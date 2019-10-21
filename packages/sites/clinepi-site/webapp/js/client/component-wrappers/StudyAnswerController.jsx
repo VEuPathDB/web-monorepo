@@ -13,7 +13,7 @@ function StudyAnswerController(props) {
       <props.DefaultComponent 
         {...props}
         renderCellContent={renderCellContent}
-        deriveRowClassName={deriveRowClassName}
+        deriveRowClassName={deriveRowClassName(props.projectId)}
       />
       
     </React.Fragment>
@@ -21,10 +21,9 @@ function StudyAnswerController(props) {
 }
 
 // StudySearchCellContent wraps StudySearchIconLinks
-// - accessing the store to get new props needed to render StudySearchIconLinks (aka StudySearches) which we want to reuse
+// - accessing the store to get new props needed to render StudySearchIconLinks (aka StudySearches) 
 // --- using connect(mapStateToProps,..): pattern also used in StudyRecordHeading
 let StudySearchCellContent = connect(mapStateToProps, null)(StudySearchIconLinks);
-
 
 /* prop types defined in WDKClient/../AnswerController.jsx
    and used in Answer.jsx
@@ -34,7 +33,7 @@ interface CellContentProps {
   attribute: AttributeField;
   record: RecordInstance;
   recordClass: RecordClass;
-};
+}
 interface RenderCellProps extends CellContentProps {
   CellContent: React.ComponentType<CellContentProps>;
 }
@@ -44,9 +43,9 @@ interface RowClassNameProps {
 }
 */
 
-// TODO: use website projectid
-const deriveRowClassName = props => {
-  if (props.record.attributes.project_availability.includes('"ClinEpiDB"')) {
+// currying to use projectId
+const deriveRowClassName = projectId => props => {
+  if (props.record.attributes.project_availability.includes('"' + projectId + '"')) {
     return 'non-greyed-out';}
   return 'greyed-out';
 };
@@ -110,4 +109,12 @@ function mapStateToProps(state,props) {
   return { entries, webAppUrl };
 }
 
-export default StudyAnswerController;
+
+
+function mapStateToProps2(state) {
+  const { projectId } = state.globalData.siteConfig;
+  return { projectId };
+}
+
+
+export default connect(mapStateToProps2, null)(StudyAnswerController);
