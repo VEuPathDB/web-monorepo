@@ -6,7 +6,7 @@ import HistogramField from 'wdk-client/Components/AttributeFilter/HistogramField
 
 // the data distribution is stored in knownDist, an array of n objects (n distinctive values)
 // each object has 3 properties { count, filteredCount, value }
-//  eg: [ {1,1,25}, {3,3,12}, {6,6,9}, {12,12,2} ]
+//  eg: [ {25,25,1}, {12,12,3}, {9,9,6}, {2,2,12} ]
 //  --- range = 12 - 1 = 11
 //  --- mean is 2.9 = (1x25 + 3x12 + 6x9 + 12x2 ) / (25+12+9+2)
 //  --- median is 1: there are 48 entry points: average values at mid positions 24 and 25: (1+1)/2
