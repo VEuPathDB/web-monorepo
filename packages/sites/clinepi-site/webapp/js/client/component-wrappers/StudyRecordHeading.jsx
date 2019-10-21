@@ -31,7 +31,7 @@ function StudyRecordHeading({ entries, loading, webAppUrl, study, attemptAction,
       </div>
       <div className={cx()}>
         <div className={cx('Label')}>Download the data</div>
-        <DownloadLink className="ce-StudySearchIconLinksItem" studyId={study.id} studyUrl={study.downloadUrl.url} attemptAction={attemptAction}/>
+        { study && <DownloadLink className="ce-StudySearchIconLinksItem" studyId={study.id} studyUrl={study.downloadUrl.url} attemptAction={attemptAction}/> }
       </div>
     </React.Fragment>
   );
