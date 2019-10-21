@@ -19,6 +19,8 @@ import newFeatureImage from 'wdk-client/Core/Style/images/new-feature.png';
 
 import { BinaryOperationsContext } from 'wdk-client/Utils/Operations';
 import { apiBinaryOperations } from './components/strategies/ApiBinaryOperations';
+import { StepDetailsActionContext } from 'wdk-client/Views/Strategy/StepDetailsDialog';
+import { apiActions } from './components/strategies/ApiStepDetailsActions';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -386,7 +388,9 @@ export function StrategyWorkspaceController(DefaultComponent) {
   return function ApiStrategyWorkspaceController(props) {
     return (
       <BinaryOperationsContext.Provider value={apiBinaryOperations}>
-        <DefaultComponent {...props} />
+        <StepDetailsActionContext.Provider value={apiActions}>
+          <DefaultComponent {...props} />
+        </StepDetailsActionContext.Provider>
       </BinaryOperationsContext.Provider>
     );
   }
