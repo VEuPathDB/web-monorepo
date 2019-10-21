@@ -105,11 +105,19 @@ const append = (
   const primaryInput = getNodeMetadata(newStepTree, primaryStepId);
 
   if (
-    primaryInput.type === "not-in-tree" ||
-    primaryInput.type === "primary-input"
+    primaryInput.type === "not-in-tree"
   ) {
-    // Trying to append to an absent node or a node which is not
-    // the root of a strategy (main or nested)
+    // Trying to append to an absent node
+    return newStepTree;
+  } else if (primaryInput.type === "primary-input") {
+    // Trying to append to a node which is a primary input
+    const newStepParentNode = primaryInput.parentNode;
+
+    newStepParentNode.primaryInput = {
+      stepId: newStepId,
+      primaryInput: primaryInput.node,
+      secondaryInput: newStepSecondaryInput
+    };
 
     return newStepTree;
   } else if (primaryInput.type === "root") {

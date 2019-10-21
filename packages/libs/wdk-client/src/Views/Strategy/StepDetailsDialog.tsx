@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
@@ -6,12 +6,14 @@ import CombineStepDetails from 'wdk-client/Views/Strategy/CombineStepDetails';
 import NestedStepDetails from 'wdk-client/Views/Strategy/NestedStepDetails';
 import StepDetails from 'wdk-client/Views/Strategy/StepDetails';
 import { getStepUrl, getDefaultStepName } from 'wdk-client/Views/Strategy/StrategyUtils';
-import { isCombineUiStepTree, isLeafUiStepTree, StepDetailProps, UiStepTree, isPartialLeafUiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { isCombineUiStepTree, isLeafUiStepTree, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
 import { SaveableTextEditor } from 'wdk-client/Components';
 
 type Props = RouteComponentProps<any> & StepDetailProps<UiStepTree>;
 
-interface StepAction {
+export interface StepAction {
+  /** Unique identifier for the action */
+  key: string;
   /** Text of the button */
   display: React.ReactType<Props>;
   /** Action to take when user clicks */
@@ -26,8 +28,9 @@ interface StepAction {
   tooltip?: (props: Props) => string | undefined;
 }
 
-const actions: StepAction[] = [
+export const defaultActions: StepAction[] = [
   {
+    key: 'view',
     display: () => <React.Fragment>View</React.Fragment>,
     onClick: ({ history, stepTree }) => {
       history.push(getStepUrl(stepTree.step));
@@ -36,18 +39,21 @@ const actions: StepAction[] = [
     tooltip: () => 'View the results of this search'
   },
   {
+    key: 'analyze',
     display: () => <React.Fragment>Analyze</React.Fragment>,
     onClick: ({ showNewAnalysisTab }) => showNewAnalysisTab(),
     isDisabled: ({ location, stepTree }) => !location.pathname.startsWith(getStepUrl(stepTree.step)),
     tooltip: () => 'Analyze the results of this search'
   },
   {
+    key: 'revise',
     display: () => <React.Fragment>Revise</React.Fragment>,
     onClick: ({ showReviseForm }) => showReviseForm(),
     isHidden: ({ allowRevise = true }) => !allowRevise,
     tooltip: () => 'Modify the configuration of this search'
   },
   {
+    key: 'nest',
     display: () => <React.Fragment>Make nested strategy</React.Fragment>,
     onClick: ({ makeNestedStrategy }) => {
       makeNestedStrategy();
@@ -60,6 +66,7 @@ const actions: StepAction[] = [
     tooltip: () => 'Create a non-linear search strategy'
   },
   {
+    key: 'unnest',
     display: () => <React.Fragment>Unnest strategy</React.Fragment>,
     onClick: ({ makeUnnestStrategy }) => makeUnnestStrategy(),
     isDisabled: ({ stepTree }) => isCombineUiStepTree(stepTree),
@@ -69,6 +76,7 @@ const actions: StepAction[] = [
       : 'Convert nested strategy into a single step'
   },
   {
+    key: 'toggleNested',
     display: ({ stepTree }) => <React.Fragment>{
       stepTree.nestedControlStep && stepTree.nestedControlStep.expanded
         ? 'Hide nested'
@@ -82,17 +90,21 @@ const actions: StepAction[] = [
     tooltip: ({ isExpanded }) => isExpanded ? 'Hide nested strategy details' : 'Show nested strategy details'
   },
   {
+    key: 'insertBefore',
     display: () => <React.Fragment>Insert step before</React.Fragment>,
     onClick: ({ insertStepBefore }) => insertStepBefore(),
     tooltip: () => 'Insert a search into your search strategy before this search'
   },
   {
+    key: 'delete',
     display: () => <React.Fragment>Delete</React.Fragment>,
     onClick: ({ deleteStep }) => deleteStep(),
     isDisabled: ({ isDeleteable }) => !isDeleteable,
     tooltip: ({ isDeleteable }) => isDeleteable ? 'Delete this search from your strategy' : 'Deleting this step will yield an invalid search strategy'
   }
-]
+];
+
+export const StepDetailsActionContext = createContext(defaultActions);
 
 export default withRouter(function StepDetailsDialog(props: Props) {
   const {
@@ -103,7 +115,9 @@ export default withRouter(function StepDetailsDialog(props: Props) {
     renameStep,
   } = props;
   const { step, nestedControlStep, recordClass } = stepTree;
-  const displayName = nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : getDefaultStepName(step, isPartialLeafUiStepTree(stepTree));
+  const displayName = nestedControlStep && nestedControlStep.expandedName ? nestedControlStep.expandedName : getDefaultStepName(step, isCombineUiStepTree(stepTree));
+  const actions = useContext(StepDetailsActionContext);
+
   return (
     <Dialog
       className={cx("--StepDetails")}
@@ -111,8 +125,8 @@ export default withRouter(function StepDetailsDialog(props: Props) {
         <div className={cx("--StepActions")}>
           {actions
           .filter(action => action.isHidden == null || !action.isHidden(props))
-          .map((action, index) => (
-            <div key={index}>
+          .map(action => (
+            <div key={action.key}>
               <button type="button" className="link" onClick={() => {
                 if (action.onClick) action.onClick(props);
                 if (action.closeOnClick !== false) onClose();

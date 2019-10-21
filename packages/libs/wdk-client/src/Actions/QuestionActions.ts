@@ -10,7 +10,6 @@ import { AddType } from 'wdk-client/Views/Strategy/Types';
 import { alert } from 'wdk-client/Utils/Platform';
 import { NewStepSpec, Step } from 'wdk-client/Utils/WdkUser';
 import { WdkService } from 'wdk-client/Core';
-import { curry } from 'lodash';
 
 
 export type Action =

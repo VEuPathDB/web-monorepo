@@ -97,8 +97,8 @@ export const AddStepPanelView = wrappable((
     stepsCompletedNumber
   }: Props
 ) => {
-  const [ selectedOperation, setSelectedOperation ] = useState<string | undefined>(undefined);
-  const [ pageHistory, setPageHistory ] = useState<string[]>([]);
+  const [ selectedOperation, setSelectedOperation ] = useState<string | undefined>(addType.selectedOperation);
+  const [ pageHistory, setPageHistory ] = useState<string[]>(addType.pageHistory || []);
 
   const currentPage = pageHistory[pageHistory.length - 1];
 
@@ -167,7 +167,17 @@ export const AddStepPanelView = wrappable((
   );
 
   return (
-    <StrategyModal title="Add a Step to your Strategy" onGoBack={selectedOperation ? onClickBack : onHideInsertStep} onClose={onHideInsertStep}>
+    <StrategyModal 
+      title="Add a Step to your Strategy" 
+      onGoBack={(
+        selectedOperation && 
+        (addType.pageHistory === undefined || pageHistory.length > addType.pageHistory.length)
+      )
+        ? onClickBack 
+        : onHideInsertStep
+      } 
+      onClose={onHideInsertStep}
+    >
       <div className={cx()}>
         {
           (

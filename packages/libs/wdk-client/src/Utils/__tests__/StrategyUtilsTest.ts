@@ -160,7 +160,7 @@ describe('addStep', () => {
     expect(addStep(stepTree, { type: 'insert-before', stepId: 2 }, 3, { stepId: 4 })).toEqual(stepTree);
   });
 
-  it('should return the same step tree structure, if trying to append a step to a non-head step', () => {
+  it('should insert a step between the append point and the append point\'s output, if trying to append a step to a non-head step', () => {
     //          5
     //          |
     //          v
@@ -169,7 +169,6 @@ describe('addStep', () => {
     //          v
     // 2 -----> 1    
     const stepTree: StepTree = {
-    
       stepId: 1,
       primaryInput: {
         stepId: 2
@@ -184,8 +183,66 @@ describe('addStep', () => {
         }
       }
     };
-    expect(addStep(stepTree, { type: 'append', stepId: 2 }, 6, { stepId: 7 })).toEqual(stepTree);
-    expect(addStep(stepTree, { type: 'append', stepId: 4 }, 6, { stepId: 7 })).toEqual(stepTree);
+
+    //              5
+    //              |
+    //              v
+    //      7  4 -> 3
+    //      |       |
+    //      v       v
+    // 2 -> 6 ----> 1    
+    const resultStepTree1: StepTree = {
+      stepId: 1,
+      primaryInput: {
+        stepId: 6,
+        primaryInput: {
+          stepId: 2
+        },
+        secondaryInput: {
+          stepId: 7
+        }
+      },
+      secondaryInput: {
+        stepId: 3,
+        primaryInput: {
+          stepId: 4
+        },
+        secondaryInput: {
+          stepId: 5
+        }
+      }
+    };
+    expect(addStep(stepTree, { type: 'append', stepId: 2 }, 6, { stepId: 7 })).toEqual(resultStepTree1);
+
+    //          7    5
+    //          |    |
+    //          v    v
+    //     4 -> 6 -> 3
+    //               |
+    //               v
+    // 2 ----------> 1    
+    const resultStepTree2: StepTree = {
+      stepId: 1,
+      primaryInput: {
+        stepId: 2
+      },
+      secondaryInput: {
+        stepId: 3,
+        primaryInput: {
+          stepId: 6,
+          primaryInput: {
+            stepId: 4
+          },
+          secondaryInput: {
+            stepId: 7
+          }
+        },
+        secondaryInput: {
+          stepId: 5
+        }
+      }
+    };    
+    expect(addStep(stepTree, { type: 'append', stepId: 4 }, 6, { stepId: 7 })).toEqual(resultStepTree2);
   });
 
   it('should return a step tree with a properly appended step, if trying to append a step to a head step', () => {

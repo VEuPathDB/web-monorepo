@@ -6,7 +6,7 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
 import { getDefaultStepName } from 'wdk-client/Views/Strategy/StrategyUtils';
-import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree, isCompleteUiStepTree, PartialUiStepTree, isPartialLeafUiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree, isCompleteUiStepTree, PartialUiStepTree, isPartialCombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 import { useBinaryStepBoxClassName } from 'wdk-client/Utils/Operations';
@@ -89,7 +89,10 @@ function StepTree(props: StepBoxesProps) {
             expandNestedStrategy: noop,
             showNewAnalysisTab: () => props.onAnalyzeStep(),
             showReviseForm: () => props.setReviseFormStepId(step.id),
-            insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', stepId: step.id }),
+            insertStepBefore: (selectedOperation?: string, pageHistory?: string[]) => 
+              props.onShowInsertStep({ type: 'insert-before', stepId: step.id, selectedOperation, pageHistory }),
+            insertStepAfter: (selectedOperation?: string, pageHistory?: string[]) => 
+              props.onShowInsertStep({ type: 'append', stepId: step.id, selectedOperation, pageHistory }),
             deleteStep: () => props.onDeleteStep(step.id)
           }}
           defaultComponent={StepBox}
@@ -135,7 +138,10 @@ function StepTree(props: StepBoxesProps) {
                   },
                   showNewAnalysisTab: () => props.onAnalyzeStep(),
                   showReviseForm: () => props.setReviseFormStepId(secondaryInput.step.id),
-                  insertStepBefore: () => props.onShowInsertStep({ type: 'insert-before', stepId: step.id }),
+                  insertStepBefore: (selectedOperation?: string, pageHistory?: string[]) => 
+                    props.onShowInsertStep({ type: 'insert-before', stepId: step.id, selectedOperation, pageHistory }),
+                  insertStepAfter: (selectedOperation?: string, pageHistory?: string[]) => 
+                    props.onShowInsertStep({ type: 'append', stepId: step.id, selectedOperation, pageHistory }),
                   deleteStep: () => props.onDeleteStep(step.id)
                 }}
                 defaultComponent={StepBox}
@@ -161,7 +167,7 @@ function UnknownQuestionStepBox({ stepTree, deleteStep }: { stepTree: PartialUiS
   return (
     <div title={INVALID_SEARCH_TITLE} className={cx('--Box', 'invalid')}>
       <div className={cx('--BoxLink', 'leaf')}>
-        <StepName step={stepTree.step} isLeaf={isPartialLeafUiStepTree(stepTree)} />
+        <StepName step={stepTree.step} isCombine={isPartialCombineUiStepTree(stepTree)} />
         <StepCount step={stepTree.step} recordClass={stepTree.recordClass}/>
       </div>
       {deleteButton}
@@ -243,7 +249,7 @@ function LeafStepBoxContent(props: StepBoxProps) {
   const { step, recordClass, nestedControlStep } = stepTree;
   return (
     <React.Fragment>
-      <StepName step={step} isLeaf={isPartialLeafUiStepTree(stepTree)} nestedControlStep={isNested ? nestedControlStep : undefined} />
+      <StepName step={step} isCombine={isPartialCombineUiStepTree(stepTree)} nestedControlStep={isNested ? nestedControlStep : undefined} />
       <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
@@ -254,7 +260,7 @@ function TransformStepBoxContent(props: StepBoxProps) {
   return (
     <React.Fragment>
       <div className={cx('--TransformInputArrow')}>&#9654;</div>
-      <StepName step={step} isLeaf={isPartialLeafUiStepTree(props.stepTree)} />
+      <StepName step={step} isCombine={isPartialCombineUiStepTree(props.stepTree)} />
       <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
   );
@@ -282,9 +288,9 @@ function CombinedStepIcon(props: { step: Step }) {
   );
 }
 
-function StepName(props: { step: Step, isLeaf: boolean, nestedControlStep?: Step }) {
-  const { step, isLeaf, nestedControlStep } = props;
-  const displayName = nestedControlStep && nestedControlStep.expandedName || getDefaultStepName(step, isLeaf);
+function StepName(props: { step: Step, isCombine: boolean, nestedControlStep?: Step }) {
+  const { step, isCombine, nestedControlStep } = props;
+  const displayName = nestedControlStep && nestedControlStep.expandedName || getDefaultStepName(step, isCombine);
   return <div className={cx('--StepName')}>{displayName}</div>;
 }
 
@@ -311,7 +317,7 @@ export function ExpandedSteps(props: StepBoxesProps) {
       {stepTree.secondaryInput && stepTree.secondaryInput.isNested && stepTree.step.expanded && (
         <React.Fragment>
           <div className="StrategyPanel--NestedTitle">
-            Expanded view of <em>{stepTree.step.expandedName || getDefaultStepName(stepTree.secondaryInput.step, isPartialLeafUiStepTree(stepTree.secondaryInput))}</em>
+            Expanded view of <em>{stepTree.step.expandedName || getDefaultStepName(stepTree.secondaryInput.step, isPartialCombineUiStepTree(stepTree.secondaryInput))}</em>
           </div>
           <div className="StrategyPanel--Panel" style={{ border: `.1em solid ${stepTree.secondaryInput.color}` }}>
             <div style={{ fontSize: '1.4em', padding: '.35em .4em' }}>

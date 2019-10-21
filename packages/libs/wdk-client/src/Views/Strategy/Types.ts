@@ -34,8 +34,8 @@ export interface PartialLeafUiStepTree extends PartialUiStepTree {
   secondaryInput: undefined;
 }
 
-export function isPartialLeafUiStepTree(stepTree: PartialUiStepTree): stepTree is PartialLeafUiStepTree {
-  return stepTree.primaryInput == null && stepTree.secondaryInput == null;
+export function isPartialCombineUiStepTree(stepTree: PartialUiStepTree): stepTree is PartialLeafUiStepTree {
+  return stepTree.primaryInput != null && stepTree.secondaryInput != null;
 }
 
 export interface LeafUiStepTree extends UiStepTree {
@@ -94,7 +94,8 @@ export interface StepBoxProps<T extends UiStepTree = UiStepTree> {
   expandNestedStrategy: () => void;
   showNewAnalysisTab: () => void;
   showReviseForm: () => void;
-  insertStepBefore: () => void;
+  insertStepBefore: (selectedOperation?: string, pageHistory?: string[]) => void;
+  insertStepAfter: (selectedOperation?: string, pageHistory?: string[]) => void;
   deleteStep: () => void;
 }
 
@@ -104,13 +105,18 @@ export interface StepDetailProps<T extends UiStepTree> extends StepBoxProps<T> {
   allowRevise?: boolean;
 }
 
-export interface InsertBefore {
+interface BaseAddType {
+  selectedOperation?: string;
+  pageHistory?: string[]
+}
+
+export interface InsertBefore extends BaseAddType {
   type: 'insert-before';
   /** The output step id of the new step */
   stepId: number;
 }
 
-export interface Append {
+export interface Append extends BaseAddType {
   type: 'append';
   /** The primary input step id of the new step */
   stepId: number;

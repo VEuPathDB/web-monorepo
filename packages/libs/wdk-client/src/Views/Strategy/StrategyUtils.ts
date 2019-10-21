@@ -34,8 +34,8 @@ export function formatDateTimeString(dateTimeString: string) {
   return `${date} ${hoursAndMinutes}`;
 }
 
-export function getDefaultStepName(step: Step, isLeaf: boolean) {
-  return isLeaf
+export function getDefaultStepName(step: Step, isCombineUiStepTree: boolean) {
+  return !isCombineUiStepTree
     ? step.customName
     : 'Unnamed Nested Strategy'
 }
