@@ -95,7 +95,6 @@ export interface EnumParamBase extends ParameterBase {
   minSelectedCount: number;
   multiPick: boolean;
   depthExpanded: number;
-  vocabularyMap: Record<string, string>;
 }
 
 type VocabTerm = string;
