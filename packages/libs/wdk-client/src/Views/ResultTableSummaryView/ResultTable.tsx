@@ -91,7 +91,9 @@ function ResultTable(props: Props) {
     uiState
   });
 
-  const downloadLink = resultType.type === 'step' ? `/step/${resultType.step.id}/download` : undefined;
+  const downloadLink = resultType.type === 'step' ? `/step/${resultType.step.id}/download`
+    : resultType.type === 'basket' ? `/workspace/basket/${resultType.basketName}/download`
+    : undefined;
   return (
     <Mesa state={tableState}>
       {downloadLink &&
