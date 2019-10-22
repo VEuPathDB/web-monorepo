@@ -73,7 +73,7 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/workspace/basket/:basketName',
+    path: '/workspace/basket/:basketName/download',
     component: (props: RouteComponentProps<{ basketName: string }>) => {
       const { format } = parseQueryString(props);
       return (
