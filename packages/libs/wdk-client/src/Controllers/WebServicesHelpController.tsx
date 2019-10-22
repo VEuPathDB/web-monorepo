@@ -31,7 +31,7 @@ type Props = { ownProps: OwnProps } & DispatchProps & StateProps;
 class WebServicesHelpController extends PageController<Props> {
 
   isRenderDataLoaded() {
-    return (this.props.step != null && !this.props.isLoading);
+    return (this.props.resultType != null && !this.props.isLoading);
   }
 
   isRenderDataLoadError() {
@@ -74,9 +74,9 @@ class WebServicesHelpController extends PageController<Props> {
   }
 
   loadData() {
-    const { ownProps, isLoading, step, loadPageDataFromSearchConfig } = this.props;
+    const { ownProps, isLoading, resultType, loadPageDataFromSearchConfig } = this.props;
 
-    if (step || isLoading) return;
+    if (resultType || isLoading) return;
 
     // must reinitialize with every new props
     if ('searchName' in ownProps && 'weight' in ownProps) {

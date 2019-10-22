@@ -7,6 +7,7 @@ import {
     FilterValueArray,
 } from 'wdk-client/Utils/WdkModel';
 import {AnswerFormatting} from 'wdk-client/Service/Mixins/SearchReportsService';
+import {submitAsForm} from 'wdk-client/Utils/FormSubmitter';
 
 type BasketStatusResponse = Array<boolean>;
 export type BasketPatchIdsOperation = 'add' | 'remove';
@@ -70,6 +71,17 @@ export default (base: ServiceBase) => {
     return base._fetchJson<Answer>('post', url, body);
   }
 
+  async function downloadBasketReport(basketName: string, formatting: AnswerFormatting, target = '_blank'): Promise<void> {
+    submitAsForm({
+      method: 'post',
+      action: base.serviceUrl + `${BASKETS_PATH}/${basketName}/reports/${formatting.format}`,
+      target,
+      inputs: {
+        data: JSON.stringify({ reportConfig: formatting.formatConfig })
+      }
+    });
+  }
+
   return {
     getBasketCounts,
     getBasketStatus,
@@ -79,6 +91,7 @@ export default (base: ServiceBase) => {
     addStepToBasket,
     getBasketCustomReport,
     getBasketStandardReport,
+    downloadBasketReport
   }
 
 }

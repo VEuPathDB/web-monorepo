@@ -85,3 +85,14 @@ export async function getCustomReport<T>(wdkService: WdkService, resultType: Res
       return wdkService.getAnswer<T>(resultType.answerSpec, formatting);
   }
 }
+
+export async function downloadReport(wdkService: WdkService, resultType: ResultType, formatting: AnswerFormatting, target: string): Promise<void> {
+  switch(resultType.type) {
+    case 'step':
+      return wdkService.downloadStepReport(resultType.step.id, formatting, target);
+    case 'answerSpec':
+      return wdkService.downloadAnswer({ answerSpec: resultType.answerSpec, formatting }, target);
+    case 'basket':
+      return wdkService.downloadBasketReport(resultType.basketName, formatting, target);
+  }
+}

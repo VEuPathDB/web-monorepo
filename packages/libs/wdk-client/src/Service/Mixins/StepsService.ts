@@ -3,6 +3,7 @@ import { StandardReportConfig, Answer, Identifier, FilterValueArray, SearchConfi
 import {  NewStepSpec, PatchStepSpec, Step, } from 'wdk-client/Utils/WdkUser';
 import * as Decode from 'wdk-client/Utils/Json';
 import { AnswerFormatting } from './SearchReportsService';
+import {submitAsForm} from 'wdk-client/Utils/FormSubmitter';
 
 export default (base: ServiceBase) => {
 
@@ -36,6 +37,17 @@ export default (base: ServiceBase) => {
       method: 'post',
       path: `/users/${userId}/steps/${stepId}/reports/standard`,
       body: JSON.stringify({ reportConfig, viewFilters })
+    });
+  }
+
+  async function downloadStepReport(stepId: number, formatting: AnswerFormatting, target = '_blank',  userId: string = 'current'): Promise<void> {
+    submitAsForm({
+      method: 'post',
+      action: base.serviceUrl + `/users/${userId}/steps/${stepId}/reports/${formatting.format}`,
+      target,
+      inputs: {
+        data: JSON.stringify({ reportConfig: formatting.formatConfig })
+      }
     });
   }
 
@@ -83,7 +95,8 @@ export default (base: ServiceBase) => {
     getStepColumnReport,
     getStepFilterSummary,
     deleteStep,
-    updateStepSearchConfig
+    updateStepSearchConfig,
+    downloadStepReport
   }
 
 }

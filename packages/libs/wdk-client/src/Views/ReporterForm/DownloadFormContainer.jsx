@@ -24,17 +24,21 @@ let ReporterSelect = props => {
   );
 };
 
-function getTitle(scope, step, recordClass) {
+function getTitle(scope, resultType, recordClass) {
+  const estimatedSize = resultType.type === 'step' ? resultType.step.estimatedSize : '';
+  const displayName = resultType.type === 'step' ? resultType.step.displayName
+    : resultType.type === 'basket' ? 'basket'
+    : 'records';
   switch (scope) {
     case 'results':
       return (
         <div>
-          <h1>Download {step.estimatedSize} {recordClass.displayNamePlural}</h1>
-          <span style={{fontSize: "1.5em"}}>Results are from search: {step.displayName}</span>
+          <h1>Download {estimatedSize} {recordClass.displayNamePlural}</h1>
+          <span style={{fontSize: "1.5em"}}>Results are from search: {displayName}</span>
         </div>
       );
     case 'record':
-      return ( <div><h1>Download {recordClass.displayName}: <PrimaryKeySpan primaryKeyString={step.displayName}/></h1></div> );
+      return ( <div><h1>Download {recordClass.displayName}: <PrimaryKeySpan primaryKeyString={displayName}/></h1></div> );
     default:
       return ( <div><h1>Download Results</h1></div> );
   }
@@ -49,17 +53,16 @@ class DownloadFormContainer extends Component {
 
   // create parameterless form submission function for forms to use
   onSubmit() {
-    let { submitForm, step, selectedReporter, formState } = this.props;
-    submitForm(step, selectedReporter, formState);
+    let { submitForm, resultType, selectedReporter, formState } = this.props;
+    submitForm(resultType, selectedReporter, formState);
   }
 
   render() {
 
-    // get the props needed in this component's render
-    let { scope, step, availableReporters, selectedReporter, recordClass, selectReporter } = this.props;
+    let { scope, resultType, availableReporters, selectedReporter, recordClass, selectReporter } = this.props;
 
     // create page title element
-    let title = getTitle(scope, step, recordClass);
+    let title = getTitle(scope, resultType, recordClass);
 
     // filter props we don't want to send to the child form
     let formProps = filterOutProps(this.props, [ 'selectReporter', 'submitForm' ]);

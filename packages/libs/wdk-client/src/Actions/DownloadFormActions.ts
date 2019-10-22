@@ -1,10 +1,11 @@
-import { StepBundle, getStepBundlePromise, getSingleRecordStepBundlePromise, getStubbedStep } from 'wdk-client/Utils/stepUtils';
+import { getStepBundlePromise, getSingleRecordStepBundlePromise, getStubbedStep } from 'wdk-client/Utils/stepUtils';
 import { ActionThunk, EmptyAction, emptyAction, ActionCreatorResult } from 'wdk-client/Core/WdkMiddleware';
 import { Step, UserPreferences } from 'wdk-client/Utils/WdkUser';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { AnswerRequest } from 'wdk-client/Service/Mixins/SearchReportsService';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { WdkService } from 'wdk-client/Core';
+import { ResultType, getResultTypeDetails, downloadReport } from 'wdk-client/Utils/WdkResult';
 
 export type Action =
   | InitializeAction
@@ -35,7 +36,7 @@ export const INITIALIZE = 'downloadForm/initialize';
 export interface InitializeAction {
   type: typeof INITIALIZE;
   payload: {
-    step: Step,
+    resultType: ResultType,
     question: Question,
     recordClass: RecordClass,
     scope: string,
@@ -143,8 +144,17 @@ export function loadPageDataFromStepId(
   stepId: number, requestedFormat?: string
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
+    const resultTypeBundle = getStepBundlePromise(stepId, wdkService)
+      .then(({ step, question, recordClass }) => ({
+        question,
+        recordClass,
+        resultType: {
+          type: 'step',
+          step
+        }
+      } as ResultTypeBundle ));
     return getInitializationActionSet(
-      wdkService, 'results', getStepBundlePromise(stepId, wdkService), requestedFormat
+      wdkService, 'results', resultTypeBundle, requestedFormat
     );
   };
 }
@@ -171,12 +181,49 @@ export function loadPageDataFromRecord(
     // create promise for bundle, dependent on previous two promises and primaryKeyString
     let bundlePromise = Promise
       .all([ recordClassPromise, recordPromise, primaryKeyString ])
-      .then(getSingleRecordStepBundlePromise);
+      .then(getSingleRecordStepBundlePromise)
+      .then(({ step, recordClass, question }) => ({
+        resultType: {
+          type: 'step',
+          step,
+        },
+        question,
+        recordClass
+      } as ResultTypeBundle));
 
     return getInitializationActionSet(
       wdkService, 'record', bundlePromise, requestedFormat
     );
   }
+}
+
+export function loadPageDataFromBasketName(
+  basketName: string,
+  requestedFormat?: string
+): ActionThunk<LoadPageDataAction> {
+  return function run({ wdkService }) {
+    const resultType: ResultType = {
+      type: 'basket',
+      basketName
+    };
+    const resultTypeBundlePromise = getResultTypeDetails(wdkService, resultType)
+      .then(({ searchName, recordClassName }) => {
+        return Promise.all([
+          wdkService.findQuestion(q => q.urlSegment === searchName),
+          wdkService.findRecordClass(r => r.urlSegment === recordClassName)
+        ]).then(([ question, recordClass ]) => ({
+          question,
+          recordClass,
+          resultType
+        }));
+      });
+    return getInitializationActionSet(
+      wdkService,
+      'results',
+      resultTypeBundlePromise,
+      requestedFormat
+    );
+  };
 }
 
 export function loadPageDataFromSearchConfig(
@@ -199,12 +246,15 @@ export function loadPageDataFromSearchConfig(
       .then(([question, recordClass]) => ({
         question,
         recordClass,
-        // make a stub step for the question and passed
-        step: getStubbedStep(question, question.urlSegment, -1, {
-          parameters: chooseParams(question, paramValues),
-          wdkWeight: weight
-        })
-      }));
+        resultType: {
+          type: 'step',
+          // make a stub step for the question and passed
+          step: getStubbedStep(question, question.urlSegment, -1, {
+            parameters: chooseParams(question, paramValues),
+            wdkWeight: weight
+          })
+        }
+      } as ResultTypeBundle));
 
     return getInitializationActionSet(wdkService, 'results', bundlePromise);
   };
@@ -221,16 +271,22 @@ function chooseParams(question: Question, valueMap: Record<string,string>): Reco
   return paramMap;
 }
 
+interface ResultTypeBundle {
+  resultType: ResultType;
+  question: Question;
+  recordClass: RecordClass;
+}
+
 function getInitializationActionSet(
     wdkService: WdkService,
     scope: string,
-    bundlePromise: Promise<StepBundle>,
+    resultTypeBundle: Promise<ResultTypeBundle>,
     requestedFormat?: string): ActionCreatorResult<LoadPageDataAction> {
   let preferencesPromise = wdkService.getCurrentUserPreferences();
   let ontologyPromise = wdkService.getOntology();
   return [
     startLoading(),
-    Promise.all([bundlePromise, preferencesPromise, ontologyPromise]).then(
+    Promise.all([resultTypeBundle, preferencesPromise, ontologyPromise]).then(
       ([stepBundle, preferences, ontology]) =>
         initialize({
           ...stepBundle,
@@ -240,31 +296,25 @@ function getInitializationActionSet(
         }),
       (error: Error) => setError(error)
     ),
-    bundlePromise.then(() => selectReporter(requestedFormat))
+    resultTypeBundle.then(() => selectReporter(requestedFormat))
   ];
 }
 
 //==============================================================================
 
 export function submitForm(
-  step: Step,
+  resultType: ResultType,
   selectedReporter: string,
   formState: any,
   target = '_blank'
 ): ActionThunk<EmptyAction> {
   return ({ wdkService }) => {
-    let answerRequest: AnswerRequest = {
-      answerSpec: {
-        searchName: step.searchName,
-        searchConfig: step.searchConfig
-      },
-      formatting: {
-        format: selectedReporter ? selectedReporter : 'wdk-service-json',
-        formatConfig: formState != null ? formState :
-            { contentDisposition: 'attachment' }
-      }
+    const formatting = {
+      format: selectedReporter ? selectedReporter : 'wdk-service-json',
+      formatConfig: formState != null ? formState :
+          { contentDisposition: 'attachment' }
     };
-    wdkService.downloadAnswer(answerRequest, target);
+    downloadReport(wdkService, resultType, formatting, target)
     return emptyAction;
   };
 }

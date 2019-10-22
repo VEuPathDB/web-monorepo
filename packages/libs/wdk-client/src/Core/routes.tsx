@@ -73,6 +73,19 @@ const routes: RouteEntry[] = [
   },
 
   {
+    path: '/workspace/basket/:basketName',
+    component: (props: RouteComponentProps<{ basketName: string }>) => {
+      const { format } = parseQueryString(props);
+      return (
+        <DownloadFormController
+          {...props.match.params}
+          format={format}
+        />
+      );
+    }
+  },
+
+  {
     path: '/web-services-help',
     component: (props: RouteComponentProps<{}>) =>
       <WebServicesHelpController {...parseQueryString(props)}/>
