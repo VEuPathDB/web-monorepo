@@ -25,20 +25,30 @@ let ReporterSelect = props => {
 };
 
 function getTitle(scope, resultType, recordClass) {
-  const estimatedSize = resultType.type === 'step' ? resultType.step.estimatedSize : '';
-  const displayName = resultType.type === 'step' ? resultType.step.displayName
-    : resultType.type === 'basket' ? 'basket'
-    : 'records';
   switch (scope) {
     case 'results':
-      return (
-        <div>
-          <h1>Download {estimatedSize} {recordClass.displayNamePlural}</h1>
-          <span style={{fontSize: "1.5em"}}>Results are from search: {displayName}</span>
-        </div>
-      );
-    case 'record':
+      switch(resultType.type) {
+        case 'step':
+          return (
+            <div>
+              <h1>Download {resultType.step.estimatedSize} {recordClass.displayNamePlural}</h1>
+              <span style={{fontSize: "1.5em"}}>Results are from search: {resultType.step.displayName}</span>
+            </div>
+          );
+        case 'basket':
+          return (
+            <div>
+              <h1>Download {recordClass.displayName} Basket</h1>
+            </div>
+          );
+        default:
+          return ( <div><h1>Download Results</h1></div> );
+      }
+    case 'record': {
+      // We should only get here with a step result
+      const displayName = resultType.type === 'step' ? resultType.step.displayName : 'Unknown';
       return ( <div><h1>Download {recordClass.displayName}: <PrimaryKeySpan primaryKeyString={displayName}/></h1></div> );
+    }
     default:
       return ( <div><h1>Download Results</h1></div> );
   }
