@@ -83,21 +83,30 @@ function ProfileParameter({
   questionState,
   eventHandlers
 }: ProfileParameterProps) {
+
+  const {
+    vocabulary: profileVocabulary,
+  } = questionState.question.parametersByName[PHYLETIC_TERM_MAP_PARAM_NAME] as CheckboxEnumParam;
+
+  const {
+    vocabulary: indentVocabulary,
+  } = questionState.question.parametersByName[PHYLETIC_INDENT_MAP_PARAM_NAME] as CheckboxEnumParam;
+
   const depthMap = useMemo(
-    () => mapValues(
-      {
-        ...(questionState.question.parametersByName[PHYLETIC_INDENT_MAP_PARAM_NAME] as CheckboxEnumParam).vocabularyMap,
-        'ALL': 0
-      },
-      value => +value
+    () => indentVocabulary.reduce(
+      (depthMap, entry) => Object.assign(depthMap, { [entry[0]]: Number(entry[1]) }),
+      { ALL: 0 }
     ),
-    [ questionState.question.parametersByName[PHYLETIC_INDENT_MAP_PARAM_NAME] ]
+    [ indentVocabulary ]
   );
 
-  const { 
-    vocabulary: profileVocabulary, 
-    vocabularyMap: displayMap 
-  } = questionState.question.parametersByName[PHYLETIC_TERM_MAP_PARAM_NAME] as CheckboxEnumParam;
+  const displayMap = useMemo(
+    () => profileVocabulary.reduce(
+      (displayMap, entry) => Object.assign(displayMap, { [entry[0]]: entry[1] }),
+      {} as Record<string, string>
+    ),
+    [ profileVocabulary ]
+  );
 
   const includedTerms = useMemo(
     () => questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME] === NO_TERMS
