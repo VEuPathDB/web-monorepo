@@ -1,4 +1,7 @@
 import { initialize } from 'ebrc-client/bootstrap';
+
+import 'eupathdb/wdkCustomization/css/client.scss';
+
 import componentWrappers from './component-wrappers';
 import wrapStoreModules from './wrapStoreModules';
 import { wrapRoutes } from './routes';
