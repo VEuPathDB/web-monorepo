@@ -297,19 +297,9 @@ button.StepBoxes--EditButton:hover {
   border-right: none;
 }
 
-/* Override wdk-DialogPopupWrapper. */
-.StepBoxes--StepDetailsPopupWrapper {
-  /* Make dialog's top position relative to the document body, not the viewport. */
-  position: absolute;
-  /* Forces position of draggable window to be relative to top of document (see .StepBoxes--StepDetails) */
-  top: 0;
-}
-
 /* Override .wdk-Dialog */
 .StepBoxes--StepDetails {
   min-width: 700px;
-  /* This is a relatively sane default. */
-  top: 250px;
 }
 
 .StepBoxes--StepDetailsHeader > button {
