@@ -9,7 +9,7 @@
   content: '\f0d7';
   font-family: FontAwesome;
   font-size: 1.2em;
-  width: 1.5ex;
+  width: 1ex;
 }
 
 .wdk-CollapsibleSectionHeader__collapsed:before {
