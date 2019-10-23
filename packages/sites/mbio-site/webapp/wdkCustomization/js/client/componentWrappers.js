@@ -189,11 +189,11 @@ function makeHeaderMenuItems(state) {
             text: 'My Search Strategies',
             appUrl: '/showApplication.do'
           },
-          {
+/*          {
             text: 'Analyze My Experiment',
             appUrl: '/app/galaxy-orientation'
           },
-          {
+*/        {
             text: 'My Basket',
             appUrl: '/showApplication.do?tab=basket',
             loginRequired: true
