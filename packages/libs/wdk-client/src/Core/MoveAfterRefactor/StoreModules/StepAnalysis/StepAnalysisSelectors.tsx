@@ -236,7 +236,6 @@ const mapUnsavedAnalysisStateToProps = (
     paramSpecs,
     paramValues,
     formStatus,
-    formUiState,
     formValidationErrors
   }: UnsavedAnalysisState,
   choices: StepAnalysisType[]
@@ -254,8 +253,7 @@ const mapUnsavedAnalysisStateToProps = (
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
-    paramValues,
-    formUiState,
+    paramValues
   },
   pluginRenderers: {
     formRenderer: (props: StepAnalysisFormPluginProps) => 
@@ -286,11 +284,9 @@ const mapSavedAnalysisStateToProps = (
       formExpanded
     },
     resultContents,
-    resultUiState,
     resultErrorMessage,
     paramSpecs,
     paramValues,
-    formUiState,
     formStatus,
     formValidationErrors,
     pollCountdown
@@ -311,15 +307,13 @@ const mapSavedAnalysisStateToProps = (
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
-    paramValues,
-    formUiState,
+    paramValues
   },
   resultState: analysisConfigStatus === 'COMPLETE' && analysisConfig.status === 'COMPLETE'
     ? {
       type: 'complete-result',
       analysisConfig,
       analysisResult: resultContents,
-      resultUiState,
       webAppUrl
     }
     : analysisConfigStatus !== 'ERROR' && (analysisConfig.status === 'PENDING' || analysisConfig.status === 'RUNNING')

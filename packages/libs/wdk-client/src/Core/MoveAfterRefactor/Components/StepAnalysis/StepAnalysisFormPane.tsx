@@ -16,12 +16,10 @@ export type StepAnalysisFormPluginProps = StepAnalysisFormPluginState & StepAnal
 export interface StepAnalysisFormPluginState {
   paramSpecs: StepAnalysisParameter[];
   paramValues: Record<string, string[]>;
-  formUiState: Record<string, any>;
 }
 
 export interface StepAnalysisFormPluginEventHandlers {
   updateParamValues: (newParamValues: Record<string, string[]>) => void;
-  updateFormUiState: (newFormState: any) => void;
   onFormSubmit: () => void;
 }
 
@@ -32,9 +30,7 @@ export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
   errors,
   paramSpecs,
   paramValues,
-  formUiState,
   updateParamValues,
-  updateFormUiState,
   onFormSubmit,
   toggleParameters
 }) => (
@@ -53,9 +49,7 @@ export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
               { 
                 paramSpecs, 
                 paramValues, 
-                formUiState, 
                 updateParamValues, 
-                updateFormUiState, 
                 onFormSubmit 
               }
             )

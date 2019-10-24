@@ -34,8 +34,6 @@ import {
   renameAnalysis,
   duplicateAnalysis,
   toggleDescription,
-  updateFormUiState,
-  updateResultUiState,
   toggleParameters
 } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
@@ -181,9 +179,7 @@ const mapDispatchToProps = (dispatch: Dispatch, { stepId, viewId, initialTab }: 
   loadChoice: memoize((panelId: number) => (choice: StepAnalysisType) => dispatch(startLoadingChosenAnalysisTab(panelId, choice))),
   loadSavedAnalysis: memoize((panelId: number) => () => dispatch(startLoadingSavedTab(panelId))),
   updateParamValues: memoize((panelId: number) => (newParamValues: Record<string, string[]>) => dispatch(updateParamValues(panelId, newParamValues))),
-  updateFormUiState: memoize((panelId: number) => (newUiState: Record<string, any>) => dispatch(updateFormUiState(panelId, newUiState))),
   onFormSubmit: memoize((panelId: number) => () => dispatch(startFormSubmission(panelId))),
-  updateResultsUiState: memoize((panelId: number) => (newUiState: Record<string, any>) => dispatch(updateResultUiState(panelId, newUiState))),
   renameAnalysis: memoize((panelId: number) => (newDisplayName: string) => dispatch(renameAnalysis(panelId, newDisplayName))),
   duplicateAnalysis: memoize((panelId: number) => () => dispatch(duplicateAnalysis(panelId)))
 });
@@ -267,9 +263,7 @@ const mergeProps = (
               toggleDescription: eventHandlers.toggleDescription(+baseTabConfig.key),
               toggleParameters: eventHandlers.toggleParameters(+baseTabConfig.key),
               updateParamValues: eventHandlers.updateParamValues(+baseTabConfig.key),
-              updateFormUiState: eventHandlers.updateFormUiState(+baseTabConfig.key),
               onFormSubmit: eventHandlers.onFormSubmit(+baseTabConfig.key),
-              updateResultsUiState: eventHandlers.updateResultsUiState(+baseTabConfig.key),
               renameAnalysis: eventHandlers.renameAnalysis(+baseTabConfig.key),
               duplicateAnalysis: eventHandlers.duplicateAnalysis(+baseTabConfig.key)
             }}

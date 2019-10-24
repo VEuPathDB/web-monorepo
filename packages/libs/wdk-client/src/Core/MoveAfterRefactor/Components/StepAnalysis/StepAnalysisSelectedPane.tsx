@@ -43,8 +43,6 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
   toggleDescription,
   toggleParameters,
   updateParamValues,
-  updateFormUiState,
-  updateResultsUiState,
   onFormSubmit,
   renameAnalysis,
   duplicateAnalysis,
@@ -80,7 +78,6 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
             toggleParameters={toggleParameters}
             formRenderer={formRenderer}
             updateParamValues={updateParamValues}
-            updateFormUiState={updateFormUiState}
             onFormSubmit={onFormSubmit}
           />
         }
@@ -89,7 +86,6 @@ export const StepAnalysisSelectedPane: React.SFC<StepAnalysisSelectedPaneProps> 
           <StepAnalysisResultsPane
             {...resultState}
             resultRenderer={resultRenderer}
-            updateResultsUiState={updateResultsUiState}
           />
         }
       </div>
