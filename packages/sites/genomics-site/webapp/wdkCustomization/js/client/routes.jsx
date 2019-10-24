@@ -88,6 +88,15 @@ export const wrapRoutes = ebrcRoutes => [
     component: () => <SampleForm/>
   },
 
+  {
+    path: '/new-home-page',
+    component: () => (
+      <div>
+        The new homepage content will go here
+      </div>
+    )
+  },
+
   ...ebrcRoutes.map(route => route.path.includes(':primaryKey+')
     ? { ...route, component: addProjectIdPkValueWrapper(route.component) }
     : route

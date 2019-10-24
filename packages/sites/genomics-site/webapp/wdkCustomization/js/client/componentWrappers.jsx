@@ -1,6 +1,7 @@
 import { isEqual } from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
@@ -21,6 +22,8 @@ import { BinaryOperationsContext } from 'wdk-client/Utils/Operations';
 import { apiBinaryOperations } from './components/strategies/ApiBinaryOperations';
 import { StepDetailsActionContext } from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { apiActions } from './components/strategies/ApiStepDetailsActions';
+
+import { NewHomePage } from './components/newhomepage/NewHomePage';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -394,4 +397,26 @@ export function StrategyWorkspaceController(DefaultComponent) {
       </BinaryOperationsContext.Provider>
     );
   }
+}
+
+export function Page(DefaultComponent) {
+  return withRouter(function VuPathDBPage(props) {
+    const renderNewHomePage = props.location.pathname.startsWith('/new-home-page');
+
+    useEffect(() => {
+      const bodyElement = document.getElementsByTagName('body')[0];
+
+      if (bodyElement) {
+        bodyElement.className = renderNewHomePage
+          ? 'vpdb-Body'
+          : '';
+      }
+    }, [ renderNewHomePage ]);
+
+    return (
+      renderNewHomePage
+        ? <NewHomePage {...props} />
+        : <DefaultComponent {...props} />
+    );
+  });
 }

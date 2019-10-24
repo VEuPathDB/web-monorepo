@@ -1,0 +1,51 @@
+body.vpdb-Body {
+  background-image: unset;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+
+  .vpdb-RootContainer {
+    display: grid;
+
+    grid-template-areas:
+      "header header header"
+      "nav content side"
+      "footer footer footer";
+  
+    grid-template-columns: 12.5rem 1fr 12.5rem;
+    grid-template-rows: auto 1fr auto;
+  
+    height: 100vh;
+
+    .vpdb-Header {
+      grid-area: header;
+    }
+    
+    .vpdb-SearchPane {
+      grid-area: nav;
+    }
+
+    .vpdb-Main {
+      grid-area: content;
+    }
+
+    .vpdb-NewsPane {
+      grid-area: aside;
+    }
+
+    .vpdb-Footer {
+      grid-area: footer;
+    }
+
+    @media screen and (max-width: 767px) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .vpdb-BgDark {
+    background-color: #00304c;
+  }
+
+  .vpdb-BgWash {
+    background-color: #eef0f2;
+  }
+}

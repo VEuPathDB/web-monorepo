@@ -1,0 +1,106 @@
+.vpdb-Footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: #f5f5f5;
+  color: #6c757d;
+
+  padding: 1.5rem 0;
+
+  > div {
+    padding: 0 0.9375rem;
+  }
+
+  &Copyright {
+    max-width: 25%;
+  }
+
+  &Brand {
+    a {
+      font-size: 1.2em;
+      font-weight: bold;
+
+      color: #6c757d;
+    }
+
+  }
+
+  &ProjectLinks {
+    display: flex;
+    flex-wrap: wrap;
+
+    max-width: 50%;
+
+    a {
+      height: 2rem;
+      padding: 0 0.3rem;
+
+      &.AmoebaDB {
+        content: url('~eupathdb/images/AmoebaDB/footer-logo.png');
+      }
+      
+      &.CryptoDB {
+        content: url('~eupathdb/images/CryptoDB/footer-logo.png');
+      }
+
+      &.FungiDB {
+        content: url('~eupathdb/images/FungiDB/footer-logo.png');
+      }
+
+      &.GiardiaDB {
+        content: url('~eupathdb/images/GiardiaDB/footer-logo.png');
+      }
+
+      &.MicrosporidiaDB {
+        content: url('~eupathdb/images/MicrosporidiaDB/footer-logo.png');
+      }
+
+      &.PiroplasmaDB {
+        content: url('~eupathdb/images/PiroplasmaDB/footer-logo.png');
+      }
+
+      &.PlasmoDB {
+        content: url('~eupathdb/images/PlasmoDB/footer-logo.png');
+      }
+
+      &.ToxoDB {
+        content: url('~eupathdb/images/ToxoDB/footer-logo.png');
+      }
+
+      &.TrichDB {
+        content: url('~eupathdb/images/TrichDB/footer-logo.png');
+      }
+
+      &.TriTrypDB {
+        content: url('~eupathdb/images/TriTrypDB/footer-logo.png');
+      }
+
+      &.OrthoMCL {
+        content: url('~eupathdb/images/OrthoMCL/footer-logo.png'); 
+      }
+
+      &.VectorBase {
+        content: url('~eupathdb/images/temp_logos/vb-logo.png');
+      }
+    }
+  }
+
+  &SocialMediaLinks {
+    display: flex;
+
+    font-size: 1.2rem;
+
+    max-width: 25%;
+
+    > a {
+      padding: .75rem 1.25rem; 
+
+      color: #6c757d;
+    }
+  }
+
+  @media screen and (max-width: 575px) {
+    flex-direction: column;
+  }
+}
