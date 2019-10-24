@@ -1,4 +1,5 @@
 import { bindAll, curry, escapeRegExp, get, keyBy } from 'lodash';
+import naturalSort from 'natural-sort';
 import React from 'react';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
@@ -225,7 +226,8 @@ export default class MultiFieldFilter extends React.Component {
       .flatMap(summary => summary.valueCounts)
       .map(count => count.value)
       .uniq()
-      .toArray();
+      .toArray()
+      .sort(naturalSort());
     const { searchTerm = '' } = this.props.activeFieldState;
     const searchRe = new RegExp(escapeRegExp(searchTerm), 'i');
     const filter = this.getOrCreateFilter(this.props, this.state);
