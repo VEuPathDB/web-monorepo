@@ -9,7 +9,6 @@ export { default as MatchedTranscriptsFilterPlugin } from 'wdk-client/Controller
 // FIXME: Move these to Ebrc/Api as appropriate
 export { StepAnalysisDefaultForm } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisDefaultForm';
 export { StepAnalysisDefaultResult } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisDefaultResult';
-export { StepAnalysisResultPluginProps } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisResultsPane';
 export { StepAnalysisWordEnrichmentResults } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisWordEnrichmentResults';
 export { StepAnalysisPathwayEnrichmentResults } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisPathwayEnrichmentResults';
 export { StepAnalysisGoEnrichmentResults } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisGoEnrichmentResults';
