@@ -2,7 +2,12 @@ import {
   GenomeSummaryViewPlugin,
   BlastSummaryViewPlugin,
   MatchedTranscriptsFilterPlugin,
-  ResultTableSummaryViewPlugin
+  ResultTableSummaryViewPlugin,
+  StepAnalysisWordEnrichmentResults,
+  StepAnalysisPathwayEnrichmentResults,
+  StepAnalysisGoEnrichmentResults,
+  StepAnalysisEupathExternalResult,
+  StepAnalysisHpiGeneListResults,
 } from 'wdk-client/Plugins';
 
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
@@ -51,5 +56,30 @@ export default [
     type: 'questionFilter',
     name: 'gene_boolean_filter_array',
     component: MatchedTranscriptsFilterPlugin
-  }
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'word-enrichment',
+    component: StepAnalysisWordEnrichmentResults
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'pathway-enrichment',
+    component: StepAnalysisPathwayEnrichmentResults
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'go-enrichment',
+    component: StepAnalysisGoEnrichmentResults
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'transcript-length-dist',
+    component: StepAnalysisEupathExternalResult
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'datasetGeneList',
+    component: StepAnalysisHpiGeneListResults
+  },
 ];
