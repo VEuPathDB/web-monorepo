@@ -18,8 +18,7 @@ import {
   DUPLICATE_ANALYSIS,
   UPDATE_PARAM_VALUES,
   TOGGLE_DESCRIPTION,
-  TOGGLE_PARAMETERS,
-  UPDATE_UI_STATE
+  TOGGLE_PARAMETERS
 } from './StepAnalysisActionConstants';
 import { 
   UninitializedAnalysisPanelState, 
@@ -55,7 +54,6 @@ export type DuplicateAnalysisAction = TypedAction<typeof DUPLICATE_ANALYSIS, { p
 export type UpdateParamValues = TypedAction<typeof UPDATE_PARAM_VALUES, { panelId: number, newParamValues: Record<string, string[]> }>;
 export type ToggleDescription = TypedAction<typeof TOGGLE_DESCRIPTION, { panelId: number }>;
 export type ToggleParameters = TypedAction<typeof TOGGLE_PARAMETERS, { panelId: number }>;
-export type UpdateUiState = TypedAction<typeof UPDATE_UI_STATE, { panelId: number, uiType: 'formUiState' | 'resultUiState', newUiState: Record<string, any> }>;
 
 export type StepAnalysisAction = StartLoadingTabListingAction 
   | FinishLoadingTabListingAction 
@@ -76,5 +74,4 @@ export type StepAnalysisAction = StartLoadingTabListingAction
   | DuplicateAnalysisAction
   | UpdateParamValues
   | ToggleDescription
-  | ToggleParameters
-  | UpdateUiState;
+  | ToggleParameters;

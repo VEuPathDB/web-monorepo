@@ -43,7 +43,6 @@ import { EMPTY } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
 import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, startFormSubmission, selectTab } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
-import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
 import { denormalizeParamValue } from '../../Components/StepAnalysis/StepAnalysisDefaultForm';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
@@ -111,8 +110,6 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
               descriptionExpanded: false,
               formExpanded: true
             },
-            formUiState: locateFormPlugin(analysisConfig.analysisName).initialFormUiState,
-            resultUiState: locateResultPlugin(analysisConfig.analysisName).initialResultUiState,
             formStatus: 'AWAITING_USER_SUBMISSION',
             formErrorMessage: null,
             formValidationErrors: [],
@@ -186,7 +183,6 @@ export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<
               descriptionExpanded: false,
               formExpanded: true
             },
-            formUiState: locateFormPlugin(choice.name).initialFormUiState,
             formErrorMessage: null,
             formValidationErrors: [],
             formStatus: 'AWAITING_USER_SUBMISSION'
@@ -287,14 +283,12 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
               formStatus: panelState.formStatus,
               formErrorMessage: panelState.formErrorMessage,
               formValidationErrors: panelState.formValidationErrors,
-              formUiState: panelState.formUiState,
               panelUiState: panelState.panelUiState,
               analysisConfig,
               analysisConfigStatus: 'COMPLETE',
               pollCountdown: 3,
               resultContents: {},
-              resultErrorMessage: null,
-              resultUiState: locateResultPlugin(panelState.analysisName).initialResultUiState
+              resultErrorMessage: null
             }),
             startFormSubmission(panelId)
           ];
@@ -446,8 +440,7 @@ export const observeDuplicateAnalysis = (action$: ActionsObservable<Action>, sta
         panelUiState: {
           descriptionExpanded: false,
           formExpanded: true
-        },
-        formUiState: locateFormPlugin(panelState.analysisConfig.analysisName).initialFormUiState
+        }
       });
     })
   );

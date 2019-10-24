@@ -57,11 +57,9 @@ interface AnalysisFormState {
   formStatus: 'AWAITING_USER_SUBMISSION' | 'SAVING_ANALYSIS' | 'ERROR';
   formErrorMessage: string | null;
   formValidationErrors: string[];
-  formUiState: Record<string, any>;
 }
 
 interface AnalysisResultState {
   resultContents: Record<string, any>;
-  resultUiState: Record<string, any>;
   resultErrorMessage: string | null;
 }
