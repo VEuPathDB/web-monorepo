@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 
 import { StepAnalysisFormPluginProps } from './StepAnalysisFormPane';
 import { StepAnalysisDefaultForm } from './StepAnalysisDefaultForm';
+import { StepAnalysisDefaultResult } from './StepAnalysisDefaultResult';
 import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
 import { StepAnalysisWordEnrichmentResults } from './StepAnalysisWordEnrichmentResults';
 import { StepAnalysisPathwayEnrichmentResults } from './StepAnalysisPathwayEnrichmentResults';
@@ -44,7 +45,7 @@ const formPlugins: Record<string, FormPluginEntry> = {
 
 const resultPlugins: Record<string, ResultPluginEntry> = {
   defaultAnalysisResult: {
-    resultRenderer: ({ analysisResult }) => <pre>{JSON.stringify(analysisResult)}</pre>,
+    resultRenderer: StepAnalysisDefaultResult,
     initialResultUiState: {}
   },
   'word-enrichment': {

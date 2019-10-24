@@ -250,8 +250,8 @@ const mergeProps = (
         content: (
           <Plugin
             context={{
-              type: 'stepAnalysis',
-              name: 'stepAnalysis'
+              type: 'stepAnalysisView',
+              name: 'defaultStepAnalysisView'
             }}
             pluginProps={{
               key: baseTabConfig.key,
