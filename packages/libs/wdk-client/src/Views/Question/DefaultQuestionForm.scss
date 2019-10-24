@@ -1,12 +1,13 @@
 .wdk-QuestionForm {
   margin: auto;
+  max-width: 90vw;
 
   &__default-width {
     max-width: 62.5rem;
   }
 
   &__wide-width {
-    max-width: 81.25em;
+    width: 110em;
   }
 
   &QuestionHeader {
