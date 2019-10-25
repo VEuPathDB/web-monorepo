@@ -2,6 +2,7 @@ import { partition } from 'lodash';
 import React from 'react';
 import Header from 'ebrc-client/App/Header';
 import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
+import StudyRecordHeading from 'ebrc-client/component-wrappers/StudyRecordHeading';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/Utils/Utils';
 import { StudyMenuItem } from 'ebrc-client/App/Studies';
 import logoUrl from 'site/images/18170.png';
@@ -15,7 +16,10 @@ import { ImageCard } from 'ebrc-client/App/ImageCard';
 export default {
   SiteHeader: () => SiteHeader,
   IndexController: () => IndexController,
-  Footer: () => Footer
+  Footer: () => Footer,
+  RecordHeading: DefaultComponent => props => props.recordClass.urlSegment === 'dataset'
+    ? <StudyRecordHeading {...props} DefaultComponent={DefaultComponent} showSearches />
+    : <DefaultComponent {...props }/>
 }
 
 function SiteHeader() {
@@ -160,11 +164,11 @@ function makeHeaderMenuItems(state) {
             text: 'My Search Strategies',
             route: '/workspace/strategies/all'
           },
-          {
+/*          {
             text: 'Analyze My Experiment',
             route: '/galaxy-orientation'
           },
-          {
+*/        {
             text: 'My Basket',
             appUrl: '/workspace/basket',
             loginRequired: true
