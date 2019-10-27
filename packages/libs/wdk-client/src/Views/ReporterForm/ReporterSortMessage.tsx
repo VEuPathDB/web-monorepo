@@ -1,4 +1,5 @@
 import React, { StatelessComponent } from 'react';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 type Props = {
   scope: string;
@@ -11,4 +12,4 @@ let ReporterSortMessage: StatelessComponent<Props> = props =>
       </div>
     );
 
-export default ReporterSortMessage;
+export default wrappable(ReporterSortMessage);

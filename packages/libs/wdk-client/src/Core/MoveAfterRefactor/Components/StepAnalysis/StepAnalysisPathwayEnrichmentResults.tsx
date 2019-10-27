@@ -1,7 +1,7 @@
 import { scientificCellFactory, decimalCellFactory, integerCell } from './Utils/StepAnalysisResults';
 import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
 import { ColumnSettings, StepAnalysisEnrichmentResultTable } from './StepAnalysisEnrichmentResultTable';
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { StepAnalysisButtonArray } from './StepAnalysisButtonArray';
 import { WordCloudModal } from './StepAnalysisWordCloudModal';
 
@@ -104,13 +104,13 @@ const pathwayButtonsConfigFactory = (
   analysisId: number, 
   { imageDownloadPath, hiddenDownloadPath }: any, 
   webAppUrl: string, 
-  updateResultsUiState: (newResultsState: any) => void
+  setWordCloudOpen: (wordCloudOpen: boolean) => void
 ) => [
   {
     key: 'wordCloud',
     onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault(); 
-      updateResultsUiState({ wordCloudOpen: true });
+      setWordCloudOpen(true);
     },
     href: `${webAppUrl}/service/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${imageDownloadPath}`,
     iconClassName: 'fa fa-bar-chart red-text',
@@ -127,39 +127,42 @@ const pathwayButtonsConfigFactory = (
 export const StepAnalysisPathwayEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> = ({
   analysisResult,
   analysisConfig,
-  resultUiState: {
-    wordCloudOpen
-  },
-  updateResultsUiState,
   webAppUrl
-}) => (
-  <Fragment>
-    <StepAnalysisButtonArray 
-      configs={pathwayButtonsConfigFactory(
-        analysisConfig.stepId,
-        analysisConfig.analysisId, 
-        analysisResult, 
-        webAppUrl, updateResultsUiState
-      )} 
-    />
-    <h3>Analysis Results:   </h3>
-    <StepAnalysisEnrichmentResultTable
-      emptyResultMessage={'No enrichment was found with significance at the P-value threshold you specified.'}
-      rows={analysisResult.resultData}
-      columns={pathwayEnrichmentResultColumns.map(column =>
-        column.key === 'pathwayId'
-          ? { ...column, renderCell: pathwayIdRenderFactory(analysisResult.pathwayBaseUrl) }
-          : column
-      )}
-      initialSortColumnKey={'oddsRatio'}
-      fixedTableHeader
-    />
-    <WordCloudModal
-      imgUrl={
-        `${webAppUrl}/service/users/current/steps/${analysisConfig.stepId}/analyses/${analysisConfig.analysisId}/resources?path=${analysisResult.imageDownloadPath}`
-      }
-      open={wordCloudOpen}
-      onClose={() => updateResultsUiState({ wordCloudOpen: false })}
-    />
-  </Fragment>
-);
+}) => {
+  const [ wordCloudOpen, setWordCloudOpen ] = useState(false);
+  
+  return (
+    <Fragment>
+      <StepAnalysisButtonArray 
+        configs={pathwayButtonsConfigFactory(
+          analysisConfig.stepId,
+          analysisConfig.analysisId, 
+          analysisResult, 
+          webAppUrl,
+          setWordCloudOpen
+        )} 
+      />
+      <h3>Analysis Results:   </h3>
+      <StepAnalysisEnrichmentResultTable
+        emptyResultMessage={'No enrichment was found with significance at the P-value threshold you specified.'}
+        rows={analysisResult.resultData}
+        columns={pathwayEnrichmentResultColumns.map(column =>
+          column.key === 'pathwayId'
+            ? { ...column, renderCell: pathwayIdRenderFactory(analysisResult.pathwayBaseUrl) }
+            : column
+        )}
+        initialSortColumnKey={'oddsRatio'}
+        fixedTableHeader
+      />
+      <WordCloudModal
+        imgUrl={
+          `${webAppUrl}/service/users/current/steps/${analysisConfig.stepId}/analyses/${analysisConfig.analysisId}/resources?path=${analysisResult.imageDownloadPath}`
+        }
+        open={wordCloudOpen}
+        onClose={() => {
+          setWordCloudOpen(false);
+        }}
+      />
+    </Fragment>
+  );
+};

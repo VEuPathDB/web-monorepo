@@ -18,8 +18,7 @@ import {
   DUPLICATE_ANALYSIS,
   UPDATE_PARAM_VALUES,
   TOGGLE_DESCRIPTION,
-  TOGGLE_PARAMETERS,
-  UPDATE_UI_STATE
+  TOGGLE_PARAMETERS
 } from './StepAnalysisActionConstants';
 import {
   UninitializedAnalysisPanelState,
@@ -47,7 +46,6 @@ import {
   RenameTabAction,
   DuplicateAnalysisAction,
   UpdateParamValues,
-  UpdateUiState,
   ToggleDescription,
   ToggleParameters
 } from './StepAnalysisActions';
@@ -152,11 +150,3 @@ export const toggleParameters = (panelId: number): ToggleParameters => ({
   type: TOGGLE_PARAMETERS,
   payload: { panelId }
 });
-
-const updateUiStateFactory = (uiType: 'formUiState' | 'resultUiState') => (panelId: number, newUiState: Record<string, any>): UpdateUiState => ({
-  type: UPDATE_UI_STATE,
-  payload: { panelId, uiType, newUiState }
-});
-
-export const updateFormUiState = updateUiStateFactory('formUiState');
-export const updateResultUiState = updateUiStateFactory('resultUiState');

@@ -1,7 +1,7 @@
 import { scientificCellFactory, decimalCellFactory, integerCell } from './Utils/StepAnalysisResults';
 import { StepAnalysisResultPluginProps } from './StepAnalysisResultsPane';
 import { ColumnSettings, StepAnalysisEnrichmentResultTable } from './StepAnalysisEnrichmentResultTable';
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { StepAnalysisButtonArray } from './StepAnalysisButtonArray';
 import { WordCloudModal } from './StepAnalysisWordCloudModal';
 
@@ -100,7 +100,7 @@ const goButtonsConfigFactory = (
   analysisId: number, 
   { imageDownloadPath, hiddenDownloadPath, revidoInputList }: any,
   webAppUrl: string,
-  updateResultsUiState: (newUiState: any) => void
+  setWordCloudOpen: (wordCloudOpen: boolean) => void
 ) => [
   {
     key: 'revigo',
@@ -120,7 +120,7 @@ const goButtonsConfigFactory = (
     key: 'wordCloud',
     onClick: (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
-      updateResultsUiState({ wordCloudOpen: true });
+      setWordCloudOpen(true);
     },
     href: `${webAppUrl}/service/users/current/steps/${stepId}/analyses/${analysisId}/resources?path=${imageDownloadPath}`,
     iconClassName: 'fa fa-bar-chart red-text',
@@ -134,41 +134,43 @@ const goButtonsConfigFactory = (
   }
 ];
 
-export const StepAnalysisGoEnrichmentResults: React.SFC<StepAnalysisResultPluginProps> = ({
+export const StepAnalysisGoEnrichmentResults: React.FunctionComponent<StepAnalysisResultPluginProps> = ({
   analysisResult,
   analysisConfig,
-  resultUiState: {
-    wordCloudOpen
-  },
-  updateResultsUiState,
   webAppUrl
-}) => (
-  <Fragment>
-    <StepAnalysisButtonArray configs={goButtonsConfigFactory(
-      analysisConfig.stepId,
-      analysisConfig.analysisId, 
-      analysisResult, 
-      webAppUrl, 
-      updateResultsUiState
-    )} />
-    <h3>Analysis Results:   </h3>
-    <StepAnalysisEnrichmentResultTable
-      emptyResultMessage={'No enrichment was found with significance at the P-value threshold you specified.'}
-      rows={analysisResult.resultData}
-      columns={goEnrichmentResultColumns.map(column =>
-        column.key === 'goId'
-          ? { ...column, renderCell: goIdRenderFactory(analysisResult.goTermBaseUrl) }
-          : column
-      )}
-      initialSortColumnKey={'pValue'}
-      fixedTableHeader
-    />
-    <WordCloudModal
-      imgUrl={
-        `${webAppUrl}/service/users/current/steps/${analysisConfig.stepId}/analyses/${analysisConfig.analysisId}/resources?path=${analysisResult.imageDownloadPath}`
-      }
-      open={wordCloudOpen}
-      onClose={() => updateResultsUiState({ wordCloudOpen: false })}
-    />
-  </Fragment>
-);
+}) => {
+  const [ wordCloudOpen, setWordCloudOpen ] = useState(false);
+
+  return (
+    <Fragment>
+      <StepAnalysisButtonArray configs={goButtonsConfigFactory(
+        analysisConfig.stepId,
+        analysisConfig.analysisId, 
+        analysisResult, 
+        webAppUrl, 
+        setWordCloudOpen
+      )} />
+      <h3>Analysis Results:   </h3>
+      <StepAnalysisEnrichmentResultTable
+        emptyResultMessage={'No enrichment was found with significance at the P-value threshold you specified.'}
+        rows={analysisResult.resultData}
+        columns={goEnrichmentResultColumns.map(column =>
+          column.key === 'goId'
+            ? { ...column, renderCell: goIdRenderFactory(analysisResult.goTermBaseUrl) }
+            : column
+        )}
+        initialSortColumnKey={'pValue'}
+        fixedTableHeader
+      />
+      <WordCloudModal
+        imgUrl={
+          `${webAppUrl}/service/users/current/steps/${analysisConfig.stepId}/analyses/${analysisConfig.analysisId}/resources?path=${analysisResult.imageDownloadPath}`
+        }
+        open={wordCloudOpen}
+        onClose={() => {
+          setWordCloudOpen(false);
+        }}
+      />
+    </Fragment>
+  );
+};

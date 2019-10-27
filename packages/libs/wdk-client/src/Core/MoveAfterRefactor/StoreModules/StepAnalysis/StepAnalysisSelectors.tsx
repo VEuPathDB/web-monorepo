@@ -8,12 +8,14 @@ import { transformPanelState } from './StepAnalysisReducer';
 import { StepAnalysisStateProps } from '../../Components/StepAnalysis/StepAnalysisView';
 import { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
-import { locateFormPlugin, locateResultPlugin } from '../../Components/StepAnalysis/StepAnalysisPluginRegistry';
 import { Question, SummaryViewPluginField, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { ResultPanelState } from 'wdk-client/StoreModules/ResultPanelStoreModule';
 import { UserPreferences } from 'wdk-client/Utils/WdkUser';
 import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
 import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { StepAnalysisFormPluginProps } from '../../Components/StepAnalysis/StepAnalysisFormPane';
+import { StepAnalysisResultPluginProps } from '../../Components/StepAnalysis/StepAnalysisResultsPane';
 
 type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | 'tooltip'>;
 
@@ -246,7 +248,6 @@ const mapUnsavedAnalysisStateToProps = (
     paramSpecs,
     paramValues,
     formStatus,
-    formUiState,
     formValidationErrors
   }: UnsavedAnalysisState,
   choices: StepAnalysisType[]
@@ -264,12 +265,25 @@ const mapUnsavedAnalysisStateToProps = (
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
-    paramValues,
-    formUiState,
+    paramValues
   },
   pluginRenderers: {
-    formRenderer: locateFormPlugin(displayToType(analysisName, choices)).formRenderer,
-    resultRenderer: locateResultPlugin(displayToType(analysisName, choices)).resultRenderer
+    formRenderer: (props: StepAnalysisFormPluginProps) => 
+      <Plugin<StepAnalysisFormPluginProps>
+        context={{
+          type: 'stepAnalysisForm',
+          name: displayToType(analysisName, choices)
+        }}
+        pluginProps={props}
+      />,
+    resultRenderer: (props: StepAnalysisResultPluginProps) => 
+      <Plugin<StepAnalysisResultPluginProps>
+        context={{
+          type: 'stepAnalysisResult',
+          name: displayToType(analysisName, choices)
+        }}
+        pluginProps={props}
+      />
   }
 });
 
@@ -282,11 +296,9 @@ const mapSavedAnalysisStateToProps = (
       formExpanded
     },
     resultContents,
-    resultUiState,
     resultErrorMessage,
     paramSpecs,
     paramValues,
-    formUiState,
     formStatus,
     formValidationErrors,
     pollCountdown
@@ -307,15 +319,13 @@ const mapSavedAnalysisStateToProps = (
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
-    paramValues,
-    formUiState,
+    paramValues
   },
   resultState: analysisConfigStatus === 'COMPLETE' && analysisConfig.status === 'COMPLETE'
     ? {
       type: 'complete-result',
       analysisConfig,
       analysisResult: resultContents,
-      resultUiState,
       webAppUrl
     }
     : analysisConfigStatus !== 'ERROR' && (analysisConfig.status === 'PENDING' || analysisConfig.status === 'RUNNING')
@@ -353,8 +363,22 @@ const mapSavedAnalysisStateToProps = (
       reason: <Fragment>{resultErrorMessage}</Fragment>
     },
   pluginRenderers: {
-    formRenderer: locateFormPlugin(analysisConfig.analysisName).formRenderer,
-    resultRenderer: locateResultPlugin(analysisConfig.analysisName).resultRenderer
+    formRenderer: (props: StepAnalysisFormPluginProps) => 
+      <Plugin<StepAnalysisFormPluginProps>
+        context={{
+          type: 'stepAnalysisForm',
+          name: analysisConfig.analysisName
+        }}
+        pluginProps={props}
+      />,
+    resultRenderer: (props: StepAnalysisResultPluginProps) => 
+      <Plugin<StepAnalysisResultPluginProps>
+        context={{
+          type: 'stepAnalysisResult',
+          name: analysisConfig.analysisName
+        }}
+        pluginProps={props}
+      />
   }
 });
 

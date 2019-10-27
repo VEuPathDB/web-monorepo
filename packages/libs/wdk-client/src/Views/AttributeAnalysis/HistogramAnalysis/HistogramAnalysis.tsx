@@ -14,6 +14,7 @@ type HistogramProps = {
   data: Record<string, number>;
   binSize: number;
   avg: number;
+  median: number;
   max: number;
   min: number;
   type: 'int' | 'float' | 'category';
@@ -94,7 +95,7 @@ export const Histogram = lazy<HistogramProps>(async () => {
   }
 
   render() {
-    const { avg, min, max, binSize, type, logXAxis, logYAxis, attrLabel, recordCountLabel, onBinSizeChange, onLogScaleYAxisChange } = this.props;
+    const { avg, min, max, median, binSize, type, logXAxis, logYAxis, attrLabel, recordCountLabel, onBinSizeChange, onLogScaleYAxisChange } = this.props;
 
     return (
       <div className={cx()}>
@@ -115,10 +116,12 @@ export const Histogram = lazy<HistogramProps>(async () => {
           <>
             <div className={cx('Summary')}>
               <dl>
+                <dt>Min</dt>
+                <dd>{numberFormat.format(min)}</dd>  
                 <dt>Mean</dt>
                 <dd>{numberFormat.format(avg)}</dd>
-                <dt>Min</dt>
-                <dd>{numberFormat.format(min)}</dd>
+                <dt>Median</dt>
+                <dd>{numberFormat.format(median)}</dd>
                 <dt>Max</dt>
                 <dd>{numberFormat.format(max)}</dd>
               </dl>

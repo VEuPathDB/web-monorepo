@@ -1,23 +1,18 @@
 import React, { ReactNode } from 'react';
 import { StepAnalysisConfig } from '../../../../Utils/StepAnalysisUtils';
 
-type StepAnalysisResultPaneProps = StepAnalysisResultState & StepAnalysisResultEventHandlers & {
+type StepAnalysisResultPaneProps = StepAnalysisResultState & {
   resultRenderer: (props: StepAnalysisResultPluginProps) => React.ReactNode;
 };
 
 export type StepAnalysisResultState = ({ type: 'complete-result' } & CompleteResultState) | ({ type: 'incomplete-result'} & IncompleteResultState);
 
-export type StepAnalysisResultPluginProps = CompleteResultState & StepAnalysisResultEventHandlers;
+export type StepAnalysisResultPluginProps = CompleteResultState;
 
 interface CompleteResultState {
   analysisResult: any;
-  resultUiState: Record<string, any>;
   analysisConfig: StepAnalysisConfig;
   webAppUrl: string;
-}
-
-interface StepAnalysisResultEventHandlers {
-  updateResultsUiState: (newResultsState: any) => void;
 }
 
 interface IncompleteResultState {
@@ -40,9 +35,7 @@ export const StepAnalysisResultsPane: React.SFC<StepAnalysisResultPaneProps> = p
       <div className="step-analysis-subpane step-analysis-results-pane">
         {props.resultRenderer({
           analysisResult: props.analysisResult,
-          resultUiState: props.resultUiState,
           analysisConfig: props.analysisConfig,
-          updateResultsUiState: props.updateResultsUiState,
           webAppUrl: props.webAppUrl
         })}
       </div>

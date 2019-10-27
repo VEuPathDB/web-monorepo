@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { RootState } from '../../../State/Types';
 import { analysisPanelOrder, analysisPanelStates, activeTab, analysisBaseTabConfigs, mapAnalysisPanelStateToProps, webAppUrl, recordClass, wdkModelBuildNumber, analysisChoices, newAnalysisButtonVisible } from '../../StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
-import { startLoadingChosenAnalysisTab, startLoadingSavedTab, startLoadingTabListing, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, updateFormUiState, updateResultUiState, toggleParameters } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
+import { startLoadingChosenAnalysisTab, startLoadingSavedTab, startLoadingTabListing, deleteAnalysis, selectTab, createNewTab, startFormSubmission, updateParamValues, renameAnalysis, duplicateAnalysis, toggleDescription, toggleParameters } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 type StateProps = {
@@ -112,9 +112,7 @@ const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHa
   loadChoice: memoize((panelId: number) => (choice: StepAnalysisType) => dispatch(startLoadingChosenAnalysisTab(panelId, choice))),
   loadSavedAnalysis: memoize((panelId: number) => () => dispatch(startLoadingSavedTab(panelId))),
   updateParamValues: memoize((panelId: number) => (newParamValues: Record<string, string>) => dispatch(updateParamValues(panelId, newParamValues))),
-  updateFormUiState: memoize((panelId: number) => (newUiState: Record<string, any>) => dispatch(updateFormUiState(panelId, newUiState))),
   onFormSubmit: memoize((panelId: number) => () => dispatch(startFormSubmission(panelId))),
-  updateResultsUiState: memoize((panelId: number) => (newUiState: Record<string, any>) => dispatch(updateResultUiState(panelId, newUiState))),
   renameAnalysis: memoize((panelId: number) => (newDisplayName: string) => dispatch(renameAnalysis(panelId, newDisplayName))),
   duplicateAnalysis: memoize((panelId: number) => () => dispatch(duplicateAnalysis(panelId)))
 });
@@ -157,9 +155,7 @@ const mergeProps = (
           toggleDescription={eventHandlers.toggleDescription(+baseTabConfig.key)}
           toggleParameters={eventHandlers.toggleParameters(+baseTabConfig.key)}
           updateParamValues={eventHandlers.updateParamValues(+baseTabConfig.key)}
-          updateFormUiState={eventHandlers.updateFormUiState(+baseTabConfig.key)}
           onFormSubmit={eventHandlers.onFormSubmit(+baseTabConfig.key)}
-          updateResultsUiState={eventHandlers.updateResultsUiState(+baseTabConfig.key)}
           renameAnalysis={eventHandlers.renameAnalysis(+baseTabConfig.key)}
           duplicateAnalysis={eventHandlers.duplicateAnalysis(+baseTabConfig.key)}
         />

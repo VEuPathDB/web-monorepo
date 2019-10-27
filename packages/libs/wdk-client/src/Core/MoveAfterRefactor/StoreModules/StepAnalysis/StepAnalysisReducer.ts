@@ -30,8 +30,7 @@ import {
   DUPLICATE_ANALYSIS,
   UPDATE_PARAM_VALUES,
   TOGGLE_DESCRIPTION,
-  TOGGLE_PARAMETERS,
-  UPDATE_UI_STATE
+  TOGGLE_PARAMETERS
 } from '../../Actions/StepAnalysis/StepAnalysisActionConstants';
 import { StepAnalysisAction } from '../../Actions/StepAnalysis/StepAnalysisActions';
 import { equals } from 'lodash/fp';
@@ -327,34 +326,6 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
           })
         }
       );
-    }
-
-    case UPDATE_UI_STATE: {
-      return updatePanelState(
-        state,
-        action.payload.panelId,
-        {
-          UninitializedPanelState: identity,
-          AnalysisMenuState: identity,
-          UnsavedAnalysisState: panelState => 
-            action.payload.uiType !== 'formUiState'
-              ? panelState
-              : ({
-                ...panelState,
-                [action.payload.uiType]: {
-                  ...panelState[action.payload.uiType],
-                  ...action.payload.newUiState
-                }
-              }),
-          SavedAnalysisState: panelState => ({
-            ...panelState,
-            [action.payload.uiType]: {
-              ...panelState[action.payload.uiType],
-              ...action.payload.newUiState
-            }
-          })
-        }
-      )
     }
 
     default: {
