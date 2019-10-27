@@ -18,6 +18,6 @@
 
 
 
-<iframe src="${iframeSrc}"  width='100%' height='100%' scrolling='no' allowfullscreen='true' ></iframe>
+<iframe src="${iframeSrc}"  width='100%' height='100%' scrolling='no' allowfullscreen='true'></iframe>
 
 </imp:pageFrame>

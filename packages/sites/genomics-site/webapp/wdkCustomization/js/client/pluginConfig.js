@@ -3,7 +3,12 @@ import {
   GenomeSummaryViewPlugin,
   BlastSummaryViewPlugin,
   MatchedTranscriptsFilterPlugin,
-  ResultTableSummaryViewPlugin
+  ResultTableSummaryViewPlugin,
+  StepAnalysisWordEnrichmentResults,
+  StepAnalysisPathwayEnrichmentResults,
+  StepAnalysisGoEnrichmentResults,
+  StepAnalysisEupathExternalResult,
+  StepAnalysisHpiGeneListResults,
 } from 'wdk-client/Plugins';
 
 import { ByGenotypeNumberCheckbox } from 'wdk-client/Views/Question/Params/ByGenotypeNumberCheckbox/ByGenotypeNumberCheckbox'
@@ -154,5 +159,30 @@ export default [
     name: 'genotype',
     searchName: 'ByGenotypeNumber',
     component: ByGenotypeNumberCheckbox
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'word-enrichment',
+    component: StepAnalysisWordEnrichmentResults
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'pathway-enrichment',
+    component: StepAnalysisPathwayEnrichmentResults
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'go-enrichment',
+    component: StepAnalysisGoEnrichmentResults
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'transcript-length-dist',
+    component: StepAnalysisEupathExternalResult
+  },
+  {
+    type: 'stepAnalysisResult',
+    name: 'datasetGeneList',
+    component: StepAnalysisHpiGeneListResults
   },
 ];
