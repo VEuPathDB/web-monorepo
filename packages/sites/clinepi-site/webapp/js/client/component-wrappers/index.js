@@ -22,8 +22,11 @@ import RelatedCaseControlGroup from '../components/RelatedCaseControlGroup';
 import SiteHeader from './SiteHeader';
 import IndexController from './IndexController';
 import AnswerController from './AnswerController';
+import ReporterSortMessage from './ReporterSortMessage';
+
 
 export default {
+  ReporterSortMessage,
   AnswerController,
   IndexController,
   SiteHeader,

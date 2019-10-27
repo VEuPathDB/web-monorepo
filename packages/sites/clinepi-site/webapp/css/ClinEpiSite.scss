@@ -493,7 +493,8 @@ a.WelcomeBoxLink {
 }
 
 .clinepi-StudyLink {
-  font-size: 1.2em;
+  font-size: 1.25em;
+  font-weight: 500;
 }
 
 .ebrc-QuestionWizardHeading {
@@ -615,26 +616,6 @@ b, strong, th,
 }
 
 /* ========================================================================= */
-/* Study page                                                                */
-/* ========================================================================= */
-
-.ce-StudyRecordHeadingSearchLinks {
-  display: flex;
-  font-size: 1.8em;
-  margin: 1.5em 0 0;
-  align-items: center;
-}
-.ce-StudyRecordHeadingSearchLinksLabel {
-  font-weight: 400;
-  margin-right: .5em;
-  text-transform: uppercase;
-}
-
-.ce-StudyRecordHeadingSearchLinks .ce-StudySearchIconLinks {
-  font-size: 1.5em;
-}
-
-/* ========================================================================= */
 /* News page                                                                */
 /* ========================================================================= */
 #clinepi-news li {
@@ -669,4 +650,9 @@ div.wdk-Answer tr.greyed-out {
   opacity: 0.5;
   pointer-events: none;
 }
+
+ul.wdk-AnswerTable-AttributeSelector li input#column-select-description, ul.wdk-AnswerTable-AttributeSelector li input#column-select-description + label {
+  display:none;
+}
+
 
