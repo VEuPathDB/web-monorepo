@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
-import { Seq } from 'wdk-client/IterableUtils';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
 import CategoryIcon from 'ebrc-client/App/Categories/CategoryIcon';
 import StudySearchIconLinks from 'ebrc-client/App/Studies/StudySearches';
@@ -76,8 +76,7 @@ const renderCellContent = props => {
 function mapStateToProps(state,props) {
   const { record } = props;
   const { globalData, studies } = state;
-  const { questions, recordClasses, siteConfig } = globalData;
-  const { webAppUrl } = siteConfig;
+  const { questions, recordClasses } = globalData;
 
   if (questions == null || recordClasses == null || studies.loading) {
     return { loading: true };
@@ -97,16 +96,16 @@ function mapStateToProps(state,props) {
       .map(search => search.name)
       .flatMap(questionName =>
         Seq.from(questions)
-          .filter(question => question.name === questionName)
+          .filter(question => question.fullName === questionName)
           .take(1)
           .flatMap(question =>
             Seq.from(recordClasses)
-              .filter(recordClass => question.recordClassName === recordClass.name)
+              .filter(recordClass => question.outputRecordClassName === recordClass.urlSegment)
               .map(recordClass => ({ question, recordClass }))
               .take(1)))
       .toArray();
 
-  return { entries, webAppUrl };
+  return { entries };
 }
 
 
