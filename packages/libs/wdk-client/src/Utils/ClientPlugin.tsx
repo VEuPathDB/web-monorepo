@@ -9,7 +9,9 @@ export type PluginType =
   | 'questionForm'
   | 'questionFormParameter'
   | 'summaryView'
-  | 'stepAnalysis'
+  | 'stepAnalysisView'
+  | 'stepAnalysisForm'
+  | 'stepAnalysisResult'
   | 'questionFilter'
   | 'stepBox'
 
