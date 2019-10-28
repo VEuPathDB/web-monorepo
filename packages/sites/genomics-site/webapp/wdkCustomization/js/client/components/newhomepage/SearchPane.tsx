@@ -3,11 +3,14 @@ import { connect } from 'react-redux';
 
 import { get, noop } from 'lodash';
 
-import { CategoriesCheckboxTree, Link, Tooltip, Icon, Loading } from 'wdk-client/Components';
+import { CategoriesCheckboxTree, Link, Tooltip, Icon, Loading, IconAlt } from 'wdk-client/Components';
+import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode, getDisplayName, getTargetType, getRecordClassUrlSegment, getTooltipContent } from 'wdk-client/Utils/CategoryUtils';
 
 import { makeVpdbClassNameHelper } from './Utils';
+
+import './SearchPane.scss';
 
 const cx = makeVpdbClassNameHelper('SearchPane');
 const cxTheme = makeVpdbClassNameHelper('BgWash');
@@ -22,11 +25,11 @@ const SearchPaneView = (props: Props) => {
   const [ expandedBranches, setExpandedBranches ] = useState<string[]>([]);
   const [ searchTerm, setSearchTerm ] = useState('');
 
-  const renderNode = useCallback((node: any, path?: number[]) => {
-    const rawDisplayName = getDisplayName(node);
-    const displayName = path && path.length === 1 ? rawDisplayName.toUpperCase() : rawDisplayName;
+  const renderNode = useCallback((node: any) => {
+    const displayName = getDisplayName(node);
     const displayElement = getTargetType(node) === 'search'
       ? <Link to={`/search/${getRecordClassUrlSegment(node)}/${node.wdkReference.urlSegment}`}>
+          <IconAlt fa="search" />
           {displayName}
         </Link>
       : <span>{displayName}</span>
@@ -59,9 +62,9 @@ const SearchPaneView = (props: Props) => {
 
   return (
     <nav className={`${cx()} ${cxTheme()}`}>
-      <h4>
+      <h6>
         SPECIALIZED SEARCHES
-      </h4> 
+      </h6> 
       {!props.searchTree 
         ? <Loading />
         : <CategoriesCheckboxTree
@@ -78,11 +81,12 @@ const SearchPaneView = (props: Props) => {
             onUiChange={setExpandedBranches}
             onSearchTermChange={setSearchTerm}
             showSearchBox   
+            linksPosition={LinksPosition.Top}
           />
       }
-      <h2>
+      <h4>
         What do you want to explore?
-      </h2>
+      </h4>
     </nav>
   );
 };
