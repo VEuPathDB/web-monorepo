@@ -1,11 +1,15 @@
 import React from 'react';
 
-import { makeVpdbClassNameHelper } from './Utils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { combineClassNames } from './Utils';
 
-const cx = makeVpdbClassNameHelper('NewsPane');
+const cx = makeClassNameHelper('ebrc-NewsPane');
 
-export const NewsPane = () => (
-  <aside className={cx()}>
+type Props = {
+  containerClassName?: string
+};
+
+export const NewsPane = ({ containerClassName }: Props) =>
+  <aside className={combineClassNames(cx(), containerClassName)}>
     
-  </aside>
-);
+  </aside>;

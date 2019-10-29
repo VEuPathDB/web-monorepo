@@ -1,9 +1,20 @@
 import React from 'react';
 
-import { makeVpdbClassNameHelper } from './Utils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
-const cx = makeVpdbClassNameHelper('Header');
-const cxTheme = makeVpdbClassNameHelper('BgDark');
+import './Header.scss';
 
-// NOTE: The component for the sticky version of this header should live in Ebrc
-export const Header = () => <header className={`${cx()} ${cxTheme()}`}></header>;
+const cx = makeClassNameHelper('ebrc-Header');
+
+type Props = {
+  containerClassName?: string;
+}
+
+export const Header = ({ containerClassName }: Props) => {
+  const className = containerClassName ? `${cx()} ${containerClassName}` : cx();
+
+  return (
+    <header className={className}>
+    </header>
+  );
+};

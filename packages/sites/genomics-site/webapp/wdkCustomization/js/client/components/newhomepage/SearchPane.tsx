@@ -7,15 +7,16 @@ import { CategoriesCheckboxTree, Link, Tooltip, Icon, Loading, IconAlt } from 'w
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode, getDisplayName, getTargetType, getRecordClassUrlSegment, getTooltipContent } from 'wdk-client/Utils/CategoryUtils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
-import { makeVpdbClassNameHelper } from './Utils';
+import { combineClassNames } from './Utils';
 
 import './SearchPane.scss';
 
-const cx = makeVpdbClassNameHelper('SearchPane');
-const cxTheme = makeVpdbClassNameHelper('BgWash');
+const cx = makeClassNameHelper('ebrc-SearchPane');
 
 type StateProps = {
+  containerClassName?: string,
   searchTree?: CategoryTreeNode
 };
 
@@ -61,7 +62,7 @@ const SearchPaneView = (props: Props) => {
   );
 
   return (
-    <nav className={`${cx()} ${cxTheme()}`}>
+    <nav className={combineClassNames(cx(), props.containerClassName)}>
       <h6>
         SPECIALIZED SEARCHES
       </h6> 

@@ -1,16 +1,17 @@
 import React from 'react';
 
 import { Link } from 'wdk-client/Components';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import { twitterUrl, facebookUrl, youtubeUrl, buildNumber, releaseDate, displayName } from 'ebrc-client/config';
 import { formatReleaseDate } from 'ebrc-client/util/formatters';
 
 import { Twitter, Facebook, YouTube } from './SocialMediaIcons';
-import { makeVpdbClassNameHelper } from './Utils';
+import { combineClassNames } from './Utils';
 
 import './Footer.scss';
 
-const cx = makeVpdbClassNameHelper('Footer');
+const cx = makeClassNameHelper('ebrc-Footer');
 
 const projects = [
   'AmoebaDB',
@@ -27,8 +28,12 @@ const projects = [
   'VectorBase'
 ];
 
-export const Footer = () => (
-  <footer className={cx()}>
+type Props = {
+  containerClassName?: string
+};
+
+export const Footer = ({containerClassName}: Props) => (
+  <footer className={combineClassNames(cx(), containerClassName)}>
     <div className={cx('Copyright')}>
       <div className={cx('Brand')}>
         <Link to="/new-home-page">{displayName}</Link>

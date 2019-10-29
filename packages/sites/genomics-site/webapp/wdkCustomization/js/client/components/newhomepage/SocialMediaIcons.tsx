@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { makeVpdbClassNameHelper } from './Utils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import './SocialMediaIcons.scss';
 
-const cx = makeVpdbClassNameHelper('SocialMediaIcon');
+const cx = makeClassNameHelper('ebrc-SocialMediaIcon');
 
 export const Twitter = () => (
   <svg 

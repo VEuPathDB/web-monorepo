@@ -1,3 +1,2 @@
-import { makeClassNameHelper } from "wdk-client/Utils/ComponentUtils";
-
-export const makeVpdbClassNameHelper = (baseClassName: string) => makeClassNameHelper(`vpdb-${baseClassName}`);
+export const combineClassNames = (...classNames: (string | undefined )[]) =>
+  classNames.filter(className => className).join(' ');
