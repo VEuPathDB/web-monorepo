@@ -1,5 +1,4 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
@@ -26,7 +25,7 @@
      * the list provided is sorted: first resources and then tutorials
      * we set how many resources we have in a variable: NumberOfResources.
 -->
-<c:set var="NumberOfResources">1</c:set>
+<c:set var="NumberOfResources">2</c:set>
 
 <div id="clinepi-resources">
   <h1>ClinEpiDB Resources</h1>
