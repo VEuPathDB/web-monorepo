@@ -58,9 +58,10 @@ export type Action =
 
 export function loadAllStaticData(): ActionThunk<Action> {
   return async function run({ wdkService }) {
+    const config$ = wdkService.getConfig();
     return Promise.all([
-      wdkService.getConfig().then(configLoaded),
-      wdkService.getOntology().then(ontologyLoaded),
+      config$.then(configLoaded),
+      config$.then(config => wdkService.getOntology(config.categoriesOntologyName)).then(ontologyLoaded),
       wdkService.getQuestions().then(questionsLoaded),
       wdkService.getRecordClasses().then(recordClassesLoaded),
       wdkService.getCurrentUser().then(userLoaded),

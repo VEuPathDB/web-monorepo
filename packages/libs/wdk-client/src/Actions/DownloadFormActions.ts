@@ -283,7 +283,7 @@ function getInitializationActionSet(
     resultTypeBundle: Promise<ResultTypeBundle>,
     requestedFormat?: string): ActionCreatorResult<LoadPageDataAction> {
   let preferencesPromise = wdkService.getCurrentUserPreferences();
-  let ontologyPromise = wdkService.getOntology();
+  let ontologyPromise = wdkService.getConfig().then(config => wdkService.getOntology(config.categoriesOntologyName));
   return [
     startLoading(),
     Promise.all([resultTypeBundle, preferencesPromise, ontologyPromise]).then(

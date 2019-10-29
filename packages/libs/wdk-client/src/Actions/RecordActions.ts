@@ -330,7 +330,7 @@ function getPrimaryKey(wdkService: WdkService, recordClassUrlSegment: string, pr
 /** Get the category tree for the given record class */
 function getCategoryTree(wdkService: WdkService, recordClassUrlSegment: string) {
   return Promise.all([
-    wdkService.getOntology(),
+    wdkService.getConfig().then(config => wdkService.getOntology(config.categoriesOntologyName)),
     wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment)
   ]).then(([ontology, recordClass]) => {
     return getTree(ontology, isLeafFor(recordClass.fullName));

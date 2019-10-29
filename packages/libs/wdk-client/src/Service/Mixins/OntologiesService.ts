@@ -5,7 +5,7 @@ import { CategoryTreeNode, pruneUnknownPaths, resolveWdkReferences, sortOntology
 
 export default (base: ServiceBase) => {
 
-  function getOntology(name = '__wdk_categories__') {
+  function getOntology(name: string) {
     let recordClasses$ = base.getRecordClasses().then(rs => keyBy(rs, 'fullName'));
     let questions$ = base.getQuestions().then(qs => keyBy(qs, 'fullName'));
     let ontology$ = base._getFromCache('ontologies/' + name, () => {
