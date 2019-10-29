@@ -3,14 +3,14 @@ package org.clinepi.service;
 import java.util.Set;
 
 import org.clinepi.service.accessRequest.AccessRequestService;
+import org.eupathdb.common.service.EuPathServiceApplication;
 import org.eupathdb.common.service.contact.ContactUsService;
 import org.gusdb.fgputil.SetBuilder;
-import org.gusdb.wdk.service.WdkServiceApplication;
 import org.gusdb.wdk.service.service.user.ProfileService;
 import org.clinepi.service.services.ShinyDataService;
 import org.clinepi.service.services.ShinyQueryService;
 
-public class ClinEpiServiceApplication extends WdkServiceApplication {
+public class ClinEpiServiceApplication extends EuPathServiceApplication {
 
   @Override
   public Set<Class<?>> getClasses() {
