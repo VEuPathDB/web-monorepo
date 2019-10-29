@@ -384,13 +384,12 @@ sub peakTitle {
     push @data, ['Score:' => $score];
     my @tags = $f->get_all_tags();
 
-    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 
-                                     'immunoglobulin complex, circulating' => 'Antibody',
-                                     'genotype information' => 'Genotype', 
-                                     'compound based treatment' => 'Treatment',
-                                     'replicate' => 'Replicate',
-                                     'life cycle stage' => 'Lifecycle Stage',
-                                     'strain'   => 'Strain'};
+    my $ontologyTermToDisplayName = {'Antibody' => 'Antibody', 
+                                     'Parasite genotype' => 'Genotype', 
+                                     'Compound' => 'Treatment',
+                                     'Replicate' => 'Replicate',
+                                     'Parasite lifecycle stage' => 'Lifecycle Stage',
+                                     'Parasite strain'   => 'Strain'};
 
     foreach my $tag (@tags) {
         if (exists $ontologyTermToDisplayName->{$tag}) {
@@ -414,13 +413,13 @@ sub peakTitleChipSeq {
     push @data, ['End:' => $end];
     my @tags = $f->get_all_tags();
 
-    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 
-                                     'immunoglobulin complex, circulating' => 'Antibody',
-                                     'genotype information' => 'Genotype', 
-                                     'compound based treatment' => 'Treatment',
-                                     'replicate' => 'Replicate',
-                                     'life cycle stage' => 'Lifecycle Stage',
-                                     'strain'   => 'Strain',
+    my $ontologyTermToDisplayName = {'Antibody' => 'Antibody', 
+                                     'Parasite genotype' => 'Genotype', 
+                                     'Compound' => 'Treatment',
+                                     'Replicate' => 'Replicate',
+                                     'Parasite lifecycle stage' => 'Lifecycle Stage',
+                                     'Parasite strain'   => 'Strain',
+                                     'score'    => 'Score',
                                      'tag_count' => 'Normalised Tag Count',
                                      'fold_change' => 'Fold Change',
                                      'p_value' => 'P Value'};
