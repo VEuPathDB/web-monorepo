@@ -23,7 +23,7 @@ import { apiBinaryOperations } from './components/strategies/ApiBinaryOperations
 import { StepDetailsActionContext } from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { apiActions } from './components/strategies/ApiStepDetailsActions';
 
-import { NewHomePage } from './components/newhomepage/NewHomePage';
+import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -415,7 +415,7 @@ export function Page(DefaultComponent) {
 
     return (
       renderNewHomePage
-        ? <NewHomePage {...props} />
+        ? <VEuPathDBHomePage {...props} />
         : <DefaultComponent {...props} />
     );
   });

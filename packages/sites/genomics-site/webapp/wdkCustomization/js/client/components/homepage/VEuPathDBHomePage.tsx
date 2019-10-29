@@ -2,18 +2,19 @@ import React, { FunctionComponent, useCallback, useEffect } from 'react';
 
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { Footer } from './Footer';
-import { Header } from './Header';
-import { Main } from './Main';
-import { NewsPane } from './NewsPane';
-import { SearchPane } from './SearchPane';
-import { combineClassNames } from './Utils';
 
-import './VEuPathDB.scss';
+import { Footer } from 'ebrc-client/components/homepage/Footer';
+import { Header } from 'ebrc-client/components/homepage/Header';
+import { Main } from 'ebrc-client/components/homepage/Main';
+import { NewsPane } from 'ebrc-client/components/homepage/NewsPane';
+import { SearchPane } from 'ebrc-client/components/homepage/SearchPane';
+import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
+
+import './VEuPathDBHomePage.scss';
 
 const vpdbCx = makeClassNameHelper('vpdb-');
 
-export const NewHomePage: FunctionComponent = props => {
+export const VEuPathDBHomePage: FunctionComponent = props => {
   const rootContainerClassName = vpdbCx('RootContainer');
   const headerClassName = combineClassNames(vpdbCx('Header'), vpdbCx('BgDark'));
   const searchPaneClassName = combineClassNames(vpdbCx('SearchPane'), vpdbCx('BgWash'));
