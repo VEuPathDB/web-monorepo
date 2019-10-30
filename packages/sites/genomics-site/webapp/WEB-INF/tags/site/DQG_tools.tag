@@ -27,7 +27,7 @@
                 </li>
             </c:when>
             <c:otherwise>
-                <li><a href="https://companion.gla.ac.uk" target="_blank"><strong>Companion</strong></a>
+                <li><a href="http://companion.gla.ac.uk" target="_blank"><strong>Companion</strong></a>
                     <ul><li  style="border:0">Annotate your sequence and determine orthology, phylogeny & synteny</li></ul>
                 </li>
             </c:otherwise>
