@@ -374,8 +374,8 @@ class UserDatasetList extends React.Component <Props, State> {
           <div style={{ textAlign: 'left' }}>
             <ul>
             <li>To learn how to add a data set check this  <a href='http://www.youtube.com/watch?v=igQZHjRBqV0'>Tutorial on User Data Sets</a>.</li>
-            <li>To add a data set, go to <a href='https:eupathdb.globusgenomics.org'>EuPathDB Galaxy</a>.</li>
-            <li><a href='wdk-client/Views/UserDatasets/galaxy-orientation'>About EuPathDB Galaxy</a> </li>
+            <li>To add a data set, go to <a href='https://eupathdb.globusgenomics.org'>EuPathDB Galaxy</a>.</li>
+            <li><Link to='/galaxy-orientation'>About EuPathDB Galaxy</Link> </li>
             </ul>
           </div>
         </p>
