@@ -850,12 +850,15 @@ sub chipColor {
   ($a) = (defined $a) ? $a : $f->get_tag_values('immunoglobulin complex, circulating');
   my ($t) = $f->get_tag_values('Compound');
   my ($r) = $f->get_tag_values('Replicate');
-  my ($g) = $f->get_tag_values('parasite genotype');
+  my ($g) = $f->get_tag_values('Parasite genotype');
   my ($l) = $f->get_tag_values('Parasite lifecycle stage');
   my ($anls) = $f->get_tag_values('name');
 
+  #print STDERR Dumper $f;
   print STDERR Dumper $r;
   print STDERR Dumper $l;
+  print STDERR Dumper $g;
+  print STDERR Dumper $anls;
 
   # plasmo - Winzeler Westenberger
   return '#D80000' if($anls eq 'H4_schizont_smoothed (ChIP-chip)');
@@ -868,7 +871,7 @@ sub chipColor {
   return '#B0E0E6' if($a =~ /CenH3/i);
 
   # plasmo - Artur Scherf
-  return '#0A7D8C' if ($g =~ /wild_type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
+  return '#0A7D8C' if ($g =~ /Wild type/i && ($a =~ /H3K/i || $a =~ /H4K/i));
   return '#FF7C70' if ($g =~ /sir2KO/i && ($a =~ /H3K/i || $a =~ /H4K/i));
 
   # toxo - Einstein + Einstein_ME1
