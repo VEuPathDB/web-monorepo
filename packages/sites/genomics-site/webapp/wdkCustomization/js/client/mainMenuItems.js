@@ -8,6 +8,7 @@ const PlasmoDB = 'PlasmoDB';
 const TriTrypDB = 'TriTrypDB';
 const CryptoDB = 'CryptoDB';
 const ToxoDB = 'ToxoDB';
+const FungiDB  = 'FungiDB';
 const EuPathDB = 'EuPathDB';
 const UD_DISABLED = 'UD_DISABLED';
 
@@ -75,8 +76,17 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'companion',
           text: 'Companion',
+          exclude: [FungiDB],
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
-          url: 'https://companion.sanger.ac.uk',
+          url: 'http://companion.gla.ac.uk/',
+          target: '_blank'
+        },
+        {
+          id: 'companion',
+          text: 'Companion',
+          include: [FungiDB],
+          tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
+          url: 'http://fungicompanion.gla.ac.uk/',
           target: '_blank'
         },
         {

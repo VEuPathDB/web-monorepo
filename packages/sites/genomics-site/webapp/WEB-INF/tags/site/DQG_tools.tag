@@ -20,9 +20,18 @@
 <!--	  <li><a href="http://rnaseq.pathogenportal.org"><strong>Pathogen Portal</strong></a>
 			<ul><li  style="border:0">RNA sequence analysis, interactome maps and more</li></ul>
 		</li>  -->
-                <li><a href="https://companion.sanger.ac.uk" target="_blank"><strong>Companion</strong></a>
-		  <ul><li  style="border:0">Annotate your sequence and determine orthology, phylogeny & synteny</li></ul>
+        <c:choose>
+            <c:when test="${sName == 'Fungi'}">
+                <li><a href="http://fungicompanion.gla.ac.uk/" target="_blank"><strong>Companion</strong></a>
+                    <ul><li style="border:0">Annotate your sequence and determine orthology, phylogeny & synteny</li></ul>
                 </li>
+            </c:when>
+            <c:otherwise>
+                <li><a href="https://companion.gla.ac.uk" target="_blank"><strong>Companion</strong></a>
+                    <ul><li  style="border:0">Annotate your sequence and determine orthology, phylogeny & synteny</li></ul>
+                </li>
+            </c:otherwise>
+        </c:choose>
                 <c:if test="${sName == 'TriTryp'}">
                   <li><a href="http://www.leishgedit.net/" target="_blank"><strong>LeishGEdit</strong></a>
                     <ul><li style="border:0">Your online resource for CRISPR Cas9 T7 RNA Polymerase gene editing in kinetoplastids</li></ul>

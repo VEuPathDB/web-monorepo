@@ -80,8 +80,16 @@
         <li><a style="padding-top:0"  href="${baseUrl}/analysisTools.jsp"> Results Analysis
               <imp:image alt="Beta feature icon" src="wdk/images/beta2-30.png" /></a></li>
         <li><a href="${baseUrl}/srt.jsp"> Sequence Retrieval</a></li>
-        <li title="Annotate your sequence and determine orthology, phylogeny & synteny">
-          <a href="https://companion.sanger.ac.uk"> Companion</a></li>
+        <c:choose>
+            <c:when test="${sName == 'Fungi'}">
+                <li title="Annotate your sequence and determine orthology, phylogeny & synteny">
+                  <a href="http://fungicompanion.gla.ac.uk/"> Companion</a></li>
+            </c:when>
+            <c:otherwise>
+                <li title="Annotate your sequence and determine orthology, phylogeny & synteny">
+                  <a href="http://companion.gla.ac.uk/"> Companion</a></li>
+            </c:otherwise>
+        </c:choose>
         <li title="Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool">
           <a href="http://grna.ctegd.uga.edu"> EuPaGDT</a></li>
         <li><a href="/pubcrawler/${project}"> PubMed and Entrez</a></li>
