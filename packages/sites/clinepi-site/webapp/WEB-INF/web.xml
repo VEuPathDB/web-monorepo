@@ -52,6 +52,15 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <filter>
+    <filter-name>CheckLoginFilter</filter-name>
+    <filter-class>org.gusdb.wdk.controller.filter.CheckLoginFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CheckLoginFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
   <!-- UrlRewrite filter -->
   <!-- This is used in conjuction with the asset fingerprinting utilities in EbrcWebsiteCommon.
        We also set some cache-related headers here (see /WEB-INF/urlrewrite.xml). -->
@@ -64,14 +73,20 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
   <!-- End UrlRewrite filter -->
-
+      
+      
+  <!-- mitigation for Struts1 security hole CVE-2014-0114 -->
   <filter>
-    <filter-name>CheckLoginFilter</filter-name>
-    <filter-class>org.gusdb.wdk.controller.filter.CheckLoginFilter</filter-class>
+    <filter-name>ParamFilter</filter-name>
+    <filter-class>org.gusdb.wdk.controller.filter.ParameterFilter</filter-class>
+    <init-param>
+      <param-name>excludeParams</param-name>
+      <param-value>(.*\.|^|.*|\[('|"))(c|C)lass(\.|('|")]|\[).*</param-value>
+    </init-param>
   </filter>
   <filter-mapping>
-    <filter-name>CheckLoginFilter</filter-name>
-    <url-pattern>/*</url-pattern>
+    <filter-name>ParamFilter</filter-name>
+    <servlet-name>wdkEuPathDbBrc</servlet-name>
   </filter-mapping>
 
   <!-- JavaMelody monitoring plugin configuration -->

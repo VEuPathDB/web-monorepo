@@ -22,7 +22,7 @@
      * the list provided is sorted: first resources and then tutorials
      * we set how many resources we have in a variable: NumberOfResources.
 -->
-<c:set var="NumberOfResources">1</c:set>
+<c:set var="NumberOfResources">2</c:set>
 
 <div id="clinepi-resources">
   <h1>ClinEpiDB Resources</h1>

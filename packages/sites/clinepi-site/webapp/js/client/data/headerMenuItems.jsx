@@ -7,7 +7,7 @@ export default function headerMenuItems (state) {
   const { siteConfig } = state.globalData;
   const siteData = getStaticSiteData(state);
   const { studies } = siteData;
-  const { webAppUrl, facebookUrl, twitterUrl, youtubeUrl } = siteConfig;
+  const { youtubeUrl } = siteConfig;
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
   const socialLinks = menuItemsFromSocials(siteConfig);
 
@@ -18,7 +18,7 @@ export default function headerMenuItems (state) {
         text: 'Search a Study',
         children:[{
             text: <div style={{ padding: '0.5em 0' }}>All Studies</div>,
-            appUrl: '/app/search/dataset/Studies/result'
+            route: '/search/dataset/Studies/result'
           }].concat(  
           studies.entities != null
           ? studies.entities.map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> }))
