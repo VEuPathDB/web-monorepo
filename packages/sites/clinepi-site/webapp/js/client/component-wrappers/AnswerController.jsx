@@ -1,5 +1,5 @@
 import React from 'react';
-import StudyAnswerController from './StudyAnswerController';
+import StudyAnswerController from 'ebrc-client/component-wrappers/StudyAnswerController';
 
 export default AnswerController => props => {
   if (props.ownProps.recordClass  === 'dataset') {
