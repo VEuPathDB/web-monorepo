@@ -115,7 +115,7 @@ export default function DefaultQuestionForm(props: Props) {
         showHeader={submissionMetadata.type === 'create-strategy' || submissionMetadata.type === 'edit-step'}
         headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}
       />
-      <StepValidationInfo stepValidation={stepValidation}/>
+      <StepValidationInfo stepValidation={stepValidation} question={question} isRevise={submissionMetadata.type === 'edit-step'}/>
       <form onSubmit={handleSubmit} noValidate={!validateForm}>
         {question.groups
           .filter(group => group.displayType !== 'hidden')
