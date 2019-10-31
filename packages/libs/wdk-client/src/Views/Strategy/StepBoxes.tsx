@@ -11,7 +11,7 @@ import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 import { useBinaryStepBoxClassName } from 'wdk-client/Utils/Operations';
 
-const INVALID_SEARCH_TITLE = 'This step refers to a search is no longer valid. In order to fix your strategy, this step must be deleted.';
+const INVALID_SEARCH_TITLE = 'This step refers to a search that is no longer valid. In order to fix your strategy, this step must be deleted.';
 const INVALID_PARAMS_TITLE = 'This step contains a configuration that is no longer valid and must be revised to view results.'
 
 /**
