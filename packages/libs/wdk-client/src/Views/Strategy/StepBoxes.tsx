@@ -197,7 +197,7 @@ function StepBox(props: StepBoxProps) {
     (secondaryInput == null || isCompleteUiStepTree(secondaryInput))
   );
 
-  const editButton = hasValidSearch
+  const editButton = hasValidSearch || isNested
     ? (
       <button
         type="button"
