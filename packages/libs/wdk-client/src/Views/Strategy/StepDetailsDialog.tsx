@@ -144,7 +144,7 @@ export default withRouter(function StepDetailsDialog(props: Props) {
     >
       <React.Fragment>
         <div className={cx('--StepDetailsHeading')}>Details for step <SaveableTextEditor value={displayName} onSave={renameStep} className={cx('--StepDetailsName')}/></div>
-        <div className={cx('--StepDetailsCount')}>{step.estimatedSize === -1 ? '?' : step.estimatedSize} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}</div>
+        <div className={cx('--StepDetailsCount')}>{step.estimatedSize == null ? '?' : step.estimatedSize} {step.estimatedSize === 1 ? recordClass.displayName : recordClass.displayNamePlural}</div>
         { isNested ? <NestedStepDetails {...props}/>
         : isCombineUiStepTree(stepTree) ? <CombineStepDetails {...props} stepTree={stepTree} />
         : <StepDetails {...props} /> }
