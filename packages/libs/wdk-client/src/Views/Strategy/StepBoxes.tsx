@@ -52,7 +52,7 @@ function StepTree(props: StepBoxesProps) {
   } = props;
 
   if (!isCompleteUiStepTree(stepTree)) {
-    return <UnknownQuestionStepBox stepTree={stepTree} deleteStep={() => props.onDeleteStep(step.id)}/>
+    return <UnknownQuestionStepBox stepTree={stepTree} deleteStep={() => props.onDeleteStep(stepTree.step.id)}/>
   }
 
   const { step, primaryInput, secondaryInput, question } = stepTree;
