@@ -1,7 +1,7 @@
-import { partition } from 'lodash';
 import React from 'react';
 import Header from 'ebrc-client/App/Header';
 import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
+import StudyAnswerController from 'ebrc-client/component-wrappers/StudyAnswerController';
 import StudyRecordHeading from 'ebrc-client/component-wrappers/StudyRecordHeading';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/Utils/Utils';
 import { StudyMenuItem } from 'ebrc-client/App/Studies';
@@ -19,6 +19,9 @@ export default {
   Footer: () => Footer,
   RecordHeading: DefaultComponent => props => props.recordClass.urlSegment === 'dataset'
     ? <StudyRecordHeading {...props} DefaultComponent={DefaultComponent} showSearches />
+    : <DefaultComponent {...props }/>,
+  AnswerController: DefaultComponent => props => props.ownProps.recordClass === 'dataset'
+    ? <StudyAnswerController {...props} DefaultComponent={DefaultComponent} />
     : <DefaultComponent {...props }/>
 }
 
@@ -51,55 +54,10 @@ function IndexController() {
 
 function getSiteData(state) {
   return {
-    studies: applyCustomDisplayNameToStudySearches(state.studies),
-    searches: applyCustomIconToSearchCards(state.searchCards),
+    studies: state.studies,
+    searches: state.searchCards,
     visualizations: { isLoading: false, entities: vizData }
   };
-}
-
-function applyCustomDisplayNameToStudySearches(studies) {
-  return {
-    ...studies,
-    entities: studies.entities && studies.entities.map(study => ({
-      ...study,
-      searches: study.searches.map(search => ({
-        ...search,
-        displayName: search.icon.toLowerCase().includes('details') ? 'Sample Details' : 'Taxon Abundance'
-      }))
-    }))
-  };
-}
-
-const iconDirectiveRe = /^\s*#\s*iconType=(\w+)\s*$/;
-
-function applyCustomIconToSearchCards(searchCards) {
-  return {
-    ...searchCards,
-    entities: searchCards.entities && searchCards.entities.map(search => {
-      const [ directives, descriptionLines ] = partition(search.description.split('\n'), line => iconDirectiveRe.test(line));
-      const description = descriptionLines.join('\n').trim();
-      const icon = directives.length === 0
-        ? search.icon
-        : getIconByType(directives[0].match(iconDirectiveRe)[1]);
-
-      return {
-        ...search,
-        description,
-        icon
-      };
-    })
-  };
-}
-
-function getIconByType(type = '') {
-  switch(type) {
-    case 'taxon':
-    case 'taxa':
-      return 'mbio-taxaQuery_light';
-    default:
-      return 'mbio-sampleDetails_light';
-
-  }
 }
 
 function getHomeContent({ studies, searches, visualizations }) {
@@ -153,8 +111,13 @@ function makeHeaderMenuItems(state) {
       {
         id: 'search',
         text: 'Search a Study',
-        children: (studies.entities == null ? [] : studies.entities)
-          .map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> }))
+        children: [
+          {
+            text: <div style={{ padding: '0.5em 0' }}>All Studies</div>,
+            route: '/search/dataset/Studies/result'
+          }
+        ].concat(studies.entities == null ? [] : studies.entities
+          .map(study => ({ text: <StudyMenuItem study={study} config={siteConfig} /> })))
       },
       {
         id: 'workspace',
