@@ -38,6 +38,8 @@
 .StrategyPanel--StepBoxesContainer {
   margin-right: auto;
   overflow-x: auto;
+  display: flex;
+  flex-flow: column nowrap;
 }
 
 .StrategyPanel--StrategyCount {
@@ -67,7 +69,7 @@
 
 /* Nested strategy */
 .StrategyPanel--Panel .StrategyPanel--Panel {
-  margin: 0em 2em 2em 4em;
+  margin: 0em auto 2em 4em;
   overflow: auto;
 }
 

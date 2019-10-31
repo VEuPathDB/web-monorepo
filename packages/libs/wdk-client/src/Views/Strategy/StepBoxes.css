@@ -3,7 +3,6 @@
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: flex-end;
-  overflow-x: auto;
   padding: 1em;
   position: relative;
 }

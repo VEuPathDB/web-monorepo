@@ -325,7 +325,9 @@ export function ExpandedSteps(props: StepBoxesProps) {
             <div style={{ fontSize: '1.4em', padding: '.35em .4em' }}>
               <button className="link" type="button" onClick={() => props.onCollapseNestedStrategy(stepTree.step.id)}><i className="fa fa-times"/></button>
             </div>
-            <StepBoxes {...props} stepTree={stepTree.secondaryInput}/>
+            <div className="StrategyPanel--StepBoxesContainer">
+              <StepBoxes {...props} stepTree={stepTree.secondaryInput}/>
+            </div>
           </div>
         </React.Fragment>
       )}
