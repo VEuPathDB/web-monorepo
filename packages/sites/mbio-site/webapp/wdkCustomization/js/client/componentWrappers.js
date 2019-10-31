@@ -104,6 +104,7 @@ function makeHeaderMenuItems(state) {
   const { studies } = siteData;
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
   const socialLinks = menuItemsFromSocials(siteConfig);
+  const {vimeoUrl} = siteConfig;
 
   return {
     mainMenu: [
@@ -160,7 +161,8 @@ function makeHeaderMenuItems(state) {
           },
           {
             text: 'Tutorials and Resources',
-            url: 'https://docs.google.com/document/u/1/d/1a_9lPf5lV0fTW1VcA48pGsnFAcwhMOWqCTQlyHEVoAQ/pub'
+            url: vimeoUrl,
+            target: '_blank'
           },
           {
             text: 'About MicrobiomeDB',
