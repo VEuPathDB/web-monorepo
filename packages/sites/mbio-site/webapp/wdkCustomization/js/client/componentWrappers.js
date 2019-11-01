@@ -113,7 +113,7 @@ function makeHeaderMenuItems(state) {
         text: 'Search a Study',
         children: [
           {
-            text: <div style={{ padding: '0.5em 0' }}>All Studies</div>,
+            text: <div style={{ padding: '0.5em 0' }}>View All Studies</div>,
             route: '/search/dataset/Studies/result'
           }
         ].concat(studies.entities == null ? [] : studies.entities
