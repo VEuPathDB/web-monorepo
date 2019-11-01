@@ -49,13 +49,13 @@ export function reduce(state: State = initialState, action: Action): State {
 
     case fulfillSaveAsStrategy.type:
       return updateOpenedStrategies(state, openedStrategies =>
-        openedStrategies.filter(id => id !== action.payload.oldStrategyId));
+        openedStrategies
+        .map(id => id === action.payload.oldStrategyId ? action.payload.newStrategyId : id));
 
     case fulfillDraftStrategy.type:
       return updateOpenedStrategies(state, openedStrategies =>
         openedStrategies
-        .filter(id => id !== action.payload.savedStrategyId)
-        .concat(action.payload.strategy.strategyId));
+        .map(id => id === action.payload.savedStrategyId ? action.payload.strategy.strategyId : id));
 
     case fulfillDeleteStrategy.type:
       return updateOpenedStrategies(state, openedStrategies =>
