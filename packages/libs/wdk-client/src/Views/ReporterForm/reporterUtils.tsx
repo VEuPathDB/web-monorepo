@@ -12,10 +12,10 @@ export let attachmentTypes = [
 ];
 
 export let tabularAttachmentTypes = [
-  { value: "text", display: "Text File" },
-  { value: "csv", display: "Excel File*" },
-  /*{ value: "excel", display: "Excel File*" },*/
-  { value: "plain", display: "Show in Browser"}
+  { value: "text", display: "Tab-delimited (.txt) file" },
+  { value: "csv", display: "Comma-delimited (.csv) file*" },
+  /*{ value: "excel", display: "Excel file*" },*/
+  { value: "plain", display: "Show in browser"}
 ];
 
 /**
