@@ -82,28 +82,26 @@ const headerMenuItems: HeaderMenuItem[] = [
 export const VEuPathDBHomePage: FunctionComponent = props => {
   const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
   const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
+  const [ headerExpanded, setHeaderExpanded ] = useState(true);
   const projectId = useProjectId();
 
-  const rootContainerClassName = combineClassNames(vpdbCx('RootContainer'), projectId);
-  const headerClassName = combineClassNames(vpdbCx('Header'), vpdbCx('BgDark'));
+  const rootContainerClassName = combineClassNames(
+    vpdbCx('RootContainer', headerExpanded ? 'header-expanded' : 'header-collapsed'), 
+    projectId
+  );
+  const headerClassName = combineClassNames(
+    vpdbCx('Header', headerExpanded ? 'expanded' : 'collapsed'), 
+    vpdbCx('BgDark')
+  );
   const searchPaneClassName = combineClassNames(vpdbCx('SearchPane'), vpdbCx('BgWash'));
   const mainClassName = vpdbCx('Main');
   const newsPaneClassName = vpdbCx('NewsPane');
   const footerClassName = vpdbCx('Footer');
 
   const updateHeaderExpanded = useCallback(() => {
-    // FIXME - find a better way to update the header height - this resizing is a little "jerky" when 
-    // the scroll bar is left near the 80px point
-    const expanded = document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80;
-
-    const headerNode = document.getElementsByClassName(headerClassName)[0] as HTMLDivElement;
-    const containerNode = document.getElementsByClassName(rootContainerClassName)[0] as HTMLDivElement;
-
-    if (headerNode && containerNode) {
-      headerNode.style.padding = expanded ? '90px 20px 10px': '10px 20px';
-      headerNode.style.height = expanded ? '9.0625rem' : '4.0625rem';
-      containerNode.style.gridTemplateRows = expanded ? '9.0625rem 1fr auto' : '4.0625rem 1fr auto';
-    }
+    // FIXME - find a better way to update the header height - this resizing is "jerky" when 
+    // the scroll bar is left near the scroll threshold
+    setHeaderExpanded(document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
   }, []);
 
   useEffect(() => {

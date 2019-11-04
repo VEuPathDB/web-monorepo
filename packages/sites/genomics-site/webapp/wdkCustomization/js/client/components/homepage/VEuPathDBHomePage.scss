@@ -17,6 +17,28 @@ body.vpdb-Body {
 
     .vpdb-Header {
       grid-area: header;
+
+      transition-duration: 0.3s;
+      transition-delay: 0.1s;
+    
+      &SearchBarToggle {
+        &__hidden {
+          display: none;
+        }
+      }
+    
+      &__collapsed {
+        height: 4.0625rem;
+        padding: 10px 20px;
+
+        .ebrc-HeaderBranding {
+          font-size: 25px;
+          color: white;
+
+          transition-duration: 0.3s;
+          transition-delay: 0.1s;
+        }
+      }
     }
     
     .vpdb-SearchPane {
@@ -38,6 +60,10 @@ body.vpdb-Body {
     @media screen and (max-width: 767px) {
       display: flex;
       flex-direction: column;
+    }
+
+    &__header-collapsed {
+      grid-template-rows: 4.0625rem 1fr auto;
     }
   }
 
