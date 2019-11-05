@@ -121,25 +121,25 @@ const useHeaderMenuItems = (searchTree?: CategoryTreeNode): HeaderMenuItem[] => 
       items: [
         {
           key: 'search-strategies',
-          display: 'Search Strategies',
+          display: 'My search strategies',
           type: 'route',
           route: '/workspace/strategies'
         },
         {
           key: 'user-data-sets',
-          display: 'User Data Sets',
+          display: 'My data sets',
           type: 'route',
           route: '/workspace/datasets'
         },
         {
           key: 'basket',
-          display: 'Basket',
+          display: 'My basket',
           type: 'route',
           route: '/workspace/basket'
         },
         {
           key: 'galaxy-analyses',
-          display: 'Galaxy analyses',
+          display: 'My Galaxy analyses',
           type: 'route',
           route: '/galaxy-orientation'
         }
