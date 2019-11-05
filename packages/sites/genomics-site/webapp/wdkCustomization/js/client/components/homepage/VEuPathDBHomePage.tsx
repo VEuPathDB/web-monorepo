@@ -222,13 +222,6 @@ const useHeaderMenuItems = (
           href: '#'
         }
       ]
-    },
-    {
-      key: 'contact',
-      display: 'Contact',
-      type: 'route',
-      route: '/contact-us',
-      target: '_blank'
     }
   ];
 
