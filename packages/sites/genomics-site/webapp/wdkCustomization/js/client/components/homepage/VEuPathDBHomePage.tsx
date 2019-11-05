@@ -25,7 +25,13 @@ const useProjectId = (): string => {
   return projectId;
 };
 
-const useHeaderMenuItems = (searchTree?: CategoryTreeNode): HeaderMenuItem[] => {
+const useHeaderMenuItems = (
+  searchTree: CategoryTreeNode | undefined, 
+  searchTerm: string, 
+  expandedBranches: string[],
+  setSearchTerm: (newSearchTerm: string) => void,
+  setExpandedBranches: (newExpandedBranches: string[]) => void
+): HeaderMenuItem[] => {
   const projectId = useProjectId();
 
   // FIXME: These are PlasmoDB-specific
@@ -37,7 +43,15 @@ const useHeaderMenuItems = (searchTree?: CategoryTreeNode): HeaderMenuItem[] => 
       items: [
         {
           key: 'searches',
-          display: <SearchCheckboxTree searchTree={searchTree} />,
+          display: (
+            <SearchCheckboxTree 
+              searchTree={searchTree} 
+              searchTerm={searchTerm}
+              expandedBranches={expandedBranches}
+              setSearchTerm={setSearchTerm}
+              setExpandedBranches={setExpandedBranches}
+            />
+          ),
           type: 'custom',
         }
       ]
@@ -227,12 +241,17 @@ type StateProps = {
 
 type Props = StateProps;
 
+const GENE_ITEM_ID = 'category:transcript-record-classes-transcript-record-class';
+
 const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
   const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
   const [ headerExpanded, setHeaderExpanded ] = useState(true);
+  const [ searchTerm, setSearchTerm ] = useState('');
+  const [ expandedBranches, setExpandedBranches ] = useState([ GENE_ITEM_ID ]);
+
   const projectId = useProjectId();
-  const headerMenuItems = useHeaderMenuItems(props.searchTree);
+  const headerMenuItems = useHeaderMenuItems(props.searchTree, searchTerm, expandedBranches, setSearchTerm, setExpandedBranches);
 
   const rootContainerClassName = combineClassNames(
     vpdbCx('RootContainer', headerExpanded ? 'header-expanded' : 'header-collapsed'), 
