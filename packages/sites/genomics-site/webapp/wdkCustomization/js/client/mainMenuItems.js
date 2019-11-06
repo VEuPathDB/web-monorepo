@@ -82,7 +82,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           target: '_blank'
         },
         {
-          id: 'companion',
+          id: 'companion--fungidb',
           text: 'Companion',
           include: [FungiDB],
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
