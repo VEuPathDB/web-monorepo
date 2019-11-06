@@ -36,7 +36,11 @@ type OwnProps = {
   history: History;
   location: Location;
 }
-type Props = OwnProps & DispatchProps & StateProps;
+type Props = {
+  ownProps: OwnProps;
+  dispatchProps: DispatchProps;
+  stateProps: StateProps;
+};
 
 class UserDatasetListController extends PageController <Props> {
 
@@ -48,23 +52,23 @@ class UserDatasetListController extends PageController <Props> {
     return ActionCreators;
   }
 
-  loadData () {
-    if (this.props.userDatasetList.status === 'not-requested') {
-      this.props.loadUserDatasetList();
+  loadData (prevProps?: Props) {
+    if (prevProps == null) {
+      this.props.dispatchProps.loadUserDatasetList();
     }
   }
 
   isRenderDataLoaded () {
     return (
-      this.props.userDatasetList.status !== 'not-requested' &&
-      this.props.userDatasetList.status !== 'loading' &&
-      this.props.globalData.config != null &&
-      this.props.globalData.user != null
+      this.props.stateProps.userDatasetList.status !== 'not-requested' &&
+      this.props.stateProps.userDatasetList.status !== 'loading' &&
+      this.props.stateProps.globalData.config != null &&
+      this.props.stateProps.globalData.user != null
     );
   }
 
   isRenderDataLoadError() {
-    return this.props.userDatasetList.status === 'error';
+    return this.props.stateProps.userDatasetList.status === 'error';
   }
 
   renderGuestView() {
@@ -77,7 +81,7 @@ class UserDatasetListController extends PageController <Props> {
             <button
               type="button"
               className="btn"
-              onClick={() => this.props.showLoginForm()}
+              onClick={() => this.props.dispatchProps.showLoginForm()}
             >Please log in to access My Data Sets.</button>
           } />
         </div>
@@ -86,26 +90,32 @@ class UserDatasetListController extends PageController <Props> {
   }
 
   renderView () {
-    const { config, user } = this.props.globalData;
+    const { config, user } = this.props.stateProps.globalData;
 
     if (user == null || config == null) return this.renderDataLoading();
 
     if (user.isGuest) return this.renderGuestView();
 
-    if (this.props.userDatasetList.status !== 'complete') return null;
+    if (this.props.stateProps.userDatasetList.status !== 'complete') return null;
 
     const { projectId, displayName: projectName } = config;
 
     const {
       history,
-      location,
-      userDatasetList: { userDatasets, userDatasetsById, filterByProject },
+      location
+    } = this.props.ownProps;
+
+    const {
+      userDatasetList: { userDatasets, userDatasetsById, filterByProject }
+    } = this.props.stateProps;
+
+    const {
       shareUserDatasets,
       unshareUserDatasets,
       removeUserDataset,
       updateUserDatasetDetail,
       updateProjectFilter,
-    } = this.props;
+    } = this.props.dispatchProps;
 
     const listProps = {
       user,
@@ -132,12 +142,13 @@ class UserDatasetListController extends PageController <Props> {
   }
 }
 
-const enhance = connect(
+const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state: RootState) => ({
     globalData: state.globalData,
     userDatasetList: state.userDatasetList
   }),
-  ActionCreators
+  ActionCreators,
+  (stateProps, dispatchProps, ownProps) => ({ stateProps, dispatchProps, ownProps })
 )
 
 export default enhance(wrappable(UserDatasetListController));
