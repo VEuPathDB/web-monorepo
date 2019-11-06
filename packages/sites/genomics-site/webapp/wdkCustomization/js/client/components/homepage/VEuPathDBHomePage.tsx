@@ -21,9 +21,21 @@ import './VEuPathDBHomePage.scss';
 
 const vpdbCx = makeClassNameHelper('vpdb-');
 
+const PlasmoDB = 'PlasmoDB';
+const TriTrypDB = 'TriTrypDB';
+const CryptoDB = 'CryptoDB';
+const ToxoDB = 'ToxoDB';
+const FungiDB  = 'FungiDB';
+const EuPathDB = 'EuPathDB';
+
 const useProjectId = (): string => {
   return projectId;
 };
+
+type HeaderMenuItemEntry = HeaderMenuItem<{
+  include?: string[],
+  exclude?: string[]
+}>;
 
 const useHeaderMenuItems = (
   searchTree: CategoryTreeNode | undefined, 
@@ -35,7 +47,7 @@ const useHeaderMenuItems = (
   const projectId = useProjectId();
 
   // FIXME: These are PlasmoDB-specific
-  const menuItems: HeaderMenuItem[] = [
+  const menuItemEntries: HeaderMenuItemEntry[] = [
     {
       key: 'searchContainer',
       display: 'Searches',
@@ -74,6 +86,12 @@ const useHeaderMenuItems = (
           urlSegment: '/analysisTools.jsp'
         },
         {
+          key: 'srt',
+          display: 'Sequence Retrieval',
+          type: 'webAppRoute',
+          urlSegment: '/srt.jsp'
+        },
+        {
           key: 'galaxy',
           display: 'Analyze my experiment',
           type: 'route',
@@ -85,7 +103,32 @@ const useHeaderMenuItems = (
           type: 'externalLink',
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
           href: 'http://companion.gla.ac.uk/',
-          target: '_blank'
+          target: '_blank',
+          metadata: {
+            exclude: [ FungiDB ]
+          }
+        },
+        {
+          key: 'companion--fungi',
+          display: 'Companion',
+          type: 'externalLink',
+          tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
+          href: 'http://fungicompanion.gla.ac.uk/',
+          target: '_blank',
+          metadata: {
+            include: [ FungiDB ]
+          }
+        },
+        {
+          key: 'LeishGEdit',
+          display: 'LeishGEdit',
+          tooltip: 'Your online resource for CRISPR Cas9 T7 RNA Polymerase gene editing in kinetoplastids',
+          type: 'externalLink',
+          href: 'http://www.leishgedit.net',
+          target: '_blank',
+          metadata: {
+            include: [ TriTrypDB ]
+          }
         },
         {
           key: 'EuPaGDT',
@@ -105,20 +148,39 @@ const useHeaderMenuItems = (
           key: 'jbrowse',
           display: 'Genome Browser',
           type: 'externalLink',
-          href: '/a/jbrowse.jsp?data=/a/service/jbrowse/tracks/default&tracks=gene'
+          href: '/a/jbrowse.jsp?data=/a/service/jbrowse/tracks/default&tracks=gene',
+          metadata: {
+            exclude: [ EuPathDB ]
+          }
         },
         {
           key: 'plasmoap',
           display: 'PlasmoAP',
           type: 'webAppRoute',
-          urlSegment: '/plasmoap.jsp'
+          urlSegment: '/plasmoap.jsp',
+          metadata: {
+            include: [ PlasmoDB ]
+          }
         },
         {
           key: 'pats',
           display: 'PATS',
           type: 'externalLink',
           href: 'http://modlabcadd.ethz.ch/software/pats/',
-          target: '_blank'
+          target: '_blank',
+          metadata: {
+            include: [ PlasmoDB ]
+          }
+        },
+        {
+          key: 'ancillary-genome-browser',
+          display: 'Ancillary Genome Browser',
+          type: 'externalLink',
+          href: 'http://ancillary.toxodb.org',
+          target: '_blank',
+          metadata: {
+            include: [ ToxoDB ]
+          }
         },
         {
           key: 'webservices',
@@ -225,8 +287,37 @@ const useHeaderMenuItems = (
     }
   ];
 
-  return menuItems;
+  return menuItemEntries.flatMap(
+    menuItemEntry => filterMenuItemEntry(menuItemEntry, projectId)
+  );
 };
+
+const filterMenuItemEntry = (
+  menuItemEntry: HeaderMenuItemEntry, 
+  projectId: string
+): HeaderMenuItemEntry[] => 
+  (
+    menuItemEntry.metadata && 
+    (
+      (
+        menuItemEntry.metadata.include && !menuItemEntry.metadata.include.includes(projectId)
+      ) ||
+      ( 
+        menuItemEntry.metadata.exclude && menuItemEntry.metadata.exclude.includes(projectId)        
+      )
+    )
+  ) 
+    ? []
+    : menuItemEntry.type !== 'subMenu'
+    ? [ menuItemEntry  ]
+    : [
+        {
+          ...menuItemEntry,
+          items: menuItemEntry.items.flatMap(
+            menuItemEntry => filterMenuItemEntry(menuItemEntry, projectId)
+          )
+        }
+      ];
 
 type StateProps = {
   searchTree?: CategoryTreeNode
