@@ -5,6 +5,8 @@ body.vpdb-Body {
   .vpdb-RootContainer {
     display: grid;
 
+    // FIXME: Should also provide fallback styling for IE11,
+    // as unfortunately, IE11 doesn't support grid-template-areas
     grid-template-areas:
       "header header header"
       "nav content side"

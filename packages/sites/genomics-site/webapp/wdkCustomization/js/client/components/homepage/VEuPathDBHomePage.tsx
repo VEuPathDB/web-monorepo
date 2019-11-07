@@ -29,6 +29,7 @@ const FungiDB  = 'FungiDB';
 const EuPathDB = 'EuPathDB';
 
 const useProjectId = (): string => {
+  // FIXME: Pull this from global data
   return projectId;
 };
 
@@ -46,7 +47,6 @@ const useHeaderMenuItems = (
 ): HeaderMenuItem[] => {
   const projectId = useProjectId();
 
-  // FIXME: These are PlasmoDB-specific
   const menuItemEntries: HeaderMenuItemEntry[] = [
     {
       key: 'searchContainer',
@@ -64,7 +64,7 @@ const useHeaderMenuItems = (
               setExpandedBranches={setExpandedBranches}
             />
           ),
-          type: 'custom',
+          type: 'custom'
         }
       ]
     },
@@ -76,33 +76,33 @@ const useHeaderMenuItems = (
         {
           key: 'blast',
           display: 'BLAST',
-          type: 'route',
-          route: '/search/transcript/UnifiedBlast'
+          type: 'reactRoute',
+          url: '/search/transcript/UnifiedBlast'
         },
         {
           key: 'analysis',
           display: 'Results analysis',
           type: 'webAppRoute',
-          urlSegment: '/analysisTools.jsp'
+          url: '/analysisTools.jsp'
         },
         {
           key: 'srt',
           display: 'Sequence Retrieval',
           type: 'webAppRoute',
-          urlSegment: '/srt.jsp'
+          url: '/srt.jsp'
         },
         {
           key: 'galaxy',
           display: 'Analyze my experiment',
-          type: 'route',
-          route: '/galaxy-orientation'
+          type: 'reactRoute',
+          url: '/galaxy-orientation'
         },
         {
           key: 'companion',
           display: 'Companion',
           type: 'externalLink',
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
-          href: 'http://companion.gla.ac.uk/',
+          url: 'http://companion.gla.ac.uk/',
           target: '_blank',
           metadata: {
             exclude: [ FungiDB ]
@@ -113,7 +113,7 @@ const useHeaderMenuItems = (
           display: 'Companion',
           type: 'externalLink',
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
-          href: 'http://fungicompanion.gla.ac.uk/',
+          url: 'http://fungicompanion.gla.ac.uk/',
           target: '_blank',
           metadata: {
             include: [ FungiDB ]
@@ -124,7 +124,7 @@ const useHeaderMenuItems = (
           display: 'LeishGEdit',
           tooltip: 'Your online resource for CRISPR Cas9 T7 RNA Polymerase gene editing in kinetoplastids',
           type: 'externalLink',
-          href: 'http://www.leishgedit.net',
+          url: 'http://www.leishgedit.net',
           target: '_blank',
           metadata: {
             include: [ TriTrypDB ]
@@ -135,20 +135,20 @@ const useHeaderMenuItems = (
           display: 'EuPaGDT',
           type: 'externalLink',
           tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
-          href: 'http://grna.ctegd.uga.edu',
+          url: 'http://grna.ctegd.uga.edu',
           target: '_blank'
         },
         {
           key: 'pubcrawler',
           display: 'PubMed and Entrez',
           type: 'externalLink',
-          href: `/pubcrawler/${projectId}`
+          url: `/pubcrawler/${projectId}`
         },
         {
           key: 'jbrowse',
           display: 'Genome Browser',
           type: 'externalLink',
-          href: '/a/jbrowse.jsp?data=/a/service/jbrowse/tracks/default&tracks=gene',
+          url: '/a/jbrowse.jsp?data=/a/service/jbrowse/tracks/default&tracks=gene',
           metadata: {
             exclude: [ EuPathDB ]
           }
@@ -157,7 +157,7 @@ const useHeaderMenuItems = (
           key: 'plasmoap',
           display: 'PlasmoAP',
           type: 'webAppRoute',
-          urlSegment: '/plasmoap.jsp',
+          url: '/plasmoap.jsp',
           metadata: {
             include: [ PlasmoDB ]
           }
@@ -166,7 +166,7 @@ const useHeaderMenuItems = (
           key: 'pats',
           display: 'PATS',
           type: 'externalLink',
-          href: 'http://modlabcadd.ethz.ch/software/pats/',
+          url: 'http://modlabcadd.ethz.ch/software/pats/',
           target: '_blank',
           metadata: {
             include: [ PlasmoDB ]
@@ -176,7 +176,7 @@ const useHeaderMenuItems = (
           key: 'ancillary-genome-browser',
           display: 'Ancillary Genome Browser',
           type: 'externalLink',
-          href: 'http://ancillary.toxodb.org',
+          url: 'http://ancillary.toxodb.org',
           target: '_blank',
           metadata: {
             include: [ ToxoDB ]
@@ -186,7 +186,7 @@ const useHeaderMenuItems = (
           key: 'webservices',
           display: 'Searches via Web Services',
           type: 'externalLink',
-          href: '/documents/WebServicesURLBuilderHELPPAGE.pdf'
+          url: '/documents/WebServicesURLBuilderHELPPAGE.pdf'
         }
       ]
     },
@@ -198,26 +198,26 @@ const useHeaderMenuItems = (
         {
           key: 'search-strategies',
           display: 'My search strategies',
-          type: 'route',
-          route: '/workspace/strategies'
+          type: 'reactRoute',
+          url: '/workspace/strategies'
         },
         {
           key: 'user-data-sets',
           display: 'My data sets',
-          type: 'route',
-          route: '/workspace/datasets'
+          type: 'reactRoute',
+          url: '/workspace/datasets'
         },
         {
           key: 'basket',
           display: 'My basket',
-          type: 'route',
-          route: '/workspace/basket'
+          type: 'reactRoute',
+          url: '/workspace/basket'
         },
         {
           key: 'galaxy-analyses',
           display: 'My Galaxy analyses',
-          type: 'route',
-          route: '/galaxy-orientation'
+          type: 'reactRoute',
+          url: '/galaxy-orientation'
         }
       ]
     },
@@ -228,35 +228,38 @@ const useHeaderMenuItems = (
       items: [
         {
           key: 'datasets',
-          display: 'Data Sets',
-          type: 'route',
-          route: '/search/dataset/AllDatasets/result'
+          display: 'Data sets',
+          type: 'reactRoute',
+          url: '/search/dataset/AllDatasets/result'
         },
         {
           key: 'analysis-methods',
           display: 'Methods',
           type: 'webAppRoute',
-          urlSegment: '/wdkCustomization/jsp/questions/XmlQuestions.Methods.jsp'
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.Methods.jsp'
         },
         {
           key: 'genomes-and-data-types',
           display: 'Organisms - Data type summary',
           tooltip: `Table summarizing all the genomes and their different data types available in ${projectId}`,
-          type: 'webAppRoute',
-          urlSegment: '/app/search/organism/GenomeDataTypes'
+          type: 'reactRoute',
+          url: '/search/organism/GenomeDataTypes'
         },
         {
           key: 'gene-metrics',
           display: 'Organisms - Gene metrics',
           tooltip: 'Table summarizing gene counts for all the available genomes, and evidence supporting them',
-          type: 'route',
-          route: '/search/organism/GeneMetrics'
+          type: 'reactRoute',
+          url: '/search/organism/GeneMetrics'
         },
         {
           key: 'data-files-eupathdb',
           display: 'Download data files',
           type: 'externalLink',
-          href: '/common/downloads'
+          url: '/common/downloads',
+          metadata: {
+            exclude: [ EuPathDB ]
+          }
         }
       ]
     },
@@ -266,22 +269,51 @@ const useHeaderMenuItems = (
       type: 'subMenu',
       items: [
         {
-          key: 'about',
-          display: 'About',
-          type: 'externalLink',
-          href: '#'
+          key: 'comments',
+          display: `Genes with comments from the ${projectId} community`,
+          tooltip: 'Add your comments to your gene of interest: start at the gene page',
+          type: 'reactRoute',
+          url: '/search/gene/GenesWithUserComments',
+          metadata: {
+            exclude: [ EuPathDB ]
+          }
         },
         {
-          key: 'help',
-          display: 'Help',
-          type: 'externalLink',
-          href: '#'
+          key: 'public-strategies',
+          display: 'Public strategies',
+          type: 'reactRoute',
+          url: '/workspace/strategies/public'
         },
         {
-          key: 'community',
-          display: 'Community',
+          key: 'community-download',
+          display: 'Community files',
+          type: 'reactRoute',
+          url: '/search/file/UserFileUploads',
+          metadata: {
+            exclude: [ EuPathDB ]
+          }
+        },
+        {
+          key: 'release-policy',
+          display: 'VEuPathDB data submission & release policies',
           type: 'externalLink',
-          href: '#'
+          url: '/EuPathDB_datasubm_SOP.pdf'
+        },
+        {
+          key: 'related-sites',
+          display: 'Related sites',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.ExternalLinks.jsp'
+        },
+        {
+          key: 'mahpic-data',
+          display: 'MaHPIC',
+          type: 'webAppRoute',
+          tooltip: 'Access MaHPIC Data',
+          url: '/mahpic.jsp',
+          metadata: {
+            include: [ PlasmoDB ]
+          }
         }
       ]
     }
@@ -423,8 +455,9 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
 }
 
+// FIXME: Use a hook instead of "connect" to provide the searchTree
 const mapStateToProps = (state: RootState) => ({
-  // FIXME: This is not typesafe
+  // FIXME: This is not typesafe.
   searchTree: get(state.globalData, 'searchTree') as CategoryTreeNode
 });
 
