@@ -68,7 +68,9 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
 
   const loadSuggestions = useCallback((searchTerm: string) => {
-    if (searchTerm) {
+      // Suppress suggestions for now
+    if (false) {
+    // if (searchTerm) {
       setSiteSearchSuggestions(
         [
           searchTerm,
@@ -343,6 +345,15 @@ const useHeaderMenuItems = (
           url: '/wdkCustomization/jsp/questions/XmlQuestions.Methods.jsp'
         },
         {
+          key: 'annotation-sops',
+          display: <>SOPs for <i>C.parvum</i> Annotation</>,
+          type: 'externalLink',
+          url: 'http://cryptodb.org/static/SOP/',
+          metadata: {
+            include: [ CryptoDB ],
+          }
+        },
+        {
           key: 'genomes-and-data-types',
           display: 'Organisms - Data type summary',
           tooltip: `Table summarizing all the genomes and their different data types available in ${projectId}`,
@@ -420,6 +431,214 @@ const useHeaderMenuItems = (
           }
         }
       ]
+    },
+    {
+      key: 'about',
+      display: 'About',
+      type: 'subMenu',
+      items: [
+        {
+          key: 'what-is',
+          display: `What is ${projectId}?`,
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp'
+        },
+        {
+          key: 'eupathdb-publications',
+          display: 'Publications on VEuPathDB sites',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.EuPathDBPubs.jsp'
+        },
+        {
+          key: 'submitting-divider',
+          display: (
+            <SubmenuDivider>
+              Submitting data to {projectId}
+            </SubmenuDivider>
+          ),
+          type: 'custom'
+        },
+        {
+          key: 'submission-instructions',
+          display: 'How to submit data to us',
+          type: 'webAppRoute',
+          url: '/dataSubmission.jsp'
+        },
+        {
+          key: 'submission-policy',
+          display: 'VEuPathDB data submission & release policies',
+          type: 'externalLink',
+          url: '/EuPathDB_datasubm_SOP.pdf'
+        },
+        {
+          key: 'usage-and-citations-divider',
+          display: (
+            <SubmenuDivider>
+              Usage and citation
+            </SubmenuDivider>
+          ),
+          type: 'custom'
+        },
+        {
+          key: 'cite-us',
+          display: 'How to cite us',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citing'
+        },
+        {
+          key: 'cite-data-provide',
+          display: 'Citing data providers',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citingproviders'
+        },
+        {
+          key: 'citations',
+          display: 'Publications that use our resources',
+          type: 'externalLink',
+          url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en'
+        },
+        {
+          key: 'data-access-policy',
+          display: 'Data Access Policy',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#use'
+        },
+        {
+          key: 'website-privacy-policy',
+          display: 'Website privacy policy',
+          type: 'externalLink',
+          url: '/documents/EuPathDB_Website_Privacy_Policy.shtml'
+        },
+        {
+          key: 'who-are-we-divider',
+          display: (
+            <SubmenuDivider>
+              Who are we?
+            </SubmenuDivider>
+          ),
+          type: 'custom'
+        },
+        {
+          key: 'scientific-working-group',
+          display: 'Scientific working group',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#swg'
+        },
+        {
+          key: 'scientific-advisory-team',
+          display: 'Scientific advisory team',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#advisors'
+        },
+        {
+          key: 'acknowledgement',
+          display: 'Acknowledgements',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#acks'
+        },
+        {
+          key: 'funding',
+          display: 'Funding',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#funding'
+        },
+        {
+          key: 'brochure',
+          display: 'EuPathDB Brochure',
+          type: 'externalLink',
+          url: 'http://eupathdb.org/tutorials/eupathdbFlyer.pdf'
+        },
+        {
+          key: 'brochure-chinese',
+          display: 'EuPathDB brochure in Chinese',
+          type: 'externalLink',
+          url: 'http://eupathdb.org/tutorials/eupathdbFlyer_Chinese.pdf'
+        },
+        {
+          key: 'technical-divider',
+          display: (
+            <SubmenuDivider>
+              Technical
+            </SubmenuDivider>
+          ),
+          type: 'custom'
+        },        
+        {
+          key: 'accessibility-vpat',
+          display: 'Accessibility VPAT',
+          type: 'externalLink',
+          url: '/documents/EuPathDB_Section_508.pdf'
+        },
+        {
+          key: 'infrastructure',
+          display: 'EuPathDB Infrastructure',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.Infrastructure.jsp'
+        },
+        {
+          key: 'usage-statistics',
+          display: 'Website Usage Statistics',
+          type: 'externalLink',
+          url: '/awstats/awstats.pl'
+        }
+      ]
+    },
+    {
+      key: 'help',
+      display: 'Help',
+      type: 'subMenu',
+      items: [
+        {
+          key: 'reset-session',
+          display: `Reset ${projectId} Session`,
+          tooltip: 'Login first to keep your work',
+          type: 'webAppRoute',
+          url: '/resetSession.jsp',
+        },
+        {
+          key: 'youtube-tutorials',
+          display: 'YouTube tutorials',
+          type: 'externalLink',
+          url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1'
+        },
+        {
+          key: 'web-tutorials',
+          display: 'Web tutorials',
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.Tutorials.jsp'
+        },
+        {
+          key: 'eupathdb-workshop',
+          display: 'EuPathDB workshop',
+          type: 'externalLink',
+          url: 'http://workshop.eupathdb.org/current/'
+        },
+        {
+          key: 'workshop-exercises',
+          display: 'Exercises from workshop',
+          type: 'externalLink',
+          url: 'http://workshop.eupathdb.org/current/index.php?page=schedule'
+        },
+        {
+          key: 'ncbi-glossary',
+          display: `NCBI's glossary of terms`,
+          type: 'externalLink',
+          url: 'http://www.genome.gov/Glossary/'
+        },
+        {
+          key: 'our-glossary',
+          display: `Our glossary`,
+          type: 'webAppRoute',
+          url: '/wdkCustomization/jsp/questions/XmlQuestions.Glossary.jsp'
+        },
+        {
+          key: 'contact-us',
+          display: 'Contact us',
+          type: 'reactRoute',
+          url: '/contact-us',
+          target: '_blank'
+        }
+      ]
     }
   ];
 
@@ -427,6 +646,11 @@ const useHeaderMenuItems = (
     menuItemEntry => filterMenuItemEntry(menuItemEntry, projectId)
   );
 };
+
+const SubmenuDivider: React.FunctionComponent = ({ children }) => 
+  <div className={vpdbCx('SubmenuDivider')}>
+    {children}
+  </div>;
 
 const filterMenuItemEntry = (
   menuItemEntry: HeaderMenuItemEntry, 
