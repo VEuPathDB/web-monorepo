@@ -350,7 +350,7 @@ const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => a
 
 const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
   ofType<QuestionLoadedAction>(QUESTION_LOADED),
-  mergeMap(({ payload: { question, searchName, paramValues }}) =>
+  mergeMap(({ payload: { question, searchName, paramValues }}: QuestionLoadedAction) =>
     from(question.parameters.map(parameter =>
       initParam({ parameter, paramValues, searchName }))))
 );

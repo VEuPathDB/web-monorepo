@@ -175,4 +175,5 @@ function makeUiStepTree(
  */
 function* colors(choices: string[]) {
   while(true) yield* choices;
+  return undefined; // needed to prevent typescript inferring return type of void
 }

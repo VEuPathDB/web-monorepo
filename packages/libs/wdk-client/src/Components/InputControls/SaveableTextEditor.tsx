@@ -159,6 +159,6 @@ class SaveableTextEditor extends React.Component<Props, State> {
 
 export default SaveableTextEditor;
 
-function onFocus(event: React.FocusEvent<HTMLInputElement>) {
+function onFocus(event: React.FocusEvent<HTMLInputElement|HTMLTextAreaElement>) {
   event.target.select();
 }

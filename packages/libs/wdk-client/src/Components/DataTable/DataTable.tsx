@@ -232,7 +232,7 @@ class DataTable extends PureComponent<Props> {
                 </div>
               `.trim())
                 .attr('title', column.help)
-                .click((e: JQuery.Event<HTMLElement, null>) => e.stopPropagation())
+                .click(e => e.stopPropagation())
                 .qtip({
                   hide: {
                     fixed: true,
@@ -266,7 +266,7 @@ class DataTable extends PureComponent<Props> {
     .width(width || '')
     .appendTo(this.node)
     // click handler for expand single row
-    .on('click keydown', '.wdk-DataTableRow__expandable', (event: JQuery.Event<HTMLElement, null>) => {
+    .on('click keydown', '.wdk-DataTableRow__expandable', event => {
 
       // ignore keydown events if the key is not Enter
       if (event.type === 'keydown' && event.key !== 'Enter') {

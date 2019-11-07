@@ -83,7 +83,7 @@ function makeClassName(className?: string, suffix = '', ...modifiers: any[]) {
 }
 
 function useRestorePrevoiusFocus(isOpen: boolean) {
-  const previousActiveRef = useRef<Element>();
+  const previousActiveRef = useRef<Element|null>();
   useEffect(() => {
     if (isOpen) {
       previousActiveRef.current = document.activeElement;

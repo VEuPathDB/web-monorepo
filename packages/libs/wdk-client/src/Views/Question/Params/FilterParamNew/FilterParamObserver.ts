@@ -68,11 +68,11 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
       mergeMap(({paramName, groupName}) => {
         // Create an Observable<FilterParamNew> based on actions
         const valueChangedParameter$: Observable<LoadDeps> = action$.pipe(
-          ofType<UpdateFiltersAction>(UPDATE_FILTERS),
-          filter(
-            action => action.payload.searchName === searchName &&
+          filter((action): action is UpdateFiltersAction => (
+            action.type === UPDATE_FILTERS &&
+            action.payload.searchName === searchName &&
             action.payload.parameter.name === paramName
-          ),
+          )),
           mergeMap(action => {
             const { prevFilters, filters } = action.payload;
             const questionState = getQuestionState(state$.value, searchName);

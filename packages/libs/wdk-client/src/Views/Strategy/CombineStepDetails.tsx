@@ -9,6 +9,7 @@ import { Question } from 'wdk-client/Utils/WdkModel';
 import Loading from 'wdk-client/Components/Loading';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
 
 export interface ReviseOperatorMenuItem {
   display: React.ReactNode;
@@ -184,9 +185,7 @@ const CombineStepDetailsForm = ({
             } else {
               setIsConfiguringOperatorParams(true);
 
-              return [
-
-              ];
+              return emptyAction;
             }
           })
         }}>

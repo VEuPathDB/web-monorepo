@@ -181,7 +181,17 @@ class LegacyParamController extends ViewController<Props> {
       )
     }
 
-    const ParameterInput = isEnumParam(parameter) ? EnumParameterInput : SimpleParamterInput;
+    const paramInput = isEnumParam(parameter)
+      ? <EnumParameterInput
+          name={this.props.own.paramName}
+          value={this.props.mapped.paramValues[this.props.own.paramName]}
+          parameter={parameter}
+        />
+      : <SimpleParamterInput
+          name={this.props.own.paramName}
+          value={this.props.mapped.paramValues[this.props.own.paramName]}
+          parameter={parameter}
+        />
 
     return (
       <div>
@@ -198,11 +208,7 @@ class LegacyParamController extends ViewController<Props> {
             });
           }}
         />
-        <ParameterInput
-          name={this.props.own.paramName}
-          value={this.props.mapped.paramValues[this.props.own.paramName]}
-          parameter={parameter}
-        />
+        {paramInput}
       </div>
     )
   }

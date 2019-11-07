@@ -197,7 +197,7 @@ function updateList<T>(item: T, add: boolean, list: T[] = []) {
 
 /** Get all attributes and tables of active record */
 function getAllFields(state: State) {
-  return filterNodes(isFieldNode, state.categoryTree)
+  return filterNodes<CategoryTreeNode>(isFieldNode, state.categoryTree)
   .map(getId);
 }
 

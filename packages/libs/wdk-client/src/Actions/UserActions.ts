@@ -1,4 +1,4 @@
-import { Action } from 'redux';
+import { Action as ReduxAction } from 'redux';
 import { transitionToExternalPage, transitionToInternalPage, Action as RouteAction } from 'wdk-client/Actions/RouterActions';
 import { showLoginWarning } from 'wdk-client/Actions/UserSessionActions';
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
@@ -510,9 +510,9 @@ const emptyThunk: ActionThunk<EmptyAction> = () => emptyAction;
  * If the user is logged in, the first thunk is dispatched, otherwise the
  * second thunk is dispatched (if present).
  */
-function maybeLoggedIn<T extends Action>(loggedInThunk: ActionThunk<T>): ActionThunk<T|EmptyAction>;
-function maybeLoggedIn<T extends Action, S extends Action>(loggedInThunk: ActionThunk<T>, guestThunk: ActionThunk<S>): ActionThunk<T|S>;
-function maybeLoggedIn<T extends Action, S extends Action>(
+function maybeLoggedIn<T extends ReduxAction>(loggedInThunk: ActionThunk<T>): ActionThunk<T|EmptyAction>;
+function maybeLoggedIn<T extends ReduxAction, S extends ReduxAction>(loggedInThunk: ActionThunk<T>, guestThunk: ActionThunk<S>): ActionThunk<T|S>;
+function maybeLoggedIn<T extends ReduxAction, S extends ReduxAction>(
   loggedInThunk: ActionThunk<T>,
   guestThunk: ActionThunk<S> = emptyThunk as ActionThunk<S>
 ): ActionThunk<T|S> {

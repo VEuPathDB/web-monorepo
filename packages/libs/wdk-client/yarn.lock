@@ -243,14 +243,16 @@
   integrity sha512-/UMY+2GkOZ27Vrc51pqC5J8SPd39FKt7kkoGAtWJ8s4msj0b15KehDWIiJpWY3/7tLxBQLLzJhIBhnEsXdzpgw==
 
 "@types/jquery@*":
-  version "3.3.6"
-  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.6.tgz#5932ead926307ca21e5b36808257f7c926b06565"
-  integrity sha512-403D4wN95Mtzt2EoQHARf5oe/jEPhzBOBNrunk+ydQGW8WmkQ/E8rViRAEB1qEt/vssfGfNVD6ujP4FVeegrLg==
+  version "3.3.31"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.31.tgz#27c706e4bf488474e1cb54a71d8303f37c93451b"
+  integrity sha512-Lz4BAJihoFw5nRzKvg4nawXPzutkv7wmfQ5121avptaSIXlDNJCUuxZxX/G+9EVidZGuO0UBlk+YjKbwRKJigg==
+  dependencies:
+    "@types/sizzle" "*"
 
 "@types/jqueryui@^1.11.35":
-  version "1.12.4"
-  resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.12.4.tgz#a9344871b83cb3d83926615efc4007060bb646d7"
-  integrity sha512-N0h+mY9CgvP6eJc+Uc3yQiqXu8mxR1j2FcxbZz5RGrHR6POaWA4dAFsFbaLEk7CFG+Kv2s5iFx+xy830jongug==
+  version "1.12.9"
+  resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.12.9.tgz#baf71bc6a195fa171fc4e389134b8c293698174d"
+  integrity sha512-bHE7BiG+5Sviy/eA9Npz5HHF3hv40XjaEbpYtSJPaNwuyxhSJ0qWlE8C5DgNMfobVOZ2aSTrM1iGDCGmvlbxOg==
   dependencies:
     "@types/jquery" "*"
 
@@ -357,6 +359,11 @@
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
+
+"@types/sizzle@*":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
+  integrity sha512-7EJYyKTL7tFR8+gDbB6Wwz/arpGa0Mywk1TJbNzKzHtzbwVmY4HR9WqS5VV7dsBUKQmPNr192jHr/VpBluj/hg==
 
 abab@^1.0.4:
   version "1.0.4"
@@ -4047,10 +4054,10 @@ realpath-native@^1.0.0:
   dependencies:
     util.promisify "^1.0.0"
 
-redux-observable@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/redux-observable/-/redux-observable-1.0.0.tgz#780ff2455493eedcef806616fe286b454fd15d91"
-  integrity sha512-6bXnpqWTBeLaLQjXHyN1giXq4nLxCmv+SUkdmiwBgvmVxvDbdmydvL1Z7DGo0WItyzI/kqXQKiucUuTxnrPRkA==
+redux-observable@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/redux-observable/-/redux-observable-1.2.0.tgz#ff51b6c6be2598e9b5e89fc36639186bb0e669c7"
+  integrity sha512-yeR90RP2WzZzCxxnQPlh2uFzyfFLsfXu8ROh53jGDPXVqj71uNDMmvi/YKQkd9ofiVoO4OYb1snbowO49tCEMg==
 
 redux@^4.0.0:
   version "4.0.4"

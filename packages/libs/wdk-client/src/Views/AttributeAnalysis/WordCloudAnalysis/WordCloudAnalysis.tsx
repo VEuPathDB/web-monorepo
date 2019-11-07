@@ -1,4 +1,3 @@
-import { memoize } from 'lodash';
 import React from 'react';
 
 import NumberRangeSelector from 'wdk-client/Components/InputControls/NumberRangeSelector';
@@ -13,21 +12,10 @@ import {
 
 import 'wdk-client/Views/AttributeAnalysis/WordCloudAnalysis/WordCloudAnalysis.scss';
 
-export interface Sort {
-  key: string;
-  direction: 'asc' | 'desc';
-}
-
 export interface Tag {
   word: string;
   count: number;
 };
-
-export interface RankRange {
-  min: number;
-  max: number;
-}
-
 
 const cx = makeClassNameHelper('WordCloudAnalysis');
 

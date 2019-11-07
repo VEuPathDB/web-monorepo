@@ -29,7 +29,7 @@ export type StoreModule<T> = {
 }
 
 type StoreModuleRecord<T extends Record<string, any>> = {
-  [K in keyof T]: StoreModule<T[K]>
+  [K in keyof T]: StoreModule<T>
 };
 
 type RootReducer<T> = Reducer<T, Action>;
@@ -67,10 +67,9 @@ export function createWdkStore<T>(
   return store;
 }
 
-function makeRootReducer<T extends Record<string, any>>(storeModules: StoreModuleRecord<T>): RootReducer<T[keyof T]> {
-  const reducers = mapValues<StoreModuleRecord<T>, SubReducer<T>>(m => m.reduce, storeModules);
+function makeRootReducer<T extends Record<string, any>>(storeModules: StoreModuleRecord<T>): RootReducer<T[string]['key']> {
+  const reducers = mapValues(m => m.reduce, storeModules);
   const keyedReducers = mapKeys(moduleKey => storeModules[moduleKey].key, reducers);
-
   return combineReducers(keyedReducers);
 }
 
