@@ -21,6 +21,110 @@ import './VEuPathDBHomePage.scss';
 
 const vpdbCx = makeClassNameHelper('vpdb-');
 
+type StateProps = {
+  searchTree?: CategoryTreeNode
+}
+
+type Props = StateProps;
+
+const GENE_ITEM_ID = 'category:transcript-record-classes-transcript-record-class';
+
+const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
+  const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
+  const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
+  const [ headerExpanded, setHeaderExpanded ] = useState(true);
+  const [ searchTerm, setSearchTerm ] = useState('');
+  const [ expandedBranches, setExpandedBranches ] = useState([ GENE_ITEM_ID ]);
+
+  const projectId = useProjectId();
+  const headerMenuItems = useHeaderMenuItems(props.searchTree, searchTerm, expandedBranches, setSearchTerm, setExpandedBranches);
+
+  const updateHeaderExpanded = useCallback(() => {
+    // FIXME - find a better way to update the header height - this resizing is "jerky" when 
+    // the scroll bar is left near the scroll threshold
+    setHeaderExpanded(document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', updateHeaderExpanded, { passive: true });
+    window.addEventListener('touch', updateHeaderExpanded, { passive: true });
+    window.addEventListener('wheel', updateHeaderExpanded, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', updateHeaderExpanded);
+      window.removeEventListener('touch', updateHeaderExpanded);
+      window.removeEventListener('wheel', updateHeaderExpanded);
+    };
+  }, [ updateHeaderExpanded ]);
+
+  const preloadedSuggestions = useMemo(
+    () => [
+      'protein',
+      'protein motifs',
+      'proteomics',
+      'protozoa',
+    ],
+    []
+  );
+
+  const loadSuggestions = useCallback((searchTerm: string) => {
+    if (searchTerm) {
+      setSiteSearchSuggestions(
+        [
+          searchTerm,
+          ...preloadedSuggestions
+        ].sort()
+      );
+    } else {
+      setSiteSearchSuggestions(undefined);
+    }
+  }, []);
+
+  const rootContainerClassName = combineClassNames(
+    vpdbCx('RootContainer', headerExpanded ? 'header-expanded' : 'header-collapsed'), 
+    projectId
+  );
+  const headerClassName = combineClassNames(
+    vpdbCx('Header', headerExpanded ? 'expanded' : 'collapsed'), 
+    vpdbCx('BgDark')
+  );
+  const searchPaneClassName = combineClassNames(vpdbCx('SearchPane'), vpdbCx('BgWash'));
+  const mainClassName = vpdbCx('Main');
+  const newsPaneClassName = vpdbCx('NewsPane');
+  const footerClassName = vpdbCx('Footer'); 
+
+  return (
+    <div className={rootContainerClassName}>
+      <ErrorBoundary>
+        <Header 
+          // FIXME: use project logos for component site branding 
+          branding={projectId}
+          menuItems={headerMenuItems} 
+          containerClassName={headerClassName} 
+          loadSuggestions={loadSuggestions}
+          siteSearchSuggestions={siteSearchSuggestions}
+          additionalSuggestions={additionalSuggestions}
+        />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <SearchPane 
+          containerClassName={searchPaneClassName} 
+          searchTree={props.searchTree}
+        />
+      </ErrorBoundary>
+      <Main containerClassName={mainClassName}>
+        {props.children}
+      </Main>
+      <ErrorBoundary>
+        <NewsPane containerClassName={newsPaneClassName} />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <Footer containerClassName={footerClassName} />
+      </ErrorBoundary>
+    </div>
+  );
+}
+
 const PlasmoDB = 'PlasmoDB';
 const TriTrypDB = 'TriTrypDB';
 const CryptoDB = 'CryptoDB';
@@ -350,110 +454,6 @@ const filterMenuItemEntry = (
           )
         }
       ];
-
-type StateProps = {
-  searchTree?: CategoryTreeNode
-}
-
-type Props = StateProps;
-
-const GENE_ITEM_ID = 'category:transcript-record-classes-transcript-record-class';
-
-const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
-  const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
-  const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
-  const [ headerExpanded, setHeaderExpanded ] = useState(true);
-  const [ searchTerm, setSearchTerm ] = useState('');
-  const [ expandedBranches, setExpandedBranches ] = useState([ GENE_ITEM_ID ]);
-
-  const projectId = useProjectId();
-  const headerMenuItems = useHeaderMenuItems(props.searchTree, searchTerm, expandedBranches, setSearchTerm, setExpandedBranches);
-
-  const rootContainerClassName = combineClassNames(
-    vpdbCx('RootContainer', headerExpanded ? 'header-expanded' : 'header-collapsed'), 
-    projectId
-  );
-  const headerClassName = combineClassNames(
-    vpdbCx('Header', headerExpanded ? 'expanded' : 'collapsed'), 
-    vpdbCx('BgDark')
-  );
-  const searchPaneClassName = combineClassNames(vpdbCx('SearchPane'), vpdbCx('BgWash'));
-  const mainClassName = vpdbCx('Main');
-  const newsPaneClassName = vpdbCx('NewsPane');
-  const footerClassName = vpdbCx('Footer');
-
-  const updateHeaderExpanded = useCallback(() => {
-    // FIXME - find a better way to update the header height - this resizing is "jerky" when 
-    // the scroll bar is left near the scroll threshold
-    setHeaderExpanded(document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('scroll', updateHeaderExpanded, { passive: true });
-    window.addEventListener('touch', updateHeaderExpanded, { passive: true });
-    window.addEventListener('wheel', updateHeaderExpanded, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', updateHeaderExpanded);
-      window.removeEventListener('touch', updateHeaderExpanded);
-      window.removeEventListener('wheel', updateHeaderExpanded);
-    };
-  }, [ updateHeaderExpanded ]);
-
-  const preloadedSuggestions = useMemo(
-    () => [
-      'protein',
-      'protein motifs',
-      'proteomics',
-      'protozoa',
-    ],
-    []
-  );
-
-  const loadSuggestions = useCallback((searchTerm: string) => {
-    if (searchTerm) {
-      setSiteSearchSuggestions(
-        [
-          searchTerm,
-          ...preloadedSuggestions
-        ].sort()
-      );
-    } else {
-      setSiteSearchSuggestions(undefined);
-    }
-  }, []);
-
-  return (
-    <div className={rootContainerClassName}>
-      <ErrorBoundary>
-        <Header 
-          // FIXME: use project logos for component site branding 
-          branding={projectId}
-          menuItems={headerMenuItems} 
-          containerClassName={headerClassName} 
-          loadSuggestions={loadSuggestions}
-          siteSearchSuggestions={siteSearchSuggestions}
-          additionalSuggestions={additionalSuggestions}
-        />
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <SearchPane 
-          containerClassName={searchPaneClassName} 
-          searchTree={props.searchTree}
-        />
-      </ErrorBoundary>
-      <Main containerClassName={mainClassName}>
-        {props.children}
-      </Main>
-      <ErrorBoundary>
-        <NewsPane containerClassName={newsPaneClassName} />
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <Footer containerClassName={footerClassName} />
-      </ErrorBoundary>
-    </div>
-  );
-}
 
 // FIXME: Use a hook instead of "connect" to provide the searchTree
 const mapStateToProps = (state: RootState) => ({
