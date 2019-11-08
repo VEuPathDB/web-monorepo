@@ -82,9 +82,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
 
   const loadSuggestions = useCallback((searchTerm: string) => {
-    // Suppress suggestions for now
-    if (false) {
-    // if (searchTerm) {
+    if (searchTerm) {
       setSiteSearchSuggestions(
         [
           searchTerm,
