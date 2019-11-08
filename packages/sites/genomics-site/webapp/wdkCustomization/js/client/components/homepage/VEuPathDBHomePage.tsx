@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
+import { Link } from 'wdk-client/Components';
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
@@ -19,11 +20,15 @@ import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 import { projectId } from '../../config';
 
 import './VEuPathDBHomePage.scss';
+import { Twitter, YouTube, Facebook } from 'ebrc-client/components/homepage/SocialMediaIcons';
 
 const vpdbCx = makeClassNameHelper('vpdb-');
 
 type StateProps = {
-  searchTree?: CategoryTreeNode
+  searchTree?: CategoryTreeNode,
+  twitterUrl?: string,
+  facebookUrl?: string,
+  youtubeUrl?: string
 }
 
 type Props = StateProps;
@@ -51,7 +56,16 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
 
   const projectId = useProjectId();
-  const headerMenuItems = useHeaderMenuItems(props.searchTree, searchTerm, expandedBranches, setSearchTerm, setExpandedBranches);
+  const headerMenuItems = useHeaderMenuItems(
+    props.searchTree, 
+    searchTerm, 
+    expandedBranches, 
+    setSearchTerm, 
+    setExpandedBranches,
+    props.twitterUrl,
+    props.facebookUrl,
+    props.youtubeUrl,
+  );
 
   const updateHeaderExpanded = useCallback(() => {
     // FIXME - find a better way to update the header height - this resizing is "jerky" when 
@@ -207,7 +221,10 @@ const useHeaderMenuItems = (
   searchTerm: string, 
   expandedBranches: string[],
   setSearchTerm: (newSearchTerm: string) => void,
-  setExpandedBranches: (newExpandedBranches: string[]) => void
+  setExpandedBranches: (newExpandedBranches: string[]) => void,
+  twitterUrl?: string,
+  facebookUrl?: string,
+  youtubeUrl?: string
 ): HeaderMenuItem[] => {
   const projectId = useProjectId();
 
@@ -441,6 +458,48 @@ const useHeaderMenuItems = (
       display: 'Community',
       type: 'subMenu',
       items: [
+        {
+          key: 'twitter',
+          display: (
+            <a 
+              className={vpdbCx('CommunitySocialMediaLink')} 
+              href={twitterUrl}
+              target="_blank"
+            >
+              <Twitter />
+              Follow us on Twitter!
+            </a>
+          ),
+          type: 'custom'
+        },
+        {
+          key: 'facebook',
+          display: (
+            <a 
+              className={vpdbCx('CommunitySocialMediaLink')} 
+              href={facebookUrl}
+              target="_blank"
+            >
+              <Facebook />
+              Follow us on Facebook!
+            </a>
+          ),
+          type: 'custom'
+        },
+        {
+          key: 'youtube',
+          display: (
+            <a 
+              className={vpdbCx('CommunitySocialMediaLink', 'wide')} 
+              href={youtubeUrl}
+              target="_blank"
+            >
+              <YouTube />
+              Follow us on YouTube!
+            </a>
+          ),
+          type: 'custom'
+        },
         {
           key: 'comments',
           display: `Genes with comments from the ${projectId} community`,
@@ -737,10 +796,13 @@ const filterMenuItemEntry = (
         }
       ];
 
-// FIXME: Use a hook instead of "connect" to provide the searchTree
+// FIXME: Use a hook instead of "connect" to provide the global data
 const mapStateToProps = (state: RootState) => ({
   // FIXME: This is not typesafe.
-  searchTree: get(state.globalData, 'searchTree') as CategoryTreeNode
+  searchTree: get(state.globalData, 'searchTree') as CategoryTreeNode,
+  twitterUrl: state.globalData.siteConfig && state.globalData.siteConfig.twitterUrl,
+  facebookUrl: state.globalData.siteConfig && state.globalData.siteConfig.facebookUrl,
+  youtubeUrl: state.globalData.siteConfig && state.globalData.siteConfig.youtubeUrl,
 });
 
 export const VEuPathDBHomePage = connect(mapStateToProps)(VEuPathDBHomePageView);

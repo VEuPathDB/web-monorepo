@@ -63,6 +63,21 @@ body.vpdb-Body {
           }
         }
       }
+
+      .vpdb-CommunitySocialMediaLink {
+        display: flex;
+        align-items: center;
+
+        i, svg {
+          margin-right: 0.5em;
+        }
+
+        &__wide {
+          i, svg {
+            margin-right: 0.325rem;
+          }
+        }
+      }
     }
     
     .vpdb-SearchPane {
