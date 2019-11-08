@@ -1,12 +1,13 @@
 import React, { FunctionComponent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { get } from 'lodash';
+import { get, memoize } from 'lodash';
 
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { arrayOf, decode, string } from 'wdk-client/Utils/Json';
 
 import { Footer } from 'ebrc-client/components/homepage/Footer';
 import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
@@ -28,13 +29,26 @@ type StateProps = {
 type Props = StateProps;
 
 const GENE_ITEM_ID = 'category:transcript-record-classes-transcript-record-class';
+const SEARCH_TERM_SESSION_KEY = 'homepage-header-search-term';
+const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
 
 const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
   const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
   const [ headerExpanded, setHeaderExpanded ] = useState(true);
-  const [ searchTerm, setSearchTerm ] = useState('');
-  const [ expandedBranches, setExpandedBranches ] = useState([ GENE_ITEM_ID ]);
+  const [ searchTerm, setSearchTerm ] = useSessionBackedState(
+    '', 
+    SEARCH_TERM_SESSION_KEY, 
+    encodeSearchTerm, 
+    parseSearchTerm
+  );
+
+  const [ expandedBranches, setExpandedBranches ] = useSessionBackedState(
+    [ GENE_ITEM_ID ], 
+    EXPANDED_BRANCHES_SESSION_KEY, 
+    encodeExpandedBranches, 
+    parseExpandedBranches
+  );
 
   const projectId = useProjectId();
   const headerMenuItems = useHeaderMenuItems(props.searchTree, searchTerm, expandedBranches, setSearchTerm, setExpandedBranches);
@@ -68,7 +82,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
 
   const loadSuggestions = useCallback((searchTerm: string) => {
-      // Suppress suggestions for now
+    // Suppress suggestions for now
     if (false) {
     // if (searchTerm) {
       setSiteSearchSuggestions(
@@ -126,6 +140,52 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     </div>
   );
 }
+
+type Encoder<T> = (t: T) => string;
+type Parser<T> = (s: string) => T;
+
+const encodeSearchTerm = (s: string) => s;
+const parseSearchTerm = encodeSearchTerm;
+
+const encodeExpandedBranches = JSON.stringify;
+const parseExpandedBranches = memoize((s: string) => decode(
+  arrayOf(string),
+  s
+));
+
+function useSessionBackedState<T>(
+  defaultValue: T,
+  key: string,
+  encode: Encoder<T>,
+  parse: Parser<T>,
+): [ T, (newState: T) => void ] {
+  let initialValue = defaultValue;
+
+  try {
+    const storedStringValue = window.sessionStorage.getItem(key);
+
+    if (storedStringValue !== null) {
+      initialValue = parse(storedStringValue);
+    }
+  } catch (e) {
+    console.warn(
+      `Failed attempt to retrieve state value at session key ${key}: ${e}; falling back to component state`
+    );
+  }
+
+  const [ state, setState ] = useState(initialValue);
+
+  const setSessionBackedState = useCallback((newValue: T) => {
+    try {
+      window.sessionStorage.setItem(key, encode(newValue));
+    } catch {
+      console.warn(`Failed attempt to persist state value ${newValue} at session key ${key}; falling back to component state`);
+    }
+    setState(newValue);
+  }, [ encode ]);
+
+  return [ state, setSessionBackedState ];
+};
 
 const PlasmoDB = 'PlasmoDB';
 const TriTrypDB = 'TriTrypDB';
