@@ -153,6 +153,7 @@ export function optional<T>(decoder: Decoder<T>) {
 }
 
 // Combine multiple decoders such that all must return Ok
+export function combine<T>(decoder1: Decoder<T>): Decoder<T>;
 export function combine<T, S>(decoder1: Decoder<T>, decoder2: Decoder<S>): Decoder<T & S>;
 export function combine<T, S, R>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>): Decoder<T & S & R>;
 export function combine<T, S, R, Q>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>): Decoder<T & S & R & Q>;
