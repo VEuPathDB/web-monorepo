@@ -172,11 +172,6 @@ export const requestReplaceStep = makeActionCreator(
     (strategyId: number, stepId: number, newStepSpec: NewStepSpec) => ({ strategyId, stepId, newStepSpec })
 );
 
-export const redirectToNewSearch = makeActionCreator(
-    'redirectToNewSearch',
-    (newStrategyId: number, newStepId: number) => ({ newStrategyId, newStepId })
-);
-
 export const requestCombineWithBasket = makeActionCreator(
     'requestCombineWithBasket',
     (
@@ -236,7 +231,6 @@ export type Action = InferAction<
   | typeof requestReplaceStep
   | typeof requestDeleteStep
   | typeof fulfillDeleteStep
-  | typeof redirectToNewSearch
   | typeof requestCombineWithBasket
   >
 

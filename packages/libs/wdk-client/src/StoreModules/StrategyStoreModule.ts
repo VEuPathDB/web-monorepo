@@ -28,7 +28,6 @@ import {
   requestUpdateStepProperties,
   requestDeleteStep,
   requestUpdateStepSearchConfig,
-  redirectToNewSearch,
   fulfillDeleteStep,
   requestRemoveStepFromStepTree,
   fulfillPatchStrategyProperties,
@@ -468,24 +467,6 @@ async function getFulfillCreateStep(
   return fulfillCreateStep(identifier.id, requestTimestamp);
 }
 
-// XXX This should probably go in the QuestionStoreModule
-async function getFulfillNewSearch(
-  [requestStrategyAction, fulfillCreateStrategyAction]: [InferAction<typeof requestCreateStrategy>, InferAction<typeof fulfillCreateStrategy>],
-  state$: StateObservable<RootState>,
-  { transitioner }: EpicDependencies
-): Promise<InferAction<typeof redirectToNewSearch>> {
-  const newStrategyId = fulfillCreateStrategyAction.payload.strategyId;
-  const newStepId = requestStrategyAction.payload.newStrategySpec.stepTree.stepId;
-
-  setTimeout(() => {
-    transitioner.transitionToInternalPage(
-      `/workspace/strategies/${newStrategyId}/${newStepId}`
-    )
-  }, 0);
-
-  return redirectToNewSearch(newStrategyId, newStepId);
-}
-
 async function getFulfillCombineWithBasket(
   [requestCombineWithBasketAction]: [InferAction<typeof requestCombineWithBasket>],
   state$: StateObservable<RootState>,
@@ -578,6 +559,5 @@ async function getFulfillCombineWithBasket(
     mrate([requestDeleteStrategy], getFulfillStrategyDelete),
     mrate([requestDuplicateStrategy], getFulfillDuplicateStrategy),
     mrate([requestCreateStep], getFulfillCreateStep),
-    mrate([requestCreateStrategy, fulfillCreateStrategy], getFulfillNewSearch),
     mrate([requestCombineWithBasket], getFulfillCombineWithBasket)
   );

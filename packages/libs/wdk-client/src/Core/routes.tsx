@@ -43,21 +43,38 @@ const routes: RouteEntry[] = [
 
   {
     path: '/search/:recordClass/:question',
-    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => <Plugin
-      context={{
-        type: 'questionController',
-        recordClassName: props.match.params.recordClass,
-        searchName: props.match.params.question
-      }}
-      pluginProps={{
-        ...props.match.params,
-        hash: props.location.hash.slice(1),
-        submissionMetadata: {
-          type: 'create-strategy'
-        },
-        shouldChangeDocumentTitle: true
-      }}
-    />
+    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => {
+      // Parse querystring. Two types of query params are supported: autoRun
+      // and param data:
+      // - autoRun: boolean (interpretted as true if present without a value, or with 'true' or '1')
+      // - param data: Prefix with "param.". E.g., "param.organism=Plasmodium+falciparum+3D7", or "param.ds_gene_ids.idList=PF3D7_1133400,PF3D7_1133401"
+      const { autoRun, ...restQueryParams } = parseQueryString(props);
+      const initialParamValuesEntries = Object.entries(restQueryParams)
+        .filter(([ key ]) => key.startsWith('param.'))
+        .map(([key, value]) => [key.replace(/^param\./, ''), value]);
+      const initialParamData = initialParamValuesEntries.length > 0
+        ? Object.fromEntries(initialParamValuesEntries)
+        : undefined;
+      return (
+        <Plugin
+          context={{
+            type: 'questionController',
+            recordClassName: props.match.params.recordClass,
+            searchName: props.match.params.question
+          }}
+          pluginProps={{
+            ...props.match.params,
+            hash: props.location.hash.slice(1),
+            submissionMetadata: {
+              type: 'create-strategy'
+            },
+            shouldChangeDocumentTitle: true,
+            initialParamData,
+            autoRun: autoRun === '' || autoRun === 'true' || autoRun === '1'
+          }}
+        />
+      );
+    }
   },
 
   {

@@ -29,7 +29,8 @@ import {
   questionNotFound,
   questionError,
   ENABLE_SUBMISSION,
-  reportSubmissionError
+  reportSubmissionError,
+  submitQuestion
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -50,9 +51,11 @@ import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 import { Action } from 'wdk-client/Actions';
 import WdkService from 'wdk-client/Service/WdkService';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction, fulfillCreateStep } from 'wdk-client/Actions/StrategyActions';
+import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction, fulfillCreateStep, fulfillCreateStrategy } from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
 import {Step} from 'wdk-client/Utils/WdkUser';
+import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
+import { InferAction, mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
 
 export const key = 'question';
 
@@ -137,7 +140,6 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
     case UPDATE_ACTIVE_QUESTION:
       return {
         ...state,
-        paramValues: action.payload.paramValues || {},
         stepId: action.payload.stepId,
         questionStatus: 'loading',
         submitting: false,
@@ -338,9 +340,9 @@ function normalizeQuestion(question: QuestionWithParameters) {
 type QuestionEpic = ModuleEpic<RootState>;
 
 const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
-  ofType<UpdateActiveQuestionAction>(UPDATE_ACTIVE_QUESTION),
+  filter((action): action is UpdateActiveQuestionAction => action.type === UPDATE_ACTIVE_QUESTION),
   mergeMap(action =>
-    from(loadQuestion(wdkService, action.payload.searchName, action.payload.stepId)).pipe(
+    from(loadQuestion(wdkService, action.payload.searchName, action.payload.stepId, action.payload.initialParamData)).pipe(
     takeUntil(action$.pipe(filter(killAction => (
       killAction.type === UNLOAD_QUESTION &&
       killAction.payload.searchName === action.payload.searchName
@@ -350,9 +352,9 @@ const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => a
 
 const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
   ofType<QuestionLoadedAction>(QUESTION_LOADED),
-  mergeMap(({ payload: { question, searchName, paramValues }}: QuestionLoadedAction) =>
+  mergeMap(({ payload: { question, searchName, paramValues, initialParamData }}: QuestionLoadedAction) =>
     from(question.parameters.map(parameter =>
-      initParam({ parameter, paramValues, searchName }))))
+      initParam({ parameter, paramValues, searchName, initialParamData }))))
 );
 
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
@@ -498,31 +500,53 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
   })
 )
 
+// XXX This should probably go in the QuestionStoreModule
+async function goToStrategyPage(
+  [
+    submitQuestionAction,
+    requestStrategyAction,
+    fulfillCreateStrategyAction
+  ]: [
+    InferAction<typeof submitQuestion>,
+    InferAction<typeof requestCreateStrategy>,
+    InferAction<typeof fulfillCreateStrategy>
+  ]
+): Promise<InferAction<typeof transitionToInternalPage>> {
+  const newStrategyId = fulfillCreateStrategyAction.payload.strategyId;
+  const newStepId = requestStrategyAction.payload.newStrategySpec.stepTree.stepId;
+  return transitionToInternalPage(
+    `/workspace/strategies/${newStrategyId}/${newStepId}`,
+    { replace: submitQuestionAction.payload.autoRun }
+  );
+}
+
 export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,
   observeLoadQuestionSuccess,
   observeUpdateDependentParams,
-  observeQuestionSubmit
+  observeQuestionSubmit,
+  mrate([submitQuestion, requestCreateStrategy, fulfillCreateStrategy], goToStrategyPage)
 );
 
 // Helpers
 // -------
 
-async function loadQuestion(wdkService: WdkService, searchName: string, stepId?: number) {
+async function loadQuestion(wdkService: WdkService, searchName: string, stepId?: number, initialParamData?: Record<string, string>) {
   const step = stepId ? await wdkService.findStep(stepId) : undefined;
   const question = step == null
     ? await wdkService.getQuestionAndParameters(searchName)
     : await wdkService.getQuestionGivenParameters(searchName, step.searchConfig.parameters);
   const recordClass = await wdkService.findRecordClass(rc => rc.urlSegment == question.outputRecordClassName);
-  const paramValues = step == null
-    ? makeDefaultParamValues(question.parameters)
-    : integrateStepAndDefaultParamValues(question.parameters, step)
+  const paramValues = step != null ? integrateStepAndDefaultParamValues(question.parameters, step)
+                    : initialParamData != null ? extractRealParamValues(question.parameters, initialParamData)
+                    : makeDefaultParamValues(question.parameters)
   const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
   return questionLoaded({
     searchName,
     question,
     recordClass,
     paramValues,
+    initialParamData: initialParamData,
     wdkWeight,
     stepValidation: step && step.validation
   })
@@ -545,6 +569,12 @@ function makeDefaultParamValues(parameters: Parameter[]): ParameterValues {
         }
     );
   }, {} as ParameterValues);
+}
+
+function extractRealParamValues(parameters: Parameter[], initialParamData: Record<string, string>): ParameterValues {
+  const realEntries = parameters.map(parameter =>
+    [ parameter.name, initialParamData[parameter.name] || '' ]);
+  return Object.fromEntries(realEntries);
 }
 
 function integrateStepAndDefaultParamValues(parameters: Parameter[], step: Step): ParameterValues {

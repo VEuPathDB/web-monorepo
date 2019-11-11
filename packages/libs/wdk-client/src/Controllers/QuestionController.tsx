@@ -10,7 +10,8 @@ import {
   updateActiveQuestion,
   updateParamValue,
   changeGroupVisibility,
-  SubmissionMetadata
+  SubmissionMetadata,
+  submitQuestion
 } from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import Error from 'wdk-client/Components/PageStatus/Error';
@@ -30,7 +31,26 @@ type OwnProps = {
   FormComponent?: (props: FormProps) => JSX.Element, 
   submissionMetadata: SubmissionMetadata,
   submitButtonText?: string,
-  shouldChangeDocumentTitle?: boolean
+  shouldChangeDocumentTitle?: boolean,
+  /**
+   * Data to provide to parameters upon initialization. Data can be parameter
+   * values, or it can be other content that the parameter can access and use
+   * for initializing ui state.
+   * 
+   * If a property's key is the same as a parameter name, then its value will
+   * be used as that parameter's initial value.
+   * 
+   * The entire object is also made available in the payload of the initParam
+   * action, so that a param can interrogate the object for other special
+   * keys.
+   */
+  initialParamData?: Record<string, string>,
+  /**
+   * If true, the form will be submitted automatically, and the browser will be
+   * directed to the new strategy. Any errors will appear above the search form
+   * and the user will be able to correct the errors.
+   */
+  autoRun?: boolean
 };
 type StateProps = QuestionState & { recordClasses: GlobalData['recordClasses'] };
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
@@ -40,7 +60,9 @@ type Props = DispatchProps & StateProps & {
   FormComponent?: FunctionComponent<FormProps>,
   submissionMetadata: SubmissionMetadata,
   submitButtonText?: string,
-  shouldChangeDocumentTitle?: boolean
+  shouldChangeDocumentTitle?: boolean,
+  initialParamData?: Record<string, string>,
+  autoRun: boolean;
 };
 
 function QuestionController(props: Props) {
@@ -54,6 +76,8 @@ function QuestionController(props: Props) {
     submitButtonText, 
     recordClasses,
     shouldChangeDocumentTitle, 
+    initialParamData,
+    autoRun,
     ...state } = props;
   const stepId = submissionMetadata.type === 'edit-step' || submissionMetadata.type === 'submit-custom-form' ? submissionMetadata.stepId : undefined;
 
@@ -80,9 +104,20 @@ function QuestionController(props: Props) {
   useEffect(() => {
     props.dispatch(updateActiveQuestion({
       searchName,
+      initialParamData: autoRun && initialParamData == null ? {} : initialParamData,
       stepId
     }))
   }, [searchName, stepId]);
+
+  useEffect(() => {
+    if (autoRun && state.questionStatus === 'complete') {
+      props.dispatch(submitQuestion({
+        searchName,
+        submissionMetadata,
+        autoRun
+      }));
+    }
+  }, [state.questionStatus]);
 
   useSetSearchDocumentTitle(state.question, state.questionStatus, recordClasses, recordClass, shouldChangeDocumentTitle);
   
@@ -92,6 +127,14 @@ function QuestionController(props: Props) {
     state.questionStatus === 'not-found'
   ) return <NotFound/>;
   if (recordClass === undefined || state.questionStatus === 'loading') return <Loading/>;
+
+  if ( autoRun && state.submitting ) return (
+    <React.Fragment>
+      <h1>Searching {recordClass.displayNamePlural}...</h1>
+      <Loading/>
+    </React.Fragment>
+  );
+
   if (state.questionStatus !== 'complete') return null;
 
   const parameterElements = mapValues(
@@ -190,7 +233,9 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
     FormComponent: ownProps.FormComponent,
     submissionMetadata: ownProps.submissionMetadata,
     submitButtonText: ownProps.submitButtonText,
-    shouldChangeDocumentTitle: ownProps.shouldChangeDocumentTitle
+    shouldChangeDocumentTitle: ownProps.shouldChangeDocumentTitle,
+    initialParamData: ownProps.initialParamData,
+    autoRun: ownProps.autoRun === true
   })
 )
 

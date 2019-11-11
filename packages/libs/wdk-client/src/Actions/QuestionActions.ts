@@ -10,6 +10,7 @@ import { AddType } from 'wdk-client/Views/Strategy/Types';
 import { alert } from 'wdk-client/Utils/Platform';
 import { NewStepSpec, Step } from 'wdk-client/Utils/WdkUser';
 import { WdkService } from 'wdk-client/Core';
+import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
 
 
 export type Action =
@@ -42,14 +43,14 @@ export const UPDATE_ACTIVE_QUESTION = 'question/update-active-question';
 export interface UpdateActiveQuestionAction {
   type: typeof UPDATE_ACTIVE_QUESTION;
   payload: QuestionPayload<{
-    paramValues?: ParameterValues;
+    initialParamData?: Record<string, string>;
     stepId: number | undefined
   }>
 }
 
 export function updateActiveQuestion(payload: {
   searchName: string;
-  paramValues?: ParameterValues,
+  initialParamData?: Record<string, string>,
   stepId: number | undefined
 }): UpdateActiveQuestionAction {
   return {
@@ -68,6 +69,7 @@ export interface QuestionLoadedAction {
     question: QuestionWithParameters;
     recordClass: RecordClass;
     paramValues: ParameterValues;
+    initialParamData?: Record<string, string>;
     wdkWeight?: number;
     stepValidation?: Step['validation'];
   }>
@@ -203,15 +205,19 @@ export type SubmissionMetadata = NewStrategy | AddBinaryStep | AddUnaryStep | Su
 
 export interface SubmitQuestionAction {
   type: typeof SUBMIT_QUESTION;
-  payload: QuestionPayload<{ submissionMetadata: SubmissionMetadata }>;
+  payload: QuestionPayload<{
+    submissionMetadata: SubmissionMetadata;
+    autoRun?: boolean;
+  }>;
 }
 
-export function submitQuestion(payload: SubmitQuestionAction['payload']): SubmitQuestionAction {
-  return {
-    type: SUBMIT_QUESTION,
-    payload
-  };
-}
+export const submitQuestion = makeActionCreator(
+  SUBMIT_QUESTION,
+  (payload: QuestionPayload<{
+    submissionMetadata: SubmissionMetadata,
+    autoRun?: boolean
+  }>) => payload
+)
 
 //==============================================================================
 
@@ -279,6 +285,7 @@ export interface InitParamAction {
   payload: QuestionPayload<{
     parameter: Parameter;
     paramValues: ParameterValues;
+    initialParamData?: Record<string, string>;
   }>;
 }
 

@@ -73,6 +73,17 @@ const getInitialParser = (parameter: DatasetParam) =>
 
 function reduce(state: State = defaultState, action: Action): State {
   switch(action.type) {
+    case INIT_PARAM: {
+      const { parameter, initialParamData } = action.payload;
+      const initialListName = parameter.name + '.idList';
+      return {
+        ...state,
+        sourceType: 'idList',
+        idList: initialParamData
+          ? initialParamData[initialListName]
+          : (parameter as DatasetParam).defaultIdList
+      }
+    }
     case SET_SOURCE_TYPE:
       return { ...state, sourceType: action.payload.sourceType };
     case SET_ID_LIST:
@@ -100,11 +111,7 @@ function reduce(state: State = defaultState, action: Action): State {
 }
 
 const getIdList = (uiState: State, parameter: DatasetParam) =>
-    uiState.loadingIdList
-      ? ''
-      : uiState.idList == null
-      ? parameter.defaultIdList
-      : uiState.idList
+    uiState.idList
 
 const getParser = (uiState: State, parameter: DatasetParam) =>
   uiState.fileParser == null
