@@ -3,11 +3,9 @@ import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
-import { Link } from 'wdk-client/Components';
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { arrayOf, decode, string } from 'wdk-client/Utils/Json';
 
 import { Footer } from 'ebrc-client/components/homepage/Footer';
@@ -15,14 +13,16 @@ import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
 import { Main } from 'ebrc-client/components/homepage/Main';
 import { NewsPane } from 'ebrc-client/components/homepage/NewsPane';
 import { SearchPane, SearchCheckboxTree } from 'ebrc-client/components/homepage/SearchPane';
+import { Twitter, YouTube, Facebook } from 'ebrc-client/components/homepage/SocialMediaIcons';
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
+
+import { makeVpdbClassNameHelper } from './Utils';
 
 import { projectId } from '../../config';
 
 import './VEuPathDBHomePage.scss';
-import { Twitter, YouTube, Facebook } from 'ebrc-client/components/homepage/SocialMediaIcons';
 
-const vpdbCx = makeClassNameHelper('vpdb-');
+const vpdbCx = makeVpdbClassNameHelper('');
 
 type StateProps = {
   searchTree?: CategoryTreeNode,
