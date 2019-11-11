@@ -168,7 +168,7 @@ export const AddStepPanelView = wrappable((
 
   return (
     <StrategyModal 
-      title="Add a Step to your Strategy" 
+      title="Extend your strategy by adding a step"
       onGoBack={(
         selectedOperation && 
         (addType.pageHistory === undefined || pageHistory.length > addType.pageHistory.length)
@@ -198,15 +198,6 @@ export const AddStepPanelView = wrappable((
                     ? (
                       <div className={cx('--MenusContainer')}>
                         <div className={cx('--MenusHeader')}>
-                            So far, your search strategy has {stepsCompletedNumber} {stepsCompletedNumber === 1 ? 'step' : 'steps'}
-                            {' '}
-                            and finds {operandStep.estimatedSize === undefined ? '?' : operandStep.estimatedSize.toLocaleString()} {
-                              operandStep.estimatedSize === 1
-                                ? inputRecordClass.displayName
-                                : inputRecordClass.displayNamePlural
-                              }.
-                            <br />
-                            Gain data mining power by adding a step to your strategy.  You can...
                         </div>
                         <div className={cx('--MenuItemsContainer')}>
                           {
