@@ -6,7 +6,7 @@ import * as Decode from 'wdk-client/Utils/Json';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise } from 'wdk-client/Utils/PromiseUtils';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
-import {   Question, RecordClass,} from 'wdk-client/Utils/WdkModel';
+import { Question, RecordClass,} from 'wdk-client/Utils/WdkModel';
 import { keyBy } from 'lodash';
 import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
 
