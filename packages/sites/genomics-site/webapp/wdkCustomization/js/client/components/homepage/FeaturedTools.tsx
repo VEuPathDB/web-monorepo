@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-import { Loading } from 'wdk-client/Components';
-
-import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
+import { Loading, IconAlt } from 'wdk-client/Components';
 
 import { MOCK_FEATURED_TOOLS_METADATA } from './FeaturedToolsMockConfig';
 import { makeVpdbClassNameHelper } from './Utils';
+
+import './FeaturedTools.scss';
 
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 
@@ -20,10 +20,8 @@ export type FeaturedToolMetadata = {
   toolEntries: Record<string, FeaturedToolEntry>;
 };
 
-function useFeaturedToolEntries() {
-  const [featuredToolMetadata, setFeaturedToolMetadata] = useState<
-    FeaturedToolMetadata | undefined
-  >(undefined);
+function useFeaturedToolMetadata() {
+  const [ featuredToolMetadata, setFeaturedToolMetadata ] = useState<FeaturedToolMetadata | undefined>(undefined);
 
   useEffect(() => {
     // FIXME: Replace this with "real" logic
@@ -36,32 +34,34 @@ function useFeaturedToolEntries() {
   return featuredToolMetadata;
 }
 
-export const FeaturedToolsContainer = () => {
-  const toolMetadata = useFeaturedToolEntries();
+export const FeaturedTools = () => {
+  const toolMetadata = useFeaturedToolMetadata();
   const [ selectedTool, setSelectedTool ] = useState<string | undefined>();
+  const selectedToolDescription = !toolMetadata || !selectedTool || !toolMetadata.toolEntries[selectedTool]
+    ? '...'
+    : toolMetadata.toolEntries[selectedTool].description;
 
   return (
     <div className={cx()}>
-      {
-        !toolMetadata 
-          ? <Loading />
-          : <FeaturedToolList
-              toolMetadata={toolMetadata}
-              setSelectedTool={setSelectedTool}
-              selectedTool={selectedTool}
-            />
-      }
-      <SelectedTool>
+      <h3>Featured Resources and Tools</h3>
+      <div className={cx('List')}> 
         {
-          (
-            !toolMetadata ||
-            !selectedTool ||
-            !toolMetadata.toolEntries[selectedTool]
-          )
-            ? null
-            : toolMetadata.toolEntries[selectedTool].description
+          !toolMetadata 
+            ? <Loading />
+            : (
+              <>          
+                <FeaturedToolList
+                  toolMetadata={toolMetadata}
+                  setSelectedTool={setSelectedTool}
+                  selectedTool={selectedTool}
+                />
+                <SelectedTool
+                  description={selectedToolDescription}
+                />
+              </>
+            )
         }
-      </SelectedTool>
+      </div>
     </div>
   );
 }
@@ -76,8 +76,8 @@ const FeaturedToolList = ({
   toolMetadata: { toolEntries, toolListOrder },
   selectedTool,
   setSelectedTool
-}: FeaturedToolListProps) => (
-  <div className={cx('List')}>
+}: FeaturedToolListProps) => 
+  <div className={cx('ListItems')}>
     {toolListOrder
       .filter(toolKey => toolEntries[toolKey])
       .map(toolKey => (
@@ -90,8 +90,7 @@ const FeaturedToolList = ({
           }}
         />
       ))}
-  </div>
-);
+  </div>;
 
 type ToolListItemProps = {
   entry: FeaturedToolEntry;
@@ -99,19 +98,31 @@ type ToolListItemProps = {
   onSelect: () => void;
 };
 
-const ToolListItem = ({ entry, onSelect, isSelected }: ToolListItemProps) => (
-  <div
-    className={
-      combineClassNames(
-        cx('ListItem', isSelected && 'selected'),
-        `fa fa-${entry.iconKey}`
-      )
-    }
-    onClick={onSelect}
+const ToolListItem = ({ entry, onSelect, isSelected }: ToolListItemProps) =>
+  <a
+    className={cx('ListItem', isSelected && 'selected')}
+    href="#"
+    onClick={e => {
+      e.preventDefault();
+      onSelect(); 
+    }}
+    type="button"
   >
+    <IconAlt fa={entry.iconKey} />
     {entry.title}
-  </div>
-);
+  </a>;
 
-const SelectedTool: React.FunctionComponent = props => 
-  <div className={cx('Selection')}>{props.children}</div>;
+type SelectedToolProps = {
+  description: string
+};
+
+const SelectedTool = ({
+  description
+}: SelectedToolProps) => 
+  <div 
+    className={cx('Selection')}
+    dangerouslySetInnerHTML={{
+      __html: description
+    }}
+  >
+  </div>;

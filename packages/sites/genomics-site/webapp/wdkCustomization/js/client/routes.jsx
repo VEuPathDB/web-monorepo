@@ -7,6 +7,8 @@ import QueryGridController from './components/controllers/QueryGridController';
 import SampleForm from './components/samples/SampleForm';
 import { projectId } from './config';
 
+import { FeaturedTools } from './components/homepage/FeaturedTools';
+
 // Project id is not needed for these record classes.
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence', 'sample' ];
@@ -90,11 +92,10 @@ export const wrapRoutes = ebrcRoutes => [
 
   {
     path: '/new-home-page',
-    component: () => (
-      <div>
-        The new homepage content will go here
-      </div>
-    )
+    component: () => 
+      <React.Fragment>
+        <FeaturedTools />
+      </React.Fragment>
   },
 
   ...ebrcRoutes.map(route => route.path.includes(':primaryKey+')
