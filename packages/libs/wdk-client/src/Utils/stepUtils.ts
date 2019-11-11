@@ -64,10 +64,11 @@ export function getSingleRecordStepBundlePromise(
     defaultSorting: [ ],
     dynamicAttributes: [ ],
     defaultSummaryView: '_default',
+    noSummaryOnSingleRecord: false,
     summaryViewPlugins: [ ],
     filters: [ ],
     isAnalyzable: false,
-    paramNames: [ "primaryKeys" ]
+    paramNames: [ "primaryKeys" ],
   };
 
   let step: Step = getStubbedStep(question, displayName, 1, {

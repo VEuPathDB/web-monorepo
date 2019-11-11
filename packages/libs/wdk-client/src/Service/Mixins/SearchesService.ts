@@ -233,6 +233,7 @@ const questionSharedDecoder =
     Decode.field('dynamicAttributes', Decode.arrayOf(attributeFieldDecoder)),
     Decode.combine(
       Decode.field('defaultSummaryView', Decode.string),
+      Decode.field('noSummaryOnSingleRecord', Decode.boolean),
       Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginFieldDecoder))
     ),
     Decode.field('filters', Decode.arrayOf(questionFilterDecoder)),

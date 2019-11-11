@@ -216,6 +216,7 @@ export interface Question extends UrlModelEntity {
   defaultSorting: AttributeSortingSpec[];
   dynamicAttributes: AttributeField[];
   defaultSummaryView: string;
+  noSummaryOnSingleRecord: boolean;
   summaryViewPlugins: SummaryViewPluginField[];
   filters: QuestionFilter[];
   allowedPrimaryInputRecordClassNames?: string[];

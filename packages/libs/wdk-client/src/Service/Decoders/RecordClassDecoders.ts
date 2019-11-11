@@ -89,10 +89,13 @@ export const questionDecoder: Decode.Decoder<Question> =
       Decode.field('defaultSorting', Decode.arrayOf(attributeSortingDecoder)),
       Decode.field('dynamicAttributes', Decode.arrayOf(attributeFieldDecoder)),
       Decode.field('defaultSummaryView', Decode.string),
+      Decode.field('noSummaryOnSingleRecord', Decode.boolean),
       Decode.field('summaryViewPlugins', Decode.arrayOf(summaryViewPluginDecoder)),
       Decode.field('filters', Decode.arrayOf(questionFilterDecoder)),
       Decode.field('allowedPrimaryInputRecordClassNames', Decode.optional(Decode.arrayOf(Decode.string))),
-      Decode.field('allowedSecondaryInputRecordClassNames', Decode.optional(Decode.arrayOf(Decode.string))),
+      Decode.field('allowedSecondaryInputRecordClassNames', Decode.optional(Decode.arrayOf(Decode.string)))
+    ),
+    Decode.combine(
       Decode.field('queryName', Decode.optional(Decode.string))
     )
   )
