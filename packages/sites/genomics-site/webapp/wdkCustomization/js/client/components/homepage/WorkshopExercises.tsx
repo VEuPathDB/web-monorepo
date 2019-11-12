@@ -48,7 +48,7 @@ export const WorkshopExercises = () => {
 
   return (
     <div className={cx()}>
-      <h2>Workshop Exercises</h2>
+      <h3>Workshop Exercises</h3>
       <a onClick={toggleExpansion} href="#">
         {
           isExpanded 

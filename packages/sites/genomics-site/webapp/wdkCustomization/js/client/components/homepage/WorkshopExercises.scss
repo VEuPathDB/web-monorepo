@@ -1,7 +1,11 @@
 .vpdb-WorkshopExercises {
+  h3 {
+    font-size: 1.75rem;
+  }
+
   .vpdb-ExerciseList {
     display: flex;
-    
+
     &__expanded {
       display: grid;
       grid-template-columns: repeat(auto-fill, 250px);
