@@ -16,6 +16,9 @@
 
     &Items {
       font-weight: bold;
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+
     }
 
     &Item {
@@ -43,6 +46,9 @@
   }
 
   &Selection {
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+
     border: 0.0625rem solid rgba(0, 0, 0, 0.125);
 
     &Header {
@@ -50,6 +56,10 @@
       color: white;
       padding: 0.75rem 1.25rem;
       margin: 0;
+    }
+
+    &Body {
+      padding: 1.25rem;
     }
   }
 }
