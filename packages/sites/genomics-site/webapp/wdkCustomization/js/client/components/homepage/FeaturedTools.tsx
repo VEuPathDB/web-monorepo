@@ -10,14 +10,15 @@ import './FeaturedTools.scss';
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 
 type FeaturedToolEntry = {
-  iconKey: string;
-  title: string;
-  description: string;
+  listIconKey: string,
+  listTitle: string,
+  descriptionTitle?: string,
+  descriptionBody: string
 };
 
 export type FeaturedToolMetadata = {
-  toolListOrder: string[];
-  toolEntries: Record<string, FeaturedToolEntry>;
+  toolListOrder: string[],
+  toolEntries: Record<string, FeaturedToolEntry>
 };
 
 function useFeaturedToolMetadata() {
@@ -37,9 +38,9 @@ function useFeaturedToolMetadata() {
 export const FeaturedTools = () => {
   const toolMetadata = useFeaturedToolMetadata();
   const [ selectedTool, setSelectedTool ] = useState<string | undefined>();
-  const selectedToolDescription = !toolMetadata || !selectedTool || !toolMetadata.toolEntries[selectedTool]
-    ? '...'
-    : toolMetadata.toolEntries[selectedTool].description;
+  const selectedToolEntry = !toolMetadata || !selectedTool || !toolMetadata.toolEntries[selectedTool]
+    ? undefined
+    : toolMetadata.toolEntries[selectedTool];
 
   return (
     <div className={cx()}>
@@ -56,7 +57,7 @@ export const FeaturedTools = () => {
                   selectedTool={selectedTool}
                 />
                 <SelectedTool
-                  description={selectedToolDescription}
+                  entry={selectedToolEntry}
                 />
               </>
             )
@@ -108,21 +109,26 @@ const ToolListItem = ({ entry, onSelect, isSelected }: ToolListItemProps) =>
     }}
     type="button"
   >
-    <IconAlt fa={entry.iconKey} />
-    {entry.title}
+    <IconAlt fa={entry.listIconKey} />
+    {entry.listTitle}
   </a>;
 
 type SelectedToolProps = {
-  description: string
+  entry?: FeaturedToolEntry
 };
 
-const SelectedTool = ({
-  description
-}: SelectedToolProps) => 
-  <div 
-    className={cx('Selection')}
-    dangerouslySetInnerHTML={{
-      __html: description
-    }}
-  >
+const SelectedTool = ({ entry }: SelectedToolProps) => 
+  <div className={cx('Selection')}>
+    {
+      entry && entry.descriptionTitle &&
+      <h5 className={cx('SelectionHeader')}>
+        {entry.descriptionTitle}
+      </h5>
+    }
+    <div
+      className={cx('SelectionBody')}
+      dangerouslySetInnerHTML={{
+        __html: entry ? entry.descriptionBody : '...'
+      }}
+    ></div>
   </div>;

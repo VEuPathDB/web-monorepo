@@ -4,27 +4,29 @@ const MOCK_FEATURED_TOOL_ORDER = [ "tour", "genome-browser", "tips" ];
 
 const MOCK_FEATURED_TOOL_ENTRIES = {
   tour: {
-    iconKey: "globe",
-    title: "Take a Tour",
-    description: `
+    listIconKey: "globe",
+    listTitle: "Take a Tour",
+    descriptionTitle: "Take a Tour of VEuPathDB",
+    descriptionBody: `
       <div>
         Place for the tour
       </div>
     `
   },
   "genome-browser": {
-    iconKey: "bar-chart",
-    title: "Genome Browser",
-    description: `
+    listIconKey: "bar-chart",
+    listTitle: "Genome Browser",
+    descriptionTitle: "Genome Browser",
+    descriptionBody: `
       <div>
         Place for the genome browser
       </div>
     `
   },
   tips: {
-    iconKey: "lightbulb-o",
-    title: "Featured Tip",
-    description: `
+    listIconKey: "lightbulb-o",
+    listTitle: "Featured Tip",
+    descriptionBody: `
       <div>
         Place to share little tips or vignettes
       </div>

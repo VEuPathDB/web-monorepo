@@ -6,6 +6,11 @@
     font-size: 1.75rem;
   }
 
+  h5 {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+
   &List {
     display: flex;
 
@@ -34,6 +39,17 @@
       i {
         margin-right: 0.25em;
       }
+    }
+  }
+
+  &Selection {
+    border: 0.0625rem solid rgba(0, 0, 0, 0.125);
+
+    &Header {
+      background-color: #00304c;
+      color: white;
+      padding: 0.75rem 1.25rem;
+      margin: 0;
     }
   }
 }
