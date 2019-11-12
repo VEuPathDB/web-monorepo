@@ -29,7 +29,7 @@
         text-decoration: none;
       }
 
-      &__selected, &__selected:active, &__selected:hover, &__selected:visited {
+      &__selected, &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
         border-left: 0.125rem solid #00304c;
         background-color: #e5eef7;
         outline: none;
