@@ -391,13 +391,18 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
       return Promise.resolve(getValueFromState(ctx, questionState, services)).then(value => [ parameter, value ] as [ Parameter, string ])
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
-    }).then((paramValues): Promise<StrategyAction> => {
+    }).then((paramValues): Promise<StrategyAction | InferAction<typeof transitionToInternalPage>> => {
       const { payload: { submissionMetadata } }: SubmitQuestionAction = action;
+      const { question } = questionState;
 
       // Parse the input string into a number
       const weight = Number.parseInt(questionState.weight || '');
-
       const customName = questionState.customName || questionState.question.shortDisplayName;
+      const searchName = question.urlSegment;
+      const searchConfig = {
+        parameters: paramValues,
+        wdkWeight: Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight
+      }
 
       if (submissionMetadata.type === 'edit-step') {
         return Promise.resolve(requestUpdateStepSearchConfig(
@@ -405,97 +410,115 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
           submissionMetadata.stepId,
           {
             ...submissionMetadata.previousSearchConfig,
-            parameters: paramValues,
-            wdkWeight: weight
+            ...searchConfig
           }
         ));
-      } else {
-        const newSearchStepSpec = {
-          searchName: questionState.question.urlSegment,
-          searchConfig: {
-            parameters: paramValues,
-            // FIXME Put 10 into a constant
-            wdkWeight: Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight
-          },
-          customName
-        };
+      }
 
-        if (submissionMetadata.type === 'submit-custom-form') {
-          submissionMetadata.onStepSubmitted(services.wdkService, newSearchStepSpec);
+      const newSearchStepSpec = {
+        searchName,
+        searchConfig,
+        customName
+      };
 
-          return Promise.resolve(fulfillCreateStep(-1, Date.now()));
+      if (submissionMetadata.type === 'submit-custom-form') {
+        submissionMetadata.onStepSubmitted(services.wdkService, newSearchStepSpec);
+        return Promise.resolve(fulfillCreateStep(-1, Date.now()));
+      }
+
+      if (submissionMetadata.type === 'create-strategy') {
+        // if noSummaryOnSingleRecord is true, do special logic
+        return Promise.resolve(questionState.question.noSummaryOnSingleRecord)
+          .then(noSummaryOnSingleRecord => {
+            if (noSummaryOnSingleRecord) {
+              const answerPromise = services.wdkService.getAnswerJson({
+                searchName: questionState.question.urlSegment,
+                searchConfig: { parameters: paramValues }
+              }, {
+                pagination: { offset: 0, numRecords: 1 }
+              });
+              return answerPromise.then(answer => {
+                if (answer.meta.totalCount === 1) {
+                  return answer.records[0];
+                }
+                return undefined;
+              });
+            }
+            return undefined;
+          })
+          .then(singleRecord => {
+            if (singleRecord != null) {
+              const { question } = questionState;
+              return transitionToInternalPage(`/record/${question.outputRecordClassName}/${singleRecord.id.map(p => p.value).join('/')}`);
+            }
+            return services.wdkService.createStep(newSearchStepSpec)
+              .then(
+                ({ id: newSearchStepId }) => requestCreateStrategy(
+                  {
+                    isSaved: false,
+                    isPublic: false,
+                    stepTree: {
+                      stepId: newSearchStepId
+                    },
+                    name: DEFAULT_STRATEGY_NAME
+                })
+              );
+          });
+      }
+
+      const strategyEntry = state$.value.strategies.strategies[submissionMetadata.strategyId];
+      const strategy = strategyEntry && strategyEntry.strategy;
+
+      if (!strategy) {
+        throw new Error(`Tried to update a nonexistent or unloaded strategy ${submissionMetadata.strategyId}`);
+      }
+
+      if (submissionMetadata.type === 'add-binary-step') {
+        const operatorQuestionState = state$.value[key].questions[submissionMetadata.operatorSearchName];
+
+        if (!operatorQuestionState || operatorQuestionState.questionStatus !== 'complete')  {
+          throw new Error(`Tried to create an operator step using a nonexistent or unloaded question ${submissionMetadata.operatorSearchName}`);
         }
+
+        const operatorParamValues = operatorQuestionState && operatorQuestionState.paramValues || {};
 
         const newSearchStep = services.wdkService.createStep(newSearchStepSpec);
+        const operatorStep = services.wdkService.createStep({
+          searchName: submissionMetadata.operatorSearchName,
+          searchConfig: {
+            parameters: operatorParamValues
+          },
+          customName: operatorQuestionState.question.shortDisplayName
+        });
 
-        if (submissionMetadata.type === 'create-strategy') {
-          return newSearchStep
-            .then(
-              ({ id: newSearchStepId }) => requestCreateStrategy(
+        return Promise.all([newSearchStep, operatorStep])
+          .then(
+            ([{ id: newSearchStepId }, { id: binaryOperatorStepId }]) => requestPutStrategyStepTree(
+              submissionMetadata.strategyId,
+              addStep(
+                strategy.stepTree,
+                submissionMetadata.addType,
+                binaryOperatorStepId,
                 {
-                  isSaved: false,
-                  isPublic: false,
-                  stepTree: {
-                    stepId: newSearchStepId
-                  },
-                  name: DEFAULT_STRATEGY_NAME
-              })
-            );
-        } else {
-          const strategyEntry = state$.value.strategies.strategies[submissionMetadata.strategyId];
-          const strategy = strategyEntry && strategyEntry.strategy;
-
-          if (!strategy) {
-            throw new Error(`Tried to update a nonexistent or unloaded strategy ${submissionMetadata.strategyId}`);
-          }
-
-          if (submissionMetadata.type === 'add-binary-step') {
-            const operatorQuestionState = state$.value[key].questions[submissionMetadata.operatorSearchName];
-
-            if (!operatorQuestionState || operatorQuestionState.questionStatus !== 'complete')  {
-              throw new Error(`Tried to create an operator step using a nonexistent or unloaded question ${submissionMetadata.operatorSearchName}`);
-            }
-
-            const operatorParamValues = operatorQuestionState && operatorQuestionState.paramValues || {};
-
-            const operatorStep = services.wdkService.createStep({
-              searchName: submissionMetadata.operatorSearchName,
-              searchConfig: {
-                parameters: operatorParamValues
-              },
-              customName: operatorQuestionState.question.shortDisplayName
-            });
-
-            return Promise.all([newSearchStep, operatorStep])
-              .then(
-                ([{ id: newSearchStepId }, { id: binaryOperatorStepId }]) => requestPutStrategyStepTree(
-                  submissionMetadata.strategyId,
-                  addStep(
-                    strategy.stepTree,
-                    submissionMetadata.addType,
-                    binaryOperatorStepId,
-                    {
-                      stepId: newSearchStepId
-                    }
-                  )
-                )
-              );
-          } else {
-            return newSearchStep
-              .then(
-                ({ id: unaryOperatorStepId }) => requestPutStrategyStepTree(
-                  submissionMetadata.strategyId,
-                  addStep(
-                    strategy.stepTree,
-                    submissionMetadata.addType,
-                    unaryOperatorStepId,
-                    undefined
-                  )
-                )
-              );
-          }
-        }
+                  stepId: newSearchStepId
+                }
+              )
+            )
+          );
       }
+
+      return services.wdkService.createStep(newSearchStepSpec)
+        .then(
+          ({ id: unaryOperatorStepId }) => requestPutStrategyStepTree(
+            submissionMetadata.strategyId,
+            addStep(
+              strategy.stepTree,
+              submissionMetadata.addType,
+              unaryOperatorStepId,
+              undefined
+            )
+          )
+        );
     }).catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
   })
 )
