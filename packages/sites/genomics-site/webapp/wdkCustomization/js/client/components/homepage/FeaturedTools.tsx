@@ -65,7 +65,7 @@ export const FeaturedTools = () => {
       </div>
     </div>
   );
-}
+};
 
 type FeaturedToolListProps = {
   toolMetadata: FeaturedToolMetadata;

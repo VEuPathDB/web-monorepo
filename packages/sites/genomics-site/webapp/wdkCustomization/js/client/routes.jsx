@@ -8,6 +8,7 @@ import SampleForm from './components/samples/SampleForm';
 import { projectId } from './config';
 
 import { FeaturedTools } from './components/homepage/FeaturedTools';
+import { WorkshopExercises } from './components/homepage/WorkshopExercises';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
@@ -95,6 +96,7 @@ export const wrapRoutes = ebrcRoutes => [
     component: () => 
       <React.Fragment>
         <FeaturedTools />
+        <WorkshopExercises />
       </React.Fragment>
   },
 
