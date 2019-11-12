@@ -195,8 +195,8 @@ export const observe = takeEpicInWindow(
       { areActionsNew: stubTrue }),
     srate([openStrategyView, fulfillImportStrategy], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
-    // srate([openStrategyView, fulfillStrategy], getRequestStrategiesList,
-    //   { areActionsNew: stubTrue }),
+    srate([openStrategyView, fulfillPutStrategy], getRequestStrategiesList,
+      { areActionsNew: stubTrue }),
     srate([openStrategyView, fulfillPatchStrategyProperties], getRequestStrategiesList,
       { areActionsNew: stubTrue }),
 
