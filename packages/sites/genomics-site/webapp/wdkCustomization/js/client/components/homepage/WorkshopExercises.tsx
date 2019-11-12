@@ -37,7 +37,9 @@ function useExerciseMetadata() {
 
 export const WorkshopExercises = () => {
   const exerciseMetadata = useExerciseMetadata();
-  const [ isExpanded, setIsExpanded ] = useState(false);
+  // FIXME: For implementor's convenience, the initial "isExpanded" value is "true"
+  // It should be set to "false" once styling is stabilized
+  const [ isExpanded, setIsExpanded ] = useState(true);
 
   const toggleExpansion = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
