@@ -1,6 +1,7 @@
 .vpdb-FeaturedTools {
   font-size: 1rem;
   color: #00304c;
+  padding: 0 .9375rem;
   
   h3 {
     font-size: 1.75rem;
@@ -11,6 +12,16 @@
     font-weight: 500;
   }
 
+  &Header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    a {
+      font-size: 0.9rem;
+    }
+  }
+
   &List {
     display: flex;
 
@@ -18,7 +29,6 @@
       font-weight: bold;
       flex: 0 0 33.333333%;
       max-width: 33.333333%;
-
     }
 
     &Item {

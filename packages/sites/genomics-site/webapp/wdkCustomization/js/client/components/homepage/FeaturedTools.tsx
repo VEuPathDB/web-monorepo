@@ -42,9 +42,22 @@ export const FeaturedTools = () => {
     ? undefined
     : toolMetadata.toolEntries[selectedTool];
 
+  useEffect(() => {
+    if (
+      toolMetadata && 
+      toolMetadata.toolListOrder.length > 0 && 
+      toolMetadata.toolEntries[toolMetadata.toolListOrder[0]]
+    ) {
+      setSelectedTool(toolMetadata.toolListOrder[0]);
+    }
+  }, [ toolMetadata ]);
+
   return (
     <div className={cx()}>
-      <h3>Featured Resources and Tools</h3>
+      <div className={cx('Header')}>
+        <h3>Featured Resources and Tools</h3>
+        <a href="">View all resources &amp; tools <IconAlt fa="angle-double-right" /></a>
+      </div>
       <div className={cx('List')}> 
         {
           !toolMetadata 
@@ -65,7 +78,7 @@ export const FeaturedTools = () => {
       </div>
     </div>
   );
-};
+}
 
 type FeaturedToolListProps = {
   toolMetadata: FeaturedToolMetadata;
