@@ -1,6 +1,4 @@
 .vpdb-WorkshopExercises {
-  padding: 0 .9375rem;
-
   h3 {
     font-size: 1.75rem;
   }
@@ -29,7 +27,7 @@
 
   .vpdb-ExerciseList {
     display: flex;
-    padding: .9375rem;
+    padding: 0.9375rem;
 
     &__expanded {
       display: grid;

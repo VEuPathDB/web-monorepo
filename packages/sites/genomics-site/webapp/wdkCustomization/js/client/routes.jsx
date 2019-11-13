@@ -95,7 +95,9 @@ export const wrapRoutes = ebrcRoutes => [
     path: '/new-home-page',
     component: () => 
       <React.Fragment>
+        <hr />
         <FeaturedTools />
+        <hr />
         <WorkshopExercises />
       </React.Fragment>
   },
