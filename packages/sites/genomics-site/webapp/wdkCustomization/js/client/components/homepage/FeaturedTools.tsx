@@ -58,24 +58,20 @@ export const FeaturedTools = () => {
         <h3>Featured Resources and Tools</h3>
         <a href="">View all resources &amp; tools <IconAlt fa="angle-double-right" /></a>
       </div>
-      <div className={cx('List')}> 
-        {
-          !toolMetadata 
-            ? <Loading />
-            : (
-              <>          
-                <FeaturedToolList
-                  toolMetadata={toolMetadata}
-                  setSelectedTool={setSelectedTool}
-                  selectedTool={selectedTool}
-                />
-                <SelectedTool
-                  entry={selectedToolEntry}
-                />
-              </>
-            )
-        }
-      </div>
+      {
+        !toolMetadata 
+          ? <Loading />
+          : <div className={cx('List')}>          
+              <FeaturedToolList
+                toolMetadata={toolMetadata}
+                setSelectedTool={setSelectedTool}
+                selectedTool={selectedTool}
+              />
+              <SelectedTool
+                entry={selectedToolEntry}
+              />
+            </div>
+      }
     </div>
   );
 }
