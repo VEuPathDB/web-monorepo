@@ -4,4 +4,65 @@
   &ProjectId {
     font-weight: bold;
   }
+
+  .VEuPathDB {
+    .vpdb-PageDescriptionHeader {
+      display: flex;
+      justify-content: space-between;
+      display: flex;
+      align-items: center;
+
+      &Primary {
+        display: flex;
+        align-items: center;
+
+        h4 {
+          font-size: 1.5rem;
+          color: #999;
+          padding-right: 0.5rem;
+        }
+      }
+
+      &Secondary {
+        a {
+          font-size: 0.9rem;
+          font-weight: bold;
+          color: #00304c;
+        }
+      }
+
+      &ProjectLinks {
+        display: flex;
+
+        a {
+          height: 1.5rem;
+          padding: 0 0.3rem;
+        }
+      }
+    }
+
+    .vpdb-PageDescriptionExpandedSummary {
+      &ProjectLinks {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+
+        &Item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 0.5rem 1rem;
+
+          a {
+            height: 2.8125rem;
+          }
+
+          &Description {
+            font-weight: bold;
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+  }
 }
