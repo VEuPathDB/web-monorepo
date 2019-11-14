@@ -110,6 +110,46 @@ body.vpdb-Body {
     &__header-collapsed {
       grid-template-rows: 4.0625rem 1fr auto;
     }
+
+    &.PlasmoDB {
+      .vpdb-Header {
+        background-color: darkslateblue;
+
+        .ebrc-HeaderBranding {
+          position: relative;
+          bottom: 10px;
+          height: 72px;
+          content: url('~site/images/PlasmoDB/title_s.png');
+        }
+
+        &__collapsed {
+          .ebrc-HeaderBranding {
+            bottom: 0px;
+            height: 48px;
+          }
+        }
+      }
+    }
+
+    &.VEuPathDB {
+      .vpdb-Header {
+        background-color: slategray;
+
+        .ebrc-HeaderBranding {
+          position: relative;
+          bottom: 10px;
+          height: 72px;
+          content: url('~site/images/PlasmoDB/title_s.png');
+        }
+
+        &__collapsed {
+          .ebrc-HeaderBranding {
+            bottom: 0px;
+            height: 48px;
+          }
+        }
+      }
+    }
   }
 
   .vpdb-BgDark {
