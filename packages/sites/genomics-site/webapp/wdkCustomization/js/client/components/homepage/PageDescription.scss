@@ -64,5 +64,48 @@
         }
       }
     }
+
+    .ebrc-ProjectLink {
+      .AmoebaDB {
+        content: url('~site/images/AmoebaDB/amoebadb_w50.png');
+      }
+      
+      .CryptoDB {
+        content: url('~site/images/CryptoDB/cryptodb_w50.png');
+      }
+    
+      .FungiDB {
+        content: url('~site/images/FungiDB/fungidb_w50.png');
+      }
+    
+      .GiardiaDB {
+        content: url('~site/images/GiardiaDB/giardiadb_w50.png');
+      }
+    
+      .MicrosporidiaDB {
+        content: url('~site/images/MicrosporidiaDB/microdb_w50.png');
+      }
+    
+      .PiroplasmaDB {
+        content: url('~site/images/PiroplasmaDB/piroLogo-50.png');
+      }
+    
+      .PlasmoDB {
+        content: url('~site/images/PlasmoDB/plasmodb_w50.png');
+      }
+    
+      .ToxoDB {
+        content: url('~site/images/ToxoDB/toxodb_w50.png');
+      }
+    
+      .TrichDB {
+        content: url('~site/images/TrichDB/trichdb_w65.png');
+      }
+    
+      .TriTrypDB {
+        content: url('~site/images/TriTrypDB/tritrypdb_w40.png');
+      }
+    }
+    
   }
 }
