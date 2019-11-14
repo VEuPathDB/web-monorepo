@@ -10,37 +10,43 @@ import { MOCK_EXERCISE_METADATA } from './WorkshopExercisesMockConfig';
 import './WorkshopExercises.scss';
 
 const cx = makeVpdbClassNameHelper('WorkshopExercises');
-const exerciseListCx = makeVpdbClassNameHelper('ExerciseList');
+const cardListCx = makeVpdbClassNameHelper('CardList');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 const bgWashCx = makeVpdbClassNameHelper('BgWash');
 
+type CardEntry = {
+  title: string,
+  description: string,
+  exercises: ExerciseEntry[]
+};
+
 type ExerciseEntry = {
-  title: string;
-  description: string;
-  url: string;
+  title: string,
+  url: string,
+  description: string
 };
 
-export type ExerciseMetadata = {
-  exerciseListOrder: string[];
-  exerciseEntries: Record<string, ExerciseEntry>;
+export type CardMetadata = {
+  cardOrder: string[],
+  cardEntries: Record<string, CardEntry>
 };
 
-function useExerciseMetadata() {
-  const [ exerciseMetadata, setExerciseMetadata ] = useState<ExerciseMetadata | undefined>(undefined);
+function useCardMetadata() {
+  const [ cardMetadata, setCardMetadata ] = useState<CardMetadata | undefined>(undefined);
 
   useEffect(() => {
     // FIXME: Replace this with "real" logic
     // for loading the featured tool entries
     setTimeout(() => {
-      setExerciseMetadata(MOCK_EXERCISE_METADATA);
+      setCardMetadata(MOCK_EXERCISE_METADATA);
     }, Math.random() * 1000 + 500);
   }, []);
 
-  return exerciseMetadata;
+  return cardMetadata;
 }
 
 export const WorkshopExercises = () => {
-  const exerciseMetadata = useExerciseMetadata();
+  const cardMetadata = useCardMetadata();
   // FIXME: For implementor's convenience, the initial "isExpanded" value is "true"
   // It should be set to "false" once styling is stabilized
   const [ isExpanded, setIsExpanded ] = useState(true);
@@ -69,10 +75,10 @@ export const WorkshopExercises = () => {
         </a>
       </div>
       {
-        !exerciseMetadata 
+        !cardMetadata 
           ? <Loading />
-          : <ExerciseList
-              exerciseMetadata={exerciseMetadata}
+          : <CardList
+              cardMetadata={cardMetadata}
               isExpanded={isExpanded}
             />
       }
@@ -80,47 +86,54 @@ export const WorkshopExercises = () => {
   );
 };
 
-type ExerciseListProps = {
-  exerciseMetadata: ExerciseMetadata;
+type CardListProps = {
+  cardMetadata: CardMetadata;
   isExpanded: boolean;
 };
 
-const ExerciseList = ({
-  exerciseMetadata: { exerciseListOrder, exerciseEntries },
+const CardList = ({
+  cardMetadata: { cardOrder, cardEntries },
   isExpanded
-}: ExerciseListProps) => 
+}: CardListProps) => 
   <div className={
     combineClassNames(
-      exerciseListCx('', isExpanded && 'expanded'),
+      cardListCx('', isExpanded && 'expanded'),
       bgWashCx()
     )
   }>
-    {exerciseListOrder.map(exerciseListKey => (
-      <ExerciseListItem
-        key={exerciseListKey}
-        entry={exerciseEntries[exerciseListKey]}
-      />
-    ))}
+    {cardOrder.map(
+      cardKey => <Card key={cardKey} entry={cardEntries[cardKey]} />
+    )}
   </div>;
 
-type ExerciseListItemProps = {
-  entry: ExerciseEntry;
+type CardProps = {
+  entry: CardEntry;
 };
 
-const ExerciseListItem = ({ entry }: ExerciseListItemProps) => 
+const Card = ({ entry }: CardProps) => 
   <div className={
     combineClassNames(
-      exerciseListCx('Item'),
+      cardListCx('Item'),
       bgDarkCx()
     )
   }>
-    <a href={entry.url}>
-      <h5>{entry.title}</h5>
-    </a>
-    <div
-      className={exerciseListCx('ItemContent')}
-      dangerouslySetInnerHTML={{
-        __html: entry.description
-      }}
-    />
+    <h5>{entry.title}</h5>
+    <div className={cardListCx('ItemContent')}>
+      <p>{entry.description}</p>
+      <ul className="fa-ul">
+      {
+        entry.exercises.map(
+          // FIXME: Dynamically render the exercise content by "taking cue"
+          // from exercise.description
+          exercise => 
+            <li key={exercise.title}>
+              <span className="fa-li">
+                <IconAlt fa="file-pdf-o" />
+              </span>
+              <a href={exercise.url} target="_blank" className={cardListCx('ItemContentLink')}>{exercise.title}</a>
+            </li>
+        )
+      }
+      </ul>
+    </div>
   </div>;
