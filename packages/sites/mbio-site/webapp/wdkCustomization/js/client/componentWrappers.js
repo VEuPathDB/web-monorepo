@@ -68,6 +68,7 @@ function getHomeContent({ studies, searches, visualizations }) {
       items: studies.entities,
       isLoading: studies.loading,
       isExpandable: true,
+      tableViewLink: '/search/dataset/Studies/result',
       cardComponent: StudyCard,
       getSearchStringForItem: item => 
         item.name + ' ' + item.headLine + ' ' + item.points.join(' ')
