@@ -34,6 +34,7 @@
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
 
+  <!--
   <filter>
     <filter-name>MDCServletFilter</filter-name>
     <filter-class>org.gusdb.wdk.controller.filter.MDCServletFilter</filter-class>
@@ -42,6 +43,7 @@
     <filter-name>MDCServletFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  -->
 
   <filter>
     <filter-name>HttpResponseLogger</filter-name>
@@ -51,7 +53,6 @@
     <filter-name>HttpResponseLogger</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-
 
   <!-- Replace /-PROJECT-/ in the request URL with the WDK Project ID -->
   <filter>
@@ -63,6 +64,7 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <!--
   <filter>
     <filter-name>CheckLoginFilter</filter-name>
     <filter-class>org.gusdb.wdk.controller.filter.CheckLoginFilter</filter-class>
@@ -71,6 +73,7 @@
     <filter-name>CheckLoginFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  -->
 
   <!-- UrlRewrite filter -->
   <!-- This is used in conjuction with the asset fingerprinting utilities in EbrcWebsiteCommon.
@@ -166,10 +169,12 @@
   </welcome-file-list>
 
   <!-- Error Page Mappings -->
+  <!--
   <error-page>
     <exception-type>java.lang.Exception</exception-type>
     <location>/wdkCustomization/jsp/Error.jsp</location>
   </error-page>
+  -->
 
 </web-app>
 
