@@ -50,7 +50,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'blast',
           text: 'BLAST',
-          webAppUrl: '/app/search/transcript/UnifiedBlast'
+          route: '/search/transcript/UnifiedBlast'
         },
         {
           id: 'analysis',
@@ -66,7 +66,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'galaxy',
           text: 'Analyze My Experiment',
-          webAppUrl: '/app/galaxy-orientation'
+          route: '/galaxy-orientation'
         },
         // {
         //   id: 'pathogen-portal',
@@ -160,7 +160,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'analysis-methods',
           text: 'Analysis Methods',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Methods.jsp'
+          route: '/community/brc3/methods.html'
         },
         {
           id: 'annotation-sops',
@@ -171,14 +171,14 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'genomes-and-data-types',
           text: 'Genomes and Data Types',
-          webAppUrl: '/app/search/organism/GenomeDataTypes',
+          route: '/search/organism/GenomeDataTypes',
           tooltip: 'Table summarizing all the genomes and their different data types available in ' + siteConfig.projectId
         },
         {
           id: 'gene-metrics',
           text: 'Gene Metrics',
           tooltip: 'Table summarizing gene counts for all the available genomes, and evidence supporting them',
-          webAppUrl: '/app/search/organism/GeneMetrics'
+          route: '/search/organism/GeneMetrics'
         }
       ]
     },
@@ -190,7 +190,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'about-downloads',
           text: 'Understanding Downloads',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#downloads'
+          route: '/community/embedded/help/general/index.html#downloads'
         },
         {
           id: 'data-files-eupathdb',
@@ -265,12 +265,12 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'community-download',
           text: 'Download Community Files',
           exclude: [EuPathDB],
-          webAppUrl: '/app/search/file/UserFileUploads'
+          route: '/search/file/UserFileUploads'
         },
         {
           id: 'eupathdb-publications',
           text: 'EuPathDB Publications',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.EuPathDBPubs.jsp'
+          route: '/community/brc3/eupathPubs.html'
         },
         {
           id: 'mahpic-data',
@@ -313,7 +313,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           text: 'Find Genes with Comments from the ' + siteConfig.projectId + ' Community',
           exclude: [EuPathDB],
           tooltip: 'Add your comments to your gene of interest: start at the gene page',
-          webAppUrl: '/app/search/gene/GenesWithUserComments'
+          route: '/search/gene/GenesWithUserComments'
         },
         //{
         //  id: 'community-upload',
@@ -325,7 +325,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'community-download',
           text: 'Download Community Files',
           exclude: [EuPathDB],
-          webAppUrl: '/app/search/file/UserFileUploads'
+          route: '/search/file/UserFileUploads'
         },
 //        {
 //          id: 'events',
@@ -335,7 +335,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'related-sites',
           text: 'Related Sites',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.ExternalLinks.jsp'
+          route: `/community/brc3/${siteConfig.projectId}/externalLinks.html`
         },
         {
           id: 'public-strategies',
