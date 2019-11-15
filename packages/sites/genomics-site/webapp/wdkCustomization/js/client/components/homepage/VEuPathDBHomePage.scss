@@ -90,6 +90,8 @@ body.vpdb-Body {
       margin: 1rem 0;
       padding: 0 2rem;
 
+      overflow: hidden;
+
       > hr {
         margin: 1.5rem 0 0.5rem 0;
       }
@@ -114,7 +116,7 @@ body.vpdb-Body {
 
     &.PlasmoDB {
       .vpdb-Header {
-        background-color: darkslateblue;
+        background-color: #d1cde6;
 
         .ebrc-HeaderBranding {
           position: relative;

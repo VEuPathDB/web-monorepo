@@ -3,17 +3,19 @@
  * @return {Array<Entry>}
  */
 export default function smallMenuEntries({ siteConfig: { projectId } }, defaultEntries) {
+  const aboutRoute = `/community/brc3/${projectId}/about.html`;
+  const aboutAllRoute = '/community/embedded/help/general/index.html';
   return [
     {
       text: `About ${projectId}`,
       children: [
         {
           text: `What is ${projectId}?`,
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp'
+          route: aboutRoute
         },
         {
           text: 'Publications on EuPathDB sites',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.EuPathDBPubs.jsp'
+          route: '/community/brc3/eupathPubs.html'
         },
         {
           liClassName: 'eupathdb-SmallMenuDivider',
@@ -21,11 +23,11 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Organisms',
-          webAppUrl: '/app/search/organism/GenomeDataTypes'
+          route: '/search/organism/GenomeDataTypes'
         },
         {
           text: `${projectId} Gene Metrics`,
-          webAppUrl: '/app/search/organism/GeneMetrics'
+          route: '/search/organism/GeneMetrics'
         },
         {
           liClassName: 'eupathdb-SmallMenuDivider',
@@ -45,11 +47,11 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'How to cite us',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citing'
+          route: `${aboutRoute}#citing`
         },
         {
           text: 'Citing Data Providers',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citingproviders'
+          route: `${aboutRoute}#citingproviders`
         },
         {
           text: 'Publications that Use our Resources',
@@ -57,7 +59,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Data Access Policy',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#use'
+          route: `${aboutRoute}#use`
         },
         {
           text: 'Website Privacy Policy',
@@ -69,19 +71,19 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Scientific Working Group',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#swg'
+          route: `${aboutAllRoute}#swg`
         },
         {
           text: 'Scientific Advisory Team',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#advisors'
+          route: `${aboutRoute}#advisors`
         },
         {
           text: 'Acknowledgements',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#acks'
+          route: `${aboutAllRoute}#acks`
         },
         {
           text: 'Funding',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#funding'
+          route: `${aboutRoute}#funding`
         },
         {
           text: 'EuPathDB Brochure',
@@ -101,7 +103,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'EuPathDB Infrastructure',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Infrastructure.jsp'
+          route: '/community/brc3/infrastructure.html'
         },
         {
           text: 'Website Usage Statistics',
@@ -123,7 +125,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Web Tutorials',
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Tutorials.jsp'
+          route: '/community/brc3/tutorials.html'
         },
         {
           text: 'EuPathDB Workshop',
@@ -139,11 +141,11 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: `Our Glossary`,
-          webAppUrl: '/wdkCustomization/jsp/questions/XmlQuestions.Glossary.jsp'
+          route: '/community/brc3/glossary.html'
         },
         {
           text: 'Contact Us',
-          url: '/a/app/contact-us',
+          route: '/contact-us',
           target: '_blank'
         }
       ]

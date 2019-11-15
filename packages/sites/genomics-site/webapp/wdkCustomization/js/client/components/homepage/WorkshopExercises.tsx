@@ -47,9 +47,7 @@ function useCardMetadata() {
 
 export const WorkshopExercises = () => {
   const cardMetadata = useCardMetadata();
-  // FIXME: For implementor's convenience, the initial "isExpanded" value is "true"
-  // It should be set to "false" once styling is stabilized
-  const [ isExpanded, setIsExpanded ] = useState(true);
+  const [ isExpanded, setIsExpanded ] = useState(false);
 
   const toggleExpansion = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -64,12 +62,12 @@ export const WorkshopExercises = () => {
           {
             isExpanded 
               ? <>
-                  <IconAlt fa="ellipsis-h" />
-                  Condensed view
-                </>
-              : <>
                   <IconAlt fa="th" />
                   Expanded view
+                </>
+              : <>
+                  <IconAlt fa="ellipsis-h" />
+                  Condensed view
                 </>
           }
         </a>
@@ -97,7 +95,7 @@ const CardList = ({
 }: CardListProps) => 
   <div className={
     combineClassNames(
-      cardListCx('', isExpanded && 'expanded'),
+      cardListCx('', isExpanded ? 'expanded' : 'collapsed'),
       bgWashCx()
     )
   }>
