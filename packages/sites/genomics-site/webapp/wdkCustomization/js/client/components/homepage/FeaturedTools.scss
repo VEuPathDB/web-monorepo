@@ -30,7 +30,7 @@
       font-weight: bold;
       flex: 0 0 33.333333%;
       max-width: 33.333333%;
-      margin-top: 3.0625rem;
+      margin-top: 2rem;
     }
 
     &Item {
@@ -38,6 +38,7 @@
       border-left: 0.125rem solid transparent;
       display: block;
       color: #00304c;
+      margin-right: 1rem;
       
       &:hover {
         background-color: #f8f9fa;

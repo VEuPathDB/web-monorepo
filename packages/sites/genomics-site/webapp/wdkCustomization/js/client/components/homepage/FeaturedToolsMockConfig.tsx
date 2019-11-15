@@ -13,8 +13,8 @@ const MOCK_FEATURED_TOOL_ENTRIES = {
     listTitle: "Take a Tour",
     descriptionTitle: "Take a Tour of VEuPathDB",
     descriptionBody: `
-      <div>
-        Place for the tour
+      <div style="display: flex; justify-content: center; align-items: center">  
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/Zgcz7jlH9h0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     `
   },
@@ -65,6 +65,7 @@ const MOCK_FEATURED_TOOL_ENTRIES = {
   "tips": {
     listIconKey: "lightbulb-o",
     listTitle: "Featured Tip",
+    descriptionTitle: "Featured Tip",
     descriptionBody: `
       <div>
         Place to share little tips or vignettes

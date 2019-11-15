@@ -26,17 +26,7 @@
   }
 
   .vpdb-CardList {
-    display: flex;
     padding: 0.9375rem;
-
-    &__expanded {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, 300px);
-      justify-content: center;
-
-      // FIXME: IE 11 does not support grid-gap
-      grid-gap: 1.2rem;
-    }
 
     &Item {
       width: 300px;
@@ -67,6 +57,26 @@
           text-decoration: underline;
         }
       }
+    }
+
+    &__collapsed {
+      display: flex;
+      overflow-x: auto;
+
+      .vpdb-CardListItem {
+        margin-right: 1.5rem;
+        flex: 0 0 auto;
+      }
+    }
+
+
+    &__expanded {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 300px);
+      justify-content: center;
+
+      // FIXME: IE 11 does not support grid-gap
+      grid-gap: 1.2rem;
     }
   }
 }
