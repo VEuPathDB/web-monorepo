@@ -5,11 +5,6 @@ import { connect } from 'react-redux';
 import { PageController } from 'wdk-client/Controllers';
 
 import { 
-  SupportFormBase, 
-  SupportFormBody
-} from 'ebrc-client/components';
-
-import { 
   onChangeFieldFactory, 
   submitForm 
 } from '../action-creators/AccessRequestActionCreators';
