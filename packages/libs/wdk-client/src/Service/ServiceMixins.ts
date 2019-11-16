@@ -19,6 +19,7 @@ import UserCommentsService from 'wdk-client/Service/Mixins/UserCommentsService';
 import UserDatasetsService from 'wdk-client/Service/Mixins/UserDatasetsService';
 import UserPreferencesService from 'wdk-client/Service/Mixins/UserPreferencesService';
 import UsersService from 'wdk-client/Service/Mixins/UsersService';
+import XmlAnswerService from 'wdk-client/Service/Mixins/XmlAnswerService';
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 
 // Create a function to mixin subclasses with ServiceBase
@@ -45,6 +46,7 @@ export function composeMixins(baseUrl: string) {
     ...UserDatasetsService(base),
     ...UserPreferencesService(base),
     ...UsersService(base),
+    ...XmlAnswerService(base),
     ...base,
   }
 }
