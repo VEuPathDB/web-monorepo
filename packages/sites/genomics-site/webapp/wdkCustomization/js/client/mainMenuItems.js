@@ -74,7 +74,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         //   url: 'http://rnaseq.pathogenportal.org'
         // },
         {
-          id: 'companion',
+          id: 'companion_fungi',
           text: 'Companion',
           exclude: [FungiDB],
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',

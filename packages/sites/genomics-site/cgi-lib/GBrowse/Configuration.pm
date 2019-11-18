@@ -539,14 +539,14 @@ sub subTrackSelect {
         return;
     }
 
-    my $ontologyTermToDisplayName = {'antibody' => 'Antibody', 
-                                     'genotype information' => 'Genotype', 
+    my $ontologyTermToDisplayName = {'Antibody' => 'Antibody', 
+                                     'Parasite genotype' => 'Genotype', 
                                      'name' => 'Name',
-                                     'compound based treatment' => 'Treatment',
-                                     'replicate' => 'Replicate',
-                                     'life cycle stage' => 'Lifecycle Stage',
+                                     'Compound' => 'Treatment',
+                                     'Replicate' => 'Replicate',
+                                     'Parasite lifecycle stage' => 'Lifecycle Stage',
                                      'immunoglobulin complex, circulating' => 'Antibody',
-                                     'strain'   => 'Strain'};
+                                     'Parasite strain'   => 'Strain'};
 
     my $displayName = $ontologyTermToDisplayName->{$subTrackAttr};
     my $subTrackSelect = [$displayName, 'tag_value', $subTrackAttr];
