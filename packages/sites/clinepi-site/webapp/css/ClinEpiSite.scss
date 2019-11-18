@@ -649,6 +649,7 @@ div#clinepi-news {
 div.wdk-Answer tr.greyed-out {
   opacity: 0.5;
   pointer-events: none;
+  display: none;
 }
 
 ul.wdk-AnswerTable-AttributeSelector li input#column-select-description, ul.wdk-AnswerTable-AttributeSelector li input#column-select-description + label {
