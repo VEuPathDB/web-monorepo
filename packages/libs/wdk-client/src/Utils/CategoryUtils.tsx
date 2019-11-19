@@ -54,6 +54,11 @@ export type IndividualNode = OntologyNode<{
 export type CategoryTreeNode = CategoryNode | IndividualNode;
 export type CategoryOntology = Ontology<CategoryTreeNode>
 
+export const EMPTY_CATEGORY_TREE_NODE: CategoryTreeNode = {
+  children: [],
+  properties: {}
+};
+
 export function getId(node: CategoryTreeNode) {
   return isIndividual(node)
     // FIXME Remove `fullName` hack when the urlSegment/name/fullName saga is resolved.

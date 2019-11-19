@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 
-import { noop, get } from 'lodash';
+import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
 import { CategoriesCheckboxTree, Icon, Tooltip, Link, Loading } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getLabel, getAllBranchIds } from 'wdk-client/Utils/CategoryUtils';
+import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getAllBranchIds, getRecordClassName, EMPTY_CATEGORY_TREE_NODE, isQualifying } from 'wdk-client/Utils/CategoryUtils';
+
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
@@ -15,6 +16,7 @@ import 'wdk-client/Views/Strategy/SearchInputSelector.scss';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { compose } from 'redux';
 import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
+import { pruneDescendantNodes } from 'wdk-client/Utils/TreeUtils';
 
 type StateProps = {
   basketCount?: number,
@@ -212,16 +214,21 @@ const hasOtherStrategies = createSelector(
       )
 );
 
-const searchTree = createSelector(
-  ({ globalData }: RootState) => globalData, 
-  (_: RootState, { inputRecordClass: { fullName } }: OwnProps) => fullName,
-  (globalData, recordClassFullName) => {
-    // FIXME: This is not typesafe
-    const fullSearchTree = get(globalData, 'searchTree') as CategoryTreeNode;
-    const prunedTree = fullSearchTree.children.find(node => getLabel(node) === recordClassFullName) as CategoryTreeNode;
+const isSearchNode = isQualifying({
+  targetType: 'search',
+  scope: 'menu'
+})
 
-    return prunedTree;
-  }
+const searchTree = createSelector(
+  ({ globalData }: RootState) => globalData.ontology,
+  (_: RootState, { inputRecordClass: { fullName } }: OwnProps) => fullName,
+  (ontology, recordClassFullName) =>
+    ontology == null ? EMPTY_CATEGORY_TREE_NODE : pruneDescendantNodes(
+      node => node.children.length > 0 || (
+        isSearchNode(node)  &&
+        getRecordClassName(node) === recordClassFullName
+      ),
+      ontology.tree)
 );
 
 
