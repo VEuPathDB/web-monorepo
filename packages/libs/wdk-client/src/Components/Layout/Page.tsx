@@ -15,9 +15,12 @@ type Props = RouteComponentProps<any> & {
 class Page extends React.Component<Props> {
   componentDidUpdate(prevProps: Props) {
     if (
-      (prevProps.location.pathname !== this.props.location.pathname) ||
-      (prevProps.location.search !== this.props.location.search)
-     ) {
+      this.props.history.action !== 'REPLACE' &&
+      (
+        (prevProps.location.pathname !== this.props.location.pathname) ||
+        (prevProps.location.search !== this.props.location.search)
+      )
+    ) {
       window.scrollTo(0, 0);
     }
   }

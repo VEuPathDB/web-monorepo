@@ -77,7 +77,7 @@ interface TabEventHandlers {
   openAnalysisMenu: () => void;
   onTabSelected: (tabKey: string) => void;
   onTabRemoved: (tabKey: string) => void;
-  transitionToInternalPage: (url: string) => void;
+  transitionToTabPage: (strategyId: number, stepId: number, tabId?: string) => void;
 }
 
 type PanelEventHandlers = {
@@ -160,7 +160,8 @@ const mapDispatchToProps = (dispatch: Dispatch, { resultType, viewId, initialTab
     if (resultType.type == 'step') {
       dispatch(
         transitionToInternalPage(
-          `/workspace/strategies/${resultType.step.strategyId}/${resultType.step.id}`
+          `/workspace/strategies/${resultType.step.strategyId}/${resultType.step.id}`,
+          { replace: true }
         )
       );
     }
@@ -186,7 +187,13 @@ const mapDispatchToProps = (dispatch: Dispatch, { resultType, viewId, initialTab
     }
   },
   onTabRemoved: (tabKey: string) => dispatch(deleteAnalysis(+tabKey)),
-  transitionToInternalPage: (path: string) => dispatch(transitionToInternalPage(path)),
+  transitionToTabPage: (strategyId: number, stepId: number, tabId?: string) => {
+    const redirectUrl = tabId == null
+      ? `/workspace/strategies/${strategyId}/${stepId}`
+      : `/workspace/strategies/${strategyId}/${stepId}/${tabId}`;
+
+    dispatch(transitionToInternalPage(redirectUrl, { replace: true }));
+  },
   toggleDescription: memoize((panelId: number) => () => dispatch(toggleDescription(panelId))),
   toggleParameters: memoize((panelId: number) => () => dispatch(toggleParameters(panelId))),
   loadChoice: memoize((panelId: number) => (choice: StepAnalysisType) => dispatch(startLoadingChosenAnalysisTab(panelId, choice))),
@@ -224,11 +231,11 @@ const mergeProps = (
     : null,
   onTabSelected: (tabKey: string) => {
     if (ownProps.resultType.type === 'step') {
-      const redirectUrl = stateProps.internalToExternalTabId[tabKey] != null
-        ? `/workspace/strategies/${ownProps.resultType.step.strategyId}/${ownProps.resultType.step.id}/${stateProps.internalToExternalTabId[tabKey]}`
-        : `/workspace/strategies/${ownProps.resultType.step.strategyId}/${ownProps.resultType.step.id}`;
-
-      eventHandlers.transitionToInternalPage(redirectUrl);
+      eventHandlers.transitionToTabPage(
+        ownProps.resultType.step.strategyId, 
+        ownProps.resultType.step.id, 
+        stateProps.internalToExternalTabId[tabKey]
+      );
     }
     
     eventHandlers.onTabSelected(tabKey);
