@@ -6,8 +6,10 @@ import { MOCK_FEATURED_TOOLS_METADATA } from './FeaturedToolsMockConfig';
 import { makeVpdbClassNameHelper } from './Utils';
 
 import './FeaturedTools.scss';
+import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 
 const cx = makeVpdbClassNameHelper('FeaturedTools');
+const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 
 type FeaturedToolEntry = {
   listIconKey: string,
@@ -130,7 +132,7 @@ const SelectedTool = ({ entry }: SelectedToolProps) =>
   <div className={cx('Selection')}>
     {
       entry && entry.descriptionTitle &&
-      <h5 className={cx('SelectionHeader')}>
+      <h5 className={combineClassNames(cx('SelectionHeader'), bgDarkCx())}>
         {entry.descriptionTitle}
       </h5>
     }

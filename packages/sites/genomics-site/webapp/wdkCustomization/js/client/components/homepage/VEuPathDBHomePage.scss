@@ -115,6 +115,16 @@ body.vpdb-Body {
     }
 
     &.PlasmoDB {
+      .vpdb-BgDark {
+        background-color: #682039;
+        // Runner-up: #662332
+        // Runner-up: #3a1428 (maybe a little too dark)
+      }
+
+      .vpdb-BdDark {
+        border-color: #682039; 
+      }
+
       .vpdb-Header {
         background-color: #d1cde6;
 
@@ -157,6 +167,10 @@ body.vpdb-Body {
 
   .vpdb-BgDark {
     background-color: #00304c;
+  }
+
+  .vpdb-BdDark {
+    border-color: #00304c; 
   }
 
   .vpdb-BgWash {

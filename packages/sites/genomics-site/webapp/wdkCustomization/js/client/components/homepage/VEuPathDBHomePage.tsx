@@ -112,11 +112,8 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     vpdbCx('RootContainer', headerExpanded ? 'header-expanded' : 'header-collapsed'), 
     projectId
   );
-  const headerClassName = combineClassNames(
-    vpdbCx('Header', headerExpanded ? 'expanded' : 'collapsed'), 
-    vpdbCx('BgDark')
-  );
-  const searchPaneClassName = combineClassNames(vpdbCx('SearchPane'), vpdbCx('BgWash'));
+  const headerClassName = vpdbCx('Header', headerExpanded ? 'expanded' : 'collapsed');
+  const searchPaneClassName = combineClassNames(vpdbCx('SearchPane'), vpdbCx('BgWash'), vpdbCx('BdDark'));
   const mainClassName = vpdbCx('Main');
   const newsPaneClassName = vpdbCx('NewsPane');
   const footerClassName = vpdbCx('Footer'); 
