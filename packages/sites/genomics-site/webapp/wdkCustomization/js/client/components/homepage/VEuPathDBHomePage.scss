@@ -126,7 +126,8 @@ body.vpdb-Body {
       }
 
       .vpdb-Header {
-        background-color: #d1cde6;
+        background-image: url('~site/images/PlasmoDB/vpdb-background.jpg');
+        background-size: cover;
 
         .ebrc-HeaderBranding {
           position: relative;
