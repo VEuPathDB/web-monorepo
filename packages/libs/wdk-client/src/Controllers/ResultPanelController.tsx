@@ -156,16 +156,26 @@ const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
 
 const mapDispatchToProps = (dispatch: Dispatch, { resultType, viewId, initialTab }: OwnProps): TabEventHandlers & PanelEventHandlers => ({
   loadTabs: (resultType: ResultType) => dispatch(openTabListing(viewId, resultType, initialTab)),
-  openAnalysisMenu: () => dispatch(
-    createNewTab(
-      {
-        type: 'ANALYSIS_MENU_STATE',
-        displayName: 'New Analysis',
-        status: 'AWAITING_USER_CHOICE',
-        errorMessage: null
-      }
-    )
-  ),
+  openAnalysisMenu: () => { 
+    if (resultType.type == 'step') {
+      dispatch(
+        transitionToInternalPage(
+          `/workspace/strategies/${resultType.step.strategyId}/${resultType.step.id}`
+        )
+      );
+    }
+
+    dispatch(
+      createNewTab(
+        {
+          type: 'ANALYSIS_MENU_STATE',
+          displayName: 'New Analysis',
+          status: 'AWAITING_USER_CHOICE',
+          errorMessage: null
+        }
+      )
+    );
+  },
   onTabSelected: (tabKey: string) => {
     if (+tabKey !== +tabKey) {
       dispatch(selectAnalysisTab(-1));

@@ -275,7 +275,7 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
           });
 
           return [
-            transitionToInternalPage(`/workspace/strategies/${strategyId}/${stepId}/${analysisConfig.analysisId}`, { replace: true }),
+            transitionToInternalPage(`/workspace/strategies/${strategyId}/${stepId}/analysis:${analysisConfig.analysisId}`, { replace: true }),
             finishLoadingSavedTab(panelId, {
               type: SAVED_ANALYSIS_STATE,
               paramSpecs: panelState.paramSpecs,
