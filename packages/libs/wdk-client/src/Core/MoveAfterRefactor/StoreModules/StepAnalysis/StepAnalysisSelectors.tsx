@@ -23,7 +23,8 @@ type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | '
 type Props = {
   viewId: string,
   resultType: ResultType,
-  initialTab?: string
+  initialTab?: string,
+  tabId?: string
 };
 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
@@ -100,15 +101,114 @@ export const loadingAnalysisChoices = createSelector<RootState, StepAnalysesStat
   stepAnalyses,
   stepAnalyses => stepAnalyses.loadingAnalysisChoices
 );
+export const analysisPanelOrder = createSelector<RootState, StepAnalysesState, number[]>(
+  stepAnalyses,
+  stepAnalyses => stepAnalyses.analysisPanelOrder
+);
+export const analysisPanelStates = createSelector<RootState, StepAnalysesState, Record<number, AnalysisPanelState>>(
+  stepAnalyses,
+  stepAnalyses => stepAnalyses.analysisPanelStates
+);
+export const analysisChoices = createSelector<RootState, StepAnalysesState, StepAnalysisType[]>(
+  stepAnalyses,
+  stepAnalyses => stepAnalyses.analysisChoices
+);
 
 export const initialTab = (_: RootState, { initialTab }: Props) => initialTab;
 
-export const activeTab = createSelector<RootState, Props, StepAnalysesState, ResultPanelState | undefined, string, string | undefined, string | number>(
+export const tabId = (_: RootState, { tabId }: Props) => tabId;
+
+const internalToExternalAnalysisId = (internalAnalysisId: number, analysisPanelStates: Record<number, AnalysisPanelState>) => {
+  const analysisPanelState = analysisPanelStates[internalAnalysisId];
+
+  const externalAnalysisId = (
+    !analysisPanelState || 
+    analysisPanelState.type === 'ANALYSIS_MENU_STATE' ||
+    analysisPanelState.type === 'UNSAVED_ANALYSIS_STATE'
+  )
+    ? null
+    : analysisPanelState.type === 'UNINITIALIZED_PANEL_STATE'
+    ? analysisPanelState.analysisId
+    : analysisPanelState.analysisConfig.analysisId;
+
+  return externalAnalysisId;
+}
+
+type ExternalToInternalTabIdMaps = { 
+  externalToInternalTabId: Record<string, string | number>, 
+  internalToExternalTabId: Record<string | number, string>
+};
+
+export const externalToInternalTabIdMaps = createSelector(
+  analysisPanelOrder,
+  analysisPanelStates,
+  summaryViewPlugins,
+  (analysisPanelOrder, analysisPanelStates, summaryViewPlugins): ExternalToInternalTabIdMaps => {
+    const { externalToInternalAnalysis, internalToExternalAnalysis } = analysisPanelOrder.reduce(
+      (memo, internalAnalysisId) => {
+        const externalAnalysisId = internalToExternalAnalysisId(internalAnalysisId, analysisPanelStates);
+
+        return externalAnalysisId !== null
+          ? {
+              externalToInternalAnalysis: {
+                ...memo.externalToInternalAnalysis,
+                [`analysis:${externalAnalysisId}`]: internalAnalysisId
+              },
+              internalToExternalAnalysis: {
+                ...memo.internalToExternalAnalysis,
+                [internalAnalysisId]: `analysis:${externalAnalysisId}`
+              }
+            }
+          : memo;
+      },
+      { 
+        externalToInternalAnalysis: {} as Record<string, number>,
+        internalToExternalAnalysis: {} as Record<number, string>, 
+      }
+    );
+
+    const { externalToInternalSummaryView, internalToExternalSummaryView } = summaryViewPlugins.reduce(
+      (memo, { name: internalSummaryViewId }) => ({
+        externalToInternalSummaryView: {
+          ...memo.externalToInternalSummaryView,
+          [`summary:${internalSummaryViewId}`]: internalSummaryViewId
+        },
+        internalToExternalSummaryView: {
+          ...memo.internalToExternalSummaryView,
+          [internalSummaryViewId]: `summary:${internalSummaryViewId}`
+        }
+      }), 
+      {
+        externalToInternalSummaryView: {} as Record<string, string>,
+        internalToExternalSummaryView: {} as Record<string, string>,
+      }
+    );
+
+    return {
+      externalToInternalTabId: {
+        ...externalToInternalAnalysis,
+        ...externalToInternalSummaryView
+      },
+      internalToExternalTabId: {
+        ...internalToExternalAnalysis,
+        ...internalToExternalSummaryView
+      }
+    };
+  }
+);
+
+export const activeTab = createSelector<RootState, Props, StepAnalysesState, ResultPanelState | undefined, string, string | undefined, string | undefined, ExternalToInternalTabIdMaps, string | number>(
   stepAnalyses,
   resultPanel,
   defaultSummaryView,
   initialTab,
-  (stepAnalyses, resultPanel, defaultSummaryView, initialTab) => {
+  tabId,
+  externalToInternalTabIdMaps,
+  (stepAnalyses, resultPanel, defaultSummaryView, initialTab, tabId, externalToInternalTabIdMaps) => {
+    if (tabId && externalToInternalTabIdMaps.externalToInternalTabId[tabId] != null) {
+      return externalToInternalTabIdMaps.externalToInternalTabId[tabId];
+    }
+
     if (initialTab && stepAnalyses.activeTab === -1 && (resultPanel == null || resultPanel.activeSummaryView == null)) {
       const tabDetail = parseTabSelector(initialTab);
       if (tabDetail == null) return '';
@@ -132,18 +232,6 @@ export const activeTab = createSelector<RootState, Props, StepAnalysesState, Res
 
     return stepAnalyses.activeTab;
   }
-);
-export const analysisPanelOrder = createSelector<RootState, StepAnalysesState, number[]>(
-  stepAnalyses,
-  stepAnalyses => stepAnalyses.analysisPanelOrder
-);
-export const analysisPanelStates = createSelector<RootState, StepAnalysesState, Record<number, AnalysisPanelState>>(
-  stepAnalyses,
-  stepAnalyses => stepAnalyses.analysisPanelStates
-);
-export const analysisChoices = createSelector<RootState, StepAnalysesState, StepAnalysisType[]>(
-  stepAnalyses,
-  stepAnalyses => stepAnalyses.analysisChoices
 );
 
 export const newAnalysisButtonVisible = createSelector<RootState, number[], Record<number, AnalysisPanelState>, boolean>(

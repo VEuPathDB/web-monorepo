@@ -5,6 +5,7 @@ import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 import { memoize, isEqual } from 'lodash/fp';
 import ResultTabs, { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { connect } from 'react-redux';
+import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {
   analysisPanelOrder,
@@ -21,14 +22,15 @@ import {
   summaryViewPlugins,
   defaultSummaryView,
   loadingSummaryViewListing,
-  resultTypeDetails
+  resultTypeDetails,
+  externalToInternalTabIdMaps
 } from 'wdk-client/Core/MoveAfterRefactor/StoreModules/StepAnalysis/StepAnalysisSelectors';
 import { Dispatch } from 'redux';
 import {
   startLoadingChosenAnalysisTab,
   startLoadingSavedTab,
   deleteAnalysis,
-  selectTab,
+  selectTab as selectAnalysisTab,
   createNewTab,
   startFormSubmission,
   updateParamValues,
@@ -58,12 +60,15 @@ type StateProps = {
   analysisPanelStates: ReturnType<typeof analysisPanelStates>,
   activeTab: ReturnType<typeof activeTab>;
   newAnalysisButtonVisible: ReturnType<typeof newAnalysisButtonVisible>;
+  externalToInternalTabId: ReturnType<typeof externalToInternalTabIdMaps>['externalToInternalTabId'];
+  internalToExternalTabId: ReturnType<typeof externalToInternalTabIdMaps>['internalToExternalTabId'];
 };
 
 type OwnProps = {
   resultType: ResultType;
   viewId: string;
   initialTab?: string;
+  tabId?: string;
   renderHeader?: () => React.ReactNode;
 };
 
@@ -72,6 +77,7 @@ interface TabEventHandlers {
   openAnalysisMenu: () => void;
   onTabSelected: (tabKey: string) => void;
   onTabRemoved: (tabKey: string) => void;
+  transitionToInternalPage: (url: string) => void;
 }
 
 type PanelEventHandlers = {
@@ -144,7 +150,8 @@ const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   analysisPanelStates: analysisPanelStates(state),
   analysisBaseTabConfigs: analysisBaseTabConfigs(state),
   activeTab: activeTab(state, props),
-  newAnalysisButtonVisible: newAnalysisButtonVisible(state)
+  newAnalysisButtonVisible: newAnalysisButtonVisible(state),
+  ...externalToInternalTabIdMaps(state, props)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch, { resultType, viewId, initialTab }: OwnProps): TabEventHandlers & PanelEventHandlers => ({
@@ -161,14 +168,15 @@ const mapDispatchToProps = (dispatch: Dispatch, { resultType, viewId, initialTab
   ),
   onTabSelected: (tabKey: string) => {
     if (+tabKey !== +tabKey) {
-      dispatch(selectTab(-1));
+      dispatch(selectAnalysisTab(-1));
       dispatch(selectSummaryView(viewId, resultType, tabKey));
     } else {
       dispatch(selectSummaryView(viewId, resultType, null));
-      dispatch(selectTab(+tabKey));
+      dispatch(selectAnalysisTab(+tabKey));
     }
   },
   onTabRemoved: (tabKey: string) => dispatch(deleteAnalysis(+tabKey)),
+  transitionToInternalPage: (path: string) => dispatch(transitionToInternalPage(path)),
   toggleDescription: memoize((panelId: number) => () => dispatch(toggleDescription(panelId))),
   toggleParameters: memoize((panelId: number) => () => dispatch(toggleParameters(panelId))),
   loadChoice: memoize((panelId: number) => (choice: StepAnalysisType) => dispatch(startLoadingChosenAnalysisTab(panelId, choice))),
@@ -204,7 +212,17 @@ const mergeProps = (
       </button>
     )
     : null,
-  onTabSelected: eventHandlers.onTabSelected,
+  onTabSelected: (tabKey: string) => {
+    if (ownProps.resultType.type === 'step') {
+      const redirectUrl = stateProps.internalToExternalTabId[tabKey] != null
+        ? `/workspace/strategies/${ownProps.resultType.step.strategyId}/${ownProps.resultType.step.id}/${stateProps.internalToExternalTabId[tabKey]}`
+        : `/workspace/strategies/${ownProps.resultType.step.strategyId}/${ownProps.resultType.step.id}`;
+
+      eventHandlers.transitionToInternalPage(redirectUrl);
+    }
+    
+    eventHandlers.onTabSelected(tabKey);
+  },
   onTabRemoved: (key: string) => {
     eventHandlers.onTabRemoved(key);
     eventHandlers.onTabSelected(stateProps.defaultSummaryView);

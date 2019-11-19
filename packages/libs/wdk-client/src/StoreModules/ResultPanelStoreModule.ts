@@ -64,7 +64,7 @@ function observeOpenTabListing(action$: ActionsObservable<Action>, state$: State
       return concat(
         from(getResultTypeDetails(dependencies.wdkService, resultType)
           .then(resultTypeDetails => setResultTypeDetails(viewId, resultTypeDetails))),
-        resultType.type === 'step' ? of(startLoadingTabListing(resultType.step.id)) : empty(),
+        resultType.type === 'step' ? of(startLoadingTabListing(resultType.step.strategyId, resultType.step.id)) : empty(),
         initialTab === ANALYSIS_MENU_ID ? of(createNewTab(
           {
             type: ANALYSIS_MENU_STATE,

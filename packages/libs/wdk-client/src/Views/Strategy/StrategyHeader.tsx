@@ -7,11 +7,12 @@ import './StrategyHeading.css';
 // - /workspace/strategies
 // - /workspace/strategies/:strategyId
 // - /workspace/strategies/:strategyId/:stepId
+// - /workspace/strategies/:strategyId/:stepId/:tabId
 const isOpenedLinkActive: NavLinkProps['isActive'] = (match , location) => {
   if (match == null) return false;
   if (!location.pathname.startsWith(match.url)) return false;
   const subPath = location.pathname.replace(match.url, '');
-  return /^(\/\d+){0,2}$/.test(subPath);
+  return /^(\/\d+){0,3}$/.test(subPath);
 }
 
 const toCountString = (count?: number, isError?: boolean) => (

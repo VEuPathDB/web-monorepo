@@ -121,6 +121,7 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
         strategyId={childView.strategyId}
         stepId={childView.stepId}
         selectedTab={childView.selectedTab}
+        tabId={childView.tabId}
       />
     case 'allStrategies':
       return <AllStrategiesController strategies={strategySummaries} strategiesLoading={strategySummariesLoading}/>
@@ -136,7 +137,7 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
 }
 
 type ChildView =
-  | { type: 'openedStrategies', strategyId?: number, stepId?: number, selectedTab?: string }
+  | { type: 'openedStrategies', strategyId?: number, stepId?: number, selectedTab?: string, tabId?: string }
   | { type: 'allStrategies' }
   | { type: 'publicStrategies' }
   | { type: 'importStrategy', signature: string, selectedTab?: string }
@@ -150,7 +151,7 @@ function parseSubPath(subPath: string, allowEmptyOpened: boolean, queryParams: R
   if (subPath === 'help') return { type: 'help' };
   if (subPath === '' && !allowEmptyOpened) return { type: 'unknown' };
 
-  const [ strategyId, stepId ] = subPath.split('/');
+  const [ strategyId, stepId, tabId ] = subPath.split('/');
   const { selectedTab } = queryParams;
 
   return {
@@ -158,8 +159,9 @@ function parseSubPath(subPath: string, allowEmptyOpened: boolean, queryParams: R
     // if toNumber returns falsey, it is either 0 or NaN, both of which we want to treat as undefined
     strategyId: toNumber(strategyId) || undefined,
     stepId: toNumber(stepId) || undefined,
+    tabId: tabId || undefined,
     selectedTab
-  }
+  };
 }
 
 function mapState(rootState: RootState): MappedProps {

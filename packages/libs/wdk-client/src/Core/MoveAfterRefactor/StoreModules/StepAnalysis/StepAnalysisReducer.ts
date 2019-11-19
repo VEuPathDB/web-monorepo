@@ -40,6 +40,7 @@ const initialState: StepAnalysesState = {
   activeTab: -1,
   analysisChoices: [],
   stepId: -1,
+  strategyId: -1,
   nextPanelId: 0,
   analysisPanelStates: {},
   analysisPanelOrder: []
@@ -52,6 +53,7 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
         // reset state since we are creating a new set of tabs
         ...initialState,
         stepId: action.payload.stepId,
+        strategyId: action.payload.strategyId,
         loadingAnalysisChoices: true,
       };
     }

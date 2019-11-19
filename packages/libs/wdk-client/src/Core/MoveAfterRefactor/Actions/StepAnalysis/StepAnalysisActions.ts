@@ -34,7 +34,7 @@ interface TypedAction<T extends string, P> {
   payload: P
 }
 
-export type StartLoadingTabListingAction = TypedAction<typeof START_LOADING_TAB_LISTING, { stepId: number }>
+export type StartLoadingTabListingAction = TypedAction<typeof START_LOADING_TAB_LISTING, { stepId: number, strategyId: number }>
 export type FinishLoadingTabListingAction = TypedAction<typeof FINISH_LOADING_TAB_LISTING, { tabListing: UninitializedAnalysisPanelState[], analysisChoices: StepAnalysisType[] }>
 export type SelectTabAction = TypedAction<typeof SELECT_TAB, { panelId: number }>
 export type StartLoadingSavedTabAction = TypedAction<typeof START_LOADING_SAVED_TAB, { panelId: number }>
@@ -55,7 +55,8 @@ export type UpdateParamValues = TypedAction<typeof UPDATE_PARAM_VALUES, { panelI
 export type ToggleDescription = TypedAction<typeof TOGGLE_DESCRIPTION, { panelId: number }>;
 export type ToggleParameters = TypedAction<typeof TOGGLE_PARAMETERS, { panelId: number }>;
 
-export type StepAnalysisAction = StartLoadingTabListingAction
+export type StepAnalysisAction = 
+  | StartLoadingTabListingAction
   | FinishLoadingTabListingAction
   | SelectTabAction
   | StartLoadingSavedTabAction

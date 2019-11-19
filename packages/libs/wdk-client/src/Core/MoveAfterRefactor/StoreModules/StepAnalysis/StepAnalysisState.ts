@@ -11,6 +11,7 @@ export interface StepAnalysesState {
   activeTab: number;
   analysisChoices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   nextPanelId: number;
   analysisPanelStates: Record<number, AnalysisPanelState>;
   analysisPanelOrder: number[];

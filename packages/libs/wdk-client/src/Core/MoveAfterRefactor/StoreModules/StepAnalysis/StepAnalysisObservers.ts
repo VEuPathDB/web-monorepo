@@ -43,6 +43,7 @@ import { EMPTY } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
 import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, startFormSubmission, selectTab } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
+import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
 export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
@@ -261,7 +262,7 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
     filter(isStartFormSubmission),
     withLatestFrom(state$, focusOnPanelById),
     filter(onTabInRunnableState),
-    mergeMap(async ({ panelId, panelState, stepId }) => {
+    mergeMap(async ({ panelId, panelState, stepId, strategyId }) => {
       const displayName = panelState.type === UNSAVED_ANALYSIS_STATE
         ? panelState.displayName
         : panelState.analysisConfig.displayName;
@@ -274,6 +275,7 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
           });
 
           return [
+            transitionToInternalPage(`/workspace/strategies/${strategyId}/${stepId}/${analysisConfig.analysisId}`, { replace: true }),
             finishLoadingSavedTab(panelId, {
               type: SAVED_ANALYSIS_STATE,
               paramSpecs: panelState.paramSpecs,
@@ -460,6 +462,7 @@ interface FocusedUninitializedAnalysisPanelState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   panelState: UninitializedAnalysisPanelState;
   panelId: number;
 }
@@ -468,6 +471,7 @@ interface FocusedAnalysisMenuState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   panelState: AnalysisMenuState;
   panelId: number;
 }
@@ -476,6 +480,7 @@ interface FocusedUnsavedAnalysisState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   panelState: UnsavedAnalysisState;
   panelId: number;
 }
@@ -484,6 +489,7 @@ interface FocusedSavedAnalysisState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   panelState: SavedAnalysisState;
   panelId: number;
 }
@@ -492,6 +498,7 @@ interface FocusedState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   panelState: AnalysisPanelState;
   panelId: number;
 }
@@ -500,6 +507,7 @@ const focusOnPanelById = <ActionType>(action: ActionType & { payload: { panelId:
   action,
   choices: state.analysisChoices,
   stepId: state.stepId,
+  strategyId: state.strategyId,
   panelId: action.payload.panelId,
   panelState: state.analysisPanelStates[action.payload.panelId]
 });

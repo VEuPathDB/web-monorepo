@@ -30,7 +30,7 @@ type OwnProps = {
 }
 
 interface TabEventHandlers {
-  loadTabs: (stepId: number) => void;
+  loadTabs: (strategyId: number, stepId: number) => void;
   openAnalysisMenu: () => void;
   onTabSelected: (tabKey: string) => void;
   onTabRemoved: (tabKey: string) => void;
@@ -47,7 +47,7 @@ interface StepAnalysisContainerProps {
   tabs: TabConfig<string>[];
   onTabSelected: (tabKey: string) => void;
   onTabRemoved: (tabKey: string) => void;
-  loadTabs: (stepId: number) => void;
+  loadTabs: (strategyId: number, stepId: number) => void;
   newAnalysisButton: React.ReactNode;
 }
 
@@ -56,6 +56,7 @@ class StepAnalysisController extends ViewController< StepAnalysisContainerProps 
     super.componentDidMount();
     if (this.props.resultType.type === 'step') {
       this.props.loadTabs(
+        this.props.resultType.step.strategyId,
         this.props.resultType.step.id
       );
     }
@@ -94,7 +95,7 @@ const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): TabEventHandlers & PanelEventHandlers => ({
-  loadTabs: (stepId: number) => dispatch(startLoadingTabListing(stepId)),
+  loadTabs: (strategyId: number, stepId: number) => dispatch(startLoadingTabListing(strategyId, stepId)),
   openAnalysisMenu: () => dispatch(
     createNewTab(
       {

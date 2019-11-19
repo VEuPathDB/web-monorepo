@@ -51,9 +51,9 @@ import {
 } from './StepAnalysisActions';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 
-export const startLoadingTabListing = (stepId: number): StartLoadingTabListingAction => ({
+export const startLoadingTabListing = (strategyId: number, stepId: number): StartLoadingTabListingAction => ({
   type: START_LOADING_TAB_LISTING,
-  payload: { stepId }
+  payload: { stepId, strategyId }
 });
 
 export const finishLoadingTabListing = (tabListing: UninitializedAnalysisPanelState[], analysisChoices: StepAnalysisType[]): FinishLoadingTabListingAction => ({

@@ -27,6 +27,7 @@ interface OwnProps {
   stepId?: number;
   openedStrategies?: number[];
   selectedTab?: string;
+  tabId?: string;
 }
 
 interface MappedProps {
@@ -46,7 +47,7 @@ type Props = Omit<OwnProps, 'openedStrategies'> & DispatchProps & MappedProps;
 const strategyPanelViewId = (strategyId: number) => `strategyPanel__${strategyId}`;
 
 function StrategyViewController(props: Props) {
-  const { stepId, strategyId, resultType, recordClass, selectedStrategy, selectedTab, dispatch, openedStrategies } = props;
+  const { stepId, strategyId, resultType, recordClass, selectedStrategy, selectedTab, dispatch, openedStrategies, tabId } = props;
 
   // Track which strategies have been loaded. We only want to load a strategy once per mount.
   const loadedStratsRef = useRef(new Set<number>());
@@ -89,6 +90,7 @@ function StrategyViewController(props: Props) {
             resultType={resultType}
             viewId={`step__${resultType.step.id}`}
             initialTab={selectedTab}
+            tabId={tabId}
             renderHeader={() => resultType && recordClass ? (
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1em' }}>
