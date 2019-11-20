@@ -4,6 +4,7 @@ import { IconAlt } from 'wdk-client/Components';
 
 import { projects } from 'ebrc-client/components/homepage/Footer';
 import { ProjectLink } from 'ebrc-client/components/homepage/ProjectLink';
+import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 
 import { projectId } from '../../config';
 
@@ -17,7 +18,7 @@ const PlasmoDB = 'PlasmoDB';
 const VEuPathDB = 'VEuPathDB';
 
 export const PageDescription = () => 
-  <div className={cx()}>
+  <div className={combineClassNames(cx(), projectId)}>
     {
       projectId === VEuPathDB &&
       <VEuPathDBDescription />

@@ -17,9 +17,11 @@ body.vpdb-Body {
   
     height: 100vh;
 
-    .vpdb-Header {
+    .vpdb-HeaderContainer {
       grid-area: header;
-      
+    }
+
+    .vpdb-Header {
       &SearchBarToggle {
         &__hidden {
           display: none;
@@ -97,6 +99,7 @@ body.vpdb-Body {
 
     .vpdb-NewsPane {
       grid-area: side;
+      border-left: 1px solid;
     }
 
     .vpdb-Footer {
@@ -124,20 +127,20 @@ body.vpdb-Body {
       }
 
       .vpdb-Header {
-        background-image: url('~site/images/PlasmoDB/vpdb-background.png');
+        background-image: url('~site/images/PlasmoDB/vpdb-background.jpg');
         background-size: cover;
 
         .ebrc-HeaderBranding {
           position: relative;
           bottom: 10px;
-          height: 72px;
-          content: url('~site/images/PlasmoDB/title_s.png');
+          height: calc(72px * 1.2);
+          content: url('~site/images/PlasmoDB/plasmo-logo_new-homepage2.png');
         }
 
         &__collapsed {
           .ebrc-HeaderBranding {
             bottom: 0px;
-            height: 48px;
+            height: calc(48px * 1.15);
           }
         }
       }

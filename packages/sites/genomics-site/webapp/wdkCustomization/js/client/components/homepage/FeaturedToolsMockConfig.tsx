@@ -1,30 +1,85 @@
 import { FeaturedToolMetadata } from "./FeaturedTools";
 
 const MOCK_FEATURED_TOOL_ORDER = [ 
+  "search-strategies",
   "tour", 
+  "analyze",
+  "population",
+  "pathways",
+  "phenotype",
   "genome-browser", 
   "transcriptomic-resources", 
   "tips" 
 ];
 
 const MOCK_FEATURED_TOOL_ENTRIES = {
+  "search-strategies": {
+    listIconKey: "search",
+    listTitle: "Search Strategies",
+    descriptionTitle: "Search Strategies",
+    descriptionBody: `
+      <div style="display: flex; justify-content: center; align-items: center">  
+        ...
+      </div>
+    `
+  },
   "tour": {
-    listIconKey: "globe",
+    listIconKey: "motorcycle",
     listTitle: "Take a Tour",
     descriptionTitle: "Take a Tour of VEuPathDB",
     descriptionBody: `
       <div style="display: flex; justify-content: center; align-items: center">  
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/Zgcz7jlH9h0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/81nuXyNQP3k" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     `
   },
-  "genome-browser": {
+  "analyze": {
     listIconKey: "bar-chart",
+    listTitle: "Analyze My Data",
+    descriptionTitle: "Analyze My Data",
+    descriptionBody: `
+      <div style="display: flex; justify-content: center; align-items: center">  
+        ...
+      </div>
+    `
+  },
+  "population": {
+    listIconKey: "globe",
+    listTitle: "Population Biology",
+    descriptionTitle: "Population Biology",
+    descriptionBody: `
+      <div style="display: flex; justify-content: center; align-items: center">  
+        ...
+      </div>
+    `
+  },  
+  "pathways": {
+    listIconKey: "share-alt",
+    listTitle: "Signalling Pathways",
+    descriptionTitle: "Signalling Pathways",
+    descriptionBody: `
+      <div style="display: flex; justify-content: center; align-items: center">  
+        ...
+      </div>
+    `
+  },  
+  "phenotype": {
+    listIconKey: "flask",
+    listTitle: "Phenotype",
+    descriptionTitle: "Phenotype",
+    descriptionBody: `
+      <div style="display: flex; justify-content: center; align-items: center">  
+        ...
+      </div>
+    `
+  },  
+  "genome-browser": {
+    listIconKey: "sliders",
     listTitle: "Genome Browser",
     descriptionTitle: "Genome Browser",
     descriptionBody: `
-      <div>
-        Place for the genome browser
+      <div style="display: flex; justify-content: center; align-items: center">  
+        ...
       </div>
     `
   },

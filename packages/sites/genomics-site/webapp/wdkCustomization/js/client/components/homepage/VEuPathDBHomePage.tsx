@@ -115,21 +115,23 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const headerClassName = vpdbCx('Header', headerExpanded ? 'expanded' : 'collapsed');
   const searchPaneClassName = combineClassNames(vpdbCx('SearchPane'), vpdbCx('BgWash'), vpdbCx('BdDark'));
   const mainClassName = vpdbCx('Main');
-  const newsPaneClassName = vpdbCx('NewsPane');
+  const newsPaneClassName = combineClassNames(vpdbCx('NewsPane'), vpdbCx('BdDark'));
   const footerClassName = vpdbCx('Footer'); 
 
   return (
     <div className={rootContainerClassName}>
       <ErrorBoundary>
-        <Header 
-          // FIXME: use project logos for component site branding 
-          branding={projectId}
-          menuItems={headerMenuItems} 
-          containerClassName={headerClassName} 
-          loadSuggestions={loadSuggestions}
-          siteSearchSuggestions={siteSearchSuggestions}
-          additionalSuggestions={additionalSuggestions}
-        />
+        <div className={vpdbCx('HeaderContainer')}>
+          <Header 
+            // FIXME: use project logos for component site branding 
+            branding={projectId}
+            menuItems={headerMenuItems} 
+            containerClassName={headerClassName} 
+            loadSuggestions={loadSuggestions}
+            siteSearchSuggestions={siteSearchSuggestions}
+            additionalSuggestions={additionalSuggestions}
+          />
+        </div>
       </ErrorBoundary>
       <ErrorBoundary>
         <SearchPane 
