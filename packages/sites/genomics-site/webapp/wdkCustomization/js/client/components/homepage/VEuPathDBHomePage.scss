@@ -19,10 +19,7 @@ body.vpdb-Body {
 
     .vpdb-Header {
       grid-area: header;
-
-      transition-duration: 0.3s;
-      transition-delay: 0.1s;
-    
+      
       &SearchBarToggle {
         &__hidden {
           display: none;
@@ -36,9 +33,6 @@ body.vpdb-Body {
         .ebrc-HeaderBranding {
           font-size: 25px;
           color: white;
-
-          transition-duration: 0.3s;
-          transition-delay: 0.1s;
         }
 
         .ebrc-FooterSocialMediaLinks {
