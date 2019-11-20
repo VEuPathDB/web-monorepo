@@ -181,7 +181,7 @@ function observeSubmitForm(action$, state$, dependencies) {
 }
 
 const fetchStudy = (datasetId, wdkService) => wdkService.getRecord(
-  'DatasetRecordClasses.DatasetRecordClass',
+  'dataset',
   [
     {
       name: 'dataset_id',

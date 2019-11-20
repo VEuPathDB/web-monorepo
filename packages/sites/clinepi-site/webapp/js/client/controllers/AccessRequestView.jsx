@@ -1,11 +1,9 @@
-import { Component, Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 
 import { Link } from 'wdk-client/Components'
 
-import { 
-  SupportFormBase, 
-  SupportFormBody
-} from 'ebrc-client/components';
+import SupportFormBase from 'ebrc-client/components/SupportForm/SupportFormBase';
+import SupportFormBody from 'ebrc-client/components/SupportForm/SupportFormBody';
 
 export default class AccessRequestView extends Component {
   constructor(...args) {

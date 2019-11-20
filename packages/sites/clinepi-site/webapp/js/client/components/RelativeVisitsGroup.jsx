@@ -47,7 +47,7 @@ const parseSettings = createSettingsParser('relatedObservationsLayoutSettings', 
     const useRelativeObservationsParam = settings.getUseRelativeObservationsParam();
     const observationsGroup = settings.getObservationGroup();
     const observationsIsDefault = observationsGroup.parameters.every(paramName =>
-      wizardState.question.parameters.find(p => p.name === paramName).defaultValue === wizardState.paramValues[paramName])
+      wizardState.question.parameters.find(p => p.name === paramName).initialDisplayValue === wizardState.paramValues[paramName])
     return (
       wizardState.paramValues[useRelativeObservationsParam.name] === 'Yes' &&
       !observationsIsDefault
@@ -124,7 +124,7 @@ export default class RelativeVisitsGroup extends React.Component {
     const settings = parseSettings(question);
     const eventsGroup = this.props.wizardState.question.groups.find(group => group === settings.getObservationGroup());
     const eventsIsDefault = eventsGroup.parameters.every(paramName =>
-      this.props.wizardState.question.parameters.find(p => p.name === paramName).defaultValue === this.props.wizardState.paramValues[paramName])
+      this.props.wizardState.question.parameters.find(p => p.name === paramName).initialDisplayValue === this.props.wizardState.paramValues[paramName])
 
     const modifiedQuestion = Object.assign({}, question, {
       parameters: question.parameters.map(param =>

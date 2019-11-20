@@ -99,6 +99,7 @@ public class ShinyQueryService extends AbstractWdkService {
                 out.write(rowConverter.getRow(rs, metadata));
               }
               out.write(rowConverter.getFooter());
+              return null;
             }
             catch (IOException e) {
               throw new RuntimeException(e);

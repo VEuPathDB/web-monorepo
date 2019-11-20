@@ -1,3 +1,4 @@
+import React from 'react';
 import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
 
 import { getStaticSiteData } from '../selectors/siteData';

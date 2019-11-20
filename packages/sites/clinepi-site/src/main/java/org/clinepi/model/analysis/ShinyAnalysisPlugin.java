@@ -19,7 +19,6 @@ import org.gusdb.fgputil.db.pool.DatabaseInstance;
 import org.gusdb.fgputil.db.runner.SQLRunner;
 import org.gusdb.fgputil.db.runner.SQLRunnerException;
 import org.gusdb.wdk.model.WdkModelException;
-import org.gusdb.wdk.model.WdkUserException;
 import org.gusdb.wdk.model.answer.AnswerValue;
 import org.gusdb.wdk.model.user.analysis.ExecutionStatus;
 import org.gusdb.wdk.model.user.analysis.StatusLogger;
@@ -82,7 +81,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
 
   @Override
   public ExecutionStatus runAnalysis(AnswerValue answerValue, StatusLogger log)
-      throws WdkModelException, WdkUserException {
+      throws WdkModelException {
     ExecutionStatus status = super.runAnalysis(answerValue, log);
 
     // perform custom dump of ontology item metadata on a per-dataset basis
@@ -126,6 +125,7 @@ public class ShinyAnalysisPlugin extends EuPathExternalAnalyzer {
                 getStringCol(rs, NUM_DISTINCT_COL),
                 getStringCol(rs, DISTINCT_COL)));
           }
+          return null;
         }
         catch (IOException e) {
           throw new SQLRunnerException(e);

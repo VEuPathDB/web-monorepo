@@ -1,3 +1,4 @@
+import React from 'react';
 const AccessRequestTextField = ({
   label,
   value

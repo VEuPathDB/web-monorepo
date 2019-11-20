@@ -4,7 +4,7 @@ import { IconAlt, Link } from 'wdk-client/Components';
 import { getStudyByQuestionName } from '../selectors/siteData';
 
 const injectSearchStudy = connect((state, props) => ({
-  activeStudy: getStudyByQuestionName(props.wizardState.question.name)(state)
+  activeStudy: getStudyByQuestionName(props.wizardState.question.fullName)(state)
 }));
 
 

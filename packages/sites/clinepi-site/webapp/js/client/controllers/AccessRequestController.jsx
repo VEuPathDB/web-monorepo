@@ -1,12 +1,8 @@
 import { get } from 'lodash';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { PageController } from 'wdk-client/Controllers';
-
-import { 
-  SupportFormBase, 
-  SupportFormBody
-} from 'ebrc-client/components';
 
 import { 
   onChangeFieldFactory, 

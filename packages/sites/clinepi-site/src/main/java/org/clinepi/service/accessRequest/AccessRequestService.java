@@ -25,7 +25,6 @@ import org.gusdb.wdk.model.record.RecordInstance;
 import org.gusdb.wdk.service.request.RecordRequest;
 import org.gusdb.wdk.service.request.exception.ConflictException;
 import org.gusdb.wdk.service.request.exception.DataValidationException;
-import org.gusdb.wdk.service.service.RecordService;
 import org.gusdb.wdk.service.service.user.UserService;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +33,7 @@ import org.json.JSONObject;
 public class AccessRequestService extends UserService {
   
   private static final Logger LOG = Logger.getLogger(AccessRequestService.class);
-  private static final String DATASET_RECORD_CLASS = "DatasetRecordClasses.DatasetRecordClass";
+  private static final String DATASET_RECORD_CLASS = "dataset";
 
   interface DatasetAccessRequestAttributes {
     public String getStudyAccess() throws WdkModelException, WdkUserException;
@@ -93,10 +92,7 @@ public class AccessRequestService extends UserService {
   }
 
   public DatasetAccessRequestAttributes retrieveDatasetRecordInstance(String datasetId) throws DataValidationException, WdkModelException {
-    RecordClass datasetRecordClass = RecordService.getRecordClassOrNotFound(
-      DATASET_RECORD_CLASS, 
-      getWdkModel()
-    );
+    RecordClass datasetRecordClass = getRecordClassOrNotFound(DATASET_RECORD_CLASS);
 
     List<RecordInstance> records = RecordClass.getRecordInstances(
       getSessionUser(), 
