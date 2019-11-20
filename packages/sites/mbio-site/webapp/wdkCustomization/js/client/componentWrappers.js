@@ -1,3 +1,4 @@
+import React from 'react';
 import Header from 'ebrc-client/App/Header';
 import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
 import StudyAnswerController from 'ebrc-client/component-wrappers/StudyAnswerController';
@@ -76,7 +77,7 @@ function getHomeContent({ studies, searches, visualizations }) {
     {
       title: 'Explore Example Searches',
       description: 'MicrobiomeDB can be used to employ a sophisticated search strategy system to explore study data. Use the example searches below to jump to saved strategies, view their results and get acquainted with MicrobiomeDB capabilities.',
-      viewAllAppUrl: '/showApplication.do?tab=public_strat',
+      viewAllAppUrl: '/app/workspace/strategies/public',
       contentType: 'SearchCardList',
       contentNamePlural: 'searches',
       items: searches.entities,
@@ -126,15 +127,15 @@ function makeHeaderMenuItems(state) {
         children: [
           {
             text: 'My Search Strategies',
-            appUrl: '/showApplication.do'
+            route: '/workspace/strategies/all'
           },
 /*          {
             text: 'Analyze My Experiment',
-            appUrl: '/app/galaxy-orientation'
+            route: '/galaxy-orientation'
           },
 */        {
             text: 'My Basket',
-            appUrl: '/showApplication.do?tab=basket',
+            appUrl: '/workspace/basket',
             loginRequired: true
           },
           {
@@ -144,7 +145,7 @@ function makeHeaderMenuItems(state) {
           },
           {
             text: 'Public Search Strategies',
-            appUrl: '/showApplication.do?tab=public_strat'
+            route: '/workspace/strategies/public'
           }
         ]
       },
@@ -158,7 +159,7 @@ function makeHeaderMenuItems(state) {
           },
           {
             text: 'Public Strategies',
-            appUrl: '/showApplication.do?tab=public_strat'
+            route: '/workspace/strategies/public'
           },
           {
             text: 'Tutorials and Resources',
