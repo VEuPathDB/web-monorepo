@@ -14,15 +14,15 @@
 
   <c:set var="newsUrl" value="${isPortal ? 'aggregateNews.jsp' : 'showXmlDataContent.do?name=XmlQuestions.News'}"/>
   <!-- if the site has statistics on its own, not covered in the Portal Data Summary table, show them, otherwise show the genome table -->
-  <c:set var="statsUrl" value="${'/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes'}"/>
+  <c:set var="statsUrl" value="${'/app/search/organism/GenomeDataTypes'}"/>
 
   <li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.About.jsp">What is ${project}?</a></li>
  <li><a href="${baseUrl}/wdkCustomization/jsp/questions/XmlQuestions.EuPathDBPubs.jsp">Publications on EuPathDB sites</a></li>
  
 <br/><span class="smallTitle">------ Data in ${project}</span>
   
-  <c:set var="linkToDataSummary" value="/processQuestion.do?questionFullName=OrganismQuestions.GenomeDataTypes" />
-  <c:set var="linkToGeneMetrics" value="/processQuestion.do?questionFullName=OrganismQuestions.GeneMetrics" />
+  <c:set var="linkToDataSummary" value="/app/search/organism/GenomeDataTypes" />
+  <c:set var="linkToGeneMetrics" value="/app/search/organism/GeneMetrics" />
 
   <li><a href="${baseUrl}${linkToDataSummary}">Organisms</a></li>
   <c:if test="${project eq 'CryptoDB'}">

@@ -3,7 +3,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="api" uri="http://eupathdb.org/taglib" %>
 
 <fmt:setLocale value="en-US"/>
 
@@ -22,6 +21,7 @@
   </c:otherwise>
 </c:choose>
 
+<%--
 <c:choose>
   <c:when test="${param.upcoming eq 1}">
     <api:xmlMessages var="xml" messageCategory="Event" projectName="${projectName}"/>
@@ -31,7 +31,7 @@
                      range="all" stopDateSort="DESC"/>
   </c:otherwise>
 </c:choose>
-
+--%>
 <x:parse doc="${xml}" var="doc"/>
 <c:set var="dateStringPattern" value="dd MMMM yyyy HH:mm"/>
 <c:choose>

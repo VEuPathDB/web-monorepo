@@ -1,10 +1,10 @@
-import { StaticDataActions } from 'wdk-client/Actions';
-import { getLeaves } from 'wdk-client/TreeUtils';
+import { allDataLoaded } from 'wdk-client/Actions/StaticDataActions';
+import { getLeaves } from 'wdk-client/Utils/TreeUtils';
 
 export function reduce(state, action) {
   switch(action.type) {
     // flatten search tree
-    case StaticDataActions.allDataLoaded.type: return {
+    case allDataLoaded.type: return {
       ...state,
       searchTree: {
         ...state.searchTree,

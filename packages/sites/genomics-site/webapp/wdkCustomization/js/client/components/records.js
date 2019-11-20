@@ -1,4 +1,4 @@
-import { identity } from 'lodash';
+import React from 'react';
 let req = require.context('./records', true);
 let moduleNames = req.keys();
 
@@ -32,7 +32,7 @@ export function findComponent(componentName, recordClassName) {
 /**
  * Create a component wrapper for `componentName`.
  * The component that the wrapper returns is either the original component or a
- * component found in the module `./records/${props.recordClass.name}`.
+ * component found in the module `./records/${props.recordClass.fullName}`.
  *
  * An optional ParentComponent can be passed as a second argument. The
  * ParentComponent will receive the resolved component Element as children.
@@ -40,7 +40,7 @@ export function findComponent(componentName, recordClassName) {
 export function makeDynamicWrapper(componentName, ParentComponent) {
   return function dynamicWrapper(DefaultComponent) {
     return function DynamicWrapper(props) {
-      let ResolvedComponent = findComponent(componentName, props.recordClass.name)
+      let ResolvedComponent = findComponent(componentName, props.recordClass.fullName)
         || DefaultComponent;
       let resolvedElement = <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>;
       return ParentComponent == null ? resolvedElement : (

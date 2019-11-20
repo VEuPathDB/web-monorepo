@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckboxList } from 'wdk-client/Components';
-import { getValueOrDefault, filterOutProps } from 'wdk-client/ComponentUtils';
+import { getValueOrDefault, filterOutProps } from 'wdk-client/Utils/ComponentUtils';
 
 /**
  * Provides hardcode relationships between user email preferences and the display labels in the order the data

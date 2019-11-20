@@ -4,7 +4,7 @@
  * React Components related to Compounds
  */
 
-import {Component} from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {uniqueId, isEmpty} from 'lodash';
 import {registerCustomElement} from 'ebrc-client/util/customElements';

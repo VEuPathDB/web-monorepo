@@ -1,0 +1,77 @@
+.vpdb-FeaturedTools {
+  font-size: 1rem;
+  color: #00304c;
+  
+  h3 {
+    font-size: 1.75rem;
+  }
+
+  h5 {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+
+  &Header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    a {
+      font-size: 0.9rem;
+      color: #00304c;
+      font-weight: bold;
+    }
+  }
+
+  &List {
+    display: flex;
+
+    &Items {
+      font-weight: bold;
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+      margin-top: 0.5rem;
+    }
+
+    &Item {
+      padding: 0.75rem 1.25rem 0.75rem 1.5rem;
+      border-left: 0.125rem solid transparent;
+      display: block;
+      color: #00304c;
+      margin-right: 1rem;
+      
+      &:hover {
+        background-color: #f8f9fa;
+        text-decoration: none;
+      }
+
+      &__selected, &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+        border-left: 0.125rem solid #00304c;
+        background-color: #e5eef7;
+        outline: none;
+        text-decoration: none;
+      }
+
+      i {
+        margin-right: 0.25em;
+      }
+    }
+  }
+
+  &Selection {
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+
+    border: 0.0625rem solid rgba(0, 0, 0, 0.125);
+
+    &Header {
+      color: white;
+      padding: 0.75rem 1.25rem;
+      margin: 0;
+    }
+
+    &Body {
+      padding: 1.25rem;
+    }
+  }
+}

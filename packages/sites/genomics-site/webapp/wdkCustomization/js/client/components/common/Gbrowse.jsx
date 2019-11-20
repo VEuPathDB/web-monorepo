@@ -1,6 +1,6 @@
 import {once, debounce} from 'lodash';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { httpGet } from 'ebrc-client/util/http';
 import $ from 'jquery';
 import { Loading } from 'wdk-client/Components';

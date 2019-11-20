@@ -1,13 +1,13 @@
 import { isEqual } from 'lodash';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import Cookies from 'js-cookie';
 import QueryString from 'querystring';
+import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { projectId } from 'ebrc-client/config';
-import { emptyAction } from 'wdk-client/WdkMiddleware';
 import { CollapsibleSection, Link } from 'wdk-client/Components';
-import { getSingleRecordAnswerSpec } from 'wdk-client/WdkModel';
-import { submitAsForm } from 'wdk-client/FormSubmitter';
+import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
@@ -15,7 +15,15 @@ import ApiApplicationSpecificProperties from './components/ApiApplicationSpecifi
 import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
-import newFeatureImage from 'wdk/images/new-feature.png';
+import OrganismFilter from './components/OrganismFilter';
+import newFeatureImage from 'wdk-client/Core/Style/images/new-feature.png';
+
+import { BinaryOperationsContext } from 'wdk-client/Utils/Operations';
+import { apiBinaryOperations } from './components/strategies/ApiBinaryOperations';
+import { StepDetailsActionContext } from 'wdk-client/Views/Strategy/StepDetailsDialog';
+import { apiActions } from './components/strategies/ApiStepDetailsActions';
+
+import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -84,6 +92,7 @@ export const RecordMainSection = makeDynamicWrapper('RecordMainSection');
 export const RecordTable = makeDynamicWrapper('RecordTable', RecordTableContainer);
 export const RecordTableDescription = makeDynamicWrapper('RecordTableDescription');
 export const ResultTable = makeDynamicWrapper('ResultTable');
+export const ResultPanelHeader = makeDynamicWrapper('ResultPanelHeader');
 
 const RecordClassSpecificRecordlink = makeDynamicWrapper('RecordLink');
 
@@ -129,7 +138,7 @@ function getBaseUrl(projectId) {
 
 function downloadRecordTable(record, tableName) {
   return ({ wdkService }) => {
-    let answerSpec = getSingleRecordAnswerSpec(record);
+    let answerSpec = wdkService.getSingleRecordAnswerSpec(record);
     let formatting = {
       format: 'tableTabular',
       formatConfig: {
@@ -146,7 +155,7 @@ function downloadRecordTable(record, tableName) {
 export function RecordTableSection(DefaultComponent) {
   return connect(null, { downloadRecordTable })(class ApiRecordTableSection extends React.PureComponent {
     render () {
-      if (this.props.recordClass.name === 'DatasetRecordClasses.DatasetRecordClass') {
+      if (this.props.recordClass.fullName === 'DatasetRecordClasses.DatasetRecordClass') {
         return (
           <DefaultComponent {...this.props}/>
         );
@@ -179,7 +188,7 @@ export function RecordTableSection(DefaultComponent) {
 
       let showDatasetsLink = (
         record.tables[table.name] &&
-        !table.name.startsWith("UserDatasets") &&  
+        !table.name.startsWith("UserDatasets") &&
         !hideDatasetLinkFromProperty
       );
 
@@ -295,7 +304,7 @@ export function RecordAttributeSection(DefaultComponent) {
 
     // use standard record class overriding
     let ResolvedComponent =
-      findComponent('RecordAttributeSection', props.recordClass.name) || DefaultComponent;
+      findComponent('RecordAttributeSection', props.recordClass.fullName) || DefaultComponent;
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
 }
@@ -365,4 +374,49 @@ export function TabularReporterFormSubmitButtons(ApiTabularReporterFormSubmitBut
       </div>
     )
   );
+}
+
+export function ResultTabs(DefaultComponent) {
+  return function ApiResultTabs(props) {
+    return (
+      <div style={{ display: "flex", paddingTop: "1em", alignItems: "stretch" }}>
+        <OrganismFilter {...props}/>
+        <div style={{ flex: 1, overflow: 'auto' }}><DefaultComponent {...props}/></div>
+      </div>
+    );
+  };
+}
+
+export function StrategyWorkspaceController(DefaultComponent) {
+  return function ApiStrategyWorkspaceController(props) {
+    return (
+      <BinaryOperationsContext.Provider value={apiBinaryOperations}>
+        <StepDetailsActionContext.Provider value={apiActions}>
+          <DefaultComponent {...props} />
+        </StepDetailsActionContext.Provider>
+      </BinaryOperationsContext.Provider>
+    );
+  }
+}
+
+export function Page(DefaultComponent) {
+  return withRouter(function VuPathDBPage(props) {
+    const renderNewHomePage = props.location.pathname.startsWith('/new-home-page');
+
+    useEffect(() => {
+      const bodyElement = document.getElementsByTagName('body')[0];
+
+      if (bodyElement) {
+        bodyElement.className = renderNewHomePage
+          ? 'vpdb-Body'
+          : '';
+      }
+    }, [ renderNewHomePage ]);
+
+    return (
+      renderNewHomePage
+        ? <VEuPathDBHomePage {...props} />
+        : <DefaultComponent {...props} />
+    );
+  });
 }

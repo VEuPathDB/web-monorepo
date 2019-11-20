@@ -1,0 +1,111 @@
+.vpdb-PageDescription {
+  font-size: 1rem;
+
+  &ProjectId {
+    font-weight: bold;
+  }
+
+  .VEuPathDB {
+    .vpdb-PageDescriptionHeader {
+      display: flex;
+      justify-content: space-between;
+      display: flex;
+      align-items: center;
+
+      &Primary {
+        display: flex;
+        align-items: center;
+
+        h4 {
+          font-size: 1.5rem;
+          color: #999;
+          padding-right: 0.5rem;
+        }
+      }
+
+      &Secondary {
+        a {
+          font-size: 0.9rem;
+          font-weight: bold;
+          color: #00304c;
+        }
+      }
+
+      &ProjectLinks {
+        display: flex;
+
+        a {
+          height: 1.5rem;
+          padding: 0 0.3rem;
+        }
+      }
+    }
+
+    .vpdb-PageDescriptionExpandedSummary {
+      &ProjectLinks {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+
+        &Item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 0.5rem 1rem;
+
+          a {
+            height: 2.8125rem;
+          }
+
+          &Description {
+            font-weight: bold;
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+
+    .ebrc-ProjectLink {
+      .AmoebaDB {
+        content: url('~site/images/AmoebaDB/amoebadb_w50.png');
+      }
+      
+      .CryptoDB {
+        content: url('~site/images/CryptoDB/cryptodb_w50.png');
+      }
+    
+      .FungiDB {
+        content: url('~site/images/FungiDB/fungidb_w50.png');
+      }
+    
+      .GiardiaDB {
+        content: url('~site/images/GiardiaDB/giardiadb_w50.png');
+      }
+    
+      .MicrosporidiaDB {
+        content: url('~site/images/MicrosporidiaDB/microdb_w50.png');
+      }
+    
+      .PiroplasmaDB {
+        content: url('~site/images/PiroplasmaDB/piroLogo-50.png');
+      }
+    
+      .PlasmoDB {
+        content: url('~site/images/PlasmoDB/plasmodb_w50.png');
+      }
+    
+      .ToxoDB {
+        content: url('~site/images/ToxoDB/toxodb_w50.png');
+      }
+    
+      .TrichDB {
+        content: url('~site/images/TrichDB/trichdb_w65.png');
+      }
+    
+      .TriTrypDB {
+        content: url('~site/images/TriTrypDB/tritrypdb_w40.png');
+      }
+    }
+    
+  }
+}

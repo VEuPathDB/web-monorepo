@@ -91,7 +91,7 @@
   </noscript>
 
   <!-- show error messages, if any -->
-  <div class='usererror'><api:errors/></div>
+  <div class='usererror'><%--<api:errors/>--%></div>
 
   <%--  PARAMS DIV --%>
   <div class="params" data-controller="wdk.parameterHandlers.init">

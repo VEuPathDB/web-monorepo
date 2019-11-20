@@ -1,6 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 
@@ -34,13 +32,23 @@
     <c:when test="${recordClasses == 'others'}">
       <%-- Generate an array of record class names to pass to javascript code --%>
       <div class="heading">Search for Other Data Types</div>
-      <div class="info" data-controller="apidb.bubble.initialize" data-is-transcript="false"><jsp:text/></div>
+      <div class="info"
+        data-controller="wdk.clientAdapter"
+        data-name="SearchBubble"
+        data-resolver="apidb.bubble.resolver"
+        data-props='{ "isTranscript": false }'
+      ><jsp:text/></div>
     </c:when>
 
     <%---------------------------------   GENES  -------------------------%>
     <c:otherwise>
       <div class="heading">Search for Genes</div>
-      <div class="info" data-controller="apidb.bubble.initialize" data-is-transcript="true"><jsp:text/></div>
+      <div class="info"
+        data-controller="wdk.clientAdapter"
+        data-name="SearchBubble"
+        data-resolver="apidb.bubble.resolver"
+        data-props='{ "isTranscript": true }'
+      ><jsp:text/></div>
     </c:otherwise>
   </c:choose> 
 </div>

@@ -1,0 +1,88 @@
+.DynSpansBySourceId {
+  max-width: 81.25em;
+  font-size: 0.75rem;
+
+  &ParamGroup {
+    display: flex;
+
+    > div {
+      width: 49%;
+    }
+
+    .wdk-QuestionFormParameterHeading {
+      display: flex;
+      justify-content: flex-end;
+      border-bottom: unset;
+
+      h2 {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+        font-size: 0.75rem;
+        margin: 0.75em;
+        padding: unset;
+
+        .HelpTrigger {
+          margin-left: 0.5em;
+        }
+      }
+    }
+
+    .wdk-QuestionFormParameterControl {
+      display: flex;
+      align-items: center;
+      padding: unset;
+    }
+
+    .wdk-QuestionFormParameterList {
+      display: grid;
+      grid-template-columns: 14em 1fr;
+    }
+
+    .wdk-DatasetParamLabel {
+      flex: 2.5
+    }
+  }
+
+  &MutuallyExclusiveParams {
+    border-right: .25em double black;
+    padding-right: .5em;
+    margin-right: .5em;
+  }
+
+  &AddLocationButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5em 0;
+  }
+
+  &AddLocationArrows{
+    font-size: 1.5em;
+    margin: 0 .25em;
+  }
+
+  &PhaseHeader {
+    font-weight: bold;
+    text-align: left;
+  }
+
+  &Instructions {
+    font-style: italic;
+  }
+
+  &ParamName {
+    font-weight: bold;
+  }
+
+  &Format {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 1em;
+  }
+
+  &Example {
+    text-align: center;
+    margin-bottom: 1.5em;
+  }
+}

@@ -1,3 +1,4 @@
+import React from 'react';
 import {CollapsibleSection} from 'wdk-client/Components';
 import {SnpsAlignmentForm} from '../common/Snps';
 

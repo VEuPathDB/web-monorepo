@@ -4,11 +4,11 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { uniqueId } from 'lodash';
 import $ from 'jquery';
-import { safeHtml } from 'wdk-client/ComponentUtils';
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { loadChemDoodleWeb } from '../common/Compound';
 import { CategoriesCheckboxTree, CollapsibleSection, Link, Loading, Dialog } from 'wdk-client/Components';
-import * as Ontology from 'wdk-client/OntologyUtils';
-import * as Category from 'wdk-client/CategoryUtils';
+import * as Ontology from 'wdk-client/Utils/OntologyUtils';
+import * as Category from 'wdk-client/Utils/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
 
 // include menu bar files
@@ -1644,7 +1644,7 @@ function setGeneraSelection(generaSelection) {
 
 function getExperimentCategoryTree(state) {
   return Ontology.getTree(state.globalData.ontology, Category.isQualifying({
-    recordClassName: state.record.recordClass.name,
+    recordClassName: state.record.recordClass.fullName,
     targetType: 'attribute',
     scope: 'graph-internal'
   }))

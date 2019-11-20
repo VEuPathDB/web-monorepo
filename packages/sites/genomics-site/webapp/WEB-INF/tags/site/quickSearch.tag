@@ -1,8 +1,5 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="w" uri="http://www.servletsuite.com/servlets/wraptag" %>
-<%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
-<%@ taglib prefix="random" uri="http://jakarta.apache.org/taglibs/random-1.0" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%-- TRANSPARENT PNGS for IE6 --%>
@@ -56,7 +53,7 @@
 <!-- GENE ID -->
       <td>
         <div align="right">
-          <html:form method="post" action="/processQuestionSetsFlat">
+          <form method="post" action="processQuestionSetsFlat.do">
             <div class="wdk-tooltip" title="Use * as a wildcard in a gene ID. Click on 'Gene ID' to enter multiple Gene IDs.">
               <label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GeneByLocusTag'/>" >Gene ID:</a></b></label>
          		  <input type="hidden" name="questionFullName" value="GeneQuestions.GeneBySingleLocusTag"/>
@@ -64,13 +61,13 @@
 	  			    <input type="hidden" name="questionSubmit" value="Get Answer"/>
               <input name="go" value="go" type="image" src="${pageContext.servletContext.contextPath}/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle"/>
 	  			  </div>
-         </html:form>
+         </form>
 		   </div>
 		 </td>
 			 
 <!-- TEXT SEARCH -->
              <td><div align="right">
-               <html:form method="post" action="/processQuestionSetsFlat">
+               <form method="post" action="/processQuestionSetsFlat.do">
           		<div class="wdk-tooltip" title="Use * as a wildcard, as in *inase, kin*se, kinas*. Do not use AND, OR. Use quotation marks to find an exact phrase. Click on 'Gene Text Search' to access the advanced gene search page.">
           		<label><b><a href="<c:url value='/showQuestion.do?questionFullName=GeneQuestions.GenesByTextSearch'/>" >Gene Text Search:</a></b></label>
 
@@ -95,7 +92,7 @@
           		<input type="hidden" name="questionSubmit" value="Get Answer"/>
               <input name="go" value="go" type="image" src="${pageContext.servletContext.contextPath}/images/mag_glass.png" alt="Click to search" width="23" height="23" class="img_align_middle" />
                      </div>
-          	   </html:form>
+          	   </form>
 			 </div></td>
 
 

@@ -1,15 +1,13 @@
 <%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
-<%@ taglib prefix="imp" tagdir="/WEB-INF/tags/imp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="http://struts.apache.org/tags-html" %>
-<%@ taglib prefix="api" uri="http://eupathdb.org/taglib" %>
 
 <c:set var="partial" value="${requestScope.partial}" />
 <c:set var="showParams" value="${requestScope.showParams}"/>
 <c:set var="wdkQuestion" value="${requestScope.wdkQuestion}"/>
 
 <!-- show error messages, if any -->
-<div class='usererror'><api:errors/></div>
+<div class='usererror'><%--<api:errors/>--%></div>
 
 <div><b>Description:</b>  Shown below is a table of identified RFLP Genotypes (Chunlei Su).  Use the check boxes on the left to search for associated isolates.  Click <a href="/Standards_gel_pics.pdf">here</a> for RFLP images in PDF format.</div>
 <br/>

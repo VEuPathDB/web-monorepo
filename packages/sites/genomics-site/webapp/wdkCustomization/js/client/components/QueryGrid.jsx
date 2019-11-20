@@ -1,7 +1,7 @@
 import React from 'react';
 import { webAppUrl } from '../config';
 import {Tooltip} from 'wdk-client/Components';
-import { getPropertyValue, nodeHasChildren, getNodeChildren } from 'wdk-client/OntologyUtils';
+import { getPropertyValue, nodeHasChildren, getNodeChildren } from 'wdk-client/Utils/OntologyUtils';
 
 class QueryGrid extends React.Component {
 
