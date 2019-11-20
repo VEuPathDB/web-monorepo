@@ -11,6 +11,7 @@ import {
 } from 'wdk-client/Actions/DownloadFormActions';
 import DownloadFormContainer from 'wdk-client/Views/ReporterForm/DownloadFormContainer';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { reportAnswerFulfillmentError } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 
 const WebServicesHelpActionCreators = {
   loadPageDataFromSearchConfig,
@@ -65,9 +66,29 @@ class WebServicesHelpController extends PageController<Props> {
     let formProps = {
       ...this.props,
     };
+    if (!formProps.resultType ||
+        formProps.resultType.type != 'step' ||
+        !formProps.recordClass) {
+      return ( <div>This page cannot be rendered with the passed query parameters.</div> );
+    }
+    let reportName = formProps.selectedReporter || "?";
+    let reportConfig = formProps.formState || "Not yet configured"
+    let url = '/service/record-types/' +
+       formProps.recordClass.urlSegment + '/searches/' +
+       formProps.resultType.step.searchName + '/reports/' + reportName;
+    let requestJson = JSON.stringify({
+      searchConfig: formProps.resultType.step.searchConfig,
+      reportConfig: reportConfig
+    }, null, 2);
     return (
       <div>
         <h3>Coming Soon...</h3>
+        <div>
+          POST the following JSON to {url}
+          <pre>
+            {requestJson}
+          </pre>
+        </div>
         <DownloadFormContainer {...formProps}/>
       </div>
     );
