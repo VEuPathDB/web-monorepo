@@ -15,8 +15,5 @@ export function valueToArray(value = '') {
 
 // Use this for both EnumParam and FlatVocabParam.
 export function isEnumParam(parameter: Parameter): parameter is EnumParam {
-  return (
-    parameter.type === 'EnumParam' ||
-    parameter.type === 'FlatVocabParam'
-  );
+  return parameter.type === 'vocabulary';
 }

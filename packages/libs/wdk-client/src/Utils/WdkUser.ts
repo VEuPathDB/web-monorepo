@@ -1,5 +1,6 @@
-import { Decoder, combine, field, string, number, boolean } from 'wdk-client/Utils/Json';
-import {AnswerSpec} from 'wdk-client/Utils/WdkModel';
+import { Decoder, combine, field, string, number, boolean, oneOf, nullValue, optional } from 'wdk-client/Utils/Json';
+import { AnswerSpec } from 'wdk-client/Utils/WdkModel';
+import {Omit} from 'wdk-client/Core/CommonTypes';
 
 export interface User {
   id: number;
@@ -21,59 +22,138 @@ export type UserPredicate = (user: User) => boolean;
 
 export interface FilterValue { }
 
-export interface Step {
-  answerSpec: AnswerSpec;
+/**
+ * Validation level performed on step.
+ */
+export enum StepValidationLevel {
+  None = 'NONE',
+  Syntactic = 'SYNTACTIC',
+  Displayable = 'DISPLAYABLE',
+  Semantic = 'SEMANTIC',
+  Runnable = 'RUNNABLE'
+}
+
+export interface ValidStepValidation {
+  isValid: true;
+  level: StepValidationLevel;
+}
+
+export interface InvalidStepValidation {
+  isValid: false;
+  level: StepValidationLevel;
+  errors: {
+    general: string[];
+    byKey: Record<string, string[] | undefined>;
+  }
+}
+
+export interface Step extends AnswerSpec {
   customName: string;
   description: string;
   displayName: string;
-  estimatedSize: number;
+  estimatedSize?: number;
   hasCompleteStepAnalyses: boolean;
   id: number;
+  isFiltered: boolean;
   ownerId: number;
   recordClassName: string;
   shortDisplayName: string;
   strategyId: number;
-  displayPrefs: {
+  displayPreferences: {
     columnSelection?: string[];
     sortColumns?: { name: string; direction: 'ASC' | 'DESC' }[];
   }
+  expanded: boolean;
+  expandedName?: string;
+  validation: ValidStepValidation | InvalidStepValidation;
 }
 
-export interface Strategy {
-  author: string;
-  estimatedSize: number;
-  isDeleted: boolean;
-  isPublic: boolean;
-  isSaved: boolean;
+export interface PatchStepSpec {
+  customName?: string,
+  expanded?: boolean, // only allowed on combiner steps
+  expandedName?: string;  // only allowed on combiner steps; not shown if expand is false and the step is not nested
+  displayPreferences?: Step['displayPreferences'];
+}
+
+export interface NewStepSpec extends PatchStepSpec, AnswerSpec {
+}
+
+export interface SaveStrategyOptions {
+  removeOrigin: boolean;
+}
+
+export interface StrategyProperties {
+  name: string,
+  isSaved: boolean,
+  isPublic: boolean,
+  description?: string,
+  savedName?: string,
+}
+
+export type EditStrategySpec = Omit<StrategyProperties, 'isSaved'>;
+
+export interface StrategySummary extends StrategyProperties {
+  nameOfFirstStep?: string;
+  strategyId: number;
+  rootStepId: number;
+  estimatedSize?: number; // optional; may be null if step was modified but not rerun
   isValid: boolean;
   lastModified: string;
-  latestStepId:	number;
-  name: string;
-  organization: string;
-  recordClassName: string;
+  createdTime: string;
+  releaseVersion?: string;
+  recordClassName: string | null; // optional; may be null if root step is invalid
   signature: string;
-  strategyId: number;
+  author?: string;
+  organization?: string;
+  isDeleted: boolean;
 }
 
-export const strategyDecoder: Decoder<Strategy> = combine(
+export interface StrategyDetails extends StrategySummary {
+  stepTree: StepTree;
+  steps: Record<number, Step>;
+}
+
+export const strategySummaryDecoder: Decoder<StrategySummary> = combine(
   combine(
-    field('author', string),
-    field('estimatedSize', number),
+    field('author', optional(string)),
+    field('description', string),
+    field('estimatedSize', optional(number)),
     field('lastModified', string),
-    field('latestStepId',	number),
+    field('createdTime', string),
     field('name', string),
-    field('organization', string),
-    field('recordClassName', string),
+    field('organization', optional(string)),
+    field('recordClassName', oneOf(nullValue, string)),
     field('signature', string),
     field('strategyId', number),
   ),
   combine(
+    field('releaseVersion', optional(string)),
     field('isDeleted', boolean),
     field('isPublic', boolean),
     field('isSaved', boolean),
     field('isValid', boolean),
+    field('rootStepId', number),
   )
 )
+
+export interface StepTree {
+  stepId: number,
+  primaryInput?: StepTree,
+  secondaryInput?: StepTree
+}
+
+export interface NewStrategySpec extends StrategyProperties {
+  stepTree: StepTree
+}
+
+export interface DuplicateStrategySpec {
+  sourceStrategySignature: string
+}
+
+export interface DeleteStrategySpec {
+  strategyId: number,
+  isDeleted: boolean
+}
 
 // TODO: should be factored to Ebrc something
 export type PubmedPreview = PubmedPreviewEntry[];
@@ -85,7 +165,7 @@ export interface PubmedPreviewEntry {
   author: string,
   url: string
 }
- 
+
 export interface UserCommentAttachedFileSpec {
   file: File | null,
   description: string
@@ -112,7 +192,7 @@ export type ReviewStatus =
   "unknown";
 
 export interface UserCommentLocation {
-  coordinateType: string, 
+  coordinateType: string,
   ranges: { start: number, end: number }[],
   reverse?: boolean
 }

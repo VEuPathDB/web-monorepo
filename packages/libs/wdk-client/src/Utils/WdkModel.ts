@@ -3,27 +3,40 @@
  */
 
 import { Field, OntologyTermSummary } from 'wdk-client/Components/AttributeFilter/Types';
-import { Step } from 'wdk-client/Utils/WdkUser';
 
-interface ModelEntity {
-  name: string;
+export interface ModelEntity {
   displayName: string;
   properties?: Record<string, string[]>;
 }
 
-export interface RecordClass extends ModelEntity {
+export interface Identifier {
+  id: number
+}
+
+export interface NamedModelEntity extends ModelEntity {
+  name: string
+}
+
+export interface UrlModelEntity extends ModelEntity {
+  fullName: string,
+  urlSegment: string
+}
+
+export interface RecordClass extends UrlModelEntity {
   displayNamePlural: string;
+  shortDisplayName: string;
+  shortDisplayNamePlural: string;
   iconName?: string;
   recordIdAttributeName: string;
   primaryKeyColumnRefs: string[];
   description: string;
-  urlSegment: string;
   attributes: AttributeField[];
   tables: TableField[];
   attributesMap: Record<string, AttributeField>;
   tablesMap: Record<string, TableField>;
   formats: Reporter[];
   useBasket: boolean;
+  searches: Array<Question>
 }
 
 export interface Reporter {
@@ -35,30 +48,28 @@ export interface Reporter {
   scopes: string[];
 }
 
-export interface ParameterBase extends ModelEntity {
+export interface ParameterBase extends NamedModelEntity {
   help: string;
   isVisible: boolean;
   group: string;
   isReadOnly: boolean;
-  defaultValue?: ParameterValue;
+  initialDisplayValue?: ParameterValue;
   dependentParams: string[];
+  allowEmptyValue: boolean;
+  visibleHelp?: string;
 }
 
 export interface StringParam extends ParameterBase {
-  type: 'StringParam';
+  type: 'string';
   length: number;
 }
 
-export interface AnswerParam extends ParameterBase {
-  type: 'AnswerParam';
-}
-
 export interface TimestampParam extends ParameterBase {
-  type: 'TimestampParam';
+  type: 'timestamp';
 }
 
 export interface FilterParamNew extends ParameterBase {
-  type: 'FilterParamNew';
+  type: 'filter';
   filterDataTypeDisplayName?: string;
   minSelectedCount: number;
   hideEmptyOntologyNodes?: boolean;
@@ -77,7 +88,7 @@ export interface FilterParamNew extends ParameterBase {
 }
 
 export interface EnumParamBase extends ParameterBase {
-  type: 'EnumParam' | 'FlatVocabParam';
+  type: 'vocabulary';
   displayType: string;
   countOnlyLeaves: boolean;
   maxSelectedCount: number;
@@ -127,47 +138,52 @@ export interface TreeBoxEnumParam extends EnumParamBase {
 export type EnumParam = SelectEnumParam | CheckboxEnumParam | TypeAheadEnumParam | TreeBoxEnumParam;
 
 export interface NumberParam extends ParameterBase {
-  type: 'NumberParam';
+  type: 'number';
   min: number;
   max: number;
-  step: number;
+  increment: number;
 }
 
 export interface NumberRangeParam extends ParameterBase {
-  type: 'NumberRangeParam';
+  type: 'number-range';
   min: number;
   max: number;
-  step: number;
+  increment: number;
 }
 
 export interface DateParam extends ParameterBase {
-  type: 'DateParam';
+  type: 'date';
   minDate: string;
   maxDate: string;
 }
 
 export interface DateRangeParam extends ParameterBase {
-  type: 'DateRangeParam';
+  type: 'date-range';
   minDate: string;
   maxDate: string;
 }
 
 export interface DatasetParam extends ParameterBase {
-  type: 'DatasetParam';
+  type: 'input-dataset';
   defaultIdList?: string;
   parsers: { name: string; displayName: string; description: string; }[]
 }
 
-export type Parameter = AnswerParam
-                      | DatasetParam
-                      | DateParam
-                      | DateRangeParam
-                      | EnumParam
-                      | FilterParamNew
-                      | NumberParam
-                      | NumberRangeParam
-                      | StringParam
-                      | TimestampParam;
+export interface AnswerParam extends ParameterBase {
+  type: 'input-step';
+}
+
+export type Parameter =
+  | StringParam
+  | TimestampParam
+  | DatasetParam
+  | DateParam
+  | DateRangeParam
+  | EnumParam
+  | FilterParamNew
+  | NumberParam
+  | NumberRangeParam
+  | AnswerParam
 
 export interface ParameterGroup {
   description: string;
@@ -178,19 +194,19 @@ export interface ParameterGroup {
   parameters: string[];
 }
 
-interface QuestionFilter {
+export interface QuestionFilter {
   name: string;
   displayName?: string;
   description?: string;
   isViewOnly: boolean;
 }
 
-interface QuestionShared extends ModelEntity {
+export interface Question extends UrlModelEntity {
   summary?: string;
   description?: string;
   iconName?: string;
   shortDisplayName: string;
-  recordClassName: string;
+  outputRecordClassName: string;
   help?: string;
   newBuild?: string;
   reviseBuild?: string;
@@ -200,16 +216,17 @@ interface QuestionShared extends ModelEntity {
   defaultSorting: AttributeSortingSpec[];
   dynamicAttributes: AttributeField[];
   defaultSummaryView: string;
+  noSummaryOnSingleRecord: boolean;
   summaryViewPlugins: SummaryViewPluginField[];
-  stepAnalysisPlugins: string[];
   filters: QuestionFilter[];
+  allowedPrimaryInputRecordClassNames?: string[];
+  allowedSecondaryInputRecordClassNames?: string[];
+  isAnalyzable: boolean;
+  paramNames: string[];
+  queryName?: string;
 }
 
-export interface Question extends QuestionShared {
-  parameters: string[];
-}
-
-export interface QuestionWithParameters extends QuestionShared {
+export interface QuestionWithParameters extends Question {
   parameters: Parameter[];
 }
 
@@ -241,7 +258,7 @@ export type ParamUIState = { } | {
   unfilteredCount?: number;
 }
 
-export interface AttributeField extends ModelEntity {
+export interface AttributeField extends NamedModelEntity {
   help?: string;
   align?: string;
   isSortable: boolean;
@@ -252,14 +269,14 @@ export interface AttributeField extends ModelEntity {
   formats: Reporter[];
 }
 
-export interface SummaryViewPluginField extends ModelEntity {
+export interface SummaryViewPluginField extends NamedModelEntity {
   description: string;
 }
 
-export interface TableField extends ModelEntity {
-  help: string;
-  type: string;
-  description: string;
+export interface TableField extends NamedModelEntity {
+  help?: string;
+  type?: string;
+  description?: string;
   attributes: AttributeField[];
 }
 
@@ -302,18 +319,30 @@ export interface Answer {
   }
 }
 
-export interface AnswerSpec {
-  questionName: string;
-  parameters?: Record<string, string>;
+export interface SearchConfig {
+  parameters: Record<string, string>;
   legacyFilterName?: string;
-  filters?: { name: string; value: any; }[];
-  viewFilters?: { name: string; value: string; }[];
+  filters?: FilterValueArray;
+  columnFilters?: Record<string,Record<string,any>>
+  viewFilters?: FilterValueArray;
   wdkWeight?: number;
 }
 
-export interface AnswerFormatting {
-  format: string
-  formatConfig?: object
+export type FilterValueArray = {
+  name: string;
+  value: any;
+}[];
+
+export interface AnswerSpec {
+  searchName: string;
+  searchConfig: SearchConfig;
+}
+
+export interface StandardReportConfig extends AttributesConfig {
+  pagination?: Pagination;
+  tables?: string[] | '__ALL_TABLES__';
+  attachmentType?: string;
+  includeEmptyTables?: boolean;
 }
 
 export interface AttributeSortingSpec {
@@ -333,14 +362,6 @@ export interface AnswerJsonFormatConfig extends AttributesConfig {
   tables?: string[] | '__ALL_TABLES__';
   attachmentType?: string;
   includeEmptyTables?: boolean;
-}
-
-export interface StepSpec {
-  answerSpec?: AnswerSpec,
-  customName?: string,
-  isCollapsible?: boolean,
-  collapsedName?: string;
-  displayPrefs?: Step['displayPrefs'];
 }
 
 export type UserDatasetMeta = {
@@ -461,10 +482,11 @@ export function getSingleRecordQuestionName(recordClassName: string): string {
 
 export function getSingleRecordAnswerSpec(record: RecordInstance): AnswerSpec {
   return {
-    questionName: getSingleRecordQuestionName(record.recordClassName),
-    parameters: {
-      "primaryKeys": record.id.map(pkCol => pkCol.value).join(",")
+    searchName: getSingleRecordQuestionName(record.recordClassName),
+    searchConfig: {
+      parameters: {
+        "primaryKeys": record.id.map(pkCol => pkCol.value).join(",")
+      }
     }
   };
 }
-

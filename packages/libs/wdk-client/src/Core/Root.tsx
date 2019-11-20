@@ -11,16 +11,18 @@ import Page from 'wdk-client/Components/Layout/Page';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
+import WdkService, { WdkServiceContext } from 'wdk-client/Service/WdkService';
+import LoginRequiredDisclaimer from 'wdk-client/Views/User/LoginRequiredDisclaimer';
 
 type Props = {
   rootUrl: string,
   routes: RouteEntry[],
   pluginConfig: ClientPluginRegistryEntry<any>[],
-  onLocationChange: (location: Location) => void;
-  history: History;
-  store: Store;
+  onLocationChange: (location: Location) => void,
+  history: History,
+  store: Store,
+  wdkService: WdkService
 };
-
 
 const REACT_ROUTER_LINK_CLASSNAME = 'wdk-ReactRouterLink';
 const GLOBAL_CLICK_HANDLER_SELECTOR = `a:not(.${REACT_ROUTER_LINK_CLASSNAME})`;
@@ -86,18 +88,30 @@ export default class Root extends React.Component<Props> {
       <Provider store={this.props.store}>
         <ErrorBoundary>
           <Router history={this.props.history}>
-            <PluginContext.Provider value={makeCompositePluginComponent(this.props.pluginConfig)}>
-              <Page>
-                <React.Fragment>
-                  <Switch>
-                    {this.props.routes.map(route => (
-                      <Route key={route.path} exact path={route.path} component={route.component} />
-                    ))}
-                  </Switch>
-                  <LoginFormController />
-                </React.Fragment>
-              </Page>
-            </PluginContext.Provider>
+            <WdkServiceContext.Provider value={this.props.wdkService}>
+              <PluginContext.Provider value={makeCompositePluginComponent(this.props.pluginConfig)}>
+                <Page>
+                  <React.Fragment>
+                    <Switch>
+                      {this.props.routes.map(({ path, exact = true, component: RouteComponent, requiresLogin }) => (
+                        <Route
+                          key={path}
+                          exact={exact == null ? false: exact}
+                          path={path}
+                          render={props => {
+                            if (RouteComponent == null) return null;
+                            if (requiresLogin) return <LoginRequiredDisclaimer><RouteComponent {...props}/></LoginRequiredDisclaimer>
+                            return <RouteComponent {...props}/>
+                            }
+                          }
+                        />
+                      ))}
+                    </Switch>
+                    <LoginFormController />
+                  </React.Fragment>
+                </Page>
+              </PluginContext.Provider>
+            </WdkServiceContext.Provider>
           </Router>
         </ErrorBoundary>
       </Provider>

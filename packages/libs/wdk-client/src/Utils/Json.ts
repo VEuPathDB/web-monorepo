@@ -153,6 +153,7 @@ export function optional<T>(decoder: Decoder<T>) {
 }
 
 // Combine multiple decoders such that all must return Ok
+export function combine<T>(decoder1: Decoder<T>): Decoder<T>;
 export function combine<T, S>(decoder1: Decoder<T>, decoder2: Decoder<S>): Decoder<T & S>;
 export function combine<T, S, R>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>): Decoder<T & S & R>;
 export function combine<T, S, R, Q>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>): Decoder<T & S & R & Q>;
@@ -182,9 +183,14 @@ export function oneOf<T, S, R, Q, P, O, N, M, L, K, J>(decoder1: Decoder<T>, dec
 export function oneOf(...decoders: any[]) {
   return function oneOfDecoder(t: any) {
     const results = Seq.from(decoders).map(d => d(t));
-    return results.find(r => r.status === 'ok')
-      ? ok(t)
-      : err(t, `${results.map(e => e.expected).join(' | ')}`)
+    const okResult = results.find(r => r.status === 'ok')
+    if (okResult) return ok(t);
+    // build error message
+    return err(
+      results.map(e => e.value).first(),
+      `${results.map(e => e.expected).join(' | ')}`,
+      results.map(e => e.context).first()
+    );
   }
 }
 

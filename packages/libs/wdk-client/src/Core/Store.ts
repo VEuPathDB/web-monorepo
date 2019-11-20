@@ -4,8 +4,10 @@ import { combineEpics, createEpicMiddleware, Epic } from 'redux-observable';
 import { EMPTY } from 'rxjs';
 import { Action } from 'wdk-client/Actions';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import { wdkMiddleware } from 'wdk-client/Core/WdkMiddleware';
+import { catchError } from 'rxjs/operators';
+import { alert } from 'wdk-client/Utils/Platform';
 
 declare global{
   interface Window {
@@ -15,6 +17,7 @@ declare global{
 
 export type EpicDependencies = {
   wdkService: WdkService;
+  transitioner: PageTransitioner;
 }
 export type ModuleReducer<T> = (state: T | undefined, action: Action) => T;
 export type ModuleEpic<T> = Epic<Action, Action, T, EpicDependencies>;
@@ -26,7 +29,7 @@ export type StoreModule<T> = {
 }
 
 type StoreModuleRecord<T extends Record<string, any>> = {
-  [K in keyof T]: StoreModule<T[K]>
+  [K in keyof T]: StoreModule<T>
 };
 
 type RootReducer<T> = Reducer<T, Action>;
@@ -42,7 +45,7 @@ export function createWdkStore<T>(
   const rootReducer = makeRootReducer(storeModules);
   const rootEpic = makeRootEpic(storeModules);
   const epicMiddleware = createEpicMiddleware<Action, Action, T, EpicDependencies>({
-    dependencies: { wdkService }
+    dependencies: { wdkService, transitioner }
   });
 
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -64,10 +67,9 @@ export function createWdkStore<T>(
   return store;
 }
 
-function makeRootReducer<T extends Record<string, any>>(storeModules: StoreModuleRecord<T>): RootReducer<T[keyof T]> {
-  const reducers = mapValues<StoreModuleRecord<T>, SubReducer<T>>(m => m.reduce, storeModules);
+function makeRootReducer<T extends Record<string, any>>(storeModules: StoreModuleRecord<T>): RootReducer<T[string]['key']> {
+  const reducers = mapValues(m => m.reduce, storeModules);
   const keyedReducers = mapKeys(moduleKey => storeModules[moduleKey].key, reducers);
-
   return combineReducers(keyedReducers);
 }
 
@@ -75,7 +77,17 @@ function makeRootEpic<T extends Record<string, any>>(storeModules: StoreModuleRe
   const epics = values(storeModules)
     .map(({ observe }: StoreModule<T>): ModuleEpic<T> => (action$, state$, deps) => {
       return observe
-        ? observe(action$, state$, deps)
+        ? observe(action$, state$, deps).pipe(
+          catchError((error, caught) => {
+            // FIXME See https://redmine.apidb.org/issues/34824
+            const message = 'status' in error && 'response' in error && error.status === 422
+              ? error.response
+              : 'An error was encountered.';
+            alert('Oops... something went wrong!', message);
+            deps.wdkService.submitErrorIfNot500(error);
+            return caught;
+          })
+        )
         : EMPTY;
     });
   return combineEpics(...epics);

@@ -17,7 +17,11 @@ const ActionCreators = { conditionallyTransition };
 type StateProps = Pick<RootState['globalData'], 'config'>;
 type DispatchProps = typeof ActionCreators;
 type OwnProps = { messageKey: string; requestUrl?: string; };
-type MergeProps = OwnProps & DispatchProps & StateProps;
+type MergeProps = {
+  ownProps: OwnProps;
+  dispatchProps: DispatchProps;
+  stateProps: StateProps;
+};
 
 class UserMessageController extends PageController<MergeProps> {
 
@@ -26,7 +30,7 @@ class UserMessageController extends PageController<MergeProps> {
   }
 
   getMessagePageContent() : PageContent {
-    switch (this.props.messageKey) {
+    switch (this.props.ownProps.messageKey) {
       case 'password-reset-successful':
         return {
           tabTitle: "Password Reset",
@@ -36,7 +40,7 @@ class UserMessageController extends PageController<MergeProps> {
           )
         };
       case 'login-error':
-        let prevPageUrl = this.props.requestUrl;
+        let prevPageUrl = this.props.ownProps.requestUrl;
         return {
           tabTitle: "Login Problem",
           pageTitle: "Unable to log in",
@@ -62,13 +66,13 @@ class UserMessageController extends PageController<MergeProps> {
 
   loadData() {
     // if registered user is logged in, show profile instead of password reset message
-    if (this.props.messageKey == 'password-reset-successful') {
-      this.props.conditionallyTransition(user => !user.isGuest, '/user/profile');
+    if (this.props.ownProps.messageKey == 'password-reset-successful') {
+      this.props.dispatchProps.conditionallyTransition(user => !user.isGuest, '/user/profile');
     }
   }
 
   isRenderDataLoaded(): boolean {
-    return this.props.config != null;
+    return this.props.stateProps.config != null;
   }
 
   getActionCreators() {
@@ -90,9 +94,10 @@ class UserMessageController extends PageController<MergeProps> {
   }
 }
 
-const enhance = connect<StateProps, DispatchProps, OwnProps, RootState>(
+const enhance = connect<StateProps, DispatchProps, OwnProps, MergeProps, RootState>(
   (state: RootState) => ({ config: state.globalData.config }),
-  ActionCreators
+  ActionCreators,
+  (stateProps, dispatchProps, ownProps) => ({ stateProps, dispatchProps, ownProps })
 );
 
 export default enhance(wrappable(UserMessageController));

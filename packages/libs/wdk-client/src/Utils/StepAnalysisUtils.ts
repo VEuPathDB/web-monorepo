@@ -1,8 +1,8 @@
-import { 
-  Decoder, 
+import {
+  Decoder,
   arrayOf,
-  boolean, 
-  combine, 
+  boolean,
+  combine,
   constant,
   field,
   number,
@@ -12,9 +12,8 @@ import {
   nullValue,
   optional
 } from './Json';
-import { Parameter as WdkModelParameter } from './WdkModel';
-
-export type StepAnalysisParameter = WdkModelParameter;
+import { ParameterGroup, Parameter } from './WdkModel';
+import { paramGroupDecoder } from '../Service/Mixins/SearchesService';
 
 export interface StepAnalysis {
   analysisId: number,
@@ -22,17 +21,18 @@ export interface StepAnalysis {
 }
 
 export interface StepAnalysisType {
-  hasParameters: boolean,
   displayName: string,
   releaseVersion: string,
   name: string,
   description: string,
   customThumbnail?: string,
-  shortDescription: string
+  shortDescription: string,
+  paramNames: string[],
+  groups: ParameterGroup[]
 }
 
 export interface FormParams {
-  [key: string]: string[]
+  [key: string]: string
 }
 
 export type StepAnalysisStatus =
@@ -71,16 +71,17 @@ export const stepAnalysisDecoder: Decoder<StepAnalysis> = combine(
 );
 
 export const stepAnalysisTypeDecoder: Decoder<StepAnalysisType> = combine(
-  field('hasParameters', boolean),
   field('displayName', string),
   field('releaseVersion', string),
   field('name', string),
   field('description', string),
   field('customThumbnail', optional(string)),
-  field('shortDescription', string)
+  field('shortDescription', string),
+  field('paramNames', arrayOf(string)),
+  field('groups', arrayOf(paramGroupDecoder))
 );
 
-export const formParamsDecoder: Decoder<FormParams> = objectOf(arrayOf(string));
+export const formParamsDecoder: Decoder<FormParams> = objectOf(string);
 
 export const stepAnalysisStatusDecoder: Decoder<StepAnalysisStatus> = oneOf(
   constant('CREATED'),

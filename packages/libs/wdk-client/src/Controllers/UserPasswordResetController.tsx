@@ -16,7 +16,10 @@ const actionCreators = {
   conditionallyTransition
 }
 
-type Props = typeof actionCreators & RootState['passwordReset'] & Pick<RootState['globalData'], 'user'>;
+type Props = {
+  stateProps: RootState['passwordReset'] & Pick<RootState['globalData'], 'user'>;
+  dispatchProps: typeof actionCreators;
+};
 
 class UserPasswordResetController extends PageController<Props> {
 
@@ -31,7 +34,7 @@ class UserPasswordResetController extends PageController<Props> {
   isRenderDataLoaded() {
     // show Loading if no user loaded yet, or if user is guest
     //   (will transition to Profile page in loadData() if non-guest)
-    return (this.props.user != null && this.props.user.isGuest);
+    return (this.props.stateProps.user != null && this.props.stateProps.user.isGuest);
   }
 
   renderView() {
@@ -39,13 +42,14 @@ class UserPasswordResetController extends PageController<Props> {
   }
 
   loadData() {
-    this.props.conditionallyTransition(user => !user.isGuest, '/user/profile');
+    this.props.dispatchProps.conditionallyTransition(user => !user.isGuest, '/user/profile');
   }
 }
 
-const enhance = connect(
+const enhance = connect<Props['stateProps'], Props['dispatchProps'], {}, Props, RootState>(
   (state: RootState) => ({ ...state.passwordReset, user: state.globalData.user }),
-  actionCreators
+  actionCreators,
+  (stateProps, dispatchProps) => ({ stateProps, dispatchProps })
 )
 
 export default enhance(wrappable(UserPasswordResetController));

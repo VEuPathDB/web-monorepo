@@ -1,0 +1,44 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+
+  "globals": {
+    "__DEV__": true
+  },
+
+  "plugins": [ "react", "import" ],
+
+  "parser": "babel-eslint",
+
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+
+  "extends": ["eslint:recommended"],
+
+  "rules": {
+    "quotes": 0,
+    "camelcase": 0,
+    "comma-dangle": 0,
+    "no-underscore-dangle": 0,
+    "no-console": 0,
+    "react/jsx-no-duplicate-props": 2,
+    "react/jsx-no-undef": 2,
+    "react/jsx-uses-vars": 2,
+    "react/no-danger": 2,
+    "react/no-deprecated": 2,
+    "react/no-did-update-set-state": 2,
+    "react/no-direct-mutation-state": 2,
+    "react/no-is-mounted": 2,
+    "react/no-unknown-property": 2,
+    "react/prop-types": 1,
+    "react/jsx-uses-react": 2
+  }
+}

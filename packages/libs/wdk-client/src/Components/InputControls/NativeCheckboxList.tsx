@@ -1,10 +1,10 @@
-import React, { Component, FormEvent, MouseEvent } from 'react';
+import React, { Component, FormEvent, MouseEvent, ReactNode } from 'react';
 import {uniqueId, noop} from 'lodash';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 type Item = {
   value: any
-  display: string
+  display: ReactNode
 }
 
 type Props = {
@@ -132,7 +132,7 @@ class NativeCheckboxList extends Component<Props, State> {
     return (
       <div className="wdk-CheckboxList">
         <div>
-          {this.props.items.map(item => {
+          {this.props.items.map((item, index) => {
             let id = `${this.id}.${item.value}`;
             return (
               <div key={item.value} className="wdk-CheckboxListItem">
@@ -145,7 +145,7 @@ class NativeCheckboxList extends Component<Props, State> {
                     checked={selectedItems.includes(item.value)}
                     onChange={e => this.toggle(e, item)}
                   />
-                  {' ' + item.display}
+                  {' '}{item.display}
                 </label>
               </div>
             );

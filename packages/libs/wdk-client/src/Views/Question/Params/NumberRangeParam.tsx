@@ -14,7 +14,7 @@ export default createParamModule({
 })
 
 function isType(param: Parameter): param is NumberRangeParam {
-  return param.type === 'NumberRangeParam';
+  return param.type === 'number-range';
 }
 
 function Component(props: Props<NumberRangeParam, void>) {
@@ -23,9 +23,10 @@ function Component(props: Props<NumberRangeParam, void>) {
     <NumberRangeSelector
       start={parameter.min}
       end={parameter.max}
-      step={parameter.step}
+      step={parameter.increment}
       value={JSON.parse(value)}
       onChange={value => onParamValueChange(JSON.stringify(value))}
+      required={!parameter.allowEmptyValue}
     />
   )
 }

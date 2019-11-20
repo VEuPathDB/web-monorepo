@@ -14,7 +14,8 @@ import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddle
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
 import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
-import WdkService, { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
+import  WdkService  from 'wdk-client/Service/WdkService';
 
 import { isLeafFor, isNotInternalNode } from 'wdk-client/Views/Records/RecordUtils';
 
@@ -82,7 +83,7 @@ export type RecordLoadingAction = {
   type: typeof RECORD_LOADING,
   id: string,
   payload: {
-    recordClassName: string,
+    recordClassUrlSegment: string,
     primaryKeyValues: string[]
   },
 }
@@ -256,7 +257,7 @@ export function loadRecordData(
  * @param {Array<string>} primaryKeyValues
  */
 function setActiveRecord(
-  recordClassName: string,
+  recordClassUrlSegment: string,
   primaryKeyValues: string[],
   getRecordRequestOptions: RequestRequestOptionsGetter
 ): ActionThunk<LoadRecordAction|UserAction|EmptyAction> {
@@ -264,18 +265,18 @@ function setActiveRecord(
     const id = uniqueId('recordViewId');
 
     return [
-      recordLoading(id, { recordClassName, primaryKeyValues }),
+      recordLoading(id, { recordClassUrlSegment, primaryKeyValues }),
       // Fetch the record base and tables in parallel.
       Promise.all([
-        wdkService.findRecordClass(r => r.urlSegment === recordClassName),
-        getPrimaryKey(wdkService, recordClassName, primaryKeyValues),
-        getCategoryTree(wdkService, recordClassName)
+        wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment),
+        getPrimaryKey(wdkService, recordClassUrlSegment, primaryKeyValues),
+        getCategoryTree(wdkService, recordClassUrlSegment)
       ]).then(
         ([recordClass, primaryKey, fullCategoryTree]) => {
           const [ initialOptions, ...additionalOptions ] =
             getRecordRequestOptions(recordClass, fullCategoryTree);
           const categoryTree = getTree({ name: '__', tree: fullCategoryTree }, isNotInternalNode);
-          const initialAction$ = wdkService.getRecord(recordClass.name, primaryKey, initialOptions).then(
+          const initialAction$ = wdkService.getRecord(recordClass.urlSegment, primaryKey, initialOptions).then(
             record => recordReceived(id, {
               record,
               recordClass,
@@ -283,7 +284,7 @@ function setActiveRecord(
             })
           );
           const additionalActions = additionalOptions.map(options =>
-            wdkService.getRecord(recordClass.name, primaryKey, options).then(
+            wdkService.getRecord(recordClass.urlSegment, primaryKey, options).then(
               record => recordUpdate(id, record),
               error => recordError(id, error)
             )
@@ -329,9 +330,9 @@ function getPrimaryKey(wdkService: WdkService, recordClassUrlSegment: string, pr
 /** Get the category tree for the given record class */
 function getCategoryTree(wdkService: WdkService, recordClassUrlSegment: string) {
   return Promise.all([
-    wdkService.getOntology(),
+    wdkService.getConfig().then(config => wdkService.getOntology(config.categoriesOntologyName)),
     wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment)
   ]).then(([ontology, recordClass]) => {
-    return getTree(ontology, isLeafFor(recordClass.name));
+    return getTree(ontology, isLeafFor(recordClass.fullName));
   });
 }

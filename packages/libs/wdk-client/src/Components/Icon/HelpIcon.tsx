@@ -1,14 +1,11 @@
 import React from 'react';
 
 import Icon from 'wdk-client/Components/Icon/IconAlt';
-import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
+import Tooltip, { TooltipPosition } from 'wdk-client/Components/Overlays/Tooltip';
 
 type Props = {
   children: string | React.ReactElement<any>;
-  tooltipPosition?: {
-    my?: string;
-    at?: string;
-  };
+  tooltipPosition?: TooltipPosition;
 }
 
 export default function HelpIcon (props: Props) {

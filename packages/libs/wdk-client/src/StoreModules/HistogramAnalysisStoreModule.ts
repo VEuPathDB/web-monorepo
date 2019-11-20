@@ -39,8 +39,8 @@ export function reduce(state: HistogramState = defaultState, action: Action): Hi
   }
 }
 
-async function getReport([{ payload: { reporterName, stepId }}]: [InferAction<typeof openView>]) {
-  return requestAttributeReport(reporterName, stepId);
+async function getReport([{ payload: { reporterName, resultType }}]: [InferAction<typeof openView>]) {
+  return requestAttributeReport(reporterName, resultType, {});
 }
 
 export const observe = takeEpicInWindow(

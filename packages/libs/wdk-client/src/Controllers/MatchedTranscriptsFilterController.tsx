@@ -13,6 +13,7 @@ import {
   getFilterValue,
   FilterValue
 } from 'wdk-client/StoreModules/MatchedTranscriptsFilterStoreModule';
+import {Step} from 'wdk-client/Utils/WdkUser';
 
 const actionCreators = {
   openMatchedTranscriptsFilter,
@@ -21,9 +22,10 @@ const actionCreators = {
   requestMatchedTransFilterUpdate,
   setDisplayedSelection
 }
+
 interface OwnProps {
-  stepId: number;
-  filterName: string;
+  step: Step;
+  filterName: 'matched_transcript_filter_array' | 'gene_boolean_filter_array';
 }
 
 type DispatchProps = typeof actionCreators;
@@ -47,12 +49,12 @@ const Label: Record<string, string> = {
   NN: 'neither search'
 }
 
-const Description: Record<string, string> = {
+const Description: Record<OwnProps['filterName'], string> = {
   matched_transcript_filter_array: 'Some Genes in your result have Transcripts that did not meet the search criteria.',
   gene_boolean_filter_array: ' Some Genes in your combined result have Transcripts that were not returned by one or both of the two input searches.'
 }
 
-const Leadin: Record<string, string> = {
+const Leadin: Record<OwnProps['filterName'], string> = {
   matched_transcript_filter_array: 'Include Transcripts that',
   gene_boolean_filter_array: 'Include Transcripts returned by'
 }
@@ -60,20 +62,20 @@ const Leadin: Record<string, string> = {
 class MatchedTranscriptsFilterController extends React.Component<Props> {
 
   componentDidMount() {
-    const { stepId, filterName } = this.props;
-    this.props.actionCreators.openMatchedTranscriptsFilter(stepId, filterName);
+    const { step, filterName } = this.props;
+    this.props.actionCreators.openMatchedTranscriptsFilter(step, filterName);
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.stepId !== this.props.stepId) {
-      const { stepId, filterName } = this.props;
-      this.props.actionCreators.closeMatchedTranscriptsFilter(prevProps.stepId);
-      this.props.actionCreators.openMatchedTranscriptsFilter(stepId, filterName);
+    if (prevProps.step !== this.props.step) {
+      const { step, filterName } = this.props;
+      this.props.actionCreators.closeMatchedTranscriptsFilter(prevProps.step.id);
+      this.props.actionCreators.openMatchedTranscriptsFilter(step, filterName);
     }
   }
 
   componentWillUnmount() {
-    this.props.actionCreators.closeMatchedTranscriptsFilter(this.props.stepId);
+    this.props.actionCreators.closeMatchedTranscriptsFilter(this.props.step.id);
   }
 
   render() {
@@ -100,8 +102,7 @@ const statePropsIsComplete = hasAllProps<StateProps>(
 
 export default connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state: RootState, ownProps: OwnProps) => {
-    const stepEntry = state.steps.steps[ownProps.stepId];
-    const step = stepEntry && stepEntry.status === 'success' ? stepEntry.step : undefined;
+    const { step } = ownProps;
     return {
       filterValue: getFilterValue(step, ownProps.filterName),
       ...state.matchedTranscriptsFilter

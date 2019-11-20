@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import ApplicationSpecificProperties from 'wdk-client/Views/User/ApplicationSpecificProperties';
 import UserPassword from 'wdk-client/Views/User/Password/UserPassword';

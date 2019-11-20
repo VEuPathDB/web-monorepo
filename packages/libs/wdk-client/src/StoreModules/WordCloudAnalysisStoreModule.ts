@@ -46,8 +46,8 @@ export function reduce(
   }
 }
 
-async function getReport([{ payload: { reporterName, stepId }}]: [InferAction<typeof openView>]) {
-  return requestAttributeReport(reporterName, stepId);
+async function getReport([{ payload: { reporterName, resultType }}]: [InferAction<typeof openView>]) {
+  return requestAttributeReport(reporterName, resultType, {});
 }
 
 export const observe = takeEpicInWindow(

@@ -14,8 +14,8 @@ export interface DispatchAction {
   (action: ActionCreatorResult<Action>): any;
 }
 
-export interface MesaColumn {
-  key: string;
+export interface MesaColumn<K extends string = string> {
+  key: K;
   name?: string;
   type?: string;
   sortable?: boolean;
@@ -40,5 +40,5 @@ export interface MesaDataCellProps {
 
 export interface MesaSortObject {
   columnKey: string;
-  direction: string;
+  direction: 'asc' | 'desc';
 };

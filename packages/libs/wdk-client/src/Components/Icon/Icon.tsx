@@ -3,7 +3,7 @@ import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 const iconClassNames = {
   warning: 'fa fa-warning',
-  info: 'fa fa-info',
+  info: 'fa fa-info-circle',
   help: 'fa fa-question-circle',
   close: 'fa fa-close',
 }

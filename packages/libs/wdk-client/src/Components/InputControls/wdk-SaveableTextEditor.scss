@@ -1,8 +1,7 @@
 @import '~wdk-client/Core/Style/palette';
 
 .wdk-SaveableTextEditor {
-  width: 100%;
-  display: flex;
+  display: inline-flex;
   flex-flow: row nowrap;
   align-items: center;
 
@@ -26,6 +25,14 @@
     }
   }
 
+  .wdk-SaveableTextEditor-ValueContainer {
+    &--Editing {
+      padding: 0 .5em;
+      visibility: hidden;
+      height: 0;
+    }
+  }
+
   .wdk-SaveableTextEditor-Children {
     margin: 0 0 0 -3px;
     padding: 5px;
@@ -34,11 +41,16 @@
   .wdk-SaveableTextEditor-Buttons {
     flex: 0 0 auto;
     display: flex;
-    flex-flow: column nowrap;
+    flex-flow: row nowrap;
     align-items: center;
     justify-content: center;
-    min-height: 43px;
-    font-size: 12px !important;
+
+    button {
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0 .25em;
+    }
 
     i.wdk-Icon {
       box-sizing: border-box;
@@ -54,9 +66,10 @@
       &.edit {
         background-color: transparent;
         color: $blue;
+        font-size: .8em
       }
-      &.cancel { background-color: $red; }
-      &.save { background-color: $green; }
+      &.cancel { background-color: $red; font-size: 12px; }
+      &.save { background-color: $green; font-size: 12px; }
     }
   }
 }

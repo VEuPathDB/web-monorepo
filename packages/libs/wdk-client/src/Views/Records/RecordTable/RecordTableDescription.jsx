@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import { safeHtml, wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 function RecordTableDescription(props) {

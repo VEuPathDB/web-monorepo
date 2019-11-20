@@ -1,0 +1,28 @@
+.BooleanSelect {
+  display: inline-block;
+  width: 13em;
+
+  & &__control {
+    border-color: black;
+    background-color: #eaeaea;
+    cursor: pointer;
+  }
+
+  & &__indicator {
+    color: black;
+  }
+
+  & &__indicator-separator {
+    background-color: black;
+  }
+
+  & &--OptionLabel {
+    display: flex;
+    align-items: center;
+
+    .StepBoxes--CombineOperator {
+      font-size: 0.75em;
+      margin-right: 0.5em;
+    }
+  }
+}

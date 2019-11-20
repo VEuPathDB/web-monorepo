@@ -1,5 +1,6 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 // Actions
 // -------
@@ -19,9 +20,9 @@ export type Action =
 // Open view
 export const openAttributeAnalysis = makeActionCreator(
   'attribute-analysis/open',
-  (reporterName: string, stepId: number) => ({
+  (reporterName: string, resultType: ResultType) => ({
     reporterName,
-    stepId
+    resultType
   })
 )
 
@@ -29,18 +30,18 @@ export const openAttributeAnalysis = makeActionCreator(
 // Close view
 export const closeAttributeAnalysis = makeActionCreator(
   'attribute-analysis/close',
-  (reporterName: string, stepId: number) => ({
+  (reporterName: string, resultType: ResultType) => ({
     reporterName,
-    stepId
+    resultType
   })
 )
 
 // Request report
 export const requestAttributeReport = makeActionCreator(
   'attribute-analysis/request-report',
-  (reporterName: string, stepId: number, config?: any) => ({
+  (reporterName: string, resultType: ResultType, config: object) => ({
     reporterName,
-    stepId,
+    resultType,
     config
   })
 )
@@ -48,9 +49,9 @@ export const requestAttributeReport = makeActionCreator(
 // Fulfill report
 export const fulfillAttributeReport = makeActionCreator(
   'attribute-analysis/fulfill-attribute-report',
-  (reporterName: string, stepId: number, report: any) => ({
+  (reporterName: string, resultType: ResultType, report: any) => ({
     reporterName,
-    stepId,
+    resultType,
     report
   })
 )
@@ -58,9 +59,9 @@ export const fulfillAttributeReport = makeActionCreator(
 // Fail report
 export const errorAttributeReport = makeActionCreator(
   'attribute-analysis/error-attribute-report',
-  (reporterName: string, stepId: number, error: ServiceError) => ({
+  (reporterName: string, resultType: ResultType, error: ServiceError) => ({
     reporterName,
-    stepId,
+    resultType,
     error
   })
 )

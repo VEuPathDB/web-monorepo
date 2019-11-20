@@ -1,0 +1,82 @@
+.AllStrategies {
+  margin-top: 1em;
+  position: relative;
+
+  &--Info {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  &--InfoIcon {
+    font-size: 1.6em;
+    margin-right: .5em;
+  }
+
+  > .wdk-TabContent > .MesaComponent:nth-of-type(3) {
+    margin-top: 2em;
+  }
+
+  .wdk-TabContent > .MesaComponent > .MesaComponent {
+    width: 100%;
+  }
+
+  .ActionToolbar-Children {
+    display: flex;
+  }
+
+  &--Title {
+    padding: 0;
+    white-space: nowrap;
+    margin-right: .5em;
+  }
+
+  &--OpenedRow {
+    font-weight: bold;
+  }
+  
+  &--InvalidIcon {
+    color: #d62d2d;
+  }
+
+  &--TableCell__isValid .HeadingCell-Content {
+    justify-content: flex-end;
+  }
+
+  &--TableCell.DataCell {
+    padding: .3em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+  }
+
+  &--TableCell {
+
+    &__name.DataCell {
+      overflow: visible;
+      white-space: break-spaces;
+    }
+
+    &__isPublic {
+      text-align: center;
+    }
+
+    &__isValid.DataCell {
+      text-align: right;
+      padding-left: 10px;
+      padding-right: 10px;
+    }  
+
+    &__leafAndTransformStepCount,
+    &__estimatedSize {
+      text-align: right;
+    }
+
+    &__actions:not(.HeadingCell) {
+      font-size: .8em;
+    }
+
+  }
+
+}

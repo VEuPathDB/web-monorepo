@@ -1,9 +1,11 @@
+import { orderBy, partition } from 'lodash';
 import React from 'react';
 import { ofType } from 'redux-observable';
 import { EMPTY, from, merge } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { DatasetParam, Parameter } from 'wdk-client/Utils/WdkModel';
-import { Strategy } from 'wdk-client/Utils/WdkUser';
+import { StrategySummary } from 'wdk-client/Utils/WdkUser';
+import { datasetItemToString, idListToArray } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 import {
   Props,
   Context,
@@ -13,14 +15,14 @@ import {
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import 'wdk-client/Views/Question/Params/DatasetParam.scss';
-import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import { DatasetConfig } from 'wdk-client/Utils/WdkService';
+import { DatasetConfig } from 'wdk-client/Service/Mixins/DatasetsService';
 import { INIT_PARAM, InitParamAction } from 'wdk-client/Actions/QuestionActions';
 import {
   SET_BASKET_COUNT,
   SET_FILE,
   SET_FILE_PARSER,
   SET_ID_LIST,
+  SET_LOADING_ID_LIST,
   SET_SOURCE_TYPE,
   SET_STRATEGY_ID,
   SET_STRATEGY_LIST,
@@ -28,6 +30,7 @@ import {
   setFile,
   setFileParser,
   setIdList,
+  setLoadingIdList,
   setSourceType,
   setStrategyId,
   setStrategyList,
@@ -43,8 +46,9 @@ const cx = makeClassNameHelper('wdk-DatasetParam');
 type State = {
   sourceType: 'idList' | 'file' | 'basket' | 'strategy';
   idList?: string;
+  loadingIdList?: boolean;
   file?: File | null;
-  strategyList?: Strategy[];
+  strategyList?: StrategySummary[];
   strategyId?: number;
   basketCount?: number;
   fileParser?: DatasetParam['parsers'][number]['name'];
@@ -52,7 +56,7 @@ type State = {
 
 
 function isType(parameter: Parameter): parameter is DatasetParam {
-  return parameter.type === 'DatasetParam';
+  return parameter.type === 'input-dataset';
 }
 
 function isParamValueValid(ctx: Context<DatasetParam>) {
@@ -69,14 +73,32 @@ const getInitialParser = (parameter: DatasetParam) =>
 
 function reduce(state: State = defaultState, action: Action): State {
   switch(action.type) {
+    case INIT_PARAM: {
+      const { parameter, initialParamData } = action.payload;
+      const initialListName = parameter.name + '.idList';
+      return {
+        ...state,
+        sourceType: 'idList',
+        idList: initialParamData
+          ? initialParamData[initialListName]
+          : (parameter as DatasetParam).defaultIdList
+      }
+    }
     case SET_SOURCE_TYPE:
       return { ...state, sourceType: action.payload.sourceType };
     case SET_ID_LIST:
       return { ...state, idList: action.payload.idList };
+    case SET_LOADING_ID_LIST: {
+      return { ...state, loadingIdList: action.payload.loadingIdList };
+    }
     case SET_FILE:
       return { ...state, file: action.payload.file };
     case SET_STRATEGY_LIST:
-      return { ...state, strategyList: action.payload.strategyList };
+      return {
+        ...state,
+        strategyList: action.payload.strategyList,
+        strategyId: action.payload.strategyList.length > 0 ? action.payload.strategyList[0].strategyId : undefined
+      };
     case SET_STRATEGY_ID:
       return { ...state, strategyId: action.payload.strategyId };
     case SET_BASKET_COUNT:
@@ -89,9 +111,7 @@ function reduce(state: State = defaultState, action: Action): State {
 }
 
 const getIdList = (uiState: State, parameter: DatasetParam) =>
-    uiState.idList == null
-      ? parameter.defaultIdList
-      : uiState.idList
+    uiState.idList
 
 const getParser = (uiState: State, parameter: DatasetParam) =>
   uiState.fileParser == null
@@ -99,9 +119,11 @@ const getParser = (uiState: State, parameter: DatasetParam) =>
     : uiState.fileParser;
 
 const getStrategyId = (uiState: State, parameter: DatasetParam) =>
-  uiState.strategyId == null
-    ? uiState.strategyList && uiState.strategyList[0].strategyId
-    : uiState.strategyId;
+  uiState.strategyId != null
+    ? uiState.strategyId
+    : uiState.strategyList && uiState.strategyList.length > 0
+    ? uiState.strategyList[0].strategyId
+    : undefined;
 
 type Section = {
   sourceType: State['sourceType'];
@@ -114,13 +136,17 @@ const sections: Section[] = [
   {
     sourceType: 'idList',
     label: 'Enter a list of IDs or text',
+    isAvailable: ({ uiState }) => !uiState.loadingIdList,
     render: ({ ctx, dispatch, parameter, uiState }) =>
-      <textarea
-        rows={5}
-        cols={30}
-        value={getIdList(uiState, parameter)}
-        onChange={e => dispatch(setIdList({ ...ctx, idList: e.target.value }))}
-      />
+      <div className={uiState.loadingIdList ? cx('IdList', 'loading') : cx('IdList')}>
+        <textarea
+          rows={5}
+          cols={30}
+          value={getIdList(uiState, parameter)}
+          onChange={e => dispatch(setIdList({ ...ctx, idList: e.target.value }))}
+          required={uiState.sourceType === 'idList' && !parameter.allowEmptyValue}
+        />
+      </div>
   },
   {
     sourceType: 'file',
@@ -131,6 +157,7 @@ const sections: Section[] = [
           type="file"
           accept="text/*"
           onChange={e => dispatch(setFile({ ...ctx, file: e.target.files && e.target.files[0] }))}
+          required={uiState.sourceType === 'file' && !parameter.allowEmptyValue}
         />
         <small>
           <div>Maximum size 10MB. The file should contain the list of IDs.</div>
@@ -166,25 +193,48 @@ const sections: Section[] = [
     isAvailable: ({ uiState }) => typeof uiState.basketCount === 'number',
     render: ({ uiState }) =>
       uiState.basketCount == null
-        ? <div>Options is not available</div>
+        ? <div>Option is not available</div>
         : <div>{uiState.basketCount} records will be copied from your basket.</div>
   },
   {
     sourceType: 'strategy',
     label: 'Copy from My Strategy',
     isAvailable: ({ uiState }) => uiState.strategyList != null && uiState.strategyList.length > 0,
-    render: ({ ctx, uiState, parameter }) =>
-      <div>
-        {uiState.strategyList
-          ? <select value={getStrategyId(uiState, parameter)} onChange={e => setStrategyId({ ...ctx, strategyId: Number(e.target.value) })}>
-              {uiState.strategyList.map(strategy =>
-                <option key={strategy.strategyId} title="Can you see me?" value={strategy.strategyId}>{strategy.name}</option>
-              )}
-            </select>
-          : 'Option is not available' }
-      </div>
+    render: ({ ctx, uiState, parameter, dispatch }) => {
+      const { strategyList } = uiState;
+      if (strategyList == null || strategyList.length === 0) return (
+        <div>Option is not available</div>
+      );
+
+      const [ saved, unsaved ] = partition(strategyList, strategy => strategy.isSaved);
+      return (
+        <div>
+          <select 
+            value={getStrategyId(uiState, parameter)} 
+            onChange={e => dispatch(setStrategyId({ ...ctx, strategyId: Number(e.target.value) }))}
+            required={uiState.sourceType === 'strategy' && !parameter.allowEmptyValue}
+          >
+            {renderStrategyOptGroup('Saved strategies', saved)}
+            {renderStrategyOptGroup('Draft strategies', unsaved)}
+          </select>
+        </div>
+      );
+    }
   }
 ]
+
+function renderStrategyOptGroup(label: string, strategyList: StrategySummary[]) {
+  if (strategyList.length === 0) return null;
+  return (
+    <optgroup label={label}>
+      {strategyList.map(strategy =>
+        <option key={strategy.strategyId} disabled={!strategy.isValid} title={strategy.description || strategy.nameOfFirstStep} value={strategy.strategyId}>
+          {strategy.name} {strategy.isSaved ? '' : '*'} ({strategy.estimatedSize == null ? '?' : strategy.estimatedSize.toLocaleString()} records)
+        </option>
+      )}
+    </optgroup>
+  );
+}
 
 function DatasetParamComponent(props: Props<DatasetParam, State>) {
   const { dispatch, uiState, ctx } = props;
@@ -217,18 +267,43 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
   mergeMap(action =>
     from(services.wdkService.getCurrentUser()).pipe(
       mergeMap(user => {
-        if (user.isGuest) return EMPTY;
-        // load basket count and strategy list
-        const { questionName, parameter, paramValues } = action.payload;
-        const questionState = state$.value.questions[questionName]
-        const recordClassName = questionState && questionState.recordClass.name;
+        const { searchName, parameter, paramValues } = action.payload;
 
-        if (recordClassName == null) return EMPTY;
+        if (!isType(parameter)) return EMPTY;
+
+        const initializeIdList$ = !paramValues[parameter.name]
+          ? EMPTY
+          : [
+              setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: true }),
+              services.wdkService.getDataset(+paramValues[parameter.name])
+                .then(
+                  datasetParamItems => 
+                    [
+                      setIdList({
+                        searchName,
+                        paramValues,
+                        parameter: (parameter as DatasetParam),
+                        idList: datasetParamItems.map(datasetItemToString).join(', ')
+                      }),
+                      setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: false })
+                    ]
+                )
+                .catch(
+                    _ => setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: false })
+                )
+            ];
+
+        if (user.isGuest) return initializeIdList$;
+        // load basket count and strategy list
+        const questionState = state$.value.questions[searchName]
+        const recordClassName = questionState && questionState.recordClass.urlSegment;
+
+        if (recordClassName == null) return initializeIdList$;
 
         return merge(
           services.wdkService.getBasketCounts().then(
             counts => setBasketCount({
-              questionName,
+              searchName,
               paramValues,
               parameter: (parameter as DatasetParam),
               basketCount: counts[recordClassName]
@@ -236,12 +311,14 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
           ),
           services.wdkService.getStrategies().then(
             strategies => setStrategyList({
-              questionName,
+              searchName,
               paramValues,
               parameter: (parameter as DatasetParam),
-              strategyList: strategies.filter(strategy => strategy.recordClassName === recordClassName)
+              strategyList: orderBy(strategies, strategy => !strategy.isSaved)
+                .filter(strategy => strategy.recordClassName === recordClassName)
             })
-          )
+          ),
+          initializeIdList$
         );
       })
     )
@@ -263,13 +340,13 @@ const getValueFromState: ParamModule<DatasetParam>['getValueFromState'] = (conte
         sourceContent: {
           temporaryFileId,
           parser,
-          questionName: questionState.question.name,
+          searchName: questionState.question.urlSegment,
           parameterName: parameter.name
         }
       }))
-    : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.recordClassName } })
+    : sourceType === 'basket' ? Promise.resolve({ sourceType, sourceContent: { basketName: questionState.question.outputRecordClassName } })
     : sourceType === 'strategy' && strategyId ? Promise.resolve({ sourceType, sourceContent: { strategyId } })
-    : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: valueToArray(idList) } })
+    : sourceType === 'idList' ? Promise.resolve({ sourceType, sourceContent: { ids: idListToArray(idList) } })
     : Promise.resolve();
 
   return datasetConfigPromise.then(config => config == null ? '' : wdkService.createDataset(config).then(String));

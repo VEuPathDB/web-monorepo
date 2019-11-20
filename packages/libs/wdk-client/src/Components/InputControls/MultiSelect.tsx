@@ -15,6 +15,9 @@ type Props = {
   /** Value of the option elements that should be selected **/
   value: string[];
 
+  /** Whether a value is required for submission */
+  required?: boolean;
+
   /**
    * Callback function that will be called when user changes selected value.
    * The new (string) value of the selected option will be passed to this
@@ -24,7 +27,7 @@ type Props = {
 };
 
 function MultiSelect(props: Props) {
-  let { name, size, value, items, onChange, ...rest } = props;
+  let { name, size, value, items, onChange, required = false, ...rest } = props;
   return (
     <select
       {...rest}
@@ -42,6 +45,7 @@ function MultiSelect(props: Props) {
         }
         onChange(value);
       }}
+      required={required}
     >
       {items.map(item =>
         ( <option key={item.value} disabled={item.disabled} value={item.value}>{item.display}</option> )

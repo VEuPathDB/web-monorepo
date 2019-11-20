@@ -1,4 +1,5 @@
 import { makeActionCreator, InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
+import {Step} from 'wdk-client/Utils/WdkUser';
 
 export type FilterSummary = Record<string, number>;
 
@@ -6,7 +7,7 @@ export type FilterSelection = Array<keyof FilterSummary>;
 
 export const openMatchedTranscriptsFilter = makeActionCreator(
     'matchedTranscriptsFilter/open',
-    (stepId: number, filterKey: string) => ({ stepId, filterKey })
+  (step: Step, filterKey: string) => ({ step, filterKey })
 );
 
 export const closeMatchedTranscriptsFilter = makeActionCreator(

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Answer, PrimaryKey } from 'wdk-client/Utils/WdkModel';
+import { Answer } from 'wdk-client/Utils/WdkModel';
 import BasketIconButton from 'wdk-client/Views/ResultTableSummaryView/BasketIconButton';
 import { BasketStatusArray, RequestUpdateBasket, ShowLoginWarning } from 'wdk-client/Views/ResultTableSummaryView/Types';
 

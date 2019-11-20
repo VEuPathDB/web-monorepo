@@ -1,5 +1,5 @@
-import { Action } from 'redux';
-import { transitionToExternalPage, transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
+import { Action as ReduxAction } from 'redux';
+import { transitionToExternalPage, transitionToInternalPage, Action as RouteAction } from 'wdk-client/Actions/RouterActions';
 import { showLoginWarning } from 'wdk-client/Actions/UserSessionActions';
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { filterOutProps } from 'wdk-client/Utils/ComponentUtils';
@@ -369,7 +369,7 @@ export function favoritesStatusError(record: RecordInstance, error: Error): Favo
  * the passed path.  Optional external param lets caller specify if path is
  * internal or external, defaulting to false (internal).
  */
-export function conditionallyTransition(test: UserPredicate, path: string, external: boolean = false): ActionThunk<EmptyAction> {
+export function conditionallyTransition(test: UserPredicate, path: string, external: boolean = false): ActionThunk<EmptyAction | RouteAction> {
   return function run({ wdkService }) {
     return wdkService.getCurrentUser().then(user => {
       if (test(user)) {
@@ -388,14 +388,14 @@ export function conditionallyTransition(test: UserPredicate, path: string, exter
  */
 export function updateUserPreference(scope: PreferenceScope, key: string, value: string): ActionThunk<PreferenceUpdateAction> {
   return function run({ wdkService }) {
-    let updatePromise = wdkService.patchUserPreference(scope, key, value);
+    let updatePromise = wdkService.patchSingleUserPreference(scope, key, value);
     return sendPrefUpdateOnCompletion(updatePromise, preferenceUpdate({ [scope]: { [key]: value }} as UserPreferences))
   };
 };
 
 export function updateUserPreferences(newPreferences: UserPreferences): ActionThunk<PreferencesUpdateAction> {
   return function run({ wdkService }) {
-    let updatePromise = wdkService.putUserPreferences(newPreferences);
+    let updatePromise = wdkService.patchUserPreferences(newPreferences);
     return sendPrefUpdateOnCompletion(updatePromise, preferencesUpdate(newPreferences));
   };
 };
@@ -425,7 +425,7 @@ export function submitProfileForm(userProfileFormData: UserProfileFormData): Sub
   return function run({ wdkService }) {
     let partialUser: Partial<User> = <UserProfileFormData>filterOutProps(userProfileFormData, ["isGuest", "id", "confirmEmail", "preferences"]);
     let userPromise = wdkService.getCurrentUser().then(user => wdkService.updateCurrentUser({ ...user, ...partialUser }));
-    let prefPromise = wdkService.putUserPreferences(userProfileFormData.preferences as UserPreferences); // should never be null by this point
+    let prefPromise = wdkService.patchUserPreferences(userProfileFormData.preferences as UserPreferences); // should never be null by this point
     return [
       profileFormSubmissionStatus('pending'),
       Promise.all([userPromise, prefPromise]).then(([user]) => [
@@ -510,9 +510,9 @@ const emptyThunk: ActionThunk<EmptyAction> = () => emptyAction;
  * If the user is logged in, the first thunk is dispatched, otherwise the
  * second thunk is dispatched (if present).
  */
-function maybeLoggedIn<T extends Action>(loggedInThunk: ActionThunk<T>): ActionThunk<T|EmptyAction>;
-function maybeLoggedIn<T extends Action, S extends Action>(loggedInThunk: ActionThunk<T>, guestThunk: ActionThunk<S>): ActionThunk<T|S>;
-function maybeLoggedIn<T extends Action, S extends Action>(
+function maybeLoggedIn<T extends ReduxAction>(loggedInThunk: ActionThunk<T>): ActionThunk<T|EmptyAction>;
+function maybeLoggedIn<T extends ReduxAction, S extends ReduxAction>(loggedInThunk: ActionThunk<T>, guestThunk: ActionThunk<S>): ActionThunk<T|S>;
+function maybeLoggedIn<T extends ReduxAction, S extends ReduxAction>(
   loggedInThunk: ActionThunk<T>,
   guestThunk: ActionThunk<S> = emptyThunk as ActionThunk<S>
 ): ActionThunk<T|S> {
@@ -534,9 +534,11 @@ type BasketAction = BasketStatusLoadingAction | BasketStatusErrorAction | Basket
  * @param {Record} record
  */
 export function loadBasketStatus(record: RecordInstance): ActionThunk<BasketAction|EmptyAction> {
-  return maybeLoggedIn<BasketAction>(({ wdkService }) =>
-    setBasketStatus(record,
-      wdkService.getBasketStatus(record.recordClassName, [record]).then(response => response[0]))
+  return maybeLoggedIn<BasketAction>(async ({ wdkService }) =>
+    setBasketStatus(record, wdkService.getBasketStatus(
+      (await wdkService.findRecordClass(rc => rc.fullName === record.recordClassName)).urlSegment,
+      [record]
+    ).then(response => response[0]))
   );
 };
 
@@ -547,9 +549,13 @@ export function loadBasketStatus(record: RecordInstance): ActionThunk<BasketActi
  */
 export function updateBasketStatus(record: RecordInstance, status: boolean): ActionThunk<BasketAction|ShowLoginModalAction|EmptyAction> {
   return maybeLoggedIn<BasketAction, ShowLoginModalAction|EmptyAction>(
-    ({ wdkService }) =>
+    async ({ wdkService }) =>
       setBasketStatus(record,
-        wdkService.updateBasketStatus(status? 'add' : 'remove', record.recordClassName, [record.id]).then(response => status)),
+        wdkService.updateRecordsBasketStatus(
+          status ? 'add' : 'remove',
+          (await wdkService.findRecordClass(rc => rc.fullName === record.recordClassName)).urlSegment,
+          [record.id]
+        ).then(() => status)),
     () => showLoginWarning('use baskets')
   );
 };

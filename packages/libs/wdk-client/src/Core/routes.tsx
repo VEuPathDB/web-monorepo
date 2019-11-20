@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, Redirect } from 'react-router';
 
 import { RouteEntry, parseQueryString } from 'wdk-client/Core/RouteEntry';
 
@@ -9,6 +9,7 @@ import NotFoundController from 'wdk-client/Controllers/NotFoundController';
 import AnswerController from 'wdk-client/Controllers/AnswerController';
 import QuestionListController from 'wdk-client/Controllers/QuestionListController';
 import DownloadFormController from 'wdk-client/Controllers/DownloadFormController';
+import WebServicesHelpController from 'wdk-client/Controllers/WebServicesHelpController';
 import UserRegistrationController from 'wdk-client/Controllers/UserRegistrationController';
 import UserProfileController from 'wdk-client/Controllers/UserProfileController';
 import UserPasswordChangeController from 'wdk-client/Controllers/UserPasswordChangeController';
@@ -18,15 +19,13 @@ import SiteMapController from 'wdk-client/Controllers/SiteMapController';
 import UserDatasetListController from 'wdk-client/Controllers/UserDatasetListController';
 import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
 import FavoritesController from 'wdk-client/Controllers/FavoritesController';
-import QuestionController from 'wdk-client/Controllers/QuestionController';
-import BlastSummaryViewController from 'wdk-client/Controllers/BlastSummaryViewController';
-import GenomeSummaryViewController from 'wdk-client/Controllers/GenomeSummaryViewController';
-import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
-import StepAnalysisController from 'wdk-client/Core/MoveAfterRefactor/Containers/StepAnalysis/StepAnalysisContainer';
-import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 import UserLoginController from 'wdk-client/Controllers/UserLoginController';
+
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
+import BasketController from 'wdk-client/Controllers/BasketController';
 
 const routes: RouteEntry[] = [
   {
@@ -44,9 +43,38 @@ const routes: RouteEntry[] = [
 
   {
     path: '/search/:recordClass/:question',
-    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => <QuestionController
-      {...props.match.params}
-    />
+    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => {
+      // Parse querystring. Two types of query params are supported: autoRun
+      // and param data:
+      // - autoRun: boolean (interpretted as true if present without a value, or with 'true' or '1')
+      // - param data: Prefix with "param.". E.g., "param.organism=Plasmodium+falciparum+3D7", or "param.ds_gene_ids.idList=PF3D7_1133400,PF3D7_1133401"
+      const { autoRun, ...restQueryParams } = parseQueryString(props);
+      const initialParamValuesEntries = Object.entries(restQueryParams)
+        .filter(([ key ]) => key.startsWith('param.'))
+        .map(([key, value]) => [key.replace(/^param\./, ''), value]);
+      const initialParamData = initialParamValuesEntries.length > 0
+        ? Object.fromEntries(initialParamValuesEntries)
+        : undefined;
+      return (
+        <Plugin
+          context={{
+            type: 'questionController',
+            recordClassName: props.match.params.recordClass,
+            searchName: props.match.params.question
+          }}
+          pluginProps={{
+            ...props.match.params,
+            hash: props.location.hash.slice(1),
+            submissionMetadata: {
+              type: 'create-strategy'
+            },
+            shouldChangeDocumentTitle: true,
+            initialParamData,
+            autoRun: autoRun === '' || autoRun === 'true' || autoRun === '1'
+          }}
+        />
+      );
+    }
   },
 
   {
@@ -59,6 +87,25 @@ const routes: RouteEntry[] = [
         summaryView={summaryView}
       />
     }
+  },
+
+  {
+    path: '/workspace/basket/:basketName/download',
+    component: (props: RouteComponentProps<{ basketName: string }>) => {
+      const { format } = parseQueryString(props);
+      return (
+        <DownloadFormController
+          {...props.match.params}
+          format={format}
+        />
+      );
+    }
+  },
+
+  {
+    path: '/web-services-help',
+    component: (props: RouteComponentProps<{}>) =>
+      <WebServicesHelpController {...parseQueryString(props)}/>
   },
 
   {
@@ -123,7 +170,14 @@ const routes: RouteEntry[] = [
   },
 
   {
+    path: '/workspace/basket',
+    requiresLogin: true,
+    component: BasketController
+  },
+
+  {
     path: '/workspace/datasets',
+    requiresLogin: true,
     component: (props: RouteComponentProps<{}>) => {
       const { history, location } = props;
       return <UserDatasetListController history={history} location={location}/>
@@ -132,6 +186,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/workspace/datasets/:id',
+    requiresLogin: true,
     component: (props: RouteComponentProps<{ id: string }>) => {
       // FIXME Remove this requirement from the component by updating action creators
       const rootUrl = window.location.href.substring(
@@ -148,7 +203,26 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/favorites',
+    path: '/workspace/strategies/:subPath*',
+    exact: false,
+    component: (props: RouteComponentProps<{ subPath?: string }, {}, { allowEmptyOpened?: boolean } | undefined>) => {
+      const queryParams = parseQueryString(props);
+      const { subPath = '' } = props.match.params;
+      const { state: { allowEmptyOpened = false } = {} } = props.location;
+      return (
+        <StrategyWorkspaceController
+          queryParams={queryParams}
+          workspacePath="/workspace/strategies"
+          subPath={subPath}
+          allowEmptyOpened={allowEmptyOpened}
+        />
+      );
+    }
+  },
+
+  {
+    path: '/workspace/favorites',
+    requiresLogin: true,
     component: () => <FavoritesController/>
   },
 
@@ -163,56 +237,8 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/step/:stepId(\\d+)/blastSummaryView',
-    component: (props: RouteComponentProps<{stepId: string}>) =>
-      <BlastSummaryViewController
-        stepId={Number(props.match.params.stepId)}
-      />
-  },
-
-  {
-    path: '/step/:stepId(\\d+)/genomeSummaryView',
-    component: (props: RouteComponentProps<{ stepId: string }>) =>
-      <GenomeSummaryViewController
-        viewId="route"
-        stepId={Number(props.match.params.stepId)}
-      />
-  },
-
-  {
-    path: '/step-analysis/:stepId(\\d+)',
-    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) =>
-      <StepAnalysisController
-        stepId={Number(props.match.params.stepId)}
-        viewId={props.match.params.viewId}
-      />
-  },
-
-  {
-    path: '/step/:stepId(\\d+)/resultPanel',
-    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) => {
-      const { initialTab } = parseQueryString(props);
-      return (
-        <ResultPanelController
-          stepId={Number(props.match.params.stepId)}
-          viewId="strategy"
-          initialTab={initialTab}
-        />
-      );
-    }
-  },
-
-  {
-    path: '/step/:stepId(\\d+)/defaultSummaryView',
-    component: (props: RouteComponentProps<{ stepId: string, viewId: string }>) =>
-      <ResultTableSummaryViewController
-        stepId={Number(props.match.params.stepId)}
-        viewId={props.match.params.viewId}
-      />
-  },
-
-  {
     path: '/user-comments/add',
+    requiresLogin: true,
     component: (props: RouteComponentProps<{}>) => {
       const parsedProps = parseUserCommentQueryString(props);
       return (
@@ -223,6 +249,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/user-comments/edit',
+    requiresLogin: true,
     component: (props: RouteComponentProps<{}>) => {
       const parsedProps = parseUserCommentQueryString(props);
       return (
@@ -248,6 +275,12 @@ const routes: RouteEntry[] = [
   },
 
   {
+    path: '/import/:signature',
+    component: (props: RouteComponentProps<{ signature: string }>) => 
+      <Redirect to={`/workspace/strategies/import/${props.match.params.signature}`} />
+  },
+
+  {
     path: '*',
     component: () => <NotFoundController />
   }
@@ -256,7 +289,7 @@ const routes: RouteEntry[] = [
 export default routes;
 
 function parseUserCommentQueryString(props: RouteComponentProps<{}>) {
-  const { 
+  const {
     commentId: stringCommentId,
     commentTargetId: targetType,
     stableId: targetId,

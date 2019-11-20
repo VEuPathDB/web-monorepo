@@ -69,7 +69,7 @@
 .wdk-RecordSidebarToggle {
   position: absolute;
   top: 16px;
-  right: -30px;
+  right: -50px;
   background: white;
   z-index: 1;
   font-size: 1.5em;
@@ -98,7 +98,7 @@
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebarToggle {
-  right: 5px;
+  right: 12px;
   border: 0;
   transform: rotate(-90deg);
   padding: 0;
@@ -251,6 +251,17 @@
   padding: 0 .5em;
   word-break: break-word;
   top: 1px;
+}
+
+.wdk-RecordTableContainerContent,
+.wdk-RecordAttributeSectionItemContent {
+  padding-left: 1rem;
+  margin: 1em 0 2em;
+}
+
+.wdk-RecordAttributeSectionItemHeader,
+.wdk-RecordTableContainerHeader {
+  margin-left: -1rem;
 }
 
 .wdk-RecordAttributeName,

@@ -14,7 +14,7 @@ import 'wdk-client/Components/CheckboxTree/wdk-CheckboxTree.scss';
 const NODE_STATE_PROPERTY = '__expandableTreeState';
 const NODE_CHILDREN_PROPERTY = '__expandableTreeChildren';
 
-enum LinksPosition {
+export enum LinksPosition {
   None,
   Top = 1 << 1,
   Bottom = 1 << 2,
@@ -119,9 +119,12 @@ type Props<T> = {
 
   /** Link placement */
   linksPosition?: LinksPosition;
+
+  /** Additional actions to render with links */
+  additionalActions?: React.ReactNode[];
 };
 
-type TreeLinkHandler = MouseEventHandler<HTMLAnchorElement>;
+type TreeLinkHandler = MouseEventHandler<HTMLButtonElement>;
 
 type TreeLinksProps = {
   showSelectionLinks: boolean;
@@ -138,6 +141,7 @@ type TreeLinksProps = {
   selectCurrentList: TreeLinkHandler;
   selectDefaultList: TreeLinkHandler;
   isFiltered: boolean;
+  additionalActions?: React.ReactNode[];
 }
 
 /**
@@ -147,7 +151,7 @@ let TreeLinks: StatelessComponent<TreeLinksProps> = props => {
   let {
     showSelectionLinks, showExpansionLinks, showCurrentLink, showDefaultLink,
     selectAll, selectNone, expandAll, expandNone, selectCurrentList, selectDefaultList,
-    addVisible, removeVisible, selectOnlyVisible, isFiltered
+    addVisible, removeVisible, selectOnlyVisible, isFiltered, additionalActions
   } = props;
 
   return (
@@ -155,44 +159,57 @@ let TreeLinks: StatelessComponent<TreeLinksProps> = props => {
 
       { isFiltered && showSelectionLinks &&
         <div>
-          <a href="#" onClick={addVisible}>add these</a>
+          <button type="button" className="link" onClick={addVisible}>add these</button>
           <Bar/>
-          <a href="#" onClick={removeVisible}>clear these</a>
+          <button type="button" className="link" onClick={removeVisible}>clear these</button>
           <Bar/>
-          <a href="#" onClick={selectOnlyVisible}>select only these</a>
+          <button type="button" className="link" onClick={selectOnlyVisible}>select only these</button>
         </div>
       }
 
       <div>
         { showSelectionLinks &&
           <span>
-            <a href="#" onClick={selectAll}>select all</a>
+            <button type="button" className="link" onClick={selectAll}>select all</button>
             <Bar/>
-            <a href="#" onClick={selectNone}>clear all</a>
+            <button type="button" className="link" onClick={selectNone}>clear all</button>
           </span> }
 
         { showExpansionLinks &&
           <span>
             { showSelectionLinks && <Bar/> }
-            <a href="#" onClick={expandAll}>expand all</a>
+            <button type="button" className="link" onClick={expandAll}>expand all</button>
             <Bar/>
-            <a href="#" onClick={expandNone}>collapse all</a>
+            <button type="button" className="link" onClick={expandNone}>collapse all</button>
           </span> }
 
         { showSelectionLinks && showCurrentLink &&
           <span>
             <Bar/>
-            <a href="#" onClick={selectCurrentList}>reset to current</a>
+            <button type="button" className="link" onClick={selectCurrentList}>reset to current</button>
           </span>
         }
 
         { showSelectionLinks && showDefaultLink &&
           <span>
             <Bar/>
-            <a href="#" onClick={selectDefaultList}>reset to default</a>
+            <button type="button" className="link" onClick={selectDefaultList}>reset to default</button>
           </span>
         }
+
       </div>
+
+      { additionalActions && additionalActions.length > 0 &&
+        <div>
+          { additionalActions.map((action, index, additionalActions) => (
+            <span key={index}>
+              {action}
+              {index !== (additionalActions.length - 1) && <Bar/>}
+            </span>
+          )) }
+        </div>
+      }
+
     </div>
   );
 };
@@ -479,7 +496,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
     searchTerm: '',
     onSearchTermChange: () => {},
     searchPredicate: () => true,
-    linkPlacement: LinksPosition.Both
+    linksPosition: LinksPosition.Both
   };
 
   expandAll: TreeLinkHandler;
@@ -644,7 +661,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
       name, showRoot, getNodeId, isSelectable, isMultiPick,
       isSearchable, currentList, defaultList, showSearchBox, searchTerm,
       searchBoxPlaceholder, searchBoxHelp, searchIconName,
-      linksPosition = LinksPosition.Both,
+      linksPosition = LinksPosition.Both, additionalActions,
       onSearchTermChange, autoFocusSearchBox
     } = this.props;
     let topLevelNodes = (showRoot ? [ this.state.generated.statefulTree ] :
@@ -670,6 +687,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
         showCurrentLink={currentList != null}
         showDefaultLink={defaultList != null}
         showExpansionLinks={!isActiveSearch(this.props)}
+        additionalActions={additionalActions}
       />
     );
 

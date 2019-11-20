@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
-import { StepAnalysisParameter } from '../../../../Utils/StepAnalysisUtils';
 import { StepAnalysisErrorsPane } from './StepAnalysisErrorsPane';
 import { CollapsibleSection } from 'wdk-client/Components';
+import { Parameter } from 'wdk-client/Utils/WdkModel';
 
 type StepAnalysisFormPaneProps = StepAnalysisFormPluginProps & {
   hasParameters: boolean;
@@ -14,12 +14,12 @@ type StepAnalysisFormPaneProps = StepAnalysisFormPluginProps & {
 export type StepAnalysisFormPluginProps = StepAnalysisFormPluginState & StepAnalysisFormPluginEventHandlers;
 
 export interface StepAnalysisFormPluginState {
-  paramSpecs: StepAnalysisParameter[];
-  paramValues: Record<string, string[]>;
+  paramSpecs: Parameter[];
+  paramValues: Record<string, string>;
 }
 
 export interface StepAnalysisFormPluginEventHandlers {
-  updateParamValues: (newParamValues: Record<string, string[]>) => void;
+  updateParamValues: (newParamValues: Record<string, string>) => void;
   onFormSubmit: () => void;
 }
 
@@ -36,7 +36,7 @@ export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
 }) => (
   <Fragment>
     <StepAnalysisErrorsPane errors={errors} />
-    {hasParameters 
+    {hasParameters
       ? (
         <CollapsibleSection
           headerContent="Parameters"
@@ -46,11 +46,11 @@ export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
         >
           {
             formRenderer(
-              { 
-                paramSpecs, 
-                paramValues, 
-                updateParamValues, 
-                onFormSubmit 
+              {
+                paramSpecs,
+                paramValues,
+                updateParamValues,
+                onFormSubmit
               }
             )
           }

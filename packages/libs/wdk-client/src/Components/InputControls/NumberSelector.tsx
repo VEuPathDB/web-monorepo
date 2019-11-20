@@ -9,6 +9,7 @@ type Props = {
   onChange: (value: number) => void;
   step: number;
   size?: number;
+  required?: boolean;
 };
 
 type State = {
@@ -26,7 +27,8 @@ class NumberSelector extends React.Component<Props, State> {
     value: PropTypes.number,
     onChange: PropTypes.func,
     step: PropTypes.number,
-    size: PropTypes.number
+    size: PropTypes.number,
+    required: PropTypes.bool
   };
 
   debouncedNotifyChange = debounce(this.notifyChange, 750);
@@ -61,7 +63,7 @@ class NumberSelector extends React.Component<Props, State> {
   }
 
   render () {
-    let { start, end, step, size } = this.props;
+    let { start, end, step, size, required = false } = this.props;
     let { internalValue: value } = this.state;
     if (!step) step = 1;
     if (!size) size = end + step;
@@ -78,6 +80,7 @@ class NumberSelector extends React.Component<Props, State> {
           value={value}
           onChange={this.handleChangeEvent}
           onBlur={this.handleBlurEvent}
+          required={required}
         />
       </span>
     );

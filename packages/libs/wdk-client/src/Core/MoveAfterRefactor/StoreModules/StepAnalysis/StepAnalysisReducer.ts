@@ -40,6 +40,7 @@ const initialState: StepAnalysesState = {
   activeTab: -1,
   analysisChoices: [],
   stepId: -1,
+  strategyId: -1,
   nextPanelId: 0,
   analysisPanelStates: {},
   analysisPanelOrder: []
@@ -52,6 +53,7 @@ export function reduce(state: StepAnalysesState = initialState, action: StepAnal
         // reset state since we are creating a new set of tabs
         ...initialState,
         stepId: action.payload.stepId,
+        strategyId: action.payload.strategyId,
         loadingAnalysisChoices: true,
       };
     }
@@ -358,6 +360,11 @@ const insertPanelState = (state: StepAnalysesState, newPanelState: AnalysisPanel
   // make sure that menu is always last
   const menuPanelId = Object.keys(state.analysisPanelStates).find(id =>
     state.analysisPanelStates[+id].type === ANALYSIS_MENU_STATE);
+
+  // only one menu tab is allowed
+  if (menuPanelId != null && newPanelState.type === ANALYSIS_MENU_STATE) {
+    return state;
+  }
 
   const nextOrder = menuPanelId == null
     ? [ ...state.analysisPanelOrder, state.nextPanelId ]

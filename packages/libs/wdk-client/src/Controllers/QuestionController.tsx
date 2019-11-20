@@ -1,71 +1,242 @@
-import * as React from 'react';
+import { mapValues } from 'lodash';
+import React, { useEffect, useCallback, FunctionComponent, useMemo } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch, bindActionCreators } from "redux";
-import PageController from 'wdk-client/Core/Controllers/PageController';
+import { Dispatch, bindActionCreators } from 'redux';
+import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import DefaultQuestionForm from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import {
   updateActiveQuestion,
   updateParamValue,
-  changeGroupVisibility
+  changeGroupVisibility,
+  SubmissionMetadata,
+  submitQuestion
 } from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import Error from 'wdk-client/Components/PageStatus/Error';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
+import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 
 const ActionCreators = {
   updateParamValue,
   setGroupVisibility: changeGroupVisibility
 }
 
-type OwnProps = { question: string; }
-type StateProps = QuestionState;
+type OwnProps = { 
+  question: string, 
+  recordClass: string, 
+  FormComponent?: (props: FormProps) => JSX.Element, 
+  submissionMetadata: SubmissionMetadata,
+  submitButtonText?: string,
+  shouldChangeDocumentTitle?: boolean,
+  /**
+   * Data to provide to parameters upon initialization. Data can be parameter
+   * values, or it can be other content that the parameter can access and use
+   * for initializing ui state.
+   * 
+   * If a property's key is the same as a parameter name, then its value will
+   * be used as that parameter's initial value.
+   * 
+   * The entire object is also made available in the payload of the initParam
+   * action, so that a param can interrogate the object for other special
+   * keys.
+   */
+  initialParamData?: Record<string, string>,
+  /**
+   * If true, the form will be submitted automatically, and the browser will be
+   * directed to the new strategy. Any errors will appear above the search form
+   * and the user will be able to correct the errors.
+   */
+  autoRun?: boolean
+};
+type StateProps = QuestionState & { recordClasses: GlobalData['recordClasses'] };
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
-type Props = OwnProps & DispatchProps & StateProps;
+type Props = DispatchProps & StateProps & {
+  searchName: string,
+  recordClassName: string,
+  FormComponent?: FunctionComponent<FormProps>,
+  submissionMetadata: SubmissionMetadata,
+  submitButtonText?: string,
+  shouldChangeDocumentTitle?: boolean,
+  initialParamData?: Record<string, string>,
+  autoRun: boolean;
+};
 
-class QuestionController extends PageController<Props> {
+function QuestionController(props: Props) {
+  const { 
+    dispatch, 
+    eventHandlers, 
+    searchName, 
+    recordClassName, 
+    submissionMetadata, 
+    FormComponent, 
+    submitButtonText, 
+    recordClasses,
+    shouldChangeDocumentTitle, 
+    initialParamData,
+    autoRun,
+    ...state } = props;
+  const stepId = submissionMetadata.type === 'edit-step' || submissionMetadata.type === 'submit-custom-form' ? submissionMetadata.stepId : undefined;
 
-  loadData() {
-    if (this.props.questionStatus == null) {
-      this.props.dispatch(updateActiveQuestion({
-        stepId: undefined,
-        questionName: this.props.question
+  const recordClass = useMemo(
+    () => recordClasses && recordClasses.find(({ urlSegment }) => urlSegment === recordClassName), 
+    [ recordClasses, recordClassName ]
+  );
+
+  const DefaultRenderForm: FunctionComponent<FormProps> = useCallback(
+    (props: FormProps) => (
+      <Plugin<FormProps>
+        context={{
+          type: 'questionForm',
+          name: searchName,
+          searchName,
+          recordClassName
+        }}
+        pluginProps={props}
+      />
+    ),
+    [ searchName, recordClassName ] 
+  );
+
+  useEffect(() => {
+    props.dispatch(updateActiveQuestion({
+      searchName,
+      initialParamData: autoRun && initialParamData == null ? {} : initialParamData,
+      stepId
+    }))
+  }, [searchName, stepId]);
+
+  useEffect(() => {
+    if (autoRun && state.questionStatus === 'complete') {
+      props.dispatch(submitQuestion({
+        searchName,
+        submissionMetadata,
+        autoRun
       }));
     }
-  }
+  }, [state.questionStatus]);
 
-  isRenderDataLoaded() {
-    return this.props.questionStatus === 'complete';
-  }
+  useSetSearchDocumentTitle(state.question, state.questionStatus, recordClasses, recordClass, shouldChangeDocumentTitle);
+  
+  if (state.questionStatus === 'error') return <Error/>;
+  if (
+    (recordClass === undefined && recordClasses !== undefined) ||
+    state.questionStatus === 'not-found'
+  ) return <NotFound/>;
+  if (recordClass === undefined || state.questionStatus === 'loading') return <Loading/>;
 
-  isRenderDataLoadError() {
-    return this.props.questionStatus === 'error';
-  }
+  if ( autoRun && state.submitting ) return (
+    <React.Fragment>
+      <h1>Searching {recordClass.displayNamePlural}...</h1>
+      <Loading/>
+    </React.Fragment>
+  );
 
-  isRenderDataNotFound() {
-    return this.props.questionStatus === 'not-found';
-  }
+  if (state.questionStatus !== 'complete') return null;
 
-  getTitle() {
-    return !this.props.question || !this.props.recordClass ? 'Loading' :
-      `Search for ${this.props.recordClass.displayNamePlural}
-      by ${this.props.question.displayName}`;
-  }
-
-  renderView() {
-    return (
-      <DefaultQuestionForm
-        state={this.props}
-        eventHandlers={this.props.eventHandlers}
-        dispatchAction={this.props.dispatch}
+  const parameterElements = mapValues(
+    state.question.parametersByName,
+    parameter => (
+      <Plugin
+        context={{
+          type: 'questionFormParameter',
+          name: parameter.name,
+          searchName,
+          recordClassName
+        }}
+        pluginProps={{
+          ctx: {
+            searchName,
+            parameter,
+            paramValues: state.paramValues
+          },
+          parameter: parameter,
+          value: state.paramValues[parameter.name],
+          uiState: state.paramUIState[parameter.name],
+          onParamValueChange: (paramValue: string) => {
+            eventHandlers.updateParamValue({
+              searchName,
+              parameter,
+              paramValues: state.paramValues,
+              paramValue
+            })
+          },
+          dispatch: dispatch
+        }}
       />
-    );
-  }
+    )
+  );
 
+  return FormComponent
+    ? <FormComponent
+        parameterElements={parameterElements}
+        state={state}
+        eventHandlers={eventHandlers}
+        dispatchAction={dispatch}
+        submissionMetadata={submissionMetadata}
+        submitButtonText={submitButtonText}
+        recordClass={recordClass}
+      />
+    : <DefaultRenderForm
+        parameterElements={parameterElements}
+        state={state}
+        eventHandlers={eventHandlers}
+        dispatchAction={dispatch}
+        submissionMetadata={submissionMetadata}
+        submitButtonText={submitButtonText}
+        recordClass={recordClass}
+      />;
 }
 
-const enhance = connect<StateProps, DispatchProps, OwnProps, RootState>(
-  (state, props) => state.question.questions[props.question] || {} as QuestionState,
-  dispatch => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) })
+export const useSetSearchDocumentTitle = (
+  question: Question | undefined, 
+  questionStatus: 'complete' | 'loading' | 'not-found' | 'error',
+  recordClasses: RecordClass[] | undefined,
+  outputRecordClass: RecordClass | undefined,
+  shouldChangeDocumentTitle: boolean | undefined
+) => {
+  useEffect(() => {
+    if (shouldChangeDocumentTitle) {
+      if (question === undefined || recordClasses === undefined || questionStatus === 'loading') {
+        document.title = 'Loading...';
+      } else if (questionStatus === 'error') {
+        document.title = 'Error';
+      } else if (outputRecordClass && questionStatus === 'complete') {
+        document.title = `Search for ${outputRecordClass.displayNamePlural} by ${question.displayName}`;
+      } else {
+        document.title = 'Page not found';
+      }
+    }
+
+    return shouldChangeDocumentTitle
+      ? () => {
+          document.title = ''
+        }
+      : () => {};
+  }, [ question, questionStatus, recordClasses, outputRecordClass, shouldChangeDocumentTitle ])
+};
+
+const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
+  (state, props) =>({
+    ...(state.question.questions[props.question] || {}) as QuestionState,
+    recordClasses: state.globalData.recordClasses
+  }),
+  (dispatch) => ({ dispatch, eventHandlers: bindActionCreators(ActionCreators, dispatch) }),
+  (stateProps, dispatchProps, ownProps) => ({
+    ...stateProps,
+    ...dispatchProps,
+    searchName: ownProps.question,
+    recordClassName: ownProps.recordClass,
+    FormComponent: ownProps.FormComponent,
+    submissionMetadata: ownProps.submissionMetadata,
+    submitButtonText: ownProps.submitButtonText,
+    shouldChangeDocumentTitle: ownProps.shouldChangeDocumentTitle,
+    initialParamData: ownProps.initialParamData,
+    autoRun: ownProps.autoRun === true
+  })
 )
 
 export default enhance(wrappable(QuestionController));

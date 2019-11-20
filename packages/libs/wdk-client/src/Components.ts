@@ -62,12 +62,18 @@ import Tabs from 'wdk-client/Components/Tabs/Tabs';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import ResultTable from 'wdk-client/Views/ResultTableSummaryView/ResultTable';
+import { ResizableContainer } from 'wdk-client/Components/Display/ResizableContainer';
+import ResultTabs from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
+import { AddStepPanelView } from 'wdk-client/Views/Strategy/AddStepPanel';
+import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
+import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
 
 export {
   AccordionButton,
   AnswerTableCell,
   ApplicationSpecificProperties,
+  AddStepPanelView,
   Banner,
   BannerList,
   CategoriesCheckboxTree,
@@ -117,6 +123,8 @@ export {
   RecordTableDescription,
   RecordTableSection,
   RecordUI,
+  ResizableContainer,
+  ResultTabs,
   ReporterSortMessage,
   SaveableTextEditor,
   ServerSideAttributeFilter,
@@ -130,4 +138,6 @@ export {
   Tooltip,
   AttributeCell,
   ResultTable,
+  ResultPanelHeader,
+  StrategyWorkspaceController
 };

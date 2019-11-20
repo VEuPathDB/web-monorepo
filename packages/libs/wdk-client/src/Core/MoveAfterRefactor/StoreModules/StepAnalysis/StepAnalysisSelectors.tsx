@@ -1,17 +1,18 @@
 import React, { Fragment } from 'react';
 
 import { createSelector } from 'reselect';
-import { RootState } from '../../../State/Types';
+import { RootState } from 'wdk-client/Core/State/Types';
 import { get, escapeRegExp } from 'lodash';
 import { StepAnalysesState, AnalysisPanelState, AnalysisMenuState, UnsavedAnalysisState, UninitializedAnalysisPanelState, SavedAnalysisState } from './StepAnalysisState';
 import { transformPanelState } from './StepAnalysisReducer';
 import { StepAnalysisStateProps } from '../../Components/StepAnalysis/StepAnalysisView';
 import { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
-import { Question, SummaryViewPluginField } from 'wdk-client/Utils/WdkModel';
+import { Question, SummaryViewPluginField, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { ResultPanelState } from 'wdk-client/StoreModules/ResultPanelStoreModule';
 import { UserPreferences } from 'wdk-client/Utils/WdkUser';
 import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { StepAnalysisFormPluginProps } from '../../Components/StepAnalysis/StepAnalysisFormPane';
 import { StepAnalysisResultPluginProps } from '../../Components/StepAnalysis/StepAnalysisResultsPane';
@@ -19,32 +20,50 @@ import { StepAnalysisResultPluginProps } from '../../Components/StepAnalysis/Ste
 type BaseTabConfig = Pick<TabConfig<string>, 'key' | 'display' | 'removable' | 'tooltip'>;
 
 // Props used by selectors... is there a better way to do this?
-type Props = { viewId: string, stepId: number, initialTab?: string };
+type Props = {
+  viewId: string,
+  resultType: ResultType,
+  initialTab?: string,
+  tabId?: string
+};
 
 export const webAppUrl = (state: RootState): string => get(state, 'globalData.siteConfig.webAppUrl', '');
 export const wdkModelBuildNumber = (state: RootState): number => get(state, 'globalData.config.buildNumber', 0);
-export const recordClassDisplayName = (
-  { 
-    globalData: { recordClasses = [] }, 
-    steps: { steps }, 
+export const resultTypeDetails = (state: RootState, props: Props) => {
+  const viewState = state.resultPanel[props.viewId];
+  return viewState && viewState.resultTypeDetails;
+}
+export const recordClass = (
+
+  {
+    resultPanel,
+    globalData: { recordClasses = [] },
   }: RootState,
-  { stepId }: Props
-) => {
-  const recordClassName = get(steps[stepId], 'step.recordClassName', '');
-  const recordClass = recordClasses.find(({ name }) => name === recordClassName);
-  return get(recordClass, 'displayName', '');
+  { viewId }: Props
+): RecordClass | undefined => {
+  const resultPanelState = resultPanel[viewId];
+  if (resultPanelState == undefined) return undefined;
+  const { resultTypeDetails } = resultPanelState;
+  if (resultTypeDetails == undefined) return undefined;
+  const { recordClassName } = resultTypeDetails;
+  const recordClass = recordClasses.find(({ urlSegment }) => urlSegment === recordClassName);
+  return recordClass;
 };
-// FIXME This look suspect
+
 export const question = (
-  { 
-    globalData: { questions = [] }, 
-    steps: { steps }, 
+
+  {
+    resultPanel,
+    globalData: { questions = [] },
   }: RootState,
-  { stepId }: Props
-) => {
-  // FIXME this is a bit dirty and not type safe
-  const questionName = get(steps[stepId], 'step.answerSpec.questionName', '');
-  const question = questions.find(({ name }) => name === questionName);
+  { viewId }: Props
+): Question | undefined => {
+  const resultPanelState = resultPanel[viewId];
+  if (resultPanelState == undefined) return undefined
+  const { resultTypeDetails } = resultPanelState;
+  if (resultTypeDetails == undefined) return undefined
+  const { searchName } = resultTypeDetails;
+  const question = questions.find(({ urlSegment }) => urlSegment === searchName);
   return question;
 };
 
@@ -54,7 +73,7 @@ export const userPreferences = (
 
 export const summaryViewPlugins = createSelector<RootState, Props, Question | undefined, SummaryViewPluginField[]>(
   question,
-  question => question 
+  question => question
     ? question.summaryViewPlugins
     : []
 );
@@ -64,22 +83,16 @@ export const defaultSummaryView = createSelector<RootState, Props, UserPreferenc
   (userPreferences, question) =>
     userPreferences == null || question == null
       ? ''
-      : get(userPreferences, prefSpecs.resultPanelTab(question.name), question.defaultSummaryView));
+      : get(userPreferences, prefSpecs.resultPanelTab(question.fullName), question.defaultSummaryView));
 
 export const resultPanel = ({ resultPanel }: RootState, { viewId }: Props): ResultPanelState | undefined => resultPanel[viewId];
 
 export const questionsLoaded = ({ globalData: { questions }}: RootState) => questions != null;
 
-export const stepLoaded = ({ steps: { steps }}: RootState, { stepId }: Props) => {
-  const stepEntry = steps[stepId];
-  return stepEntry != null && !stepEntry.isLoading;
-}
-
-export const loadingSummaryViewListing = createSelector<RootState, Props, ResultPanelState | undefined, boolean, boolean, boolean>(
+export const loadingSummaryViewListing = createSelector<RootState, Props, ResultPanelState | undefined, boolean, boolean>(
   resultPanel,
   questionsLoaded,
-  stepLoaded,
-  (resultPanel, questionsLoaded, stepLoaded) => resultPanel != null && (!questionsLoaded || !stepLoaded)
+  (resultPanel, questionsLoaded) => resultPanel != null && (!questionsLoaded)
 );
 
 export const stepAnalyses = ({ stepAnalysis }: RootState) => stepAnalysis;
@@ -88,15 +101,114 @@ export const loadingAnalysisChoices = createSelector<RootState, StepAnalysesStat
   stepAnalyses,
   stepAnalyses => stepAnalyses.loadingAnalysisChoices
 );
+export const analysisPanelOrder = createSelector<RootState, StepAnalysesState, number[]>(
+  stepAnalyses,
+  stepAnalyses => stepAnalyses.analysisPanelOrder
+);
+export const analysisPanelStates = createSelector<RootState, StepAnalysesState, Record<number, AnalysisPanelState>>(
+  stepAnalyses,
+  stepAnalyses => stepAnalyses.analysisPanelStates
+);
+export const analysisChoices = createSelector<RootState, StepAnalysesState, StepAnalysisType[]>(
+  stepAnalyses,
+  stepAnalyses => stepAnalyses.analysisChoices
+);
 
 export const initialTab = (_: RootState, { initialTab }: Props) => initialTab;
 
-export const activeTab = createSelector<RootState, Props, StepAnalysesState, ResultPanelState | undefined, string, string | undefined, string | number>(
+export const tabId = (_: RootState, { tabId }: Props) => tabId;
+
+const internalToExternalAnalysisId = (internalAnalysisId: number, analysisPanelStates: Record<number, AnalysisPanelState>) => {
+  const analysisPanelState = analysisPanelStates[internalAnalysisId];
+
+  const externalAnalysisId = (
+    !analysisPanelState || 
+    analysisPanelState.type === 'ANALYSIS_MENU_STATE' ||
+    analysisPanelState.type === 'UNSAVED_ANALYSIS_STATE'
+  )
+    ? null
+    : analysisPanelState.type === 'UNINITIALIZED_PANEL_STATE'
+    ? analysisPanelState.analysisId
+    : analysisPanelState.analysisConfig.analysisId;
+
+  return externalAnalysisId;
+}
+
+type ExternalToInternalTabIdMaps = { 
+  externalToInternalTabId: Record<string, string | number>, 
+  internalToExternalTabId: Record<string | number, string>
+};
+
+export const externalToInternalTabIdMaps = createSelector(
+  analysisPanelOrder,
+  analysisPanelStates,
+  summaryViewPlugins,
+  (analysisPanelOrder, analysisPanelStates, summaryViewPlugins): ExternalToInternalTabIdMaps => {
+    const { externalToInternalAnalysis, internalToExternalAnalysis } = analysisPanelOrder.reduce(
+      (memo, internalAnalysisId) => {
+        const externalAnalysisId = internalToExternalAnalysisId(internalAnalysisId, analysisPanelStates);
+
+        return externalAnalysisId !== null
+          ? {
+              externalToInternalAnalysis: {
+                ...memo.externalToInternalAnalysis,
+                [`analysis:${externalAnalysisId}`]: internalAnalysisId
+              },
+              internalToExternalAnalysis: {
+                ...memo.internalToExternalAnalysis,
+                [internalAnalysisId]: `analysis:${externalAnalysisId}`
+              }
+            }
+          : memo;
+      },
+      { 
+        externalToInternalAnalysis: {} as Record<string, number>,
+        internalToExternalAnalysis: {} as Record<number, string>, 
+      }
+    );
+
+    const { externalToInternalSummaryView, internalToExternalSummaryView } = summaryViewPlugins.reduce(
+      (memo, { name: internalSummaryViewId }) => ({
+        externalToInternalSummaryView: {
+          ...memo.externalToInternalSummaryView,
+          [`summary:${internalSummaryViewId}`]: internalSummaryViewId
+        },
+        internalToExternalSummaryView: {
+          ...memo.internalToExternalSummaryView,
+          [internalSummaryViewId]: `summary:${internalSummaryViewId}`
+        }
+      }), 
+      {
+        externalToInternalSummaryView: {} as Record<string, string>,
+        internalToExternalSummaryView: {} as Record<string, string>,
+      }
+    );
+
+    return {
+      externalToInternalTabId: {
+        ...externalToInternalAnalysis,
+        ...externalToInternalSummaryView
+      },
+      internalToExternalTabId: {
+        ...internalToExternalAnalysis,
+        ...internalToExternalSummaryView
+      }
+    };
+  }
+);
+
+export const activeTab = createSelector<RootState, Props, StepAnalysesState, ResultPanelState | undefined, string, string | undefined, string | undefined, ExternalToInternalTabIdMaps, string | number>(
   stepAnalyses,
   resultPanel,
   defaultSummaryView,
   initialTab,
-  (stepAnalyses, resultPanel, defaultSummaryView, initialTab) => {
+  tabId,
+  externalToInternalTabIdMaps,
+  (stepAnalyses, resultPanel, defaultSummaryView, initialTab, tabId, externalToInternalTabIdMaps) => {
+    if (tabId && externalToInternalTabIdMaps.externalToInternalTabId[tabId] != null) {
+      return externalToInternalTabIdMaps.externalToInternalTabId[tabId];
+    }
+
     if (initialTab && stepAnalyses.activeTab === -1 && (resultPanel == null || resultPanel.activeSummaryView == null)) {
       const tabDetail = parseTabSelector(initialTab);
       if (tabDetail == null) return '';
@@ -120,18 +232,6 @@ export const activeTab = createSelector<RootState, Props, StepAnalysesState, Res
 
     return stepAnalyses.activeTab;
   }
-);
-export const analysisPanelOrder = createSelector<RootState, StepAnalysesState, number[]>(
-  stepAnalyses,
-  stepAnalyses => stepAnalyses.analysisPanelOrder
-);
-export const analysisPanelStates = createSelector<RootState, StepAnalysesState, Record<number, AnalysisPanelState>>(
-  stepAnalyses,
-  stepAnalyses => stepAnalyses.analysisPanelStates
-);
-export const analysisChoices = createSelector<RootState, StepAnalysesState, StepAnalysisType[]>(
-  stepAnalyses,
-  stepAnalyses => stepAnalyses.analysisChoices
 );
 
 export const newAnalysisButtonVisible = createSelector<RootState, number[], Record<number, AnalysisPanelState>, boolean>(
@@ -181,7 +281,7 @@ export const mapAnalysisPanelStateToProps = (
   analysisPanelState: AnalysisPanelState,
   choices: StepAnalysisType[],
   webAppUrl: string,
-  wdkModelBuildNumber: number, 
+  wdkModelBuildNumber: number,
   recordClassDisplayName: string
 ): StepAnalysisStateProps => transformPanelState(
   analysisPanelState,
@@ -208,26 +308,26 @@ const mapAnalysisMenuStateToProps = (
   analysisMenuState: AnalysisMenuState,
   choices: StepAnalysisType[],
   webAppUrl: string,
-  wdkModelBuildNumber: number, 
+  wdkModelBuildNumber: number,
   recordClassDisplayName: string
-): StepAnalysisStateProps => ({ 
+): StepAnalysisStateProps => ({
   type: 'analysis-menu',
   recordClassDisplayName,
   wdkModelBuildNumber,
   webAppUrl,
   choices,
-  selectedType: analysisMenuState.selectedAnalysis 
+  selectedType: analysisMenuState.selectedAnalysis
     ? analysisMenuState.selectedAnalysis.name
     : undefined
 });
 
 const mapUnsavedAnalysisStateToProps = (
-  { 
-    analysisName, 
-    analysisType: { 
+  {
+    analysisName,
+    analysisType: {
       shortDescription,
       description,
-      hasParameters
+      paramNames
     },
     panelUiState: {
       descriptionExpanded,
@@ -248,8 +348,8 @@ const mapUnsavedAnalysisStateToProps = (
     descriptionExpanded
   },
   formSaving: formStatus === 'SAVING_ANALYSIS',
-  formState: { 
-    hasParameters,
+  formState: {
+    hasParameters: paramNames.length > 0,
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
@@ -276,7 +376,7 @@ const mapUnsavedAnalysisStateToProps = (
 });
 
 const mapSavedAnalysisStateToProps = (
-  { 
+  {
     analysisConfig,
     analysisConfigStatus,
     panelUiState: {
@@ -302,8 +402,8 @@ const mapSavedAnalysisStateToProps = (
     descriptionExpanded
   },
   formSaving: formStatus === 'SAVING_ANALYSIS',
-  formState: { 
-    hasParameters: typeHasParameters(analysisConfig.analysisName, choices),
+  formState: {
+    hasParameters: paramSpecs.length > 0,
     formExpanded,
     errors: formValidationErrors,
     paramSpecs,
@@ -374,12 +474,6 @@ const displayToType = (display: string, choices: StepAnalysisType[]) => get(
   choices.find(({ displayName }) => display === displayName),
   'name',
   ''
-);
-
-const typeHasParameters = (display: string, choices: StepAnalysisType[]) => get(
-  choices.find(({ name }) => display === name),
-  'hasParameters',
-  false
 );
 
 const typeToDisplay = (type: string, choices: StepAnalysisType[]) => get(

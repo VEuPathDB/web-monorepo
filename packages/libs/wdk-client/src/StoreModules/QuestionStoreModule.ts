@@ -1,4 +1,4 @@
-import { keyBy, mapValues } from 'lodash';
+import { keyBy, mapValues, toString } from 'lodash';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
 import { from, EMPTY, merge, Subject } from 'rxjs';
 import { debounceTime, filter, mergeMap, takeUntil, map } from 'rxjs/operators';
@@ -28,6 +28,9 @@ import {
   questionLoaded,
   questionNotFound,
   questionError,
+  ENABLE_SUBMISSION,
+  reportSubmissionError,
+  submitQuestion
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -46,21 +49,33 @@ import {
 
 import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 import { Action } from 'wdk-client/Actions';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction, fulfillCreateStep, fulfillCreateStrategy } from 'wdk-client/Actions/StrategyActions';
+import { addStep } from 'wdk-client/Utils/StrategyUtils';
+import {Step} from 'wdk-client/Utils/WdkUser';
+import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
+import { InferAction, mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
 
 export const key = 'question';
+
+// Defaults
+export const DEFAULT_STRATEGY_NAME = 'Unnamed Strategy';
+export const DEFAULT_STEP_WEIGHT = 10;
 
 interface GroupState {
   isVisible: boolean;
 }
 
+export type QuestionWithMappedParameters =
+  QuestionWithParameters & {
+    parametersByName: Record<string, Parameter>;
+    groupsByName: Record<string, ParameterGroup>;
+  };
+
 export type QuestionState = {
   questionStatus: 'loading' | 'error' | 'not-found' | 'complete';
-  question: QuestionWithParameters & {
-    parametersByName: Record<string, Parameter>;
-    groupsByName: Record<string, ParameterGroup>
-  };
+  question: QuestionWithMappedParameters;
   recordClass: RecordClass;
   paramValues: Record<string, string>;
   paramUIState: Record<string, any>;
@@ -69,6 +84,9 @@ export type QuestionState = {
   stepId: number | undefined;
   weight?: string;
   customName?: string;
+  stepValidation?: Step['validation'];
+  submitting: boolean;
+  paramDependenciesUpdating: Record<string, boolean>;
 }
 
 export type State = {
@@ -81,24 +99,25 @@ const initialState: State = {
 
 export function reduce(state: State = initialState, action: Action): State {
   if ('payload' in action && action.payload != null && typeof action.payload === 'object') {
-    if ('questionName' in action.payload) {
-      const { questionName } = action.payload;
-      const questionState = reduceQuestionState(state.questions[questionName], action);
-      if (questionState !== state.questions[questionName]) {
+    if ('searchName' in action.payload) {
+      const { searchName } = action.payload;
+      const questionState = reduceQuestionState(state.questions[searchName], action);
+      if (questionState !== state.questions[searchName]) {
         return {
           ...state,
           questions: {
             ...state.questions,
-            [questionName]: questionState
+            [searchName]: questionState
           }
         };
       }
     }
   }
+
   return state;
 }
 
-export const observe = (action$: ActionsObservable<Action>, state$: StateObservable<any>, dependencies: EpicDependencies) => {
+export const observe = (action$: ActionsObservable<Action>, state$: StateObservable<RootState>, dependencies: EpicDependencies) => {
   const questionState$ = new StateObservable(
     state$.pipe(
       map(state => state[key])
@@ -107,7 +126,7 @@ export const observe = (action$: ActionsObservable<Action>, state$: StateObserva
   );
 
   return merge(
-    observeQuestion(action$, questionState$, dependencies),
+    observeQuestion(action$, state$, dependencies),
     observeParam(action$, questionState$, dependencies)
   );
 };
@@ -121,9 +140,10 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
     case UPDATE_ACTIVE_QUESTION:
       return {
         ...state,
-        paramValues: action.payload.paramValues || {},
         stepId: action.payload.stepId,
-        questionStatus: 'loading'
+        questionStatus: 'loading',
+        submitting: false,
+        paramDependenciesUpdating: {}
       }
 
     case QUESTION_LOADED:
@@ -131,6 +151,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         ...state,
         questionStatus: 'complete',
         question: normalizeQuestion(action.payload.question),
+        stepValidation: action.payload.stepValidation,
         recordClass: action.payload.recordClass,
         paramValues: action.payload.paramValues,
         paramErrors: action.payload.question.parameters.reduce((paramValues, param) =>
@@ -138,7 +159,8 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         paramUIState: action.payload.question.parameters.reduce((paramUIState, parameter) =>
           Object.assign(paramUIState, { [parameter.name]: paramReducer(parameter, undefined, { type: '@@parm-stub@@' }) }), {}),
         groupUIState: action.payload.question.groups.reduce((groupUIState, group) =>
-          Object.assign(groupUIState, { [group.name]: { isVisible: group.isVisible }}), {})
+          Object.assign(groupUIState, { [group.name]: { isVisible: group.isVisible }}), {}),
+        weight: toString(action.payload.wdkWeight)
       }
 
     case QUESTION_ERROR:
@@ -166,7 +188,12 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
       }
 
     case UPDATE_PARAM_VALUE:
-       return {
+      const newParamDependenciesUpdating = action.payload.parameter.dependentParams.reduce(
+        (memo, dependentParam) => ({ ...memo, [dependentParam]: true }), 
+        {} as Record<string, boolean>
+      );
+
+      return {
         ...state,
         paramValues: {
           ...state.paramValues,
@@ -175,6 +202,10 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         paramErrors: {
           ...state.paramErrors,
           [action.payload.parameter.name]: undefined
+        },
+        paramDependenciesUpdating: {
+          ...state.paramDependenciesUpdating,
+          ...newParamDependenciesUpdating
         }
       };
 
@@ -189,9 +220,10 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
 
     case UPDATE_PARAMS: {
       const newParamsByName = keyBy(action.payload.parameters, 'name');
-      const newParamValuesByName = mapValues(newParamsByName, param => param.defaultValue || '');
+      const newParamValuesByName = mapValues(newParamsByName, param => param.initialDisplayValue || '');
       const newParamErrors = mapValues(newParamsByName, () => undefined);
-      // merge updated parameters into quesiton and reset their values
+      const newParamDependenciesUpdating = mapValues(newParamsByName, () => false);
+      // merge updated parameters into question and reset their values
       return {
         ...state,
         paramValues: {
@@ -210,6 +242,10 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           },
           parameters: state.question.parameters
             .map(parameter => newParamsByName[parameter.name] || parameter)
+        },
+        paramDependenciesUpdating: {
+          ...state.paramDependenciesUpdating,
+          ...newParamDependenciesUpdating
         }
       };
     }
@@ -243,6 +279,21 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           [action.payload.groupName]: action.payload.groupState
         }
       };
+
+    case SUBMIT_QUESTION: {
+      return {
+        ...state,
+        submitting: true
+      };
+    }
+
+    case ENABLE_SUBMISSION: {
+      return {
+        ...state,
+        submitting: false,
+        stepValidation: action.payload.stepValidation ? action.payload.stepValidation : state.stepValidation
+      };
+    }
 
     // finally, handle parameter specific actions
     default:
@@ -289,21 +340,21 @@ function normalizeQuestion(question: QuestionWithParameters) {
 type QuestionEpic = ModuleEpic<RootState>;
 
 const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
-  ofType<UpdateActiveQuestionAction>(UPDATE_ACTIVE_QUESTION),
+  filter((action): action is UpdateActiveQuestionAction => action.type === UPDATE_ACTIVE_QUESTION),
   mergeMap(action =>
-    from(loadQuestion(wdkService, action.payload.questionName, action.payload.paramValues)).pipe(
+    from(loadQuestion(wdkService, action.payload.searchName, action.payload.stepId, action.payload.initialParamData)).pipe(
     takeUntil(action$.pipe(filter(killAction => (
       killAction.type === UNLOAD_QUESTION &&
-      killAction.payload.questionName === action.payload.questionName
+      killAction.payload.searchName === action.payload.searchName
     )))))
   )
 );
 
 const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
   ofType<QuestionLoadedAction>(QUESTION_LOADED),
-  mergeMap(({ payload: { question, questionName, paramValues }}) =>
+  mergeMap(({ payload: { question, searchName, paramValues, initialParamData }}: QuestionLoadedAction) =>
     from(question.parameters.map(parameter =>
-      initParam({ parameter, paramValues, questionName }))))
+      initParam({ parameter, paramValues, searchName, initialParamData }))))
 );
 
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
@@ -311,20 +362,20 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
   filter(action => action.payload.parameter.dependentParams.length > 0),
   debounceTime(1000),
   mergeMap(action => {
-    const { questionName, parameter, paramValues, paramValue } = action.payload;
+    const { searchName, parameter, paramValues, paramValue } = action.payload;
     return from(wdkService.getQuestionParamValues(
-      questionName,
+      searchName,
       parameter.name,
       paramValue,
       paramValues
     ).then(
-      parameters => updateParams({questionName, parameters}),
-      error => paramError({ questionName, error: error.message, paramName: parameter.name })
+      parameters => updateParams({searchName, parameters}),
+      error => paramError({ searchName, error: error.message, paramName: parameter.name })
     )).pipe(
       takeUntil(action$.pipe(ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE))),
       takeUntil(action$.pipe(filter(killAction => (
         killAction.type === UNLOAD_QUESTION &&
-        killAction.payload.questionName === action.payload.questionName
+        killAction.payload.searchName === action.payload.searchName
       ))))
     )
   })
@@ -333,66 +384,231 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
 const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => action$.pipe(
   ofType<SubmitQuestionAction>(SUBMIT_QUESTION),
   mergeMap(action => {
-    const questionState = state$.value[key].questions[action.payload.questionName];
+    const questionState = state$.value[key].questions[action.payload.searchName];
     if (questionState == null) return EMPTY;
-    Promise.all(questionState.question.parameters.map(parameter => {
-      const ctx = { parameter, questionName: questionState.question.urlSegment, paramValues: questionState.paramValues };
+    return Promise.all(questionState.question.parameters.map(parameter => {
+      const ctx = { parameter, searchName: questionState.question.urlSegment, paramValues: questionState.paramValues };
       return Promise.resolve(getValueFromState(ctx, questionState, services)).then(value => [ parameter, value ] as [ Parameter, string ])
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
-    }).then(paramValues => {
-      const weight = Number.parseInt(questionState.weight || '');
-      services.wdkService.createStep({
-        answerSpec: {
-          questionName: questionState.question.name,
-          parameters: paramValues,
-          wdkWeight: Number.isNaN(weight) ? undefined : weight
-        },
-        customName: questionState.customName
-      }).then(step => {
-        console.log('Created step', step);
-        console.log('TODO: Submit question');
-      })
-    })
+    }).then((paramValues): Promise<StrategyAction | InferAction<typeof transitionToInternalPage>> => {
+      const { payload: { submissionMetadata } }: SubmitQuestionAction = action;
+      const { question } = questionState;
 
-    return EMPTY;
+      // Parse the input string into a number
+      const weight = Number.parseInt(questionState.weight || '');
+      const customName = questionState.customName || questionState.question.shortDisplayName;
+      const searchName = question.urlSegment;
+      const searchConfig = {
+        parameters: paramValues,
+        wdkWeight: Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight
+      }
+
+      if (submissionMetadata.type === 'edit-step') {
+        return Promise.resolve(requestUpdateStepSearchConfig(
+          submissionMetadata.strategyId,
+          submissionMetadata.stepId,
+          {
+            ...submissionMetadata.previousSearchConfig,
+            ...searchConfig
+          }
+        ));
+      }
+
+      const newSearchStepSpec = {
+        searchName,
+        searchConfig,
+        customName
+      };
+
+      if (submissionMetadata.type === 'submit-custom-form') {
+        submissionMetadata.onStepSubmitted(services.wdkService, newSearchStepSpec);
+        return Promise.resolve(fulfillCreateStep(-1, Date.now()));
+      }
+
+      if (submissionMetadata.type === 'create-strategy') {
+        // if noSummaryOnSingleRecord is true, do special logic
+        return Promise.resolve(questionState.question.noSummaryOnSingleRecord)
+          .then(noSummaryOnSingleRecord => {
+            if (noSummaryOnSingleRecord) {
+              const answerPromise = services.wdkService.getAnswerJson({
+                searchName: questionState.question.urlSegment,
+                searchConfig: { parameters: paramValues }
+              }, {
+                pagination: { offset: 0, numRecords: 1 }
+              });
+              return answerPromise.then(answer => {
+                if (answer.meta.totalCount === 1) {
+                  return answer.records[0];
+                }
+                return undefined;
+              });
+            }
+            return undefined;
+          })
+          .then(singleRecord => {
+            if (singleRecord != null) {
+              const { question } = questionState;
+              return transitionToInternalPage(`/record/${question.outputRecordClassName}/${singleRecord.id.map(p => p.value).join('/')}`);
+            }
+            return services.wdkService.createStep(newSearchStepSpec)
+              .then(
+                ({ id: newSearchStepId }) => requestCreateStrategy(
+                  {
+                    isSaved: false,
+                    isPublic: false,
+                    stepTree: {
+                      stepId: newSearchStepId
+                    },
+                    name: DEFAULT_STRATEGY_NAME
+                })
+              );
+          });
+      }
+
+      const strategyEntry = state$.value.strategies.strategies[submissionMetadata.strategyId];
+      const strategy = strategyEntry && strategyEntry.strategy;
+
+      if (!strategy) {
+        throw new Error(`Tried to update a nonexistent or unloaded strategy ${submissionMetadata.strategyId}`);
+      }
+
+      if (submissionMetadata.type === 'add-binary-step') {
+        const operatorQuestionState = state$.value[key].questions[submissionMetadata.operatorSearchName];
+
+        if (!operatorQuestionState || operatorQuestionState.questionStatus !== 'complete')  {
+          throw new Error(`Tried to create an operator step using a nonexistent or unloaded question ${submissionMetadata.operatorSearchName}`);
+        }
+
+        const operatorParamValues = operatorQuestionState && operatorQuestionState.paramValues || {};
+
+        const newSearchStep = services.wdkService.createStep(newSearchStepSpec);
+        const operatorStep = services.wdkService.createStep({
+          searchName: submissionMetadata.operatorSearchName,
+          searchConfig: {
+            parameters: operatorParamValues
+          },
+          customName: operatorQuestionState.question.shortDisplayName
+        });
+
+        return Promise.all([newSearchStep, operatorStep])
+          .then(
+            ([{ id: newSearchStepId }, { id: binaryOperatorStepId }]) => requestPutStrategyStepTree(
+              submissionMetadata.strategyId,
+              addStep(
+                strategy.stepTree,
+                submissionMetadata.addType,
+                binaryOperatorStepId,
+                {
+                  stepId: newSearchStepId
+                }
+              )
+            )
+          );
+      }
+
+      return services.wdkService.createStep(newSearchStepSpec)
+        .then(
+          ({ id: unaryOperatorStepId }) => requestPutStrategyStepTree(
+            submissionMetadata.strategyId,
+            addStep(
+              strategy.stepTree,
+              submissionMetadata.addType,
+              unaryOperatorStepId,
+              undefined
+            )
+          )
+        );
+    }).catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
   })
 )
 
+// XXX This should probably go in the QuestionStoreModule
+async function goToStrategyPage(
+  [
+    submitQuestionAction,
+    requestStrategyAction,
+    fulfillCreateStrategyAction
+  ]: [
+    InferAction<typeof submitQuestion>,
+    InferAction<typeof requestCreateStrategy>,
+    InferAction<typeof fulfillCreateStrategy>
+  ]
+): Promise<InferAction<typeof transitionToInternalPage>> {
+  const newStrategyId = fulfillCreateStrategyAction.payload.strategyId;
+  const newStepId = requestStrategyAction.payload.newStrategySpec.stepTree.stepId;
+  return transitionToInternalPage(
+    `/workspace/strategies/${newStrategyId}/${newStepId}`,
+    { replace: submitQuestionAction.payload.autoRun }
+  );
+}
 
 export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,
   observeLoadQuestionSuccess,
   observeUpdateDependentParams,
-  observeQuestionSubmit
+  observeQuestionSubmit,
+  mrate([submitQuestion, requestCreateStrategy, fulfillCreateStrategy], goToStrategyPage)
 );
 
 // Helpers
 // -------
 
-function loadQuestion(wdkService: WdkService, questionName: string, paramValues?: ParameterValues) {
-  const question$ = paramValues == null
-    ? wdkService.getQuestionAndParameters(questionName)
-    : wdkService.getQuestionGivenParameters(questionName, paramValues);
-
-  const recordClass$ = question$.then(question =>
-    wdkService.findRecordClass(rc => rc.name == question.recordClassName));
-
-  return Promise.all([question$, recordClass$]).then(
-    ([question, recordClass]) => {
-      if (paramValues == null) {
-        paramValues = makeDefaultParamValues(question.parameters);
-      }
-      return questionLoaded({ questionName, question, recordClass, paramValues })
-    },
-    error => error.status === 404
-      ? questionNotFound({ questionName })
-      : questionError({ questionName })
-  );
+async function loadQuestion(wdkService: WdkService, searchName: string, stepId?: number, initialParamData?: Record<string, string>) {
+  const step = stepId ? await wdkService.findStep(stepId) : undefined;
+  const question = step == null
+    ? await wdkService.getQuestionAndParameters(searchName)
+    : await wdkService.getQuestionGivenParameters(searchName, step.searchConfig.parameters);
+  const recordClass = await wdkService.findRecordClass(rc => rc.urlSegment == question.outputRecordClassName);
+  const paramValues = step != null ? integrateStepAndDefaultParamValues(question.parameters, step)
+                    : initialParamData != null ? extractRealParamValues(question.parameters, initialParamData)
+                    : makeDefaultParamValues(question.parameters)
+  const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
+  return questionLoaded({
+    searchName,
+    question,
+    recordClass,
+    paramValues,
+    initialParamData: initialParamData,
+    wdkWeight,
+    stepValidation: step && step.validation
+  })
+  //   error => error.status === 404
+  //     ? questionNotFound({ searchName })
+  //     : questionError({ searchName })
+  // );
 }
 
-function makeDefaultParamValues(parameters: Parameter[]) {
-  return parameters.reduce(function(values, { name, defaultValue = ''}) {
-    return Object.assign(values, { [name]: defaultValue });
+function makeDefaultParamValues(parameters: Parameter[]): ParameterValues {
+  return parameters.reduce(function(values, { name, initialDisplayValue, type }) {
+    return Object.assign(
+      values,
+      type === 'input-step'
+        ? {
+          [name]: ''
+        }
+        : {
+          [name]: initialDisplayValue
+        }
+    );
+  }, {} as ParameterValues);
+}
+
+function extractRealParamValues(parameters: Parameter[], initialParamData: Record<string, string>): ParameterValues {
+  const realEntries = parameters.map(parameter =>
+    [ parameter.name, initialParamData[parameter.name] || '' ]);
+  return Object.fromEntries(realEntries);
+}
+
+function integrateStepAndDefaultParamValues(parameters: Parameter[], step: Step): ParameterValues {
+  const { searchConfig: { parameters: currentParamValues }, validation } = step;
+  const keyedErrors = validation.isValid == true ? {} : validation.errors.byKey;
+  return parameters.reduce(function(values, { name, initialDisplayValue }): ParameterValues {
+    const value = (name in currentParamValues) && !(name in keyedErrors)
+      ? currentParamValues[name]
+      : initialDisplayValue;
+    return Object.assign(values, {
+      [name]: value
+    });
   }, {} as ParameterValues);
 }

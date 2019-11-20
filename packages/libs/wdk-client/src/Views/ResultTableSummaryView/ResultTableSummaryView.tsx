@@ -25,6 +25,7 @@ import ResultTableAddColumnsDialog from 'wdk-client/Views/ResultTableSummaryView
 import { LoadingOverlay } from 'wdk-client/Components';
 
 import './ResultTableSummaryView.scss';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 // Export this for convenience
 export { Action };
@@ -38,7 +39,7 @@ interface Props {
   showIdAttributeColumn?: boolean;
   userIsGuest: boolean;
   activeAttributeAnalysisName: string | undefined;
-  stepId: number;
+  resultType: ResultType;
   recordClass?: RecordClass;
   question?: Question;
   basketStatusArray?: BasketStatusArray;
@@ -53,6 +54,7 @@ interface Props {
   requestAddStepToBasket: RequestAddStepToBasket;
   requestPageSizeUpdate: RequestPageSizeUpdate;
   viewPageNumber: ViewPageNumber;
+  viewId: string;
   showHideAddColumnsDialog: ShowHideAddColumnsDialog;
   updateColumnsDialogSelection: UpdateColumnsDialogSelection;
   updateColumnsDialogSearchString: UpdateColumnsDialogSearchString;
@@ -73,7 +75,7 @@ export default function ResultTableSummaryView({
   selectedIds,
   showIdAttributeColumn = true,
   activeAttributeAnalysisName,
-  stepId,
+  resultType,
   recordClass,
   question,
   userIsGuest,
@@ -84,6 +86,7 @@ export default function ResultTableSummaryView({
   requestAddStepToBasket,
   requestPageSizeUpdate,
   viewPageNumber,
+  viewId,
   showHideAddColumnsDialog,
   columnsDialogExpandedNodes,
   columnsDialogIsOpen,
@@ -109,6 +112,7 @@ export default function ResultTableSummaryView({
         <ResultTableAddColumnsDialog
           answer={answer}
           question={question}
+          viewId={viewId}
           columnsDialogExpandedNodes={columnsDialogExpandedNodes}
           columnsDialogIsOpen={columnsDialogIsOpen}
           columnsDialogSelection={columnsDialogSelection}
@@ -124,11 +128,12 @@ export default function ResultTableSummaryView({
       {answer && recordClass && question ? (
         <ResultTable
           answer={answer}
+          viewId={viewId}
           actions={actions}
           selectedIds={selectedIds}
           showIdAttributeColumn={showIdAttributeColumn}
           activeAttributeAnalysisName={activeAttributeAnalysisName}
-          stepId={stepId}
+          resultType={resultType}
           question={question}
           recordClass={recordClass}
           userIsGuest={userIsGuest}

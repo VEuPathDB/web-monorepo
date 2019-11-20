@@ -21,7 +21,8 @@ import {
   GenomeSummaryViewReport,
   RecordClass
 } from 'wdk-client/Utils/WdkModel';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
+import {getCustomReport, getResultTypeDetails, ResultType} from 'wdk-client/Utils/WdkResult';
 
 export const key = 'genomeSummaryView';
 export type State = IndexedState<ViewState>;
@@ -85,25 +86,25 @@ function reduceView(state: ViewState = initialState, action: Action): ViewState 
 
 function getFormatFromRecordClassName(recordClassName: string): string {
   switch (recordClassName) {
-    case 'TranscriptRecordClasses.TranscriptRecordClass':
+    case 'transcript':
       return 'geneGenomeSummaryView';
-    case 'DynSpanRecordClasses.DynSpanRecordClass':
+    case 'genomic-segment':
       return 'dynamicSpanSummaryView';
     default:
-      throw 'This step cannot use this summary view, it is the wrong record class: ' +
-        recordClassName;
+      throw new Error('This step cannot use this summary view, it is the wrong record class: ' +
+        recordClassName);
   }
 }
 
 async function getRecordClassAndFormat(
-  stepId: number,
+  resultType: ResultType,
   wdkService: WdkService
 ): Promise<[string, RecordClass]> {
-  let stepBundlePromise = getStepBundlePromise(stepId, wdkService);
-  let bundle = await stepBundlePromise;
+  const resultTypeDetails = await getResultTypeDetails(wdkService, resultType);
+  const recordClass = await wdkService.findRecordClass(r => r.urlSegment === resultTypeDetails.recordClassName);
   return [
-    getFormatFromRecordClassName(bundle.recordClass.name),
-    bundle.recordClass
+    getFormatFromRecordClassName(resultTypeDetails.recordClassName),
+    recordClass
   ];
 }
 
@@ -113,12 +114,13 @@ async function getGenomeSummaryViewReport(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillGenomeSummaryReport>> {
   let [format, recordClass] = await getRecordClassAndFormat(
-    requestAction.payload.stepId,
+    requestAction.payload.resultType,
     wdkService
   );
-  let report: GenomeSummaryViewReport = await wdkService.getStepAnswer(
-    requestAction.payload.stepId,
-    { format: format }
+  let report = await getCustomReport<GenomeSummaryViewReport>(
+    wdkService,
+    requestAction.payload.resultType,
+    { format: format, formatConfig: {} }
   );
   return fulfillGenomeSummaryReport(requestAction.payload.viewId, report, recordClass);
 }

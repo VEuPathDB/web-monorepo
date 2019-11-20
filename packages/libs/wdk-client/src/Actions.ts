@@ -5,6 +5,7 @@ import * as BasketActions from 'wdk-client/Actions/BasketActions';
 import * as FavoritesActions from 'wdk-client/Actions/FavoritesActions';
 import * as RouterActions from 'wdk-client/Actions/RouterActions';
 import * as QuestionActions from 'wdk-client/Actions/QuestionActions';
+import * as QuestionWithParametersActions from 'wdk-client/Actions/QuestionWithParametersActions';
 import * as FilterParamActions from 'wdk-client/Actions/FilterParamActions';
 import * as DatasetParamActions from 'wdk-client/Actions/DatasetParamActions';
 import * as TreeBoxEnumParamActions from 'wdk-client/Actions/TreeBoxEnumParamActions';
@@ -18,7 +19,12 @@ import * as UserDatasetsActions from 'wdk-client/Actions/UserDatasetsActions';
 import * as ResultTableSummaryViewActions from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import * as BlastSummaryViewActions from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
 import * as GenomeSummaryViewActions from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
-import * as StepActions from 'wdk-client/Actions/StepActions';
+import * as ImportStrategyActions from 'wdk-client/Actions/ImportStrategyActions';
+import * as StrategyPanelActions from 'wdk-client/Actions/StrategyPanelActions';
+import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
+import * as StrategyWorkspaceActions from 'wdk-client/Actions/StrategyWorkspaceActions';
+import * as StrategyListActions from 'wdk-client/Actions/StrategyListActions';
+import * as PublicStrategyActions from 'wdk-client/Actions/PublicStrategyActions';
 import * as WordCloudAnalysisActions from 'wdk-client/Actions/WordCloudAnalysisActions';
 import * as HistogramAnalysisActions from 'wdk-client/Actions/HistogramAnalysisActions';
 import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTranscriptsFilterActions';
@@ -36,14 +42,20 @@ export {
   FavoritesActions,
   RouterActions,
   QuestionActions,
+  QuestionWithParametersActions,
   FilterParamActions,
   DatasetParamActions,
   TreeBoxEnumParamActions,
   UserActions,
   RecordActions,
+  ImportStrategyActions,
   SiteMapActions,
   StaticDataActions,
-  StepActions,
+  StrategyPanelActions,
+  StrategyActions,
+  StrategyWorkspaceActions,
+  StrategyListActions,
+  PublicStrategyActions,
   UserDatasetsActions,
   ResultTableSummaryViewActions,
   BlastSummaryViewActions,
@@ -65,14 +77,20 @@ export type Action =
   | FavoritesActions.Action
   | RouterActions.Action
   | QuestionActions.Action
+  | QuestionWithParametersActions.Action
   | FilterParamActions.Action
   | DatasetParamActions.Action
   | TreeBoxEnumParamActions.Action
   | UserActions.Action
   | RecordActions.Action
+  | ImportStrategyActions.Action
   | SiteMapActions.Action
   | StaticDataActions.Action
-  | StepActions.Action
+  | StrategyActions.Action
+  | StrategyWorkspaceActions.Action
+  | StrategyPanelActions.Action
+  | StrategyListActions.Action
+  | PublicStrategyActions.Action
   | UserDatasetsActions.Action
   | UserCommentFormActions.Action
   | UserCommentShowActions.Action

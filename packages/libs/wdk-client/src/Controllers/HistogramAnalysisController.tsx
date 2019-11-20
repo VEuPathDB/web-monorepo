@@ -19,9 +19,10 @@ import {
   getDefaultBinSize,
   HistogramReport
 } from 'wdk-client/Views/AttributeAnalysis/HistogramAnalysis/HistogramAnalysisUtils';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 interface OwnProps {
-  stepId: number;
+  resultType: ResultType;
   reporterType: string;
   attributeName: string;
 }
@@ -41,15 +42,15 @@ type Props = OwnProps & DispatchProps & StateProps;
 
 class HistogramAnalysisController extends React.PureComponent<Props> {
   componentDidMount() {
-    const { openView, reporterType, stepId, attributeName } = this.props;
+    const { openView, reporterType, resultType, attributeName } = this.props;
     const reporterName = `${attributeName}-${reporterType}`;
-    openView(reporterName, stepId);
+    openView(reporterName, resultType);
   }
 
   componentWillUnmount() {
-    const { closeView, reporterType, stepId, attributeName } = this.props;
+    const { closeView, reporterType, resultType, attributeName } = this.props;
     const reporterName = `${attributeName}-${reporterType}`;
-    closeView(reporterName, stepId);
+    closeView(reporterName, resultType);
   }
 
   render() {

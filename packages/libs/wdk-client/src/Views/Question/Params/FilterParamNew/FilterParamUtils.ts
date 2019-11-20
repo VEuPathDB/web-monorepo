@@ -12,7 +12,7 @@ import { Context } from 'wdk-client/Views/Question/Params/Utils';
 const natSortComparator = (natsort as any)();
 
 export function isType(parameter: Parameter): parameter is FilterParamNew {
-  return parameter.type === 'FilterParamNew';
+  return parameter.type === 'filter';
 }
 
 export function isParamValueValid(context: Context<FilterParamNew>, state: State) {

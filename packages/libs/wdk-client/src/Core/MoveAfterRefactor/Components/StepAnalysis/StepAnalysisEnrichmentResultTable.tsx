@@ -5,34 +5,33 @@ import { RealTimeSearchBox } from '../../../../Components';
 import React from 'react';
 import { htmlStringValue, numericValue } from '../../../../Components/Mesa/Utils/Utils';
 import { compose, debounce } from 'lodash/fp';
+import { MesaColumn } from 'wdk-client/Core/CommonTypes';
 
 const simpleFilterPredicateFactory = (searchQuery: string) => (row: Record<string, string>) =>
   Object.values(row).some(entry => `${entry}`.toLowerCase().includes(searchQuery.toLowerCase()));
 
-interface StepAnalysisEnrichmentResultTableProps {
+interface StepAnalysisEnrichmentResultTableProps<R> {
   emptyResultMessage: string;
-  rows: Record<string, any>[];
+  rows: R[];
   columns: ColumnSettings[];
   initialSearchQuery?: string;
   initialSortColumnKey?: string;
   initialSortDirection?: 'asc' | 'desc';
   fixedTableHeader?: boolean;
   pagination?: boolean;
+  children?: any;
+  showCount?: boolean;
+  searchBoxHeader?: string;
 }
 
-export interface ColumnSettings {
-  key: string;
-  name: string;
-  helpText: string;
-  sortable: boolean;
-  type?: 'text' | 'html';
-  width?: string;
-  renderCell?: React.SFC;
+export interface ColumnSettings extends MesaColumn {
+  type?: 'number' | 'text' | 'html';
   sortType?: 'text' | 'number' | 'htmlText' | 'htmlNumber';
 }
 
-export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnrichmentResultTableProps, any> {
-  constructor(props: StepAnalysisEnrichmentResultTableProps) {
+// TODO Refactor using hooks
+export class StepAnalysisEnrichmentResultTable<R = Record<string, any>> extends Component<StepAnalysisEnrichmentResultTableProps<R>, any> {
+  constructor(props: StepAnalysisEnrichmentResultTableProps<R>) {
     super(props);
     this.handleSearch = debounce(200, this.handleSearch.bind(this));
     this.handleSort = this.handleSort.bind(this);
@@ -44,20 +43,20 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
       columns: this.props.columns,
       options: 
         this.props.fixedTableHeader 
-          ? (
-            {
-              showCount: true,
+          ? {
+              showCount: this.props.showCount === undefined 
+                ? true 
+                : this.props.showCount,
               toolbar: true
             }
-          )
-          : (
-            {
-              showCount: true,
+          : {
+              showCount: this.props.showCount === undefined 
+                ? true 
+                : this.props.showCount,
               toolbar: true,
               useStickyHeader: true,
               tableBodyMaxHeight: '80vh'
-            }
-          ),
+            },
       uiState: {
         searchQuery: this.props.initialSearchQuery || '',
         sort: {
@@ -78,6 +77,18 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
         onRowsPerPageChange: this.handleRowsPerPageChange
       }
     });
+  }
+
+  componentDidUpdate(prevProps: StepAnalysisEnrichmentResultTableProps<R>) {
+    if (prevProps !== this.props) {
+      this.setState(
+        (prevState: any, props: StepAnalysisEnrichmentResultTableProps<R>) => 
+          MesaState.setColumns(
+            MesaState.setRows(prevState, props.rows),
+            props.columns
+          )
+      );
+    }
   }
 
   handleSearch(searchQuery: string) {
@@ -181,14 +192,18 @@ export class StepAnalysisEnrichmentResultTable extends Component<StepAnalysisEnr
           this.props.rows.length
             ? (
               <Mesa state={sortedState}>
-                <RealTimeSearchBox
-                  className="enrichment-search-field"
-                  autoFocus={false}
-                  searchTerm={searchQuery}
-                  onSearchTermChange={this.handleSearch}
-                  placeholderText={''}
-                  helpText={'The entire table will be searched'}
-                />
+                <div className="wdk-RealTimeSearchBoxContainer">
+                  <span>{this.props.searchBoxHeader || null}</span>
+                  <RealTimeSearchBox
+                    className="enrichment-search-field"
+                    autoFocus={false}
+                    searchTerm={searchQuery}
+                    onSearchTermChange={this.handleSearch}
+                    placeholderText={''}
+                    helpText={'The entire table will be searched'}
+                  />
+                </div>
+                {this.props.children}
               </Mesa>
             )
             : (

@@ -13,7 +13,7 @@ export default createParamModule({
 })
 
 function isType(param: Parameter): param is DateParam {
-  return param.type === 'DateParam';
+  return param.type === 'date';
 }
 
 function Component(props: Props<DateParam, undefined>) {
@@ -24,6 +24,7 @@ function Component(props: Props<DateParam, undefined>) {
       end={parameter.maxDate}
       value={value}
       onChange={onParamValueChange}
+      required={!parameter.allowEmptyValue}
     />
   )
 }

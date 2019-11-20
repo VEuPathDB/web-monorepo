@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 class Main extends Component {

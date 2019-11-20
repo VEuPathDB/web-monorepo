@@ -6,11 +6,12 @@ type Props = {
   name?: string;
   items: { value: string; display: string; disabled?: boolean; }[];
   value?: string;
+  required?: boolean;
   onChange: (value: string) => void;
 }
 
 function SingleSelect(props: Props) {
-  const { name, value, items, onChange } = props;
+  const { name, value, items, required = false, onChange } = props;
   return (
     <select
       name={name}
@@ -20,6 +21,7 @@ function SingleSelect(props: Props) {
           onChange(event.target.value);
         }
       }}
+      required={required}
     >
       {items.map(item => (
         <option key={item.value} disabled={item.disabled} value={item.value}>{item.display}</option>

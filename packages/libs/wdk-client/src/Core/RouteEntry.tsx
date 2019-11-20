@@ -4,7 +4,9 @@ import { RouteComponentProps, RouteProps } from 'react-router';
 
 export interface RouteEntry {
   readonly path: string;
+  readonly exact?: false;
   readonly component: RouteProps['component'];
+  readonly requiresLogin?: boolean;
 }
 
 export function parseQueryString(props: RouteComponentProps<any>): Record<string, string> {

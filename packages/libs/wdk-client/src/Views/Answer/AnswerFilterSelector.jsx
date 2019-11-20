@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { includes } from 'lodash';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import TabbableContainer from 'wdk-client/Components/Display/TabbableContainer';
 import { wrappable, lazy } from 'wdk-client/Utils/ComponentUtils';

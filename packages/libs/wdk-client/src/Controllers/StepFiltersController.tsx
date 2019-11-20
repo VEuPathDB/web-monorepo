@@ -4,13 +4,13 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { Step } from 'wdk-client/Utils/WdkUser';
 import { Question } from 'wdk-client/Utils/WdkModel';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 interface OwnProps {
-  stepId: number;
+  step: Step;
 }
 
 interface StateProps {
-  step?: Step;
   question?: Question;
 }
 
@@ -22,31 +22,30 @@ function StepFiltersController(props: Props) {
   const { step, question } = props;
   if (step == null || question == null) return null;
   return (
-    <>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
       {question.filters.map(filter =>
         <Plugin
           key={filter.name}
           context={{
             type: "questionFilter",
             name: filter.name,
-            questionName: question.name,
-            recordClassName: question.recordClassName
+            searchName: question.urlSegment,
+            recordClassName: question.outputRecordClassName
           }}
           pluginProps={{
-            stepId: step.id,
+            step: step,
             filterName: filter.name
           }}
         />
       )}
-    </>
+    </div>
   )
 }
 
 function mapPropsToState(state: RootState, props: OwnProps): StateProps {
-  const stepEntry = state.steps.steps[props.stepId];
-  const step = stepEntry && stepEntry.status === 'success' ? stepEntry.step : undefined;
-  const question = step && state.globalData.questions && state.globalData.questions.find(({ name }) => name === step.answerSpec.questionName)
-  return { step, question };
+  const question = state.globalData.questions && 
+  state.globalData.questions.find(({ urlSegment }) => urlSegment === props.step.searchName)
+  return { question };
 }
 
-export default connect(mapPropsToState)(StepFiltersController);
+export default connect(mapPropsToState)(wrappable(StepFiltersController));

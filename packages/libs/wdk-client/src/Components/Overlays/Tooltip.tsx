@@ -23,6 +23,11 @@ let defaultOptions = {
   }
 };
 
+export interface TooltipPosition {
+  my?: string;
+  at?: string;
+};
+
 // FIXME Add `renderContent` props that is a function that returns `typeof content`
 type Props = {
   content: string | React.ReactElement<any>;
@@ -33,10 +38,7 @@ type Props = {
   showDelay?: number;
   hideEvent?: string;
   hideDelay?: number;
-  position?: {
-    my?: string;
-    at?: string;
-  }
+  position?: TooltipPosition;
   solo?: boolean;
   children: React.ReactChild;
   onShow?: (e: Event) => void;

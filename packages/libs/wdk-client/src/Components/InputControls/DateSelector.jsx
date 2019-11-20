@@ -100,7 +100,7 @@ class DateSelector extends React.Component {
   }
 
   render () {
-    let { value, onChange } = this.props;
+    let { value, onChange, required = false } = this.props;
     let { year, month, day, start, end } = this.state;
 
     const yearOptions = DateUtils.generateYearList(start.year, end.year)
@@ -126,9 +126,9 @@ class DateSelector extends React.Component {
 
     return (
       <div className="wdk-DateSelector">
-        <Select value={year.toString()} name="yearSelection" items={yearOptions} onChange={this.handleYearChange} />
-        <Select value={month.toString()} name="monthSelection" items={monthOptions} onChange={this.handleMonthChange} />
-        <Select value={day.toString()} name="daySelection" items={dayOptions} onChange={this.handleDayChange} />
+        <Select value={year.toString()} name="yearSelection" items={yearOptions} onChange={this.handleYearChange} required={required} />
+        <Select value={month.toString()} name="monthSelection" items={monthOptions} onChange={this.handleMonthChange} required={required} />
+        <Select value={day.toString()} name="daySelection" items={dayOptions} onChange={this.handleDayChange} required={required} />
       </div>
     );
   };

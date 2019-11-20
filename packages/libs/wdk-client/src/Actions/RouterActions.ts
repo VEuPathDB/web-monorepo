@@ -5,44 +5,27 @@
  * propagate router state to stores.
  */
 import { Location } from 'history';
+import {InferAction, makeActionCreator} from 'wdk-client/Utils/ActionCreatorUtils';
+import {TransitionOptions} from 'wdk-client/Utils/PageTransitioner';
 
-import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
+export type Action = InferAction<
+  | typeof updateLocation
+  | typeof transitionToInternalPage
+  | typeof transitionToExternalPage
+  >
 
-export type Action =
-  | UpdateLocationAction
 
-//==============================================================================
+export const updateLocation = makeActionCreator(
+  'router-update-loading',
+  (location: Location) => ({ location })
+);
 
-export const UPDATE_LOCATION = 'router-update-location';
+export const transitionToInternalPage = makeActionCreator(
+  'router-transition-internal',
+  (path: string, options?: TransitionOptions) => ({ path, options })
+);
 
-export interface UpdateLocationAction {
-  type: typeof UPDATE_LOCATION;
-  payload: {
-    location: Location;
-  };
-}
-
-export function updateLocation(location: Location): UpdateLocationAction {
-  return {
-    type: UPDATE_LOCATION,
-    payload: {
-      location
-    }
-  };
-}
-
-//==============================================================================
-
-export function transitionToInternalPage(path: string): ActionThunk<EmptyAction> {
-  return function run({ transitioner }) {
-    transitioner.transitionToInternalPage(path);
-    return emptyAction;
-  };
-}
-
-export function transitionToExternalPage(path: string): ActionThunk<EmptyAction> {
-  return function run({ transitioner }) {
-    transitioner.transitionToExternalPage(path);
-    return emptyAction;
-  };
-}
+export const transitionToExternalPage = makeActionCreator(
+  'router-transition-external',
+  (path: string, options?: TransitionOptions) => ({ path, options })
+);

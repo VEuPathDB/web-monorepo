@@ -29,11 +29,14 @@ const ActionCreators = {
   unshareUserDatasets
 };
 
-type StateProps = Pick<RootState['userDatasetDetail'], 'userDatasetsById' | 'loadError' | 'userDatasetUpdating' | 'updateError'>
-           & Pick<RootState["globalData"], 'user' | 'questions' | 'config'>;
+type StateProps = RootState['userDatasetDetail'] & RootState['globalData'];
 type DispatchProps =  typeof ActionCreators;
 type OwnProps = { id: string; rootUrl: string; };
-type MergedProps = OwnProps & DispatchProps & StateProps;
+type MergedProps = {
+  ownProps: OwnProps;
+  dispatchProps: DispatchProps;
+  stateProps: StateProps
+}
 
 
 /**
@@ -46,12 +49,12 @@ type MergedProps = OwnProps & DispatchProps & StateProps;
 class UserDatasetDetailController extends PageController<MergedProps> {
 
   getQuestionUrl = (question: Question): string => {
-    return `#${question.name}`;
+    return `#${question.urlSegment}`;
   }
 
 
   getTitle () {
-    const entry = this.props.userDatasetsById[this.props.id];
+    const entry = this.props.stateProps.userDatasetsById[this.props.ownProps.id];
     if (entry && entry.resource) {
       return `My Data Set ${entry.resource.meta.name}`;
     }
@@ -66,19 +69,19 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   loadData (prevProps?: this['props']) {
-    const { userDatasetsById } = this.props;
-    const idChanged = prevProps && prevProps.id !== this.props.id;
-    if (idChanged || !userDatasetsById[this.props.id]) {
-      this.props.loadUserDatasetDetail(Number(this.props.id));
+    const idChanged = prevProps && prevProps.ownProps.id !== this.props.ownProps.id;
+    if (idChanged) {
+      this.props.dispatchProps.loadUserDatasetDetail(Number(this.props.ownProps.id));
     }
   }
 
   isRenderDataLoadError () {
-    return this.props.loadError != null && this.props.loadError.status >= 500;
+    return this.props.stateProps.loadError != null && this.props.stateProps.loadError.status >= 500;
   }
 
   isRenderDataLoaded () {
-    const { userDatasetsById, user, questions, config, id } = this.props;
+    const { id } = this.props.ownProps;
+    const { userDatasetsById, user, questions, config } = this.props.stateProps;
     const entry = userDatasetsById[id];
     if (user && user.isGuest) return true;
     return (entry && !entry.isLoading && user && questions && config)
@@ -105,16 +108,16 @@ class UserDatasetDetailController extends PageController<MergedProps> {
         <button
           type="button"
           className="btn"
-          onClick={() => this.props.showLoginForm()}
+          onClick={() => this.props.dispatchProps.showLoginForm()}
         >Please log in to access My Data Sets.</button>
       }/>
     );
   }
 
   renderView () {
-    const { id, rootUrl } = this.props;
-    const { updateUserDatasetDetail, shareUserDatasets, removeUserDataset, unshareUserDatasets } = this.props;
-    const { userDatasetsById, user, updateError, questions, config, userDatasetUpdating } = this.props;
+    const { id, rootUrl } = this.props.ownProps;
+    const { updateUserDatasetDetail, shareUserDatasets, removeUserDataset, unshareUserDatasets } = this.props.dispatchProps;
+    const { userDatasetsById, user, updateError, questions, config, userDatasetUpdating } = this.props.stateProps;
     const entry = userDatasetsById[id];
     const isOwner = !!(user && entry.resource && entry.resource.ownerUserId === user.id);
 
@@ -133,7 +136,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
       updateUserDatasetDetail,
       userDataset: entry.resource,
       getQuestionUrl: this.getQuestionUrl,
-      questionMap: keyBy(questions, 'name')
+      questionMap: keyBy(questions, 'fullName')
     };
 
     const DetailView = this.getDetailView(typeof entry.resource === 'object' ? entry.resource.type : null);
@@ -143,12 +146,13 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 }
 
-const enhance = connect(
+const enhance = connect<StateProps, DispatchProps, OwnProps, MergedProps, RootState>(
   (state: RootState) => ({
     ...state.globalData,
     ...state.userDatasetDetail
   }),
-  ActionCreators
+  ActionCreators,
+  (stateProps, dispatchProps, ownProps) => ({ stateProps, dispatchProps, ownProps })
 )
 
 export default enhance(wrappable(UserDatasetDetailController));

@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -32,6 +32,7 @@ import ResultTableSummaryView, { Action as TableAction } from 'wdk-client/Views/
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { openAttributeAnalysis, closeAttributeAnalysis } from 'wdk-client/Actions/AttributeAnalysisActions';
 import { partial, Partial1 } from 'wdk-client/Utils/ActionCreatorUtils';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 interface StateProps {
   viewData: RootState['resultTableSummaryView'][string];
@@ -65,7 +66,7 @@ type DispatchProps = {
 
 type OwnProps = {
   viewId: string;
-  stepId: number;
+  resultType: ResultType;
   tableActions?: TableAction[];
   showIdAttributeColumn?: boolean;
 }
@@ -74,57 +75,49 @@ type Props = OwnProps & StateProps & {
   actionCreators: DispatchProps;
 }
 
-class ResultTableSummaryViewController extends React.Component< Props > {
+function ResultTableSummaryViewController(props: Props) {
+  const { resultType, actionCreators, viewData, viewId, derivedData, tableActions, showIdAttributeColumn } = props;
 
-  componentDidMount() {
-    this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
-    console.log('mounting ResultTableSummaryViewController', this);
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.stepId !== this.props.stepId) {
-      this.props.actionCreators.closeResultTableSummaryView(this.props.stepId);
-      this.props.actionCreators.openResultTableSummaryView(this.props.stepId);
-      console.log('updating ResultTableSummaryViewController', this);
+  useEffect(() => {
+    actionCreators.openResultTableSummaryView(resultType);
+    return () => {
+      actionCreators.closeResultTableSummaryView();
     }
-  }
+  }, [ resultType ]);
 
-  componentWillUnmount() {
-    this.props.actionCreators.closeResultTableSummaryView(this.props.stepId);
-    console.log('unmounting ResultTableSummaryViewController', this);
-  }
+  if (viewData == null) return null;
+  if (derivedData.errorMessage != null) return (<Error message={derivedData.errorMessage} />);
 
-  render() {
-    if (this.props.viewData == null) return null;
-    if (this.props.derivedData.errorMessage != null) return (<Error message={this.props.derivedData.errorMessage} />);
-
-    return (
-      <ResultTableSummaryView
-        stepId={this.props.stepId}
-        actions={this.props.tableActions}
-        showIdAttributeColumn={this.props.showIdAttributeColumn}
-        {...this.props.viewData}
-        {...this.props.derivedData}
-        {...this.props.actionCreators}
-      />
-    );
-  }
+  return (
+    <ResultTableSummaryView
+      viewId={viewId}
+      resultType={resultType}
+      actions={tableActions}
+      showIdAttributeColumn={showIdAttributeColumn}
+      {...viewData}
+      {...derivedData}
+      {...actionCreators}
+    />
+  );
 }
 
 const columnsTreeSelector = createSelector(
   (state: RootState) => state.globalData.ontology,
   (state: RootState) => state.globalData.questions,
-  (state: RootState, props: OwnProps) => state.steps.steps[props.stepId],
-  (ontology, questions, stepEntry) => {
-    if (ontology == null || questions == null || stepEntry == null || stepEntry.status !== 'success') return;
-    const question = questions.find(q => q.name === stepEntry.step.answerSpec.questionName);
-    const { recordClassName } = stepEntry.step;
+  (state: RootState, props: OwnProps) => state.resultTableSummaryView[props.viewId],
+  (ontology, questions, summaryViewState) => {
+    if (ontology == null || questions == null || summaryViewState == null) return;
+    const { resultTypeDetails } = summaryViewState;
+    if (resultTypeDetails == null) return;
+
+    const { recordClassName, searchName } = resultTypeDetails;
+    const question = questions.find(({ urlSegment }) => urlSegment === searchName);
 
     if (question == null) return undefined;
 
     const tree = getTree(ontology, isQualifying({
       targetType: 'attribute',
-      recordClassName,
+      recordClassUrlSegment: recordClassName,
       scope: 'results'
     }));
     return addSearchSpecificSubtree(question, tree);
@@ -135,14 +128,14 @@ function getQuestionAndRecordClass(rootState: RootState, props: OwnProps): { que
   const viewState = rootState.resultTableSummaryView[props.viewId];
   if (
     viewState == null ||
-    viewState.questionFullName == null ||
+    viewState.searchName == null ||
     rootState.globalData.questions == null ||
     rootState.globalData.recordClasses == null
   ) return;
 
-  const questionName = viewState.questionFullName;
-  const question = rootState.globalData.questions.find(q => q.name === questionName);
-  const recordClass = question && rootState.globalData.recordClasses.find(r => r.name === question.recordClassName);
+  const searchName = viewState.searchName;
+  const question = rootState.globalData.questions.find(q => q.urlSegment === searchName);
+  const recordClass = question && rootState.globalData.recordClasses.find(r => r.urlSegment === question.outputRecordClassName);
   return question && recordClass && { question, recordClass };
 }
 
@@ -152,7 +145,7 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
     ? (
       props.viewId.startsWith('basket')
         ? 'Fixing your basket using the instructions above might help.'
-        : ''
+        : undefined
     )
     : undefined;
 
@@ -168,7 +161,7 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch, { stepId, viewId }: OwnProps): DispatchProps {
+function mapDispatchToProps(dispatch: Dispatch, { viewId }: OwnProps): DispatchProps {
   return bindActionCreators({
     showLoginWarning,
     closeAttributeAnalysis,

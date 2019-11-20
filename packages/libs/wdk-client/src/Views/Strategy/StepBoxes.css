@@ -1,0 +1,420 @@
+.StepBoxes {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding: 1em;
+  position: relative;
+}
+
+.StepBoxes,
+.StepBoxes * {
+  box-sizing: border-box;
+}
+
+.StepBoxes--Link {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.StepBoxes--Slot {
+  display: flex;
+  flex-flow: column-reverse nowrap;
+  justify-content: space-between;
+  height: 8em;
+  position: relative;
+}
+
+/*
+ * Line connecting primary input steps
+ *
+ *           []
+ *           |
+ * []-->[]-->oo-->[]
+ */
+.StepBoxes--Slot:before {
+  content: "";
+  border-top: .17em solid black;
+  position: absolute;
+  bottom: 25%;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.StepBoxes--Slot:first-of-type:before {
+  left: 50%;
+}
+
+.StepBoxes--Slot:last-of-type:before {
+  right: 50%;
+}
+
+.StepBoxes--Box {
+  height: 45%;
+  position: relative;
+}
+
+.StepBoxes--Box__invalid:before,
+.StepBoxes--Box__invalid:after {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  right: 1em;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  border-radius: .75em;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%, auto;
+}
+
+/* Red X over step box */
+.StepBoxes--Box__invalid:before {
+  background-image: url("./red-x.svg");
+  background-color: #ffffff60;
+}
+
+.StepBoxes--BoxLink {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 0 1em;
+  margin-right: 1em;
+  border-radius: 0.5em;
+  position: relative;
+}
+
+.StepBoxes--BoxLink__leaf {
+  background-color: #d0cfcf;
+  border: .17em solid black;
+  box-shadow: .1em .1em .35em #6a6a6a45;
+  z-index: 1;
+}
+
+.StepBoxes--BoxLink__transform {
+  background-image: url("./TransformBg.gif");
+  background-size: 100% 100%;
+  z-index: 1;
+}
+
+.StepBoxes--BoxLink__leaf_active,
+.StepBoxes--BoxLink__combined_active {
+  background-color: #ffffa0;
+}
+
+.StepBoxes--BoxLink__transform_active {
+  background-image: url("./TransformBg_yellow.gif");
+}
+
+/* Line connecting leaf step and combined step */
+.StepBoxes--BoxLink__combined:before {
+  content: "";
+  border-right: .17em solid black;
+  height: 4em;
+  position: absolute;
+  left: calc(50% + .4em); /** TODO convert px to em */
+  top: -3em;
+}
+
+.StepBoxes--BoxLink__nested:before {
+  content: "";
+  border: .1em solid #111;
+  position: absolute;
+  border-radius: 0.5em;
+  left: .17em;
+  bottom: .17em;
+  border-left: none;
+  border-bottom: none;
+  width: calc(100% + .17em);
+  height: calc(100% + .17em);
+}
+
+.StepBoxes--BoxLink__nested:after {
+  content: "";
+  border: .1em solid #111;
+  position: absolute;
+  border-radius: 0.5em;
+  left: calc(.1em + (.17em * 2));
+  bottom: calc(.1em + (.17em * 2));
+  border-left: none;
+  border-bottom: none;
+  width: calc(100% + .17em);
+  height: calc(100% + .17em);
+}
+
+.StepBoxes--FilterIcon {
+  bottom: .6em;
+  color: #ef6565;
+  position: absolute;
+  right: 1.3em;
+  z-index: 1;
+}
+
+.StepBoxes--StepName {
+  color: black;
+  font-weight: bold;
+}
+
+.StepBoxes--StepCount {
+  font-size: 0.9em;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.StepBoxes--CombineOperator {
+  display: inline-block;
+  background-image: url("./operationIcons.png");
+  background-size: 8em;
+  height: 1.9em;
+  width: 3em;
+  z-index: 1;
+}
+
+/* Arrows */
+.StepBoxes--CombinePrimaryInputArrow {
+  top: .65em;
+  left: -.6em;
+  position: relative;
+  color: black;
+}
+
+/* Arrows */
+.StepBoxes--CombineSecondaryInputArrow {
+  top: -2em;
+  left: 50%;
+  position: relative;
+  color: black;
+}
+
+/* Arrows */
+.StepBoxes--TransformInputArrow {
+  top: .97em;
+  left: -.3em;
+  position: absolute;
+  color: black;
+}
+
+.StepBoxes--CombineOperator__INTERSECT {
+  background-position: -2.5em -3em;
+}
+
+.StepBoxes--CombineOperator__UNION {
+  background-position: -2.5em -6em;
+}
+
+.StepBoxes--CombineOperator__MINUS {
+  background-position: -2.5em 0em;
+}
+
+.StepBoxes--CombineOperator__RMINUS {
+  background-position: -2.5em -9em;
+}
+
+.StepBoxes--CombineOperator__RONLY {
+  background-position: -2.5em -12em;
+}
+
+.StepBoxes--CombineOperator__LONLY {
+  background-position: -2.5em -15em;
+}
+
+.StepBoxes--InsertStepButton {
+  height: calc(8em * .45);
+  font-weight: bold;
+  border-radius: .5em;
+  display: flex;
+  align-items: center;
+  border-style: dashed;
+  background: #d0cfcf6b;
+  border-width: 1px;
+  border-color: black;
+}
+
+.StepBoxes--InsertStepButton:hover,
+.StepBoxes--InsertStepButton:focus,
+.StepBoxes--InsertStepButton:active {
+  background: #d0cfcfcf;
+}
+
+.StepBoxes--InsertStepButton .fa {
+  font-size: 1.4em;
+  margin-right: .4em;
+}
+
+button.StepBoxes--EditButton {
+  position: absolute;
+  right: .5em;
+  top: -.5em;
+  padding: 0 2px;
+  margin: 2px;
+  z-index: 3;
+  background: white;
+  border: .085em solid;
+  border-radius: 4px;
+  display: none;
+  color: black;
+}
+
+.StepBoxes--BoxLink__combined + button.StepBoxes--EditButton {
+  right: calc(50% - 3em);
+}
+
+button.StepBoxes--EditButton:hover {
+  background: yellow;
+}
+
+.StrategyPanel--Panel:hover button.StepBoxes--EditButton {
+  display: inline;
+}
+
+.StepBoxes--RenameInput {
+  position: absolute;
+  top: .8em;
+  z-index: 1;
+  width: calc(100% - 2em);
+  left: .5em;
+}
+
+.StepBoxes--StepActions {
+  display: flex;
+  font-size: .8em;
+  white-space: nowrap;
+  margin: .5em 0;
+}
+
+.StepBoxes--StepActions > * {
+  padding: 0 .5em;
+  border-right: 1px solid;
+}
+.StepBoxes--StepActions > *:last-of-type {
+  border-right: none;
+}
+
+/* Override .wdk-Dialog */
+.StepBoxes--StepDetails {
+  min-width: 700px;
+}
+
+.StepBoxes--StepDetailsHeader > button {
+  position: absolute;
+  right: 1em;
+}
+
+.StepBoxes--StepDetailsContent {
+  display: block;
+  width: 100%;
+  padding: 1em;
+}
+
+.StepBoxes--StepDetailsContent table {
+  margin: 2em 1em;
+}
+
+.StepBoxes--StepDetailsContent td,
+.StepBoxes--StepDetailsContent th {
+  border: none;
+  padding: .5em;
+  vertical-align: top;
+}
+
+.StepBoxes--StepDetailsContent th {
+  text-align: right;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.StepBoxes--StepDetailsResults {
+  text-align: center;
+}
+
+.StepBoxes--StepDetailsTitle {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2em;
+}
+
+.StepBoxes--StepDetailsHeading {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.StepBoxes--StepDetailsName {
+  font-style: italic;
+  font-weight: normal;
+}
+
+.StepBoxes--StepDetailsName fieldset {
+  padding: 0;
+}
+
+.StepBoxes--StepDetailsWeight {
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+}
+
+.StepBoxes--StepDetailsWeightHeader {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.StepBoxes--StepDetailsWeightHeader:before {
+  font-size: 1.6em;
+}
+
+.StepBoxes--StepDetailsWeightContent {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  padding: .5em;
+  margin: 0;
+}
+
+.StepBoxes--StepDetailsWeightContent > * {
+  padding: .5em;
+}
+
+.CombineStepDetails {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.CombineStepDetailsTitle {
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 1em;
+}
+
+.CombineStepDetails > hr {
+  width: 100%;
+}
+
+.StepOperators {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 1em 0;
+  width: 100%;
+}
+
+.StepOperator {
+  display: flex;
+  align-items: center;
+}
+
+.StepOperator > * {
+  margin: 0 .2em;
+}
+
+.StepOperator > *:last-child {
+  margin-right: 2em;
+}

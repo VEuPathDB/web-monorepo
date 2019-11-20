@@ -1,17 +1,17 @@
 import React, { Fragment, ReactNode } from 'react';
-import { StepAnalysisParameter } from '../../../../Utils/StepAnalysisUtils';
 import { ParamComponent } from '../../../../Views/Question/Params';
 import { join, mapValues, split } from 'lodash/fp';
 import { HelpIcon } from '../../../../Components';
+import { Parameter } from 'wdk-client/Utils/WdkModel';
 
 interface StepAnalysisDefaultFormProps {
-  paramSpecs: StepAnalysisParameter[];
-  paramValues: Record<string, string[]>;
-  updateParamValues: (newParamValues: Record<string, string[]>) => void;
+  paramSpecs: Parameter[];
+  paramValues: Record<string, string>;
+  updateParamValues: (newParamValues: Record<string, string>) => void;
   onFormSubmit: () => void;
 }
 
-export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = ({
+export const StepAnalysisDefaultForm: React.FunctionComponent<StepAnalysisDefaultFormProps> = ({
   paramSpecs,
   paramValues,
   updateParamValues,
@@ -21,16 +21,17 @@ export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = 
     <tbody>
       {
         paramSpecs
-          .map(paramSpec => 
-            <StepAnalysisParamRow 
-              key={paramSpec.name} 
+          .filter(paramSpec => paramSpec.isVisible)
+          .map(paramSpec =>
+            <StepAnalysisParamRow
+              key={paramSpec.name}
               displayName={<ParamDisplayName paramSpec={paramSpec} />}
-              paramValues={paramValues} 
-              paramSpec={paramSpec} 
+              paramValues={paramValues}
+              paramSpec={paramSpec}
               onChange={value => {
                 updateParamValues({
                   ...paramValues,
-                  [paramSpec.name]: denormalizeParamValue(value)
+                  [paramSpec.name]: value
                 });
               }}
             />
@@ -47,12 +48,12 @@ export const StepAnalysisDefaultForm: React.SFC<StepAnalysisDefaultFormProps> = 
 
 interface StepAnalysisRowProps {
   displayName: ReactNode;
-  paramValues: Record<string, string[]>;
-  paramSpec: StepAnalysisParameter;
+  paramValues: Record<string, string>;
+  paramSpec: Parameter;
   onChange: (newValue: string) => void;
 }
 
-const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
+const StepAnalysisParamRow: React.FunctionComponent<StepAnalysisRowProps> = ({
   displayName,
   paramValues,
   paramSpec,
@@ -64,26 +65,26 @@ const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
         <span style={labelSpanStyle}>{displayName}</span>
         {
           paramSpec.help &&
-          <HelpIcon tooltipPosition={tooltipPosition}>{paramSpec.help}</HelpIcon> 
+          <HelpIcon tooltipPosition={tooltipPosition}>{paramSpec.help}</HelpIcon>
         }
-      </label>    
+      </label>
     </td>
     <td>
       <ParamComponent
-        key={paramSpec.name}  
+        key={paramSpec.name}
         ctx={{
-          questionName: '',
+          searchName: '',
           parameter: paramSpec,
-          paramValues: normalizeParamValues(paramValues)
+          paramValues
         }}
         parameter={paramSpec}
-        value={(paramValues[paramSpec.name] || []).join(',')}
+        value={paramValues[paramSpec.name]}
         uiState={uiState}
         dispatch={NOOP}
         onParamValueChange={onChange}
       />
       {
-        paramSpec.type === 'NumberParam' &&
+        paramSpec.type === 'number' &&
         <span style={numberParamRangeSpanStyle}>
           ({paramSpec.min} - {paramSpec.max})
         </span>
@@ -92,7 +93,7 @@ const StepAnalysisParamRow: React.SFC<StepAnalysisRowProps> = ({
   </tr>
 
 interface ParamDisplayNameProps {
-  paramSpec: StepAnalysisParameter;
+  paramSpec: Parameter;
 }
 
 const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({
@@ -106,11 +107,8 @@ const ParamDisplayName: React.SFC<ParamDisplayNameProps> = ({
 const uiState = {};
 const NOOP = () => {};
 
-const normalizeParamValues = (paramValues: Record<string, string[]>) => mapValues(join(','), paramValues);
-export const denormalizeParamValue = split(/\s*,\s*/g);
-
-const tooltipPosition = { 
-  my: 'top center', 
+const tooltipPosition = {
+  my: 'top center',
   at: 'bottom center'
 };
 

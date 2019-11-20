@@ -14,7 +14,7 @@ export default createParamModule({
 })
 
 function isType(param: Parameter): param is DateRangeParam {
-  return param.type === 'DateRangeParam';
+  return param.type === 'date-range';
 }
 
 function Component(props: Props<DateRangeParam, void>) {
@@ -25,6 +25,7 @@ function Component(props: Props<DateRangeParam, void>) {
       end={parameter.maxDate}
       value={JSON.parse(value)}
       onChange={(value: any) => onParamValueChange(JSON.stringify(value))}
+      required={!parameter.allowEmptyValue}
     />
   )
 }

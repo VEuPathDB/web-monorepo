@@ -112,7 +112,7 @@ class Popup extends React.Component<Props> {
     const $node = $(this.popupNode)
       .draggable({
         addClasses: false,
-        containment: this.props.containerSelector == null ? false : this.props.containerSelector(),
+        containment: this.props.containerSelector == null ? 'document' : this.props.containerSelector(),
         handle: this.props.dragHandleSelector == null ? false : this.props.dragHandleSelector()
       })
       .toggle(this.props.open);

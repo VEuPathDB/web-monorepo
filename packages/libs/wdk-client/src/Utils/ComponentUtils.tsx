@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { AttributeValue } from 'wdk-client/Utils/WdkModel';
 
 /**
@@ -131,8 +131,8 @@ interface LoadPromiseFactory<T, U extends Partial<T> | void = void> {
 
 type DiffProps<T, U> = Pick<T, Exclude<keyof T, keyof U>>;
 
-interface LazyEnhance<T, U = void> {
-  (Component: React.ComponentType<T>): React.ComponentClass<DiffProps<T, U>>;
+interface LazyEnhance<T> {
+  (Component: React.ComponentType<T>): React.ComponentClass<T>;
 }
 
 
@@ -146,24 +146,20 @@ interface LazyEnhance<T, U = void> {
  *   })
  * })(ComponentThatNeedsData);
  */
-export function lazy<T, U extends Partial<T> | void = void>(load: LoadPromiseFactory<T, U>): LazyEnhance<T, U> {
+export function lazy<T>(load: (props: T) => Promise<void>): LazyEnhance<T> {
   return function(Component: React.ComponentClass<T> | React.StatelessComponent<T>) {
-    class Lazy extends React.Component<DiffProps<T, U>, { loading: boolean, loadedProps?: U }> {
+    class Lazy extends React.Component<T, { loading: boolean }> {
       displayName = `Lazy(${Component.displayName || Component.name})`;
       mounted?: boolean;
-      constructor(props: DiffProps<T, U>) {
+      constructor(props: T) {
         super(props);
         this.state = { loading: true }
       }
       componentDidMount() {
         this.mounted = true;
-        load(this.props).then(loadedProps => {
+        load(this.props).then(() => {
           if (this.mounted === false) return;
-
-          this.setState(prevState => loadedProps
-            ? { ...prevState, loadedProps, loading: false }
-            : { ...prevState, loading: false }
-          );
+          this.setState({ loading: false });
         });
       }
       componentWillUnmount() {
@@ -171,7 +167,7 @@ export function lazy<T, U extends Partial<T> | void = void>(load: LoadPromiseFac
       }
       render() {
         return this.state.loading ? null :
-          <Component {...this.props} {...this.state.loadedProps}/>
+          <Component {...this.props}/>
       }
     }
     return Lazy;
@@ -395,4 +391,18 @@ export function makeClassNameHelper(baseClassName: string) {
 
     return className + modifiedClassNames;
   }
+}
+
+/**
+ * Type guard that narrows an object's type such that the interrogated property value is not null or undefined.
+ */
+export function propertyIsNonNull<T, K extends keyof T>(object: T, key: K): object is T & { [Key in K]-?: T[K] } {
+  return object[key] != null;
+}
+
+export function useSetDocumentTitle(title: string) {
+  useEffect(() => {
+    document.title = title;
+    return () => { document.title = ''; }
+  }, [ title ]);
 }

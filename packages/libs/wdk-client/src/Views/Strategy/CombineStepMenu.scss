@@ -1,0 +1,37 @@
+.CombineStepMenu {
+  &--Header {
+    font-size: 1.5em;
+    margin: 1em 0;
+
+    h3 {
+      font-size: 1.25em;
+      font-weight: bold;
+    }
+  }
+
+  &--Body {
+    display: flex;
+    align-items: start;
+    justify-content: space-evenly;
+
+    >:first-child {
+      margin-right: 1em;
+    }
+
+    >:not(:first-child) {
+      margin: 0 1em;
+    }
+  }
+
+  &--OperatorChoice {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0.5em;
+
+    input {
+      margin-right: 5px;
+      margin-top: 5px;
+    }
+  }
+}

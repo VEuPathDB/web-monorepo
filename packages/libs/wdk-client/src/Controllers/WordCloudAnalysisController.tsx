@@ -18,11 +18,12 @@ import {
   closeView
 } from 'wdk-client/Actions/WordCloudAnalysisActions';
 import { Dispatch } from 'redux';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 const DEFAULT_RANK_RANGE_MAX = 50;
 
 interface OwnProps {
-  stepId: number;
+  resultType: ResultType;
   reporterType: string;
   attributeName: string;
 }
@@ -41,15 +42,15 @@ type Props = OwnProps & DispatchProps & StateProps;
 
 class WordCloudAnalysisController extends React.PureComponent<Props> {
   componentDidMount() {
-    const { reporterType, stepId, attributeName, openView } = this.props;
+    const { reporterType, resultType, attributeName, openView } = this.props;
     const reporterName = `${attributeName}-${reporterType}`;
-    openView(reporterName, stepId);
+    openView(reporterName, resultType);
   }
 
   componentWillUnmount() {
-    const { reporterType, stepId, attributeName, closeView } = this.props;
+    const { reporterType, resultType, attributeName, closeView } = this.props;
     const reporterName = `${attributeName}-${reporterType}`;
-    closeView(reporterName, stepId);
+    closeView(reporterName, resultType);
   }
 
   render() {

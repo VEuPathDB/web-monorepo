@@ -22,6 +22,7 @@ import { createSelector } from 'reselect';
 import { GenomeSummaryViewReportModel, toReportModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { identity } from 'rxjs';
 import { Partial1 } from 'wdk-client/Utils/ActionCreatorUtils';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 type StateProps = { status: 'loading' } | {
   status: 'complete'
@@ -43,7 +44,7 @@ type DispatchProps = {
   unapplyEmptyChromosomesFilter: Partial1<typeof unapplyEmptyChromosomesFilter>;
 };
 
-type OwnProps = { viewId: string, stepId: number };
+type OwnProps = { viewId: string, resultType: ResultType };
 
 type Props = {
   state: StateProps,
@@ -58,8 +59,8 @@ class GenomeSummaryViewController extends ViewController< Props > {
   }
 
   loadData (prevProps?: Props) {
-    if (prevProps == null || prevProps.ownProps.stepId !== this.props.ownProps.stepId) {
-      this.props.actionCreators.requestGenomeSummaryReport(this.props.ownProps.stepId);
+    if (prevProps == null || prevProps.ownProps.resultType !== this.props.ownProps.resultType) {
+      this.props.actionCreators.requestGenomeSummaryReport(this.props.ownProps.resultType);
     }
   }
 

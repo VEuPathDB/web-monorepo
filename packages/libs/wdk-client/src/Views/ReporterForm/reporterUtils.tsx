@@ -53,7 +53,7 @@ export function getAllTables(recordClass: RecordClass, predicate: (table: TableF
  */
 export function getAttributeSelections(userPrefs: UserPreferences, question: Question, allReportScopedAttrs: string[] = []) {
   // try initializing based on user prefs
-  let userPrefKey = question.name + "_summary";
+  let userPrefKey = question.fullName + "_summary";
   let initialAttrs = (userPrefKey in userPrefs ?
       // preference key found; use user preference
       userPrefs.project[userPrefKey].split(',') :
@@ -63,19 +63,19 @@ export function getAttributeSelections(userPrefs: UserPreferences, question: Que
   return initialAttrs.filter(attr => allReportScopedAttrs.indexOf(attr) != -1);
 }
 
-export function getAttributeTree(categoriesOntology: CategoryOntology, recordClassName: string, question: Question) {
+export function getAttributeTree(categoriesOntology: CategoryOntology, recordClassFullName: string, question: Question) {
   let categoryTree = getTree(categoriesOntology, isQualifying({
     targetType: 'attribute',
-    recordClassName,
+    recordClassName: recordClassFullName,
     scope: 'download'
   }));
   return addSearchSpecificSubtree(question, categoryTree);
 }
 
-export function getTableTree(categoriesOntology: CategoryOntology, recordClassName: string) {
+export function getTableTree(categoriesOntology: CategoryOntology, recordClassFullName: string) {
   let categoryTree = getTree(categoriesOntology, isQualifying({
     targetType: 'table',
-    recordClassName,
+    recordClassName: recordClassFullName,
     scope: 'download'
   }));
   return categoryTree;

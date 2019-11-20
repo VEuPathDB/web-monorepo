@@ -6,10 +6,11 @@ import {
   GenomeSummaryViewReport,
   RecordClass
 } from 'wdk-client/Utils/WdkModel';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 export const requestGenomeSummaryReport = makeActionCreator(
   'genomeSummaryView/requestGenomeSummaryReport',
-  (viewId: string, stepId: number) => ({ viewId, stepId })
+  (viewId: string, resultType: ResultType) => ({ viewId, resultType })
 );
 
 export const fulfillGenomeSummaryReport = makeActionCreator(

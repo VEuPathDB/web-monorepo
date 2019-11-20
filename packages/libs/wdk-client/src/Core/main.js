@@ -1,4 +1,9 @@
 /* global __DEV__ */
+
+// import css files
+// import './webapp/wdk/css/wdk.css';
+import 'wdk-client/Core/Style/index.scss';
+
 import { createBrowserHistory } from 'history';
 import { identity, isString } from 'lodash';
 import { createElement } from 'react';
@@ -7,16 +12,16 @@ import * as Components from 'wdk-client/Components';
 import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin'; // eslint-disable-line no-unused-vars
 import { createMockHistory } from 'wdk-client/Utils/MockHistory';
 import { getTransitioner } from 'wdk-client/Utils/PageTransitioner';
-import WdkService from 'wdk-client/Utils/WdkService';
+import { getInstance } from 'wdk-client/Service/WdkService';
 import { updateLocation } from 'wdk-client/Actions/RouterActions';
 import { loadAllStaticData } from 'wdk-client/Actions/StaticDataActions';
 import * as Controllers from 'wdk-client/Controllers';
 import Root from 'wdk-client/Core/Root';
 import wdkRoutes from 'wdk-client/Core/routes';
+import defaultPluginConfig from 'wdk-client/Core/pluginConfig';
 
 import storeModules from 'wdk-client/StoreModules';
 import { createWdkStore } from 'wdk-client/Core/Store';
-
 
 /**
  * Initialize the application.
@@ -64,7 +69,7 @@ export function initialize(options) {
   let history = canUseRouter
     ? createBrowserHistory({ basename: rootUrl })
     : createMockHistory({ basename: rootUrl });
-  let wdkService = wrapWdkService(WdkService).getInstance(endpoint);
+  let wdkService = wrapWdkService(getInstance(endpoint));
   let transitioner = getTransitioner(history);
   let store = createWdkStore(wrapStoreModules(storeModules), wdkService, transitioner, additionalMiddleware);
 
@@ -87,9 +92,10 @@ export function initialize(options) {
             rootUrl,
             store,
             history,
-            pluginConfig,
+            pluginConfig: pluginConfig.concat(defaultPluginConfig),
             routes: wrapRoutes(wdkRoutes),
             onLocationChange: handleLocationChange,
+            wdkService
           });
         ReactDOM.render(applicationElement, container);
       }

@@ -1,6 +1,9 @@
 import { History } from 'history';
 
-export type TransitionFunction = (url: string) => void;
+export type TransitionOptions = {
+  replace?: boolean // defaults to false
+}
+export type TransitionFunction = (url: string, options?: TransitionOptions) => void;
 
 export interface PageTransitioner {
   transitionToExternalPage: TransitionFunction;
@@ -17,7 +20,13 @@ export interface PageTransitioner {
  * @param {History} history
  */
 export function getTransitioner(history: History) {
-  let transitionToInternalPage: TransitionFunction = path => { history.push(path); };
-  let transitionToExternalPage: TransitionFunction = path => { window.location.assign(path); };
+  let transitionToInternalPage: TransitionFunction = (path, options = {}) => {
+    if (options.replace) history.replace(path);
+    else history.push(path);
+  };
+  let transitionToExternalPage: TransitionFunction = (path, options = {}) => {
+    if (options.replace) window.location.replace(path);
+    else window.location.assign(path);
+  };
   return { transitionToInternalPage, transitionToExternalPage };
 }

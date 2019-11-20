@@ -13,7 +13,7 @@ export default createParamModule({
 })
 
 function isType(param: Parameter): param is NumberParam {
-  return param.type === 'NumberParam';
+  return param.type === 'number';
 }
 
 function Component(props: Props<NumberParam, undefined>) {
@@ -23,9 +23,10 @@ function Component(props: Props<NumberParam, undefined>) {
     <NumberSelector
       start={parameter.min}
       end={parameter.max}
-      step={parameter.step}
+      step={parameter.increment}
       value={Number(value)}
       onChange={value => onParamValueChange(String(value))}
+      required={!parameter.allowEmptyValue}
     />
   )
 }

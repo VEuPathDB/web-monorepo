@@ -2,7 +2,7 @@ import { isEqual } from 'lodash';
 import { combineEpics, ofType, Epic } from 'redux-observable';
 import { concat, empty, from, merge, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import {
   CHANGE_GROUP_VISIBILITY,
   QUESTION_LOADED,
@@ -47,12 +47,12 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
   ofType<QuestionLoadedAction>(QUESTION_LOADED),
   // filter((action): action is QuestionLoadedAction => action.type === QUESTION_LOADED),
   mergeMap(action => {
-    const { questionName } = action.payload;
-    const questionState = getQuestionState(state$.value, questionName);
+    const { searchName } = action.payload;
+    const questionState = getQuestionState(state$.value, searchName);
     if (questionState == null) return empty();
     const { question, paramValues } = questionState;
     const isVisible = (paramName: string) => {
-      const state = getQuestionState(state$.value, questionName);
+      const state = getQuestionState(state$.value, searchName);
       if (state == null) return false;
 
       const parameter = getFilterParamNewFromState(state, paramName);
@@ -68,14 +68,14 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
       mergeMap(({paramName, groupName}) => {
         // Create an Observable<FilterParamNew> based on actions
         const valueChangedParameter$: Observable<LoadDeps> = action$.pipe(
-          ofType<UpdateFiltersAction>(UPDATE_FILTERS),
-          filter(
-            action => action.payload.questionName === questionName &&
+          filter((action): action is UpdateFiltersAction => (
+            action.type === UPDATE_FILTERS &&
+            action.payload.searchName === searchName &&
             action.payload.parameter.name === paramName
-          ),
+          )),
           mergeMap(action => {
             const { prevFilters, filters } = action.payload;
-            const questionState = getQuestionState(state$.value, questionName);
+            const questionState = getQuestionState(state$.value, searchName);
             if (questionState == null) return empty() as Observable<LoadDeps>;
 
             const { activeOntologyTerm, fieldStates } =
@@ -98,9 +98,9 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
         const activeOntologyTermChangedParameter$: Observable<LoadDeps> = action$.pipe(
           ofType<SetActiveFieldAction>(SET_ACTIVE_FIELD),
-          filter(action => action.payload.questionName === questionName && action.payload.parameter.name === paramName),
+          filter(action => action.payload.searchName === searchName && action.payload.parameter.name === paramName),
           mergeMap(() => {
-            const questionState = getQuestionState(state$.value, questionName);
+            const questionState = getQuestionState(state$.value, searchName);
             if (questionState == null) return empty() as Observable<LoadDeps>;
 
             const { activeOntologyTerm, fieldStates }: FilterParamState = questionState.paramUIState[paramName];
@@ -119,9 +119,9 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
         const groupVisibilityChangeParameter$: Observable<LoadDeps> = action$.pipe(
           ofType<ChangeGroupVisibilityAction>(CHANGE_GROUP_VISIBILITY),
-          filter(action => action.payload.questionName === questionName && action.payload.groupName === groupName),
+          filter(action => action.payload.searchName === searchName && action.payload.groupName === groupName),
           mergeMap(() => {
-            const questionState = getQuestionState(state$.value, questionName);
+            const questionState = getQuestionState(state$.value, searchName);
             if (questionState == null) return empty() as Observable<LoadDeps>;
 
             const { activeOntologyTerm, fieldStates }: FilterParamState = questionState.paramUIState[paramName];
@@ -157,7 +157,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
         const filters = getFilters(paramValues[paramName]);
         const activeField = filters.length === 0
-          ? getFilterFields(getFilterParamNewFromState(getQuestionState(state$.value, questionName), paramName)).first().term
+          ? getFilterFields(getFilterParamNewFromState(getQuestionState(state$.value, searchName), paramName)).first().term
           : filters[0].field;
 
         // The order here is important. We want to first merge the child
@@ -167,14 +167,14 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
         return merge(
           parameter$,
           of(setActiveField({
-            questionName,
+            searchName,
             parameter: getFilterParamNewFromState(questionState, paramName),
             paramValues,
             activeField
           }))
         );
       }),
-      takeUntil(getUnloadQuestionStream(action$, questionName))
+      takeUntil(getUnloadQuestionStream(action$, searchName))
     );
   })
 );
@@ -182,11 +182,11 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wdkService }) => action$.pipe(
   ofType<UpdateParamsAction>(UPDATE_PARAMS),
   switchMap(action => {
-    const { questionName, parameters } = action.payload;
+    const { searchName, parameters } = action.payload;
     return from(parameters).pipe(
       filter(isType),
       mergeMap(parameter => {
-        const questionState = getQuestionState(state$.value, questionName);
+        const questionState = getQuestionState(state$.value, searchName);
         if (questionState == null) return empty() as Observable<Action>;
         const { paramValues, paramUIState } = questionState;
         const { activeOntologyTerm } = paramUIState[parameter.name] as FilterParamState;
@@ -199,7 +199,7 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
 
         return merge(
           of(invalidateOntologyTerms({
-            questionName,
+            searchName,
             parameter,
             paramValues,
             retainedFields: [/* activeOntologyTerm */]
@@ -208,7 +208,7 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
           getSummaryCounts(wdkService, parameter.name, questionState)
         );
       }),
-      takeUntil(getUnloadQuestionStream(action$, questionName))
+      takeUntil(getUnloadQuestionStream(action$, searchName))
     )
 
   })
@@ -222,10 +222,10 @@ export default observeParam;
 // Helpers
 // -------
 
-function getUnloadQuestionStream(action$: Observable<Action>, questionName: string): Observable<Action> {
+function getUnloadQuestionStream(action$: Observable<Action>, searchName: string): Observable<Action> {
   return action$.pipe(
     ofType<UnloadQuestionAction>(UNLOAD_QUESTION),
-    filter(action => action.payload.questionName === questionName)
+    filter(action => action.payload.searchName === searchName)
   );
 }
 
@@ -236,7 +236,7 @@ function getOntologyTermSummary(
   ontologyTerm: string
 ): Observable<Action> {
   const { question, paramValues } = state;
-  const questionName = question.urlSegment;
+  const searchName = question.urlSegment;
   const parameter = getFilterParamNewFromState(state, paramName);
 
   if (ontologyTerm == null) return empty();
@@ -246,7 +246,7 @@ function getOntologyTermSummary(
     .filter(filter => filter.field !== ontologyTerm);
   return concat(
     of(updateFieldState({
-      questionName,
+      searchName,
       parameter,
       paramValues,
       field: ontologyTerm,
@@ -254,7 +254,7 @@ function getOntologyTermSummary(
         loading: true
       }
     })),
-    wdkService.getOntologyTermSummary(questionName, parameter.name, filters, ontologyTerm, paramValues).then(
+    wdkService.getOntologyTermSummary(searchName, parameter.name, filters, ontologyTerm, paramValues).then(
       summary => {
         const fieldState: FieldState = isMemberField(parameter, ontologyTerm)
           ? {
@@ -274,7 +274,7 @@ function getOntologyTermSummary(
           };
 
         return updateFieldState({
-          questionName,
+          searchName,
           parameter,
           paramValues,
           field: ontologyTerm,
@@ -284,7 +284,7 @@ function getOntologyTermSummary(
       error => {
         console.error(error);
         return updateFieldState({
-          questionName,
+          searchName,
           parameter,
           paramValues,
           field: ontologyTerm,
@@ -305,19 +305,19 @@ function getSummaryCounts(
   state: QuestionState
 ): Observable<Action> {
   const { question, paramValues } = state;
-  const questionName = question.urlSegment;
+  const searchName = question.urlSegment;
   const parameter = getFilterParamNewFromState(state, paramName);
   const filters = JSON.parse(paramValues[paramName]).filters;
 
-  return from(wdkService.getFilterParamSummaryCounts(questionName, paramName, filters, paramValues).then(
+  return from(wdkService.getFilterParamSummaryCounts(searchName, paramName, filters, paramValues).then(
     counts => summaryCountsLoaded({
-      questionName,
+      searchName,
       parameter,
       paramValues,
       ...counts
     }),
     error => paramError({
-      questionName,
+      searchName,
       error,
       paramName
     })
@@ -326,16 +326,16 @@ function getSummaryCounts(
 
 
 
-function getQuestionState(state: State, questionName: string) {
-  const questionState = state.questions[questionName];
-  if (questionState == null) throw new Error(`Question ${questionName} does not exist in store state.`);
+function getQuestionState(state: State, searchName: string) {
+  const questionState = state.questions[searchName];
+  if (questionState == null) throw new Error(`Question ${searchName} does not exist in store state.`);
   return questionState;
 }
 
 function getFilterParamNewFromState(state: QuestionState, paramName: string) {
   const parameter = state.question.parametersByName[paramName];
-  if (parameter == null || parameter.type !== 'FilterParamNew') {
-    throw new Error(`Parameter ${paramName} in ${state.question.name} is not a FilterParamNew.`);
+  if (parameter == null || parameter.type !== 'filter') {
+    throw new Error(`Parameter ${paramName} in ${state.question.urlSegment} is not a FilterParamNew.`);
   }
   return parameter;
 }

@@ -3,7 +3,7 @@ import * as AttributeFilterUtils from 'wdk-client/Components/AttributeFilter/Att
 import * as Actions from 'wdk-client/Actions';
 import * as Controllers from 'wdk-client/Controllers';
 import { initialize, wrapComponents } from 'wdk-client/Core/main';
-import * as Plugins from 'wdk-client/Core/Plugins';
+import * as Plugins from 'wdk-client/Plugins';
 import * as ActionCreatorUtils from 'wdk-client/Utils/ActionCreatorUtils';
 import * as CategoryUtils from 'wdk-client/Utils/CategoryUtils';
 import * as ComponentUtils from 'wdk-client/Utils/ComponentUtils';
@@ -16,7 +16,7 @@ import * as PromiseUtils from 'wdk-client/Utils/PromiseUtils';
 import StoreModules from 'wdk-client/StoreModules';
 import * as TreeUtils from 'wdk-client/Utils/TreeUtils';
 import * as WdkModel from 'wdk-client/Utils/WdkModel';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import * as ReporterUtils from 'wdk-client/Views/ReporterForm/reporterUtils';
 import * as FilterParamUtils from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
 import * as WdkMiddleware from 'wdk-client/Core/WdkMiddleware';

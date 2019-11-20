@@ -1,5 +1,5 @@
 import HelpIcon from 'wdk-client/Components/Icon/HelpIcon';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { getValueOrDefault, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import 'wdk-client/Components/InputControls/RadioList.css';
 
@@ -10,12 +10,15 @@ type Props = {
   name?: string;
   /** Array of items to display in the list **/
   items: Array<{
-    display: string;
+    display: ReactNode;
     value: string;
     description?: string;
+    disabled?: boolean;
   }>;
   /** Value of the radio input element that should be checked **/
   value?: string;
+  /** Whether a value is required for submission */
+  required?: boolean;
   /**
    * Callback function that will be called when user changes selected value.
    * The new (string) value of the selected button will be passed to this
@@ -45,17 +48,21 @@ class RadioList extends React.Component<Props> {
 
   render() {
     let className = baseClassName + " " + getValueOrDefault(this.props, "className", "");
+    const { required = false } = this.props;
     return (
       <ul className={className}>
         {this.props.items.map(item => (
-          <li key={item.value}>
+          <li key={item.value} className={item.disabled ? 'disabled' : ''}>
             <label>
               <input type="radio"
                 name={this.props.name}
                 value={item.value}
                 checked={item.value === this.props.value}
-                onChange={this.onChange}/>
-              {' ' + item.display + ' '}
+                onChange={this.onChange}
+                required={required}
+                disabled={item.disabled}
+              />
+              {' '}{item.display}{' '}
               {item.description != null &&
                 <HelpIcon tooltipPosition={{ my: 'center left', at: 'center right' }}>
                   {item.description}

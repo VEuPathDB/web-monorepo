@@ -1,6 +1,6 @@
 import { Context } from 'wdk-client/Views/Question/Params/Utils';
 import { DatasetParam } from 'wdk-client/Utils/WdkModel';
-import { Strategy } from 'wdk-client/Utils/WdkUser';
+import { StrategySummary } from "wdk-client/Utils/WdkUser";
 
 type Payload<T> = Context<DatasetParam> & T;
 
@@ -9,6 +9,7 @@ export type Action =
   | SetFileAction
   | SetFileParserAction
   | SetIdListAction
+  | SetLoadingIdListAction
   | SetSourceTypeAction
   | SetStrategyIdAction
   | SetStrategyListAction
@@ -51,6 +52,24 @@ export function setIdList(payload: SetIdListAction['payload']): SetIdListAction 
 
 //==============================================================================
 
+export const SET_LOADING_ID_LIST = 'dataset-param/set-loading-id-list';
+
+export interface SetLoadingIdListAction {
+  type: typeof SET_LOADING_ID_LIST;
+  payload: Payload<{
+    loadingIdList?: boolean;
+  }>;
+}
+
+export function setLoadingIdList(payload: SetLoadingIdListAction['payload']): SetLoadingIdListAction {
+  return {
+    type: SET_LOADING_ID_LIST,
+    payload
+  }
+}
+
+//==============================================================================
+
 export const SET_FILE = 'dataset-param/set-file';
 
 export interface SetFileAction {
@@ -74,7 +93,7 @@ export const SET_STRATEGY_LIST = 'dataset-param/set-strategy-list';
 export interface SetStrategyListAction {
   type: typeof SET_STRATEGY_LIST;
   payload: Payload<{
-    strategyList: Strategy[];
+    strategyList: StrategySummary[];
   }>;
 }
 

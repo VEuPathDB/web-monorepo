@@ -2,7 +2,7 @@ import { Middleware } from 'redux';
 import { isPromise } from 'wdk-client/Utils/PromiseUtils';
 import { Action } from 'wdk-client/Actions';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
-import WdkService from 'wdk-client/Utils/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 
 export interface ActionCreatorServices {
   wdkService: WdkService;
@@ -42,12 +42,6 @@ export const emptyAction: EmptyAction = {
  * dispatch actions.
  */
 export type DispatchAction<T extends Action> = (action: ActionCreatorResult<T>) => ActionCreatorResult<T>;
-
-declare module 'redux' {
-  export interface Dispatch<A extends Action = AnyAction> {
-    <T extends A>(action: ActionCreatorResult<T>): ActionCreatorResult<T>;
-  }
-}
 
 type WdkMiddleWare = Middleware<DispatchAction<Action>>;
 
@@ -103,7 +97,6 @@ export const wdkMiddleware = (services: ActionCreatorServices): WdkMiddleWare =>
   }
 
   function logError(error: Error) {
-    console.error(error);
     services.wdkService.submitError(error).catch(err => {
       console.error('Could not submit error to log.', err);
     });
@@ -116,4 +109,10 @@ export const logger: WdkMiddleWare = store => next => action => {
   let result = next(action)
   console.log('next state', store.getState())
   return result
+}
+
+declare module 'redux' {
+  export interface Dispatch<A extends Action = AnyAction> {
+    <T extends A>(action: ActionCreatorResult<T>): ActionCreatorResult<T>;
+  }
 }

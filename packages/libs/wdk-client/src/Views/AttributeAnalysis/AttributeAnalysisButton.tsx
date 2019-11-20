@@ -5,15 +5,16 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Reporter } from 'wdk-client/Utils/WdkModel';
 
 import 'wdk-client/Views/AttributeAnalysis/AttributeAnalysis.scss';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 const cx = makeClassNameHelper('AttributeAnalysis');
 
 type Props = {
-  stepId: number;
+  resultType: ResultType;
   reporter: Reporter;
   isOpen: boolean;
-  onOpen: (reporterName: string, stepId: number) => void;
-  onClose: (reporterName: string, stepId: number) => void;
+  onOpen: (reporterName: string, resultType: ResultType) => void;
+  onClose: (reporterName: string, resultType: ResultType) => void;
   children: React.ReactChild;
 }
 
@@ -24,7 +25,7 @@ const {
   onOpen,
   onClose,
   isOpen,
-  stepId,
+  resultType,
 } = props;
   const title = `Analyze/Graph the contents of this column by ${reporter.displayName.toLowerCase()}`;
 
@@ -34,12 +35,12 @@ const {
         className={cx('Button')}
         type="button"
         title={title}
-        onClick={() => onOpen(reporter.name, stepId)}
+        onClick={() => onOpen(reporter.name, resultType)}
       />
       <Dialog
         modal={true}
         open={isOpen}
-        onClose={() => onClose(reporter.name, stepId)}
+        onClose={() => onClose(reporter.name, resultType)}
         className={cx()}
         title={reporter.displayName}>
         {children}

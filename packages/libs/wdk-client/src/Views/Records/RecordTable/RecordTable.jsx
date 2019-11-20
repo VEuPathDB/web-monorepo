@@ -1,5 +1,5 @@
-import { chunk, memoize, property, orderBy, toLower } from 'lodash';
-import { Component } from 'react';
+import { chunk, property, orderBy, toLower } from 'lodash';
+import React, { Component } from 'react';
 import { createSelector } from 'reselect';
 import PropTypes from 'prop-types';
 import DataTable from 'wdk-client/Components/DataTable/DataTable';
@@ -25,9 +25,6 @@ const getSortIndex = (rowData) =>
 
 const addDefaultSortId = (row, index) =>
   Object.assign({}, row, { [defaultSortId]: index });
-
-const sortSpecToOrder = (sortSpec) =>
-  [ sortSpec.itemName, sortSpec.direction.toLowerCase() ];
 
 const getColumns = (tableField) =>
   defaultSortColumn.concat(tableField.attributes.map(attr => ({
@@ -67,7 +64,7 @@ class RecordTable extends Component {
   }
 
   render() {
-    const { value, table, childRow, expandedRows, onExpandedRowsChange, className } = this.props;
+    const { value, childRow, expandedRows, onExpandedRowsChange, className } = this.props;
     const displayableAttributes = this.getDisplayableAttributes(this.props);
     const columns = this.getColumns(this.props);
     const data = this.getOrderedData(this.props);

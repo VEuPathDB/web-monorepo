@@ -1,4 +1,31 @@
 .wdk-QuestionForm {
+  margin: auto;
+  max-width: 90vw;
+
+  &__default-width {
+    max-width: 62.5rem;
+  }
+
+  &__wide-width {
+    width: 110em;
+  }
+
+  &QuestionHeader {
+    position: sticky;
+    top: 1.75rem;
+    z-index: 2;
+    background-color: white;
+    border-bottom: 0.0625rem solid black;
+  }
+
+  &DescriptionLink {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1rem;
+    margin-bottom: -0.5em;
+    padding-top: 1em;
+  }
 
   &ShowHideGroup {
     border: 1px solid #eaeaea;
@@ -27,11 +54,22 @@
   }
 
   &ParameterHeading {
+    h2 {
+      font-size: 1.6em;
+    }
     border-bottom: 1px solid #ccc;
   }
 
   &ParameterControl {
     padding: 1.3rem;
+  }
+
+  &VisibleHelp {
+    font-style: oblique;
+    margin: 0.5rem auto;
+    color: #525252;
+    font-weight: 400;
+    max-width: 50vw;
   }
 
   &SubmitSection {
@@ -49,6 +87,36 @@
     input {
       width: 16em;
       margin: 0 .2em;
+    }
+  }
+
+  &SubmittingIndicator {
+    background-image: url('./wizard-busy.gif');
+    height: 24px;
+    width: 160px;
+    background-size: cover;
+    margin: 1em;
+  }
+
+  &DescriptionSection {
+    padding-top: 7em;
+    margin: -5em 0 1em 0;
+
+    h2.navigatingToDescription::before {
+      animation: fade-in-out ease-in 3s;
+      opacity: 0;
+      content: "\f0da";
+      position: absolute;
+      margin-left: -.6em;
+      color: #046599;
+      font-family: FontAwesome;
+      font-size: 2.5em;    
+    } 
+  }
+
+  &Description {
+    h2 {
+      font-size: 1.6em;
     }
   }
 

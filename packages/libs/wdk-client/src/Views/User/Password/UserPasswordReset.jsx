@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import TextBox from 'wdk-client/Components/InputControls/TextBox';
 

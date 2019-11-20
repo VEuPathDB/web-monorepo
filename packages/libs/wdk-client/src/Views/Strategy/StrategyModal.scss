@@ -1,0 +1,26 @@
+.StrategyModal {
+
+  &Header {
+    background: white;
+    button {
+      border-radius: 50%;
+      font-size: 1.2em;
+      height: 2em;
+      width: 2em;
+    }
+    i {
+      color: #3e3e3e;
+    }
+  }
+
+  &Title {
+    font-size: 1.4em;
+    margin: auto;
+  }
+
+  &Content {
+    max-height: 80vh;
+    padding: 1em 2em;
+  }
+
+}

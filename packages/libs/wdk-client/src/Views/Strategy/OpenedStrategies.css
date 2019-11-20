@@ -1,0 +1,20 @@
+.OpenedStrategies {
+  margin-top: .5em;
+}
+
+.OpenedStrategiesContent {
+  border: 1px solid transparent;
+  margin: 0 -2em;
+  padding: 2em 8em 7em 8em;
+}
+
+.OpenedStrategiesContent > * {
+  font-size: .7em;
+}
+
+.OpenedStrategiesHeader {
+  font-size: 1.7em;
+  font-weight: bold;
+  text-transform: capitalize;
+  padding-bottom: .5em;
+}

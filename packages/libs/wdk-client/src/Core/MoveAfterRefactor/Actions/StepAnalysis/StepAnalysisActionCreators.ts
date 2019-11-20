@@ -1,49 +1,49 @@
-import { 
-  START_LOADING_TAB_LISTING, 
-  FINISH_LOADING_TAB_LISTING, 
-  SELECT_TAB, 
-  START_LOADING_SAVED_TAB, 
-  FINISH_LOADING_SAVED_TAB, 
-  START_LOADING_CHOSEN_ANALYSIS_TAB, 
-  FINISH_LOADING_CHOSEN_ANALYSIS_TAB, 
-  CREATE_NEW_TAB, 
+import {
+  START_LOADING_TAB_LISTING,
+  FINISH_LOADING_TAB_LISTING,
+  SELECT_TAB,
+  START_LOADING_SAVED_TAB,
+  FINISH_LOADING_SAVED_TAB,
+  START_LOADING_CHOSEN_ANALYSIS_TAB,
+  FINISH_LOADING_CHOSEN_ANALYSIS_TAB,
+  CREATE_NEW_TAB,
   DELETE_ANALYSIS,
   REMOVE_TAB,
-  START_FORM_SUBMISSION, 
-  CHECK_RESULT_STATUS, 
-  COUNT_DOWN, 
-  FINISH_FORM_SUBMISSION, 
-  RENAME_ANALYSIS, 
-  RENAME_TAB, 
+  START_FORM_SUBMISSION,
+  CHECK_RESULT_STATUS,
+  COUNT_DOWN,
+  FINISH_FORM_SUBMISSION,
+  RENAME_ANALYSIS,
+  RENAME_TAB,
   DUPLICATE_ANALYSIS,
   UPDATE_PARAM_VALUES,
   TOGGLE_DESCRIPTION,
   TOGGLE_PARAMETERS
 } from './StepAnalysisActionConstants';
-import { 
-  UninitializedAnalysisPanelState, 
-  SavedAnalysisState, 
-  AnalysisMenuState, 
-  UnsavedAnalysisState, 
+import {
+  UninitializedAnalysisPanelState,
+  SavedAnalysisState,
+  AnalysisMenuState,
+  UnsavedAnalysisState,
   AnalysisPanelState
 } from '../../StoreModules/StepAnalysis/StepAnalysisState';
-import { 
-  StartLoadingTabListingAction, 
-  FinishLoadingTabListingAction, 
-  SelectTabAction, 
-  StartLoadingSavedTabAction, 
-  FinishLoadingSavedTabAction, 
-  StartLoadingChosenAnalysisTabAction, 
-  FinishLoadingChosenAnalysisTabAction, 
-  CreateNewTabAction, 
-  DeleteAnalysisAction, 
-  RemoveTabAction, 
-  StartFormSubmissionAction, 
-  CheckResultStatusAction, 
-  CountDownAction, 
-  FinishFormSubmissionAction, 
-  RenameAnalysisAction, 
-  RenameTabAction, 
+import {
+  StartLoadingTabListingAction,
+  FinishLoadingTabListingAction,
+  SelectTabAction,
+  StartLoadingSavedTabAction,
+  FinishLoadingSavedTabAction,
+  StartLoadingChosenAnalysisTabAction,
+  FinishLoadingChosenAnalysisTabAction,
+  CreateNewTabAction,
+  DeleteAnalysisAction,
+  RemoveTabAction,
+  StartFormSubmissionAction,
+  CheckResultStatusAction,
+  CountDownAction,
+  FinishFormSubmissionAction,
+  RenameAnalysisAction,
+  RenameTabAction,
   DuplicateAnalysisAction,
   UpdateParamValues,
   ToggleDescription,
@@ -51,9 +51,9 @@ import {
 } from './StepAnalysisActions';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 
-export const startLoadingTabListing = (stepId: number): StartLoadingTabListingAction => ({
+export const startLoadingTabListing = (strategyId: number, stepId: number): StartLoadingTabListingAction => ({
   type: START_LOADING_TAB_LISTING,
-  payload: { stepId }
+  payload: { stepId, strategyId }
 });
 
 export const finishLoadingTabListing = (tabListing: UninitializedAnalysisPanelState[], analysisChoices: StepAnalysisType[]): FinishLoadingTabListingAction => ({
@@ -74,7 +74,7 @@ export const startLoadingSavedTab = (panelId: number): StartLoadingSavedTabActio
 export const finishLoadingSavedTab = (panelId: number, loadedState: UninitializedAnalysisPanelState | SavedAnalysisState): FinishLoadingSavedTabAction => ({
   type: FINISH_LOADING_SAVED_TAB,
   payload: { panelId, loadedState }
-}); 
+});
 
 export const startLoadingChosenAnalysisTab = (panelId: number, choice: StepAnalysisType): StartLoadingChosenAnalysisTabAction => ({
   type: START_LOADING_CHOSEN_ANALYSIS_TAB,
@@ -136,7 +136,7 @@ export const duplicateAnalysis = (panelId: number): DuplicateAnalysisAction => (
   payload: { panelId }
 });
 
-export const updateParamValues = (panelId: number, newParamValues: Record<string, string[]>): UpdateParamValues => ({
+export const updateParamValues = (panelId: number, newParamValues: Record<string, string>): UpdateParamValues => ({
   type: UPDATE_PARAM_VALUES,
   payload: { panelId, newParamValues }
 });

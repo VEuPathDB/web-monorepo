@@ -69,26 +69,25 @@ type Props = {
 } & Options;
 
 class AnswerController extends PageController<Props> {
+
   loadData(prevProps?: Props) {
-    // incoming values from the router
-    let { question, recordClass: recordClassName, parameters } = this.props.ownProps;
-    let [ , questionName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
 
     // decide whether new answer needs to be loaded (may not need to be loaded
     //   if user goes someplace else and hits 'back' to here- store already correct)
-    const {
-      dispatchProps
-    } = this.props;
+    if (prevProps && isEqual(prevProps.ownProps, this.props.ownProps)) return;
 
-    if (prevProps == null || !isEqual(prevProps.ownProps, this.props.ownProps)) {
+    // incoming values from the router
+    let { question, recordClass: recordClassName, parameters } = this.props.ownProps;
+    let [ , searchName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
 
-      // (re)initialize the page
-      let pagination = { numRecords: 1000, offset: 0 };
-      let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
-      let displayInfo = { pagination, sorting, customName };
-      let opts = { displayInfo, parameters };
-      dispatchProps.loadAnswer(questionName, recordClassName, opts);
-    }
+    const { dispatchProps } = this.props;
+
+    // (re)initialize the page
+    let pagination = { numRecords: 1000, offset: 0 };
+    let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
+    let displayInfo = { pagination, sorting, customName };
+    let opts = { displayInfo, parameters };
+    dispatchProps.loadAnswer(searchName, recordClassName, opts);
   }
 
   isRenderDataLoaded() {

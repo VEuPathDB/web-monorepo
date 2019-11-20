@@ -9,3 +9,8 @@ declare module 'lib/jquery-flot';
 declare module 'lib/jquery-flot-categories';
 declare module 'lib/jquery-flot-selection';
 declare module 'lib/jquery-flot-time';
+
+declare module '*.svg' {
+  const content: string;
+  export default content;
+}

@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { isEqual } from 'lodash';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import {
   loadPageDataFromRecord,
+  loadPageDataFromBasketName,
   loadPageDataFromStepId,
   selectReporter,
   updateForm,
@@ -15,6 +17,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 
 const DownloadFormActionCreators = {
   loadPageDataFromRecord,
+  loadPageDataFromBasketName,
   loadPageDataFromStepId,
   selectReporter,
   submitForm,
@@ -28,6 +31,7 @@ type Options = Partial<{
 }>;
 
 type OwnProps =
+  | ({ basketName: string } & Options)
   | ({ recordClass: string; primaryKey: string; } & Options)
   | ({ stepId: number; } & Options)
 
@@ -40,7 +44,7 @@ type Props = { ownProps: OwnProps } & DispatchProps & StateProps;
 class DownloadFormController extends PageController<Props> {
 
   isRenderDataLoaded() {
-    return (this.props.step != null && !this.props.isLoading);
+    return (this.props.resultType != null && !this.props.isLoading);
   }
 
   isRenderDataLoadError() {
@@ -66,8 +70,13 @@ class DownloadFormController extends PageController<Props> {
   }
 
   getTitle() {
+    const { resultType } = this.props;
+    const displayName = resultType == null ? 'Results'
+      : resultType.type === 'step' ? resultType.step.displayName
+      : resultType.type === 'basket' ? 'Basket'
+      : 'Results';
     return (!this.isRenderDataLoaded() ? "Loading..." :
-      "Download: " + this.props.step!.displayName);
+      "Download: " + displayName);
   }
 
   renderView() {
@@ -78,10 +87,11 @@ class DownloadFormController extends PageController<Props> {
     return ( <DownloadFormContainer {...formProps}/> );
   }
 
-  loadData() {
-    const { ownProps, isLoading, step, loadPageDataFromRecord, loadPageDataFromStepId } = this.props;
+  loadData(prevProps: Props) {
 
-    if (step || isLoading) return;
+    const { ownProps, loadPageDataFromRecord, loadPageDataFromStepId, loadPageDataFromBasketName } = this.props;
+
+    if (prevProps && isEqual(ownProps, prevProps.ownProps)) return;
 
     // must reinitialize with every new props
     if ('stepId' in ownProps) {
@@ -90,6 +100,9 @@ class DownloadFormController extends PageController<Props> {
     else if ('recordClass' in ownProps) {
       loadPageDataFromRecord(
           ownProps.recordClass, ownProps.primaryKey.split('/').join(','), ownProps.format);
+    }
+    else if ('basketName' in ownProps) {
+      loadPageDataFromBasketName(ownProps.basketName, ownProps.format);
     }
     else {
       console.error("Neither stepId nor recordClass param was passed " +

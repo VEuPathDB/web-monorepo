@@ -65,7 +65,7 @@ class DataRow extends React.PureComponent {
     const sharedProps = { row, inline, options, rowIndex };
 
     return (
-      <tr className={className} style={rowStyle} onClick={this.handleRowClick}>
+      <tr className={className} tabIndex={this.props.options.onRowClick ? -1 : undefined} style={rowStyle} onClick={this.handleRowClick}>
         {!hasSelectionColumn
           ? null
           : <SelectionCell

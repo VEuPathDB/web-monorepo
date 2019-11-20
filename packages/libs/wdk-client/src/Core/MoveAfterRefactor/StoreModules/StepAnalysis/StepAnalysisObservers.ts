@@ -1,39 +1,39 @@
-import { 
-  UNINITIALIZED_PANEL_STATE, 
-  ANALYSIS_MENU_STATE, 
-  UNSAVED_ANALYSIS_STATE, 
+import {
+  UNINITIALIZED_PANEL_STATE,
+  ANALYSIS_MENU_STATE,
+  UNSAVED_ANALYSIS_STATE,
   SAVED_ANALYSIS_STATE,
-  AnalysisPanelState, 
+  AnalysisPanelState,
   StepAnalysesState,
   UninitializedAnalysisPanelState,
   AnalysisMenuState,
   UnsavedAnalysisState,
   SavedAnalysisState
 } from './StepAnalysisState';
-import { 
-  START_LOADING_TAB_LISTING, 
-  SELECT_TAB, 
-  START_LOADING_SAVED_TAB, 
-  START_LOADING_CHOSEN_ANALYSIS_TAB, 
+import {
+  START_LOADING_TAB_LISTING,
+  SELECT_TAB,
+  START_LOADING_SAVED_TAB,
+  START_LOADING_CHOSEN_ANALYSIS_TAB,
   DELETE_ANALYSIS,
-  START_FORM_SUBMISSION, 
-  CHECK_RESULT_STATUS, 
-  COUNT_DOWN, 
+  START_FORM_SUBMISSION,
+  CHECK_RESULT_STATUS,
+  COUNT_DOWN,
   RENAME_ANALYSIS,
   DUPLICATE_ANALYSIS,
   REMOVE_TAB
 } from '../../Actions/StepAnalysis/StepAnalysisActionConstants';
-import { 
-  StartLoadingTabListingAction, 
-  SelectTabAction, 
+import {
+  StartLoadingTabListingAction,
+  SelectTabAction,
   StartLoadingSavedTabAction,
-  StartLoadingChosenAnalysisTabAction, 
-  DeleteAnalysisAction, 
-  StartFormSubmissionAction, 
-  CheckResultStatusAction, 
-  CountDownAction, 
-  RenameAnalysisAction, 
-  DuplicateAnalysisAction, 
+  StartLoadingChosenAnalysisTabAction,
+  DeleteAnalysisAction,
+  StartFormSubmissionAction,
+  CheckResultStatusAction,
+  CountDownAction,
+  RenameAnalysisAction,
+  DuplicateAnalysisAction,
   RemoveTabAction
 } from '../../Actions/StepAnalysis/StepAnalysisActions';
 import { ActionsObservable, StateObservable } from 'redux-observable';
@@ -43,7 +43,7 @@ import { EMPTY } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
 import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, startFormSubmission, selectTab } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
-import { denormalizeParamValue } from '../../Components/StepAnalysis/StepAnalysisDefaultForm';
+import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
 
 export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
@@ -51,7 +51,7 @@ export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>
     filter(isStartLoadingTabListing),
     withLatestFrom(state$, (_, { stepId }) => stepId),
     mergeMap(async stepId => {
-      try {        
+      try {
         const appliedAnalyses = await wdkService.getAppliedStepAnalyses(stepId);
         const choices = await wdkService.getStepAnalysisTypes(stepId);
         const tabListing = appliedAnalyses.map((analysis): UninitializedAnalysisPanelState => ({
@@ -91,12 +91,11 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
       const analysisId = panelState.analysisId;
       try {
         const analysisConfig = await wdkService.getStepAnalysis(stepId, analysisId);
-        const paramSpecs = await wdkService.getStepAnalysisTypeParamSpecs(stepId, analysisConfig.analysisName);
-        const resultContents = analysisConfig.status === 'COMPLETE' 
+        const resultContents = analysisConfig.status === 'COMPLETE'
           ? await wdkService.getStepAnalysisResult(stepId, analysisId)
           : {};
         const myChoice = choices.find(analysis => analysis.name === analysisConfig.analysisName);
-        const isAutorun = myChoice && !myChoice.hasParameters;
+        const isAutorun = myChoice && myChoice.paramNames.length == 0;
         const finishLoading = finishLoadingSavedTab(
           panelId,
           {
@@ -104,7 +103,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
             analysisConfig,
             analysisConfigStatus: 'COMPLETE',
             pollCountdown: 3,
-            paramSpecs,
+            paramSpecs: analysisConfig.displayParams,
             paramValues: analysisConfig.formParams,
             panelUiState: {
               descriptionExpanded: false,
@@ -173,9 +172,9 @@ export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<
             pollCountdown: 0,
             paramSpecs,
             paramValues: paramSpecs.reduce(
-              (memo, { name, defaultValue }) => ({
+              (memo, { name, initialDisplayValue }) => ({
                 ...memo,
-                [name]: denormalizeParamValue(defaultValue || '')
+                [name]: initialDisplayValue || ''
               }),
               {}
             ),
@@ -189,7 +188,7 @@ export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<
           }
         );
 
-        return choice.hasParameters
+        return choice.paramNames.length > 0
           ? [
             finishLoading,
           ]
@@ -234,7 +233,7 @@ export const observeDeleteAnalysis = (action$: ActionsObservable<Action>, state$
         const { displayName, analysisId } = panelState.type === UNINITIALIZED_PANEL_STATE
           ? panelState
           : panelState.analysisConfig;
-        
+
         wdkService.deleteStepAnalysis(stepId, analysisId).catch(
           () => {
             alert(`Cannot delete analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`);
@@ -263,7 +262,7 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
     filter(isStartFormSubmission),
     withLatestFrom(state$, focusOnPanelById),
     filter(onTabInRunnableState),
-    mergeMap(async ({ panelId, panelState, stepId }) => {
+    mergeMap(async ({ panelId, panelState, stepId, strategyId }) => {
       const displayName = panelState.type === UNSAVED_ANALYSIS_STATE
         ? panelState.displayName
         : panelState.analysisConfig.displayName;
@@ -276,6 +275,7 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
           });
 
           return [
+            transitionToInternalPage(`/workspace/strategies/${strategyId}/${stepId}/analysis:${analysisConfig.analysisId}`, { replace: true }),
             finishLoadingSavedTab(panelId, {
               type: SAVED_ANALYSIS_STATE,
               paramSpecs: panelState.paramSpecs,
@@ -294,8 +294,8 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
           ];
         } else {
           const validationErrors = await wdkService.updateStepAnalysisForm(
-            stepId, 
-            panelState.analysisConfig.analysisId, 
+            stepId,
+            panelState.analysisConfig.analysisId,
             panelState.paramValues
           );
 
@@ -424,7 +424,7 @@ export const observeDuplicateAnalysis = (action$: ActionsObservable<Action>, sta
     mergeMap(async ({ choices, stepId, panelState }) => {
       if (panelState.type === UNSAVED_ANALYSIS_STATE) {
         return createNewTab(panelState);
-      } 
+      }
 
       return createNewTab({
         type: UNSAVED_ANALYSIS_STATE,
@@ -461,7 +461,8 @@ const isDuplicateAnalysis = (action: Action): action is DuplicateAnalysisAction 
 interface FocusedUninitializedAnalysisPanelState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
-  stepId: number;  
+  stepId: number;
+  strategyId: number;
   panelState: UninitializedAnalysisPanelState;
   panelId: number;
 }
@@ -470,6 +471,7 @@ interface FocusedAnalysisMenuState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   panelState: AnalysisMenuState;
   panelId: number;
 }
@@ -478,6 +480,7 @@ interface FocusedUnsavedAnalysisState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   panelState: UnsavedAnalysisState;
   panelId: number;
 }
@@ -486,6 +489,7 @@ interface FocusedSavedAnalysisState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   panelState: SavedAnalysisState;
   panelId: number;
 }
@@ -494,6 +498,7 @@ interface FocusedState<ActionType> {
   action: ActionType;
   choices: StepAnalysisType[];
   stepId: number;
+  strategyId: number;
   panelState: AnalysisPanelState;
   panelId: number;
 }
@@ -502,6 +507,7 @@ const focusOnPanelById = <ActionType>(action: ActionType & { payload: { panelId:
   action,
   choices: state.analysisChoices,
   stepId: state.stepId,
+  strategyId: state.strategyId,
   panelId: action.payload.panelId,
   panelState: state.analysisPanelStates[action.payload.panelId]
 });

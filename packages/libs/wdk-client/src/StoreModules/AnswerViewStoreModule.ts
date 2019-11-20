@@ -5,7 +5,7 @@ import {
   RecordClass,
   RecordInstance
 } from 'wdk-client/Utils/WdkModel';
-import { ServiceError } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
 import { Action } from 'wdk-client/Actions';
 import {
   START_LOADING,

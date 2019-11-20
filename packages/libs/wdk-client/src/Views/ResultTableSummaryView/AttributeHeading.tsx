@@ -5,15 +5,16 @@ import {
   Question
 } from 'wdk-client/Utils/WdkModel';
 import AttributeAnalysisButton from 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisButton';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
+import { Plugin, PluginEntryContext } from 'wdk-client/Utils/ClientPlugin';
 import { OpenAttributeAnalysis, CloseAttributeAnalysis } from 'wdk-client/Views/ResultTableSummaryView/Types';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 interface Props {
   activeAttributeAnalysisName: string | undefined;
   attribute: AttributeField;
   recordClass: RecordClass;
   question: Question;
-  stepId: number;
+  resultType: ResultType;
   headingComponents: {
     SortTrigger: React.ComponentType<any>;
     HelpTrigger: React.ComponentType<any>;
@@ -30,7 +31,7 @@ export default function AttributeHeading(props: Props) {
     attribute,
     recordClass,
     question,
-    stepId,
+    resultType,
     headingComponents: { SortTrigger, HelpTrigger },
     removeAttribute,
     openAttributeAnalysis,
@@ -60,15 +61,15 @@ export default function AttributeHeading(props: Props) {
       )}
 
       {attribute.formats.map(reporter => {
-        const context = {
+        const context: PluginEntryContext = {
           type: 'attributeAnalysis',
           name: reporter.type,
-          recordClassName: recordClass.name,
-          questionName: question.name
+          recordClassName: recordClass.urlSegment,
+          searchName: question.urlSegment
         };
 
         const pluginProps = {
-          stepId,
+          resultType,
           attributeName: attribute.name,
           reporterType: reporter.type
         };
@@ -76,7 +77,7 @@ export default function AttributeHeading(props: Props) {
         return (
           <div className="Trigger" key={reporter.name}>
             <AttributeAnalysisButton
-              stepId={stepId}
+              resultType={resultType}
               reporter={reporter}
               isOpen={activeAttributeAnalysisName === reporter.name}
               onOpen={openAttributeAnalysis}

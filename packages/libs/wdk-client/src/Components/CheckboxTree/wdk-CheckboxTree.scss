@@ -36,6 +36,8 @@
   }
 
   &NodeWrapper {
+    display: flex;
+    align-items: center;
     padding: 1px 0;
   }
 
@@ -67,7 +69,15 @@
     line-height: 1rem;
   }
 
+  &Checkbox {
+    margin-right: 1ex;
+  }
+
   &NodeContent {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
     margin-left: 1.3em;
   }
 

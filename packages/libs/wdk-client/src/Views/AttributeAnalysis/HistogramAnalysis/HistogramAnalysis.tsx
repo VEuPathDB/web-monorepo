@@ -67,7 +67,7 @@ export const Histogram = lazy<HistogramProps>(async () => {
     $.plot(plotCanvas, [ plotData ], options);
     plotCanvas
       .off("plothover")
-      .on("plothover", (event, pos, item) => {
+      .on("plothover", (event: any, pos: any, item: any) => {
         if (item) {
           if (previousPoint != item.dataIndex) {
             previousPoint = item.dataIndex;

@@ -10,7 +10,6 @@ import {
   requestAddStepToBasket,
   requestUpdateBasket
 } from 'wdk-client/Actions/BasketActions';
-import { fulfillStep, requestStep } from 'wdk-client/Actions/StepActions';
 import {
   fulfillAnswer,
   fulfillColumnsChoice,
@@ -37,12 +36,14 @@ import {
   updateGlobalViewFilters,
   fulfillGlobalViewFilters,
   reportAnswerFulfillmentError,
+  requestResultTypeDetails,
+  fulfillResultTypeDetails,
 } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import {
   InferAction,
-  mergeMapRequestActionsToEpic as mrate,
+  switchMapRequestActionsToEpic as smrate,
   takeEpicInWindow
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import {
@@ -61,9 +62,10 @@ import {
   AnswerJsonFormatConfig,
   AttributesConfig,
   PrimaryKey,
-  AnswerSpec
+  SearchConfig
 } from 'wdk-client/Utils/WdkModel';
 import { IndexedState, indexByActionProperty } from 'wdk-client/Utils/ReducerUtils';
+import {ResultType, getResultTypeDetails, getStandardReport, ResultTypeDetails} from 'wdk-client/Utils/WdkResult';
 
 export const key = 'resultTableSummaryView';
 
@@ -73,14 +75,15 @@ type BasketStatus = 'yes' | 'no' | 'loading';
 
 // View filters that are applied to all answer requests for this summary view.
 // Keys are recordClass names.
-type GlobalViewFilters = Record<string, AnswerSpec['viewFilters']>;
+type GlobalViewFilters = Record<string, SearchConfig['viewFilters']>;
 
 type ViewState = {
-  stepId?: number;
+  resultType?: ResultType;
+  resultTypeDetails?: ResultTypeDetails;
   answer?: Answer;
   answerLoading: boolean;
   addingStepToBasket: boolean;
-  questionFullName?: string; // remember question so can validate sorting and columns fulfill actions
+  searchName?: string; // remember question so can validate sorting and columns fulfill actions
   basketStatusArray?: Array<BasketStatus>; // cardinality == pageSize
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: Array<string>; //
@@ -138,7 +141,7 @@ function reduceBasketUpdateAction(state: ViewState, action: Action): ViewState {
 function reduceColumnsFulfillAction(state: ViewState, action: Action): ViewState {
   if (
     action.type != fulfillColumnsChoice.type ||
-    action.payload.questionName != state.questionFullName
+    action.payload.searchName != state.searchName
   )
     return state;
 
@@ -153,7 +156,10 @@ export const reduce = indexByActionProperty(
 function reduceView(state: ViewState = initialViewState, action: Action): ViewState {
   switch (action.type) {
     case openResultTableSummaryView.type: {
-      return { ...initialViewState, stepId: action.payload.stepId };
+      return { ...initialViewState, resultType: action.payload.resultType };
+    }
+    case fulfillResultTypeDetails.type: {
+      return { ...state, resultTypeDetails: action.payload.resultTypeDetails };
     }
     case requestAnswer.type: {
       return { ...state, answerLoading: true };
@@ -173,10 +179,10 @@ function reduceView(state: ViewState = initialViewState, action: Action): ViewSt
       };
     }
     case requestColumnsChoicePreference.type: {
-      return { ...state, questionFullName: action.payload.questionName };
+      return { ...state, searchName: action.payload.searchName };
     }
     case requestSortingPreference.type: {
-      return { ...state, questionFullName: action.payload.questionName };
+      return { ...state, searchName: action.payload.searchName };
     }
     case requestUpdateBasket.type: {
       return reduceBasketUpdateAction(state, action);
@@ -185,7 +191,7 @@ function reduceView(state: ViewState = initialViewState, action: Action): ViewSt
       return reduceBasketUpdateAction(state, action);
     }
     case requestAddStepToBasket.type: {
-      return action.payload.stepId === state.stepId && state.basketStatusArray
+      return state.basketStatusArray
         ? {
             ...state,
             basketStatusArray: state.basketStatusArray.map(
@@ -196,7 +202,7 @@ function reduceView(state: ViewState = initialViewState, action: Action): ViewSt
         : state;
     }
     case fulfillAddStepToBasket.type: {
-      return action.payload.stepId === state.stepId && state.basketStatusArray
+      return state.basketStatusArray
         ? {
             ...state,
             basketStatusArray: state.basketStatusArray.map(
@@ -251,240 +257,216 @@ async function getFirstPageNumber(
   return viewPageNumber(openAction.payload.viewId, 1);
 }
 
-async function getRequestStep(
+async function getRequestResultTypeDetails(
   [openRTSAction]: [InferAction<typeof openRTS>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof requestStep>> {
-  let stepId = openRTSAction.payload.stepId;
-  return requestStep(stepId);
+): Promise<InferAction<typeof requestResultTypeDetails>> {
+  let { viewId, resultType } = openRTSAction.payload;
+  return requestResultTypeDetails(viewId, resultType);
+}
+
+async function getFulfillResultTypeDetails(
+  [openRTSAction, requestAction]: [InferAction<typeof openRTS>, InferAction<typeof requestResultTypeDetails>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof fulfillResultTypeDetails>> {
+  const { viewId, resultType } = requestAction.payload;
+  const resultTypeDetails = await getResultTypeDetails(wdkService, resultType);
+  return fulfillResultTypeDetails(viewId, resultTypeDetails);
 }
 
 async function getRequestColumnsChoicePreference(
   [openAction, requestAction]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>
+    InferAction<typeof fulfillResultTypeDetails>
   ],
   state$: StateObservable<RootState>,
   {  }: EpicDependencies
 ): Promise<InferAction<typeof requestColumnsChoicePreference>> {
-  return requestColumnsChoicePreference(
-    openAction.payload.viewId,
-    requestAction.payload.step.answerSpec.questionName
-  );
+  const { searchName } = requestAction.payload.resultTypeDetails;
+  return requestColumnsChoicePreference( openAction.payload.viewId, searchName);
 }
 
-function filterRequestColumnsChoicePreferenceActions([
-  openAction,
-  requestAction
-]: [InferAction<typeof openRTS>, InferAction<typeof fulfillStep>]) {
-  return openAction.payload.stepId === requestAction.payload.step.id;
+function filterResultTypeDetailsActions(
+  [openRTSAction, resultTypeAction]: [InferAction<typeof openRTS>, InferAction<typeof requestResultTypeDetails | typeof fulfillResultTypeDetails>],
+) {
+  return openRTSAction.payload.viewId === resultTypeAction.payload.viewId;
 }
 
 // this probably belongs in user preference land
 async function getFulfillColumnsChoicePreference(
-  [openAction, stepAction, requestAction]: [
+  [openAction, resultTypeDetailsAction, requestAction]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>,
+    InferAction<typeof fulfillResultTypeDetails>,
     InferAction<typeof requestColumnsChoicePreference>
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillColumnsChoice>> {
-  const { questionName } = requestAction.payload;
+  const { resultType } = openAction.payload;
   const columns = await getResultTableColumnsPref(
     wdkService,
-    questionName,
-    openAction.payload.stepId
+    requestAction.payload.searchName,
+    resultType.type === 'step' ? resultType.step : undefined
   );
-  const validColumns = await filterInvalidAttributes(wdkService, questionName, identity, columns);
+  const validColumns = await filterInvalidAttributes(wdkService, requestAction.payload.searchName, identity, columns);
   return fulfillColumnsChoice(
     openAction.payload.viewId,
     validColumns,
-    questionName
+    requestAction.payload.searchName
   );
 }
 
-function filterFulfillColumnsChoicePreferenceActions([
+function filterFulfillBySearchName([
   openAction,
-  stepAction,
+  resultTypeDetailsAction,
   requestAction
 ]: [
   InferAction<typeof openRTS>,
-  InferAction<typeof fulfillStep>,
-  InferAction<typeof requestColumnsChoicePreference>
+  InferAction<typeof fulfillResultTypeDetails>,
+  InferAction<typeof requestColumnsChoicePreference>  |
+  InferAction<typeof requestSortingPreference>  | 
+  InferAction<typeof requestSortingUpdate>  |  InferAction<typeof requestColumnsChoiceUpdate> 
 ]) {
+  const { resultTypeDetails } = resultTypeDetailsAction.payload;
   return (
     openAction.payload.viewId === requestAction.payload.viewId &&
-    openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.answerSpec.questionName ===
-      requestAction.payload.questionName
+    resultTypeDetails.searchName === requestAction.payload.searchName
   );
 }
 
 async function getFulfillColumnsChoiceUpdate(
-  [openAction, stepAction, requestAction]: [
+  [openAction, resultTypeDetailsAction, requestAction]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>,
+    InferAction<typeof fulfillResultTypeDetails>,
     InferAction<typeof requestColumnsChoiceUpdate>
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillColumnsChoice>> {
-  const { id, displayPrefs } = stepAction.payload.step;
-  const columnSelection = requestAction.payload.columns;
-  const sortColumns = displayPrefs.sortColumns
-    ? displayPrefs.sortColumns
-    : (await getResultTableSortingPref(
-        requestAction.payload.questionName,
-        wdkService
-      )).map(({ attributeName: name, direction }) => ({ name, direction }));
+  const { resultType } = openAction.payload;
+
   // Save user preference and update step.
-  // FIXME Update step with redux
   setResultTableColumnsPref(
-    requestAction.payload.questionName,
+    requestAction.payload.searchName,
     wdkService,
     requestAction.payload.columns
   );
-  wdkService.updateStep(id, { displayPrefs: { sortColumns, columnSelection } });
+
+  if (resultType.type === 'step') {
+    // FIXME Update step with redux?
+    const { step } = resultType;
+    const { id, displayPreferences } = step;
+    const columnSelection = requestAction.payload.columns;
+    const sortColumns = displayPreferences.sortColumns
+      ? displayPreferences.sortColumns
+      : (await getResultTableSortingPref(
+          requestAction.payload.searchName,
+          wdkService
+        )).map(({ attributeName: name, direction }) => ({ name, direction }));
+
+    wdkService.updateStepProperties(id, { displayPreferences: { sortColumns, columnSelection } });
+  }
+
   return fulfillColumnsChoice(
     openAction.payload.viewId,
     requestAction.payload.columns,
-    requestAction.payload.questionName
-  );
-}
-
-function filterFulfillColumnColumnsChoiceUpdateActions([
-  openAction,
-  stepAction,
-  requestAction
-]: [
-  InferAction<typeof openRTS>,
-  InferAction<typeof fulfillStep>,
-  InferAction<typeof requestColumnsChoiceUpdate>
-]) {
-  return (
-    openAction.payload.viewId === requestAction.payload.viewId &&
-    openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.answerSpec.questionName ===
-      requestAction.payload.questionName
+    requestAction.payload.searchName
   );
 }
 
 async function getRequestSortingPreference(
   [openAction, requestAction]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>
+    InferAction<typeof fulfillResultTypeDetails>
   ],
   state$: StateObservable<RootState>,
   {  }: EpicDependencies
 ): Promise<InferAction<typeof requestSortingPreference>> {
   return requestSortingPreference(
     openAction.payload.viewId,
-    requestAction.payload.step.answerSpec.questionName
+    requestAction.payload.resultTypeDetails.searchName
   );
 }
 
-function filterRequestSortingPreferenceActions([openAction, requestAction]: [
-  InferAction<typeof openRTS>,
-  InferAction<typeof fulfillStep>
-]) {
-  return openAction.payload.stepId === requestAction.payload.step.id;
+function filterRequestSortingPreference(
+  [openAction, requestAction]: [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillResultTypeDetails>
+  ],
+) {
+  return openAction.payload.viewId === requestAction.payload.viewId;
 }
 
 async function getFulfillSortingPreference(
-  [openAction, stepAction, requestAction]: [
+  [openAction, strategyAction, requestAction]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>,
+    InferAction<typeof fulfillResultTypeDetails>,
     InferAction<typeof requestSortingPreference>
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillSorting>> {
-  const { step } = stepAction.payload;
-  const { questionName } = requestAction.payload;
-  const sorting = step.displayPrefs.sortColumns
-    ? step.displayPrefs.sortColumns.map(
+  const { resultType } = openAction.payload;
+  const stepSortColumns = resultType.type === 'step' && resultType.step.displayPreferences.sortColumns;
+
+  const sorting = stepSortColumns
+    ? stepSortColumns.map(
         ({ name: attributeName, direction }) => ({ attributeName, direction })
       )
     : await getResultTableSortingPref(
-        requestAction.payload.questionName,
+        requestAction.payload.searchName,
         wdkService
       );
-  const validSorting = await filterInvalidAttributes(wdkService, questionName, spec => spec.attributeName, sorting);
+  const validSorting = await filterInvalidAttributes(wdkService, requestAction.payload.searchName, spec => spec.attributeName, sorting);
+
   return fulfillSorting(
     openAction.payload.viewId,
     validSorting,
-    requestAction.payload.questionName
+    requestAction.payload.searchName
   );
 }
 
-function filterFullfillSortingPreferenceActions([
-  openAction,
-  stepAction,
-  requestAction
-]: [
-  InferAction<typeof openRTS>,
-  InferAction<typeof fulfillStep>,
-  InferAction<typeof requestSortingPreference>
-]) {
-  return (
-    openAction.payload.viewId === requestAction.payload.viewId &&
-    openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.answerSpec.questionName ===
-      requestAction.payload.questionName
-  );
-}
 
 async function getFulfillSortingUpdate(
-  [openAction, stepAction, requestAction]: [
+  [openAction, resultTypeDetailsAction, requestAction]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>,
+    InferAction<typeof fulfillResultTypeDetails>,
     InferAction<typeof requestSortingUpdate>
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillSorting>> {
-  const {
-    step: { id }
-  } = stepAction.payload;
-  const sortColumns = requestAction.payload.sorting.map(
-    ({ attributeName: name, direction }) => ({ name, direction })
-  );
-  const columnSelection = await getResultTableColumnsPref(
-    wdkService,
-    requestAction.payload.questionName,
-    openAction.payload.stepId
-  );
+  const { resultType } = openAction.payload;
+
   // save user preference and update step
-  // FIXME Update step with redux
   setResultTableSortingPref(
-    requestAction.payload.questionName,
+    requestAction.payload.searchName,
     wdkService,
     requestAction.payload.sorting
   );
-  wdkService.updateStep(id, { displayPrefs: { columnSelection, sortColumns } });
+
+  if (resultType.type === 'step') {
+    // FIXME Update step with redux?
+    const { step } = resultType;
+    const sortColumns = requestAction.payload.sorting.map(
+      ({ attributeName: name, direction }) => ({ name, direction })
+    );
+
+    const columnSelection = await getResultTableColumnsPref(
+      wdkService,
+      requestAction.payload.searchName,
+      step
+    );
+
+    wdkService.updateStepProperties(step.id, { displayPreferences: { columnSelection, sortColumns } });
+  }
+
   return fulfillSorting(
     openAction.payload.viewId,
     requestAction.payload.sorting,
-    requestAction.payload.questionName
-  );
-}
-
-function filterFulfillSortingUpdateActions([
-  openAction,
-  stepAction,
-  requestAction
-]: [
-  InferAction<typeof openRTS>,
-  InferAction<typeof fulfillStep>,
-  InferAction<typeof requestSortingUpdate>
-]) {
-  return (
-    openAction.payload.viewId === requestAction.payload.viewId &&
-    openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.answerSpec.questionName ===
-      requestAction.payload.questionName
+    requestAction.payload.searchName
   );
 }
 
@@ -525,7 +507,7 @@ async function getFulfillPageSize(
 async function getRequestAnswer(
   [
     openAction,
-    fulfillStepAction,
+    fulfillResultTypeDetailsAction,
     viewPageNumberAction,
     fulfillPageSizeAction,
     fulfillColumnsChoiceAction,
@@ -533,7 +515,7 @@ async function getRequestAnswer(
     fulfillGlobalViewFiltersAction
   ]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>,
+    InferAction<typeof fulfillResultTypeDetails>,
     InferAction<typeof viewPageNumber>,
     InferAction<typeof fulfillPageSize>,
     InferAction<typeof fulfillColumnsChoice>,
@@ -545,18 +527,18 @@ async function getRequestAnswer(
 ): Promise<InferAction<typeof requestAnswer>> {
   let numRecords = fulfillPageSizeAction.payload.pageSize;
   let offset = numRecords * (viewPageNumberAction.payload.page - 1);
-  let stepId = openAction.payload.stepId;
+  let { resultType } = openAction.payload;
   let pagination = { numRecords, offset };
   let attributes = fulfillColumnsChoiceAction.payload.columns;
   let sorting = fulfillSortingAction.payload.sorting;
   let columnsConfig: AttributesConfig = { attributes, sorting };
   let { viewFilters } = fulfillGlobalViewFiltersAction.payload;
-  return requestAnswer(openAction.payload.viewId, stepId, columnsConfig, pagination, viewFilters);
+  return requestAnswer(openAction.payload.viewId, resultType, columnsConfig, pagination, viewFilters);
 }
 
 function filterRequestAnswerActions([
   openAction,
-  fulfillStepAction,
+  fulfillResultTypeDetailsAction,
   viewPageNumberAction,
   fulfillPageSizeAction,
   fulfillColumnsChoiceAction,
@@ -564,25 +546,26 @@ function filterRequestAnswerActions([
   fulfillGlobalViewFiltersAction
 ]: [
   InferAction<typeof openRTS>,
-  InferAction<typeof fulfillStep>,
+  InferAction<typeof fulfillResultTypeDetails>,
   InferAction<typeof viewPageNumber>,
   InferAction<typeof fulfillPageSize>,
   InferAction<typeof fulfillColumnsChoice>,
   InferAction<typeof fulfillSorting>,
   InferAction<typeof fulfillGlobalViewFilters>
 ]) {
-  const { stepId, viewId } = openAction.payload;
+  const { viewId } = openAction.payload;
+  const { searchName, recordClassName } = fulfillResultTypeDetailsAction.payload.resultTypeDetails;
+
   return (
-    fulfillStepAction.payload.step.id === stepId &&
     viewPageNumberAction.payload.viewId === viewId &&
     fulfillPageSizeAction.payload.viewId === viewId &&
     fulfillColumnsChoiceAction.payload.viewId === viewId &&
     fulfillSortingAction.payload.viewId === viewId &&
     fulfillGlobalViewFiltersAction.payload.viewId === viewId &&
-    fulfillStepAction.payload.step.answerSpec.questionName === fulfillColumnsChoiceAction.payload.questionName &&
-    fulfillStepAction.payload.step.answerSpec.questionName === fulfillColumnsChoiceAction.payload.questionName &&
-    fulfillStepAction.payload.step.answerSpec.questionName === fulfillSortingAction.payload.questionName &&
-    fulfillGlobalViewFiltersAction.payload.recordClassName === fulfillStepAction.payload.step.recordClassName
+    searchName === fulfillColumnsChoiceAction.payload.searchName &&
+    searchName === fulfillColumnsChoiceAction.payload.searchName &&
+    searchName === fulfillSortingAction.payload.searchName &&
+    fulfillGlobalViewFiltersAction.payload.recordClassName === recordClassName
   );
 }
 
@@ -613,7 +596,7 @@ async function getFulfillAnswer(
               attributes: r.columnsConfig.attributes as Answer['meta']['attributes']
           }
       };
-      return fulfillAnswer(openAction.payload.viewId, r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
+      return fulfillAnswer(openAction.payload.viewId, r.resultType, r.columnsConfig, r.pagination, r.viewFilters, answer);
   }
   // FIXME Need to figure out how to handle client errors, given that some of these inputs are stored as user preferences. We might need to clear these prefs on errors?
   let formatConfig: AnswerJsonFormatConfig= {
@@ -622,12 +605,8 @@ async function getFulfillAnswer(
     pagination: r.pagination
   };
 
-  try {
-    let answer = await wdkService.getStepAnswerJson(r.stepId, formatConfig, r.viewFilters);
-    return fulfillAnswer(openAction.payload.viewId, r.stepId, r.columnsConfig, r.pagination, r.viewFilters, answer);
-  } catch (e) {
-    return reportAnswerFulfillmentError(openAction.payload.viewId);
-  }
+  const answer = await getStandardReport(wdkService, r.resultType, formatConfig, r.viewFilters)
+  return fulfillAnswer(openAction.payload.viewId, r.resultType, r.columnsConfig, r.pagination, r.viewFilters, answer);
 }
 
 function filterFulfillAnswerActions([openAction, requestAction]: [
@@ -635,8 +614,7 @@ function filterFulfillAnswerActions([openAction, requestAction]: [
   InferAction<typeof requestAnswer>
 ]) {
   return (
-    openAction.payload.viewId === requestAction.payload.viewId &&
-    openAction.payload.stepId === requestAction.payload.stepId
+    openAction.payload.viewId === requestAction.payload.viewId
   );
 }
 
@@ -654,7 +632,6 @@ async function getRequestRecordsBasketStatus(
   );
   return requestRecordsBasketStatus(
     openAction.payload.viewId,
-    openAction.payload.stepId,
     answerAction.payload.pagination.offset,
     answerAction.payload.pagination.numRecords,
     answer.meta.recordClassName,
@@ -667,8 +644,7 @@ function filterRequestRecordsBasketStatusActions([openAction, answerAction]: [
   InferAction<typeof fulfillAnswer>
 ]) {
   return (
-    openAction.payload.viewId === answerAction.payload.viewId &&
-    openAction.payload.stepId === answerAction.payload.stepId
+    openAction.payload.viewId === answerAction.payload.viewId
   );
 }
 
@@ -689,7 +665,6 @@ async function getFulfillRecordsBasketStatus(
       );
   return fulfillRecordsBasketStatus(
     openAction.payload.viewId,
-    openAction.payload.stepId,
     requestAction.payload.pageNumber,
     requestAction.payload.pageSize,
     recordsStatus
@@ -705,9 +680,7 @@ function filterFulfillRecordBasketStatusActions([
 ]) {
   let rp = requestAction.payload;
   let op = openAction.payload;
-  return (
-    op.viewId === rp.viewId &&
-    op.stepId === rp.stepId);
+  return op.viewId === rp.viewId;
 }
 
 // Global view filters
@@ -715,44 +688,44 @@ function filterFulfillRecordBasketStatusActions([
 async function getRequestGlobalViewFiltersPref(
   [
     openAction,
-    stepAction,
+    resultTypeDetailsAction,
   ]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>
+    InferAction<typeof fulfillResultTypeDetails>
   ],
 ): Promise<InferAction<typeof requestGlobalViewFilters>> {
   return requestGlobalViewFilters(
     openAction.payload.viewId,
-    stepAction.payload.step.recordClassName
+    resultTypeDetailsAction.payload.resultTypeDetails.recordClassName
   );
 }
 
 function filterRequestGlobalViewFiltersActionsPref(
   [
     openAction,
-    stepAction,
+    resultTypeDetailsAction,
   ]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>
+    InferAction<typeof fulfillResultTypeDetails>
   ]
 ) {
-  return openAction.payload.stepId === stepAction.payload.step.id;
+  return openAction.payload.viewId === resultTypeDetailsAction.payload.viewId;
 }
 
 async function getFulfillGlobalViewFiltersPref(
   [
     openAction,
-    stepAction,
+    resultTypeDetailsAction,
     requestAction
   ]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>,
+    InferAction<typeof fulfillResultTypeDetails>,
     InferAction<typeof requestGlobalViewFilters>
   ],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof fulfillGlobalViewFilters>> {
-  const { recordClassName } = stepAction.payload.step;
+  const { recordClassName } = resultTypeDetailsAction.payload.resultTypeDetails;
   const viewFilters = await getGlobalViewFilters(wdkService, recordClassName);
   return fulfillGlobalViewFilters(
     openAction.payload.viewId,
@@ -760,32 +733,31 @@ async function getFulfillGlobalViewFiltersPref(
   );
 }
 
-function filterFulfillGlobalViewFiltersActionsPref(
+function filterFulfillStrategyByStepRecordClass(
   [
     openAction,
-    stepAction,
+    resultTypeDetailsAction,
     requestAction
   ]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>,
-    InferAction<typeof requestGlobalViewFilters>
+    InferAction<typeof fulfillResultTypeDetails>,
+    InferAction<typeof requestGlobalViewFilters> | InferAction<typeof updateGlobalViewFilters>
   ]
 ) {
   return (
     openAction.payload.viewId === requestAction.payload.viewId &&
-    openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.recordClassName === requestAction.payload.recordClassName
-  )
+    openAction.payload.viewId === resultTypeDetailsAction.payload.viewId
+  );
 }
 
 async function getFulfillGlobalViewFiltersUpdate(
   [
     openAction,
-    stepAction,
+    resultTypeDetailsAction,
     updateAction
   ]: [
     InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>,
+    InferAction<typeof fulfillResultTypeDetails>,
     InferAction<typeof updateGlobalViewFilters>
   ],
   state$: StateObservable<RootState>,
@@ -794,24 +766,6 @@ async function getFulfillGlobalViewFiltersUpdate(
   const { recordClassName, viewFilters, viewId } = updateAction.payload;
   setGlobalViewFilters(wdkService, recordClassName, viewFilters);
   return fulfillGlobalViewFilters(viewId, recordClassName, viewFilters);
-}
-
-function filterFulfillGlobalViewFiltersActionsUpdate(
-  [
-    openAction,
-    stepAction,
-    updateAction
-  ]: [
-    InferAction<typeof openRTS>,
-    InferAction<typeof fulfillStep>,
-    InferAction<typeof updateGlobalViewFilters>
-  ]
-) {
-  return (
-    openAction.payload.viewId === updateAction.payload.viewId &&
-    openAction.payload.stepId === stepAction.payload.step.id &&
-    stepAction.payload.step.recordClassName === updateAction.payload.recordClassName
-  )
 }
 
 export const observe = takeEpicInWindow(
@@ -824,37 +778,48 @@ export const observe = takeEpicInWindow(
     ) => start.payload.viewId === end.payload.viewId
   },
   combineEpics(
-    mrate([openRTS], getRequestStep),
-    mrate([openRTS], getFirstPageNumber),
-    mrate([openRTS], getRequestPageSize),
-    mrate([openRTS, fulfillStep], getRequestColumnsChoicePreference,
-      { areActionsCoherent: filterRequestColumnsChoicePreferenceActions }),
-    mrate([openRTS, fulfillStep, requestColumnsChoicePreference], getFulfillColumnsChoicePreference,
-      { areActionsCoherent: filterFulfillColumnsChoicePreferenceActions }),
-    mrate([openRTS, fulfillStep, requestColumnsChoiceUpdate], getFulfillColumnsChoiceUpdate,
-      { areActionsCoherent: filterFulfillColumnColumnsChoiceUpdateActions }),
-    mrate([openRTS, fulfillStep], getRequestSortingPreference,
-      { areActionsCoherent: filterRequestSortingPreferenceActions }),
-    // need question from step
-    mrate([openRTS, fulfillStep, requestSortingPreference], getFulfillSortingPreference,
-      { areActionsCoherent: filterFullfillSortingPreferenceActions }),
-    mrate([openRTS, fulfillStep, requestSortingUpdate], getFulfillSortingUpdate,
-      { areActionsCoherent: filterFulfillSortingUpdateActions }),
-    mrate([openRTS, fulfillStep], getRequestGlobalViewFiltersPref,
+    // FIXME Change to getRequestSearchDetails => { searchName, recordClassName }
+    smrate([openRTS], getRequestResultTypeDetails),
+    smrate([openRTS], getFirstPageNumber),
+    smrate([openRTS], getRequestPageSize),
+    smrate([openRTS, requestResultTypeDetails], getFulfillResultTypeDetails,
+      { areActionsCoherent: filterResultTypeDetailsActions }),
+    // strat needed for searchName
+    smrate([openRTS, fulfillResultTypeDetails], getRequestColumnsChoicePreference,
+      { areActionsCoherent: filterResultTypeDetailsActions }),
+    // strat needed for searchName
+    smrate([openRTS, fulfillResultTypeDetails, requestColumnsChoicePreference], getFulfillColumnsChoicePreference,
+      { areActionsCoherent: filterFulfillBySearchName }),
+    // strat needed for searchName
+    smrate([openRTS, fulfillResultTypeDetails, requestColumnsChoiceUpdate], getFulfillColumnsChoiceUpdate,
+      { areActionsCoherent: filterFulfillBySearchName }),
+    // strat needed for searchName
+    smrate([openRTS, fulfillResultTypeDetails], getRequestSortingPreference,
+      { areActionsCoherent: filterRequestSortingPreference }),
+    // strat needed for searchName
+    smrate([openRTS, fulfillResultTypeDetails, requestSortingPreference], getFulfillSortingPreference,
+      { areActionsCoherent: filterFulfillBySearchName }),
+    smrate([openRTS, fulfillResultTypeDetails, requestSortingUpdate], getFulfillSortingUpdate,
+      { areActionsCoherent: filterFulfillBySearchName }),
+    // strat needed for recordClassName
+    smrate([openRTS, fulfillResultTypeDetails], getRequestGlobalViewFiltersPref,
       { areActionsCoherent: filterRequestGlobalViewFiltersActionsPref }),
-    mrate([openRTS, fulfillStep, requestGlobalViewFilters], getFulfillGlobalViewFiltersPref,
-      { areActionsCoherent: filterFulfillGlobalViewFiltersActionsPref }),
-    mrate([openRTS, fulfillStep, updateGlobalViewFilters], getFulfillGlobalViewFiltersUpdate,
-      { areActionsCoherent: filterFulfillGlobalViewFiltersActionsUpdate }),
-    mrate([requestPageSize], getFulfillPageSize),
-    mrate([requestPageSizeUpdate], getFulfillPageSizeUpdate),
-    mrate([openRTS, fulfillStep, viewPageNumber, fulfillPageSize, fulfillColumnsChoice, fulfillSorting, fulfillGlobalViewFilters], getRequestAnswer,
+    // strat needed for recordClassName
+    smrate([openRTS, fulfillResultTypeDetails, requestGlobalViewFilters], getFulfillGlobalViewFiltersPref,
+      { areActionsCoherent: filterFulfillStrategyByStepRecordClass }),
+    // strat needed for recordClassName
+    smrate([openRTS, fulfillResultTypeDetails, updateGlobalViewFilters], getFulfillGlobalViewFiltersUpdate,
+      { areActionsCoherent: filterFulfillStrategyByStepRecordClass }),
+    smrate([requestPageSize], getFulfillPageSize),
+    smrate([requestPageSizeUpdate], getFulfillPageSizeUpdate),
+    // strat needed for searchName and recordClassName, also needed to indicate update to step (params, filters, etc) (this is actually not needed. the whole thing should restart)
+    smrate([openRTS, fulfillResultTypeDetails, viewPageNumber, fulfillPageSize, fulfillColumnsChoice, fulfillSorting, fulfillGlobalViewFilters], getRequestAnswer,
       { areActionsCoherent: filterRequestAnswerActions }),
-    mrate([openRTS, requestAnswer], getFulfillAnswer,
+    smrate([openRTS, requestAnswer], getFulfillAnswer,
       { areActionsCoherent: filterFulfillAnswerActions, areActionsNew: stubTrue }),
-    mrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus,
+    smrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus,
       { areActionsCoherent: filterRequestRecordsBasketStatusActions }),
-    mrate([openRTS, requestRecordsBasketStatus], getFulfillRecordsBasketStatus,
+    smrate([openRTS, requestRecordsBasketStatus], getFulfillRecordsBasketStatus,
       { areActionsCoherent: filterFulfillRecordBasketStatusActions })
   )
 );

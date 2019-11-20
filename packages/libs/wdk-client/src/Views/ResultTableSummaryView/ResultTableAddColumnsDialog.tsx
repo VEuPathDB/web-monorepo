@@ -15,6 +15,7 @@ import {
 
 export interface Props {
   answer: Answer;
+  viewId: string;
   question: Question;
   columnsDialogIsOpen: boolean;
   columnsDialogSelection?: string[];
@@ -51,7 +52,7 @@ function ResultTableAddColumnsDialog({
         className="btn"
         onClick={() => {
           if (columnsDialogSelection) {
-            requestColumnsChoiceUpdate(columnsDialogSelection, question.name)
+            requestColumnsChoiceUpdate(columnsDialogSelection, question.urlSegment)
           }
           showHideAddColumnsDialog(false);
         }}

@@ -8,6 +8,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import {requestBlastSummaryReport, fulfillBlastSummaryReport} from 'wdk-client/Actions/SummaryView/BlastSummaryViewActions';
 import {State} from 'wdk-client/StoreModules/BlastSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 
 const actionCreators = {
@@ -17,7 +18,7 @@ const actionCreators = {
 
 type StateProps = State[number];
 type DispatchProps = typeof actionCreators;
-type OwnProps = { stepId: number };
+type OwnProps = { viewId: string, resultType: ResultType };
 
 type Props = OwnProps & DispatchProps & StateProps;
 
@@ -28,8 +29,8 @@ class BlastSummaryViewController extends ViewController< Props > {
   }
 
   loadData (prevProps?: Props) {
-    if (prevProps == null || prevProps.stepId !== this.props.stepId) {
-      this.props.requestBlastSummaryReport(this.props.stepId);
+    if (prevProps == null || prevProps.resultType !== this.props.resultType) {
+      this.props.requestBlastSummaryReport(this.props.viewId, this.props.resultType);
     }
   }
 
@@ -61,7 +62,7 @@ class BlastSummaryViewController extends ViewController< Props > {
   }
 }
 
-const mapStateToProps = (state: RootState, props: OwnProps) => state.blastSummaryView[props.stepId];
+const mapStateToProps = (state: RootState, props: OwnProps) => state.blastSummaryView[props.viewId];
 
 export default connect<StateProps, DispatchProps, OwnProps, RootState>(
   mapStateToProps,

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
 import RecordAttribute from 'wdk-client/Views/Records/RecordAttributes/RecordAttribute';

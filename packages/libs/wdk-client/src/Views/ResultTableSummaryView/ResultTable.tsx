@@ -16,10 +16,12 @@ import PrimaryKeyCell from 'wdk-client/Views/ResultTableSummaryView/PrimaryKeyCe
 import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell';
 import AttributeHeading from 'wdk-client/Views/ResultTableSummaryView/AttributeHeading';
 import { Action, BasketStatusArray, RequestSortingUpdate, RequestColumnsChoiceUpdate, RequestUpdateBasket, RequestAddStepToBasket, ViewPageNumber, RequestPageSizeUpdate, ShowHideAddColumnsDialog, OpenAttributeAnalysis, CloseAttributeAnalysis, UpdateSelectedIds, ShowLoginWarning } from 'wdk-client/Views/ResultTableSummaryView/Types';
+import {ResultType} from 'wdk-client/Utils/WdkResult';
 
 
 export interface Props {
-  stepId: number;
+  resultType: ResultType;
+  viewId: string;
   actions?: Action[];
   selectedIds?: string[];
   showIdAttributeColumn: boolean;
@@ -46,7 +48,7 @@ function ResultTable(props: Props) {
   const {
     answer,
     recordClass,
-    stepId,
+    resultType,
     showHideAddColumnsDialog,
     requestAddStepToBasket,
     actions,
@@ -71,6 +73,8 @@ function ResultTable(props: Props) {
   const selectedIdsSet = new Set(selectedIds);
   const options = {
     toolbar: true,
+    useStickyHeader: true,
+    tableBodyMaxHeight: 'calc(95vh - 200px)',
     isRowSelected: (recordInstance: RecordInstance) => {
       return selectedIdsSet.has(recordInstance.attributes[recordClass.recordIdAttributeName] as string);
     }
@@ -86,19 +90,25 @@ function ResultTable(props: Props) {
     eventHandlers,
     uiState
   });
+
+  const downloadLink = resultType.type === 'step' ? `/step/${resultType.step.id}/download`
+    : resultType.type === 'basket' ? `/workspace/basket/${resultType.basketName}/download`
+    : undefined;
   return (
     <Mesa state={tableState}>
-      <div className="ResultTableButton">
-        <Link to={`/step/${stepId}/download`}>Download</Link>
-      </div>
-      {!recordClass.useBasket ? null :
+      {downloadLink &&
+        <div className="ResultTableButton">
+          <Link to={downloadLink}>Download</Link>
+        </div>
+      }
+      {!recordClass.useBasket || resultType.type !== 'step' ? null :
         <div className="ResultTableButton">
           <button type="button"
             className="wdk-Link"
             title={userIsGuest ? 'You must login to use baskets' : 'Add all records returned by this search to your basket'}
             onClick={() => {
               if (userIsGuest) showLoginWarning('use baskets');
-              else requestAddStepToBasket(stepId)
+              else requestAddStepToBasket(resultType.step.id)
             }}>
             Add to Basket
           </button>
@@ -140,7 +150,7 @@ function getEventHandlers(props: Props) {
       },
       ...answer.meta.sorting.filter(entry => entry.attributeName !== key)
     ].slice(0, 3);
-    requestSortingUpdate(newSort, question.name);
+    requestSortingUpdate(newSort, question.urlSegment);
   }
   function onColumnReorder(attributeName: string, newIndex: number) {
     const tmpColumns = answer.meta.attributes.filter(attrName => attrName !== attributeName);
@@ -152,7 +162,7 @@ function getEventHandlers(props: Props) {
       attributeName,
       ...tmpColumns.slice(targetIndex)
     ];
-    requestColumnsChoiceUpdate(newColumns, question.name);
+    requestColumnsChoiceUpdate(newColumns, question.urlSegment);
   }
   function onPageChange(newPage: number) {
     viewPageNumber(newPage);
@@ -191,7 +201,7 @@ function getEventHandlers(props: Props) {
 }
 
 function getColumns({
-  stepId,
+  resultType,
   activeAttributeAnalysisName,
   showIdAttributeColumn,
   answer,
@@ -223,6 +233,7 @@ function getColumns({
     }) => (
       <BasketCell
         value={basketStatusArray ? basketStatusArray[rowIndex] : 'loading'}
+        recordClassUrlSegment={recordClass.urlSegment}
         row={row}
         requestUpdateBasket={requestUpdateBasket}
         userIsGuest={userIsGuest}
@@ -261,7 +272,7 @@ function getColumns({
         ClickBoundary: React.ComponentType<any>
       }) => (
         <AttributeHeading
-          stepId={stepId}
+          resultType={resultType}
           activeAttributeAnalysisName={activeAttributeAnalysisName}
           attribute={attribute}
           question={question}
@@ -270,7 +281,7 @@ function getColumns({
           openAttributeAnalysis={openAttributeAnalysis}
           closeAttributeAnalysis={closeAttributeAnalysis}
           removeAttribute={() => {
-            requestColumnsChoiceUpdate(answer.meta.attributes.filter(a => a !== attribute.name), question.name)
+            requestColumnsChoiceUpdate(answer.meta.attributes.filter(a => a !== attribute.name), question.urlSegment)
           }}
         />
       )

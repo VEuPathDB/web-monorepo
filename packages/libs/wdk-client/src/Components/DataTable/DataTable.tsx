@@ -285,9 +285,9 @@ class DataTable extends PureComponent<Props> {
 
       // ignore event if text has been selected
       const selection = window.getSelection();
-      const selectionText = selection.toString();
       if (
-        selectionText &&
+        selection &&
+        selection.toString() &&
         containsAncestorNode(
           selection.anchorNode,
           currNode => currNode.parentNode === tr
@@ -306,7 +306,7 @@ class DataTable extends PureComponent<Props> {
       this._callExpandedRowsCallback(dataTable);
     })
     // click handler for expand all rows
-    .on('click', 'th .wdk-DataTableCellExpand', event => {
+    .on('click', 'th .wdk-DataTableCellExpand', () => {
       // if all are shown, then hide all, otherwise show any that are hidden
       let allShown = areAllChildRowsShown(dataTable);
       for (let tr of dataTable.rows().nodes().toArray()) {

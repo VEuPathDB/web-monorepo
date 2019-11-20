@@ -1,10 +1,11 @@
 import { get } from 'lodash';
 
-import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
+import { transitionToInternalPage, Action as RouteAction } from 'wdk-client/Actions/RouterActions';
 import { updateUserPreference, PreferenceUpdateAction } from 'wdk-client/Actions/UserActions';
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { UserDataset, UserDatasetMeta } from 'wdk-client/Utils/WdkModel';
-import { ServiceError, UserDatasetShareResponse } from 'wdk-client/Utils/WdkService';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
+import {  UserDatasetShareResponse } from 'wdk-client/Service/Mixins/UserDatasetsService';
 
 export type Action =
   | DetailErrorAction
@@ -402,7 +403,7 @@ export function updateUserDatasetDetail(userDataset: UserDataset, meta: UserData
   ]
 }
 
-export function removeUserDataset (userDataset: UserDataset, redirectTo?: string): ActionThunk<RemovalAction|EmptyAction> {
+export function removeUserDataset (userDataset: UserDataset, redirectTo?: string): ActionThunk<RemovalAction|EmptyAction|RouteAction> {
   return ({ wdkService }) => [
     detailRemoving(),
     wdkService.removeUserDataset(userDataset.id)

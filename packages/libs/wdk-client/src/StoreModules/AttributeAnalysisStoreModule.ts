@@ -13,13 +13,14 @@ import {
 } from 'wdk-client/Actions/AttributeAnalysisActions';
 import {EpicDependencies} from 'wdk-client/Core/Store';
 import {combineReducers} from 'redux';
-import {StateObservable, combineEpics} from 'redux-observable';
+import {StateObservable} from 'redux-observable';
 import {
   InferAction,
   switchMapRequestActionsToEpic,
   takeEpicInWindow,
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
+import {ResultType, getCustomReport} from 'wdk-client/Utils/WdkResult';
 
 export const key = 'attributeAnalysis';
 
@@ -31,7 +32,7 @@ interface ReportState {
   error: Error | undefined;
   loading: boolean;
   activeAnalysis?: {
-    stepId: number,
+    resultType: ResultType;
     reporterName: string
   };
 }
@@ -148,13 +149,13 @@ async function getAttributeReport(
   state$: StateObservable<RootState>,
   {wdkService}: EpicDependencies,
 ) {
-  const {reporterName, stepId, config} = requestReportAction.payload;
+  const {reporterName, resultType, config} = requestReportAction.payload;
   try {
-    const report = await wdkService.getStepAnswer(stepId, {format: reporterName, formatConfig: config});
-    return fulfillAttributeReport(reporterName, stepId, report);
+    const report = await getCustomReport(wdkService, resultType, {format: reporterName, formatConfig: config});
+    return fulfillAttributeReport(reporterName, resultType, report);
   }
   catch (error) {
-    return errorAttributeReport(reporterName, stepId, error);
+    return errorAttributeReport(reporterName, resultType, error);
   }
 }
 

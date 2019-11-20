@@ -48,7 +48,7 @@ class RecordController extends PageController<Props> {
    * Declare what fields of the record are needed. All requests are made in
    * parallel, but the first requests is required to render the page.
    *
-   * By default, two elements are returned. The first includes all atrributes,
+   * By default, two elements are returned. The first includes all attributes,
    * and the second includes all tables. In some cases, more granular control
    * might be required, which this function hook provides.
    */
