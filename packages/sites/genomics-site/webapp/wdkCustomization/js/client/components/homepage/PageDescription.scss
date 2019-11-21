@@ -1,5 +1,5 @@
 .vpdb-PageDescription {
-  font-size: 1rem;
+  font-size: 1.3333333333333em;
 
   &ProjectId {
     font-weight: bold;
@@ -17,7 +17,7 @@
         align-items: center;
 
         h4 {
-          font-size: 1.5rem;
+          font-size: 2em;
           color: #999;
           padding-right: 0.5rem;
         }
@@ -25,7 +25,7 @@
 
       &Secondary {
         a {
-          font-size: 0.9rem;
+          font-size: 0.9em;
           font-weight: bold;
           color: #00304c;
         }
@@ -59,7 +59,7 @@
 
           &Description {
             font-weight: bold;
-            font-size: 0.75rem;
+            font-size: 1em;
           }
         }
       }

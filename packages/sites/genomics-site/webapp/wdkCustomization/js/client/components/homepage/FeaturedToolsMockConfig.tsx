@@ -1,8 +1,8 @@
 import { FeaturedToolMetadata } from "./FeaturedTools";
 
 const MOCK_FEATURED_TOOL_ORDER = [ 
-  "search-strategies",
   "tour", 
+  "search-strategies",
   "analyze",
   "population",
   "pathways",

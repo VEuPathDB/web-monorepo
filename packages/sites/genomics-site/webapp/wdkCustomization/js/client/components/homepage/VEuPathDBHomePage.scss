@@ -15,7 +15,7 @@ body.vpdb-Body {
     grid-template-columns: 15.625rem 1fr 18.75rem;
     grid-template-rows: 9.0625rem 1fr auto;
   
-    height: 100vh;
+    min-height: 100vh;
 
     .vpdb-HeaderContainer {
       grid-area: header;
@@ -99,7 +99,7 @@ body.vpdb-Body {
 
     .vpdb-NewsPane {
       grid-area: side;
-      border-left: 1px solid;
+      border-left: 0.0625rem solid;
     }
 
     .vpdb-Footer {

@@ -1,13 +1,12 @@
 .vpdb-FeaturedTools {
-  font-size: 1rem;
   color: #00304c;
   
   h3 {
-    font-size: 1.75rem;
+    font-size: 2.33333333333em;
   }
 
   h5 {
-    font-size: 1.25rem;
+    font-size: 1.66666666667em;
     font-weight: 500;
   }
 
@@ -17,7 +16,7 @@
     align-items: center;
 
     a {
-      font-size: 0.9rem;
+      font-size: 1.2em;
       color: #00304c;
       font-weight: bold;
     }
@@ -34,6 +33,7 @@
     }
 
     &Item {
+      font-size: 1.2em;
       padding: 0.75rem 1.25rem 0.75rem 1.5rem;
       border-left: 0.125rem solid transparent;
       display: block;
