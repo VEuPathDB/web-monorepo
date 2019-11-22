@@ -38,6 +38,7 @@ export type Props = {
   DescriptionComponent?: (props: { description?: string, navigatingToDescription: boolean }) => JSX.Element;
   onClickDescriptionLink?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onSubmit?: (e: React.FormEvent) => boolean | void;
+  containerClassName?: string;
 }
 
 const cx = makeClassNameHelper('wdk-QuestionForm');
@@ -55,7 +56,7 @@ export const useDefaultOnSubmit = (dispatchAction: DispatchAction, urlSegment: s
 
 export default function DefaultQuestionForm(props: Props) {
 
-  const { dispatchAction, onSubmit, submissionMetadata, state, submitButtonText, recordClass, validateForm = true } = props;
+  const { dispatchAction, onSubmit, submissionMetadata, state, submitButtonText, recordClass, validateForm = true, containerClassName } = props;
   const { question, customName, paramValues, weight, stepValidation, submitting } = state;
 
   let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata);
@@ -82,7 +83,7 @@ export default function DefaultQuestionForm(props: Props) {
   let renderParamGroup = props.renderParamGroup ? props.renderParamGroup : renderDefaultParamGroup;
   let Description = props.DescriptionComponent || QuestionDescription;
 
-  let containerClassName = question.parameters.every(({ type }) => type !== 'filter') 
+  let fullContainerClassName = (containerClassName || ' ') + question.parameters.every(({ type }) => type !== 'filter') 
     ? cx('', 'default-width')
     : cx('', 'wide-width');
 
@@ -108,7 +109,7 @@ export default function DefaultQuestionForm(props: Props) {
   let onClickDescriptionLink = props.onClickDescriptionLink || defaultOnClickDescriptionLink;
 
   return (
-    <div className={containerClassName} ref={containerRef}>
+    <div className={fullContainerClassName} ref={containerRef}>
       <QuestionHeader
         showDescriptionLink={submissionMetadata.type === 'create-strategy'}
         onClickDescriptionLink={onClickDescriptionLink}
