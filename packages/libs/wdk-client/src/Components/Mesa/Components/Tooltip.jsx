@@ -50,6 +50,8 @@ class Tooltip extends React.Component {
 
   componentWillUnmount () {
     if (this.events) this.events.clearAll();
+    clearTimeout(this.hideTimeout);
+    clearTimeout(this.showTimeout);
   }
 
   /* -=-=-=-=-=-=-=-=-=-=-=-= Utilities -=-=-=-=-=-=-=-=-=-=-=-= */
