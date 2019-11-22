@@ -393,8 +393,9 @@ function WebServicesTutorialLink(props: WebServicesTutorialLinkProps) {
   let queryString =
     "searchName=" + searchName +
     "&weight=" + weight +
-    Object.keys(paramValues).map(
-      paramName => "&" + paramName + "=" + encodeURIComponent(paramValues[paramName]));
+    Object.keys(paramValues)
+      .map(paramName => "&" + paramName + "=" + encodeURIComponent(paramValues[paramName]))
+      .join("");
   let link = "/web-services-help?" + queryString;
   return (
     <div style={{marginBottom:"5px"}}>
