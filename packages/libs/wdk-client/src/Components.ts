@@ -54,6 +54,7 @@ import PermissionDenied from 'wdk-client/Components/PageStatus/PermissionDenied'
 import Loading from 'wdk-client/Components/Loading/Loading';
 import LoadingOverlay from 'wdk-client/Components/Loading/LoadingOverlay';
 import * as Mesa from 'wdk-client/Components/Mesa';
+import CommonModal from 'wdk-client/Components/Overlays/CommonModal';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import Modal from 'wdk-client/Components/Overlays/Modal';
 import Popup from 'wdk-client/Components/Overlays/Popup';
@@ -82,6 +83,7 @@ export {
   CheckboxTree,
   CheckboxTreeNode,
   CollapsibleSection,
+  CommonModal,
   DataTable,
   DateRangeSelector,
   DateSelector,

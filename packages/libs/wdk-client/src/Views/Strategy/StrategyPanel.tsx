@@ -10,7 +10,7 @@ import {StrategyControls} from 'wdk-client/Views/Strategy/StrategyControls';
 import './StrategyPanel.css';
 import {Plugin} from 'wdk-client/Utils/ClientPlugin';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
-import StrategyModal from 'wdk-client/Views/Strategy/StrategyModal';
+import { CommonModal as StrategyModal } from 'wdk-client/Components';
 
 const cx = makeClassNameHelper('StrategyPanel');
 

@@ -1,0 +1,15 @@
+.wdk-PlatformModal {
+  &Content {
+    min-width: 30em;
+    min-height: 10em;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+
+    &Actions {
+      display: flex;
+    }
+  }
+}

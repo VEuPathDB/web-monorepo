@@ -2,9 +2,9 @@ import React from 'react';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
 
-import './StrategyModal.scss';
+import './CommonModal.scss';
 
-const cx = makeClassNameHelper('StrategyModal');
+const cx = makeClassNameHelper('CommonModal');
 
 interface Props {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ interface Props {
   onClose?: () => void;
 }
 
-export default function StrategyModal(props: Props) {
+export default function CommonModal(props: Props) {
   const { children, title, onClose, onGoBack } = props;
   const leftButtons = onGoBack && [
     <button type="button" onClick={() => onGoBack()}>

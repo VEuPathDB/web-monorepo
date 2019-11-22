@@ -15,7 +15,7 @@ import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
 
 import 'wdk-client/Views/Strategy/AddStepPanel.scss';
-import StrategyModal from 'wdk-client/Views/Strategy/StrategyModal';
+import { CommonModal as StrategyModal } from 'wdk-client/Components';
 
 const cx = makeClassNameHelper('AddStepPanel');
 

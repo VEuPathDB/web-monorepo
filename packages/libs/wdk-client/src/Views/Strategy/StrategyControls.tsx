@@ -14,7 +14,7 @@ import {requestDuplicateStrategy, requestDeleteStrategy, requestPatchStrategyPro
 
 import './StrategyControls.scss';
 import {showLoginWarning} from 'wdk-client/Actions/UserSessionActions';
-import StrategyModal from 'wdk-client/Views/Strategy/StrategyModal';
+import { CommonModal as StrategyModal } from 'wdk-client/Components';
 
 const cx = makeClassNameHelper('StrategyControls');
 
