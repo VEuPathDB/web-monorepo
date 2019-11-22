@@ -94,10 +94,10 @@ class WebServicesHelpController extends PageController<Props> {
     );
   }
 
-  loadData() {
+  loadData(prevProps?: Props) {
     const { ownProps, isLoading, resultType, loadPageDataFromSearchConfig } = this.props;
 
-    if (resultType || isLoading) return;
+    if (prevProps != null) return;
 
     // must reinitialize with every new props
     if ('searchName' in ownProps && 'weight' in ownProps) {
