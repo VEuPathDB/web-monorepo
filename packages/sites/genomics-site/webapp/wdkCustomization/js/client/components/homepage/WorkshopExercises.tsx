@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Loading, IconAlt } from 'wdk-client/Components';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 
 import { makeVpdbClassNameHelper } from './Utils';
-import { MOCK_EXERCISE_METADATA } from './WorkshopExercisesMockConfig';
 
 import './WorkshopExercises.scss';
 
@@ -13,6 +12,31 @@ const cx = makeVpdbClassNameHelper('WorkshopExercises');
 const cardListCx = makeVpdbClassNameHelper('CardList');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 const bgWashCx = makeVpdbClassNameHelper('BgWash');
+
+const WORKSHOP_EXERCISES_PREFIX = 'https://workshop.eupathdb.org';
+const WORKSHOP_EXERCISES_URL = 'https://qa.community.eupathdb.org/json/workshop_exercises.json';
+const FILL_ME_IN = 'FILL ME IN';
+
+type WorkshopExercisesResponseData = {
+  cards: CardResponseData[]
+};
+
+type CardResponseData = {
+  card: string,
+  description: string | null,
+  links: LinkResponseData[]
+};
+
+type LinkResponseData = {
+  name: string,
+  path: string,
+  description: string,
+};
+
+type CardMetadata = {
+  cardOrder: string[],
+  cardEntries: Record<string, CardEntry>
+};
 
 type CardEntry = {
   title: string,
@@ -26,21 +50,44 @@ type ExerciseEntry = {
   description: string
 };
 
-export type CardMetadata = {
-  cardOrder: string[],
-  cardEntries: Record<string, CardEntry>
-};
-
-function useCardMetadata() {
-  const [ cardMetadata, setCardMetadata ] = useState<CardMetadata | undefined>(undefined);
+function useCardMetadata(): CardMetadata | undefined {
+  const [ workshopExercisesResponseData, setWorkshopExercisesResponseData ] = useState<WorkshopExercisesResponseData | undefined>(undefined);
 
   useEffect(() => {
-    // FIXME: Replace this with "real" logic
-    // for loading the featured tool entries
-    setTimeout(() => {
-      setCardMetadata(MOCK_EXERCISE_METADATA);
-    }, Math.random() * 1000 + 500);
+    (async () => {
+      // FIXME Add basic error-handling 
+      const response = await fetch(WORKSHOP_EXERCISES_URL, { mode: 'cors' });
+
+      // FIXME Validate this JSON using a Decoder
+      const responseData = await response.json() as WorkshopExercisesResponseData;
+
+      setWorkshopExercisesResponseData(responseData);
+    })();
   }, []);
+
+  const cardMetadata = useMemo(
+    () => 
+      workshopExercisesResponseData &&
+      {
+        cardOrder: workshopExercisesResponseData.cards.map(({ card }) => card),
+        cardEntries: workshopExercisesResponseData.cards.reduce(
+          (memo, { card, description, links }) => ({
+            ...memo,
+            [card]: {
+              title: card,
+              description: description == null ? FILL_ME_IN : description,
+              exercises: links.map(({ name, path, description }) => ({
+                title: name,
+                url: path,
+                description
+              }))
+            }
+          }), 
+          {  } as Record<string, CardEntry>
+        )
+      },
+    [ workshopExercisesResponseData ]
+  );
 
   return cardMetadata;
 }
@@ -128,7 +175,7 @@ const Card = ({ entry }: CardProps) =>
               <span className="fa-li">
                 <IconAlt fa="file-pdf-o" />
               </span>
-              <a href={exercise.url} target="_blank" className={cardListCx('ItemContentLink')}>{exercise.title}</a>
+              <a href={`${WORKSHOP_EXERCISES_PREFIX}/${exercise.url}`} target="_blank" className={cardListCx('ItemContentLink')}>{exercise.title}</a>
             </li>
         )
       }
