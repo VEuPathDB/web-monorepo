@@ -4,7 +4,7 @@ import { Loading, IconAlt } from 'wdk-client/Components';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 
-import { makeVpdbClassNameHelper } from './Utils';
+import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
 
 import './WorkshopExercises.scss';
 
@@ -13,8 +13,11 @@ const cardListCx = makeVpdbClassNameHelper('CardList');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 const bgWashCx = makeVpdbClassNameHelper('BgWash');
 
+// FIXME This prefix should be added on the "Jekyll side"
 const WORKSHOP_EXERCISES_PREFIX = 'https://workshop.eupathdb.org';
-const WORKSHOP_EXERCISES_URL = 'https://qa.community.eupathdb.org/json/workshop_exercises.json';
+
+const WORKSHOP_EXERCISES_URL_SEGMENT = 'json/workshop_exercises.json';
+
 const FILL_ME_IN = 'FILL ME IN';
 
 type WorkshopExercisesResponseData = {
@@ -51,19 +54,22 @@ type ExerciseEntry = {
 };
 
 function useCardMetadata(): CardMetadata | undefined {
+  const communitySiteUrl = useCommunitySiteUrl();
   const [ workshopExercisesResponseData, setWorkshopExercisesResponseData ] = useState<WorkshopExercisesResponseData | undefined>(undefined);
 
   useEffect(() => {
-    (async () => {
-      // FIXME Add basic error-handling 
-      const response = await fetch(WORKSHOP_EXERCISES_URL, { mode: 'cors' });
+    if (communitySiteUrl != null) {
+      (async () => {
+        // FIXME Add basic error-handling 
+        const response = await fetch(`${communitySiteUrl}${WORKSHOP_EXERCISES_URL_SEGMENT}`, { mode: 'cors' });
 
-      // FIXME Validate this JSON using a Decoder
-      const responseData = await response.json() as WorkshopExercisesResponseData;
+        // FIXME Validate this JSON using a Decoder
+        const responseData = await response.json() as WorkshopExercisesResponseData;
 
-      setWorkshopExercisesResponseData(responseData);
-    })();
-  }, []);
+        setWorkshopExercisesResponseData(responseData);
+      })();
+    }
+  }, [ communitySiteUrl ]);
 
   const cardMetadata = useMemo(
     () => 

@@ -3,7 +3,7 @@ import { keyBy } from 'lodash';
 
 import { Loading, IconAlt } from 'wdk-client/Components';
 
-import { makeVpdbClassNameHelper } from './Utils';
+import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
 
 import './FeaturedTools.scss';
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
@@ -11,7 +11,7 @@ import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 
-const FEATURED_TOOL_URL = 'https://qa.community.eupathdb.org/json/features_tools.json';
+const FEATURED_TOOL_URL_SEGMENT = 'json/features_tools.json';
 
 type FeaturedToolResponseData = FeaturedToolEntry[];
 
@@ -29,19 +29,22 @@ type FeaturedToolEntry = {
 };
 
 function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
+  const communitySiteUrl = useCommunitySiteUrl();
   const [ featuredToolResponseData, setFeaturedToolResponseData ] = useState<FeaturedToolResponseData | undefined>(undefined);
 
   useEffect(() => {
-    (async () => {
-      // FIXME Add basic error-handling 
-      const response = await fetch(FEATURED_TOOL_URL, { mode: 'cors' });
+    if (communitySiteUrl != null) {
+      (async () => {
+        // FIXME Add basic error-handling 
+        const response = await fetch(`${communitySiteUrl}${FEATURED_TOOL_URL_SEGMENT}`, { mode: 'cors' });
 
-      // FIXME Validate this JSON using a Decoder
-      const responseData = await response.json() as FeaturedToolResponseData;
+        // FIXME Validate this JSON using a Decoder
+        const responseData = await response.json() as FeaturedToolResponseData;
 
-      setFeaturedToolResponseData(responseData);
-    })();
-  }, []);
+        setFeaturedToolResponseData(responseData);
+      })();
+    }
+  }, [ communitySiteUrl ]);
 
   const featuredToolMetadata = useMemo(
     () => 
