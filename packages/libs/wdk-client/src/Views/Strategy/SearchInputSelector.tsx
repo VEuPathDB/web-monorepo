@@ -16,7 +16,7 @@ import 'wdk-client/Views/Strategy/SearchInputSelector.scss';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { compose } from 'redux';
 import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
-import { pruneDescendantNodes } from 'wdk-client/Utils/TreeUtils';
+import { pruneDescendantNodes, getLeaves } from 'wdk-client/Utils/TreeUtils';
 
 type StateProps = {
   basketCount?: number,
@@ -59,24 +59,30 @@ export const SearchInputSelectorView = ({
     }
   }, [ isGuest ]);
 
-  const { linksPosition, initialExpandedBranches, showSearchBox } = useMemo(
+  const { linksPosition, initialExpandedBranches, showSearchBox, finalTree } = useMemo(
     () => {
       const has0Categories = searchTree.children.every(child => child.children.length === 0);
       const has1Category = searchTree.children.length === 1 && searchTree.children[0].children.every(child => child.children.length === 0);
       const checkboxRowsCount = countCheckboxRows(searchTree);
+      const allBranchIds = getAllBranchIds(searchTree);
       const SMALL_CHECKBOX_ROW_COUNT = 8;
+      const MIN_CATEGORIES_TO_SHOW = 5;
 
       // If there are 0 or 1 search categories, or fewer than SMALL_CHECKBOX_ROW_COUNT rows in the checkbox tree
       // ... don't offer expand/collapse links, and start expanded
       const [ linksPosition, initialExpandedBranches ] = has0Categories || has1Category || checkboxRowsCount < SMALL_CHECKBOX_ROW_COUNT
-        ? [ LinksPosition.None, getAllBranchIds(searchTree) ]
+        ? [ LinksPosition.None, allBranchIds ]
         : [ LinksPosition.Top, [] ];
 
       // If there are fewer than SMALL_CHECKBOX_ROW_COUNT rows in the checkbox tree
       // ... don't offer a search box
       const showSearchBox = checkboxRowsCount >= SMALL_CHECKBOX_ROW_COUNT;
 
-      return { linksPosition, initialExpandedBranches, showSearchBox };
+      const finalTree: CategoryTreeNode = allBranchIds.length >= MIN_CATEGORIES_TO_SHOW
+        ? searchTree
+        : { properties: { }, children: getLeaves(searchTree, node => node.children) }
+
+      return { linksPosition, initialExpandedBranches, showSearchBox, finalTree };
 
       function countCheckboxRows(node: CategoryTreeNode): number {
         return node.children.reduce(
@@ -168,7 +174,7 @@ export const SearchInputSelectorView = ({
             <CategoriesCheckboxTree
               selectedLeaves={noSelectedLeaves}
               onChange={noop}
-              tree={searchTree}
+              tree={finalTree}
               expandedBranches={expandedBranches}
               searchTerm={searchTerm}
               isSelectable={false}
