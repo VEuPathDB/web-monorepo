@@ -91,7 +91,7 @@ export default class Root extends React.Component<Props> {
             <WdkServiceContext.Provider value={this.props.wdkService}>
               <PluginContext.Provider value={makeCompositePluginComponent(this.props.pluginConfig)}>
                 <Page>
-                  <ErrorBoundary>
+                  <React.Fragment>
                     <Switch>
                       {this.props.routes.map(({ path, exact = true, component: RouteComponent, requiresLogin }) => (
                         <Route
@@ -108,7 +108,7 @@ export default class Root extends React.Component<Props> {
                       ))}
                     </Switch>
                     <LoginFormController />
-                  </ErrorBoundary>
+                  </React.Fragment>
                 </Page>
               </PluginContext.Provider>
             </WdkServiceContext.Provider>
