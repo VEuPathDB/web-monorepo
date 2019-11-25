@@ -178,26 +178,35 @@
 
 /* Arrows */
 .StepBoxes--CombinePrimaryInputArrow {
-  top: .65em;
+  top: .8em;
   left: -.6em;
   position: relative;
   color: black;
+  background-image: url('./primary-input-arrow.svg');
+  height: 0.83333333333em;
+  width: 0.83333333333em;
 }
 
 /* Arrows */
 .StepBoxes--CombineSecondaryInputArrow {
-  top: -2em;
-  left: 50%;
+  top: -1.55em;
+  left: calc(50% + .07em);
   position: relative;
   color: black;
+  background-image: url('./secondary-input-arrow.svg');
+  height: 0.83333333333em;
+  width: 0.83333333333em;
 }
 
 /* Arrows */
 .StepBoxes--TransformInputArrow {
-  top: .97em;
+  top: 1.1em;
   left: -.3em;
   position: absolute;
   color: black;
+  background-image: url('./primary-input-arrow.svg');
+  height: 0.83333333333em;
+  width: 0.83333333333em;
 }
 
 .StepBoxes--CombineOperator__INTERSECT {
