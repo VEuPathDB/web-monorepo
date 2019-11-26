@@ -6,6 +6,6 @@ import './ColocateStepBoxIcon.scss';
 
 export const ColocateStepBoxIcon = () =>
   <div className={cxStepBoxes('--SpanOperator')}>
-    <div className={cxStepBoxes('--CombinePrimaryInputArrow')}>&#9654;</div>
-    <div className={cxStepBoxes('--CombineSecondaryInputArrow')}>&#9660;</div>
+    <div className={cxStepBoxes('--CombinePrimaryInputArrow')}></div>
+    <div className={cxStepBoxes('--CombineSecondaryInputArrow')}></div>
   </div>;

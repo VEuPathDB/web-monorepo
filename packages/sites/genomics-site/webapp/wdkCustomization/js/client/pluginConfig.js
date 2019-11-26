@@ -11,7 +11,7 @@ import {
   StepAnalysisHpiGeneListResults,
 } from 'wdk-client/Plugins';
 
-import { ByGenotypeNumberCheckbox } from 'wdk-client/Views/Question/Params/ByGenotypeNumberCheckbox/ByGenotypeNumberCheckbox'
+import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumberCheckbox';
 
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
 import { ByGenotypeNumber } from './components/questions/ByGenotypeNumber';

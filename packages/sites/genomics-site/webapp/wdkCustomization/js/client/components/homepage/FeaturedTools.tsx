@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { keyBy } from 'lodash';
 
 import { Loading, IconAlt } from 'wdk-client/Components';
 
-import { MOCK_FEATURED_TOOLS_METADATA } from './FeaturedToolsMockConfig';
-import { makeVpdbClassNameHelper } from './Utils';
+import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
 
 import './FeaturedTools.scss';
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
@@ -11,28 +11,50 @@ import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 
+const FEATURED_TOOL_URL_SEGMENT = 'json/features_tools.json';
+
+type FeaturedToolResponseData = FeaturedToolEntry[];
+
+type FeaturedToolMetadata = {
+  toolListOrder: string[],
+  toolEntries: Record<string, FeaturedToolEntry>
+};
+
 type FeaturedToolEntry = {
+  identifier: string,
   listIconKey: string,
   listTitle: string,
   descriptionTitle?: string,
   descriptionBody: string
 };
 
-export type FeaturedToolMetadata = {
-  toolListOrder: string[],
-  toolEntries: Record<string, FeaturedToolEntry>
-};
-
-function useFeaturedToolMetadata() {
-  const [ featuredToolMetadata, setFeaturedToolMetadata ] = useState<FeaturedToolMetadata | undefined>(undefined);
+function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
+  const communitySiteUrl = useCommunitySiteUrl();
+  const [ featuredToolResponseData, setFeaturedToolResponseData ] = useState<FeaturedToolResponseData | undefined>(undefined);
 
   useEffect(() => {
-    // FIXME: Replace this with "real" logic
-    // for loading the featured tool entries
-    setTimeout(() => {
-      setFeaturedToolMetadata(MOCK_FEATURED_TOOLS_METADATA);
-    }, Math.random() * 1000 + 500);
-  }, []);
+    if (communitySiteUrl != null) {
+      (async () => {
+        // FIXME Add basic error-handling 
+        const response = await fetch(`${communitySiteUrl}${FEATURED_TOOL_URL_SEGMENT}`, { mode: 'cors' });
+
+        // FIXME Validate this JSON using a Decoder
+        const responseData = await response.json() as FeaturedToolResponseData;
+
+        setFeaturedToolResponseData(responseData);
+      })();
+    }
+  }, [ communitySiteUrl ]);
+
+  const featuredToolMetadata = useMemo(
+    () => 
+      featuredToolResponseData && 
+      {
+        toolListOrder: featuredToolResponseData.map(({ identifier }) => identifier),
+        toolEntries: keyBy(featuredToolResponseData, 'identifier')
+      }, 
+    [ featuredToolResponseData ]
+  );
 
   return featuredToolMetadata;
 }
