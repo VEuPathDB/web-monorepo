@@ -25,8 +25,8 @@ function SelectEnumParam(props: Props<SelectEnumParam>) {
   return parameter.multiPick
     ? <MultiSelect
         items={parameter.vocabulary.map(([value, display]) => ({ value, display }))}
-        value={valueToArray(value)}
-        onChange={(value: string[]) => onParamValueChange(value.join(','))}
+        value={JSON.parse(value)}
+        onChange={(value: string[]) => onParamValueChange(JSON.stringify(value))}
         required={!parameter.allowEmptyValue}
       />
     : <SingleSelect

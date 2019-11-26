@@ -59,12 +59,12 @@ function getNodeChildren(node: TreeBoxVocabNode) {
   return node.children;
 }
 
-function removeBranches(tree: TreeBoxVocabNode, items: string[]) {
+function removeBranches(tree: TreeBoxVocabNode, items: string[]): string[] {
   const leaves = getLeaves(tree, getNodeChildren);
   return intersection(leaves.map(getNodeId), items);
 }
 
-function deriveSelectedBranches(tree: TreeBoxVocabNode, items: string[]) {
+function deriveSelectedBranches(tree: TreeBoxVocabNode, items: string[]): string[] {
   const itemSet = new Set(items);
   return filterNodes((node: TreeBoxVocabNode) => (
     isBranch(node, getNodeChildren) &&
@@ -80,7 +80,7 @@ function findBranchTermsUpToDepth(tree: TreeBoxVocabNode, depth: number): string
     .toArray();
 }
 
-function deriveIndeterminateBranches(tree: TreeBoxVocabNode, items: string[]) {
+function deriveIndeterminateBranches(tree: TreeBoxVocabNode, items: string[]): string[] {
   const itemSet = new Set(items);
   return filterNodes((node: TreeBoxVocabNode) => (
     isBranch(node, getNodeChildren) &&
@@ -128,7 +128,7 @@ export function reduce(state: State = {} as State, action: Action): State {
 
 export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   const tree = props.parameter.vocabulary;
-  const selectedNodes = props.value.split(/\s*,\s*/);
+  const selectedNodes = JSON.parse(props.value);
   const selectedLeaves = removeBranches(tree, selectedNodes);
   const allCount = getLeaves(tree, getNodeChildren).length;
   const selectedCount = props.parameter.countOnlyLeaves
@@ -152,7 +152,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         selectedList={selectedLeaves}
         onSelectionChange={(ids: string[]) => {
           const idsWithBranches = ids.concat(deriveSelectedBranches(tree, ids));
-          props.onParamValueChange(idsWithBranches.join(','));
+          props.onParamValueChange(JSON.stringify(idsWithBranches));
         }}
         isSearchable={true}
         searchBoxPlaceholder="Filter list below..."

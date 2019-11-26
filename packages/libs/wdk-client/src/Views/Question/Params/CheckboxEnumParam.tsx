@@ -26,8 +26,8 @@ function CheckboxEnumParam(props: Props<CheckboxEnumParam>) {
   return parameter.multiPick
     ? <CheckboxList
         items={parameter.vocabulary.map(([value, display]) => ({ value, display: safeHtml(display) }))}
-        value={valueToArray(value)}
-        onChange={value => onParamValueChange(value.join(','))}
+        value={JSON.parse(value)}
+        onChange={value => onParamValueChange(JSON.stringify(value))}
       />
     : <RadioList
         items={parameter.vocabulary.map(([value, display]) => ({ value, display: safeHtml(display) }))}

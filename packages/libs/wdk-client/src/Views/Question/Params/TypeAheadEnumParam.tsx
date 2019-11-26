@@ -24,14 +24,14 @@ export const TypeAheadEnumParamComponent = (props: Props<TypeAheadEnumParam>) =>
         (memo, entry) => ({
           ...memo,
           [entry[0]]: entry
-        }), 
+        }),
         {} as Record<string, [string, string, null]>
       ),
     [ props.parameter.vocabulary ]
   );
 
   const options = useMemo(
-    () => props.parameter.vocabulary.map(([ value, label ]) => ({ value, label })), 
+    () => props.parameter.vocabulary.map(([ value, label ]) => ({ value, label })),
     [ props.parameter.vocabulary ]
   );
 
@@ -39,12 +39,7 @@ export const TypeAheadEnumParamComponent = (props: Props<TypeAheadEnumParam>) =>
 
   const selection = useMemo(
     () => {
-      const stringValueArray = props.value === ''
-        ? []
-        : props.parameter.multiPick
-        ? props.value.split(',')
-        : [ props.value ];
-
+      const stringValueArray = JSON.parse(props.value) as string[];
       return stringValueArray.map(
         value => ({ value, label: vocabularyByValue[value][1] })
       );
@@ -59,32 +54,32 @@ export const TypeAheadEnumParamComponent = (props: Props<TypeAheadEnumParam>) =>
   }, []);
 
   const onChange = useCallback((newSelection: ValueType<Option>) => {
-    const newSelectionArray = newSelection == null 
-      ? [] 
+    const newSelectionArray = newSelection == null
+      ? []
       : Array.isArray(newSelection)
       ? (newSelection as Option[])
       : [newSelection as Option];
 
-    props.onParamValueChange(newSelectionArray.map(({ value }) => value).join(','));
+    props.onParamValueChange(JSON.stringify(newSelectionArray.map(({ value }) => value)));
     setSearchTerm('');
   }, [ props.onParamValueChange ]);
 
   const filterOption = useCallback(
-    (option: Option, inputValue: string) => 
+    (option: Option, inputValue: string) =>
       (inputValue.length >= 3 || option.label.length < 3) &&
       option.label.toLowerCase().includes(inputValue.toLowerCase()),
     []
   );
 
   const noOptionsMessage = useCallback(
-    ({ inputValue }: { inputValue: string } ) => 
+    ({ inputValue }: { inputValue: string } ) =>
       inputValue.length === 0
         ? 'Please input at least 3 characters'
         : inputValue.length === 1
         ? 'Please input at least 2 more characters'
         : inputValue.length === 2
         ? 'Please input at least 1 more character'
-        : 'No matches found', 
+        : 'No matches found',
     []
   );
 

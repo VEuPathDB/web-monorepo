@@ -38,7 +38,7 @@ export type ReviseOperationFormProps = {
   requestReplaceStep: (strategyId: number, stepId: number, newStepSpec: NewStepSpec) => void
 };
 
-export type ReviseOperationParameterConfiguration = 
+export type ReviseOperationParameterConfiguration =
   | { type: 'form', FormComponent: React.ComponentType<ReviseOperationFormProps> }
   | { type: 'inline' };
 
@@ -52,11 +52,11 @@ export type BinaryOperation = {
   reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration,
   operatorMenuGroup: OperatorMenuGroup,
   isCompatibleAddStepSearch: (
-    search: Question, 
+    search: Question,
     questionsByUrlSegment: Record<string, Question>,
     recordClassesByUrlSegment: Record<string, RecordClass>,
     primaryOperandStep: Step,
-    previousStep?: Step, 
+    previousStep?: Step,
     outputStep?: Step
   ) => boolean
 };
@@ -77,30 +77,30 @@ export const defaultBinaryOperations: BinaryOperation[] = [
       name: 'standard_boolean_operators',
       display: 'Revise as a boolean operation',
       items: [
-        { 
+        {
           radioDisplay: <React.Fragment>A <strong>INTERSECT</strong> B</React.Fragment>,
-          value: 'INTERSECT'
+          value: '["INTERSECT"]'
         },
-        { 
+        {
           radioDisplay: <React.Fragment>A <strong>UNION</strong> B</React.Fragment>,
-          value: 'UNION'
+          value: '["UNION"]'
         },
-        { 
+        {
           radioDisplay: <React.Fragment>A <strong>MINUS</strong> B</React.Fragment>,
-          value: 'MINUS'
+          value: '["MINUS"]'
         },
-        { 
+        {
           radioDisplay: <React.Fragment>B <strong>MINUS</strong> A</React.Fragment>,
-          value: 'RMINUS'
+          value: '["RMINUS"]'
         }
       ]
     },
     isCompatibleAddStepSearch: (
-      search: Question, 
+      search: Question,
       questionsByUrlSegment: Record<string, Question>,
       recordClassesByUrlSegment: Record<string, RecordClass>,
       primaryOperandStep: Step
-    ) => 
+    ) =>
       search.outputRecordClassName === primaryOperandStep.recordClassName &&
       search.urlSegment.startsWith('boolean_question')
   }
@@ -133,13 +133,13 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
       const compatibleOperatorMetadata = binaryOperations.reduce(
         (memo, { name, isOperationSearchName, operatorParamName, baseClassName, operatorMenuGroup, reviseOperatorParamConfiguration }) => {
           const operationQuestion = questions.find(
-            question => 
+            question =>
               isOperationSearchName(question.urlSegment) &&
               (
                 (
                   !!primaryInputRecordClass &&
                   !!secondaryInputRecordClass &&
-                  !!question.allowedPrimaryInputRecordClassNames && 
+                  !!question.allowedPrimaryInputRecordClassNames &&
                   !!question.allowedSecondaryInputRecordClassNames &&
                   question.outputRecordClassName === outputRecordClass &&
                   question.allowedPrimaryInputRecordClassNames.includes(primaryInputRecordClass) &&
@@ -150,9 +150,9 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
 
           const parameterValues = [
             ...operatorMenuGroup.items.map(({ value }) => value),
-            ...(name === 'combine' ? [ 'LONLY', 'RONLY' ] : [])
+            ...(name === 'combine' ? [ '["LONLY"]', '["RONLY"]' ] : [])
           ];
-  
+
           const newMetadataEntries = operationQuestion && parameterValues.reduce(
             (memo, itemValue) => ({
               ...memo,
@@ -175,7 +175,7 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
         },
         {} as Record<string, OperatorMetadata>
       );
-      
+
       return compatibleOperatorMetadata;
     },
     [ binaryOperations, outputRecordClass, primaryInputRecordClass, secondaryInputRecordClass, questions ]
@@ -191,8 +191,8 @@ export type ReviseOperatorMenuGroup = {
 }
 
 const ignoreOperators: ReviseOperatorMenuItem[] = [
-  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LONLY', iconClassName: cxOperator('--CombineOperator', 'LONLY') },
-  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY', iconClassName: cxOperator('--CombineOperator', 'RONLY') }
+  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: '["LONLY"]', iconClassName: cxOperator('--CombineOperator', 'LONLY') },
+  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: '["RONLY"]', iconClassName: cxOperator('--CombineOperator', 'RONLY') }
 ];
 
 export const useReviseOperatorConfigs = (questions: Question[] | undefined, outputRecordClass: string | undefined, primaryInputRecordClass: string | undefined, secondaryInputRecordClass: string | undefined) => {
@@ -212,20 +212,20 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
                 items: operatorMenuGroup.items.map(
                   (menuItem) => ({
                     display: menuItem.radioDisplay,
-                    iconClassName: cxOperator(`--${baseClassName}`, toUpper(menuItem.value)),
+                    iconClassName: cxOperator(`--${baseClassName}`, toUpper(JSON.parse(menuItem.value)[0])),
                     value: menuItem.value
                   })
                 )
               }
           ]
-      }, 
+      },
       [] as ReviseOperatorMenuGroup[]
     ),
     [ binaryOperations, operatorMetadata ]
   );
 
   const reviseOperatorConfigs = useMemo(
-    () => !reviseOperatorConfigsWithoutIgnore 
+    () => !reviseOperatorConfigsWithoutIgnore
       ? undefined
       : primaryInputRecordClass !== secondaryInputRecordClass
       ? reviseOperatorConfigsWithoutIgnore
@@ -237,14 +237,14 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
             items: ignoreOperators
           }
         ],
-    [ 
-      reviseOperatorConfigsWithoutIgnore, 
+    [
+      reviseOperatorConfigsWithoutIgnore,
       ignoreOperators,
       primaryInputRecordClass,
       secondaryInputRecordClass
     ]
   );
-  
+
   return reviseOperatorConfigs;
 };
 
@@ -257,16 +257,16 @@ const convertConfig: AddStepMenuConfig = {
     'convert': ConvertStepForm
   },
   isCompatibleAddStepSearch: (
-    search: Question, 
+    search: Question,
     questionsByUrlSegment: Record<string, Question>,
     recordClassesByUrlSegment: Record<string, RecordClass>,
     primaryOperandStep: Step,
-    previousStep?: Step, 
+    previousStep?: Step,
     outputStep?: Step
-  ) => 
+  ) =>
     !!previousStep &&
     isValidTransformFactory(
-      recordClassesByUrlSegment[previousStep.recordClassName], 
+      recordClassesByUrlSegment[previousStep.recordClassName],
       outputStep && questionsByUrlSegment[outputStep.recordClassName]
     )(search)
 };
@@ -275,7 +275,7 @@ export const useAddStepMenuConfigs = (
   questionsByUrlSegment?: Record<string, Question>,
   recordClassesByUrlSegment?: Record<string, RecordClass>,
   primaryOperandStep?: Step,
-  previousStep?: Step, 
+  previousStep?: Step,
   outputStep?: Step
 ): AddStepMenuConfig[] | undefined => {
   const binaryOperations = useBinaryOperations();
@@ -289,22 +289,22 @@ export const useAddStepMenuConfigs = (
       ({ isCompatibleAddStepSearch }) =>
         Object.values(questionsByUrlSegment)
           .some(search => isCompatibleAddStepSearch(
-            search, 
-            questionsByUrlSegment, 
-            recordClassesByUrlSegment, 
-            primaryOperandStep, 
-            previousStep, 
+            search,
+            questionsByUrlSegment,
+            recordClassesByUrlSegment,
+            primaryOperandStep,
+            previousStep,
             outputStep
           )
         )
     ),
-    [ 
-      binaryOperations, 
-      questionsByUrlSegment, 
-      recordClassesByUrlSegment, 
-      primaryOperandStep, 
-      previousStep, 
-      outputStep 
+    [
+      binaryOperations,
+      questionsByUrlSegment,
+      recordClassesByUrlSegment,
+      primaryOperandStep,
+      previousStep,
+      outputStep
     ]
   );
 
@@ -316,27 +316,27 @@ export const useSelectedAddStepFormComponent = (
   questionsByUrlSegment?: Record<string, Question>,
   recordClassesByUrlSegment?: Record<string, RecordClass>,
   primaryOperandStep?: Step,
-  previousStep?: Step, 
-  outputStep?: Step  
+  previousStep?: Step,
+  outputStep?: Step
 ): React.ComponentType<AddStepOperationFormProps> => {
   const menuConfigs = useAddStepMenuConfigs(
-    questionsByUrlSegment, 
-    recordClassesByUrlSegment, 
-    primaryOperandStep, 
-    previousStep, 
+    questionsByUrlSegment,
+    recordClassesByUrlSegment,
+    primaryOperandStep,
+    previousStep,
     outputStep
   );
-  
+
   const operationFormsByName = useMemo(
     () => menuConfigs && menuConfigs.reduce(
-      (memo, { addStepFormComponents }) => ({ ...memo, ...addStepFormComponents }), 
+      (memo, { addStepFormComponents }) => ({ ...memo, ...addStepFormComponents }),
       {} as Record<string, React.ComponentType<AddStepOperationFormProps>>
     ),
     [ menuConfigs ]
   );
 
   const DefaultFormComponent = useCallback(
-    () => null, 
+    () => null,
     []
   );
 
@@ -345,19 +345,19 @@ export const useSelectedAddStepFormComponent = (
 
 export const useBinaryStepBoxClassName = (step: Step) => {
   const binaryOperations = useBinaryOperations();
-  
+
   const binaryOperation = useMemo(
     () => binaryOperations.find(({ isOperationSearchName }) => isOperationSearchName(step.searchName)),
     [ binaryOperations, step ]
   );
-  
+
   if (!binaryOperation) {
     return undefined;
   }
 
   const { baseClassName, operatorParamName } = binaryOperation;
 
-  const classNameModifier = toUpper(step.searchConfig.parameters[operatorParamName])
+  const classNameModifier = toUpper(JSON.parse(step.searchConfig.parameters[operatorParamName])[0])
 
   return classNameModifier
     ? cxOperator(`--${baseClassName}`, classNameModifier)

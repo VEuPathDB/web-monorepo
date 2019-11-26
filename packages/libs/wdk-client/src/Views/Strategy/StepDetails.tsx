@@ -115,14 +115,14 @@ function StepDetails({ stepTree, question, assignWeight, requestQuestionWithPara
 }
 
 function formatParameterValue(
-  parameter: Parameter, 
-  value: string | undefined, 
+  parameter: Parameter,
+  value: string | undefined,
   datasetParamItems: Record<string, DatasetItem[]> | undefined
 ) {
   if (
-    !value || 
-    parameter.type === 'string' || 
-    parameter.type === 'number' || 
+    !value ||
+    parameter.type === 'string' ||
+    parameter.type === 'number' ||
     parameter.type === 'date' ||
     parameter.type === 'timestamp' ||
     parameter.type === 'input-step'
@@ -142,7 +142,7 @@ function formatParameterValue(
 function formatRangeParameterValue(value: string) {
   try {
     const { min, max } = JSON.parse(value);
-    
+
     return min !== undefined && max !== undefined
       ? `min:${min},max:${max}`
       : value;
@@ -152,13 +152,14 @@ function formatRangeParameterValue(value: string) {
 }
 
 function formatEnumParameterValue(parameter: EnumParam, value: string) {
-  const valueSet = new Set(parameter.multiPick ? valueToArray(value) : [ value ]);
+  const valueArray = JSON.parse(value) as string[];
+  const valueSet = new Set(valueArray);
   const termDisplayPairs = makeTermDisplayPairs(parameter.vocabulary);
-  
+
   return termDisplayPairs
     .filter(([term]) => valueSet.has(term))
     .map(([, display]) => display)
-    .join(', '); 
+    .join(', ');
 }
 
 const makeTermDisplayPairs = memoize((vocabulary: EnumParam['vocabulary']): [string, string, null][] =>
@@ -174,7 +175,7 @@ function formatFilterValue(value: string) {
   try {
     const { filters } = JSON.parse(value) as { filters: FilterWithFieldDisplayName[] };
 
-    return filters.flatMap((filter, i, coll) => 
+    return filters.flatMap((filter, i, coll) =>
       <React.Fragment key={filter.field}>
         {filter.fieldDisplayName || filter.field}: {getFilterValueDisplay(filter)}
         {i < coll.length - 1 ? <><br /><br /></> : null}
@@ -186,7 +187,7 @@ function formatFilterValue(value: string) {
 }
 
 function formatDatasetValue(
-  parameter: DatasetParam, 
+  parameter: DatasetParam,
   datasetParamItems: Record<string, DatasetItem[]> | undefined
 ) {
   return !datasetParamItems
