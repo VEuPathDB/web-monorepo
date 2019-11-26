@@ -27,7 +27,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
     },
     isOperationSearchName: searchName => searchName.endsWith('BySpanLogic'),
     baseClassName: 'SpanOperator',
-    reviseOperatorParamConfiguration: { 
+    reviseOperatorParamConfiguration: {
       type: 'form',
       FormComponent: ({
         questions,
@@ -47,7 +47,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
             ),
           [ questions, primaryInputRecordClass, colocationQuestionSuffix ]
         );
-      
+
         const colocationQuestionSecondaryInput = useMemo(
           () => secondaryInputRecordClass && questions.find(
             ({ outputRecordClassName, urlSegment }) =>
@@ -65,9 +65,9 @@ export const apiBinaryOperations: BinaryOperation[] = [
           if (!colocationQuestionPrimaryInput || !colocationQuestionSecondaryInput) {
             throw new Error(`Could not find the necessary questions to perform span logic operation '${JSON.stringify(colocationStepSpec)}'`);
           }
-      
+
           const shouldUsePrimaryInputQuestion = colocationStepSpec.searchConfig.parameters['span_output'] === 'a';
-      
+
           const { urlSegment: searchName, shortDisplayName: customName } = shouldUsePrimaryInputQuestion
             ? colocationQuestionPrimaryInput
             : colocationQuestionSecondaryInput;
@@ -103,15 +103,15 @@ export const apiBinaryOperations: BinaryOperation[] = [
             )
           }
         }, [ colocationQuestionPrimaryInput, colocationQuestionSecondaryInput ]);
-      
+
         const submissionMetadata = useMemo(
-          () => ({ 
-            type: 'submit-custom-form', 
-            stepId: step.searchName.endsWith(colocationQuestionSuffix) ? step.id : undefined, 
-            onStepSubmitted 
-          }) as SubmissionMetadata, 
+          () => ({
+            type: 'submit-custom-form',
+            stepId: step.searchName.endsWith(colocationQuestionSuffix) ? step.id : undefined,
+            onStepSubmitted
+          }) as SubmissionMetadata,
           [ onStepSubmitted ]
-        );        
+        );
 
         const FormComponent = useCallback(
           (props: FormProps) =>
@@ -151,14 +151,14 @@ export const apiBinaryOperations: BinaryOperation[] = [
       name: 'span_operation',
       display: 'Revise as a span operation',
       items: [
-        { 
+        {
           radioDisplay: <React.Fragment>A <strong>RELATIVE TO</strong> B, using genomic colocation</React.Fragment>,
-          value: 'overlap'
+          value: '["overlap"]'
         }
       ]
     },
     isCompatibleAddStepSearch: (
-      search: Question, 
+      search: Question,
       questionsByUrlSegment: Record<string, Question>,
       recordClassesByUrlSegment: Record<string, RecordClass>,
       primaryOperandStep: Step
