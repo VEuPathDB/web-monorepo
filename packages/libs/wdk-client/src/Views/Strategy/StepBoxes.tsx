@@ -261,7 +261,7 @@ function TransformStepBoxContent(props: StepBoxProps) {
   const { step, recordClass } = props.stepTree;
   return (
     <React.Fragment>
-      <div className={cx('--TransformInputArrow')}>&#9654;</div>
+      <div className={cx('--TransformInputArrow')}></div>
       <StepName step={step} isCombine={isPartialCombineUiStepTree(props.stepTree)} />
       <StepCount step={step} recordClass={recordClass}/>
     </React.Fragment>
@@ -284,8 +284,8 @@ function CombinedStepIcon(props: { step: Step }) {
 
   return (
     <div className={operatorClassName}>
-      <div className={cx('--CombinePrimaryInputArrow')}>&#9654;</div>
-      <div className={cx('--CombineSecondaryInputArrow')}>&#9660;</div>
+      <div className={cx('--CombinePrimaryInputArrow')}></div>
+      <div className={cx('--CombineSecondaryInputArrow')}></div>
     </div>
   );
 }
