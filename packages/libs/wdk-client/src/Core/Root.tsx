@@ -1,7 +1,7 @@
 import { History, Location } from 'history';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { Route, Router, Switch } from 'react-router';
+import { Router, Switch } from 'react-router';
 
 import { ClientPluginRegistryEntry, PluginContext, makeCompositePluginComponent } from 'wdk-client/Utils/ClientPlugin';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
@@ -12,7 +12,7 @@ import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 import WdkService, { WdkServiceContext } from 'wdk-client/Service/WdkService';
-import LoginRequiredDisclaimer from 'wdk-client/Views/User/LoginRequiredDisclaimer';
+import WdkRoute from 'wdk-client/Core/WdkRoute';
 
 type Props = {
   rootUrl: string,
@@ -93,17 +93,13 @@ export default class Root extends React.Component<Props> {
                 <Page>
                   <React.Fragment>
                     <Switch>
-                      {this.props.routes.map(({ path, exact = true, component: RouteComponent, requiresLogin }) => (
-                        <Route
+                      {this.props.routes.map(({ path, exact = true, component, requiresLogin = false }) => (
+                        <WdkRoute
                           key={path}
                           exact={exact == null ? false: exact}
                           path={path}
-                          render={props => {
-                            if (RouteComponent == null) return null;
-                            if (requiresLogin) return <LoginRequiredDisclaimer><RouteComponent {...props}/></LoginRequiredDisclaimer>
-                            return <RouteComponent {...props}/>
-                            }
-                          }
+                          component={component}
+                          requiresLogin={requiresLogin}
                         />
                       ))}
                     </Switch>
