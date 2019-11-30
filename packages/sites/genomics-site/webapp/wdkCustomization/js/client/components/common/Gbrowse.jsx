@@ -167,9 +167,11 @@ export function GbrowseContext(props) {
     }
     if (attribute.name == 'BlatAlignmentsGbrowseUrl'){ 
         jbrowseUrlMinimal = record.attributes.blatJbrowseUrl;
+        jbrowseUrlFull = record.attributes.blatJbrowseFullUrl;
     }
     if (attribute.name == 'SnpsGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.snpsJbrowseUrl;
+      jbrowseUrlFull = record.attributes.snpsJbrowseFullUrl;
     }
     return (
         <div>
