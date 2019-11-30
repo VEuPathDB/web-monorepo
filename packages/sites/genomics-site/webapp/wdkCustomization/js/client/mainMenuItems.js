@@ -160,7 +160,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'analysis-methods',
           text: 'Analysis Methods',
-          route: '/community/brc3/methods.html'
+          route: '/community/methods'
         },
         {
           id: 'annotation-sops',
@@ -171,14 +171,14 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'genomes-and-data-types',
           text: 'Genomes and Data Types',
-          route: '/search/organism/GenomeDataTypes',
+          route: '/search/organism/GenomeDataTypes/results',
           tooltip: 'Table summarizing all the genomes and their different data types available in ' + siteConfig.projectId
         },
         {
           id: 'gene-metrics',
           text: 'Gene Metrics',
           tooltip: 'Table summarizing gene counts for all the available genomes, and evidence supporting them',
-          route: '/search/organism/GeneMetrics'
+          route: '/search/organism/GeneMetrics/results'
         }
       ]
     },
@@ -212,6 +212,11 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
               id: 'CryptoDB',
               text: 'CryptoDB',
               url: 'http://cryptodb.org/common/downloads'
+            },
+            { 
+              id: 'FungiDB',
+              text: 'FungiDB',
+              url: 'http://fungidb.org/common/downloads'
             },
             {
               id: 'GiardiaDB',
@@ -265,12 +270,12 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'community-download',
           text: 'Download Community Files',
           exclude: [EuPathDB],
-          route: '/search/file/UserFileUploads'
+          route: '/search/file/UserFileUploads/results'
         },
         {
           id: 'eupathdb-publications',
           text: 'EuPathDB Publications',
-          route: '/community/brc3/eupathPubs.html'
+          route: '/community/veupathPubs'
         },
         {
           id: 'mahpic-data',
@@ -325,7 +330,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'community-download',
           text: 'Download Community Files',
           exclude: [EuPathDB],
-          route: '/search/file/UserFileUploads'
+          route: '/search/file/UserFileUploads/results'
         },
 //        {
 //          id: 'events',
@@ -335,7 +340,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'related-sites',
           text: 'Related Sites',
-          route: `/community/brc3/${siteConfig.projectId}/externalLinks.html`
+          route: `/community/${siteConfig.projectId}/externalLinks`
         },
         {
           id: 'public-strategies',

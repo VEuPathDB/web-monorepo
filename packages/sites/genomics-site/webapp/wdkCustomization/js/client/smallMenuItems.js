@@ -3,7 +3,7 @@
  * @return {Array<Entry>}
  */
 export default function smallMenuEntries({ siteConfig: { projectId } }, defaultEntries) {
-  const aboutRoute = `/community/brc3/${projectId}/about.html`;
+  const aboutRoute = `/community/${projectId}/about`;
   const aboutAllRoute = '/community/embedded/help/general/index.html';
   return [
     {
@@ -15,7 +15,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Publications on EuPathDB sites',
-          route: '/community/brc3/eupathPubs.html'
+          route: '/community/veupathPubs'
         },
         {
           liClassName: 'eupathdb-SmallMenuDivider',
@@ -23,11 +23,11 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Organisms',
-          route: '/search/organism/GenomeDataTypes'
+          route: '/search/organism/GenomeDataTypes/results'
         },
         {
           text: `${projectId} Gene Metrics`,
-          route: '/search/organism/GeneMetrics'
+          route: '/search/organism/GeneMetrics/results'
         },
         {
           liClassName: 'eupathdb-SmallMenuDivider',
@@ -103,7 +103,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'EuPathDB Infrastructure',
-          route: '/community/brc3/infrastructure.html'
+          route: '/community/infrastructure'
         },
         {
           text: 'Website Usage Statistics',
@@ -125,7 +125,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Web Tutorials',
-          route: '/community/brc3/tutorials.html'
+          route: '/community/tutorials'
         },
         {
           text: 'EuPathDB Workshop',
@@ -141,7 +141,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: `Our Glossary`,
-          route: '/community/brc3/glossary.html'
+          route: '/community/glossary'
         },
         {
           text: 'Contact Us',
