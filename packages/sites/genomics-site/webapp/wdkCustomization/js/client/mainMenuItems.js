@@ -160,7 +160,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'analysis-methods',
           text: 'Analysis Methods',
-          route: '/community/methods'
+          route: '/community/methods.html'
         },
         {
           id: 'annotation-sops',
@@ -275,7 +275,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'eupathdb-publications',
           text: 'EuPathDB Publications',
-          route: '/community/veupathPubs'
+          route: '/community/veupathPubs.html'
         },
         {
           id: 'mahpic-data',
@@ -340,7 +340,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'related-sites',
           text: 'Related Sites',
-          route: `/community/${siteConfig.projectId}/externalLinks`
+          route: `/community/${siteConfig.projectId}/externalLinks.html`
         },
         {
           id: 'public-strategies',

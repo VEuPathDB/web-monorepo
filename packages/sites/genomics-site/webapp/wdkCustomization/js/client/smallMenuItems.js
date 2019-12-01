@@ -3,7 +3,7 @@
  * @return {Array<Entry>}
  */
 export default function smallMenuEntries({ siteConfig: { projectId } }, defaultEntries) {
-  const aboutRoute = `/community/${projectId}/about`;
+  const aboutRoute = `/community/${projectId}/about.html`;
   const aboutAllRoute = '/community/embedded/help/general/index.html';
   return [
     {
@@ -15,7 +15,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Publications on EuPathDB sites',
-          route: '/community/veupathPubs'
+          route: '/community/veupathPubs.html'
         },
         {
           liClassName: 'eupathdb-SmallMenuDivider',
@@ -103,7 +103,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'EuPathDB Infrastructure',
-          route: '/community/infrastructure'
+          route: '/community/infrastructure.html'
         },
         {
           text: 'Website Usage Statistics',
@@ -125,7 +125,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Web Tutorials',
-          route: '/community/tutorials'
+          route: '/community/tutorials.html'
         },
         {
           text: 'EuPathDB Workshop',
@@ -141,7 +141,7 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: `Our Glossary`,
-          route: '/community/glossary'
+          route: '/community/glossary.html'
         },
         {
           text: 'Contact Us',
