@@ -98,18 +98,14 @@
 }
 
 .StepBoxes--BoxLink__transform {
-  background-image: url("./TransformBg.gif");
-  background-size: 100% 100%;
   z-index: 1;
+  height: calc(100% - 0.17em);
+  margin-right: 0;
 }
 
 .StepBoxes--BoxLink__leaf_active,
 .StepBoxes--BoxLink__combined_active {
   background-color: #ffffa0;
-}
-
-.StepBoxes--BoxLink__transform_active {
-  background-image: url("./TransformBg_yellow.gif");
 }
 
 /* Line connecting leaf step and combined step */
@@ -118,8 +114,8 @@
   border-right: .17em solid black;
   height: 4em;
   position: absolute;
-  left: calc(50% + .4em); /** TODO convert px to em */
-  top: -3em;
+  left: calc(50% + .4em);
+  top: -4em;
 }
 
 .StepBoxes--BoxLink__nested:before {
@@ -169,8 +165,8 @@
 
 .StepBoxes--CombineOperator {
   display: inline-block;
-  background-image: url("./operationIcons.png");
-  background-size: 8em;
+  background-size: cover;
+  background-repeat: no-repeat;
   height: 1.9em;
   width: 3em;
   z-index: 1;
@@ -179,7 +175,7 @@
 /* Arrows */
 .StepBoxes--CombinePrimaryInputArrow {
   top: .8em;
-  left: -.6em;
+  left: -.4em;
   position: relative;
   color: black;
   background-image: url('./primary-input-arrow.svg');
@@ -189,7 +185,7 @@
 
 /* Arrows */
 .StepBoxes--CombineSecondaryInputArrow {
-  top: -1.55em;
+  top: -1.5em;
   left: calc(50% + .07em);
   position: relative;
   color: black;
@@ -201,7 +197,7 @@
 /* Arrows */
 .StepBoxes--TransformInputArrow {
   top: 1.1em;
-  left: -.3em;
+  left: -.25em;
   position: absolute;
   color: black;
   background-image: url('./primary-input-arrow.svg');
@@ -209,28 +205,73 @@
   width: 0.83333333333em;
 }
 
+.StepBoxes--TransformIconContainer {
+  position: absolute;
+  display: flex;
+  flex-wrap: nowrap;
+  height: 100%;
+  width: 100%;
+  left: -.25em;
+  top: 0;
+}
+
+.StepBoxes--TransformDetails {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  height: 100%;
+  padding-right: 1em;
+  padding-left: 0.5em;
+}
+
+svg.StepBoxes--TransformIconInputSide, svg.StepBoxes--TransformIconOutputSide {
+  height: 100%;
+  overflow: visible;
+}
+
+svg.StepBoxes--TransformIconInputSide path, svg.StepBoxes--TransformIconOutputSide path {
+  fill: #d0cfcf;
+}
+
+.StepBoxes--BoxLink__transform_active svg.StepBoxes--TransformIconInputSide path, .StepBoxes--BoxLink__transform_active svg.StepBoxes--TransformIconOutputSide path {
+  fill: #ffffa0;
+}
+
+svg.StepBoxes--TransformIconContents {
+  background-color: #d0cfcf;
+  height: 100%;
+  width: calc(100% - 2.5em);
+  overflow: visible;
+}
+
+.StepBoxes--BoxLink__transform_active svg.StepBoxes--TransformIconContents {
+  background-color: #ffffa0;
+}
+
 .StepBoxes--CombineOperator__INTERSECT {
-  background-position: -2.5em -3em;
+  background-image: url('./a_intersect_b.svg');
 }
 
 .StepBoxes--CombineOperator__UNION {
-  background-position: -2.5em -6em;
+  background-image: url('./a_union_b.svg');
 }
 
 .StepBoxes--CombineOperator__MINUS {
-  background-position: -2.5em 0em;
+  background-image: url('./a_minus_b.svg');
 }
 
 .StepBoxes--CombineOperator__RMINUS {
-  background-position: -2.5em -9em;
+  background-image: url('./b_minus_a.svg');
 }
 
 .StepBoxes--CombineOperator__RONLY {
-  background-position: -2.5em -12em;
+  background-image: url('./b_only.svg');
 }
 
 .StepBoxes--CombineOperator__LONLY {
-  background-position: -2.5em -15em;
+  background-image: url('./a_only.svg');
 }
 
 .StepBoxes--InsertStepButton {
@@ -272,6 +313,10 @@ button.StepBoxes--EditButton {
 
 .StepBoxes--BoxLink__combined + button.StepBoxes--EditButton {
   right: calc(50% - 3em);
+}
+
+.StepBoxes--BoxLink__transform + button.StepBoxes--EditButton {
+  right: 1em;
 }
 
 button.StepBoxes--EditButton:hover {
