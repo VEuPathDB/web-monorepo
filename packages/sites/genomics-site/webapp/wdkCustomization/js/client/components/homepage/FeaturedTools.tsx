@@ -5,8 +5,11 @@ import { Loading, IconAlt } from 'wdk-client/Components';
 
 import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
 
-import './FeaturedTools.scss';
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
+import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
+import { decode, string } from 'wdk-client/Utils/Json';
+
+import './FeaturedTools.scss';
 
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
@@ -59,9 +62,16 @@ function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
   return featuredToolMetadata;
 }
 
+const FEATURED_TOOL_KEY = 'homepage-featured-tool';
+
 export const FeaturedTools = () => {
   const toolMetadata = useFeaturedToolMetadata();
-  const [ selectedTool, setSelectedTool ] = useState<string | undefined>();
+  const [ selectedTool, setSelectedTool ] = useSessionBackedState<string | undefined>(
+    undefined,
+    FEATURED_TOOL_KEY,
+    JSON.stringify,
+    (s: string) => decode(string, s)
+  );
   const selectedToolEntry = !toolMetadata || !selectedTool || !toolMetadata.toolEntries[selectedTool]
     ? undefined
     : toolMetadata.toolEntries[selectedTool];
@@ -70,7 +80,8 @@ export const FeaturedTools = () => {
     if (
       toolMetadata && 
       toolMetadata.toolListOrder.length > 0 && 
-      toolMetadata.toolEntries[toolMetadata.toolListOrder[0]]
+      toolMetadata.toolEntries[toolMetadata.toolListOrder[0]] &&
+      (!selectedTool || !toolMetadata.toolEntries[selectedTool])
     ) {
       setSelectedTool(toolMetadata.toolListOrder[0]);
     }

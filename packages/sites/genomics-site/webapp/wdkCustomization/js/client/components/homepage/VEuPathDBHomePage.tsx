@@ -21,6 +21,7 @@ import { makeVpdbClassNameHelper } from './Utils';
 import { projectId } from '../../config';
 
 import './VEuPathDBHomePage.scss';
+import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -152,9 +153,6 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
 }
 
-type Encoder<T> = (t: T) => string;
-type Parser<T> = (s: string) => T;
-
 const encodeSearchTerm = (s: string) => s;
 const parseSearchTerm = encodeSearchTerm;
 
@@ -163,40 +161,6 @@ const parseExpandedBranches = memoize((s: string) => decode(
   arrayOf(string),
   s
 ));
-
-function useSessionBackedState<T>(
-  defaultValue: T,
-  key: string,
-  encode: Encoder<T>,
-  parse: Parser<T>,
-): [ T, (newState: T) => void ] {
-  let initialValue = defaultValue;
-
-  try {
-    const storedStringValue = window.sessionStorage.getItem(key);
-
-    if (storedStringValue !== null) {
-      initialValue = parse(storedStringValue);
-    }
-  } catch (e) {
-    console.warn(
-      `Failed attempt to retrieve state value at session key ${key}: ${e}; falling back to component state`
-    );
-  }
-
-  const [ state, setState ] = useState(initialValue);
-
-  const setSessionBackedState = useCallback((newValue: T) => {
-    try {
-      window.sessionStorage.setItem(key, encode(newValue));
-    } catch {
-      console.warn(`Failed attempt to persist state value ${newValue} at session key ${key}; falling back to component state`);
-    }
-    setState(newValue);
-  }, [ encode ]);
-
-  return [ state, setSessionBackedState ];
-};
 
 const PlasmoDB = 'PlasmoDB';
 const TriTrypDB = 'TriTrypDB';

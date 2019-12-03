@@ -110,17 +110,17 @@ export const WorkshopExercises = () => {
   return (
     <div className={cx()}>
       <div className={cx('Header')}>
-        <h3>Workshop Exercises</h3>
+        <h3>Learning Exercises</h3>
         <a onClick={toggleExpansion} href="#">
           {
             isExpanded 
               ? <>
-                  <IconAlt fa="th" />
-                  Expanded view
+                  <IconAlt fa="ellipsis-h" />
+                  Row view
                 </>
               : <>
-                  <IconAlt fa="ellipsis-h" />
-                  Condensed view
+                  <IconAlt fa="th" />
+                  Grid view
                 </>
           }
         </a>
