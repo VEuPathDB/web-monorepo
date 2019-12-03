@@ -72,7 +72,9 @@ type OwnProps = {
 }
 
 type Props = OwnProps & StateProps & {
-  actionCreators: DispatchProps;
+  actionCreators: Omit<DispatchProps, 'updateColumnsDialogSelection'> & {
+    updateColumnsDialogSelection: (columnSelection: string[]) => void;
+  };
 }
 
 function ResultTableSummaryViewController(props: Props) {
@@ -185,7 +187,27 @@ function mapDispatchToProps(dispatch: Dispatch, { viewId }: OwnProps): DispatchP
 const ConnectedController = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   mapStateToProps,
   mapDispatchToProps,
-  (mappedState, actionCreators, ownProps) => ({ ...mappedState, actionCreators, ...ownProps })
+  (mappedState, actionCreators, ownProps) => ({ 
+    ...mappedState,
+    actionCreators: {
+      ...actionCreators,
+      updateColumnsDialogSelection: (columnSelection: string[]) => {
+        // Prevent the primary key column from being removed (as per Redmine #37492)
+        const columnSelectionWithPrimaryKey = (
+          mappedState.derivedData.recordClass == null ||
+          columnSelection.includes(mappedState.derivedData.recordClass.recordIdAttributeName)
+        )
+          ? columnSelection
+          : [
+              mappedState.derivedData.recordClass.recordIdAttributeName, 
+              ...columnSelection
+            ];
+
+        actionCreators.updateColumnsDialogSelection(columnSelectionWithPrimaryKey);
+      }
+    },
+    ...ownProps 
+  })
 )(wrappable(ResultTableSummaryViewController));
 
 export default Object.assign(ConnectedController, {
