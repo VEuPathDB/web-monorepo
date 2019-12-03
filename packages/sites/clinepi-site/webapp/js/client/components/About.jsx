@@ -1,7 +1,9 @@
 import React from 'react';
+import { communitySite } from 'ebrc-client/config';
 import './About.scss';
 
 export default function About() {
+
   return (
     <div id="about">
       <h1>About ClinEpiDB</h1>
@@ -33,7 +35,7 @@ export default function About() {
 
       <h2 id="how-do-i-use-site">How do I use ClinEpiDB?</h2>
       <div>
-        <p>See our written <a href="/a/showXmlDataContent.do?name=XmlQuestions.Tutorials">Tutorials and Resources</a> and <a target="_blank" href="https://www.youtube.com/playlist?list=PLWzQB3i5sYAIp4urzLGB8jxvVZr6jvkZh">Video Tutorials</a>.
+        <p>See our written <a href="{ communitySite }/resources.html">Tutorials and Resources</a> and <a target="_blank" href="https://www.youtube.com/playlist?list=PLWzQB3i5sYAIp4urzLGB8jxvVZr6jvkZh">Video Tutorials</a>.
         </p>
       </div>
 
