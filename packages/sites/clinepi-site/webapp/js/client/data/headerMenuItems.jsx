@@ -53,7 +53,7 @@ export default function headerMenuItems (state) {
           },
           {
             text: 'News',
-            appUrl: '/showXmlDataContent.do?name=XmlQuestions.News'
+            route: '/community/news'
           },
           {
             text: 'Public Strategies',
@@ -66,7 +66,7 @@ export default function headerMenuItems (state) {
           },
           {
             text: 'Tutorials and Resources',
-            appUrl: '/showXmlDataContent.do?name=XmlQuestions.Tutorials'
+            route: '/community/resources.html'
           },
           {
             text: 'Data Access & Use Policy',
