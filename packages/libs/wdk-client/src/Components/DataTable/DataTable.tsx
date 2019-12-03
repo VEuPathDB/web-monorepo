@@ -2,7 +2,7 @@ import $ from 'jquery';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import { eq, once, uniqueId } from 'lodash';
 import React, { Component, PureComponent, ReactElement } from 'react';
-import { unmountComponentAtNode, unstable_renderSubtreeIntoContainer } from 'react-dom';
+import { createPortal } from 'react-dom';
 import { formatAttributeValue, lazy, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { containsAncestorNode } from 'wdk-client/Utils/DomUtils';
 import 'wdk-client/Components/DataTable/DataTable.css';
@@ -90,12 +90,16 @@ type Props = {
   getRowId: (row: Row) => number;
 }
 
+interface State {
+  childRows: [ HTMLElement, ChildRowProps ][];
+}
+
 /**
  * Sortable table for WDK-formatted data.
  *
  * This uses DataTables jQuery plugin
  */
-class DataTable extends PureComponent<Props> {
+class DataTable extends PureComponent<Props, State> {
 
   /** Default DataTables jQuery plugin options. */
   static defaultDataTableOpts = {
@@ -111,6 +115,10 @@ class DataTable extends PureComponent<Props> {
       infoPostFix: 'rows'
     }
   };
+
+  state: State = {
+    childRows: []
+  }
 
   _childRowContainers: Map<HTMLTableRowElement, HTMLElement> = new Map();
 
@@ -134,7 +142,6 @@ class DataTable extends PureComponent<Props> {
 
     let columnsChanged = didPropChange(this, prevProps, 'columns')
     let dataChanged = didPropChange(this, prevProps, 'data');
-    let childRowChanged = didPropChange(this, prevProps, 'childRow');
     let sortingChanged = didPropChange(this, prevProps, 'sorting') &&
       !eq(this.props.sorting, prevProps.sorting);
     let widthChanged = didPropChange(this, prevProps, 'width');
@@ -150,11 +157,6 @@ class DataTable extends PureComponent<Props> {
 
     else {
       let needsRedraw = false;
-
-      if (childRowChanged) {
-        this._rerenderChildRows(this._dataTable);
-        needsRedraw = true;
-      }
 
       if (sortingChanged) {
         this._updateSorting(this._dataTable);
@@ -333,12 +335,6 @@ class DataTable extends PureComponent<Props> {
     }
   }
 
-  _rerenderChildRows(dataTable: DataTables.Api) {
-    for (let tableRowNode of this._childRowContainers.keys()) {
-      this._renderChildRow(dataTable, tableRowNode, false);
-    }
-  }
-
   _updateSorting(dataTable: DataTables.Api) {
     dataTable.order(formatSorting(this.columns, this.props.sorting));
   }
@@ -392,7 +388,9 @@ class DataTable extends PureComponent<Props> {
     }
     else {
       let props = { rowIndex: row.index(), rowData: row.data() };
-      unstable_renderSubtreeIntoContainer(this, React.createElement(childRow, props), childRowContainer);
+      this.setState({
+        childRows: [ ...this.state.childRows, [ childRowContainer, props ] ]
+      });
     }
     if (openRow && !row.child.isShown()) {
       row.child.show();
@@ -436,14 +434,11 @@ class DataTable extends PureComponent<Props> {
   /** Unmount all child row components and destroy the datatable instance */
   _destroy(dataTable: DataTables.Api) {
     dataTable.destroy(true);
-    for (let container of this._childRowContainers.values()) {
-      unmountComponentAtNode(container);
-    }
     this._childRowContainers.clear();
   }
 
   render() {
-    let { searchable = true } = this.props;
+    let { searchable = true, childRow } = this.props;
     return (
       <div className="MesaComponent">
         {searchable && (
@@ -459,6 +454,8 @@ class DataTable extends PureComponent<Props> {
           />
         )}
         <div ref={node => this.node = node} className="wdk-DataTableContainer"/>
+        {this.state.childRows.map(([ node, childRowProps ]) =>
+          childRow && createPortal(React.createElement(childRow, childRowProps), node))}
       </div>
     );
   }
