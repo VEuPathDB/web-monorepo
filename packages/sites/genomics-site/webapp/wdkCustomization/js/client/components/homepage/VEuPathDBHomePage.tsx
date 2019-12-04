@@ -25,6 +25,10 @@ import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
+type OwnProps = {
+  isHomePage: boolean;
+}
+
 type StateProps = {
   searchTree?: CategoryTreeNode,
   twitterUrl?: string,
@@ -32,16 +36,17 @@ type StateProps = {
   youtubeUrl?: string
 }
 
-type Props = StateProps;
+type Props = OwnProps & StateProps;
 
 const GENE_ITEM_ID = 'category:transcript-record-classes-transcript-record-class';
 const SEARCH_TERM_SESSION_KEY = 'homepage-header-search-term';
 const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
 
 const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
+  const { isHomePage } = props;
   const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
   const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
-  const [ headerExpanded, setHeaderExpanded ] = useState(true);
+  const [ headerExpanded, setHeaderExpanded ] = useState(isHomePage);
   const [ searchTerm, setSearchTerm ] = useSessionBackedState(
     '', 
     SEARCH_TERM_SESSION_KEY, 
@@ -71,8 +76,8 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const updateHeaderExpanded = useCallback(() => {
     // FIXME - find a better way to update the header height - this resizing is "jerky" when 
     // the scroll bar is left near the scroll threshold
-    setHeaderExpanded(document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
-  }, []);
+    setHeaderExpanded(isHomePage && document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
+  }, [ isHomePage ]);
 
   useEffect(() => {
     window.addEventListener('scroll', updateHeaderExpanded, { passive: true });
@@ -85,6 +90,10 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
       window.removeEventListener('wheel', updateHeaderExpanded);
     };
   }, [ updateHeaderExpanded ]);
+
+  useEffect(() => {
+    updateHeaderExpanded();
+  }, [ isHomePage ])
 
   const preloadedSuggestions = useMemo(
     () => [
@@ -110,7 +119,11 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   }, []);
 
   const rootContainerClassName = combineClassNames(
-    vpdbCx('RootContainer', headerExpanded ? 'header-expanded' : 'header-collapsed'), 
+    vpdbCx(
+      'RootContainer',
+      headerExpanded ? 'header-expanded' : 'header-collapsed',
+      isHomePage && 'home'
+    ), 
     projectId
   );
   const headerClassName = vpdbCx('Header', headerExpanded ? 'expanded' : 'collapsed');
@@ -134,18 +147,22 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
           />
         </div>
       </ErrorBoundary>
-      <ErrorBoundary>
-        <SearchPane 
-          containerClassName={searchPaneClassName} 
-          searchTree={props.searchTree}
-        />
-      </ErrorBoundary>
+      {isHomePage &&
+        <ErrorBoundary>
+          <SearchPane 
+            containerClassName={searchPaneClassName} 
+            searchTree={props.searchTree}
+          />
+        </ErrorBoundary>
+      }
       <Main containerClassName={mainClassName}>
         {props.children}
       </Main>
-      <ErrorBoundary>
-        <NewsPane containerClassName={newsPaneClassName} />
-      </ErrorBoundary>
+      {isHomePage &&
+        <ErrorBoundary>
+          <NewsPane containerClassName={newsPaneClassName} />
+        </ErrorBoundary>
+      }
       <ErrorBoundary>
         <Footer containerClassName={footerClassName} />
       </ErrorBoundary>
@@ -190,6 +207,8 @@ const useHeaderMenuItems = (
   youtubeUrl?: string
 ): HeaderMenuItem[] => {
   const projectId = useProjectId();
+  const aboutRoute = `/community/${projectId}/about.html`;
+  const aboutAllRoute = '/community/embedded/help/general/index.html';
 
   const menuItemEntries: HeaderMenuItemEntry[] = [
     {
@@ -497,8 +516,8 @@ const useHeaderMenuItems = (
         {
           key: 'related-sites',
           display: 'Related sites',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.ExternalLinks.jsp'
+          type: 'reactRoute',
+          url: `/community/${projectId}/externalLinks.html`
         },
         {
           key: 'mahpic-data',
@@ -520,14 +539,14 @@ const useHeaderMenuItems = (
         {
           key: 'what-is',
           display: `What is ${projectId}?`,
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp'
+          type: 'reactRoute',
+          url: aboutRoute
         },
         {
           key: 'eupathdb-publications',
           display: 'Publications on VEuPathDB sites',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.EuPathDBPubs.jsp'
+          type: 'reactRoute',
+          url: '/community/veupathPubs.html'
         },
         {
           key: 'submitting-divider',
@@ -562,14 +581,14 @@ const useHeaderMenuItems = (
         {
           key: 'cite-us',
           display: 'How to cite us',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citing'
+          type: 'reactRoute',
+          url: `${aboutRoute}#citing`
         },
         {
           key: 'cite-data-provide',
           display: 'Citing data providers',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#citingproviders'
+          type: 'reactRoute',
+          url: `${aboutRoute}#citingproviders`
         },
         {
           key: 'citations',
@@ -580,8 +599,8 @@ const useHeaderMenuItems = (
         {
           key: 'data-access-policy',
           display: 'Data Access Policy',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#use'
+          type: 'reactRoute',
+          url: `${aboutRoute}#use`
         },
         {
           key: 'website-privacy-policy',
@@ -601,26 +620,26 @@ const useHeaderMenuItems = (
         {
           key: 'scientific-working-group',
           display: 'Scientific working group',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#swg'
+          type: 'reactRoute',
+          url: `${aboutAllRoute}#swg`
         },
         {
           key: 'scientific-advisory-team',
           display: 'Scientific advisory team',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#advisors'
+          type: 'reactRoute',
+          url: `${aboutRoute}#advisors`
         },
         {
           key: 'acknowledgement',
           display: 'Acknowledgements',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.AboutAll.jsp#acks'
+          type: 'reactRoute',
+          url: `${aboutAllRoute}#acks`
         },
         {
           key: 'funding',
           display: 'Funding',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.About.jsp#funding'
+          type: 'reactRoute',
+          url: `${aboutRoute}#funding`
         },
         {
           key: 'brochure',
@@ -652,8 +671,8 @@ const useHeaderMenuItems = (
         {
           key: 'infrastructure',
           display: 'EuPathDB Infrastructure',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.Infrastructure.jsp'
+          type: 'reactRoute',
+          url: '/community/infrastructure.html'
         },
         {
           key: 'usage-statistics',
@@ -684,8 +703,8 @@ const useHeaderMenuItems = (
         {
           key: 'web-tutorials',
           display: 'Web tutorials',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.Tutorials.jsp'
+          type: 'reactRoute',
+          url: '/community/tutorials.html'
         },
         {
           key: 'eupathdb-workshop',
@@ -708,8 +727,8 @@ const useHeaderMenuItems = (
         {
           key: 'our-glossary',
           display: `Our glossary`,
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.Glossary.jsp'
+          type: 'reactRoute',
+          url: '/community/glossary.html'
         },
         {
           key: 'contact-us',

@@ -401,7 +401,8 @@ export function StrategyWorkspaceController(DefaultComponent) {
 
 export function Page(DefaultComponent) {
   return withRouter(function VuPathDBPage(props) {
-    const renderNewHomePage = props.location.pathname.startsWith('/new-home-page');
+    const renderNewHomePage = projectId === 'PlasmoDB';
+    const isHomePage = props.location.pathname === '/';
 
     useEffect(() => {
       const bodyElement = document.getElementsByTagName('body')[0];
@@ -415,7 +416,7 @@ export function Page(DefaultComponent) {
 
     return (
       renderNewHomePage
-        ? <VEuPathDBHomePage {...props} />
+        ? <VEuPathDBHomePage {...props} isHomePage={isHomePage} />
         : <DefaultComponent {...props} />
     );
   });

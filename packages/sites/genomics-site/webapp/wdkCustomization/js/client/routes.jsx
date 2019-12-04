@@ -93,7 +93,7 @@ export const wrapRoutes = ebrcRoutes => [
   },
 
   {
-    path: '/new-home-page',
+    path: '/',
     component: () => 
       <React.Fragment>
         <PageDescription />
