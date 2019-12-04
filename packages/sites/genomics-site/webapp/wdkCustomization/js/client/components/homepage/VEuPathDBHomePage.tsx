@@ -348,8 +348,8 @@ const useHeaderMenuItems = (
         {
           key: 'webservices',
           display: 'Searches via Web Services',
-          type: 'externalLink',
-          url: '/documents/WebServicesURLBuilderHELPPAGE.pdf'
+          type: 'reactRoute',
+          url: '/community/webservices.html'
         }
       ]
     },
@@ -398,8 +398,8 @@ const useHeaderMenuItems = (
         {
           key: 'analysis-methods',
           display: 'Methods',
-          type: 'webAppRoute',
-          url: '/wdkCustomization/jsp/questions/XmlQuestions.Methods.jsp'
+          type: 'reactRoute',
+          url: '/community/methods.html'
         },
         {
           key: 'annotation-sops',
@@ -415,14 +415,14 @@ const useHeaderMenuItems = (
           display: 'Organisms - Data type summary',
           tooltip: `Table summarizing all the genomes and their different data types available in ${projectId}`,
           type: 'reactRoute',
-          url: '/search/organism/GenomeDataTypes'
+          url: '/search/organism/GenomeDataTypes/result'
         },
         {
           key: 'gene-metrics',
           display: 'Organisms - Gene metrics',
           tooltip: 'Table summarizing gene counts for all the available genomes, and evidence supporting them',
           type: 'reactRoute',
-          url: '/search/organism/GeneMetrics'
+          url: '/search/organism/GeneMetrics/result'
         },
         {
           key: 'data-files-eupathdb',
@@ -487,7 +487,7 @@ const useHeaderMenuItems = (
           display: `Genes with comments from the ${projectId} community`,
           tooltip: 'Add your comments to your gene of interest: start at the gene page',
           type: 'reactRoute',
-          url: '/search/gene/GenesWithUserComments',
+          url: '/search/gene/GenesWithUserComments/result',
           metadata: {
             exclude: [ EuPathDB ]
           }
@@ -502,7 +502,7 @@ const useHeaderMenuItems = (
           key: 'community-download',
           display: 'Community files',
           type: 'reactRoute',
-          url: '/search/file/UserFileUploads',
+          url: '/search/file/UserFileUploads/result',
           metadata: {
             exclude: [ EuPathDB ]
           }
