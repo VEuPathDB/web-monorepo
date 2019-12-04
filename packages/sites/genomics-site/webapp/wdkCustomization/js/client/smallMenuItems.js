@@ -23,11 +23,11 @@ export default function smallMenuEntries({ siteConfig: { projectId } }, defaultE
         },
         {
           text: 'Organisms',
-          route: '/search/organism/GenomeDataTypes/results'
+          route: '/search/organism/GenomeDataTypes/result'
         },
         {
           text: `${projectId} Gene Metrics`,
-          route: '/search/organism/GeneMetrics/results'
+          route: '/search/organism/GeneMetrics/result'
         },
         {
           liClassName: 'eupathdb-SmallMenuDivider',
