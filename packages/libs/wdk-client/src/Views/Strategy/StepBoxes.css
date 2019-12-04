@@ -353,6 +353,7 @@ button.StepBoxes--EditButton:hover {
 /* Override .wdk-Dialog */
 .StepBoxes--StepDetails {
   min-width: 700px;
+  max-height: 95vh;
 }
 
 .StepBoxes--StepDetailsHeader > button {
