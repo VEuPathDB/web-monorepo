@@ -28,7 +28,7 @@ type FeaturedToolEntry = {
   listIconKey: string,
   listTitle: string,
   descriptionTitle?: string,
-  descriptionBody: string
+  output: string
 };
 
 function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
@@ -172,7 +172,7 @@ const SelectedTool = ({ entry }: SelectedToolProps) =>
     <div
       className={cx('SelectionBody')}
       dangerouslySetInnerHTML={{
-        __html: entry ? entry.descriptionBody : '...'
+        __html: entry ? entry.output : '...'
       }}
     ></div>
   </div>;
