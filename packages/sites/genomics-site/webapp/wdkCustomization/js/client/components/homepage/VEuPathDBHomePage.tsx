@@ -528,6 +528,12 @@ const useHeaderMenuItems = (
           metadata: {
             include: [ PlasmoDB ]
           }
+        },
+        { 
+          key: 'news',
+          display: 'News',
+          type: 'reactRoute',
+          url: `/community/${projectId}/news.html`
         }
       ]
     },
