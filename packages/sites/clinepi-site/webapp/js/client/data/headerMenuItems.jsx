@@ -49,11 +49,11 @@ export default function headerMenuItems (state) {
         children: [
           {
             text: 'About ClinEpiDB',
-            route: '/about'
+            route: '/community/ClinEpiDB/about.html'
           },
           {
             text: 'News',
-            route: '/community/news'
+            route: '/community/ClinEpiDB/news.html'
           },
           {
             text: 'Public Strategies',
