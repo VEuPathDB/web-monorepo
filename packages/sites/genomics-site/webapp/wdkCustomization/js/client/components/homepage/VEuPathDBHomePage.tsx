@@ -349,7 +349,7 @@ const useHeaderMenuItems = (
           key: 'webservices',
           display: 'Searches via Web Services',
           type: 'reactRoute',
-          url: '/community/webservices.html'
+          url: '/community/webServices.html'
         }
       ]
     },
