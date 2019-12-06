@@ -16,12 +16,15 @@ const cx = makeVpdbClassNameHelper('PageDescription');
 
 const PlasmoDB = 'PlasmoDB';
 const VEuPathDB = 'VEuPathDB';
+const EuPathDB = 'EuPathDB';
 
 export const PageDescription = () => 
   <div className={combineClassNames(cx(), projectId)}>
     {
-      projectId === VEuPathDB &&
-      <VEuPathDBDescription />
+      (
+        projectId === VEuPathDB || 
+        projectId === EuPathDB
+      ) && <VEuPathDBDescription />
     }
     {
       projectId === PlasmoDB &&

@@ -401,7 +401,11 @@ export function StrategyWorkspaceController(DefaultComponent) {
 
 export function Page(DefaultComponent) {
   return withRouter(function VuPathDBPage(props) {
-    const renderNewHomePage = projectId === 'PlasmoDB';
+    // FIXME: When the VEuPathDB logo is ready for "release", update 
+    // the value of renderNewHomePage appropriately
+    const renderNewHomePage = (
+      projectId === 'PlasmoDB'
+    );
     const isHomePage = props.location.pathname === '/';
 
     useEffect(() => {
