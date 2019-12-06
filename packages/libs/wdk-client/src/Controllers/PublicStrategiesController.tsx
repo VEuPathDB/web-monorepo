@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { keyBy } from 'lodash/fp';
 
-import { setSearchTerm, setSort, setPrioritizeEuPathDbExamples } from 'wdk-client/Actions/PublicStrategyActions';
+import { setSearchTerm, setSort, setPrioritizeExamples } from 'wdk-client/Actions/PublicStrategyActions';
 import { Loading } from 'wdk-client/Components';
 import { MesaSortObject, DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -18,7 +18,7 @@ import Error from 'wdk-client/Components/PageStatus/Error';
 interface StateProps {
   searchTerm: string;
   sort?: MesaSortObject;
-  prioritizeEuPathDbExamples: boolean;
+  prioritizeExamples: boolean;
   publicStrategySummaries?: StrategySummary[];
   recordClassesByUrlSegment?: Record<string, RecordClass>;
   hasError?: boolean;
@@ -48,7 +48,7 @@ const recordClassesByUrlSegment = createSelector(
 const mapStateToProps = (state: RootState): StateProps => ({
   searchTerm: state.publicStrategies.searchTerm,
   sort: state.publicStrategies.sort,
-  prioritizeEuPathDbExamples: state.publicStrategies.prioritizeEuPathDBExamples,
+  prioritizeExamples: state.publicStrategies.prioritizeExamples,
   publicStrategySummaries: state.strategyWorkspace.publicStrategySummaries,
   recordClassesByUrlSegment: recordClassesByUrlSegment(state),
   hasError: state.strategyWorkspace.publicStrategySummariesError
@@ -57,7 +57,7 @@ const mapStateToProps = (state: RootState): StateProps => ({
 const mapDispatchToProps = (dispatch: DispatchAction): DispatchProps => ({
   onSearchTermChange: compose(dispatch, setSearchTerm),
   onSortChange: compose(dispatch, setSort),
-  onPriorityChange: compose(dispatch, setPrioritizeEuPathDbExamples)
+  onPriorityChange: compose(dispatch, setPrioritizeExamples)
 });
 
 export const PublicStrategiesController = connect(mapStateToProps, mapDispatchToProps)(wrappable(PublicStrategiesControllerView));

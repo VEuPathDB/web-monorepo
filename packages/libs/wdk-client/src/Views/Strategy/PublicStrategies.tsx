@@ -16,12 +16,12 @@ import 'wdk-client/Views/Strategy/PublicStrategies.scss';
 const cx = makeClassNameHelper('PublicStrategies');
 
 // FIXME This should be pulled from the model.xml's "exampleStratsAuthor" property
-const EUPATHDB_EXAMPLE = 'EuPathDB Example';
+const EXAMPLE_AUTHOR = 'VEuPathDB Example';
 
 interface Props {
   searchTerm: string;
   sort?: MesaSortObject;
-  prioritizeEuPathDbExamples: boolean;
+  prioritizeExamples: boolean;
   publicStrategySummaries: StrategySummary[];
   recordClassesByUrlSegment: Record<string, RecordClass>;
   onSearchTermChange: (newSearchTerm: string) => void;
@@ -32,7 +32,7 @@ interface Props {
 export const PublicStrategies = ({
   searchTerm,
   sort = { columnKey: 'lastModified', direction: 'desc' } as MesaSortObject,
-  prioritizeEuPathDbExamples,
+  prioritizeExamples,
   publicStrategySummaries,
   recordClassesByUrlSegment,
   onSearchTermChange,
@@ -51,8 +51,8 @@ export const PublicStrategies = ({
   const mesaColumns = useMemo(() => makeMesaColumns(recordClassToDisplayString), [ recordClassToDisplayString ]);
 
   const mesaRows = useMemo(() => makeMesaRows(
-    publicStrategySummaries, sort, recordClassToDisplayString, prioritizeEuPathDbExamples), 
-    [ publicStrategySummaries, sort, recordClassToDisplayString, prioritizeEuPathDbExamples ]
+    publicStrategySummaries, sort, recordClassToDisplayString, prioritizeExamples), 
+    [ publicStrategySummaries, sort, recordClassToDisplayString, prioritizeExamples ]
   );
   const mesaFilteredRows = useMemo(() => makeMesaFilteredRows(
     mesaRows, mesaColumns, searchTerm, recordClassToDisplayString), 
@@ -95,12 +95,12 @@ export const PublicStrategies = ({
         <div className={cx('--PriorityCheckbox')}>
           <input 
             id="public_strategies_priority_checkbox" 
-            checked={prioritizeEuPathDbExamples}
+            checked={prioritizeExamples}
             onChange={onPriorityCheckboxChange} type="checkbox" 
           />
           {' '}
           <label htmlFor="public_strategies_priority_checkbox">
-            Sort EuPathDB Example Strategies To Top
+            Sort VEuPathDB Example Strategies To Top
           </label>
         </div>
       </Mesa>
@@ -170,15 +170,15 @@ function makeMesaRows(
   publicStrategies: Props['publicStrategySummaries'], 
   sort: MesaSortObject, 
   recordClassToDisplayString: (urlSegment: string | null) => string,
-  prioritizeEuPathDbExamples: boolean
+  prioritizeExamples: boolean
 ) {
   const sortColumnValue = sort.columnKey === 'recordClassName'
     ? (row: StrategySummary) => recordClassToDisplayString(row.recordClassName)
     : sort.columnKey;
 
-  const sortPriorityValue = (row: StrategySummary) => row.author === EUPATHDB_EXAMPLE ? 0 : 1;
+  const sortPriorityValue = (row: StrategySummary) => row.author === EXAMPLE_AUTHOR ? 0 : 1;
 
-  return prioritizeEuPathDbExamples
+  return prioritizeExamples
     ? orderBy(publicStrategies, [ sortPriorityValue, sortColumnValue, ], [ 'asc', sort.direction ])
     : orderBy(publicStrategies, [ sortColumnValue ], [ sort.direction ])
 }
@@ -208,7 +208,7 @@ function makeMesaOptions() {
     toolbar: true,
     useStickyHeader: true,
     tableBodyMaxHeight: 'calc(80vh - 200px)',
-    deriveRowClassName: (strategy: StrategySummary) => strategy.author === EUPATHDB_EXAMPLE ? cx('--EuPathDBRow') : undefined
+    deriveRowClassName: (strategy: StrategySummary) => strategy.author === EXAMPLE_AUTHOR ? cx('--ExampleRow') : undefined
   };
 }
 

@@ -1,5 +1,5 @@
 import { Action } from 'wdk-client/Actions';
-import { setSearchTerm, setSort, setPrioritizeEuPathDbExamples } from 'wdk-client/Actions/PublicStrategyActions';
+import { setSearchTerm, setSort, setPrioritizeExamples } from 'wdk-client/Actions/PublicStrategyActions';
 import { MesaSortObject } from 'wdk-client/Core/CommonTypes';
 
 export const key = 'publicStrategies';
@@ -7,12 +7,12 @@ export const key = 'publicStrategies';
 export interface State {
   searchTerm: string,
   sort?: MesaSortObject,
-  prioritizeEuPathDBExamples: boolean
+  prioritizeExamples: boolean
 }
 
 const initialState: State = {
   searchTerm: '',
-  prioritizeEuPathDBExamples: true
+  prioritizeExamples: true
 };
 
 export function reduce(state: State = initialState, action: Action): State {
@@ -29,10 +29,10 @@ export function reduce(state: State = initialState, action: Action): State {
         sort: action.payload.sort 
       };
 
-    case setPrioritizeEuPathDbExamples.type:
+    case setPrioritizeExamples.type:
       return { 
         ...state, 
-        prioritizeEuPathDBExamples: action.payload.prioritizeEuPathDBExamples 
+        prioritizeExamples: action.payload.prioritizeExamples 
       };
 
     default:

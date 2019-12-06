@@ -25,9 +25,9 @@ export const setSort = makeActionCreator(
   (sort: MesaSortObject) => ({ sort })
 );
 
-export const setPrioritizeEuPathDbExamples = makeActionCreator(
-  'publicStrategies/setPrioritizeEuPathDBExamples',
-  (prioritizeEuPathDBExamples: boolean) => ({ prioritizeEuPathDBExamples })
+export const setPrioritizeExamples = makeActionCreator(
+  'publicStrategies/setPrioritizeExamples',
+  (prioritizeExamples: boolean) => ({ prioritizeExamples })
 )
 
 export type Action =
@@ -36,4 +36,4 @@ export type Action =
   | InferAction<typeof fulfillPublicStrategiesError>
   | InferAction<typeof setSearchTerm>
   | InferAction<typeof setSort>
-  | InferAction<typeof setPrioritizeEuPathDbExamples>;
+  | InferAction<typeof setPrioritizeExamples>;
