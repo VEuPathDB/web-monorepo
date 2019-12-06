@@ -34,6 +34,10 @@ body.vpdb-Body {
         padding: 10px 20px;
         box-shadow: 0 2px 4px #00000066;
 
+        @media screen and (max-width: 767px) {
+          height: auto;
+        }
+
         .ebrc-HeaderBranding {
           font-size: 25px;
           color: white;
