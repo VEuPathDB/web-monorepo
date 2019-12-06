@@ -153,7 +153,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
       items: [
         {
           radioDisplay: <React.Fragment>A <strong>RELATIVE TO</strong> B, using genomic colocation</React.Fragment>,
-          value: '["overlap"]'
+          value: 'overlap'
         }
       ]
     },

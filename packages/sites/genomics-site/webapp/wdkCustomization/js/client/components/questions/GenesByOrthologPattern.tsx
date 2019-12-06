@@ -4,15 +4,15 @@ import { mapValues } from 'lodash'
 
 import { CheckboxTree, HelpIcon } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
-import { CheckboxEnumParam, ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import { CheckBoxEnumParam, ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import './GenesByOrthologPattern.scss';
+import { toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 const cx = makeClassNameHelper('GenesByOrthologPattern');
 const cxDefaultQuestionForm = makeClassNameHelper('wdk-QuestionForm');
@@ -68,7 +68,7 @@ export const GenesByOrthologPattern = (props: Props) => {
 
   return (
     <EbrcDefaultQuestionForm
-      {...props} 
+      {...props}
       renderParamGroup={renderParamGroup}
     />
   );
@@ -86,11 +86,11 @@ function ProfileParameter({
 
   const {
     vocabulary: profileVocabulary,
-  } = questionState.question.parametersByName[PHYLETIC_TERM_MAP_PARAM_NAME] as CheckboxEnumParam;
+  } = questionState.question.parametersByName[PHYLETIC_TERM_MAP_PARAM_NAME] as CheckBoxEnumParam;
 
   const {
     vocabulary: indentVocabulary,
-  } = questionState.question.parametersByName[PHYLETIC_INDENT_MAP_PARAM_NAME] as CheckboxEnumParam;
+  } = questionState.question.parametersByName[PHYLETIC_INDENT_MAP_PARAM_NAME] as CheckBoxEnumParam;
 
   const depthMap = useMemo(
     () => indentVocabulary.reduce(
@@ -113,7 +113,7 @@ function ProfileParameter({
       ? new Set([])
       : questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME] === ALL_ORGANISMS_DISPLAY
       ? new Set([ ALL_ORGANISMS_TERM ])
-      : new Set(valueToArray(questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME])),
+      : new Set(toMultiValueArray(questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME])),
     [ questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME] ]
   );
 
@@ -122,7 +122,7 @@ function ProfileParameter({
       ? new Set([])
       : questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME] === ALL_ORGANISMS_DISPLAY
       ? new Set([ ALL_ORGANISMS_TERM ])
-      : new Set(valueToArray(questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME])),
+      : new Set(toMultiValueArray(questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME])),
     [ questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME] ]
   );
 
@@ -140,7 +140,7 @@ function ProfileParameter({
     () => {
       const profilePatternLeaves = Object.keys(constraints)
         .filter(
-          term => 
+          term =>
             nodeMap[term].children.length === 0 && (
               constraints[term] === 'include' ||
               constraints[term] === 'exclude'
@@ -189,7 +189,7 @@ function ProfileParameter({
     () => makeRenderNode(constraints, nodeMap, profileTree, eventHandlers, questionState),
     [ constraints, nodeMap, profileTree, eventHandlers, questionState ]
   );
-  
+
   return (
     <div className={cx('ProfileParameter')}>
       <div className={cx('ProfileParameterHelp')}>
@@ -299,7 +299,7 @@ function ConstraintIcon({
     <span
       className={cx('ConstraintIcon', constraintType)}
       onClick={onClickSpan}
-    >  
+    >
     </span>
   );
 }
@@ -355,7 +355,7 @@ function paramsToProfileTree(
 
   traverse(0, profileTree, 1);
 
-  return { 
+  return {
     profileTree,
     nodeMap
   };
@@ -410,7 +410,7 @@ function updateProfileTerms(
   constraints: Record<string, TermConstraintState>,
   profileTree: ProfileNode
 ) {
-  const newConstraints = { 
+  const newConstraints = {
     ...constraints,
     [term]: newTermConstraint
   };
@@ -450,8 +450,8 @@ function updateProfileTerms(
   }
 
   function traverseSpeciesMemberships(
-    node: ProfileNode, 
-    ancestorIncluded: boolean, 
+    node: ProfileNode,
+    ancestorIncluded: boolean,
     ancestorExcluded: boolean
   ) {
     if (newConstraints[node.term] === 'include' && !ancestorIncluded) {

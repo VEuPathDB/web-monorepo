@@ -164,7 +164,7 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
 
   // show collapsed view if not expanded
   if (!isExpanded) {
-    return ( 
+    return (
       <div style={{ position: 'relative' }}>
         <ExpansionBar onClick={() => setExpandedAndPref(true)} message={'Show ' + TITLE} arrow="&dArr;"/>
       </div>
@@ -353,11 +353,11 @@ function loadTaxonomyTree(wdkService: WdkService,
   wdkService.getQuestionAndParameters(TAXON_QUESTION_NAME)
     .then(question => {
       let orgParam  = question.parameters.find(p => p.name == ORGANISM_PARAM_NAME);
-      if (orgParam && orgParam.type == 'vocabulary' && orgParam.displayType == "treeBox") {
+      if (orgParam && orgParam.type == 'multi-pick-vocabulary' && orgParam.displayType == "treeBox") {
         setTaxonomyTree(orgParam.vocabulary);
       }
       else {
-        throw TAXON_QUESTION_NAME + " does not contain treebox enum param " + ORGANISM_PARAM_NAME;
+        throw new Error(TAXON_QUESTION_NAME + " does not contain treebox enum param " + ORGANISM_PARAM_NAME);
       }
     });
 }

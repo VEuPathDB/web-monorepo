@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
-
 import { zip } from 'lodash';
-
 import { SubmissionMetadata, reportSubmissionError } from 'wdk-client/Actions/QuestionActions';
 import { requestCreateStrategy } from 'wdk-client/Actions/StrategyActions';
 import { Loading, RadioList, TextArea } from 'wdk-client/Components';
@@ -11,11 +9,10 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { QuestionState, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { AnswerSpec, StandardReportConfig, Answer, CheckboxEnumParam, StringParam } from 'wdk-client/Utils/WdkModel';
+import { AnswerSpec, StandardReportConfig, Answer, CheckBoxEnumParam, StringParam } from 'wdk-client/Utils/WdkModel';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { DEFAULT_COLS, calculateRows } from 'wdk-client/Views/Question/Params/StringParam';
 import { useChangeParamValue } from 'wdk-client/Views/Question/Params/Utils';
-
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
 const BLAST_DATABASE_TYPE_PARAM = 'BlastDatabaseType';
@@ -47,7 +44,7 @@ type AlgorithmOntologyTerm = {
   internal: string
 };
 
-const BlastQuestionFormView = ({ projectId, ...formProps}: Props) => { 
+const BlastQuestionFormView = ({ projectId, ...formProps}: Props) => {
   const targetDataType = formProps.state.paramValues[BLAST_DATABASE_TYPE_PARAM] as TargetDataType;
 
   const enabledAlgorithms = useEnabledAlgorithms(targetDataType, projectId);
@@ -56,8 +53,8 @@ const BlastQuestionFormView = ({ projectId, ...formProps}: Props) => {
   const sequenceParamProps = useSequenceParamProps(formProps.state, formProps.eventHandlers.updateParamValue);
 
   const submissionMetadata = useSubmissionMetadata(
-    formProps.submissionMetadata, 
-    formProps.state.question.urlSegment, 
+    formProps.submissionMetadata,
+    formProps.state.question.urlSegment,
     targetMetadataByDataType[targetDataType],
     formProps.dispatchAction
   );
@@ -76,8 +73,8 @@ const BlastQuestionFormView = ({ projectId, ...formProps}: Props) => {
 
   return !enabledAlgorithms
     ? <Loading />
-    : <EbrcDefaultQuestionForm 
-        {...formProps} 
+    : <EbrcDefaultQuestionForm
+        {...formProps}
         parameterElements={
           {
             ...formProps.parameterElements,
@@ -135,7 +132,7 @@ const useEnabledAlgorithms = (targetDataType: TargetDataType, projectId: string 
 
   const enabledAlgorithms = useMemo(
     () => (
-      algorithmTermsByDatabase && 
+      algorithmTermsByDatabase &&
       algorithmTermsByDatabase[targetMetadataByDataType[targetDataType].blastDatabase]
     ),
     [ algorithmTermsByDatabase, targetMetadataByDataType, targetDataType ]
@@ -154,13 +151,13 @@ const useAlgorithmTermsByDatabase = (projectId: string | undefined) => {
 
     const answerPromises = blastDatabases.map(
       databaseName => wdkService.getAnswerJson(
-        makeAllowedAlgorithmsSearchConfig(databaseName, projectId), 
+        makeAllowedAlgorithmsSearchConfig(databaseName, projectId),
         makeAllowedAlgorithmsReportConfig(databaseName)
       )
     );
 
     (async () => {
-      const answersByDatabase = await Promise.all(answerPromises); 
+      const answersByDatabase = await Promise.all(answerPromises);
 
       const result = zip(blastDatabases, answersByDatabase).reduce(
         (memo, [databaseName, answer]) => ({
@@ -219,7 +216,7 @@ const answerToTerms = (databaseName: BlastDatabase, answer: Answer): AlgorithmOn
 
 const useTargetParamProps = (state: QuestionState, updateParamValue: Props['eventHandlers']['updateParamValue']) => {
   const searchName = state.question.urlSegment;
-  const parameter = state.question.parametersByName[BLAST_DATABASE_TYPE_PARAM] as CheckboxEnumParam;
+  const parameter = state.question.parametersByName[BLAST_DATABASE_TYPE_PARAM] as CheckBoxEnumParam;
 
   const items = useMemo(
     () => parameter.vocabulary.map(([value, display]) => ({
@@ -229,7 +226,7 @@ const useTargetParamProps = (state: QuestionState, updateParamValue: Props['even
         targetMetadataByDataType[value as TargetDataType].searchName !== searchName &&
         searchName !== 'UnifiedBlast'
       )
-    })), 
+    })),
     [ parameter, targetMetadataByDataType, searchName ]
   );
 
@@ -244,19 +241,19 @@ const useTargetParamProps = (state: QuestionState, updateParamValue: Props['even
 };
 
 const useAlgorithmParamProps = (
-  state: QuestionState, 
-  updateParamValue: Props['eventHandlers']['updateParamValue'], 
+  state: QuestionState,
+  updateParamValue: Props['eventHandlers']['updateParamValue'],
   enabledAlgorithms: string[] | undefined
 ) => {
-  const parameter = state.question.parametersByName[BLAST_ALGORITHM_PARAM] as CheckboxEnumParam;
+  const parameter = state.question.parametersByName[BLAST_ALGORITHM_PARAM] as CheckBoxEnumParam;
   const algorithm = state.paramValues[BLAST_ALGORITHM_PARAM];
-  
+
   const items = useMemo(
     () => parameter.vocabulary.map(([value, display]) => ({
       value,
       display: safeHtml(display),
       disabled: !enabledAlgorithms || !enabledAlgorithms.includes(value)
-    })), 
+    })),
     [ parameter, enabledAlgorithms ]
   );
 
@@ -279,8 +276,8 @@ const useAlgorithmParamProps = (
 const useSequenceParamProps = (state: QuestionState, updateParamValue: Props['eventHandlers']['updateParamValue']) => {
   const parameter = state.question.parametersByName[BLAST_QUERY_SEQUENCE_PARAM] as StringParam;
   const expectValueParameter = state.question.parametersByName[EXPECTATION_VALUE_PARAM];
-  const { 
-    [BLAST_QUERY_SEQUENCE_PARAM]: value, 
+  const {
+    [BLAST_QUERY_SEQUENCE_PARAM]: value,
     [BLAST_ALGORITHM_PARAM]: algorithm,
     [EXPECTATION_VALUE_PARAM]: expectValue
   } = state.paramValues;
@@ -310,16 +307,16 @@ const useSequenceParamProps = (state: QuestionState, updateParamValue: Props['ev
 };
 
 const useSubmissionMetadata = (
-  pageSubmissionMetadata: SubmissionMetadata, 
-  pageSearchName: string, 
+  pageSubmissionMetadata: SubmissionMetadata,
+  pageSearchName: string,
   targetMetadata: TargetMetadata,
   dispatchAction: DispatchAction
 ) => {
   const submissionMetadata = useMemo(
     () => pageSearchName !== 'UnifiedBlast'
       ? pageSubmissionMetadata
-      : { 
-          type: 'submit-custom-form', 
+      : {
+          type: 'submit-custom-form',
           onStepSubmitted: (wdkService, submissionSpec) => {
             wdkService.createStep({
               ...submissionSpec,
@@ -346,11 +343,11 @@ const useSubmissionMetadata = (
                 dispatchAction(reportSubmissionError(pageSearchName, error, wdkService));
               });
           }
-        } as SubmissionMetadata, 
-    [ 
-      pageSubmissionMetadata, 
-      pageSearchName, 
-      targetMetadata, 
+        } as SubmissionMetadata,
+    [
+      pageSubmissionMetadata,
+      pageSearchName,
+      targetMetadata,
       dispatchAction
     ]
   );
