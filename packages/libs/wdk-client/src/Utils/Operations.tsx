@@ -79,19 +79,19 @@ export const defaultBinaryOperations: BinaryOperation[] = [
       items: [
         {
           radioDisplay: <React.Fragment>A <strong>INTERSECT</strong> B</React.Fragment>,
-          value: '["INTERSECT"]'
+          value: 'INTERSECT'
         },
         {
           radioDisplay: <React.Fragment>A <strong>UNION</strong> B</React.Fragment>,
-          value: '["UNION"]'
+          value: 'UNION'
         },
         {
           radioDisplay: <React.Fragment>A <strong>MINUS</strong> B</React.Fragment>,
-          value: '["MINUS"]'
+          value: 'MINUS'
         },
         {
           radioDisplay: <React.Fragment>B <strong>MINUS</strong> A</React.Fragment>,
-          value: '["RMINUS"]'
+          value: 'RMINUS'
         }
       ]
     },
@@ -150,7 +150,7 @@ export const useCompatibleOperatorMetadata = (questions: Question[] | undefined,
 
           const parameterValues = [
             ...operatorMenuGroup.items.map(({ value }) => value),
-            ...(name === 'combine' ? [ '["LONLY"]', '["RONLY"]' ] : [])
+            ...(name === 'combine' ? [ 'LONLY', 'RONLY' ] : [])
           ];
 
           const newMetadataEntries = operationQuestion && parameterValues.reduce(
@@ -191,8 +191,8 @@ export type ReviseOperatorMenuGroup = {
 }
 
 const ignoreOperators: ReviseOperatorMenuItem[] = [
-  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: '["LONLY"]', iconClassName: cxOperator('--CombineOperator', 'LONLY') },
-  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: '["RONLY"]', iconClassName: cxOperator('--CombineOperator', 'RONLY') }
+  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LONLY', iconClassName: cxOperator('--CombineOperator', 'LONLY') },
+  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY', iconClassName: cxOperator('--CombineOperator', 'RONLY') }
 ];
 
 export const useReviseOperatorConfigs = (questions: Question[] | undefined, outputRecordClass: string | undefined, primaryInputRecordClass: string | undefined, secondaryInputRecordClass: string | undefined) => {
@@ -212,7 +212,7 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
                 items: operatorMenuGroup.items.map(
                   (menuItem) => ({
                     display: menuItem.radioDisplay,
-                    iconClassName: cxOperator(`--${baseClassName}`, toUpper(JSON.parse(menuItem.value)[0])),
+                    iconClassName: cxOperator(`--${baseClassName}`, toUpper(menuItem.value)),
                     value: menuItem.value
                   })
                 )
@@ -357,7 +357,7 @@ export const useBinaryStepBoxClassName = (step: Step) => {
 
   const { baseClassName, operatorParamName } = binaryOperation;
 
-  const classNameModifier = toUpper(JSON.parse(step.searchConfig.parameters[operatorParamName])[0])
+  const classNameModifier = toUpper(step.searchConfig.parameters[operatorParamName])
 
   return classNameModifier
     ? cxOperator(`--${baseClassName}`, classNameModifier)

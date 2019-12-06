@@ -6,8 +6,7 @@ import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { ParamLine } from 'wdk-client/Views/Question/Groups/FoldChange/ParamLine';
 import { ReferenceSampleParameterPane, ComparisonSampleParameterPane } from 'wdk-client/Views/Question/Groups/FoldChange/sampleParameterPane';
-import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import { HelpIcon } from 'wdk-client/Components';
+import { toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 type EventHandlers = {
   setGroupVisibility: typeof changeGroupVisibility,
@@ -46,7 +45,7 @@ export const SamplesParamSubgroup: React.FunctionComponent<Props> = ({
         parameterElement={parameterElements['min_max_avg_ref']}
         parameter={parametersByName['min_max_avg_ref']}
         postParameterContent={<b>{' '}{valueType}</b>}
-        hideParameter={valueToArray(paramValues['samples_fc_ref_generic']).length < 2}
+        hideParameter={toMultiValueArray(paramValues['samples_fc_ref_generic']).length < 2}
       />
       {
         hardFloorVisible && (
@@ -67,7 +66,7 @@ export const SamplesParamSubgroup: React.FunctionComponent<Props> = ({
         parameterElement={parameterElements['min_max_avg_comp']}
         parameter={parametersByName['min_max_avg_comp']}
         postParameterContent={<b>{' '}{valueType}</b>}
-        hideParameter={valueToArray(paramValues['samples_fc_comp_generic']).length < 2}
+        hideParameter={toMultiValueArray(paramValues['samples_fc_comp_generic']).length < 2}
       />
       {
         hardFloorVisible && (

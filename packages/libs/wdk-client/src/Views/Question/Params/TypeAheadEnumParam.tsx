@@ -1,16 +1,14 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import Select from 'react-select';
-import { TypeAheadEnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
-import { Props, createParamModule } from 'wdk-client/Views/Question/Params/Utils';
-import { isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { TypeAheadEnumParam } from 'wdk-client/Utils/WdkModel';
+import { Props } from 'wdk-client/Views/Question/Params/Utils';
 import { ValueType, InputActionMeta } from 'react-select/src/types';
+import { isMultiPick } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
-function isType(parameter: Parameter): parameter is TypeAheadEnumParam {
-  return isEnumParam(parameter) && parameter.displayType === 'typeAhead';
-}
-
-function isParamValueValid() {
-  return true;
+type TypeAheadParamProps = {
+  parameter: TypeAheadEnumParam;
+  selectedValues: string[];
+  onChange: (newValue: string[]) => void;
 }
 
 type Option = {
@@ -18,7 +16,7 @@ type Option = {
   label: string
 };
 
-export const TypeAheadEnumParamComponent = (props: Props<TypeAheadEnumParam>) => {
+export const TypeAheadEnumParamComponent = (props: TypeAheadParamProps) => {
   const vocabularyByValue = useMemo(
     () => props.parameter.vocabulary.reduce(
         (memo, entry) => ({
@@ -39,12 +37,11 @@ export const TypeAheadEnumParamComponent = (props: Props<TypeAheadEnumParam>) =>
 
   const selection = useMemo(
     () => {
-      const stringValueArray = JSON.parse(props.value) as string[];
-      return stringValueArray.map(
+      return props.selectedValues.map(
         value => ({ value, label: vocabularyByValue[value][1] })
       );
     },
-    [ props.value, props.parameter.multiPick ]
+    [ props.selectedValues, isMultiPick(props.parameter) ]
   );
 
   const onInputChange = useCallback((inputValue: string, { action }: InputActionMeta) => {
@@ -60,9 +57,9 @@ export const TypeAheadEnumParamComponent = (props: Props<TypeAheadEnumParam>) =>
       ? (newSelection as Option[])
       : [newSelection as Option];
 
-    props.onParamValueChange(JSON.stringify(newSelectionArray.map(({ value }) => value)));
+    props.onChange(newSelectionArray.map(({ value }) => value));
     setSearchTerm('');
-  }, [ props.onParamValueChange ]);
+  }, [ props.onChange ]);
 
   const filterOption = useCallback(
     (option: Option, inputValue: string) =>
@@ -85,7 +82,7 @@ export const TypeAheadEnumParamComponent = (props: Props<TypeAheadEnumParam>) =>
 
   return (
     <Select<Option>
-      isMulti={props.parameter.multiPick}
+      isMulti={isMultiPick(props.parameter)}
       isSearchable
       options={options}
       filterOption={filterOption}
@@ -98,8 +95,4 @@ export const TypeAheadEnumParamComponent = (props: Props<TypeAheadEnumParam>) =>
   );
 };
 
-export default createParamModule({
-  isType,
-  isParamValueValid,
-  Component: TypeAheadEnumParamComponent
-});
+export default TypeAheadEnumParamComponent;

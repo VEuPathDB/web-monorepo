@@ -8,11 +8,11 @@ import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { filterNodes, getLeaves, isBranch } from 'wdk-client/Utils/TreeUtils';
-import { Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from 'wdk-client/Utils/WdkModel';
+import { EnumParam, TreeBoxEnumParam, TreeBoxVocabNode } from 'wdk-client/Utils/WdkModel';
 
 import SelectionInfo from 'wdk-client/Views/Question/Params/SelectionInfo';
-import { Props, createParamModule } from 'wdk-client/Views/Question/Params/Utils';
-import { isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { Context } from 'wdk-client/Views/Question/Params/Utils';
+import { isMultiPick, isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { INIT_PARAM } from 'wdk-client/Actions/QuestionActions';
 import {
   setExpandedList,
@@ -21,25 +21,25 @@ import {
   SET_SEARCH_TERM
 } from 'wdk-client/Actions/TreeBoxEnumParamActions';
 import { Action } from 'wdk-client/Actions';
-
-function isType(parameter: Parameter): parameter is TreeBoxEnumParam {
-  return isEnumParam(parameter) && parameter.displayType === 'treeBox';
-}
-
-function isParamValueValid() {
-  return true;
-}
+import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 
 // Types
 // -----
-
-
-type TreeBoxProps = Props<TreeBoxEnumParam, State>;
 
 export type State = {
   expandedList: string[];
   searchTerm: string;
 }
+
+type TreeBoxProps = {
+  parameter: TreeBoxEnumParam;
+  selectedValues: string[];
+  onChange: (newValue: string[]) => void;
+  uiState: State;
+  context: Context<TreeBoxEnumParam>;
+  dispatch: DispatchAction;
+}
+
 
 
 // Utils
@@ -96,14 +96,19 @@ function deriveIndeterminateBranches(tree: TreeBoxVocabNode, items: string[]): s
 
 export function reduce(state: State = {} as State, action: Action): State {
   switch(action.type) {
+
     case INIT_PARAM:
-      return {
-        expandedList: findBranchTermsUpToDepth(
-          (action.payload.parameter as TreeBoxEnumParam).vocabulary,
-          (action.payload.parameter as TreeBoxEnumParam).depthExpanded
-        ),
-        searchTerm: ''
-      };
+      let { parameter } = action.payload;
+      if (isEnumParam(parameter) && parameter.displayType == 'treeBox') {
+        return {
+          expandedList: findBranchTermsUpToDepth(
+            parameter.vocabulary,
+            parameter.depthExpanded
+          ),
+          searchTerm: ''
+        };
+      }
+      return state;
 
     case SET_EXPANDED_LIST:
       return {
@@ -122,13 +127,13 @@ export function reduce(state: State = {} as State, action: Action): State {
   }
 }
 
+
 // View
 // ----
 
-
 export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   const tree = props.parameter.vocabulary;
-  const selectedNodes = JSON.parse(props.value);
+  const selectedNodes = props.selectedValues;
   const selectedLeaves = removeBranches(tree, selectedNodes);
   const allCount = getLeaves(tree, getNodeChildren).length;
   const selectedCount = props.parameter.countOnlyLeaves
@@ -140,19 +145,19 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
       <SelectionInfo parameter={props.parameter} selectedCount={selectedCount} allCount={allCount} alwaysShowCount />
       <CheckboxTree
         isSelectable={true}
-        isMultiPick={props.parameter.multiPick}
+        isMultiPick={isMultiPick(props.parameter)}
         linksPosition={CheckboxTree.LinkPlacement.Bottom}
         showRoot={false}
         tree={tree}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
         renderNode={renderNode}
-        onExpansionChange={expandedList => props.dispatch(setExpandedList({ ...props.ctx, expandedList}))}
+        onExpansionChange={expandedList => props.dispatch(setExpandedList({ ...props.context, expandedList}))}
         expandedList={props.uiState.expandedList}
         selectedList={selectedLeaves}
         onSelectionChange={(ids: string[]) => {
           const idsWithBranches = ids.concat(deriveSelectedBranches(tree, ids));
-          props.onParamValueChange(JSON.stringify(idsWithBranches));
+          props.onChange(idsWithBranches);
         }}
         isSearchable={true}
         searchBoxPlaceholder="Filter list below..."
@@ -160,7 +165,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         renderNoResults={renderNoResults}
         searchTerm={props.uiState.searchTerm}
         searchPredicate={searchPredicate}
-        onSearchTermChange={searchTerm => props.dispatch(setSearchTerm({ ...props.ctx, searchTerm }))}
+        onSearchTermChange={searchTerm => props.dispatch(setSearchTerm({ ...props.context, searchTerm }))}
       />
     </div>
   );
@@ -168,10 +173,6 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
 
 function renderNode(node: TreeBoxVocabNode) {
   return safeHtml(node.data.display);
-}
-
-type NoResultsProps = {
-  searchTerm: string;
 }
 
 function renderNoResults(searchTerm: string) {
@@ -182,9 +183,4 @@ function renderNoResults(searchTerm: string) {
   )
 }
 
-export default createParamModule({
-  isType,
-  isParamValueValid,
-  reduce,
-  Component: TreeBoxEnumParamComponent
-});
+export default TreeBoxEnumParamComponent;

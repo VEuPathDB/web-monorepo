@@ -267,7 +267,7 @@ type EnumParameterInputProps = {
 
 class EnumParameterInput extends React.Component<EnumParameterInputProps> {
   render() {
-    const options = TreeBoxEnumParam.isType(this.props.parameter)
+    const options = this.props.parameter.displayType === 'treeBox'
       ? Seq.from(preorder(this.props.parameter.vocabulary, node => node.children))
         .filter(node => node.children.length == 0)
         .map(node => node.data.term)

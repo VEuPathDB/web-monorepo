@@ -4,7 +4,7 @@ import { FoldChangeParamPreview } from 'wdk-client/Views/Question/Groups/FoldCha
 import { GenericFoldChangeParamGroup } from 'wdk-client/Views/Question/Groups/FoldChange/GenericFoldChangeParamGroup';
 import { MetaboliteFoldChangeParamGroup } from 'wdk-client/Views/Question/Groups/FoldChange/MetaboliteFoldChangeParamGroup';
 import { FoldChangeDirection, FoldChangeOperation } from 'wdk-client/Views/Question/Groups/FoldChange/Types';
-import { valueToArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { Props } from '../../DefaultQuestionForm';
 
 import 'wdk-client/Views/Question/Groups/FoldChange/FoldChange.scss';
@@ -13,8 +13,8 @@ import 'wdk-client/Views/Question/Groups/FoldChange/FoldChange.scss';
 const cx = makeClassNameHelper('wdk-QuestionForm');
 
 const foldChangeGroup = (
-  valueType: string, 
-  valueTypePlural: string, 
+  valueType: string,
+  valueTypePlural: string,
   foldChangeParamKey: string,
   FoldChangeParamGroup: React.FunctionComponent<Props & { valueType: string }>
 ): React.FunctionComponent<Props> => props => {
@@ -31,8 +31,8 @@ const foldChangeGroup = (
   const refSamples = paramValues['samples_fc_ref_generic'];
   const compSamples = paramValues['samples_fc_comp_generic'];
 
-  const refSampleSize = valueToArray(refSamples).length;
-  const compSampleSize = valueToArray(compSamples).length;
+  const refSampleSize = toMultiValueArray(refSamples).length;
+  const compSampleSize = toMultiValueArray(compSamples).length;
 
   const referenceOperation = refSampleSize === 1
     ? 'none'

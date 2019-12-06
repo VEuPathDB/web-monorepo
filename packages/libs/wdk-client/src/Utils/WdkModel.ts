@@ -48,7 +48,7 @@ export interface Reporter {
   scopes: string[];
 }
 
-export interface ParameterBase extends NamedModelEntity {
+interface ParameterBase extends NamedModelEntity {
   help: string;
   isVisible: boolean;
   group: string;
@@ -87,39 +87,18 @@ export interface FilterParamNew extends ParameterBase {
   values: Record<string, string[]>;
 }
 
-export interface EnumParamBase extends ParameterBase {
-  type: 'vocabulary';
+interface AbstractEnumParamBase extends ParameterBase {
   displayType: string;
-  countOnlyLeaves: boolean;
   maxSelectedCount: number;
   minSelectedCount: number;
-  multiPick: boolean;
-  depthExpanded: number;
 }
 
 type VocabTerm = string;
 type VocabDisplay = string;
 type VocabParent = string;
 
-export interface SelectEnumParam extends EnumParamBase {
-  displayType: 'select';
+interface StandardEnumParamBase extends AbstractEnumParamBase {
   vocabulary: [ VocabTerm, VocabDisplay, null ][];
-}
-
-export interface CheckboxEnumParam extends EnumParamBase {
-  displayType: 'checkBox';
-  vocabulary: [ VocabTerm, VocabDisplay, null ][];
-}
-
-export interface TypeAheadEnumParam extends EnumParamBase {
-  displayType: 'typeAhead';
-  vocabulary: [ VocabTerm, VocabDisplay, null ][];
-}
-
-// FIXME Remove
-export interface ListEnumParam extends EnumParamBase {
-  displayType: 'select' | 'checkBox' | 'typeAhead';
-  vocabulary: [ VocabTerm, VocabDisplay, VocabParent | null ][];
 }
 
 export interface TreeBoxVocabNode {
@@ -127,15 +106,49 @@ export interface TreeBoxVocabNode {
     term: string;
     display: string;
   };
-  children: TreeBoxVocabNode[]
+  children: TreeBoxVocabNode[];
 }
 
-export interface TreeBoxEnumParam extends EnumParamBase {
+interface TreeBoxEnumParamBase extends AbstractEnumParamBase {
   displayType: 'treeBox';
+  depthExpanded: number;
+  countOnlyLeaves: boolean;
   vocabulary: TreeBoxVocabNode;
 }
 
-export type EnumParam = SelectEnumParam | CheckboxEnumParam | TypeAheadEnumParam | TreeBoxEnumParam;
+// simple interfaces to declare individual types, displayTypes
+interface SelectEnumParamBase extends StandardEnumParamBase {
+  displayType: 'select';
+}
+interface CheckBoxEnumParamBase extends StandardEnumParamBase {
+  displayType: 'checkBox';
+}
+interface TypeAheadEnumParamBase extends StandardEnumParamBase {
+  displayType: 'typeAhead';
+}
+interface SinglePickEnumParam {
+  type: 'single-pick-vocabulary';
+}
+interface MultiPickEnumParam {
+  type: 'multi-pick-vocabulary';
+}
+
+// final types of all varieties of enum params
+export interface SinglePickSelectEnumParam extends SelectEnumParamBase, SinglePickEnumParam {}
+export interface MultiPickSelectEnumParam extends SelectEnumParamBase, MultiPickEnumParam {}
+export interface SinglePickCheckBoxEnumParam extends CheckBoxEnumParamBase, SinglePickEnumParam {}
+export interface MultiPickCheckBoxEnumParam extends CheckBoxEnumParamBase, MultiPickEnumParam {}
+export interface SinglePickTypeAheadEnumParam extends TypeAheadEnumParamBase, SinglePickEnumParam {}
+export interface MultiPickTypeAheadEnumParam extends TypeAheadEnumParamBase, MultiPickEnumParam {}
+export interface SinglePickTreeBoxEnumParam extends TreeBoxEnumParamBase, SinglePickEnumParam {}
+export interface MultiPickTreeBoxEnumParam extends TreeBoxEnumParamBase, MultiPickEnumParam {}
+
+export type SelectEnumParam = SinglePickSelectEnumParam | MultiPickSelectEnumParam;
+export type CheckBoxEnumParam = SinglePickCheckBoxEnumParam | MultiPickCheckBoxEnumParam;
+export type TypeAheadEnumParam = SinglePickTypeAheadEnumParam | MultiPickTypeAheadEnumParam;
+export type TreeBoxEnumParam = SinglePickTreeBoxEnumParam | MultiPickTreeBoxEnumParam;
+
+export type EnumParam = SelectEnumParam | CheckBoxEnumParam | TypeAheadEnumParam | TreeBoxEnumParam;
 
 export interface NumberParam extends ParameterBase {
   type: 'number';

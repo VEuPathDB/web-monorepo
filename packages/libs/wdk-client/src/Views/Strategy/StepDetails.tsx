@@ -12,7 +12,7 @@ import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import { QuestionWithParameters, Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
-import { valueToArray, isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { isEnumParam, isMultiPick, toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { datasetItemToString, DatasetItem } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
 
@@ -152,8 +152,7 @@ function formatRangeParameterValue(value: string) {
 }
 
 function formatEnumParameterValue(parameter: EnumParam, value: string) {
-  const valueArray = JSON.parse(value) as string[];
-  const valueSet = new Set(valueArray);
+  const valueSet = new Set(isMultiPick(parameter) ? toMultiValueArray(value) : value);
   const termDisplayPairs = makeTermDisplayPairs(parameter.vocabulary);
 
   return termDisplayPairs

@@ -10,7 +10,7 @@ type Item = {
 type Props = {
   name?: string
   items: Item[]
-  value: any
+  value: string[]
   onChange: (value: string[]) => void
 }
 

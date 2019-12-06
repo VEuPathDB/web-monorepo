@@ -3,7 +3,7 @@ import {uniqueId, noop} from 'lodash';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 type Item = {
-  value: any
+  value: string
   display: ReactNode
 }
 
@@ -19,7 +19,7 @@ type Props = {
    * Default list of selected items. If provided, these items will be checked
    * for the initial render.
    */
-  defaultSelectedItems?: Item[]
+  defaultSelectedItems?: string[]
 
   /**
    * List of selected items.
@@ -28,10 +28,10 @@ type Props = {
    *
    * - If provided, items in this list will be checked, regardless of the value
    *   of `defaultSelectedItems`. Also, state will not be tracked locally.
-   *   `onChange` should be used to detect changes and update extrernally
+   *   `onChange` should be used to detect changes and update externally
    *   tracked state.
    */
-  selectedItems: Item[]
+  selectedItems?: string[]
 
   /**
    * Callback function that will be called when the set of selected items
@@ -58,7 +58,7 @@ type Props = {
 }
 
 type State = {
-  selectedItems: Item[]
+  selectedItems: string[]
 }
 
 /**
@@ -73,7 +73,7 @@ class NativeCheckboxList extends Component<Props, State> {
   controlled = this.props.selectedItems != null
 
   static defaultProps = {
-    defaultSelectedItems: [] as Item[],
+    defaultSelectedItems: [] as string[],
     onChange: (event: FormEvent<HTMLInputElement>, item: Item) => {},
     onSelectAll: (event: MouseEvent<HTMLButtonElement>) => {},
     onClearAll: (event: MouseEvent<HTMLButtonElement>) => {}
@@ -96,7 +96,7 @@ class NativeCheckboxList extends Component<Props, State> {
       this.setState({
         selectedItems: event.currentTarget.checked
           ? this.state.selectedItems.concat(item.value)
-          : this.state.selectedItems.filter(i => i.value !== item.value)
+          : this.state.selectedItems.filter(i => i !== item.value)
       });
     }
   }
@@ -128,7 +128,8 @@ class NativeCheckboxList extends Component<Props, State> {
   }
 
   render() {
-    let { selectedItems } = this.controlled ? this.props : this.state;
+    let { selectedItems: storedSelectedItems } = this.controlled ? this.props : this.state;
+    let selectedItems = storedSelectedItems || [];
     return (
       <div className="wdk-CheckboxList">
         <div>

@@ -12,6 +12,7 @@ import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionFor
 // -----
 
 // FIXME Add full question, paramUIState and groupUIState
+// OR TODO: change parameter to parameterName to reduce type constraints
 export type Context<T extends Parameter> = {
   searchName: string;
   parameter: T;
