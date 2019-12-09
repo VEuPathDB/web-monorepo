@@ -34,7 +34,7 @@ body.vpdb-Body {
         padding: 10px 20px;
         box-shadow: 0 2px 4px #00000066;
 
-        @media screen and (max-width: 767px) {
+        @media screen and (max-width: 1000px) {
           height: auto;
         }
 
@@ -110,7 +110,7 @@ body.vpdb-Body {
       grid-area: footer;
     }
 
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 1000px) {
       display: flex;
       flex-direction: column;
     }
