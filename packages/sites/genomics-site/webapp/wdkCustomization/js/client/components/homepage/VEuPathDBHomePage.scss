@@ -111,8 +111,10 @@ body.vpdb-Body {
     }
 
     @media screen and (max-width: 1000px) {
-      display: flex;
-      flex-direction: column;
+      &__home {
+        display: flex;
+        flex-direction: column;
+      }
     }
 
     &__header-collapsed {
