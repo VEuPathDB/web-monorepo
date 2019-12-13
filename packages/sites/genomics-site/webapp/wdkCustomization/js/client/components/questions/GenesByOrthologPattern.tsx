@@ -109,22 +109,23 @@ function ProfileParameter({
   );
 
   const includedTerms = useMemo(
-    () => questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME] === NO_TERMS
-      ? new Set([])
-      : questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME] === ALL_ORGANISMS_DISPLAY
-      ? new Set([ ALL_ORGANISMS_TERM ])
-      : new Set(toMultiValueArray(questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME])),
+    () => getSpeciesTerms(INCLUDED_SPECIES_PARAM_NAME),
     [ questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME] ]
   );
 
   const excludedTerms = useMemo(
-    () => questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME] === NO_TERMS
-      ? new Set([])
-      : questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME] === ALL_ORGANISMS_DISPLAY
-      ? new Set([ ALL_ORGANISMS_TERM ])
-      : new Set(toMultiValueArray(questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME])),
+    () => getSpeciesTerms(EXCLUDED_SPECIES_PARAM_NAME),
     [ questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME] ]
   );
+
+  const getSpeciesTerms = (paramName: string) => {
+    let value = questionState.paramValues[paramName];
+    return (
+      value === NO_TERMS ? new Set([]) :
+      value === ALL_ORGANISMS_DISPLAY ? new Set([ ALL_ORGANISMS_TERM ]) :
+      new Set(value.split(","))
+    );
+  }
 
   const { profileTree, nodeMap } = useMemo(
     () => paramsToProfileTree(profileVocabulary, depthMap, displayMap),
