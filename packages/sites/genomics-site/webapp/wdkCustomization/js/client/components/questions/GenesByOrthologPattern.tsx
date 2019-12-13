@@ -79,6 +79,13 @@ type ProfileParameterProps = {
   eventHandlers: Props['eventHandlers']
 };
 
+function getSpeciesTerms(speciesParamValue: string): Set<string> {
+  return (
+    speciesParamValue === NO_TERMS ? new Set([]) :
+    speciesParamValue === ALL_ORGANISMS_DISPLAY ? new Set([ ALL_ORGANISMS_TERM ]) :
+    new Set(speciesParamValue.split(","))
+  );
+}
 function ProfileParameter({
   questionState,
   eventHandlers
@@ -109,23 +116,14 @@ function ProfileParameter({
   );
 
   const includedTerms = useMemo(
-    () => getSpeciesTerms(INCLUDED_SPECIES_PARAM_NAME),
+    () => getSpeciesTerms(questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME]),
     [ questionState.paramValues[INCLUDED_SPECIES_PARAM_NAME] ]
   );
 
   const excludedTerms = useMemo(
-    () => getSpeciesTerms(EXCLUDED_SPECIES_PARAM_NAME),
+    () => getSpeciesTerms(questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME]),
     [ questionState.paramValues[EXCLUDED_SPECIES_PARAM_NAME] ]
   );
-
-  const getSpeciesTerms = (paramName: string) => {
-    let value = questionState.paramValues[paramName];
-    return (
-      value === NO_TERMS ? new Set([]) :
-      value === ALL_ORGANISMS_DISPLAY ? new Set([ ALL_ORGANISMS_TERM ]) :
-      new Set(value.split(","))
-    );
-  }
 
   const { profileTree, nodeMap } = useMemo(
     () => paramsToProfileTree(profileVocabulary, depthMap, displayMap),
