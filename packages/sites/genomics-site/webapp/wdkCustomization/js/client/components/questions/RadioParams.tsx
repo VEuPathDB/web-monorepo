@@ -7,6 +7,7 @@ import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { Props, Group } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { isMultiPick, isEnumParam, toMultiValueString, toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
@@ -76,6 +77,8 @@ function RadioParameterList(props: RadioParameterListProps) {
 const NONSENSE_VALUE = 'N/A';
 const NONSENSE_VALUE_REGEX = /^(nil|N\/A)$/;
 
+const NONSENSE_MULTIPICK_STRING = toMultiValueString([ NONSENSE_VALUE ]);
+
 export const RadioParams: React.FunctionComponent<Props> = props => {
   const radioParams: string[] = get( 
     props.state.question.properties,
@@ -89,9 +92,15 @@ export const RadioParams: React.FunctionComponent<Props> = props => {
 
   const initialRadioParam = radioParams.find(
     radioParam => {
-      const radioParamValue = (props.state.paramValues[radioParam] || '').trim();
-      
-      return !!radioParamValue && !NONSENSE_VALUE_REGEX.test(radioParamValue)
+      const paramValueString = (props.state.paramValues[radioParam] || '').trim();
+
+      if (isMultiPick(props.state.question.parametersByName[radioParam])) {
+        const paramValue = toMultiValueArray(paramValueString);
+
+        return paramValue.length > 0 && !NONSENSE_VALUE_REGEX.test(paramValue[0]);
+      } else {      
+        return paramValueString.length > 0 && !NONSENSE_VALUE_REGEX.test(paramValueString);
+      }
     }
   ) || radioParams[0];
 
@@ -131,11 +140,16 @@ export const RadioParams: React.FunctionComponent<Props> = props => {
 
     radioParams.forEach(radioParam => {
       if (radioParam !== activeRadioParam) {
+        const parameter = props.state.question.parametersByName[radioParam];
+        const paramValue = isMultiPick(parameter) 
+          ? NONSENSE_MULTIPICK_STRING
+          : NONSENSE_VALUE
+
         props.eventHandlers.updateParamValue({
           searchName: props.state.question.urlSegment,
-          parameter: props.state.question.parametersByName[radioParam],
+          parameter,
           paramValues: props.state.paramValues,
-          paramValue: NONSENSE_VALUE
+          paramValue
         });
       }
     });
