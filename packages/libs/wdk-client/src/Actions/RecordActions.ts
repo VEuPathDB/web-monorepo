@@ -13,7 +13,7 @@ import {
 import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
-import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
+import { RecordClass, RecordInstance, PrimaryKey } from 'wdk-client/Utils/WdkModel';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
 import  WdkService  from 'wdk-client/Service/WdkService';
 
@@ -21,10 +21,12 @@ import { isLeafFor, isNotInternalNode } from 'wdk-client/Views/Records/RecordUti
 
 export type Action =
   | RecordReceivedAction
+  | RequestPartialRecord
   | RecordUpdatedAction
   | RecordLoadingAction
   | RecordErrorAction
   | SectionVisibilityAction
+  | SetCollapsedSectionsAction
   | AllFieldVisibilityAction
   | NavigationVisibilityAction
   | CategoryExpansionAction
@@ -51,6 +53,34 @@ export function recordReceived(id: string, payload: RecordReceivedAction['payloa
     id,
     payload
   };
+}
+
+//==============================================================================
+
+export const REQUEST_PARTIAL_RECORD = 'record-view/request-partial-record';
+
+export type RequestPartialRecord = {
+  type: typeof REQUEST_PARTIAL_RECORD,
+  id: string,
+  payload: {
+    recordClassName: string;
+    primaryKey: PrimaryKey;
+    attributes?: string[];
+    tables?: string[];
+  },
+}
+
+export function requestPartialRecord(id: string, recordClassName: string, primaryKey: PrimaryKey, attributes?: string[], tables?: string[]): RequestPartialRecord {
+  return {
+    type: REQUEST_PARTIAL_RECORD,
+    id,
+    payload: { 
+      recordClassName,
+      primaryKey,
+      attributes,
+      tables
+    }
+  }
 }
 
 //==============================================================================
@@ -133,6 +163,25 @@ export function updateSectionVisibility(sectionName: string, isVisible: boolean)
   return {
     type: SECTION_VISIBILITY,
     payload: { name: sectionName, isVisible }
+  };
+}
+
+//==============================================================================
+
+export const SET_COLLAPSED_SECTIONS = 'record-view/set-collapsed-sections';
+
+export type SetCollapsedSectionsAction = {
+  type: typeof SET_COLLAPSED_SECTIONS;
+  payload: {
+    names: string[]
+  }
+}
+
+/** Update a section's collapsed status */
+export function setCollapsedSections(names: string[]): SetCollapsedSectionsAction {
+  return {
+    type: SET_COLLAPSED_SECTIONS,
+    payload: { names }
   };
 }
 

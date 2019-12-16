@@ -15,7 +15,8 @@ const RecordMainSection = ({
   categories,
   collapsedSections,
   parentEnumeration,
-  onSectionToggle
+  onSectionToggle,
+  requestPartialRecord
 }) => (categories == null ? null : (
   <div>
     {categories.map((category, index) => {
@@ -35,6 +36,7 @@ const RecordMainSection = ({
           onSectionToggle={onSectionToggle}
           record={record}
           recordClass={recordClass}
+          requestPartialRecord={requestPartialRecord}
         >
           <RecordMainSection$
             depth={depth + 1}
@@ -44,6 +46,7 @@ const RecordMainSection = ({
             collapsedSections={collapsedSections}
             parentEnumeration={enumeration}
             onSectionToggle={onSectionToggle}
+            requestPartialRecord={requestPartialRecord}
           />
         </RecordMainCategorySection>
       );

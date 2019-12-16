@@ -15,6 +15,7 @@ import {
   updateNavigationQuery,
   updateNavigationVisibility,
   updateSectionVisibility,
+  requestPartialRecord,
 } from 'wdk-client/Actions/RecordActions';
 
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
@@ -30,7 +31,8 @@ const ActionCreators = {
   updateNavigationQuery,
   updateAllFieldVisibility,
   updateNavigationCategoryExpansion,
-  updateNavigationVisibility
+  updateNavigationVisibility,
+  requestPartialRecord
 };
 
 type StateProps = RootState['record'];
@@ -43,6 +45,16 @@ const CastRecordUI: any = RecordUI;
 
 /** View Controller for record page */
 class RecordController extends PageController<Props> {
+
+  requestPartialRecord = ({ attributes, tables}: { attributes?: string[], tables?: string[] }) => {
+    this.props.requestPartialRecord(
+      this.props.requestId,
+      this.props.recordClass.name,
+      this.props.record.id,
+      attributes,
+      tables
+    )
+  }
 
   /**
    * Declare what fields of the record are needed. All requests are made in
@@ -165,7 +177,11 @@ class RecordController extends PageController<Props> {
     }
 
     return (
-      <CastRecordUI {...this.props} headerActions={headerActions} />
+      <CastRecordUI
+        {...this.props}
+        requestPartialRecord={this.requestPartialRecord}
+        headerActions={headerActions}
+      />
     );
   }
 

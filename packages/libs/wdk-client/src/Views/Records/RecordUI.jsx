@@ -130,18 +130,19 @@ class RecordUI extends Component {
                 onNavigationVisibilityChange={this.props.updateNavigationVisibility}
                 onNavigationCategoryExpansionChange={this.props.updateNavigationCategoryExpansion}
                 onNavigationQueryChange={this.props.updateNavigationQuery}
+                requestPartialRecord={this.props.requestPartialRecord}
               />
             </div>
           )}
         </Sticky>
         <div className="wdk-RecordMain">
-          <div className="wdk-RecordMainSectionFieldToggles">
+          {/* <div className="wdk-RecordMainSectionFieldToggles">
             <button type="button" title="Expand all content" className="wdk-Link"
               onClick={this.props.updateAllFieldVisibility.bind(null, true)}>Expand All</button>
             {' | '}
             <button type="button" title="Collapse all content" className="wdk-Link"
               onClick={this.props.updateAllFieldVisibility.bind(null, false)}>Collapse All</button>
-          </div>
+          </div> */}
           <RecordMainSection
             ref={c => this.recordMainSectionNode = findDOMNode(c)}
             record={this.props.record}
@@ -149,6 +150,7 @@ class RecordUI extends Component {
             categories={this.props.categoryTree.children}
             collapsedSections={this.props.collapsedSections}
             onSectionToggle={this.props.updateSectionVisibility}
+            requestPartialRecord={this.props.requestPartialRecord}
           />
         </div>
       </div>

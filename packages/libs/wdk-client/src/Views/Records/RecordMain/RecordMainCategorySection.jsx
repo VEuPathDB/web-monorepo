@@ -36,7 +36,8 @@ class RecordMainCategorySection extends React.PureComponent {
       depth,
       isCollapsed,
       enumeration,
-      children
+      children,
+      requestPartialRecord
     } = this.props;
 
     switch (getTargetType(category)) {
@@ -48,6 +49,7 @@ class RecordMainCategorySection extends React.PureComponent {
           recordClass={recordClass}
           isCollapsed={isCollapsed}
           onCollapsedChange={this.toggleCollapse}
+          requestPartialRecord={requestPartialRecord}
         />
       );
 
@@ -59,6 +61,7 @@ class RecordMainCategorySection extends React.PureComponent {
           recordClass={recordClass}
           isCollapsed={isCollapsed}
           onCollapsedChange={this.toggleCollapse}
+          requestPartialRecord={requestPartialRecord}
         />
       )
 
