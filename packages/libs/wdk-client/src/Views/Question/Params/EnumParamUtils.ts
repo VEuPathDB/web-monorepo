@@ -30,8 +30,8 @@ export function isEnumParam(parameter: Parameter): parameter is EnumParam {
   return parameter.type === 'single-pick-vocabulary' || parameter.type === 'multi-pick-vocabulary';
 }
 
-export function isMultiPick(parameter: EnumParam): boolean {
-  return parameter.type === 'multi-pick-vocabulary';
+export function isMultiPick(parameter: Parameter): boolean {
+  return isEnumParam(parameter) && parameter.type === 'multi-pick-vocabulary';
 }
 
 export function isValidEnumJson(value: string): boolean {
