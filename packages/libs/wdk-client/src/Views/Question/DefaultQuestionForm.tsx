@@ -83,9 +83,11 @@ export default function DefaultQuestionForm(props: Props) {
   let renderParamGroup = props.renderParamGroup ? props.renderParamGroup : renderDefaultParamGroup;
   let Description = props.DescriptionComponent || QuestionDescription;
 
-  let fullContainerClassName = (containerClassName || ' ') + question.parameters.every(({ type }) => type !== 'filter') 
-    ? cx('', 'default-width')
-    : cx('', 'wide-width');
+  let fullContainerClassName = `${containerClassName || ''} ` + (
+    question.parameters.every(({ type }) => type !== 'filter') 
+      ? cx('', 'default-width')
+      : cx('', 'wide-width')
+  );
 
   let containerRef = React.useRef<HTMLDivElement>(null);
 
