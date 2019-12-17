@@ -18,7 +18,7 @@ import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 
 import { makeVpdbClassNameHelper } from './Utils';
 
-import { projectId } from '../../config';
+import { projectId } from 'ebrc-client/config';
 
 import './VEuPathDBHomePage.scss';
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
@@ -33,7 +33,10 @@ type StateProps = {
   searchTree?: CategoryTreeNode,
   twitterUrl?: string,
   facebookUrl?: string,
-  youtubeUrl?: string
+  youtubeUrl?: string,
+  buildNumber?: string,
+  releaseDate?: string,
+  displayName?: string
 }
 
 type Props = OwnProps & StateProps;
@@ -164,7 +167,12 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
         </ErrorBoundary>
       }
       <ErrorBoundary>
-        <Footer containerClassName={footerClassName} />
+        <Footer
+          containerClassName={footerClassName}
+          buildNumber={props.buildNumber}
+          releaseDate={props.releaseDate}
+          displayName={props.displayName}
+        />
       </ErrorBoundary>
     </div>
   );
@@ -427,8 +435,8 @@ const useHeaderMenuItems = (
         {
           key: 'data-files-eupathdb',
           display: 'Download data files',
-          type: 'externalLink',
-          url: '/common/downloads',
+          type: 'reactRoute',
+          url: '/downloads/',
           metadata: {
             exclude: [ EuPathDB ]
           }
@@ -788,9 +796,12 @@ const filterMenuItemEntry = (
 const mapStateToProps = (state: RootState) => ({
   // FIXME: This is not typesafe.
   searchTree: get(state.globalData, 'searchTree') as CategoryTreeNode,
-  twitterUrl: state.globalData.siteConfig && state.globalData.siteConfig.twitterUrl,
-  facebookUrl: state.globalData.siteConfig && state.globalData.siteConfig.facebookUrl,
-  youtubeUrl: state.globalData.siteConfig && state.globalData.siteConfig.youtubeUrl,
+  twitterUrl: state.globalData.siteConfig?.twitterUrl,
+  facebookUrl: state.globalData.siteConfig?.facebookUrl,
+  youtubeUrl: state.globalData.siteConfig?.youtubeUrl,
+  buildNumber: state.globalData.config?.buildNumber,
+  releaseDate: state.globalData.config?.releaseDate,
+  displayName: state.globalData.config?.displayName,
 });
 
 export const VEuPathDBHomePage = connect(mapStateToProps)(VEuPathDBHomePageView);
