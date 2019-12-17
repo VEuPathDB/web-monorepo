@@ -73,7 +73,7 @@ const documentTitle = createSelector(
   globalData,
   targetId,
   (globalDataState: GlobalData, targetId: string) => {
-    const displayName = get(globalDataState, 'siteConfig.displayName', '');
+    const displayName = get(globalDataState, 'config.displayName', '');
     
     return displayName ? `${displayName}.org :: User Comments on ${targetId}` : displayName;
   }

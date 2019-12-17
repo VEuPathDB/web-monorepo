@@ -175,7 +175,7 @@ const projectId = createSelector<RootState, GlobalData, string>(
 const documentTitle = createSelector<RootState, GlobalData, string>(
   globalData,
   (globalDataState: GlobalData) => {
-    const displayName = get(globalDataState, 'siteConfig.displayName', '');
+    const displayName = get(globalDataState, 'config.displayName', '');
     
     return displayName ? `${displayName}.org :: Add A Comment` : displayName;
   }
