@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 
 import { Parameter } from 'wdk-client/Utils/WdkModel';
+import { toMultiValueArray, toMultiValueString } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { Props as ParameterProps } from 'wdk-client/Views/Question/Params/Utils';
 
 const detailTypes = ["I", "II", "III", "II or III", "nd", "u-1", "u-2", "u-3"];
@@ -263,12 +264,14 @@ const TableBody: React.SFC<TableBodyProps> = ({ checkedValues, onToggle }) =>
 
 type ByGenotypeNumberCheckboxProps = ParameterProps<Parameter>;
 
+const EMPTY_VALUE = toMultiValueString([]);
+
 export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberCheckboxProps> = ({ 
   onParamValueChange, 
-  value = ''
+  value = EMPTY_VALUE
 }) => {
   const orderedCheckedValues = useMemo(
-    () => value.split(/\s*,\s*/g),
+    () => toMultiValueArray(value),
     [ value ]
   );
   const checkedValues = useMemo(
@@ -286,7 +289,7 @@ export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberC
     const newParamValueItems = event.target.checked
       ? [
         ...predecessors,
-        itemKey,
+        `${itemKey}`,
         ...successors
       ]
       : [
@@ -294,7 +297,7 @@ export const ByGenotypeNumberCheckbox: React.FunctionComponent<ByGenotypeNumberC
         ...successors
       ];
 
-    onParamValueChange(newParamValueItems.join(','));
+    onParamValueChange(toMultiValueString(newParamValueItems));
   }, [ onParamValueChange, orderedCheckedValues ] );
 
   return (
