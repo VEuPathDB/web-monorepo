@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { mapValues } from 'lodash'
-
 import { CheckboxTree, HelpIcon } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { CheckBoxEnumParam, ParameterGroup } from 'wdk-client/Utils/WdkModel';
@@ -12,7 +10,6 @@ import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDe
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import './GenesByOrthologPattern.scss';
-import { toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 const cx = makeClassNameHelper('GenesByOrthologPattern');
 const cxDefaultQuestionForm = makeClassNameHelper('wdk-QuestionForm');
@@ -83,7 +80,7 @@ function getSpeciesTerms(speciesParamValue: string): Set<string> {
   return (
     speciesParamValue === NO_TERMS ? new Set([]) :
     speciesParamValue === ALL_ORGANISMS_DISPLAY ? new Set([ ALL_ORGANISMS_TERM ]) :
-    new Set(speciesParamValue.split(","))
+    new Set(speciesParamValue.split(',').map(species => species.trim()).filter(species => species.length > 0))
   );
 }
 function ProfileParameter({
@@ -102,7 +99,7 @@ function ProfileParameter({
   const depthMap = useMemo(
     () => indentVocabulary.reduce(
       (depthMap, entry) => Object.assign(depthMap, { [entry[0]]: Number(entry[1]) }),
-      { ALL: 0 }
+      { [ALL_ORGANISMS_TERM]: 0 }
     ),
     [ indentVocabulary ]
   );
