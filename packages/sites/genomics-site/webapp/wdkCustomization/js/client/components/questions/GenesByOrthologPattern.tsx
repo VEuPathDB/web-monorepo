@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { mapValues } from 'lodash'
-
 import { CheckboxTree, HelpIcon } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { CheckBoxEnumParam, ParameterGroup } from 'wdk-client/Utils/WdkModel';
@@ -12,7 +10,6 @@ import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDe
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import './GenesByOrthologPattern.scss';
-import { toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 const cx = makeClassNameHelper('GenesByOrthologPattern');
 const cxDefaultQuestionForm = makeClassNameHelper('wdk-QuestionForm');
