@@ -83,7 +83,7 @@ function getSpeciesTerms(speciesParamValue: string): Set<string> {
   return (
     speciesParamValue === NO_TERMS ? new Set([]) :
     speciesParamValue === ALL_ORGANISMS_DISPLAY ? new Set([ ALL_ORGANISMS_TERM ]) :
-    new Set(speciesParamValue.split(","))
+    new Set(speciesParamValue.split(',').map(species => species.trim()).filter(species => species.length > 0))
   );
 }
 function ProfileParameter({
