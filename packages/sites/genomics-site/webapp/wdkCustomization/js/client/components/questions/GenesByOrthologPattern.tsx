@@ -102,7 +102,7 @@ function ProfileParameter({
   const depthMap = useMemo(
     () => indentVocabulary.reduce(
       (depthMap, entry) => Object.assign(depthMap, { [entry[0]]: Number(entry[1]) }),
-      { ALL: 0 }
+      { [ALL_ORGANISMS_TERM]: 0 }
     ),
     [ indentVocabulary ]
   );
