@@ -5,7 +5,7 @@ import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
-import { getDefaultStepName } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { makeStepBoxDisplayName } from 'wdk-client/Views/Strategy/StrategyUtils';
 import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree, isCompleteUiStepTree, PartialUiStepTree, isPartialCombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
@@ -297,7 +297,7 @@ function CombinedStepIcon(props: { step: Step }) {
 
 function StepName(props: { step: Step, isCombine: boolean, nestedControlStep?: Step }) {
   const { step, isCombine, nestedControlStep } = props;
-  const displayName = nestedControlStep && nestedControlStep.expandedName || getDefaultStepName(step, isCombine);
+  const displayName = makeStepBoxDisplayName(step, isCombine, nestedControlStep);
   return <div className={cx('--StepName')}>{displayName}</div>;
 }
 
@@ -324,7 +324,7 @@ export function ExpandedSteps(props: StepBoxesProps) {
       {stepTree.secondaryInput && stepTree.secondaryInput.isNested && stepTree.step.expanded && (
         <React.Fragment>
           <div className="StrategyPanel--NestedTitle">
-            Expanded view of <em>{stepTree.step.expandedName || getDefaultStepName(stepTree.secondaryInput.step, isPartialCombineUiStepTree(stepTree.secondaryInput))}</em>
+            Expanded view of <em>{makeStepBoxDisplayName(stepTree.secondaryInput.step, isPartialCombineUiStepTree(stepTree.secondaryInput), stepTree.step)}</em>
           </div>
           <div className="StrategyPanel--Panel" style={{ border: `.1em solid ${stepTree.secondaryInput.color}` }}>
             <div style={{ fontSize: '1.4em', padding: '.35em .4em' }}>

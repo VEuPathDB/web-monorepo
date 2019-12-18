@@ -34,8 +34,18 @@ export function formatDateTimeString(dateTimeString: string) {
   return `${date} ${hoursAndMinutes}`;
 }
 
-export function getDefaultStepName(step: Step, isCombineUiStepTree: boolean) {
-  return !isCombineUiStepTree
-    ? step.customName
-    : 'Unnamed Nested Strategy'
+export function makeStepDetailsDisplayName(step: Step, isCombine: boolean, nestedControlStep?: Step) {
+  return (
+    (nestedControlStep && nestedControlStep.expandedName) || 
+    (nestedControlStep && isCombine && 'Unnamed Nested Strategy') ||
+    step.customName
+  );
+}
+
+export function makeStepBoxDisplayName(step: Step, isCombine: boolean, nestedControlStep?: Step) {
+  return (
+    (nestedControlStep && nestedControlStep.expandedName) ||
+    (isCombine && 'Unnamed Nested Strategy') ||
+    step.customName
+  );
 }
