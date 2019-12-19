@@ -135,7 +135,7 @@ function formatParameterValue(
   } else if (parameter.type === 'filter') {
     return formatFilterValue(value);
   } else {
-    return formatDatasetValue(parameter, datasetParamItems)
+    return formatDatasetValue(parameter, datasetParamItems);
   }
 }
 
