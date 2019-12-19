@@ -157,8 +157,9 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
   function updateBehaviors() {
     const view = jbrowseViewContainer.current;
     if (view == null) return;
-    if (isLocked) view.behaviorManager.removeBehaviors('normalMouse');
-    else view.behaviorManager.applyBehaviors('normalMouse');
+    const behaviors = Object.keys(view.behaviorManager.behaviors);
+    if (isLocked) view.behaviorManager.removeBehaviors(...behaviors);
+    else view.behaviorManager.applyBehaviors(...behaviors);
   }
 
   return (
