@@ -157,9 +157,8 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
   function updateBehaviors() {
     const view = jbrowseViewContainer.current;
     if (view == null) return;
-    const behaviors = Object.keys(view.behaviorManager.behaviors);
-    if (isLocked) view.behaviorManager.removeBehaviors(...behaviors);
-    else view.behaviorManager.applyBehaviors(...behaviors);
+    if (isLocked) view.behaviorManager.removeAll();
+    else view.behaviorManager.initialize();
   }
 
   return (
