@@ -152,7 +152,7 @@ function formatRangeParameterValue(value: string) {
 }
 
 function formatEnumParameterValue(parameter: EnumParam, value: string) {
-  const valueSet = new Set(isMultiPick(parameter) ? toMultiValueArray(value) : value);
+  const valueSet = new Set(isMultiPick(parameter) ? toMultiValueArray(value) : [ value ]);
   const termDisplayPairs = makeTermDisplayPairs(parameter.vocabulary);
 
   return termDisplayPairs
