@@ -1,6 +1,6 @@
 import {once, debounce} from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useCallback, useState, useEffect, useRef } from 'react';
 import { httpGet } from 'ebrc-client/util/http';
 import $ from 'jquery';
 import { Loading } from 'wdk-client/Components';
@@ -135,10 +135,39 @@ const PbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
 
 </div>
 
-const JbrowseIframe = ({ jbrowseUrl,ht }) =>
-        <div>
-      <iframe src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height={ht} scrolling="no" allowfullscreen="false" />
-      </div>
+function JbrowseIframe({ jbrowseUrl,ht }) {
+  const [ isLocked, setIsLocked ] = useState(true);
+  const [ isLockTextVisible, setLockTextVisibility ] = useState(false);
+  const jbrowseViewContainer = useRef(null);
+  const lockClassName = isLocked ? 'fa fa-lock' : 'fa fa-unlock';
+  const lockText = <small>{isLocked ? 'Enabled panning' : 'Disable panning'}</small>;
+
+  useEffect(() => {
+    updateBehaviors();
+  }, [ isLocked ]);
+
+  function onLoad(event) {
+    const { JBrowse } = event.currentTarget.contentWindow;
+    JBrowse.afterMilestone('completely initialized', function() {
+      jbrowseViewContainer.current = JBrowse.view;
+      updateBehaviors();
+    });
+  }
+
+  function updateBehaviors() {
+    const view = jbrowseViewContainer.current;
+    if (view == null) return;
+    if (isLocked) view.behaviorManager.removeBehaviors('normalMouse');
+    else view.behaviorManager.applyBehaviors('normalMouse');
+  }
+
+  return (
+    <div>
+      <button type="button" onClick={() => setIsLocked(!isLocked)} onMouseEnter={() => setLockTextVisibility(true)} onMouseLeave={() => setLockTextVisibility(false)}><i className={lockClassName}/> {isLockTextVisible ? lockText : ''}</button>
+      <iframe onLoad={onLoad} src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height={ht} scrolling="no" allowfullscreen="false" />
+    </div>
+  );
+}
 
 
 export function GbrowseContext(props) {
