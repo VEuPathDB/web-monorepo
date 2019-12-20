@@ -137,10 +137,9 @@ const PbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
 
 function JbrowseIframe({ jbrowseUrl,ht }) {
   const [ isLocked, setIsLocked ] = useState(true);
-  const [ isLockTextVisible, setLockTextVisibility ] = useState(false);
   const jbrowseViewContainer = useRef(null);
   const lockClassName = isLocked ? 'fa fa-lock' : 'fa fa-unlock';
-  const lockText = <small>{isLocked ? 'Enabled panning' : 'Disable panning'}</small>;
+  const lockText = <small>{isLocked ? 'Enable' : 'Disable'} scrolling and zooming capabilities</small>;
 
   useEffect(() => {
     updateBehaviors();
@@ -163,7 +162,7 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
 
   return (
     <div>
-      <button type="button" onClick={() => setIsLocked(!isLocked)} onMouseEnter={() => setLockTextVisibility(true)} onMouseLeave={() => setLockTextVisibility(false)}><i className={lockClassName}/> {isLockTextVisible ? lockText : ''}</button>
+      <button type="button" onClick={() => setIsLocked(!isLocked)} ><i className={lockClassName}/> {lockText}</button>
       <iframe onLoad={onLoad} src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height={ht} scrolling="no" allowfullscreen="false" />
     </div>
   );
