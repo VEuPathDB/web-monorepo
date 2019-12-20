@@ -151,6 +151,22 @@ export const RecordHeading = connect(
 
 });
 
+export const RecordMainSection = connect(null)(({ DefaultComponent, dispatch, ...props }) => {
+  return (
+    <React.Fragment>
+      {props.depth == null && (
+        <div style={{ position: 'absolute', right: '3em' }}>
+          <i className="fa fa-exclamation-triangle"/>&nbsp;
+          <button className="link" onClick={() => dispatch(RecordActions.updateAllFieldVisibility(false))}>
+            Collapse all sections for better performance
+          </button>
+        </div>
+      )}
+      <DefaultComponent {...props}/>
+    </React.Fragment>
+  );
+  });
+
 function FungiOrgLinkoutsTable(props) {
   if (props.value == null || props.value.length === 0) return null;
   const groupedLinks = lodash.groupBy(props.value, 'dataset');
