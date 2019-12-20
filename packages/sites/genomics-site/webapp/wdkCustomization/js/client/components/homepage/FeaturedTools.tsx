@@ -39,7 +39,7 @@ function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
     if (communitySiteUrl != null) {
       (async () => {
         // FIXME Add basic error-handling 
-        const response = await fetch(`${communitySiteUrl}${FEATURED_TOOL_URL_SEGMENT}`, { mode: 'cors' });
+        const response = await fetch(`https://${communitySiteUrl}${FEATURED_TOOL_URL_SEGMENT}`, { mode: 'cors' });
 
         // FIXME Validate this JSON using a Decoder
         const responseData = await response.json() as FeaturedToolResponseData;
@@ -80,10 +80,10 @@ export const FeaturedTools = () => {
     if (
       toolMetadata && 
       toolMetadata.toolListOrder.length > 0 && 
-      toolMetadata.toolEntries[toolMetadata.toolListOrder[0]] &&
+      toolMetadata.toolEntries[toolMetadata.toolListOrder[1]] &&
       (!selectedTool || !toolMetadata.toolEntries[selectedTool])
     ) {
-      setSelectedTool(toolMetadata.toolListOrder[0]);
+      setSelectedTool(toolMetadata.toolListOrder[1]);
     }
   }, [ toolMetadata ]);
 
@@ -153,8 +153,12 @@ const ToolListItem = ({ entry, onSelect, isSelected }: ToolListItemProps) =>
     }}
     type="button"
   >
-    <IconAlt fa={entry.listIconKey} />
-    {entry.listTitle}
+    <div className={cx('ListItemIconContainer')}>
+      <IconAlt fa={entry.listIconKey} />
+    </div>
+    <span className={cx('ListItemCaption')}>
+      {entry.listTitle}
+    </span>
   </a>;
 
 type SelectedToolProps = {

@@ -159,6 +159,12 @@ body.vpdb-Body {
           background-color: #682039;
         }
       }
+
+      .vpdb-FeaturedToolsListItem__selected {
+        .vpdb-FeaturedToolsListItemIconContainer {
+          border-color: #682039;
+        }
+      }
     }
 
     &.VEuPathDB, &.EuPathDB {
@@ -191,7 +197,7 @@ body.vpdb-Body {
         "nav content side"
         "footer footer footer";
     
-      grid-template-columns: 15.625rem 1fr 18.75rem;
+      grid-template-columns: 18.75rem 1fr 18.75rem;
       grid-template-rows: 9.0625rem 1fr auto;
 
       .vpdb-Main {

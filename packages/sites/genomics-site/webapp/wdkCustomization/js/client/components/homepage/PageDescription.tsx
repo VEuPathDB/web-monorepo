@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
-import { IconAlt } from 'wdk-client/Components';
+import { IconAlt, Link } from 'wdk-client/Components';
 
 import { projects } from 'ebrc-client/components/homepage/Footer';
 import { ProjectLink } from 'ebrc-client/components/homepage/ProjectLink';
@@ -14,7 +14,6 @@ import './PageDescription.scss';
 
 const cx = makeVpdbClassNameHelper('PageDescription');
 
-const PlasmoDB = 'PlasmoDB';
 const VEuPathDB = 'VEuPathDB';
 const EuPathDB = 'EuPathDB';
 
@@ -24,19 +23,17 @@ export const PageDescription = () =>
       (
         projectId === VEuPathDB || 
         projectId === EuPathDB
-      ) && <VEuPathDBDescription />
-    }
-    {
-      projectId === PlasmoDB &&
-      <p>
-        As part of the VEuPathDB 
-        {' '}
-        <a href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers" target="_blank">Bioinformatics Resource Center</a>,
-        {' '}
-        <span className={cx('ProjectId')}>PlasmoDB</span>
-        {' '} 
-        provides genomic, phenotypic, and population-centric data to the scientific community for plasmodium.
-      </p>
+      )
+        ? <VEuPathDBDescription />
+        : <p>
+            As part of the VEuPathDB 
+            {' '}
+            <a href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers" target="_blank">Bioinformatics Resource Center</a>,
+            {' '}
+            <span className={cx('ProjectId')}>{projectId}</span>
+            {' '} 
+            provides genomic, phenotypic, and population-centric data to the scientific community for <Link to="/search/organism/GenomeDataTypes/result">these organisms</Link>.
+          </p>
     }
   </div>;
 

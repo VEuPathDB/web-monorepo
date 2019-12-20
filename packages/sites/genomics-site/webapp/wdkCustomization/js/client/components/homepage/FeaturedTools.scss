@@ -3,11 +3,13 @@
   
   h3 {
     font-size: 2.33333333333em;
+    margin: 0.25em 0;
+    padding: 0;
   }
 
   h5 {
     font-size: 1.66666666667em;
-    font-weight: 500;
+    font-weight: 300;
   }
 
   &Header {
@@ -24,48 +26,78 @@
 
   &List {
     display: flex;
+    flex-direction: column;
+    align-items: center;
 
     &Items {
-      font-weight: bold;
-      flex: 0 0 33.333333%;
-      max-width: 33.333333%;
-      margin-top: 0.5rem;
+      display: flex;
+      font-weight: 500;
+      margin: 1.25em 0;
+      overflow-x: auto;
     }
 
     &Item {
-      font-size: 1.2em;
-      padding: 0.75rem 1.25rem 0.75rem 1.5rem;
-      border-left: 0.125rem solid transparent;
-      display: block;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1 0;
+      margin: 0 1em;
+
+      padding-bottom: 0.5em;
+      border-bottom: 0.5em solid transparent;
+
       color: #00304c;
-      margin-right: 1rem;
+
+      &IconContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 1.75em;
+        width: 1.75em;
+
+        border: 0.05em solid #00304c;
+        border-radius: 0.25em;
+        padding: 0.25em;
+        font-size: 2em;
+
+        box-shadow: 1px 1px 8px #00000085;
+      }
+
+      &Caption {
+        margin-top: 0.25em;
+      }
       
       &:hover {
-        background-color: #f8f9fa;
         text-decoration: none;
+
+        .vpdb-FeaturedToolsListItemIconContainer {
+          border: 0.075em solid #00304c;
+        }
       }
 
       &__selected, &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
-        border-left: 0.125rem solid #00304c;
-        background-color: #e5eef7;
         outline: none;
         text-decoration: none;
-      }
+        font-weight: bold;
 
-      i {
-        margin-right: 0.25em;
+        border-color: #00304c;
+
+        .vpdb-FeaturedToolsListItemIconContainer {
+          border: 0.2em solid #00304c;
+        }
       }
     }
   }
 
   &Selection {
-    flex: 0 0 66.666667%;
-    max-width: 66.666667%;
     box-shadow: 0px 0px 12px 0px #0000001a;
+    width: 90%;
+    display: inline-block;
 
     &Header {
       color: white;
-      padding: 0.75rem 1.25rem;
+      padding: 0.25em 1.25rem;
       margin: 0;
     }
 

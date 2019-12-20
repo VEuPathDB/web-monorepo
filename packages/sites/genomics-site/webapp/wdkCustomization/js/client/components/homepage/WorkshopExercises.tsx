@@ -61,7 +61,7 @@ function useCardMetadata(): CardMetadata | undefined {
     if (communitySiteUrl != null) {
       (async () => {
         // FIXME Add basic error-handling 
-        const response = await fetch(`${communitySiteUrl}${WORKSHOP_EXERCISES_URL_SEGMENT}`, { mode: 'cors' });
+        const response = await fetch(`https://${communitySiteUrl}${WORKSHOP_EXERCISES_URL_SEGMENT}`, { mode: 'cors' });
 
         // FIXME Validate this JSON using a Decoder
         const responseData = await response.json() as WorkshopExercisesResponseData;
