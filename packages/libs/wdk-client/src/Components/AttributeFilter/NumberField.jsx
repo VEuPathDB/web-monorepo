@@ -1,6 +1,7 @@
 import React from 'react';
 import { partition } from 'lodash';
 
+import { formatNumber } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import HistogramField from 'wdk-client/Components/AttributeFilter/HistogramField';
 
 // the data distribution is stored in knownDist, an array of n objects (n distinctive values)
@@ -65,19 +66,19 @@ export default class NumberField extends React.Component {
       .map(entry => entry.value);
     var distMin = Math.min(...values);
     var distMax = Math.max(...values);
-    var distAvg = (sum / size).toFixed(2);
+    var distAvg = sum / size;
     var median = this.numericDataMedian(knownDist.flatMap(x => Array(x.filteredCount).fill(x.value))); 
     var unknownCount = unknownDist.reduce((sum, entry) => sum + entry.count, 0);
     var overview = (
       <dl className="ui-helper-clearfix">
         <dt>Min</dt>
-        <dd>{distMin}</dd>
+        <dd>{formatNumber(distMin)}</dd>
         <dt>Mean</dt>
-        <dd>{distAvg}</dd>
+        <dd>{formatNumber(distAvg)}</dd>
         <dt>Median</dt>
-        <dd>{median}</dd>
+        <dd>{formatNumber(median)}</dd>
         <dt>Max</dt>
-        <dd>{distMax}</dd>
+        <dd>{formatNumber(distMax)}</dd>
       </dl>
     );
 

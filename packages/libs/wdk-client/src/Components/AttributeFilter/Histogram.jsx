@@ -7,7 +7,7 @@ import { lazy } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import DateRangeSelector from 'wdk-client/Components/InputControls/DateRangeSelector';
 import NumberRangeSelector from 'wdk-client/Components/InputControls/NumberRangeSelector';
-import { formatDate, parseDate } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { formatDate, formatNumber, parseDate } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 
 var distributionEntryPropType = PropTypes.shape({
@@ -239,7 +239,9 @@ var Histogram = (function() {
 
       var xaxisBaseOptions = chartType === 'date'
         ? { mode: 'time', timeformat: timeformat }
-        : {};
+        : {
+          tickFormatter: value => formatNumber(value, { useScientificNotation: true })
+        };
 
 
       var seriesData = this.getSeriesData(clampedDistribution);
@@ -326,7 +328,7 @@ var Histogram = (function() {
         const [ , filteredCount ] = filteredData[item.dataIndex];
         var formattedValue = this.props.chartType === 'date'
           ? formatDate(this.props.timeformat, value)
-          : value;
+          : formatNumber(value, { useScientificNotation: true });
 
         qtipApi.set('content.text',
           this.props.xaxisLabel + ': ' + formattedValue +

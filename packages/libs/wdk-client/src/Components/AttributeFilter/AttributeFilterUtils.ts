@@ -95,6 +95,19 @@ export function formatDate(format: string, date: string | Date | number): string
   .replace(/%d/, padStart(String(date.getDate()), 2, '0'));
 }
 
+interface NumberFormatOptions {
+  /** If the number has more than 5 digits, use scientific notation */
+  useScientificNotation?: boolean
+}
+
+export function formatNumber(value: number, options?: NumberFormatOptions) {
+  return options?.useScientificNotation && value.toString().length > 5
+    ? value.toExponential(2)
+    : value.toLocaleString(undefined, {
+      maximumFractionDigits: 2
+    });
+}
+
 /**
  * @param {string} dataString An ISO 8601 compatible date string.
  *   See https://en.wikipedia.org/wiki/ISO_8601.
