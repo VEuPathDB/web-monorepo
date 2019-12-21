@@ -1,6 +1,5 @@
 import React from 'react';
 import { partition } from 'lodash';
-import { flatMap } from 'lodash/fp';
 
 import HistogramField from 'wdk-client/Components/AttributeFilter/HistogramField';
 
