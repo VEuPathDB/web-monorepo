@@ -26,9 +26,9 @@ export const JBrowseController = (props: JBrowseControllerProps) => {
       onLoad={onLoad}
       id="jbrowse_iframe" 
       src={`/a/jbrowse/index.html${props.location.search}`}
-      width='100%' 
-      height='100%' 
-      scrolling='no' 
+      width="100%" 
+      height="100%" 
+      scrolling="no" 
       allowFullScreen
     >
     </iframe>
