@@ -3,6 +3,7 @@ import React from 'react';
 // load api-specific page controllers
 import FastaConfigController from './components/controllers/FastaConfigController';
 import QueryGridController from './components/controllers/QueryGridController';
+import { JBrowseController } from './components/controllers/JBrowseController';
 
 import SampleForm from './components/samples/SampleForm';
 import { projectId } from './config';
@@ -102,6 +103,11 @@ export const wrapRoutes = ebrcRoutes => [
         <hr />
         <WorkshopExercises />
       </React.Fragment>
+  },
+
+  {
+    path: '/jbrowse',
+    component: JBrowseController
   },
 
   ...ebrcRoutes.map(route => route.path.includes(':primaryKey+')
