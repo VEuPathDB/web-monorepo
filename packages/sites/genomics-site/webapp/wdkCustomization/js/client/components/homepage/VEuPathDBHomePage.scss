@@ -74,6 +74,21 @@ body.vpdb-Body {
         }
       }
 
+      .wdk-CheckboxTreeLinks {
+        margin-left: 0;
+      }
+
+      .wdk-RealTimeSearchBox {
+        &Input {
+          border-radius: 0.5em;
+          padding: 0.2em 1.5em 0.2em 1.75em;
+        }
+
+        &SearchIcon {
+          left: 0.5em;
+        }
+      }
+
       .vpdb-CommunitySocialMediaLink {
         display: flex;
         align-items: center;
