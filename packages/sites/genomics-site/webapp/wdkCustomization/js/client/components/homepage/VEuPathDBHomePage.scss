@@ -175,8 +175,14 @@ body.vpdb-Body {
         }
       }
 
-      .vpdb-FeaturedToolsListItem__selected {
-        .vpdb-FeaturedToolsListItemIconContainer {
+      .vpdb-FeaturedToolsListItem {
+        &__selected {
+          .vpdb-FeaturedToolsListItemIconContainer {
+            border-color: #682039;
+          }
+        }
+
+        &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
           border-color: #682039;
         }
       }
