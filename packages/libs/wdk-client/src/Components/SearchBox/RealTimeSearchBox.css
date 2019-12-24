@@ -50,5 +50,5 @@ button.wdk-RealTimeSearchBoxCancelBtn {
 }
 
 .wdk-RealTimeSearchBox .HelpTrigger {
-  margin: 0 8px;
+  margin: 0 8px !important;
 }
