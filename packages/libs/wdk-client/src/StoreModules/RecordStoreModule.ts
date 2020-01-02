@@ -1,36 +1,16 @@
 import { chunk, difference, union, uniq } from 'lodash';
 import { ActionsObservable, StateObservable } from 'redux-observable';
 import { EMPTY, from, Observable } from 'rxjs';
-import { bufferTime, filter, groupBy, mergeMap, tap } from 'rxjs/operators';
+import { bufferTime, filter, groupBy, mergeMap } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
 import { ALL_FIELD_VISIBILITY, CATEGORY_EXPANSION, NAVIGATION_QUERY, NAVIGATION_VISIBILITY, RecordUpdatedAction, RECORD_ERROR, RECORD_LOADING, RECORD_RECEIVED, RECORD_UPDATE, RequestPartialRecord, REQUEST_PARTIAL_RECORD, SECTION_VISIBILITY, SET_COLLAPSED_SECTIONS } from 'wdk-client/Actions/RecordActions';
 import { BASKET_STATUS_ERROR, BASKET_STATUS_LOADING, BASKET_STATUS_RECEIVED, FAVORITES_STATUS_ERROR, FAVORITES_STATUS_LOADING, FAVORITES_STATUS_RECEIVED } from 'wdk-client/Actions/UserActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
 import { CategoryTreeNode, getId, getTargetType } from 'wdk-client/Utils/CategoryUtils';
 import { filterNodes } from 'wdk-client/Utils/TreeUtils';
 import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
-import { ServiceError } from 'wdk-client/Service/ServiceError';
-import { Action } from 'wdk-client/Actions';
-import {
-  RECORD_LOADING,
-  RECORD_RECEIVED,
-  RECORD_UPDATE,
-  RECORD_ERROR,
-  SECTION_VISIBILITY,
-  ALL_FIELD_VISIBILITY,
-  NAVIGATION_QUERY,
-  NAVIGATION_VISIBILITY,
-  CATEGORY_EXPANSION
-} from 'wdk-client/Actions/RecordActions';
-import {
-  BASKET_STATUS_LOADING,
-  BASKET_STATUS_RECEIVED,
-  BASKET_STATUS_ERROR,
-  FAVORITES_STATUS_LOADING,
-  FAVORITES_STATUS_RECEIVED,
-  FAVORITES_STATUS_ERROR
-} from 'wdk-client/Actions/UserActions';
 
 export const key = 'record';
 
@@ -208,7 +188,7 @@ function updateList<T>(item: T, add: boolean, list: T[] = []) {
 }
 
 /** Get all attributes and tables of active record */
-function getAllFields(state: State) {
+export function getAllFields(state: State) {
   return filterNodes<CategoryTreeNode>(isFieldNode, state.categoryTree)
   .map(getId);
 }
