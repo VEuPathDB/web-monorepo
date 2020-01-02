@@ -49,7 +49,7 @@ class RecordController extends PageController<Props> {
   requestPartialRecord = ({ attributes, tables}: { attributes?: string[], tables?: string[] }) => {
     this.props.requestPartialRecord(
       this.props.requestId,
-      this.props.recordClass.name,
+      this.props.recordClass.urlSegment,
       this.props.record.id,
       attributes,
       tables
