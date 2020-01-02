@@ -1,5 +1,5 @@
 import lodash from 'lodash';
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
@@ -20,6 +20,7 @@ import {OverviewThumbnails} from '../common/OverviewThumbnails';
 import Sequence from '../common/Sequence';
 import {SnpsAlignmentForm} from '../common/Snps';
 import { addCommentLink } from '../common/UserComments';
+import { withRequestFields } from './utils';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -139,6 +140,7 @@ export const RecordHeading = connect(
   }
 
   render() {
+    // FungiOrgLinkoutsTable is requested in componentWrappers
     return (
       <React.Fragment>
         <div ref={node => this.node = node}>
@@ -351,7 +353,20 @@ function makeDatasetGraphChildRow(dataTableName, facetMetadataTableName, contXAx
     };
 
     return { dataTable, facetMetadataTable, contXAxisMetadataTable };
-  })(DatasetGraph);
+  })(withRequestFields(Wrapper));
+
+  function Wrapper({ requestFields, ...props }) {
+    useEffect(() => {
+      requestFields({
+        tables: [
+          dataTableName,
+          facetMetadataTableName,
+          contXAxisMetadataTableName
+        ].filter(tableName => tableName != null)
+      })
+    }, []);
+    return <DatasetGraph {...props}/>;
+  }
 }
 
 // SequenceTable Components
