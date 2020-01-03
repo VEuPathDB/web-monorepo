@@ -185,30 +185,39 @@ const SelectionBody = ({ entry }: SelectionBodyProps) => {
   const [ isExpanded, setExpanded ] = useState(false);
 
   const toggleExpanded = useCallback(() => {
-    setExpanded(true);
-  }, []);
+    setExpanded(!isExpanded);
+  }, [ isExpanded ]);
 
   return (
-    <div
-      className={cx('SelectionBody', isExpanded && 'expanded')}
-      ref={ref}
-    >
+    <div className={cx('SelectionBody')}>
       <div
-        className={cx('SelectionBodyContent')}
+        ref={ref}
+        className={cx('SelectionBodyContent', isExpanded && 'expanded')}
         dangerouslySetInnerHTML={{
           __html: entry ? entry.output : '...'
         }}
       >
       </div>
       {
-        isOverflowing && !isExpanded && (
-          <div className={cx('SelectionBodyReadMore')}>
+        isOverflowing && (
+          <div className={cx('SelectionBodyReadMore', isExpanded && 'expanded')}>
             <button 
               type="button" 
-              className={cx('SelectionBodyReadMoreButton')} 
+              className="link" 
               onClick={toggleExpanded}
             >
-              Read More
+              {isExpanded 
+                ? <React.Fragment>
+                    <IconAlt fa="chevron-up" />
+                    {' '}
+                    Read Less
+                  </React.Fragment>
+                : <React.Fragment>
+                    <IconAlt fa="chevron-down" />
+                    {' '}
+                    Read More
+                  </React.Fragment>
+              }
             </button>
           </div>
         )

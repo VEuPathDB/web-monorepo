@@ -193,18 +193,6 @@ body.vpdb-Body {
           border-color: #682039;
         }
       }
-
-      .vpdb-FeaturedToolsSelectionBodyReadMore {
-        button {
-          background: unset;
-          background-color: #682039;
-
-          &:hover, &:active, &:focus {
-            background: unset;
-            background-color: #682039;
-          }
-        }
-      } 
     }
 
     &.VEuPathDB, &.EuPathDB {

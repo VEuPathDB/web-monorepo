@@ -104,29 +104,32 @@
     &Body {
       padding: 1.39em;
       font-size: 1.2em;
-      overflow-x: auto;
-      max-height: 25vh;
 
-      &__expanded {
-        max-height: unset;
+      &Content {
+        height: 350px; // FIXME: Use rem instead of px?
+        overflow: hidden;
+  
+        &__expanded {
+          height: unset;
+        }
       }
       
       &ReadMore {
-        display: flex;
-        justify-content: center;
         position: absolute;
-        bottom: 0;
         left: 0;
+        bottom: 0;
+        padding-bottom: 1.39em;
+        padding-left: 1.39em;
+        padding-top: 3em;
         width: 100%;
-        padding: 2em 1.39em 0.78em 1.39em;
-        background-image: linear-gradient(to bottom, transparent, white);
+        background-image: linear-gradient(to bottom, transparent, white 50%);
 
-        button {
-          margin: 0;
-          padding: 0.1em 2em;
-          border-radius: 0.33em;
-          border: 0.0625rem solid black;
-          color: white;
+        &__expanded {
+          position: relative;
+          padding-top: 1em;
+          padding-bottom: 0;
+          padding-left: 0;
+          background-image: unset;
         }
       }
     }
