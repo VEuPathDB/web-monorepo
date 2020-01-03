@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { keyBy } from 'lodash';
 
 import { Loading, IconAlt } from 'wdk-client/Components';
@@ -6,6 +6,7 @@ import { Loading, IconAlt } from 'wdk-client/Components';
 import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
+import { useIsRefOverflowingVertically } from 'wdk-client/Hooks/Overflow';
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { decode, string } from 'wdk-client/Utils/Json';
 
@@ -173,10 +174,45 @@ const SelectedTool = ({ entry }: SelectedToolProps) =>
         {entry.descriptionTitle}
       </h5>
     }
-    <div
-      className={cx('SelectionBody')}
-      dangerouslySetInnerHTML={{
-        __html: entry ? entry.output : '...'
-      }}
-    ></div>
+    <SelectionBody key={entry?.identifier} entry={entry} />
   </div>;
+
+type SelectionBodyProps = SelectedToolProps;
+
+const SelectionBody = ({ entry }: SelectionBodyProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const isOverflowing = useIsRefOverflowingVertically(ref);
+  const [ isExpanded, setExpanded ] = useState(false);
+
+  const toggleExpanded = useCallback(() => {
+    setExpanded(true);
+  }, []);
+
+  return (
+    <div
+      className={cx('SelectionBody', isExpanded && 'expanded')}
+      ref={ref}
+    >
+      <div
+        className={cx('SelectionBodyContent')}
+        dangerouslySetInnerHTML={{
+          __html: entry ? entry.output : '...'
+        }}
+      >
+      </div>
+      {
+        isOverflowing && !isExpanded && (
+          <div className={cx('SelectionBodyReadMore')}>
+            <button 
+              type="button" 
+              className={cx('SelectionBodyReadMoreButton')} 
+              onClick={toggleExpanded}
+            >
+              Read More
+            </button>
+          </div>
+        )
+      }
+    </div>
+  );
+};

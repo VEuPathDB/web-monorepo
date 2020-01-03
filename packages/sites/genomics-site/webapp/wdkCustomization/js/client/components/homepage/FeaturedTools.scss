@@ -92,17 +92,42 @@
   &Selection {
     box-shadow: 0px 0px 12px 0px #0000001a;
     width: 90%;
+    position: relative;
 
     &Header {
       color: white;
-      padding: 0.25em 1.25rem;
+      padding: 0.25em 1.39em;
       margin: 0;
     }
 
     &Body {
-      padding: 1.25rem;
+      padding: 1.39em;
       font-size: 1.2em;
       overflow-x: auto;
+      max-height: 25vh;
+
+      &__expanded {
+        max-height: unset;
+      }
+      
+      &ReadMore {
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 2em 1.39em 0.78em 1.39em;
+        background-image: linear-gradient(to bottom, transparent, white);
+
+        button {
+          margin: 0;
+          padding: 0.1em 2em;
+          border-radius: 0.33em;
+          border: 0.0625rem solid black;
+          color: white;
+        }
+      }
     }
   }
 }
