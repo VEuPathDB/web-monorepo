@@ -49,17 +49,15 @@ class NumberSelector extends React.Component<Props, State> {
   }
 
   handleBlurEvent (e: React.FocusEvent<HTMLInputElement>) {
-    let { start, end } = this.props;
-    let value = Number(e.currentTarget.value);
-    if (value < start) value = start;
-    if (value > end) value = end;
+    const value = e.currentTarget.value === '' ? this.props.value : e.currentTarget.value;
     this.setState({ internalValue: value }, () => this.notifyChange());
   }
 
   notifyChange() {
     const { onChange } = this.props;
-    if (onChange == null) return;
-    onChange(Number(this.state.internalValue));
+    const { internalValue } = this.state;
+    if (onChange == null || internalValue === '') return;
+    onChange(Number(internalValue));
   }
 
   render () {
