@@ -416,8 +416,8 @@ var Histogram = (function() {
         <React.Fragment>
           <NumberRangeSelector
             value={{ min: Number(xaxisMin.toFixed(numFixedDigits)), max: Number(xaxisMax.toFixed(numFixedDigits)) }}
-            start={Number(valuesMin.toFixed(numFixedDigits))}
-            end={Number(valuesMax.toFixed(numFixedDigits))}
+            start={-Infinity}
+            end={Infinity}
             step={step}
             onChange={value => this.setXAxisScale(Number(value.min), Number(value.max))}
           /> &nbsp;
