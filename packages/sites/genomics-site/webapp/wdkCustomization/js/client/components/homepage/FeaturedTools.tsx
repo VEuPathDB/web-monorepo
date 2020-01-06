@@ -1,15 +1,17 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { keyBy, noop } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { keyBy } from 'lodash';
 
 import { Loading, IconAlt } from 'wdk-client/Components';
 
 import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
+import { useIsRefOverflowingVertically } from 'wdk-client/Hooks/Overflow';
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { decode, string } from 'wdk-client/Utils/Json';
 
 import './FeaturedTools.scss';
+
 
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
@@ -178,55 +180,23 @@ const SelectedTool = ({ entry }: SelectedToolProps) =>
 
 type SelectionBodyProps = SelectedToolProps;
 
-const RESOURCE_TYPES = [
-  'img',
-  'audio',
-  'video',
-  'style',
-  'link'
-];
-
 const SelectionBody = ({ entry }: SelectionBodyProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [ isOverflowing, setIsOverflowing ] = useState(false);
+  const isOverflowing = useIsRefOverflowingVertically(ref);
   const [ isExpanded, setExpanded ] = useState(false);
 
   const toggleExpanded = useCallback(() => {
     setExpanded(!isExpanded);
   }, [ isExpanded ]);
 
-  useLayoutEffect(() => {
-    if (ref.current) {
-      ref.current.innerHTML = entry?.output || '...';
-
-      const resources = ref.current.querySelectorAll(RESOURCE_TYPES.join(','));
-
-      // Whenever a resource loads, check to see if the ref's new height overflows
-      const onLoad = () => {
-        if (ref.current) {
-          setIsOverflowing(ref.current.scrollHeight > ref.current.clientHeight);
-        }
-      };
-
-      resources.forEach(resource => {
-        resource.addEventListener('load', onLoad);
-      });
-
-      return () => {
-        resources.forEach(resource => {
-          resource.removeEventListener('load', onLoad);
-        });
-      };
-    }
-
-    return noop;
-  }, [ ref.current ]);
-
   return (
     <div className={cx('SelectionBody')}>
       <div
         ref={ref}
         className={cx('SelectionBodyContent', isExpanded && 'expanded')}
+        dangerouslySetInnerHTML={{
+          __html: entry?.output || '...'
+        }}
       >
       </div>
       {
