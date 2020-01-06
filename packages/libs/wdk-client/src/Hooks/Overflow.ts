@@ -10,7 +10,7 @@ import { partial } from 'lodash';
 // ResizeObserver API is still experimental - maybe this would
 // be a good use case for a ponyfill?
 export function useIsRefOverflowing<T extends HTMLElement>(
-  isElementOverflowing: (e: T) => boolean, 
+  isElementOverflowing: (elem: T) => boolean, 
   ref: React.RefObject<T>
 ) {
   const [ isOverflowing, setIsOverflowing ] = useState(false);
@@ -24,5 +24,5 @@ export function useIsRefOverflowing<T extends HTMLElement>(
   return isOverflowing;
 }
 
-export const useIsRefOverflowingHorizontally = partial(useIsRefOverflowing, e => e.scrollWidth > e.clientWidth);
-export const useIsRefOverflowingVertically = partial(useIsRefOverflowing, e => e.scrollHeight > e.clientHeight);
+export const useIsRefOverflowingHorizontally = partial(useIsRefOverflowing, elem => elem.scrollWidth > elem.clientWidth);
+export const useIsRefOverflowingVertically = partial(useIsRefOverflowing, elem => elem.scrollHeight > elem.clientHeight);
