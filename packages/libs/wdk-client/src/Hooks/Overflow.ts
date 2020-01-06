@@ -17,7 +17,7 @@ const RESOURCE_TYPES = [
 // ResizeObserver. The catch with this approach is that the
 // ResizeObserver API is still experimental - maybe this would
 // be a good use case for a ponyfill?
-export function useIsRefOverflowing<T extends HTMLElement>(
+export function useIsRefOverflowing<T extends Element>(
   isElementOverflowing: (elem: T) => boolean, 
   ref: React.RefObject<T>
 ) {
