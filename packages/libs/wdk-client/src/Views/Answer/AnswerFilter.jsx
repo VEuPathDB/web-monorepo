@@ -23,7 +23,7 @@ class AnswerFilter extends React.Component {
     super(props);
 
     this.toggleFilterFieldSelector = this.toggleFilterFieldSelector.bind(this);
-    this.handleFilter = this.handleFilter.bind(this);
+    this.handleFilter = debounce(this.handleFilter.bind(this), 300);
     this.toggleAttribute = this.toggleAttribute.bind(this);
     this.toggleTable = this.toggleTable.bind(this);
     this.selectAll = this.selectAll.bind(this);
@@ -35,10 +35,6 @@ class AnswerFilter extends React.Component {
       filterAttributes,
       filterTables
     };
-  }
-
-  componentWillMount() {
-    this.handleFilter = debounce(this.handleFilter, 300);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -92,31 +88,13 @@ class AnswerFilter extends React.Component {
     let { filterAttributes, filterTables, showFilterFieldSelector } = this.state;
     let { recordClass, filterTerm } = this.props;
     let { displayNamePlural } = recordClass;
-    /*
-    let tooltipContent = (
-      <div>
-        <p>
-          Enter words or phrases that you wish to query. Words should be
-          separated by spaces, and phrases should be enclosed in double-quotes.
-        </p>
-        <p>
-          {displayNamePlural} displayed will contain these words or phrases
-          in any field. All words and phrases are partially matched.
-        </p>
-        <p>
-          For example, the word <i>typical</i> will match both the
-          word <i><u>typical</u>ly</i> and the word <i>a<u>typical</u></i>.
-        </p>
-      </div>
-    );
-    */
     let tooltipContent = (
       <div>
         <ul>
         <li>The data sets in your refined list will contain ALL your terms (or phrases, when using double quotes), in ANY of the selected fields.</li>
         <li>Click on the arrow inside the box to select/unselect fields. </li>
-        <li>Your terms are partially matched; 
-            for example, the term <i>typ</i> will match <i><u>typ</u>ically</i>, <i><u>typ</u>e</i>, <i>a<u>typ</u>ical</i>.</li>
+        <li>Your terms are matched at the start; 
+            for example, the term <i>typ</i> will match <i><u>typ</u>ically</i> and <i><u>typ</u>e</i>, but <strong>not</strong> <i><u>atyp</u>ical</i>.</li>
         </ul>
       </div>
     );

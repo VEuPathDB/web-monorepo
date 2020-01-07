@@ -2,6 +2,8 @@
  * Created by steve on 3/28/2016.
  */
 
+import { escapeRegExp, deburr } from 'lodash';
+
 /**
 * Filter a provided list of (generic) items.
 * Uses a "multi-term" search approach.  The search expression is parsed into query terms
@@ -52,7 +54,8 @@ export function areTermsInString(queryTerms: Array<string>, searchableString: st
  * @returns {boolean} true if a match
  */
 export function isTermInString(queryTerm: string, searchableString: string = '') {
-  return !queryTerm || (searchableString.toLowerCase().includes(queryTerm.toLowerCase()));
+  if (!queryTerm) return true;
+
+  const re = new RegExp("\\b" + escapeRegExp(deburr(queryTerm)), "i");
+  return re.test(deburr(searchableString));
 }
-
-
