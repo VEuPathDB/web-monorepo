@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { keyBy } from 'lodash';
 
 import { Loading, IconAlt } from 'wdk-client/Components';
@@ -123,21 +123,119 @@ const FeaturedToolList = ({
   toolMetadata: { toolEntries, toolListOrder },
   selectedTool,
   setSelectedTool
-}: FeaturedToolListProps) => 
-  <div className={cx('ListItems')}>
-    {toolListOrder
-      .filter(toolKey => toolEntries[toolKey])
-      .map(toolKey => (
-        <ToolListItem
-          key={toolKey}
-          entry={toolEntries[toolKey]}
-          isSelected={toolKey === selectedTool}
-          onSelect={() => {
-            setSelectedTool(toolKey);
-          }}
-        />
-      ))}
-  </div>;
+}: FeaturedToolListProps) => {
+  const itemContainerRef = useRef<HTMLDivElement>(null);
+  const [ isLeftButtonEnabled, setIsLeftButtonEnabled ] = useState(true);
+  const [ isRightButtonEnabled, setIsRightButtonEnabled ] = useState(true);
+
+  const updateButtons = useCallback(() => {
+    if (itemContainerRef.current) {
+      const { isLeftButtonEnabled, isRightButtonEnabled } = shouldEnableButtons(itemContainerRef.current);
+      setIsLeftButtonEnabled(isLeftButtonEnabled);
+      setIsRightButtonEnabled(isRightButtonEnabled);
+    }
+  }, [ itemContainerRef.current ]);
+
+  useLayoutEffect(() => {
+    updateButtons();
+
+    window.addEventListener('resize', updateButtons);
+
+    const SCROLL_EVENT_OPTIONS = { capture: false, passive: true };
+
+    if (itemContainerRef.current) {
+      itemContainerRef.current.addEventListener('scroll', updateButtons, SCROLL_EVENT_OPTIONS);
+      itemContainerRef.current.addEventListener('touch', updateButtons, SCROLL_EVENT_OPTIONS);
+      itemContainerRef.current.addEventListener('wheel', updateButtons, SCROLL_EVENT_OPTIONS);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateButtons);
+
+      if (itemContainerRef.current) {
+        itemContainerRef.current.removeEventListener('scroll', updateButtons, SCROLL_EVENT_OPTIONS);
+        itemContainerRef.current.removeEventListener('touch', updateButtons, SCROLL_EVENT_OPTIONS);
+        itemContainerRef.current.removeEventListener('wheel', updateButtons, SCROLL_EVENT_OPTIONS);
+      }
+    };
+  }, [ itemContainerRef.current, updateButtons ]);
+
+  const onClickLeft = useCallback(() => {
+    if (itemContainerRef.current) {
+      const itemContainerDiv = itemContainerRef.current;
+      const itemElements = [...itemContainerDiv.children] as HTMLElement[];
+
+      const i = findNearestItemIndex(itemElements, itemContainerDiv.scrollLeft);
+      const itemOffset = 
+        i <= 1 
+          ? itemElements[0].offsetLeft
+          : itemElements[i - 2].offsetLeft + (itemElements[i - 2].clientWidth / 2)
+
+      itemContainerDiv.scrollTo({
+        top: 0,
+        left: itemOffset,
+        behavior: 'auto'
+      });
+    }
+  }, [ itemContainerRef.current ]);
+
+  const onClickRight = useCallback(() => {
+    if (itemContainerRef.current) {
+      const itemContainerDiv = itemContainerRef.current;
+      const itemElements = [...itemContainerDiv.children] as HTMLElement[];
+
+      const i = findNearestItemIndex(itemElements, itemContainerDiv.scrollLeft + itemContainerDiv.clientWidth);
+      const itemOffset = 
+        i === itemElements.length - 1
+          ? itemElements[i].offsetLeft + itemElements[i].clientWidth
+          : itemElements[i].offsetLeft + (itemElements[i].clientWidth / 2);
+      
+      itemContainerDiv.scrollTo({
+        top: 0,
+        left: itemOffset - itemContainerDiv.clientWidth,
+        behavior: 'auto'
+      });
+    }
+  }, [ itemContainerRef.current ]);
+
+  return (
+    <div>
+      <button type="button" onClick={onClickLeft} disabled={!isLeftButtonEnabled}>
+        <IconAlt fa="chevron-left fa-lg" />
+      </button>
+      <button type="button" onClick={onClickRight} disabled={!isRightButtonEnabled}>
+        <IconAlt fa="chevron-right fa-lg" />
+      </button>
+      <div ref={itemContainerRef} className={cx('ListItems')}>
+        {toolListOrder
+          .filter(toolKey => toolEntries[toolKey])
+          .map(toolKey => (
+            <ToolListItem
+              key={toolKey}
+              entry={toolEntries[toolKey]}
+              isSelected={toolKey === selectedTool}
+              onSelect={() => {
+                setSelectedTool(toolKey);
+              }}
+            />
+          ))}
+      </div>
+    </div>
+  );
+};
+
+function shouldEnableButtons(itemContainerDiv: HTMLDivElement) {
+  return {
+    isLeftButtonEnabled: itemContainerDiv.scrollLeft > 0,
+    isRightButtonEnabled: itemContainerDiv.scrollLeft + itemContainerDiv.clientWidth < itemContainerDiv.scrollWidth
+  };
+}
+
+function findNearestItemIndex(itemElements: HTMLElement[], position: number) {
+  const findResult = itemElements.findIndex(itemElement => position <= itemElement.offsetLeft);
+
+  return (findResult + itemElements.length) % itemElements.length;
+}
 
 type ToolListItemProps = {
   entry: FeaturedToolEntry;

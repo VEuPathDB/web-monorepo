@@ -68,6 +68,7 @@ body.vpdb-Body {
 
       .wdk-CategoriesCheckboxTreeWrapper {
         position: relative;
+        
         .wdk-CheckboxTreeItem__leaf {
           .wdk-CheckboxTreeNodeContent { 
             a {
@@ -114,6 +115,19 @@ body.vpdb-Body {
     
     .vpdb-SearchPane {
       grid-area: nav;
+
+      padding-right: 0.1em;
+
+      @media screen and (min-width: 1001px) {
+        .wdk-CheckboxTree {
+          > .wdk-CheckboxTreeList {
+            position: relative;
+            max-height: 65vh;
+            overflow-y: auto;
+            padding-right: 0.5em;
+          }
+        }
+      }
     }
 
     .vpdb-Main {

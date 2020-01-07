@@ -29,11 +29,49 @@
     flex-direction: column;
     align-items: center;
 
+    > div:first-of-type {
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+      margin-bottom: 1em;
+
+      button {
+        background: white;
+        border: none;
+        color: #00304c;
+        padding: 2.5em 1em;
+        opacity: 0.5;
+        font-size: 1.1em;
+
+        &:hover, &:active, &:focus {
+          opacity: 0.75;
+        }
+
+        &:disabled {
+          visibility: hidden;
+        }
+      }
+
+      button:last-of-type {
+        order: 1;
+      }
+    }
+
     &Items {
+      position: relative;
       display: flex;
       font-weight: 500;
-      margin: 1.25em 0;
+      margin: 1.25em 1em;
       overflow-x: auto;
+      width: auto;
+
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
     }
 
     &Item {
@@ -42,7 +80,7 @@
       align-items: center;
       text-align: center;
       flex: 1 0;
-      margin: 0 1em;
+      padding: 0 1em;
 
       padding-bottom: 0.5em;
       border-bottom: 0.5em solid transparent;
@@ -106,7 +144,7 @@
       font-size: 1.2em;
 
       &Content {
-        height: 350px; // FIXME: Use rem instead of px?
+        height: 300px; // FIXME: Use rem instead of px?
         overflow: hidden;
   
         &__expanded {
