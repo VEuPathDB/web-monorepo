@@ -5,7 +5,7 @@ export default (base: ServiceBase) => {
 
   function createTemporaryFile(file: File): Promise<string> {
     const formData = new FormData();
-    const path = '/temporary-file';
+    const path = '/temporary-files';
     formData.append('file', file, file.name);
     return fetch(base.serviceUrl + path, {
       method: 'POST',
