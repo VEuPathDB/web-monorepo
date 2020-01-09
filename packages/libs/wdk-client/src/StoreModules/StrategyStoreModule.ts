@@ -93,9 +93,12 @@ export function reduce(state: State = initialState, action: Action): State {
   }
 
   case fulfillSaveAsStrategy.type: {
-    return updateStrategyEntry(state, action.payload.oldStrategyId, {
+    // remove the new saved strategy from state, if it is there, since it will be out-of-date.
+    const s1 = deleteStrategiesFromState(state, [ action.payload.newStrategyId ]);
+    const s2 = updateStrategyEntry(s1, action.payload.oldStrategyId, {
       isLoading: false
     });
+    return s2;
   }
 
   case fulfillDraftStrategy.type: {
