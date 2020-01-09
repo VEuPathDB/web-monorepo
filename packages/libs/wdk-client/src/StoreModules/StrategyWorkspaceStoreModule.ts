@@ -1,21 +1,21 @@
-import { defaultTo, difference, union, last, stubTrue } from 'lodash';
+import { defaultTo, difference, last, stubTrue, union, uniq } from 'lodash';
 import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
-import { empty, Observable, of, merge, concat } from 'rxjs';
-import { mergeMap, mergeMapTo, tap, map, distinctUntilChanged, filter } from 'rxjs/operators';
+import { empty, merge, Observable, of } from 'rxjs';
+import { distinctUntilChanged, filter, map, mergeMap, mergeMapTo, tap } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
-import { fulfillDeleteStrategy, fulfillDuplicateStrategy, fulfillPutStrategy, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillPatchStrategyProperties, fulfillSaveAsStrategy, fulfillDraftStrategy, requestDeleteStrategy, requestDeleteOrRestoreStrategies, cancelRequestDeleteOrRestoreStrategies, requestDuplicateStrategy } from 'wdk-client/Actions/StrategyActions';
+import { fulfillImportStrategy } from 'wdk-client/Actions/ImportStrategyActions';
+import { fulfillPublicStrategies, fulfillPublicStrategiesError, requestPublicStrategies } from 'wdk-client/Actions/PublicStrategyActions';
+import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
+import { cancelRequestDeleteOrRestoreStrategies, fulfillCreateStrategy, fulfillDeleteOrRestoreStrategies, fulfillDeleteStrategy, fulfillDraftStrategy, fulfillDuplicateStrategy, fulfillPatchStrategyProperties, fulfillPutStrategy, fulfillSaveAsStrategy, requestDeleteOrRestoreStrategies, requestDeleteStrategy, requestDuplicateStrategy } from 'wdk-client/Actions/StrategyActions';
+import { fulfillStrategiesList, requestStrategiesList } from 'wdk-client/Actions/StrategyListActions';
+import { addNotification, addToOpenedStrategies, clearActiveModal, closeStrategyView, openStrategyView, removeFromOpenedStrategies, removeNotification, setActiveModal, setActiveStrategy, setOpenedStrategies, setOpenedStrategiesVisibility } from 'wdk-client/Actions/StrategyWorkspaceActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
-import { openStrategyView, setOpenedStrategies, setOpenedStrategiesVisibility, setActiveStrategy, addNotification, removeNotification, closeStrategyView, addToOpenedStrategies, removeFromOpenedStrategies, clearActiveModal, setActiveModal } from 'wdk-client/Actions/StrategyWorkspaceActions';
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
-import { InferAction, switchMapRequestActionsToEpic as srate, mergeMapRequestActionsToEpic as mrate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
+import { InferAction, mergeMapRequestActionsToEpic as mrate, switchMapRequestActionsToEpic as srate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
-import { StrategyDetails, StrategySummary, StepTree } from 'wdk-client/Utils/WdkUser';
-import { requestStrategiesList, fulfillStrategiesList } from 'wdk-client/Actions/StrategyListActions';
-import { requestPublicStrategies, fulfillPublicStrategies, fulfillPublicStrategiesError } from 'wdk-client/Actions/PublicStrategyActions';
-import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
-import {fulfillImportStrategy} from 'wdk-client/Actions/ImportStrategyActions';
 import { diffSimilarStepTrees } from 'wdk-client/Utils/StrategyUtils';
+import { StepTree, StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
 
 export const key = 'strategyWorkspace';
 
@@ -154,7 +154,7 @@ export function reduce(state: State = initialState, action: Action): State {
 function updateOpenedStrategies(state: State, updater: (openedStrategies: number[]) => number[]): State {
   return state.openedStrategies == null ? state : {
     ...state,
-    openedStrategies: updater(state.openedStrategies)
+    openedStrategies: uniq(updater(state.openedStrategies))
   }
 }
 
