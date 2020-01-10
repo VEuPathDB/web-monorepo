@@ -47,7 +47,7 @@ export function stripHTML(str: string): string {
  *
  * There is much room for performance tuning here.
  */
-function getSearchableString(filterAttributes: string[], filterTables: string[], record: RecordInstance): string {
+export function getSearchableString(filterAttributes: string[], filterTables: string[], record: RecordInstance): string {
   let useAllTablesAndAttributes = filterAttributes.length === 0 && filterTables.length === 0;
   let attributes = useAllTablesAndAttributes ? record.attributes : pick(record.attributes, filterAttributes);
   let tables = useAllTablesAndAttributes ? record.tables : pick(record.tables, filterTables);
