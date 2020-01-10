@@ -13,7 +13,7 @@ export default ({ studies, searches, visualizations }) => ([
     tableViewLink: '/search/dataset/Studies/result',
     cardComponent: StudyCard,
     getSearchStringForItem: item => 
-      item.name + ' ' + item.headLine + ' ' + item.points.join(' ')
+      item.searchString
   },
   {
     title: 'Explore Example Searches',
