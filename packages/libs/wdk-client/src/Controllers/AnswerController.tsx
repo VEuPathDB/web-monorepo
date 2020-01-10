@@ -2,7 +2,7 @@ import * as React from 'react';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import {isEqual} from 'lodash';
+import { isEqual, ListIteratee } from 'lodash';
 import {
   loadAnswer,
   changeFilter,
@@ -53,6 +53,7 @@ type Options = {
   // optional overrides
   renderCellContent?: (props: RenderCellProps) => React.ReactNode;
   deriveRowClassName?: (props: RowClassNameProps) => string | undefined;
+  customSortBys?: Record<string, ListIteratee<RecordInstance>[]>
 };
 
 type OwnProps = {
@@ -62,7 +63,7 @@ type OwnProps = {
 
 }
 
-type Props = {
+export type Props = {
   stateProps: StateProps,
   dispatchProps: DispatchProps
   ownProps: OwnProps;
@@ -201,6 +202,7 @@ class AnswerController extends PageController<Props> {
         onFilter={changeFilter}
         renderCellContent={this.props.renderCellContent}
         deriveRowClassName={this.props.deriveRowClassName}
+        customSortBys={this.props.customSortBys}
       />
     );
   }

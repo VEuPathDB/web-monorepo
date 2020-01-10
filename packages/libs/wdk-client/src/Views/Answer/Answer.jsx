@@ -16,6 +16,7 @@ import 'wdk-client/Views/Answer/wdk-Answer.scss';
 // Optional props
 // - renderCellContent
 // - deriveRowClassName
+// - customSortBys
 class Answer extends React.Component {
   constructor(props) {
     super(props);
@@ -119,7 +120,7 @@ class Answer extends React.Component {
   }
 
   getTableState () {
-    const { records, onSort, recordClass, onMoveColumn, visibleAttributes, displayInfo, renderCellContent, deriveRowClassName } = this.props;
+    const { records, onSort, recordClass, onMoveColumn, visibleAttributes, displayInfo, renderCellContent, deriveRowClassName, customSortBys } = this.props;
     const { sorting } = displayInfo;
 
     const options = {
@@ -136,9 +137,9 @@ class Answer extends React.Component {
     };
 
     let sortingAttribute = visibleAttributes.find( attribute => attribute.name === sorting[0].attributeName )
-    const rows = orderBy( records, 
-                          [record => sortingAttribute.type === 'link' ? record.attributes[sortingAttribute.name].displayText : record.attributes[sortingAttribute.name]],
-                          sorting[0].direction.toLowerCase() || 'asc' )
+    const sortKeys = makeSortKeys(sortingAttribute, customSortBys);
+    const sortDirections = sortKeys.map(sortKey => sorting[0].direction.toLowerCase() || 'asc');
+    const rows = orderBy(records, sortKeys, sortDirections);
 
     const columns = visibleAttributes.map((attribute) => {
       return {
@@ -206,6 +207,20 @@ class Answer extends React.Component {
         </div>
       </div>
     );
+  }
+}
+
+function makeSortKeys(sortingAttribute, customSortBys = {}) {
+  if (customSortBys[sortingAttribute.name] != null) {
+    return customSortBys[sortingAttribute.name];
+  } else if (sortingAttribute.type === 'link') {
+    return [
+      record => record.attributes[sortingAttribute.name].displayText
+    ];
+  } else {
+    return [
+      record => record.attributes[sortingAttribute.name]
+    ];
   }
 }
 
