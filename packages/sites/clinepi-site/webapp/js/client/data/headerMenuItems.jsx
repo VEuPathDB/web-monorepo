@@ -66,7 +66,7 @@ export default function headerMenuItems (state) {
           },
           {
             text: 'Tutorials and Resources',
-            route: '/community/resources.html'
+            route: '/community/ClinEpiDB/resources.html'
           },
           {
             text: 'Data Access & Use Policy',
