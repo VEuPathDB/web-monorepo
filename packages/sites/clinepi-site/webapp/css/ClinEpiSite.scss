@@ -637,6 +637,9 @@ div#clinepi-news {
   list-style: none;
   margin: 1em 0;
 }
+#clinepi-general li p, #clinepi-using_site li p {
+  font-size: 90%;
+}
 #clinepi-tutorials li .fa, #clinepi-resources li .fa {
   color: #333;
   margin-right: .5em;
