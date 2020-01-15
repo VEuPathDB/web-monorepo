@@ -267,19 +267,15 @@ async function getFulfilllSaveAs(
 
   if (!proceed) return cancelStrategyRequest(strategyId);
 
-  const { description } = sourceStrategy;
-
-  // If there is a saved strategy with targetName, update it; otherwise create a new strategy.
+  // If there is a saved strategy with targetName, update it based on the unsaved strategy; otherwise update the unsaved strategy.
   if (conflictingStrategy) {
     await wdkService.patchStrategyProperties(conflictingStrategy.strategyId, { overwriteWith: strategyId, name: targetName });
     if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
     return fulfillSaveAsStrategy(strategyId, conflictingStrategy.strategyId);
   }
 
-  const stepTree = await wdkService.getDuplicatedStrategyStepTree(strategyId);
-  const newStratResponse = await wdkService.createStrategy({ name: targetName, description, isSaved: true, isPublic: false, stepTree });
-  if (options.removeOrigin) await wdkService.deleteStrategy(strategyId);
-  return fulfillSaveAsStrategy(strategyId, newStratResponse.id);
+  await wdkService.patchStrategyProperties(strategyId, { name: targetName, isSaved: true });
+  return fulfillSaveAsStrategy(strategyId, strategyId);
 }
 
 async function getFulfillStrategy_SaveAs(
