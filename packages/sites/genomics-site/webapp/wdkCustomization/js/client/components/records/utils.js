@@ -10,12 +10,12 @@ import { RecordActions } from 'wdk-client/Actions';
 export function withRequestFields(Component) {
   return connect(mapRecordStateToProps)(WithFieldsWrapper);
   function WithFieldsWrapper({ dispatch, currentRecordState, ...props }) {
-    const { requestId, record } = currentRecordState;
+    const { requestId, record, recordClass } = currentRecordState;
     const requestFields = useCallback((options) => {
       if (requestId == null || record == null) return;
       dispatch(RecordActions.requestPartialRecord(
         requestId,
-        record.recordClassName,
+        recordClass.urlSegment,
         record.id,
         options.attributes,
         options.tables
