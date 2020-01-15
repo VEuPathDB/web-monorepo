@@ -93,7 +93,6 @@ export const FeaturedTools = () => {
     <div className={cx()}>
       <div className={cx('Header')}>
         <h3>Featured Resources and Tools</h3>
-        <a href="">View all <IconAlt fa="angle-double-right" /></a>
       </div>
       {
         !toolMetadata 
