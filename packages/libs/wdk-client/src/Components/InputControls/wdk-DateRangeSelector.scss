@@ -1,82 +1,54 @@
 @import '~wdk-client/Core/Style/palette';
 
 .wdk-DateRangeSelector {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-
-  padding: 10px 0;
-  border-radius: 5px;
-
-  label {
-    padding: 5px;
-    display: inline-block;
+  &--Label, &--Control__reset {
     font-size: 0.9em;
-    line-height: 0.9em;
-    font-weight: bold;
-    opacity: 0.5;
   }
-  .label-column {
-    margin: 5px 0 12px;
-    .label-cell:first-of-type {
-      margin-bottom: 6px;
-    }
-  }
-  display: inline-flex;
 
-  .label-column, .control-column {
+  &__inline {
     display: inline-flex;
-    flex-direction: column;
-  }
-
-  .label-column {
-    flex: auto;
-    justify-content: flex-start;
-    align-items: flex-end;
-
-    .label-cell {
-      flex: none;
-      label {
-        padding: 5px 0;
-        display: block;
-        font-size: 0.9em;
-        line-height: 0.9em;
-        font-weight: bold;
-        opacity: 0.5;
-      }
-    }
-  }
-
-  .control-column {
-    flex: content;
-
-    .control-cell {
-      .wdk-DateSelector {
-        flex: 0 0 auto;
-        padding: 3px;
-        align-self: center;
-      }
-
-      a {
-        color: $blue;
-        font-size: 0.9em;
-        font-weight: 400;
-        padding: 10px 5px;
-        &:hover, &:active, &:focus {
-          text-decoration: none;
-          color: $darkblue;
-        }
-        &.disabled {
-          opacity: 0.5;
-          pointer-events: none;
-        }
-      }
-    }
-  }
-
-  div.control-row {
-    display: inline-flex;
-    flex: 0 0 auto;
     flex-direction: row;
+    align-items: center;
   }
+  
+  &__inline &--Label__from {
+    display: none;
+  }
+  &__inline &--Label__to {
+    margin-right: .5em;
+  }
+  &__inline &--Label__to, &__inline &--Control__reset {
+    margin-left: .5em;
+  }
+
+  &__grid {
+    display: inline-grid;
+    row-gap: .5em;
+    column-gap: .5em;
+    grid:
+      "label-from control-from"
+      "label-to control-to"
+      ". control-reset";
+  }
+
+  &__grid &--Label__from {
+    grid-area: label-from;
+    justify-self: end;
+    text-transform: capitalize;
+  }
+  &__grid &--Control__from {
+    grid-area: control-from;
+  }
+  &__grid &--Label__to {
+    grid-area: label-to;
+    justify-self: end;
+    text-transform: capitalize;
+  }
+  &__grid &--Control__to {
+    grid-area: control-to;
+  }
+  &__grid &--Control__reset {
+    grid-area: control-reset;
+  }
+
 }

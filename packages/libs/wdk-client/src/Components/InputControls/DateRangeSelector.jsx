@@ -1,8 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-import 'wdk-client/Components/InputControls/wdk-DateRangeSelector.scss';
 import * as DateUtils from 'wdk-client/Utils/DateUtils';
 import DateSelector from 'wdk-client/Components/InputControls/DateSelector';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+
+import 'wdk-client/Components/InputControls/wdk-DateRangeSelector.scss';
+
+const cx = makeClassNameHelper('wdk-DateRangeSelector');
 
 class DateRangeSelector extends React.Component {
   constructor (props) {
@@ -22,10 +27,9 @@ class DateRangeSelector extends React.Component {
     this.handleReset = this.handleReset.bind(this);
     this.handleMinValueChange = this.handleMinValueChange.bind(this);
     this.handleMaxValueChange = this.handleMaxValueChange.bind(this);
-    this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
   }
 
-  componentWillReceiveProps (nextProps) {
+  UNSAFE_componentWillReceiveProps (nextProps) {
     let { start, end } = nextProps;
     start = (start === this.props.start)
       ? this.state.start
@@ -61,7 +65,7 @@ class DateRangeSelector extends React.Component {
   }
 
   render () {
-    let { value: { min, max }, required = false } = this.props;
+    let { value: { min, max }, required = false, inline = false, hideReset = false } = this.props;
     let { start, end } = this.state;
 
     start = DateUtils.formatDateObject(start);
@@ -70,32 +74,41 @@ class DateRangeSelector extends React.Component {
     let alreadyDefault = (start === min && end === max);
 
     return (
-      <div className="wdk-DateRangeSelector wdk-ControlGrid">
-        <div className="label-column">
-          <div className="label-cell">
-            <label>From</label>
-          </div>
-          <div className="label-cell">
-            <label>To</label>
-          </div>
-          <div className="label-cell">
-            <label> </label>
-          </div>
+      <div className={cx('', inline ? 'inline' : 'grid')}>
+        <div className={cx('--Label', 'from')}>
+          <label>from</label>
         </div>
-        <div className="control-column">
-          <div className="control-cell">
-            <DateSelector start={start} end={end} value={min} onChange={this.handleMinValueChange} required={required} />
-          </div>
-          <div className="control-cell">
-            <DateSelector start={start} end={end} value={max} onChange={this.handleMaxValueChange} required={required} />
-          </div>
-          <div className="control-cell">
-            <button type="button" className={alreadyDefault ? 'disabled link' : 'link'} onClick={this.handleReset}>Reset to Defaults</button>
-          </div>
+        <div className={cx('--Control', 'from')}>
+          <DateSelector start={start} end={end} value={min} onChange={this.handleMinValueChange} required={required} />
         </div>
+        <div className={cx('--Label', 'to')}>
+          <label>to</label>
+        </div>
+        <div className={cx('--Control', 'to')}>
+          <DateSelector start={start} end={end} value={max} onChange={this.handleMaxValueChange} required={required} />
+        </div>
+        {!hideReset && (
+          <div className={cx('--Control', 'reset')}>
+            <button type="button" disabled={alreadyDefault} className="link" onClick={this.handleReset}>Reset to Defaults</button>
+          </div>
+        )}
       </div>
     );
   }
+}
+
+DateRangeSelector.propTypes = {
+  value: PropTypes.shape({
+    min: PropTypes.string.isRequired,
+    max: PropTypes.string.isRequired
+  }),
+  start: PropTypes.string,
+  end: PropTypes.string,
+  onChange: PropTypes.func,
+  // both default to false
+  inline: PropTypes.bool,
+  hideReset: PropTypes.bool,
+  required: PropTypes.bool
 }
 
 export default DateRangeSelector;
