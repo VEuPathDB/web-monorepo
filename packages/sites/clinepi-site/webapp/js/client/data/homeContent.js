@@ -2,6 +2,8 @@ import { StudyCard } from 'ebrc-client/App/Studies';
 import { SearchCard } from 'ebrc-client/App/Searches';
 import { ImageCard } from 'ebrc-client/App/ImageCard';
 
+import { studyMatchPredicate } from 'ebrc-client/util/homeContent';
+
 export default ({ studies, searches, visualizations }) => ([
   {
     title: 'Explore the Studies',
@@ -13,7 +15,8 @@ export default ({ studies, searches, visualizations }) => ([
     tableViewLink: '/search/dataset/Studies/result',
     cardComponent: StudyCard,
     getSearchStringForItem: item => 
-      item.searchString
+      item.searchString,
+    matchPredicate: studyMatchPredicate
   },
   {
     title: 'Explore Example Searches',
