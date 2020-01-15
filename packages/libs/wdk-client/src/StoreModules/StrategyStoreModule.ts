@@ -90,7 +90,7 @@ export function reduce(state: State = initialState, action: Action): State {
       ...entry,
       isLoading: false
     }));
-    const s2 = updateStrategyEntry(state, action.payload.strategyId, { isLoading: false });
+    const s2 = updateStrategyEntry(s1, action.payload.strategyId, { isLoading: false });
 
     return s2;
   }
