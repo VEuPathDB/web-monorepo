@@ -75,13 +75,13 @@ export let contexts = [
     isPbrowse: true
   },
   {
-    gbrowse_url: 'dnaContextUrl',
+    gbrowse_url: 'jbrowseUrl',
     displayName: 'Features',
     anchor: 'FeaturesGBrowse',
     isPbrowse: false
   },
   {
-    gbrowse_url: 'orfGbrowseImageUrl',
+    gbrowse_url: 'jbrowseUrl',
     displayName: 'Genomic Context',
     anchor: 'orfGenomicContext',
     isPbrowse: false
@@ -106,34 +106,16 @@ export let contexts = [
   }
 ];
 
-const GbrowseLink = ({ url }) =>
-    <div style={{ textAlign: 'center', margin: 25 }}>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser</a>
-</div>
-
 const JbrowseLink = ({ url }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
-<a href={url} className="eupathdb-BigButton">View in Genome Browser</a>
+<a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
 </div>
 
-
-const GbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
+const PbrowseJbrowseLink = ({ url }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
-<a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in GBrowse genome browser&nbsp;<img src={webAppUrl + '/wdk/images/toBeRetired.png'} height="35" align="center" /></a>
+<a href={url} className="eupathdb-BigButton">View in protein browser</a>
 </div>
 
-const PbrowseLink = ({ url }) =>
-    <div style={{ textAlign: 'center', margin: 25 }}>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in protein browser</a>
-</div>
-
-const PbrowseJbrowseLink = ({ url, jbrowseUrl }) =>
-    <div style={{ textAlign: 'center', margin: 25 }}>
-<a href={makeGbrowseLinkUrl(jbrowseUrl)} className="eupathdb-BigButton" target="_blank">View in JBrowse protein browser</a>
-<a href={makeGbrowseLinkUrl(url)} className="eupathdb-BigButton">View in Gbrowse protein browser&nbsp;<img src={webAppUrl + '/wdk/images/toBeRetired.png'} height="35" align="center" /></a>
-
-</div>
 
 function JbrowseIframe({ jbrowseUrl,ht }) {
   const [ isLocked, setIsLocked ] = useState(true);
@@ -182,9 +164,9 @@ export function GbrowseContext(props) {
       jbrowseUrlFull = record.attributes.geneJbrowseFullUrl; 
       return (
     	<div>
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
+      	<JbrowseLink url={jbrowseUrlFull}/>
       	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
+      	<JbrowseLink url={jbrowseUrlFull}/>
       	</div>
 	)
   }	
@@ -203,9 +185,9 @@ export function GbrowseContext(props) {
     }
     return (
         <div>
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
+      	<JbrowseLink url={jbrowseUrlFull}/>
         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-      	<GbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrlFull}/>
+      	<JbrowseLink url={jbrowseUrlFull}/>
       </div>
 	  )
   }
@@ -222,7 +204,7 @@ export function GbrowseContext(props) {
   return (
     <div>
       <JbrowseLink url={jbrowseCommonUrl}/>
-      <GbrowseImage url={url} includeImageMap={true} />
+      <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
       <JbrowseLink url={jbrowseCommonUrl}/>
     </div>
   );
@@ -234,9 +216,9 @@ export function ProteinContext(props) {
   let jbrowseUrlMinimal = props.rowData.proteinJbrowseUrl;
   return (
     <div>
-      <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+      <PbrowseJbrowseLink url={jbrowseUrl}/>
       <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="500" />
-      <PbrowseJbrowseLink url={url} jbrowseUrl={jbrowseUrl}/>
+      <PbrowseJbrowseLink url={jbrowseUrl}/>
     </div>
   );
 
