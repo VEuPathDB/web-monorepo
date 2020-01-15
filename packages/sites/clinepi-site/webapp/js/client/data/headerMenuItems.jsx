@@ -55,6 +55,10 @@ export default function headerMenuItems (state) {
             text: 'News',
             route: '/community/ClinEpiDB/news.html'
           },
+          { 
+            text: 'FAQ',
+            route: '/community/ClinEpiDB/faq.html'
+          },
           {
             text: 'Public Strategies',
             route: '/workspace/strategies/public'
