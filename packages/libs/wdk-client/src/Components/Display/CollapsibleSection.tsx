@@ -22,6 +22,17 @@ interface Props {
 
 const defaultClassName = 'wdk-CollapsibleSection';
 
+// Make the button unstyled so it does not alter the layout of the page
+// but we still get the accessibility benefits of a button.
+const buttonStyle: React.CSSProperties = {
+  border: 'none',
+  background: 'none',
+  display: 'block',
+  width: '100%',
+  textAlign: 'left',
+  padding: 0
+}
+
 function CollapsibleSection(props: Props) {
   const { className, id, isCollapsed = true, headerContent, children, onCollapsedChange } = props;
   const [ shouldRenderChildren, setShouldRenderChildren ] = useState(!isCollapsed);
@@ -30,15 +41,18 @@ function CollapsibleSection(props: Props) {
   const Header = props.headerComponent || 'div';
   const contentStyle = isCollapsed ? { display: 'none' } : undefined;
 
-  function handleCollapsedChange() {
+  function handleCollapsedChange(event: React.MouseEvent<HTMLElement>) {
+    event.currentTarget.blur();
     setShouldRenderChildren(true);
     onCollapsedChange(!isCollapsed);
   }
   return (
     <div id={id} className={containerClassName}>
-      <Header className={headerClassName} onClick={handleCollapsedChange}>
-        {headerContent}
-      </Header>
+      <button style={buttonStyle} type="button" onClick={handleCollapsedChange}>
+        <Header className={headerClassName}>
+          {headerContent}
+        </Header>
+      </button>
       <div style={contentStyle} className={contentClassName}>
         {shouldRenderChildren ? children : null}
       </div>

@@ -10,6 +10,7 @@
   font-family: FontAwesome;
   font-size: 1.2em;
   width: 1ex;
+  padding-right: .25em;
 }
 
 .wdk-CollapsibleSectionHeader__collapsed:before {
