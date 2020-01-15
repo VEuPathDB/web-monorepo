@@ -1,5 +1,5 @@
 import { toNumber, last } from 'lodash';
-import React, {useEffect, useLayoutEffect} from 'react';
+import React, {useEffect, useLayoutEffect, useMemo} from 'react';
 import { connect } from 'react-redux';
 import {Dispatch} from 'redux';
 
@@ -38,12 +38,21 @@ interface MappedProps {
   strategySummariesLoading?: boolean;
   publicStrategySummaries?: StrategySummary[];
   publicStrategySummariesError?: boolean;
+  strategies: RootState['strategies']['strategies'];
 }
 
 type Props = OwnProps & DispatchProps & MappedProps;
 
 function StrategyWorkspaceController(props: Props) {
-  const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError } = props;
+  const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError, strategies } = props;
+
+  const userOwnedStrategies = useMemo(
+    () => strategySummaries && new Set([
+      ...Object.keys(strategies).map(toNumber),
+      ...strategySummaries.map(({ strategyId }) => toNumber(strategyId))
+    ]),
+    [ strategies, strategySummaries ]
+  );
 
   useEffect(() => {
     dispatch(openStrategyView());
@@ -69,13 +78,15 @@ function StrategyWorkspaceController(props: Props) {
         publicStrategiesCount={publicStrategiesCount}
         publicStrategiesError={publicStrategySummariesError}
       />
-      {/* Only load ChildView when openedStrategies are loaded, to prevent clobbering store values. Not ideal, but it works. */}
-        {openedStrategies ? <ChildView {...props}/> : <Loading/>}
+      {/* Only load ChildView when openedStrategies and userOwnedStrategies are loaded, to prevent clobbering store values. Not ideal, but it works. */}
+        {openedStrategies && userOwnedStrategies ? <ChildView {...props} userOwnedStrategies={userOwnedStrategies} /> : <Loading/>}
     </div>
   )
 }
 
-function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStrategies = [], strategySummaries, strategySummariesLoading }: Props) {
+type ChildViewProps = Props & { userOwnedStrategies: Set<number> };
+
+function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStrategies = [], strategySummaries, strategySummariesLoading, userOwnedStrategies }: ChildViewProps) {
   const childView = parseSubPath(subPath, allowEmptyOpened, queryParams);
   const activeStrategyId = childView.type === 'openedStrategies' ? childView.strategyId : undefined;
   const activeStepId = childView.type === 'openedStrategies' ? childView.stepId : undefined;
@@ -94,22 +105,35 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
     }
   }, [childView, openedStrategies, strategySummaries, dispatch]);
 
+  // If the user is navigatating to a strategy they own,
+  // update openedStrategies if necessary
   useEffect(() => {
-    if (activeStrategyId) {
-      if (!openedStrategies.includes(activeStrategyId)) {
-        dispatch(addToOpenedStrategies([activeStrategyId]));
-      }
+    if (
+      activeStrategyId &&
+      userOwnedStrategies.has(activeStrategyId) &&
+      !openedStrategies.includes(activeStrategyId)
+    ) {
+      dispatch(addToOpenedStrategies([activeStrategyId]));
     }
-  }, [activeStrategyId]);
+  }, [activeStrategyId, userOwnedStrategies]);
 
+  // If the user is navigating to a strategy they own,
+  // update the activeStrategy approriately
   useEffect(() => {
-    if (activeStrategyId) {
+    if (activeStrategyId && userOwnedStrategies.has(activeStrategyId)) {
       dispatch(setActiveStrategy(activeStrategyId == null ? undefined : {
         strategyId: activeStrategyId,
         stepId: activeStepId
       }));
     }
-  }, [activeStrategyId, activeStepId]);
+  }, [activeStrategyId, activeStepId, userOwnedStrategies]);
+
+  // If the user is tryting to navigate to a strategy they don't own, redirect them
+  useLayoutEffect(() => {
+    if (activeStrategyId && !userOwnedStrategies.has(activeStrategyId)) {
+      dispatch(transitionToInternalPage('/workspace/strategies/all', { replace: true }));
+    }
+  }, [activeStrategyId, userOwnedStrategies]);
 
   // Prevent opened tab from being selecting while data needed for redirect above is being loaded
   if (openedStrategies == null || strategySummaries == null) return <Loading/>;
@@ -165,6 +189,7 @@ function parseSubPath(subPath: string, allowEmptyOpened: boolean, queryParams: R
 }
 
 function mapState(rootState: RootState): MappedProps {
+  const { strategies: { strategies } } = rootState;
   const { activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError, activeModal, strategySummariesLoading } = rootState.strategyWorkspace;
   return {
     activeStrategy,
@@ -174,7 +199,8 @@ function mapState(rootState: RootState): MappedProps {
     strategySummaries,
     strategySummariesLoading,
     publicStrategySummaries,
-    publicStrategySummariesError
+    publicStrategySummariesError,
+    strategies
   };
 }
 
