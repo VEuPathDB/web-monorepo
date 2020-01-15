@@ -86,10 +86,13 @@ export function reduce(state: State = initialState, action: Action): State {
   }
 
   case fulfillDuplicateStrategy.type: {
-    return updateStrategyEntry(state, action.payload.sourceStrategyId, entry => ({
+    const s1 = updateStrategyEntry(state, action.payload.sourceStrategyId, entry => ({
       ...entry,
       isLoading: false
     }));
+    const s2 = updateStrategyEntry(state, action.payload.strategyId, { isLoading: false });
+
+    return s2;
   }
 
   case fulfillSaveAsStrategy.type: {
@@ -109,6 +112,10 @@ export function reduce(state: State = initialState, action: Action): State {
       isLoading: false,
       strategy: action.payload.strategy
     });
+  }
+
+  case fulfillCreateStrategy.type: {
+    return updateStrategyEntry(state, action.payload.strategyId, { isLoading: false });
   }
 
   // XXX Consider doing a deep compare of current and new strategy. Will have to determine which values to compare (e.g., omit step.{estimatedSize,lastRunTime})
