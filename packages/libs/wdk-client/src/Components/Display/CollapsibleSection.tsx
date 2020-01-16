@@ -6,7 +6,7 @@
  */
 
 import { zipWith } from 'lodash';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import './CollapsibleSection.css';
 
@@ -41,11 +41,16 @@ function CollapsibleSection(props: Props) {
   const Header = props.headerComponent || 'div';
   const contentStyle = isCollapsed ? { display: 'none' } : undefined;
 
-  function handleCollapsedChange(event: React.MouseEvent<HTMLElement>) {
-    event.currentTarget.blur();
+  useEffect(() => {
+    if (shouldRenderChildren || isCollapsed) return;
     setShouldRenderChildren(true);
+  }, [ isCollapsed, shouldRenderChildren ])
+
+  const handleCollapsedChange = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    event.currentTarget.blur();
     onCollapsedChange(!isCollapsed);
-  }
+  }, [ isCollapsed ]);
+
   return (
     <div id={id} className={containerClassName}>
       <button style={buttonStyle} type="button" onClick={handleCollapsedChange}>
