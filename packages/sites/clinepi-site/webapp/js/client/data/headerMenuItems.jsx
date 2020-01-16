@@ -2,6 +2,7 @@ import React from 'react';
 import { StudyMenuItem } from 'ebrc-client/App/Studies';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
+import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 
 export default function headerMenuItems (state) {
   const { siteConfig } = state.globalData;
@@ -49,15 +50,15 @@ export default function headerMenuItems (state) {
         children: [
           {
             text: 'About ClinEpiDB',
-            route: '/community/ClinEpiDB/about.html'
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/about.html`
           },
           {
             text: 'News',
-            route: '/community/ClinEpiDB/news.html'
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/news.html`
           },
           { 
             text: 'FAQ',
-            route: '/community/ClinEpiDB/faq.html'
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/faq.html`
           },
           {
             text: 'Public Strategies',
@@ -70,7 +71,7 @@ export default function headerMenuItems (state) {
           },
           {
             text: 'Tutorials and Resources',
-            route: '/community/ClinEpiDB/resources.html'
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/resources.html`
           },
           {
             text: 'Data Access & Use Policy',
