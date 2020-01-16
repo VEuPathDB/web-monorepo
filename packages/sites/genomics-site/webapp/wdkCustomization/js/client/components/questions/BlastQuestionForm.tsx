@@ -61,8 +61,8 @@ const BlastQuestionFormView = ({ projectId, ...formProps}: Props) => {
 
   const onSubmit = useOnSubmit(formProps.state);
 
-  const targetParamElement = <RadioList {...targetParamProps} />;
-  const algorithmParamElement = <RadioList {...algorithmParamProps} />;
+  const targetParamElement = <RadioList {...targetParamProps} name="target" />;
+  const algorithmParamElement = <RadioList {...algorithmParamProps} name="algorithm" />;
   const sequenceParamElement = (
     <React.Fragment>
       <TextArea {...sequenceParamProps} />
