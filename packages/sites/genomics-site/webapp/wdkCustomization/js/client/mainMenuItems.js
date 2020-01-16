@@ -160,7 +160,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'analysis-methods',
           text: 'Analysis Methods',
-          route: '/community/methods.html'
+          route: `${STATIC_ROUTE_PATH}/methods.html`
         },
         {
           id: 'annotation-sops',
@@ -190,7 +190,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'about-downloads',
           text: 'Understanding Downloads',
-          route: '/community/embedded/help/general/index.html#downloads'
+          route: `${STATIC_ROUTE_PATH}/embedded/help/general/index.html#downloads`
         },
         {
           id: 'data-files-eupathdb',
@@ -275,7 +275,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'eupathdb-publications',
           text: 'EuPathDB Publications',
-          route: '/community/veupathPubs.html'
+          route: `${STATIC_ROUTE_PATH}/veupathPubs.html`
         },
         {
           id: 'mahpic-data',
@@ -340,7 +340,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
         {
           id: 'related-sites',
           text: 'Related Sites',
-          route: `/community/${siteConfig.projectId}/externalLinks.html`
+          route: `${STATIC_ROUTE_PATH}/${siteConfig.projectId}/externalLinks.html`
         },
         {
           id: 'public-strategies',

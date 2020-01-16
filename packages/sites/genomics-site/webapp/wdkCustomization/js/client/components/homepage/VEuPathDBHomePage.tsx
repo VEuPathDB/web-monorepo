@@ -23,6 +23,7 @@ import { projectId } from 'ebrc-client/config';
 
 import './VEuPathDBHomePage.scss';
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
+import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -199,6 +200,10 @@ const ToxoDB = 'ToxoDB';
 const FungiDB  = 'FungiDB';
 const EuPathDB = 'EuPathDB';
 
+function makeStaticPageRoute(subPath: string) {
+  return `${STATIC_ROUTE_PATH}${subPath}`;
+}
+
 const useProjectId = (): string => {
   // FIXME: Pull this from global data
   return projectId;
@@ -220,8 +225,8 @@ const useHeaderMenuItems = (
   youtubeUrl?: string
 ): HeaderMenuItem[] => {
   const projectId = useProjectId();
-  const aboutRoute = `/community/${projectId}/about.html`;
-  const aboutAllRoute = '/community/embedded/help/general/index.html';
+  const aboutRoute = makeStaticPageRoute(`/${projectId}/about.html`);
+  const aboutAllRoute = makeStaticPageRoute('/embedded/help/general/index.html');
 
   const menuItemEntries: HeaderMenuItemEntry[] = [
     {
@@ -362,7 +367,7 @@ const useHeaderMenuItems = (
           key: 'webservices',
           display: 'Searches via Web Services',
           type: 'reactRoute',
-          url: '/community/webServices.html'
+          url: makeStaticPageRoute('/webServices.html')
         }
       ]
     },
@@ -412,7 +417,7 @@ const useHeaderMenuItems = (
           key: 'analysis-methods',
           display: 'Methods',
           type: 'reactRoute',
-          url: '/community/methods.html'
+          url: makeStaticPageRoute('/methods.html')
         },
         {
           key: 'annotation-sops',
@@ -530,7 +535,7 @@ const useHeaderMenuItems = (
           key: 'related-sites',
           display: 'Related sites',
           type: 'reactRoute',
-          url: `/community/${projectId}/externalLinks.html`
+          url: makeStaticPageRoute(`/${projectId}/externalLinks.html`)
         },
         {
           key: 'mahpic-data',
@@ -546,7 +551,7 @@ const useHeaderMenuItems = (
           key: 'news',
           display: 'News',
           type: 'reactRoute',
-          url: `/community/${projectId}/news.html`
+          url: makeStaticPageRoute(`/${projectId}/news.html`)
         }
       ]
     },
@@ -565,7 +570,7 @@ const useHeaderMenuItems = (
           key: 'eupathdb-publications',
           display: 'Publications on VEuPathDB sites',
           type: 'reactRoute',
-          url: '/community/veupathPubs.html'
+          url: makeStaticPageRoute('/veupathPubs.html')
         },
         {
           key: 'submitting-divider',
@@ -691,7 +696,7 @@ const useHeaderMenuItems = (
           key: 'infrastructure',
           display: 'EuPathDB Infrastructure',
           type: 'reactRoute',
-          url: '/community/infrastructure.html'
+          url: makeStaticPageRoute('/infrastructure.html')
         },
         {
           key: 'usage-statistics',
@@ -723,7 +728,7 @@ const useHeaderMenuItems = (
           key: 'web-tutorials',
           display: 'Web tutorials',
           type: 'reactRoute',
-          url: '/community/tutorials.html'
+          url: makeStaticPageRoute('/tutorials.html')
         },
         {
           key: 'eupathdb-workshop',
@@ -747,7 +752,7 @@ const useHeaderMenuItems = (
           key: 'our-glossary',
           display: `Our glossary`,
           type: 'reactRoute',
-          url: '/community/glossary.html'
+          url: makeStaticPageRoute('/glossary.html')
         },
         {
           key: 'contact-us',
