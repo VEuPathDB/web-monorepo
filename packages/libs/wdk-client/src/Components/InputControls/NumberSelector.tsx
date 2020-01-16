@@ -53,6 +53,10 @@ class NumberSelector extends React.Component<Props, State> {
     this.setState({ internalValue: value }, () => this.notifyChange());
   }
 
+  handleFocusEvent(e: React.FocusEvent<HTMLInputElement>) {
+    e.currentTarget.select();
+  }
+
   notifyChange() {
     const { onChange } = this.props;
     const { internalValue } = this.state;
@@ -78,6 +82,7 @@ class NumberSelector extends React.Component<Props, State> {
           value={value}
           onChange={this.handleChangeEvent}
           onBlur={this.handleBlurEvent}
+          onFocus={this.handleFocusEvent}
           required={required}
         />
       </span>

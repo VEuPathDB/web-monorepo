@@ -390,9 +390,8 @@ var Histogram = (function() {
     }
 
     setBinSize(binSize) {
-      const { binStart } = this.state.uiState;
+      const { binStart, xaxisMin, xaxisMax } = this.state.uiState;
       const distribution = binSize ? this.getBinnedDistribution(binSize, binStart, this.props.distribution) : this.props.distribution;
-      const { min: xaxisMin, max: xaxisMax } = this.getRange(distribution);
       const yaxisMax = binSize
         ? Math.max(...distribution.map(entry => entry.count))
         : this.getYAxisMax(this.props)
@@ -400,9 +399,8 @@ var Histogram = (function() {
     }
 
     setBinStart(binStart) {
-      const { binSize } = this.state.uiState;
+      const { binSize, xaxisMin, xaxisMax } = this.state.uiState;
       const distribution = binSize ? this.getBinnedDistribution(binSize, binStart, this.props.distribution) : this.props.distribution;
-      const { min: xaxisMin, max: xaxisMax } = this.getRange(distribution);
       const yaxisMax = binSize
         ? Math.max(...distribution.map(entry => entry.count))
         : this.getYAxisMax(this.props)
@@ -416,10 +414,12 @@ var Histogram = (function() {
 
     resetUiState() {
       const { min: xaxisMin, max: xaxisMax } = this.getRange(this.props.distribution);
+      const yaxisMin = 0;
       const yaxisMax = this.getYAxisMax(this.props);
       const binSize = 0;
       const binStart = Math.min(0, xaxisMin);
-      this.updateUIState({ ...this.state.uiState, binSize, binStart, yaxisMax, xaxisMin, xaxisMax });
+      const scaleYAxis = false;
+      this.updateUIState({ ...this.state.uiState, binSize, binStart, yaxisMin, yaxisMax, xaxisMin, xaxisMax, scaleYAxis });
     }
 
     render() {
@@ -484,20 +484,22 @@ var Histogram = (function() {
               <div>
                 <div>Range: {xaxisScaleSelector}</div>
               </div>
-              {chartType !== 'date' && <div>Bin start: <input type="number" max={valuesMin} value={this.state.uiState.binStart} onChange={e => this.setBinStart(eventToNumber(e))}/></div>}
-              <div>Bin size: <input type="number" min={0} value={this.state.uiState.binSize} onChange={e => this.setBinSize(eventToNumber(e))}/></div>
+              {chartType !== 'date' && <div>Bin start: <input type="number" max={valuesMin} value={this.state.uiState.binStart} onFocus={autoSelectOnFocus} onChange={e => this.setBinStart(eventToNumber(e))}/></div>}
+              <div>Bin size: <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setBinSize(eventToNumber(e))}/>
+                <em style={{ color: '#444444', marginLeft: '1em' }}> When bin size = 0, the count of discrete values is shown</em>
+              </div>
             </fieldset>
             <fieldset>
               <legend>y-axis{/*yaxisLabel*/}</legend>
               <div>Range: {yAxisScaleSelector}&nbsp;&nbsp;</div>
               <div>Scale counts:&nbsp;&nbsp;
                 <label>
-                  <input type="radio" checked={!this.state.uiState.scaleYAxis} onChange={() => this.setScaleYAxis(false)}/>
+                  <input type="radio" checked={!this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(false)}/>
                   &nbsp;linear
                 </label>
                 &nbsp;&nbsp;&nbsp;
                 <label>
-                  <input type="radio" checked={this.state.uiState.scaleYAxis} onChange={() => this.setScaleYAxis(true)}/>
+                  <input type="radio" checked={this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(true)}/>
                   &nbsp;log<sub>10</sub>
                 </label>
               </div>
@@ -613,4 +615,8 @@ function createBinnedDistribution(binSize, binStart, distribution) {
 function eventToNumber(event) {
   const value = event.target.value.trim();
   return value === '' ? undefined : Number(value);
+}
+
+function autoSelectOnFocus(event) {
+  event.target.select();
 }
