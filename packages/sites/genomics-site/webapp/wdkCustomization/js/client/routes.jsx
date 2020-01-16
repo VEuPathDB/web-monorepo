@@ -12,6 +12,8 @@ import { FeaturedTools } from './components/homepage/FeaturedTools';
 import { PageDescription } from './components/homepage/PageDescription';
 import { WorkshopExercises } from './components/homepage/WorkshopExercises';
 
+import Announcements from 'ebrc-client/components/Announcements';
+
 // Project id is not needed for these record classes.
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence', 'sample' ];
@@ -97,6 +99,8 @@ export const wrapRoutes = ebrcRoutes => [
     path: '/',
     component: () => 
       <React.Fragment>
+        {/* <Announcements />
+        <hr /> */}
         <PageDescription />
         <hr />
         <FeaturedTools />

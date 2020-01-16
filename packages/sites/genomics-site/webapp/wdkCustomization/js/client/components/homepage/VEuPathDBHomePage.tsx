@@ -8,6 +8,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { arrayOf, decode, string } from 'wdk-client/Utils/Json';
 
+import Announcements from 'ebrc-client/components/Announcements';
 import { Footer } from 'ebrc-client/components/homepage/Footer';
 import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
 import { Main } from 'ebrc-client/components/homepage/Main';
@@ -41,7 +42,6 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
-const GENE_ITEM_ID = 'category:transcript-record-classes-transcript-record-class';
 const SEARCH_TERM_SESSION_KEY = 'homepage-header-search-term';
 const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
 
@@ -58,7 +58,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
 
   const [ expandedBranches, setExpandedBranches ] = useSessionBackedState(
-    [ GENE_ITEM_ID ], 
+    [ ], 
     EXPANDED_BRANCHES_SESSION_KEY, 
     encodeExpandedBranches, 
     parseExpandedBranches
@@ -150,6 +150,11 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
           />
         </div>
       </ErrorBoundary>
+      {isHomePage &&
+        <div className={vpdbCx('Announcements')}>
+          <Announcements />
+        </div>
+      }
       {isHomePage &&
         <ErrorBoundary>
           <SearchPane 

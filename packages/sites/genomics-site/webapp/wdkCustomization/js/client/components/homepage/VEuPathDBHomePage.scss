@@ -57,10 +57,6 @@ body.vpdb-Body {
         .ebrc-HeaderProjectBranding {
           display: none;
         }
-
-        .ebrc-FooterSocialMediaLinks {
-          display: none;
-        }
       }
 
       .vpdb-SubmenuDivider {
@@ -116,7 +112,11 @@ body.vpdb-Body {
         }
       }
     }
-    
+
+    .vpdb-Announcements {
+      grid-area: banner;
+    }
+
     .vpdb-SearchPane {
       grid-area: nav;
 
@@ -200,6 +200,10 @@ body.vpdb-Body {
         }
       }
 
+      .vpdb-Main {
+        border-color: #682039;
+      }
+
       .vpdb-FeaturedToolsListItem {
         &__selected {
           .vpdb-FeaturedToolsListItemIconContainer {
@@ -240,14 +244,17 @@ body.vpdb-Body {
       // as unfortunately, IE11 doesn't support grid-template-areas
       grid-template-areas:
         "header header header"
+        "banner banner banner"
         "nav content side"
         "footer footer footer";
     
       grid-template-columns: 26em 1fr 26em;
-      grid-template-rows: 9.0625rem 1fr auto;
+      grid-template-rows: 9.0625rem auto 1fr auto;
 
       .vpdb-Main {
         overflow: hidden;
+
+        margin: 0 0 1rem 0;
       }
     }
 
