@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
-import { eq, once, uniqueId } from 'lodash';
+import { eq, once, uniqueId, uniqBy } from 'lodash';
 import React, { Component, PureComponent, ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { formatAttributeValue, lazy, wrappable } from 'wdk-client/Utils/ComponentUtils';
@@ -133,7 +133,7 @@ class DataTable extends PureComponent<Props, State> {
   columns: DataTables.ColumnSettings[] = [];
 
   componentDidMount() {
-    this._childRowContainers = new Map();
+    // this._childRowContainers = new Map();
     this._setup();
   }
 
@@ -330,8 +330,8 @@ class DataTable extends PureComponent<Props, State> {
     .DataTable(tableOpts);
 
     if (childRow != null) {
-      this._updateExpandedRows(dataTable);
       this._dataTable.draw();
+      this._updateExpandedRows(dataTable);
     }
   }
 
@@ -388,9 +388,9 @@ class DataTable extends PureComponent<Props, State> {
     }
     else {
       let props = { rowIndex: row.index(), rowData: row.data() };
-      this.setState({
-        childRows: [ ...this.state.childRows, [ childRowContainer, props ] ]
-      });
+      this.setState(state => ({
+        childRows: uniqBy([ ...state.childRows, [ childRowContainer, props ] ], ([node]) => node)
+      }));
     }
     if (openRow && !row.child.isShown()) {
       row.child.show();
@@ -402,7 +402,7 @@ class DataTable extends PureComponent<Props, State> {
   _hideChildRow(dataTable: DataTables.Api, tableRowNode: HTMLTableRowElement) {
     let row = dataTable.row(tableRowNode);
     row.child.hide();
-      tableRowNode.setAttribute('aria-expanded', 'false');
+    tableRowNode.setAttribute('aria-expanded', 'false');
   }
 
   _callExpandedRowsCallback(dataTable: DataTables.Api) {
