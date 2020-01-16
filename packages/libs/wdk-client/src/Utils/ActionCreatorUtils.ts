@@ -1,9 +1,9 @@
 import { isEqual, stubTrue, negate } from 'lodash';
+import { AnyAction } from 'redux';
 import {concat, of, Observable, from, Observer, OperatorFunction} from 'rxjs';
 import {catchError, filter, mergeMap, takeWhile, switchMap, concatMap, tap} from 'rxjs/operators';
 import { StateObservable, ActionsObservable } from 'redux-observable';
 
-import {Action as WdkAction} from 'wdk-client/Actions';
 import { notifyUnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
 import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 
@@ -67,7 +67,7 @@ interface Request2Fulfill<T, State> {
     requestActions: T,
     state: StateObservable<State>,
     dependencies: EpicDependencies
-  ): Promise<WdkAction>
+  ): Promise<AnyAction>
 }
 
 interface MapRequestActionsToEpicOptions<T, State> {
@@ -117,7 +117,7 @@ interface MapRequestActionsToEpic {
     options?: MapRequestActionsToEpicOptions<[
       A1
     ], State>
-  ): ModuleEpic<State>;
+  ): ModuleEpic<State, AnyAction>;
 
   // 2 request action
   <
@@ -136,7 +136,7 @@ interface MapRequestActionsToEpic {
       A1, A2
     ], State>
 
-  ): ModuleEpic<State>;
+  ): ModuleEpic<State, AnyAction>;
 
   // 3 request action
   <
@@ -161,7 +161,7 @@ interface MapRequestActionsToEpic {
       A3
     ], State>
 
-  ): ModuleEpic<State>;
+  ): ModuleEpic<State, AnyAction>;
 
   // 4 request action
   <
@@ -190,7 +190,7 @@ interface MapRequestActionsToEpic {
       A4
     ], State>
 
-  ): ModuleEpic<State>;
+  ): ModuleEpic<State, AnyAction>;
 
   // 5 request action
   <
@@ -223,7 +223,7 @@ interface MapRequestActionsToEpic {
       A5
     ], State>
 
-  ): ModuleEpic<State>;
+  ): ModuleEpic<State, AnyAction>;
 
   // 6 request action
   <
@@ -260,7 +260,7 @@ interface MapRequestActionsToEpic {
       A6
     ], State>
 
-  ): ModuleEpic<State>;
+  ): ModuleEpic<State, AnyAction>;
 
   // 7 request action
   <
@@ -301,7 +301,7 @@ interface MapRequestActionsToEpic {
       A7
     ], State>
 
-  ): ModuleEpic<State>;
+  ): ModuleEpic<State, AnyAction>;
 
   // 8 request action
   <
@@ -346,7 +346,7 @@ interface MapRequestActionsToEpic {
       A8
     ], State>
 
-  ): ModuleEpic<State>;
+  ): ModuleEpic<State, AnyAction>;
 
 }
 
@@ -358,9 +358,9 @@ export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFacto
   actionCreators: GenericActionCreator[],
   request2Fulfill: Request2Fulfill<any, State>,
   options: MapRequestActionsToEpicOptions<any, State> = {}
-): ModuleEpic<State> => {
+): ModuleEpic<State, AnyAction> => {
   return function mapRequestActionsEpic(
-    action$: Observable<WdkAction>,
+    action$: Observable<AnyAction>,
     state$: StateObservable<State>,
     dependencies: EpicDependencies,
   ) {
@@ -417,7 +417,7 @@ export const concatMapRequestActionsToEpic: MapRequestActionsToEpic = mapRequest
  */
 export const switchMapRequestActionsToEpic: MapRequestActionsToEpic = mapRequestActionsToEpicWith(switchMap);
 
-interface TakeEpicInWindowOptions<StartAction extends WdkAction, EndAction extends WdkAction> {
+interface TakeEpicInWindowOptions<StartAction extends AnyAction, EndAction extends AnyAction> {
   startActionCreator: ActionCreator<StartAction, any>;
   endActionCreator: ActionCreator<EndAction, any>;
   compareStartAndEndActions?: (startAction: StartAction, endAction: EndAction) => boolean;
@@ -427,10 +427,10 @@ interface TakeEpicInWindowOptions<StartAction extends WdkAction, EndAction exten
  * Starts the target epic when `startAction` is emitted, until `endAction` is
  * emitted.
  */
-export function takeEpicInWindow<State, StartAction extends WdkAction, EndAction extends WdkAction>(
+export function takeEpicInWindow<State, StartAction extends AnyAction, EndAction extends AnyAction>(
   options: TakeEpicInWindowOptions<StartAction, EndAction>,
-  epic: ModuleEpic<State>,
-): ModuleEpic<State> {
+  epic: ModuleEpic<State, AnyAction>,
+): ModuleEpic<State, AnyAction> {
   const {
     startActionCreator,
     endActionCreator,

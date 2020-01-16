@@ -337,7 +337,7 @@ function normalizeQuestion(question: QuestionWithParameters) {
 // Observers
 // ---------
 
-type QuestionEpic = ModuleEpic<RootState>;
+type QuestionEpic = ModuleEpic<RootState, Action>;
 
 const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   filter((action): action is UpdateActiveQuestionAction => action.type === UPDATE_ACTIVE_QUESTION),

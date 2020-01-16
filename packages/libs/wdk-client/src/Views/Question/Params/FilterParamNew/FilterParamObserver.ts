@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash';
-import { combineEpics, ofType, Epic } from 'redux-observable';
+import { combineEpics, Epic } from 'redux-observable';
 import { concat, empty, from, merge, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 import WdkService from 'wdk-client/Service/WdkService';
@@ -31,7 +31,7 @@ const defaultMemberFieldSort: MemberFieldState['sort'] = {
 // Observers
 // ---------
 
-type Observer = ModuleEpic<State>;
+type Observer = ModuleEpic<State, Action>;
 
 type LoadDeps = {
   paramName: string,
@@ -44,8 +44,7 @@ type LoadDeps = {
  * When a Question is loaded, listen for parameter-specific actions and load data as needed.
  */
 const observeInit: Observer = (action$, state$, services) => action$.pipe(
-  ofType<QuestionLoadedAction>(QUESTION_LOADED),
-  // filter((action): action is QuestionLoadedAction => action.type === QUESTION_LOADED),
+  filter((action): action is QuestionLoadedAction => action.type === QUESTION_LOADED),
   mergeMap(action => {
     const { searchName } = action.payload;
     const questionState = getQuestionState(state$.value, searchName);
@@ -97,7 +96,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
         );
 
         const activeOntologyTermChangedParameter$: Observable<LoadDeps> = action$.pipe(
-          ofType<SetActiveFieldAction>(SET_ACTIVE_FIELD),
+          filter((action): action is SetActiveFieldAction => action.type === SET_ACTIVE_FIELD),
           filter(action => action.payload.searchName === searchName && action.payload.parameter.name === paramName),
           mergeMap(() => {
             const questionState = getQuestionState(state$.value, searchName);
@@ -118,7 +117,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
 
         const groupVisibilityChangeParameter$: Observable<LoadDeps> = action$.pipe(
-          ofType<ChangeGroupVisibilityAction>(CHANGE_GROUP_VISIBILITY),
+          filter((action): action is ChangeGroupVisibilityAction => action.type === CHANGE_GROUP_VISIBILITY),
           filter(action => action.payload.searchName === searchName && action.payload.groupName === groupName),
           mergeMap(() => {
             const questionState = getQuestionState(state$.value, searchName);
@@ -180,7 +179,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 );
 
 const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wdkService }) => action$.pipe(
-  ofType<UpdateParamsAction>(UPDATE_PARAMS),
+  filter((action): action is UpdateParamsAction => action.type === UPDATE_PARAMS),
   switchMap(action => {
     const { searchName, parameters } = action.payload;
     return from(parameters).pipe(
@@ -224,7 +223,7 @@ export default observeParam;
 
 function getUnloadQuestionStream(action$: Observable<Action>, searchName: string): Observable<Action> {
   return action$.pipe(
-    ofType<UnloadQuestionAction>(UNLOAD_QUESTION),
+    filter((action): action is UnloadQuestionAction => action.type === UNLOAD_QUESTION),
     filter(action => action.payload.searchName === searchName)
   );
 }
