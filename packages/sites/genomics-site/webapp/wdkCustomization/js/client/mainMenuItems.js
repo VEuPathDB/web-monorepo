@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-
+import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 import {
   SHOW_GALAXY_PAGE_PREFERENCE
 } from 'ebrc-client/controllers/GalaxyTermsController';
