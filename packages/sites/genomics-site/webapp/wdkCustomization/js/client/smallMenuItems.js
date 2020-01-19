@@ -2,6 +2,8 @@
  * Get small menu entries
  * @return {Array<Entry>}
  */
+import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
+
 export default function smallMenuEntries({ siteConfig: { projectId } }, defaultEntries) {
   const aboutRoute = `${STATIC_ROUTE_PATH}/${projectId}/about.html`;
   const aboutAllRoute = `${STATIC_ROUTE_PATH}/embedded/help/general/index.html`;
