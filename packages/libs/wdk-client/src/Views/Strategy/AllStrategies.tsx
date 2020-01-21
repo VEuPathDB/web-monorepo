@@ -175,7 +175,7 @@ function makeColumns(isSaved: boolean, updatePublicStatus: TableProps['updatePub
       name: 'Description',
       className: cx('--TableCell', 'description'),
       renderCell: ({ value, row }: CellRenderProps<string>) =>
-        <OverflowingTextCell value={value || row.nameOfFirstStep || ''}/>,
+        <OverflowingTextCell value={value || row.nameOfFirstStep || ''} key={row.strategyId} />,
       width: '25em'
     },
     {
