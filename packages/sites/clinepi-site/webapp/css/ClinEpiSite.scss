@@ -630,16 +630,23 @@ div#clinepi-news {
   margin: 0 4em;
 }
 /* ========================================================================= */
-/* Tutorials page                                                                */
+/* Tutorials page, faq page                                                                */
 /* ========================================================================= */
 #clinepi-tutorials  li, #clinepi-resources li, #clinepi-general li, #clinepi-using_site li {
   font-size: 1.4em;
   list-style: none;
   margin: 1em 0;
 }
-#clinepi-general li p, #clinepi-using_site li p {
+
+#clinepi-general li p, #clinepi-general li ol li, #clinepi-using_site li p, #clinepi-using_site li ol li {
   font-size: 90%;
+  padding-left: 1em;
+  list-style: decimal;
 }
+#clinepi-general li p span.indent, #clinepi-using_site li p span.indent {
+  padding-left: 2em;
+}
+
 #clinepi-tutorials li .fa, #clinepi-resources li .fa {
   color: #333;
   margin-right: .5em;
