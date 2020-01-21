@@ -25,6 +25,8 @@ export function useIsRefOverflowing<T extends Element>(
 
   useLayoutEffect(() => {
     if (ref.current) {
+      setIsOverflowing(isElementOverflowing(ref.current));
+
       const resources = ref.current.querySelectorAll(RESOURCE_TYPES.join(','));
 
       // Whenever a resource loads, check to see if the element overflows

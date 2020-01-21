@@ -38,6 +38,9 @@ import {
   cancelRequestDeleteOrRestoreStrategies as cancelDeleteOrRestoreStrategies,
   requestCombineWithBasket
 } from 'wdk-client/Actions/StrategyActions';
+import {
+  fulfillImportStrategy
+} from 'wdk-client/Actions/ImportStrategyActions'
 import { removeStep, getStepIds, replaceStep, mapStepTreeIds, addStep } from 'wdk-client/Utils/StrategyUtils';
 import {confirm, alert} from 'wdk-client/Utils/Platform';
 
@@ -114,7 +117,8 @@ export function reduce(state: State = initialState, action: Action): State {
     });
   }
 
-  case fulfillCreateStrategy.type: {
+  case fulfillCreateStrategy.type: 
+  case fulfillImportStrategy.type: {
     return updateStrategyEntry(state, action.payload.strategyId, { isLoading: false });
   }
 
