@@ -40,7 +40,7 @@ import {
 } from 'wdk-client/Actions/StrategyActions';
 import {
   fulfillImportStrategy
-} from 'wdk-client/Actions/ImportStrategyActions'
+} from 'wdk-client/Actions/ImportStrategyActions';
 import { removeStep, getStepIds, replaceStep, mapStepTreeIds, addStep } from 'wdk-client/Utils/StrategyUtils';
 import {confirm, alert} from 'wdk-client/Utils/Platform';
 
