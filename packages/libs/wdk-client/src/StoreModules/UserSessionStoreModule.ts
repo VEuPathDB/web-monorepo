@@ -109,7 +109,7 @@ function observeShowLogoutWarning(
     mergeMap(async () => {
       const shouldLogout = await confirm(
         'Are you sure you want to logout?',
-        'Note: You must log out of other assiciated sites separately'
+        'Note: You must log out of other VEuPathDB sites separately'
       );
 
       if (!shouldLogout) return logoutDismissed();
