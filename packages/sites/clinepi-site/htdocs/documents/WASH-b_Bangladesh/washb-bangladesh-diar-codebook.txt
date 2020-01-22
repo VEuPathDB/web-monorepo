@@ -1,0 +1,486 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-diar-codebook.txt
+  log type:  text
+ opened on:  12 Apr 2018, 11:33:18
+
+. desc
+
+Contains data from washb-bangladesh-diar.dta
+  obs:        22,594                          Bangladesh diarrhea dataset, created by
+                                                3-bangladesh-dm-diar.do
+ vars:            28                          17 Aug 2016 14:37
+ size:     1,197,482                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+dataid          str5    %9s                   Compound ID
+childid         str3    %3s                   Child ID
+tchild          byte    %12.0g     tchild     Target child in birth cohort
+clusterid       str3    %9s                   Cluster ID
+block           byte    %8.0g                 Randomization block
+svy             byte    %9.0g                 Survey round (0,1,2)
+month           byte    %9.0g                 Month of measurement
+sex             byte    %10.0g     sex        Sex (1=male)
+agedays         int     %9.0g                 Age in days
+ageyrs          float   %9.0g                 Age in years
+enrolage        double  %10.0g                Age at enrollment, years
+newbirth        byte    %8.0g                 New birth
+sibnewbirth     byte    %8.0g                 Sibling (non-index child) new birth
+gt36mos         byte    %8.0g                 Older than 36 mos at enrollment
+d3plus2d        byte    %8.0g                 3+ stools in 24 hr, 2d recall
+d3plus7d        byte    %8.0g                 3+ stools in 24 hr, 7d recall
+dloose2d        byte    %8.0g                 loose or watery stool, 2d recall
+dloose7d        byte    %8.0g                 loose or watery stool, 7d recall
+dblood2d        byte    %8.0g                 blood in stool, 2d recall
+dblood7d        byte    %8.0g                 blood in stool, 7d recall
+diar2d          byte    %8.0g               * Diarrhea case, 2d recall
+diar7d          byte    %8.0g               * Diarrhea case, 7d recall
+bruise2d        byte    %8.0g                 Bruising, 2d recall
+bruise7d        byte    %8.0g                 Bruising, 7d recall
+tooth2d         byte    %8.0g                 Toothache, 2d recall
+tooth7d         byte    %8.0g                 Toothache, 7d recall
+svyweek         float   %9.0g                 Week of survey
+svyyear         float   %9.0g                 Year of survey
+                                            * indicated variables have notes
+----------------------------------------------------------------------------------------------------
+Sorted by: dataid
+     Note: Dataset has changed since last saved.
+
+. codebook, c
+
+Variable       Obs Unique      Mean        Min       Max  Label
+----------------------------------------------------------------------------------------------------
+dataid       22594   5197         .          .         .  Compound ID
+childid      22594     13         .          .         .  Child ID
+tchild       22594      2  .4166593          0         1  Target child in birth cohort
+clusterid    22594    720         .          .         .  Cluster ID
+block        22594     90  43.97318          1        90  Randomization block
+svy          22594      3  1.278215          0         2  Survey round (0,1,2)
+month        22594     12  5.712224          1        12  Month of measurement
+sex          22594      2  .4973887          0         1  Sex (1=male)
+agedays      22594   1906  679.4641        -42      2013  Age in days
+ageyrs       22594   1906  1.860271  -.1149897  5.511293  Age in years
+enrolage     22594   1833  .4476507  -2.683094  3.000684  Age at enrollment, years
+newbirth     22594      2  .5492609          0         1  New birth
+sibnewbirth  22594      2  .1326016          0         1  Sibling (non-index child) new birth
+gt36mos      22594      1         0          0         0  Older than 36 mos at enrollment
+d3plus2d     19849      2  .0925991          0         1  3+ stools in 24 hr, 2d recall
+d3plus7d     19850      2  .1068514          0         1  3+ stools in 24 hr, 7d recall
+dloose2d     19845      2  .0426304          0         1  loose or watery stool, 2d recall
+dloose7d     19839      2  .0503554          0         1  loose or watery stool, 7d recall
+dblood2d     19820      2  .0059031          0         1  blood in stool, 2d recall
+dblood7d     19820      2  .0079213          0         1  blood in stool, 7d recall
+diar2d       19849      2  .0377853          0         1  Diarrhea case, 2d recall
+diar7d       19849      2  .0495743          0         1  Diarrhea case, 7d recall
+bruise2d     19838      2  .0218268          0         1  Bruising, 2d recall
+bruise7d     19831      2  .0282386          0         1  Bruising, 7d recall
+tooth2d      19836      2  .0017645          0         1  Toothache, 2d recall
+tooth7d      19834      2  .0023192          0         1  Toothache, 7d recall
+svyweek      22594     52  22.99407          1        52  Week of survey
+svyyear      22594      4  2014.141       2012      2015  Year of survey
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+dataid                                                                                   Compound ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str5)
+
+         unique values:  5,197                    missing "":  0/22,594
+
+              examples:  "43107"
+                         "55703"
+                         "68704"
+                         "82508"
+
+----------------------------------------------------------------------------------------------------
+childid                                                                                     Child ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str3)
+
+         unique values:  13                       missing "":  0/22,594
+
+              examples:  "C1"
+                         "C2"
+                         "T1"
+                         "T1"
+
+----------------------------------------------------------------------------------------------------
+tchild                                                                  Target child in birth cohort
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  tchild
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/22,594
+
+            tabulation:  Freq.   Numeric  Label
+                        13,180         0  Sibling
+                         9,414         1  Target child
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str3)
+
+         unique values:  720                      missing "":  0/22,594
+
+              examples:  "431"
+                         "557"
+                         "687"
+                         "825"
+
+----------------------------------------------------------------------------------------------------
+block                                                                            Randomization block
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,90]                       units:  1
+         unique values:  90                       missing .:  0/22,594
+
+                  mean:   43.9732
+              std. dev:   25.1338
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 9        23        43        64        80
+
+----------------------------------------------------------------------------------------------------
+svy                                                                             Survey round (0,1,2)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,2]                        units:  1
+         unique values:  3                        missing .:  0/22,594
+
+            tabulation:  Freq.  Value
+                         3,678  0
+                         8,952  1
+                         9,964  2
+
+----------------------------------------------------------------------------------------------------
+month                                                                           Month of measurement
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,12]                       units:  1
+         unique values:  12                       missing .:  0/22,594
+
+                  mean:   5.71222
+              std. dev:   3.07598
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 2         3         5         8        10
+
+----------------------------------------------------------------------------------------------------
+sex                                                                                     Sex (1=male)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  sex
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/22,594
+
+            tabulation:  Freq.   Numeric  Label
+                        11,356         0  female
+                        11,238         1  male
+
+----------------------------------------------------------------------------------------------------
+agedays                                                                                  Age in days
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (int)
+
+                 range:  [-42,2013]                   units:  1
+         unique values:  1,906                    missing .:  0/22,594
+
+                  mean:   679.464
+              std. dev:    434.04
+
+           percentiles:        10%       25%       50%       75%       90%
+                               209       296       647       906      1343
+
+----------------------------------------------------------------------------------------------------
+ageyrs                                                                                  Age in years
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [-.11498974,5.5112934]       units:  1.000e-10
+         unique values:  1,906                    missing .:  0/22,594
+
+                  mean:   1.86027
+              std. dev:   1.18834
+
+           percentiles:        10%       25%       50%       75%       90%
+                           .572211   .810404   1.77139   2.48049   3.67693
+
+----------------------------------------------------------------------------------------------------
+enrolage                                                                    Age at enrollment, years
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-2.6830938,3.0006845]       units:  1.000e-11
+         unique values:  1,833                    missing .:  0/22,594
+
+                  mean:   .447651
+              std. dev:   1.22583
+
+           percentiles:        10%       25%       50%       75%       90%
+                          -.574949  -.410678  -.202601   1.49213    2.4011
+
+----------------------------------------------------------------------------------------------------
+newbirth                                                                                   New birth
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/22,594
+
+            tabulation:  Freq.  Value
+                        10,184  0
+                        12,410  1
+
+----------------------------------------------------------------------------------------------------
+sibnewbirth                                                      Sibling (non-index child) new birth
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/22,594
+
+            tabulation:  Freq.  Value
+                        19,598  0
+                         2,996  1
+
+----------------------------------------------------------------------------------------------------
+gt36mos                                                              Older than 36 mos at enrollment
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,0]                        units:  1
+         unique values:  1                        missing .:  0/22,594
+
+            tabulation:  Freq.  Value
+                        22,594  0
+
+----------------------------------------------------------------------------------------------------
+d3plus2d                                                               3+ stools in 24 hr, 2d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,745/22,594
+
+            tabulation:  Freq.  Value
+                        18,011  0
+                         1,838  1
+                         2,745  .
+
+----------------------------------------------------------------------------------------------------
+d3plus7d                                                               3+ stools in 24 hr, 7d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,744/22,594
+
+            tabulation:  Freq.  Value
+                        17,729  0
+                         2,121  1
+                         2,744  .
+
+----------------------------------------------------------------------------------------------------
+dloose2d                                                            loose or watery stool, 2d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,749/22,594
+
+            tabulation:  Freq.  Value
+                        18,999  0
+                           846  1
+                         2,749  .
+
+----------------------------------------------------------------------------------------------------
+dloose7d                                                            loose or watery stool, 7d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,755/22,594
+
+            tabulation:  Freq.  Value
+                        18,840  0
+                           999  1
+                         2,755  .
+
+----------------------------------------------------------------------------------------------------
+dblood2d                                                                   blood in stool, 2d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,774/22,594
+
+            tabulation:  Freq.  Value
+                        19,703  0
+                           117  1
+                         2,774  .
+
+----------------------------------------------------------------------------------------------------
+dblood7d                                                                   blood in stool, 7d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,774/22,594
+
+            tabulation:  Freq.  Value
+                        19,663  0
+                           157  1
+                         2,774  .
+
+----------------------------------------------------------------------------------------------------
+diar2d                                                                      Diarrhea case, 2d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,745/22,594
+
+            tabulation:  Freq.  Value
+                        19,099  0
+                           750  1
+                         2,745  .
+
+----------------------------------------------------------------------------------------------------
+diar7d                                                                      Diarrhea case, 7d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,745/22,594
+
+            tabulation:  Freq.  Value
+                        18,865  0
+                           984  1
+                         2,745  .
+
+----------------------------------------------------------------------------------------------------
+bruise2d                                                                         Bruising, 2d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,756/22,594
+
+            tabulation:  Freq.  Value
+                        19,405  0
+                           433  1
+                         2,756  .
+
+----------------------------------------------------------------------------------------------------
+bruise7d                                                                         Bruising, 7d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,763/22,594
+
+            tabulation:  Freq.  Value
+                        19,271  0
+                           560  1
+                         2,763  .
+
+----------------------------------------------------------------------------------------------------
+tooth2d                                                                         Toothache, 2d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,758/22,594
+
+            tabulation:  Freq.  Value
+                        19,801  0
+                            35  1
+                         2,758  .
+
+----------------------------------------------------------------------------------------------------
+tooth7d                                                                         Toothache, 7d recall
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,760/22,594
+
+            tabulation:  Freq.  Value
+                        19,788  0
+                            46  1
+                         2,760  .
+
+----------------------------------------------------------------------------------------------------
+svyweek                                                                               Week of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [1,52]                       units:  1
+         unique values:  52                       missing .:  0/22,594
+
+                  mean:   22.9941
+              std. dev:    13.403
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 5        13        21        33        41
+
+----------------------------------------------------------------------------------------------------
+svyyear                                                                               Year of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2012,2015]                  units:  1
+         unique values:  4                        missing .:  0/22,594
+
+            tabulation:  Freq.  Value
+                           628  2012
+                         5,073  2013
+                         7,389  2014
+                         9,504  2015
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-diar-codebook.txt
+  log type:  text
+ closed on:  12 Apr 2018, 11:33:20
+----------------------------------------------------------------------------------------------------
