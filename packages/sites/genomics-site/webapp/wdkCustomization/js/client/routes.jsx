@@ -5,14 +5,12 @@ import FastaConfigController from './components/controllers/FastaConfigControlle
 import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
 
-import SampleForm from './components/samples/SampleForm';
-import { projectId } from './config';
-
 import { FeaturedTools } from './components/homepage/FeaturedTools';
 import { PageDescription } from './components/homepage/PageDescription';
 import { WorkshopExercises } from './components/homepage/WorkshopExercises';
 
-import Announcements from 'ebrc-client/components/Announcements';
+import SampleForm from './components/samples/SampleForm';
+import { projectId } from './config';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
@@ -97,15 +95,13 @@ export const wrapRoutes = ebrcRoutes => [
 
   {
     path: '/',
-    component: () => 
+    component: () =>
       <React.Fragment>
-        {/* <Announcements />
-        <hr /> */}
-        <PageDescription />
-        <hr />
         <FeaturedTools />
         <hr />
         <WorkshopExercises />
+        <hr />
+        <PageDescription />
       </React.Fragment>
   },
 

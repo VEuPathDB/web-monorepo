@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FunctionComponent, ReactNode, useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
@@ -17,6 +17,9 @@ import { SearchPane, SearchCheckboxTree } from 'ebrc-client/components/homepage/
 import { Twitter, YouTube, Facebook } from 'ebrc-client/components/homepage/SocialMediaIcons';
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 
+import { FeaturedTools } from './FeaturedTools';
+import { PageDescription } from './PageDescription';
+import { WorkshopExercises } from './WorkshopExercises';
 import { makeVpdbClassNameHelper } from './Utils';
 
 import { projectId } from 'ebrc-client/config';
@@ -43,6 +46,7 @@ type StateProps = {
 
 type Props = OwnProps & StateProps;
 
+const IS_NEWS_EXPANDED_SESSION_KEY = 'homepage-is-news-expanded';
 const SEARCH_TERM_SESSION_KEY = 'homepage-header-search-term';
 const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
 
@@ -51,6 +55,18 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
   const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
   const [ headerExpanded, setHeaderExpanded ] = useState(isHomePage);
+
+  const [ isNewsExpanded, setIsNewsExpanded ] = useSessionBackedState(
+    false,
+    IS_NEWS_EXPANDED_SESSION_KEY,
+    encodeIsNewsExpanded,
+    decodeIsNewsExpanded
+  );
+
+  const toggleNews = useCallback(() => {
+    setIsNewsExpanded(!isNewsExpanded);
+  }, [ isNewsExpanded ]);
+
   const [ searchTerm, setSearchTerm ] = useSessionBackedState(
     '', 
     SEARCH_TERM_SESSION_KEY, 
@@ -82,7 +98,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     // the scroll bar is left near the scroll threshold
     setHeaderExpanded(isHomePage && document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
   }, [ isHomePage ]);
-
+  
   useEffect(() => {
     window.addEventListener('scroll', updateHeaderExpanded, { passive: true });
     window.addEventListener('touch', updateHeaderExpanded, { passive: true });
@@ -97,7 +113,13 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
 
   useEffect(() => {
     updateHeaderExpanded();
-  }, [ isHomePage ])
+  }, [ isHomePage ]);
+
+  useLayoutEffect(() => {
+    // FIXME: This is a hack for recalculating the "rabbit ears"
+    // of Featured Tools whenever the news is expanded/collapsed
+    window.dispatchEvent(new Event('resize'));
+  }, [ isNewsExpanded ]);
 
   const preloadedSuggestions = useMemo(
     () => [
@@ -126,7 +148,8 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     vpdbCx(
       'RootContainer',
       headerExpanded ? 'header-expanded' : 'header-collapsed',
-      isHomePage && 'home'
+      isHomePage && 'home',
+      isNewsExpanded ? 'news-expanded' : 'news-collapsed'
     ), 
     projectId
   );
@@ -167,9 +190,9 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
       <Main containerClassName={mainClassName}>
         {props.children}
       </Main>
-      {isHomePage &&
+      {isHomePage && 
         <ErrorBoundary>
-          <NewsPane containerClassName={newsPaneClassName} />
+          <NewsPane containerClassName={newsPaneClassName} isNewsExpanded={isNewsExpanded} toggleNews={toggleNews} />
         </ErrorBoundary>
       }
       <ErrorBoundary>
@@ -183,6 +206,9 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     </div>
   );
 }
+
+const encodeIsNewsExpanded = (b: boolean) => b ? 'y' : '';
+const decodeIsNewsExpanded = (s: string) => !!s;
 
 const encodeSearchTerm = (s: string) => s;
 const parseSearchTerm = encodeSearchTerm;

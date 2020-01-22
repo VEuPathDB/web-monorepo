@@ -110,7 +110,7 @@ export const WorkshopExercises = () => {
   return (
     <div className={cx()}>
       <div className={cx('Header')}>
-        <h3>Learning Exercises</h3>
+        <h2>Learning Exercises</h2>
         <a onClick={toggleExpansion} href="#">
           {
             isExpanded 
@@ -168,7 +168,7 @@ const Card = ({ entry }: CardProps) =>
       bgDarkCx()
     )
   }>
-    <h5>{entry.title}</h5>
+    <h3>{entry.title}</h3>
     <div className={cardListCx('ItemContent')}>
       <p>{entry.description}</p>
       <ul className="fa-ul">

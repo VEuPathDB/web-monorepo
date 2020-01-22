@@ -92,7 +92,7 @@ export const FeaturedTools = () => {
   return (
     <div className={cx()}>
       <div className={cx('Header')}>
-        <h3>Featured Resources and Tools</h3>
+        <h2>Featured Resources and Tools</h2>
       </div>
       {
         !toolMetadata 
@@ -268,9 +268,9 @@ const SelectedTool = ({ entry }: SelectedToolProps) =>
   <div className={cx('Selection')}>
     {
       entry && entry.descriptionTitle &&
-      <h5 className={combineClassNames(cx('SelectionHeader'), bgDarkCx())}>
+      <h3 className={combineClassNames(cx('SelectionHeader'), bgDarkCx())}>
         {entry.descriptionTitle}
-      </h5>
+      </h3>
     }
     <SelectionBody key={entry?.identifier} entry={entry} />
   </div>;

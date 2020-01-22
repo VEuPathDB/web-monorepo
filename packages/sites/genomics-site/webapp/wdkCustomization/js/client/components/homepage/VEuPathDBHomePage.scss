@@ -138,7 +138,8 @@ body.vpdb-Body {
       grid-area: content;
 
       margin: 1rem 0;
-      padding: 0 2rem;
+      padding: 0 1rem;
+      position: relative;
 
       > hr {
         margin: 1.5rem 0 0.5rem 0;
@@ -148,6 +149,12 @@ body.vpdb-Body {
     .vpdb-NewsPane {
       grid-area: side;
       border-left: 0.0625rem solid;
+
+      @media screen and (min-width: 1001px) {
+        .wdk-Showcase-HeadingRow {
+          display: none;
+        }
+      }
     }
 
     .vpdb-Footer {
@@ -247,16 +254,21 @@ body.vpdb-Body {
         "banner banner banner"
         "nav content side"
         "footer footer footer";
-    
-      grid-template-columns: 26em 1fr 26em;
+
       grid-template-rows: 9.0625rem auto 1fr auto;
 
       .vpdb-Main {
         overflow: hidden;
-
-        margin: 0 0 1rem 0;
       }
     }
+
+    &__home.vpdb-RootContainer__news-expanded {
+      grid-template-columns: 26em 1fr 26em;
+    }
+
+    &__home.vpdb-RootContainer__news-collapsed {
+      grid-template-columns: 31em 1fr auto;
+    }    
 
   }
 
