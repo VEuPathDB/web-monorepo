@@ -15,18 +15,16 @@ import { Main } from 'ebrc-client/components/homepage/Main';
 import { NewsPane } from 'ebrc-client/components/homepage/NewsPane';
 import { SearchPane, SearchCheckboxTree } from 'ebrc-client/components/homepage/SearchPane';
 import { Twitter, YouTube, Facebook } from 'ebrc-client/components/homepage/SocialMediaIcons';
-import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
+import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/components/homepage/Utils';
 
-import { FeaturedTools } from './FeaturedTools';
-import { PageDescription } from './PageDescription';
-import { WorkshopExercises } from './WorkshopExercises';
 import { makeVpdbClassNameHelper } from './Utils';
 
 import { projectId } from 'ebrc-client/config';
 
-import './VEuPathDBHomePage.scss';
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
+
+import './VEuPathDBHomePage.scss';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -251,6 +249,7 @@ const useHeaderMenuItems = (
   youtubeUrl?: string
 ): HeaderMenuItem[] => {
   const projectId = useProjectId();
+  const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
   const aboutRoute = makeStaticPageRoute(`/${projectId}/about.html`);
   const aboutAllRoute = makeStaticPageRoute('/embedded/help/general/index.html');
 
@@ -264,7 +263,7 @@ const useHeaderMenuItems = (
           key: 'searches',
           display: (
             <SearchCheckboxTree 
-              searchTree={searchTree} 
+              searchTree={alphabetizedSearchTree} 
               searchTerm={searchTerm}
               expandedBranches={expandedBranches}
               setSearchTerm={setSearchTerm}
