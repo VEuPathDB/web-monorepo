@@ -13,6 +13,58 @@ body.vpdb-Body {
   min-width: unset;
   width: unset;
 
+
+  @mixin branding-style($primary-color, $bckgrnd-img, $logo)
+  {  
+      .vpdb-BgDark {
+        background-color: $primary-color;
+      }
+
+      .vpdb-BdDark {
+        border-color: $primary-color; 
+      }
+
+      .vpdb-Header {
+        background-image: $bckgrnd-img;
+        background-size: cover;
+
+        .ebrc-HeaderBranding {
+          position: relative;
+          bottom: 42px;
+          height: calc(62px * 1.2);
+	  content: $logo;
+        }
+
+        &__collapsed {
+          .ebrc-HeaderBranding {
+            bottom: 0px;
+            height: calc(48px * 1.15);
+          }
+        }
+
+        @media screen and (max-width: 1000px) {
+          background-image: none;
+          background-color: $primary-color;
+        }
+      }
+
+      .vpdb-Main {
+        border-color: $primary-color;
+      }
+
+      .vpdb-FeaturedToolsListItem {
+        &__selected {
+          .vpdb-FeaturedToolsListItemIconContainer {
+            border-color: $primary-color;
+          }
+        }
+
+        &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+          border-color: $primary-color;
+        }
+      }
+  } 
+
   .vpdb-RootContainer {
 
     display: grid;
@@ -172,58 +224,132 @@ body.vpdb-Body {
       grid-template-rows: 4.0625rem 1fr auto;
     }
 
-    &.PlasmoDB {
-      .vpdb-BgDark {
-        background-color: #682039;
-        // Runner-up: #662332
-        // Runner-up: #3a1428 (maybe a little too dark)
-      }
+    /**** VEUPATH SITES ***/
+    // eupath  bkgrnd 
+    &.AmoebaDB {
+      $primary-color: #82bca6;
+      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
+      $logo: url('~site/images/AmoebaDB/amoeba.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    } 
 
-      .vpdb-BdDark {
-        border-color: #682039; 
-      }
-
-      .vpdb-Header {
-        background-image: url('~site/images/PlasmoDB/vpdb-background.jpg');
-        background-size: cover;
-
-        .ebrc-HeaderBranding {
-          position: relative;
-          bottom: 10px;
-          height: calc(72px * 1.2);
-          content: url('~site/images/PlasmoDB/plasmo-logo_new-homepage2.png');
-        }
-
-        &__collapsed {
-          .ebrc-HeaderBranding {
-            bottom: 0px;
-            height: calc(48px * 1.15);
-          }
-        }
-
-        @media screen and (max-width: 1000px) {
-          background-image: none;
-          background-color: #682039;
-        }
-      }
-
-      .vpdb-Main {
-        border-color: #682039;
-      }
-
-      .vpdb-FeaturedToolsListItem {
-        &__selected {
-          .vpdb-FeaturedToolsListItemIconContainer {
-            border-color: #682039;
-          }
-        }
-
-        &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
-          border-color: #682039;
-        }
-      }
+    // bckgrnd dark 
+    &.CryptoDB {                     
+      $primary-color: #274f94;    /* #274f94 or #8b465c, banner-crypto.jpg */
+      $bckgrnd-img: url('~site/images/CryptoDB/banner-crypto.jpg');
+      $logo: url('~site/images/CryptoDB/crypto-logo.png');  /* crypto-logo-w.png, crypto-logo-2.png */
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
 
+/* included below
+    // eupath  bkgrnd 
+    &.EuPathDB {
+      $primary-color: #244c63;
+      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
+      $logo: url('~site/images/EuPathDB/vpdb-logo-full-inv.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+*/
+
+    // eupath  bkgrnd 
+    &.FungiDB {
+      $primary-color: #32b6cd;
+      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
+      $logo: url('~site/images/FungiDB/fungi.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+    // eupath  bkgrnd w/one watermark,  Giardia: #569551,  veupathdb-banner-GADB.jpg 
+    &.GiardiaDB {
+      $primary-color: #569551;
+      $bckgrnd-img: url('~site/images/GiardiaDB/veupathdb-banner-GADB.jpg');
+      $logo: url('~site/images/GiardiaDB/giardia.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+    // eupath  bkgrnd, default 
+    &.HostDB {
+      $primary-color: #244c63;
+      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
+      $logo: url('~site/images/HostDB/title_s.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+    // tinted bkgrnd  MicrosporidiaDB: #4d3c68 (same as header) or #7988b3 (second color), veupathdb-banner-MSDBtint.jpg 
+    &.MicrosporidiaDB {
+      $primary-color: #4d3c68;
+      $bckgrnd-img: url('~site/images/MicrosporidiaDB/veupathdb-banner-MSDBtint.jpg');
+      $logo: url('~site/images/MicrosporidiaDB/microsporidia.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+    // tinted  bkgrnd  PiroplasmaDB: #8b465c (same as header) or #3a8c9f (second color), veupathdb-banner-PPDBtint.jpg 
+    &.PiroplasmaDB {
+      $primary-color: #8b465c;
+      $bckgrnd-img: url('~site/images/PiroplasmaDB/veupathdb-banner-PPDBtint.jpg');
+      $logo: url('~site/images/PiroplasmaDB/piroplasma.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+    // current QA colors, darker bckgr 
+    &.PlasmoDB {
+      $primary-color: #682039;
+      $bckgrnd-img: url('~site/images/PlasmoDB/vpdb-background.jpg');
+      $logo: url('~site/images/PlasmoDB/plasmo-logo_new-homepage2.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+/* bckgrnd light 
+    &.PlasmoDB {
+      $primary-color: #985c86;
+      $bckgrnd-img: url('~site/images/PlasmoDB/banner-plasmo.jpg');
+      $logo: url('~site/images/PlasmoDB/title_s.png'); 
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+*/
+ 
+    // eupath bkgrnd 
+    &.SchistoDB {
+      $primary-color: #244c63;
+      $bckgrnd-img: url('~site/images/EuPathDB/veupathdb-banner.jpg');
+      $logo: url('~site/images/SchistoDB/title_s.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+    // eupath bkgrnd 
+    &.ToxoDB {
+      $primary-color: #569551;
+      $bckgrnd-img: url('~site/images/EuPathDB/veupathdb-banner.jpg');
+      $logo: url('~site/images/ToxoDB/toxo.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+    // eupath bkgrnd 
+    &.TrichDB {
+      $primary-color: #244c63;
+      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
+      $logo: url('~site/images/TrichDB/title_s.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+    // eupath bkgrnd w/one watermark, TriTrypDB: #c06530,  veupathdb-banner-TTDB.jpg 
+    &.TriTrypDB {
+      $primary-color: #c06530;
+      $bckgrnd-img: url('~site/images/TriTrypDB/veupathdb-banner-TTDB.jpg');
+      $logo: url('~site/images/TriTrypDB/tritryp.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+    // bckgrnd dark 
+    &.VectorBase {
+      $primary-color: #115781;
+      $bckgrnd-img: url('~site/images/VectorBase/banner-vb.jpg');
+      $logo: url('~site/images/VectorBase/vb-logo-full.png');
+      @include branding-style($primary-color, $bckgrnd-img, $logo);
+    }
+
+
+    /***** PORTAL *******/
     &.VEuPathDB, &.EuPathDB {
       .vpdb-Header {
         background-image: url('~site/images/VEuPathDB/veupathdb-banner.jpg');

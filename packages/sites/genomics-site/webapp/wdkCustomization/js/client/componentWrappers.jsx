@@ -399,8 +399,8 @@ export function Page(DefaultComponent) {
   return withRouter(function VuPathDBPage(props) {
     // FIXME: When the VEuPathDB logo is ready for "release", update 
     // the value of renderNewHomePage appropriately
-    const renderNewHomePage = (
-      projectId === 'PlasmoDB'
+    const renderNewHomePage = ( true
+//      projectId === 'ToxoDB'
     );
     const isHomePage = props.location.pathname === '/';
 
