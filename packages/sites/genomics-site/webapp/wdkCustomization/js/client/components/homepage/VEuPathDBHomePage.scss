@@ -138,7 +138,7 @@ body.vpdb-Body {
       grid-area: content;
 
       margin: 1rem 0;
-      padding: 0 1rem;
+      padding: 0 1rem 0 1.25rem;
       position: relative;
 
       > hr {
@@ -263,7 +263,7 @@ body.vpdb-Body {
     }
 
     &__home.vpdb-RootContainer__news-expanded {
-      grid-template-columns: 26em 1fr 26em;
+      grid-template-columns: 26em 1fr 23em;
     }
 
     &__home.vpdb-RootContainer__news-collapsed {
