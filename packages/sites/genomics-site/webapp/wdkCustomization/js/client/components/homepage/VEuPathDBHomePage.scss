@@ -16,54 +16,54 @@ body.vpdb-Body {
 
   @mixin branding-style($primary-color, $bckgrnd-img, $logo)
   {  
-      .vpdb-BgDark {
+    .vpdb-BgDark {
+      background-color: $primary-color;
+    }
+
+    .vpdb-BdDark {
+      border-color: $primary-color; 
+    }
+
+    .vpdb-Header {
+      background-image: $bckgrnd-img;
+      background-size: cover;
+      background-position: center;
+
+      .ebrc-HeaderBranding {
+        position: relative;
+        bottom: 42px;
+        height: calc(70px * 1.2);
+        content: $logo;
+      }
+
+      &__collapsed {
+        .ebrc-HeaderBranding {
+          bottom: 0px;
+          height: calc(48px * 1.15);
+        }
+      }
+
+      @media screen and (max-width: 1000px) {
+        background-image: none;
         background-color: $primary-color;
       }
+    }
 
-      .vpdb-BdDark {
-        border-color: $primary-color; 
-      }
+    .vpdb-Main {
+      border-color: $primary-color;
+    }
 
-      .vpdb-Header {
-        background-image: $bckgrnd-img;
-        background-size: cover;
-        background-position: center;
-
-        .ebrc-HeaderBranding {
-          position: relative;
-          bottom: 42px;
-          height: calc(70px * 1.2);
-	  content: $logo;
-        }
-
-        &__collapsed {
-          .ebrc-HeaderBranding {
-            bottom: 0px;
-            height: calc(48px * 1.15);
-          }
-        }
-
-        @media screen and (max-width: 1000px) {
-          background-image: none;
-          background-color: $primary-color;
-        }
-      }
-
-      .vpdb-Main {
-        border-color: $primary-color;
-      }
-
-      .vpdb-FeaturedToolsListItem {
-        &__selected {
-          .vpdb-FeaturedToolsListItemIconContainer {
-            border-color: $primary-color;
-          }
-        }
-
-        &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+    .vpdb-FeaturedToolsListItem {
+      &__selected {
+        .vpdb-FeaturedToolsListItemIconContainer {
           border-color: $primary-color;
         }
       }
+
+      &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+        border-color: $primary-color;
+      }
+    }
   } 
 
   .vpdb-RootContainer {
@@ -172,10 +172,11 @@ body.vpdb-Body {
 
     .vpdb-SearchPane {
       grid-area: nav;
-
       padding-right: 0.1em;
 
       @media screen and (min-width: 1001px) {
+        border-right: 0.0625rem solid;
+
         .wdk-CheckboxTree {
           > .wdk-CheckboxTreeList {
             position: relative;
@@ -201,9 +202,10 @@ body.vpdb-Body {
 
     .vpdb-NewsPane {
       grid-area: side;
-      border-left: 0.0625rem solid;
 
       @media screen and (min-width: 1001px) {
+        border-left: 0.0625rem solid;
+
         .wdk-Showcase-HeadingRow {
           display: none;
         }
