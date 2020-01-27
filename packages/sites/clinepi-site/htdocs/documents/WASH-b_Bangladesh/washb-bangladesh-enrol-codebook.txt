@@ -1,0 +1,1208 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-enrol-codebook.txt
+  log type:  text
+ opened on:  12 Apr 2018, 11:33:21
+
+. desc
+
+Contains data from washb-bangladesh-enrol.dta
+  obs:         5,551                          Bangladesh enrollment analysis dataset (HH obs),
+                                                created by 2-bangladesh-dm-enro
+ vars:            73                          17 Aug 2016 14:37
+ size:       543,998                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+dataid          str5    %9s                   Compound ID
+clusterid       str3    %9s                   Cluster ID
+hhid            str1    %9s                   Household ID
+block           byte    %8.0g                 Randomization block
+union           int     %18.0g     q4008_lbl
+                                              Administrative union (q4008)
+fracode         str6    %6s                   FRA code (q4001)
+Nhh             byte    %9.0g                 Number of persons in household (q012)
+Nlt18           byte    %9.0g                 N indivs in HH <=18y
+Ncomp           byte    %9.0g                 Total indivs in compound
+momage          byte    %9.0g                 Mother's age, years
+momheight       float   %9.0g                 Maternal height (median)
+momedu          byte    %15.0g     momedu     Mother's education (category)
+momeduy         byte    %9.0g                 Mother, years of education (q009)
+dadeduy         byte    %9.0g                 Father, years of education (q010)
+dadagri         byte    %9.0g                 Father works in agriculture (q011)
+landacre        float   %9.0g                 Acres of land owned (q4110)
+hfias           byte    %8.0g                 HFIAs food insecurity score (0-27)
+hfiacat         byte    %24.0g     hfiacat    HFIAS food insecurity category
+tubewell        byte    %8.0g                 Primary water source: shallow tubewell (q1010)
+watmin          int     %9.0g                 Dist (mins) to primary water source
+storewat        byte    %8.0g                 Store drinking water (q1003)
+treatwat        byte    %8.0g                 Reported treating water today or yesterday (q1008)
+odmen           byte    %8.0g                 Daily OD, adult men (q801a)
+odwom           byte    %8.0g                 Daily OD, adult women (q801b)
+odch815         byte    %8.0g                 Daily OD, children 8-15 (q801e)
+odch38          byte    %8.0g                 Daily OD, children 3-8 (q801d)
+odchu3          byte    %8.0g                 Daily OD, children <3 (q801c)
+latown          byte    %8.0g                 Own their latrine (not shared) (q816)
+latslab         byte    %8.0g                 Latrine has concrete slab (q809_7)
+latseal         byte    %8.0g                 Latrine has functional water seal (q809_9a)
+latfeces        byte    %8.0g                 No visible feces on slab/floor of latrine
+potty           byte    %8.0g                 Has a potty for child defecation
+humfeces        byte    %8.0g                 Human feces observed in house/compound
+                                                (q4201,4203,4205)
+humfecesch      byte    %8.0g                 Human feces obs in loc where child spends most time
+                                                (q4203)
+hwlat           byte    %8.0g                 Has handwashing loc w/in 6 steps of latrine
+hwlatwat        byte    %8.0g                 Has handwashing loc w/in 6 steps of latrine w/ water
+hwlatsoap       byte    %8.0g                 Has handwashing loc w/in 6 steps of latrine w/ soap
+hwkit           byte    %8.0g                 Has handwashing loc w/in 6 steps of kitchen
+hwkitwat        byte    %8.0g                 Has handwashing loc w/in 6 steps of kitchen w/ water
+hwkitsoap       byte    %8.0g                 Has handwashing loc w/in 6 steps of kitchen w/ soap
+hwsw            byte    %8.0g                 Prim handwashing loc has water (q704_1)
+hwss            byte    %8.0g                 Prim handwashing loc has soap (q704_2-6)
+hwsws           byte    %8.0g                 Prim handwashing loc has water+soap (q704_1-6)
+roof            byte    %8.0g                 Improved roof material (tin, cement)
+walls           byte    %8.0g                 Improved wall material (wood, brick, tin)
+floor           byte    %8.0g                 Improved floor (wood, concrete)
+cement          byte    %8.0g                 Has cement floor (q4103)
+elec            byte    %8.0g                 Household has electricity
+asset_radio     byte    %8.0g                 households have radio
+asset_tvbw      byte    %8.0g                 households have B/W television
+asset_tvcol     byte    %8.0g                 households have color television
+asset_refrig    byte    %8.0g                 households have Refrigerator
+asset_bike      byte    %8.0g                 households have bicycle
+asset_moto      byte    %8.0g                 households have motorcycle
+asset_sewmach   byte    %8.0g                 households have sewing machine
+asset_phone     byte    %8.0g                 number of land phone
+asset_tv        byte    %9.0g                 Has bw or color TV
+asset_wardrobe  byte    %9.0g                 Has >=1 wardrobe
+asset_table     byte    %9.0g                 Has >=1 table
+asset_chair     byte    %9.0g                 Has >=1 chair
+asset_clock     byte    %9.0g                 Has >=1 clock
+asset_khat      byte    %9.0g                 Has >=1 khat
+asset_chouki    byte    %9.0g                 Has >=1 chouki
+asset_mobile    byte    %9.0g                 Has >=1 mobile
+n_asset_wardr~e byte    %8.0g                 number of waredrobe
+n_asset_table   byte    %8.0g                 number of Tables
+n_asset_chair   byte    %8.0g                 number of Chair
+n_asset_clock   byte    %8.0g                 number of clock
+n_asset_khat    byte    %8.0g                 number of Khat
+n_asset_chouki  byte    %8.0g                 number of chouki
+n_asset_mobile  byte    %8.0g                 number of mobile phone
+svyweek         float   %9.0g                 Week of survey
+svyyear         float   %9.0g                 Year of survey
+----------------------------------------------------------------------------------------------------
+Sorted by: dataid
+     Note: Dataset has changed since last saved.
+
+. codebook, c
+
+Variable       Obs Unique      Mean     Min   Max  Label
+----------------------------------------------------------------------------------------------------
+dataid        5551   5551         .       .     .  Compound ID
+clusterid     5551    720         .       .     .  Cluster ID
+hhid          5551      3         .       .     .  Household ID
+block         5551     90  45.24284       1    90  Randomization block
+union         5551    139  66.74851       1   139  Administrative union (q4008)
+fracode       5551     28         .       .     .  FRA code (q4001)
+Nhh           5551     21  4.680958       1    23  Number of persons in household (q012)
+Nlt18         5551     11  1.593046       0    10  N indivs in HH <=18y
+Ncomp         5551     44  10.99784       2    52  Total indivs in compound
+momage        5531     33  23.76749      14    60  Mother's age, years
+momheight     4811    702  150.5354  120.65   168  Maternal height (median)
+momedu        5551      3  1.373086       0     2  Mother's education (category)
+momeduy       5551     18  5.815889       0    17  Mother, years of education (q009)
+dadeduy       5539     18  4.854306       0    17  Father, years of education (q010)
+dadagri       5549      2  .3146513       0     1  Father works in agriculture (q011)
+landacre      5258    105  .1455725       0  8.88  Acres of land owned (q4110)
+hfias         5551     24  1.901099       0    24  HFIAs food insecurity score (0-27)
+hfiacat       5551      4  1.569267       1     4  HFIAS food insecurity category
+tubewell      5551      2  .7400468       0     1  Primary water source: shallow tubewell (q1010)
+watmin        5551     22  .9351468       0   600  Dist (mins) to primary water source
+storewat      5551      2  .4761304       0     1  Store drinking water (q1003)
+treatwat      5551      2  .0014412       0     1  Reported treating water today or yesterday (q1...
+odmen         5446      2  .0762027       0     1  Daily OD, adult men (q801a)
+odwom         5547      2  .0425455       0     1  Daily OD, adult women (q801b)
+odch815       2295      2  .1002179       0     1  Daily OD, children 8-15 (q801e)
+odch38        2854      2   .379117       0     1  Daily OD, children 3-8 (q801d)
+odchu3        1158      2   .835924       0     1  Daily OD, children <3 (q801c)
+latown        5551      2  .5361196       0     1  Own their latrine (not shared) (q816)
+latslab       5313      2  .9371353       0     1  Latrine has concrete slab (q809_7)
+latseal       4671      2  .2932991       0     1  Latrine has functional water seal (q809_9a)
+latfeces      5202      2  .4921184       0     1  No visible feces on slab/floor of latrine
+potty         5549      2  .0439719       0     1  Has a potty for child defecation
+humfeces      5545      2  .0829576       0     1  Human feces observed in house/compound (q4201,...
+humfecesch    5542      2  .0113677       0     1  Human feces obs in loc where child spends most...
+hwlat         5551      2  .1138534       0     1  Has handwashing loc w/in 6 steps of latrine
+hwlatwat      5069      2  .1195502       0     1  Has handwashing loc w/in 6 steps of latrine w/...
+hwlatsoap     5069      2  .0654962       0     1  Has handwashing loc w/in 6 steps of latrine w/...
+hwkit         5551      2  .0990812       0     1  Has handwashing loc w/in 6 steps of kitchen
+hwkitwat      5069      2  .0877885       0     1  Has handwashing loc w/in 6 steps of kitchen w/...
+hwkitsoap     5069      2  .0260406       0     1  Has handwashing loc w/in 6 steps of kitchen w/...
+hwsw          5069      2  .9420004       0     1  Prim handwashing loc has water (q704_1)
+hwss          5069      2  .2351549       0     1  Prim handwashing loc has soap (q704_2-6)
+hwsws         5069      2  .2337739       0     1  Prim handwashing loc has water+soap (q704_1-6)
+roof          5551      2  .9855882       0     1  Improved roof material (tin, cement)
+walls         5551      2  .7191497       0     1  Improved wall material (wood, brick, tin)
+floor         5551      2  .1050261       0     1  Improved floor (wood, concrete)
+cement        5551      2  .1050261       0     1  Has cement floor (q4103)
+elec          5551      2  .5883625       0     1  Household has electricity
+asset_radio   5551      2  .0407134       0     1  households have radio
+asset_tvbw    5551      2  .0816069       0     1  households have B/W television
+asset_tvcol   5551      2  .2277067       0     1  households have color television
+asset_refrig  5551      2  .0787246       0     1  households have Refrigerator
+asset_bike    5551      2  .3107548       0     1  households have bicycle
+asset_moto    5551      2  .0652135       0     1  households have motorcycle
+asset_sewm~h  5551      2  .0641326       0     1  households have sewing machine
+asset_phone   5551      3  .0045037       0     9  number of land phone
+asset_tv      5551      2  .2992254       0     1  Has bw or color TV
+asset_ward~e  5551      2  .1650153       0     1  Has >=1 wardrobe
+asset_table   5551      2  .7250946       0     1  Has >=1 table
+asset_chair   5551      2  .7276166       0     1  Has >=1 chair
+asset_clock   2692      2  .7451709       0     1  Has >=1 clock
+asset_khat    5551      2  .6103405       0     1  Has >=1 khat
+asset_chouki  5551      2  .7870654       0     1  Has >=1 chouki
+asset_mobile  5551      2  .8553414       0     1  Has >=1 mobile
+n_asset_wa~e  5551      8  .2250045       0     8  number of waredrobe
+n_asset_ta~e  5551     10  1.079805       0    10  number of Tables
+n_asset_ch~r  5551     22  2.253468       0    25  number of Chair
+n_asset_cl~k  2692     11   1.18685       0    10  number of clock
+n_asset_khat  5551     11  1.032066       0    10  number of Khat
+n_asset_ch~i  5551      7  1.239596       0     6  number of chouki
+n_asset_mo~e  5551     12  1.556656       0    13  number of mobile phone
+svyweek       5551     43  20.49721       1    52  Week of survey
+svyyear       5551      2  2012.758    2012  2013  Year of survey
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+dataid                                                                                   Compound ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str5)
+
+         unique values:  5,551                    missing "":  0/5,551
+
+              examples:  "42208"
+                         "56405"
+                         "70705"
+                         "85402"
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str3)
+
+         unique values:  720                      missing "":  0/5,551
+
+              examples:  "422"
+                         "564"
+                         "707"
+                         "854"
+
+----------------------------------------------------------------------------------------------------
+hhid                                                                                    Household ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str1)
+
+         unique values:  3                        missing "":  0/5,551
+
+            tabulation:  Freq.  Value
+                         5,349  "1"
+                           196  "2"
+                             6  "3"
+
+----------------------------------------------------------------------------------------------------
+block                                                                            Randomization block
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,90]                       units:  1
+         unique values:  90                       missing .:  0/5,551
+
+                  mean:   45.2428
+              std. dev:   25.9636
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 9        23        45        67        81
+
+----------------------------------------------------------------------------------------------------
+union                                                                   Administrative union (q4008)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (int)
+                 label:  q4008_lbl
+
+                 range:  [1,139]                      units:  1
+         unique values:  139                      missing .:  0/5,551
+
+              examples:  22    KAORAID
+                         55    RAONA
+                         83    KUMARGHATA
+                         106   KAKNI
+
+----------------------------------------------------------------------------------------------------
+fracode                                                                             FRA code (q4001)
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str6)
+
+         unique values:  28                       missing "":  0/5,551
+
+              examples:  "N05265"
+                         "N06453"
+                         "N06489"
+                         "N06524"
+
+----------------------------------------------------------------------------------------------------
+Nhh                                                            Number of persons in household (q012)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,23]                       units:  1
+         unique values:  21                       missing .:  0/5,551
+
+                  mean:   4.68096
+              std. dev:   2.18397
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 2         3         4         6         8
+
+----------------------------------------------------------------------------------------------------
+Nlt18                                                                           N indivs in HH <=18y
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,10]                       units:  1
+         unique values:  11                       missing .:  0/5,551
+
+                  mean:   1.59305
+              std. dev:   1.26475
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         1         1         2         3
+
+----------------------------------------------------------------------------------------------------
+Ncomp                                                                       Total indivs in compound
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [2,52]                       units:  1
+         unique values:  44                       missing .:  0/5,551
+
+                  mean:   10.9978
+              std. dev:   6.31115
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 4         6        10        14        19
+
+----------------------------------------------------------------------------------------------------
+momage                                                                           Mother's age, years
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [14,60]                      units:  1
+         unique values:  33                       missing .:  20/5,551
+
+                  mean:   23.7675
+              std. dev:   5.24887
+
+           percentiles:        10%       25%       50%       75%       90%
+                                18        20        23        27        31
+
+----------------------------------------------------------------------------------------------------
+momheight                                                                   Maternal height (median)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [120.65,168]                 units:  .00001
+         unique values:  702                      missing .:  740/5,551
+
+                  mean:   150.535
+              std. dev:   5.23341
+
+           percentiles:        10%       25%       50%       75%       90%
+                            143.85     147.1     150.6     154.1    157.25
+
+----------------------------------------------------------------------------------------------------
+momedu                                                                 Mother's education (category)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  momedu
+
+                 range:  [0,2]                        units:  1
+         unique values:  3                        missing .:  0/5,551
+
+            tabulation:  Freq.   Numeric  Label
+                           869         0  No education
+                         1,742         1  Primary (1-5y)
+                         2,940         2  Secondary (>5y)
+
+----------------------------------------------------------------------------------------------------
+momeduy                                                            Mother, years of education (q009)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,17]                       units:  1
+         unique values:  18                       missing .:  0/5,551
+
+                  mean:   5.81589
+              std. dev:   3.41754
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         4         6         9        10
+
+----------------------------------------------------------------------------------------------------
+dadeduy                                                            Father, years of education (q010)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,17]                       units:  1
+         unique values:  18                       missing .:  12/5,551
+
+                  mean:   4.85431
+              std. dev:   4.04996
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         5         8        10
+
+----------------------------------------------------------------------------------------------------
+dadagri                                                           Father works in agriculture (q011)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2/5,551
+
+            tabulation:  Freq.  Value
+                         3,803  0
+                         1,746  1
+                             2  .
+
+----------------------------------------------------------------------------------------------------
+landacre                                                                 Acres of land owned (q4110)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [0,8.88]                     units:  .01
+         unique values:  105                      missing .:  293/5,551
+
+                  mean:   .145572
+              std. dev:   .246232
+
+           percentiles:        10%       25%       50%       75%       90%
+                               .02       .04       .08       .16        .3
+
+----------------------------------------------------------------------------------------------------
+hfias                                                             HFIAs food insecurity score (0-27)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,24]                       units:  1
+         unique values:  24                       missing .:  0/5,551
+
+                  mean:    1.9011
+              std. dev:   3.41493
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         0         3         7
+
+----------------------------------------------------------------------------------------------------
+hfiacat                                                               HFIAS food insecurity category
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  hfiacat
+
+                 range:  [1,4]                        units:  1
+         unique values:  4                        missing .:  0/5,551
+
+            tabulation:  Freq.   Numeric  Label
+                         3,823         1  Food Secure
+                           492         2  Mildly Food Insecure
+                         1,040         3  Moderately Food Insecure
+                           196         4  Severely Food Insecure
+
+----------------------------------------------------------------------------------------------------
+tubewell                                              Primary water source: shallow tubewell (q1010)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         1,443  0
+                         4,108  1
+
+----------------------------------------------------------------------------------------------------
+watmin                                                           Dist (mins) to primary water source
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (int)
+
+                 range:  [0,600]                      units:  1
+         unique values:  22                       missing .:  0/5,551
+
+                  mean:   .935147
+              std. dev:   8.78349
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         0         1         2
+
+----------------------------------------------------------------------------------------------------
+storewat                                                                Store drinking water (q1003)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         2,908  0
+                         2,643  1
+
+----------------------------------------------------------------------------------------------------
+treatwat                                          Reported treating water today or yesterday (q1008)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         5,543  0
+                             8  1
+
+----------------------------------------------------------------------------------------------------
+odmen                                                                    Daily OD, adult men (q801a)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  105/5,551
+
+            tabulation:  Freq.  Value
+                         5,031  0
+                           415  1
+                           105  .
+
+----------------------------------------------------------------------------------------------------
+odwom                                                                  Daily OD, adult women (q801b)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  4/5,551
+
+            tabulation:  Freq.  Value
+                         5,311  0
+                           236  1
+                             4  .
+
+----------------------------------------------------------------------------------------------------
+odch815                                                              Daily OD, children 8-15 (q801e)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  3,256/5,551
+
+            tabulation:  Freq.  Value
+                         2,065  0
+                           230  1
+                         3,256  .
+
+----------------------------------------------------------------------------------------------------
+odch38                                                                Daily OD, children 3-8 (q801d)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,697/5,551
+
+            tabulation:  Freq.  Value
+                         1,772  0
+                         1,082  1
+                         2,697  .
+
+----------------------------------------------------------------------------------------------------
+odchu3                                                                 Daily OD, children <3 (q801c)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  4,393/5,551
+
+            tabulation:  Freq.  Value
+                           190  0
+                           968  1
+                         4,393  .
+
+----------------------------------------------------------------------------------------------------
+latown                                                         Own their latrine (not shared) (q816)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         2,575  0
+                         2,976  1
+
+----------------------------------------------------------------------------------------------------
+latslab                                                           Latrine has concrete slab (q809_7)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  238/5,551
+
+            tabulation:  Freq.  Value
+                           334  0
+                         4,979  1
+                           238  .
+
+----------------------------------------------------------------------------------------------------
+latseal                                                  Latrine has functional water seal (q809_9a)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  880/5,551
+
+            tabulation:  Freq.  Value
+                         3,301  0
+                         1,370  1
+                           880  .
+
+----------------------------------------------------------------------------------------------------
+latfeces                                                   No visible feces on slab/floor of latrine
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  349/5,551
+
+            tabulation:  Freq.  Value
+                         2,642  0
+                         2,560  1
+                           349  .
+
+----------------------------------------------------------------------------------------------------
+potty                                                               Has a potty for child defecation
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2/5,551
+
+            tabulation:  Freq.  Value
+                         5,305  0
+                           244  1
+                             2  .
+
+----------------------------------------------------------------------------------------------------
+humfeces                                    Human feces observed in house/compound (q4201,4203,4205)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  6/5,551
+
+            tabulation:  Freq.  Value
+                         5,085  0
+                           460  1
+                             6  .
+
+----------------------------------------------------------------------------------------------------
+humfecesch                               Human feces obs in loc where child spends most time (q4203)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  9/5,551
+
+            tabulation:  Freq.  Value
+                         5,479  0
+                            63  1
+                             9  .
+
+----------------------------------------------------------------------------------------------------
+hwlat                                                    Has handwashing loc w/in 6 steps of latrine
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         4,919  0
+                           632  1
+
+----------------------------------------------------------------------------------------------------
+hwlatwat                                        Has handwashing loc w/in 6 steps of latrine w/ water
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  482/5,551
+
+            tabulation:  Freq.  Value
+                         4,463  0
+                           606  1
+                           482  .
+
+----------------------------------------------------------------------------------------------------
+hwlatsoap                                        Has handwashing loc w/in 6 steps of latrine w/ soap
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  482/5,551
+
+            tabulation:  Freq.  Value
+                         4,737  0
+                           332  1
+                           482  .
+
+----------------------------------------------------------------------------------------------------
+hwkit                                                    Has handwashing loc w/in 6 steps of kitchen
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         5,001  0
+                           550  1
+
+----------------------------------------------------------------------------------------------------
+hwkitwat                                        Has handwashing loc w/in 6 steps of kitchen w/ water
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  482/5,551
+
+            tabulation:  Freq.  Value
+                         4,624  0
+                           445  1
+                           482  .
+
+----------------------------------------------------------------------------------------------------
+hwkitsoap                                        Has handwashing loc w/in 6 steps of kitchen w/ soap
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  482/5,551
+
+            tabulation:  Freq.  Value
+                         4,937  0
+                           132  1
+                           482  .
+
+----------------------------------------------------------------------------------------------------
+hwsw                                                         Prim handwashing loc has water (q704_1)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  482/5,551
+
+            tabulation:  Freq.  Value
+                           294  0
+                         4,775  1
+                           482  .
+
+----------------------------------------------------------------------------------------------------
+hwss                                                        Prim handwashing loc has soap (q704_2-6)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  482/5,551
+
+            tabulation:  Freq.  Value
+                         3,877  0
+                         1,192  1
+                           482  .
+
+----------------------------------------------------------------------------------------------------
+hwsws                                                 Prim handwashing loc has water+soap (q704_1-6)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  482/5,551
+
+            tabulation:  Freq.  Value
+                         3,884  0
+                         1,185  1
+                           482  .
+
+----------------------------------------------------------------------------------------------------
+roof                                                            Improved roof material (tin, cement)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                            80  0
+                         5,471  1
+
+----------------------------------------------------------------------------------------------------
+walls                                                      Improved wall material (wood, brick, tin)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         1,559  0
+                         3,992  1
+
+----------------------------------------------------------------------------------------------------
+floor                                                                Improved floor (wood, concrete)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         4,968  0
+                           583  1
+
+----------------------------------------------------------------------------------------------------
+cement                                                                      Has cement floor (q4103)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         4,968  0
+                           583  1
+
+----------------------------------------------------------------------------------------------------
+elec                                                                       Household has electricity
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         2,285  0
+                         3,266  1
+
+----------------------------------------------------------------------------------------------------
+asset_radio                                                                    households have radio
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         5,325  0
+                           226  1
+
+----------------------------------------------------------------------------------------------------
+asset_tvbw                                                            households have B/W television
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         5,098  0
+                           453  1
+
+----------------------------------------------------------------------------------------------------
+asset_tvcol                                                         households have color television
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         4,287  0
+                         1,264  1
+
+----------------------------------------------------------------------------------------------------
+asset_refrig                                                            households have Refrigerator
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         5,114  0
+                           437  1
+
+----------------------------------------------------------------------------------------------------
+asset_bike                                                                   households have bicycle
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         3,826  0
+                         1,725  1
+
+----------------------------------------------------------------------------------------------------
+asset_moto                                                                households have motorcycle
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         5,189  0
+                           362  1
+
+----------------------------------------------------------------------------------------------------
+asset_sewmach                                                         households have sewing machine
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         5,195  0
+                           356  1
+
+----------------------------------------------------------------------------------------------------
+asset_phone                                                                     number of land phone
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         5,542  0
+                             7  1
+                             2  9
+
+----------------------------------------------------------------------------------------------------
+asset_tv                                                                          Has bw or color TV
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         3,890  0
+                         1,661  1
+
+----------------------------------------------------------------------------------------------------
+asset_wardrobe                                                                      Has >=1 wardrobe
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         4,635  0
+                           916  1
+
+----------------------------------------------------------------------------------------------------
+asset_table                                                                            Has >=1 table
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         1,526  0
+                         4,025  1
+
+----------------------------------------------------------------------------------------------------
+asset_chair                                                                            Has >=1 chair
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         1,512  0
+                         4,039  1
+
+----------------------------------------------------------------------------------------------------
+asset_clock                                                                            Has >=1 clock
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2,859/5,551
+
+            tabulation:  Freq.  Value
+                           686  0
+                         2,006  1
+                         2,859  .
+
+----------------------------------------------------------------------------------------------------
+asset_khat                                                                              Has >=1 khat
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         2,163  0
+                         3,388  1
+
+----------------------------------------------------------------------------------------------------
+asset_chouki                                                                          Has >=1 chouki
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         1,182  0
+                         4,369  1
+
+----------------------------------------------------------------------------------------------------
+asset_mobile                                                                          Has >=1 mobile
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                           803  0
+                         4,748  1
+
+----------------------------------------------------------------------------------------------------
+n_asset_wardrobe                                                                 number of waredrobe
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,8]                        units:  1
+         unique values:  8                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         4,635  0
+                           690  1
+                           164  2
+                            33  3
+                            18  4
+                             8  5
+                             2  6
+                             1  8
+
+----------------------------------------------------------------------------------------------------
+n_asset_table                                                                       number of Tables
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,10]                       units:  1
+         unique values:  10                       missing .:  0/5,551
+
+                  mean:   1.07981
+              std. dev:   .999427
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         1         1         2
+
+----------------------------------------------------------------------------------------------------
+n_asset_chair                                                                        number of Chair
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,25]                       units:  1
+         unique values:  22                       missing .:  0/5,551
+
+                  mean:   2.25347
+              std. dev:   2.54234
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         2         3         6
+
+----------------------------------------------------------------------------------------------------
+n_asset_clock                                                                        number of clock
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,10]                       units:  1
+         unique values:  11                       missing .:  2,859/5,551
+
+                  mean:   1.18685
+              std. dev:   1.16448
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         1         2         3
+
+----------------------------------------------------------------------------------------------------
+n_asset_khat                                                                          number of Khat
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,10]                       units:  1
+         unique values:  11                       missing .:  0/5,551
+
+                  mean:   1.03207
+              std. dev:   1.16017
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         1         2         3
+
+----------------------------------------------------------------------------------------------------
+n_asset_chouki                                                                      number of chouki
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,6]                        units:  1
+         unique values:  7                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         1,182  0
+                         2,468  1
+                         1,393  2
+                           414  3
+                            88  4
+                             3  5
+                             3  6
+
+----------------------------------------------------------------------------------------------------
+n_asset_mobile                                                                number of mobile phone
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,13]                       units:  1
+         unique values:  12                       missing .:  0/5,551
+
+                  mean:   1.55666
+              std. dev:    1.2875
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         1         1         2         3
+
+----------------------------------------------------------------------------------------------------
+svyweek                                                                               Week of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [1,52]                       units:  1
+         unique values:  43                       missing .:  0/5,551
+
+                  mean:   20.4972
+              std. dev:   12.4699
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 6        11        19        26        42
+
+----------------------------------------------------------------------------------------------------
+svyyear                                                                               Year of survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2012,2013]                  units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         1,343  2012
+                         4,208  2013
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-enrol-codebook.txt
+  log type:  text
+ closed on:  12 Apr 2018, 11:33:23
+----------------------------------------------------------------------------------------------------

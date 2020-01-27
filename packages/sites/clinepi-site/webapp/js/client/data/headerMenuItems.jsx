@@ -45,8 +45,8 @@ export default function headerMenuItems (state) {
         ]
       },
       {
-        id: 'community',
-        text: 'Community',
+        id: 'about',
+        text: 'About',
         children: [
           {
             text: 'About ClinEpiDB',
@@ -61,17 +61,12 @@ export default function headerMenuItems (state) {
             route: `${STATIC_ROUTE_PATH}/ClinEpiDB/faq.html`
           },
           {
-            text: 'Public Strategies',
-            route: '/workspace/strategies/public'
-          },
-          {
-            text: 'Video Tutorials',
-            url: youtubeUrl,
-            target: '_blank'
-          },
-          {
             text: 'Tutorials and Resources',
             route: `${STATIC_ROUTE_PATH}/ClinEpiDB/resources.html`
+          },
+          {
+            text: 'Public Strategies',
+            route: '/workspace/strategies/public'
           },
           {
             text: 'Data Access & Use Policy',

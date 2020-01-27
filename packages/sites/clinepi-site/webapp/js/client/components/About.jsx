@@ -1,6 +1,5 @@
 import React from 'react';
 import { communitySite } from 'ebrc-client/config';
-import './About.scss';
 
 export default function About() {
 

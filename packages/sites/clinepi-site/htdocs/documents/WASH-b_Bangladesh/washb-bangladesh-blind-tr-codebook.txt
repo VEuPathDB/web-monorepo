@@ -1,0 +1,90 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-blind-tr-codebook.txt
+  log type:  text
+ opened on:  12 Apr 2018, 11:33:18
+
+. desc
+
+Contains data from washb-bangladesh-blind-tr.dta
+  obs:           720                          WASH Benefits Bangladesh cluster level treatment
+                                                assignments (scrambled/blinded!
+ vars:             3                          
+ size:         5,760                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+block           byte    %8.0g                 Randomization block
+clusterid       str3    %9s                   Cluster ID
+tr              long    %9.0g      tr         Randomized treatment assignment (scrambled/blinded!!)
+----------------------------------------------------------------------------------------------------
+Sorted by: clusterid
+     Note: Dataset has changed since last saved.
+
+. codebook, c
+
+Variable   Obs Unique   Mean  Min  Max  Label
+----------------------------------------------------------------------------------------------------
+block      720     90   45.5    1   90  Randomization block
+clusterid  720    720      .    .    .  Cluster ID
+tr         720      7  3.625    1    7  Randomized treatment assignment (scrambled/blinded!!)
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+block                                                                            Randomization block
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,90]                       units:  1
+         unique values:  90                       missing .:  0/720
+
+                  mean:      45.5
+              std. dev:   25.9972
+
+           percentiles:        10%       25%       50%       75%       90%
+                               9.5        23      45.5        68      81.5
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str3)
+
+         unique values:  720                      missing "":  0/720
+
+              examples:  "423"
+                         "567"
+                         "711"
+                         "855"
+
+----------------------------------------------------------------------------------------------------
+tr                                             Randomized treatment assignment (scrambled/blinded!!)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (long)
+                 label:  tr
+
+                 range:  [1,7]                        units:  1
+         unique values:  7                        missing .:  0/720
+
+            tabulation:  Freq.   Numeric  Label
+                           180         1  Control
+                            90         2  Water
+                            90         3  Sanitation
+                            90         4  Handwashing
+                            90         5  WSH
+                            90         6  Nutrition
+                            90         7  Nutrition + WSH
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-blind-tr-codebook.txt
+  log type:  text
+ closed on:  12 Apr 2018, 11:33:18
+----------------------------------------------------------------------------------------------------

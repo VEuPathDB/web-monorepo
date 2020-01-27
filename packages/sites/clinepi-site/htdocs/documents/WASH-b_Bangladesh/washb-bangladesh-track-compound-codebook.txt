@@ -1,0 +1,155 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-track-compound-codebook.txt
+  log type:  text
+ opened on:  12 Apr 2018, 11:33:23
+
+. desc
+
+Contains data from washb-bangladesh-track-compound.dta
+  obs:         5,551                          WASH Benefits Bangladesh tracking file, compounds
+ vars:             7                          9 Jan 2018 17:50
+ size:        72,163                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+dataid          str5    %9s                   Compound ID
+clusterid       str3    %9s                   Cluster ID
+block           byte    %8.0g                 Randomization block
+miss1           byte    %9.0g                 Not measured at year 1
+miss1reason     byte    %13.0g     missreason
+                                              Reason for no measurement in year 1
+miss2           byte    %9.0g                 Not measured at year 2
+miss2reason     byte    %13.0g     missreason
+                                              Reason for no measurement in year 2
+----------------------------------------------------------------------------------------------------
+Sorted by: dataid
+     Note: Dataset has changed since last saved.
+
+. codebook, c
+
+Variable      Obs Unique      Mean  Min  Max  Label
+----------------------------------------------------------------------------------------------------
+dataid       5551   5551         .    .    .  Compound ID
+clusterid    5551    720         .    .    .  Cluster ID
+block        5551     90  45.24284    1   90  Randomization block
+miss1        5551      2  .1504233    0    1  Not measured at year 1
+miss1reason  5551      6  .4172221    0    5  Reason for no measurement in year 1
+miss2        5551      2  .1642947    0    1  Not measured at year 2
+miss2reason  4937      5  .2463034    0    5  Reason for no measurement in year 2
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+dataid                                                                                   Compound ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str5)
+
+         unique values:  5,551                    missing "":  0/5,551
+
+              examples:  "42208"
+                         "56405"
+                         "70705"
+                         "85402"
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str3)
+
+         unique values:  720                      missing "":  0/5,551
+
+              examples:  "422"
+                         "564"
+                         "707"
+                         "854"
+
+----------------------------------------------------------------------------------------------------
+block                                                                            Randomization block
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,90]                       units:  1
+         unique values:  90                       missing .:  0/5,551
+
+                  mean:   45.2428
+              std. dev:   25.9636
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 9        23        45        67        81
+
+----------------------------------------------------------------------------------------------------
+miss1                                                                         Not measured at year 1
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         4,716  0
+                           835  1
+
+----------------------------------------------------------------------------------------------------
+miss1reason                                                      Reason for no measurement in year 1
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  missreason
+
+                 range:  [0,5]                        units:  1
+         unique values:  6                        missing .:  0/5,551
+
+            tabulation:  Freq.   Numeric  Label
+                         4,716         0  Not lost
+                           363         1  No live birth
+                            32         2  Refused
+                            57         3  Moved away
+                           197         4  Child death
+                           186         5  Absent
+
+----------------------------------------------------------------------------------------------------
+miss2                                                                         Not measured at year 2
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/5,551
+
+            tabulation:  Freq.  Value
+                         4,639  0
+                           912  1
+
+----------------------------------------------------------------------------------------------------
+miss2reason                                                      Reason for no measurement in year 2
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  missreason
+
+                 range:  [0,5]                        units:  1
+         unique values:  5                        missing .:  614/5,551
+
+            tabulation:  Freq.   Numeric  Label
+                         4,639         0  Not lost
+                            47         2  Refused
+                            55         3  Moved away
+                            23         4  Child death
+                           173         5  Absent
+                           614         .  
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/Dropbox/WASHB-Bangladesh-Data/1-primary-outcome-datasets/Public/washb
+> -bangladesh-track-compound-codebook.txt
+  log type:  text
+ closed on:  12 Apr 2018, 11:33:23
+----------------------------------------------------------------------------------------------------
