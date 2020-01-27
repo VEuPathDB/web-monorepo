@@ -4,9 +4,8 @@ import { IconAlt, Link } from 'wdk-client/Components';
 
 import { projects } from 'ebrc-client/components/homepage/Footer';
 import { ProjectLink } from 'ebrc-client/components/homepage/ProjectLink';
-import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 
-import { projectId } from '../../config';
+import { projectId } from 'ebrc-client/config';
 
 import { makeVpdbClassNameHelper } from './Utils';
 
@@ -17,25 +16,15 @@ const cx = makeVpdbClassNameHelper('PageDescription');
 const VEuPathDB = 'VEuPathDB';
 const EuPathDB = 'EuPathDB';
 
-export const PageDescription = () => 
-  <div className={combineClassNames(cx(), projectId)}>
-    {
-      (
-        projectId === VEuPathDB || 
-        projectId === EuPathDB
-      )
-        ? <VEuPathDBDescription />
-        : <p>
-            As part of the VEuPathDB 
-            {' '}
-            <a href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers" target="_blank">Bioinformatics Resource Center</a>,
-            {' '}
-            <span className={cx('ProjectId')}>{projectId}</span>
-            {' '} 
-            provides genomic, phenotypic, and population-centric data to the scientific community for <Link to="/search/organism/GenomeDataTypes/result">these organisms</Link>.
-          </p>
-    }
-  </div>;
+export const PageDescription = () => {
+  const isPortalSite = projectId === VEuPathDB || projectId === EuPathDB;
+
+  return (
+    <div className={cx('', isPortalSite ? 'portal-site' : 'component-site')}>
+      {!isPortalSite && <ComponentSiteDescription />}
+    </div>
+  );
+};
 
 const VEuPathDBDescription = () => {
   const [ isExpanded, setIsExpanded ] = useState(false);
@@ -52,9 +41,9 @@ const VEuPathDBDescription = () => {
           <h4>VEuPathDB</h4>
           <div className={cx('HeaderProjectLinks')}>
             {
-              projects.map(projectId => 
-                <ProjectLink key={projectId} projectId={projectId} />
-              )
+              projects
+                .filter(projectId => projectId !== VEuPathDB && projectId !== EuPathDB)
+                .map(projectId => <ProjectLink key={projectId} projectId={projectId} />)
             }
           </div>
         </div>
@@ -99,3 +88,14 @@ const VEuPathDBDescription = () => {
     </div>
   );
 };
+
+const ComponentSiteDescription = () =>
+  <p>
+    As part of the VEuPathDB
+    {' '}
+    <a href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers" target="_blank">Bioinformatics Resource Center</a>,
+    {' '}
+    <span className={cx('ProjectId')}>{projectId}</span>
+    {' '}
+    provides genomic, phenotypic, and population-centric data to the scientific community for <Link to="/search/organism/GenomeDataTypes/result">these organisms</Link>.
+  </p>;

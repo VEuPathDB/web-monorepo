@@ -397,11 +397,7 @@ export function StrategyWorkspaceController(DefaultComponent) {
 
 export function Page(DefaultComponent) {
   return withRouter(function VuPathDBPage(props) {
-    // FIXME: When the VEuPathDB logo is ready for "release", update 
-    // the value of renderNewHomePage appropriately
-    const renderNewHomePage = ( true
-//      projectId === 'ToxoDB'
-    );
+    const renderNewHomePage = true;
     const isHomePage = props.location.pathname === '/';
 
     useEffect(() => {
