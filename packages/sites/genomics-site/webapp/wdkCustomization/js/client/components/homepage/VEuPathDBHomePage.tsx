@@ -17,6 +17,7 @@ import { SearchPane, SearchCheckboxTree } from 'ebrc-client/components/homepage/
 import { Twitter, YouTube, Facebook } from 'ebrc-client/components/homepage/SocialMediaIcons';
 import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/components/homepage/Utils';
 
+import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
 import { projectId } from 'ebrc-client/config';
@@ -199,7 +200,9 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
           buildNumber={props.buildNumber}
           releaseDate={props.releaseDate}
           displayName={props.displayName}
-        />
+        >
+          <PageDescription />
+        </Footer>
       </ErrorBoundary>
     </div>
   );

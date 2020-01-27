@@ -6,7 +6,6 @@ import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
 
 import { FeaturedTools } from './components/homepage/FeaturedTools';
-import { PageDescription } from './components/homepage/PageDescription';
 import { WorkshopExercises } from './components/homepage/WorkshopExercises';
 
 import SampleForm from './components/samples/SampleForm';
@@ -100,8 +99,6 @@ export const wrapRoutes = ebrcRoutes => [
         <FeaturedTools />
         <hr />
         <WorkshopExercises />
-        <hr />
-        <PageDescription />
       </React.Fragment>
   },
 

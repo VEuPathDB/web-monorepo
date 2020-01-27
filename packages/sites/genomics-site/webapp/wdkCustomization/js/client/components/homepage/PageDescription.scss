@@ -5,7 +5,7 @@
     font-weight: bold;
   }
 
-  .VEuPathDB, .EuPathDB {
+  &__portal-site {
     .vpdb-PageDescriptionHeader {
       display: flex;
       justify-content: space-between;
@@ -109,10 +109,9 @@
     
   }
 
-  &.PlasmoDB {
+  &__component-site {
     p {
       font-size: 1.1em;
-      color: #682039;
     }
   }
 }
