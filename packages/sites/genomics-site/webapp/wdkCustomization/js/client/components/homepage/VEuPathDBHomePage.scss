@@ -237,7 +237,7 @@ body.vpdb-Body {
     // bckgrnd dark 
     &.CryptoDB {                     
       $primary-color: #274f94;    /* #274f94 or #8b465c, banner-crypto.jpg */
-      $bckgrnd-img: url('~site/images/CryptoDB/banner-crypto.jpg');
+      $bckgrnd-img: url('~site/images/CryptoDB/vuepathdb-banner-CryptoDB.jpg');
       $logo: url('~site/images/CryptoDB/crypto-logo.png');  /* crypto-logo-w.png, crypto-logo-2.png */
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
@@ -292,6 +292,7 @@ body.vpdb-Body {
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
 
+/*
     // current QA colors, darker bckgr 
     &.PlasmoDB {
       $primary-color: #682039;
@@ -299,15 +300,14 @@ body.vpdb-Body {
       $logo: url('~site/images/PlasmoDB/plasmo-logo_new-homepage2.png');
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
-
-/* bckgrnd light 
+*/
+    // bckgrnd light 
     &.PlasmoDB {
       $primary-color: #985c86;
       $bckgrnd-img: url('~site/images/PlasmoDB/banner-plasmo.jpg');
       $logo: url('~site/images/PlasmoDB/title_s.png'); 
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
-*/
  
     // eupath bkgrnd 
     &.SchistoDB {
