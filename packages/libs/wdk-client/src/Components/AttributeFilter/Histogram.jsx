@@ -140,7 +140,7 @@ var Histogram = (function() {
       // If max is more than twice the size of nextMax, assume it is
       // an outlier and use nextMax as the max
       var yaxisMax = max >= nextMax * 2 ? nextMax : max;
-      return yaxisMax + yaxisMax * 0.1;
+      return yaxisMax;
     }
 
     getClampedDistribution(distribution, uiState) {
