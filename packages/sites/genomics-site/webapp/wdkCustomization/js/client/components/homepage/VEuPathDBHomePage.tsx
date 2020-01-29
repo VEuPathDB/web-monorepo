@@ -400,16 +400,16 @@ const useHeaderMenuItems = (
       ]
     },
     {
+      key: 'search-strategies',
+      display: 'My Strategies',
+      type: 'reactRoute',
+      url: '/workspace/strategies'
+    },
+    {
       key: 'workspace',
       display: 'Workspace',
       type: 'subMenu',
       items: [
-        {
-          key: 'search-strategies',
-          display: 'My search strategies',
-          type: 'reactRoute',
-          url: '/workspace/strategies'
-        },
         {
           key: 'user-data-sets',
           display: 'My data sets',
@@ -739,6 +739,13 @@ const useHeaderMenuItems = (
       display: 'Help',
       type: 'subMenu',
       items: [
+        { 
+          key: 'contact-us',
+          display: 'Contact us',
+          type: 'reactRoute',
+          url: '/contact-us',
+          target: '_blank'
+        }, 
         {
           key: 'reset-session',
           display: `Reset ${projectId} Session`,
@@ -781,13 +788,6 @@ const useHeaderMenuItems = (
           display: `Our glossary`,
           type: 'reactRoute',
           url: makeStaticPageRoute('/glossary.html')
-        },
-        {
-          key: 'contact-us',
-          display: 'Contact us',
-          type: 'reactRoute',
-          url: '/contact-us',
-          target: '_blank'
         }
       ]
     }

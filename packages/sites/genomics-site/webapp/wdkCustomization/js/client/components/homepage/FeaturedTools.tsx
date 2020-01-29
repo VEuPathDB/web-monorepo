@@ -92,7 +92,7 @@ export const FeaturedTools = () => {
   return (
     <div className={cx()}>
       <div className={cx('Header')}>
-        <h2>Featured Resources and Tools</h2>
+        <h2>Overview of Resources and Tools</h2>
       </div>
       {
         !toolMetadata 
