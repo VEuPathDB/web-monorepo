@@ -6,11 +6,8 @@ import {
   Question,
   Answer,
   ParameterValues,
-  FilterValueArray,
   AnswerSpec
 } from "wdk-client/Utils/WdkModel";
-import { isQualifying, isIndividual } from 'wdk-client/Utils/CategoryUtils';
-import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 
 
 // Shared types
@@ -31,8 +28,6 @@ export type Sorting = {
 
 export type AnswerOptions = {
   parameters?: ParameterValues;
-  filters?: FilterValueArray;
-  viewFilters?: FilterValueArray;
   displayInfo: DisplayInfo;
 }
 
@@ -42,7 +37,6 @@ export type AnswerOptions = {
 
 export type Action =
   | ChangeColumnPositionAction
-  | ChangeFilterAction
   | ChangeSortingAction
   | ChangeVisibleColumnsAction
   | EndLoadingWithAnswerAction
@@ -163,26 +157,6 @@ export function changeVisibleColumns(attributes: AttributeField[]): ChangeVisibl
 
 //==============================================================================
 
-export const CHANGE_FILTER = 'answer/change-filter';
-
-export interface ChangeFilterAction {
-  type: typeof CHANGE_FILTER;
-  payload: {
-    terms: string;
-    attributes: string[];
-    tables: string[];
-  };
-}
-
-export function changeFilter(terms: string, attributes: string[], tables: string[]): ChangeFilterAction {
-  return {
-    type: CHANGE_FILTER,
-    payload: { terms, attributes, tables }
-  }
-}
-
-//==============================================================================
-
 
 // Thunks
 // ------
@@ -237,7 +211,7 @@ export function loadAnswer(
       startLoading(),
       async () => {
         try {
-          const { parameters = {} as ParameterValues, filters = [], displayInfo } = opts;
+          const { parameters = {} as ParameterValues, displayInfo } = opts;
           const question = await wdkService.findQuestion(hasUrlSegment(questionUrlSegment));
           const recordClass = await wdkService.findRecordClass(hasUrlSegment(recordClassUrlSegment));
           const attributes = recordClass.attributes
@@ -253,8 +227,7 @@ export function loadAnswer(
           const answerSpec: AnswerSpec = {
             searchName: question.urlSegment,
             searchConfig: {
-              parameters,
-              filters
+              parameters
             }
           };
           const formatConfig = pick(displayInfo, ['attributes', 'pagination', 'sorting']);

@@ -1,4 +1,6 @@
+import { isArray, castArray } from 'lodash';
 import React from 'react';
+import QueryString from 'querystring';
 import { RouteComponentProps, Redirect } from 'react-router';
 
 import { RouteEntry, parseQueryString } from 'wdk-client/Core/RouteEntry';
@@ -35,10 +37,20 @@ const routes: RouteEntry[] = [
 
   {
     path: '/search/:recordClass/:question/result',
-    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => <AnswerController
-      {...props.match.params}
-      parameters={parseQueryString(props)}
-    />
+    component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => {
+      const { filterTerm, filterAttributes = [], filterTables = [] } = QueryString.parse(props.location.search.slice(1));
+      const parameters = parseSearchParamsFromQueryParams(parseQueryString(props));
+      return (
+        <AnswerController
+          {...props.match.params}
+          parameters={parameters}
+          filterTerm={isArray(filterTerm) ? filterTerm[0] : filterTerm}
+          filterAttributes={castArray(filterAttributes)}
+          filterTables={castArray(filterTables)}
+          history={props.history}
+        />
+      )
+    }
   },
 
   {
@@ -49,12 +61,7 @@ const routes: RouteEntry[] = [
       // - autoRun: boolean (interpretted as true if present without a value, or with 'true' or '1')
       // - param data: Prefix with "param.". E.g., "param.organism=Plasmodium+falciparum+3D7", or "param.ds_gene_ids.idList=PF3D7_1133400,PF3D7_1133401"
       const { autoRun, ...restQueryParams } = parseQueryString(props);
-      const initialParamValuesEntries = Object.entries(restQueryParams)
-        .filter(([ key ]) => key.startsWith('param.'))
-        .map(([key, value]) => [key.replace(/^param\./, ''), value]);
-      const initialParamData = initialParamValuesEntries.length > 0
-        ? Object.fromEntries(initialParamValuesEntries)
-        : undefined;
+      const initialParamData = parseSearchParamsFromQueryParams(restQueryParams);
       return (
         <Plugin
           context={{
@@ -287,6 +294,15 @@ const routes: RouteEntry[] = [
 ];
 
 export default routes;
+
+function parseSearchParamsFromQueryParams(restQueryParams: { [x: string]: string; }): Record<string, string> | undefined {
+  const initialParamValuesEntries = Object.entries(restQueryParams)
+    .filter(([key]) => key.startsWith('param.'))
+    .map(([key, value]) => [key.replace(/^param\./, ''), value]);
+  return initialParamValuesEntries.length > 0
+    ? Object.fromEntries(initialParamValuesEntries)
+    : undefined;
+}
 
 function parseUserCommentQueryString(props: RouteComponentProps<{}>) {
   const {

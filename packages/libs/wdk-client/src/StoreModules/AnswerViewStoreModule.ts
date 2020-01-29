@@ -12,24 +12,19 @@ import {
   END_LOADING_WITH_ANSWER,
   END_LOADING_WITH_ERROR,
   CHANGE_COLUMN_POSITION,
-  CHANGE_FILTER,
   CHANGE_SORTING,
   CHANGE_VISIBLE_COLUMNS,
   EndLoadingWithAnswerAction,
   ChangeColumnPositionAction,
   ChangeVisibleColumnsAction,
-  ChangeFilterAction,
   ChangeSortingAction,
   AnswerOptions
 } from 'wdk-client/Actions/AnswerActions';
-// FIXME RecordUtils should be moved to Utils
-import { filterRecords } from 'wdk-client/Views/Records/RecordUtils';
 
 type EndLoadingWithAnswerPayload = EndLoadingWithAnswerAction['payload']
 type ChangeColumnPositionPayload = ChangeColumnPositionAction['payload']
 type ChangeVisibleColumnsPayload = ChangeVisibleColumnsAction['payload']
 type ChangeSortingPayload = ChangeSortingAction['payload']
-type ChangeFilterPayload = ChangeFilterAction['payload']
 
 export const key = 'answerView';
 
@@ -65,8 +60,6 @@ export function reduce(state: State = initialState, action: Action): State {
       return updateSorting(state, action.payload);
     case CHANGE_COLUMN_POSITION:
       return moveTableColumn(state, action.payload);
-    case CHANGE_FILTER:
-      return updateFilter(state, action.payload);
     default:
       return state;
   }
@@ -102,17 +95,13 @@ function addAnswer( state: State, payload: EndLoadingWithAnswerPayload ) {
    */
   return Object.assign({}, state, {
     meta: answer.meta,
+    records: answer.records,
     question,
     recordClass,
     parameters,
     allAttributes,
     visibleAttributes,
     unfilteredRecords: answer.records,
-    records: filterRecords(answer.records, { 
-      filterTerm: state.filterTerm || '', 
-      filterAttributes: state.filterAttributes || [], 
-      filterTables:state.filterTables || [] 
-    }),
     isLoading: false,
     displayInfo
   });
@@ -156,16 +145,5 @@ function updateVisibleAttributes(state: State, { attributes }: ChangeVisibleColu
 function updateSorting(state: State, { sorting }: ChangeSortingPayload) {
   return Object.assign({}, state, {
     displayInfo: Object.assign({}, state.displayInfo, { sorting })
-  });
-}
-
-function updateFilter(state: State, payload: ChangeFilterPayload) {
-  let filterSpec = {
-    filterTerm: payload.terms,
-    filterAttributes: payload.attributes || [],
-    filterTables: payload.tables || []
-  };
-  return Object.assign({}, state, filterSpec, {
-    records: filterRecords(state.unfilteredRecords || [], filterSpec)
   });
 }

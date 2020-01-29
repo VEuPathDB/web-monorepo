@@ -1,11 +1,11 @@
+import QueryString from 'querystring';
 import * as React from 'react';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { isEqual, ListIteratee } from 'lodash';
+import { isEmpty, ListIteratee } from 'lodash';
 import {
   loadAnswer,
-  changeFilter,
   changeColumnPosition,
   changeVisibleColumns,
   changeSorting,
@@ -17,10 +17,11 @@ import { State } from 'wdk-client/StoreModules/AnswerViewStoreModule';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { connect } from 'react-redux';
 import { AttributeField, TableField, AttributeValue, RecordInstance, RecordClass } from 'wdk-client/Utils/WdkModel';
+import { History } from 'history';
+import { filterRecords } from 'wdk-client/Views/Records/RecordUtils';
 
 const ActionCreators = {
   loadAnswer,
-  changeFilter,
   changeColumnPosition,
   changeVisibleColumns,
   changeSorting,
@@ -59,8 +60,11 @@ type Options = {
 type OwnProps = {
   recordClass: string;
   question: string;
-  parameters: Record<string, string>;
-
+  parameters?: Record<string, string>;
+  filterTerm?: string;
+  filterAttributes?: string[];
+  filterTables?: string[];
+  history: History;
 }
 
 export type Props = {
@@ -71,24 +75,39 @@ export type Props = {
 
 class AnswerController extends PageController<Props> {
 
+  changeFilter = (filterTerm: string, filterAttributes?: string[], filterTables?: string[]) => {
+    const { history } = this.props.ownProps;
+    if (!filterTerm) {
+      history.replace(history.location.pathname);
+      return;
+    }
+    const queryParams: { filterTerm: string, filterAttributes?: string[], filterTables?: string[] } = { filterTerm };
+    if (!isEmpty(filterAttributes)) queryParams.filterAttributes = filterAttributes;
+    if (!isEmpty(filterTables)) queryParams.filterTables = filterTables;
+    const queryString = QueryString.stringify(queryParams);
+    this.props.ownProps.history.replace(`?${queryString}`);
+  }
+
   loadData(prevProps?: Props) {
-
-    // decide whether new answer needs to be loaded (may not need to be loaded
-    //   if user goes someplace else and hits 'back' to here- store already correct)
-    if (prevProps && isEqual(prevProps.ownProps, this.props.ownProps)) return;
-
     // incoming values from the router
-    let { question, recordClass: recordClassName, parameters } = this.props.ownProps;
+    let { question, recordClass: recordClassName, parameters, filterTerm, filterAttributes, filterTables } = this.props.ownProps;
     let [ , searchName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
 
     const { dispatchProps } = this.props;
 
-    // (re)initialize the page
-    let pagination = { numRecords: 1000, offset: 0 };
-    let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
-    let displayInfo = { pagination, sorting, customName };
-    let opts = { displayInfo, parameters };
-    dispatchProps.loadAnswer(searchName, recordClassName, opts);
+    // (re)initialize the page, if question, recordClass, or parmaeters changes
+    if (
+      question !== prevProps?.ownProps.question ||
+      recordClassName !== prevProps?.ownProps.recordClass ||
+      parameters !== prevProps?.ownProps.parameters
+    ) {
+      let pagination = { numRecords: 1000, offset: 0 };
+      let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
+      let displayInfo = { pagination, sorting, customName };
+      let opts = { displayInfo, parameters, filterTerm, filterAttributes, filterTables };
+      dispatchProps.loadAnswer(searchName, recordClassName, opts);
+    }
+
   }
 
   isRenderDataLoaded() {
@@ -162,9 +181,6 @@ class AnswerController extends PageController<Props> {
       displayInfo,
       allAttributes,
       visibleAttributes,
-      filterTerm,
-      filterAttributes = [],
-      filterTables = [],
       question,
       recordClass = { 
         attributes: [] as AttributeField[],
@@ -172,21 +188,24 @@ class AnswerController extends PageController<Props> {
       }
     } = this.props.stateProps;
 
+    let { 
+      filterTerm,
+      filterAttributes = [],
+      filterTables = [],
+    } = this.props.ownProps;
+
     const {
       changeSorting,
       changeColumnPosition,
-      changeVisibleColumns,
-      changeFilter
+      changeVisibleColumns
     } = this.props.dispatchProps;
 
-    if (filterAttributes.length === 0 && filterTables.length === 0) {
-      filterAttributes = recordClass.attributes.map(a => a.name);
-      filterTables = recordClass.tables.map(t => t.name);
-    }
+    const filteredRecords = records && filterTerm ? filterRecords(records, { filterTerm, filterAttributes, filterTables }) : records;
+
     return (
       <CastAnswer
         meta={meta}
-        records={records}
+        records={filteredRecords}
         question={question}
         recordClass={recordClass}
         displayInfo={displayInfo}
@@ -199,7 +218,7 @@ class AnswerController extends PageController<Props> {
         onSort={changeSorting}
         onMoveColumn={changeColumnPosition}
         onChangeColumns={changeVisibleColumns}
-        onFilter={changeFilter}
+        onFilter={this.changeFilter}
         renderCellContent={this.props.renderCellContent}
         deriveRowClassName={this.props.deriveRowClassName}
         customSortBys={this.props.customSortBys}
