@@ -368,43 +368,63 @@ var Histogram = (function() {
       }
     }
 
-    updateUIState(uiState) {
-      this.setState({ uiState });
-      this.emitStateChange(uiState);
+    updateUIState(updater) {
+      this.setState(
+        ({ uiState }) => ({ uiState: updater(uiState) }),
+        () => this.emitStateChange(this.state.uiState)
+      );
     }
 
     emitStateChange(uiState) {
       this.props.onUiStateChange(uiState);
     }
 
-    setYAxisRange(yaxisMin, yaxisMax) {
-      this.updateUIState(Object.assign({}, this.state.uiState, { yaxisMin, yaxisMax }));
-    }
+    // x-axis settings
+    // ---------------
 
     setXAxisRange(xaxisMin, xaxisMax) {
-      this.updateUIState(Object.assign({}, this.state.uiState, { xaxisMin, xaxisMax }));
+      this.updateUIState(uiState => ({ ...uiState, xaxisMin, xaxisMax }));
+    }
+
+    setXAxisBinSize(binSize) {
+      this.setXAxisBinState(this.state.uiState.binStart, binSize);
+    }
+
+    setXAxisBinStart(binStart) {
+      this.setXAxisBinState(binStart, this.state.uiState.binSize);
+    }
+
+    setXAxisBinState(binStart, binSize) {
+      const { min: xaxisMin, max: xaxisMax } = this.getRange(this.props.distribution);
+      const distribution = binSize ? this.getBinnedDistribution(binSize, binStart, this.props.distribution) : this.props.distribution;
+      const yaxisMax = binSize
+        ? Math.max(...distribution.map(entry => entry.count))
+        : this.getYAxisMax(this.props)
+      this.updateUIState(uiState => ({ ...uiState, binStart, binSize, yaxisMax, xaxisMin, xaxisMax: xaxisMax + (binSize || 0) }));
+    }
+
+    resetXAxisState() {
+      const { min: xaxisMin, max: xaxisMax } = this.getRange(this.props.distribution);
+      this.setXAxisRange(xaxisMin, xaxisMax);
+      this.setXAxisBinState(Math.min(0, xaxisMin), 0);
+    }
+
+    // y-axis settings
+    // ---------------
+
+    setYAxisRange(yaxisMin, yaxisMax) {
+      this.updateUIState(uiState => ({ ...uiState, yaxisMin, yaxisMax }));
     }
 
     setScaleYAxis(scaleYAxis) {
-      this.updateUIState({ ...this.state.uiState, scaleYAxis })
+      this.updateUIState(uiState => ({ ...uiState, scaleYAxis }));
     }
 
-    setBinSize(binSize) {
-      const { binStart, xaxisMin, xaxisMax } = this.state.uiState;
-      const distribution = binSize ? this.getBinnedDistribution(binSize, binStart, this.props.distribution) : this.props.distribution;
-      const yaxisMax = binSize
-        ? Math.max(...distribution.map(entry => entry.count))
-        : this.getYAxisMax(this.props)
-      this.updateUIState({ ...this.state.uiState, binSize, yaxisMax, xaxisMin, xaxisMax: xaxisMax + (binSize || 0) });
-    }
-
-    setBinStart(binStart) {
-      const { binSize, xaxisMin, xaxisMax } = this.state.uiState;
-      const distribution = binSize ? this.getBinnedDistribution(binSize, binStart, this.props.distribution) : this.props.distribution;
-      const yaxisMax = binSize
-        ? Math.max(...distribution.map(entry => entry.count))
-        : this.getYAxisMax(this.props)
-      this.updateUIState({ ...this.state.uiState, binStart, yaxisMax, xaxisMin, xaxisMax: xaxisMax + (binSize || 0) });
+    resetYAxisState() {
+      const { binStart, binSize } = this.state.uiState;
+      this.setXAxisBinState(binStart, binSize);
+      this.setScaleYAxis(false);
+      this.updateUIState(uiState => ({ ...uiState, yaxisMin: 0 }));
     }
 
     setSettingsOpen(showSettings) {
@@ -413,13 +433,8 @@ var Histogram = (function() {
     }
 
     resetUiState() {
-      const { min: xaxisMin, max: xaxisMax } = this.getRange(this.props.distribution);
-      const yaxisMin = 0;
-      const yaxisMax = this.getYAxisMax(this.props);
-      const binSize = 0;
-      const binStart = Math.min(0, xaxisMin);
-      const scaleYAxis = false;
-      this.updateUIState({ ...this.state.uiState, binSize, binStart, yaxisMin, yaxisMax, xaxisMin, xaxisMax, scaleYAxis });
+      this.resetXAxisState();
+      this.resetYAxisState();
     }
 
     render() {
@@ -484,10 +499,11 @@ var Histogram = (function() {
               <div>
                 <div>Range: {xaxisScaleSelector}</div>
               </div>
-              {chartType !== 'date' && <div>Bin start: <input type="number" max={valuesMin} value={this.state.uiState.binStart} onFocus={autoSelectOnFocus} onChange={e => this.setBinStart(eventToNumber(e))}/></div>}
-              <div>Bin size: <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setBinSize(eventToNumber(e))}/>
+              {chartType !== 'date' && <div>Bin start: <input type="number" max={valuesMin} value={this.state.uiState.binStart} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinStart(eventToNumber(e))}/></div>}
+              <div>Bin size: <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
                 <em style={{ color: '#444444', marginLeft: '1em' }}> When bin size = 0, the count of discrete values is shown</em>
               </div>
+              <div><button type="button" onClick={() => this.resetXAxisState()}>Reset to defaults</button></div>
             </fieldset>
             <fieldset>
               <legend>y-axis{/*yaxisLabel*/}</legend>
@@ -503,8 +519,9 @@ var Histogram = (function() {
                   &nbsp;log<sub>10</sub>
                 </label>
               </div>
+              <div><button type="button" onClick={() => this.resetYAxisState()}>Reset to defaults</button></div>
             </fieldset>
-            <div><button type="button" onClick={() => this.resetUiState()}>Reset to defaults</button></div>
+            {/* <div><button type="button" onClick={() => this.resetUiState()}>Reset to defaults</button></div> */}
           </CollapsibleSection>
         </div>
       );
