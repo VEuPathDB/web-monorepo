@@ -23,6 +23,7 @@ import SiteHeader from './SiteHeader';
 import IndexController from './IndexController';
 import AnswerController from './AnswerController';
 import ReporterSortMessage from './ReporterSortMessage';
+import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
 
 
 export default {
@@ -55,6 +56,11 @@ export default {
   // FIXME Add restricted results panel
   RecordHeading,
   RecordTable,
+  ContactUsController: function(DefaultComponent) {
+    const specialInstructions = <SpecialContactUsInstructions />;
+
+    return () => <DefaultComponent specialInstructions={specialInstructions} />;
+  }
 }
 
 function guard(propsPredicate) {
