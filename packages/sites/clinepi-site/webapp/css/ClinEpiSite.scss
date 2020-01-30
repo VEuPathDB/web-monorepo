@@ -651,15 +651,28 @@ div#ce-static-content li .fa {
   margin-right: .5em;
 }
 
-div#ce-static-content h1#resources ~ div summary {
-  // size and weight like h2 in this file 
+div#ce-static-content h1#resources ~ div summary.h2 {
+  // size and weight like h2 in ebrc/client.scss 
   font-size: 1.8em;
   font-weight: 500;
   // like h2 in allsites 
-  //color: #222;    
   margin: 0;
   padding: 12px 0 8px 0;
-  color: black;
+  color: #222; 
+}
+
+div#ce-static-content h1#resources ~ div summary.h3 {
+  // size and weight like h3 in ebrc/client.scss 
+  font-size: 1.5em;
+  font-weight: 500;
+  // like h3 in allsites 
+  margin: 0;
+  padding: 12px 0 8px 0;
+  color: #222;
+}
+
+div#ce-static-content h1#resources ~ div details.h3 {
+  margin-left: 2.5em;
 }
 
 div#ce-static-content li {
