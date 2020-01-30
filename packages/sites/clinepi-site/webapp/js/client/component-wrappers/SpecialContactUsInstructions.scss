@@ -1,10 +1,10 @@
 .ce-SpecialContactUsInstructions {
   details {
-    font-size: 1.7em;
+    font-size: 1.4em;
   }
 
   summary {
-    font-size: 1.1em;
+    font-size: 1.2em;
     color: #069;
   }
 
@@ -21,7 +21,7 @@
     line-height: 1.4;
     margin: 0.5em 1.5em 0.5em 0.5em;
     border: 0.0625rem solid #069;
-    padding: 1em;
+    padding: 0.5em;
   }
 
   &--InstructionsList {
@@ -40,5 +40,6 @@
 
   &--Footer {
     grid-area: footer;
+    margin-left: 1em;
   }
 }

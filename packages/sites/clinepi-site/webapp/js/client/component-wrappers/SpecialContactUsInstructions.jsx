@@ -9,9 +9,9 @@ const cx = makeClassNameHelper('ce-SpecialContactUsInstructions');
 export function SpecialContactUsInstructions() {
   return (
     <div className={cx()}>
-      <details>
+      <details open>
         <summary>
-          If you hit an error with our analysis tools, please let us know
+          If you hit an error with our analysis tools, please send us a message ...
         </summary>
         <div className={cx('--ExpandedDetails')}>
           <ol className={cx('--InstructionList')}>
