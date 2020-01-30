@@ -1,0 +1,44 @@
+.ce-SpecialContactUsInstructions {
+  details {
+    font-size: 1.7em;
+  }
+
+  summary {
+    font-size: 1.1em;
+    color: #069;
+  }
+
+  &--ExpandedDetails {
+    display: grid;
+    grid-template-areas:
+      "instructions-list sample-screenshot"
+      "footer            footer";
+    grid-template-columns: 1fr auto;
+
+    column-gap: 1em;
+    row-gap: 1em;
+
+    line-height: 1.4;
+    margin: 0.5em 1.5em 0.5em 0.5em;
+    border: 0.0625rem solid #069;
+    padding: 1em;
+  }
+
+  &--InstructionsList {
+    grid-area: instructions-list;
+  }
+
+  &--SampleScreenshot {
+    grid-area: sample-screenshot;
+    background-image: url('~site/images/sample-screenshot.png');
+    background-size: cover;
+    height: 10em;
+    width: 20em;
+
+    margin: 1em 0;
+  }
+
+  &--Footer {
+    grid-area: footer;
+  }
+}
