@@ -31,11 +31,12 @@ body.vpdb-Body {
 
       .ebrc-HeaderBranding {
         content: $logo;
+        height: 85px;
       }
 
       &__collapsed {
         .ebrc-HeaderBranding {
-          height: 3rem;
+          height: 48px;
         }
       }
 
@@ -88,17 +89,37 @@ body.vpdb-Body {
 
       &__collapsed {
         display: grid;
-        height: 8.5em;
-        padding: 10px 20px;
+        height: auto;
+        padding: 0.5em 0.75em;
         box-shadow: 0 2px 4px #00000066;
         grid-template-areas:
-            "site-branding searchbar login "
-            "menubar menubar login ";
+            "site-branding searchbar social login "
+            "site-branding menubar social login";
         grid-template-rows: auto 1fr;
         row-gap: 0.5em;
 
+
+        .ebrc-HeaderSearchBar {
+          input, form {
+            line-height: normal;
+          }
+
+          button {
+            line-height: normal;
+            padding: 2x 6px;
+          }
+        }
+
+        .ebrc-HeaderMenuBar > .ebrc-HeaderMenuItemGroup > .ebrc-HeaderMenuItemContent {
+          padding: 0 0.5em;
+        }
+
         @media screen and (max-width: 1000px) {
           height: auto;
+        }
+
+        .ebrc-HeaderBrandingContainer {
+          align-self: center;
         }
 
         .ebrc-HeaderBranding {
@@ -107,10 +128,6 @@ body.vpdb-Body {
         }
 
         .ebrc-HeaderProjectBranding {
-          display: none;
-        }
-
-        .ebrc-SocialMediaLinks {
           display: none;
         }
   
