@@ -8,6 +8,7 @@ import { StudyMenuItem } from 'ebrc-client/App/Studies';
 import logoUrl from 'site/images/18170.png';
 import heroImageUrl from 'site/images/mbio_hero.png';
 import vizData from './visualizations.json';
+import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 
 import { StudyCard } from 'ebrc-client/App/Studies';
 import { SearchCard } from 'ebrc-client/App/Searches';
@@ -153,12 +154,12 @@ function makeHeaderMenuItems(state) {
         ]
       },
       {
-        id: 'community',
-        text: 'Community',
+        id: 'about',
+        text: 'About',
         children: [
           {
             text: 'News',
-            appUrl: '/showXmlDataContent.do?name=XmlQuestions.News'
+            route: `${STATIC_ROUTE_PATH}/MicrobiomeDB/news.html`
           },
           {
             text: 'Public Strategies',
@@ -207,7 +208,7 @@ function Footer() {
             Follow us on <i className="fa fa-twitter"/>
           </a>
         </div>
-        <div>©{new Date().getFullYear()} The EuPathDB Project Team</div>
+        <div>©{new Date().getFullYear()} The VEuPathDB Project Team</div>
       </div>
       <div>
         <div>
