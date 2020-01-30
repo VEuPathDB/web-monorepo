@@ -30,16 +30,12 @@ body.vpdb-Body {
       background-position: center;
 
       .ebrc-HeaderBranding {
-        position: relative;
-        bottom: 42px;
-        height: calc(70px * 1.2);
         content: $logo;
       }
 
       &__collapsed {
         .ebrc-HeaderBranding {
-          bottom: 0px;
-          height: calc(48px * 1.15);
+          height: 3rem;
         }
       }
 
@@ -77,16 +73,13 @@ body.vpdb-Body {
       "content"
       "footer";
     
-    grid-template-rows: 9.0625rem 1fr auto;
     grid-template-columns: 100%;
   
     min-height: 100vh;
 
-    .vpdb-HeaderContainer {
-      grid-area: header;
-    }
-
     .vpdb-Header {
+      grid-area: header;
+
       &SearchBarToggle {
         &__hidden {
           display: none;
@@ -94,9 +87,15 @@ body.vpdb-Body {
       }
 
       &__collapsed {
-        height: 4.0625rem;
+        display: grid;
+        height: 8.5em;
         padding: 10px 20px;
         box-shadow: 0 2px 4px #00000066;
+        grid-template-areas:
+            "site-branding searchbar login "
+            "menubar menubar login ";
+        grid-template-rows: auto 1fr;
+        row-gap: 0.5em;
 
         @media screen and (max-width: 1000px) {
           height: auto;
@@ -109,6 +108,14 @@ body.vpdb-Body {
 
         .ebrc-HeaderProjectBranding {
           display: none;
+        }
+
+        .ebrc-SocialMediaLinks {
+          display: none;
+        }
+  
+        .UserMenu {
+          align-self: flex-end;
         }
       }
 
@@ -147,21 +154,6 @@ body.vpdb-Body {
 
         &SearchIcon {
           left: 0.5em;
-        }
-      }
-
-      .vpdb-CommunitySocialMediaLink {
-        display: flex;
-        align-items: center;
-
-        i, svg {
-          margin-right: 0.5em;
-        }
-
-        &__wide {
-          i, svg {
-            margin-right: 0.325rem;
-          }
         }
       }
     }
@@ -264,7 +256,7 @@ body.vpdb-Body {
     }
 
     &__header-collapsed {
-      grid-template-rows: 4.0625rem 1fr auto;
+      grid-template-rows: 8.5em 1fr auto;
     }
 
     /**** VEUPATH SITES ***/
@@ -425,7 +417,7 @@ body.vpdb-Body {
         "nav content side"
         "footer footer footer";
 
-      grid-template-rows: 9.0625rem auto 1fr auto;
+      grid-template-rows: 12em auto 1fr auto;
 
       .vpdb-Main {
         overflow: hidden;
@@ -456,6 +448,6 @@ body.vpdb-Body {
 
   // Fix for question page sticky header
   .wdk-QuestionFormQuestionHeader {
-    top: 5.5em;
+    top: 8.5em;
   }
 }

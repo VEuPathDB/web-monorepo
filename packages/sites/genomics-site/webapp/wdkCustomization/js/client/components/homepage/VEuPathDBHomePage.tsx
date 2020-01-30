@@ -161,17 +161,14 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   return (
     <div className={rootContainerClassName}>
       <ErrorBoundary>
-        <div className={vpdbCx('HeaderContainer')}>
-          <Header 
-            // FIXME: use project logos for component site branding 
-            branding={projectId}
-            menuItems={headerMenuItems} 
-            containerClassName={headerClassName} 
-            loadSuggestions={loadSuggestions}
-            siteSearchSuggestions={siteSearchSuggestions}
-            additionalSuggestions={additionalSuggestions}
-          />
-        </div>
+        <Header 
+          branding={projectId}
+          menuItems={headerMenuItems} 
+          containerClassName={headerClassName} 
+          loadSuggestions={loadSuggestions}
+          siteSearchSuggestions={siteSearchSuggestions}
+          additionalSuggestions={additionalSuggestions}
+        />
       </ErrorBoundary>
       {isHomePage &&
         <div className={vpdbCx('Announcements')}>
@@ -790,6 +787,13 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/glossary.html')
         }
       ]
+    },
+    {
+      key: 'contact-us',
+      display: 'Contact Us',
+      type: 'reactRoute',
+      url: '/contact-us',
+      target: '_blank'
     }
   ];
 
