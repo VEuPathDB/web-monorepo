@@ -361,7 +361,6 @@ var Histogram = (function() {
           '<br/>All ' + this.props.yaxisLabel + ': ' + unfilteredCount +
           '<br/>Remaining ' + this.props.yaxisLabel + ': ' + filteredCount);
         const offset = this.$chart.offset();
-        qtipApi.elements.tooltip.stop(1, 1);
         qtipApi.set('position.adjust.x', item.pageX - offset.left + (this.state.uiState.binSize ? barWidthPx : 0));
         qtipApi.set('position.adjust.y', item.pageY - offset.top);
         qtipApi.show(item);
