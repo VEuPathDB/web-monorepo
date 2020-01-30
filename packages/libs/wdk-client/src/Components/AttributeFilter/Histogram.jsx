@@ -394,12 +394,11 @@ var Histogram = (function() {
     }
 
     setXAxisBinState(binStart, binSize) {
-      const { min: xaxisMin, max: xaxisMax } = this.getRange(this.props.distribution);
       const distribution = binSize ? this.getBinnedDistribution(binSize, binStart, this.props.distribution) : this.props.distribution;
       const yaxisMax = binSize
         ? Math.max(...distribution.map(entry => entry.count))
         : this.getYAxisMax(this.props)
-      this.updateUIState(uiState => ({ ...uiState, binStart, binSize, yaxisMax, xaxisMin, xaxisMax: xaxisMax + (binSize || 0) }));
+      this.updateUIState(uiState => ({ ...uiState, binStart, binSize, yaxisMax }));
     }
 
     resetXAxisState() {
