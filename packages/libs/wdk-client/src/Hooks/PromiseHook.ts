@@ -12,11 +12,16 @@ interface PromiseFactory<T> {
 export function usePromise<T>(factory: PromiseFactory<T>, deps?: any[]) {
   let doSetValue = true;
   const [ value, setValue ] = useState<T>();
+  const [ loading, setLoading ] = useState(false);
   useEffect(() => {
+    setLoading(true);
     factory().then(value => {
-      if (doSetValue) setValue(value);
+      if (doSetValue) {
+        setValue(value);
+        setLoading(false);
+      }
     });
     return () => { doSetValue = false };
   }, deps);
-  return value;
+  return { value, loading };
 }
