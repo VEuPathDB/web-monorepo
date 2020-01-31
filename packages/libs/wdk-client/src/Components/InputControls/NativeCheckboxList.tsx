@@ -152,7 +152,7 @@ class NativeCheckboxList extends Component<Props, State> {
             );
           })}
         </div>
-        <div style={{ marginTop: '.5em' }}>
+        <div style={{ margin: '.5em', textAlign: 'center' }}>
           <button type="button" className="wdk-Link" onClick={e => this.selectAll(e)}>select all</button>
           {' | '}
           <button type="button" className="wdk-Link" onClick={e => this.clearAll(e)}>clear all</button>
