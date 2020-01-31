@@ -7,7 +7,6 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel'
-import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 
 import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
 
@@ -59,6 +58,9 @@ const ConvertStepMenuView = ({
                     </>
                   )
               }
+              <div>
+                {TODO}
+              </div>
             </div>
           </div>
     }
