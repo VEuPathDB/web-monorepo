@@ -110,7 +110,7 @@ export const WorkshopExercises = () => {
   return (
     <div className={cx()}>
       <div className={cx('Header')}>
-        <h2>Learning Exercises</h2>
+        <h2>Tutorials and Exercises</h2>
         <a onClick={toggleExpansion} href="#">
           {
             isExpanded 
