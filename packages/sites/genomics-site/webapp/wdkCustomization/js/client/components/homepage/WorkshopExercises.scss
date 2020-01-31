@@ -77,7 +77,7 @@
 
     &__expanded {
       display: grid;
-      grid-template-columns: repeat(auto-fill, 300px);
+      grid-template-columns: repeat(auto-fill, 250px);
       justify-content: center;
 
       // FIXME: IE 11 does not support grid-gap
