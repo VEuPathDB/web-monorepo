@@ -96,7 +96,7 @@ body.vpdb-Body {
             "site-branding searchbar social login"
             "site-branding menubar social login";
         grid-template-rows: auto 1fr;
-        row-gap: 0.5em;
+        grid-gap: 0.5em;
 
 
         .ebrc-HeaderSearchBar {
