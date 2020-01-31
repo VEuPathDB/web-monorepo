@@ -1,5 +1,7 @@
 import React from 'react';
 
+import SiteSearchController from 'ebrc-client/controllers/SiteSearchController';
+
 // load api-specific page controllers
 import FastaConfigController from './components/controllers/FastaConfigController';
 import QueryGridController from './components/controllers/QueryGridController';
@@ -9,6 +11,7 @@ import { FeaturedTools } from './components/homepage/FeaturedTools';
 import { WorkshopExercises } from './components/homepage/WorkshopExercises';
 
 import SampleForm from './components/samples/SampleForm';
+
 import { projectId } from './config';
 
 // Project id is not needed for these record classes.
@@ -105,6 +108,11 @@ export const wrapRoutes = ebrcRoutes => [
   {
     path: '/jbrowse',
     component: JBrowseController
+  },
+
+  {
+    path: '/search',
+    component: SiteSearchController
   },
 
   ...ebrcRoutes.map(route => route.path.includes(':primaryKey+')
