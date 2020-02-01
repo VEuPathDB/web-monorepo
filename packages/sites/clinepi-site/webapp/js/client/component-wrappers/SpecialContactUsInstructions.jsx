@@ -11,11 +11,11 @@ export function SpecialContactUsInstructions() {
     <div className={cx()}>
       <details>
         <summary>
-          If you hit an error with our analysis tools, click here for instructions ...
+          If you hit an error with our analysis tools, please click here for instructions ...
         </summary>
         <div className={cx('--ExpandedDetails')}>
           <div className={cx('--InstructionsList')}>
-            Please send us a message, fill in the form below and provide: 
+            Send us a message by filling in the form below. Please provide: 
             <ol>
               <li>
                 Your page URL (copy and paste from your browser tab), 
@@ -25,7 +25,7 @@ export function SpecialContactUsInstructions() {
                 The type of analysis: Distributions, Contingency Tables, or Data Summaries.
               </li>
               <li>
-                A screenshot of your Plot Parameters. 
+                A screenshot of your Plot Parameters similar to this example: 
                 <br /><span className={cx('--small')}>(You can zoom out (Cmd/Ctrl -) to fit the content if needed.)</span>
               </li>
             </ol>
