@@ -1,21 +1,4 @@
 .SearchInputSelector {
-  display: flex;
-  flex-direction: column;
-
-  >:first-child {
-    margin-bottom: 1em;
-  }
-    
-  >:not(:first-child) {
-    margin: 1em 0;
-  }
-
-  &--NewSearchCheckbox {
-    background: #f1f1f1;
-    border-radius: 5px;
-    border: 1px solid black;
-  }
-  
   &--CheckboxHeader {
     padding: 0.5em 0;
     text-align: center;

@@ -23,6 +23,12 @@
     }
   }
 
+  &--OperatorSelector {
+    display: flex;
+    justify-content: space-evenly;
+    margin-left: 2em;
+  }
+
   &--OperatorChoice {
     display: flex;
     flex-direction: row;
@@ -30,8 +36,39 @@
     margin: 0.5em;
 
     input {
-      margin-right: 5px;
-      margin-top: 5px;
+      margin-right: 0.5em;
+      margin-top: 0.5em;
     }
+
+    label {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  &--Container {
+    counter-reset: panel;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 1em;
+  };
+
+  &--Choice::before {
+    counter-increment: panel;
+    content: counter(panel);
+    background: #666666;
+    border-radius: 1em;
+    height: 1.5em;
+    width: 1.5em;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: .5em;
+    color: white;
+  }
+
+  .SearchInputSelector {
+    margin: 1em 1em 1em 2em;
   }
 }

@@ -7,17 +7,14 @@ import { updateActiveQuestion, updateParamValue } from 'wdk-client/Actions/Quest
 import { requestCombineWithBasket } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import WdkService from 'wdk-client/Service/WdkService';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { Parameter, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { StepTree } from 'wdk-client/Utils/WdkUser';
+import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
-import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
+import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
-import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineStepMenu.scss';
 
@@ -31,6 +28,17 @@ type StateProps = {
   booleanSearchState?: QuestionState,
   booleanOperatorParameter?: Parameter
 };
+
+function combineOperatorOptionDisplay(operator: CombineOperator, stepALabel = 'A', stepBLabel = 'B') {
+  return operator === CombineOperator.Intersect
+    ? <React.Fragment>{stepALabel} <strong>INTERSECT</strong> {stepBLabel}</React.Fragment>
+    : operator === CombineOperator.Union
+    ? <React.Fragment>{stepALabel} <strong>UNION</strong> {stepBLabel}</React.Fragment>
+    : operator === CombineOperator.LeftMinus
+    ? <React.Fragment>{stepALabel} <strong>MINUS</strong> {stepBLabel}</React.Fragment>
+    : <React.Fragment>{stepBLabel} <strong>MINUS</strong> {stepALabel}</React.Fragment>;
+}
+
 
 const recordClassSegment = createSelector(
   (_: RootState, { inputRecordClass }: OwnProps) => inputRecordClass,
@@ -182,7 +190,7 @@ export const CombineStepMenuView = (
     addType
   ]);
 
-  const onCombineWithNewSearchClicked = useCallback((newSearchUrlSegment: string) => {
+  const onNewSearchSelected = useCallback((newSearchUrlSegment: string) => {
     startOperationForm('combine-with-new-search', newSearchUrlSegment);
   }, [ startOperationForm ]);
 
@@ -196,19 +204,11 @@ export const CombineStepMenuView = (
           !booleanOperatorParameter
         )
           ? <Loading />
-          : (
-            <div className={cx('--Container')}>
-              <div className={cx('--Header')}>
-                <h3>
-                  Combine it
-                </h3>
-                  with another set of {inputRecordClass.displayNamePlural} from:
-              </div>
-              <div className={cx('--Body')}>
-                <PrimaryInputLabel
-                  resultSetSize={operandStep.estimatedSize}
-                  recordClass={inputRecordClass}
-                />
+          : <div className={cx('--Container')}>
+              <div className={cx('--Choice')}>
+                <strong>
+                  Choose <em>how</em> to combine with other {inputRecordClass.displayNamePlural}
+                </strong>
                 <div className={cx('--OperatorSelector')}>
                   {
                     combineOperatorOrder.map(operator => (
@@ -224,21 +224,31 @@ export const CombineStepMenuView = (
                         <label htmlFor={operator}>
                           <div className={cxOperator('--CombineOperator', operator)}>
                           </div>
+                          <span>
+                            {combineOperatorOptionDisplay(operator)}
+                          </span>
                         </label>
                       </div>
                     ))
                   }
                 </div>
-                <SearchInputSelector
-                  containerClassName={cx('--SecondaryInputSelector')}
-                  onCombineWithBasketClicked={onCombineWithBasketClicked}
-                  onCombineWithStrategyClicked={onCombineWithStrategyClicked}
-                  onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
-                  inputRecordClass={inputRecordClass}
-                />
               </div>
+              {
+                booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME] &&
+                <div className={cx('--Choice')}>
+                  <strong>
+                    Choose <em>which</em> {inputRecordClass.displayNamePlural} to combine. From...
+                  </strong>
+                  <SearchInputSelector
+                    strategy={strategy}
+                    onCombineWithBasketClicked={console.log}
+                    onCombineWithNewSearchClicked={console.log}
+                    onCombineWithStrategyClicked={console.log}
+                    inputRecordClass={inputRecordClass}
+                  />
+                </div>
+              }
             </div>
-          )
       }
     </div>
   );
@@ -258,6 +268,7 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
       dispatch(
         updateActiveQuestion({
           searchName: booleanSearchUrlSegment,
+          initialParamData: {},
           stepId: undefined
         })
       )

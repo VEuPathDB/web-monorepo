@@ -2,21 +2,22 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 
 import { noop } from 'lodash';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
-import { CategoriesCheckboxTree, Icon, Tooltip, Link, Loading } from 'wdk-client/Components';
+import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
+import { CategoriesCheckboxTree, Icon, Tooltip, Link, Loading, Tabs } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getAllBranchIds, getRecordClassName, EMPTY_CATEGORY_TREE_NODE, isQualifying } from 'wdk-client/Utils/CategoryUtils';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { pruneDescendantNodes, getLeaves } from 'wdk-client/Utils/TreeUtils';
+import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
 import 'wdk-client/Views/Strategy/SearchInputSelector.scss';
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import { compose } from 'redux';
-import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
-import { pruneDescendantNodes, getLeaves } from 'wdk-client/Utils/TreeUtils';
 
 type StateProps = {
   basketCount?: number,
@@ -34,7 +35,8 @@ type OwnProps = {
   onCombineWithBasketClicked: (e: React.MouseEvent) => void,
   onCombineWithStrategyClicked: (e: React.MouseEvent) => void,
   onCombineWithNewSearchClicked: (newSearchUrlSegment: string) => void,
-  inputRecordClass: RecordClass
+  inputRecordClass: RecordClass,
+  strategy: StrategyDetails
 };
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -51,7 +53,8 @@ export const SearchInputSelectorView = ({
   onCombineWithStrategyClicked,
   onCombineWithNewSearchClicked,
   searchTree,
-  requestBasketCounts
+  requestBasketCounts,
+  strategy
 }: Props) => {
   useEffect(() => {
     if (!isGuest) {
@@ -147,48 +150,71 @@ export const SearchInputSelectorView = ({
     ? [ false, undefined ]
     : [ true, `You have no other ${inputRecordClass.displayNamePlural} strategies` ];
 
+  const [ selectedTab, onTabSelected ] = useState<"new-search" | "another-strategy" | "basket">('new-search');
+
   return isGuest === undefined || (isGuest === false && basketCount === undefined)
     ? <Loading />
     : <div className={`${containerClassName || ''} ${cx()}`}>
-        <button 
-          onClick={onCombineWithBasketClicked} 
-          disabled={combineWithBasketDisabled}
-          type="button"
-          title={combineWithBasketTooltip}
-        >
-          Your {inputRecordClass.displayNamePlural} basket
-        </button>
-        <button 
-          onClick={onCombineWithStrategyClicked}
-          disabled={combineWithStrategyDisabled}
-          type="button"
-          title={combineWithStrategyTooltip}
-        >
-          A {inputRecordClass.displayNamePlural} strategy
-        </button>
-        <div className={cx('--NewSearchCheckbox')}>
-          <div className={cx('--CheckboxHeader')}>
-            A new {inputRecordClass.displayNamePlural} search
-          </div>
-          <div className={cx('--CheckboxContainer')}>
-            <CategoriesCheckboxTree
-              selectedLeaves={noSelectedLeaves}
-              onChange={noop}
-              tree={finalTree}
-              expandedBranches={expandedBranches}
-              searchTerm={searchTerm}
-              isSelectable={false}
-              searchBoxPlaceholder="Filter the searches below..."
-              leafType="search"
-              renderNode={renderNode}
-              renderNoResults={renderNoResults}
-              onUiChange={setExpandedBranches}
-              onSearchTermChange={setSearchTerm}
-              linksPosition={linksPosition}
-              showSearchBox={showSearchBox}
-            />
-          </div>
-        </div>
+        <Tabs
+          tabs={[
+            {
+              key: 'new-search',
+              display: 'A new search',
+              content: (
+                <div className={cx('--NewSearchCheckbox')}>
+                  <div className={cx('--CheckboxContainer')}>
+                    <CategoriesCheckboxTree
+                      selectedLeaves={noSelectedLeaves}
+                      onChange={noop}
+                      tree={finalTree}
+                      expandedBranches={expandedBranches}
+                      searchTerm={searchTerm}
+                      isSelectable={false}
+                      searchBoxPlaceholder="Filter the searches below..."
+                      leafType="search"
+                      renderNode={renderNode}
+                      renderNoResults={renderNoResults}
+                      onUiChange={setExpandedBranches}
+                      onSearchTermChange={setSearchTerm}
+                      linksPosition={linksPosition}
+                      showSearchBox={showSearchBox}
+                    />
+                  </div>
+                </div>
+              )
+            },
+            {
+              key: 'another-strategy',
+              display: 'Another strategy',
+              content: (
+                <button
+                  onClick={onCombineWithStrategyClicked}
+                  disabled={combineWithStrategyDisabled}
+                  type="button"
+                  title={combineWithStrategyTooltip}
+                >
+                  A {inputRecordClass.displayNamePlural} strategy
+                </button>
+              )
+            },
+            {
+              key: 'basket',
+              display: 'My basket',
+              content: (
+                <button
+                  onClick={onCombineWithBasketClicked}
+                  disabled={combineWithBasketDisabled}
+                  type="button"
+                  title={combineWithBasketTooltip}
+                >
+                  Your {inputRecordClass.displayNamePlural} basket
+                </button>
+              )
+            }
+          ]}
+          activeTab={selectedTab}
+          onTabSelected={onTabSelected}
+        />
       </div>;
 };
 
