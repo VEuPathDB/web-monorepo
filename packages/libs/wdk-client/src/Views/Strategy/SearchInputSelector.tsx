@@ -270,6 +270,7 @@ const TabDisplay = ({
         checked={tabKey === selectedTab}
         onChange={changeTab}
         tabIndex={-1}
+        readOnly
       />
       <label htmlFor={tabKey} onClick={changeTab}>
         <strong>{tabLabel}</strong>

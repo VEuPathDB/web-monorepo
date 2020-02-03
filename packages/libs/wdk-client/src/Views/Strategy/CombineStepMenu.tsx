@@ -227,6 +227,7 @@ export const CombineStepMenuView = (
                           value={operator}
                           checked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
                           tabIndex={-1}
+                          readOnly
                         />
                         <label htmlFor={operator}>
                           <div className={cxOperator('--CombineOperator', operator)}>
