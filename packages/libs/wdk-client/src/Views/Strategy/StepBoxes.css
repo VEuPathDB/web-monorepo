@@ -227,7 +227,6 @@
 }
 
 svg.StepBoxes--TransformIconInputSide, svg.StepBoxes--TransformIconOutputSide {
-  height: 100%;
   overflow: visible;
 }
 
