@@ -8,7 +8,6 @@ import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelect
 
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
-import { DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
@@ -156,7 +155,8 @@ const SelectSearchPage = ({
   inputRecordClass,
   operandStep,
   recordClassesByUrlSegment,
-  recordClassUrlSegment
+  recordClassUrlSegment,
+  strategy
 }: AddStepOperationFormProps & { recordClassUrlSegment: string }) => {
   const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
  
@@ -195,6 +195,7 @@ const SelectSearchPage = ({
         <div className={cx('--ColocationIcon')}></div>
         <SearchInputSelector
           containerClassName={cx('--SearchInputSelector')}
+          strategy={strategy}
           inputRecordClass={secondaryInputRecordClass}
           onCombineWithBasketClicked={onCombineWithBasketClicked}
           onCombineWithStrategyClicked={onCombineWithStrategyClicked}
