@@ -169,26 +169,26 @@ export const SearchInputSelectorView = ({
               ),
               content: (
                 <React.Fragment>
-                <div className={cx('--NewSearchCheckbox')}>
-                  <div className={cx('--CheckboxContainer')}>
-                    <CategoriesCheckboxTree
-                      selectedLeaves={noSelectedLeaves}
-                      onChange={noop}
-                      tree={finalTree}
-                      expandedBranches={expandedBranches}
-                      searchTerm={searchTerm}
-                      isSelectable={false}
-                      searchBoxPlaceholder="Filter the searches below..."
-                      leafType="search"
-                      renderNode={renderNode}
-                      renderNoResults={renderNoResults}
-                      onUiChange={setExpandedBranches}
-                      onSearchTermChange={setSearchTerm}
-                      linksPosition={linksPosition}
-                      showSearchBox={showSearchBox}
-                    />
+                  <div className={cx('--NewSearchCheckbox')}>
+                    <div className={cx('--CheckboxContainer')}>
+                      <CategoriesCheckboxTree
+                        selectedLeaves={noSelectedLeaves}
+                        onChange={noop}
+                        tree={finalTree}
+                        expandedBranches={expandedBranches}
+                        searchTerm={searchTerm}
+                        isSelectable={false}
+                        searchBoxPlaceholder="Filter the searches below..."
+                        leafType="search"
+                        renderNode={renderNode}
+                        renderNoResults={renderNoResults}
+                        onUiChange={setExpandedBranches}
+                        onSearchTermChange={setSearchTerm}
+                        linksPosition={linksPosition}
+                        showSearchBox={showSearchBox}
+                      />
+                    </div>
                   </div>
-                </div>
                 </React.Fragment>
               )
             },
