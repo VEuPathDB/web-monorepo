@@ -33,4 +33,22 @@
       margin: unset;
     }
   }
+
+  .wdk-TabsContainer {
+    .wdk-Tabs {
+      justify-content: space-evenly;
+    }
+
+    .wdk-Tab {
+      border: unset;
+
+      input {
+        margin-right: 0.5em;
+      }
+
+      input, label {
+        cursor: pointer;
+      }
+    }
+  }
 }

@@ -153,8 +153,8 @@ export const CombineStepMenuView = (
     loadBooleanQuestion(booleanSearchUrlSegment);
   }, [ booleanSearchUrlSegment ]);
 
-  const onOperatorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateBooleanOperator(e.target.value);
+  const onOperatorSelect = useCallback((operator: CombineOperator) => {
+    updateBooleanOperator(operator);
   }, [ updateBooleanOperator ]);
 
   const onCombineWithStrategyClicked = useCallback((_: React.MouseEvent) => {
@@ -190,7 +190,7 @@ export const CombineStepMenuView = (
     addType
   ]);
 
-  const onNewSearchSelected = useCallback((newSearchUrlSegment: string) => {
+  const onCombineWithNewSearchClicked = useCallback((newSearchUrlSegment: string) => {
     startOperationForm('combine-with-new-search', newSearchUrlSegment);
   }, [ startOperationForm ]);
 
@@ -212,14 +212,21 @@ export const CombineStepMenuView = (
                 <div className={cx('--OperatorSelector')}>
                   {
                     combineOperatorOrder.map(operator => (
-                      <div key={operator} className={cx('--OperatorChoice')} >
+                      <div
+                        key={operator}
+                        className={cx('--OperatorChoice')}
+                        tabIndex={0}
+                        onClick={() => {
+                          onOperatorSelect(operator);
+                        }}
+                      >
                         <input
                           id={operator}
                           type="radio"
                           name="operator"
                           value={operator}
-                          defaultChecked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
-                          onChange={onOperatorChange}
+                          checked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
+                          tabIndex={-1}
                         />
                         <label htmlFor={operator}>
                           <div className={cxOperator('--CombineOperator', operator)}>
@@ -241,9 +248,9 @@ export const CombineStepMenuView = (
                   </strong>
                   <SearchInputSelector
                     strategy={strategy}
-                    onCombineWithBasketClicked={console.log}
-                    onCombineWithNewSearchClicked={console.log}
-                    onCombineWithStrategyClicked={console.log}
+                    onCombineWithBasketClicked={onCombineWithBasketClicked}
+                    onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
+                    onCombineWithStrategyClicked={onCombineWithStrategyClicked}
                     inputRecordClass={inputRecordClass}
                   />
                 </div>

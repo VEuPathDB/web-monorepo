@@ -150,7 +150,7 @@ export const SearchInputSelectorView = ({
     ? [ false, undefined ]
     : [ true, `You have no other ${inputRecordClass.displayNamePlural} strategies` ];
 
-  const [ selectedTab, onTabSelected ] = useState<"new-search" | "another-strategy" | "basket">('new-search');
+  const [ selectedTab, onTabSelected ] = useState<TabKey>('new-search');
 
   return isGuest === undefined || (isGuest === false && basketCount === undefined)
     ? <Loading />
@@ -159,8 +159,16 @@ export const SearchInputSelectorView = ({
           tabs={[
             {
               key: 'new-search',
-              display: 'A new search',
+              display: (
+                <TabDisplay
+                  tabKey="new-search"
+                  tabLabel="a new search"
+                  selectedTab={selectedTab}
+                  onTabSelected={onTabSelected}
+                />
+              ),
               content: (
+                <React.Fragment>
                 <div className={cx('--NewSearchCheckbox')}>
                   <div className={cx('--CheckboxContainer')}>
                     <CategoriesCheckboxTree
@@ -181,11 +189,19 @@ export const SearchInputSelectorView = ({
                     />
                   </div>
                 </div>
+                </React.Fragment>
               )
             },
             {
               key: 'another-strategy',
-              display: 'Another strategy',
+              display: (
+                <TabDisplay
+                  tabKey="another-strategy"
+                  tabLabel="an existing strategy"
+                  selectedTab={selectedTab}
+                  onTabSelected={onTabSelected}
+                />
+              ),
               content: (
                 <button
                   onClick={onCombineWithStrategyClicked}
@@ -199,7 +215,14 @@ export const SearchInputSelectorView = ({
             },
             {
               key: 'basket',
-              display: 'My basket',
+              display: (
+                <TabDisplay
+                  tabKey="basket"
+                  tabLabel={`my ${inputRecordClass.displayNamePlural.toLowerCase()} basket`}
+                  selectedTab={selectedTab}
+                  onTabSelected={onTabSelected}
+                />
+              ),
               content: (
                 <button
                   onClick={onCombineWithBasketClicked}
@@ -216,6 +239,43 @@ export const SearchInputSelectorView = ({
           onTabSelected={onTabSelected}
         />
       </div>;
+};
+
+type TabKey = "new-search" | "another-strategy" | "basket";
+
+type TabDisplayProps = {
+  selectedTab: TabKey,
+  tabKey: TabKey,
+  tabLabel: string,
+  onTabSelected: (newSelection: TabKey) => void
+};
+
+const TabDisplay = ({
+  selectedTab,
+  tabKey,
+  tabLabel,
+  onTabSelected
+}: TabDisplayProps) => {
+  const changeTab = useCallback(() => {
+    onTabSelected(tabKey);
+  }, [ tabKey, onTabSelected ]);
+
+  return (
+    <React.Fragment>
+      <input
+        id={tabKey}
+        type="radio"
+        name="search-input-choice"
+        value={tabKey}
+        checked={tabKey === selectedTab}
+        onChange={changeTab}
+        tabIndex={-1}
+      />
+      <label htmlFor={tabKey} onClick={changeTab}>
+        <strong>{tabLabel}</strong>
+      </label>
+    </React.Fragment>
+  );
 };
 
 const isGuest = ({ globalData: { user } }: RootState) => user && user.isGuest;
