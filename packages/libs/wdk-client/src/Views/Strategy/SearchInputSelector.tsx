@@ -237,6 +237,7 @@ export const SearchInputSelectorView = ({
           ]}
           activeTab={selectedTab}
           onTabSelected={onTabSelected}
+          displayIsNavigable
         />
       </div>;
 };
@@ -269,8 +270,6 @@ const TabDisplay = ({
         value={tabKey}
         checked={tabKey === selectedTab}
         onChange={changeTab}
-        tabIndex={-1}
-        readOnly
       />
       <label htmlFor={tabKey} onClick={changeTab}>
         <strong>{tabLabel}</strong>

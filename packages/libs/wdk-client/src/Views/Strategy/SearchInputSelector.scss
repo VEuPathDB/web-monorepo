@@ -43,13 +43,14 @@
     .wdk-Tab {
       position: relative;
       border: unset;
+      cursor: default;
 
       input {
         margin-right: 0.5em;
       }
 
-      input, label {
-        cursor: pointer;
+      &:focus {
+        outline: none;
       }
 
       &__active {

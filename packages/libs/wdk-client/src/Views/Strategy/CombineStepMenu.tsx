@@ -215,10 +215,6 @@ export const CombineStepMenuView = (
                       <div
                         key={operator}
                         className={cx('--OperatorChoice')}
-                        tabIndex={0}
-                        onClick={() => {
-                          onOperatorSelect(operator);
-                        }}
                       >
                         <input
                           id={operator}
@@ -226,10 +222,13 @@ export const CombineStepMenuView = (
                           name="operator"
                           value={operator}
                           checked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
-                          tabIndex={-1}
-                          readOnly
+                          onChange={() => {
+                            onOperatorSelect(operator);
+                          }}
                         />
-                        <label htmlFor={operator}>
+                        <label htmlFor={operator} onClick={() => {
+                          onOperatorSelect(operator);
+                        }}>
                           <div className={cxOperator('--CombineOperator', operator)}>
                           </div>
                           <span>

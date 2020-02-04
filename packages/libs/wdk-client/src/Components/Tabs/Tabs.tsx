@@ -31,6 +31,13 @@ type Props<TabKey extends string> = {
    * useful to prevent the empty tab panel from showing
    */
   loadingTabs?: boolean;
+
+  /**
+   * If provided, indicates that tab navigation is controlled by
+   * the tabs' display nodes (i.e. the buttons we provide for each
+   * tab should have a tabIndex of -1)
+   */
+  displayIsNavigable?: boolean;
 };
 
 export type TabConfig<TabKey extends string> = {
@@ -58,6 +65,7 @@ export default function Tabs<T extends string>(props: Props<T>) {
             key={tab.key}
             onClick={() => props.onTabSelected(tab.key)}
             className={cx('', tab.key === props.activeTab ? 'active' : '')}
+            tabIndex={props.displayIsNavigable ? -1 : undefined}
           >
             {tab.display}
             {
