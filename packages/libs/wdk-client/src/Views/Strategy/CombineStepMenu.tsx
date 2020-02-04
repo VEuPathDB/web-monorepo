@@ -219,7 +219,7 @@ export const CombineStepMenuView = (
                         <input
                           id={operator}
                           type="radio"
-                          name="operator"
+                          name="add-step__operator-choice"
                           value={operator}
                           checked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
                           onChange={() => {

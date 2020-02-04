@@ -266,7 +266,7 @@ const TabDisplay = ({
       <input
         id={tabKey}
         type="radio"
-        name="search-input-choice"
+        name="search-input__source-choice"
         value={tabKey}
         checked={tabKey === selectedTab}
         onChange={changeTab}
