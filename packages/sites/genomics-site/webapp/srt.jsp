@@ -18,7 +18,7 @@
   <c:set var="gSrt" value="geneSrt"/>
   <c:set var="cSrt" value="contigSrt"/>
   <c:set var="eSrt" value="estSrt"/>
-  <c:set var="oSrt" value="orfSrt"/>
+  <!-- c:set var="oSrt" value="orfSrt"/ -->
   <c:set var="iSrt" value="isolateSrt"/>
 
   <table border=0 width=100% cellpadding=10 style="font-size:130%">
@@ -29,7 +29,7 @@
             <a href="#sequence">Genomic Sequence IDs</a> |  
  <c:if test="${project != 'HostDB'}" >
             <a href="#est">EST IDs</a> |  
-            <a href="#est">Popset Isolate IDs</a> |  
+            <a href="#est">Popset Isolate IDs</a>   
 </c:if>
             <%--
                <c:if test="${wdkModel.name ne 'TrichDB' && wdkModel.name ne 'EuPathDB'}">
@@ -37,7 +37,7 @@
                </c:if>
                --%>
 
-            <a href="#orf">ORF IDs</a>
+            <!--a href="#orf">ORF IDs</a-->
         </center></b>              
         <br><br>
         <c:if test="${project != 'EuPathDB'}" >
@@ -189,6 +189,7 @@ ${contigsIds3.default}:100..2000:r</textarea>
 
   <hr>
 
+<!--
   <h3><a name="orf">Retrieve Sequences By Open Reading Frame IDs</a></h3>
 
   <form action="/cgi-bin/${oSrt}" method="post">
@@ -206,13 +207,6 @@ ${contigsIds3.default}:100..2000:r</textarea>
           <input type="radio" name="type" value="genomic" checked onclick="setEnable2(true)">genomic
       </td></tr>
 
-      <%--
-         <b>Choose the type of sequence:</b>
-         <input type="radio" name="type" value="protein" checked>protein
-         <input type="radio" name="type" value="genomic">genomic
-         --%>
-
-      
       <tr><td colspan="2">
           <table id="offsetOptions2" cellpadding="2">
             <tr><td colspan="2">
@@ -261,7 +255,9 @@ ${contigsIds3.default}:100..2000:r</textarea>
   </form>
   <a href="#help"><imp:image src="images/toHelp.jpg" align="top" border='0'/></a>
 
+
   <hr>
+-->
 
   <b><a name="help">Help</a></b><br/>
 
