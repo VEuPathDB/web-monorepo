@@ -275,6 +275,10 @@ const TabDisplay = ({
       <label htmlFor={tabKey} onClick={changeTab}>
         <strong>{tabLabel}</strong>
       </label>
+      {
+        tabKey === selectedTab &&
+        <div className="wdk-TabSelectionIndicator"></div>
+      }
     </React.Fragment>
   );
 };
