@@ -160,7 +160,7 @@ const SelectSearchPage = ({
 }: AddStepOperationFormProps & { recordClassUrlSegment: string }) => {
   const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
  
-  const onCombineWithBasketClicked = useCallback(() => {
+  const onCombineWithBasketSelected = useCallback(() => {
     advanceToPage(basketPage(recordClassUrlSegment));
   }, [ advanceToPage, recordClassUrlSegment ]);
 
@@ -168,7 +168,7 @@ const SelectSearchPage = ({
     advanceToPage(strategyForm(recordClassUrlSegment));
   }, [ advanceToPage, recordClassUrlSegment ]);
 
-  const onCombineWithNewSearchClicked = useCallback((searchUrlSegment: string) => {
+  const onCombineWithNewSearchSelected = useCallback((searchUrlSegment: string) => {
     advanceToPage(newSearchForm(searchUrlSegment));
   }, [ advanceToPage ]);
 
@@ -197,9 +197,9 @@ const SelectSearchPage = ({
           containerClassName={cx('--SearchInputSelector')}
           strategy={strategy}
           inputRecordClass={secondaryInputRecordClass}
-          onCombineWithBasketClicked={onCombineWithBasketClicked}
+          onCombineWithBasketSelected={onCombineWithBasketSelected}
           onCombineWithStrategyClicked={onCombineWithStrategyClicked}
-          onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
+          onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
         />
       </div>
     </div>
