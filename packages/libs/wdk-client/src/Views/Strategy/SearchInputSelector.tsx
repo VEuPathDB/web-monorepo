@@ -18,6 +18,7 @@ import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
 import 'wdk-client/Views/Strategy/SearchInputSelector.scss';
+import { BasketInput } from './BasketInput';
 
 type StateProps = {
   basketCount?: number,
@@ -32,9 +33,9 @@ type DispatchProps = {
 
 type OwnProps = {
   containerClassName?: string,
-  onCombineWithBasketClicked: (e: React.MouseEvent) => void,
+  onCombineWithBasketSelected: () => void,
   onCombineWithStrategyClicked: (e: React.MouseEvent) => void,
-  onCombineWithNewSearchClicked: (newSearchUrlSegment: string) => void,
+  onCombineWithNewSearchSelected: (newSearchUrlSegment: string) => void,
   inputRecordClass: RecordClass,
   strategy: StrategyDetails
 };
@@ -49,9 +50,9 @@ export const SearchInputSelectorView = ({
   hasOtherStrategies,
   inputRecordClass,
   isGuest,
-  onCombineWithBasketClicked,
+  onCombineWithBasketSelected,
   onCombineWithStrategyClicked,
-  onCombineWithNewSearchClicked,
+  onCombineWithNewSearchSelected,
   searchTree,
   requestBasketCounts,
   strategy
@@ -106,7 +107,7 @@ export const SearchInputSelectorView = ({
       ? <Link 
           onClick={(e: Event) => {
             e.preventDefault();
-            onCombineWithNewSearchClicked(node.wdkReference.urlSegment);
+            onCombineWithNewSearchSelected(node.wdkReference.urlSegment);
           }}
           to={`/search/${getRecordClassUrlSegment(node)}/${node.wdkReference.urlSegment}`}
         >
@@ -123,7 +124,7 @@ export const SearchInputSelectorView = ({
         </Tooltip>
       )
       : displayElement;
-  }, [ onCombineWithNewSearchClicked ]);
+  }, [ onCombineWithNewSearchSelected ]);
 
   const noSelectedLeaves = useMemo(
     () => [] as string[],
@@ -140,12 +141,6 @@ export const SearchInputSelectorView = ({
     []
   );
   
-  const [ combineWithBasketDisabled, combineWithBasketTooltip ] = isGuest 
-    ?  [true, 'You must log in to use this feature' ]
-    : basketCount === 0
-    ? [ true, `Your ${inputRecordClass.displayNamePlural} basket is empty` ]
-    : [ false, undefined ];
-
   const [ combineWithStrategyDisabled, combineWithStrategyTooltip ] = hasOtherStrategies
     ? [ false, undefined ]
     : [ true, `You have no other ${inputRecordClass.displayNamePlural} strategies` ];
@@ -224,14 +219,12 @@ export const SearchInputSelectorView = ({
                 />
               ),
               content: (
-                <button
-                  onClick={onCombineWithBasketClicked}
-                  disabled={combineWithBasketDisabled}
-                  type="button"
-                  title={combineWithBasketTooltip}
-                >
-                  Your {inputRecordClass.displayNamePlural} basket
-                </button>
+                <BasketInput
+                  inputRecordClass={inputRecordClass}
+                  onSelectBasket={onCombineWithBasketSelected}
+                  basketCount={basketCount}
+                  isGuest={isGuest}
+                />
               )
             }
           ]}

@@ -157,11 +157,11 @@ export const CombineStepMenuView = (
     updateBooleanOperator(operator);
   }, [ updateBooleanOperator ]);
 
-  const onCombineWithStrategyClicked = useCallback((_: React.MouseEvent) => {
+  const onCombineWithStrategyClicked = useCallback(() => {
     startOperationForm('combine-with-strategy', 'main-page');
   }, []);
 
-  const onCombineWithBasketClicked = useCallback((_: React.MouseEvent) => {
+  const onCombineWithBasketSelected = useCallback(() => {
     if (basketSearchShortDisplayName && booleanSearchState) {
       onHideInsertStep();
       startCombiningWithBasket(
@@ -190,7 +190,7 @@ export const CombineStepMenuView = (
     addType
   ]);
 
-  const onCombineWithNewSearchClicked = useCallback((newSearchUrlSegment: string) => {
+  const onCombineWithNewSearchSelected = useCallback((newSearchUrlSegment: string) => {
     startOperationForm('combine-with-new-search', newSearchUrlSegment);
   }, [ startOperationForm ]);
 
@@ -248,8 +248,8 @@ export const CombineStepMenuView = (
                   </strong>
                   <SearchInputSelector
                     strategy={strategy}
-                    onCombineWithBasketClicked={onCombineWithBasketClicked}
-                    onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
+                    onCombineWithBasketSelected={onCombineWithBasketSelected}
+                    onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
                     onCombineWithStrategyClicked={onCombineWithStrategyClicked}
                     inputRecordClass={inputRecordClass}
                   />

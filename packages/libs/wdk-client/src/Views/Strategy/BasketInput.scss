@@ -1,0 +1,14 @@
+.BasketInput {
+  font-size: 1.2em;
+
+  &__enabled {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-gap: 0.75em;
+    justify-content: center;
+  }
+
+  i.fa-shopping-basket {
+    color: green;
+  }
+}
