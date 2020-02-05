@@ -148,6 +148,12 @@ body.vpdb-Body {
         font-weight: bold;
       }
 
+      .vpdb-CommunitySocialMediaLink {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-gap: 0.25em;
+      }
+
       .wdk-CategoriesCheckboxTreeWrapper {
         position: relative;
         
