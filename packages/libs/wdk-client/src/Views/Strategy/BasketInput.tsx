@@ -42,21 +42,21 @@ export const BasketInput = ({
         status === 'empty-basket' &&
           <div>
             <div>
-              Your {inputRecordClass.displayName.toLowerCase()} basket is empty.
+              Your {inputRecordClass.displayName} basket is empty.
             </div>
             <div>
-              You may add {inputRecordClass.displayNamePlural.toLowerCase()} to your basket:
+              You may add {inputRecordClass.displayNamePlural} to your basket:
 
               <ol>
                 <li>
-                  In a {inputRecordClass.displayName.toLowerCase()} page, by clicking on the{' '}
+                  In a {inputRecordClass.displayName} page, by clicking on the{' '}
                   <IconAlt fa="shopping-basket" />{' '}
                   icon located at the top
                 </li>
                 <li>
-                  In a {inputRecordClass.displayName.toLowerCase()} search result, by either:
+                  In a {inputRecordClass.displayName} search result, by either:
                     <ul>
-                      <li>Using the <IconAlt fa="shopping-basket" /> icon to add a {inputRecordClass.displayName.toLowerCase()} or a page</li>
+                      <li>Using the <IconAlt fa="shopping-basket" /> icon to add a {inputRecordClass.displayName} or a page</li>
                       <li>Using the <a href="#" onClick={e => {
                         e.preventDefault();
                       }}>Add To Basket</a> link to add the whole result</li>
@@ -71,8 +71,8 @@ export const BasketInput = ({
         <React.Fragment>
           <div>
             You have {basketCount} {basketCount === 1 
-              ? inputRecordClass.displayName.toLowerCase()
-              : inputRecordClass.displayNamePlural.toLowerCase()
+              ? inputRecordClass.displayName
+              : inputRecordClass.displayNamePlural
             } in your basket
           </div>
           <button type="button" onClick={onSelectBasket}>Run</button>

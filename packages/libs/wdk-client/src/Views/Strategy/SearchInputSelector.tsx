@@ -207,7 +207,7 @@ export const SearchInputSelectorView = ({
               display: (
                 <TabDisplay
                   tabKey="basket"
-                  tabLabel={`my ${inputRecordClass.displayNamePlural.toLowerCase()} basket`}
+                  tabLabel={`my ${inputRecordClass.displayNamePlural} basket`}
                   selectedTab={selectedTab}
                   onTabSelected={onTabSelected}
                 />
