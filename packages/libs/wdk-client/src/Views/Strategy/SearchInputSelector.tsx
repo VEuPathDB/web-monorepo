@@ -17,12 +17,14 @@ import { pruneDescendantNodes, getLeaves } from 'wdk-client/Utils/TreeUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
+import { BasketInput } from 'wdk-client/Views/Strategy/BasketInput';
+import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
+
 import 'wdk-client/Views/Strategy/SearchInputSelector.scss';
-import { BasketInput } from './BasketInput';
+
 
 type StateProps = {
   basketCount?: number,
-  hasOtherStrategies: boolean,
   isGuest?: boolean,
   searchTree: CategoryTreeNode
 };
@@ -34,7 +36,7 @@ type DispatchProps = {
 type OwnProps = {
   containerClassName?: string,
   onCombineWithBasketSelected: () => void,
-  onCombineWithStrategyClicked: (e: React.MouseEvent) => void,
+  onCombineWithStrategySelected: (strategyId: number, strategyDescription: string) => void,
   onCombineWithNewSearchSelected: (newSearchUrlSegment: string) => void,
   inputRecordClass: RecordClass,
   strategy: StrategyDetails
@@ -47,11 +49,10 @@ const cx = makeClassNameHelper('SearchInputSelector');
 export const SearchInputSelectorView = ({
   basketCount,
   containerClassName,
-  hasOtherStrategies,
   inputRecordClass,
   isGuest,
   onCombineWithBasketSelected,
-  onCombineWithStrategyClicked,
+  onCombineWithStrategySelected,
   onCombineWithNewSearchSelected,
   searchTree,
   requestBasketCounts,
@@ -141,10 +142,6 @@ export const SearchInputSelectorView = ({
     []
   );
   
-  const [ combineWithStrategyDisabled, combineWithStrategyTooltip ] = hasOtherStrategies
-    ? [ false, undefined ]
-    : [ true, `You have no other ${inputRecordClass.displayNamePlural} strategies` ];
-
   const [ selectedTab, onTabSelected ] = useState<TabKey>('new-search');
 
   return isGuest === undefined || (isGuest === false && basketCount === undefined)
@@ -198,14 +195,11 @@ export const SearchInputSelectorView = ({
                 />
               ),
               content: (
-                <button
-                  onClick={onCombineWithStrategyClicked}
-                  disabled={combineWithStrategyDisabled}
-                  type="button"
-                  title={combineWithStrategyTooltip}
-                >
-                  A {inputRecordClass.displayNamePlural} strategy
-                </button>
+                <StrategyInputSelector
+                  onStrategySelected={onCombineWithStrategySelected}
+                  primaryInput={strategy}
+                  secondaryInputRecordClass={inputRecordClass}
+                />
               )
             },
             {
@@ -280,29 +274,6 @@ const isGuest = ({ globalData: { user } }: RootState) => user && user.isGuest;
 const basketCount = ({ basket }: RootState, { inputRecordClass: { urlSegment } }: OwnProps) =>
     basket.counts && basket.counts[urlSegment];
 
-const openedStrategiesSet = createSelector(
-  ({ strategyWorkspace: { openedStrategies } }: RootState) => openedStrategies,
-  openedStrategies => openedStrategies && new Set(openedStrategies)
-);
-
-// We permit combining with strategies which are open or saved
-const hasOtherStrategies = createSelector(
-  ({ strategyWorkspace: { strategySummaries } }: RootState) => strategySummaries,
-  ({ strategyWorkspace: { activeStrategy } }: RootState) => activeStrategy && activeStrategy.strategyId,
-  (_: RootState, { inputRecordClass: { urlSegment: inputRecordClassName } }: OwnProps) => inputRecordClassName,
-  openedStrategiesSet,
-  (strategySummaries, activeStrategyId, inputRecordClassName, openedStrategiesSet) => !strategySummaries || !activeStrategyId || !openedStrategiesSet
-    ? false
-    : strategySummaries.some(({ isSaved, strategyId, recordClassName }) => 
-        recordClassName === inputRecordClassName &&
-        strategyId !== activeStrategyId &&
-        (
-          openedStrategiesSet.has(strategyId) ||
-          isSaved
-        )
-      )
-);
-
 const isSearchNode = isQualifying({
   targetType: 'search',
   scope: 'menu'
@@ -320,12 +291,9 @@ const searchTree = createSelector(
       ontology.tree)
 );
 
-
-
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   isGuest: isGuest(state),
   basketCount: basketCount(state, props),
-  hasOtherStrategies: hasOtherStrategies(state, props),
   searchTree: searchTree(state, props)
 });
 

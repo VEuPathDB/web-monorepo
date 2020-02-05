@@ -76,6 +76,12 @@ const StrategyInputSelectorView = ({
     : (
       <div className={cx()}>
         {
+          openedStrategyChoices.length === 0 && savedStrategyChoices.length === 0 &&
+          <div className={cx('--NoAvailableStrategies')}>
+            You have no other open or saved {secondaryInputRecordClass.displayName} strategies
+          </div>
+        }
+        {
           openedStrategyChoices.length > 0 &&
           <div className={cx('--OpenedStrategies')}>
             <StrategyInputSelectorTable

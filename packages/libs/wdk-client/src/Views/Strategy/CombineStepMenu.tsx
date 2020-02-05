@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
 import { updateActiveQuestion, updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { requestCombineWithBasket } from 'wdk-client/Actions/StrategyActions';
+import { requestCombineWithBasket, requestCombineWithStrategy } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { QuestionState, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
@@ -119,6 +119,15 @@ type DispatchProps = {
     booleanSearchParamValues: Record<string, string>,
     booleanSearchDisplayName: string,
     addType: AddType
+  ) => void,
+  startCombiningWithStrategy: (
+    strategyId: number,
+    secondaryInputStrategyId: number,
+    secondaryInputName: string,
+    booleanSearchUrlSegment: string,
+    booleanSearchParamValues: Record<string, string>,
+    booleanSearchDisplayName: string,
+    addType: AddType
   ) => void
 };
 
@@ -142,9 +151,9 @@ export const CombineStepMenuView = (
     inputRecordClass,
     updateBooleanOperator,
     startOperationForm,
-    operandStep,
     onHideInsertStep,
     startCombiningWithBasket,
+    startCombiningWithStrategy,
     strategy,
     addType
   }: Props
@@ -157,38 +166,61 @@ export const CombineStepMenuView = (
     updateBooleanOperator(operator);
   }, [ updateBooleanOperator ]);
 
-  const onCombineWithStrategyClicked = useCallback(() => {
-    startOperationForm('combine-with-strategy', 'main-page');
-  }, []);
+  const onCombineWithStrategySelected = useCallback(
+    (secondaryInputStrategyId: number, secondaryInputName: string) => {
+      if (booleanSearchState) {
+        onHideInsertStep();
+        startCombiningWithStrategy(
+          strategy.strategyId,
+          secondaryInputStrategyId,
+          secondaryInputName || DEFAULT_STRATEGY_NAME,
+          booleanSearchUrlSegment,
+          booleanSearchState.paramValues,
+          booleanSearchState.question.displayName,
+          addType
+        );
+      }
+    },
+    [
+      onHideInsertStep,
+      startCombiningWithBasket,
+      strategy.strategyId,
+      booleanSearchUrlSegment,
+      booleanSearchState,
+      addType
+    ]
+  );
 
-  const onCombineWithBasketSelected = useCallback(() => {
-    if (basketSearchShortDisplayName && booleanSearchState) {
-      onHideInsertStep();
-      startCombiningWithBasket(
-        strategy.strategyId,
-        inputRecordClass.urlSegment,
-        basketSearchUrlSegment,
-        basketDatasetParamName,
-        basketSearchShortDisplayName,
-        booleanSearchUrlSegment,
-        booleanSearchState.paramValues,
-        booleanSearchState.question.displayName,
-        addType
-      );
-    }
-  }, 
-  [ 
-    onHideInsertStep, 
-    startCombiningWithBasket,
-    strategy.strategyId, 
-    inputRecordClass.urlSegment, 
-    basketSearchUrlSegment, 
-    basketDatasetParamName ,
-    basketSearchShortDisplayName,
-    booleanSearchUrlSegment,
-    booleanSearchState,
-    addType
-  ]);
+  const onCombineWithBasketSelected = useCallback(
+    () => {
+      if (basketSearchShortDisplayName && booleanSearchState) {
+        onHideInsertStep();
+        startCombiningWithBasket(
+          strategy.strategyId,
+          inputRecordClass.urlSegment,
+          basketSearchUrlSegment,
+          basketDatasetParamName,
+          basketSearchShortDisplayName,
+          booleanSearchUrlSegment,
+          booleanSearchState.paramValues,
+          booleanSearchState.question.displayName,
+          addType
+        );
+      }
+    },
+    [
+      onHideInsertStep,
+      startCombiningWithBasket,
+      strategy.strategyId,
+      inputRecordClass.urlSegment,
+      basketSearchUrlSegment,
+      basketDatasetParamName,
+      basketSearchShortDisplayName,
+      booleanSearchUrlSegment,
+      booleanSearchState,
+      addType
+    ]
+  );
 
   const onCombineWithNewSearchSelected = useCallback((newSearchUrlSegment: string) => {
     startOperationForm('combine-with-new-search', newSearchUrlSegment);
@@ -250,7 +282,7 @@ export const CombineStepMenuView = (
                     strategy={strategy}
                     onCombineWithBasketSelected={onCombineWithBasketSelected}
                     onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
-                    onCombineWithStrategyClicked={onCombineWithStrategyClicked}
+                    onCombineWithStrategySelected={onCombineWithStrategySelected}
                     inputRecordClass={inputRecordClass}
                   />
                 </div>
@@ -281,7 +313,8 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
       )
     },
     updateParamValue: compose(dispatch, updateParamValue),
-    startCombiningWithBasket: compose(dispatch, requestCombineWithBasket)
+    startCombiningWithBasket: compose(dispatch, requestCombineWithBasket),
+    startCombiningWithStrategy: compose(dispatch, requestCombineWithStrategy)
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
