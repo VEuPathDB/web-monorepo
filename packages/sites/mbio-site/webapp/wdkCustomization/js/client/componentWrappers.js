@@ -139,7 +139,7 @@ function makeHeaderMenuItems(state) {
           },
 */        {
             text: 'My Basket',
-            appUrl: '/workspace/basket',
+            route: '/workspace/basket',
             loginRequired: true
           },
           {
