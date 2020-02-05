@@ -42,6 +42,13 @@ const StrategyInputSelectorView = ({
 }: Props) => {
   const [ strategies, setStrategies ] = useState<StrategySummary[] | undefined>(undefined);
 
+  // FIXME: Find a nicer way of dealing with the "equivalence" of genes and transcripts.
+  const homogeneousSecondaryInputRecordClasses = useMemo(() => {
+    return ['gene', 'transcript'].includes(secondaryInputRecordClass.urlSegment)
+      ? [ 'gene', 'transcript' ]
+      : [ secondaryInputRecordClass.urlSegment ];
+  }, [ secondaryInputRecordClass ]);
+
   useWdkEffect(wdkService => {
     wdkService.getStrategies().then(setStrategies);
   }, []);
@@ -49,7 +56,8 @@ const StrategyInputSelectorView = ({
   const openedStrategyChoices = useMemo(
     () => strategies && openedStrategies && strategies.filter(
       ({ recordClassName, strategyId }) => (
-        recordClassName === secondaryInputRecordClass.urlSegment &&
+        recordClassName != null &&
+        homogeneousSecondaryInputRecordClasses.includes(recordClassName) &&
         openedStrategies.has(strategyId) &&
         strategyId !== primaryInput.strategyId
       )
@@ -60,7 +68,8 @@ const StrategyInputSelectorView = ({
   const savedStrategyChoices = useMemo(
     () => strategies && strategies.filter(
       ({ isSaved, recordClassName, strategyId }) => (
-        recordClassName === secondaryInputRecordClass.urlSegment &&
+        recordClassName != null &&
+        homogeneousSecondaryInputRecordClasses.includes(recordClassName) &&
         isSaved &&
         strategyId !== primaryInput.strategyId
       )

@@ -6,6 +6,7 @@ import { createSelector } from 'reselect';
 import { reportSubmissionError } from 'wdk-client/Actions/QuestionActions';
 import { requestStrategy, requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
 import { CommonModal as StrategyModal, Loading, HelpIcon } from 'wdk-client/Components';
+import DeferredDiv from 'wdk-client/Components/Display/DeferredDiv';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
@@ -224,85 +225,81 @@ export const AddStepPanelView = wrappable((
           )
             ? <Loading />
             : <div className={cx('--Container')}>
+                <DeferredDiv className={cx('--MenuContainer')} visible={selectedOperation == null}>
+                  <div className={cx('--MenuSelector')}>
+                    {
+                      addStepMenuConfigs.map(
+                        ({ name: operationName }) =>
+                          <AddStepMenuSelection
+                            key={operationName}
+                            operationName={operationName}
+                            isSelected={selectedMenu === operationName}
+                            onSelectMenuItem={() => {
+                              startOperationMenu(operationName);
+                            }}
+                          />
+                      )
+                    }
+                  </div>
+                  <div className={cx('--SelectedMenuContainer')}>
+                    {
+                      SelectedMenu == null
+                        ? <div>
+                            <div>
+                              Select an option on the left to consider more data for your search strategy.
+                            </div>
+
+                            <div>
+                              For example, you can...
+                            </div>
+
+                            <div>
+                              {TODO}
+                            </div>
+                          </div>
+                        : <SelectedMenu
+                            strategy={strategy}
+                            inputRecordClass={inputRecordClass}
+                            startOperationForm={startOperationForm}
+                            updateStrategy={updateStrategy}
+                            addType={addType}
+                            stepsCompletedNumber={stepsCompletedNumber}
+                            operandStep={operandStep}
+                            previousStep={previousStep}
+                            outputStep={outputStep}
+                            questions={questions}
+                            questionsByUrlSegment={questionsByUrlSegment}
+                            recordClasses={recordClasses}
+                            recordClassesByUrlSegment={recordClassesByUrlSegment}
+                            onHideInsertStep={onHideInsertStep}
+                            reportSubmissionError={reportSubmissionError}
+                          />
+                    }
+                  </div>
+                </DeferredDiv>
                 {
-                  !selectedOperation
-                    ? (
-                      <div className={cx('--MenuContainer')}>
-                        <div className={cx('--MenuSelector')}>
-                          {
-                            addStepMenuConfigs.map(
-                              ({ name: operationName }) =>
-                                <AddStepMenuSelection
-                                  key={operationName}
-                                  operationName={operationName}
-                                  isSelected={selectedMenu === operationName}
-                                  onSelectMenuItem={() => {
-                                    startOperationMenu(operationName);
-                                  }}
-                                />
-                            )
-                          }
-                        </div>
-                        <div className={cx('--SelectedMenuContainer')}>
-                          {
-                            SelectedMenu == null
-                              ? <div>
-                                  <div>
-                                    Select an option on the left to consider more data for your search strategy.
-                                  </div>
-
-                                  <div>
-                                    For example, you can...
-                                  </div>
-
-                                  <div>
-                                    {TODO}
-                                  </div>
-                                </div>
-                              : <SelectedMenu
-                                  strategy={strategy}
-                                  inputRecordClass={inputRecordClass}
-                                  startOperationForm={startOperationForm}
-                                  updateStrategy={updateStrategy}
-                                  addType={addType}
-                                  stepsCompletedNumber={stepsCompletedNumber}
-                                  operandStep={operandStep}
-                                  previousStep={previousStep}
-                                  outputStep={outputStep}
-                                  questions={questions}
-                                  questionsByUrlSegment={questionsByUrlSegment}
-                                  recordClasses={recordClasses}
-                                  recordClassesByUrlSegment={recordClassesByUrlSegment}
-                                  onHideInsertStep={onHideInsertStep}
-                                  reportSubmissionError={reportSubmissionError}
-                                />
-                          }
-                        </div>
-                      </div>
-                    )
-                    : (
-                      <div className={cx('--Form')}>
-                        <SelectedForm
-                          strategy={strategy}
-                          inputRecordClass={inputRecordClass}
-                          currentPage={currentPage}
-                          advanceToPage={advanceToPage}
-                          replacePage={replacePage}
-                          updateStrategy={updateStrategy}
-                          addType={addType}
-                          stepsCompletedNumber={stepsCompletedNumber}
-                          operandStep={operandStep}
-                          previousStep={previousStep}
-                          outputStep={outputStep}
-                          questions={questions}
-                          questionsByUrlSegment={questionsByUrlSegment}
-                          recordClasses={recordClasses}
-                          recordClassesByUrlSegment={recordClassesByUrlSegment}
-                          onHideInsertStep={onHideInsertStep}
-                          reportSubmissionError={reportSubmissionError}
-                        />
-                      </div>
-                    )
+                  selectedOperation != null &&
+                  <div className={cx('--Form')}>
+                    <SelectedForm
+                      strategy={strategy}
+                      inputRecordClass={inputRecordClass}
+                      currentPage={currentPage}
+                      advanceToPage={advanceToPage}
+                      replacePage={replacePage}
+                      updateStrategy={updateStrategy}
+                      addType={addType}
+                      stepsCompletedNumber={stepsCompletedNumber}
+                      operandStep={operandStep}
+                      previousStep={previousStep}
+                      outputStep={outputStep}
+                      questions={questions}
+                      questionsByUrlSegment={questionsByUrlSegment}
+                      recordClasses={recordClasses}
+                      recordClassesByUrlSegment={recordClassesByUrlSegment}
+                      onHideInsertStep={onHideInsertStep}
+                      reportSubmissionError={reportSubmissionError}
+                    />
+                  </div>
                 }
               </div>
         }
