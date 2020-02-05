@@ -164,7 +164,7 @@ const SelectSearchPage = ({
     advanceToPage(basketPage(recordClassUrlSegment));
   }, [ advanceToPage, recordClassUrlSegment ]);
 
-  const onCombineWithStrategyClicked = useCallback(() => {
+  const onCombineWithStrategySelected = useCallback(() => {
     advanceToPage(strategyForm(recordClassUrlSegment));
   }, [ advanceToPage, recordClassUrlSegment ]);
 
@@ -198,7 +198,7 @@ const SelectSearchPage = ({
           strategy={strategy}
           inputRecordClass={secondaryInputRecordClass}
           onCombineWithBasketSelected={onCombineWithBasketSelected}
-          onCombineWithStrategyClicked={onCombineWithStrategyClicked}
+          onCombineWithStrategySelected={onCombineWithStrategySelected}
           onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
         />
       </div>
