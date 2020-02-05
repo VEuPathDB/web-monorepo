@@ -242,3 +242,13 @@ export function decode<T>(decoder: Decoder<T>, jsonString: string): T {
   }
   return r.value;
 }
+
+export function decodeOrElse<T>(decoder: Decoder<T>, defaultValue: T, jsonString: string): T {
+  try {
+    return decode(decoder, jsonString);
+  }
+  catch (e) {
+    console.warn('Unable to decode value. Falling back to default.', e);
+    return defaultValue;
+  }
+}

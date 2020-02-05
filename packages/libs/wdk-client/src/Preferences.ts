@@ -21,7 +21,7 @@ export const preferences = {
   openedStrategies: memoize(() => makePreference(
     'openedStrategies',
     arrayOf(number),
-    PersistenceLevel.Session,
+    PersistenceLevel.Local,
     'wdk/openedStrategies'
   )),
 
@@ -46,8 +46,13 @@ export const preferences = {
 
 }
 
+/**
+ * Persistence levels
+ */
 export const enum PersistenceLevel {
+  /** Browsing session lifetime */
   Session = 'session',
+  /** BrowseinghHistory lifetime */
   Local = 'local',
   Project = 'project',
   Global = 'global'
