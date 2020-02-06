@@ -258,6 +258,7 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
       dispatch(
         updateActiveQuestion({
           searchName: booleanSearchUrlSegment,
+          autoRun: false,
           stepId: undefined
         })
       )

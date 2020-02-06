@@ -104,20 +104,24 @@ function QuestionController(props: Props) {
   useEffect(() => {
     props.dispatch(updateActiveQuestion({
       searchName,
+      autoRun,
       initialParamData: autoRun && initialParamData == null ? {} : initialParamData,
       stepId
     }))
   }, [searchName, stepId]);
 
-  useEffect(() => {
-    if (autoRun && state.questionStatus === 'complete') {
-      props.dispatch(submitQuestion({
-        searchName,
-        submissionMetadata,
-        autoRun
-      }));
-    }
-  }, [state.questionStatus]);
+  // useEffect(() => {
+  //   // FIXME This is getting called twice when a question form is loaded a second time
+  //   // Need to make sure this only gets called after the question state is refreshed, but not sure how...
+  //   // Perhaps this logic should get moved to the question store w/ an observer
+  //   if (autoRun && state.questionStatus === 'complete') {
+  //     props.dispatch(submitQuestion({
+  //       searchName,
+  //       submissionMetadata,
+  //       autoRun
+  //     }));
+  //   }
+  // }, [state.questionStatus]);
 
   useSetSearchDocumentTitle(state.question, state.questionStatus, recordClasses, recordClass, shouldChangeDocumentTitle);
   

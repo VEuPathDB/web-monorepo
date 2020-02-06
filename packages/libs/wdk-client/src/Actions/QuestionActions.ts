@@ -43,6 +43,7 @@ export const UPDATE_ACTIVE_QUESTION = 'question/update-active-question';
 export interface UpdateActiveQuestionAction {
   type: typeof UPDATE_ACTIVE_QUESTION;
   payload: QuestionPayload<{
+    autoRun: boolean;
     initialParamData?: Record<string, string>;
     stepId: number | undefined
   }>
@@ -50,6 +51,7 @@ export interface UpdateActiveQuestionAction {
 
 export function updateActiveQuestion(payload: {
   searchName: string;
+  autoRun: boolean,
   initialParamData?: Record<string, string>,
   stepId: number | undefined
 }): UpdateActiveQuestionAction {
@@ -66,6 +68,7 @@ export const QUESTION_LOADED = 'question/question-loaded';
 export interface QuestionLoadedAction {
   type: typeof QUESTION_LOADED;
   payload: QuestionPayload<{
+    autoRun: boolean;
     question: QuestionWithParameters;
     recordClass: RecordClass;
     paramValues: ParameterValues;

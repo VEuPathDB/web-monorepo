@@ -63,6 +63,7 @@ class LegacyParamController extends ViewController<Props> {
     ) {
       this.props.mapped.eventHandlers.setActiveQuestion({
         searchName: this.props.own.searchName,
+        autoRun: false,
         initialParamData: this.props.own.paramValues,
         stepId: this.props.own.stepId
       });

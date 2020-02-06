@@ -30,7 +30,8 @@ import {
   questionError,
   ENABLE_SUBMISSION,
   reportSubmissionError,
-  submitQuestion
+  submitQuestion,
+  SubmissionMetadata
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -342,13 +343,32 @@ type QuestionEpic = ModuleEpic<RootState, Action>;
 const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   filter((action): action is UpdateActiveQuestionAction => action.type === UPDATE_ACTIVE_QUESTION),
   mergeMap(action =>
-    from(loadQuestion(wdkService, action.payload.searchName, action.payload.stepId, action.payload.initialParamData)).pipe(
+    from(loadQuestion(
+      wdkService,
+      action.payload.searchName,
+      action.payload.autoRun,
+      action.payload.stepId,
+      action.payload.initialParamData
+    )).pipe(
     takeUntil(action$.pipe(filter(killAction => (
       killAction.type === UNLOAD_QUESTION &&
       killAction.payload.searchName === action.payload.searchName
     )))))
   )
 );
+
+const observeAutoRun: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
+  filter((action): action is QuestionLoadedAction =>
+    action.type === QUESTION_LOADED && action.payload.autoRun
+  ),
+  map(action => submitQuestion({
+    searchName: action.payload.searchName,
+    autoRun: action.payload.autoRun,
+    submissionMetadata: {
+      type: 'create-strategy'
+    }
+  }))
+)
 
 const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
   ofType<QuestionLoadedAction>(QUESTION_LOADED),
@@ -545,6 +565,7 @@ async function goToStrategyPage(
 
 export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,
+  observeAutoRun,
   observeLoadQuestionSuccess,
   observeUpdateDependentParams,
   observeQuestionSubmit,
@@ -554,7 +575,13 @@ export const observeQuestion: QuestionEpic = combineEpics(
 // Helpers
 // -------
 
-async function loadQuestion(wdkService: WdkService, searchName: string, stepId?: number, initialParamData?: Record<string, string>) {
+async function loadQuestion(
+  wdkService: WdkService,
+  searchName: string,
+  autoRun: boolean,
+  stepId?: number,
+  initialParamData?: Record<string, string>,
+) {
   const step = stepId ? await wdkService.findStep(stepId) : undefined;
   const question = step == null
     ? await wdkService.getQuestionAndParameters(searchName)
@@ -565,6 +592,7 @@ async function loadQuestion(wdkService: WdkService, searchName: string, stepId?:
                     : makeDefaultParamValues(question.parameters)
   const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
   return questionLoaded({
+    autoRun,
     searchName,
     question,
     recordClass,
