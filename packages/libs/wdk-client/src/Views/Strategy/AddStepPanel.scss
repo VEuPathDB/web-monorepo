@@ -66,14 +66,36 @@
     grid-gap: 1em;
   }
 
-  &--SelectedMenuContainer {
-    margin: 1em;
-    height: 50em;
-  }
-
   &--MenuSelector {
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 1em;
+  }
+
+  &--SelectedMenuContainer {
+    margin: 1em;
+    height: 50em;
+
+    .MenuChoicesContainer {
+      counter-reset: panel;
+
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-gap: 1em;
+
+      .MenuChoice::before {
+        counter-increment: panel;
+        content: counter(panel);
+        background: #666666;
+        border-radius: 1em;
+        height: 1.5em;
+        width: 1.5em;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: .5em;
+        color: white;
+      }
+    }
   }
 }

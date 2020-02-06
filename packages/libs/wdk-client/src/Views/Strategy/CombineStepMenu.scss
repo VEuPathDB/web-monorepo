@@ -22,28 +22,6 @@
     }
   }
 
-  &--Container {
-    counter-reset: panel;
-
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 1em;
-  };
-
-  &--Choice::before {
-    counter-increment: panel;
-    content: counter(panel);
-    background: #666666;
-    border-radius: 1em;
-    height: 1.5em;
-    width: 1.5em;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: .5em;
-    color: white;
-  }
-
   .SearchInputSelector {
     margin: 1em 1em 2em 2em;
   }

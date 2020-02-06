@@ -11,6 +11,7 @@ import { QuestionState, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/Qu
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+import { MenuChoicesContainer, MenuChoice } from 'wdk-client/Views/Strategy/AddStepUtils';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
@@ -236,8 +237,8 @@ export const CombineStepMenuView = (
           !booleanOperatorParameter
         )
           ? <Loading />
-          : <div className={cx('--Container')}>
-              <div className={cx('--Choice')}>
+          : <MenuChoicesContainer containerClassName={cx('--Container')}>
+              <MenuChoice>
                 <strong>
                   Choose <em>how</em> to combine with other {inputRecordClass.displayNamePlural}
                 </strong>
@@ -271,10 +272,10 @@ export const CombineStepMenuView = (
                     ))
                   }
                 </div>
-              </div>
+              </MenuChoice>
               {
                 booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME] &&
-                <div className={cx('--Choice')}>
+                <MenuChoice>
                   <strong>
                     Choose <em>which</em> {inputRecordClass.displayNamePlural} to combine. From...
                   </strong>
@@ -285,9 +286,9 @@ export const CombineStepMenuView = (
                     onCombineWithStrategySelected={onCombineWithStrategySelected}
                     inputRecordClass={inputRecordClass}
                   />
-                </div>
+                </MenuChoice>
               }
-            </div>
+            </MenuChoicesContainer>
       }
     </div>
   );
