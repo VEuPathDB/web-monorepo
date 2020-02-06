@@ -315,7 +315,7 @@ button.StepBoxes--EditButton {
 }
 
 .StepBoxes--BoxLink__transform + button.StepBoxes--EditButton {
-  right: 1em;
+  right: 0.5em;
 }
 
 button.StepBoxes--EditButton:hover {
