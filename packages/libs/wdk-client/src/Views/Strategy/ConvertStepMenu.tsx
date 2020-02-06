@@ -6,13 +6,12 @@ import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel'
+import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+import { MenuChoicesContainer, MenuChoice } from 'wdk-client/Views/Strategy/AddStepUtils';
 
 import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
 
 const cx = makeClassNameHelper('ConvertStepMenu');
-
-const TODO = 'MORE HELP TEXT HERE';
 
 type StateProps = {
   operatorChoices?: OperatorChoice[];
@@ -38,31 +37,28 @@ const ConvertStepMenuView = ({
     {
       !operatorChoices
         ? <Loading />
-        : <div className={cx('--Container')}>
-            <h2 className={cx('--Header')}>
-              Transform {inputResultSetDescription(operandStep.estimatedSize, inputRecordClass)} into:
-            </h2>
-            <div className={cx('--OperatorSelector')}>
-              {
-                !previousStep || operatorChoices.length === 0
-                  ? "No conversions available."
-                  : (
-                    <>
-                      {
-                        operatorChoices.map(({ searchName, display }) =>
-                          <button key={searchName} onClick={() => startOperationForm('convert', searchName)}>
-                            {display}
-                          </button>
-                        )
-                      }
-                    </>
-                  )
-              }
-              <div>
-                {TODO}
+        : <MenuChoicesContainer containerClassName={cx('--Container')}>
+            <MenuChoice>
+              <strong>Transform your {inputResultSetDescription(operandStep.estimatedSize, inputRecordClass)} into...</strong>
+              <div className={cx('--OperatorSelector')}>
+                {
+                  !previousStep || operatorChoices.length === 0
+                    ? "No conversions available."
+                    : (
+                      <>
+                        {
+                          operatorChoices.map(({ searchName, display }) =>
+                            <button key={searchName} onClick={() => startOperationForm('convert', searchName)}>
+                              {display}
+                            </button>
+                          )
+                        }
+                      </>
+                    )
+                }
               </div>
-            </div>
-          </div>
+            </MenuChoice>
+          </MenuChoicesContainer>
     }
   </div>
 );

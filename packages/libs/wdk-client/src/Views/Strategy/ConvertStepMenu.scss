@@ -8,10 +8,10 @@
   &--OperatorSelector {
     display: grid;
     grid-template-columns: 1fr;
-    flex-direction: column;
 
     row-gap: 1em;
 
     width: max-content;
+    margin: 1em auto 1em auto;
   }
 }
