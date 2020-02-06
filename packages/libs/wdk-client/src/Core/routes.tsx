@@ -215,7 +215,7 @@ const routes: RouteEntry[] = [
     component: (props: RouteComponentProps<{ subPath?: string }, {}, { allowEmptyOpened?: boolean } | undefined>) => {
       const queryParams = parseQueryString(props);
       const { subPath = '' } = props.match.params;
-      const { state: { allowEmptyOpened = false } = {} } = props.location;
+      const { allowEmptyOpened = false } = props.location.state || {};
       return (
         <StrategyWorkspaceController
           queryParams={queryParams}
