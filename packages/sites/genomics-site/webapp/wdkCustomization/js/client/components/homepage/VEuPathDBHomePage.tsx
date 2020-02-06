@@ -256,7 +256,7 @@ const useHeaderMenuItems = (
   const menuItemEntries: HeaderMenuItemEntry[] = [
     {
       key: 'search-strategies',
-      display: 'My Search Strategies',
+      display: 'My Strategies',
       type: 'reactRoute',
       url: '/workspace/strategies'
     },
