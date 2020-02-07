@@ -6,6 +6,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
 import './BasketInput.scss';
+import { inputResultSetDescription } from './AddStepUtils';
 
 const cx = makeClassNameHelper('BasketInput');
 
@@ -72,10 +73,7 @@ export const BasketInput = ({
         status === 'enabled' &&
         <React.Fragment>
           <div>
-            You have {basketCount} {basketCount === 1 
-              ? inputRecordClass.displayName
-              : inputRecordClass.displayNamePlural
-            } in your basket
+            Your basket contains {inputResultSetDescription(basketCount, inputRecordClass)}
           </div>
           <div>
             <button type="button" onClick={onSelectBasket}>{selectButtonText}</button>

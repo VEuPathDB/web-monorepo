@@ -11,7 +11,7 @@ import { QuestionState, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/Qu
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { MenuChoicesContainer, MenuChoice } from 'wdk-client/Views/Strategy/AddStepUtils';
+import { MenuChoicesContainer, MenuChoice, inputResultSetDescription } from 'wdk-client/Views/Strategy/AddStepUtils';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
@@ -156,7 +156,8 @@ export const CombineStepMenuView = (
     startCombiningWithBasket,
     startCombiningWithStrategy,
     strategy,
-    addType
+    addType,
+    operandStep
   }: Props
 ) => {
   useEffect(() => {
@@ -283,7 +284,7 @@ export const CombineStepMenuView = (
                   onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
                   onCombineWithStrategySelected={onCombineWithStrategySelected}
                   inputRecordClass={inputRecordClass}
-                  selectButtonText="Combine with basket"
+                  selectButtonText={`Combine ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass)} with your basket`}
                 />
               </MenuChoice>
             </MenuChoicesContainer>
