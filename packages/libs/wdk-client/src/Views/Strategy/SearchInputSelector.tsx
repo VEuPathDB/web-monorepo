@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 
-import { noop } from 'lodash';
+import { noop, orderBy } from 'lodash';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
@@ -13,7 +13,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getAllBranchIds, getRecordClassName, EMPTY_CATEGORY_TREE_NODE, isQualifying } from 'wdk-client/Utils/CategoryUtils';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { pruneDescendantNodes, getLeaves } from 'wdk-client/Utils/TreeUtils';
+import { pruneDescendantNodes, getLeaves, mapStructure } from 'wdk-client/Utils/TreeUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
@@ -282,7 +282,7 @@ const isSearchNode = isQualifying({
   scope: 'menu'
 })
 
-const searchTree = createSelector(
+const unorderedSearchTree = createSelector(
   ({ globalData }: RootState) => globalData.ontology,
   (_: RootState, { inputRecordClass: { fullName } }: OwnProps) => fullName,
   (ontology, recordClassFullName) =>
@@ -292,6 +292,24 @@ const searchTree = createSelector(
         getRecordClassName(node) === recordClassFullName
       ),
       ontology.tree)
+);
+
+// FIXME: This logic needs to be...
+//   (1) unified with the similar logic for the new home page's searchTree, or...
+//   (2) better yet, eliminated via an update to the underlying ontolog(ies)
+const searchTree = createSelector(
+  unorderedSearchTree,
+  unorderedSearchTree =>
+    unorderedSearchTree && mapStructure(
+      (node, mappedChildren: CategoryTreeNode[]) => {
+        return {
+          ...node,
+          children: orderBy(mappedChildren, getDisplayName)
+        };
+      },
+      node => node.children,
+      unorderedSearchTree
+    )
 );
 
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
