@@ -200,6 +200,7 @@ const SelectSearchPage = ({
           onCombineWithBasketSelected={onCombineWithBasketSelected}
           onCombineWithStrategySelected={onCombineWithStrategySelected}
           onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
+          selectButtonText="Colocate with basket"
         />
       </div>
     </div>
