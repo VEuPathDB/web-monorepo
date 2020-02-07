@@ -13,12 +13,16 @@
     position: relative;
     border: 1px solid grey;
     padding: 0 0.5em;
-    background-color: white;
+    background-color: #f0f0f0;
     border-radius: 1px;
     text-align: left;
 
     .wdk-CheckboxTreeLinks {
       margin-left: unset;
+
+      button {
+        color: #069
+      }
     }
   }
 
