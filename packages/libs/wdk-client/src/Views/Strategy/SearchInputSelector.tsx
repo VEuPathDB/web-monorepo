@@ -154,7 +154,7 @@ export const SearchInputSelectorView = ({
               display: (
                 <TabDisplay
                   tabKey="new-search"
-                  tabLabel="a new search"
+                  tabLabel="A new search"
                   selectedTab={selectedTab}
                   onTabSelected={onTabSelected}
                 />
@@ -189,7 +189,7 @@ export const SearchInputSelectorView = ({
               display: (
                 <TabDisplay
                   tabKey="another-strategy"
-                  tabLabel="an existing strategy"
+                  tabLabel="An existing strategy"
                   selectedTab={selectedTab}
                   onTabSelected={onTabSelected}
                 />
@@ -207,7 +207,7 @@ export const SearchInputSelectorView = ({
               display: (
                 <TabDisplay
                   tabKey="basket"
-                  tabLabel={`my ${inputRecordClass.displayNamePlural} basket`}
+                  tabLabel={`My ${inputRecordClass.displayNamePlural} basket`}
                   selectedTab={selectedTab}
                   onTabSelected={onTabSelected}
                 />
