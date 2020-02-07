@@ -273,21 +273,18 @@ export const CombineStepMenuView = (
                   }
                 </div>
               </MenuChoice>
-              {
-                booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME] &&
-                <MenuChoice>
-                  <strong>
-                    Choose <em>which</em> {inputRecordClass.displayNamePlural} to combine. From...
-                  </strong>
-                  <SearchInputSelector
-                    strategy={strategy}
-                    onCombineWithBasketSelected={onCombineWithBasketSelected}
-                    onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
-                    onCombineWithStrategySelected={onCombineWithStrategySelected}
-                    inputRecordClass={inputRecordClass}
-                  />
-                </MenuChoice>
-              }
+              <MenuChoice>
+                <strong>
+                  Choose <em>which</em> {inputRecordClass.displayNamePlural} to combine. From...
+                </strong>
+                <SearchInputSelector
+                  strategy={strategy}
+                  onCombineWithBasketSelected={onCombineWithBasketSelected}
+                  onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
+                  onCombineWithStrategySelected={onCombineWithStrategySelected}
+                  inputRecordClass={inputRecordClass}
+                />
+              </MenuChoice>
             </MenuChoicesContainer>
       }
     </div>
@@ -308,7 +305,6 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
       dispatch(
         updateActiveQuestion({
           searchName: booleanSearchUrlSegment,
-          initialParamData: {},
           autoRun: false,
           stepId: undefined
         })
