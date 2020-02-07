@@ -4,6 +4,7 @@ import { Loading } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StepTree, NewStepSpec } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+import { inputResultSetDescription } from 'wdk-client/Views/Strategy/AddStepUtils';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
@@ -200,7 +201,7 @@ const SelectSearchPage = ({
           onCombineWithBasketSelected={onCombineWithBasketSelected}
           onCombineWithStrategySelected={onCombineWithStrategySelected}
           onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
-          selectButtonText="Colocate with basket"
+          selectButtonText={`Colocate ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass) } with your basket`}
         />
       </div>
     </div>
