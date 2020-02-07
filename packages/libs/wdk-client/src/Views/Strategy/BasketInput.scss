@@ -3,9 +3,12 @@
 
   &__enabled {
     display: grid;
-    grid-template-rows: 1fr;
     grid-gap: 0.75em;
-    justify-content: center;
+    justify-items: center;
+  }
+
+  &__enabled, &__is-guest {
+    padding: 4em;
   }
 
   i.fa-shopping-basket {

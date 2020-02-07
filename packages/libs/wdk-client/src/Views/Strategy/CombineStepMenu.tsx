@@ -283,6 +283,7 @@ export const CombineStepMenuView = (
                   onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
                   onCombineWithStrategySelected={onCombineWithStrategySelected}
                   inputRecordClass={inputRecordClass}
+                  selectButtonText="Combine with basket"
                 />
               </MenuChoice>
             </MenuChoicesContainer>

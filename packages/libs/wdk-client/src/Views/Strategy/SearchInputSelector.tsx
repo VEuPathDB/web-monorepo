@@ -39,7 +39,8 @@ type OwnProps = {
   onCombineWithStrategySelected: (strategyId: number, strategyDescription: string) => void,
   onCombineWithNewSearchSelected: (newSearchUrlSegment: string) => void,
   inputRecordClass: RecordClass,
-  strategy: StrategyDetails
+  strategy: StrategyDetails,
+  selectButtonText: string
 };
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -56,7 +57,8 @@ export const SearchInputSelectorView = ({
   onCombineWithNewSearchSelected,
   searchTree,
   requestBasketCounts,
-  strategy
+  strategy,
+  selectButtonText
 }: Props) => {
   useEffect(() => {
     if (!isGuest) {
@@ -218,6 +220,7 @@ export const SearchInputSelectorView = ({
                   onSelectBasket={onCombineWithBasketSelected}
                   basketCount={basketCount}
                   isGuest={isGuest}
+                  selectButtonText={selectButtonText}
                 />
               )
             }

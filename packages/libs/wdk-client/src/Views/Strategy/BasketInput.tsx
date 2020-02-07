@@ -15,14 +15,16 @@ type Props = {
   inputRecordClass: RecordClass,
   basketCount: number | undefined,
   isGuest: boolean,
-  onSelectBasket: () => void
+  onSelectBasket: () => void,
+  selectButtonText: string
 };
 
 export const BasketInput = ({
   inputRecordClass,
   basketCount,
   isGuest,
-  onSelectBasket
+  onSelectBasket,
+  selectButtonText
 }: Props) => {
   const status: BasketInputStatus = isGuest
     ? 'is-guest'
@@ -35,7 +37,7 @@ export const BasketInput = ({
       {
         status === 'is-guest' &&
         <div>
-          You must log in to use this feature
+          You must log in to access your basket.
         </div>
       }
       {
@@ -75,7 +77,9 @@ export const BasketInput = ({
               : inputRecordClass.displayNamePlural
             } in your basket
           </div>
-          <button type="button" onClick={onSelectBasket}>Run</button>
+          <div>
+            <button type="button" onClick={onSelectBasket}>{selectButtonText}</button>
+          </div>
         </React.Fragment>
       }
     </div>
