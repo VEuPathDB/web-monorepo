@@ -629,6 +629,13 @@ b, strong, th,
       padding-bottom: 2em;
       border-bottom: 1px solid #eee;
     }
+    h2 + div li {
+      font-size: 95%;
+      list-style: decimal;
+    }
+    h2 + div ol {
+      padding-left: 1.3em;
+    }
     h2:last-of-type + div {
       border-bottom: 0;
     }
