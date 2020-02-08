@@ -17,7 +17,7 @@ type Props = {
   basketCount: number | undefined,
   isGuest: boolean,
   onSelectBasket: () => void,
-  selectButtonText: string
+  selectBasketButtonText: string
 };
 
 export const BasketInput = ({
@@ -25,7 +25,7 @@ export const BasketInput = ({
   basketCount,
   isGuest,
   onSelectBasket,
-  selectButtonText
+  selectBasketButtonText
 }: Props) => {
   const status: BasketInputStatus = isGuest
     ? 'is-guest'
@@ -76,7 +76,7 @@ export const BasketInput = ({
             Your basket contains {inputResultSetDescription(basketCount, inputRecordClass)}
           </div>
           <div>
-            <button type="button" onClick={onSelectBasket}>{selectButtonText}</button>
+            <button type="button" onClick={onSelectBasket}>{selectBasketButtonText}</button>
           </div>
         </React.Fragment>
       }

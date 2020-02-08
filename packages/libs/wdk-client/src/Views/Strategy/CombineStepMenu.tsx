@@ -284,7 +284,7 @@ export const CombineStepMenuView = (
                   onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
                   onCombineWithStrategySelected={onCombineWithStrategySelected}
                   inputRecordClass={inputRecordClass}
-                  selectButtonText={`Combine ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass)} with your basket`}
+                  selectBasketButtonText={`Combine ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass)} with your basket`}
                 />
               </MenuChoice>
             </MenuChoicesContainer>

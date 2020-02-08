@@ -76,7 +76,7 @@ const StrategyInputSelectorView = ({
               : 1
         )
     ),
-    [ strategies, openedStrategies ]
+    [ homogeneousSecondaryInputRecordClasses, strategies, openedStrategies ]
   );
 
   return strategyChoices == null || openedStrategies == null
