@@ -1,11 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
+import { RadioList } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
+import { MenuChoicesContainer, MenuChoice, inputResultSetDescription } from 'wdk-client/Views/Strategy/AddStepUtils';
+import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
 import { colocationQuestionSuffix } from './ApiBinaryOperations';
-import { selectSearchPage } from './ColocateStepForm';
 
 import './ColocateStepMenu.scss';
 
@@ -15,7 +16,8 @@ export const ColocateStepMenu = ({
   inputRecordClass,
   operandStep,
   recordClasses,
-  startOperationForm
+  strategy,
+  recordClassesByUrlSegment
 }: AddStepOperationMenuProps) => {
   const colocationRecordClasses = useMemo(
     () => recordClasses.filter(
@@ -32,35 +34,47 @@ export const ColocateStepMenu = ({
     [ inputRecordClass, recordClasses, colocationQuestionSuffix ]
   );
 
+  const [ selectedFeatureTypeUrlSegment, setSelectedFeatureTypeUrlSegment ] = useState<string>(colocationRecordClasses[0].urlSegment);
+
+  const secondaryInputRecordClass = useMemo(
+    () => recordClassesByUrlSegment[selectedFeatureTypeUrlSegment],
+    [ selectedFeatureTypeUrlSegment ]
+  );
+
+  const featureTypeItems = useMemo(
+    () => colocationRecordClasses.map(
+      ({ displayNamePlural, urlSegment }) => ({
+        value: urlSegment,
+        display: displayNamePlural
+      })
+    ),
+    [ colocationRecordClasses ]
+  );
+
   return (
     <div className={cx()}>
-      <div className={cx('--Header')}>
-        <h3>
-          Use Genomic Colocation
-        </h3>
-          to combine it with:
-      </div>
-      <div className={cx('--Body')}>
-        <PrimaryInputLabel
-          resultSetSize={operandStep.estimatedSize}
-          recordClass={inputRecordClass}
-        />
-        <div className={cx('--ColocationIcon')}></div>
-        <div className={cx('--RecordClassSelector')}>
-          {
-            colocationRecordClasses.length === 0
-              ? 'No colocation operations available'
-              : colocationRecordClasses.map(
-                  ({ displayNamePlural, urlSegment }) =>
-                    <button key={urlSegment} type="button" onClick={() => {
-                      startOperationForm('colocate', selectSearchPage(urlSegment));
-                    }}>
-                      {displayNamePlural}
-                    </button>
-                )
-          }
-        </div>
-      </div>
+      <MenuChoicesContainer containerClassName={cx('--Container')}>
+        <MenuChoice>
+          <strong>Choose <em>which</em> type of feature to use in your new step's result</strong>
+          <RadioList
+            name="add-step__feature-type-choice"
+            onChange={setSelectedFeatureTypeUrlSegment}
+            items={featureTypeItems}
+            value={selectedFeatureTypeUrlSegment}
+          />
+        </MenuChoice>
+        <MenuChoice>
+          <strong>Choose <em>where</em> to obtain the {secondaryInputRecordClass.displayNamePlural} for your new step</strong>
+          <SearchInputSelector
+            onCombineWithBasketSelected={console.log}
+            onCombineWithNewSearchSelected={console.log}
+            onCombineWithStrategySelected={console.log}
+            strategy={strategy}
+            inputRecordClass={secondaryInputRecordClass}
+            selectBasketButtonText={`Colocate ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass) } with your basket`}
+          />
+        </MenuChoice>
+      </MenuChoicesContainer>
     </div>
   );
 };

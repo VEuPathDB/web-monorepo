@@ -61,14 +61,9 @@ type TypedPage =
 const untypedPageFactory = (prefix: string) => (suffix: string) => `${prefix}/${suffix}`;
 
 const toTypedPage = (untypedPage: string): TypedPage => {
-  const [prefix, suffix] = untypedPage.split('/');
+  const [ prefix, suffix ] = untypedPage.split('/');
 
-  return prefix === PageTypes.SelectSearchPage
-    ? {
-        pageType: PageTypes.SelectSearchPage,
-        recordClassUrlSegment: suffix
-      }
-    : prefix === PageTypes.BasketPage
+  return prefix === PageTypes.BasketPage
     ? {
         pageType: PageTypes.BasketPage,
         recordClassUrlSegment: suffix
@@ -94,10 +89,9 @@ const toTypedPage = (untypedPage: string): TypedPage => {
       };
 };
 
-export const selectSearchPage = untypedPageFactory(PageTypes.SelectSearchPage);
-const basketPage = untypedPageFactory(PageTypes.BasketPage);
-const strategyForm = untypedPageFactory(PageTypes.StrategyForm);
-const newSearchForm = untypedPageFactory(PageTypes.NewSearchForm);
+export const basketPage = untypedPageFactory(PageTypes.BasketPage);
+export const strategyForm = untypedPageFactory(PageTypes.StrategyForm);
+export const newSearchForm = untypedPageFactory(PageTypes.NewSearchForm);
 const colocationOperatorForm = untypedPageFactory(PageTypes.ColocationOperatorForm);
 
 type SelectedSecondaryInput = {
@@ -201,7 +195,7 @@ const SelectSearchPage = ({
           onCombineWithBasketSelected={onCombineWithBasketSelected}
           onCombineWithStrategySelected={onCombineWithStrategySelected}
           onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
-          selectButtonText={`Colocate ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass) } with your basket`}
+          selectBasketButtonText={`Colocate ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass) } with your basket`}
         />
       </div>
     </div>
@@ -216,6 +210,7 @@ const BasketPage = ({
   recordClassesByUrlSegment,
   setSelectedSecondaryInput
 }: AddStepOperationFormProps & { recordClassUrlSegment: string, setSelectedSecondaryInput: SetSelectedSecondaryInput }) => {
+  const [ isLoading, setIsLoading ] = useState(true);
   const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
   const secondaryInputRecordClassSearchSubsegment = secondaryInputRecordClass.fullName.replace('.', '_');
   const basketSearchUrlSegment = `${secondaryInputRecordClassSearchSubsegment}BySnapshotBasket`;
@@ -225,6 +220,8 @@ const BasketPage = ({
   const basketSearchShortDisplayName = basketSearchQuestion && basketSearchQuestion.shortDisplayName;
 
   useWdkEffect(wdkService => {
+    setIsLoading(isLoading);
+
     wdkService.createDataset({
       sourceType: 'basket',
       sourceContent: {
@@ -242,9 +239,20 @@ const BasketPage = ({
         })
       )
       .then(({ id: newStepId }) => {
-        setSelectedSecondaryInput({ stepTree: { stepId: newStepId } });
-        replacePage(colocationOperatorForm(recordClassUrlSegment));
+        if (isLoading) {
+          setIsLoading(false);
+          setSelectedSecondaryInput({ stepTree: { stepId: newStepId } });
+          replacePage(colocationOperatorForm(recordClassUrlSegment));
+        }
+      })
+      .catch(error => {
+        alert('Oops... something went wrong\n' + error);
+        wdkService.submitErrorIfNot500(error)
       });
+
+    return () => {
+      setIsLoading(false);
+    };
   }, [ replacePage, setSelectedSecondaryInput, secondaryInputRecordClass ]);
 
   return <Loading />;
