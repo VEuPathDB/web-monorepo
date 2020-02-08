@@ -16,8 +16,16 @@
     }
   }
 
+  &__is-guest {
+    text-align: center;
+  }
+
   &__enabled, &__is-guest {
     padding: 4em;
+  }
+
+  &__empty-basket {
+    padding: 2em;
   }
 
   i.fa-shopping-basket {
