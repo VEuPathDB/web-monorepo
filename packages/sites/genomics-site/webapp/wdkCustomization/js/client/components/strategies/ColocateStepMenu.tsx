@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { RadioList } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -7,6 +7,7 @@ import { MenuChoicesContainer, MenuChoice, inputResultSetDescription } from 'wdk
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
 import { colocationQuestionSuffix } from './ApiBinaryOperations';
+import { makeBasketPage, makeNewSearchFormPage, makeStrategyFormPage } from './ColocateStepForm';
 
 import './ColocateStepMenu.scss';
 
@@ -17,7 +18,8 @@ export const ColocateStepMenu = ({
   operandStep,
   recordClasses,
   strategy,
-  recordClassesByUrlSegment
+  recordClassesByUrlSegment,
+  startOperationForm
 }: AddStepOperationMenuProps) => {
   const colocationRecordClasses = useMemo(
     () => recordClasses.filter(
@@ -51,6 +53,27 @@ export const ColocateStepMenu = ({
     [ colocationRecordClasses ]
   );
 
+  const onCombineNewSearchSelected = useCallback((searchUrlSegment: string) => {
+    startOperationForm(
+      'colocate',
+      makeNewSearchFormPage(searchUrlSegment)
+    );
+  }, [ startOperationForm ]);
+
+  const onCombineWithStrategySelected = useCallback((strategyId: number, name: string) => {
+    startOperationForm(
+      'colocate',
+      makeStrategyFormPage(secondaryInputRecordClass.urlSegment, strategyId, name)
+    );
+  }, [ startOperationForm, secondaryInputRecordClass ]);
+
+  const onCombineWithBasketSelected = useCallback(() => {
+    startOperationForm(
+      'colocate',
+      makeBasketPage(secondaryInputRecordClass.urlSegment)
+    );
+  }, [ startOperationForm, secondaryInputRecordClass ]);
+
   return (
     <div className={cx()}>
       <MenuChoicesContainer containerClassName={cx('--Container')}>
@@ -66,9 +89,9 @@ export const ColocateStepMenu = ({
         <MenuChoice>
           <strong>Choose <em>where</em> to obtain the {secondaryInputRecordClass.displayNamePlural} for your new step</strong>
           <SearchInputSelector
-            onCombineWithBasketSelected={console.log}
-            onCombineWithNewSearchSelected={console.log}
-            onCombineWithStrategySelected={console.log}
+            onCombineWithNewSearchSelected={onCombineNewSearchSelected}
+            onCombineWithStrategySelected={onCombineWithStrategySelected}
+            onCombineWithBasketSelected={onCombineWithBasketSelected}
             strategy={strategy}
             inputRecordClass={secondaryInputRecordClass}
             selectBasketButtonText={`Colocate ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass) } with your basket`}

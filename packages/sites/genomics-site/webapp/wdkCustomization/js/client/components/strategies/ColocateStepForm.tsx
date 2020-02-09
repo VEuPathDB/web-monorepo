@@ -4,16 +4,13 @@ import { Loading } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StepTree, NewStepSpec } from 'wdk-client/Utils/WdkUser';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { inputResultSetDescription } from 'wdk-client/Views/Strategy/AddStepUtils';
-import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
 import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { StrategyInputSelector } from 'wdk-client/Views/Strategy/StrategyInputSelector';
+import { DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
 
 import { colocationQuestionSuffix } from './ApiBinaryOperations';
 
@@ -24,7 +21,6 @@ import './ColocateStepForm.scss';
 const cx = makeClassNameHelper('ColocateStepForm');
 
 enum PageTypes {
-  SelectSearchPage = 'select-search',
   BasketPage = 'basket-page',
   StrategyForm = 'strategy-form',
   NewSearchForm = 'new-search-form',
@@ -34,16 +30,14 @@ enum PageTypes {
 
 type TypedPage =
   | {
-      pageType: PageTypes.SelectSearchPage,
-      recordClassUrlSegment: string
-    }
-  | {
       pageType: PageTypes.BasketPage,
       recordClassUrlSegment: string
     }
   | {
       pageType: PageTypes.StrategyForm,
-      recordClassUrlSegment: string
+      recordClassUrlSegment: string,
+      strategyId: number,
+      name: string
     }
   | {
       pageType: PageTypes.NewSearchForm,
@@ -58,41 +52,52 @@ type TypedPage =
       pageName: string
     };
 
-const untypedPageFactory = (prefix: string) => (suffix: string) => `${prefix}/${suffix}`;
-
 const toTypedPage = (untypedPage: string): TypedPage => {
-  const [ prefix, suffix ] = untypedPage.split('/');
+  const [ , prefix, suffix ] = untypedPage.match(/([^/]*)\/((.|\s)*)/) || [];
 
-  return prefix === PageTypes.BasketPage
-    ? {
-        pageType: PageTypes.BasketPage,
-        recordClassUrlSegment: suffix
-      }
-    : prefix === PageTypes.StrategyForm
-    ? {
-        pageType: PageTypes.StrategyForm,
-        recordClassUrlSegment: suffix
-      }
-    : prefix === PageTypes.NewSearchForm
-    ? {
-        pageType: PageTypes.NewSearchForm,
-        searchUrlSegment: suffix
-      }
-    : prefix === PageTypes.ColocationOperatorForm
-    ? {
-        pageType: PageTypes.ColocationOperatorForm,
-        recordClassUrlSegment: suffix
-      }
-    : {
-        pageType: PageTypes.PageNotFound,
-        pageName: untypedPage
-      };
+  if (prefix === PageTypes.BasketPage) {
+    return {
+      pageType: PageTypes.BasketPage,
+      recordClassUrlSegment: suffix
+    };
+  } else if (prefix === PageTypes.StrategyForm) {
+    const [ , recordClassUrlSegment, strategyIdStr, name ] = suffix.match(/([^/]*)\/([^/]*)\/((.|\s)*)/) || [];
+
+    return {
+      pageType: PageTypes.StrategyForm,
+      recordClassUrlSegment,
+      strategyId: parseInt(strategyIdStr, 10),
+      name
+    };
+  } else if (prefix === PageTypes.NewSearchForm) {
+    return {
+      pageType: PageTypes.NewSearchForm,
+      searchUrlSegment: suffix
+    };
+  } else if (prefix === PageTypes.ColocationOperatorForm) {
+    return {
+      pageType: PageTypes.ColocationOperatorForm,
+      recordClassUrlSegment: suffix
+    };
+  } else {
+    return {
+      pageType: PageTypes.PageNotFound,
+      pageName: untypedPage
+    };
+  }
 };
 
-export const basketPage = untypedPageFactory(PageTypes.BasketPage);
-export const strategyForm = untypedPageFactory(PageTypes.StrategyForm);
-export const newSearchForm = untypedPageFactory(PageTypes.NewSearchForm);
-const colocationOperatorForm = untypedPageFactory(PageTypes.ColocationOperatorForm);
+export const makeBasketPage = (recordClassUrlSegment: string) =>
+  `${PageTypes.BasketPage}/${recordClassUrlSegment}`;
+
+export const makeStrategyFormPage = (recordClassUrlSegment: string, strategyId: number, name: string) =>
+  `${PageTypes.StrategyForm}/${recordClassUrlSegment}/${strategyId}/${name}`;
+
+export const makeNewSearchFormPage = (searchUrlSegment: string) =>
+  `${PageTypes.NewSearchForm}/${searchUrlSegment}`;
+
+const makeColocationOperatorFormPage = (recordClassUrlSegment: string) =>
+  `${PageTypes.ColocationOperatorForm}/${recordClassUrlSegment}`;
 
 type SelectedSecondaryInput = {
   stepTree: StepTree,
@@ -109,12 +114,7 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
   return (
     <div className={cx()}>
       {
-        typedPage.pageType === PageTypes.SelectSearchPage
-          ? <SelectSearchPage
-              {...props}
-              recordClassUrlSegment={typedPage.recordClassUrlSegment}
-            />
-          : typedPage.pageType === PageTypes.BasketPage
+        typedPage.pageType === PageTypes.BasketPage
           ? <BasketPage 
               {...props}
               recordClassUrlSegment={typedPage.recordClassUrlSegment}
@@ -124,6 +124,8 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
           ? <StrategyForm 
               {...props}
               recordClassUrlSegment={typedPage.recordClassUrlSegment}
+              strategyId={typedPage.strategyId}
+              name={typedPage.name}
               setSelectedSecondaryInput={setSelectedSecondaryInput}
             />
           : typedPage.pageType === PageTypes.NewSearchForm
@@ -145,72 +147,14 @@ export const ColocateStepForm = (props: AddStepOperationFormProps) => {
   );
 };
 
-const SelectSearchPage = ({
-  advanceToPage,
-  inputRecordClass,
-  operandStep,
-  recordClassesByUrlSegment,
-  recordClassUrlSegment,
-  strategy
-}: AddStepOperationFormProps & { recordClassUrlSegment: string }) => {
-  const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
- 
-  const onCombineWithBasketSelected = useCallback(() => {
-    advanceToPage(basketPage(recordClassUrlSegment));
-  }, [ advanceToPage, recordClassUrlSegment ]);
-
-  const onCombineWithStrategySelected = useCallback(() => {
-    advanceToPage(strategyForm(recordClassUrlSegment));
-  }, [ advanceToPage, recordClassUrlSegment ]);
-
-  const onCombineWithNewSearchSelected = useCallback((searchUrlSegment: string) => {
-    advanceToPage(newSearchForm(searchUrlSegment));
-  }, [ advanceToPage ]);
-
-  return (
-    <div className={cx('--SelectSearchPage')}>
-      <h2>
-        Choose a {secondaryInputRecordClass.displayName} result to combine with your strategy using <em>genomic colocation</em>
-      </h2>
-
-      <p>
-        Genomic colocation allows you to select members of either result based on their proximity to members of the other set.<br />  
-        For example, you can find {inputRecordClass.displayNamePlural} in your strategy that are 100 bp upstream of {secondaryInputRecordClass.displayNamePlural} in the result you are combining.
-      </p>
-
-      <p>
-        The next step is to choose a set of {secondaryInputRecordClass.displayNamePlural} to combine. 
-      </p>
-
-      <div className={cx('--SearchInputSelectorContainer')}>
-        <PrimaryInputLabel
-          resultSetSize={operandStep.estimatedSize}
-          recordClass={inputRecordClass}
-        />
-        <div className={cx('--ColocationIcon')}></div>
-        <SearchInputSelector
-          containerClassName={cx('--SearchInputSelector')}
-          strategy={strategy}
-          inputRecordClass={secondaryInputRecordClass}
-          onCombineWithBasketSelected={onCombineWithBasketSelected}
-          onCombineWithStrategySelected={onCombineWithStrategySelected}
-          onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
-          selectBasketButtonText={`Colocate ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass) } with your basket`}
-        />
-      </div>
-    </div>
-  );
-};
-
-
 const BasketPage = ({
   replacePage,
   questionsByUrlSegment,
   recordClassUrlSegment,
   recordClassesByUrlSegment,
-  setSelectedSecondaryInput
+  setSelectedSecondaryInput,
+  onHideInsertStep
 }: AddStepOperationFormProps & { recordClassUrlSegment: string, setSelectedSecondaryInput: SetSelectedSecondaryInput }) => {
-  const [ isLoading, setIsLoading ] = useState(true);
   const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
   const secondaryInputRecordClassSearchSubsegment = secondaryInputRecordClass.fullName.replace('.', '_');
   const basketSearchUrlSegment = `${secondaryInputRecordClassSearchSubsegment}BySnapshotBasket`;
@@ -220,7 +164,7 @@ const BasketPage = ({
   const basketSearchShortDisplayName = basketSearchQuestion && basketSearchQuestion.shortDisplayName;
 
   useWdkEffect(wdkService => {
-    setIsLoading(isLoading);
+    let shouldCancel = false;
 
     wdkService.createDataset({
       sourceType: 'basket',
@@ -239,19 +183,19 @@ const BasketPage = ({
         })
       )
       .then(({ id: newStepId }) => {
-        if (isLoading) {
-          setIsLoading(false);
+        if (!shouldCancel) {
           setSelectedSecondaryInput({ stepTree: { stepId: newStepId } });
-          replacePage(colocationOperatorForm(recordClassUrlSegment));
+          replacePage(makeColocationOperatorFormPage(recordClassUrlSegment));
         }
       })
       .catch(error => {
         alert('Oops... something went wrong\n' + error);
-        wdkService.submitErrorIfNot500(error)
+        wdkService.submitErrorIfNot500(error);
+        onHideInsertStep();
       });
 
     return () => {
-      setIsLoading(false);
+      shouldCancel = true;
     };
   }, [ replacePage, setSelectedSecondaryInput, secondaryInputRecordClass ]);
 
@@ -259,36 +203,36 @@ const BasketPage = ({
 };
 
 const StrategyForm = ({
-  advanceToPage,
-  recordClassUrlSegment,
-  recordClassesByUrlSegment,
+  strategyId,
+  name,
   setSelectedSecondaryInput,
-  strategy
-}: AddStepOperationFormProps & { recordClassUrlSegment: string, setSelectedSecondaryInput: SetSelectedSecondaryInput }) => {
-  const [ selectedStrategy, setSelectedStrategy ] = useState<{ id: number, name: string } | undefined>(undefined);
-
-  const secondaryInputRecordClass = recordClassesByUrlSegment[recordClassUrlSegment];
-  
-  const onStrategySelected = useCallback((id: number, name: string) => {
-    setSelectedStrategy({ id, name });
-  }, []);
-
+  onHideInsertStep,
+  recordClassUrlSegment,
+  replacePage
+}: AddStepOperationFormProps & { strategyId: number, name: string, recordClassUrlSegment: string, setSelectedSecondaryInput: SetSelectedSecondaryInput }) => {
   useWdkEffect(wdkService => {
-    if (selectedStrategy !== undefined) {
-      wdkService.getDuplicatedStrategyStepTree(selectedStrategy.id).then(stepTree => {
-        setSelectedSecondaryInput({ stepTree, expandedName: `Copy of ${selectedStrategy.name}` });
-        advanceToPage(colocationOperatorForm(secondaryInputRecordClass.urlSegment));
-      });
-    }
-  }, [ selectedStrategy ]);
+    let shouldCancel = false;
 
-  return selectedStrategy !== undefined
-    ? <Loading />
-    : <StrategyInputSelector
-        primaryInput={strategy}
-        secondaryInputRecordClass={secondaryInputRecordClass}
-        onStrategySelected={onStrategySelected}
-      />;
+    wdkService
+      .getDuplicatedStrategyStepTree(strategyId)
+      .then(stepTree => {
+        if (!shouldCancel) {
+          setSelectedSecondaryInput({ stepTree, expandedName: `Copy of ${name || DEFAULT_STRATEGY_NAME}` });
+          replacePage(makeColocationOperatorFormPage(recordClassUrlSegment));
+        }
+      })
+      .catch(error => {
+        alert('Oops... something went wrong\n' + error);
+        wdkService.submitErrorIfNot500(error);
+        onHideInsertStep();
+      });
+
+    return () => {
+      shouldCancel = true;
+    };
+  }, [ strategyId ]);
+
+  return <Loading />;
 };
 
 const NewSearchForm = ({ 
@@ -308,7 +252,7 @@ const NewSearchForm = ({
       .createStep(newSearchStepSpec)
       .then(({ id }) => {
         setSelectedSecondaryInput({ stepTree: { stepId: id }});
-        advanceToPage(colocationOperatorForm(newSearchRecordClass.urlSegment));
+        advanceToPage(makeColocationOperatorFormPage(newSearchRecordClass.urlSegment));
       })
       .catch(error => reportSubmissionError(searchUrlSegment, error, wdkService));
   }, [ advanceToPage, newSearchRecordClass, setSelectedSecondaryInput, searchUrlSegment, reportSubmissionError ]);
