@@ -79,13 +79,17 @@ const StrategyInputSelectorView = ({
     [ homogeneousSecondaryInputRecordClasses, strategies, openedStrategies ]
   );
 
+  const noAvailableStrategiesMessage =
+    `You have no ${primaryInput.recordClassName === secondaryInputRecordClass.urlSegment ? 'other' : '' }` + 
+    `open or saved ${secondaryInputRecordClass.displayName} strategies`;
+
   return strategyChoices == null || openedStrategies == null
     ? <Loading />
     : <div className={cx()}>
         {
           strategyChoices.length === 0
             ? <div className={cx('--NoAvailableStrategies')}>
-                You have no other open or saved {secondaryInputRecordClass.displayName} strategies
+                {noAvailableStrategiesMessage}
               </div>
             : <div className={cx('--StrategyChoices')}>
                 <StrategyInputSelectorTable
