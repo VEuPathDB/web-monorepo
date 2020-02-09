@@ -9,4 +9,21 @@ $blue-text: #0000ee;
   .region_b {
     color: $blue-text;
   }
+
+  .wdk-RadioList {
+    font-weight: bold;
+
+    display: flex;
+    justify-content: space-evenly;
+
+    margin: 1em 1em 1em 2em;
+
+    input {
+      margin-right: 0.5em;
+    }
+  }
+
+  .SearchInputSelector {
+    margin: 1em 1em 1em 2em;
+  }
 }
