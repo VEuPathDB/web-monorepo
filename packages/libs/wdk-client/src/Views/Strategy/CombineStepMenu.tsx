@@ -270,8 +270,7 @@ export const CombineStepMenuView = (
                             {combineOperatorOptionDisplay(
                               operator,
                               stepsCompletedNumber,
-                              stepsCompletedNumber + 1,
-                              addType.type === 'insert-before'
+                              stepsCompletedNumber + 1
                             )}
                           </span>
                         </label>
