@@ -6,6 +6,7 @@ import { AnswerRequest } from 'wdk-client/Service/Mixins/SearchReportsService';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { WdkService } from 'wdk-client/Core';
 import { ResultType, getResultTypeDetails, downloadReport } from 'wdk-client/Utils/WdkResult';
+import { number } from 'wdk-client/Utils/Json';
 
 export type Action =
   | InitializeAction
@@ -56,14 +57,17 @@ export function initialize(data: InitializeAction['payload']): InitializeAction 
 
 export const SELECT_REPORTER = 'downloadForm/select-reporter';
 
+// represents either the name of the reporter or the index in the reporter array
+export type ReporterSelection = string | number;
+
 export interface SelectReporterAction {
   type: typeof SELECT_REPORTER;
   payload: {
-    selectedReporter?: string;
+    selectedReporter?: ReporterSelection;
   };
 }
 
-export function selectReporter(selectedReporter?: string): SelectReporterAction {
+export function selectReporter(selectedReporter?: ReporterSelection): SelectReporterAction {
   return {
     type: SELECT_REPORTER,
     payload: {
@@ -141,7 +145,8 @@ type LoadPageDataAction =
   | SelectReporterAction
 
 export function loadPageDataFromStepId(
-  stepId: number, requestedFormat?: string
+  stepId: number,
+  requestedFormat?: ReporterSelection
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
     const resultTypeBundle = getStepBundlePromise(stepId, wdkService)
@@ -162,7 +167,7 @@ export function loadPageDataFromStepId(
 export function loadPageDataFromRecord(
   recordClassUrlSegment: string,
   primaryKeyString: string,
-  requestedFormat?: string
+  requestedFormat?: ReporterSelection
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
     // create promise for recordClass
@@ -199,7 +204,7 @@ export function loadPageDataFromRecord(
 
 export function loadPageDataFromBasketName(
   basketName: string,
-  requestedFormat?: string
+  requestedFormat?: ReporterSelection
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
     const resultType: ResultType = {
@@ -230,6 +235,7 @@ export function loadPageDataFromSearchConfig(
   searchName: string,
   paramValues: Record<string,string>,
   weight: number,
+  requestedFormat?: ReporterSelection
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
 
@@ -256,7 +262,12 @@ export function loadPageDataFromSearchConfig(
         }
       } as ResultTypeBundle));
 
-    return getInitializationActionSet(wdkService, 'results', bundlePromise);
+    return getInitializationActionSet(
+      wdkService,
+      'results',
+      bundlePromise,
+      requestedFormat
+    );
   };
 }
 
@@ -281,22 +292,23 @@ function getInitializationActionSet(
     wdkService: WdkService,
     scope: string,
     resultTypeBundle: Promise<ResultTypeBundle>,
-    requestedFormat?: string): ActionCreatorResult<LoadPageDataAction> {
+    requestedFormat?: ReporterSelection): ActionCreatorResult<LoadPageDataAction> {
   let preferencesPromise = wdkService.getCurrentUserPreferences();
   let ontologyPromise = wdkService.getConfig().then(config => wdkService.getOntology(config.categoriesOntologyName));
+  let initializePromise = Promise.all([resultTypeBundle, preferencesPromise, ontologyPromise]).then(
+    ([stepBundle, preferences, ontology]) =>
+      initialize({
+        ...stepBundle,
+        preferences,
+        ontology,
+        scope
+      }),
+    (error: Error) => setError(error)
+  );
   return [
     startLoading(),
-    Promise.all([resultTypeBundle, preferencesPromise, ontologyPromise]).then(
-      ([stepBundle, preferences, ontology]) =>
-        initialize({
-          ...stepBundle,
-          preferences,
-          ontology,
-          scope
-        }),
-      (error: Error) => setError(error)
-    ),
-    resultTypeBundle.then(() => selectReporter(requestedFormat))
+    initializePromise,
+    initializePromise.then(() => selectReporter(requestedFormat))
   ];
 }
 

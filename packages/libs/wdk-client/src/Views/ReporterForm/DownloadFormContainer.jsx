@@ -69,7 +69,7 @@ class DownloadFormContainer extends Component {
 
   render() {
 
-    let { scope, resultType, availableReporters, selectedReporter, recordClass, selectReporter } = this.props;
+    let { scope, resultType, availableReporters, selectedReporter, recordClass, selectReporter, includeTitle, includeSubmit } = this.props;
 
     // create page title element
     let title = getTitle(scope, resultType, recordClass);
@@ -84,9 +84,9 @@ class DownloadFormContainer extends Component {
 
     return (
       <div style={{padding: '1em 3em'}}>
-        {title}
+        {includeTitle && title}
         <ReporterSelect reporters={availableReporters} selected={selectedReporter} onChange={selectReporter}/>
-        <DownloadForm {...formProps} onSubmit={this.onSubmit}/>
+        <DownloadForm {...formProps} onSubmit={this.onSubmit} includeSubmit={includeSubmit}/>
       </div>
     );
   }
