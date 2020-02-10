@@ -12,9 +12,10 @@ import { ConvertStepMenu, isValidTransformFactory } from 'wdk-client/Views/Strat
 import { CombineStepForm } from 'wdk-client/Views/Strategy/CombineStepForm';
 import { CombineWithStrategyForm } from 'wdk-client/Views/Strategy/CombineWithStrategyForm';
 import { ConvertStepForm } from 'wdk-client/Views/Strategy/ConvertStepForm';
+import { PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
 
 type OperatorMenuItem = {
-  radioDisplay: ReactNode,
+  radioDisplay: (stepALabel: string, stepBLabel: string) => ReactNode,
   value: string
 }
 
@@ -78,19 +79,23 @@ export const defaultBinaryOperations: BinaryOperation[] = [
       display: 'Revise as a boolean operation',
       items: [
         {
-          radioDisplay: <React.Fragment>A <strong>INTERSECT</strong> B</React.Fragment>,
+          radioDisplay: (stepALabel: string, stepBLabel: string) =>
+            <React.Fragment>{stepALabel} <strong>INTERSECT</strong> {stepBLabel}</React.Fragment>,
           value: 'INTERSECT'
         },
         {
-          radioDisplay: <React.Fragment>A <strong>UNION</strong> B</React.Fragment>,
+          radioDisplay: (stepALabel: string, stepBLabel: string) =>
+            <React.Fragment>{stepALabel} <strong>UNION</strong> {stepBLabel}</React.Fragment>,
           value: 'UNION'
         },
         {
-          radioDisplay: <React.Fragment>A <strong>MINUS</strong> B</React.Fragment>,
+          radioDisplay: (stepALabel: string, stepBLabel: string) =>
+            <React.Fragment>{stepALabel} <strong>MINUS</strong> {stepBLabel}</React.Fragment>,
           value: 'MINUS'
         },
         {
-          radioDisplay: <React.Fragment>B <strong>MINUS</strong> A</React.Fragment>,
+          radioDisplay: (stepALabel: string, stepBLabel: string) =>
+            <React.Fragment>{stepBLabel} <strong>MINUS</strong> {stepALabel}</React.Fragment>,
           value: 'RMINUS'
         }
       ]
@@ -121,7 +126,9 @@ export type OperatorMetadata = {
   reviseOperatorParamConfiguration: ReviseOperationParameterConfiguration
 };
 
-export const useCompatibleOperatorMetadata = (questions: Question[] | undefined, outputRecordClass: string | undefined, primaryInputRecordClass: string | undefined, secondaryInputRecordClass: string | undefined): Record<string, OperatorMetadata> | undefined => {
+export const useCompatibleOperatorMetadata = (questions: Question[] | undefined, uiStepTree: PartialUiStepTree): Record<string, OperatorMetadata> | undefined => {
+  const { outputRecordClass, primaryInputRecordClass, secondaryInputRecordClass } = makeStepRecordClassNames(uiStepTree);
+
   const binaryOperations = useBinaryOperations();
 
   const compatibleOperatorMetadata = useMemo(
@@ -190,14 +197,30 @@ export type ReviseOperatorMenuGroup = {
   items: ReviseOperatorMenuItem[]
 }
 
-const ignoreOperators: ReviseOperatorMenuItem[] = [
-  { display: <React.Fragment><strong>IGNORE</strong> B</React.Fragment>, value: 'LONLY', iconClassName: cxOperator('--CombineOperator', 'LONLY') },
-  { display: <React.Fragment><strong>IGNORE</strong> A</React.Fragment>, value: 'RONLY', iconClassName: cxOperator('--CombineOperator', 'RONLY') }
+const ignoreOperators = (stepALabel: string, stepBLabel: string): ReviseOperatorMenuItem[] => [
+  {
+    display: <React.Fragment><strong>IGNORE</strong> {stepBLabel}</React.Fragment>,
+    value: 'LONLY',
+    iconClassName: cxOperator('--CombineOperator', 'LONLY')
+  },
+  {
+    display: <React.Fragment><strong>IGNORE</strong> {stepALabel}</React.Fragment>,
+    value: 'RONLY',
+    iconClassName: cxOperator('--CombineOperator', 'RONLY')
+  }
 ];
 
-export const useReviseOperatorConfigs = (questions: Question[] | undefined, outputRecordClass: string | undefined, primaryInputRecordClass: string | undefined, secondaryInputRecordClass: string | undefined) => {
+export const useReviseOperatorConfigs = (
+  questions: Question[] | undefined, 
+  uiStepTree: PartialUiStepTree,
+) => {
+  const { primaryInputRecordClass, secondaryInputRecordClass } = makeStepRecordClassNames(uiStepTree);
+
   const binaryOperations = useBinaryOperations();
-  const operatorMetadata = useCompatibleOperatorMetadata(questions, outputRecordClass, primaryInputRecordClass, secondaryInputRecordClass);
+  const operatorMetadata = useCompatibleOperatorMetadata(questions, uiStepTree);
+
+  const stepALabel = `${uiStepTree.slotNumber - 1}`;
+  const stepBLabel = `${uiStepTree.slotNumber}`;
 
   const reviseOperatorConfigsWithoutIgnore = useMemo(
     () => operatorMetadata && binaryOperations.reduce(
@@ -211,7 +234,7 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
                 display: operatorMenuGroup.display,
                 items: operatorMenuGroup.items.map(
                   (menuItem) => ({
-                    display: menuItem.radioDisplay,
+                    display: menuItem.radioDisplay(stepALabel, stepBLabel),
                     iconClassName: cxOperator(`--${baseClassName}`, toUpper(menuItem.value)),
                     value: menuItem.value
                   })
@@ -234,7 +257,7 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
           {
             name: 'ignore_boolean_operators',
             display: 'Ignore one of the inputs',
-            items: ignoreOperators
+            items: ignoreOperators(stepALabel, stepBLabel)
           }
         ],
     [
@@ -246,6 +269,14 @@ export const useReviseOperatorConfigs = (questions: Question[] | undefined, outp
   );
 
   return reviseOperatorConfigs;
+};
+
+const makeStepRecordClassNames = (uiStepTree: PartialUiStepTree) => {
+  return {
+    outputRecordClass: uiStepTree.step.recordClassName,
+    primaryInputRecordClass: uiStepTree.primaryInput?.recordClass?.urlSegment,
+    secondaryInputRecordClass: uiStepTree.secondaryInput?.recordClass?.urlSegment
+  };
 };
 
 const toAddStepMenuConfig = pick<BinaryOperation, keyof AddStepMenuConfig>(['name', 'AddStepMenuComponent', 'addStepFormComponents', 'isCompatibleAddStepSearch']);

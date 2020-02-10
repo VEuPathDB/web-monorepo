@@ -37,22 +37,8 @@ function CombineStepDetails({
 }: OwnProps & StateProps & DispatchProps) {
   const { step } = stepTree;
 
-  const primaryInputRecordClass = stepTree.primaryInput.recordClass && stepTree.primaryInput.recordClass.urlSegment;
-  const secondaryInputRecordClass = stepTree.secondaryInput.recordClass && stepTree.secondaryInput.recordClass.urlSegment;
-
-  const compatibleOperatorMetadata = useCompatibleOperatorMetadata(
-    questions,
-    step.recordClassName,
-    primaryInputRecordClass, 
-    secondaryInputRecordClass
-  );
-
-  const reviseOperatorConfigs = useReviseOperatorConfigs(
-    questions,
-    step.recordClassName,
-    primaryInputRecordClass,
-    secondaryInputRecordClass
-  );
+  const compatibleOperatorMetadata = useCompatibleOperatorMetadata(questions, stepTree);
+  const reviseOperatorConfigs = useReviseOperatorConfigs(questions, stepTree);
 
   const currentOperatorMetadata = compatibleOperatorMetadata && Object.values(compatibleOperatorMetadata).find(
     ({ searchName }) => searchName === step.searchName
