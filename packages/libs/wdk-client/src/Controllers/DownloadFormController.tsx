@@ -84,7 +84,7 @@ class DownloadFormController extends PageController<Props> {
     let formProps = {
       ...this.props,
     };
-    return ( <DownloadFormContainer {...formProps}/> );
+    return ( <DownloadFormContainer {...formProps} includeTitle={true} includeSubmit={true}/> );
   }
 
   loadData(prevProps: Props) {

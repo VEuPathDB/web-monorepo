@@ -4,7 +4,8 @@ import {
   START_LOADING,
   SELECT_REPORTER,
   UPDATE_FORM_UI,
-  UPDATE_FORM
+  UPDATE_FORM,
+  ReporterSelection
 } from 'wdk-client/Actions/DownloadFormActions';
 import WdkServiceJsonReporterForm from 'wdk-client/Views/ReporterForm/WdkServiceJsonReporterForm';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
@@ -136,12 +137,25 @@ function tryFormInit(getSelectedReporter: GetSelectedReporter, state: State) {
   return state;
 }
 
-function updateReporter(getSelectedReporter: GetSelectedReporter, state: State, selectedReporter?: string) {
+function updateReporter(getSelectedReporter: GetSelectedReporter, state: State, selectedReporter?: ReporterSelection) {
   // selectedReporter may be undefined or invalid since we are now respecting a query param "preference"
-  let reporterFound = state.availableReporters.findIndex(r => r.name === selectedReporter) != -1;
-  return !reporterFound || state.recordClass == null ? state :
-    Object.assign({}, state, { selectedReporter },
-      getSelectedReporter(selectedReporter, state.recordClass.fullName).getInitialState(state));
+  let selectedReporterName: string | undefined = undefined;
+  if (typeof selectedReporter === 'number') {
+    // make sure valid index was passed
+    if (selectedReporter < 0 || selectedReporter >= state.availableReporters.length) {
+      throw new Error("Requested reporter index " + selectedReporter + " is out of bounds.");
+    }
+    selectedReporterName = state.availableReporters[selectedReporter].name;
+  }
+  else {
+    // make sure valid name was passed
+    if (state.availableReporters.findIndex(r => r.name === selectedReporter) != -1) {
+      selectedReporterName = selectedReporter;
+    }
+  }
+  return !selectedReporterName || state.recordClass == null ? state :
+    Object.assign({}, state, { selectedReporter: selectedReporterName },
+      getSelectedReporter(selectedReporterName, state.recordClass.fullName).getInitialState(state));
 }
 
 function updateFormState(state: State, formState: any) {

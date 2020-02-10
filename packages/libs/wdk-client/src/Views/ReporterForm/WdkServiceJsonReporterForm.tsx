@@ -19,10 +19,11 @@ type Props<T, U> = {
   updateFormState: (state: T) => T;
   updateFormUiState: (uiState: U) => U;
   onSubmit: () => void;
+  includeSubmit: boolean;
 }
 
 function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
-  let { scope, question, recordClass, ontology, formState, formUiState, updateFormState, updateFormUiState, onSubmit } = props;
+  let { scope, question, recordClass, ontology, formState, formUiState, updateFormState, updateFormUiState, onSubmit, includeSubmit } = props;
   let getUpdateHandler = (fieldName: string) => getChangeHandler(fieldName, updateFormState, formState);
   let getUiUpdateHandler = (fieldName: string) => getChangeHandler(fieldName, updateFormUiState, formUiState);
   return (
@@ -58,9 +59,11 @@ function WdkServiceJsonReporterForm<T, U>(props: Props<T, U>) {
         onSearchTermChange={getUiUpdateHandler('tableSearchText')}
       />
 
-      <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
-        <button className="btn" type="submit" onClick={onSubmit}>Get {recordClass.displayNamePlural}</button>
-      </div>
+      { includeSubmit &&
+        <div style={{width:'30em',textAlign:'center', margin:'0.6em 0'}}>
+          <button className="btn" type="submit" onClick={onSubmit}>Get {recordClass.displayNamePlural}</button>
+        </div>
+      }
     </div>
   );
 }

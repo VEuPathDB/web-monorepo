@@ -9,9 +9,8 @@ import {
   updateFormUi,
   submitForm
 } from 'wdk-client/Actions/DownloadFormActions';
-import DownloadFormContainer from 'wdk-client/Views/ReporterForm/DownloadFormContainer';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { reportAnswerFulfillmentError } from 'wdk-client/Actions/SummaryView/ResultTableSummaryViewActions';
+import WebServicesHelp from 'wdk-client/Components/WebServicesHelp/WebServicesHelp';
 
 const WebServicesHelpActionCreators = {
   loadPageDataFromSearchConfig,
@@ -27,7 +26,7 @@ type StateProps = RootState['downloadForm'];
 
 type DispatchProps = typeof WebServicesHelpActionCreators;
 
-type Props = { ownProps: OwnProps } & DispatchProps & StateProps;
+export type Props = { ownProps: OwnProps } & DispatchProps & StateProps;
 
 class WebServicesHelpController extends PageController<Props> {
 
@@ -62,36 +61,7 @@ class WebServicesHelpController extends PageController<Props> {
   }
 
   renderView() {
-    // build props object to pass to form component
-    let formProps = {
-      ...this.props,
-    };
-    if (!formProps.resultType ||
-        formProps.resultType.type != 'step' ||
-        !formProps.recordClass) {
-      return ( <div>This page cannot be rendered with the passed query parameters.</div> );
-    }
-    let reportName = formProps.selectedReporter || "?";
-    let reportConfig = formProps.formState || "Not yet configured"
-    let url = '/service/record-types/' +
-       formProps.recordClass.urlSegment + '/searches/' +
-       formProps.resultType.step.searchName + '/reports/' + reportName;
-    let requestJson = JSON.stringify({
-      searchConfig: formProps.resultType.step.searchConfig,
-      reportConfig: reportConfig
-    }, null, 2);
-    return (
-      <div>
-        <h3>Coming Soon...</h3>
-        <div>
-          POST the following JSON to {url}
-          <pre>
-            {requestJson}
-          </pre>
-        </div>
-        <DownloadFormContainer {...formProps}/>
-      </div>
-    );
+    return <WebServicesHelp {...this.props}/>;
   }
 
   loadData(prevProps?: Props) {
@@ -101,7 +71,7 @@ class WebServicesHelpController extends PageController<Props> {
 
     // must reinitialize with every new props
     if ('searchName' in ownProps && 'weight' in ownProps) {
-      loadPageDataFromSearchConfig(ownProps.searchName, ownProps, +ownProps.weight);
+      loadPageDataFromSearchConfig(ownProps.searchName, ownProps, +ownProps.weight, 0);
     }
     else {
       console.error("Query string does not contain both 'searchName' and 'weight'.");
