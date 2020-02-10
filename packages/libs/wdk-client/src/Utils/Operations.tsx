@@ -13,9 +13,10 @@ import { CombineStepForm } from 'wdk-client/Views/Strategy/CombineStepForm';
 import { CombineWithStrategyForm } from 'wdk-client/Views/Strategy/CombineWithStrategyForm';
 import { ConvertStepForm } from 'wdk-client/Views/Strategy/ConvertStepForm';
 import { PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { CombineOperator, IgnoreOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 type OperatorMenuItem = {
-  radioDisplay: (stepALabel: string, stepBLabel: string) => ReactNode,
+  radioDisplay: (stepALabel: ReactNode, stepBLabel: ReactNode) => ReactNode,
   value: string
 }
 
@@ -26,6 +27,7 @@ type OperatorMenuGroup = {
 }
 
 export type ReviseOperationFormProps = {
+  uiStepTree: PartialUiStepTree,
   searchName?: string,
   step: Step,
   strategy: StrategyDetails,
@@ -79,24 +81,24 @@ export const defaultBinaryOperations: BinaryOperation[] = [
       display: 'Revise as a boolean operation',
       items: [
         {
-          radioDisplay: (stepALabel: string, stepBLabel: string) =>
+          radioDisplay: (stepALabel, stepBLabel) =>
             <React.Fragment>{stepALabel} <strong>INTERSECT</strong> {stepBLabel}</React.Fragment>,
-          value: 'INTERSECT'
+          value: CombineOperator.Intersect
         },
         {
-          radioDisplay: (stepALabel: string, stepBLabel: string) =>
+          radioDisplay: (stepALabel, stepBLabel) =>
             <React.Fragment>{stepALabel} <strong>UNION</strong> {stepBLabel}</React.Fragment>,
-          value: 'UNION'
+          value: CombineOperator.Union
         },
         {
-          radioDisplay: (stepALabel: string, stepBLabel: string) =>
+          radioDisplay: (stepALabel, stepBLabel) =>
             <React.Fragment>{stepALabel} <strong>MINUS</strong> {stepBLabel}</React.Fragment>,
-          value: 'MINUS'
+          value: CombineOperator.LeftMinus
         },
         {
-          radioDisplay: (stepALabel: string, stepBLabel: string) =>
+          radioDisplay: (stepALabel, stepBLabel) =>
             <React.Fragment>{stepBLabel} <strong>MINUS</strong> {stepALabel}</React.Fragment>,
-          value: 'RMINUS'
+          value: CombineOperator.RightMinus
         }
       ]
     },
@@ -200,12 +202,12 @@ export type ReviseOperatorMenuGroup = {
 const ignoreOperators = (stepALabel: string, stepBLabel: string): ReviseOperatorMenuItem[] => [
   {
     display: <React.Fragment><strong>IGNORE</strong> {stepBLabel}</React.Fragment>,
-    value: 'LONLY',
+    value: IgnoreOperator.LeftOnly,
     iconClassName: cxOperator('--CombineOperator', 'LONLY')
   },
   {
     display: <React.Fragment><strong>IGNORE</strong> {stepALabel}</React.Fragment>,
-    value: 'RONLY',
+    value: IgnoreOperator.RightOnly,
     iconClassName: cxOperator('--CombineOperator', 'RONLY')
   }
 ];

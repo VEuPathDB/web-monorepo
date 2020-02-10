@@ -11,7 +11,7 @@ export enum CombineOperator {
   RightMinus = 'RMINUS'
 }
 
-enum IgnoreOperator {
+export enum IgnoreOperator {
   LeftOnly = 'LONLY',
   RightOnly = 'RONLY'
 }

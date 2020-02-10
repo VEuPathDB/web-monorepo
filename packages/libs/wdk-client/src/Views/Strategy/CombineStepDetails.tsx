@@ -198,6 +198,7 @@ const CombineStepDetailsForm = ({
     : !ReviseOperatorForm
     ? <NotFound />
     : <ReviseOperatorForm
+        uiStepTree={stepTree}
         searchName={newOperatorSearchName}
         questions={questions}
         step={step}

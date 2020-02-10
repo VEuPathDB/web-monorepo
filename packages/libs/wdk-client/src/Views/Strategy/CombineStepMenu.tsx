@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
@@ -30,14 +30,14 @@ type StateProps = {
   booleanOperatorParameter?: Parameter
 };
 
-function combineOperatorOptionDisplay(operator: CombineOperator, stepALabel = 'A', stepBLabel = 'B') {
+function combineOperatorOptionDisplay(operator: CombineOperator, stepALabel: ReactNode, stepBLabel: ReactNode, insertingBefore: boolean) {
   return operator === CombineOperator.Intersect
     ? <React.Fragment>{stepALabel} <strong>INTERSECT</strong> {stepBLabel}</React.Fragment>
     : operator === CombineOperator.Union
     ? <React.Fragment>{stepALabel} <strong>UNION</strong> {stepBLabel}</React.Fragment>
     : operator === CombineOperator.LeftMinus
-    ? <React.Fragment>{stepALabel} <strong>MINUS</strong> {stepBLabel}</React.Fragment>
-    : <React.Fragment>{stepBLabel} <strong>MINUS</strong> {stepALabel}</React.Fragment>;
+    ? <React.Fragment>{insertingBefore ? stepBLabel : stepALabel} <strong>MINUS</strong> {insertingBefore ? stepALabel : stepBLabel}</React.Fragment>
+    : <React.Fragment>{insertingBefore ? stepALabel : stepBLabel} <strong>MINUS</strong> {insertingBefore ? stepBLabel : stepALabel}</React.Fragment>;
 }
 
 
@@ -157,7 +157,8 @@ export const CombineStepMenuView = (
     startCombiningWithStrategy,
     strategy,
     addType,
-    operandStep
+    operandStep,
+    stepsCompletedNumber
   }: Props
 ) => {
   useEffect(() => {
@@ -266,7 +267,12 @@ export const CombineStepMenuView = (
                           <div className={cxOperator('--CombineOperator', operator)}>
                           </div>
                           <span>
-                            {combineOperatorOptionDisplay(operator)}
+                            {combineOperatorOptionDisplay(
+                              operator,
+                              stepsCompletedNumber,
+                              stepsCompletedNumber + 1,
+                              addType.type === 'insert-before'
+                            )}
                           </span>
                         </label>
                       </div>
