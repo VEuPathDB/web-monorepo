@@ -30,14 +30,14 @@ type StateProps = {
   booleanOperatorParameter?: Parameter
 };
 
-function combineOperatorOptionDisplay(operator: CombineOperator, stepALabel: ReactNode, stepBLabel: ReactNode, insertingBefore: boolean) {
+function combineOperatorOptionDisplay(operator: CombineOperator, stepALabel: ReactNode, stepBLabel: ReactNode) {
   return operator === CombineOperator.Intersect
     ? <React.Fragment>{stepALabel} <strong>INTERSECT</strong> {stepBLabel}</React.Fragment>
     : operator === CombineOperator.Union
     ? <React.Fragment>{stepALabel} <strong>UNION</strong> {stepBLabel}</React.Fragment>
     : operator === CombineOperator.LeftMinus
-    ? <React.Fragment>{insertingBefore ? stepBLabel : stepALabel} <strong>MINUS</strong> {insertingBefore ? stepALabel : stepBLabel}</React.Fragment>
-    : <React.Fragment>{insertingBefore ? stepALabel : stepBLabel} <strong>MINUS</strong> {insertingBefore ? stepBLabel : stepALabel}</React.Fragment>;
+    ? <React.Fragment>{stepALabel} <strong>MINUS</strong> {stepBLabel}</React.Fragment>
+    : <React.Fragment>{stepBLabel} <strong>MINUS</strong> {stepALabel}</React.Fragment>;
 }
 
 
