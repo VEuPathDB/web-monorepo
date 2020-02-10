@@ -30,6 +30,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
     reviseOperatorParamConfiguration: {
       type: 'form',
       FormComponent: ({
+        uiStepTree,
         questions,
         step,
         strategy,
@@ -121,8 +122,8 @@ export const apiBinaryOperations: BinaryOperation[] = [
               newStepRecordClass={secondaryInputRecordClass}
               insertingBeforeFirstStep={false}
               typeChangeAllowed={typeChangeAllowed}
-              currentStepName="Step A"
-              newStepName="Step B"
+              currentStepName={`Step ${uiStepTree.slotNumber - 1}`}
+              newStepName={`Step ${uiStepTree.slotNumber}`}
             />,
           [ primaryInputRecordClass, secondaryInputRecordClass, typeChangeAllowed ]
         );
@@ -152,7 +153,8 @@ export const apiBinaryOperations: BinaryOperation[] = [
       display: 'Revise as a span operation',
       items: [
         {
-          radioDisplay: <React.Fragment>A <strong>RELATIVE TO</strong> B, using genomic colocation</React.Fragment>,
+          radioDisplay: (stepALabel, stepBLabel) =>
+            <React.Fragment>{stepALabel} <strong>RELATIVE TO</strong> {stepBLabel}, using genomic colocation</React.Fragment>,
           value: 'overlap'
         }
       ]
