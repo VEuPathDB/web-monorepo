@@ -52,6 +52,15 @@
   right: 50%;
 }
 
+.StepBoxes--SlotLabel {
+  position: absolute;
+  bottom: -1.5em;
+  width: calc(100% - 1em);
+  text-align: center;
+  line-height: 1;
+  font-weight: bold;
+}
+
 .StepBoxes--Box {
   height: 45%;
   position: relative;

@@ -153,6 +153,9 @@ function StepTree(props: StepBoxesProps) {
             )
           )
         }
+        <div className={cx('--SlotLabel')}>
+          Step {stepTree.slotNumber}
+        </div>
       </div>
     </React.Fragment>
   );
