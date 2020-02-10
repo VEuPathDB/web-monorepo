@@ -32,7 +32,7 @@ public class AccessRequestSubmitter {
     //   (1) insert a DB record for the new request and 
     //   (2) email the request to the appropriate parties
     try (
-        Connection conn = wdkModel.getAccountDb().getDataSource().getConnection();
+        Connection conn = wdkModel.getUserDb().getDataSource().getConnection();
     ) {
       conn.setAutoCommit(false);
       String sql = insertRequestPreparedStatementBody();
@@ -85,12 +85,12 @@ public class AccessRequestSubmitter {
       .collect(Collectors.toList());
 
     return String.format(
-      "INSERT INTO studyaccess.ValidDatasetUser (%s)    " + 
+      "INSERT INTO userlogins5.ValidDatasetUser (%s)    " + 
       "SELECT                                    %s     " +
       "FROM dual                                        " +
       "WHERE NOT EXISTS (                               " +
       "  SELECT user_id, dataset_presenter_id           " +
-      "  FROM studyaccess.ValidDatasetUser              " +
+      "  FROM userlogins5.ValidDatasetUser              " +
       "  WHERE user_id = ? AND dataset_presenter_id = ? " +
       ")                                                ",
       String.join(", ", insertStatementColumns),
