@@ -107,11 +107,12 @@ export default function StrategyPanel(props: Props) {
             </div>
           </> : null}
           </div>
-          {strategy != null && insertStepVisibility != null ? (
+          {strategy != null && uiStepTree != null && insertStepVisibility != null ? (
             <AddStepPanel
               strategy={strategy}
               addType={insertStepVisibility}
               onHideInsertStep={onHideInsertStep}
+              uiStepTree={uiStepTree}
             />
           ) : null}
       {strategy != null && reviseStep != null ? (

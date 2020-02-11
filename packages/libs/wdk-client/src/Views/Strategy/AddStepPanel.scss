@@ -26,11 +26,15 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 1em;
+
+    button {
+      height: 15em;
+    }
   }
 
   &--SelectedMenuContainer {
     margin: 1em;
-    height: 50em;
+    height: 45em;
 
     .MenuChoicesContainer {
       counter-reset: panel;
@@ -42,7 +46,7 @@
       .MenuChoice::before {
         counter-increment: panel;
         content: counter(panel);
-        background: #666666;
+        background: #777777;
         border-radius: 1em;
         height: 1.5em;
         width: 1.5em;

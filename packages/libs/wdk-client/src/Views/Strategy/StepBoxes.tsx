@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { Step, StepTree } from 'wdk-client/Utils/WdkUser';
+import { Step } from 'wdk-client/Utils/WdkUser';
 import { makeStepBoxDisplayName } from 'wdk-client/Views/Strategy/StrategyUtils';
 import { StepBoxesProps, StepBoxProps, isTransformUiStepTree, isCombineUiStepTree, isCompleteUiStepTree, PartialUiStepTree, isPartialCombineUiStepTree } from 'wdk-client/Views/Strategy/Types';
 import StepDetailsDialog from 'wdk-client/Views/Strategy/StepDetailsDialog';
@@ -37,6 +37,31 @@ export default function StepBoxes(props: StepBoxesProps) {
       <ExpandedSteps {...props}/>
     </React.Fragment>
   )
+}
+
+type PreviewStepBoxes = {
+  stepTree: PartialUiStepTree
+};
+
+export function PreviewStepBoxes(props: PreviewStepBoxes) {
+  return (
+    <div className={cx()}>
+      <StepTree
+        stepTree={props.stepTree}
+        setReviseFormStepId={noop}
+        onShowInsertStep={noop}
+        onHideInsertStep={noop}
+        onRenameStep={noop}
+        onMakeNestedStrategy={noop}
+        onMakeUnnestedStrategy={noop}
+        onExpandNestedStrategy={noop}
+        onCollapseNestedStrategy={noop}
+        onRenameNestedStrategy={noop}
+        onAnalyzeStep={noop}
+        onDeleteStep={noop}
+      />
+    </div>
+  );
 }
 
 /**

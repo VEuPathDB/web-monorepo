@@ -15,7 +15,7 @@ import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLea
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { AddStepMenuSelection } from 'wdk-client/Views/Strategy/AddStepMenuSelection';
-import { AddType } from 'wdk-client/Views/Strategy/Types';
+import { AddType, PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
 
 import 'wdk-client/Views/Strategy/AddStepPanel.scss';
 
@@ -44,7 +44,8 @@ type DispatchProps = {
 type OwnProps = {
   strategy: StrategyDetails,
   addType: AddType,
-  onHideInsertStep: () => void
+  onHideInsertStep: () => void,
+  uiStepTree: PartialUiStepTree
 };
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -100,7 +101,8 @@ export const AddStepPanelView = wrappable((
     recordClasses,
     requestPutStrategyStepTree,
     strategy,
-    stepsCompletedNumber
+    stepsCompletedNumber,
+    uiStepTree
   }: Props
 ) => {
   const [ shouldSkipAddStepHelp, setShouldSkipAddStepHelp ] = useSessionBackedState<boolean>(
@@ -244,17 +246,9 @@ export const AddStepPanelView = wrappable((
                   <div className={cx('--SelectedMenuContainer')}>
                     {
                       SelectedMenu == null
-                        ? <div>
+                        ? <div className={cx('--Orientation')}>
                             <div>
                               Select an option on the left to consider more data for your search strategy.
-                            </div>
-
-                            <div>
-                              For example, you can...
-                            </div>
-
-                            <div>
-                              {TODO}
                             </div>
                           </div>
                         : <SelectedMenu

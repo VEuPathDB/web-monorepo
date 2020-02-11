@@ -262,7 +262,7 @@ const TabDisplay = ({
         onChange={changeTab}
       />
       <label htmlFor={tabKey} onClick={changeTab}>
-        <strong>{tabLabel}</strong>
+        {tabLabel}
       </label>
       {
         tabKey === selectedTab &&

@@ -32,12 +32,12 @@ type StateProps = {
 
 function combineOperatorOptionDisplay(operator: CombineOperator, stepALabel: ReactNode, stepBLabel: ReactNode) {
   return operator === CombineOperator.Intersect
-    ? <React.Fragment>{stepALabel} <strong>INTERSECT</strong> {stepBLabel}</React.Fragment>
+    ? <React.Fragment>{stepALabel} INTERSECT {stepBLabel}</React.Fragment>
     : operator === CombineOperator.Union
-    ? <React.Fragment>{stepALabel} <strong>UNION</strong> {stepBLabel}</React.Fragment>
+    ? <React.Fragment>{stepALabel} UNION {stepBLabel}</React.Fragment>
     : operator === CombineOperator.LeftMinus
-    ? <React.Fragment>{stepALabel} <strong>MINUS</strong> {stepBLabel}</React.Fragment>
-    : <React.Fragment>{stepBLabel} <strong>MINUS</strong> {stepALabel}</React.Fragment>;
+    ? <React.Fragment>{stepALabel} MINUS {stepBLabel}</React.Fragment>
+    : <React.Fragment>{stepBLabel} MINUS {stepALabel}</React.Fragment>;
 }
 
 
@@ -241,9 +241,7 @@ export const CombineStepMenuView = (
           ? <Loading />
           : <MenuChoicesContainer containerClassName={cx('--Container')}>
               <MenuChoice>
-                <strong>
-                  Choose <em>how</em> to combine with other {inputRecordClass.displayNamePlural}
-                </strong>
+                <strong>Choose <em>how</em> to combine with other {inputRecordClass.displayNamePlural}</strong>
                 <div className={cx('--OperatorSelector')}>
                   {
                     combineOperatorOrder.map(operator => (
@@ -280,16 +278,14 @@ export const CombineStepMenuView = (
                 </div>
               </MenuChoice>
               <MenuChoice>
-                <strong>
-                  Choose <em>which</em> {inputRecordClass.displayNamePlural} to combine. From...
-                </strong>
+                <strong>Choose <em>which</em> {inputRecordClass.displayNamePlural} to combine.  From...</strong>
                 <SearchInputSelector
                   strategy={strategy}
                   onCombineWithBasketSelected={onCombineWithBasketSelected}
                   onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
                   onCombineWithStrategySelected={onCombineWithStrategySelected}
                   inputRecordClass={inputRecordClass}
-                  selectBasketButtonText={`Combine ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass)} with your basket`}
+                  selectBasketButtonText={`Combine Step ${stepsCompletedNumber} with your basket`}
                 />
               </MenuChoice>
             </MenuChoicesContainer>

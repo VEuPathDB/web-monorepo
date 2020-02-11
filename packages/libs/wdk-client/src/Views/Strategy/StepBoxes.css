@@ -58,7 +58,7 @@
   width: calc(100% - 1em);
   text-align: center;
   line-height: 1;
-  font-weight: bold;
+  font-size: 0.9;
 }
 
 .StepBoxes--Box {
