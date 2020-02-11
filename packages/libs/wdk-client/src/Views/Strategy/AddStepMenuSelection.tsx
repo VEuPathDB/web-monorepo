@@ -1,23 +1,30 @@
 import React from 'react';
 
-type Props = {
-  /* TODO: Pass whatever props are needed to render the preview images */
-  operationName: string;
-  isSelected: boolean;
-  onSelectMenuItem: () => void;
-}
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
+import { PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
 
-export const AddStepMenuSelection = (props: Props) =>
+import './AddStepMenuSelection.scss';
+import { PreviewStepBoxes } from './StepBoxes';
+
+const cx = makeClassNameHelper('AddStepMenuSelection');
+
+type Props = {
+  operationName: string,
+  uiStepTree: PartialUiStepTree,
+  strategy: StrategyDetails,
+  isSelected: boolean,
+  onSelectMenuItem: () => void
+};
+
+export const AddStepMenuSelection = ({
+  isSelected,
+  onSelectMenuItem,
+  uiStepTree
+}: Props) =>
   <button 
-    onClick={props.onSelectMenuItem} 
-    style={
-      props.isSelected 
-        ? {
-            border: '1px solid red',
-            outline: 'none'
-          }
-        : {}
-    }
+    className={cx('', isSelected && 'selected')}
+    onClick={onSelectMenuItem}
   >
-    {props.operationName}
+    <PreviewStepBoxes stepTree={uiStepTree} />
   </button>;

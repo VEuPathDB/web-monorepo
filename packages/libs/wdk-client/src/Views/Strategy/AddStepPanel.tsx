@@ -11,7 +11,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { useAddStepMenuConfigs, useSelectedAddStepFormComponent } from 'wdk-client/Utils/Operations';
-import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLeaf, findSubtree, getOutputStep } from 'wdk-client/Utils/StrategyUtils';
+import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLeaf, findSubtree, getOutputStep, findNestedStrategyRoot } from 'wdk-client/Utils/StrategyUtils';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { AddStepMenuSelection } from 'wdk-client/Views/Strategy/AddStepMenuSelection';
@@ -193,6 +193,11 @@ export const AddStepPanelView = wrappable((
     outputStep  
   );
 
+  const nestedBranchStepTree = useMemo(
+    () => findNestedStrategyRoot(uiStepTree, addType.stepId) || uiStepTree,
+    [ uiStepTree, addType.stepId ]
+  );
+
   return (
     <StrategyModal 
       title={
@@ -234,6 +239,8 @@ export const AddStepPanelView = wrappable((
                         ({ name: operationName }) =>
                           <AddStepMenuSelection
                             key={operationName}
+                            uiStepTree={nestedBranchStepTree}
+                            strategy={strategy}
                             operationName={operationName}
                             isSelected={selectedMenu === operationName}
                             onSelectMenuItem={() => {

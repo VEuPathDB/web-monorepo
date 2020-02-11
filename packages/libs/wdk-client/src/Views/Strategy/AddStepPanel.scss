@@ -17,24 +17,24 @@
 
   &--MenuContainer {
     display: grid;
-    grid-template-columns: 30% 1fr;
+    grid-template-columns: auto 1em 1fr;
     align-items: flex-start;
     grid-gap: 1em;
+    grid-template-areas: "menu-selector . selected-menu";
   }
 
   &--MenuSelector {
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 1em;
-
-    button {
-      height: 15em;
-    }
+    margin: 1em 0;
+    grid-area: menu-selector;
   }
 
   &--SelectedMenuContainer {
     margin: 1em;
     height: 45em;
+    grid-area: selected-menu;
 
     .MenuChoicesContainer {
       counter-reset: panel;
