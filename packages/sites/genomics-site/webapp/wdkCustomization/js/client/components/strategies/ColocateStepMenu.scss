@@ -11,8 +11,6 @@ $blue-text: #0000ee;
   }
 
   .wdk-RadioList {
-    font-weight: bold;
-
     display: flex;
     justify-content: space-evenly;
 
@@ -25,5 +23,10 @@ $blue-text: #0000ee;
 
   .SearchInputSelector {
     margin: 1em 1em 1em 2em;
+  }
+
+  p {
+    font-size: 1.1em;
+    margin: 0 0 2em 0;
   }
 }

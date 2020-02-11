@@ -76,9 +76,12 @@ export const ColocateStepMenu = ({
 
   return (
     <div className={cx()}>
+      <p>
+        Use the relative position of features on the genome between your existing step and the new step to identify features to keep in the final result.
+      </p>
       <MenuChoicesContainer containerClassName={cx('--Container')}>
         <MenuChoice>
-          <strong>Choose <em>which</em> type of feature to use in your new step's result</strong>
+          <strong>Choose the data type of your new step</strong>
           <RadioList
             name="add-step__feature-type-choice"
             onChange={setSelectedFeatureTypeUrlSegment}
@@ -87,7 +90,7 @@ export const ColocateStepMenu = ({
           />
         </MenuChoice>
         <MenuChoice>
-          <strong>Choose <em>where</em> to obtain the {secondaryInputRecordClass.displayNamePlural} for your new step</strong>
+          <strong>Choose <em>which</em> {secondaryInputRecordClass.displayNamePlural} to colocate. From...</strong>
           <SearchInputSelector
             onCombineWithNewSearchSelected={onCombineNewSearchSelected}
             onCombineWithStrategySelected={onCombineWithStrategySelected}
