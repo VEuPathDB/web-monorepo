@@ -240,6 +240,7 @@ export const AddStepPanelView = wrappable((
                           <AddStepMenuSelection
                             key={operationName}
                             uiStepTree={nestedBranchStepTree}
+                            inputRecordClass={inputRecordClass}
                             strategy={strategy}
                             operationName={operationName}
                             isSelected={selectedMenu === operationName}

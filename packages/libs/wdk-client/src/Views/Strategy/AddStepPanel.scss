@@ -17,7 +17,7 @@
 
   &--MenuContainer {
     display: grid;
-    grid-template-columns: auto 1em 1fr;
+    grid-template-columns: auto 1em 60em;
     align-items: flex-start;
     grid-gap: 1em;
     grid-template-areas: "menu-selector . selected-menu";
