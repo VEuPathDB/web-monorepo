@@ -15,11 +15,11 @@ const cx = makeClassNameHelper('ColocateStepMenu');
 
 export const ColocateStepMenu = ({
   inputRecordClass,
-  operandStep,
   recordClasses,
   strategy,
   recordClassesByUrlSegment,
-  startOperationForm
+  startOperationForm,
+  stepsCompletedNumber
 }: AddStepOperationMenuProps) => {
   const colocationRecordClasses = useMemo(
     () => recordClasses.filter(
@@ -97,7 +97,7 @@ export const ColocateStepMenu = ({
             onCombineWithBasketSelected={onCombineWithBasketSelected}
             strategy={strategy}
             inputRecordClass={secondaryInputRecordClass}
-            selectBasketButtonText={`Colocate ${inputResultSetDescription(operandStep.estimatedSize, inputRecordClass) } with your basket`}
+            selectBasketButtonText={`Colocate Step ${stepsCompletedNumber} with your basket`}
           />
         </MenuChoice>
       </MenuChoicesContainer>
