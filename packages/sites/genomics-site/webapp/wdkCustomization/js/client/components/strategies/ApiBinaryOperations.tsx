@@ -12,8 +12,12 @@ import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { cxStepBoxes } from 'wdk-client/Views/Strategy/ClassNames';
+import { LeafPreview, combinedPreviewFactory } from 'wdk-client/Views/Strategy/StepBoxes';
 
 import './ColocateStepBoxIcon.scss';
+
+const ColocatePreview = combinedPreviewFactory(cxStepBoxes('--SpanOperator', 'OVERLAP'));
 
 export const colocationQuestionSuffix = 'BySpanLogic';
 
@@ -166,6 +170,12 @@ export const apiBinaryOperations: BinaryOperation[] = [
       primaryOperandStep: Step
     ) =>
       search.outputRecordClassName === primaryOperandStep.recordClassName &&
-      search.urlSegment.endsWith(colocationQuestionSuffix)
+      search.urlSegment.endsWith(colocationQuestionSuffix),
+    AddStepHeaderComponent: () =>
+      <React.Fragment>
+        Use <strong>Genomic Colocation</strong> to combine with other genomic features
+      </React.Fragment>,
+    AddStepNewInputComponent: LeafPreview,
+    AddStepNewOperationComponent: ColocatePreview
   }
 ];
