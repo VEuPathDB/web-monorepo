@@ -153,6 +153,10 @@
   height: calc(100% + .17em);
 }
 
+.StepBoxes--BoxLink__preview:hover, .StepBoxes--BoxLink__preview:visited, .StepBoxes--BoxLink__preview:focus, .StepBoxes--BoxLink__preview:active {
+  text-decoration: none;
+}
+
 .StepBoxes--FilterIcon {
   bottom: .6em;
   color: #ef6565;

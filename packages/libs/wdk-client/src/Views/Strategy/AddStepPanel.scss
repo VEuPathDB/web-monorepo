@@ -27,12 +27,12 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 1em;
-    margin: 1em 0;
+    margin-bottom: 1em;
     grid-area: menu-selector;
   }
 
   &--SelectedMenuContainer {
-    margin: 1em;
+    margin: 0 1em 1em 1em;
     height: 45em;
     grid-area: selected-menu;
 

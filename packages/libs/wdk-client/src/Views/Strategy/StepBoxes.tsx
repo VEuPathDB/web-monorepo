@@ -45,7 +45,7 @@ type PreviewStepBoxes = {
 
 export function PreviewStepBoxes(props: PreviewStepBoxes) {
   return (
-    <div className={cx()}>
+    <div className={cx('', '__preview')}>
       <StepTree
         stepTree={props.stepTree}
         setReviseFormStepId={noop}
@@ -207,7 +207,7 @@ function UnknownQuestionStepBox({ stepTree, deleteStep }: { stepTree: PartialUiS
   );
 }
 
-function StepBox(props: StepBoxProps) {
+const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
   const [ detailVisibility, setDetailVisibility ] = useState(false);
   const { isNested, stepTree, deleteStep } = props;
   const { step, color, primaryInput, secondaryInput } = stepTree;
@@ -219,6 +219,7 @@ function StepBox(props: StepBoxProps) {
     : isTransformUiStepTree(stepTree) && !isNested ? 'transform'
     : 'leaf';
   const nestedModifier = isNested ? 'nested' : '';
+  const previewModifier = isPreview ? 'preview' : '';
   const borderColor = isNested && stepTree.nestedControlStep && stepTree.nestedControlStep.expanded ? color : undefined;
   const allowRevise = !isNested && !isCombineUiStepTree(stepTree);
 
@@ -263,18 +264,26 @@ function StepBox(props: StepBoxProps) {
       <NavLink
         replace
         style={{ borderColor }}
-        className={cx("--BoxLink", classModifier, nestedModifier)}
+        className={cx("--BoxLink", classModifier, nestedModifier, previewModifier)}
         activeClassName={cx("--BoxLink", classModifier + "_active")}
         to={`/workspace/strategies/${step.strategyId}/${step.id}`}
+        onClick={e => {
+          if (isPreview) {
+            e.preventDefault();
+          }
+        }}
       >
         <StepComponent {...props} />
       </NavLink>
-      {editButton}
-      {stepDetails}
+      {isPreview && editButton}
+      {isPreview && stepDetails}
       {filterIcon}
     </div>
   );
 }
+
+const StepBox = stepBoxFactory(false);
+const PreviewStepBox = stepBoxFactory(true);
 
 function LeafStepBoxContent(props: StepBoxProps) {
   const { stepTree, isNested } = props;

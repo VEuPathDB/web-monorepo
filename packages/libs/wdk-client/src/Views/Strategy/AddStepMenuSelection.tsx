@@ -37,6 +37,7 @@ export const AddStepMenuSelection = ({
         <h3>
           <strong>Combine</strong> with other {inputRecordClass.displayNamePlural}
         </h3>
+        <PreviewStepBoxes stepTree={uiStepTree} />
       </React.Fragment>
     }
     {
@@ -45,6 +46,7 @@ export const AddStepMenuSelection = ({
         <h3>
           <strong>Transform</strong> into related records
         </h3>
+        <PreviewStepBoxes stepTree={uiStepTree} />
       </React.Fragment>
     }
     {
@@ -53,6 +55,7 @@ export const AddStepMenuSelection = ({
         <h3>
           Use <strong>Genomic Colocation</strong> to combine with other genomic features
         </h3>
+        <PreviewStepBoxes stepTree={uiStepTree} />
       </React.Fragment>
     }
   </button>;
