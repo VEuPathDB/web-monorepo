@@ -198,9 +198,6 @@ export function TransformPreview() {
   );
 };
 
-// FIXME: Move to ApiCommonWebsite
-export const ColocatePreview = combinedPreviewFactory(cx('--SpanOperator', 'OVERLAP'));
-
 function UnknownQuestionStepBox({ stepTree, deleteStep }: { stepTree: PartialUiStepTree, deleteStep: () => void }) {
   const deleteButton = (
     <button
