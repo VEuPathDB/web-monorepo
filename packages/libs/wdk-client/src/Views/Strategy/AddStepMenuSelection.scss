@@ -10,8 +10,9 @@
 
   &:hover, &:focus {
     background: white;
-    border: 0.25em solid #666666;
-    padding: 0.75em;
+  }
+
+  &:hover {
     outline: none;
   }
 
@@ -22,6 +23,7 @@
     &:hover, &:focus {
       border: 0.5em solid #666666;
       padding: 0.5em;
+      outline: none;
     }
 
     &::after {

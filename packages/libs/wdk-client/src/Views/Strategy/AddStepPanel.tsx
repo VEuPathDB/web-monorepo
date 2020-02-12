@@ -247,6 +247,7 @@ export const AddStepPanelView = wrappable((
                             onSelectMenuItem={() => {
                               startOperationMenu(operationName);
                             }}
+                            addType={addType}
                           />
                       )
                     }

@@ -252,6 +252,12 @@ export const findNestedStrategyRoot = (root: PartialUiStepTree, targetStepId: nu
   }
 };
 
+export const findSlotNumber = (root: PartialUiStepTree, targetStepId: number): number => {
+  return root.primaryInput == null || root.step.id === targetStepId
+    ? root.slotNumber
+    : findSlotNumber(root.primaryInput, targetStepId);
+}
+
 export const findPrimaryBranchHeight = (stepTree: StepTree): number => {
   return traversePrimaryBranch(stepTree, 0);
 

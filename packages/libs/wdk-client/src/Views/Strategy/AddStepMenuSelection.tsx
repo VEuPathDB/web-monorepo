@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { PreviewStepBoxes } from 'wdk-client/Views/Strategy/StepBoxes';
-import { PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { PreviewStepBoxes, BooleanPreview, TransformPreview, ColocatePreview, LeafPreview } from 'wdk-client/Views/Strategy/StepBoxes';
+import { PartialUiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 
 import './AddStepMenuSelection.scss';
+import { findSlotNumber } from 'wdk-client/Utils/StrategyUtils';
 
 const cx = makeClassNameHelper('AddStepMenuSelection');
 
@@ -16,7 +17,8 @@ type Props = {
   inputRecordClass: RecordClass,
   strategy: StrategyDetails,
   isSelected: boolean,
-  onSelectMenuItem: () => void
+  onSelectMenuItem: () => void,
+  addType: AddType
 };
 
 export const AddStepMenuSelection = ({
@@ -24,38 +26,59 @@ export const AddStepMenuSelection = ({
   onSelectMenuItem,
   operationName,
   inputRecordClass,
-  uiStepTree
-}: Props) =>
-  <button 
-    className={cx('', isSelected && 'selected')}
-    onClick={onSelectMenuItem}
-  >
-    {/* FIXME Remove this hardcoding by updating the AddStepMenuConfig type */}
-    {
-      operationName === 'combine' &&
-      <React.Fragment>
-        <h3>
+  uiStepTree,
+  addType,
+}: Props) => {
+  // FIXME: Remove this hardcoding by updating the AddStepMenuConfig
+  const [ headerContent, operationStepBox, newInputStepBox ] = operationName === 'combine'
+    ? [
+        <React.Fragment>
           <strong>Combine</strong> with other {inputRecordClass.displayNamePlural}
-        </h3>
-        <PreviewStepBoxes stepTree={uiStepTree} />
-      </React.Fragment>
-    }
-    {
-      operationName === 'convert' &&
-      <React.Fragment>
-        <h3>
+        </React.Fragment>,
+        <BooleanPreview />,
+        <LeafPreview />
+      ]
+    : operationName === 'convert'
+    ? [
+        <React.Fragment>
           <strong>Transform</strong> into related records
-        </h3>
-        <PreviewStepBoxes stepTree={uiStepTree} />
-      </React.Fragment>
-    }
-    {
-      operationName === 'colocate' &&
-      <React.Fragment>
-        <h3>
+        </React.Fragment>,
+        <TransformPreview />,
+        null
+      ]
+    : [
+        <React.Fragment>
           Use <strong>Genomic Colocation</strong> to combine with other genomic features
-        </h3>
-        <PreviewStepBoxes stepTree={uiStepTree} />
-      </React.Fragment>
-    }
-  </button>;
+        </React.Fragment>,
+        <ColocatePreview />,
+        <LeafPreview />
+      ];
+
+  const targetSlotNumber = useMemo(
+    () => findSlotNumber(uiStepTree, addType.stepId),
+    [ uiStepTree, addType ]
+  );
+
+  return (
+    <button
+      className={cx('', isSelected && 'selected')}
+      onClick={onSelectMenuItem}
+    >
+      <h3>{headerContent}</h3>
+      <PreviewStepBoxes
+        stepTree={uiStepTree}
+        fromSlot={addType.type === 'insert-before'
+          ? Math.max(targetSlotNumber - 1, 1)
+          : targetSlotNumber
+        }
+        toSlot={targetSlotNumber}
+        insertAtSlot={targetSlotNumber}
+        insertType={addType.type}
+        newOperationStepBox={operationStepBox}
+        newInputStepBox={newInputStepBox}
+      />
+    </button>
+  );
+};
+
+

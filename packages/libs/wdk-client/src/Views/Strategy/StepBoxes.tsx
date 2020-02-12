@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
@@ -37,31 +37,6 @@ export default function StepBoxes(props: StepBoxesProps) {
       <ExpandedSteps {...props}/>
     </React.Fragment>
   )
-}
-
-type PreviewStepBoxes = {
-  stepTree: PartialUiStepTree
-};
-
-export function PreviewStepBoxes(props: PreviewStepBoxes) {
-  return (
-    <div className={cx('', '__preview')}>
-      <StepTree
-        stepTree={props.stepTree}
-        setReviseFormStepId={noop}
-        onShowInsertStep={noop}
-        onHideInsertStep={noop}
-        onRenameStep={noop}
-        onMakeNestedStrategy={noop}
-        onMakeUnnestedStrategy={noop}
-        onExpandNestedStrategy={noop}
-        onCollapseNestedStrategy={noop}
-        onRenameNestedStrategy={noop}
-        onAnalyzeStep={noop}
-        onDeleteStep={noop}
-      />
-    </div>
-  );
 }
 
 /**
@@ -186,6 +161,46 @@ function StepTree(props: StepBoxesProps) {
   );
 }
 
+export function LeafPreview() {
+  return (
+    <div className={cx('--Box', 'valid')}>
+      <div className={cx('--BoxLink', 'leaf', 'new-step-preview')}>
+      </div>
+    </div>
+  );
+}
+
+export const combinedPreviewFactory = (operatorClassName: string) => () =>
+  <div className={cx('--Box', 'valid')}>
+    <div className={cx('--BoxLink', 'combined', 'new-step-preview')}>
+      <div className={operatorClassName}>
+        <div className={cx('--CombinePrimaryInputArrow')}></div>
+        <div className={cx('--CombineSecondaryInputArrow')}></div>
+      </div>
+      <div className={cx('--StepCount')}></div>
+    </div>
+  </div>;
+
+export const BooleanPreview = combinedPreviewFactory(cx('--CombineOperator', 'PREVIEW'));
+
+export function TransformPreview() {
+  return (
+    <div className={cx('--Box', 'valid')}>
+      <div className={cx('--BoxLink', 'transform', 'new-step-preview')}>
+        <div className={cx('--TransformInputArrow')}></div>
+        <TransformIcon isPreview />
+        <div className={cx('--TransformDetails')}>
+          <div className={cx('--StepName')}></div>
+          <div className={cx('--StepCount')}></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// FIXME: Move to ApiCommonWebsite
+export const ColocatePreview = combinedPreviewFactory(cx('--SpanOperator', 'OVERLAP'));
+
 function UnknownQuestionStepBox({ stepTree, deleteStep }: { stepTree: PartialUiStepTree, deleteStep: () => void }) {
   const deleteButton = (
     <button
@@ -207,6 +222,215 @@ function UnknownQuestionStepBox({ stepTree, deleteStep }: { stepTree: PartialUiS
   );
 }
 
+type PreviewStepBoxesProps = {
+  stepTree: PartialUiStepTree,
+  fromSlot: number,
+  toSlot: number,
+  insertType: 'append' | 'insert-before',
+  insertAtSlot: number,
+  newOperationStepBox: ReactNode,
+  newInputStepBox: ReactNode
+};
+
+const existingStepPreviewProps = {
+  isAnalyzable: false,
+  isExpanded: false,
+  isDeleteable: false,
+  renameStep: noop,
+  makeNestedStrategy: noop,
+  makeUnnestStrategy: noop,
+  collapseNestedStrategy: noop,
+  expandNestedStrategy: noop,
+  showNewAnalysisTab: noop,
+  showReviseForm: noop,
+  insertStepBefore: noop,
+  insertStepAfter: noop,
+  deleteStep: noop
+};
+
+export function PreviewStepBoxes(props: PreviewStepBoxesProps) {
+  return (
+    <div className={cx('', 'preview')}>
+      <PreviewStepTree {...props} />
+    </div>
+  );
+}
+
+/**
+ * Recursively render the step tree. Steps are rendered into "slots", where a
+ * slot contains a primary input and its secondary input if it has one (the
+ * left-most rendered step, and transforms, do not have seondary inputs)
+ *
+ * We also close over provided handlers with the appropriate step id and
+ * sequence of actions.
+ */
+function PreviewStepTree(props: PreviewStepBoxesProps) {
+  const {
+    stepTree,
+    fromSlot,
+    toSlot,
+    insertType,
+    insertAtSlot,
+    newInputStepBox,
+    newOperationStepBox
+  } = props;
+
+  if (!isCompleteUiStepTree(stepTree)) {
+    return <UnknownQuestionStepBox stepTree={stepTree} deleteStep={noop} />;
+  }
+
+  const { step, primaryInput, secondaryInput } = stepTree;
+
+  const existingStepBox = (
+    <Plugin<StepBoxProps>
+      context={{
+        type: 'stepBox',
+        name: step.searchName,
+        searchName: step.searchName,
+        recordClassName: step.recordClassName
+      }}
+      pluginProps={{
+        stepTree,
+        isNested: false,
+        ...existingStepPreviewProps
+      }}
+      defaultComponent={ExistingStepPreviewBox}
+    />
+  );
+
+  const existingStepSecondaryInputBox = (
+    secondaryInput && (
+      !isCompleteUiStepTree(secondaryInput)
+        ? <UnknownQuestionStepBox stepTree={secondaryInput} deleteStep={noop} />
+        : <Plugin<StepBoxProps>
+            context={{
+              type: 'stepBox',
+              name: secondaryInput.step.searchName,
+              searchName: secondaryInput.step.searchName,
+              recordClassName: secondaryInput.step.recordClassName
+            }}
+            pluginProps={{
+              stepTree: secondaryInput,
+              isNested: secondaryInput.isNested,
+              ...existingStepPreviewProps
+            }}
+            defaultComponent={ExistingStepPreviewBox}
+          />
+    )
+  );
+
+  const shouldRenderExistingSlotContent = fromSlot <= stepTree.slotNumber && stepTree.slotNumber <= toSlot;
+
+  return (
+    <React.Fragment>
+      {primaryInput && <PreviewStepTree {...props} stepTree={primaryInput} />}
+      {
+        shouldRenderExistingSlotContent
+          ? <SlotContent
+              insertType={insertType}
+              insertAtSlot={insertAtSlot}
+              currentSlot={stepTree.slotNumber}
+              existingStepBox={existingStepBox}
+              existingStepSecondaryInputBox={existingStepSecondaryInputBox}
+              newInputStepBox={newInputStepBox}
+              newOperationStepBox={newOperationStepBox}
+            />
+          : <div className={cx('--Slot')}></div>
+      }
+    </React.Fragment>
+  );
+}
+
+type SlotContentProps = {
+  insertType: 'append' | 'insert-before',
+  insertAtSlot: number,
+  currentSlot: number,
+  existingStepBox: ReactNode,
+  existingStepSecondaryInputBox: ReactNode
+  newOperationStepBox: ReactNode,
+  newInputStepBox: ReactNode
+};
+
+function SlotContent({
+  insertType,
+  insertAtSlot,
+  currentSlot,
+  existingStepBox,
+  existingStepSecondaryInputBox,
+  newOperationStepBox,
+  newInputStepBox
+}: SlotContentProps) {
+  if (currentSlot !== insertAtSlot) {
+    return (
+      <React.Fragment>
+        <div className={cx('--Slot')}>
+          {existingStepBox}
+          {existingStepSecondaryInputBox}
+          <div className={cx('--SlotLabel')}>
+            Step {currentSlot > insertAtSlot ? currentSlot + 1 : currentSlot}
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  } else if (insertType === 'append') {
+    return (
+      <React.Fragment>
+        <div className={cx('--Slot')}>
+          {existingStepBox}
+          {existingStepSecondaryInputBox}
+          <div className={cx('--SlotLabel')}>
+            Step {currentSlot}
+          </div>
+        </div>
+        <div className={cx('--Slot')}>
+          {newOperationStepBox}
+          {newInputStepBox}
+          <div className={cx('--SlotLabel')}>
+            Step {currentSlot + 1}
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  } else if (insertAtSlot >= 2) {
+    return (
+      <React.Fragment>
+        <div className={cx('--Slot')}>
+          {newOperationStepBox}
+          {newInputStepBox}
+          <div className={cx('--SlotLabel')}>
+            Step {currentSlot}
+          </div>
+        </div>
+        <div className={cx('--Slot')}>
+          {existingStepBox}
+          {existingStepSecondaryInputBox}
+          <div className={cx('--SlotLabel')}>
+            Step {currentSlot + 1}
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  } else {
+    return (
+      <React.Fragment>
+        <div className={cx('--Slot')}>
+          {newInputStepBox}
+          <div className={cx('--SlotLabel')}>
+            Step 1
+          </div>
+        </div>
+        <div className={cx('--Slot')}>
+          {newOperationStepBox}
+          {existingStepBox}
+          <div className={cx('--SlotLabel')}>
+            Step 2
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  }
+}
+
 const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
   const [ detailVisibility, setDetailVisibility ] = useState(false);
   const { isNested, stepTree, deleteStep } = props;
@@ -219,7 +443,7 @@ const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
     : isTransformUiStepTree(stepTree) && !isNested ? 'transform'
     : 'leaf';
   const nestedModifier = isNested ? 'nested' : '';
-  const previewModifier = isPreview ? 'preview' : '';
+  const previewModifier = isPreview ? 'existing-step-preview' : '';
   const borderColor = isNested && stepTree.nestedControlStep && stepTree.nestedControlStep.expanded ? color : undefined;
   const allowRevise = !isNested && !isCombineUiStepTree(stepTree);
 
@@ -275,15 +499,15 @@ const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
       >
         <StepComponent {...props} />
       </NavLink>
-      {isPreview && editButton}
-      {isPreview && stepDetails}
+      {!isPreview && editButton}
+      {!isPreview && stepDetails}
       {filterIcon}
     </div>
   );
 }
 
 const StepBox = stepBoxFactory(false);
-const PreviewStepBox = stepBoxFactory(true);
+const ExistingStepPreviewBox = stepBoxFactory(true);
 
 function LeafStepBoxContent(props: StepBoxProps) {
   const { stepTree, isNested } = props;
