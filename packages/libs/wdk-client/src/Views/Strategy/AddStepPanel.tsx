@@ -236,18 +236,24 @@ export const AddStepPanelView = wrappable((
                   <div className={cx('--MenuSelector')}>
                     {
                       addStepMenuConfigs.map(
-                        ({ name: operationName }) =>
+                        ({
+                          name: operationName,
+                          AddStepHeaderComponent,
+                          AddStepNewInputComponent,
+                          AddStepNewOperationComponent
+                        }) =>
                           <AddStepMenuSelection
                             key={operationName}
                             uiStepTree={nestedBranchStepTree}
                             inputRecordClass={inputRecordClass}
-                            strategy={strategy}
-                            operationName={operationName}
                             isSelected={selectedMenu === operationName}
                             onSelectMenuItem={() => {
                               startOperationMenu(operationName);
                             }}
                             addType={addType}
+                            AddStepHeaderComponent={AddStepHeaderComponent}
+                            AddStepNewInputComponent={AddStepNewInputComponent}
+                            AddStepNewOperationComponent={AddStepNewOperationComponent}
                           />
                       )
                     }

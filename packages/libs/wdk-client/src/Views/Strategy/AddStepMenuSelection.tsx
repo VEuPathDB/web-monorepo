@@ -1,58 +1,37 @@
 import React, { useMemo } from 'react';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { PreviewStepBoxes, BooleanPreview, TransformPreview, ColocatePreview, LeafPreview } from 'wdk-client/Views/Strategy/StepBoxes';
+import { PreviewStepBoxes } from 'wdk-client/Views/Strategy/StepBoxes';
 import { PartialUiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
+import { AddStepMenuConfig } from 'wdk-client/Utils/Operations';
+import { findSlotNumber } from 'wdk-client/Utils/StrategyUtils';
 
 import './AddStepMenuSelection.scss';
-import { findSlotNumber } from 'wdk-client/Utils/StrategyUtils';
 
 const cx = makeClassNameHelper('AddStepMenuSelection');
 
 type Props = {
-  operationName: string,
   uiStepTree: PartialUiStepTree,
   inputRecordClass: RecordClass,
-  strategy: StrategyDetails,
   isSelected: boolean,
   onSelectMenuItem: () => void,
-  addType: AddType
+  addType: AddType,
+  AddStepHeaderComponent: AddStepMenuConfig['AddStepHeaderComponent'],
+  AddStepNewInputComponent: AddStepMenuConfig['AddStepNewInputComponent'],
+  AddStepNewOperationComponent: AddStepMenuConfig['AddStepNewOperationComponent'],
 };
 
 export const AddStepMenuSelection = ({
   isSelected,
   onSelectMenuItem,
-  operationName,
   inputRecordClass,
   uiStepTree,
   addType,
+  AddStepHeaderComponent,
+  AddStepNewInputComponent,
+  AddStepNewOperationComponent
 }: Props) => {
-  // FIXME: Remove this hardcoding by updating the AddStepMenuConfig
-  const [ headerContent, operationStepBox, newInputStepBox ] = operationName === 'combine'
-    ? [
-        <React.Fragment>
-          <strong>Combine</strong> with other {inputRecordClass.displayNamePlural}
-        </React.Fragment>,
-        <BooleanPreview />,
-        <LeafPreview />
-      ]
-    : operationName === 'convert'
-    ? [
-        <React.Fragment>
-          <strong>Transform</strong> into related records
-        </React.Fragment>,
-        <TransformPreview />,
-        null
-      ]
-    : [
-        <React.Fragment>
-          Use <strong>Genomic Colocation</strong> to combine with other genomic features
-        </React.Fragment>,
-        <ColocatePreview />,
-        <LeafPreview />
-      ];
 
   const targetSlotNumber = useMemo(
     () => findSlotNumber(uiStepTree, addType.stepId),
@@ -64,7 +43,9 @@ export const AddStepMenuSelection = ({
       className={cx('', isSelected && 'selected')}
       onClick={onSelectMenuItem}
     >
-      <h3>{headerContent}</h3>
+      <h3>
+        <AddStepHeaderComponent inputRecordClass={inputRecordClass} />
+      </h3>
       <PreviewStepBoxes
         stepTree={uiStepTree}
         fromSlot={addType.type === 'insert-before'
@@ -74,8 +55,8 @@ export const AddStepMenuSelection = ({
         toSlot={targetSlotNumber}
         insertAtSlot={targetSlotNumber}
         insertType={addType.type}
-        newOperationStepBox={operationStepBox}
-        newInputStepBox={newInputStepBox}
+        newOperationStepBox={<AddStepNewOperationComponent />}
+        newInputStepBox={<AddStepNewInputComponent />}
       />
     </button>
   );
