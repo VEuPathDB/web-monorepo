@@ -2,15 +2,16 @@
   cursor: pointer;
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .wdk-CollapsibleSectionHeader:before {
   content: '\f0d7';
   font-family: FontAwesome;
   font-size: 1.2em;
-  width: 1ex;
-  padding-right: .25em;
+  padding: .1em .25em 0 0;
+  display: flex;
+  justify-self: flex-end;
 }
 
 .wdk-CollapsibleSectionHeader__collapsed:before {
