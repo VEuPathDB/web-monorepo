@@ -111,6 +111,8 @@
 }
 
 .StepBoxes--BoxLink__leaf.StepBoxes--BoxLink__new-step-preview {
+  background-color: #eaeaea;
+  border-color: #999999;
   box-shadow: none;
   border-style: dashed;
   min-width: 7.5em;
@@ -278,6 +280,12 @@ svg.StepBoxes--TransformIconInputSide path, svg.StepBoxes--TransformIconOutputSi
   fill: #d0cfcf;
 }
 
+.StepBoxes__preview svg.StepBoxes--TransformIconInputSide path,
+.StepBoxes__preview svg.StepBoxes--TransformIconOutputSide path {
+  fill: #eaeaea;
+  stroke: #999999;
+}
+
 .StepBoxes--BoxLink__transform_active svg.StepBoxes--TransformIconInputSide path, .StepBoxes--BoxLink__transform_active svg.StepBoxes--TransformIconOutputSide path {
   fill: #ffffa0;
 }
@@ -287,6 +295,14 @@ svg.StepBoxes--TransformIconContents {
   height: 100%;
   width: calc(100% - 2.5em);
   overflow: visible;
+}
+
+.StepBoxes__preview svg.StepBoxes--TransformIconContents {
+  background-color: #eaeaea;
+}
+
+.StepBoxes__preview svg.StepBoxes--TransformIconContents path {
+  stroke: #999999;
 }
 
 .StepBoxes--BoxLink__transform_active svg.StepBoxes--TransformIconContents {
