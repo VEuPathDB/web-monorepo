@@ -112,7 +112,8 @@ export const AddStepPanelView = wrappable((
     parseShouldSkipAddStepHelp
   );
 
-  const [ selectedMenu, setSelectedMenu ] = useState<string | undefined>(shouldSkipAddStepHelp ? 'combine' : undefined);
+  // FIXME: Change the initial state of selectedMenu once the orientation verbiage is ready
+  const [ selectedMenu, setSelectedMenu ] = useState<string | undefined>('combine');
   const [ selectedOperation, setSelectedOperation ] = useState<string | undefined>(addType.selectedOperation);
   const [ pageHistory, setPageHistory ] = useState<string[]>(addType.pageHistory || []);
 

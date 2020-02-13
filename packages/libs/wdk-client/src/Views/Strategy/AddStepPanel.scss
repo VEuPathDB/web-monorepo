@@ -36,6 +36,10 @@
     height: 45em;
     grid-area: selected-menu;
 
+    .MenuChoice strong, .MenuChoice label {
+      font-size: 1.2em;
+    }
+
     .MenuChoicesContainer {
       counter-reset: panel;
 

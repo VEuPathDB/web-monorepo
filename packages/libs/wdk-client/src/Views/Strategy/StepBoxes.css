@@ -7,6 +7,11 @@
   position: relative;
 }
 
+.StepBoxes.StepBoxes__preview {
+  font-size: 0.8;
+  justify-content: center;
+}
+
 .StepBoxes,
 .StepBoxes * {
   box-sizing: border-box;
@@ -108,7 +113,7 @@
 
 .StepBoxes--BoxLink__leaf.StepBoxes--BoxLink__new-step-preview {
   box-shadow: none;
-  border-style: dotted;
+  border-style: dashed;
   min-width: 7.5em;
 }
 
@@ -187,6 +192,11 @@
   font-size: 0.9em;
   font-style: italic;
   font-weight: bold;
+}
+
+.StepBoxes--BoxLink__existing-step-preview .StepBoxes--StepName,
+.StepBoxes--BoxLink__existing-step-preview .StepBoxes--StepCount {
+  white-space: nowrap;
 }
 
 .StepBoxes--BoxLink__combined.StepBoxes--BoxLink__new-step-preview .StepBoxes--StepCount {
