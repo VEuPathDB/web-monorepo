@@ -173,7 +173,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
       search.urlSegment.endsWith(colocationQuestionSuffix),
     AddStepHeaderComponent: () =>
       <React.Fragment>
-        Use <strong>Genomic Colocation</strong> to combine with other genomic features
+        Use <strong>Genomic Colocation</strong> to combine with other features
       </React.Fragment>,
     AddStepNewInputComponent: LeafPreview,
     AddStepNewOperationComponent: ColocatePreview
