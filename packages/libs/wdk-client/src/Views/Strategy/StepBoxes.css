@@ -280,8 +280,8 @@ svg.StepBoxes--TransformIconInputSide path, svg.StepBoxes--TransformIconOutputSi
   fill: #d0cfcf;
 }
 
-.StepBoxes__preview svg.StepBoxes--TransformIconInputSide path,
-.StepBoxes__preview svg.StepBoxes--TransformIconOutputSide path {
+.StepBoxes--BoxLink__new-step-preview svg.StepBoxes--TransformIconInputSide path,
+.StepBoxes--BoxLink__new-step-preview svg.StepBoxes--TransformIconOutputSide path {
   fill: #eaeaea;
   stroke: #999999;
 }
@@ -297,11 +297,11 @@ svg.StepBoxes--TransformIconContents {
   overflow: visible;
 }
 
-.StepBoxes__preview svg.StepBoxes--TransformIconContents {
+.StepBoxes--BoxLink__new-step-preview svg.StepBoxes--TransformIconContents {
   background-color: #eaeaea;
 }
 
-.StepBoxes__preview svg.StepBoxes--TransformIconContents path {
+.StepBoxes--BoxLink__new-step-preview svg.StepBoxes--TransformIconContents path {
   stroke: #999999;
 }
 
