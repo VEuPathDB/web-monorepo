@@ -36,7 +36,8 @@ import {
   fulfillSaveAsStrategy,
   cancelStrategyRequest,
   cancelRequestDeleteOrRestoreStrategies as cancelDeleteOrRestoreStrategies,
-  requestCombineWithBasket
+  requestCombineWithBasket,
+  requestCombineWithStrategy
 } from 'wdk-client/Actions/StrategyActions';
 import {
   fulfillImportStrategy
@@ -73,7 +74,8 @@ export function reduce(state: State = initialState, action: Action): State {
   case requestRemoveStepFromStepTree.type:
   case requestUpdateStepSearchConfig.type:
   case requestReplaceStep.type: 
-  case requestCombineWithBasket.type: {
+  case requestCombineWithBasket.type:
+  case requestCombineWithStrategy.type: {
     const strategyId  = action.payload.strategyId;
     return updateStrategyEntry(state, strategyId, prevEntry => ({
       ...prevEntry,
@@ -541,6 +543,52 @@ async function getFulfillCombineWithBasket(
     newStepTree
   );
 }
+
+async function getFulfillCombineWithStrategy(
+  [requestCombineWithStrategyAction]: [InferAction<typeof requestCombineWithStrategy>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof requestPutStrategyStepTree>> {
+  const {
+    strategyId,
+    secondaryInputStrategyId,
+    secondaryInputName,
+    booleanSearchUrlSegment,
+    booleanSearchParamValues,
+    booleanSearchDisplayName,
+    addType
+  } = requestCombineWithStrategyAction.payload;
+
+  const strategyEntry = state$.value.strategies.strategies[strategyId];
+
+  if (strategyEntry == null || strategyEntry.strategy == null) {
+    throw new Error(`Tried to combine strategy #${secondaryInputStrategyId} with strategy #${strategyId}, which is pending`);
+  }
+
+  const operatorStepPromise = wdkService.createStep({
+    searchName: booleanSearchUrlSegment,
+    searchConfig: {
+      parameters: booleanSearchParamValues
+    },
+    customName: booleanSearchDisplayName,
+    expandedName: `Copy of ${secondaryInputName}`
+  });
+
+  const duplicateStepTreePromise = wdkService.getDuplicatedStrategyStepTree(secondaryInputStrategyId);
+
+  const [{ id: booleanStepId }, duplicatedStepTree ] = await Promise.all([
+    operatorStepPromise,
+    duplicateStepTreePromise
+  ]);
+
+  const oldStepTree = strategyEntry.strategy.stepTree;
+  const newStepTree = addStep(oldStepTree, addType, booleanStepId, duplicatedStepTree);
+
+  return requestPutStrategyStepTree(
+    strategyId,
+    newStepTree
+  );
+}
   
   export const observe = combineEpics(
     mrate([requestStrategy], getFulfillStrategy, {
@@ -567,5 +615,6 @@ async function getFulfillCombineWithBasket(
     mrate([requestDeleteStrategy], getFulfillStrategyDelete),
     mrate([requestDuplicateStrategy], getFulfillDuplicateStrategy),
     mrate([requestCreateStep], getFulfillCreateStep),
-    mrate([requestCombineWithBasket], getFulfillCombineWithBasket)
+    mrate([requestCombineWithBasket], getFulfillCombineWithBasket),
+    mrate([requestCombineWithStrategy], getFulfillCombineWithStrategy)
   );

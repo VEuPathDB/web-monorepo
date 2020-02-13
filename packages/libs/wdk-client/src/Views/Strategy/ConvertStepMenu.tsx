@@ -6,8 +6,8 @@ import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel'
-import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
+import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+import { inputResultSetDescription } from 'wdk-client/Views/Strategy/AddStepUtils';
 
 import 'wdk-client/Views/Strategy/ConvertStepMenu.scss';
 
@@ -34,40 +34,26 @@ const ConvertStepMenuView = ({
     {
       !operatorChoices
         ? <Loading />
-        : (
-          <div className={cx('--Container')}>
-            <div className={cx('--Header')}>
-              <h3>
-                Convert it
-              </h3>
-                into a related set of:
-            </div>
-            <div className={cx('--Body')}>
-              <PrimaryInputLabel
-                resultSetSize={operandStep.estimatedSize}
-                recordClass={inputRecordClass}
-              />
-              <div className={cx('--TransformIcon')}></div>
-              <div className={cx('--OperatorSelector')}>
-                {
-                  !previousStep || operatorChoices.length === 0
-                    ? "No conversions available."
-                    : (
-                      <>
-                        {
-                          operatorChoices.map(({ searchName, display }) =>
-                            <button key={searchName} onClick={() => startOperationForm('convert', searchName)}>
-                              {display}
-                            </button>
-                          )
-                        }
-                      </>
-                    )
-                }
-              </div>
+        : <div className={cx('--Content')}>
+            <h2>Transform {inputResultSetDescription(operandStep.estimatedSize, inputRecordClass)} into...</h2>
+            <div className={cx('--OperatorSelector')}>
+              {
+                !previousStep || operatorChoices.length === 0
+                  ? "No conversions available."
+                  : (
+                    <>
+                      {
+                        operatorChoices.map(({ searchName, display }) =>
+                          <button key={searchName} onClick={() => startOperationForm('convert', searchName)}>
+                            {display}
+                          </button>
+                        )
+                      }
+                    </>
+                  )
+              }
             </div>
           </div>
-        )
     }
   </div>
 );
@@ -80,6 +66,7 @@ const outputStepQuestion = (_: RootState, { outputStep, questionsByUrlSegment }:
 //   (2) the search's primary input is compatible with the input step's record class
 //   (3) if inserting before a step (the "output step"), the search's output record class is compatible with the output step's primary input
 //   (4) FIXME - ugly hardcoding - the search's outputRecordClassName is not "gene"
+//   (5) FIXME - ugly hardcoding - the search's shortDisplayName is not "Weight"
 export const isValidTransformFactory = (inputRecordClass: RecordClass, outputStepQuestion?: Question) => (search: Question) =>
   ( // (1)
     !!search.allowedPrimaryInputRecordClassNames && !search.allowedSecondaryInputRecordClassNames
@@ -94,6 +81,9 @@ export const isValidTransformFactory = (inputRecordClass: RecordClass, outputSte
   ) &&
   ( // (4)
     search.outputRecordClassName !== 'gene'
+  ) &&
+  ( // (5)
+    search.shortDisplayName !== 'Weight'
   );
 
 const isValidTransform = createSelector(
@@ -113,7 +103,7 @@ const transformToOperatorChoiceFactory = (recordClassesByUrlSegment: Record<stri
     searchName: transform.urlSegment,
     display: inputRecordClass.urlSegment !== outputRecordClass.urlSegment
       ? outputRecordClass.displayNamePlural
-      : `${inputRecordClass.displayNamePlural} (by ${transform.shortDisplayName})`
+      : transform.shortDisplayName
   };
 };
 

@@ -5,19 +5,25 @@ import { createSelector } from 'reselect';
 
 import { reportSubmissionError } from 'wdk-client/Actions/QuestionActions';
 import { requestStrategy, requestPutStrategyStepTree } from 'wdk-client/Actions/StrategyActions';
-import { Loading } from 'wdk-client/Components';
+import { CommonModal as StrategyModal, Loading, HelpIcon } from 'wdk-client/Components';
+import DeferredDiv from 'wdk-client/Components/Display/DeferredDiv';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { useAddStepMenuConfigs, useSelectedAddStepFormComponent } from 'wdk-client/Utils/Operations';
-import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLeaf, findSubtree, getOutputStep } from 'wdk-client/Utils/StrategyUtils';
+import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLeaf, findSubtree, getOutputStep, findNestedStrategyRoot } from 'wdk-client/Utils/StrategyUtils';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
-import { AddType } from 'wdk-client/Views/Strategy/Types';
+import { AddStepMenuSelection } from 'wdk-client/Views/Strategy/AddStepMenuSelection';
+import { AddType, PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
 
 import 'wdk-client/Views/Strategy/AddStepPanel.scss';
-import { CommonModal as StrategyModal } from 'wdk-client/Components';
 
 const cx = makeClassNameHelper('AddStepPanel');
+
+const SHOULD_SKIP_ADD_STEP_HELP_SESSION_KEY = 'should-skip-add-step-help';
+
+const TODO = 'FILL ME IN';
 
 type StateProps = {
   inputRecordClass?: RecordClass,
@@ -38,7 +44,8 @@ type DispatchProps = {
 type OwnProps = {
   strategy: StrategyDetails,
   addType: AddType,
-  onHideInsertStep: () => void
+  onHideInsertStep: () => void,
+  uiStepTree: PartialUiStepTree
 };
 
 type Props = StateProps & DispatchProps & OwnProps;
@@ -94,9 +101,19 @@ export const AddStepPanelView = wrappable((
     recordClasses,
     requestPutStrategyStepTree,
     strategy,
-    stepsCompletedNumber
+    stepsCompletedNumber,
+    uiStepTree
   }: Props
 ) => {
+  const [ shouldSkipAddStepHelp, setShouldSkipAddStepHelp ] = useSessionBackedState<boolean>(
+    false,
+    SHOULD_SKIP_ADD_STEP_HELP_SESSION_KEY,
+    encodeShouldSkipAddStepHelp,
+    parseShouldSkipAddStepHelp
+  );
+
+  // FIXME: Change the initial state of selectedMenu once the orientation verbiage is ready
+  const [ selectedMenu, setSelectedMenu ] = useState<string | undefined>('combine');
   const [ selectedOperation, setSelectedOperation ] = useState<string | undefined>(addType.selectedOperation);
   const [ pageHistory, setPageHistory ] = useState<string[]>(addType.pageHistory || []);
 
@@ -111,6 +128,11 @@ export const AddStepPanelView = wrappable((
 
     setPageHistory(newPageHistory);
   }, [ pageHistory ]);
+
+  const startOperationMenu = useCallback((operationType: string) => {
+    setShouldSkipAddStepHelp(true);
+    setSelectedMenu(operationType);
+  }, []);
 
   const advanceToPage = useCallback((nextPage: string) => {
     setPageHistory([...pageHistory, nextPage]);
@@ -157,6 +179,12 @@ export const AddStepPanelView = wrappable((
   );
 
   const addStepMenuConfigs = useAddStepMenuConfigs(questionsByUrlSegment, recordClassesByUrlSegment, operandStep, previousStep, outputStep);
+
+  const SelectedMenu = useMemo(
+    () => addStepMenuConfigs?.find(({ name }) => name === selectedMenu)?.AddStepMenuComponent,
+    [ addStepMenuConfigs, selectedMenu ]
+  );
+  
   const SelectedForm = useSelectedAddStepFormComponent(
     selectedOperation,
     questionsByUrlSegment, 
@@ -166,9 +194,21 @@ export const AddStepPanelView = wrappable((
     outputStep  
   );
 
+  const nestedBranchStepTree = useMemo(
+    () => findNestedStrategyRoot(uiStepTree, addType.stepId) || uiStepTree,
+    [ uiStepTree, addType.stepId ]
+  );
+
   return (
     <StrategyModal 
-      title="Extend your strategy by adding a step"
+      title={
+        <div>
+          Extend your strategy by adding a step
+          <HelpIcon>
+            {TODO}
+          </HelpIcon>
+        </div>
+      }
       onGoBack={(
         selectedOperation && 
         (addType.pageHistory === undefined || pageHistory.length > addType.pageHistory.length)
@@ -193,72 +233,83 @@ export const AddStepPanelView = wrappable((
           )
             ? <Loading />
             : <div className={cx('--Container')}>
+                <DeferredDiv className={cx('--MenuContainer')} visible={selectedOperation == null}>
+                  <div className={cx('--MenuSelector')}>
+                    {
+                      addStepMenuConfigs.map(
+                        ({
+                          name: operationName,
+                          AddStepHeaderComponent,
+                          AddStepNewInputComponent,
+                          AddStepNewOperationComponent
+                        }) =>
+                          <AddStepMenuSelection
+                            key={operationName}
+                            uiStepTree={nestedBranchStepTree}
+                            inputRecordClass={inputRecordClass}
+                            isSelected={selectedMenu === operationName}
+                            onSelectMenuItem={() => {
+                              startOperationMenu(operationName);
+                            }}
+                            addType={addType}
+                            AddStepHeaderComponent={AddStepHeaderComponent}
+                            AddStepNewInputComponent={AddStepNewInputComponent}
+                            AddStepNewOperationComponent={AddStepNewOperationComponent}
+                          />
+                      )
+                    }
+                  </div>
+                  <div className={cx('--SelectedMenuContainer')}>
+                    {
+                      SelectedMenu == null
+                        ? <div className={cx('--Orientation')}>
+                            <div>
+                              Select an option on the left to consider more data for your search strategy.
+                            </div>
+                          </div>
+                        : <SelectedMenu
+                            strategy={strategy}
+                            inputRecordClass={inputRecordClass}
+                            startOperationForm={startOperationForm}
+                            updateStrategy={updateStrategy}
+                            addType={addType}
+                            stepsCompletedNumber={stepsCompletedNumber}
+                            operandStep={operandStep}
+                            previousStep={previousStep}
+                            outputStep={outputStep}
+                            questions={questions}
+                            questionsByUrlSegment={questionsByUrlSegment}
+                            recordClasses={recordClasses}
+                            recordClassesByUrlSegment={recordClassesByUrlSegment}
+                            onHideInsertStep={onHideInsertStep}
+                            reportSubmissionError={reportSubmissionError}
+                          />
+                    }
+                  </div>
+                </DeferredDiv>
                 {
-                  !selectedOperation
-                    ? (
-                      <div className={cx('--MenusContainer')}>
-                        <div className={cx('--MenusHeader')}>
-                        </div>
-                        <div className={cx('--MenuItemsContainer')}>
-                          {
-                            addStepMenuConfigs
-                              .map(({ name: operation, AddStepMenuComponent }, index) =>
-                                <React.Fragment key={operation}>
-                                  <div className={cx('--MenuItem')}>
-                                    <AddStepMenuComponent
-                                      strategy={strategy}
-                                      inputRecordClass={inputRecordClass}
-                                      startOperationForm={startOperationForm}
-                                      updateStrategy={updateStrategy}
-                                      addType={addType}
-                                      stepsCompletedNumber={stepsCompletedNumber}
-                                      operandStep={operandStep}
-                                      previousStep={previousStep}
-                                      outputStep={outputStep}
-                                      questions={questions}
-                                      questionsByUrlSegment={questionsByUrlSegment}
-                                      recordClasses={recordClasses}
-                                      recordClassesByUrlSegment={recordClassesByUrlSegment}
-                                      onHideInsertStep={onHideInsertStep}
-                                      reportSubmissionError={reportSubmissionError}
-                                    />
-                                  </div>
-                                  {
-                                    index < addStepMenuConfigs.length - 1 &&
-                                    <div className={cx('--MenuItemSeparator')}>
-                                      <em>-or-</em>
-                                      <div className={cx('--MenuItemDividingLine')}></div>
-                                    </div>
-                                  }
-                                </React.Fragment>
-                              )
-                          }
-                        </div>
-                      </div>
-                    )
-                    : (
-                      <div className={cx('--Form')}>
-                        <SelectedForm
-                          strategy={strategy}
-                          inputRecordClass={inputRecordClass}
-                          currentPage={currentPage}
-                          advanceToPage={advanceToPage}
-                          replacePage={replacePage}
-                          updateStrategy={updateStrategy}
-                          addType={addType}
-                          stepsCompletedNumber={stepsCompletedNumber}
-                          operandStep={operandStep}
-                          previousStep={previousStep}
-                          outputStep={outputStep}
-                          questions={questions}
-                          questionsByUrlSegment={questionsByUrlSegment}
-                          recordClasses={recordClasses}
-                          recordClassesByUrlSegment={recordClassesByUrlSegment}
-                          onHideInsertStep={onHideInsertStep}
-                          reportSubmissionError={reportSubmissionError}
-                        />
-                      </div>
-                    )
+                  selectedOperation != null &&
+                  <div className={cx('--Form')}>
+                    <SelectedForm
+                      strategy={strategy}
+                      inputRecordClass={inputRecordClass}
+                      currentPage={currentPage}
+                      advanceToPage={advanceToPage}
+                      replacePage={replacePage}
+                      updateStrategy={updateStrategy}
+                      addType={addType}
+                      stepsCompletedNumber={stepsCompletedNumber}
+                      operandStep={operandStep}
+                      previousStep={previousStep}
+                      outputStep={outputStep}
+                      questions={questions}
+                      questionsByUrlSegment={questionsByUrlSegment}
+                      recordClasses={recordClasses}
+                      recordClassesByUrlSegment={recordClassesByUrlSegment}
+                      onHideInsertStep={onHideInsertStep}
+                      reportSubmissionError={reportSubmissionError}
+                    />
+                  </div>
                 }
               </div>
         }
@@ -266,6 +317,9 @@ export const AddStepPanelView = wrappable((
     </StrategyModal>
   )
 });
+
+const encodeShouldSkipAddStepHelp = (shouldSkipAddStepHelp: boolean) => shouldSkipAddStepHelp ? 'y' : 'n';
+const parseShouldSkipAddStepHelp = (shouldSkipAddStepHelpStr: string) => shouldSkipAddStepHelpStr === 'y';
 
 const globalData = ({ globalData }: RootState) => globalData;
 

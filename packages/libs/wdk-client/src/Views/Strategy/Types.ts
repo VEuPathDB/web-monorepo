@@ -10,6 +10,7 @@ export interface PartialUiStepTree {
   secondaryInput?: PartialUiStepTree;
   nestedControlStep?: Step;
   isNested: boolean;
+  slotNumber: number;
 }
 
 export function isCompleteUiStepTree(stepTree: PartialUiStepTree): stepTree is UiStepTree {
@@ -25,6 +26,7 @@ export interface UiStepTree {
   secondaryInput?: PartialUiStepTree;
   nestedControlStep?: Step;
   isNested: boolean;
+  slotNumber: number;
 }
 
 // specialized UiStepTree types and guards

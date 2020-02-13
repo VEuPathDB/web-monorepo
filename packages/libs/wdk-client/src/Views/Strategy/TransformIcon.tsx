@@ -2,7 +2,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { cxStepBoxes as cx } from 'wdk-client/Views/Strategy/ClassNames';
 
-export const TransformIcon = () => {
+export const TransformIcon = ({ isPreview = false }: { isPreview?: boolean }) => {
   const ref = useRef<SVGSVGElement>(null);
   const [ height, setHeight ] = useState(0);
 
@@ -33,6 +33,7 @@ export const TransformIcon = () => {
         version="1.1"
         viewBox="0 0 50 120"
         height={`${height}px`}
+        strokeDasharray={isPreview ? '5.5' : undefined}
       >
         <path
           d="M 50 0 L 10 0 C 35 60, 35 60, 10 120 L 50 120"
@@ -48,6 +49,7 @@ export const TransformIcon = () => {
         viewBox="0 0 120 120"
         preserveAspectRatio="none"
         ref={ref}
+        strokeDasharray={isPreview ? '5.5' : undefined}
       >
         <path
           d="M 0 0 L 120 0 M 120 120 L 0 120"
@@ -62,6 +64,7 @@ export const TransformIcon = () => {
         version="1.1"
         viewBox="0 0 50 120"
         height={`${height}px`}
+        strokeDasharray={isPreview ? '5.5' : undefined}
       >
         <path
           d="M 0 0 L 10 0 C 35 60, 35 60, 10 120 L 0 120"

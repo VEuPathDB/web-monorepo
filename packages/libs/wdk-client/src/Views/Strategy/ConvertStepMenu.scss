@@ -1,47 +1,38 @@
 .ConvertStepMenu {
-  &--Header {
-    font-size: 1.5em;
-    margin: 1em 0;
-
-    h3 {
-      font-size: 1.25em;
-      font-weight: bold;
-    }
-  }
-
-  &--Body {
-    display: flex;
-    align-items: start;
-    justify-content: space-evenly;
-
-    >:first-child {
-      margin-right: 1em;
-    }
-
-    >:not(:first-child) {
-      margin: 0 1em;
-    }
-  }
-
-  &--TransformIcon {
-    background-image: url('./convertStepMenuIcon.svg');
-    background-position: center center;
-    background-repeat: no-repeat;
-
-    width: 4em;
-    height: 4em;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  max-height: 70vh;
+  font-size: 1.2em;
 
   &--OperatorSelector {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    row-gap: 1em;
+
+    width: max-content;
+    margin: 1em auto 1em auto;
+  }
+
+  &--Content {
     display: flex;
     flex-direction: column;
+    align-items: center;
+  }
 
-    >:first-child {
-      margin-bottom: 1em;
-    }
+  h2 {
+    margin: 0 1em 1em 0;
+    font-size: 1.5em;
+  }
 
-    >:not(:first-child) {
-      margin: 1em 0;
-    }
+  button {
+    padding: 0.5em;
+    background: #f1f1f1;
+    color: black;
+    border-color: black;
+    border-width: 0.0625rem 0.0625rem 0.1250rem 0.0625rem;
+    border-radius: 5px;
   }
 }

@@ -7,6 +7,11 @@
   position: relative;
 }
 
+.StepBoxes.StepBoxes__preview {
+  font-size: 0.8;
+  justify-content: center;
+}
+
 .StepBoxes,
 .StepBoxes * {
   box-sizing: border-box;
@@ -52,6 +57,15 @@
   right: 50%;
 }
 
+.StepBoxes--SlotLabel {
+  position: absolute;
+  bottom: -1.5em;
+  width: calc(100% - 1em);
+  text-align: center;
+  line-height: 1;
+  font-size: 0.9em;
+}
+
 .StepBoxes--Box {
   height: 45%;
   position: relative;
@@ -95,6 +109,16 @@
   border: .17em solid black;
   box-shadow: .1em .1em .35em #6a6a6a45;
   z-index: 1;
+}
+
+.StepBoxes--BoxLink__leaf.StepBoxes--BoxLink__new-step-preview {
+  box-shadow: none;
+  border-style: dashed;
+  min-width: 7.5em;
+}
+
+.StepBoxes--BoxLink__transform.StepBoxes--BoxLink__new-step-preview {
+  min-width: 8em;
 }
 
 .StepBoxes--BoxLink__transform {
@@ -144,6 +168,13 @@
   height: calc(100% + .17em);
 }
 
+.StepBoxes--BoxLink__existing-step-preview:hover,
+.StepBoxes--BoxLink__existing-step-preview:visited,
+.StepBoxes--BoxLink__existing-step-preview:focus,
+.StepBoxes--BoxLink__existing-step-preview:active {
+  text-decoration: none;
+}
+
 .StepBoxes--FilterIcon {
   bottom: .6em;
   color: #ef6565;
@@ -161,6 +192,15 @@
   font-size: 0.9em;
   font-style: italic;
   font-weight: bold;
+}
+
+.StepBoxes--BoxLink__existing-step-preview .StepBoxes--StepName,
+.StepBoxes--BoxLink__existing-step-preview .StepBoxes--StepCount {
+  white-space: nowrap;
+}
+
+.StepBoxes--BoxLink__combined.StepBoxes--BoxLink__new-step-preview .StepBoxes--StepCount {
+  height: 1em;
 }
 
 .StepBoxes--CombineOperator {
@@ -213,6 +253,11 @@
   width: 100%;
   left: -.25em;
   top: .085em;
+  filter: drop-shadow(0.1em 0.1em 0.35em #6a6a6a45);
+}
+
+.StepBoxes--BoxLink__transform.StepBoxes--BoxLink__new-step-preview .StepBoxes--TransformIconContainer {
+  filter: none;
 }
 
 .StepBoxes--TransformDetails {
@@ -273,6 +318,10 @@ svg.StepBoxes--TransformIconContents {
   background-image: url('./a_only.svg');
 }
 
+.StepBoxes--CombineOperator__PREVIEW {
+  background-image: url('./boolean_preview.svg');
+}
+
 .StepBoxes--InsertStepButton {
   height: calc(8em * .45);
   font-weight: bold;
@@ -315,7 +364,7 @@ button.StepBoxes--EditButton {
 }
 
 .StepBoxes--BoxLink__transform + button.StepBoxes--EditButton {
-  right: 1em;
+  right: 0.5em;
 }
 
 button.StepBoxes--EditButton:hover {

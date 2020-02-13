@@ -27,7 +27,7 @@ export const ConvertStepForm = ({
         <h2>
           {
             inputRecordClass.urlSegment === outputRecordClassName
-              ? `Your ${inputRecordClass.shortDisplayNamePlural} from Step ${stepsCompletedNumber} will be converted by ${transformQuestion && transformQuestion.shortDisplayName}`
+              ? `Your ${inputRecordClass.shortDisplayNamePlural} from Step ${stepsCompletedNumber} will be converted into ${transformQuestion && transformQuestion.shortDisplayName}`
               : `Your ${inputRecordClass.shortDisplayNamePlural} from Step ${stepsCompletedNumber} will be converted into ${outputRecordClass && outputRecordClass.shortDisplayNamePlural}`
           }
         </h2>

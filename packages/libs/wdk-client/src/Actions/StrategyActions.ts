@@ -197,6 +197,27 @@ export const requestCombineWithBasket = makeActionCreator(
     })
 );
 
+export const requestCombineWithStrategy = makeActionCreator(
+    'requestCombineWithStrategy',
+    (
+        strategyId: number,
+        secondaryInputStrategyId: number,
+        secondaryInputName: string,
+        booleanSearchUrlSegment: string,
+        booleanSearchParamValues: Record<string, string>,
+        booleanSearchDisplayName: string,
+        addType: AddType
+    ) => ({
+        strategyId,
+        secondaryInputStrategyId,
+        secondaryInputName,
+        booleanSearchUrlSegment,
+        booleanSearchParamValues,
+        booleanSearchDisplayName,
+        addType
+    })
+);
+
 export type Action = InferAction<
   | typeof cancelStrategyRequest
   | typeof requestCreateStrategy
@@ -232,5 +253,6 @@ export type Action = InferAction<
   | typeof requestDeleteStep
   | typeof fulfillDeleteStep
   | typeof requestCombineWithBasket
+  | typeof requestCombineWithStrategy
   >
 

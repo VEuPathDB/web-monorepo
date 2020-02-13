@@ -14,7 +14,8 @@
   }
 
   &Title {
-    font-size: 1.4em;
+    font-size: 1.7em;
+    font-weight: normal;
     margin: auto;
     flex: 10;
     overflow: visible;
@@ -23,6 +24,11 @@
   &Content {
     max-height: 80vh;
     padding: 1em 2em;
+  }
+
+  &LeftButtons, &RightButtons {
+    align-self: flex-start;
+    color: #8e8e8e;
   }
 
 }

@@ -1,23 +1,21 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useCallback, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
 import { updateActiveQuestion, updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { requestCombineWithBasket } from 'wdk-client/Actions/StrategyActions';
+import { requestCombineWithBasket, requestCombineWithStrategy } from 'wdk-client/Actions/StrategyActions';
 import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
-import WdkService from 'wdk-client/Service/WdkService';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { QuestionState, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { Parameter, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { StepTree } from 'wdk-client/Utils/WdkUser';
+import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
-import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
+import { MenuChoicesContainer, MenuChoice, inputResultSetDescription } from 'wdk-client/Views/Strategy/AddStepUtils';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
+import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
-import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineStepMenu.scss';
 
@@ -31,6 +29,17 @@ type StateProps = {
   booleanSearchState?: QuestionState,
   booleanOperatorParameter?: Parameter
 };
+
+function combineOperatorOptionDisplay(operator: CombineOperator, stepALabel: ReactNode, stepBLabel: ReactNode) {
+  return operator === CombineOperator.Intersect
+    ? <React.Fragment>{stepALabel} INTERSECT {stepBLabel}</React.Fragment>
+    : operator === CombineOperator.Union
+    ? <React.Fragment>{stepALabel} UNION {stepBLabel}</React.Fragment>
+    : operator === CombineOperator.LeftMinus
+    ? <React.Fragment>{stepALabel} MINUS {stepBLabel}</React.Fragment>
+    : <React.Fragment>{stepBLabel} MINUS {stepALabel}</React.Fragment>;
+}
+
 
 const recordClassSegment = createSelector(
   (_: RootState, { inputRecordClass }: OwnProps) => inputRecordClass,
@@ -111,6 +120,15 @@ type DispatchProps = {
     booleanSearchParamValues: Record<string, string>,
     booleanSearchDisplayName: string,
     addType: AddType
+  ) => void,
+  startCombiningWithStrategy: (
+    strategyId: number,
+    secondaryInputStrategyId: number,
+    secondaryInputName: string,
+    booleanSearchUrlSegment: string,
+    booleanSearchParamValues: Record<string, string>,
+    booleanSearchDisplayName: string,
+    addType: AddType
   ) => void
 };
 
@@ -134,55 +152,80 @@ export const CombineStepMenuView = (
     inputRecordClass,
     updateBooleanOperator,
     startOperationForm,
-    operandStep,
     onHideInsertStep,
     startCombiningWithBasket,
+    startCombiningWithStrategy,
     strategy,
-    addType
+    addType,
+    operandStep,
+    stepsCompletedNumber
   }: Props
 ) => {
   useEffect(() => {
     loadBooleanQuestion(booleanSearchUrlSegment);
   }, [ booleanSearchUrlSegment ]);
 
-  const onOperatorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    updateBooleanOperator(e.target.value);
+  const onOperatorSelect = useCallback((operator: CombineOperator) => {
+    updateBooleanOperator(operator);
   }, [ updateBooleanOperator ]);
 
-  const onCombineWithStrategyClicked = useCallback((_: React.MouseEvent) => {
-    startOperationForm('combine-with-strategy', 'main-page');
-  }, []);
+  const onCombineWithStrategySelected = useCallback(
+    (secondaryInputStrategyId: number, secondaryInputName: string) => {
+      if (booleanSearchState) {
+        onHideInsertStep();
+        startCombiningWithStrategy(
+          strategy.strategyId,
+          secondaryInputStrategyId,
+          secondaryInputName || DEFAULT_STRATEGY_NAME,
+          booleanSearchUrlSegment,
+          booleanSearchState.paramValues,
+          booleanSearchState.question.displayName,
+          addType
+        );
+      }
+    },
+    [
+      onHideInsertStep,
+      startCombiningWithBasket,
+      strategy.strategyId,
+      booleanSearchUrlSegment,
+      booleanSearchState,
+      addType
+    ]
+  );
 
-  const onCombineWithBasketClicked = useCallback((_: React.MouseEvent) => {
-    if (basketSearchShortDisplayName && booleanSearchState) {
-      onHideInsertStep();
-      startCombiningWithBasket(
-        strategy.strategyId,
-        inputRecordClass.urlSegment,
-        basketSearchUrlSegment,
-        basketDatasetParamName,
-        basketSearchShortDisplayName,
-        booleanSearchUrlSegment,
-        booleanSearchState.paramValues,
-        booleanSearchState.question.displayName,
-        addType
-      );
-    }
-  }, 
-  [ 
-    onHideInsertStep, 
-    startCombiningWithBasket,
-    strategy.strategyId, 
-    inputRecordClass.urlSegment, 
-    basketSearchUrlSegment, 
-    basketDatasetParamName ,
-    basketSearchShortDisplayName,
-    booleanSearchUrlSegment,
-    booleanSearchState,
-    addType
-  ]);
+  const onCombineWithBasketSelected = useCallback(
+    () => {
+      if (basketSearchShortDisplayName && booleanSearchState) {
+        onHideInsertStep();
+        startCombiningWithBasket(
+          strategy.strategyId,
+          inputRecordClass.urlSegment,
+          basketSearchUrlSegment,
+          basketDatasetParamName,
+          basketSearchShortDisplayName,
+          booleanSearchUrlSegment,
+          booleanSearchState.paramValues,
+          booleanSearchState.question.displayName,
+          addType
+        );
+      }
+    },
+    [
+      onHideInsertStep,
+      startCombiningWithBasket,
+      strategy.strategyId,
+      inputRecordClass.urlSegment,
+      basketSearchUrlSegment,
+      basketDatasetParamName,
+      basketSearchShortDisplayName,
+      booleanSearchUrlSegment,
+      booleanSearchState,
+      addType
+    ]
+  );
 
-  const onCombineWithNewSearchClicked = useCallback((newSearchUrlSegment: string) => {
+  const onCombineWithNewSearchSelected = useCallback((newSearchUrlSegment: string) => {
     startOperationForm('combine-with-new-search', newSearchUrlSegment);
   }, [ startOperationForm ]);
 
@@ -196,49 +239,56 @@ export const CombineStepMenuView = (
           !booleanOperatorParameter
         )
           ? <Loading />
-          : (
-            <div className={cx('--Container')}>
-              <div className={cx('--Header')}>
-                <h3>
-                  Combine it
-                </h3>
-                  with another set of {inputRecordClass.displayNamePlural} from:
-              </div>
-              <div className={cx('--Body')}>
-                <PrimaryInputLabel
-                  resultSetSize={operandStep.estimatedSize}
-                  recordClass={inputRecordClass}
-                />
+          : <MenuChoicesContainer containerClassName={cx('--Container')}>
+              <MenuChoice>
+                <strong>Choose <em>how</em> to combine with other {inputRecordClass.displayNamePlural}</strong>
                 <div className={cx('--OperatorSelector')}>
                   {
                     combineOperatorOrder.map(operator => (
-                      <div key={operator} className={cx('--OperatorChoice')} >
+                      <div
+                        key={operator}
+                        className={cx('--OperatorChoice')}
+                      >
                         <input
                           id={operator}
                           type="radio"
-                          name="operator"
+                          name="add-step__operator-choice"
                           value={operator}
-                          defaultChecked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
-                          onChange={onOperatorChange}
+                          checked={operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME]}
+                          onChange={() => {
+                            onOperatorSelect(operator);
+                          }}
                         />
-                        <label htmlFor={operator}>
+                        <label htmlFor={operator} onClick={() => {
+                          onOperatorSelect(operator);
+                        }}>
                           <div className={cxOperator('--CombineOperator', operator)}>
                           </div>
+                          <span>
+                            {combineOperatorOptionDisplay(
+                              operator,
+                              stepsCompletedNumber,
+                              stepsCompletedNumber + 1
+                            )}
+                          </span>
                         </label>
                       </div>
                     ))
                   }
                 </div>
+              </MenuChoice>
+              <MenuChoice>
+                <strong>Choose <em>which</em> {inputRecordClass.displayNamePlural} to combine.  From...</strong>
                 <SearchInputSelector
-                  containerClassName={cx('--SecondaryInputSelector')}
-                  onCombineWithBasketClicked={onCombineWithBasketClicked}
-                  onCombineWithStrategyClicked={onCombineWithStrategyClicked}
-                  onCombineWithNewSearchClicked={onCombineWithNewSearchClicked}
+                  strategy={strategy}
+                  onCombineWithBasketSelected={onCombineWithBasketSelected}
+                  onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
+                  onCombineWithStrategySelected={onCombineWithStrategySelected}
                   inputRecordClass={inputRecordClass}
+                  selectBasketButtonText={`Combine Step ${stepsCompletedNumber} with your basket`}
                 />
-              </div>
-            </div>
-          )
+              </MenuChoice>
+            </MenuChoicesContainer>
       }
     </div>
   );
@@ -264,7 +314,8 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
       )
     },
     updateParamValue: compose(dispatch, updateParamValue),
-    startCombiningWithBasket: compose(dispatch, requestCombineWithBasket)
+    startCombiningWithBasket: compose(dispatch, requestCombineWithBasket),
+    startCombiningWithStrategy: compose(dispatch, requestCombineWithStrategy)
   }),
   (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,

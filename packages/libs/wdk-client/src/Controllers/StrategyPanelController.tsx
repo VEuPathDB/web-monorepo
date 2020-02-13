@@ -141,31 +141,46 @@ function makeUiStepTree(
     '#A0A000', // green
   ]);
   
-  return _recurse(strategy.stepTree);
+  return _recurse(strategy.stepTree).uiStepTree;
 
-  function _recurse(stepTree: StepTree, nestedControlStep?: Step, color?: string, isNested: boolean = false): PartialUiStepTree {
+  type UiStepTreeMetadata = {
+    uiStepTree: PartialUiStepTree
+    primaryBranchLength: number
+  };
+
+  function _recurse(stepTree: StepTree, primaryDepth: number = 0, nestedControlStep?: Step, color?: string, isNested: boolean = false): UiStepTreeMetadata {
     const step = strategy.steps[stepTree.stepId];
     const recordClass = recordClassesByName[step.recordClassName];
     const question = questionsByName[step.searchName];
-    const primaryInput = stepTree.primaryInput && _recurse(stepTree.primaryInput);
+    const primaryInputMetadata = stepTree.primaryInput && _recurse(stepTree.primaryInput, primaryDepth + 1);
     // XXX Should we reset coloring when we traverse a new branch of secondary inputs?
     // only secondary inputs get a color
-    const secondaryInput = stepTree.secondaryInput && _recurse(
+    const secondaryInputMetadata = stepTree.secondaryInput && _recurse(
       stepTree.secondaryInput,
+      0,
       step,
       colorIter.next().value,
       // should the step be rendered as nested...
-      nestedBranchIds.includes(step.id) || !isEmpty(step.expandedName) || stepTree.secondaryInput.primaryInput != null
+      nestedBranchIds.includes(step.id) || !isEmpty(step.expandedName) || stepTree.secondaryInput.primaryInput != null,
     );
+
+    const primaryBranchLength = primaryInputMetadata == null
+      ? primaryDepth + 1
+      : primaryInputMetadata.primaryBranchLength;
+
     return {
-      step,
-      recordClass,
-      question,
-      primaryInput,
-      secondaryInput,
-      nestedControlStep,
-      color,
-      isNested
+      uiStepTree: {
+        step,
+        recordClass,
+        question,
+        primaryInput: primaryInputMetadata?.uiStepTree,
+        secondaryInput: secondaryInputMetadata?.uiStepTree,
+        nestedControlStep,
+        color,
+        isNested,
+        slotNumber: primaryBranchLength - primaryDepth
+      },
+      primaryBranchLength
     };
   }
 }

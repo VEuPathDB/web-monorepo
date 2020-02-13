@@ -28,4 +28,21 @@
       }
     }
   }
+
+  &--NoAvailableStrategies {
+    font-size: 1.2em;
+    text-align: center;
+
+    padding: 4em;
+  }
+
+  &--OpenedRow {
+    font-weight: bold;
+  }
+
+  &--SearchBox {
+    &__hide {
+      display: none;
+    }
+  }
 }

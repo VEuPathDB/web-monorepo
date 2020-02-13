@@ -1,5 +1,5 @@
 import { StepTree } from 'wdk-client/Utils/WdkUser';
-import { AddType } from 'wdk-client/Views/Strategy/Types';
+import { AddType, PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
 
 type SimilarTreesDiffResult =
   | { areSimilar: false }
@@ -237,6 +237,26 @@ export const findSubtree = (stepTree: StepTree | undefined, targetStepId: number
     : stepTree.stepId === targetStepId
     ? stepTree
     : findSubtree(stepTree.primaryInput, targetStepId) || findSubtree(stepTree.secondaryInput, targetStepId);
+
+export const findNestedStrategyRoot = (root: PartialUiStepTree, targetStepId: number) => {
+  return traverse(root, root);
+
+  function traverse(node: PartialUiStepTree | undefined, currentNestedRoot: PartialUiStepTree): PartialUiStepTree | undefined {
+    return node == null
+      ? undefined
+      : node.step.id === targetStepId
+      ? currentNestedRoot
+      : node.secondaryInput == null
+      ? traverse(node.primaryInput, currentNestedRoot)
+      : traverse(node.primaryInput, currentNestedRoot) || traverse(node.secondaryInput, node.secondaryInput);
+  }
+};
+
+export const findSlotNumber = (root: PartialUiStepTree, targetStepId: number): number => {
+  return root.primaryInput == null || root.step.id === targetStepId
+    ? root.slotNumber
+    : findSlotNumber(root.primaryInput, targetStepId);
+}
 
 export const findPrimaryBranchHeight = (stepTree: StepTree): number => {
   return traversePrimaryBranch(stepTree, 0);
