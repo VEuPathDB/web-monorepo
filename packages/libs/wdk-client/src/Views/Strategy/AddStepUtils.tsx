@@ -21,4 +21,4 @@ export const MenuChoice = ({ containerClassName, children }: Props) =>
   </div>;
 
 export const inputResultSetDescription = (resultSetSize: number | undefined, inputRecordClass: RecordClass) =>
-  `${resultSetSize != null ? resultSetSize : '?'} ${resultSetSize === 1 ? inputRecordClass.displayName : inputRecordClass.displayNamePlural}`;
+  `${resultSetSize != null ? resultSetSize.toLocaleString() : '?'} ${resultSetSize === 1 ? inputRecordClass.displayName : inputRecordClass.displayNamePlural}`;
