@@ -1,5 +1,5 @@
 .AddStepMenuSelection {
-  min-width: 30em;
+  min-width: 25em;
   position: relative;
   background: white;
   border: 0.0625rem solid black;
@@ -30,18 +30,18 @@
       width: 0;
       height: 0;
       content: '';
-      border-top: 3em solid transparent;
-      border-bottom: 3em solid transparent;
-      border-left: 3em solid #666666;
+      border-top: 2.5em solid transparent;
+      border-bottom: 2em solid transparent;
+      border-left: 2.5em solid #666666;
       position: absolute;
-      bottom: calc(50% - 3em);
+      bottom: calc(50% - 2.5em);
       right: -3em;
       filter: drop-shadow(0.2em 0.2em 0.35em #6a6a6a45);
     }
   }
 
   h3 {
-    font-size: 1.5em;
+    font-size: 1.4em;
     font-weight: 400;
     margin: 0.15em 0.5em 0.25em 0.5em;
     padding: 0;
