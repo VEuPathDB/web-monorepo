@@ -247,7 +247,10 @@ export const CombineStepMenuView = (
                     combineOperatorOrder.map(operator => (
                       <div
                         key={operator}
-                        className={cx('--OperatorChoice')}
+                        className={cx(
+                          '--OperatorChoice',
+                          operator === booleanSearchState.paramValues[BOOLEAN_OPERATOR_PARAM_NAME] && 'selected'
+                        )}
                       >
                         <input
                           id={operator}
