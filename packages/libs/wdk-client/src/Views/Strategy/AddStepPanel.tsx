@@ -203,7 +203,7 @@ export const AddStepPanelView = wrappable((
     <StrategyModal 
       title={
         <div>
-          Extend your strategy by adding a step
+          Add a step to your search strategy
           <HelpIcon>
             {TODO}
           </HelpIcon>
