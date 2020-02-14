@@ -16,6 +16,8 @@ import { TransformIcon } from 'wdk-client/Views/Strategy/TransformIcon';
 const INVALID_SEARCH_TITLE = 'This step refers to a search that is no longer valid. In order to fix your strategy, this step must be deleted.';
 const INVALID_PARAMS_TITLE = 'This step contains a configuration that is no longer valid and must be revised to view results.'
 
+export const ADD_STEP_BUTTON_VERBIAGE = 'Combine the results of your strategy with the results of a new search, or convert the results of your strategy with available data transformations.';
+
 /**
  * Render each step of a strategy as a grid.
  */
@@ -26,7 +28,7 @@ export default function StepBoxes(props: StepBoxesProps) {
         <StepTree {...props}/>
         <Tooltip
           position={{ my: 'top center', at: 'bottom center' }}
-          content="Combine the results of your strategy with the results of a new search, or convert the results of your strategy with available data transformations."
+          content={ADD_STEP_BUTTON_VERBIAGE}
         >
           <button
             className={cx('--InsertStepButton')}

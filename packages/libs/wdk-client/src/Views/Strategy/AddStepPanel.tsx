@@ -15,6 +15,7 @@ import { findPrimaryBranchHeight, addStep, getPreviousStep, findPrimaryBranchLea
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { StrategyDetails, StepTree, Step } from 'wdk-client/Utils/WdkUser';
 import { AddStepMenuSelection } from 'wdk-client/Views/Strategy/AddStepMenuSelection';
+import { ADD_STEP_BUTTON_VERBIAGE } from 'wdk-client/Views/Strategy/StepBoxes';
 import { AddType, PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
 
 import 'wdk-client/Views/Strategy/AddStepPanel.scss';
@@ -22,8 +23,6 @@ import 'wdk-client/Views/Strategy/AddStepPanel.scss';
 const cx = makeClassNameHelper('AddStepPanel');
 
 const SHOULD_SKIP_ADD_STEP_HELP_SESSION_KEY = 'should-skip-add-step-help';
-
-const TODO = 'FILL ME IN';
 
 type StateProps = {
   inputRecordClass?: RecordClass,
@@ -205,7 +204,7 @@ export const AddStepPanelView = wrappable((
         <div>
           Add a step to your search strategy
           <HelpIcon>
-            {TODO}
+            {ADD_STEP_BUTTON_VERBIAGE}
           </HelpIcon>
         </div>
       }

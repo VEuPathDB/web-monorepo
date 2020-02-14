@@ -6,7 +6,7 @@
   border-radius: 1em;
   box-shadow: 0.1em 0.1em 0.35em #afafaf;
 
-  padding: 1em;
+  padding: 0.85em;
 
   &:hover, &:focus {
     background: white;
@@ -23,7 +23,6 @@
 
     &:hover, &:focus {
       border: 0.35em solid #4f81bd;
-      padding: 0.5em 0.5em 0.75em 0.5em;
       outline: none;
     }
 
