@@ -189,8 +189,11 @@ export function loadPageDataFromRecord(
       .then(getSingleRecordStepBundlePromise)
       .then(({ step, recordClass, question }) => ({
         resultType: {
-          type: 'step',
-          step,
+          type: 'answerSpec',
+          answerSpec: {
+            searchName: step.searchName,
+            searchConfig: step.searchConfig
+          }
         },
         question,
         recordClass
