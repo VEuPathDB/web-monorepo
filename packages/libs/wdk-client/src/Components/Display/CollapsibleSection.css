@@ -9,9 +9,8 @@
   content: '\f0d7';
   font-family: FontAwesome;
   font-size: 1.2em;
-  padding: .1em .25em 0 0;
-  display: flex;
-  justify-self: flex-end;
+  margin-right: .5ex;
+  line-height: 1.2em;
 }
 
 .wdk-CollapsibleSectionHeader__collapsed:before {
