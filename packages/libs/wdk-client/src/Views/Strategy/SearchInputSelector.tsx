@@ -38,7 +38,7 @@ type OwnProps = {
   onCombineWithBasketSelected: () => void,
   onCombineWithStrategySelected: (strategyId: number, strategyDescription: string) => void,
   onCombineWithNewSearchSelected: (newSearchUrlSegment: string) => void,
-  inputRecordClass: RecordClass,
+  inputRecordClasses: RecordClass[],
   strategy: StrategyDetails,
   selectBasketButtonText: string
 };
@@ -50,7 +50,7 @@ const cx = makeClassNameHelper('SearchInputSelector');
 export const SearchInputSelectorView = ({
   basketCount,
   containerClassName,
-  inputRecordClass,
+  inputRecordClasses,
   isGuest,
   onCombineWithBasketSelected,
   onCombineWithStrategySelected,
@@ -200,7 +200,7 @@ export const SearchInputSelectorView = ({
                 <StrategyInputSelector
                   onStrategySelected={onCombineWithStrategySelected}
                   primaryInput={strategy}
-                  secondaryInputRecordClass={inputRecordClass}
+                  secondaryInputRecordClass={inputRecordClasses[0]}
                 />
               )
             },
@@ -209,14 +209,14 @@ export const SearchInputSelectorView = ({
               display: (
                 <TabDisplay
                   tabKey="basket"
-                  tabLabel={`My ${inputRecordClass.displayNamePlural} basket`}
+                  tabLabel={`My ${inputRecordClasses[0].displayNamePlural} basket`}
                   selectedTab={selectedTab}
                   onTabSelected={onTabSelected}
                 />
               ),
               content: (
                 <BasketInput
-                  inputRecordClass={inputRecordClass}
+                  inputRecordClass={inputRecordClasses[0]}
                   onSelectBasket={onCombineWithBasketSelected}
                   basketCount={basketCount}
                   isGuest={isGuest}
@@ -270,8 +270,8 @@ const TabDisplay = ({
 
 const isGuest = ({ globalData: { user } }: RootState) => user && user.isGuest;
 
-const basketCount = ({ basket }: RootState, { inputRecordClass: { urlSegment } }: OwnProps) =>
-    basket.counts && basket.counts[urlSegment];
+const basketCount = ({ basket }: RootState, { inputRecordClasses }: OwnProps) =>
+  basket.counts && basket.counts[inputRecordClasses[0].urlSegment];
 
 const isSearchNode = isQualifying({
   targetType: 'search',
@@ -280,7 +280,7 @@ const isSearchNode = isQualifying({
 
 const unorderedSearchTree = createSelector(
   ({ globalData }: RootState) => globalData.ontology,
-  (_: RootState, { inputRecordClass: { fullName } }: OwnProps) => fullName,
+  (_: RootState, { inputRecordClasses }: OwnProps) => inputRecordClasses[0].fullName,
   (ontology, recordClassFullName) =>
     ontology == null ? EMPTY_CATEGORY_TREE_NODE : pruneDescendantNodes(
       node => node.children.length > 0 || (

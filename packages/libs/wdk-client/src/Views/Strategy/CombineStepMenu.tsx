@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, ReactNode } from 'react';
+import React, { useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createSelector } from 'reselect';
@@ -229,6 +229,11 @@ export const CombineStepMenuView = (
     startOperationForm('combine-with-new-search', newSearchUrlSegment);
   }, [ startOperationForm ]);
 
+  const inputRecordClasses = useMemo(
+    () => [ inputRecordClass ],
+    [ inputRecordClass ]
+  );
+
   return (
     <div className={cx()}>
       {
@@ -287,7 +292,7 @@ export const CombineStepMenuView = (
                   onCombineWithBasketSelected={onCombineWithBasketSelected}
                   onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
                   onCombineWithStrategySelected={onCombineWithStrategySelected}
-                  inputRecordClass={inputRecordClass}
+                  inputRecordClasses={inputRecordClasses}
                   selectBasketButtonText={`Combine Step ${stepsCompletedNumber} with your basket`}
                 />
               </MenuChoice>
