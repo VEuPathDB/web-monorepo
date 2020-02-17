@@ -280,12 +280,15 @@ const isSearchNode = isQualifying({
 
 const unorderedSearchTree = createSelector(
   ({ globalData }: RootState) => globalData.ontology,
-  (_: RootState, { inputRecordClasses }: OwnProps) => inputRecordClasses[0].fullName,
-  (ontology, recordClassFullName) =>
+  (_: RootState, { inputRecordClasses }: OwnProps) => inputRecordClasses,
+  (ontology, inputRecordClasses) =>
     ontology == null ? EMPTY_CATEGORY_TREE_NODE : pruneDescendantNodes(
       node => node.children.length > 0 || (
-        isSearchNode(node)  &&
-        getRecordClassName(node) === recordClassFullName
+        isSearchNode(node) &&
+        inputRecordClasses.some(
+          ({ fullName: inputRecordClassFullName }) =>
+            getRecordClassName(node) === inputRecordClassFullName
+        )
       ),
       ontology.tree)
 );
