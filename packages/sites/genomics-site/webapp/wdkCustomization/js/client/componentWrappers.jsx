@@ -263,7 +263,7 @@ export function RecordTableSection(DefaultComponent) {
 
 export const RecordAttribute = makeDynamicWrapper('RecordAttribute',
   function MaybeDyamicWrapper(props) {
-    let { attribute, record, DefaultComponent } = props;
+    let { attribute, record } = props;
 
     // Render attribute as a Sequence if attribute name ends with "sequence".
     let sequenceRE = /sequence$/;
@@ -271,9 +271,7 @@ export const RecordAttribute = makeDynamicWrapper('RecordAttribute',
       return ( <Sequence sequence={record.attributes[attribute.name]}/> );
     }
 
-    return record.attributes[attribute.name] == null
-      ? <DefaultComponent {...props} />
-      : props.children;
+    return props.children;
   }
 );
 
