@@ -10,7 +10,7 @@ import { CategoriesCheckboxTree, Icon, Tooltip, Link, Loading, Tabs } from 'wdk-
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getAllBranchIds, getRecordClassName, EMPTY_CATEGORY_TREE_NODE, isQualifying } from 'wdk-client/Utils/CategoryUtils';
+import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getAllBranchIds, getRecordClassName, EMPTY_CATEGORY_TREE_NODE, isQualifying, CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { pruneDescendantNodes, getLeaves, mapStructure } from 'wdk-client/Utils/TreeUtils';
@@ -278,38 +278,49 @@ const isSearchNode = isQualifying({
   scope: 'menu'
 })
 
-const unorderedSearchTree = createSelector(
+const searchTree = createSelector(
   ({ globalData }: RootState) => globalData.ontology,
   (_: RootState, { inputRecordClasses }: OwnProps) => inputRecordClasses,
   (ontology, inputRecordClasses) =>
-    ontology == null ? EMPTY_CATEGORY_TREE_NODE : pruneDescendantNodes(
-      node => node.children.length > 0 || (
-        isSearchNode(node) &&
-        inputRecordClasses.some(
-          ({ fullName: inputRecordClassFullName }) =>
-            getRecordClassName(node) === inputRecordClassFullName
-        )
-      ),
-      ontology.tree)
+    ontology == null || inputRecordClasses.length === 0
+      ? EMPTY_CATEGORY_TREE_NODE
+      : inputRecordClasses.length === 1
+      ? pruneAndOrderSearchesForRecordClass(ontology, inputRecordClasses[0])
+      : {
+          properties: {},
+          children: inputRecordClasses.map(inputRecordClass => ({
+            properties: {
+              label: [ inputRecordClass.fullName ],
+              'EuPathDB alternative term': [ inputRecordClass.displayNamePlural ]
+            },
+            children: pruneAndOrderSearchesForRecordClass(ontology, inputRecordClass).children
+          }))
+        }
 );
 
 // FIXME: This logic needs to be...
 //   (1) unified with the similar logic for the new home page's searchTree, or...
 //   (2) better yet, eliminated via an update to the underlying ontolog(ies)
-const searchTree = createSelector(
-  unorderedSearchTree,
-  unorderedSearchTree =>
-    unorderedSearchTree && mapStructure(
-      (node, mappedChildren: CategoryTreeNode[]) => {
-        return {
-          ...node,
-          children: orderBy(mappedChildren, getDisplayName)
-        };
-      },
-      node => node.children,
-      unorderedSearchTree
-    )
-);
+const pruneAndOrderSearchesForRecordClass = (ontology: CategoryOntology, recordClass: RecordClass) => {
+  const unorderedSearches = pruneDescendantNodes(
+    node => node.children.length > 0 || (
+      isSearchNode(node)  &&
+      getRecordClassName(node) === recordClass.fullName
+    ),
+    ontology.tree
+  );
+
+  return mapStructure(
+    (node, mappedChildren: CategoryTreeNode[]) => {
+      return {
+        ...node,
+        children: orderBy(mappedChildren, getDisplayName)
+      };
+    },
+    node => node.children,
+    unorderedSearches
+  );
+};
 
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   isGuest: isGuest(state),
