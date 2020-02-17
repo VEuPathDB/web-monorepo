@@ -9,7 +9,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { QuestionState, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { AnswerSpec, StandardReportConfig, Answer, CheckBoxEnumParam, StringParam } from 'wdk-client/Utils/WdkModel';
+import { AnswerSpec, StandardReportConfig, Answer, CheckBoxEnumParam, StringParam, getSingleRecordQuestionName } from 'wdk-client/Utils/WdkModel';
 import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { DEFAULT_COLS, calculateRows } from 'wdk-client/Views/Question/Params/StringParam';
 import { useChangeParamValue } from 'wdk-client/Views/Question/Params/Utils';
@@ -180,8 +180,8 @@ const blastDatabases: BlastDatabase[] = [
 ];
 
 const blastDatabaseSearchNames: Record<BlastDatabase, string> = {
-  'blast-est-ontology': 'single_record_question_AjaxRecordClasses_Blast_Transcripts_Genome_Est_TermClass',
-  'blast-orf-ontology': 'single_record_question_AjaxRecordClasses_Blast_Protein_Orf_TermClass'
+  'blast-est-ontology': getSingleRecordQuestionName('AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass'),
+  'blast-orf-ontology': getSingleRecordQuestionName('AjaxRecordClasses.Blast_Protein_Orf_TermClass')
 };
 
 const algorithmTermTables: Record<BlastDatabase, string> = {
