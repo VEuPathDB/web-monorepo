@@ -26,6 +26,7 @@ export interface BasketResultType {
 export interface AnswerSpecResultType {
   type: 'answerSpec';
   answerSpec: AnswerSpec;
+  displayName: string;
 }
 
 export type ResultType =

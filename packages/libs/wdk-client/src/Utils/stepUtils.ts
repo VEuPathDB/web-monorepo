@@ -12,6 +12,7 @@ export interface AnswerSpecBundle {
   answerSpec: AnswerSpec;
   question: Question;
   recordClass: RecordClass;
+  displayName: string;
 }
 
 /**
@@ -51,9 +52,11 @@ export function getSingleRecordStepBundlePromise(wdkService: WdkService) {
     let questionPromise: Promise<Question> = wdkService.findQuestion(
       q => q.urlSegment === getSingleRecordQuestionName(recordClass.fullName));
     let answerSpec = getSingleRecordAnswerSpec(recordInstance);
+    let displayName = String(recordInstance.attributes[recordClass.recordIdAttributeName]) ||
+      recordInstance.id.map(pk => pk.value).reduce((s, val) => (s == null ? val : '/' + val));
 
     // return a promise containing our generated bundle
-    return questionPromise.then(question => Promise.resolve({ recordClass, question, answerSpec }));
+    return questionPromise.then(question => Promise.resolve({ recordClass, question, answerSpec, displayName }));
   };
 }
 

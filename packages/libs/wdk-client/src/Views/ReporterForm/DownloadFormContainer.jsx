@@ -45,8 +45,8 @@ function getTitle(scope, resultType, recordClass) {
           return ( <div><h1>Download Results</h1></div> );
       }
     case 'record': {
-      // We should only get here with a step result
-      const displayName = resultType.type === 'step' ? resultType.step.displayName : 'Unknown';
+      // We should only get here with an answerSpec result
+      const displayName = resultType.type === 'answerSpec' ? resultType.displayName : 'Unknown';
       return ( <div><h1>Download {recordClass.displayName}: <PrimaryKeySpan primaryKeyString={displayName}/></h1></div> );
     }
     default:

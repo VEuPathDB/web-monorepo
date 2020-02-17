@@ -187,10 +187,11 @@ export function loadPageDataFromRecord(
     let bundlePromise = Promise
       .all([ recordClassPromise, recordPromise ])
       .then(getSingleRecordStepBundlePromise(wdkService))
-      .then(({ answerSpec, recordClass, question }) => ({
+      .then(({ answerSpec, recordClass, question, displayName }) => ({
         resultType: {
           type: 'answerSpec',
-          answerSpec
+          answerSpec,
+          displayName
         },
         question,
         recordClass
