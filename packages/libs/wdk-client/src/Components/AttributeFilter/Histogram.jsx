@@ -362,7 +362,7 @@ var Histogram = (function() {
           '<br/>Remaining ' + this.props.yaxisLabel + ': ' + filteredCount);
         const offset = this.$chart.offset();
         qtipApi.set('position.adjust.x', item.pageX - offset.left + (this.state.uiState.binSize ? barWidthPx : 0));
-        qtipApi.set('position.adjust.y', item.pageY - offset.top);
+        qtipApi.set('position.adjust.y', Math.max(item.pageY - offset.top, 0));
         qtipApi.show(item);
       }
     }
