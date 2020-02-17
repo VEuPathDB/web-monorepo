@@ -255,6 +255,12 @@ const useHeaderMenuItems = (
 
   const menuItemEntries: HeaderMenuItemEntry[] = [
     {
+      key: 'search-strategies',
+      display: 'My Strategies',
+      type: 'reactRoute',
+      url: '/workspace/strategies'
+    },
+    {
       key: 'searchContainer',
       display: 'Searches',
       type: 'subMenu',
@@ -397,31 +403,25 @@ const useHeaderMenuItems = (
       ]
     },
     {
-      key: 'search-strategies',
-      display: 'My Strategies',
-      type: 'reactRoute',
-      url: '/workspace/strategies'
-    },
-    {
       key: 'workspace',
-      display: 'Workspace',
+      display: 'My Workspace',
       type: 'subMenu',
       items: [
         {
           key: 'user-data-sets',
-          display: 'My data sets',
+          display: 'Data sets',
           type: 'reactRoute',
           url: '/workspace/datasets'
         },
         {
           key: 'basket',
-          display: 'My basket',
+          display: 'Basket',
           type: 'reactRoute',
           url: '/workspace/basket'
         },
         {
           key: 'galaxy-analyses',
-          display: 'My Galaxy analyses',
+          display: 'Analyze my data (Galaxy)',
           type: 'reactRoute',
           url: '/galaxy-orientation'
         }
@@ -491,7 +491,7 @@ const useHeaderMenuItems = (
               href={twitterUrl}
               target="_blank"
             >
-              <Twitter />
+              <Twitter />{' '}
               Follow us on Twitter!
             </a>
           ),
@@ -505,7 +505,7 @@ const useHeaderMenuItems = (
               href={facebookUrl}
               target="_blank"
             >
-              <Facebook />
+              <Facebook />{' '}
               Follow us on Facebook!
             </a>
           ),
@@ -519,7 +519,7 @@ const useHeaderMenuItems = (
               href={youtubeUrl}
               target="_blank"
             >
-              <YouTube />
+              <YouTube />{' '}
               Follow us on YouTube!
             </a>
           ),

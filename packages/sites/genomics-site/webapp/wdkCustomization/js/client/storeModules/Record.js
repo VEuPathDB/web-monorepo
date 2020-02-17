@@ -131,7 +131,7 @@ function pruneCategories(nextState) {
 
 /** Remove protein related categories from tree */
 function removeProteinCategories(categoryTree, record) {
-  if (record.attributes.gene_type !== 'protein coding') {
+  if (record.attributes.gene_type !== 'protein coding' && record.attributes.gene_type !== 'protein coding gene')  {
     let children = categoryTree.children.filter(function(category) {
       let label = category.properties.label[0];
       return label !== 'Protein properties' && label !== 'Proteomics';

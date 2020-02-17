@@ -12,8 +12,12 @@ import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { cxStepBoxes } from 'wdk-client/Views/Strategy/ClassNames';
+import { LeafPreview, combinedPreviewFactory } from 'wdk-client/Views/Strategy/StepBoxes';
 
 import './ColocateStepBoxIcon.scss';
+
+const ColocatePreview = combinedPreviewFactory(cxStepBoxes('--SpanOperator', 'OVERLAP'));
 
 export const colocationQuestionSuffix = 'BySpanLogic';
 
@@ -30,6 +34,7 @@ export const apiBinaryOperations: BinaryOperation[] = [
     reviseOperatorParamConfiguration: {
       type: 'form',
       FormComponent: ({
+        uiStepTree,
         questions,
         step,
         strategy,
@@ -121,8 +126,8 @@ export const apiBinaryOperations: BinaryOperation[] = [
               newStepRecordClass={secondaryInputRecordClass}
               insertingBeforeFirstStep={false}
               typeChangeAllowed={typeChangeAllowed}
-              currentStepName="Step A"
-              newStepName="Step B"
+              currentStepName={`Step ${uiStepTree.slotNumber - 1}`}
+              newStepName={`Step ${uiStepTree.slotNumber}`}
             />,
           [ primaryInputRecordClass, secondaryInputRecordClass, typeChangeAllowed ]
         );
@@ -152,7 +157,8 @@ export const apiBinaryOperations: BinaryOperation[] = [
       display: 'Revise as a span operation',
       items: [
         {
-          radioDisplay: <React.Fragment>A <strong>RELATIVE TO</strong> B, using genomic colocation</React.Fragment>,
+          radioDisplay: (stepALabel, stepBLabel) =>
+            <React.Fragment>{stepALabel} <strong>RELATIVE TO</strong> {stepBLabel}, using genomic colocation</React.Fragment>,
           value: 'overlap'
         }
       ]
@@ -164,6 +170,12 @@ export const apiBinaryOperations: BinaryOperation[] = [
       primaryOperandStep: Step
     ) =>
       search.outputRecordClassName === primaryOperandStep.recordClassName &&
-      search.urlSegment.endsWith(colocationQuestionSuffix)
+      search.urlSegment.endsWith(colocationQuestionSuffix),
+    AddStepHeaderComponent: () =>
+      <React.Fragment>
+        Use <strong>Genomic Colocation</strong> to combine with other features
+      </React.Fragment>,
+    AddStepNewInputComponent: LeafPreview,
+    AddStepNewOperationComponent: ColocatePreview
   }
 ];

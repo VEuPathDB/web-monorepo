@@ -1,47 +1,32 @@
-.ColocateStepMenu {
-  &--Header {
-    font-size: 1.5em;
-    margin: 1em 0;
+$red-text: #c80064;
+$blue-text: #0000ee;
 
-    h3 {
-      font-size: 1.25em;
-      font-weight: bold;
-    }
+.ColocateStepMenu {
+  .region_a {
+    color: $red-text;
   }
 
-  &--Body {
+  .region_b {
+    color: $blue-text;
+  }
+
+  .wdk-RadioList {
     display: flex;
-    align-items: start;
     justify-content: space-evenly;
 
-    >:first-child {
-      margin-right: 1em;
-    }
+    margin: 1em 1em 1em 2em;
 
-    >:not(:first-child) {
-      margin: 0 1em;
+    input {
+      margin-right: 0.5em;
     }
   }
 
-  &--ColocationIcon {
-    background-image: url('../questions/overlap.svg');
-    background-position: center center;
-    background-repeat: no-repeat;
-
-    width: 4em;
-    height: 4em;
+  .SearchInputSelector {
+    margin: 1em 1em 1em 2em;
   }
 
-  &--RecordClassSelector {
-    display: flex;
-    flex-direction: column;
-
-    >:first-child {
-      margin-bottom: 1em;
-    }
-
-    >:not(:first-child) {
-      margin: 1em 0;
-    }
+  p {
+    font-size: 1.2em;
+    margin: 0 0 2em 0;
   }
 }

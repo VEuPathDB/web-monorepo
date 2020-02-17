@@ -1,11 +1,13 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
+import { RadioList } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { PrimaryInputLabel } from 'wdk-client/Views/Strategy/PrimaryInputLabel';
+import { MenuChoicesContainer, MenuChoice, inputResultSetDescription } from 'wdk-client/Views/Strategy/AddStepUtils';
+import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
 import { colocationQuestionSuffix } from './ApiBinaryOperations';
-import { selectSearchPage } from './ColocateStepForm';
+import { makeBasketPage, makeNewSearchFormPage, makeStrategyFormPage } from './ColocateStepForm';
 
 import './ColocateStepMenu.scss';
 
@@ -13,9 +15,11 @@ const cx = makeClassNameHelper('ColocateStepMenu');
 
 export const ColocateStepMenu = ({
   inputRecordClass,
-  operandStep,
   recordClasses,
-  startOperationForm
+  strategy,
+  recordClassesByUrlSegment,
+  startOperationForm,
+  stepsCompletedNumber
 }: AddStepOperationMenuProps) => {
   const colocationRecordClasses = useMemo(
     () => recordClasses.filter(
@@ -32,35 +36,71 @@ export const ColocateStepMenu = ({
     [ inputRecordClass, recordClasses, colocationQuestionSuffix ]
   );
 
+  const [ selectedFeatureTypeUrlSegment, setSelectedFeatureTypeUrlSegment ] = useState<string>(colocationRecordClasses[0].urlSegment);
+
+  const secondaryInputRecordClass = useMemo(
+    () => recordClassesByUrlSegment[selectedFeatureTypeUrlSegment],
+    [ selectedFeatureTypeUrlSegment ]
+  );
+
+  const featureTypeItems = useMemo(
+    () => colocationRecordClasses.map(
+      ({ displayNamePlural, urlSegment }) => ({
+        value: urlSegment,
+        display: displayNamePlural
+      })
+    ),
+    [ colocationRecordClasses ]
+  );
+
+  const onCombineNewSearchSelected = useCallback((searchUrlSegment: string) => {
+    startOperationForm(
+      'colocate',
+      makeNewSearchFormPage(searchUrlSegment)
+    );
+  }, [ startOperationForm ]);
+
+  const onCombineWithStrategySelected = useCallback((strategyId: number, name: string) => {
+    startOperationForm(
+      'colocate',
+      makeStrategyFormPage(secondaryInputRecordClass.urlSegment, strategyId, name)
+    );
+  }, [ startOperationForm, secondaryInputRecordClass ]);
+
+  const onCombineWithBasketSelected = useCallback(() => {
+    startOperationForm(
+      'colocate',
+      makeBasketPage(secondaryInputRecordClass.urlSegment)
+    );
+  }, [ startOperationForm, secondaryInputRecordClass ]);
+
   return (
     <div className={cx()}>
-      <div className={cx('--Header')}>
-        <h3>
-          Use Genomic Colocation
-        </h3>
-          to combine it with:
-      </div>
-      <div className={cx('--Body')}>
-        <PrimaryInputLabel
-          resultSetSize={operandStep.estimatedSize}
-          recordClass={inputRecordClass}
-        />
-        <div className={cx('--ColocationIcon')}></div>
-        <div className={cx('--RecordClassSelector')}>
-          {
-            colocationRecordClasses.length === 0
-              ? 'No colocation operations available'
-              : colocationRecordClasses.map(
-                  ({ displayNamePlural, urlSegment }) =>
-                    <button key={urlSegment} type="button" onClick={() => {
-                      startOperationForm('colocate', selectSearchPage(urlSegment));
-                    }}>
-                      {displayNamePlural}
-                    </button>
-                )
-          }
-        </div>
-      </div>
+      <p>
+        Use the relative position of features on the genome between your existing step and the new step to identify features to keep in the final result.
+      </p>
+      <MenuChoicesContainer containerClassName={cx('--Container')}>
+        <MenuChoice>
+          <strong>Choose the data type of your new step</strong>
+          <RadioList
+            name="add-step__feature-type-choice"
+            onChange={setSelectedFeatureTypeUrlSegment}
+            items={featureTypeItems}
+            value={selectedFeatureTypeUrlSegment}
+          />
+        </MenuChoice>
+        <MenuChoice>
+          <strong>Choose <em>which</em> {secondaryInputRecordClass.displayNamePlural} to colocate. From...</strong>
+          <SearchInputSelector
+            onCombineWithNewSearchSelected={onCombineNewSearchSelected}
+            onCombineWithStrategySelected={onCombineWithStrategySelected}
+            onCombineWithBasketSelected={onCombineWithBasketSelected}
+            strategy={strategy}
+            inputRecordClass={secondaryInputRecordClass}
+            selectBasketButtonText={`Colocate Step ${stepsCompletedNumber} with your basket`}
+          />
+        </MenuChoice>
+      </MenuChoicesContainer>
     </div>
   );
 };

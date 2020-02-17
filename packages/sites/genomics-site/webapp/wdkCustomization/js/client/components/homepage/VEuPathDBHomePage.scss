@@ -1,5 +1,5 @@
 // FIXME: Come to a consensus on the font weights we'd like to provide for Roboto
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
 
 body.vpdb-Body {
   background-image: unset;
@@ -141,6 +141,12 @@ body.vpdb-Body {
         border-top: 0.0625rem solid gray;
         border-bottom: 0.0625rem solid gray;
         font-weight: bold;
+      }
+
+      .vpdb-CommunitySocialMediaLink {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-gap: 0.25em;
       }
 
       .wdk-CategoriesCheckboxTreeWrapper {
@@ -355,8 +361,8 @@ body.vpdb-Body {
     // bckgrnd light 
     &.PlasmoDB {
       $primary-color: #985c86;
-      $bckgrnd-img: url('~site/images/PlasmoDB/banner-plasmo.jpg');
-      $logo: url('~site/images/PlasmoDB/title_s.png'); 
+      $bckgrnd-img: url('~site/images/PlasmoDB/header-plasmoDB.jpg');
+      $logo: url('~site/images/PlasmoDB/plasmoDB.png'); 
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
  
@@ -371,8 +377,8 @@ body.vpdb-Body {
     // eupath bkgrnd 
     &.ToxoDB {
       $primary-color: #569551;
-      $bckgrnd-img: url('~site/images/EuPathDB/veupathdb-banner.jpg');
-      $logo: url('~site/images/ToxoDB/toxo.png');
+      $bckgrnd-img: url('~site/images/ToxoDB/header-toxoDB.jpg');
+      $logo: url('~site/images/ToxoDB/toxoDB.png');
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
 
@@ -395,8 +401,8 @@ body.vpdb-Body {
     // bckgrnd dark 
     &.VectorBase {
       $primary-color: #115781;
-      $bckgrnd-img: url('~site/images/VectorBase/banner-vb.jpg');
-      $logo: url('~site/images/VectorBase/vb-logo-full.png');
+      $bckgrnd-img: url('~site/images/VectorBase/header-vectorbase.jpg');
+      $logo: url('~site/images/VectorBase/vectorbase.png');
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
 
