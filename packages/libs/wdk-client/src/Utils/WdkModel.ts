@@ -489,8 +489,9 @@ export interface GenomeViewFeature {
   description: string;
 }
 
-export function getSingleRecordQuestionName(recordClassName: string): string {
-  return `__${recordClassName}__singleRecordQuestion__`;
+export function getSingleRecordQuestionName(recordClassFullName: string): string {
+  let recordClassPortion = recordClassFullName.replace('.', '_');
+  return `single_record_question_${recordClassPortion}`;
 }
 
 export function getSingleRecordAnswerSpec(record: RecordInstance): AnswerSpec {

@@ -185,15 +185,12 @@ export function loadPageDataFromRecord(
 
     // create promise for bundle, dependent on previous two promises and primaryKeyString
     let bundlePromise = Promise
-      .all([ recordClassPromise, recordPromise, primaryKeyString ])
-      .then(getSingleRecordStepBundlePromise)
-      .then(({ step, recordClass, question }) => ({
+      .all([ recordClassPromise, recordPromise ])
+      .then(getSingleRecordStepBundlePromise(wdkService))
+      .then(({ answerSpec, recordClass, question }) => ({
         resultType: {
           type: 'answerSpec',
-          answerSpec: {
-            searchName: step.searchName,
-            searchConfig: step.searchConfig
-          }
+          answerSpec
         },
         question,
         recordClass
