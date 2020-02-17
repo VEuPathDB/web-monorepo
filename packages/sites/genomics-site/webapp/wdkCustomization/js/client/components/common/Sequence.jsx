@@ -1,11 +1,25 @@
 import { orderBy, range } from 'lodash';
 import React from 'react';
+import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+
+import { useIsRefOverflowingVertically } from 'wdk-client/Hooks/Overflow';
 
 const NUM_COLS = 80;
 
 function Sequence(props) {
-  let { highlightRegions, sequence } = props;
+  const { highlightRegions, sequence } = props;
+  const ref = useRef(null);
+  const [ isExpanded, setIsExpanded ] = useState(false);
+  const isOverflowing = useIsRefOverflowingVertically(ref);
+
+  const style = {
+    width: `${NUM_COLS}ch`,
+    whiteSpace: 'break-spaces',
+    wordBreak: 'break-all',
+    maxHeight: isExpanded ? '' : '30vh',
+    overflow: 'hidden'
+  };
 
   const sortedHilightRegions = orderBy(highlightRegions, ['start']);
   const firstHighlightRegion = sortedHilightRegions[0];
@@ -23,9 +37,27 @@ function Sequence(props) {
 
   // FIXME Trunate and show "Show more" button
   return (
-    <pre onCopy={handleCopy} style={{ width: `${NUM_COLS}ch`, whiteSpace: 'break-spaces', wordBreak: 'break-all' }}>
-      {highlightedSequence}
-    </pre>
+    <div style={{ position: 'relative' }}>
+      <pre ref={ref} onCopy={handleCopy} style={style}>
+        {highlightedSequence}
+      </pre>
+      {isOverflowing && (
+        <div style={isExpanded ? {
+          fontWeight: 500
+        } : {
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+          paddingTop: '2em',
+          background: 'linear-gradient(to bottom, transparent, white 50%)',
+          fontWeight: 500
+        }}>
+          <button type="button" className="link" onClick={() => setIsExpanded(!isExpanded)}>
+            <i className={`fa fa-chevron-${isExpanded ? 'up' : 'down'}`}/> {isExpanded ? 'Show less' : 'Show more'}
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
