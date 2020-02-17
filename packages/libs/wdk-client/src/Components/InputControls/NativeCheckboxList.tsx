@@ -2,6 +2,8 @@ import React, { Component, FormEvent, MouseEvent, ReactNode } from 'react';
 import {uniqueId, noop} from 'lodash';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
+import './wdk-CheckboxList.scss';
+
 type Item = {
   value: string
   display: ReactNode
