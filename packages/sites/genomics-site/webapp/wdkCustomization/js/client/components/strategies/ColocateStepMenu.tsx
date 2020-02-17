@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { RadioList } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { MenuChoicesContainer, MenuChoice, inputResultSetDescription } from 'wdk-client/Views/Strategy/AddStepUtils';
+import { MenuChoicesContainer, MenuChoice } from 'wdk-client/Views/Strategy/AddStepUtils';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
 import { colocationQuestionSuffix } from './ApiBinaryOperations';
@@ -74,6 +74,11 @@ export const ColocateStepMenu = ({
     );
   }, [ startOperationForm, secondaryInputRecordClass ]);
 
+  const inputRecordClasses = useMemo(
+    () => [ secondaryInputRecordClass ],
+    [ secondaryInputRecordClass ]
+  );
+
   return (
     <div className={cx()}>
       <p>
@@ -96,7 +101,7 @@ export const ColocateStepMenu = ({
             onCombineWithStrategySelected={onCombineWithStrategySelected}
             onCombineWithBasketSelected={onCombineWithBasketSelected}
             strategy={strategy}
-            inputRecordClass={secondaryInputRecordClass}
+            inputRecordClasses={inputRecordClasses}
             selectBasketButtonText={`Colocate Step ${stepsCompletedNumber} with your basket`}
           />
         </MenuChoice>
