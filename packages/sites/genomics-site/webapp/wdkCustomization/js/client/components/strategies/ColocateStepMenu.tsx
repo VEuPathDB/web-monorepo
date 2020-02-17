@@ -1,9 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { RadioList } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { MenuChoicesContainer, MenuChoice } from 'wdk-client/Views/Strategy/AddStepUtils';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
 import { colocationQuestionSuffix } from './ApiBinaryOperations';
@@ -17,7 +15,6 @@ export const ColocateStepMenu = ({
   inputRecordClass,
   recordClasses,
   strategy,
-  recordClassesByUrlSegment,
   startOperationForm,
   stepsCompletedNumber
 }: AddStepOperationMenuProps) => {
@@ -36,22 +33,7 @@ export const ColocateStepMenu = ({
     [ inputRecordClass, recordClasses, colocationQuestionSuffix ]
   );
 
-  const [ selectedFeatureTypeUrlSegment, setSelectedFeatureTypeUrlSegment ] = useState<string>(colocationRecordClasses[0].urlSegment);
-
-  const secondaryInputRecordClass = useMemo(
-    () => recordClassesByUrlSegment[selectedFeatureTypeUrlSegment],
-    [ selectedFeatureTypeUrlSegment ]
-  );
-
-  const featureTypeItems = useMemo(
-    () => colocationRecordClasses.map(
-      ({ displayNamePlural, urlSegment }) => ({
-        value: urlSegment,
-        display: displayNamePlural
-      })
-    ),
-    [ colocationRecordClasses ]
-  );
+  const secondaryInputRecordClass = colocationRecordClasses[0];
 
   const onCombineNewSearchSelected = useCallback((searchUrlSegment: string) => {
     startOperationForm(
@@ -74,38 +56,20 @@ export const ColocateStepMenu = ({
     );
   }, [ startOperationForm, secondaryInputRecordClass ]);
 
-  const inputRecordClasses = useMemo(
-    () => [ secondaryInputRecordClass ],
-    [ secondaryInputRecordClass ]
-  );
-
   return (
     <div className={cx()}>
       <p>
         Use the relative position of features on the genome between your existing step and the new step to identify features to keep in the final result.
       </p>
-      <MenuChoicesContainer containerClassName={cx('--Container')}>
-        <MenuChoice>
-          <strong>Choose the data type of your new step</strong>
-          <RadioList
-            name="add-step__feature-type-choice"
-            onChange={setSelectedFeatureTypeUrlSegment}
-            items={featureTypeItems}
-            value={selectedFeatureTypeUrlSegment}
-          />
-        </MenuChoice>
-        <MenuChoice>
-          <strong>Choose <em>which</em> {secondaryInputRecordClass.displayNamePlural} to colocate. From...</strong>
-          <SearchInputSelector
-            onCombineWithNewSearchSelected={onCombineNewSearchSelected}
-            onCombineWithStrategySelected={onCombineWithStrategySelected}
-            onCombineWithBasketSelected={onCombineWithBasketSelected}
-            strategy={strategy}
-            inputRecordClasses={inputRecordClasses}
-            selectBasketButtonText={`Colocate Step ${stepsCompletedNumber} with your basket`}
-          />
-        </MenuChoice>
-      </MenuChoicesContainer>
+      <strong>Choose <em>which</em> features to colocate. From...</strong>
+      <SearchInputSelector
+        onCombineWithNewSearchSelected={onCombineNewSearchSelected}
+        onCombineWithStrategySelected={onCombineWithStrategySelected}
+        onCombineWithBasketSelected={onCombineWithBasketSelected}
+        strategy={strategy}
+        inputRecordClasses={colocationRecordClasses}
+        selectBasketButtonText={`Colocate Step ${stepsCompletedNumber} with your basket`}
+      />
     </div>
   );
 };
