@@ -1,36 +1,37 @@
 import React from 'react';
 
-import { IconAlt } from 'wdk-client/Components';
+import { Loading } from 'wdk-client/Components';
 
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 
-import './BasketInput.scss';
 import { inputResultSetDescription } from './AddStepUtils';
+
+import './BasketInput.scss';
 
 const cx = makeClassNameHelper('BasketInput');
 
-type BasketInputStatus = 'is-guest' | 'empty-basket' | 'enabled';
+type BasketInputStatus = 'is-guest' | 'loading' | 'enabled';
 
 type Props = {
-  inputRecordClass: RecordClass,
-  basketCount: number | undefined,
+  basketCounts: Record<string, number> | undefined,
+  inputRecordClasses: RecordClass[],
   isGuest: boolean,
-  onSelectBasket: () => void,
+  onSelectBasket: (recordClassUrlSegment: string) => void,
   selectBasketButtonText: string
 };
 
 export const BasketInput = ({
-  inputRecordClass,
-  basketCount,
+  inputRecordClasses,
+  basketCounts,
   isGuest,
   onSelectBasket,
   selectBasketButtonText
 }: Props) => {
   const status: BasketInputStatus = isGuest
     ? 'is-guest'
-    : !basketCount
-    ? 'empty-basket'
+    : basketCounts == null
+    ? 'loading'
     : 'enabled';
 
   return (
@@ -42,42 +43,28 @@ export const BasketInput = ({
         </div>
       }
       {
-        status === 'empty-basket' &&
-          <div>
-            <div>
-              Your {inputRecordClass.displayName} basket is empty.
-            </div>
-            <div>
-              You may add {inputRecordClass.displayNamePlural} to your basket:
-
-              <ol>
-                <li>
-                  In a {inputRecordClass.displayName} page, by clicking on the{' '}
-                  <IconAlt fa="shopping-basket" />{' '}
-                  icon located at the top
-                </li>
-                <li>
-                  In a {inputRecordClass.displayName} search result, by either:
-                    <ul>
-                      <li>Using the <IconAlt fa="shopping-basket" /> icon to add a {inputRecordClass.displayName} or a page</li>
-                      <li>Using the <a href="#" onClick={e => {
-                        e.preventDefault();
-                      }}>Add To Basket</a> link to add the whole result</li>
-                    </ul>
-                </li>
-              </ol>
-            </div>
-          </div>
+        status === 'loading' &&
+        <Loading />
       }
       {
         status === 'enabled' &&
         <React.Fragment>
-          <div>
-            Your basket contains {inputResultSetDescription(basketCount, inputRecordClass)}
-          </div>
-          <div>
-            <button type="button" onClick={onSelectBasket}>{selectBasketButtonText}</button>
-          </div>
+          {
+            inputRecordClasses.map(inputRecordClass =>
+              <button
+                key={inputRecordClass.urlSegment}
+                disabled={basketCounts && !basketCounts[inputRecordClass.urlSegment]}
+                title={basketCounts && !basketCounts[inputRecordClass.urlSegment]
+                  ? `Your ${inputRecordClass.displayNamePlural} basket is empty`
+                  : undefined
+                }
+                type="button"
+                onClick={() => {
+                  onSelectBasket(inputRecordClass.urlSegment)
+                }}>{`${selectBasketButtonText} with your ${inputRecordClass.displayNamePlural} basket`}
+              </button>
+            )
+          }
         </React.Fragment>
       }
     </div>

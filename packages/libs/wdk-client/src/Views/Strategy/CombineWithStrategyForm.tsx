@@ -86,7 +86,8 @@ const CombineWithStrategyFormView = ({
   updateBooleanOperator,
   stepsCompletedNumber,
   strategy,
-  updateStrategy
+  updateStrategy,
+  recordClassesByUrlSegment
 }: CombineStepFormViewProps) => {
   const [ selectedStrategy, setSelectedStrategy ] = useState<SelectedStrategy | undefined>(undefined);
 
@@ -144,7 +145,8 @@ const CombineWithStrategyFormView = ({
               : <StrategyInputSelector
                   onStrategySelected={onStrategySelected}
                   primaryInput={strategy}
-                  secondaryInputRecordClass={inputRecordClass}
+                  secondaryInputRecordClasses={[inputRecordClass]}
+                  recordClassesByUrlSegment={recordClassesByUrlSegment}
                 />
           }
         </div>

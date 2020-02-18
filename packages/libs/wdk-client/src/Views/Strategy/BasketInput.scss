@@ -5,6 +5,8 @@
     display: grid;
     grid-gap: 0.75em;
     justify-items: center;
+    margin: auto;
+    width: max-content;
 
     button {
       padding: 0.5em;
@@ -22,13 +24,5 @@
 
   &__enabled, &__is-guest {
     padding: 4em;
-  }
-
-  &__empty-basket {
-    padding: 2em;
-  }
-
-  i.fa-shopping-basket {
-    color: green;
   }
 }

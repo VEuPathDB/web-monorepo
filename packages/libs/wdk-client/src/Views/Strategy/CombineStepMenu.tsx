@@ -157,7 +157,7 @@ export const CombineStepMenuView = (
     startCombiningWithStrategy,
     strategy,
     addType,
-    operandStep,
+    recordClassesByUrlSegment,
     stepsCompletedNumber
   }: Props
 ) => {
@@ -195,12 +195,12 @@ export const CombineStepMenuView = (
   );
 
   const onCombineWithBasketSelected = useCallback(
-    () => {
+    (recordClassUrlSegment: string) => {
       if (basketSearchShortDisplayName && booleanSearchState) {
         onHideInsertStep();
         startCombiningWithBasket(
           strategy.strategyId,
-          inputRecordClass.urlSegment,
+          recordClassUrlSegment,
           basketSearchUrlSegment,
           basketDatasetParamName,
           basketSearchShortDisplayName,
@@ -215,7 +215,6 @@ export const CombineStepMenuView = (
       onHideInsertStep,
       startCombiningWithBasket,
       strategy.strategyId,
-      inputRecordClass.urlSegment,
       basketSearchUrlSegment,
       basketDatasetParamName,
       basketSearchShortDisplayName,
@@ -293,7 +292,8 @@ export const CombineStepMenuView = (
                   onCombineWithNewSearchSelected={onCombineWithNewSearchSelected}
                   onCombineWithStrategySelected={onCombineWithStrategySelected}
                   inputRecordClasses={inputRecordClasses}
-                  selectBasketButtonText={`Combine Step ${stepsCompletedNumber} with your basket`}
+                  selectBasketButtonText={`Combine Step ${stepsCompletedNumber}`}
+                  recordClassesByUrlSegment={recordClassesByUrlSegment}
                 />
               </MenuChoice>
             </MenuChoicesContainer>

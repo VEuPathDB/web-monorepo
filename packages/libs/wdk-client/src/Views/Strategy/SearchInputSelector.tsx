@@ -24,7 +24,7 @@ import 'wdk-client/Views/Strategy/SearchInputSelector.scss';
 
 
 type StateProps = {
-  basketCount?: number,
+  basketCounts?: Record<string, number>,
   isGuest?: boolean,
   searchTree: CategoryTreeNode
 };
@@ -35,10 +35,11 @@ type DispatchProps = {
 
 type OwnProps = {
   containerClassName?: string,
-  onCombineWithBasketSelected: () => void,
-  onCombineWithStrategySelected: (strategyId: number, strategyDescription: string) => void,
+  onCombineWithBasketSelected: (recordClassUrlSegment: string) => void,
+  onCombineWithStrategySelected: (strategyId: number, strategyDescription: string, recordClassesByUrlSegment: string) => void,
   onCombineWithNewSearchSelected: (newSearchUrlSegment: string) => void,
   inputRecordClasses: RecordClass[],
+  recordClassesByUrlSegment: Record<string, RecordClass>,
   strategy: StrategyDetails,
   selectBasketButtonText: string
 };
@@ -48,7 +49,7 @@ type Props = StateProps & DispatchProps & OwnProps;
 const cx = makeClassNameHelper('SearchInputSelector');
 
 export const SearchInputSelectorView = ({
-  basketCount,
+  basketCounts,
   containerClassName,
   inputRecordClasses,
   isGuest,
@@ -56,6 +57,7 @@ export const SearchInputSelectorView = ({
   onCombineWithStrategySelected,
   onCombineWithNewSearchSelected,
   searchTree,
+  recordClassesByUrlSegment,
   requestBasketCounts,
   strategy,
   selectBasketButtonText
@@ -146,7 +148,7 @@ export const SearchInputSelectorView = ({
   
   const [ selectedTab, onTabSelected ] = useState<TabKey>('new-search');
 
-  return isGuest === undefined || (isGuest === false && basketCount === undefined)
+  return isGuest == null || (isGuest === false && basketCounts == null)
     ? <Loading />
     : <div className={`${containerClassName || ''} ${cx()}`}>
         <Tabs
@@ -200,7 +202,8 @@ export const SearchInputSelectorView = ({
                 <StrategyInputSelector
                   onStrategySelected={onCombineWithStrategySelected}
                   primaryInput={strategy}
-                  secondaryInputRecordClass={inputRecordClasses[0]}
+                  recordClassesByUrlSegment={recordClassesByUrlSegment}
+                  secondaryInputRecordClasses={inputRecordClasses}
                 />
               )
             },
@@ -209,16 +212,16 @@ export const SearchInputSelectorView = ({
               display: (
                 <TabDisplay
                   tabKey="basket"
-                  tabLabel={`My ${inputRecordClasses[0].displayNamePlural} basket`}
+                  tabLabel="My basket"
                   selectedTab={selectedTab}
                   onTabSelected={onTabSelected}
                 />
               ),
               content: (
                 <BasketInput
-                  inputRecordClass={inputRecordClasses[0]}
+                  inputRecordClasses={inputRecordClasses}
                   onSelectBasket={onCombineWithBasketSelected}
-                  basketCount={basketCount}
+                  basketCounts={basketCounts}
                   isGuest={isGuest}
                   selectBasketButtonText={selectBasketButtonText}
                 />
@@ -270,8 +273,7 @@ const TabDisplay = ({
 
 const isGuest = ({ globalData: { user } }: RootState) => user && user.isGuest;
 
-const basketCount = ({ basket }: RootState, { inputRecordClasses }: OwnProps) =>
-  basket.counts && basket.counts[inputRecordClasses[0].urlSegment];
+const basketCounts = ({ basket }: RootState, { inputRecordClasses }: OwnProps) => basket.counts;
 
 const isSearchNode = isQualifying({
   targetType: 'search',
@@ -298,17 +300,25 @@ const searchTree = createSelector(
         }
 );
 
-// FIXME: This logic needs to be...
-//   (1) unified with the similar logic for the new home page's searchTree, or...
-//   (2) better yet, eliminated via an update to the underlying ontolog(ies)
+// FIXME: This logic needs to be unified with the similar logic for the new home page's searchTree, or...
 const pruneAndOrderSearchesForRecordClass = (ontology: CategoryOntology, recordClass: RecordClass) => {
-  const unorderedSearches = pruneDescendantNodes(
+  const unorderedSearchesInitial = pruneDescendantNodes(
     node => node.children.length > 0 || (
-      isSearchNode(node)  &&
+      isSearchNode(node) &&
       getRecordClassName(node) === recordClass.fullName
     ),
     ontology.tree
   );
+
+  const unorderedSearchesLeaves = getLeaves(unorderedSearchesInitial, node => node.children);
+  const MAX_LEAVES_IN_FLAT_TREE = 8;
+
+  const unorderedSearchesPenultimate = unorderedSearchesLeaves.length <= MAX_LEAVES_IN_FLAT_TREE
+    ? {
+        properties: {},
+        children: unorderedSearchesLeaves
+      }
+    : unorderedSearchesInitial;
 
   return mapStructure(
     (node, mappedChildren: CategoryTreeNode[]) => {
@@ -318,18 +328,18 @@ const pruneAndOrderSearchesForRecordClass = (ontology: CategoryOntology, recordC
       };
     },
     node => node.children,
-    unorderedSearches
+    unorderedSearchesPenultimate
   );
 };
 
 const mapStateToProps = (state: RootState, props: OwnProps): StateProps => ({
   isGuest: isGuest(state),
-  basketCount: basketCount(state, props),
+  basketCounts: basketCounts(state, props),
   searchTree: searchTree(state, props)
 });
 
 const mapDispatchToProps = (dispatch: DispatchAction) => ({
   requestBasketCounts: compose(dispatch, requestBasketCounts)
-})
+});
 
 export const SearchInputSelector = connect(mapStateToProps, mapDispatchToProps)(SearchInputSelectorView);
