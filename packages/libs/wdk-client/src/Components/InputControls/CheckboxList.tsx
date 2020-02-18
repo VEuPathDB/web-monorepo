@@ -1,6 +1,7 @@
 import React, { Component, FormEvent, ReactNode } from 'react';
 import { wrappable, addOrRemove } from 'wdk-client/Utils/ComponentUtils';
 import NativeCheckboxList from 'wdk-client/Components/InputControls/NativeCheckboxList';
+import { LinksPosition } from '../CheckboxTree/CheckboxTree';
 
 type Item = {
   display: ReactNode
@@ -11,7 +12,8 @@ type Props = {
   name?: string
   items: Item[]
   value: string[]
-  onChange: (value: string[]) => void
+  onChange: (value: string[]) => void,
+  linksPosition?: LinksPosition;
 }
 
 /**
@@ -41,17 +43,19 @@ class CheckboxList extends Component<Props> {
   }
 
   render() {
-    let { name, items, value } = this.props;
+    let { name, items, value, linksPosition } = this.props;
     return (
-      <NativeCheckboxList name={name}
-         onChange={this.onChange}
-         onSelectAll={this.onSelectAll}
-         onClearAll={this.onClearAll}
-         selectedItems={value}
-         items={items}
+      <NativeCheckboxList
+        name={name}
+        onChange={this.onChange}
+        onSelectAll={this.onSelectAll}
+        onClearAll={this.onClearAll}
+        selectedItems={value}
+        items={items}
+        linksPosition={linksPosition}
       />
     );
   }
 }
 
-export default wrappable(CheckboxList);
+export default Object.assign(wrappable(CheckboxList), { LinksPosition });
