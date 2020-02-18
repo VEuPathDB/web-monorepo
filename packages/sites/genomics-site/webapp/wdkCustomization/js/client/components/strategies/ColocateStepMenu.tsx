@@ -14,6 +14,7 @@ const cx = makeClassNameHelper('ColocateStepMenu');
 export const ColocateStepMenu = ({
   inputRecordClass,
   recordClasses,
+  recordClassesByUrlSegment,
   strategy,
   startOperationForm,
   stepsCompletedNumber
@@ -42,19 +43,19 @@ export const ColocateStepMenu = ({
     );
   }, [ startOperationForm ]);
 
-  const onCombineWithStrategySelected = useCallback((strategyId: number, name: string) => {
+  const onCombineWithStrategySelected = useCallback((strategyId: number, name: string, recordClassUrlSegment: string) => {
     startOperationForm(
       'colocate',
-      makeStrategyFormPage(secondaryInputRecordClass.urlSegment, strategyId, name)
+      makeStrategyFormPage(recordClassUrlSegment, strategyId, name)
     );
-  }, [ startOperationForm, secondaryInputRecordClass ]);
+  }, [ startOperationForm ]);
 
-  const onCombineWithBasketSelected = useCallback(() => {
+  const onCombineWithBasketSelected = useCallback((recordClassUrlSegment: string) => {
     startOperationForm(
       'colocate',
-      makeBasketPage(secondaryInputRecordClass.urlSegment)
+      makeBasketPage(recordClassUrlSegment)
     );
-  }, [ startOperationForm, secondaryInputRecordClass ]);
+  }, [ startOperationForm ]);
 
   return (
     <div className={cx()}>
@@ -68,7 +69,8 @@ export const ColocateStepMenu = ({
         onCombineWithBasketSelected={onCombineWithBasketSelected}
         strategy={strategy}
         inputRecordClasses={colocationRecordClasses}
-        selectBasketButtonText={`Colocate Step ${stepsCompletedNumber} with your basket`}
+        selectBasketButtonText={`Colocate Step ${stepsCompletedNumber}`}
+        recordClassesByUrlSegment={recordClassesByUrlSegment}
       />
     </div>
   );
