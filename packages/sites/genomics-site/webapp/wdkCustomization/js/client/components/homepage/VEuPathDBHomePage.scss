@@ -294,8 +294,8 @@ body.vpdb-Body {
     // bckgrnd dark 
     &.CryptoDB {                     
       $primary-color: #274f94;    /* #274f94 or #8b465c, banner-crypto.jpg */
-      $bckgrnd-img: url('~site/images/CryptoDB/vuepathdb-banner-CryptoDB.jpg');
-      $logo: url('~site/images/CryptoDB/crypto-logo.png');  /* crypto-logo-w.png, crypto-logo-2.png */
+      $bckgrnd-img: url('~site/images/CryptoDB/header-cryptoDB.jpg');
+      $logo: url('~site/images/CryptoDB/cryptoDB.png');  /* crypto-logo-w.png, crypto-logo-2.png */
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
 
@@ -320,8 +320,8 @@ body.vpdb-Body {
     // eupath  bkgrnd w/one watermark,  Giardia: #569551,  veupathdb-banner-GADB.jpg 
     &.GiardiaDB {
       $primary-color: #569551;
-      $bckgrnd-img: url('~site/images/GiardiaDB/veupathdb-banner-GADB.jpg');
-      $logo: url('~site/images/GiardiaDB/giardia.png');
+      $bckgrnd-img: url('~site/images/GiardiaDB/header-giardiaDB.jpg');
+      $logo: url('~site/images/GiardiaDB/giardiaDB.png');
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
 
@@ -344,8 +344,8 @@ body.vpdb-Body {
     // tinted  bkgrnd  PiroplasmaDB: #8b465c (same as header) or #3a8c9f (second color), veupathdb-banner-PPDBtint.jpg 
     &.PiroplasmaDB {
       $primary-color: #8b465c;
-      $bckgrnd-img: url('~site/images/PiroplasmaDB/veupathdb-banner-PPDBtint.jpg');
-      $logo: url('~site/images/PiroplasmaDB/piroplasma.png');
+      $bckgrnd-img: url('~site/images/PiroplasmaDB/header-piroplasmaDB.jpg');
+      $logo: url('~site/images/PiroplasmaDB/piroplasmaDB.png');
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
 
@@ -393,8 +393,8 @@ body.vpdb-Body {
     // eupath bkgrnd w/one watermark, TriTrypDB: #c06530,  veupathdb-banner-TTDB.jpg 
     &.TriTrypDB {
       $primary-color: #c06530;
-      $bckgrnd-img: url('~site/images/TriTrypDB/veupathdb-banner-TTDB.jpg');
-      $logo: url('~site/images/TriTrypDB/tritryp.png');
+      $bckgrnd-img: url('~site/images/TriTrypDB/header-tritrypDB.jpg');
+      $logo: url('~site/images/TriTrypDB/tritrypDB.png');
       @include branding-style($primary-color, $bckgrnd-img, $logo);
     }
 
@@ -418,7 +418,7 @@ body.vpdb-Body {
           position: relative;
           bottom: 20px;
           height: calc(72px * 1.2);
-          content: url('~site/images/VEuPathDB/veupath-logo-long.png');
+          content: url('~site/images/VEuPathDB/VEuPathDB.png');
         }
 
         &__collapsed {
