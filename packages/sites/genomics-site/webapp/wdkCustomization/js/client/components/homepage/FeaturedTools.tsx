@@ -12,7 +12,6 @@ import { decode, string } from 'wdk-client/Utils/Json';
 
 import './FeaturedTools.scss';
 
-
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 
@@ -297,29 +296,40 @@ const SelectionBody = ({ entry }: SelectionBodyProps) => {
       >
       </div>
       {
-        isOverflowing && (
-          <div className={cx('SelectionBodyReadMore', isExpanded && 'expanded')}>
-            <button 
-              type="button" 
-              className="link" 
-              onClick={toggleExpanded}
-            >
-              {isExpanded 
-                ? <React.Fragment>
-                    <IconAlt fa="chevron-up" />
-                    {' '}
-                    Read Less
-                  </React.Fragment>
-                : <React.Fragment>
-                    <IconAlt fa="chevron-down" />
-                    {' '}
-                    Read More
-                  </React.Fragment>
-              }
-            </button>
-          </div>
-        )
+        isOverflowing && <ReadMoreButton isExpanded={isExpanded} toggleExpanded={toggleExpanded} />
       }
     </div>
   );
 };
+
+type ReadMoreButtonProps = {
+  classNameModifier?: string,
+  isExpanded: boolean,
+  toggleExpanded: () => void
+};
+
+const ReadMoreButton = ({
+  classNameModifier,
+  isExpanded,
+  toggleExpanded
+}: ReadMoreButtonProps) =>
+  <div className={cx('SelectionBodyReadMore', isExpanded && 'expanded', classNameModifier)}>
+    <button
+      type="button"
+      className="link"
+      onClick={toggleExpanded}
+    >
+      {isExpanded
+        ? <React.Fragment>
+            <IconAlt fa="chevron-up" />
+            {' '}
+            Read Less
+          </React.Fragment>
+        : <React.Fragment>
+            <IconAlt fa="chevron-down" />
+            {' '}
+            Read More
+          </React.Fragment>
+      }
+    </button>
+  </div>;
