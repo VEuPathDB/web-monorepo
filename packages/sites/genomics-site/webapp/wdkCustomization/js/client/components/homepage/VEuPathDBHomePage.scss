@@ -259,7 +259,11 @@ body.vpdb-Body {
       grid-area: side;
 
       @media screen and (min-width: 1001px) {
-        border-left: 0.0625rem transparent;
+        border-left: 0.0625rem solid;
+
+        &__news-collapsed {
+          border-left-style: hidden;
+        }
 
         .wdk-Showcase-HeadingRow {
           display: none;
