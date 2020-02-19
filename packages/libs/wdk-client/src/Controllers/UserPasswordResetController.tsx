@@ -38,7 +38,7 @@ class UserPasswordResetController extends PageController<Props> {
   }
 
   renderView() {
-    return ( <UserPasswordReset {...this.props} /> );
+    return ( <UserPasswordReset {...this.props.stateProps} {...this.props.dispatchProps} /> );
   }
 
   loadData() {
