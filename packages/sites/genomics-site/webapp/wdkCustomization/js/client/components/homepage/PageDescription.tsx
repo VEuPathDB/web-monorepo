@@ -18,6 +18,7 @@ const EuPathDB = 'EuPathDB';
 
 export const PageDescription = () => {
   const isPortalSite = projectId === VEuPathDB || projectId === EuPathDB;
+  const ComponentSiteDescription = customComponentSiteDescriptions[projectId] || DefaultComponentSiteDescription;
 
   return (
     <div className={cx('', isPortalSite ? 'portal-site' : 'component-site')}>
@@ -89,7 +90,12 @@ const VEuPathDBDescription = () => {
   );
 };
 
-const ComponentSiteDescription = () =>
+// As necessary, add entries for custom site descriptions, keyed by project id
+const customComponentSiteDescriptions: Record<string, React.ComponentType> = {
+
+};
+
+const DefaultComponentSiteDescription = () =>
   <p>
     As part of the VEuPathDB
     {' '}
