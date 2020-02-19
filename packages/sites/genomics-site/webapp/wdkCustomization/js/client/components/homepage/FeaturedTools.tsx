@@ -287,6 +287,9 @@ const SelectionBody = ({ entry }: SelectionBodyProps) => {
 
   return (
     <div className={cx('SelectionBody')}>
+      {
+        isOverflowing && isExpanded && <ReadMoreButton isExpanded={isExpanded} toggleExpanded={toggleExpanded} classNameModifier="top" />
+      }
       <div
         ref={ref}
         className={cx('SelectionBodyContent', isExpanded && 'expanded')}
