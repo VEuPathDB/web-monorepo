@@ -125,7 +125,7 @@ class Answer extends React.Component {
 
     const options = {
       useStickyHeader: true,
-      tableBodyMaxHeight: 'calc(100vh - 120px)',
+      tableBodyMaxHeight: 'unset',
       deriveRowClassName: deriveRowClassName && (record => deriveRowClassName({ recordClass, record }))
     };
 
