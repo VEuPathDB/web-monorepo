@@ -34,7 +34,7 @@ header {
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
            =Answer page (all datasets table)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-.MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
+.wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
   top: 5em;;
 }
 
