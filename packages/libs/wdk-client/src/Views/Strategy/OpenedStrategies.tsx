@@ -58,7 +58,7 @@ export default function OpenedStrategies(props: Props) {
   useLayoutEffect(() => {
     if (resizeContainerRef.current == null) return;
     resizeContainerRef.current.style.height = containerHeight + 'px';
-  }, [ ])
+  }, [ resizeContainerRef.current, containerHeight ])
 
   const stratPanel = (
     <div className="OpenedStrategiesPanel" ref={stratPanelRef}>
