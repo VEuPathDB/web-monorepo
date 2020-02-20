@@ -13,21 +13,15 @@
       overflow: visible;
       position: relative;
 
-
-      .DataTable-Header {
+      .DataTable-Header, .DataTable-Body {
         display: block;
-        //overflow: visible;
-        //overflow-y: auto;
+        overflow: visible;
+        overflow-y: auto;
         // table { table-layout: fixed; }
-        position: sticky;
-        top: 3em;
-        background-color: #efefef;
-        z-index: 10;
       }
 
       .DataTable-Body {
         padding-bottom: 1.5em; /* prevent macos scrollbar from occluding last row */
-        display: block;
       }
 
       .DataTable-Header {
