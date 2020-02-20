@@ -188,6 +188,9 @@
 .StepBoxes--StepName {
   color: black;
   font-weight: bold;
+  max-width: 15em;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .StepBoxes--StepCount {
