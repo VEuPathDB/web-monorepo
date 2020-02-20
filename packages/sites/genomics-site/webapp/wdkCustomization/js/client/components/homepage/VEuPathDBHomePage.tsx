@@ -422,6 +422,12 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/workspace/basket'
         },
+        
+          key: 'favorites',
+          display: 'Favorites',
+          type: 'reactRoute',
+          url: '/workspace/favorites'
+        },
         {
           key: 'galaxy-analyses',
           display: 'Analyze my data (Galaxy)',
@@ -533,7 +539,7 @@ const useHeaderMenuItems = (
           display: `Genes with comments from the ${projectId} community`,
           tooltip: 'Add your comments to your gene of interest: start at the gene page',
           type: 'reactRoute',
-          url: '/search/gene/GenesWithUserComments/result',
+          url: '/search/transcript/GenesWithUserComments/result',
           metadata: {
             exclude: [ EuPathDB ]
           }
