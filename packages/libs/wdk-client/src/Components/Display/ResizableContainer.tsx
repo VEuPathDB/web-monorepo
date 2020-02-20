@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useImperativeHandle } from 'react';
 
 // TODO: Do we want to store our custom hooks in a central place?
 const useJQueryUIResizable = ( 
@@ -18,14 +18,15 @@ const useJQueryUIResizable = (
   });
 };
 
-type ResizableProps = JQueryUI.ResizableOptions & { className?: string };
+type ResizableProps = JQueryUI.ResizableOptions & { className?: string; };
 
-export const ResizableContainer: React.FunctionComponent<ResizableProps> = ({ 
+export const ResizableContainer = React.forwardRef<HTMLDivElement | null, React.PropsWithChildren<ResizableProps>>(({ 
   className,
   children,
   ...resizableOptions 
-}) => {
+}, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(ref, () => containerRef.current);
   useJQueryUIResizable(containerRef, resizableOptions);
 
   return (
@@ -33,4 +34,4 @@ export const ResizableContainer: React.FunctionComponent<ResizableProps> = ({
       {children}
     </div>
   );
-};
+});

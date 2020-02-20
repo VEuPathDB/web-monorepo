@@ -346,8 +346,8 @@ svg.StepBoxes--TransformIconContents {
   align-items: center;
   border-style: dashed;
   background: #d0cfcf6b;
-  border-width: 1px;
-  border-color: black;
+  border-width: .2em;
+  border-color: #4f81bd;
 }
 
 .StepBoxes--InsertStepButton:hover,
@@ -356,9 +356,14 @@ svg.StepBoxes--TransformIconContents {
   background: #d0cfcfcf;
 }
 
+.StepBoxes--InsertStepButton div {
+  font-size: 1.1em;
+}
+
 .StepBoxes--InsertStepButton .fa {
   font-size: 1.4em;
   margin-right: .4em;
+  color: #666;
 }
 
 button.StepBoxes--EditButton {

@@ -183,3 +183,30 @@ function findAnchorNode(element: Element) {
 function getElementChildren(el: Element) {
   return Array.from(el.children);
 }
+
+/**
+ * Scroll element into view, if needed. Only scrolls offsetParent.
+ * @param element Element to scroll into view
+ */
+export function scrollIntoViewIfNeeded(element: HTMLElement) {
+  const { offsetParent } = element;
+  const scrollParent = findAncestorNode(
+    element,
+    node => {
+      if (!(node instanceof HTMLElement)) return false;
+      const { overflowY } = window.getComputedStyle(node);
+      const isScrollable = overflowY !== 'visible' && overflowY !== 'hidden';
+      return isScrollable && node.scrollHeight >= node.clientHeight;
+    }
+  )
+  if (
+    offsetParent != null &&
+    scrollParent instanceof HTMLElement &&
+    // below the bottom
+    ((offsetParent.scrollTop > element.offsetTop) ||
+    (offsetParent.clientHeight + offsetParent.scrollTop) <= (element.offsetTop + element.clientHeight))
+    // above the top
+  ) {
+    scrollParent.scrollTop = element.offsetTop;
+  }
+}

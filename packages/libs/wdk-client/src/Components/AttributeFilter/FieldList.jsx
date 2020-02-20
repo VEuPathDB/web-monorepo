@@ -2,6 +2,7 @@ import { memoize, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 import React, {useLayoutEffect, useRef} from 'react';
 import ReactDOM from 'react-dom';
+import { scrollIntoViewIfNeeded } from 'wdk-client/Utils/DomUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
@@ -177,17 +178,4 @@ function getIcon(field) {
   return isRange(field) ? 'bar-chart-o'
     : isMulti(field) ? 'th-list'
     : 'list';
-}
-
-function scrollIntoViewIfNeeded(element) {
-  const { offsetParent } = element;
-  if (
-    offsetParent != null &&
-    // below the bottom
-    ((offsetParent.scrollTop > element.offsetTop) ||
-    (offsetParent.clientHeight + offsetParent.scrollTop) <= (element.offsetTop + element.clientHeight))
-    // above the top
-  ) {
-    offsetParent.scrollTop = element.offsetTop - (offsetParent.clientHeight / 2);
-  }
 }
