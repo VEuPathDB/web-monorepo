@@ -16,6 +16,7 @@ import { NewsPane } from 'ebrc-client/components/homepage/NewsPane';
 import { SearchPane, SearchCheckboxTree } from 'ebrc-client/components/homepage/SearchPane';
 import { Twitter, YouTube, Facebook } from 'ebrc-client/components/homepage/SocialMediaIcons';
 import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/components/homepage/Utils';
+import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
@@ -161,6 +162,8 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
   const footerClassName = vpdbCx('Footer'); 
 
+  const [ closedBanners, setClosedBanners ] = useAnnouncementsState();
+
   return (
     <div className={rootContainerClassName}>
       <ErrorBoundary>
@@ -175,7 +178,10 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
       </ErrorBoundary>
       {isHomePage &&
         <div className={vpdbCx('Announcements')}>
-          <Announcements />
+          <Announcements
+            closedBanners={closedBanners}
+            setClosedBanners={setClosedBanners}
+          />
         </div>
       }
       {isHomePage &&
