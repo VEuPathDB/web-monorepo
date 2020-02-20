@@ -422,7 +422,7 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/workspace/basket'
         },
-        
+        {   
           key: 'favorites',
           display: 'Favorites',
           type: 'reactRoute',
@@ -539,7 +539,7 @@ const useHeaderMenuItems = (
           display: `Genes with comments from the ${projectId} community`,
           tooltip: 'Add your comments to your gene of interest: start at the gene page',
           type: 'reactRoute',
-          url: '/search/transcript/GenesWithUserComments/result',
+          url: '/search/transcript/GenesWithUserComments?autoRun',
           metadata: {
             exclude: [ EuPathDB ]
           }
