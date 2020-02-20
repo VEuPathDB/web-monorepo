@@ -33,7 +33,9 @@ export default function StepBoxes(props: StepBoxesProps) {
           <button
             className={cx('--InsertStepButton')}
             type="button" onClick={() => props.onShowInsertStep({ type: 'append', stepId: props.stepTree.step.id })}
-          ><i className="fa fa-plus"/> Extend your search strategy</button>
+          >
+            <i className="fa fa-plus"/> <div>Add a step</div>
+          </button>
         </Tooltip>
       </div>
       <ExpandedSteps {...props}/>

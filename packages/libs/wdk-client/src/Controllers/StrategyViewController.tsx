@@ -1,11 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { setOpenedStrategiesVisibility } from 'wdk-client/Actions/StrategyWorkspaceActions';
-import { Link } from 'wdk-client/Components';
 import ResultPanelController from 'wdk-client/Controllers/ResultPanelController';
 import {StepFiltersController} from 'wdk-client/Controllers';
-import StrategyPanelController from 'wdk-client/Controllers/StrategyPanelController';
 import { RootState } from 'wdk-client/Core/State/Types';
 import OpenedStrategies from 'wdk-client/Views/Strategy/OpenedStrategies';
 import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
@@ -17,7 +14,6 @@ import {StepResultType} from 'wdk-client/Utils/WdkResult';
 import {RecordClass, Question} from 'wdk-client/Utils/WdkModel';
 import {Omit} from 'wdk-client/Core/CommonTypes';
 import InvalidStepResults from 'wdk-client/Views/Strategy/InvalidStepResults';
-import ShowAllToggle from 'wdk-client/Views/Strategy/ShowAllToggle';
 
 type StrategyEntry = { strategy?: StrategyDetails, isLoading: boolean; };
 type OpenedStrategiesMap = [number, StrategyEntry][];
@@ -83,7 +79,7 @@ function StrategyViewController(props: Props) {
   return (
     <>
       {/* <StrategyPanelWithOpenedPanel {...props}/> */}
-      <StrategyPanelWithToggle {...props}/>
+      <OpenedStrategies {...props} strategyPanelViewId={strategyPanelViewId}/>
       <div style={{ position: 'relative', minHeight: '350px' }}>
       { resultType == null ? null
         : isSelectedValid ? (
@@ -159,73 +155,3 @@ function mapState(state: RootState, props: OwnProps): MappedProps {
 }
 
 export default connect(mapState)(StrategyViewController);
-
-function StrategyPanelWithOpenedPanel(props: Props) {
-  const { stepId, strategyId, selectedStrategy, dispatch, openedStrategies, isOpenedStrategiesVisible } = props;
-  return (
-    <>
-      {openedStrategies != null && <OpenedStrategies
-        activeStrategyId={strategyId}
-        openStrategies={openedStrategies}
-        isVisible={isOpenedStrategiesVisible || false}
-        setVisibility={isVisible => dispatch(setOpenedStrategiesVisibility(isVisible))}
-      />}
-      {strategyId == null &&
-        <div style={{ fontSize: '1.2em' }}>
-          <p>You have no open strategies. Please run a search to start a strategy.</p>
-          <p>To open an existing strategy, visit the <Link to="/workspace/strategies/all">'All' page</Link>.</p>
-        </div>}
-      {strategyId && <StrategyPanelController
-        isActive
-        viewId={strategyPanelViewId(strategyId)}
-        strategyId={strategyId}
-        stepId={stepId}
-        strategy={selectedStrategy && selectedStrategy.strategy}
-        isLoading={selectedStrategy ? selectedStrategy.isLoading : true}
-      />}
-    </>
-  );
-}
-
-function StrategyPanelWithToggle(props: Props) {
-  const { stepId, strategyId, dispatch, selectedStrategy,  openedStrategies = [], isOpenedStrategiesVisible } = props;
-  const toggleId = "openedStrategiesPanelToggle";
-  const strategiesToShow: OpenedStrategiesMap = isOpenedStrategiesVisible ? openedStrategies
-    : selectedStrategy && strategyId ? [[ strategyId, selectedStrategy ]]
-    : [];
-
-  return (
-    <>
-      {openedStrategies.length > 1 &&
-        <ShowAllToggle
-          on={!!isOpenedStrategiesVisible}
-          onChange={on => dispatch(setOpenedStrategiesVisibility(on))}
-        />
-      }
-      <div className="OpenedStrategiesPanel">
-        {strategiesToShow.map(([id, entry]) => (
-          <StrategyPanelController
-            key={id}
-            isActive={id === strategyId}
-            showCloseButton
-            viewId={strategyPanelViewId(id)}
-            strategyId={id}
-            stepId={id === strategyId ? stepId : undefined}
-            {...entry}
-          />
-        ))}
-      </div>
-      {strategyId == null &&
-        <div style={{ fontSize: '1.2em' }}>
-          <p>You have no open strategies. Please run a search to start a strategy.</p>
-          <p>To open an existing strategy, visit the <Link to="/workspace/strategies/all">'All' page</Link>.</p>
-        </div>
-      }
-      {strategyId != null && stepId == null &&
-        <div>
-          Select a search above to see the results.
-        </div>
-      }
-    </>
-  )
-}
