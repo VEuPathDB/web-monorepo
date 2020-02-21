@@ -216,10 +216,10 @@ body.vpdb-Body {
 
     .vpdb-SearchPane {
       grid-area: nav;
-      padding-right: 0.1em;
 
       @media screen and (min-width: 1001px) {
         border-right: 0.0625rem solid;
+        padding-right: 0.1em;
 
         .wdk-CheckboxTree {
           > .wdk-CheckboxTreeList {
