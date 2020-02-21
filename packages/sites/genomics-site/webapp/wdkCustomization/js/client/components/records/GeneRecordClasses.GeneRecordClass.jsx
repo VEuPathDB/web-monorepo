@@ -909,6 +909,10 @@ class OrthologsForm extends SortKeyTable {
   render() {
       let { source_id, gene_type } = this.props.record.attributes;
 
+      if ( !this.props.table.isInReport ) {
+          return ( <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/> ) 
+        } else {
+
       if(gene_type === "protein coding" || gene_type === 'protein coding gene') {
         return (
           <form action="/cgi-bin/isolateAlignment" target="_blank" method="post">
@@ -944,6 +948,7 @@ class OrthologsForm extends SortKeyTable {
           </form>
         );
       }
+    }
   }
 }
 
