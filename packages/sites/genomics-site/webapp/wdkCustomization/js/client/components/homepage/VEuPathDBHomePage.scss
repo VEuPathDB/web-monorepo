@@ -180,13 +180,13 @@ body.vpdb-Body {
       @media screen and (max-width: $mobile-width) {
         grid-template-areas:
           "hamburger site-branding login"
-          "hamburger searchbar     searchbar"
-          "menubar   menubar       menubar";
+          "menubar   menubar       menubar"
+          ".         searchbar     searchbar";
 
         grid-template-columns: auto auto 1fr;
 
-        grid-row-gap: 0.5em;
-        padding: 0.5em 0.5em 0 0.5em;
+        row-gap: 0.5em;
+        padding: 0.5em;
       }
     }
 
