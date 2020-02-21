@@ -226,6 +226,7 @@ const parseExpandedBranches = memoize((s: string) => decode(
   s
 ));
 
+const VectorBase = 'VectorBase';
 const PlasmoDB = 'PlasmoDB';
 const TriTrypDB = 'TriTrypDB';
 const CryptoDB = 'CryptoDB';
@@ -303,8 +304,18 @@ const useHeaderMenuItems = (
         {
           key: 'analysis',
           display: 'Results analysis',
-          type: 'webAppRoute',
-          url: '/analysisTools.jsp'
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/analysisTools.html')
+        },
+        { 
+          key: 'PopBio map',
+          display: 'Population Biology map',
+          type: 'externalLink',
+          url: '/popbio-map/web/vb_geohashes_mean.html',
+          target: '_blank',
+          metadata: {
+            include: [ VectorBase ]
+         }
         },
         {
           key: 'srt',
@@ -730,7 +741,7 @@ const useHeaderMenuItems = (
           key: 'accessibility-vpat',
           display: 'Accessibility VPAT',
           type: 'externalLink',
-          url: '/documents/EuPathDB_Section_508.pdf'
+          url: '/documents/VEuPathDB_Section_508.pdf'
         },
         {
           key: 'infrastructure',
