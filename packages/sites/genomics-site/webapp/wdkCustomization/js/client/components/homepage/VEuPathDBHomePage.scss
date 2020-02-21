@@ -1,6 +1,9 @@
 // FIXME: Come to a consensus on the font weights we'd like to provide for Roboto
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
 
+$mobile-width: 1000px;
+$desktop-width: 1001px;
+
 body.vpdb-Body {
   background-image: unset;
   font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
@@ -40,7 +43,7 @@ body.vpdb-Body {
         }
       }
 
-      @media screen and (max-width: 1000px) {
+      @media screen and (max-width: $mobile-width) {
         background-color: $primary-color;
 
         .ebrc-HeaderBranding {
@@ -115,7 +118,7 @@ body.vpdb-Body {
           padding: 0 0.5em;
         }
 
-        @media screen and (max-width: 1000px) {
+        @media screen and (max-width: $mobile-width) {
           height: auto;
         }
 
@@ -181,7 +184,7 @@ body.vpdb-Body {
         }
       }
 
-      @media screen and (max-width: 1000px) {
+      @media screen and (max-width: $mobile-width) {
         grid-template-areas:
           "hamburger site-branding login"
           "hamburger searchbar     searchbar"
@@ -217,7 +220,7 @@ body.vpdb-Body {
     .vpdb-SearchPane {
       grid-area: nav;
 
-      @media screen and (min-width: 1001px) {
+      @media screen and (min-width: $desktop-width) {
         border-right: 0.0625rem solid;
         padding-right: 0.1em;
 
@@ -271,7 +274,7 @@ body.vpdb-Body {
     .vpdb-NewsPane {
       grid-area: side;
 
-      @media screen and (min-width: 1001px) {
+      @media screen and (min-width: $desktop-width) {
         border-left: 0.0625rem solid;
 
         &__news-collapsed {
@@ -288,7 +291,7 @@ body.vpdb-Body {
       grid-area: footer;
     }
 
-    @media screen and (max-width: 1000px) {
+    @media screen and (max-width: $mobile-width) {
       &__home {
         display: flex;
         flex-direction: column;
