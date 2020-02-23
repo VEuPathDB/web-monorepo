@@ -75,7 +75,7 @@ export let contexts = [
     isPbrowse: true
   },
   {
-    gbrowse_url: 'jbrowseUrl',
+    gbrowse_url: 'dnaContextUrl',
     displayName: 'Features',
     anchor: 'FeaturesGBrowse',
     isPbrowse: false
@@ -200,6 +200,15 @@ export function GbrowseContext(props) {
     </div>
 	  )
     }
+  if (attribute.name == 'dnaContextUrl'){ 
+      jbrowseUrlFull = record.attributes.dnaContextUrl;
+      return (
+    	<div>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="180" />
+      	</div>
+	)
+  }	
+
 
   return (
     <div>
