@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { keyBy } from 'lodash';
-
+import { projectId } from '../../config';
 import { Loading, IconAlt } from 'wdk-client/Components';
 
 import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
@@ -15,7 +15,7 @@ import './FeaturedTools.scss';
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 
-const FEATURED_TOOL_URL_SEGMENT = 'json/features_tools.json';
+const FEATURED_TOOL_URL_SEGMENT = projectId + '/features_tools.json';
 
 type FeaturedToolResponseData = FeaturedToolEntry[];
 
@@ -35,7 +35,7 @@ type FeaturedToolEntry = {
 function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
   const communitySiteUrl = useCommunitySiteUrl();
   const [ featuredToolResponseData, setFeaturedToolResponseData ] = useState<FeaturedToolResponseData | undefined>(undefined);
-
+  
   useEffect(() => {
     if (communitySiteUrl != null) {
       (async () => {
