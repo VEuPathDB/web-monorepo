@@ -2,7 +2,6 @@ import React, { useCallback, useRef, useMemo, useEffect, useLayoutEffect } from 
 import StrategyPanelController from 'wdk-client/Controllers/StrategyPanelController';
 import { StrategyEntry } from 'wdk-client/StoreModules/StrategyStoreModule';
 import { ResizableContainer, Link } from 'wdk-client/Components';
-import { scrollIntoViewIfNeeded } from 'wdk-client/Utils/DomUtils';
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 
 import "./OpenedStrategies.css";
@@ -19,7 +18,7 @@ export default function OpenedStrategies(props: Props) {
   const stratPanelRef = useRef<HTMLDivElement>(null);
   const resizeContainerRef = useRef<HTMLDivElement>(null);
   // FIXME Figure out how to compute this...
-  const singlePanelHeight = 185;
+  const singlePanelHeight = 172;
   // TODO Make this configurable
   const maxDefaultGrowFactor = 2.25;
   const defaultContainerHeight = Math.min(singlePanelHeight * maxDefaultGrowFactor, singlePanelHeight * (openedStrategies?.length || 1));
@@ -48,7 +47,7 @@ export default function OpenedStrategies(props: Props) {
 
   const scrollToActiveStrategy = useCallback(() => {
     if (activeStrategyElement == null) return;
-    scrollIntoViewIfNeeded(activeStrategyElement);
+    activeStrategyElement.scrollIntoView({ block: 'end' });
   }, [ activeStrategyElement ]);
 
   useEffect(() => {

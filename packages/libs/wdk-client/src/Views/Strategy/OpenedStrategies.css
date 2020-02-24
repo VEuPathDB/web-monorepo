@@ -20,7 +20,6 @@
 }
 
 .OpenedStrategiesPanel {
-  margin-bottom: 2em;
   overflow: auto;
   padding: 0 4px;
   height: 100%;
@@ -33,7 +32,7 @@
 .OpenedStrategiesPanel--ResizableContainer .ui-resizable-s {
   border-top: 1px solid #999;
   padding: 2px;
-  bottom: -2px;
+  bottom: -10px;
   height: 10px;
   background: white;
 }
