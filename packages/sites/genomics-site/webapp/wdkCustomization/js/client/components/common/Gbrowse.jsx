@@ -208,7 +208,30 @@ export function GbrowseContext(props) {
       	</div>
 	)
   }	
-
+  if (attribute.name == 'snpGbrowseImageUrl'){ 
+      jbrowseUrlFull = record.attributes.snpGbrowseImageUrl;
+      return (
+    	<div>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="500" />
+      	</div>
+	)
+  }	
+  if (attribute.name == 'snpChipGbrowseImageUrl'){ 
+      jbrowseUrlFull = record.attributes.snpChipGbrowseImageUrl;
+      return (
+    	<div>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="300" />
+      	</div>
+	)
+  }	
+  if (attribute.name == 'spanGbrowseImageUrl'){ 
+      jbrowseUrlFull = record.attributes.spanGbrowseImageUrl;
+      return (
+    	<div>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="500" />
+      	</div>
+	)
+  }	
 
   return (
     <div>
