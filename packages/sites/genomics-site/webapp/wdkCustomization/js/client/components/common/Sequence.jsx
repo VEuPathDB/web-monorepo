@@ -1,20 +1,26 @@
 import { orderBy, range } from 'lodash';
-import React from 'react';
-import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 import { useIsRefOverflowingVertically } from 'wdk-client/Hooks/Overflow';
+import { copyContent } from 'wdk-client/Utils/DomUtils';
 
 const NUM_COLS = 80;
 
 function Sequence(props) {
   const { highlightRegions, sequence } = props;
   const ref = useRef(null);
-  const [ isExpanded, setIsExpanded ] = useState(false);
+  const [ isExpanded, setIsExpanded ] = useState();
   const isOverflowing = useIsRefOverflowingVertically(ref);
 
+  useEffect(() => {
+    if (isExpanded == null || isExpanded) return;
+    ref.current.scrollIntoView({ block: 'center' });
+  }, [ isExpanded ]);
+
   const style = {
-    width: `${NUM_COLS}ch`,
+    width: `${NUM_COLS + 0.5}ch`,
     whiteSpace: 'break-spaces',
     wordBreak: 'break-all',
     maxHeight: isExpanded ? '' : '30vh',
@@ -24,7 +30,7 @@ function Sequence(props) {
   const sortedHilightRegions = orderBy(highlightRegions, ['start']);
   const firstHighlightRegion = sortedHilightRegions[0];
   // array of react elements
-  const highlightedSequence = firstHighlightRegion == null ? [ <React.Fragment>{sequence}</React.Fragment> ]
+  const highlightedSequence = firstHighlightRegion == null ? [ sequence ]
     : firstHighlightRegion.start === 0 ? []
     : [sequence.slice(0, firstHighlightRegion.start - 1)];
 
@@ -38,21 +44,30 @@ function Sequence(props) {
   // FIXME Trunate and show "Show more" button
   return (
     <div style={{ position: 'relative' }}>
+      <div style={{
+        position: 'absolute',
+        fontSize: '.9em',
+        top: '-3em',
+        right: 0,
+      }}>
+        <button type="button" onClick={() => copyContent(ref.current)}>Copy to clipboard</button>
+      </div>
       <pre ref={ref} onCopy={handleCopy} style={style}>
-        {highlightedSequence}
+        {highlightedSequence.map((frag, index) => <React.Fragment key={index}>{frag}</React.Fragment>)}
       </pre>
       {isOverflowing && (
-        <div style={isExpanded ? {
-          fontWeight: 500
-        } : {
-          position: 'absolute',
+        <div style={{
+          position: isExpanded ? 'sticky' : 'absolute',
           bottom: 0,
           width: '100%',
           paddingTop: '2em',
+          paddingBottom: isExpanded && '2em',
           background: 'linear-gradient(to bottom, transparent, white 50%)',
           fontWeight: 500
         }}>
-          <button type="button" className="link" onClick={() => setIsExpanded(!isExpanded)}>
+          <button type="button" className="link" onClick={() => {
+            setIsExpanded(!isExpanded);
+          }}>
             <i className={`fa fa-chevron-${isExpanded ? 'up' : 'down'}`}/> {isExpanded ? 'Show less' : 'Show more'}
           </button>
         </div>

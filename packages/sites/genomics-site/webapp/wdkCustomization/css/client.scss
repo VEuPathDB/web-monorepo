@@ -403,6 +403,11 @@
   white-space: nowrap;
 }
 
+/* Prevent sequence table from having an scroll container ancestor */
+.wdk-RecordTable__Sequences .wdk-DataTableContainer {
+  overflow: visible;
+}
+
 .eupathdb-TranscriptRecordNavigationSectionContainer h3 {
   padding-top: 18px;
 }
