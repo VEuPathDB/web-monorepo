@@ -383,6 +383,10 @@ class DataTable extends PureComponent<Props, State> {
     let row = dataTable.row(tableRowNode);
     let childRowContainer = this._getChildRowContainer(tableRowNode);
     if (row.child() == null) row.child(childRowContainer);
+    if (openRow && !row.child.isShown()) {
+      row.child.show();
+      tableRowNode.setAttribute('aria-expanded', 'true');
+    }
     if (typeof childRow === 'string') {
       childRowContainer.innerHTML = childRow;
     }
@@ -391,10 +395,6 @@ class DataTable extends PureComponent<Props, State> {
       this.setState(state => ({
         childRows: uniqBy([ ...state.childRows, [ childRowContainer, props ] ], ([node]) => node)
       }));
-    }
-    if (openRow && !row.child.isShown()) {
-      row.child.show();
-      tableRowNode.setAttribute('aria-expanded', 'true');
     }
   }
 
