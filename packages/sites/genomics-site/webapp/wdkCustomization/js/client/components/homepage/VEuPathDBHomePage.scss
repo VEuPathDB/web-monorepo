@@ -470,6 +470,21 @@ body.vpdb-Body {
       grid-template-columns: 31em 1fr 3em;
     }    
 
+    @media screen and (max-width: $mobile-width) {
+      // FIXME: Should also provide fallback styling for IE11,
+      // as unfortunately, IE11 doesn't support grid-template-areas
+      grid-template-areas:
+        "header"
+        "banner"
+        "nav"
+        "content"
+        "side"
+        "footer";
+
+      &__home.vpdb-RootContainer__news-expanded, &__home.vpdb-RootContainer__news-collapsed {
+        grid-template-columns: 100%;
+      }
+    }
   }
 
   .vpdb-BgDark {
