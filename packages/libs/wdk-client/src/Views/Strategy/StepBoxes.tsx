@@ -250,8 +250,14 @@ const existingStepPreviewProps = {
 };
 
 export function PreviewStepBoxes(props: PreviewStepBoxesProps) {
+  const previewModifier = props.insertType === 'append'
+    ? 'appending-step'
+    : props.insertAtSlot > 1
+    ? 'inserting-between-steps'
+    : 'prepending-step';
+
   return (
-    <div className={cx('', 'preview')}>
+    <div className={cx('', 'preview', previewModifier)}>
       <PreviewStepTree {...props} />
     </div>
   );

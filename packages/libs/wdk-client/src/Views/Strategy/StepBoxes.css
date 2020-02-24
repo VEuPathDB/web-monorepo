@@ -193,6 +193,10 @@
   text-overflow: ellipsis;
 }
 
+.StepBoxes.StepBoxes__preview.StepBoxes__inserting-between-steps .StepBoxes--StepName {
+  max-width: 6.75em;
+}
+
 .StepBoxes--StepCount {
   font-size: 0.9em;
   font-style: italic;
