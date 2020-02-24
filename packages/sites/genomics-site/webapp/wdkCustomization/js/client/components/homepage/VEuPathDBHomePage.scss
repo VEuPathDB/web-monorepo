@@ -487,5 +487,9 @@ body.vpdb-Body {
   // Fix for question page sticky header
   .wdk-QuestionFormQuestionHeader {
     top: 5.5em;
+
+    @media screen and (max-width: $mobile-width) {
+      top: 0;
+    }
   }
 }
