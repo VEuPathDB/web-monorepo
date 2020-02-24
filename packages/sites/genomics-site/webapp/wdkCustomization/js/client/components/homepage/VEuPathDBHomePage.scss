@@ -179,9 +179,9 @@ body.vpdb-Body {
 
       @media screen and (max-width: $mobile-width) {
         grid-template-areas:
-          "hamburger site-branding login"
-          "menubar   menubar       menubar"
-          ".         searchbar     searchbar";
+          "site-branding site-branding     social    login"
+          "hamburger     searchbar         searchbar searchbar"
+          "menubar       menubar           menubar   menubar";
 
         grid-template-columns: auto auto 1fr;
 
