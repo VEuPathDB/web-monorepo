@@ -61,7 +61,7 @@ import { InferAction, mergeMapRequestActionsToEpic as mrate } from 'wdk-client/U
 export const key = 'question';
 
 // Defaults
-export const DEFAULT_STRATEGY_NAME = 'Unnamed Strategy';
+export const DEFAULT_STRATEGY_NAME = 'Unnamed Search Strategy';
 export const DEFAULT_STEP_WEIGHT = 10;
 
 interface GroupState {

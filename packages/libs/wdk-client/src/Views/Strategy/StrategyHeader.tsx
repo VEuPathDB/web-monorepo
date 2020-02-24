@@ -40,7 +40,7 @@ function StrategyHeader(props: Props) {
   const { openedStrategiesCount, allStrategiesCount, publicStrategiesCount, publicStrategiesError } = props
   return (
     <div className="StrategyHeading">
-      <h1>My Strategies</h1>
+      <h1>My Search Strategies</h1>
       <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={openedStrategiesRoute} isActive={isOpenedLinkActive}>
         Opened ({toCountString(openedStrategiesCount)})
       </NavLink>
