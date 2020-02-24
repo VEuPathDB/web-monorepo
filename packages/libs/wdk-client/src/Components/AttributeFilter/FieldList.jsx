@@ -121,7 +121,12 @@ export default class FieldList extends React.Component { // eslint-disable-line 
           onSearchTermChange={this.handleSearchTermChange}
           searchPredicate={this.searchPredicate}
           renderNode={node => (
-            <FieldNode node={node} isActive={node.field === activeField} handleFieldSelect={this.handleFieldSelect} />
+            <FieldNode
+              node={node}
+              searchTerm={this.state.searchTerm}
+              isActive={node.field === activeField}
+              handleFieldSelect={this.handleFieldSelect}
+            />
           )}
         />
       </div>
@@ -144,12 +149,14 @@ function getNodeSearchString(valuesMap) {
 }
 
 
-function FieldNode({node, isActive, handleFieldSelect }) {
+function FieldNode({node, searchTerm, isActive, handleFieldSelect }) {
   const nodeRef = useRef(null);
 
   useLayoutEffect(() => {
-    if (isActive && nodeRef.current) scrollIntoViewIfNeeded(nodeRef.current);
-  }, [ isActive, nodeRef.current ])
+    if (isActive && nodeRef.current && nodeRef.current.offsetParent) {
+      scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
+    }
+  }, [ isActive, nodeRef.current, searchTerm ])
 
   return (
     <Tooltip content={node.field.description} hideDelay={0}>
