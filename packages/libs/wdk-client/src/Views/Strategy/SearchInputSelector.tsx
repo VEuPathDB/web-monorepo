@@ -6,7 +6,7 @@ import { compose } from 'redux';
 import { createSelector } from 'reselect';
 
 import { requestBasketCounts } from 'wdk-client/Actions/BasketActions';
-import { CategoriesCheckboxTree, Icon, Tooltip, Link, Loading, Tabs } from 'wdk-client/Components';
+import { CategoriesCheckboxTree, Icon, Tooltip, Link, Loading, Tabs, IconAlt } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
@@ -116,6 +116,7 @@ export const SearchInputSelectorView = ({
           }}
           to={`/search/${getRecordClassUrlSegment(node)}/${node.wdkReference.urlSegment}`}
         >
+          <IconAlt fa="search" />
           {displayName}
         </Link>
       : <span>{displayName}</span>
