@@ -164,6 +164,14 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
 
   const [ closedBanners, setClosedBanners ] = useAnnouncementsState();
 
+  const onShowAnnouncements = useCallback(() => {
+    setClosedBanners([]);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, [ setClosedBanners ]);
+
   return (
     <div className={rootContainerClassName}>
       <ErrorBoundary>
@@ -174,6 +182,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
           loadSuggestions={loadSuggestions}
           siteSearchSuggestions={siteSearchSuggestions}
           additionalSuggestions={additionalSuggestions}
+          onShowAnnouncements={onShowAnnouncements}
         />
       </ErrorBoundary>
       {isHomePage &&
