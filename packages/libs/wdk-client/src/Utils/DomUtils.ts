@@ -5,13 +5,13 @@ import { find } from 'wdk-client/Utils/IterableUtils';
 export function findAncestorNode(
   targetNode: Node | null,
   predicate: (node: Node) => boolean,
-  rootNode: Node = document
+  rootNode: Node = document.documentElement
 ): Node | undefined {
-  if (targetNode == null || targetNode == rootNode) return undefined;
-
-  return predicate(targetNode)
-    ? targetNode
-    : findAncestorNode(targetNode.parentNode, predicate, rootNode);
+  while (targetNode != null && targetNode != rootNode) {
+    if (predicate(targetNode)) return targetNode;
+    targetNode = targetNode.parentNode;
+  }
+  return undefined;
 }
 
 /**
@@ -20,7 +20,7 @@ export function findAncestorNode(
 export function containsAncestorNode(
   targetNode: Node | null,
   predicate: (node: Node) => boolean,
-  rootNode: Node = document
+  rootNode: Node = document.documentElement
 ): boolean {
   const ancestorNode = findAncestorNode(targetNode, predicate, rootNode);
   return ancestorNode != null;
@@ -185,12 +185,26 @@ function getElementChildren(el: Element) {
 }
 
 /**
- * Scroll element into view, if needed. Only scrolls offsetParent.
- * @param element Element to scroll into view
+ * Is the top of the element visible in the element's scroll parent?
+ * @param element 
  */
-export function scrollIntoViewIfNeeded(element: HTMLElement) {
-  const { offsetParent } = element;
-  const scrollParent = findAncestorNode(
+export function isElementInViewport(element: HTMLElement) {
+  const scrollParent = findScrollParent(element);
+  return (
+    scrollParent != null &&
+    // top of element above top of scroll parent
+    ((scrollParent.scrollTop > element.offsetTop) ||
+    // bottom of element below bottom of scroll parent
+    ((scrollParent.scrollTop + scrollParent.clientHeight) <= (element.offsetTop + element.clientHeight)))
+  );
+}
+
+export function scrollIntoView(element: HTMLElement) {
+  findScrollParent(element).scrollTop = element.offsetTop;
+}
+
+export function findScrollParent(element: HTMLElement) {
+  const scrollParentNode = findAncestorNode(
     element,
     node => {
       if (!(node instanceof HTMLElement)) return false;
@@ -198,15 +212,30 @@ export function scrollIntoViewIfNeeded(element: HTMLElement) {
       const isScrollable = overflowY !== 'visible' && overflowY !== 'hidden';
       return isScrollable && node.scrollHeight >= node.clientHeight;
     }
-  )
-  if (
-    offsetParent != null &&
-    scrollParent instanceof HTMLElement &&
-    // below the bottom
-    ((offsetParent.scrollTop > element.offsetTop) ||
-    (offsetParent.clientHeight + offsetParent.scrollTop) <= (element.offsetTop + element.clientHeight))
-    // above the top
-  ) {
-    scrollParent.scrollTop = element.offsetTop;
+  );
+  return scrollParentNode instanceof HTMLElement ? scrollParentNode : document.documentElement;
+}
+
+/**
+ * Scroll element into view, if needed. Only scrolls offsetParent.
+ * @param element Element to scroll into view
+ */
+export function scrollIntoViewIfNeeded(element: HTMLElement) {
+  if (isElementInViewport(element)) scrollIntoView(element);
+}
+
+export function copyContent(node: HTMLElement) {
+  try {
+    const selection = window.getSelection();
+    if (selection == null) return;
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand('copy');
+    selection.removeAllRanges();
+  }
+  catch (error) {
+    console.error(error);
   }
 }
