@@ -192,18 +192,17 @@ const ConnectedController = connect<StateProps, DispatchProps, OwnProps, Props, 
     actionCreators: {
       ...actionCreators,
       updateColumnsDialogSelection: (columnSelection: string[]) => {
-        // Prevent the primary key column from being removed (as per Redmine #37492)
-        const columnSelectionWithPrimaryKey = (
-          mappedState.derivedData.recordClass == null ||
-          columnSelection.includes(mappedState.derivedData.recordClass.recordIdAttributeName)
-        )
+        // Prevent non-removable columns from being removed (as per Redmine #37492)
+        const columnSelectionWithNonRemovableColumns = mappedState.derivedData.recordClass == null
           ? columnSelection
           : [
-              mappedState.derivedData.recordClass.recordIdAttributeName, 
+              ...mappedState.derivedData.recordClass.attributes
+                .filter(attribute => !attribute.isRemovable && !columnSelection.includes(attribute.name))
+                .map(attribute => attribute.name),
               ...columnSelection
             ];
 
-        actionCreators.updateColumnsDialogSelection(columnSelectionWithPrimaryKey);
+        actionCreators.updateColumnsDialogSelection(columnSelectionWithNonRemovableColumns);
       }
     },
     ...ownProps 
