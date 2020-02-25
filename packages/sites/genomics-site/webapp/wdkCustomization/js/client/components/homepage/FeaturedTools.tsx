@@ -15,7 +15,7 @@ import './FeaturedTools.scss';
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 
-const FEATURED_TOOL_URL_SEGMENT = projectId + '/features_tools.json';
+const FEATURED_TOOL_URL_SEGMENT = projectId + '/resources_tools.json';
 
 type FeaturedToolResponseData = FeaturedToolEntry[];
 
