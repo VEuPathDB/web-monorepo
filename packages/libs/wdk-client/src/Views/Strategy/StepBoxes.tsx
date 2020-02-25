@@ -88,6 +88,8 @@ function StepTree(props: StepBoxesProps) {
             isNested: false,
             isExpanded: false,
             isDeleteable,
+            isDetailVisible: props.stepDetailVisibility === step.id,
+            setDetailVisibility: isVisible => props.setStepDetailVisibility(isVisible ? step.id : undefined),
             renameStep: (newName: string) => props.onRenameStep(step.id, newName),
             // no-op; primary inputs cannot be nested
             makeNestedStrategy: noop,
@@ -120,6 +122,8 @@ function StepTree(props: StepBoxesProps) {
                   isNested: secondaryInput.isNested,
                   isExpanded: step.expanded,
                   isDeleteable,
+                  isDetailVisible: props.stepDetailVisibility === secondaryInput.step.id,
+                  setDetailVisibility: isVisible => props.setStepDetailVisibility(isVisible ? secondaryInput.step.id : undefined),
                   renameStep: (newName: string) => {
                     if (secondaryInput.isNested) {
                       props.onRenameNestedStrategy(step.id, newName);
@@ -299,6 +303,8 @@ function PreviewStepTree(props: PreviewStepBoxesProps) {
       pluginProps={{
         stepTree,
         isNested: false,
+        isDetailVisible: false,
+        setDetailVisibility: () => {},
         ...existingStepPreviewProps
       }}
       defaultComponent={ExistingStepPreviewBox}
@@ -319,6 +325,8 @@ function PreviewStepTree(props: PreviewStepBoxesProps) {
             pluginProps={{
               stepTree: secondaryInput,
               isNested: secondaryInput.isNested,
+              isDetailVisible: false,
+              setDetailVisibility: () => {},
               ...existingStepPreviewProps
             }}
             defaultComponent={ExistingStepPreviewBox}
@@ -439,8 +447,7 @@ function SlotContent({
 }
 
 const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
-  const [ detailVisibility, setDetailVisibility ] = useState(false);
-  const { isNested, stepTree, deleteStep } = props;
+  const { isNested, stepTree, deleteStep, isDetailVisible, setDetailVisibility } = props;
   const { step, color, primaryInput, secondaryInput } = stepTree;
 
   const StepComponent = isCombineUiStepTree(stepTree) && !isNested ? CombineStepBoxContent
@@ -479,7 +486,7 @@ const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
     )
 
   const stepDetails = (
-    <StepDetailsDialog {...props} allowRevise={allowRevise} isOpen={detailVisibility} onClose={() => setDetailVisibility(false)}/>
+    <StepDetailsDialog {...props} allowRevise={allowRevise} isOpen={isDetailVisible} onClose={() => setDetailVisibility(false)}/>
   );
 
   const filterIcon = step.isFiltered && (

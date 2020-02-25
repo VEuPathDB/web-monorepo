@@ -71,6 +71,8 @@ export interface StepBoxesProps {
   stepTree: PartialUiStepTree;
   nestedStrategyBranchToRename?: number;
   isDeleteable?: boolean;
+  stepDetailVisibility?: number;
+  setStepDetailVisibility: (stepId?: number) => void;
   setReviseFormStepId: (stepId?: number) => void;
   onShowInsertStep: (addType: AddType) => void;
   onHideInsertStep: () => void;
@@ -90,6 +92,8 @@ export interface StepBoxProps<T extends UiStepTree = UiStepTree> {
   isExpanded: boolean;
   isDeleteable: boolean;
   isAnalyzable: boolean;
+  isDetailVisible: boolean;
+  setDetailVisibility: (isVisible: boolean) => void;
   renameStep: (newName: string) => void;
   makeNestedStrategy: () => void;
   makeUnnestStrategy: () => void;
