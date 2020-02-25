@@ -270,7 +270,7 @@ const useHeaderMenuItems = (
   const projectId = useProjectId();
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
   const aboutRoute = makeStaticPageRoute(`/${projectId}/about.html`);
-  const aboutAllRoute = makeStaticPageRoute('/embedded/help/general/index.html');
+  const aboutAllRoute = makeStaticPageRoute('/aboutall/general.html');
 
   const menuItemEntries: HeaderMenuItemEntry[] = [
     {
