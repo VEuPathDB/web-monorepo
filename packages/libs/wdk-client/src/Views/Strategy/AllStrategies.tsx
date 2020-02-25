@@ -93,8 +93,8 @@ type TabContentProps = Props & {
 function StrategiesTab(props: TabContentProps) {
   const [ savedStrategies, unsavedStrategies ] = partition(props.strategies, (strategy: StrategySummary) => strategy.isSaved);
   const content = [
+    { strategies: unsavedStrategies, isSaved: false },
     { strategies: savedStrategies, isSaved: true },
-    { strategies: unsavedStrategies, isSaved: false }
   ].map(({ strategies, isSaved }) => {
     const tableId = props.tableIdPrefix + '_' + (isSaved ? 'saved' : 'unsaved');
     return strategies.length > 0 && (
