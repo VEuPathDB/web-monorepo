@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useMemo, useEffect, useLayoutEffect } from 'react';
+import React, { useCallback, useRef, useMemo, useEffect } from 'react';
 import StrategyPanelController from 'wdk-client/Controllers/StrategyPanelController';
 import { StrategyEntry } from 'wdk-client/StoreModules/StrategyStoreModule';
 import { ResizableContainer, Link } from 'wdk-client/Components';
@@ -50,14 +50,22 @@ export default function OpenedStrategies(props: Props) {
     activeStrategyElement.scrollIntoView({ block: 'end' });
   }, [ activeStrategyElement ]);
 
+  // Update resize container height if containerHeight changes
   useEffect(() => {
-    scrollToActiveStrategy();
-  }, [ activeStrategy ]);
-
-  useLayoutEffect(() => {
     if (resizeContainerRef.current == null) return;
     resizeContainerRef.current.style.height = containerHeight + 'px';
-  }, [ resizeContainerRef.current, containerHeight ])
+  }, [ resizeContainerRef.current, containerHeight ]);
+
+  // Make sure resize container height is tall enough for active strategy (any time it changes).
+  // This will include expanding a nested strategy. This won't update the user's stored preference.
+  useEffect(() => {
+    if (resizeContainerRef.current == null || activeStrategyElement == null || activeStrategy == null) return;
+    const height = activeStrategyElement.clientHeight;
+    if (height > containerHeight) {
+      resizeContainerRef.current.style.height = height + 'px';
+    }
+    scrollToActiveStrategy();
+  }, [ activeStrategy ]);
 
   const stratPanel = (
     <div className="OpenedStrategiesPanel" ref={stratPanelRef}>
