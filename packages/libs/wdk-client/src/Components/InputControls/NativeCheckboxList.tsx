@@ -1,9 +1,11 @@
 import React, { Component, FormEvent, MouseEvent, ReactNode } from 'react';
 import {uniqueId, noop} from 'lodash';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable, makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import './wdk-CheckboxList.scss';
+
+const cx = makeClassNameHelper('wdk-CheckboxList');
 
 type Item = {
   value: string
@@ -138,20 +140,20 @@ class NativeCheckboxList extends Component<Props, State> {
     let selectedItems = storedSelectedItems || [];
     let { linksPosition = LinksPosition.Bottom } = this.props;
     let links = (
-      <div style={{ fontSize: '0.9em', margin: '.5em', textAlign: 'center' }}>
+      <div className={cx('Links')}>
         <button type="button" className="wdk-Link" onClick={e => this.selectAll(e)}>select all</button>
         {' | '}
         <button type="button" className="wdk-Link" onClick={e => this.clearAll(e)}>clear all</button>
       </div>
     );
     return (
-      <div className="wdk-CheckboxList">
+      <div className={cx()}>
         {linksPosition & LinksPosition.Top ? links : null}
         <div>
           {this.props.items.map((item, index) => {
             let id = `${this.id}.${item.value}`;
             return (
-              <div key={item.value} className="wdk-CheckboxListItem">
+              <div key={item.value} className={cx('Item')}>
                 <label>
                   <input
                     id={id}
