@@ -98,8 +98,8 @@ export default function DefaultQuestionForm(props: Props) {
     e.preventDefault();
     const descriptionSection = containerRef.current && containerRef.current.querySelector(`.${cx('DescriptionSection')}`);
 
-    if (descriptionSection) {
-      scrollIntoView(descriptionSection as HTMLElement);
+    if (descriptionSection instanceof HTMLElement) {
+      scrollIntoView(descriptionSection);
 
       setNavigatingToDescription(true);
       setTimeout(() => {
@@ -109,6 +109,12 @@ export default function DefaultQuestionForm(props: Props) {
   }, []);
 
   let onClickDescriptionLink = props.onClickDescriptionLink || defaultOnClickDescriptionLink;
+
+  React.useEffect(() => {
+    if (stepValidation && !stepValidation.isValid && containerRef.current instanceof HTMLElement) {
+      scrollIntoView(containerRef.current);
+    }
+  }, [ stepValidation ]);
 
   return (
     <div className={fullContainerClassName} ref={containerRef}>
