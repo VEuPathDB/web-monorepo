@@ -16,6 +16,7 @@ import {
 } from 'wdk-client/Actions/QuestionActions';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 import { TooltipPosition } from 'wdk-client/Components/Overlays/Tooltip';
+import { scrollIntoView } from 'wdk-client/Utils/DomUtils';
 import StepValidationInfo from 'wdk-client/Views/Question/StepValidationInfo';
 
 type TextboxChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -98,8 +99,7 @@ export default function DefaultQuestionForm(props: Props) {
     const descriptionSection = containerRef.current && containerRef.current.querySelector(`.${cx('DescriptionSection')}`);
 
     if (descriptionSection) {
-      descriptionSection.scrollIntoView(true);
-      document.documentElement.scrollTop -= 22;
+      scrollIntoView(descriptionSection as HTMLElement);
 
       setNavigatingToDescription(true);
       setTimeout(() => {
