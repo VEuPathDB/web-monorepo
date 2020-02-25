@@ -169,6 +169,7 @@ export const SearchInputSelectorView = ({
                   <div className={cx('--NewSearchCheckbox')}>
                     <div className={cx('--CheckboxContainer')}>
                       <CategoriesCheckboxTree
+                        containerClassName="wdk-SearchTree"
                         selectedLeaves={noSelectedLeaves}
                         onChange={noop}
                         tree={finalTree}

@@ -1,0 +1,19 @@
+.wdk-SearchTree {
+  .wdk-CheckboxTreeItem {
+    &__leaf {
+      .wdk-CheckboxTreeNodeContent {
+        margin: 0;
+
+        a {
+          display: flex;
+        }
+
+        i {
+          margin: 0.15em 0.25em 0 0;
+          font-size: 0.8em;
+          color: gray;
+        }
+      }
+    }
+  }
+}

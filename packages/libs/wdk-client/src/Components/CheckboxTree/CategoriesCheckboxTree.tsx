@@ -40,6 +40,7 @@ type Props = {
   disableHelp?: boolean;
   linksPosition?: LinksPosition;
   showSearchBox?: boolean;
+  containerClassName?: string;
 };
 
 let CategoriesCheckboxTree: FunctionComponent<Props> = props => {
@@ -66,7 +67,8 @@ let {
   title,
   tree,
   linksPosition,
-  showSearchBox
+  showSearchBox,
+  containerClassName = ''
 } = props;
 
   if (tree.children.length == 0) {
@@ -78,7 +80,7 @@ let {
     `Each ${leafType} name will be searched. The ${leafType} names will contain all your terms. Your terms are partially matched; for example, the term typ will match typically, type, atypical.`;
 
   return (
-    <div className="wdk-CategoriesCheckboxTree">
+    <div className={`wdk-CategoriesCheckboxTree ${containerClassName}`}>
       {title && <h3 className="wdk-CategoriesCheckboxTreeHeading">{title}</h3>}
       <div className="wdk-CategoriesCheckboxTreeWrapper">
         <CheckboxTree<CategoryTreeNode>
