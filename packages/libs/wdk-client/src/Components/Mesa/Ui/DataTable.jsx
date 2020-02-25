@@ -20,8 +20,9 @@ class DataTable extends React.Component {
     this.hasSelectionColumn = this.hasSelectionColumn.bind(this);
     this.shouldUseStickyHeader = this.shouldUseStickyHeader.bind(this);
     this.handleTableBodyScroll = this.handleTableBodyScroll.bind(this);
-    this.handleWindowResize = debounce(this.handleWindowResize.bind(this), 250);
-    this.setDynamicWidths = debounce(this.setDynamicWidths.bind(this), 250, { leading: true });
+    this.setDynamicWidths = this.setDynamicWidths.bind(this);
+    this.resizeId = -1;
+    this.mainRef = null;
   }
 
   shouldUseStickyHeader () {
@@ -36,8 +37,8 @@ class DataTable extends React.Component {
 
   componentDidMount () {
     this.setDynamicWidths();
-    window.addEventListener('resize', this.handleWindowResize, { passive: true });
     this.attachLoadEventHandlers();
+    this.attachResizeHandler();
   }
 
   componentDidUpdate(prevProps) {
@@ -51,7 +52,7 @@ class DataTable extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.handleWindowResize, { passive: true });
+    this.removeResizeHandler();
   }
 
   attachLoadEventHandlers() {
@@ -60,6 +61,18 @@ class DataTable extends React.Component {
       if (node.complete) return;
       node.addEventListener('load', this.setDynamicWidths);
     });
+  }
+
+  attachResizeHandler() {
+    this.resizeId = setInterval(() => {
+      if (this.mainRef == null || this.cachedWidth === this.mainRef.clientWidth) return;
+      this.setDynamicWidths();
+      this.cachedWidth = this.mainRef.clientWidth;
+    }, 250);
+  }
+
+  removeResizeHandler() {
+    clearInterval(this.resizeId);
   }
 
   setDynamicWidths () {
@@ -110,10 +123,6 @@ class DataTable extends React.Component {
     window.dispatchEvent(new CustomEvent('MesaScroll'));
   }
 
-  handleWindowResize() {
-    this.setDynamicWidths();
-  }
-
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
   renderStickyTable () {
@@ -128,7 +137,7 @@ class DataTable extends React.Component {
     const tableLayout = { tableLayout: dynamicWidths ? 'fixed' : 'auto' };
     const tableProps = { options, rows, filteredRows, actions, eventHandlers, uiState, columns: newColumns };
     return (
-      <div className="MesaComponent">
+      <div ref={node => this.mainRef = node} className="MesaComponent">
         <div className={dataTableClass()} style={wrapperStyle}>
           <div className={dataTableClass('Sticky')} style={wrapperStyle}>
             <div
