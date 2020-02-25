@@ -1,6 +1,7 @@
 // FIXME: Come to a consensus on the font weights we'd like to provide for Roboto
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
 
+$small-mobile-width: 415px;
 $mobile-width: 1200px;
 $desktop-width: 1201px;
 
@@ -187,6 +188,14 @@ body.vpdb-Body {
 
         row-gap: 0.5em;
         padding: 0.5em;
+      }
+
+      @media screen and (max-width: $small-mobile-width) {
+        .ebrc-SocialMediaLinks {
+          a:not(.ebrc-SocialMediaLinks--AnnouncementsToggle) {
+            display: none;
+          }
+        }
       }
     }
 
