@@ -583,28 +583,31 @@ async function loadQuestion(
   initialParamData?: Record<string, string>,
 ) {
   const step = stepId ? await wdkService.findStep(stepId) : undefined;
-  const question = step == null
-    ? await wdkService.getQuestionAndParameters(searchName)
-    : await wdkService.getQuestionGivenParameters(searchName, step.searchConfig.parameters);
-  const recordClass = await wdkService.findRecordClass(rc => rc.urlSegment == question.outputRecordClassName);
-  const paramValues = step != null ? integrateStepAndDefaultParamValues(question.parameters, step)
-                    : initialParamData != null ? extractRealParamValues(question.parameters, initialParamData)
-                    : makeDefaultParamValues(question.parameters)
-  const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
-  return questionLoaded({
-    autoRun,
-    searchName,
-    question,
-    recordClass,
-    paramValues,
-    initialParamData: initialParamData,
-    wdkWeight,
-    stepValidation: step && step.validation
-  })
-  //   error => error.status === 404
-  //     ? questionNotFound({ searchName })
-  //     : questionError({ searchName })
-  // );
+  try {
+    const question = step == null
+      ? await wdkService.getQuestionAndParameters(searchName)
+      : await wdkService.getQuestionGivenParameters(searchName, step.searchConfig.parameters);
+    const recordClass = await wdkService.findRecordClass(rc => rc.urlSegment == question.outputRecordClassName);
+    const paramValues = step != null ? integrateStepAndDefaultParamValues(question.parameters, step)
+                      : initialParamData != null ? extractRealParamValues(question.parameters, initialParamData)
+                      : makeDefaultParamValues(question.parameters)
+    const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
+    return questionLoaded({
+      autoRun,
+      searchName,
+      question,
+      recordClass,
+      paramValues,
+      initialParamData: initialParamData,
+      wdkWeight,
+      stepValidation: step && step.validation
+    })
+  }
+  catch (error) {
+    return error.status === 404
+      ? questionNotFound({ searchName })
+      : questionError({ searchName });
+  }
 }
 
 function makeDefaultParamValues(parameters: Parameter[]): ParameterValues {
