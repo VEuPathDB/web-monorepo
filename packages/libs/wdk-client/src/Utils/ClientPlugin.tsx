@@ -2,6 +2,10 @@ import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
+import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
+import Error from 'wdk-client/Components/PageStatus/Error';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 
 export type PluginType =
   | 'attributeAnalysis'
@@ -84,33 +88,38 @@ export interface ClientPluginRegistryEntry<PluginProps> {
 
 export function makeCompositePluginComponent<T>(registry: ClientPluginRegistryEntry<T>[]): React.ComponentType<CompositePluginComponentProps<T>> {
 
-  type OwnProps = CompositePluginComponentProps<T>;
+  type Props = CompositePluginComponentProps<T>;
 
-  type StateProps = {
-    resolvedReferences: ResolvedPluginReferences;
-  }
+  function CompositePluginComponent(props: Props) {
+    const resolvedReferences = useWdkService(async wdkService => {
+      try {
+        const { searchName, recordClassName } = props.context;
+        const [ question, recordClass ] = await Promise.all([
+          searchName == null ? undefined : wdkService.findQuestion(q => q.urlSegment === searchName),
+          recordClassName == null ? undefined : wdkService.findRecordClass(rc => rc.urlSegment === recordClassName)
+        ]);
+        return { question, recordClass };
+      }
+      catch (error) {
+        return { error };
+      }
+    });
 
-  type MappedProps = OwnProps & StateProps;
+    if (resolvedReferences == null) return null;
 
-  function CompositePluginComponent(props: MappedProps) {
-    // FIXME Distinguish between resolving reference-loading and reference-does-not-exist
-    if (!isResolved(props.context, props.resolvedReferences)) return null;
+    if ('error' in resolvedReferences) {
+      return resolvedReferences.error.status === 404
+        ? <NotFound/>
+        : <LoadError/>
+    }
+
     const defaultPluginComponent = props.defaultComponent || DefaultPluginComponent;
-    const entry = registry.find(entry => isMatchingEntry(entry, props.context, props.resolvedReferences));
+    const entry = registry.find(entry => isMatchingEntry(entry, props.context, resolvedReferences));
     const PluginComponent = entry ? entry.component : defaultPluginComponent;
     return <PluginComponent {...props.context} {...props.pluginProps}/>
   }
 
-  function mapStateToProps(state: RootState, props: OwnProps) {
-    const { searchName, recordClassName } = props.context;
-    const question = searchName == null || state.globalData.questions == null ? undefined
-      : state.globalData.questions.find(question => question.urlSegment === searchName);
-    const recordClass = recordClassName == null || state.globalData.recordClasses == null ? undefined
-      : state.globalData.recordClasses.find(recordClass => recordClass.urlSegment === recordClassName);
-    return { resolvedReferences: { question, recordClass } };
-  }
-
-  return connect<StateProps, {}, OwnProps, RootState>(mapStateToProps)(CompositePluginComponent);
+  return CompositePluginComponent;
 }
 
 function isMatchingEntry<T>(entry: ClientPluginRegistryEntry<T>, context: PluginEntryContext, references: ResolvedPluginReferences): boolean {
