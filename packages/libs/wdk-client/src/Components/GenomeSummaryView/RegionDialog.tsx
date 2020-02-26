@@ -16,7 +16,6 @@ interface RegionDialogProps {
   displayNamePlural: string;
   siteName: string;
   recordType: string;
-  webAppUrl: string;
 }
 
 export const RegionDialog: React.SFC<RegionDialogProps> = ({
@@ -29,7 +28,6 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
   displayNamePlural,
   siteName,
   recordType,
-  webAppUrl
 }) => (
   <Dialog onClose={onClose} onOpen={onOpen} open={open}>
     <div key={region.sourceId} className="region">
@@ -49,7 +47,6 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
                     feature={feature}
                     sequence={sequence}
                     recordType={recordType}
-                    webAppUrl={webAppUrl}
                     siteName={siteName}
                   />
                 }
@@ -82,7 +79,6 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
         displayNamePlural={displayNamePlural}
         recordType={recordType}
         siteName={siteName}
-        webAppUrl={webAppUrl}
       />
     </div>
   </Dialog>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { StepAnalysisEnrichmentResultTable, ColumnSettings } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
 import { GenomeViewRegionModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
@@ -6,16 +7,15 @@ import { GenomeViewRegionModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 const featureColumnsFactory = (
   displayName: string,
   recordType: string, 
-  webAppUrl: string, 
   siteName: string) => 
   [
     {
       key: 'sourceId',
       name: displayName,
       renderCell: ({ value: sourceId }: { value: string }) =>
-        <a href={`${webAppUrl}/app/record/${recordType}/${sourceId}`} target="_blank">
+        <Link to={`/record/${recordType}/${sourceId}`} target="_blank">
           <u>{sourceId}</u>
-        </a>,
+        </Link>,
       sortable: true,
       sortType: 'text'
     },
@@ -48,7 +48,6 @@ interface FeatureTableProps {
   displayName: string;
   displayNamePlural: string;
   recordType: string;
-  webAppUrl: string;
   siteName: string;
 }
 
@@ -56,11 +55,10 @@ export const FeatureTable: React.SFC<FeatureTableProps> = ({
   region,
   displayName,
   recordType,
-  webAppUrl,
   siteName
 }) =>
   <StepAnalysisEnrichmentResultTable
     rows={region.features}
-    columns={featureColumnsFactory(displayName, recordType, webAppUrl, siteName)}
+    columns={featureColumnsFactory(displayName, recordType, siteName)}
     emptyResultMessage="No Features present in region"
   />;

@@ -1,11 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { GenomeViewFeatureModel, GenomeViewSequenceModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 
 interface FeatureTooltipProps {
   feature: GenomeViewFeatureModel;
   sequence: GenomeViewSequenceModel;
   recordType: string;
-  webAppUrl: string;
   siteName: string;
 }
 
@@ -13,7 +13,6 @@ export const FeatureTooltip: React.SFC<FeatureTooltipProps> = ({
   feature,
   sequence,
   recordType,
-  webAppUrl,
   siteName
 }) => (
   <div id={feature.sourceId}>
@@ -26,11 +25,11 @@ export const FeatureTooltip: React.SFC<FeatureTooltipProps> = ({
     </p>
     <ul>
       <li>
-        <a href={`${webAppUrl}/app/record/${recordType}/${feature.sourceId}`} target="_blank">
+        <Link to={`/record/${recordType}/${feature.sourceId}`} target="_blank">
           <u>
             Record page
           </u>
-        </a>
+        </Link>
       </li>
       <li>
         <a href={`/cgi-bin/gbrowse/${siteName}/?name=${feature.context};h_feat=${feature.sourceId}@yellow`} target="_blank">

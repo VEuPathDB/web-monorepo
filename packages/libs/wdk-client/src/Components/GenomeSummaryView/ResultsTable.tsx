@@ -5,9 +5,9 @@ import { ColumnSettings, StepAnalysisEnrichmentResultTable } from 'wdk-client/Co
 import { GenomeSummaryViewReportModel, GenomeViewRegionModel, GenomeViewFeatureModel, GenomeViewSequenceModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { FeatureTooltip } from 'wdk-client/Components/GenomeSummaryView/FeatureTooltip';
 import { memoize } from 'lodash/fp';
+import { Link } from 'react-router-dom';
 
 const resultColumnsFactory = memoize((
-    webAppUrl: string, 
     displayName: string, 
     displayNamePlural: string, 
     siteName: string, 
@@ -19,7 +19,7 @@ const resultColumnsFactory = memoize((
     name: 'Sequence',
     width: '10%',
     renderCell: ({ value: sourceId }: { value: string }) =>
-      <a href={`${webAppUrl}/app/record/genomic-sequence/${sourceId}`} target="_blank">{sourceId}</a>,
+      <Link to={`/record/genomic-sequence/${sourceId}`} target="_blank">{sourceId}</Link>,
     sortable: true,
     sortType: 'text'
   },
@@ -58,14 +58,13 @@ const resultColumnsFactory = memoize((
     key: 'sourceId',
     name: `${displayName} Locations`,
     width: '60%',
-    renderCell: locationCellRenderFactory(displayNamePlural, webAppUrl, siteName, recordType, showRegionDialog),
+    renderCell: locationCellRenderFactory(displayNamePlural, siteName, recordType, showRegionDialog),
     sortable: false
   }
 ] as ColumnSettings[]);
 
 const locationCellRenderFactory = (
   displayNamePlural: string, 
-  webAppUrl: string, 
   siteName: string, 
   recordType: string,
   showRegionDialog: (regionId: string) => void
@@ -85,7 +84,6 @@ const locationCellRenderFactory = (
           region={region}
           sequence={sequence}
           recordType={recordType}
-          webAppUrl={webAppUrl}
           siteName={siteName}
           showDialog={() => showRegionDialog(region.sourceId)}
         />
@@ -98,7 +96,6 @@ interface RegionProps {
   region: GenomeViewRegionModel;
   sequence: GenomeViewSequenceModel;
   recordType: string;
-  webAppUrl: string;
   siteName: string;
   showDialog: () => void;
 }
@@ -107,7 +104,6 @@ const Region: React.SFC<RegionProps> = ({
   displayNamePlural,
   region,
   recordType,
-  webAppUrl,
   siteName,
   sequence,
   showDialog
@@ -117,7 +113,6 @@ const Region: React.SFC<RegionProps> = ({
       region={region} 
       feature={region.features[0]} 
       recordType={recordType} 
-      webAppUrl={webAppUrl} 
       siteName={siteName} 
       sequence={sequence}
     />;
@@ -149,7 +144,6 @@ interface SingleFeatureRegionProps {
   feature: GenomeViewFeatureModel;
   sequence: GenomeViewSequenceModel;
   recordType: string;
-  webAppUrl: string;
   siteName: string;
 }
 
@@ -158,7 +152,6 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
   feature,
   sequence,
   recordType,
-  webAppUrl,
   siteName
 }) =>
   <EagerlyLoadedTooltip
@@ -167,7 +160,6 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
         feature={feature}
         sequence={sequence}
         recordType={recordType}
-        webAppUrl={webAppUrl}
         siteName={siteName}
       />
     }
@@ -183,7 +175,6 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
   </EagerlyLoadedTooltip>;
 
 interface ResultsTableProps {
-  webAppUrl: string;
   emptyChromosomeFilterApplied: boolean;
   report: GenomeSummaryViewReportModel;
   displayName: string;
@@ -205,7 +196,6 @@ const rowsFactory = memoize(
 );
 
 export const ResultsTable: React.SFC<ResultsTableProps> = ({ 
-  webAppUrl, 
   emptyChromosomeFilterApplied,
   report, 
   displayName, 
@@ -216,7 +206,7 @@ export const ResultsTable: React.SFC<ResultsTableProps> = ({
 }) =>
   <StepAnalysisEnrichmentResultTable
     rows={rowsFactory(report, emptyChromosomeFilterApplied)}
-    columns={resultColumnsFactory(webAppUrl, displayName, displayNamePlural, siteName, recordType, showRegionDialog)}
+    columns={resultColumnsFactory(displayName, displayNamePlural, siteName, recordType, showRegionDialog)}
     initialSortColumnKey="featureCount"
     initialSortDirection="desc"
     emptyResultMessage="No Genomes present in result"

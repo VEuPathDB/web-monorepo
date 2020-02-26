@@ -12,7 +12,6 @@ export interface GenomeSummaryViewProps {
   genomeSummaryData: GenomeSummaryViewReportModel;
   displayName: string;
   displayNamePlural: string;
-  webAppUrl: string;
   siteName: string;
   recordType: string;
   regionDialogVisibilities: Record<string, boolean>;
@@ -27,7 +26,6 @@ export const GenomeSummaryView: React.SFC<GenomeSummaryViewProps> = ({
   genomeSummaryData, 
   displayName, 
   displayNamePlural, 
-  webAppUrl,
   recordType,
   siteName,
   regionDialogVisibilities,
@@ -62,13 +60,11 @@ export const GenomeSummaryView: React.SFC<GenomeSummaryViewProps> = ({
                   displayNamePlural={displayNamePlural}
                   recordType={recordType}
                   siteName={siteName}
-                  webAppUrl={webAppUrl}
                 />
               )
             )}
             <ResultsTable
               emptyChromosomeFilterApplied
-              webAppUrl={webAppUrl}
               displayName={displayName}
               displayNamePlural={displayNamePlural}
               report={genomeSummaryData}
