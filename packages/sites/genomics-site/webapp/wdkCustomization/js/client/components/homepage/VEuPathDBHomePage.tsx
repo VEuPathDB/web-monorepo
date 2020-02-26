@@ -183,6 +183,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
           siteSearchSuggestions={siteSearchSuggestions}
           additionalSuggestions={additionalSuggestions}
           onShowAnnouncements={onShowAnnouncements}
+          showAnnouncementsToggle={isHomePage && closedBanners.length > 0}
         />
       </ErrorBoundary>
       <div className={vpdbCx('Announcements')}>
