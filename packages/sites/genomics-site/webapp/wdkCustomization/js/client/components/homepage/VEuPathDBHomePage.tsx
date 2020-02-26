@@ -185,14 +185,12 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
           onShowAnnouncements={onShowAnnouncements}
         />
       </ErrorBoundary>
-      {isHomePage &&
-        <div className={vpdbCx('Announcements')}>
-          <Announcements
-            closedBanners={closedBanners}
-            setClosedBanners={setClosedBanners}
-          />
-        </div>
-      }
+      <div className={vpdbCx('Announcements')}>
+        <Announcements
+          closedBanners={closedBanners}
+          setClosedBanners={setClosedBanners}
+        />
+      </div>
       {isHomePage &&
         <ErrorBoundary>
           <SearchPane 

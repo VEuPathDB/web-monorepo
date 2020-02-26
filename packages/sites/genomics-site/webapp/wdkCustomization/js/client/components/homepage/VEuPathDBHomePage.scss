@@ -78,6 +78,7 @@ body.vpdb-Body {
     // as unfortunately, IE11 doesn't support grid-template-areas
     grid-template-areas:
       "header"
+      "banner"
       "content"
       "footer";
     
@@ -94,8 +95,8 @@ body.vpdb-Body {
         padding: 0.5em 0.75em;
         box-shadow: 0 2px 4px #00000066;
         grid-template-areas:
-            "site-branding searchbar social login"
-            "site-branding menubar social login";
+          "site-branding searchbar social login"
+          "site-branding menubar social login";
 
         .ebrc-HeaderSearchBar {
           input, form {
