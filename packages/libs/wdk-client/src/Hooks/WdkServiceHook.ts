@@ -20,7 +20,6 @@ export function useWdkService<T>(callback: WdkServiceCallback<T>): T | undefined
       },
       error => {
         if (active) {
-          alert('Oops... something went wrong\n' + error);
           wdkService.submitErrorIfNot500(error);        }
       });
     return () => { setActive(false) }
