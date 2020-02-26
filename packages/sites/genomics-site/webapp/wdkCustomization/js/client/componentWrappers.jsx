@@ -230,8 +230,8 @@ export function RecordTableSection(DefaultComponent) {
                 to={{
                   pathname: `/search/dataset/DatasetsByReferenceNameNoTaxon:${customName}/result`,
                   search: QueryString.stringify({
-                    record_class: record.recordClassName,
-                    reference_name: table.name,
+                    'param.record_class': record.recordClassName,
+                    'param.reference_name': table.name,
                   })
                 }}
               ><i className="fa fa-database"/> Data Sets</Link>}
@@ -246,9 +246,9 @@ export function RecordTableSection(DefaultComponent) {
                 to={{
                   pathname: `/search/dataset/DatasetsByReferenceName:${customName}/result`,
                   search: QueryString.stringify({
-                    record_class: record.recordClassName,
-                    reference_name: table.name,
-                    taxon: record.attributes.organism_full
+                    'param.record_class': record.recordClassName,
+                    'param.reference_name': table.name,
+                    'param.taxon': record.attributes.organism_full
                   })
                 }}
               ><i className="fa fa-database"/> Data sets</Link>}
