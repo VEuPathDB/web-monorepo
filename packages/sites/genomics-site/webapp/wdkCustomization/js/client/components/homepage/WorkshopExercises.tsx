@@ -16,7 +16,7 @@ const bgWashCx = makeVpdbClassNameHelper('BgWash');
 // FIXME This prefix should be added on the "Jekyll side"
 const WORKSHOP_EXERCISES_PREFIX = 'https://workshop.eupathdb.org';
 
-const WORKSHOP_EXERCISES_URL_SEGMENT = 'json/workshop_exercises.json';
+const WORKSHOP_EXERCISES_URL_SEGMENT = 'workshop_exercises.json';
 
 const FILL_ME_IN = 'FILL ME IN';
 
