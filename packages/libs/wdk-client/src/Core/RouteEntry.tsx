@@ -7,6 +7,7 @@ export interface RouteEntry {
   readonly exact?: false;
   readonly component: RouteProps['component'];
   readonly requiresLogin?: boolean;
+  readonly rootClassNameModifier?: string;
 }
 
 export function parseQueryString(props: RouteComponentProps<any>): Record<string, string> {

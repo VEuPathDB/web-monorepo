@@ -1,7 +1,7 @@
 import { History, Location } from 'history';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { Router, Switch } from 'react-router';
+import { Router, Switch, matchPath } from 'react-router';
 
 import { ClientPluginRegistryEntry, PluginContext, makeCompositePluginComponent } from 'wdk-client/Utils/ClientPlugin';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
@@ -24,12 +24,16 @@ type Props = {
   wdkService: WdkService
 };
 
+interface State {
+  location: Location;
+}
+
 const REACT_ROUTER_LINK_CLASSNAME = 'wdk-ReactRouterLink';
 const GLOBAL_CLICK_HANDLER_SELECTOR = `a:not(.${REACT_ROUTER_LINK_CLASSNAME})`;
 const RELATIVE_LINK_REGEXP = new RegExp('^((' + location.protocol + ')?//)?' + location.host);
 
 /** WDK Application Root */
-export default class Root extends React.Component<Props> {
+export default class Root extends React.Component<Props, State> {
 
   static propTypes = {
     rootUrl: PropTypes.string,
@@ -47,8 +51,14 @@ export default class Root extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.handleGlobalClick = this.handleGlobalClick.bind(this);
-    this.removeHistoryListener = this.props.history.listen(location => this.props.onLocationChange(location));
+    this.removeHistoryListener = this.props.history.listen(location => {
+      this.props.onLocationChange(location);
+      this.setState({ location });
+    });
     this.props.onLocationChange(this.props.history.location);
+    this.state = {
+      location: this.props.history.location
+    };
   }
 
   handleGlobalClick(event: MouseEvent) {
@@ -84,13 +94,17 @@ export default class Root extends React.Component<Props> {
   }
 
   render() {
+    const { routes } = this.props;
+    const { location } = this.state;
+    const activeRoute = routes.find(({ path, exact = true }) => matchPath(location.pathname, { path, exact }));
+    const rootClassNameModifier = activeRoute && activeRoute.rootClassNameModifier;
     return (
       <Provider store={this.props.store}>
         <ErrorBoundary>
           <Router history={this.props.history}>
             <WdkServiceContext.Provider value={this.props.wdkService}>
               <PluginContext.Provider value={makeCompositePluginComponent(this.props.pluginConfig)}>
-                <Page>
+                <Page classNameModifier={rootClassNameModifier}>
                   <React.Fragment>
                     <Switch>
                       {this.props.routes.map(({ path, exact = true, component, requiresLogin = false }) => (

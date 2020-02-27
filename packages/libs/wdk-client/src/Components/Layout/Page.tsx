@@ -3,14 +3,17 @@
  */
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import {wrappable} from 'wdk-client/Utils/ComponentUtils';
+import {wrappable, makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
 import Header from 'wdk-client/Components/Layout/Header';
 import Footer from 'wdk-client/Components/Layout/Footer';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 
 type Props = RouteComponentProps<any> & {
+  classNameModifier?: string;
   children: React.ReactChild;
 };
+
+const cx = makeClassNameHelper('wdk-RootContainer');
 
 class Page extends React.Component<Props> {
   componentDidUpdate(prevProps: Props) {
@@ -26,7 +29,7 @@ class Page extends React.Component<Props> {
   }
   render () {
     return (
-      <div className="wdk-RootContainer">
+      <div className={cx('', this.props.classNameModifier)}>
         <ErrorBoundary><Header/></ErrorBoundary>
         <div className="wdk-PageContent">{this.props.children}</div>
         <ErrorBoundary><Footer/></ErrorBoundary>
