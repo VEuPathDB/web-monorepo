@@ -29,7 +29,6 @@ type StateProps = { status: 'loading' } | {
   genomeSummaryData?: GenomeSummaryViewReportModel;
   displayName: string;
   displayNamePlural: string;
-  siteName: string;
   recordType: string;
   regionDialogVisibilities: Record<string, boolean>;
   emptyChromosomeFilterApplied: boolean;
@@ -81,7 +80,6 @@ class GenomeSummaryViewController extends ViewController< Props > {
         displayNamePlural={this.props.state.displayNamePlural}
         regionDialogVisibilities={this.props.state.regionDialogVisibilities}
         emptyChromosomeFilterApplied={this.props.state.emptyChromosomeFilterApplied}
-        siteName={this.props.state.siteName}
         recordType={this.props.state.recordType}
         showRegionDialog={this.props.actionCreators.showRegionDialog}
         hideRegionDialog={this.props.actionCreators.hideRegionDialog}
@@ -116,7 +114,6 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
     displayName: get(genomeSummaryViewState, 'recordClass.displayName', ''),
     displayNamePlural: get(genomeSummaryViewState, 'recordClass.displayNamePlural', ''),
     recordType: urlSegmentToRecordType(get(genomeSummaryViewState, 'recordClass.urlSegment', '')),
-    siteName: toLower(get(globalDataState, 'siteConfig.projectId', '')),
     regionDialogVisibilities: genomeSummaryViewState.regionDialogVisibilities,
     emptyChromosomeFilterApplied: genomeSummaryViewState.emptyChromosomeFilterApplied
   };

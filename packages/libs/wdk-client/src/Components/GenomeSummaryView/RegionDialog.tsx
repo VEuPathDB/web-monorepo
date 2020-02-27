@@ -14,7 +14,6 @@ interface RegionDialogProps {
   onClose?: () => void;
   displayName: string;
   displayNamePlural: string;
-  siteName: string;
   recordType: string;
 }
 
@@ -26,7 +25,6 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
   onClose,
   displayName,
   displayNamePlural,
-  siteName,
   recordType,
 }) => (
   <Dialog onClose={onClose} onOpen={onOpen} open={open}>
@@ -47,7 +45,6 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
                     feature={feature}
                     sequence={sequence}
                     recordType={recordType}
-                    siteName={siteName}
                   />
                 }
               >
@@ -75,10 +72,10 @@ export const RegionDialog: React.SFC<RegionDialogProps> = ({
       </ul>
       <FeatureTable
         region={region}
+        sequence={sequence}
         displayName={displayName}
         displayNamePlural={displayNamePlural}
         recordType={recordType}
-        siteName={siteName}
       />
     </div>
   </Dialog>

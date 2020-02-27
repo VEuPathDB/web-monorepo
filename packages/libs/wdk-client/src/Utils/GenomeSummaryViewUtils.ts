@@ -23,6 +23,7 @@ export interface GenomeViewSequenceModel {
   percentLength: number;
   chromosome: string;
   organism: string;
+  organismAbbrev: string;
 }
 
 export interface GenomeViewRegionModel {

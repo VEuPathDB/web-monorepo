@@ -6,14 +6,12 @@ interface FeatureTooltipProps {
   feature: GenomeViewFeatureModel;
   sequence: GenomeViewSequenceModel;
   recordType: string;
-  siteName: string;
 }
 
 export const FeatureTooltip: React.SFC<FeatureTooltipProps> = ({
   feature,
   sequence,
   recordType,
-  siteName
 }) => (
   <div id={feature.sourceId}>
     <h4>{feature.sourceId}</h4>
@@ -32,11 +30,11 @@ export const FeatureTooltip: React.SFC<FeatureTooltipProps> = ({
         </Link>
       </li>
       <li>
-        <a href={`/cgi-bin/gbrowse/${siteName}/?name=${feature.context};h_feat=${feature.sourceId}@yellow`} target="_blank">
+        <Link to={`/jbrowse?loc=${feature.context}&tracks=gene&data=/a/service/jbrowse/tracks/${sequence.organismAbbrev}`} target="_blank">
           <u>
-            Gbrowse
+            Genome browser
           </u>
-        </a>
+        </Link>
       </li>
     </ul>
   </div>

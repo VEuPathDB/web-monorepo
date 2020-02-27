@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 const resultColumnsFactory = memoize((
     displayName: string, 
     displayNamePlural: string, 
-    siteName: string, 
     recordType: string,
     showRegionDialog: (regionId: string) => void
   ) => [
@@ -58,14 +57,13 @@ const resultColumnsFactory = memoize((
     key: 'sourceId',
     name: `${displayName} Locations`,
     width: '60%',
-    renderCell: locationCellRenderFactory(displayNamePlural, siteName, recordType, showRegionDialog),
+    renderCell: locationCellRenderFactory(displayNamePlural, recordType, showRegionDialog),
     sortable: false
   }
 ] as ColumnSettings[]);
 
 const locationCellRenderFactory = (
   displayNamePlural: string, 
-  siteName: string, 
   recordType: string,
   showRegionDialog: (regionId: string) => void
 ) => ({ row: sequence }: { row: GenomeViewSequenceModel }) =>
@@ -84,7 +82,6 @@ const locationCellRenderFactory = (
           region={region}
           sequence={sequence}
           recordType={recordType}
-          siteName={siteName}
           showDialog={() => showRegionDialog(region.sourceId)}
         />
       )
@@ -96,7 +93,6 @@ interface RegionProps {
   region: GenomeViewRegionModel;
   sequence: GenomeViewSequenceModel;
   recordType: string;
-  siteName: string;
   showDialog: () => void;
 }
 
@@ -104,7 +100,6 @@ const Region: React.SFC<RegionProps> = ({
   displayNamePlural,
   region,
   recordType,
-  siteName,
   sequence,
   showDialog
 }) => region.featureCount > 1
@@ -113,7 +108,6 @@ const Region: React.SFC<RegionProps> = ({
       region={region} 
       feature={region.features[0]} 
       recordType={recordType} 
-      siteName={siteName} 
       sequence={sequence}
     />;
 
@@ -144,7 +138,6 @@ interface SingleFeatureRegionProps {
   feature: GenomeViewFeatureModel;
   sequence: GenomeViewSequenceModel;
   recordType: string;
-  siteName: string;
 }
 
 const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({ 
@@ -152,7 +145,6 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
   feature,
   sequence,
   recordType,
-  siteName
 }) =>
   <EagerlyLoadedTooltip
     content={
@@ -160,7 +152,6 @@ const SingleFeatureRegion: React.SFC<SingleFeatureRegionProps> = ({
         feature={feature}
         sequence={sequence}
         recordType={recordType}
-        siteName={siteName}
       />
     }
   >
@@ -180,7 +171,6 @@ interface ResultsTableProps {
   displayName: string;
   displayNamePlural: string;
   recordType: string;
-  siteName: string;
   showRegionDialog: (regionId: string) => void;
 }
 
@@ -200,13 +190,12 @@ export const ResultsTable: React.SFC<ResultsTableProps> = ({
   report, 
   displayName, 
   displayNamePlural,
-  siteName,
   recordType,
   showRegionDialog
 }) =>
   <StepAnalysisEnrichmentResultTable
     rows={rowsFactory(report, emptyChromosomeFilterApplied)}
-    columns={resultColumnsFactory(displayName, displayNamePlural, siteName, recordType, showRegionDialog)}
+    columns={resultColumnsFactory(displayName, displayNamePlural, recordType, showRegionDialog)}
     initialSortColumnKey="featureCount"
     initialSortDirection="desc"
     emptyResultMessage="No Genomes present in result"
