@@ -107,7 +107,8 @@ export const wrapRoutes = ebrcRoutes => [
 
   {
     path: '/jbrowse',
-    component: JBrowseController
+    component: JBrowseController,
+    rootClassNameModifier: 'jbrowse'
   },
 
   {

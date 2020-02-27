@@ -32,6 +32,7 @@ const vpdbCx = makeVpdbClassNameHelper('');
 
 type OwnProps = {
   isHomePage: boolean;
+  classNameModifier?: string;
 }
 
 type StateProps = {
@@ -51,7 +52,7 @@ const SEARCH_TERM_SESSION_KEY = 'homepage-header-search-term';
 const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
 
 const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
-  const { isHomePage } = props;
+  const { isHomePage, classNameModifier } = props;
   const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
   const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
   const [ headerExpanded, setHeaderExpanded ] = useState(isHomePage);
@@ -149,7 +150,8 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
       'RootContainer',
       headerExpanded ? 'header-expanded' : 'header-collapsed',
       isHomePage && 'home',
-      isNewsExpanded ? 'news-expanded' : 'news-collapsed'
+      isNewsExpanded ? 'news-expanded' : 'news-collapsed',
+      classNameModifier
     ), 
     projectId
   );
@@ -387,8 +389,8 @@ const useHeaderMenuItems = (
         {
           key: 'jbrowse',
           display: 'Genome Browser',
-          type: 'externalLink',
-          url: '/a/jbrowse.jsp?data=/a/service/jbrowse/tracks/default&tracks=gene',
+          type: 'reactRoute',
+          url: '/jbrowse?data=/a/service/jbrowse/tracks/default&tracks=gene',
           metadata: {
             exclude: [ EuPathDB ]
           }

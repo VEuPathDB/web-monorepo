@@ -5,6 +5,9 @@ $small-mobile-width: 415px;
 $mobile-width: 1200px;
 $desktop-width: 1201px;
 
+$large-branding-height: 7em;
+$small-branding-height: 4em;
+
 body.vpdb-Body {
   background-image: unset;
   font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
@@ -35,12 +38,12 @@ body.vpdb-Body {
 
       .ebrc-HeaderBranding {
         content: $logo;
-        height: 85px;
+        height: $large-branding-height;
       }
 
       &__collapsed {
         .ebrc-HeaderBranding {
-          height: 48px;
+          height: $small-branding-height;
         }
       }
 
@@ -48,7 +51,7 @@ body.vpdb-Body {
         background-color: $primary-color;
 
         .ebrc-HeaderBranding {
-          height: 48px;
+          height: $small-branding-height;
         }
       }
     }
@@ -121,11 +124,6 @@ body.vpdb-Body {
 
         .ebrc-HeaderBrandingContainer {
           align-self: center;
-        }
-
-        .ebrc-HeaderBranding {
-          font-size: 25px;
-          color: white;
         }
 
         .ebrc-HeaderProjectBranding {

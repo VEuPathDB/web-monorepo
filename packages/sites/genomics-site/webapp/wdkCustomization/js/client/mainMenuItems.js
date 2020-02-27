@@ -113,7 +113,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
           id: 'jbrowse',
           text: 'Genome Browser',
           exclude: [EuPathDB],
-          url: '/a/jbrowse.jsp?data=/a/service/jbrowse/tracks/default&tracks=gene'
+          route: '/jbrowse?data=/a/service/jbrowse/tracks/default&tracks=gene'
         },
         {
           id: 'plasmoap',
