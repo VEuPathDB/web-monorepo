@@ -909,7 +909,7 @@ class OrthologsForm extends SortKeyTable {
   render() {
       let { source_id, gene_type } = this.props.record.attributes;
 
-      if ( !this.props.table.isInReport ) {
+      if ( this.props.value == null ) {
           return ( <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/> ) 
         } else {
 
