@@ -238,17 +238,15 @@ body.vpdb-Body {
     .vpdb-SearchPane {
       grid-area: nav;
 
-      @media screen and (min-width: $desktop-width) {
-        border-right: 0.0625rem solid;
-        padding-right: 0.1em;
+      border-right: 0.0625rem solid;
+      padding-right: 0.1em;
 
-        .wdk-CheckboxTree {
-          > .wdk-CheckboxTreeList {
-            position: relative;
-            max-height: 65vh;
-            overflow-y: auto;
-            padding-right: 0.5em;
-          }
+      .wdk-CheckboxTree {
+        > .wdk-CheckboxTreeList {
+          position: relative;
+          max-height: 65vh;
+          overflow-y: auto;
+          padding-right: 0.5em;
         }
       }
       
@@ -273,7 +271,19 @@ body.vpdb-Body {
       .wdk-CheckboxTreeList .wdk-CheckboxTreeItem__leaf .wdk-CheckboxTreeNodeContent i {
         font-size: 0.7em;
         color: grey;
-      } 
+      }
+      
+      @media screen and (max-width: $mobile-width) {
+        border-right: none;
+        padding-right: 1rem;
+
+        .wdk-CheckboxTree {
+          > .wdk-CheckboxTreeList {
+            max-height: none;
+            padding-right: 1rem;
+          }
+        }
+      }
     }
 
     .vpdb-Main {
