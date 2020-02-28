@@ -312,10 +312,8 @@ body.vpdb-Body {
       }
     }
 
-    @media screen and (min-width: $desktop-width) {
-      &__header-collapsed {
-        grid-template-rows: 5.5em auto 1fr auto;
-      }
+    &__header-collapsed {
+      grid-template-rows: 5.5em auto 1fr auto;
     }
 
     /**** VEUPATH SITES ***/
