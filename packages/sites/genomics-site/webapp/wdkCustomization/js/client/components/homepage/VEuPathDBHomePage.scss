@@ -102,9 +102,11 @@ body.vpdb-Body {
 
     .vpdb-Header {
       grid-area: header;
+      position: relative;
 
       &__collapsed {
         display: grid;
+        position: fixed;
         height: auto;
         padding: 0.5em 0.75em;
         box-shadow: 0 2px 4px #00000066;
@@ -194,6 +196,8 @@ body.vpdb-Body {
       }
 
       @media screen and (max-width: $mobile-width) {
+        position: relative;
+
         grid-template-areas:
           "site-branding site-branding     social    login"
           "hamburger     searchbar         searchbar searchbar"
