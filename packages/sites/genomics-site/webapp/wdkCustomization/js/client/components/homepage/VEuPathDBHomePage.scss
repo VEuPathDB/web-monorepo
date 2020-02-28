@@ -1,9 +1,8 @@
 // FIXME: Come to a consensus on the font weights we'd like to provide for Roboto
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
 
-$small-mobile-width: 415px;
 $mobile-width: 1200px;
-$desktop-width: 1201px;
+$small-mobile-width: 415px;
 
 $large-branding-height: 7em;
 $small-branding-height: 4em;
@@ -272,7 +271,7 @@ body.vpdb-Body {
         font-size: 0.7em;
         color: grey;
       }
-      
+
       @media screen and (max-width: $mobile-width) {
         border-right: none;
         padding-right: 1rem;
