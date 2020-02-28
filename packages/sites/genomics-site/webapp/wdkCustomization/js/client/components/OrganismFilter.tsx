@@ -235,7 +235,7 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
               additionalActions={[
                 <label className={cx('--HideZeroes')}>
                   <input className={cx('--HideZeroes-Input')} type="checkbox" checked={hideZeroes} onChange={() => setHideZeroes(!hideZeroes)}/>
-                  hide zero counts
+                  Hide zero counts
                 </label>
               ]}
             />
