@@ -57,10 +57,12 @@ body.vpdb-Body {
     }
 
     .vpdb-SearchPane {
-      @media screen and (min-width: $desktop-width) {
-        .wdk-CheckboxTree {
-          > .wdk-CheckboxTreeList {
-            border-bottom: 0.0625rem solid $primary-color;
+      .wdk-CheckboxTree {
+        > .wdk-CheckboxTreeList {
+          border-bottom: 0.0625rem solid $primary-color;
+
+          @media screen and (max-width: $mobile-width) {
+            border-bottom: none;
           }
         }
       }
