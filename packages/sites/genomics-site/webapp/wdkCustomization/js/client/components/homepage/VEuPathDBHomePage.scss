@@ -136,11 +136,12 @@ body.vpdb-Body {
           align-self: flex-end;
         }
 
-        @media screen and (min-width: $desktop-width) {
-          grid-gap: 0.5em;
+        .ebrc-HeaderMenuBar > .ebrc-HeaderMenuItemGroup > .ebrc-HeaderMenuItemContent {
+          row-gap: 0.5em;
+          padding: 0 0.5em;
 
-          .ebrc-HeaderMenuBar > .ebrc-HeaderMenuItemGroup > .ebrc-HeaderMenuItemContent {
-            padding: 0 0.5em;
+          @media screen and (max-width: $mobile-width) {
+            padding: 0.5em;
           }
         }
       }
