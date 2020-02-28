@@ -267,7 +267,6 @@ body.vpdb-Body {
       }
 
       .wdk-CheckboxTreeList .wdk-CheckboxTreeItem__leaf .wdk-CheckboxTreeNodeContent i {
-        //margin-left: 0.8em;
         font-size: 0.7em;
         color: grey;
       } 
@@ -288,15 +287,21 @@ body.vpdb-Body {
     .vpdb-NewsPane {
       grid-area: side;
 
-      @media screen and (min-width: $desktop-width) {
-        border-left: 0.0625rem solid;
+      border-left: 0.0625rem solid;
 
-        &__news-collapsed {
-          border-left-style: hidden;
-        }
+      &__news-collapsed {
+        border-left-style: hidden;
+      }
+
+      .wdk-Showcase-HeadingRow {
+        display: none;
+      }
+
+      @media screen and (max-width: $mobile-width) {
+        border-left: none;
 
         .wdk-Showcase-HeadingRow {
-          display: none;
+          display: flex;
         }
       }
     }
