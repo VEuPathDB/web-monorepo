@@ -359,11 +359,11 @@ body.vpdb-Body {
     }
 
     &__header-expanded {
-      grid-template-rows: 11em auto 1fr auto;
+      grid-template-rows: $expanded-header-height auto 1fr auto;
     }
 
     &__header-collapsed {
-      grid-template-rows: 5.5em auto 1fr auto;
+      grid-template-rows: $collapsed-header-height auto 1fr auto;
     }
 
     /**** VEUPATH SITES ***/
@@ -524,7 +524,7 @@ body.vpdb-Body {
         "nav content side"
         "footer footer footer";
 
-      grid-template-rows: 11em auto 1fr auto;
+      grid-template-rows: $expanded-header-height auto 1fr auto;
 
       .vpdb-Main {
         overflow: hidden;
