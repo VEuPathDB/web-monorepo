@@ -2,12 +2,20 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
 
 // Header breakpoints
-$hamburger-width: 1200px;
+$cramped-header-width: 1200px;
+$hamburger-width: 1060px;
+
+// Use these when "Community" menu item is removed
+// $cramped-header-width: 1100px;
+// $hamburger-width: 960px;
 
 // Search Pane + Main + News breakpoints
 $tablet-width: 1000px;
 $mobile-width: 900px;
 $small-mobile-width: 415px;
+
+$expanded-header-height: 11em;
+$collapsed-header-height: 5.5em;
 
 $large-branding-height: 7em;
 $small-branding-height: 4em;
@@ -51,7 +59,7 @@ body.vpdb-Body {
         }
       }
 
-      @media screen and (max-width: $hamburger-width) {
+      @media screen and (max-width: $cramped-header-width) {
         .ebrc-HeaderBranding {
           height: $small-branding-height;
         }
@@ -105,14 +113,27 @@ body.vpdb-Body {
 
     .vpdb-Header {
       grid-area: header;
-      position: relative;
+      box-shadow: 0 2px 4px #00000066;
+
+      &__expanded {
+        @media screen and (max-width: $cramped-header-width) {
+          grid-template-areas:
+            "site-branding .         project-branding project-branding "
+            "site-branding searchbar .                .                "
+            ".             menubar   social           login            ";
+
+          .ebrc-HeaderBrandingContainer {
+            align-self: flex-start;
+            margin-top: 0.5em;
+          }
+        }
+      }
 
       &__collapsed {
         display: grid;
         position: fixed;
         height: auto;
         padding: 0.5em 0.75em;
-        box-shadow: 0 2px 4px #00000066;
         grid-template-areas:
           "site-branding searchbar social login"
           "site-branding menubar social login";
@@ -337,6 +358,10 @@ body.vpdb-Body {
       }
     }
 
+    &__header-expanded {
+      grid-template-rows: 11em auto 1fr auto;
+    }
+
     &__header-collapsed {
       grid-template-rows: 5.5em auto 1fr auto;
     }
@@ -499,7 +524,7 @@ body.vpdb-Body {
         "nav content side"
         "footer footer footer";
 
-      grid-template-rows: 12em auto 1fr auto;
+      grid-template-rows: 11em auto 1fr auto;
 
       .vpdb-Main {
         overflow: hidden;
@@ -559,7 +584,7 @@ body.vpdb-Body {
 
   // Fix for question page sticky header
   .wdk-QuestionFormQuestionHeader {
-    top: 5.5em;
+    top: $expanded-header-height;
 
     @media screen and (max-width: $hamburger-width) {
       top: 0;

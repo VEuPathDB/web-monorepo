@@ -55,7 +55,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const { isHomePage, classNameModifier } = props;
   const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
   const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
-  const [ headerExpanded, setHeaderExpanded ] = useState(isHomePage);
+  const [ headerExpanded, setHeaderExpanded ] = useState(true);
 
   const [ isNewsExpanded, setIsNewsExpanded ] = useSessionBackedState(
     false,
@@ -97,7 +97,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const updateHeaderExpanded = useCallback(() => {
     // FIXME - find a better way to update the header height - this resizing is "jerky" when 
     // the scroll bar is left near the scroll threshold
-    setHeaderExpanded(isHomePage && document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
+    setHeaderExpanded(!isHomePage || document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
   }, [ isHomePage ]);
   
   useEffect(() => {
