@@ -1,7 +1,8 @@
 // FIXME: Come to a consensus on the font weights we'd like to provide for Roboto
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
 
-$mobile-width: 1200px;
+$tablet-width: 1000px;
+$mobile-width: 900px;
 $small-mobile-width: 415px;
 
 $large-branding-height: 7em;
@@ -314,7 +315,7 @@ body.vpdb-Body {
         display: none;
       }
 
-      @media screen and (max-width: $mobile-width) {
+      @media screen and (max-width: $tablet-width) {
         border-left: none;
 
         .wdk-Showcase-HeadingRow {
@@ -501,6 +502,16 @@ body.vpdb-Body {
       .vpdb-Main {
         overflow: hidden;
       }
+
+      @media screen and (max-width: $tablet-width) {
+        grid-template-areas:
+          "header header header"
+          "banner banner banner"
+          "nav content content"
+          "nav content content"
+          "nav side side"
+          "footer footer footer"
+      }
     }
 
     &__home.vpdb-RootContainer__news-expanded {
@@ -509,7 +520,7 @@ body.vpdb-Body {
 
     &__home.vpdb-RootContainer__news-collapsed {
       grid-template-columns: 31em 1fr 3em;
-    }    
+    }
 
     @media screen and (max-width: $mobile-width) {
       // FIXME: Should also provide fallback styling for IE11,
