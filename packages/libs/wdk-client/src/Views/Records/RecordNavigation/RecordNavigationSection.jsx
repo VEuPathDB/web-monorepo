@@ -74,7 +74,7 @@ class RecordNavigationSection extends React.PureComponent {
     return (
       <div className="wdk-RecordNavigationSection">
         <h2 className="wdk-RecordNavigationSectionHeader">
-          {heading}
+          <span dangerouslySetInnerHTML={{__html: heading}}/>
         </h2>
         <CategoriesCheckboxTree
           disableHelp
