@@ -10,6 +10,7 @@ import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
 import { getOperationDisplay, isRange, shouldAddFilter, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import Banner from 'wdk-client/Components/Banners/Banner';
+import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
 
 const cx = makeClassNameHelper('wdk-MultiFieldFilter');
 
@@ -171,7 +172,13 @@ export default class MultiFieldFilter extends React.Component {
 
   renderDistributionCell({ row }) {
     const unknownCount = this.props.dataCount - row.summary.internalsCount;
-    return row.value != null
+    const notAll = (row.value == null);
+    let percent = 0;
+
+    if( notAll ) // NOT all (displayName) have data for this row/variable 
+      {  percent = Math.round(row.summary.internalsCount*100/this.props.dataCount); }
+  
+    return !notAll // all (displayName) have data for this variable
       ? (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <StackedBar
@@ -183,7 +190,7 @@ export default class MultiFieldFilter extends React.Component {
       )
       : unknownCount > 0 && (
         <div style={{ fontWeight: 300 }}>
-          <b>{unknownCount}</b> {this.props.displayName} have no data
+          <b>{percent}% of {this.props.dataCount.toLocaleString()}</b> {this.props.displayName} have data  
         </div>
       )
   }
