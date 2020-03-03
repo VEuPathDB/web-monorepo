@@ -313,7 +313,7 @@ const useHeaderMenuItems = (
         },
         { 
           key: 'companion',
-          display: 'Companion annotator',
+          display: 'Companion',
           type: 'externalLink',
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
           url: 'http://companion.gla.ac.uk/',
@@ -324,7 +324,7 @@ const useHeaderMenuItems = (
         },
         { 
           key: 'companion--fungi',
-          display: 'Companion annotator',
+          display: 'Companion',
           type: 'externalLink',
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
           url: 'http://fungicompanion.gla.ac.uk/',
