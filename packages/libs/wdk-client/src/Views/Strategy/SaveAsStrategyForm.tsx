@@ -91,6 +91,7 @@ export default function SaveAsStrategyForm(props: Props) {
     options: {
       useStickyHeader: true,
       tableBodyMaxHeight: '50vh',
+      renderEmptyState: () => null,
       deriveRowClassName: (s: StrategySummary) => cx('--TableRow', s.strategyId === selectedStrategyId ? 'selected' : 'unselected'),
       onRowClick: (s: StrategySummary) => {
         setName(s.name);
