@@ -305,12 +305,6 @@ const useHeaderMenuItems = (
       display: 'Tools',
       type: 'subMenu',
       items: [
-        { 
-          key: 'galaxy',
-          display: 'Analyze my data (Galaxy)',
-          type: 'reactRoute',
-          url: '/galaxy-orientation'
-        },
         {
           key: 'blast',
           display: 'BLAST',
@@ -346,6 +340,12 @@ const useHeaderMenuItems = (
           tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
           url: 'http://grna.ctegd.uga.edu',
           target: '_blank'
+        },
+        { 
+          key: 'galaxy',
+          display: 'Galaxy',
+          type: 'reactRoute',
+          url: '/galaxy-orientation'
         },
         { 
           key: 'jbrowse',
@@ -506,15 +506,6 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/methods.html')
         },
         {
-          key: 'annotation-sops',
-          display: <>SOPs for <i>C.parvum</i> Annotation</>,
-          type: 'externalLink',
-          url: 'http://cryptodb.org/static/SOP/',
-          metadata: {
-            include: [ CryptoDB ],
-          }
-        },
-        {
           key: 'genomes-and-data-types',
           display: 'Organisms - Data type summary',
           tooltip: `Table summarizing all the genomes and their different data types available in ${projectId}`,
@@ -527,6 +518,15 @@ const useHeaderMenuItems = (
           tooltip: 'Table summarizing gene counts for all the available genomes, and evidence supporting them',
           type: 'reactRoute',
           url: '/search/organism/GeneMetrics/result'
+        },
+        { 
+          key: 'annotation-sops',
+          display: <>SOPs for <i>C.parvum</i> Annotation</>,
+          type: 'externalLink',
+          url: 'http://cryptodb.org/static/SOP/',
+          metadata: {
+            include: [ CryptoDB ],
+          }
         },
         {
           key: 'community-download',
