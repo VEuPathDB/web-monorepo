@@ -498,7 +498,7 @@ var Histogram = (function() {
                 <div>Range: {xaxisScaleSelector}</div>
               </div>
               {chartType !== 'date' && <div>Bin start: <input type="number" max={valuesMin} value={this.state.uiState.binStart} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinStart(eventToNumber(e))}/></div>}
-              <div>Bin size: <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
+              <div>Bin width: <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
                 <em style={{ color: '#444444', marginLeft: '1em' }}> When bin size = 0, the count of discrete values is shown</em>
               </div>
               <div><button type="button" onClick={() => this.resetXAxisState()}>Reset to defaults</button></div>
