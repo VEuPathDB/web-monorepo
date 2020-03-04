@@ -97,8 +97,8 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const updateHeaderExpanded = useCallback(() => {
     // FIXME - find a better way to update the header height - this resizing is "jerky" when 
     // the scroll bar is left near the scroll threshold
-    setHeaderExpanded(!isHomePage || document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
-  }, [ isHomePage ]);
+    setHeaderExpanded(document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
+  }, []);
   
   useEffect(() => {
     window.addEventListener('scroll', updateHeaderExpanded, { passive: true });
