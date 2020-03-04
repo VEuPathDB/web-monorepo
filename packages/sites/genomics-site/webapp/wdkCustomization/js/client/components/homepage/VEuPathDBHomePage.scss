@@ -1,5 +1,6 @@
 // FIXME: Come to a consensus on the font weights we'd like to provide for Roboto
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
+@import 'ebrc-client/styles/themes.scss';
 
 // Header breakpoints
 $cramped-header-width: 1100px;
@@ -16,6 +17,76 @@ $collapsed-header-height: 5.5em;
 $large-branding-height: 7em;
 $small-branding-height: 4em;
 
+
+/**** VEUPATH SITES ***/
+// eupath  bkgrnd
+@include themify($child: '') {
+  $primary-color: themed('primary-color');
+  $bckgrnd-img: themed('bckgrnd-img');
+  $logo: themed('logo');
+
+  .vpdb-BgDark {
+    background-color: $primary-color;
+  }
+
+  .vpdb-BdDark {
+    border-color: $primary-color; 
+  }
+
+  .vpdb-Header {
+    background-image: $bckgrnd-img;
+    background-size: cover;
+    background-position: center;
+
+    .ebrc-HeaderBranding {
+      content: $logo;
+      height: $large-branding-height;
+    }
+
+    &__collapsed {
+      .ebrc-HeaderBranding {
+        height: $small-branding-height;
+      }
+    }
+    
+    @media screen and (max-width: $cramped-header-width) {
+      .ebrc-HeaderBranding {
+        height: $small-branding-height;
+      }
+    }
+  }
+
+  .vpdb-SearchPane {
+    .wdk-CheckboxTree {
+      > .wdk-CheckboxTreeList {
+        border-bottom: 0.0625rem solid $primary-color;
+
+        @media screen and (max-width: $mobile-width) {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  .vpdb-Main {
+    border-color: $primary-color;
+  }
+
+  .vpdb-FeaturedToolsListItem {
+    &__selected {
+      .vpdb-FeaturedToolsListItemIconContainer {
+        border-color: $primary-color;
+      }
+    }
+
+    &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+      border-color: $primary-color;
+    }
+  }
+
+}
+
+
 body.vpdb-Body {
   background-image: unset;
   font-family: Roboto, "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
@@ -29,67 +100,6 @@ body.vpdb-Body {
   width: unset;
 
 
-  @mixin branding-style($primary-color, $bckgrnd-img, $logo)
-  {  
-    .vpdb-BgDark {
-      background-color: $primary-color;
-    }
-
-    .vpdb-BdDark {
-      border-color: $primary-color; 
-    }
-
-    .vpdb-Header {
-      background-image: $bckgrnd-img;
-      background-size: cover;
-      background-position: center;
-
-      .ebrc-HeaderBranding {
-        content: $logo;
-        height: $large-branding-height;
-      }
-
-      &__collapsed {
-        .ebrc-HeaderBranding {
-          height: $small-branding-height;
-        }
-      }
-
-      @media screen and (max-width: $cramped-header-width) {
-        .ebrc-HeaderBranding {
-          height: $small-branding-height;
-        }
-      }
-    }
-
-    .vpdb-SearchPane {
-      .wdk-CheckboxTree {
-        > .wdk-CheckboxTreeList {
-          border-bottom: 0.0625rem solid $primary-color;
-
-          @media screen and (max-width: $mobile-width) {
-            border-bottom: none;
-          }
-        }
-      }
-    }
-
-    .vpdb-Main {
-      border-color: $primary-color;
-    }
-
-    .vpdb-FeaturedToolsListItem {
-      &__selected {
-        .vpdb-FeaturedToolsListItemIconContainer {
-          border-color: $primary-color;
-        }
-      }
-
-      &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
-        border-color: $primary-color;
-      }
-    }
-  } 
 
   .vpdb-RootContainer {
 
@@ -361,131 +371,6 @@ body.vpdb-Body {
     &__header-collapsed {
       grid-template-rows: $collapsed-header-height auto 1fr auto;
     }
-
-    /**** VEUPATH SITES ***/
-    // eupath  bkgrnd 
-    &.AmoebaDB {
-      $primary-color: #82bca6;
-      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
-      $logo: url('~site/images/AmoebaDB/amoeba.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    } 
-
-    // bckgrnd dark 
-    &.CryptoDB {                     
-      $primary-color: #274f94;    /* #274f94 or #8b465c, banner-crypto.jpg */
-      $bckgrnd-img: url('~site/images/CryptoDB/header-cryptoDB.jpg');
-      $logo: url('~site/images/CryptoDB/cryptoDB.png');  /* crypto-logo-w.png, crypto-logo-2.png */
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-/* included below
-    // eupath  bkgrnd 
-    &.EuPathDB {
-      $primary-color: #244c63;
-      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
-      $logo: url('~site/images/EuPathDB/vpdb-logo-full-inv.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-*/
-
-    // eupath  bkgrnd 
-    &.FungiDB {
-      $primary-color: #32b6cd;
-      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
-      $logo: url('~site/images/FungiDB/fungi.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-    // eupath  bkgrnd w/one watermark,  Giardia: #569551,  veupathdb-banner-GADB.jpg 
-    &.GiardiaDB {
-      $primary-color: #569551;
-      $bckgrnd-img: url('~site/images/GiardiaDB/header-giardiaDB.jpg');
-      $logo: url('~site/images/GiardiaDB/giardiaDB.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-    // eupath  bkgrnd, default 
-    &.HostDB {
-      $primary-color: #244c63;
-      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
-      $logo: url('~site/images/HostDB/title_s.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-    // tinted bkgrnd  MicrosporidiaDB: #4d3c68 (same as header) or #7988b3 (second color), veupathdb-banner-MSDBtint.jpg 
-    &.MicrosporidiaDB {
-      $primary-color: #4d3c68;
-      $bckgrnd-img: url('~site/images/MicrosporidiaDB/veupathdb-banner-MSDBtint.jpg');
-      $logo: url('~site/images/MicrosporidiaDB/microsporidia.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-    // tinted  bkgrnd  PiroplasmaDB: #8b465c (same as header) or #3a8c9f (second color), veupathdb-banner-PPDBtint.jpg 
-    &.PiroplasmaDB {
-      $primary-color: #8b465c;
-      $bckgrnd-img: url('~site/images/PiroplasmaDB/header-piroplasmaDB.jpg');
-      $logo: url('~site/images/PiroplasmaDB/piroplasmaDB.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-/*
-    // current QA colors, darker bckgr 
-    &.PlasmoDB {
-      $primary-color: #682039;
-      $bckgrnd-img: url('~site/images/PlasmoDB/vpdb-background.jpg');
-      $logo: url('~site/images/PlasmoDB/plasmo-logo_new-homepage2.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-*/
-    // bckgrnd light 
-    &.PlasmoDB {
-      $primary-color: #985c86;
-      $bckgrnd-img: url('~site/images/PlasmoDB/header-plasmoDB.jpg');
-      $logo: url('~site/images/PlasmoDB/plasmoDB.png'); 
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
- 
-    // eupath bkgrnd 
-    &.SchistoDB {
-      $primary-color: #244c63;
-      $bckgrnd-img: url('~site/images/EuPathDB/veupathdb-banner.jpg');
-      $logo: url('~site/images/SchistoDB/title_s.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-    // eupath bkgrnd 
-    &.ToxoDB {
-      $primary-color: #569551;
-      $bckgrnd-img: url('~site/images/ToxoDB/header-toxoDB.jpg');
-      $logo: url('~site/images/ToxoDB/toxoDB.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-    // eupath bkgrnd 
-    &.TrichDB {
-      $primary-color: #244c63;
-      $bckgrnd-img: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
-      $logo: url('~site/images/TrichDB/title_s.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-    // eupath bkgrnd w/one watermark, TriTrypDB: #c06530,  veupathdb-banner-TTDB.jpg 
-    &.TriTrypDB {
-      $primary-color: #c06530;
-      $bckgrnd-img: url('~site/images/TriTrypDB/header-tritrypDB.jpg');
-      $logo: url('~site/images/TriTrypDB/tritrypDB.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
-    // bckgrnd dark 
-    &.VectorBase {
-      $primary-color: #115781;
-      $bckgrnd-img: url('~site/images/VectorBase/header-vectorbase.jpg');
-      $logo: url('~site/images/VectorBase/vectorbase.png');
-      @include branding-style($primary-color, $bckgrnd-img, $logo);
-    }
-
 
     /***** PORTAL *******/
     &.VEuPathDB, &.EuPathDB {
