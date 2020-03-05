@@ -95,7 +95,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
 
   const updateHeaderExpanded = useCallback(() => {
-    setHeaderExpanded(document.body.scrollTop <= 40 && document.documentElement.scrollTop <= 40);
+    setHeaderExpanded(document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
   }, []);
   
   useEffect(() => {

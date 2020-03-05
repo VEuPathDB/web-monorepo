@@ -458,7 +458,7 @@ body.vpdb-Body {
 
   // Fix for question page sticky header
   .wdk-QuestionFormQuestionHeader {
-    top: $expanded-header-height;
+    top: $collapsed-header-height;
 
     @media screen and (max-width: $hamburger-width) {
       top: 0;
