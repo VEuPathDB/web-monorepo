@@ -10,19 +10,20 @@ interface WdkServiceCallback<T> {
  * @param callback Returns a Promise whose resolved value is used
  *                 as the return value of this hook.
  */
-export function useWdkService<T>(callback: WdkServiceCallback<T>): T | undefined {
+export function useWdkService<T>(callback: WdkServiceCallback<T>, deps?: any[]): T | undefined {
   const [ value, setValue ] = useState<T>();
-  const [ active, setActive ] = useState(true);
   useWdkEffect(wdkService => {
+    let doSetValue = true;
     callback(wdkService).then(
       value => {
-        if (active) setValue(value);
+        if (doSetValue) setValue(value);
       },
       error => {
-        if (active) {
-          wdkService.submitErrorIfNot500(error);        }
+        if (doSetValue) {
+          wdkService.submitErrorIfNot500(error);
+        }
       });
-    return () => { setActive(false) }
-  }, [callback])
+    return () => { doSetValue = false; }
+  }, deps)
   return value;
 }

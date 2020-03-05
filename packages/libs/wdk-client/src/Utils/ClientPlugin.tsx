@@ -103,7 +103,7 @@ export function makeCompositePluginComponent<T>(registry: ClientPluginRegistryEn
       catch (error) {
         return { error };
       }
-    });
+    }, [ props.context.searchName, props.context.recordClassName ]);
 
     if (resolvedReferences == null) return null;
 

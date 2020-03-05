@@ -52,7 +52,7 @@ const StrategyInputSelectorView = ({
   recordClassesByUrlSegment,
   secondaryInputRecordClasses
 }: Props) => {
-  const strategies = useWdkService(getStrategies);
+  const strategies = useWdkService(getStrategies, []);
 
   // FIXME: Find a nicer way of dealing with the "equivalence" of genes and transcripts.
   const homogeneousSecondaryInputRecordClasses = useMemo(() => secondaryInputRecordClasses.flatMap(
