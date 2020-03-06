@@ -1,0 +1,21 @@
+.vpdb-Srt {
+  &--ChoicesHeader {
+    text-align: center;
+  }
+
+  &--ChoicesLinks {
+    font-size: 1.3em;    
+    text-align: center;
+  }
+
+  &--BulkDownloadLink {
+    font-size: 1.3em;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 2em;
+  }
+
+  &--IdsInput {
+    margin: 2em;
+  }
+}

@@ -4,22 +4,26 @@ import { useLocation } from 'react-router';
 
 import { noop } from 'lodash';
 
-import { TextArea, Loading } from 'wdk-client/Components';
+import { TextArea, Loading, HelpIcon } from 'wdk-client/Components';
 import DeferredDiv from 'wdk-client/Components/Display/DeferredDiv';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import FastaGeneReporterForm from 'ebrc-client/components/reporters/FastaGeneReporterForm';
-import FastaGenomicSequenceReporterForm from 'ebrc-client/components/reporters/FastaGenomicSequenceReporterForm';
+import { fastaGenomicSequenceReporterFormFactory } from 'ebrc-client/components/reporters/FastaGenomicSequenceReporterForm';
+
+import './Srt.scss';
 
 const cx = makeClassNameHelper('vpdb-Srt');
+const FastaGenomicSequenceReporterForm = fastaGenomicSequenceReporterFormFactory('default region');
 
 interface BaseSrtFormConfig {
   recordClassUrlSegment: string;
   display: string;
   ReporterForm: React.ComponentType<any>;
   initialReporterFormState: Record<string, string | number | boolean>;
+  idsInputHelp?: React.ReactElement;
   formActionUrl: string;
 }
 
@@ -65,6 +69,16 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
             `${sourceId}:100..2000:r`
           ].join('\r\n');
     },
+    idsInputHelp: (
+      <div>
+        Valid formats of specified Genomic Sequence IDs are:
+        <ul>
+          <li>'ID' for full sequence</li>
+          <li>'ID:start..end' for sequence from start to end</li>
+          <li>'ID:start..end:r' for sequence from start to end, reverse-complemented</li>
+        </ul>
+      </div>
+    ),
     formActionUrl: '/cgi-bin/contigSrt'
   },
   {
@@ -93,6 +107,11 @@ const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
   }
 ];
 
+const IDS_HELP_TOOLTIP_POSITION = {
+  my: 'bottom left',
+  at: 'top right'
+};
+
 export function Srt() {
   const { hash } = useLocation();
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
@@ -102,25 +121,36 @@ export function Srt() {
     ? <Loading />
     : <div className={cx()}>
         <div className={cx('--Choices')}>
-          <h2>
-            Download Sequences by
+          <h2 className={cx('--ChoicesHeader')}>
+            Download Sequences By
           </h2>
-          {
-            compatibleSrtConfigs.map(
-              config =>
-                <a
-                  key={config.recordClassUrlSegment}
-                  href={`#${config.recordClassUrlSegment}`}
-                  onClick={() => setSelectedSrtConfig(config.recordClassUrlSegment)}
-                >
-                  {config.display}
-                </a>
-            )
-          }
+          <div className={cx('--ChoicesLinks')}>
+            {
+              compatibleSrtConfigs.map(
+                (config, i, configs)  =>
+                  <React.Fragment key={config.recordClassUrlSegment}>
+                    {
+                      config.recordClassUrlSegment === selectedSrtConfig
+                        ? config.display
+                        : <a
+                            href={`#${config.recordClassUrlSegment}`}
+                            onClick={() => setSelectedSrtConfig(config.recordClassUrlSegment)}
+                            className={cx('--ChoiceLink', config.recordClassUrlSegment === selectedSrtConfig && 'selected')}
+                          >
+                            {config.display}
+                          </a>
+                    }
+                    {i < configs.length - 1 && ' | '}
+                  </React.Fragment>
+              )
+            }
+          </div>
         </div>
-        <div className={cx('--BulkDownloadLink')}>
-          If you would like to download data in bulk, please visit our <a href={BULK_DOWNLOAD_URL}>file download section</a>
-        </div>
+        <p className={cx('--BulkDownloadLink')}>
+          If you would like to download data in bulk, please visit our
+          {' '}
+          <a href={BULK_DOWNLOAD_URL} target="_blank">file download section</a>
+        </p>
         <hr />
         <div className={cx('--Forms')}>
           {
@@ -144,6 +174,7 @@ function SrtForm({
   initialReporterFormState,
   ReporterForm,
   initialIdsState,
+  idsInputHelp,
   projectId,
   formActionUrl
 }: SrtFormConfig) {
@@ -157,16 +188,25 @@ function SrtForm({
       </h3>
 
       <input type="hidden" name="project_id" value={projectId} />
-      <div className={cx('--IdsInstructions')}>
-        Enter a list of {display} (each ID on a separate line):
+      <div className={cx('--IdsInput')} >
+        <p>
+          Enter a list of {display} (each ID on a separate line):
+          {' '}
+          {
+            idsInputHelp != null &&
+            <HelpIcon tooltipPosition={IDS_HELP_TOOLTIP_POSITION}>
+              {idsInputHelp}
+            </HelpIcon>
+          }
+        </p>
+        <TextArea
+          name="ids"
+          value={idsState}
+          onChange={setIdsState}
+          rows={4}
+          cols={60}
+        />
       </div>
-      <TextArea
-        name="ids"
-        value={idsState}
-        onChange={setIdsState}
-        rows={4}
-        cols={60}
-      />
       <hr />
       <ReporterForm
         formState={formState}
