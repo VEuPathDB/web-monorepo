@@ -1,6 +1,9 @@
+import React from 'react';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { StudyCard } from 'ebrc-client/App/Studies';
 import { SearchCard } from 'ebrc-client/App/Searches';
 import { ImageCard } from 'ebrc-client/App/ImageCard';
+import { CategoryIcon } from 'ebrc-client/App/Categories';
 
 import { studyMatchPredicate } from 'ebrc-client/util/homeContent';
 
@@ -9,6 +12,15 @@ export default ({ studies, searches, visualizations }) => ([
     title: 'Explore the Studies',
     contentType: 'StudyCardList',
     contentNamePlural: 'studies',
+    filters: Seq.from(studies.entities || [])
+      .flatMap(study => study.categories)
+      .uniq()
+      .map(category => ({
+        id: category,
+        display: <CategoryIcon category={category}/>,
+        predicate: study => study.categories.includes(category)
+      }))
+      .toArray(),
     items: studies.entities,
     isLoading: studies.loading,
     isExpandable: true,
