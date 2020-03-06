@@ -240,9 +240,10 @@ var Histogram = (function() {
     createPlot() {
       var { chartType, timeformat } = this.props;
       var { uiState } = this.state;
-      var { binSize, binStart } = uiState;
+      var { binSize, binStart, xaxisMin, xaxisMax } = uiState;
       const distribution = binSize ? this.getBinnedDistribution(binSize, binStart, this.props.distribution) : this.props.distribution;
       const clampedDistribution = binSize ? distribution : this.getClampedDistribution(distribution, uiState);
+      const useScientificNotation = xaxisMax - xaxisMin < 0.1;
 
       var barWidth = binSize
         ? (
@@ -255,9 +256,10 @@ var Histogram = (function() {
       var xaxisBaseOptions = chartType === 'date'
         ? { mode: 'time', timeformat: timeformat }
         : {
-          tickFormatter: value => formatNumber(value, { useScientificNotation: true })
+          tickFormatter: value => useScientificNotation
+            ? value.toExponential(2)
+            : value.toLocaleString(undefined, { maximumFractionDigits: 2 })
         };
-
 
       var seriesData = this.getSeriesData(clampedDistribution);
 

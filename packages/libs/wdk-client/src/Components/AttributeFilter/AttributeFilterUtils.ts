@@ -101,7 +101,7 @@ interface NumberFormatOptions {
 }
 
 export function formatNumber(value: number, options?: NumberFormatOptions) {
-  return options?.useScientificNotation && value.toString().length > 5
+  return options?.useScientificNotation && Math.abs(value) < 0.01 && value !== 0
     ? value.toExponential(2)
     : value.toLocaleString(undefined, {
       maximumFractionDigits: 2
