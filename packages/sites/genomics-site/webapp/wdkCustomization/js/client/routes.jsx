@@ -6,7 +6,6 @@ import SiteSearchController from 'ebrc-client/controllers/SiteSearchController';
 import FastaConfigController from './components/controllers/FastaConfigController';
 import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
-import { SrtController } from './components/controllers/SrtController';
 
 import { FeaturedTools } from './components/homepage/FeaturedTools';
 import { WorkshopExercises } from './components/homepage/WorkshopExercises';
@@ -115,11 +114,6 @@ export const wrapRoutes = ebrcRoutes => [
   {
     path: '/search',
     component: SiteSearchController
-  },
-
-  {
-    path: '/srt',
-    component: SrtController
   },
 
   ...ebrcRoutes.map(route => route.path.includes(':primaryKey+')

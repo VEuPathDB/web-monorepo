@@ -1,5 +1,6 @@
 import React from 'react';
 import { PageController } from 'wdk-client/Controllers';
+import { Srt } from '../Srt';
 
 /**
  * This will eventually be the view controller for the SRT page (srt.jsp).  It
@@ -9,6 +10,6 @@ import { PageController } from 'wdk-client/Controllers';
  */
 export default class FastaConfigController extends PageController {
   renderView() {
-    return ( <h1>FASTA!</h1> );
+    return <Srt />;
   }
 }
