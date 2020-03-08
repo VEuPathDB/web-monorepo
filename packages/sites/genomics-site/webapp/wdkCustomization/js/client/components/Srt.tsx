@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
@@ -115,7 +115,11 @@ const IDS_HELP_TOOLTIP_POSITION = {
 export function Srt() {
   const { hash } = useLocation();
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
-  const [ selectedSrtConfig, setSelectedSrtConfig ] = useState(hash.slice(1) || undefined);
+  const [ selectedSrtForm, setSelectedSrtForm ] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setSelectedSrtForm(hash.slice(1) || undefined);
+  }, [ hash ]);
 
   return !compatibleSrtConfigs
     ? <Loading />
@@ -130,12 +134,12 @@ export function Srt() {
                 (config, i, configs)  =>
                   <React.Fragment key={config.recordClassUrlSegment}>
                     {
-                      config.recordClassUrlSegment === selectedSrtConfig
+                      config.recordClassUrlSegment === selectedSrtForm
                         ? config.display
                         : <a
                             href={`#${config.recordClassUrlSegment}`}
-                            onClick={() => setSelectedSrtConfig(config.recordClassUrlSegment)}
-                            className={cx('--ChoiceLink', config.recordClassUrlSegment === selectedSrtConfig && 'selected')}
+                            onClick={() => setSelectedSrtForm(config.recordClassUrlSegment)}
+                            className={cx('--ChoiceLink', config.recordClassUrlSegment === selectedSrtForm && 'selected')}
                           >
                             {config.display}
                           </a>
@@ -158,7 +162,7 @@ export function Srt() {
               config =>
                 <DeferredDiv
                   key={config.recordClassUrlSegment}
-                  visible={config.recordClassUrlSegment === selectedSrtConfig}
+                  visible={config.recordClassUrlSegment === selectedSrtForm}
                   className={cx('--SelectedForm')}
                 >
                   <SrtForm {...config} />
