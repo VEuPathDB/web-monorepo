@@ -131,20 +131,21 @@ export function Srt() {
                 <a href={BULK_DOWNLOAD_URL} target="_blank">file download section</a>
               </p>
               <hr />
-              <h3 className={cx('--RecordTypeChoicesHeader')}>
+              <h3 className={cx('--RecordTypeHeader')}>
                 Select the type of identifiers you will provide:
               </h3>
-              <RadioList
-                className={cx('--RecordTypeChoices')}
-                value={selectedSrtForm}
-                onChange={setSelectedSrtForm}
-                items={compatibleSrtConfigs.map(
-                  config => ({
-                    value: config.recordClassUrlSegment,
-                    display: config.display
-                  })
-                )}
-              />
+              <div className={cx('--RecordTypeInput')}>
+                <RadioList
+                  value={selectedSrtForm}
+                  onChange={setSelectedSrtForm}
+                  items={compatibleSrtConfigs.map(
+                    config => ({
+                      value: config.recordClassUrlSegment,
+                      display: config.display
+                    })
+                  )}
+                />
+              </div>
               {
                 selectedSrtForm &&
                 <hr />

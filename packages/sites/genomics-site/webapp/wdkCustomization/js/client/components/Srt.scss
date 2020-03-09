@@ -3,11 +3,7 @@
     font-size: 1.3em;
   }
 
-  ul.wdk-RadioList.vpdb-Srt--RecordTypeChoicesInput {
-    margin: 2em;
-  }
-
-  &--IdsInput {
+  &--RecordTypeInput, &--IdsInput {
     margin: 2em;
   }
 }
