@@ -1,10 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router';
 
 import { noop } from 'lodash';
 
-import { TextArea, Loading, HelpIcon } from 'wdk-client/Components';
+import { TextArea, Loading, HelpIcon, RadioList } from 'wdk-client/Components';
 import DeferredDiv from 'wdk-client/Components/Display/DeferredDiv';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
@@ -113,13 +112,9 @@ const IDS_HELP_TOOLTIP_POSITION = {
 };
 
 export function Srt() {
-  const { hash } = useLocation();
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
   const [ selectedSrtForm, setSelectedSrtForm ] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    setSelectedSrtForm(hash.slice(1) || undefined);
-  }, [ hash ]);
 
   return (
     <div className={cx()}>
@@ -130,38 +125,30 @@ export function Srt() {
         !compatibleSrtConfigs
           ? <Loading />
           : <React.Fragment>
-              <div className={cx('--Choices')}>
-                <h2 className={cx('--ChoicesHeader')}>
-                  Select the type of identifiers you will provide:
-                </h2>
-                <div className={cx('--ChoicesLinks')}>
-                  {
-                    compatibleSrtConfigs.map(
-                      (config, i, configs)  =>
-                        <React.Fragment key={config.recordClassUrlSegment}>
-                          {
-                            config.recordClassUrlSegment === selectedSrtForm
-                              ? config.display
-                              : <a
-                                  href={`#${config.recordClassUrlSegment}`}
-                                  onClick={() => setSelectedSrtForm(config.recordClassUrlSegment)}
-                                  className={cx('--ChoiceLink', config.recordClassUrlSegment === selectedSrtForm && 'selected')}
-                                >
-                                  {config.display}
-                                </a>
-                          }
-                          {i < configs.length - 1 && ' | '}
-                        </React.Fragment>
-                    )
-                  }
-                </div>
-              </div>
               <p className={cx('--BulkDownloadLink')}>
                 If you would like to download data in bulk, please visit our
                 {' '}
                 <a href={BULK_DOWNLOAD_URL} target="_blank">file download section</a>
               </p>
               <hr />
+              <h3 className={cx('--RecordTypeChoicesHeader')}>
+                Select the type of identifiers you will provide:
+              </h3>
+              <RadioList
+                className={cx('--RecordTypeChoices')}
+                value={selectedSrtForm}
+                onChange={setSelectedSrtForm}
+                items={compatibleSrtConfigs.map(
+                  config => ({
+                    value: config.recordClassUrlSegment,
+                    display: config.display
+                  })
+                )}
+              />
+              {
+                selectedSrtForm &&
+                <hr />
+              }
               <div className={cx('--Forms')}>
                 {
                   compatibleSrtConfigs.map(
@@ -196,22 +183,18 @@ function SrtForm({
 
   return (
     <form action={formActionUrl} method="post" target="_blank">
-      <h3 className={cx('--FormHeader')} >
-        Retrieve Sequences by {display}
-      </h3>
-
       <input type="hidden" name="project_id" value={projectId} />
+      <h3 className={cx('--IdsHeader')} >
+        Enter a list of {display} (each ID on a separate line):
+        {' '}
+        {
+          idsInputHelp != null &&
+          <HelpIcon tooltipPosition={IDS_HELP_TOOLTIP_POSITION}>
+            {idsInputHelp}
+          </HelpIcon>
+        }
+      </h3>
       <div className={cx('--IdsInput')} >
-        <p>
-          Enter a list of {display} (each ID on a separate line):
-          {' '}
-          {
-            idsInputHelp != null &&
-            <HelpIcon tooltipPosition={IDS_HELP_TOOLTIP_POSITION}>
-              {idsInputHelp}
-            </HelpIcon>
-          }
-        </p>
         <TextArea
           name="ids"
           value={idsState}
