@@ -555,7 +555,7 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/veupathPubs.html')
         },
         {
-          key: 'submitting-divider',
+          key: 'community-divider',
           display: (
             <SubmenuDivider>
               Community
