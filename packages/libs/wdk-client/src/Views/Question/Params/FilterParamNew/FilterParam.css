@@ -97,7 +97,7 @@
 }
 .filter-param .chart {
   height: 200px;
-  margin-left: 1em;
+  margin-left: 2em;
 }
 .filter-param .chart-title {
   font-weight: 500;
@@ -132,19 +132,36 @@
 .filter-param .chart-controls .chart-controlsHeader {
   padding: 1em;
 }
-.filter-param .chart-controls .chart-controlsContent > * {
-  margin: 1em;
+.filter-param .chart-controls .chart-controlsContent {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
 }
-.filter-param .chart-controls .chart-controlsContent > *:first-child {
-  margin-top: 0em;
+.filter-param .chart-controls .chart-controlsContent > * {
+  margin: 0 1em 1em 1em;
+  flex: 1 0 0;
+  position: relative;
+  padding-bottom: 4em;
+}
+.filter-param .chart-controls .chart-controlsContent > * > div {
+  position: absolute;
+  bottom: 1em;
 }
 .filter-param .chart-controls fieldset legend {
   font-weight: 500;
   padding-inline-start: .5em;
   padding-inline-end: .5em;
 }
-.filter-param .chart-controls fieldset > div {
-  margin: .5em 0;
+.filter-param .chart-controls td,
+.filter-param .chart-controls th {
+  border: none;
+  white-space: nowrap;
+}
+.filter-param .chart-controls td {
+  width: 100%;
+}
+.filter-param .chart-controls th {
+  text-align: right;
 }
 .filter-param .chart-controls input {
   vertical-align: middle;

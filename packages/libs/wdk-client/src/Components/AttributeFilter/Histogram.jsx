@@ -496,31 +496,53 @@ var Histogram = (function() {
               className="chart-controls"
             >
               <fieldset>
-                <legend>x-axis{/*xaxisLabel*/}</legend>
-                <div>
-                  <div>Range: {xaxisScaleSelector}</div>
-                </div>
-                {chartType !== 'date' && <div>Bin start: <input type="number" max={valuesMin} value={this.state.uiState.binStart} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinStart(eventToNumber(e))}/></div>}
-                <div>Bin width: <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
-                  <em style={{ color: '#444444', marginLeft: '1em' }}> When bin size = 0, the count of discrete values is shown</em>
-                </div>
-                <div><button type="button" onClick={() => this.resetXAxisState()}>Reset to defaults</button></div>
+                <legend>y-axis{/*yaxisLabel*/}</legend>
+                <table>
+                  <tr>
+                    <th>Scale counts:</th>
+                    <td>
+                      <label>
+                        <input type="radio" checked={!this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(false)}/>
+                        &nbsp;linear
+                      </label>
+                      &nbsp;&nbsp;&nbsp;
+                      <label>
+                        <input type="radio" checked={this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(true)}/>
+                        &nbsp;log<sub>10</sub>
+                      </label>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Range:</th>
+                    <td>{yAxisScaleSelector}&nbsp;&nbsp;</td>
+                  </tr>
+                </table>
+                <div><button type="button" onClick={() => this.resetYAxisState()}>Reset to defaults</button></div>
               </fieldset>
               <fieldset>
-                <legend>y-axis{/*yaxisLabel*/}</legend>
-                <div>Range: {yAxisScaleSelector}&nbsp;&nbsp;</div>
-                <div>Scale counts:&nbsp;&nbsp;
-                  <label>
-                    <input type="radio" checked={!this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(false)}/>
-                    &nbsp;linear
-                  </label>
-                  &nbsp;&nbsp;&nbsp;
-                  <label>
-                    <input type="radio" checked={this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(true)}/>
-                    &nbsp;log<sub>10</sub>
-                  </label>
-                </div>
-                <div><button type="button" onClick={() => this.resetYAxisState()}>Reset to defaults</button></div>
+                <legend>x-axis{/*xaxisLabel*/}</legend>
+                <table>
+                  {chartType !== 'date' &&
+                    <tr>
+                      <th>Bin start:</th>
+                      <td>
+                        <input type="number" max={valuesMin} value={this.state.uiState.binStart} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinStart(eventToNumber(e))}/>
+                      </td>
+                    </tr>
+                  }
+                  <tr>
+                    <th>Bin width:</th>
+                    <td>
+                      <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
+                      <em style={{ color: '#444444', marginLeft: '1em' }}> When bin size = 0, the count of discrete values is shown</em>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Range:</th>
+                    <td>{xaxisScaleSelector}</td>
+                  </tr>
+                </table>
+                <div><button type="button" onClick={() => this.resetXAxisState()}>Reset to defaults</button></div>
               </fieldset>
               {/* <div><button type="button" onClick={() => this.resetUiState()}>Reset to defaults</button></div> */}
             </CollapsibleSection>
