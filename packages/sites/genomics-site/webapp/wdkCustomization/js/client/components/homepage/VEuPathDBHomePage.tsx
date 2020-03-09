@@ -14,7 +14,6 @@ import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
 import { Main } from 'ebrc-client/components/homepage/Main';
 import { NewsPane } from 'ebrc-client/components/homepage/NewsPane';
 import { SearchPane, SearchCheckboxTree } from 'ebrc-client/components/homepage/SearchPane';
-import { Twitter, YouTube, Facebook } from 'ebrc-client/components/homepage/SocialMediaIcons';
 import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/components/homepage/Utils';
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 
