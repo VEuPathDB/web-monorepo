@@ -53,8 +53,6 @@ const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
 
 const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const { isHomePage, classNameModifier } = props;
-  const [ siteSearchSuggestions, setSiteSearchSuggestions ] = useState<string[] | undefined>(undefined);
-  const [ additionalSuggestions, setAdditionalSuggestions ] = useState<{ key: string, display: ReactNode }[]>([]);
   const [ headerExpanded, setHeaderExpanded ] = useState(true);
 
   const [ isNewsExpanded, setIsNewsExpanded ] = useSessionBackedState(
@@ -120,29 +118,6 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     window.dispatchEvent(new Event('resize'));
   }, [ isNewsExpanded ]);
 
-  const preloadedSuggestions = useMemo(
-    () => [
-      'protein',
-      'protein motifs',
-      'proteomics',
-      'protozoa',
-    ],
-    []
-  );
-
-  const loadSuggestions = useCallback((searchTerm: string) => {
-    if (searchTerm) {
-      setSiteSearchSuggestions(
-        [
-          searchTerm,
-          ...preloadedSuggestions
-        ].sort()
-      );
-    } else {
-      setSiteSearchSuggestions(undefined);
-    }
-  }, []);
-
   const rootContainerClassName = combineClassNames(
     vpdbCx(
       'RootContainer',
@@ -179,9 +154,6 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
           branding={projectId}
           menuItems={headerMenuItems} 
           containerClassName={headerClassName} 
-          loadSuggestions={loadSuggestions}
-          siteSearchSuggestions={siteSearchSuggestions}
-          additionalSuggestions={additionalSuggestions}
           onShowAnnouncements={onShowAnnouncements}
           showAnnouncementsToggle={isHomePage && closedBanners.length > 0}
         />
