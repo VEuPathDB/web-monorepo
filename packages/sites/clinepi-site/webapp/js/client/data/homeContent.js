@@ -14,6 +14,7 @@ export default ({ studies, searches, visualizations }) => ([
     contentNamePlural: 'studies',
     filters: Seq.from(studies.entities || [])
       .flatMap(study => study.categories)
+      .orderBy(c => c)
       .uniq()
       .map(category => ({
         id: category,
