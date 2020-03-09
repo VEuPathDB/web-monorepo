@@ -488,41 +488,43 @@ var Histogram = (function() {
               </div>
             </div>
           <div className="chart-title x-axis">{xaxisLabel}</div>
-          <CollapsibleSection
-            isCollapsed={!showSettings}
-            onCollapsedChange={isCollasped => this.setSettingsOpen(!isCollasped)}
-            headerContent={<div><Icon fa="gear"/>&nbsp;&nbsp;Plot Settings</div>}
-            className="chart-controls"
-          >
-            <fieldset>
-              <legend>x-axis{/*xaxisLabel*/}</legend>
-              <div>
-                <div>Range: {xaxisScaleSelector}</div>
-              </div>
-              {chartType !== 'date' && <div>Bin start: <input type="number" max={valuesMin} value={this.state.uiState.binStart} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinStart(eventToNumber(e))}/></div>}
-              <div>Bin width: <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
-                <em style={{ color: '#444444', marginLeft: '1em' }}> When bin size = 0, the count of discrete values is shown</em>
-              </div>
-              <div><button type="button" onClick={() => this.resetXAxisState()}>Reset to defaults</button></div>
-            </fieldset>
-            <fieldset>
-              <legend>y-axis{/*yaxisLabel*/}</legend>
-              <div>Range: {yAxisScaleSelector}&nbsp;&nbsp;</div>
-              <div>Scale counts:&nbsp;&nbsp;
-                <label>
-                  <input type="radio" checked={!this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(false)}/>
-                  &nbsp;linear
-                </label>
-                &nbsp;&nbsp;&nbsp;
-                <label>
-                  <input type="radio" checked={this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(true)}/>
-                  &nbsp;log<sub>10</sub>
-                </label>
-              </div>
-              <div><button type="button" onClick={() => this.resetYAxisState()}>Reset to defaults</button></div>
-            </fieldset>
-            {/* <div><button type="button" onClick={() => this.resetUiState()}>Reset to defaults</button></div> */}
-          </CollapsibleSection>
+          <form noValidate onSubmit={e => e.preventDefault()}>
+            <CollapsibleSection
+              isCollapsed={!showSettings}
+              onCollapsedChange={isCollasped => this.setSettingsOpen(!isCollasped)}
+              headerContent={<div><Icon fa="gear"/>&nbsp;&nbsp;Plot Settings</div>}
+              className="chart-controls"
+            >
+              <fieldset>
+                <legend>x-axis{/*xaxisLabel*/}</legend>
+                <div>
+                  <div>Range: {xaxisScaleSelector}</div>
+                </div>
+                {chartType !== 'date' && <div>Bin start: <input type="number" max={valuesMin} value={this.state.uiState.binStart} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinStart(eventToNumber(e))}/></div>}
+                <div>Bin width: <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
+                  <em style={{ color: '#444444', marginLeft: '1em' }}> When bin size = 0, the count of discrete values is shown</em>
+                </div>
+                <div><button type="button" onClick={() => this.resetXAxisState()}>Reset to defaults</button></div>
+              </fieldset>
+              <fieldset>
+                <legend>y-axis{/*yaxisLabel*/}</legend>
+                <div>Range: {yAxisScaleSelector}&nbsp;&nbsp;</div>
+                <div>Scale counts:&nbsp;&nbsp;
+                  <label>
+                    <input type="radio" checked={!this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(false)}/>
+                    &nbsp;linear
+                  </label>
+                  &nbsp;&nbsp;&nbsp;
+                  <label>
+                    <input type="radio" checked={this.state.uiState.scaleYAxis} onFocus={autoSelectOnFocus} onChange={() => this.setScaleYAxis(true)}/>
+                    &nbsp;log<sub>10</sub>
+                  </label>
+                </div>
+                <div><button type="button" onClick={() => this.resetYAxisState()}>Reset to defaults</button></div>
+              </fieldset>
+              {/* <div><button type="button" onClick={() => this.resetUiState()}>Reset to defaults</button></div> */}
+            </CollapsibleSection>
+          </form>
         </div>
       );
     }
