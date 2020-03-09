@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 import { keyBy } from 'lodash';
 import { projectId } from '../../config';
 import { Loading, IconAlt } from 'wdk-client/Components';
@@ -67,6 +68,7 @@ const FEATURED_TOOL_KEY = 'homepage-featured-tool';
 
 export const FeaturedTools = () => {
   const toolMetadata = useFeaturedToolMetadata();
+  const { hash } = useLocation();
   const [ selectedTool, setSelectedTool ] = useSessionBackedState<string | undefined>(
     undefined,
     FEATURED_TOOL_KEY,
@@ -75,6 +77,7 @@ export const FeaturedTools = () => {
   );
   const selectedToolEntry = !toolMetadata || !selectedTool || !toolMetadata.toolEntries[selectedTool]
     ? undefined
+    : hash.slice(1) ? toolMetadata.toolEntries[hash.slice(1)]
     : toolMetadata.toolEntries[selectedTool];
 
   useEffect(() => {
@@ -82,7 +85,7 @@ export const FeaturedTools = () => {
       toolMetadata && 
       toolMetadata.toolListOrder.length > 0 && 
       toolMetadata.toolEntries[toolMetadata.toolListOrder[1]] &&
-      (!selectedTool || !toolMetadata.toolEntries[selectedTool])
+      (!selectedToolEntry)
     ) {
       setSelectedTool(toolMetadata.toolListOrder[1]);
     }
@@ -100,7 +103,7 @@ export const FeaturedTools = () => {
               <FeaturedToolList
                 toolMetadata={toolMetadata}
                 setSelectedTool={setSelectedTool}
-                selectedTool={selectedTool}
+                selectedTool={selectedToolEntry?.identifier}
               />
               <SelectedTool
                 entry={selectedToolEntry}
@@ -241,23 +244,29 @@ type ToolListItemProps = {
   onSelect: () => void;
 };
 
-const ToolListItem = ({ entry, onSelect, isSelected }: ToolListItemProps) =>
-  <a
-    className={cx('ListItem', isSelected && 'selected')}
-    href="#"
-    onClick={e => {
-      e.preventDefault();
-      onSelect(); 
-    }}
-    type="button"
-  >
-    <div className={cx('ListItemIconContainer')}>
-      <IconAlt fa={entry.listIconKey} />
-    </div>
-    <span className={cx('ListItemCaption')}>
-      {entry.listTitle}
-    </span>
-  </a>;
+const ToolListItem = ({ entry, onSelect, isSelected }: ToolListItemProps) => {
+  const history = useHistory();
+  return (
+    <a
+      className={cx('ListItem', isSelected && 'selected')}
+      href={`#${entry.identifier}`}
+      onClick={e => {
+        if (e.shiftKey || e.ctrlKey) return;
+        e.preventDefault();
+        onSelect(); 
+        history.replace(`#${entry.identifier}`);
+      }}
+      type="button"
+    >
+      <div className={cx('ListItemIconContainer')}>
+        <IconAlt fa={entry.listIconKey} />
+      </div>
+      <span className={cx('ListItemCaption')}>
+        {entry.listTitle}
+      </span>
+    </a>
+  );
+};
 
 type SelectedToolProps = {
   entry?: FeaturedToolEntry
