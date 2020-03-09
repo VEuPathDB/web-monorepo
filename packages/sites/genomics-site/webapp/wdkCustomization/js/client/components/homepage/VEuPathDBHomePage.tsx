@@ -390,12 +390,12 @@ const useHeaderMenuItems = (
         { 
           key: 'srt',
           display: 'Sequence retrieval',
-          type: 'webAppRoute',
-          url: '/srt.jsp'
+          type: 'reactRoute',
+          url: '/fasta-tool'
         },
         {
           key: 'webservices',
-	  display: 'Web services',
+	        display: 'Web services',
           type: 'reactRoute',
           url: makeStaticPageRoute('/webServices.html')
         }
