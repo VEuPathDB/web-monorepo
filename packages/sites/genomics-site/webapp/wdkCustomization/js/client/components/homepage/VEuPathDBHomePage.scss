@@ -438,6 +438,8 @@ body.vpdb-Body {
         "side"
         "footer";
 
+      grid-template-rows: auto auto auto 1fr auto auto;
+
       &__home.vpdb-RootContainer__news-expanded, &__home.vpdb-RootContainer__news-collapsed {
         grid-template-columns: 100%;
       }
