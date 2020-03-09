@@ -398,7 +398,7 @@ const useHeaderMenuItems = (
           key: 'PopBio map',
           display: 'Population Biology map',
           type: 'externalLink',
-          url: '/popbio-map/web/vb_geohashes_mean.html',
+          url: '/popbio-map/web/',
           target: '_blank',
           metadata: {
             include: [ VectorBase ]
