@@ -137,6 +137,13 @@
   align-items: stretch;
   flex-wrap: wrap;
 }
+.filter-param .chart-controls .chart-controlsContent em {
+  color: #444444;
+  margin-left: 1em;
+}
+.filter-param .chart-controls .chart-controlsContent .range-warning {
+  color: #d32f2f;
+}
 .filter-param .chart-controls .chart-controlsContent > * {
   margin: 0 1em 1em 1em;
   flex: 1 0 0;

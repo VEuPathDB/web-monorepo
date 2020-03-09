@@ -9,7 +9,8 @@ import DateRangeSelector from 'wdk-client/Components/InputControls/DateRangeSele
 import NumberRangeSelector from 'wdk-client/Components/InputControls/NumberRangeSelector';
 import { formatDate, formatNumber, parseDate } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
-import { CollapsibleSection } from 'wdk-client/Components';
+import { CollapsibleSection, IconAlt } from 'wdk-client/Components';
+import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 
 const DAY = 1000 * 60 * 60 * 24;
 
@@ -449,6 +450,10 @@ var Histogram = (function() {
       var valuesMin = Math.min(...values);
       var valuesMax = Math.max(...values);
 
+      var counts = distribution.map(entry => entry.count);
+      var countsMin = Math.min(...counts);
+      var countsMax = Math.max(...counts);
+
       var xaxisScaleSelector = chartType === 'date' ? (
         <DateRangeSelector
           inline
@@ -513,8 +518,13 @@ var Histogram = (function() {
                     </td>
                   </tr>
                   <tr>
-                    <th>Range:</th>
-                    <td>{yAxisScaleSelector}&nbsp;&nbsp;</td>
+                    <th>
+                      <RangeWarning rangeMin={countsMin} rangeMax={countsMax} selectionMin={yaxisMin} selectionMax={yaxisMax}/> Range:
+                    </th>
+                    <td>
+                      {yAxisScaleSelector}
+                      <em>({countsMin} - {countsMax})</em>
+                    </td>
                   </tr>
                 </table>
                 <div><button type="button" onClick={() => this.resetYAxisState()}>Reset to defaults</button></div>
@@ -534,12 +544,17 @@ var Histogram = (function() {
                     <th>Bin width:</th>
                     <td>
                       <input type="number" min={0} value={this.state.uiState.binSize} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinSize(eventToNumber(e))}/>
-                      <em style={{ color: '#444444', marginLeft: '1em' }}> When bin size = 0, the count of discrete values is shown</em>
+                      <em> When bin size = 0, the count of discrete values is shown</em>
                     </td>
                   </tr>
                   <tr>
-                    <th>Range:</th>
-                    <td>{xaxisScaleSelector}</td>
+                    <th>
+                      <RangeWarning rangeMin={valuesMin} rangeMax={valuesMax} selectionMin={xaxisMin} selectionMax={xaxisMax}/> Range:
+                    </th>
+                    <td>
+                      {xaxisScaleSelector}
+                      <em>({valuesMin} - {valuesMax})</em>
+                    </td>
                   </tr>
                 </table>
                 <div><button type="button" onClick={() => this.resetXAxisState()}>Reset to defaults</button></div>
@@ -601,6 +616,13 @@ var Histogram = (function() {
 })();
 
 export default Histogram;
+
+function RangeWarning({ rangeMin, rangeMax, selectionMin, selectionMax }) {
+  if (rangeMin >= selectionMin && rangeMax <= selectionMax) return null;
+  return <Tooltip content="Some values are hidden due to your current range selection.">
+    <IconAlt fa="exclamation-circle range-warning"/>
+  </Tooltip>
+}
 
 /**
  * Reusable histogram field component. The parent component is responsible for
