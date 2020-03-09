@@ -85,7 +85,7 @@ export default function StrategyPanel(props: Props) {
       </h2>
       <div className={cx('--Panel')}>
         {isLoading || strategy == null || uiStepTree == null ? <Loading className={cx('--Loading')}/> : null}
-        {strategy && uiStepTree && showCloseButton && (
+        {showCloseButton && (
           <div className={cx('--CloseButton')} title="Close this strategy.">
             <button className="link" onClick={() => onStrategyClose()}>
               <Icon fa="times"/>
