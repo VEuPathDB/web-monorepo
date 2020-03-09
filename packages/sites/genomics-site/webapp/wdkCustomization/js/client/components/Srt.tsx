@@ -121,56 +121,65 @@ export function Srt() {
     setSelectedSrtForm(hash.slice(1) || undefined);
   }, [ hash ]);
 
-  return !compatibleSrtConfigs
-    ? <Loading />
-    : <div className={cx()}>
-        <div className={cx('--Choices')}>
-          <h2 className={cx('--ChoicesHeader')}>
-            Download Sequences By
-          </h2>
-          <div className={cx('--ChoicesLinks')}>
-            {
-              compatibleSrtConfigs.map(
-                (config, i, configs)  =>
-                  <React.Fragment key={config.recordClassUrlSegment}>
-                    {
-                      config.recordClassUrlSegment === selectedSrtForm
-                        ? config.display
-                        : <a
-                            href={`#${config.recordClassUrlSegment}`}
-                            onClick={() => setSelectedSrtForm(config.recordClassUrlSegment)}
-                            className={cx('--ChoiceLink', config.recordClassUrlSegment === selectedSrtForm && 'selected')}
-                          >
-                            {config.display}
-                          </a>
-                    }
-                    {i < configs.length - 1 && ' | '}
-                  </React.Fragment>
-              )
-            }
-          </div>
-        </div>
-        <p className={cx('--BulkDownloadLink')}>
-          If you would like to download data in bulk, please visit our
-          {' '}
-          <a href={BULK_DOWNLOAD_URL} target="_blank">file download section</a>
-        </p>
-        <hr />
-        <div className={cx('--Forms')}>
-          {
-            compatibleSrtConfigs.map(
-              config =>
-                <DeferredDiv
-                  key={config.recordClassUrlSegment}
-                  visible={config.recordClassUrlSegment === selectedSrtForm}
-                  className={cx('--SelectedForm')}
-                >
-                  <SrtForm {...config} />
-                </DeferredDiv>
-            )
-          }
-        </div>
-      </div>;
+  return (
+    <div className={cx()}>
+      <h1>
+        Download Sequences By Identifiers
+      </h1>
+      {
+        !compatibleSrtConfigs
+          ? <Loading />
+          : <React.Fragment>
+              <div className={cx('--Choices')}>
+                <h2 className={cx('--ChoicesHeader')}>
+                  Select the type of identifiers you will provide:
+                </h2>
+                <div className={cx('--ChoicesLinks')}>
+                  {
+                    compatibleSrtConfigs.map(
+                      (config, i, configs)  =>
+                        <React.Fragment key={config.recordClassUrlSegment}>
+                          {
+                            config.recordClassUrlSegment === selectedSrtForm
+                              ? config.display
+                              : <a
+                                  href={`#${config.recordClassUrlSegment}`}
+                                  onClick={() => setSelectedSrtForm(config.recordClassUrlSegment)}
+                                  className={cx('--ChoiceLink', config.recordClassUrlSegment === selectedSrtForm && 'selected')}
+                                >
+                                  {config.display}
+                                </a>
+                          }
+                          {i < configs.length - 1 && ' | '}
+                        </React.Fragment>
+                    )
+                  }
+                </div>
+              </div>
+              <p className={cx('--BulkDownloadLink')}>
+                If you would like to download data in bulk, please visit our
+                {' '}
+                <a href={BULK_DOWNLOAD_URL} target="_blank">file download section</a>
+              </p>
+              <hr />
+              <div className={cx('--Forms')}>
+                {
+                  compatibleSrtConfigs.map(
+                    config =>
+                      <DeferredDiv
+                        key={config.recordClassUrlSegment}
+                        visible={config.recordClassUrlSegment === selectedSrtForm}
+                        className={cx('--SelectedForm')}
+                      >
+                        <SrtForm {...config} />
+                      </DeferredDiv>
+                  )
+                }
+              </div>
+            </React.Fragment>
+      }
+    </div>
+  );
 }
 
 function SrtForm({
