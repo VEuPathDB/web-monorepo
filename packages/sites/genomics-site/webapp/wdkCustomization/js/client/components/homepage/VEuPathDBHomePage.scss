@@ -370,7 +370,7 @@ body.vpdb-Body {
     /***** PORTAL *******/
     &.VEuPathDB, &.EuPathDB {
       .vpdb-Header {
-        background-image: url('~site/images/VEuPathDB/veupathdb-banner.jpg');
+        background-image: url('~site/images/VEuPathDB/header-veupathdb.jpg');
         background-size: cover;
         background-position: center;
 
@@ -378,7 +378,7 @@ body.vpdb-Body {
           position: relative;
           bottom: 20px;
           height: calc(72px * 1.2);
-          content: url('~site/images/VEuPathDB/VEuPathDB.png');
+          content: url('~site/images/VEuPathDB/logos/VEuPathDB.png');
         }
 
         &__collapsed {
