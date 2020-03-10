@@ -45,6 +45,7 @@ import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, f
 
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
+import { InvalidStepValidation } from 'wdk-client/Utils/WdkUser';
 
 export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
   return action$.pipe(
@@ -198,13 +199,19 @@ export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<
           ];
       }
       catch (ex) {
+        const { isValidationError, errorMessage } = parseAnalysisInitializationError(ex);
+
+        if (!isValidationError) {
+          wdkService.submitErrorIfNot500(ex);
+        }
+
         return [
           finishLoadingChosenAnalysisTab(
             panelId,
             {
               ...panelState,
               status: 'ERROR',
-              errorMessage: `An error occurred while loading your chosen analysis: ${ex}`
+              errorMessage
             }
           )
         ];
@@ -523,3 +530,20 @@ const onTabInRunnableState = <ActionType>(state: FocusedState<ActionType>): stat
 
 const onTabInSavedState = <ActionType>(state: FocusedState<ActionType>): state is FocusedSavedAnalysisState<ActionType> =>
   state.panelState && (state.panelState.type === SAVED_ANALYSIS_STATE);
+
+function parseAnalysisInitializationError(error: any) {
+  const isValidationError = 'status' in error && 'response' in error && error.status === 422;
+  const stepValidation = isValidationError ? JSON.parse(error.response) as InvalidStepValidation : undefined;
+
+  if (stepValidation == null) {
+    return {
+      isValidationError: false,
+      errorMessage: error
+    };
+  } else {
+    return {
+      isValidationError: true,
+      errorMessage: stepValidation.errors.general[0]
+    };
+  }
+}
