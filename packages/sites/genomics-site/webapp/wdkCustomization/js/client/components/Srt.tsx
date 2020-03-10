@@ -119,16 +119,16 @@ export function Srt() {
   return (
     <div className={cx()}>
       <h1>
-        Download Sequences By Identifiers
+        Retrieve Sequences
       </h1>
       {
         !compatibleSrtConfigs
           ? <Loading />
           : <React.Fragment>
               <p className={cx('--BulkDownloadLink')}>
-                If you would like to download data in bulk, please visit our
+                Use this tool to retrieve FASTA sequences based on identifiers you supply. (If instead you would like to download sequences in bulk, please visit our
                 {' '}
-                <a href={BULK_DOWNLOAD_URL} target="_blank">file download section</a>
+                <a href={BULK_DOWNLOAD_URL} target="_blank">file download section</a>.)
               </p>
               <hr />
               <h3 className={cx('--RecordTypeHeader')}>
