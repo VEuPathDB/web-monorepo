@@ -17,6 +17,7 @@ const cx = makeClassNameHelper('StrategyPanel');
 
 interface Props {
   isLoading: boolean;
+  hasError: boolean;
   strategy?: StrategyDetails;
   uiStepTree?: PartialUiStepTree;
   insertStepVisibility?: AddType;
@@ -45,6 +46,7 @@ interface Props {
 export default function StrategyPanel(props: Props) {
   const {
     isLoading,
+    hasError,
     uiStepTree,
     strategy,
     insertStepVisibility,
@@ -73,7 +75,8 @@ export default function StrategyPanel(props: Props) {
     <div className={cx()}>
       <h2 className={cx('--Heading')}>
         {/*<div>Search Strategy:</div>*/}
-        {strategy == null ? <em>Loading...</em> :
+        { hasError ? <em>Error...</em> :
+          strategy == null ? <em>Loading...</em> :
           <div className={cx('--StrategyName')}>
             <SaveableTextEditor
               value={strategy.name}
@@ -84,7 +87,7 @@ export default function StrategyPanel(props: Props) {
         }
       </h2>
       <div className={cx('--Panel')}>
-        {isLoading || strategy == null || uiStepTree == null ? <Loading className={cx('--Loading')}/> : null}
+        {!hasError && (isLoading || strategy == null || uiStepTree == null) ? <Loading className={cx('--Loading')}/> : null}
         {showCloseButton && (
           <div className={cx('--CloseButton')} title="Close this strategy.">
             <button className="link" onClick={() => onStrategyClose()}>
@@ -92,7 +95,11 @@ export default function StrategyPanel(props: Props) {
             </button>
           </div>
         )}
-        {strategy != null && uiStepTree != null ?
+          {hasError ? (
+            <div style={{ padding: '1em' }}>
+              This strategy could no be loaded due to a server error.
+            </div>
+          ) : strategy != null && uiStepTree != null ?
           <>
             <StrategyControls strategyId={strategy.strategyId}/>
             <div className={cx('--StepBoxesContainer')}>

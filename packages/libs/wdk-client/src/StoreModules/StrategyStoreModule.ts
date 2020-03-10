@@ -19,6 +19,7 @@ import {
   fulfillDuplicateStrategy,
   requestStrategy,
   fulfillStrategy,
+  fulfillStrategyError,
   fulfillPutStrategy,
   fulfillDraftStrategy,
   requestPatchStrategyProperties,
@@ -49,6 +50,7 @@ export const key = 'strategies';
 
 export interface StrategyEntry {
   isLoading: boolean;
+  hasError: boolean;
   strategy?: StrategyDetails;
 }
 
@@ -79,23 +81,27 @@ export function reduce(state: State = initialState, action: Action): State {
     const strategyId  = action.payload.strategyId;
     return updateStrategyEntry(state, strategyId, prevEntry => ({
       ...prevEntry,
-      isLoading: true
+      isLoading: true,
+      hasError: false
     }));
   }
 
   case cancelStrategyRequest.type: {
     return updateStrategyEntry(state, action.payload.strategyId, entry => ({
+      hasError: false,
       ...entry,
-      isLoading: false
+      isLoading: false,
+      
     }));
   }
 
   case fulfillDuplicateStrategy.type: {
     const s1 = updateStrategyEntry(state, action.payload.sourceStrategyId, entry => ({
+      hasError: false,
       ...entry,
       isLoading: false
     }));
-    const s2 = updateStrategyEntry(s1, action.payload.strategyId, { isLoading: false });
+    const s2 = updateStrategyEntry(s1, action.payload.strategyId, { hasError: false, isLoading: false });
 
     return s2;
   }
@@ -104,24 +110,27 @@ export function reduce(state: State = initialState, action: Action): State {
     // remove the new saved strategy from state, if it is there, since it will be out-of-date.
     const s1 = deleteStrategiesFromState(state, [ action.payload.newStrategyId ]);
     const s2 = updateStrategyEntry(s1, action.payload.oldStrategyId, {
-      isLoading: false
+      isLoading: false,
+      hasError: false
     });
     return s2;
   }
 
   case fulfillDraftStrategy.type: {
     const newState = updateStrategyEntry(state, action.payload.savedStrategyId, {
-      isLoading: false
+      isLoading: false,
+      hasError: false
     });
     return updateStrategyEntry(newState, action.payload.strategy.strategyId, {
       isLoading: false,
+      hasError: false,
       strategy: action.payload.strategy
     });
   }
 
   case fulfillCreateStrategy.type: 
   case fulfillImportStrategy.type: {
-    return updateStrategyEntry(state, action.payload.strategyId, { isLoading: false });
+    return updateStrategyEntry(state, action.payload.strategyId, { hasError: false, isLoading: false });
   }
 
   // XXX Consider doing a deep compare of current and new strategy. Will have to determine which values to compare (e.g., omit step.{estimatedSize,lastRunTime})
@@ -130,8 +139,17 @@ export function reduce(state: State = initialState, action: Action): State {
     const strategy = action.payload.strategy;
     return updateStrategyEntry(state, strategy.strategyId, {
       isLoading: false,
+      hasError: false,
       strategy
     });
+  }
+
+  case fulfillStrategyError.type: {
+    return updateStrategyEntry(state, action.payload.strategyId, entry => ({
+      ...entry,
+      isLoading: false,
+      hasError: true
+    }));
   }
 
   case fulfillDeleteStrategy.type: {
@@ -183,10 +201,15 @@ function deleteStrategiesFromState(state: State, strategyIds: number[]): State {
     [requestAction]: [InferAction<typeof requestStrategy>],
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
-  ): Promise<InferAction<typeof fulfillStrategy>> {
+  ): Promise<InferAction<typeof fulfillStrategy | typeof fulfillStrategyError>> {
     const strategyId  = requestAction.payload.strategyId;
-      let strategy = await wdkService.getStrategy(strategyId);
+    try {
+      const strategy = await wdkService.getStrategy(strategyId);
       return fulfillStrategy(strategy);
+    }
+    catch (error) {
+      return fulfillStrategyError(strategyId, error);
+    }
   }
 
   async function getFulfillStrategy_PutStepTree(

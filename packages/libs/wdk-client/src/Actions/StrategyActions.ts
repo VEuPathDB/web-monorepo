@@ -30,6 +30,11 @@ export const fulfillStrategy = makeActionCreator(
     (strategy: StrategyDetails) => ({ strategy })
 );
 
+export const fulfillStrategyError = makeActionCreator(
+    'fulfillStrategyError',
+    (strategyId: number, error: Error) => ({ strategyId, error })
+);
+
 export const fulfillPutStrategy = makeActionCreator(
     'fulfillPutStrategy',
     (strategy: StrategyDetails, oldStepTree: StepTree) => ({ strategy, oldStepTree })
@@ -231,6 +236,7 @@ export type Action = InferAction<
   | typeof fulfillDuplicateStrategy
   | typeof requestStrategy
   | typeof fulfillStrategy
+  | typeof fulfillStrategyError
   | typeof fulfillPutStrategy
   | typeof fulfillDraftStrategy
   | typeof requestPatchStrategyProperties

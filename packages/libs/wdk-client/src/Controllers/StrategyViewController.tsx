@@ -7,15 +7,15 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import OpenedStrategies from 'wdk-client/Views/Strategy/OpenedStrategies';
 import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
-import {Step, StrategyDetails} from 'wdk-client/Utils/WdkUser';
+import {Step} from 'wdk-client/Utils/WdkUser';
 import {requestStrategy} from 'wdk-client/Actions/StrategyActions';
 import {createSelector} from 'reselect';
 import {StepResultType} from 'wdk-client/Utils/WdkResult';
 import {RecordClass, Question} from 'wdk-client/Utils/WdkModel';
 import {Omit} from 'wdk-client/Core/CommonTypes';
 import InvalidStepResults from 'wdk-client/Views/Strategy/InvalidStepResults';
+import { StrategyEntry } from 'wdk-client/StoreModules/StrategyStoreModule';
 
-type StrategyEntry = { strategy?: StrategyDetails, isLoading: boolean; };
 type OpenedStrategiesMap = [number, StrategyEntry][];
 
 interface OwnProps {
@@ -141,7 +141,7 @@ function getQuestion({
 
 function getStrategyEntry(state: RootState, id?: number): StrategyEntry {
   const entry = id == null ? undefined : state.strategies.strategies[id];
-  return entry || { isLoading: true };
+  return entry || { isLoading: true, hasError: false };
 }
 
 function mapState(state: RootState, props: OwnProps): MappedProps {

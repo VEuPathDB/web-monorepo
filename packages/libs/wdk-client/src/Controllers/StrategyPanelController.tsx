@@ -18,6 +18,7 @@ interface OwnProps {
   isActive: boolean;
   strategy?: StrategyDetails;
   isLoading: boolean;
+  hasError: boolean;
   strategyId: number;
   stepId?: number;
   showCloseButton?: boolean;
