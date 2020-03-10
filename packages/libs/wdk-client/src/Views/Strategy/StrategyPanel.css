@@ -4,12 +4,9 @@
   justify-content: flex-start;
   align-items: center;
   font-size: 1.4em;
-  padding-bottom: 0;
-  height: 2em;
-}
-
-.StrategyPanel:first-child .StrategyPanel--Heading {
   padding: 0;
+  height: 2em;
+  margin-top: .5em;
 }
 
 .StrategyPanel--CloseButton {

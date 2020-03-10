@@ -18,7 +18,7 @@ export default function OpenedStrategies(props: Props) {
   const stratPanelRef = useRef<HTMLDivElement>(null);
   const resizeContainerRef = useRef<HTMLDivElement>(null);
   // FIXME Figure out how to compute this...
-  const singlePanelHeight = 172;
+  const singlePanelHeight = 180;
   // TODO Make this configurable
   const maxDefaultGrowFactor = 2.25;
   const defaultContainerHeight = Math.min(singlePanelHeight * maxDefaultGrowFactor, singlePanelHeight * (openedStrategies?.length || 1));
