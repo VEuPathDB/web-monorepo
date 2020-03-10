@@ -7,7 +7,7 @@ import { TextArea, Loading, HelpIcon, RadioList } from 'wdk-client/Components';
 import DeferredDiv from 'wdk-client/Components/Display/DeferredDiv';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper, useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
 
 import FastaGeneReporterForm from 'ebrc-client/components/reporters/FastaGeneReporterForm';
 import { fastaGenomicSequenceReporterFormFactory } from 'ebrc-client/components/reporters/FastaGenomicSequenceReporterForm';
@@ -115,6 +115,7 @@ export function Srt() {
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
   const [ selectedSrtForm, setSelectedSrtForm ] = useState<string | undefined>(undefined);
 
+  useSetDocumentTitle('Retrieve Sequences');
 
   return (
     <div className={cx()}>
