@@ -163,7 +163,7 @@
         padding-left: 1.39em;
         padding-top: 3em;
         width: 100%;
-        background-image: linear-gradient(to bottom, transparent, white 50%);
+        background-image: linear-gradient(to bottom, rgba(white, 0), white 50%);
 
         &__expanded {
           position: relative;
