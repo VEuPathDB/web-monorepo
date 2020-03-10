@@ -23,6 +23,7 @@
     right: 1em;
     top: 1em;
     font-size: .9em;
+    font-weight: bold;
     &__hidden {
       visibility: hidden;
     }
@@ -34,7 +35,7 @@
   }
   &--ApplyButton.btn {
     &, &:hover {
-      background: #1c6ccc;
+      background: green;
       color: white;
     }
   }
@@ -43,6 +44,10 @@
     &, &:hover {
       background: #cb2b39;
       color: white;
+    }
+    .fa {
+      margin: 0;
+      font-size: 1em;
     }
   }
 

@@ -210,7 +210,7 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
         </h3>
         <div className={cx('--Buttons', showApplyAndCancelButtons ? 'visible' : 'hidden')}>
           <button type="button" className={cx('--ApplyButton') + ' btn'} onClick={() => updateSearchConfig()}>Apply</button>
-          <button type="button" className={cx('--CancelButton') + ' btn'} onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}>Cancel</button>
+          <button type="button" className={cx('--CancelButton') + ' btn'} onClick={() => setTemporaryFilterConfig(appliedFilterConfig)}><i className="fa fa-times"/></button>
         </div>
         { taxonomyTreeWithCounts
         ? (
