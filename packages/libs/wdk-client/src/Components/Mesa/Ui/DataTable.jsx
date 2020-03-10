@@ -58,7 +58,10 @@ class DataTable extends React.Component {
     if (this.bodyNode == null) return;
     this.bodyNode.querySelectorAll('img, iframe, object').forEach(node => {
       if (node.complete) return;
-      node.addEventListener('load', this.setDynamicWidths);
+      node.addEventListener('load', (event) => {
+        const el = event.target.offsetParent || event.target;
+        if (el.scrollWidth > el.clientWidth) this.setDynamicWidths();
+      });
     });
   }
 
