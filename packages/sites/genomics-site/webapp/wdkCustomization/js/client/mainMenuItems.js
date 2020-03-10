@@ -28,20 +28,11 @@ function shouldShowGalaxyOrientation(preferences) {
  * @return {Array<Item>}
  */
 export default function mainMenuItems({ siteConfig, config, preferences }, defaultItems) {
-  const userDatasetsEnabled = get(config, ['userDatasetStoreStatus'], UD_DISABLED) !== UD_DISABLED;
   return [
     defaultItems.home,
     defaultItems.search,
     defaultItems.strategies,
     defaultItems.basket,
-
-    userDatasetsEnabled ? {
-      id: 'userDatasets',
-      text: 'My Data Sets',
-      beta: true,
-      exclude: [EuPathDB],
-      route: '/workspace/datasets'
-    } : null,
 
     {
       id: 'tools',
@@ -213,7 +204,7 @@ export default function mainMenuItems({ siteConfig, config, preferences }, defau
               text: 'CryptoDB',
               url: 'http://cryptodb.org/common/downloads'
             },
-            { 
+            {
               id: 'FungiDB',
               text: 'FungiDB',
               url: 'http://fungidb.org/common/downloads'
