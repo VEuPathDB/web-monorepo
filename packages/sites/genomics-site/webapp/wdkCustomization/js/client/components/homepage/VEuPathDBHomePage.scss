@@ -120,7 +120,6 @@ body.vpdb-Body {
 
     .vpdb-Header {
       grid-area: header;
-      box-shadow: 0 2px 4px #00000066;
 
       &__expanded {
         position: relative;
@@ -146,6 +145,8 @@ body.vpdb-Body {
         grid-template-areas:
           "site-branding searchbar social login"
           "site-branding menubar social login";
+
+        box-shadow: 0 2px 4px #00000066;
 
         .ebrc-HeaderSearchBar {
           input, form {
