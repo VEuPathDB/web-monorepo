@@ -318,7 +318,8 @@ const mapAnalysisMenuStateToProps = (
   choices,
   selectedType: analysisMenuState.selectedAnalysis
     ? analysisMenuState.selectedAnalysis.name
-    : undefined
+    : undefined,
+  errorMessage: analysisMenuState.errorMessage
 });
 
 const mapUnsavedAnalysisStateToProps = (
