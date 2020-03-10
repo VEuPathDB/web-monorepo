@@ -10,6 +10,7 @@ export type StepAnalysisStateProps = StepAnalysisUnopenedPaneTypedProps | StepAn
 
 export interface StepAnalysisUnopenedPaneTypedProps {
   type: 'unopened-pane';
+  errorMessage: string | null;
 }
 
 export interface StepAnalysisLoadingMenuPaneTypedProps {
@@ -44,7 +45,15 @@ export const StepAnalysisView: React.SFC<StepAnalysisStateProps & StepAnalysisEv
     <Fragment>
       {
         props.type === 'unopened-pane' &&
-        <div className="step-analysis-pane"></div>
+        <div className="step-analysis-pane">
+          {
+            props.errorMessage != null &&
+            <Fragment>
+              <h3>An error occurred while loading this analysis</h3>
+              <p>{props.errorMessage}</p>
+            </Fragment>
+          }
+        </div>
       }
       {
         props.type === 'loading-menu-pane' &&

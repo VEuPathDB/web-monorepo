@@ -302,7 +302,7 @@ export const mapAnalysisPanelStateToProps = (
 const mapUnitializedPanelStateToProps = (panelState: UninitializedAnalysisPanelState): StepAnalysisStateProps =>
   panelState.status === 'LOADING_SAVED_ANALYSIS'
     ? ({ type: 'loading-menu-pane' })
-    : ({ type: 'unopened-pane' });
+    : ({ type: 'unopened-pane', errorMessage: panelState.errorMessage });
 
 const mapAnalysisMenuStateToProps = (
   analysisMenuState: AnalysisMenuState,

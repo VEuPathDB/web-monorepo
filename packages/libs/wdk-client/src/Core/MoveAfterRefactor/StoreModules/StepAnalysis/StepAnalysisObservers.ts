@@ -145,7 +145,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
           {
             ...panelState,
             status: 'ERROR',
-            errorMessage: `An error occurred while loading this analysis: ${ex}`
+            errorMessage: ex
           }
         )
       }
