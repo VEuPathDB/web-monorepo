@@ -67,6 +67,13 @@ export default function OpenedStrategies(props: Props) {
     scrollToActiveStrategy();
   }, [ activeStrategy ]);
 
+  if (openedStrategies == null || openedStrategies.length === 0) return (
+    <div style={{ fontSize: '1.2em' }}>
+      <p>You have no open strategies. Please run a search to start a strategy.</p>
+      <p>To open an existing strategy, visit the <Link to="/workspace/strategies/all">'All' page</Link>.</p>
+    </div>
+  );
+
   const stratPanel = (
     <div className="OpenedStrategiesPanel" ref={stratPanelRef}>
       {openedStrategies && openedStrategies.map(([id, entry]) => (
@@ -100,14 +107,8 @@ export default function OpenedStrategies(props: Props) {
       >
         {stratPanel}
       </ResizableContainer>
-      {strategyId == null &&
+      {(strategyId == null || stepId == null) &&
         <div style={{ fontSize: '1.2em' }}>
-          <p>You have no open strategies. Please run a search to start a strategy.</p>
-          <p>To open an existing strategy, visit the <Link to="/workspace/strategies/all">'All' page</Link>.</p>
-        </div>
-      }
-      {strategyId != null && stepId == null &&
-        <div>
           Select a search above to see the results.
         </div>
       }
