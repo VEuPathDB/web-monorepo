@@ -12,8 +12,10 @@ export function reduce() {
 }
 
 export const observe = combineEpics(
-  mrate([requestImportStrategy], getFulfillImportStrategy),
-  mrate([fulfillImportStrategy], getTransitionOnImport),
+  mrate([requestImportStrategy], getFulfillImportStrategy,
+    { areActionsNew: () => true }),
+  mrate([fulfillImportStrategy], getTransitionOnImport,
+    { areActionsNew: () => true }),
 )
 
 async function getFulfillImportStrategy(
