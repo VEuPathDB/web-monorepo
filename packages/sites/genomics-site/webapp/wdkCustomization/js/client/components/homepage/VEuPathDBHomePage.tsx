@@ -519,11 +519,26 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: aboutRoute
         },
+        { 
+          key: 'pubs-divider',
+          display: (
+            <SubmenuDivider>
+              Publications
+            </SubmenuDivider>
+          ),
+          type: 'custom'
+        },
         {
           key: 'eupathdb-publications',
           display: 'Publications on VEuPathDB sites',
           type: 'reactRoute',
           url: makeStaticPageRoute('/veupathPubs.html')
+        },
+        { 
+          key: 'citations',
+          display: 'Publications that use our resources',
+          type: 'externalLink',
+          url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en'
         },
         {
           key: 'community-divider',
@@ -556,7 +571,7 @@ const useHeaderMenuItems = (
           key: 'submitting-divider',
           display: (
             <SubmenuDivider>
-              Submitting data to {projectId}
+              Submit data
             </SubmenuDivider>
           ),
           type: 'custom'
@@ -569,7 +584,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'submission-policy',
-          display: 'VEuPathDB data submission & release policies',
+          display: 'Data submission and release policies',
           type: 'externalLink',
           url: '/EuPathDB_datasubm_SOP.pdf'
         },
@@ -595,14 +610,8 @@ const useHeaderMenuItems = (
           url: `${aboutRoute}#citingproviders`
         },
         {
-          key: 'citations',
-          display: 'Publications that use our resources',
-          type: 'externalLink',
-          url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en'
-        },
-        {
           key: 'data-access-policy',
-          display: 'Data Access Policy',
+          display: 'Data access policy',
           type: 'reactRoute',
           url: `${aboutRoute}#use`
         },
@@ -634,6 +643,12 @@ const useHeaderMenuItems = (
           url: `${aboutRoute}#advisors`
         },
         {
+          key: 'personnel',
+          display: 'Personnel',
+          type: 'reactRoute',
+          url: `${aboutAllRoute}#personnel`
+        },
+        {
           key: 'acknowledgement',
           display: 'Acknowledgements',
           type: 'reactRoute',
@@ -644,18 +659,6 @@ const useHeaderMenuItems = (
           display: 'Funding',
           type: 'reactRoute',
           url: `${aboutRoute}#funding`
-        },
-        {
-          key: 'brochure',
-          display: 'EuPathDB Brochure',
-          type: 'externalLink',
-          url: 'http://eupathdb.org/tutorials/eupathdbFlyer.pdf'
-        },
-        {
-          key: 'brochure-chinese',
-          display: 'EuPathDB brochure in Chinese',
-          type: 'externalLink',
-          url: 'http://eupathdb.org/tutorials/eupathdbFlyer_Chinese.pdf'
         },
         {
           key: 'technical-divider',
@@ -674,13 +677,13 @@ const useHeaderMenuItems = (
         },
         {
           key: 'infrastructure',
-          display: 'EuPathDB Infrastructure',
+          display: 'Infrastructure',
           type: 'reactRoute',
           url: makeStaticPageRoute('/infrastructure.html')
         },
         {
           key: 'usage-statistics',
-          display: 'Website Usage Statistics',
+          display: 'Website usage statistics',
           type: 'externalLink',
           url: '/awstats/awstats.pl'
         }
