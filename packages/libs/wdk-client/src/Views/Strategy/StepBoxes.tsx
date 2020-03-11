@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
