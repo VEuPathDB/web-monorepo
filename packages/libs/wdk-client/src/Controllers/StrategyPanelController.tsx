@@ -12,6 +12,7 @@ import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { PartialUiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 import {removeFromOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
+import { getStepIds } from 'wdk-client/Utils/StrategyUtils';
 
 interface OwnProps {
   viewId: string;
@@ -173,6 +174,12 @@ function makeUiStepTree(
       ? primaryDepth + 1
       : primaryInputMetadata.primaryBranchLength;
 
+    // if step is nested, need to check validity of any input steps
+    const areInputsValid = (
+      (primaryInputMetadata ? primaryInputMetadata.uiStepTree.areInputsValid && primaryInputMetadata.uiStepTree.step.validation.isValid : true) &&
+      (secondaryInputMetadata ? secondaryInputMetadata.uiStepTree.areInputsValid && secondaryInputMetadata.uiStepTree.step.validation.isValid : true)
+    );
+
     return {
       uiStepTree: {
         step,
@@ -183,6 +190,7 @@ function makeUiStepTree(
         nestedControlStep,
         color,
         isNested,
+        areInputsValid,
         slotNumber: primaryBranchLength - primaryDepth
       },
       primaryBranchLength

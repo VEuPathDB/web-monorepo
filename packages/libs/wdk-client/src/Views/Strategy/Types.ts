@@ -10,6 +10,7 @@ export interface PartialUiStepTree {
   secondaryInput?: PartialUiStepTree;
   nestedControlStep?: Step;
   isNested: boolean;
+  areInputsValid: boolean;
   slotNumber: number;
 }
 
@@ -26,6 +27,7 @@ export interface UiStepTree {
   secondaryInput?: PartialUiStepTree;
   nestedControlStep?: Step;
   isNested: boolean;
+  areInputsValid: boolean;
   slotNumber: number;
 }
 
@@ -89,6 +91,7 @@ export interface StepBoxesProps {
 export interface StepBoxProps<T extends UiStepTree = UiStepTree> {
   stepTree: T;
   isNested: boolean;
+  areInputsValid: boolean;
   isExpanded: boolean;
   isDeleteable: boolean;
   isAnalyzable: boolean;

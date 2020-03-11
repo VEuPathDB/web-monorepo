@@ -15,6 +15,7 @@ import { TransformIcon } from 'wdk-client/Views/Strategy/TransformIcon';
 
 const INVALID_SEARCH_TITLE = 'This step refers to a search that is no longer valid. In order to fix your strategy, this step must be deleted.';
 const INVALID_PARAMS_TITLE = 'This step contains a configuration that is no longer valid and must be revised to view results.'
+const INVALID_NESTED_TITLE = 'This nested strategy contains a step that is no longer valid. Expand this nested strategy to see which steps need to be updated.'
 
 export const ADD_STEP_BUTTON_VERBIAGE = 'Combine the results of your strategy with the results of a new search, or convert the results of your strategy with available data transformations.';
 
@@ -61,7 +62,7 @@ function StepTree(props: StepBoxesProps) {
     return <UnknownQuestionStepBox stepTree={stepTree} deleteStep={() => props.onDeleteStep(stepTree.step.id)}/>
   }
 
-  const { step, primaryInput, secondaryInput, question } = stepTree;
+  const { step, primaryInput, secondaryInput, question, areInputsValid } = stepTree;
 
   // primary input is deleteable if the current step accepts
   // the record type of the primary input's primary input record type,
@@ -87,6 +88,7 @@ function StepTree(props: StepBoxesProps) {
             isAnalyzable: question.isAnalyzable,
             isNested: false,
             isExpanded: false,
+            areInputsValid,
             isDeleteable,
             isDetailVisible: props.stepDetailVisibility === step.id,
             setDetailVisibility: isVisible => props.setStepDetailVisibility(isVisible ? step.id : undefined),
@@ -120,6 +122,7 @@ function StepTree(props: StepBoxesProps) {
                   stepTree: secondaryInput,
                   isAnalyzable: secondaryInput.question.isAnalyzable,
                   isNested: secondaryInput.isNested,
+                  areInputsValid: secondaryInput.areInputsValid,
                   isExpanded: step.expanded,
                   isDeleteable,
                   isDetailVisible: props.stepDetailVisibility === secondaryInput.step.id,
@@ -290,7 +293,7 @@ function PreviewStepTree(props: PreviewStepBoxesProps) {
     return <UnknownQuestionStepBox stepTree={stepTree} deleteStep={noop} />;
   }
 
-  const { step, primaryInput, secondaryInput } = stepTree;
+  const { step, primaryInput, secondaryInput, areInputsValid } = stepTree;
 
   const existingStepBox = (
     <Plugin<StepBoxProps>
@@ -303,6 +306,7 @@ function PreviewStepTree(props: PreviewStepBoxesProps) {
       pluginProps={{
         stepTree,
         isNested: false,
+        areInputsValid,
         isDetailVisible: false,
         setDetailVisibility: () => {},
         ...existingStepPreviewProps
@@ -325,6 +329,7 @@ function PreviewStepTree(props: PreviewStepBoxesProps) {
             pluginProps={{
               stepTree: secondaryInput,
               isNested: secondaryInput.isNested,
+              areInputsValid: secondaryInput.areInputsValid,
               isDetailVisible: false,
               setDetailVisibility: () => {},
               ...existingStepPreviewProps
@@ -447,7 +452,7 @@ function SlotContent({
 }
 
 const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
-  const { isNested, stepTree, deleteStep, isDetailVisible, setDetailVisibility } = props;
+  const { isNested, areInputsValid, stepTree, deleteStep, isDetailVisible, setDetailVisibility } = props;
   const { step, color, primaryInput, secondaryInput } = stepTree;
 
   const StepComponent = isCombineUiStepTree(stepTree) && !isNested ? CombineStepBoxContent
@@ -495,10 +500,13 @@ const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
 
   const title = !hasValidSearch ? INVALID_SEARCH_TITLE
     : !step.validation.isValid ? INVALID_PARAMS_TITLE
+    : isNested && !areInputsValid ? INVALID_NESTED_TITLE
     : undefined;
 
+  const isValid = step.validation.isValid && (isNested ? areInputsValid : true);
+
   return (
-    <div title={title} className={cx("--Box", step.validation.isValid ? 'valid' : 'invalid')}>
+    <div title={title} className={cx("--Box", isValid ? 'valid' : 'invalid')}>
       <NavLink
         replace
         style={{ borderColor }}
