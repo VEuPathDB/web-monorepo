@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import RadioList from 'wdk-client/Components/InputControls/RadioList';
-import { filterOutProps, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { filterOutProps, wrappable, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import DownloadForm from 'wdk-client/Views/ReporterForm/DownloadForm';
 import PrimaryKeySpan from 'wdk-client/Views/ReporterForm/PrimaryKeySpan';
 
@@ -46,8 +46,8 @@ function getTitle(scope, resultType, recordClass) {
       }
     case 'record': {
       // We should only get here with an answerSpec result
-      const displayName = resultType.type === 'answerSpec' ? resultType.displayName : 'Unknown';
-      return ( <div><h1>Download {recordClass.displayName}: <PrimaryKeySpan primaryKeyString={displayName}/></h1></div> );
+      const displayName = resultType.type === 'answerSpec' ? safeHtml(resultType.displayName) : 'Unknown';
+      return ( <div><h1>Download {recordClass.displayName}: {displayName}</h1></div> );
     }
     default:
       return ( <div><h1>Download Results</h1></div> );
