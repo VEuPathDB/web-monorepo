@@ -1,10 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { noop } from 'lodash';
 
-import { TextArea, Loading, HelpIcon, RadioList } from 'wdk-client/Components';
-import DeferredDiv from 'wdk-client/Components/Display/DeferredDiv';
+import { TextArea, Loading, HelpIcon, Tabs } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import { makeClassNameHelper, useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
@@ -113,9 +112,15 @@ const IDS_HELP_TOOLTIP_POSITION = {
 
 export function Srt() {
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
-  const [ selectedSrtForm, setSelectedSrtForm ] = useState<string | undefined>(undefined);
+  const [ selectedSrtForm, setSelectedSrtForm ] = useState<string>('');
 
   useSetDocumentTitle('Retrieve Sequences');
+
+  useEffect(() => {
+    if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
+      setSelectedSrtForm(compatibleSrtConfigs[0].recordClassUrlSegment);
+    }
+  }, [ compatibleSrtConfigs ]);
 
   return (
     <div className={cx()}>
@@ -131,40 +136,18 @@ export function Srt() {
                 {' '}
                 <a href={BULK_DOWNLOAD_URL} target="_blank">file download section</a>.)
               </p>
-              <hr />
-              <h3 className={cx('--RecordTypeHeader')}>
-                Select the type of identifiers you will provide:
-              </h3>
-              <div className={cx('--RecordTypeInput')}>
-                <RadioList
-                  value={selectedSrtForm}
-                  onChange={setSelectedSrtForm}
-                  items={compatibleSrtConfigs.map(
-                    config => ({
-                      value: config.recordClassUrlSegment,
-                      display: config.display
-                    })
-                  )}
-                />
-              </div>
-              {
-                selectedSrtForm &&
-                <hr />
-              }
-              <div className={cx('--Forms')}>
-                {
-                  compatibleSrtConfigs.map(
-                    config =>
-                      <DeferredDiv
-                        key={config.recordClassUrlSegment}
-                        visible={config.recordClassUrlSegment === selectedSrtForm}
-                        className={cx('--SelectedForm')}
-                      >
-                        <SrtForm {...config} />
-                      </DeferredDiv>
-                  )
-                }
-              </div>
+              <Tabs
+                containerClassName={cx('--SrtForms')}
+                activeTab={selectedSrtForm}
+                onTabSelected={setSelectedSrtForm}
+                tabs={compatibleSrtConfigs.map(
+                  config => ({
+                    key: config.recordClassUrlSegment,
+                    display: config.display,
+                    content: <SrtForm {...config} />
+                  })
+                )}
+              />
             </React.Fragment>
       }
     </div>
@@ -205,7 +188,6 @@ function SrtForm({
           cols={60}
         />
       </div>
-      <hr />
       <ReporterForm
         formState={formState}
         updateFormState={updateFormState}
@@ -242,7 +224,7 @@ function useCompatibleSrtFormConfigs() {
     [ recordClasses ]
   );
 
-  return (
+  const compatibleSrtConfigs = useMemo(() =>
     recordClassUrlSegments != null &&
     projectId != null &&
     srtQuestionParamDisplayMap != null &&
@@ -252,6 +234,9 @@ function useCompatibleSrtFormConfigs() {
         ...initialSrtConfig,
         initialIdsState: initialSrtConfig.makeInitialIdsState(srtQuestionParamDisplayMap),
         projectId
-      }) as SrtFormConfig)
+      }) as SrtFormConfig),
+    [ recordClassUrlSegments, projectId, srtQuestionParamDisplayMap ]
   );
+
+  return compatibleSrtConfigs;
 }
