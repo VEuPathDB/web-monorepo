@@ -1,5 +1,5 @@
 import { toNumber, toString, memoize, zip } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { requestQuestionWithParameters } from 'wdk-client/Actions/QuestionWithParametersActions';
@@ -7,66 +7,55 @@ import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyAction
 import { CollapsibleSection, IconAlt } from 'wdk-client/Components';
 import { getFilterValueDisplay } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import { FilterWithFieldDisplayName } from 'wdk-client/Components/AttributeFilter/Types';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
-import { QuestionWithParameters, Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
+import { Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
 import { isEnumParam, isMultiPick, toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { datasetItemToString, DatasetItem } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
+import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 
 import './StepDetails.scss';
 
 const cx = makeClassNameHelper('StepDetails');
 
-interface MappedProps {
-  question?: QuestionWithParameters;
-}
-
 interface DispatchProps {
-  requestQuestionWithParameters: (name: string) => void;
   assignWeight: (weight: number) => void;
 }
 
-function StepDetails({ stepTree, question, assignWeight, requestQuestionWithParameters }: StepDetailProps<UiStepTree> & DispatchProps & MappedProps) {
+function StepDetails({ stepTree, assignWeight }: StepDetailProps<UiStepTree> & DispatchProps) {
   const { step } = stepTree;
   const [ weightCollapsed, setWeightCollapsed ] = useState(true);
-  const [ datasetParamItems, setDatasetParamItems ] = useState<Record<string, DatasetItem[]> | undefined>(undefined);
 
-  useEffect(() => {
-    setDatasetParamItems(undefined);
-    requestQuestionWithParameters(step.searchName);
-  }, [ step.searchName ]);
+  const data = useWdkService(async wdkService => {
+    const question = await wdkService.getQuestionGivenParameters(step.searchName, step.searchConfig.parameters);
+    const nonemptyDatasetParams = question.parameters
+      .filter(
+        ({ name, type }) => (
+          type === 'input-dataset' && step.searchConfig.parameters[name]
+        )
+      );
 
-  useWdkEffect(wdkService => {
-    (async () => {
-      if (question) {
-        const nonemptyDatasetParams = question.parameters
-          .filter(
-            ({ name, type }) => (
-              type === 'input-dataset' && step.searchConfig.parameters[name]
-            )
-          );
+    const datasetParamItemArrays = await Promise.all(
+      nonemptyDatasetParams.map(
+        ({ name }) => wdkService.getDataset(+step.searchConfig.parameters[name])
+      )
+    );
 
-        const datasetParamItemArrays = await Promise.all(
-          nonemptyDatasetParams.map(
-            ({ name }) => wdkService.getDataset(+step.searchConfig.parameters[name])
-          )
-        );
+    const paramsWithItemValues = zip(nonemptyDatasetParams, datasetParamItemArrays);
 
-        const paramsWithItemValues = zip(nonemptyDatasetParams, datasetParamItemArrays);
+    const datasetParamItems = paramsWithItemValues.reduce(
+      (memo, [ param, itemArray ]) => ({
+        ...memo,
+        [(param as Parameter).name]: itemArray as DatasetItem[]
+      }),
+      {} as Record<number, DatasetItem[]>
+    );
 
-        setDatasetParamItems(paramsWithItemValues.reduce(
-          (memo, [ param, itemArray ]) => ({
-            ...memo,
-            [(param as Parameter).name]: itemArray as DatasetItem[]
-          }),
-          {} as Record<number, DatasetItem[]>
-        ));
-      }
-    })();
-  }, [ question ]);
+    return { datasetParamItems, question };
+  }, [ step ])
+
+  const { datasetParamItems, question } = data || {};
 
   const weight = toString(step.searchConfig.wdkWeight);
 
@@ -196,11 +185,6 @@ function formatDatasetValue(
         .join(', ');
 }
 
-function mapStateToProps(state: RootState, props: StepBoxProps): MappedProps {
-  const question = state.questionsWithParameters[props.stepTree.step.searchName];
-  return { question };
-}
-
 function mapDispatchToProps(dispatch: Dispatch, props: StepBoxProps): DispatchProps {
   const { step } = props.stepTree;
   return bindActionCreators({
@@ -216,4 +200,4 @@ function mapDispatchToProps(dispatch: Dispatch, props: StepBoxProps): DispatchPr
   }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StepDetails);
+export default connect(null, mapDispatchToProps)(StepDetails);
