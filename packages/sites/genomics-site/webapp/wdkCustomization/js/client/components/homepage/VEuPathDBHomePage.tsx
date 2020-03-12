@@ -696,7 +696,7 @@ const useHeaderMenuItems = (
       items: [
         {
           key: 'eupathdb-workshop',
-          display: 'EuPathDB workshop',
+          display: 'VEuPathDB workshop',
           type: 'externalLink',
           url: 'http://workshop.eupathdb.org/current/'
         },
