@@ -1,9 +1,11 @@
 import React from 'react';
-import { PageController } from 'wdk-client/Controllers';
+
+import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
+
 import { Srt } from '../Srt';
 
-export default class FastaConfigController extends PageController {
-  renderView() {
-    return <Srt />;
-  }
+export default function FastaConfigController() {
+  useSetDocumentTitle('Retrieve Sequences');
+
+  return <Srt />;
 }

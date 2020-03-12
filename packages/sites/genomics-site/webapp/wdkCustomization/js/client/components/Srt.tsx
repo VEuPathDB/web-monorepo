@@ -6,7 +6,7 @@ import { noop } from 'lodash';
 import { TextArea, Loading, HelpIcon, Tabs } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { makeClassNameHelper, useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import FastaGeneReporterForm from 'ebrc-client/components/reporters/FastaGeneReporterForm';
 import { fastaGenomicSequenceReporterFormFactory } from 'ebrc-client/components/reporters/FastaGenomicSequenceReporterForm';
@@ -113,8 +113,6 @@ const IDS_HELP_TOOLTIP_POSITION = {
 export function Srt() {
   const compatibleSrtConfigs = useCompatibleSrtFormConfigs();
   const [ selectedSrtForm, setSelectedSrtForm ] = useState<string>('');
-
-  useSetDocumentTitle('Retrieve Sequences');
 
   useEffect(() => {
     if (!selectedSrtForm && compatibleSrtConfigs && compatibleSrtConfigs.length >= 1) {
