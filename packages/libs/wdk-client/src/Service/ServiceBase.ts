@@ -263,6 +263,10 @@ export const ServiceBase = (serviceUrl: string) => {
     return _initialCheck;
   }
 
+  function _clearCache() {
+    return _store.clear();
+  }
+
   function getRecordTypesPath() {
     return '/record-types';
   }
@@ -346,6 +350,7 @@ export const ServiceBase = (serviceUrl: string) => {
     _version,
     _fetchJson,
     _getFromCache,
+    _clearCache,
     serviceUrl,
     sendRequest,
     submitError,
