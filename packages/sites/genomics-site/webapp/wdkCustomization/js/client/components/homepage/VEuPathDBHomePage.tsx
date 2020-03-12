@@ -367,7 +367,8 @@ const useHeaderMenuItems = (
         },
         { 
           key: 'PopBio map',
-          display: 'Population Biology map',
+          display: 'MapVEu',
+          tooltip: 'Population Biology map',
           type: 'externalLink',
           url: '/popbio-map/web/',
           target: '_blank',
