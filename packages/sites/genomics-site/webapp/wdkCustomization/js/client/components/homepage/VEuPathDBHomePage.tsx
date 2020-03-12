@@ -349,8 +349,8 @@ const useHeaderMenuItems = (
         {
           key: 'plasmoap',
           display: 'PlasmoAP',
-          type: 'webAppRoute',
-          url: '/plasmoap.jsp',
+          type: 'reactRoute',
+          url: '/plasmoap',
           metadata: {
             include: [ PlasmoDB ]
           }
