@@ -6,7 +6,7 @@ interface Props {
   children?: React.ReactChildren
 }
 
-function Error(props: Props) {
+export const ErrorStatus = wrappable(function ErrorStatus(props: Props) {
   return (
     <div className="wdk-Error">
       <h1>Oops...</h1>
@@ -19,6 +19,6 @@ function Error(props: Props) {
       )}
     </div>
   )
-}
+});
 
-export default wrappable(Error);
+export default ErrorStatus;
