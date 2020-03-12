@@ -707,14 +707,8 @@ const useHeaderMenuItems = (
           url: 'http://workshop.eupathdb.org/current/index.php?page=schedule'
         },
         {
-          key: 'ncbi-glossary',
-          display: `NCBI's glossary of terms`,
-          type: 'externalLink',
-          url: 'http://www.genome.gov/Glossary/'
-        },
-        {
           key: 'our-glossary',
-          display: `Our glossary`,
+          display: `VEuPathDB glossary`,
           type: 'reactRoute',
           url: makeStaticPageRoute('/glossary.html')
         },
