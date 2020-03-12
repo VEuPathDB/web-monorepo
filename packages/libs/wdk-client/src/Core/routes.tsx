@@ -28,6 +28,9 @@ import UserLoginController from 'wdk-client/Controllers/UserLoginController';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
 import BasketController from 'wdk-client/Controllers/BasketController';
+import { PermissionDenied } from 'wdk-client/Components';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import ErrorStatus from 'wdk-client/Components/PageStatus/Error';
 
 const routes: RouteEntry[] = [
   {
@@ -285,6 +288,21 @@ const routes: RouteEntry[] = [
     path: '/import/:signature',
     component: (props: RouteComponentProps<{ signature: string }>) => 
       <Redirect to={`/workspace/strategies/import/${props.match.params.signature}`} />
+  },
+
+  {
+    path: '/401',
+    component: PermissionDenied
+  },
+
+  {
+    path: '/404',
+    component: NotFound
+  },
+
+  {
+    path: '/500',
+    component: ErrorStatus
   },
 
   {

@@ -34,6 +34,8 @@ import { createWdkStore } from 'wdk-client/Core/Store';
  *   application. Can be a selector string or an element. If this option does
  *   not resolve to an element after the DOMContentLoaded event is fired, the
  *   application will not render automatically.
+ * @param {string} [options.retainContainerContent] If true, the content in the container
+ *   will be retained when rendering the application. Optional, defaults to false.
  * @param {string} options.endpoint Base URL for WdkService.
  * @param {Function} [options.wrapRoutes] A function that takes a WDK Routes array
  *   and returns a modified copy.
@@ -52,6 +54,7 @@ export function initialize(options) {
     rootUrl,
     rootElement,
     endpoint,
+    retainContainerContent = false,
     wrapRoutes = identity,
     wrapStoreModules = identity,
     wrapWdkService = identity,
@@ -63,10 +66,9 @@ export function initialize(options) {
   if (!isString(rootUrl)) throw new Error(`Expected rootUrl to be a string, but got ${typeof rootUrl}.`);
   if (!isString(endpoint)) throw new Error(`Expected endpoint to be a string, but got ${typeof endpoint}.`);
 
-  let canUseRouter = location.pathname.startsWith(rootUrl);
   // define the elements of the Flux architecture
 
-  let history = canUseRouter
+  let history = location.pathname.startsWith(rootUrl) && !retainContainerContent
     ? createBrowserHistory({ basename: rootUrl })
     : createMockHistory({ basename: rootUrl });
   let wdkService = wrapWdkService(getInstance(endpoint));
@@ -76,37 +78,33 @@ export function initialize(options) {
   // load static WDK data into service cache and view stores that need it
   store.dispatch(loadAllStaticData());
 
-  if (canUseRouter) {
-    // render the root element once page has completely loaded
-    document.addEventListener('DOMContentLoaded', function() {
-      let container = rootElement instanceof HTMLElement
-        ? rootElement
-        : document.querySelector(rootElement);
-      let handleLocationChange = location => {
-        if (onLocationChange) onLocationChange(location);
-        store.dispatch(updateLocation(location));
-      };
-      if (container != null) {
-        let applicationElement = createElement(
-          Root, {
-            rootUrl,
-            store,
-            history,
-            pluginConfig: pluginConfig.concat(defaultPluginConfig),
-            routes: wrapRoutes(wdkRoutes),
-            onLocationChange: handleLocationChange,
-            wdkService
-          });
-        ReactDOM.render(applicationElement, container);
-      }
-      else if (__DEV__) {
-        console.debug('Could not resolve rootElement %o. Application will not render automatically.', rootElement);
-      }
-    });
-  }
-  else if (__DEV__) {
-    console.debug('The current page url does not start with the rootUrl %o. Application router will not be rendered.', rootUrl);
-  }
+  // render the root element once page has completely loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    let container = rootElement instanceof HTMLElement ? rootElement
+      : rootElement ? document.querySelector(rootElement)
+      : undefined;
+    let handleLocationChange = location => {
+      if (onLocationChange) onLocationChange(location);
+      store.dispatch(updateLocation(location));
+    };
+    if (container != null) {
+      let applicationElement = createElement(
+        Root, {
+          rootUrl,
+          store,
+          history,
+          pluginConfig: pluginConfig.concat(defaultPluginConfig),
+          routes: wrapRoutes(wdkRoutes),
+          onLocationChange: handleLocationChange,
+          wdkService,
+          staticContent: retainContainerContent ? container.innerHTML : undefined
+        });
+      ReactDOM.render(applicationElement, container);
+    }
+    else if (__DEV__) {
+      console.debug('Could not resolve rootElement %o. Application will not render automatically.', rootElement);
+    }
+  });
 
   // return WDK application components
   return { wdkService, store, history, pluginConfig };

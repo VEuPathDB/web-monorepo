@@ -13,6 +13,7 @@ import { Provider } from 'react-redux';
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 import WdkService, { WdkServiceContext } from 'wdk-client/Service/WdkService';
 import WdkRoute from 'wdk-client/Core/WdkRoute';
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 
 type Props = {
   rootUrl: string,
@@ -21,7 +22,8 @@ type Props = {
   onLocationChange: (location: Location) => void,
   history: History,
   store: Store,
-  wdkService: WdkService
+  wdkService: WdkService,
+  staticContent?: string
 };
 
 interface State {
@@ -38,7 +40,8 @@ export default class Root extends React.Component<Props, State> {
   static propTypes = {
     rootUrl: PropTypes.string,
     routes: PropTypes.array.isRequired,
-    onLocationChange: PropTypes.func
+    onLocationChange: PropTypes.func,
+    staticContent: PropTypes.string
   };
 
   static defaultProps = {
@@ -94,7 +97,7 @@ export default class Root extends React.Component<Props, State> {
   }
 
   render() {
-    const { routes } = this.props;
+    const { routes, staticContent } = this.props;
     const { location } = this.state;
     const activeRoute = routes.find(({ path, exact = true }) => matchPath(location.pathname, { path, exact }));
     const rootClassNameModifier = activeRoute && activeRoute.rootClassNameModifier;
@@ -105,20 +108,22 @@ export default class Root extends React.Component<Props, State> {
             <WdkServiceContext.Provider value={this.props.wdkService}>
               <PluginContext.Provider value={makeCompositePluginComponent(this.props.pluginConfig)}>
                 <Page classNameModifier={rootClassNameModifier}>
-                  <React.Fragment>
-                    <Switch>
-                      {this.props.routes.map(({ path, exact = true, component, requiresLogin = false }) => (
-                        <WdkRoute
-                          key={path}
-                          exact={exact == null ? false: exact}
-                          path={path}
-                          component={component}
-                          requiresLogin={requiresLogin}
-                        />
-                      ))}
-                    </Switch>
-                    <LoginFormController />
-                  </React.Fragment>
+                  {staticContent ? safeHtml(staticContent, null, 'div') : (
+                    <React.Fragment>
+                      <Switch>
+                        {this.props.routes.map(({ path, exact = true, component, requiresLogin = false }) => (
+                          <WdkRoute
+                            key={path}
+                            exact={exact == null ? false: exact}
+                            path={path}
+                            component={component}
+                            requiresLogin={requiresLogin}
+                          />
+                        ))}
+                      </Switch>
+                      <LoginFormController />
+                    </React.Fragment>
+                  )}
                 </Page>
               </PluginContext.Provider>
             </WdkServiceContext.Provider>
