@@ -360,8 +360,8 @@ const useHeaderMenuItems = (
         {
           key: 'plasmoap',
           display: 'PlasmoAP',
-          type: 'webAppRoute',
-          url: '/plasmoap.jsp',
+          type: 'reactRoute',
+          url: '/plasmoap',
           metadata: {
             include: [ PlasmoDB ]
           }
@@ -734,8 +734,8 @@ const useHeaderMenuItems = (
           key: 'reset-session',
           display: `Reset ${projectId} session`,
           tooltip: 'Login first to keep your work',
-          type: 'webAppRoute',
-          url: '/resetSession.jsp',
+          type: 'reactRoute',
+          url: '/reset-session',
         },
         {
           key: 'youtube-tutorials',
