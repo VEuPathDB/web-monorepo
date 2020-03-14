@@ -274,6 +274,17 @@ const useHeaderMenuItems = (
       display: 'Tools',
       type: 'subMenu',
       items: [
+        { 
+          key: 'apollo',
+          display: 'Apollo',
+          tooltip: 'Instantaneous, collaborative, genome annotation editor',
+          type: 'externalLink',
+          url: 'https://apollo.veupathdb.org/',
+          target: '_blank',
+          metadata: {
+            include: [ VectorBase ]
+         }
+        },
         {
           key: 'blast',
           display: 'BLAST',
@@ -366,7 +377,7 @@ const useHeaderMenuItems = (
           }
         },
         { 
-          key: 'PopBio map',
+          key: 'mapveu',
           display: 'MapVEu',
           tooltip: 'Population Biology map',
           type: 'externalLink',
@@ -569,6 +580,12 @@ const useHeaderMenuItems = (
           url: '/workspace/strategies/public'
         },
         {
+          key: 'workshops-events',
+          display: 'Workshops, webinars and meetings',
+          type: 'reactRoute',
+          url: makeStaticPageRoute(`/${projectId}/news.html`)
+        },
+        {
           key: 'submitting-divider',
           display: (
             <SubmenuDivider>
@@ -715,7 +732,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'reset-session',
-          display: `Reset ${projectId} Session`,
+          display: `Reset ${projectId} session`,
           tooltip: 'Login first to keep your work',
           type: 'webAppRoute',
           url: '/resetSession.jsp',
