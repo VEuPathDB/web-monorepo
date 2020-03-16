@@ -44,7 +44,7 @@
 }
 
 .wdk-RecordSidebar {
-  left: -322px;
+  left: -332px;
   width: 282px;
   position: absolute;
   padding-right: 48px;
@@ -59,7 +59,7 @@
 .wdk-RecordSidebar__fixed {
   position: fixed;
   top: 0;
-  left: -298px;
+  left: -312px;
 }
 
 .wdk-RecordSidebarHeader {
@@ -89,12 +89,11 @@
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebar {
-  padding-right: 22px;
   left: 0;
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebar__fixed {
-  left: 24px;
+  left: 20px;
 }
 
 .wdk-RecordContainer__withSidebar .wdk-RecordSidebarToggle {
@@ -117,7 +116,7 @@
 
 .wdk-RecordNavigationIndicator {
   position: absolute;
-  left: -2em;
+  left: -2.5em;
   padding-top: 0;
   line-height: 1rem;
 }
@@ -133,7 +132,7 @@
 }
 
 .wdk-RecordNavigationSection .wdk-CheckboxTreeNodeWrapper {
-  padding: 4px 0 4px 1.2em;
+  padding: 4px 0 4px 1.5em;
 }
 
 .wdk-RecordNavigationSectionHeader {
