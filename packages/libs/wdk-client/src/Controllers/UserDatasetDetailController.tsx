@@ -69,7 +69,7 @@ class UserDatasetDetailController extends PageController<MergedProps> {
   }
 
   loadData (prevProps?: this['props']) {
-    const idChanged = prevProps && prevProps.ownProps.id !== this.props.ownProps.id;
+    const idChanged = prevProps == null || prevProps.ownProps.id !== this.props.ownProps.id;
     if (idChanged) {
       this.props.dispatchProps.loadUserDatasetDetail(Number(this.props.ownProps.id));
     }
