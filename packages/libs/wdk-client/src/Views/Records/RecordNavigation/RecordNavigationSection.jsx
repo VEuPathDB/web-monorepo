@@ -50,7 +50,7 @@ class RecordNavigationSection extends React.PureComponent {
         let domNode = document.getElementById(id);
         if (domNode == null) return;
         let rect = domNode.getBoundingClientRect();
-        return rect.top <= 70;
+        return rect.top <= 10;
       });
 
     this.setState({ activeCategory });
