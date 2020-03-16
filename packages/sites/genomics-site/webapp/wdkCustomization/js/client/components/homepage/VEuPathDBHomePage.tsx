@@ -747,11 +747,6 @@ const useHeaderMenuItems = (
   );
 };
 
-const SubmenuDivider: React.FunctionComponent = ({ children }) => 
-  <div className={vpdbCx('SubmenuDivider')}>
-    {children}
-  </div>;
-
 const filterMenuItemEntry = (
   menuItemEntry: HeaderMenuItemEntry, 
   projectId: string
