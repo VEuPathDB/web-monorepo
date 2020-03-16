@@ -425,28 +425,22 @@ const useHeaderMenuItems = (
           url: '/galaxy-orientation'
         },
         {
-          key: 'analysis',
-          display: 'Analyze my strategy results',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/analysisTools.html')
-        },
-        {
           key: 'basket',
           display: 'Basket',
           type: 'reactRoute',
           url: '/workspace/basket'
-        },
-        {
-          key: 'user-data-sets',
-          display: 'Data sets',
-          type: 'reactRoute',
-          url: '/workspace/datasets'
         },
         {   
           key: 'favorites',
           display: 'Favorites',
           type: 'reactRoute',
           url: '/workspace/favorites'
+        },
+        {
+          key: 'user-data-sets',
+          display: 'My data sets',
+          type: 'reactRoute',
+          url: '/workspace/datasets'
         }
       ]
     },
@@ -457,7 +451,7 @@ const useHeaderMenuItems = (
       items: [
         {
           key: 'datasets',
-          display: 'Data sets',
+          display: `Data sets in ${projectId}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result'
         },
@@ -577,7 +571,7 @@ const useHeaderMenuItems = (
               key: 'workshops-events',
               display: 'Workshops, webinars and meetings',
               type: 'reactRoute',
-              url: makeStaticPageRoute(`/${projectId}/news.html`)
+              url: makeStaticPageRoute(`/${projectId}/events.md`)
             }
           ]
         },
@@ -700,11 +694,12 @@ const useHeaderMenuItems = (
       display: 'Help',
       type: 'subMenu',
       items: [
-        {
-          key: 'eupathdb-workshop',
-          display: 'VEuPathDB workshop',
-          type: 'externalLink',
-          url: 'http://workshop.eupathdb.org/current/'
+        { 
+          key: 'reset-session',
+          display: `Reset ${projectId} session`,
+          tooltip: 'Login first to keep your work',
+          type: 'reactRoute',
+          url: '/reset-session',
         },
         {
           key: 'workshop-exercises',
@@ -718,12 +713,11 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: makeStaticPageRoute('/glossary.html')
         },
-        {
-          key: 'reset-session',
-          display: `Reset ${projectId} session`,
-          tooltip: 'Login first to keep your work',
-          type: 'reactRoute',
-          url: '/reset-session',
+        { 
+          key: 'eupathdb-workshop',
+          display: 'VEuPathDB workshop',
+          type: 'externalLink',
+          url: 'http://workshop.eupathdb.org/current/'
         },
         {
           key: 'youtube-tutorials',
