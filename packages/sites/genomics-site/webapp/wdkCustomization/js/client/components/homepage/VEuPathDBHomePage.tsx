@@ -391,7 +391,8 @@ const useHeaderMenuItems = (
           key: 'pubcrawler',
           display: 'PubMed and Entrez',
           type: 'externalLink',
-          url: `/pubcrawler/${projectId}`
+          url: `/pubcrawler/${projectId}`,
+          target: '_blank'
         },
         { 
           key: 'analysis',
@@ -526,6 +527,37 @@ const useHeaderMenuItems = (
           url: aboutRoute
         },
         { 
+          key: 'community',
+          type: 'subMenu',
+          display: 'Community',
+          items: [
+            { 
+              key: 'news',
+              display: 'News',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/${projectId}/news.html`)
+            },
+            { 
+              key: 'related-sites',
+              display: 'Related sites',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/${projectId}/externalLinks.html`)
+            },
+            { 
+              key: 'public-strategies',
+              display: 'Public strategies',
+              type: 'reactRoute',
+              url: '/workspace/strategies/public'
+            },
+            { 
+              key: 'workshops-events',
+              display: 'Workshops, webinars and meetings',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/${projectId}/events.md`)
+            }
+          ]
+        },
+        { 
           key: 'pubs',
           type: 'subMenu',
           display: 'Publications',
@@ -540,38 +572,8 @@ const useHeaderMenuItems = (
               key: 'citations',
               display: 'Publications that use our resources',
               type: 'externalLink',
-              url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en'
-            }
-          ]
-        },
-        {
-          key: 'community',
-          type: 'subMenu',
-          display: 'Community',
-          items: [
-            {
-              key: 'news',
-              display: 'News',
-              type: 'reactRoute',
-              url: makeStaticPageRoute(`/${projectId}/news.html`)
-            },
-            {
-              key: 'related-sites',
-              display: 'Related sites',
-              type: 'reactRoute',
-              url: makeStaticPageRoute(`/${projectId}/externalLinks.html`)
-            },
-            {
-              key: 'public-strategies',
-              display: 'Public strategies',
-              type: 'reactRoute',
-              url: '/workspace/strategies/public'
-            },
-            {
-              key: 'workshops-events',
-              display: 'Workshops, webinars and meetings',
-              type: 'reactRoute',
-              url: makeStaticPageRoute(`/${projectId}/events.md`)
+              url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en',
+              target: '_blank'
             }
           ]
         },
@@ -664,7 +666,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'technical',
-          display: 'Technical',
+          display: 'Technical information',
           type: 'subMenu',
           items: [
             {
@@ -683,7 +685,8 @@ const useHeaderMenuItems = (
               key: 'usage-statistics',
               display: 'Website usage statistics',
               type: 'externalLink',
-              url: '/awstats/awstats.pl'
+              url: '/awstats/awstats.pl',
+              target: '_blank'
             }
           ]
         }
@@ -694,18 +697,12 @@ const useHeaderMenuItems = (
       display: 'Help',
       type: 'subMenu',
       items: [
-        { 
-          key: 'reset-session',
-          display: `Reset ${projectId} session`,
-          tooltip: 'Login first to keep your work',
-          type: 'reactRoute',
-          url: '/reset-session',
-        },
         {
           key: 'workshop-exercises',
           display: 'Exercises from workshop',
           type: 'externalLink',
-          url: 'http://workshop.eupathdb.org/current/index.php?page=schedule'
+          url: 'http://workshop.eupathdb.org/current/index.php?page=schedule',
+          target: '_blank'
         },
         {
           key: 'our-glossary',
@@ -717,13 +714,22 @@ const useHeaderMenuItems = (
           key: 'eupathdb-workshop',
           display: 'VEuPathDB workshop',
           type: 'externalLink',
-          url: 'http://workshop.eupathdb.org/current/'
+          url: 'http://workshop.eupathdb.org/current/',
+          target: '_blank'
         },
         {
           key: 'youtube-tutorials',
           display: 'YouTube tutorials',
           type: 'externalLink',
-          url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1'
+          url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1',
+          target: '_blank'
+        },
+        { 
+          key: 'reset-session',
+          display: `Reset ${projectId} session`,
+          tooltip: 'Login first to keep your work',
+          type: 'reactRoute',
+          url: '/reset-session',
         }
       ]
     },
