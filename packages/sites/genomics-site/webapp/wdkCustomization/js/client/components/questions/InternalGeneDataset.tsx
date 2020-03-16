@@ -15,6 +15,8 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { QuestionHeader } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
+import { formatLink } from 'ebrc-client/components/records/DatasetRecordClasses.DatasetRecordClass'
+
 import './InternalGeneDataset.scss';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
@@ -217,9 +219,9 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                                   <ul>
                                     {
                                       publications.map(
-                                        ({ url, displayText }) =>
-                                          <li key={url}>
-                                            <a href={url} target="_blank">{displayText || url}</a>
+                                        link =>
+                                          <li key={link.url}>
+                                            {formatLink(link, { newWindow: true })}
                                           </li>
                                       )
                                     }
