@@ -532,178 +532,166 @@ const useHeaderMenuItems = (
           url: aboutRoute
         },
         { 
-          key: 'pubs-divider',
-          display: (
-            <SubmenuDivider>
-              Publications
-            </SubmenuDivider>
-          ),
-          type: 'custom'
+          key: 'pubs',
+          type: 'subMenu',
+          display: 'Publications',
+          items: [
+            {
+              key: 'eupathdb-publications',
+              display: 'Publications on VEuPathDB sites',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/veupathPubs.html')
+            },
+            {
+              key: 'citations',
+              display: 'Publications that use our resources',
+              type: 'externalLink',
+              url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en'
+            }
+          ]
         },
         {
-          key: 'eupathdb-publications',
-          display: 'Publications on VEuPathDB sites',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/veupathPubs.html')
-        },
-        { 
-          key: 'citations',
-          display: 'Publications that use our resources',
-          type: 'externalLink',
-          url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en'
-        },
-        {
-          key: 'community-divider',
-          display: (
-            <SubmenuDivider>
-              Community
-            </SubmenuDivider>
-          ),
-          type: 'custom'
-        },
-        { 
-          key: 'news',
-          display: 'News',
-          type: 'reactRoute',
-          url: makeStaticPageRoute(`/${projectId}/news.html`)
-        },
-        {
-          key: 'related-sites',
-          display: 'Related sites',
-          type: 'reactRoute',
-          url: makeStaticPageRoute(`/${projectId}/externalLinks.html`)
+          key: 'community',
+          type: 'subMenu',
+          display: 'Community',
+          items: [
+            {
+              key: 'news',
+              display: 'News',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/${projectId}/news.html`)
+            },
+            {
+              key: 'related-sites',
+              display: 'Related sites',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/${projectId}/externalLinks.html`)
+            },
+            {
+              key: 'public-strategies',
+              display: 'Public strategies',
+              type: 'reactRoute',
+              url: '/workspace/strategies/public'
+            },
+            {
+              key: 'workshops-events',
+              display: 'Workshops, webinars and meetings',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/${projectId}/news.html`)
+            }
+          ]
         },
         {
-          key: 'public-strategies',
-          display: 'Public strategies',
-          type: 'reactRoute',
-          url: '/workspace/strategies/public'
+          key: 'submitting',
+          type: 'subMenu',
+          display: 'Submit data',
+          items: [
+            {
+              key: 'submission-instructions',
+              display: 'How to submit data to us',
+              type: 'webAppRoute',
+              url: '/dataSubmission.jsp'
+            },
+            {
+              key: 'submission-policy',
+              display: 'Data submission and release policies',
+              type: 'externalLink',
+              url: '/EuPathDB_datasubm_SOP.pdf'
+            },
+          ]
         },
         {
-          key: 'workshops-events',
-          display: 'Workshops, webinars and meetings',
-          type: 'reactRoute',
-          url: makeStaticPageRoute(`/${projectId}/news.html`)
+          key: 'usage-and-citations',
+          display: 'Usage and citation',
+          type: 'subMenu',
+          items: [
+            {
+              key: 'cite-us',
+              display: 'How to cite us',
+              type: 'reactRoute',
+              url: `${aboutRoute}#citing`
+            },
+            {
+              key: 'cite-data-provide',
+              display: 'Citing data providers',
+              type: 'reactRoute',
+              url: `${aboutRoute}#citingproviders`
+            },
+            {
+              key: 'data-access-policy',
+              display: 'Data access policy',
+              type: 'reactRoute',
+              url: `${aboutRoute}#use`
+            },
+            {
+              key: 'website-privacy-policy',
+              display: 'Website privacy policy',
+              type: 'externalLink',
+              url: '/documents/EuPathDB_Website_Privacy_Policy.shtml'
+            }
+          ]
         },
         {
-          key: 'submitting-divider',
-          display: (
-            <SubmenuDivider>
-              Submit data
-            </SubmenuDivider>
-          ),
-          type: 'custom'
+          key: 'who-are-we',
+          display: 'Who are we?',
+          type: 'subMenu',
+          items: [
+            {
+              key: 'scientific-working-group',
+              display: 'Scientific working group',
+              type: 'reactRoute',
+              url: `${aboutAllRoute}#swg`
+            },
+            {
+              key: 'scientific-advisory-team',
+              display: 'Scientific advisory team',
+              type: 'reactRoute',
+              url: `${aboutRoute}#advisors`
+            },
+            {
+              key: 'personnel',
+              display: 'Personnel',
+              type: 'reactRoute',
+              url: `${aboutAllRoute}#personnel`
+            },
+            {
+              key: 'acknowledgement',
+              display: 'Acknowledgements',
+              type: 'reactRoute',
+              url: `${aboutAllRoute}#acks`
+            },
+            {
+              key: 'funding',
+              display: 'Funding',
+              type: 'reactRoute',
+              url: `${aboutRoute}#funding`
+            }
+          ],
         },
         {
-          key: 'submission-instructions',
-          display: 'How to submit data to us',
-          type: 'webAppRoute',
-          url: '/dataSubmission.jsp'
-        },
-        {
-          key: 'submission-policy',
-          display: 'Data submission and release policies',
-          type: 'externalLink',
-          url: '/EuPathDB_datasubm_SOP.pdf'
-        },
-        {
-          key: 'usage-and-citations-divider',
-          display: (
-            <SubmenuDivider>
-              Usage and citation
-            </SubmenuDivider>
-          ),
-          type: 'custom'
-        },
-        {
-          key: 'cite-us',
-          display: 'How to cite us',
-          type: 'reactRoute',
-          url: `${aboutRoute}#citing`
-        },
-        {
-          key: 'cite-data-provide',
-          display: 'Citing data providers',
-          type: 'reactRoute',
-          url: `${aboutRoute}#citingproviders`
-        },
-        {
-          key: 'data-access-policy',
-          display: 'Data access policy',
-          type: 'reactRoute',
-          url: `${aboutRoute}#use`
-        },
-        {
-          key: 'website-privacy-policy',
-          display: 'Website privacy policy',
-          type: 'externalLink',
-          url: '/documents/EuPathDB_Website_Privacy_Policy.shtml'
-        },
-        {
-          key: 'who-are-we-divider',
-          display: (
-            <SubmenuDivider>
-              Who are we?
-            </SubmenuDivider>
-          ),
-          type: 'custom'
-        },
-        {
-          key: 'scientific-working-group',
-          display: 'Scientific working group',
-          type: 'reactRoute',
-          url: `${aboutAllRoute}#swg`
-        },
-        {
-          key: 'scientific-advisory-team',
-          display: 'Scientific advisory team',
-          type: 'reactRoute',
-          url: `${aboutRoute}#advisors`
-        },
-        {
-          key: 'personnel',
-          display: 'Personnel',
-          type: 'reactRoute',
-          url: `${aboutAllRoute}#personnel`
-        },
-        {
-          key: 'acknowledgement',
-          display: 'Acknowledgements',
-          type: 'reactRoute',
-          url: `${aboutAllRoute}#acks`
-        },
-        {
-          key: 'funding',
-          display: 'Funding',
-          type: 'reactRoute',
-          url: `${aboutRoute}#funding`
-        },
-        {
-          key: 'technical-divider',
-          display: (
-            <SubmenuDivider>
-              Technical
-            </SubmenuDivider>
-          ),
-          type: 'custom'
-        },        
-        {
-          key: 'accessibility-vpat',
-          display: 'Accessibility VPAT',
-          type: 'externalLink',
-          url: '/documents/VEuPathDB_Section_508.pdf'
-        },
-        {
-          key: 'infrastructure',
-          display: 'Infrastructure',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/infrastructure.html')
-        },
-        {
-          key: 'usage-statistics',
-          display: 'Website usage statistics',
-          type: 'externalLink',
-          url: '/awstats/awstats.pl'
+          key: 'technical',
+          display: 'Technical',
+          type: 'subMenu',
+          items: [
+            {
+              key: 'accessibility-vpat',
+              display: 'Accessibility VPAT',
+              type: 'externalLink',
+              url: '/documents/VEuPathDB_Section_508.pdf'
+            },
+            {
+              key: 'infrastructure',
+              display: 'Infrastructure',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/infrastructure.html')
+            },
+            {
+              key: 'usage-statistics',
+              display: 'Website usage statistics',
+              type: 'externalLink',
+              url: '/awstats/awstats.pl'
+            }
+          ]
         }
       ]
     },
