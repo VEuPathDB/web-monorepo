@@ -13,6 +13,7 @@ import {ResultType} from 'wdk-client/Utils/WdkResult';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
 
 import './OrganismFilter.scss';
+import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
 
 const cx = makeClassNameHelper('OrganismFilter')
 
@@ -322,10 +323,7 @@ function createDisplayableTree(
 }
 
 function nodeMeetsSearchCriteria(node: TaxonomyNodeWithCount, terms: string[]) {
-  for (let term of terms) {
-    if (node.display.toLowerCase().search(term.toLowerCase()) !== -1) return true;
-  }
-  return false;
+  return areTermsInString(terms, node.display);
 }
 
 function isSameConfig(a: OrgFilterConfig, b: OrgFilterConfig): boolean {
