@@ -5,6 +5,7 @@ import React, { Component, PureComponent, ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { formatAttributeValue, lazy, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { containsAncestorNode } from 'wdk-client/Utils/DomUtils';
+import { areTermsInStringRegexString, parseSearchQueryString } from 'wdk-client/Utils/SearchUtils';
 import 'wdk-client/Components/DataTable/DataTable.css';
 
 
@@ -448,7 +449,9 @@ class DataTable extends PureComponent<Props, State> {
             placeholderText="Search this table..."
             onSearchTermChange={(searchTerm: string) => {
               this._searchTerm = searchTerm;
-              this._dataTable && this._dataTable.search(searchTerm).draw();
+              const queryTerms = parseSearchQueryString(searchTerm);
+              const searchTermRegex = areTermsInStringRegexString(queryTerms);
+              this._dataTable && this._dataTable.search(searchTermRegex, true, false, true).draw();
             }}
             delayMs={0}
           />
