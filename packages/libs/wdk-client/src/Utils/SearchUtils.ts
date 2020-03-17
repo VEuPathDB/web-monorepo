@@ -29,11 +29,16 @@ export function filterItems<T>(items: Array<T>, itemToSearchableString: (item: T
  * @returns {Array<String>} A set of query terms parsed from searchQueryString
  */
 export function parseSearchQueryString(searchQueryString: string) {
-  let match = searchQueryString.match(/\S+|"[^"]*"/g);
+  let match = searchQueryString.match(/[^\s"]+|"[^"]*"/g);
   if (match == null) return [];
   return match.map(function (queryTerm) {
-    // remove wrapping quotes from phrases
-    return queryTerm.replace(/(^")|("$)/g, '');
+    if (queryTerm.startsWith('"')) {
+      // remove wrapping quotes and asterisks from phrases
+      return queryTerm.replace(/(^")|("$)|\*/g, '');
+    } else {
+      // remove stray quotes
+      return queryTerm.replace(/(^")|("$)/g, '');
+    }
   });
 }
 
