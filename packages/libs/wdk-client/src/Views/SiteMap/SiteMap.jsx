@@ -76,7 +76,7 @@ let SiteMap = props => {
     isSearchable: true,
     showSearchBox: true,
     searchBoxPlaceholder: "Search for data...",
-    searchBoxHelp: makeSearchHelpText("the items by name and description"),
+    searchBoxHelp: makeSearchHelpText("the items by name or description"),
     searchTerm: props.searchText,
     onSearchTermChange: props.siteMapActions.setSearchText,
     searchPredicate: siteMapSearchPredicate
