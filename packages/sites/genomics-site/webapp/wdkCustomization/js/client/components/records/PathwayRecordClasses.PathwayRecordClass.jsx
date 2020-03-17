@@ -22,8 +22,8 @@ const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
   'GeneQuestions.InternalGenesByEcNumber&organism=all&array%28ec_source%29=all' +
   '&questionSubmit=Get+Answer&ec_number_pattern=N/A&ec_wildcard=';
 
-const ORTHOMCL_LINK = 'http://orthomcl.org/orthomcl/processQuestion.do?questionFullName=' +
-  'GroupQuestions.ByEcNumber&questionSubmit=Get+Answer&ec_number_type_ahead=N/A&ec_wildcard=*';
+const ORTHOMCL_LINK = 'https://qa.orthomcl.org/orthomcl/processQuestion.do?questionFullName=' +
+  'GroupQuestions.ByEcNumber&questionSubmit=Get+Answer&ec_number_type_ahead=N/A&ec_wildcard=';
 
 function loadCytoscapeJs() {
   return new Promise(function(resolve, reject) {
@@ -1499,7 +1499,7 @@ function EnzymeNodeDetails(props) {
         </div>
       )}
 
-      <p><a href={ORTHOMCL_LINK + display_label + '*'}>Search on OrthoMCL for groups with this EC Number</a></p>
+      <p><a href={ORTHOMCL_LINK + display_label}>Search on OrthoMCL for groups with this EC Number</a></p>
 
       {image && (
         <div>
