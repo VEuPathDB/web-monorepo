@@ -77,7 +77,7 @@ let {
   }
 
   // set help
-  let searchBoxHelp = disableHelp ? '' : makeSearchHelpText(`each ${leafType}`);
+  let searchBoxHelp = disableHelp ? '' : makeSearchHelpText(`each ${leafType} below`);
 
   return (
     <div className={`wdk-CategoriesCheckboxTree ${containerClassName}`}>

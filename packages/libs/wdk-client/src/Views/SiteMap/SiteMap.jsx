@@ -58,7 +58,7 @@ import Link from 'wdk-client/Components/Link/Link';
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { getNodeChildren, getPropertyValue } from 'wdk-client/Utils/OntologyUtils';
 import { getTargetType, getRefName, getDisplayName, getDescription, getNodeId, getId } from 'wdk-client/Utils/CategoryUtils';
-import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
+import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 
 /**
  * Displays site map page, basically just a custom expandable tree
@@ -76,7 +76,7 @@ let SiteMap = props => {
     isSearchable: true,
     showSearchBox: true,
     searchBoxPlaceholder: "Search for data...",
-    searchBoxHelp: "Each item's name and description will be searched for your exact input text",
+    searchBoxHelp: makeSearchHelpText("the items by name and description"),
     searchTerm: props.searchText,
     onSearchTermChange: props.siteMapActions.setSearchText,
     searchPredicate: siteMapSearchPredicate

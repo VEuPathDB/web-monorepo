@@ -4,7 +4,7 @@ import React, {useLayoutEffect, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import { scrollIntoViewIfNeeded } from 'wdk-client/Utils/DomUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
+import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
@@ -115,7 +115,7 @@ export default class FieldList extends React.Component { // eslint-disable-line 
           isSelectable={false}
           isSearchable={true}
           searchBoxPlaceholder="Find a variable"
-          searchBoxHelp="Find a variable by searching names and descriptions"
+          searchBoxHelp={makeSearchHelpText("the variables by name and description")}
           searchTerm={this.state.searchTerm}
           onSearchTermChange={this.handleSearchTermChange}
           searchPredicate={this.searchPredicate}

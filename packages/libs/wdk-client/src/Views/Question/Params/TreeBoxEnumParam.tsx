@@ -1,14 +1,15 @@
 import 'wdk-client/Views/Question/Params/TreeBoxParam.scss';
 
-import { escapeRegExp, intersection } from 'lodash';
+import { intersection } from 'lodash';
 import React from 'react';
 
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import { filterNodes, getLeaves, isBranch } from 'wdk-client/Utils/TreeUtils';
-import { EnumParam, TreeBoxEnumParam, TreeBoxVocabNode } from 'wdk-client/Utils/WdkModel';
+import { TreeBoxEnumParam, TreeBoxVocabNode } from 'wdk-client/Utils/WdkModel';
 
 import SelectionInfo from 'wdk-client/Views/Question/Params/SelectionInfo';
 import { Context } from 'wdk-client/Views/Question/Params/Utils';
@@ -22,7 +23,6 @@ import {
 } from 'wdk-client/Actions/TreeBoxEnumParamActions';
 import { Action } from 'wdk-client/Actions';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
 
 // Types
 // -----
@@ -160,6 +160,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         }}
         isSearchable={true}
         searchBoxPlaceholder="Filter list below..."
+        searchBoxHelp={makeSearchHelpText("the list below")}
         searchIconName="filter"
         renderNoResults={renderNoResults}
         searchTerm={props.uiState.searchTerm}

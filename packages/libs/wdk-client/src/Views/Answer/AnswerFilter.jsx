@@ -95,6 +95,8 @@ class AnswerFilter extends React.Component {
         <li>Click on the arrow inside the box to select/unselect fields. </li>
         <li>Your terms are matched at the start; 
             for example, the term <i>typ</i> will match <i><u>typ</u>ically</i> and <i><u>typ</u>e</i>, but <strong>not</strong> <i><u>atyp</u>ical</i>.</li>
+        <li>Your terms may include * wildcards;
+            for example, the term <i>*typ</i> will match <i><u>typ</u>ically</i>, <i><u>typ</u>e</i>, and <i>a<u>typ</u>ical</i>.</li>
         </ul>
       </div>
     );
