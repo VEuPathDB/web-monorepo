@@ -57,6 +57,7 @@ import { addStep } from 'wdk-client/Utils/StrategyUtils';
 import {Step} from 'wdk-client/Utils/WdkUser';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { InferAction, mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
+import { isMultiPick } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 export const key = 'question';
 
@@ -629,7 +630,13 @@ function makeDefaultParamValues(parameters: Parameter[]): ParameterValues {
 
 function extractRealParamValues(parameters: Parameter[], initialParamData: Record<string, string>): ParameterValues {
   const realEntries = parameters.map(parameter =>
-    [ parameter.name, initialParamData[parameter.name] || '' ]);
+    [
+      parameter.name,
+      parameter.name in initialParamData
+        ? initialParamData[parameter.name]
+        : isMultiPick(parameter) ? '[]' : ''
+    ]
+  );
   return Object.fromEntries(realEntries);
 }
 
