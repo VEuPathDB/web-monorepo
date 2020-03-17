@@ -497,6 +497,15 @@ a.WelcomeBoxLink {
   font-weight: 500;
 }
 
+.ebrc-QuestionWizard div.clinepi-Summary {
+  max-width: 75em;
+  font-size: 1.2em; 
+  margin: 0;
+}
+.ebrc-QuestionWizard div.clinepi-Summary span#prompt {
+  font-weight: 500;
+}
+
 .ebrc-QuestionWizardHeading {
   font-size: 2em;
 }

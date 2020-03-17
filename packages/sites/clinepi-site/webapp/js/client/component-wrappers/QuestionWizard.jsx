@@ -27,7 +27,7 @@ export default QuestionWizard => injectSearchStudy(props => {
       questionSummary={wizardState.question
         ? (
           <div className="clinepi-Summary">
-            <span dangerouslySetInnerHTML={{__html: wizardState.question.summary}}/>
+            <span id="prompt">Summary:  </span><span dangerouslySetInnerHTML={{__html: wizardState.question.summary}}/>
           </div>
         ) : (
           <div>Could not find question.</div>
