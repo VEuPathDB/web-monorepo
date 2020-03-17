@@ -9,6 +9,7 @@ import {
   BasicNodeComponent,
   CategoryTreeNode
 } from 'wdk-client/Utils/CategoryUtils';
+import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import CheckboxTree, { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 
 type ChangeHandler = (ids: string[]) => void;
@@ -76,8 +77,7 @@ let {
   }
 
   // set help
-  let searchBoxHelp = disableHelp ? '' : 
-    `Each ${leafType} name will be searched. The ${leafType} names will contain all your terms. Your terms are partially matched; for example, the term typ will match typically, type, atypical.`;
+  let searchBoxHelp = disableHelp ? '' : makeSearchHelpText(`each ${leafType}`);
 
   return (
     <div className={`wdk-CategoriesCheckboxTree ${containerClassName}`}>
