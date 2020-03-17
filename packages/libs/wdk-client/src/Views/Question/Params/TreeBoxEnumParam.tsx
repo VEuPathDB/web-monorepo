@@ -22,6 +22,7 @@ import {
 } from 'wdk-client/Actions/TreeBoxEnumParamActions';
 import { Action } from 'wdk-client/Actions';
 import { DispatchAction } from 'wdk-client/Core/CommonTypes';
+import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
 
 // Types
 // -----
@@ -46,9 +47,7 @@ type TreeBoxProps = {
 // -----
 
 function searchPredicate(node: TreeBoxVocabNode, searchTerms: string[]) {
-  return searchTerms
-    .map(term => new RegExp(escapeRegExp(term), 'i'))
-    .every(re => re.test(node.data.display));
+  return areTermsInString(searchTerms, node.data.display);
 }
 
 function getNodeId(node: TreeBoxVocabNode) {
