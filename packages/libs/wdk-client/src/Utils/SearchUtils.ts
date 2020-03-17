@@ -44,7 +44,32 @@ export function parseSearchQueryString(searchQueryString: string) {
  * @returns boolean
  */
 export function areTermsInString(queryTerms: Array<string>, searchableString: string) {
-  return queryTerms.every(term => isTermInString(term, searchableString));
+  const re = new RegExp(areTermsInStringRegexString(queryTerms), "i");
+  return re.test(searchableString);
+}
+
+/**
+ * Return a regex string which can be used to determine if all queryTerms
+ * are found in the searchableString
+ * @param queryTerms An array of queryTerms to search with
+ * @param searchableString The string to search.
+ * @returns boolean
+ */
+export function areTermsInStringRegexString(queryTerms: Array<string>) {
+  const queryTermRegexStrs = queryTerms.map(isTermInStringRegexString);
+  return combineQueryTermRegexStrs(queryTermRegexStrs);
+}
+
+function combineQueryTermRegexStrs(queryTermRegexStrs: Array<string>) {
+  return '^(?=.*?'+ queryTermRegexStrs.join( ')(?=.*?' )+ ').*$';
+}
+
+/**
+ * Returns help text which describes the search provided by areTermsInString
+ * @param itemDescription A description of the items that are being filtered
+ */
+export function makeSearchHelpText(itemDescription: string) {
+  return `Type one or more terms to filter ${itemDescription}.  Your terms will match words and leading characters of words, and may also include '*' wildcards.  For example, the term 'typ' will match 'typically' and 'type', and '*typ' will additionally match 'atypical'.`;
 }
 
 /**
@@ -56,6 +81,18 @@ export function areTermsInString(queryTerms: Array<string>, searchableString: st
 export function isTermInString(queryTerm: string, searchableString: string = '') {
   if (!queryTerm) return true;
 
-  const re = new RegExp("\\b" + escapeRegExp(deburr(queryTerm)), "i");
+  const re = new RegExp(isTermInStringRegexString(queryTerm), "i");
   return re.test(deburr(searchableString));
+}
+
+function isTermInStringRegexString(queryTerm: string) {
+  if (!queryTerm) {
+    return "";
+  }
+
+  const deburredQueryTerm = deburr(queryTerm);
+  const escapedQueryTerm = escapeRegExp(deburredQueryTerm);
+  const queryTermRegexWithWildcards = escapedQueryTerm.replace(/\\\*/g, '[\\w]*');
+
+  return "\\b" + queryTermRegexWithWildcards;
 }
