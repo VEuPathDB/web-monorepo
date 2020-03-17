@@ -4,6 +4,7 @@ import React, {useLayoutEffect, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import { scrollIntoViewIfNeeded } from 'wdk-client/Utils/DomUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
@@ -87,9 +88,7 @@ export default class FieldList extends React.Component { // eslint-disable-line 
   }
 
   searchPredicate(node, searchTerms) {
-    return searchTerms.every(searchTerm =>
-      this.getFieldSearchString(node).includes(searchTerm.toLowerCase())
-    )
+    return areTermsInString(searchTerms, this.getFieldSearchString(node));
   }
 
   _getPathToField(field) {
