@@ -7,13 +7,12 @@ import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
 import { Step } from 'wdk-client/Utils/WdkUser';
 import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
 import { Loading, CheckboxTree } from 'wdk-client/Components';
-import Checkbox from 'wdk-client/Components/InputControls/Checkbox';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
 import {ResultType} from 'wdk-client/Utils/WdkResult';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
+import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 
 import './OrganismFilter.scss';
-import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
 
 const cx = makeClassNameHelper('OrganismFilter')
 
@@ -230,6 +229,7 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
                 selectedNodeIds.length == 0 ? NO_ORGANISM_FILTER_APPLIED : { values: selectedNodeIds })}
               isSearchable={true}
               searchBoxPlaceholder="Search organisms..."
+              searchBoxHelp={makeSearchHelpText("the organisms below")}
               searchTerm={searchTerm}
               onSearchTermChange={term => setSearchTerm(term)}
               searchPredicate={nodeMeetsSearchCriteria}
