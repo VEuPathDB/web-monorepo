@@ -66,7 +66,11 @@ export function areTermsInStringRegexString(queryTerms: Array<string>) {
 }
 
 function combineQueryTermRegexStrs(queryTermRegexStrs: Array<string>) {
-  return '^(?=.*?'+ queryTermRegexStrs.join( ')(?=.*?' )+ ').*$';
+  return (
+    '^(?=[\\\s\\\S]*?' +
+    queryTermRegexStrs.join( ')(?=[\\\s\\\S]*?' ) +
+    ')[\\\s\\\S]*$'
+  );
 }
 
 /**
