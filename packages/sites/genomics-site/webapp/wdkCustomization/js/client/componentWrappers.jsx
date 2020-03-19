@@ -127,7 +127,7 @@ function getBaseUrl(projectId) {
     case 'TrichDB': return 'https://trichdb.org/trichdb';
     case 'TriTrypDB': return 'https://tritrypdb.org/tritrypdb';
     case 'OrthoMCL': return 'https://orthomcl.org/orthomcl';
-    default: return 'https://eupathdb.org/eupathdb';
+    default: return 'https://veupathdb.org/veupathdb';
   }
 }
 
