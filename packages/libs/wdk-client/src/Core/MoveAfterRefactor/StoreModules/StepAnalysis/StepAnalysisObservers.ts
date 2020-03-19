@@ -95,8 +95,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
         const resultContents = analysisConfig.status === 'COMPLETE'
           ? await wdkService.getStepAnalysisResult(stepId, analysisId)
           : {};
-        const myChoice = choices.find(analysis => analysis.name === analysisConfig.analysisName);
-        const isAutorun = myChoice && myChoice.paramNames.length == 0;
+        const isAutorun = determineIfAutorun(analysisConfig.analysisName, choices);
         const finishLoading = finishLoadingSavedTab(
           panelId,
           {
@@ -433,6 +432,29 @@ export const observeDuplicateAnalysis = (action$: ActionsObservable<Action>, sta
         return createNewTab(panelState);
       }
 
+      const isAutorun = determineIfAutorun(panelState.analysisConfig.analysisName, choices);
+
+      if (isAutorun) {
+        try {
+          const duplicateAnalysisConfig = await wdkService.createStepAnalysis(stepId, {
+            displayName: panelState.analysisConfig.displayName,
+            analysisName: panelState.analysisConfig.analysisName
+          });
+
+          return createNewTab({
+            type: UNINITIALIZED_PANEL_STATE,
+            analysisId: duplicateAnalysisConfig.analysisId,
+            displayName: duplicateAnalysisConfig.displayName,
+            status: 'UNOPENED',
+            errorMessage: null
+          });
+        }
+        catch (ex) {
+          alert(`Cannot duplicate analysis '${panelState.analysisConfig.displayName}' at this time. Please try again later, or contact us if the problem persists.`);
+          return EMPTY;
+        }
+      }
+
       return createNewTab({
         type: UNSAVED_ANALYSIS_STATE,
         pollCountdown: 3,
@@ -546,4 +568,9 @@ function parseAnalysisInitializationError(error: any) {
       errorMessage: stepValidation.errors.general[0]
     };
   }
+}
+
+function determineIfAutorun(analysisTypeName: string, choices: StepAnalysisType[]) {
+  const myChoice = choices.find(analysis => analysis.name === analysisTypeName);
+  return myChoice?.paramNames.length == 0;
 }
