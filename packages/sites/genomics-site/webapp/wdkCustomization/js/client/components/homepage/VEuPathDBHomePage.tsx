@@ -730,6 +730,13 @@ const useHeaderMenuItems = (
           tooltip: 'Login first to keep your work',
           type: 'reactRoute',
           url: '/reset-session',
+        },
+        {
+          key: 'back-to-main',
+          display: 'Return to main site',
+          tooltip: 'Opt out of the beta site',
+          type: 'externalLink',
+          url: `https://${projectId.toLowerCase()}.org`,
         }
       ]
     },
