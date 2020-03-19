@@ -18,7 +18,6 @@ function isType(param: Parameter): param is NumberParam {
 
 function Component(props: Props<NumberParam, undefined>) {
   const { parameter, value, onParamValueChange } = props;
-  console.info('Number param', { NumberSelector, props });
   return (
     <NumberSelector
       start={parameter.min}
