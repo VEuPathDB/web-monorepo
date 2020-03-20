@@ -94,8 +94,7 @@ const RecordClassSpecificRecordlink = makeDynamicWrapper('RecordLink');
 /** Remove project_id from record links */
 export function RecordLink(WdkRecordLink) {
   const isPortal = projectId === 'EuPathDB';
-  const DefaultRecordLink = isPortal ? PortalRecordLink : WdkRecordLink;
-  const ResolvedRecordLink = RecordClassSpecificRecordlink(DefaultRecordLink);
+  const ResolvedRecordLink = RecordClassSpecificRecordlink(makePortalRecordLink(WdkRecordLink));
   return function ApiRecordLink(props) {
     let recordId = isPortal ? props.recordId : props.recordId.filter(p => p.name !== 'project_id');
     return (
@@ -104,32 +103,40 @@ export function RecordLink(WdkRecordLink) {
   };
 }
 
-function PortalRecordLink(props) {
-  const { recordId, recordClass } = props;
-  const projectIdPart = recordId.find(part => part.name === 'project_id');
-  const baseUrl = getBaseUrl(projectIdPart && projectIdPart.value);
-  const pkValues = recordId.filter(p => p.name !== 'project_id').map(p => p.value).join('/');
-  return (
-    <a href={`${baseUrl}/app/record/${recordClass.urlSegment}/${pkValues}`} target="_blank">{props.children}</a>
-  );
+function makePortalRecordLink(WdkRecordLink) {
+  if (projectId !== 'EuPathDB') return WdkRecordLink;
+  return function PortalRecordLink(props) {
+    const { recordId, recordClass } = props;
+    const projectIdPart = recordId.find(part => part.name === 'project_id');
+
+    if (projectIdPart == null || projectIdPart.value === 'EuPathDB') return <WdkRecordLink {...props}/>;
+
+    const baseUrl = getBaseUrl(projectIdPart && projectIdPart.value);
+    const pkValues = recordId.filter(p => p.name !== 'project_id').map(p => p.value).join('/');
+
+    return (
+      <a href={`${baseUrl}/app/record/${recordClass.urlSegment}/${pkValues}`} target="_blank">{props.children}</a>
+    );
+  }
 }
 
 function getBaseUrl(projectId) {
+  const hostPrefix = window.location.hostname.replace('eupathdb.org', '');
   switch(projectId) {
-    case 'AmoebaDB': return 'https://amoebadb.org/amoeba';
-    case 'CryptoDB': return 'https://cryptodb.org/cryptodb';
-    case 'FungiDB': return 'https://fungidb.org/fungidb';
-    case 'GiardiaDB': return 'https://giardiadb.org/giardiadb';
-    case 'HostDB': return 'https://hostdb.org/hostdb';
-    case 'MicrosporidiaDB': return 'https://microsporidiadb.org/micro';
-    case 'PiroplasmaDB': return 'https://piroplasmadb.org/piro';
-    case 'PlasmoDB': return 'https://plasmodb.org/plasmo';
-    case 'ToxoDB': return 'https://toxodb.org/toxo';
-    case 'TrichDB': return 'https://trichdb.org/trichdb';
-    case 'TriTrypDB': return 'https://tritrypdb.org/tritrypdb';
-    case 'VectorBase': return 'https://vectorbase.org/vectorbase';
-    case 'OrthoMCL': return 'https://orthomcl.org/orthomcl';
-    default: return 'https://veupathdb.org/veupathdb';
+    case 'AmoebaDB': return `https://${hostPrefix}amoebadb.org/amoeba`;
+    case 'CryptoDB': return `https://${hostPrefix}cryptodb.org/cryptodb`;
+    case 'FungiDB': return `https://${hostPrefix}fungidb.org/fungidb`;
+    case 'GiardiaDB': return `https://${hostPrefix}giardiadb.org/giardiadb`;
+    case 'HostDB': return `https://${hostPrefix}hostdb.org/hostdb`;
+    case 'MicrosporidiaDB': return `https://${hostPrefix}microsporidiadb.org/micro`;
+    case 'PiroplasmaDB': return `https://${hostPrefix}piroplasmadb.org/piro`;
+    case 'PlasmoDB': return `https://${hostPrefix}plasmodb.org/plasmo`;
+    case 'ToxoDB': return `https://${hostPrefix}toxodb.org/toxo`;
+    case 'TrichDB': return `https://${hostPrefix}trichdb.org/trichdb`;
+    case 'TriTrypDB': return `https://${hostPrefix}tritrypdb.org/tritrypdb`;
+    case 'VectorBase': return `https://${hostPrefix}vectorbase.org/vectorbase`;
+    case 'OrthoMCL': return `https://${hostPrefix}orthomcl.org/orthomcl`;
+    default: return `https://${hostPrefix}veupathdb.org/veupathdb`;
   }
 }
 
