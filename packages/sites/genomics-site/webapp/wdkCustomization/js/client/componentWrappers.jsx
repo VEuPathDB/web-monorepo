@@ -120,12 +120,14 @@ function getBaseUrl(projectId) {
     case 'CryptoDB': return 'https://cryptodb.org/cryptodb';
     case 'FungiDB': return 'https://fungidb.org/fungidb';
     case 'GiardiaDB': return 'https://giardiadb.org/giardiadb';
+    case 'HostDB': return 'https://hostdb.org/hostdb';
     case 'MicrosporidiaDB': return 'https://microsporidiadb.org/micro';
     case 'PiroplasmaDB': return 'https://piroplasmadb.org/piro';
     case 'PlasmoDB': return 'https://plasmodb.org/plasmo';
     case 'ToxoDB': return 'https://toxodb.org/toxo';
     case 'TrichDB': return 'https://trichdb.org/trichdb';
     case 'TriTrypDB': return 'https://tritrypdb.org/tritrypdb';
+    case 'VectorBase': return 'https://vectorbase.org/vectorbase';
     case 'OrthoMCL': return 'https://orthomcl.org/orthomcl';
     default: return 'https://veupathdb.org/veupathdb';
   }
