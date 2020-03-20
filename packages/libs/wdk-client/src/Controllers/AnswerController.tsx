@@ -94,14 +94,15 @@ class AnswerController extends PageController<Props> {
     let [ , searchName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
 
     const { dispatchProps } = this.props;
+    const MAXROWS = 2000;
 
-    // (re)initialize the page, if question, recordClass, or parmaeters changes
+    // (re)initialize the page, if question, recordClass, or parameters changes
     if (
       question !== prevProps?.ownProps.question ||
       recordClassName !== prevProps?.ownProps.recordClass ||
       parameters !== prevProps?.ownProps.parameters
     ) {
-      let pagination = { numRecords: 1000, offset: 0 };
+      let pagination = { numRecords: 2000, offset: 0 };
       let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
       let displayInfo = { pagination, sorting, customName };
       let opts = { displayInfo, parameters, filterTerm, filterAttributes, filterTables };
