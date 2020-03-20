@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { defaultMemoize } from 'reselect';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
@@ -83,7 +84,7 @@ export interface ClientPluginRegistryEntry<PluginProps> {
   component: PluginComponent<PluginProps>;
 }
 
-export function makeCompositePluginComponent<T>(registry: ClientPluginRegistryEntry<T>[]): React.ComponentType<CompositePluginComponentProps<T>> {
+function makeCompositePluginComponentUncached<T>(registry: ClientPluginRegistryEntry<T>[]): React.ComponentType<CompositePluginComponentProps<T>> {
 
   type Props = CompositePluginComponentProps<T>;
 
@@ -118,6 +119,9 @@ export function makeCompositePluginComponent<T>(registry: ClientPluginRegistryEn
 
   return CompositePluginComponent;
 }
+
+// We should only re-create the composite plugin component if the plugin registry has changed
+export const makeCompositePluginComponent = defaultMemoize(makeCompositePluginComponentUncached);
 
 function isMatchingEntry<T>(entry: ClientPluginRegistryEntry<T>, context: PluginEntryContext, references: ResolvedPluginReferences): boolean {
   if (entry.type !== context.type) return false;
