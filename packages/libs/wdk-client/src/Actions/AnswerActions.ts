@@ -212,8 +212,8 @@ export function loadAnswer(
       async () => {
         try {
           const { parameters = {} as ParameterValues, displayInfo } = opts;
-          const question = await wdkService.findQuestion(hasUrlSegment(questionUrlSegment));
-          const recordClass = await wdkService.findRecordClass(hasUrlSegment(recordClassUrlSegment));
+          const question = await wdkService.findQuestion(questionUrlSegment);
+          const recordClass = await wdkService.findRecordClass(recordClassUrlSegment);
           const attributes = recordClass.attributes
           // Get all attributes for applications that need internal attributes for rendering purposes.
           // TODO Figure out a way to allow applications to declore additional non-displayable attributes for request
@@ -248,9 +248,3 @@ export function loadAnswer(
     ]
   }
 }
-
-// Helpers
-// -------
-
-const hasUrlSegment = (urlSegment: string) => (e: RecordClass | Question): boolean =>
-  e.urlSegment === urlSegment

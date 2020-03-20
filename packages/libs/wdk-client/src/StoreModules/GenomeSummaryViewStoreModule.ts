@@ -101,7 +101,7 @@ async function getRecordClassAndFormat(
   wdkService: WdkService
 ): Promise<[string, RecordClass]> {
   const resultTypeDetails = await getResultTypeDetails(wdkService, resultType);
-  const recordClass = await wdkService.findRecordClass(r => r.urlSegment === resultTypeDetails.recordClassName);
+  const recordClass = await wdkService.findRecordClass(resultTypeDetails.recordClassName);
   return [
     getFormatFromRecordClassName(resultTypeDetails.recordClassName),
     recordClass

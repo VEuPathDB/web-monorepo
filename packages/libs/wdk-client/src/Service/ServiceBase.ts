@@ -324,22 +324,22 @@ export const ServiceBase = (serviceUrl: string) => {
     });
   }
 
-  function findQuestion(test: (question: Question) => boolean) {
+  function findQuestion(urlSegment: string) {
     return getQuestions().then(qs => {
-      let question = qs.find(test)
+      let question = qs.find(q => q.urlSegment === urlSegment);
       if (question == null) {
-        throw new ServiceError("Could not find question.", "Not found", 404);
+        throw new ServiceError(`Could not find question "${urlSegment}".`, "Not found", 404);
       }
       return question;
     });
   }
 
 
-  function findRecordClass(test: (recordClass: RecordClass) => boolean) {
+  function findRecordClass(urlSegment: string) {
     return getRecordClasses().then(rs => {
-      let record = rs.find(test);
+      let record = rs.find(r => r.urlSegment === urlSegment);
       if (record == null) {
-        throw new ServiceError("Could not find record class.", "Not found", 404);
+        throw new ServiceError(`Could not find record class "${urlSegment}".`, "Not found", 404);
       }
       return record;
     });

@@ -22,9 +22,9 @@ export default (base: ServiceBase) => {
   }
 
   /** Get the first RecordClass that matches `test`. */
-  function findRecordClass(test: (recordClass: RecordClass) => boolean): Promise<RecordClass> {
+  function findRecordClass(urlSegment: string): Promise<RecordClass> {
     return base.getRecordClasses().then(rs => {
-      let record = rs.find(test);
+      let record = rs.find(r => r.urlSegment === urlSegment);
       if (record == null) {
         throw new ServiceError("Could not find record class.", "Not found", 404);
       }

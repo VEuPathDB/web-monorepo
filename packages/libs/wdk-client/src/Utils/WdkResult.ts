@@ -47,7 +47,7 @@ export async function getResultTypeDetails(wdkService: WdkService, resultType: R
     }
     case 'answerSpec': {
       const { searchName } = resultType.answerSpec;
-      const question = await wdkService.findQuestion(q => q.urlSegment === searchName);
+      const question = await wdkService.findQuestion(searchName);
       if (question == null) throw new Error(`Answer spec has an unknown searchName: "${searchName}".`);
       return { searchName, recordClassName: question.outputRecordClassName };
     }
@@ -55,10 +55,10 @@ export async function getResultTypeDetails(wdkService: WdkService, resultType: R
       // We currently only suppport basket names that match with record type.
       // The following will need to be updated to support multiple baskets per
       // record type.
-      const recordClass = await wdkService.findRecordClass(r => r.urlSegment === resultType.basketName);
+      const recordClass = await wdkService.findRecordClass(resultType.basketName);
       if (recordClass == null) throw new Error(`The basket with the name "${resultType.basketName}" does not exist.`);
       const searchNamePrefix = recordClass.fullName.replace('.', '_');
-      const question = await wdkService.findQuestion(q => q.urlSegment === searchNamePrefix + 'ByRealtimeBasket');
+      const question = await wdkService.findQuestion(searchNamePrefix + 'ByRealtimeBasket');
       if (question == null) throw new Error(`The basket with the name "${resultType.basketName}" does not exist.`);
       return { searchName: question.urlSegment, recordClassName: recordClass.urlSegment };
     }

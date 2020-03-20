@@ -390,33 +390,6 @@ const questionsDecoder: Decode.Decoder<Question[]> =
 
 export default (base: ServiceBase) => {
 
-  /**
-   * Get all Questions defined in WDK Model.
-   *
-   * @return {Promise<Array<Object>>}
-   */
-  function getQuestions() : Promise<Array<Question>> {
-    return base.getRecordClasses().then(result => {
-      return result.reduce((arr, rc) => arr.concat(rc.searches), [] as Array<Question>);
-    });
-  }
-
-  /**
-   * Get the first Question that matches `test`.
-   *
-   * @param {Function} test Predicate function the Question must satisfy
-   * @return {Promise<Object?>}
-   */
-  function findQuestion(test: (question: Question) => boolean) {
-    return base.getQuestions().then(qs => {
-      let question = qs.find(test)
-      if (question == null) {
-        throw new ServiceError("Could not find question.", "Not found", 404);
-      }
-      return question;
-    });
-  }
-
   async function getQuestionAndParameters(questionUrlSegment: string): Promise<QuestionWithParameters> {
     let searchPath = await getSearchPathFromUrlSegment(questionUrlSegment);
     return base.sendRequest(questionWithParametersDecoder, {
@@ -454,8 +427,8 @@ export default (base: ServiceBase) => {
   }
 
   async function getSearchPathFromUrlSegment(questionUrlSegment: string) : Promise<string> {
-    const question = await base.findQuestion(question => question.urlSegment === questionUrlSegment );
-    const recordClass = await base.findRecordClass(recordClass => recordClass.urlSegment === question.outputRecordClassName);
+    const question = await base.findQuestion(questionUrlSegment );
+    const recordClass = await base.findRecordClass(question.outputRecordClassName);
     return base.getSearchPath(recordClass.urlSegment, questionUrlSegment);
   }
 
@@ -485,8 +458,6 @@ export default (base: ServiceBase) => {
   }
 
   return {
-    getQuestions,
-    findQuestion,
     getQuestionAndParameters,
     getQuestionGivenParameters,
     getQuestionParamValues,

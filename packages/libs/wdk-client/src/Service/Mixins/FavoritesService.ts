@@ -15,7 +15,7 @@ export default (base: ServiceBase) => {
    * @param record Record instance to search for
    */
   async function getFavoriteId (record: RecordInstance) {
-    let rcObject = await base.findRecordClass(rc => rc.fullName === record.recordClassName);
+    let rcObject = await base.findRecordClass(record.recordClassName);
     let data = [{
       recordClassName: rcObject.urlSegment,
       primaryKey: record.id
@@ -33,7 +33,7 @@ export default (base: ServiceBase) => {
    * @param record Record to add as a favorite
    */
   async function addFavorite (record: RecordInstance) {
-    let rcObject = await base.findRecordClass(rc => rc.fullName === record.recordClassName);
+    let rcObject = await base.findRecordClass(record.recordClassName);
     const favorite = { recordClassName: rcObject.urlSegment, primaryKey: record.id };
     const url = '/users/current/favorites';
     return base

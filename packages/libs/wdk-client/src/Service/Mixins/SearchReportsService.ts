@@ -41,8 +41,8 @@ interface CustomSearchReportRequestInfo {
 export default (base: ServiceBase) => {
 
   async function getCustomSearchReportRequestInfo(answerSpec: AnswerSpec, formatting: AnswerFormatting): Promise<CustomSearchReportRequestInfo> {
-    const question = await base.findQuestion(question => question.urlSegment === answerSpec.searchName);
-    const recordClass = await base.findRecordClass(recordClass => recordClass.urlSegment === question.outputRecordClassName);
+    const question = await base.findQuestion(answerSpec.searchName);
+    const recordClass = await base.findRecordClass(question.outputRecordClassName);
     let url = base.getCustomSearchReportEndpoint(recordClass.urlSegment, question.urlSegment, formatting.format);
     let searchConfig: SearchConfig = answerSpec.searchConfig;
     let reportConfig = formatting.formatConfig || {};
@@ -64,8 +64,8 @@ export default (base: ServiceBase) => {
    * This method uses the deprecated AnswerSpec and AnswerFormatting for backwards compatibility with bulk of client code
    */
   async function getAnswerJson(answerSpec: AnswerSpec, reportConfig: StandardReportConfig, viewFilters?: FilterValueArray): Promise<Answer> {
-    const question = await base.findQuestion(question => question.urlSegment === answerSpec.searchName);
-    const recordClass = await base.findRecordClass(recordClass => recordClass.urlSegment === question.outputRecordClassName);
+    const question = await base.findQuestion(answerSpec.searchName);
+    const recordClass = await base.findRecordClass(question.outputRecordClassName);
     let url = base.getStandardSearchReportEndpoint(recordClass.urlSegment, question.urlSegment);
     let searchConfig: SearchConfig = answerSpec.searchConfig
     let body: StandardSearchReportRequest = { searchConfig, reportConfig };

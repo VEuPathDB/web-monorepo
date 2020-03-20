@@ -24,7 +24,7 @@ export function getStepBundlePromise(stepId: number, service: WdkService): Promi
 
   let stepPromise = service.findStep(stepId);
   let questionPromise = stepPromise.then(step => {
-    return service.findQuestion( q => q.urlSegment === step.searchName )
+    return service.findQuestion( step.searchName )
     .then(question => {
       if (question == null) {
         throw new Error("The question `" + step.searchName + "` could not be found.");
@@ -33,7 +33,7 @@ export function getStepBundlePromise(stepId: number, service: WdkService): Promi
     })
   });
   let recordClassPromise = questionPromise.then(question =>
-    service.findRecordClass( rc => rc.urlSegment === question.outputRecordClassName )
+    service.findRecordClass( question.outputRecordClassName )
   );
 
   return Promise.all([ stepPromise, questionPromise, recordClassPromise ])
@@ -49,8 +49,7 @@ export function getSingleRecordStepBundlePromise(wdkService: WdkService) {
   return function([ recordClass, recordInstance ]: [ RecordClass, RecordInstance ]): Promise<AnswerSpecBundle> {
 
     // create single-record question and step for this record class
-    let questionPromise: Promise<Question> = wdkService.findQuestion(
-      q => q.urlSegment === getSingleRecordQuestionName(recordClass.fullName));
+    let questionPromise: Promise<Question> = wdkService.findQuestion(getSingleRecordQuestionName(recordClass.fullName));
     let answerSpec = getSingleRecordAnswerSpec(recordInstance);
     let displayName = String(recordInstance.attributes[recordClass.recordIdAttributeName]) ||
       recordInstance.id.map(pk => pk.value).reduce((s, val) => (s == null ? val : '/' + val));

@@ -317,7 +317,7 @@ function setActiveRecord(
       recordLoading(id, { recordClassUrlSegment, primaryKeyValues }),
       // Fetch the record base and tables in parallel.
       Promise.all([
-        wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment),
+        wdkService.findRecordClass(recordClassUrlSegment),
         getPrimaryKey(wdkService, recordClassUrlSegment, primaryKeyValues),
         getCategoryTree(wdkService, recordClassUrlSegment)
       ]).then(
@@ -366,7 +366,7 @@ function setActiveRecord(
  * @returns Promise<PrimaryKey>
  */
 function getPrimaryKey(wdkService: WdkService, recordClassUrlSegment: string, primaryKeyValues: string[]) {
-  return wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment)
+  return wdkService.findRecordClass(recordClassUrlSegment)
     .then(recordClass => {
       if (recordClass == null)
         throw new Error("Could not find a record class identified by `" + recordClassUrlSegment + "`.");
@@ -380,7 +380,7 @@ function getPrimaryKey(wdkService: WdkService, recordClassUrlSegment: string, pr
 function getCategoryTree(wdkService: WdkService, recordClassUrlSegment: string) {
   return Promise.all([
     wdkService.getConfig().then(config => wdkService.getOntology(config.categoriesOntologyName)),
-    wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment)
+    wdkService.findRecordClass(recordClassUrlSegment)
   ]).then(([ontology, recordClass]) => {
     return getTree(ontology, isLeafFor(recordClass.fullName));
   });

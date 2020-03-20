@@ -171,7 +171,7 @@ export function loadPageDataFromRecord(
 ): ActionThunk<LoadPageDataAction> {
   return function run({ wdkService }) {
     // create promise for recordClass
-    let recordClassPromise = wdkService.findRecordClass(r => r.urlSegment === recordClassUrlSegment);
+    let recordClassPromise = wdkService.findRecordClass(recordClassUrlSegment);
 
     // create promise for record, dependent on result of recordClass promise
     let recordPromise = recordClassPromise.then(recordClass => {
@@ -215,8 +215,8 @@ export function loadPageDataFromBasketName(
     const resultTypeBundlePromise = getResultTypeDetails(wdkService, resultType)
       .then(({ searchName, recordClassName }) => {
         return Promise.all([
-          wdkService.findQuestion(q => q.urlSegment === searchName),
-          wdkService.findRecordClass(r => r.urlSegment === recordClassName)
+          wdkService.findQuestion(searchName),
+          wdkService.findRecordClass(recordClassName)
         ]).then(([ question, recordClass ]) => ({
           question,
           recordClass,
@@ -242,11 +242,11 @@ export function loadPageDataFromSearchConfig(
 
     // find question
     let questionPromise = wdkService
-      .findQuestion(q => q.urlSegment === searchName);
+      .findQuestion(searchName);
 
     // find record class for that question
     let recordClassPromise = questionPromise
-      .then(q => wdkService.findRecordClass(rc => rc.urlSegment === q.outputRecordClassName));
+      .then(q => wdkService.findRecordClass(q.outputRecordClassName));
 
     // bundle these with a stub step to populate the store
     let bundlePromise = Promise.all([questionPromise, recordClassPromise])

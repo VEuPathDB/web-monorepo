@@ -92,8 +92,8 @@ export function makeCompositePluginComponent<T>(registry: ClientPluginRegistryEn
       try {
         const { searchName, recordClassName } = props.context;
         const [ question, recordClass ] = await Promise.all([
-          searchName == null ? undefined : wdkService.findQuestion(q => q.urlSegment === searchName),
-          recordClassName == null ? undefined : wdkService.findRecordClass(rc => rc.urlSegment === recordClassName)
+          searchName == null ? undefined : wdkService.findQuestion(searchName),
+          recordClassName == null ? undefined : wdkService.findRecordClass(recordClassName)
         ]);
         return { question, recordClass };
       }

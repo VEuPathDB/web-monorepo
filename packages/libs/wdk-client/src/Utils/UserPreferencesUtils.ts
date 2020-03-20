@@ -19,7 +19,7 @@ export async function getResultPanelTabPref(searchName: string, wdkService: WdkS
 
 export async function getResultTableColumnsPref(wdkService: WdkService, searchName: string, step?: Step): Promise<string[]> {
   const question = await getQuestionFromSearchName(searchName, wdkService);
-  const recordClass = await wdkService.findRecordClass(({ urlSegment }) => urlSegment === question.outputRecordClassName);
+  const recordClass = await wdkService.findRecordClass(question.outputRecordClassName);
   const fixedColumns = [
     recordClass.recordIdAttributeName,
     ...recordClass.attributes
@@ -146,8 +146,8 @@ async function getQuestionFromSearchName(searchName: string, wdkService: WdkServ
 }
 
 async function getQuestionAndRecordClass(wdkService: WdkService, questionName: string) {
-  const question = await wdkService.findQuestion(q => q.urlSegment === questionName);
-  const recordClass = await wdkService.findRecordClass(r => r.urlSegment === question.outputRecordClassName);
+  const question = await wdkService.findQuestion(questionName);
+  const recordClass = await wdkService.findRecordClass(question.outputRecordClassName);
   return { question, recordClass };
 }
 

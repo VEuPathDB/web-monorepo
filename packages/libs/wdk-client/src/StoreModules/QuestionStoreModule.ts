@@ -590,7 +590,7 @@ async function loadQuestion(
     const question = step == null
       ? await wdkService.getQuestionAndParameters(searchName)
       : await wdkService.getQuestionGivenParameters(searchName, step.searchConfig.parameters);
-    const recordClass = await wdkService.findRecordClass(rc => rc.urlSegment == question.outputRecordClassName);
+    const recordClass = await wdkService.findRecordClass(question.outputRecordClassName);
     const paramValues = step != null ? integrateStepAndDefaultParamValues(question.parameters, step)
                       : initialParamData != null ? extractRealParamValues(question.parameters, initialParamData)
                       : makeDefaultParamValues(question.parameters)

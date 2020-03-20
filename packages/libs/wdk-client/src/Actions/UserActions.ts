@@ -536,7 +536,7 @@ type BasketAction = BasketStatusLoadingAction | BasketStatusErrorAction | Basket
 export function loadBasketStatus(record: RecordInstance): ActionThunk<BasketAction|EmptyAction> {
   return maybeLoggedIn<BasketAction>(async ({ wdkService }) =>
     setBasketStatus(record, wdkService.getBasketStatus(
-      (await wdkService.findRecordClass(rc => rc.fullName === record.recordClassName)).urlSegment,
+      (await wdkService.findRecordClass(record.recordClassName)).urlSegment,
       [record]
     ).then(response => response[0]))
   );
@@ -553,7 +553,7 @@ export function updateBasketStatus(record: RecordInstance, status: boolean): Act
       setBasketStatus(record,
         wdkService.updateRecordsBasketStatus(
           status ? 'add' : 'remove',
-          (await wdkService.findRecordClass(rc => rc.fullName === record.recordClassName)).urlSegment,
+          (await wdkService.findRecordClass(record.recordClassName)).urlSegment,
           [record.id]
         ).then(() => status)),
     () => showLoginWarning('use baskets')

@@ -106,7 +106,7 @@ async function getBasketStrategy(
   { wdkService }: EpicDependencies
 ): Promise<InferAction<typeof transitionToInternalPage>> {
   const { basketName } = action.payload;
-  const recordClass = await wdkService.findRecordClass(rc => rc.urlSegment === basketName);
+  const recordClass = await wdkService.findRecordClass(basketName);
   const datasetId = await wdkService.createDataset({
     sourceType: 'basket',
     sourceContent: { basketName }
