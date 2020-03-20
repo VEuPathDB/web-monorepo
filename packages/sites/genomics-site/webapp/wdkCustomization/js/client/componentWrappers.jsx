@@ -121,7 +121,7 @@ function makePortalRecordLink(WdkRecordLink) {
 }
 
 function getBaseUrl(projectId) {
-  const hostPrefix = window.location.hostname.replace('eupathdb.org', '');
+  const hostPrefix = window.location.hostname.replace('veupathdb.org', '');
   switch(projectId) {
     case 'AmoebaDB': return `https://${hostPrefix}amoebadb.org/amoeba`;
     case 'CryptoDB': return `https://${hostPrefix}cryptodb.org/cryptodb`;
