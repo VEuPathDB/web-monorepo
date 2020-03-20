@@ -20,7 +20,7 @@ export const loadPathwayGeneDynamicCols = (geneStepId, pathwaySource, pathwayId,
   return wdkService.findStep(geneStepId)
   .then(geneStep => {
     baseAnswerSpec = geneStep.answerSpec;
-    return wdkService.findQuestion(question => question.fullName === baseAnswerSpec.questionName);
+    return wdkService.findQuestion(baseAnswerSpec.questionName);
   })
   .then(question => {
     let dynamicAttrNames = question.dynamicAttributes.map(attr => attr.name);
