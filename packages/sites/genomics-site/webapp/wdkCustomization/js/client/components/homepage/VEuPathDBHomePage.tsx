@@ -585,8 +585,8 @@ const useHeaderMenuItems = (
             {
               key: 'submission-instructions',
               display: 'How to submit data to us',
-              type: 'webAppRoute',
-              url: '/dataSubmission.jsp'
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/dataSubmission.html')
             },
             {
               key: 'submission-policy',
