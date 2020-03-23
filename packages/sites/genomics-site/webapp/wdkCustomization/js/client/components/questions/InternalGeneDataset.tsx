@@ -6,7 +6,7 @@ import { Loading, Link, Tooltip, HelpIcon, Tabs } from 'wdk-client/Components';
 import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
 import { useSetSearchDocumentTitle } from 'wdk-client/Controllers/QuestionController';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { useWdkEffect } from 'wdk-client/Service/WdkService';
+import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUtils';
@@ -87,10 +87,41 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     [ questions, recordClasses, internalSearchName ]
   );
 
-  const [ questionNamesByDatasetAndCategory, updateQuestionNamesByDatasetAndCategory ] = useState<Record<string, Record<string, string>> | undefined>(undefined);
-  const [ displayCategoriesByName, updateDisplayCategoriesByName ] = useState<Record<string, DisplayCategory> | undefined>(undefined);
-  const [ displayCategoryOrder, updateDisplayCategoryOrder ] = useState<string[] | undefined>(undefined);
-  const [ datasetRecords, updateDatasetRecords ] = useState<DatasetRecord[] | undefined>(undefined);
+  const serviceResult = useWdkService(async wdkService => {
+    if (
+      !questions || 
+      !ontology ||
+      !outputRecordClass || 
+      !datasetCategory || 
+      !datasetSubtype
+    ) {
+      return undefined;
+    }
+
+    const answer = await wdkService.getAnswerJson(
+      getAnswerSpec(datasetCategory, datasetSubtype),
+      REPORT_CONFIG
+    );
+
+    const internalQuestions = getInternalQuestions(answer, outputRecordClass.fullName);
+    const displayCategoryMetadata = getDisplayCategoryMetadata(ontology, internalQuestions);
+    const datasetRecords = getDatasetRecords(answer, displayCategoryMetadata);
+
+    return {
+      questionNamesByDatasetAndCategory: displayCategoryMetadata.questionNamesByDatasetAndCategory,
+      displayCategoriesByName: displayCategoryMetadata.displayCategoriesByName,
+      displayCategoryOrder: displayCategoryMetadata.displayCategoryOrder,
+      datasetRecords
+    };
+  }, [ questions, ontology, internalSearchName, outputRecordClass, datasetCategory, datasetSubtype ]);
+
+  const {
+    questionNamesByDatasetAndCategory,
+    displayCategoriesByName,
+    displayCategoryOrder,
+    datasetRecords
+  } = serviceResult || {};
+
   const [ showingOneRecord, updateShowingOneRecord ] = useState(showingRecordToggle);
 
   const selectedDataSetRecord = useMemo(
@@ -102,37 +133,6 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
     () => getFilteredDatasetRecords(datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord),
     [ datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord ]
   );
-    
-  useWdkEffect(wdkService => {
-    updateQuestionNamesByDatasetAndCategory(undefined);
-    updateDisplayCategoriesByName(undefined);
-    updateDisplayCategoryOrder(undefined);
-    updateDatasetRecords(undefined);
-
-    if (
-      !questions || 
-      !ontology ||
-      !outputRecordClass || 
-      !datasetCategory || 
-      !datasetSubtype
-    ) {
-      return;
-    }
-
-    wdkService.getAnswerJson(
-      getAnswerSpec(datasetCategory, datasetSubtype),
-      REPORT_CONFIG
-    ).then(answer => {
-      const internalQuestions = getInternalQuestions(answer, outputRecordClass.fullName);
-      const displayCategoryMetadata = getDisplayCategoryMetadata(ontology, internalQuestions);
-      const datasetRecords = getDatasetRecords(answer, displayCategoryMetadata);
-
-      updateQuestionNamesByDatasetAndCategory(displayCategoryMetadata.questionNamesByDatasetAndCategory);
-      updateDisplayCategoriesByName(displayCategoryMetadata.displayCategoriesByName);
-      updateDisplayCategoryOrder(displayCategoryMetadata.displayCategoryOrder);
-      updateDatasetRecords(datasetRecords);
-    });
-  }, [ questions, ontology, internalSearchName, outputRecordClass, datasetCategory, datasetSubtype ]);
 
   useEffect(() => {
     updateShowingOneRecord(searchName !== internalSearchName);
@@ -148,23 +148,22 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
 
   return (
     (
-      (!internalQuestion && questions) ||
-      !outputRecordClass || 
-      !datasetCategory || 
-      !datasetSubtype
+      !questions ||
+      !ontology ||
+      !questionNamesByDatasetAndCategory ||
+      !displayCategoriesByName ||
+      !displayCategoryOrder ||
+      !datasetRecords ||
+      !filteredDatasetRecords
     )
-      ? <NotFound />
-      : (
-          !internalQuestion ||
-          !questions ||
-          !ontology ||
-          !questionNamesByDatasetAndCategory ||
-          !displayCategoriesByName ||
-          !displayCategoryOrder ||
-          !datasetRecords ||
-          !filteredDatasetRecords
-        )
       ? <Loading />
+      : (
+        !internalQuestion ||
+        !outputRecordClass ||
+        !datasetCategory ||
+        !datasetSubtype
+      )
+      ? <NotFound />
       : (
         <div className={cx()}>
           <QuestionHeader
