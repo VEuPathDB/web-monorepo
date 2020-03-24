@@ -24,6 +24,7 @@ $small-branding-scale-factor: 0.57142857142em;
   $primary-color: themed('primary-color');
   $bckgrnd-img: themed('bckgrnd-img');
   $logo: themed('logo');
+  $beta-position-left: themed('beta-position-left');
 
   .vpdb-BgDark {
     background-color: $primary-color;
@@ -37,6 +38,23 @@ $small-branding-scale-factor: 0.57142857142em;
     background-image: $bckgrnd-img;
     background-size: cover;
     background-position: center;
+
+    /* TODO Remove when we're out of beta */
+    .ebrc-HeaderBrandingContainer {
+      a {
+        position: relative;
+      }
+
+      a::after {
+        content: "(beta)";
+        position: absolute;
+        top: 1.3em;
+        left: $beta-position-left;
+        font-size: 1.4em;
+        font-weight: 500;
+        color: white;
+      }
+    }
 
     .ebrc-HeaderBranding {
       content: $logo;
