@@ -41,7 +41,6 @@ function Sequence(props) {
     highlightedSequence.push(sequence.slice(region.end, nextRegion == null ? sequence.length : nextRegion.start - 1));
   }
 
-  // FIXME Trunate and show "Show more" button
   return (
     <div style={{ position: 'relative' }}>
       <div style={{
