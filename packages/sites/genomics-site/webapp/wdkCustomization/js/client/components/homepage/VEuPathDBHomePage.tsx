@@ -26,6 +26,7 @@ import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 
 import './VEuPathDBHomePage.scss';
+import CookieBanner from 'ebrc-client/components/CookieBanner';
 
 const vpdbCx = makeVpdbClassNameHelper('');
 
@@ -188,6 +189,9 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
         >
           <PageDescription />
         </Footer>
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <CookieBanner/>
       </ErrorBoundary>
     </div>
   );
