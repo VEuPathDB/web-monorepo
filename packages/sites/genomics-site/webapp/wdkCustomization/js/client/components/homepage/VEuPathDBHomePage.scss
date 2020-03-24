@@ -14,8 +14,8 @@ $small-mobile-width: 415px;
 $expanded-header-height: 11em;
 $collapsed-header-height: 5.5em;
 
-$large-branding-height: 7em;
-$small-branding-height: 4em;
+$branding-height: 7em;
+$small-branding-scale-factor: 0.57142857142em;
 
 
 /**** VEUPATH SITES ***/
@@ -40,18 +40,18 @@ $small-branding-height: 4em;
 
     .ebrc-HeaderBranding {
       content: $logo;
-      height: $large-branding-height;
+      height: $branding-height;
     }
 
     &__collapsed {
-      .ebrc-HeaderBranding {
-        height: $small-branding-height;
+      .ebrc-HeaderBrandingContainer {
+        font-size: $small-branding-scale-factor;
       }
     }
     
     @media screen and (max-width: $cramped-header-width) {
-      .ebrc-HeaderBranding {
-        height: $small-branding-height;
+      .ebrc-HeaderBrandingContainer {
+        font-size: $small-branding-scale-factor;
       }
     }
   }
