@@ -24,7 +24,14 @@ $small-branding-scale-factor: 0.57142857142em;
   $primary-color: themed('primary-color');
   $bckgrnd-img: themed('bckgrnd-img');
   $logo: themed('logo');
+  $small-logo: themed('small-logo');
+  /* TODO Remove when we're out of beta */
+  $beta-position-top: themed('beta-position-top');
   $beta-position-left: themed('beta-position-left');
+  $beta-font-size: themed('beta-font-size');
+  $beta-position-top-small: themed('beta-position-top-small');
+  $beta-position-left-small: themed('beta-position-left-small');
+  $beta-font-size-small: themed('beta-font-size-small');
 
   .vpdb-BgDark {
     background-color: $primary-color;
@@ -39,7 +46,6 @@ $small-branding-scale-factor: 0.57142857142em;
     background-size: cover;
     background-position: center;
 
-    /* TODO Remove when we're out of beta */
     .ebrc-HeaderBrandingContainer {
       a {
         position: relative;
@@ -48,9 +54,17 @@ $small-branding-scale-factor: 0.57142857142em;
       a::after {
         content: "(beta)";
         position: absolute;
-        top: 1.3em;
+        @if ($beta-position-top) {
+          top: $beta-position-top;
+        } @else {
+          top: 1.3em;
+        }
         left: $beta-position-left;
-        font-size: 1.4em;
+        @if ($beta-font-size) {
+          font-size: $beta-font-size;
+        } @else {
+          font-size: 1.4em;
+        }
         font-weight: 500;
         color: white;
       }
@@ -64,12 +78,32 @@ $small-branding-scale-factor: 0.57142857142em;
     &__collapsed {
       .ebrc-HeaderBrandingContainer {
         font-size: $small-branding-scale-factor;
+
+        a::after {
+          top: $beta-position-top-small;
+          left: $beta-position-left-small;
+          font-size: $beta-font-size-small;
+        }
+      }
+
+      .ebrc-HeaderBranding {
+        content: $small-logo;
       }
     }
     
     @media screen and (max-width: $cramped-header-width) {
       .ebrc-HeaderBrandingContainer {
         font-size: $small-branding-scale-factor;
+
+        a::after {
+          top: $beta-position-top-small;
+          left: $beta-position-left-small;
+          font-size: $beta-font-size-small;
+        }
+      }
+
+      .ebrc-HeaderBranding {
+        content: $small-logo;
       }
     }
   }
@@ -379,29 +413,29 @@ body.vpdb-Body {
       }
     }
 
-    /***** PORTAL *******/
-    &.VEuPathDB, &.EuPathDB {
-      .vpdb-Header {
-        background-image: url('~site/images/VEuPathDB/header-veupathDB.jpg');
-        background-size: cover;
-        background-position: center;
+    // /***** PORTAL *******/
+    // &.VEuPathDB, &.EuPathDB {
+    //   .vpdb-Header {
+    //     background-image: url('~site/images/VEuPathDB/header-veupathDB.jpg');
+    //     background-size: cover;
+    //     background-position: center;
 
-        .ebrc-HeaderBranding {
-          position: relative;
-          bottom: 20px;
-          height: calc(72px * 1.2);
-          content: url('~site/images/VEuPathDB/logos/VEuPathDB.png');
-        }
+    //     .ebrc-HeaderBranding {
+    //       position: relative;
+    //       bottom: 20px;
+    //       height: calc(72px * 1.2);
+    //       content: url('~site/images/VEuPathDB/logos/VEuPathDB.png');
+    //     }
 
-        &__collapsed {
-          .ebrc-HeaderBranding {
-            bottom: 0px;
-            height: calc(48px * 1.15);
-            content: url('~site/images/VEuPathDB/veupath-logo-no-tag.png');
-          }
-        }
-      }
-    }
+    //     &__collapsed {
+    //       .ebrc-HeaderBranding {
+    //         bottom: 0px;
+    //         height: calc(48px * 1.15);
+    //         content: url('~site/images/VEuPathDB/veupath-logo-no-tag.png');
+    //       }
+    //     }
+    //   }
+    // }
 
     &__home {
       // FIXME: Should also provide fallback styling for IE11,
