@@ -108,19 +108,21 @@ function makePortalRecordLink(WdkRecordLink) {
   return function PortalRecordLink(props) {
     const { recordId, recordClass } = props;
     const projectIdPart = recordId.find(part => part.name === 'project_id');
+    const projectUrls = useProjectUrls();
 
-    if (projectIdPart == null || projectIdPart.value === 'EuPathDB') return <WdkRecordLink {...props}/>;
+    if (projectIdPart == null || projectIdPart.value === 'EuPathDB' || projectUrls[projectIdPart.value] == null ) return <WdkRecordLink {...props}/>;
 
-    const baseUrl = getBaseUrl(projectIdPart && projectIdPart.value);
+    const baseUrl = projectUrls[projectIdPart.value];
     const pkValues = recordId.filter(p => p.name !== 'project_id').map(p => p.value).join('/');
-
+    const url = new URL(`app/record/${recordClass.urlSegment}/${pkValues}`, baseUrl);
     return (
-      <a href={`${baseUrl}/app/record/${recordClass.urlSegment}/${pkValues}`} target="_blank">{props.children}</a>
+      <a href={url} target="_blank">{props.children}</a>
     );
   }
 }
 
-function getBaseUrl(projectId) {
+function getBaseUrl(projectId, projectUrls) {
+  return projectUrls[projectId] || 'https://veupathdb.org'
   const hostPrefix = window.location.hostname.replace('veupathdb.org', '');
   switch(projectId) {
     case 'AmoebaDB': return `https://${hostPrefix}amoebadb.org/amoeba`;
