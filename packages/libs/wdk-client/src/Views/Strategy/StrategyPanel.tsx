@@ -97,7 +97,7 @@ export default function StrategyPanel(props: Props) {
         )}
           {hasError ? (
             <div style={{ padding: '1em' }}>
-              This strategy could no be loaded due to a server error.
+              This strategy could not be loaded due to a server error.
             </div>
           ) : strategy != null && uiStepTree != null ?
           <>
