@@ -1043,21 +1043,13 @@ sub get_results {
     print_debug_message('get_results', 'Begin', 1);
     my $jobid = shift;
 
+
 #    print STDERR $jobid . "\n";
 ######### Lin add here...
 =head
     my ($FH, $File) = tempfile(SUFFIX => '.txt');
     print $FH  $jobid;
     close ($FH);
-=cut
-
-###################### how to get jobID???????????????????????????????????????????????????????????????????????
-
-=head
-    my $filename2 = '/var/www/linxu123.plasmodb.org/tmp/JobID.txt';    
-    open(FHH, '>', $filename2) or die $!;                                                                                          
-    print FHH $jobid;                                                                                                       
-    close(FHH);   
 =cut
 
 
