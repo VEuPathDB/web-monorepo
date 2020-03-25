@@ -1,0 +1,23 @@
+.wdk-WebServicesHelp {  
+  &--Steps {
+    counter-reset: step;
+  }
+
+  &--StepHeader {
+    font-size: 1.5em;
+  }
+
+  &--StepHeader::before {
+    counter-increment: step;
+    content: counter(step);
+    background: #777777;
+    border-radius: 1em;
+    height: 1.5em;
+    width: 1.5em;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: .5em;
+    color: white;
+  }
+}

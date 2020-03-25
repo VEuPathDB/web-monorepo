@@ -1,21 +1,28 @@
 import * as React from 'react';
-import { noop } from 'lodash';
+import { useHistory } from 'react-router-dom';
 import { Props } from 'wdk-client/Controllers/WebServicesHelpController';
-import WdkServiceJsonReporterForm from 'wdk-client/Views/ReporterForm/WdkServiceJsonReporterForm';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import DownloadFormContainer from 'wdk-client/Views/ReporterForm/DownloadFormContainer';
+
+import 'wdk-client/Components/WebServicesHelp/WebServicesHelp.scss';
+
+const cx = makeClassNameHelper('wdk-WebServicesHelp');
 
 const STANDARD_REPORT_NAME = 'standard';
 
 export default function(props: Props) {
-  let [ formStates, setFormStates ] = React.useState(WdkServiceJsonReporterForm.getInitialState(props));
-  let [ formHasBeenExpanded, setFormHasBeenExpanded ] = React.useState(false);
-  let [ isFormExpanded, setIsFormExpanded ] = React.useState(false);
+  let history = useHistory();
+
+  let goBack = React.useCallback(() => {
+    history.goBack();
+  }, [ history ]);
 
   let step = props.resultType?.type === 'step' ? props.resultType.step : undefined;
   let searchName = step?.searchName;
   let parameters = step?.searchConfig.parameters || {};
   let recordClassUrlSegment = props.recordClass?.urlSegment;
   let reportName = STANDARD_REPORT_NAME;
-  let reportConfig = formStates.formState || "Not yet configured"
+  let reportConfig = props.formState || "Not yet configured"
   let l = window.location;
   let webapp = l.pathname.substring(0, l.pathname.indexOf("/", 1));
   let urlBase = l.protocol + "//" + l.host + webapp;
@@ -45,87 +52,42 @@ export default function(props: Props) {
     !props.recordClass
   )
     ? <div>This page cannot be rendered with the passed query parameters.</div>
-    : <div style={{ fontSize: "1.2em" }}>
-        <h1>Working with Web Services</h1>
-        <div style={{ margin: "10px"}}>
-          Search results are available programmatically in a variety of formats (e.g. JSON, tab-delimited),
-          delivered through an assortment of reports.  Configuration of a report consists of your search's
-          parameter values and report-specific settings.  Reports can be requested via an HTTP POST (with
-          JSON payload), or HTTP GET (which can sometimes be more convenient, but you must URL encode values).
-        </div>
-        <div style={{ margin: "10px"}}>
-          { (!formHasBeenExpanded) &&
-            <span>
-              A default report has been selected to illustrate how you can access these endpoints. To choose a
-              different report or change settings, <a style={linkStyle} onClick={() => { setFormHasBeenExpanded(true); setIsFormExpanded(true); }}>click here</a>.
-            </span>
-          }
-          { formHasBeenExpanded &&
-            <span>
-              <a style={linkStyle} onClick={() => { setIsFormExpanded(!isFormExpanded); }}>
-                {isFormExpanded ? "Hide" : "Show"} report selection and settings.
-              </a>
-            </span>
-          }
-        </div>
-        { (isFormExpanded === true) &&
-          <div style={{ border: "1px solid blue", borderRadius: "10px", marginLeft: "30px" }}>
-            <WdkServiceJsonReporterForm<
-              ReturnType<typeof WdkServiceJsonReporterForm.getInitialState>['formState'],
-              ReturnType<typeof WdkServiceJsonReporterForm.getInitialState>['formUiState']
-            >
-              formState={formStates.formState}
-              formUiState={formStates.formUiState}
-              updateFormState={newFormStateValues => {
-                const newFormState = {
-                  ...formStates.formState,
-                  ...newFormStateValues
-                };
-
-                setFormStates({
-                  ...formStates,
-                  formState: newFormState
-                });
-
-                return newFormState;
-              }}
-              updateFormUiState={newFormUiStateValues => {
-                const newFormUiState = {
-                  ...formStates.formState,
-                  ...newFormUiStateValues
-                };
-
-                setFormStates({
-                  ...formStates,
-                  formUiState: newFormUiState
-                });
-
-                return newFormUiState;
-              }}
-              question={props.question}
-              recordClass={props.recordClass}
-              ontology={props.ontology}
-              scope="result"
-              summaryView="?"
-              onSubmit={noop}
-              includeSubmit={false}
-            />
+    : <div className={cx()}>
+        <h1>Build A Web Services URL</h1>
+        <div className={cx('--Steps')}>
+          <div className={cx('--StepHeader')}>
+            Build the input part of the URL
           </div>
-        }
-        <h2 style={{ padding: "0", margin: "20px 0 10px 0"}}>Sample Requests</h2>
-        <div style={{ margin: "10px"}}>
-          <h3 style={{ padding: "0", margin: "20px 0 10px 0" }}>HTTP GET: Create a URL containing your search, parameters, and report settings</h3>
-          <div style={{ marginLeft: "20px" }}>
-            <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
+          <div className={cx('--InputPartInstructions')}>
+            <p>
+              You are building a web services URL based on the input you just provided in the
+              {' '}
+              {props.recordClass.displayNamePlural} by {props.question.displayName} search page.
+              {' '}
+              (To revise, <a href="#" onClick={goBack}>go back to that page</a>.)
+            </p>
           </div>
-        </div>
-        <div style={{ margin: "10px"}}>
-          <h3 style={{ padding: "0", margin: "20px 0 10px 0" }}>HTTP POST: Send the JSON below to the following URL</h3>
-          <div style={{ marginLeft: "20px" }}>
-            <a target="_blank" href={url}>{url}</a>
-            <pre>
-              {requestJson}
-            </pre>
+          <div className={cx('--StepHeader')}>
+            Build the report part of the URL
+          </div>
+          <div className={cx('--Report')}>
+            <DownloadFormContainer {...props} />
+          </div>
+          <h2 style={{ padding: "0", margin: "20px 0 10px 0"}}>Sample Requests</h2>
+          <div style={{ margin: "10px"}}>
+            <h3 style={{ padding: "0", margin: "20px 0 10px 0" }}>HTTP GET: Create a URL containing your search, parameters, and report settings</h3>
+            <div style={{ marginLeft: "20px" }}>
+              <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
+            </div>
+          </div>
+          <div style={{ margin: "10px"}}>
+            <h3 style={{ padding: "0", margin: "20px 0 10px 0" }}>HTTP POST: Send the JSON below to the following URL</h3>
+            <div style={{ marginLeft: "20px" }}>
+              <a target="_blank" href={url}>{url}</a>
+              <pre>
+                {requestJson}
+              </pre>
+            </div>
           </div>
         </div>
       </div>;
