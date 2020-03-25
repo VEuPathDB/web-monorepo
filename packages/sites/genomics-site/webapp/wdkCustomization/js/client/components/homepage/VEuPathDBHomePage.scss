@@ -57,7 +57,7 @@ $small-branding-scale-factor: 0.57142857142em;
         @if ($beta-position-top) {
           top: $beta-position-top;
         } @else {
-          top: 1.3em;
+          top: 1.2em;
         }
         left: $beta-position-left;
         @if ($beta-font-size) {
