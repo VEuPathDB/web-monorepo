@@ -454,11 +454,14 @@ export function SubmitSection(props: SubmitSectionProps) {
         submitting={submitting}
         submitButtonText={submitButtonText}
       />
-      <WebServicesTutorialLink
-        searchName={searchName}
-        paramValues={paramValues}
-        weight={weight || "0"}
-      />
+      {
+        submissionMetadata.type === 'create-strategy' &&
+        <WebServicesTutorialLink
+          searchName={searchName}
+          paramValues={paramValues}
+          weight={weight || "0"}
+        />
+      }
       <SearchNameInput
         tooltipPosition={tooltipPosition}
         customName={customName}
