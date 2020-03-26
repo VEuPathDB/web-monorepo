@@ -55,7 +55,27 @@
     }
   }
 
-  &--BuiltUrl {
-    margin-left: 1em;
+  &--GeneratedRequestsContainer {
+    hr {
+      border-color: black;
+      border-top: none;
+    }
+  }
+
+  &--GeneratedRequests {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-gap: 0.5em;
+
+    border-top: 0.0625rem solid black;
+
+    > * {
+      overflow: auto;
+      padding: 2em;
+    }
+  }
+
+  &--GeneratedGetRequest {
+    border-right: 0.0625rem solid black;
   }
 }

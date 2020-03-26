@@ -57,7 +57,7 @@ export default function(props: Props) {
           </div>
           <div className={cx('--SearchPartInstructions')}>
             <p>
-              You are building a web services URL based on the input you provided in the
+              You are building a web services request based on the input you provided in the
               {' '}
               {props.recordClass.displayNamePlural} by {props.question.displayName} search page.
               {' '}
@@ -100,21 +100,24 @@ function GeneratedRequests({
   requestJson
 }: GeneratedRequestsProps) {
   return (
-    <div className={cx('--GeneratedRequests')}>
-      <div className={cx('--GeneratedGetRequest')}>
-        <h2>HTTP GET: The following url contains your search, parameters, and report settings</h2>
-        <p className={cx('--BuiltUrl')}>
-          <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
-        </p>
-      </div>
-      <div className={cx('--GeneratedPostRequest')}>
-        <h2>HTTP POST: Send the JSON below to the following URL</h2>
-        <p className={cx('--BuiltUrl')}>
-          <a target="_blank" href={url}>{url}</a>
-          <pre>
-            {requestJson}
-          </pre>
-        </p>
+    <div className={cx('--GeneratedRequestsContainer')}>
+      <hr />
+      <div className={cx('--GeneratedRequests')}>
+        <div className={cx('--GeneratedGetRequest')}>
+          <h2>HTTP GET</h2>
+          <p className={cx('--BuiltUrl')}>
+            <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
+          </p>
+        </div>
+        <div className={cx('--GeneratedPostRequest')}>
+          <h2>HTTP POST</h2>
+          <p className={cx('--BuiltUrl')}>
+            <a target="_blank" href={url}>{url}</a>
+            <pre>
+              {requestJson}
+            </pre>
+          </p>
+        </div>
       </div>
     </div>
   );
