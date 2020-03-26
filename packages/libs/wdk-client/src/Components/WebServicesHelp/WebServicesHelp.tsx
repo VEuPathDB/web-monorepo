@@ -68,21 +68,21 @@ export default function(props: Props) {
             Build the <em>report</em> component of the GET/POST
           </div>
           <div className={cx('--ReportPartInstructions')}>
-            <p>In the URLs below, we have pre-selected some default columns and a JSON reporter for your report.</p>
+            <p>In the GET/POST below, we have pre-selected some default columns and a JSON reporter for your report.</p>
             <details>
               <summary>
-                Modify your report configuration
+                Modify the report configuration for the GET/POST
               </summary>
               <DownloadFormContainer {...props} />
             </details>
-            <GeneratedRequests
-              getUrlLink={getUrlLink}
-              getUrlDisplay={getUrlDisplay}
-              url={url}
-              requestJson={requestJson}
-            />
           </div>
         </div>
+        <GeneratedRequests
+          getUrlLink={getUrlLink}
+          getUrlDisplay={getUrlDisplay}
+          url={url}
+          requestJson={requestJson}
+        />
       </div>;
 }
 
@@ -100,14 +100,14 @@ function GeneratedRequests({
   requestJson
 }: GeneratedRequestsProps) {
   return (
-    <React.Fragment>
-      <div>
+    <div className={cx('--GeneratedRequests')}>
+      <div className={cx('--GeneratedGetRequest')}>
         <h2>HTTP GET: The following url contains your search, parameters, and report settings</h2>
         <p className={cx('--BuiltUrl')}>
           <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
         </p>
       </div>
-      <div>
+      <div className={cx('--GeneratedPostRequest')}>
         <h2>HTTP POST: Send the JSON below to the following URL</h2>
         <p className={cx('--BuiltUrl')}>
           <a target="_blank" href={url}>{url}</a>
@@ -116,6 +116,6 @@ function GeneratedRequests({
           </pre>
         </p>
       </div>
-    </React.Fragment>
+    </div>
   );
 }
