@@ -63,6 +63,12 @@ export default function(props: Props) {
               {' '}
               (To revise, <Link to={goBackUrl}>go back to that page</Link>.)
             </p>
+            <GeneratedRequests
+              getUrlLink={getUrlLink}
+              getUrlDisplay={getUrlDisplay}
+              url={url}
+              requestJson={requestJson}
+            />
           </div>
           <div className={cx('--StepHeader')}>
             Build the report part of the URL
@@ -75,22 +81,47 @@ export default function(props: Props) {
               </summary>
               <DownloadFormContainer {...props} />
             </details>
-            <div>
-              <h2>HTTP GET: The following url contains your search, parameters, and report settings</h2>
-              <p className={cx('--BuiltUrl')}>
-                <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
-              </p>
-            </div>
-            <div>
-              <h2>HTTP POST: Send the JSON below to the following URL</h2>
-              <p className={cx('--BuiltUrl')}>
-                <a target="_blank" href={url}>{url}</a>
-                <pre>
-                  {requestJson}
-                </pre>
-              </p>
-            </div>
+            <GeneratedRequests
+              getUrlLink={getUrlLink}
+              getUrlDisplay={getUrlDisplay}
+              url={url}
+              requestJson={requestJson}
+            />
           </div>
         </div>
       </div>;
+}
+
+interface GeneratedRequestsProps {
+  getUrlLink: string;
+  getUrlDisplay: React.ReactNode;
+  url: string;
+  requestJson: string;
+}
+
+function GeneratedRequests({
+  getUrlLink,
+  getUrlDisplay,
+  url,
+  requestJson
+}: GeneratedRequestsProps) {
+  return (
+    <React.Fragment>
+      <div>
+        <h2>HTTP GET: The following url contains your search, parameters, and report settings</h2>
+        <p className={cx('--BuiltUrl')}>
+          <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
+        </p>
+      </div>
+      <div>
+        <h2>HTTP POST: Send the JSON below to the following URL</h2>
+        <p className={cx('--BuiltUrl')}>
+          <a target="_blank" href={url}>{url}</a>
+          <pre>
+            {requestJson}
+          </pre>
+        </p>
+      </div>
+    </React.Fragment>
+  );
 }
