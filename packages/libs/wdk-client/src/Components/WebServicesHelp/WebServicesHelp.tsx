@@ -50,10 +50,10 @@ export default function(props: Props) {
   )
     ? <div>This page cannot be rendered with the passed query parameters.</div>
     : <div className={cx()}>
-        <h1>Build A Web Services URL</h1>
+        <h1>Build A Web Services Requestion</h1>
         <div className={cx('--Steps')}>
           <div className={cx('--StepHeader')}>
-            Build the input part of the URL
+            Build the <em>search</em> component of the GET/POST
           </div>
           <div className={cx('--InputPartInstructions')}>
             <p>
@@ -63,15 +63,9 @@ export default function(props: Props) {
               {' '}
               (To revise, <Link to={goBackUrl}>go back to that page</Link>.)
             </p>
-            <GeneratedRequests
-              getUrlLink={getUrlLink}
-              getUrlDisplay={getUrlDisplay}
-              url={url}
-              requestJson={requestJson}
-            />
           </div>
           <div className={cx('--StepHeader')}>
-            Build the report part of the URL
+            Build the <em>report</em> component of the GET/POST
           </div>
           <div className={cx('--ReportPartInstructions')}>
             <p>In the URLs below, we have pre-selected some default columns and a JSON reporter for your report.</p>

@@ -22,11 +22,11 @@
     color: white;
   }
 
-  &--InputPartInstructions, &--ReportPartInstructions {
+  &--SearchPartInstructions, &--ReportPartInstructions {
     font-size: 1.2em;
   }
 
-  &--InputPartInstructions {
+  &--SearchPartInstructions {
     > * {
       margin: 1.5em 2.5em 2.5em 2.5em;
     }
