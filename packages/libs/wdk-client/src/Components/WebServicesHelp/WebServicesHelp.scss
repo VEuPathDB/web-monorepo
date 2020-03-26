@@ -5,6 +5,7 @@
 
   &--StepHeader {
     font-size: 1.5em;
+    font-weight: 500;
   }
 
   &--StepHeader::before {
@@ -19,5 +20,42 @@
     align-items: center;
     margin-right: .5em;
     color: white;
+  }
+
+  &--InputPartInstructions, &--ReportPartInstructions {
+    font-size: 1.2em;
+  }
+
+  &--InputPartInstructions {
+    > * {
+      margin: 1.5em 2.5em 2.5em 2.5em;
+    }
+  }
+
+  &--ReportPartInstructions {
+    > * {
+      margin: 1.5em 2.5em 0 2.5em;
+    }
+
+    h2 {
+      font-size: 1.1em;
+      margin: 1em 0 0.5em 0;
+      padding: 0;
+    }
+
+    details {
+      border: 0.0625rem solid black;
+      border-bottom-width: 0.125rem;
+      border-radius: 1em;
+      padding: 1em;
+    }
+
+    summary {
+      cursor: pointer;
+    }
+  }
+
+  &--BuiltUrl {
+    margin-left: 1em;
   }
 }

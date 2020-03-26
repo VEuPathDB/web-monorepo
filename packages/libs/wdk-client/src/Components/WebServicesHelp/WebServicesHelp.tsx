@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'wdk-client/Components';
 import { Props } from 'wdk-client/Controllers/WebServicesHelpController';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import DownloadFormContainer from 'wdk-client/Views/ReporterForm/DownloadFormContainer';
@@ -11,12 +11,6 @@ const cx = makeClassNameHelper('wdk-WebServicesHelp');
 const STANDARD_REPORT_NAME = 'standard';
 
 export default function(props: Props) {
-  let history = useHistory();
-
-  let goBack = React.useCallback(() => {
-    history.goBack();
-  }, [ history ]);
-
   let step = props.resultType?.type === 'step' ? props.resultType.step : undefined;
   let searchName = step?.searchName;
   let parameters = step?.searchConfig.parameters || {};
@@ -44,7 +38,10 @@ export default function(props: Props) {
     </span>
   );
   let requestJson = JSON.stringify({ searchConfig, reportConfig }, null, 2);
-  let linkStyle = { cursor: "pointer" };
+
+  let goBackUrl = `/search/${props.recordClass?.urlSegment}/${props.question?.urlSegment}` +
+    `?${Object.entries(parameters).map(([ key, value ]) => `param.${key}=${value}`).join('&')}`;
+
   return (
     props.resultType?.type !== 'step' ||
     !props.ontology ||
@@ -60,33 +57,38 @@ export default function(props: Props) {
           </div>
           <div className={cx('--InputPartInstructions')}>
             <p>
-              You are building a web services URL based on the input you just provided in the
+              You are building a web services URL based on the input you provided in the
               {' '}
               {props.recordClass.displayNamePlural} by {props.question.displayName} search page.
               {' '}
-              (To revise, <a href="#" onClick={goBack}>go back to that page</a>.)
+              (To revise, <Link to={goBackUrl}>go back to that page</Link>.)
             </p>
           </div>
           <div className={cx('--StepHeader')}>
             Build the report part of the URL
           </div>
-          <div className={cx('--Report')}>
-            <DownloadFormContainer {...props} />
-          </div>
-          <h2 style={{ padding: "0", margin: "20px 0 10px 0"}}>Sample Requests</h2>
-          <div style={{ margin: "10px"}}>
-            <h3 style={{ padding: "0", margin: "20px 0 10px 0" }}>HTTP GET: Create a URL containing your search, parameters, and report settings</h3>
-            <div style={{ marginLeft: "20px" }}>
-              <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
+          <div className={cx('--ReportPartInstructions')}>
+            <p>In the URLs below, we have pre-selected some default columns and a JSON reporter for your report.</p>
+            <details>
+              <summary>
+                Modify your report configuration
+              </summary>
+              <DownloadFormContainer {...props} />
+            </details>
+            <div>
+              <h2>HTTP GET: The following url contains your search, parameters, and report settings</h2>
+              <p className={cx('--BuiltUrl')}>
+                <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
+              </p>
             </div>
-          </div>
-          <div style={{ margin: "10px"}}>
-            <h3 style={{ padding: "0", margin: "20px 0 10px 0" }}>HTTP POST: Send the JSON below to the following URL</h3>
-            <div style={{ marginLeft: "20px" }}>
-              <a target="_blank" href={url}>{url}</a>
-              <pre>
-                {requestJson}
-              </pre>
+            <div>
+              <h2>HTTP POST: Send the JSON below to the following URL</h2>
+              <p className={cx('--BuiltUrl')}>
+                <a target="_blank" href={url}>{url}</a>
+                <pre>
+                  {requestJson}
+                </pre>
+              </p>
             </div>
           </div>
         </div>
