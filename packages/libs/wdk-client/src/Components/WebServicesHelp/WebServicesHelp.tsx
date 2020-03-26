@@ -50,12 +50,12 @@ export default function(props: Props) {
   )
     ? <div>This page cannot be rendered with the passed query parameters.</div>
     : <div className={cx()}>
-        <h1>Build A Web Services Requestion</h1>
+        <h1>Build A Web Services Request</h1>
         <div className={cx('--Steps')}>
           <div className={cx('--StepHeader')}>
             Build the <em>search</em> component of the GET/POST
           </div>
-          <div className={cx('--InputPartInstructions')}>
+          <div className={cx('--SearchPartInstructions')}>
             <p>
               You are building a web services URL based on the input you provided in the
               {' '}
