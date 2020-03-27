@@ -47,9 +47,7 @@ $small-branding-scale-factor: 0.57142857142em;
     background-position: center;
 
     .ebrc-HeaderBrandingContainer {
-      a {
-        position: relative;
-      }
+      position: relative;
 
       a::after {
         content: "(beta)";
@@ -57,7 +55,7 @@ $small-branding-scale-factor: 0.57142857142em;
         @if ($beta-position-top) {
           top: $beta-position-top;
         } @else {
-          top: 1.2em;
+          top: 0.8em;
         }
         left: $beta-position-left;
         @if ($beta-font-size) {
