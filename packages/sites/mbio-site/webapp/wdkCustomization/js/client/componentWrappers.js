@@ -14,7 +14,7 @@ import { StudyCard } from 'ebrc-client/App/Studies';
 import { SearchCard } from 'ebrc-client/App/Searches';
 import { ImageCard } from 'ebrc-client/App/ImageCard';
 
-import { studyMatchPredicate } from 'ebrc-client/util/homeContent';
+import { studyMatchPredicate, studyFilters } from 'ebrc-client/util/homeContent';
 
 export default {
   SiteHeader: () => SiteHeader,
@@ -69,6 +69,7 @@ function getHomeContent({ studies, searches, visualizations }) {
       title: 'Explore the Studies',
       contentType: 'StudyCardList',
       contentNamePlural: 'studies',
+      filters: studyFilters(studies),
       items: studies.entities,
       isLoading: studies.loading,
       isExpandable: true,
