@@ -18,7 +18,7 @@ const cx = makeClassNameHelper('LoadingOverlay');
 export default function LoadingOverlay(props: Props) {
   return (
     <div className={props.className || cx()}>
-      <Loading className={cx('-Spinner')}>
+      <Loading className={cx('-Spinner')} top="40%" >
         {props.children}
       </Loading>
     </div>

@@ -17,6 +17,12 @@ type Props = {
   /** Radius in pixels of the inner circle */
   radius?: number;
 
+  /** top position of the spinner relative to its container */
+  top?: string;
+
+  /** left position of the spinner relative to its container */
+  left?: string;
+
   children?: React.ReactNode;
 }
 
@@ -29,7 +35,7 @@ class Loading extends React.Component<Props> {
   private spinner?: Spinner;
 
   componentDidMount() {
-    const { radius = 8 } = this.props;
+    const { radius = 8, top = '50%', left = '50%' } = this.props;
     const opts = {
       lines: 11, // The number of lines to draw
       length: 3, // The length of each line
@@ -45,8 +51,8 @@ class Loading extends React.Component<Props> {
       hwaccel: false, // Whether to use hardware acceleration
       className: 'spinner', // The CSS class to assign to the spinner
       zIndex: 2e9, // The z-index (defaults to 2000000000)
-      top: '50%', // Top position relative to parent
-      left: '50%' // Left position relative to parent
+      top, // Top position relative to parent
+      left // Left position relative to parent
     };
     const node = findDOMNode(this) as HTMLElement;
     this.spinner = new Spinner(opts).spin(node);
