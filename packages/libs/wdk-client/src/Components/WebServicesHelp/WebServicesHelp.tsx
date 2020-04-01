@@ -52,33 +52,34 @@ export default function(props: Props) {
     ? <div>This page cannot be rendered with the passed query parameters.</div>
     : <div className={cx()}>
         <h1>Build A Web Services Request</h1>
-        <div className={cx('--Steps')}>
-          <div className={cx('--StepHeader')}>
-            Build the <em>search</em> component of the GET/POST
+        <div className={cx('--Content')}>
+          <div className={cx('--Steps')}>
+            <div className={cx('--StepHeader')}>
+              Build the <em>search</em> component of a GET or POST request
+            </div>
+            <div className={cx('--SearchPartInstructions')}>
+              <p>
+                The <em>search</em> parameters in the requests to the right use your input from the
+                {' '}
+                <em>{props.recordClass.displayNamePlural} by {props.question.displayName}</em> search page.
+                {' '}
+                (To revise, <Link to={goBackUrl}>go back to that page</Link>.)
+              </p>
+            </div>
+            <div className={cx('--StepHeader')}>
+              Build the <em>report</em> component of the GET or POST request
+            </div>
+            <div className={cx('--ReportPartInstructions')}>
+              <DownloadFormContainer {...props} />
+            </div>
           </div>
-          <div className={cx('--SearchPartInstructions')}>
-            <p>
-              You are building a web services request based on the input you provided in the
-              {' '}
-              {props.recordClass.displayNamePlural} by {props.question.displayName} search page.
-              {' '}
-              (To revise, <Link to={goBackUrl}>go back to that page</Link>.)
-            </p>
-          </div>
-          <div className={cx('--StepHeader')}>
-            Build the <em>report</em> component of the GET/POST
-          </div>
-          <div className={cx('--ReportPartInstructions')}>
-            <p>Modify the report configuration for the GET/POST</p>
-            <DownloadFormContainer {...props} />
-          </div>
+          <GeneratedRequests
+            getUrlLink={getUrlLink}
+            getUrlDisplay={getUrlDisplay}
+            url={url}
+            requestJson={requestJson}
+          />
         </div>
-        <GeneratedRequests
-          getUrlLink={getUrlLink}
-          getUrlDisplay={getUrlDisplay}
-          url={url}
-          requestJson={requestJson}
-        />
       </div>;
 }
 
@@ -97,10 +98,7 @@ function GeneratedRequests({
 }: GeneratedRequestsProps) {
   return (
     <div className={cx('--GeneratedRequestsContainer')}>
-      <ResizableContainer
-        handles="n"
-        className={cx('--GeneratedRequests')}
-      >
+      <div className={cx('--GeneratedRequests')}>
         <div className={cx('--GeneratedGetRequest')}>
           <h2>GET</h2>
           <p className={cx('--BuiltUrl')}>
@@ -116,7 +114,7 @@ function GeneratedRequests({
             </pre>
           </p>
         </div>
-      </ResizableContainer>
+      </div>
     </div>
   );
 }

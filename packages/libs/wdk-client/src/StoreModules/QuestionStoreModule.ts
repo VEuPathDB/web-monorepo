@@ -448,6 +448,30 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
       }
 
       if (submissionMetadata.type === 'create-strategy') {
+        // if trying to initialize a web services tutorial
+        if (submissionMetadata.webServicesTutorialSubmission) {
+          const answerPromise = services.wdkService.getAnswerJson({
+            searchName,
+            searchConfig: { parameters: paramValues }
+          }, {
+            pagination: { offset: 0, numRecords: 1 }
+          });
+
+          return answerPromise.then(
+            () => {
+              const weightQueryParam = Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight;
+              const queryString =
+                "searchName=" + searchName +
+                "&weight=" + weightQueryParam +
+                Object.keys(paramValues)
+                  .map(paramName => "&" + paramName + "=" + encodeURIComponent(paramValues[paramName]))
+                  .join("");
+
+              return transitionToInternalPage("/web-services-help?" + queryString);
+            }
+          );
+        }
+
         // if noSummaryOnSingleRecord is true, do special logic
         return Promise.resolve(questionState.question.noSummaryOnSingleRecord)
           .then(noSummaryOnSingleRecord => {

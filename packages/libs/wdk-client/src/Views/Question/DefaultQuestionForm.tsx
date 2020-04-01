@@ -46,13 +46,30 @@ const cx = makeClassNameHelper('wdk-QuestionForm');
 const tooltipPosition = { my: 'right center', at: 'left center' };
 
 // FIXME Should be made nicer once we upgrade to a version of Redux that supports hooks
-export const useDefaultOnSubmit = (dispatchAction: DispatchAction, urlSegment: string, submissionMetadata: SubmissionMetadata) =>
+export const useDefaultOnSubmit = (
+  dispatchAction: DispatchAction,
+  urlSegment: string,
+  submissionMetadata: SubmissionMetadata,
+  forWebServicesTutorial: boolean
+) =>
   React.useCallback(
     (event: React.FormEvent) => {
       event.preventDefault();
-      dispatchAction(submitQuestion({ searchName: urlSegment, submissionMetadata }));
+      dispatchAction(submitQuestion({
+        searchName: urlSegment,
+        submissionMetadata: {
+          ...submissionMetadata,
+          ...(
+            submissionMetadata.type === 'create-strategy'
+              ? {
+                  webServicesTutorialSubmission: forWebServicesTutorial
+                }
+              : {}
+          )
+        }
+      }));
     },
-    [ dispatchAction, urlSegment, submissionMetadata ]
+    [ dispatchAction, urlSegment, submissionMetadata, forWebServicesTutorial ]
   );
 
 export default function DefaultQuestionForm(props: Props) {
@@ -60,7 +77,8 @@ export default function DefaultQuestionForm(props: Props) {
   const { dispatchAction, onSubmit, submissionMetadata, state, submitButtonText, recordClass, validateForm = true, containerClassName } = props;
   const { question, customName, paramValues, weight, stepValidation, submitting } = state;
 
-  let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata);
+  let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata, false);
+  let defaultOnWebservicesLinkClick = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata, true);
 
   let handleSubmit = React.useCallback(
     (event: React.FormEvent) => {
@@ -71,6 +89,17 @@ export default function DefaultQuestionForm(props: Props) {
       return defaultOnSubmit(event);
     },
     [ onSubmit, defaultOnSubmit ]
+  );
+
+  let handleWebservicesTutorialLinkClick = React.useCallback(
+    (event: React.MouseEvent) => {
+      if (onSubmit && !onSubmit(event)) {
+        return false;
+      }
+
+      return defaultOnWebservicesLinkClick(event);
+    },
+    [ onSubmit, defaultOnWebservicesLinkClick ]
   );
 
   let handleCustomNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,6 +171,7 @@ export default function DefaultQuestionForm(props: Props) {
           submissionMetadata={submissionMetadata}
           submitting={submitting}
           submitButtonText={submitButtonText}
+          onClickWebservicesTutorialLink={handleWebservicesTutorialLinkClick}
         />
         <Description description={question.description} navigatingToDescription={navigatingToDescription} />
       </form>
@@ -391,25 +421,19 @@ export function QuestionDescription(props: { description?: string, navigatingToD
 }
 
 interface WebServicesTutorialLinkProps {
-  searchName: string;
-  paramValues: Record<string,string>;
-  weight: string;
+  onClick: (event: React.MouseEvent) => void
 }
 
 function WebServicesTutorialLink(props: WebServicesTutorialLinkProps) {
-  let { searchName, paramValues, weight } = props;
-  weight = (weight === "" ? "0" : weight);
-  let queryString =
-    "searchName=" + searchName +
-    "&weight=" + weight +
-    Object.keys(paramValues)
-      .map(paramName => "&" + paramName + "=" + encodeURIComponent(paramValues[paramName]))
-      .join("");
-  let link = "/web-services-help?" + queryString;
+  let { onClick } = props;
   return (
     <div style={{marginBottom:"5px"}}>
       <Link
-        to={link}
+        to="#"
+        onClick={(event: React.MouseEvent) => {
+          event.preventDefault();
+          onClick(event);
+        }}
         title="Build a Web Services URL from this Search"
         className="wdk-ReactRouterLink wdk-RecordActionLink"
         replace={false}>
@@ -431,6 +455,7 @@ interface SubmitSectionProps {
   submissionMetadata: SubmissionMetadata;
   submitting: boolean;
   submitButtonText?: string;
+  onClickWebservicesTutorialLink: (event: React.MouseEvent) => void;
 }
 
 export function SubmitSection(props: SubmitSectionProps) {
@@ -445,7 +470,8 @@ export function SubmitSection(props: SubmitSectionProps) {
     handleWeightChange, 
     submissionMetadata, 
     submitting,
-    submitButtonText 
+    submitButtonText,
+    onClickWebservicesTutorialLink
   } = props;
   return (
     <div className={className}>
@@ -456,11 +482,8 @@ export function SubmitSection(props: SubmitSectionProps) {
       />
       {
         submissionMetadata.type === 'create-strategy' &&
-        <WebServicesTutorialLink
-          searchName={searchName}
-          paramValues={paramValues}
-          weight={weight || "0"}
-        />
+        !submitting &&
+        <WebServicesTutorialLink onClick={onClickWebservicesTutorialLink} />
       }
       <SearchNameInput
         tooltipPosition={tooltipPosition}

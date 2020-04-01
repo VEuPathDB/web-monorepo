@@ -175,7 +175,8 @@ export const SUBMIT_QUESTION = 'question/submit-question';
 
 // TODO Consider breaking these into multiple actions
 type NewStrategy = {
-  type: 'create-strategy'
+  type: 'create-strategy',
+  webServicesTutorialSubmission?: boolean
 }
 
 type AddBinaryStep = {
