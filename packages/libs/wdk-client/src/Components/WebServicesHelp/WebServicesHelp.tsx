@@ -63,7 +63,7 @@ export default function(props: Props) {
                 {' '}
                 <em>{props.recordClass.displayNamePlural} by {props.question.displayName}</em> search page.
                 {' '}
-                (To revise, <Link to={goBackUrl}>go back to that page</Link>.)
+                To revise, <Link to={goBackUrl}>go back to that page</Link>.
               </p>
             </div>
             <div className={cx('--StepHeader')}>
@@ -98,6 +98,9 @@ function GeneratedRequests({
 }: GeneratedRequestsProps) {
   return (
     <div className={cx('--GeneratedRequestsContainer')}>
+      <div className={cx('--StepHeader')}>
+        Here is your GET or POST
+      </div>
       <div className={cx('--GeneratedRequests')}>
         <div className={cx('--GeneratedGetRequest')}>
           <h2>GET</h2>

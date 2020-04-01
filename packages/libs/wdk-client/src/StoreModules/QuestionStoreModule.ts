@@ -595,7 +595,10 @@ export const observeQuestion: QuestionEpic = combineEpics(
   observeUpdateDependentParams,
   observeQuestionSubmit,
   mrate([submitQuestion, requestCreateStrategy, fulfillCreateStrategy], goToStrategyPage, {
-    areActionsCoherent: ([ submitAction ]) => submitAction.payload.submissionMetadata.type === 'create-strategy'
+    areActionsCoherent: ([ submitAction ]) => (
+      submitAction.payload.submissionMetadata.type === 'create-strategy' &&
+      !submitAction.payload.submissionMetadata.webServicesTutorialSubmission
+    )
   })
 );
 
