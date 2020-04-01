@@ -162,7 +162,7 @@ export function SpanLogicForm(
     }
   }, [ upstreamOffsetA, upstreamOffsetB, downstreamOffsetA, downstreamOffsetB, updateUpstreamOffset, updateDownstreamOffset, updateSpanLogicParam ]);
 
-  const onSubmit = useDefaultOnSubmit(dispatchAction, urlSegment, submissionMetadata);
+  const onSubmit = useDefaultOnSubmit(dispatchAction, urlSegment, submissionMetadata, false);
 
   const [ leftRegion, rightRegion ] = paramValues['span_output'] !== 'b' && !insertingBeforeFirstStep
     ? [ 'region_a', 'region_b' ]
