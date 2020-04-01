@@ -115,7 +115,8 @@ const routes: RouteEntry[] = [
   {
     path: '/web-services-help',
     component: (props: RouteComponentProps<{}>) =>
-      <WebServicesHelpController {...parseQueryString(props)}/>
+      <WebServicesHelpController {...parseQueryString(props)}/>,
+    rootClassNameModifier: 'web-services-help'
   },
 
   {

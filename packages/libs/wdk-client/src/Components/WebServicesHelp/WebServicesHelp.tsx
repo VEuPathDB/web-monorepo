@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'wdk-client/Components';
+import { ResizableContainer } from 'wdk-client/Components/Display/ResizableContainer';
 import { Props } from 'wdk-client/Controllers/WebServicesHelpController';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import DownloadFormContainer from 'wdk-client/Views/ReporterForm/DownloadFormContainer';
@@ -68,13 +69,8 @@ export default function(props: Props) {
             Build the <em>report</em> component of the GET/POST
           </div>
           <div className={cx('--ReportPartInstructions')}>
-            <p>In the GET/POST below, we have pre-selected some default columns and a JSON reporter for your report.</p>
-            <details>
-              <summary>
-                Modify the report configuration for the GET/POST
-              </summary>
-              <DownloadFormContainer {...props} />
-            </details>
+            <p>Modify the report configuration for the GET/POST</p>
+            <DownloadFormContainer {...props} />
           </div>
         </div>
         <GeneratedRequests
@@ -101,16 +97,18 @@ function GeneratedRequests({
 }: GeneratedRequestsProps) {
   return (
     <div className={cx('--GeneratedRequestsContainer')}>
-      <hr />
-      <div className={cx('--GeneratedRequests')}>
+      <ResizableContainer
+        handles="n"
+        className={cx('--GeneratedRequests')}
+      >
         <div className={cx('--GeneratedGetRequest')}>
-          <h2>HTTP GET</h2>
+          <h2>GET</h2>
           <p className={cx('--BuiltUrl')}>
             <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
           </p>
         </div>
         <div className={cx('--GeneratedPostRequest')}>
-          <h2>HTTP POST</h2>
+          <h2>POST</h2>
           <p className={cx('--BuiltUrl')}>
             <a target="_blank" href={url}>{url}</a>
             <pre>
@@ -118,7 +116,7 @@ function GeneratedRequests({
             </pre>
           </p>
         </div>
-      </div>
+      </ResizableContainer>
     </div>
   );
 }

@@ -1,6 +1,26 @@
+body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__web-services-help {
+  min-height: unset;
+
+  .vpdb-Main {
+    margin: 0;
+    padding: 0;
+  }
+
+  .vpdb-Footer {
+    display: none;
+  }
+}
+
 .wdk-WebServicesHelp {  
+  h1 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   &--Steps {
     counter-reset: step;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   &--StepHeader {
@@ -42,30 +62,18 @@
       margin: 1em 0 0.5em 0;
       padding: 0;
     }
-
-    details {
-      border: 0.0625rem solid black;
-      border-bottom-width: 0.125rem;
-      border-radius: 1em;
-      padding: 1em;
-    }
-
-    summary {
-      cursor: pointer;
-    }
   }
 
   &--GeneratedRequestsContainer {
-    hr {
-      border-color: black;
-      border-top: none;
-    }
+    position: fixed;
+    bottom: 0;
   }
 
   &--GeneratedRequests {
     display: grid;
     grid-template-columns: 50% 50%;
     grid-gap: 0.5em;
+    background-color: white;
 
     border-top: 0.0625rem solid black;
 
@@ -73,6 +81,11 @@
       overflow: auto;
       padding: 2em;
     }
+  }
+
+  &--GeneratedGetRequest, &--GeneratedPostRequest {
+    padding: 2em;
+    overflow: auto;
   }
 
   &--GeneratedGetRequest {
