@@ -50,7 +50,8 @@ $small-branding-scale-factor: 0.57142857142em;
       position: relative;
 
       a::after {
-        content: "(beta)";
+        content: "beta";
+        font-style: italic;
         position: absolute;
         @if ($beta-position-top) {
           top: $beta-position-top;
