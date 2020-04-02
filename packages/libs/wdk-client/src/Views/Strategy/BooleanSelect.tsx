@@ -26,15 +26,15 @@ export type BooleanOption = {
 const appendOptions: BooleanOption[] = [
   { value: CombineOperator.Intersect, label: 'intersected with' },
   { value: CombineOperator.Union, label: 'unioned with' },
-  { value: CombineOperator.LeftMinus, label: 'subtracted by' },
-  { value: CombineOperator.RightMinus, label: 'subtracted from' },
+  { value: CombineOperator.LeftMinus, label: 'subtracted from' },
+  { value: CombineOperator.RightMinus, label: 'subtracted by' },
 ];
 
 const insertBeforeOptions: BooleanOption[] = [
   { value: CombineOperator.Intersect, label: 'intersected with' },
   { value: CombineOperator.Union, label: 'unioned with' },
-  { value: CombineOperator.LeftMinus, label: 'subtracted from' },
-  { value: CombineOperator.RightMinus, label: 'subtracted by' },
+  { value: CombineOperator.LeftMinus, label: 'subtracted by' },
+  { value: CombineOperator.RightMinus, label: 'subtracted from' },
 ];
 
 const formatBooleanOptionLabel = (option: BooleanOption) => 
