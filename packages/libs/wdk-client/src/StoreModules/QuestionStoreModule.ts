@@ -596,8 +596,14 @@ export const observeQuestion: QuestionEpic = combineEpics(
   observeQuestionSubmit,
   mrate([submitQuestion, requestCreateStrategy, fulfillCreateStrategy], goToStrategyPage, {
     areActionsCoherent: ([ submitAction ]) => (
-      submitAction.payload.submissionMetadata.type === 'create-strategy' &&
-      !submitAction.payload.submissionMetadata.webServicesTutorialSubmission
+      (
+        submitAction.payload.submissionMetadata.type === 'create-strategy' &&
+        !submitAction.payload.submissionMetadata.webServicesTutorialSubmission
+      ) ||
+      // FIXME: This is to handle the special case of creating a strategy
+      // FIXME: with UnifiedBlast. We should remov the 'submit-custom-form'
+      // FIXME: type of SubmissionMetadata ASAP.
+      submitAction.payload.submissionMetadata.type === 'submit-custom-form'
     )
   })
 );
