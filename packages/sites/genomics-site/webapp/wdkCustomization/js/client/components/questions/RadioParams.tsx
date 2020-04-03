@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { get } from 'lodash';
 
-import { HelpIcon } from 'wdk-client/Components';
+import { HelpIcon, IconAlt } from 'wdk-client/Components';
 import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
@@ -22,10 +22,19 @@ type RadioParameterListProps = {
   radioParamSet: Set<string>;
   activeRadioParam: string;
   updateActiveRadioParam: (activeRadioParam: string) => void;
+  paramDependenciesUpdating: Record<string, boolean>;
 }
 
 function RadioParameterList(props: RadioParameterListProps) {
-  const { parameters, parameterMap, parameterElements, radioParamSet, activeRadioParam, updateActiveRadioParam } = props;
+  const {
+    parameters,
+    parameterMap,
+    parameterElements,
+    radioParamSet,
+    activeRadioParam,
+    updateActiveRadioParam,
+    paramDependenciesUpdating
+  } = props;
 
   return (
     <div className={cx('ParameterList')}>
@@ -63,6 +72,7 @@ function RadioParameterList(props: RadioParameterListProps) {
               }
               <h2>
                 <HelpIcon>{parameter.help}</HelpIcon> {parameter.displayName}
+                {paramDependenciesUpdating[parameter.name] && <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />}
               </h2>
             </div>
             <div className={cx('ParameterControl')}>
@@ -108,7 +118,7 @@ export const RadioParams: React.FunctionComponent<Props> = props => {
 
   const renderParamGroup = useCallback((group: ParameterGroup, props: Props) => {
       const { 
-        state: { question, groupUIState },
+        state: { question, groupUIState, paramDependenciesUpdating },
         eventHandlers: { setGroupVisibility }, 
         parameterElements 
       } = props;
@@ -128,6 +138,7 @@ export const RadioParams: React.FunctionComponent<Props> = props => {
             radioParamSet={radioParamSet}
             activeRadioParam={activeRadioParam}
             updateActiveRadioParam={updateActiveRadioParam}
+            paramDependenciesUpdating={paramDependenciesUpdating}
           />
         </Group>
       );
