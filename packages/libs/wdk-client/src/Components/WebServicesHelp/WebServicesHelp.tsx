@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Link } from 'wdk-client/Components';
-import { ResizableContainer } from 'wdk-client/Components/Display/ResizableContainer';
 import { Props } from 'wdk-client/Controllers/WebServicesHelpController';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import DownloadFormContainer from 'wdk-client/Views/ReporterForm/DownloadFormContainer';
@@ -104,18 +103,18 @@ function GeneratedRequests({
       <div className={cx('--GeneratedRequests')}>
         <div className={cx('--GeneratedGetRequest')}>
           <h2>GET</h2>
-          <p className={cx('--BuiltUrl')}>
+          <div className={cx('--RequestContent')}>
             <a target="_blank" href={getUrlLink}>{getUrlDisplay}</a>
-          </p>
+          </div>
         </div>
         <div className={cx('--GeneratedPostRequest')}>
           <h2>POST</h2>
-          <p className={cx('--BuiltUrl')}>
+          <div className={cx('--RequestContent')}>
             <a target="_blank" href={url}>{url}</a>
             <pre>
               {requestJson}
             </pre>
-          </p>
+          </div>
         </div>
       </div>
     </div>
