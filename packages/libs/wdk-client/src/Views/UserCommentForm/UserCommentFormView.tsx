@@ -96,7 +96,7 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
                           <>
                             If you wish to {title[0].toLowerCase()}{title.slice(1)}, please
                             {' '}
-                            <a rel="noreferrer" href={`https://${projectId.toLowerCase()}.org/${toMainWebAppUrl(projectId)}/app${pathname}${search}&useBetaSite=0`}>
+                            <a rel="noreferrer" href={`https://${projectId.toLowerCase()}.${projectId === 'SchistoDB' ? 'net' : 'org'}/${toMainWebAppUrl(projectId)}/app${pathname}${search}&useBetaSite=0`}>
                               visit the legacy site
                             </a>.
                           </>
@@ -150,6 +150,7 @@ function toMainWebAppUrl(projectId: string) {
   if (
     projectId === 'AmoebaDB' ||
     projectId === 'PlasmoDB' ||
+    projectId === 'SchistoDB' ||
     projectId === 'ToxoDB'
   ) {
     return projectId.slice(0, -2).toLowerCase();
