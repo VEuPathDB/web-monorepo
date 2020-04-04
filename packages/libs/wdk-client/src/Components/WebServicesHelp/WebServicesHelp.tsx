@@ -8,14 +8,12 @@ import 'wdk-client/Components/WebServicesHelp/WebServicesHelp.scss';
 
 const cx = makeClassNameHelper('wdk-WebServicesHelp');
 
-const STANDARD_REPORT_NAME = 'standard';
-
 export default function(props: Props) {
   let step = props.resultType?.type === 'step' ? props.resultType.step : undefined;
   let searchName = step?.searchName;
   let parameters = step?.searchConfig.parameters || {};
   let recordClassUrlSegment = props.recordClass?.urlSegment;
-  let reportName = STANDARD_REPORT_NAME;
+  let reportName = props.selectedReporter;
   let reportConfig = props.formState || "Not yet configured"
   let l = window.location;
   let webapp = l.pathname.substring(0, l.pathname.indexOf("/", 1));
