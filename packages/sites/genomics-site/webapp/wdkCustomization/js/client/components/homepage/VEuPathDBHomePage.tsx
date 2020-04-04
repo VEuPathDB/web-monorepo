@@ -464,7 +464,7 @@ const useHeaderMenuItems = (
           display: 'MaHPIC',
           type: 'webAppRoute',
           tooltip: 'Access MaHPIC Data',
-          url: '/mahpic.jsp',
+          url: makeStaticPageRoute(`/${projectId}/mahpic.html`),
           metadata: {
             include: [ PlasmoDB ]
           }
@@ -547,7 +547,7 @@ const useHeaderMenuItems = (
               key: 'workshops-events',
               display: 'Workshops, webinars and meetings',
               type: 'reactRoute',
-              url: makeStaticPageRoute(`/${projectId}/events.md`)
+              url: makeStaticPageRoute('/webinars_workshops.html')
             }
           ]
         },
@@ -566,7 +566,7 @@ const useHeaderMenuItems = (
               key: 'citations',
               display: 'Publications that use our resources',
               type: 'externalLink',
-              url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL+PlasmoDB+ToxoDB+CryptoDB+TrichDB+GiardiaDB+TriTrypDB+AmoebaDB+MicrosporidiaDB+%22FungiDB%22+PiroplasmaDB+ApiDB+EuPathDB&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en',
+              url: 'https://scholar.google.com/scholar?hl=en&as_sdt=0,39&q=OrthoMCL+OR+PlasmoDB+OR+ToxoDB+OR+CryptoDB+OR+TrichDB+OR+GiardiaDB+OR+TriTrypDB+OR+AmoebaDB+OR+MicrosporidiaDB+OR+%22FungiDB%22+OR+PiroplasmaDB+OR+%22vectorbase%22+OR+veupathdb+OR+ApiDB+OR+EuPathDB+-encrypt+-cryptography+-hymenoptera&scisbd=1',
               target: '_blank'
             }
           ]
@@ -617,13 +617,13 @@ const useHeaderMenuItems = (
               key: 'website-privacy-policy',
               display: 'Website privacy policy',
               type: 'externalLink',
-              url: '/documents/EuPathDB_Website_Privacy_Policy.shtml'
+              url: makeStaticPageRoute('/privacyPolicy.html')
             }
           ]
         },
         {
           key: 'who-are-we',
-          display: 'Who are we?',
+          display: 'Who we are',
           type: 'subMenu',
           items: [
             {

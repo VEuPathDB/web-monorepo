@@ -113,6 +113,22 @@ header {
     padding-right: 1em;
   }
 
+/* ========================================================================= */
+/* Static Content  page                                                      */
+/* ========================================================================= */
+
+  div.static-content {
+    padding: 0 3em;
+    font-size: 16px;
+    margin-bottom: 20px;
+    line-height: 150%;
+  }
+
+  div.static-content p {
+  }
+
+
+
 
 /* ---------------------------------------------------------------
                     jQuery UI Override
