@@ -1,9 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { GenomeViewFeatureModel, GenomeViewSequenceModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
-
-const PORTAL_SITE_PROJECT_ID = 'EuPathDB';
+import { GenomeViewFeatureModel, GenomeViewSequenceModel, useIsPortalSite } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 
 interface FeatureTooltipProps {
   feature: GenomeViewFeatureModel;
@@ -16,8 +14,7 @@ export const FeatureTooltip: React.SFC<FeatureTooltipProps> = ({
   sequence,
   recordType,
 }) => {
-  const config = useWdkService(wdkService => wdkService.getConfig(), []);
-  const isPortalSite = config?.projectId === PORTAL_SITE_PROJECT_ID;
+  const isPortalSite = useIsPortalSite();
 
   return (
     <div id={feature.sourceId}>

@@ -1,16 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { defaultMemoize } from 'reselect';
 
 import { StepAnalysisEnrichmentResultTable, ColumnSettings } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
-import { GenomeViewRegionModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
+import { GenomeViewRegionModel, useIsPortalSite } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { GenomeViewSequence } from 'wdk-client/Utils/WdkModel';
 
-const featureColumnsFactory = (
+const featureColumnsFactory = defaultMemoize((
   displayName: string,
   recordType: string,
-  sequence: GenomeViewSequence) => 
+  sequence: GenomeViewSequence,
+  isPortalSite: boolean
+) =>
   [
-    {
+    !isPortalSite && {
       key: 'sourceId',
       name: displayName,
       renderCell: ({ value: sourceId }: { value: string }) =>
@@ -32,7 +35,7 @@ const featureColumnsFactory = (
       sortable: true,
       sortType: 'number'
     },
-    {
+    !isPortalSite && {
       key: 'sourceId',
       name: 'Go To',
       renderCell: ({ row: feature }: { row: any }) =>
@@ -42,7 +45,8 @@ const featureColumnsFactory = (
       sortable: true,
       sortType: 'text' 
     }
-  ] as ColumnSettings[];
+  ].filter(column => typeof column !== 'boolean') as ColumnSettings[]
+);
 
 interface FeatureTableProps {
   region: GenomeViewRegionModel;
@@ -57,9 +61,14 @@ export const FeatureTable: React.SFC<FeatureTableProps> = ({
   sequence,
   displayName,
   recordType,
-}) =>
-  <StepAnalysisEnrichmentResultTable
-    rows={region.features}
-    columns={featureColumnsFactory(displayName, recordType, sequence)}
-    emptyResultMessage="No Features present in region"
-  />;
+}) => {
+  const isPortalSite = useIsPortalSite();
+
+  return (
+    <StepAnalysisEnrichmentResultTable
+      rows={region.features}
+      columns={featureColumnsFactory(displayName, recordType, sequence, isPortalSite)}
+      emptyResultMessage="No Features present in region"
+    />
+  );
+};

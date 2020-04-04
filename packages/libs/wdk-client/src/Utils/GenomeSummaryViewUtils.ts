@@ -1,3 +1,4 @@
+import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import { GenomeViewSequence, GenomeSummaryViewReport, GenomeViewFeature, GenomeViewRegion } from 'wdk-client/Utils/WdkModel';
 
 export type GenomeSummaryViewReportModel =
@@ -119,3 +120,10 @@ const toFeatureModel = (feature: GenomeViewFeature): GenomeViewFeatureModel => (
   startFormatted: feature.start.toLocaleString(),
   endFormatted: feature.end.toLocaleString(),
 });
+
+const PORTAL_SITE_PROJECT_ID = 'EuPathDB';
+
+export function useIsPortalSite() {
+  const config = useWdkService(wdkService => wdkService.getConfig(), []);
+  return config?.projectId === PORTAL_SITE_PROJECT_ID;
+}
