@@ -1,13 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { defaultMemoize } from 'reselect';
 
 import { EagerlyLoadedTooltip } from 'wdk-client/Components/Overlays/Tooltip';
 import { ColumnSettings, StepAnalysisEnrichmentResultTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
 import { GenomeSummaryViewReportModel, GenomeViewRegionModel, GenomeViewFeatureModel, GenomeViewSequenceModel } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 import { FeatureTooltip } from 'wdk-client/Components/GenomeSummaryView/FeatureTooltip';
-import { memoize } from 'lodash/fp';
-import { Link } from 'react-router-dom';
 
-const resultColumnsFactory = memoize((
+const resultColumnsFactory = defaultMemoize((
     displayName: string, 
     displayNamePlural: string, 
     recordType: string,
@@ -174,7 +174,7 @@ interface ResultsTableProps {
   showRegionDialog: (regionId: string) => void;
 }
 
-const rowsFactory = memoize(
+const rowsFactory = defaultMemoize(
   (report: GenomeSummaryViewReportModel, emptyChromosomeFilterApplied: boolean) =>
     report.type === 'truncated'
       ? []
