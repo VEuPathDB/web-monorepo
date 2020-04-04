@@ -478,7 +478,7 @@ const useHeaderMenuItems = (
         {
           key: 'genomes-and-data-types',
           display: 'Organisms - Data type summary',
-          tooltip: `Table summarizing all the genomes and their different data types available in ${projectId}`,
+          tooltip: `Table summarizing all the genomes and their different data types available in ${displayName}`,
           type: 'reactRoute',
           url: '/search/organism/GenomeDataTypes/result'
         },
@@ -516,7 +516,7 @@ const useHeaderMenuItems = (
       items: [
         {
           key: 'what-is',
-          display: `What is ${projectId}?`,
+          display: `What is ${displayName}?`,
           type: 'reactRoute',
           url: aboutRoute
         },
@@ -720,7 +720,7 @@ const useHeaderMenuItems = (
         },
         { 
           key: 'reset-session',
-          display: `Reset ${projectId} session`,
+          display: `Reset ${displayName} session`,
           tooltip: 'Login first to keep your work',
           type: 'reactRoute',
           url: '/reset-session',
@@ -730,7 +730,7 @@ const useHeaderMenuItems = (
           display: 'Return to main site',
           tooltip: 'Opt out of the beta site',
           type: 'externalLink',
-          url: `https://${projectId?.toLowerCase()}.org`,
+          url: `https://${projectId?.toLowerCase()}.${projectId === 'SchistoDB' ? 'net' : 'org'}`
         }
       ]
     },
