@@ -5,6 +5,7 @@ import { get, memoize } from 'lodash';
 
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { arrayOf, decode, string } from 'wdk-client/Utils/Json';
 
@@ -21,8 +22,6 @@ import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
-import { projectId } from 'ebrc-client/config';
-
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 
@@ -37,9 +36,6 @@ type OwnProps = {
 
 type StateProps = {
   searchTree?: CategoryTreeNode,
-  twitterUrl?: string,
-  facebookUrl?: string,
-  youtubeUrl?: string,
   buildNumber?: string,
   releaseDate?: string,
   displayName?: string
@@ -80,16 +76,17 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     parseExpandedBranches
   );
 
-  const projectId = useProjectId();
+  const config = useWdkService(wdkService => wdkService.getConfig(), []);
+  const { projectId, displayName } = config || {};
+
   const headerMenuItems = useHeaderMenuItems(
     props.searchTree, 
     searchTerm, 
     expandedBranches, 
     setSearchTerm, 
     setExpandedBranches,
-    props.twitterUrl,
-    props.facebookUrl,
-    props.youtubeUrl,
+    projectId,
+    displayName
   );
 
   const updateHeaderExpanded = useCallback(() => {
@@ -221,11 +218,6 @@ function makeStaticPageRoute(subPath: string) {
   return `${STATIC_ROUTE_PATH}${subPath}`;
 }
 
-const useProjectId = (): string => {
-  // FIXME: Pull this from global data
-  return projectId;
-};
-
 type HeaderMenuItemEntry = HeaderMenuItem<{
   include?: string[],
   exclude?: string[]
@@ -237,11 +229,9 @@ const useHeaderMenuItems = (
   expandedBranches: string[],
   setSearchTerm: (newSearchTerm: string) => void,
   setExpandedBranches: (newExpandedBranches: string[]) => void,
-  twitterUrl?: string,
-  facebookUrl?: string,
-  youtubeUrl?: string
+  projectId: string | undefined,
+  displayName: string | undefined
 ): HeaderMenuItem[] => {
-  const projectId = useProjectId();
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
   const aboutRoute = makeStaticPageRoute(`/${projectId}/about.html`);
   const aboutAllRoute = makeStaticPageRoute('/aboutall.html');
@@ -456,7 +446,7 @@ const useHeaderMenuItems = (
       items: [
         {
           key: 'datasets',
-          display: `Data sets in ${projectId}`,
+          display: `Data sets in ${displayName}`,
           type: 'reactRoute',
           url: '/search/dataset/AllDatasets/result'
         },
@@ -740,7 +730,7 @@ const useHeaderMenuItems = (
           display: 'Return to main site',
           tooltip: 'Opt out of the beta site',
           type: 'externalLink',
-          url: `https://${projectId.toLowerCase()}.org`,
+          url: `https://${projectId?.toLowerCase()}.org`,
         }
       ]
     },
@@ -760,16 +750,16 @@ const useHeaderMenuItems = (
 
 const filterMenuItemEntry = (
   menuItemEntry: HeaderMenuItemEntry, 
-  projectId: string
+  projectId: string | undefined
 ): HeaderMenuItemEntry[] => 
   (
     menuItemEntry.metadata && 
     (
       (
-        menuItemEntry.metadata.include && !menuItemEntry.metadata.include.includes(projectId)
+        projectId != null && menuItemEntry.metadata.include && !menuItemEntry.metadata.include.includes(projectId)
       ) ||
       ( 
-        menuItemEntry.metadata.exclude && menuItemEntry.metadata.exclude.includes(projectId)        
+        projectId != null && menuItemEntry.metadata.exclude && menuItemEntry.metadata.exclude.includes(projectId)
       )
     )
   ) 
@@ -789,9 +779,6 @@ const filterMenuItemEntry = (
 const mapStateToProps = (state: RootState) => ({
   // FIXME: This is not typesafe.
   searchTree: get(state.globalData, 'searchTree') as CategoryTreeNode,
-  twitterUrl: state.globalData.siteConfig?.twitterUrl,
-  facebookUrl: state.globalData.siteConfig?.facebookUrl,
-  youtubeUrl: state.globalData.siteConfig?.youtubeUrl,
   buildNumber: state.globalData.config?.buildNumber,
   releaseDate: state.globalData.config?.releaseDate,
   displayName: state.globalData.config?.displayName,
