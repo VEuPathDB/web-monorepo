@@ -518,7 +518,7 @@ const useHeaderMenuItems = (
           key: 'what-is',
           display: `What is ${displayName}?`,
           type: 'reactRoute',
-          url: aboutRoute
+          url: makeStaticPageRoute('/VEuPathDB/about.html')
         },
         { 
           key: 'community',
@@ -526,16 +526,16 @@ const useHeaderMenuItems = (
           display: 'Community',
           items: [
             { 
+              key: 'scientific-advisory-team',
+              display: 'Community advisors',
+              type: 'reactRoute',
+              url: `${aboutRoute}#advisors`
+            },
+            { 
               key: 'news',
               display: 'News',
               type: 'reactRoute',
               url: makeStaticPageRoute(`/${projectId}/news.html`)
-            },
-            { 
-              key: 'related-sites',
-              display: 'Related sites',
-              type: 'reactRoute',
-              url: makeStaticPageRoute(`/${projectId}/externalLinks.html`)
             },
             { 
               key: 'public-strategies',
@@ -544,8 +544,14 @@ const useHeaderMenuItems = (
               url: '/workspace/strategies/public'
             },
             { 
+              key: 'related-sites',
+              display: 'Related sites',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/${projectId}/externalLinks.html`)
+            },
+            { 
               key: 'workshops-events',
-              display: 'Workshops, webinars and meetings',
+              display: 'Workshops and training',
               type: 'reactRoute',
               url: makeStaticPageRoute('/webinars_workshops.html')
             }
@@ -616,7 +622,7 @@ const useHeaderMenuItems = (
             {
               key: 'website-privacy-policy',
               display: 'Website privacy policy',
-              type: 'externalLink',
+              type: 'reactRoute',
               url: makeStaticPageRoute('/privacyPolicy.html')
             }
           ]
@@ -626,18 +632,6 @@ const useHeaderMenuItems = (
           display: 'Who we are',
           type: 'subMenu',
           items: [
-            {
-              key: 'scientific-working-group',
-              display: 'Scientific working group',
-              type: 'reactRoute',
-              url: `${aboutAllRoute}#swg`
-            },
-            {
-              key: 'scientific-advisory-team',
-              display: 'Scientific advisory team',
-              type: 'reactRoute',
-              url: `${aboutRoute}#advisors`
-            },
             {
               key: 'personnel',
               display: 'Personnel',
@@ -698,19 +692,11 @@ const useHeaderMenuItems = (
           url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1',
           target: '_blank'
         },
-        {
-          key: 'workshop-exercises',
-          display: 'Exercises from workshop',
-          type: 'externalLink',
-          url: 'http://workshop.eupathdb.org/current/index.php?page=schedule',
-          target: '_blank'
-        },
         { 
           key: 'eupathdb-workshop',
-          display: 'Apply to VEuPathDB workshop',
-          type: 'externalLink',
-          url: 'http://workshop.eupathdb.org/current/',
-          target: '_blank'
+          display: 'VEuPathDB workshops',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/webinars_workshops.html')
         },
         {
           key: 'our-glossary',
