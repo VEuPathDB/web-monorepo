@@ -170,7 +170,7 @@ function makeHeaderMenuItems(state) {
             target: '_blank'
           },
           {
-            text: 'About MicrobiomeDB',
+            text: 'FAQs',
             route: '/about'
           },
           ...socialLinks
