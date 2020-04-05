@@ -8,12 +8,13 @@ import { StudyMenuItem } from 'ebrc-client/App/Studies';
 import logoUrl from 'site/images/18170.png';
 import heroImageUrl from 'site/images/mbio_hero.png';
 import vizData from './visualizations.json';
+import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 
 import { StudyCard } from 'ebrc-client/App/Studies';
 import { SearchCard } from 'ebrc-client/App/Searches';
 import { ImageCard } from 'ebrc-client/App/ImageCard';
 
-import { studyMatchPredicate } from 'ebrc-client/util/homeContent';
+import { studyMatchPredicate, studyFilters } from 'ebrc-client/util/homeContent';
 
 export default {
   SiteHeader: () => SiteHeader,
@@ -68,6 +69,7 @@ function getHomeContent({ studies, searches, visualizations }) {
       title: 'Explore the Studies',
       contentType: 'StudyCardList',
       contentNamePlural: 'studies',
+      filters: studyFilters(studies),
       items: studies.entities,
       isLoading: studies.loading,
       isExpandable: true,
@@ -138,7 +140,7 @@ function makeHeaderMenuItems(state) {
           },
 */        {
             text: 'My Basket',
-            appUrl: '/workspace/basket',
+            route: '/workspace/basket',
             loginRequired: true
           },
           {
@@ -153,12 +155,12 @@ function makeHeaderMenuItems(state) {
         ]
       },
       {
-        id: 'community',
-        text: 'Community',
+        id: 'about',
+        text: 'About',
         children: [
           {
             text: 'News',
-            appUrl: '/showXmlDataContent.do?name=XmlQuestions.News'
+            route: `${STATIC_ROUTE_PATH}/MicrobiomeDB/news.html`
           },
           {
             text: 'Public Strategies',
@@ -207,7 +209,7 @@ function Footer() {
             Follow us on <i className="fa fa-twitter"/>
           </a>
         </div>
-        <div>©{new Date().getFullYear()} The EuPathDB Project Team</div>
+        <div>©{new Date().getFullYear()} The VEuPathDB Project Team</div>
       </div>
       <div>
         <div>
