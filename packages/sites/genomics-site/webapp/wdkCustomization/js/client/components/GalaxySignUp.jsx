@@ -10,7 +10,7 @@ export default function GalaxySignUp(props) {
   return (
     <GalaxyPageLayout>
       <p>
-        The first time you visit EuPathDB Galaxy you will be asked to sign up with Globus, EuPathDB’s Galaxy manager,
+        The first time you visit VEuPathDB Galaxy you will be asked to sign up with Globus, VEuPathDB’s Galaxy manager,
         in order to set up your private Galaxy workspace. This is a three-step sign-up process (screenshots below),
         which will be opened in a new tab.
       </p>
@@ -27,7 +27,7 @@ export default function GalaxySignUp(props) {
           <img title="Option to link an existing Globus Account" src="/a/wdkCustomization/images/globus-02-link-account.jpg"/>
           <div className="eupathdb-GalaxySignUpScreenCaption">
             If you already have a Globus account, you may choose to link it to
-            your EuPathDB account. If you don't have an existing Globus account,
+            your VEuPathDB account. If you don't have an existing Globus account,
             choose <strong>No thanks, continue</strong>.
           </div>
         </div>
@@ -43,7 +43,7 @@ export default function GalaxySignUp(props) {
         </div>
         <div>
           <div className="eupathdb-GalaxySignUpScreenHeader">
-            <strong>3. Grant EuPathDB Galaxy access to your account.</strong>
+            <strong>3. Grant VEuPathDB Galaxy access to your account.</strong>
           </div>
           <img title="Grant permission to access your Globus account" src="/a/wdkCustomization/images/globus-04-oauth-perms.jpg"/>
           <div className="eupathdb-GalaxySignUpScreenCaption">
@@ -55,18 +55,18 @@ export default function GalaxySignUp(props) {
 
       <div className="eupathdb-GalaxyTermsContinueLink">
         <p style={{ fontSize: 'small', textAlign: 'justify' }}>
-          EuPathDB Galaxy workspaces are provided free of charge. We encrypt
+          VEuPathDB Galaxy workspaces are provided free of charge. We encrypt
           data transfers and storage but ultimately we cannot guarantee the
-          security of data transmissions between EuPathDB, Globus and
+          security of data transmissions between VEuPathDB, Globus and
           affiliates, Amazon Cloud Services, and the user. It is your
           responsibility to backup your data and obtain any required permissions
           from your study and/or institution prior to uploading data for
-          analyses on the EuPathDB Galaxy platform. Do not use, transmit, upload
+          analyses on the VEuPathDB Galaxy platform. Do not use, transmit, upload
           or share any human identifiable information in the files you analyze.
-          EuPathDB, Globus and affiliates, University of Georgia, University of
+          VEuPathDB, Globus and affiliates, University of Georgia, University of
           Pennsylvania, University of Liverpool, and Amazon Cloud Services do
           not take any responsibility and are not liable for the loss and/or
-          release of any data you analyze via the EuPathDB Galaxy platform.
+          release of any data you analyze via the VEuPathDB Galaxy platform.
         </p>
         <p style={{fontSize: 'small'}}>
           <label>
