@@ -692,10 +692,24 @@ const useHeaderMenuItems = (
       type: 'subMenu',
       items: [
         {
+          key: 'youtube-tutorials',
+          display: 'YouTube tutorials',
+          type: 'externalLink',
+          url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1',
+          target: '_blank'
+        },
+        {
           key: 'workshop-exercises',
           display: 'Exercises from workshop',
           type: 'externalLink',
           url: 'http://workshop.eupathdb.org/current/index.php?page=schedule',
+          target: '_blank'
+        },
+        { 
+          key: 'eupathdb-workshop',
+          display: 'Apply to VEuPathDB workshop',
+          type: 'externalLink',
+          url: 'http://workshop.eupathdb.org/current/',
           target: '_blank'
         },
         {
@@ -703,20 +717,6 @@ const useHeaderMenuItems = (
           display: `VEuPathDB glossary`,
           type: 'reactRoute',
           url: makeStaticPageRoute('/glossary.html')
-        },
-        { 
-          key: 'eupathdb-workshop',
-          display: 'VEuPathDB workshop',
-          type: 'externalLink',
-          url: 'http://workshop.eupathdb.org/current/',
-          target: '_blank'
-        },
-        {
-          key: 'youtube-tutorials',
-          display: 'YouTube tutorials',
-          type: 'externalLink',
-          url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1',
-          target: '_blank'
         },
         { 
           key: 'reset-session',
