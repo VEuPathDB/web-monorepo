@@ -211,13 +211,16 @@ const title = createSelector(
       externalDatabase: { name, version } = { name: '', version: '' } 
     }: UserCommentPostRequest
   ) => {
-    // TODO Revert this once we're out of beta
     return (
-      editing
-        ? `Edit comment ${commentId} for ${targetId}`
-        : `Add a comment to ${targetType} ${targetId}`
-    );
-        {/* Please add only scientific comments to be displayed on the {targetType} page for {targetId}. 
+      <>
+        <h1>
+          {
+            editing
+              ? `Edit comment ${commentId} for ${targetId}`
+              : `Add a comment to ${targetType} ${targetId}`
+          }
+        </h1>
+        Please add only scientific comments to be displayed on the {targetType} page for {targetId}. 
         If you want to report a problem, use the <Link to={'/contact-us'} target="_blank">support page</Link>.
 
         <br />Your comments are appreciated.{' '}
@@ -246,7 +249,9 @@ const title = createSelector(
           targetType === 'genome' && (
             'This form can be used for adding comments for a new gene. '
           )
-        } */}
+        }
+      </>
+    )
   }
 );
 
