@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import { GenomeViewFeatureModel, GenomeViewSequenceModel, useIsPortalSite } from 'wdk-client/Utils/GenomeSummaryViewUtils';
 
 interface FeatureTooltipProps {
@@ -35,13 +34,13 @@ export const FeatureTooltip: React.SFC<FeatureTooltipProps> = ({
               </u>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link to={`/jbrowse?loc=${feature.context}&tracks=gene&data=/a/service/jbrowse/tracks/${sequence.organismAbbrev}`} target="_blank">
               <u>
                 Genome browser
               </u>
             </Link>
-          </li>
+          </li> */}
         </ul>
       }
     </div>

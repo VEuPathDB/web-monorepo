@@ -35,16 +35,16 @@ const featureColumnsFactory = defaultMemoize((
       sortable: true,
       sortType: 'number'
     },
-    !isPortalSite && {
-      key: 'sourceId',
-      name: 'Go To',
-      renderCell: ({ row: feature }: { row: any }) =>
-        <Link to={`/jbrowse?loc=${feature.context}&tracks=gene&data=/a/service/jbrowse/tracks/${sequence.organismAbbrev}`} target="_blank">
-          <u>Genome browser</u>
-        </Link>,
-      sortable: true,
-      sortType: 'text' 
-    }
+    // !isPortalSite && {
+    //   key: 'sourceId',
+    //   name: 'Go To',
+    //   renderCell: ({ row: feature }: { row: any }) =>
+    //     <Link to={`/jbrowse?loc=${feature.context}&tracks=gene&data=/a/service/jbrowse/tracks/${sequence.organismAbbrev}`} target="_blank">
+    //       <u>Genome browser</u>
+    //     </Link>,
+    //   sortable: true,
+    //   sortType: 'text' 
+    // }
   ].filter(column => typeof column !== 'boolean') as ColumnSettings[]
 );
 
