@@ -32,8 +32,8 @@ let interpretFormStatus = (formStatus, errorMessage) => {
 let IntroText = () => (
   <div style={{width:"70%",textAlign:"center",margin:"15px"}}>
     IMPORTANT: If you already registered in another site<br/>
-    (AmoebaDB, CryptoDB, EuPathDB, FungiDB, GiardiaDB, MicrosporidiaDB,
-    PiroplasmaDB, PlasmoDB, SchistoDB, ToxoDB, TrichDB or TriTrypDB)<br/>
+    (AmoebaDB, CryptoDB, FungiDB, GiardiaDB, MicrosporidiaDB,
+    PiroplasmaDB, PlasmoDB, SchistoDB, ToxoDB, TrichDB, TriTrypDB, VectorBase or VEuPathDB)<br/>
     you do NOT need to register again.
   </div>
 );
@@ -65,8 +65,8 @@ let WhyRegister = () => (
 let PrivacyPolicy = () => (
   <div style={descriptionBoxStyle}>
     <div style={{fontSize:"1.2em"}}>
-      <a title="It will open in a new tab" target="_blank" href="/documents/EuPathDB_Website_Privacy_Policy.shtml">
-        <b>EuPathDB Websites Privacy Policy</b></a> 
+      <a title="It will open in a new tab" target="_blank" href="/a/app/static-content/privacyPolicy.html">
+        <b>VEuPathDB Websites Privacy Policy</b></a> 
     </div>
     <table>
       <tbody>
