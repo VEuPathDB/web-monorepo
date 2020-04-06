@@ -159,6 +159,10 @@ function makeHeaderMenuItems(state) {
         text: 'About',
         children: [
           {
+            text: 'FAQs',
+            route: `${STATIC_ROUTE_PATH}/MicrobiomeDB/faq.html`
+          },
+          {
             text: 'News',
             route: `${STATIC_ROUTE_PATH}/MicrobiomeDB/news.html`
           },
@@ -170,10 +174,6 @@ function makeHeaderMenuItems(state) {
             text: 'Tutorials and Resources',
             url: vimeoUrl,
             target: '_blank'
-          },
-          {
-            text: 'FAQs',
-            route: `${STATIC_ROUTE_PATH}/MicrobiomeDB/faq.html`
           },
           ...socialLinks
         ]
