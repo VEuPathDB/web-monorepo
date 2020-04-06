@@ -173,7 +173,7 @@ function makeHeaderMenuItems(state) {
           },
           {
             text: 'FAQs',
-            route: '/about'
+            route: `${STATIC_ROUTE_PATH}/microbiome_faq.html`
           },
           ...socialLinks
         ]
