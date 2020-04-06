@@ -20,7 +20,7 @@ import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/compon
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 
 import { PageDescription } from './PageDescription';
-import { makeVpdbClassNameHelper } from './Utils';
+import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
 
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
@@ -218,6 +218,10 @@ function makeStaticPageRoute(subPath: string) {
   return `${STATIC_ROUTE_PATH}${subPath}`;
 }
 
+function makeExternalStaticPageUrl(communitySiteUrl: string | undefined, subPath: string) {
+  return `https://${communitySiteUrl}${subPath}`;
+}
+
 type HeaderMenuItemEntry = HeaderMenuItem<{
   include?: string[],
   exclude?: string[]
@@ -233,11 +237,11 @@ const useHeaderMenuItems = (
   displayName: string | undefined
 ): HeaderMenuItem[] => {
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
+  const communitySite = useCommunitySiteUrl();
   const aboutRoute = makeStaticPageRoute(`/${projectId}/about.html`);
   const aboutAllRoute = makeStaticPageRoute('/aboutall.html');
 
-// type: reactRoute, webAppRoute, externalLink, subMenu, custom
-
+  // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const menuItemEntries: HeaderMenuItemEntry[] = [
     {
       key: 'search-strategies',
@@ -594,7 +598,10 @@ const useHeaderMenuItems = (
               key: 'submission-policy',
               display: 'Data submission and release policies',
               type: 'externalLink',
-              url: '/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf'
+              url: makeExternalStaticPageUrl(
+                communitySite,
+                '/assets/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf'
+              )
             }
           ]
         },
