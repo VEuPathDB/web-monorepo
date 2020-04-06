@@ -349,6 +349,7 @@ const useHeaderMenuItems = (
         {
           key: 'vb-images',
           display: 'Image gallery',
+          tooltip: 'Free to use pictures of vectors',
           type: 'externalLink',
           url: 'https://www.vectorbase.org/image-gallery',
           target: '_blank',
