@@ -236,6 +236,8 @@ const useHeaderMenuItems = (
   const aboutRoute = makeStaticPageRoute(`/${projectId}/about.html`);
   const aboutAllRoute = makeStaticPageRoute('/aboutall.html');
 
+// type: reactRoute, webAppRoute, externalLink, subMenu, custom
+
   const menuItemEntries: HeaderMenuItemEntry[] = [
     {
       key: 'search-strategies',
@@ -591,8 +593,8 @@ const useHeaderMenuItems = (
             {
               key: 'submission-policy',
               display: 'Data submission and release policies',
-              type: 'reactRoute',
-              url: makeStaticPageRoute('/assets/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf')
+              type: 'externalLin',
+              url: '/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf')
             },
           ]
         },
