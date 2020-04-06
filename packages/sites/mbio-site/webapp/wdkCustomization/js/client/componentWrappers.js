@@ -167,10 +167,6 @@ function makeHeaderMenuItems(state) {
             route: `${STATIC_ROUTE_PATH}/MicrobiomeDB/news.html`
           },
           {
-            text: 'Public Strategies',
-            route: '/workspace/strategies/public'
-          },
-          {
             text: 'Tutorials and Resources',
             url: vimeoUrl,
             target: '_blank'
