@@ -593,9 +593,9 @@ const useHeaderMenuItems = (
             {
               key: 'submission-policy',
               display: 'Data submission and release policies',
-              type: 'externalLin',
-              url: '/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf')
-            },
+              type: 'externalLink',
+              url: '/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf'
+            }
           ]
         },
         {
@@ -644,7 +644,7 @@ const useHeaderMenuItems = (
               key: 'funding',
               display: 'Funding',
               type: 'reactRoute',
-              url: `${aboutRoute}#funding`
+              url: `${aboutRoute}#about_funding`
             }
           ],
         },
