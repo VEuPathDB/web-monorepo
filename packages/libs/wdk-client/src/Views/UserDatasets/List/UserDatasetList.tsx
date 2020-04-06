@@ -211,7 +211,7 @@ class UserDatasetList extends React.Component <Props, State> {
       {
         key: 'projects',
         sortable: true,
-        name: 'EuPathDB Websites',
+        name: 'VEuPathDB Websites',
         renderCell (cellProps: MesaDataCellProps) {
           const userDataset: UserDataset = cellProps.row;
           const { projects } = userDataset;
@@ -374,8 +374,8 @@ class UserDatasetList extends React.Component <Props, State> {
           <div style={{ textAlign: 'left' }}>
             <ul>
             <li>To learn how to add a data set check this  <a href='http://www.youtube.com/watch?v=igQZHjRBqV0'>Tutorial on User Data Sets</a>.</li>
-            <li>To add a data set, go to <a href='https://eupathdb.globusgenomics.org'>EuPathDB Galaxy</a>.</li>
-            <li><Link to='/galaxy-orientation'>About EuPathDB Galaxy</Link> </li>
+            <li>To add a data set, go to <a href='https://veupathdb.globusgenomics.org'>VEuPathDB Galaxy</a>.</li>
+            <li><Link to='/galaxy-orientation'>About VEuPathDB Galaxy</Link> </li>
             </ul>
           </div>
         </p>
@@ -521,7 +521,7 @@ class UserDatasetList extends React.Component <Props, State> {
                   Bring your own data sets to <b>{projectName}</b>.
                   <ul style={{ marginTop: '10px' }}>
                     <li>My Data Sets is currently enabled for data sets containing one or more bigwig files. </li>
-                    <li>Export this type of data set from your history in <a href='http://eupathdb.globusgenomics.org'>EuPathDB Galaxy</a> into <b>{projectName}</b>.</li>
+                    <li>Export this type of data set from your history in <a href='http://veupathdb.globusgenomics.org'>VEuPathDB Galaxy</a> into <b>{projectName}</b>.</li>
                     <li>Push compatible data straight to <a>GBrowse</a>, with other tooling coming soon.</li>
                     <li>Share your data set with others and receive shared data from your colleagues.</li>
                   </ul>

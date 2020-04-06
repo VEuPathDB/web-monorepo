@@ -402,7 +402,7 @@ class UserDatasetDetail extends React.Component {
     return [
       {
         key: 'project',
-        name: 'EuPathDB Website',
+        name: 'VEuPathDB Website',
         renderCell () {
           return projects.join(', ');
         }

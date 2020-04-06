@@ -38,8 +38,8 @@ export function FormMessage({ message, messageClass }) {
 
 export function IntroComponent() {
   return (
-    <div> <a title="It will open in a new tab" target="_blank" href="/documents/EuPathDB_Website_Privacy_Policy.shtml">
-        <b>EuPathDB Websites Privacy Policy</b></a> 
+    <div> <a title="It will open in a new tab" target="_blank" href="/a/app/static-content/privacyPolicy.html">
+        <b>VEuPathDB Websites Privacy Policy</b></a> 
    </div> );
 }
 
@@ -71,8 +71,8 @@ class UserFormContainer extends React.Component {
           <div>
             <h1>{this.props.titleText}</h1>
           {/*  <IntroComponent/> */}
-            <div style={{paddingBottom:"2em"}}>Review our <a title="It will open in a new tab" target="_blank" href="/documents/EuPathDB_Website_Privacy_Policy.shtml">
-        <b>EuPathDB Websites Privacy Policy</b></a>.</div>
+            <div style={{paddingBottom:"2em"}}>Review our <a title="It will open in a new tab" target="_blank" href="/a/app/static-content/privacyPolicy.html">
+        <b>VEuPathDB Websites Privacy Policy</b></a>.</div>
             <FormMessage {...formConfig}/>
             <UserAccountForm
               user={this.props.userFormData}

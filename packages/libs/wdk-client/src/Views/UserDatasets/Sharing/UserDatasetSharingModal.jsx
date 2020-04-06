@@ -79,7 +79,7 @@ class UserDatasetSharingModal extends React.Component {
         if (!results.length || !foundUsers) {
           return this.disqualifyRecipient(recipientEmail, (
             <span>
-              This email is not associated with a EuPathDB account. <br/> <b>{recipientEmail}</b> will not receive {this.getDatasetNoun()}.
+              This email is not associated with a VEuPathDB account. <br/> <b>{recipientEmail}</b> will not receive {this.getDatasetNoun()}.
             </span>
           ));
         }
