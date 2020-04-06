@@ -118,8 +118,8 @@ header {
 /* ========================================================================= */
 
   div.static-content {
-    padding: 0 3em;
-    font-size: 16px;
+    padding: 0 1em;
+    font-size: 16px; 
     margin-bottom: 20px;
     line-height: 150%;
   }

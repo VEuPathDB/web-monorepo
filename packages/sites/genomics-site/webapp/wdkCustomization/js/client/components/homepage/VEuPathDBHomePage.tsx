@@ -360,7 +360,7 @@ const useHeaderMenuItems = (
             include: [ PlasmoDB ]
           }
         },
-        {
+      /*  {
           key: 'pats',
           display: 'PATS',
           type: 'externalLink',
@@ -369,7 +369,7 @@ const useHeaderMenuItems = (
           metadata: {
             include: [ PlasmoDB ]
           }
-        },
+        },*/
         { 
           key: 'mapveu',
           display: 'MapVEu',
@@ -462,7 +462,7 @@ const useHeaderMenuItems = (
         {
           key: 'mahpic-data',
           display: 'MaHPIC',
-          type: 'webAppRoute',
+          type: 'reactRoute',
           tooltip: 'Access MaHPIC Data',
           url: makeStaticPageRoute(`/${projectId}/mahpic.html`),
           metadata: {
@@ -518,7 +518,7 @@ const useHeaderMenuItems = (
           key: 'what-is',
           display: `What is ${displayName}?`,
           type: 'reactRoute',
-          url: makeStaticPageRoute('/VEuPathDB/about.html')
+          url: makeStaticPageRoute('/about.html')
         },
         { 
           key: 'community',
@@ -591,8 +591,8 @@ const useHeaderMenuItems = (
             {
               key: 'submission-policy',
               display: 'Data submission and release policies',
-              type: 'externalLink',
-              url: '/EuPathDB_datasubm_SOP.pdf'
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/assets/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf')
             },
           ]
         },
@@ -602,16 +602,10 @@ const useHeaderMenuItems = (
           type: 'subMenu',
           items: [
             {
-              key: 'cite-us',
-              display: 'How to cite us',
+              key: 'cite',
+              display: 'Citing VEuPathDB in Publications and Presentations',
               type: 'reactRoute',
               url: `${aboutRoute}#citing`
-            },
-            {
-              key: 'cite-data-provide',
-              display: 'Citing data providers',
-              type: 'reactRoute',
-              url: `${aboutRoute}#citingproviders`
             },
             {
               key: 'data-access-policy',
