@@ -347,6 +347,16 @@ const useHeaderMenuItems = (
           }
         },
         {
+          key: 'vb-images',
+          display: 'Image gallery',
+          type: 'externalLink',
+          url: 'https://www.vectorbase.org/image-gallery',
+          target: '_blank',
+          metadata: {
+            include: [ VectorBase ]
+          }
+        },
+        {
           key: 'LeishGEdit',
           display: 'LeishGEdit',
           tooltip: 'Your online resource for CRISPR Cas9 T7 RNA Polymerase gene editing in kinetoplastids',
@@ -541,7 +551,7 @@ const useHeaderMenuItems = (
               key: 'news',
               display: 'News',
               type: 'reactRoute',
-              url: makeStaticPageRoute(`/${projectId}/news.html`)
+              url: makeStaticPageRoute(`/${displayName}/news.html`)
             },
             { 
               key: 'public-strategies',
