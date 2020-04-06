@@ -10,16 +10,18 @@ import { getValueOrDefault, filterOutProps } from 'wdk-client/Utils/ComponentUti
 const EMAIL_PREFERENCE_DATA = [
   {value:'preference_global_email_amoebadb', display:'AmoebaDB'},
   {value:'preference_global_email_cryptodb', display:'CryptoDB'},
-  {value:'preference_global_email_apidb', display:'EuPathDB'},
   {value:'preference_global_email_fungidb', display:'FungiDB'},
   {value:'preference_global_email_giardiadb', display:'GiardiaDB'},
+  {value:'preference_global_email_hostdb', display:'HostDB'},
   {value:'preference_global_email_microsporidiadb', display:'MicrosporidiaDB'},
   {value:'preference_global_email_piroplasmadb', display:'PiroplasmaDB'},
   {value:'preference_global_email_plasmodb', display:'PlasmoDB'},
   {value:'preference_global_email_schistodb', display:'SchistoDB'},
   {value:'preference_global_email_toxodb', display:'ToxoDB'},
   {value:'preference_global_email_trichdb', display:'TrichDB'},
-  {value:'preference_global_email_tritrypdb', display:'TriTrypDB'}
+  {value:'preference_global_email_tritrypdb', display:'TriTrypDB'},
+  {value:'preference_global_email_vectorbase', display:'VectorBase'},
+  {value:'preference_global_email_apidb', display:'VEuPathDB'}
 ];
 
 /**
