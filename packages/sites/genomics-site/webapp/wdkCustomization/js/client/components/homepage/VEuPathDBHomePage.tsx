@@ -535,7 +535,7 @@ const useHeaderMenuItems = (
               key: 'scientific-advisory-team',
               display: 'Community advisors',
               type: 'reactRoute',
-              url: `${aboutRoute}#advisors`
+              url: makeStaticPageRoute('/advisors.html')
             },
             { 
               key: 'news',
@@ -614,13 +614,13 @@ const useHeaderMenuItems = (
               key: 'cite',
               display: 'Citing VEuPathDB in Publications and Presentations',
               type: 'reactRoute',
-              url: `${aboutRoute}#citing`
+              url: makeStaticPageRoute('/about.html#about_citing')
             },
             {
               key: 'data-access-policy',
               display: 'Data access policy',
               type: 'reactRoute',
-              url: `${aboutRoute}#use`
+              url: makeStaticPageRoute('/about.html#about_use')
             },
             {
               key: 'website-privacy-policy',
@@ -639,19 +639,19 @@ const useHeaderMenuItems = (
               key: 'personnel',
               display: 'Personnel',
               type: 'reactRoute',
-              url: `${aboutAllRoute}#personnel`
+              url: makeStaticPageRoute('/personnel.html')
             },
             {
               key: 'acknowledgement',
               display: 'Acknowledgements',
               type: 'reactRoute',
-              url: `${aboutAllRoute}#acks`
+              url: makeStaticPageRoute('/acks.html')
             },
             {
               key: 'funding',
               display: 'Funding',
               type: 'reactRoute',
-              url: `${aboutRoute}#about_funding`
+              url: makeStaticPageRoute('/about.html#about_funding')
             }
           ],
         },
