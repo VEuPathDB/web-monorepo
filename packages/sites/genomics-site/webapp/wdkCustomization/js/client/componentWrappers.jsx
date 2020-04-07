@@ -1,7 +1,7 @@
 import { isEqual } from 'lodash';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
+import { useLocation } from 'react-router';
 import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
@@ -18,6 +18,7 @@ import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCre
 import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
 import newFeatureImage from 'wdk-client/Core/Style/images/new-feature.png';
+import { useScrollUpOnRouteChange } from 'wdk-client/Hooks/Page';
 
 import { BinaryOperationsContext } from 'wdk-client/Utils/Operations';
 import { apiBinaryOperations } from './components/strategies/ApiBinaryOperations';
@@ -384,25 +385,13 @@ export function StrategyWorkspaceController(DefaultComponent) {
   }
 }
 
-export function Page(DefaultComponent) {
-  return withRouter(function VuPathDBPage(props) {
-    const renderNewHomePage = true;
-    const isHomePage = props.location.pathname === '/';
+export function Page() {
+  return function VuPathDBPage(props) {
+    useScrollUpOnRouteChange();
 
-    useEffect(() => {
-      const bodyElement = document.getElementsByTagName('body')[0];
+    const location = useLocation();
+    const isHomePage = location.pathname === '/';
 
-      if (bodyElement) {
-        bodyElement.className = renderNewHomePage
-          ? 'vpdb-Body'
-          : '';
-      }
-    }, [ renderNewHomePage ]);
-
-    return (
-      renderNewHomePage
-        ? <VEuPathDBHomePage {...props} isHomePage={isHomePage} />
-        : <DefaultComponent {...props} />
-    );
-  });
+    return <VEuPathDBHomePage {...props} isHomePage={isHomePage} />;
+  };
 }
