@@ -30,32 +30,21 @@ interface DescriptionProps {
 
 // As necessary, add entries for custom site descriptions, keyed by project id
 const customSiteDescriptions: Record<string, React.ComponentType<DescriptionProps>> = {
-  [PORTAL_SITE_PROJECT_ID]: PortalSiteDescription
+//  [PORTAL_SITE_PROJECT_ID]: PortalSiteDescription
 };
 
 function DefaultComponentSiteDescription ({ displayName }: DescriptionProps) {
   return (
     <p>
-      As part of the VEuPathDB
-      {' '}
-      <a href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers" target="_blank">Bioinformatics Resource Center</a>,
-      {' '}
-      <span className={cx('--DisplayName')}>{displayName}</span>
-      {' '}
-      provides genomic, phenotypic, and population-centric data to the scientific community for <Link to="/search/organism/GenomeDataTypes/result">these organisms</Link>.
-    </p>
-  );
-};
-
-function PortalSiteDescription({ displayName }: DescriptionProps) {
-  return (
-    <p>
-      The <span className={cx('--DisplayName')}>{displayName}</span>
+      The <span className={cx('--DisplayName')}>VEuPathDB</span>
       {' '}
       <a href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers" target="_blank">Bioinformatics Resource Center</a>
       {' '}
-      makes genomic, phenotypic, and population-centric data accessible to the scientific community. VEuPathDB provides support for <Link to="/search/organism/GenomeDataTypes/result">these organisms</Link>.
-      <p></p>This project is funded in part by the US National Institute of Allergy and Infectious Diseases (Contract HHSN272201400027C).
+      makes genomic, phenotypic, and population-centric data accessible to the scientific community. 
+      {' '}
+      <span className={cx('--DisplayName')}>{displayName}</span> provides support for <Link to="/search/organism/GenomeDataTypes/result">these organisms</Link>.
+      <p></p>
+      This project is funded in part by the US National Institute of Allergy and Infectious Diseases (Contract HHSN272201400027C).
     </p>
   );
 };
