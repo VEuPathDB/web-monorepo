@@ -22,7 +22,7 @@ const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
   'GeneQuestions.InternalGenesByEcNumber&organism=all&array%28ec_source%29=all' +
   '&questionSubmit=Get+Answer&ec_number_pattern=N/A&ec_wildcard=';
 
-const ORTHOMCL_LINK = 'https://qa.orthomcl.org/orthomcl/processQuestion.do?questionFullName=' +
+const ORTHOMCL_LINK = 'https://beta.orthomcl.org/orthomcl/processQuestion.do?questionFullName=' +
   'GroupQuestions.ByEcNumber&questionSubmit=Get+Answer&ec_number_type_ahead=N/A&ec_wildcard=';
 
 function loadCytoscapeJs() {
