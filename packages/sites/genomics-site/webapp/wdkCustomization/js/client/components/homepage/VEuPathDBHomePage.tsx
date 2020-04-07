@@ -354,7 +354,7 @@ const useHeaderMenuItems = (
           url: 'https://www.vectorbase.org/image-gallery',
           target: '_blank',
           metadata: {
-            include: [ VectorBase ]
+            include: [ EuPathDB,VectorBase ]
           }
         },
         {
