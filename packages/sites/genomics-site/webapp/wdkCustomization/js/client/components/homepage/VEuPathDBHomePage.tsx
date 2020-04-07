@@ -611,7 +611,7 @@ const useHeaderMenuItems = (
               type: 'externalLink',
               url: makeExternalStaticPageUrl(
                 communitySite,
-                '/assets/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf'
+                '/documents/VEuPathDB_Data_Sub_Release_policy_rev_02April2020.pdf'
               )
             }
           ]
