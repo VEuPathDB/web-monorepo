@@ -18,9 +18,8 @@ import * as QueryString from 'querystring';
 
 export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 
-const EC_NUMBER_SEARCH_PREFIX = '/processQuestion.do?questionFullName=' +
-  'GeneQuestions.InternalGenesByEcNumber&organism=all&array%28ec_source%29=all' +
-  '&questionSubmit=Get+Answer&ec_number_pattern=N/A&ec_wildcard=';
+const EC_NUMBER_SEARCH_PREFIX = '/app/search/transcript/' +
+  'InternalGenesByEcNumber?param.organism=all&param.ec_source=all&param.ec_number_pattern=N/A&autoRun=1&param.ec_wildcard=';
 
 const ORTHOMCL_LINK = 'https://qa.orthomcl.org/orthomcl/processQuestion.do?questionFullName=' +
   'GroupQuestions.ByEcNumber&questionSubmit=Get+Answer&ec_number_type_ahead=N/A&ec_wildcard=';
