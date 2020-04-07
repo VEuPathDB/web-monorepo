@@ -54,7 +54,8 @@ function PortalSiteDescription({ displayName }: DescriptionProps) {
       {' '}
       <a href="https://www.niaid.nih.gov/research/bioinformatics-resource-centers" target="_blank">Bioinformatics Resource Center</a>
       {' '}
-      provides genomic, phenotypic, and population-centric data to the scientific community for <Link to="/search/organism/GenomeDataTypes/result">these organisms</Link>.
+      makes genomic, phenotypic, and population-centric data accessible to the scientific community. VEuPathDB provides support for <Link to="/search/organism/GenomeDataTypes/result">these organisms</Link>.
+      <p></p>This project is funded in part by the US National Institute of Allergy and Infectious Diseases (Contract HHSN272201400027C).
     </p>
   );
 };
