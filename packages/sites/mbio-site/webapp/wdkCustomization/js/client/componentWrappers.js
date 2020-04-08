@@ -210,7 +210,7 @@ function Footer() {
       <div>
         <div>
           <a href="http://www.vet.upenn.edu/">
-            <img width="120" src="http://microbiomedb.org/mbio/images/PrivateLogo.png"/>
+            <img width="120" src="https://microbiomedb.org/mbio/images/PrivateLogo.png"/>
           </a>
         </div>
         <div>
