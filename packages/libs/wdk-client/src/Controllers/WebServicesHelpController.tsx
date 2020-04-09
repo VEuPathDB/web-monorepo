@@ -11,6 +11,7 @@ import {
 } from 'wdk-client/Actions/DownloadFormActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import WebServicesHelp from 'wdk-client/Components/WebServicesHelp/WebServicesHelp';
+import { STANDARD_REPORTER_NAME } from 'wdk-client/Views/ReporterForm/reporterUtils';
 
 const WebServicesHelpActionCreators = {
   loadPageDataFromSearchConfig,
@@ -65,13 +66,18 @@ class WebServicesHelpController extends PageController<Props> {
   }
 
   loadData(prevProps?: Props) {
-    const { ownProps, isLoading, resultType, loadPageDataFromSearchConfig } = this.props;
+    const { ownProps, loadPageDataFromSearchConfig } = this.props;
 
     if (prevProps != null) return;
 
     // must reinitialize with every new props
     if ('searchName' in ownProps && 'weight' in ownProps) {
-      loadPageDataFromSearchConfig(ownProps.searchName, ownProps, +ownProps.weight, 0);
+      loadPageDataFromSearchConfig(
+        ownProps.searchName,
+        ownProps,
+        +ownProps.weight,
+        STANDARD_REPORTER_NAME
+      );
     }
     else {
       console.error("Query string does not contain both 'searchName' and 'weight'.");
