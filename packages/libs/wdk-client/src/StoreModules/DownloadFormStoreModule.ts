@@ -8,6 +8,7 @@ import {
   ReporterSelection
 } from 'wdk-client/Actions/DownloadFormActions';
 import WdkServiceJsonReporterForm from 'wdk-client/Views/ReporterForm/WdkServiceJsonReporterForm';
+import { STANDARD_REPORTER_NAME } from 'wdk-client/Views/ReporterForm/reporterUtils';
 import {UserPreferences} from 'wdk-client/Utils/WdkUser';
 import {RecordClass, Question, Reporter} from 'wdk-client/Utils/WdkModel';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
@@ -110,8 +111,10 @@ function initialize(
   { resultType, question, recordClass, scope, preferences, ontology }: InitializeData
 ) {
 
-  // only use reporters configured for the report download page
-  let availableReporters = recordClass.formats.filter(reporter => reporter.scopes.indexOf(scope) > -1);
+  // only use reporters configured for the report download page, and offer standard at the bottom of the list
+  let standardReporter = recordClass.formats.filter(reporter => reporter.name === STANDARD_REPORTER_NAME && reporter.scopes.indexOf(scope) > -1);
+  let otherAvailableReporters = recordClass.formats.filter(reporter => reporter.name !== STANDARD_REPORTER_NAME && reporter.scopes.indexOf(scope) > -1);
+  let availableReporters = [ ...otherAvailableReporters, ...standardReporter ];
 
   // set portion of static page state not loaded automatically
   let partialState = Object.assign({}, state, { resultType, question, recordClass, scope, availableReporters, preferences, ontology });

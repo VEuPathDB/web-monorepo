@@ -1,12 +1,11 @@
 import { getStepBundlePromise, getSingleRecordStepBundlePromise, getStubbedStep } from 'wdk-client/Utils/stepUtils';
 import { ActionThunk, EmptyAction, emptyAction, ActionCreatorResult } from 'wdk-client/Core/WdkMiddleware';
-import { Step, UserPreferences } from 'wdk-client/Utils/WdkUser';
+import { UserPreferences } from 'wdk-client/Utils/WdkUser';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { AnswerRequest } from 'wdk-client/Service/Mixins/SearchReportsService';
 import { CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 import { WdkService } from 'wdk-client/Core';
 import { ResultType, getResultTypeDetails, downloadReport } from 'wdk-client/Utils/WdkResult';
-import { number } from 'wdk-client/Utils/Json';
+import { STANDARD_REPORTER_NAME } from 'wdk-client/Views/ReporterForm/reporterUtils';
 
 export type Action =
   | InitializeAction
@@ -323,7 +322,7 @@ export function submitForm(
 ): ActionThunk<EmptyAction> {
   return ({ wdkService }) => {
     const formatting = {
-      format: selectedReporter ? selectedReporter : 'wdk-service-json',
+      format: selectedReporter ? selectedReporter : STANDARD_REPORTER_NAME,
       formatConfig: formState != null ? formState :
           { contentDisposition: 'attachment' }
     };

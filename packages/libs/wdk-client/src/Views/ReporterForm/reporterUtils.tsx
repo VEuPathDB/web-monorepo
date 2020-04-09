@@ -3,6 +3,8 @@ import { isQualifying, addSearchSpecificSubtree, CategoryOntology } from 'wdk-cl
 import { AttributeField, Question, RecordClass, TableField } from 'wdk-client/Utils/WdkModel';
 import { UserPreferences } from 'wdk-client/Utils/WdkUser';
 
+export const STANDARD_REPORTER_NAME = 'standard';
+
 /**
  * Typical attachment type vocabulary for reporter forms
  */
