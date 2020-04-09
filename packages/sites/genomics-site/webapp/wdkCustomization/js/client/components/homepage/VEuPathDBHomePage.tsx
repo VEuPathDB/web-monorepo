@@ -5,7 +5,6 @@ import { get, memoize } from 'lodash';
 
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { arrayOf, decode, string } from 'wdk-client/Utils/Json';
 
@@ -38,7 +37,8 @@ type StateProps = {
   searchTree?: CategoryTreeNode,
   buildNumber?: string,
   releaseDate?: string,
-  displayName?: string
+  displayName?: string,
+  projectId?: string
 }
 
 type Props = OwnProps & StateProps;
@@ -76,17 +76,14 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     parseExpandedBranches
   );
 
-  const config = useWdkService(wdkService => wdkService.getConfig(), []);
-  const { projectId, displayName } = config || {};
-
   const headerMenuItems = useHeaderMenuItems(
     props.searchTree, 
     searchTerm, 
     expandedBranches, 
     setSearchTerm, 
     setExpandedBranches,
-    projectId,
-    displayName
+    props.projectId,
+    props.displayName
   );
 
   const updateHeaderExpanded = useCallback(() => {
@@ -123,7 +120,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
       isNewsExpanded ? 'news-expanded' : 'news-collapsed',
       classNameModifier
     ), 
-    projectId
+    props.projectId
   );
   const headerClassName = vpdbCx('Header', headerExpanded ? 'expanded' : 'collapsed');
   const searchPaneClassName = combineClassNames(vpdbCx('SearchPane'), vpdbCx('BgWash'), vpdbCx('BdDark'));
@@ -148,7 +145,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     <div className={rootContainerClassName}>
       <ErrorBoundary>
         <Header 
-          branding={projectId}
+          branding={props.projectId}
           menuItems={headerMenuItems} 
           containerClassName={headerClassName} 
           onShowAnnouncements={onShowAnnouncements}
@@ -782,6 +779,7 @@ const mapStateToProps = (state: RootState) => ({
   buildNumber: state.globalData.config?.buildNumber,
   releaseDate: state.globalData.config?.releaseDate,
   displayName: state.globalData.config?.displayName,
+  projectId: state.globalData.siteConfig?.projectId
 });
 
 export const VEuPathDBHomePage = connect(mapStateToProps)(VEuPathDBHomePageView);
