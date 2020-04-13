@@ -201,7 +201,8 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
             searchName,
             parameter,
             paramValues,
-            retainedFields: [/* activeOntologyTerm */]
+            retainedFields: [/* activeOntologyTerm */],
+            activeOntologyTerm: activeField
           })),
           activeField ? getOntologyTermSummary(wdkService, parameter.name, questionState, activeField) : empty() as Observable<Action>,
           getSummaryCounts(wdkService, parameter.name, questionState)

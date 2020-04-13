@@ -30,7 +30,7 @@ export default class SingleFieldFilter extends React.Component {
   render() {
     const { activeField, activeFieldState, filters } = this.props;
 
-    const FieldDetail = activeField == null ? null
+    const FieldDetail = (activeField == null || activeFieldState == null) ? null
       : activeFieldState.summary.valueCounts.length === 0 ? EmptyValues
       : isRange(activeField) == false ? MembershipField
       : activeField.type == 'string' ? MembershipField
@@ -46,7 +46,7 @@ export default class SingleFieldFilter extends React.Component {
 
     const restProps = omit(this.props, ['filters']);
 
-    return (
+    return FieldDetail && (
       <React.Fragment>
         <FieldDetail
           filter={filter}
