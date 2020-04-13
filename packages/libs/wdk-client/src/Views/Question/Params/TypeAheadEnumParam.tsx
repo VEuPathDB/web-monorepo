@@ -19,10 +19,10 @@ type Option = {
 export const TypeAheadEnumParamComponent = (props: TypeAheadParamProps) => {
   const vocabularyByValue = useMemo(
     () => props.parameter.vocabulary.reduce(
-        (memo, entry) => ({
-          ...memo,
-          [entry[0]]: entry
-        }),
+        (memo, entry) => {
+          memo[entry[0]] = entry;
+          return memo;
+        },
         {} as Record<string, [string, string, null]>
       ),
     [ props.parameter.vocabulary ]
