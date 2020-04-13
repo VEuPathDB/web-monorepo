@@ -44,7 +44,7 @@ function DefaultComponentSiteDescription ({ displayName }: DescriptionProps) {
         <span className={cx('--DisplayName')}>{displayName}</span> provides support for <Link to="/search/organism/GenomeDataTypes/result">these organisms</Link>.
       </p>
       <p>
-        This project is funded in part by the US National Institute of Allergy and Infectious Diseases (Contract `HHSN75N93019C00077).
+        This project is funded in part by the US National Institute of Allergy and Infectious Diseases (Contract HHSN75N93019C00077).
       </p>
     </Fragment>
   );
