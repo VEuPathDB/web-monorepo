@@ -122,8 +122,11 @@
 
   /* Parameter-specific rules */
 
-  .wdk-TreeBoxParam {
+  .wdk-CheckboxList, .wdk-TreeBoxParam {
     width: 50%;
   }
 
+  .wdk-CheckboxListLinks, .wdk-CheckboxTreeLinks > div {
+    text-align: left;
+  }
 }
