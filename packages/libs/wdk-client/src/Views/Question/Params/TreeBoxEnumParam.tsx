@@ -99,10 +99,16 @@ export function reduce(state: State = {} as State, action: Action): State {
     case INIT_PARAM:
       let { parameter } = action.payload;
       if (isEnumParam(parameter) && parameter.displayType == 'treeBox') {
+        const depthExpanded = parameter.depthExpanded >= 1
+          ? parameter.depthExpanded
+          : parameter.vocabulary.children.length === 1
+          ? 1
+          : 0;
+
         return {
           expandedList: findBranchTermsUpToDepth(
             parameter.vocabulary,
-            parameter.depthExpanded
+            depthExpanded
           ),
           searchTerm: ''
         };
