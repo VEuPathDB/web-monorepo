@@ -147,7 +147,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         isMultiPick={isMultiPick(props.parameter)}
         linksPosition={CheckboxTree.LinkPlacement.Bottom}
         showRoot={false}
-        expandDescendantsWithOneChild
+        shouldExpandDescendantsWithOneChild
         tree={tree}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
