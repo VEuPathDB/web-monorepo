@@ -5,7 +5,7 @@ import CheckboxTreeNode from 'wdk-client/Components/CheckboxTree/CheckboxTreeNod
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 
 import { addOrRemove, propsDiffer } from 'wdk-client/Utils/ComponentUtils';
-import { isLeaf, getLeaves, getBranches, mapStructure } from 'wdk-client/Utils/TreeUtils';
+import { isLeaf, getLeaves, getBranches, mapStructure, preorder } from 'wdk-client/Utils/TreeUtils';
 import { parseSearchQueryString } from 'wdk-client/Utils/SearchUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 
@@ -50,6 +50,9 @@ type Props<T> = {
 
   /** Called when the set of expanded (branch) nodes changes.  The function will be called with the array of the expanded node ids.  If omitted, no handler is called. */
   onExpansionChange: ChangeHandler;
+
+  /** Whether to, on expanding a node, automatically expand its descendants with one child */
+  shouldExpandDescendantsWithOneChild?: boolean;
 
   /** Whether to show the root node or start with the array of children; optional, defaults to false */
   showRoot?: boolean;
@@ -602,9 +605,33 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
    * Toggle expansion of the given node.  If node is a leaf, does nothing.
    */
   toggleExpansion(node: T) {
-    let { getNodeId, getNodeChildren } = this.props;
+    let { getNodeId, getNodeChildren, shouldExpandDescendantsWithOneChild } = this.props;
     if (!isActiveSearch(this.props) && !isLeaf(node, getNodeChildren)) {
-      this.props.onExpansionChange(addOrRemove(this.state.generated.expandedList, getNodeId(node)));
+      if (!shouldExpandDescendantsWithOneChild || this.state.generated.expandedList.includes(getNodeId(node))) {
+        // If "shouldExpandDescendantsWithOneChild" is not set to "true," or the node is already expanded,
+        // simply addOrRemove the node to/from the expandedList
+        this.props.onExpansionChange(addOrRemove(this.state.generated.expandedList, getNodeId(node)));
+      } else {
+        // Otherwise, add the node and its descendants with one child to the expandedList
+        let descendantNodesWithOneChild = _findDescendantsWithOneChild(node);
+
+        let newExpandedList = Seq.from(this.state.generated.expandedList)
+          .concat(descendantNodesWithOneChild)
+          .uniq()
+          .toArray();
+
+        this.props.onExpansionChange(newExpandedList);
+      }
+    }
+
+    function _findDescendantsWithOneChild(descendant: T): Seq<string> {
+      let nextNodes = getNodeId(node) === getNodeId(descendant) || getNodeChildren(descendant).length === 1
+        ? Seq.from([ getNodeId(descendant) ])
+        : Seq.empty();
+
+      let remainingNodes = Seq.from(getNodeChildren(descendant)).flatMap(_findDescendantsWithOneChild);
+
+      return nextNodes.concat(remainingNodes);
     }
   }
 
