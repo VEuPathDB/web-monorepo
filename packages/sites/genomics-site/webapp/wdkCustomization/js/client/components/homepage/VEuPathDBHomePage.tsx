@@ -449,7 +449,10 @@ const useHeaderMenuItems = (
           key: 'user-data-sets',
           display: 'My data sets',
           type: 'reactRoute',
-          url: '/workspace/datasets'
+          url: '/workspace/datasets',
+          metadata: {
+            exclude: [ EuPathDB ]
+          }
         }
       ]
     },
