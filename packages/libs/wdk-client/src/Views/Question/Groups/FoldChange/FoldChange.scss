@@ -120,4 +120,8 @@
   input[type=text],select {
     margin-left: 4px;
   }
+
+  .wdk-CheckboxList, .wdk-TreeBoxParam {
+    width: 100%;
+  }
 }
