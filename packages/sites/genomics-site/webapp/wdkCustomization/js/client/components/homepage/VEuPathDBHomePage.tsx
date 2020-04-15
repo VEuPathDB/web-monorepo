@@ -296,12 +296,12 @@ const useHeaderMenuItems = (
           url: 'http://companion.gla.ac.uk/',
           target: '_blank',
           metadata: {
-            exclude: [ FungiDB ]
+            exclude: [ FungiDB,VectorBase ]
           }
         },
         { 
           key: 'companion--fungi',
-          display: 'Companion',
+          display: 'Companion Fungi',
           type: 'externalLink',
           tooltip: 'Annotate your sequence and determine orthology, phylogeny & synteny',
           url: 'http://fungicompanion.gla.ac.uk/',
