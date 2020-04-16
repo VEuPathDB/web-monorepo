@@ -730,7 +730,7 @@ const useHeaderMenuItems = (
           display: 'Return to legacy site',
           tooltip: 'Opt out of the beta site',
           type: 'externalLink',
-          url: `https://${projectId?.toLowerCase()}.${projectId === 'SchistoDB' ? 'net' : 'org'}?useBetaSite=0`
+          url: `https://${projectId?.toLowerCase()}.${projectId === 'SchistoDB' ? 'net' : 'org'}`
         }
       ]
     },
