@@ -410,12 +410,6 @@ const useHeaderMenuItems = (
           target: '_blank'
         },
         { 
-          key: 'analysis',
-          display: 'Results analysis',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/analysisTools.html')
-        },
-        { 
           key: 'srt',
           display: 'Sequence retrieval',
           type: 'reactRoute',
