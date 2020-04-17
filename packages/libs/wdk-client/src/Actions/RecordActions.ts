@@ -343,8 +343,8 @@ function setActiveRecord(
             action => [
               action,
               additionalActions,
-              recordClass.useBasket ? loadBasketStatus(action.payload.record) : emptyAction,
-              loadFavoritesStatus(action.payload.record)
+              recordClass.useBasket ? loadBasketStatus(action.payload.record, recordClass.urlSegment) : emptyAction,
+              loadFavoritesStatus(action.payload.record, recordClass.urlSegment)
             ],
             error => recordError(id, error)
           );

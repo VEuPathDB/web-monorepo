@@ -2,6 +2,7 @@ import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import {
     RecordInstance,
     Favorite,
+    PrimaryKey,
 } from 'wdk-client/Utils/WdkModel';
 
 
@@ -14,11 +15,10 @@ export default (base: ServiceBase) => {
    *
    * @param record Record instance to search for
    */
-  async function getFavoriteId (record: RecordInstance) {
-    let rcObject = await base.findRecordClass(record.recordClassName);
+  async function getFavoriteId (recordId: PrimaryKey, recordClassUrlSegment: string) {
     let data = [{
-      recordClassName: rcObject.urlSegment,
-      primaryKey: record.id
+      recordClassName: recordClassUrlSegment,
+      primaryKey: recordId
     }];
     let url = '/users/current/favorites/query';
     return base
@@ -32,9 +32,8 @@ export default (base: ServiceBase) => {
    *
    * @param record Record to add as a favorite
    */
-  async function addFavorite (record: RecordInstance) {
-    let rcObject = await base.findRecordClass(record.recordClassName);
-    const favorite = { recordClassName: rcObject.urlSegment, primaryKey: record.id };
+  async function addFavorite (recordId: PrimaryKey, recordClassUrlSegment: string) {
+    const favorite = { recordClassName: recordClassUrlSegment, primaryKey: recordId };
     const url = '/users/current/favorites';
     return base
       ._fetchJson<Favorite>('post', url, JSON.stringify(favorite))
@@ -70,7 +69,7 @@ export default (base: ServiceBase) => {
     let url = '/users/current/favorites/' + favorite.id;
     favorite.group = favorite.group ? favorite.group : '';
     favorite.description = favorite.description ? favorite.description : '';
-    return base._fetchJson<void>('put', url, JSON.stringify(favorite));
+    return base._fetchJson<void>('patch', url, JSON.stringify(favorite));
   }
 
   function deleteFavorites (ids: Array<number>) {
@@ -81,10 +80,9 @@ export default (base: ServiceBase) => {
     return runBulkFavoritesAction('undelete', ids);
   }
 
-  function runBulkFavoritesAction (operation: string, ids: Array<number>) {
+  function runBulkFavoritesAction (operation: 'delete' | 'undelete', ids: Array<number>) {
     let url = '/users/current/favorites';
-    let baseOperations = { delete: [], undelete: [] };
-    let data = Object.assign({}, baseOperations, { [operation]: ids });
+    let data = { action: operation, primaryKeys: ids };
     return base._fetchJson<void>('patch', url, JSON.stringify(data));
   }
 

@@ -148,7 +148,7 @@ class RecordController extends PageController<Props> {
         iconClassName: loadingBasketStatus ? loadingClassName : 'fa fa-shopping-basket',
         onClick: (event: Event) => {
           event.preventDefault();
-          this.props.updateBasketStatus(record, !inBasket);
+          this.props.updateBasketStatus(record, recordClass.urlSegment, !inBasket);
         }
       });
     }
@@ -162,7 +162,7 @@ class RecordController extends PageController<Props> {
           this.props.removeFavorite(record, favoriteId);
         }
         else {
-          this.props.addFavorite(record);
+          this.props.addFavorite(record, recordClass.urlSegment);
         }
       }
     });
