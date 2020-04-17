@@ -51,6 +51,12 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const { isHomePage, classNameModifier } = props;
   const [ headerExpanded, setHeaderExpanded ] = useState(true);
 
+  useEffect(() => {
+    if (isHomePage && props.displayName) {
+      document.title = props.displayName;
+    }
+  }, [ isHomePage, props.displayName ]);
+
   const [ isNewsExpanded, setIsNewsExpanded ] = useSessionBackedState(
     false,
     IS_NEWS_EXPANDED_SESSION_KEY,
