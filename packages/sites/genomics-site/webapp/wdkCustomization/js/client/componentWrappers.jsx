@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router';
 import Cookies from 'js-cookie';
