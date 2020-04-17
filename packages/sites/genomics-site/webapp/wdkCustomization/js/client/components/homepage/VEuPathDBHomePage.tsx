@@ -565,7 +565,7 @@ const useHeaderMenuItems = (
               key: 'related-sites',
               display: 'Related sites',
               type: 'reactRoute',
-              url: makeStaticPageRoute(`/${projectId}/externalLinks.html`)
+              url: makeStaticPageRoute(`/${displayName}/externalLinks.html`)
             },
             { 
               key: 'workshops-events',
