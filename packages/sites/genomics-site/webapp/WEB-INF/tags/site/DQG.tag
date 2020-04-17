@@ -37,7 +37,7 @@
       <td title="${ToxoDBOrgs}" align="center" width="${mywidth}"><a href="http://toxodb.org"><imp:image border="0" src="images/ToxoDB/toxodb_w50.png" alt="ToxoDB logo"/></a></td>
       <td title="${TrichDBOrgs}" align="center" width="${mywidth}"><a href="http://trichdb.org"><imp:image border="0" src="images/TrichDB/trichdb_w65.png" alt="TrichDB logo"/></a></td>
       <td title="${TriTrypDBOrgs}" align="center" width="${mywidth}" ><a href="http://tritrypdb.org"><imp:image border="0" src="images/TriTrypDB/tritrypdb_w40.png" alt="TriTrypDB logo"/></a></td>
-      <td  align="center" width="${mywidth}" ><a href="http://orthomcl.org"><imp:image border="0" src="images/OrthoMCL/Ortho-3D-lighter-50.png" width="55" alt="OrthoMCL logo"/></a></td>
+      <td  align="center" width="${mywidth}" ><a href="https://beta.orthomcl.org"><imp:image border="0" src="images/OrthoMCL/Ortho-3D-lighter-50.png" width="55" alt="OrthoMCL logo"/></a></td>
       </tr>
 
       <tr>

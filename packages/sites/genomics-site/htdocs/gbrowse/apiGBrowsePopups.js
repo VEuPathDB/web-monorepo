@@ -215,7 +215,7 @@ function gene_title (tip, projectId, sourceId, chr, loc, soTerm, product, taxon,
     + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&endAnchor3=End&go=Get+Sequences' target='_blank'>protein</a>"
   var recordLink = '<a href="' + baseRecordUrl + '/app/record/gene/' + geneId + '">Gene Page</a>';
   var gbLink = "<a href='" + baseUrl + "/cgi-bin/gbrowse/" + projectId.toLowerCase() + "/?" + gbLinkParams + "'>GBrowse</a>";
-  var orthomclLink = "<a href='http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=" + orthomcl + "'>" + orthomcl + "</a>";
+  var orthomclLink = "<a href='https://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=" + orthomcl + "'>" + orthomcl + "</a>";
 
   // format into html table rows
   var rows = new Array();
@@ -273,7 +273,7 @@ function gene_title_gff (tip, projectId, sourceId, chr, loc, soTerm, product, ta
     + "&type=protein&upstreamAnchor=Start&upstreamOffset=0&downstreamAnchor=End&downstreamOffset=0&endAnchor3=End&go=Get+Sequences' target='_blank'>protein</a>"
   var recordLink = '<a href="' + baseRecordUrl + '/app/record/gene/' + geneId + '">Gene Page</a>';
   var gbLink = "<a href='" + baseUrl + "/cgi-bin/gbrowse/" + projectId.toLowerCase() + "/?" + gbLinkParams + "'>GBrowse</a>";
-  var orthomclLink = "<a href='http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=" + orthomcl + "'>" + orthomcl + "</a>";
+  var orthomclLink = "<a href='https://beta.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=" + orthomcl + "'>" + orthomcl + "</a>";
 
   // format into html table rows
   var rows = new Array();
