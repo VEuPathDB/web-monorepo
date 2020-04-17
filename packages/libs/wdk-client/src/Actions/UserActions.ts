@@ -533,10 +533,10 @@ type BasketAction = BasketStatusLoadingAction | BasketStatusErrorAction | Basket
 /**
  * @param {Record} record
  */
-export function loadBasketStatus(record: RecordInstance): ActionThunk<BasketAction|EmptyAction> {
+export function loadBasketStatus(record: RecordInstance, recordClassUrlSegment: string): ActionThunk<BasketAction|EmptyAction> {
   return maybeLoggedIn<BasketAction>(async ({ wdkService }) =>
     setBasketStatus(record, wdkService.getBasketStatus(
-      (await wdkService.findRecordClass(record.recordClassName)).urlSegment,
+      recordClassUrlSegment,
       [record]
     ).then(response => response[0]))
   );
@@ -547,13 +547,13 @@ export function loadBasketStatus(record: RecordInstance): ActionThunk<BasketActi
  * @param {Record} record
  * @param {Boolean} status
  */
-export function updateBasketStatus(record: RecordInstance, status: boolean): ActionThunk<BasketAction|ShowLoginModalAction|EmptyAction> {
+export function updateBasketStatus(record: RecordInstance, recordClassUrlSegment: string, status: boolean): ActionThunk<BasketAction|ShowLoginModalAction|EmptyAction> {
   return maybeLoggedIn<BasketAction, ShowLoginModalAction|EmptyAction>(
     async ({ wdkService }) =>
       setBasketStatus(record,
         wdkService.updateRecordsBasketStatus(
           status ? 'add' : 'remove',
-          (await wdkService.findRecordClass(record.recordClassName)).urlSegment,
+          recordClassUrlSegment,
           [record.id]
         ).then(() => status)),
     () => showLoginWarning('use baskets')
@@ -586,9 +586,9 @@ type FavoriteAction = FavoritesStatusErrorAction | FavoritesStatusLoadingAction 
 /**
  * @param {Record} record
  */
-export function loadFavoritesStatus(record: RecordInstance): ActionThunk<FavoriteAction|EmptyAction> {
+export function loadFavoritesStatus(record: RecordInstance, recordClassUrlSegment: string): ActionThunk<FavoriteAction|EmptyAction> {
   return maybeLoggedIn<FavoriteAction>(
-    ({ wdkService }) => setFavoritesStatus(record, wdkService.getFavoriteId(record))
+    ({ wdkService }) => setFavoritesStatus(record, wdkService.getFavoriteId(record.id, recordClassUrlSegment))
   );
 };
 
@@ -599,9 +599,9 @@ export function removeFavorite(record: RecordInstance, favoriteId: number): Acti
   );
 };
 
-export function addFavorite(record: RecordInstance): ActionThunk<FavoriteAction|ShowLoginModalAction|EmptyAction> {
+export function addFavorite(record: RecordInstance, recordClassUrlSegment: string): ActionThunk<FavoriteAction|ShowLoginModalAction|EmptyAction> {
   return maybeLoggedIn<FavoriteAction, ShowLoginModalAction|EmptyAction>(
-    ({ wdkService }) => setFavoritesStatus(record, wdkService.addFavorite(record)),
+    ({ wdkService }) => setFavoritesStatus(record, wdkService.addFavorite(record.id, recordClassUrlSegment)),
     () => showLoginWarning('use favorites')
   );
 };

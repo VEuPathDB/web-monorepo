@@ -1,7 +1,7 @@
 import { ActionThunk } from 'wdk-client/Core/WdkMiddleware';
 import { Favorite, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
-import { MesaState, MesaSelection } from 'wdk-client/Components/Mesa';
+import { MesaState } from 'wdk-client/Components/Mesa';
 
 // Types
 // -----
