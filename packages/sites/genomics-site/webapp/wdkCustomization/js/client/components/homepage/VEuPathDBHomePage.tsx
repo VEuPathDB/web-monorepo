@@ -51,6 +51,12 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const { isHomePage, classNameModifier } = props;
   const [ headerExpanded, setHeaderExpanded ] = useState(true);
 
+  useEffect(() => {
+    if (isHomePage && props.displayName) {
+      document.title = props.displayName;
+    }
+  }, [ isHomePage, props.displayName ]);
+
   const [ isNewsExpanded, setIsNewsExpanded ] = useSessionBackedState(
     false,
     IS_NEWS_EXPANDED_SESSION_KEY,
@@ -500,15 +506,6 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/search/organism/GeneMetrics/result'
         },
-        { 
-          key: 'annotation-sops',
-          display: <>SOPs for <i>C.parvum</i> Annotation</>,
-          type: 'externalLink',
-          url: 'http://cryptodb.org/static/SOP/',
-          metadata: {
-            include: [ CryptoDB ],
-          }
-        },
         {
           key: 'community-download',
           display: 'User uploaded files',
@@ -558,7 +555,7 @@ const useHeaderMenuItems = (
               key: 'related-sites',
               display: 'Related sites',
               type: 'reactRoute',
-              url: makeStaticPageRoute(`/${projectId}/externalLinks.html`)
+              url: makeStaticPageRoute(`/${displayName}/externalLinks.html`)
             },
             { 
               key: 'workshops-events',
@@ -697,7 +694,7 @@ const useHeaderMenuItems = (
           key: 'youtube-tutorials',
           display: 'YouTube tutorials',
           type: 'externalLink',
-          url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1',
+          url: 'http://www.youtube.com/user/EuPathDB/playlists',
           target: '_blank'
         },
         { 
@@ -718,13 +715,6 @@ const useHeaderMenuItems = (
           tooltip: 'Login first to keep your work',
           type: 'reactRoute',
           url: '/reset-session',
-        },
-        {
-          key: 'back-to-main',
-          display: 'Return to legacy site',
-          tooltip: 'Opt out of the beta site',
-          type: 'externalLink',
-          url: `https://${projectId?.toLowerCase()}.${projectId === 'SchistoDB' ? 'net' : 'org'}`
         }
       ]
     },

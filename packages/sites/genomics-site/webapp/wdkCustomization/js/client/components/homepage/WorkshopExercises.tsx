@@ -15,6 +15,7 @@ const bgWashCx = makeVpdbClassNameHelper('BgWash');
 
 // FIXME This prefix should be added on the "Jekyll side"
 const WORKSHOP_EXERCISES_PREFIX = 'https://workshop.eupathdb.org';
+const JEKYLL_PDF_PREFIX = 'https://static-content.veupathdb.org//documents';
 
 const WORKSHOP_EXERCISES_URL_SEGMENT = 'workshop_exercises.json';
 
@@ -181,7 +182,15 @@ const Card = ({ entry }: CardProps) =>
               <span className="fa-li">
                 <IconAlt fa="file-pdf-o" />
               </span>
-              <a href={`${WORKSHOP_EXERCISES_PREFIX}/${exercise.url}`} target="_blank" className={cardListCx('ItemContentLink')}>{exercise.title}</a>
+              { 
+              exercise.url.includes("/")
+              ? <>
+                  <a href={`${WORKSHOP_EXERCISES_PREFIX}/${exercise.url}`} target="_blank" className={cardListCx('ItemContentLink')}>{exercise.title}</a>
+                </>
+              : <>
+                  <a href={`${JEKYLL_PDF_PREFIX}/${exercise.url}`} target="_blank" className={cardListCx('ItemContentLink')}>{exercise.title}</a>
+                </>
+              } 
             </li>
         )
       }

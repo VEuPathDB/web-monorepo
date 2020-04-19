@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router';
 import Cookies from 'js-cookie';
@@ -19,6 +19,7 @@ import ApiSiteHeader from './components/SiteHeader';
 import OrganismFilter from './components/OrganismFilter';
 import newFeatureImage from 'wdk-client/Core/Style/images/new-feature.png';
 import { useScrollUpOnRouteChange } from 'wdk-client/Hooks/Page';
+import { getSingleRecordAnswerSpec } from 'wdk-client/Utils/WdkModel';
 
 import { BinaryOperationsContext } from 'wdk-client/Utils/Operations';
 import { apiBinaryOperations } from './components/strategies/ApiBinaryOperations';
@@ -125,7 +126,7 @@ function makePortalRecordLink(WdkRecordLink) {
 
 function downloadRecordTable(record, tableName) {
   return ({ wdkService }) => {
-    let answerSpec = wdkService.getSingleRecordAnswerSpec(record);
+    let answerSpec = getSingleRecordAnswerSpec(record);
     let formatting = {
       format: 'tableTabular',
       formatConfig: {
