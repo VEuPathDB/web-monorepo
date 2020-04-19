@@ -695,7 +695,7 @@ const useHeaderMenuItems = (
           key: 'youtube-tutorials',
           display: 'YouTube tutorials',
           type: 'externalLink',
-          url: 'http://www.youtube.com/user/EuPathDB/videos?sort=dd&flow=list&view=1',
+          url: 'http://www.youtube.com/user/EuPathDB/playlists',
           target: '_blank'
         },
         { 
