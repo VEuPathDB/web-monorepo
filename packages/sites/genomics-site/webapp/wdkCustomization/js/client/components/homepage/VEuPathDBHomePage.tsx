@@ -506,15 +506,6 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/search/organism/GeneMetrics/result'
         },
-        { 
-          key: 'annotation-sops',
-          display: <>SOPs for <i>C.parvum</i> Annotation</>,
-          type: 'externalLink',
-          url: 'http://cryptodb.org/static/SOP/',
-          metadata: {
-            include: [ CryptoDB ],
-          }
-        },
         {
           key: 'community-download',
           display: 'User uploaded files',
