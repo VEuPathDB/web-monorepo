@@ -50,6 +50,12 @@ header {
   top: 68px;
 }
 
+@media screen and (max-width: 960px) {
+  .wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
+    top: 0;
+  }
+}
+
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       = Results Table: Boolean and Leaf transcript Filters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
