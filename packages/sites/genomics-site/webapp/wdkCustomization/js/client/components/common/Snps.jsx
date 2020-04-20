@@ -24,7 +24,7 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
 
   if (questionStatus != 'complete') return null;
 
-  let questionName = question.urlSegment;
+  let searchName = question.urlSegment;
   let parameter = question.parametersByName.ngsSnp_strain_meta;
   let uiState = paramUIState.ngsSnp_strain_meta;
   let value = paramValues.ngsSnp_strain_meta;
@@ -54,14 +54,14 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
         <div style={headingStyle}>Select strains:</div>
 
         <FilterParamNew
-          ctx={{ questionName, parameter, paramValues }}
+          ctx={{ searchName, parameter, paramValues }}
           parameter={parameter}
           value={value}
           uiState={uiState}
           dispatch={dispatch}
           onParamValueChange={value => {
             dispatch(QuestionActions.updateParamValue({
-              questionName,
+              searchName,
               parameter,
               dependentParameters: [],
               paramValues,
