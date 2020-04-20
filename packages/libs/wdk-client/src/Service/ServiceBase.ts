@@ -200,7 +200,7 @@ export const ServiceBase = (serviceUrl: string) => {
           _isInvalidating = true;
           Promise.all([
             _store.clear(),
-            alert('Reload Page', 'This page is no longer valid and will be reloaded when you click "OK"')
+            alert('Reload Page', 'This page is no longer valid and will be reloaded.')
           ])
           .then(() => location.reload(true));
           return pendingPromise as Promise<T>;
