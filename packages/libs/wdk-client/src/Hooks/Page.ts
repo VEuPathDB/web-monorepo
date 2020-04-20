@@ -20,9 +20,10 @@ export function useScrollUpOnRouteChange() {
         )
       ) {
         window.scrollTo(0, 0);
-        setPrevPathname(newLocation.pathname);
-        setPrevQueryString(newLocation.search);
       }
+
+      setPrevPathname(newLocation.pathname);
+      setPrevQueryString(newLocation.search);
     });
 
     return removeHistoryListener;
