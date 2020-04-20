@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { noop } from 'lodash';
 
-import { TextArea, Loading, HelpIcon, Tabs } from 'wdk-client/Components';
+import { TextArea, Loading, HelpIcon, Tabs, Link } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -36,7 +36,7 @@ interface SrtFormConfig extends BaseSrtFormConfig {
 
 const SRT_QUESTION = 'SRT';
 
-const BULK_DOWNLOAD_URL = '/common/downloads';
+const BULK_DOWNLOAD_URL = '/downloads';
 
 const SUPPORTED_RECORD_CLASS_CONFIGS: InitialSrtFormConfig[] = [
   {
@@ -132,7 +132,7 @@ export function Srt() {
               <p className={cx('--BulkDownloadLink')}>
                 Use this tool to retrieve FASTA sequences based on identifiers you supply. (If instead you would like to download sequences in bulk, please visit our
                 {' '}
-                <a href={BULK_DOWNLOAD_URL} target="_blank">file download section</a>.)
+                <Link to={BULK_DOWNLOAD_URL} target="_blank">file download section</Link>.)
               </p>
               <Tabs
                 containerClassName={cx('--SrtForms')}
