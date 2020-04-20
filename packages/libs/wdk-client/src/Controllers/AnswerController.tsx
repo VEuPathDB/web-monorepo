@@ -78,11 +78,20 @@ class AnswerController extends PageController<Props> {
 
   changeFilter = (filterTerm: string, filterAttributes?: string[], filterTables?: string[]) => {
     const { history } = this.props.ownProps;
+    const currentParams = QueryString.parse(history.location.search.slice(1));
+
+    // remove current filter query params
+    delete currentParams.filterTerm;
+    delete currentParams.filterAttributes;
+    delete currentParams.filterTables;
+
     if (!filterTerm) {
-      history.replace(history.location.pathname);
+      const queryString = QueryString.stringify(currentParams);
+      history.replace(`?${queryString}`);
       return;
     }
-    const queryParams: { filterTerm: string, filterAttributes?: string[], filterTables?: string[] } = { filterTerm };
+
+    const queryParams: { filterTerm: string, filterAttributes?: string[], filterTables?: string[] } = { ...currentParams, filterTerm };
     if (!isEmpty(filterAttributes)) queryParams.filterAttributes = filterAttributes;
     if (!isEmpty(filterTables)) queryParams.filterTables = filterTables;
     const queryString = QueryString.stringify(queryParams);
