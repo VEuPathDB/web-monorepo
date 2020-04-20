@@ -825,7 +825,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     }
 
                     //Handle nodes with no preset position
-                    cy.elements('node[!x]').layout({ name: 'cose' }).run();
+                    //cy.elements('node[!x]').layout({ name: 'cose' }).run();
 
                     //clean up unplaces and orphan nodes
                     enzymeNodes.map(function(node) {
