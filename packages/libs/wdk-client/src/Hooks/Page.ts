@@ -14,6 +14,7 @@ export function useScrollUpOnRouteChange() {
       if (
         action !== 'REPLACE' &&
         !navigatingWithinStrategyWorkspace(prevPathname, newLocation.pathname) &&
+        !newLocation.hash &&
         (
           prevPathname !== newLocation.pathname ||
           prevQueryString !== newLocation.search
