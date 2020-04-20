@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import QueryString from 'querystring';
 import * as React from 'react';
 import PageController from 'wdk-client/Core/Controllers/PageController';
@@ -100,7 +101,7 @@ class AnswerController extends PageController<Props> {
     if (
       question !== prevProps?.ownProps.question ||
       recordClassName !== prevProps?.ownProps.recordClass ||
-      parameters !== prevProps?.ownProps.parameters
+      !isEqual(parameters, prevProps?.ownProps.parameters)
     ) {
       let pagination = { numRecords: 2000, offset: 0 };
       let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
