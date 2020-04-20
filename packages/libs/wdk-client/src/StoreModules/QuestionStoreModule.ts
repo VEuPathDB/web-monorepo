@@ -282,7 +282,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         }
       };
 
-    case SUBMIT_QUESTION: {
+    case submitQuestion.type: {
       return {
         ...state,
         submitting: true
@@ -403,7 +403,7 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
 );
 
 const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => action$.pipe(
-  ofType<SubmitQuestionAction>(SUBMIT_QUESTION),
+  filter(submitQuestion.isOfType),
   mergeMap(action => {
     const questionState = state$.value[key].questions[action.payload.searchName];
     if (questionState == null) return EMPTY;
@@ -590,8 +590,8 @@ async function goToStrategyPage(
 
 export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,
-  observeAutoRun,
   observeLoadQuestionSuccess,
+  observeAutoRun,
   observeUpdateDependentParams,
   observeQuestionSubmit,
   mrate([submitQuestion, requestCreateStrategy, fulfillCreateStrategy], goToStrategyPage, {
@@ -634,7 +634,7 @@ async function loadQuestion(
       question,
       recordClass,
       paramValues,
-      initialParamData: initialParamData,
+      initialParamData,
       wdkWeight,
       stepValidation: step && step.validation
     })
