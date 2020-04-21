@@ -82,7 +82,7 @@ l9 level1 lfo12'><![if !supportLists]><b style='mso-bidi-font-weight:normal'><sp
 style='mso-bidi-font-family:Calibri;mso-bidi-theme-font:minor-latin'><span
 style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span></b><![endif]><b style='mso-bidi-font-weight:normal'>Contact
-EuPathDB Outreach for an initial review of your data.</b> </p>
+VEuPathDB Outreach for an initial review of your data.</b> </p>
 
 <p class=MsoNoSpacing style='margin-left:.25in;text-align:justify'>Use the <a
 href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> link to send a
@@ -143,7 +143,7 @@ database releases to remap or update our analyses when necessary.
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>1.<span style='font:7.0pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
+</span></span></span><![endif]>Transfer a copy of your data to VEuPathDB using
 one of these three options:</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -153,7 +153,7 @@ style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]
 your data to a sequence read archive such as DNA Data Bank of Japan, the
 European Nucleotide Archive or NCBI's Sequence Read Archive. If your data is
 already submitted to a data repository, there is no need to re-transfer the
-data to EuPathDB.<span style="mso-spacerun:yes">&nbsp; </span>In either case, we
+data to VEuPathDB.<span style="mso-spacerun:yes">&nbsp; </span>In either case, we
 will retrieve the data directly from the repository.<span
 style="mso-spacerun:yes">&nbsp; </span></p>
 
@@ -237,7 +237,7 @@ set information.</p>
 l13 level1 lfo13'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
+</span></span></span><![endif]>Transfer a copy of your data to VEuPathDB using
 one of these four options:</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -282,7 +282,7 @@ our <a
 href="https://docs.google.com/a/apidb.org/forms/d/1pzD53hCY0rH7JYomUH8cjwJXJlOSrtZRc_mFowfFfU4/edit?usp=sharing">Microarray
 Data Description Form</a> making sure to enter your data archive accession
 numbers (if any) when prompted. Pay special attention to clearly indicate the
-identity of columns in the data files you transferred to EuPathDB.<span
+identity of columns in the data files you transferred to VEuPathDB.<span
 style='color:#538135;mso-themecolor:accent6;mso-themeshade:191'><o:p></o:p></span></p>
 
 </div>
@@ -327,7 +327,7 @@ sequences, peptide counts and scores. </p>
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
+</span></span></span><![endif]>Transfer a copy of your data to VEuPathDB using
 one of these three options: </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -406,7 +406,7 @@ style='mso-list:Ignore'>.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;
 l0 level1 lfo3'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
+</span></span></span><![endif]>Transfer a copy of your data to VEuPathDB using
 one of these three options: </p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -477,7 +477,7 @@ and probe set information.</p>
 l1 level1 lfo4'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol;color:black;
 mso-themecolor:text1'><span style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
+</span></span></span><![endif]>Transfer a copy of your data to VEuPathDB using
 one of these four options:</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -551,7 +551,7 @@ style='mso-list:Ignore'>&#149;<span style='font:7.0pt "Times New Roman"'>&nbsp;&
 </span></span></span><![endif]>If your data <b style='mso-bidi-font-weight:
 normal'>IS</b> uploaded to Genbank, use the Contact Us to tell us about your
 data. Genebank Isolate records and the associated metadata are automatically
-updated with each EuPathDB release.<span style="mso-spacerun:yes">&nbsp;
+updated with each VEuPathDB release.<span style="mso-spacerun:yes">&nbsp;
 </span>There is no need to complete our Isolate Submission Form. </p>
 
 <p class=MsoNoSpacing style='margin-left:49.5pt;text-indent:-.25in;mso-list:
@@ -573,7 +573,7 @@ style='color:#C00000'>Susanne needs to finish) </span>
  
 and we will use the
 information to generate a Genbank submission for your isolates. The new isolate records will be
-downloaded to EuPathDB with the release. Use the <a
+downloaded to VEuPathDB with the release. Use the <a
 href="${baseUrl}/app/contact-us" class="new-window" data-name="contact_us">Contact Us</a> form to send us
 instructions for retrieving your data.</p>
 
@@ -610,7 +610,7 @@ l0 level1 lfo3'>
 <![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
+</span></span></span><![endif]>Transfer a copy of your data to VEuPathDB using
 one of these three options:</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -703,7 +703,7 @@ mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
 style='mso-list:Ignore'>&#149;<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span></span><![endif]>If you are <b style='mso-bidi-font-weight:normal'>submitting
 only genome annotation (gff, ensemble, gtf or genbank formats)</b>, transfer a
-copy of your files to EuPathDB using one of these three options:</p>
+copy of your files to VEuPathDB using one of these three options:</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
 l2 level2 lfo6'><![if !supportLists]><span style='font-family:"Courier New";
@@ -755,7 +755,7 @@ data and work out the best way to transfer the data.</p>
 l6 level1 lfo14'><![if !supportLists]><span style='font-family:Symbol;
 mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol;color:black;
 mso-themecolor:text1'><span style='mso-list:Ignore'>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span></span><![endif]>Transfer a copy of your data to EuPathDB using
+</span></span></span><![endif]>Transfer a copy of your data to VEuPathDB using
 one of these four options:</p>
 
 <p class=MsoNoSpacing style='margin-left:81.0pt;text-indent:-.25in;mso-list:
@@ -786,7 +786,7 @@ l1 level2 lfo4'><![if !supportLists]><span style='font-family:"Courier New";
 mso-fareast-font-family:"Courier New";color:black;mso-themecolor:text1'><span
 style='mso-list:Ignore'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;
 </span></span></span><![endif]><span style='color:#C00000'>Send your data as an
-attachment to an email. Do we use the EuPathDB Contact Us link here</span>?<span
+attachment to an email. Do we use the VEuPathDB Contact Us link here</span>?<span
 style="mso-spacerun:yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
 
  -->

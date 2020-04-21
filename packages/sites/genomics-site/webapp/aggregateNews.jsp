@@ -108,7 +108,7 @@ ${rss_Url}
 <table width='100%'>
 <tr><td>
 	<c:if test="${param.tag != null and param.tag != ''}">
- 	<a href="aggregateNews.jsp" id='allnews'>All EuPathDB News</a>
+ 	<a href="aggregateNews.jsp" id='allnews'>All VEuPathDB News</a>
 	</c:if>
 </td>
 <td align="right">

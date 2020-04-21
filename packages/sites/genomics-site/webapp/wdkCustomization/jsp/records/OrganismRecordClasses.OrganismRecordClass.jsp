@@ -104,7 +104,7 @@
  </tr>
 
  <tr class="rowMedium">
-   <td>RNASeq Reads</td>
+   <td>RNA-Seq Reads</td>
    <td align="center"><a href="${attrs['hasRNASeq'].url}">${attrs['hasRNASeq'].displayText}</a></td>
    <td>${attrs['rnaseqcount'].value}</td>
  </tr>
