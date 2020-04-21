@@ -1,6 +1,6 @@
 import { parseInt, uniq } from 'lodash/fp';
 import WdkService from 'wdk-client/Service/WdkService';
-import { decode, arrayOf, combine, field, string, Decoder, optional, ok } from 'wdk-client/Utils/Json';
+import { decode, arrayOf, combine, field, string, Decoder, optional, ok, boolean } from 'wdk-client/Utils/Json';
 import {UserPreferences, Step} from 'wdk-client/Utils/WdkUser';
 import { Question, AttributeSortingSpec, SearchConfig } from "wdk-client/Utils/WdkModel"
 
@@ -47,7 +47,7 @@ export async function getResultTableSortingPref(searchName: string, wdkService: 
 }
 
 function isValidDirection(direction: string): direction is 'ASC' | 'DESC' {
-    return direction === 'ASC' || direction === 'DESC' 
+    return direction === 'ASC' || direction === 'DESC'
   }
 
 function constructSortingSpec(specString: string): AttributeSortingSpec {
@@ -95,7 +95,8 @@ type ViewFilters = SearchConfig['viewFilters'];
 // FIXME Need to figure out a way to validate view filter values
 const viewFiltersDecoder: Decoder<ViewFilters> = optional(arrayOf(combine(
   field('name', string),
-  field('value', ok)
+  field('value', ok),
+  field('disabled', boolean)
 )));
 
 export async function getGlobalViewFilters(wdkService: WdkService, recordClassName: string): Promise<ViewFilters> {
@@ -123,7 +124,7 @@ export enum Scope {
 
 type PrefSpec = [keyof UserPreferences, string];
 
-const getPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec) => 
+const getPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec) =>
   (await wdkService.getCurrentUserPreferences())[scope][key];
 
 const setPrefWith = async (wdkService: WdkService, [ scope, key ]: PrefSpec, value: string | null) =>

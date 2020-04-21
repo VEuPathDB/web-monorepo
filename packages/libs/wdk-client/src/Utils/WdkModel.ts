@@ -344,6 +344,7 @@ export interface SearchConfig {
 export type FilterValueArray = {
   name: string;
   value: any;
+  disabled: boolean;
 }[];
 
 export interface AnswerSpec {
