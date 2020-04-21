@@ -219,6 +219,7 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
               getNodeId={node => node.term}
               getNodeChildren={node => node.children}
               onExpansionChange={expandedNodeIds => setExpandedNodeIds(expandedNodeIds)}
+              shouldExpandDescendantsWithOneChild
               renderNode={renderTaxonomyNode}
               expandedList={expandedNodeIds}
               currentList={appliedFilterList}
