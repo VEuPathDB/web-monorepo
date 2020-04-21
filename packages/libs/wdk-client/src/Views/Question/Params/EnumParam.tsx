@@ -65,6 +65,8 @@ function EnumParamComponent(props: EnumParamProps) {
       }
     case 'select':
     case 'checkBox':
+      let parameterName = parameter.name;
+
       // handle select and checkBox displays
       let multiValueChange = (value: string[]) => onParamValueChange(toMultiValueString(value));
       let valueRequired = !parameter.allowEmptyValue;
@@ -77,12 +79,14 @@ function EnumParamComponent(props: EnumParamProps) {
                 value={toMultiValueArray(value)}
                 onChange={multiValueChange}
                 required={valueRequired}
+                name={parameterName}
               />
             : <SingleSelect
                 items={selectOptions}
                 value={value}
                 onChange={onParamValueChange}
                 required={valueRequired}
+                name={parameterName}
               />
         case 'checkBox':
           let checkboxOptions = parameter.vocabulary.map(([value, display]) => ({ value, display: safeHtml(display) }));
@@ -91,12 +95,14 @@ function EnumParamComponent(props: EnumParamProps) {
                 items={checkboxOptions}
                 value={toMultiValueArray(value)}
                 onChange={multiValueChange}
+                name={parameterName}
               />
             : <RadioList
                 items={checkboxOptions}
                 value={value}
                 onChange={onParamValueChange}
                 required={valueRequired}
+                name={parameterName}
               />
       }
     default:
