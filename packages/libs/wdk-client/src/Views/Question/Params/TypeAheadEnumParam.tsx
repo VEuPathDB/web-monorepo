@@ -4,6 +4,7 @@ import { TypeAheadEnumParam } from 'wdk-client/Utils/WdkModel';
 import { Props } from 'wdk-client/Views/Question/Params/Utils';
 import { ValueType, InputActionMeta } from 'react-select/src/types';
 import { isMultiPick } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 
 type TypeAheadParamProps = {
   parameter: TypeAheadEnumParam;
@@ -91,6 +92,7 @@ export const TypeAheadEnumParamComponent = (props: TypeAheadParamProps) => {
       onChange={onChange}
       inputValue={searchTerm}
       onInputChange={onInputChange}
+      formatOptionLabel={option => safeHtml(option.label)}
     />
   );
 };
