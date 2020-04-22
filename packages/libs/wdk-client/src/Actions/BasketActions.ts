@@ -77,6 +77,11 @@ export const saveBasketToStrategy = makeActionCreator(
   (basketName: string) => ({ basketName })
 );
 
+export const fulfillBasketStrategy = makeActionCreator(
+  'fulfillBasketStrategy',
+  (strategyId: number) => ({ strategyId })
+);
+
 export type Action = InferAction<
   | typeof requestUpdateBasket
   | typeof fulfillUpdateBasket
@@ -91,4 +96,5 @@ export type Action = InferAction<
   | typeof requestBasketDetails
   | typeof fulfillBasketDetails
   | typeof saveBasketToStrategy
+  | typeof fulfillBasketStrategy
   >

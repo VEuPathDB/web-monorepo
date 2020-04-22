@@ -12,6 +12,7 @@ import {
   cancelRequestUpdateBasket,
   cancelRequestClearBasket,
   saveBasketToStrategy,
+  fulfillBasketStrategy
 } from 'wdk-client/Actions/BasketActions';
 import { InferAction } from 'wdk-client/Utils/ActionCreatorUtils';
 
@@ -20,6 +21,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 
 import {
   concatMapRequestActionsToEpic as crate,
+  mergeMapRequestActionsToEpic as mrate,
   switchMapRequestActionsToEpic as srate,
 } from 'wdk-client/Utils/ActionCreatorUtils';
 import { combineEpics } from 'redux-observable';
@@ -104,7 +106,7 @@ async function getBasketStrategy(
   [action]: [InferAction<typeof saveBasketToStrategy>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof transitionToInternalPage>> {
+): Promise<InferAction<typeof fulfillBasketStrategy>> {
   const { basketName } = action.payload;
   const recordClass = await wdkService.findRecordClass(basketName);
   const datasetId = await wdkService.createDataset({
@@ -121,8 +123,17 @@ async function getBasketStrategy(
   };
   const { id: stepId } = await wdkService.createStep({ searchName, searchConfig, customName: 'Copy of Basket' });
   const stepTree = { stepId };
-  const { id: strategyId } = await wdkService.createStrategy({ name: DEFAULT_STRATEGY_NAME, isPublic: false, isSaved: false, stepTree })
-  return transitionToInternalPage(`/workspace/strategies/${strategyId}/${stepId}`);
+  const { id: strategyId } = await wdkService.createStrategy({ name: DEFAULT_STRATEGY_NAME, isPublic: false, isSaved: false, stepTree });
+
+  return fulfillBasketStrategy(strategyId);
+}
+
+async function goToBasketStrategy(
+  [action]: [InferAction<typeof fulfillBasketStrategy>],
+  state$: StateObservable<RootState>,
+  { wdkService }: EpicDependencies
+): Promise<InferAction<typeof transitionToInternalPage>> {
+  return transitionToInternalPage(`/workspace/strategies/${action.payload.strategyId}`);
 }
 
 export const observe = combineEpics(
@@ -132,6 +143,8 @@ export const observe = combineEpics(
     { areActionsNew: () => true }),
   crate([requestAddStepToBasket], getFulfillAddStepToBasket,
     { areActionsNew: () => true }),
+
+  mrate([fulfillBasketStrategy], goToBasketStrategy),
 
   srate([fulfillUpdateBasket], getFulfillBasketCounts,
     { areActionsNew: () => true }),
