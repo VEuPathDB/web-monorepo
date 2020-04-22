@@ -63,7 +63,12 @@ function StrategyViewController(props: Props) {
   // Select root step if no step is selected
   useEffect(() => {
     if (selectedStrategy && selectedStrategy.strategy && stepId == null) {
-      dispatch(transitionToInternalPage(`/workspace/strategies/${selectedStrategy.strategy.strategyId}/${selectedStrategy.strategy.rootStepId}`));
+      dispatch(
+        transitionToInternalPage(
+          `/workspace/strategies/${selectedStrategy.strategy.strategyId}/${selectedStrategy.strategy.rootStepId}`,
+          { replace: true }
+        )
+      );
     }
   }, [stepId, strategyId, selectedStrategy]);
 
