@@ -182,7 +182,7 @@ export const ServiceBase = (serviceUrl: string) => {
         body: body,
         credentials: 'include',
         headers: new Headers(Object.assign({
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json; charset=utf-8'
         }, _version && {
           [CLIENT_WDK_VERSION_HEADER]: _version
         }))
