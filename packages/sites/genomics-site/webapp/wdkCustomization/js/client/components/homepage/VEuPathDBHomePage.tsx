@@ -487,12 +487,6 @@ const useHeaderMenuItems = (
           }
         },
         {
-          key: 'analysis-methods',
-          display: 'Methods',
-          type: 'reactRoute',
-          url: makeStaticPageRoute('/methods.html')
-        },
-        {
           key: 'genomes-and-data-types',
           display: 'Organisms - Data type summary',
           tooltip: `Table summarizing all the genomes and their different data types available in ${displayName}`,
