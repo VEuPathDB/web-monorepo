@@ -1,3 +1,4 @@
+import { range } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -12,7 +13,6 @@ const settings = {
 class PaginationMenu extends React.PureComponent {
   constructor (props) {
     super(props);
-    this.renderDynamicPageLink = this.renderDynamicPageLink.bind(this);
     this.renderEllipsis = this.renderEllipsis.bind(this);
     this.renderPageLink = this.renderPageLink.bind(this);
     this.renderPageList = this.renderPageList.bind(this);
@@ -98,31 +98,22 @@ class PaginationMenu extends React.PureComponent {
     )
   }
 
-  renderDynamicPageLink (page, current, total) {
-    const link = this.renderPageLink(page, current);
-    const dots = this.renderEllipsis(page);
-    const { innerRadius } = settings;
-
-    if (page === 1 || page === total) return link;
-    if (page >= current - innerRadius && page <= current + innerRadius) return link;
-    if (page === current - innerRadius - 1) return dots;
-    if (page === current + innerRadius + 1) return dots;
-    return null;
-  }
-
   renderPageList () {
-    const { overflowPoint } = settings;
+    const { innerRadius } = settings;
     const { currentPage } = this.props;
     const totalPages = this.getTotalPages();
 
-    const pageList = new Array(totalPages)
-      .fill({})
-      .map((empty, index) => index + 1);
+    const left = Math.max(1, currentPage - innerRadius);
+    const right = Math.min(currentPage + innerRadius, totalPages);
+    const pageList = range(left, right + 1);
 
-    const renderer = totalPages > overflowPoint ? this.renderDynamicPageLink : this.renderPageLink;
     return (
       <span className="Pagination-Nav">
-        {pageList.map(page => renderer(page, currentPage, totalPages)).filter(e => e)}
+        {left > 1 && this.renderPageLink(1, currentPage)}
+        {left > 2 && this.renderEllipsis(2)}
+        {pageList.map(page => this.renderPageLink(page, currentPage))}
+        {right < totalPages - 1 && this.renderEllipsis(totalPages - 1)}
+        {right < totalPages && this.renderPageLink(totalPages, currentPage)}
       </span>
     );
   }
@@ -163,7 +154,7 @@ class PaginationMenu extends React.PureComponent {
       </div>
     );
   }
-};
+}
 
 PaginationMenu.propTypes = {
   totalRows: PropTypes.number,
