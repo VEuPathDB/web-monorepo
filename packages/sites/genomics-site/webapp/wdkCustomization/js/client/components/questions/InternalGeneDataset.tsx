@@ -231,7 +231,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                           </div>
                         </HelpIcon>
                         {' '}
-                        {display_name}
+                        {safeHtml(display_name)}
                         {
                           build_number_introduced === buildNumber &&
                           <span className={cx('NewDataset')}></span>
