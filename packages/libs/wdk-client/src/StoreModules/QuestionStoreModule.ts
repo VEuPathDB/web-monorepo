@@ -568,22 +568,18 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
   })
 )
 
-// XXX This should probably go in the QuestionStoreModule
 async function goToStrategyPage(
   [
     submitQuestionAction,
-    requestStrategyAction,
     fulfillCreateStrategyAction
   ]: [
     InferAction<typeof submitQuestion>,
-    InferAction<typeof requestCreateStrategy>,
     InferAction<typeof fulfillCreateStrategy>
   ]
 ): Promise<InferAction<typeof transitionToInternalPage>> {
   const newStrategyId = fulfillCreateStrategyAction.payload.strategyId;
-  const newStepId = requestStrategyAction.payload.newStrategySpec.stepTree.stepId;
   return transitionToInternalPage(
-    `/workspace/strategies/${newStrategyId}/${newStepId}`,
+    `/workspace/strategies/${newStrategyId}`,
     { replace: submitQuestionAction.payload.autoRun }
   );
 }
@@ -594,17 +590,19 @@ export const observeQuestion: QuestionEpic = combineEpics(
   observeAutoRun,
   observeUpdateDependentParams,
   observeQuestionSubmit,
-  mrate([submitQuestion, requestCreateStrategy, fulfillCreateStrategy], goToStrategyPage, {
+  mrate([submitQuestion, fulfillCreateStrategy], goToStrategyPage, {
     areActionsCoherent: ([ submitAction ]) => (
       (
         submitAction.payload.submissionMetadata.type === 'create-strategy' &&
         !submitAction.payload.submissionMetadata.webServicesTutorialSubmission
       ) ||
       // FIXME: This is to handle the special case of creating a strategy
-      // FIXME: with UnifiedBlast. We should remov the 'submit-custom-form'
+      // FIXME: with UnifiedBlast. We should remove the 'submit-custom-form'
       // FIXME: type of SubmissionMetadata ASAP.
       submitAction.payload.submissionMetadata.type === 'submit-custom-form'
-    )
+    ),
+    areActionsNew: ([, prevFulfillCreateStrategy], [, newFulfillCreateStrategy]) =>
+      prevFulfillCreateStrategy.payload.strategyId !== newFulfillCreateStrategy.payload.strategyId
   })
 );
 
