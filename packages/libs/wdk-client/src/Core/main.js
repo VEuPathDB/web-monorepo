@@ -76,7 +76,7 @@ export function initialize(options) {
   let store = createWdkStore(wrapStoreModules(storeModules), wdkService, transitioner, additionalMiddleware);
 
   // load static WDK data into service cache and view stores that need it
-  store.dispatch(loadAllStaticData());
+  loadAllStaticData(wdkService, store.dispatch);
 
   // render the root element once page has completely loaded
   document.addEventListener('DOMContentLoaded', function() {
