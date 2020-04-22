@@ -41,6 +41,9 @@ import {
   requestCombineWithStrategy
 } from 'wdk-client/Actions/StrategyActions';
 import {
+  fulfillBasketStrategy
+} from 'wdk-client/Actions/BasketActions';
+import {
   fulfillImportStrategy
 } from 'wdk-client/Actions/ImportStrategyActions';
 import { removeStep, getStepIds, replaceStep, mapStepTreeIds, addStep } from 'wdk-client/Utils/StrategyUtils';
@@ -129,6 +132,7 @@ export function reduce(state: State = initialState, action: Action): State {
   }
 
   case fulfillCreateStrategy.type: 
+  case fulfillBasketStrategy.type:
   case fulfillImportStrategy.type: {
     return updateStrategyEntry(state, action.payload.strategyId, { hasError: false, isLoading: false });
   }
