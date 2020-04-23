@@ -30,7 +30,7 @@ import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspac
 import BasketController from 'wdk-client/Controllers/BasketController';
 import { PermissionDenied } from 'wdk-client/Components';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
-import ErrorStatus from 'wdk-client/Components/PageStatus/Error';
+import Error from 'wdk-client/Components/PageStatus/Error';
 
 const routes: RouteEntry[] = [
   {
@@ -303,7 +303,7 @@ const routes: RouteEntry[] = [
 
   {
     path: '/500',
-    component: ErrorStatus
+    component: Error
   },
 
   {
