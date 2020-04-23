@@ -183,6 +183,12 @@ body.vpdb-Body {
 
           .ebrc-HeaderBrandingContainer {
             align-self: flex-start;
+            margin-top: 1.5em;
+          }
+        }
+
+        @media screen and (max-width: $hamburger-width) {
+          .ebrc-HeaderBrandingContainer {
             margin-top: 0.5em;
           }
         }
