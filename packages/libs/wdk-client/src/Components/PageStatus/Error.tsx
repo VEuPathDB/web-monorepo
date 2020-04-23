@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
-interface Props {
+export interface Props {
   message?: string;
-  children?: React.ReactChildren
+  children?: React.ReactNode;
 }
 
 export const ErrorStatus = wrappable(function ErrorStatus(props: Props) {
