@@ -524,6 +524,97 @@ const useHeaderMenuItems = (
           url: makeStaticPageRoute('/about.html')
         },
         { 
+          key: 'switchsites',
+          display: 'VEuPathDB sites',
+          type: 'subMenu',
+          items: [
+            { 
+              key: 'amoebadb',
+              display: 'AmoebaDB',
+              type: 'externalLink',
+              url: 'https://amoebadb.org',
+              target: '_blank'
+            },
+            {
+              key: 'cryptodb',
+              display: 'CryptoDB',
+              type: 'externalLink',
+              url: 'https://cryptodb.org',
+              target: '_blank'
+            },
+            {
+              key: 'fungidb',
+              display: 'FungiDB',
+              type: 'externalLink',
+              url: 'https://fungidb.org',
+              target: '_blank'
+            },
+            {
+              key: 'giardiadb',
+              display: 'GiardiaDB',
+              type: 'externalLink',
+              url: 'https://giardiadb.org',
+              target: '_blank'
+            },
+            {
+              key: 'hostdb',
+              display: 'HostDB',
+              type: 'externalLink',
+              url: 'https://hostdb.org',
+              target: '_blank'
+            },
+            {
+              key: 'microsporidiadb',
+              display: 'MicrosporidiaDB',
+              type: 'externalLink',
+              url: 'https://microsporidiadb.org',
+              target: '_blank'
+            },
+            {
+              key: 'piroplasmadb',
+              display: 'PiroplasmaDB',
+              type: 'externalLink',
+              url: 'https://piroplasmadb.org',
+              target: '_blank'
+            },
+            {
+              key: 'plasmodb',
+              display: 'PlasmoDB',
+              type: 'externalLink',
+              url: 'https://plasmodb.org',
+              target: '_blank'
+            },
+            {
+              key: 'toxodb',
+              display: 'ToxoDB',
+              type: 'externalLink',
+              url: 'https://toxodb.org',
+              target: '_blank'
+            },
+            {
+              key: 'trichdb',
+              display: 'TrichDB',
+              type: 'externalLink',
+              url: 'https://trichdb.org',
+              target: '_blank'
+            },
+            {
+              key: 'tritrypdb',
+              display: 'TriTrypDB',
+              type: 'externalLink',
+              url: 'https://tritrypdb.org',
+              target: '_blank'
+            },
+            {
+              key: 'vectorbase',
+              display: 'VectorBase',
+              type: 'externalLink',
+              url: 'https://vectorbase.org',
+              target: '_blank'
+            }
+          ]
+        },
+        { 
           key: 'community',
           type: 'subMenu',
           display: 'Community',
@@ -651,97 +742,6 @@ const useHeaderMenuItems = (
               url: makeStaticPageRoute('/about.html#about_funding')
             }
           ],
-        },
-       { 
-          key: 'switchsites',
-          display: 'Switch sites',
-          type: 'subMenu',
-          items: [
-            { 
-              key: 'amoebadb',
-              display: 'AmoebaDB',
-              type: 'externalLink',
-              url: 'https://amoebadb.org',
-              target: '_blank'
-            },
-            {
-              key: 'cryptodb',
-              display: 'CryptoDB',
-              type: 'externalLink',
-              url: 'https://cryptodb.org',
-              target: '_blank'
-            },
-            {
-              key: 'fungidb',
-              display: 'FungiDB',
-              type: 'externalLink',
-              url: 'https://fungidb.org',
-              target: '_blank'
-            },
-            {
-              key: 'giardiadb',
-              display: 'GiardiaDB',
-              type: 'externalLink',
-              url: 'https://giardiadb.org',
-              target: '_blank'
-            },
-            {
-              key: 'hostdb',
-              display: 'HostDB',
-              type: 'externalLink',
-              url: 'https://hostdb.org',
-              target: '_blank'
-            },
-            {
-              key: 'microsporidiadb',
-              display: 'MicrosporidiaDB',
-              type: 'externalLink',
-              url: 'https://microsporidiadb.org',
-              target: '_blank'
-            },
-            {
-              key: 'piroplasmadb',
-              display: 'PiroplasmaDB',
-              type: 'externalLink',
-              url: 'https://piroplasmadb.org',
-              target: '_blank'
-            },
-            {
-              key: 'plasmodb',
-              display: 'PlasmoDB',
-              type: 'externalLink',
-              url: 'https://plasmodb.org',
-              target: '_blank'
-            },
-            {
-              key: 'toxodb',
-              display: 'ToxoDB',
-              type: 'externalLink',
-              url: 'https://toxodb.org',
-              target: '_blank'
-            },
-            {
-              key: 'trichdb',
-              display: 'TrichDB',
-              type: 'externalLink',
-              url: 'https://trichdb.org',
-              target: '_blank'
-            },
-            {
-              key: 'tritrypdb',
-              display: 'TriTrypDB',
-              type: 'externalLink',
-              url: 'https://tritrypdb.org',
-              target: '_blank'
-            },
-            {
-              key: 'vectorbase',
-              display: 'VectorBase',
-              type: 'externalLink',
-              url: 'https://vectorbase.org',
-              target: '_blank'
-            }
-          ]
         },
         {
           key: 'technical',
