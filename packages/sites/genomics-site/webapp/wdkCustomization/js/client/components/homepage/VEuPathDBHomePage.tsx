@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
+import { Loading } from 'wdk-client/Components';
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
@@ -245,7 +246,7 @@ const useHeaderMenuItems = (
   const aboutAllRoute = makeStaticPageRoute('/aboutall.html');
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
-  const menuItemEntries: HeaderMenuItemEntry[] = [
+  const fullMenuItemEntries: HeaderMenuItemEntry[] = [
     {
       key: 'search-strategies',
       display: 'My Strategies',
@@ -748,6 +749,23 @@ const useHeaderMenuItems = (
       target: '_blank'
     }
   ];
+
+  // Don't render submenus until projectId and displayName have loaded
+  const menuItemEntries: HeaderMenuItemEntry[] = fullMenuItemEntries.map(
+    menuItemEntry =>
+      menuItemEntry.type !== 'subMenu' || (projectId != null && displayName != null)
+        ? menuItemEntry
+        : {
+            ...menuItemEntry,
+            items: [
+              {
+                key: `${menuItemEntry.key}-loading`,
+                display: <Loading />,
+                type: 'custom'
+              }
+            ]
+          }
+  );
 
   return menuItemEntries.flatMap(
     menuItemEntry => filterMenuItemEntry(menuItemEntry, projectId)
