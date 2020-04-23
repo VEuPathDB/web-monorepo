@@ -42,8 +42,7 @@ export const loadPathwayGeneDynamicCols = (
             pathway_source_id: pathwayId,
             exclude_incomplete_ec: excludeIncompleteEc,
             exact_match_only: exactMatchOnly
-        },
-        disabled: false
+        }
       }].concat(existingFilters)
     });
 
