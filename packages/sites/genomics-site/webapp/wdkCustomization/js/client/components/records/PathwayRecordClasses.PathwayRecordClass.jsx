@@ -1163,7 +1163,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     if (this.props.pathwayRecord.error) {
       return (
         <div style={{color: 'red' }}>
-          Error: The Pathway Network could not be loaded.
+          Warning: Problems were encountered while drawing this pathway map. Some nodes may be incorrectly located.
         </div>
       );
     }
