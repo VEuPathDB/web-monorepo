@@ -529,6 +529,13 @@ const useHeaderMenuItems = (
           type: 'subMenu',
           items: [
             { 
+              key: 'veupathdb',
+              display: 'VEuPathDB',
+              type: 'externalLink',
+              url: 'https://veupathdb.org',
+              target: '_blank'
+            },
+            { 
               key: 'amoebadb',
               display: 'AmoebaDB',
               type: 'externalLink',
@@ -610,6 +617,13 @@ const useHeaderMenuItems = (
               display: 'VectorBase',
               type: 'externalLink',
               url: 'https://vectorbase.org',
+              target: '_blank'
+            },
+            {
+              key: 'orthomcl',
+              display: 'OrthoMCL',
+              type: 'externalLink',
+              url: 'https://orthomcl.org',
               target: '_blank'
             }
           ]
