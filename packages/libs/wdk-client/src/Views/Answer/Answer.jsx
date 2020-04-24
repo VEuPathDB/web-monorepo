@@ -215,7 +215,10 @@ function makeSortKeys(sortingAttribute, customSortBys = {}) {
     return customSortBys[sortingAttribute.name];
   } else if (sortingAttribute.type === 'link') {
     return [
-      record => record.attributes[sortingAttribute.name].displayText
+      record => (
+        record.attributes[sortingAttribute.name] &&
+        record.attributes[sortingAttribute.name].displayText
+      )
     ];
   } else {
     return [
