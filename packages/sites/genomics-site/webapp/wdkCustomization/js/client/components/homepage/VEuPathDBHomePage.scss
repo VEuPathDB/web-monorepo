@@ -165,6 +165,11 @@ body.vpdb-Body {
       "footer";
     
     grid-template-rows: $expanded-header-height auto 1fr auto;
+
+    @media screen and (max-width: $hamburger-width) {
+      grid-template-rows: auto auto 1fr auto;
+    }
+
     grid-template-columns: 100%;
   
     min-height: 100vh;
@@ -453,10 +458,6 @@ body.vpdb-Body {
 
       .vpdb-Main {
         overflow: hidden;
-      }
-
-      @media screen and (max-width: $hamburger-width) {
-        grid-template-rows: auto auto 1fr auto;
       }
 
       @media screen and (max-width: $tablet-width) {
