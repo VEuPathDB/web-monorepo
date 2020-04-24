@@ -356,7 +356,7 @@ const useHeaderMenuItems = (
           tooltip: 'Free to use pictures of vectors',
           type: 'externalLink',
           url: 'https://www.vectorbase.org/image-gallery',
-          ref: 'noreferrer',
+          rel: 'noreferrer',
           target: '_blank',
           metadata: {
             include: [ VectorBase ]
