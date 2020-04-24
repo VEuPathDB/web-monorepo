@@ -96,7 +96,7 @@ type ViewFilters = SearchConfig['viewFilters'];
 const viewFiltersDecoder: Decoder<ViewFilters> = optional(arrayOf(combine(
   field('name', string),
   field('value', ok),
-  optional(field('disabled', boolean))
+  field('disabled', optional(boolean))
 )));
 
 export async function getGlobalViewFilters(wdkService: WdkService, recordClassName: string): Promise<ViewFilters> {
