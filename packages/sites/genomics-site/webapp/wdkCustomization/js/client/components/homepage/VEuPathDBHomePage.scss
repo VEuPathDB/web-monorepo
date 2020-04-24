@@ -6,19 +6,6 @@
 $cramped-header-width: 1215px;
 $hamburger-width: 1013px;
 
-@include themify() {
-  $special-cramped-header-width: themed('special-cramped-header-width');
-  $special-hamburger-width: themed('special-hamburger-width');
-
-  @if ($special-cramped-header-width) {
-    $cramped-header-width: $special-cramped-header-width !global;
-  }
-
-  @if ($special-hamburger-width) {
-    $hamburger-width: $special-hamburger-width !global;
-  }
-}
-
 // Search Pane + Main + News breakpoints
 $tablet-width: 1000px;
 $mobile-width: 900px;
