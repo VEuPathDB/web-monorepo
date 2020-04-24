@@ -17,7 +17,7 @@ import { projectId } from './config';
 
 // Project id is not needed for these record classes.
 // Matches urlSegment.
-const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'genomic-sequence', 'sample' ];
+const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'sample' ];
 
 const projectRegExp = new RegExp('/' + projectId + '$');
 
