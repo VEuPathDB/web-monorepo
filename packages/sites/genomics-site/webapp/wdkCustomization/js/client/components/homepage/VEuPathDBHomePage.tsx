@@ -356,6 +356,7 @@ const useHeaderMenuItems = (
           tooltip: 'Free to use pictures of vectors',
           type: 'externalLink',
           url: 'https://www.vectorbase.org/image-gallery',
+          ref: 'noreferrer',
           target: '_blank',
           metadata: {
             include: [ EuPathDB,VectorBase ]
@@ -444,7 +445,10 @@ const useHeaderMenuItems = (
           key: 'favorites',
           display: 'Favorites',
           type: 'reactRoute',
-          url: '/workspace/favorites'
+          url: '/workspace/favorites',
+          metadata: {
+            exclude: [ EuPathDB ]
+          }
         },
         {
           key: 'user-data-sets',
@@ -505,7 +509,7 @@ const useHeaderMenuItems = (
           key: 'community-download',
           display: 'User uploaded files',
           type: 'reactRoute',
-          url: '/search/file/UserFileUploads/result',
+          url: '/search/file/UserFileUploads?autoRun=1',
           metadata: {
             exclude: [ EuPathDB ]
           }
