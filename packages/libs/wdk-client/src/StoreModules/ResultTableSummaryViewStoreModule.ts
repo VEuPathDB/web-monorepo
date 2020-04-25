@@ -116,21 +116,15 @@ function getUpdatedBasketStatus(
   });
 }
 
-function reduceBasketUpdateAction(state: ViewState, action: Action): ViewState {
-  let status: BasketStatus;
-  if (action.type == requestUpdateBasket.type) status = 'loading';
-  else if (action.type == fulfillUpdateBasket.type)
-    status = action.payload.operation === 'add' ? 'yes' : 'no';
-  else return state;
-
+function reduceBasketUpdateAction(state: ViewState, action: InferAction<typeof requestUpdateBasket>): ViewState {
   if (
     state.basketStatusArray == undefined ||
     state.answer == undefined ||
     action.payload.recordClassName != state.answer.meta.recordClassName
-  )
-    return { ...state };
+  ) return state;
+
   let newBasketStatusArray = getUpdatedBasketStatus(
-    status,
+    'loading',
     state.answer,
     state.basketStatusArray,
     action.payload.primaryKeys
@@ -185,9 +179,6 @@ function reduceView(state: ViewState = initialViewState, action: Action): ViewSt
       return { ...state, searchName: action.payload.searchName };
     }
     case requestUpdateBasket.type: {
-      return reduceBasketUpdateAction(state, action);
-    }
-    case fulfillUpdateBasket.type: {
       return reduceBasketUpdateAction(state, action);
     }
     case requestAddStepToBasket.type: {
@@ -622,6 +613,10 @@ async function getRequestRecordsBasketStatus(
   [openAction, answerAction]: [
     InferAction<typeof openRTS>,
     InferAction<typeof fulfillAnswer>
+  ] | [
+    InferAction<typeof openRTS>,
+    InferAction<typeof fulfillAnswer>,
+    InferAction<typeof fulfillUpdateBasket>
   ],
   state$: StateObservable<RootState>,
   {  }: EpicDependencies
@@ -642,6 +637,10 @@ async function getRequestRecordsBasketStatus(
 function filterRequestRecordsBasketStatusActions([openAction, answerAction]: [
   InferAction<typeof openRTS>,
   InferAction<typeof fulfillAnswer>
+] | [
+  InferAction<typeof openRTS>,
+  InferAction<typeof fulfillAnswer>,
+  InferAction<typeof fulfillUpdateBasket>
 ]) {
   return (
     openAction.payload.viewId === answerAction.payload.viewId
@@ -819,7 +818,9 @@ export const observe = takeEpicInWindow(
       { areActionsCoherent: filterFulfillAnswerActions, areActionsNew: stubTrue }),
     smrate([openRTS, fulfillAnswer], getRequestRecordsBasketStatus,
       { areActionsCoherent: filterRequestRecordsBasketStatusActions }),
+    smrate([openRTS, fulfillAnswer, fulfillUpdateBasket], getRequestRecordsBasketStatus,
+      { areActionsCoherent: filterRequestRecordsBasketStatusActions }),
     smrate([openRTS, requestRecordsBasketStatus], getFulfillRecordsBasketStatus,
-      { areActionsCoherent: filterFulfillRecordBasketStatusActions })
+      { areActionsCoherent: filterFulfillRecordBasketStatusActions, areActionsNew: () => true })
   )
 );
