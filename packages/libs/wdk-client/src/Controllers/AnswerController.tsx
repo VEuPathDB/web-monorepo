@@ -21,6 +21,8 @@ import { AttributeField, TableField, AttributeValue, RecordInstance, RecordClass
 import { History } from 'history';
 import { filterRecords } from 'wdk-client/Views/Records/RecordUtils';
 
+const MAXROWS = 2000;
+
 const ActionCreators = {
   loadAnswer,
   changeColumnPosition,
@@ -104,7 +106,6 @@ class AnswerController extends PageController<Props> {
     let [ , searchName, customName ] = question.match(/([^:]+):?(.*)/) || ['', question, ''];
 
     const { dispatchProps } = this.props;
-    const MAXROWS = 2000;
 
     // (re)initialize the page, if question, recordClass, or parameters changes
     if (
@@ -112,7 +113,7 @@ class AnswerController extends PageController<Props> {
       recordClassName !== prevProps?.ownProps.recordClass ||
       !isEqual(parameters, prevProps?.ownProps.parameters)
     ) {
-      let pagination = { numRecords: 2000, offset: 0 };
+      let pagination = { numRecords: MAXROWS, offset: 0 };
       let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
       let displayInfo = { pagination, sorting, customName };
       let opts = { displayInfo, parameters, filterTerm, filterAttributes, filterTables };
