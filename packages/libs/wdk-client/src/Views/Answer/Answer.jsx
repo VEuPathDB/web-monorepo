@@ -215,16 +215,22 @@ function makeSortKeys(sortingAttribute, customSortBys = {}) {
     return customSortBys[sortingAttribute.name];
   } else if (sortingAttribute.type === 'link') {
     return [
-      record => (
+      record => castValue(
         record.attributes[sortingAttribute.name] &&
         record.attributes[sortingAttribute.name].displayText
       )
     ];
   } else {
     return [
-      record => record.attributes[sortingAttribute.name]
+      record => castValue(record.attributes[sortingAttribute.name])
     ];
   }
+}
+
+function castValue(value) {
+  if (value == null) return value;
+  const numberValue = Number(value);
+  return Number.isNaN(numberValue) ? value : numberValue;
 }
 
 export default wrappable(withRouter(Answer));
