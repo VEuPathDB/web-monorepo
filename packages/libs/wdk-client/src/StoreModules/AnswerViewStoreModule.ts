@@ -78,9 +78,9 @@ function addAnswer( state: State, payload: EndLoadingWithAnswerPayload ) {
   // collect attributes from recordClass and question
   let allAttributes = recordClass.attributes.concat(question.dynamicAttributes).filter(isNotWeight);
 
-  // use previously selected visible attributes unless they don't exist
+  // use previously selected visible attributes unless they don't exist or the question changed
   let visibleAttributes = state.visibleAttributes;
-  if (!visibleAttributes || state.meta && state.meta.recordClassName !== answer.meta.recordClassName) {
+  if (!visibleAttributes || state.meta && state.question?.urlSegment !== question.urlSegment) {
     // need to populate attribute details for visible attributes
     visibleAttributes = question.defaultAttributes
       .map(attrName => allAttributes.find(attr => attr.name ===  attrName))
