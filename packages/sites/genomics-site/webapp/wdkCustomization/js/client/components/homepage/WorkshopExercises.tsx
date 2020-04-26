@@ -175,13 +175,19 @@ const Card = ({ entry }: CardProps) =>
       <ul className="fa-ul">
       {
         entry.exercises.map(
-          // FIXME: Dynamically render the exercise content by "taking cue"
-          // from exercise.description
+          // FIXME: Dynamically render the exercise content by "taking cue" from exercise.description
+          // FIXME: each link in each card  should include another property: url prefix (workshop or jekyll or no link)
           exercise => 
             <li key={exercise.title}>
-              <span className="fa-li">
-                <IconAlt fa="file-pdf-o" />
-              </span>
+              {
+              exercise.url != ""
+              ? <>
+                <span className="fa-li">
+                  <IconAlt fa="file-pdf-o" />
+                </span>
+                </>
+              : <span></span>
+              }
               { 
               exercise.url.includes("/")
               ? <>
