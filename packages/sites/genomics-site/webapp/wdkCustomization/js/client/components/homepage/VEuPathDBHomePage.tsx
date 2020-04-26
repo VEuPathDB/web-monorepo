@@ -418,9 +418,9 @@ const useHeaderMenuItems = (
         },
         {
           key: 'webservices',
-	        display: 'Web services',
+          display: 'Web services',
           type: 'reactRoute',
-          url: makeStaticPageRoute('/webServices.html')
+          url: makeStaticPageRoute(`/content/${displayName}/webServices.html`)
         }
       ]
     },
