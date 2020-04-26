@@ -123,10 +123,10 @@ class AnswerController extends PageController<Props> {
 
   isRenderDataLoaded() {
     const {
-      stateProps: { records }
+      stateProps: { isLoading }
     } = this.props;
 
-    return records != null;
+    return isLoading === false;
   }
 
   isRenderDataLoadError() {
