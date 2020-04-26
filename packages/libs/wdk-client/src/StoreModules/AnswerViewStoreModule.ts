@@ -51,7 +51,7 @@ export function reduce(state: State = initialState, action: Action): State {
     case START_LOADING:
       return { ...state, isLoading: true, error: undefined };
     case END_LOADING_WITH_ERROR:
-      return { ...action.payload };
+      return { ...action.payload, isLoading: false };
     case END_LOADING_WITH_ANSWER:
       return addAnswer(state, action.payload);
     case CHANGE_VISIBLE_COLUMNS:
