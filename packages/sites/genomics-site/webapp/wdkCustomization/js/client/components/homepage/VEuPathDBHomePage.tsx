@@ -354,10 +354,8 @@ const useHeaderMenuItems = (
           key: 'vb-images',
           display: 'Image gallery',
           tooltip: 'Free to use pictures of vectors',
-          type: 'externalLink',
-          url: 'https://www.vectorbase.org/image-gallery',
-          rel: 'noreferrer',
-          target: '_blank',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/VectorBase/imageGallery.html'),
           metadata: {
             include: [ VectorBase ]
           }
