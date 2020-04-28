@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import HeadingRow from 'wdk-client/Components/Mesa/Ui/HeadingRow';
 import DataRowList from 'wdk-client/Components/Mesa/Ui/DataRowList';
 import { makeClassifier, combineWidths } from 'wdk-client/Components/Mesa/Utils/Utils';
+import { MESA_SCROLL_EVENT, MESA_REFLOW_EVENT } from './MesaContants';
 
 const dataTableClass = makeClassifier('DataTable');
 
@@ -100,7 +101,7 @@ class DataTable extends React.Component {
       const dynamicWidths = columns.map((c, i) => getInnerCellWidth(contentCells[i], c) - (hasSelectionColumn && !i ? 1 : 0));
       console.debug('dynamicWidths updating', dynamicWidths);
       this.setState({ dynamicWidths }, () => {
-        window.dispatchEvent(new CustomEvent('MesaReflow'));
+        window.dispatchEvent(new CustomEvent(MESA_REFLOW_EVENT));
         const tableWrapperWidth = this.bodyNode && this.bodyNode.clientWidth;
         this.setState({ tableWrapperWidth });
       });
@@ -122,7 +123,7 @@ class DataTable extends React.Component {
   handleTableBodyScroll () {
     const offset = this.bodyNode.scrollLeft;
     this.headerNode.scrollLeft = offset;
-    window.dispatchEvent(new CustomEvent('MesaScroll'));
+    window.dispatchEvent(new CustomEvent(MESA_SCROLL_EVENT));
   }
 
   // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
