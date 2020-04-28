@@ -3,9 +3,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loading, IconAlt } from 'wdk-client/Components';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
-import { useCommunitySiteUrl } from 'ebrc-client/hooks/staticData';
 
-import { makeVpdbClassNameHelper } from './Utils';
+import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
 
 import './WorkshopExercises.scss';
 
@@ -16,6 +15,7 @@ const bgWashCx = makeVpdbClassNameHelper('BgWash');
 
 // FIXME This prefix should be added on the "Jekyll side"
 const WORKSHOP_EXERCISES_PREFIX = 'https://workshop.eupathdb.org';
+const JEKYLL_PDF_PREFIX = 'https://static-content.veupathdb.org//documents';
 
 const WORKSHOP_EXERCISES_URL_SEGMENT = 'workshop_exercises.json';
 
@@ -175,14 +175,28 @@ const Card = ({ entry }: CardProps) =>
       <ul className="fa-ul">
       {
         entry.exercises.map(
-          // FIXME: Dynamically render the exercise content by "taking cue"
-          // from exercise.description
+          // FIXME: Dynamically render the exercise content by "taking cue" from exercise.description
+          // FIXME: each link in each card  should include another property: url prefix (workshop or jekyll or no link)
           exercise => 
             <li key={exercise.title}>
-              <span className="fa-li">
-                <IconAlt fa="file-pdf-o" />
-              </span>
-              <a href={`${WORKSHOP_EXERCISES_PREFIX}/${exercise.url}`} target="_blank" className={cardListCx('ItemContentLink')}>{exercise.title}</a>
+              {
+              exercise.url != ""
+              ? <>
+                <span className="fa-li">
+                  <IconAlt fa="file-pdf-o" />
+                </span>
+                </>
+              : <span></span>
+              }
+              { 
+              exercise.url.includes("/")
+              ? <>
+                  <a href={`${WORKSHOP_EXERCISES_PREFIX}/${exercise.url}`} target="_blank" className={cardListCx('ItemContentLink')}>{exercise.title}</a>
+                </>
+              : <>
+                  <a href={`${JEKYLL_PDF_PREFIX}/${exercise.url}`} target="_blank" className={cardListCx('ItemContentLink')}>{exercise.title}</a>
+                </>
+              } 
             </li>
         )
       }
