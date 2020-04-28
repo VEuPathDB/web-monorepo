@@ -215,11 +215,16 @@ function updateRouteOnStrategySteptreePutEpic(action$: ActionsObservable<Action>
     if (fulfillPutStrategy.isOfType(action)) {
       // when the active srtrategies step tree is updated, select the root step only if the previous selection was the root before the update
       const { strategy } = action.payload;
-      const { activeStrategy } = state$.value[key];
-      if (shouldMakeRootStepActive(strategy, activeStrategy)) {
+      const { activeStrategy, openedStrategies } = state$.value[key];
+      if (shouldMakeRootStepActive(strategy, activeStrategy, openedStrategies)) {
         transitioner.transitionToInternalPage(`/workspace/strategies/${strategy.strategyId}/${strategy.rootStepId}`, { replace: true });
       } else {
-        const replaceStepRedirectMetadata = shouldMakeReplacedStepActive(action.payload.oldStepTree, strategy.stepTree);
+        const replaceStepRedirectMetadata = shouldMakeReplacedStepActive(
+          strategy.strategyId,
+          action.payload.oldStepTree,
+          strategy.stepTree,
+          openedStrategies
+        );
 
         if (replaceStepRedirectMetadata.shouldRedirect) {
           transitioner.transitionToInternalPage(
@@ -233,7 +238,8 @@ function updateRouteOnStrategySteptreePutEpic(action$: ActionsObservable<Action>
   }));
 }
 
-function shouldMakeRootStepActive(strategy: StrategyDetails, activeStrategy?: { strategyId: number, stepId?: number }): boolean {
+function shouldMakeRootStepActive(strategy: StrategyDetails, activeStrategy?: { strategyId: number, stepId?: number }, openedStrategies?: number[]): boolean {
+  if (isStrategyClosed(strategy.strategyId, openedStrategies)) return false;
   if (activeStrategy == null) return true;
   if (activeStrategy.strategyId !== strategy.strategyId) return true;
   if (activeStrategy.stepId == null) return true;
@@ -249,14 +255,24 @@ type ReplaceStepRedirectMetadata =
   | { shouldRedirect: true, redirectTo: number };
 
 function shouldMakeReplacedStepActive(
+  strategyId: number,
   oldStepTree: StepTree,
-  newStepTree: StepTree
+  newStepTree: StepTree,
+  openedStrategies?: number[]
 ): ReplaceStepRedirectMetadata {
   const putRequestDiffResult = diffSimilarStepTrees(oldStepTree, newStepTree);
 
-  return (!putRequestDiffResult.areSimilar || putRequestDiffResult.diffs.length !== 1)
+  return (
+    !putRequestDiffResult.areSimilar ||
+    putRequestDiffResult.diffs.length !== 1 ||
+    isStrategyClosed(strategyId, openedStrategies)
+  )
     ? { shouldRedirect: false }
     : { shouldRedirect: true, redirectTo: putRequestDiffResult.diffs[0].newStepId };
+}
+
+function isStrategyClosed(strategyId: number, openedStrategies?: number[]) {
+  return !openedStrategies?.includes(strategyId)
 }
 
 function updateRouteOnStrategyDeleteEpic(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { transitioner }: EpicDependencies): Observable<Action> {
