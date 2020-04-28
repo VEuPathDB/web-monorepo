@@ -19,8 +19,10 @@ import { SearchPane, SearchCheckboxTree } from 'ebrc-client/components/homepage/
 import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/components/homepage/Utils';
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 
+import { useCommunitySiteUrl } from 'ebrc-client/hooks/staticData';
+
 import { PageDescription } from './PageDescription';
-import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
+import { makeVpdbClassNameHelper } from './Utils';
 
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
@@ -242,8 +244,6 @@ const useHeaderMenuItems = (
 ): HeaderMenuItem[] => {
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
   const communitySite = useCommunitySiteUrl();
-  const aboutRoute = makeStaticPageRoute(`/${projectId}/about.html`);
-  const aboutAllRoute = makeStaticPageRoute('/aboutall.html');
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [

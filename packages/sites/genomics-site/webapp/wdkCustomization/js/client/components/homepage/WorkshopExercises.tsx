@@ -3,8 +3,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Loading, IconAlt } from 'wdk-client/Components';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
+import { useCommunitySiteUrl } from 'ebrc-client/hooks/staticData';
 
-import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
+import { makeVpdbClassNameHelper } from './Utils';
 
 import './WorkshopExercises.scss';
 

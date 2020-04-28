@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { keyBy } from 'lodash';
-import { projectId } from '../../config';
 import { Loading, IconAlt } from 'wdk-client/Components';
 
-import { makeVpdbClassNameHelper, useCommunitySiteUrl } from './Utils';
+import { makeVpdbClassNameHelper } from './Utils';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
+import { useCommunitySiteUrl, useDisplayName } from 'ebrc-client/hooks/staticData';
 import { useIsRefOverflowingVertically } from 'wdk-client/Hooks/Overflow';
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { decode, string } from 'wdk-client/Utils/Json';
@@ -16,7 +16,7 @@ import './FeaturedTools.scss';
 const cx = makeVpdbClassNameHelper('FeaturedTools');
 const bgDarkCx = makeVpdbClassNameHelper('BgDark');
 
-const FEATURED_TOOL_URL_SEGMENT = projectId + '/resources_tools.json';
+const FEATURED_TOOL_URL_SEGMENT = '/resources_tools.json';
 
 type FeaturedToolResponseData = FeaturedToolEntry[];
 
@@ -35,13 +35,14 @@ type FeaturedToolEntry = {
 
 function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
   const communitySiteUrl = useCommunitySiteUrl();
+  const displayName = useDisplayName();
   const [ featuredToolResponseData, setFeaturedToolResponseData ] = useState<FeaturedToolResponseData | undefined>(undefined);
   
   useEffect(() => {
-    if (communitySiteUrl != null) {
+    if (communitySiteUrl != null && displayName != null) {
       (async () => {
         // FIXME Add basic error-handling 
-        const response = await fetch(`https://${communitySiteUrl}${FEATURED_TOOL_URL_SEGMENT}`, { mode: 'cors' });
+        const response = await fetch(`https://${communitySiteUrl}${displayName}${FEATURED_TOOL_URL_SEGMENT}`, { mode: 'cors' });
 
         // FIXME Validate this JSON using a Decoder
         const responseData = await response.json() as FeaturedToolResponseData;
@@ -49,7 +50,7 @@ function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
         setFeaturedToolResponseData(responseData);
       })();
     }
-  }, [ communitySiteUrl ]);
+  }, [ communitySiteUrl, displayName ]);
 
   const featuredToolMetadata = useMemo(
     () => 
