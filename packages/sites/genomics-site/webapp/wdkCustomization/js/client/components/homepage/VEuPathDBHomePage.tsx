@@ -357,7 +357,7 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: makeStaticPageRoute('/VectorBase/imageGallery.html'),
           metadata: {
-            include: [ EuPathDB,VectorBase ]
+            include: [ VectorBase ]
           }
         },
         {

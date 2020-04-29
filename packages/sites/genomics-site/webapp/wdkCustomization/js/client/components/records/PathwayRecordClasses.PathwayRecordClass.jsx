@@ -825,7 +825,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     }
 
                     //Handle nodes with no preset position
-                    cy.elements('node[!x]').layout({ name: 'cose' }).run();
+                    //cy.elements('node[!x]').layout({ name: 'cose' }).run();
 
                     //clean up unplaces and orphan nodes
                     enzymeNodes.map(function(node) {
@@ -1163,7 +1163,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     if (this.props.pathwayRecord.error) {
       return (
         <div style={{color: 'red' }}>
-          Error: The Pathway Network could not be loaded.
+          Warning: Some nodes may be incorrectly located in this pathway map.
         </div>
       );
     }
@@ -1478,10 +1478,23 @@ NodeDetails.propTypes = {
 function EnzymeNodeDetails(props) {
   let { display_label, name, gene_count, image, cellular_location } = props.nodeData;
 
+  var regex = /^[0-9]+\.[0-9]*-*\.[0-9]*-*\.[0-9]*-*$/;
+  var ec_url = display_label;
+  var orthomcl_url = (<p></p>);
+  if (regex.test(display_label)) {
+    var expasy_url = "http://enzyme.expasy.org/EC/";
+    var ec_url = (
+    	<a href={expasy_url + display_label}>{display_label}</a>
+    );
+    var orthomcl_url = (
+      <p><a href={ORTHOMCL_LINK + display_label}>Search on OrthoMCL for groups with this EC Number</a></p>
+    );
+
+  } 
+
   return (
     <div>
-        <p><b>EC Number or Reaction:</b>
-          <a href={'http://enzyme.expasy.org/EC/' + display_label}> {display_label}</a> </p>
+        <p><b>EC Number or Reaction:</b> {ec_url}</p>
 
       {name && (
            <p><b>Enzyme Name:</b> {name}</p>
@@ -1491,23 +1504,21 @@ function EnzymeNodeDetails(props) {
            <p><b>Cellular Location:</b> {safeHtml(cellular_location)}</p>
       )}
 
-
-      {gene_count > 0&& (
+      {gene_count > 0 && (
         <div>
             <a href={props.wdkConfig.webAppUrl + EC_NUMBER_SEARCH_PREFIX + display_label}>Show {gene_count} gene(s) which match this EC Number</a>
         </div>
       )}
 
-      <p><a href={ORTHOMCL_LINK + display_label}>Search on OrthoMCL for groups with this EC Number</a></p>
+      {orthomcl_url}
 
       {image && (
         <div>
           <img src={image + '&h=250&w=350'}/>
         </div>
-
       )}
-    </div>
 
+    </div>
 
   );
 }
@@ -1661,74 +1672,103 @@ const n = Category.createNode; // helper for below
 /** Return a category tree for genera */
 function getGeneraCategoryTree() {
   return n('genera', 'Genera', null, [
-    n('Amoebozoa', 'Amoebozoa', null, [
-      n('Acanthamoeba', 'Acanthamoeba'),
-      n('Entamoeba', 'Entamoeba'),
-      n('Naegleria', 'Naegleria')
-    ]),
-    n('Apicomplexa', 'Apicomplexa', null, [
-      n('Babesia', 'Babesia'),
-      n('Cryptosporidium', 'Cryptosporidium'),
-      n('Eimeria', 'Eimeria'),
-      n('Gregarina', 'Gregarina'),
-      n('Neospora', 'Neospora'),
-      n('Plasmodium', 'Plasmodium'),
-      n('Theileria', 'Theileria'),
-      n('Toxoplasma', 'Toxoplasma')
-    ]),
-    n('Chromerida', 'Chromerida', null, [
-      n('Chromera', 'Chromera'),
-      n('Vitrella', 'Vitrella')
-    ]),
-    n('Diplomonadida', 'Diplomonadida', null, [
-      n('Giardia', 'Giardia'),
-      n('Spironucleus', 'Spironucleus')
-    ]),
-    n('Fungi', 'Fungi', null, [
-      n('Eurotiomycetes', 'Eurotiomycetes', null, [
-        n('Aspergillus', 'Aspergillus'),
-        n('Coccidioides', 'Coccidioides'),
-        n('Talaromyces', 'Talaromyces')
+      n('Amoebozoa', 'Amoebozoa', null, [
+          n('Acanthamoeba', 'Acanthamoeba'),
+          n('Entamoeba', 'Entamoeba'),
+          n('Naegleria', 'Naegleria')
       ]),
-      n('Microsporidia', 'Microsporidia', null, [
-        n('Anncaliia', 'Anncaliia'),
-        n('Edhazardia', 'Edhazardia'),
-        n('Encephalitozoon', 'Encephalitozoon'),
-        n('Enterocytozoon', 'Enterocytozoon'),
-        n('Nematocida', 'Nematocida'),
-        n('Nosema', 'Nosema'),
-        n('Spraguea', 'Spraguea'),
-        n('Vavraia', 'Vavraia'),
-        n('Vittaforma', 'Vittaforma')
+      n('Apicomplexa', 'Apicomplexa', null, [
+          n('Babesia', 'Babesia'),
+          n('Cryptosporidium', 'Cryptosporidium'),
+          n('Eimeria', 'Eimeria'),
+          n('Gregarina', 'Gregarina'),
+          n('Neospora', 'Neospora'),
+          n('Plasmodium', 'Plasmodium'),
+          n('Theileria', 'Theileria'),
+          n('Toxoplasma', 'Toxoplasma')
       ]),
-      n('Sordariomycetes', 'Sordariomycetes', null, [
-        n('Fusarium', 'Fusarium'),
-        n('Neurospora', 'Neurospora')
+      n('Arthropoda', 'Arthropoda', null, [
+          n('Arachnida', 'Arachnida', null, [
+              n('Ixodes', 'Ixodes'),
+              n('Sarcoptes', 'Sarcoptes'),
+              n('Leptotrombidium', 'Leptotrombidium')
+          ]),
+          n('Insecta', 'Insecta', null, [
+              n('Diptera', 'Diptera', null,  [
+                  n('Aedes', 'Aedes'),
+                  n('Anopheles', 'Anopheles'),
+                  n('Culex', 'Culex'),
+                  n('Glossina', 'Glossina'),
+                  n('Musca', 'Musca'),
+                  n('Stomoxys', 'Stomoxys'),
+                  n('Lutzomyia', 'Lutzomyia'),
+                  n('Phlebotomus', 'Phlebotomus')
+              ]),
+              n('Hemiptera', 'Hemiptera', null,  [
+                  n('Cimex', 'Cimex'),
+                  n('Rhodnius', 'Rhodnius')
+              ]),
+              n('Phthiraptera', 'Phthiraptera', null, [
+                  n('Pediculus', 'Pediculus')
+              ])
+          ])
+      ]),
+      n('Chromerida', 'Chromerida', null, [
+          n('Chromera', 'Chromera'),
+          n('Vitrella', 'Vitrella')
+      ]),
+      n('Diplomonadida', 'Diplomonadida', null, [
+          n('Giardia', 'Giardia'),
+          n('Spironucleus', 'Spironucleus')
+      ]),
+      n('Fungi', 'Fungi', null, [
+          n('Eurotiomycetes', 'Eurotiomycetes', null, [
+              n('Aspergillus', 'Aspergillus'),
+              n('Coccidioides', 'Coccidioides'),
+              n('Talaromyces', 'Talaromyces')
+          ]),
+          n('Microsporidia', 'Microsporidia', null, [
+              n('Anncaliia', 'Anncaliia'),
+              n('Edhazardia', 'Edhazardia'),
+              n('Encephalitozoon', 'Encephalitozoon'),
+              n('Enterocytozoon', 'Enterocytozoon'),
+              n('Nematocida', 'Nematocida'),
+              n('Nosema', 'Nosema'),
+              n('Spraguea', 'Spraguea'),
+              n('Vavraia', 'Vavraia'),
+              n('Vittaforma', 'Vittaforma')
+          ]),
+          n('Sordariomycetes', 'Sordariomycetes', null, [
+              n('Fusarium', 'Fusarium'),
+              n('Neurospora', 'Neurospora')
+          ])
+      ]),
+      n('Kinetoplastida', 'Kinetoplastida', null, [
+          n('Crithidia', 'Crithidia'),
+          n('Leishmania', 'Leishmania'),
+          n('Trypanosoma', 'Trypanosoma')
+      ]),
+      n('Mollusca', 'Mollusca', null, [
+          n('Biomphalaria', 'Biomphalaria')
+      ]),
+      n('Oomycetes', 'Oomycetes', null, [
+          n('Albugo', 'Albugo'),
+          n('Aphanomyces', 'Aphanomyces'),
+          n('Phytophthora', 'Phytophthora'),
+          n('Pythium', 'Pythium'),
+          n('Saprolegnia', 'Saprolegnia')
+      ]),
+      n('Trichomonadida', 'Trichomonadida', null, [
+          n('Trichomonas', 'Trichomonas')
+      ]),
+      n('Schistosomatidae', 'Schistosomatidae', null, [
+          n('Schistosoma', 'Schistosoma')
+      ]),
+      n('Mammalia', 'Mammalia', null, [
+          n('Homo', 'Homo'),
+          n('Macaca', 'Macaca'),
+          n('Mus', 'Mus')
       ])
-    ]),
-    n('Kinetoplastida', 'Kinetoplastida', null, [
-      n('Crithidia', 'Crithidia'),
-      n('Leishmania', 'Leishmania'),
-      n('Trypanosoma', 'Trypanosoma')
-    ]),
-    n('Oomycetes', 'Oomycetes', null, [
-      n('Albugo', 'Albugo'),
-      n('Aphanomyces', 'Aphanomyces'),
-      n('Phytophthora', 'Phytophthora'),
-      n('Pythium', 'Pythium'),
-      n('Saprolegnia', 'Saprolegnia')
-    ]),
-    n('Trichomonadida', 'Trichomonadida', null, [
-      n('Trichomonas', 'Trichomonas')
-    ]),
-    n('Schistosomatidae', 'Schistosomatidae', null, [
-      n('Schistosoma', 'Schistosoma')
-    ]),
-    n('Mammalia', 'Mammalia', null, [
-      n('Homo', 'Homo'),
-      n('Macaca', 'Macaca'),
-      n('Mus', 'Mus')
-    ])
   ]);
 }
 

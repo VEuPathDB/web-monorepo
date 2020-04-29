@@ -493,7 +493,7 @@ sub rnaseqColorFromBigWig {
   my ($strand) = $f->get_tag_values('strand');
   my ($alignment) = $f->get_tag_values('alignment');
 
-  ######## strand specific rnaseq ######
+  ######## strand specific RNA-Seq ######
 
   # pos strand unique = BLUE
   if($strand eq 'forward' && $alignment eq 'unique') {
@@ -513,7 +513,7 @@ sub rnaseqColorFromBigWig {
     return 'lightgrey';
   }
 
-  ######## non strand specific rnaseq ######
+  ######## non strand specific RNA-Seq ######
   if($alignment eq 'black') {
     return 'blue';
   }

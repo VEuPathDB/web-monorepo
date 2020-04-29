@@ -1043,7 +1043,7 @@ sub gsnapIntronTitleUnified {
   push @data, [ '' => $html ];
 
 
-#  hover('Unified Splice Site Junctions - RNASeq', \@data);
+#  hover('Unified Splice Site Junctions - RNA-Seq', \@data);
   hover($f, \@data); 
 }
 
@@ -1136,7 +1136,7 @@ sub gsnapUnifiedIntronJunctionTitle {
 
   push @data, [ $html ];
 
-#  hover('Unified Splice Site Junctions - RNASeq', \@data);
+#  hover('Unified Splice Site Junctions - RNA-Seq', \@data);
   hover($f, \@data,1); 
 }
 

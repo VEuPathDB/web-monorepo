@@ -15,7 +15,7 @@
  <c:set var='release_num' value="${fn:substring(release_start,2,-1)}"/>
 
 <%--  construct link  ------%>
- <c:set var='link' value="http://v${release_num}.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}"/>
+ <c:set var='link' value="https://v${release_num}.orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&groupac=${orthomcl_name}"/>
 
 
  <c:out value="${link}"/>

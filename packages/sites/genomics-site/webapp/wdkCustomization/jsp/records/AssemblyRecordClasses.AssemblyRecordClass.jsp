@@ -134,7 +134,7 @@ ${pageContext.request.scheme}://${pageContext.request.serverName}/${dnaContext}
 
 <imp:panel 
     displayName="Attributions"
-    content=" CAP4 clustering and alignments by EuPathDB. EST sequences as individually attributed." />
+    content=" CAP4 clustering and alignments by VEuPathDB. EST sequences as individually attributed." />
 <br>
 
 <hr>
