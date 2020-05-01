@@ -21,10 +21,6 @@
   </listener>
 
   <listener>
-    <listener-class>org.gusdb.wdk.controller.InitListenerForBeans</listener-class>
-  </listener>
-
-  <listener>
     <listener-class>org.gusdb.wdk.jmx.JmxInitListener</listener-class>
   </listener>
 
@@ -169,6 +165,7 @@
     <location>/404.html</location>
   </error-page>
   <error-page>
+    <exception-type>java.lang.Exception</exception-type>
     <location>/500.html</location>
   </error-page>
 
