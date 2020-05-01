@@ -30,11 +30,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.gusdb</groupId>
-      <artifactId>wdk-website-controller</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.eupathdb</groupId>
       <artifactId>ebrc-website-common-model</artifactId>
     </dependency>

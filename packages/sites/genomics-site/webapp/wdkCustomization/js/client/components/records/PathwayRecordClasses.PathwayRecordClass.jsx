@@ -6,7 +6,7 @@ import { uniqueId } from 'lodash';
 import $ from 'jquery';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { loadChemDoodleWeb } from '../common/Compound';
-import { CategoriesCheckboxTree, CollapsibleSection, Link, Loading, Dialog } from 'wdk-client/Components';
+import { CategoriesCheckboxTree, CollapsibleSection, Link, Loading, Dialog, HelpIcon } from 'wdk-client/Components';
 import * as Ontology from 'wdk-client/Utils/OntologyUtils';
 import * as Category from 'wdk-client/Utils/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
@@ -1294,7 +1294,9 @@ function VisMenu(props) {
           ]
         }, {
           text: (
-            <span>Layout <img title="Choose a Layout for the Pathway Map"  src={props.webAppUrl + "/wdk/images/question.png"} /></span>
+            <>
+              Layout <HelpIcon>Choose a Layout for the Pathway Map</HelpIcon>
+            </>
           ),
           children: [
             source === 'KEGG' ? {
@@ -1330,16 +1332,11 @@ function VisMenu(props) {
           ]
         }, {
           text: (
-            <span>
-              Paint Enzymes <img
-                src={props.webAppUrl + "/wdk/images/question.png"}
-                title={
-                  `Choose an Experiment to display each enzyme's ` +
-                  `corresponding average expression profile, or choose a ` +
-                  `Genera set to display their presence or absence for ` +
-                  `all enzymes in the Map`
-                } />
-            </span>
+            <>
+              Paint Enzymes <HelpIcon>
+              Choose an Experiment to display each enzyme's corresponding average expression profile, or choose a Genera set to display their presence or absence for all enzymes in the Map
+            </HelpIcon>
+            </>
           ),
           children: [
             {
