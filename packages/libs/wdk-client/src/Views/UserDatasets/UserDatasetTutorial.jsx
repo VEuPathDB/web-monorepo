@@ -1,13 +1,16 @@
 import React from 'react';
 import { bytesToHuman } from 'wdk-client/Utils/Converters';
 
-function UserDatasetTutorial ({ projectName, rootUrl, quotaSize }) {
+import tutStep2 from './images/tut-step-2.jpg';
+import tutStep3 from './images/tut-step-3.jpg';
+
+function UserDatasetTutorial ({ projectName, quotaSize }) {
   const galaxyUrl = 'https://eupathdb.globusgenomics.org/';
   return (
     <div className="row UserDataset-Tutorial">
       <div className="box xs-12 md-6">
         <h2>EuPathDB Galaxy</h2>
-        <img src={`${rootUrl}/wdk/images/userDatasetHelp/tut-step-2.jpg`} />
+        <img src={tutStep2} />
         <ul>
           <li>Use the <b>EuPathDB Export Tools</b> on the left-side navigation, at <b><a href={galaxyUrl} target="_blank">EuPathDB Galaxy</a></b>.</li>
           <li>Prepare your export data set by selecting the files (galaxy datasets) in your history. </li>
@@ -17,7 +20,7 @@ function UserDatasetTutorial ({ projectName, rootUrl, quotaSize }) {
       </div>
       <div className="box xs-12 md-6">
         <h2>My Data Sets page</h2>
-        <img src={`${rootUrl}/wdk/images/userDatasetHelp/tut-step-3.jpg`} />
+        <img src={tutStep3} />
         <ul>
           <li>You can now view, manage, share, and utilize your data set in <b>{projectName}</b>.</li>
           <li>My Data sets you’ve created contribute to a per-user upload limit/quota of <b>{bytesToHuman(quotaSize)}</b>.</li>

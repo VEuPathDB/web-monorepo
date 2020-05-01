@@ -564,7 +564,7 @@ class UserDatasetList extends React.Component <Props, State> {
             }
           </div>
         </Mesa>
-        {userDatasets.length ? null : <UserDatasetTutorial projectName={projectName} rootUrl={rootUrl} quotaSize={quotaSize} />}
+        {userDatasets.length ? null : <UserDatasetTutorial projectName={projectName} quotaSize={quotaSize} />}
       </div>
     )
   }

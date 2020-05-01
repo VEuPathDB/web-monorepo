@@ -1,7 +1,6 @@
 /* global __DEV__ */
 
 // import css files
-// import './webapp/wdk/css/wdk.css';
 import 'wdk-client/Core/Style/index.scss';
 
 import { createBrowserHistory } from 'history';
