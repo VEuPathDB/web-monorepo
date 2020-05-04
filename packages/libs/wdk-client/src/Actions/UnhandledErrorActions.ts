@@ -6,4 +6,11 @@ export const notifyUnhandledError = makeActionCreator(
   (error: any) => ({ error })
 );
 
-export type Action = InferAction<typeof notifyUnhandledError>;
+export const clearUnhandledErrors = makeActionCreator(
+  'unhandled-error/clear'
+);
+
+export type Action = InferAction<
+  | typeof notifyUnhandledError
+  | typeof clearUnhandledErrors
+>;
