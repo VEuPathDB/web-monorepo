@@ -31,7 +31,7 @@ export default function headerMenuItems (state) {
         children: [
           {
             text: 'My Search Strategies',
-            route: '/workspace/strategies/all'
+            route: '/workspace/strategies'
           },
           {
             text: 'My Basket',
