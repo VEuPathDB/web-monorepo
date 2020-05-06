@@ -22,7 +22,7 @@ function UnhandledError(props: Props) {
 
 function ErrorDetail(props: { error: any }) {
   const { error } = props;
-  return <p>{error}</p>;
+  return <p>{String(error)}</p>;
 }
 
 export default wrappable(UnhandledError);
