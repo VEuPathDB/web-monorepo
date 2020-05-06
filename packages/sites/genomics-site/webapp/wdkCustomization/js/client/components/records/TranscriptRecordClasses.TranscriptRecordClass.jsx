@@ -111,7 +111,6 @@ function OrthologCount(props) {
     ).then(
       result => {
         const { uniqueValues } = result;
-        throw new Error('injected')
         setUniqueOrthologValues(uniqueValues);
       }
     );
