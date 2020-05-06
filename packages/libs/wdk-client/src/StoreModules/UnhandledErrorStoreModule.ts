@@ -1,7 +1,7 @@
 import { Action } from 'wdk-client/Actions';
 import { ActionsObservable, StateObservable } from 'redux-observable';
-import { Observable, EMPTY } from 'rxjs';
-import { filter, tap, mergeMapTo } from 'rxjs/operators';
+import { Observable, EMPTY, fromEvent } from 'rxjs';
+import { filter, tap, mergeMapTo, map, merge } from 'rxjs/operators';
 import { notifyUnhandledError, clearUnhandledErrors } from 'wdk-client/Actions/UnhandledErrorActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
@@ -33,11 +33,15 @@ export function reduce(state: State = initialState, action: Action): State {
 }
 
 export function observe(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
+  const rejection$: Observable<Action> = fromEvent(window, 'unhandledrejection').pipe(
+    map((event: PromiseRejectionEvent) => notifyUnhandledError( event.reason))
+  );
   return action$.pipe(
     filter(notifyUnhandledError.isOfType),
     tap(error => {
       wdkService.submitErrorIfNot500(error instanceof Error ? error : new Error(String(error)));
     }),
-    mergeMapTo(EMPTY)
+    mergeMapTo(EMPTY),
+    merge(rejection$),
   )
 }
