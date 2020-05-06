@@ -14,6 +14,7 @@ import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 import WdkService, { WdkServiceContext } from 'wdk-client/Service/WdkService';
 import WdkRoute from 'wdk-client/Core/WdkRoute';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import UnhandledErrorsController from 'wdk-client/Controllers/UnhandledErrorsController';
 
 type Props = {
   rootUrl: string,
@@ -122,6 +123,7 @@ export default class Root extends React.Component<Props, State> {
                         ))}
                       </Switch>
                       <LoginFormController />
+                      <UnhandledErrorsController />
                     </React.Fragment>
                   )}
                 </Page>
