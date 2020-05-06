@@ -1,0 +1,40 @@
+#info1, #info2, #info3, #info4 {
+  fill: blue;
+}
+
+#info1, #info2 {
+    font-weight: bold;
+}
+
+line {
+     stroke-width: 2;
+}
+
+circle {
+    stroke-width: 1;
+    stroke: black;
+}
+
+text {
+    font-size: 11px;
+}
+
+#Ortholog line, #control .Ortholog {
+    stroke: red;
+}
+
+#Coortholog line, #control .Coortholog {
+    stroke: yellow;
+}
+
+#Inparalog line, #control .Inparalog {
+    stroke: #33FF33;
+}
+
+#Normal line, #control .Normal {
+    stroke: #555555;
+}
+
+#control rect {
+    fill: #EEEEEE;
+}

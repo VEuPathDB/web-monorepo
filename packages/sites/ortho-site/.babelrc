@@ -1,0 +1,3 @@
+{
+  "extends": "../../install/.babelrc"
+}
