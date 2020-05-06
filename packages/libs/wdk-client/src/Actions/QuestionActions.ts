@@ -7,6 +7,7 @@ import {
   SearchConfig
 } from 'wdk-client/Utils/WdkModel';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
+import { alert } from 'wdk-client/Utils/Platform';
 import { NewStepSpec, Step } from 'wdk-client/Utils/WdkUser';
 import { WdkService } from 'wdk-client/Core';
 import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
@@ -28,6 +29,7 @@ export type Action =
   | UpdateParamStateAction
   | ChangeGroupVisibilityAction
   | UpdateGroupStateAction
+  | EnableSubmissionAction
 
 
 type QuestionPayload<T>  = T & {
@@ -354,3 +356,30 @@ export function updateGroupState(payload: UpdateGroupStateAction['payload']): Up
     payload
   };
 }
+
+//==============================================================================
+
+export const ENABLE_SUBMISSION = 'question/enable-submission';
+
+export interface EnableSubmissionAction {
+  type: typeof ENABLE_SUBMISSION;
+  payload: QuestionPayload<{ stepValidation?: Step['validation'] }>;
+}
+
+function enableSubmission(payload: EnableSubmissionAction['payload']): EnableSubmissionAction {
+  return {
+    type: ENABLE_SUBMISSION,
+    payload
+  };
+}
+
+export const reportSubmissionError = (searchName: string, error: any, wdkService: WdkService): EnableSubmissionAction => {
+  const isValidationError = 'status' in error && 'response' in error && error.status === 422;
+  const stepValidation = isValidationError ? JSON.parse(error.response) : undefined;
+
+  if (!isValidationError) {
+    throw error;
+  }
+
+  return enableSubmission({ searchName, stepValidation });
+};
