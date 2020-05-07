@@ -110,21 +110,22 @@ export default class Root extends React.Component<Props, State> {
               <PluginContext.Provider value={makeCompositePluginComponent(this.props.pluginConfig)}>
                 <Page classNameModifier={rootClassNameModifier}>
                   {staticContent ? safeHtml(staticContent, null, 'div') : (
-                    <React.Fragment>
-                      <Switch>
-                        {this.props.routes.map(({ path, exact = true, component, requiresLogin = false }) => (
-                          <WdkRoute
-                            key={path}
-                            exact={exact == null ? false: exact}
-                            path={path}
-                            component={component}
-                            requiresLogin={requiresLogin}
-                          />
-                        ))}
-                      </Switch>
-                      <LoginFormController />
-                      <UnhandledErrorsController />
-                    </React.Fragment>
+                    <UnhandledErrorsController>
+                      <>
+                        <Switch>
+                          {this.props.routes.map(({ path, exact = true, component, requiresLogin = false }) => (
+                            <WdkRoute
+                              key={path}
+                              exact={exact == null ? false: exact}
+                              path={path}
+                              component={component}
+                              requiresLogin={requiresLogin}
+                            />
+                          ))}
+                        </Switch>
+                        <LoginFormController />
+                      </>
+                    </UnhandledErrorsController>
                   )}
                 </Page>
               </PluginContext.Provider>
