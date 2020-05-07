@@ -132,7 +132,7 @@ function makeHeaderMenuItems(state) {
         children: [
           {
             text: 'My Search Strategies',
-            route: '/workspace/strategies/all'
+            route: '/workspace/strategies'
           },
 /*          {
             text: 'Analyze My Experiment',
@@ -145,7 +145,7 @@ function makeHeaderMenuItems(state) {
           },
           {
             text: 'My Favorites',
-            route: '/favorites',
+            route: '/workspace/favorites',
             loginRequired: true
           },
           {
