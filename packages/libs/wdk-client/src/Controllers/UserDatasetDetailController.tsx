@@ -7,6 +7,7 @@ import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Question } from 'wdk-client/Utils/WdkModel';
 import BigwigDatasetDetail from 'wdk-client/Views/UserDatasets/Detail/BigwigDatasetDetail';
+import BiomDatasetDetail from 'wdk-client/Views/UserDatasets/Detail/BiomDatasetDetail';
 import RnaSeqDatasetDetail from 'wdk-client/Views/UserDatasets/Detail/RnaSeqDatasetDetail';
 import UserDatasetDetail from 'wdk-client/Views/UserDatasets/Detail/UserDatasetDetail';
 import EmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
@@ -97,6 +98,8 @@ class UserDatasetDetailController extends PageController<MergedProps> {
         return BigwigDatasetDetail;
       case 'RnaSeq':
         return RnaSeqDatasetDetail;
+      case 'BIOM':
+        return BiomDatasetDetail;
       default:
         return UserDatasetDetail;
     }
