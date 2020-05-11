@@ -106,6 +106,7 @@ export function reduce(state: State = initialState, action: Action): State {
     case INVALIDATE_ONTOLOGY_TERMS:
       return {
         ...state,
+        activeOntologyTerm: action.payload.activeOntologyTerm,
         fieldStates: mapValues(state.fieldStates, (fieldState, key) =>
           action.payload.retainedFields.includes(key)
             ? fieldState
