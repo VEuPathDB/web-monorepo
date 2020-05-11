@@ -190,11 +190,13 @@ class UserDatasetDetail extends React.Component {
             attribute: 'Available Searches',
             value: (
               <ul>
-                {questions.map(question => { 
-                     var questionFullName = "/a/showQuestion.do?questionFullName="+ question;
-                     var questionDisplayName = questionMap[question].displayName;
-                     return (<li key={question}><a href={questionFullName}>{questionDisplayName}</a></li>);
-                })}
+                {questions.map(question => (
+                   <li key={question}>
+                     <Link to={["", "search", questionMap[question].outputRecordClassName, questionMap[question].urlSegment ].join("/")}>
+                       {questionMap[question].displayName}
+                     </Link>
+                   </li>
+                ))}
               </ul>
             )
           }
