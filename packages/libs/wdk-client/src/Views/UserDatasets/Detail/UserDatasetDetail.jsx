@@ -190,13 +190,20 @@ class UserDatasetDetail extends React.Component {
             attribute: 'Available Searches',
             value: (
               <ul>
-                {questions.map(question => (
-                   <li key={question}>
-                     <Link to={["", "search", questionMap[question].outputRecordClassName, questionMap[question].urlSegment ].join("/")}>
-                       {questionMap[question].displayName}
+                {questions.map(questionName => {
+			const q = questionMap[questionName];
+			// User dataset searches typically offer changing the dataset through a dropdown
+			// Ths dropdown is a param, "biom_dataset" on MicrobiomeDB and "rna_seq_dataset" on genomic sites
+			// Hence the regex: /dataset/
+			const ps = q.paramNames.filter(paramName => paramName.match(/dataset/));
+			const urlPath = ["", "search", q.outputRecordClassName, q.urlSegment].join("/");
+			const url = urlPath + (ps.length === 1 ? ("?param." + ps[0] + "=" + id) : "");
+                   return (<li key={questionName}>
+                     <Link to={url}>
+                       {q.displayName}
                      </Link>
-                   </li>
-                ))}
+                   </li>);
+	        })}
               </ul>
             )
           }
