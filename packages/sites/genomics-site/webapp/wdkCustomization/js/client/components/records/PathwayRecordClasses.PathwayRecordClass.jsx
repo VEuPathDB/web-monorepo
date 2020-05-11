@@ -780,6 +780,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                                 //flag node as places to avoid repeatedly placing parent nodes
                                 node.data('placed', 'true'); //change to use boolean instead of text
                                 //if node is a parent, place the children
+
                                 if (node.isParent()) {
                                     if (pathwaySource.indexOf('Cyc') > -1) {
                                         //use i to ensure child nodes aren't placed on top of each other
@@ -792,6 +793,26 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                                             node.children()[i].data('placed', 'true'); //use boolean
                                             (orientation === 'vertical') ? placeSideNodes(node.children()[i], orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node.children()[i], orientation, xValuesIn.concat(xValuesOut));
                                         }
+
+                                    } else if (pathwaySource.indexOf('KEGG') > -1) {
+                                        for (let i=0; i<node.children().size(); i++) {
+                                            if (node.children()[i].is('node[?x]')) {
+                                                node.children()[i].renderedPosition({ x:node.children()[i].data('x'), y:node.children()[i].data('y') });
+                                                node.children()[i].data('placed', 'true');
+                                                node.data('placed', 'true');
+                                                (orientation === 'vertical') ? placeSideNodes(node.children()[i], orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node.children()[i], orientation, xValuesIn.concat(xValuesOut));                
+                                            }
+                                            else {
+                                                node.children()[i].data('x', ((i*15) + meanX));
+                                                node.children()[i].data('y', meanY);
+                                                node.children()[i].renderedPosition({ x:((i*15) + meanX), y:meanY});
+                                                node.children()[i].data('placed', 'true');
+                                                node.data('placed', 'true');
+                                                (orientation === 'vertical') ? placeSideNodes(node.children()[i], orientation, yValuesIn.concat(yValuesOut)) : placeSideNodes(node.children()[i], orientation, xValuesIn.concat(xValuesOut));
+                                            }
+                                        }
+                                        
+
                                     } else {
                                         for (let i=0; i<node.children().size(); i++) {
                                             node.children()[i].renderedPosition({ x:node.children()[i].data('x'), y:node.children()[i].data('y') });
@@ -817,15 +838,15 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     for (let i=0; i < enzymeNodes.size(); i++) {
                         for (let j=0; j < enzymeNodes.size(); j++) {
                             //find enzyme nodes with identical coords and reset
-                            if (enzymeNodes[i].id() != enzymeNodes[j].id() && enzymeNodes[i].data('x') === enzymeNodes[j].data('x') && enzymeNodes[i].data('y') === enzymeNodes[j].data('y')) {
-                                resetOverlappingNodes(enzymeNodes[i], -60);
-                                resetOverlappingNodes(enzymeNodes[j], 60);
+                            if (! enzymeNodes[i].isChild() && ! enzymeNodes[j].isChild()) {
+                                if (enzymeNodes[i].id() != enzymeNodes[j].id() && enzymeNodes[i].data('x') === enzymeNodes[j].data('x') && enzymeNodes[i].data('y') === enzymeNodes[j].data('y')) {
+                                    resetOverlappingNodes(enzymeNodes[i], -60);
+                                    resetOverlappingNodes(enzymeNodes[j], 60);
+                                }
                             }
                         }
                     }
 
-                    //Handle nodes with no preset position
-                    //cy.elements('node[!x]').layout({ name: 'cose' }).run();
 
                     //clean up unplaces and orphan nodes
                     enzymeNodes.map(function(node) {
@@ -844,7 +865,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     });
 
                     //Remove duplicate nodes
-                    var allNodes = cy.nodes();
+                    var allNodes = cy.nodes('node[node_type!="nodeOfNodes"]');
                     for (let i=0; i < allNodes.size() -1; i++) {
                         for (let j= i+1; j < allNodes.size(); j++) {
                             //Find node with identical coordinates
