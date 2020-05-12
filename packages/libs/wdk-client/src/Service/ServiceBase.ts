@@ -25,7 +25,7 @@ export const CLIENT_OUT_OF_SYNC_TEXT = 'WDK-TIMESTAMP-MISMATCH';
 
 export interface StandardWdkPostResponse  {id: number};
 
-type RequestOptions = {
+type RequestOptions<Resource> = {
   /** Request method */
   method: string;
   /** Path to the resource, relative to the base url */
@@ -43,6 +43,8 @@ type RequestOptions = {
    * generated cache key.
    */
   cacheId?: string;
+  /** If using cache and a value is present, this is a check for the cached value */
+  checkCachedValue?: (resource: Resource) => boolean;
 }
 
 export interface ServiceConfig {
@@ -121,10 +123,12 @@ export const ServiceBase = (serviceUrl: string) => {
    *    The resource's url and any query params are used to generate a cache key.
    * @param options.cacheId? Additional string to use for cache key. This is useful
    *    for POST requests that are semantically treated as GET requests.
+   * @param options.checkCachedValue? If present this function is called on a cached value,
+   *    which is then only returned if the call returns true.
    * @return {Promise<Resource>}
    */
-   function sendRequest<Resource>(decoder: Decode.Decoder<Resource>, options: RequestOptions): Promise<Resource> {
-    let { method, path, params, body, useCache, cacheId } = options;
+  function sendRequest<Resource>(decoder: Decode.Decoder<Resource>, options: RequestOptions<Resource>): Promise<Resource> {
+    let { method, path, params, body, useCache, cacheId, checkCachedValue } = options;
     method = method.toUpperCase();
     let url = path + (params == null ? '' : '?' + QueryString.stringify(params));
     // Technically, only GET should be cache-able, but some resources treat POST
@@ -132,7 +136,8 @@ export const ServiceBase = (serviceUrl: string) => {
     if (useCache && (method === 'GET' || method === 'POST')) {
       let cacheKey = url + (cacheId == null ? '' : '__' + cacheId);
       return _getFromCache(cacheKey,
-        () => sendRequest(decoder, { ...options, useCache: false }));
+        () => sendRequest(decoder, { ...options, useCache: false }),
+        checkCachedValue);
     }
     return _fetchJson(method, url, body).then(resp => {
       const result = decoder(resp);
@@ -219,12 +224,12 @@ export const ServiceBase = (serviceUrl: string) => {
    * Checks cache for item associated to key. If item is not in cache, then
    * call onCacheMiss callback and set the resolved value in the cache.
    */
-  function _getFromCache<T>(key: string, onCacheMiss: () => Promise<T>) {
+  function _getFromCache<T>(key: string, onCacheMiss: () => Promise<T>, checkCachedValue = (cachedValue: T) => true) {
     if (!_cache.has(key)) {
       let cacheValue$ = _checkStoreVersion()
       .then(() => _store.getItem<T>(key))
       .then(storeItem => {
-        if (storeItem != null) return storeItem;
+        if (storeItem != null && checkCachedValue(storeItem)) return storeItem;
         return onCacheMiss().then(item => {
           return _store.setItem(key, item)
           .catch(err => {
