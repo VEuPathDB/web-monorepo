@@ -97,7 +97,8 @@ export const questionDecoder: Decode.Decoder<Question> =
     ),
     Decode.combine(
       Decode.field('queryName', Decode.optional(Decode.string))
-    )
+    ),
+    Decode.field('isCacheable', Decode.boolean)
   )
 
   export const expandedRecordClassDecoder: Decode.Decoder<RecordClassResponse> =

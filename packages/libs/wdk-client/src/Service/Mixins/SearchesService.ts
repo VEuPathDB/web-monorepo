@@ -362,6 +362,10 @@ const questionSharedDecoder =
     Decode.field(
       'isAnalyzable',
       Decode.boolean
+    ),
+    Decode.field(
+      'isCacheable',
+      Decode.boolean
     )
   )
 
@@ -389,7 +393,7 @@ const questionsDecoder: Decode.Decoder<Question[]> =
   Decode.arrayOf(questionDecoder)
 
 export default (base: ServiceBase) => {
-
+  
   async function getQuestionAndParameters(questionUrlSegment: string): Promise<QuestionWithParameters> {
     let searchPath = await getSearchPathFromUrlSegment(questionUrlSegment);
     return base.sendRequest(questionWithParametersDecoder, {
@@ -398,7 +402,8 @@ export default (base: ServiceBase) => {
       params: {
         expandParams: 'true',
       },
-      useCache: true
+      useCache: true,
+      checkCachedValue: response => (response.searchData != null && response.searchData.isCacheable)
     }).then(response => response.searchData);
   }
 
