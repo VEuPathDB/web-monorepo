@@ -658,12 +658,6 @@ const useHeaderMenuItems = (
               display: 'Related sites',
               type: 'reactRoute',
               url: makeStaticPageRoute(`/${displayName}/externalLinks.html`)
-            },
-            { 
-              key: 'workshops-events',
-              display: 'Workshops and training',
-              type: 'reactRoute',
-              url: makeStaticPageRoute('/webinars_workshops.html')
             }
           ]
         },
@@ -800,10 +794,10 @@ const useHeaderMenuItems = (
           target: '_blank'
         },
         { 
-          key: 'eupathdb-workshop',
-          display: 'VEuPathDB workshops',
+          key: 'landing',
+          display: 'Learning about VEuPathDB',
           type: 'reactRoute',
-          url: makeStaticPageRoute('/webinars_workshops.html')
+          url: makeStaticPageRoute('/landing.html')
         },
         {
           key: 'our-glossary',
