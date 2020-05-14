@@ -65,9 +65,9 @@ function getIconByType(type = '') {
   switch(type) {
     case 'taxon':
     case 'taxa':
-      return 'mbio-taxaQuery_light';
+      return 'ebrc-taxaQuery_light';
     default:
-      return 'mbio-sampleDetails_light';
+      return 'ebrc-sampleDetails_light';
 
   }
 }
