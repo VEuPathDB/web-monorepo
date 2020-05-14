@@ -786,16 +786,9 @@ const useHeaderMenuItems = (
       display: 'Help',
       type: 'subMenu',
       items: [
-        {
-          key: 'youtube-tutorials',
-          display: 'YouTube tutorials',
-          type: 'externalLink',
-          url: 'http://www.youtube.com/user/EuPathDB/playlists',
-          target: '_blank'
-        },
         { 
           key: 'landing',
-          display: 'Learning about VEuPathDB',
+	  display: 'Learn how to use VEuPathDB',
           type: 'reactRoute',
           url: makeStaticPageRoute('/landing.html')
         },
