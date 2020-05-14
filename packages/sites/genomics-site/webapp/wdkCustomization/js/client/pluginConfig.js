@@ -124,6 +124,7 @@ export default [
       !!question && 
       (
         question.queryName === 'GenesByGenericFoldChange' ||
+	question.queryName === 'GenesByRnaSeqFoldChange' ||
         question.queryName === 'GenesByUserDatasetRnaSeq'
       ),
     component: GenericFoldChangeForm,

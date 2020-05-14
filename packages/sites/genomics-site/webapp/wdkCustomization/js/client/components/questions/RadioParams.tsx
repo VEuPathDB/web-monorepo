@@ -4,7 +4,7 @@ import { get } from 'lodash';
 
 import { HelpIcon, IconAlt } from 'wdk-client/Components';
 import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { Props, Group } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { isMultiPick, isEnumParam, toMultiValueString, toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
@@ -71,7 +71,7 @@ function RadioParameterList(props: RadioParameterListProps) {
                 )
               }
               <h2>
-                <HelpIcon>{parameter.help}</HelpIcon> {parameter.displayName}
+                <HelpIcon>{safeHtml(parameter.help)}</HelpIcon> {parameter.displayName}
                 {paramDependenciesUpdating[parameter.name] && <IconAlt fa="circle-o-notch" className="fa-spin fa-fw" />}
               </h2>
             </div>

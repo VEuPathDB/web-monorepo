@@ -154,7 +154,6 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     <div className={rootContainerClassName}>
       <ErrorBoundary>
         <Header 
-          branding={props.projectId}
           menuItems={headerMenuItems} 
           containerClassName={headerClassName} 
           onShowAnnouncements={onShowAnnouncements}
