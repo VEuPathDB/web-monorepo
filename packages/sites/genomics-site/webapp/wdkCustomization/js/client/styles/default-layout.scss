@@ -1,5 +1,6 @@
 // FIXME: Come to a consensus on the font weights we'd like to provide for Roboto
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,600,700&display=swap');
+@import '~site/wdkCustomization/js/client/styles/breakpoints.scss';
 
 $expanded-header-height: 11em;
 $collapsed-header-height: 5.5em;
