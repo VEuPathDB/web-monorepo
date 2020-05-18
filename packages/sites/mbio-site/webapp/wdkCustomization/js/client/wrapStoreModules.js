@@ -67,7 +67,7 @@ function getIconByType(type = '') {
     case 'taxa':
       return 'ebrc-taxaQuery_light';
     default:
-      return 'ebrc-sampleDetails_light';
+      return 'ebrc-icon-sampleDetails_light';
 
   }
 }
