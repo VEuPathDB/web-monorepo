@@ -1,7 +1,20 @@
 @import '~site/wdkCustomization/js/client/styles/breakpoints.scss';
 
+$branding-height: 7em;
+$small-branding-scale-factor: 0.57142857142em;
+
 .vpdb-Header {
   grid-area: header;
+
+  .ebrc-HeaderBranding {
+    height: $branding-height;
+  }
+
+  @media screen and (max-width: $cramped-header-width) {
+    .ebrc-HeaderBrandingContainer {
+      font-size: $small-branding-scale-factor;
+    }
+  }
 
   &__expanded {
     position: relative;
@@ -35,6 +48,10 @@
       "site-branding menubar social login";
 
     box-shadow: 0 2px 4px #00000066;
+
+    .ebrc-HeaderBrandingContainer {
+      font-size: $small-branding-scale-factor;
+    }
 
     .ebrc-HeaderSearchBar {
       input, form {
