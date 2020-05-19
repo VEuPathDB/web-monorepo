@@ -1,7 +1,4 @@
-@import '~site/wdkCustomization/js/client/styles/breakpoints.scss';
-
-$branding-height: 7em;
-$small-branding-scale-factor: 0.57142857142em;
+@import '~site/wdkCustomization/js/client/styles/collapsed-header-mixins.scss';
 
 .vpdb-Header {
   grid-area: header;
@@ -39,51 +36,7 @@ $small-branding-scale-factor: 0.57142857142em;
   }
 
   &__collapsed {
-    display: grid;
-    position: fixed;
-    height: auto;
-    padding: 0.5em 0.75em;
-    grid-template-areas:
-      "site-branding searchbar social login"
-      "site-branding menubar social login";
-
-    box-shadow: 0 2px 4px #00000066;
-
-    .ebrc-HeaderBrandingContainer {
-      font-size: $small-branding-scale-factor;
-    }
-
-    .ebrc-HeaderSearchBar {
-      input, form {
-        line-height: normal;
-      }
-
-      button {
-        line-height: normal;
-        padding: 2px 6px;
-      }
-    }
-
-    .ebrc-HeaderBrandingContainer {
-      align-self: center;
-    }
-
-    .ebrc-HeaderProjectBranding {
-      display: none;
-    }
-
-    .UserMenu {
-      align-self: flex-end;
-    }
-
-    .ebrc-HeaderMenuBar > .ebrc-HeaderMenuItemGroup > .ebrc-HeaderMenuItemContent {
-      row-gap: 0.5em;
-      padding: 0 0.5em;
-
-      @media screen and (max-width: $hamburger-width) {
-        padding: 0.5em;
-      }
-    }
+    @include collapsed-header-styling;
   }
 
   .vpdb-CommunitySocialMediaLink {
