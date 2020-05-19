@@ -1,5 +1,5 @@
-import ScatterPlot from '../plots/scatter-plot';
-import { useState } from 'react';
+import ScatterPlot from '../plots/ScatterPlot';
+import React, { useState } from 'react';
 
 export interface Props {
   studyId: string;
@@ -33,7 +33,17 @@ export default function ScatterPlotAdapter(props: Props) {
 function useClinEpiPlotReporter(studyId: string, xVariableId: string, yVariableId: string) {
   // request data from wdk rest service and return response
   return {
-    xData: [1,2,3],
-    yData: [4,5,6]
+    xData: generateNumberArray(20),
+    yData: generateNumberArray(20)
   }
+}
+
+function generateNumberArray(size: number) {
+  const array = [];
+  let i = 0;
+  while (i < size) {
+    array.push(Math.random());
+    i++;
+  }
+  return array;
 }
