@@ -65,7 +65,7 @@ function getIconByType(type = '') {
   switch(type) {
     case 'taxon':
     case 'taxa':
-      return 'ebrc-taxaQuery_light';
+      return 'ebrc-icon-taxaQuery_light';
     default:
       return 'ebrc-icon-sampleDetails_light';
 
