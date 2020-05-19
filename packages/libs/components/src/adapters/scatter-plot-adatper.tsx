@@ -1,4 +1,4 @@
-import ScatterPlot from '.';
+import ScatterPlot from '../plots/scatter-plot';
 import { useState } from 'react';
 
 interface Props {
