@@ -4,11 +4,13 @@ import Plot, { Figure } from "react-plotly.js";
 /**
  * Data passed to this component, typically gathered by an adapter.
  */
-interface Props {
+export interface Props {
   xData: number[],
   yData: number[],
   xLabel: string,
   yLabel: string,
+  height: number;
+  width: number;
   onUpdate?: (state: any) => void;
 }
 

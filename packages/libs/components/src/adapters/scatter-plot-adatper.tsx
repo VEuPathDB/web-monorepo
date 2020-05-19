@@ -1,7 +1,7 @@
 import ScatterPlot from '../plots/scatter-plot';
 import { useState } from 'react';
 
-interface Props {
+export interface Props {
   studyId: string;
   xVariableId: string;
   yVariableId: string;
@@ -22,6 +22,8 @@ export default function ScatterPlotAdapter(props: Props) {
       yData={data.yData}
       xLabel={xVariableId}
       yLabel={yVariableId}
+      height={200}
+      width={200}
       onUpdate={setPlotState}
     />
   )
