@@ -38,7 +38,7 @@
     .ebrc-HeaderBrandingContainer {
       position: relative;
 
-      .ebrc-HeaderBrandingSuperscript {
+      .vpdb-HeaderBrandingSuperscript {
         font-style: italic;
         position: absolute;
         @if ($superscript-position-top) {
@@ -57,34 +57,34 @@
       }
     }
 
-    .ebrc-HeaderBranding {
+    .vpdb-HeaderBranding {
       content: $logo;
     }
 
     &__collapsed {
       .ebrc-HeaderBrandingContainer {
-        .ebrc-HeaderBrandingSuperscript {
+        .vpdb-HeaderBrandingSuperscript {
           top: $superscript-position-top-small;
           left: $superscript-position-left-small;
           font-size: $superscript-font-size-small;
         }
       }
 
-      .ebrc-HeaderBranding {
+      .vpdb-HeaderBranding {
         content: $small-logo;
       }
     }
     
     @media screen and (max-width: $cramped-header-width) {
       .ebrc-HeaderBrandingContainer {
-        .ebrc-HeaderBrandingSuperscript {
+        .vpdb-HeaderBrandingSuperscript {
           top: $superscript-position-top-small;
           left: $superscript-position-left-small;
           font-size: $superscript-font-size-small;
         }
       }
 
-      .ebrc-HeaderBranding {
+      .vpdb-HeaderBranding {
         content: $small-logo;
       }
     }

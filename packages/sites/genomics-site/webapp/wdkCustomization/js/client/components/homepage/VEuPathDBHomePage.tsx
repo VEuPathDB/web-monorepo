@@ -153,10 +153,10 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const branding = (
     <>
       <Link to="/">
-        <div className="ebrc-HeaderBranding">
+        <div className={vpdbCx('HeaderBranding')}>
         </div>
       </Link>
-      <div className="ebrc-HeaderBrandingSuperscript">
+      <div className={vpdbCx('HeaderBrandingSuperscript')}>
         beta
       </div>
     </>
