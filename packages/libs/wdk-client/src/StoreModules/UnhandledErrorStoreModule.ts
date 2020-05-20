@@ -36,7 +36,13 @@ export function reduce(state: State = initialState, action: Action): State {
 export function observe(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
   // map unhandled promise rejections to unhandledError action
   const rejection$: Observable<Action> = fromEvent(window, 'unhandledrejection').pipe(
-    map((event: PromiseRejectionEvent) => notifyUnhandledError( event.reason))
+    map((event: PromiseRejectionEvent) => notifyUnhandledError(event.reason))
+  );
+  // map unhandled errors to unhandledError action
+  const error$: Observable<Action> = fromEvent(window, 'error').pipe(
+    map((event: ErrorEvent) => {
+      return notifyUnhandledError(event.error)
+    })
   );
   // clear errors when route changes
   const clear$: Observable<Action> = action$.pipe(
@@ -53,5 +59,5 @@ export function observe(action$: ActionsObservable<Action>, state$: StateObserva
     mergeMapTo(EMPTY),
 
   );
-  return merge(rejection$, clear$, notify$);
+  return merge(rejection$, error$, clear$, notify$);
 }
