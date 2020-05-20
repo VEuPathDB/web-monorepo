@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
-import { Loading } from 'wdk-client/Components';
+import { Loading, Link } from 'wdk-client/Components';
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
@@ -150,6 +150,13 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     });
   }, [ setClosedBanners ]);
 
+  const branding = (
+    <Link to="/">
+      <div className="ebrc-HeaderBranding">
+      </div>
+    </Link>
+  );
+
   return (
     <div className={rootContainerClassName}>
       <ErrorBoundary>
@@ -158,6 +165,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
           containerClassName={headerClassName} 
           onShowAnnouncements={onShowAnnouncements}
           showAnnouncementsToggle={isHomePage && closedBanners.length > 0}
+          branding={branding}
         />
       </ErrorBoundary>
       <div className={vpdbCx('Announcements')}>
