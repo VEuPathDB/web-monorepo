@@ -1,13 +1,13 @@
+@import '~site/wdkCustomization/js/client/styles/collapsed-header-mixins.scss';
+
 body.vpdb-Body .vpdb-RootContainer__jbrowse {
+  @include collapsed-header-page-layout;
+
   .vpdb-Main {
     margin: 0;
     padding: 0;
     iframe {
       border: none;
     }
-  }
-
-  .ebrc-FooterPageDescriptionRow {
-    display: none;
   }
 }

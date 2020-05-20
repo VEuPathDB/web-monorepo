@@ -9,9 +9,6 @@
 @import '~site/wdkCustomization/js/client/styles/footer.scss';
 @import '~site/wdkCustomization/js/client/styles/home-page-layout.scss';
 
-$branding-height: 7em;
-$small-branding-scale-factor: 0.57142857142em;
-
 @include themify($child: '') {
   $primary-color: themed('primary-color');
   $bckgrnd-img: themed('bckgrnd-img');
@@ -63,13 +60,10 @@ $small-branding-scale-factor: 0.57142857142em;
 
     .ebrc-HeaderBranding {
       content: $logo;
-      height: $branding-height;
     }
 
     &__collapsed {
       .ebrc-HeaderBrandingContainer {
-        font-size: $small-branding-scale-factor;
-
         a::after {
           top: $beta-position-top-small;
           left: $beta-position-left-small;
@@ -84,8 +78,6 @@ $small-branding-scale-factor: 0.57142857142em;
     
     @media screen and (max-width: $cramped-header-width) {
       .ebrc-HeaderBrandingContainer {
-        font-size: $small-branding-scale-factor;
-
         a::after {
           top: $beta-position-top-small;
           left: $beta-position-left-small;
