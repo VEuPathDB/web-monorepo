@@ -151,10 +151,15 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   }, [ setClosedBanners ]);
 
   const branding = (
-    <Link to="/">
-      <div className="ebrc-HeaderBranding">
+    <>
+      <Link to="/">
+        <div className="ebrc-HeaderBranding">
+        </div>
+      </Link>
+      <div className="ebrc-HeaderBrandingSuperscript">
+        beta
       </div>
-    </Link>
+    </>
   );
 
   return (
