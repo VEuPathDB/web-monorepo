@@ -635,12 +635,6 @@ const useHeaderMenuItems = (
           display: 'Community',
           items: [
             { 
-              key: 'scientific-advisory-team',
-              display: 'Community advisors',
-              type: 'reactRoute',
-              url: makeStaticPageRoute('/advisors.html')
-            },
-            { 
               key: 'news',
               display: 'News',
               type: 'reactRoute',
