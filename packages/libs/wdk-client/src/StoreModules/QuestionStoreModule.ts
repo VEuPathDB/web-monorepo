@@ -617,7 +617,7 @@ async function loadQuestion(
   initialParamData?: Record<string, string>,
 ) {
   const step = stepId ? await wdkService.findStep(stepId) : undefined;
-  const initialParams = step ? initialParamDataFromStep(step) : initialParamData != null ? initialParamData : {};
+  const initialParams = step ? initialParamDataFromStep(step) : initialParamData != null ? initialParamDataWithDatasetParamSpecialCase(initialParamData) : {};
 
   try {
     const question = Object.keys(initialParams).length > 0
@@ -625,19 +625,7 @@ async function loadQuestion(
       : await wdkService.getQuestionAndParameters(searchName);
 
     const recordClass = await wdkService.findRecordClass(question.outputRecordClassName);
-    const paramValues = question.parameters.reduce(function(values, { name, initialDisplayValue, type }) {
-      return Object.assign(
-        values,{
-          [name]: (
-            (step == null && type === 'input-step')
-            ? ''
-            : (name in initialParams)
-              ? initialParams[name]
-              : initialDisplayValue
-          )
-        }
-      );
-    }, {} as ParameterValues);
+    const paramValues = extractParamValues(question, initialParams, step);
 
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
     return questionLoaded({
@@ -665,4 +653,23 @@ function initialParamDataFromStep(step: Step): Record<string, string> {
   }, {});
 }
 
+function initialParamDataWithDatasetParamSpecialCase(initialParamData: Record<string, string>){
+  return Object.keys(initialParamData).reduce(function(result, paramName) {
+    const k = paramName.indexOf(".idList") > -1 ? paramName.replace(".idList", "") : paramName;
+    return Object.assign(result, {[k] : initialParamData[paramName]});
+  }, {});
+}
 
+function extractParamValues(question: QuestionWithParameters, initialParams: Record<string, string>,  step?: Step ){
+  return question.parameters.reduce(function(values, { name, initialDisplayValue, type }) {
+    return Object.assign(values, {
+      [name]: (
+        (step == null && type === 'input-step')
+        ? ''
+        : (name in initialParams)
+          ? initialParams[name]
+          : initialDisplayValue
+      )
+    });
+  }, {} as ParameterValues);
+}
