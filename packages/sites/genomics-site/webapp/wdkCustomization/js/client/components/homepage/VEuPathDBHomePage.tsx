@@ -21,6 +21,8 @@ import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 
 import { useCommunitySiteUrl } from 'ebrc-client/hooks/staticData';
 
+import { formatReleaseDate } from 'ebrc-client/util/formatters';
+
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
@@ -157,7 +159,9 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
         </div>
       </Link>
       <div className={vpdbCx('HeaderBrandingSuperscript')}>
-        beta
+        {props.buildNumber && `Release ${props.buildNumber}`}
+        <br />
+        {props.releaseDate && formatReleaseDate(props.releaseDate)}
       </div>
     </>
   );
