@@ -6,6 +6,8 @@ import wrapStoreModules from './wrapStoreModules';
 import pluginConfig from './pluginConfig';
 
 // import CSS files
+import 'eupathdb/wdkCustomization/css/client.scss';
+import 'site/css/AllApiSites.css';
 import 'site/wdkCustomization/css/client.scss';
 
 // Initialize the application.

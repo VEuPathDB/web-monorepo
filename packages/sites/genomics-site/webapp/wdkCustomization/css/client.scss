@@ -1,6 +1,3 @@
-@import '~eupathdb/wdkCustomization/css/client.scss';
-@import '~site/css/AllApiSites.css';
-
 /* Hide default record ID printed by WDK for genes */
 .wdk-RecordContainer__GeneRecordClasses\.GeneRecordClass .wdk-RecordHeading {
   display: none;

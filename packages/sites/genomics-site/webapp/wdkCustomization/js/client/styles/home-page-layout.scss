@@ -1,0 +1,39 @@
+@import '~site/wdkCustomization/js/client/styles/breakpoints.scss';
+
+body.vpdb-Body .vpdb-RootContainer {
+  &__home {
+    grid-template-areas:
+      "header header header"
+      "banner banner banner"
+      "nav content side"
+      "footer footer footer";
+
+    .vpdb-Main {
+      overflow: hidden;
+    }
+
+    @media screen and (max-width: $tablet-width) {
+      grid-template-areas:
+        "header header header"
+        "banner banner banner"
+        "nav content content"
+        "nav content content"
+        "nav side side"
+        "footer footer footer";
+    }
+  }
+
+  &__home.vpdb-RootContainer__news-expanded {
+    grid-template-columns: 26em 1fr 23em;
+  }
+
+  &__home.vpdb-RootContainer__news-collapsed {
+    grid-template-columns: 31em 1fr 3em;
+  }
+
+  @media screen and (max-width: $mobile-width) {
+    &__home.vpdb-RootContainer__news-expanded, &__home.vpdb-RootContainer__news-collapsed {
+      grid-template-columns: 100%;
+    }
+  }
+}

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
-import { Loading } from 'wdk-client/Components';
+import { Loading, Link } from 'wdk-client/Components';
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
@@ -20,6 +20,8 @@ import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/compon
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 
 import { useCommunitySiteUrl } from 'ebrc-client/hooks/staticData';
+
+import { formatReleaseDate } from 'ebrc-client/util/formatters';
 
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
@@ -150,15 +152,29 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     });
   }, [ setClosedBanners ]);
 
+  const branding = (
+    <>
+      <Link to="/">
+        <div className={vpdbCx('HeaderBranding')}>
+        </div>
+      </Link>
+      <div className={vpdbCx('HeaderBrandingSuperscript')}>
+        {props.buildNumber && `Release ${props.buildNumber}`}
+        <br />
+        {props.releaseDate && formatReleaseDate(props.releaseDate)}
+      </div>
+    </>
+  );
+
   return (
     <div className={rootContainerClassName}>
       <ErrorBoundary>
         <Header 
-          branding={props.projectId}
           menuItems={headerMenuItems} 
           containerClassName={headerClassName} 
           onShowAnnouncements={onShowAnnouncements}
           showAnnouncementsToggle={isHomePage && closedBanners.length > 0}
+          branding={branding}
         />
       </ErrorBoundary>
       <div className={vpdbCx('Announcements')}>
@@ -636,12 +652,6 @@ const useHeaderMenuItems = (
           display: 'Community',
           items: [
             { 
-              key: 'scientific-advisory-team',
-              display: 'Community advisors',
-              type: 'reactRoute',
-              url: makeStaticPageRoute('/advisors.html')
-            },
-            { 
               key: 'news',
               display: 'News',
               type: 'reactRoute',
@@ -658,12 +668,6 @@ const useHeaderMenuItems = (
               display: 'Related sites',
               type: 'reactRoute',
               url: makeStaticPageRoute(`/${displayName}/externalLinks.html`)
-            },
-            { 
-              key: 'workshops-events',
-              display: 'Workshops and training',
-              type: 'reactRoute',
-              url: makeStaticPageRoute('/webinars_workshops.html')
             }
           ]
         },
@@ -792,18 +796,11 @@ const useHeaderMenuItems = (
       display: 'Help',
       type: 'subMenu',
       items: [
-        {
-          key: 'youtube-tutorials',
-          display: 'YouTube tutorials',
-          type: 'externalLink',
-          url: 'http://www.youtube.com/user/EuPathDB/playlists',
-          target: '_blank'
-        },
         { 
-          key: 'eupathdb-workshop',
-          display: 'VEuPathDB workshops',
+          key: 'landing',
+	  display: 'Learn how to use VEuPathDB',
           type: 'reactRoute',
-          url: makeStaticPageRoute('/webinars_workshops.html')
+          url: makeStaticPageRoute('/landing.html')
         },
         {
           key: 'our-glossary',
