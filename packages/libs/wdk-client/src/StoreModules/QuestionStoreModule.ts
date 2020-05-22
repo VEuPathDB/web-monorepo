@@ -655,8 +655,7 @@ function initialParamDataFromStep(step: Step): Record<string, string> {
 
 function initialParamDataWithDatasetParamSpecialCase(initialParamData: Record<string, string>){
   return Object.keys(initialParamData).reduce(function(result, paramName) {
-    const k = paramName.indexOf(".idList") > -1 ? paramName.replace(".idList", "") : paramName;
-    return Object.assign(result, {[k] : initialParamData[paramName]});
+    return paramName.indexOf(".idList") > -1 ? result : Object.assign(result, {[paramName] : initialParamData[paramName]});
   }, {});
 }
 
