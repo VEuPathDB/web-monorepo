@@ -237,6 +237,7 @@ export interface Question extends UrlModelEntity {
   isAnalyzable: boolean;
   paramNames: string[];
   queryName?: string;
+  isCacheable: boolean;
 }
 
 export interface QuestionWithParameters extends Question {

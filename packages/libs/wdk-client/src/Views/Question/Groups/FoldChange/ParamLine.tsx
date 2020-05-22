@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import { HelpIcon }  from 'wdk-client/Components';
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 
 export interface PreAndPostParameterEntries {
@@ -30,14 +31,14 @@ export const ParamLine: React.FunctionComponent<ParamLineProps> = ({
     {parameterElement && !hideParameter && (
       <HelpIcon>
         <>
-          {' '}{parameter.help}
+          {' '}{safeHtml(parameter.help)}
         </>
       </HelpIcon>
     )}
     {hideParameter && (
       <HelpIcon>
         <>
-          {' '}{parameter.help}
+          {' '}{safeHtml(parameter.help)}
         </>
       </HelpIcon>
     )}

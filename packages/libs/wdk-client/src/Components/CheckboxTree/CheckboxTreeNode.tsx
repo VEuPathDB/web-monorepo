@@ -137,7 +137,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
             </label>
           )}
         </div>
-        {isLeafNode ? null :
+        { !isLeafNode && isVisible && isExpanded &&
           <ul className={listClassName} style={childrenVisibilityCss}>
             {getNodeChildren(node).map((child, index) =>
               <CheckboxTreeNode

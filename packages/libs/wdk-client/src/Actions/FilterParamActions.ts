@@ -121,6 +121,7 @@ export interface InvalidateOntologyTermsAction {
   type: typeof INVALIDATE_ONTOLOGY_TERMS;
   payload: Ctx & {
     retainedFields: string[];
+    activeOntologyTerm: string;
   };
 }
 

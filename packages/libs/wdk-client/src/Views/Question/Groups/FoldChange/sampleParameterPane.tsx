@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import { ResizableContainer, HelpIcon } from 'wdk-client/Components'
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 
 type ResizingOptions = JQueryUI.ResizableOptions;
@@ -15,7 +16,7 @@ const sampleParameterPane = (sampleParameterTypeClass: string, tabHeader: string
   parameter
 }) => (
   <div className="wdk-FoldChangeSampleParameterPane">
-    in the following <span className={`wdk-FoldChangeSampleParameterTab ${sampleParameterTypeClass}`}>{tabHeader}</span><HelpIcon>{parameter.help}</HelpIcon>
+    in the following <span className={`wdk-FoldChangeSampleParameterTab ${sampleParameterTypeClass}`}>{tabHeader}</span><HelpIcon>{safeHtml(parameter.help)}</HelpIcon>
     <div className={`wdk-FoldChangeSampleParameterContainer ${sampleParameterTypeClass}`}>
       <ResizableContainer
         alsoResize={`.wdk-FoldChangeSampleParameterContainer.${sampleParameterTypeClass} .wdk-CheckboxList > div:first-child, .wdk-FoldChangeSampleParameterContainer.${sampleParameterTypeClass} .wdk-CheckboxTree`}
