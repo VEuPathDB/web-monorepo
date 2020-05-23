@@ -55,6 +55,7 @@ const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
 const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   const { isHomePage, classNameModifier } = props;
   const [ headerExpanded, setHeaderExpanded ] = useState(true);
+  const [ footerThin, setFooterThin ] = useState(true);
 
   useEffect(() => {
     if (isHomePage && props.displayName) {
@@ -97,25 +98,28 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     props.displayName
   );
 
-  const updateHeaderExpanded = useCallback(() => {
+  const updateHeaderAndFooter = useCallback(() => {
     setHeaderExpanded(document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
+
+    // Modern adaptation of https://stackoverflow.com/a/22394544
+    const scrollTop = document.documentElement?.scrollTop || document.body.scrollTop;
+    const scrollHeight = document.documentElement?.scrollHeight || document.body.scrollHeight;
+    const scrolledToBottom = scrollTop + window.innerHeight >= scrollHeight;
+
+    setFooterThin(!scrolledToBottom);
   }, []);
   
   useEffect(() => {
-    window.addEventListener('scroll', updateHeaderExpanded, { passive: true });
-    window.addEventListener('touch', updateHeaderExpanded, { passive: true });
-    window.addEventListener('wheel', updateHeaderExpanded, { passive: true });
+    window.addEventListener('scroll', updateHeaderAndFooter, { passive: true });
+    window.addEventListener('touch', updateHeaderAndFooter, { passive: true });
+    window.addEventListener('wheel', updateHeaderAndFooter, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', updateHeaderExpanded);
-      window.removeEventListener('touch', updateHeaderExpanded);
-      window.removeEventListener('wheel', updateHeaderExpanded);
+      window.removeEventListener('scroll', updateHeaderAndFooter);
+      window.removeEventListener('touch', updateHeaderAndFooter);
+      window.removeEventListener('wheel', updateHeaderAndFooter);
     };
-  }, [ updateHeaderExpanded ]);
-
-  useEffect(() => {
-    updateHeaderExpanded();
-  }, [ isHomePage ]);
+  }, [ updateHeaderAndFooter ]);
 
   useLayoutEffect(() => {
     // FIXME: This is a hack for recalculating the "rabbit ears"
@@ -140,7 +144,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     vpdbCx('NewsPane', isNewsExpanded ? 'news-expanded' : 'news-collapsed'),
     vpdbCx('BdDark')
   );
-  const footerClassName = vpdbCx('Footer'); 
+  const footerClassName = vpdbCx('Footer', footerThin && 'thin');
 
   const [ closedBanners, setClosedBanners ] = useAnnouncementsState();
 
