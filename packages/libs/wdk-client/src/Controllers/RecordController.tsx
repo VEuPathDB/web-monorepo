@@ -47,10 +47,11 @@ const CastRecordUI: any = RecordUI;
 class RecordController extends PageController<Props> {
 
   requestPartialRecord = ({ attributes, tables}: { attributes?: string[], tables?: string[] }) => {
+    // Important! Use info from ownProps to prevent cache misses when record is is aliased
     this.props.requestPartialRecord(
       this.props.requestId,
-      this.props.recordClass.urlSegment,
-      this.props.record.id,
+      this.props.ownProps.recordClass,
+      this.props.ownProps.primaryKey.split('/'),
       attributes,
       tables
     )

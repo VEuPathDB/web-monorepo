@@ -3,7 +3,7 @@ import { ActionsObservable, StateObservable } from 'redux-observable';
 import { EMPTY, from, Observable } from 'rxjs';
 import { bufferTime, filter, groupBy, mergeMap } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
-import { ALL_FIELD_VISIBILITY, CATEGORY_EXPANSION, NAVIGATION_QUERY, NAVIGATION_VISIBILITY, RecordUpdatedAction, RECORD_ERROR, RECORD_LOADING, RECORD_RECEIVED, RECORD_UPDATE, RequestPartialRecord, REQUEST_PARTIAL_RECORD, SECTION_VISIBILITY, SET_COLLAPSED_SECTIONS } from 'wdk-client/Actions/RecordActions';
+import { ALL_FIELD_VISIBILITY, CATEGORY_EXPANSION, NAVIGATION_QUERY, NAVIGATION_VISIBILITY, RecordUpdatedAction, RECORD_ERROR, RECORD_LOADING, RECORD_RECEIVED, RECORD_UPDATE, RequestPartialRecord, REQUEST_PARTIAL_RECORD, SECTION_VISIBILITY, SET_COLLAPSED_SECTIONS, getPrimaryKey } from 'wdk-client/Actions/RecordActions';
 import { BASKET_STATUS_ERROR, BASKET_STATUS_LOADING, BASKET_STATUS_RECEIVED, FAVORITES_STATUS_ERROR, FAVORITES_STATUS_LOADING, FAVORITES_STATUS_RECEIVED } from 'wdk-client/Actions/UserActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
@@ -213,12 +213,12 @@ function observeRecordRequests(action$: ActionsObservable<Action>, state$: State
     mergeMap(group$ => group$.pipe(
       bufferTime(100),
       mergeMap(actions => chunk(actions, 10)),
-      mergeMap((actions: RequestPartialRecord[]) => {
+      filter(actions => actions.length > 0),
+      mergeMap(async actions => {
         // build up request object
-        if (actions.length === 0) return EMPTY;
         // XXX Assuming recordClassName and primaryKey are the same for a given `id`
         const { id } = actions[0];
-        const { recordClassName, primaryKey } = actions[0].payload;
+        const { recordClassName, primaryKeyValues } = actions[0].payload;
         const options = actions.reduce((options, action) => {
           const { attributes = [], tables = [] } = action.payload;
           return Object.assign(options, {
@@ -226,15 +226,15 @@ function observeRecordRequests(action$: ActionsObservable<Action>, state$: State
             tables: uniq([ ...options.tables, ...tables])
           })
         }, { attributes: [], tables: [] } as RecordOptions);
-        return from(deps.wdkService.getRecord(recordClassName, primaryKey, options).then(
-          record => ({
-            type: RECORD_UPDATE,
-            id,
-            payload: {
-              record
-            }
-          } as RecordUpdatedAction)
-        ));
+        const primaryKey = await getPrimaryKey(deps.wdkService, recordClassName, primaryKeyValues);
+        const record = await deps.wdkService.getRecord(recordClassName, primaryKey, options);
+        return {
+          type: RECORD_UPDATE,
+          id,
+          payload: {
+            record
+          }
+        } as RecordUpdatedAction;
       })
     ))
   )
