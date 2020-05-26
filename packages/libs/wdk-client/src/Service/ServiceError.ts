@@ -4,10 +4,7 @@ export class ServiceError extends Error {
     public response: string,
     public status: number
   ) {
-    super(message);
+    super(`${message}: ${response}`);
   }
 
-  toString() {
-    return super.toString() + ': ' + this.response;
-  }
 }
