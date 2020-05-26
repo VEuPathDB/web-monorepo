@@ -31,6 +31,30 @@ body.vpdb-Body .vpdb-RootContainer {
     grid-template-columns: 31em 1fr 3em;
   }
 
+  @media screen and (min-width: $hamburger-width + 1) {
+    &__home {
+      .vpdb-SearchPane, .vpdb-Main, .vpdb-NewsPane {
+        padding-bottom: 12em;
+      }
+
+      .vpdb-Footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+
+      .vpdb-Footer__thin {
+        .ebrc-FooterPageDescriptionRow {
+          display: none;
+        }
+
+        .ebrc-FooterCopyright {
+          bottom: 0;
+        }
+      }
+    }
+  }
+
   @media screen and (max-width: $mobile-width) {
     &__home.vpdb-RootContainer__news-expanded, &__home.vpdb-RootContainer__news-collapsed {
       grid-template-columns: 100%;
