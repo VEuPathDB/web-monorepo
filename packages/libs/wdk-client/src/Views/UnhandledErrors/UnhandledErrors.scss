@@ -1,3 +1,37 @@
 .UnhandledErrors {
-  
+  position: relative;
+  width: 80vw;
+  max-height: 80vh;
+  background: white;
+  padding: 2em;
+  border-radius: 1em;
+  box-shadow: 0 0 6px #0000004d;
+
+  h1 {
+    padding: 0;
+  }
+
+  button {
+    position: absolute;
+    right: 1em;
+    border: none;
+    border-radius: 100%;
+    background: none;
+    font-size: 2em;
+    height: 2em;
+    width: 2em;
+  }
+
+  &--Details {
+    overflow: auto;
+    max-height: 60vh;
+  }
+
+  &--DetailItem {
+    margin: 1em 0;
+    padding: 1em;
+    background: #ff00001a;
+    border-radius: .5em;
+    color: #e22222;
+  }
 }
