@@ -64,19 +64,19 @@ export type RequestPartialRecord = {
   id: string,
   payload: {
     recordClassName: string;
-    primaryKey: PrimaryKey;
+    primaryKeyValues: string[];
     attributes?: string[];
     tables?: string[];
   },
 }
 
-export function requestPartialRecord(id: string, recordClassName: string, primaryKey: PrimaryKey, attributes?: string[], tables?: string[]): RequestPartialRecord {
+export function requestPartialRecord(id: string, recordClassName: string, primaryKeyValues: string[], attributes?: string[], tables?: string[]): RequestPartialRecord {
   return {
     type: REQUEST_PARTIAL_RECORD,
     id,
     payload: { 
       recordClassName,
-      primaryKey,
+      primaryKeyValues,
       attributes,
       tables
     }
@@ -365,7 +365,7 @@ function setActiveRecord(
  * @param primaryKeyValues
  * @returns Promise<PrimaryKey>
  */
-function getPrimaryKey(wdkService: WdkService, recordClassUrlSegment: string, primaryKeyValues: string[]) {
+export function getPrimaryKey(wdkService: WdkService, recordClassUrlSegment: string, primaryKeyValues: string[]) {
   return wdkService.findRecordClass(recordClassUrlSegment)
     .then(recordClass => {
       if (recordClass == null)
