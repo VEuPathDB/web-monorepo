@@ -42,6 +42,7 @@ const parseSettings = createSettingsParser('relatedObservationsLayoutSettings', 
   getDateDirectionParam: parameterGetter('dateDirectionParamName'),
   getNumRelativeVisitsParam: parameterGetter('numRelativeEventsParamName', false),
   getRelativeVisitsParam: parameterGetter('relativeVisitsParamName'),
+  getTimepointUnits: (_, properties) => () => properties.timepointUnits || 'days',
   isRelatedObservationsGroups: (_, __, settings) => group => group === settings.getRelatedObservationsGroup(),
   isActive: (_, __, settings) => wizardState => {
     const useRelativeObservationsParam = settings.getUseRelativeObservationsParam();
@@ -100,7 +101,7 @@ export default class RelativeVisitsGroup extends React.Component {
             {paramRenderer(settings.getDateOperationParam(), this.props)}
             <Padded><FakeStep>{eventsGroup.displayName}</FakeStep> that are</Padded>
             {paramRenderer(settings.getDaysBetweenParam(), this.props)}
-            <Padded>days</Padded>
+            <Padded>{settings.getTimepointUnits()}</Padded>
             {paramRenderer(settings.getDateDirectionParam(), this.props)}
             <Padded>the <FakeStep>{group.displayName}</FakeStep> specified below</Padded>
           </div>
