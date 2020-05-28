@@ -1,0 +1,20 @@
+@import 'ebrc-client/styles/breakpoints.scss';
+@import 'ebrc-client/styles/default-layout.scss';
+@import 'ebrc-client/styles/header.scss';
+@import 'ebrc-client/styles/announcements.scss';
+@import 'ebrc-client/styles/main.scss';
+@import 'ebrc-client/styles/footer.scss';
+
+.vpdb-Header {
+  background-color: #414c9b;
+
+  .vpdb-HeaderBranding {
+    content: url('~site/images/OrthoMCL/title_s.png');
+  }
+
+  @media screen and (min-width: $cramped-header-width + 1) {
+    .vpdb-HeaderBranding {
+      height: 5em;
+    }
+  }
+}
