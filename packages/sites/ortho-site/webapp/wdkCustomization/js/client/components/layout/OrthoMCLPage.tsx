@@ -22,10 +22,6 @@ const cx = makeClassNameHelper('vpdb-');
 export const OrthoMCLPage: FunctionComponent<Props> = props => {
   useHomePageTitle();
 
-  const displayName = useDisplayName();
-  const buildNumber = useBuildNumber();
-  const releaseDate = useReleaseDate();
-
   const menuItems = useHeaderMenuItems();
 
   const {
@@ -63,12 +59,7 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
         {props.children}
       </Main>
       <ErrorBoundary>
-        <Footer
-          containerClassName={cx('Footer')}
-          buildNumber={buildNumber}
-          releaseDate={releaseDate}
-          displayName={displayName}
-        >
+        <Footer containerClassName={cx('Footer')}>
         </Footer>
       </ErrorBoundary>
       <ErrorBoundary>
@@ -85,14 +76,6 @@ function useIsHomePage() {
 
 function useDisplayName() {
   return useSelector((state: RootState) => state.globalData.config?.displayName);
-}
-
-function useBuildNumber() {
-  return useSelector((state: RootState) => state.globalData.config?.buildNumber);
-}
-
-function useReleaseDate() {
-  return useSelector((state: RootState) => state.globalData.config?.releaseDate);
 }
 
 function useHomePageTitle() {
