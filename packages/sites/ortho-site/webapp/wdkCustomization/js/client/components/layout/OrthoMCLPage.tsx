@@ -1,5 +1,6 @@
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
 
 import { noop } from 'lodash';
 
@@ -20,9 +21,11 @@ import './OrthoMCLPage.scss';
 const cx = makeClassNameHelper('vpdb-');
 
 export const OrthoMCLPage: FunctionComponent<Props> = props => {
-  const buildNumber = useSelector((state: RootState) => state.globalData.config?.buildNumber);
-  const releaseDate = useSelector((state: RootState) => state.globalData.config?.releaseDate);
-  const displayName = useSelector((state: RootState) => state.globalData.config?.displayName);
+  useHomePageTitle();
+
+  const displayName = useDisplayName();
+  const buildNumber = useBuildNumber();
+  const releaseDate = useReleaseDate();
 
   const menuItems = useMemo(() => [], []);
   const closedBanners = useMemo(() => [], []);
@@ -68,4 +71,32 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
       </ErrorBoundary>
     </div>
   );
+}
+
+function useIsHomePage() {
+  const location = useLocation();
+  return location.pathname === '/';
+}
+
+function useDisplayName() {
+  return useSelector((state: RootState) => state.globalData.config?.displayName);
+}
+
+function useBuildNumber() {
+  return useSelector((state: RootState) => state.globalData.config?.buildNumber);
+}
+
+function useReleaseDate() {
+  return useSelector((state: RootState) => state.globalData.config?.releaseDate);
+}
+
+function useHomePageTitle() {
+  const isHomePage = useIsHomePage();
+  const displayName = useDisplayName();
+
+  useEffect(() => {
+    if (isHomePage && displayName != null) {
+      document.title = displayName;
+    }
+  }, [ isHomePage, displayName ]);
 }
