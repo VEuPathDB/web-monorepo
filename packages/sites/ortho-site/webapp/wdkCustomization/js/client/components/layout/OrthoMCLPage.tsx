@@ -1,8 +1,6 @@
-import React, { FunctionComponent, useEffect, useMemo } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
-
-import { noop } from 'lodash';
 
 import { Link } from 'wdk-client/Components';
 import { Props } from 'wdk-client/Components/Layout/Page';
@@ -15,6 +13,7 @@ import CookieBanner from 'ebrc-client/components/CookieBanner';
 import { Footer } from 'ebrc-client/components/homepage/Footer';
 import { Header } from 'ebrc-client/components/homepage/Header';
 import { Main } from 'ebrc-client/components/homepage/Main';
+import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 
 import './OrthoMCLPage.scss';
 
@@ -28,7 +27,13 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
   const releaseDate = useReleaseDate();
 
   const menuItems = useMemo(() => [], []);
-  const closedBanners = useMemo(() => [], []);
+
+  const {
+    closedBanners,
+    setClosedBanners,
+    showAnnouncementsToggle,
+    onShowAnnouncements
+  } = useAnnouncements();
 
   const branding = (
     <Link to="/">
@@ -43,15 +48,15 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
         <Header
           menuItems={menuItems}
           containerClassName={cx('Header', 'expanded')}
-          onShowAnnouncements={noop}
-          showAnnouncementsToggle={false}
+          onShowAnnouncements={onShowAnnouncements}
+          showAnnouncementsToggle={showAnnouncementsToggle}
           branding={branding}
         />
       </ErrorBoundary>
       <div className={cx('Announcements')}>
         <Announcements
           closedBanners={closedBanners}
-          setClosedBanners={noop}
+          setClosedBanners={setClosedBanners}
         />
       </div>
       <Main containerClassName={cx('Main')}>
@@ -99,4 +104,29 @@ function useHomePageTitle() {
       document.title = displayName;
     }
   }, [ isHomePage, displayName ]);
+}
+
+function useAnnouncements() {
+  const isHomePage = useIsHomePage();
+  const [ closedBanners, setClosedBanners ] = useAnnouncementsState();
+
+  const showAnnouncementsToggle = useMemo(
+    () => isHomePage && closedBanners.length > 0,
+    [ isHomePage, closedBanners ]
+  );
+
+  const onShowAnnouncements = useCallback(() => {
+    setClosedBanners([]);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, [ setClosedBanners ]);
+
+  return {
+    closedBanners,
+    setClosedBanners,
+    showAnnouncementsToggle,
+    onShowAnnouncements
+  };
 }
