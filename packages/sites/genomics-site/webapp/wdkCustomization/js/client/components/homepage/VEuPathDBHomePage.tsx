@@ -204,12 +204,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
         </ErrorBoundary>
       }
       <ErrorBoundary>
-        <Footer
-          containerClassName={footerClassName}
-          buildNumber={props.buildNumber}
-          releaseDate={props.releaseDate}
-          displayName={props.displayName}
-        >
+        <Footer containerClassName={footerClassName}>
           <PageDescription />
         </Footer>
       </ErrorBoundary>
