@@ -11,7 +11,7 @@ import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import Announcements from 'ebrc-client/components/Announcements';
 import CookieBanner from 'ebrc-client/components/CookieBanner';
 import { Footer } from 'ebrc-client/components/homepage/Footer';
-import { Header } from 'ebrc-client/components/homepage/Header';
+import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
 import { Main } from 'ebrc-client/components/homepage/Main';
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 
@@ -26,7 +26,7 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
   const buildNumber = useBuildNumber();
   const releaseDate = useReleaseDate();
 
-  const menuItems = useMemo(() => [], []);
+  const menuItems = useHeaderMenuItems();
 
   const {
     closedBanners,
@@ -104,6 +104,71 @@ function useHomePageTitle() {
       document.title = displayName;
     }
   }, [ isHomePage, displayName ]);
+}
+
+function useHeaderMenuItems() {
+  return useMemo(() => {
+    const menuItems: HeaderMenuItem[] = [
+      {
+        key: 'my-strategies',
+        display: 'My Strategies',
+        type: 'reactRoute',
+        url: '/workspace/strategies'
+      },
+      {
+        key: 'searches',
+        display: 'Searches',
+        type: 'subMenu',
+        items: [ makeTodoItem('searches-content') ]
+      },
+      {
+        key: 'my-workspace',
+        display: 'My Workspace',
+        type: 'subMenu',
+        items: [ makeTodoItem('workspace-content') ]
+      },
+      {
+        key: 'tools',
+        display: 'Tools',
+        type: 'subMenu',
+        items: [ makeTodoItem('tools-content') ]
+      },
+      {
+        key: 'data',
+        display: 'Data',
+        type: 'subMenu',
+        items: [ makeTodoItem('data-content') ]
+      },
+      {
+        key: 'help',
+        display: 'Help',
+        type: 'subMenu',
+        items: [ makeTodoItem('help-content') ]
+      },
+      {
+        key: 'about',
+        display: 'Data',
+        type: 'subMenu',
+        items: [ makeTodoItem('about-content') ]
+      },
+      {
+        key: 'contact-us',
+        display: 'Contact Us',
+        type: 'reactRoute',
+        url: '/contact-us'
+      }
+    ];
+
+    return menuItems;
+  }, []);
+}
+
+function makeTodoItem(key: string): HeaderMenuItem {
+  return {
+    key,
+    display: <div>TODO</div>,
+    type: 'custom'
+  };
 }
 
 function useAnnouncements() {
