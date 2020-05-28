@@ -16,7 +16,7 @@ export function withRequestFields(Component) {
       dispatch(RecordActions.requestPartialRecord(
         requestId,
         recordClass.urlSegment,
-        record.id,
+        record.id.map(part => part.value),
         options.attributes,
         options.tables
       ))
