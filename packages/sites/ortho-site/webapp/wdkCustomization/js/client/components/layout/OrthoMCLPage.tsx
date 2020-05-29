@@ -108,7 +108,26 @@ function useHeaderMenuItems() {
         key: 'my-workspace',
         display: 'My Workspace',
         type: 'subMenu',
-        items: [ makeTodoItem('workspace-content') ]
+        items: [
+          {
+            key: 'galaxy-analyses',
+            display: 'Analyze my data (Galaxy)',
+            type: 'reactRoute',
+            url: '/galaxy-orientation'
+          },
+          {
+            key: 'basket',
+            display: 'Basket',
+            type: 'reactRoute',
+            url: '/workspace/basket'
+          },
+          {
+            key: 'favorites',
+            display: 'Favorites',
+            type: 'reactRoute',
+            url: '/workspace/favorites',
+          }
+        ]
       },
       {
         key: 'tools',
