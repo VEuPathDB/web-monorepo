@@ -2,16 +2,11 @@ import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } f
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
-import { get, memoize } from 'lodash';
-
 import { Link } from 'wdk-client/Components';
 import { Props } from 'wdk-client/Components/Layout/Page';
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
-import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { decode, string, arrayOf } from 'wdk-client/Utils/Json';
 
 import Announcements from 'ebrc-client/components/Announcements';
 import CookieBanner from 'ebrc-client/components/CookieBanner';
@@ -21,6 +16,12 @@ import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
 import { Main } from 'ebrc-client/components/homepage/Main';
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
+
+import {
+  useSearchTree,
+  useSessionBackedSearchTerm,
+  useSessionBackedExpandedBranches
+} from '../../hooks/searchCheckboxTree';
 
 import './OrthoMCLPage.scss';
 
@@ -124,20 +125,14 @@ function useCollapsibleHeader() {
 }
 
 function useHeaderMenuItems() {
-  const searchTree = useSelector(
-    (state: RootState) => get(state.globalData, 'searchTree') as CategoryTreeNode
-  );
-  const [ searchTerm, setSearchTerm ] = useSessionBackedState(
+  const searchTree = useSearchTree();
+  const [ searchTerm, setSearchTerm ] = useSessionBackedSearchTerm(
     '',
-    SEARCH_TERM_SESSION_KEY,
-    encodeSearchTerm,
-    parseSearchTerm
+    SEARCH_TERM_SESSION_KEY
   );
-  const [ expandedBranches, setExpandedBranches ] = useSessionBackedState(
+  const [ expandedBranches, setExpandedBranches ] = useSessionBackedExpandedBranches(
     [],
-    EXPANDED_BRANCHES_SESSION_KEY,
-    encodeExpandedBranches,
-    parseExpandedBranches
+    EXPANDED_BRANCHES_SESSION_KEY
   );
 
   const searchTreeNode = useMemo(
@@ -286,15 +281,6 @@ function makeTodoItem(key: string): HeaderMenuItem {
     type: 'custom'
   };
 }
-
-const encodeSearchTerm = (s: string) => s;
-const parseSearchTerm = encodeSearchTerm;
-
-const encodeExpandedBranches = JSON.stringify;
-const parseExpandedBranches = memoize((s: string) => decode(
-  arrayOf(string),
-  s
-));
 
 function makeStaticPageRoute(url: string) {
   return `${STATIC_ROUTE_PATH}${url}`;
