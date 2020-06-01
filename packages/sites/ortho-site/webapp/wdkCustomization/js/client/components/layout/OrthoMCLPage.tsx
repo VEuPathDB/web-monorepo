@@ -32,6 +32,8 @@ const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
 export const OrthoMCLPage: FunctionComponent<Props> = props => {
   useHomePageTitle();
 
+  const isHeaderExpanded = useCollapsibleHeader();
+
   const menuItems = useHeaderMenuItems();
 
   const {
@@ -40,8 +42,6 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
     showAnnouncementsToggle,
     onShowAnnouncements
   } = useAnnouncements();
-
-  const isHeaderExpanded = useCollapisbleHeader();
 
   const branding = (
     <Link to="/">
@@ -101,7 +101,7 @@ function useHomePageTitle() {
   }, [ isHomePage, displayName ]);
 }
 
-function useCollapisbleHeader() {
+function useCollapsibleHeader() {
   const [ isHeaderExpanded, setIsHeaderExpanded ] = useState(true);
 
   const updateHeader = useCallback(() => {
