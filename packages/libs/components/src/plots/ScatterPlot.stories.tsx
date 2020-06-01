@@ -8,11 +8,39 @@ export default {
 };
 
 export const Basic = () => <ScatterPlot
-  onUpdate={action('state updated')}
-  xData={[1,2,3,4,5,6]}
-  yData={[6,5,4,3,2,1]}
+  onPlotUpdate={action('state updated')}
+  data={[{
+    x: randomData(100),
+    y: randomData(100),
+    name: 'Variable A'
+  }]}
   xLabel="foo"
   yLabel="bar"
-  height={300}
-  width={300}
+  height={600}
+  width={600}
 />
+
+export const MultiVariate = () => <ScatterPlot
+  onPlotUpdate={action('state updated')}
+  data={[{
+    x: randomData(100),
+    y: randomData(100),
+    name: 'Variable A'
+  }, {
+    x: randomData(100),
+    y: randomData(100),
+    name: 'Variable B'
+  }]}
+  xLabel="foo"
+  yLabel="bar"
+  height={600}
+  width={600}
+/>
+
+function randomData(size: number) {
+  const data: number[] = [];
+  for (let i = 0; i < size; i++) {
+    data.push(Math.random());
+  }
+  return data;
+}
