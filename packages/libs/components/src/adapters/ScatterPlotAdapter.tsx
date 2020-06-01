@@ -18,13 +18,16 @@ export default function ScatterPlotAdapter(props: Props) {
   const [ plotState, setPlotState ] = useState();
   return (
     <ScatterPlot
-      xData={data.xData}
-      yData={data.yData}
+      data={[{
+        x: data.xData,
+        y: data.yData,
+        name: 'foo'
+      }]}
       xLabel={xVariableId}
       yLabel={yVariableId}
       height={200}
       width={200}
-      onUpdate={setPlotState}
+      onPlotUpdate={setPlotState}
     />
   )
 }
