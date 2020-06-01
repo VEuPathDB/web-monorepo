@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useCallback, useEffect, useMemo } from 'react';
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
@@ -41,6 +41,8 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
     onShowAnnouncements
   } = useAnnouncements();
 
+  const isHeaderExpanded = useCollapisbleHeader();
+
   const branding = (
     <Link to="/">
       <div className="vpdb-HeaderBranding">
@@ -53,7 +55,7 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
       <ErrorBoundary>
         <Header
           menuItems={menuItems}
-          containerClassName={cx('Header', 'expanded')}
+          containerClassName={cx('Header', isHeaderExpanded ? 'expanded' : 'collapsed')}
           onShowAnnouncements={onShowAnnouncements}
           showAnnouncementsToggle={showAnnouncementsToggle}
           branding={branding}
@@ -97,6 +99,28 @@ function useHomePageTitle() {
       document.title = displayName;
     }
   }, [ isHomePage, displayName ]);
+}
+
+function useCollapisbleHeader() {
+  const [ isHeaderExpanded, setIsHeaderExpanded ] = useState(true);
+
+  const updateHeader = useCallback(() => {
+    setIsHeaderExpanded(document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    window.addEventListener('touch', updateHeader, { passive: true });
+    window.addEventListener('wheel', updateHeader, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', updateHeader);
+      window.removeEventListener('touch', updateHeader);
+      window.removeEventListener('wheel', updateHeader);
+    };
+  }, [ updateHeader ]);
+
+  return isHeaderExpanded;
 }
 
 function useHeaderMenuItems() {
