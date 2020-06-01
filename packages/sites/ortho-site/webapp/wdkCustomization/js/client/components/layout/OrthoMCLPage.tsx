@@ -14,6 +14,7 @@ import { Footer } from 'ebrc-client/components/homepage/Footer';
 import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
 import { Main } from 'ebrc-client/components/homepage/Main';
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
+import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 
 import './OrthoMCLPage.scss';
 
@@ -133,13 +134,58 @@ function useHeaderMenuItems() {
         key: 'tools',
         display: 'Tools',
         type: 'subMenu',
-        items: [ makeTodoItem('tools-content') ]
+        items: [
+          {
+            key: 'blast',
+            display: 'BLAST',
+            type: 'reactRoute',
+            url: '/search/sequence/ByBlast'
+          },
+          {
+            key: 'proteome-upload',
+            display: 'Assign your proteins to groups - TODO',
+            type: 'reactRoute',
+            url: '/proteome-upload'
+          },
+          {
+            key: 'downloads',
+            display: 'Download OrthoMCL software',
+            type: 'reactRoute',
+            url: '/downloads'
+          },
+          {
+            key: 'web-services',
+            display: 'Web services',
+            type: 'reactRoute',
+            url: makeStaticPageRoute(`/content/OrthoMCL/webServices.html`)
+          },
+          {
+            key: 'publications',
+            display: 'Publications mentioning OrthoMCL',
+            type: 'externalLink',
+            target: '_blank',
+            url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en'
+          }
+        ]
       },
       {
         key: 'data',
         display: 'Data',
         type: 'subMenu',
-        items: [ makeTodoItem('data-content') ]
+        items: [
+          {
+            key: 'genome-statistics',
+            display: 'Genome Statistics - TODO',
+            type: 'reactRoute',
+            url: '/genome-statistics'
+          },
+          {
+            key: 'genome-sources',
+            display: 'Genome Sources - TODO',
+            type: 'reactRoute',
+            url: '/genome-sources'
+          }
+        ]
       },
       {
         key: 'help',
@@ -149,7 +195,7 @@ function useHeaderMenuItems() {
       },
       {
         key: 'about',
-        display: 'Data',
+        display: 'About',
         type: 'subMenu',
         items: [ makeTodoItem('about-content') ]
       },
@@ -171,6 +217,10 @@ function makeTodoItem(key: string): HeaderMenuItem {
     display: <div>TODO</div>,
     type: 'custom'
   };
+}
+
+function makeStaticPageRoute(url: string) {
+  return `${STATIC_ROUTE_PATH}${url}`;
 }
 
 function useAnnouncements() {
