@@ -1,11 +1,12 @@
-import React from 'react';
-import { RouteEntry } from "wdk-client/Core/RouteEntry";
+import { RouteEntry } from 'wdk-client/Core/RouteEntry';
+
+import { OrthoMCLHomePageController } from './controllers/OrthoMCLHomePageController';
 
 export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
   return [
     {
       path: '/',
-      component: () => <div>Future OrthoMCL Home Page</div>
+      component: OrthoMCLHomePageController
     },
     ...ebrcRoutes
   ];
