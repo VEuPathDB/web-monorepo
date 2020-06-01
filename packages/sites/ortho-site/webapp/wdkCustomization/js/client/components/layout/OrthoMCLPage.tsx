@@ -2,15 +2,21 @@ import React, { FunctionComponent, useCallback, useEffect, useMemo } from 'react
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
+import { get, memoize } from 'lodash';
+
 import { Link } from 'wdk-client/Components';
 import { Props } from 'wdk-client/Components/Layout/Page';
 import { ErrorBoundary } from 'wdk-client/Controllers';
 import { RootState } from 'wdk-client/Core/State/Types';
+import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
+import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { decode, string, arrayOf } from 'wdk-client/Utils/Json';
 
 import Announcements from 'ebrc-client/components/Announcements';
 import CookieBanner from 'ebrc-client/components/CookieBanner';
 import { Footer } from 'ebrc-client/components/homepage/Footer';
+import { SearchCheckboxTree } from 'ebrc-client/components/homepage/SearchPane';
 import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
 import { Main } from 'ebrc-client/components/homepage/Main';
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
@@ -19,6 +25,9 @@ import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 import './OrthoMCLPage.scss';
 
 const cx = makeClassNameHelper('vpdb-');
+
+const SEARCH_TERM_SESSION_KEY = 'homepage-header-search-term';
+const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
 
 export const OrthoMCLPage: FunctionComponent<Props> = props => {
   useHomePageTitle();
@@ -91,6 +100,35 @@ function useHomePageTitle() {
 }
 
 function useHeaderMenuItems() {
+  const searchTree = useSelector(
+    (state: RootState) => get(state.globalData, 'searchTree') as CategoryTreeNode
+  );
+  const [ searchTerm, setSearchTerm ] = useSessionBackedState(
+    '',
+    SEARCH_TERM_SESSION_KEY,
+    encodeSearchTerm,
+    parseSearchTerm
+  );
+  const [ expandedBranches, setExpandedBranches ] = useSessionBackedState(
+    [],
+    EXPANDED_BRANCHES_SESSION_KEY,
+    encodeExpandedBranches,
+    parseExpandedBranches
+  );
+
+  const searchTreeNode = useMemo(
+    () => (
+      <SearchCheckboxTree
+        searchTree={searchTree}
+        searchTerm={searchTerm}
+        expandedBranches={expandedBranches}
+        setSearchTerm={setSearchTerm}
+        setExpandedBranches={setExpandedBranches}
+      />
+    ),
+    [ searchTree, searchTerm, expandedBranches ]
+  );
+
   return useMemo(() => {
     const menuItems: HeaderMenuItem[] = [
       {
@@ -103,7 +141,13 @@ function useHeaderMenuItems() {
         key: 'searches',
         display: 'Searches',
         type: 'subMenu',
-        items: [ makeTodoItem('searches-content') ]
+        items: [
+          {
+            key: 'search-tree',
+            display: searchTreeNode,
+            type: 'custom'
+          }
+        ]
       },
       {
         key: 'my-workspace',
@@ -208,7 +252,7 @@ function useHeaderMenuItems() {
     ];
 
     return menuItems;
-  }, []);
+  }, [ searchTreeNode ]);
 }
 
 function makeTodoItem(key: string): HeaderMenuItem {
@@ -218,6 +262,15 @@ function makeTodoItem(key: string): HeaderMenuItem {
     type: 'custom'
   };
 }
+
+const encodeSearchTerm = (s: string) => s;
+const parseSearchTerm = encodeSearchTerm;
+
+const encodeExpandedBranches = JSON.stringify;
+const parseExpandedBranches = memoize((s: string) => decode(
+  arrayOf(string),
+  s
+));
 
 function makeStaticPageRoute(url: string) {
   return `${STATIC_ROUTE_PATH}${url}`;
