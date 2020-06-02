@@ -27,8 +27,8 @@ import './OrthoMCLPage.scss';
 
 const cx = makeClassNameHelper('vpdb-');
 
-const SEARCH_TERM_SESSION_KEY = 'homepage-header-search-term';
-const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-header-expanded-branch-ids';
+const SEARCH_TERM_SESSION_KEY = 'header-search-term';
+const EXPANDED_BRANCHES_SESSION_KEY = 'header-expanded-branch-ids';
 
 export const OrthoMCLPage: FunctionComponent<Props> = props => {
   useHomePageTitle();

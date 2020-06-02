@@ -9,7 +9,7 @@ import { decode, arrayOf, string } from 'wdk-client/Utils/Json';
 
 export function useSearchTree() {
   return useSelector(
-    (state: RootState) => get(state.globalData, 'searchTree') as CategoryTreeNode
+    (state: RootState) => get(state.globalData, 'searchTree') as CategoryTreeNode | undefined
   );
 }
 
