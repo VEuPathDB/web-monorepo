@@ -6,7 +6,8 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
   return [
     {
       path: '/',
-      component: OrthoMCLHomePageController
+      component: OrthoMCLHomePageController,
+      rootClassNameModifier: 'home-page'
     },
     ...ebrcRoutes
   ];

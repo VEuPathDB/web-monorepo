@@ -1,0 +1,105 @@
+@import 'ebrc-client/styles/breakpoints.scss';
+
+$dark-color: #414c9b;
+
+.vpdb-RootContainer.vpdb-RootContainer__home-page main {
+  padding-right: 0;
+
+  .vpdb-LandingContent {
+    display: grid;
+
+    &__news-expanded {
+      grid-template-columns: 1fr 23em;
+    }
+
+    &__news-collapsed {
+      grid-template-columns: 1fr 3em;
+    }
+
+    @media screen and (max-width: $tablet-width) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .vpdb-Bubbles {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-content: flex-start;
+  }
+
+  .vpdb-Bubble {
+    width: 20em;
+    margin: 0 1em 3em 1em;
+    border: 0.0625rem solid gray;
+    border-top-left-radius: 1.3em;
+    border-top-right-radius: 1.3em;
+
+    &Header {
+      text-align: center;
+      color: white;
+      background-color: $dark-color;
+      padding: 0.75em;
+      font-size: 1.2em;
+      border-top-left-radius: 1em;
+      border-top-right-radius: 1em;
+    }
+  }
+
+  .vpdb-Bubble.Groups .vpdb-BubbleHeader {
+    background-color: #3a486f;
+  }
+
+  .vpdb-Bubble.Sequences .vpdb-BubbleHeader {
+    background-color: #636a7e;
+  }
+
+  .vpdb-Bubble.Tools .vpdb-BubbleHeader {
+    background-color: #919191;
+  }
+
+  .vpdb-Bubble.Groups .vpdb-BubbleContent, .vpdb-Bubble.Sequences .vpdb-BubbleContent {
+    padding: 0 0.5em 0.7em 0.5em;
+  }
+
+  .vpdb-Bubble.Tools .vpdb-BubbleContent {
+    padding: 0.75em;
+  }
+
+  .ebrc-NewsPane {
+    border-left: 0.0625rem solid $dark-color;
+
+    &__news-collapsed {
+      border-left-style: hidden;
+    }
+
+    .wdk-Showcase-HeadingRow {
+      display: none;
+    }
+
+    @media screen and (max-width: $tablet-width) {
+      border-left: none;
+
+      .wdk-Showcase-HeadingRow {
+        display: flex;
+      }
+    }
+  }
+
+  .wdk-Showcase {
+    margin: 0
+  }
+  .News-Section .News .NewsList {
+    max-height: 145px;
+    border-color: rgba(15,70,100,.12);
+    border-style: solid;
+    border-width: 1px 0;
+  }
+  .News-Section .News .NewsList .NewsTeaser{
+    display: none;
+  }
+  .News-Section .AllNewsLink {
+    font-size: 110%;
+  }
+}
