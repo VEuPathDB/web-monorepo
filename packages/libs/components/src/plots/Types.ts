@@ -12,7 +12,9 @@ export interface PlotComponentData<T, S> {
 export interface PlotComponentProps<T, S> {
   /** The data to be plotted */
   data: PlotComponentData<T, S>[];
+  /** Label for x-axis */
   xLabel: string;
+  /** Label for y-axis */
   yLabel: string;
   /** Height of plot element */
   height: CSSProperties['height'];
