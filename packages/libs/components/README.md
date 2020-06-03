@@ -6,5 +6,6 @@ This project is a component library for plots used in VEuPathDB websites. It use
 
 ## Quick start
 Clone this repo and run the following commands within the repo's directory:
+
     yarn install
     yarn storybook
