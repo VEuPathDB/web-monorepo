@@ -3,13 +3,14 @@ import React, { useCallback, useMemo } from 'react';
 import { getLabel } from 'wdk-client/Utils/CategoryUtils';
 
 import { Link } from 'wdk-client/Components';
+import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 
 import { useSearchTree, useSessionBackedSearchTerm, useSessionBackedExpandedBranches } from '../hooks/searchCheckboxTree';
 import { SearchCheckboxTree } from 'ebrc-client/components/homepage/SearchPane';
 import { NewsPane } from 'ebrc-client/components/homepage/NewsPane';
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 
 const IS_NEWS_EXPANDED_SESSION_KEY = 'homepage-is-news-expanded';
 
@@ -24,6 +25,7 @@ const SEQUENCE_EXPANDED_BRANCHES_SESSION_KEY = 'homepage-sequence-expanded-branc
 const cx = makeClassNameHelper('vpdb-');
 
 import './OrthoMCLHomePageController.scss';
+
 
 export function OrthoMCLHomePageController() {
   const groupSearchTree = usePartialSearchTree(GROUP_RECORD_CLASS_FULL_NAME);
@@ -57,6 +59,7 @@ export function OrthoMCLHomePageController() {
             expandedBranches={groupExpandedBranches}
             setSearchTerm={setGroupSearchTerm}
             setExpandedBranches={setGroupExpandedBranches}
+            linksPosition={LinksPosition.None}
           />
         </Bubble>
         <Bubble title="Identify Protein Sequences" containerClassName="Sequences">
@@ -66,6 +69,7 @@ export function OrthoMCLHomePageController() {
             expandedBranches={sequenceExpandedBranches}
             setSearchTerm={setSequenceSearchTerm}
             setExpandedBranches={setSequenceExpandedBranches}
+            linksPosition={LinksPosition.None}
           />
         </Bubble>
         <Bubble title="Tools" containerClassName="Tools">
