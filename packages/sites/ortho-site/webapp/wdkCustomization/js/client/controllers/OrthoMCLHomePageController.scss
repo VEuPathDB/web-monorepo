@@ -4,6 +4,7 @@ $dark-color: #414c9b;
 
 .vpdb-RootContainer.vpdb-RootContainer__home-page main {
   padding-right: 0;
+  margin: 0;
 
   .vpdb-LandingContent {
     display: grid;
@@ -27,6 +28,8 @@ $dark-color: #414c9b;
     justify-content: space-around;
     flex-wrap: wrap;
     align-content: flex-start;
+
+    margin-top: 1.5em;
   }
 
   .vpdb-Bubble {
