@@ -1,8 +1,9 @@
 @import 'ebrc-client/styles/breakpoints.scss';
+@import 'ebrc-client/styles/news.scss';
 
 $dark-color: #414c9b;
 
-.vpdb-RootContainer.vpdb-RootContainer__home-page {
+body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__home-page {
   .vpdb-Main {
     padding-right: 0;
     margin: 0;
@@ -13,6 +14,10 @@ $dark-color: #414c9b;
 
     &__news-expanded {
       grid-template-columns: 1fr 23em;
+
+      .vpdb-Bubbles {
+        border-right: 0.0625rem solid $dark-color;
+      }
     }
 
     &__news-collapsed {
@@ -33,7 +38,7 @@ $dark-color: #414c9b;
 
     font-size: 1.2em;
 
-    margin-top: 1.5em;
+    padding-top: 1.5em;
   }
 
   .vpdb-Bubble {
@@ -74,51 +79,8 @@ $dark-color: #414c9b;
     padding: 0.75em;
   }
 
-  .ebrc-NewsPane {
-    border-left: 0.0625rem solid $dark-color;
-
-    &__news-collapsed {
-      border-left-style: hidden;
-    }
-
-    .wdk-Showcase-HeadingRow {
-      display: none;
-    }
-
-    @media screen and (max-width: $tablet-width) {
-      border-left: none;
-
-      .wdk-Showcase-HeadingRow {
-        display: flex;
-      }
-    }
-  }
-
-  .wdk-Showcase {
-    margin: 0
-  }
-  .News-Section .News .NewsList {
-    max-height: 145px;
-    border-color: rgba(15,70,100,.12);
-    border-style: solid;
-    border-width: 1px 0;
-  }
-  .News-Section .News .NewsList .NewsTeaser{
-    display: none;
-  }
-  .News-Section .AllNewsLink {
-    font-size: 110%;
-  }
-
-  @media screen and (min-width: $hamburger-width + 1) {
-    .vpdb-Bubbles, .vpdb-NewsPane {
-      padding-bottom: 8em;
-    }
-
-    .vpdb-Footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-    }
+  .vpdb-NewsPane {
+    grid-area: unset;
+    border-style: none;
   }
 }

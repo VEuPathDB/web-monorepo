@@ -103,7 +103,7 @@ export function OrthoMCLHomePageController() {
         </Bubble>
       </div>
       <NewsPane
-        containerClassName={cx('NewsPane')}
+        containerClassName={cx('NewsPane', isNewsExpanded ? 'news-expanded' : 'news-collapsed')}
         isNewsExpanded={isNewsExpanded}
         toggleNews={toggleNews}
       />
