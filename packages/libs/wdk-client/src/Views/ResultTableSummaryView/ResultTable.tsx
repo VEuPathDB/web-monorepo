@@ -60,10 +60,10 @@ function ResultTable(props: Props) {
   const rows = answer.records;
   const eventHandlers = getEventHandlers(props);
   const uiState = {
-    sort: {
+    sort: answer.meta.sorting.length > 0 ? {
       columnKey: answer.meta.sorting[0].attributeName,
       direction: answer.meta.sorting[0].direction.toLowerCase()
-    },
+    } : undefined,
     pagination: {
       currentPage: Math.ceil((answer.meta.pagination.offset + 1) / answer.meta.pagination.numRecords),
       rowsPerPage: answer.meta.pagination.numRecords,
