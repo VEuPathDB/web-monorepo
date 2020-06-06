@@ -9,10 +9,10 @@ export interface Props {
 export const ErrorStatus = wrappable(function ErrorStatus(props: Props) {
   return (
     <div className="wdk-Error">
-      <h1>Oops...</h1>
+      <h1>We're sorry, something went wrong.</h1>
       {props.children || (
         <p>
-          Something went wrong. Please try again later.
+          Please try again later.
           <br />
           {props.message}
         </p>

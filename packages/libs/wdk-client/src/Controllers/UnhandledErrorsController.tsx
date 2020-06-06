@@ -12,7 +12,7 @@ export default function UnhandledErrorsController(props: Props) {
   const dispatch = useDispatch();
   const clearErrors = useCallback(() => dispatch(clearUnhandledErrors()), [ dispatch ])
   return (
-    <UnhandledErrors errors={errors} showDetails={process.env.NODE_ENV === 'production'} clearErrors={clearErrors}>
+    <UnhandledErrors errors={errors} showDetails={process.env.NODE_ENV !== 'production'} clearErrors={clearErrors}>
       {props.children}
     </UnhandledErrors>
   );

@@ -2,15 +2,16 @@ import { Action } from 'wdk-client/Actions';
 import { ActionsObservable, StateObservable } from 'redux-observable';
 import { Observable, EMPTY, fromEvent, merge } from 'rxjs';
 import { filter, tap, mergeMapTo, map, mapTo } from 'rxjs/operators';
-import { notifyUnhandledError, clearUnhandledErrors } from 'wdk-client/Actions/UnhandledErrorActions';
+import { notifyUnhandledError, clearUnhandledErrors, UnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { updateLocation } from 'wdk-client/Actions/RouterActions';
 
 export const key = 'unhandledErrors';
 
+
 export interface State {
-  errors: any[]
+  errors: UnhandledError[]
 }
 
 const initialState: State = {
@@ -22,7 +23,7 @@ export function reduce(state: State = initialState, action: Action): State {
     case notifyUnhandledError.type:
       return {
         ...state,
-        errors: [ ...state.errors, action.payload.error ]
+        errors: [ ...state.errors, action.payload.unhandledError ]
       }
     case clearUnhandledErrors.type:
       return {
@@ -53,8 +54,8 @@ export function observe(action$: ActionsObservable<Action>, state$: StateObserva
   const notify$: Observable<never> = action$.pipe(
     filter(notifyUnhandledError.isOfType),
     tap(action => {
-      const { error } = action.payload;
-      wdkService.submitErrorIfNot500(error instanceof Error ? error : new Error(String(error)));
+      const { unhandledError: { error, id } } = action.payload;
+      wdkService.submitErrorIfNot500(error instanceof Error ? error : new Error(String(error)), { id });
     }),
     mergeMapTo(EMPTY),
 

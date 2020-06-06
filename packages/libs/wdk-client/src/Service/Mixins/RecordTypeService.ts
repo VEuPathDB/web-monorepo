@@ -1,4 +1,5 @@
 import { keyBy } from 'lodash';
+import { v4 as uuid } from 'uuid';
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
@@ -26,7 +27,7 @@ export default (base: ServiceBase) => {
     return base.getRecordClasses().then(rs => {
       let record = rs.find(r => r.urlSegment === urlSegment);
       if (record == null) {
-        throw new ServiceError("Could not find record class.", "Not found", 404);
+        throw new ServiceError("Could not find record class.", "Not found", 404, uuid());
       }
       return record;
     });
