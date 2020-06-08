@@ -32,12 +32,6 @@ export function OrthoMCLHomePageController() {
     [ isNewsExpanded, setIsNewsExpanded ]
   );
 
-  useLayoutEffect(() => {
-    // FIXME: This is a hack for recalculating the "rabbit ears"
-    // of Featured Tools whenever the news is expanded/collapsed
-    window.dispatchEvent(new Event('resize'));
-  }, [ isNewsExpanded ]);
-
   return (
     <div className={cx('LandingContent', isNewsExpanded ? 'news-expanded' : 'news-collapsed')}>
       <SearchPane
