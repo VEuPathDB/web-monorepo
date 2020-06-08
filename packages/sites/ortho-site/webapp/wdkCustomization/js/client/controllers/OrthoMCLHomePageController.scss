@@ -5,7 +5,7 @@ $dark-color: #414c9b;
 
 body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__home-page {
   .vpdb-Main {
-    padding-right: 0;
+    padding: 0;
     margin: 0;
   }
 
@@ -13,15 +13,15 @@ body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__home-page {
     display: grid;
 
     &__news-expanded {
-      grid-template-columns: 1fr 23em;
+      grid-template-columns: 26em 1fr 23em;
 
-      .vpdb-Bubbles {
-        border-right: 0.0625rem solid $dark-color;
+      .vpdb-MainContent {
+        border-right: 0.0625rem solid;
       }
     }
 
     &__news-collapsed {
-      grid-template-columns: 1fr 3em;
+      grid-template-columns: 31em 1fr 3em;
     }
 
     @media screen and (max-width: $tablet-width) {
@@ -30,57 +30,58 @@ body.vpdb-Body .vpdb-RootContainer.vpdb-RootContainer__home-page {
     }
   }
 
-  .vpdb-Bubbles {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    align-content: flex-start;
-
-    font-size: 1.2em;
-
-    padding-top: 1.5em;
+  .vpdb-SearchPane {
+    min-height: 100vh;
   }
 
-  .vpdb-Bubble {
-    width: 20em;
-    margin: 0 1em 3em 1em;
-    border: 0.0625rem solid gray;
-    border-top-left-radius: 1.3em;
-    border-top-right-radius: 1.3em;
+  .vpdb-MainContent {
+    overflow: hidden;
+    border-left: 0.0625rem solid;
+    padding: 1.5em 1.25em 0 1.5em;
 
-    &Header {
-      text-align: center;
-      color: white;
-      background-color: $dark-color;
-      padding: 0.75em;
-      font-size: 1.2em;
-      border-top-left-radius: 1em;
-      border-top-right-radius: 1em;
+    > hr {
+      margin: 2em 0 0.75em 0;
     }
   }
 
-  .vpdb-Bubble.Groups .vpdb-BubbleHeader {
-    background-color: #3a486f;
-  }
+  .vpdb-FeaturedToolsListItem {
+    &__selected {
+      .vpdb-FeaturedToolsListItemIconContainer {
+        border-color: $dark-color;
+      }
+    }
 
-  .vpdb-Bubble.Sequences .vpdb-BubbleHeader {
-    background-color: #636a7e;
-  }
-
-  .vpdb-Bubble.Tools .vpdb-BubbleHeader {
-    background-color: #919191;
-  }
-
-  .vpdb-Bubble.Groups .vpdb-BubbleContent, .vpdb-Bubble.Sequences .vpdb-BubbleContent {
-    padding: 0.5em 0.5em 0.7em 0.5em;
-  }
-
-  .vpdb-Bubble.Tools .vpdb-BubbleContent {
-    padding: 0.75em;
+    &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
+      border-color: $dark-color;
+    }
   }
 
   .vpdb-NewsPane {
     grid-area: unset;
     border-style: none;
+  }
+
+  @media screen and (min-width: $hamburger-width + 1) {
+    .vpdb-NewsPane {
+      padding-bottom: 8em;
+    }
+
+    .vpdb-SearchPane, .vpdb-MainContent {
+      padding-bottom: 10em;
+    }
+
+    .vpdb-Footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  }
+
+  .vpdb-BgDark {
+    background-color: $dark-color;
+  }
+
+  .vpdb-BdDark {
+    border-color: $dark-color;
   }
 }
