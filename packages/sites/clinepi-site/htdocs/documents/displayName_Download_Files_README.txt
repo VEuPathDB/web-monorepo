@@ -11,8 +11,7 @@ General notes:
 	install.packages("data.table")
 	library(data.table)
 	setwd("~/Downloads")
-	d <- fread("ISASimple_Gates_MAL-ED_phase2_RSRC.txt")
-	
+	d <- fread("ISASimple_Gates_MAL-ED_phase2_RSRC.txt") 
 • If you choose to use Excel: 
    ◦ For a primer on how to open tab delimited .txt files in Excel, see: https://support.microsoft.com/en-us/office/import-or-export-text-txt-or-csv-files-5250ac4c-663c-47ce-937b-339e391393ba 
    ◦ When opening data files in Excel, date variables may read "00:00.0" for all values. This is not a data error, but will require reformatting the column using Excel’s ‘Text Import Wizard’ to obtain the actual data. See: https://support.office.com/en-us/article/text-import-wizard-c5b02af6-fda1-4440-899f-f78bafe41857#ID0EAAEAAA=Office_2010_-_Office_2016 
@@ -21,8 +20,7 @@ General notes:
 
 
 
-ISASimple_[INSERT file name]_RSRC_ontologyMetadata.txt 
-The ontology term association file includes the columns: 
+ISASimple_[INSERT file name]_RSRC_ontologyMetadata.txt, the ontology term association file includes the columns: 
 • iri -- Internationalized Resource Identifier (IRI) assigned to variable (Example: "[INSERT IRI for a key variable]") 
 • label -- Displayed as variable name on ClinEpiDB (Example: "[INSERT label for the key variable whose IRI appears above]") 
 • type -- Whether data is formatted as number, string, or date. If empty, row belongs to parent term without data 
@@ -35,8 +33,6 @@ The ontology term association file includes the columns: 
 • distinct_values -- Pipe-delimited (|) list of all possible values for string variable 
 • variable -- Column header, or variable name, from original data files. Pipe-delimited (|) list if multiple variables from original data files were mapped to one ontology term (Example: "[INSERT variable for the key variable whose IRI appears above]") 
    ◦ Values are formatted as"data file::variable" (Example: "[INSERT dataFile::variable for the key variable whose IRI appears above]"; variable "[INSERT variable-only for the key variable whose IRI appears above]" came from data file "[INSERT dataFile-only for the key variable whose IRI appears above].[INSERT file extension for the dataFile]") 
-
-
 
 
 
