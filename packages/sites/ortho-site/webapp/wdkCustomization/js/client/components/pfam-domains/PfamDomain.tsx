@@ -5,9 +5,9 @@ import { assignColors } from '../../utils/pfamDomain';
 import './PfamDomain.scss';
 
 interface Props {
-  pfamId: string,
-  style?: React.CSSProperties,
-  title?: string
+  pfamId: string;
+  style?: React.CSSProperties;
+  title?: string;
 }
 
 export function PfamDomain({ pfamId, style, title }: Props) {
