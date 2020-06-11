@@ -44,15 +44,7 @@ interface MappedProps {
 type Props = OwnProps & DispatchProps & MappedProps;
 
 function StrategyWorkspaceController(props: Props) {
-  const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError, strategies } = props;
-
-  const userOwnedStrategies = useMemo(
-    () => strategySummaries && new Set([
-      ...Object.keys(strategies).map(toNumber),
-      ...strategySummaries.map(({ strategyId }) => toNumber(strategyId))
-    ]),
-    [ strategies, strategySummaries ]
-  );
+  const { dispatch, activeStrategy, notifications, openedStrategies, strategySummaries, publicStrategySummaries, publicStrategySummariesError } = props;
 
   useEffect(() => {
     dispatch(openStrategyView());
@@ -78,18 +70,19 @@ function StrategyWorkspaceController(props: Props) {
         publicStrategiesCount={publicStrategiesCount}
         publicStrategiesError={publicStrategySummariesError}
       />
-      {/* Only load ChildView when openedStrategies and userOwnedStrategies are loaded, to prevent clobbering store values. Not ideal, but it works. */}
-        {openedStrategies && userOwnedStrategies ? <ChildView {...props} userOwnedStrategies={userOwnedStrategies} /> : <Loading/>}
+      {/* Only load ChildView when openedStrategies and strategySummaries are loaded, to prevent clobbering store values. Not ideal, but it works. */}
+        {openedStrategies && strategySummaries ? <ChildView {...props} /> : <Loading/>}
     </div>
   )
 }
 
-type ChildViewProps = Props & { userOwnedStrategies: Set<number> };
-
-function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStrategies = [], strategySummaries, strategySummariesLoading, userOwnedStrategies }: ChildViewProps) {
+function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStrategies = [], strategySummaries = [], strategySummariesLoading, strategies }: Props) {
   const childView = parseSubPath(subPath, allowEmptyOpened, queryParams);
   const activeStrategyId = childView.type === 'openedStrategies' ? childView.strategyId : undefined;
   const activeStepId = childView.type === 'openedStrategies' ? childView.stepId : undefined;
+  const ownsActiveStrategy = activeStrategyId == null
+    ? false
+    : activeStrategyId in strategies || strategySummaries.some(({ strategyId }) => strategyId === activeStrategyId)
 
   // Select last opened strategy, if no strategy is specified in url
   // Note, using `useLayoutEffect` to prevent glitches when transistion between routes
@@ -108,32 +101,28 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
   // If the user is navigatating to a strategy they own,
   // update openedStrategies if necessary
   useEffect(() => {
-    if (
-      activeStrategyId &&
-      userOwnedStrategies.has(activeStrategyId) &&
-      !openedStrategies.includes(activeStrategyId)
-    ) {
+    if (activeStrategyId && ownsActiveStrategy) {
       dispatch(addToOpenedStrategies([activeStrategyId]));
     }
-  }, [activeStrategyId, userOwnedStrategies]);
+  }, [activeStrategyId, ownsActiveStrategy]);
 
   // If the user is navigating to a strategy they own,
   // update the activeStrategy approriately
   useEffect(() => {
-    if (activeStrategyId && userOwnedStrategies.has(activeStrategyId)) {
+    if (activeStrategyId && ownsActiveStrategy) {
       dispatch(setActiveStrategy(activeStrategyId == null ? undefined : {
         strategyId: activeStrategyId,
         stepId: activeStepId
       }));
     }
-  }, [activeStrategyId, activeStepId, userOwnedStrategies]);
+  }, [activeStrategyId, activeStepId, ownsActiveStrategy]);
 
   // If the user is tryting to navigate to a strategy they don't own, redirect them
   useLayoutEffect(() => {
-    if (activeStrategyId && !userOwnedStrategies.has(activeStrategyId)) {
+    if (activeStrategyId && !ownsActiveStrategy) {
       dispatch(transitionToInternalPage('/workspace/strategies/all', { replace: true }));
     }
-  }, [activeStrategyId, userOwnedStrategies]);
+  }, [activeStrategyId, ownsActiveStrategy]);
 
   // Prevent opened tab from being selecting while data needed for redirect above is being loaded
   if (openedStrategies == null || strategySummaries == null) return <Loading/>;
