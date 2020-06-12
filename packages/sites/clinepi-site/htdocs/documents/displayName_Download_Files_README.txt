@@ -62,7 +62,7 @@ Data Files:
    • Key identifiers: [Observation_Id, Participant_Id, Household_Id] 
    • 1 row for each day of observation for each participant 
    • [INSERT # of columns] variables (columns) & [INSERT # of rows] observations (rows) 
-	◦ [INSERT # of unique Observation_Id] unique "Observartion_Id" 
+	◦ [INSERT # of unique Observation_Id] unique "Observation_Id" 
 
 4. ISASimple_[INSERT file name]_RSRC_samples.txt 
    • Key identifiers: [Sample_Id, Observation_Id, Participant_Id, Household_Id] 
