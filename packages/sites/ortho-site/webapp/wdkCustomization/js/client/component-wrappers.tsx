@@ -2,11 +2,13 @@ import React from 'react';
 
 import { OrthoMCLPage } from './components/layout/OrthoMCLPage';
 import {
-  RecordAttributeSectionProps,
-  RecordTableProps,
   RecordTable as GroupRecordTable,
-  RecordAttributeSection as GroupRecordAttributeSection,
+  RecordAttributeSection as GroupRecordAttributeSection
 } from './records/GroupRecordClasses.GroupRecordClass';
+import {
+  RecordAttributeSectionProps,
+  RecordTableProps
+} from './records/Types';
 
 export default {
   Page: () => OrthoMCLPage,

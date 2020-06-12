@@ -1,16 +1,13 @@
 import React, { useMemo } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { requestPartialRecord } from 'wdk-client/Actions/RecordActions';
 import { CollapsibleSection } from 'wdk-client/Components';
-import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
-import { AttributeField, AttributeValue, RecordClass, RecordInstance, TableField, TableValue } from 'wdk-client/Utils/WdkModel';
+import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
 
 import { PfamDomain } from '../components/pfam-domains/PfamDomain';
+import { RecordAttributeSectionProps, RecordTableProps,  WrappedComponentProps } from './Types';
 
 import './GroupRecordClasses.GroupRecordClass.scss';
-
-type WrappedComponentProps<T> = T & { DefaultComponent: React.ComponentType<T> };
 
 const MSA_ATTRIBUTE_NAME = 'msa';
 const PFAMS_TABLE_NAME = 'PFams';
@@ -25,16 +22,6 @@ const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeField = {
   truncateTo: 100,
   formats: []
 };
-
-export interface RecordAttributeSectionProps {
-  attribute: AttributeField;
-  isCollapsed: boolean;
-  onCollapsedChange: () => void;
-  ontologyProperties: CategoryTreeNode['properties'];
-  record: RecordInstance;
-  recordClass: RecordClass;
-  requestPartialRecord: typeof requestPartialRecord;
-}
 
 export function RecordAttributeSection(props: WrappedComponentProps<RecordAttributeSectionProps>) {
   return props.attribute.name === MSA_ATTRIBUTE_NAME
@@ -69,13 +56,6 @@ function MsaAttributeSection(props: RecordAttributeSectionProps) {
   );
 }
 
-export interface RecordTableProps {
-  className?: string;
-  record: RecordInstance;
-  recordClass: RecordClass;
-  table: TableField;
-  value: TableValue;
-}
 
 export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
   const transformedTable = useMemo(
