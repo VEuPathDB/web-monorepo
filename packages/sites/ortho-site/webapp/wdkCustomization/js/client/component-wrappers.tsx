@@ -2,13 +2,16 @@ import React from 'react';
 
 import { OrthoMCLPage } from './components/layout/OrthoMCLPage';
 import {
+  RecordAttributeSectionProps,
+  RecordTableProps,
+  RecordTable as GroupRecordTable,
   RecordAttributeSection as GroupRecordAttributeSection,
-  RecordAttributeSectionProps
 } from './records/GroupRecordClasses.GroupRecordClass';
 
 export default {
   Page: () => OrthoMCLPage,
-  RecordAttributeSection: makeDynamicWrapper('RecordAttributeSection', (props: RecordAttributeSectionProps) => props.recordClass.fullName)
+  RecordAttributeSection: makeDynamicWrapper('RecordAttributeSection', (props: RecordAttributeSectionProps) => props.recordClass.fullName),
+  RecordTable: makeDynamicWrapper('RecordTable', (props: RecordTableProps) => props.recordClass.fullName)
 };
 
 const GROUP_RECORD_CLASS_NAME = 'GroupRecordClasses.GroupRecordClass';
@@ -16,7 +19,8 @@ const SEQUENCE_RECORD_CLASS_NAME = 'SequenceRecordClasses.SequenceRecordClass';
 
 const wrappedComponentsByRecordClass: Record<string, Record<string, React.ComponentType<any>>> = {
   [GROUP_RECORD_CLASS_NAME]: {
-    RecordAttributeSection: GroupRecordAttributeSection
+    RecordAttributeSection: GroupRecordAttributeSection,
+    RecordTable: GroupRecordTable
   },
   [SEQUENCE_RECORD_CLASS_NAME]: {}
 };
