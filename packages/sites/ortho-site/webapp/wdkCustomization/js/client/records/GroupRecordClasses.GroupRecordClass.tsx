@@ -12,16 +12,6 @@ import './GroupRecordClasses.GroupRecordClass.scss';
 
 type WrappedComponentProps<T> = T & { DefaultComponent: React.ComponentType<T> };
 
-export interface RecordAttributeSectionProps {
-  attribute: AttributeField;
-  isCollapsed: boolean;
-  onCollapsedChange: () => void;
-  ontologyProperties: CategoryTreeNode['properties'];
-  record: RecordInstance;
-  recordClass: RecordClass;
-  requestPartialRecord: typeof requestPartialRecord;
-}
-
 const MSA_ATTRIBUTE_NAME = 'msa';
 const PFAMS_TABLE_NAME = 'PFams';
 const PFAMS_ACCESSION_NUMBER_ATTRIBUTE_NAME = 'accession';
@@ -35,6 +25,16 @@ const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeField = {
   truncateTo: 100,
   formats: []
 };
+
+export interface RecordAttributeSectionProps {
+  attribute: AttributeField;
+  isCollapsed: boolean;
+  onCollapsedChange: () => void;
+  ontologyProperties: CategoryTreeNode['properties'];
+  record: RecordInstance;
+  recordClass: RecordClass;
+  requestPartialRecord: typeof requestPartialRecord;
+}
 
 export function RecordAttributeSection(props: WrappedComponentProps<RecordAttributeSectionProps>) {
   return props.attribute.name === MSA_ATTRIBUTE_NAME
@@ -77,6 +77,35 @@ export interface RecordTableProps {
   value: TableValue;
 }
 
+export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
+  const transformedTable = useMemo(
+    () => props.table.name in attributeFieldTransforms
+      ? {
+          ...props.table,
+          attributes: attributeFieldTransforms[props.table.name](props.table.attributes)
+        }
+      : props.table,
+    [ props.table ]
+  );
+
+  const transformedValue = useMemo(
+    () => props.table.name in tableRowTransforms
+      ? props.value.map(tableRowTransforms[props.table.name])
+      : props.value,
+    [ props.value, props.table.name ]
+  );
+
+  return <props.DefaultComponent {...props} table={transformedTable} value={transformedValue} />;
+}
+
+const attributeFieldTransforms: Record<string, (afs: AttributeField[]) => AttributeField[]> = {
+  [PFAMS_TABLE_NAME]: afs => transformPfamsAttributeFields(true, afs)
+};
+
+const tableRowTransforms: Record<string, (row: Record<string, AttributeValue>) => Record<string, AttributeValue>> = {
+  [PFAMS_TABLE_NAME]: row => transformPfamsTableRow(true, row)
+};
+
 function transformPfamsAttributeFields(
   isGraphic: boolean,
   attributeFields: AttributeField[]
@@ -110,33 +139,4 @@ function transformPfamsTableRow(
       ? renderToStaticMarkup(<PfamDomain pfamId={accessionValue} />)
       : null
   };
-}
-
-const attributeFieldTransforms: Record<string, (afs: AttributeField[]) => AttributeField[]> = {
-  [PFAMS_TABLE_NAME]: afs => transformPfamsAttributeFields(true, afs)
-};
-
-const tableRowTransforms: Record<string, (row: Record<string, AttributeValue>) => Record<string, AttributeValue>> = {
-  [PFAMS_TABLE_NAME]: row => transformPfamsTableRow(true, row)
-};
-
-export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
-  const transformedTable = useMemo(
-    () => props.table.name in attributeFieldTransforms
-      ? {
-          ...props.table,
-          attributes: attributeFieldTransforms[props.table.name](props.table.attributes)
-        }
-      : props.table,
-    [ props.table ]
-  );
-
-  const transformedValue = useMemo(
-    () => props.table.name in tableRowTransforms
-      ? props.value.map(tableRowTransforms[props.table.name])
-      : props.value,
-    [ props.value, props.table.name ]
-  );
-
-  return <props.DefaultComponent {...props} table={transformedTable} value={transformedValue} />;
 }
