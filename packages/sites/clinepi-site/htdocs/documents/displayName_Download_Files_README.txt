@@ -32,7 +32,7 @@ ISASimple_[INSERT file name]_RSRC_ontologyMetadata.txt, the ontology term associ
 • number_distinct_values -- Count of all possible values for variable 
 • distinct_values -- Pipe-delimited (|) list of all possible values for string variable 
 • variable -- Column header, or variable name, from original data files. Pipe-delimited (|) list if multiple variables from original data files were mapped to one ontology term (Example: "[INSERT variable for the key variable whose IRI appears above]") 
-   ◦ Values are formatted as"data file::variable" (Example: "[INSERT dataFile::variable for the key variable whose IRI appears above]"; variable "[INSERT variable-only for the key variable whose IRI appears above]" came from data file "[INSERT dataFile-only for the key variable whose IRI appears above].[INSERT file extension for the dataFile]") 
+   ◦ Values are formatted as "data file::variable" (Example: "[INSERT dataFile::variable for the key variable whose IRI appears above]"; variable "[INSERT variable-only for the key variable whose IRI appears above]" came from data file "[INSERT dataFile-only for the key variable whose IRI appears above].[INSERT file extension for the dataFile]") 
 
 
 
@@ -48,7 +48,7 @@ Data Files:
 1. ISASimple_[INSERT file name]_RSRC_households.txt 
    • Key identifiers: [Household_Observation_Id, Household_Id] 
    • 1 row for [each day of observation for each household / each household]. 
-   • [INSERT # of columns] variables (columns) & [INSERT # of rows] households (rows) 
+   • [INSERT # of columns] variables (columns) & [INSERT # of rows] [household observations / households] (rows) 
 	◦ [INSERT # of unique Household_Id] unique "Household_Id" 
 	◦ [INSERT # of unique Household_Observation_Id] unique "Household_Observation_Id" 
 
