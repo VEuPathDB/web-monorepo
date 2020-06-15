@@ -1,12 +1,12 @@
 import { capitalize, groupBy } from 'lodash';
 import React, { ReactElement } from "react";
 import { wrappable, makeClassNameHelper } from "wdk-client/Utils/ComponentUtils";
-import ErrorStatus from "wdk-client/Components/PageStatus/Error";
 import Modal from "wdk-client/Components/Overlays/Modal";
 import Icon from "wdk-client/Components/Icon/Icon";
 
 import './UnhandledErrors.scss';
 import { UnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
+import Link from 'wdk-client/Components/Link';
 
 const cx = makeClassNameHelper('UnhandledErrors');
 
@@ -21,6 +21,11 @@ function UnhandledError(props: Props) {
   const { children, clearErrors, errors, showDetails } = props;
   const groupedErrors = groupBy(errors, 'type');
   const errorTypes = [ 'input', 'runtime', 'server', 'client' ] as const;
+  const contactUsMessage = errorTypes.map(errorType => {
+    const typedErrors: UnhandledError[] | undefined = groupedErrors[errorType];
+    if (typedErrors == null) return '';
+    return '# ' + capitalize(errorType) +' errors: ' + typedErrors.map(te => te.id).join(', ');
+  }).join('\n')
 
   const modal = errors && errors.length > 0 && (
     <Modal>
@@ -28,13 +33,17 @@ function UnhandledError(props: Props) {
         <button type="button" onClick={clearErrors}>
           <Icon type="close"/>
         </button>
-        <ErrorStatus/>
+        <h1>We're sorry, something when wrong.</h1>
+        <div>
+          Please try again later, and <Link to={`/contact-us?ctx=${encodeURIComponent(contactUsMessage)}`}>contact us</Link> if the problem persists.
+        </div>
         <div className={cx('--Details')}>
           {errorTypes.map(type => {
             const typedErrors: UnhandledError[] | undefined = groupedErrors[type];
             return typedErrors && <>
               <h2>{capitalize(type)} errors</h2>
-              {typedErrors.map(({ error, id }) => <ErrorDetail key={id} id={id} error={error} showDetails={showDetails}/>)}
+              {typedErrors.map(({ error, id, message }) =>
+                <ErrorDetail key={id} id={id} error={error} showDetails={showDetails} message={message}/>)}
             </>;
           })}
         </div>
@@ -50,11 +59,11 @@ function UnhandledError(props: Props) {
   );
 }
 
-function ErrorDetail(props: { error: unknown, id: string, showDetails: boolean }) {
-  const { error, id, showDetails } = props;
+function ErrorDetail(props: { error: unknown, id: string, showDetails: boolean, message: string }) {
+  const { error, id, showDetails, message } = props;
   return (
     <div>
-      <code>Id: {id}</code>
+      <code>{message} (log marker {id})</code>
       {showDetails && (
         <pre className={cx('--DetailItem')}>
           {getErrorMessage(error)}

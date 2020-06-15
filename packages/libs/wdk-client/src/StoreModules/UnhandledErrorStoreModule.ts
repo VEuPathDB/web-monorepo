@@ -54,8 +54,8 @@ export function observe(action$: ActionsObservable<Action>, state$: StateObserva
   const notify$: Observable<never> = action$.pipe(
     filter(notifyUnhandledError.isOfType),
     tap(action => {
-      const { unhandledError: { error, id } } = action.payload;
-      wdkService.submitErrorIfNot500(error instanceof Error ? error : new Error(String(error)), { id });
+      const { unhandledError: { error, id, info } } = action.payload;
+      wdkService.submitErrorIfNot500(error instanceof Error ? error : new Error(String(error)), { id, info });
     }),
     mergeMapTo(EMPTY),
 
