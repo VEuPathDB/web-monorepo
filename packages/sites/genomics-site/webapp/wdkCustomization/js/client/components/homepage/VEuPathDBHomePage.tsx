@@ -106,7 +106,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     const scrollHeight = document.documentElement?.scrollHeight || document.body.scrollHeight;
     const scrolledToBottom = scrollTop + window.innerHeight >= scrollHeight;
 
-    setFooterThin(!scrolledToBottom);
+    setFooterThin(scrollTop === 0 || !scrolledToBottom);
   }, []);
   
   useEffect(() => {

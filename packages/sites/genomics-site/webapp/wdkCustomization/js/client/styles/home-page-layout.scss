@@ -38,6 +38,7 @@ body.vpdb-Body .vpdb-RootContainer {
       }
 
       .vpdb-Footer {
+        display: grid;
         position: fixed;
         bottom: 0;
         width: 100%;
