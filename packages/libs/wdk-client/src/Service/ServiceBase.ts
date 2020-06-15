@@ -217,7 +217,7 @@ export const ServiceBase = (serviceUrl: string) => {
           `Cannot ${method.toUpperCase()} ${url} (${response.status})`,
           text,
           response.status,
-          uuid()
+          response.headers.get('x-log-marker') || uuid()
         );
       });
     }) as Promise<T>
