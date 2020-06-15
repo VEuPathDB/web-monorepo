@@ -34,10 +34,14 @@ const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeField = {
 };
 
 export function RecordAttributeSection(props: WrappedComponentProps<RecordAttributeSectionProps>) {
-  return props.attribute.name === MSA_ATTRIBUTE_NAME
-    ? <MsaAttributeSection {...props} />
-    : <props.DefaultComponent {...props} />;
+  const Component = recordAttributeSectionWrappers[props.attribute.name] ?? props.DefaultComponent;
+
+  return <Component {...props} />;
 }
+
+const recordAttributeSectionWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordAttributeSectionProps>>> = {
+  [MSA_ATTRIBUTE_NAME]: MsaAttributeSection
+};
 
 function MsaAttributeSection(props: RecordAttributeSectionProps) {
   const { isCollapsed, onCollapsedChange } = props;
@@ -66,27 +70,31 @@ function MsaAttributeSection(props: RecordAttributeSectionProps) {
   );
 }
 
-
 export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
+  const Component = recordTableWrappers[props.table.name] ?? props.DefaultComponent;
+  return <Component {...props} />;
+}
+
+const makeRecordTableWrapper = curry((
+  makeAttributeFields: (ads: AttributeField[]) => AttributeField[],
+  makeTableRow: (row: Record<string, AttributeValue>) => Record<string, AttributeValue>,
+  props: WrappedComponentProps<RecordTableProps>
+) => {
   const transformedTable = useMemo(
-    () => props.table.name in attributeFieldTransforms
-      ? {
-          ...props.table,
-          attributes: attributeFieldTransforms[props.table.name](props.table.attributes)
-        }
-      : props.table,
-    [ props.table ]
+    () => ({
+      ...props.table,
+      attributes: makeAttributeFields(props.table.attributes)
+    }),
+    []
   );
 
   const transformedValue = useMemo(
-    () => props.table.name in tableRowTransforms
-      ? props.value.map(tableRowTransforms[props.table.name])
-      : props.value,
-    [ props.value, props.table.name ]
+    () => props.value.map(makeTableRow),
+    [ props.value ]
   );
 
   return <props.DefaultComponent {...props} table={transformedTable} value={transformedValue} />;
-}
+});
 
 const transformPfamsAttributeFields = curry((
   isGraphic: boolean,
@@ -200,12 +208,11 @@ function makeProteinDomainLocationsTableRow(row: Record<string, AttributeValue>)
   };
 }
 
-const attributeFieldTransforms: Record<string, (afs: AttributeField[]) => AttributeField[]> = {
-  [PFAMS_TABLE_NAME]: makePfamsGraphicAttributeFields,
-  [PROTEIN_PFAMS_TABLE_NAME]: makeProteinDomainLocationAttributeFields
-};
+const RecordTable_PfamDomainGraphic = makeRecordTableWrapper(makePfamsGraphicAttributeFields, makePfamsGraphicTableRow);
+const RecordTable_PfamDomainDetails = makeRecordTableWrapper(makePfamsDetailsAttributeFields, makePfamsDetailsTableRow);
+const RecordTable_ProteinDomainLocations = makeRecordTableWrapper(makeProteinDomainLocationAttributeFields, makeProteinDomainLocationsTableRow);
 
-const tableRowTransforms: Record<string, (row: Record<string, AttributeValue>) => Record<string, AttributeValue>> = {
-  [PFAMS_TABLE_NAME]: makePfamsGraphicTableRow,
-  [PROTEIN_PFAMS_TABLE_NAME]: makeProteinDomainLocationsTableRow
+const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {
+  [PFAMS_TABLE_NAME]: RecordTable_PfamDomainGraphic,
+  [PROTEIN_PFAMS_TABLE_NAME]: RecordTable_ProteinDomainLocations
 };
