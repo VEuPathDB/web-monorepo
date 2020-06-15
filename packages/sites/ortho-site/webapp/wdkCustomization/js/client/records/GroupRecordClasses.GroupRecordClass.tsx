@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { orderBy } from 'lodash';
+import { curry, orderBy } from 'lodash';
 
 import { CollapsibleSection } from 'wdk-client/Components';
 import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
@@ -88,44 +88,10 @@ export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
   return <props.DefaultComponent {...props} table={transformedTable} value={transformedValue} />;
 }
 
-const attributeFieldTransforms: Record<string, (afs: AttributeField[]) => AttributeField[]> = {
-  [PFAMS_TABLE_NAME]: afs => transformPfamsAttributeFields(true, afs),
-  [PROTEIN_PFAMS_TABLE_NAME]: afs => transformProteinPfamsAttributeFields(
-    [
-      {
-        name: SOURCE_ID_ATTRIBUTE_NAME,
-        displayName: 'Accession'
-      },
-      {
-        name: PROTEIN_LENGTH_ATTRIBUTE_NAME,
-        displayName: 'Protein Length'
-      },
-      {
-        name: ACCESSION_NUMBER_ATTRIBUTE_NAME,
-        displayName: 'Pfam Domain'
-      },
-      {
-        name: DOMAIN_START_ATTRIBUTE_NAME,
-        displayName: 'Domain Start'
-      },
-      {
-        name: DOMAIN_END_ATTRIBUTE_NAME,
-        displayName: 'Domain End'
-      }
-    ],
-    afs
-  )
-};
-
-const tableRowTransforms: Record<string, (row: Record<string, AttributeValue>) => Record<string, AttributeValue>> = {
-  [PFAMS_TABLE_NAME]: row => transformPfamsTableRow(true, row),
-  [PROTEIN_PFAMS_TABLE_NAME]: row => transformProteinPfamsTableRow(true, row)
-};
-
-function transformPfamsAttributeFields(
+const transformPfamsAttributeFields = curry((
   isGraphic: boolean,
   attributeFields: AttributeField[]
-): AttributeField[] {
+): AttributeField[] => {
   const renamedAttributeFields = attributeFields.map(
     attributeField => attributeField.name === ACCESSION_NUMBER_ATTRIBUTE_NAME
       ? { ...attributeField, displayName: 'Accession' }
@@ -135,12 +101,15 @@ function transformPfamsAttributeFields(
   return isGraphic
     ? [...renamedAttributeFields, PFAM_LEGEND_ATTRIBUTE_FIELD]
     : renamedAttributeFields;
-}
+});
 
-function transformPfamsTableRow(
-  isGraphic: boolean = true,
+const makePfamsGraphicAttributeFields = transformPfamsAttributeFields(true);
+const makePfamsDetailsAttributeFields = transformPfamsAttributeFields(false);
+
+const transformPfamsTableRow = curry((
+  isGraphic: boolean,
   row: Record<string, AttributeValue>
-): Record<string, AttributeValue> {
+): Record<string, AttributeValue> => {
   const accessionValue = row[ACCESSION_NUMBER_ATTRIBUTE_NAME];
 
   // The accession value should be rendered as a link, and if
@@ -155,17 +124,20 @@ function transformPfamsTableRow(
       ? renderToStaticMarkup(<PfamDomain pfamId={accessionValue} />)
       : null
   };
-}
+});
+
+const makePfamsGraphicTableRow = transformPfamsTableRow(true);
+const makePfamsDetailsTableRow = transformPfamsTableRow(false);
 
 interface PseudoAttributeSpec {
   name: string;
   displayName: string;
 }
 
-function transformProteinPfamsAttributeFields(
+const transformProteinPfamsAttributeFields = curry((
   pseudoAttributeSpecs: PseudoAttributeSpec[],
   attributeFields: AttributeField[]
-): AttributeField[] {
+): AttributeField[] => {
   const filteredAttributeFields = attributeFields.filter(
     attributeField => pseudoAttributeSpecs.find(pa => pa.name === attributeField.name)
   );
@@ -186,12 +158,38 @@ function transformProteinPfamsAttributeFields(
   );
 
   return reorderedAttributeFields;
-}
+});
 
-function transformProteinPfamsTableRow(
-  isGraphic: boolean = true,
-  row: Record<string, AttributeValue>
-): Record<string, AttributeValue> {
+const makeProteinDomainLocationAttributeFields = transformProteinPfamsAttributeFields(
+  [
+    {
+      name: SOURCE_ID_ATTRIBUTE_NAME,
+      displayName: 'Accession'
+    },
+    {
+      name: CORE_PERIPHERAL_NAME,
+      displayName: 'Core/Peripheral'
+    },
+    {
+      name: PROTEIN_LENGTH_ATTRIBUTE_NAME,
+      displayName: 'Protein Length'
+    },
+    {
+      name: ACCESSION_NUMBER_ATTRIBUTE_NAME,
+      displayName: 'Pfam Domain'
+    },
+    {
+      name: DOMAIN_START_ATTRIBUTE_NAME,
+      displayName: 'Domain Start'
+    },
+    {
+      name: DOMAIN_END_ATTRIBUTE_NAME,
+      displayName: 'Domain End'
+    }
+  ]
+);
+
+function makeProteinDomainLocationsTableRow(row: Record<string, AttributeValue>): Record<string, AttributeValue> {
   const accessionValue = row[SOURCE_ID_ATTRIBUTE_NAME];
 
   return {
@@ -201,3 +199,13 @@ function transformProteinPfamsTableRow(
       : accessionValue,
   };
 }
+
+const attributeFieldTransforms: Record<string, (afs: AttributeField[]) => AttributeField[]> = {
+  [PFAMS_TABLE_NAME]: makePfamsGraphicAttributeFields,
+  [PROTEIN_PFAMS_TABLE_NAME]: makeProteinDomainLocationAttributeFields
+};
+
+const tableRowTransforms: Record<string, (row: Record<string, AttributeValue>) => Record<string, AttributeValue>> = {
+  [PFAMS_TABLE_NAME]: makePfamsGraphicTableRow,
+  [PROTEIN_PFAMS_TABLE_NAME]: makeProteinDomainLocationsTableRow
+};
