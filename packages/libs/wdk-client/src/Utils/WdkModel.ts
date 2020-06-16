@@ -421,8 +421,30 @@ export type UserDataset = {
     display: string;
     version: string;
   };
-  updloaded: number;
-}
+  uploaded: number;
+};
+
+export type UserDatasetUpload = {
+  id: string;
+  datasetId?: number;
+  datasetName: string;
+  summary: string;
+  projects: string[];
+  status: string;
+  errors: string[];
+  stepPercent?: number;
+  started: string;
+  finished?: string;
+  isOngoing: boolean;
+  isSuccessful: boolean;
+  isUserError: boolean;
+};
+
+export type NewUserDataset = UserDatasetMeta & {
+  datasetType: string; // In prototype, the only value is "biom" - will eventually be an enum
+  projects: string[];
+  file: File;
+};
 
 export type Favorite = {
   id: number;

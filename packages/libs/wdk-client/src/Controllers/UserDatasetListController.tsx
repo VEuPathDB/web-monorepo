@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { History, Location } from 'history';
+import { Location } from 'history';
 
 import 'wdk-client/Views/UserDatasets/UserDatasets.scss';
 import { showLoginForm } from 'wdk-client/Actions/UserSessionActions';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { UserDataset } from 'wdk-client/Utils/WdkModel';
+import { UserDataset, UserDatasetUpload } from 'wdk-client/Utils/WdkModel';
 import UserDatasetEmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
 import UserDatasetList from 'wdk-client/Views/UserDatasets/List/UserDatasetList';
+import { MyDatasetsRibbon } from 'wdk-client/Views/UserDatasets/Navigation';
 import {
   loadUserDatasetList,
   removeUserDataset,
@@ -16,10 +17,10 @@ import {
   updateProjectFilter,
   updateUserDatasetDetail,
 } from 'wdk-client/Actions/UserDatasetsActions';
+import { requestUploadMessages } from 'wdk-client/Actions/UserDatasetUploadActions';
 import { quotaSize } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
-
 const ActionCreators = {
   showLoginForm,
   loadUserDatasetList,
@@ -27,13 +28,13 @@ const ActionCreators = {
   removeUserDataset,
   shareUserDatasets,
   unshareUserDatasets,
-  updateProjectFilter
+  updateProjectFilter,
+  requestUploadMessages
 };
 
-type StateProps = Pick<RootState, 'globalData' | 'userDatasetList'>;
+type StateProps = Pick<RootState, 'globalData' | 'userDatasetList' | 'userDatasetUpload' >;
 type DispatchProps = typeof ActionCreators;
 type OwnProps = {
-  history: History;
   location: Location;
 }
 type Props = {
@@ -44,6 +45,10 @@ type Props = {
 
 class UserDatasetListController extends PageController <Props> {
 
+  constructor(props: Props) {
+    super(props);
+    this.needsUploadMessages = this.needsUploadMessages.bind(this);
+  }
   getTitle () {
     return 'My Data Sets';
   }
@@ -51,19 +56,37 @@ class UserDatasetListController extends PageController <Props> {
   getActionCreators () {
     return ActionCreators;
   }
+  needsUploadMessages(){
+    const { config } = this.props.stateProps.globalData;
+    if (config == null) {
+      return true;
+    }
+    const { uploads, badAllUploadsActionMessage } = this.props.stateProps.userDatasetUpload;
+    return config.displayName == 'MicrobiomeDB' && uploads == null && badAllUploadsActionMessage == null;
+  }
 
   loadData (prevProps?: Props) {
-    if (prevProps == null) {
+    if (prevProps == null){
       this.props.dispatchProps.loadUserDatasetList();
+      return;
+    }
+
+    const { config } = this.props.stateProps.globalData;
+    if (config != null 
+      && prevProps.stateProps.userDatasetList.status !== this.props.stateProps.userDatasetList.status
+      && this.needsUploadMessages()){
+      this.props.dispatchProps.requestUploadMessages();
     }
   }
+
 
   isRenderDataLoaded () {
     return (
       this.props.stateProps.userDatasetList.status !== 'not-requested' &&
       this.props.stateProps.userDatasetList.status !== 'loading' &&
       this.props.stateProps.globalData.config != null &&
-      this.props.stateProps.globalData.user != null
+      this.props.stateProps.globalData.user != null &&
+      ! this.needsUploadMessages()
     );
   }
 
@@ -101,13 +124,15 @@ class UserDatasetListController extends PageController <Props> {
     const { projectId, displayName: projectName } = config;
 
     const {
-      history,
       location
     } = this.props.ownProps;
 
     const {
-      userDatasetList: { userDatasets, userDatasetsById, filterByProject }
+      userDatasetList: { userDatasets, userDatasetsById, filterByProject },
+      userDatasetUpload: { uploads }
     } = this.props.stateProps;
+
+    const numOngoingUploads = uploads != null ? uploads.filter(upload => upload.isOngoing).length : 0;
 
     const {
       shareUserDatasets,
@@ -119,10 +144,10 @@ class UserDatasetListController extends PageController <Props> {
 
     const listProps = {
       user,
-      history,
       location,
       projectId,
       projectName,
+      numOngoingUploads,
       quotaSize,
       userDatasets: userDatasets.map(id => userDatasetsById[id].resource) as UserDataset[],
       filterByProject,
@@ -135,6 +160,7 @@ class UserDatasetListController extends PageController <Props> {
     return (
       <div className="UserDatasetList-Controller">
         <div className="UserDatasetList-Content">
+          <MyDatasetsRibbon projectName={projectName} numOngoingUploads={numOngoingUploads} />
           <UserDatasetList {...listProps} />
         </div>
       </div>
@@ -145,7 +171,8 @@ class UserDatasetListController extends PageController <Props> {
 const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (state: RootState) => ({
     globalData: state.globalData,
-    userDatasetList: state.userDatasetList
+    userDatasetList: state.userDatasetList,
+    userDatasetUpload: state.userDatasetUpload
   }),
   ActionCreators,
   (stateProps, dispatchProps, ownProps) => ({ stateProps, dispatchProps, ownProps })
