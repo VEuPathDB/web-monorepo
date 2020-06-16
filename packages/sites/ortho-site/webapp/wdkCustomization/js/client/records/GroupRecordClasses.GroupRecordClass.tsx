@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { curry, groupBy, isNaN, orderBy, uniqBy } from 'lodash';
 
 import { CollapsibleSection } from 'wdk-client/Components';
-import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
+import { AttributeField, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
 
 import { PfamDomain } from '../components/pfam-domains/PfamDomain';
 import { Domain, PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
@@ -12,7 +12,7 @@ import { RecordAttributeSectionProps, RecordTableProps,  WrappedComponentProps }
 
 import './GroupRecordClasses.GroupRecordClass.scss';
 
-const SEQUENCE_RECORD_URL_SEGMENT = '/a/app/record/sequence/';
+const SEQUENCE_RECORD_URL_SEGMENT = '/a/app/record/sequence';
 
 const MSA_ATTRIBUTE_NAME = 'msa';
 
@@ -236,8 +236,8 @@ function makeProteinDomainLocationsTableRow(row: Record<string, AttributeValue>)
   return {
     ...row,
     [SOURCE_ID_ATTRIBUTE_NAME]: typeof accessionValue === 'string'
-      ? { url: `${SEQUENCE_RECORD_URL_SEGMENT}${accessionValue}`, displayText: accessionValue }
-      : accessionValue,
+      ? makeAccessionLink(accessionValue)
+      : accessionValue
   };
 }
 
@@ -270,13 +270,13 @@ function RecordTable_ProteinDomainArchitectures(props: WrappedComponentProps<Rec
     const uniqueRows = uniqBy(props.value, SOURCE_ID_ATTRIBUTE_NAME);
     const rowsWithPfamDomains = uniqueRows.map(
       row => {
-        const accession = row[SOURCE_ID_ATTRIBUTE_NAME];
+        const accessionValue = row[SOURCE_ID_ATTRIBUTE_NAME];
 
-        return typeof accession === 'string'
+        return typeof accessionValue === 'string'
           ? {
               ...row,
-              [SOURCE_ID_ATTRIBUTE_NAME]: { url: `${SEQUENCE_RECORD_URL_SEGMENT}${accession}`, displayText: accession },
-              [PFAM_DOMAINS_ATTRIBUTE_FIELD.name]: makePfamDomainMarkup(rowsByAccession[accession], maxLength)
+              [SOURCE_ID_ATTRIBUTE_NAME]: makeAccessionLink(accessionValue),
+              [PFAM_DOMAINS_ATTRIBUTE_FIELD.name]: makePfamDomainMarkup(rowsByAccession[accessionValue], maxLength)
             }
           : row;
       }
@@ -286,6 +286,13 @@ function RecordTable_ProteinDomainArchitectures(props: WrappedComponentProps<Rec
   }, [ props.value ]);
 
   return <props.DefaultComponent {...props} table={transformedTable} value={transformedRecords} />;
+}
+
+function makeAccessionLink(accession: string): LinkAttributeValue {
+  return {
+    url: `${SEQUENCE_RECORD_URL_SEGMENT}/${accession}`,
+    displayText: accession
+  };
 }
 
 function makePfamDomainMarkup(rowGroup: Record<string, AttributeValue>[], maxLength: number): string {
