@@ -8,4 +8,18 @@
       width: 16.6666666667em;
     }
   }
+
+  th.wdk-DataTableCell__domains {
+    width: 35em;
+  }
+
+  td.wdk-DataTableCell__domains {
+    vertical-align: middle;
+    padding-top: 1.2em;
+    padding-bottom: 1.2em;
+
+    .PfamDomain {
+      min-width: 0.41666666666em;
+    }
+  }
 }

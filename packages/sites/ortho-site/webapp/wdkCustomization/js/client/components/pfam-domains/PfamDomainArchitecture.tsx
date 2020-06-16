@@ -7,17 +7,18 @@ import './PfamDomainArchitecture.scss';
 interface Props {
   length: number;
   domains: { start: number, end: number, pfamId: string }[];
+  style: React.CSSProperties;
 }
 
-interface Domain {
+export interface Domain {
   start: number;
   end: number;
   pfamId: string;
 };
 
-export function PfamDomainArchitecture({ length, domains }: Props) {
+export function PfamDomainArchitecture({ length, domains, style }: Props) {
   return (
-    <div className="PfamDomainArchitecture">
+    <div className="PfamDomainArchitecture" style={style}>
       <div className="ProteinGraph"></div>
       {
         domains.map(

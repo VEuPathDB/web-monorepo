@@ -1,15 +1,18 @@
 import React, { useMemo } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { curry, orderBy } from 'lodash';
+import { curry, groupBy, isNaN, orderBy, uniqBy } from 'lodash';
 
 import { CollapsibleSection } from 'wdk-client/Components';
 import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
 
 import { PfamDomain } from '../components/pfam-domains/PfamDomain';
+import { Domain, PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
 import { RecordAttributeSectionProps, RecordTableProps,  WrappedComponentProps } from './Types';
 
 import './GroupRecordClasses.GroupRecordClass.scss';
+
+const SEQUENCE_RECORD_URL_SEGMENT = '/a/app/record/sequence/';
 
 const MSA_ATTRIBUTE_NAME = 'msa';
 
@@ -26,6 +29,16 @@ const SOURCE_ID_ATTRIBUTE_NAME = 'full_id';
 const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeField = {
   name: 'legend',
   displayName: 'Legend',
+  isDisplayable: true,
+  isSortable: false,
+  isRemovable: false,
+  truncateTo: 100,
+  formats: []
+};
+
+const PFAM_DOMAINS_ATTRIBUTE_FIELD: AttributeField = {
+  name: 'domains',
+  displayName: ' ',
   isDisplayable: true,
   isSortable: false,
   isRemovable: false,
@@ -146,7 +159,9 @@ const transformProteinPfamsAttributeFields = curry((
   pseudoAttributeSpecs: PseudoAttributeSpec[],
   attributeFields: AttributeField[]
 ): AttributeField[] => {
-  const filteredAttributeFields = attributeFields.filter(
+  const augmentedAttributeFields = [...attributeFields, PFAM_DOMAINS_ATTRIBUTE_FIELD];
+
+  const filteredAttributeFields = augmentedAttributeFields.filter(
     attributeField => pseudoAttributeSpecs.find(pa => pa.name === attributeField.name)
   );
 
@@ -197,13 +212,31 @@ const makeProteinDomainLocationAttributeFields = transformProteinPfamsAttributeF
   ]
 );
 
+const makeProteinDomainArchitectureAttributeFields = transformProteinPfamsAttributeFields(
+  [
+    {
+      name: SOURCE_ID_ATTRIBUTE_NAME,
+      displayName: 'Accession'
+    },
+    {
+      name: CORE_PERIPHERAL_NAME,
+      displayName: 'Core/Peripheral'
+    },
+    {
+      name: PROTEIN_LENGTH_ATTRIBUTE_NAME,
+      displayName: 'Protein Length'
+    },
+    PFAM_DOMAINS_ATTRIBUTE_FIELD
+  ]
+);
+
 function makeProteinDomainLocationsTableRow(row: Record<string, AttributeValue>): Record<string, AttributeValue> {
   const accessionValue = row[SOURCE_ID_ATTRIBUTE_NAME];
 
   return {
     ...row,
     [SOURCE_ID_ATTRIBUTE_NAME]: typeof accessionValue === 'string'
-      ? { url: `/a/app/record/sequence/${accessionValue}`, displayText: accessionValue }
+      ? { url: `${SEQUENCE_RECORD_URL_SEGMENT}${accessionValue}`, displayText: accessionValue }
       : accessionValue,
   };
 }
@@ -212,7 +245,85 @@ const RecordTable_PfamDomainGraphic = makeRecordTableWrapper(makePfamsGraphicAtt
 const RecordTable_PfamDomainDetails = makeRecordTableWrapper(makePfamsDetailsAttributeFields, makePfamsDetailsTableRow);
 const RecordTable_ProteinDomainLocations = makeRecordTableWrapper(makeProteinDomainLocationAttributeFields, makeProteinDomainLocationsTableRow);
 
+function RecordTable_ProteinDomainArchitectures(props: WrappedComponentProps<RecordTableProps>) {
+  const maxLength = useMemo(
+    () => (
+      Math.max(
+        ...props.value.map(
+          row => Number(row[PROTEIN_LENGTH_ATTRIBUTE_NAME])
+        )
+      )
+    ),
+    [ props.value ]
+  );
+
+  const transformedTable = useMemo(
+    () => ({
+      ...props.table,
+      attributes: makeProteinDomainArchitectureAttributeFields(props.table.attributes)
+    }),
+    []
+  );
+
+  const transformedRecords = useMemo(() => {
+    const rowsByAccession = groupBy(props.value, SOURCE_ID_ATTRIBUTE_NAME);
+    const uniqueRows = uniqBy(props.value, SOURCE_ID_ATTRIBUTE_NAME);
+    const rowsWithPfamDomains = uniqueRows.map(
+      row => {
+        const accession = row[SOURCE_ID_ATTRIBUTE_NAME];
+
+        return typeof accession === 'string'
+          ? {
+              ...row,
+              [SOURCE_ID_ATTRIBUTE_NAME]: { url: `${SEQUENCE_RECORD_URL_SEGMENT}${accession}`, displayText: accession },
+              [PFAM_DOMAINS_ATTRIBUTE_FIELD.name]: makePfamDomainMarkup(rowsByAccession[accession], maxLength)
+            }
+          : row;
+      }
+    );
+
+    return rowsWithPfamDomains;
+  }, [ props.value ]);
+
+  return <props.DefaultComponent {...props} table={transformedTable} value={transformedRecords} />;
+}
+
+function makePfamDomainMarkup(rowGroup: Record<string, AttributeValue>[], maxLength: number): string {
+  const proteinLength = Number(rowGroup[0][PROTEIN_LENGTH_ATTRIBUTE_NAME]);
+  const pfamDomains = rowGroup.flatMap(extractPfamDomain);
+
+  return !isNaN(proteinLength) && !isNaN(maxLength)
+    ? renderToStaticMarkup(
+        <PfamDomainArchitecture
+          style={{ width: `${(proteinLength / maxLength) * 100}%` }}
+          length={Number(proteinLength)}
+          domains={pfamDomains}
+        />
+      )
+    : '';
+}
+
+function extractPfamDomain(row: Record<string, AttributeValue>): Domain[] {
+  const pfamIdAttributeValue = row[ACCESSION_NUMBER_ATTRIBUTE_NAME];
+  const domainStartAttributeValue = row[DOMAIN_START_ATTRIBUTE_NAME];
+  const domainEndAttributeValue = row[DOMAIN_END_ATTRIBUTE_NAME];
+
+  return (
+    typeof pfamIdAttributeValue === 'string' &&
+    typeof domainStartAttributeValue === 'string' &&
+    typeof domainEndAttributeValue === 'string'
+  )
+    ? [
+        {
+          pfamId: pfamIdAttributeValue,
+          start: Number(domainStartAttributeValue),
+          end: Number(domainEndAttributeValue)
+        }
+      ]
+    : [];
+}
+
 const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {
   [PFAMS_TABLE_NAME]: RecordTable_PfamDomainGraphic,
-  [PROTEIN_PFAMS_TABLE_NAME]: RecordTable_ProteinDomainLocations
+  [PROTEIN_PFAMS_TABLE_NAME]: RecordTable_ProteinDomainArchitectures
 };
