@@ -71,6 +71,7 @@ function MsaAttributeSection(props: RecordAttributeSectionProps) {
 
 export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
   const Component = recordTableWrappers[props.table.name] ?? props.DefaultComponent;
+
   return <Component {...props} />;
 }
 
