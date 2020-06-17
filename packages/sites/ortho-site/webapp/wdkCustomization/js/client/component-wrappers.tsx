@@ -6,6 +6,9 @@ import {
   RecordAttributeSection as GroupRecordAttributeSection
 } from './records/GroupRecordClasses.GroupRecordClass';
 import {
+  RecordTable as SequenceRecordTable
+} from './records/SequenceRecordClasses.SequenceRecordClass';
+import {
   RecordAttributeSectionProps,
   RecordTableProps
 } from './records/Types';
@@ -24,7 +27,9 @@ const wrappedComponentsByRecordClass: Record<string, Record<string, React.Compon
     RecordAttributeSection: GroupRecordAttributeSection,
     RecordTable: GroupRecordTable
   },
-  [SEQUENCE_RECORD_CLASS_NAME]: {}
+  [SEQUENCE_RECORD_CLASS_NAME]: {
+    RecordTable: SequenceRecordTable
+  }
 };
 
 function makeDynamicWrapper<P>(componentName: string, getWrapperType: (props: P) => string) {
