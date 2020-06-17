@@ -1,14 +1,20 @@
 import React, { useMemo } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { curry, groupBy, isNaN, orderBy, uniqBy } from 'lodash';
+import { curry, groupBy, isNaN, uniqBy } from 'lodash';
 
 import { CollapsibleSection } from 'wdk-client/Components';
 import { AttributeField, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
 
 import { PfamDomain } from '../components/pfam-domains/PfamDomain';
 import { Domain, PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
-import { RecordAttributeSectionProps, RecordTableProps,  WrappedComponentProps } from './Types';
+import { RecordAttributeSectionProps, RecordTableProps, WrappedComponentProps } from './Types';
+import {
+  makeCommonRecordTableWrapper,
+  transformAttributeFieldsUsingSpecs,
+  PFAM_DOMAINS_ATTRIBUTE_FIELD,
+  PFAM_LEGEND_ATTRIBUTE_FIELD
+} from './utils';
 
 import './GroupRecordClasses.GroupRecordClass.scss';
 
@@ -26,25 +32,6 @@ const DOMAIN_END_ATTRIBUTE_NAME = 'end_max';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
 const SOURCE_ID_ATTRIBUTE_NAME = 'full_id';
 
-const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeField = {
-  name: 'legend',
-  displayName: 'Legend',
-  isDisplayable: true,
-  isSortable: false,
-  isRemovable: false,
-  truncateTo: 100,
-  formats: []
-};
-
-const PFAM_DOMAINS_ATTRIBUTE_FIELD: AttributeField = {
-  name: 'domains',
-  displayName: ' ',
-  isDisplayable: true,
-  isSortable: false,
-  isRemovable: false,
-  truncateTo: 100,
-  formats: []
-};
 
 export function RecordAttributeSection(props: WrappedComponentProps<RecordAttributeSectionProps>) {
   const Component = recordAttributeSectionWrappers[props.attribute.name] ?? props.DefaultComponent;
@@ -88,27 +75,6 @@ export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
   return <Component {...props} />;
 }
 
-const makeRecordTableWrapper = curry((
-  makeAttributeFields: (ads: AttributeField[]) => AttributeField[],
-  makeTableRow: (row: Record<string, AttributeValue>) => Record<string, AttributeValue>,
-  props: WrappedComponentProps<RecordTableProps>
-) => {
-  const transformedTable = useMemo(
-    () => ({
-      ...props.table,
-      attributes: makeAttributeFields(props.table.attributes)
-    }),
-    []
-  );
-
-  const transformedValue = useMemo(
-    () => props.value.map(makeTableRow),
-    [ props.value ]
-  );
-
-  return <props.DefaultComponent {...props} table={transformedTable} value={transformedValue} />;
-});
-
 const transformPfamsAttributeFields = curry((
   isGraphic: boolean,
   attributeFields: AttributeField[]
@@ -150,40 +116,7 @@ const transformPfamsTableRow = curry((
 const makePfamsGraphicTableRow = transformPfamsTableRow(true);
 const makePfamsDetailsTableRow = transformPfamsTableRow(false);
 
-interface PseudoAttributeSpec {
-  name: string;
-  displayName: string;
-}
-
-const transformProteinPfamsAttributeFields = curry((
-  pseudoAttributeSpecs: PseudoAttributeSpec[],
-  attributeFields: AttributeField[]
-): AttributeField[] => {
-  const augmentedAttributeFields = [...attributeFields, PFAM_DOMAINS_ATTRIBUTE_FIELD];
-
-  const filteredAttributeFields = augmentedAttributeFields.filter(
-    attributeField => pseudoAttributeSpecs.find(pa => pa.name === attributeField.name)
-  );
-
-  const attributeDisplayNames = new Map(pseudoAttributeSpecs.map(pa => [pa.name, pa.displayName]));
-
-  const renamedAttributeFields = filteredAttributeFields.map(
-    attributeField =>
-      ({
-        ...attributeField,
-        displayName: attributeDisplayNames.get(attributeField.name) ?? attributeField.name
-      })
-  );
-
-  const reorderedAttributeFields = orderBy(
-    renamedAttributeFields,
-    attributeField => pseudoAttributeSpecs.findIndex(pa => pa.name === attributeField.name)
-  );
-
-  return reorderedAttributeFields;
-});
-
-const makeProteinDomainLocationAttributeFields = transformProteinPfamsAttributeFields(
+const makeProteinDomainLocationAttributeFields = transformAttributeFieldsUsingSpecs(
   [
     {
       name: SOURCE_ID_ATTRIBUTE_NAME,
@@ -212,7 +145,7 @@ const makeProteinDomainLocationAttributeFields = transformProteinPfamsAttributeF
   ]
 );
 
-const makeProteinDomainArchitectureAttributeFields = transformProteinPfamsAttributeFields(
+const makeProteinDomainArchitectureAttributeFields = transformAttributeFieldsUsingSpecs(
   [
     {
       name: SOURCE_ID_ATTRIBUTE_NAME,
@@ -241,9 +174,9 @@ function makeProteinDomainLocationsTableRow(row: Record<string, AttributeValue>)
   };
 }
 
-const RecordTable_PfamDomainGraphic = makeRecordTableWrapper(makePfamsGraphicAttributeFields, makePfamsGraphicTableRow);
-const RecordTable_PfamDomainDetails = makeRecordTableWrapper(makePfamsDetailsAttributeFields, makePfamsDetailsTableRow);
-const RecordTable_ProteinDomainLocations = makeRecordTableWrapper(makeProteinDomainLocationAttributeFields, makeProteinDomainLocationsTableRow);
+const RecordTable_PfamDomainGraphic = makeCommonRecordTableWrapper(makePfamsGraphicAttributeFields, makePfamsGraphicTableRow);
+const RecordTable_PfamDomainDetails = makeCommonRecordTableWrapper(makePfamsDetailsAttributeFields, makePfamsDetailsTableRow);
+const RecordTable_ProteinDomainLocations = makeCommonRecordTableWrapper(makeProteinDomainLocationAttributeFields, makeProteinDomainLocationsTableRow);
 
 function RecordTable_ProteinDomainArchitectures(props: WrappedComponentProps<RecordTableProps>) {
   const maxLength = useMemo(
