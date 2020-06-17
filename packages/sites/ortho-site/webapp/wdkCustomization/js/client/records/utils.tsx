@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 import { curry, orderBy } from 'lodash'
 
 import { AttributeField, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
 
 import { RecordTableProps, WrappedComponentProps } from './Types';
+import { PfamDomain } from '../components/pfam-domains/PfamDomain';
 
 export const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeField = {
   name: 'legend',
@@ -93,4 +95,8 @@ export function makeSourceAccessionLink(accession: string): LinkAttributeValue {
     url: `/a/app/record/sequence/${accession}`,
     displayText: accession
   };
+}
+
+export function makePfamLegendMarkup(pfamId: string) {
+  return renderToStaticMarkup(<PfamDomain pfamId={pfamId} />);
 }

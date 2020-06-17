@@ -4,9 +4,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { curry, groupBy, isNaN, uniqBy } from 'lodash';
 
 import { CollapsibleSection } from 'wdk-client/Components';
-import { AttributeField, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
+import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
 
-import { PfamDomain } from '../components/pfam-domains/PfamDomain';
 import { Domain, PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
 import { RecordAttributeSectionProps, RecordTableProps, WrappedComponentProps } from './Types';
 import {
@@ -14,9 +13,10 @@ import {
   PFAM_LEGEND_ATTRIBUTE_FIELD,
   makeCommonRecordTableWrapper,
   makeDomainAccessionLink,
+  makePfamLegendMarkup,
   makeSourceAccessionLink,
-  transformAttributeFieldsUsingSpecs
-} from './utils';
+  transformAttributeFieldsUsingSpecs,
+} from './utils'
 
 import './GroupRecordClasses.GroupRecordClass.scss';
 
@@ -108,7 +108,7 @@ const transformPfamsTableRow = curry((
       ? makeDomainAccessionLink(accessionValue)
       : accessionValue,
     legend: isGraphic && typeof accessionValue === 'string'
-      ? renderToStaticMarkup(<PfamDomain pfamId={accessionValue} />)
+      ? makePfamLegendMarkup(accessionValue)
       : null
   };
 });
