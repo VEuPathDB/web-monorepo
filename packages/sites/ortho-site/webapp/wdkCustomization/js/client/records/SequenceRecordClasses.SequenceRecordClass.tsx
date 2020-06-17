@@ -9,7 +9,8 @@ import {
   PFAM_LEGEND_ATTRIBUTE_FIELD,
   makeCommonRecordTableWrapper,
   makeDomainAccessionLink,
-  transformAttributeFieldsUsingSpecs
+  transformAttributeFieldsUsingSpecs,
+  makePfamLegendMarkup
 } from './utils';
 
 const PFAM_DOMAINS_TABLE_NAME = 'PFamDomains';
@@ -57,6 +58,9 @@ function makePfamDomainsTableRow(row: Record<string, AttributeValue>) {
     ...row,
     [DOMAIN_ACCESSION_ATTRIBUTE_NAME]: typeof accessionValue === 'string'
       ? makeDomainAccessionLink(accessionValue)
+      : accessionValue,
+    [PFAM_LEGEND_ATTRIBUTE_FIELD.name]: typeof accessionValue === 'string'
+      ? makePfamLegendMarkup(accessionValue)
       : accessionValue
   };
 }
