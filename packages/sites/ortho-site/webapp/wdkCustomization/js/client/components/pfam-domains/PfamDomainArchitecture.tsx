@@ -7,7 +7,7 @@ import './PfamDomainArchitecture.scss';
 interface Props {
   length: number;
   domains: { start: number, end: number, pfamId: string }[];
-  style: React.CSSProperties;
+  style?: React.CSSProperties;
 }
 
 export interface Domain {
@@ -24,7 +24,7 @@ export function PfamDomainArchitecture({ length, domains, style }: Props) {
         domains.map(
           domain => (
             <PfamDomain
-              key={domain.pfamId}
+              key={`${domain.pfamId}}-${domain.start}-${domain.start}`}
               pfamId={domain.pfamId}
               title={makeDomainTitle(domain)}
               style={makeDomainPositionStyling(length, domain)}
