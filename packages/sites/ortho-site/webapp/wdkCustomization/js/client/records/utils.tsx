@@ -56,7 +56,11 @@ export const transformAttributeFieldsUsingSpecs = curry((
   pseudoAttributeSpecs: PseudoAttributeSpec[],
   attributeFields: AttributeField[]
 ): AttributeField[] => {
-  const augmentedAttributeFields = [...attributeFields, PFAM_DOMAINS_ATTRIBUTE_FIELD];
+  const augmentedAttributeFields = [
+    ...attributeFields,
+    PFAM_LEGEND_ATTRIBUTE_FIELD,
+    PFAM_DOMAINS_ATTRIBUTE_FIELD
+  ];
 
   const filteredAttributeFields = augmentedAttributeFields.filter(
     attributeField => pseudoAttributeSpecs.find(pa => pa.name === attributeField.name)

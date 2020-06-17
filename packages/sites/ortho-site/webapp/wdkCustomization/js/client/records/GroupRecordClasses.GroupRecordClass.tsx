@@ -32,7 +32,6 @@ const DOMAIN_END_ATTRIBUTE_NAME = 'end_max';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
 const SOURCE_ID_ATTRIBUTE_NAME = 'full_id';
 
-
 export function RecordAttributeSection(props: WrappedComponentProps<RecordAttributeSectionProps>) {
   const Component = recordAttributeSectionWrappers[props.attribute.name] ?? props.DefaultComponent;
 
