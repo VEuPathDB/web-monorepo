@@ -10,10 +10,11 @@ import { PfamDomain } from '../components/pfam-domains/PfamDomain';
 import { Domain, PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
 import { RecordAttributeSectionProps, RecordTableProps, WrappedComponentProps } from './Types';
 import {
-  makeCommonRecordTableWrapper,
-  transformAttributeFieldsUsingSpecs,
   PFAM_DOMAINS_ATTRIBUTE_FIELD,
-  PFAM_LEGEND_ATTRIBUTE_FIELD
+  PFAM_LEGEND_ATTRIBUTE_FIELD,
+  makeCommonRecordTableWrapper,
+  makeDomainAccessionLink,
+  transformAttributeFieldsUsingSpecs
 } from './utils';
 
 import './GroupRecordClasses.GroupRecordClass.scss';
@@ -105,7 +106,7 @@ const transformPfamsTableRow = curry((
   return {
     ...row,
     [ACCESSION_NUMBER_ATTRIBUTE_NAME]: typeof accessionValue === 'string'
-      ? { url: `http://pfam.xfam.org/family/${accessionValue}`, displayText: accessionValue }
+      ? makeDomainAccessionLink(accessionValue)
       : accessionValue,
     legend: isGraphic && typeof accessionValue === 'string'
       ? renderToStaticMarkup(<PfamDomain pfamId={accessionValue} />)

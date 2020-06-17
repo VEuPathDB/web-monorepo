@@ -1,9 +1,16 @@
 import React, { useMemo } from 'react';
 
+import { AttributeValue } from 'wdk-client/Utils/WdkModel';
+
 import { RecordTableProps, WrappedComponentProps } from './Types';
 
 import './SequenceRecordClasses.SequenceRecordClass.scss';
-import { makeCommonRecordTableWrapper, transformAttributeFieldsUsingSpecs, PFAM_LEGEND_ATTRIBUTE_FIELD } from './utils';
+import {
+  PFAM_LEGEND_ATTRIBUTE_FIELD,
+  makeCommonRecordTableWrapper,
+  makeDomainAccessionLink,
+  transformAttributeFieldsUsingSpecs
+} from './utils';
 
 const PFAM_DOMAINS_TABLE_NAME = 'PFamDomains';
 
@@ -43,9 +50,20 @@ const makePfamDomainsAttributeFields = transformAttributeFieldsUsingSpecs([
   PFAM_LEGEND_ATTRIBUTE_FIELD
 ]);
 
+function makePfamDomainsTableRow(row: Record<string, AttributeValue>) {
+  const accessionValue = row[DOMAIN_ACCESSION_ATTRIBUTE_NAME];
+
+  return {
+    ...row,
+    [DOMAIN_ACCESSION_ATTRIBUTE_NAME]: typeof accessionValue === 'string'
+      ? makeDomainAccessionLink(accessionValue)
+      : accessionValue
+  };
+}
+
 const RecordTable_PfamDomains = makeCommonRecordTableWrapper(
   makePfamDomainsAttributeFields,
-  table => table
+  makePfamDomainsTableRow
 );
 
 const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {

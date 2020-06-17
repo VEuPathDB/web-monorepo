@@ -84,3 +84,6 @@ export const transformAttributeFieldsUsingSpecs = curry((
   return reorderedAttributeFields;
 });
 
+export function makeDomainAccessionLink(accession: string) {
+  return { url: `http://pfam.xfam.org/family/${accession}`, displayText: accession };
+}
