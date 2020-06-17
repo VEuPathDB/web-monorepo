@@ -14,12 +14,11 @@ import {
   PFAM_LEGEND_ATTRIBUTE_FIELD,
   makeCommonRecordTableWrapper,
   makeDomainAccessionLink,
+  makeSourceAccessionLink,
   transformAttributeFieldsUsingSpecs
 } from './utils';
 
 import './GroupRecordClasses.GroupRecordClass.scss';
-
-const SEQUENCE_RECORD_URL_SEGMENT = '/a/app/record/sequence';
 
 const MSA_ATTRIBUTE_NAME = 'msa';
 
@@ -170,7 +169,7 @@ function makeProteinDomainLocationsTableRow(row: Record<string, AttributeValue>)
   return {
     ...row,
     [SOURCE_ID_ATTRIBUTE_NAME]: typeof accessionValue === 'string'
-      ? makeAccessionLink(accessionValue)
+      ? makeSourceAccessionLink(accessionValue)
       : accessionValue
   };
 }
@@ -209,7 +208,7 @@ function RecordTable_ProteinDomainArchitectures(props: WrappedComponentProps<Rec
         return typeof accessionValue === 'string'
           ? {
               ...row,
-              [SOURCE_ID_ATTRIBUTE_NAME]: makeAccessionLink(accessionValue),
+              [SOURCE_ID_ATTRIBUTE_NAME]: makeSourceAccessionLink(accessionValue),
               [PFAM_DOMAINS_ATTRIBUTE_FIELD.name]: makePfamDomainMarkup(rowsByAccession[accessionValue], maxLength)
             }
           : row;
@@ -220,13 +219,6 @@ function RecordTable_ProteinDomainArchitectures(props: WrappedComponentProps<Rec
   }, [ props.value ]);
 
   return <props.DefaultComponent {...props} table={transformedTable} value={transformedRecords} />;
-}
-
-function makeAccessionLink(accession: string): LinkAttributeValue {
-  return {
-    url: `${SEQUENCE_RECORD_URL_SEGMENT}/${accession}`,
-    displayText: accession
-  };
 }
 
 function makePfamDomainMarkup(rowGroup: Record<string, AttributeValue>[], maxLength: number): string {

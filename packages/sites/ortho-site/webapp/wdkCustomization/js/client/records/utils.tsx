@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { curry, orderBy } from 'lodash'
 
-import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
+import { AttributeField, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
 
 import { RecordTableProps, WrappedComponentProps } from './Types';
 
@@ -86,4 +86,11 @@ export const transformAttributeFieldsUsingSpecs = curry((
 
 export function makeDomainAccessionLink(accession: string) {
   return { url: `http://pfam.xfam.org/family/${accession}`, displayText: accession };
+}
+
+export function makeSourceAccessionLink(accession: string): LinkAttributeValue {
+  return {
+    url: `/a/app/record/sequence/${accession}`,
+    displayText: accession
+  };
 }
