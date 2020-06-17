@@ -77,7 +77,11 @@ const PfamDomainsTable = makeCommonRecordTableWrapper(
 
 function RecordTable_PfamDomains(props: WrappedComponentProps<RecordTableProps>) {
   const length = Number(props.record.attributes[DOMAIN_LENGTH_ATTRIBUTE_NAME]);
-  const domains = props.value.flatMap(extractPfamDomain);
+
+  const domains = useMemo(
+    () => props.value.flatMap(extractPfamDomain),
+    [ props.value ]
+  );
 
   return (
     <div className="PfamDomainsContent">
