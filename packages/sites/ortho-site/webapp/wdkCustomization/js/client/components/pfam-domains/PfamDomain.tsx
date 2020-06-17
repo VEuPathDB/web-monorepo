@@ -17,7 +17,7 @@ export function PfamDomain({ pfamId, style, title }: Props) {
     <div className="PfamDomain" style={style} title={title}>
       {
         colors.map(
-          (color, i) => <div className="Band" key={i} style={{ backgroundColor: color }} ></div>
+          (color, i) => <div className="Band" key={i} style={{ backgroundColor: color }}></div>
         )
       }
     </div>
