@@ -2,24 +2,29 @@ import React, { useMemo } from 'react';
 
 import { AttributeValue } from 'wdk-client/Utils/WdkModel';
 
-import { RecordTableProps, WrappedComponentProps } from './Types';
+import { PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
 
-import './SequenceRecordClasses.SequenceRecordClass.scss';
 import {
+  DOMAIN_END_ATTRIBUTE_NAME,
+  DOMAIN_START_ATTRIBUTE_NAME,
   PFAM_LEGEND_ATTRIBUTE_FIELD,
   makeCommonRecordTableWrapper,
   makeDomainAccessionLink,
   transformAttributeFieldsUsingSpecs,
-  makePfamLegendMarkup
+  makePfamLegendMarkup,
+  extractPfamDomain
 } from './utils';
+
+import { RecordTableProps, WrappedComponentProps } from './Types';
+
+import './SequenceRecordClasses.SequenceRecordClass.scss';
 
 const PFAM_DOMAINS_TABLE_NAME = 'PFamDomains';
 
 const DOMAIN_ACCESSION_ATTRIBUTE_NAME = 'accession';
-const DOMAIN_SYMBOL_ATTRIBUTE_NAME = 'symbol';
+const DOMAIN_LENGTH_ATTRIBUTE_NAME = 'length';
 const DOMAIN_DESCRIPTION_ATTRIBUTE_NAME = 'description';
-const DOMAIN_START_ATTRIBUTE_NAME = 'start_min';
-const DOMAIN_END_ATTRIBUTE_NAME = 'end_max';
+const DOMAIN_SYMBOL_ATTRIBUTE_NAME = 'symbol';
 
 export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
   const Component = recordTableWrappers[props.table.name] ?? props.DefaultComponent;
@@ -65,10 +70,28 @@ function makePfamDomainsTableRow(row: Record<string, AttributeValue>) {
   };
 }
 
-const RecordTable_PfamDomains = makeCommonRecordTableWrapper(
+const PfamDomainsTable = makeCommonRecordTableWrapper(
   makePfamDomainsAttributeFields,
   makePfamDomainsTableRow
 );
+
+function RecordTable_PfamDomains(props: WrappedComponentProps<RecordTableProps>) {
+  const length = Number(props.record.attributes[DOMAIN_LENGTH_ATTRIBUTE_NAME]);
+  const domains = props.value.flatMap(extractPfamDomain);
+
+  return (
+    <div className="PfamDomainsContent">
+      <div className="DomainArchitectureHeader">
+        Domain Architecture
+      </div>
+      <PfamDomainArchitecture
+        length={length}
+        domains={domains}
+      />
+      <PfamDomainsTable {...props} />
+    </div>
+  )
+}
 
 const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {
   [PFAM_DOMAINS_TABLE_NAME]: RecordTable_PfamDomains

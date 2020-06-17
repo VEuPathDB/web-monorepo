@@ -5,8 +5,14 @@ import { curry, orderBy } from 'lodash'
 
 import { AttributeField, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
 
-import { RecordTableProps, WrappedComponentProps } from './Types';
 import { PfamDomain } from '../components/pfam-domains/PfamDomain';
+import { Domain } from '../components/pfam-domains/PfamDomainArchitecture';
+
+import { RecordTableProps, WrappedComponentProps } from './Types';
+
+export const ACCESSION_ATTRIBUTE_NAME = 'accession';
+export const DOMAIN_START_ATTRIBUTE_NAME = 'start_min';
+export const DOMAIN_END_ATTRIBUTE_NAME = 'end_max';
 
 export const PFAM_LEGEND_ATTRIBUTE_FIELD: AttributeField = {
   name: 'legend',
@@ -99,4 +105,24 @@ export function makeSourceAccessionLink(accession: string): LinkAttributeValue {
 
 export function makePfamLegendMarkup(pfamId: string) {
   return renderToStaticMarkup(<PfamDomain pfamId={pfamId} />);
+}
+
+export function extractPfamDomain(row: Record<string, AttributeValue>): Domain[] {
+  const pfamIdAttributeValue = row[ACCESSION_ATTRIBUTE_NAME];
+  const domainStartAttributeValue = row[DOMAIN_START_ATTRIBUTE_NAME];
+  const domainEndAttributeValue = row[DOMAIN_END_ATTRIBUTE_NAME];
+
+  return (
+    typeof pfamIdAttributeValue === 'string' &&
+    typeof domainStartAttributeValue === 'string' &&
+    typeof domainEndAttributeValue === 'string'
+  )
+    ? [
+        {
+          pfamId: pfamIdAttributeValue,
+          start: Number(domainStartAttributeValue),
+          end: Number(domainEndAttributeValue)
+        }
+      ]
+    : [];
 }

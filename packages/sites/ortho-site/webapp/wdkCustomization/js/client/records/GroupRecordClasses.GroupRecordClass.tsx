@@ -6,16 +6,21 @@ import { curry, groupBy, isNaN, uniqBy } from 'lodash';
 import { CollapsibleSection } from 'wdk-client/Components';
 import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
 
-import { Domain, PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
+import { PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
+
 import { RecordAttributeSectionProps, RecordTableProps, WrappedComponentProps } from './Types';
 import {
+  ACCESSION_ATTRIBUTE_NAME,
+  DOMAIN_END_ATTRIBUTE_NAME,
+  DOMAIN_START_ATTRIBUTE_NAME,
   PFAM_DOMAINS_ATTRIBUTE_FIELD,
   PFAM_LEGEND_ATTRIBUTE_FIELD,
+  extractPfamDomain,
   makeCommonRecordTableWrapper,
   makeDomainAccessionLink,
   makePfamLegendMarkup,
   makeSourceAccessionLink,
-  transformAttributeFieldsUsingSpecs,
+  transformAttributeFieldsUsingSpecs
 } from './utils'
 
 import './GroupRecordClasses.GroupRecordClass.scss';
@@ -25,10 +30,7 @@ const MSA_ATTRIBUTE_NAME = 'msa';
 const PFAMS_TABLE_NAME = 'PFams';
 const PROTEIN_PFAMS_TABLE_NAME = 'ProteinPFams';
 
-const ACCESSION_NUMBER_ATTRIBUTE_NAME = 'accession';
-const CORE_PERIPHERAL_NAME = 'core_peripheral';
-const DOMAIN_START_ATTRIBUTE_NAME = 'start_min';
-const DOMAIN_END_ATTRIBUTE_NAME = 'end_max';
+const CORE_PERIPHERAL_ATTRIBUTE_NAME = 'core_peripheral';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
 const SOURCE_ID_ATTRIBUTE_NAME = 'full_id';
 
@@ -80,7 +82,7 @@ const transformPfamsAttributeFields = curry((
   attributeFields: AttributeField[]
 ): AttributeField[] => {
   const renamedAttributeFields = attributeFields.map(
-    attributeField => attributeField.name === ACCESSION_NUMBER_ATTRIBUTE_NAME
+    attributeField => attributeField.name === ACCESSION_ATTRIBUTE_NAME
       ? { ...attributeField, displayName: 'Accession' }
       : attributeField
   );
@@ -97,14 +99,14 @@ const transformPfamsTableRow = curry((
   isGraphic: boolean,
   row: Record<string, AttributeValue>
 ): Record<string, AttributeValue> => {
-  const accessionValue = row[ACCESSION_NUMBER_ATTRIBUTE_NAME];
+  const accessionValue = row[ACCESSION_ATTRIBUTE_NAME];
 
   // The accession value should be rendered as a link, and if
   // the table is in "graphic" mode, a value for the "legend" column should
   // be provided
   return {
     ...row,
-    [ACCESSION_NUMBER_ATTRIBUTE_NAME]: typeof accessionValue === 'string'
+    [ACCESSION_ATTRIBUTE_NAME]: typeof accessionValue === 'string'
       ? makeDomainAccessionLink(accessionValue)
       : accessionValue,
     legend: isGraphic && typeof accessionValue === 'string'
@@ -123,7 +125,7 @@ const makeProteinDomainLocationAttributeFields = transformAttributeFieldsUsingSp
       displayName: 'Accession'
     },
     {
-      name: CORE_PERIPHERAL_NAME,
+      name: CORE_PERIPHERAL_ATTRIBUTE_NAME,
       displayName: 'Core/Peripheral'
     },
     {
@@ -131,7 +133,7 @@ const makeProteinDomainLocationAttributeFields = transformAttributeFieldsUsingSp
       displayName: 'Protein Length'
     },
     {
-      name: ACCESSION_NUMBER_ATTRIBUTE_NAME,
+      name: ACCESSION_ATTRIBUTE_NAME,
       displayName: 'Pfam Domain'
     },
     {
@@ -152,7 +154,7 @@ const makeProteinDomainArchitectureAttributeFields = transformAttributeFieldsUsi
       displayName: 'Accession'
     },
     {
-      name: CORE_PERIPHERAL_NAME,
+      name: CORE_PERIPHERAL_ATTRIBUTE_NAME,
       displayName: 'Core/Peripheral'
     },
     {
@@ -234,26 +236,6 @@ function makePfamDomainMarkup(rowGroup: Record<string, AttributeValue>[], maxLen
         />
       )
     : '';
-}
-
-function extractPfamDomain(row: Record<string, AttributeValue>): Domain[] {
-  const pfamIdAttributeValue = row[ACCESSION_NUMBER_ATTRIBUTE_NAME];
-  const domainStartAttributeValue = row[DOMAIN_START_ATTRIBUTE_NAME];
-  const domainEndAttributeValue = row[DOMAIN_END_ATTRIBUTE_NAME];
-
-  return (
-    typeof pfamIdAttributeValue === 'string' &&
-    typeof domainStartAttributeValue === 'string' &&
-    typeof domainEndAttributeValue === 'string'
-  )
-    ? [
-        {
-          pfamId: pfamIdAttributeValue,
-          start: Number(domainStartAttributeValue),
-          end: Number(domainEndAttributeValue)
-        }
-      ]
-    : [];
 }
 
 const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {
