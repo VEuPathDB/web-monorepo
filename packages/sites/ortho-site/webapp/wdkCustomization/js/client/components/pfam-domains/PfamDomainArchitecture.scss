@@ -1,0 +1,15 @@
+.PfamDomainArchitecture {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .ProteinGraph {
+    background-color: #666;
+    height: 0.0625rem;
+    width: 100%;
+  }
+
+  .PfamDomain {
+    position: absolute;
+  }
+}
