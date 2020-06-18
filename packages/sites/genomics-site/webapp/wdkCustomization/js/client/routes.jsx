@@ -8,8 +8,8 @@ import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
 import { PlasmoApController } from './components/controllers/PlasmoApController';
 
-import { FeaturedTools } from './components/homepage/FeaturedTools';
-import { WorkshopExercises } from './components/homepage/WorkshopExercises';
+import { FeaturedTools } from 'ebrc-client/components/homepage/FeaturedTools';
+import { WorkshopExercises } from 'ebrc-client/components/homepage/WorkshopExercises';
 
 import SampleForm from './components/samples/SampleForm';
 

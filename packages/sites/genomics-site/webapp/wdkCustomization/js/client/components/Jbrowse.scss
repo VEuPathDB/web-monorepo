@@ -1,4 +1,4 @@
-@import '~site/wdkCustomization/js/client/styles/collapsed-header-mixins.scss';
+@import 'ebrc-client/styles/collapsed-header-mixins.scss';
 
 body.vpdb-Body .vpdb-RootContainer__jbrowse {
   @include collapsed-header-page-layout;
