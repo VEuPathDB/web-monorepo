@@ -5,5 +5,5 @@ interface Props {
 }
 
 export function GroupClusterGraphController(props: Props) {
-  return <div>Future home of Cluster Graph</div>;
+  return <div>A cluster graph display for {props.groupName} will be rendered here</div>;
 }
