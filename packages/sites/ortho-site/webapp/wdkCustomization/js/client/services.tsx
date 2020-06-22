@@ -20,7 +20,7 @@ const orthoServiceWrappers = {
       {
         useCache: true,
         method: 'get',
-        path: `/data-summary/genome-sources`
+        path: '/data-summary/genome-sources'
       }
     ),
   getGenomeStatistics: (wdkService: WdkService) => () =>
@@ -29,7 +29,7 @@ const orthoServiceWrappers = {
       {
         useCache: true,
         method: 'get',
-        path: `/data-summary/genome-statistics`
+        path: '/data-summary/genome-statistics'
       }
     ),
   getGroupLayout: (wdkService: WdkService) => (groupName: string) =>
@@ -47,7 +47,7 @@ const orthoServiceWrappers = {
       {
         useCache: true,
         method: 'get',
-        path: `/data-summary/taxons`
+        path: '/data-summary/taxons'
       }
     )
 };
