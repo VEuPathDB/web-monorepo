@@ -1,5 +1,9 @@
 import React from 'react';
 
-export function ClusterGraphController() {
+interface Props {
+  groupName: string;
+}
+
+export function ClusterGraphController(props: Props) {
   return <div>Future home of Cluster Graph</div>;
 }

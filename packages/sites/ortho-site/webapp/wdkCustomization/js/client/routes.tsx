@@ -1,3 +1,7 @@
+import React from 'react';
+
+import { RouteComponentProps } from 'react-router';
+
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 
 import { OrthoMCLHomePageController } from './controllers/OrthoMCLHomePageController';
@@ -14,7 +18,11 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
     // TODO: of the cluster graph is complete
     {
       path: '/cluster-graph/:groupName',
-      component: ClusterGraphController
+      component: (props: RouteComponentProps<{ groupName: string }>) => {
+        const groupName = props.match.params.groupName;
+
+        return <ClusterGraphController groupName={groupName} />;
+      }
     },
     ...ebrcRoutes
   ];
