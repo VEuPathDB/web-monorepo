@@ -1,9 +1,11 @@
 import WdkService, { useWdkEffect } from "wdk-client/Service/WdkService";
 import { useState } from "react";
 
-interface WdkServiceCallback<T> {
-  (wdkService: WdkService): Promise<T>;
+export interface ServiceCallback<S, T> {
+  (service: S): Promise<T>;
 }
+
+type WdkServiceCallback<T> = ServiceCallback<WdkService, T>;
 
 /**
  * Use WdkService to extract data from the WDK Service REST API.
