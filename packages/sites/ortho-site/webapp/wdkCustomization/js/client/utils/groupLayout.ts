@@ -7,7 +7,7 @@ export interface GroupLayout {
   minEValueExp: number;
   maxEValueExp: number;
   size: number;
-  taxonCounts: unknown;
+  taxonCounts: Record<string, number>;
   taxons: unknown;
 }
 
@@ -18,6 +18,6 @@ export const groupLayoutDecoder: Decode.Decoder<GroupLayout> = Decode.combine(
   Decode.field('minEValueExp', Decode.number),
   Decode.field('maxEValueExp', Decode.number),
   Decode.field('size', Decode.number),
-  Decode.field('taxonCounts', Decode.ok),
+  Decode.field('taxonCounts', Decode.objectOf(Decode.number)),
   Decode.field('taxons', Decode.ok)
 );
