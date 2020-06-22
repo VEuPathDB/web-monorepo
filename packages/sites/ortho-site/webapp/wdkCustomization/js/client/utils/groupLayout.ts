@@ -1,5 +1,7 @@
 import * as Decode from 'wdk-client/Utils/Json';
 
+import { TaxonEntries, taxonEntriesDecoder } from './taxons';
+
 export interface GroupLayout {
   edges: unknown;
   nodes: unknown;
@@ -8,7 +10,7 @@ export interface GroupLayout {
   maxEValueExp: number;
   size: number;
   taxonCounts: Record<string, number>;
-  taxons: unknown;
+  taxons: TaxonEntries;
 }
 
 export const groupLayoutDecoder: Decode.Decoder<GroupLayout> = Decode.combine(
@@ -19,5 +21,5 @@ export const groupLayoutDecoder: Decode.Decoder<GroupLayout> = Decode.combine(
   Decode.field('maxEValueExp', Decode.number),
   Decode.field('size', Decode.number),
   Decode.field('taxonCounts', Decode.objectOf(Decode.number)),
-  Decode.field('taxons', Decode.ok)
+  Decode.field('taxons', taxonEntriesDecoder)
 );

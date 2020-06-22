@@ -2,6 +2,7 @@ import { WdkService } from 'wdk-client/Core';
 import { ok } from 'wdk-client/Utils/Json';
 
 import { GroupLayout, groupLayoutDecoder } from './utils/groupLayout';
+import { TaxonEntries, taxonEntriesDecoder } from './utils/taxons';
 
 export function wrapWdkService(wdkService: WdkService): OrthoService {
   return ({
@@ -42,8 +43,8 @@ const orthoServiceWrappers = {
       }
     ),
   getTaxons: (wdkService: WdkService) => () =>
-    wdkService.sendRequest<unknown>(
-      ok,
+    wdkService.sendRequest(
+      taxonEntriesDecoder,
       {
         useCache: true,
         method: 'get',
@@ -56,7 +57,7 @@ export interface OrthoService extends WdkService {
   getGenomeSources: () => Promise<unknown>;
   getGenomeStatistics: () => Promise<unknown>;
   getGroupLayout: (groupName: string) => Promise<GroupLayout>;
-  getTaxons: () => Promise<unknown>;
+  getTaxons: () => Promise<TaxonEntries>;
 }
 
 export function isOrthoService(wdkService: WdkService): wdkService is OrthoService {
