@@ -4,6 +4,6 @@ interface Props {
   groupName: string;
 }
 
-export function ClusterGraphController(props: Props) {
+export function GroupClusterGraphController(props: Props) {
   return <div>Future home of Cluster Graph</div>;
 }

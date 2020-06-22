@@ -5,7 +5,7 @@ import { RouteComponentProps } from 'react-router';
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 
 import { OrthoMCLHomePageController } from './controllers/OrthoMCLHomePageController';
-import { ClusterGraphController } from './controllers/ClusterGraphController';
+import { GroupClusterGraphController } from './controllers/GroupClusterGraphController';
 
 export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
   return [
@@ -21,7 +21,7 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
       component: (props: RouteComponentProps<{ groupName: string }>) => {
         const groupName = props.match.params.groupName;
 
-        return <ClusterGraphController groupName={groupName} />;
+        return <GroupClusterGraphController groupName={groupName} />;
       }
     },
     ...ebrcRoutes
