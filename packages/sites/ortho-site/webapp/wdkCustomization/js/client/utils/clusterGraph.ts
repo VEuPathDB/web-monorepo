@@ -6,5 +6,29 @@ export const edgeTypeDisplayNames: Record<EdgeType, string> = {
   'P': 'Inparalog',
   'L': 'PeripheralCore',
   'M': 'PeripheralPeripheral',
-  'N': 'Normal'
+  'N': 'Other Similarities'
 };
+
+export const edgeTypeOptionOrder: EdgeType[] = [
+  'O',
+  'C',
+  'P',
+  'L',
+  'M',
+  'N'
+];
+
+export const initialEdgeTypeSelections: Record<EdgeType, boolean> = {
+  O: true,
+  C: true,
+  P: true,
+  L: true,
+  M: true,
+  N: false
+};
+
+export interface EdgeTypeOption {
+  key: EdgeType;
+  display: string;
+  isSelected: boolean;
+}
