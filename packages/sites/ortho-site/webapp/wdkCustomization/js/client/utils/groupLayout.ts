@@ -3,7 +3,7 @@ import * as Decode from 'wdk-client/Utils/Json';
 import { TaxonEntries, TaxonEntry, taxonEntryDecoder, taxonEntriesDecoder} from './taxons';
 
 export interface GroupLayout {
-  edges: unknown;
+  edges: Record<string, EdgeEntry>;
   nodes: Record<string, NodeEntry>;
   group: GroupField;
   minEvalueExp: number;
@@ -12,6 +12,18 @@ export interface GroupLayout {
   taxonCounts: Record<string, number>;
   taxons: TaxonEntries;
 }
+
+export interface EdgeEntry {
+  E: string;
+  Q: number;
+  S: number;
+  T: unknown;
+  queryId: string;
+  score: number;
+  subjectId: string;
+}
+
+export type EdgeType = 'O' | 'C' | 'P' | 'L' | 'M' | 'N';
 
 export interface NodeEntry {
   x: string;
@@ -49,6 +61,27 @@ export interface PfamDomainEntry {
   index: number;
   symbol: string;
 }
+
+export const edgeTypeDecoder: Decode.Decoder<EdgeType> = Decode.oneOf(
+  Decode.constant('O'),
+  Decode.constant('C'),
+  Decode.constant('P'),
+  Decode.constant('L'),
+  Decode.constant('M'),
+  Decode.constant('N')
+);
+
+export const edgeEntryDecoder: Decode.Decoder<EdgeEntry> = Decode.combine(
+  Decode.field('E', Decode.string),
+  Decode.field('Q', Decode.number),
+  Decode.field('S', Decode.number),
+  Decode.field('T', edgeTypeDecoder),
+  Decode.field('queryId', Decode.string),
+  Decode.field('score', Decode.number),
+  Decode.field('subjectId', Decode.string)
+);
+
+
 
 export const nodeEntryDecoder: Decode.Decoder<NodeEntry> = Decode.combine(
   Decode.field('x', Decode.string),
