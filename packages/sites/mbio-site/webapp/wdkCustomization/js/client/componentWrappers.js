@@ -134,11 +134,7 @@ function makeHeaderMenuItems(state) {
             text: 'My Search Strategies',
             route: '/workspace/strategies/all'
           },
-/*          {
-            text: 'Analyze My Experiment',
-            route: '/galaxy-orientation'
-          },
-*/        {
+          {
             text: 'My Basket',
             route: '/workspace/basket',
             loginRequired: true
@@ -151,6 +147,14 @@ function makeHeaderMenuItems(state) {
           {
             text: 'Public Search Strategies',
             route: '/workspace/strategies/public'
+          },
+          {
+            text: 'Upload Data Set',
+            route: '/workspace/dataset-upload'
+          },
+          {
+            text: 'My Data Sets',
+            route: '/workspace/datasets'
           }
         ]
       },
