@@ -4,13 +4,20 @@ import { TaxonEntries, TaxonEntry, taxonEntryDecoder, taxonEntriesDecoder} from 
 
 export interface GroupLayout {
   edges: unknown;
-  nodes: unknown;
+  nodes: Record<string, NodeEntry>;
   group: GroupField;
   minEvalueExp: number;
   maxEvalueExp: number;
   size: number;
   taxonCounts: Record<string, number>;
   taxons: TaxonEntries;
+}
+
+export interface NodeEntry {
+  x: string;
+  y: string;
+  i: number;
+  id: string;
 }
 
 export interface GroupField {
@@ -42,6 +49,13 @@ export interface PfamDomainEntry {
   index: number;
   symbol: string;
 }
+
+export const nodeEntryDecoder: Decode.Decoder<NodeEntry> = Decode.combine(
+  Decode.field('x', Decode.string),
+  Decode.field('y', Decode.string),
+  Decode.field('i', Decode.number),
+  Decode.field('id', Decode.string)
+);
 
 export const ecNumberEntryDecoder: Decode.Decoder<EcNumberEntry> = Decode.combine(
   Decode.field('code', Decode.string),
@@ -75,7 +89,7 @@ export const groupFieldDecoder: Decode.Decoder<GroupField> = Decode.combine(
 
 export const groupLayoutDecoder: Decode.Decoder<GroupLayout> = Decode.combine(
   Decode.field('edges', Decode.ok),
-  Decode.field('nodes', Decode.ok),
+  Decode.field('nodes', Decode.objectOf(nodeEntryDecoder)),
   Decode.field('group', groupFieldDecoder),
   Decode.field('minEvalueExp', Decode.number),
   Decode.field('maxEvalueExp', Decode.number),
