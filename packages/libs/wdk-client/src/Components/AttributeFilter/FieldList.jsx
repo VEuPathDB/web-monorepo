@@ -142,8 +142,8 @@ FieldList.propTypes = {
 };
 
 function getNodeSearchString(valuesMap) {
-  return function ({ field: { term, display = '', description = '' }}) {
-    return `${display} ${description} ${valuesMap[term] || ''}`.toLowerCase();
+  return function ({ field: { term, display = '', description = '', variableName = ''}}) {
+    return `${display} ${description} ${variableName} ${valuesMap[term] || ''}`.toLowerCase();
   }
 }
 
