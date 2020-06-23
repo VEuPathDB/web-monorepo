@@ -1,10 +1,11 @@
 import * as Decode from 'wdk-client/Utils/Json';
 
+import { EdgeType } from './clusterGraph';
 import { TaxonEntries, TaxonEntry, taxonEntryDecoder, taxonEntriesDecoder} from './taxons';
 
 export interface GroupLayout {
-  edges: Record<string, EdgeEntry>;
-  nodes: Record<string, NodeEntry>;
+  edges: EdgeEntries;
+  nodes: NodeEntries;
   group: GroupField;
   minEvalueExp: number;
   maxEvalueExp: number;
@@ -13,17 +14,19 @@ export interface GroupLayout {
   taxons: TaxonEntries;
 }
 
+export type EdgeEntries = Record<string, EdgeEntry>;
+
 export interface EdgeEntry {
   E: string;
   Q: number;
   S: number;
-  T: unknown;
+  T: EdgeType;
   queryId: string;
   score: number;
   subjectId: string;
 }
 
-export type EdgeType = 'O' | 'C' | 'P' | 'L' | 'M' | 'N';
+export type NodeEntries = Record<string, NodeEntry>;
 
 export interface NodeEntry {
   x: string;
@@ -81,7 +84,7 @@ export const edgeEntryDecoder: Decode.Decoder<EdgeEntry> = Decode.combine(
   Decode.field('subjectId', Decode.string)
 );
 
-
+export const edgeEntriesDecoder: Decode.Decoder<EdgeEntries> = Decode.objectOf(edgeEntryDecoder);
 
 export const nodeEntryDecoder: Decode.Decoder<NodeEntry> = Decode.combine(
   Decode.field('x', Decode.string),
@@ -89,6 +92,8 @@ export const nodeEntryDecoder: Decode.Decoder<NodeEntry> = Decode.combine(
   Decode.field('i', Decode.number),
   Decode.field('id', Decode.string)
 );
+
+export const nodeEntriesDecoder: Decode.Decoder<NodeEntries> = Decode.objectOf(nodeEntryDecoder);
 
 export const ecNumberEntryDecoder: Decode.Decoder<EcNumberEntry> = Decode.combine(
   Decode.field('code', Decode.string),
@@ -121,8 +126,8 @@ export const groupFieldDecoder: Decode.Decoder<GroupField> = Decode.combine(
 );
 
 export const groupLayoutDecoder: Decode.Decoder<GroupLayout> = Decode.combine(
-  Decode.field('edges', Decode.ok),
-  Decode.field('nodes', Decode.objectOf(nodeEntryDecoder)),
+  Decode.field('edges', edgeEntriesDecoder),
+  Decode.field('nodes', nodeEntriesDecoder),
   Decode.field('group', groupFieldDecoder),
   Decode.field('minEvalueExp', Decode.number),
   Decode.field('maxEvalueExp', Decode.number),
