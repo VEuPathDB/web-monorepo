@@ -178,36 +178,41 @@ function NodeOptions({
         items={nodeDisplayTypeOptions}
         onChange={onNodeDisplayTypeChange}
       />
-      {
-        selectedNodeDisplayType === 'taxa' &&
-        <div className="TaxaControlSection">
-          {
-            taxonLegendEntries.map(
-              taxonLegendEntry =>
-                <div key={taxonLegendEntry.id} className="TaxonLegendEntry">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    version="1.1"
-                    width="11"
-                    height="11"
-                  >
-                    <circle
-                      r="5.5"
-                      cx="5.5"
-                      cy="5.5"
-                      fill={taxonLegendEntry.color}
-                    />
-                  </svg>
-                  {taxonLegendEntry.abbrev}
-                </div>
-            )
-          }
-        </div>
-      }
-      {
-        selectedNodeDisplayType !== 'taxa' &&
-        <div>Under Construction</div>
-      }
+      <fieldset>
+        <legend>
+          Show Nodes By
+        </legend>
+        {
+          selectedNodeDisplayType === 'taxa' &&
+          <div className="TaxaControlSection">
+            {
+              taxonLegendEntries.map(
+                taxonLegendEntry =>
+                  <div key={taxonLegendEntry.id} className="TaxonLegendEntry">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      version="1.1"
+                      width="11"
+                      height="11"
+                    >
+                      <circle
+                        r="5.5"
+                        cx="5.5"
+                        cy="5.5"
+                        fill={taxonLegendEntry.color}
+                      />
+                    </svg>
+                    {taxonLegendEntry.abbrev}
+                  </div>
+              )
+            }
+          </div>
+        }
+        {
+          selectedNodeDisplayType !== 'taxa' &&
+          <div>Under Construction</div>
+        }
+      </fieldset>
     </div>
   );
 }
