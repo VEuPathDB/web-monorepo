@@ -58,7 +58,10 @@ function EdgeOptions({
         <summary>
           Edge Options
         </summary>
-        <div className="EdgeTypeOptions">
+        <fieldset className="EdgeTypeOptions">
+          <legend>
+            Edge Type
+          </legend>
           {
             edgeTypeOptions.map(
               ({ key, display, isSelected }) =>
