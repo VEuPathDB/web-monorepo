@@ -20,6 +20,7 @@ interface Props {
 
 export function ClusterGraphDisplay({ layout }: Props) {
   const { edgeTypeOptions, selectEdgeTypeOption } = useEdgeTypeOptions(layout);
+  const { minEValueExp, maxEValueExp, eValueExp, selectEValueExp } = useScoreControl(layout);
 
   return (
     <div>
@@ -27,6 +28,10 @@ export function ClusterGraphDisplay({ layout }: Props) {
       <GraphControls
         edgeTypeOptions={edgeTypeOptions}
         selectEdgeTypeOption={selectEdgeTypeOption}
+        minEValueExp={minEValueExp}
+        maxEValueExp={maxEValueExp}
+        eValueExp={eValueExp}
+        selectEValueExp={selectEValueExp}
       />
       <ClusterGraphCanvas />
       <GraphInformation />
@@ -62,5 +67,22 @@ function useEdgeTypeOptions(layout: GroupLayout) {
   return {
     edgeTypeOptions,
     selectEdgeTypeOption
+  };
+}
+
+function useScoreControl(layout: GroupLayout) {
+  const initialEValue = layout.maxEvalueExp - Math.round((layout.maxEvalueExp - layout.minEvalueExp) / 5.0);
+
+  const [ eValueExp, setEValueExp ] = useState(initialEValue);
+
+  useEffect(() => {
+    setEValueExp(initialEValue);
+  }, [ layout ]);
+
+  return {
+    minEValueExp: layout.minEvalueExp - 1,
+    maxEValueExp: layout.maxEvalueExp + 1,
+    eValueExp,
+    selectEValueExp: setEValueExp
   };
 }
