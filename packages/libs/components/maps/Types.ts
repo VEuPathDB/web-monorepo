@@ -14,12 +14,12 @@ export interface GeoBBox {
   northEast: LatLong
 }
 
-export interface MapData {
-  markers: Array<MarkerData>
+export interface MarkerData {
+  markers: Array<MarkerDatum>
 }
 
 
-export interface MarkerData {
+export interface MarkerDatum {
   props: MarkerProps,
   component: React.Component | Function  // because FancyMarker is just a function...
 }
@@ -36,7 +36,7 @@ export interface FancyMarkerProps extends MarkerProps {
 
 
 /** React Props that are passed to a Map Component. */
-export interface SemanticMarkerMapProps {
+export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
   viewport: Viewport,
   
@@ -44,13 +44,13 @@ export interface SemanticMarkerMapProps {
   height: CSSProperties['height'],
   width: CSSProperties['width'],
 
-  onMapUpdate: (bvp: BoundsViewport) => MapData,
-  data: MapData
+  onViewportChanged: (bvp: BoundsViewport) => void,
+  markerData: MarkerData
 }
 
 export interface SemanticMarkersProps {
-  onMapUpdate: (bvp : BoundsViewport) => MapData,
-  data: MapData['markers']
+  onViewportChanged: (bvp: BoundsViewport) => void,
+  data: MarkerData
 }
 
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"; //  { useState, useCallback } from "react";
-import { GeoBBox, SemanticMarkersProps, MarkerProps } from "./Types";
+import { GeoBBox, SemanticMarkersProps } from "./Types";
 import { useLeaflet } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 
@@ -10,8 +10,7 @@ import 'leaflet/dist/leaflet.css';
  * 
  * @param props 
  */
-export default function SemanticMarkers(props: SemanticMarkersProps<MarkerProps>) {
-  const { data, onMapUpdate } = props;
+export default function SemanticMarkers({ onViewportChanged, data }: SemanticMarkersProps) {
 console.log("I'm here");
   const { map } = useLeaflet();
   const bounds = boundsToGeoBBox(map!.getBounds()); // do we need these non null assertion ! thingies?
@@ -26,7 +25,7 @@ console.log("I'm here");
 
     map.on('resize moveend zoomend', updateMap); // resize is there hopefully when we have full screen mode
     function updateMap() {
-      onMapUpdate({ bounds, zoomLevel });
+      onViewportChanged({ bounds, zoomLevel });
     }
     return () => {
       map.off('resize moveend zoomend', updateMap);
@@ -49,7 +48,7 @@ console.log("I'm here");
 
   return (
     <>
-      { data.map(({props, component: ComponentType}) => (<ComponentType {...props}></ComponentType>)) }
+      { data.markers.map(({props, component: ComponentType}) => (<ComponentType {...props}></ComponentType>)) }
     </>
   );
 }

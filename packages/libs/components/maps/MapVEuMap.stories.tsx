@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // import { action } from '@storybook/addon-actions';
-import SemanticMarkerMap from './SemanticMarkerMap';
-import { BoundsViewport, MapData, MarkerProps, FancyMarkerProps } from './Types';
+import MapVEuMap from './MapVEuMap';
+import { BoundsViewport, MarkerData, MarkerProps, FancyMarkerProps } from './Types';
 import { Marker } from 'react-leaflet';
 import FancyMarker from './FancyMarker';
 
@@ -20,7 +20,7 @@ L.Icon.Default.mergeOptions({
 
 export default {
   title: 'Map',
-  component: SemanticMarkerMap,
+  component: MapVEuMap,
 };
 
 
@@ -30,11 +30,11 @@ export default {
    This is a trivial marker data generator.  It returns 10 random points within the given bounds.
    The real thing should something with zoomLevel.
 */
-const onMapUpdate = ({ bounds, zoomLevel }: BoundsViewport) => {
+const getMarkerData = ({ bounds, zoomLevel }: BoundsViewport) => {
   // marker data has to be empty because we don't
   // know the map bounds until the map is rendered
   // (particularly in full screen deployments)
-  const mapData : MapData = {
+  let markerData : MarkerData = {
     markers : []
   }
   console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
@@ -43,7 +43,7 @@ const onMapUpdate = ({ bounds, zoomLevel }: BoundsViewport) => {
     const lat = bounds.southWest[0] + Math.random()*(bounds.northEast[0] - bounds.southWest[0]);
     const long = bounds.southWest[1] + Math.random()*(bounds.northEast[1] - bounds.southWest[1]);
     if (Math.random() < 0.5) { // basic Marker
-      mapData.markers.push(
+      markerData.markers.push(
 	{
 	  props: { key: 'marker'+i,
 		   position: [ lat, long ]
@@ -51,7 +51,7 @@ const onMapUpdate = ({ bounds, zoomLevel }: BoundsViewport) => {
 	  component: Marker
       });
     } else {  // make a FancyMarker
-      mapData.markers.push(
+      markerData.markers.push(
 	{
 	  props: { key: 'fancymarker'+i,
 		   position: [ lat, long ],
@@ -62,18 +62,18 @@ const onMapUpdate = ({ bounds, zoomLevel }: BoundsViewport) => {
     }
   }
   // replace old markers with these new ones
-  return mapData;
+  return markerData;
 }
 
 
 export const Basic = () => {
-  const [ mapData, setMapData ] = useState<MapData>({ markers: []});
+  const [ markerData, setMarkerData ] = useState<MarkerData>({ markers: [] });
   return (
-    <SemanticMarkerMap
+    <MapVEuMap
     viewport={{center: [ 54.561781, -3.143297 ], zoom: 12}}
     height="600px" width="800px"
-    onMapUpdate={(bvp : BoundsViewport) => setMapData(onMapUpdate(bvp))}
-    data={mapData}
+    onViewportChanged={(bvp : BoundsViewport) => setMarkerData(getMarkerData(bvp))}
+    markerData={markerData}
     />
   );
 }
