@@ -3,7 +3,9 @@ import { Figure } from "react-plotly.js";
 import { PlotType, PlotData, Layout, Frame } from "plotly.js";
 import { PlotComponentProps } from "./Types";
 
-interface Props extends PlotComponentProps<any> {
+type PlotDataKey = keyof PlotData;
+
+interface Props<T extends PlotDataKey> extends PlotComponentProps<T> {
   /**
    * The type of Plotly plot
    */
@@ -29,7 +31,7 @@ const Plot = lazy(() => import('react-plotly.js'));
  * 
  * @param props 
  */
-export default function PlotlyPlot(props: Props) {
+export default function PlotlyPlot<T extends PlotDataKey>(props: Props<T>) {
   const { data, layout = {}, frames = null, onPlotUpdate, mode, type } = props;
 
   const [ state, updateState ] = useState<Figure>({

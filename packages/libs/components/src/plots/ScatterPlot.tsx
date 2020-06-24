@@ -2,7 +2,7 @@ import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
 import { PlotComponentProps } from "./Types";
 
-interface Props extends PlotComponentProps<'name', 'x'|'y'> {
+interface Props extends PlotComponentProps<'name'|'x'|'y'> {
   /** Label for x-axis */
   xLabel: string;
   /** Label for y-axis */
@@ -20,5 +20,12 @@ export default function ScatterPlot(props: Props) {
     }
   };
 
-  return <PlotlyPlot {...plotlyProps} layout={layout} type="scatter" mode="markers"/>
+  return (
+    <PlotlyPlot
+      {...plotlyProps}
+      layout={layout}
+      type="scatter"
+      mode="markers"
+    />
+  );
 }

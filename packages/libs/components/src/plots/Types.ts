@@ -8,9 +8,10 @@ import { PlotData } from "plotly.js";
  * @typeParam T required `PlotData` keys
  * @typeParam S optional `PlotData` keys
  */
-export interface PlotComponentProps<T extends keyof PlotData, S extends keyof PlotData = never> {
+export interface PlotComponentProps<T extends keyof PlotData> {
   /** The data to be plotted */
-  data: (Pick<PlotData, T> & Pick<Partial<PlotData>, S>)[];
+  // TODO Support optional keys
+  data: Pick<PlotData, T>[];
   /** Style to be applied to container div element */
   style?: CSSProperties;
   /** Callback function to handle selection */
