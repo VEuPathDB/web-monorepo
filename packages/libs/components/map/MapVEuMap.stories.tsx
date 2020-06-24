@@ -34,7 +34,7 @@ const getMarkerData = ({ bounds, zoomLevel }: BoundsViewport) => {
   // marker data has to be empty because we don't
   // know the map bounds until the map is rendered
   // (particularly in full screen deployments)
-  let markerData : MarkerData = {
+  const markerData : MarkerData = {
     markers : []
   }
   console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
