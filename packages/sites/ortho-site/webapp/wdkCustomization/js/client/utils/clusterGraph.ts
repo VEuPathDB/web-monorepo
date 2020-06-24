@@ -32,3 +32,17 @@ export interface EdgeTypeOption {
   display: string;
   isSelected: boolean;
 }
+
+export type NodeDisplayType = 'taxa' | 'ec-numbers' | 'pfam-domains';
+
+export const nodeDisplayTypeDisplayNames: Record<NodeDisplayType, string> = {
+  'taxa': 'Taxa',
+  'ec-numbers': 'EC Numbers',
+  'pfam-domains': 'PFam Domains'
+};
+
+export const nodeDisplayTypeOrder: NodeDisplayType[] = [
+  'taxa',
+  'ec-numbers',
+  'pfam-domains'
+];

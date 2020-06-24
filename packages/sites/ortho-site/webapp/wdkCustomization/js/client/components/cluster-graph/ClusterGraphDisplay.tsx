@@ -3,9 +3,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   EdgeType,
   EdgeTypeOption,
+  NodeDisplayType,
   edgeTypeOptionOrder,
   edgeTypeDisplayNames,
-  initialEdgeTypeSelections
+  initialEdgeTypeSelections,
+  nodeDisplayTypeOrder,
+  nodeDisplayTypeDisplayNames
 } from '../../utils/clusterGraph';
 import { GroupLayout } from '../../utils/groupLayout';
 
@@ -22,6 +25,8 @@ export function ClusterGraphDisplay({ layout }: Props) {
   const { edgeTypeOptions, selectEdgeTypeOption } = useEdgeTypeOptions(layout);
   const { minEValueExp, maxEValueExp, eValueExp, selectEValueExp } = useScoreControl(layout);
 
+  const { nodeDisplayTypeOptions, selectedNodeDisplayType, setSelectedNodeDisplayType } = useNodeDisplayTypeOptions(layout);
+
   return (
     <div>
       <Instructions />
@@ -32,6 +37,9 @@ export function ClusterGraphDisplay({ layout }: Props) {
         maxEValueExp={maxEValueExp}
         eValueExp={eValueExp}
         selectEValueExp={selectEValueExp}
+        nodeDisplayTypeOptions={nodeDisplayTypeOptions}
+        selectedNodeDisplayType={selectedNodeDisplayType}
+        setSelectedNodeDisplayType={setSelectedNodeDisplayType}
       />
       <ClusterGraphCanvas />
       <GraphInformation />
@@ -84,5 +92,31 @@ function useScoreControl(layout: GroupLayout) {
     maxEValueExp: layout.maxEvalueExp + 1,
     eValueExp,
     selectEValueExp: setEValueExp
+  };
+}
+
+function useNodeDisplayTypeOptions(layout: GroupLayout) {
+  const initialNodeDisplayTypeSelection = 'taxa';
+
+  const [ selectedNodeDisplayType, setSelectedNodeDisplayType ] = useState<NodeDisplayType>(initialNodeDisplayTypeSelection);
+
+  useEffect(() => {
+    setSelectedNodeDisplayType(initialNodeDisplayTypeSelection);
+  }, [ layout ]);
+
+  const nodeDisplayTypeOptions = useMemo(
+    () => nodeDisplayTypeOrder.map(
+      nodeDisplayType => ({
+        value: nodeDisplayType,
+        display: nodeDisplayTypeDisplayNames[nodeDisplayType]
+      })
+    ),
+    []
+  );
+
+  return {
+    nodeDisplayTypeOptions,
+    selectedNodeDisplayType,
+    setSelectedNodeDisplayType
   };
 }

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { Checkbox, SliderInput, TextBox } from 'wdk-client/Components';
+import { Checkbox, SliderInput, TextBox, RadioList } from 'wdk-client/Components';
 
-import { EdgeTypeOption, EdgeType } from '../../utils/clusterGraph';
+import { EdgeTypeOption, EdgeType, NodeDisplayType } from '../../utils/clusterGraph';
 
-type Props = EdgeOptionsProps;
+type Props = EdgeOptionsProps & NodeOptionsProps;
 
 export function GraphControls({
   edgeTypeOptions,
@@ -12,7 +12,10 @@ export function GraphControls({
   minEValueExp,
   maxEValueExp,
   eValueExp,
-  selectEValueExp
+  selectEValueExp,
+  nodeDisplayTypeOptions,
+  selectedNodeDisplayType,
+  setSelectedNodeDisplayType
 }: Props) {
   return (
     <div className="GraphControls">
@@ -23,6 +26,11 @@ export function GraphControls({
         maxEValueExp={maxEValueExp}
         eValueExp={eValueExp}
         selectEValueExp={selectEValueExp}
+      />
+      <NodeOptions
+        nodeDisplayTypeOptions={nodeDisplayTypeOptions}
+        selectedNodeDisplayType={selectedNodeDisplayType}
+        setSelectedNodeDisplayType={setSelectedNodeDisplayType}
       />
     </div>
   );
@@ -136,4 +144,32 @@ function useInternalEValueTextState(
     internalEValueText,
     setInternalEValueText
   };
+}
+
+interface NodeOptionsProps {
+  nodeDisplayTypeOptions: { value: NodeDisplayType, display: React.ReactNode, disabled?: boolean }[];
+  selectedNodeDisplayType: NodeDisplayType;
+  setSelectedNodeDisplayType: (newNodeDisplayType: NodeDisplayType) => void;
+}
+
+function NodeOptions({ nodeDisplayTypeOptions, selectedNodeDisplayType, setSelectedNodeDisplayType }: NodeOptionsProps) {
+  const onNodeDisplayTypeChange = useCallback((newValue: string) => {
+    setSelectedNodeDisplayType(newValue as NodeDisplayType);
+  }, [ setSelectedNodeDisplayType ]);
+
+  return (
+    <div className="NodeOptions">
+      <details open>
+        <summary>
+          Node Options
+        </summary>
+      </details>
+      <RadioList
+        name="node-display-type"
+        value={selectedNodeDisplayType}
+        items={nodeDisplayTypeOptions}
+        onChange={onNodeDisplayTypeChange}
+      />
+    </div>
+  );
 }
