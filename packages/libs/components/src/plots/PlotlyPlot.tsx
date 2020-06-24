@@ -1,42 +1,45 @@
 import React, { useState, useCallback, lazy, Suspense } from "react";
 import { Figure } from "react-plotly.js";
-import { PlotType, PlotData, Datum } from "plotly.js";
+import { PlotType, PlotData, Layout, Frame } from "plotly.js";
 import { PlotComponentProps } from "./Types";
 
-interface Props<XType extends Datum, YType extends Datum> extends PlotComponentProps<XType, YType> {
+interface Props extends PlotComponentProps<any> {
+  /**
+   * The type of Plotly plot
+   */
   type: PlotType;
+  /**
+   * The mode of Plotly plot
+   */
   mode?: PlotData['mode'];
+  /**
+   * Plotly layout options
+   */
+  layout?: Partial<Layout>;
+  /**
+   * Plotly frames
+   */
+  frames?: Frame[];
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
 
 /**
- * Renders a scatter plot.
- * 
- * This is some really excellent documentation about how to use ScatterPlot.
+ * Wrapper over the `react-plotly.js` `Plot` component
  * 
  * @param props 
  */
-export default function PlotlyPlot<XType extends Datum, YType extends Datum>(props: Props<XType, YType>) {
-  const { data, xLabel, yLabel, height, width, onPlotUpdate, mode, type } = props;
+export default function PlotlyPlot(props: Props) {
+  const { data, layout = {}, frames = null, onPlotUpdate, mode, type } = props;
 
   const [ state, updateState ] = useState<Figure>({
     data: data.map(trace => ({
       type: type,
       mode: mode,
-      x: trace.x,
-      y: trace.y,
-      name: trace.name
+      ...trace
     })),
-    layout: {
-      xaxis: {
-        title: xLabel
-      },
-      yaxis: {
-        title: yLabel
-      }
-    },
-    frames: []
+    layout,
+    frames
   });
 
   const handleUpdate = useCallback((figure: Figure) => {
@@ -47,7 +50,6 @@ export default function PlotlyPlot<XType extends Datum, YType extends Datum>(pro
   return (
     <Suspense fallback="Loading...">
       <Plot
-        style={{ height, width }}
         data={state.data}
         layout={state.layout}
         frames={state.frames || undefined}

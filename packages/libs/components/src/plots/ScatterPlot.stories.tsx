@@ -12,12 +12,10 @@ export const Basic = () => <ScatterPlot
   data={[{
     x: randomData(100),
     y: randomData(100),
-    name: 'Variable A'
+    name: 'Variable A',
   }]}
   xLabel="foo"
   yLabel="bar"
-  height={600}
-  width={600}
 />
 
 export const MultiVariate = () => <ScatterPlot
@@ -33,8 +31,6 @@ export const MultiVariate = () => <ScatterPlot
   }]}
   xLabel="foo"
   yLabel="bar"
-  height={600}
-  width={600}
 />
 
 function randomData(size: number) {

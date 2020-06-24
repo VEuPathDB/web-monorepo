@@ -16,25 +16,22 @@ export const Basic = () => <Histogram
   }]}
   xLabel="foo"
   yLabel="bar"
-  height={600}
-  width={600}
 />
 
+const x = randomData(100);
 export const MultiVariate = () => <Histogram
   onPlotUpdate={action('state updated')}
   data={[{
-    x: randomData(100),
+    x,
     y: randomData(100),
     name: 'Variable A'
   }, {
-    x: randomData(100),
+    x,
     y: randomData(100),
     name: 'Variable B'
   }]}
   xLabel="foo"
   yLabel="bar"
-  height={600}
-  width={600}
 />
 
 function randomData(size: number) {
