@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { orderBy } from 'lodash';
+
 import {
   EdgeType,
   EdgeTypeOption,
   NodeDisplayType,
+  TaxonLegendEntry,
   edgeTypeOptionOrder,
   edgeTypeDisplayNames,
   initialEdgeTypeSelections,
@@ -22,10 +25,15 @@ interface Props {
 }
 
 export function ClusterGraphDisplay({ layout }: Props) {
-  const { edgeTypeOptions, selectEdgeTypeOption } = useEdgeTypeOptions(layout);
+  const { edgeTypeOptions, selectEdgeTypeOption } = useEdgeTypeControl(layout);
   const { minEValueExp, maxEValueExp, eValueExp, selectEValueExp } = useScoreControl(layout);
 
-  const { nodeDisplayTypeOptions, selectedNodeDisplayType, setSelectedNodeDisplayType } = useNodeDisplayTypeOptions(layout);
+  const {
+    nodeDisplayTypeOptions,
+    selectedNodeDisplayType,
+    setSelectedNodeDisplayType,
+    taxonLegendEntries
+  } = useNodeDisplayTypeControl(layout);
 
   return (
     <div>
@@ -40,6 +48,7 @@ export function ClusterGraphDisplay({ layout }: Props) {
         nodeDisplayTypeOptions={nodeDisplayTypeOptions}
         selectedNodeDisplayType={selectedNodeDisplayType}
         setSelectedNodeDisplayType={setSelectedNodeDisplayType}
+        taxonLegendEntries={taxonLegendEntries}
       />
       <ClusterGraphCanvas />
       <GraphInformation />
@@ -47,7 +56,7 @@ export function ClusterGraphDisplay({ layout }: Props) {
   );
 }
 
-function useEdgeTypeOptions(layout: GroupLayout) {
+function useEdgeTypeControl(layout: GroupLayout) {
   const [ selectedEdgeTypes, setSelectedEdgeTypes ] = useState<Record<EdgeType, boolean>>(initialEdgeTypeSelections);
 
   const selectEdgeTypeOption = useCallback((selectedEdge: EdgeType, newValue: boolean) => {
@@ -95,7 +104,7 @@ function useScoreControl(layout: GroupLayout) {
   };
 }
 
-function useNodeDisplayTypeOptions(layout: GroupLayout) {
+function useNodeDisplayTypeControl(layout: GroupLayout) {
   const initialNodeDisplayTypeSelection = 'taxa';
 
   const [ selectedNodeDisplayType, setSelectedNodeDisplayType ] = useState<NodeDisplayType>(initialNodeDisplayTypeSelection);
@@ -103,6 +112,8 @@ function useNodeDisplayTypeOptions(layout: GroupLayout) {
   useEffect(() => {
     setSelectedNodeDisplayType(initialNodeDisplayTypeSelection);
   }, [ layout ]);
+
+  const taxonLegendEntries = useTaxonLegendEntries(layout);
 
   const nodeDisplayTypeOptions = useMemo(
     () => nodeDisplayTypeOrder.map(
@@ -117,6 +128,23 @@ function useNodeDisplayTypeOptions(layout: GroupLayout) {
   return {
     nodeDisplayTypeOptions,
     selectedNodeDisplayType,
-    setSelectedNodeDisplayType
+    setSelectedNodeDisplayType,
+    taxonLegendEntries
   };
+}
+
+function useTaxonLegendEntries(layout: GroupLayout): TaxonLegendEntry[] {
+  return useMemo(() => {
+    const taxonsWithNonzeroCounts =
+      Object.values(layout.taxons)
+        .filter(taxonEntry => layout.taxonCounts[taxonEntry.abbrev] > 0)
+        .map(taxonEntry => ({ ...taxonEntry, count: layout.taxonCounts[taxonEntry.abbrev], path: 'TODO', groupColor: 'black' }));
+
+    const orderedTaxons = orderBy(
+      taxonsWithNonzeroCounts,
+      entry => entry.sortIndex
+    );
+
+    return orderedTaxons;
+  }, [ layout ]);
 }

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Checkbox, SliderInput, TextBox, RadioList } from 'wdk-client/Components';
 
-import { EdgeTypeOption, EdgeType, NodeDisplayType } from '../../utils/clusterGraph';
+import { EdgeTypeOption, EdgeType, NodeDisplayType, TaxonLegendEntry } from '../../utils/clusterGraph';
 
 type Props = EdgeOptionsProps & NodeOptionsProps;
 
@@ -15,7 +15,8 @@ export function GraphControls({
   selectEValueExp,
   nodeDisplayTypeOptions,
   selectedNodeDisplayType,
-  setSelectedNodeDisplayType
+  setSelectedNodeDisplayType,
+  taxonLegendEntries
 }: Props) {
   return (
     <div className="GraphControls">
@@ -31,6 +32,7 @@ export function GraphControls({
         nodeDisplayTypeOptions={nodeDisplayTypeOptions}
         selectedNodeDisplayType={selectedNodeDisplayType}
         setSelectedNodeDisplayType={setSelectedNodeDisplayType}
+        taxonLegendEntries={taxonLegendEntries}
       />
     </div>
   );
@@ -150,9 +152,15 @@ interface NodeOptionsProps {
   nodeDisplayTypeOptions: { value: NodeDisplayType, display: React.ReactNode, disabled?: boolean }[];
   selectedNodeDisplayType: NodeDisplayType;
   setSelectedNodeDisplayType: (newNodeDisplayType: NodeDisplayType) => void;
+  taxonLegendEntries: TaxonLegendEntry[];
 }
 
-function NodeOptions({ nodeDisplayTypeOptions, selectedNodeDisplayType, setSelectedNodeDisplayType }: NodeOptionsProps) {
+function NodeOptions({
+  nodeDisplayTypeOptions,
+  selectedNodeDisplayType,
+  setSelectedNodeDisplayType,
+  taxonLegendEntries
+}: NodeOptionsProps) {
   const onNodeDisplayTypeChange = useCallback((newValue: string) => {
     setSelectedNodeDisplayType(newValue as NodeDisplayType);
   }, [ setSelectedNodeDisplayType ]);
@@ -170,6 +178,36 @@ function NodeOptions({ nodeDisplayTypeOptions, selectedNodeDisplayType, setSelec
         items={nodeDisplayTypeOptions}
         onChange={onNodeDisplayTypeChange}
       />
+      {
+        selectedNodeDisplayType === 'taxa' &&
+        <div className="TaxaControlSection">
+          {
+            taxonLegendEntries.map(
+              taxonLegendEntry =>
+                <div key={taxonLegendEntry.id} className="TaxonLegendEntry">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.1"
+                    width="11"
+                    height="11"
+                  >
+                    <circle
+                      r="5.5"
+                      cx="5.5"
+                      cy="5.5"
+                      fill={taxonLegendEntry.color}
+                    />
+                  </svg>
+                  {taxonLegendEntry.abbrev}
+                </div>
+            )
+          }
+        </div>
+      }
+      {
+        selectedNodeDisplayType !== 'taxa' &&
+        <div>Under Construction</div>
+      }
     </div>
   );
 }
