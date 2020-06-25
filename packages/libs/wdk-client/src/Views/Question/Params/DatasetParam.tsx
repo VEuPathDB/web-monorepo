@@ -1,7 +1,7 @@
 import { orderBy, partition } from 'lodash';
 import React from 'react';
 import { ofType } from 'redux-observable';
-import { EMPTY, from, merge } from 'rxjs';
+import { EMPTY, from, merge, of } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 import { DatasetParam, Parameter } from 'wdk-client/Utils/WdkModel';
 import { StrategySummary } from 'wdk-client/Utils/WdkUser';
@@ -273,25 +273,20 @@ const observeParam: ParamModule['observeParam'] = (action$, state$, services) =>
 
         const initializeIdList$ = !paramValues[parameter.name]
           ? EMPTY
-          : [
-              setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: true }),
-              services.wdkService.getDataset(+paramValues[parameter.name])
-                .then(
-                  datasetParamItems => 
-                    [
-                      setIdList({
-                        searchName,
-                        paramValues,
-                        parameter: (parameter as DatasetParam),
-                        idList: datasetParamItems.map(datasetItemToString).join(', ')
-                      }),
-                      setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: false })
-                    ]
-                )
-                .catch(
-                    _ => setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: false })
-                )
-            ];
+          : merge(
+              of(setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: true })),
+              from(services.wdkService.getDataset(+paramValues[parameter.name])).pipe(
+                mergeMap(datasetParamItems => from([
+                  setIdList({
+                    searchName,
+                    paramValues,
+                    parameter: (parameter as DatasetParam),
+                    idList: datasetParamItems.map(datasetItemToString).join(', ')
+                  }),
+                  setLoadingIdList({ searchName, parameter, paramValues, loadingIdList: false })
+                ]))
+              )
+            );
 
         if (user.isGuest) return initializeIdList$;
         // load basket count and strategy list
