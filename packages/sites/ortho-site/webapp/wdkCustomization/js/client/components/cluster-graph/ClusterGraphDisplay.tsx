@@ -33,7 +33,8 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
     nodeDisplayTypeOptions,
     selectedNodeDisplayType,
     setSelectedNodeDisplayType,
-    legendEntries
+    legendEntries,
+    legendHeaders
   } = useNodeDisplayTypeControl(layout, taxonUiMetadata);
 
   return (
@@ -50,6 +51,7 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
         selectedNodeDisplayType={selectedNodeDisplayType}
         setSelectedNodeDisplayType={setSelectedNodeDisplayType}
         legendEntries={legendEntries}
+        legendHeaders={legendHeaders}
       />
       <ClusterGraphCanvas />
       <GraphInformation />
@@ -124,6 +126,12 @@ function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUi
     'pfam-domains': pfamDomainLegendEntries
   };
 
+  const legendHeaders = {
+    'taxa': 'Mouse over a taxon legend to highlight sequences of that taxon.',
+    'ec-numbers': 'The EC Numbers are rendered in a pie chart for each gene.',
+    'pfam-domains': 'The PFam Domains are rendered in a pie chart for each gene.'
+  };
+
   const nodeDisplayTypeOptions = useMemo(
     () => nodeDisplayTypeOrder.map(
       nodeDisplayType => ({
@@ -137,6 +145,7 @@ function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUi
 
   return {
     legendEntries,
+    legendHeaders,
     nodeDisplayTypeOptions,
     selectedNodeDisplayType,
     setSelectedNodeDisplayType

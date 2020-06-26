@@ -16,7 +16,8 @@ export function GraphControls({
   nodeDisplayTypeOptions,
   selectedNodeDisplayType,
   setSelectedNodeDisplayType,
-  legendEntries
+  legendEntries,
+  legendHeaders
 }: Props) {
   return (
     <div className="GraphControls">
@@ -33,6 +34,7 @@ export function GraphControls({
         selectedNodeDisplayType={selectedNodeDisplayType}
         setSelectedNodeDisplayType={setSelectedNodeDisplayType}
         legendEntries={legendEntries}
+        legendHeaders={legendHeaders}
       />
     </div>
   );
@@ -153,13 +155,15 @@ interface NodeOptionsProps {
   selectedNodeDisplayType: NodeDisplayType;
   setSelectedNodeDisplayType: (newNodeDisplayType: NodeDisplayType) => void;
   legendEntries: Record<string, LegendEntryProps[]>;
+  legendHeaders: Record<NodeDisplayType, React.ReactNode>;
 }
 
 function NodeOptions({
   nodeDisplayTypeOptions,
   selectedNodeDisplayType,
   setSelectedNodeDisplayType,
-  legendEntries
+  legendEntries,
+  legendHeaders
 }: NodeOptionsProps) {
   const onNodeDisplayTypeChange = useCallback((newValue: string) => {
     setSelectedNodeDisplayType(newValue as NodeDisplayType);
@@ -182,6 +186,9 @@ function NodeOptions({
             onChange={onNodeDisplayTypeChange}
           />
           <div className={`ControlSection ${selectedNodeDisplayType}`}>
+            <div className={`LegendHeader`}>
+              {legendHeaders[selectedNodeDisplayType]}
+            </div>
             {
               legendEntries[selectedNodeDisplayType].map(
                 taxonLegendEntry => <LegendEntry {...taxonLegendEntry} />
