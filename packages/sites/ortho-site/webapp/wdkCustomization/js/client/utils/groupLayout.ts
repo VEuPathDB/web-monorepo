@@ -1,7 +1,7 @@
 import * as Decode from 'wdk-client/Utils/Json';
 
 import { EdgeType } from './clusterGraph';
-import { TaxonEntries, TaxonEntry, taxonEntryDecoder, taxonEntriesDecoder} from './taxons';
+import { TaxonEntries, TaxonEntry, taxonEntryDecoder, taxonEntriesDecoder } from './taxons';
 
 export interface GroupLayout {
   edges: EdgeEntries;

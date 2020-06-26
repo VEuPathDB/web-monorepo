@@ -2,7 +2,9 @@ import React from 'react';
 
 import { Loading } from 'wdk-client/Components';
 
-import { useOrthoService } from '../hooks/orthoServiceHook';
+import { useOrthoService } from '../hooks/orthoService';
+import { useTaxonUiMetadata } from '../hooks/taxons';
+
 import { ClusterGraphDisplay } from '../components/cluster-graph/ClusterGraphDisplay';
 
 interface Props {
@@ -15,7 +17,9 @@ export function GroupClusterGraphController({ groupName }: Props) {
     [ groupName ]
   );
 
-  return layout == null
+  const taxonUiMetadata = useTaxonUiMetadata();
+
+  return layout == null || taxonUiMetadata == null
     ? <Loading />
-    : <ClusterGraphDisplay layout={layout} />;
+    : <ClusterGraphDisplay layout={layout} taxonUiMetadata={taxonUiMetadata} />;
 }

@@ -1,5 +1,3 @@
-import { TaxonEntry } from "./taxons";
-
 export type EdgeType = 'O' | 'C' | 'P' | 'L' | 'M' | 'N';
 
 export const edgeTypeDisplayNames: Record<EdgeType, string> = {
@@ -48,9 +46,3 @@ export const nodeDisplayTypeOrder: NodeDisplayType[] = [
   'ec-numbers',
   'pfam-domains'
 ];
-
-export interface TaxonLegendEntry extends TaxonEntry {
-  count: number;
-  path: string;
-  groupColor: string;
-}

@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Checkbox, SliderInput, TextBox, RadioList } from 'wdk-client/Components';
+import { Checkbox, RadioList, SliderInput, TextBox, Tooltip } from 'wdk-client/Components';
 
-import { EdgeTypeOption, EdgeType, NodeDisplayType, TaxonLegendEntry } from '../../utils/clusterGraph';
+import { EdgeTypeOption, EdgeType, NodeDisplayType } from '../../utils/clusterGraph';
 
 type Props = EdgeOptionsProps & NodeOptionsProps;
 
@@ -16,7 +16,7 @@ export function GraphControls({
   nodeDisplayTypeOptions,
   selectedNodeDisplayType,
   setSelectedNodeDisplayType,
-  taxonLegendEntries
+  legendEntries
 }: Props) {
   return (
     <div className="GraphControls">
@@ -32,7 +32,7 @@ export function GraphControls({
         nodeDisplayTypeOptions={nodeDisplayTypeOptions}
         selectedNodeDisplayType={selectedNodeDisplayType}
         setSelectedNodeDisplayType={setSelectedNodeDisplayType}
-        taxonLegendEntries={taxonLegendEntries}
+        legendEntries={legendEntries}
       />
     </div>
   );
@@ -152,14 +152,14 @@ interface NodeOptionsProps {
   nodeDisplayTypeOptions: { value: NodeDisplayType, display: React.ReactNode, disabled?: boolean }[];
   selectedNodeDisplayType: NodeDisplayType;
   setSelectedNodeDisplayType: (newNodeDisplayType: NodeDisplayType) => void;
-  taxonLegendEntries: TaxonLegendEntry[];
+  legendEntries: Record<string, LegendEntryProps[]>;
 }
 
 function NodeOptions({
   nodeDisplayTypeOptions,
   selectedNodeDisplayType,
   setSelectedNodeDisplayType,
-  taxonLegendEntries
+  legendEntries
 }: NodeOptionsProps) {
   const onNodeDisplayTypeChange = useCallback((newValue: string) => {
     setSelectedNodeDisplayType(newValue as NodeDisplayType);
@@ -171,48 +171,54 @@ function NodeOptions({
         <summary>
           Node Options
         </summary>
-      </details>
-      <RadioList
-        name="node-display-type"
-        value={selectedNodeDisplayType}
-        items={nodeDisplayTypeOptions}
-        onChange={onNodeDisplayTypeChange}
-      />
-      <fieldset>
-        <legend>
-          Show Nodes By
-        </legend>
-        {
-          selectedNodeDisplayType === 'taxa' &&
-          <div className="TaxaControlSection">
+        <fieldset>
+          <legend>
+            Show Nodes By
+          </legend>
+          <RadioList
+            name="node-display-type"
+            value={selectedNodeDisplayType}
+            items={nodeDisplayTypeOptions}
+            onChange={onNodeDisplayTypeChange}
+          />
+          <div className={`ControlSection ${selectedNodeDisplayType}`}>
             {
-              taxonLegendEntries.map(
-                taxonLegendEntry =>
-                  <div key={taxonLegendEntry.id} className="TaxonLegendEntry">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      version="1.1"
-                      width="11"
-                      height="11"
-                    >
-                      <circle
-                        r="5.5"
-                        cx="5.5"
-                        cy="5.5"
-                        fill={taxonLegendEntry.color}
-                      />
-                    </svg>
-                    {taxonLegendEntry.abbrev}
-                  </div>
+              legendEntries[selectedNodeDisplayType].map(
+                taxonLegendEntry => <LegendEntry {...taxonLegendEntry} />
               )
             }
           </div>
-        }
-        {
-          selectedNodeDisplayType !== 'taxa' &&
-          <div>Under Construction</div>
-        }
-      </fieldset>
+        </fieldset>
+      </details>
     </div>
   );
+}
+
+export interface LegendEntryProps {
+  key: string;
+  symbol: React.ReactNode;
+  description: string;
+  tooltip?: React.ReactNode;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+}
+
+const TOOLTIP_POSITION = {
+  my: 'top left',
+  at: 'bottom right'
+};
+
+function LegendEntry({ symbol, tooltip, description, onMouseEnter, onMouseLeave }: LegendEntryProps) {
+  const legendContent = (
+    <div className="LegendEntry" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      {symbol}
+      {description}
+    </div>
+  );
+
+  return tooltip == null
+    ? legendContent
+    : <Tooltip content={tooltip} showDelay={0} position={TOOLTIP_POSITION} >
+        {legendContent}
+      </Tooltip>;
 }

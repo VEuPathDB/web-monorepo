@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { orderBy } from 'lodash';
-
 import {
   EdgeType,
   EdgeTypeOption,
   NodeDisplayType,
-  TaxonLegendEntry,
   edgeTypeOptionOrder,
   edgeTypeDisplayNames,
   initialEdgeTypeSelections,
@@ -14,17 +11,19 @@ import {
   nodeDisplayTypeDisplayNames
 } from '../../utils/clusterGraph';
 import { GroupLayout } from '../../utils/groupLayout';
+import { TaxonUiMetadata } from '../../utils/taxons';
 
 import { ClusterGraphCanvas } from './ClusterGraphCanvas';
-import { GraphControls } from './GraphControls';
+import { GraphControls, LegendEntryProps } from './GraphControls';
 import { GraphInformation } from './GraphInformation';
 import { Instructions } from './Instructions';
 
 interface Props {
   layout: GroupLayout;
+  taxonUiMetadata: TaxonUiMetadata;
 }
 
-export function ClusterGraphDisplay({ layout }: Props) {
+export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
   const { edgeTypeOptions, selectEdgeTypeOption } = useEdgeTypeControl(layout);
   const { minEValueExp, maxEValueExp, eValueExp, selectEValueExp } = useScoreControl(layout);
 
@@ -32,8 +31,8 @@ export function ClusterGraphDisplay({ layout }: Props) {
     nodeDisplayTypeOptions,
     selectedNodeDisplayType,
     setSelectedNodeDisplayType,
-    taxonLegendEntries
-  } = useNodeDisplayTypeControl(layout);
+    legendEntries
+  } = useNodeDisplayTypeControl(layout, taxonUiMetadata);
 
   return (
     <div>
@@ -48,7 +47,7 @@ export function ClusterGraphDisplay({ layout }: Props) {
         nodeDisplayTypeOptions={nodeDisplayTypeOptions}
         selectedNodeDisplayType={selectedNodeDisplayType}
         setSelectedNodeDisplayType={setSelectedNodeDisplayType}
-        taxonLegendEntries={taxonLegendEntries}
+        legendEntries={legendEntries}
       />
       <ClusterGraphCanvas />
       <GraphInformation />
@@ -104,7 +103,7 @@ function useScoreControl(layout: GroupLayout) {
   };
 }
 
-function useNodeDisplayTypeControl(layout: GroupLayout) {
+function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUiMetadata) {
   const initialNodeDisplayTypeSelection = 'taxa';
 
   const [ selectedNodeDisplayType, setSelectedNodeDisplayType ] = useState<NodeDisplayType>(initialNodeDisplayTypeSelection);
@@ -113,38 +112,75 @@ function useNodeDisplayTypeControl(layout: GroupLayout) {
     setSelectedNodeDisplayType(initialNodeDisplayTypeSelection);
   }, [ layout ]);
 
-  const taxonLegendEntries = useTaxonLegendEntries(layout);
+  const taxonLegendEntries = useTaxonLegendEntries(layout, taxonUiMetadata);
+
+  const legendEntries: Record<NodeDisplayType, LegendEntryProps[]> = {
+    'taxa': taxonLegendEntries,
+    'ec-numbers': [],
+    'pfam-domains': []
+  };
 
   const nodeDisplayTypeOptions = useMemo(
     () => nodeDisplayTypeOrder.map(
       nodeDisplayType => ({
         value: nodeDisplayType,
-        display: nodeDisplayTypeDisplayNames[nodeDisplayType]
+        display: nodeDisplayTypeDisplayNames[nodeDisplayType],
+        disabled: legendEntries[nodeDisplayType].length === 0
       })
     ),
     []
   );
 
   return {
+    legendEntries,
     nodeDisplayTypeOptions,
     selectedNodeDisplayType,
-    setSelectedNodeDisplayType,
-    taxonLegendEntries
+    setSelectedNodeDisplayType
   };
 }
 
-function useTaxonLegendEntries(layout: GroupLayout): TaxonLegendEntry[] {
-  return useMemo(() => {
-    const taxonsWithNonzeroCounts =
-      Object.values(layout.taxons)
-        .filter(taxonEntry => layout.taxonCounts[taxonEntry.abbrev] > 0)
-        .map(taxonEntry => ({ ...taxonEntry, count: layout.taxonCounts[taxonEntry.abbrev], path: 'TODO', groupColor: 'black' }));
+function useTaxonLegendEntries(
+  { taxonCounts }: GroupLayout,
+  { taxonOrder, species }: TaxonUiMetadata
+) {
+  return useMemo(
+    () => {
+      const speciesInLegend = taxonOrder.filter(taxonAbbrev => taxonCounts[taxonAbbrev] > 0);
 
-    const orderedTaxons = orderBy(
-      taxonsWithNonzeroCounts,
-      entry => entry.sortIndex
-    );
+      return speciesInLegend.map(taxonAbbrev => {
+        const { color, groupColor, name, path } = species[taxonAbbrev];
+        const count = taxonCounts[taxonAbbrev];
 
-    return orderedTaxons;
-  }, [ layout ]);
+        return {
+          key: taxonAbbrev,
+          symbol: (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              version="1.1"
+              width="17"
+              height="17"
+            >
+              <circle
+                r="5.5"
+                cx="8.5"
+                cy="8.5"
+                fill={color}
+                stroke={groupColor}
+                strokeWidth="3"
+              />
+            </svg>
+          ),
+          description: `${taxonAbbrev} (${count})`,
+          tooltip: (
+            <React.Fragment>
+              {path.join('->')}
+              <br />
+              {name}
+            </React.Fragment>
+          )
+        };
+      });
+    },
+    [ taxonCounts ]
+  );
 }
