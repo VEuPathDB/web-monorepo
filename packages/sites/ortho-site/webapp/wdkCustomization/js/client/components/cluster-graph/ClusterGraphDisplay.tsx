@@ -120,7 +120,7 @@ function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUi
   const ecNumberLegendEntries = useEcNumberLegendEntries(layout);
   const pfamDomainLegendEntries = usePfamDomainLegendEntries(layout);
 
-  const legendEntries: Record<NodeDisplayType, LegendEntryProps[]> = {
+  const legendEntries = {
     'taxa': taxonLegendEntries,
     'ec-numbers': ecNumberLegendEntries,
     'pfam-domains': pfamDomainLegendEntries
