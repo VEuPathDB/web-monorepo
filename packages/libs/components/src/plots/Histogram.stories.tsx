@@ -1,31 +1,32 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import ScatterPlot from './ScatterPlot';
+import Histogram from './Histogram';
 
 export default {
-  title: 'ScatterPlot',
-  component: ScatterPlot,
+  title: 'Histogram',
+  component: Histogram,
 };
 
-export const Basic = () => <ScatterPlot
-  onPlotUpdate={action('state updated')}
-  data={[{
-    x: randomData(100),
-    y: randomData(100),
-    name: 'Variable A',
-  }]}
-  xLabel="foo"
-  yLabel="bar"
-/>
-
-export const MultiVariate = () => <ScatterPlot
+export const Basic = () => <Histogram
   onPlotUpdate={action('state updated')}
   data={[{
     x: randomData(100),
     y: randomData(100),
     name: 'Variable A'
+  }]}
+  xLabel="foo"
+  yLabel="bar"
+/>
+
+const x = randomData(100);
+export const MultiVariate = () => <Histogram
+  onPlotUpdate={action('state updated')}
+  data={[{
+    x,
+    y: randomData(100),
+    name: 'Variable A'
   }, {
-    x: randomData(100),
+    x,
     y: randomData(100),
     name: 'Variable B'
   }]}

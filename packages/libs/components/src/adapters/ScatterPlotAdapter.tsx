@@ -15,7 +15,7 @@ export interface Props {
 export default function ScatterPlotAdapter(props: Props) {
   const { studyId, xVariableId, yVariableId } = props;
   const data = useClinEpiPlotReporter(studyId, xVariableId, yVariableId);
-  const [ plotState, setPlotState ] = useState();
+  const [ plotState, setPlotState ] = useState<any>();
   return (
     <ScatterPlot
       data={[{
@@ -25,8 +25,6 @@ export default function ScatterPlotAdapter(props: Props) {
       }]}
       xLabel={xVariableId}
       yLabel={yVariableId}
-      height={200}
-      width={200}
       onPlotUpdate={setPlotState}
     />
   )
