@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { orderBy } from 'lodash';
+
 import {
   EdgeType,
   EdgeTypeOption,
@@ -113,10 +115,11 @@ function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUi
   }, [ layout ]);
 
   const taxonLegendEntries = useTaxonLegendEntries(layout, taxonUiMetadata);
+  const ecNumberLegendEntries = useEcNumberLegendEntries(layout);
 
   const legendEntries: Record<NodeDisplayType, LegendEntryProps[]> = {
     'taxa': taxonLegendEntries,
-    'ec-numbers': [],
+    'ec-numbers': ecNumberLegendEntries,
     'pfam-domains': []
   };
 
@@ -183,4 +186,35 @@ function useTaxonLegendEntries(
     },
     [ taxonCounts ]
   );
+}
+
+function useEcNumberLegendEntries({ group: { ecNumbers } }: GroupLayout) {
+  return useMemo(() => {
+    const orderedEcNumberEntries = orderBy(
+      Object.values(ecNumbers),
+      value => value.index
+    );
+
+    return orderedEcNumberEntries.map(
+      ({ code, color, count }) => ({
+        key: code,
+        symbol: (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            version="1.1"
+            width="17"
+            height="17"
+          >
+            <circle
+              r="6.5"
+              cx="8.5"
+              cy="8.5"
+              fill={color}
+            />
+          </svg>
+        ),
+        description: `${code} (${count})`
+      })
+    );
+  }, [ ecNumbers ])
 }
