@@ -4,6 +4,8 @@ import { Checkbox, RadioList, SliderInput, TextBox, Tooltip } from 'wdk-client/C
 
 import { EdgeTypeOption, EdgeType, NodeDisplayType } from '../../utils/clusterGraph';
 
+import './GraphControls.scss';
+
 type Props = EdgeOptionsProps & NodeOptionsProps;
 
 export function GraphControls({
@@ -186,14 +188,16 @@ function NodeOptions({
             onChange={onNodeDisplayTypeChange}
           />
           <div className={`ControlSection ${selectedNodeDisplayType}`}>
-            <div className={`LegendHeader`}>
+            <div className="LegendHeader">
               {legendHeaders[selectedNodeDisplayType]}
             </div>
-            {
-              legendEntries[selectedNodeDisplayType].map(
-                taxonLegendEntry => <LegendEntry {...taxonLegendEntry} />
-              )
-            }
+            <div className="LegendContent">
+              {
+                legendEntries[selectedNodeDisplayType].map(
+                  taxonLegendEntry => <LegendEntry {...taxonLegendEntry} />
+                )
+              }
+            </div>
           </div>
         </fieldset>
       </details>

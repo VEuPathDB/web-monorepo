@@ -1,0 +1,16 @@
+.GraphControls {
+  .LegendContent {
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 0.4em;
+  }
+
+  .LegendEntry {
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.25em;
+    align-items: center;
+    padding: 0.2em;
+    border: 0.0625rem dotted gray;
+  }
+}
