@@ -83,21 +83,21 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
     return (
       <fieldset>
         <div className="formSection">
-          <label htmlFor="data-set-name">Name:<br/></label>
+          <label htmlFor="data-set-name">Name<sup className="supAsterisk">*</sup>:<br/></label>
           <TextBox
             type="input" id="data-set-name" required={true} placeholder="name of the data set"
             onChange={(name) => this.setState({name})} 
           />
         </div>
         <div className="formSection">
-          <label htmlFor="data-set-summary">Summary:<br/></label>
+          <label htmlFor="data-set-summary">Summary<sup className="supAsterisk">*</sup>:<br/></label>
           <TextBox
             type="input" id="data-set-summary" required={true} placeholder="brief summary of the data set contents"
             onChange={(summary) => this.setState({summary})} 
           />
         </div>
         <div className="formSection">
-          <label htmlFor="data-set-description">Description:<br/></label>
+          <label htmlFor="data-set-description">Description<sup className="supAsterisk">*</sup>:<br/></label>
           <TextArea
             id="data-set-description" required={true} placeholder="brief description of the data set contents"
             onChange={(description) => this.setState({description})} 
@@ -115,7 +115,7 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
   renderInfo(){
     return (
       <p className="formInfo">
-        All form fields are required.
+        <span>* </span> All form fields are required.
         <br/>
         <br/>
         We accept any file in the <a href="http://biom-format.org">BIOM format</a>, either JSON-based (BIOM 1.0) or HDF5 (BIOM 2.0+).
