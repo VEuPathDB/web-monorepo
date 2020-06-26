@@ -9,7 +9,7 @@ import Footer from 'wdk-client/Components/Layout/Footer';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 import { useScrollUpOnRouteChange } from 'wdk-client/Hooks/Page';
 
-type Props = RouteComponentProps<any> & {
+export type Props = RouteComponentProps<any> & {
   classNameModifier?: string;
   children: React.ReactChild;
 };
