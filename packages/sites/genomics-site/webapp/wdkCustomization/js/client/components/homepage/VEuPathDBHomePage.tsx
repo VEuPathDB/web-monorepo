@@ -449,13 +449,13 @@ const useHeaderMenuItems = (
         },
         {
           key: 'basket',
-          display: 'Basket',
+          display: 'My baskets',
           type: 'reactRoute',
           url: '/workspace/basket'
         },
         {   
           key: 'favorites',
-          display: 'Favorites',
+          display: 'My favorites',
           type: 'reactRoute',
           url: '/workspace/favorites',
           metadata: {
@@ -502,6 +502,13 @@ const useHeaderMenuItems = (
           metadata: {
             include: [ PlasmoDB ]
           }
+        },
+        {
+          key: 'methods',
+          display: 'Methods',
+          type: 'reactRoute',
+          tooltip: 'How we obtain/generate the data',
+          url: makeStaticPageRoute(`/methods.html`)
         },
         {
           key: 'genomes-and-data-types',
