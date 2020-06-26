@@ -157,23 +157,7 @@ function useTaxonLegendEntries(
 
         return {
           key: taxonAbbrev,
-          symbol: (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              version="1.1"
-              width="17"
-              height="17"
-            >
-              <circle
-                r="5.5"
-                cx="8.5"
-                cy="8.5"
-                fill={color}
-                stroke={groupColor}
-                strokeWidth="3"
-              />
-            </svg>
-          ),
+          symbol: renderTaxonLegendSymbol(color, groupColor),
           description: `${taxonAbbrev} (${count})`,
           tooltip: (
             <React.Fragment>
@@ -199,21 +183,7 @@ function useEcNumberLegendEntries({ group: { ecNumbers } }: GroupLayout) {
     return orderedEcNumberEntries.map(
       ({ code, color, count }) => ({
         key: code,
-        symbol: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            version="1.1"
-            width="17"
-            height="17"
-          >
-            <circle
-              r="6.5"
-              cx="8.5"
-              cy="8.5"
-              fill={color}
-            />
-          </svg>
-        ),
+        symbol: renderSimpleLegendSymbol(color),
         description: `${code} (${count})`
       })
     );
@@ -230,24 +200,52 @@ function usePfamDomainLegendEntries({ group: { pfamDomains } }: GroupLayout) {
     return orderedPfamDomainEntries.map(
       ({ accession, color, count, description }) => ({
         key: accession,
-        symbol: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            version="1.1"
-            width="17"
-            height="17"
-          >
-            <circle
-              r="6.5"
-              cx="8.5"
-              cy="8.5"
-              fill={color}
-            />
-          </svg>
-        ),
+        symbol: renderSimpleLegendSymbol(color),
         description: `${accession} (${count})`,
         tooltip: description
       })
     );
   }, [ pfamDomains ])
+}
+
+interface SimpleLegendSymbolProps {
+  color: string;
+}
+
+function renderSimpleLegendSymbol(color: string) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      version="1.1"
+      width="17"
+      height="17"
+    >
+      <circle
+        r="6.5"
+        cx="8.5"
+        cy="8.5"
+        fill={color}
+      />
+    </svg>
+  );
+}
+
+function renderTaxonLegendSymbol(color: string, groupColor: string) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      version="1.1"
+      width="17"
+      height="17"
+    >
+      <circle
+        r="5.5"
+        cx="8.5"
+        cy="8.5"
+        fill={color}
+        stroke={groupColor}
+        strokeWidth="3"
+      />
+    </svg>
+  );
 }
