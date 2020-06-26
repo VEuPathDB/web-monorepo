@@ -40,11 +40,11 @@ function UnhandledError(props: Props) {
         <div className={cx('--Details')}>
           {errorTypes.map(type => {
             const typedErrors: UnhandledError[] | undefined = groupedErrors[type];
-            return typedErrors && <>
+            return typedErrors && <React.Fragment key={type}>
               <h2>{capitalize(type)} errors</h2>
               {typedErrors.map(({ error, id, message }) =>
                 <ErrorDetail key={id} id={id} error={error} showDetails={showDetails} message={message}/>)}
-            </>;
+            </React.Fragment>;
           })}
         </div>
       </div>
