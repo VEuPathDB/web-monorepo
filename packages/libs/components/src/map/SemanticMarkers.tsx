@@ -13,24 +13,23 @@ import 'leaflet/dist/leaflet.css';
 export default function SemanticMarkers({ onViewportChanged, data }: SemanticMarkersProps) {
 console.log("I'm here");
   const { map } = useLeaflet();
-  const bounds = boundsToGeoBBox(map!.getBounds()); // do we need these non null assertion ! thingies?
-  const zoomLevel = map!.getZoom();
   // call the prop callback to communicate bounds and zoomLevel to outside world
   useEffect(() => {
     if (map == null) return; // is it ever null?
 
-    // bug: markers don't show on initial render.  This could be fixed by putting a vanilla call to
-    // updateMap() inside useEffect() - but then it gets called twice when zooming/moving
-    // map.on('load') doesn't work - maybe because the Leaflet map has already loaded when SemanticMarkers is 
-
-    map.on('resize moveend zoomend', updateMap); // resize is there hopefully when we have full screen mode
     function updateMap() {
+      const bounds = boundsToGeoBBox(map.getBounds());
+      const zoomLevel = map.getZoom();
       onViewportChanged({ bounds, zoomLevel });
     }
+
+    updateMap();
+    map.on('resize dragend zoomend', updateMap); // resize is there hopefully when we have full screen mode
+
     return () => {
-      map.off('resize moveend zoomend', updateMap);
+      map.off('resize dragend zoomend', updateMap);
     };
-  }, [...bounds.southWest, ...bounds.northEast, zoomLevel]);
+  }, [map]);
 
   
 
