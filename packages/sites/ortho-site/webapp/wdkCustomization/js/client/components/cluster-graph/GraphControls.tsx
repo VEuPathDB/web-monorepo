@@ -154,7 +154,7 @@ interface NodeOptionsProps {
   nodeDisplayTypeOptions: { value: NodeDisplayType, display: React.ReactNode, disabled?: boolean }[];
   selectedNodeDisplayType: NodeDisplayType;
   setSelectedNodeDisplayType: (newNodeDisplayType: NodeDisplayType) => void;
-  legendEntries: Record<string, LegendEntryProps[]>;
+  legendEntries: Record<NodeDisplayType, LegendEntryProps[]>;
   legendHeaders: Record<NodeDisplayType, React.ReactNode>;
 }
 
