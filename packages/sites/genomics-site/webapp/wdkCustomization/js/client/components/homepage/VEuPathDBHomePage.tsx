@@ -19,7 +19,7 @@ import { SearchPane, SearchCheckboxTree } from 'ebrc-client/components/homepage/
 import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/components/homepage/Utils';
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 
-import { useCommunitySiteUrl } from 'ebrc-client/hooks/staticData';
+import { useCommunitySiteRootUrl } from 'ebrc-client/hooks/staticData';
 
 import { formatReleaseDate } from 'ebrc-client/util/formatters';
 
@@ -204,12 +204,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
         </ErrorBoundary>
       }
       <ErrorBoundary>
-        <Footer
-          containerClassName={footerClassName}
-          buildNumber={props.buildNumber}
-          releaseDate={props.releaseDate}
-          displayName={props.displayName}
-        >
+        <Footer containerClassName={footerClassName}>
           <PageDescription />
         </Footer>
       </ErrorBoundary>
@@ -235,7 +230,6 @@ const parseExpandedBranches = memoize((s: string) => decode(
 const VectorBase = 'VectorBase';
 const PlasmoDB = 'PlasmoDB';
 const TriTrypDB = 'TriTrypDB';
-const CryptoDB = 'CryptoDB';
 const ToxoDB = 'ToxoDB';
 const FungiDB  = 'FungiDB';
 const EuPathDB = 'EuPathDB';
@@ -263,7 +257,7 @@ const useHeaderMenuItems = (
   displayName: string | undefined
 ): HeaderMenuItem[] => {
   const alphabetizedSearchTree = useAlphabetizedSearchTree(searchTree);
-  const communitySite = useCommunitySiteUrl();
+  const communitySite = useCommunitySiteRootUrl();
 
   // type: reactRoute, webAppRoute, externalLink, subMenu, custom
   const fullMenuItemEntries: HeaderMenuItemEntry[] = [

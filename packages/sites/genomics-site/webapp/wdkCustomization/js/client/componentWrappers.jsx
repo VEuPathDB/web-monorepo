@@ -326,8 +326,8 @@ export function PrimaryKeySpan() {
  */
 function sendToGalaxy(props) {
   return ({ wdkService }) => {
-    let { galaxyUrl, step, selectedReporter, formState, globalData } = props;
-    Cookies.remove('GALAXY_URL', { path: globalData.siteConfig.webAppUrl });
+    let { galaxyUrl, step, selectedReporter, formState, webAppUrl } = props;
+    Cookies.remove('GALAXY_URL', { path: webAppUrl });
     let formatting = {
       format: selectedReporter,
       formatConfig: formState
@@ -353,7 +353,7 @@ function SendToGalaxyButton(props) {
 }
 
 export function TabularReporterFormSubmitButtons(ApiTabularReporterFormSubmitButtons) {
-  return connect(state => state.downloadForm, { sendToGalaxy })(
+  return connect(state => Object.assign({}, state.downloadForm, { webAppUrl: state.globalData.siteConfig.webAppUrl }), { sendToGalaxy })(
     props => (
       <div>
         <ApiTabularReporterFormSubmitButtons {...props} />
