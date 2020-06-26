@@ -1,5 +1,7 @@
 import WdkService, { useWdkEffect } from "wdk-client/Service/WdkService";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { notifyUnhandledError } from "wdk-client/Actions/UnhandledErrorActions";
 
 interface WdkServiceCallback<T> {
   (wdkService: WdkService): Promise<T>;
@@ -12,6 +14,7 @@ interface WdkServiceCallback<T> {
  */
 export function useWdkService<T>(callback: WdkServiceCallback<T>, deps?: any[]): T | undefined {
   const [ value, setValue ] = useState<T>();
+  const dispatch = useDispatch();
   useWdkEffect(wdkService => {
     let doSetValue = true;
     callback(wdkService).then(
@@ -21,6 +24,7 @@ export function useWdkService<T>(callback: WdkServiceCallback<T>, deps?: any[]):
       error => {
         if (doSetValue) {
           wdkService.submitErrorIfNot500(error);
+          dispatch(notifyUnhandledError(error));
         }
       });
     return () => { doSetValue = false; }
