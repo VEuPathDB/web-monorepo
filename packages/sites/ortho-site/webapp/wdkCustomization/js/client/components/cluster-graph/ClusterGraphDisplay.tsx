@@ -116,11 +116,12 @@ function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUi
 
   const taxonLegendEntries = useTaxonLegendEntries(layout, taxonUiMetadata);
   const ecNumberLegendEntries = useEcNumberLegendEntries(layout);
+  const pfamDomainLegendEntries = usePfamDomainLegendEntries(layout);
 
   const legendEntries: Record<NodeDisplayType, LegendEntryProps[]> = {
     'taxa': taxonLegendEntries,
     'ec-numbers': ecNumberLegendEntries,
-    'pfam-domains': []
+    'pfam-domains': pfamDomainLegendEntries
   };
 
   const nodeDisplayTypeOptions = useMemo(
@@ -217,4 +218,36 @@ function useEcNumberLegendEntries({ group: { ecNumbers } }: GroupLayout) {
       })
     );
   }, [ ecNumbers ])
+}
+
+function usePfamDomainLegendEntries({ group: { pfamDomains } }: GroupLayout) {
+  return useMemo(() => {
+    const orderedPfamDomainEntries = orderBy(
+      Object.values(pfamDomains),
+      pfamDomain => pfamDomain.index
+    );
+
+    return orderedPfamDomainEntries.map(
+      ({ accession, color, count, description }) => ({
+        key: accession,
+        symbol: (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            version="1.1"
+            width="17"
+            height="17"
+          >
+            <circle
+              r="6.5"
+              cx="8.5"
+              cy="8.5"
+              fill={color}
+            />
+          </svg>
+        ),
+        description: `${accession} (${count})`,
+        tooltip: description
+      })
+    );
+  }, [ pfamDomains ])
 }
