@@ -16,7 +16,7 @@ import { GroupLayout } from '../../utils/groupLayout';
 import { TaxonUiMetadata } from '../../utils/taxons';
 
 import { ClusterGraphCanvas } from './ClusterGraphCanvas';
-import { GraphControls, LegendEntryProps } from './GraphControls';
+import { GraphControls } from './GraphControls';
 import { GraphInformation } from './GraphInformation';
 import { Instructions } from './Instructions';
 
