@@ -217,10 +217,6 @@ function usePfamDomainLegendEntries({ group: { pfamDomains } }: GroupLayout) {
   }, [ pfamDomains ])
 }
 
-interface SimpleLegendSymbolProps {
-  color: string;
-}
-
 function renderSimpleLegendSymbol(color: string) {
   return (
     <svg
