@@ -33,10 +33,10 @@ function UnhandledError(props: Props) {
         <button type="button" onClick={clearErrors}>
           <Icon type="close"/>
         </button>
-        <h1>We're sorry, something when wrong.</h1>
-        <div>
+        <h1>We're sorry, something went wrong.</h1>
+        <p>
           Please try again later, and <Link to={`/contact-us?ctx=${encodeURIComponent(contactUsMessage)}`}>contact us</Link> if the problem persists.
-        </div>
+        </p>
         <div className={cx('--Details')}>
           {errorTypes.map(type => {
             const typedErrors: UnhandledError[] | undefined = groupedErrors[type];
