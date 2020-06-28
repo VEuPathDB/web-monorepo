@@ -35,7 +35,7 @@ function UnhandledError(props: Props) {
         </button>
         <h1>We're sorry, something went wrong.</h1>
         <p>
-          Please try again later, and <Link to={`/contact-us?ctx=${encodeURIComponent(contactUsMessage)}`}>contact us</Link> if the problem persists.
+          Please try again later, and <Link to={`/contact-us?ctx=${encodeURIComponent(contactUsMessage)}`} target="_blank">contact us</Link> if the problem persists.
         </p>
         <div className={cx('--Details')}>
           {errorTypes.map(type => {
