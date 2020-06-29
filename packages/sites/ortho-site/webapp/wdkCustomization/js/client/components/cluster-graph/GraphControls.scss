@@ -19,9 +19,12 @@
     width: 100%;
   }
 
-  .EdgeOptions .GraphAccordion > *:nth-child(n+2) {
-    margin-top: 1em;
+  .EdgeOptions {
     margin-bottom: 1em;
+  }
+
+  .EdgeOptions .GraphAccordionContent > *:nth-child(n+2) {
+    margin-top: 1em;
   }
 
   .EdgeTypeOption, .LegendEntry {
@@ -85,7 +88,7 @@
   }
 
   .NodeOptions fieldset {
-    margin: 1em 0 0.25em 0;
+    margin: 0 0 0.25em 0;
     padding-top: 0.1em;
     padding-bottom: 0.1em;
   }

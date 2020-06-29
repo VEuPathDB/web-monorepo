@@ -9,8 +9,10 @@ interface Props {
 export const GraphAccordion: React.FunctionComponent<Props> = function({ title, children }) {
   return (
     <details className="GraphAccordion" open>
-      <summary>{title}</summary>
-      {children}
+      <summary className="GraphAccordionHeader">{title}</summary>
+      <div className="GraphAccordionContent">
+        {children}
+      </div>
     </details>
   );
 }
