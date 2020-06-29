@@ -1,16 +1,96 @@
 .GraphControls {
-  .LegendContent {
-    display: inline-grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-gap: 0.4em;
+  width: 23em;
+
+  .EValueHeader {
+    margin-bottom: 0.75em;
   }
 
-  .LegendEntry {
+  .EValueText {
+    font-weight: bold;
+    margin-left: 1em;
+  }
+
+  .EValueText input[type="text"] {
+    margin-left: 0.25em;
+    width: 3.5em;
+  }
+
+  .EValueSlider {
+    width: 100%;
+  }
+
+  .EdgeOptions details > *:nth-child(n+2) {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+
+  .EdgeTypeOption, .LegendEntry {
     display: inline-grid;
     grid-template-columns: auto 1fr;
     column-gap: 0.25em;
     align-items: center;
     padding: 0.2em;
     border: 0.0625rem dotted gray;
+  }
+
+  .LegendHeader {
+    color: #555555;
+    font-style: italic;
+    margin-bottom: 0.25em;
+  }
+
+  .EdgeTypeOptions, .LegendContent {
+    display: inline-grid;
+    grid-gap: 0.4em;
+  }
+
+  .EdgeTypeOptions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ControlSection {
+    height: 40em;
+    overflow-y: auto;
+  }
+
+  .ControlSection.taxa .LegendContent {
+    grid-template-columns: 6.8em 6.8em 6.8em;
+  }
+
+  .ControlSection.ec-numbers .LegendContent, .ControlSection.pfam-domains .LegendContent {
+    grid-template-columns: 9.3em 9.3em;
+  }
+
+  summary {
+    cursor: pointer;
+  }
+
+  fieldset + fieldset {
+    margin-top: 1em;
+  }
+
+  fieldset, .ControlSection {
+    border: 0.0625rem dotted gray;
+    padding: 0.5em;
+  }
+
+  .ControlSection {
+    padding-top: 0.25em;
+  }
+
+  legend {
+    font-weight: bold;
+  }
+
+  .NodeOptions .wdk-RadioList {
+    display: flex;
+    justify-content: space-around;
+    padding-left: 0.5em;
+  }
+
+  .NodeOptions fieldset {
+    margin: 1em 0 0.25em 0;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
   }
 }

@@ -72,41 +72,43 @@ function EdgeOptions({
         <summary>
           Edge Options
         </summary>
-        <fieldset className="EdgeTypeOptions">
+        <fieldset className="EdgeTypeControl">
           <legend>
             Edge Type
           </legend>
-          {
-            edgeTypeOptions.map(
-              ({ key, display, isSelected }) =>
-                <div className="EdgeTypeOption" key={key}>
-                  <Checkbox
-                    key={key}
-                    value={isSelected}
-                    onChange={newValue => selectEdgeTypeOption(key, newValue)}
-                  />
-                  <label>
-                    {display}
-                  </label>
-                </div>
-            )
-          }
+          <div className="EdgeTypeOptions">
+            {
+              edgeTypeOptions.map(
+                ({ key, display, isSelected }) =>
+                  <div className="EdgeTypeOption" key={key}>
+                    <Checkbox
+                      key={key}
+                      value={isSelected}
+                      onChange={newValue => selectEdgeTypeOption(key, newValue)}
+                    />
+                    <label>
+                      {display}
+                    </label>
+                  </div>
+              )
+            }
+          </div>
         </fieldset>
         <fieldset className="ScoreControl">
           <legend>
             E-Value Cutoff
           </legend>
-          <div className="EValueHead">
-            <div>
+          <div className="EValueHeader">
+            <span>
               Max E-Value:
-            </div>
-            <div className="EValueText">
+            </span>
+            <span className="EValueText">
               1E
               <TextBox
                 value={internalEValueText}
                 onChange={setInternalEValueText}
               />
-            </div>
+            </span>
           </div>
           <SliderInput
             className="EValueSlider"
@@ -187,19 +189,19 @@ function NodeOptions({
             items={nodeDisplayTypeOptions}
             onChange={onNodeDisplayTypeChange}
           />
-          <div className={`ControlSection ${selectedNodeDisplayType}`}>
-            <div className="LegendHeader">
-              {legendHeaders[selectedNodeDisplayType]}
-            </div>
-            <div className="LegendContent">
-              {
-                legendEntries[selectedNodeDisplayType].map(
-                  taxonLegendEntry => <LegendEntry {...taxonLegendEntry} />
-                )
-              }
-            </div>
-          </div>
         </fieldset>
+        <div className={`ControlSection ${selectedNodeDisplayType}`}>
+          <div className="LegendHeader">
+            {legendHeaders[selectedNodeDisplayType]}
+          </div>
+          <div className="LegendContent">
+            {
+              legendEntries[selectedNodeDisplayType].map(
+                taxonLegendEntry => <LegendEntry {...taxonLegendEntry} />
+              )
+            }
+          </div>
+        </div>
       </details>
     </div>
   );
@@ -229,7 +231,7 @@ function LegendEntry({ symbol, tooltip, description, onMouseEnter, onMouseLeave 
 
   return tooltip == null
     ? legendContent
-    : <Tooltip content={tooltip} showDelay={0} position={TOOLTIP_POSITION} >
+    : <Tooltip content={tooltip} showDelay={0} position={TOOLTIP_POSITION}>
         {legendContent}
       </Tooltip>;
 }
