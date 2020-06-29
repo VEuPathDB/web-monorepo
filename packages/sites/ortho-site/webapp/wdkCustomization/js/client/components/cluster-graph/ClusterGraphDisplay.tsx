@@ -186,7 +186,8 @@ function useEcNumberLegendEntries({ group: { ecNumbers } }: GroupLayout) {
   return useMemo(() => {
     const orderedEcNumberEntries = orderBy(
       Object.values(ecNumbers),
-      value => value.index
+      [ value => value.count, value => value.index ],
+      [ 'desc', 'asc' ]
     );
 
     return orderedEcNumberEntries.map(
@@ -203,7 +204,8 @@ function usePfamDomainLegendEntries({ group: { pfamDomains } }: GroupLayout) {
   return useMemo(() => {
     const orderedPfamDomainEntries = orderBy(
       Object.values(pfamDomains),
-      pfamDomain => pfamDomain.index
+      [ value => value.count, pfamDomain => pfamDomain.index ],
+      [ 'desc', 'asc' ]
     );
 
     return orderedPfamDomainEntries.map(
