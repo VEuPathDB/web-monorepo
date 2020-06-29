@@ -19,7 +19,7 @@
     width: 100%;
   }
 
-  .EdgeOptions details > *:nth-child(n+2) {
+  .EdgeOptions .GraphAccordion > *:nth-child(n+2) {
     margin-top: 1em;
     margin-bottom: 1em;
   }
@@ -59,10 +59,6 @@
 
   .ControlSection.ec-numbers .LegendContent, .ControlSection.pfam-domains .LegendContent {
     grid-template-columns: 9.3em 9.3em;
-  }
-
-  summary {
-    cursor: pointer;
   }
 
   fieldset + fieldset {

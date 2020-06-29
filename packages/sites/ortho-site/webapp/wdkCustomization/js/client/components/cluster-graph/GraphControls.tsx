@@ -4,6 +4,8 @@ import { Checkbox, RadioList, SliderInput, TextBox, Tooltip } from 'wdk-client/C
 
 import { EdgeTypeOption, EdgeType, NodeDisplayType } from '../../utils/clusterGraph';
 
+import { GraphAccordion } from './GraphAccordion';
+
 import './GraphControls.scss';
 
 type Props = EdgeOptionsProps & NodeOptionsProps;
@@ -68,10 +70,7 @@ function EdgeOptions({
 
   return (
     <div className="EdgeOptions">
-      <details open>
-        <summary>
-          Edge Options
-        </summary>
+      <GraphAccordion title="Edge Options">
         <fieldset className="EdgeTypeControl">
           <legend>
             Edge Type
@@ -119,7 +118,7 @@ function EdgeOptions({
             onChange={selectEValueExp}
           />
         </fieldset>
-      </details>
+      </GraphAccordion>
     </div>
   );
 }
@@ -175,10 +174,7 @@ function NodeOptions({
 
   return (
     <div className="NodeOptions">
-      <details open>
-        <summary>
-          Node Options
-        </summary>
+      <GraphAccordion title="Node Options">
         <fieldset>
           <legend>
             Show Nodes By
@@ -202,7 +198,7 @@ function NodeOptions({
             }
           </div>
         </div>
-      </details>
+      </GraphAccordion>
     </div>
   );
 }
