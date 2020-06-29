@@ -10,28 +10,28 @@ export default {
 export const Basic = () => <Histogram
   onPlotUpdate={action('state updated')}
   data={[{
-    x: randomData(100),
-    y: randomData(100),
+    x: [0,1,2,3,4,5,6,7,8,9,10],
+    y: randomData(11).map((x) => Math.floor(x*100)),
     name: 'Variable A'
   }]}
-  xLabel="foo"
-  yLabel="bar"
+  xLabel="exam score"
+  yLabel="count"
 />
 
-const x = randomData(100);
+const x = [ 'eggs', 'milk', 'cheese' ];
 export const MultiVariate = () => <Histogram
   onPlotUpdate={action('state updated')}
   data={[{
     x,
-    y: randomData(100),
-    name: 'Variable A'
+    y: randomData(3).map((x) => 100*x),
+    name: 'carbohydrate'
   }, {
     x,
-    y: randomData(100),
-    name: 'Variable B'
+    y: randomData(3).map((x) => 100*x),
+    name: 'fat'
   }]}
-  xLabel="foo"
-  yLabel="bar"
+  xLabel="ingredient"
+  yLabel="percent content"
 />
 
 function randomData(size: number) {
