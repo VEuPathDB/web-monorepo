@@ -17,7 +17,7 @@ interface Props {
   children: ReactElement;
 }
 
-function UnhandledError(props: Props) {
+function UnhandledErrors(props: Props) {
   const { children, clearErrors, errors, showDetails } = props;
   const groupedErrors = groupBy(errors, 'type');
   const errorTypes = [ 'input', 'runtime', 'server', 'client' ] as const;
@@ -79,4 +79,4 @@ function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-export default wrappable(UnhandledError);
+export default wrappable(UnhandledErrors);
