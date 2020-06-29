@@ -12,13 +12,13 @@ const cx = makeClassNameHelper('UnhandledErrors');
 
 interface Props {
   errors?: UnhandledError[];
-  showDetails: boolean;
+  showStackTraces: boolean;
   clearErrors: () => void;
   children: ReactElement;
 }
 
 function UnhandledErrors(props: Props) {
-  const { children, clearErrors, errors, showDetails } = props;
+  const { children, clearErrors, errors, showStackTraces } = props;
   const groupedErrors = groupBy(errors, 'type');
   const errorTypes = [ 'input', 'runtime', 'server', 'client' ] as const;
   const contactUsMessage = errorTypes.map(errorType => {
@@ -43,7 +43,7 @@ function UnhandledErrors(props: Props) {
             return typedErrors && <React.Fragment key={type}>
               <h2>{capitalize(type)} errors</h2>
               {typedErrors.map(({ error, id, message }) =>
-                <ErrorDetail key={id} id={id} error={error} showDetails={showDetails} message={message}/>)}
+                <ErrorDetail key={id} id={id} error={error} showStackTraces={showStackTraces} message={message}/>)}
             </React.Fragment>;
           })}
         </div>
@@ -59,21 +59,21 @@ function UnhandledErrors(props: Props) {
   );
 }
 
-function ErrorDetail(props: { error: unknown, id: string, showDetails: boolean, message: string }) {
-  const { error, id, showDetails, message } = props;
+function ErrorDetail(props: { error: unknown, id: string, showStackTraces: boolean, message: string }) {
+  const { error, id, showStackTraces, message } = props;
   return (
     <div>
       <code>{message} (log marker {id})</code>
-      {showDetails && (
+      {showStackTraces && (
         <pre className={cx('--DetailItem')}>
-          {getErrorMessage(error)}
+          {getStackTrace(error)}
         </pre>
       )}
     </div>
   );
 }
 
-function getErrorMessage(error: unknown): string {
+function getStackTrace(error: unknown): string {
   if (error == null) return 'Unknown';
   if (error instanceof Error && error.stack) return error.stack;
   return String(error);
