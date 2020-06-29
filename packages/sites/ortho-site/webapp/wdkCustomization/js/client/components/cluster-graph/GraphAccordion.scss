@@ -5,6 +5,7 @@
     border: 0.0625rem solid #aaa;
     padding: .5em .5em .5em .7em;
     border-radius: 0.33333333333em;
+    background: linear-gradient(#eaeaea, #dadada, #eaeaea);
   }
 
   &Content {
@@ -17,4 +18,14 @@
 .GraphAccordion[open] .GraphAccordionHeader {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+  background: none;
+}
+
+.GraphAccordionContent {
+  animation: open .5s ease;
+}
+
+@keyframes open {
+  0%    {opacity: 0%;};
+  100%  {opacity: 100%;};
 }
