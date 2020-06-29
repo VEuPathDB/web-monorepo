@@ -2,7 +2,7 @@ import * as React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 export interface Props {
-  message?: string;
+  message?: React.ReactNode;
   children?: React.ReactNode;
 }
 
