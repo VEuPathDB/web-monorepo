@@ -1,6 +1,9 @@
 .UnhandledErrors {
   position: relative;
-  width: 80vw;
+  min-width: 60em;
+  max-width: 80vw;
+  width: 50vw;
+  min-height: 20em;
   max-height: 80vh;
   background: white;
   padding: 2em;
@@ -9,6 +12,10 @@
 
   h1 {
     padding: 0;
+  }
+
+  h2, h3 {
+    padding: .4em 0;
   }
 
   p {
@@ -28,7 +35,10 @@
 
   &--Details {
     overflow: auto;
-    max-height: 60vh;
+    max-height: 50vh;
+    border-top: .15em solid #00000045;
+    padding-top: 1.5em;
+    margin-top: 2.5em;
   }
 
   &--DetailItem {
