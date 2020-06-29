@@ -34,6 +34,10 @@
     align-items: center;
     padding: 0.2em;
     border: 0.0625rem dotted gray;
+
+    &:hover {
+      background-color: #FFFF99;
+    }
   }
 
   .LegendHeader {
