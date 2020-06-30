@@ -3,6 +3,7 @@ import { isPromise } from 'wdk-client/Utils/PromiseUtils';
 import { Action } from 'wdk-client/Actions';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
 import WdkService from 'wdk-client/Service/WdkService';
+import { notifyUnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
 
 export interface ActionCreatorServices {
   wdkService: WdkService;
@@ -97,9 +98,7 @@ export const wdkMiddleware = (services: ActionCreatorServices): WdkMiddleWare =>
   }
 
   function logError(error: Error) {
-    services.wdkService.submitError(error).catch(err => {
-      console.error('Could not submit error to log.', err);
-    });
+    dispatch(notifyUnhandledError(error));
   }
 
 }

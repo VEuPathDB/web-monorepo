@@ -14,6 +14,7 @@ import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 import WdkService, { WdkServiceContext } from 'wdk-client/Service/WdkService';
 import WdkRoute from 'wdk-client/Core/WdkRoute';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import UnhandledErrorsController from 'wdk-client/Controllers/UnhandledErrorsController';
 
 type Props = {
   rootUrl: string,
@@ -109,20 +110,22 @@ export default class Root extends React.Component<Props, State> {
               <PluginContext.Provider value={makeCompositePluginComponent(this.props.pluginConfig)}>
                 <Page classNameModifier={rootClassNameModifier}>
                   {staticContent ? safeHtml(staticContent, null, 'div') : (
-                    <React.Fragment>
-                      <Switch>
-                        {this.props.routes.map(({ path, exact = true, component, requiresLogin = false }) => (
-                          <WdkRoute
-                            key={path}
-                            exact={exact == null ? false: exact}
-                            path={path}
-                            component={component}
-                            requiresLogin={requiresLogin}
-                          />
-                        ))}
-                      </Switch>
-                      <LoginFormController />
-                    </React.Fragment>
+                    <UnhandledErrorsController>
+                      <>
+                        <Switch>
+                          {this.props.routes.map(({ path, exact = true, component, requiresLogin = false }) => (
+                            <WdkRoute
+                              key={path}
+                              exact={exact == null ? false: exact}
+                              path={path}
+                              component={component}
+                              requiresLogin={requiresLogin}
+                            />
+                          ))}
+                        </Switch>
+                        <LoginFormController />
+                      </>
+                    </UnhandledErrorsController>
                   )}
                 </Page>
               </PluginContext.Provider>

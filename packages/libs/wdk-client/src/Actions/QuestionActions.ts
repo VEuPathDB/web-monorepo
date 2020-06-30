@@ -378,8 +378,7 @@ export const reportSubmissionError = (searchName: string, error: any, wdkService
   const stepValidation = isValidationError ? JSON.parse(error.response) : undefined;
 
   if (!isValidationError) {
-    alert('Oops... something went wrong!', 'An error was encountered.');
-    wdkService.submitErrorIfNot500(error);
+    throw error;
   }
 
   return enableSubmission({ searchName, stepValidation });

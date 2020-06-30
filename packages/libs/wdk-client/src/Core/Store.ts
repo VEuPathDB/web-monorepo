@@ -1,12 +1,12 @@
 import { compose, mapKeys, mapValues, values } from 'lodash/fp';
 import { applyMiddleware, combineReducers, createStore, Reducer, Middleware, Action } from 'redux';
 import { combineEpics, createEpicMiddleware, Epic } from 'redux-observable';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of, Observable } from 'rxjs';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
 import WdkService from 'wdk-client/Service/WdkService';
 import { wdkMiddleware } from 'wdk-client/Core/WdkMiddleware';
-import { catchError } from 'rxjs/operators';
-import { alert } from 'wdk-client/Utils/Platform';
+import { catchError, startWith } from 'rxjs/operators';
+import { notifyUnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
 
 declare global{
   interface Window {
@@ -76,14 +76,10 @@ function makeRootEpic<T extends Record<string, any>, A extends Action>(storeModu
     .map(({ observe }: StoreModule<T, A>): ModuleEpic<T, A> => (action$, state$, deps) => {
       return observe
         ? observe(action$, state$, deps).pipe(
-          catchError((error, caught) => {
-            // FIXME See https://redmine.apidb.org/issues/34824
-            const message = 'status' in error && 'response' in error && error.status === 422
-              ? error.response
-              : 'An error was encountered.';
-            alert('Oops... something went wrong!', message);
-            deps.wdkService.submitErrorIfNot500(error);
-            return caught;
+          catchError((error, caught): Observable<A> => {
+            return caught.pipe(
+              startWith(notifyUnhandledError(error))
+            );
           })
         )
         : EMPTY;

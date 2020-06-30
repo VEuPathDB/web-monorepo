@@ -1,6 +1,7 @@
 import { memoize } from 'lodash';
 import localforage from 'localforage';
 import * as QueryString from 'querystring';
+import { v4 as uuid } from 'uuid';
 
 import * as Decode from 'wdk-client/Utils/Json';
 import { alert } from 'wdk-client/Utils/Platform';
@@ -174,9 +175,9 @@ export const ServiceBase = (serviceUrl: string) => {
     }));
   }
 
-  async function submitErrorIfNot500(error: Error): Promise<void> {
+  async function submitErrorIfNot500(error: Error, extra?: any): Promise<void> {
     if ('status' in error && (error as ServiceError).status >= 500) return;
-    return submitError(error);
+    return submitError(error, extra);
   }
 
   function _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
@@ -211,10 +212,12 @@ export const ServiceBase = (serviceUrl: string) => {
           return pendingPromise as Promise<T>;
         }
 
+        // FIXME Get uuid from response header when available
         throw new ServiceError(
           `Cannot ${method.toUpperCase()} ${url} (${response.status})`,
           text,
-          response.status
+          response.status,
+          response.headers.get('x-log-marker') || uuid()
         );
       });
     }) as Promise<T>
@@ -333,7 +336,7 @@ export const ServiceBase = (serviceUrl: string) => {
     return getQuestions().then(qs => {
       let question = qs.find(q => q.urlSegment === urlSegment);
       if (question == null) {
-        throw new ServiceError(`Could not find question "${urlSegment}".`, "Not found", 404);
+        throw new ServiceError(`Could not find question "${urlSegment}".`, "Not found", 404, uuid());
       }
       return question;
     });
@@ -344,7 +347,7 @@ export const ServiceBase = (serviceUrl: string) => {
     return getRecordClasses().then(rs => {
       let record = rs.find(r => r.urlSegment === urlSegment);
       if (record == null) {
-        throw new ServiceError(`Could not find record class "${urlSegment}".`, "Not found", 404);
+        throw new ServiceError(`Could not find record class "${urlSegment}".`, "Not found", 404, uuid());
       }
       return record;
     });

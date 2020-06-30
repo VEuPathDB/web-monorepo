@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
 
@@ -18,10 +19,12 @@ export default (base: ServiceBase) => {
         return Promise.resolve(id);
       }
       return response.text().then(text => {
+        // FIXME Get uuid from response header when available
         throw new ServiceError(
           `Cannot POST ${path} (${response.status})`,
           text,
-          response.status
+          response.status,
+          uuid()
         );
       })
     })
