@@ -114,6 +114,7 @@ function userDatasetUploadFromStatusDetail(upload: UserDatasetUploadWithStatusDe
     {
     ...restUpload,
     errors: getErrorsFromStatusDetails(statusDetails),
+    // Could instead use utility functions and an enum for status values?
     isOngoing: ! upload.status.match(/success|rejected|errored/),
     isCancellable: !! upload.status.match(/awaiting-upload/),
     isSuccessful: !! upload.status.match(/success/),
