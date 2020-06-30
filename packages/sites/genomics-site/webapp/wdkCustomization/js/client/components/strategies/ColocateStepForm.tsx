@@ -187,11 +187,6 @@ const BasketPage = ({
           setSelectedSecondaryInput({ stepTree: { stepId: newStepId } });
           replacePage(makeColocationOperatorFormPage(recordClassUrlSegment));
         }
-      })
-      .catch(error => {
-        alert('Oops... something went wrong\n' + error);
-        wdkService.submitErrorIfNot500(error);
-        onHideInsertStep();
       });
 
     return () => {
@@ -206,7 +201,6 @@ const StrategyForm = ({
   strategyId,
   name,
   setSelectedSecondaryInput,
-  onHideInsertStep,
   recordClassUrlSegment,
   replacePage
 }: AddStepOperationFormProps & { strategyId: number, name: string, recordClassUrlSegment: string, setSelectedSecondaryInput: SetSelectedSecondaryInput }) => {
@@ -220,11 +214,6 @@ const StrategyForm = ({
           setSelectedSecondaryInput({ stepTree, expandedName: `Copy of ${name || DEFAULT_STRATEGY_NAME}` });
           replacePage(makeColocationOperatorFormPage(recordClassUrlSegment));
         }
-      })
-      .catch(error => {
-        alert('Oops... something went wrong\n' + error);
-        wdkService.submitErrorIfNot500(error);
-        onHideInsertStep();
       });
 
     return () => {

@@ -112,10 +112,6 @@ function OrthologCount(props) {
       result => {
         const { uniqueValues } = result;
         setUniqueOrthologValues(uniqueValues);
-      },
-      error => {
-        alert('Oops... something went wrong', 'An error was encountered.');
-        wdkService.submitError(error);
       }
     );
   }, [step]);
