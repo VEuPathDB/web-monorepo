@@ -87,8 +87,10 @@ const statusDetailDecoder = Decode.combine(
   Decode.field("started", Decode.string),
   Decode.field("finished", Decode.optional(Decode.string))
 );
+type UserDatasetUploadWithStatusDetails = Decode.Unpack<typeof statusDetailDecoder>;
+type StatusDetails = UserDatasetUploadWithStatusDetails['statusDetails'];
 
-function getErrorsFromStatusDetails(statusDetails: any){
+function getErrorsFromStatusDetails(statusDetails: StatusDetails): string[]{
   let errorLines = [];
   
   if( statusDetails && statusDetails.errors && statusDetails.errors.general ){
@@ -106,7 +108,7 @@ function getErrorsFromStatusDetails(statusDetails: any){
   return errorLines;
 }
 
-function userDatasetUploadFromStatusDetail(upload: any){
+function userDatasetUploadFromStatusDetail(upload: UserDatasetUploadWithStatusDetails): UserDatasetUpload {
   const { statusDetails, ...restUpload } = upload;
   return (
     {
