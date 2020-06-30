@@ -5,13 +5,13 @@ import * as Decode from 'wdk-client/Utils/Json';
 const serviceUrl = '/dataset-import';
 
 /*
- * The authentication method uses an 'Auth_Key' header, not the cookie like in WDK
+ * The authentication method uses an 'Auth-Key' header, not the cookie like in WDK
  */
 function fetchWithCredentials(path: string, method: string, body: any, contentType?: string){
   const wdkCheckAuth = document.cookie.split("; ").find(x => x.startsWith("wdk_check_auth=")) || "";
   const authKey = wdkCheckAuth.replace("wdk_check_auth=", "");
   const authO = {
-        'Auth_Key': authKey
+        'Auth-Key': authKey
   };
   const contentTypeO = contentType != null ? {'Content-Type': contentType } : {};
   return fetch(serviceUrl + path,
@@ -70,7 +70,54 @@ function fetchDecodedJsonOrThrowMessage<Resource> (decoder: Decode.Decoder<Resou
       throw errorMessage;
     });
 }
+const statusDetailDecoder = Decode.combine(
+  Decode.field("id", Decode.string),
+  Decode.field("datasetId", Decode.optional(Decode.number)),
+  Decode.field("datasetName", Decode.string),
+  Decode.field("summary", Decode.string),
+  Decode.field("projects", Decode.arrayOf(Decode.string)),
+  Decode.field("status", Decode.string),
+  Decode.field("statusDetails", Decode.optional(Decode.combine(
+    Decode.field("errors", Decode.optional(Decode.combine(
+      Decode.field("general", Decode.arrayOf(Decode.string)),
+      Decode.field("byKey", Decode.objectOf(Decode.string))
+    ))),
+  ))),
+  Decode.field("stepPercent", Decode.optional(Decode.number)),
+  Decode.field("started", Decode.string),
+  Decode.field("finished", Decode.optional(Decode.string))
+);
 
+function getErrorsFromStatusDetails(statusDetails: any){
+  let errorLines = [];
+  
+  if( statusDetails && statusDetails.errors && statusDetails.errors.general ){
+    let line;
+    for(line of statusDetails.errors.general ){
+      errorLines.push(line);
+    }
+  }
+  if( statusDetails && statusDetails.errors && statusDetails.errors.byKey ){
+    let p;
+    for(p of Object.entries(statusDetails.errors.byKey)){ 
+      errorLines.push(p[0] + ": " + p[1]);
+    }
+  }
+  return errorLines;
+}
+
+function userDatasetUploadFromStatusDetail(upload: any){
+  const { statusDetails, ...restUpload } = upload;
+  return (
+    {
+    ...restUpload,
+    errors: getErrorsFromStatusDetails(statusDetails),
+    isOngoing: ! upload.status.match(/success|rejected|errored/),
+    isCancellable: !! upload.status.match(/awaiting-upload/),
+    isSuccessful: !! upload.status.match(/success/),
+    isUserError: !! upload.status.match(/rejected/)
+   });
+}; 
 export default (base: ServiceBase) => {
   function addDataset(newUserDataset: NewUserDataset): Promise<void> {
     const metaBody = JSON.stringify({
@@ -102,54 +149,12 @@ export default (base: ServiceBase) => {
   }
   function listStatusDetails():  Promise<Array<UserDatasetUpload>> {
     return fetchDecodedJsonOrThrowMessage(
-      Decode.arrayOf(Decode.combine(
-        Decode.field("id", Decode.string),
-        Decode.field("datasetId", Decode.optional(Decode.number)),
-        Decode.field("datasetName", Decode.string),
-        Decode.field("summary", Decode.string),
-        Decode.field("projects", Decode.arrayOf(Decode.string)),
-        Decode.field("status", Decode.string),
-        Decode.field("statusDetails", Decode.optional(Decode.combine(
-          Decode.field("errors", Decode.optional(Decode.combine(
-            Decode.field("general", Decode.arrayOf(Decode.string)),
-            Decode.field("byKey", Decode.objectOf(Decode.string))
-          ))),
-        ))),
-        Decode.field("stepPercent", Decode.optional(Decode.number)),
-        Decode.field("started", Decode.string),
-        Decode.field("finished", Decode.optional(Decode.string))
-      )),
+      Decode.arrayOf(statusDetailDecoder),
       {
         path: '/user-datasets',
         method: 'GET'
       }
-    ).then(uploads => uploads.map(upload => {
-      let errorLines = [];
-			
-      if( upload.statusDetails && upload.statusDetails.errors && upload.statusDetails.errors.general ){
-        let line;
-        for(line of upload.statusDetails.errors.general ){
-          errorLines.push(line);
-        }
-      }
-      if( upload.statusDetails && upload.statusDetails.errors && upload.statusDetails.errors.byKey ){
-        let p;
-        for(p of Object.entries(upload.statusDetails.errors.byKey)){ 
-      	  errorLines.push(p[0] + ": " + p[1]);
-        }
-			}
-			delete upload.statusDetails;
-
-      return (
-				{
-				...upload,
-				errors: errorLines,
-				isOngoing: ! upload.status.match(/success|rejected|errored/),
-				isSuccessful: !! upload.status.match(/success/),
-				isUserError: !! upload.status.match(/rejected/)
-			 });
-			}
-    ));
+    ).then(uploads => uploads.map(userDatasetUploadFromStatusDetail));
   }
   function issueDeleteCommand(jobId: string) : Promise<void> {
     return fetchWithCredentials('/user-datasets/'+jobId, 'DELETE', undefined, 'text/plain;').then(x=>{});

@@ -436,6 +436,7 @@ export type UserDatasetUpload = {
   started: string;
   finished?: string;
   isOngoing: boolean;
+  isCancellable: boolean;
   isSuccessful: boolean;
   isUserError: boolean;
 };

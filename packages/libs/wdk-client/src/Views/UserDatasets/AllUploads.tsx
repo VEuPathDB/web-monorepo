@@ -43,7 +43,7 @@ const OngoingUpload = (upload: UserDatasetUpload, onClickCancel: () => void) => 
     <div>
       Status: {upload.status + (upload.stepPercent ? " ... " + upload.stepPercent + "%" : "")}
     </div>
-    {upload.status === 'awaiting-upload' && <a style={{cursor: "pointer"}} onClick={()=>onClickCancel()}>Cancel upload</a> }
+    {upload.isCancellable && <button className="btn" onClick={()=>onClickCancel()}>Cancel upload</button> }
   </div>
 );
 
