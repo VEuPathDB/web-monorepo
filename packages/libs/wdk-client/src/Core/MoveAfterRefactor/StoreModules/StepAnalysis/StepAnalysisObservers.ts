@@ -144,7 +144,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
           {
             ...panelState,
             status: 'ERROR',
-            errorMessage: ex
+            errorMessage: 'response' in ex ? ex.response : String(ex)
           }
         )
       }
@@ -560,7 +560,7 @@ function parseAnalysisInitializationError(error: any) {
   if (stepValidation == null) {
     return {
       isValidationError: false,
-      errorMessage: error
+      errorMessage: 'response' in error ? error.response : String(error)
     };
   } else {
     return {

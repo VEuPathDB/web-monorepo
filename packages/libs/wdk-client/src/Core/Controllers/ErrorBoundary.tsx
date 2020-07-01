@@ -2,19 +2,20 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
+import { notifyUnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
 import Error from 'wdk-client/Components/PageStatus/Error';
-import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+
 type Props = {
   renderError?: () => React.ReactNode;
   children?: React.ReactNode;
-  dispatch?: Dispatch;
+  dispatch: Dispatch;
 }
 
 type State = {
   hasError: boolean;
 }
 
-export default connect()(class ErrorBoundary extends React.Component<Props, State> {
+class ErrorBoundary extends React.Component<Props, State> {
 
   state = {
     hasError: false
@@ -22,16 +23,7 @@ export default connect()(class ErrorBoundary extends React.Component<Props, Stat
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     this.setState({ hasError: true });
-
-    const { dispatch } = this.props;
-    if (dispatch == null) {
-      console.warn('`dispatch` function not found. Unable to log render error to server.');
-    }
-    else {
-      dispatch(({ wdkService }) => {
-        return wdkService.submitError(error, info).then(() => emptyAction)
-      });
-    }
+    this.props.dispatch(notifyUnhandledError(error, info));
   }
 
   render() {
@@ -40,4 +32,6 @@ export default connect()(class ErrorBoundary extends React.Component<Props, Stat
       : this.props.children;
   }
 
-})
+}
+
+export default connect()(ErrorBoundary);

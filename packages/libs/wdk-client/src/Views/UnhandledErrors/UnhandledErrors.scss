@@ -1,0 +1,51 @@
+.UnhandledErrors {
+  position: relative;
+  min-width: 60em;
+  max-width: 80vw;
+  width: 50vw;
+  min-height: 20em;
+  max-height: 80vh;
+  background: white;
+  padding: 2em;
+  border-radius: 1em;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+
+  h1 {
+    padding: 0;
+  }
+
+  h2, h3 {
+    padding: .4em 0;
+  }
+
+  p {
+    font-size: 1.2em;
+  }
+
+  button {
+    position: absolute;
+    right: 1em;
+    border: none;
+    border-radius: 100%;
+    background: none;
+    font-size: 2em;
+    height: 2em;
+    width: 2em;
+  }
+
+  &--Details {
+    overflow: auto;
+    max-height: 50vh;
+    border-top: .15em solid #00000045;
+    padding-top: 1.5em;
+    margin-top: 2.5em;
+  }
+
+  &--DetailItem {
+    margin: 1em 0;
+    padding: 1em;
+    background: #ff00001a;
+    border-radius: .5em;
+    color: #e22222;
+  }
+}
