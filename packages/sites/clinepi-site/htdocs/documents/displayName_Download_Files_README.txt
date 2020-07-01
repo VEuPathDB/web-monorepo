@@ -31,7 +31,7 @@ ISASimple_[INSERT file name]_RSRC_ontologyMetadata.txt, the ontology term associ
 • average -- Provided for number variables 
 • number_distinct_values -- Count of all possible values for variable 
 • distinct_values -- Pipe-delimited (|) list of all possible values for string variable 
-• variable -- Column header, or variable name, from original data files. Pipe-delimited (|) list if multiple variables from original data files were mapped to one ontology term (Example: "[INSERT variable for the key variable whose IRI appears above]") 
+• variable -- Column header, or variable name, from original data files. Comma-delimited (,) list if multiple variables from original data files were mapped to one ontology term (Example: "[INSERT variable for the key variable whose IRI appears above]") 
    ◦ Values are formatted as "data file::variable" (Example: "[INSERT dataFile::variable for the key variable whose IRI appears above]"; variable "[INSERT variable-only for the key variable whose IRI appears above]" came from data file "[INSERT dataFile-only for the key variable whose IRI appears above].[INSERT file extension for the dataFile]") 
 
 
