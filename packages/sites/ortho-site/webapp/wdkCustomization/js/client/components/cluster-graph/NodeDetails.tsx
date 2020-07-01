@@ -9,23 +9,33 @@ import {
 } from '../../utils/graphInformation';
 import { GroupLayout } from '../../utils/groupLayout';
 
+import { GraphAccordion } from './GraphAccordion';
+
 export function NodeDetails({ layout, selectedNode }: GraphInformationTabProps) {
   const nodeDetails = useNodeDetails(layout, selectedNode);
 
   return (
     <React.Fragment>
-      <pre>
-        {JSON.stringify(nodeDetails?.sequenceInformation, null, 2)}
-      </pre>
-      <pre>
-        {JSON.stringify(nodeDetails?.blastScoreRows, null, 2)}
-      </pre>
+      <GraphAccordion title="Sequence Information">
+        <pre>
+          {JSON.stringify(nodeDetails?.sequenceInformation, null, 2)}
+        </pre>
+      </GraphAccordion>
+      <GraphAccordion title="BLAST Scores">
+        <pre>
+          {JSON.stringify(nodeDetails?.blastScoreRows, null, 2)}
+        </pre>
+      </GraphAccordion>
+      <GraphAccordion title="PFam Domains">
       <pre>
         {JSON.stringify(nodeDetails?.pfamDomainRows, null, 2)}
       </pre>
+      </GraphAccordion>
+      <GraphAccordion title="EC Numbers">
       <pre>
         {JSON.stringify(nodeDetails?.ecNumberRows, null, 2)}
       </pre>
+      </GraphAccordion>
     </React.Fragment>
   );
 }
