@@ -19,6 +19,12 @@ export function GroupClusterGraphController({ groupName }: Props) {
 
   const taxonUiMetadata = useTaxonUiMetadata();
 
+  useEffect(() => {
+    if (layout != null) {
+      console.log(layout);
+    }
+  }, [ layout ]);
+
   return layout == null || taxonUiMetadata == null
     ? <Loading />
     : <ClusterGraphDisplay layout={layout} taxonUiMetadata={taxonUiMetadata} />;

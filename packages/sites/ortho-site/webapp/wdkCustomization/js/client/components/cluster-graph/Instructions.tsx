@@ -1,5 +1,5 @@
 import React from 'react';
 
 export function Instructions() {
-  return <div></div>;
+  return <div style={{ display: 'none' }}></div>;
 }

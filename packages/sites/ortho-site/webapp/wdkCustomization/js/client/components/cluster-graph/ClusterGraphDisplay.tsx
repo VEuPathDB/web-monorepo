@@ -12,6 +12,11 @@ import {
   nodeDisplayTypeOrder,
   nodeDisplayTypeDisplayNames
 } from '../../utils/clusterGraph';
+import {
+  GraphInformationTabKey,
+  GraphInformationTabProps,
+  graphInformationBaseTabConfigs
+} from '../../utils/graphInformation';
 import { GroupLayout } from '../../utils/groupLayout';
 import { TaxonUiMetadata } from '../../utils/taxons';
 
@@ -19,6 +24,10 @@ import { ClusterGraphCanvas } from './ClusterGraphCanvas';
 import { GraphControls } from './GraphControls';
 import { GraphInformation } from './GraphInformation';
 import { Instructions } from './Instructions';
+import { NodeDetails } from './NodeDetails';
+import { SequenceList } from './SequenceList';
+
+import './ClusterGraphDisplay.scss';
 
 interface Props {
   layout: GroupLayout;
@@ -37,8 +46,16 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
     legendHeaders
   } = useNodeDisplayTypeControl(layout, taxonUiMetadata);
 
+  const {
+    activeTab,
+    selectedNode,
+    setActiveTab,
+    setSelectedNode,
+    tabs
+  } = useGraphInformationTabs(layout);
+
   return (
-    <div>
+    <div className="ClusterGraphDisplay">
       <Instructions />
       <GraphControls
         edgeTypeOptions={edgeTypeOptions}
@@ -54,7 +71,13 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
         legendHeaders={legendHeaders}
       />
       <ClusterGraphCanvas />
-      <GraphInformation />
+      <GraphInformation
+        activeTab={activeTab}
+        selectedNode={selectedNode}
+        setActiveTab={setActiveTab}
+        setSelectedNode={setSelectedNode}
+        tabs={tabs}
+      />
     </div>
   );
 }
@@ -256,3 +279,32 @@ function renderTaxonLegendSymbol(color: string, groupColor: string) {
     </svg>
   );
 }
+
+function useGraphInformationTabs(layout: GroupLayout) {
+  const [ activeTab, setActiveTab ] = useState<GraphInformationTabKey>('sequence-list');
+  const [ selectedNode, setSelectedNode ] = useState(layout.nodes['0'].id);
+
+  const tabs = graphInformationBaseTabConfigs.map(
+    baseConfig => {
+      const TabContentComponent = graphInformationTabComponents[baseConfig.key];
+
+      return ({
+        ...baseConfig,
+        content: <TabContentComponent layout={layout} />
+      });
+    }
+  );
+
+  return {
+    activeTab,
+    setActiveTab,
+    selectedNode,
+    setSelectedNode,
+    tabs
+  };
+}
+
+const graphInformationTabComponents: Record<GraphInformationTabKey, React.ComponentType<GraphInformationTabProps>> = {
+  'sequence-list': SequenceList,
+  'node-details': NodeDetails
+};
