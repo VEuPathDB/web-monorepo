@@ -282,7 +282,7 @@ function renderTaxonLegendSymbol(color: string, groupColor: string) {
 
 function useGraphInformationTabs(layout: GroupLayout) {
   const [ activeTab, setActiveTab ] = useState<GraphInformationTabKey>('sequence-list');
-  const [ selectedNode, setSelectedNode ] = useState(layout.nodes['0'].id);
+  const [ selectedNode, setSelectedNode ] = useState<string | undefined>(layout.nodes['0'].id);
 
   const tabs = graphInformationBaseTabConfigs.map(
     baseConfig => {
