@@ -2,20 +2,23 @@ import React, { useMemo } from 'react';
 
 import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
 
-import { MesaColumn } from 'wdk-client/Core/CommonTypes';
+import { GraphInformationColumns } from '../../utils/graphInformation';
 
-interface Props<R> {
+interface Props<R, C extends keyof R & string> {
   rows: R[];
-  columns: MesaColumn<keyof R & string>[];
+  columns: GraphInformationColumns<R, C>;
+  columnOrder: readonly C[];
 }
 
-export function GraphInformationDataTable<R>({ rows, columns }: Props<R>) {
+export function GraphInformationDataTable<R, V extends keyof R & string>(
+  { rows, columns, columnOrder }: Props<R, V>
+) {
   const mesaState = useMemo(
     () => MesaState.create({
       rows,
-      columns
+      columns: columnOrder.map(columnKey => columns[columnKey])
     }),
-    [ rows, columns ]
+    [ rows, columns, columnOrder ]
   );
 
   return (

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Link } from 'wdk-client/Components';
 import { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
+import { MesaColumn } from 'wdk-client/Core/CommonTypes';
 
 import { EdgeType, edgeTypeDisplayNames } from './clusterGraph';
 import { GroupLayout } from './groupLayout';
@@ -12,9 +13,15 @@ export interface GraphInformationTabProps {
   setSelectedNode: (newNode: string | undefined) => void;
 }
 
-export interface GraphInformationCellRenderer<R, K extends keyof R> {
-  (props: { row: R, value: R[K] }): React.ReactNode;
+export interface GraphInformationColumn<R, K extends keyof R & string> extends MesaColumn<K> {
+  renderCell?: (props: { row: R, value: R[K] }) => React.ReactNode;
+  makeSearchableString?: (value: R[K]) => string;
+  makeOrder?: (row: R) => boolean | number | string;
 }
+
+export type GraphInformationColumns<R, C extends keyof R & string> = {
+  [K in C]: GraphInformationColumn<R, K>
+};
 
 export type GraphInformationTabKey = 'sequence-list' | 'node-details';
 

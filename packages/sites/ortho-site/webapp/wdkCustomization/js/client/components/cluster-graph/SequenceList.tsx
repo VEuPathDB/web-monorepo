@@ -1,14 +1,12 @@
 import React, { useMemo } from 'react';
 
-import { MesaColumn } from 'wdk-client/Core/CommonTypes';
-
 import { GraphInformationDataTable } from './GraphInformationDataTable';
 
 import {
+  GraphInformationColumns,
   GraphInformationTabProps,
   SequenceListRow,
   layoutToSequenceListRows,
-  GraphInformationCellRenderer,
   renderSequenceLink
 } from '../../utils/graphInformation';
 
@@ -23,30 +21,30 @@ export function SequenceList({ layout }: GraphInformationTabProps) {
       <GraphInformationDataTable
         rows={rows}
         columns={SEQUENCE_LIST_COLUMNS}
+        columnOrder={SEQUENCE_LIST_COLUMN_ORDER}
       />
     </div>
   );
 }
 
-const accessionCellRenderer: GraphInformationCellRenderer<SequenceListRow, 'accession'> =
-  ({ value }) => renderSequenceLink(value);
-
-const SEQUENCE_LIST_COLUMNS: MesaColumn<keyof SequenceListRow>[] = [
-  {
+const SEQUENCE_LIST_COLUMNS: GraphInformationColumns<SequenceListRow, 'accession' | 'taxon' | 'length' | 'description'> = {
+  accession: {
     key: 'accession',
     name: 'Accession',
-    renderCell: accessionCellRenderer
+    renderCell: ({ value }) => renderSequenceLink(value)
   },
-  {
+  taxon: {
     key: 'taxon',
     name: 'Taxon'
   },
-  {
+  length: {
     key: 'length',
     name: 'Length'
   },
-  {
+  description: {
     key: 'description',
     name: 'Description'
   }
-];
+};
+
+const SEQUENCE_LIST_COLUMN_ORDER = [ 'accession', 'taxon', 'length', 'description' ] as const;

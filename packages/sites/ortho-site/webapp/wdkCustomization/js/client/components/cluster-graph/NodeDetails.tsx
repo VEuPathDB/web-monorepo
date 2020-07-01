@@ -1,11 +1,9 @@
 import React, { useMemo } from 'react';
 
-import { MesaColumn } from 'wdk-client/Core/CommonTypes';
-
 import {
   BlastScoreRow,
   EcNumberRow,
-  GraphInformationCellRenderer,
+  GraphInformationColumns,
   GraphInformationTabProps,
   PfamDomainRow,
   SequenceInformation,
@@ -40,18 +38,21 @@ export function NodeDetails({ layout, selectedNode }: GraphInformationTabProps) 
                 <GraphInformationDataTable
                   rows={nodeDetails.blastScoreRows}
                   columns={BLAST_SCORE_COLUMNS}
+                  columnOrder={BLAST_SCORE_COLUMN_ORDER}
                 />
               </GraphAccordion>
               <GraphAccordion title="PFam Domains">
                 <GraphInformationDataTable
                   rows={nodeDetails.pfamDomainRows}
                   columns={PFAM_DOMAIN_COLUMNS}
+                  columnOrder={PFAM_DOMAIN_COLUMN_ORDER}
                 />
               </GraphAccordion>
               <GraphAccordion title="EC Numbers">
                 <GraphInformationDataTable
                   rows={nodeDetails.ecNumberRows}
                   columns={EC_NUMBER_COLUMNS}
+                  columnOrder={EC_NUMBER_COLUMN_ORDER}
                 />
               </GraphAccordion>
             </React.Fragment>
@@ -99,55 +100,55 @@ function SequenceInformationTable(props: SequenceInformation) {
   );
 }
 
-const subjectCellRenderer: GraphInformationCellRenderer<BlastScoreRow, 'subject'> =
-  ({ value }) => renderSequenceLink(value);
-
-const edgeTypeRenderer: GraphInformationCellRenderer<BlastScoreRow, 'type'> =
-  ({ value }) => renderEdgeType(value);
-
-const BLAST_SCORE_COLUMNS: MesaColumn<keyof BlastScoreRow>[] = [
-  {
+const BLAST_SCORE_COLUMNS: GraphInformationColumns<BlastScoreRow, 'subject' | 'type' | 'evalue'> = {
+  subject: {
     key: 'subject',
     name: 'Subject',
-    renderCell: subjectCellRenderer
+    renderCell: ({ value }) => renderSequenceLink(value)
   },
-  {
+  type: {
     key: 'type',
     name: 'Type',
-    renderCell: edgeTypeRenderer
+    renderCell: ({ value }) => renderEdgeType(value)
   },
-  {
+  evalue: {
     key: 'evalue',
     name: 'Evalue'
   }
-];
+};
 
-const PFAM_DOMAIN_COLUMNS: MesaColumn<keyof PfamDomainRow>[] = [
-  {
+const BLAST_SCORE_COLUMN_ORDER = [ 'subject', 'type', 'evalue' ] as const;
+
+const PFAM_DOMAIN_COLUMNS: GraphInformationColumns<PfamDomainRow, 'accession' | 'symbol' | 'start' | 'end' | 'length'> = {
+  accession: {
     key: 'accession',
     name: 'Accession'
   },
-  {
+  symbol: {
     key: 'symbol',
     name: 'Symbol'
   },
-  {
+  start: {
     key: 'start',
     name: 'Start'
   },
-  {
+  end: {
     key: 'end',
     name: 'End'
   },
-  {
+  length: {
     key: 'length',
     name: 'Length'
   }
-];
+};
 
-export const EC_NUMBER_COLUMNS: MesaColumn<keyof EcNumberRow>[] = [
-  {
+const PFAM_DOMAIN_COLUMN_ORDER = [ 'accession', 'symbol', 'start', 'end', 'length' ] as const;
+
+export const EC_NUMBER_COLUMNS: GraphInformationColumns<EcNumberRow, 'ecNumber'> = {
+  ecNumber: {
     key: 'ecNumber',
     name: 'EC Number'
   }
-];
+};
+
+const EC_NUMBER_COLUMN_ORDER = [ 'ecNumber' ] as const;
