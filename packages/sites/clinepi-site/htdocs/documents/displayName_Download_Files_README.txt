@@ -79,7 +79,7 @@ Data Files:
 	◦ [INSERT # of unique XXX] unique "XXX" 
 
 6. ISASimple_[INSERT file name]_RSRC.txt 
-   • Merges the files indicated below using [Household_Observation_Id, Participant_Id, Observation_Id, and Sample_Id]: 
+   • Merges the files indicated below using [Household_Id, Household_Observation_Id, Participant_Id, Observation_Id, and Sample_Id]: 
 	◦ ISASimple_[INSERT file name]_RSRC_households.txt 
 	◦ ISASimple_[INSERT file name]_RSRC_participant.txt 
 	◦ ISASimple_[INSERT file name]_RSRC_observations.txt 
