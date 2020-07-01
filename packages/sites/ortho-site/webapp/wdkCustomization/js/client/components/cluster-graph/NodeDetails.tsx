@@ -1,16 +1,25 @@
 import React, { useMemo } from 'react';
 
+import { MesaColumn } from 'wdk-client/Core/CommonTypes';
+
 import {
+  BlastScoreRow,
+  EcNumberRow,
+  GraphInformationCellRenderer,
   GraphInformationTabProps,
+  PfamDomainRow,
   SequenceInformation,
   layoutAndAccessionToBlastScoreRows,
   layoutAndAccessionToEcNumberRows,
   layoutAndAccessionToSequenceInformation,
-  layoutAndAccessionToPfamDomainRows
+  layoutAndAccessionToPfamDomainRows,
+  renderEdgeType,
+  renderSequenceLink
 } from '../../utils/graphInformation';
 import { GroupLayout } from '../../utils/groupLayout';
 
 import { GraphAccordion } from './GraphAccordion';
+import { GraphInformationDataTable } from './GraphInformationDataTable';
 
 export function NodeDetails({ layout, selectedNode }: GraphInformationTabProps) {
   const nodeDetails = useNodeDetails(layout, selectedNode);
@@ -28,19 +37,22 @@ export function NodeDetails({ layout, selectedNode }: GraphInformationTabProps) 
                 <SequenceInformationTable {...nodeDetails.sequenceInformation} />
               </GraphAccordion>
               <GraphAccordion title="BLAST Scores">
-                <pre>
-                  {JSON.stringify(nodeDetails?.blastScoreRows, null, 2)}
-                </pre>
+                <GraphInformationDataTable
+                  rows={nodeDetails.blastScoreRows}
+                  columns={BLAST_SCORE_COLUMNS}
+                />
               </GraphAccordion>
               <GraphAccordion title="PFam Domains">
-              <pre>
-                {JSON.stringify(nodeDetails?.pfamDomainRows, null, 2)}
-              </pre>
+                <GraphInformationDataTable
+                  rows={nodeDetails.pfamDomainRows}
+                  columns={PFAM_DOMAIN_COLUMNS}
+                />
               </GraphAccordion>
               <GraphAccordion title="EC Numbers">
-              <pre>
-                {JSON.stringify(nodeDetails?.ecNumberRows, null, 2)}
-              </pre>
+                <GraphInformationDataTable
+                  rows={nodeDetails.ecNumberRows}
+                  columns={EC_NUMBER_COLUMNS}
+                />
               </GraphAccordion>
             </React.Fragment>
       }
@@ -86,3 +98,56 @@ function SequenceInformationTable(props: SequenceInformation) {
     </table>
   );
 }
+
+const subjectCellRenderer: GraphInformationCellRenderer<BlastScoreRow, 'subject'> =
+  ({ value }) => renderSequenceLink(value);
+
+const edgeTypeRenderer: GraphInformationCellRenderer<BlastScoreRow, 'type'> =
+  ({ value }) => renderEdgeType(value);
+
+const BLAST_SCORE_COLUMNS: MesaColumn<keyof BlastScoreRow>[] = [
+  {
+    key: 'subject',
+    name: 'Subject',
+    renderCell: subjectCellRenderer
+  },
+  {
+    key: 'type',
+    name: 'Type',
+    renderCell: edgeTypeRenderer
+  },
+  {
+    key: 'evalue',
+    name: 'Evalue'
+  }
+];
+
+const PFAM_DOMAIN_COLUMNS: MesaColumn<keyof PfamDomainRow>[] = [
+  {
+    key: 'accession',
+    name: 'Accession'
+  },
+  {
+    key: 'symbol',
+    name: 'Symbol'
+  },
+  {
+    key: 'start',
+    name: 'Start'
+  },
+  {
+    key: 'end',
+    name: 'End'
+  },
+  {
+    key: 'length',
+    name: 'Length'
+  }
+];
+
+export const EC_NUMBER_COLUMNS: MesaColumn<keyof EcNumberRow>[] = [
+  {
+    key: 'ecNumber',
+    name: 'EC Number'
+  }
+];

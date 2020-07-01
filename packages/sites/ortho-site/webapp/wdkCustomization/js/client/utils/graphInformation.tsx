@@ -1,9 +1,9 @@
 import React from 'react';
 
+import { Link } from 'wdk-client/Components';
 import { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
-import { MesaColumn } from 'wdk-client/Core/CommonTypes';
 
-import { EdgeType } from './clusterGraph';
+import { EdgeType, edgeTypeDisplayNames } from './clusterGraph';
 import { GroupLayout } from './groupLayout';
 
 export interface GraphInformationTabProps {
@@ -12,8 +12,8 @@ export interface GraphInformationTabProps {
   setSelectedNode: (newNode: string | undefined) => void;
 }
 
-export interface GraphInformationColumn<R, K extends keyof R & string = keyof R & string> extends MesaColumn<K> {
-  renderCell?: (props: { value: R[K], row: R }) => React.ReactNode;
+export interface GraphInformationCellRenderer<R, K extends keyof R> {
+  (props: { row: R, value: R[K] }): React.ReactNode;
 }
 
 export type GraphInformationTabKey = 'sequence-list' | 'node-details';
@@ -121,4 +121,12 @@ export function layoutAndAccessionToEcNumberRows(layout: GroupLayout, accession:
       index: layout.group.ecNumbers[ecNumber].index
     })
   );
+}
+
+export function renderSequenceLink(accession: string) {
+  return <Link to={`/record/sequence/${accession}`}>{accession}</Link>
+}
+
+export function renderEdgeType(edgeType: EdgeType) {
+  return edgeTypeDisplayNames[edgeType];
 }
