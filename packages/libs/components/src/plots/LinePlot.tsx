@@ -2,13 +2,14 @@ import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
 import { PlotComponentProps } from "./Types";
 
-export interface Props extends PlotComponentProps<'name'|'x'|'y'> {
+export interface Props extends PlotComponentProps<'name'|'x'|'y'|'line'> {
   xLabel: string;
   yLabel: string;
+  mode: string;
 }
 
 export default function LinePlot(props: Props) {
-  const { xLabel, yLabel, ...plotlyProps } = props;
+  const { xLabel, yLabel, mode, ...plotlyProps } = props;
   const layout = {
     xaxis: {
       title: xLabel
