@@ -12,4 +12,4 @@ Clone this repo and run the following commands within the repo's directory:
 
 ## Storybook output for master
 
-See https://veupathdb.github.io/plot-components/?path=/story/welcome--to-storybook
+See https://veupathdb.github.io/plot-components
