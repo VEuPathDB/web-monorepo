@@ -31,14 +31,14 @@ export const graphInformationBaseTabConfigs: GraphInformationBaseTabConfig[] = [
   }
 ];
 
-interface SequenceListRow {
+export interface SequenceListRow {
   accession: string;
   taxon: string;
   length: number;
   description: string;
 }
 
-interface SequenceInformation {
+export interface SequenceInformation {
   sourceId: string;
   length: number;
   organism: string;
@@ -46,13 +46,13 @@ interface SequenceInformation {
   description: string;
 }
 
-interface BlastScoreRow {
+export interface BlastScoreRow {
   subject: string;
   type: EdgeType;
   evalue: string;
 }
 
-interface PfamDomainRow {
+export interface PfamDomainRow {
   accession: string;
   symbol: string;
   start: number;
@@ -60,7 +60,7 @@ interface PfamDomainRow {
   length: number;
 }
 
-interface EcNumberRow {
+export interface EcNumberRow {
   ecNumber: string;
   index: number;
 }
