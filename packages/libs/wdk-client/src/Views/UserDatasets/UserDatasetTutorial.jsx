@@ -6,7 +6,7 @@ import tutStep3 from './images/tut-step-3.jpg';
 
 function UserDatasetTutorial ({ projectName, quotaSize }) {
   const galaxyUrl = 'https://eupathdb.globusgenomics.org/';
-  return (
+  return projectName === 'MicrobiomeDB' ? <div/> : (
     <div className="row UserDataset-Tutorial">
       <div className="box xs-12 md-6">
         <h2>EuPathDB Galaxy</h2>

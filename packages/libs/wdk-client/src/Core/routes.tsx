@@ -24,6 +24,8 @@ import FavoritesController from 'wdk-client/Controllers/FavoritesController';
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 import UserLoginController from 'wdk-client/Controllers/UserLoginController';
+import UserDatasetNewUploadController from 'wdk-client/Controllers/UserDatasetNewUploadController';
+import UserDatasetAllUploadsController from 'wdk-client/Controllers/UserDatasetAllUploadsController';
 
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
@@ -190,8 +192,8 @@ const routes: RouteEntry[] = [
     path: '/workspace/datasets',
     requiresLogin: true,
     component: (props: RouteComponentProps<{}>) => {
-      const { history, location } = props;
-      return <UserDatasetListController history={history} location={location}/>
+      const { location } = props;
+      return <UserDatasetListController location={location}/>
     }
   },
 
@@ -211,6 +213,18 @@ const routes: RouteEntry[] = [
         />
       );
     }
+  },
+
+  {
+    path: '/workspace/dataset-upload',
+    requiresLogin: true,
+    component: () => <UserDatasetNewUploadController />
+  },
+
+  {
+    path: '/workspace/dataset-upload/status',
+    requiresLogin: true,
+    component: () => <UserDatasetAllUploadsController />
   },
 
   {

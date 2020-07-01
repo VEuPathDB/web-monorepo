@@ -1,20 +1,5 @@
 .UserDatasetList {
   margin-bottom: 30px;
-  .UserDatasetList-Title {
-    flex: 0 0 auto;
-    font-weight: 200;
-    line-height: 1em;
-    margin-right: 20px;
-    margin-bottom: 10px;
-
-    .wdk-SaveableTextEditor-Buttons {
-      align-items: center;
-    }
-
-    .HelpTrigger {
-      margin-left: 10px;
-    }
-  }
 }
 .UserDatasetList-EmptyState {
   width: 100%;

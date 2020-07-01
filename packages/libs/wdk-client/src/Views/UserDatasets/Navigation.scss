@@ -1,0 +1,17 @@
+.UserDatasetNavigation {
+  margin-top: 1em;
+  .UserDatasetNavigation-Title {
+    flex: 0 0 auto;
+    font-weight: 200;
+    line-height: 1em;
+
+    .wdk-SaveableTextEditor-Buttons {
+      align-items: center;
+    }
+
+    .HelpTrigger {
+      margin-left: 10px;
+    }
+  }
+}
+

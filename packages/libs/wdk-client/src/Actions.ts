@@ -31,6 +31,7 @@ import * as MatchedTranscriptsFilterActions from 'wdk-client/Actions/MatchedTran
 import * as ResultPanelActions from 'wdk-client/Actions/ResultPanelActions';
 import * as UnhandledErrorActions from 'wdk-client/Actions/UnhandledErrorActions';
 import * as UserSessionActions from 'wdk-client/Actions/UserSessionActions';
+import * as UserDatasetUploadActions from 'wdk-client/Actions/UserDatasetUploadActions';
 // FIXME Change this when StepAnalysis is moved out of `MoveAfterRefactor`
 import { StepAnalysisAction } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActions';
 
@@ -67,6 +68,7 @@ export {
   UserCommentFormActions,
   UserCommentShowActions,
   UserSessionActions,
+  UserDatasetUploadActions,
 };
 
 export type Action =
@@ -104,4 +106,5 @@ export type Action =
   | UnhandledErrorActions.Action
   | MatchedTranscriptsFilterActions.Action
   | UserSessionActions.Action
+  | UserDatasetUploadActions.Action
   | StepAnalysisAction

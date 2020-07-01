@@ -33,6 +33,7 @@ import * as router from 'wdk-client/StoreModules/RouterStoreModule';
 import * as userCommentForm from 'wdk-client/StoreModules/UserCommentFormStoreModule';
 import * as userCommentShow from 'wdk-client/StoreModules/UserCommentShowStoreModule';
 import * as userSession from 'wdk-client/StoreModules/UserSessionStoreModule';
+import * as userDatasetUpload from 'wdk-client/StoreModules/UserDatasetUploadStoreModule';
 
 export default {
   answerView,
@@ -69,5 +70,6 @@ export default {
   resultPanel,
   unhandledErrors,
   matchedTranscriptsFilter,
-  userSession
+  userSession,
+  userDatasetUpload
 };
