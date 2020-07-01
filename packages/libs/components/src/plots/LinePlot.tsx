@@ -5,11 +5,10 @@ import { PlotComponentProps } from "./Types";
 export interface Props extends PlotComponentProps<'name'|'x'|'y'|'line'> {
   xLabel: string;
   yLabel: string;
-  mode: string;
 }
 
 export default function LinePlot(props: Props) {
-  const { xLabel, yLabel, mode, ...plotlyProps } = props;
+  const { xLabel, yLabel, ...plotlyProps } = props;
   const layout = {
     xaxis: {
       title: xLabel
@@ -20,7 +19,7 @@ export default function LinePlot(props: Props) {
   }
   return (
   <
-    PlotlyPlot {...plotlyProps} layout={layout} type="scatter"
+    PlotlyPlot {...plotlyProps} layout={layout} type="scatter" mode="lines"
     />
   )
 }

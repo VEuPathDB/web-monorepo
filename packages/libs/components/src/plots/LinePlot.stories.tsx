@@ -20,7 +20,6 @@ export const Basic = () => <LinePlot
   }]}
   xLabel="foo"
   yLabel="bar"
-  mode="lines"
 />
 
 const x = ['A','B','C','D','E'];
@@ -58,7 +57,6 @@ export const MultiVariate = () => <LinePlot
 ]}
   xLabel="foo"
   yLabel="bar"
-  mode= "lines"
 />
 
 
