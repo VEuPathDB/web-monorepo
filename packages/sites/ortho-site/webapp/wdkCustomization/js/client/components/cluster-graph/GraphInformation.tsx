@@ -7,9 +7,9 @@ import { GraphInformationTabKey } from '../../utils/graphInformation';
 
 interface Props {
   activeTab: GraphInformationTabKey;
-  selectedNode: string;
+  selectedNode: string | undefined;
   setActiveTab: (newTab: GraphInformationTabKey) => void;
-  setSelectedNode: (newNode: string) => void;
+  setSelectedNode: (newNode: string | undefined) => void;
   tabs: TabConfig<GraphInformationTabKey>[];
 }
 
