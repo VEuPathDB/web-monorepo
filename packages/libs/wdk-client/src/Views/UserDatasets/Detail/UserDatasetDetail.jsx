@@ -89,7 +89,7 @@ class UserDatasetDetail extends React.Component {
     return (
       <Link className="AllDatasetsLink" to={'/workspace/datasets'}>
         <Icon fa="chevron-left"/>
-        &nbsp; All My Datasets
+        &nbsp; All My Data Sets
       </Link>
     );
   }

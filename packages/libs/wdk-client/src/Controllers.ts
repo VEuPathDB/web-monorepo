@@ -23,6 +23,8 @@ import ResultPanelController from 'wdk-client/Controllers/ResultPanelController'
 import ResultTableSummaryViewController from 'wdk-client/Controllers/ResultTableSummaryViewController';
 import StepFiltersController from 'wdk-client/Controllers/StepFiltersController';
 import MatchedTranscriptsFilterController from 'wdk-client/Controllers/MatchedTranscriptsFilterController';
+import UserDatasetNewUploadController from 'wdk-client/Controllers/UserDatasetNewUploadController';
+import UserDatasetAllUploadsController from 'wdk-client/Controllers/UserDatasetAllUploadsController';
 
 export {
   PageController,
@@ -50,4 +52,6 @@ export {
   ResultTableSummaryViewController,
   StepFiltersController,
   MatchedTranscriptsFilterController,
+  UserDatasetNewUploadController,
+  UserDatasetAllUploadsController,
 };
