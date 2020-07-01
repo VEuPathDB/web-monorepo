@@ -290,7 +290,13 @@ function useGraphInformationTabs(layout: GroupLayout) {
 
       return ({
         ...baseConfig,
-        content: <TabContentComponent layout={layout} />
+        content: (
+          <TabContentComponent
+            layout={layout}
+            selectedNode={selectedNode}
+            setSelectedNode={setSelectedNode}
+          />
+        )
       });
     }
   );

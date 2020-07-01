@@ -1,5 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
-export function SequenceList() {
-  return <div>Under construction</div>;
+import { GraphInformationTabProps, layoutToSequenceListRows } from '../../utils/graphInformation';
+
+export function SequenceList({ layout }: GraphInformationTabProps) {
+  const rows = useMemo(
+    () => layoutToSequenceListRows(layout),
+    [ layout ]
+  );
+
+  return (
+    <pre>
+      {JSON.stringify(rows, null, 2)}
+    </pre>
+  );
 }
