@@ -121,7 +121,7 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
   // Prevent opened tab from being selecting while data needed for redirect above is being loaded
   if (openedStrategies == null || strategySummaries == null) return <Loading/>;
 
-  if (!ownsActiveStrategy) return <UnownedStrategy/>;
+  if (activeStrategyId != null && !ownsActiveStrategy) return <UnownedStrategy/>;
 
   switch(childView.type) {
     case 'openedStrategies':
