@@ -57,7 +57,7 @@ export function observe(action$: ActionsObservable<Action>, state$: StateObserva
       try {
         const { unhandledError: { error, id, info } } = action.payload;
         console.error(error);
-        wdkService.submitErrorIfNot500(error instanceof Error ? error : new Error(String(error)), { id, info });
+        await wdkService.submitErrorIfNot500(error instanceof Error ? error : new Error(String(error)), { id, info });
       }
       catch (error) {
         console.error('Error logging request failed:', error);
