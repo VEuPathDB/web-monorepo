@@ -33,7 +33,7 @@ body.wdk-ModalOpen {
   position: fixed;
   top: 50vh;
   left: 50vw;
-  z-index: 100;
+  z-index: 1;
   height: 0px;
   width: 0px;
   display: flex;
