@@ -31,19 +31,23 @@ const SEQUENCE_LIST_COLUMNS: GraphInformationColumns<SequenceListRow, 'accession
   accession: {
     key: 'accession',
     name: 'Accession',
+    sortable: true,
     renderCell: ({ value }) => renderSequenceLink(value)
   },
   taxon: {
     key: 'taxon',
-    name: 'Taxon'
+    name: 'Taxon',
+    sortable: true
   },
   length: {
     key: 'length',
-    name: 'Length'
+    name: 'Length',
+    sortable: true
   },
   description: {
     key: 'description',
-    name: 'Description'
+    name: 'Description',
+    sortable: true
   }
 };
 

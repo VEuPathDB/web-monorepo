@@ -104,16 +104,19 @@ const BLAST_SCORE_COLUMNS: GraphInformationColumns<BlastScoreRow, 'subject' | 't
   subject: {
     key: 'subject',
     name: 'Subject',
+    sortable: true,
     renderCell: ({ value }) => renderSequenceLink(value)
   },
   type: {
     key: 'type',
     name: 'Type',
+    sortable: true,
     renderCell: ({ value }) => renderEdgeType(value)
   },
   evalue: {
     key: 'evalue',
-    name: 'Evalue'
+    name: 'Evalue',
+    sortable: true
   }
 };
 
@@ -122,23 +125,28 @@ const BLAST_SCORE_COLUMN_ORDER = [ 'subject', 'type', 'evalue' ] as const;
 const PFAM_DOMAIN_COLUMNS: GraphInformationColumns<PfamDomainRow, 'accession' | 'symbol' | 'start' | 'end' | 'length'> = {
   accession: {
     key: 'accession',
-    name: 'Accession'
+    name: 'Accession',
+    sortable: true
   },
   symbol: {
     key: 'symbol',
-    name: 'Symbol'
+    name: 'Symbol',
+    sortable: true
   },
   start: {
     key: 'start',
-    name: 'Start'
+    name: 'Start',
+    sortable: true
   },
   end: {
     key: 'end',
-    name: 'End'
+    name: 'End',
+    sortable: true
   },
   length: {
     key: 'length',
-    name: 'Length'
+    name: 'Length',
+    sortable: true
   }
 };
 
@@ -147,7 +155,8 @@ const PFAM_DOMAIN_COLUMN_ORDER = [ 'accession', 'symbol', 'start', 'end', 'lengt
 export const EC_NUMBER_COLUMNS: GraphInformationColumns<EcNumberRow, 'ecNumber'> = {
   ecNumber: {
     key: 'ecNumber',
-    name: 'EC Number'
+    name: 'EC Number',
+    sortable: true
   }
 };
 
