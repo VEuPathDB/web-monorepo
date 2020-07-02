@@ -112,6 +112,7 @@ const BLAST_SCORE_COLUMNS: GraphInformationColumns<BlastScoreRow, 'subject' | 't
     name: 'Type',
     sortable: true,
     makeOrder: ({ type }) => renderEdgeType(type),
+    makeSearchableString: value => renderEdgeType(value),
     renderCell: ({ value }) => renderEdgeType(value)
   },
   evalue: {
