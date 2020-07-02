@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from 'react';
 
+import { orderBy } from 'lodash';
+
 import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
 
 import { GraphInformationColumnKey, GraphInformationColumns, GraphInformationSortObject } from '../../utils/graphInformation';
@@ -31,7 +33,7 @@ function useMesaState<R, C extends GraphInformationColumnKey<R>>(
     { columnKey: columns[columnOrder[0]].key, direction: 'asc' };
   const [ sortUiState, setSortUiState ] = useState(initialSortUiState);
 
-  const mesaRows = useMemo(() => makeMesaRows(rows), [ rows ]);
+  const mesaRows = useMemo(() => makeMesaRows(rows, columns, sortUiState), [ rows, columns, sortUiState ]);
   const mesaColumns = useMemo(() => makeMesaColumns(columns, columnOrder), [ columns, columnOrder ]);
 
   const mesaEventHandlers = useMemo(() => makeMesaEventHandlers(setSortUiState), []);
@@ -49,9 +51,17 @@ function useMesaState<R, C extends GraphInformationColumnKey<R>>(
 }
 
 function makeMesaRows<R, C extends GraphInformationColumnKey<R>>(
-  rows: Props<R, C>['rows']
+  rows: Props<R, C>['rows'],
+  columns: Props<R, C>['columns'],
+  sortUiState: GraphInformationSortObject<R, C>
 ) {
-  return rows;
+  const { columnKey: sortKey, direction: sortDirection } = sortUiState;
+
+  const makeOrder = columns[sortKey].makeOrder;
+
+  return makeOrder == null
+    ? orderBy(rows, sortKey, sortDirection)
+    : orderBy(rows, makeOrder, sortDirection);
 }
 
 function makeMesaColumns<R, C extends GraphInformationColumnKey<R>>(

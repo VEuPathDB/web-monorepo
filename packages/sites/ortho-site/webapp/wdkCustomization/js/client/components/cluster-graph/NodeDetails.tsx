@@ -111,12 +111,14 @@ const BLAST_SCORE_COLUMNS: GraphInformationColumns<BlastScoreRow, 'subject' | 't
     key: 'type',
     name: 'Type',
     sortable: true,
+    makeOrder: ({ type }) => renderEdgeType(type),
     renderCell: ({ value }) => renderEdgeType(value)
   },
   evalue: {
     key: 'evalue',
     name: 'Evalue',
-    sortable: true
+    sortable: true,
+    makeOrder: ({ evalue }) => Number(evalue)
   }
 };
 
@@ -156,7 +158,8 @@ export const EC_NUMBER_COLUMNS: GraphInformationColumns<EcNumberRow, 'ecNumber'>
   ecNumber: {
     key: 'ecNumber',
     name: 'EC Number',
-    sortable: true
+    sortable: true,
+    makeOrder: ({ index }) => index
   }
 };
 
