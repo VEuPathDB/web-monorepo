@@ -35,6 +35,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     this._handleActiveFieldChange = this._handleActiveFieldChange.bind(this);
     this._handleFilterChange = this._handleFilterChange.bind(this);
     this._handleMemberSort = this._handleMemberSort.bind(this);
+    this._handleMemberPaginationChange = this._handleMemberPaginationChange.bind(this);
     this._handleMemberSearch = this._handleMemberSearch.bind(this);
     this._handleRangeScaleChange = this._handleRangeScaleChange.bind(this);
   }
@@ -105,6 +106,25 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     }));
   }
 
+  _handleMemberPaginationChange(field: Field, pagination: MemberFieldState['pagination']) {
+    if (isRange(field)) {
+      throw new Error(`Cannot paginate a range field.`);
+    }
+
+    const filters = this._getFiltersFromValue(this.props.value);
+    const filter = filters.find(filter => filter.field === field.term) as MemberFilter;
+    const fieldState = this.props.uiState.fieldStates[field.term] as MemberFieldState;
+
+    this.props.dispatch(updateFieldState({
+      ...this.props.ctx,
+      field: field.term,
+      fieldState: {
+        ...fieldState,
+        pagination
+      }
+    }));
+  }
+
   _handleMemberSearch(field: Field, searchTerm: string) {
     const fieldState = this.props.uiState.fieldStates[field.term] as MemberFieldState
     this.props.dispatch(updateFieldState({
@@ -155,6 +175,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
           onActiveFieldChange={this._handleActiveFieldChange}
           onFieldCountUpdateRequest={this._handleFieldCountUpdateRequest}
           onMemberSort={this._handleMemberSort}
+          onMemberPaginationChange={this._handleMemberPaginationChange}
           onMemberSearch={this._handleMemberSearch}
           onRangeScaleChange={this._handleRangeScaleChange}
         />

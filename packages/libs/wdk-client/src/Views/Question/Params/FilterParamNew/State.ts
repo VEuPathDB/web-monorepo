@@ -19,6 +19,14 @@ export type SortSpec = {
   direction: 'asc' | 'desc';
 };
 
+export type PaginationSpec = {
+  totalRows: number;
+  totalPages: number;
+  currentPage: number;
+  rowsPerPage: number;
+  rowsPerPageOptions: number[];
+};
+
 type BaseFieldState = {
   summary?: OntologyTermSummary;
   loading?: boolean;
@@ -29,6 +37,7 @@ type BaseFieldState = {
 export type MemberFieldState = BaseFieldState & {
   sort: SortSpec;
   searchTerm: string;
+  pagination: PaginationSpec;
 }
 
 export type RangeFieldState = BaseFieldState & {

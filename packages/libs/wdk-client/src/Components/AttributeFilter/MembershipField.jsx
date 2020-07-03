@@ -151,6 +151,8 @@ class MembershipTable extends React.PureComponent {
       'handleSearchTermChange',
       'handleSelectAll',
       'handleSort',
+      'handlePageChange',
+      'handleRowsPerPageChange',
       'isItemSelected',
       'renderCheckboxCell',
       'renderCheckboxHeading',
@@ -166,6 +168,8 @@ class MembershipTable extends React.PureComponent {
       'renderValueHeading',
       'renderValueHeadingSearch',
       'toFilterValue',
+      'getRows',
+      'getFilteredRows'
     );
     this.getKnownValues = memoize(this.getKnownValues);
     this.isItemSelected = memoize(this.isItemSelected);
@@ -187,8 +191,12 @@ class MembershipTable extends React.PureComponent {
       : value;
   }
 
+  getRows(){
+     return this.props.activeFieldState.summary.valueCounts;
+  }
+
   getKnownValues() {
-    return this.props.activeFieldState.summary.valueCounts
+    return this.getRows()
       .filter(({ value }) => value != null)
       .map(({ value }) => value);
   }
@@ -197,11 +205,27 @@ class MembershipTable extends React.PureComponent {
     return get(this.props, 'filter.value');
   }
 
-  getFilteredRows(searchTerm) {
-    let re = new RegExp(escapeRegExp(searchTerm), 'i');
-    return searchTerm !== ''
-      ? this.props.activeFieldState.summary.valueCounts.filter(entry => re.test(entry.value))
-      : this.props.activeFieldState.summary.valueCounts;
+  getFilteredRows() {
+    const searchTerm = this.props.activeFieldState.searchTerm;
+    const usePagination = this.isPaginationEnabled();
+    const { totalRows, totalPages, currentPage, rowsPerPage} = this.props.activeFieldState.pagination;
+    let rows = this.getRows();
+
+    if (usePagination && ! searchTerm) {
+      rows = rows.slice(
+        (currentPage - 1) * rowsPerPage,
+        currentPage * rowsPerPage
+      );
+    }
+    if (searchTerm !== ''){
+      let re = new RegExp(escapeRegExp(searchTerm), 'i');
+      rows = rows.filter(entry => re.test(entry.value));
+      // When searching, pagination doesn't work, but we still show at most rowsPerPage
+      if (usePagination){
+         rows = rows.slice(0, rowsPerPage);
+      }
+    }
+    return rows;
   }
 
   deriveRowClassName(item) {
@@ -233,9 +257,17 @@ class MembershipTable extends React.PureComponent {
     );
   }
 
+  isPaginationEnabled(){
+    return (
+      this.getRows().length > 100 &&
+      has(this.props, 'activeFieldState.pagination') &&
+      isFunction(this.props.onMemberPaginationChange)
+    );
+  }
+
   isSearchEnabled() {
     return (
-      this.props.activeFieldState.summary.valueCounts.length > 10 &&
+      this.getRows().length > 10 &&
       has(this.props, 'activeFieldState.searchTerm') &&
       isFunction(this.props.onMemberSearch)
     );
@@ -315,27 +347,59 @@ class MembershipTable extends React.PureComponent {
     this.props.onMemberSort(this.props.activeField, sort);
   }
 
+  handlePageChange(nextPage) {
+    this.props.onMemberPaginationChange(
+      this.props.activeField,
+      {...this.props.activeFieldState.pagination, currentPage: nextPage}
+    );
+  }
+
+  handleRowsPerPageChange(nextRowsPerPage) {
+    const {totalRows, currentPage, rowsPerPage} = this.props.activeFieldState.pagination;
+
+    // try preserve what the user is looking at
+    // example: if we're on page 11 and make the page size twice as large, we should now be on page 6
+    const rowsBeforeFirstRowOnCurrentPage = (currentPage - 1)  * rowsPerPage;
+    const numFullPagesContainingRowsBeforeFirstRowOnCurrentPage = Math.floor(rowsBeforeFirstRowOnCurrentPage / nextRowsPerPage);
+    const newCurrentPage = 1 + numFullPagesContainingRowsBeforeFirstRowOnCurrentPage;
+    this.props.onMemberPaginationChange(
+      this.props.activeField,
+      { ...this.props.activeFieldState.pagination,
+        rowsPerPage: nextRowsPerPage,
+        totalPages: Math.ceil(totalRows / nextRowsPerPage),
+        currentPage: newCurrentPage
+      }
+    );
+  }
+
   handleSearchTermChange(searchTerm) {
     this.props.onMemberSearch(this.props.activeField, searchTerm);
   }
 
   emitChange(value, includeUnknown = get(this.props, 'filter.includeUnknown', false)) {
     this.props.onChange(this.props.activeField, value, includeUnknown,
-      this.props.activeFieldState.summary.valueCounts);
+      this.getRows());
   }
 
   renderCheckboxHeading() {
-    const availableItems = this.props.activeFieldState.summary.valueCounts
+    const availableItems = this.getRows()
       .filter(member => member.filteredCount > 0);
     const allAvailableChecked = availableItems
       .every(member => this.isItemSelected(member));
-    const onClick = () =>
-      allAvailableChecked ? this.handleRemoveAll() : this.handleSelectAll()
+    const someAvailableChecked = availableItems
+      .some(member => this.isItemSelected(member));
+    
+    const showChecked = availableItems.length > 0 && allAvailableChecked;
+    const showIndeterminate = availableItems.length > 0 && someAvailableChecked && ! allAvailableChecked;
+
+     const onClick = () =>
+      allAvailableChecked ? this.handleRemoveAll() : this.handleSelectAll();
     return (
       <input
         type="checkbox"
         disabled={availableItems.length === 0}
-        checked={availableItems.length > 0 && allAvailableChecked}
+        checked={showChecked}
+        ref={el => el && (el.indeterminate = showIndeterminate)}
         onChange={onClick} />
     );
   }
@@ -458,11 +522,37 @@ class MembershipTable extends React.PureComponent {
   render() {
     var useSort = this.isSortEnabled();
     var useSearch = this.isSearchEnabled();
+    var usePagination = this.isPaginationEnabled();
 
-    var rows = useSearch
-      ? this.getFilteredRows(this.props.activeFieldState.searchTerm)
-      : this.props.activeFieldState.summary.valueCounts;
+    const {pagination, searchTerm, uiStateOther} = this.props.activeFieldState;
 
+    const uiState = Object.assign({},
+      uiStateOther,
+      useSearch && searchTerm
+      ? {searchTerm}
+      : {},
+      usePagination 
+      ? { 
+        pagination: Object.assign({}, pagination, 
+          { disallowClick: !! (useSearch && searchTerm) }
+          )
+        }
+      : {}
+    );
+      
+    const eventHandlers = Object.assign(
+      {
+      // onRowSelect: this.handleRowSelect,
+      // onRowDeselect: this.handleRowDeselect,
+      // onMultipleRowSelect: this.handleToggleSelectAll,
+      // onMultipleRowDeselect: this.handleRemoveAll,
+      onSort: this.handleSort
+      },
+      usePagination ? {
+          onPageChange: this.handlePageChange,
+          onRowsPerPageChange: this.handleRowsPerPageChange
+      } : {}
+    );
     return (
       <Mesa
         options={{
@@ -472,17 +562,11 @@ class MembershipTable extends React.PureComponent {
           useStickyHeader: true,
           tableBodyMaxHeight: '80vh'
         }}
-        uiState={this.props.activeFieldState}
+        uiState={uiState}
         actions={[]}
-        eventHandlers={{
-          // onRowSelect: this.handleRowSelect,
-          // onRowDeselect: this.handleRowDeselect,
-          // onMultipleRowSelect: this.handleSelectAll,
-          // onMultipleRowDeselect: this.handleRemoveAll,
-          onSort: this.handleSort
-        }}
-        rows={this.props.activeFieldState.summary.valueCounts}
-        filteredRows={rows}
+        eventHandlers={eventHandlers}
+        rows={this.getRows()}
+        filteredRows={this.getFilteredRows()}
         columns={[
           {
             key: 'checked',
@@ -557,6 +641,7 @@ class MembershipTable extends React.PureComponent {
       </Mesa>
     );
   }
+
 }
 
 export default MembershipField

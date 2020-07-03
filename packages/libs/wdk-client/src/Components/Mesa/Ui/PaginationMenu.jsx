@@ -133,7 +133,7 @@ class PaginationMenu extends React.PureComponent {
   }
 
   render () {
-    const { currentPage, rowsPerPage, totalRows } = this.props;
+    const { currentPage, rowsPerPage, totalRows, disallowClick } = this.props;
     const totalPages = this.getTotalPages();
 
     const PageList = this.renderPageList;
@@ -145,7 +145,7 @@ class PaginationMenu extends React.PureComponent {
     const showPageList = totalRows > rowsPerPage;
 
     return (
-      <div className="PaginationMenu">
+      <div className={disallowClick ? "PaginationMenu PaginationMenu-DisallowClick" : "PaginationMenu"}>
         <span className="Pagination-Spacer" />
         {showPageList && <RelativeLink relative="previous" />}
         {showPageList && <PageList />}
@@ -163,7 +163,8 @@ PaginationMenu.propTypes = {
   rowsPerPage: PropTypes.number,
   onPageChange: PropTypes.func,
   rowsPerPageOptions: PropTypes.array,
-  onRowsPerPageChange: PropTypes.func
+  onRowsPerPageChange: PropTypes.func,
+  disallowClick: PropTypes.bool
 };
 
 export default PaginationMenu;
