@@ -629,6 +629,16 @@ b, strong, th,
 /* Static Content  page                                                      */
 /* ========================================================================= */
 
+#ce-data-access {
+    padding: 0 3em;
+
+    p, ul, table {
+      font-size: 130%;
+      margin-bottom: 1em;
+    }
+
+}
+
 #ce-static-content {
     padding: 0 3em;
 

@@ -70,7 +70,7 @@ export default function headerMenuItems (state) {
           },
           {
             text: 'Data Access & Use Policy',
-            url: '/documents/DataAccessUsePolicyClinEpiDB.latest.pdf'
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/access_and_use.html`
           },
           ...socialLinks
         ]
