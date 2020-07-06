@@ -17,6 +17,7 @@ import AttributeCell from 'wdk-client/Views/ResultTableSummaryView/AttributeCell
 import AttributeHeading from 'wdk-client/Views/ResultTableSummaryView/AttributeHeading';
 import { Action, BasketStatusArray, RequestSortingUpdate, RequestColumnsChoiceUpdate, RequestUpdateBasket, RequestAddStepToBasket, ViewPageNumber, RequestPageSizeUpdate, ShowHideAddColumnsDialog, OpenAttributeAnalysis, CloseAttributeAnalysis, UpdateSelectedIds, ShowLoginWarning } from 'wdk-client/Views/ResultTableSummaryView/Types';
 import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { IconAlt } from 'wdk-client/Components';
 
 
 export interface Props {
@@ -98,25 +99,27 @@ function ResultTable(props: Props) {
     <Mesa state={tableState}>
       {downloadLink &&
         <div className="ResultTableButton">
-          <Link to={downloadLink}>Download</Link>
+          <Link className="btn" to={downloadLink}>
+            <IconAlt fa="download"/> Download
+          </Link>
         </div>
       }
       {!recordClass.useBasket || resultType.type !== 'step' ? null :
         <div className="ResultTableButton">
           <button type="button"
-            className="wdk-Link"
+            className="btn"
             title={userIsGuest ? 'You must login to use baskets' : 'Add all records returned by this search to your basket'}
             onClick={() => {
               if (userIsGuest) showLoginWarning('use baskets');
               else requestAddStepToBasket(resultType.step.id)
             }}>
-            Add to Basket
+            <IconAlt fa="shopping-basket"/> Add to Basket
           </button>
         </div>
       }
       <div className="ResultTableButton">
         <button className="btn" type="button" onClick={() => showHideAddColumnsDialog(true)}>
-          Add Columns
+          <IconAlt fa="cog"/> Add Columns
         </button>
       </div>
     </Mesa>
@@ -240,15 +243,7 @@ function getColumns({
         showLoginWarning={showLoginWarning}
       />
     ),
-    renderHeading: () => (
-      <BasketHeading
-        answer={answer}
-        basketStatusArray={basketStatusArray}
-        requestUpdateBasket={requestUpdateBasket}
-        userIsGuest={userIsGuest}
-        showLoginWarning={showLoginWarning}
-      />
-    )
+    renderHeading: () => null
   };
   const answerColumns = answer.meta.attributes
     .filter(attrName => attrName === recordClass.recordIdAttributeName
