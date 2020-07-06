@@ -19,6 +19,7 @@ interface BasketCellProps {
 export default function BasketCell({ value, requestUpdateBasket, recordClassUrlSegment, row, userIsGuest, showLoginWarning }: BasketCellProps) {
   return (
     <BasketIconButton
+      tooltipContext="this row"
       status={value}
       idsToToggle={[row.id]}
       recordClassName={recordClassUrlSegment}
