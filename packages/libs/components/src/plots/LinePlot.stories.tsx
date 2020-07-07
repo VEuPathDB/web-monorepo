@@ -12,6 +12,7 @@ export const Basic = () => <LinePlot
   data={[{
     x: ['A','B','C','D','E'],
     y: [2,4,3,5,8],
+    fill: 'None',
     name: 'Variable A',
     line: {
       dash: 'solid',
@@ -48,7 +49,8 @@ export const MultiVariate = () => <LinePlot
     x,
     y: [1,2,3,4,5],
     name: 'Variable A',
-    line: {
+    fill: 'None',
+      line: {
       dash: 'dashdot',
       width: 4
     }
@@ -56,6 +58,7 @@ export const MultiVariate = () => <LinePlot
   {
     x,
     y: [1,4,9,16,25],
+    fill: 'None',
     name: 'Variable B',
     line: {
       dash: 'dot',
@@ -65,6 +68,7 @@ export const MultiVariate = () => <LinePlot
   {
     x,
     y: [3,9,4,16,10],
+    fill: 'None',
     name: 'Variable C',
     line: {
       dash: 'solid',
