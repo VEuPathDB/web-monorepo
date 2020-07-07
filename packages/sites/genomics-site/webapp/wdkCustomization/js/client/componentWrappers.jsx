@@ -28,6 +28,8 @@ import { apiActions } from './components/strategies/ApiStepDetailsActions';
 
 import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 
+import { SiteSearchInput as SiteSearchInputWrapper } from './component-wrappers/SiteSearchInput';
+
 export const SiteHeader = () => ApiSiteHeader;
 
 const stopPropagation = event => event.stopPropagation();
@@ -396,3 +398,5 @@ export function Page() {
     return <VEuPathDBHomePage {...props} isHomePage={isHomePage} />;
   };
 }
+
+export const SiteSearchInput = SiteSearchInputWrapper;
