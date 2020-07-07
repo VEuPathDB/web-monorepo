@@ -2,7 +2,7 @@ import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
 import { PlotComponentProps } from "./Types";
 
-export interface Props extends PlotComponentProps<'name'|'x'|'y'|'line'> {
+export interface Props extends PlotComponentProps<'name'|'x'|'y'|'line'|'fill'> {
   xLabel: string;
   yLabel: string;
 }
