@@ -22,6 +22,25 @@ export const Basic = () => <LinePlot
   yLabel="bar"
 />
 
+
+export const BasicFilled = () => <LinePlot
+  onPlotUpdate={action('state updated')}
+  data={[{
+    x: [1,2,4,8,16,32,64,128],
+    y: [22,54,90,12,94,38,25,82],
+    name: 'Variable A',
+    fill: 'tozeroy',
+    line: {
+      dash: 'solid',
+      width: 3
+      }
+  }]}
+  xLabel="foo"
+  yLabel="bar"
+/>
+
+
+
 const x = ['A','B','C','D','E'];
 export const MultiVariate = () => <LinePlot
   onPlotUpdate={action('state updated')}
