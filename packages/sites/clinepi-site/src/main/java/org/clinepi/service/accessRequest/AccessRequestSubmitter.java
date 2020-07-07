@@ -28,15 +28,15 @@ public class AccessRequestSubmitter {
   public static SubmissionResult submitAccessRequest(AccessRequestParams params, WdkModel wdkModel, EmailSender emailSender) throws SQLException, WdkModelException {
     boolean requestInitiated = false;
 
-    // In one transaction... 
-    //   (1) insert a DB record for the new request and 
+    // In one transaction...
+    //   (1) insert a DB record for the new request and
     //   (2) email the request to the appropriate parties
     try (
         Connection conn = wdkModel.getAccountDb().getDataSource().getConnection();
     ) {
       conn.setAutoCommit(false);
       String sql = insertRequestPreparedStatementBody();
-      
+
       try (
           PreparedStatement ps = insertRequestPreparedStatement(conn, sql, params);
       ) {
@@ -53,9 +53,9 @@ public class AccessRequestSubmitter {
 
         if (!params.inTestMode()) {
           conn.commit();
-        }     
+        }
       }
-      // Either the DB update (SQLException) or email submission (WdkModelException) 
+      // Either the DB update (SQLException) or email submission (WdkModelException)
       // has failed, and so we roll back the record insertion
       catch (SQLException | WdkModelException ex) {
         conn.rollback();
@@ -85,7 +85,7 @@ public class AccessRequestSubmitter {
       .collect(Collectors.toList());
 
     return String.format(
-      "INSERT INTO studyaccess.ValidDatasetUser (%s)    " + 
+      "INSERT INTO studyaccess.ValidDatasetUser (%s)    " +
       "SELECT                                    %s     " +
       "FROM dual                                        " +
       "WHERE NOT EXISTS (                               " +
@@ -125,8 +125,8 @@ public class AccessRequestSubmitter {
     String requesterEmail = params.getRequesterEmail();
     String datasetName = params.getDatasetName();
 
-		LOG.debug("emailAccessRequest() -- requesterEmail: " + requesterEmail);
-		LOG.debug("emailAccessRequest() -- providerEmail: not needed" + params.getProviderEmail());
+    LOG.debug("emailAccessRequest() -- requesterEmail: " + requesterEmail);
+    LOG.debug("emailAccessRequest() -- providerEmail: not needed" + params.getProviderEmail());
 
     String bodyTemplate = params.getBodyTemplate();
     Map<String, String> formFields = params.getFormFields();
@@ -144,24 +144,24 @@ public class AccessRequestSubmitter {
         "ReplyTo: " + replyEmail + "\n" +
         "WDK Model version: " + version;
 
-    String redmineContent = "****THIS IS NOT A REPLY****" + 
+    String redmineContent = "****THIS IS NOT A REPLY****" +
                             "This is an automatic response, that includes your message for your records, to let you " +
                             "know that we have received your email and will get back to you as " +
                             "soon as possible. Thanks so much for contacting us!" +
                             "This was your message:" + "\n\n" + body + "\n";
 
-    String redmineMetaInfo = "Project: clinepidb\n" + "Category: " + 
+    String redmineMetaInfo = "Project: clinepidb\n" + "Category: " +
         website + "\n" + "\n" +
         metaInfo + "\n";
     String smtpServer = modelConfig.getSmtpServer();
-    
+
     // Send auto-reply
     emailSender.sendEmail(
-			smtpServer,
+      smtpServer,
       replyEmail,    //to
-      supportEmail,  //reply (from)       
+      supportEmail,  //reply (from)
       subject,
-      escapeHtml(metaInfo) + "\n\n" + redmineContent + "\n\n", 
+      escapeHtml(metaInfo) + "\n\n" + redmineContent + "\n\n",
       null,null,
       null
     );
@@ -170,11 +170,11 @@ public class AccessRequestSubmitter {
     emailSender.sendEmail(
       smtpServer,
       supportEmail, //or params.getProviderEmail(),
-      requesterEmail,          
+      requesterEmail,
       subject,
-			body,
+      body,
       null, //not needed, already sent to support
-      params.getBccEmail(),                                    
+      params.getBccEmail(),
       null
     );
 
@@ -194,7 +194,7 @@ public class AccessRequestSubmitter {
     String bodyWithFilledOutFormFields = formFields.entrySet().stream().reduce(
       bodyTemplate,
       (body, entry) -> body.replaceAll(
-        "\\$\\$" + entry.getKey().toUpperCase() + "\\$\\$", 
+        "\\$\\$" + entry.getKey().toUpperCase() + "\\$\\$",
         escapeHtml(entry.getValue())
       ),
       String::concat
@@ -205,5 +205,4 @@ public class AccessRequestSubmitter {
       escapeHtml(datasetName)
     );
   }
-
 }
