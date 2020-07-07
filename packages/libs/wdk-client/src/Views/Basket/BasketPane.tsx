@@ -19,10 +19,8 @@ function BasketPane(props: Props) {
         <button type="button" className="btn" onClick={() => emptyBasket()}>Empty Basket</button>
         <button type="button" className="btn" onClick={() => saveBasketToStrategy()}>Save Basket to Strategy</button>
         <div className={cx('--Notes')}>
-          <div>In case of Error: Fix Basket</div>
-          <div>On new releases IDs sometimes change or are retired. Why?</div>
-          <div>Old IDs are mapped to new IDs when possible. Retired IDs will not be in the basket.</div>
-          <div>To keep a copy of your current basket please download your IDs now</div>
+          <div>In case of Error, please Contact Us or empty your basket.</div>
+          <div>On new releases IDs sometimes change or are retired.</div>
         </div>
       </div>
       {children}
