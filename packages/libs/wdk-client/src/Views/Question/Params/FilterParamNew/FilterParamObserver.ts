@@ -27,16 +27,6 @@ const defaultMemberFieldSort: MemberFieldState['sort'] = {
   direction: 'asc',
   groupBySelected: false
 }
-function firstPageForRows(numRows: number) : MemberFieldState['pagination'] {
-  const pageSize = 100;
-  return ({
-    totalRows: numRows,
-    currentPage: 1,
-    rowsPerPage: Math.min(numRows, pageSize),
-    totalPages: Math.ceil(numRows / pageSize),
-    rowsPerPageOptions: [0.5,1,2,5,10].map(n => n * pageSize)
-  });
-}
 
 // Observers
 // ---------
@@ -271,7 +261,8 @@ function getOntologyTermSummary(
             invalid: false,
             loading: false,
             sort: defaultMemberFieldSort,
-            pagination: firstPageForRows(summary.valueCounts.length),
+            currentPage: 1,
+            rowsPerPage: 100,
             searchTerm: '',
             summary: {
               ...summary,
