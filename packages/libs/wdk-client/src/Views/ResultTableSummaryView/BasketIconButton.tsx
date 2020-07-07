@@ -9,9 +9,11 @@ interface BasketIconButtonProps {
   userIsGuest: boolean;
   requestUpdateBasket: RequestUpdateBasket;
   showLoginWarning: ShowLoginWarning;
+  tooltipContext: string;
 }
 
 export default function BasketIconButton({
+  tooltipContext,
   status,
   idsToToggle,
   recordClassName,
@@ -37,7 +39,7 @@ export default function BasketIconButton({
     <button
       type="button"
       className="ResultTableBasketIconButton"
-      title={makeTitle(status, userIsGuest)}
+      title={makeTitle(status, tooltipContext, userIsGuest)}
       onClick={() => {
         if (userIsGuest)
           showLoginWarning('use baskets')
@@ -52,11 +54,11 @@ export default function BasketIconButton({
   );
 }
 
-function makeTitle(status: BasketStatus, userIsGuest: boolean) {
+function makeTitle(status: BasketStatus, tooltipContext: string, userIsGuest: boolean) {
   if (userIsGuest) return 'You must log in to use baskets';
   switch(status) {
     case 'loading': return 'Your basket is being updated';
-    case 'no': return 'Click to add to your basket';
-    case 'yes': return 'Click to remove from your basket';
+    case 'no': return `Click to add ${tooltipContext} to your basket`;
+    case 'yes': return `Click to remove ${tooltipContext} from your basket`;
   }
 }

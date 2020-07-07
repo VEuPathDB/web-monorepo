@@ -52,6 +52,15 @@
     margin-left: 1em;
   }
 
+  .ResultTableButton {
+    .fa-download {
+      color: #069;
+    }
+    .fa-shopping-basket {
+      color: green;
+    }
+  }
+
   td.DataCell:empty:after,
   td.DataCell > div:empty:after {
     content: 'N/A';
