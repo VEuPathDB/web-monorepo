@@ -1,4 +1,10 @@
 .MesaComponent {
+
+  .PaginationMenu-DisallowClick {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
   .PaginationMenu {
     padding: 10px 0;
     text-align: center;

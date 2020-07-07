@@ -261,6 +261,8 @@ function getOntologyTermSummary(
             invalid: false,
             loading: false,
             sort: defaultMemberFieldSort,
+            currentPage: 1,
+            rowsPerPage: 100,
             searchTerm: '',
             summary: {
               ...summary,
