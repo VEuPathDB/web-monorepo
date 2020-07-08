@@ -30,9 +30,9 @@ export function NodeDetails({ layout, selectedNode }: GraphInformationTabProps) 
         nodeDetails == null
           ? <h2 className="NoNodeSelected">Click a node to see details</h2>
           : <React.Fragment>
-              <div className="NodeDetailsHeader">
+              <h2 className="NodeDetailsHeader">
                 {selectedNode}
-              </div>
+              </h2>
               <GraphAccordion title="Sequence Information">
                 <SequenceInformationTable {...nodeDetails.sequenceInformation} />
               </GraphAccordion>
