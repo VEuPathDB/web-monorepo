@@ -7,4 +7,8 @@
   .NoNodeSelected {
     color: #777;
   }
+
+  .GraphAccordion:not(:last-child) {
+    margin-bottom: 0.75em;
+  }
 }
