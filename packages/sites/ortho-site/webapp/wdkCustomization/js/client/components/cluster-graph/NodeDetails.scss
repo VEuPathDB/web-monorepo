@@ -11,4 +11,16 @@
   .GraphAccordion:not(:last-child) {
     margin-bottom: 0.75em;
   }
+
+  table.SequenceInformation {
+    width: 100%;
+
+    td, th {
+      border: 0.0625rem solid black;
+    }
+
+    th {
+      background-color: #eee;
+    }
+  }
 }
