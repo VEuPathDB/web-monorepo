@@ -19,6 +19,8 @@ import { GroupLayout } from '../../utils/groupLayout';
 import { GraphAccordion } from './GraphAccordion';
 import { GraphInformationDataTable } from './GraphInformationDataTable';
 
+import './NodeDetails.scss';
+
 export function NodeDetails({ layout, selectedNode }: GraphInformationTabProps) {
   const nodeDetails = useNodeDetails(layout, selectedNode);
 
