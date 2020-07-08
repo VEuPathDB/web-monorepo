@@ -35,6 +35,8 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     this._handleActiveFieldChange = this._handleActiveFieldChange.bind(this);
     this._handleFilterChange = this._handleFilterChange.bind(this);
     this._handleMemberSort = this._handleMemberSort.bind(this);
+    this._handleMemberChangeRowsPerPage = this._handleMemberChangeRowsPerPage.bind(this);
+    this._handleMemberChangeCurrentPage = this._handleMemberChangeCurrentPage.bind(this);
     this._handleMemberSearch = this._handleMemberSearch.bind(this);
     this._handleRangeScaleChange = this._handleRangeScaleChange.bind(this);
   }
@@ -105,12 +107,55 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     }));
   }
 
+  _handleMemberChangeRowsPerPage(field: Field, newRowsPerPage: number) {
+    if (isRange(field)) {
+      throw new Error(`Cannot paginate a range field.`);
+    }
+
+    const fieldState = this.props.uiState.fieldStates[field.term] as MemberFieldState;
+
+    const { currentPage, rowsPerPage } = fieldState;
+
+    // try preserve what the user is looking at
+    // example: if we're on page 11 and make the page size twice as large, we should now be on page 6
+    const rowsBeforeFirstRowOnCurrentPage = (currentPage - 1)  * rowsPerPage;
+    const numFullPagesContainingRowsBeforeFirstRowOnCurrentPage = Math.floor(rowsBeforeFirstRowOnCurrentPage / newRowsPerPage);
+    const newCurrentPage = 1 + numFullPagesContainingRowsBeforeFirstRowOnCurrentPage;
+
+    this.props.dispatch(updateFieldState({
+      ...this.props.ctx,
+      field: field.term,
+      fieldState: {
+        ...fieldState,
+        rowsPerPage: newRowsPerPage,
+        currentPage: newCurrentPage
+      }
+    }));
+  }
+
+  _handleMemberChangeCurrentPage(field: Field, currentPage: number) {
+    if (isRange(field)) {
+      throw new Error(`Cannot paginate a range field.`);
+    }
+
+    const fieldState = this.props.uiState.fieldStates[field.term] as MemberFieldState;
+
+    this.props.dispatch(updateFieldState({
+      ...this.props.ctx,
+      field: field.term,
+      fieldState: {
+        ...fieldState,
+        currentPage
+      }
+    }));
+  }
+
   _handleMemberSearch(field: Field, searchTerm: string) {
     const fieldState = this.props.uiState.fieldStates[field.term] as MemberFieldState
     this.props.dispatch(updateFieldState({
       ...this.props.ctx,
       field: field.term,
-      fieldState: { ...fieldState, searchTerm }
+      fieldState: { ...fieldState, searchTerm, currentPage: 1 }
     }));
   }
 
@@ -155,6 +200,8 @@ export default class FilterParamNew extends React.PureComponent<Props> {
           onActiveFieldChange={this._handleActiveFieldChange}
           onFieldCountUpdateRequest={this._handleFieldCountUpdateRequest}
           onMemberSort={this._handleMemberSort}
+          onMemberChangeCurrentPage={this._handleMemberChangeCurrentPage}
+          onMemberChangeRowsPerPage={this._handleMemberChangeRowsPerPage}
           onMemberSearch={this._handleMemberSearch}
           onRangeScaleChange={this._handleRangeScaleChange}
         />

@@ -53,9 +53,15 @@ export function observe(action$: ActionsObservable<Action>, state$: StateObserva
   // log errors as they come in
   const notify$: Observable<never> = action$.pipe(
     filter(notifyUnhandledError.isOfType),
-    tap(action => {
-      const { unhandledError: { error, id, info } } = action.payload;
-      wdkService.submitErrorIfNot500(error instanceof Error ? error : new Error(String(error)), { id, info });
+    tap(async action => {
+      try {
+        const { unhandledError: { error, id, info } } = action.payload;
+        console.error(error);
+        await wdkService.submitErrorIfNot500(error instanceof Error ? error : new Error(String(error)), { id, info });
+      }
+      catch (error) {
+        console.error('Error logging request failed:', error);
+      }
     }),
     mergeMapTo(EMPTY),
 

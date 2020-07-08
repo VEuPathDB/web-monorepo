@@ -28,6 +28,7 @@ export default function BasketHeading({
       'loading';
   return (
     <BasketIconButton
+      tooltipContext="the current page of rows"
       status={status}
       idsToToggle={answer.records.map(record => record.id)}
       recordClassName={answer.meta.recordClassName}

@@ -124,6 +124,21 @@ class MembershipField extends React.PureComponent {
 
 }
 
+function filterBySearchTerm(rows, searchTerm){
+  if (searchTerm !== ''){
+    let re = new RegExp(escapeRegExp(searchTerm), 'i');
+    return rows.filter(entry => re.test(entry.value));
+  } else {
+    return rows;
+  }
+}
+function selectPage(rows, currentPage, rowsPerPage){
+  return rows.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+}
+
 /**
  * Membership activeField component
  */
@@ -151,6 +166,8 @@ class MembershipTable extends React.PureComponent {
       'handleSearchTermChange',
       'handleSelectAll',
       'handleSort',
+      'handleChangeCurrentPage',
+      'handleChangeRowsPerPage',
       'isItemSelected',
       'renderCheckboxCell',
       'renderCheckboxHeading',
@@ -166,6 +183,7 @@ class MembershipTable extends React.PureComponent {
       'renderValueHeading',
       'renderValueHeadingSearch',
       'toFilterValue',
+      'getRows',
     );
     this.getKnownValues = memoize(this.getKnownValues);
     this.isItemSelected = memoize(this.isItemSelected);
@@ -187,8 +205,12 @@ class MembershipTable extends React.PureComponent {
       : value;
   }
 
+  getRows(){
+     return this.props.activeFieldState.summary.valueCounts;
+  }
+
   getKnownValues() {
-    return this.props.activeFieldState.summary.valueCounts
+    return this.getRows()
       .filter(({ value }) => value != null)
       .map(({ value }) => value);
   }
@@ -197,12 +219,7 @@ class MembershipTable extends React.PureComponent {
     return get(this.props, 'filter.value');
   }
 
-  getFilteredRows(searchTerm) {
-    let re = new RegExp(escapeRegExp(searchTerm), 'i');
-    return searchTerm !== ''
-      ? this.props.activeFieldState.summary.valueCounts.filter(entry => re.test(entry.value))
-      : this.props.activeFieldState.summary.valueCounts;
-  }
+   
 
   deriveRowClassName(item) {
     const selectedClassName = (
@@ -233,9 +250,17 @@ class MembershipTable extends React.PureComponent {
     );
   }
 
+  isPaginationEnabled(){
+    return (
+      this.getRows().length > 100 &&
+      has(this.props, 'activeFieldState.currentPage') &&
+      isFunction(this.props.onMemberChangeCurrentPage)
+    );
+  }
+
   isSearchEnabled() {
     return (
-      this.props.activeFieldState.summary.valueCounts.length > 10 &&
+      this.getRows().length > 10 &&
       has(this.props, 'activeFieldState.searchTerm') &&
       isFunction(this.props.onMemberSearch)
     );
@@ -292,17 +317,20 @@ class MembershipTable extends React.PureComponent {
 
     const filterValues = this.getValuesForFilter();
 
-    const value = this.isSearchEnabled()
-      ? difference(
-        this.getFilteredRows(this.props.activeFieldState.searchTerm)
-          .map(entry => entry.value),
-        disabledValues
-      ).concat(filterValues || [])
-      : ( disabledValues.length === 0 && filterValues == null
-        ? undefined
-        : difference(allValues, disabledValues).concat(filterValues || []));
+    if (disabledValues.length === 0 && filterValues == null) {
+      this.emitChange(undefined);
+    } else {
+      let rows = this.getRows();
+      if (this.isSearchEnabled()){
+        rows = filterBySearchTerm(rows, this.props.activeFieldState.searchTerm);
+      }
+      if (this.isPaginationEnabled()){
+        rows = selectPage(rows, this.props.activeFieldState.currentPage, this.props.activeFieldState.rowsPerPage);
+      }
+      const currentValues = rows.map(entry => entry.value);
 
-    this.emitChange(value);
+      this.emitChange(difference(currentValues, disabledValues).concat(filterValues || []));
+    }
   }
 
   handleRemoveAll() {
@@ -319,23 +347,38 @@ class MembershipTable extends React.PureComponent {
     this.props.onMemberSearch(this.props.activeField, searchTerm);
   }
 
+  handleChangeCurrentPage(newCurrentPage) {
+    this.props.onMemberChangeCurrentPage(this.props.activeField, newCurrentPage);
+  }
+
+  handleChangeRowsPerPage(newRowsPerPage) {
+    this.props.onMemberChangeRowsPerPage(this.props.activeField, newRowsPerPage);
+  }
+
   emitChange(value, includeUnknown = get(this.props, 'filter.includeUnknown', false)) {
     this.props.onChange(this.props.activeField, value, includeUnknown,
-      this.props.activeFieldState.summary.valueCounts);
+      this.getRows());
   }
 
   renderCheckboxHeading() {
-    const availableItems = this.props.activeFieldState.summary.valueCounts
+    const availableItems = this.getRows()
       .filter(member => member.filteredCount > 0);
     const allAvailableChecked = availableItems
       .every(member => this.isItemSelected(member));
-    const onClick = () =>
-      allAvailableChecked ? this.handleRemoveAll() : this.handleSelectAll()
+    const someAvailableChecked = availableItems
+      .some(member => this.isItemSelected(member));
+    
+    const showChecked = availableItems.length > 0 && allAvailableChecked;
+    const showIndeterminate = availableItems.length > 0 && someAvailableChecked && ! allAvailableChecked;
+
+     const onClick = () =>
+      allAvailableChecked ? this.handleRemoveAll() : this.handleSelectAll();
     return (
       <input
         type="checkbox"
         disabled={availableItems.length === 0}
-        checked={availableItems.length > 0 && allAvailableChecked}
+        checked={showChecked}
+        ref={el => el && (el.indeterminate = showIndeterminate)}
         onChange={onClick} />
     );
   }
@@ -458,11 +501,53 @@ class MembershipTable extends React.PureComponent {
   render() {
     var useSort = this.isSortEnabled();
     var useSearch = this.isSearchEnabled();
+    var usePagination = this.isPaginationEnabled();
+    const {currentPage, rowsPerPage, searchTerm, uiStateOther} = this.props.activeFieldState;
 
-    var rows = useSearch
-      ? this.getFilteredRows(this.props.activeFieldState.searchTerm)
-      : this.props.activeFieldState.summary.valueCounts;
+    const rows = this.getRows();
+    let filteredRows = this.getRows();
 
+    if (useSearch){
+      filteredRows = filterBySearchTerm(filteredRows, searchTerm);
+    }
+
+    const totalRowsForPagination = Math.max(1, filteredRows.length);
+
+    if (usePagination){
+      filteredRows = selectPage(filteredRows, currentPage, rowsPerPage);
+    }
+
+    const uiState = Object.assign({},
+      uiStateOther,
+      useSearch && searchTerm
+      ? {searchTerm}
+      : {},
+      usePagination 
+      ? { 
+        pagination:  {
+          currentPage,
+          rowsPerPage,
+          totalRows: totalRowsForPagination,
+          rowsPerPageOptions: [50, 100, 200, 500, 1000],
+          totalPages: Math.ceil(totalRowsForPagination / rowsPerPage)
+        }
+      }
+      : {}
+    );
+      
+    const eventHandlers = Object.assign(
+      {
+        // onRowSelect: this.handleRowSelect,
+        // onRowDeselect: this.handleRowDeselect,
+        // onMultipleRowSelect: this.handleToggleSelectAll,
+        // onMultipleRowDeselect: this.handleRemoveAll,
+        onSort: this.handleSort
+      },
+      usePagination ? {
+        onPageChange: this.handleChangeCurrentPage,
+        onRowsPerPageChange: this.handleChangeRowsPerPage
+      } : {}
+    );
     return (
       <Mesa
         options={{
@@ -472,17 +557,11 @@ class MembershipTable extends React.PureComponent {
           useStickyHeader: true,
           tableBodyMaxHeight: '80vh'
         }}
-        uiState={this.props.activeFieldState}
+        uiState={uiState}
         actions={[]}
-        eventHandlers={{
-          // onRowSelect: this.handleRowSelect,
-          // onRowDeselect: this.handleRowDeselect,
-          // onMultipleRowSelect: this.handleSelectAll,
-          // onMultipleRowDeselect: this.handleRemoveAll,
-          onSort: this.handleSort
-        }}
-        rows={this.props.activeFieldState.summary.valueCounts}
-        filteredRows={rows}
+        eventHandlers={eventHandlers}
+        rows={rows}
+        filteredRows={filteredRows}
         columns={[
           {
             key: 'checked',
@@ -557,6 +636,7 @@ class MembershipTable extends React.PureComponent {
       </Mesa>
     );
   }
+
 }
 
 export default MembershipField

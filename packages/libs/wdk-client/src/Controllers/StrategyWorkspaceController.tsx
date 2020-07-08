@@ -1,5 +1,5 @@
 import { toNumber, last } from 'lodash';
-import React, {useEffect, useLayoutEffect, useMemo} from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
 import {Dispatch} from 'redux';
 
@@ -17,6 +17,7 @@ import { StrategyActionModal } from 'wdk-client/Views/Strategy/StrategyControls'
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
 import StrategyHelpPage from 'wdk-client/Views/Strategy/StrategyHelpPage';
 import Loading from 'wdk-client/Components/Loading';
+import UnownedStrategy from 'wdk-client/Views/Strategy/UnownedStrategy';
 
 interface OwnProps {
   workspacePath: string;
@@ -117,15 +118,10 @@ function ChildView({ allowEmptyOpened, queryParams, dispatch, subPath, openedStr
     }
   }, [activeStrategyId, activeStepId, ownsActiveStrategy]);
 
-  // If the user is tryting to navigate to a strategy they don't own, redirect them
-  useLayoutEffect(() => {
-    if (activeStrategyId && !ownsActiveStrategy) {
-      dispatch(transitionToInternalPage('/workspace/strategies/all', { replace: true }));
-    }
-  }, [activeStrategyId, ownsActiveStrategy]);
-
   // Prevent opened tab from being selecting while data needed for redirect above is being loaded
   if (openedStrategies == null || strategySummaries == null) return <Loading/>;
+
+  if (activeStrategyId != null && !ownsActiveStrategy) return <UnownedStrategy/>;
 
   switch(childView.type) {
     case 'openedStrategies':
