@@ -24,6 +24,10 @@ interface Props<T extends PlotDataKey> extends PlotComponentProps<T> {
   frames?: Frame[];
 }
 
+const config = {
+  responsive: true
+};
+
 const Plot = lazy(() => import('react-plotly.js'));
 
 /**
@@ -32,7 +36,7 @@ const Plot = lazy(() => import('react-plotly.js'));
  * @param props 
  */
 export default function PlotlyPlot<T extends PlotDataKey>(props: Props<T>) {
-  const { data, layout = {}, frames = null, onPlotUpdate, mode, type } = props;
+  const { mode, type, data, style, layout = {}, frames = null, onPlotUpdate } = props;
 
   const [ state, updateState ] = useState<Figure>({
     data: data.map(trace => ({
@@ -44,6 +48,8 @@ export default function PlotlyPlot<T extends PlotDataKey>(props: Props<T>) {
     frames
   });
 
+  const finalStyle = { height: '100%', width: '100%', ...style };
+
   const handleUpdate = useCallback((figure: Figure) => {
     updateState(figure);
     if (onPlotUpdate) onPlotUpdate(figure);
@@ -52,11 +58,13 @@ export default function PlotlyPlot<T extends PlotDataKey>(props: Props<T>) {
   return (
     <Suspense fallback="Loading...">
       <Plot
+        style={finalStyle}
         data={state.data}
         layout={state.layout}
         frames={state.frames || undefined}
         onInitialized={handleUpdate}
         onUpdate={handleUpdate}
+        config={config}
       />
     </Suspense>
   )
