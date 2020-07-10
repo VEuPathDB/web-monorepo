@@ -3,6 +3,10 @@
     padding: 0.5em;
   }
 
+  .MesaComponent .MesaComponent {
+    overflow-x: auto;
+  }
+
   .SearchBoxContainer {
     display: flex;
     align-items: center;
