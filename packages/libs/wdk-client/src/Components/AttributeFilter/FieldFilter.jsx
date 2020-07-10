@@ -33,7 +33,7 @@ function FieldFilter(props) {
             <div className="field-description">{props.activeField.description}</div>
           )}
           {props.activeField.variableName && (
-            <div className="field-variableName">(<i>Providers name:</i> {props.activeField.variableName})</div>
+            <div className="field-variableName">(<i>Provider label:</i> {props.activeField.variableName})</div>
           )} 
           {props.activeFieldState && props.activeFieldState.errorMessage ? (
             <div style={{ color: 'darkred' }}>{props.activeFieldState.errorMessage}</div>
