@@ -163,9 +163,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
         </div>
       </Link>
       <div className={vpdbCx('HeaderBrandingSuperscript')}>
-        {props.buildNumber && `Release ${props.buildNumber}`}
-        <br />
-        {props.releaseDate && formatReleaseDate(props.releaseDate)}
+        beta
       </div>
     </>
   );
