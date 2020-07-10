@@ -1,4 +1,5 @@
 .ClusterGraphDisplay {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 700px auto;
+  grid-gap: 0.25em;
 }

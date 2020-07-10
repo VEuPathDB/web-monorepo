@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './ClusterGraphCanvas.scss';
+
 export function ClusterGraphCanvas() {
-  return <div style={{ display: 'none' }}></div>;
+  return <div className="ClusterGraphCanvas"></div>;
 }
