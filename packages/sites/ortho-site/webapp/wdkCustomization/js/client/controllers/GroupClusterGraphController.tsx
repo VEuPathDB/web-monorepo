@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { Loading } from 'wdk-client/Components';
 
@@ -18,12 +18,6 @@ export function GroupClusterGraphController({ groupName }: Props) {
   );
 
   const taxonUiMetadata = useTaxonUiMetadata();
-
-  useEffect(() => {
-    if (layout != null) {
-      console.log(layout);
-    }
-  }, [ layout ]);
 
   return layout == null || taxonUiMetadata == null
     ? <Loading />
