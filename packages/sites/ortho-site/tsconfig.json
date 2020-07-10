@@ -1,6 +1,24 @@
-  
 {
   "extends": "../../EbrcWebsiteCommon/Site/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "wdk-client/*": [ "WDKClient/Client/src/*" ],
+      "ebrc-client/*": [ "EbrcWebsiteCommon/Site/webapp/wdkCustomization/js/client/*" ],
+      "*": [
+        "WDKClient/Client/node_modules/*",
+        "WDKClient/Client/node_modules/@types/*",
+        "EbrcWebsiteCommon/Site/node_modules/*",
+        "EbrcWebsiteCommon/Site/node_modules/@types/*",
+        "OrthoMCLClient/Site/node_modules/*",
+        "OrthoMCLClient/Site/node_modules/@types/*"
+      ]
+    },
+    "typeRoots": [
+      "../../WDKClient/Client/node_modules/@types",
+      "../../EbrcWebsiteCommon/Site/node_modules/@types",
+      "OrthoMCLClient/Site/node_modules/@types"
+    ]
+  },
   "include": [
     "./webapp/**/*",
     "../../WDKClient/Client/src/index.d.ts"

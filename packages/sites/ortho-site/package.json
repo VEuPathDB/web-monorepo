@@ -1,0 +1,11 @@
+{
+  "name": "orthomcl-client",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/VEuPathDB/OrthoMCLClient",
+  "license": "MIT",
+  "dependencies": {
+    "@types/cytoscape": "^3.14.7",
+    "cytoscape": "^3.15.2"
+  }
+}
