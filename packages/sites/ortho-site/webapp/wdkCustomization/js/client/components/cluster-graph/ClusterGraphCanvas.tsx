@@ -94,7 +94,29 @@ function useEdges(layout: GroupLayout): EdgeDefinition[] {
 
 function useStyle() {
   return useMemo(
-    () => [],
+    () => [
+      {
+        selector: 'node',
+        css: {
+          'shape': 'ellipse',
+          'width': 20,
+          'height': 20,
+          'z-index-compare': 'manual',
+          'z-index': 2
+        }
+      },
+      {
+        selector: 'edge',
+        css: {
+          'curve-style': 'straight',
+          'line-color': 'black',
+          'width': 1,
+          'opacity': 0.2,
+          'z-index-compare': 'manual',
+          'z-index': 1
+        }
+      }
+    ],
     []
   );
 }
