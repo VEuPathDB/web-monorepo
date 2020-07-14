@@ -9,6 +9,7 @@ import cytoscape, {
 } from 'cytoscape';
 import { noop, orderBy, range } from 'lodash';
 
+import { NodeDisplayType } from '../../utils/clusterGraph';
 import {
   EcNumberEntry,
   GroupLayout,
@@ -24,13 +25,22 @@ const MAX_PIE_SLICES = 16;
 interface Props {
   layout: GroupLayout;
   taxonUiMetadata: TaxonUiMetadata;
+  selectedNodeDisplayType: NodeDisplayType;
 }
 
-export function ClusterGraphCanvas({ layout, taxonUiMetadata }: Props) {
+export function ClusterGraphCanvas({
+  layout,
+  taxonUiMetadata,
+  selectedNodeDisplayType
+}: Props) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core>();
 
   useInitializeCyEffect(canvasRef, cyRef, layout, taxonUiMetadata);
+
+  useCyEffect(cyRef, cy => {
+    cy.nodes().classes(selectedNodeDisplayType);
+  }, [ selectedNodeDisplayType ]);
 
   return <div ref={canvasRef} className="ClusterGraphCanvas"></div>;
 }
