@@ -28,12 +28,14 @@ interface Props {
   layout: GroupLayout;
   taxonUiMetadata: TaxonUiMetadata;
   selectedNodeDisplayType: NodeDisplayType;
+  highlightedLegendNodeIds: string[];
 }
 
 export function ClusterGraphCanvas({
   layout,
   taxonUiMetadata,
-  selectedNodeDisplayType
+  selectedNodeDisplayType,
+  highlightedLegendNodeIds
 }: Props) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core>();
@@ -63,6 +65,16 @@ export function ClusterGraphCanvas({
   useCyEffect(cyRef, cy => {
     cy.nodes().classes(selectedNodeDisplayType);
   }, [ selectedNodeDisplayType ]);
+
+  useCyEffect(cyRef, cy => {
+    cy.nodes().removeClass('highlighted');
+
+    cy.batch(() => {
+      highlightedLegendNodeIds.forEach(highlightedLegendNodeId => {
+        cy.getElementById(highlightedLegendNodeId).addClass('highlighted');
+      });
+    });
+  }, [ highlightedLegendNodeIds ]);
 
   return <div ref={canvasRef} className="ClusterGraphCanvas"></div>;
 }
