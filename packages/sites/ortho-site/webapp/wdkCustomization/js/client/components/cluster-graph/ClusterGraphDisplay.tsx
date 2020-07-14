@@ -78,6 +78,7 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
         layout={layout}
         taxonUiMetadata={taxonUiMetadata}
         selectedNodeDisplayType={selectedNodeDisplayType}
+        highlightedEdgeType={highlightedEdgeType}
         highlightedLegendNodeIds={highlightedLegendNodeIds}
         eValueExp={eValueExp}
         edgeTypeOptions={edgeTypeOptions}

@@ -34,6 +34,7 @@ interface Props {
   layout: GroupLayout;
   taxonUiMetadata: TaxonUiMetadata;
   edgeTypeOptions: EdgeTypeOption[];
+  highlightedEdgeType: EdgeType | undefined;
   eValueExp: number;
   selectedNodeDisplayType: NodeDisplayType;
   highlightedLegendNodeIds: string[];
@@ -43,6 +44,7 @@ export function ClusterGraphCanvas({
   layout,
   taxonUiMetadata,
   edgeTypeOptions,
+  highlightedEdgeType,
   eValueExp,
   selectedNodeDisplayType,
   highlightedLegendNodeIds
@@ -71,6 +73,18 @@ export function ClusterGraphCanvas({
       cy.off('mouseout', 'edge', handleEdgeMouseover);
     };
   }, []);
+
+  useCyEffect(cyRef, cy => {
+    cy.edges().removeClass('type-highlighted')
+
+    cy.batch(() => {
+      cy.edges().forEach(edge => {
+        if (edge.data('type') === highlightedEdgeType) {
+          edge.addClass('type-highlighted');
+        }
+      })
+    })
+  }, [ highlightedEdgeType ]);
 
   useCyEffect(cyRef, cy => {
     cy.edges().removeClass('filtered-out');
@@ -447,6 +461,12 @@ function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number): Sty
           'z-index': 4,
           'font-size': 15,
           'font-weight': 'bold'
+        }
+      },
+      {
+        selector: 'edge.type-highlighted',
+        css: {
+          'line-color': 'red'
         }
       },
       {
