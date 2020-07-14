@@ -11,9 +11,10 @@ import cytoscape, {
 } from 'cytoscape';
 import { noop, orderBy, range } from 'lodash';
 
-import { NodeDisplayType } from '../../utils/clusterGraph';
+import { NodeDisplayType, EdgeType, edgeTypeDisplayNames } from '../../utils/clusterGraph';
 import {
   EcNumberEntry,
+  EdgeEntry,
   GroupLayout,
   NodeEntry,
   PfamDomainEntry
@@ -278,20 +279,36 @@ function nodeEntryToPfamDomainPieData(
   };
 }
 
+interface EdgeData {
+  id: string;
+  source: string;
+  target: string;
+  type: EdgeType;
+  label: string;
+  eValue: number;
+}
+
 function useEdges(layout: GroupLayout): EdgeDefinition[] {
   return useMemo(
     () =>
       Object.entries(layout.edges).map(([ edgeId, edgeEntry ]) =>
         ({
           group: 'edges',
-          data: {
-            id: edgeId,
-            source: edgeEntry.queryId,
-            target: edgeEntry.subjectId
-          },
+          data: makeEdgeData(edgeId, edgeEntry),
           selectable: false
         })
   ), [ layout.edges ]);
+}
+
+function makeEdgeData(edgeId: string, edgeEntry: EdgeEntry): EdgeData {
+  return {
+    id: edgeId,
+    source: edgeEntry.queryId,
+    target: edgeEntry.subjectId,
+    type: edgeEntry.T,
+    label: `${edgeTypeDisplayNames[edgeEntry.T]}, evalue=${edgeEntry.E}`,
+    eValue: Number(edgeEntry.E)
+  };
 }
 
 function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number): Stylesheet[] {
@@ -392,7 +409,7 @@ function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number): Sty
         css: {
           'opacity': 1,
           'width': 3,
-          'label': 'data(id)',
+          'label': 'data(label)',
           'text-outline-color': 'white',
           'text-outline-width': 2,
           'z-index': 4,
