@@ -12,6 +12,7 @@ type Props = EdgeOptionsProps & NodeOptionsProps;
 
 export function GraphControls({
   edgeTypeOptions,
+  setHighlightedEdgeType,
   selectEdgeTypeOption,
   minEValueExp,
   maxEValueExp,
@@ -27,6 +28,7 @@ export function GraphControls({
     <div className="GraphControls">
       <EdgeOptions
         edgeTypeOptions={edgeTypeOptions}
+        setHighlightedEdgeType={setHighlightedEdgeType}
         selectEdgeTypeOption={selectEdgeTypeOption}
         minEValueExp={minEValueExp}
         maxEValueExp={maxEValueExp}
@@ -47,6 +49,7 @@ export function GraphControls({
 interface EdgeOptionsProps {
   edgeTypeOptions: EdgeTypeOption[];
   selectEdgeTypeOption: (selectedEdge: EdgeType, newValue: boolean) => void;
+  setHighlightedEdgeType: (newEdgeType: EdgeType | undefined) => void;
   minEValueExp: number;
   maxEValueExp: number;
   eValueExp: number;
@@ -56,6 +59,7 @@ interface EdgeOptionsProps {
 function EdgeOptions({
   edgeTypeOptions,
   selectEdgeTypeOption,
+  setHighlightedEdgeType,
   minEValueExp,
   maxEValueExp,
   eValueExp,
@@ -79,7 +83,16 @@ function EdgeOptions({
             {
               edgeTypeOptions.map(
                 ({ key, display, isSelected }) =>
-                  <div className="EdgeTypeOption" key={key}>
+                  <div
+                    className="EdgeTypeOption"
+                    key={key}
+                    onMouseEnter={() => {
+                      setHighlightedEdgeType(key);
+                    }}
+                    onMouseLeave={() => {
+                      setHighlightedEdgeType(undefined);
+                    }}
+                  >
                     <Checkbox
                       key={key}
                       value={isSelected}

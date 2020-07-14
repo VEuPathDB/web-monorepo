@@ -35,6 +35,7 @@ interface Props {
 }
 
 export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
+  const [ highlightedEdgeType, setHighlightedEdgeType ] = useState<EdgeType | undefined>(undefined);
   const [ highlightedLegendNodeIds, setHighlightedLegendNodeIds ] = useState<string[]>([]);
 
   const { edgeTypeOptions, selectEdgeTypeOption } = useEdgeTypeControl(layout);
@@ -62,6 +63,7 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
       <GraphControls
         edgeTypeOptions={edgeTypeOptions}
         selectEdgeTypeOption={selectEdgeTypeOption}
+        setHighlightedEdgeType={setHighlightedEdgeType}
         minEValueExp={minEValueExp}
         maxEValueExp={maxEValueExp}
         eValueExp={eValueExp}
