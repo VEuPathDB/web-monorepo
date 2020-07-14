@@ -70,7 +70,10 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
         legendEntries={legendEntries}
         legendHeaders={legendHeaders}
       />
-      <ClusterGraphCanvas layout={layout} />
+      <ClusterGraphCanvas
+        layout={layout}
+        taxonUiMetadata={taxonUiMetadata}
+      />
       <GraphInformation
         activeTab={activeTab}
         selectedNode={selectedNode}
