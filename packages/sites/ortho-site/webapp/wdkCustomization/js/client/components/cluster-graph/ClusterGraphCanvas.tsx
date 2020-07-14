@@ -4,6 +4,8 @@ import cytoscape, {
   Core,
   CytoscapeOptions,
   EdgeDefinition,
+  EventHandler,
+  EventObject,
   NodeDefinition,
   Stylesheet
 } from 'cytoscape';
@@ -39,15 +41,31 @@ export function ClusterGraphCanvas({
   useInitializeCyEffect(canvasRef, cyRef, layout, taxonUiMetadata);
 
   useCyEffect(cyRef, cy => {
+    cy.on('mouseover', 'node', handleNodeMouseover);
+    cy.on('mouseout', 'node', handleNodeMouseout);
+
+    return () => {
+      cy.off('mouseover', 'node', handleNodeMouseover);
+      cy.off('mouseout', 'node', handleNodeMouseover);
+    };
+  }, []);
+
+  useCyEffect(cyRef, cy => {
+    cy.on('mouseover', 'edge', handleEdgeMouseover);
+    cy.on('mouseout', 'edge', handleEdgeMouseout);
+
+    return () => {
+      cy.off('mouseover', 'edge', handleEdgeMouseover);
+      cy.off('mouseout', 'edge', handleEdgeMouseover);
+    };
+  }, []);
+
+  useCyEffect(cyRef, cy => {
     cy.nodes().classes(selectedNodeDisplayType);
   }, [ selectedNodeDisplayType ]);
 
   return <div ref={canvasRef} className="ClusterGraphCanvas"></div>;
 }
-
-interface CyEffectCallback {
-  (cy: Core): (void | (() => void | undefined));
-};
 
 function useInitializeCyEffect(
   canvasRef: React.RefObject<HTMLDivElement>,
@@ -93,6 +111,10 @@ function useInitializeCyEffect(
     };
   }, [ canvasRef.current, nodes, edges, style, options ]);
 }
+
+interface CyEffectCallback {
+  (cy: Core): (void | (() => void | undefined));
+};
 
 function useCyEffect(
   cyRef: React.MutableRefObject<Core | undefined>,
@@ -405,3 +427,63 @@ function useOptions(): CytoscapeOptions {
     []
   );
 }
+
+const handleNodeMouseover: EventHandler = function(evt: EventObject) {
+  evt.target.addClass('highlighted');
+};
+
+const handleNodeMouseout: EventHandler = function(evt: EventObject) {
+  evt.target.removeClass('highlighted');
+};
+
+const handleEdgeMouseover: EventHandler = function(evt: EventObject) {
+  const edge = evt.target;
+  const source = edge.source();
+  const target = edge.target();
+
+  const horizontalFlow = source.position('x') >= target.position('x')
+    ? 'right-to-left'
+    : 'left-to-right';
+
+  const verticalFlow = source.position('y') <= target.position('y')
+    ? 'top-to-bottom'
+    : 'bottom-to-top';
+
+  source
+    .addClass('highlighted')
+    .addClass('source')
+    .addClass(horizontalFlow)
+    .addClass(verticalFlow);
+
+  target
+    .addClass('highlighted')
+    .addClass('target')
+    .addClass(horizontalFlow)
+    .addClass(verticalFlow);
+
+  edge.addClass('highlighted');
+};
+
+const handleEdgeMouseout: EventHandler = function(evt: EventObject) {
+  const edge = evt.target;
+  const source = edge.source();
+  const target = edge.target();
+
+  source
+    .removeClass('highlighted')
+    .removeClass('source')
+    .removeClass('left-to-right')
+    .removeClass('right-to-left')
+    .removeClass('top-to-bottom')
+    .removeClass('bottom-to-top');
+
+  target
+    .removeClass('highlighted')
+    .removeClass('target')
+    .removeClass('left-to-right')
+    .removeClass('right-to-left')
+    .removeClass('top-to-bottom')
+    .removeClass('bottom-to-top');
+
+  edge.removeClass('highlighted');
+};
