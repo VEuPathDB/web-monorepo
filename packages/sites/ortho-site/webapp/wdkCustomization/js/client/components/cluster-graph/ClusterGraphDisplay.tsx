@@ -35,6 +35,8 @@ interface Props {
 }
 
 export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
+  const [ highlightedLegendNodeIds, setHighlightedLegendNodeIds ] = useState<string[]>([]);
+
   const { edgeTypeOptions, selectEdgeTypeOption } = useEdgeTypeControl(layout);
   const { minEValueExp, maxEValueExp, eValueExp, selectEValueExp } = useScoreControl(layout);
 
@@ -44,7 +46,7 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
     setSelectedNodeDisplayType,
     legendEntries,
     legendHeaders
-  } = useNodeDisplayTypeControl(layout, taxonUiMetadata);
+  } = useNodeDisplayTypeControl(layout, taxonUiMetadata, setHighlightedLegendNodeIds);
 
   const {
     activeTab,
@@ -134,7 +136,11 @@ function useScoreControl(layout: GroupLayout) {
   };
 }
 
-function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUiMetadata) {
+function useNodeDisplayTypeControl(
+  layout: GroupLayout,
+  taxonUiMetadata: TaxonUiMetadata,
+  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
+) {
   const initialNodeDisplayTypeSelection = 'taxa';
 
   const [ selectedNodeDisplayType, setSelectedNodeDisplayType ] = useState<NodeDisplayType>(initialNodeDisplayTypeSelection);
@@ -143,9 +149,9 @@ function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUi
     setSelectedNodeDisplayType(initialNodeDisplayTypeSelection);
   }, [ layout ]);
 
-  const taxonLegendEntries = useTaxonLegendEntries(layout, taxonUiMetadata);
-  const ecNumberLegendEntries = useEcNumberLegendEntries(layout);
-  const pfamDomainLegendEntries = usePfamDomainLegendEntries(layout);
+  const taxonLegendEntries = useTaxonLegendEntries(layout, taxonUiMetadata, setHighlightedLegendNodeIds);
+  const ecNumberLegendEntries = useEcNumberLegendEntries(layout, setHighlightedLegendNodeIds);
+  const pfamDomainLegendEntries = usePfamDomainLegendEntries(layout, setHighlightedLegendNodeIds);
 
   const legendEntries = {
     'taxa': taxonLegendEntries,
@@ -180,8 +186,9 @@ function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUi
 }
 
 function useTaxonLegendEntries(
-  { taxonCounts }: GroupLayout,
-  { taxonOrder, species }: TaxonUiMetadata
+  { taxonCounts, group: { genes } }: GroupLayout,
+  { taxonOrder, species }: TaxonUiMetadata,
+  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
 ) {
   return useMemo(
     () => {
@@ -201,15 +208,35 @@ function useTaxonLegendEntries(
               <br />
               {name}
             </React.Fragment>
-          )
+          ),
+          onMouseEnter: () => {
+            const nodesOfSpecies = Object.entries(genes).reduce(
+              (memo, [ nodeId, geneEntry ]) => {
+                if (geneEntry.taxon.abbrev === taxonAbbrev) {
+                  memo.push(nodeId);
+                }
+
+                return memo;
+              },
+              [] as string[]
+            );
+
+            setHighlightedLegendNodeIds(nodesOfSpecies);
+          },
+          onMouseLeave: () => {
+            setHighlightedLegendNodeIds([]);
+          }
         };
       });
     },
-    [ taxonCounts ]
+    [ taxonCounts, genes ]
   );
 }
 
-function useEcNumberLegendEntries({ group: { ecNumbers } }: GroupLayout) {
+function useEcNumberLegendEntries(
+  { group: { ecNumbers, genes } }: GroupLayout,
+  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
+) {
   return useMemo(() => {
     const orderedEcNumberEntries = orderBy(
       Object.values(ecNumbers),
@@ -221,13 +248,33 @@ function useEcNumberLegendEntries({ group: { ecNumbers } }: GroupLayout) {
       ({ code, color, count }) => ({
         key: code,
         symbol: renderSimpleLegendSymbol(color),
-        description: `${code} (${count})`
+        description: `${code} (${count})`,
+        onMouseEnter: () => {
+          const nodesWithEcNumber = Object.entries(genes).reduce(
+            (memo, [ nodeId, geneEntry ]) => {
+              if (geneEntry.ecNumbers.includes(code)) {
+                memo.push(nodeId);
+              }
+
+              return memo;
+            },
+            [] as string[]
+          );
+
+          setHighlightedLegendNodeIds(nodesWithEcNumber);
+        },
+        onMouseLeave: () => {
+          setHighlightedLegendNodeIds([]);
+        }
       })
     );
-  }, [ ecNumbers ])
+  }, [ ecNumbers, genes ]);
 }
 
-function usePfamDomainLegendEntries({ group: { pfamDomains } }: GroupLayout) {
+function usePfamDomainLegendEntries(
+  { group: { genes, pfamDomains } }: GroupLayout,
+  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
+) {
   return useMemo(() => {
     const orderedPfamDomainEntries = orderBy(
       Object.values(pfamDomains),
@@ -240,10 +287,27 @@ function usePfamDomainLegendEntries({ group: { pfamDomains } }: GroupLayout) {
         key: accession,
         symbol: renderSimpleLegendSymbol(color),
         description: `${accession} (${count})`,
-        tooltip: description
+        tooltip: description,
+        onMouseEnter: () => {
+          const nodesWithEcNumber = Object.entries(genes).reduce(
+            (memo, [ nodeId, geneEntry ]) => {
+              if (accession in geneEntry.pfamDomains) {
+                memo.push(nodeId);
+              }
+
+              return memo;
+            },
+            [] as string[]
+          );
+
+          setHighlightedLegendNodeIds(nodesWithEcNumber);
+        },
+        onMouseLeave: () => {
+          setHighlightedLegendNodeIds([]);
+        }
       })
     );
-  }, [ pfamDomains ])
+  }, [ pfamDomains, genes ]);
 }
 
 function renderSimpleLegendSymbol(color: string) {
