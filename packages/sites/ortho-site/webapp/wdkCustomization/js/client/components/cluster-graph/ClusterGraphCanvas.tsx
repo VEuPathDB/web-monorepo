@@ -84,7 +84,11 @@ function useInitializeCyEffect(
   }, [ canvasRef.current, nodes, edges, style, options ]);
 }
 
-function useCyEffect(cyRef: React.MutableRefObject<Core>, effect: CyEffectCallback, deps?: React.DependencyList) {
+function useCyEffect(
+  cyRef: React.MutableRefObject<Core | undefined>,
+  effect: CyEffectCallback,
+  deps?: React.DependencyList
+) {
   useEffect(() => {
     if (cyRef.current == null) {
       return noop;
