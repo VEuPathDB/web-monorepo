@@ -250,7 +250,7 @@ function useEdges(layout: GroupLayout): EdgeDefinition[] {
   ), [ layout.edges ]);
 }
 
-function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number) {
+function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number): Stylesheet[] {
   return useMemo(
     () => [
       {
@@ -290,6 +290,49 @@ function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number) {
         }
       },
       {
+        selector: 'node.highlighted',
+        css: {
+          'label': 'data(id)',
+          'width': 30,
+          'height': 30,
+          'text-outline-color': 'white',
+          'text-outline-width': 2,
+          'text-halign': 'right',
+          'text-valign': 'center',
+          'text-margin-x': 2,
+          'text-margin-y': -6,
+          'z-index': 3,
+          'font-size': 15,
+          'font-weight': 'bold'
+        }
+      },
+      {
+        selector: 'node.highlighted.source.left-to-right, node.highlighted.target.right-to-left',
+        css: {
+          'text-halign': 'left'
+        }
+      },
+      {
+        selector: 'node.highlighted.target.left-to-right, node.highlighted.source.right-to-left',
+        css: {
+          'text-halign': 'right'
+        }
+      },
+      {
+        selector: 'node.highlighted.source.top-to-bottom, node.highlighted.target.bottom-to-top',
+        css: {
+          'text-valign': 'top',
+          'text-margin-y': 10
+        }
+      },
+      {
+        selector: 'node.highlighted.target.top-to-bottom, node.highlighted.source.bottom-to-top',
+        css: {
+          'text-valign': 'bottom',
+          'text-margin-y': -16
+        }
+      },
+      {
         selector: 'edge',
         css: {
           'curve-style': 'straight',
@@ -298,6 +341,19 @@ function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number) {
           'opacity': 0.2,
           'z-index-compare': 'manual',
           'z-index': 1
+        }
+      },
+      {
+        selector: 'edge.highlighted',
+        css: {
+          'opacity': 1,
+          'width': 3,
+          'label': 'data(id)',
+          'text-outline-color': 'white',
+          'text-outline-width': 2,
+          'z-index': 4,
+          'font-size': 15,
+          'font-weight': 'bold'
         }
       }
     ],
