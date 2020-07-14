@@ -38,6 +38,7 @@ interface Props {
   eValueExp: number;
   selectedNodeDisplayType: NodeDisplayType;
   highlightedLegendNodeIds: string[];
+  onClickNode: (clickedNode: string) => void;
 }
 
 export function ClusterGraphCanvas({
@@ -47,12 +48,23 @@ export function ClusterGraphCanvas({
   highlightedEdgeType,
   eValueExp,
   selectedNodeDisplayType,
-  highlightedLegendNodeIds
+  highlightedLegendNodeIds,
+  onClickNode
 }: Props) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core>();
 
   useInitializeCyEffect(canvasRef, cyRef, layout, taxonUiMetadata);
+
+  useCyEffect(cyRef, cy => {
+    const handleNodeClick = makeHandleNodeClick(onClickNode);
+
+    cy.on('click', 'node', handleNodeClick);
+
+    return () => {
+      cy.off('click', 'node', handleNodeClick);
+    };
+  }, [ onClickNode ]);
 
   useCyEffect(cyRef, cy => {
     cy.on('mouseover', 'node', handleNodeMouseover);
@@ -515,7 +527,12 @@ function useOptions(): CytoscapeOptions {
   );
 }
 
-const handleNodeMouseover: EventHandler = function(evt: EventObject) {
+function makeHandleNodeClick(clickNode: Props['onClickNode']): EventHandler {
+  return function(evt) {
+    clickNode(evt.target.data('id'));
+  };
+}
+
   evt.target.addClass('highlighted');
 };
 

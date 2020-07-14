@@ -57,6 +57,11 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
     tabs
   } = useGraphInformationTabs(layout);
 
+  const onClickNode = useCallback((clickedNode: string) => {
+    setSelectedNode(clickedNode);
+    setActiveTab('node-details');
+  }, [ setSelectedNode, setActiveTab ]);
+
   return (
     <div className="ClusterGraphDisplay">
       <Instructions />
@@ -82,6 +87,7 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
         highlightedLegendNodeIds={highlightedLegendNodeIds}
         eValueExp={eValueExp}
         edgeTypeOptions={edgeTypeOptions}
+        onClickNode={onClickNode}
       />
       <GraphInformation
         activeTab={activeTab}
