@@ -1,9 +1,20 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
-import cytoscape, { Core, CytoscapeOptions, EdgeDefinition, NodeDefinition } from 'cytoscape';
+import cytoscape, {
+  Core,
+  CytoscapeOptions,
+  EdgeDefinition,
+  NodeDefinition,
+  Stylesheet
+} from 'cytoscape';
 import { noop, orderBy, range } from 'lodash';
 
-import { GroupLayout, NodeEntry, EcNumberEntry, PfamDomainEntry } from '../../utils/groupLayout';
+import {
+  EcNumberEntry,
+  GroupLayout,
+  NodeEntry,
+  PfamDomainEntry
+} from '../../utils/groupLayout';
 import { TaxonUiMetadata } from '../../utils/taxons';
 
 import './ClusterGraphCanvas.scss';
