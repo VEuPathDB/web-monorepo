@@ -28,6 +28,7 @@ const MAX_PIE_SLICES = 16;
 interface Props {
   layout: GroupLayout;
   taxonUiMetadata: TaxonUiMetadata;
+  eValueExp: number;
   selectedNodeDisplayType: NodeDisplayType;
   highlightedLegendNodeIds: string[];
 }
@@ -35,6 +36,7 @@ interface Props {
 export function ClusterGraphCanvas({
   layout,
   taxonUiMetadata,
+  eValueExp,
   selectedNodeDisplayType,
   highlightedLegendNodeIds
 }: Props) {
@@ -62,6 +64,18 @@ export function ClusterGraphCanvas({
       cy.off('mouseout', 'edge', handleEdgeMouseover);
     };
   }, []);
+
+  useCyEffect(cyRef, cy => {
+    cy.edges().removeClass('filtered-out');
+
+    const maxEValue = parseFloat(`1e${eValueExp}`);
+
+    cy.edges().forEach(edge => {
+      if (edge.data('eValue') > maxEValue) {
+        edge.addClass('filtered-out');
+      }
+    });
+  }, [ eValueExp ]);
 
   useCyEffect(cyRef, cy => {
     cy.nodes().classes(selectedNodeDisplayType);
@@ -415,6 +429,12 @@ function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number): Sty
           'z-index': 4,
           'font-size': 15,
           'font-weight': 'bold'
+        }
+      },
+      {
+        selector: 'edge.filtered-out',
+        css: {
+          'display': 'none'
         }
       }
     ],
