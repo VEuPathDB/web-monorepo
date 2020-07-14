@@ -494,7 +494,7 @@ function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number): Sty
 
 function makePieStyles(nPieSlices: number, dataPrefix: string) {
   const sliceStyles = range(0, nPieSlices).reduce(
-    (memo, _, i) => ({
+    (memo, i) => ({
       ...memo,
       [`pie-${i + 1}-background-color`]: `data(${dataPrefix}PieColors.${i})`,
       [`pie-${i + 1}-background-size`]: `data(${dataPrefix}PieSliceSize)`
