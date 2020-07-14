@@ -5,7 +5,6 @@ import cytoscape, {
   CytoscapeOptions,
   EdgeDefinition,
   EventHandler,
-  EventObject,
   NodeDefinition,
   Stylesheet
 } from 'cytoscape';
@@ -533,14 +532,15 @@ function makeHandleNodeClick(clickNode: Props['onClickNode']): EventHandler {
   };
 }
 
+const handleNodeMouseover: EventHandler = function(evt) {
   evt.target.addClass('highlighted');
 };
 
-const handleNodeMouseout: EventHandler = function(evt: EventObject) {
+const handleNodeMouseout: EventHandler = function(evt) {
   evt.target.removeClass('highlighted');
 };
 
-const handleEdgeMouseover: EventHandler = function(evt: EventObject) {
+const handleEdgeMouseover: EventHandler = function(evt) {
   const edge = evt.target;
   const source = edge.source();
   const target = edge.target();
@@ -568,7 +568,7 @@ const handleEdgeMouseover: EventHandler = function(evt: EventObject) {
   edge.addClass('highlighted');
 };
 
-const handleEdgeMouseout: EventHandler = function(evt: EventObject) {
+const handleEdgeMouseout: EventHandler = function(evt) {
   const edge = evt.target;
   const source = edge.source();
   const target = edge.target();
