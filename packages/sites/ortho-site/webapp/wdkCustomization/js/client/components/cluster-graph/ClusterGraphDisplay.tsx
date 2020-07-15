@@ -37,7 +37,8 @@ interface Props {
 export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
   const {
     edgeTypeOptions,
-    highlightedEdgeType
+    highlightedEdgeType,
+    selectedEdgeTypes
   } = useEdgeTypeControl(layout);
 
   const {
@@ -93,7 +94,7 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
         highlightedEdgeType={highlightedEdgeType}
         highlightedLegendNodeIds={highlightedLegendNodeIds}
         eValueExp={eValueExp}
-        edgeTypeOptions={edgeTypeOptions}
+        selectedEdgeTypes={selectedEdgeTypes}
         highlightedSequenceNodeId={highlightedSequenceNodeId}
         highlightedBlastEdgeId={highlightedBlastEdgeId}
         onClickNode={onClickNode}
@@ -141,7 +142,8 @@ function useEdgeTypeControl(layout: GroupLayout) {
 
   return {
     edgeTypeOptions,
-    highlightedEdgeType
+    highlightedEdgeType,
+    selectedEdgeTypes
   };
 }
 

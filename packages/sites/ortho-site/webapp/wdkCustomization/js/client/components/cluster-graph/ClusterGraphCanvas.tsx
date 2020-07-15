@@ -14,7 +14,6 @@ import cytoscape, {
 import { noop, orderBy, range } from 'lodash';
 
 import {
-  EdgeTypeOption,
   NodeDisplayType,
   EdgeType,
   edgeTypeDisplayNames
@@ -35,7 +34,7 @@ const MAX_PIE_SLICES = 16;
 interface Props {
   layout: GroupLayout;
   taxonUiMetadata: TaxonUiMetadata;
-  edgeTypeOptions: EdgeTypeOption[];
+  selectedEdgeTypes: Record<EdgeType, boolean>;
   highlightedEdgeType: EdgeType | undefined;
   eValueExp: number;
   selectedNodeDisplayType: NodeDisplayType;
@@ -48,7 +47,7 @@ interface Props {
 export function ClusterGraphCanvas({
   layout,
   taxonUiMetadata,
-  edgeTypeOptions,
+  selectedEdgeTypes,
   highlightedEdgeType,
   eValueExp,
   selectedNodeDisplayType,
@@ -128,26 +127,18 @@ export function ClusterGraphCanvas({
 
   useCyEffect(cyRef, cy => {
     cy.batch(() => {
-      cy.edges().forEach(unfilterEdge);
-
-      const selectedEdgeTypes = new Set(
-        edgeTypeOptions
-          .filter(edgeTypeOption => edgeTypeOption.isSelected)
-          .map(edgeTypeOption => edgeTypeOption.key)
-      );
-
       const maxEValue = parseFloat(`1e${eValueExp}`);
 
       cy.edges().forEach(edge => {
         if (
-          !selectedEdgeTypes.has(edge.data('type')) ||
+          !selectedEdgeTypes[edge.data('type') as EdgeType] ||
           edge.data('eValue') > maxEValue
         ) {
           filterEdge(edge);
         }
       });
     });
-  }, [ eValueExp, edgeTypeOptions ]);
+  }, [ eValueExp, selectedEdgeTypes ]);
 
   useCyEffect(cyRef, cy => {
     cy.batch(() => {
