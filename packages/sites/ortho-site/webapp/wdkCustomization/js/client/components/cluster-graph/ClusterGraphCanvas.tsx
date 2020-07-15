@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import cytoscape, {
   Core,
@@ -60,6 +60,28 @@ export function ClusterGraphCanvas({
   const canvasRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core>();
 
+  const [ highlightedNodeIds, setHighlightedNodeIds ] = useState<string[]>([]);
+  const previousHighlightedNodeIds = usePreviousValue(highlightedNodeIds);
+
+  const [ highlightedEdgeId, setHighlightedEdgeId ] = useState<string | undefined>(undefined);
+  const previousHighlightedEdgeId = usePreviousValue(highlightedEdgeId);
+
+  useEffect(() => {
+    setHighlightedNodeIds(highlightedLegendNodeIds);
+  }, [ highlightedLegendNodeIds ]);
+
+  useEffect(() => {
+    const newHighlightedNodeIds = highlightedSequenceNodeId == null
+      ? [ ]
+      : [ highlightedSequenceNodeId ];
+
+    setHighlightedNodeIds(newHighlightedNodeIds);
+  }, [ highlightedSequenceNodeId ]);
+
+  useEffect(() => {
+    setHighlightedEdgeId(highlightedBlastEdgeId);
+  }, [ highlightedBlastEdgeId ]);
+
   useInitializeCyEffect(canvasRef, cyRef, layout, taxonUiMetadata);
 
   useCyEffect(cyRef, cy => {
@@ -93,9 +115,9 @@ export function ClusterGraphCanvas({
   }, []);
 
   useCyEffect(cyRef, cy => {
-    cy.edges().forEach(unhighlightEdgeType);
-
     cy.batch(() => {
+      cy.edges().forEach(unhighlightEdgeType);
+
       cy.edges().forEach(edge => {
         if (edge.data('type') === highlightedEdgeType) {
           highlightEdgeType(edge);
@@ -105,17 +127,17 @@ export function ClusterGraphCanvas({
   }, [ highlightedEdgeType ]);
 
   useCyEffect(cyRef, cy => {
-    cy.edges().forEach(unfilterEdge);
-
-    const selectedEdgeTypes = new Set(
-      edgeTypeOptions
-        .filter(edgeTypeOption => edgeTypeOption.isSelected)
-        .map(edgeTypeOption => edgeTypeOption.key)
-    );
-
-    const maxEValue = parseFloat(`1e${eValueExp}`);
-
     cy.batch(() => {
+      cy.edges().forEach(unfilterEdge);
+
+      const selectedEdgeTypes = new Set(
+        edgeTypeOptions
+          .filter(edgeTypeOption => edgeTypeOption.isSelected)
+          .map(edgeTypeOption => edgeTypeOption.key)
+      );
+
+      const maxEValue = parseFloat(`1e${eValueExp}`);
+
       cy.edges().forEach(edge => {
         if (
           !selectedEdgeTypes.has(edge.data('type')) ||
@@ -128,42 +150,38 @@ export function ClusterGraphCanvas({
   }, [ eValueExp, edgeTypeOptions ]);
 
   useCyEffect(cyRef, cy => {
-    cy.nodes().classes(selectedNodeDisplayType);
+    cy.batch(() => {
+      cy.nodes().classes(selectedNodeDisplayType);
+    });
   }, [ selectedNodeDisplayType ]);
 
   useCyEffect(cyRef, cy => {
-    cy.nodes().forEach(unhighlightNode);
-
     cy.batch(() => {
-      highlightedLegendNodeIds.forEach(highlightedLegendNodeId => {
-        const element = cy.getElementById(highlightedLegendNodeId);
+      previousHighlightedNodeIds?.forEach(nodeId => {
+        const previousHighlighedNode = cy.nodes().getElementById(nodeId);
+        unhighlightNode(previousHighlighedNode);
+      });
 
-        if (element.isNode()) {
-          highlightNode(element);
-        }
+      highlightedNodeIds.forEach(nodeId => {
+        const newHighlighedNode = cy.nodes().getElementById(nodeId);
+        highlightNode(newHighlighedNode);
       });
     });
-  }, [ highlightedLegendNodeIds ]);
+  }, [ highlightedNodeIds ]);
 
   useCyEffect(cyRef, cy => {
-    cy.nodes().forEach(unhighlightNode);
+    cy.batch(() => {
+      if (previousHighlightedEdgeId != null) {
+        const previousHightlightedEdge = cy.edges().getElementById(previousHighlightedEdgeId);
+        unhighlightEdge(previousHightlightedEdge);
+      }
 
-    if (highlightedSequenceNodeId != null) {
-      const element = cy.getElementById(highlightedSequenceNodeId);
-
-      highlightNode(element);
-    }
-  }, [ highlightedSequenceNodeId ]);
-
-  useCyEffect(cyRef, cy => {
-    cy.edges().forEach(unhighlightEdge);
-
-    if (highlightedBlastEdgeId != null) {
-      const element = cy.getElementById(highlightedBlastEdgeId);
-
-      highlightEdge(element);
-    }
-  }, [ highlightedBlastEdgeId ]);
+      if (highlightedEdgeId != null) {
+        const newHighlightedEdge = cy.edges().getElementById(highlightedEdgeId);
+        highlightEdge(newHighlightedEdge);
+      }
+    });
+  }, [ highlightedEdgeId ]);
 
   return <div ref={canvasRef} className="ClusterGraphCanvas"></div>;
 }
@@ -651,4 +669,15 @@ function filterEdge(edge: EdgeSingular) {
 
 function unfilterEdge(edge: EdgeSingular) {
   edge.removeClass('filtered-out');
+}
+
+// https://blog.logrocket.com/how-to-get-previous-props-state-with-react-hooks/
+function usePreviousValue<T>(value: T) {
+  const ref = useRef<T>();
+
+  useEffect(() => {
+    ref.current = value;
+  });
+
+  return ref.current;
 }
