@@ -127,21 +127,6 @@ header {
   }
 
 /* ========================================================================= */
-/* Static Content  page                                                      */
-/* ========================================================================= */
-
-  div.static-content {
-    padding: 0 1em;
-    font-size: 16px; 
-    margin-bottom: 20px;
-    line-height: 150%;
-  }
-
-  div.static-content p {
-  }
-
-
-/* ========================================================================= */
 /* Gene  page   - Transcriptomics, coverage graph                            */
 /* ========================================================================= */
 div.eupathdb-GbrowseContextContent {
