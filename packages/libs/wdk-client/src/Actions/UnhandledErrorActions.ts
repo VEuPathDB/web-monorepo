@@ -41,5 +41,5 @@ function getTypedError(error: unknown, info?: unknown): UnhandledError {
   if (isServerError(error)) return { type: 'server', message: 'Internal server error', id: error.logMarker, error, info };
   if (isClientError(error)) return { type: 'client', message: error.response, id: error.logMarker, error, info };
   if (isInputError(error)) return { type: 'input', message: error.response, id: error.logMarker, error, info };
-  return { type: 'runtime', message: 'Runtime error', id: uuid(), error, info };
+  return { type: 'runtime', message: error instanceof Error ? error.message : String(error) || 'Unknown error', id: uuid(), error, info };
 }
