@@ -93,19 +93,19 @@ export function ClusterGraphCanvas({
   }, []);
 
   useCyEffect(cyRef, cy => {
-    cy.edges().removeClass('type-highlighted')
+    cy.edges().forEach(unhighlightEdgeType);
 
     cy.batch(() => {
       cy.edges().forEach(edge => {
         if (edge.data('type') === highlightedEdgeType) {
-          edge.addClass('type-highlighted');
+          highlightEdgeType(edge);
         }
       })
     })
   }, [ highlightedEdgeType ]);
 
   useCyEffect(cyRef, cy => {
-    cy.edges().removeClass('filtered-out');
+    cy.edges().forEach(unfilterEdge);
 
     const selectedEdgeTypes = new Set(
       edgeTypeOptions
@@ -121,7 +121,7 @@ export function ClusterGraphCanvas({
           !selectedEdgeTypes.has(edge.data('type')) ||
           edge.data('eValue') > maxEValue
         ) {
-          edge.addClass('filtered-out');
+          filterEdge(edge);
         }
       });
     });
@@ -136,7 +136,11 @@ export function ClusterGraphCanvas({
 
     cy.batch(() => {
       highlightedLegendNodeIds.forEach(highlightedLegendNodeId => {
-        cy.getElementById(highlightedLegendNodeId).addClass('highlighted');
+        const element = cy.getElementById(highlightedLegendNodeId);
+
+        if (element.isNode()) {
+          highlightNode(element);
+        }
       });
     });
   }, [ highlightedLegendNodeIds ]);
@@ -571,13 +575,6 @@ function handleNodeMouseOut(evt: EventObjectNode) {
   unhighlightNode(evt.target);
 }
 
-function highlightNode(node: NodeSingular) {
-  node.addClass('highlighted');
-}
-function unhighlightNode(node: NodeSingular) {
-  node.removeClass('highlighted');
-}
-
 function handleEdgeMouseOver(evt: EventObjectEdge) {
   highlightEdge(evt.target);
 };
@@ -585,6 +582,14 @@ function handleEdgeMouseOver(evt: EventObjectEdge) {
 function handleEdgeMouseOut(evt: EventObjectEdge) {
   unhighlightEdge(evt.target);
 };
+
+function highlightNode(node: NodeSingular) {
+  node.addClass('highlighted');
+}
+
+function unhighlightNode(node: NodeSingular) {
+  node.removeClass('highlighted');
+}
 
 function highlightEdge(edge: EdgeSingular) {
   const source = edge.source();
@@ -634,4 +639,20 @@ function unhighlightEdge(edge: EdgeSingular) {
     .removeClass('bottom-to-top');
 
   edge.removeClass('highlighted');
+}
+
+function highlightEdgeType(edge: EdgeSingular) {
+  edge.addClass('type-highlighted');
+}
+
+function unhighlightEdgeType(edge: EdgeSingular) {
+  edge.removeClass('type-highlighted');
+}
+
+function filterEdge(edge: EdgeSingular) {
+  edge.addClass('filtered-out');
+}
+
+function unfilterEdge(edge: EdgeSingular) {
+  edge.removeClass('filtered-out');
 }
