@@ -32,7 +32,7 @@ export interface EdgeTypeOption {
   display: string;
   isSelected: boolean;
   onChange: (selected: boolean) => void;
-  onMouseEnter: () => void;
+  onMouseOver: () => void;
   onMouseLeave: () => void;
 }
 
