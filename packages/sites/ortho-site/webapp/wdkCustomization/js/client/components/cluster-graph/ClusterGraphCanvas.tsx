@@ -4,8 +4,11 @@ import cytoscape, {
   Core,
   CytoscapeOptions,
   EdgeDefinition,
-  EventHandler,
+  EventObjectEdge,
+  EventObjectNode,
+  EdgeSingular,
   NodeDefinition,
+  NodeSingular,
   Stylesheet
 } from 'cytoscape';
 import { noop, orderBy, range } from 'lodash';
@@ -66,22 +69,22 @@ export function ClusterGraphCanvas({
   }, [ onClickNode ]);
 
   useCyEffect(cyRef, cy => {
-    cy.on('mouseover', 'node', handleNodeMouseover);
-    cy.on('mouseout', 'node', handleNodeMouseout);
+    cy.on('mouseover', 'node', handleNodeMouseOver);
+    cy.on('mouseout', 'node', handleNodeMouseOut);
 
     return () => {
-      cy.off('mouseover', 'node', handleNodeMouseover);
-      cy.off('mouseout', 'node', handleNodeMouseover);
+      cy.off('mouseover', 'node', handleNodeMouseOver);
+      cy.off('mouseout', 'node', handleNodeMouseOut);
     };
   }, []);
 
   useCyEffect(cyRef, cy => {
-    cy.on('mouseover', 'edge', handleEdgeMouseover);
-    cy.on('mouseout', 'edge', handleEdgeMouseout);
+    cy.on('mouseover', 'edge', handleEdgeMouseOver);
+    cy.on('mouseout', 'edge', handleEdgeMouseOut);
 
     return () => {
-      cy.off('mouseover', 'edge', handleEdgeMouseover);
-      cy.off('mouseout', 'edge', handleEdgeMouseover);
+      cy.off('mouseover', 'edge', handleEdgeMouseOver);
+      cy.off('mouseout', 'edge', handleEdgeMouseOut);
     };
   }, []);
 
@@ -526,22 +529,36 @@ function useOptions(): CytoscapeOptions {
   );
 }
 
-function makeHandleNodeClick(clickNode: Props['onClickNode']): EventHandler {
-  return function(evt) {
-    clickNode(evt.target.data('id'));
+function makeHandleNodeClick(onClickNode: Props['onClickNode']) {
+  return function(evt: EventObjectNode) {
+    onClickNode(evt.target.data('id'));
   };
 }
 
-const handleNodeMouseover: EventHandler = function(evt) {
-  evt.target.addClass('highlighted');
+function handleNodeMouseOver(evt: EventObjectNode) {
+  highlightNode(evt.target);
+}
+
+function handleNodeMouseOut(evt: EventObjectNode) {
+  unhighlightNode(evt.target);
+}
+
+function highlightNode(node: NodeSingular) {
+  node.addClass('highlighted');
+}
+function unhighlightNode(node: NodeSingular) {
+  node.removeClass('highlighted');
+}
+
+function handleEdgeMouseOver(evt: EventObjectEdge) {
+  highlightEdge(evt.target);
 };
 
-const handleNodeMouseout: EventHandler = function(evt) {
-  evt.target.removeClass('highlighted');
+function handleEdgeMouseOut(evt: EventObjectEdge) {
+  unhighlightEdge(evt.target);
 };
 
-const handleEdgeMouseover: EventHandler = function(evt) {
-  const edge = evt.target;
+function highlightEdge(edge: EdgeSingular) {
   const source = edge.source();
   const target = edge.target();
 
@@ -566,10 +583,9 @@ const handleEdgeMouseover: EventHandler = function(evt) {
     .addClass(verticalFlow);
 
   edge.addClass('highlighted');
-};
+}
 
-const handleEdgeMouseout: EventHandler = function(evt) {
-  const edge = evt.target;
+function unhighlightEdge(edge: EdgeSingular) {
   const source = edge.source();
   const target = edge.target();
 
@@ -590,4 +606,4 @@ const handleEdgeMouseout: EventHandler = function(evt) {
     .removeClass('bottom-to-top');
 
   edge.removeClass('highlighted');
-};
+}
