@@ -25,7 +25,6 @@ function UnhandledErrors(props: Props) {
   const { children, clearErrors, errors, showStackTraces } = props;
   const errorsToDisplay = Seq.from(errors || [])
     .orderBy(error => error.type)
-    .filter(error => showStackTraces || error.type === 'input')
     .map(({ type, error, id, message }) =>
       <li key={id}>
         <ErrorDetail key={id} id={id} type={type} error={error} showStackTraces={showStackTraces} message={message}/>
@@ -48,23 +47,6 @@ function UnhandledErrors(props: Props) {
             </div>
           }
         />
-        {/*
-        <details>
-          <summary><IconAlt fa="question-circle"/> Why do I keep getting this message?</summary>
-          <p>
-            Sometimes the website encounters unexpected errors due to bugs or user input.
-            It is not always possible to know what caused the error, nor how it will impact your current activity.
-          </p>
-          <p>
-            This message serves as an indication that such an error has been encounterd.
-            When this happens, developers are notified of the errors.
-          </p>
-          <p>
-            It is possible that you can continue working without any problem,
-            but it is also possible the data is no longer accurate.
-          </p>
-        </details>
-        */}
       </div>
     </Modal>
   );
