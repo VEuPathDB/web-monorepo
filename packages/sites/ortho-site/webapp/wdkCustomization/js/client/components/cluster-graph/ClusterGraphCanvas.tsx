@@ -151,9 +151,7 @@ export function ClusterGraphCanvas({
     if (highlightedSequenceNodeId != null) {
       const element = cy.getElementById(highlightedSequenceNodeId);
 
-      if (element.isNode()) {
-        highlightNode(element);
-      }
+      highlightNode(element);
     }
   }, [ highlightedSequenceNodeId ]);
 
@@ -163,9 +161,7 @@ export function ClusterGraphCanvas({
     if (highlightedBlastEdgeId != null) {
       const element = cy.getElementById(highlightedBlastEdgeId);
 
-      if (element.isEdge()) {
-        highlightNode(element);
-      }
+      highlightEdge(element);
     }
   }, [ highlightedBlastEdgeId ]);
 
