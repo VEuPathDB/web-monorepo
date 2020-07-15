@@ -10,7 +10,8 @@ import { GroupLayout } from './groupLayout';
 export interface GraphInformationTabProps {
   layout: GroupLayout;
   selectedNode: string | undefined;
-  setSelectedNode: (newNode: string | undefined) => void;
+  setHighlightedSequenceNodeId: (nodeId: string | undefined) => void;
+  setHighlightedBlastEdgeId: (nodeId: string | undefined) => void;
 }
 
 export type GraphInformationColumnKey<R> = keyof R & string;
@@ -61,6 +62,7 @@ export interface SequenceInformation {
 }
 
 export interface BlastScoreRow {
+  edgeId: string;
   subject: string;
   type: EdgeType;
   evalue: string;
@@ -104,13 +106,14 @@ export function layoutAndAccessionToSequenceInformation(layout: GroupLayout, acc
 
 export function layoutAndAccessionToBlastScoreRows(layout: GroupLayout, accession: string): BlastScoreRow[] {
   return (
-    Object.values(layout.edges)
-      .filter(edge => edge.queryId === accession)
+    Object.entries(layout.edges)
+      .filter(([ _, edgeEntry ]) => edgeEntry.queryId === accession)
       .map(
-        edge => ({
-          subject: edge.subjectId,
-          type: edge.T,
-          evalue: edge.E
+        ([ edgeId, edgeEntry ]) => ({
+          edgeId,
+          subject: edgeEntry.subjectId,
+          type: edgeEntry.T,
+          evalue: edgeEntry.E
         })
       )
   );

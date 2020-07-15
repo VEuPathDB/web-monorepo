@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import {
   BlastScoreRow,
@@ -21,8 +21,26 @@ import { GraphInformationDataTable } from './GraphInformationDataTable';
 
 import './NodeDetails.scss';
 
-export function NodeDetails({ layout, selectedNode }: GraphInformationTabProps) {
+export function NodeDetails({
+  layout,
+  selectedNode,
+  setHighlightedBlastEdgeId
+}: GraphInformationTabProps) {
   const nodeDetails = useNodeDetails(layout, selectedNode);
+
+  const onBlastRowMouseOver = useCallback(
+    (row: BlastScoreRow) => {
+      setHighlightedBlastEdgeId(row.edgeId);
+    },
+    [ setHighlightedBlastEdgeId ]
+  );
+
+  const onBlastRowMouseLeave = useCallback(
+    () => {
+      setHighlightedBlastEdgeId(undefined);
+    },
+    [ setHighlightedBlastEdgeId ]
+  );
 
   return (
     <div className="NodeDetails">
@@ -41,6 +59,8 @@ export function NodeDetails({ layout, selectedNode }: GraphInformationTabProps) 
                   rows={nodeDetails.blastScoreRows}
                   columns={BLAST_SCORE_COLUMNS}
                   columnOrder={BLAST_SCORE_COLUMN_ORDER}
+                  onRowMouseOver={onBlastRowMouseOver}
+                  onRowMouseLeave={onBlastRowMouseLeave}
                 />
               </GraphAccordion>
               <GraphAccordion title="PFam Domains">

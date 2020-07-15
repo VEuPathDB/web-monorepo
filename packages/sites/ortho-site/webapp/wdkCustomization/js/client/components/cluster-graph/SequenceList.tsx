@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { GraphInformationDataTable } from './GraphInformationDataTable';
 
@@ -10,10 +10,24 @@ import {
   renderSequenceLink
 } from '../../utils/graphInformation';
 
-export function SequenceList({ layout }: GraphInformationTabProps) {
+export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInformationTabProps) {
   const rows = useMemo(
     () => layoutToSequenceListRows(layout),
     [ layout ]
+  );
+
+  const onSequenceRowMouseOver = useCallback(
+    (row: SequenceListRow) => {
+      setHighlightedSequenceNodeId(row.accession);
+    },
+    [ setHighlightedSequenceNodeId ]
+  );
+
+  const onSequenceRowMouseLeave = useCallback(
+    () => {
+      setHighlightedSequenceNodeId(undefined);
+    },
+    [ setHighlightedSequenceNodeId ]
   );
 
   return (
@@ -22,6 +36,8 @@ export function SequenceList({ layout }: GraphInformationTabProps) {
         rows={rows}
         columns={SEQUENCE_LIST_COLUMNS}
         columnOrder={SEQUENCE_LIST_COLUMN_ORDER}
+        onRowMouseOver={onSequenceRowMouseOver}
+        onRowMouseLeave={onSequenceRowMouseLeave}
       />
     </div>
   );

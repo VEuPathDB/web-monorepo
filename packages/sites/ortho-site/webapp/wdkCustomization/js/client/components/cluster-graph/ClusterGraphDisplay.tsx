@@ -61,7 +61,9 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
     selectedNode,
     setActiveTab,
     setSelectedNode,
-    tabs
+    tabs,
+    highlightedSequenceNodeId,
+    highlightedBlastEdgeId
   } = useGraphInformationTabs(layout);
 
   const onClickNode = useCallback((clickedNode: string) => {
@@ -373,6 +375,9 @@ function useGraphInformationTabs(layout: GroupLayout) {
   const [ activeTab, setActiveTab ] = useState<GraphInformationTabKey>('sequence-list');
   const [ selectedNode, setSelectedNode ] = useState<string | undefined>(undefined);
 
+  const [ highlightedSequenceNodeId, setHighlightedSequenceNodeId ] = useState<string | undefined>(undefined);
+  const [ highlightedBlastEdgeId, setHighlightedBlastEdgeId ] = useState<string | undefined>(undefined);
+
   const tabs = graphInformationBaseTabConfigs.map(
     baseConfig => {
       const TabContentComponent = graphInformationTabComponents[baseConfig.key];
@@ -383,7 +388,8 @@ function useGraphInformationTabs(layout: GroupLayout) {
           <TabContentComponent
             layout={layout}
             selectedNode={selectedNode}
-            setSelectedNode={setSelectedNode}
+            setHighlightedSequenceNodeId={setHighlightedSequenceNodeId}
+            setHighlightedBlastEdgeId={setHighlightedBlastEdgeId}
           />
         )
       });
@@ -392,6 +398,8 @@ function useGraphInformationTabs(layout: GroupLayout) {
 
   return {
     activeTab,
+    highlightedSequenceNodeId,
+    highlightedBlastEdgeId,
     setActiveTab,
     selectedNode,
     setSelectedNode,
