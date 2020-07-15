@@ -40,6 +40,8 @@ interface Props {
   eValueExp: number;
   selectedNodeDisplayType: NodeDisplayType;
   highlightedLegendNodeIds: string[];
+  highlightedSequenceNodeId: string | undefined;
+  highlightedBlastEdgeId: string | undefined;
   onClickNode: (clickedNode: string) => void;
 }
 
@@ -51,6 +53,8 @@ export function ClusterGraphCanvas({
   eValueExp,
   selectedNodeDisplayType,
   highlightedLegendNodeIds,
+  highlightedSequenceNodeId,
+  highlightedBlastEdgeId,
   onClickNode
 }: Props) {
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -128,7 +132,7 @@ export function ClusterGraphCanvas({
   }, [ selectedNodeDisplayType ]);
 
   useCyEffect(cyRef, cy => {
-    cy.nodes().removeClass('highlighted');
+    cy.nodes().forEach(unhighlightNode);
 
     cy.batch(() => {
       highlightedLegendNodeIds.forEach(highlightedLegendNodeId => {
@@ -136,6 +140,30 @@ export function ClusterGraphCanvas({
       });
     });
   }, [ highlightedLegendNodeIds ]);
+
+  useCyEffect(cyRef, cy => {
+    cy.nodes().forEach(unhighlightNode);
+
+    if (highlightedSequenceNodeId != null) {
+      const element = cy.getElementById(highlightedSequenceNodeId);
+
+      if (element.isNode()) {
+        highlightNode(element);
+      }
+    }
+  }, [ highlightedSequenceNodeId ]);
+
+  useCyEffect(cyRef, cy => {
+    cy.edges().forEach(unhighlightEdge);
+
+    if (highlightedBlastEdgeId != null) {
+      const element = cy.getElementById(highlightedBlastEdgeId);
+
+      if (element.isEdge()) {
+        highlightNode(element);
+      }
+    }
+  }, [ highlightedBlastEdgeId ]);
 
   return <div ref={canvasRef} className="ClusterGraphCanvas"></div>;
 }

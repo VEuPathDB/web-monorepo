@@ -94,6 +94,8 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
         highlightedLegendNodeIds={highlightedLegendNodeIds}
         eValueExp={eValueExp}
         edgeTypeOptions={edgeTypeOptions}
+        highlightedSequenceNodeId={highlightedSequenceNodeId}
+        highlightedBlastEdgeId={highlightedBlastEdgeId}
         onClickNode={onClickNode}
       />
       <GraphInformation
