@@ -31,6 +31,9 @@ export interface EdgeTypeOption {
   key: EdgeType;
   display: string;
   isSelected: boolean;
+  onChange: (selected: boolean) => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }
 
 export type NodeDisplayType = 'taxa' | 'ec-numbers' | 'pfam-domains';

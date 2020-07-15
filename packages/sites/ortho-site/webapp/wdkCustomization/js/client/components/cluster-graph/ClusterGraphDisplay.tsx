@@ -35,19 +35,26 @@ interface Props {
 }
 
 export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
-  const [ highlightedEdgeType, setHighlightedEdgeType ] = useState<EdgeType | undefined>(undefined);
-  const [ highlightedLegendNodeIds, setHighlightedLegendNodeIds ] = useState<string[]>([]);
+  const {
+    edgeTypeOptions,
+    highlightedEdgeType
+  } = useEdgeTypeControl(layout);
 
-  const { edgeTypeOptions, selectEdgeTypeOption } = useEdgeTypeControl(layout);
-  const { minEValueExp, maxEValueExp, eValueExp, selectEValueExp } = useScoreControl(layout);
+  const {
+    minEValueExp,
+    maxEValueExp,
+    eValueExp,
+    selectEValueExp
+  } = useScoreControl(layout);
 
   const {
     nodeDisplayTypeOptions,
     selectedNodeDisplayType,
     setSelectedNodeDisplayType,
     legendEntries,
-    legendHeaders
-  } = useNodeDisplayTypeControl(layout, taxonUiMetadata, setHighlightedLegendNodeIds);
+    legendHeaders,
+    highlightedLegendNodeIds
+  } = useNodeDisplayTypeControl(layout, taxonUiMetadata);
 
   const {
     activeTab,
@@ -67,8 +74,6 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
       <Instructions />
       <GraphControls
         edgeTypeOptions={edgeTypeOptions}
-        selectEdgeTypeOption={selectEdgeTypeOption}
-        setHighlightedEdgeType={setHighlightedEdgeType}
         minEValueExp={minEValueExp}
         maxEValueExp={maxEValueExp}
         eValueExp={eValueExp}
@@ -93,7 +98,6 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
         activeTab={activeTab}
         selectedNode={selectedNode}
         setActiveTab={setActiveTab}
-        setSelectedNode={setSelectedNode}
         tabs={tabs}
       />
     </div>
@@ -102,13 +106,7 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
 
 function useEdgeTypeControl(layout: GroupLayout) {
   const [ selectedEdgeTypes, setSelectedEdgeTypes ] = useState<Record<EdgeType, boolean>>(initialEdgeTypeSelections);
-
-  const selectEdgeTypeOption = useCallback((selectedEdge: EdgeType, newValue: boolean) => {
-    setSelectedEdgeTypes({
-      ...selectedEdgeTypes,
-      [selectedEdge]: newValue
-    });
-  }, [ selectedEdgeTypes ]);
+  const [ highlightedEdgeType, setHighlightedEdgeType ] = useState<EdgeType | undefined>(undefined);
 
   useEffect(() => {
     setSelectedEdgeTypes(initialEdgeTypeSelections);
@@ -119,7 +117,19 @@ function useEdgeTypeControl(layout: GroupLayout) {
       edgeType => ({
         key: edgeType,
         display: edgeTypeDisplayNames[edgeType],
-        isSelected: selectedEdgeTypes[edgeType]
+        isSelected: selectedEdgeTypes[edgeType],
+        onChange: (selected: boolean) => {
+          setSelectedEdgeTypes({
+            ...selectedEdgeTypes,
+            [edgeType]: selected
+          });
+        },
+        onMouseEnter: () => {
+          setHighlightedEdgeType(edgeType);
+        },
+        onMouseLeave: () => {
+          setHighlightedEdgeType(undefined);
+        }
       })
     ),
     [ selectedEdgeTypes ]
@@ -127,7 +137,7 @@ function useEdgeTypeControl(layout: GroupLayout) {
 
   return {
     edgeTypeOptions,
-    selectEdgeTypeOption
+    highlightedEdgeType
   };
 }
 
@@ -148,12 +158,12 @@ function useScoreControl(layout: GroupLayout) {
 
 function useNodeDisplayTypeControl(
   layout: GroupLayout,
-  taxonUiMetadata: TaxonUiMetadata,
-  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
+  taxonUiMetadata: TaxonUiMetadata
 ) {
   const initialNodeDisplayTypeSelection = 'taxa';
 
   const [ selectedNodeDisplayType, setSelectedNodeDisplayType ] = useState<NodeDisplayType>(initialNodeDisplayTypeSelection);
+  const [ highlightedLegendNodeIds, setHighlightedLegendNodeIds ] = useState<string[]>([]);
 
   useEffect(() => {
     setSelectedNodeDisplayType(initialNodeDisplayTypeSelection);
@@ -187,6 +197,7 @@ function useNodeDisplayTypeControl(
   );
 
   return {
+    highlightedLegendNodeIds,
     legendEntries,
     legendHeaders,
     nodeDisplayTypeOptions,

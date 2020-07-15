@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Checkbox, RadioList, SliderInput, TextBox, Tooltip } from 'wdk-client/Components';
 
-import { EdgeTypeOption, EdgeType, NodeDisplayType } from '../../utils/clusterGraph';
+import { EdgeTypeOption, NodeDisplayType } from '../../utils/clusterGraph';
 
 import { GraphAccordion } from './GraphAccordion';
 
@@ -12,8 +12,6 @@ type Props = EdgeOptionsProps & NodeOptionsProps;
 
 export function GraphControls({
   edgeTypeOptions,
-  setHighlightedEdgeType,
-  selectEdgeTypeOption,
   minEValueExp,
   maxEValueExp,
   eValueExp,
@@ -28,8 +26,6 @@ export function GraphControls({
     <div className="GraphControls">
       <EdgeOptions
         edgeTypeOptions={edgeTypeOptions}
-        setHighlightedEdgeType={setHighlightedEdgeType}
-        selectEdgeTypeOption={selectEdgeTypeOption}
         minEValueExp={minEValueExp}
         maxEValueExp={maxEValueExp}
         eValueExp={eValueExp}
@@ -48,8 +44,6 @@ export function GraphControls({
 
 interface EdgeOptionsProps {
   edgeTypeOptions: EdgeTypeOption[];
-  selectEdgeTypeOption: (selectedEdge: EdgeType, newValue: boolean) => void;
-  setHighlightedEdgeType: (newEdgeType: EdgeType | undefined) => void;
   minEValueExp: number;
   maxEValueExp: number;
   eValueExp: number;
@@ -58,8 +52,6 @@ interface EdgeOptionsProps {
 
 function EdgeOptions({
   edgeTypeOptions,
-  selectEdgeTypeOption,
-  setHighlightedEdgeType,
   minEValueExp,
   maxEValueExp,
   eValueExp,
@@ -82,21 +74,16 @@ function EdgeOptions({
           <div className="EdgeTypeOptions">
             {
               edgeTypeOptions.map(
-                ({ key, display, isSelected }) =>
+                ({ key, display, isSelected, onChange, onMouseEnter, onMouseLeave }) =>
                   <div
                     className="EdgeTypeOption"
                     key={key}
-                    onMouseEnter={() => {
-                      setHighlightedEdgeType(key);
-                    }}
-                    onMouseLeave={() => {
-                      setHighlightedEdgeType(undefined);
-                    }}
+                    onMouseEnter={onMouseEnter}
+                    onMouseLeave={onMouseLeave}
                   >
                     <Checkbox
-                      key={key}
                       value={isSelected}
-                      onChange={newValue => selectEdgeTypeOption(key, newValue)}
+                      onChange={onChange}
                     />
                     <label>
                       {display}
