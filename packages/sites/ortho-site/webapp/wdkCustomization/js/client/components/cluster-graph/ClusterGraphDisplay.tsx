@@ -132,12 +132,10 @@ function useEdgeTypeControl(layout: GroupLayout) {
 }
 
 function useScoreControl(layout: GroupLayout) {
-  const initialEValue = layout.maxEvalueExp - Math.round((layout.maxEvalueExp - layout.minEvalueExp) / 5.0);
-
-  const [ eValueExp, setEValueExp ] = useState(initialEValue);
+  const [ eValueExp, setEValueExp ] = useState(layout.maxEvalueExp + 1);
 
   useEffect(() => {
-    setEValueExp(initialEValue);
+    setEValueExp(layout.maxEvalueExp + 1);
   }, [ layout ]);
 
   return {
