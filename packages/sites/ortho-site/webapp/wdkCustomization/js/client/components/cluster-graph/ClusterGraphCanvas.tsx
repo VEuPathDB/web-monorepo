@@ -127,6 +127,8 @@ export function ClusterGraphCanvas({
 
   useCyEffect(cyRef, cy => {
     cy.batch(() => {
+      cy.edges().forEach(unfilterEdge);
+
       const maxEValue = parseFloat(`1e${eValueExp}`);
 
       cy.edges().forEach(edge => {
