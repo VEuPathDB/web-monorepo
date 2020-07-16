@@ -2,7 +2,7 @@
  * Provides a simple wrapper around <input type="range"/>.  The only differences
  * are that
  * (1) the value the component receives must be numeric
- * (2) the (optional) min, max, and step props must be number
+ * (2) the (optional) min, max, and step props must be numeric
  * (3) the value passed to the onChange property is the new value from the range,
  *     not the event causing the change
  */
