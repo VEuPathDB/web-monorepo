@@ -491,32 +491,6 @@ function useStyle(
         }
       },
       {
-        selector: 'node.highlighted.source.left-to-right, node.highlighted.target.right-to-left',
-        css: {
-          'text-halign': 'left'
-        }
-      },
-      {
-        selector: 'node.highlighted.target.left-to-right, node.highlighted.source.right-to-left',
-        css: {
-          'text-halign': 'right'
-        }
-      },
-      {
-        selector: 'node.highlighted.source.top-to-bottom, node.highlighted.target.bottom-to-top',
-        css: {
-          'text-valign': 'top',
-          'text-margin-y': 10
-        }
-      },
-      {
-        selector: 'node.highlighted.target.top-to-bottom, node.highlighted.source.bottom-to-top',
-        css: {
-          'text-valign': 'bottom',
-          'text-margin-y': -16
-        }
-      },
-      {
         selector: 'edge',
         css: {
           'curve-style': 'straight',
@@ -632,50 +606,45 @@ function highlightEdge(edge: EdgeSingular) {
   const source = edge.source();
   const target = edge.target();
 
-  const horizontalFlow = source.position('x') >= target.position('x')
-    ? 'right-to-left'
-    : 'left-to-right';
+  const [ leftNode, rightNode ] = source.position('x') <= target.position('x')
+    ? [ source, target ]
+    : [ target, source ];
 
-  const verticalFlow = source.position('y') <= target.position('y')
-    ? 'top-to-bottom'
-    : 'bottom-to-top';
+  leftNode.style('text-halign', 'left');
+  rightNode.style('text-halign', 'right');
 
-  source
-    .addClass('highlighted')
-    .addClass('source')
-    .addClass(horizontalFlow)
-    .addClass(verticalFlow);
+  const [ topNode, bottomNode ] = source.position('y') <= target.position('y')
+    ? [ source, target ]
+    : [ target, source ];
 
-  target
-    .addClass('highlighted')
-    .addClass('target')
-    .addClass(horizontalFlow)
-    .addClass(verticalFlow);
+  topNode
+    .style('text-valign', 'top')
+    .style('text-margin-y', 10);
+
+  bottomNode
+    .style('text-valign', 'bottom')
+    .style('text-margin-y', -16);
 
   edge.addClass('highlighted');
+  source.addClass('highlighted');
+  target.addClass('highlighted');
 }
 
 function unhighlightEdge(edge: EdgeSingular) {
   const source = edge.source();
   const target = edge.target();
 
+  edge.removeClass('highlighted');
+
   source
     .removeClass('highlighted')
-    .removeClass('source')
-    .removeClass('left-to-right')
-    .removeClass('right-to-left')
-    .removeClass('top-to-bottom')
-    .removeClass('bottom-to-top');
+    .style('text-valign', null)
+    .style('text-margin-y', null);
 
   target
     .removeClass('highlighted')
-    .removeClass('target')
-    .removeClass('left-to-right')
-    .removeClass('right-to-left')
-    .removeClass('top-to-bottom')
-    .removeClass('bottom-to-top');
-
-  edge.removeClass('highlighted');
+    .style('text-valign', null)
+    .style('text-margin-y', null);
 }
 
 function highlightEdgeType(edge: EdgeSingular) {
