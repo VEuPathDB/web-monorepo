@@ -94,6 +94,9 @@ export function ClusterGraphCanvas({
   }, [ onClickNode ]);
 
   useCyEffect(cyRef, cy => {
+    const handleNodeMouseOver = makeHandleNodeMouseOver(setHighlightedNodeIds);
+    const handleNodeMouseOut = makeHandleNodeMouseOut(setHighlightedNodeIds);
+
     cy.on('mouseover', 'node', handleNodeMouseOver);
     cy.on('mouseout', 'node', handleNodeMouseOut);
 
@@ -104,6 +107,9 @@ export function ClusterGraphCanvas({
   }, []);
 
   useCyEffect(cyRef, cy => {
+    const handleEdgeMouseOver = makeHandleEdgeMouseOver(setHighlightedEdgeId);
+    const handleEdgeMouseOut = makeHandleEdgeMouseOut(setHighlightedEdgeId);
+
     cy.on('mouseover', 'edge', handleEdgeMouseOver);
     cy.on('mouseout', 'edge', handleEdgeMouseOut);
 
@@ -574,21 +580,29 @@ function makeHandleNodeClick(onClickNode: Props['onClickNode']) {
   };
 }
 
-function handleNodeMouseOver(evt: EventObjectNode) {
-  highlightNode(evt.target);
+function makeHandleNodeMouseOver(setHighlightedNodeIds: (highlightedNodeIds: string[]) => void) {
+  return function(evt: EventObjectNode) {
+    setHighlightedNodeIds([ evt.target.data('id') ]);
+  }
 }
 
-function handleNodeMouseOut(evt: EventObjectNode) {
-  unhighlightNode(evt.target);
+function makeHandleNodeMouseOut(setHighlightedNodeIds: (highlightedNodeIds: string[]) => void) {
+  return function(_: EventObjectNode) {
+    setHighlightedNodeIds([]);
+  }
 }
 
-function handleEdgeMouseOver(evt: EventObjectEdge) {
-  highlightEdge(evt.target);
-};
+function makeHandleEdgeMouseOver(setHighlightedEdgeId: (highlightedEdgeId: string | undefined) => void) {
+  return function(evt: EventObjectNode) {
+    setHighlightedEdgeId(evt.target.data('id'));
+  }
+}
 
-function handleEdgeMouseOut(evt: EventObjectEdge) {
-  unhighlightEdge(evt.target);
-};
+function makeHandleEdgeMouseOut(setHighlightedEdgeId: (highlightedEdgeId: string | undefined) => void) {
+  return function(_: EventObjectNode) {
+    setHighlightedEdgeId(undefined);
+  }
+}
 
 function highlightNode(node: NodeSingular) {
   node.addClass('highlighted');
