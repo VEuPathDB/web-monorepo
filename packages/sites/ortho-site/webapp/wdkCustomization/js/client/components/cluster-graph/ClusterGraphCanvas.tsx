@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import cytoscape, {
   Core,
@@ -80,6 +80,11 @@ export function ClusterGraphCanvas({
   useEffect(() => {
     setHighlightedEdgeId(highlightedBlastEdgeId);
   }, [ highlightedBlastEdgeId ]);
+
+  const onMouseLeaveCanvas = useCallback(() => {
+    setHighlightedNodeIds([]);
+    setHighlightedEdgeId(undefined);
+  }, []);
 
   useInitializeCyEffect(canvasRef, cyRef, layout, taxonUiMetadata);
 
@@ -182,7 +187,14 @@ export function ClusterGraphCanvas({
     });
   }, [ highlightedEdgeId ]);
 
-  return <div ref={canvasRef} className="ClusterGraphCanvas"></div>;
+  return (
+    <div
+      ref={canvasRef}
+      className="ClusterGraphCanvas"
+      onMouseLeave={onMouseLeaveCanvas}
+    >
+    </div>
+  );
 }
 
 function useInitializeCyEffect(
