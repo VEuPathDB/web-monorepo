@@ -610,13 +610,13 @@ function makeHandleNodeMouseOut(setHighlightedNodeIds: (highlightedNodeIds: stri
 }
 
 function makeHandleEdgeMouseOver(setHighlightedEdgeId: (highlightedEdgeId: string | undefined) => void) {
-  return function(evt: EventObjectNode) {
+  return function(evt: EventObjectEdge) {
     setHighlightedEdgeId(evt.target.data('id'));
   }
 }
 
 function makeHandleEdgeMouseOut(setHighlightedEdgeId: (highlightedEdgeId: string | undefined) => void) {
-  return function(_: EventObjectNode) {
+  return function(_: EventObjectEdge) {
     setHighlightedEdgeId(undefined);
   }
 }
