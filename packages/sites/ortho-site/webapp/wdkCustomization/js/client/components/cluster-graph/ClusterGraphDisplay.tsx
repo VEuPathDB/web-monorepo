@@ -129,7 +129,7 @@ function useEdgeTypeControl(layout: GroupLayout) {
             [edgeType]: selected
           });
         },
-        onMouseOver: () => {
+        onMouseEnter: () => {
           setHighlightedEdgeType(edgeType);
         },
         onMouseLeave: () => {
@@ -236,7 +236,7 @@ function useTaxonLegendEntries(
               {name}
             </React.Fragment>
           ),
-          onMouseOver: () => {
+          onMouseEnter: () => {
             const nodesOfSpecies = Object.entries(genes).reduce(
               (memo, [ nodeId, geneEntry ]) => {
                 if (geneEntry.taxon.abbrev === taxonAbbrev) {
@@ -276,7 +276,7 @@ function useEcNumberLegendEntries(
         key: code,
         symbol: renderSimpleLegendSymbol(color),
         description: `${code} (${count})`,
-        onMouseOver: () => {
+        onMouseEnter: () => {
           const nodesWithEcNumber = Object.entries(genes).reduce(
             (memo, [ nodeId, geneEntry ]) => {
               if (geneEntry.ecNumbers.includes(code)) {
@@ -315,7 +315,7 @@ function usePfamDomainLegendEntries(
         symbol: renderSimpleLegendSymbol(color),
         description: `${accession} (${count})`,
         tooltip: description,
-        onMouseOver: () => {
+        onMouseEnter: () => {
           const nodesWithEcNumber = Object.entries(genes).reduce(
             (memo, [ nodeId, geneEntry ]) => {
               if (accession in geneEntry.pfamDomains) {

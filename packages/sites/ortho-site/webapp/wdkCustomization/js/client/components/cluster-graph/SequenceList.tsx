@@ -23,7 +23,7 @@ export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInfo
     [ setHighlightedSequenceNodeId ]
   );
 
-  const onSequenceRowMouseLeave = useCallback(
+  const onSequenceRowMouseOut = useCallback(
     () => {
       setHighlightedSequenceNodeId(undefined);
     },
@@ -37,7 +37,7 @@ export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInfo
         columns={SEQUENCE_LIST_COLUMNS}
         columnOrder={SEQUENCE_LIST_COLUMN_ORDER}
         onRowMouseOver={onSequenceRowMouseOver}
-        onRowMouseLeave={onSequenceRowMouseLeave}
+        onRowMouseOut={onSequenceRowMouseOut}
       />
     </div>
   );

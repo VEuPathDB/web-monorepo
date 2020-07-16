@@ -35,7 +35,7 @@ export function NodeDetails({
     [ setHighlightedBlastEdgeId ]
   );
 
-  const onBlastRowMouseLeave = useCallback(
+  const onBlastRowMouseOut = useCallback(
     () => {
       setHighlightedBlastEdgeId(undefined);
     },
@@ -60,7 +60,7 @@ export function NodeDetails({
                   columns={BLAST_SCORE_COLUMNS}
                   columnOrder={BLAST_SCORE_COLUMN_ORDER}
                   onRowMouseOver={onBlastRowMouseOver}
-                  onRowMouseLeave={onBlastRowMouseLeave}
+                  onRowMouseOut={onBlastRowMouseOut}
                 />
               </GraphAccordion>
               <GraphAccordion title="PFam Domains">
