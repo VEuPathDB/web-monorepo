@@ -485,7 +485,7 @@ function useStyle(
           'text-valign': 'center',
           'text-margin-x': 2,
           'text-margin-y': -6,
-          'z-index': 3,
+          'z-index': 4,
           'font-size': 15,
           'font-weight': 'bold'
         }
@@ -529,12 +529,11 @@ function useStyle(
       {
         selector: 'edge.highlighted',
         css: {
-          'opacity': 1,
           'width': 3,
           'label': 'data(label)',
           'text-outline-color': 'white',
           'text-outline-width': 2,
-          'z-index': 4,
+          'z-index': 3,
           'font-size': 15,
           'font-weight': 'bold'
         }
