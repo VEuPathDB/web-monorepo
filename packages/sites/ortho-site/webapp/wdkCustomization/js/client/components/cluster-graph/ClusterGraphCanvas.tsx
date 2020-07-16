@@ -128,7 +128,7 @@ export function ClusterGraphCanvas({
           highlightEdgeType(edge);
         }
       })
-    })
+    });
   }, [ highlightedEdgeType ]);
 
   useCyEffect(cyRef, cy => {
