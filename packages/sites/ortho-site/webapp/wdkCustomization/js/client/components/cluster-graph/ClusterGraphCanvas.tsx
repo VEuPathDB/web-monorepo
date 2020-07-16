@@ -207,7 +207,14 @@ function useInitializeCyEffect(
   );
 
   const edges = useEdges(layout);
-  const style = useStyle(ecNumberNPieSlices, pfamDomainNPieSlices);
+
+  const style = useStyle(
+    ecNumberNPieSlices,
+    pfamDomainNPieSlices,
+    layout.minEvalueExp,
+    layout.maxEvalueExp
+  );
+
   const options = useOptions();
 
   useEffect(() => {
@@ -391,18 +398,23 @@ interface EdgeData {
   type: EdgeType;
   label: string;
   eValue: number;
+  score: number;
 }
 
 function useEdges(layout: GroupLayout): EdgeDefinition[] {
   return useMemo(
     () =>
-      Object.entries(layout.edges).map(([ edgeId, edgeEntry ]) =>
-        ({
-          group: 'edges',
-          data: makeEdgeData(edgeId, edgeEntry),
-          selectable: false
-        })
-  ), [ layout.edges ]);
+      Object.entries(layout.edges)
+        .map(([ edgeId, edgeEntry ]) =>
+          ({
+            group: 'edges',
+            data: makeEdgeData(edgeId, edgeEntry),
+            selectable: false
+          }) as const
+        )
+        .sort((e1, e2) => e2.data.score - e1.data.score),
+    [ layout.edges ]
+  );
 }
 
 function makeEdgeData(edgeId: string, edgeEntry: EdgeEntry): EdgeData {
@@ -412,11 +424,17 @@ function makeEdgeData(edgeId: string, edgeEntry: EdgeEntry): EdgeData {
     target: edgeEntry.subjectId,
     type: edgeEntry.T,
     label: `${edgeTypeDisplayNames[edgeEntry.T]}, evalue=${edgeEntry.E}`,
-    eValue: Number(edgeEntry.E)
+    eValue: Number(edgeEntry.E),
+    score: edgeEntry.score
   };
 }
 
-function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number): Stylesheet[] {
+function useStyle(
+  ecNumberNPieSlices: number,
+  pfamDomainNPieSlices: number,
+  minEvalueExp: number,
+  maxEvalueExp: number
+): Stylesheet[] {
   return useMemo(
     () => [
       {
@@ -502,9 +520,8 @@ function useStyle(ecNumberNPieSlices: number, pfamDomainNPieSlices: number): Sty
         selector: 'edge',
         css: {
           'curve-style': 'straight',
-          'line-color': 'black',
+          'line-color': `mapData(score, ${maxEvalueExp}, ${minEvalueExp}, #e9e9e9, black)`,
           'width': 1,
-          'opacity': 0.2,
           'z-index-compare': 'manual',
           'z-index': 1
         }
