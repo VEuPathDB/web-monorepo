@@ -30,11 +30,16 @@ import { SequenceList } from './SequenceList';
 import './ClusterGraphDisplay.scss';
 
 interface Props {
+  groupName: string;
   layout: GroupLayout;
   taxonUiMetadata: TaxonUiMetadata;
 }
 
-export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
+export function ClusterGraphDisplay({
+  groupName,
+  layout,
+  taxonUiMetadata
+}: Props) {
   const {
     edgeTypeOptions,
     highlightedEdgeType,
@@ -74,7 +79,10 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
 
   return (
     <div className="ClusterGraphDisplay">
-      <Instructions />
+      <Instructions
+        groupName={groupName}
+        maxEValueExp={layout.maxEvalueExp}
+      />
       <GraphControls
         edgeTypeOptions={edgeTypeOptions}
         minEValueExp={minEValueExp}

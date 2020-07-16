@@ -21,5 +21,9 @@ export function GroupClusterGraphController({ groupName }: Props) {
 
   return layout == null || taxonUiMetadata == null
     ? <Loading />
-    : <ClusterGraphDisplay layout={layout} taxonUiMetadata={taxonUiMetadata} />;
+    : <ClusterGraphDisplay
+        groupName={groupName}
+        layout={layout}
+        taxonUiMetadata={taxonUiMetadata}
+      />;
 }
