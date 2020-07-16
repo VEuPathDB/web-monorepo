@@ -13,7 +13,7 @@ class DataRow extends React.PureComponent {
     this.state = { expanded: false };
     this.handleRowClick = this.handleRowClick.bind(this);
     this.handleRowMouseOver = this.handleRowMouseOver.bind(this);
-    this.handleRowMouseLeave = this.handleRowMouseLeave.bind(this);
+    this.handleRowMouseOut = this.handleRowMouseOut.bind(this);
     this.expandRow = this.expandRow.bind(this);
     this.collapseRow = this.collapseRow.bind(this);
     this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
@@ -54,12 +54,12 @@ class DataRow extends React.PureComponent {
     }
   }
 
-  handleRowMouseLeave () {
+  handleRowMouseOut () {
     const { row, rowIndex, options } = this.props;
-    const { onRowMouseLeave } = options;
+    const { onRowMouseOut } = options;
 
-    if (typeof onRowMouseLeave === 'function') {
-      onRowMouseLeave(row, rowIndex);
+    if (typeof onRowMouseOut === 'function') {
+      onRowMouseOut(row, rowIndex);
     }
   }
 
@@ -91,7 +91,7 @@ class DataRow extends React.PureComponent {
         style={rowStyle}
         onClick={this.handleRowClick}
         onMouseOver={this.handleRowMouseOver}
-        onMouseLeave={this.handleRowMouseLeave}
+        onMouseOut={this.handleRowMouseOut}
       >
         {!hasSelectionColumn
           ? null
