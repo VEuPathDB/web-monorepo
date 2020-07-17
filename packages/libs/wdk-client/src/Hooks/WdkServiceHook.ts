@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { notifyUnhandledError } from "wdk-client/Actions/UnhandledErrorActions";
 
-export interface ServiceCallback<S, T> {
+export interface ServiceCallback<S extends WdkService, T> {
   (service: S): Promise<T>;
 }
 
