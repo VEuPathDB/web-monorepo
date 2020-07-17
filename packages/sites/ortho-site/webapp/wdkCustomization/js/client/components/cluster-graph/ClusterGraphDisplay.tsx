@@ -137,10 +137,10 @@ function useEdgeTypeControl(layout: GroupLayout) {
             [edgeType]: selected
           });
         },
-        onMouseEnter: () => {
+        onMouseOver: () => {
           setHighlightedEdgeType(edgeType);
         },
-        onMouseLeave: () => {
+        onMouseOut: () => {
           setHighlightedEdgeType(undefined);
         }
       })
@@ -244,7 +244,7 @@ function useTaxonLegendEntries(
               {name}
             </React.Fragment>
           ),
-          onMouseEnter: () => {
+          onMouseOver: () => {
             const nodesOfSpecies = Object.entries(genes).reduce(
               (memo, [ nodeId, geneEntry ]) => {
                 if (geneEntry.taxon.abbrev === taxonAbbrev) {
@@ -258,7 +258,7 @@ function useTaxonLegendEntries(
 
             setHighlightedLegendNodeIds(nodesOfSpecies);
           },
-          onMouseLeave: () => {
+          onMouseOut: () => {
             setHighlightedLegendNodeIds([]);
           }
         };
@@ -284,7 +284,7 @@ function useEcNumberLegendEntries(
         key: code,
         symbol: renderSimpleLegendSymbol(color),
         description: `${code} (${count})`,
-        onMouseEnter: () => {
+        onMouseOver: () => {
           const nodesWithEcNumber = Object.entries(genes).reduce(
             (memo, [ nodeId, geneEntry ]) => {
               if (geneEntry.ecNumbers.includes(code)) {
@@ -298,7 +298,7 @@ function useEcNumberLegendEntries(
 
           setHighlightedLegendNodeIds(nodesWithEcNumber);
         },
-        onMouseLeave: () => {
+        onMouseOut: () => {
           setHighlightedLegendNodeIds([]);
         }
       })
@@ -323,7 +323,7 @@ function usePfamDomainLegendEntries(
         symbol: renderSimpleLegendSymbol(color),
         description: `${accession} (${count})`,
         tooltip: description,
-        onMouseEnter: () => {
+        onMouseOver: () => {
           const nodesWithEcNumber = Object.entries(genes).reduce(
             (memo, [ nodeId, geneEntry ]) => {
               if (accession in geneEntry.pfamDomains) {
@@ -337,7 +337,7 @@ function usePfamDomainLegendEntries(
 
           setHighlightedLegendNodeIds(nodesWithEcNumber);
         },
-        onMouseLeave: () => {
+        onMouseOut: () => {
           setHighlightedLegendNodeIds([]);
         }
       })

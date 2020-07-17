@@ -74,12 +74,12 @@ function EdgeOptions({
           <div className="EdgeTypeOptions">
             {
               edgeTypeOptions.map(
-                ({ key, display, isSelected, onChange, onMouseEnter, onMouseLeave }) =>
+                ({ key, display, isSelected, onChange, onMouseOver, onMouseOut }) =>
                   <div
                     className="EdgeTypeOption"
                     key={key}
-                    onMouseEnter={onMouseEnter}
-                    onMouseLeave={onMouseLeave}
+                    onMouseOver={onMouseOver}
+                    onMouseOut={onMouseOut}
                   >
                     <Checkbox
                       value={isSelected}
@@ -208,8 +208,8 @@ export interface LegendEntryProps {
   symbol: React.ReactNode;
   description: string;
   tooltip?: React.ReactNode;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
+  onMouseOver?: () => void;
+  onMouseOut?: () => void;
 }
 
 const TOOLTIP_POSITION = {
@@ -217,9 +217,9 @@ const TOOLTIP_POSITION = {
   at: 'bottom right'
 };
 
-function LegendEntry({ symbol, tooltip, description, onMouseEnter, onMouseLeave }: LegendEntryProps) {
+function LegendEntry({ symbol, tooltip, description, onMouseOver, onMouseOut }: LegendEntryProps) {
   const legendContent = (
-    <div className="LegendEntry" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div className="LegendEntry" onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
       {symbol}
       {description}
     </div>
