@@ -36,16 +36,18 @@ export interface EdgeTypeOption {
   onMouseOut: () => void;
 }
 
-export type NodeDisplayType = 'taxa' | 'ec-numbers' | 'pfam-domains';
+export type NodeDisplayType = 'taxa' | 'ec-numbers' | 'pfam-domains' | 'core-peripheral';
 
 export const nodeDisplayTypeDisplayNames: Record<NodeDisplayType, string> = {
   'taxa': 'Taxa',
   'ec-numbers': 'EC Numbers',
-  'pfam-domains': 'PFam Domains'
+  'pfam-domains': 'PFam Domains',
+  'core-peripheral': 'Core/Peripheral'
 };
 
 export const nodeDisplayTypeOrder: NodeDisplayType[] = [
   'taxa',
   'ec-numbers',
-  'pfam-domains'
+  'pfam-domains',
+  'core-peripheral'
 ];

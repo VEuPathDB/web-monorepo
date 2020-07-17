@@ -190,13 +190,15 @@ function useNodeDisplayTypeControl(
   const legendEntries = {
     'taxa': taxonLegendEntries,
     'ec-numbers': ecNumberLegendEntries,
-    'pfam-domains': pfamDomainLegendEntries
+    'pfam-domains': pfamDomainLegendEntries,
+    'core-peripheral': []
   };
 
   const legendHeaders = {
     'taxa': 'Mouse over a taxon legend to highlight sequences of that taxon.',
     'ec-numbers': 'The EC Numbers are rendered in a pie chart for each gene.',
-    'pfam-domains': 'The PFam Domains are rendered in a pie chart for each gene.'
+    'pfam-domains': 'The PFam Domains are rendered in a pie chart for each gene.',
+    'core-peripheral': 'The core and peripheral proteins are colored as shown below.'
   };
 
   const nodeDisplayTypeOptions = useMemo(
