@@ -22,7 +22,6 @@ import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/q
 import { GenesByBindingSiteFeature } from './components/questions/GenesByBindingSiteFeature';
 import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
-import { RadioParams } from './components/questions/RadioParams';
 
 
 export default [
@@ -80,15 +79,6 @@ export default [
       question.properties.datasetSubtype
     ),    
     component: InternalGeneDataset
-  },
-  {
-    type: 'questionForm',
-    test: ({ question }) => !!(
-      question && 
-      question.properties && 
-      question.properties['radio-params']
-    ),
-    component: RadioParams
   },
   {
     type: 'questionForm',
