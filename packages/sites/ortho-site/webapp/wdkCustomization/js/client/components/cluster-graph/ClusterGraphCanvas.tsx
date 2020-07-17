@@ -14,8 +14,10 @@ import cytoscape, {
 import { noop, orderBy, range } from 'lodash';
 
 import {
-  NodeDisplayType,
   EdgeType,
+  NodeDisplayType,
+  ProteinType,
+  corePeripheralLegendColors,
   edgeTypeDisplayNames
 } from '../../utils/clusterGraph';
 import {
@@ -33,6 +35,7 @@ const MAX_PIE_SLICES = 16;
 
 interface Props {
   layout: GroupLayout;
+  corePeripheralMap: Record<string, ProteinType>;
   taxonUiMetadata: TaxonUiMetadata;
   selectedEdgeTypes: Record<EdgeType, boolean>;
   highlightedEdgeType: EdgeType | undefined;
@@ -46,6 +49,7 @@ interface Props {
 
 export function ClusterGraphCanvas({
   layout,
+  corePeripheralMap,
   taxonUiMetadata,
   selectedEdgeTypes,
   highlightedEdgeType,
@@ -86,7 +90,13 @@ export function ClusterGraphCanvas({
     setHighlightedEdgeId(undefined);
   }, []);
 
-  useInitializeCyEffect(canvasRef, cyRef, layout, taxonUiMetadata);
+  useInitializeCyEffect(
+    canvasRef,
+    cyRef,
+    layout,
+    corePeripheralMap,
+    taxonUiMetadata
+  );
 
   useCyEffect(cyRef, cy => {
     const handleNodeClick = makeHandleNodeClick(onClickNode);
@@ -201,6 +211,7 @@ function useInitializeCyEffect(
   canvasRef: React.RefObject<HTMLDivElement>,
   cyRef: React.MutableRefObject<Core | undefined>,
   layout: GroupLayout,
+  corePeripheralMap: Record<string, ProteinType>,
   taxonUiMetadata: TaxonUiMetadata
 ) {
   const orderedEcNumbers = useOrderedEcNumbers(layout);
@@ -211,6 +222,7 @@ function useInitializeCyEffect(
 
   const nodes = useNodes(
     layout,
+    corePeripheralMap,
     taxonUiMetadata,
     orderedEcNumbers,
     ecNumberNPieSlices,
@@ -291,6 +303,7 @@ function useOrderedPfamDomains(layout: GroupLayout) {
 
 function useNodes(
   layout: GroupLayout,
+  corePeripheralMap: Record<string, ProteinType>,
   taxonUiMetadata: TaxonUiMetadata,
   orderedEcNumbers: EcNumberEntry[],
   ecNumberNPieSlices: number,
@@ -303,14 +316,17 @@ function useNodes(
         nodeEntry =>
           ({
             group: 'nodes',
-            data: nodeEntryToCytoscapeData(
-              nodeEntry,
-              layout,
-              taxonUiMetadata,
-              orderedEcNumbers,
-              ecNumberNPieSlices,
-              orderedPfamDomains,
-              pfamDomainNPieSlices
+            data: (
+              nodeEntryToCytoscapeData(
+                nodeEntry,
+                layout,
+                corePeripheralMap,
+                taxonUiMetadata,
+                orderedEcNumbers,
+                ecNumberNPieSlices,
+                orderedPfamDomains,
+                pfamDomainNPieSlices
+              )
             ),
             position: {
               x: Number(nodeEntry.x),
@@ -324,6 +340,7 @@ function useNodes(
 
 interface NodeData {
   id: string;
+  corePeripheralColor: string;
   groupColor: string;
   speciesColor: string;
   ecPieColors: string[];
@@ -335,6 +352,7 @@ interface NodeData {
 function nodeEntryToCytoscapeData(
   nodeEntry: NodeEntry,
   layout: GroupLayout,
+  corePeripheralMap: Record<string, ProteinType>,
   taxonUiMetadata: TaxonUiMetadata,
   orderedEcNumbers: EcNumberEntry[],
   ecNumberNPieSlices: number,
@@ -343,10 +361,22 @@ function nodeEntryToCytoscapeData(
 ): NodeData {
   return {
     id: nodeEntry.id,
+    corePeripheralColor: nodeEntryToCorePeripheralColor(nodeEntry, layout, corePeripheralMap),
     ...nodeEntryToTaxonColors(nodeEntry, layout, taxonUiMetadata),
     ...nodeEntryToEcNumberPieData(nodeEntry, layout, orderedEcNumbers, ecNumberNPieSlices),
     ...nodeEntryToPfamDomainPieData(nodeEntry, layout, orderedPfamDomains, pfamDomainNPieSlices),
   };
+}
+
+function nodeEntryToCorePeripheralColor(
+  nodeEntry: NodeEntry,
+  { group: { genes } }: GroupLayout,
+  corePeripheralMap: Record<string, ProteinType>
+) {
+  const taxonAbbrev = genes[nodeEntry.id].taxon.abbrev;
+  const proteinType = corePeripheralMap[taxonAbbrev];
+
+  return corePeripheralLegendColors[proteinType];
 }
 
 function nodeEntryToTaxonColors(
@@ -483,6 +513,14 @@ function useStyle(
           'border-color': 'black',
           'border-width': 1,
           ...makePieStyles(pfamDomainNPieSlices, 'pfam')
+        }
+      },
+      {
+        selector: 'node.core-peripheral',
+        css: {
+          'background-color': 'data(corePeripheralColor)',
+          'border-color': 'black',
+          'border-width': 1,
         }
       },
       {

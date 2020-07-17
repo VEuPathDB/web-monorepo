@@ -102,6 +102,7 @@ export function ClusterGraphDisplay({
       />
       <ClusterGraphCanvas
         layout={layout}
+        corePeripheralMap={corePeripheralMap}
         taxonUiMetadata={taxonUiMetadata}
         selectedNodeDisplayType={selectedNodeDisplayType}
         highlightedEdgeType={highlightedEdgeType}
