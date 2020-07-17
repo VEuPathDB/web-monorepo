@@ -1,3 +1,7 @@
+import { keyBy, mapValues, once } from 'lodash';
+
+import { GenomeSourcesRows } from '../utils/dataSummary';
+
 import { useOrthoService } from './orthoService';
 
 export function useGenomeSourcesRows() {
@@ -12,4 +16,23 @@ export function useGenomeStatisticsRows() {
     orthoService => orthoService.getGenomeStatistics(),
     []
   );
+}
+
+function makeCorePeripheralMap(genomeSourcesRows: GenomeSourcesRows): Record<string, 'Core' | 'Peripheral'> {
+  const speciesByAbbrev = keyBy(genomeSourcesRows, 'three_letter_abbrev');
+
+  return mapValues(
+    speciesByAbbrev,
+    genomeSourcesRow => genomeSourcesRow.core_peripheral
+  );
+}
+
+const memoizedCorePeripheralMapMaker = once(makeCorePeripheralMap);
+
+export function useCorePeripheralMap() {
+  const genomeSourcesRows = useGenomeSourcesRows();
+
+  return genomeSourcesRows == null
+    ? undefined
+    : memoizedCorePeripheralMapMaker(genomeSourcesRows);
 }
