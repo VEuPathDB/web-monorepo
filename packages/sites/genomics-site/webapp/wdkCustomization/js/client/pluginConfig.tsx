@@ -10,6 +10,7 @@ import {
   StepAnalysisEupathExternalResult,
   StepAnalysisHpiGeneListResults,
 } from 'wdk-client/Plugins';
+import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin';
 
 import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumberCheckbox';
 
@@ -23,8 +24,7 @@ import { GenesByBindingSiteFeature } from './components/questions/GenesByBinding
 import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
 
-
-export default [
+const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'summaryView',
     name: '_default',
@@ -177,3 +177,5 @@ export default [
     component: StepAnalysisHpiGeneListResults
   },
 ];
+
+export default apiPluginConfig;
