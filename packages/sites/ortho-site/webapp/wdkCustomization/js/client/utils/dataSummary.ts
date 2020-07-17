@@ -18,7 +18,19 @@ export interface GenomeSourcesRow {
   three_letter_abbrev: string;
 }
 
+export interface GenomeStatisticsRow {
+  clustered_sequences: string;
+  core_peripheral: 'Core' | 'Peripheral';
+  groups: string;
+  name: string;
+  root_taxon: string;
+  sequences: string;
+  three_letter_abbrev: string;
+}
+
 export type GenomeSourcesRows = GenomeSourcesRow[];
+
+export type GenomeStatisticsRows = GenomeStatisticsRow[];
 
 const genomeSourcesRowDecoder: Decoder<GenomeSourcesRow> = record({
   core_peripheral: oneOf(constant('Core'), constant('Peripheral')),
@@ -32,3 +44,16 @@ const genomeSourcesRowDecoder: Decoder<GenomeSourcesRow> = record({
 
 export const genomeSourcesRowsDecoder: Decoder<GenomeSourcesRows> =
   arrayOf(genomeSourcesRowDecoder);
+
+const genomeStatisticsRowDecoder: Decoder<GenomeStatisticsRow> = record({
+  clustered_sequences: string,
+  core_peripheral: oneOf(constant('Core'), constant('Peripheral')),
+  groups: string,
+  name: string,
+  root_taxon: string,
+  sequences: string,
+  three_letter_abbrev: string
+});
+
+export const genomeStatisticsRowsDecoder: Decoder<GenomeStatisticsRows> =
+  arrayOf(genomeStatisticsRowDecoder);
