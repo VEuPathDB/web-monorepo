@@ -1,5 +1,6 @@
 import { keyBy, mapValues, once } from 'lodash';
 
+import { ProteinType } from '../utils/clusterGraph';
 import { GenomeSourcesRows } from '../utils/dataSummary';
 
 import { useOrthoService } from './orthoService';
@@ -18,7 +19,7 @@ export function useGenomeStatisticsRows() {
   );
 }
 
-function makeCorePeripheralMap(genomeSourcesRows: GenomeSourcesRows): Record<string, 'Core' | 'Peripheral'> {
+function makeCorePeripheralMap(genomeSourcesRows: GenomeSourcesRows): Record<string, ProteinType> {
   const speciesByAbbrev = keyBy(genomeSourcesRows, 'three_letter_abbrev');
 
   return mapValues(

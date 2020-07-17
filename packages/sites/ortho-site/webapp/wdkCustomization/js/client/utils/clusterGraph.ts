@@ -51,3 +51,15 @@ export const nodeDisplayTypeOrder: NodeDisplayType[] = [
   'pfam-domains',
   'core-peripheral'
 ];
+
+export type ProteinType = 'Core' | 'Peripheral';
+
+export const corePeripheralLegendOrder: ProteinType[] = [
+  'Core',
+  'Peripheral'
+];
+
+export const corePeripheralLegendColors: Record<ProteinType, string> = {
+  Core: '#0000FF',
+  Peripheral: '#00FF00'
+};

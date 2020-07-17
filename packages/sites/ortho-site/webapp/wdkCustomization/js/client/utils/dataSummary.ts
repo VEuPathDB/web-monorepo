@@ -8,8 +8,10 @@ import {
   string
 } from 'wdk-client/Utils/Json';
 
+import { ProteinType } from './clusterGraph';
+
 export interface GenomeSourcesRow {
-  core_peripheral: 'Core' | 'Peripheral';
+  core_peripheral: ProteinType;
   description: string | null;
   name: string;
   resource_name: string;
@@ -20,7 +22,7 @@ export interface GenomeSourcesRow {
 
 export interface GenomeStatisticsRow {
   clustered_sequences: string;
-  core_peripheral: 'Core' | 'Peripheral';
+  core_peripheral: ProteinType;
   groups: string;
   name: string;
   root_taxon: string;

@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { orderBy } from 'lodash';
+import { groupBy, mapValues, orderBy } from 'lodash';
 
 import {
   EdgeType,
   EdgeTypeOption,
   NodeDisplayType,
+  ProteinType,
+  corePeripheralLegendColors,
+  corePeripheralLegendOrder,
   edgeTypeOptionOrder,
   edgeTypeDisplayNames,
   initialEdgeTypeSelections,
@@ -33,9 +36,11 @@ interface Props {
   groupName: string;
   layout: GroupLayout;
   taxonUiMetadata: TaxonUiMetadata;
+  corePeripheralMap: Record<string, ProteinType>;
 }
 
 export function ClusterGraphDisplay({
+  corePeripheralMap,
   groupName,
   layout,
   taxonUiMetadata
@@ -60,7 +65,7 @@ export function ClusterGraphDisplay({
     legendEntries,
     legendHeaders,
     highlightedLegendNodeIds
-  } = useNodeDisplayTypeControl(layout, taxonUiMetadata);
+  } = useNodeDisplayTypeControl(layout, corePeripheralMap, taxonUiMetadata);
 
   const {
     activeTab,
@@ -172,7 +177,8 @@ function useScoreControl(layout: GroupLayout) {
 
 function useNodeDisplayTypeControl(
   layout: GroupLayout,
-  taxonUiMetadata: TaxonUiMetadata
+  corePeripheralMap: Props['corePeripheralMap'],
+  taxonUiMetadata: TaxonUiMetadata,
 ) {
   const initialNodeDisplayTypeSelection = 'taxa';
 
@@ -186,12 +192,13 @@ function useNodeDisplayTypeControl(
   const taxonLegendEntries = useTaxonLegendEntries(layout, taxonUiMetadata, setHighlightedLegendNodeIds);
   const ecNumberLegendEntries = useEcNumberLegendEntries(layout, setHighlightedLegendNodeIds);
   const pfamDomainLegendEntries = usePfamDomainLegendEntries(layout, setHighlightedLegendNodeIds);
+  const corePeripheralLegendEntries = useCorePeripheralLegendEntries(layout, corePeripheralMap, setHighlightedLegendNodeIds);
 
   const legendEntries = {
     'taxa': taxonLegendEntries,
     'ec-numbers': ecNumberLegendEntries,
     'pfam-domains': pfamDomainLegendEntries,
-    'core-peripheral': []
+    'core-peripheral': corePeripheralLegendEntries
   };
 
   const legendHeaders = {
@@ -345,6 +352,55 @@ function usePfamDomainLegendEntries(
       })
     );
   }, [ pfamDomains, genes ]);
+}
+
+function useCorePeripheralLegendEntries(
+  { group: { genes } }: GroupLayout,
+  corePeripheralMap: Props['corePeripheralMap'],
+  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
+) {
+  return useMemo(
+    () => {
+      const proteinsByType = groupBy(
+        Object.entries(genes),
+        ([_, gene]) => corePeripheralMap[gene.taxon.abbrev]
+      );
+
+      const legendCountsByProteinType = mapValues(
+        proteinsByType,
+        proteinsOfType => proteinsOfType.length
+      );
+
+      const nodeIdsByProteinType = mapValues(
+        proteinsByType,
+        proteinsOfType => proteinsOfType.map(([ nodeId ]) => nodeId)
+      );
+
+      return corePeripheralLegendOrder.map(proteinType => {
+        const count = legendCountsByProteinType[proteinType];
+        const color = corePeripheralLegendColors[proteinType];
+        const nodesOfType = nodeIdsByProteinType[proteinType];
+
+        return {
+          key: proteinType,
+          symbol: renderSimpleLegendSymbol(color),
+          description: `${proteinType} (${count})`,
+          tooltip: (
+            <React.Fragment>
+              There are {count} {proteinType.toLowerCase()} proteins.
+            </React.Fragment>
+          ),
+          onMouseOver: () => {
+            setHighlightedLegendNodeIds(nodesOfType);
+          },
+          onMouseOut: () => {
+            setHighlightedLegendNodeIds([]);
+          }
+        };
+      });
+    },
+    [ corePeripheralMap, genes ]
+  );
 }
 
 function renderSimpleLegendSymbol(color: string) {

@@ -66,7 +66,9 @@
     grid-template-columns: 6.8em 6.8em 6.8em;
   }
 
-  .ControlSection.ec-numbers .LegendContent, .ControlSection.pfam-domains .LegendContent {
+  .ControlSection.ec-numbers .LegendContent,
+  .ControlSection.pfam-domains .LegendContent,
+  .ControlSection.core-peripheral .LegendContent {
     grid-template-columns: 9.3em 9.3em;
   }
 
