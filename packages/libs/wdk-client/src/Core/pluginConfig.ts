@@ -5,7 +5,6 @@ import DefaultQuestionController from 'wdk-client/Controllers/QuestionController
 
 // Default set of plugins provided by wdk
 // FIXME Make this typesafe by enumerating
-// TODO Move the custom question pages/parameters to the registries for Ebrc and/or Api
 const pluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionController',
