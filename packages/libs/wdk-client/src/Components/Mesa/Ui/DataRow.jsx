@@ -12,6 +12,8 @@ class DataRow extends React.PureComponent {
     super(props);
     this.state = { expanded: false };
     this.handleRowClick = this.handleRowClick.bind(this);
+    this.handleRowMouseOver = this.handleRowMouseOver.bind(this);
+    this.handleRowMouseOut = this.handleRowMouseOut.bind(this);
     this.expandRow = this.expandRow.bind(this);
     this.collapseRow = this.collapseRow.bind(this);
     this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
@@ -43,6 +45,24 @@ class DataRow extends React.PureComponent {
     if (typeof onRowClick === 'function') onRowClick(row, rowIndex);
   }
 
+  handleRowMouseOver () {
+    const { row, rowIndex, options } = this.props;
+    const { onRowMouseOver } = options;
+
+    if (typeof onRowMouseOver === 'function') {
+      onRowMouseOver(row, rowIndex);
+    }
+  }
+
+  handleRowMouseOut () {
+    const { row, rowIndex, options } = this.props;
+    const { onRowMouseOut } = options;
+
+    if (typeof onRowMouseOut === 'function') {
+      onRowMouseOut(row, rowIndex);
+    }
+  }
+
   render () {
     const { row, rowIndex, columns, options, actions, eventHandlers } = this.props;
     const { expanded } = this.state;
@@ -65,7 +85,14 @@ class DataRow extends React.PureComponent {
     const sharedProps = { row, inline, options, rowIndex };
 
     return (
-      <tr className={className} tabIndex={this.props.options.onRowClick ? -1 : undefined} style={rowStyle} onClick={this.handleRowClick}>
+      <tr
+        className={className}
+        tabIndex={this.props.options.onRowClick ? -1 : undefined}
+        style={rowStyle}
+        onClick={this.handleRowClick}
+        onMouseOver={this.handleRowMouseOver}
+        onMouseOut={this.handleRowMouseOut}
+      >
         {!hasSelectionColumn
           ? null
           : <SelectionCell

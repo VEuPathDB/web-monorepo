@@ -3,9 +3,11 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { notifyUnhandledError } from "wdk-client/Actions/UnhandledErrorActions";
 
-interface WdkServiceCallback<T> {
-  (wdkService: WdkService): Promise<T>;
+export interface ServiceCallback<S extends WdkService, T> {
+  (service: S): Promise<T>;
 }
+
+type WdkServiceCallback<T> = ServiceCallback<WdkService, T>;
 
 /**
  * Use WdkService to extract data from the WDK Service REST API.

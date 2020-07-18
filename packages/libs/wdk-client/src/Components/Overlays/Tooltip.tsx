@@ -30,7 +30,7 @@ export interface TooltipPosition {
 
 // FIXME Add `renderContent` props that is a function that returns `typeof content`
 type Props = {
-  content: string | React.ReactElement<any>;
+  content: React.ReactNode;
   open?: boolean;
   classes?: string;
   showTip?: boolean;

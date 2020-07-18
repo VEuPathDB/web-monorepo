@@ -69,6 +69,7 @@ import { AddStepPanelView } from 'wdk-client/Views/Strategy/AddStepPanel';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
 import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
+import SliderInput from 'wdk-client/Components/InputControls/SliderInput';
 
 export {
   AccordionButton,
@@ -131,6 +132,7 @@ export {
   SaveableTextEditor,
   ServerSideAttributeFilter,
   SingleSelect,
+  SliderInput,
   Sticky,
   Tabs,
   TabbableContainer,
