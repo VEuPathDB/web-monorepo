@@ -50,7 +50,7 @@ export const makeTaxonTree = function(taxonEntries: TaxonEntries): TaxonTree {
   const rootEntry = taxonEntries[ROOT_TAXON_ABBREV];
 
   if (rootEntry == null) {
-    throw Error(`Taxon entry '${ROOT_TAXON_ABBREV}' is missing`);
+    throw new Error(`Taxon entry "${ROOT_TAXON_ABBREV}" is missing.`);
   }
 
   return _traverseEntries(rootEntry);
