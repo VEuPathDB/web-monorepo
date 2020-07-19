@@ -117,11 +117,11 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
 
     if (taxonEntry.species) {
       if (taxonEntry.color == null) {
-        throw new Error(`Taxon entry '${taxonAbbrev}' is missing a color`);
+        throw new Error(`Taxon entry "${taxonAbbrev}" is missing a color.`);
       }
 
       if (groupColor == null) {
-        throw new Error(`Taxon entry ${taxonAbbrev} was not assigned a group color.`);
+        throw new Error(`Taxon entry "${taxonAbbrev}" was not assigned a group color.`);
       }
 
       species[taxonAbbrev] = {
