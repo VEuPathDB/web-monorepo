@@ -63,7 +63,12 @@ export function ClusterGraphCanvas({
 }: Props) {
   const cyRef = useRef<Core>();
 
-  const [ cytoscapeConfig, setCytoscapeConfig ] = useCytoscapeConfig(layout, corePeripheralMap, taxonUiMetadata);
+  const [ cytoscapeConfig, setCytoscapeConfig ] = useCytoscapeConfig(
+    layout,
+    corePeripheralMap,
+    taxonUiMetadata,
+    selectedNodeDisplayType
+  );
 
   const [ highlightedNodeIds, setHighlightedNodeIds ] = useState<string[]>([]);
   const previousHighlightedNodeIds = usePreviousValue(highlightedNodeIds);
@@ -216,7 +221,8 @@ export function ClusterGraphCanvas({
 function useCytoscapeConfig(
   layout: GroupLayout,
   corePeripheralMap: Record<string, ProteinType>,
-  taxonUiMetadata: TaxonUiMetadata
+  taxonUiMetadata: TaxonUiMetadata,
+  selectedNodeDisplayType: NodeDisplayType
 ) {
   const orderedEcNumbers = useOrderedEcNumbers(layout);
   const ecNumberNPieSlices = Math.min(orderedEcNumbers.length, MAX_PIE_SLICES);
@@ -231,7 +237,8 @@ function useCytoscapeConfig(
     orderedEcNumbers,
     ecNumberNPieSlices,
     orderedPfamDomains,
-    pfamDomainNPieSlices
+    pfamDomainNPieSlices,
+    selectedNodeDisplayType
   );
 
   const edges = useEdges(layout);
@@ -311,6 +318,7 @@ function useNodes(
   ecNumberNPieSlices: number,
   orderedPfamDomains: PfamDomainEntry[],
   pfamDomainNPieSlices: number,
+  selectedNodeDisplayType: string
 ): NodeDefinition[] {
   return useMemo(
     () =>
@@ -318,6 +326,7 @@ function useNodes(
         nodeEntry =>
           ({
             group: 'nodes',
+            classes: selectedNodeDisplayType,
             data: (
               nodeEntryToCytoscapeData(
                 nodeEntry,
