@@ -153,6 +153,11 @@ export function ClusterGraphCanvas({
     setCytoscapeConfig(newConfig);
   }, [ cytoscapeConfig ]);
 
+  const onMouseLeaveCanvas = useCallback(() => {
+    updateHighlightedNodes([]);
+    updateHighlightedEdge(undefined);
+  }, [ updateHighlightedNodes, updateHighlightedEdge ]);
+
   useEffect(() => {
     const newConfig = produce(cytoscapeConfig, draftConfig => {
       draftConfig.elements.forEach(element => {
@@ -217,11 +222,6 @@ export function ClusterGraphCanvas({
 
     setCytoscapeConfig(newConfig);
   }, [ highlightedEdgeType ]);
-
-  const onMouseLeaveCanvas = useCallback(() => {
-    updateHighlightedNodes([]);
-    updateHighlightedEdge(undefined);
-  }, [ updateHighlightedNodes, updateHighlightedEdge ]);
 
   useCyEffect(cyRef, cy => {
     const handleNodeClick = makeHandleNodeClick(onClickNode);
