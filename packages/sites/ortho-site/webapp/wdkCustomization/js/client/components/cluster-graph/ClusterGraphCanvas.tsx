@@ -263,7 +263,7 @@ function useCytoscapeConfig(
     zoomingEnabled: false,
     userZoomingEnabled: false,
     boxSelectionEnabled: false,
-    autoungrabbify: true,
+    autoungrabify: true,
     autounselectify: true
   };
 
