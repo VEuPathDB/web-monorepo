@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import {
   Core,
-  CytoscapeOptions,
   EdgeDefinition,
   EventObjectEdge,
   EventObjectNode,
@@ -11,6 +10,7 @@ import {
   NodeSingular,
   Stylesheet
 } from 'cytoscape';
+import produce from 'immer';
 import { noop, orderBy, range } from 'lodash';
 import CytoscapeComponent from 'react-cytoscapejs';
 
@@ -70,6 +70,18 @@ export function ClusterGraphCanvas({
 
   const [ highlightedEdgeId, setHighlightedEdgeId ] = useState<string | undefined>(undefined);
   const previousHighlightedEdgeId = usePreviousValue(highlightedEdgeId);
+
+  useEffect(() => {
+    const newConfig = produce(cytoscapeConfig, draftConfig => {
+      draftConfig.elements.forEach(element => {
+        if (element.group === 'nodes') {
+          element.classes = selectedNodeDisplayType;
+        }
+      });
+    });
+
+    setCytoscapeConfig(newConfig);
+  }, [ selectedNodeDisplayType ]);
 
   useEffect(() => {
     setHighlightedNodeIds(highlightedLegendNodeIds);
@@ -156,12 +168,6 @@ export function ClusterGraphCanvas({
       });
     });
   }, [ eValueExp, selectedEdgeTypes ]);
-
-  useCyEffect(cyRef, cy => {
-    cy.batch(() => {
-      cy.nodes().classes(selectedNodeDisplayType);
-    });
-  }, [ selectedNodeDisplayType ]);
 
   useCyEffect(cyRef, cy => {
     cy.batch(() => {
