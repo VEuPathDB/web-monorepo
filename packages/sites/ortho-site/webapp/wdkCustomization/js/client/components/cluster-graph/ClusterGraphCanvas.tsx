@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import cytoscape, {
+import {
   Core,
   CytoscapeOptions,
   EdgeDefinition,
@@ -12,6 +12,7 @@ import cytoscape, {
   Stylesheet
 } from 'cytoscape';
 import { noop, orderBy, range } from 'lodash';
+import CytoscapeComponent from 'react-cytoscapejs';
 
 import {
   EdgeType,
@@ -60,8 +61,9 @@ export function ClusterGraphCanvas({
   highlightedBlastEdgeId,
   onClickNode
 }: Props) {
-  const canvasRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core>();
+
+  const [ cytoscapeConfig, setCytoscapeConfig ] = useCytoscapeConfig(layout, corePeripheralMap, taxonUiMetadata);
 
   const [ highlightedNodeIds, setHighlightedNodeIds ] = useState<string[]>([]);
   const previousHighlightedNodeIds = usePreviousValue(highlightedNodeIds);
@@ -89,14 +91,6 @@ export function ClusterGraphCanvas({
     setHighlightedNodeIds([]);
     setHighlightedEdgeId(undefined);
   }, []);
-
-  useInitializeCyEffect(
-    canvasRef,
-    cyRef,
-    layout,
-    corePeripheralMap,
-    taxonUiMetadata
-  );
 
   useCyEffect(cyRef, cy => {
     const handleNodeClick = makeHandleNodeClick(onClickNode);
@@ -199,17 +193,21 @@ export function ClusterGraphCanvas({
 
   return (
     <div
-      ref={canvasRef}
-      className="ClusterGraphCanvas"
+      className="ClusterGraphCanvasContainer"
       onMouseLeave={onMouseLeaveCanvas}
     >
+      <CytoscapeComponent
+        className="ClusterGraphCanvas"
+        cy={cy => {
+          cyRef.current = cy;
+        }}
+        {...cytoscapeConfig}
+      />
     </div>
   );
 }
 
-function useInitializeCyEffect(
-  canvasRef: React.RefObject<HTMLDivElement>,
-  cyRef: React.MutableRefObject<Core | undefined>,
+function useCytoscapeConfig(
   layout: GroupLayout,
   corePeripheralMap: Record<string, ProteinType>,
   taxonUiMetadata: TaxonUiMetadata
@@ -232,33 +230,31 @@ function useInitializeCyEffect(
 
   const edges = useEdges(layout);
 
-  const style = useStyle(
+  const elements = useMemo(
+    () => [ ...nodes, ...edges ],
+    [ nodes, edges ]
+  );
+
+  const stylesheet = useStylesheet(
     ecNumberNPieSlices,
     pfamDomainNPieSlices,
     layout.minEvalueExp,
     layout.maxEvalueExp
   );
 
-  const options = useOptions();
+  const initialCytoscapeConfig = {
+    elements,
+    stylesheet,
+    layout: { name: 'preset' },
+    zoom: 1,
+    zoomingEnabled: false,
+    userZoomingEnabled: false,
+    boxSelectionEnabled: false,
+    autoungrabbify: true,
+    autounselectify: true
+  };
 
-  useEffect(() => {
-    if (canvasRef.current != null) {
-      const cy = cytoscape({
-        container: canvasRef.current,
-        elements: { nodes, edges },
-        style,
-        ...options
-      });
-
-      cyRef.current = cy;
-    }
-
-    return () => {
-      if (cyRef.current != null) {
-        cyRef.current.destroy();
-      }
-    };
-  }, [ canvasRef.current, nodes, edges, style, options ]);
+  return useState(initialCytoscapeConfig);
 }
 
 interface CyEffectCallback {
@@ -471,7 +467,7 @@ function makeEdgeData(edgeId: string, edgeEntry: EdgeEntry): EdgeData {
   };
 }
 
-function useStyle(
+function useStylesheet(
   ecNumberNPieSlices: number,
   pfamDomainNPieSlices: number,
   minEvalueExp: number,
@@ -593,25 +589,6 @@ function makePieStyles(nPieSlices: number, dataPrefix: string) {
     'pie-size': '100%',
     ...sliceStyles
   };
-}
-
-function useOptions(): CytoscapeOptions {
-  return useMemo(
-    () => ({
-      layout: { name: 'preset' },
-      zoom: 1,
-      zoomingEnabled: false,
-      userZoomingEnabled: false,
-      autolock: true,
-      panningEnabled: false,
-      userPanningEnabled: false,
-      boxSelectionEnabled: false,
-      autoungrabbify: true,
-      autounselectify: true,
-      pixelRatio: window.devicePixelRatio
-    }),
-    []
-  );
 }
 
 function makeHandleNodeClick(onClickNode: Props['onClickNode']) {
