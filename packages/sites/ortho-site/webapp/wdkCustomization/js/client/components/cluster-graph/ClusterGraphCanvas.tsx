@@ -89,6 +89,27 @@ export function ClusterGraphCanvas({
   }, [ selectedNodeDisplayType ]);
 
   useEffect(() => {
+    const newConfig = produce(cytoscapeConfig, draftConfig => {
+      const maxEValue = parseFloat(`1e${eValueExp}`);
+
+      draftConfig.elements.forEach(element => {
+        if (element.group === 'edges') {
+          if (
+            !selectedEdgeTypes[element.data.type as EdgeType] ||
+            element.data.eValue > maxEValue
+          ) {
+            element.classes = addCytoscapeClass(element.classes, 'filtered-out');
+          } else {
+            element.classes = removeCytoscapeClass(element.classes, 'filtered-out');
+          }
+        }
+      });
+    });
+
+    setCytoscapeConfig(newConfig);
+  }, [ eValueExp, selectedEdgeTypes ]);
+
+  useEffect(() => {
     setHighlightedNodeIds(highlightedLegendNodeIds);
   }, [ highlightedLegendNodeIds ]);
 
@@ -156,23 +177,6 @@ export function ClusterGraphCanvas({
       })
     });
   }, [ highlightedEdgeType ]);
-
-  useCyEffect(cyRef, cy => {
-    cy.batch(() => {
-      cy.edges().forEach(unfilterEdge);
-
-      const maxEValue = parseFloat(`1e${eValueExp}`);
-
-      cy.edges().forEach(edge => {
-        if (
-          !selectedEdgeTypes[edge.data('type') as EdgeType] ||
-          edge.data('eValue') > maxEValue
-        ) {
-          filterEdge(edge);
-        }
-      });
-    });
-  }, [ eValueExp, selectedEdgeTypes ]);
 
   useCyEffect(cyRef, cy => {
     cy.batch(() => {
@@ -697,14 +701,6 @@ function unhighlightEdgeType(edge: EdgeSingular) {
   edge.removeClass('type-highlighted');
 }
 
-function filterEdge(edge: EdgeSingular) {
-  edge.addClass('filtered-out');
-}
-
-function unfilterEdge(edge: EdgeSingular) {
-  edge.removeClass('filtered-out');
-}
-
 // https://blog.logrocket.com/how-to-get-previous-props-state-with-react-hooks/
 function usePreviousValue<T>(value: T) {
   const ref = useRef<T>();
@@ -714,4 +710,21 @@ function usePreviousValue<T>(value: T) {
   });
 
   return ref.current;
+}
+
+function addCytoscapeClass(existingClasses: string | undefined, classToAdd: string) {
+  const existingClassesString = existingClasses ?? '';
+
+  const existingClassesArray = existingClassesString.split(/\s+/g);
+
+  return [ ...existingClassesArray, classToAdd ].join(' ');
+}
+
+function removeCytoscapeClass(existingClasses: string | undefined, classToRemove: string) {
+  const existingClassesString = existingClasses ?? '';
+
+  return existingClassesString
+    .split(/\s+/g)
+    .filter(existingClass => existingClass !== classToRemove)
+    .join(' ');
 }
