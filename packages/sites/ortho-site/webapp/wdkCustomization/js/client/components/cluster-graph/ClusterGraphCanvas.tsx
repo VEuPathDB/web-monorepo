@@ -140,6 +140,22 @@ export function ClusterGraphCanvas({
     setHighlightedEdgeId(highlightedBlastEdgeId);
   }, [ highlightedBlastEdgeId ]);
 
+  useEffect(() => {
+    const newConfig = produce(cytoscapeConfig, draftConfig => {
+      draftConfig.elements.forEach(element => {
+        if (element.group === 'edges' && element.data.type != null) {
+          if (element.data.type === highlightedEdgeType) {
+            element.classes = addCytoscapeClass(element.classes, 'type-highlighted');
+          } else {
+            element.classes = removeCytoscapeClass(element.classes, 'type-highlighted');
+          }
+        }
+      });
+    });
+
+    setCytoscapeConfig(newConfig);
+  }, [ highlightedEdgeType ]);
+
   const onMouseLeaveCanvas = useCallback(() => {
     updateHighlightedNodeIds([]);
     setHighlightedEdgeId(undefined);
@@ -180,18 +196,6 @@ export function ClusterGraphCanvas({
       cy.off('mouseout', 'edge', handleEdgeMouseOut);
     };
   }, []);
-
-  useCyEffect(cyRef, cy => {
-    cy.batch(() => {
-      cy.edges().forEach(unhighlightEdgeType);
-
-      cy.edges().forEach(edge => {
-        if (edge.data('type') === highlightedEdgeType) {
-          highlightEdgeType(edge);
-        }
-      })
-    });
-  }, [ highlightedEdgeType ]);
 
   useCyEffect(cyRef, cy => {
     cy.batch(() => {
@@ -692,14 +696,6 @@ function unhighlightEdge(edge: EdgeSingular) {
     .removeClass('highlighted')
     .style('text-valign', null)
     .style('text-margin-y', null);
-}
-
-function highlightEdgeType(edge: EdgeSingular) {
-  edge.addClass('type-highlighted');
-}
-
-function unhighlightEdgeType(edge: EdgeSingular) {
-  edge.removeClass('type-highlighted');
 }
 
 // https://blog.logrocket.com/how-to-get-previous-props-state-with-react-hooks/
