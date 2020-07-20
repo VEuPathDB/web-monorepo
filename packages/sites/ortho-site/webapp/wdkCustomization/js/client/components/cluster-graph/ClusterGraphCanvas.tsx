@@ -7,7 +7,6 @@ import {
   EventObjectNode,
   EdgeSingular,
   NodeDefinition,
-  NodeSingular,
   Stylesheet
 } from 'cytoscape';
 import produce from 'immer';
@@ -643,14 +642,6 @@ function makeHandleEdgeMouseOut(setHighlightedEdgeId: (highlightedEdgeId: string
   return function(_: EventObjectEdge) {
     setHighlightedEdgeId(undefined);
   }
-}
-
-function highlightNode(node: NodeSingular) {
-  node.addClass('highlighted');
-}
-
-function unhighlightNode(node: NodeSingular) {
-  node.removeClass('highlighted');
 }
 
 function highlightEdge(edge: EdgeSingular) {
