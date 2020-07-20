@@ -1,12 +1,12 @@
 import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin';
 
-import { GroupsByPhyleticPattern } from '../questions/GroupsByPhyleticPattern';
+import { Form as GroupsByPhyleticPatternForm } from '../questions/GroupsByPhyleticPattern/Form';
 
 const orthoPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionForm',
     searchName: 'GroupsByPhyleticPattern',
-    component: GroupsByPhyleticPattern
+    component: GroupsByPhyleticPatternForm
   }
 ];
 
