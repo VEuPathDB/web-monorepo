@@ -748,7 +748,7 @@ function makeHighlightedEdgeNodeClasses(edge: EdgeSingular) {
 function addCytoscapeClass(existingClasses: string | undefined, classToAdd: string) {
   const existingClassesString = existingClasses ?? '';
 
-  const existingClassesArray = existingClassesString.split(/\s+/g);
+  const existingClassesArray = existingClassesString.trim().split(/\s+/g);
 
   return existingClassesArray.includes(classToAdd)
     ? existingClasses
@@ -762,7 +762,7 @@ function addCytoscapeClasses(existingClasses: string | undefined, classesToAdd: 
 function removeCytoscapeClass(existingClasses: string | undefined, classToRemove: string) {
   const existingClassesString = existingClasses ?? '';
 
-  const existingClassesArray = existingClassesString.split(/\s+/g);
+  const existingClassesArray = existingClassesString.trim().split(/\s+/g);
 
   return !existingClassesArray.includes(classToRemove)
     ? existingClasses
