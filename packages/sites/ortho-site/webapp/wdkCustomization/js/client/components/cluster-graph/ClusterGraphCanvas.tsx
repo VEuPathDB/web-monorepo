@@ -69,7 +69,7 @@ export function ClusterGraphCanvas({
     selectedNodeDisplayType
   );
 
-  const updateHighlightedNodeIds = useCallback((highlightedNodeIds: string[]) => {
+  const updateHighlightedNodes = useCallback((highlightedNodeIds: string[]) => {
     const newConfig = produce(cytoscapeConfig, draftConfig => {
       const highlightedNodeIdsSet = new Set(highlightedNodeIds);
 
@@ -87,8 +87,71 @@ export function ClusterGraphCanvas({
     setCytoscapeConfig(newConfig);
   }, [ cytoscapeConfig ]);
 
-  const [ highlightedEdgeId, setHighlightedEdgeId ] = useState<string | undefined>(undefined);
-  const previousHighlightedEdgeId = usePreviousValue(highlightedEdgeId);
+  const updateHighlightedEdge = useCallback((highlightedEdgeId: string | undefined) => {
+    const newConfig = produce(cytoscapeConfig, draftConfig => {
+      if (cyRef.current == null) {
+        return;
+      }
+
+      if (highlightedEdgeId === undefined) {
+        draftConfig.elements.forEach(element => {
+          element.classes = removeCytoscapeClasses(
+            element.classes,
+            [
+              'highlighted',
+              'left',
+              'right',
+              'top',
+              'bottom'
+            ]
+          );
+        });
+
+        return;
+      }
+
+      const edge = cyRef.current.getElementById(highlightedEdgeId);
+
+      const {
+        source: highlightedSourceClasses,
+        target: highlightedTargetClasses
+      } = makeHighlightedEdgeNodeClasses(edge);
+
+      const sourceId = highlightedSourceClasses.elementId;
+      const targetId = highlightedTargetClasses.elementId;
+
+      draftConfig.elements.forEach(element => {
+        if (element.data.id === highlightedEdgeId) {
+          element.classes = addCytoscapeClass(element.classes, 'highlighted');
+        } else if (element.data.id === sourceId) {
+          element.classes = addAndRemoveCytoscapeClasses(
+            element.classes,
+            highlightedSourceClasses.classesToAdd,
+            highlightedSourceClasses.classesToRemove
+          );
+        } else if (element.data.id === targetId) {
+          element.classes = addAndRemoveCytoscapeClasses(
+            element.classes,
+            highlightedTargetClasses.classesToAdd,
+            highlightedTargetClasses.classesToRemove
+          );
+        } else {
+          element.classes = removeCytoscapeClasses(
+            element.classes,
+            [
+              'highlighted',
+              'left',
+              'right',
+              'top',
+              'bottom'
+            ]
+          );
+        }
+      });
+    });
+
+    setCytoscapeConfig(newConfig);
+  }, [ cytoscapeConfig ]);
 
   useEffect(() => {
     const newConfig = produce(cytoscapeConfig, draftConfig => {
@@ -124,7 +187,7 @@ export function ClusterGraphCanvas({
   }, [ eValueExp, selectedEdgeTypes ]);
 
   useEffect(() => {
-    updateHighlightedNodeIds(highlightedLegendNodeIds);
+    updateHighlightedNodes(highlightedLegendNodeIds);
   }, [ highlightedLegendNodeIds ]);
 
   useEffect(() => {
@@ -132,11 +195,11 @@ export function ClusterGraphCanvas({
       ? [ ]
       : [ highlightedSequenceNodeId ];
 
-    updateHighlightedNodeIds(newHighlightedNodeIds);
+    updateHighlightedNodes(newHighlightedNodeIds);
   }, [ highlightedSequenceNodeId ]);
 
   useEffect(() => {
-    setHighlightedEdgeId(highlightedBlastEdgeId);
+    updateHighlightedEdge(highlightedBlastEdgeId);
   }, [ highlightedBlastEdgeId ]);
 
   useEffect(() => {
@@ -156,9 +219,9 @@ export function ClusterGraphCanvas({
   }, [ highlightedEdgeType ]);
 
   const onMouseLeaveCanvas = useCallback(() => {
-    updateHighlightedNodeIds([]);
-    setHighlightedEdgeId(undefined);
-  }, []);
+    updateHighlightedNodes([]);
+    updateHighlightedEdge(undefined);
+  }, [ updateHighlightedNodes, updateHighlightedEdge ]);
 
   useCyEffect(cyRef, cy => {
     const handleNodeClick = makeHandleNodeClick(onClickNode);
@@ -171,8 +234,8 @@ export function ClusterGraphCanvas({
   }, [ onClickNode ]);
 
   useCyEffect(cyRef, cy => {
-    const handleNodeMouseOver = makeHandleNodeMouseOver(updateHighlightedNodeIds);
-    const handleNodeMouseOut = makeHandleNodeMouseOut(updateHighlightedNodeIds);
+    const handleNodeMouseOver = makeHandleNodeMouseOver(updateHighlightedNodes);
+    const handleNodeMouseOut = makeHandleNodeMouseOut(updateHighlightedNodes);
 
     cy.on('mouseover', 'node', handleNodeMouseOver);
     cy.on('mouseout', 'node', handleNodeMouseOut);
@@ -181,11 +244,11 @@ export function ClusterGraphCanvas({
       cy.off('mouseover', 'node', handleNodeMouseOver);
       cy.off('mouseout', 'node', handleNodeMouseOut);
     };
-  }, []);
+  }, [ updateHighlightedNodes ]);
 
   useCyEffect(cyRef, cy => {
-    const handleEdgeMouseOver = makeHandleEdgeMouseOver(setHighlightedEdgeId);
-    const handleEdgeMouseOut = makeHandleEdgeMouseOut(setHighlightedEdgeId);
+    const handleEdgeMouseOver = makeHandleEdgeMouseOver(updateHighlightedEdge);
+    const handleEdgeMouseOut = makeHandleEdgeMouseOut(updateHighlightedEdge);
 
     cy.on('mouseover', 'edge', handleEdgeMouseOver);
     cy.on('mouseout', 'edge', handleEdgeMouseOut);
@@ -194,21 +257,7 @@ export function ClusterGraphCanvas({
       cy.off('mouseover', 'edge', handleEdgeMouseOver);
       cy.off('mouseout', 'edge', handleEdgeMouseOut);
     };
-  }, []);
-
-  useCyEffect(cyRef, cy => {
-    cy.batch(() => {
-      if (previousHighlightedEdgeId != null) {
-        const previousHightlightedEdge = cy.edges().getElementById(previousHighlightedEdgeId);
-        unhighlightEdge(previousHightlightedEdge);
-      }
-
-      if (highlightedEdgeId != null) {
-        const newHighlightedEdge = cy.edges().getElementById(highlightedEdgeId);
-        highlightEdge(newHighlightedEdge);
-      }
-    });
-  }, [ highlightedEdgeId ]);
+  }, [ updateHighlightedEdge ]);
 
   return (
     <div
@@ -560,6 +609,32 @@ function useStylesheet(
         }
       },
       {
+        selector: 'node.highlighted.left',
+        css: {
+          'text-halign': 'left'
+        }
+      },
+      {
+        selector: 'node.highlighted.right',
+        css: {
+          'text-halign': 'right'
+        }
+      },
+      {
+        selector: 'node.highlighted.top',
+        css: {
+          'text-valign': 'top',
+          'text-margin-y': 10
+        }
+      },
+      {
+        selector: 'node.highlighted.bottom',
+        css: {
+          'text-valign': 'bottom',
+          'text-margin-y': -16
+        }
+      },
+      {
         selector: 'edge',
         css: {
           'curve-style': 'straight',
@@ -620,84 +695,54 @@ function makeHandleNodeClick(onClickNode: Props['onClickNode']) {
   };
 }
 
-function makeHandleNodeMouseOver(updateHighlightedNodeIds: (highlightedNodeIds: string[]) => void) {
+function makeHandleNodeMouseOver(updateHighlightedNodes: (highlightedNodeIds: string[]) => void) {
   return function(evt: EventObjectNode) {
-    updateHighlightedNodeIds([ evt.target.data('id') ]);
+    updateHighlightedNodes([ evt.target.data('id') ]);
   }
 }
 
-function makeHandleNodeMouseOut(updateHighlightedNodeIds: (highlightedNodeIds: string[]) => void) {
+function makeHandleNodeMouseOut(updateHighlightedNodes: (highlightedNodeIds: string[]) => void) {
   return function(_: EventObjectNode) {
-    updateHighlightedNodeIds([]);
+    updateHighlightedNodes([]);
   }
 }
 
-function makeHandleEdgeMouseOver(setHighlightedEdgeId: (highlightedEdgeId: string | undefined) => void) {
+function makeHandleEdgeMouseOver(updateHighlightedEdge: (highlightedEdgeId: string | undefined) => void) {
   return function(evt: EventObjectEdge) {
-    setHighlightedEdgeId(evt.target.data('id'));
+    updateHighlightedEdge(evt.target.data('id'));
   }
 }
 
-function makeHandleEdgeMouseOut(setHighlightedEdgeId: (highlightedEdgeId: string | undefined) => void) {
+function makeHandleEdgeMouseOut(updateHighlightedEdge: (highlightedEdgeId: string | undefined) => void) {
   return function(_: EventObjectEdge) {
-    setHighlightedEdgeId(undefined);
+    updateHighlightedEdge(undefined);
   }
 }
 
-function highlightEdge(edge: EdgeSingular) {
+function makeHighlightedEdgeNodeClasses(edge: EdgeSingular) {
   const source = edge.source();
   const target = edge.target();
 
-  const [ leftNode, rightNode ] = source.position('x') <= target.position('x')
-    ? [ source, target ]
-    : [ target, source ];
+  const [ sourceHAlignClass, targetHAlignClass ] = source.position('x') <= target.position('x')
+    ? [ 'left', 'right' ]
+    : [ 'right', 'left' ];
 
-  leftNode.style('text-halign', 'left');
-  rightNode.style('text-halign', 'right');
+  const [ sourceVAlignClass, targetVAlignClass ] = source.position('y') <= target.position('y')
+    ? [ 'top', 'bottom' ]
+    : [ 'bottom', 'top' ];
 
-  const [ topNode, bottomNode ] = source.position('y') <= target.position('y')
-    ? [ source, target ]
-    : [ target, source ];
-
-  topNode
-    .style('text-valign', 'top')
-    .style('text-margin-y', 10);
-
-  bottomNode
-    .style('text-valign', 'bottom')
-    .style('text-margin-y', -16);
-
-  edge.addClass('highlighted');
-  source.addClass('highlighted');
-  target.addClass('highlighted');
-}
-
-function unhighlightEdge(edge: EdgeSingular) {
-  const source = edge.source();
-  const target = edge.target();
-
-  edge.removeClass('highlighted');
-
-  source
-    .removeClass('highlighted')
-    .style('text-valign', null)
-    .style('text-margin-y', null);
-
-  target
-    .removeClass('highlighted')
-    .style('text-valign', null)
-    .style('text-margin-y', null);
-}
-
-// https://blog.logrocket.com/how-to-get-previous-props-state-with-react-hooks/
-function usePreviousValue<T>(value: T) {
-  const ref = useRef<T>();
-
-  useEffect(() => {
-    ref.current = value;
-  });
-
-  return ref.current;
+  return {
+    source: {
+      elementId: source.id(),
+      classesToAdd: [ 'highlighted', sourceHAlignClass, sourceVAlignClass ],
+      classesToRemove: [ targetHAlignClass, targetVAlignClass ]
+    },
+    target: {
+      elementId: target.id(),
+      classesToAdd: [ 'highlighted', targetHAlignClass, targetVAlignClass ],
+      classesToRemove: [ sourceHAlignClass, sourceVAlignClass ]
+    }
+  };
 }
 
 function addCytoscapeClass(existingClasses: string | undefined, classToAdd: string) {
@@ -710,6 +755,10 @@ function addCytoscapeClass(existingClasses: string | undefined, classToAdd: stri
     : [ ...existingClassesArray, classToAdd ].join(' ');
 }
 
+function addCytoscapeClasses(existingClasses: string | undefined, classesToAdd: string[]) {
+  return classesToAdd.reduce(addCytoscapeClass, existingClasses);
+}
+
 function removeCytoscapeClass(existingClasses: string | undefined, classToRemove: string) {
   const existingClassesString = existingClasses ?? '';
 
@@ -720,4 +769,19 @@ function removeCytoscapeClass(existingClasses: string | undefined, classToRemove
     : existingClassesArray
         .filter(existingClass => existingClass !== classToRemove)
         .join(' ');
+}
+
+function removeCytoscapeClasses(existingClasses: string | undefined, classesToRemove: string[]) {
+  return classesToRemove.reduce(removeCytoscapeClass, existingClasses);
+}
+
+function addAndRemoveCytoscapeClasses(
+  existingClasses: string | undefined,
+  classesToAdd: string[],
+  classesToRemove: string[]
+) {
+  return removeCytoscapeClasses(
+    addCytoscapeClasses(existingClasses, classesToAdd),
+    classesToRemove
+  );
 }
