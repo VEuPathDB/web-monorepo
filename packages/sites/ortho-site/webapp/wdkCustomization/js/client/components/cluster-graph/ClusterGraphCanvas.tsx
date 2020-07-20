@@ -70,8 +70,23 @@ export function ClusterGraphCanvas({
     selectedNodeDisplayType
   );
 
-  const [ highlightedNodeIds, setHighlightedNodeIds ] = useState<string[]>([]);
-  const previousHighlightedNodeIds = usePreviousValue(highlightedNodeIds);
+  const updateHighlightedNodeIds = useCallback((highlightedNodeIds: string[]) => {
+    const newConfig = produce(cytoscapeConfig, draftConfig => {
+      const highlightedNodeIdsSet = new Set(highlightedNodeIds);
+
+      draftConfig.elements.forEach(element => {
+        if (element.group === 'nodes' && element.data.id != null) {
+          if (highlightedNodeIdsSet.has(element.data.id)) {
+            element.classes = addCytoscapeClass(element.classes, 'highlighted');
+          } else {
+            element.classes = removeCytoscapeClass(element.classes, 'highlighted');
+          }
+        }
+      });
+    });
+
+    setCytoscapeConfig(newConfig);
+  }, [ cytoscapeConfig ]);
 
   const [ highlightedEdgeId, setHighlightedEdgeId ] = useState<string | undefined>(undefined);
   const previousHighlightedEdgeId = usePreviousValue(highlightedEdgeId);
@@ -110,7 +125,7 @@ export function ClusterGraphCanvas({
   }, [ eValueExp, selectedEdgeTypes ]);
 
   useEffect(() => {
-    setHighlightedNodeIds(highlightedLegendNodeIds);
+    updateHighlightedNodeIds(highlightedLegendNodeIds);
   }, [ highlightedLegendNodeIds ]);
 
   useEffect(() => {
@@ -118,7 +133,7 @@ export function ClusterGraphCanvas({
       ? [ ]
       : [ highlightedSequenceNodeId ];
 
-    setHighlightedNodeIds(newHighlightedNodeIds);
+    updateHighlightedNodeIds(newHighlightedNodeIds);
   }, [ highlightedSequenceNodeId ]);
 
   useEffect(() => {
@@ -126,7 +141,7 @@ export function ClusterGraphCanvas({
   }, [ highlightedBlastEdgeId ]);
 
   const onMouseLeaveCanvas = useCallback(() => {
-    setHighlightedNodeIds([]);
+    updateHighlightedNodeIds([]);
     setHighlightedEdgeId(undefined);
   }, []);
 
@@ -141,8 +156,8 @@ export function ClusterGraphCanvas({
   }, [ onClickNode ]);
 
   useCyEffect(cyRef, cy => {
-    const handleNodeMouseOver = makeHandleNodeMouseOver(setHighlightedNodeIds);
-    const handleNodeMouseOut = makeHandleNodeMouseOut(setHighlightedNodeIds);
+    const handleNodeMouseOver = makeHandleNodeMouseOver(updateHighlightedNodeIds);
+    const handleNodeMouseOut = makeHandleNodeMouseOut(updateHighlightedNodeIds);
 
     cy.on('mouseover', 'node', handleNodeMouseOver);
     cy.on('mouseout', 'node', handleNodeMouseOut);
@@ -177,20 +192,6 @@ export function ClusterGraphCanvas({
       })
     });
   }, [ highlightedEdgeType ]);
-
-  useCyEffect(cyRef, cy => {
-    cy.batch(() => {
-      previousHighlightedNodeIds?.forEach(nodeId => {
-        const previousHighlighedNode = cy.nodes().getElementById(nodeId);
-        unhighlightNode(previousHighlighedNode);
-      });
-
-      highlightedNodeIds.forEach(nodeId => {
-        const newHighlighedNode = cy.nodes().getElementById(nodeId);
-        highlightNode(newHighlighedNode);
-      });
-    });
-  }, [ highlightedNodeIds ]);
 
   useCyEffect(cyRef, cy => {
     cy.batch(() => {
@@ -616,15 +617,15 @@ function makeHandleNodeClick(onClickNode: Props['onClickNode']) {
   };
 }
 
-function makeHandleNodeMouseOver(setHighlightedNodeIds: (highlightedNodeIds: string[]) => void) {
+function makeHandleNodeMouseOver(updateHighlightedNodeIds: (highlightedNodeIds: string[]) => void) {
   return function(evt: EventObjectNode) {
-    setHighlightedNodeIds([ evt.target.data('id') ]);
+    updateHighlightedNodeIds([ evt.target.data('id') ]);
   }
 }
 
-function makeHandleNodeMouseOut(setHighlightedNodeIds: (highlightedNodeIds: string[]) => void) {
+function makeHandleNodeMouseOut(updateHighlightedNodeIds: (highlightedNodeIds: string[]) => void) {
   return function(_: EventObjectNode) {
-    setHighlightedNodeIds([]);
+    updateHighlightedNodeIds([]);
   }
 }
 
