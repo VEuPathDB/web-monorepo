@@ -714,7 +714,9 @@ function makeHandleEdgeMouseOver(updateHighlightedEdge: (highlightedEdgeId: stri
 }
 
 function makeHandleEdgeMouseOut(updateHighlightedEdge: (highlightedEdgeId: string | undefined) => void) {
-  return function(_: EventObjectEdge) {
+  return function(evt: EventObjectEdge) {
+    evt.target.removeClass('highlighted');
+
     updateHighlightedEdge(undefined);
   }
 }
