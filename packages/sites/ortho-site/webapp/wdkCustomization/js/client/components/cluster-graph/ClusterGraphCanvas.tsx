@@ -718,14 +718,19 @@ function addCytoscapeClass(existingClasses: string | undefined, classToAdd: stri
 
   const existingClassesArray = existingClassesString.split(/\s+/g);
 
-  return [ ...existingClassesArray, classToAdd ].join(' ');
+  return existingClassesArray.includes(classToAdd)
+    ? existingClasses
+    : [ ...existingClassesArray, classToAdd ].join(' ');
 }
 
 function removeCytoscapeClass(existingClasses: string | undefined, classToRemove: string) {
   const existingClassesString = existingClasses ?? '';
 
-  return existingClassesString
-    .split(/\s+/g)
-    .filter(existingClass => existingClass !== classToRemove)
-    .join(' ');
+  const existingClassesArray = existingClassesString.split(/\s+/g);
+
+  return !existingClassesArray.includes(classToRemove)
+    ? existingClasses
+    : existingClassesArray
+        .filter(existingClass => existingClass !== classToRemove)
+        .join(' ');
 }
