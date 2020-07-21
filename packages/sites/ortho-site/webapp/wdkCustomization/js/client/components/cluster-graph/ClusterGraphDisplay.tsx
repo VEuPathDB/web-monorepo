@@ -191,9 +191,9 @@ function useNodeDisplayTypeControl(
   }, [ layout ]);
 
   const taxonLegendEntries = useTaxonLegendEntries(layout, taxonUiMetadata, setHighlightedLegendNodeIds);
-  const ecNumberLegendEntries = useEcNumberLegendEntries(layout, setHighlightedLegendNodeIds);
-  const pfamDomainLegendEntries = usePfamDomainLegendEntries(layout, setHighlightedLegendNodeIds);
-  const corePeripheralLegendEntries = useCorePeripheralLegendEntries(layout, corePeripheralMap, setHighlightedLegendNodeIds);
+  const ecNumberLegendEntries = useEcNumberLegendEntries(layout);
+  const pfamDomainLegendEntries = usePfamDomainLegendEntries(layout);
+  const corePeripheralLegendEntries = useCorePeripheralLegendEntries(layout, corePeripheralMap);
 
   const legendEntries = {
     'taxa': taxonLegendEntries,
@@ -279,8 +279,7 @@ function useTaxonLegendEntries(
 }
 
 function useEcNumberLegendEntries(
-  { group: { ecNumbers, genes } }: GroupLayout,
-  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
+  { group: { ecNumbers, genes } }: GroupLayout
 ) {
   return useMemo(() => {
     const orderedEcNumberEntries = orderBy(
@@ -293,32 +292,14 @@ function useEcNumberLegendEntries(
       ({ code, color, count }) => ({
         key: code,
         symbol: renderSimpleLegendSymbol(color),
-        description: `${code} (${count})`,
-        onMouseOver: () => {
-          const nodesWithEcNumber = Object.entries(genes).reduce(
-            (memo, [ nodeId, geneEntry ]) => {
-              if (geneEntry.ecNumbers.includes(code)) {
-                memo.push(nodeId);
-              }
-
-              return memo;
-            },
-            [] as string[]
-          );
-
-          setHighlightedLegendNodeIds(nodesWithEcNumber);
-        },
-        onMouseOut: () => {
-          setHighlightedLegendNodeIds([]);
-        }
+        description: `${code} (${count})`
       })
     );
   }, [ ecNumbers, genes ]);
 }
 
 function usePfamDomainLegendEntries(
-  { group: { genes, pfamDomains } }: GroupLayout,
-  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
+  { group: { genes, pfamDomains } }: GroupLayout
 ) {
   return useMemo(() => {
     const orderedPfamDomainEntries = orderBy(
@@ -332,24 +313,7 @@ function usePfamDomainLegendEntries(
         key: accession,
         symbol: renderSimpleLegendSymbol(color),
         description: `${accession} (${count})`,
-        tooltip: description,
-        onMouseOver: () => {
-          const nodesWithEcNumber = Object.entries(genes).reduce(
-            (memo, [ nodeId, geneEntry ]) => {
-              if (accession in geneEntry.pfamDomains) {
-                memo.push(nodeId);
-              }
-
-              return memo;
-            },
-            [] as string[]
-          );
-
-          setHighlightedLegendNodeIds(nodesWithEcNumber);
-        },
-        onMouseOut: () => {
-          setHighlightedLegendNodeIds([]);
-        }
+        tooltip: description
       })
     );
   }, [ pfamDomains, genes ]);
@@ -357,8 +321,7 @@ function usePfamDomainLegendEntries(
 
 function useCorePeripheralLegendEntries(
   { group: { genes } }: GroupLayout,
-  corePeripheralMap: Props['corePeripheralMap'],
-  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
+  corePeripheralMap: Props['corePeripheralMap']
 ) {
   return useMemo(
     () => {
@@ -390,13 +353,7 @@ function useCorePeripheralLegendEntries(
             <React.Fragment>
               There are {count} {proteinType.toLowerCase()} proteins.
             </React.Fragment>
-          ),
-          onMouseOver: () => {
-            setHighlightedLegendNodeIds(nodesOfType);
-          },
-          onMouseOut: () => {
-            setHighlightedLegendNodeIds([]);
-          }
+          )
         };
       });
     },
