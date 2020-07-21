@@ -551,8 +551,10 @@ function useStylesheet(
         selector: 'node',
         css: {
           'shape': 'ellipse',
-          'width': 20,
-          'height': 20,
+          'width': 15,
+          'height': 15,
+          'border-color': 'black',
+          'border-width': 1,
           'z-index-compare': 'manual',
           'z-index': 2
         }
@@ -560,17 +562,17 @@ function useStylesheet(
       {
         selector: 'node.taxa',
         css: {
+          'width': 12,
+          'height': 12,
           'background-color': 'data(speciesColor)',
           'border-color': 'data(groupColor)',
-          'border-width': 6
+          'border-width': 4
         }
       },
       {
         selector: 'node.ec-numbers',
         css: {
           'background-color': 'white',
-          'border-color': 'black',
-          'border-width': 1,
           ...makePieStyles(ecNumberNPieSlices, 'ec')
         }
       },
@@ -578,25 +580,21 @@ function useStylesheet(
         selector: 'node.pfam-domains',
         css: {
           'background-color': 'white',
-          'border-color': 'black',
-          'border-width': 1,
           ...makePieStyles(pfamDomainNPieSlices, 'pfam')
         }
       },
       {
         selector: 'node.core-peripheral',
         css: {
-          'background-color': 'data(corePeripheralColor)',
-          'border-color': 'black',
-          'border-width': 1,
+          'background-color': 'data(corePeripheralColor)'
         }
       },
       {
         selector: 'node.highlighted',
         css: {
           'label': 'data(id)',
-          'width': 30,
-          'height': 30,
+          'width': 23,
+          'height': 23,
           'text-outline-color': 'white',
           'text-outline-width': 2,
           'text-halign': 'right',
@@ -606,6 +604,13 @@ function useStylesheet(
           'z-index': 4,
           'font-size': 15,
           'font-weight': 'bold'
+        }
+      },
+      {
+        selector: 'node.taxa.highlighted',
+        css: {
+          'width': 20,
+          'height': 20
         }
       },
       {
@@ -624,14 +629,14 @@ function useStylesheet(
         selector: 'node.highlighted.top',
         css: {
           'text-valign': 'top',
-          'text-margin-y': 10
+          'text-margin-y': 5
         }
       },
       {
         selector: 'node.highlighted.bottom',
         css: {
           'text-valign': 'bottom',
-          'text-margin-y': -16
+          'text-margin-y': -8
         }
       },
       {
