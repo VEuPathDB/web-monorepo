@@ -672,6 +672,14 @@ function useStylesheet(
         css: {
           'display': 'none'
         }
+      },
+      {
+        selector: 'edge.filtered-out.highlighted',
+        css: {
+          // FIXME: This is necessary to bypass an incorrect type definition
+          // in @types/cytoscape; we should open a PR to DefinitelyTyped
+          'display': 'element' as any
+        }
       }
     ],
     []
