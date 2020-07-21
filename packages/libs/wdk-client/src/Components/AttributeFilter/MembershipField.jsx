@@ -502,7 +502,7 @@ class MembershipTable extends React.PureComponent {
     var useSort = this.isSortEnabled();
     var useSearch = this.isSearchEnabled();
     var usePagination = this.isPaginationEnabled();
-    const {currentPage, rowsPerPage, searchTerm, uiStateOther} = this.props.activeFieldState;
+    const {currentPage, rowsPerPage, searchTerm, ...uiStateOther} = this.props.activeFieldState;
 
     const rows = this.getRows();
     let filteredRows = this.getRows();
