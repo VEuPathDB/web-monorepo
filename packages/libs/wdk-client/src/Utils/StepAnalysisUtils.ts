@@ -12,7 +12,7 @@ import {
   nullValue,
   optional
 } from './Json';
-import { ParameterGroup, Parameter } from './WdkModel';
+import { ParameterGroup, SearchConfig } from './WdkModel';
 import { paramGroupDecoder } from '../Service/Mixins/SearchesService';
 
 export interface StepAnalysis {
@@ -31,9 +31,7 @@ export interface StepAnalysisType {
   groups: ParameterGroup[]
 }
 
-export interface FormParams {
-  [key: string]: string
-}
+export type FormParams = SearchConfig['parameters'];
 
 export type StepAnalysisStatus =
   | 'CREATED'
