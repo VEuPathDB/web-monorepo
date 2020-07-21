@@ -33,6 +33,7 @@ import BasketController from 'wdk-client/Controllers/BasketController';
 import { PermissionDenied } from 'wdk-client/Components';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import Error from 'wdk-client/Components/PageStatus/Error';
+import UserDatasetsWorkspace from 'wdk-client/Views/UserDatasets/UserDatasetsWorkspace';
 
 const routes: RouteEntry[] = [
   {
@@ -188,17 +189,20 @@ const routes: RouteEntry[] = [
     component: BasketController
   },
 
-  {
-    path: '/workspace/datasets',
-    requiresLogin: true,
-    component: (props: RouteComponentProps<{}>) => {
-      const { location } = props;
-      return <UserDatasetListController location={location}/>
-    }
-  },
+  // {
+  //   path: '/workspace/datasets/new-upload',
+  //   requiresLogin: true,
+  //   component: () => <UserDatasetNewUploadController />
+  // },
+
+  // {
+  //   path: '/workspace/datasets/recent-uploads',
+  //   requiresLogin: true,
+  //   component: () => <UserDatasetAllUploadsController />
+  // },
 
   {
-    path: '/workspace/datasets/:id',
+    path: '/workspace/datasets/:id(\\d+)',
     requiresLogin: true,
     component: (props: RouteComponentProps<{ id: string }>) => {
       // FIXME Remove this requirement from the component by updating action creators
@@ -216,15 +220,10 @@ const routes: RouteEntry[] = [
   },
 
   {
-    path: '/workspace/dataset-upload',
+    path: '/workspace/datasets',
+    exact: false,
     requiresLogin: true,
-    component: () => <UserDatasetNewUploadController />
-  },
-
-  {
-    path: '/workspace/dataset-upload/status',
-    requiresLogin: true,
-    component: () => <UserDatasetAllUploadsController />
+    component: (props: RouteComponentProps<{}>) => < UserDatasetsWorkspace rootPath={props.match.path}/>
   },
 
   {

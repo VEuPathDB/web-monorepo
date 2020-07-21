@@ -368,14 +368,8 @@ class UserDatasetList extends React.Component <Props, State> {
     const { userDatasets, projectName, location, filterByProject } = this.props;
     const emptyMessage = !userDatasets.length
       ? (
-        <p style={{ textAlign: 'center' }}>This page is empty because you do not have any data sets. <br/><br/> 
-          {projectName != 'MicrobiomeDB' && <div style={{ textAlign: 'left' }}>
-            <ul>
-            <li>To learn how to add a data set check this  <a href='http://www.youtube.com/watch?v=igQZHjRBqV0'>Tutorial on User Data Sets</a>.</li>
-            <li>To add a data set, go to <a href='https://veupathdb.globusgenomics.org'>VEuPathDB Galaxy</a>.</li>
-            <li><Link to='/galaxy-orientation'>About VEuPathDB Galaxy</Link> </li>
-            </ul>
-          </div>}
+        <p style={{ textAlign: 'center' }}>
+          This page is empty because you do not have any data sets.
         </p>
       ) : filterByProject
         ? (
@@ -475,6 +469,8 @@ class UserDatasetList extends React.Component <Props, State> {
     const { isRowSelected, toggleProjectScope } = this;
     const { userDatasets, user, projectName, shareUserDatasets, unshareUserDatasets, filterByProject, quotaSize } = this.props;
     const { uiState, selectedRows, searchTerm, sharingModalOpen } = this.state;
+
+    if (userDatasets.length === 0) return <UserDatasetTutorial projectName={projectName} quotaSize={quotaSize} />;
 
     const rows = userDatasets;
     const selectedDatasets = rows.filter(isRowSelected);
