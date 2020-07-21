@@ -107,11 +107,16 @@ export function layoutAndAccessionToSequenceInformation(layout: GroupLayout, acc
 export function layoutAndAccessionToBlastScoreRows(layout: GroupLayout, accession: string): BlastScoreRow[] {
   return (
     Object.entries(layout.edges)
-      .filter(([ _, edgeEntry ]) => edgeEntry.queryId === accession)
+      .filter(([ _, edgeEntry ]) =>
+        edgeEntry.queryId === accession ||
+        edgeEntry.subjectId === accession
+      )
       .map(
         ([ edgeId, edgeEntry ]) => ({
           edgeId,
-          subject: edgeEntry.subjectId,
+          subject: edgeEntry.queryId === accession
+            ? edgeEntry.subjectId
+            : edgeEntry.queryId,
           type: edgeEntry.T,
           evalue: edgeEntry.E
         })
