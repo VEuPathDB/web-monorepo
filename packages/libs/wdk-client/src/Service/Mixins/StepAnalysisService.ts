@@ -109,7 +109,7 @@ export default (base: ServiceBase) => {
     return fetch(`${base.serviceUrl}/users/current/steps/${stepId}/analyses/${analysisId}`, {
       method: 'PATCH',
       body: JSON.stringify({
-        formParams
+        parameters: formParams
       }),
       credentials: 'include',
       headers: new Headers(Object.assign({
