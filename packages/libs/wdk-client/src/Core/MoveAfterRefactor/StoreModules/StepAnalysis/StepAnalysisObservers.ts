@@ -276,8 +276,8 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
       try {
         if (panelState.type === UNSAVED_ANALYSIS_STATE) {
           const analysisConfig = await wdkService.createStepAnalysis(stepId, {
-            displayName: panelState.displayName,
-            analysisName: panelState.analysisType.name
+            analysisName: panelState.analysisType.name,
+            parameters: panelState.paramValues
           });
 
           return [
@@ -299,21 +299,6 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
             startFormSubmission(panelId)
           ];
         } else {
-          const validationErrors = await wdkService.updateStepAnalysisForm(
-            stepId,
-            panelState.analysisConfig.analysisId,
-            panelState.paramValues
-          );
-
-          if (validationErrors.length > 0) {
-            return [
-              finishFormSubmission(panelId, {
-                ...panelState,
-                formValidationErrors: validationErrors
-              })
-            ];
-          }
-
           const { status } = await wdkService.runStepAnalysis(stepId, panelState.analysisConfig.analysisId);
 
           return [
@@ -437,8 +422,8 @@ export const observeDuplicateAnalysis = (action$: ActionsObservable<Action>, sta
       if (isAutorun) {
         try {
           const duplicateAnalysisConfig = await wdkService.createStepAnalysis(stepId, {
-            displayName: panelState.analysisConfig.displayName,
-            analysisName: panelState.analysisConfig.analysisName
+            analysisName: panelState.analysisConfig.analysisName,
+            parameters: panelState.paramValues
           });
 
           return createNewTab({

@@ -70,13 +70,13 @@ export default (base: ServiceBase) => {
     );
   }
 
-  function createStepAnalysis(stepId: number, analysisConfig: { displayName?: string, analysisName: string }) {
+  function createStepAnalysis(stepId: number, baseAnalysisConfig: { analysisName: string, parameters: FormParams }) {
     return base.sendRequest(
       stepAnalysisConfigDecoder,
       {
         path: `/users/current/steps/${stepId}/analyses`,
         method: 'POST',
-        body: JSON.stringify(analysisConfig)
+        body: JSON.stringify(baseAnalysisConfig)
       }
     );
   }
