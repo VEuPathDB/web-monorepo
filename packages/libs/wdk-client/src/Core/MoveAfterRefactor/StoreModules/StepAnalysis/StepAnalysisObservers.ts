@@ -104,7 +104,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
             analysisConfigStatus: 'COMPLETE',
             pollCountdown: 3,
             paramSpecs: analysisConfig.displayParams,
-            paramValues: analysisConfig.formParams,
+            paramValues: analysisConfig.parameters,
             panelUiState: {
               descriptionExpanded: false,
               formExpanded: true

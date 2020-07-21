@@ -97,7 +97,7 @@ export default (base: ServiceBase) => {
       }
     ).then(stepAnalysisConfig => {
       return getStepAnalysisTypeParamSpecsWithGivenParameters(
-        stepId, stepAnalysisConfig.analysisName, stepAnalysisConfig.formParams)
+        stepId, stepAnalysisConfig.analysisName, stepAnalysisConfig.parameters)
       .then(displayParams => ({
         ...stepAnalysisConfig,
         displayParams

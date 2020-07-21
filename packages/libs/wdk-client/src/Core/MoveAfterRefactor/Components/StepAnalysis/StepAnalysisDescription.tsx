@@ -1,8 +1,10 @@
 import React, { Fragment } from 'react';
 
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+
 interface StepAnalysisDescriptionProps {
-  shortDescription: string;
-  description: string;
+  shortDescription?: string;
+  description?: string;
   descriptionExpanded: boolean;
   toggleDescription: () => void;
 }
@@ -25,8 +27,10 @@ export const StepAnalysisDescription: React.SFC<StepAnalysisDescriptionProps> = 
       }
     </div>
     {
-      descriptionExpanded &&
-      <div className="step-analysis-description" dangerouslySetInnerHTML={{ __html: description }} />
+      description && descriptionExpanded && description &&
+      <div className="step-analysis-description">
+        {safeHtml(description)}
+      </div>
     }
   </Fragment>
 );

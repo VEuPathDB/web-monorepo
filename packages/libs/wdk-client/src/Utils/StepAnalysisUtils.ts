@@ -1,19 +1,21 @@
 import {
   Decoder,
   arrayOf,
-  boolean,
   combine,
   constant,
   field,
+  nullValue,
   number,
   objectOf,
-  string,
+  ok,
   oneOf,
-  nullValue,
-  optional
+  optional,
+  record,
+  string
 } from './Json';
 import { ParameterGroup, SearchConfig } from './WdkModel';
 import { paramGroupDecoder } from '../Service/Mixins/SearchesService';
+import { ValidStepValidation, InvalidStepValidation } from 'wdk-client/Utils/WdkUser';
 
 export interface StepAnalysis {
   analysisId: number,
@@ -51,16 +53,14 @@ export type InvalidStepReason = string | null;
 export interface StepAnalysisConfig {
   analysisId: number,
   stepId: number,
-  hasParams: boolean,
   analysisName: string,
-  answerValueHash: string,
-  formParams: FormParams,
+  parameters: FormParams,
   displayName: string,
-  shortDescription: string,
-  description: string,
+  shortDescription?: string,
+  description?: string,
   userNotes?: string,
   status: StepAnalysisStatus,
-  invalidStepReason: InvalidStepReason
+  validation: ValidStepValidation | InvalidStepValidation
 }
 
 export const stepAnalysisDecoder: Decoder<StepAnalysis> = combine(
@@ -100,21 +100,15 @@ export const invalidStepReasonDecoder: Decoder<InvalidStepReason> = oneOf(
   nullValue
 );
 
-export const stepAnalysisConfigDecoder: Decoder<StepAnalysisConfig> = combine(
-  combine(
-    field('analysisId', number),
-    field('stepId', number),
-    field('hasParams', boolean),
-    field('analysisName', string),
-    field('answerValueHash', string),
-    field('displayName', string),
-    field('shortDescription', string),
-    field('description', string),
-    field('userNotes', optional(string))
-  ),
-  combine(
-    field('status', stepAnalysisStatusDecoder),
-    field('invalidStepReason', invalidStepReasonDecoder),
-    field('formParams', formParamsDecoder)
-  )
-);
+export const stepAnalysisConfigDecoder: Decoder<StepAnalysisConfig> = record({
+  analysisId: number,
+  stepId: number,
+  analysisName: string,
+  displayName: string,
+  shortDescription: optional(string),
+  description: optional(string),
+  userNotes: optional(string),
+  status: stepAnalysisStatusDecoder,
+  parameters: formParamsDecoder,
+  validation: ok // FIXME: Make decoders for ValidStepValidation and InvalidStepValidation
+});
