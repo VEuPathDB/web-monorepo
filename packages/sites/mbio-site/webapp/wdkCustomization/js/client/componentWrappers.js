@@ -149,10 +149,6 @@ function makeHeaderMenuItems(state) {
             route: '/workspace/strategies/public'
           },
           {
-            text: 'Upload Data Set',
-            route: '/workspace/dataset-upload'
-          },
-          {
             text: 'My Data Sets',
             route: '/workspace/datasets'
           }
