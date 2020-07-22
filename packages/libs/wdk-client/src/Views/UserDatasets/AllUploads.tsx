@@ -94,11 +94,11 @@ const FailedUpload = (upload: UserDatasetUpload) => (
 const UploadsTable = (props: {uploads: Array<UserDatasetUpload>, cancelCurrentUpload: (id: string) => void}) => {
   const {uploads, cancelCurrentUpload} = props;
   return (
-    <table>
+    <table style={{ margin: '1em 0' }}>
       <tbody>
         { uploads.map((upload, ix) => (
           <tr key={ix + "-" + upload.datasetName} >
-            <td style={{fontSize: "large", paddingBottom: "1em"}}>
+            <td style={{fontSize: "larger", paddingBottom: "1em"}}>
               { upload.isOngoing
                 ? OngoingUpload(upload, () => cancelCurrentUpload(upload.id))
                   : upload.isSuccessful
@@ -139,7 +139,7 @@ const AllUploads = (props: Props) => {
       {ongoingUploads.length > 0 && RefreshButton()}
       {uploads.length > 0 && <UploadsTable uploads={uploads} cancelCurrentUpload={props.actions.cancelCurrentUpload} />}
       {finishedUploads.length > 0 && ClearAllMessagesButton(() => props.actions.clearMessages(finishedUploads.map(u=>u.id)))}
-      {props.errorMessage == null && uploads.length === 0 && <UserDatasetEmptyState message={"There are no messages to be displayed."}/>}
+      {props.errorMessage == null && uploads.length === 0 && <UserDatasetEmptyState message={"There are no recent uploads to be displayed."}/>}
     </div>
   );
 };

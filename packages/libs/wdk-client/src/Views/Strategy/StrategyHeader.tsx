@@ -1,7 +1,8 @@
 import React from 'react';
-import { NavLink, NavLinkProps } from 'react-router-dom';
+import { NavLinkProps } from 'react-router-dom';
 
 import './StrategyHeading.css';
+import WorkspaceNavigation from 'wdk-client/Components/Workspace/WorkspaceNavigation';
 
 // The link for Opened strategies is active if the url matches one of:
 // - /workspace/strategies
@@ -30,33 +31,34 @@ interface Props {
 }
 
 function StrategyHeader(props: Props) {
-  const rootRoute = `/workspace/strategies`;
   const activeStratPath = props.activeStrategy ? `/${props.activeStrategy.strategyId}` : '';
   const activeStepPath = props.activeStrategy && props.activeStrategy.stepId ? `/${props.activeStrategy.stepId}` : '';
-  const openedStrategiesRoute = {
-    pathname: rootRoute + activeStratPath + activeStepPath,
-    state: { allowEmptyOpened: true }
-  };
   const { openedStrategiesCount, allStrategiesCount, publicStrategiesCount, publicStrategiesError } = props
   return (
-    <div className="StrategyHeading">
-      <h1>My Search Strategies</h1>
-      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={openedStrategiesRoute} isActive={isOpenedLinkActive}>
-        Opened ({toCountString(openedStrategiesCount)})
-      </NavLink>
-      <span className="StrategyHeading--Separator"></span>
-      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/all`}>
-        All ({toCountString(allStrategiesCount)})
-      </NavLink>
-      <span className="StrategyHeading--Separator"></span>
-      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/public`}>
-        Public ({toCountString(publicStrategiesCount, publicStrategiesError)})
-      </NavLink>
-      <span className="StrategyHeading--Separator"></span>
-      <NavLink className="StrategyHeading--Item" activeClassName="StrategyHeading--Item__active" to={`${rootRoute}/help`}>
-        Help
-      </NavLink>
-    </div>
+    <WorkspaceNavigation
+      routeBase="/workspace/strategies/"
+      heading="My Search Strategies"
+      items={[
+        {
+          display: <>Opened ({toCountString(openedStrategiesCount)})</>,
+          route: activeStratPath + activeStepPath,
+          state: { allowEmptyOpened: true },
+          isActive: isOpenedLinkActive
+        },
+        {
+          display: <>All ({toCountString(allStrategiesCount)})</>,
+          route: 'all'
+        },
+        {
+          display: <>Public ({toCountString(publicStrategiesCount, publicStrategiesError)})</>,
+          route: 'public'
+        },
+        {
+          display: 'Help',
+          route: 'help'
+        }
+      ]}
+    />
   )
 }
 

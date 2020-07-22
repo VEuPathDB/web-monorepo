@@ -6,9 +6,7 @@ import { showLoginForm } from 'wdk-client/Actions/UserSessionActions';
 import { requestUploadMessages, cancelCurrentUpload, clearMessages } from 'wdk-client/Actions/UserDatasetUploadActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
-import { AllUploadsRibbon } from 'wdk-client/Views/UserDatasets/Navigation';
 import UserDatasetEmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
-import { UserDatasetUpload } from 'wdk-client/Utils/WdkModel';
 
 const actionCreators = {
   showLoginForm,
@@ -40,7 +38,7 @@ class UserDatasetAllUploadsController extends PageController<Props> {
   }
 
   getTitle() {
-    return "Upload History";
+    return "Recent Uploads";
   }
 
   renderGuestView(){
@@ -58,7 +56,6 @@ class UserDatasetAllUploadsController extends PageController<Props> {
   renderAllUploads(){
     return (
       <div className="stack">
-        <AllUploadsRibbon/>
         <AllUploads 
           errorMessage={this.props.badAllUploadsActionMessage}
           uploadList={this.props.uploads}

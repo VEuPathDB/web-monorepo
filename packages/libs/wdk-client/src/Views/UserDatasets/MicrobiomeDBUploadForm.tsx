@@ -81,7 +81,7 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
   }
   renderForm () {
     return (
-      <fieldset>
+      <div>
         <div className="formSection">
           <label htmlFor="data-set-name">Name<sup className="supAsterisk">*</sup>:<br/></label>
           <TextBox
@@ -108,7 +108,7 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
           <FileInput id="data-set-file" onChange={ (file) => this.setState({file: file || undefined}) } />
           <div>Maximum size 1GB. </div>
         </div>
-      </fieldset>
+      </div>
     );
   }
 
