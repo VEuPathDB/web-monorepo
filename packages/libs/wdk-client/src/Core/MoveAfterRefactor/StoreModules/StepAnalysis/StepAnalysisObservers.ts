@@ -293,6 +293,7 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
         if (panelState.type === UNSAVED_ANALYSIS_STATE) {
           const analysisConfig = await wdkService.createStepAnalysis(stepId, {
             analysisName: panelState.analysisType.name,
+            displayName,
             parameters: panelState.paramValues
           });
 
@@ -460,12 +461,14 @@ export const observeDuplicateAnalysis = (action$: ActionsObservable<Action>, sta
         return createNewTab(panelState);
       }
 
+      const displayName = panelState.analysisConfig.displayName;
       const isAutorun = determineIfAutorun(panelState.analysisConfig.analysisName, choices);
 
       if (isAutorun) {
         try {
           const duplicateAnalysisConfig = await wdkService.createStepAnalysis(stepId, {
             analysisName: panelState.analysisConfig.analysisName,
+            displayName,
             parameters: panelState.paramValues
           });
 
@@ -478,7 +481,7 @@ export const observeDuplicateAnalysis = (action$: ActionsObservable<Action>, sta
           });
         }
         catch (ex) {
-          alert(`Cannot duplicate analysis '${panelState.analysisConfig.displayName}' at this time. Please try again later, or contact us if the problem persists.`);
+          alert(`Cannot duplicate analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`);
           return EMPTY;
         }
       }

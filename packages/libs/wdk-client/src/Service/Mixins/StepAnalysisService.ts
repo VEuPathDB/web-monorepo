@@ -70,7 +70,7 @@ export default (base: ServiceBase) => {
     );
   }
 
-  function createStepAnalysis(stepId: number, baseAnalysisConfig: { analysisName: string, parameters: FormParams }) {
+  function createStepAnalysis(stepId: number, baseAnalysisConfig: { analysisName: string, displayName?: string, parameters: FormParams }) {
     return base.sendRequest(
       stepAnalysisConfigDecoder,
       {
