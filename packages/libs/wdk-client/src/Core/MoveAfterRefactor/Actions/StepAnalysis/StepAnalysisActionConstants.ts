@@ -9,6 +9,7 @@ export const CREATE_NEW_TAB = 'step-analysis/create-new-tab';
 export const DELETE_ANALYSIS = 'step-analysis/delete-analysis';
 export const REMOVE_TAB = 'step-analysis/remove-tab';
 export const START_FORM_SUBMISSION = 'step-analysis/start-form-submission';
+export const RUN_ANALYSIS = 'step-analysis/run-analysis';
 export const CHECK_RESULT_STATUS = 'step-analysis/check-result-status';
 export const COUNT_DOWN = 'step-analysis/count-down';
 export const FINISH_FORM_SUBMISSION = 'step-analysis/finish-form-submission';

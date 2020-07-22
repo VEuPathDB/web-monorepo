@@ -10,6 +10,7 @@ import {
   DELETE_ANALYSIS,
   REMOVE_TAB,
   START_FORM_SUBMISSION,
+  RUN_ANALYSIS,
   CHECK_RESULT_STATUS,
   COUNT_DOWN,
   FINISH_FORM_SUBMISSION,
@@ -45,6 +46,7 @@ export type CreateNewTabAction = TypedAction<typeof CREATE_NEW_TAB, { initialSta
 export type DeleteAnalysisAction = TypedAction<typeof DELETE_ANALYSIS, { panelId: number }>
 export type RemoveTabAction = TypedAction<typeof REMOVE_TAB, { panelId: number }>
 export type StartFormSubmissionAction = TypedAction<typeof START_FORM_SUBMISSION, { panelId: number }>
+export type RunAnalysisAction = TypedAction<typeof RUN_ANALYSIS, { panelId: number }>
 export type CheckResultStatusAction = TypedAction<typeof CHECK_RESULT_STATUS, { panelId: number }>
 export type CountDownAction = TypedAction<typeof COUNT_DOWN, { panelId: number }>
 export type FinishFormSubmissionAction = TypedAction<typeof FINISH_FORM_SUBMISSION, { panelId: number, loadedState: SavedAnalysisState }>
@@ -67,6 +69,7 @@ export type StepAnalysisAction =
   | DeleteAnalysisAction
   | RemoveTabAction
   | StartFormSubmissionAction
+  | RunAnalysisAction
   | CheckResultStatusAction
   | CountDownAction
   | FinishFormSubmissionAction

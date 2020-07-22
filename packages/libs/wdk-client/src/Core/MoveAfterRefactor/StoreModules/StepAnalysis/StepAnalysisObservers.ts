@@ -17,6 +17,7 @@ import {
   START_LOADING_CHOSEN_ANALYSIS_TAB,
   DELETE_ANALYSIS,
   START_FORM_SUBMISSION,
+  RUN_ANALYSIS,
   CHECK_RESULT_STATUS,
   COUNT_DOWN,
   RENAME_ANALYSIS,
@@ -30,6 +31,7 @@ import {
   StartLoadingChosenAnalysisTabAction,
   DeleteAnalysisAction,
   StartFormSubmissionAction,
+  RunAnalysisAction,
   CheckResultStatusAction,
   CountDownAction,
   RenameAnalysisAction,
@@ -41,7 +43,21 @@ import { Action } from 'redux';
 import { EpicDependencies } from '../../../Store';
 import { EMPTY } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
-import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, startFormSubmission, selectTab } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
+import {
+  finishLoadingTabListing,
+  startLoadingSavedTab,
+  finishLoadingSavedTab,
+  finishLoadingChosenAnalysisTab,
+  removeTab,
+  countDown,
+  renameTab,
+  createNewTab,
+  startFormSubmission,
+  runAnalysis,
+  checkResultStatus,
+  finishFormSubmission,
+  selectTab
+} from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
@@ -296,26 +312,53 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
               resultContents: {},
               resultErrorMessage: null
             }),
-            startFormSubmission(panelId)
+            runAnalysis(panelId)
           ];
         } else {
-          const { status } = await wdkService.runStepAnalysis(stepId, panelState.analysisConfig.analysisId);
+          await wdkService.updateStepAnalysisForm(
+            stepId,
+            panelState.analysisConfig.analysisId,
+            panelState.paramValues
+          );
 
           return [
-            finishFormSubmission(panelId, {
-              ...panelState,
-              analysisConfig: {
-                ...panelState.analysisConfig,
-                status
-              },
-              analysisConfigStatus: 'LOADING',
-              formValidationErrors: []
-            }),
-            checkResultStatus(panelId)
+            runAnalysis(panelId)
           ];
         }
       }
       catch (ex) {
+        alert(`Cannot run analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`)
+        return EMPTY;
+      }
+    }),
+    mergeAll()
+  );
+};
+
+export const observeRunAnalysis = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
+  return action$.pipe(
+    filter(isRunAnalysis),
+    withLatestFrom(state$, focusOnPanelById),
+    filter(onTabInSavedState),
+    mergeMap(async ({ panelId, panelState, stepId, strategyId }) => {
+      try {
+        const { status } = await wdkService.runStepAnalysis(stepId, panelState.analysisConfig.analysisId);
+
+        return [
+          finishFormSubmission(panelId, {
+            ...panelState,
+            analysisConfig: {
+              ...panelState.analysisConfig,
+              status
+            },
+            analysisConfigStatus: 'LOADING',
+            formValidationErrors: []
+          }),
+          checkResultStatus(panelId)
+        ];
+      }
+      catch (ex) {
+        const displayName = panelState.analysisConfig.displayName;
         alert(`Cannot run analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`)
         return EMPTY;
       }
@@ -466,6 +509,7 @@ const isStartLoadingSavedTab = (action: Action): action is StartLoadingSavedTabA
 const isStartLoadingChosenAnalysisTab = (action: Action): action is StartLoadingChosenAnalysisTabAction => action.type === START_LOADING_CHOSEN_ANALYSIS_TAB;
 const isDeleteAnalysis = (action: Action): action is DeleteAnalysisAction => action.type === DELETE_ANALYSIS;
 const isStartFormSubmission = (action: Action): action is StartFormSubmissionAction => action.type === START_FORM_SUBMISSION;
+const isRunAnalysis = (action: Action): action is RunAnalysisAction => action.type === RUN_ANALYSIS;
 const isCheckResultStatus = (action: Action): action is CheckResultStatusAction => action.type === CHECK_RESULT_STATUS;
 const isCountDown = (action: Action): action is CountDownAction => action.type === COUNT_DOWN;
 const isRenameAnalysis = (action: Action): action is RenameAnalysisAction => action.type === RENAME_ANALYSIS;
