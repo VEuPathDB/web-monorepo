@@ -10,7 +10,7 @@ function UserDatasetTutorial ({ projectName, quotaSize }) {
   return projectName === 'MicrobiomeDB' ? (
     <div className="UserDataset-TutorialMicrobiome">
       <div className="UserDataset-TutorialMicrobiome__lead">You do not have any data sets.</div>
-      <div>You can add your data sets to {projectName} using the <Link to="/workspace/datasets/new-upload">upload tool</Link>.</div>
+      <div>Try adding a data set using the <Link to="/workspace/datasets/new">New upload section</Link> above.</div>
     </div>
   ) : (
     <div>

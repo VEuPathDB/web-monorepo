@@ -189,18 +189,6 @@ const routes: RouteEntry[] = [
     component: BasketController
   },
 
-  // {
-  //   path: '/workspace/datasets/new-upload',
-  //   requiresLogin: true,
-  //   component: () => <UserDatasetNewUploadController />
-  // },
-
-  // {
-  //   path: '/workspace/datasets/recent-uploads',
-  //   requiresLogin: true,
-  //   component: () => <UserDatasetAllUploadsController />
-  // },
-
   {
     path: '/workspace/datasets/:id(\\d+)',
     requiresLogin: true,

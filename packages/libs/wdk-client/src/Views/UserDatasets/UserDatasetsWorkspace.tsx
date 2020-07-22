@@ -12,7 +12,7 @@ interface Props {
 };
 
 function UserDatasetsWorkspace(props: Props) {
-  const config = useWdkService(wdkService => wdkService.getConfig());
+  const config = useWdkService(wdkService => wdkService.getConfig(), []);
   const { rootPath } = props;
   if (config == null) return null;
   if (config.projectId !== 'MicrobiomeDB') return (
