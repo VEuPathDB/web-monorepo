@@ -9,7 +9,8 @@ import { getFilterValueDisplay } from 'wdk-client/Components/AttributeFilter/Att
 import { FilterWithFieldDisplayName } from 'wdk-client/Components/AttributeFilter/Types';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
-import { Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
+import { Parameter, EnumParam, DatasetParam, QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
+import { Step } from 'wdk-client/Utils/WdkUser';
 import { isEnumParam, isMultiPick, toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { datasetItemToString, DatasetItem } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
@@ -23,11 +24,38 @@ interface DispatchProps {
   assignWeight: (weight: number) => void;
 }
 
-function StepDetails({ stepTree, assignWeight }: StepDetailProps<UiStepTree> & DispatchProps) {
-  const { step } = stepTree;
+function StepDetails(props: StepDetailProps<UiStepTree> & DispatchProps) {
+  const { stepTree: { step } } = props;
+
+  const { question, datasetParamItems } = useStepDetailsData(step);
+  const { weight, weightCollapsed, setWeightCollapsed } = useStepDetailsWeightControls(step);
+
+  return (
+    <DefaultStepDetails
+      {...props}
+      question={question}
+      datasetParamItems={datasetParamItems}
+      weight={weight}
+      weightCollapsed={weightCollapsed}
+      setWeightCollapsed={setWeightCollapsed}
+    />
+  );
+}
+
+function useStepDetailsWeightControls(step: Step) {
   const [ weightCollapsed, setWeightCollapsed ] = useState(true);
 
-  const data = useWdkService(async wdkService => {
+  const weight = toString(step.searchConfig.wdkWeight);
+
+  return {
+    setWeightCollapsed,
+    weightCollapsed,
+    weight
+  };
+}
+
+function useStepDetailsData(step: Step) {
+  const rawData = useWdkService(async wdkService => {
     const question = await wdkService.getQuestionGivenParameters(step.searchName, step.searchConfig.parameters);
     const nonemptyDatasetParams = question.parameters
       .filter(
@@ -53,12 +81,29 @@ function StepDetails({ stepTree, assignWeight }: StepDetailProps<UiStepTree> & D
     );
 
     return { datasetParamItems, question };
-  }, [ step ])
+  }, [ step ]);
 
-  const { datasetParamItems, question } = data || {};
+  return rawData ?? { datasetParamItems: undefined, question: undefined };
+}
 
-  const weight = toString(step.searchConfig.wdkWeight);
+interface StepDetailsTableProps<T extends UiStepTree> extends StepDetailProps<T> {
+  datasetParamItems?: Record<number, DatasetItem[]>;
+  question?: QuestionWithParameters;
+  assignWeight: (weight: number) => void;
+  weight: string;
+  weightCollapsed: boolean;
+  setWeightCollapsed: (isCollapsed: boolean) => void;
+}
 
+function DefaultStepDetails({
+  question,
+  datasetParamItems,
+  stepTree: { step },
+  assignWeight,
+  weight,
+  weightCollapsed,
+  setWeightCollapsed
+} : StepDetailsTableProps<UiStepTree> & DispatchProps) {
   return (
     <React.Fragment>
       <table className={cx('Table')}>
