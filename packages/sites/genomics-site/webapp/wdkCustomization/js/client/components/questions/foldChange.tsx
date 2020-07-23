@@ -1,9 +1,10 @@
 import React from 'react';
 
 import { Props, renderDefaultParamGroup } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { CompoundsByFoldChange, GenericFoldChange } from 'wdk-client/Views/Question/Groups/FoldChange/foldChangeGroup';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
+
+import { CompoundsByFoldChange, GenericFoldChange } from './FoldChange/foldChangeGroup';
 
 const foldChangeForm = (FoldChangeComponent: React.FunctionComponent<Props>): React.FunctionComponent<Props> => (props: Props) =>
   <EbrcDefaultQuestionForm

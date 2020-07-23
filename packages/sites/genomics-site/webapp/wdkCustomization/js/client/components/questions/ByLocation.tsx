@@ -1,12 +1,13 @@
 import React, { useState, useCallback } from 'react';
 
+import { useChangeParamValue } from 'wdk-client/Views/Question/Params/Utils';
 import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { mutuallyExclusiveParamsGroupRenderer, MutuallyExclusiveTabKey } from 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
 import { ParameterGroup, SelectEnumParam } from 'wdk-client/Utils/WdkModel';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
-import { findChromosomeOptionalKey, findSequenceIdKey } from 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/utils';
-import { useChangeParamValue } from 'wdk-client/Views/Question/Params/Utils';
+
+import { mutuallyExclusiveParamsGroupRenderer, MutuallyExclusiveTabKey } from './MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
+import { findChromosomeOptionalKey, findSequenceIdKey } from './MutuallyExclusiveParams/utils';
 
 const SEQUENCE_ID_EMPTY = /(\(Example: .*\)|No match)/i;
 

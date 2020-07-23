@@ -5,10 +5,11 @@ import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { Props, getSubmitButtonText } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { mutuallyExclusiveParamsGroupRenderer, MutuallyExclusiveTabKey } from 'wdk-client/Views/Question/Groups/MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
 import { idListToArray } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
+
+import { mutuallyExclusiveParamsGroupRenderer, MutuallyExclusiveTabKey } from './MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
 
 import './DynSpansBySourceId.scss';
 
