@@ -1,0 +1,26 @@
+.NodeDetails {
+  h2 {
+    text-align: center;
+    font-size: 1.6em;
+  }
+
+  .NoNodeSelected {
+    color: #777;
+  }
+
+  .GraphAccordion:not(:last-child) {
+    margin-bottom: 0.75em;
+  }
+
+  table.SequenceInformation {
+    width: 100%;
+
+    td, th {
+      border: 0.0625rem solid black;
+    }
+
+    th {
+      background-color: #eee;
+    }
+  }
+}

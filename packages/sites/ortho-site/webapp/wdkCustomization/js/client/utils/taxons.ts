@@ -63,7 +63,10 @@ export const makeTaxonTree = function(taxonEntries: TaxonEntries): TaxonTree {
 
     const orderedChildren = orderBy(
       Object.values(unorderedChildren),
-      childEntry => taxonEntries[childEntry.abbrev].sortIndex
+      [
+        childEntry => taxonEntries[childEntry.abbrev].species,
+        childEntry => taxonEntries[childEntry.abbrev].sortIndex
+      ]
     );
 
     return {
@@ -130,12 +133,12 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
         groupColor,
         path: newPath
       };
+
+      taxonOrder.push(taxonAbbrev);
     }
 
     node.children.forEach(childNode => {
       _traverseTaxonTree(childNode, groupColor ?? taxonEntry.groupColor, newPath);
     });
-
-    taxonOrder.push(taxonAbbrev);
   }
 }

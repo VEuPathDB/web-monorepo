@@ -22,12 +22,3 @@
   border-bottom-right-radius: 0;
   background: none;
 }
-
-.GraphAccordionContent {
-  animation: open .5s ease;
-}
-
-@keyframes open {
-  0%    {opacity: 0%;};
-  100%  {opacity: 100%;};
-}
