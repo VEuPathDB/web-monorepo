@@ -16,7 +16,7 @@ export type PluginType =
   | 'stepAnalysisResult'
   | 'questionFilter'
   | 'stepBox'
-  | 'stepDetailsTable'
+  | 'stepDetails'
 
 export interface PluginEntryContext {
   type: PluginType;
