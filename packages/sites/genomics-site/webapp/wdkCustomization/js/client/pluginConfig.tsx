@@ -72,12 +72,9 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionController',
-    test: ({ question }) => !!(
-      question && 
-      question.properties && 
-      question.properties.datasetCategory &&
-      question.properties.datasetSubtype
-    ),    
+    test: ({ question }) =>
+      question?.properties?.datasetCategory != null &&
+      question?.properties?.datasetSubtype != null,
     component: InternalGeneDataset
   },
   {
@@ -95,12 +92,9 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => !!(
-      question && 
-      question.properties && 
-      question.properties.datasetCategory &&
-      question.properties.datasetSubtype
-    ),
+    test: ({ question }) =>
+      question?.properties?.datasetCategory != null &&
+      question?.properties?.datasetSubtype != null,
     component: InternalGeneDataset
   },
   {
@@ -111,11 +105,10 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionForm',
     test: ({ question }) => 
-      !!question && 
       (
-        question.queryName === 'GenesByGenericFoldChange' ||
-	question.queryName === 'GenesByRnaSeqFoldChange' ||
-        question.queryName === 'GenesByUserDatasetRnaSeq'
+        question?.queryName === 'GenesByGenericFoldChange' ||
+        question?.queryName === 'GenesByRnaSeqFoldChange' ||
+        question?.queryName === 'GenesByUserDatasetRnaSeq'
       ),
     component: GenericFoldChangeForm,
   },
@@ -133,11 +126,8 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'questionForm',
     test: ({ question }) => 
-      !!question && 
-      (
-        question.urlSegment.endsWith('BySimilarity') ||
-        question.urlSegment === 'UnifiedBlast'
-      ),
+      question?.urlSegment.endsWith('BySimilarity') ||
+      question?.urlSegment === 'UnifiedBlast',
     component: BlastQuestionForm
   },
   {
