@@ -108,7 +108,7 @@ function DefaultStepDetails({
     <React.Fragment>
       <table className={cx('Table')}>
         <tbody>
-          {question && question.parameters
+          {question?.parameters
             .filter(parameter => parameter.isVisible)
             .map(parameter =>(
               <tr key={parameter.name}>
