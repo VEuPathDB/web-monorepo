@@ -24,6 +24,15 @@ import { GenesByBindingSiteFeature } from './components/questions/GenesByBinding
 import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
 
+const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
+  ({ question }) => (
+    question?.properties?.datasetCategory != null &&
+    question?.properties?.datasetSubtype != null
+  );
+
+const isMutuallyExclusiveParamQuestion: ClientPluginRegistryEntry<any>['test'] =
+  ({ question }) => question?.urlSegment.endsWith('ByLocation') ?? false;
+
 const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
     type: 'summaryView',
@@ -72,9 +81,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionController',
-    test: ({ question }) =>
-      question?.properties?.datasetCategory != null &&
-      question?.properties?.datasetSubtype != null,
+    test: isInternalGeneDatasetQuestion,
     component: InternalGeneDataset
   },
   {
@@ -84,17 +91,12 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => !!(
-      question && 
-      question.urlSegment.endsWith('ByLocation')
-    ),
-    component: ByLocation
+    test: isMutuallyExclusiveParamQuestion,
+    component: ByLocationForm
   },
   {
     type: 'questionForm',
-    test: ({ question }) =>
-      question?.properties?.datasetCategory != null &&
-      question?.properties?.datasetSubtype != null,
+    test: isInternalGeneDatasetQuestion,
     component: InternalGeneDataset
   },
   {
