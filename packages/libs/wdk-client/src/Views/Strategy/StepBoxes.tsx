@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
@@ -76,7 +76,7 @@ function StepTree(props: StepBoxesProps) {
     <React.Fragment>
       {primaryInput && <StepTree {...props} stepTree={primaryInput} isDeleteable={primaryInputIsDeletable} />}
       <div className={cx('--Slot')}>
-        <Plugin<StepBoxProps>
+        <Plugin
           context={{
             type: 'stepBox',
             name: step.searchName,
@@ -90,8 +90,6 @@ function StepTree(props: StepBoxesProps) {
             isExpanded: false,
             areInputsValid,
             isDeleteable,
-            isDetailVisible: props.stepDetailVisibility === step.id,
-            setDetailVisibility: isVisible => props.setStepDetailVisibility(isVisible ? step.id : undefined),
             renameStep: (newName: string) => props.onRenameStep(step.id, newName),
             // no-op; primary inputs cannot be nested
             makeNestedStrategy: noop,
@@ -111,7 +109,7 @@ function StepTree(props: StepBoxesProps) {
         {secondaryInput && (
           !isCompleteUiStepTree(secondaryInput) ? <UnknownQuestionStepBox stepTree={secondaryInput} deleteStep={() => props.onDeleteStep(secondaryInput.step.id)}/>
             : (
-              <Plugin<StepBoxProps>
+              <Plugin
                 context={{
                   type: 'stepBox',
                   name: secondaryInput.step.searchName,
@@ -125,8 +123,6 @@ function StepTree(props: StepBoxesProps) {
                   areInputsValid: secondaryInput.areInputsValid,
                   isExpanded: step.expanded,
                   isDeleteable,
-                  isDetailVisible: props.stepDetailVisibility === secondaryInput.step.id,
-                  setDetailVisibility: isVisible => props.setStepDetailVisibility(isVisible ? secondaryInput.step.id : undefined),
                   renameStep: (newName: string) => {
                     if (secondaryInput.isNested) {
                       props.onRenameNestedStrategy(step.id, newName);
@@ -296,7 +292,7 @@ function PreviewStepTree(props: PreviewStepBoxesProps) {
   const { step, primaryInput, secondaryInput, areInputsValid } = stepTree;
 
   const existingStepBox = (
-    <Plugin<StepBoxProps>
+    <Plugin
       context={{
         type: 'stepBox',
         name: step.searchName,
@@ -307,8 +303,6 @@ function PreviewStepTree(props: PreviewStepBoxesProps) {
         stepTree,
         isNested: false,
         areInputsValid,
-        isDetailVisible: false,
-        setDetailVisibility: () => {},
         ...existingStepPreviewProps
       }}
       defaultComponent={ExistingStepPreviewBox}
@@ -319,7 +313,7 @@ function PreviewStepTree(props: PreviewStepBoxesProps) {
     secondaryInput && (
       !isCompleteUiStepTree(secondaryInput)
         ? <UnknownQuestionStepBox stepTree={secondaryInput} deleteStep={noop} />
-        : <Plugin<StepBoxProps>
+        : <Plugin
             context={{
               type: 'stepBox',
               name: secondaryInput.step.searchName,
@@ -330,8 +324,6 @@ function PreviewStepTree(props: PreviewStepBoxesProps) {
               stepTree: secondaryInput,
               isNested: secondaryInput.isNested,
               areInputsValid: secondaryInput.areInputsValid,
-              isDetailVisible: false,
-              setDetailVisibility: () => {},
               ...existingStepPreviewProps
             }}
             defaultComponent={ExistingStepPreviewBox}
@@ -452,8 +444,10 @@ function SlotContent({
 }
 
 const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
-  const { isNested, areInputsValid, stepTree, deleteStep, isDetailVisible, setDetailVisibility } = props;
+  const { isNested, areInputsValid, stepTree, deleteStep } = props;
   const { step, color, primaryInput, secondaryInput } = stepTree;
+
+  const [ isDetailVisible, setDetailVisibility ] = useState(false);
 
   const StepComponent = isCombineUiStepTree(stepTree) && !isNested ? CombineStepBoxContent
     : isTransformUiStepTree(stepTree) && !isNested ? TransformStepBoxContent
@@ -471,7 +465,9 @@ const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
     (secondaryInput == null || isCompleteUiStepTree(secondaryInput))
   );
 
-  const editButton = hasValidSearch || isNested
+  const editButton = isPreview
+    ? null
+    : hasValidSearch || isNested
     ? (
       <button
         type="button"
@@ -490,9 +486,9 @@ const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
       </button>
     )
 
-  const stepDetails = (
-    <StepDetailsDialog {...props} allowRevise={allowRevise} isOpen={isDetailVisible} onClose={() => setDetailVisibility(false)}/>
-  );
+  const stepDetails = isPreview
+    ? null
+    : <StepDetailsDialog {...props} allowRevise={allowRevise} isOpen={isDetailVisible} onClose={() => setDetailVisibility(false)}/>;
 
   const filterIcon = step.isFiltered && (
     <i className={`${cx('--FilterIcon')} fa fa-filter`}/>
@@ -521,8 +517,8 @@ const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
       >
         <StepComponent {...props} />
       </NavLink>
-      {!isPreview && editButton}
-      {!isPreview && stepDetails}
+      {editButton}
+      {stepDetails}
       {filterIcon}
     </div>
   );
