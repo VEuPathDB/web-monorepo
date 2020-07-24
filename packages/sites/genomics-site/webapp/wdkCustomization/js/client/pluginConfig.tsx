@@ -86,7 +86,7 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    searchName: 'ByGenotypeNumber',
+    name: 'ByGenotypeNumber',
     component: ByGenotypeNumber
   },
   {
