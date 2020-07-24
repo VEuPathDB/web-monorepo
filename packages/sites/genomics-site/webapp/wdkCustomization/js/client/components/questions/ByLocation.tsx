@@ -1,26 +1,31 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { useChangeParamValue } from 'wdk-client/Views/Question/Params/Utils';
-import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { ParameterGroup, SelectEnumParam } from 'wdk-client/Utils/WdkModel';
+import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { StepDetailsContentProps, DefaultStepDetails } from 'wdk-client/Views/Strategy/StepDetails';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
-import { mutuallyExclusiveParamsGroupRenderer, MutuallyExclusiveTabKey } from './MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
-import { findChromosomeOptionalKey, findSequenceIdKey } from './MutuallyExclusiveParams/utils';
+import {
+  mutuallyExclusiveParamsGroupRenderer,
+  MutuallyExclusiveTabKey
+} from './MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
+import {
+  findChromosomeOptionalKey,
+  findSequenceIdKey,
+  xorGroupingByChromosomeAndSequenceID
+} from './MutuallyExclusiveParams/utils';
 
 const SEQUENCE_ID_EMPTY = /(\(Example: .*\)|No match)/i;
 
-export const ByLocation: React.FunctionComponent<Props> = props => {
+export function ByLocationForm(props: Props) {
   const chromosomeOptionalKey = findChromosomeOptionalKey(props.state.question.paramNames);
   const chromosomeOptionalParam = props.state.question.parametersByName[chromosomeOptionalKey] as SelectEnumParam;
 
   const sequenceIdKey = findSequenceIdKey(props.state.question.paramNames);
-  const sequenceIdParamValue = props.state.paramValues[sequenceIdKey];
 
-  const initialTab = !SEQUENCE_ID_EMPTY.test(sequenceIdParamValue)
-    ? 'Sequence ID'
-    : 'Chromosome';
+  const initialTab = findOpenTab(sequenceIdKey, props.state.paramValues);
 
   const [ activeTab, onTabSelected ] = useState<MutuallyExclusiveTabKey>(initialTab);
 
@@ -74,3 +79,67 @@ export const ByLocation: React.FunctionComponent<Props> = props => {
     />
   );
 };
+
+export function ByLocationStepDetails(props: StepDetailsContentProps) {
+  const {
+    question,
+    stepTree: { step }
+  } = props;
+
+  const questionWithHiddenParams = useMemo(() => {
+    if (question == null) {
+      return undefined;
+    }
+
+    const sequenceIdKey = findSequenceIdKey(question.paramNames);
+    const openTab = findOpenTab(sequenceIdKey, step.searchConfig.parameters);
+
+    return {
+      ...question,
+      parameters: question.parameters.map(
+        parameter => ({
+          ...parameter,
+          isVisible: (
+            parameter.isVisible &&
+            !parameterLiesInAClosedTab(
+              parameter.name,
+              xorGroupingByChromosomeAndSequenceID,
+              openTab
+            )
+          )
+        })
+      )
+    };
+  }, [ question, step ]);
+
+  return (
+    <DefaultStepDetails
+      {...props}
+      question={questionWithHiddenParams}
+    />
+  );
+}
+
+function findOpenTab(
+  sequenceIdKey: string,
+  paramValues: Record<string, string>
+) {
+  const sequenceIdParamValue = paramValues[sequenceIdKey];
+
+  return !SEQUENCE_ID_EMPTY.test(sequenceIdParamValue)
+    ? 'Sequence ID'
+    : 'Chromosome';
+}
+
+function parameterLiesInAClosedTab(
+  paramName: string,
+  xorGrouping: Record<MutuallyExclusiveTabKey, string[]>,
+  openTab: MutuallyExclusiveTabKey
+) {
+  return Object.entries(xorGrouping).some(
+    ([ tab, tabParams ]) => (
+      tab !== openTab &&
+      tabParams.includes(paramName)
+    )
+  );
+}

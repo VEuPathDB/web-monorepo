@@ -43,7 +43,7 @@ const groupXorParameters = (xorGrouping: Dictionary<string[]>) => (state: Questi
       );
 };
 
-const xorGroupingByChromosomeAndSequenceID = {
+export const xorGroupingByChromosomeAndSequenceID = {
   'Chromosome': ['organismSinglePick', 'chromosomeOptional', 'chromosomeOptionalForNgsSnps'],
   'Sequence ID': ['sequenceId']
 };
