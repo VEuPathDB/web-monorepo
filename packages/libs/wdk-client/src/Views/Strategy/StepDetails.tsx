@@ -25,29 +25,37 @@ interface DispatchProps {
   assignWeight: (weight: number) => void;
 }
 
-function StepDetails(props: StepDetailProps<UiStepTree> & DispatchProps) {
+export type LeafStepDetailsProps = StepDetailProps<UiStepTree> & DispatchProps;
+
+function StepDetails(props: LeafStepDetailsProps) {
+  return (
+    <Plugin
+      context={{
+        type: 'stepDetails',
+        name: 'leaf',
+        searchName: props.stepTree.step.searchName,
+        recordClassName: props.stepTree.step.recordClassName
+      }}
+      pluginProps={props}
+      defaultComponent={DefaultStepDetails}
+    />
+  );
+}
+
+export function DefaultStepDetails(props: LeafStepDetailsProps) {
   const { stepTree: { step } } = props;
 
   const { question, datasetParamItems } = useStepDetailsData(step);
   const { weight, weightCollapsed, setWeightCollapsed } = useStepDetailsWeightControls(step);
 
   return (
-    <Plugin
-      context={{
-        type: 'stepDetails',
-        name: 'leaf',
-        searchName: step.searchName,
-        recordClassName: step.recordClassName
-      }}
-      pluginProps={{
-        ...props,
-        question,
-        datasetParamItems,
-        weight,
-        weightCollapsed,
-        setWeightCollapsed
-      }}
-      defaultComponent={DefaultStepDetails}
+    <DefaultStepDetailsContent
+      {...props}
+      question={question}
+      datasetParamItems={datasetParamItems}
+      weight={weight}
+      weightCollapsed={weightCollapsed}
+      setWeightCollapsed={setWeightCollapsed}
     />
   );
 }
@@ -96,16 +104,15 @@ export function useStepDetailsData(step: Step) {
   return rawData ?? { datasetParamItems: undefined, question: undefined };
 }
 
-export interface StepDetailsContentProps extends StepDetailProps<UiStepTree> {
+export interface LeafStepDetailsContentProps extends LeafStepDetailsProps {
   question?: QuestionWithParameters;
   datasetParamItems?: Record<number, DatasetItem[]>;
-  assignWeight: (weight: number) => void;
   weight: string;
   weightCollapsed: boolean;
   setWeightCollapsed: (isCollapsed: boolean) => void;
 }
 
-export function DefaultStepDetails({
+export function DefaultStepDetailsContent({
   question,
   datasetParamItems,
   stepTree: { step },
@@ -113,7 +120,7 @@ export function DefaultStepDetails({
   weight,
   weightCollapsed,
   setWeightCollapsed
-} : StepDetailsContentProps) {
+} : LeafStepDetailsContentProps) {
   return (
     <React.Fragment>
       <table className={cx('Table')}>
