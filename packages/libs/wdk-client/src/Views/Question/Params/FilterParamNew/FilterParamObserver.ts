@@ -103,7 +103,10 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
             if (questionState == null) return empty() as Observable<LoadDeps>;
 
             const { activeOntologyTerm, fieldStates }: FilterParamState = questionState.paramUIState[paramName];
-            if (activeOntologyTerm != null && fieldStates[activeOntologyTerm].summary == null) {
+            if (activeOntologyTerm != null && (
+              fieldStates[activeOntologyTerm].summary == null ||
+              fieldStates[activeOntologyTerm].invalid
+            )) {
               return of({
                 paramName,
                 loadCounts: true,
@@ -124,7 +127,10 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
             if (questionState == null) return empty() as Observable<LoadDeps>;
 
             const { activeOntologyTerm, fieldStates }: FilterParamState = questionState.paramUIState[paramName];
-            if (activeOntologyTerm != null && fieldStates[activeOntologyTerm].summary == null) {
+            if (activeOntologyTerm != null && (
+              fieldStates[activeOntologyTerm].summary == null ||
+              fieldStates[activeOntologyTerm].invalid
+            )) {
               return of({
                 paramName,
                 loadCounts: true,
