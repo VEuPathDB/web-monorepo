@@ -28,7 +28,6 @@ interface MappedProps {
   uiStepTree?: PartialUiStepTree;
   insertStepVisibility?: AddType;
   reviseFormStepId?: number;
-  detailModalStepId?: number;
 }
 
 interface MappedDispatch {

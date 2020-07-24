@@ -21,7 +21,6 @@ interface Props {
   uiStepTree?: PartialUiStepTree;
   insertStepVisibility?: AddType;
   reviseFormStepId?: number;
-  detailModalStepId?: number;
   showCloseButton?: boolean;
   setReviseFormStepId: (stepId?: number) => void;
   onStrategyRename: (name: string) => void;
