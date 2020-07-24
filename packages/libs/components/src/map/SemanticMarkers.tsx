@@ -1,8 +1,12 @@
-import React, { useEffect } from "react"; //  { useState, useCallback } from "react";
-import { GeoBBox, SemanticMarkersProps } from "./Types";
+import React, { ReactElement, useEffect } from "react"; //  { useState, useCallback } from "react";
+import { GeoBBox, MarkerProps, BoundsViewport } from "./Types";
 import { useLeaflet } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 
+interface SemanticMarkersProps {
+  onViewportChanged: (bvp: BoundsViewport) => void,
+  markers: Array<ReactElement<MarkerProps>>
+}
 
 /**
  * Renders the semantic markers layer
@@ -10,8 +14,7 @@ import 'leaflet/dist/leaflet.css';
  * 
  * @param props 
  */
-export default function SemanticMarkers({ onViewportChanged, data }: SemanticMarkersProps) {
-console.log("I'm here");
+export default function SemanticMarkers({ onViewportChanged, markers }: SemanticMarkersProps) {
   const { map } = useLeaflet();
   // call the prop callback to communicate bounds and zoomLevel to outside world
   useEffect(() => {
@@ -29,7 +32,7 @@ console.log("I'm here");
     return () => {
       map.off('resize dragend zoomend', updateMap);
     };
-  }, [map]);
+  }, [map, onViewportChanged]);
 
   
 
@@ -47,7 +50,7 @@ console.log("I'm here");
 
   return (
     <>
-      { data.markers.map(({props, component: ComponentType}) => (<ComponentType {...props}></ComponentType>)) }
+      {markers}
     </>
   );
 }

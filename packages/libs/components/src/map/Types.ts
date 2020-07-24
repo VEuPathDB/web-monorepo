@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import { CSSProperties, ReactElement } from "react";
 // import type { Viewport } from "react-leaflet";  // react-leaflet is flow not TS. Not sure how to do thus
 
 export type LatLong = number[];  // TO DO: bounds checking? and enforce exactly two numbers
@@ -13,17 +13,6 @@ export interface GeoBBox {
   southWest: LatLong,
   northEast: LatLong
 }
-
-export interface MarkerData {
-  markers: Array<MarkerDatum>
-}
-
-
-export interface MarkerDatum {
-  props: MarkerProps,
-  component: React.Component | Function  // because FancyMarker is just a function...
-}
-
 
 export interface MarkerProps {
   position: LatLong,
@@ -45,12 +34,7 @@ export interface MapVEuMapProps {
   width: CSSProperties['width'],
 
   onViewportChanged: (bvp: BoundsViewport) => void,
-  markerData: MarkerData
-}
-
-export interface SemanticMarkersProps {
-  onViewportChanged: (bvp: BoundsViewport) => void,
-  data: MarkerData
+  markers: ReactElement<MarkerProps>[]
 }
 
 
