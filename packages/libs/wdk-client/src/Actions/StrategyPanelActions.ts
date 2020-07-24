@@ -26,11 +26,6 @@ export const fulfillStrategyPanelVisibility = makeActionCreator(
   (viewId: string, isVisible: boolean) => ({ isVisible, viewId })
 );
 
-export const setStepDetailsVisibility = makeActionCreator(
-  'strategyPanel/setStepDetailsVisibility',
-  (viewId: string, stepId: number | undefined) => ({ stepId, viewId })
-);
-
 export const setInsertStepWizardVisibility = makeActionCreator(
   'strategyPanel/setInsertStepWizardVisibility',
   (viewId: string, addType: AddType | undefined) => ({ addType, viewId })
@@ -73,7 +68,6 @@ export type Action =
   | InferAction<typeof closeStrategyPanel>
   | InferAction<typeof requestStrategyPanelVisibilityChange>
   | InferAction<typeof fulfillStrategyPanelVisibility>
-  | InferAction<typeof setStepDetailsVisibility>
   | InferAction<typeof setInsertStepWizardVisibility>
   | InferAction<typeof setReviseFormVisibility>
   | InferAction<typeof setDeleteStepDialogVisibilty>

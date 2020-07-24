@@ -11,7 +11,6 @@ import './StrategyPanel.css';
 import {Plugin} from 'wdk-client/Utils/ClientPlugin';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { CommonModal as StrategyModal } from 'wdk-client/Components';
-import StepDetailsDialog from './StepDetailsDialog';
 
 const cx = makeClassNameHelper('StrategyPanel');
 
@@ -25,7 +24,6 @@ interface Props {
   detailModalStepId?: number;
   showCloseButton?: boolean;
   setReviseFormStepId: (stepId?: number) => void;
-  setDetailModalStepId: (stepId?: number) => void;
   onStrategyRename: (name: string) => void;
   onStrategyClose: () => void;
   onStrategyCopy: (signature: string) => void;
@@ -51,11 +49,9 @@ export default function StrategyPanel(props: Props) {
     strategy,
     insertStepVisibility,
     reviseFormStepId,
-    detailModalStepId,
     showCloseButton,
     onStrategyClose,
     setReviseFormStepId,
-    setDetailModalStepId,
     onShowInsertStep,
     onHideInsertStep,
     onMakeNestedStrategy,
@@ -69,7 +65,6 @@ export default function StrategyPanel(props: Props) {
   } = props;
 
   const reviseStep = reviseFormStepId != null && strategy != null ? strategy.steps[reviseFormStepId] : undefined;
-  const detailStep = detailModalStepId != null && strategy != null ? strategy.steps[detailModalStepId] : undefined;
 
   return (
     <div className={cx()}>
@@ -105,8 +100,6 @@ export default function StrategyPanel(props: Props) {
             <div className={cx('--StepBoxesContainer')}>
               <StepBoxes
                 stepTree={uiStepTree}
-                stepDetailVisibility={detailModalStepId}
-                setStepDetailVisibility={setDetailModalStepId}
                 setReviseFormStepId={setReviseFormStepId}
                 onShowInsertStep={onShowInsertStep}
                 onHideInsertStep={onHideInsertStep}
