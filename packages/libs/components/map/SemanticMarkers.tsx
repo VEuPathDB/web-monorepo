@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect } from "react"; //  { useState, useCallback } from "react";
 import { GeoBBox, MarkerProps, BoundsViewport } from "./Types";
 import { useLeaflet } from "react-leaflet";
-import 'leaflet/dist/leaflet.css';
+import { LatLngBounds } from 'leaflet'
 
 interface SemanticMarkersProps {
   onViewportChanged: (bvp: BoundsViewport) => void,
@@ -18,12 +18,14 @@ export default function SemanticMarkers({ onViewportChanged, markers }: Semantic
   const { map } = useLeaflet();
   // call the prop callback to communicate bounds and zoomLevel to outside world
   useEffect(() => {
-    if (map == null) return; // is it ever null?
+    if (map == null) return;
 
     function updateMap() {
-      const bounds = boundsToGeoBBox(map.getBounds());
-      const zoomLevel = map.getZoom();
-      onViewportChanged({ bounds, zoomLevel });
+      if (map != null) {
+	const bounds = boundsToGeoBBox(map.getBounds());
+	const zoomLevel = map.getZoom();
+	onViewportChanged({ bounds, zoomLevel });
+      }
     }
 
     updateMap();
@@ -57,7 +59,7 @@ export default function SemanticMarkers({ onViewportChanged, markers }: Semantic
 
 
 
-function boundsToGeoBBox(bounds : any) : GeoBBox {
+function boundsToGeoBBox(bounds : LatLngBounds) : GeoBBox {
 
   var south = bounds.getSouth();
   if (south < -90) {

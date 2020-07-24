@@ -19,11 +19,6 @@ export interface MarkerProps {
   key: string
 }
 
-export interface FancyMarkerProps extends MarkerProps {
-  opacity: number
-}
-
-
 /** React Props that are passed to a Map Component. */
 export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
