@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
@@ -60,6 +60,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
     agg.lat = agg.lat + lat;
     agg.long = agg.long + long;
     agg.count++;
+    return undefined
   });
   return Array.from(aggsByGeohash.values()).map((agg) => {
     const meanLat = agg.lat/agg.count;
@@ -77,11 +78,14 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
 
 export const GeohashIds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 500));
+  }, [setMarkerElements])
   return (
     <MapVEuMap
     viewport={{center: [ 54.561781, -3.013297 ], zoom: 11}}
     height="600px" width="800px"
-    onViewportChanged={(bvp : BoundsViewport) => setMarkerElements(getMarkerElements(bvp, 500))}
+    onViewportChanged={handleViewportChanged}
     markers={markerElements}
     />
   );

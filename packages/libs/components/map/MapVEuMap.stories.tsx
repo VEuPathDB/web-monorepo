@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
@@ -41,11 +41,15 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
 
 export const Basic = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 10));
+  }, [setMarkerElements])
+
   return (
     <MapVEuMap
     viewport={{center: [ 54.561781, -3.143297 ], zoom: 12}}
     height="600px" width="800px"
-    onViewportChanged={(bvp : BoundsViewport) => setMarkerElements(getMarkerElements(bvp, 10))}
+    onViewportChanged={handleViewportChanged}
     markers={markerElements}
     />
   );

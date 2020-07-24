@@ -32,7 +32,7 @@ export default function SemanticMarkers({ onViewportChanged, markers }: Semantic
     return () => {
       map.off('resize dragend zoomend', updateMap);
     };
-  }, [map]);
+  }, [map, onViewportChanged]);
 
   
 
