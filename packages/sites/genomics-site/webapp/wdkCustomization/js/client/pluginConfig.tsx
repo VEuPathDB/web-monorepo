@@ -106,12 +106,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    test: ({ question }) => 
-      (
-        question?.queryName === 'GenesByGenericFoldChange' ||
-        question?.queryName === 'GenesByRnaSeqFoldChange' ||
-        question?.queryName === 'GenesByUserDatasetRnaSeq'
-      ),
+    test: ({ question }) => (
+      question?.queryName === 'GenesByGenericFoldChange' ||
+      question?.queryName === 'GenesByRnaSeqFoldChange' ||
+      question?.queryName === 'GenesByUserDatasetRnaSeq'
+    ),
     component: GenericFoldChangeForm,
   },
   {
