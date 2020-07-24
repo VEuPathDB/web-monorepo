@@ -32,14 +32,14 @@ export const mutuallyExclusiveParamsGroupRenderer = (
         group.name !== xorGroupKey || !chromosomeParameterKeys || !sequenceIdParameterKeys
           ? renderDefaultParamGroup(group, props)
           : (
-            <Tabs
+            <Tabs<MutuallyExclusiveTabKey>
               key={group.name}
               activeTab={activeTab}
               onTabSelected={onTabSelected}
               containerClassName={cx('Container')}
               tabs={[
                 {
-                  key: 'Chromosome' as MutuallyExclusiveTabKey,
+                  key: 'Chromosome',
                   display: 'Search by Chromosome',
                   content: renderDefaultParamGroup(
                     restrictParameterGroup(group, chromosomeParameterKeys),
@@ -47,7 +47,7 @@ export const mutuallyExclusiveParamsGroupRenderer = (
                   )
                 },
                 {
-                  key: 'Sequence ID' as MutuallyExclusiveTabKey,
+                  key: 'Sequence ID',
                   display: 'Search by Sequence ID',
                   content: renderDefaultParamGroup(
                     restrictParameterGroup(group, sequenceIdParameterKeys),
