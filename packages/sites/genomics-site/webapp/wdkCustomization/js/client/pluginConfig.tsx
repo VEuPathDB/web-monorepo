@@ -16,7 +16,7 @@ import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumbe
 
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
 import { ByGenotypeNumber } from './components/questions/ByGenotypeNumber';
-import { ByLocation } from './components/questions/ByLocation';
+import { ByLocationForm, ByLocationStepDetails } from './components/questions/ByLocation';
 import { BlastQuestionForm } from './components/questions/BlastQuestionForm';
 import { DynSpansBySourceId } from './components/questions/DynSpansBySourceId';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
@@ -165,6 +165,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     type: 'stepAnalysisResult',
     name: 'datasetGeneList',
     component: StepAnalysisHpiGeneListResults
+  },
+  {
+    type: 'stepDetails',
+    test: isMutuallyExclusiveParamQuestion,
+    component: ByLocationStepDetails
   },
 ];
 
