@@ -1,9 +1,15 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useChangeParamValue } from 'wdk-client/Views/Question/Params/Utils';
-import { ParameterGroup, SelectEnumParam } from 'wdk-client/Utils/WdkModel';
+import { ParameterGroup, SelectEnumParam, QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
+import { Step } from 'wdk-client/Utils/WdkUser';
 import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { StepDetailsContentProps, DefaultStepDetails } from 'wdk-client/Views/Strategy/StepDetails';
+import {
+  DefaultStepDetailsContent,
+  LeafStepDetailsProps,
+  useStepDetailsData,
+  useStepDetailsWeightControls
+} from 'wdk-client/Views/Strategy/StepDetails';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
@@ -80,13 +86,33 @@ export function ByLocationForm(props: Props) {
   );
 };
 
-export function ByLocationStepDetails(props: StepDetailsContentProps) {
-  const {
-    question,
-    stepTree: { step }
-  } = props;
+export function ByLocationStepDetails(props: LeafStepDetailsProps) {
+  const { stepTree: { step } } = props;
 
-  const questionWithHiddenParams = useMemo(() => {
+  const {
+    weight,
+    weightCollapsed,
+    setWeightCollapsed
+  } = useStepDetailsWeightControls(step);
+
+  const { question, datasetParamItems } = useStepDetailsData(step);
+
+  const questionWithHiddenParams = useQuestionWithHiddenParams(step, question);
+
+  return (
+    <DefaultStepDetailsContent
+      {...props}
+      question={questionWithHiddenParams}
+      datasetParamItems={datasetParamItems}
+      weight={weight}
+      weightCollapsed={weightCollapsed}
+      setWeightCollapsed={setWeightCollapsed}
+    />
+  );
+}
+
+function useQuestionWithHiddenParams(step: Step, question?: QuestionWithParameters) {
+  return useMemo(() => {
     if (question == null) {
       return undefined;
     }
@@ -111,13 +137,6 @@ export function ByLocationStepDetails(props: StepDetailsContentProps) {
       )
     };
   }, [ question, step ]);
-
-  return (
-    <DefaultStepDetails
-      {...props}
-      question={questionWithHiddenParams}
-    />
-  );
 }
 
 function findOpenTab(
