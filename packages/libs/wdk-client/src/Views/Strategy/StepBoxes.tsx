@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
@@ -452,8 +452,10 @@ function SlotContent({
 }
 
 const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
-  const { isNested, areInputsValid, stepTree, deleteStep, isDetailVisible, setDetailVisibility } = props;
+  const { isNested, areInputsValid, stepTree, deleteStep } = props;
   const { step, color, primaryInput, secondaryInput } = stepTree;
+
+  const [ isDetailVisible, setDetailVisibility ] = useState(false);
 
   const StepComponent = isCombineUiStepTree(stepTree) && !isNested ? CombineStepBoxContent
     : isTransformUiStepTree(stepTree) && !isNested ? TransformStepBoxContent
