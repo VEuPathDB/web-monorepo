@@ -18,8 +18,8 @@ export interface StepAnalysisSelectedPaneStateProps {
 }
 
 interface DescriptionState {
-  shortDescription: string;
-  description: string;
+  shortDescription?: string;
+  description?: string;
   descriptionExpanded: boolean;
 }
 

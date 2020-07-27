@@ -10,6 +10,7 @@ import {
   DELETE_ANALYSIS,
   REMOVE_TAB,
   START_FORM_SUBMISSION,
+  RUN_ANALYSIS,
   CHECK_RESULT_STATUS,
   COUNT_DOWN,
   FINISH_FORM_SUBMISSION,
@@ -47,7 +48,8 @@ import {
   DuplicateAnalysisAction,
   UpdateParamValues,
   ToggleDescription,
-  ToggleParameters
+  ToggleParameters,
+  RunAnalysisAction
 } from './StepAnalysisActions';
 import { StepAnalysisType } from '../../../../Utils/StepAnalysisUtils';
 
@@ -103,6 +105,11 @@ export const removeTab = (panelId: number): RemoveTabAction => ({
 
 export const startFormSubmission = (panelId: number): StartFormSubmissionAction => ({
   type: START_FORM_SUBMISSION,
+  payload: { panelId }
+});
+
+export const runAnalysis = (panelId: number): RunAnalysisAction => ({
+  type: RUN_ANALYSIS,
   payload: { panelId }
 });
 

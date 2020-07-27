@@ -70,13 +70,13 @@ export default (base: ServiceBase) => {
     );
   }
 
-  function createStepAnalysis(stepId: number, analysisConfig: { displayName?: string, analysisName: string }) {
+  function createStepAnalysis(stepId: number, baseAnalysisConfig: { analysisName: string, displayName?: string, parameters: FormParams }) {
     return base.sendRequest(
       stepAnalysisConfigDecoder,
       {
         path: `/users/current/steps/${stepId}/analyses`,
         method: 'POST',
-        body: JSON.stringify(analysisConfig)
+        body: JSON.stringify(baseAnalysisConfig)
       }
     );
   }
@@ -97,7 +97,7 @@ export default (base: ServiceBase) => {
       }
     ).then(stepAnalysisConfig => {
       return getStepAnalysisTypeParamSpecsWithGivenParameters(
-        stepId, stepAnalysisConfig.analysisName, stepAnalysisConfig.formParams)
+        stepId, stepAnalysisConfig.analysisName, stepAnalysisConfig.parameters)
       .then(displayParams => ({
         ...stepAnalysisConfig,
         displayParams
@@ -109,7 +109,7 @@ export default (base: ServiceBase) => {
     return fetch(`${base.serviceUrl}/users/current/steps/${stepId}/analyses/${analysisId}`, {
       method: 'PATCH',
       body: JSON.stringify({
-        formParams
+        parameters: formParams
       }),
       credentials: 'include',
       headers: new Headers(Object.assign({

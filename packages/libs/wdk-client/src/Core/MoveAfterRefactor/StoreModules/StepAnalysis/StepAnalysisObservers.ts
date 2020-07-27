@@ -17,6 +17,7 @@ import {
   START_LOADING_CHOSEN_ANALYSIS_TAB,
   DELETE_ANALYSIS,
   START_FORM_SUBMISSION,
+  RUN_ANALYSIS,
   CHECK_RESULT_STATUS,
   COUNT_DOWN,
   RENAME_ANALYSIS,
@@ -30,6 +31,7 @@ import {
   StartLoadingChosenAnalysisTabAction,
   DeleteAnalysisAction,
   StartFormSubmissionAction,
+  RunAnalysisAction,
   CheckResultStatusAction,
   CountDownAction,
   RenameAnalysisAction,
@@ -41,7 +43,21 @@ import { Action } from 'redux';
 import { EpicDependencies } from '../../../Store';
 import { EMPTY } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
-import { finishLoadingTabListing, startLoadingSavedTab, finishLoadingSavedTab, finishLoadingChosenAnalysisTab, removeTab, checkResultStatus, countDown, renameTab, finishFormSubmission, createNewTab, startFormSubmission, selectTab } from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
+import {
+  finishLoadingTabListing,
+  startLoadingSavedTab,
+  finishLoadingSavedTab,
+  finishLoadingChosenAnalysisTab,
+  removeTab,
+  countDown,
+  renameTab,
+  createNewTab,
+  startFormSubmission,
+  runAnalysis,
+  checkResultStatus,
+  finishFormSubmission,
+  selectTab
+} from '../../Actions/StepAnalysis/StepAnalysisActionCreators';
 
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
@@ -104,7 +120,7 @@ export const observeStartLoadingSavedTab = (action$: ActionsObservable<Action>, 
             analysisConfigStatus: 'COMPLETE',
             pollCountdown: 3,
             paramSpecs: analysisConfig.displayParams,
-            paramValues: analysisConfig.formParams,
+            paramValues: analysisConfig.parameters,
             panelUiState: {
               descriptionExpanded: false,
               formExpanded: true
@@ -236,15 +252,11 @@ export const observeDeleteAnalysis = (action$: ActionsObservable<Action>, state$
       }
 
       if (panelState.type !== UNSAVED_ANALYSIS_STATE) {
-        const { displayName, analysisId } = panelState.type === UNINITIALIZED_PANEL_STATE
+        const { analysisId } = panelState.type === UNINITIALIZED_PANEL_STATE
           ? panelState
           : panelState.analysisConfig;
 
-        wdkService.deleteStepAnalysis(stepId, analysisId).catch(
-          () => {
-            alert(`Cannot delete analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`);
-          }
-        );
+        wdkService.deleteStepAnalysis(stepId, analysisId);
       }
 
       return [
@@ -273,67 +285,67 @@ export const observeStartFormSubmission = (action$: ActionsObservable<Action>, s
         ? panelState.displayName
         : panelState.analysisConfig.displayName;
 
-      try {
-        if (panelState.type === UNSAVED_ANALYSIS_STATE) {
-          const analysisConfig = await wdkService.createStepAnalysis(stepId, {
-            displayName: panelState.displayName,
-            analysisName: panelState.analysisType.name
-          });
+      if (panelState.type === UNSAVED_ANALYSIS_STATE) {
+        const analysisConfig = await wdkService.createStepAnalysis(stepId, {
+          analysisName: panelState.analysisType.name,
+          displayName,
+          parameters: panelState.paramValues
+        });
 
-          return [
-            transitionToInternalPage(`/workspace/strategies/${strategyId}/${stepId}/analysis:${analysisConfig.analysisId}`, { replace: true }),
-            finishLoadingSavedTab(panelId, {
-              type: SAVED_ANALYSIS_STATE,
-              paramSpecs: panelState.paramSpecs,
-              paramValues: panelState.paramValues,
-              formStatus: panelState.formStatus,
-              formErrorMessage: panelState.formErrorMessage,
-              formValidationErrors: panelState.formValidationErrors,
-              panelUiState: panelState.panelUiState,
-              analysisConfig,
-              analysisConfigStatus: 'COMPLETE',
-              pollCountdown: 3,
-              resultContents: {},
-              resultErrorMessage: null
-            }),
-            startFormSubmission(panelId)
-          ];
-        } else {
-          const validationErrors = await wdkService.updateStepAnalysisForm(
-            stepId,
-            panelState.analysisConfig.analysisId,
-            panelState.paramValues
-          );
+        return [
+          transitionToInternalPage(`/workspace/strategies/${strategyId}/${stepId}/analysis:${analysisConfig.analysisId}`, { replace: true }),
+          finishLoadingSavedTab(panelId, {
+            type: SAVED_ANALYSIS_STATE,
+            paramSpecs: panelState.paramSpecs,
+            paramValues: panelState.paramValues,
+            formStatus: panelState.formStatus,
+            formErrorMessage: panelState.formErrorMessage,
+            formValidationErrors: panelState.formValidationErrors,
+            panelUiState: panelState.panelUiState,
+            analysisConfig,
+            analysisConfigStatus: 'COMPLETE',
+            pollCountdown: 3,
+            resultContents: {},
+            resultErrorMessage: null
+          }),
+          runAnalysis(panelId)
+        ];
+      } else {
+        await wdkService.updateStepAnalysisForm(
+          stepId,
+          panelState.analysisConfig.analysisId,
+          panelState.paramValues
+        );
 
-          if (validationErrors.length > 0) {
-            return [
-              finishFormSubmission(panelId, {
-                ...panelState,
-                formValidationErrors: validationErrors
-              })
-            ];
-          }
-
-          const { status } = await wdkService.runStepAnalysis(stepId, panelState.analysisConfig.analysisId);
-
-          return [
-            finishFormSubmission(panelId, {
-              ...panelState,
-              analysisConfig: {
-                ...panelState.analysisConfig,
-                status
-              },
-              analysisConfigStatus: 'LOADING',
-              formValidationErrors: []
-            }),
-            checkResultStatus(panelId)
-          ];
-        }
+        return [
+          runAnalysis(panelId)
+        ];
       }
-      catch (ex) {
-        alert(`Cannot run analysis '${displayName}' at this time. Please try again later, or contact us if the problem persists.`)
-        return EMPTY;
-      }
+    }),
+    mergeAll()
+  );
+};
+
+export const observeRunAnalysis = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
+  return action$.pipe(
+    filter(isRunAnalysis),
+    withLatestFrom(state$, focusOnPanelById),
+    filter(onTabInSavedState),
+    mergeMap(async ({ panelId, panelState, stepId }) => {
+      const { status } = await wdkService.runStepAnalysis(stepId, panelState.analysisConfig.analysisId);
+
+      return [
+        finishFormSubmission(panelId, {
+          ...panelState,
+          analysisConfig: {
+            ...panelState.analysisConfig,
+            status
+          },
+          analysisConfigStatus: 'LOADING',
+          formValidationErrors: []
+        }),
+        checkResultStatus(panelId)
+      ];
     }),
     mergeAll()
   );
@@ -409,12 +421,7 @@ export const observeRenameAnalysis = (action$: ActionsObservable<Action>, state$
     filter(onTabInRunnableState),
     mergeMap(async ({ action: { payload: { panelId, newDisplayName } }, stepId, panelState }) => {
       if (panelState.type === SAVED_ANALYSIS_STATE) {
-        try {
-          await wdkService.renameStepAnalysis(stepId, panelState.analysisConfig.analysisId, newDisplayName);
-        }
-        catch (ex) {
-          alert(`Cannot rename analysis '${panelState.analysisConfig.displayName}' at this time. Please try again later, or contact us if the problem persists.`);
-        }
+        await wdkService.renameStepAnalysis(stepId, panelState.analysisConfig.analysisId, newDisplayName);
       }
 
       return renameTab(panelId, newDisplayName);
@@ -432,27 +439,23 @@ export const observeDuplicateAnalysis = (action$: ActionsObservable<Action>, sta
         return createNewTab(panelState);
       }
 
+      const displayName = panelState.analysisConfig.displayName;
       const isAutorun = determineIfAutorun(panelState.analysisConfig.analysisName, choices);
 
       if (isAutorun) {
-        try {
-          const duplicateAnalysisConfig = await wdkService.createStepAnalysis(stepId, {
-            displayName: panelState.analysisConfig.displayName,
-            analysisName: panelState.analysisConfig.analysisName
-          });
+        const duplicateAnalysisConfig = await wdkService.createStepAnalysis(stepId, {
+          analysisName: panelState.analysisConfig.analysisName,
+          displayName,
+          parameters: panelState.paramValues
+        });
 
-          return createNewTab({
-            type: UNINITIALIZED_PANEL_STATE,
-            analysisId: duplicateAnalysisConfig.analysisId,
-            displayName: duplicateAnalysisConfig.displayName,
-            status: 'UNOPENED',
-            errorMessage: null
-          });
-        }
-        catch (ex) {
-          alert(`Cannot duplicate analysis '${panelState.analysisConfig.displayName}' at this time. Please try again later, or contact us if the problem persists.`);
-          return EMPTY;
-        }
+        return createNewTab({
+          type: UNINITIALIZED_PANEL_STATE,
+          analysisId: duplicateAnalysisConfig.analysisId,
+          displayName: duplicateAnalysisConfig.displayName,
+          status: 'UNOPENED',
+          errorMessage: null
+        });
       }
 
       return createNewTab({
@@ -481,6 +484,7 @@ const isStartLoadingSavedTab = (action: Action): action is StartLoadingSavedTabA
 const isStartLoadingChosenAnalysisTab = (action: Action): action is StartLoadingChosenAnalysisTabAction => action.type === START_LOADING_CHOSEN_ANALYSIS_TAB;
 const isDeleteAnalysis = (action: Action): action is DeleteAnalysisAction => action.type === DELETE_ANALYSIS;
 const isStartFormSubmission = (action: Action): action is StartFormSubmissionAction => action.type === START_FORM_SUBMISSION;
+const isRunAnalysis = (action: Action): action is RunAnalysisAction => action.type === RUN_ANALYSIS;
 const isCheckResultStatus = (action: Action): action is CheckResultStatusAction => action.type === CHECK_RESULT_STATUS;
 const isCountDown = (action: Action): action is CountDownAction => action.type === COUNT_DOWN;
 const isRenameAnalysis = (action: Action): action is RenameAnalysisAction => action.type === RENAME_ANALYSIS;

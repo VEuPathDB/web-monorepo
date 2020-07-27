@@ -1,11 +1,11 @@
 import { reduce as stepAnalysisReducer } from './StepAnalysis/StepAnalysisReducer';
 import { 
   observeStartLoadingTabListing, 
-  observeSelectTab, 
   observeStartLoadingSavedTab, 
   observeStartLoadingChosenAnalysisTab, 
   observeDeleteAnalysis, 
   observeStartFormSubmission, 
+  observeRunAnalysis,
   observeCheckResultStatus, 
   observeCountDown, 
   observeRenameAnalysis, 
@@ -32,12 +32,12 @@ const observe = (action$: ActionsObservable<Action>, state$: StateObservable<Roo
 
   return merge(
     observeStartLoadingTabListing(action$, stepAnalysisState$, dependencies),
-    // observeSelectTab(action$, stepAnalysisState$, dependencies),
     observeStartLoadingSavedTab(action$, stepAnalysisState$, dependencies),
     observeStartLoadingChosenAnalysisTab(action$, stepAnalysisState$, dependencies),
     observeDeleteAnalysis(action$, stepAnalysisState$, dependencies),
     observeRemoveTab(action$, stepAnalysisState$, dependencies),
     observeStartFormSubmission(action$, stepAnalysisState$, dependencies),
+    observeRunAnalysis(action$, stepAnalysisState$, dependencies),
     observeCheckResultStatus(action$, stepAnalysisState$, dependencies),
     observeCountDown(action$, stepAnalysisState$, dependencies),
     observeRenameAnalysis(action$, stepAnalysisState$, dependencies),
