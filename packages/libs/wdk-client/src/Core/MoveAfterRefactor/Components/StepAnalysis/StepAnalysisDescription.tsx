@@ -27,7 +27,7 @@ export const StepAnalysisDescription: React.SFC<StepAnalysisDescriptionProps> = 
       }
     </div>
     {
-      description && descriptionExpanded && description &&
+      description && descriptionExpanded &&
       <div className="step-analysis-description">
         {safeHtml(description)}
       </div>
