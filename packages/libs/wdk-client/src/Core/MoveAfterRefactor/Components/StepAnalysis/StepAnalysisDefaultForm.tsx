@@ -1,8 +1,8 @@
-import React, { ReactNode } from 'react';
+import React, { Fragment, ReactNode } from 'react';
 import { ParamComponent } from '../../../../Views/Question/Params';
+import { join, mapValues, split } from 'lodash/fp';
 import { HelpIcon } from '../../../../Components';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
-import { isEnumParam, isMultiPick, isValidEnumJson } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 interface StepAnalysisDefaultFormProps {
   paramSpecs: Parameter[];
@@ -78,10 +78,7 @@ const StepAnalysisParamRow: React.FunctionComponent<StepAnalysisRowProps> = ({
           paramValues
         }}
         parameter={paramSpec}
-        value={isEnumParam(paramSpec) && !isMultiPick(paramSpec) && isValidEnumJson(paramValues[paramSpec.name])
-          ? JSON.parse(paramValues[paramSpec.name])[0] // FIXME: See if we can have the service perform this transform
-          : paramValues[paramSpec.name]
-        }
+        value={paramValues[paramSpec.name]}
         uiState={uiState}
         dispatch={NOOP}
         onParamValueChange={onChange}
