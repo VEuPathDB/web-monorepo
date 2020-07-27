@@ -52,7 +52,7 @@ function observeSubmitUploadForm(
     mergeMap(async action => {
       try {
         await dependencies.wdkService.addDataset(action.payload.newUserDataset);
-        dependencies.transitioner.transitionToInternalPage('/workspace/dataset-upload/status');
+        dependencies.transitioner.transitionToInternalPage('/workspace/datasets/recent');
         return requestUploadMessages();
       } catch (err) {
         return receiveBadUpload(err || "Failed to upload dataset");

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, Dispatch } from 'redux';
 import { requestDeleteStrategy, requestDuplicateStrategy, requestPatchStrategyProperties, requestRemoveStepFromStepTree, requestStrategy, requestUpdateStepProperties } from 'wdk-client/Actions/StrategyActions';
-import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setReviseFormVisibility, openStrategyPanel, closeStrategyPanel, setStepDetailsVisibility } from 'wdk-client/Actions/StrategyPanelActions';
+import { nestStrategy, setInsertStepWizardVisibility, unnestStrategy, setReviseFormVisibility, openStrategyPanel, closeStrategyPanel } from 'wdk-client/Actions/StrategyPanelActions';
 import { createNewTab } from 'wdk-client/Core/MoveAfterRefactor/Actions/StepAnalysis/StepAnalysisActionCreators';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
@@ -12,7 +12,6 @@ import StrategyPanel from 'wdk-client/Views/Strategy/StrategyPanel';
 import { PartialUiStepTree, AddType } from 'wdk-client/Views/Strategy/Types';
 import {removeFromOpenedStrategies} from 'wdk-client/Actions/StrategyWorkspaceActions';
 import {transitionToInternalPage} from 'wdk-client/Actions/RouterActions';
-import { getStepIds } from 'wdk-client/Utils/StrategyUtils';
 
 interface OwnProps {
   viewId: string;
@@ -29,13 +28,11 @@ interface MappedProps {
   uiStepTree?: PartialUiStepTree;
   insertStepVisibility?: AddType;
   reviseFormStepId?: number;
-  detailModalStepId?: number;
 }
 
 interface MappedDispatch {
   openStrategyPanel: (viewId: string) => void;
   closeStrategyPanel: (viewId: string) => void;
-  setDetailModalStepId: (stepId?: number) => void;
   setReviseFormStepId: (stepId?: number) => void;
   requestStrategy: (id: number) => void;
   onStrategyClose: () => void;
@@ -63,7 +60,6 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
   const insertStepVisibility = panelState && panelState.visibleInsertStepWizard;
   const nestedStrategyBranchIds = panelState ? panelState.nestedStrategyBranchIds : [];
   const reviseFormStepId = panelState && panelState.visibleReviseForm;
-  const detailModalStepId = panelState && panelState.visibleStepDetails;
   // FIXME
   const { recordClasses, questions } = state.globalData;
   const uiStepTree = (
@@ -72,7 +68,7 @@ function mapStateToProps(state: RootState, ownProps: OwnProps): MappedProps {
     questions &&
     makeUiStepTree(strategy, keyBy(recordClasses, 'urlSegment'), keyBy(questions, 'urlSegment'), nestedStrategyBranchIds)
   );
-  return { uiStepTree, insertStepVisibility, reviseFormStepId, detailModalStepId };
+  return { uiStepTree, insertStepVisibility, reviseFormStepId };
 }
 
 function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch {
@@ -85,7 +81,6 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
       removeFromOpenedStrategies([strategyId]),
       transitionToInternalPage('/workspace/strategies')
     ],
-    setDetailModalStepId: (stepId?: number) => setStepDetailsVisibility(viewId, stepId),
     setReviseFormStepId: (stepId?: number) => setReviseFormVisibility(viewId, stepId),
     onStrategyCopy: () => requestDuplicateStrategy(strategyId),
     onStrategyDelete: () => requestDeleteStrategy(strategyId),

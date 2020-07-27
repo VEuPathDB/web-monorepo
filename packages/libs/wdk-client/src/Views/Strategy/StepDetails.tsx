@@ -8,8 +8,10 @@ import { CollapsibleSection, IconAlt } from 'wdk-client/Components';
 import { getFilterValueDisplay } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import { FilterWithFieldDisplayName } from 'wdk-client/Components/AttributeFilter/Types';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
-import { Parameter, EnumParam, DatasetParam } from 'wdk-client/Utils/WdkModel';
+import { Parameter, EnumParam, DatasetParam, QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
+import { Step } from 'wdk-client/Utils/WdkUser';
 import { isEnumParam, isMultiPick, toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 import { datasetItemToString, DatasetItem } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
 import { StepBoxProps, StepDetailProps, UiStepTree } from 'wdk-client/Views/Strategy/Types';
@@ -23,11 +25,55 @@ interface DispatchProps {
   assignWeight: (weight: number) => void;
 }
 
-function StepDetails({ stepTree, assignWeight }: StepDetailProps<UiStepTree> & DispatchProps) {
-  const { step } = stepTree;
+export type LeafStepDetailsProps = StepDetailProps<UiStepTree> & DispatchProps;
+
+function StepDetails(props: LeafStepDetailsProps) {
+  return (
+    <Plugin
+      context={{
+        type: 'stepDetails',
+        name: 'leaf',
+        searchName: props.stepTree.step.searchName,
+        recordClassName: props.stepTree.step.recordClassName
+      }}
+      pluginProps={props}
+      defaultComponent={DefaultStepDetails}
+    />
+  );
+}
+
+export function DefaultStepDetails(props: LeafStepDetailsProps) {
+  const { stepTree: { step } } = props;
+
+  const { question, datasetParamItems } = useStepDetailsData(step);
+  const { weight, weightCollapsed, setWeightCollapsed } = useStepDetailsWeightControls(step);
+
+  return (
+    <DefaultStepDetailsContent
+      {...props}
+      question={question}
+      datasetParamItems={datasetParamItems}
+      weight={weight}
+      weightCollapsed={weightCollapsed}
+      setWeightCollapsed={setWeightCollapsed}
+    />
+  );
+}
+
+export function useStepDetailsWeightControls(step: Step) {
   const [ weightCollapsed, setWeightCollapsed ] = useState(true);
 
-  const data = useWdkService(async wdkService => {
+  const weight = toString(step.searchConfig.wdkWeight);
+
+  return {
+    setWeightCollapsed,
+    weightCollapsed,
+    weight
+  };
+}
+
+export function useStepDetailsData(step: Step) {
+  const rawData = useWdkService(async wdkService => {
     const question = await wdkService.getQuestionGivenParameters(step.searchName, step.searchConfig.parameters);
     const nonemptyDatasetParams = question.parameters
       .filter(
@@ -53,17 +99,33 @@ function StepDetails({ stepTree, assignWeight }: StepDetailProps<UiStepTree> & D
     );
 
     return { datasetParamItems, question };
-  }, [ step ])
+  }, [ step ]);
 
-  const { datasetParamItems, question } = data || {};
+  return rawData ?? { datasetParamItems: undefined, question: undefined };
+}
 
-  const weight = toString(step.searchConfig.wdkWeight);
+export interface LeafStepDetailsContentProps extends LeafStepDetailsProps {
+  question?: QuestionWithParameters;
+  datasetParamItems?: Record<number, DatasetItem[]>;
+  weight: string;
+  weightCollapsed: boolean;
+  setWeightCollapsed: (isCollapsed: boolean) => void;
+}
 
+export function DefaultStepDetailsContent({
+  question,
+  datasetParamItems,
+  stepTree: { step },
+  assignWeight,
+  weight,
+  weightCollapsed,
+  setWeightCollapsed
+} : LeafStepDetailsContentProps) {
   return (
     <React.Fragment>
       <table className={cx('Table')}>
         <tbody>
-          {question && question.parameters
+          {question?.parameters
             .filter(parameter => parameter.isVisible)
             .map(parameter =>(
               <tr key={parameter.name}>

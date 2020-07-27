@@ -1,14 +1,14 @@
-import * as React from 'react';
 import { Location } from 'history';
+import * as React from 'react';
+import { withRouter } from 'react-router-dom';
 
 import 'wdk-client/Views/UserDatasets/UserDatasets.scss';
 import { showLoginForm } from 'wdk-client/Actions/UserSessionActions';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { UserDataset, UserDatasetUpload } from 'wdk-client/Utils/WdkModel';
+import { UserDataset } from 'wdk-client/Utils/WdkModel';
 import UserDatasetEmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
 import UserDatasetList from 'wdk-client/Views/UserDatasets/List/UserDatasetList';
-import { MyDatasetsRibbon } from 'wdk-client/Views/UserDatasets/Navigation';
 import {
   loadUserDatasetList,
   removeUserDataset,
@@ -160,7 +160,6 @@ class UserDatasetListController extends PageController <Props> {
     return (
       <div className="UserDatasetList-Controller">
         <div className="UserDatasetList-Content">
-          <MyDatasetsRibbon projectName={projectName} numOngoingUploads={numOngoingUploads} />
           <UserDatasetList {...listProps} />
         </div>
       </div>
@@ -178,4 +177,4 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
   (stateProps, dispatchProps, ownProps) => ({ stateProps, dispatchProps, ownProps })
 )
 
-export default enhance(wrappable(UserDatasetListController));
+export default withRouter(enhance(wrappable(UserDatasetListController)));

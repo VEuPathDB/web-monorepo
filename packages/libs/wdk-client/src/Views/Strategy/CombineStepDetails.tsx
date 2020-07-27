@@ -10,6 +10,7 @@ import Loading from 'wdk-client/Components/Loading';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 
 export interface ReviseOperatorMenuItem {
   display: React.ReactNode;
@@ -28,13 +29,30 @@ interface DispatchProps {
 
 type OwnProps = StepDetailProps<CombineUiStepTree>;
 
-function CombineStepDetails({ 
+export type CombineStepDetailsProps = OwnProps & StateProps & DispatchProps;
+
+function CombineStepDetails(props: CombineStepDetailsProps) {
+  return (
+    <Plugin
+      context={{
+        type: 'stepDetails',
+        name: 'combine',
+        searchName: props.stepTree.step.searchName,
+        recordClassName: props.stepTree.step.recordClassName
+      }}
+      pluginProps={props}
+      defaultComponent={DefaultCombineStepDetails}
+    />
+  );
+}
+
+function DefaultCombineStepDetails({
   questions, 
   strategy, 
   stepTree, 
   onClose, 
   dispatch,
-}: OwnProps & StateProps & DispatchProps) {
+}: CombineStepDetailsProps) {
   const { step } = stepTree;
 
   const compatibleOperatorMetadata = useCompatibleOperatorMetadata(questions, stepTree);

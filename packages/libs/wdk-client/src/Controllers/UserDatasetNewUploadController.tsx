@@ -6,7 +6,6 @@ import { showLoginForm } from 'wdk-client/Actions/UserSessionActions';
 import { submitUploadForm } from 'wdk-client/Actions/UserDatasetUploadActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { connect } from 'react-redux';
-import { UploadDatasetRibbon } from 'wdk-client/Views/UserDatasets/Navigation';
 import UserDatasetEmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
 
 const actionCreators = {
@@ -63,7 +62,6 @@ class UserDatasetUploadController extends PageController<MergedProps> {
 
     return (
       <div className="stack">
-        <UploadDatasetRibbon/>
         { projectName === 'MicrobiomeDB'
           ? <MicrobiomeDBUploadForm badUploadMessage={this.props.badUploadMessage} submitForm={this.props.userEvents.submitUploadForm} />
           : this.renderMissingForm()
