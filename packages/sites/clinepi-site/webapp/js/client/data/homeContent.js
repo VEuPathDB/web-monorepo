@@ -10,6 +10,7 @@ export default ({ studies, searches, visualizations }) => ([
     contentType: 'StudyCardList',
     contentNamePlural: 'studies',
     filters: studyFilters(studies),
+    filtersLabel: 'disease',
     items: studies.entities,
     isLoading: studies.loading,
     isExpandable: true,
