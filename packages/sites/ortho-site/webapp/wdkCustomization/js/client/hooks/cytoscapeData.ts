@@ -10,8 +10,7 @@ import { noop, orderBy } from 'lodash';
 
 import {
   NodeDisplayType,
-  ProteinType,
-  corePeripheralLegendColors
+  ProteinType
 } from '../utils/clusterGraph';
 import {
   makePieStyles,
@@ -21,7 +20,6 @@ import {
 import {
   EcNumberEntry,
   GroupLayout,
-  NodeEntry,
   PfamDomainEntry
 } from '../utils/groupLayout';
 import { TaxonUiMetadata } from '../utils/taxons';
@@ -157,17 +155,6 @@ function useNodes(
       ),
       [ layout ]
   );
-}
-
-function nodeEntryToCorePeripheralColor(
-  nodeEntry: NodeEntry,
-  { group: { genes } }: GroupLayout,
-  corePeripheralMap: Record<string, ProteinType>
-) {
-  const taxonAbbrev = genes[nodeEntry.id].taxon.abbrev;
-  const proteinType = corePeripheralMap[taxonAbbrev];
-
-  return corePeripheralLegendColors[proteinType];
 }
 
 function useEdges(layout: GroupLayout): EdgeDefinition[] {
