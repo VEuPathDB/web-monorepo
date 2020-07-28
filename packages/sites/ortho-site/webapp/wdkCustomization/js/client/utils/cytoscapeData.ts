@@ -51,7 +51,7 @@ export function nodeEntryToCytoscapeData(
     corePeripheralColor: nodeEntryToCorePeripheralColor(nodeEntry, layout, corePeripheralMap),
     ...nodeEntryToTaxonColors(nodeEntry, layout, taxonUiMetadata),
     ...nodeEntryToEcNumberPieData(nodeEntry, layout, orderedEcNumbers, ecNumberNPieSlices),
-    ...nodeEntryToPfamDomainPieData(nodeEntry, layout, orderedPfamDomains, pfamDomainNPieSlices),
+    ...nodeEntryToPfamDomainPieData(nodeEntry, layout, orderedPfamDomains, pfamDomainNPieSlices)
   };
 }
 

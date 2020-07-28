@@ -73,6 +73,8 @@ export function useCytoscapeConfig(
     elements,
     stylesheet,
     layout: { name: 'preset' },
+    panningEnabled: false,
+    userPanningEnabled: false,
     zoom: 1,
     zoomingEnabled: false,
     userZoomingEnabled: false,
