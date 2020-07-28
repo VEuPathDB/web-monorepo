@@ -19,6 +19,12 @@ import {
   NodeDisplayType,
   ProteinType
 } from '../../utils/clusterGraph';
+import {
+  addCytoscapeClass,
+  addAndRemoveCytoscapeClasses,
+  removeCytoscapeClass,
+  removeCytoscapeClasses
+} from '../../utils/cytoscapeClasses';
 import { GroupLayout } from '../../utils/groupLayout';
 import { TaxonUiMetadata } from '../../utils/taxons';
 
@@ -357,45 +363,4 @@ function makeHighlightedEdgeNodeClasses(edge: EdgeSingular) {
       classesToRemove: [ sourceHAlignClass, sourceVAlignClass ]
     }
   };
-}
-
-function addCytoscapeClass(existingClasses: string | undefined, classToAdd: string) {
-  const existingClassesString = existingClasses ?? '';
-
-  const existingClassesArray = existingClassesString.trim().split(/\s+/g);
-
-  return existingClassesArray.includes(classToAdd)
-    ? existingClasses
-    : [ ...existingClassesArray, classToAdd ].join(' ');
-}
-
-function addCytoscapeClasses(existingClasses: string | undefined, classesToAdd: string[]) {
-  return classesToAdd.reduce(addCytoscapeClass, existingClasses);
-}
-
-function removeCytoscapeClass(existingClasses: string | undefined, classToRemove: string) {
-  const existingClassesString = existingClasses ?? '';
-
-  const existingClassesArray = existingClassesString.trim().split(/\s+/g);
-
-  return !existingClassesArray.includes(classToRemove)
-    ? existingClasses
-    : existingClassesArray
-        .filter(existingClass => existingClass !== classToRemove)
-        .join(' ');
-}
-
-function removeCytoscapeClasses(existingClasses: string | undefined, classesToRemove: string[]) {
-  return classesToRemove.reduce(removeCytoscapeClass, existingClasses);
-}
-
-function addAndRemoveCytoscapeClasses(
-  existingClasses: string | undefined,
-  classesToAdd: string[],
-  classesToRemove: string[]
-) {
-  return removeCytoscapeClasses(
-    addCytoscapeClasses(existingClasses, classesToAdd),
-    classesToRemove
-  );
 }
