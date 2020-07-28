@@ -10,14 +10,15 @@ import produce from 'immer';
 import CytoscapeComponent from 'react-cytoscapejs';
 
 import {
+  useCyEffect,
+  useCytoscapeConfig
+} from '../../hooks/cytoscapeData';
+import {
   EdgeType,
   NodeDisplayType,
   ProteinType
 } from '../../utils/clusterGraph';
-import {
-  useCyEffect,
-  useCytoscapeConfig
-} from '../../hooks/cytoscapeData';
+
 import { GroupLayout } from '../../utils/groupLayout';
 import { TaxonUiMetadata } from '../../utils/taxons';
 
@@ -36,6 +37,8 @@ interface Props {
   highlightedBlastEdgeId: string | undefined;
   onClickNode: (clickedNode: string) => void;
 }
+
+type CytoscapeConfig = ReturnType<typeof useCytoscapeConfig>[0];
 
 export function ClusterGraphCanvas({
   layout,
@@ -59,89 +62,8 @@ export function ClusterGraphCanvas({
     selectedNodeDisplayType
   );
 
-  const updateHighlightedNodes = useCallback((highlightedNodeIds: string[]) => {
-    const newConfig = produce(cytoscapeConfig, draftConfig => {
-      const highlightedNodeIdsSet = new Set(highlightedNodeIds);
-
-      draftConfig.elements.forEach(element => {
-        if (element.group === 'nodes' && element.data.id != null) {
-          if (highlightedNodeIdsSet.has(element.data.id)) {
-            element.classes = addCytoscapeClass(element.classes, 'highlighted');
-          } else {
-            element.classes = removeCytoscapeClass(element.classes, 'highlighted');
-          }
-        }
-      });
-    });
-
-    setCytoscapeConfig(newConfig);
-  }, [ cytoscapeConfig ]);
-
-  const updateHighlightedEdge = useCallback((highlightedEdgeId: string | undefined) => {
-    const newConfig = produce(cytoscapeConfig, draftConfig => {
-      if (cyRef.current == null) {
-        return;
-      }
-
-      if (highlightedEdgeId === undefined) {
-        draftConfig.elements.forEach(element => {
-          element.classes = removeCytoscapeClasses(
-            element.classes,
-            [
-              'highlighted',
-              'left',
-              'right',
-              'top',
-              'bottom'
-            ]
-          );
-        });
-
-        return;
-      }
-
-      const edge = cyRef.current.getElementById(highlightedEdgeId);
-
-      const {
-        source: highlightedSourceClasses,
-        target: highlightedTargetClasses
-      } = makeHighlightedEdgeNodeClasses(edge);
-
-      const sourceId = highlightedSourceClasses.elementId;
-      const targetId = highlightedTargetClasses.elementId;
-
-      draftConfig.elements.forEach(element => {
-        if (element.data.id === highlightedEdgeId) {
-          element.classes = addCytoscapeClass(element.classes, 'highlighted');
-        } else if (element.data.id === sourceId) {
-          element.classes = addAndRemoveCytoscapeClasses(
-            element.classes,
-            highlightedSourceClasses.classesToAdd,
-            highlightedSourceClasses.classesToRemove
-          );
-        } else if (element.data.id === targetId) {
-          element.classes = addAndRemoveCytoscapeClasses(
-            element.classes,
-            highlightedTargetClasses.classesToAdd,
-            highlightedTargetClasses.classesToRemove
-          );
-        } else {
-          element.classes = removeCytoscapeClasses(
-            element.classes,
-            [
-              'highlighted',
-              'left',
-              'right',
-              'top',
-              'bottom'
-            ]
-          );
-        }
-      });
-    });
-
-    setCytoscapeConfig(newConfig);
-  }, [ cytoscapeConfig ]);
+  const updateHighlightedNodes = useUpdateHighlightedNodes(cytoscapeConfig, setCytoscapeConfig);
+  const updateHighlightedEdge = useUpdateHighlightedEdge(cyRef.current, cytoscapeConfig, setCytoscapeConfig);
 
   const onMouseLeaveCanvas = useCallback(() => {
     updateHighlightedNodes([]);
@@ -263,6 +185,101 @@ export function ClusterGraphCanvas({
       />
     </div>
   );
+}
+
+function useUpdateHighlightedNodes(
+  cytoscapeConfig: CytoscapeConfig,
+  setCytoscapeConfig: (newConfig: CytoscapeConfig) => void
+) {
+  return useCallback((highlightedNodeIds: string[]) => {
+    const newConfig = produce(cytoscapeConfig, draftConfig => {
+      const highlightedNodeIdsSet = new Set(highlightedNodeIds);
+
+      draftConfig.elements.forEach(element => {
+        if (element.group === 'nodes' && element.data.id != null) {
+          if (highlightedNodeIdsSet.has(element.data.id)) {
+            element.classes = addCytoscapeClass(element.classes, 'highlighted');
+          } else {
+            element.classes = removeCytoscapeClass(element.classes, 'highlighted');
+          }
+        }
+      });
+    });
+
+    setCytoscapeConfig(newConfig);
+  }, [ cytoscapeConfig ]);
+}
+
+function useUpdateHighlightedEdge(
+  cy: Core | undefined,
+  cytoscapeConfig: CytoscapeConfig,
+  setCytoscapeConfig: (newConfig: CytoscapeConfig) => void
+) {
+  return useCallback((highlightedEdgeId: string | undefined) => {
+    const newConfig = produce(cytoscapeConfig, draftConfig => {
+      if (cy == null) {
+        return;
+      }
+  
+      if (highlightedEdgeId === undefined) {
+        draftConfig.elements.forEach(element => {
+          element.classes = removeCytoscapeClasses(
+            element.classes,
+            [
+              'highlighted',
+              'left',
+              'right',
+              'top',
+              'bottom'
+            ]
+          );
+        });
+  
+        return;
+      }
+  
+      const edge = cy.getElementById(highlightedEdgeId);
+  
+      const {
+        source: highlightedSourceClasses,
+        target: highlightedTargetClasses
+      } = makeHighlightedEdgeNodeClasses(edge);
+  
+      const sourceId = highlightedSourceClasses.elementId;
+      const targetId = highlightedTargetClasses.elementId;
+  
+      draftConfig.elements.forEach(element => {
+        if (element.data.id === highlightedEdgeId) {
+          element.classes = addCytoscapeClass(element.classes, 'highlighted');
+        } else if (element.data.id === sourceId) {
+          element.classes = addAndRemoveCytoscapeClasses(
+            element.classes,
+            highlightedSourceClasses.classesToAdd,
+            highlightedSourceClasses.classesToRemove
+          );
+        } else if (element.data.id === targetId) {
+          element.classes = addAndRemoveCytoscapeClasses(
+            element.classes,
+            highlightedTargetClasses.classesToAdd,
+            highlightedTargetClasses.classesToRemove
+          );
+        } else {
+          element.classes = removeCytoscapeClasses(
+            element.classes,
+            [
+              'highlighted',
+              'left',
+              'right',
+              'top',
+              'bottom'
+            ]
+          );
+        }
+      });
+    });
+  
+    setCytoscapeConfig(newConfig);
+  }, [ cytoscapeConfig, cy ]);
 }
 
 function makeHandleNodeClick(onClickNode: Props['onClickNode']) {
