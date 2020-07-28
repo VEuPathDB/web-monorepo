@@ -279,6 +279,7 @@ const mergeProps = (
             pluginProps={{
               key: baseTabConfig.key,
               ...mapAnalysisPanelStateToProps(
+                +baseTabConfig.key,
                 stateProps.analysisPanelStates[+baseTabConfig.key],
                 stateProps.analysisChoices,
                 stateProps.webAppUrl,
