@@ -1,17 +1,11 @@
-import React, { Fragment, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { ParamComponent } from '../../../../Views/Question/Params';
-import { join, mapValues, split } from 'lodash/fp';
 import { HelpIcon } from '../../../../Components';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
+import { StepAnalysisFormPluginProps } from './StepAnalysisFormPane';
 
-interface StepAnalysisDefaultFormProps {
-  paramSpecs: Parameter[];
-  paramValues: Record<string, string>;
-  updateParamValues: (newParamValues: Record<string, string>) => void;
-  onFormSubmit: () => void;
-}
-
-export const StepAnalysisDefaultForm: React.FunctionComponent<StepAnalysisDefaultFormProps> = ({
+export const StepAnalysisDefaultForm: React.FunctionComponent<StepAnalysisFormPluginProps> = ({
+  formKey,
   paramSpecs,
   paramValues,
   updateParamValues,
@@ -25,6 +19,7 @@ export const StepAnalysisDefaultForm: React.FunctionComponent<StepAnalysisDefaul
           .map(paramSpec =>
             <StepAnalysisParamRow
               key={paramSpec.name}
+              formKey={formKey}
               displayName={<ParamDisplayName paramSpec={paramSpec} />}
               paramValues={paramValues}
               paramSpec={paramSpec}
@@ -47,6 +42,7 @@ export const StepAnalysisDefaultForm: React.FunctionComponent<StepAnalysisDefaul
 )
 
 interface StepAnalysisRowProps {
+  formKey: string;
   displayName: ReactNode;
   paramValues: Record<string, string>;
   paramSpec: Parameter;
@@ -54,6 +50,7 @@ interface StepAnalysisRowProps {
 }
 
 const StepAnalysisParamRow: React.FunctionComponent<StepAnalysisRowProps> = ({
+  formKey,
   displayName,
   paramValues,
   paramSpec,
@@ -71,9 +68,8 @@ const StepAnalysisParamRow: React.FunctionComponent<StepAnalysisRowProps> = ({
     </td>
     <td>
       <ParamComponent
-        key={paramSpec.name}
         ctx={{
-          searchName: '',
+          searchName: formKey,
           parameter: paramSpec,
           paramValues
         }}
