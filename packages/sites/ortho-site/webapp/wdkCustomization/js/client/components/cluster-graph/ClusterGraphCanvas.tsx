@@ -10,14 +10,14 @@ import produce from 'immer';
 import CytoscapeComponent from 'react-cytoscapejs';
 
 import {
-  useCyEffect,
-  useCytoscapeConfig
-} from '../../hooks/clusterGraph';
-import {
   EdgeType,
   NodeDisplayType,
   ProteinType
 } from '../../utils/clusterGraph';
+import {
+  useCyEffect,
+  useCytoscapeConfig
+} from '../../hooks/cytoscapeData';
 import { GroupLayout } from '../../utils/groupLayout';
 import { TaxonUiMetadata } from '../../utils/taxons';
 
