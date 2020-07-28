@@ -26,6 +26,8 @@ import { TaxonUiMetadata } from '../utils/taxons';
 
 const MAX_PIE_SLICES = 16;
 
+export type CytoscapeConfig = ReturnType<typeof useCytoscapeConfig>[0];
+
 interface CyEffectCallback {
   (cy: Core): (void | (() => void | undefined));
 };

@@ -10,6 +10,7 @@ import produce from 'immer';
 import CytoscapeComponent from 'react-cytoscapejs';
 
 import {
+  CytoscapeConfig,
   useCyEffect,
   useCytoscapeConfig
 } from '../../hooks/cytoscapeData';
@@ -18,7 +19,6 @@ import {
   NodeDisplayType,
   ProteinType
 } from '../../utils/clusterGraph';
-
 import { GroupLayout } from '../../utils/groupLayout';
 import { TaxonUiMetadata } from '../../utils/taxons';
 
@@ -37,8 +37,6 @@ interface Props {
   highlightedBlastEdgeId: string | undefined;
   onClickNode: (clickedNode: string) => void;
 }
-
-type CytoscapeConfig = ReturnType<typeof useCytoscapeConfig>[0];
 
 export function ClusterGraphCanvas({
   layout,
@@ -135,41 +133,11 @@ export function ClusterGraphCanvas({
     setCytoscapeConfig(newConfig);
   }, [ highlightedEdgeType ]);
 
-  useCyEffect(cyRef, cy => {
-    const handleNodeClick = makeHandleNodeClick(onClickNode);
+  useNodeClickEventHandler(cyRef, onClickNode);
 
-    cy.on('click', 'node', handleNodeClick);
+  useNodeMouseMovementEventHandlers(cyRef, updateHighlightedNodes);
 
-    return () => {
-      cy.off('click', 'node', handleNodeClick);
-    };
-  }, [ onClickNode ]);
-
-  useCyEffect(cyRef, cy => {
-    const handleNodeMouseOver = makeHandleNodeMouseOver(updateHighlightedNodes);
-    const handleNodeMouseOut = makeHandleNodeMouseOut(updateHighlightedNodes);
-
-    cy.on('mouseover', 'node', handleNodeMouseOver);
-    cy.on('mouseout', 'node', handleNodeMouseOut);
-
-    return () => {
-      cy.off('mouseover', 'node', handleNodeMouseOver);
-      cy.off('mouseout', 'node', handleNodeMouseOut);
-    };
-  }, [ updateHighlightedNodes ]);
-
-  useCyEffect(cyRef, cy => {
-    const handleEdgeMouseOver = makeHandleEdgeMouseOver(updateHighlightedEdge);
-    const handleEdgeMouseOut = makeHandleEdgeMouseOut(updateHighlightedEdge);
-
-    cy.on('mouseover', 'edge', handleEdgeMouseOver);
-    cy.on('mouseout', 'edge', handleEdgeMouseOut);
-
-    return () => {
-      cy.off('mouseover', 'edge', handleEdgeMouseOver);
-      cy.off('mouseout', 'edge', handleEdgeMouseOut);
-    };
-  }, [ updateHighlightedEdge ]);
+  useEdgeMouseMovementEventHandlers(cyRef, updateHighlightedEdge);
 
   return (
     <div
@@ -280,6 +248,57 @@ function useUpdateHighlightedEdge(
   
     setCytoscapeConfig(newConfig);
   }, [ cytoscapeConfig, cy ]);
+}
+
+function useNodeClickEventHandler(
+  cyRef: React.MutableRefObject<Core | undefined>,
+  onClickNode: Props['onClickNode']
+) {
+  useCyEffect(cyRef, cy => {
+    const handleNodeClick = makeHandleNodeClick(onClickNode);
+
+    cy.on('click', 'node', handleNodeClick);
+
+    return () => {
+      cy.off('click', 'node', handleNodeClick);
+    };
+  }, [ onClickNode ]);
+}
+
+function useNodeMouseMovementEventHandlers(
+  cyRef: React.MutableRefObject<Core | undefined>,
+  updateHighlightedNodes: ReturnType<typeof useUpdateHighlightedNodes>
+) {
+  useCyEffect(cyRef, cy => {
+    const handleNodeMouseOver = makeHandleNodeMouseOver(updateHighlightedNodes);
+    const handleNodeMouseOut = makeHandleNodeMouseOut(updateHighlightedNodes);
+
+    cy.on('mouseover', 'node', handleNodeMouseOver);
+    cy.on('mouseout', 'node', handleNodeMouseOut);
+
+    return () => {
+      cy.off('mouseover', 'node', handleNodeMouseOver);
+      cy.off('mouseout', 'node', handleNodeMouseOut);
+    };
+  }, [ updateHighlightedNodes ])
+};
+
+function useEdgeMouseMovementEventHandlers(
+  cyRef: React.MutableRefObject<Core | undefined>,
+  updateHighlightedEdge: ReturnType<typeof useUpdateHighlightedEdge>
+) {
+  useCyEffect(cyRef, cy => {
+    const handleEdgeMouseOver = makeHandleEdgeMouseOver(updateHighlightedEdge);
+    const handleEdgeMouseOut = makeHandleEdgeMouseOut(updateHighlightedEdge);
+
+    cy.on('mouseover', 'edge', handleEdgeMouseOver);
+    cy.on('mouseout', 'edge', handleEdgeMouseOut);
+
+    return () => {
+      cy.off('mouseover', 'edge', handleEdgeMouseOver);
+      cy.off('mouseout', 'edge', handleEdgeMouseOut);
+    };
+  }, [ updateHighlightedEdge ]);
 }
 
 function makeHandleNodeClick(onClickNode: Props['onClickNode']) {
