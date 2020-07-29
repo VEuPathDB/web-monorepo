@@ -1,7 +1,7 @@
 import 'wdk-client/Views/Question/Params/TreeBoxParam.scss';
 
 import { intersection } from 'lodash';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
@@ -66,6 +66,8 @@ function removeBranches(tree: TreeBoxVocabNode, items: string[]): string[] {
 function deriveSelectedBranches(tree: TreeBoxVocabNode, items: string[]): string[] {
   const itemSet = new Set(items);
   return filterNodes((node: TreeBoxVocabNode) => (
+    // never include root node
+    node !== tree &&
     isBranch(node, getNodeChildren) &&
     node.children.every(child => itemSet.has(child.data.term))
   ), tree)
@@ -144,6 +146,16 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   const selectedCount = props.parameter.countOnlyLeaves
     ? selectedLeaves.length
     : selectedNodes.length;
+  const handleExpansionChange = useCallback((expandedList: string[]) => {
+    props.dispatch(setExpandedList({ ...props.context, expandedList }));
+  }, [props.dispatch, props.context])
+  const handleSelectionChange = useCallback((ids: string[]) => {
+    const idsWithBranches = ids.concat(deriveSelectedBranches(tree, ids));
+    props.onChange(idsWithBranches);
+  }, [props.onChange, tree]);
+  const handleSearchTermChange = useCallback((searchTerm: string) => {
+    props.dispatch(setSearchTerm({ ...props.context, searchTerm }));
+  }, [props.dispatch, props.context]);
 
   return (
     <div className="wdk-TreeBoxParam">
@@ -158,13 +170,10 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
         renderNode={renderNode}
-        onExpansionChange={expandedList => props.dispatch(setExpandedList({ ...props.context, expandedList}))}
+        onExpansionChange={handleExpansionChange}
         expandedList={props.uiState.expandedList}
         selectedList={selectedLeaves}
-        onSelectionChange={(ids: string[]) => {
-          const idsWithBranches = ids.concat(deriveSelectedBranches(tree, ids));
-          props.onChange(idsWithBranches);
-        }}
+        onSelectionChange={handleSelectionChange}
         isSearchable={true}
         searchBoxPlaceholder="Filter list below..."
         searchBoxHelp={makeSearchHelpText("the list below")}
@@ -172,7 +181,7 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
         renderNoResults={renderNoResults}
         searchTerm={props.uiState.searchTerm}
         searchPredicate={searchPredicate}
-        onSearchTermChange={searchTerm => props.dispatch(setSearchTerm({ ...props.context, searchTerm }))}
+        onSearchTermChange={handleSearchTermChange}
       />
     </div>
   );
