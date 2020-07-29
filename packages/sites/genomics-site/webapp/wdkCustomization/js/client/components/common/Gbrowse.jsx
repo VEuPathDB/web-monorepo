@@ -1,10 +1,9 @@
 import {once, debounce} from 'lodash';
 import PropTypes from 'prop-types';
-import React, { PureComponent, useCallback, useState, useEffect, useRef } from 'react';
+import React, { PureComponent, useCallback, useEffect, useState, useRef } from 'react';
 import { httpGet } from 'ebrc-client/util/http';
 import $ from 'jquery';
-import { Loading } from 'wdk-client/Components';
-import { webAppUrl } from '../../config';
+import { Checkbox, Loading } from 'wdk-client/Components';
 
 /**
  * Each entry below is used in two scenarios:
@@ -119,9 +118,15 @@ const PbrowseJbrowseLink = ({ url }) =>
 
 function JbrowseIframe({ jbrowseUrl,ht }) {
   const [ isLocked, setIsLocked ] = useState(true);
+  const onCheckboxToggle = useCallback(
+    newIsUnlockedValue => {
+      setIsLocked(!newIsUnlockedValue);
+    },
+    []
+  );
+
   const jbrowseViewContainer = useRef(null);
-  const lockClassName = isLocked ? 'fa fa-lock' : 'fa fa-unlock';
-  const lockText = <small>{isLocked ? 'Enable' : 'Disable'} scrolling and zooming capabilities</small>;
+  const lockText = <small>Scrolling and zooming</small>;
 
   useEffect(() => {
     updateBehaviors();
@@ -144,7 +149,21 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
 
   return (
     <div>
-      <button type="button" onClick={() => setIsLocked(!isLocked)} ><i className={lockClassName}/> {lockText}</button>
+      <label
+        style={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          marginBottom: '0.5em'
+        }}
+      >
+        <Checkbox
+          style={{ marginRight: '0.25em' }}
+          value={!isLocked}
+          onChange={onCheckboxToggle}
+        />
+        {lockText}
+      </label>
       <iframe onLoad={onLoad} src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height={ht} scrolling="no" allowfullscreen="false" />
     </div>
   );
