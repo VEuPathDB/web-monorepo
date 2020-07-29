@@ -6,7 +6,7 @@
  * checkbox (typically !previousValue), rather than a click event.
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 
@@ -24,7 +24,9 @@ const Checkbox = (props: Props) => {
     isDisabled = false,
     ...otherProps
   } = props;
-  let changeHandler = (_event: React.FormEvent<HTMLInputElement>) => { onChange(!value); };
+  let changeHandler = useCallback((_event: React.FormEvent<HTMLInputElement>) => {
+    onChange(!value);
+  }, [ value ]);
 
   return (
     <input
