@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, } from 'react';
 
 import { orderBy } from 'lodash';
 
-import { RealTimeSearchBox, Link, Icon } from 'wdk-client/Components';
+import { Checkbox, Icon, Link, RealTimeSearchBox } from 'wdk-client/Components';
 import { MesaState, Mesa } from 'wdk-client/Components/Mesa';
 import { MesaSortObject, MesaColumn } from 'wdk-client/Core/CommonTypes';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -42,10 +42,6 @@ export const PublicStrategies = ({
   onSortChange,
   onPriorityChange
 }: Props) => {
-  const onPriorityCheckboxChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onPriorityChange(e.target.checked);
-  }, [ onPriorityChange ]);
-
   const recordClassToDisplayString = useCallback(
     (urlSegment: string | null) => urlSegment ? recordClassesByUrlSegment[urlSegment].displayNamePlural : '', 
     [ recordClassesByUrlSegment ]
@@ -97,17 +93,13 @@ export const PublicStrategies = ({
         </div>
         {
           examplesAvailable &&
-          <div className={cx('--PriorityCheckbox')}>
-            <input
-              id="public_strategies_priority_checkbox"
-              checked={prioritizeExamples}
-              onChange={onPriorityCheckboxChange} type="checkbox"
+          <label className={cx('--PriorityCheckbox')}>
+            <Checkbox
+              value={prioritizeExamples}
+              onChange={onPriorityChange}
             />
-            {' '}
-            <label htmlFor="public_strategies_priority_checkbox">
-              Sort VEuPathDB Example Strategies To Top
-            </label>
-          </div>
+            Sort VEuPathDB Example Strategies To Top
+          </label>
         }
       </Mesa>
     </div>
