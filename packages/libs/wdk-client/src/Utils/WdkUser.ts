@@ -104,6 +104,7 @@ export type EditStrategySpec = Omit<StrategyProperties, 'isSaved'>;
 export interface StrategySummary extends StrategyProperties {
   nameOfFirstStep?: string;
   strategyId: number;
+  ownerId: number;
   rootStepId: number;
   estimatedSize?: number; // optional; may be null if step was modified but not rerun
   isValid: boolean;
@@ -138,7 +139,8 @@ export const strategySummaryDecoder: Decoder<StrategySummary> = record({
   isPublic: boolean,
   isSaved: boolean,
   isValid: boolean,
-  rootStepId: number
+  rootStepId: number,
+  ownerId: number
 });
 
 export interface StepTree {
