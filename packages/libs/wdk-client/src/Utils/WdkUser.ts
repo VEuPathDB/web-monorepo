@@ -1,4 +1,13 @@
-import { Decoder, combine, field, string, number, boolean, oneOf, nullValue, optional } from 'wdk-client/Utils/Json';
+import {
+  Decoder,
+  boolean,
+  nullValue,
+  number,
+  oneOf,
+  optional,
+  record,
+  string,
+} from 'wdk-client/Utils/Json';
 import { AnswerSpec } from 'wdk-client/Utils/WdkModel';
 import {Omit} from 'wdk-client/Core/CommonTypes';
 
@@ -113,28 +122,24 @@ export interface StrategyDetails extends StrategySummary {
   steps: Record<number, Step>;
 }
 
-export const strategySummaryDecoder: Decoder<StrategySummary> = combine(
-  combine(
-    field('author', optional(string)),
-    field('description', string),
-    field('estimatedSize', optional(number)),
-    field('lastModified', string),
-    field('createdTime', string),
-    field('name', string),
-    field('organization', optional(string)),
-    field('recordClassName', oneOf(nullValue, string)),
-    field('signature', string),
-    field('strategyId', number),
-  ),
-  combine(
-    field('releaseVersion', optional(string)),
-    field('isDeleted', boolean),
-    field('isPublic', boolean),
-    field('isSaved', boolean),
-    field('isValid', boolean),
-    field('rootStepId', number),
-  )
-)
+export const strategySummaryDecoder: Decoder<StrategySummary> = record({
+  author: optional(string),
+  description: string,
+  estimatedSize: optional(number),
+  lastModified: string,
+  createdTime: string,
+  name: string,
+  organization: optional(string),
+  recordClassName: oneOf(nullValue, string),
+  signature: string,
+  strategyId: number,
+  releaseVersion: optional(string),
+  isDeleted: boolean,
+  isPublic: boolean,
+  isSaved: boolean,
+  isValid: boolean,
+  rootStepId: number
+});
 
 export interface StepTree {
   stepId: number,
