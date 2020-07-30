@@ -31,18 +31,35 @@ export interface EdgeTypeOption {
   key: EdgeType;
   display: string;
   isSelected: boolean;
+  onChange: (selected: boolean) => void;
+  onMouseOver: () => void;
+  onMouseOut: () => void;
 }
 
-export type NodeDisplayType = 'taxa' | 'ec-numbers' | 'pfam-domains';
+export type NodeDisplayType = 'taxa' | 'ec-numbers' | 'pfam-domains' | 'core-peripheral';
 
 export const nodeDisplayTypeDisplayNames: Record<NodeDisplayType, string> = {
   'taxa': 'Taxa',
   'ec-numbers': 'EC Numbers',
-  'pfam-domains': 'PFam Domains'
+  'pfam-domains': 'PFam Domains',
+  'core-peripheral': 'Core/Peripheral'
 };
 
 export const nodeDisplayTypeOrder: NodeDisplayType[] = [
   'taxa',
   'ec-numbers',
-  'pfam-domains'
+  'pfam-domains',
+  'core-peripheral'
 ];
+
+export type ProteinType = 'Core' | 'Peripheral';
+
+export const corePeripheralLegendOrder: ProteinType[] = [
+  'Core',
+  'Peripheral'
+];
+
+export const corePeripheralLegendColors: Record<ProteinType, string> = {
+  Core: '#0000FF',
+  Peripheral: '#00FF00'
+};

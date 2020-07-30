@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { orderBy } from 'lodash';
+import { groupBy, mapValues, orderBy } from 'lodash';
 
 import {
   EdgeType,
   EdgeTypeOption,
   NodeDisplayType,
+  ProteinType,
+  corePeripheralLegendColors,
+  corePeripheralLegendOrder,
   edgeTypeOptionOrder,
   edgeTypeDisplayNames,
   initialEdgeTypeSelections,
@@ -30,36 +33,63 @@ import { SequenceList } from './SequenceList';
 import './ClusterGraphDisplay.scss';
 
 interface Props {
+  groupName: string;
   layout: GroupLayout;
   taxonUiMetadata: TaxonUiMetadata;
+  corePeripheralMap: Record<string, ProteinType>;
 }
 
-export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
-  const { edgeTypeOptions, selectEdgeTypeOption } = useEdgeTypeControl(layout);
-  const { minEValueExp, maxEValueExp, eValueExp, selectEValueExp } = useScoreControl(layout);
+export function ClusterGraphDisplay({
+  corePeripheralMap,
+  groupName,
+  layout,
+  taxonUiMetadata
+}: Props) {
+  const {
+    edgeTypeOptions,
+    highlightedEdgeType,
+    selectedEdgeTypes
+  } = useEdgeTypeControl(layout);
+
+  const {
+    minEValueExp,
+    maxEValueExp,
+    eValueExp,
+    selectEValueExp
+  } = useScoreControl(layout);
 
   const {
     nodeDisplayTypeOptions,
     selectedNodeDisplayType,
     setSelectedNodeDisplayType,
     legendEntries,
-    legendHeaders
-  } = useNodeDisplayTypeControl(layout, taxonUiMetadata);
+    legendHeaders,
+    highlightedLegendNodeIds
+  } = useNodeDisplayTypeControl(layout, corePeripheralMap, taxonUiMetadata);
 
   const {
     activeTab,
     selectedNode,
     setActiveTab,
     setSelectedNode,
-    tabs
+    tabs,
+    highlightedSequenceNodeId,
+    highlightedBlastEdgeId
   } = useGraphInformationTabs(layout);
+
+  const onClickNode = useCallback((clickedNode: string) => {
+    setSelectedNode(clickedNode);
+    setActiveTab('node-details');
+  }, [ setSelectedNode, setActiveTab ]);
 
   return (
     <div className="ClusterGraphDisplay">
-      <Instructions />
+      <Instructions
+        groupName={groupName}
+        maxEValueExp={layout.maxEvalueExp}
+      />
       <GraphControls
         edgeTypeOptions={edgeTypeOptions}
-        selectEdgeTypeOption={selectEdgeTypeOption}
         minEValueExp={minEValueExp}
         maxEValueExp={maxEValueExp}
         eValueExp={eValueExp}
@@ -70,12 +100,23 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
         legendEntries={legendEntries}
         legendHeaders={legendHeaders}
       />
-      <ClusterGraphCanvas />
+      <ClusterGraphCanvas
+        layout={layout}
+        corePeripheralMap={corePeripheralMap}
+        taxonUiMetadata={taxonUiMetadata}
+        selectedNodeDisplayType={selectedNodeDisplayType}
+        highlightedEdgeType={highlightedEdgeType}
+        highlightedLegendNodeIds={highlightedLegendNodeIds}
+        eValueExp={eValueExp}
+        selectedEdgeTypes={selectedEdgeTypes}
+        highlightedSequenceNodeId={highlightedSequenceNodeId}
+        highlightedBlastEdgeId={highlightedBlastEdgeId}
+        onClickNode={onClickNode}
+      />
       <GraphInformation
         activeTab={activeTab}
         selectedNode={selectedNode}
         setActiveTab={setActiveTab}
-        setSelectedNode={setSelectedNode}
         tabs={tabs}
       />
     </div>
@@ -84,13 +125,7 @@ export function ClusterGraphDisplay({ layout, taxonUiMetadata }: Props) {
 
 function useEdgeTypeControl(layout: GroupLayout) {
   const [ selectedEdgeTypes, setSelectedEdgeTypes ] = useState<Record<EdgeType, boolean>>(initialEdgeTypeSelections);
-
-  const selectEdgeTypeOption = useCallback((selectedEdge: EdgeType, newValue: boolean) => {
-    setSelectedEdgeTypes({
-      ...selectedEdgeTypes,
-      [selectedEdge]: newValue
-    });
-  }, [ selectedEdgeTypes ]);
+  const [ highlightedEdgeType, setHighlightedEdgeType ] = useState<EdgeType | undefined>(undefined);
 
   useEffect(() => {
     setSelectedEdgeTypes(initialEdgeTypeSelections);
@@ -101,7 +136,19 @@ function useEdgeTypeControl(layout: GroupLayout) {
       edgeType => ({
         key: edgeType,
         display: edgeTypeDisplayNames[edgeType],
-        isSelected: selectedEdgeTypes[edgeType]
+        isSelected: selectedEdgeTypes[edgeType],
+        onChange: (selected: boolean) => {
+          setSelectedEdgeTypes({
+            ...selectedEdgeTypes,
+            [edgeType]: selected
+          });
+        },
+        onMouseOver: () => {
+          setHighlightedEdgeType(edgeType);
+        },
+        onMouseOut: () => {
+          setHighlightedEdgeType(undefined);
+        }
       })
     ),
     [ selectedEdgeTypes ]
@@ -109,17 +156,16 @@ function useEdgeTypeControl(layout: GroupLayout) {
 
   return {
     edgeTypeOptions,
-    selectEdgeTypeOption
+    highlightedEdgeType,
+    selectedEdgeTypes
   };
 }
 
 function useScoreControl(layout: GroupLayout) {
-  const initialEValue = layout.maxEvalueExp - Math.round((layout.maxEvalueExp - layout.minEvalueExp) / 5.0);
-
-  const [ eValueExp, setEValueExp ] = useState(initialEValue);
+  const [ eValueExp, setEValueExp ] = useState(layout.maxEvalueExp + 1);
 
   useEffect(() => {
-    setEValueExp(initialEValue);
+    setEValueExp(layout.maxEvalueExp + 1);
   }, [ layout ]);
 
   return {
@@ -130,29 +176,37 @@ function useScoreControl(layout: GroupLayout) {
   };
 }
 
-function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUiMetadata) {
+function useNodeDisplayTypeControl(
+  layout: GroupLayout,
+  corePeripheralMap: Props['corePeripheralMap'],
+  taxonUiMetadata: TaxonUiMetadata,
+) {
   const initialNodeDisplayTypeSelection = 'taxa';
 
   const [ selectedNodeDisplayType, setSelectedNodeDisplayType ] = useState<NodeDisplayType>(initialNodeDisplayTypeSelection);
+  const [ highlightedLegendNodeIds, setHighlightedLegendNodeIds ] = useState<string[]>([]);
 
   useEffect(() => {
     setSelectedNodeDisplayType(initialNodeDisplayTypeSelection);
   }, [ layout ]);
 
-  const taxonLegendEntries = useTaxonLegendEntries(layout, taxonUiMetadata);
+  const taxonLegendEntries = useTaxonLegendEntries(layout, taxonUiMetadata, setHighlightedLegendNodeIds);
   const ecNumberLegendEntries = useEcNumberLegendEntries(layout);
   const pfamDomainLegendEntries = usePfamDomainLegendEntries(layout);
+  const corePeripheralLegendEntries = useCorePeripheralLegendEntries(layout, corePeripheralMap);
 
   const legendEntries = {
     'taxa': taxonLegendEntries,
     'ec-numbers': ecNumberLegendEntries,
-    'pfam-domains': pfamDomainLegendEntries
+    'pfam-domains': pfamDomainLegendEntries,
+    'core-peripheral': corePeripheralLegendEntries
   };
 
   const legendHeaders = {
     'taxa': 'Mouse over a taxon legend to highlight sequences of that taxon.',
     'ec-numbers': 'The EC Numbers are rendered in a pie chart for each gene.',
-    'pfam-domains': 'The PFam Domains are rendered in a pie chart for each gene.'
+    'pfam-domains': 'The PFam Domains are rendered in a pie chart for each gene.',
+    'core-peripheral': 'The core and peripheral proteins are colored as shown below.'
   };
 
   const nodeDisplayTypeOptions = useMemo(
@@ -167,6 +221,7 @@ function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUi
   );
 
   return {
+    highlightedLegendNodeIds,
     legendEntries,
     legendHeaders,
     nodeDisplayTypeOptions,
@@ -176,8 +231,9 @@ function useNodeDisplayTypeControl(layout: GroupLayout, taxonUiMetadata: TaxonUi
 }
 
 function useTaxonLegendEntries(
-  { taxonCounts }: GroupLayout,
-  { taxonOrder, species }: TaxonUiMetadata
+  { taxonCounts, group: { genes } }: GroupLayout,
+  { taxonOrder, species }: TaxonUiMetadata,
+  setHighlightedLegendNodeIds: (newNodeIds: string[]) => void
 ) {
   return useMemo(
     () => {
@@ -197,15 +253,34 @@ function useTaxonLegendEntries(
               <br />
               {name}
             </React.Fragment>
-          )
+          ),
+          onMouseOver: () => {
+            const nodesOfSpecies = Object.entries(genes).reduce(
+              (memo, [ nodeId, geneEntry ]) => {
+                if (geneEntry.taxon.abbrev === taxonAbbrev) {
+                  memo.push(nodeId);
+                }
+
+                return memo;
+              },
+              [] as string[]
+            );
+
+            setHighlightedLegendNodeIds(nodesOfSpecies);
+          },
+          onMouseOut: () => {
+            setHighlightedLegendNodeIds([]);
+          }
         };
       });
     },
-    [ taxonCounts ]
+    [ taxonCounts, genes ]
   );
 }
 
-function useEcNumberLegendEntries({ group: { ecNumbers } }: GroupLayout) {
+function useEcNumberLegendEntries(
+  { group: { ecNumbers, genes } }: GroupLayout
+) {
   return useMemo(() => {
     const orderedEcNumberEntries = orderBy(
       Object.values(ecNumbers),
@@ -220,10 +295,12 @@ function useEcNumberLegendEntries({ group: { ecNumbers } }: GroupLayout) {
         description: `${code} (${count})`
       })
     );
-  }, [ ecNumbers ])
+  }, [ ecNumbers, genes ]);
 }
 
-function usePfamDomainLegendEntries({ group: { pfamDomains } }: GroupLayout) {
+function usePfamDomainLegendEntries(
+  { group: { genes, pfamDomains } }: GroupLayout
+) {
   return useMemo(() => {
     const orderedPfamDomainEntries = orderBy(
       Object.values(pfamDomains),
@@ -239,7 +316,49 @@ function usePfamDomainLegendEntries({ group: { pfamDomains } }: GroupLayout) {
         tooltip: description
       })
     );
-  }, [ pfamDomains ])
+  }, [ pfamDomains, genes ]);
+}
+
+function useCorePeripheralLegendEntries(
+  { group: { genes } }: GroupLayout,
+  corePeripheralMap: Props['corePeripheralMap']
+) {
+  return useMemo(
+    () => {
+      const proteinsByType = groupBy(
+        Object.entries(genes),
+        ([_, gene]) => corePeripheralMap[gene.taxon.abbrev]
+      );
+
+      const legendCountsByProteinType = mapValues(
+        proteinsByType,
+        proteinsOfType => proteinsOfType.length
+      );
+
+      const nodeIdsByProteinType = mapValues(
+        proteinsByType,
+        proteinsOfType => proteinsOfType.map(([ nodeId ]) => nodeId)
+      );
+
+      return corePeripheralLegendOrder.map(proteinType => {
+        const count = legendCountsByProteinType[proteinType];
+        const color = corePeripheralLegendColors[proteinType];
+        const nodesOfType = nodeIdsByProteinType[proteinType];
+
+        return {
+          key: proteinType,
+          symbol: renderSimpleLegendSymbol(color),
+          description: `${proteinType} (${count})`,
+          tooltip: (
+            <React.Fragment>
+              There are {count} {proteinType.toLowerCase()} proteins.
+            </React.Fragment>
+          )
+        };
+      });
+    },
+    [ corePeripheralMap, genes ]
+  );
 }
 
 function renderSimpleLegendSymbol(color: string) {
@@ -284,6 +403,9 @@ function useGraphInformationTabs(layout: GroupLayout) {
   const [ activeTab, setActiveTab ] = useState<GraphInformationTabKey>('sequence-list');
   const [ selectedNode, setSelectedNode ] = useState<string | undefined>(undefined);
 
+  const [ highlightedSequenceNodeId, setHighlightedSequenceNodeId ] = useState<string | undefined>(undefined);
+  const [ highlightedBlastEdgeId, setHighlightedBlastEdgeId ] = useState<string | undefined>(undefined);
+
   const tabs = graphInformationBaseTabConfigs.map(
     baseConfig => {
       const TabContentComponent = graphInformationTabComponents[baseConfig.key];
@@ -294,7 +416,8 @@ function useGraphInformationTabs(layout: GroupLayout) {
           <TabContentComponent
             layout={layout}
             selectedNode={selectedNode}
-            setSelectedNode={setSelectedNode}
+            setHighlightedSequenceNodeId={setHighlightedSequenceNodeId}
+            setHighlightedBlastEdgeId={setHighlightedBlastEdgeId}
           />
         )
       });
@@ -303,6 +426,8 @@ function useGraphInformationTabs(layout: GroupLayout) {
 
   return {
     activeTab,
+    highlightedSequenceNodeId,
+    highlightedBlastEdgeId,
     setActiveTab,
     selectedNode,
     setSelectedNode,

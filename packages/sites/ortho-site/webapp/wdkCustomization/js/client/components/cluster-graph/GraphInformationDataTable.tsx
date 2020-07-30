@@ -11,10 +11,12 @@ interface Props<R, C extends GraphInformationColumnKey<R>> {
   rows: R[];
   columns: GraphInformationColumns<R, C>;
   columnOrder: readonly C[];
+  onRowMouseOver?: (row: R) => void;
+  onRowMouseOut?: (row: R) => void;
 }
 
 export function GraphInformationDataTable<R, C extends GraphInformationColumnKey<R>>(
-  { rows, columns, columnOrder }: Props<R, C>
+  { rows, columns, columnOrder, onRowMouseOver, onRowMouseOut }: Props<R, C>
 ) {
   const [ searchTerm, setSearchTerm ] = useState('');
 
@@ -34,7 +36,10 @@ export function GraphInformationDataTable<R, C extends GraphInformationColumnKey
 
   const mesaColumns = useMemo(() => makeMesaColumns(columns, columnOrder), [ columns, columnOrder ]);
 
-  const mesaOptions = useMemo(makeMesaOptions, []);
+  const mesaOptions = useMemo(
+    () => makeMesaOptions(onRowMouseOver, onRowMouseOut),
+    [ onRowMouseOver, onRowMouseOut ]
+  );
   const mesaEventHandlers = useMemo(() => makeMesaEventHandlers(setSortUiState), []);
   const mesaUiState = useMemo(() => makeMesaUiState(sortUiState), [ sortUiState ]);
 
@@ -124,8 +129,13 @@ function makeMesaUiState<R, C extends GraphInformationColumnKey<R>>(sort: GraphI
   };
 }
 
-function makeMesaOptions() {
+function makeMesaOptions<R>(
+  onRowMouseOver?: (row: R) => void,
+  onRowMouseOut?: (row: R) => void
+) {
   return {
-    toolbar: true
+    toolbar: true,
+    onRowMouseOver,
+    onRowMouseOut
   };
 }

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Checkbox, RadioList, SliderInput, TextBox, Tooltip } from 'wdk-client/Components';
 
-import { EdgeTypeOption, EdgeType, NodeDisplayType } from '../../utils/clusterGraph';
+import { EdgeTypeOption, NodeDisplayType } from '../../utils/clusterGraph';
 
 import { GraphAccordion } from './GraphAccordion';
 
@@ -12,7 +12,6 @@ type Props = EdgeOptionsProps & NodeOptionsProps;
 
 export function GraphControls({
   edgeTypeOptions,
-  selectEdgeTypeOption,
   minEValueExp,
   maxEValueExp,
   eValueExp,
@@ -27,7 +26,6 @@ export function GraphControls({
     <div className="GraphControls">
       <EdgeOptions
         edgeTypeOptions={edgeTypeOptions}
-        selectEdgeTypeOption={selectEdgeTypeOption}
         minEValueExp={minEValueExp}
         maxEValueExp={maxEValueExp}
         eValueExp={eValueExp}
@@ -46,7 +44,6 @@ export function GraphControls({
 
 interface EdgeOptionsProps {
   edgeTypeOptions: EdgeTypeOption[];
-  selectEdgeTypeOption: (selectedEdge: EdgeType, newValue: boolean) => void;
   minEValueExp: number;
   maxEValueExp: number;
   eValueExp: number;
@@ -55,7 +52,6 @@ interface EdgeOptionsProps {
 
 function EdgeOptions({
   edgeTypeOptions,
-  selectEdgeTypeOption,
   minEValueExp,
   maxEValueExp,
   eValueExp,
@@ -78,12 +74,16 @@ function EdgeOptions({
           <div className="EdgeTypeOptions">
             {
               edgeTypeOptions.map(
-                ({ key, display, isSelected }) =>
-                  <div className="EdgeTypeOption" key={key}>
+                ({ key, display, isSelected, onChange, onMouseOver, onMouseOut }) =>
+                  <div
+                    className="EdgeTypeOption"
+                    key={key}
+                    onMouseOver={onMouseOver}
+                    onMouseOut={onMouseOut}
+                  >
                     <Checkbox
-                      key={key}
                       value={isSelected}
-                      onChange={newValue => selectEdgeTypeOption(key, newValue)}
+                      onChange={onChange}
                     />
                     <label>
                       {display}
@@ -208,8 +208,8 @@ export interface LegendEntryProps {
   symbol: React.ReactNode;
   description: string;
   tooltip?: React.ReactNode;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
+  onMouseOver?: () => void;
+  onMouseOut?: () => void;
 }
 
 const TOOLTIP_POSITION = {
@@ -217,9 +217,9 @@ const TOOLTIP_POSITION = {
   at: 'bottom right'
 };
 
-function LegendEntry({ symbol, tooltip, description, onMouseEnter, onMouseLeave }: LegendEntryProps) {
+function LegendEntry({ symbol, tooltip, description, onMouseOver, onMouseOut }: LegendEntryProps) {
   const legendContent = (
-    <div className="LegendEntry" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div className="LegendEntry" onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
       {symbol}
       {description}
     </div>
