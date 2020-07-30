@@ -10,16 +10,16 @@ import { MesaSortObject, DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable, propertyIsNonNull } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { StrategySummary } from 'wdk-client/Utils/WdkUser';
-import { PublicStrategies } from 'wdk-client/Views/Strategy/PublicStrategies';
+import { PublicStrategies, PublicStrategySummary } from 'wdk-client/Views/Strategy/PublicStrategies';
 import { createSelector } from 'reselect';
 import Error from 'wdk-client/Components/PageStatus/Error';
 
 interface StateProps {
+  examplesAvailable: boolean;
   searchTerm: string;
   sort?: MesaSortObject;
   prioritizeExamples: boolean;
-  publicStrategySummaries?: StrategySummary[];
+  publicStrategySummaries?: PublicStrategySummary[];
   recordClassesByUrlSegment?: Record<string, RecordClass>;
   hasError?: boolean;
 }
@@ -45,14 +45,28 @@ const recordClassesByUrlSegment = createSelector(
   globalData => globalData.recordClasses && keyByUrlSegment(globalData.recordClasses)
 );
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  searchTerm: state.publicStrategies.searchTerm,
-  sort: state.publicStrategies.sort,
-  prioritizeExamples: state.publicStrategies.prioritizeExamples,
-  publicStrategySummaries: state.strategyWorkspace.publicStrategySummaries,
-  recordClassesByUrlSegment: recordClassesByUrlSegment(state),
-  hasError: state.strategyWorkspace.publicStrategySummariesError
-});
+const mapStateToProps = (state: RootState): StateProps => {
+  const exampleStratsAuthorId = state.globalData.siteConfig?.exampleStratsOwnerId;
+
+  const publicStrategySummaries = state.strategyWorkspace.publicStrategySummaries?.map(
+    publicStrategySummary => ({
+      ...publicStrategySummary,
+      isExample: publicStrategySummary.ownerId === exampleStratsAuthorId
+    })
+  );
+
+  const examplesAvailable = publicStrategySummaries?.some(({ isExample }) => isExample) ?? false;
+
+  return ({
+    examplesAvailable,
+    searchTerm: state.publicStrategies.searchTerm,
+    sort: state.publicStrategies.sort,
+    prioritizeExamples: state.publicStrategies.prioritizeExamples,
+    publicStrategySummaries,
+    recordClassesByUrlSegment: recordClassesByUrlSegment(state),
+    hasError: state.strategyWorkspace.publicStrategySummariesError
+  });
+};
 
 const mapDispatchToProps = (dispatch: DispatchAction): DispatchProps => ({
   onSearchTermChange: compose(dispatch, setSearchTerm),

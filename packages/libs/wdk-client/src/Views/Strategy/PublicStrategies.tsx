@@ -15,21 +15,24 @@ import 'wdk-client/Views/Strategy/PublicStrategies.scss';
 
 const cx = makeClassNameHelper('PublicStrategies');
 
-// FIXME This should be pulled from the model.xml's "exampleStratsAuthor" property
-const EXAMPLE_AUTHOR = 'VEuPathDB Example';
-
 interface Props {
+  examplesAvailable: boolean;
   searchTerm: string;
   sort?: MesaSortObject;
   prioritizeExamples: boolean;
-  publicStrategySummaries: StrategySummary[];
+  publicStrategySummaries: PublicStrategySummary[];
   recordClassesByUrlSegment: Record<string, RecordClass>;
   onSearchTermChange: (newSearchTerm: string) => void;
   onSortChange: (newSort: MesaSortObject) => void;
   onPriorityChange: (newPriority: boolean) => void;
 }
 
+export interface PublicStrategySummary extends StrategySummary {
+  isExample: boolean;
+}
+
 export const PublicStrategies = ({
+  examplesAvailable,
   searchTerm,
   sort = { columnKey: 'lastModified', direction: 'desc' } as MesaSortObject,
   prioritizeExamples,
@@ -92,28 +95,31 @@ export const PublicStrategies = ({
             placeholderText="Filter strategies"
           />
         </div>
-        <div className={cx('--PriorityCheckbox')}>
-          <input 
-            id="public_strategies_priority_checkbox" 
-            checked={prioritizeExamples}
-            onChange={onPriorityCheckboxChange} type="checkbox" 
-          />
-          {' '}
-          <label htmlFor="public_strategies_priority_checkbox">
-            Sort VEuPathDB Example Strategies To Top
-          </label>
-        </div>
+        {
+          examplesAvailable &&
+          <div className={cx('--PriorityCheckbox')}>
+            <input
+              id="public_strategies_priority_checkbox"
+              checked={prioritizeExamples}
+              onChange={onPriorityCheckboxChange} type="checkbox"
+            />
+            {' '}
+            <label htmlFor="public_strategies_priority_checkbox">
+              Sort VEuPathDB Example Strategies To Top
+            </label>
+          </div>
+        }
       </Mesa>
     </div>
   );
 };
 
 interface RenderCellProps<T> {
-  row: StrategySummary;
+  row: PublicStrategySummary;
   value: T;
 }
 
-function makeMesaColumns(recordClassToDisplayString: (urlSegment: string | null) => string): MesaColumn<keyof StrategySummary>[] {
+function makeMesaColumns(recordClassToDisplayString: (urlSegment: string | null) => string): MesaColumn<keyof PublicStrategySummary>[] {
   return [
     {
       key: 'name',
@@ -173,19 +179,19 @@ function makeMesaRows(
   prioritizeExamples: boolean
 ) {
   const sortColumnValue = sort.columnKey === 'recordClassName'
-    ? (row: StrategySummary) => recordClassToDisplayString(row.recordClassName)
+    ? (row: PublicStrategySummary) => recordClassToDisplayString(row.recordClassName)
     : sort.columnKey;
 
-  const sortPriorityValue = (row: StrategySummary) => row.author === EXAMPLE_AUTHOR ? 0 : 1;
+  const sortPriorityValue = (row: PublicStrategySummary) => row.isExample;
 
   return prioritizeExamples
-    ? orderBy(publicStrategies, [ sortPriorityValue, sortColumnValue, ], [ 'asc', sort.direction ])
+    ? orderBy(publicStrategies, [ sortPriorityValue, sortColumnValue, ], [ 'desc', sort.direction ])
     : orderBy(publicStrategies, [ sortColumnValue ], [ sort.direction ])
 }
 
 function makeMesaFilteredRows(
   rows: Props['publicStrategySummaries'], 
-  columns: MesaColumn<keyof StrategySummary>[],
+  columns: MesaColumn<keyof PublicStrategySummary>[],
   searchTerm: string, 
   recordClassToDisplayString: (urlSegment: string | null) => string
 ) {  
@@ -208,7 +214,7 @@ function makeMesaOptions() {
     toolbar: true,
     useStickyHeader: true,
     tableBodyMaxHeight: 'calc(80vh - 200px)',
-    deriveRowClassName: (strategy: StrategySummary) => strategy.author === EXAMPLE_AUTHOR ? cx('--ExampleRow') : undefined
+    deriveRowClassName: (strategy: PublicStrategySummary) => strategy.isExample ? cx('--ExampleRow') : undefined
   };
 }
 
