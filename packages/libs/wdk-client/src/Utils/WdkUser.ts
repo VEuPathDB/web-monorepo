@@ -9,7 +9,7 @@ import {
   string,
 } from 'wdk-client/Utils/Json';
 import { AnswerSpec } from 'wdk-client/Utils/WdkModel';
-import {Omit} from 'wdk-client/Core/CommonTypes';
+import { Omit } from 'wdk-client/Core/CommonTypes';
 
 export interface User {
   id: number;
