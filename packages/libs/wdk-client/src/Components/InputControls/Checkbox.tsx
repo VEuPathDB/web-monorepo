@@ -9,8 +9,7 @@
 import React, { useCallback } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
-
-type BaseProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'disabled' | 'onChange' | 'type' | 'value'>;
+type BaseProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'disabled' | 'onChange' | 'type' | 'value' | 'checked'>;
 
 interface Props extends BaseProps {
   value: boolean;
