@@ -142,13 +142,13 @@ export default (base: ServiceBase) => {
         method: 'POST',
         body: metaBody
       }
-    ).then(({jobId}) => {
+    ).then(({jobId}) =>
       fetchWithCredentials(
           '/user-datasets/'+jobId,
           'POST',
            fileBody
-      );
-    });
+      ).then(response => {})
+    );
   }
   function listStatusDetails():  Promise<Array<UserDatasetUpload>> {
     return fetchDecodedJsonOrThrowMessage(
