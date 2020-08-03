@@ -6,20 +6,36 @@
  * checkbox (typically !previousValue), rather than a click event.
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
-type Props = {
+type BaseProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'disabled' | 'onChange' | 'type' | 'value' | 'checked'>;
+
+interface Props extends BaseProps {
   value: boolean;
   onChange: (newValue: boolean) => void;
   isDisabled?: boolean;
 }
 const Checkbox = (props: Props) => {
-  let { onChange, value } = props;
-  let changeHandler = (_event: React.FormEvent<HTMLInputElement>) => { onChange(!value); };
-  let isDisabled = props.isDisabled || false;
+  let {
+    onChange,
+    value,
+    isDisabled = false,
+    ...otherProps
+  } = props;
+  let changeHandler = useCallback((_event: React.FormEvent<HTMLInputElement>) => {
+    onChange(!value);
+  }, [ value ]);
 
-  return <input type="checkbox" checked={value} onChange={changeHandler} disabled={isDisabled}/>;
+  return (
+    <input
+      type="checkbox"
+      checked={value}
+      onChange={changeHandler}
+      disabled={isDisabled}
+      {...otherProps}
+    />
+  );
 }
 
 export default wrappable(Checkbox);

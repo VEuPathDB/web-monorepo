@@ -14,6 +14,7 @@ type StepAnalysisFormPaneProps = StepAnalysisFormPluginProps & {
 export type StepAnalysisFormPluginProps = StepAnalysisFormPluginState & StepAnalysisFormPluginEventHandlers;
 
 export interface StepAnalysisFormPluginState {
+  formKey: string;
   paramSpecs: Parameter[];
   paramValues: Record<string, string>;
 }
@@ -24,6 +25,7 @@ export interface StepAnalysisFormPluginEventHandlers {
 }
 
 export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
+  formKey,
   formExpanded,
   formRenderer,
   hasParameters,
@@ -47,6 +49,7 @@ export const StepAnalysisFormPane: React.SFC<StepAnalysisFormPaneProps> = ({
           {
             formRenderer(
               {
+                formKey,
                 paramSpecs,
                 paramValues,
                 updateParamValues,
