@@ -4,6 +4,7 @@
     "paths": {
       "wdk-client/*": [ "WDKClient/Client/src/*" ],
       "ebrc-client/*": [ "EbrcWebsiteCommon/Site/webapp/wdkCustomization/js/client/*" ],
+      "ortho-client/*": [ "OrthoMCLClient/Site/webapp/wdkCustomization/js/client/*" ],
       "*": [
         "WDKClient/Client/node_modules/*",
         "WDKClient/Client/node_modules/@types/*",
