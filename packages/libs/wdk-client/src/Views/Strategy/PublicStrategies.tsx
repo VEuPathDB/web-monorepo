@@ -93,13 +93,16 @@ export const PublicStrategies = ({
         </div>
         {
           examplesAvailable &&
-          <label className={cx('--PriorityCheckbox')}>
+          <div className={cx('--PriorityCheckbox')}>
             <Checkbox
+              id="public-strategies-priority-checkbox"
               value={prioritizeExamples}
               onChange={onPriorityChange}
             />
-            Sort VEuPathDB Example Strategies To Top
-          </label>
+            <label htmlFor="public-strategies-priority-checkbox">
+              Sort VEuPathDB Example Strategies To Top
+            </label>
+          </div>
         }
       </Mesa>
     </div>
