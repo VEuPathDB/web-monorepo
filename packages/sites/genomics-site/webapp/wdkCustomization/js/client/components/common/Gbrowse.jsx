@@ -149,7 +149,7 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
 
   return (
     <div>
-      <label
+      <div
         style={{
           display: 'flex',
           justifyContent: 'flex-end',
@@ -158,12 +158,15 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
         }}
       >
         <Checkbox
+          id="jbrowse-scroll-zoom-toggle"
           style={{ marginRight: '0.25em' }}
           value={!isLocked}
           onChange={onCheckboxToggle}
         />
-        {lockText}
-      </label>
+        <label htmlFor="jbrowse-scroll-zoom-toggle">
+          {lockText}
+        </label>
+      </div>
       <iframe onLoad={onLoad} src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height={ht} scrolling="no" allowfullscreen="false" />
     </div>
   );
