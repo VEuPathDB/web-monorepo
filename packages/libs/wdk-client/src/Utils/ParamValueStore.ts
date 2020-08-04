@@ -9,14 +9,10 @@ type ParamValues = SearchConfig['parameters'];
 export interface ParamValueStore {
   clearParamValues: () => Promise<void>;
 
-  fetchParamValues: (
-    prefix: string | undefined,
-    parameterName: string
-  ) => Promise<ParamValues>;
+  fetchParamValues: (paramContext: string) => Promise<ParamValues>;
 
   updateParamValues: (
-    prefix: string | undefined,
-    parameterName: string,
+    paramContext: string,
     newParamValues: ParamValues
   ) => Promise<ParamValues>;
 }
@@ -32,22 +28,19 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
     clearParamValues: () => {
       return _store.clear();
     },
-    fetchParamValues: (prefix, parameterName) => {
-      const storeKey = makeStoreKey(prefix, parameterName);
+    fetchParamValues: paramContext => {
+      const storeKey = makeParamStoreKey(paramContext);
 
       return _store.getItem(storeKey);
     },
-    updateParamValues: (prefix, parameterName, newParamValues) => {
-      const storeKey = makeStoreKey(prefix, parameterName);
+    updateParamValues: (paramContext, newParamValues) => {
+      const storeKey = makeParamStoreKey(paramContext);
 
       return _store.setItem(storeKey, newParamValues);
     }
   };
 }
 
-function makeStoreKey(
-  prefix: string | undefined,
-  parameterName: string
-) {
-  return `${prefix ?? 'parameter'}/${parameterName}`;
+function makeParamStoreKey(paramContext: string) {
+  return `paramValues/${paramContext}`;
 }
