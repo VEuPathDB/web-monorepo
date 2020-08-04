@@ -11,17 +11,13 @@ interface ParamValueStore {
 
   fetchParamValues: (
     prefix: string | undefined,
-    recordClassUrlSegment: string,
-    searchUrlSegment: string,
-    parameterName: string,
+    parameterName: string
   ) => Promise<ParamValues>;
 
   updateParamValues: (
-    newParamValues: ParamValues,
     prefix: string | undefined,
-    recordClassUrlSegment: string,
-    searchUrlSegment: string,
-    parameterName: string
+    parameterName: string,
+    newParamValues: ParamValues
   ) => Promise<ParamValues>;
 }
 
@@ -36,13 +32,13 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
     clearParamValues: () => {
       return _store.clear();
     },
-    fetchParamValues: (...args) => {
-      const storeKey = makeStoreKey(...args);
+    fetchParamValues: (prefix, parameterName) => {
+      const storeKey = makeStoreKey(prefix, parameterName);
 
       return _store.getItem(storeKey);
     },
-    updateParamValues: (newParamValues, ...keyArgs) => {
-      const storeKey = makeStoreKey(...keyArgs);
+    updateParamValues: (prefix, parameterName, newParamValues) => {
+      const storeKey = makeStoreKey(prefix, parameterName);
 
       return _store.setItem(storeKey, newParamValues);
     }
@@ -51,9 +47,7 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
 
 function makeStoreKey(
   prefix: string | undefined,
-  recordClassUrlSegment: string,
-  searchUrlSegment: string,
   parameterName: string
 ) {
-  return `${prefix ?? 'parameter'}/${recordClassUrlSegment}/${searchUrlSegment}/${parameterName}`;
+  return `${prefix ?? 'parameter'}/${parameterName}`;
 }
