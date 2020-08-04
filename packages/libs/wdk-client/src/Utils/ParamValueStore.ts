@@ -25,7 +25,7 @@ interface ParamValueStore {
   ) => Promise<ParamValues>;
 }
 
-export const getInstance = memoize(makeInstance);
+export const getInstance = memoize(makeInstance, serviceUrl => serviceUrl);
 
 function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueStore {
   const _store = localforage.createInstance({
