@@ -1,8 +1,9 @@
 import { compose, mapKeys, mapValues, values } from 'lodash/fp';
 import { applyMiddleware, combineReducers, createStore, Reducer, Middleware, Action } from 'redux';
 import { combineEpics, createEpicMiddleware, Epic } from 'redux-observable';
-import { EMPTY, of, Observable } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { PageTransitioner } from 'wdk-client/Utils/PageTransitioner';
+import { ParamValueStore } from 'wdk-client/Utils/ParamValueStore';
 import WdkService from 'wdk-client/Service/WdkService';
 import { wdkMiddleware } from 'wdk-client/Core/WdkMiddleware';
 import { catchError, startWith } from 'rxjs/operators';
@@ -15,8 +16,9 @@ declare global{
 }
 
 export type EpicDependencies = {
-  wdkService: WdkService;
+  paramValueStore: ParamValueStore;
   transitioner: PageTransitioner;
+  wdkService: WdkService;
 }
 export type ModuleReducer<T, A extends Action> = (state: T | undefined, action: A) => T;
 export type ModuleEpic<T, A extends Action> = Epic<A, A, T, EpicDependencies>;
@@ -35,15 +37,16 @@ type RootReducer<T, A extends Action> = Reducer<T, A>;
 
 export function createWdkStore<T, A extends Action>(
   storeModules: StoreModuleRecord<T, A>,
-  wdkService: WdkService,
+  paramValueStore: ParamValueStore,
   transitioner: PageTransitioner,
+  wdkService: WdkService,
   // FIXME Figure out how to allow the order of middleware to be configured
   additionalMiddleware: Middleware[] = []
 ) {
   const rootReducer = makeRootReducer(storeModules);
   const rootEpic = makeRootEpic(storeModules);
   const epicMiddleware = createEpicMiddleware<A, A, T, EpicDependencies>({
-    dependencies: { wdkService, transitioner }
+    dependencies: { paramValueStore, transitioner, wdkService }
   });
 
   const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__

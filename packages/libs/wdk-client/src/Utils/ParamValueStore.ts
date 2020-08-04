@@ -6,7 +6,7 @@ import { SearchConfig } from 'wdk-client/Utils/WdkModel';
 
 type ParamValues = SearchConfig['parameters'];
 
-interface ParamValueStore {
+export interface ParamValueStore {
   clearParamValues: () => Promise<void>;
 
   fetchParamValues: (

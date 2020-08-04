@@ -74,7 +74,13 @@ export function initialize(options) {
   let wdkService = wrapWdkService(getInstance(endpoint));
   let paramValueStore = getParamValueStoreInstance(endpoint, wdkService);
   let transitioner = getTransitioner(history);
-  let store = createWdkStore(wrapStoreModules(storeModules), wdkService, transitioner, additionalMiddleware);
+  let store = createWdkStore(
+    wrapStoreModules(storeModules),
+    paramValueStore,
+    transitioner,
+    wdkService,
+    additionalMiddleware
+  );
 
   // load static WDK data into service cache and view stores that need it
   loadAllStaticData(wdkService, store.dispatch);
