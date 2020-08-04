@@ -24,14 +24,12 @@ import {
   updateParams,
   paramError,
   SubmitQuestionAction,
-  SUBMIT_QUESTION,
   questionLoaded,
   questionNotFound,
   questionError,
   ENABLE_SUBMISSION,
   reportSubmissionError,
-  submitQuestion,
-  SubmissionMetadata
+  submitQuestion
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -57,7 +55,6 @@ import { addStep } from 'wdk-client/Utils/StrategyUtils';
 import {Step} from 'wdk-client/Utils/WdkUser';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { InferAction, mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
-import { isMultiPick } from 'wdk-client/Views/Question/Params/EnumParamUtils';
 
 export const key = 'question';
 
@@ -378,6 +375,26 @@ const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
       initParam({ parameter, paramValues, searchName, initialParamData }))))
 );
 
+const observeUpdateParams: QuestionEpic = (action$, state$, { paramValueStore }) => action$.pipe(
+  ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE),
+  mergeMap((action: UpdateParamValueAction) => {
+    const searchName = action.payload.searchName;
+    const questionState = state$.value.question.questions[searchName];
+
+    if (questionState == null) {
+      throw new Error(`Tried to record the parameter values of a nonexistent or unloaded question ${searchName}`);
+    }
+
+    const newParamValues = questionState.paramValues;
+
+    const paramValuesStoreContext = makeParamValuesStoreContext(searchName);
+
+    paramValueStore.updateParamValues(paramValuesStoreContext, newParamValues);
+
+    return EMPTY;
+  })
+)
+
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE),
   filter(action => action.payload.parameter.dependentParams.length > 0),
@@ -588,6 +605,7 @@ export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,
   observeLoadQuestionSuccess,
   observeAutoRun,
+  observeUpdateParams,
   observeUpdateDependentParams,
   observeQuestionSubmit,
   mrate([submitQuestion, fulfillCreateStrategy], goToStrategyPage, {
@@ -645,6 +663,11 @@ async function loadQuestion(
       : questionError({ searchName });
   }
 }
+
+function makeParamValuesStoreContext(searchName: string) {
+  return `question-form/${searchName}`;
+}
+
 function initialParamDataFromStep(step: Step): Record<string, string> {
   const { searchConfig: { parameters }, validation } = step;
   const keyedErrors = validation.isValid == true ? {} : validation.errors.byKey;

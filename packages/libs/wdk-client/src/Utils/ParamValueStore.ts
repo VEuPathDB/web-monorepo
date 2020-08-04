@@ -42,5 +42,5 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
 }
 
 function makeParamStoreKey(paramContext: string) {
-  return `paramValues/${paramContext}`;
+  return `param-values/${paramContext}`;
 }
