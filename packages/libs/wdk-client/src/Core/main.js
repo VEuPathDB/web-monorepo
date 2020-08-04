@@ -11,6 +11,7 @@ import * as Components from 'wdk-client/Components';
 import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin'; // eslint-disable-line no-unused-vars
 import { createMockHistory } from 'wdk-client/Utils/MockHistory';
 import { getTransitioner } from 'wdk-client/Utils/PageTransitioner';
+import { getInstance as getParamValueStoreInstance } from 'wdk-client/Utils/ParamValueStore';
 import { getInstance } from 'wdk-client/Service/WdkService';
 import { updateLocation } from 'wdk-client/Actions/RouterActions';
 import { loadAllStaticData } from 'wdk-client/Actions/StaticDataActions';
@@ -71,6 +72,7 @@ export function initialize(options) {
     ? createBrowserHistory({ basename: rootUrl })
     : createMockHistory({ basename: rootUrl });
   let wdkService = wrapWdkService(getInstance(endpoint));
+  let paramValueStore = getParamValueStoreInstance(endpoint, wdkService);
   let transitioner = getTransitioner(history);
   let store = createWdkStore(wrapStoreModules(storeModules), wdkService, transitioner, additionalMiddleware);
 
@@ -106,7 +108,7 @@ export function initialize(options) {
   });
 
   // return WDK application components
-  return { wdkService, store, history, pluginConfig };
+  return { wdkService, paramValueStore, store, history, pluginConfig };
 }
 
 /**
