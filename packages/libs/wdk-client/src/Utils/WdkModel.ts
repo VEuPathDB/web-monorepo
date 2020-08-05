@@ -334,7 +334,7 @@ export interface Answer {
 }
 
 export interface SearchConfig {
-  parameters: Record<string, string>;
+  parameters: ParameterValues;
   legacyFilterName?: string;
   filters?: FilterValueArray;
   columnFilters?: Record<string,Record<string,any>>

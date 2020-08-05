@@ -13,7 +13,7 @@ import {
   record,
   string
 } from './Json';
-import { ParameterGroup, SearchConfig } from './WdkModel';
+import { ParameterGroup, ParameterValues } from './WdkModel';
 import { paramGroupDecoder } from '../Service/Mixins/SearchesService';
 import { ValidStepValidation, InvalidStepValidation } from 'wdk-client/Utils/WdkUser';
 
@@ -33,7 +33,7 @@ export interface StepAnalysisType {
   groups: ParameterGroup[]
 }
 
-export type FormParams = SearchConfig['parameters'];
+export type FormParams = ParameterValues;
 
 export type StepAnalysisStatus =
   | 'CREATED'

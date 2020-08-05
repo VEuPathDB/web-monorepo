@@ -2,19 +2,17 @@ import { memoize } from 'lodash';
 import localforage from 'localforage';
 
 import { WdkService } from 'wdk-client/Core';
-import { SearchConfig } from 'wdk-client/Utils/WdkModel';
-
-type ParamValues = SearchConfig['parameters'];
+import { ParameterValues } from 'wdk-client/Utils/WdkModel';
 
 export interface ParamValueStore {
   clearParamValues: () => Promise<void>;
 
-  fetchParamValues: (paramContext: string) => Promise<ParamValues>;
+  fetchParamValues: (paramContext: string) => Promise<ParameterValues>;
 
   updateParamValues: (
     paramContext: string,
-    newParamValues: ParamValues
-  ) => Promise<ParamValues>;
+    newParamValues: ParameterValues
+  ) => Promise<ParameterValues>;
 }
 
 export const getInstance = memoize(makeInstance, serviceUrl => serviceUrl);
