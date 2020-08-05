@@ -635,7 +635,7 @@ async function loadQuestion(
   initialParamData?: Record<string, string>,
 ) {
   const step = stepId ? await wdkService.findStep(stepId) : undefined;
-  const initialParams = step ? initialParamDataFromStep(step) : initialParamData != null ? initialParamDataWithDatasetParamSpecialCase(initialParamData) : {};
+  const initialParams = await fetchInitialParams(step, initialParamData);
 
   try {
     const question = Object.keys(initialParams).length > 0
@@ -666,6 +666,16 @@ async function loadQuestion(
 
 function makeParamValuesStoreContext(searchName: string) {
   return `question-form/${searchName}`;
+}
+
+async function fetchInitialParams(step: Step | undefined, initialParamData: ParameterValues | undefined) {
+  if (step != null) {
+    return initialParamDataFromStep(step);
+  } else if (initialParamData != null) {
+    return initialParamDataWithDatasetParamSpecialCase(initialParamData);
+  } else {
+    return {};
+  }
 }
 
 function initialParamDataFromStep(step: Step): Record<string, string> {
