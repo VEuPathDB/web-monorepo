@@ -7,7 +7,7 @@ import { ParameterValues } from 'wdk-client/Utils/WdkModel';
 export interface ParamValueStore {
   clearParamValues: () => Promise<void>;
 
-  fetchParamValues: (paramContext: string) => Promise<ParameterValues>;
+  fetchParamValues: (paramContext: string) => Promise<ParameterValues | null>;
 
   updateParamValues: (
     paramContext: string,

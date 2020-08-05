@@ -55,6 +55,7 @@ import { addStep } from 'wdk-client/Utils/StrategyUtils';
 import {Step} from 'wdk-client/Utils/WdkUser';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { InferAction, mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
+import { ParamValueStore } from 'wdk-client/Utils/ParamValueStore';
 
 export const key = 'question';
 
@@ -76,7 +77,7 @@ export type QuestionState = {
   questionStatus: 'loading' | 'error' | 'not-found' | 'complete';
   question: QuestionWithMappedParameters;
   recordClass: RecordClass;
-  paramValues: Record<string, string>;
+  paramValues: ParameterValues;
   paramUIState: Record<string, any>;
   groupUIState: Record<string, GroupState>;
   paramErrors: Record<string, string | undefined>;
@@ -338,10 +339,11 @@ function normalizeQuestion(question: QuestionWithParameters) {
 
 type QuestionEpic = ModuleEpic<RootState, Action>;
 
-const observeLoadQuestion: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
+const observeLoadQuestion: QuestionEpic = (action$, state$, { paramValueStore, wdkService }) => action$.pipe(
   filter((action): action is UpdateActiveQuestionAction => action.type === UPDATE_ACTIVE_QUESTION),
   mergeMap(action =>
     from(loadQuestion(
+      paramValueStore,
       wdkService,
       action.payload.searchName,
       action.payload.autoRun,
@@ -441,6 +443,9 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
         parameters: paramValues,
         wdkWeight: Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight
       }
+
+      const paramValuesStoreContext = makeParamValuesStoreContext(question.urlSegment);
+      services.paramValueStore.updateParamValues(paramValuesStoreContext, paramValues);
 
       if (submissionMetadata.type === 'edit-step') {
         return Promise.resolve(requestUpdateStepSearchConfig(
@@ -628,14 +633,15 @@ export const observeQuestion: QuestionEpic = combineEpics(
 // -------
 
 async function loadQuestion(
+  paramValueStore: ParamValueStore,
   wdkService: WdkService,
   searchName: string,
   autoRun: boolean,
   stepId?: number,
-  initialParamData?: Record<string, string>,
+  initialParamData?: ParameterValues,
 ) {
   const step = stepId ? await wdkService.findStep(stepId) : undefined;
-  const initialParams = await fetchInitialParams(step, initialParamData);
+  const initialParams = await fetchInitialParams(searchName, step, initialParamData, paramValueStore);
 
   try {
     const question = Object.keys(initialParams).length > 0
@@ -668,17 +674,26 @@ function makeParamValuesStoreContext(searchName: string) {
   return `question-form/${searchName}`;
 }
 
-async function fetchInitialParams(step: Step | undefined, initialParamData: ParameterValues | undefined) {
+async function fetchInitialParams(
+  searchName: string,
+  step: Step | undefined,
+  initialParamData: ParameterValues | undefined,
+  paramValueStore: ParamValueStore
+) {
   if (step != null) {
     return initialParamDataFromStep(step);
   } else if (initialParamData != null) {
     return initialParamDataWithDatasetParamSpecialCase(initialParamData);
   } else {
-    return {};
+    const paramValuesStoreContext = makeParamValuesStoreContext(searchName);
+
+    const storedParamValues = await paramValueStore.fetchParamValues(paramValuesStoreContext);
+
+    return storedParamValues ?? {};
   }
 }
 
-function initialParamDataFromStep(step: Step): Record<string, string> {
+function initialParamDataFromStep(step: Step): ParameterValues {
   const { searchConfig: { parameters }, validation } = step;
   const keyedErrors = validation.isValid == true ? {} : validation.errors.byKey;
   return Object.keys(parameters).reduce(function (values, k) {
@@ -686,13 +701,13 @@ function initialParamDataFromStep(step: Step): Record<string, string> {
   }, {});
 }
 
-function initialParamDataWithDatasetParamSpecialCase(initialParamData: Record<string, string>){
+function initialParamDataWithDatasetParamSpecialCase(initialParamData: ParameterValues){
   return Object.keys(initialParamData).reduce(function(result, paramName) {
     return paramName.indexOf(".idList") > -1 ? result : Object.assign(result, {[paramName] : initialParamData[paramName]});
   }, {});
 }
 
-function extractParamValues(question: QuestionWithParameters, initialParams: Record<string, string>,  step?: Step ){
+function extractParamValues(question: QuestionWithParameters, initialParams: ParameterValues,  step?: Step ){
   return question.parameters.reduce(function(values, { name, initialDisplayValue, type }) {
     return Object.assign(values, {
       [name]: (
