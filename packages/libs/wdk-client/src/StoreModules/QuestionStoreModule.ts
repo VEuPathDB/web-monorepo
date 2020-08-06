@@ -389,9 +389,7 @@ const observeUpdateParams: QuestionEpic = (action$, state$, { paramValueStore })
 
     const newParamValues = questionState.paramValues;
 
-    const paramValuesStoreContext = makeParamValuesStoreContext(searchName);
-
-    paramValueStore.updateParamValues(paramValuesStoreContext, newParamValues);
+    updateLastParamValues(paramValueStore, searchName, newParamValues);
 
     return EMPTY;
   })
@@ -444,8 +442,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
         wdkWeight: Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight
       }
 
-      const paramValuesStoreContext = makeParamValuesStoreContext(question.urlSegment);
-      services.paramValueStore.updateParamValues(paramValuesStoreContext, paramValues);
+      updateLastParamValues(services.paramValueStore, searchName, paramValues);
 
       if (submissionMetadata.type === 'edit-step') {
         return Promise.resolve(requestUpdateStepSearchConfig(
@@ -653,8 +650,7 @@ async function loadQuestion(
 
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
 
-    const paramValuesStoreContext = makeParamValuesStoreContext(searchName);
-    paramValueStore.updateParamValues(paramValuesStoreContext, paramValues);
+    updateLastParamValues(paramValueStore, searchName, paramValues);
 
     return questionLoaded({
       autoRun,
@@ -674,10 +670,6 @@ async function loadQuestion(
   }
 }
 
-function makeParamValuesStoreContext(searchName: string) {
-  return `question-form/${searchName}`;
-}
-
 async function fetchInitialParams(
   searchName: string,
   step: Step | undefined,
@@ -689,9 +681,7 @@ async function fetchInitialParams(
   } else if (initialParamData != null) {
     return initialParamDataWithDatasetParamSpecialCase(initialParamData);
   } else {
-    const paramValuesStoreContext = makeParamValuesStoreContext(searchName);
-
-    const storedParamValues = await paramValueStore.fetchParamValues(paramValuesStoreContext);
+    const storedParamValues = await fetchLastParamValues(paramValueStore, searchName);
 
     return storedParamValues ?? {};
   }
@@ -723,4 +713,27 @@ function extractParamValues(question: QuestionWithParameters, initialParams: Par
       )
     });
   }, {} as ParameterValues);
+}
+
+function updateLastParamValues(
+  paramValueStore: ParamValueStore,
+  searchName: string,
+  newParamValues: ParameterValues
+) {
+  const paramValueStoreContext = makeParamValueStoreContext(searchName);
+
+  return paramValueStore.updateParamValues(paramValueStoreContext, newParamValues);
+}
+
+function fetchLastParamValues(
+  paramValueStore: ParamValueStore,
+  searchName: string
+) {
+  const paramValueStoreContext = makeParamValueStoreContext(searchName);
+
+  return paramValueStore.fetchParamValues(paramValueStoreContext);
+}
+
+function makeParamValueStoreContext(searchName: string) {
+  return `question-form/${searchName}`;
 }
