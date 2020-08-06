@@ -11,10 +11,10 @@ import Page from 'wdk-client/Components/Layout/Page';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
-import WdkService, { WdkServiceContext } from 'wdk-client/Service/WdkService';
 import WdkRoute from 'wdk-client/Core/WdkRoute';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import UnhandledErrorsController from 'wdk-client/Controllers/UnhandledErrorsController';
+import { WdkDependencies, WdkDepdendenciesContext } from 'wdk-client/Hooks/WdkDependenciesEffect';
 
 type Props = {
   rootUrl: string,
@@ -23,7 +23,7 @@ type Props = {
   onLocationChange: (location: Location) => void,
   history: History,
   store: Store,
-  wdkService: WdkService,
+  wdkDependencies: WdkDependencies,
   staticContent?: string
 };
 
@@ -106,7 +106,7 @@ export default class Root extends React.Component<Props, State> {
       <Provider store={this.props.store}>
         <ErrorBoundary>
           <Router history={this.props.history}>
-            <WdkServiceContext.Provider value={this.props.wdkService}>
+            <WdkDepdendenciesContext.Provider value={this.props.wdkDependencies}>
               <PluginContext.Provider value={makeCompositePluginComponent(this.props.pluginConfig)}>
                 <Page classNameModifier={rootClassNameModifier}>
                   {staticContent ? safeHtml(staticContent, null, 'div') : (
@@ -129,7 +129,7 @@ export default class Root extends React.Component<Props, State> {
                   )}
                 </Page>
               </PluginContext.Provider>
-            </WdkServiceContext.Provider>
+            </WdkDepdendenciesContext.Provider>
           </Router>
         </ErrorBoundary>
       </Provider>
