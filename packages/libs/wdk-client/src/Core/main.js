@@ -74,11 +74,16 @@ export function initialize(options) {
   let wdkService = wrapWdkService(getInstance(endpoint));
   let paramValueStore = getParamValueStoreInstance(endpoint, wdkService);
   let transitioner = getTransitioner(history);
-  let store = createWdkStore(
-    wrapStoreModules(storeModules),
+
+  let wdkDependencies = {
     paramValueStore,
     transitioner,
-    wdkService,
+    wdkService
+  };
+
+  let store = createWdkStore(
+    wrapStoreModules(storeModules),
+    wdkDependencies,
     additionalMiddleware
   );
 
@@ -103,11 +108,7 @@ export function initialize(options) {
           pluginConfig: pluginConfig.concat(defaultPluginConfig),
           routes: wrapRoutes(wdkRoutes),
           onLocationChange: handleLocationChange,
-          wdkDependencies: {
-            paramValueStore,
-            transitioner,
-            wdkService
-          },
+          wdkDependencies,
           staticContent: retainContainerContent ? container.innerHTML : undefined
         });
       ReactDOM.render(applicationElement, container);
