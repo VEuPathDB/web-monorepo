@@ -652,6 +652,10 @@ async function loadQuestion(
     const paramValues = extractParamValues(question, initialParams, step);
 
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
+
+    const paramValuesStoreContext = makeParamValuesStoreContext(searchName);
+    paramValueStore.updateParamValues(paramValuesStoreContext, paramValues);
+
     return questionLoaded({
       autoRun,
       searchName,
