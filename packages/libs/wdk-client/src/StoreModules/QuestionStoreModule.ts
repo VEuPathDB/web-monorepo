@@ -347,6 +347,7 @@ const observeLoadQuestion: QuestionEpic = (action$, state$, { paramValueStore, w
       wdkService,
       action.payload.searchName,
       action.payload.autoRun,
+      action.payload.prepopulateWithLastParamValues,
       action.payload.stepId,
       action.payload.initialParamData
     )).pipe(
@@ -634,11 +635,18 @@ async function loadQuestion(
   wdkService: WdkService,
   searchName: string,
   autoRun: boolean,
+  prepopulateWithLastParamValues: boolean,
   stepId?: number,
   initialParamData?: ParameterValues,
 ) {
   const step = stepId ? await wdkService.findStep(stepId) : undefined;
-  const initialParams = await fetchInitialParams(searchName, step, initialParamData, paramValueStore);
+  const initialParams = await fetchInitialParams(
+    searchName,
+    step,
+    initialParamData,
+    prepopulateWithLastParamValues,
+    paramValueStore
+  );
 
   try {
     const question = Object.keys(initialParams).length > 0
@@ -654,6 +662,7 @@ async function loadQuestion(
 
     return questionLoaded({
       autoRun,
+      prepopulateWithLastParamValues,
       searchName,
       question,
       recordClass,
@@ -674,16 +683,17 @@ async function fetchInitialParams(
   searchName: string,
   step: Step | undefined,
   initialParamData: ParameterValues | undefined,
+  prepopulateWithLastParamValues: boolean,
   paramValueStore: ParamValueStore
 ) {
   if (step != null) {
     return initialParamDataFromStep(step);
   } else if (initialParamData != null) {
     return initialParamDataWithDatasetParamSpecialCase(initialParamData);
+  } else if (prepopulateWithLastParamValues) {
+    return await fetchLastParamValues(paramValueStore, searchName) ?? {};
   } else {
-    const storedParamValues = await fetchLastParamValues(paramValueStore, searchName);
-
-    return storedParamValues ?? {};
+    return {};
   }
 }
 

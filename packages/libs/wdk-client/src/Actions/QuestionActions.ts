@@ -44,8 +44,9 @@ export interface UpdateActiveQuestionAction {
   type: typeof UPDATE_ACTIVE_QUESTION;
   payload: QuestionPayload<{
     autoRun: boolean;
+    prepopulateWithLastParamValues: boolean;
     initialParamData?: Record<string, string>;
-    stepId: number | undefined
+    stepId: number | undefined;
   }>
 }
 
@@ -70,6 +71,7 @@ export interface QuestionLoadedAction {
   type: typeof QUESTION_LOADED;
   payload: QuestionPayload<{
     autoRun: boolean;
+    prepopulateWithLastParamValues: boolean;
     question: QuestionWithParameters;
     recordClass: RecordClass;
     paramValues: ParameterValues;
