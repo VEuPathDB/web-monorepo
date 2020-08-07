@@ -50,7 +50,12 @@ type OwnProps = {
    * directed to the new strategy. Any errors will appear above the search form
    * and the user will be able to correct the errors.
    */
-  autoRun?: boolean
+  autoRun?: boolean,
+  /**
+   * If true, the form will be prepopulated with the param value
+   * selections from the user's last visit to the form
+   */
+  prepopulateWithLastParamValues?: boolean
 };
 type StateProps = QuestionState & { recordClasses: GlobalData['recordClasses'] };
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
@@ -62,7 +67,8 @@ type Props = DispatchProps & StateProps & {
   submitButtonText?: string,
   shouldChangeDocumentTitle?: boolean,
   initialParamData?: Record<string, string>,
-  autoRun: boolean;
+  autoRun: boolean,
+  prepopulateWithLastParamValues: boolean
 };
 
 function QuestionController(props: Props) {
@@ -78,6 +84,7 @@ function QuestionController(props: Props) {
     shouldChangeDocumentTitle, 
     initialParamData,
     autoRun,
+    prepopulateWithLastParamValues,
     ...state } = props;
   const stepId = submissionMetadata.type === 'edit-step' || submissionMetadata.type === 'submit-custom-form' ? submissionMetadata.stepId : undefined;
 
@@ -106,6 +113,7 @@ function QuestionController(props: Props) {
       searchName,
       autoRun,
       initialParamData: autoRun && initialParamData == null ? {} : initialParamData,
+      prepopulateWithLastParamValues,
       stepId
     }))
   }, [searchName, stepId]);
@@ -239,7 +247,8 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
     submitButtonText: ownProps.submitButtonText,
     shouldChangeDocumentTitle: ownProps.shouldChangeDocumentTitle,
     initialParamData: ownProps.initialParamData,
-    autoRun: ownProps.autoRun === true
+    autoRun: ownProps.autoRun === true,
+    prepopulateWithLastParamValues: ownProps.prepopulateWithLastParamValues === true
   })
 )
 

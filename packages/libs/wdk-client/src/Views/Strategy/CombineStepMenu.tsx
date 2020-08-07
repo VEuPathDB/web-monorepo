@@ -317,10 +317,8 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
         updateActiveQuestion({
           searchName: booleanSearchUrlSegment,
           autoRun: false,
-          stepId: undefined,
-          initialParamData: {
-            [BOOLEAN_OPERATOR_PARAM_NAME]: CombineOperator.Intersect
-          }
+          prepopulateWithLastParamValues: false,
+          stepId: undefined
         })
       )
     },

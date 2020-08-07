@@ -52,6 +52,7 @@ export interface UpdateActiveQuestionAction {
 export function updateActiveQuestion(payload: {
   searchName: string;
   autoRun: boolean,
+  prepopulateWithLastParamValues: boolean,
   initialParamData?: Record<string, string>,
   stepId: number | undefined
 }): UpdateActiveQuestionAction {
