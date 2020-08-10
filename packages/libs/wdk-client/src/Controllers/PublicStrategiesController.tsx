@@ -10,7 +10,8 @@ import { MesaSortObject, DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable, propertyIsNonNull } from 'wdk-client/Utils/ComponentUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { PublicStrategies, PublicStrategySummary } from 'wdk-client/Views/Strategy/PublicStrategies';
+import { StrategySummary } from 'wdk-client/Utils/WdkUser';
+import { PublicStrategies } from 'wdk-client/Views/Strategy/PublicStrategies';
 import { createSelector } from 'reselect';
 import Error from 'wdk-client/Components/PageStatus/Error';
 
@@ -19,7 +20,7 @@ interface StateProps {
   searchTerm: string;
   sort?: MesaSortObject;
   prioritizeExamples: boolean;
-  publicStrategySummaries?: PublicStrategySummary[];
+  publicStrategySummaries?: StrategySummary[];
   recordClassesByUrlSegment?: Record<string, RecordClass>;
   hasError?: boolean;
 }
@@ -46,14 +47,7 @@ const recordClassesByUrlSegment = createSelector(
 );
 
 const mapStateToProps = (state: RootState): StateProps => {
-  const exampleStratsAuthorId = state.globalData.siteConfig?.exampleStratsOwnerId;
-
-  const publicStrategySummaries = state.strategyWorkspace.publicStrategySummaries?.map(
-    publicStrategySummary => ({
-      ...publicStrategySummary,
-      isExample: publicStrategySummary.ownerId === exampleStratsAuthorId
-    })
-  );
+  const publicStrategySummaries = state.strategyWorkspace.publicStrategySummaries;
 
   const examplesAvailable = publicStrategySummaries?.some(({ isExample }) => isExample) ?? false;
 

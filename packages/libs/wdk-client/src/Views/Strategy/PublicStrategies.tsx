@@ -20,15 +20,11 @@ interface Props {
   searchTerm: string;
   sort?: MesaSortObject;
   prioritizeExamples: boolean;
-  publicStrategySummaries: PublicStrategySummary[];
+  publicStrategySummaries: StrategySummary[];
   recordClassesByUrlSegment: Record<string, RecordClass>;
   onSearchTermChange: (newSearchTerm: string) => void;
   onSortChange: (newSort: MesaSortObject) => void;
   onPriorityChange: (newPriority: boolean) => void;
-}
-
-export interface PublicStrategySummary extends StrategySummary {
-  isExample: boolean;
 }
 
 export const PublicStrategies = ({
@@ -110,11 +106,11 @@ export const PublicStrategies = ({
 };
 
 interface RenderCellProps<T> {
-  row: PublicStrategySummary;
+  row: StrategySummary;
   value: T;
 }
 
-function makeMesaColumns(recordClassToDisplayString: (urlSegment: string | null) => string): MesaColumn<keyof PublicStrategySummary>[] {
+function makeMesaColumns(recordClassToDisplayString: (urlSegment: string | null) => string): MesaColumn<keyof StrategySummary>[] {
   return [
     {
       key: 'name',
@@ -174,10 +170,10 @@ function makeMesaRows(
   prioritizeExamples: boolean
 ) {
   const sortColumnValue = sort.columnKey === 'recordClassName'
-    ? (row: PublicStrategySummary) => recordClassToDisplayString(row.recordClassName)
+    ? (row: StrategySummary) => recordClassToDisplayString(row.recordClassName)
     : sort.columnKey;
 
-  const sortPriorityValue = (row: PublicStrategySummary) => row.isExample;
+  const sortPriorityValue = (row: StrategySummary) => row.isExample;
 
   return prioritizeExamples
     ? orderBy(publicStrategies, [ sortPriorityValue, sortColumnValue, ], [ 'desc', sort.direction ])
@@ -186,7 +182,7 @@ function makeMesaRows(
 
 function makeMesaFilteredRows(
   rows: Props['publicStrategySummaries'], 
-  columns: MesaColumn<keyof PublicStrategySummary>[],
+  columns: MesaColumn<keyof StrategySummary>[],
   searchTerm: string, 
   recordClassToDisplayString: (urlSegment: string | null) => string
 ) {  
@@ -209,7 +205,7 @@ function makeMesaOptions() {
     toolbar: true,
     useStickyHeader: true,
     tableBodyMaxHeight: 'calc(80vh - 200px)',
-    deriveRowClassName: (strategy: PublicStrategySummary) => strategy.isExample ? cx('--ExampleRow') : undefined
+    deriveRowClassName: (strategy: StrategySummary) => strategy.isExample ? cx('--ExampleRow') : undefined
   };
 }
 
