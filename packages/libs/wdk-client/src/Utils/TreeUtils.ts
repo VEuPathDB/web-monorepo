@@ -199,19 +199,9 @@ export function isBranch<T>(node: T, getNodeChildren: ChildrenGetter<T>) {
  * @param {Array} initial list of leaf nodes (optional)
  * @return {Array} updated list of leaf nodes
  */
-export function getLeaves <T>(node: T, getNodeChildren: ChildrenGetter<T>, leaves: T[] = []) {
- if(!isLeaf(node, getNodeChildren)) {
-   getNodeChildren(node).map(function(child) {
-
-     // push only leaf nodes into the array
-     if(isLeaf(child, getNodeChildren)) {
-       leaves.push(child);
-     }
-     getLeaves(child, getNodeChildren, leaves);
-   });
- }
- return leaves;
-};
+export function getLeaves <T>(node: T, getNodeChildren: ChildrenGetter<T>) {
+  return Seq.from(preorder(node, getNodeChildren)).filter(node => isLeaf(node, getNodeChildren)).toArray();
+}
 
 /**
  * Using recursion to return all the branch nodes for a given node
@@ -220,9 +210,5 @@ export function getLeaves <T>(node: T, getNodeChildren: ChildrenGetter<T>, leave
  * @return {Array} updated list of branch nodes
  */
 export function getBranches <T>(node: T, getNodeChildren: ChildrenGetter<T>, branches: T[] = []) {
-  if(!isLeaf(node, getNodeChildren)) {
-    branches.push(node);
-    getNodeChildren(node).map(child => getBranches(child, getNodeChildren, branches));
-  }
-  return branches;
-};
+  return Seq.from(preorder(node, getNodeChildren)).filter(node => isBranch(node, getNodeChildren)).toArray();
+}
