@@ -31,7 +31,7 @@ function isType(parameter: Parameter): parameter is EnumParam {
 }
 
 function EnumParamComponent(props: EnumParamProps) {
-  const { onParamValueChange, parameter, value } = props;
+  const { onParamValueChange, parameter, value, ctx: { searchName } } = props;
   switch(parameter.displayType) {
     case 'typeAhead':
     case 'treeBox':
@@ -65,7 +65,7 @@ function EnumParamComponent(props: EnumParamProps) {
       }
     case 'select':
     case 'checkBox':
-      let parameterName = parameter.name;
+      let parameterKey = `${searchName}/${parameter.name}`;
 
       // handle select and checkBox displays
       let multiValueChange = (value: string[]) => onParamValueChange(toMultiValueString(value));
@@ -79,14 +79,14 @@ function EnumParamComponent(props: EnumParamProps) {
                 value={toMultiValueArray(value)}
                 onChange={multiValueChange}
                 required={valueRequired}
-                name={parameterName}
+                name={parameterKey}
               />
             : <SingleSelect
                 items={selectOptions}
                 value={value}
                 onChange={onParamValueChange}
                 required={valueRequired}
-                name={parameterName}
+                name={parameterKey}
               />
         case 'checkBox':
           let checkboxOptions = parameter.vocabulary.map(([value, display]) => ({ value, display: safeHtml(display) }));
@@ -95,14 +95,14 @@ function EnumParamComponent(props: EnumParamProps) {
                 items={checkboxOptions}
                 value={toMultiValueArray(value)}
                 onChange={multiValueChange}
-                name={parameterName}
+                name={parameterKey}
               />
             : <RadioList
                 items={checkboxOptions}
                 value={value}
                 onChange={onParamValueChange}
                 required={valueRequired}
-                name={parameterName}
+                name={parameterKey}
               />
       }
     default:

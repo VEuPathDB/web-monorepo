@@ -278,6 +278,7 @@ export const analysisBaseTabConfigs = createSelector<RootState, number[], Record
 );
 
 export const mapAnalysisPanelStateToProps = (
+  panelId: number,
   analysisPanelState: AnalysisPanelState,
   choices: StepAnalysisType[],
   webAppUrl: string,
@@ -294,8 +295,8 @@ export const mapAnalysisPanelStateToProps = (
       wdkModelBuildNumber,
       recordClassDisplayName
     ),
-    UnsavedAnalysisState: panelState => mapUnsavedAnalysisStateToProps(panelState, choices),
-    SavedAnalysisState: panelState => mapSavedAnalysisStateToProps(panelState, choices, webAppUrl)
+    UnsavedAnalysisState: panelState => mapUnsavedAnalysisStateToProps(panelId, panelState, choices),
+    SavedAnalysisState: panelState => mapSavedAnalysisStateToProps(panelId, panelState, choices, webAppUrl)
   }
 );
 
@@ -323,6 +324,7 @@ const mapAnalysisMenuStateToProps = (
 });
 
 const mapUnsavedAnalysisStateToProps = (
+  panelId: number,
   {
     analysisName,
     analysisType: {
@@ -350,6 +352,7 @@ const mapUnsavedAnalysisStateToProps = (
   },
   formSaving: formStatus === 'SAVING_ANALYSIS',
   formState: {
+    formKey: makeFormKey(panelId),
     hasParameters: paramNames.length > 0,
     formExpanded,
     errors: formValidationErrors,
@@ -377,6 +380,7 @@ const mapUnsavedAnalysisStateToProps = (
 });
 
 const mapSavedAnalysisStateToProps = (
+  panelId: number,
   {
     analysisConfig,
     analysisConfigStatus,
@@ -404,6 +408,7 @@ const mapSavedAnalysisStateToProps = (
   },
   formSaving: formStatus === 'SAVING_ANALYSIS',
   formState: {
+    formKey: makeFormKey(panelId),
     hasParameters: paramSpecs.length > 0,
     formExpanded,
     errors: formValidationErrors,
@@ -522,3 +527,5 @@ function parseTabSelector(selector: string): TabDetail | undefined {
   const [ , type, id ] = matches;
   return { type, id } as TabDetail;
 }
+
+const makeFormKey = (panelId: number) => `step-analysis-form/${panelId}`;
