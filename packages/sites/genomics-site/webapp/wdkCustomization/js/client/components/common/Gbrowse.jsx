@@ -223,10 +223,13 @@ export function GbrowseContext(props) {
 	  )
     }
   if (attribute.name == 'dnaContextUrl'){ 
-      jbrowseUrlFull = record.attributes.dnaContextUrl;
+      jbrowseUrlFull = record.attributes.jbrowseUrl;
+      jbrowseUrlMinimal = record.attributes.dnaContextUrl;
       return (
     	<div>
-      	<JbrowseIframe jbrowseUrl={jbrowseUrlFull} ht="180" />
+      	<JbrowseLink url={jbrowseUrlFull}/>
+      	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="180" />
+      	<JbrowseLink url={jbrowseUrlFull}/>
       	</div>
 	)
   }	

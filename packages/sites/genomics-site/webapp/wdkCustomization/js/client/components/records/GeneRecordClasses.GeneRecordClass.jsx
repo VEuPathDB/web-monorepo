@@ -918,10 +918,13 @@ class OrthologsForm extends SortKeyTable {
 
   render() {
       let { source_id, gene_type } = this.props.record.attributes;
+
+      let is_protein = (gene_type === "protein coding" || gene_type === 'protein coding gene') ? true : false;
+      let not_protein = is_protein ? false : true;
+
       if ( this.props.value.length === 0 ) {
           return ( <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/> ) 
         } else {
-      if(gene_type === "protein coding" || gene_type === 'protein coding gene') {
         return (
           <form action="/cgi-bin/isolateAlignment" target="_blank" method="post">
             <input type="hidden" name="type" value="geneOrthologs"/>
@@ -936,9 +939,9 @@ class OrthologsForm extends SortKeyTable {
             <p><b>Select sequence type for Clustal Omega multiple sequence alignment:</b></p>
             <p>Please note: selecting a large flanking region or a large number of sequences will take several minutes to align.</p>
             <div id="userOptions" >
-              <input type="radio" name="sequence_Type" value="protein" defaultChecked={true} /> Protein
-              <input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced)
-              <input type="radio" name="sequence_Type" value="genomic" /> Genomic
+             { is_protein && <> <input type="radio" name="sequence_Type" value="protein" defaultChecked={is_protein} /> Protein </> }
+             { is_protein && <> <input type="radio" name="sequence_Type" value="CDS" /> CDS (spliced) </> }
+              <input type="radio" name="sequence_Type" value="genomic" defaultChecked={not_protein}/> Genomic
               <span className="genomic">
                 <input type="number" id="oneOffset" name="oneOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt upstream (max 2500)
                 <input type="number" id="twoOffset" name="twoOffset" placeholder="0" size="4" pattern='[0-9]+' min="0" max="2500"/> nt downstream (max 2500)
@@ -955,7 +958,6 @@ class OrthologsForm extends SortKeyTable {
             </div>  
           </form>
         );
-      }
     }
   }
 }
