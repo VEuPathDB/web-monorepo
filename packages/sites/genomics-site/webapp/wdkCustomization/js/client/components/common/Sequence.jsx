@@ -1,18 +1,36 @@
 import { orderBy, range } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { useRef, useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useIsRefOverflowingVertically } from 'wdk-client/Hooks/Overflow';
-import { copyContent } from 'wdk-client/Utils/DomUtils';
+import { writeTextToClipboard } from 'wdk-client/Utils/DomUtils';
 
 const NUM_COLS = 80;
 
 function Sequence(props) {
-  const { highlightRegions, sequence } = props;
+  const { accession, highlightRegions, sequence } = props;
   const ref = useRef(null);
   const [ isExpanded, setIsExpanded ] = useState();
   const isOverflowing = useIsRefOverflowingVertically(ref);
+
+  const onClickCopyButton = useCallback(
+    () => {
+      if (ref.current) {
+        const sequenceLines = makeSequenceLines(ref.current.textContent);
+
+        const newClipboardLines = accession == null
+          ? sequenceLines
+          : [ makeDefline(accession), ...sequenceLines ]
+
+        const newClipboardText = newClipboardLines
+          .flatMap(newClipboardLine => [ newClipboardLine, '\n' ])
+          .join('');
+
+        writeTextToClipboard(newClipboardText);
+      }
+    },
+    [ accession, ref.current ]
+  );
 
   useEffect(() => {
     if (isExpanded == null || isExpanded) return;
@@ -49,7 +67,7 @@ function Sequence(props) {
         top: '-3em',
         right: 0,
       }}>
-        <button type="button" onClick={() => copyContent(ref.current)}>Copy to clipboard</button>
+        <button type="button" onClick={onClickCopyButton}>Copy to clipboard</button>
       </div>
       <pre ref={ref} onCopy={handleCopy} style={style}>
         {highlightedSequence.map((frag, index) => <React.Fragment key={index}>{frag}</React.Fragment>)}
@@ -93,11 +111,20 @@ Sequence.defaultProps = {
 
 function handleCopy(event) {
   const string = window.getSelection().toString();
-  const selection = range(Math.ceil(string.length / NUM_COLS))
-    .map(n => string.slice(n * NUM_COLS, n * NUM_COLS + NUM_COLS))
-    .join('\n');
+  const selection = makeSequenceLines(string).join('\n');
   event.clipboardData.setData('text/plain', selection);
   event.preventDefault();
+}
+
+function makeDefline(accession) {
+  return `>${accession}`;
+}
+
+function makeSequenceLines(sequenceSegment) {
+  return (
+    range(Math.ceil(sequenceSegment.length / NUM_COLS))
+      .map(n => sequenceSegment.slice(n * NUM_COLS, n * NUM_COLS + NUM_COLS))
+  );
 }
 
 export default Sequence;
