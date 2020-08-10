@@ -91,7 +91,7 @@ var Histogram = (function() {
     componentDidUpdate(prevProps) {
       if (
         !isEqual(this.props.distribution, prevProps.distribution) ||
-        this.props.uiState !== prevProps.uiState
+        !isEqual(this.props.uiState, prevProps.uiState)
       ) {
         this.createPlot();
         this.drawPlotSelection();
