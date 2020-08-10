@@ -380,6 +380,7 @@ const renderIntron = str =>
 
 const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
   let {
+    source_id,
     protein_sequence,
     transcript_sequence,
     genomic_sequence,
@@ -419,7 +420,10 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
         <div style={{ padding: '1em' }}>
           <h3>Predicted Protein Sequence</h3>
           <div><span style={legendStyle}>{protein_length} aa</span></div>
-          <Sequence sequence={protein_sequence}/>
+          <Sequence
+            accession={source_id}
+            sequence={protein_sequence}
+          />
         </div>
         )}
         {protein_sequence == null ? null : <hr/>}
@@ -431,8 +435,11 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
               ? <span style={legendStyle}>{renderUtr('UTR')}</span>
               : null }
           </div>
-          <Sequence sequence={transcript_sequence}
-            highlightRegions={transcriptHighlightRegions}/>
+          <Sequence
+            accession={source_id}
+            sequence={transcript_sequence}
+            highlightRegions={transcriptHighlightRegions}
+          />
         </div>
         <div style={{ padding: '1em' }}>
           <h3>Genomic Sequence { genomicRegionTypes.length > 0 ? ' (' + genomicRegionTypes.map(t => t + 's').join(' and ') + ' highlighted)' : null}</h3>
@@ -445,8 +452,11 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
               );
             })}
           </div>
-          <Sequence sequence={genomic_sequence}
-            highlightRegions={genomicHighlightRegions}/>
+          <Sequence
+            accession={source_id}
+            sequence={genomic_sequence}
+            highlightRegions={genomicHighlightRegions}
+          />
         </div>
       </div>
   );
