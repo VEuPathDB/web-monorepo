@@ -82,7 +82,8 @@ export default function DefaultQuestionForm(props: Props) {
     submitButtonText,
     recordClass,
     validateForm = true,
-    containerClassName
+    containerClassName,
+    resetFormConfig
   } = props;
   const {
     question,
@@ -170,11 +171,16 @@ export default function DefaultQuestionForm(props: Props) {
         headerText={`Identify ${recordClass.displayNamePlural} based on ${question.displayName}`}
       />
       <StepValidationInfo stepValidation={stepValidation} question={question} isRevise={submissionMetadata.type === 'edit-step'}/>
+      {resetFormConfig.offered && <ResetFormButton {...resetFormConfig} />}
+      <hr />
       <form onSubmit={handleSubmit} noValidate={!validateForm}>
         {question.groups
           .filter(group => group.displayType !== 'hidden')
           .map(group => renderParamGroup(group, props))
         }
+        <hr />
+        {resetFormConfig.offered && <ResetFormButton {...resetFormConfig} />}
+        <hr />
         <SubmitSection
           className={cx('SubmitSection')}
           tooltipPosition={tooltipPosition}
@@ -222,19 +228,25 @@ export function QuestionHeader(props: QuestionHeaderProps) {
     : <></>;
 }
 
-type ResetFormConfig =
+export type ResetFormConfig =
   | { offered: false }
   | { offered: true } & ResetFormButtonProps;
 
 interface ResetFormButtonProps {
+  disabled?: boolean;
   onResetForm: () => void;
   resetFormContent: React.ReactNode;
 }
 
-function ResetFormButton({ onResetForm, resetFormContent }: ResetFormButtonProps) {
+function ResetFormButton({
+  disabled,
+  onResetForm,
+  resetFormContent
+}: ResetFormButtonProps) {
   return (
     <button
       type="button"
+      disabled={disabled}
       className={cx('ResetFormButton')}
       onClick={onResetForm}
     >
