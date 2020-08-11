@@ -79,7 +79,7 @@ function reduce(state: State = defaultState, action: Action): State {
       return {
         ...state,
         sourceType: 'idList',
-        idList: initialParamData
+        idList: initialParamData?.[initialListName] != null
           ? initialParamData[initialListName]
           : (parameter as DatasetParam).defaultIdList
       }
