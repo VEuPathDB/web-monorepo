@@ -225,12 +225,12 @@ function useResetFormConfig(
       dispatch(updateActiveQuestion({
         autoRun,
         searchName,
-        prepopulateWithLastParamValues,
-        initialParamData: undefined,
+        prepopulateWithLastParamValues: false,
+        initialParamData: {},
         stepId
       }));
     },
-    [ autoRun, dispatch, prepopulateWithLastParamValues, searchName, stepId ]
+    [ autoRun, dispatch, searchName, stepId ]
   );
 
   return useMemo(
