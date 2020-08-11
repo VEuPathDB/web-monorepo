@@ -10,8 +10,7 @@ import {
   updateActiveQuestion,
   updateParamValue,
   changeGroupVisibility,
-  SubmissionMetadata,
-  submitQuestion
+  SubmissionMetadata
 } from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import Error from 'wdk-client/Components/PageStatus/Error';
@@ -191,6 +190,7 @@ function QuestionController(props: Props) {
         submissionMetadata={submissionMetadata}
         submitButtonText={submitButtonText}
         recordClass={recordClass}
+        resetFormConfig={{ offered: false }}
       />
     : <DefaultRenderForm
         parameterElements={parameterElements}
@@ -200,6 +200,7 @@ function QuestionController(props: Props) {
         submissionMetadata={submissionMetadata}
         submitButtonText={submitButtonText}
         recordClass={recordClass}
+        resetFormConfig={{ offered: false }}
       />;
 }
 

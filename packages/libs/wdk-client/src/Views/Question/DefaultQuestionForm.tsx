@@ -7,12 +7,12 @@ import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { Parameter, ParameterGroup, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
+  SubmissionMetadata,
   changeGroupVisibility,
-  updateParamValue,
   submitQuestion,
   updateCustomQuestionName,
-  updateQuestionWeight,
-  SubmissionMetadata
+  updateParamValue,
+  updateQuestionWeight
 } from 'wdk-client/Actions/QuestionActions';
 import 'wdk-client/Views/Question/DefaultQuestionForm.scss';
 import { TooltipPosition } from 'wdk-client/Components/Overlays/Tooltip';
@@ -39,6 +39,7 @@ export type Props = {
   DescriptionComponent?: (props: { description?: string, navigatingToDescription: boolean }) => JSX.Element;
   onClickDescriptionLink?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   onSubmit?: (e: React.FormEvent) => boolean | void;
+  resetFormConfig: ResetFormConfig;
   containerClassName?: string;
 }
 
@@ -73,9 +74,24 @@ export const useDefaultOnSubmit = (
   );
 
 export default function DefaultQuestionForm(props: Props) {
-
-  const { dispatchAction, onSubmit, submissionMetadata, state, submitButtonText, recordClass, validateForm = true, containerClassName } = props;
-  const { question, customName, paramValues, weight, stepValidation, submitting } = state;
+  const {
+    dispatchAction,
+    onSubmit,
+    submissionMetadata,
+    state,
+    submitButtonText,
+    recordClass,
+    validateForm = true,
+    containerClassName
+  } = props;
+  const {
+    question,
+    customName,
+    paramValues,
+    weight,
+    stepValidation,
+    submitting
+  } = state;
 
   let defaultOnSubmit = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata, false);
   let defaultOnWebservicesLinkClick = useDefaultOnSubmit(dispatchAction, question.urlSegment, submissionMetadata, true);
@@ -204,6 +220,27 @@ export function QuestionHeader(props: QuestionHeaderProps) {
       </div>
     )
     : <></>;
+}
+
+type ResetFormConfig =
+  | { offered: false }
+  | { offered: true } & ResetFormButtonProps;
+
+interface ResetFormButtonProps {
+  onResetForm: () => void;
+  resetFormContent: React.ReactNode;
+}
+
+function ResetFormButton({ onResetForm, resetFormContent }: ResetFormButtonProps) {
+  return (
+    <button
+      type="button"
+      className={cx('ResetFormButton')}
+      onClick={onResetForm}
+    >
+      {resetFormContent}
+    </button>
+  );
 }
 
 export function renderDefaultParamGroup(group: ParameterGroup, formProps: Props) {
