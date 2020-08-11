@@ -242,9 +242,7 @@ function useResetFormConfig(
             resetFormContent: (
               <React.Fragment>
                 <IconAlt fa="refresh" />
-                {' '}
                 Reload form with default parameters
-                {' '}
                 <IconAlt fa="refresh" />
               </React.Fragment>
             )

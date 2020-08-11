@@ -27,6 +27,16 @@
     padding-top: 1em;
   }
 
+  &ResetFormButton.btn {
+    display: block;
+    width: 100%;
+    margin: 1em auto;
+
+    .fa {
+      margin: 0 0.25em;
+    }
+  }
+
   &ShowHideGroup {
     border: 1px solid #eaeaea;
     background-color: #f0f0f0;

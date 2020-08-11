@@ -172,13 +172,11 @@ export default function DefaultQuestionForm(props: Props) {
       />
       <StepValidationInfo stepValidation={stepValidation} question={question} isRevise={submissionMetadata.type === 'edit-step'}/>
       {resetFormConfig.offered && <ResetFormButton {...resetFormConfig} />}
-      <hr />
       <form onSubmit={handleSubmit} noValidate={!validateForm}>
         {question.groups
           .filter(group => group.displayType !== 'hidden')
           .map(group => renderParamGroup(group, props))
         }
-        <hr />
         {resetFormConfig.offered && <ResetFormButton {...resetFormConfig} />}
         <hr />
         <SubmitSection
@@ -247,7 +245,7 @@ function ResetFormButton({
     <button
       type="button"
       disabled={disabled}
-      className={cx('ResetFormButton')}
+      className={`${cx('ResetFormButton')} btn`}
       onClick={onResetForm}
     >
       {resetFormContent}
