@@ -177,8 +177,6 @@ export default function DefaultQuestionForm(props: Props) {
           .filter(group => group.displayType !== 'hidden')
           .map(group => renderParamGroup(group, props))
         }
-        {resetFormConfig.offered && <ResetFormButton {...resetFormConfig} />}
-        <hr />
         <SubmitSection
           className={cx('SubmitSection')}
           tooltipPosition={tooltipPosition}
