@@ -229,7 +229,7 @@ function makeSortKeys(sortingAttribute, customSortBys = {}) {
     ];
   } else {
     return [
-      record => castValue(record.attributes[sortingAttribute.name])
+      record => record.attributes[sortingAttribute.name]
     ];
   }
 }
