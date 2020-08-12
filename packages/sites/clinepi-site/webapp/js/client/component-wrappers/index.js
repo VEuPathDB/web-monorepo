@@ -105,7 +105,7 @@ function withRestrictionHandler(action, getRecordClassSelector) {
       this.props.dispatchProps.attemptAction(action, {
         studyId,
         onDeny: () => {
-          document.body.style.overflow = 'hidden';
+          // document.body.style.overflow = 'hidden';
           this.setState({ allowed: false })
         },
         onAllow: () => {
