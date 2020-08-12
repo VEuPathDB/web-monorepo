@@ -70,6 +70,6 @@ export function getDefaultBinSize(report: HistogramReport, applyLog: boolean) {
     : Math.min(MAX_DEFUALT_NUM_BINS, max - min);
 
   return isTypeFloat(report.type) || applyLog
-    ? Math.ceil(max / numBins * 100) / 100
+    ? Math.ceil(Math.max(Math.abs(min), Math.abs(max)) / numBins * 100) / 100
     : Math.max(1, Math.ceil((max - min + 1) / numBins));
 }
