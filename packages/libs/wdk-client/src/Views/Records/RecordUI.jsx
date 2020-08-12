@@ -24,6 +24,7 @@ class RecordUI extends Component {
     this.monitorActiveSection = debounce(this.monitorActiveSection.bind(this), 100);
 
     this.recordMainSectionNode = null;
+    this.activeSectionTop = null;
   }
 
   componentDidMount() {
@@ -68,13 +69,15 @@ class RecordUI extends Component {
     console.debug(Date.now(), 'updated activeSection', activeSection);
     let newUrl = location.pathname + location.search + (activeSection ? '#' + activeSection : '');
     history.replaceState(null, null, newUrl);
+    this.activeSectionTop = activeElement && activeElement.getBoundingClientRect().top;
   }
 
   _scrollToActiveSection() {
     this.unmonitorActiveSection();
     let domNode = document.getElementById(location.hash.slice(1));
     if (domNode != null) {
-      domNode.scrollIntoView(true);
+      const rect = domNode.getBoundingClientRect();
+      if (rect.top !== this.activeSectionTop) domNode.scrollIntoView(true);
       console.debug(Date.now(), 'scrolled to active section', domNode, domNode.getBoundingClientRect().top);
     }
     this.monitorActiveSection();

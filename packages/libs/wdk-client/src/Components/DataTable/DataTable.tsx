@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
-import { eq, once, uniqueId, uniqBy } from 'lodash';
+import { isEqual, once, uniqueId, uniqBy } from 'lodash';
 import React, { Component, PureComponent, ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { formatAttributeValue, lazy, wrappable } from 'wdk-client/Utils/ComponentUtils';
@@ -143,8 +143,7 @@ class DataTable extends PureComponent<Props, State> {
 
     let columnsChanged = didPropChange(this, prevProps, 'columns')
     let dataChanged = didPropChange(this, prevProps, 'data');
-    let sortingChanged = didPropChange(this, prevProps, 'sorting') &&
-      !eq(this.props.sorting, prevProps.sorting);
+    let sortingChanged = didPropChange(this, prevProps, 'sorting');
     let widthChanged = didPropChange(this, prevProps, 'width');
     let heightChanged = didPropChange(this, prevProps, 'height');
     let expandedRowsChanged = didPropChange(this, prevProps, 'expandedRows');
@@ -515,6 +514,6 @@ function formatSorting(columns: DataTables.ColumnSettings[], sorting: SortingDef
 }
 
 /** Return boolean indicating if a prop's value has changed. */
-function didPropChange(component: Component<Props, any>, prevProps: Props, propName: string) {
-  return (component.props as any)[propName] !== (prevProps as any)[propName];
+function didPropChange(component: Component<Props, any>, prevProps: Props, propName: keyof Props) {
+  return !isEqual(component.props[propName], prevProps[propName]);
 }
