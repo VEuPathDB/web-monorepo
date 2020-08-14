@@ -162,7 +162,8 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           Object.assign(paramUIState, { [parameter.name]: paramReducer(parameter, undefined, { type: '@@parm-stub@@' }) }), {}),
         groupUIState: action.payload.question.groups.reduce((groupUIState, group) =>
           Object.assign(groupUIState, { [group.name]: { isVisible: group.isVisible }}), {}),
-        weight: toString(action.payload.wdkWeight)
+        weight: toString(action.payload.wdkWeight),
+        customName: toString(action.payload.customName)
       }
 
     case QUESTION_ERROR:
@@ -636,6 +637,7 @@ async function loadQuestion(
       paramValues,
       initialParamData, // Intentionally not initialParams to preserve previous behaviour ( an "INIT_PARAM" action triggered)
       wdkWeight,
+      customName: step?.customName,
       stepValidation: step && step.validation
     })
   }
