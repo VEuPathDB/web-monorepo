@@ -638,7 +638,7 @@ async function loadQuestion(
       initialParamData, // Intentionally not initialParams to preserve previous behaviour ( an "INIT_PARAM" action triggered)
       wdkWeight,
       customName: step?.customName,
-      stepValidation: step && step.validation
+      stepValidation: step?.validation
     })
   }
   catch (error) {
