@@ -922,7 +922,7 @@ class OrthologsForm extends SortKeyTable {
       let is_protein = (gene_type === 'protein coding' || gene_type === 'protein coding gene') ? true : false;
       let not_protein = is_protein ? false : true;
 
-      if ( this.props.value.length === 0 || not_protein ) {
+      if ( (this.props.value.length === 0) || not_protein ) {
           return ( <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/> ) 
       } else {
         return (
