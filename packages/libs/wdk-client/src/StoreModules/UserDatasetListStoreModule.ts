@@ -74,7 +74,10 @@ export function reduce(state: State = initialState, action: Action): State {
           ...state,
           userDatasetsById: {
             ...state.userDatasetsById,
-            [action.payload.userDataset.id]: action.payload.userDataset
+            [action.payload.userDataset.id]: {
+              isLoading: false,
+              resource: action.payload.userDataset
+            }
           }
         }
         : state;
