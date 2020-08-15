@@ -736,21 +736,20 @@ div#ce-static-content h1#news ~ h2 {
 /* ========================================================================= */
 /* News page                                                                */
 /* ========================================================================= */
-/*
-#clinepi-news li {
-  font-size: 1.4em;
-  margin: 1em 1em;
+div.static-content section ul {
+  max-width: 60em;
 }
-
-#clinepi-news li .fa {
-  color: #333;
-  margin-right: .5em;
+div.static-content section ul li {
+  padding-bottom: 0.5em;
 }
-div#clinepi-news {
-  margin: 0 4em;
+div.static-content section ul img {
+  width: 60em;
+  margin: 1em 0;
 }
-*/
-
+div.static-content section ul li ul{
+  font-size: 90%;
+  margin: 1em 0;
+}
 
 
 /* ========================================================================= */
