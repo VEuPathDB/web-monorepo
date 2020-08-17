@@ -39,8 +39,7 @@ export default function UserDatasetStatus(props: Props) {
     )
     : (
       <span>
-        This dataset is not compatible with resources in this release of {displayName}.
-        See <Link to={link + '#dataset-compatibility'}>Compatibility Information</Link> for more information.
+        This data set was uploaded but could not be installed, as it is not compatible with resources in this release of {displayName}.
       </span>
     )
   );
