@@ -74,6 +74,7 @@ export interface QuestionLoadedAction {
     paramValues: ParameterValues;
     initialParamData?: Record<string, string>;
     wdkWeight?: number;
+    customName?: string;
     stepValidation?: Step['validation'];
   }>
 }
