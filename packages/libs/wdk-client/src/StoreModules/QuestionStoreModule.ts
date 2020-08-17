@@ -1,6 +1,6 @@
 import { keyBy, mapValues, toString } from 'lodash';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
-import { EMPTY, Observable, Subject, from, merge } from 'rxjs';
+import { EMPTY, Observable, Subject, from, merge, of } from 'rxjs';
 import { debounceTime, filter, map, mergeAll, mergeMap, takeUntil } from 'rxjs/operators';
 
 import {
@@ -53,6 +53,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import {
   requestCreateStrategy,
   requestPutStrategyStepTree,
+  requestUpdateStepProperties,
   requestUpdateStepSearchConfig,
   fulfillCreateStep,
   fulfillCreateStrategy
@@ -430,13 +431,22 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
       }
 
       if (submissionMetadata.type === 'edit-step') {
-        return requestUpdateStepSearchConfig(
-          submissionMetadata.strategyId,
-          submissionMetadata.stepId,
-          {
-            ...submissionMetadata.previousSearchConfig,
-            ...searchConfig
-          }
+        return of(
+          requestUpdateStepProperties(
+            submissionMetadata.strategyId,
+            submissionMetadata.stepId,
+            {
+              customName
+            }
+          ),
+          requestUpdateStepSearchConfig(
+            submissionMetadata.strategyId,
+            submissionMetadata.stepId,
+            {
+              ...submissionMetadata.previousSearchConfig,
+              ...searchConfig
+            }
+          )
         );
       }
 
