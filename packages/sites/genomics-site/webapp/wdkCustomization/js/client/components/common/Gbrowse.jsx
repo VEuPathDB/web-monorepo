@@ -3,7 +3,12 @@ import PropTypes from 'prop-types';
 import React, { PureComponent, useCallback, useEffect, useState, useRef } from 'react';
 import { httpGet } from 'ebrc-client/util/http';
 import $ from 'jquery';
-import { Checkbox, Loading } from 'wdk-client/Components';
+import { Checkbox, HelpIcon, Loading } from 'wdk-client/Components';
+
+const SCROLL_AND_ZOOM_CHECKBOX_TOOLTIP_POSITION = {
+  my: 'bottom right',
+  at: 'top center'
+};
 
 /**
  * Each entry below is used in two scenarios:
@@ -126,7 +131,19 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
   );
 
   const jbrowseViewContainer = useRef(null);
-  const lockText = <small>Scrolling and zooming</small>;
+  const lockText = (
+    <small>
+      Scroll and zoom
+      {' '}
+      <HelpIcon
+        tooltipPosition={SCROLL_AND_ZOOM_CHECKBOX_TOOLTIP_POSITION}
+      >
+        Select to enable using mouse / track pad for scrolling &amp; zoom
+        <br />
+        (double click to zoom in; shift-double click to zoom out)
+      </HelpIcon>
+    </small>
+  );
 
   useEffect(() => {
     updateBehaviors();
