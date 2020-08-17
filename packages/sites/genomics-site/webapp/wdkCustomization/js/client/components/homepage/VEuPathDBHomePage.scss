@@ -43,15 +43,14 @@
         @if ($superscript-position-top) {
           top: $superscript-position-top;
         } @else {
-          top: 0.8em;
+          top: 0.5em;
         }
         left: $superscript-position-left;
         @if ($superscript-font-size) {
           font-size: $superscript-font-size;
         } @else {
-          font-size: 1.4em;
+          font-size: 0.9em;
         }
-        font-style: italic;
         font-weight: 500;
         color: white;
         white-space: nowrap;
