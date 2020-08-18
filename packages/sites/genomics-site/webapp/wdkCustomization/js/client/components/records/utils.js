@@ -1,7 +1,10 @@
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 
+import { compose, defaultTo, memoize, property } from 'lodash/fp';
+
 import { RecordActions } from 'wdk-client/Actions';
+import { stripHTML } from 'wdk-client/Views/Records/RecordUtils';
 
 /**
  * Higher order component to ensure that record fields
@@ -28,4 +31,21 @@ export function withRequestFields(Component) {
 function mapRecordStateToProps(state) {
   const currentRecordState = state.record;
   return { currentRecordState };
+}
+
+function getCytoscapeElementData(cyElement) {
+  return cyElement.data();
+}
+
+export function renderNodeLabelMarkup(dataProp) {
+  const getDataProperty = compose(
+    defaultTo(''),
+    property(dataProp),
+    getCytoscapeElementData
+  );
+
+  return memoize(
+    compose(stripHTML, getDataProperty),
+    getDataProperty
+  );
 }

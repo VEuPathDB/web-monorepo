@@ -10,6 +10,7 @@ import { CategoriesCheckboxTree, CollapsibleSection, Link, Loading, Dialog, Help
 import * as Ontology from 'wdk-client/Utils/OntologyUtils';
 import * as Category from 'wdk-client/Utils/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
+import { renderNodeLabelMarkup } from './utils';
 
 // include menu bar files
 import 'site/wdkCustomization/css/pathway.css';
@@ -450,7 +451,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                   'font-size':12,
                   'background-image':'data(smallImage)',
                   'background-fit':'contain',
-                  label:null,
+                  label: null,
               },
             },
 
@@ -469,7 +470,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 style: {
                     visibility:'visible',
                    'font-size':6,
-                    label: 'data(display_label)',
+                    label: renderNodeLabelMarkup('display_label'),
                     width:'label',
                     height:'label',
 
@@ -495,7 +496,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                'background-color':'white',
                'border-width':1,
                'background-image-opacity':0,
-               label:null,
+               label: null,
                }
                },
 
@@ -517,7 +518,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                width:'label',
                height:'label',
                'border-width':0,
-               label:'data(name)',
+               label: renderNodeLabelMarkup('name'),
                padding:'2px',
                'font-size':6,
                }
@@ -537,7 +538,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                width:'label',
                height:'label',
                'border-width':0,
-               label:'data(name)',
+               label: renderNodeLabelMarkup('name'),
                'font-size':12,
                },
                },
@@ -554,7 +555,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                'background-color': 'white',
                'background-image':'data(image)',
                'background-fit':'contain',
-               label:null,
+               label: null,
 
                },
                },
@@ -564,7 +565,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             {
                selector: 'node[node_type= "molecular entity"][?image][zoomLevel > 1.4][!side]',
                style: {
-                   label:'data(name)',
+                   label: renderNodeLabelMarkup('name'),
                    'border-width':0,
                    'text-valign': 'bottom',
                    'text-halign': 'center',
@@ -613,7 +614,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     'background-color': '#ccffff',
                     width:'label',
                     height:'label',
-                    label: 'data(display_label)',
+                    label: renderNodeLabelMarkup('display_label'),
                     'border-width':0,
                     'font-size':30,
                 },
@@ -638,7 +639,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                     'text-background-color': 'data(color)',
                     'text-background-opacity': 0.1,
                     'background-opacity' : 0.1,
-                    label: 'data(display_label)',
+                    label: renderNodeLabelMarkup('display_label'),
                     padding:'5%',
                     'text-valign': 'top',
                     'text-halign': 'center',
