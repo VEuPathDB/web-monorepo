@@ -2,11 +2,11 @@ import React from 'react';
 
 import { Loading } from 'wdk-client/Components';
 
-import { useCorePeripheralMap } from '../hooks/dataSummary';
-import { useOrthoService } from '../hooks/orthoService';
-import { useTaxonUiMetadata } from '../hooks/taxons';
+import { useCorePeripheralMap } from 'ortho-client/hooks/dataSummary';
+import { useOrthoService } from 'ortho-client/hooks/orthoService';
+import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 
-import { ClusterGraphDisplay } from '../components/cluster-graph/ClusterGraphDisplay';
+import { ClusterGraphDisplay } from 'ortho-client/components/cluster-graph/ClusterGraphDisplay';
 
 interface Props {
   groupName: string;

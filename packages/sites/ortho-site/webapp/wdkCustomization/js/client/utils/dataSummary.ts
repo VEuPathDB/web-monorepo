@@ -8,7 +8,7 @@ import {
   string
 } from 'wdk-client/Utils/Json';
 
-import { ProteinType } from './clusterGraph';
+import { ProteinType } from 'ortho-client/utils/clusterGraph';
 
 export interface GenomeSourcesRow {
   core_peripheral: ProteinType;

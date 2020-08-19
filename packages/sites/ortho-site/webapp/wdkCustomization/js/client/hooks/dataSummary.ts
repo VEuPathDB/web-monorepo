@@ -1,9 +1,9 @@
 import { keyBy, mapValues, once } from 'lodash';
 
-import { ProteinType } from '../utils/clusterGraph';
-import { GenomeSourcesRows } from '../utils/dataSummary';
+import { ProteinType } from 'ortho-client/utils/clusterGraph';
+import { GenomeSourcesRows } from 'ortho-client/utils/dataSummary';
 
-import { useOrthoService } from './orthoService';
+import { useOrthoService } from 'ortho-client/hooks/orthoService';
 
 export function useGenomeSourcesRows() {
   return useOrthoService(

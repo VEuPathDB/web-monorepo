@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
@@ -8,7 +8,7 @@ import { SearchPane } from 'ebrc-client/components/homepage/SearchPane';
 import { WorkshopExercises } from 'ebrc-client/components/homepage/WorkshopExercises';
 import { NewsPane } from 'ebrc-client/components/homepage/NewsPane';
 
-import { useSearchTree } from '../hooks/searchCheckboxTree';
+import { useSearchTree } from 'ortho-client/hooks/searchCheckboxTree';
 
 const IS_NEWS_EXPANDED_SESSION_KEY = 'homepage-is-news-expanded';
 

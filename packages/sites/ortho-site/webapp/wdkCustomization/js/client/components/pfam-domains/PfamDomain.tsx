@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { assignColors } from '../../utils/pfamDomain';
+import { assignColors } from 'ortho-client/utils/pfamDomain';
 
 import './PfamDomain.scss';
 

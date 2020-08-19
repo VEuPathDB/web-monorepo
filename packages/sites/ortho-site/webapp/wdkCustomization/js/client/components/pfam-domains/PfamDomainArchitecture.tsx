@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PfamDomain } from './PfamDomain';
+import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 
 import './PfamDomainArchitecture.scss';
 

@@ -21,7 +21,7 @@ import {
   useSearchTree,
   useSessionBackedSearchTerm,
   useSessionBackedExpandedBranches
-} from '../../hooks/searchCheckboxTree';
+} from 'ortho-client/hooks/searchCheckboxTree';
 
 import './OrthoMCLPage.scss';
 

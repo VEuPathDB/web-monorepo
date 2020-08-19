@@ -1,10 +1,10 @@
 import { initialize } from 'ebrc-client/bootstrap';
-import componentWrappers from './component-wrappers';
-import { wrapRoutes } from './routes';
-import { wrapWdkService } from './services';
+import componentWrappers from 'ortho-client/component-wrappers';
+import { wrapRoutes } from 'ortho-client/routes';
+import { wrapWdkService } from 'ortho-client/services';
 
 import 'eupathdb/wdkCustomization/css/client.scss';
-import '../../css/client.scss';
+import 'site/wdkCustomization/css/client.scss';
 
 initialize({
   componentWrappers,

@@ -13,11 +13,11 @@ import {
   layoutAndAccessionToPfamDomainRows,
   renderEdgeType,
   renderSequenceLink
-} from '../../utils/graphInformation';
-import { GroupLayout } from '../../utils/groupLayout';
+} from 'ortho-client/utils/graphInformation';
+import { GroupLayout } from 'ortho-client/utils/groupLayout';
 
-import { GraphAccordion } from './GraphAccordion';
-import { GraphInformationDataTable } from './GraphInformationDataTable';
+import { GraphAccordion } from 'ortho-client/components/cluster-graph/GraphAccordion';
+import { GraphInformationDataTable } from 'ortho-client/components/cluster-graph/GraphInformationDataTable';
 
 import './NodeDetails.scss';
 

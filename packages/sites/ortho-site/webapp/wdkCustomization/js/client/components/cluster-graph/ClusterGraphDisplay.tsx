@@ -14,21 +14,21 @@ import {
   initialEdgeTypeSelections,
   nodeDisplayTypeOrder,
   nodeDisplayTypeDisplayNames
-} from '../../utils/clusterGraph';
+} from 'ortho-client/utils/clusterGraph';
 import {
   GraphInformationTabKey,
   GraphInformationTabProps,
   graphInformationBaseTabConfigs
-} from '../../utils/graphInformation';
-import { GroupLayout } from '../../utils/groupLayout';
-import { TaxonUiMetadata } from '../../utils/taxons';
+} from 'ortho-client/utils/graphInformation';
+import { GroupLayout } from 'ortho-client/utils/groupLayout';
+import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
-import { ClusterGraphCanvas } from './ClusterGraphCanvas';
-import { GraphControls } from './GraphControls';
-import { GraphInformation } from './GraphInformation';
-import { Instructions } from './Instructions';
-import { NodeDetails } from './NodeDetails';
-import { SequenceList } from './SequenceList';
+import { ClusterGraphCanvas } from 'ortho-client/components/cluster-graph/ClusterGraphCanvas';
+import { GraphControls } from 'ortho-client/components/cluster-graph/GraphControls';
+import { GraphInformation } from 'ortho-client/components/cluster-graph/GraphInformation';
+import { Instructions } from 'ortho-client/components/cluster-graph/Instructions';
+import { NodeDetails } from 'ortho-client/components/cluster-graph/NodeDetails';
+import { SequenceList } from 'ortho-client/components/cluster-graph/SequenceList';
 
 import './ClusterGraphDisplay.scss';
 

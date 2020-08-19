@@ -4,7 +4,7 @@ import { Core } from 'cytoscape';
 import produce from 'immer';
 import CytoscapeComponent from 'react-cytoscapejs';
 
-import { useCytoscapeConfig } from '../../hooks/cytoscapeData';
+import { useCytoscapeConfig } from 'ortho-client/hooks/cytoscapeData';
 import {
   useEdgeMouseMovementEventHandlers,
   useNodeClickEventHandler,

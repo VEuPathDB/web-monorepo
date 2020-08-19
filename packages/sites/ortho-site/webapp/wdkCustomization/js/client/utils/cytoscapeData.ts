@@ -5,15 +5,15 @@ import {
   ProteinType,
   corePeripheralLegendColors,
   edgeTypeDisplayNames
-} from '../utils/clusterGraph';
+} from 'ortho-client/utils/clusterGraph';
 import {
   EcNumberEntry,
   EdgeEntry,
   GroupLayout,
   NodeEntry,
   PfamDomainEntry
-} from '../utils/groupLayout';
-import { TaxonUiMetadata } from '../utils/taxons';
+} from 'ortho-client/utils/groupLayout';
+import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
 interface NodeData {
   id: string;

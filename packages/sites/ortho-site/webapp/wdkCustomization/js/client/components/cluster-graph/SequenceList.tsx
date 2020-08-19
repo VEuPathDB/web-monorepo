@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { GraphInformationDataTable } from './GraphInformationDataTable';
+import { GraphInformationDataTable } from 'ortho-client/components/cluster-graph/GraphInformationDataTable';
 
 import {
   GraphInformationColumns,
@@ -8,7 +8,7 @@ import {
   SequenceListRow,
   layoutToSequenceListRows,
   renderSequenceLink
-} from '../../utils/graphInformation';
+} from 'ortho-client/utils/graphInformation';
 
 export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInformationTabProps) {
   const rows = useMemo(

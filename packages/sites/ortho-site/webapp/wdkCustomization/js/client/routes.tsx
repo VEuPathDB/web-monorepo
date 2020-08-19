@@ -4,8 +4,8 @@ import { RouteComponentProps } from 'react-router';
 
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 
-import { OrthoMCLHomePageController } from './controllers/OrthoMCLHomePageController';
-import { GroupClusterGraphController } from './controllers/GroupClusterGraphController';
+import { OrthoMCLHomePageController } from 'ortho-client/controllers/OrthoMCLHomePageController';
+import { GroupClusterGraphController } from 'ortho-client/controllers/GroupClusterGraphController';
 
 export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
   return [

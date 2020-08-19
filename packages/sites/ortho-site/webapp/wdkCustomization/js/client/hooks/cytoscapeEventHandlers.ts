@@ -11,13 +11,13 @@ import produce from 'immer';
 import {
   CytoscapeConfig,
   useCyEffect
-} from './cytoscapeData';
+} from 'ortho-client/hooks/cytoscapeData';
 import {
   addAndRemoveCytoscapeClasses,
   addCytoscapeClass,
   removeCytoscapeClass,
   removeCytoscapeClasses
-} from '../utils/cytoscapeClasses';
+} from 'ortho-client/utils/cytoscapeClasses';
 
 export function useUpdateHighlightedNodes(
   cytoscapeConfig: CytoscapeConfig,

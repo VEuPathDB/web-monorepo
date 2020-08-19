@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { GraphAccordion } from './GraphAccordion';
+import { GraphAccordion } from 'ortho-client/components/cluster-graph/GraphAccordion';
 
 import './Instructions.scss';
 
