@@ -5,7 +5,11 @@ import { orderBy } from 'lodash';
 import { RealTimeSearchBox } from 'wdk-client/Components';
 import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
 
-import { GraphInformationColumnKey, GraphInformationColumns, GraphInformationSortObject } from '../../utils/graphInformation';
+import {
+  GraphInformationColumnKey,
+  GraphInformationColumns,
+  GraphInformationSortObject
+} from 'ortho-client/utils/graphInformation';
 
 interface Props<R, C extends GraphInformationColumnKey<R>> {
   rows: R[];

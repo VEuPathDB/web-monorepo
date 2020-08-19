@@ -4,8 +4,8 @@ import { Link } from 'wdk-client/Components';
 import { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
 import { MesaColumn, MesaSortObject } from 'wdk-client/Core/CommonTypes';
 
-import { EdgeType, edgeTypeDisplayNames } from './clusterGraph';
-import { GroupLayout } from './groupLayout';
+import { EdgeType, edgeTypeDisplayNames } from 'ortho-client/utils/clusterGraph';
+import { GroupLayout } from 'ortho-client/utils/groupLayout';
 
 export interface GraphInformationTabProps {
   layout: GroupLayout;

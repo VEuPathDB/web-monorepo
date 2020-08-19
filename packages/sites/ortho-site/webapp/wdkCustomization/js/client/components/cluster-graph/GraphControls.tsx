@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Checkbox, RadioList, SliderInput, TextBox, Tooltip } from 'wdk-client/Components';
 
-import { EdgeTypeOption, NodeDisplayType } from '../../utils/clusterGraph';
+import { EdgeTypeOption, NodeDisplayType } from 'ortho-client/utils/clusterGraph';
 
-import { GraphAccordion } from './GraphAccordion';
+import { GraphAccordion } from 'ortho-client/components/cluster-graph/GraphAccordion';
 
 import './GraphControls.scss';
 

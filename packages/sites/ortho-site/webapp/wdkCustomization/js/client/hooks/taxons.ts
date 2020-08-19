@@ -5,7 +5,7 @@ import {
   TaxonUiMetadata,
   makeTaxonTree,
   makeTaxonUiMetadata,
-} from '../utils/taxons';
+} from 'ortho-client/utils/taxons';
 
 import { useOrthoService } from './orthoService';
 

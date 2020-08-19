@@ -1,17 +1,17 @@
 import React from 'react';
 
-import { OrthoMCLPage } from './components/layout/OrthoMCLPage';
+import { OrthoMCLPage } from 'ortho-client/components/layout/OrthoMCLPage';
 import {
   RecordTable as GroupRecordTable,
   RecordAttributeSection as GroupRecordAttributeSection
-} from './records/GroupRecordClasses.GroupRecordClass';
+} from 'ortho-client/records/GroupRecordClasses.GroupRecordClass';
 import {
   RecordTable as SequenceRecordTable
-} from './records/SequenceRecordClasses.SequenceRecordClass';
+} from 'ortho-client/records/SequenceRecordClasses.SequenceRecordClass';
 import {
   RecordAttributeSectionProps,
   RecordTableProps
-} from './records/Types';
+} from 'ortho-client/records/Types';
 
 export default {
   Page: () => OrthoMCLPage,

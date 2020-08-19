@@ -3,7 +3,7 @@ import React from 'react';
 import { Tabs } from 'wdk-client/Components';
 import { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
 
-import { GraphInformationTabKey } from '../../utils/graphInformation';
+import { GraphInformationTabKey } from 'ortho-client/utils/graphInformation';
 
 import './GraphInformation.scss';
 

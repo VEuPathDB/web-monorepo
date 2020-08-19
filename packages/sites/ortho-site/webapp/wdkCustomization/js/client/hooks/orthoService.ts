@@ -1,6 +1,6 @@
 import { ServiceCallback, useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 
-import { OrthoService, isOrthoService } from '../services';
+import { OrthoService, isOrthoService } from 'ortho-client/services';
 
 type OrthoServiceCallback<T> = ServiceCallback<OrthoService, T>;
 

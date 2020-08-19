@@ -8,8 +8,13 @@ import {
   record,
   string
 } from 'wdk-client/Utils/Json';
-import { EdgeType } from './clusterGraph';
-import { TaxonEntries, TaxonEntry, taxonEntryDecoder, taxonEntriesDecoder } from './taxons';
+import { EdgeType } from 'ortho-client/utils/clusterGraph';
+import {
+  TaxonEntries,
+  TaxonEntry,
+  taxonEntryDecoder,
+  taxonEntriesDecoder
+} from 'ortho-client/utils/taxons';
 
 export interface GroupLayout {
   edges: EdgeEntries;

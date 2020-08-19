@@ -5,9 +5,9 @@ import {
   GenomeStatisticsRows,
   genomeSourcesRowsDecoder,
   genomeStatisticsRowsDecoder
-} from './utils/dataSummary';
-import { GroupLayout, groupLayoutDecoder } from './utils/groupLayout';
-import { TaxonEntries, taxonEntriesDecoder } from './utils/taxons';
+} from 'ortho-client/utils/dataSummary';
+import { GroupLayout, groupLayoutDecoder } from 'ortho-client/utils/groupLayout';
+import { TaxonEntries, taxonEntriesDecoder } from 'ortho-client/utils/taxons';
 
 export function wrapWdkService(wdkService: WdkService): OrthoService {
   return ({

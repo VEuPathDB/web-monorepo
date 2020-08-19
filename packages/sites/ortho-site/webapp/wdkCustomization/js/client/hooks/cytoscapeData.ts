@@ -11,18 +11,18 @@ import { noop, orderBy } from 'lodash';
 import {
   NodeDisplayType,
   ProteinType
-} from '../utils/clusterGraph';
+} from 'ortho-client/utils/clusterGraph';
 import {
   makePieStyles,
   makeEdgeData,
   nodeEntryToCytoscapeData
-} from '../utils/cytoscapeData';
+} from 'ortho-client/utils/cytoscapeData';
 import {
   EcNumberEntry,
   GroupLayout,
   PfamDomainEntry
-} from '../utils/groupLayout';
-import { TaxonUiMetadata } from '../utils/taxons';
+} from 'ortho-client/utils/groupLayout';
+import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
 const MAX_PIE_SLICES = 16;
 
