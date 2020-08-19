@@ -478,6 +478,13 @@ const useHeaderMenuItems = (
       display: 'Data',
       type: 'subMenu',
       items: [
+        { 
+          key: 'methods',
+          display: 'Analysis methods',
+          type: 'reactRoute',
+          tooltip: 'How we obtain/generate the data',
+          url: makeStaticPageRoute(`/methods.html`)
+        },
         {
           key: 'datasets',
           display: `Data sets in ${displayName}`,
@@ -502,13 +509,6 @@ const useHeaderMenuItems = (
           metadata: {
             include: [ PlasmoDB ]
           }
-        },
-        {
-          key: 'methods',
-          display: 'Methods',
-          type: 'reactRoute',
-          tooltip: 'How we obtain/generate the data',
-          url: makeStaticPageRoute(`/methods.html`)
         },
         {
           key: 'genomes-and-data-types',
@@ -777,7 +777,14 @@ const useHeaderMenuItems = (
               key: 'accessibility-vpat',
               display: 'Accessibility VPAT',
               type: 'externalLink',
-              url: '/documents/VEuPathDB_Section_508.pdf'
+              url: '/documents/VEuPathDB_Section_508_BRC4.pdf'
+            },
+            { 
+              key: 'methods',
+              display: 'Analysis methods',
+              type: 'reactRoute',
+              tooltip: 'How we obtain/generate the data',
+              url: makeStaticPageRoute(`/methods.html`)
             },
             {
               key: 'infrastructure',
