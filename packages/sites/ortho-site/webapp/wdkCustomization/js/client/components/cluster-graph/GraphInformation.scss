@@ -1,6 +1,9 @@
 .GraphInformation {
   grid-area: information;
 
+  height: 700px;
+  overflow-y: auto;
+
   .wdk-Tabs .wdk-Tab {
     padding: 0.5em;
   }

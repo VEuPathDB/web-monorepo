@@ -1,7 +1,9 @@
 .GraphControls {
-  width: 24em;
-
   grid-area: controls;
+
+  width: 24em;
+  height: 700px;
+  overflow-y: auto;
 
   .EValueHeader {
     margin-bottom: 0.75em;
