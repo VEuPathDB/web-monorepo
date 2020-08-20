@@ -1,7 +1,7 @@
 .GraphInformation {
   grid-area: information;
 
-  height: 700px;
+  max-height: 700px;
   overflow-y: auto;
 
   .wdk-Tabs .wdk-Tab {

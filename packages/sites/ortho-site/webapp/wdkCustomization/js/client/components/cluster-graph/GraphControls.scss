@@ -2,7 +2,7 @@
   grid-area: controls;
 
   width: 24em;
-  height: 700px;
+  max-height: 700px;
   overflow-y: auto;
 
   .EValueHeader {
@@ -60,7 +60,7 @@
   }
 
   .ControlSection {
-    height: 40em;
+    max-height: 40em;
     overflow-y: auto;
   }
 
