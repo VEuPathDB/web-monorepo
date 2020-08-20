@@ -26,7 +26,6 @@ import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 import { ClusterGraphCanvas } from 'ortho-client/components/cluster-graph/ClusterGraphCanvas';
 import { GraphControls } from 'ortho-client/components/cluster-graph/GraphControls';
 import { GraphInformation } from 'ortho-client/components/cluster-graph/GraphInformation';
-import { Instructions } from 'ortho-client/components/cluster-graph/Instructions';
 import { NodeDetails } from 'ortho-client/components/cluster-graph/NodeDetails';
 import { SequenceList } from 'ortho-client/components/cluster-graph/SequenceList';
 
@@ -84,10 +83,6 @@ export function ClusterGraphDisplay({
 
   return (
     <div className="ClusterGraphDisplay">
-      <Instructions
-        groupName={groupName}
-        maxEValueExp={layout.maxEvalueExp}
-      />
       <GraphControls
         edgeTypeOptions={edgeTypeOptions}
         minEValueExp={minEValueExp}

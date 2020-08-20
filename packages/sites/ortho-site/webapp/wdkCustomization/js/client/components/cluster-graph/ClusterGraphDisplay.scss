@@ -1,7 +1,6 @@
 .ClusterGraphDisplay {
   display: grid;
   grid-template-areas:
-    "instructions instructions instructions"
     "controls     canvas       information";
   grid-template-columns: 24em 700px 41.5em;
   grid-gap: 0.25em;
