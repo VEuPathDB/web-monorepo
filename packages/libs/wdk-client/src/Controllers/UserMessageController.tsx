@@ -26,7 +26,7 @@ type MergeProps = {
 class UserMessageController extends PageController<MergeProps> {
 
   getContactUrl() {
-    return 'mailto:help@eupathdb.org';
+    return 'mailto:help@veupathdb.org';
   }
 
   getMessagePageContent() : PageContent {
