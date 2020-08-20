@@ -72,7 +72,7 @@ Data Files:
    • [INSERT # of columns] variables (columns) & [INSERT # of rows] samples (rows) 
 	◦ [INSERT # of unique Sample_Id] unique "Sample_Id" 
 
-5. ISASimple_[INSERT file name]_RSRC_[INSERT file type for OTHER (ie, light trap…)].txt 
+5. ISASimple_[INSERT file name]_RSRC_[INSERT file type for OTHER (ie, entomology…)].txt 
    • Key identifiers: [Sample_Id, Observation_Id, Participant_Id, Household_Id] 
    • 1 row for each [INSERT level of data collection (ie, light trap)] 
    • [INSERT # of columns] variables (columns) & [INSERT # of rows] rows 
