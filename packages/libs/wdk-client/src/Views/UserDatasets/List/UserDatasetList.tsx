@@ -474,7 +474,6 @@ class UserDatasetList extends React.Component <Props, State> {
 
     const rows = userDatasets;
     const selectedDatasets = rows.filter(isRowSelected);
-
     const rootUrl = this.getRootUrl();
     const columns = this.getColumns();
     const actions = this.getTableActions();
@@ -504,6 +503,12 @@ class UserDatasetList extends React.Component <Props, State> {
 
     const totalPercent = totalSize / quotaSize;
 
+    const offerProjectToggle = userDatasets.some(
+      ({ projects }) => projects.some(
+        project => project !== projectName
+      )
+    );
+
     return (
       <div className="UserDatasetList">
         <Mesa state={MesaState.create(tableState)}>
@@ -530,13 +535,16 @@ class UserDatasetList extends React.Component <Props, State> {
                 <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
                   Showing {filteredRows.length} of {rows.length} {`data set${rows.length == 1 ? '' : 's'}`}
                 </div>
-                <div className="UserDatasetList-ProjectToggle" style={{ flex: '0 0 auto', padding: '0 10px' }}>
-                  <Checkbox value={filterByProject} onChange={toggleProjectScope} />
-                  {' '}
-                  <div onClick={() => toggleProjectScope(!filterByProject)} style={{ display: 'inline-block' }}>
-                    Only show data sets related to <b>{projectName}</b>
+                {
+                  offerProjectToggle &&
+                  <div className="UserDatasetList-ProjectToggle" style={{ flex: '0 0 auto', padding: '0 10px' }}>
+                    <Checkbox value={filterByProject} onChange={toggleProjectScope} />
+                    {' '}
+                    <div onClick={() => toggleProjectScope(!filterByProject)} style={{ display: 'inline-block' }}>
+                      Only show data sets related to <b>{projectName}</b>
+                    </div>
                   </div>
-                </div>
+                }
                 <div style={{ flex: '0 0 auto', padding: '0 10px' }}>
                   <Icon fa="info-circle"/> {bytesToHuman(totalSize)} ({normalizePercentage(totalPercent)}%) of {bytesToHuman(quotaSize)} used
                 </div>
