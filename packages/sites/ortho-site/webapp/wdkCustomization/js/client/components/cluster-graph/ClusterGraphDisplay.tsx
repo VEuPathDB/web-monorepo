@@ -44,6 +44,11 @@ export function ClusterGraphDisplay({
   layout,
   taxonUiMetadata
 }: Props) {
+  const proteinCount = useMemo(
+    () => Object.keys(layout.nodes).length,
+    [ layout ]
+  );
+
   const {
     edgeTypeOptions,
     highlightedEdgeType,
@@ -82,38 +87,43 @@ export function ClusterGraphDisplay({
   }, [ setSelectedNode, setActiveTab ]);
 
   return (
-    <div className="ClusterGraphDisplay">
-      <GraphControls
-        edgeTypeOptions={edgeTypeOptions}
-        minEValueExp={minEValueExp}
-        maxEValueExp={maxEValueExp}
-        eValueExp={eValueExp}
-        selectEValueExp={selectEValueExp}
-        nodeDisplayTypeOptions={nodeDisplayTypeOptions}
-        selectedNodeDisplayType={selectedNodeDisplayType}
-        setSelectedNodeDisplayType={setSelectedNodeDisplayType}
-        legendEntries={legendEntries}
-        legendHeaders={legendHeaders}
-      />
-      <ClusterGraphCanvas
-        layout={layout}
-        corePeripheralMap={corePeripheralMap}
-        taxonUiMetadata={taxonUiMetadata}
-        selectedNodeDisplayType={selectedNodeDisplayType}
-        highlightedEdgeType={highlightedEdgeType}
-        highlightedLegendNodeIds={highlightedLegendNodeIds}
-        eValueExp={eValueExp}
-        selectedEdgeTypes={selectedEdgeTypes}
-        highlightedSequenceNodeId={highlightedSequenceNodeId}
-        highlightedBlastEdgeId={highlightedBlastEdgeId}
-        onClickNode={onClickNode}
-      />
-      <GraphInformation
-        activeTab={activeTab}
-        selectedNode={selectedNode}
-        setActiveTab={setActiveTab}
-        tabs={tabs}
-      />
+    <div className="ClusterGraphDisplayContainer">
+      <h1>
+        Cluster Graph: {groupName} ({proteinCount} proteins)
+      </h1>
+      <div className="ClusterGraphDisplay">
+        <GraphControls
+          edgeTypeOptions={edgeTypeOptions}
+          minEValueExp={minEValueExp}
+          maxEValueExp={maxEValueExp}
+          eValueExp={eValueExp}
+          selectEValueExp={selectEValueExp}
+          nodeDisplayTypeOptions={nodeDisplayTypeOptions}
+          selectedNodeDisplayType={selectedNodeDisplayType}
+          setSelectedNodeDisplayType={setSelectedNodeDisplayType}
+          legendEntries={legendEntries}
+          legendHeaders={legendHeaders}
+        />
+        <ClusterGraphCanvas
+          layout={layout}
+          corePeripheralMap={corePeripheralMap}
+          taxonUiMetadata={taxonUiMetadata}
+          selectedNodeDisplayType={selectedNodeDisplayType}
+          highlightedEdgeType={highlightedEdgeType}
+          highlightedLegendNodeIds={highlightedLegendNodeIds}
+          eValueExp={eValueExp}
+          selectedEdgeTypes={selectedEdgeTypes}
+          highlightedSequenceNodeId={highlightedSequenceNodeId}
+          highlightedBlastEdgeId={highlightedBlastEdgeId}
+          onClickNode={onClickNode}
+        />
+        <GraphInformation
+          activeTab={activeTab}
+          selectedNode={selectedNode}
+          setActiveTab={setActiveTab}
+          tabs={tabs}
+        />
+      </div>
     </div>
   );
 }
