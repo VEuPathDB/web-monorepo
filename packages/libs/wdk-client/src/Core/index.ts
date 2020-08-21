@@ -23,14 +23,6 @@ import * as WdkMiddleware from 'wdk-client/Core/WdkMiddleware';
 import * as SearchUtils from 'wdk-client/Utils/SearchUtils';
 import * as StepAnalysisResults from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/Utils/StepAnalysisResults';
 
-declare global {
-  interface Window {
-    __asset_path_remove_me_please__: string;
-  }
-}
-declare var __webpack_public_path__: string;
-__webpack_public_path__ = window.__asset_path_remove_me_please__;
-
 export {
   Actions,
   ActionCreatorUtils,
