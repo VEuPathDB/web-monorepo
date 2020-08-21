@@ -61,5 +61,5 @@ export const corePeripheralLegendOrder: ProteinType[] = [
 
 export const corePeripheralLegendColors: Record<ProteinType, string> = {
   Core: '#0000FF',
-  Peripheral: '#00FF00'
+  Peripheral: '#FFFFFF'
 };

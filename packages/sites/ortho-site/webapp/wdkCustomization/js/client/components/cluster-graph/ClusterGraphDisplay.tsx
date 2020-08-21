@@ -379,6 +379,8 @@ function renderSimpleLegendSymbol(color: string) {
         cx="8.5"
         cy="8.5"
         fill={color}
+        stroke="black"
+        strokeWidth="1"
       />
     </svg>
   );
