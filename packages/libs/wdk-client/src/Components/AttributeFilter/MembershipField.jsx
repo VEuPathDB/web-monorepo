@@ -9,7 +9,7 @@ import { findAncestorNode } from 'wdk-client/Utils/DomUtils';
 import FilterLegend from 'wdk-client/Components/AttributeFilter/FilterLegend';
 import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
 import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
-
+import { toPercentage } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 const UNKNOWN_ELEMENT = <em>Not specified</em>;
 
@@ -449,7 +449,7 @@ class MembershipTable extends React.PureComponent {
         &nbsp;
         {internalsCount != null && (
           <small style={{ display: 'inline-block', width: '50%', textAlign: 'center' }}>
-            ({value === 0 || internalsCount ===  0 ? 0 : Math.round(value/internalsCount * 100)}%)
+            ({value === 0 || internalsCount ===  0 ? 0 : toPercentage(value,internalsCount)}%)
           </small>
         )}
       </div>

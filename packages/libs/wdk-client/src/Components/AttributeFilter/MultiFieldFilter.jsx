@@ -7,7 +7,7 @@ import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { MesaController as Mesa } from 'wdk-client/Components/Mesa';
 import RealTimeSearchBox from 'wdk-client/Components/SearchBox/RealTimeSearchBox';
 import StackedBar from 'wdk-client/Components/AttributeFilter/StackedBar';
-import { getOperationDisplay, isRange, shouldAddFilter, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { toPercentage, getOperationDisplay, isRange, shouldAddFilter, findAncestorFields } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import Banner from 'wdk-client/Components/Banners/Banner';
 import UnknownCount from 'wdk-client/Components/AttributeFilter/UnknownCount';
@@ -18,7 +18,6 @@ const getCountType = curry((countType, summary, value) =>
   get(summary.valueCounts.find(count => count.value === value), countType, NaN))
 const getCount = getCountType('count');
 const getFilteredCount = getCountType('filteredCount');
-const toPercentage = (num, denom) => Math.round(num / denom * 100)
 
 export default class MultiFieldFilter extends React.Component {
 
@@ -190,7 +189,7 @@ export default class MultiFieldFilter extends React.Component {
       )
       : unknownCount > 0 && (
         <div style={{ fontWeight: 300 }}>
-          <b>{percent}% of {this.props.dataCount.toLocaleString()}</b> {this.props.displayName} have data  
+          <b>{toPercentage(row.summary.internalsCount,this.props.dataCount).toLocaleString()}% of {this.props.dataCount.toLocaleString()}</b> {this.props.displayName} have data  
         </div>
       )
   }

@@ -243,3 +243,11 @@ export function getOperationDisplay(operation: MultiFilter['value']['operation']
     case 'intersect': return 'all';
   }
 }
+
+export const toPercentage = (num: number, denom: number) =>
+  ( num == 0 ) ? 0 
+    : ( num == denom) ? 100 
+      : ( (num != denom) && ((num / denom * 100) > 99.4) ) ? '>99'
+        : ( (num != denom) && ((num / denom * 100) < 0.5) ) ? '< 1'
+          : Math.round(num / denom * 100);
+
