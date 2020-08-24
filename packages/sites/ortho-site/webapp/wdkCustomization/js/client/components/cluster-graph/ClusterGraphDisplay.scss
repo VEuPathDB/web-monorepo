@@ -1,9 +1,19 @@
 .ClusterGraphDisplayContainer {
-  .ClusterGraphDisplay {
+  .Header {
+    display: flex;
+    align-items: center;
+  }
+
+  .BackToGroupPageButton {
+    font-size: 1.5em;
+    margin-left: 2em;
+  }
+
+  .Content {
     display: grid;
     grid-template-areas:
       "controls     canvas       information";
     grid-template-columns: 24em 700px 41.5em;
-    grid-gap: 0.25em;
+    gap: 0.25em;
   }
 }

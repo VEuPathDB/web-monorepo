@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { groupBy, mapValues, orderBy } from 'lodash';
 
+import { Link } from 'wdk-client/Components';
+
 import {
   EdgeType,
   EdgeTypeOption,
@@ -37,6 +39,8 @@ interface Props {
   taxonUiMetadata: TaxonUiMetadata;
   corePeripheralMap: Record<string, ProteinType>;
 }
+
+const GROUP_RECORD_URL_SEGMENT = '/record/group';
 
 export function ClusterGraphDisplay({
   corePeripheralMap,
@@ -88,10 +92,20 @@ export function ClusterGraphDisplay({
 
   return (
     <div className="ClusterGraphDisplayContainer">
-      <h1>
-        Cluster Graph: {groupName} ({proteinCount} proteins)
-      </h1>
-      <div className="ClusterGraphDisplay">
+      <div className="Header">
+        <h1>
+          Cluster Graph: {groupName} ({proteinCount} proteins)
+        </h1>
+        <Link
+          to={`${GROUP_RECORD_URL_SEGMENT}/${groupName}`}
+          className="BackToGroupPageButton"
+        >
+          <button type="button" className="btn">
+            Back to Group page
+          </button>
+        </Link>
+      </div>
+      <div className="Content">
         <GraphControls
           edgeTypeOptions={edgeTypeOptions}
           minEValueExp={minEValueExp}
