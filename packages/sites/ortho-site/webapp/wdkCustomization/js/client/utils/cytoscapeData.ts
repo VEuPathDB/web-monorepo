@@ -147,3 +147,15 @@ export function makePieStyles(nPieSlices: number, dataPrefix: string) {
     ...sliceStyles
   };
 }
+
+export function makeHAlignClass(xCoord: number, canvasWidth: number) {
+  return xCoord <= canvasWidth / 2
+    ? 'right'
+    : 'left';
+}
+
+export function makeVAlignClass(yCoord: number, canvasHeight: number) {
+  return yCoord <= canvasHeight / 2
+    ? 'bottom'
+    : 'top'
+}
