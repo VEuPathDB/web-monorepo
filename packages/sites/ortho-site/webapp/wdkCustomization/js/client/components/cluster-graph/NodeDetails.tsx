@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { DataTableColumns } from 'ortho-client/utils/dataTables';
 import {
   BlastScoreRow,
   EcNumberRow,
-  GraphInformationColumns,
   GraphInformationTabProps,
   PfamDomainRow,
   SequenceInformation,
@@ -16,8 +16,8 @@ import {
 } from 'ortho-client/utils/graphInformation';
 import { GroupLayout } from 'ortho-client/utils/groupLayout';
 
+import { OrthoDataTable } from 'ortho-client/components/OrthoDataTable';
 import { GraphAccordion } from 'ortho-client/components/cluster-graph/GraphAccordion';
-import { GraphInformationDataTable } from 'ortho-client/components/cluster-graph/GraphInformationDataTable';
 
 import './NodeDetails.scss';
 
@@ -55,7 +55,7 @@ export function NodeDetails({
                 <SequenceInformationTable {...nodeDetails.sequenceInformation} />
               </GraphAccordion>
               <GraphAccordion title="BLAST Scores">
-                <GraphInformationDataTable
+                <OrthoDataTable
                   rows={nodeDetails.blastScoreRows}
                   columns={BLAST_SCORE_COLUMNS}
                   columnOrder={BLAST_SCORE_COLUMN_ORDER}
@@ -64,14 +64,14 @@ export function NodeDetails({
                 />
               </GraphAccordion>
               <GraphAccordion title="PFam Domains">
-                <GraphInformationDataTable
+                <OrthoDataTable
                   rows={nodeDetails.pfamDomainRows}
                   columns={PFAM_DOMAIN_COLUMNS}
                   columnOrder={PFAM_DOMAIN_COLUMN_ORDER}
                 />
               </GraphAccordion>
               <GraphAccordion title="EC Numbers">
-                <GraphInformationDataTable
+                <OrthoDataTable
                   rows={nodeDetails.ecNumberRows}
                   columns={EC_NUMBER_COLUMNS}
                   columnOrder={EC_NUMBER_COLUMN_ORDER}
@@ -122,7 +122,7 @@ function SequenceInformationTable(props: SequenceInformation) {
   );
 }
 
-const BLAST_SCORE_COLUMNS: GraphInformationColumns<BlastScoreRow, 'subject' | 'type' | 'evalue'> = {
+const BLAST_SCORE_COLUMNS: DataTableColumns<BlastScoreRow, 'subject' | 'type' | 'evalue'> = {
   subject: {
     key: 'subject',
     name: 'Subject',
@@ -147,7 +147,7 @@ const BLAST_SCORE_COLUMNS: GraphInformationColumns<BlastScoreRow, 'subject' | 't
 
 const BLAST_SCORE_COLUMN_ORDER = [ 'subject', 'type', 'evalue' ] as const;
 
-const PFAM_DOMAIN_COLUMNS: GraphInformationColumns<PfamDomainRow, 'accession' | 'symbol' | 'start' | 'end' | 'length'> = {
+const PFAM_DOMAIN_COLUMNS: DataTableColumns<PfamDomainRow, 'accession' | 'symbol' | 'start' | 'end' | 'length'> = {
   accession: {
     key: 'accession',
     name: 'Accession',
@@ -177,7 +177,7 @@ const PFAM_DOMAIN_COLUMNS: GraphInformationColumns<PfamDomainRow, 'accession' | 
 
 const PFAM_DOMAIN_COLUMN_ORDER = [ 'accession', 'symbol', 'start', 'end', 'length' ] as const;
 
-export const EC_NUMBER_COLUMNS: GraphInformationColumns<EcNumberRow, 'ecNumber'> = {
+export const EC_NUMBER_COLUMNS: DataTableColumns<EcNumberRow, 'ecNumber'> = {
   ecNumber: {
     key: 'ecNumber',
     name: 'EC Number',

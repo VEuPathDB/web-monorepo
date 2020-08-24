@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { HelpIcon, Link, Tooltip } from 'wdk-client/Components';
+import { Link, Tooltip } from 'wdk-client/Components';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
-import { MesaColumn, MesaSortObject } from 'wdk-client/Core/CommonTypes';
 
 import {
   EdgeType,
@@ -13,31 +12,14 @@ import {
 } from 'ortho-client/utils/clusterGraph';
 import { GroupLayout } from 'ortho-client/utils/groupLayout';
 
+export type GraphInformationTabKey = 'sequence-list' | 'node-details';
+
 export interface GraphInformationTabProps {
   layout: GroupLayout;
   selectedNode: string | undefined;
   setHighlightedSequenceNodeId: (nodeId: string | undefined) => void;
   setHighlightedBlastEdgeId: (nodeId: string | undefined) => void;
 }
-
-export type GraphInformationColumnKey<R> = keyof R & string;
-
-export interface GraphInformationSortObject<R, K extends GraphInformationColumnKey<R>> extends MesaSortObject {
-  columnKey: K;
-  direction: 'asc' | 'desc';
-};
-
-export interface GraphInformationColumn<R, K extends GraphInformationColumnKey<R>> extends MesaColumn<K> {
-  renderCell?: (props: { row: R, value: R[K] }) => React.ReactNode;
-  makeSearchableString?: (value: R[K]) => string;
-  makeOrder?: (row: R) => boolean | number | string;
-}
-
-export type GraphInformationColumns<R, C extends GraphInformationColumnKey<R>> = {
-  [K in C]: GraphInformationColumn<R, K>
-};
-
-export type GraphInformationTabKey = 'sequence-list' | 'node-details';
 
 type GraphInformationBaseTabConfig = Omit<TabConfig<GraphInformationTabKey>, 'content'>;
 
