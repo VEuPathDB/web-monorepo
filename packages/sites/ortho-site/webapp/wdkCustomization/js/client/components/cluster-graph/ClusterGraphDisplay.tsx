@@ -98,7 +98,7 @@ export function ClusterGraphDisplay({
         </h1>
         <Link
           to={`${GROUP_RECORD_URL_SEGMENT}/${groupName}`}
-          className="BackToGroupPageButton"
+          className="BackToGroupPageLink"
         >
           <button type="button" className="btn">
             Back to Group page

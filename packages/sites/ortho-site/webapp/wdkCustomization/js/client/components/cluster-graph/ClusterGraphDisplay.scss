@@ -4,9 +4,15 @@
     align-items: center;
   }
 
-  .BackToGroupPageButton {
+  .BackToGroupPageLink {
     font-size: 1.5em;
     margin-left: 2em;
+
+    button.btn {
+      background: #414c9b;
+      color: white;
+      border-bottom-color: #20264c;
+    }
   }
 
   .Content {
