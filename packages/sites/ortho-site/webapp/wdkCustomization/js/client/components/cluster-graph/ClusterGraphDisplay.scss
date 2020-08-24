@@ -2,11 +2,16 @@
   .Header {
     display: flex;
     align-items: center;
+
+    .wdk-Icon {
+      font-size: 1em;
+      margin-left: 0.25em;
+    }
   }
 
   .BackToGroupPageLink {
     font-size: 1.5em;
-    margin-left: 2em;
+    margin-left: 3em;
 
     button.btn {
       background: #414c9b;

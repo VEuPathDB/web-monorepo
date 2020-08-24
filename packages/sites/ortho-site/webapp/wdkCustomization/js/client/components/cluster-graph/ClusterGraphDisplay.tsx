@@ -2,12 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { groupBy, mapValues, orderBy } from 'lodash';
 
-import { Link } from 'wdk-client/Components';
+import { HelpIcon, Link } from 'wdk-client/Components';
 
 import {
   EdgeType,
   EdgeTypeOption,
   NodeDisplayType,
+  PAGE_TITLE_HELP,
   ProteinType,
   corePeripheralLegendColors,
   corePeripheralLegendOrder,
@@ -95,6 +96,9 @@ export function ClusterGraphDisplay({
       <div className="Header">
         <h1>
           Cluster Graph: {groupName} ({proteinCount} proteins)
+          <HelpIcon>
+            {PAGE_TITLE_HELP}
+          </HelpIcon>
         </h1>
         <Link
           to={`${GROUP_RECORD_URL_SEGMENT}/${groupName}`}
