@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { HelpIcon, Link } from 'wdk-client/Components';
+import { HelpIcon, Link, Tooltip } from 'wdk-client/Components';
+import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
 import { MesaColumn, MesaSortObject } from 'wdk-client/Core/CommonTypes';
 
@@ -46,9 +47,11 @@ export const graphInformationBaseTabConfigs: GraphInformationBaseTabConfig[] = [
     display: (
       <div>
         Sequence List
-        <HelpIcon>
-          {SEQUENCE_LIST_HELP}
-        </HelpIcon>
+        <Tooltip content={SEQUENCE_LIST_HELP}>
+          <div className="HelpTrigger">
+            <Icon fa="question-circle" />
+          </div>
+        </Tooltip>
       </div>
     ),
   },
@@ -57,9 +60,11 @@ export const graphInformationBaseTabConfigs: GraphInformationBaseTabConfig[] = [
     display: (
       <div>
         Node Details
-        <HelpIcon>
-          {NODE_DETAILS_HELP}
-        </HelpIcon>
+        <Tooltip content={NODE_DETAILS_HELP}>
+          <div className="HelpTrigger">
+            <Icon fa="question-circle" />
+          </div>
+        </Tooltip>
       </div>
     )
   }
