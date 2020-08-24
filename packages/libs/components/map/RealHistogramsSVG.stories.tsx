@@ -112,7 +112,7 @@ const getSampleSizeMarkerElements = (yAxisRange: Array<number> | null) => {
 export const SampleSizeLocal = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
-  const yAxisRange = null
+  const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getSampleSizeMarkerElements(yAxisRange));
@@ -194,7 +194,7 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
 export const CollectionDateLocal = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
-  const yAxisRange = null
+  const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getCollectionDateMarkerElements(yAxisRange));
@@ -275,7 +275,7 @@ const getIRDataMarkerElements = (yAxisRange: Array<number> | null) => {
 export const IRDataLocal = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
-  const yAxisRange = null
+  const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getIRDataMarkerElements(yAxisRange));

@@ -53,6 +53,11 @@ export default function RealHistogramMarkerSVG(props: HistogramMarkerSVGProps) {
   let count = fullStat.length
   let sumValues: number = fullStat.map(o => o.value).reduce((a, c) => { return a + c })     //DKDK summation of fullStat.value per marker icon
   var maxValues: number = Math.max(...fullStat.map(o=>o.value));                            //DKDK max of fullStat.value per marker icon
+  //DKDK for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
+  if (maxValues == 0) {
+    maxValues = 1   //DKDK this doesn't matter as all values are zeros
+  }
+
   const roundX = 10     //DKDK round corner in pixel
   const roundY = 10     //DKDK round corner in pixel
   const marginX = 5     //DKDK margin to start drawing bars in left and right ends of svg marker: plot area = (size - 2*marginX)
@@ -84,6 +89,8 @@ export default function RealHistogramMarkerSVG(props: HistogramMarkerSVGProps) {
       barHeight = el.value/globalMaxValue*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
       startingY = (size-marginY)-barHeight            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
 
+      // console.log('im at global max')
+
       svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + barWidth + ' height=' + barHeight + ' fill=' + el.color + ' />'
       iter += 1
     })
@@ -100,6 +107,10 @@ export default function RealHistogramMarkerSVG(props: HistogramMarkerSVGProps) {
       startingX = marginX + barWidth*iter             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
       barHeight = el.value/maxValues*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
       startingY = (size-marginY)-barHeight            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
+
+      if(isNaN(startingY)) {
+        console.log('NaN value = ', el.value)
+      }
 
       svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + barWidth + ' height=' + barHeight + ' fill=' + el.color + ' />'
       iter += 1
