@@ -453,20 +453,20 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/workspace/basket'
         },
+        { 
+          key: 'user-data-sets',
+          display: 'My data sets',
+          type: 'reactRoute',
+          url: '/workspace/datasets',
+          metadata: {
+            exclude: [ EuPathDB ]
+          }
+        },
         {   
           key: 'favorites',
           display: 'My favorites',
           type: 'reactRoute',
           url: '/workspace/favorites',
-          metadata: {
-            exclude: [ EuPathDB ]
-          }
-        },
-        {
-          key: 'user-data-sets',
-          display: 'My data sets',
-          type: 'reactRoute',
-          url: '/workspace/datasets',
           metadata: {
             exclude: [ EuPathDB ]
           }
