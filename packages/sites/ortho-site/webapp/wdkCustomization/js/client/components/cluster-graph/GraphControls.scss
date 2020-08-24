@@ -103,4 +103,12 @@
     padding-top: 0.1em;
     padding-bottom: 0.1em;
   }
+
+  .GraphAccordionHeader > * {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: calc(100% - 1.25em);
+  }
 }

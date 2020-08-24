@@ -1,8 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Checkbox, RadioList, SliderInput, TextBox, Tooltip } from 'wdk-client/Components';
+import { Checkbox, RadioList, SliderInput, TextBox, Tooltip, HelpIcon } from 'wdk-client/Components';
 
-import { EdgeTypeOption, NodeDisplayType } from 'ortho-client/utils/clusterGraph';
+import {
+  EDGE_OPTIONS_HELP,
+  EdgeTypeOption,
+  NODE_OPTIONS_HELP,
+  NodeDisplayType
+} from 'ortho-client/utils/clusterGraph';
 
 import { GraphAccordion } from 'ortho-client/components/cluster-graph/GraphAccordion';
 
@@ -64,9 +69,18 @@ function EdgeOptions({
     selectEValueExp
   );
 
+  const title = (
+    <div>
+      Edge Options
+      <HelpIcon>
+        {EDGE_OPTIONS_HELP}
+      </HelpIcon>
+    </div>
+  );
+
   return (
     <div className="EdgeOptions">
-      <GraphAccordion title="Edge Options">
+      <GraphAccordion title={title}>
         <fieldset className="EdgeTypeControl">
           <legend>
             Edge Type
@@ -172,9 +186,18 @@ function NodeOptions({
     setSelectedNodeDisplayType(newValue as NodeDisplayType);
   }, [ setSelectedNodeDisplayType ]);
 
+  const title = (
+    <div>
+      Node Options
+      <HelpIcon>
+        {NODE_OPTIONS_HELP}
+      </HelpIcon>
+    </div>
+  );
+
   return (
     <div className="NodeOptions">
-      <GraphAccordion title="Node Options">
+      <GraphAccordion title={title}>
         <fieldset>
           <legend>
             Show Nodes By

@@ -3,9 +3,12 @@
     display: flex;
     align-items: center;
 
+    .HelpTrigger {
+      margin-left: 0.25em !important;
+    }
+
     .wdk-Icon {
       font-size: 1em;
-      margin-left: 0.25em;
     }
   }
 
