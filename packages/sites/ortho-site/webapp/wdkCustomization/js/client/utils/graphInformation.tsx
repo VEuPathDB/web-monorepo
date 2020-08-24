@@ -1,10 +1,15 @@
 import React from 'react';
 
-import { Link } from 'wdk-client/Components';
+import { HelpIcon, Link } from 'wdk-client/Components';
 import { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
 import { MesaColumn, MesaSortObject } from 'wdk-client/Core/CommonTypes';
 
-import { EdgeType, edgeTypeDisplayNames } from 'ortho-client/utils/clusterGraph';
+import {
+  EdgeType,
+  NODE_DETAILS_HELP,
+  SEQUENCE_LIST_HELP,
+  edgeTypeDisplayNames
+} from 'ortho-client/utils/clusterGraph';
 import { GroupLayout } from 'ortho-client/utils/groupLayout';
 
 export interface GraphInformationTabProps {
@@ -38,11 +43,25 @@ type GraphInformationBaseTabConfig = Omit<TabConfig<GraphInformationTabKey>, 'co
 export const graphInformationBaseTabConfigs: GraphInformationBaseTabConfig[] = [
   {
     key: 'sequence-list',
-    display: 'Sequence List',
+    display: (
+      <div>
+        Sequence List
+        <HelpIcon>
+          {SEQUENCE_LIST_HELP}
+        </HelpIcon>
+      </div>
+    ),
   },
   {
     key: 'node-details',
-    display: 'Node Details'
+    display: (
+      <div>
+        Node Details
+        <HelpIcon>
+          {NODE_DETAILS_HELP}
+        </HelpIcon>
+      </div>
+    )
   }
 ];
 
