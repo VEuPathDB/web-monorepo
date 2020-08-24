@@ -89,8 +89,6 @@ export default function RealHistogramMarkerSVG(props: HistogramMarkerSVGProps) {
       barHeight = el.value/globalMaxValue*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
       startingY = (size-marginY)-barHeight            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
 
-      // console.log('im at global max')
-
       svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + barWidth + ' height=' + barHeight + ' fill=' + el.color + ' />'
       iter += 1
     })
@@ -107,10 +105,6 @@ export default function RealHistogramMarkerSVG(props: HistogramMarkerSVGProps) {
       startingX = marginX + barWidth*iter             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
       barHeight = el.value/maxValues*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
       startingY = (size-marginY)-barHeight            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
-
-      if(isNaN(startingY)) {
-        console.log('NaN value = ', el.value)
-      }
 
       svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + barWidth + ' height=' + barHeight + ' fill=' + el.color + ' />'
       iter += 1
