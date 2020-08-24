@@ -1,0 +1,97 @@
+import React from 'react';
+
+export type EdgeType = 'O' | 'C' | 'P' | 'L' | 'M' | 'N';
+
+export const edgeTypeDisplayNames: Record<EdgeType, string> = {
+  'O': 'Ortholog',
+  'C': 'Coortholog',
+  'P': 'Inparalog',
+  'L': 'PeripheralCore',
+  'M': 'PeripheralPeripheral',
+  'N': 'Other Similarities'
+};
+
+export const edgeTypeOptionOrder: EdgeType[] = [
+  'O',
+  'C',
+  'P',
+  'L',
+  'M',
+  'N'
+];
+
+export const initialEdgeTypeSelections: Record<EdgeType, boolean> = {
+  O: true,
+  C: true,
+  P: true,
+  L: true,
+  M: true,
+  N: false
+};
+
+export interface EdgeTypeOption {
+  key: EdgeType;
+  display: string;
+  isSelected: boolean;
+  onChange: (selected: boolean) => void;
+  onMouseOver: () => void;
+  onMouseOut: () => void;
+}
+
+export type NodeDisplayType = 'taxa' | 'ec-numbers' | 'pfam-domains' | 'core-peripheral';
+
+export const nodeDisplayTypeDisplayNames: Record<NodeDisplayType, string> = {
+  'taxa': 'Taxa',
+  'ec-numbers': 'EC Numbers',
+  'pfam-domains': 'PFam Domains',
+  'core-peripheral': 'Core/Peripheral'
+};
+
+export const nodeDisplayTypeOrder: NodeDisplayType[] = [
+  'taxa',
+  'ec-numbers',
+  'pfam-domains',
+  'core-peripheral'
+];
+
+export type ProteinType = 'Core' | 'Peripheral';
+
+export const corePeripheralLegendOrder: ProteinType[] = [
+  'Core',
+  'Peripheral'
+];
+
+export const corePeripheralLegendColors: Record<ProteinType, string> = {
+  Core: '#0000FF',
+  Peripheral: '#FFFFFF'
+};
+
+export const PAGE_TITLE_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);
+
+export const EDGE_OPTIONS_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);
+
+export const NODE_OPTIONS_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);
+
+export const SEQUENCE_LIST_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);
+
+export const NODE_DETAILS_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);
