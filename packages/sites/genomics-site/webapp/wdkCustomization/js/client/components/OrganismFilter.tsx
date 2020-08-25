@@ -8,7 +8,7 @@ import { Step } from 'wdk-client/Utils/WdkUser';
 import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
 import { Loading, CheckboxTree } from 'wdk-client/Components';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { ResultType } from 'wdk-client/Utils/WdkResult';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
 import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import { useWdkServiceWithRefresh } from 'wdk-client/Hooks/WdkServiceHook';
@@ -101,8 +101,8 @@ function Container(props: ContainerProps) {
   )
 }
 
-function OrganismFilter({ resultType, ...otherProps}: Props) {
   const step = resultType.type === 'step' ? resultType.step : undefined;
+function OrganismFilter({ resultType, ...otherProps }: Props) {
 
   // only show Organism Filter for transcript step results
   if (step == null || step.recordClassName !== ALLOWABLE_RECORD_CLASS_NAME) {
@@ -114,7 +114,7 @@ function OrganismFilter({ resultType, ...otherProps}: Props) {
 
 type OrganismFilterForStepProps = { step: Step } & Omit<Props, 'resultType'>;
 
-function OrganismFilterForStep({step, requestUpdateStepSearchConfig}: OrganismFilterForStepProps) {
+function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: OrganismFilterForStepProps) {
   // if temporary value assigned, use until user clears or hits apply;
   // else check step for a filter value and if present, use; else use empty string (no filter)
   let appliedFilterConfig: OrgFilterConfig = findOrganismFilterConfig(step.searchConfig);
