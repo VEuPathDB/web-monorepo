@@ -96,7 +96,7 @@ export const UserCommentFormView: React.SFC<UserCommentFormViewProps> = ({
                           <>
                             If you wish to {title[0].toLowerCase()}{title.slice(1)}, please
                             {' '}
-                            <a rel="noreferrer" href={`https://${projectId.toLowerCase()}.${projectId === 'SchistoDB' ? 'net' : 'org'}/${toMainWebAppUrl(projectId)}/app${pathname}${search}`}>
+                            <a rel="noreferrer" href={`https://${projectId.toLowerCase()}.${projectId === 'SchistoDB' ? 'net' : 'org'}/${toMainWebAppUrl(projectId)}/app${pathname}${search}&useBetaSite=0`}>
                               visit the legacy site
                             </a>.
                           </>
