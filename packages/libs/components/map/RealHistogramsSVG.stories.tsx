@@ -20,11 +20,11 @@ export default {
 // some colors randomly pasted from the old mapveu code
 // these are NOT the final decided colors for MapVEu 2.0
 const all_colors_hex = [
-  "#FFB300", // Vivid Yellow
-  "#803E75", // Strong Purple
-  "#FF6800", // Vivid Orange
-  "#A6BDD7", // Very Light Blue
-  "#C10020", // Vivid Red
+  "#0200C5", // Bob1
+  "#6300C5", // Bob2
+  "#C400C5", // Bob3
+  "#C50045", // Bob4
+  "#C50000", // Bob5
   "#CEA262", // Grayish Yellow
   // "#817066", // Medium Gray
 
