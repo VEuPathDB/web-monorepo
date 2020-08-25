@@ -101,8 +101,8 @@ function Container(props: ContainerProps) {
   )
 }
 
-  const step = resultType.type === 'step' ? resultType.step : undefined;
 function OrganismFilter({ resultType, ...otherProps }: Props) {
+  const step = resultType?.type === 'step' ? resultType.step : undefined;
 
   // only show Organism Filter for transcript step results
   if (step == null || step.recordClassName !== ALLOWABLE_RECORD_CLASS_NAME) {
