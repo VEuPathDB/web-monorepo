@@ -101,15 +101,20 @@ function Container(props: ContainerProps) {
   )
 }
 
-function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
+function OrganismFilter({ resultType, ...otherProps}: Props) {
+  const step = resultType.type === 'step' ? resultType.step : undefined;
 
-  const step = resultType && resultType.type === 'step' && resultType.step;
-
-  // don't show anything until step loaded, and after that only if a transcript step
-  if (!step || step.recordClassName !== ALLOWABLE_RECORD_CLASS_NAME) {
+  // only show Organism Filter for transcript step results
+  if (step == null || step.recordClassName !== ALLOWABLE_RECORD_CLASS_NAME) {
     return null;
   }
 
+  return <OrganismFilterForStep step={step} {...otherProps} />;
+}
+
+type OrganismFilterForStepProps = { step: Step } & Omit<Props, 'resultType'>;
+
+function OrganismFilterForStep({step, requestUpdateStepSearchConfig}: OrganismFilterForStepProps) {
   // if temporary value assigned, use until user clears or hits apply;
   // else check step for a filter value and if present, use; else use empty string (no filter)
   let appliedFilterConfig: OrgFilterConfig = findOrganismFilterConfig(step.searchConfig);
