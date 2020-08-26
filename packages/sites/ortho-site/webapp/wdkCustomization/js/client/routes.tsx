@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 
+import { GenomeSourcesController } from 'ortho-client/controllers/GenomeSourcesController';
 import { GenomeStatisticsController } from 'ortho-client/controllers/GenomeStatisticsController';
 import { OrthoMCLHomePageController } from 'ortho-client/controllers/OrthoMCLHomePageController';
 import { GroupClusterGraphController } from 'ortho-client/controllers/GroupClusterGraphController';
@@ -31,7 +32,7 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
     },
     {
       path: '/genome-sources',
-      component: () => <div>Future Home of Genome Sources Page</div>
+      component: GenomeSourcesController,
     },
     ...ebrcRoutes
   ];
