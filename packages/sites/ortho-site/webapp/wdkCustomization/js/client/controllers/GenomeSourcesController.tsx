@@ -13,7 +13,7 @@ import {
 } from 'ortho-client/utils/dataSummary';
 import { DataTableColumns } from 'ortho-client/utils/dataTables';
 
-export function GenomeStatisticsController() {
+export function GenomeSourcesController() {
   useSetDocumentTitle('Release Summary - Genome Statistics');
 
   const rows = useDataTableRows();
