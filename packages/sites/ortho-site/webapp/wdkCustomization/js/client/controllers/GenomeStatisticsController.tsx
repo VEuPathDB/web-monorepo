@@ -7,24 +7,28 @@ import { OrthoDataTable } from 'ortho-client/components/OrthoDataTable';
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 import { useGenomeStatisticsRows } from 'ortho-client/hooks/dataSummary';
 import { GenomeStatisticsRows } from 'ortho-client/utils/dataSummary';
-import { DataTableColumns, DataTableColumnKey } from 'ortho-client/utils/dataTables';
+import { DataTableColumns } from 'ortho-client/utils/dataTables';
 import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
 export function GenomeStatisticsController() {
   useSetDocumentTitle('Release Summary - Genome Statistics');
 
-  const props = useDataTableProps();
+  const rows = useDataTableRows();
 
-  return props == null
+  return rows == null
     ? <Loading />
-    : <OrthoDataTable {...props} />;
+    : <OrthoDataTable
+        rows={rows}
+        columns={GENOME_STATISTICS_COLUMNS}
+        columnOrder={GENOME_STATISTICS_COLUMN_ORDER}
+      />;
 }
 
 interface GenomeStatisticsTableRow {
   root_taxon: string;
 }
 
-function useDataTableProps() {
+function useDataTableRows() {
   const taxonUiMetadata = useTaxonUiMetadata();
   const genomeStatisticsRows = useGenomeStatisticsRows();
 
@@ -37,26 +41,10 @@ function useDataTableProps() {
         genomeStatisticsRows
       )
     ),
-    [ genomeStatisticsRows ]
+    [ taxonUiMetadata, genomeStatisticsRows ]
   );
 
-  const columns = useMemo(
-    () => makeDataTableColumns(),
-    []
-  );
-
-  const columnOrder = useMemo(
-    () => makeDataTableColumnOrder(),
-    []
-  );
-
-  return rows == undefined
-    ? undefined
-    : {
-        rows,
-        columns,
-        columnOrder
-      };
+  return rows;
 }
 
 function makeDataTableRows(
@@ -70,18 +58,14 @@ function makeDataTableRows(
   );
 }
 
-function makeDataTableColumns(): DataTableColumns<GenomeStatisticsTableRow, 'root_taxon'> {
-  return {
-    root_taxon: {
-      key: 'root_taxon',
-      name: 'Category',
-      sortable: true
-    }
-  };
-}
+const GENOME_STATISTICS_COLUMNS: DataTableColumns<GenomeStatisticsTableRow, 'root_taxon'> = {
+  root_taxon: {
+    key: 'root_taxon',
+    name: 'Category',
+    sortable: true
+  }
+};
 
-function makeDataTableColumnOrder(): DataTableColumnKey<GenomeStatisticsTableRow>[] {
-  return [
-    'root_taxon'
-  ];
-}
+const GENOME_STATISTICS_COLUMN_ORDER = [
+  'root_taxon'
+] as const;
