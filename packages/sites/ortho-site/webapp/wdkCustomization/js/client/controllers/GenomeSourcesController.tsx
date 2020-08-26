@@ -13,6 +13,8 @@ import {
 } from 'ortho-client/utils/dataSummary';
 import { DataTableColumns } from 'ortho-client/utils/dataTables';
 
+import './GenomeSourcesController.scss';
+
 export function GenomeSourcesController() {
   useSetDocumentTitle('Release Summary - Genome Statistics');
 
@@ -21,6 +23,7 @@ export function GenomeSourcesController() {
   return rows == null
     ? <Loading />
     : <ReleaseSummaryPage
+        containerClassName="GenomeSources"
         header="Genome Sources"
         rows={rows}
         columns={GENOME_SOURCES_COLUMNS}
