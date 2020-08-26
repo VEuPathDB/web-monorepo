@@ -49,14 +49,36 @@ function useDataTableRows() {
 
 const GENOME_SOURCES_COLUMNS: DataTableColumns<
   GenomeSourcesRow,
-  keyof typeof COMMON_RELEASE_SUMMARY_COLUMNS
+  keyof GenomeSourcesRow
 > = {
-  ...COMMON_RELEASE_SUMMARY_COLUMNS
+  ...COMMON_RELEASE_SUMMARY_COLUMNS,
+  resource_name: {
+    key: 'resource_name',
+    name: 'Resource',
+    sortable: true
+  },
+  resource_url: {
+    key: 'resource_url',
+    name: 'URL',
+    sortable: true
+  },
+  description: {
+    key: 'description',
+    name: 'Description',
+    sortable: true,
+    makeOrder: ({ description }) => description || '',
+    makeSearchableString: description => description || 'N/A',
+    renderCell: ({ value }) =>
+      value ? value : <span className="EmptyDescription">N/A</span>
+  }
 };
 
 const GENOME_SOURCES_COLUMN_ORDER = [
   'root_taxon',
   'name',
   'core_peripheral',
-  'three_letter_abbrev'
+  'three_letter_abbrev',
+  'resource_name',
+  'resource_url',
+  'description'
 ] as const;
