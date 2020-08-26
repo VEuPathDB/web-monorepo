@@ -60,7 +60,7 @@ export function OrthoDataTable<R, C extends DataTableColumnKey<R>>(
   );
 
   return (
-    <div className="GraphInformationDataTable">
+    <div className="OrthoDataTable">
       <Mesa state={mesaState}>
         <div className="SearchBoxContainer">
           <span>Search: </span>
