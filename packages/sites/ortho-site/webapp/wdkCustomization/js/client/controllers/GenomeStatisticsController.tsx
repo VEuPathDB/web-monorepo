@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Loading } from 'wdk-client/Components';
 import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
 
-import { OrthoDataTable } from 'ortho-client/components/OrthoDataTable';
+import { ReleaseSummaryPage } from 'ortho-client/components/release-summary/ReleaseSummaryPage';
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 import { useGenomeStatisticsRows } from 'ortho-client/hooks/dataSummary';
 import { GenomeStatisticsRow, GenomeStatisticsRows } from 'ortho-client/utils/dataSummary';
@@ -17,14 +17,12 @@ export function GenomeStatisticsController() {
 
   return rows == null
     ? <Loading />
-    : <div className="GenomeStatistics">
-        <h1>Genome Statistics</h1>
-        <OrthoDataTable
-          rows={rows}
-          columns={GENOME_STATISTICS_COLUMNS}
-          columnOrder={GENOME_STATISTICS_COLUMN_ORDER}
-        />
-      </div>;
+    : <ReleaseSummaryPage
+        header="Genome Statistics"
+        rows={rows}
+        columns={GENOME_STATISTICS_COLUMNS}
+        columnOrder={GENOME_STATISTICS_COLUMN_ORDER}
+      />;
 }
 
 type GenomeStatisticsDataTableRow = GenomeStatisticsRow;
