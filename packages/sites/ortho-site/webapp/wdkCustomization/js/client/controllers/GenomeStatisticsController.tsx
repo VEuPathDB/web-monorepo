@@ -6,9 +6,12 @@ import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
 import { ReleaseSummaryPage } from 'ortho-client/components/release-summary/ReleaseSummaryPage';
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 import { useGenomeStatisticsRows } from 'ortho-client/hooks/dataSummary';
-import { GenomeStatisticsRow, GenomeStatisticsRows } from 'ortho-client/utils/dataSummary';
+import {
+  COMMON_RELEASE_SUMMARY_COLUMNS,
+  GenomeStatisticsRow,
+  makeDataTableRows
+} from 'ortho-client/utils/dataSummary';
 import { DataTableColumns } from 'ortho-client/utils/dataTables';
-import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
 export function GenomeStatisticsController() {
   useSetDocumentTitle('Release Summary - Genome Statistics');
@@ -24,8 +27,6 @@ export function GenomeStatisticsController() {
         columnOrder={GENOME_STATISTICS_COLUMN_ORDER}
       />;
 }
-
-type GenomeStatisticsDataTableRow = GenomeStatisticsRow;
 
 function useDataTableRows() {
   const taxonUiMetadata = useTaxonUiMetadata();
@@ -46,38 +47,16 @@ function useDataTableRows() {
   return rows;
 }
 
-function makeDataTableRows(
-  { species }: TaxonUiMetadata,
-  genomeStatisticsRows: GenomeStatisticsRows
-): GenomeStatisticsDataTableRow[] {
-  return genomeStatisticsRows.map(
-    genomeStatisticsRow => ({
-      ...genomeStatisticsRow,
-      root_taxon: species[genomeStatisticsRow.three_letter_abbrev].rootTaxon
-    })
-  );
-}
-
 const GENOME_STATISTICS_COLUMNS: DataTableColumns<
-  GenomeStatisticsDataTableRow,
-  | 'clustered_sequences'
-  | 'core_peripheral'
-  | 'groups'
-  | 'name'
-  | 'root_taxon'
-  | 'sequences'
-  | 'three_letter_abbrev'
+  GenomeStatisticsRow,
+  keyof GenomeStatisticsRow
 > = {
+  ...COMMON_RELEASE_SUMMARY_COLUMNS,
   clustered_sequences: {
     key: 'clustered_sequences',
     name: '# Clustered Sequences',
     sortable: true,
     makeOrder: ({ clustered_sequences }) => Number(clustered_sequences)
-  },
-  core_peripheral: {
-    key: 'core_peripheral',
-    name: 'Core/Peripheral',
-    sortable: true
   },
   groups: {
     key: 'groups',
@@ -85,26 +64,11 @@ const GENOME_STATISTICS_COLUMNS: DataTableColumns<
     sortable: true,
     makeOrder: ({ groups }) => Number(groups)
   },
-  name: {
-    key: 'name',
-    name: 'Name',
-    sortable: true
-  },
-  root_taxon: {
-    key: 'root_taxon',
-    name: 'Category',
-    sortable: true
-  },
   sequences: {
     key: 'sequences',
     name: '# Sequences',
     sortable: true,
     makeOrder: ({ sequences }) => Number(sequences)
-  },
-  three_letter_abbrev: {
-    key: 'three_letter_abbrev',
-    name: 'Abbreviation',
-    sortable: true
   }
 };
 
