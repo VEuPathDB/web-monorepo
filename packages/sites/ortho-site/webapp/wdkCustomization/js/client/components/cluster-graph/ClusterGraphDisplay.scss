@@ -1,7 +1,19 @@
-.ClusterGraphDisplayContainer {
+.ClusterGraphDisplay {
+  display: grid;
+  grid-template-areas:
+    "header       header       header     "
+    "controls     canvas       information";
+  grid-template-columns: 24em 700px 41.5em;
+  gap: 0.25em;
+
   .Header {
+    grid-area: header;
+
+    max-width: calc(100vw - 2rem);
+
     display: flex;
     align-items: center;
+    justify-content: space-between;
 
     .HelpTrigger {
       margin-left: 0.25em !important;
@@ -21,13 +33,5 @@
       color: white;
       border-bottom-color: #20264c;
     }
-  }
-
-  .Content {
-    display: grid;
-    grid-template-areas:
-      "controls     canvas       information";
-    grid-template-columns: 24em 700px 41.5em;
-    gap: 0.25em;
   }
 }
