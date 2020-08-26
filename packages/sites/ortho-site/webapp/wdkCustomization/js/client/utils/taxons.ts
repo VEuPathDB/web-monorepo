@@ -89,6 +89,7 @@ export interface RootTaxonEntry extends TaxonEntry {
 export interface SpeciesEntry extends TaxonEntry {
   color: string;
   groupColor: string;
+  rootTaxon: string;
   path: string[];
 }
 
@@ -97,7 +98,7 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
   const species = {} as TaxonUiMetadata['species'];
   const taxonOrder = [] as TaxonUiMetadata['taxonOrder'];
 
-  _traverseTaxonTree(taxonTree, undefined, []);
+  _traverseTaxonTree(taxonTree, undefined, undefined, []);
 
   return {
     rootTaxons,
@@ -105,7 +106,12 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     taxonOrder
   };
 
-  function _traverseTaxonTree(node: TaxonTree, groupColor: string | undefined, path: string[]) {
+  function _traverseTaxonTree(
+    node: TaxonTree,
+    groupColor: string | undefined,
+    rootTaxon: string | undefined,
+    path: string[]
+  ) {
     const taxonAbbrev = node.abbrev;
     const newPath = taxonAbbrev === ROOT_TAXON_ABBREV ? path : [...path, taxonAbbrev];
     const taxonEntry = taxonEntries[taxonAbbrev];
@@ -127,10 +133,15 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
         throw new Error(`Taxon entry "${taxonAbbrev}" was not assigned a group color.`);
       }
 
+      if (rootTaxon == null) {
+        throw new Error(`Taxon entry "${taxonAbbrev}" was not assigned a root taxon.`);
+      }
+
       species[taxonAbbrev] = {
         ...taxonEntry,
         color: taxonEntry.color,
         groupColor,
+        rootTaxon,
         path: newPath
       };
 
@@ -138,7 +149,12 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     }
 
     node.children.forEach(childNode => {
-      _traverseTaxonTree(childNode, groupColor ?? taxonEntry.groupColor, newPath);
+      _traverseTaxonTree(
+        childNode,
+        groupColor ?? taxonEntry.groupColor,
+        rootTaxon ?? (taxonEntry.groupColor && taxonEntry.abbrev),
+        newPath
+      );
     });
   }
 }
