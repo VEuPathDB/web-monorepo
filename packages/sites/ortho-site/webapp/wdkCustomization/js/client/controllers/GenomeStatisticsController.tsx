@@ -17,11 +17,14 @@ export function GenomeStatisticsController() {
 
   return rows == null
     ? <Loading />
-    : <OrthoDataTable
-        rows={rows}
-        columns={GENOME_STATISTICS_COLUMNS}
-        columnOrder={GENOME_STATISTICS_COLUMN_ORDER}
-      />;
+    : <div className="GenomeStatistics">
+        <h1>Genome Statistics</h1>
+        <OrthoDataTable
+          rows={rows}
+          columns={GENOME_STATISTICS_COLUMNS}
+          columnOrder={GENOME_STATISTICS_COLUMN_ORDER}
+        />
+      </div>;
 }
 
 type GenomeStatisticsDataTableRow = GenomeStatisticsRow;
