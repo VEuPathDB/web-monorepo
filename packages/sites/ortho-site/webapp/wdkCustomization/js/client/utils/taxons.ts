@@ -98,7 +98,12 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
   const species = {} as TaxonUiMetadata['species'];
   const taxonOrder = [] as TaxonUiMetadata['taxonOrder'];
 
-  _traverseTaxonTree(taxonTree, undefined, undefined, []);
+  _traverseTaxonTree({
+    node: taxonTree,
+    groupColor: undefined,
+    rootTaxon: undefined,
+    path: []
+  });
 
   return {
     rootTaxons,
@@ -106,12 +111,17 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     taxonOrder
   };
 
-  function _traverseTaxonTree(
+  function _traverseTaxonTree({
+    node,
+    groupColor,
+    rootTaxon,
+    path
+  }: {
     node: TaxonTree,
     groupColor: string | undefined,
     rootTaxon: string | undefined,
     path: string[]
-  ) {
+  }) {
     const taxonAbbrev = node.abbrev;
     const newPath = taxonAbbrev === ROOT_TAXON_ABBREV ? path : [...path, taxonAbbrev];
     const taxonEntry = taxonEntries[taxonAbbrev];
@@ -149,12 +159,12 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     }
 
     node.children.forEach(childNode => {
-      _traverseTaxonTree(
-        childNode,
-        groupColor ?? taxonEntry.groupColor,
-        rootTaxon ?? (taxonEntry.groupColor && taxonEntry.abbrev),
-        newPath
-      );
+      _traverseTaxonTree({
+        node: childNode,
+        groupColor: groupColor ?? taxonEntry.groupColor,
+        rootTaxon: rootTaxon ?? (taxonEntry.groupColor && taxonEntry.abbrev),
+        path: newPath
+      });
     });
   }
 }
