@@ -24,6 +24,14 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
         return <GroupClusterGraphController groupName={groupName} />;
       }
     },
+    {
+      path: '/genome-statistics',
+      component: () => <div>Future Home of Genome Statistics Page</div>
+    },
+    {
+      path: '/genome-sources',
+      component: () => <div>Future Home of Genome Sources Page</div>
+    },
     ...ebrcRoutes
   ];
 }
