@@ -48,8 +48,18 @@ const all_colors_hex = [
  * DKDK gathering functions here temporarily
  * Need to add export to be used in the other component
  */
+  //DKDK top-marker test: mouseOver and mouseOut
+  const handleMouseOver = (e: LeafletMouseEvent) => {
+    e.target._icon.classList.add('top-marker')
+    // console.log('onMouseOver', e)
+  }
 
-/**
+  const handleMouseOut = (e: LeafletMouseEvent) => {
+    e.target._icon.classList.remove('top-marker')
+    // console.log('onMouseOut', e)
+  }
+
+  /**
    This is a trivial marker data generator.  It returns 10 random points within the given bounds.
    The real thing should something with zoomLevel.
 */
@@ -76,7 +86,7 @@ const getSampleSizeMarkerElements = (yAxisRange: Array<number> | null) => {
     noDataValue = bucket.count - bucket.term.before.count - bucket.term.after.count - bucket.term.between.count
     labels.push("noData");
     values.push(noDataValue);
-    colors.push("grey");     //DKDK fill the last color
+    colors.push("white");     //DKDK fill the last color
 
     // console.log('noDataValue', noDataValue)
     // //DKDK temp
@@ -101,8 +111,8 @@ const getSampleSizeMarkerElements = (yAxisRange: Array<number> | null) => {
         //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
         yAxisRange ={yAxisRange}
         // onClick={handleClick}
-        // onMouseOut={handleMouseOut}
-        // onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+        onMouseOver={handleMouseOver}
       />
       )
   });
@@ -183,8 +193,8 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
       //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
       yAxisRange ={yAxisRange}
       // onClick={handleClick}
-      // onMouseOut={handleMouseOut}
-      // onMouseOver={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      onMouseOver={handleMouseOver}
     />
     )
   });
@@ -248,7 +258,7 @@ const getIRDataMarkerElements = (yAxisRange: Array<number> | null) => {
     noDataValue = bucket.count - bucket.term.before.count - bucket.term.after.count - bucket.term.between.count
     labels.push("noData");
     values.push(noDataValue);
-    colors.push("grey");     //DKDK fill the last color
+    colors.push("white");     //DKDK fill the last color
 
     return (
       <RealHistogramMarkerSVG
@@ -264,8 +274,8 @@ const getIRDataMarkerElements = (yAxisRange: Array<number> | null) => {
         //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
         yAxisRange ={yAxisRange}
         // onClick={handleClick}
-        // onMouseOut={handleMouseOut}
-        // onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+        onMouseOver={handleMouseOver}
       />
       )
   });
