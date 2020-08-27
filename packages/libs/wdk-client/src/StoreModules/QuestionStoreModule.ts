@@ -417,7 +417,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
       return Promise.resolve(getValueFromState(ctx, questionState, services)).then(value => [ parameter, value ] as [ Parameter, string ])
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
-    }).then((paramValues): Action | Observable<Action> => {
+    }).then((paramValues): Observable<Action> => {
       const { payload: { submissionMetadata } }: SubmitQuestionAction = action;
       const { question } = questionState;
 
@@ -458,7 +458,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
 
       if (submissionMetadata.type === 'submit-custom-form') {
         submissionMetadata.onStepSubmitted(services.wdkService, newSearchStepSpec);
-        return fulfillCreateStep(-1, Date.now());
+        return EMPTY;
       }
 
       if (submissionMetadata.type === 'create-strategy') {
@@ -505,7 +505,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             }
             return undefined;
           })
-          .then((singleRecord): Action | Promise<Action> => {
+          .then(singleRecord => {
             if (singleRecord != null) {
               const { question } = questionState;
               return transitionToInternalPage(`/record/${question.outputRecordClassName}/${singleRecord.id.map(p => p.value).join('/')}`);
