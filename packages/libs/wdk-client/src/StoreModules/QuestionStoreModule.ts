@@ -1,7 +1,7 @@
 import { keyBy, mapValues, toString } from 'lodash';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
 import { EMPTY, Observable, Subject, from, merge, of } from 'rxjs';
-import { debounceTime, filter, map, mergeAll, mergeMap, takeUntil } from 'rxjs/operators';
+import { catchError, debounceTime, filter, map, mergeAll, mergeMap, takeUntil } from 'rxjs/operators';
 
 import {
   UNLOAD_QUESTION,
@@ -412,7 +412,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
   mergeMap(action => {
     const questionState = state$.value[key].questions[action.payload.searchName];
     if (questionState == null) return EMPTY;
-    return Promise.all(questionState.question.parameters.map(parameter => {
+    return from(Promise.all(questionState.question.parameters.map(parameter => {
       const ctx = { parameter, searchName: questionState.question.urlSegment, paramValues: questionState.paramValues };
       return Promise.resolve(getValueFromState(ctx, questionState, services)).then(value => [ parameter, value ] as [ Parameter, string ])
     })).then(entries => {
@@ -483,7 +483,6 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
 
               return transitionToInternalPage("/web-services-help?" + queryString);
             })
-            .catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
           );
         }
 
@@ -524,7 +523,6 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                 })
               );
           })
-          .catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
         );
       }
 
@@ -567,7 +565,6 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
               )
             )
           )
-          .catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
         );
       }
 
@@ -583,11 +580,12 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             )
           )
         )
-        .catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
       );
-    });
-  }),
-  mergeAll()
+    })).pipe(
+      mergeAll(),
+      catchError((error: any) => of(reportSubmissionError(action.payload.searchName, error, services.wdkService)))
+    );
+  })
 )
 
 async function goToStrategyPage(
