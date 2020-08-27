@@ -223,6 +223,11 @@ export const requestCombineWithStrategy = makeActionCreator(
     })
 );
 
+export const requestReviseStep = makeActionCreator(
+    'requestReviseStep',
+    (strategyId: number, stepId: number, stepSpec: PatchStepSpec, searchConfig: SearchConfig) => ({ strategyId, stepId, stepSpec, searchConfig })
+);
+
 export type Action = InferAction<
   | typeof cancelStrategyRequest
   | typeof requestCreateStrategy
@@ -260,5 +265,6 @@ export type Action = InferAction<
   | typeof fulfillDeleteStep
   | typeof requestCombineWithBasket
   | typeof requestCombineWithStrategy
+  | typeof requestReviseStep
   >
 

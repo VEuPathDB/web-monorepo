@@ -53,9 +53,9 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import {
   requestCreateStrategy,
   requestPutStrategyStepTree,
+  requestReviseStep,
   requestUpdateStepProperties,
   requestUpdateStepSearchConfig,
-  fulfillCreateStep,
   fulfillCreateStrategy
 } from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
@@ -432,16 +432,12 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
 
       if (submissionMetadata.type === 'edit-step') {
         return of(
-          requestUpdateStepProperties(
+          requestReviseStep(
             submissionMetadata.strategyId,
             submissionMetadata.stepId,
             {
               customName
-            }
-          ),
-          requestUpdateStepSearchConfig(
-            submissionMetadata.strategyId,
-            submissionMetadata.stepId,
+            },
             {
               ...submissionMetadata.previousSearchConfig,
               ...searchConfig
