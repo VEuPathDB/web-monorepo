@@ -38,7 +38,8 @@ import {
   cancelStrategyRequest,
   cancelRequestDeleteOrRestoreStrategies as cancelDeleteOrRestoreStrategies,
   requestCombineWithBasket,
-  requestCombineWithStrategy
+  requestCombineWithStrategy,
+  requestReviseStep
 } from 'wdk-client/Actions/StrategyActions';
 import {
   fulfillBasketStrategy
@@ -80,7 +81,8 @@ export function reduce(state: State = initialState, action: Action): State {
   case requestUpdateStepSearchConfig.type:
   case requestReplaceStep.type: 
   case requestCombineWithBasket.type:
-  case requestCombineWithStrategy.type: {
+  case requestCombineWithStrategy.type:
+  case requestReviseStep.type: {
     const strategyId  = action.payload.strategyId;
     return updateStrategyEntry(state, strategyId, prevEntry => ({
       ...prevEntry,
@@ -407,6 +409,50 @@ async function getFulfillStrategy_SaveAs(
     }
   }
 
+  async function getFulfillStrategy_ReviseStep(
+    [requestAction]: [InferAction<typeof requestReviseStep>],
+    state$: StateObservable<RootState>,
+    { wdkService }: EpicDependencies
+  ): Promise<InferAction<typeof fulfillStrategy | typeof fulfillDraftStrategy> | EnableSubmissionAction> {
+    const {strategyId, stepId, stepSpec, searchConfig }  = requestAction.payload;
+    const strategy = await wdkService.getStrategy(strategyId);
+    if (strategy.isSaved) {
+      // Make duplicate strategy and apply changes to it
+      const { id: duplicateStrategyId } = await wdkService.duplicateStrategy({ sourceStrategySignature: strategy.signature });
+      const duplicateStrategy = await wdkService.getStrategy(duplicateStrategyId);
+      const oldStepIds = getStepIds(strategy.stepTree);
+      const duplicateStepIds = getStepIds(duplicateStrategy.stepTree);
+      const duplicateStepId = duplicateStepIds[oldStepIds.indexOf(stepId)];
+      if (duplicateStepId == null) throw new Error("Could not revise step of draft strategy.");
+      // Map answer param values to new step ids
+      const { searchName } = duplicateStrategy.steps[duplicateStepId];
+      const question = await wdkService.getQuestionAndParameters(searchName);
+      const duplicateParameters = question.parameters.reduce((duplicateParameters, parameter) =>
+        Object.assign(duplicateParameters, {
+          [parameter.name]: parameter.type === 'input-step'
+          ? String(duplicateStepIds[oldStepIds.indexOf(Number(searchConfig.parameters[parameter.name]))])
+          : searchConfig.parameters[parameter.name]
+        }), { ...searchConfig.parameters });
+      const duplicateSearchConfig = { ...searchConfig, parameters: duplicateParameters };
+
+      try {
+        await wdkService.updateStepSearchConfig(duplicateStepId, duplicateSearchConfig);
+        await wdkService.updateStepProperties(duplicateStepId, stepSpec);
+        return fulfillDraftStrategy(await wdkService.getStrategy(duplicateStrategyId), strategyId);
+      } catch (error) {
+        return reportSubmissionError(searchName, error, wdkService);
+      }
+    }
+
+    try {
+      await wdkService.updateStepSearchConfig(stepId, searchConfig);
+      await wdkService.updateStepProperties(stepId, stepSpec);
+      return fulfillStrategy(await wdkService.getStrategy(strategyId));
+    } catch (error) {
+      return reportSubmissionError(strategy.steps[stepId].searchName, error, wdkService);
+    }
+  }
+
   async function getFulfillStrategy_ReplaceStep(
     [requestAction]: [InferAction<typeof requestReplaceStep>],
     state$: StateObservable<RootState>,
@@ -643,5 +689,6 @@ async function getFulfillCombineWithStrategy(
     mrate([requestDuplicateStrategy], getFulfillDuplicateStrategy),
     mrate([requestCreateStep], getFulfillCreateStep),
     mrate([requestCombineWithBasket], getFulfillCombineWithBasket),
-    mrate([requestCombineWithStrategy], getFulfillCombineWithStrategy)
+    mrate([requestCombineWithStrategy], getFulfillCombineWithStrategy),
+    mrate([requestReviseStep], getFulfillStrategy_ReviseStep)
   );
