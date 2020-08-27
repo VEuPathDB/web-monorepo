@@ -471,8 +471,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             pagination: { offset: 0, numRecords: 1 }
           });
 
-          return from(answerPromise.then(
-            () => {
+          return from(answerPromise
+            .then(() => {
               const weightQueryParam = Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight;
               const queryString =
                 "searchName=" + searchName +
@@ -482,8 +482,9 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                   .join("");
 
               return transitionToInternalPage("/web-services-help?" + queryString);
-            }
-          ));
+            })
+            .catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
+          );
         }
 
         // if noSummaryOnSingleRecord is true, do special logic
@@ -505,7 +506,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             }
             return undefined;
           })
-          .then(singleRecord => {
+          .then((singleRecord): Action | Promise<Action> => {
             if (singleRecord != null) {
               const { question } = questionState;
               return transitionToInternalPage(`/record/${question.outputRecordClassName}/${singleRecord.id.map(p => p.value).join('/')}`);
@@ -522,7 +523,9 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                     name: DEFAULT_STRATEGY_NAME
                 })
               );
-          }));
+          })
+          .catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
+        );
       }
 
       const strategyEntry = state$.value.strategies.strategies[submissionMetadata.strategyId];
@@ -563,7 +566,9 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                 }
               )
             )
-          ));
+          )
+          .catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
+        );
       }
 
       return from(services.wdkService.createStep(newSearchStepSpec)
@@ -577,8 +582,10 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
               undefined
             )
           )
-        ));
-    }).catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
+        )
+        .catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
+      );
+    });
   }),
   mergeAll()
 )
