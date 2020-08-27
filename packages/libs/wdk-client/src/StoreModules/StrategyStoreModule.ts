@@ -690,5 +690,6 @@ async function getFulfillCombineWithStrategy(
     mrate([requestCreateStep], getFulfillCreateStep),
     mrate([requestCombineWithBasket], getFulfillCombineWithBasket),
     mrate([requestCombineWithStrategy], getFulfillCombineWithStrategy),
-    mrate([requestReviseStep], getFulfillStrategy_ReviseStep)
+    mrate([requestReviseStep], getFulfillStrategy_ReviseStep,
+      { areActionsNew: stubTrue })
   );
