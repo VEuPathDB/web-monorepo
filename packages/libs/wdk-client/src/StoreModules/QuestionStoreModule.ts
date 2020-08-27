@@ -1,7 +1,7 @@
 import { keyBy, mapValues, toString } from 'lodash';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
 import { EMPTY, Observable, Subject, from, merge, of } from 'rxjs';
-import { debounceTime, filter, map, mergeAll, mergeMap, takeUntil } from 'rxjs/operators';
+import { catchError, debounceTime, filter, map, mergeAll, mergeMap, takeUntil } from 'rxjs/operators';
 
 import {
   UNLOAD_QUESTION,
@@ -412,12 +412,12 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
   mergeMap(action => {
     const questionState = state$.value[key].questions[action.payload.searchName];
     if (questionState == null) return EMPTY;
-    return Promise.all(questionState.question.parameters.map(parameter => {
+    return from(Promise.all(questionState.question.parameters.map(parameter => {
       const ctx = { parameter, searchName: questionState.question.urlSegment, paramValues: questionState.paramValues };
       return Promise.resolve(getValueFromState(ctx, questionState, services)).then(value => [ parameter, value ] as [ Parameter, string ])
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
-    }).then((paramValues): Action | Observable<Action> => {
+    }).then((paramValues): Observable<Action> => {
       const { payload: { submissionMetadata } }: SubmitQuestionAction = action;
       const { question } = questionState;
 
@@ -458,7 +458,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
 
       if (submissionMetadata.type === 'submit-custom-form') {
         submissionMetadata.onStepSubmitted(services.wdkService, newSearchStepSpec);
-        return fulfillCreateStep(-1, Date.now());
+        return EMPTY;
       }
 
       if (submissionMetadata.type === 'create-strategy') {
@@ -471,8 +471,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             pagination: { offset: 0, numRecords: 1 }
           });
 
-          return from(answerPromise.then(
-            () => {
+          return from(answerPromise
+            .then(() => {
               const weightQueryParam = Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight;
               const queryString =
                 "searchName=" + searchName +
@@ -482,8 +482,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                   .join("");
 
               return transitionToInternalPage("/web-services-help?" + queryString);
-            }
-          ));
+            })
+          );
         }
 
         // if noSummaryOnSingleRecord is true, do special logic
@@ -522,7 +522,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                     name: DEFAULT_STRATEGY_NAME
                 })
               );
-          }));
+          })
+        );
       }
 
       const strategyEntry = state$.value.strategies.strategies[submissionMetadata.strategyId];
@@ -563,7 +564,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                 }
               )
             )
-          ));
+          )
+        );
       }
 
       return from(services.wdkService.createStep(newSearchStepSpec)
@@ -577,10 +579,13 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
               undefined
             )
           )
-        ));
-    }).catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
-  }),
-  mergeAll()
+        )
+      );
+    })).pipe(
+      mergeAll(),
+      catchError((error: any) => of(reportSubmissionError(action.payload.searchName, error, services.wdkService)))
+    );
+  })
 )
 
 async function goToStrategyPage(
