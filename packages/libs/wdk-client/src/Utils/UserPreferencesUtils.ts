@@ -42,8 +42,17 @@ export async function setResultTableColumnsPref(searchName: string, wdkService: 
 export async function getResultTableSortingPref(searchName: string, wdkService: WdkService): Promise<AttributeSortingSpec[]> {
     const question = await getQuestionFromSearchName(searchName, wdkService);
     const sortingPref = await getPrefWith(wdkService, prefSpecs.sort(question.fullName));
-    if (sortingPref) return sortingPref.split(/,\s*/).map(constructSortingSpec);
-    return question.defaultSorting;
+    if (!sortingPref) {
+      // no sorting pref defined, use default from quesiton
+      return question.defaultSorting;
+    }
+    try {
+      return sortingPref.split(/,\s*/).map(constructSortingSpec);
+    }
+    catch(error) {
+      console.warn(`Unable to parse sorting preference for ${question.fullName}. Using question's default sorting.`, error);
+      return question.defaultSorting;
+    }
 }
 
 function isValidDirection(direction: string): direction is 'ASC' | 'DESC' {
