@@ -210,3 +210,46 @@ function getNextState(currentState: ConstraintState, isSpecies: boolean): Homoge
 
 const NON_SPECIES_STATE_ORDER = [ 'free', 'include-all', 'include-at-least-one', 'exclude' ] as const;
 const SPECIES_STATE_ORDER = [ 'free', 'include-all', 'exclude' ] as HomogeneousConstraintState[];
+
+function updateParentConstraintStates(
+  node: PhyleticExpressionUiTree,
+  draftConstraintStates: ConstraintStates,
+  changedState: HomogeneousConstraintState
+): void {
+  const parent = node.parent;
+
+  if (parent != null) {
+    const distinctChildConstraintTypes = new Set(
+      parent.children.map(
+        child => draftConstraintStates[child.abbrev]
+      )
+    );
+
+    if (
+      distinctChildConstraintTypes.size === 1 &&
+      changedState !== 'include-at-least-one'
+    ) {
+      draftConstraintStates[parent.abbrev] = changedState;
+    } else {
+      draftConstraintStates[parent.abbrev] = 'mixed';
+    }
+
+    updateParentConstraintStates(parent, draftConstraintStates, changedState);
+  }
+}
+
+function updateChildConstraintStates(
+  node: PhyleticExpressionUiTree,
+  draftConstraintStates: ConstraintStates,
+  changedState: HomogeneousConstraintState
+): void {
+  node.children.forEach(child => {
+    if (changedState === 'include-at-least-one') {
+      draftConstraintStates[child.abbrev] = 'free';
+    } else {
+      draftConstraintStates[child.abbrev] = changedState;
+    }
+
+    updateChildConstraintStates(child, draftConstraintStates, changedState);
+  });
+}
