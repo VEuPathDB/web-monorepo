@@ -96,7 +96,7 @@ const getSampleSizeMarkerElements = (yAxisRange: Array<number> | null) => {
         labels={labels}
         values={values}
         //DKDK colors is set to be optional props, if null (e.g., comment out) then bars will have skyblue-like defaultColor
-        //colors={colors}
+        colors={colors}
         //DKDK disable isAtomic for histogram
         // isAtomic={atomicValue}
         //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
@@ -105,7 +105,7 @@ const getSampleSizeMarkerElements = (yAxisRange: Array<number> | null) => {
         // onMouseOut={handleMouseOut}
         // onMouseOver={handleMouseOver}
         library={'highcharts'}
-        type={'bar'}
+        type={'line'}
       />
       )
   });
@@ -181,7 +181,7 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
           labels={labels}
           values={values}
           //DKDK colors is set to be optional props, if null (e.g., comment out) then bars will have skyblue-like defaultColor
-          //colors={colors}
+          colors={colors}
           //DKDK disable isAtomic for histogram
           // isAtomic={atomicValue}
           //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
@@ -190,7 +190,7 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
           // onMouseOut={handleMouseOut}
           // onMouseOver={handleMouseOver}
           library={'highcharts'}
-          type={'bar'}
+          type={'line'}
         />
         )
   });
@@ -265,7 +265,7 @@ const getIRDataMarkerElements = (yAxisRange: Array<number> | null) => {
           labels={labels}
           values={values}
           //DKDK colors is set to be optional props, if null (e.g., comment out) then bars will have skyblue-like defaultColor
-          //colors={colors}
+          colors={colors}
           //DKDK disable isAtomic for histogram
           // isAtomic={atomicValue}
           //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
@@ -274,7 +274,7 @@ const getIRDataMarkerElements = (yAxisRange: Array<number> | null) => {
           // onMouseOut={handleMouseOut}
           // onMouseOver={handleMouseOver}
           library={'highcharts'}
-          type={'bar'}
+          type={'line'}
         />
         )
   });

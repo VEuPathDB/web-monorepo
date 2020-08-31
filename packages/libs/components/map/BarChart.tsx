@@ -10,6 +10,7 @@ interface BarChartProps {
   height: number,
   type: 'bar' | 'line',
   library: 'highcharts' | 'plotly',
+  colors: string[] | null,
 }
 
 /**
@@ -20,7 +21,9 @@ interface BarChartProps {
 export default function BarChart(props: BarChartProps) {
   let element: JSX.Element;
 
+  // Not updating plotly implementation currently
   if (props.library === 'plotly') {
+    console.log('Notice: Plotly implementation not currently being updated!');
     let typeProps;
     let yAxisProps = {};
 
@@ -33,6 +36,8 @@ export default function BarChart(props: BarChartProps) {
       typeProps = {
         type: 'scatter',
         mode: 'lines',
+        line: {shape: 'spline'},
+        fill: 'tozeroy',
       };
     }
 
@@ -86,7 +91,7 @@ export default function BarChart(props: BarChartProps) {
     if (props.type === 'bar') {
       type = 'column';
     } else {
-      type = props.type;
+      type = 'areaspline';
     }
 
     if (!(props.yRange === null || props.yRange === [])) {
@@ -95,6 +100,22 @@ export default function BarChart(props: BarChartProps) {
         max: props.yRange[1],
       }
     }
+
+    // Construct the data object
+    let zones;
+    //console.log(props.colors);
+    if (props.colors !== null) {
+      zones = props.values.map((value, i) => {
+        return {
+          value: value,
+          color: props.colors[i],
+          fillColor: props.colors[i],
+        };
+      });
+    } else {
+      zones = null;
+    }
+    //console.log(zones);
 
     let config = {
       chart: {
@@ -122,6 +143,8 @@ export default function BarChart(props: BarChartProps) {
       },
       series: [{
         data: props.values,
+        zones: zones,
+        lineWidth: 0,
       }],
       credits: {
         enabled: false,
@@ -136,6 +159,9 @@ export default function BarChart(props: BarChartProps) {
             enabled: false,
           },
           enableMouseTracking: false,
+          lineWidth: 4,
+          zoneAxis: 'x',
+          zones: zones,
         }
       },
     }
