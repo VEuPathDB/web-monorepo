@@ -151,6 +151,7 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
 
   function onLoad(event) {
     const { JBrowse } = event.currentTarget.contentWindow;
+    if (JBrowse == null) throw new Error("Could not load embedded JBrowse instance.");
     JBrowse.afterMilestone('completely initialized', function() {
       jbrowseViewContainer.current = JBrowse.view;
       updateBehaviors();
