@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { orderBy } from 'lodash';
 
@@ -52,19 +52,25 @@ function PhyleticExpressionParameter(props: PhyleticExpressionParameterProps) {
 
   const [ expandedNodes, setExpandedNodes ] = useState([] as string[]);
 
-  const phyleticExressionUiTree = useMemo(
+  const initialPhyleticExpressionUiTree = useMemo(
     () => taxonUiMetadata == null
       ? undefined
       : makePhyleticExpressionUiTree(taxonUiMetadata.taxonTree),
     [ taxonUiMetadata ]
   );
 
-  return phyleticExressionUiTree == null
+  const [ phyleticExpressionUiTree, setPhyleticExpressionUiTree ] = useState(initialPhyleticExpressionUiTree);
+
+  useEffect(() => {
+    setPhyleticExpressionUiTree(initialPhyleticExpressionUiTree);
+  }, [ initialPhyleticExpressionUiTree ]);
+
+  return phyleticExpressionUiTree == null
     ? <Loading />
     : <div className="PhyleticExpressionParameter">
         {props.phyleticExpressionTextField}
         <CheckboxTree
-          tree={phyleticExressionUiTree}
+          tree={phyleticExpressionUiTree}
           getNodeId={getNodeId}
           getNodeChildren={getNodeChildren}
           onExpansionChange={setExpandedNodes}
@@ -84,13 +90,13 @@ type ConstraintState =
   | 'exclude'
   | 'mixed';
 
-interface PhyleticExressionUiTree extends TaxonTree {
-  children: PhyleticExressionUiTree[];
+interface PhyleticExpressionUiTree extends TaxonTree {
+  children: PhyleticExpressionUiTree[];
   constraintState: ConstraintState;
   speciesCount: number;
 }
 
-function makePhyleticExpressionUiTree(taxonTree: TaxonTree): PhyleticExressionUiTree {
+function makePhyleticExpressionUiTree(taxonTree: TaxonTree): PhyleticExpressionUiTree {
   return mapStructure(
     (node, mappedChildren) => ({
       ...node,
@@ -112,15 +118,15 @@ function makePhyleticExpressionUiTree(taxonTree: TaxonTree): PhyleticExressionUi
   );
 }
 
-function getNodeId(node: PhyleticExressionUiTree) {
+function getNodeId(node: PhyleticExpressionUiTree) {
   return node.abbrev;
 }
 
-function getNodeChildren(node: PhyleticExressionUiTree) {
+function getNodeChildren(node: PhyleticExpressionUiTree) {
   return node.children;
 }
 
-function renderNode(node: PhyleticExressionUiTree, path: number[] | undefined) {
+function renderNode(node: PhyleticExpressionUiTree, path: number[] | undefined) {
   const containerClassName = cxPhyleticExpression(
     '--Node',
     path?.length === 1 ? 'root' : 'interior',
