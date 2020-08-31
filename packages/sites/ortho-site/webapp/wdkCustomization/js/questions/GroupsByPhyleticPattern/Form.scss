@@ -1,5 +1,32 @@
 .wdk-QuestionForm {
   &GroupsByPhyleticPattern {
     max-width: 110em;
+
+    .PhyleticExpression--Node {
+      display: flex;
+      align-items: center;
+
+      &Selection {
+        &__free {
+          content: url('~ortho-images/dc.gif');
+        }
+
+        &__include-all {
+          content: url('~ortho-images/yes.gif');
+        }
+
+        &__include-at-least-one {
+          content: url('~ortho-images/maybe.gif');
+        }
+
+        &__exclude {
+          content: url('~ortho-images/no.gif');
+        }
+
+        &__mixed {
+          content: url('~ortho-images/unk.gif');
+        }
+      }
+    }
   }
 }
