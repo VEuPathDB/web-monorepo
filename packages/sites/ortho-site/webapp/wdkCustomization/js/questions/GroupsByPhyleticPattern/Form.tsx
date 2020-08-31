@@ -1,10 +1,13 @@
 import React, { useCallback } from 'react';
 
+import { Loading } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
+
+import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 
 import './Form.scss';
 
@@ -39,9 +42,15 @@ interface PhyleticExpressionParameterProps {
 }
 
 function PhyleticExpressionParameter(props: PhyleticExpressionParameterProps) {
+  const taxonUiMetadata = useTaxonUiMetadata();
+
   return (
     <div className="PhyleticExpressionParameter">
-      {props.phyleticExpressionTextField}
+      {
+        taxonUiMetadata == null
+          ? <Loading />
+          : props.phyleticExpressionTextField
+      }
     </div>
   );
 }
