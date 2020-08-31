@@ -77,7 +77,7 @@ function PhyleticExpressionParameter(props: PhyleticExpressionParameterProps) {
       </div>;
 }
 
-type SelectionState =
+type ConstraintState =
   | 'free'
   | 'include-at-least-one'
   | 'include-all'
@@ -86,7 +86,7 @@ type SelectionState =
 
 interface PhyleticExressionUiTree extends TaxonTree {
   children: PhyleticExressionUiTree[];
-  selectionState: SelectionState;
+  constraintState: ConstraintState;
   speciesCount: number;
 }
 
@@ -99,7 +99,7 @@ function makePhyleticExpressionUiTree(taxonTree: TaxonTree): PhyleticExressionUi
         child => child.species,
         'desc'
       ),
-      selectionState: 'free',
+      constraintState: 'free',
       speciesCount: node.species
         ? 1
         : mappedChildren.reduce(
@@ -127,14 +127,14 @@ function renderNode(node: PhyleticExressionUiTree, path: number[] | undefined) {
     node.species && 'species'
   );
 
-  const selectionClassName = cxPhyleticExpression(
-    '--NodeSelection',
-    node.selectionState
+  const constraintClassName = cxPhyleticExpression(
+    '--NodeConstraint',
+    node.constraintState
   );
 
   return (
     <div className={containerClassName}>
-      <span className={selectionClassName}></span>
+      <span className={constraintClassName}></span>
       <span>{node.name} ({node.abbrev})</span>
     </div>
   );

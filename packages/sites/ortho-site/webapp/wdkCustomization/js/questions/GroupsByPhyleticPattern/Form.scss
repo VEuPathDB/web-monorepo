@@ -6,17 +6,17 @@
       display: flex;
       align-items: center;
 
-      &Selection {
+      &Constraint {
         &__free {
           content: url('~ortho-images/dc.gif');
         }
 
-        &__include-all {
-          content: url('~ortho-images/yes.gif');
-        }
-
         &__include-at-least-one {
           content: url('~ortho-images/maybe.gif');
+        }
+
+        &__include-all {
+          content: url('~ortho-images/yes.gif');
         }
 
         &__exclude {
