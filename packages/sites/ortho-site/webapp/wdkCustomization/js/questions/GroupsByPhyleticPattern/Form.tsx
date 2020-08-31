@@ -70,12 +70,13 @@ interface PhyleticExpressionUiTree extends TaxonTree {
 
 type ConstraintStates = Record<string, ConstraintState>;
 
-type ConstraintState =
+type HomogeneousConstraintState =
   | 'free'
   | 'include-at-least-one'
   | 'include-all'
-  | 'exclude'
-  | 'mixed';
+  | 'exclude';
+
+type ConstraintState = HomogeneousConstraintState | 'mixed';
 
 function PhyleticExpressionParameter({
   phyleticExpressionTextField,
@@ -192,3 +193,20 @@ function makeRenderNode(constraintStates: ConstraintStates) {
     );
   }
 }
+
+function getNextState(currentState: ConstraintState, isSpecies: boolean): HomogeneousConstraintState {
+  if (currentState === 'mixed') {
+    return 'include-all';
+  }
+
+  const stateOrder = isSpecies
+    ? SPECIES_STATE_ORDER
+    : NON_SPECIES_STATE_ORDER;
+
+  const stateIndex = stateOrder.indexOf(currentState);
+
+  return stateOrder[(stateIndex + 1) % stateOrder.length];
+}
+
+const NON_SPECIES_STATE_ORDER = [ 'free', 'include-all', 'include-at-least-one', 'exclude' ] as const;
+const SPECIES_STATE_ORDER = [ 'free', 'include-all', 'exclude' ] as HomogeneousConstraintState[];
