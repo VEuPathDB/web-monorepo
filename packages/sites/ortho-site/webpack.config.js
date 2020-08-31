@@ -6,7 +6,8 @@ module.exports = configure({
   },
   resolve: {
     alias: {
-      'ortho-client': __dirname + '/webapp/wdkCustomization/js/client'
+      'ortho-client': __dirname + '/webapp/wdkCustomization/js/client',
+      'ortho-images': __dirname + '/webapp/wdkCustomization/images'
     }
   }
 });
