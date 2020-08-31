@@ -17,7 +17,9 @@ export function Form(props: Props) {
     return (
       <div key={group.name} className={cxDefaultQuestionForm('ParameterList')}>
         <div className={cxDefaultQuestionForm('ParameterControl')}>
-          {formProps.parameterElements[PHYLETIC_EXPRESSION_PARAM_NAME]}
+          <PhyleticExpressionParameter
+            phyleticExpressionTextField={formProps.parameterElements[PHYLETIC_EXPRESSION_PARAM_NAME]}
+          />
         </div>
       </div>
     );
@@ -29,5 +31,17 @@ export function Form(props: Props) {
       containerClassName={`${cxDefaultQuestionForm()} ${cxDefaultQuestionForm('GroupsByPhyleticPattern')}`}
       renderParamGroup={renderParamGroup}
     />
+  );
+}
+
+interface PhyleticExpressionParameterProps {
+  phyleticExpressionTextField: React.ReactNode;
+}
+
+function PhyleticExpressionParameter(props: PhyleticExpressionParameterProps) {
+  return (
+    <div className="PhyleticExpressionParameter">
+      {props.phyleticExpressionTextField}
+    </div>
   );
 }
