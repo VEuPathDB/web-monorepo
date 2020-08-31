@@ -53,6 +53,7 @@ type Props<T> = {
   getNodeId: (node: T) => string;
   getNodeChildren: (node: T) => T[];
   renderNode: (node: T, path?: number[]) => React.ReactNode;
+  shouldExpandOnClick: boolean;
 }
 
 class CheckboxTreeNode<T> extends Component<Props<T>> {
@@ -79,7 +80,8 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
       toggleExpansion,
       getNodeId,
       getNodeChildren,
-      renderNode
+      renderNode,
+      shouldExpandOnClick
     } = this.props;
 
     // We have to apply the generic type `T` to these child components. This is
@@ -112,7 +114,10 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
             />
           )}
           {!isSelectable || (!isMultiPick && !isLeafNode) ? (
-            <div className="wdk-CheckboxTreeNodeContent" onClick={this.toggleExpansion}>
+            <div
+              className="wdk-CheckboxTreeNodeContent"
+              onClick={shouldExpandOnClick ? this.toggleExpansion : undefined}
+            >
               {nodeElement}
             </div>
           ) : (
@@ -152,6 +157,7 @@ class CheckboxTreeNode<T> extends Component<Props<T>> {
                 isActiveSearch={isActiveSearch}
                 toggleSelection={toggleSelection}
                 toggleExpansion={toggleExpansion}
+                shouldExpandOnClick={shouldExpandOnClick}
                 getNodeId={getNodeId}
                 getNodeChildren={getNodeChildren}
                 renderNode={renderNode} />
