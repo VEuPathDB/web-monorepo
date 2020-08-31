@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import produce from 'immer';
 import { orderBy } from 'lodash';
 
 import { CheckboxTree, Loading } from 'wdk-client/Components';
@@ -93,7 +94,7 @@ function PhyleticExpressionParameter({
   }, [ phyleticExpressionUiTree ]);
 
   const renderNode = useMemo(
-    () => makeRenderNode(constraintStates),
+    () => makeRenderNode(constraintStates, setConstraintStates),
     [ constraintStates ]
   );
 
@@ -172,7 +173,10 @@ function getNodeChildren(node: PhyleticExpressionUiTree) {
   return node.children;
 }
 
-function makeRenderNode(constraintStates: ConstraintStates) {
+function makeRenderNode(
+  constraintStates: ConstraintStates,
+  setConstraintStates: (newConstraintStates: ConstraintStates) => void
+) {
   return function(node: PhyleticExpressionUiTree, path: number[] | undefined) {
     const containerClassName = cxPhyleticExpression(
       '--Node',
@@ -185,16 +189,31 @@ function makeRenderNode(constraintStates: ConstraintStates) {
       constraintStates[node.abbrev]
     );
 
+    const onConstraintChange = () => {
+      const newConstraintStates = produce(constraintStates, draftConstraintStates => {
+        const changedState = getNextConstraintState(
+          constraintStates[node.abbrev],
+          node.species
+        );
+
+        draftConstraintStates[node.abbrev] = changedState;
+        updateParentConstraintStates(node, draftConstraintStates, changedState);
+        updateChildConstraintStates(node, draftConstraintStates, changedState);
+      });
+
+      setConstraintStates(newConstraintStates);
+    };
+
     return (
       <div className={containerClassName}>
-        <span className={constraintClassName}></span>
+        <span onClick={onConstraintChange} className={constraintClassName}></span>
         <span>{node.name} ({node.abbrev})</span>
       </div>
     );
   }
 }
 
-function getNextState(currentState: ConstraintState, isSpecies: boolean): HomogeneousConstraintState {
+function getNextConstraintState(currentState: ConstraintState, isSpecies: boolean): HomogeneousConstraintState {
   if (currentState === 'mixed') {
     return 'include-all';
   }
