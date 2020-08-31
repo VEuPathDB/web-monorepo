@@ -39,10 +39,9 @@ export const taxonEntryDecoder: Decoder<TaxonEntry> = record({
 
 export const taxonEntriesDecoder: Decoder<TaxonEntries> = objectOf(taxonEntryDecoder);
 
-export interface TaxonTree {
-  abbrev: string;
+export interface TaxonTree extends Omit<TaxonEntry, 'children'> {
   children: TaxonTree[];
-};
+}
 
 export const ROOT_TAXON_ABBREV = 'ALL';
 
@@ -70,7 +69,7 @@ export const makeTaxonTree = function(taxonEntries: TaxonEntries): TaxonTree {
     );
 
     return {
-      abbrev: entry.abbrev,
+      ...entry,
       children: orderedChildren
     };
   }
@@ -81,6 +80,7 @@ export interface TaxonUiMetadata {
   rootTaxons: Record<string, RootTaxonEntry>;
   species: Record<string, SpeciesEntry>;
   taxonOrder: string[];
+  taxonTree: TaxonTree;
 }
 
 export interface RootTaxonEntry extends TaxonEntry {
@@ -112,7 +112,8 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     parents,
     rootTaxons,
     species,
-    taxonOrder
+    taxonOrder,
+    taxonTree
   };
 
   function _traverseTaxonTree({
