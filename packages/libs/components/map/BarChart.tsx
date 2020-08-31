@@ -101,9 +101,10 @@ export default function BarChart(props: BarChartProps) {
       }
     }
 
-    // Construct the data object
+    // Construct the objects that deal with color
     let zones;
-    //console.log(props.colors);
+    let gradient;
+
     if (props.colors !== null) {
       zones = props.values.map((value, i) => {
         return {
@@ -112,10 +113,18 @@ export default function BarChart(props: BarChartProps) {
           fillColor: props.colors[i],
         };
       });
+      gradient = null;
     } else {
       zones = null;
+      gradient = {
+        linearGradient: {x1: 0, x2: 1, y1: 0, y2: 0},
+        stops: [
+            [0, '#8cbdff'], // start
+            //[0.5, '#ffffff'], // middle
+            [1, '#001b52'] // end
+        ],
+      };
     }
-    //console.log(zones);
 
     let config = {
       chart: {
@@ -144,7 +153,8 @@ export default function BarChart(props: BarChartProps) {
       series: [{
         data: props.values,
         zones: zones,
-        lineWidth: 0,
+        //lineWidth: 0,
+        fillColor: gradient,
       }],
       credits: {
         enabled: false,
@@ -159,10 +169,13 @@ export default function BarChart(props: BarChartProps) {
             enabled: false,
           },
           enableMouseTracking: false,
-          lineWidth: 4,
+          lineWidth: 0,
           zoneAxis: 'x',
           zones: zones,
-        }
+        },
+        // area: {
+        //   fillColor: gradient,
+        // },
       },
     }
 
