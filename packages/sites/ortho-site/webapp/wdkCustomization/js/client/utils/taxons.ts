@@ -76,7 +76,6 @@ export const makeTaxonTree = function(taxonEntries: TaxonEntries): TaxonTree {
 };
 
 export interface TaxonUiMetadata {
-  parents: Record<string, TaxonTree | null>;
   rootTaxons: Record<string, RootTaxonEntry>;
   species: Record<string, SpeciesEntry>;
   taxonOrder: string[];
@@ -95,21 +94,18 @@ export interface SpeciesEntry extends TaxonEntry {
 }
 
 export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: TaxonTree): TaxonUiMetadata {
-  const parents = {} as TaxonUiMetadata['parents'];
   const rootTaxons = {} as TaxonUiMetadata['rootTaxons'];
   const species = {} as TaxonUiMetadata['species'];
   const taxonOrder = [] as TaxonUiMetadata['taxonOrder'];
 
   _traverseTaxonTree({
     node: taxonTree,
-    parent: undefined,
     groupColor: undefined,
     rootTaxon: undefined,
     path: []
   });
 
   return {
-    parents,
     rootTaxons,
     species,
     taxonOrder,
@@ -118,13 +114,11 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
 
   function _traverseTaxonTree({
     node,
-    parent,
     groupColor,
     rootTaxon,
     path
   }: {
     node: TaxonTree,
-    parent: TaxonTree | undefined,
     groupColor: string | undefined,
     rootTaxon: string | undefined,
     path: string[]
@@ -136,8 +130,6 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     if (taxonEntry == null) {
       throw new Error(`The taxon entry for "${taxonAbbrev}" is missing.`);
     }
-
-    parents[taxonAbbrev] = parent ?? null;
 
     // A taxon is a root taxon iff its taxon entry has a group color
     if (taxonEntry.groupColor != null) {
@@ -174,7 +166,6 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     node.children.forEach(childNode => {
       _traverseTaxonTree({
         node: childNode,
-        parent: node,
         groupColor: groupColor ?? taxonEntry.groupColor,
         rootTaxon: rootTaxon ?? (taxonEntry.groupColor && taxonEntry.abbrev),
         path: newPath
