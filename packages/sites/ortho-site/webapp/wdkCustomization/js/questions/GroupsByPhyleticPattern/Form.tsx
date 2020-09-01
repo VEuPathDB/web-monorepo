@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import produce from 'immer';
-import { orderBy } from 'lodash';
+import { groupBy, mapValues, orderBy, partition } from 'lodash';
 
 import { CheckboxTree, Loading } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
@@ -32,7 +32,7 @@ export function Form(props: Props) {
     [ taxonUiMetadata ]
   );
 
-  const updatePhyleticPatternParam = useCallback((newParamValue: string) => {
+  const updatePhyleticExpressionParam = useCallback((newParamValue: string) => {
     props.eventHandlers.updateParamValue({
       searchName: props.state.question.urlSegment,
       parameter: props.state.question.parametersByName[PHYLETIC_EXPRESSION_PARAM_NAME],
@@ -51,13 +51,13 @@ export function Form(props: Props) {
             : <PhyleticExpressionParameter
                 phyleticExpressionTextField={formProps.parameterElements[PHYLETIC_EXPRESSION_PARAM_NAME]}
                 phyleticExpressionUiTree={phyleticExpressionUiTree}
-                updatePhyleticPatternParam={updatePhyleticPatternParam}
+                updatePhyleticExpressionParam={updatePhyleticExpressionParam}
               />
         }
         </div>
       </div>
     );
-  }, [ phyleticExpressionUiTree, updatePhyleticPatternParam ]);
+  }, [ phyleticExpressionUiTree, updatePhyleticExpressionParam ]);
 
   return (
     <EbrcDefaultQuestionForm
@@ -71,7 +71,7 @@ export function Form(props: Props) {
 interface PhyleticExpressionParameterProps {
   phyleticExpressionTextField: React.ReactNode;
   phyleticExpressionUiTree: PhyleticExpressionUiTree;
-  updatePhyleticPatternParam: (newParamValue: string) => void;
+  updatePhyleticExpressionParam: (newParamValue: string) => void;
 }
 
 interface PhyleticExpressionUiTree extends TaxonTree {
@@ -93,7 +93,7 @@ type ConstraintState = HomogeneousConstraintState | 'mixed';
 function PhyleticExpressionParameter({
   phyleticExpressionTextField,
   phyleticExpressionUiTree,
-  updatePhyleticPatternParam
+  updatePhyleticExpressionParam
 }: PhyleticExpressionParameterProps) {
   const [ expandedNodes, setExpandedNodes ] = useState([] as string[]);
 
@@ -109,9 +109,10 @@ function PhyleticExpressionParameter({
     () => makeRenderNode(
       constraintStates,
       setConstraintStates,
-      updatePhyleticPatternParam
+      phyleticExpressionUiTree,
+      updatePhyleticExpressionParam
     ),
-    [ constraintStates, updatePhyleticPatternParam ]
+    [ constraintStates, phyleticExpressionUiTree, updatePhyleticExpressionParam ]
   );
 
   console.log(phyleticExpressionUiTree);
@@ -192,7 +193,8 @@ function getNodeChildren(node: PhyleticExpressionUiTree) {
 function makeRenderNode(
   constraintStates: ConstraintStates,
   setConstraintStates: (newConstraintStates: ConstraintStates) => void,
-  updatePhyleticPatternParam: (newParamValue: string) => void
+  phyleticExpressionUiTree: PhyleticExpressionUiTree,
+  updatePhyleticExpressionParam: (newParamValue: string) => void
 ) {
   return function(node: PhyleticExpressionUiTree, path: number[] | undefined) {
     const containerClassName = cxPhyleticExpression(
@@ -218,7 +220,13 @@ function makeRenderNode(
         updateChildConstraintStates(node, draftConstraintStates, changedState);
       });
 
+      const newPhyleticExpression = makePhyleticExpression(
+        phyleticExpressionUiTree,
+        newConstraintStates
+      );
+
       setConstraintStates(newConstraintStates);
+      updatePhyleticExpressionParam(newPhyleticExpression);
     };
 
     return (
@@ -288,4 +296,74 @@ function updateChildConstraintStates(
 
     updateChildConstraintStates(child, draftConstraintStates, changedState);
   });
+}
+
+function makePhyleticExpression(
+  phyleticExpressionUiTree: PhyleticExpressionUiTree,
+  constraintStates: ConstraintStates
+) {
+  const nonSpeciesExpressionTerms = [] as string[];
+  const includedSpeciesWithMixedParents = [] as string[];
+  const excludedSpeciesWithMixedParents = [] as string[];
+
+  _traverse(phyleticExpressionUiTree);
+
+  const nonSpeciesSubexpression = nonSpeciesExpressionTerms.length == 0
+    ? undefined
+    : nonSpeciesExpressionTerms.join(' AND ');
+
+  const includedSpeciesSubexpression = includedSpeciesWithMixedParents.length == 0
+    ? undefined
+    : `${includedSpeciesWithMixedParents.join('+')}=${includedSpeciesWithMixedParents.length}T`;
+
+  const excludedSpeciesSubexpression = excludedSpeciesWithMixedParents.length == 0
+    ? undefined
+    : `${excludedSpeciesWithMixedParents.join('+')}=0T`;
+
+  const subexpressions = [
+    nonSpeciesSubexpression,
+    includedSpeciesSubexpression,
+    excludedSpeciesSubexpression
+  ];
+
+  return (
+    subexpressions
+      .filter(subexpression => subexpression != null)
+      .join(' AND ')
+  );
+
+  function _traverse(node: PhyleticExpressionUiTree) {
+    const nextConstraintType = constraintStates[node.abbrev];
+
+    if (nextConstraintType === 'include-all') {
+      nonSpeciesExpressionTerms.push(`${node.abbrev}=${node.speciesCount}T`);
+    } else if (nextConstraintType === 'include-at-least-one') {
+      nonSpeciesExpressionTerms.push(`${node.abbrev}>=1T`);
+    } else if (nextConstraintType === 'exclude') {
+      nonSpeciesExpressionTerms.push(`${node.abbrev}=0T`);
+    } else if (nextConstraintType === 'mixed') {
+      const [ speciesChildren, nonSpeciesChildren ] = partition(
+        node.children,
+        child => child.species
+      );
+
+      const speciesChildrenAbbrevs = mapValues(
+        speciesChildren,
+        speciesChild => speciesChild.abbrev
+      );
+
+      const speciesChildrenAbbrevsByState = groupBy(
+        speciesChildrenAbbrevs,
+        speciesChildAbbrev => constraintStates[speciesChildAbbrev]
+      );
+
+      const includedSpeciesAbbrevs = speciesChildrenAbbrevsByState['include-all'] ?? [];
+      const excludedSpeciesAbbrevs = speciesChildrenAbbrevsByState['exclude'] ?? [];
+
+      includedSpeciesWithMixedParents.push(...includedSpeciesAbbrevs);
+      excludedSpeciesWithMixedParents.push(...excludedSpeciesAbbrevs);
+
+      nonSpeciesChildren.forEach(_traverse);
+    }
+  }
 }
