@@ -40,7 +40,9 @@ export const PFAM_DOMAINS_ATTRIBUTE_FIELD: AttributeField = {
 };
 
 const COUNT_ATTRIBUTE_NAME = 'count';
-const ABBREV_ATTRIBUTE_NAME = 'abbrev;'
+const ABBREV_ATTRIBUTE_NAME = 'abbrev';
+
+export const TAXON_COUNTS_TABLE_NAME = 'TaxonCounts';
 
 interface PseudoAttributeSpec {
   name: string;
@@ -142,11 +144,15 @@ export function taxonCountsTableValueToMap(taxonCountsTableValue: TableValue) {
       const countValue = countRow[COUNT_ATTRIBUTE_NAME];
 
       if (typeof abbrevValue !== 'string') {
-        throw new Error('Encountered a non-string "abbrev" attribute for a TaxonCounts row.');
+        throw new Error(
+          makeAttributeTypeMismatchError('a non-string', ABBREV_ATTRIBUTE_NAME, TAXON_COUNTS_TABLE_NAME)
+        );
       }
 
       if (typeof countValue !== 'string') {
-        throw new Error('Encountered a non-string "count" attribute for a TaxonCounts row.');
+        throw new Error(
+          makeAttributeTypeMismatchError('a non-string', COUNT_ATTRIBUTE_NAME, TAXON_COUNTS_TABLE_NAME)
+        );
       }
 
       counts[abbrevValue] = Number(countValue);
@@ -155,4 +161,12 @@ export function taxonCountsTableValueToMap(taxonCountsTableValue: TableValue) {
     },
     {} as Record<string, number>
   );
+}
+
+function makeAttributeTypeMismatchError(
+  typeMismatch: string,
+  attributeName: string,
+  tableName: string
+) {
+  return `Encountered ${typeMismatch} '${attributeName}' in a '${tableName}' row`;
 }

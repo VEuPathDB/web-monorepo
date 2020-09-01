@@ -18,6 +18,7 @@ import {
   DOMAIN_START_ATTRIBUTE_NAME,
   PFAM_DOMAINS_ATTRIBUTE_FIELD,
   PFAM_LEGEND_ATTRIBUTE_FIELD,
+  TAXON_COUNTS_TABLE_NAME,
   extractPfamDomain,
   makeCommonRecordTableWrapper,
   makeDomainAccessionLink,
@@ -33,7 +34,6 @@ const MSA_ATTRIBUTE_NAME = 'msa';
 
 const PFAMS_TABLE_NAME = 'PFams';
 const PROTEIN_PFAMS_TABLE_NAME = 'ProteinPFams';
-const TAXON_COUNTS_TABLE_NAME = 'TaxonCounts';
 
 const CORE_PERIPHERAL_ATTRIBUTE_NAME = 'core_peripheral';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
