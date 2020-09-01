@@ -3,8 +3,11 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 import { curry, groupBy, isNaN, uniqBy } from 'lodash';
 
-import { CollapsibleSection } from 'wdk-client/Components';
+import { CollapsibleSection, Loading } from 'wdk-client/Components';
 import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
+
+import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
+import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-distribution/PhyleticDistributionCheckbox';
 
 import { PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
 
@@ -29,6 +32,7 @@ const MSA_ATTRIBUTE_NAME = 'msa';
 
 const PFAMS_TABLE_NAME = 'PFams';
 const PROTEIN_PFAMS_TABLE_NAME = 'ProteinPFams';
+const TAXON_COUNTS_TABLE_NAME = 'TaxonCounts';
 
 const CORE_PERIPHERAL_ATTRIBUTE_NAME = 'core_peripheral';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
@@ -180,6 +184,29 @@ const RecordTable_PfamDomainGraphic = makeCommonRecordTableWrapper(makePfamsGrap
 const RecordTable_PfamDomainDetails = makeCommonRecordTableWrapper(makePfamsDetailsAttributeFields, makePfamsDetailsTableRow);
 const RecordTable_ProteinDomainLocations = makeCommonRecordTableWrapper(makeProteinDomainLocationAttributeFields, makeProteinDomainLocationsTableRow);
 
+function RecordTable_TaxonCounts(props: WrappedComponentProps<RecordTableProps>) {
+  const selectionConfig = useMemo(
+    () => ({ selectable: false } as const),
+    []
+  );
+
+  const speciesCounts = useMemo(
+    () => ({}),
+    []
+  );
+
+  const taxonUiMetadata = useTaxonUiMetadata();
+
+  return taxonUiMetadata == null
+    ? <Loading />
+    : <PhyleticDistributionCheckbox
+        selectionConfig={selectionConfig}
+        speciesCounts={speciesCounts}
+        taxonTree={taxonUiMetadata.taxonTree}
+      />
+}
+
+
 function RecordTable_ProteinDomainArchitectures(props: WrappedComponentProps<RecordTableProps>) {
   const maxLength = useMemo(
     () => (
@@ -240,5 +267,6 @@ function makePfamDomainMarkup(rowGroup: Record<string, AttributeValue>[], maxLen
 
 const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {
   [PFAMS_TABLE_NAME]: RecordTable_PfamDomainGraphic,
-  [PROTEIN_PFAMS_TABLE_NAME]: RecordTable_ProteinDomainArchitectures
+  [PROTEIN_PFAMS_TABLE_NAME]: RecordTable_ProteinDomainArchitectures,
+  [TAXON_COUNTS_TABLE_NAME]: RecordTable_TaxonCounts
 };
