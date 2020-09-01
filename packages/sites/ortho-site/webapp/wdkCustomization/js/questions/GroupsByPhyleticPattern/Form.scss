@@ -2,6 +2,13 @@
   &GroupsByPhyleticPattern {
     max-width: 110em;
 
+    .PhyleticExpression--Instructions {
+      .wdk-Icon {
+        font-size: 1.2em;
+        color: #AAA;
+      }
+    }
+
     .PhyleticExpression--ConstraintIcon {
       &__free {
         content: url('~ortho-images/dc.gif');

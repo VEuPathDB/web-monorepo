@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import produce from 'immer';
 import { groupBy, mapValues, orderBy, partition } from 'lodash';
 
-import { CheckboxTree, Loading } from 'wdk-client/Components';
+import { CheckboxTree, IconAlt, Loading } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { foldStructure, mapStructure } from 'wdk-client/Utils/TreeUtils';
@@ -132,6 +132,33 @@ function PhyleticExpressionParameter({
 
   return (
     <div className={cxPhyleticExpression('--Parameter')}>
+      <div className={cxPhyleticExpression('--Instructions')}>
+        <p>
+          Find Ortholog Groups that have a particular phyletic pattern, i.e., that include or exclude taxa or species that you specify.
+        </p>
+
+        <br/>
+
+        <p>
+          The search is controlled by the Phyletic Pattern Expression (PPE) shown in the text box.
+          Use either the text box or the graphical tree display, or both, to specify your pattern.
+          The graphical tree display is a friendly way to generate a pattern expression.
+          You can always edit the expression directly.
+          For PPE help see the instructions at the bottom of this page.
+        </p>
+
+        <br/>
+
+        <p>
+          In the graphical tree display:
+        </p>
+
+        <ul>
+          <li>Click on the <IconAlt fa="caret-right" /> icons to show or hide subtaxa and species.</li>
+          <li>Click on the <ConstraintIcon constraintType="free" /> icons to specify which taxa or species to include or exclude in the profile.</li>
+          <li>Refer to the legend below to understand other icons.</li>
+        </ul>
+      </div>
       <div className={cxPhyleticExpression('--TextField')}>
         Expression:
         {phyleticExpressionTextField}
