@@ -9,9 +9,13 @@ import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-distribution/PhyleticDistributionCheckbox';
 
-import { PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
+import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 
-import { RecordAttributeSectionProps, RecordTableProps, WrappedComponentProps } from './Types';
+import {
+  RecordAttributeSectionProps,
+  RecordTableProps,
+  WrappedComponentProps
+} from 'ortho-client/records/Types';
 import {
   ACCESSION_ATTRIBUTE_NAME,
   DOMAIN_END_ATTRIBUTE_NAME,

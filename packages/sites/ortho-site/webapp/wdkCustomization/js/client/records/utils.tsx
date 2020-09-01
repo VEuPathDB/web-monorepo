@@ -10,8 +10,8 @@ import {
   TableValue
 } from 'wdk-client/Utils/WdkModel';
 
-import { PfamDomain } from '../components/pfam-domains/PfamDomain';
-import { Domain } from '../components/pfam-domains/PfamDomainArchitecture';
+import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
+import { Domain } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 
 import { RecordTableProps, WrappedComponentProps } from './Types';
 

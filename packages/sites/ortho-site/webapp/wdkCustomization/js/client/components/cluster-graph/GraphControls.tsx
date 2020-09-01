@@ -1,6 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Checkbox, RadioList, SliderInput, TextBox, Tooltip, HelpIcon } from 'wdk-client/Components';
+import {
+  Checkbox,
+  HelpIcon,
+  RadioList,
+  SliderInput,
+  TextBox,
+  Tooltip
+} from 'wdk-client/Components';
 
 import {
   EDGE_OPTIONS_HELP,

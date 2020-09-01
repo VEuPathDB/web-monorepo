@@ -11,19 +11,19 @@ import {
   useNodeMouseMovementEventHandlers,
   useUpdateHighlightedEdge,
   useUpdateHighlightedNodes
-} from '../../hooks/cytoscapeEventHandlers';
+} from 'ortho-client/hooks/cytoscapeEventHandlers';
 
 import {
   EdgeType,
   NodeDisplayType,
   ProteinType
-} from '../../utils/clusterGraph';
+} from 'ortho-client/utils/clusterGraph';
 import {
   addCytoscapeClass,
-  removeCytoscapeClass,
-} from '../../utils/cytoscapeClasses';
-import { GroupLayout } from '../../utils/groupLayout';
-import { TaxonUiMetadata } from '../../utils/taxons';
+  removeCytoscapeClass
+} from 'ortho-client/utils/cytoscapeClasses';
+import { GroupLayout } from 'ortho-client/utils/groupLayout';
+import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
 import './ClusterGraphCanvas.scss';
 
