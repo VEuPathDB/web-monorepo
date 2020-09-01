@@ -140,7 +140,7 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
   // counts of genes of each organism in the result; retrieved when component is loaded and when step is revised
   const filterSummary = useWdkServiceWithRefresh(
     wdkService => fetchFilterSummary(wdkService, step.id),
-    [ step.id ]
+    [ step ]
   );
 
   // current value of filter shown in the tree (will be cleared if applied to the step)
