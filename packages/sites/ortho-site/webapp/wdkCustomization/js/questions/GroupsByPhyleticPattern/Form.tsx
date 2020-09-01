@@ -224,6 +224,8 @@ function makeRenderNode(
       constraintStates[node.abbrev]
     );
 
+    const descriptionClassName = cxPhyleticExpression('--NodeDescription');
+
     const onConstraintChange = () => {
       const newConstraintStates = produce(constraintStates, draftConstraintStates => {
         const changedState = getNextConstraintState(
@@ -248,7 +250,12 @@ function makeRenderNode(
     return (
       <div className={containerClassName}>
         <span onClick={onConstraintChange} className={constraintClassName}></span>
-        <span>{node.name} ({node.abbrev})</span>
+        <span className={descriptionClassName}>
+          {node.name}
+          <code>
+            ({node.abbrev})
+          </code>
+        </span>
       </div>
     );
   }
