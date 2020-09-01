@@ -170,6 +170,18 @@ function PhyleticExpressionParameter({
           />
         </div>
       </div>
+      <div className={cxPhyleticExpression('--IconLegend')}>
+        <div className={cxPhyleticExpression('--IconLegendHeader')}>
+          Key:
+        </div>
+        <div className={cxPhyleticExpression('--IconLegendContents')}>
+          <ConstraintIcon constraintType="free" /> = no constraints |
+          <ConstraintIcon constraintType="include-all" /> = must be in group |
+          <ConstraintIcon constraintType="include-at-least-one" /> = at least one subtaxon must be in group |
+          <ConstraintIcon constraintType="exclude" /> = must not be in group |
+          <ConstraintIcon constraintType="mixed" /> = mixture of constraints
+        </div>
+      </div>
       <CheckboxTree
         tree={phyleticExpressionUiTree}
         getNodeId={getNodeId}

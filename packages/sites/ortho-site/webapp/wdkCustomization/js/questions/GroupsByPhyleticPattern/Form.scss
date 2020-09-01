@@ -9,6 +9,31 @@
       }
     }
 
+    .PhyleticExpression--IconLegend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      border: 0.0625rem solid black;
+      padding: 0.5em;
+      margin: 1em 0;
+
+      .PhyleticExpression--ConstraintIcon {
+        margin-left: 0.25em;
+      }
+
+      &Header {
+        margin-right: 0.5em;
+
+        font-weight: bold;
+      }
+
+      &Content {
+        display: flex;
+        align-items: center;
+      }
+    }
+
     .PhyleticExpression--ConstraintIcon {
       &__free {
         content: url('~ortho-images/dc.gif');
