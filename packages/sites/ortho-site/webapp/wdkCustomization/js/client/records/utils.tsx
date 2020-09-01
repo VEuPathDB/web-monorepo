@@ -3,7 +3,12 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 import { curry, orderBy } from 'lodash'
 
-import { AttributeField, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
+import {
+  AttributeField,
+  AttributeValue,
+  LinkAttributeValue,
+  TableValue
+} from 'wdk-client/Utils/WdkModel';
 
 import { PfamDomain } from '../components/pfam-domains/PfamDomain';
 import { Domain } from '../components/pfam-domains/PfamDomainArchitecture';
@@ -33,6 +38,9 @@ export const PFAM_DOMAINS_ATTRIBUTE_FIELD: AttributeField = {
   truncateTo: 100,
   formats: []
 };
+
+const COUNT_ATTRIBUTE_NAME = 'count';
+const ABBREV_ATTRIBUTE_NAME = 'abbrev;'
 
 interface PseudoAttributeSpec {
   name: string;
@@ -125,4 +133,26 @@ export function extractPfamDomain(row: Record<string, AttributeValue>): Domain[]
         }
       ]
     : [];
+}
+
+export function taxonCountsTableValueToMap(taxonCountsTableValue: TableValue) {
+  return taxonCountsTableValue.reduce(
+    (counts, countRow) => {
+      const abbrevValue = countRow[ABBREV_ATTRIBUTE_NAME];
+      const countValue = countRow[COUNT_ATTRIBUTE_NAME];
+
+      if (typeof abbrevValue !== 'string') {
+        throw new Error('Encountered a non-string "abbrev" attribute for a TaxonCounts row.');
+      }
+
+      if (typeof countValue !== 'string') {
+        throw new Error('Encountered a non-string "count" attribute for a TaxonCounts row.');
+      }
+
+      counts[abbrevValue] = Number(countValue);
+
+      return counts;
+    },
+    {} as Record<string, number>
+  );
 }

@@ -23,6 +23,7 @@ import {
   makeDomainAccessionLink,
   makePfamLegendMarkup,
   makeSourceAccessionLink,
+  taxonCountsTableValueToMap,
   transformAttributeFieldsUsingSpecs
 } from './utils'
 
@@ -184,15 +185,15 @@ const RecordTable_PfamDomainGraphic = makeCommonRecordTableWrapper(makePfamsGrap
 const RecordTable_PfamDomainDetails = makeCommonRecordTableWrapper(makePfamsDetailsAttributeFields, makePfamsDetailsTableRow);
 const RecordTable_ProteinDomainLocations = makeCommonRecordTableWrapper(makeProteinDomainLocationAttributeFields, makeProteinDomainLocationsTableRow);
 
-function RecordTable_TaxonCounts(props: WrappedComponentProps<RecordTableProps>) {
+function RecordTable_TaxonCounts({ value }: WrappedComponentProps<RecordTableProps>) {
   const selectionConfig = useMemo(
     () => ({ selectable: false } as const),
     []
   );
 
   const speciesCounts = useMemo(
-    () => ({}),
-    []
+    () => taxonCountsTableValueToMap(value),
+    [ value ]
   );
 
   const taxonUiMetadata = useTaxonUiMetadata();
