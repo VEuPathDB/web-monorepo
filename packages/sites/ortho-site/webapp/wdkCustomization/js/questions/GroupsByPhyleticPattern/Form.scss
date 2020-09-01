@@ -2,6 +2,29 @@
   &GroupsByPhyleticPattern {
     max-width: 110em;
 
+    .PhyleticExpression--ConstraintIcon {
+      &__free {
+        content: url('~ortho-images/dc.gif');
+      }
+
+      &__include-at-least-one {
+        content: url('~ortho-images/maybe.gif');
+      }
+
+      &__include-all {
+        content: url('~ortho-images/yes.gif');
+      }
+
+      &__exclude {
+        content: url('~ortho-images/no.gif');
+      }
+
+      &__mixed {
+        content: url('~ortho-images/unk.gif');
+        margin-right: 2px;
+      }
+    }
+
     .PhyleticExpression--Node {
       display: flex;
       align-items: center;
@@ -14,27 +37,6 @@
 
       &Constraint {
         cursor: pointer;
-
-        &__free {
-          content: url('~ortho-images/dc.gif');
-        }
-
-        &__include-at-least-one {
-          content: url('~ortho-images/maybe.gif');
-        }
-
-        &__include-all {
-          content: url('~ortho-images/yes.gif');
-        }
-
-        &__exclude {
-          content: url('~ortho-images/no.gif');
-        }
-
-        &__mixed {
-          content: url('~ortho-images/unk.gif');
-          margin-right: 2px;
-        }
       }
 
       &Description {
@@ -59,6 +61,22 @@
           margin-left: 0;
         }
       }
+    }
+
+    .wdk-CheckboxTree {
+      position: relative;
+      font-size: 1.1em;
+
+      &Links {
+        position: absolute;
+        left: 8em;
+        top: 0.5em;
+        z-index: 1;
+      }
+    }
+
+    .wdk-CheckboxTree > .wdk-CheckboxTreeList > .wdk-CheckboxTreeItem > .wdk-CheckboxTreeNodeWrapper > i {
+      display: none;
     }
 
     .wdk-CheckboxTreeItem .wdk-CheckboxTreeNodeWrapper:hover {

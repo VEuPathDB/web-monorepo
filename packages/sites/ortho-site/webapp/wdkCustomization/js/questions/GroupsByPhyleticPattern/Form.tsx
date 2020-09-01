@@ -104,15 +104,21 @@ function PhyleticExpressionParameter({
   submitting,
   updatePhyleticExpressionParam
 }: PhyleticExpressionParameterProps) {
-  const [ expandedNodes, setExpandedNodes ] = useState([] as string[]);
+  const [ expandedNodes, setExpandedNodes ] = useState(
+    () => makeInitialExpandedNodes(phyleticExpressionUiTree)
+  );
+
+  const onExpansionChange = useCallback((newExpandedIds: string[]) => {
+    setExpandedNodes(
+      !newExpandedIds.includes(phyleticExpressionUiTree.abbrev)
+        ? [ phyleticExpressionUiTree.abbrev, ...newExpandedIds ]
+        : newExpandedIds
+    );
+  }, [ phyleticExpressionUiTree ]);
 
   const [ constraintStates, setConstraintStates ] = useState(
     () => makeInitialConstraintStates(phyleticExpressionUiTree)
   );
-
-  useEffect(() => {
-    setConstraintStates(makeInitialConstraintStates(phyleticExpressionUiTree));
-  }, [ phyleticExpressionUiTree ]);
 
   const renderNode = useMemo(
     () => makeRenderNode(
@@ -141,7 +147,7 @@ function PhyleticExpressionParameter({
         tree={phyleticExpressionUiTree}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
-        onExpansionChange={setExpandedNodes}
+        onExpansionChange={onExpansionChange}
         shouldExpandOnClick={false}
         expandedList={expandedNodes}
         renderNode={renderNode}
@@ -187,6 +193,24 @@ function makePhyleticExpressionUiTree(taxonTree: TaxonTree) {
   }
 }
 
+function makeInitialExpandedNodes(phyleticExpressionUiTree: PhyleticExpressionUiTree) {
+  const initialExpandedNodes = [] as string[];
+
+  _traverse(phyleticExpressionUiTree, 0, 1);
+
+  return initialExpandedNodes;
+
+  function _traverse(node: PhyleticExpressionUiTree, depth: number, maxDepth: number) {
+    if (depth <= maxDepth) {
+      initialExpandedNodes.push(getNodeId(node));
+
+      node.children.forEach(child => {
+        _traverse(child, depth + 1, maxDepth);
+      });
+    }
+  }
+}
+
 function makeInitialConstraintStates(phyleticExpressionUiTree: PhyleticExpressionUiTree) {
   return foldStructure(
     (constraintStates: ConstraintStates, node: PhyleticExpressionUiTree) => {
@@ -219,10 +243,7 @@ function makeRenderNode(
       node.species && 'species'
     );
 
-    const constraintClassName = cxPhyleticExpression(
-      '--NodeConstraint',
-      constraintStates[node.abbrev]
-    );
+    const constraintClassName = cxPhyleticExpression('--NodeConstraint');
 
     const descriptionClassName = cxPhyleticExpression('--NodeDescription');
 
@@ -249,7 +270,11 @@ function makeRenderNode(
 
     return (
       <div className={containerClassName}>
-        <span onClick={onConstraintChange} className={constraintClassName}></span>
+        <ConstraintIcon
+          constraintType={constraintStates[node.abbrev]}
+          containerClassName={constraintClassName}
+          onClick={onConstraintChange}
+        />
         <span className={descriptionClassName}>
           {node.name}
           <code>
@@ -259,6 +284,31 @@ function makeRenderNode(
       </div>
     );
   }
+}
+
+interface ConstraintIconProps {
+  constraintType: ConstraintState;
+  containerClassName?: string;
+  onClick?: () => void;
+}
+
+function ConstraintIcon({
+  constraintType,
+  containerClassName,
+  onClick
+}: ConstraintIconProps) {
+  const baseClassName = cxPhyleticExpression(
+    '--ConstraintIcon',
+    constraintType
+  );
+
+  const className = containerClassName == null
+    ? baseClassName
+    : `${containerClassName} ${baseClassName}`;
+
+  return (
+    <span className={className} onClick={onClick}></span>
+  );
 }
 
 function getNextConstraintState(currentState: ConstraintState, isSpecies: boolean): HomogeneousConstraintState {
