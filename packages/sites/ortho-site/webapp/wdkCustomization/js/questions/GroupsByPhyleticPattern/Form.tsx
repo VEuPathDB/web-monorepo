@@ -32,6 +32,15 @@ export function Form(props: Props) {
     [ taxonUiMetadata ]
   );
 
+  const updatePhyleticPatternParam = useCallback((newParamValue: string) => {
+    props.eventHandlers.updateParamValue({
+      searchName: props.state.question.urlSegment,
+      parameter: props.state.question.parametersByName[PHYLETIC_EXPRESSION_PARAM_NAME],
+      paramValues: props.state.paramValues,
+      paramValue: newParamValue
+    });
+  }, [ props.eventHandlers, props.state.question, props.state.paramValues ]);
+
   const renderParamGroup = useCallback((group: ParameterGroup, formProps: Props) => {
     return (
       <div key={group.name} className={cxDefaultQuestionForm('ParameterList')}>
@@ -42,12 +51,13 @@ export function Form(props: Props) {
             : <PhyleticExpressionParameter
                 phyleticExpressionTextField={formProps.parameterElements[PHYLETIC_EXPRESSION_PARAM_NAME]}
                 phyleticExpressionUiTree={phyleticExpressionUiTree}
+                updatePhyleticPatternParam={updatePhyleticPatternParam}
               />
         }
         </div>
       </div>
     );
-  }, [ phyleticExpressionUiTree ]);
+  }, [ phyleticExpressionUiTree, updatePhyleticPatternParam ]);
 
   return (
     <EbrcDefaultQuestionForm
@@ -61,6 +71,7 @@ export function Form(props: Props) {
 interface PhyleticExpressionParameterProps {
   phyleticExpressionTextField: React.ReactNode;
   phyleticExpressionUiTree: PhyleticExpressionUiTree;
+  updatePhyleticPatternParam: (newParamValue: string) => void;
 }
 
 interface PhyleticExpressionUiTree extends TaxonTree {
@@ -81,7 +92,8 @@ type ConstraintState = HomogeneousConstraintState | 'mixed';
 
 function PhyleticExpressionParameter({
   phyleticExpressionTextField,
-  phyleticExpressionUiTree
+  phyleticExpressionUiTree,
+  updatePhyleticPatternParam
 }: PhyleticExpressionParameterProps) {
   const [ expandedNodes, setExpandedNodes ] = useState([] as string[]);
 
@@ -94,8 +106,12 @@ function PhyleticExpressionParameter({
   }, [ phyleticExpressionUiTree ]);
 
   const renderNode = useMemo(
-    () => makeRenderNode(constraintStates, setConstraintStates),
-    [ constraintStates ]
+    () => makeRenderNode(
+      constraintStates,
+      setConstraintStates,
+      updatePhyleticPatternParam
+    ),
+    [ constraintStates, updatePhyleticPatternParam ]
   );
 
   console.log(phyleticExpressionUiTree);
@@ -175,7 +191,8 @@ function getNodeChildren(node: PhyleticExpressionUiTree) {
 
 function makeRenderNode(
   constraintStates: ConstraintStates,
-  setConstraintStates: (newConstraintStates: ConstraintStates) => void
+  setConstraintStates: (newConstraintStates: ConstraintStates) => void,
+  updatePhyleticPatternParam: (newParamValue: string) => void
 ) {
   return function(node: PhyleticExpressionUiTree, path: number[] | undefined) {
     const containerClassName = cxPhyleticExpression(
