@@ -8,7 +8,7 @@ import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { foldStructure, mapStructure } from 'wdk-client/Utils/TreeUtils';
 import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
-import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Props, SubmitButton } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
@@ -45,15 +45,18 @@ export function Form(props: Props) {
     return (
       <div key={group.name} className={cxDefaultQuestionForm('ParameterList')}>
         <div className={cxDefaultQuestionForm('ParameterControl')}>
-        {
-          phyleticExpressionUiTree == null
-            ? <Loading />
-            : <PhyleticExpressionParameter
-                phyleticExpressionTextField={formProps.parameterElements[PHYLETIC_EXPRESSION_PARAM_NAME]}
-                phyleticExpressionUiTree={phyleticExpressionUiTree}
-                updatePhyleticExpressionParam={updatePhyleticExpressionParam}
-              />
-        }
+          {
+            phyleticExpressionUiTree == null
+              ? <Loading />
+              : <PhyleticExpressionParameter
+                  phyleticExpressionTextField={formProps.parameterElements[PHYLETIC_EXPRESSION_PARAM_NAME]}
+                  phyleticExpressionUiTree={phyleticExpressionUiTree}
+                  submissionMetadata={formProps.submissionMetadata}
+                  submitButtonText={formProps.submitButtonText}
+                  submitting={formProps.state.submitting}
+                  updatePhyleticExpressionParam={updatePhyleticExpressionParam}
+                />
+          }
         </div>
       </div>
     );
@@ -71,6 +74,9 @@ export function Form(props: Props) {
 interface PhyleticExpressionParameterProps {
   phyleticExpressionTextField: React.ReactNode;
   phyleticExpressionUiTree: PhyleticExpressionUiTree;
+  submissionMetadata: Props['submissionMetadata'];
+  submitButtonText: Props['submitButtonText'];
+  submitting: Props['state']['submitting'];
   updatePhyleticExpressionParam: (newParamValue: string) => void;
 }
 
@@ -93,6 +99,9 @@ type ConstraintState = HomogeneousConstraintState | 'mixed';
 function PhyleticExpressionParameter({
   phyleticExpressionTextField,
   phyleticExpressionUiTree,
+  submissionMetadata,
+  submitButtonText,
+  submitting,
   updatePhyleticExpressionParam
 }: PhyleticExpressionParameterProps) {
   const [ expandedNodes, setExpandedNodes ] = useState([] as string[]);
@@ -116,8 +125,18 @@ function PhyleticExpressionParameter({
   );
 
   return (
-    <div className="PhyleticExpressionParameter">
-      {phyleticExpressionTextField}
+    <div className={cxPhyleticExpression('--Parameter')}>
+      <div className={cxPhyleticExpression('--TextField')}>
+        Expression:
+        {phyleticExpressionTextField}
+        <div className={cxPhyleticExpression('--SubmitButtonContainer')}>
+          <SubmitButton
+            submissionMetadata={submissionMetadata}
+            submitButtonText={submitButtonText}
+            submitting={submitting}
+          />
+        </div>
+      </div>
       <CheckboxTree
         tree={phyleticExpressionUiTree}
         getNodeId={getNodeId}
