@@ -115,9 +115,6 @@ function PhyleticExpressionParameter({
     [ constraintStates, phyleticExpressionUiTree, updatePhyleticExpressionParam ]
   );
 
-  console.log(phyleticExpressionUiTree);
-  console.log(constraintStates);
-
   return (
     <div className="PhyleticExpressionParameter">
       {phyleticExpressionTextField}
