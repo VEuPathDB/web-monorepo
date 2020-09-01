@@ -30,7 +30,7 @@ import {
   makeSourceAccessionLink,
   taxonCountsTableValueToMap,
   transformAttributeFieldsUsingSpecs
-} from './utils'
+} from 'ortho-client/records/utils';
 
 import './GroupRecordClasses.GroupRecordClass.scss';
 

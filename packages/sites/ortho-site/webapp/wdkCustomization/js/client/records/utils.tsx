@@ -13,7 +13,7 @@ import {
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import { Domain } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 
-import { RecordTableProps, WrappedComponentProps } from './Types';
+import { RecordTableProps, WrappedComponentProps } from 'ortho-client/records/Types';
 
 export const ACCESSION_ATTRIBUTE_NAME = 'accession';
 export const DOMAIN_START_ATTRIBUTE_NAME = 'start_min';
