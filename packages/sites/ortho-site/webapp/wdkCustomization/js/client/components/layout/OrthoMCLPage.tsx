@@ -238,13 +238,13 @@ function useHeaderMenuItems() {
         items: [
           {
             key: 'genome-statistics',
-            display: 'Genome Statistics - TODO',
+            display: 'Genome Statistics',
             type: 'reactRoute',
             url: '/genome-statistics'
           },
           {
             key: 'genome-sources',
-            display: 'Genome Sources - TODO',
+            display: 'Genome Sources',
             type: 'reactRoute',
             url: '/genome-sources'
           }
