@@ -16,7 +16,9 @@ import {
   makeInitialExpandedNodes
 } from 'ortho-client/utils/taxons';
 
-const cxPhyleticDistributionNode = makeClassNameHelper('PhyleticDistributionNode');
+import './PhyleticDistributionCheckbox';
+
+const cx = makeClassNameHelper('PhyleticDistributionCheckbox');
 
 interface Props {
   selectionConfig: SelectionConfig;
@@ -48,24 +50,26 @@ export function PhyleticDistributionCheckbox({
   );
 
   return (
-    <CheckboxTree
-      tree={phyleticDistributionUiTree}
-      getNodeId={getTaxonNodeId}
-      getNodeChildren={getNodeChildren}
-      onExpansionChange={setExpandedNodes}
-      shouldExpandOnClick={false}
-      expandedList={expandedNodes}
-      renderNode={renderNode}
-      isMultiPick={selectionConfig.selectable}
-      isSelectable={selectionConfig.selectable}
-      onSelectionChange={
-        selectionConfig.selectable
-          ? selectionConfig.onSpeciesSelected
-          : undefined
-      }
-      showRoot
-      linksPosition={LinksPosition.Top}
-    />
+    <div className={cx()}>
+      <CheckboxTree
+        tree={phyleticDistributionUiTree}
+        getNodeId={getTaxonNodeId}
+        getNodeChildren={getNodeChildren}
+        onExpansionChange={setExpandedNodes}
+        shouldExpandOnClick={false}
+        expandedList={expandedNodes}
+        renderNode={renderNode}
+        isMultiPick={selectionConfig.selectable}
+        isSelectable={selectionConfig.selectable}
+        onSelectionChange={
+          selectionConfig.selectable
+            ? selectionConfig.onSpeciesSelected
+            : undefined
+        }
+        showRoot
+        linksPosition={LinksPosition.Top}
+      />
+    </div>
   );
 }
 
@@ -95,15 +99,15 @@ export function makePhyleticDistributionUiTree(
 
 function renderNode(phyleticDistributionUiTree: PhyleticDistributionUiTree) {
   return (
-    <div className={cxPhyleticDistributionNode('')}>
-      <span className={cxPhyleticDistributionNode('--Name')}>
+    <div className={cx('--Node')}>
+      <span className={cx('--NodeName')}>
         {phyleticDistributionUiTree.name}
         &nbsp;
-        <code className={cxPhyleticDistributionNode('--Abbrev')}>
+        <code className={cx('--NodeAbbrev')}>
           ({phyleticDistributionUiTree.abbrev})
         </code>
       </span>
-      <span className={cxPhyleticDistributionNode('--Count')}>
+      <span className={cx('--NodeCount')}>
         {phyleticDistributionUiTree.speciesCount}
       </span>
     </div>
