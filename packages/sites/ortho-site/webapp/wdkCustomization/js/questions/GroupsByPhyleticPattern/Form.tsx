@@ -17,15 +17,13 @@ import {
   PhyleticExpressionUiTree,
   cxPhyleticExpression,
   getNextConstraintState,
-  getNodeChildren,
-  getNodeId,
   makeInitialConstraintStates,
-  makeInitialExpandedNodes,
   makePhyleticExpression,
   makePhyleticExpressionUiTree,
   updateChildConstraintStates,
   updateParentConstraintStates
 } from 'ortho-client/utils/phyleticPattern';
+import { getTaxonNodeId, makeInitialExpandedNodes } from 'ortho-client/utils/taxons';
 
 import './Form.scss';
 
@@ -179,7 +177,7 @@ function PhyleticExpressionParameter({
       </div>
       <CheckboxTree
         tree={phyleticExpressionUiTree}
-        getNodeId={getNodeId}
+        getNodeId={getTaxonNodeId}
         getNodeChildren={getNodeChildren}
         onExpansionChange={onExpansionChange}
         shouldExpandOnClick={false}
@@ -246,6 +244,10 @@ function makeRenderNode(
       </div>
     );
   }
+}
+
+function getNodeChildren(node: PhyleticExpressionUiTree) {
+  return node.children;
 }
 
 interface ConstraintIconProps {

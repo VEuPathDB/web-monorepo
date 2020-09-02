@@ -23,14 +23,6 @@ export type ConstraintState = HomogeneousConstraintState | 'mixed';
 
 export type ConstraintStates = Record<string, ConstraintState>;
 
-export function getNodeId(node: PhyleticExpressionUiTree) {
-  return node.abbrev;
-}
-
-export function getNodeChildren(node: PhyleticExpressionUiTree) {
-  return node.children;
-}
-
 export function makePhyleticExpressionUiTree(taxonTree: TaxonTree) {
   const phyleticExpressionUiTree = mapStructure(
     (node: TaxonTree, mappedChildren: PhyleticExpressionUiTree[]) => ({
@@ -63,24 +55,6 @@ export function makePhyleticExpressionUiTree(taxonTree: TaxonTree) {
     node.children.forEach(child => {
       _addParentRefs(child, node);
     });
-  }
-}
-
-export function makeInitialExpandedNodes(phyleticExpressionUiTree: PhyleticExpressionUiTree) {
-  const initialExpandedNodes = [] as string[];
-
-  _traverse(phyleticExpressionUiTree, 0, 1);
-
-  return initialExpandedNodes;
-
-  function _traverse(node: PhyleticExpressionUiTree, depth: number, maxDepth: number) {
-    if (depth <= maxDepth) {
-      initialExpandedNodes.push(getNodeId(node));
-
-      node.children.forEach(child => {
-        _traverse(child, depth + 1, maxDepth);
-      });
-    }
   }
 }
 
