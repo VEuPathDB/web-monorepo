@@ -4,6 +4,7 @@ import { orderBy } from 'lodash';
 
 import { CheckboxTree } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
 
 import { PhyleticDistributionUiTree,
@@ -14,6 +15,8 @@ import {
   getTaxonNodeId,
   makeInitialExpandedNodes
 } from 'ortho-client/utils/taxons';
+
+const cxPhyleticDistributionNode = makeClassNameHelper('PhyleticDistributionNode');
 
 interface Props {
   selectionConfig: SelectionConfig;
@@ -52,6 +55,7 @@ export function PhyleticDistributionCheckbox({
       onExpansionChange={setExpandedNodes}
       shouldExpandOnClick={false}
       expandedList={expandedNodes}
+      renderNode={renderNode}
       isMultiPick={selectionConfig.selectable}
       isSelectable={selectionConfig.selectable}
       onSelectionChange={
@@ -89,3 +93,19 @@ export function makePhyleticDistributionUiTree(
   );
 }
 
+function renderNode(phyleticDistributionUiTree: PhyleticDistributionUiTree) {
+  return (
+    <div className={cxPhyleticDistributionNode('')}>
+      <span className={cxPhyleticDistributionNode('--Name')}>
+        {phyleticDistributionUiTree.name}
+        &nbsp;
+        <code className={cxPhyleticDistributionNode('--Abbrev')}>
+          ({phyleticDistributionUiTree.abbrev})
+        </code>
+      </span>
+      <span className={cxPhyleticDistributionNode('--Count')}>
+        {phyleticDistributionUiTree.speciesCount}
+      </span>
+    </div>
+  );
+}
