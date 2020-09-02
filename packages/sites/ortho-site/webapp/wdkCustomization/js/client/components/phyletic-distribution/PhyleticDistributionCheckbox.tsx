@@ -6,7 +6,14 @@ import { CheckboxTree } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
 
-import { TaxonTree, getTaxonNodeId, makeInitialExpandedNodes } from 'ortho-client/utils/taxons';
+import { PhyleticDistributionUiTree,
+  getNodeChildren
+} from 'ortho-client/utils/phyleticDistribution';
+import {
+  TaxonTree,
+  getTaxonNodeId,
+  makeInitialExpandedNodes
+} from 'ortho-client/utils/taxons';
 
 interface Props {
   selectionConfig: SelectionConfig;
@@ -22,11 +29,6 @@ type SelectionConfig =
       selectable: true,
       onSpeciesSelected: (selection: string[]) => void;
     };
-
-interface PhyleticDistributionUiTree extends TaxonTree {
-  children: PhyleticDistributionUiTree[];
-  speciesCount: number;
-}
 
 export function PhyleticDistributionCheckbox({
   selectionConfig,
@@ -87,6 +89,3 @@ export function makePhyleticDistributionUiTree(
   );
 }
 
-function getNodeChildren(node: PhyleticDistributionUiTree) {
-  return node.children;
-}

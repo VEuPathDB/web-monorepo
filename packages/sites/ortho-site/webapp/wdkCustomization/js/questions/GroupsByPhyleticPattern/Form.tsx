@@ -17,6 +17,7 @@ import {
   PhyleticExpressionUiTree,
   cxPhyleticExpression,
   getNextConstraintState,
+  getNodeChildren,
   makeInitialConstraintStates,
   makePhyleticExpression,
   makePhyleticExpressionUiTree,
@@ -244,10 +245,6 @@ function makeRenderNode(
       </div>
     );
   }
-}
-
-function getNodeChildren(node: PhyleticExpressionUiTree) {
-  return node.children;
 }
 
 interface ConstraintIconProps {

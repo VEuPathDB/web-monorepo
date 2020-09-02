@@ -23,6 +23,10 @@ export type ConstraintState = HomogeneousConstraintState | 'mixed';
 
 export type ConstraintStates = Record<string, ConstraintState>;
 
+export function getNodeChildren(node: PhyleticExpressionUiTree) {
+  return node.children;
+}
+
 export function makePhyleticExpressionUiTree(taxonTree: TaxonTree) {
   const phyleticExpressionUiTree = mapStructure(
     (node: TaxonTree, mappedChildren: PhyleticExpressionUiTree[]) => ({
