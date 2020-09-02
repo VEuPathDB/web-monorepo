@@ -1,3 +1,5 @@
+import React from 'react';
+
 export type EdgeType = 'O' | 'C' | 'P' | 'L' | 'M' | 'N';
 
 export const edgeTypeDisplayNames: Record<EdgeType, string> = {
@@ -61,5 +63,35 @@ export const corePeripheralLegendOrder: ProteinType[] = [
 
 export const corePeripheralLegendColors: Record<ProteinType, string> = {
   Core: '#0000FF',
-  Peripheral: '#00FF00'
+  Peripheral: '#FFFFFF'
 };
+
+export const PAGE_TITLE_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);
+
+export const EDGE_OPTIONS_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);
+
+export const NODE_OPTIONS_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);
+
+export const SEQUENCE_LIST_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);
+
+export const NODE_DETAILS_HELP = (
+  <div>
+    FILL ME IN
+  </div>
+);

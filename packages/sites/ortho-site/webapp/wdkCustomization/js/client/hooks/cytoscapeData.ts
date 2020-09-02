@@ -12,9 +12,12 @@ import {
   NodeDisplayType,
   ProteinType
 } from 'ortho-client/utils/clusterGraph';
+import { addCytoscapeClasses } from 'ortho-client/utils/cytoscapeClasses';
 import {
   makePieStyles,
   makeEdgeData,
+  makeHAlignClass,
+  makeVAlignClass,
   nodeEntryToCytoscapeData
 } from 'ortho-client/utils/cytoscapeData';
 import {
@@ -138,7 +141,14 @@ function useNodes(
         nodeEntry =>
           ({
             group: 'nodes',
-            classes: selectedNodeDisplayType,
+            classes: addCytoscapeClasses(
+              undefined,
+              [
+                selectedNodeDisplayType,
+                makeHAlignClass(Number(nodeEntry.x), layout.size),
+                makeVAlignClass(Number(nodeEntry.y), layout.size)
+              ]
+            ),
             data: (
               nodeEntryToCytoscapeData(
                 nodeEntry,

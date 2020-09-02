@@ -1,7 +1,9 @@
 .GraphControls {
-  width: 24em;
-
   grid-area: controls;
+
+  width: 24em;
+  max-height: 700px;
+  overflow-y: auto;
 
   .EValueHeader {
     margin-bottom: 0.75em;
@@ -58,7 +60,7 @@
   }
 
   .ControlSection {
-    height: 40em;
+    max-height: 40em;
     overflow-y: auto;
   }
 
@@ -100,5 +102,13 @@
     margin: 0 0 0.25em 0;
     padding-top: 0.1em;
     padding-bottom: 0.1em;
+  }
+
+  .GraphAccordionHeader > * {
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: calc(100% - 1.25em);
   }
 }

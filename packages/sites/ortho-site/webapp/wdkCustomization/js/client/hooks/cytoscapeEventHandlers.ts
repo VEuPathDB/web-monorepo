@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 
 import {
   Core,
-  EdgeSingular,
   EventObjectEdge,
   EventObjectNode
 } from 'cytoscape';
@@ -13,10 +12,8 @@ import {
   useCyEffect
 } from 'ortho-client/hooks/cytoscapeData';
 import {
-  addAndRemoveCytoscapeClasses,
   addCytoscapeClass,
-  removeCytoscapeClass,
-  removeCytoscapeClasses
+  removeCytoscapeClass
 } from 'ortho-client/utils/cytoscapeClasses';
 
 export function useUpdateHighlightedNodes(
@@ -30,9 +27,15 @@ export function useUpdateHighlightedNodes(
       draftConfig.elements.forEach(element => {
         if (element.group === 'nodes' && element.data.id != null) {
           if (highlightedNodeIdsSet.has(element.data.id)) {
-            element.classes = addCytoscapeClass(element.classes, 'highlighted');
+            element.classes = addCytoscapeClass(
+              element.classes,
+              'highlighted'
+            );
           } else {
-            element.classes = removeCytoscapeClass(element.classes, 'highlighted');
+            element.classes = removeCytoscapeClass(
+              element.classes,
+              'highlighted'
+            );
           }
         }
       });
@@ -55,15 +58,9 @@ export function useUpdateHighlightedEdge(
   
       if (highlightedEdgeId === undefined) {
         draftConfig.elements.forEach(element => {
-          element.classes = removeCytoscapeClasses(
+          element.classes = removeCytoscapeClass(
             element.classes,
-            [
-              'highlighted',
-              'left',
-              'right',
-              'top',
-              'bottom'
-            ]
+            'highlighted'
           );
         });
   
@@ -71,40 +68,21 @@ export function useUpdateHighlightedEdge(
       }
   
       const edge = cy.getElementById(highlightedEdgeId);
-  
-      const {
-        source: highlightedSourceClasses,
-        target: highlightedTargetClasses
-      } = makeHighlightedEdgeNodeClasses(edge);
-  
-      const sourceId = highlightedSourceClasses.elementId;
-      const targetId = highlightedTargetClasses.elementId;
+      const sourceId = edge.source().id();
+      const targetId = edge.target().id();
   
       draftConfig.elements.forEach(element => {
         if (element.data.id === highlightedEdgeId) {
           element.classes = addCytoscapeClass(element.classes, 'highlighted');
-        } else if (element.data.id === sourceId) {
-          element.classes = addAndRemoveCytoscapeClasses(
+        } else if (element.data.id === sourceId || element.data.id === targetId) {
+          element.classes = addCytoscapeClass(
             element.classes,
-            highlightedSourceClasses.classesToAdd,
-            highlightedSourceClasses.classesToRemove
-          );
-        } else if (element.data.id === targetId) {
-          element.classes = addAndRemoveCytoscapeClasses(
-            element.classes,
-            highlightedTargetClasses.classesToAdd,
-            highlightedTargetClasses.classesToRemove
+            'highlighted'
           );
         } else {
-          element.classes = removeCytoscapeClasses(
+          element.classes = removeCytoscapeClass(
             element.classes,
-            [
-              'highlighted',
-              'left',
-              'right',
-              'top',
-              'bottom'
-            ]
+            'highlighted'
           );
         }
       });
@@ -195,30 +173,4 @@ function makeHandleEdgeMouseOut(updateHighlightedEdge: (highlightedEdgeId: strin
 
     updateHighlightedEdge(undefined);
   }
-}
-
-function makeHighlightedEdgeNodeClasses(edge: EdgeSingular) {
-  const source = edge.source();
-  const target = edge.target();
-
-  const [ sourceHAlignClass, targetHAlignClass ] = source.position('x') <= target.position('x')
-    ? [ 'left', 'right' ]
-    : [ 'right', 'left' ];
-
-  const [ sourceVAlignClass, targetVAlignClass ] = source.position('y') <= target.position('y')
-    ? [ 'top', 'bottom' ]
-    : [ 'bottom', 'top' ];
-
-  return {
-    source: {
-      elementId: source.id(),
-      classesToAdd: [ 'highlighted', sourceHAlignClass, sourceVAlignClass ],
-      classesToRemove: [ targetHAlignClass, targetVAlignClass ]
-    },
-    target: {
-      elementId: target.id(),
-      classesToAdd: [ 'highlighted', targetHAlignClass, targetVAlignClass ],
-      classesToRemove: [ sourceHAlignClass, sourceVAlignClass ]
-    }
-  };
 }

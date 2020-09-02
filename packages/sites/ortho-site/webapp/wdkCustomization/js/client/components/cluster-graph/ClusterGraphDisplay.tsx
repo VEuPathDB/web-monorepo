@@ -2,10 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { groupBy, mapValues, orderBy } from 'lodash';
 
+import { HelpIcon, Link } from 'wdk-client/Components';
+
 import {
   EdgeType,
   EdgeTypeOption,
   NodeDisplayType,
+  PAGE_TITLE_HELP,
   ProteinType,
   corePeripheralLegendColors,
   corePeripheralLegendOrder,
@@ -26,7 +29,6 @@ import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 import { ClusterGraphCanvas } from 'ortho-client/components/cluster-graph/ClusterGraphCanvas';
 import { GraphControls } from 'ortho-client/components/cluster-graph/GraphControls';
 import { GraphInformation } from 'ortho-client/components/cluster-graph/GraphInformation';
-import { Instructions } from 'ortho-client/components/cluster-graph/Instructions';
 import { NodeDetails } from 'ortho-client/components/cluster-graph/NodeDetails';
 import { SequenceList } from 'ortho-client/components/cluster-graph/SequenceList';
 
@@ -39,12 +41,19 @@ interface Props {
   corePeripheralMap: Record<string, ProteinType>;
 }
 
+const GROUP_RECORD_URL_SEGMENT = '/record/group';
+
 export function ClusterGraphDisplay({
   corePeripheralMap,
   groupName,
   layout,
   taxonUiMetadata
 }: Props) {
+  const proteinCount = useMemo(
+    () => Object.keys(layout.nodes).length,
+    [ layout ]
+  );
+
   const {
     edgeTypeOptions,
     highlightedEdgeType,
@@ -84,10 +93,22 @@ export function ClusterGraphDisplay({
 
   return (
     <div className="ClusterGraphDisplay">
-      <Instructions
-        groupName={groupName}
-        maxEValueExp={layout.maxEvalueExp}
-      />
+      <div className="Header">
+        <h1>
+          Cluster Graph: {groupName} ({proteinCount} proteins)
+          <HelpIcon>
+            {PAGE_TITLE_HELP}
+          </HelpIcon>
+        </h1>
+        <Link
+          to={`${GROUP_RECORD_URL_SEGMENT}/${groupName}`}
+          className="BackToGroupPageLink"
+        >
+          <button type="button" className="btn">
+            Back to Group page
+          </button>
+        </Link>
+      </div>
       <GraphControls
         edgeTypeOptions={edgeTypeOptions}
         minEValueExp={minEValueExp}
@@ -374,6 +395,8 @@ function renderSimpleLegendSymbol(color: string) {
         cx="8.5"
         cy="8.5"
         fill={color}
+        stroke="black"
+        strokeWidth="1"
       />
     </svg>
   );

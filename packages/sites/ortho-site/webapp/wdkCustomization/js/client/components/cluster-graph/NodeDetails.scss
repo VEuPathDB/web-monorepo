@@ -12,6 +12,11 @@
     margin-bottom: 0.75em;
   }
 
+  .GraphInformationDataTable {
+    max-height: 20em;
+    overflow-y: auto;
+  }
+
   table.SequenceInformation {
     width: 100%;
 

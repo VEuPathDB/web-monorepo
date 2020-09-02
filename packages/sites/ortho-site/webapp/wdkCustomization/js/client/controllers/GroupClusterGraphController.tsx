@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Loading } from 'wdk-client/Components';
+import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
 
 import { useCorePeripheralMap } from 'ortho-client/hooks/dataSummary';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
@@ -13,6 +14,8 @@ interface Props {
 }
 
 export function GroupClusterGraphController({ groupName }: Props) {
+  useSetDocumentTitle(`Cluster Graph - ${groupName}`);
+
   const corePeripheralMap = useCorePeripheralMap();
 
   const layout = useOrthoService(
