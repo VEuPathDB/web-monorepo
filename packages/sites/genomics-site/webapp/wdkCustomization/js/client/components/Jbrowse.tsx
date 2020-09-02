@@ -11,6 +11,7 @@ type WindowWithJBrowse = Window & { JBrowse: any };
 export default function Jbrowse(props: Props) {
   const onLoad = useCallback((e: React.SyntheticEvent<HTMLIFrameElement, Event>) => {
     const JBrowse = (e.currentTarget.contentWindow as WindowWithJBrowse).JBrowse;
+    if (JBrowse == null) throw new Error("Could not load embedded JBrowse instance.");
     JBrowse.subscribe('/jbrowse/v1/n/navigate', function() {
       const shareURL = JBrowse.makeCurrentViewURL();
       const parser = new URL(shareURL);
