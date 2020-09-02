@@ -238,6 +238,7 @@ function makeRenderNode(
         />
         <span className={descriptionClassName}>
           {node.name}
+          &nbsp;
           <code>
             ({node.abbrev})
           </code>
