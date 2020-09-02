@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { GraphInformationDataTable } from 'ortho-client/components/cluster-graph/GraphInformationDataTable';
+import { OrthoDataTable } from 'ortho-client/components/OrthoDataTable';
 
+import { DataTableColumns } from 'ortho-client/utils/dataTables';
 import {
-  GraphInformationColumns,
   GraphInformationTabProps,
   SequenceListRow,
   layoutToSequenceListRows,
@@ -32,7 +32,7 @@ export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInfo
 
   return (
     <div className="SequenceList">
-      <GraphInformationDataTable
+      <OrthoDataTable
         rows={rows}
         columns={SEQUENCE_LIST_COLUMNS}
         columnOrder={SEQUENCE_LIST_COLUMN_ORDER}
@@ -43,7 +43,7 @@ export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInfo
   );
 }
 
-const SEQUENCE_LIST_COLUMNS: GraphInformationColumns<SequenceListRow, 'accession' | 'taxon' | 'length' | 'description'> = {
+const SEQUENCE_LIST_COLUMNS: DataTableColumns<SequenceListRow, 'accession' | 'taxon' | 'length' | 'description'> = {
   accession: {
     key: 'accession',
     name: 'Accession',

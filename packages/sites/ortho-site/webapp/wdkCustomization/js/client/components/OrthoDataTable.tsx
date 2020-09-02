@@ -6,25 +6,25 @@ import { RealTimeSearchBox } from 'wdk-client/Components';
 import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
 
 import {
-  GraphInformationColumnKey,
-  GraphInformationColumns,
-  GraphInformationSortObject
-} from 'ortho-client/utils/graphInformation';
+  DataTableColumnKey,
+  DataTableColumns,
+  DataTableSortObject
+} from 'ortho-client/utils/dataTables';
 
-interface Props<R, C extends GraphInformationColumnKey<R>> {
+interface Props<R, C extends DataTableColumnKey<R>> {
   rows: R[];
-  columns: GraphInformationColumns<R, C>;
+  columns: DataTableColumns<R, C>;
   columnOrder: readonly C[];
   onRowMouseOver?: (row: R) => void;
   onRowMouseOut?: (row: R) => void;
 }
 
-export function GraphInformationDataTable<R, C extends GraphInformationColumnKey<R>>(
+export function OrthoDataTable<R, C extends DataTableColumnKey<R>>(
   { rows, columns, columnOrder, onRowMouseOver, onRowMouseOut }: Props<R, C>
 ) {
   const [ searchTerm, setSearchTerm ] = useState('');
 
-  const initialSortUiState: GraphInformationSortObject<R, C> =
+  const initialSortUiState: DataTableSortObject<R, C> =
     { columnKey: columns[columnOrder[0]].key, direction: 'asc' };
   const [ sortUiState, setSortUiState ] = useState(initialSortUiState);
 
@@ -60,7 +60,7 @@ export function GraphInformationDataTable<R, C extends GraphInformationColumnKey
   );
 
   return (
-    <div className="GraphInformationDataTable">
+    <div className="OrthoDataTable">
       <Mesa state={mesaState}>
         <div className="SearchBoxContainer">
           <span>Search: </span>
@@ -75,10 +75,10 @@ export function GraphInformationDataTable<R, C extends GraphInformationColumnKey
   );
 }
 
-function makeMesaRows<R, C extends GraphInformationColumnKey<R>>(
+function makeMesaRows<R, C extends DataTableColumnKey<R>>(
   rows: Props<R, C>['rows'],
   columns: Props<R, C>['columns'],
-  sortUiState: GraphInformationSortObject<R, C>
+  sortUiState: DataTableSortObject<R, C>
 ) {
   const { columnKey: sortKey, direction: sortDirection } = sortUiState;
 
@@ -89,7 +89,7 @@ function makeMesaRows<R, C extends GraphInformationColumnKey<R>>(
     : orderBy(rows, makeOrder, sortDirection);
 }
 
-function makeMesaFilteredRows<R, C extends GraphInformationColumnKey<R>>(
+function makeMesaFilteredRows<R, C extends DataTableColumnKey<R>>(
   rows: Props<R, C>['rows'],
   columns: Props<R, C>['columns'],
   columnOrder: Props<R, C>['columnOrder'],
@@ -110,24 +110,24 @@ function makeMesaFilteredRows<R, C extends GraphInformationColumnKey<R>>(
   );
 }
 
-function makeMesaColumns<R, C extends GraphInformationColumnKey<R>>(
+function makeMesaColumns<R, C extends DataTableColumnKey<R>>(
   columns: Props<R, C>['columns'],
   columnOrder: Props<R, C>['columnOrder']
 ) {
   return columnOrder.map(columnKey => columns[columnKey]);
 }
 
-function makeMesaEventHandlers<R, C extends GraphInformationColumnKey<R>>(
-  setSortUiState: (newSort: GraphInformationSortObject<R, C>) => void
+function makeMesaEventHandlers<R, C extends DataTableColumnKey<R>>(
+  setSortUiState: (newSort: DataTableSortObject<R, C>) => void
 ) {
   return {
-    onSort: ({ key }: { key: C }, direction: GraphInformationSortObject<R, C>['direction']) => {
+    onSort: ({ key }: { key: C }, direction: DataTableSortObject<R, C>['direction']) => {
       setSortUiState({ columnKey: key, direction });
     }
   };
 };
 
-function makeMesaUiState<R, C extends GraphInformationColumnKey<R>>(sort: GraphInformationSortObject<R, C>) {
+function makeMesaUiState<R, C extends DataTableColumnKey<R>>(sort: DataTableSortObject<R, C>) {
   return {
     sort
   };

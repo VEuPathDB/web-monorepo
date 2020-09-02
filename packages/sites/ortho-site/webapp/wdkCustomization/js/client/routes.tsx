@@ -4,6 +4,8 @@ import { RouteComponentProps } from 'react-router';
 
 import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 
+import { GenomeSourcesController } from 'ortho-client/controllers/GenomeSourcesController';
+import { GenomeStatisticsController } from 'ortho-client/controllers/GenomeStatisticsController';
 import { OrthoMCLHomePageController } from 'ortho-client/controllers/OrthoMCLHomePageController';
 import { GroupClusterGraphController } from 'ortho-client/controllers/GroupClusterGraphController';
 
@@ -23,6 +25,14 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
 
         return <GroupClusterGraphController groupName={groupName} />;
       }
+    },
+    {
+      path: '/genome-statistics',
+      component: GenomeStatisticsController
+    },
+    {
+      path: '/genome-sources',
+      component: GenomeSourcesController,
     },
     ...ebrcRoutes
   ];
