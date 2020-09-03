@@ -8,9 +8,19 @@ export default {
 };
 
 export const Basic = () => <Pie
-  onPlotUpdate={action('state updated')}
-  data={[{
-    labels: [ 'Foo', 'Bar', 'Baz' ],
-    values: [ 10, 2, 30 ]
-  }]}
+  //onPlotUpdate={action('state updated')}
+  data={
+    [{
+      value: 10,
+      label: 'Foo',
+    },
+    {
+      value: 2,
+      label: 'Bar',
+    },
+    {
+      value: 30,
+      label: 'Baz',
+    }]
+  }
 />
