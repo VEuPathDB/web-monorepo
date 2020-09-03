@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { orderBy } from 'lodash';
 
-import { CheckboxTree } from 'wdk-client/Components';
+import { Checkbox, CheckboxTree } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
@@ -50,6 +50,8 @@ export function PhyleticDistributionCheckbox({
     () => makeInitialExpandedNodes(taxonTree)
   );
 
+  const [ hideMissingSpecies, setHideMissingSpecies ] = useState(false);
+
   return (
     <div className={cx()}>
       <CheckboxTree
@@ -69,6 +71,16 @@ export function PhyleticDistributionCheckbox({
         }
         showRoot
         linksPosition={LinksPosition.Top}
+        additionalActions={[
+          <label className={cx('--MissingSpeciesFilter')}>
+            <Checkbox
+              value={hideMissingSpecies}
+              onChange={setHideMissingSpecies}
+            />
+            &nbsp;
+            Hide zero counts
+          </label>
+        ]}
       />
     </div>
   );
