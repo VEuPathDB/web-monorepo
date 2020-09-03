@@ -5,6 +5,7 @@ import produce from 'immer';
 import { CheckboxTree, IconAlt, Loading } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { Props, SubmitButton } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
@@ -24,7 +25,11 @@ import {
   updateChildConstraintStates,
   updateParentConstraintStates
 } from 'ortho-client/utils/phyleticPattern';
-import { getTaxonNodeId, makeInitialExpandedNodes } from 'ortho-client/utils/taxons';
+import {
+  getTaxonNodeId,
+  makeInitialExpandedNodes,
+  taxonSearchPredicate
+} from 'ortho-client/utils/taxons';
 
 import './Form.scss';
 
@@ -114,6 +119,8 @@ function PhyleticExpressionParameter({
     () => makeInitialConstraintStates(phyleticExpressionUiTree)
   );
 
+  const [ searchTerm, setSearchTerm ] = useState('');
+
   const renderNode = useMemo(
     () => makeRenderNode(
       constraintStates,
@@ -184,6 +191,12 @@ function PhyleticExpressionParameter({
         shouldExpandOnClick={false}
         expandedList={expandedNodes}
         renderNode={renderNode}
+        isSearchable
+        searchBoxPlaceholder="Type a taxonomic name"
+        searchBoxHelp={makeSearchHelpText("the taxons below")}
+        searchTerm={searchTerm}
+        onSearchTermChange={setSearchTerm}
+        searchPredicate={taxonSearchPredicate}
         showRoot
         linksPosition={LinksPosition.Top}
       />

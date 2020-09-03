@@ -96,15 +96,8 @@
     }
 
     .wdk-CheckboxTree {
-      position: relative;
       font-size: 1.1em;
-
-      &Links {
-        position: absolute;
-        left: 8em;
-        top: 0.5em;
-        z-index: 1;
-      }
+      width: 41em;
     }
 
     .wdk-CheckboxTree > .wdk-CheckboxTreeList > .wdk-CheckboxTreeItem > .wdk-CheckboxTreeNodeWrapper > i {
