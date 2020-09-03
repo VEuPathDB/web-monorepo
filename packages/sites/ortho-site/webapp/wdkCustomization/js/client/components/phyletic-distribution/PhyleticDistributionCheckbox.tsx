@@ -5,6 +5,7 @@ import { orderBy } from 'lodash';
 import { Checkbox, CheckboxTree } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import {
   mapStructure,
   pruneDescendantNodes
@@ -17,7 +18,8 @@ import {
 import {
   TaxonTree,
   getTaxonNodeId,
-  makeInitialExpandedNodes
+  makeInitialExpandedNodes,
+  taxonSearchPredicate
 } from 'ortho-client/utils/taxons';
 
 import './PhyleticDistributionCheckbox.scss';
@@ -55,6 +57,8 @@ export function PhyleticDistributionCheckbox({
 
   const [ hideMissingSpecies, setHideMissingSpecies ] = useState(false);
 
+  const [ searchTerm, setSearchTerm ] = useState('');
+
   const prunedPhyleticDistributionUiTree = useMemo(
     () => filterPhyleticDistributionUiTree(phyleticDistributionUiTree, hideMissingSpecies),
     [ phyleticDistributionUiTree, hideMissingSpecies ]
@@ -77,6 +81,12 @@ export function PhyleticDistributionCheckbox({
             ? selectionConfig.onSpeciesSelected
             : undefined
         }
+        isSearchable
+        searchBoxPlaceholder="Type a taxonomic name"
+        searchBoxHelp={makeSearchHelpText("the taxons below")}
+        searchTerm={searchTerm}
+        onSearchTermChange={setSearchTerm}
+        searchPredicate={taxonSearchPredicate}
         showRoot
         linksPosition={LinksPosition.Top}
         additionalActions={[

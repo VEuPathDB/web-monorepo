@@ -10,6 +10,7 @@ import {
   record,
   string
 } from 'wdk-client/Utils/Json';
+import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
 
 export interface BaseTaxonEntry {
   abbrev: string;
@@ -80,6 +81,10 @@ export function makeTaxonTree(taxonEntries: TaxonEntries): TaxonTree {
 
 export function getTaxonNodeId(node: TaxonTree) {
   return node.abbrev;
+}
+
+export function taxonSearchPredicate(node: TaxonTree, searchTerms: string[]) {
+  return areTermsInString(searchTerms, `${node.name} ${node.abbrev}`);
 }
 
 export function makeInitialExpandedNodes(taxonTree: TaxonTree, maxDepth: number = 1) {
