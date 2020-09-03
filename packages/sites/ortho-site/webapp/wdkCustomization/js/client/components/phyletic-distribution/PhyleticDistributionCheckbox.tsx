@@ -1,11 +1,14 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { orderBy } from 'lodash';
 
 import { Checkbox, CheckboxTree } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { mapStructure } from 'wdk-client/Utils/TreeUtils';
+import {
+  mapStructure,
+  pruneDescendantNodes
+} from 'wdk-client/Utils/TreeUtils';
 
 import {
   PhyleticDistributionUiTree,
@@ -52,10 +55,15 @@ export function PhyleticDistributionCheckbox({
 
   const [ hideMissingSpecies, setHideMissingSpecies ] = useState(false);
 
+  const prunedPhyleticDistributionUiTree = useMemo(
+    () => filterPhyleticDistributionUiTree(phyleticDistributionUiTree, hideMissingSpecies),
+    [ phyleticDistributionUiTree, hideMissingSpecies ]
+  );
+
   return (
     <div className={cx()}>
       <CheckboxTree
-        tree={phyleticDistributionUiTree}
+        tree={prunedPhyleticDistributionUiTree}
         getNodeId={getTaxonNodeId}
         getNodeChildren={getNodeChildren}
         onExpansionChange={setExpandedNodes}
@@ -86,7 +94,7 @@ export function PhyleticDistributionCheckbox({
   );
 }
 
-export function makePhyleticDistributionUiTree(
+function makePhyleticDistributionUiTree(
   speciesCounts: Record<string, number>,
   taxonTree: TaxonTree
 ) {
@@ -108,6 +116,18 @@ export function makePhyleticDistributionUiTree(
     (node: TaxonTree) => node.children,
     taxonTree
   );
+}
+
+function filterPhyleticDistributionUiTree(
+  phyleticDistributionUiTree: PhyleticDistributionUiTree,
+  hideMissingSpecies: boolean
+) {
+  return hideMissingSpecies
+    ? pruneDescendantNodes(
+        node => node.speciesCount > 0,
+        phyleticDistributionUiTree
+      )
+    : phyleticDistributionUiTree;
 }
 
 function renderNode(phyleticDistributionUiTree: PhyleticDistributionUiTree) {
