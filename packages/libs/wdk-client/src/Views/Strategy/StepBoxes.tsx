@@ -444,7 +444,7 @@ function SlotContent({
 }
 
 const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
-  const { isNested, areInputsValid, stepTree, deleteStep } = props;
+  const { isNested, areInputsValid, stepTree, deleteStep, showReviseForm } = props;
   const { step, color, primaryInput, secondaryInput } = stepTree;
 
   const [ isDetailVisible, setDetailVisibility ] = useState(false);
@@ -471,7 +471,11 @@ const stepBoxFactory = (isPreview: boolean) => (props: StepBoxProps) => {
     ? (
       <button
         type="button"
-        onClick={() => setDetailVisibility(true)}
+        onClick={
+          !step.validation.isValid && allowRevise
+            ? () => showReviseForm()
+            : () => setDetailVisibility(true)
+        }
         className={cx("--EditButton")}
       >
         <div style={{ fontSize: '.8em'}}>Edit</div>
