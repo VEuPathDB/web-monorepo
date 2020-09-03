@@ -7,7 +7,8 @@ import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
 
-import { PhyleticDistributionUiTree,
+import {
+  PhyleticDistributionUiTree,
   getNodeChildren
 } from 'ortho-client/utils/phyleticDistribution';
 import {
@@ -16,7 +17,7 @@ import {
   makeInitialExpandedNodes
 } from 'ortho-client/utils/taxons';
 
-import './PhyleticDistributionCheckbox';
+import './PhyleticDistributionCheckbox.scss';
 
 const cx = makeClassNameHelper('PhyleticDistributionCheckbox');
 
