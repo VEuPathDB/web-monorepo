@@ -140,18 +140,18 @@ function filterPhyleticDistributionUiTree(
     : phyleticDistributionUiTree;
 }
 
-function renderNode(phyleticDistributionUiTree: PhyleticDistributionUiTree) {
+function renderNode(node: PhyleticDistributionUiTree) {
   return (
-    <div className={cx('--Node')}>
+    <div className={cx('--Node', node.species && 'species')}>
       <span className={cx('--NodeName')}>
-        {phyleticDistributionUiTree.name}
+        {node.name}
         &nbsp;
         <code className={cx('--NodeAbbrev')}>
-          ({phyleticDistributionUiTree.abbrev})
+          ({node.abbrev})
         </code>
       </span>
       <span className={cx('--NodeCount')}>
-        {phyleticDistributionUiTree.speciesCount}
+        {node.speciesCount}
       </span>
     </div>
   );

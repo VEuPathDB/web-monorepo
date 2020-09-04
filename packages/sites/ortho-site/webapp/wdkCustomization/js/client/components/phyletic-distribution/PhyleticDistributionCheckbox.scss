@@ -10,6 +10,12 @@
     display: flex;
     justify-content: space-between;
     width: calc(100% - 2em);
+
+    font-weight: bold;
+
+    &__species {
+      font-weight: normal;
+    }
   }
 
   .wdk-CheckboxTreeItem .wdk-CheckboxTreeNodeWrapper:hover {
