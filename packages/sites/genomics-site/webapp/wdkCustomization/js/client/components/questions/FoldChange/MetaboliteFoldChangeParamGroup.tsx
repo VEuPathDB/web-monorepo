@@ -25,7 +25,13 @@ const metaboliteFoldChangePreAndPostParams = memoize((props: GroupProps): PreAnd
     preParameterContent: <span>with a <b>Fold change</b> >=</span>,
     parameterName: 'fold_change_compound',
     postParameterContent: null
+  },
+  {
+    preParameterContent: <span>if return only <b>Preferred Compounds</b></span>,
+    parameterName: 'is_preferred_compound',
+    postParameterContent: null
   }
+
 ]);
 
 export const MetaboliteFoldChangeParamGroup: React.FunctionComponent<GroupProps> = props => {
