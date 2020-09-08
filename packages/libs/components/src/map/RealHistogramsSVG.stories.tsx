@@ -99,7 +99,7 @@ const getSampleSizeMarkerElements = (yAxisRange: Array<number> | null) => {
 
     return (
       <RealHistogramMarkerSVG
-        key={`marker_${index}`}
+        key={bucket.val}
         //DKDK change position format
         position={[lat, long]}
         labels={labels}
@@ -181,7 +181,7 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
 
   return (
     <RealHistogramMarkerSVG
-      key={`marker_${index}`}
+      key={bucket.val}
       //DKDK change position format
       position={[lat, long]}
       labels={labels}
@@ -216,6 +216,7 @@ export const CollectionDateLocal = () => {
     height="100vh" width="100vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    nudge="geohash"
     />
   );
 }
@@ -262,7 +263,7 @@ const getIRDataMarkerElements = (yAxisRange: Array<number> | null) => {
 
     return (
       <RealHistogramMarkerSVG
-        key={`marker_${index}`}
+        key={bucket.val}
         //DKDK change position format
         position={[lat, long]}
         labels={labels}

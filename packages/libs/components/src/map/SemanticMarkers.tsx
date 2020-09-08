@@ -1,7 +1,8 @@
-import React, { ReactElement, useEffect } from "react"; //  { useState, useCallback } from "react";
+import React, { ReactElement, useEffect, useState } from "react"; //  { useState, useCallback } from "react";
 import { GeoBBox, MarkerProps, BoundsViewport } from "./Types";
 import { useLeaflet } from "react-leaflet";
 import { LatLngBounds } from 'leaflet'
+import Geohash from 'latlon-geohash';
 
 interface SemanticMarkersProps {
   onViewportChanged: (bvp: BoundsViewport) => void,
@@ -14,7 +15,7 @@ interface SemanticMarkersProps {
  * 
  * @param props 
  */
-export default function SemanticMarkers({ onViewportChanged, markers }: SemanticMarkersProps) {
+export default function SemanticMarkers({ onViewportChanged, markers, nudge }: SemanticMarkersProps) {
   const { map } = useLeaflet();
   // call the prop callback to communicate bounds and zoomLevel to outside world
   useEffect(() => {
@@ -36,7 +37,25 @@ export default function SemanticMarkers({ onViewportChanged, markers }: Semantic
     };
   }, [map, onViewportChanged]);
 
-  
+
+  // handle the nudging of markers inside their geohash rectangles
+  // (if possible)
+  const [myMarkers, setMyMarkers] = useState<ReactElement<MarkerProps>[]>([]);
+  useEffect(() => {
+    if (nudge && nudge === 'geohash') {
+      setMyMarkers(markers.map( marker => {
+	const geohash = marker.key as string;
+	const geohashCenter = Geohash.decode(geohash);
+	
+	marker.props.position[0] = geohashCenter.lat;
+	marker.props.position[1] = geohashCenter.lon;
+	
+	return marker;
+      }));
+    } else {
+      setMyMarkers(markers);
+    }
+  }, [markers]);
 
   /* also think about animating from the previous markers
      hopefully react can do that for free?  (I saw something about prevProps in lifecycle methods.)
@@ -52,7 +71,7 @@ export default function SemanticMarkers({ onViewportChanged, markers }: Semantic
 
   return (
     <>
-      {markers}
+      {myMarkers}
     </>
   );
 }
