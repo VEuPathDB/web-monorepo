@@ -115,7 +115,7 @@ const SPECIES_STATE_ORDER = [ 'free', 'include-all', 'exclude' ] as HomogeneousC
 export function updateParentConstraintStates(
   node: PhyleticExpressionUiTree,
   draftConstraintStates: ConstraintStates,
-  changedState: HomogeneousConstraintState
+  changedState: ConstraintState
 ): void {
   const parent = node.parent;
 
@@ -126,16 +126,16 @@ export function updateParentConstraintStates(
       )
     );
 
-    if (
+    const newParentState = (
       distinctChildConstraintTypes.size === 1 &&
-      changedState !== 'include-at-least-one'
-    ) {
-      draftConstraintStates[parent.abbrev] = changedState;
-    } else {
-      draftConstraintStates[parent.abbrev] = 'mixed';
-    }
+      changedState !== 'include-at-least-one'     
+    )
+      ? changedState
+      : 'mixed';
 
-    updateParentConstraintStates(parent, draftConstraintStates, changedState);
+    draftConstraintStates[parent.abbrev] = newParentState;
+
+    updateParentConstraintStates(parent, draftConstraintStates, newParentState);
   }
 }
 
