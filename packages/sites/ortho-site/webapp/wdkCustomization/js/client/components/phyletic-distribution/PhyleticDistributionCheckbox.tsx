@@ -55,7 +55,7 @@ export function PhyleticDistributionCheckbox({
     () => makeInitialExpandedNodes(taxonTree)
   );
 
-  const [ hideMissingSpecies, setHideMissingSpecies ] = useState(false);
+  const [ hideMissingSpecies, setHideMissingSpecies ] = useState(true);
 
   const [ searchTerm, setSearchTerm ] = useState('');
 
