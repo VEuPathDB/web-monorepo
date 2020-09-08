@@ -13,6 +13,7 @@ export interface BarMarkerProps extends MarkerProps {
   yRange: [number, number] | [] | null,
   type: 'bar' | 'line',
   library: 'highcharts' | 'plotly',
+  colors: string[],
 }
 /**
  * A marker containing a small bar chart
@@ -29,7 +30,16 @@ export default function BarMarker(props: BarMarkerProps) {
   // Render the chart after the marker is rendered
   useEffect(() => {
     ReactDOM.render(
-      <BarChart labels={props.labels} values={props.values} yRange={props.yRange} width={40} height={40} type={props.type} library={props.library}></BarChart>,
+      <BarChart
+        labels={props.labels}
+        values={props.values}
+        yRange={props.yRange}
+        width={40}
+        height={40}
+        type={props.type}
+        library={props.library}
+        colors={props.colors}
+      ></BarChart>,
       document.getElementById(props.id)
     );
 
