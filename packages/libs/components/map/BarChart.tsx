@@ -10,6 +10,7 @@ interface BarChartProps {
   height: number,
   type: 'bar' | 'line',
   library: 'highcharts' | 'plotly',
+  colors: string[] | null,
 }
 
 /**
@@ -20,7 +21,9 @@ interface BarChartProps {
 export default function BarChart(props: BarChartProps) {
   let element: JSX.Element;
 
+  // Not updating plotly implementation currently
   if (props.library === 'plotly') {
+    console.log('Notice: Plotly implementation not currently being updated!');
     let typeProps;
     let yAxisProps = {};
 
@@ -33,6 +36,8 @@ export default function BarChart(props: BarChartProps) {
       typeProps = {
         type: 'scatter',
         mode: 'lines',
+        line: {shape: 'spline'},
+        fill: 'tozeroy',
       };
     }
 
@@ -86,7 +91,7 @@ export default function BarChart(props: BarChartProps) {
     if (props.type === 'bar') {
       type = 'column';
     } else {
-      type = props.type;
+      type = 'areaspline';
     }
 
     if (!(props.yRange === null || props.yRange === [])) {
@@ -94,6 +99,31 @@ export default function BarChart(props: BarChartProps) {
         min: props.yRange[0],
         max: props.yRange[1],
       }
+    }
+
+    // Construct the objects that deal with color
+    let zones;
+    let gradient;
+
+    if (props.colors !== null) {
+      zones = props.values.map((value, i) => {
+        return {
+          value: value,
+          color: props.colors[i],
+          fillColor: props.colors[i],
+        };
+      });
+      gradient = null;
+    } else {
+      zones = null;
+      gradient = {
+        linearGradient: {x1: 0, x2: 1, y1: 0, y2: 0},
+        stops: [
+            [0, '#8cbdff'], // start
+            //[0.5, '#ffffff'], // middle
+            [1, '#001b52'] // end
+        ],
+      };
     }
 
     let config = {
@@ -122,6 +152,9 @@ export default function BarChart(props: BarChartProps) {
       },
       series: [{
         data: props.values,
+        zones: zones,
+        //lineWidth: 0,
+        fillColor: gradient,
       }],
       credits: {
         enabled: false,
@@ -136,7 +169,13 @@ export default function BarChart(props: BarChartProps) {
             enabled: false,
           },
           enableMouseTracking: false,
-        }
+          lineWidth: 0,
+          zoneAxis: 'x',
+          zones: zones,
+        },
+        // area: {
+        //   fillColor: gradient,
+        // },
       },
     }
 
