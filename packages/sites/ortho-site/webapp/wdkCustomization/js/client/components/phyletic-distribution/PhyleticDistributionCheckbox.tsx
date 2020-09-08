@@ -87,7 +87,6 @@ export function PhyleticDistributionCheckbox({
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
         searchPredicate={taxonSearchPredicate}
-        showRoot
         linksPosition={LinksPosition.Top}
         additionalActions={[
           <label className={cx('--MissingSpeciesFilter')}>
