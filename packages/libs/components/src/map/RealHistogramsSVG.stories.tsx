@@ -216,10 +216,30 @@ export const CollectionDateLocal = () => {
     height="100vh" width="100vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    />
+  );
+}
+
+export const CollectionDateLocalNudged = () => {
+  //DKDK set global or local
+  // const yAxisRange: Array<number> | null = [0, 1104]
+  const yAxisRange: Array<number> | null = []
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getCollectionDateMarkerElements(yAxisRange));
+  }, [setMarkerElements])
+
+  return (
+    <MapVEuMap
+    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    height="100vh" width="100vw"
+    onViewportChanged={handleViewportChanged}
+    markers={markerElements}
     nudge="geohash"
     />
   );
 }
+
 
 export const CollectionDateGlobal = () => {
   //DKDK set global or local

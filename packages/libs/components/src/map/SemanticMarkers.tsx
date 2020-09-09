@@ -38,18 +38,53 @@ export default function SemanticMarkers({ onViewportChanged, markers, nudge }: S
   }, [map, onViewportChanged]);
 
 
-  // handle the nudging of markers inside their geohash rectangles
-  // (if possible)
+  // Nudge markers inside their geohash rectangle (if possible)
   const [myMarkers, setMyMarkers] = useState<ReactElement<MarkerProps>[]>([]);
   useEffect(() => {
-    if (nudge && nudge === 'geohash') {
+    if (nudge && nudge === 'geohash' && map && map.options && map.options.crs) {
+
+      const zoomLevel = map.getZoom();
+      const scale = map.options.crs.scale(zoomLevel)/256;
+
       setMyMarkers(markers.map( marker => {
+	const markerRadius = 50; // pixels // TEMPORARILY HARDCODED - need to get it from the marker somehow?
+	// It should work with half the maximum dimension (65/2 = 35)
+	// but I suspect 'position' is not in the center of the marker icon
+	
 	const geohash = marker.key as string;
 	const geohashCenter = Geohash.decode(geohash);
-	
-	marker.props.position[0] = geohashCenter.lat;
-	marker.props.position[1] = geohashCenter.lon;
-	
+	const bounds = Geohash.bounds(geohash);
+	const markerRadius2 = markerRadius/scale;
+	let [ lat, lon ] = marker.props.position;
+
+	// bottom edge
+	if (lat - markerRadius2 < bounds.sw.lat) {
+	  // nudge it up
+	  lat = bounds.sw.lat + markerRadius2;
+	  // but don't nudge it past the center of the geohash rectangle
+	  if (lat > geohashCenter.lat) lat = geohashCenter.lat;
+	}
+	// left edge
+	if (lon - markerRadius2 < bounds.sw.lon) {
+	  lon = bounds.sw.lon + markerRadius2;
+	  if (lon > geohashCenter.lon) lon = geohashCenter.lon;
+	}
+	// top edge
+	if (lat + markerRadius2 > bounds.ne.lat) {
+	  lat = bounds.ne.lat - markerRadius2;
+	  if (lat < geohashCenter.lat) lat = geohashCenter.lat;
+	}
+	// right edge
+	if (lon + markerRadius2 > bounds.ne.lon) {
+	  lon = bounds.ne.lon - markerRadius2;
+	  if (lon < geohashCenter.lon) lon = geohashCenter.lon;
+	}
+
+	// marker.props.position is readonly, but this works
+	// are we being evil? (BobM)
+	marker.props.position[0] = lat;
+	marker.props.position[1] = lon;
+
 	return marker;
       }));
     } else {
