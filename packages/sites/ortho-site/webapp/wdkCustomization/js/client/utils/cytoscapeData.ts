@@ -157,5 +157,5 @@ export function makeHAlignClass(xCoord: number, canvasWidth: number) {
 export function makeVAlignClass(yCoord: number, canvasHeight: number) {
   return yCoord <= canvasHeight / 2
     ? 'bottom'
-    : 'top'
+    : 'top';
 }
