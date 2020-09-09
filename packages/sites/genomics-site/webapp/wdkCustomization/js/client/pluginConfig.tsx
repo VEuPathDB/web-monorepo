@@ -101,7 +101,9 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    name: 'CompoundsByFoldChange',
+    test: ({ question }) => (
+      question?.queryName === 'CompoundsByFoldChange'
+    ),
     component: CompoundsByFoldChangeForm
   },
   {
