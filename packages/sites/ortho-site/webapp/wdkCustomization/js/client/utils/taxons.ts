@@ -39,10 +39,9 @@ export const taxonEntryDecoder: Decoder<TaxonEntry> = record({
 
 export const taxonEntriesDecoder: Decoder<TaxonEntries> = objectOf(taxonEntryDecoder);
 
-export interface TaxonTree {
-  abbrev: string;
+export interface TaxonTree extends Omit<TaxonEntry, 'children'> {
   children: TaxonTree[];
-};
+}
 
 export const ROOT_TAXON_ABBREV = 'ALL';
 
@@ -70,7 +69,7 @@ export const makeTaxonTree = function(taxonEntries: TaxonEntries): TaxonTree {
     );
 
     return {
-      abbrev: entry.abbrev,
+      ...entry,
       children: orderedChildren
     };
   }
@@ -80,6 +79,7 @@ export interface TaxonUiMetadata {
   rootTaxons: Record<string, RootTaxonEntry>;
   species: Record<string, SpeciesEntry>;
   taxonOrder: string[];
+  taxonTree: TaxonTree;
 }
 
 export interface RootTaxonEntry extends TaxonEntry {
@@ -108,7 +108,8 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
   return {
     rootTaxons,
     species,
-    taxonOrder
+    taxonOrder,
+    taxonTree
   };
 
   function _traverseTaxonTree({
@@ -126,6 +127,10 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
     const newPath = taxonAbbrev === ROOT_TAXON_ABBREV ? path : [...path, taxonAbbrev];
     const taxonEntry = taxonEntries[taxonAbbrev];
 
+    if (taxonEntry == null) {
+      throw new Error(`The taxon entry for "${taxonAbbrev}" is missing.`);
+    }
+
     // A taxon is a root taxon iff its taxon entry has a group color
     if (taxonEntry.groupColor != null) {
       rootTaxons[taxonAbbrev] = {
@@ -136,15 +141,15 @@ export function makeTaxonUiMetadata(taxonEntries: TaxonEntries, taxonTree: Taxon
 
     if (taxonEntry.species) {
       if (taxonEntry.color == null) {
-        throw new Error(`Taxon entry "${taxonAbbrev}" is missing a color.`);
+        throw new Error(`The taxon entry for "${taxonAbbrev}" is missing a color.`);
       }
 
       if (groupColor == null) {
-        throw new Error(`Taxon entry "${taxonAbbrev}" was not assigned a group color.`);
+        throw new Error(`The taxon entry for "${taxonAbbrev}" was not assigned a group color.`);
       }
 
       if (rootTaxon == null) {
-        throw new Error(`Taxon entry "${taxonAbbrev}" was not assigned a root taxon.`);
+        throw new Error(`The taxon entry for "${taxonAbbrev}" was not assigned a root taxon.`);
       }
 
       species[taxonAbbrev] = {

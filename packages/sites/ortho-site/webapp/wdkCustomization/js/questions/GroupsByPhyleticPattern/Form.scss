@@ -1,0 +1,119 @@
+.wdk-QuestionForm {
+  &GroupsByPhyleticPattern {
+    max-width: 110em;
+
+    .PhyleticExpression--Instructions {
+      .wdk-Icon {
+        font-size: 1.2em;
+        color: #AAA;
+      }
+    }
+
+    .PhyleticExpression--IconLegend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1em;
+      border: 0.0625rem solid black;
+      padding: 0.5em;
+      margin: 1em 0;
+
+      .PhyleticExpression--ConstraintIcon {
+        margin-left: 0.25em;
+      }
+
+      &Header {
+        margin-right: 0.5em;
+
+        font-weight: bold;
+      }
+
+      &Content {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    .PhyleticExpression--ConstraintIcon {
+      &__free {
+        content: url('~ortho-images/dc.gif');
+      }
+
+      &__include-at-least-one {
+        content: url('~ortho-images/maybe.gif');
+      }
+
+      &__include-all {
+        content: url('~ortho-images/yes.gif');
+      }
+
+      &__exclude {
+        content: url('~ortho-images/no.gif');
+      }
+
+      &__mixed {
+        content: url('~ortho-images/unk.gif');
+        margin-right: 2px;
+      }
+    }
+
+    .PhyleticExpression--Node {
+      display: flex;
+      align-items: center;
+
+      font-weight: bold;
+
+      &__species {
+        font-weight: normal;
+      }
+
+      &Constraint {
+        cursor: pointer;
+      }
+
+      &Description {
+        margin-left: 0.25em;
+      }
+    }
+
+    .PhyleticExpression--TextField {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      input {
+        width: 80em;
+        margin: 0 2em 0 1em;
+      }
+
+      .PhyleticExpression--SubmitButtonContainer {
+        width: 160px;
+
+        button.btn {
+          margin-left: 0;
+        }
+      }
+    }
+
+    .wdk-CheckboxTree {
+      position: relative;
+      font-size: 1.1em;
+
+      &Links {
+        position: absolute;
+        left: 8em;
+        top: 0.5em;
+        z-index: 1;
+      }
+    }
+
+    .wdk-CheckboxTree > .wdk-CheckboxTreeList > .wdk-CheckboxTreeItem > .wdk-CheckboxTreeNodeWrapper > i {
+      display: none;
+    }
+
+    .wdk-CheckboxTreeItem .wdk-CheckboxTreeNodeWrapper:hover {
+      cursor: default;
+      text-decoration: none;
+    }
+  }
+}
