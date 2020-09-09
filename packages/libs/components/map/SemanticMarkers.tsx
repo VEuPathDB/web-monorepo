@@ -47,9 +47,9 @@ export default function SemanticMarkers({ onViewportChanged, markers, nudge }: S
       const scale = map.options.crs.scale(zoomLevel)/256;
 
       setMyMarkers(markers.map( marker => {
-	const markerRadius = 50; // pixels // TEMPORARILY HARDCODED - need to get it from the marker somehow?
-	// It should work with half the maximum dimension (65/2 = 35)
-	// but I suspect 'position' is not in the center of the marker icon
+	const markerRadius = 35; // pixels // TEMPORARILY HARDCODED - need to get it from the marker somehow?
+	// It should work with half the maximum dimension (50/2 = 25)
+	// but I suspect 'position' is not in the center of the marker icon?
 	
 	const geohash = marker.key as string;
 	const geohashCenter = Geohash.decode(geohash);

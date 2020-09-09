@@ -91,7 +91,7 @@ const getSampleSizeMarkerElements = (yAxisRange: Array<number> | null) => {
 
     return (
       <RealHistogramMarkerSVGnoShadow
-        key={`marker_${index}`}
+        key={bucket.val}
         //DKDK change position format
         position={[lat, long]}
         labels={labels}
@@ -126,6 +126,26 @@ export const SampleSizeLocal = () => {
     height="100vh" width="100vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    />
+  );
+}
+
+export const SampleSizeLocalNudged = () => {
+  //DKDK set global or local
+  // const yAxisRange: Array<number> | null = [0, 1104]
+  const yAxisRange: Array<number> | null = []
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getSampleSizeMarkerElements(yAxisRange));
+  }, [setMarkerElements])
+
+  return (
+    <MapVEuMap
+    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    height="100vh" width="100vw"
+    onViewportChanged={handleViewportChanged}
+    markers={markerElements}
+    nudge="geohash"
     />
   );
 }
@@ -173,7 +193,7 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
 
   return (
     <RealHistogramMarkerSVGnoShadow
-      key={`marker_${index}`}
+      key={bucket.val}
       //DKDK change position format
       position={[lat, long]}
       labels={labels}
@@ -207,6 +227,26 @@ export const CollectionDateLocal = () => {
     height="100vh" width="100vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    />
+  );
+}
+
+export const CollectionDateLocalNudged = () => {
+  //DKDK set global or local
+  // const yAxisRange: Array<number> | null = [0, 1104]
+  const yAxisRange: Array<number> | null = []
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getCollectionDateMarkerElements(yAxisRange));
+  }, [setMarkerElements])
+
+  return (
+    <MapVEuMap
+    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    height="100vh" width="100vw"
+    onViewportChanged={handleViewportChanged}
+    markers={markerElements}
+    nudge="geohash"
     />
   );
 }
@@ -254,7 +294,7 @@ const getIRDataMarkerElements = (yAxisRange: Array<number> | null) => {
 
     return (
       <RealHistogramMarkerSVGnoShadow
-        key={`marker_${index}`}
+        key={bucket.val}
         //DKDK change position format
         position={[lat, long]}
         labels={labels}
@@ -291,6 +331,27 @@ export const IRDataLocal = () => {
     />
   );
 }
+
+export const IRDataLocalNudged = () => {
+  //DKDK set global or local
+  // const yAxisRange: Array<number> | null = [0, 1104]
+  const yAxisRange: Array<number> | null = []
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getIRDataMarkerElements(yAxisRange));
+  }, [setMarkerElements])
+
+  return (
+    <MapVEuMap
+    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    height="100vh" width="100vw"
+    onViewportChanged={handleViewportChanged}
+    markers={markerElements}
+    nudge="geohash"
+    />
+  );
+}
+
 
 export const IRDataGlobal = () => {
   //DKDK set global or local
