@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react"; //  { useState, useCallback } from "react";
+import React, { ReactElement, useEffect, useState, cloneElement } from "react"; //  { useState, useCallback } from "react";
 import { GeoBBox, MarkerProps, BoundsViewport } from "./Types";
 import { useLeaflet } from "react-leaflet";
 import { LatLngBounds } from 'leaflet'
@@ -6,7 +6,8 @@ import Geohash from 'latlon-geohash';
 
 interface SemanticMarkersProps {
   onViewportChanged: (bvp: BoundsViewport) => void,
-  markers: Array<ReactElement<MarkerProps>>
+  markers: Array<ReactElement<MarkerProps>>,
+  nudge?: "geohash" | "none"
 }
 
 /**
@@ -55,7 +56,8 @@ export default function SemanticMarkers({ onViewportChanged, markers, nudge }: S
 	const geohashCenter = Geohash.decode(geohash);
 	const bounds = Geohash.bounds(geohash);
 	const markerRadius2 = markerRadius/scale;
-	let [ lat, lon ] = marker.props.position;
+	let [ lat, lon ] : number[] = marker.props.position;
+	let nudged : boolean = false;
 
 	// bottom edge
 	if (lat - markerRadius2 < bounds.sw.lat) {
@@ -63,29 +65,28 @@ export default function SemanticMarkers({ onViewportChanged, markers, nudge }: S
 	  lat = bounds.sw.lat + markerRadius2;
 	  // but don't nudge it past the center of the geohash rectangle
 	  if (lat > geohashCenter.lat) lat = geohashCenter.lat;
+	  nudged = true;
 	}
 	// left edge
 	if (lon - markerRadius2 < bounds.sw.lon) {
 	  lon = bounds.sw.lon + markerRadius2;
 	  if (lon > geohashCenter.lon) lon = geohashCenter.lon;
+	  nudged = true;
 	}
 	// top edge
 	if (lat + markerRadius2 > bounds.ne.lat) {
 	  lat = bounds.ne.lat - markerRadius2;
 	  if (lat < geohashCenter.lat) lat = geohashCenter.lat;
+	  nudged = true;
 	}
 	// right edge
 	if (lon + markerRadius2 > bounds.ne.lon) {
 	  lon = bounds.ne.lon - markerRadius2;
 	  if (lon < geohashCenter.lon) lon = geohashCenter.lon;
+	  nudged = true;
 	}
 
-	// marker.props.position is readonly, but this works
-	// are we being evil? (BobM)
-	marker.props.position[0] = lat;
-	marker.props.position[1] = lon;
-
-	return marker;
+	return nudged ? cloneElement(marker, { position: [ lat, lon ] }) : marker;
       }));
     } else {
       setMyMarkers(markers);

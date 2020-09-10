@@ -130,7 +130,7 @@ export const SampleSizeLocal = () => {
 
   return (
     <MapVEuMap
-    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
     height="100vh" width="100vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
@@ -149,7 +149,7 @@ export const SampleSizeGlobal = () => {
 
   return (
     <MapVEuMap
-    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
     height="100vh" width="100vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
@@ -212,7 +212,7 @@ export const CollectionDateLocal = () => {
 
   return (
     <MapVEuMap
-    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
     height="100vh" width="100vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
@@ -231,7 +231,7 @@ export const CollectionDateLocalNudged = () => {
 
   return (
     <MapVEuMap
-    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
     height="100vh" width="100vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
@@ -252,7 +252,7 @@ export const CollectionDateGlobal = () => {
 
   return (
     <MapVEuMap
-    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
     height="100vh" width="100vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}

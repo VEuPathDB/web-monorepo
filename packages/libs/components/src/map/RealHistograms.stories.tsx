@@ -55,7 +55,7 @@ export const SampleSize = () => {
 
   return (
     <MapVEuMap
-    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
     height="600px" width="800px"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
@@ -99,7 +99,7 @@ export const CollectionDate = () => {
 
   return (
     <MapVEuMap
-    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
     height="600px" width="800px"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
@@ -142,7 +142,7 @@ export const IRData = () => {
 
   return (
     <MapVEuMap
-    viewport={{center: [ 13.449566, -9.304301 ], zoom: 6}}
+    viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
     height="600px" width="800px"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
