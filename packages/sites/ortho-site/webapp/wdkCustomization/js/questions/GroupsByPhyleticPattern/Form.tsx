@@ -282,6 +282,20 @@ function ConstraintIcon({
     : `${containerClassName} ${baseClassName}`;
 
   return (
-    <span className={className} onClick={onClick}></span>
+    <span className={className} onClick={onClick}>
+      <IconAlt fa={getContrainstIconFaClass(constraintType)} />
+    </span>
   );
+}
+
+function getContrainstIconFaClass(constraintType: ConstraintState) {
+  if (constraintType === 'free') {
+    return 'circle';
+  } else if (constraintType === 'include-all' || constraintType === 'include-at-least-one') {
+    return 'check';
+  } else if (constraintType === 'exclude') {
+    return 'remove';
+  } else {
+    return 'asterisk';
+  }
 }
