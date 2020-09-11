@@ -3,25 +3,34 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 import { curry, groupBy, isNaN, uniqBy } from 'lodash';
 
-import { CollapsibleSection } from 'wdk-client/Components';
+import { CollapsibleSection, Loading } from 'wdk-client/Components';
 import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
 
-import { PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
+import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
+import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-distribution/PhyleticDistributionCheckbox';
 
-import { RecordAttributeSectionProps, RecordTableProps, WrappedComponentProps } from './Types';
+import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
+
+import {
+  RecordAttributeSectionProps,
+  RecordTableProps,
+  WrappedComponentProps
+} from 'ortho-client/records/Types';
 import {
   ACCESSION_ATTRIBUTE_NAME,
   DOMAIN_END_ATTRIBUTE_NAME,
   DOMAIN_START_ATTRIBUTE_NAME,
   PFAM_DOMAINS_ATTRIBUTE_FIELD,
   PFAM_LEGEND_ATTRIBUTE_FIELD,
+  TAXON_COUNTS_TABLE_NAME,
   extractPfamDomain,
   makeCommonRecordTableWrapper,
   makeDomainAccessionLink,
   makePfamLegendMarkup,
   makeSourceAccessionLink,
+  taxonCountsTableValueToMap,
   transformAttributeFieldsUsingSpecs
-} from './utils'
+} from 'ortho-client/records/utils';
 
 import './GroupRecordClasses.GroupRecordClass.scss';
 
@@ -180,6 +189,29 @@ const RecordTable_PfamDomainGraphic = makeCommonRecordTableWrapper(makePfamsGrap
 const RecordTable_PfamDomainDetails = makeCommonRecordTableWrapper(makePfamsDetailsAttributeFields, makePfamsDetailsTableRow);
 const RecordTable_ProteinDomainLocations = makeCommonRecordTableWrapper(makeProteinDomainLocationAttributeFields, makeProteinDomainLocationsTableRow);
 
+function RecordTable_TaxonCounts({ value }: WrappedComponentProps<RecordTableProps>) {
+  const selectionConfig = useMemo(
+    () => ({ selectable: false } as const),
+    []
+  );
+
+  const speciesCounts = useMemo(
+    () => taxonCountsTableValueToMap(value),
+    [ value ]
+  );
+
+  const taxonUiMetadata = useTaxonUiMetadata();
+
+  return taxonUiMetadata == null
+    ? <Loading />
+    : <PhyleticDistributionCheckbox
+        selectionConfig={selectionConfig}
+        speciesCounts={speciesCounts}
+        taxonTree={taxonUiMetadata.taxonTree}
+      />
+}
+
+
 function RecordTable_ProteinDomainArchitectures(props: WrappedComponentProps<RecordTableProps>) {
   const maxLength = useMemo(
     () => (
@@ -240,5 +272,6 @@ function makePfamDomainMarkup(rowGroup: Record<string, AttributeValue>[], maxLen
 
 const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {
   [PFAMS_TABLE_NAME]: RecordTable_PfamDomainGraphic,
-  [PROTEIN_PFAMS_TABLE_NAME]: RecordTable_ProteinDomainArchitectures
+  [PROTEIN_PFAMS_TABLE_NAME]: RecordTable_ProteinDomainArchitectures,
+  [TAXON_COUNTS_TABLE_NAME]: RecordTable_TaxonCounts
 };

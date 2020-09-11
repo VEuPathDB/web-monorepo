@@ -1,3 +1,8 @@
+.wdk-RecordContainer .wdk-DataTableContainer {
+  max-height: 50em;
+  overflow: auto;
+}
+
 .wdk-DataTableCell__legend {
   .PfamDomain {
     width: 16.6666666667em;

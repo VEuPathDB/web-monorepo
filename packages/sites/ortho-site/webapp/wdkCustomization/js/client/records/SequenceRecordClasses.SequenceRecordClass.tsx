@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { AttributeValue } from 'wdk-client/Utils/WdkModel';
 
-import { PfamDomainArchitecture } from '../components/pfam-domains/PfamDomainArchitecture';
+import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 
 import {
   DOMAIN_END_ATTRIBUTE_NAME,
@@ -13,9 +13,12 @@ import {
   transformAttributeFieldsUsingSpecs,
   makePfamLegendMarkup,
   extractPfamDomain
-} from './utils';
+} from 'ortho-client/records/utils';
 
-import { RecordTableProps, WrappedComponentProps } from './Types';
+import {
+  RecordTableProps,
+  WrappedComponentProps
+} from 'ortho-client/records/Types';
 
 import './SequenceRecordClasses.SequenceRecordClass.scss';
 

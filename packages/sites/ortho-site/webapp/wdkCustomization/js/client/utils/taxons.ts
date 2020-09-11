@@ -10,10 +10,10 @@ import {
   record,
   string
 } from 'wdk-client/Utils/Json';
+import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
 
-export interface TaxonEntry {
+export interface BaseTaxonEntry {
   abbrev: string;
-  children: Record<string, TaxonEntry>;
   commonName: string;
   id: number;
   name: string;
@@ -21,6 +21,10 @@ export interface TaxonEntry {
   species: boolean;
   color?: string;
   groupColor?: string;
+}
+
+export interface TaxonEntry extends BaseTaxonEntry {
+  children: Record<string, TaxonEntry>;
 }
 
 export type TaxonEntries = Record<string, TaxonEntry>;
@@ -39,13 +43,13 @@ export const taxonEntryDecoder: Decoder<TaxonEntry> = record({
 
 export const taxonEntriesDecoder: Decoder<TaxonEntries> = objectOf(taxonEntryDecoder);
 
-export interface TaxonTree extends Omit<TaxonEntry, 'children'> {
+export interface TaxonTree extends BaseTaxonEntry {
   children: TaxonTree[];
 }
 
 export const ROOT_TAXON_ABBREV = 'ALL';
 
-export const makeTaxonTree = function(taxonEntries: TaxonEntries): TaxonTree {
+export function makeTaxonTree(taxonEntries: TaxonEntries): TaxonTree {
   const rootEntry = taxonEntries[ROOT_TAXON_ABBREV];
 
   if (rootEntry == null) {
@@ -73,7 +77,33 @@ export const makeTaxonTree = function(taxonEntries: TaxonEntries): TaxonTree {
       children: orderedChildren
     };
   }
-};
+}
+
+export function getTaxonNodeId(node: TaxonTree) {
+  return node.abbrev;
+}
+
+export function taxonSearchPredicate(node: TaxonTree, searchTerms: string[]) {
+  return areTermsInString(searchTerms, `${node.name} ${node.abbrev}`);
+}
+
+export function makeInitialExpandedNodes(taxonTree: TaxonTree, maxDepth: number = 1) {
+  const initialExpandedNodes = [] as string[];
+
+  _traverse(taxonTree, 0);
+
+  return initialExpandedNodes;
+
+  function _traverse(node: TaxonTree, depth: number) {
+    if (depth <= maxDepth) {
+      initialExpandedNodes.push(getTaxonNodeId(node));
+
+      node.children.forEach(child => {
+        _traverse(child, depth + 1);
+      });
+    }
+  }
+}
 
 export interface TaxonUiMetadata {
   rootTaxons: Record<string, RootTaxonEntry>;

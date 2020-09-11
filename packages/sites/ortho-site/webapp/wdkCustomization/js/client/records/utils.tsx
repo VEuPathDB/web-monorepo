@@ -3,12 +3,17 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 import { curry, orderBy } from 'lodash'
 
-import { AttributeField, AttributeValue, LinkAttributeValue } from 'wdk-client/Utils/WdkModel';
+import {
+  AttributeField,
+  AttributeValue,
+  LinkAttributeValue,
+  TableValue
+} from 'wdk-client/Utils/WdkModel';
 
-import { PfamDomain } from '../components/pfam-domains/PfamDomain';
-import { Domain } from '../components/pfam-domains/PfamDomainArchitecture';
+import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
+import { Domain } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 
-import { RecordTableProps, WrappedComponentProps } from './Types';
+import { RecordTableProps, WrappedComponentProps } from 'ortho-client/records/Types';
 
 export const ACCESSION_ATTRIBUTE_NAME = 'accession';
 export const DOMAIN_START_ATTRIBUTE_NAME = 'start_min';
@@ -33,6 +38,11 @@ export const PFAM_DOMAINS_ATTRIBUTE_FIELD: AttributeField = {
   truncateTo: 100,
   formats: []
 };
+
+const COUNT_ATTRIBUTE_NAME = 'count';
+const ABBREV_ATTRIBUTE_NAME = 'abbrev';
+
+export const TAXON_COUNTS_TABLE_NAME = 'TaxonCounts';
 
 interface PseudoAttributeSpec {
   name: string;
@@ -125,4 +135,38 @@ export function extractPfamDomain(row: Record<string, AttributeValue>): Domain[]
         }
       ]
     : [];
+}
+
+export function taxonCountsTableValueToMap(taxonCountsTableValue: TableValue) {
+  return taxonCountsTableValue.reduce(
+    (counts, countRow) => {
+      const abbrevValue = countRow[ABBREV_ATTRIBUTE_NAME];
+      const countValue = countRow[COUNT_ATTRIBUTE_NAME];
+
+      if (typeof abbrevValue !== 'string') {
+        throw new Error(
+          makeAttributeTypeMismatchError('a non-string', ABBREV_ATTRIBUTE_NAME, TAXON_COUNTS_TABLE_NAME)
+        );
+      }
+
+      if (typeof countValue !== 'string') {
+        throw new Error(
+          makeAttributeTypeMismatchError('a non-string', COUNT_ATTRIBUTE_NAME, TAXON_COUNTS_TABLE_NAME)
+        );
+      }
+
+      counts[abbrevValue] = Number(countValue);
+
+      return counts;
+    },
+    {} as Record<string, number>
+  );
+}
+
+function makeAttributeTypeMismatchError(
+  typeMismatch: string,
+  attributeName: string,
+  tableName: string
+) {
+  return `Encountered ${typeMismatch} '${attributeName}' in a '${tableName}' row`;
 }

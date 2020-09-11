@@ -7,7 +7,7 @@ import {
   makeTaxonUiMetadata,
 } from 'ortho-client/utils/taxons';
 
-import { useOrthoService } from './orthoService';
+import { useOrthoService } from 'ortho-client/hooks/orthoService';
 
 export function useTaxonEntries(): TaxonEntries | undefined {
   return useOrthoService(

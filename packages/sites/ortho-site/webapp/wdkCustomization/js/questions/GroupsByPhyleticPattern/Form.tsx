@@ -5,6 +5,7 @@ import produce from 'immer';
 import { CheckboxTree, IconAlt, Loading } from 'wdk-client/Components';
 import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
 import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { Props, SubmitButton } from 'wdk-client/Views/Question/DefaultQuestionForm';
 
@@ -18,14 +19,17 @@ import {
   cxPhyleticExpression,
   getNextConstraintState,
   getNodeChildren,
-  getNodeId,
   makeInitialConstraintStates,
-  makeInitialExpandedNodes,
   makePhyleticExpression,
   makePhyleticExpressionUiTree,
   updateChildConstraintStates,
   updateParentConstraintStates
 } from 'ortho-client/utils/phyleticPattern';
+import {
+  getTaxonNodeId,
+  makeInitialExpandedNodes,
+  taxonSearchPredicate
+} from 'ortho-client/utils/taxons';
 
 import './Form.scss';
 
@@ -115,6 +119,8 @@ function PhyleticExpressionParameter({
     () => makeInitialConstraintStates(phyleticExpressionUiTree)
   );
 
+  const [ searchTerm, setSearchTerm ] = useState('');
+
   const renderNode = useMemo(
     () => makeRenderNode(
       constraintStates,
@@ -179,12 +185,18 @@ function PhyleticExpressionParameter({
       </div>
       <CheckboxTree
         tree={phyleticExpressionUiTree}
-        getNodeId={getNodeId}
+        getNodeId={getTaxonNodeId}
         getNodeChildren={getNodeChildren}
         onExpansionChange={onExpansionChange}
         shouldExpandOnClick={false}
         expandedList={expandedNodes}
         renderNode={renderNode}
+        isSearchable
+        searchBoxPlaceholder="Type a taxonomic name"
+        searchBoxHelp={makeSearchHelpText("the taxons below")}
+        searchTerm={searchTerm}
+        onSearchTermChange={setSearchTerm}
+        searchPredicate={taxonSearchPredicate}
         showRoot
         linksPosition={LinksPosition.Top}
       />
@@ -239,6 +251,7 @@ function makeRenderNode(
         />
         <span className={descriptionClassName}>
           {node.name}
+          &nbsp;
           <code>
             ({node.abbrev})
           </code>
@@ -269,6 +282,20 @@ function ConstraintIcon({
     : `${containerClassName} ${baseClassName}`;
 
   return (
-    <span className={className} onClick={onClick}></span>
+    <span className={className} onClick={onClick}>
+      <IconAlt fa={getContrainstIconFaClass(constraintType)} />
+    </span>
   );
+}
+
+function getContrainstIconFaClass(constraintType: ConstraintState) {
+  if (constraintType === 'free') {
+    return 'circle';
+  } else if (constraintType === 'include-all' || constraintType === 'include-at-least-one') {
+    return 'check';
+  } else if (constraintType === 'exclude') {
+    return 'remove';
+  } else {
+    return 'asterisk';
+  }
 }

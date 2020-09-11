@@ -1,8 +1,14 @@
 import React from 'react';
 
 import { requestPartialRecord } from 'wdk-client/Actions/RecordActions';
-import { AttributeField, RecordInstance, RecordClass, TableField, TableValue } from 'wdk-client/Utils/WdkModel';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
+import {
+  AttributeField,
+  RecordInstance,
+  RecordClass,
+  TableField,
+  TableValue
+} from 'wdk-client/Utils/WdkModel';
 
 export type WrappedComponentProps<T> = T & { DefaultComponent: React.ComponentType<T> };
 
