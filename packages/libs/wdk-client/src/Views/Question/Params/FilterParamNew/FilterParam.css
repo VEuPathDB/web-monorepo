@@ -68,6 +68,10 @@
   justify-content: space-between;
   align-items: flex-end;
 }
+.filter-param .range-filter .head input {
+  width: 8em;
+  text-align: right;
+}
 .filter-param .range-filter .table tr {
   display: inline-block;
 }

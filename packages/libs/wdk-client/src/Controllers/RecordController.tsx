@@ -84,7 +84,8 @@ class RecordController extends PageController<Props> {
     return (
       this.props.recordClass != null &&
       this.props.record != null &&
-      !this.props.isLoading
+      !this.props.isLoading &&
+      this.props.ownProps.recordClass === this.props.recordClass.urlSegment
     );
   }
 

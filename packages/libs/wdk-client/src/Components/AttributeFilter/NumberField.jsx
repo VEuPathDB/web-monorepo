@@ -11,6 +11,8 @@ import HistogramField from 'wdk-client/Components/AttributeFilter/HistogramField
 //  --- mean is 2.9 = (1x25 + 3x12 + 6x9 + 12x2 ) / (25+12+9+2)
 //  --- median is 1: there are 48 entry points: average values at mid positions 24 and 25: (1+1)/2
 
+const MAX_DECIMALS = 3;
+
 /**
  * Number field component
  */
@@ -38,7 +40,11 @@ export default class NumberField extends React.Component {
   }
 
   toHistogramValue(value) {
-    return Number(value);
+    const scaleFactor = 10**MAX_DECIMALS;
+    const numValue = Number(value);
+    const integerPart = Math.floor(numValue);
+    const decimalPart = Math.round((numValue - integerPart) * scaleFactor) / scaleFactor;
+    return integerPart + decimalPart;
   }
 
   toFilterValue(value) {

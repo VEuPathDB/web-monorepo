@@ -1,7 +1,7 @@
 import { keyBy, mapValues, toString } from 'lodash';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
-import { from, EMPTY, merge, Subject } from 'rxjs';
-import { debounceTime, filter, mergeMap, takeUntil, map } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, from, merge, of } from 'rxjs';
+import { catchError, debounceTime, filter, map, mergeAll, mergeMap, takeUntil } from 'rxjs/operators';
 
 import {
   UNLOAD_QUESTION,
@@ -50,7 +50,14 @@ import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 import { Action } from 'wdk-client/Actions';
 import WdkService from 'wdk-client/Service/WdkService';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { requestCreateStrategy, requestPutStrategyStepTree, requestUpdateStepSearchConfig, Action as StrategyAction, fulfillCreateStep, fulfillCreateStrategy } from 'wdk-client/Actions/StrategyActions';
+import {
+  requestCreateStrategy,
+  requestPutStrategyStepTree,
+  requestReviseStep,
+  requestUpdateStepProperties,
+  requestUpdateStepSearchConfig,
+  fulfillCreateStrategy
+} from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
 import {Step} from 'wdk-client/Utils/WdkUser';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
@@ -160,7 +167,8 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           Object.assign(paramUIState, { [parameter.name]: paramReducer(parameter, undefined, { type: '@@parm-stub@@' }) }), {}),
         groupUIState: action.payload.question.groups.reduce((groupUIState, group) =>
           Object.assign(groupUIState, { [group.name]: { isVisible: group.isVisible }}), {}),
-        weight: toString(action.payload.wdkWeight)
+        weight: toString(action.payload.wdkWeight),
+        customName: toString(action.payload.customName)
       }
 
     case QUESTION_ERROR:
@@ -425,12 +433,12 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
   mergeMap(action => {
     const questionState = state$.value[key].questions[action.payload.searchName];
     if (questionState == null) return EMPTY;
-    return Promise.all(questionState.question.parameters.map(parameter => {
+    return from(Promise.all(questionState.question.parameters.map(parameter => {
       const ctx = { parameter, searchName: questionState.question.urlSegment, paramValues: questionState.paramValues };
       return Promise.resolve(getValueFromState(ctx, questionState, services)).then(value => [ parameter, value ] as [ Parameter, string ])
     })).then(entries => {
       return entries.reduce((paramValues, [ parameter, value ]) => Object.assign(paramValues, { [parameter.name]: value }), {} as ParameterValues);
-    }).then((paramValues): Promise<StrategyAction | InferAction<typeof transitionToInternalPage>> => {
+    }).then((paramValues): Observable<Action> => {
       const { payload: { submissionMetadata } }: SubmitQuestionAction = action;
       const { question } = questionState;
 
@@ -446,14 +454,19 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
       updateLastParamValues(services.paramValueStore, searchName, paramValues);
 
       if (submissionMetadata.type === 'edit-step') {
-        return Promise.resolve(requestUpdateStepSearchConfig(
-          submissionMetadata.strategyId,
-          submissionMetadata.stepId,
-          {
-            ...submissionMetadata.previousSearchConfig,
-            ...searchConfig
-          }
-        ));
+        return of(
+          requestReviseStep(
+            submissionMetadata.strategyId,
+            submissionMetadata.stepId,
+            {
+              customName
+            },
+            {
+              ...submissionMetadata.previousSearchConfig,
+              ...searchConfig
+            }
+          )
+        );
       }
 
       const newSearchStepSpec = {
@@ -464,7 +477,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
 
       if (submissionMetadata.type === 'submit-custom-form') {
         submissionMetadata.onStepSubmitted(services.wdkService, newSearchStepSpec);
-        return Promise.resolve(fulfillCreateStep(-1, Date.now()));
+        return EMPTY;
       }
 
       if (submissionMetadata.type === 'create-strategy') {
@@ -477,8 +490,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             pagination: { offset: 0, numRecords: 1 }
           });
 
-          return answerPromise.then(
-            () => {
+          return from(answerPromise
+            .then(() => {
               const weightQueryParam = Number.isNaN(weight) ? DEFAULT_STEP_WEIGHT : weight;
               const queryString =
                 "searchName=" + searchName +
@@ -488,12 +501,12 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                   .join("");
 
               return transitionToInternalPage("/web-services-help?" + queryString);
-            }
+            })
           );
         }
 
         // if noSummaryOnSingleRecord is true, do special logic
-        return Promise.resolve(questionState.question.noSummaryOnSingleRecord)
+        return from(Promise.resolve(questionState.question.noSummaryOnSingleRecord)
           .then(noSummaryOnSingleRecord => {
             if (noSummaryOnSingleRecord) {
               const answerPromise = services.wdkService.getAnswerJson({
@@ -528,7 +541,8 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                     name: DEFAULT_STRATEGY_NAME
                 })
               );
-          });
+          })
+        );
       }
 
       const strategyEntry = state$.value.strategies.strategies[submissionMetadata.strategyId];
@@ -556,7 +570,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
           customName: operatorQuestionState.question.shortDisplayName
         });
 
-        return Promise.all([newSearchStep, operatorStep])
+        return from(Promise.all([newSearchStep, operatorStep])
           .then(
             ([{ id: newSearchStepId }, { id: binaryOperatorStepId }]) => requestPutStrategyStepTree(
               submissionMetadata.strategyId,
@@ -569,10 +583,11 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
                 }
               )
             )
-          );
+          )
+        );
       }
 
-      return services.wdkService.createStep(newSearchStepSpec)
+      return from(services.wdkService.createStep(newSearchStepSpec)
         .then(
           ({ id: unaryOperatorStepId }) => requestPutStrategyStepTree(
             submissionMetadata.strategyId,
@@ -583,8 +598,12 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
               undefined
             )
           )
-        );
-    }).catch(error => reportSubmissionError(action.payload.searchName, error, services.wdkService))
+        )
+      );
+    })).pipe(
+      mergeAll(),
+      catchError((error: any) => of(reportSubmissionError(action.payload.searchName, error, services.wdkService)))
+    );
   })
 )
 
@@ -669,7 +688,8 @@ async function loadQuestion(
       paramValues,
       initialParamData, // Intentionally not initialParams to preserve previous behaviour ( an "INIT_PARAM" action triggered)
       wdkWeight,
-      stepValidation: step && step.validation
+      customName: step?.customName,
+      stepValidation: step?.validation
     })
   }
   catch (error) {

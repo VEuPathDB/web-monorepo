@@ -31,7 +31,7 @@ interface Props {
 }
 
 function StrategyHeader(props: Props) {
-  const activeStratPath = props.activeStrategy ? `/${props.activeStrategy.strategyId}` : '';
+  const activeStratPath = props.activeStrategy ? `${props.activeStrategy.strategyId}` : '';
   const activeStepPath = props.activeStrategy && props.activeStrategy.stepId ? `/${props.activeStrategy.stepId}` : '';
   const { openedStrategiesCount, allStrategiesCount, publicStrategiesCount, publicStrategiesError } = props
   return (

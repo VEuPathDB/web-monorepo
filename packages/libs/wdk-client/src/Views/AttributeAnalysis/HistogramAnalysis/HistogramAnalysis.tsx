@@ -96,6 +96,8 @@ export const Histogram = lazy<HistogramProps>(async () => {
 
   render() {
     const { avg, min, max, median, binSize, type, logXAxis, logYAxis, attrLabel, recordCountLabel, onBinSizeChange, onLogScaleYAxisChange } = this.props;
+    const minBinSize = Math.min(Math.abs(min), Math.abs(max));
+    const maxBinSize = Math.max(Math.abs(min), Math.abs(max));
 
     return (
       <div className={cx()}>
@@ -127,8 +129,8 @@ export const Histogram = lazy<HistogramProps>(async () => {
               </dl>
             </div>
             <div className={cx('Controls')}>
-              <label>Size of bins: <input type="number" min={min} max={max} step={this.getStep()} value={binSize} onChange={e => onBinSizeChange(Number(e.target.value))} /></label>
-              <input className={cx('Slider')} type="range" min={min} max={max}  step={this.getStep()}onChange={e => onBinSizeChange(Number(e.target.value))} value={binSize}/>
+              <label>Size of bins: <input type="number" min={minBinSize} max={maxBinSize} step={this.getStep()} value={binSize} onChange={e => onBinSizeChange(Number(e.target.value))} /></label>
+              <input className={cx('Slider')} type="range" min={minBinSize} max={maxBinSize} step={this.getStep()}onChange={e => onBinSizeChange(Number(e.target.value))} value={binSize}/>
             </div>
           </>
         )}

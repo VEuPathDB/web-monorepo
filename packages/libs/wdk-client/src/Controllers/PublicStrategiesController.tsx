@@ -16,6 +16,7 @@ import { createSelector } from 'reselect';
 import Error from 'wdk-client/Components/PageStatus/Error';
 
 interface StateProps {
+  examplesAvailable: boolean;
   searchTerm: string;
   sort?: MesaSortObject;
   prioritizeExamples: boolean;
@@ -45,14 +46,21 @@ const recordClassesByUrlSegment = createSelector(
   globalData => globalData.recordClasses && keyByUrlSegment(globalData.recordClasses)
 );
 
-const mapStateToProps = (state: RootState): StateProps => ({
-  searchTerm: state.publicStrategies.searchTerm,
-  sort: state.publicStrategies.sort,
-  prioritizeExamples: state.publicStrategies.prioritizeExamples,
-  publicStrategySummaries: state.strategyWorkspace.publicStrategySummaries,
-  recordClassesByUrlSegment: recordClassesByUrlSegment(state),
-  hasError: state.strategyWorkspace.publicStrategySummariesError
-});
+const mapStateToProps = (state: RootState): StateProps => {
+  const publicStrategySummaries = state.strategyWorkspace.publicStrategySummaries;
+
+  const examplesAvailable = publicStrategySummaries?.some(({ isExample }) => isExample) ?? false;
+
+  return ({
+    examplesAvailable,
+    searchTerm: state.publicStrategies.searchTerm,
+    sort: state.publicStrategies.sort,
+    prioritizeExamples: state.publicStrategies.prioritizeExamples,
+    publicStrategySummaries,
+    recordClassesByUrlSegment: recordClassesByUrlSegment(state),
+    hasError: state.strategyWorkspace.publicStrategySummariesError
+  });
+};
 
 const mapDispatchToProps = (dispatch: DispatchAction): DispatchProps => ({
   onSearchTermChange: compose(dispatch, setSearchTerm),

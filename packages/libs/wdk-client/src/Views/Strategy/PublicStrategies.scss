@@ -10,6 +10,15 @@
     }
   }
 
+  &--PriorityCheckbox {
+    display: flex;
+    align-items: center;
+
+    input {
+      margin-right: 0.25em;
+    }
+  }
+
   .MesaComponent {
     .TableToolbar-Children {
       display: flex;

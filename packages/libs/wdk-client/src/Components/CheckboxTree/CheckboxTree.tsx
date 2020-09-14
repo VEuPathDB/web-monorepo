@@ -54,6 +54,9 @@ type Props<T> = {
   /** Whether to, on expanding a node, automatically expand its descendants with one child */
   shouldExpandDescendantsWithOneChild?: boolean;
 
+  /** Whether to expand a node if its contents are clicked */
+  shouldExpandOnClick?: boolean
+
   /** Whether to show the root node or start with the array of children; optional, defaults to false */
   showRoot?: boolean;
 
@@ -689,7 +692,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
       isSearchable, currentList, defaultList, showSearchBox, searchTerm,
       searchBoxPlaceholder, searchBoxHelp, searchIconName,
       linksPosition = LinksPosition.Both, additionalActions,
-      onSearchTermChange, autoFocusSearchBox
+      onSearchTermChange, autoFocusSearchBox, shouldExpandOnClick = true
     } = this.props;
     let topLevelNodes = (showRoot ? [ this.state.generated.statefulTree ] :
       getStatefulChildren(this.state.generated.statefulTree));
@@ -747,6 +750,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
               isActiveSearch={isActiveSearch(this.props)}
               toggleSelection={this.toggleSelection}
               toggleExpansion={this.toggleExpansion}
+              shouldExpandOnClick={shouldExpandOnClick}
               getNodeId={getNodeId}
               getNodeChildren={getStatefulChildren}
               renderNode={this.renderNode} />

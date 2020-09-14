@@ -40,17 +40,19 @@ export const addScrollAnchor = addScrollAnchor__loop
  * which mitigates the potential for race conditions.
  */
 function addScrollAnchor__loop(
-  container: Element,
+  container: HTMLElement,
   anchorNode = findAnchorNode(container)
 ) {
   let { scrollY } = window;
   let containerRect = container.getBoundingClientRect();
+  const offsetParent = container.offsetParent || document.body;
+  let parentSize = offsetParent.clientHeight;
   let animId: number;
 
   function loop() {
     animId = requestAnimationFrame(function() {
       loop();
-      if (containerHasResized()) {
+      if (parentSizeChanged() || containerHasResized()) {
         scrollToAnchor();
       }
       else if (pageHasScrolled()) {
@@ -58,6 +60,7 @@ function addScrollAnchor__loop(
       }
       scrollY = window.scrollY;
       containerRect = container.getBoundingClientRect();
+      parentSize = offsetParent.clientHeight;
     });
   }
 
@@ -68,6 +71,10 @@ function addScrollAnchor__loop(
   function updateAnchor() {
     anchorNode = findAnchorNode(container);
     console.debug('updating anchorNode', anchorNode);
+  }
+
+  function parentSizeChanged(): boolean {
+    return parentSize !== offsetParent.clientHeight;
   }
 
   function containerHasResized(): boolean {
@@ -238,4 +245,39 @@ export function copyContent(node: HTMLElement) {
   catch (error) {
     console.error(error);
   }
+}
+
+export function writeTextToClipboard(str: string) {
+  return navigator?.clipboard?.writeText == null
+    ? writeText(str)
+    : navigator.clipboard.writeText(str);
+}
+
+// TypeScript adaptation of
+// https://gist.github.com/lgarron/d1dee380f4ed9d825ca7#gistcomment-2934251
+// A minimal polyfill for `navigator.clipboard.writeText()` that works most of the time in most modern browsers.
+// Note that on Edge this may call `resolve()` even if copying failed.
+// See https://github.com/lgarron/clipboard-polyfill for a more robust solution.
+// License: public domain
+function writeText(str: string): Promise<void> {
+  return new Promise(function(resolve, reject) {
+
+    const range = document.createRange();
+    range.selectNodeContents(document.body);
+    document.getSelection()?.addRange(range);
+
+    let success = false;
+    function listener(e: ClipboardEvent) {
+      e.clipboardData?.setData("text/plain", str);
+      e.preventDefault();
+      success = true;
+    }
+    document.addEventListener("copy", listener);
+    document.execCommand("copy");
+    document.removeEventListener("copy", listener);
+
+    document.getSelection()?.removeAllRanges();
+
+    success ? resolve(): reject();
+  });
 }

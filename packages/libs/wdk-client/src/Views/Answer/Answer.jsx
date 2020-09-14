@@ -213,6 +213,13 @@ class Answer extends React.Component {
 function makeSortKeys(sortingAttribute, customSortBys = {}) {
   if (customSortBys[sortingAttribute.name] != null) {
     return customSortBys[sortingAttribute.name];
+  } else if (sortingAttribute.type === 'number') {
+    return [                                                                                                                                                                                                  
+      record => castValue(                                                                                                                                                                            
+        record.attributes[sortingAttribute.name] &&                                                                                                                                                                             
+        record.attributes[sortingAttribute.name].replace(/,/g, '')                                                                                                                                                                           
+      )
+    ];
   } else if (sortingAttribute.type === 'link') {
     return [
       record => castValue(
@@ -222,7 +229,7 @@ function makeSortKeys(sortingAttribute, customSortBys = {}) {
     ];
   } else {
     return [
-      record => castValue(record.attributes[sortingAttribute.name])
+      record => record.attributes[sortingAttribute.name]
     ];
   }
 }

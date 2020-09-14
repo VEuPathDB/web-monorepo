@@ -81,11 +81,15 @@
       "jsx",
       "json",
       "node"
+    ],
+    "reporters": [
+      "jest-tap-reporter"
     ]
   },
   "optionalDependencies": {
     "babel-jest": "^23.1.2",
     "jest": "^23.4.2",
+    "jest-tap-reporter": "^1.9.0",
     "ts-jest": "^23.1.2"
   }
 }
