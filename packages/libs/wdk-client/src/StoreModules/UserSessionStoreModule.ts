@@ -102,7 +102,7 @@ function observeSubmitLoginForm(
 function observeShowLogoutWarning(
   action$: ActionsObservable<Action>,
   state$: StateObservable<RootState>,
-  { wdkService }: EpicDependencies
+  { paramValueStore, wdkService }: EpicDependencies
 ): Observable<Action> {
   return action$.pipe(
     filter(showLogoutWarning.isOfType),
@@ -113,6 +113,8 @@ function observeShowLogoutWarning(
       );
 
       if (!shouldLogout) return logoutDismissed();
+
+      paramValueStore.clearParamValues();
 
       const config = await wdkService.getConfig();
       const { oauthClientUrl, oauthUrl, method } = config.authentication;
