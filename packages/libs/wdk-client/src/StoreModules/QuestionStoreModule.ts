@@ -54,8 +54,6 @@ import {
   requestCreateStrategy,
   requestPutStrategyStepTree,
   requestReviseStep,
-  requestUpdateStepProperties,
-  requestUpdateStepSearchConfig,
   fulfillCreateStrategy
 } from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
@@ -85,6 +83,7 @@ export type QuestionState = {
   question: QuestionWithMappedParameters;
   recordClass: RecordClass;
   paramValues: ParameterValues;
+  atLeastOneInitialParamValueProvided: boolean;
   paramUIState: Record<string, any>;
   groupUIState: Record<string, GroupState>;
   paramErrors: Record<string, string | undefined>;
@@ -161,6 +160,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         stepValidation: action.payload.stepValidation,
         recordClass: action.payload.recordClass,
         paramValues: action.payload.paramValues,
+        atLeastOneInitialParamValueProvided: action.payload.atLeastOneInitialParamValueProvided,
         paramErrors: action.payload.question.parameters.reduce((paramValues, param) =>
           Object.assign(paramValues, { [param.name]: undefined }), {}),
         paramUIState: action.payload.question.parameters.reduce((paramUIState, parameter) =>
@@ -667,8 +667,10 @@ async function loadQuestion(
     paramValueStore
   );
 
+  const atLeastOneInitialParamValueProvided = Object.keys(initialParams).length > 0;
+
   try {
-    const question = Object.keys(initialParams).length > 0
+    const question = atLeastOneInitialParamValueProvided
       ? await wdkService.getQuestionGivenParameters(searchName, initialParams)
       : await wdkService.getQuestionAndParameters(searchName);
 
@@ -677,7 +679,9 @@ async function loadQuestion(
 
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
 
-    updateLastParamValues(paramValueStore, searchName, paramValues);
+    if (atLeastOneInitialParamValueProvided) {
+      updateLastParamValues(paramValueStore, searchName, paramValues);
+    }
 
     return questionLoaded({
       autoRun,
@@ -686,6 +690,7 @@ async function loadQuestion(
       question,
       recordClass,
       paramValues,
+      atLeastOneInitialParamValueProvided,
       initialParamData, // Intentionally not initialParams to preserve previous behaviour ( an "INIT_PARAM" action triggered)
       wdkWeight,
       customName: step?.customName,

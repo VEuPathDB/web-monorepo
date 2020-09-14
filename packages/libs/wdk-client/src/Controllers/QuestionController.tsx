@@ -137,6 +137,7 @@ function QuestionController(props: Props) {
     searchName,
     autoRun,
     prepopulateWithLastParamValues,
+    state.atLeastOneInitialParamValueProvided,
     state.stepId,
     dispatch
   );
@@ -217,6 +218,7 @@ function useResetFormConfig(
   searchName: string,
   autoRun: boolean,
   prepopulateWithLastParamValues: boolean,
+  atLeastOneInitialParamValueProvided: boolean,
   stepId: number | undefined,
   dispatch: Dispatch<Action>
 ): ResetFormConfig {
@@ -235,7 +237,7 @@ function useResetFormConfig(
 
   return useMemo(
     () => (
-      prepopulateWithLastParamValues
+      prepopulateWithLastParamValues && atLeastOneInitialParamValueProvided
         ? {
             offered: true,
             onResetForm: reloadFormWithSystemDefaults,
@@ -250,7 +252,11 @@ function useResetFormConfig(
             offered: false
           }
     ),
-    [ prepopulateWithLastParamValues ]
+    [
+      prepopulateWithLastParamValues,
+      atLeastOneInitialParamValueProvided,
+      reloadFormWithSystemDefaults
+    ]
   );
 };
 

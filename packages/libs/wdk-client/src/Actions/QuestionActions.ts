@@ -75,6 +75,7 @@ export interface QuestionLoadedAction {
     question: QuestionWithParameters;
     recordClass: RecordClass;
     paramValues: ParameterValues;
+    atLeastOneInitialParamValueProvided: boolean;
     initialParamData?: Record<string, string>;
     wdkWeight?: number;
     customName?: string;
