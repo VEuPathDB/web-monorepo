@@ -29,12 +29,7 @@
 
   &ResetFormButton.btn {
     display: block;
-    width: 100%;
-    margin: 1em auto;
-
-    .fa {
-      margin: 0 0.25em;
-    }
+    margin: 1em 0 1em auto;
   }
 
   &ShowHideGroup {
