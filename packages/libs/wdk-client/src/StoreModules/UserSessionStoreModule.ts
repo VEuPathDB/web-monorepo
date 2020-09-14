@@ -114,7 +114,7 @@ function observeShowLogoutWarning(
 
       if (!shouldLogout) return logoutDismissed();
 
-      paramValueStore.clearParamValues();
+      await paramValueStore.clearParamValues();
 
       const config = await wdkService.getConfig();
       const { oauthClientUrl, oauthUrl, method } = config.authentication;

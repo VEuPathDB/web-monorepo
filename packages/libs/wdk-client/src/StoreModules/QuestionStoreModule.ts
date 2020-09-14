@@ -388,7 +388,7 @@ const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
 
 const observeUpdateParams: QuestionEpic = (action$, state$, { paramValueStore }) => action$.pipe(
   ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE),
-  mergeMap((action: UpdateParamValueAction) => {
+  mergeMap(async (action: UpdateParamValueAction) => {
     const searchName = action.payload.searchName;
     const questionState = state$.value.question.questions[searchName];
 
@@ -398,11 +398,12 @@ const observeUpdateParams: QuestionEpic = (action$, state$, { paramValueStore })
 
     const newParamValues = questionState.paramValues;
 
-    updateLastParamValues(paramValueStore, searchName, newParamValues);
+    await updateLastParamValues(paramValueStore, searchName, newParamValues);
 
     return EMPTY;
-  })
-)
+  }),
+  mergeAll()
+);
 
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE),
@@ -680,7 +681,7 @@ async function loadQuestion(
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
 
     if (atLeastOneInitialParamValueProvided) {
-      updateLastParamValues(paramValueStore, searchName, paramValues);
+      await updateLastParamValues(paramValueStore, searchName, paramValues);
     }
 
     return questionLoaded({
