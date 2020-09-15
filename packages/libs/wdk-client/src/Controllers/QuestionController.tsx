@@ -9,9 +9,10 @@ import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import {
   Action,
   SubmissionMetadata,
+  changeGroupVisibility,
+  reloadQuestion,
   updateActiveQuestion,
-  updateParamValue,
-  changeGroupVisibility
+  updateParamValue
 } from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import Error from 'wdk-client/Components/PageStatus/Error';
@@ -25,7 +26,7 @@ const ActionCreators = {
   setGroupVisibility: changeGroupVisibility
 }
 
-type OwnProps = { 
+export type OwnProps = {
   question: string, 
   recordClass: string, 
   FormComponent?: (props: FormProps) => JSX.Element, 
@@ -135,10 +136,9 @@ function QuestionController(props: Props) {
 
   const resetFormConfig = useResetFormConfig(
     searchName,
-    autoRun,
+    state.stepId,
     prepopulateWithLastParamValues,
     state.atLeastOneInitialParamValueProvided,
-    state.stepId,
     dispatch
   );
   
@@ -216,23 +216,19 @@ function QuestionController(props: Props) {
 
 function useResetFormConfig(
   searchName: string,
-  autoRun: boolean,
+  stepId: number | undefined,
   prepopulateWithLastParamValues: boolean,
   atLeastOneInitialParamValueProvided: boolean,
-  stepId: number | undefined,
   dispatch: Dispatch<Action>
 ): ResetFormConfig {
   const reloadFormWithSystemDefaults = useCallback(
     () => {
-      dispatch(updateActiveQuestion({
-        autoRun,
+      dispatch(reloadQuestion({
         searchName,
-        prepopulateWithLastParamValues: false,
-        initialParamData: {},
         stepId
       }));
     },
-    [ autoRun, dispatch, searchName, stepId ]
+    [ searchName, stepId ]
   );
 
   return useMemo(

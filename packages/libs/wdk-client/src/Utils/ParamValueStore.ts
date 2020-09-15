@@ -11,6 +11,8 @@ export interface ParamValueStore {
 
   fetchParamValues: (paramContext: string) => Promise<ParameterValues | null>;
 
+  removeParamValueEntry: (paramContext: string) => Promise<void>;
+
   updateParamValues: (
     paramContext: string,
     newParamValues: ParameterValues
@@ -51,6 +53,11 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
       const storeKey = makeParamStoreKey(paramContext);
 
       return _store.getItem(storeKey);
+    },
+    removeParamValueEntry: (paramContext: string) => {
+      const storeKey = makeParamStoreKey(paramContext);
+
+      return _store.removeItem(storeKey);
     },
     updateParamValues: async (paramContext, newParamValues) => {
       await _checkModelVersion();

@@ -75,7 +75,6 @@ const routes: RouteEntry[] = [
           }}
           pluginProps={{
             ...props.match.params,
-            hash: props.location.hash.slice(1),
             submissionMetadata: {
               type: 'create-strategy'
             } as const,

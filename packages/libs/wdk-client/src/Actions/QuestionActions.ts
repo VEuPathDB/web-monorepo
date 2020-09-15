@@ -16,6 +16,7 @@ import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
 export type Action =
   | UpdateActiveQuestionAction
   | QuestionLoadedAction
+  | ReloadQuestionAction
   | UnloadQuestionAction
   | QuestionErrorAction
   | QuestionNotFoundAction
@@ -91,6 +92,22 @@ export function questionLoaded(payload: QuestionLoadedAction['payload']): Questi
 }
 
 //==============================================================================
+
+export const RELOAD_QUESTION = 'question/reload-question';
+
+export interface ReloadQuestionAction {
+  type: typeof RELOAD_QUESTION;
+  payload: QuestionPayload<{
+    stepId: number | undefined;
+  }>;
+}
+
+export function reloadQuestion(payload: ReloadQuestionAction['payload']): ReloadQuestionAction {
+  return {
+    type: RELOAD_QUESTION,
+    payload
+  };
+}
 
 export const UNLOAD_QUESTION = 'question/unload-question';
 
