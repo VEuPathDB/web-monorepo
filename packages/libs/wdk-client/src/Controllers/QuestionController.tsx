@@ -1,4 +1,4 @@
-import { mapValues } from 'lodash';
+import { isEqual, mapValues } from 'lodash';
 import React, { useEffect, useCallback, FunctionComponent, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
@@ -19,7 +19,7 @@ import Error from 'wdk-client/Components/PageStatus/Error';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import { Props as FormProps, ResetFormConfig } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
-import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
+import { ParameterValues, RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 
 const ActionCreators = {
   updateParamValue,
@@ -138,7 +138,8 @@ function QuestionController(props: Props) {
     searchName,
     state.stepId,
     prepopulateWithLastParamValues,
-    state.atLeastOneInitialParamValueProvided,
+    state.paramValues,
+    state.defaultParamValues,
     dispatch
   );
   
@@ -218,7 +219,8 @@ function useResetFormConfig(
   searchName: string,
   stepId: number | undefined,
   prepopulateWithLastParamValues: boolean,
-  atLeastOneInitialParamValueProvided: boolean,
+  paramValues: ParameterValues,
+  defaultParamValues: ParameterValues,
   dispatch: Dispatch<Action>
 ): ResetFormConfig {
   const reloadFormWithSystemDefaults = useCallback(
@@ -236,7 +238,10 @@ function useResetFormConfig(
       prepopulateWithLastParamValues
         ? {
             offered: true,
-            disabled: !atLeastOneInitialParamValueProvided,
+            disabled: isEqual(
+              defaultParamValues,
+              paramValues
+            ),
             onResetForm: reloadFormWithSystemDefaults,
             resetFormContent: (
               <React.Fragment>
@@ -250,8 +255,9 @@ function useResetFormConfig(
           }
     ),
     [
+      defaultParamValues,
+      paramValues,
       prepopulateWithLastParamValues,
-      atLeastOneInitialParamValueProvided,
       reloadFormWithSystemDefaults
     ]
   );

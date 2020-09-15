@@ -86,7 +86,7 @@ export type QuestionState = {
   question: QuestionWithMappedParameters;
   recordClass: RecordClass;
   paramValues: ParameterValues;
-  atLeastOneInitialParamValueProvided: boolean;
+  defaultParamValues: ParameterValues;
   paramUIState: Record<string, any>;
   groupUIState: Record<string, GroupState>;
   paramErrors: Record<string, string | undefined>;
@@ -163,7 +163,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         stepValidation: action.payload.stepValidation,
         recordClass: action.payload.recordClass,
         paramValues: action.payload.paramValues,
-        atLeastOneInitialParamValueProvided: action.payload.atLeastOneInitialParamValueProvided,
+        defaultParamValues: action.payload.defaultParamValues,
         paramErrors: action.payload.question.parameters.reduce((paramValues, param) =>
           Object.assign(paramValues, { [param.name]: undefined }), {}),
         paramUIState: action.payload.question.parameters.reduce((paramUIState, parameter) =>
@@ -692,11 +692,15 @@ async function loadQuestion(
   const atLeastOneInitialParamValueProvided = Object.keys(initialParams).length > 0;
 
   try {
+    const defaultQuestion = await wdkService.getQuestionAndParameters(searchName);
+
     const question = atLeastOneInitialParamValueProvided
       ? await wdkService.getQuestionGivenParameters(searchName, initialParams)
-      : await wdkService.getQuestionAndParameters(searchName);
+      : defaultQuestion;
 
     const recordClass = await wdkService.findRecordClass(question.outputRecordClassName);
+
+    const defaultParamValues = extractParamValues(defaultQuestion, {}, step);
     const paramValues = extractParamValues(question, initialParams, step);
 
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
@@ -712,7 +716,7 @@ async function loadQuestion(
       question,
       recordClass,
       paramValues,
-      atLeastOneInitialParamValueProvided,
+      defaultParamValues,
       initialParamData, // Intentionally not initialParams to preserve previous behaviour ( an "INIT_PARAM" action triggered)
       wdkWeight,
       customName: step?.customName,
