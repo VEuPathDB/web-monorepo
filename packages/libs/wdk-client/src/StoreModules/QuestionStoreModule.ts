@@ -29,10 +29,7 @@ import {
   questionError,
   ENABLE_SUBMISSION,
   reportSubmissionError,
-  submitQuestion,
-  RELOAD_QUESTION,
-  ReloadQuestionAction,
-  updateActiveQuestion
+  submitQuestion
 } from 'wdk-client/Actions/QuestionActions';
 
 import {
@@ -382,23 +379,6 @@ const observeAutoRun: QuestionEpic = (action$, state$, { wdkService }) => action
   }))
 )
 
-const observeReloadQuestion: QuestionEpic = (action$, state$, { paramValueStore }) => action$.pipe(
-  filter((action): action is ReloadQuestionAction =>
-    action.type === RELOAD_QUESTION
-  ),
-  mergeMap(async action => {
-    await removeParamValueStoreEntry(paramValueStore, action.payload.searchName);
-
-    return updateActiveQuestion({
-      autoRun: false,
-      searchName: action.payload.searchName,
-      prepopulateWithLastParamValues: false,
-      initialParamData: {},
-      stepId: action.payload.stepId
-    });
-  })
-);
-
 const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
   ofType<QuestionLoadedAction>(QUESTION_LOADED),
   mergeMap(({ payload: { question, searchName, paramValues, initialParamData }}: QuestionLoadedAction) =>
@@ -648,7 +628,6 @@ export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,
   observeLoadQuestionSuccess,
   observeAutoRun,
-  observeReloadQuestion,
   observeUpdateParams,
   observeUpdateDependentParams,
   observeQuestionSubmit,
@@ -705,9 +684,7 @@ async function loadQuestion(
 
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
 
-    if (atLeastOneInitialParamValueProvided) {
-      await updateLastParamValues(paramValueStore, searchName, paramValues);
-    }
+    await updateLastParamValues(paramValueStore, searchName, paramValues);
 
     return questionLoaded({
       autoRun,
@@ -774,15 +751,6 @@ function extractParamValues(question: QuestionWithParameters, initialParams: Par
       )
     });
   }, {} as ParameterValues);
-}
-
-function removeParamValueStoreEntry(
-  paramValueStore: ParamValueStore,
-  searchName: string
-) {
-  const paramValueStoreContext = makeParamValueStoreContext(searchName);
-
-  return paramValueStore.removeParamValueEntry(paramValueStoreContext);
 }
 
 function updateLastParamValues(

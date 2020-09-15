@@ -10,7 +10,6 @@ import {
   Action,
   SubmissionMetadata,
   changeGroupVisibility,
-  reloadQuestion,
   updateActiveQuestion,
   updateParamValue
 } from 'wdk-client/Actions/QuestionActions';
@@ -225,8 +224,11 @@ function useResetFormConfig(
 ): ResetFormConfig {
   const reloadFormWithSystemDefaults = useCallback(
     () => {
-      dispatch(reloadQuestion({
+      dispatch(updateActiveQuestion({
+        autoRun: false,
         searchName,
+        prepopulateWithLastParamValues: false,
+        initialParamData: {},
         stepId
       }));
     },
