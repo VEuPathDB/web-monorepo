@@ -5,6 +5,7 @@ import { BoundsViewport, MarkerProps } from './Types';
 import { Marker } from 'react-leaflet';
 import Geohash from 'latlon-geohash';
 import './TempIconHack';
+import {DriftMarker} from "leaflet-drift-marker";
 
 
 export default {
@@ -36,7 +37,9 @@ const zoomLevelToGeohashLevel = [
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number) => {
   console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
+
   let aggsByGeohash = new Map();
+
   Array(numMarkers).fill(undefined).map(() => {
     const lat = bounds.southWest[0] + Math.random()*(bounds.northEast[0] - bounds.southWest[0]);
     const long = bounds.southWest[1] + Math.random()*(bounds.northEast[1] - bounds.southWest[1]);
@@ -52,32 +55,37 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
     agg.count++;
     return undefined
   });
+
   return Array.from(aggsByGeohash.values()).map((agg) => {
     const meanLat = agg.lat/agg.count;
     const meanLong = agg.long/agg.count;
-    return <Marker
-      key={agg.geohash}
-      position={[meanLat, meanLong]}
-      title={agg.geohash}
+    return <DriftMarker
+        duration={300}
+        key={agg.geohash}
+        position={[meanLat, meanLong]}
+        title={agg.geohash}
       />
   })
 
-}
+};
 
 
 
 export const GeohashIds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getMarkerElements(bvp, 500));
-  }, [setMarkerElements])
+  }, [setMarkerElements]);
+
   return (
     <MapVEuMap
     viewport={{center: [ 54.561781, -3.013297 ], zoom: 11}}
     height="600px" width="800px"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    setMarkerElements={setMarkerElements}
     />
   );
-}
+};
 
