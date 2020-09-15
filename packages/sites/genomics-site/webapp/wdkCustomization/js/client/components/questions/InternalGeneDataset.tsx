@@ -68,6 +68,10 @@ export function InternalGeneDataset(props: Props) {
 
   const [ selectedSearch, setSelectedSearch ] = useState<string | undefined>(searchNameAnchorTag);
 
+  useEffect(() => {
+    setSelectedSearch(searchNameAnchorTag);
+  }, [ searchNameAnchorTag ]);
+
   const [ searchName, showingRecordToggle ] = selectedSearch
     ? [ selectedSearch, true ]
     : [ internalSearchName, false ];
