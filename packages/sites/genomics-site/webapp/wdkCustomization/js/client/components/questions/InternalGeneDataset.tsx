@@ -304,7 +304,7 @@ export function InternalGeneDataset(props: Props) {
                         }
                       >
                         <span key={categoryName}>
-                          <span className="bttn bttn-cyan bttn-active">
+                          <span className="bttn bttn-cyan bttn-legend">
                             {displayCategoriesByName[categoryName].shortDisplayName}
                           </span>
                           <span>
