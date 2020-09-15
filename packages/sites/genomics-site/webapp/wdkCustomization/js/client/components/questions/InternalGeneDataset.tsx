@@ -244,7 +244,11 @@ export function InternalGeneDataset(props: Props) {
                         displayCategoryOrder.map(
                           categoryName => {
                             const datasetName = cellProps.row.dataset_name;
-                            const categorySearchName = questionNamesByDatasetAndCategory[datasetName][categoryName];
+                            const categorySearchName = getCategorySearchName(
+                              questionNamesByDatasetAndCategory,
+                              datasetName,
+                              categoryName
+                            );
 
                             return (
                                 <div key={categoryName}>
@@ -257,14 +261,13 @@ export function InternalGeneDataset(props: Props) {
                                             : "bttn bttn-cyan"
                                         } 
                                         key={categoryName} 
-                                        to={`${internalSearchName}#${categorySearchName}`}
-                                        onClick={(e: React.MouseEvent) => {
-                                          if (submissionMetadata.type !== 'create-strategy') {
-                                            e.preventDefault();
-                                          }
-
-                                          setSelectedSearch(categorySearchName);
-                                        }}
+                                        to={ `${internalSearchName}#${categorySearchName}`}
+                                        onClick={makeLinkClickHandler(
+                                          submissionMetadata,
+                                          categorySearchName,
+                                          searchName,
+                                          setSelectedSearch
+                                        )}
                                       >
                                         {displayCategoriesByName[categoryName].shortDisplayName}
                                       </Link>
@@ -351,21 +354,30 @@ export function InternalGeneDataset(props: Props) {
                 tabs={
                   displayCategoryOrder
                     .filter(
-                      categoryName => questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]
+                      categoryName => getCategorySearchName(
+                        questionNamesByDatasetAndCategory,
+                        selectedDataSetRecord.dataset_name,
+                        categoryName
+                      )
                     )
-                    .map(
-                      categoryName => ({
-                        key: questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName],
+                    .map(categoryName => {
+                      const categorySearchName = getCategorySearchName(
+                        questionNamesByDatasetAndCategory,
+                        selectedDataSetRecord.dataset_name,
+                        categoryName
+                      );
+
+                      return {
+                        key: categorySearchName,
                         display: (
                           <Link 
-                            to={`${internalSearchName}#${questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]}`}
-                            onClick={(e: React.MouseEvent) => {
-                              if (submissionMetadata.type !== 'create-strategy') {
-                                e.preventDefault();
-                              }
-
-                              setSelectedSearch(questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]);
-                            }}
+                            to={`${internalSearchName}#${categorySearchName}`}
+                            onClick={makeLinkClickHandler(
+                              submissionMetadata,
+                              categorySearchName,
+                              searchName,
+                              setSelectedSearch
+                            )}
                           >
                             {displayCategoriesByName[categoryName].displayName}
                           </Link>
@@ -385,8 +397,8 @@ export function InternalGeneDataset(props: Props) {
                             defaultComponent={QuestionController}
                           />
                         )
-                      })
-                    )
+                      };
+                    })
                 }
                 activeTab={searchName}
                 onTabSelected={(tab) => {
@@ -576,7 +588,13 @@ function getDatasetRecords(
           }
         ),
         searches: displayCategoryOrder
-          .filter(categoryName => questionNamesByDatasetAndCategory[`${datasetRecord.attributes.dataset_name}`][categoryName])
+          .filter(
+            categoryName => getCategorySearchName(
+              questionNamesByDatasetAndCategory,
+              `${datasetRecord.attributes.dataset_name}`,
+              categoryName
+            )
+          )
           .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
           .join(' ')
       };
@@ -644,5 +662,33 @@ function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: I
     questionNamesByDatasetAndCategory, 
     displayCategoriesByName, 
     displayCategoryOrder
+  };
+}
+
+function getCategorySearchName(
+  questionNamesByDatasetAndCategory: ReturnType<typeof getDisplayCategoryMetadata>['questionNamesByDatasetAndCategory'],
+  datasetName: string,
+  categoryName: string,
+) {
+  return questionNamesByDatasetAndCategory[datasetName][categoryName];
+}
+
+function makeLinkClickHandler(
+  submissionMetadata: Props['submissionMetadata'],
+  categorySearchName: string,
+  selectedSearchName: string,
+  setSelectedSearch: (newSearchName: string) => void
+) {
+  return function(e: React.MouseEvent) {
+    if (
+      submissionMetadata.type !== 'create-strategy' ||
+      categorySearchName === selectedSearchName
+    ) {
+      e.preventDefault();
+    }
+
+    if (categorySearchName !== selectedSearchName) {
+      setSelectedSearch(categorySearchName);
+    }
   };
 }
