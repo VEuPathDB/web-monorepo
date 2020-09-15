@@ -233,14 +233,15 @@ function useResetFormConfig(
 
   return useMemo(
     () => (
-      prepopulateWithLastParamValues && atLeastOneInitialParamValueProvided
+      prepopulateWithLastParamValues
         ? {
             offered: true,
+            disabled: !atLeastOneInitialParamValueProvided,
             onResetForm: reloadFormWithSystemDefaults,
             resetFormContent: (
               <React.Fragment>
                 <IconAlt fa="refresh" />
-                Reset form with default parameters
+                Reset values
               </React.Fragment>
             )
           }

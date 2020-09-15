@@ -226,7 +226,7 @@ export function QuestionHeader(props: QuestionHeaderProps) {
 
 export type ResetFormConfig =
   | { offered: false }
-  | { offered: true } & ResetFormButtonProps;
+  | { disabled: boolean, offered: true } & ResetFormButtonProps;
 
 interface ResetFormButtonProps {
   disabled?: boolean;
