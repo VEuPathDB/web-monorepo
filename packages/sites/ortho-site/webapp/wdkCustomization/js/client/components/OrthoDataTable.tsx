@@ -32,7 +32,7 @@ export function OrthoDataTable<R, C extends DataTableColumnKey<R>>(
     columnOrder,
     onRowMouseOver,
     onRowMouseOut,
-    tableBodyMaxHeight = 'calc(80vh - 11em)'
+    tableBodyMaxHeight = 'calc(80vh - 275px)'
   }: Props<R, C>
 ) {
   const [ searchTerm, setSearchTerm ] = useState('');
