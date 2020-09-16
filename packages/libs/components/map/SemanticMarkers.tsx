@@ -158,14 +158,13 @@ function updateMarkers(toChangeMarkers: Array<ReactElement<MarkerProps>>,
     const sourceHash = sourceKey.slice(0, -hashDif);
 
     // Find the object with the matching geohash
-    const matchingMarker = sourceMarkers.filter(obj => {
+    const matchingMarkers = sourceMarkers.filter(obj => {
       return obj.key === sourceHash
     });
 
     // Clone marker element with new position
     const markerCloneProps = {
-      ...markerObj.props,
-      position: matchingMarker[0].props.position
+      position: matchingMarkers[0].props.position
     };
     return cloneElement(markerObj, markerCloneProps);
   });
