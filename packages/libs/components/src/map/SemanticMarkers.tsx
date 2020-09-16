@@ -94,17 +94,22 @@ export default function SemanticMarkers({ onViewportChanged, markers, setMarkerE
     * the new markers will start at the matching existing marker's location and here we will
     * reset marker elements so they will animated to their final position
     **/
+    let timeoutVariable: NodeJS.Timeout;
+
     if (zoomType == 'in') {
       setConsolidatedMarkers([...markers])
     }
     /** bfox6 - If we are zooming out then remove the old markers after they finish animating. **/
     else if (zoomType == 'out') {
-      setTimeout(
+      timeoutVariable = setTimeout(
           () => {
             setConsolidatedMarkers([...markers])
           }, 300
       );
     }
+
+    return () => clearTimeout(timeoutVariable)
+
   }, [zoomType]);
 
   return (
@@ -144,10 +149,10 @@ function boundsToGeoBBox(bounds : LatLngBounds) : GeoBBox {
 	   northEast: [north, east] }
 }
 
-function updateMarkers(toChangMarkers: Array<ReactElement<MarkerProps>>,
+function updateMarkers(toChangeMarkers: Array<ReactElement<MarkerProps>>,
                        sourceMarkers: Array<ReactElement<MarkerProps>>,
                        hashDif: number) {
-  return toChangMarkers.map((markerObj) => {
+  return toChangeMarkers.map((markerObj) => {
     // bfox6 - Calculate the matching geohash
     const sourceKey = markerObj.key as string;
     const sourceHash = sourceKey.slice(0, -hashDif);
