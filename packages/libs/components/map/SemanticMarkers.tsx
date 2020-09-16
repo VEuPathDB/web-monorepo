@@ -76,12 +76,12 @@ export default function SemanticMarkers({ onViewportChanged, markers, setMarkerE
           /** No difference in geohashes - Render markers as they are **/
           else {
             setZoomType(null);
-            setConsolidatedMarkers(markers)
+            setConsolidatedMarkers([...markers])
           }
       }
       /** First render of markers **/
       else {
-        setConsolidatedMarkers(markers);
+        setConsolidatedMarkers([...markers]);
       }
 
       // Update previous markers with the original markers array
@@ -95,13 +95,13 @@ export default function SemanticMarkers({ onViewportChanged, markers, setMarkerE
     * reset marker elements so they will animated to their final position
     **/
     if (zoomType == 'in') {
-      setMarkerElements([...markers])
+      setConsolidatedMarkers([...markers])
     }
     /** bfox6 - If we are zooming out then remove the old markers after they finish animating. **/
     else if (zoomType == 'out') {
       setTimeout(
           () => {
-            setMarkerElements([...markers])
+            setConsolidatedMarkers([...markers])
           }, 300
       );
     }
