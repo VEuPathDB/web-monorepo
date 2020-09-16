@@ -15,8 +15,6 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
       component: OrthoMCLHomePageController,
       rootClassNameModifier: 'home-page'
     },
-    // TODO: Delete this route once the initial implementation
-    // TODO: of the cluster graph is complete
     {
       path: '/cluster-graph/:groupName',
       component: (props: RouteComponentProps<{ groupName: string }>) => {
