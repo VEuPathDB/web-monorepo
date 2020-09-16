@@ -19,6 +19,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, setMarkerE
   const { map } = useLeaflet();
 
   const [prevMarkers, setPrevMarkers] = useState<ReactElement<MarkerProps>[]>(markers);
+
   const [consolidatedMarkers, setConsolidatedMarkers] = useState<ReactElement<MarkerProps>[]>([]);
   const [zoomType, setZoomType] = useState<string | null>(null);
 
@@ -50,7 +51,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, setMarkerE
           /** Zoom Out - Move existing markers to new position
            * Existing GeoHash = gcwr
            * New Geohash      = gcw
-           * **/
+           **/
           if (prevGeoHash.length > currentGeohash.length) {
             setZoomType('out');
             const hashDif = prevGeoHash.length - currentGeohash.length;
@@ -62,7 +63,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, setMarkerE
           /** Zoom In - New markers start at old position
            * Existing GeoHash = gcw
            * New Geohash      = gcwr
-           * **/
+           **/
           else if (prevGeoHash.length < currentGeohash.length) {
             setZoomType('in');
             const hashDif = currentGeohash.length - prevGeoHash.length;
@@ -70,12 +71,12 @@ export default function SemanticMarkers({ onViewportChanged, markers, setMarkerE
             const cloneArray = updateMarkers(markers, prevMarkers, hashDif);
             // bfox6 - Set final render markers to the cloneArray which holds the new markers with
             // their new starting location
-            setConsolidatedMarkers([...cloneArray])
+            setConsolidatedMarkers(cloneArray)
           }
           /** No difference in geohashes - Render markers as they are **/
           else {
             setZoomType(null);
-            setConsolidatedMarkers([...markers])
+            setConsolidatedMarkers(markers)
           }
       }
       /** First render of markers **/
@@ -91,11 +92,12 @@ export default function SemanticMarkers({ onViewportChanged, markers, setMarkerE
   useEffect (() => {
     /** bfox6 - If we are zooming in then reset the marker elements. When initially rendered
     * the new markers will start at the matching existing marker's location and here we will
-    * basically reset marker elements so they will animated to their final position **/
+    * reset marker elements so they will animated to their final position
+    **/
     if (zoomType == 'in') {
       setMarkerElements([...markers])
     }
-    /** bfox6 - If we are zooming out then remove the old markers after they finish animation. **/
+    /** bfox6 - If we are zooming out then remove the old markers after they finish animating. **/
     else if (zoomType == 'out') {
       setTimeout(
           () => {
