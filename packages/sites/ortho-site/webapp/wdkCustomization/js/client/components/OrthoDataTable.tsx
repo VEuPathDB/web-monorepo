@@ -22,10 +22,18 @@ interface Props<R, C extends DataTableColumnKey<R>> {
   columnOrder: readonly C[];
   onRowMouseOver?: (row: R) => void;
   onRowMouseOut?: (row: R) => void;
+  tableBodyMaxHeight?: string;
 }
 
 export function OrthoDataTable<R, C extends DataTableColumnKey<R>>(
-  { rows, columns, columnOrder, onRowMouseOver, onRowMouseOut }: Props<R, C>
+  {
+    rows,
+    columns,
+    columnOrder,
+    onRowMouseOver,
+    onRowMouseOut,
+    tableBodyMaxHeight = 'calc(80vh - 11em)'
+  }: Props<R, C>
 ) {
   const [ searchTerm, setSearchTerm ] = useState('');
 
@@ -43,8 +51,8 @@ export function OrthoDataTable<R, C extends DataTableColumnKey<R>>(
   const mesaColumns = useMemo(() => makeMesaColumns(columns, columnOrder), [ columns, columnOrder ]);
 
   const mesaOptions = useMemo(
-    () => makeMesaOptions(onRowMouseOver, onRowMouseOut),
-    [ onRowMouseOver, onRowMouseOut ]
+    () => makeMesaOptions(onRowMouseOver, onRowMouseOut, tableBodyMaxHeight),
+    [ onRowMouseOver, onRowMouseOut, tableBodyMaxHeight ]
   );
   const mesaEventHandlers = useMemo(() => makeMesaEventHandlers(setSortUiState), []);
   const mesaUiState = useMemo(() => makeMesaUiState(sortUiState), [ sortUiState ]);
@@ -162,10 +170,13 @@ function makeMesaUiState<R, C extends DataTableColumnKey<R>>(sort: DataTableSort
 
 function makeMesaOptions<R>(
   onRowMouseOver?: (row: R) => void,
-  onRowMouseOut?: (row: R) => void
+  onRowMouseOut?: (row: R) => void,
+  tableBodyMaxHeight?: string
 ) {
   return {
     toolbar: true,
+    useStickyHeader: true,
+    tableBodyMaxHeight,
     onRowMouseOver,
     onRowMouseOut
   };

@@ -10,6 +10,8 @@ import {
   renderSequenceLink
 } from 'ortho-client/utils/graphInformation';
 
+const TABLE_BODY_MAX_HEIGHT = '625px';
+
 export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInformationTabProps) {
   const rows = useMemo(
     () => layoutToSequenceListRows(layout),
@@ -38,6 +40,7 @@ export function SequenceList({ layout, setHighlightedSequenceNodeId }: GraphInfo
         columnOrder={SEQUENCE_LIST_COLUMN_ORDER}
         onRowMouseOver={onSequenceRowMouseOver}
         onRowMouseOut={onSequenceRowMouseOut}
+        tableBodyMaxHeight={TABLE_BODY_MAX_HEIGHT}
       />
     </div>
   );
