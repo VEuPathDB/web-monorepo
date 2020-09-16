@@ -15,7 +15,6 @@ import {
 import { ProteinType } from 'ortho-client/utils/clusterGraph';
 import { DataTableColumns } from 'ortho-client/utils/dataTables';
 import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 interface CommonRowEntries {
   core_peripheral: ProteinType;
