@@ -4,6 +4,11 @@ import { orderBy } from 'lodash';
 
 import { RealTimeSearchBox } from 'wdk-client/Components';
 import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import {
+  areTermsInString,
+  parseSearchQueryString
+} from 'wdk-client/Utils/SearchUtils';
 
 import {
   DataTableColumnKey,
@@ -33,10 +38,7 @@ export function OrthoDataTable<R, C extends DataTableColumnKey<R>>(
     [ rows, columns, sortUiState ]
   );
 
-  const mesaFilteredRows = useMemo(
-    () => makeMesaFilteredRows(mesaRows, columns, columnOrder, searchTerm),
-    [ mesaRows, columns, columnOrder, searchTerm ]
-  );
+  const mesaFilteredRows = useMesaFilteredRows(mesaRows, columns, columnOrder, searchTerm);
 
   const mesaColumns = useMemo(() => makeMesaColumns(columns, columnOrder), [ columns, columnOrder ]);
 
@@ -89,24 +91,49 @@ function makeMesaRows<R, C extends DataTableColumnKey<R>>(
     : orderBy(rows, makeOrder, sortDirection);
 }
 
-function makeMesaFilteredRows<R, C extends DataTableColumnKey<R>>(
+function useMesaFilteredRows<R, C extends DataTableColumnKey<R>>(
   rows: Props<R, C>['rows'],
   columns: Props<R, C>['columns'],
   columnOrder: Props<R, C>['columnOrder'],
   searchTerm: string
 ) {
-  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+  const searchTerms = useMemo(
+    () => parseSearchQueryString(searchTerm),
+    [ searchTerm ]
+  );
 
-  return rows.filter(
-    row => columnOrder.some(columnKey => {
-      const { makeSearchableString } = columns[columnKey];
+  const rowsWithSearchableString = useMemo(
+    () => Seq.from(rows).map(row => {
+      const searchableColumnStrings = columnOrder.map(columnKey => {
+        const { makeSearchableString } = columns[columnKey];
 
-      const searchableString = makeSearchableString == null
-        ? String(row[columnKey])
-        : makeSearchableString(row[columnKey]);
+        return makeSearchableString == null
+          ? String(row[columnKey])
+          : makeSearchableString(row[columnKey]);
+      });
 
-      return searchableString.toLowerCase().includes(normalizedSearchTerm);
-    })
+      const searchableRowString = searchableColumnStrings.join('\0');
+
+      return {
+        row,
+        searchableRowString
+      };
+    }),
+    [ rows, columns, columnOrder ]
+  );
+
+  return useMemo(
+    () => (
+      rowsWithSearchableString
+        .filter(
+          ({ searchableRowString }) => areTermsInString(searchTerms, searchableRowString)
+        )
+        .map(
+          ({ row }) => row
+        )
+        .toArray()
+    ),
+    [ rowsWithSearchableString, searchTerms ]
   );
 }
 
