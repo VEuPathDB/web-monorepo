@@ -11,7 +11,7 @@ import 'leaflet/dist/leaflet.css';
  * 
  * @param props 
  */
-export default function MapVEuMap({ viewport, height, width, onViewportChanged, markers, setMarkerElements }: MapVEuMapProps) {
+export default function MapVEuMap({ viewport, height, width, onViewportChanged, markers, animation}: MapVEuMapProps) {
 
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
@@ -40,7 +40,7 @@ export default function MapVEuMap({ viewport, height, width, onViewportChanged, 
       <SemanticMarkers
         onViewportChanged={onViewportChanged}
         markers={markers}
-        setMarkerElements={setMarkerElements}
+        animation={animation}
       />
     </Map>
   );
