@@ -162,10 +162,14 @@ function updateMarkers(toChangeMarkers: Array<ReactElement<MarkerProps>>,
       return obj.key === sourceHash
     });
 
-    // Clone marker element with new position
-    const markerCloneProps = {
-      position: matchingMarkers[0].props.position
-    };
+    let markerCloneProps = {};
+    if (matchingMarkers.length == 1) {
+      // Clone marker element with new position
+      markerCloneProps = {
+        position: matchingMarkers[0].props.position
+      };
+    }
+
     return cloneElement(markerObj, markerCloneProps);
   });
 
