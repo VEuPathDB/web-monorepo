@@ -70,7 +70,10 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
   const marginY = 5    //DKDK margin to start drawing bars in Y
 
   // //DKDK thin line: drawing outer box with round corners: changed border color (stroke)
-  svgHTML += '<rect x="0" y="0" rx=' + roundX + ' ry=' + roundY + ' width=' + xSize + ' height=' + ySize + ' fill="white" stroke="' + defaultLineColor +'" stroke-width="1" opacity="1.0" />'
+  svgHTML += '<rect x="0" y="0" rx=' + roundX + ' ry=' + roundY + ' width=' + xSize + ' height=' + ySize + ' fill="white" stroke="' + defaultLineColor +'" stroke-width="0" opacity="1.0" />'
+
+  //DKDK add inner border to avoid the issue of clipped border in svg
+  svgHTML += '<rect x=1 y=1 rx="9" ry="9" width="' + (xSize-1) + '" height="' + (ySize-1) + '" fill="white" opacity="0.5" stroke="black" stroke-width="1"/>'
 
   //DKDK set globalMaxValue non-zero if props.yAxisRange exists
   let globalMaxValue: number = 0
@@ -104,7 +107,9 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
     })
   }
   //DKDK add horizontal line
-  svgHTML += '<line x1="0" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />'
+  // svgHTML += '<line x1="0" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />'
+  //DKDK add horizontal line: when using inner border (adjust x1)
+  svgHTML += '<line x1="1" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />'
 
   //DKDK set the location of total number
   svgHTML += '<text x="50%" y="89%" dominant-baseline="middle" text-anchor="middle" opacity="1">' + sumValues + '</text>'
