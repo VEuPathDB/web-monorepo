@@ -1,11 +1,10 @@
 import React, { ReactElement, useState, useCallback } from 'react';
-// import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
-import { Marker } from 'react-leaflet';
 import Geohash from 'latlon-geohash';
 import './TempIconHack';
 import {DriftMarker} from "leaflet-drift-marker";
+import geohashAnimation from "./animation_functions/geohash";
 
 
 export default {
@@ -79,17 +78,17 @@ export const GeohashIds = () => {
   }, [setMarkerElements]);
 
   return (
-    <MapVEuMap
-    viewport={{center: [ 54.561781, -3.013297 ], zoom: 11}}
-    height="600px" width="800px"
-    onViewportChanged={handleViewportChanged}
-    markers={markerElements}
-    animation={{
-      method: "geohash",
-      duration: 300
-      // function: updateMarkers
-    }}
-    />
+      <MapVEuMap
+          viewport={{center: [54.561781, -3.013297], zoom: 11}}
+          height="600px" width="800px"
+          onViewportChanged={handleViewportChanged}
+          markers={markerElements}
+          animation={{
+            method: "geohash",
+            duration: 300,
+            animationFunction: geohashAnimation
+          }}
+      />
   );
 };
 
