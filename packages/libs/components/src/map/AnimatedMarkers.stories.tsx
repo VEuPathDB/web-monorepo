@@ -35,7 +35,7 @@ const zoomLevelToGeohashLevel = [
   7  // 18
 ];
 
-const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number) => {
+const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number, duration: number) => {
   console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
 
   let aggsByGeohash = new Map();
@@ -60,7 +60,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
     const meanLat = agg.lat/agg.count;
     const meanLong = agg.long/agg.count;
     return <DriftMarker
-        duration={300}
+        duration={duration}
         key={agg.geohash}
         position={[meanLat, meanLong]}
         title={agg.geohash}
@@ -74,8 +74,8 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
 export const GeohashIds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
 
-  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getMarkerElements(bvp, 500));
+  const handleViewportChanged = useCallback((bvp: BoundsViewport, duration: number) => {
+    setMarkerElements(getMarkerElements(bvp, 500, duration));
   }, [setMarkerElements]);
 
   return (
@@ -84,7 +84,11 @@ export const GeohashIds = () => {
     height="600px" width="800px"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
-    setMarkerElements={setMarkerElements}
+    animation={{
+      method: "geohash",
+      duration: 300
+      // function: updateMarkers
+    }}
     />
   );
 };
