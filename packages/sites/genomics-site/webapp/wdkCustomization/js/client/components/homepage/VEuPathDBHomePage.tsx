@@ -349,7 +349,7 @@ const useHeaderMenuItems = (
           key: 'jbrowse',
           display: 'Genome browser',
           type: 'reactRoute',
-          url: '/jbrowse?data=/a/service/jbrowse/tracks/default&tracks=gene',
+          url: '/jbrowse?data=/a/service/jbrowse/tracks/default',
           metadata: {
             exclude: [ EuPathDB ]
           }
