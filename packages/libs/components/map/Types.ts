@@ -19,6 +19,13 @@ export interface MarkerProps {
   key: string
 }
 
+export interface AnimationFunction {
+  prevMarkers: ReactElement<MarkerProps>[],
+  markers: ReactElement<MarkerProps>[],
+  setZoomType: (zoomType: string | null) => void,
+  setConsolidatedMarkers: (markers: ReactElement<MarkerProps>[]) => void
+}
+
 /** React Props that are passed to a Map Component. */
 export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
@@ -33,7 +40,7 @@ export interface MapVEuMapProps {
   animation: {
     method: string,
     duration: number,
-    // function: () => ReactElement<MarkerProps>[]
+    animationFunction: ({prevMarkers, markers, setZoomType, setConsolidatedMarkers}: AnimationFunction) => ReactElement<MarkerProps>[]
   }
 }
 

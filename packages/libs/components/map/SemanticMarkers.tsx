@@ -1,8 +1,7 @@
-import React, {cloneElement, ReactElement, useEffect, useState} from "react"; //  { useState, useCallback } from "react";
-import { GeoBBox, MarkerProps, BoundsViewport } from "./Types";
+import React, {ReactElement, useEffect, useState} from "react";
+import {GeoBBox, MarkerProps, BoundsViewport, AnimationFunction} from "./Types";
 import { useLeaflet } from "react-leaflet";
 import { LatLngBounds } from 'leaflet'
-import geohashAnimation from "./animation_functions/geohash";
 
 interface SemanticMarkersProps {
   onViewportChanged: (bvp: BoundsViewport, duration: number) => void,
@@ -10,7 +9,7 @@ interface SemanticMarkersProps {
   animation: {
     method: string,
     duration: number,
-    // function: () => ReactElement<MarkerProps>[]
+    animationFunction: ({prevMarkers, markers, setZoomType, setConsolidatedMarkers}: AnimationFunction) => ReactElement<MarkerProps>[]
   }
 }
 
@@ -50,7 +49,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
 
   useEffect(() => {
       if (markers.length > 0 && prevMarkers.length > 0) {
-        geohashAnimation({prevMarkers, markers, setZoomType, setConsolidatedMarkers})
+        animation.animationFunction({prevMarkers, markers, setZoomType, setConsolidatedMarkers})
       }
       /** First render of markers **/
       else {
@@ -77,7 +76,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
       timeoutVariable = setTimeout(
           () => {
             setConsolidatedMarkers([...markers])
-          }, 300
+          }, animation.duration
       );
     }
 
