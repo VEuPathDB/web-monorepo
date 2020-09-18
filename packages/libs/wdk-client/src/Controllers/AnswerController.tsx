@@ -297,7 +297,7 @@ function makeOnDownloadButtonClick(
           attributes: allAttributes
             .filter(({ isDisplayable }) => isDisplayable)
             .map(({ name }) => name),
-          customName: 'foo',
+          customName: '',
           pagination: DEFAULT_PAGINATION,
           sorting: DEFAULT_SORTING
         }
