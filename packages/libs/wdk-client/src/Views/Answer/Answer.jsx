@@ -197,6 +197,10 @@ class Answer extends React.Component {
             <AnswerCount />
             <AttributePopup />
             <div style={{ flex: 1, textAlign: 'right' }}>
+              <button className="btn" onClick={this.props.onDownloadButtonClick}>
+                <Icon fa="download" />
+                Download
+              </button>
               <button className="btn" onClick={this.openAttributeSelector}>
                 <Icon fa="plus-circle" />
                 Add / Remove Columns
