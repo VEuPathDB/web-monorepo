@@ -9,7 +9,7 @@ interface SemanticMarkersProps {
   animation: {
     method: string,
     duration: number,
-    animationFunction: ({prevMarkers, markers, setZoomType, setConsolidatedMarkers}: AnimationFunction) => ReactElement<MarkerProps>[]
+    animationFunction: AnimationFunction
   }
 }
 
