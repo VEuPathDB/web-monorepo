@@ -19,29 +19,18 @@ export interface MarkerProps {
   key: string
 }
 
-// export interface AnimationFunction {
-//   prevMarkers: ReactElement<MarkerProps>[],
-//   markers: ReactElement<MarkerProps>[],
-//   setZoomType: (zoomType: string | null) => void,
-//   setConsolidatedMarkers: (markers: ReactElement<MarkerProps>[]) => void
-// }
-
-// type AnimationFunction = ({prevMarkers: ReactElement<MarkerProps>[],
-//                           markers: ReactElement<MarkerProps>[],
-//                           setZoomType: (zoomType: string | null) => void,
-//                           setConsolidatedMarkers: (markers: ReactElement<MarkerProps>[]) => void}) => void;
-
-export type AnimationFunction = ({
-                            prevMarkers,
-                            markers,
-                            setZoomType,
-    setConsolidatedMarkers
-                          }: {
-  prevMarkers: ReactElement<MarkerProps>[];
-  markers: ReactElement<MarkerProps>[];
-  setZoomType: (zoomType: string | null) => void,
-  setConsolidatedMarkers: (markers: ReactElement<MarkerProps>[]) => void
-}) => void;
+export type AnimationFunction = (
+    {
+      prevMarkers,
+      markers,
+      setZoomType,
+      setConsolidatedMarkers
+    }: {
+      prevMarkers: ReactElement<MarkerProps>[];
+      markers: ReactElement<MarkerProps>[];
+      setZoomType: (zoomType: string | null) => void,
+      setConsolidatedMarkers: (markers: ReactElement<MarkerProps>[]) => void
+    }) => void;
 
 /** React Props that are passed to a Map Component. */
 export interface MapVEuMapProps {
