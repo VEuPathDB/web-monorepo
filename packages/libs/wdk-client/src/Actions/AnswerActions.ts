@@ -1,5 +1,5 @@
 import { pick } from 'lodash';
-import { ActionThunk } from 'wdk-client/Core/WdkMiddleware';
+import { ActionThunk, EmptyAction, emptyAction } from 'wdk-client/Core/WdkMiddleware';
 import {
   AttributeField,
   RecordClass,
@@ -246,5 +246,39 @@ export function loadAnswer(
         }
       }
     ]
+  }
+}
+
+export function downloadAnswer(
+  searchName: string,
+  {
+    displayInfo: {
+      attributes,
+      pagination,
+      sorting
+    },
+    parameters = {}
+  }: AnswerOptions
+): ActionThunk<EmptyAction> {
+  return function run({ wdkService }) {
+    wdkService.downloadAnswer({
+      answerSpec: {
+        searchName,
+        searchConfig: {
+          parameters
+        }
+      },
+      formatting: {
+        format: 'attributesTabular',
+        formatConfig: {
+          attachmentType: 'csv',
+          attributes,
+          pagination,
+          sorting
+        }
+      }
+    });
+
+    return emptyAction;
   }
 }
