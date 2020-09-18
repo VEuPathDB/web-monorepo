@@ -55,11 +55,17 @@ interface RowClassNameProps {
   recordClass: RecordClass;
 };
 
+interface TableAction {
+  key: string;
+  display: React.ReactNode
+}
+
 type Options = {
   // optional overrides
   renderCellContent?: (props: RenderCellProps) => React.ReactNode;
   deriveRowClassName?: (props: RowClassNameProps) => string | undefined;
-  customSortBys?: Record<string, ListIteratee<RecordInstance>[]>
+  customSortBys?: Record<string, ListIteratee<RecordInstance>[]>;
+  additionalActions?: TableAction[];
 };
 
 type OwnProps = {
@@ -79,8 +85,8 @@ export type Props = {
   onDownloadButtonClick?: () => void;
 } & Options;
 
-const DEFAULT_PAGINATION = { numRecords: MAXROWS, offset: 0 };
-const DEFAULT_SORTING = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
+export const DEFAULT_PAGINATION = { numRecords: MAXROWS, offset: 0 };
+export const DEFAULT_SORTING = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
 
 class AnswerController extends PageController<Props> {
 
@@ -241,6 +247,7 @@ class AnswerController extends PageController<Props> {
         deriveRowClassName={this.props.deriveRowClassName}
         customSortBys={this.props.customSortBys}
         onDownloadButtonClick={this.props.onDownloadButtonClick}
+        additionalActions={this.props.additionalActions}
       />
     );
   }
