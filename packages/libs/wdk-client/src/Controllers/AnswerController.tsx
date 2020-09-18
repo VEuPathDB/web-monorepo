@@ -6,6 +6,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { isEmpty, ListIteratee } from 'lodash';
 import {
+  downloadAnswer,
   loadAnswer,
   changeColumnPosition,
   changeVisibleColumns,
@@ -28,6 +29,7 @@ const ActionCreators = {
   changeColumnPosition,
   changeVisibleColumns,
   changeSorting,
+  downloadAnswer,
 };
 
 // FIXME Remove this when Answer is converted to Typescript
@@ -74,7 +76,11 @@ export type Props = {
   stateProps: StateProps,
   dispatchProps: DispatchProps
   ownProps: OwnProps;
+  onDownloadButtonClick?: () => void;
 } & Options;
+
+const DEFAULT_PAGINATION = { numRecords: MAXROWS, offset: 0 };
+const DEFAULT_SORTING = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
 
 class AnswerController extends PageController<Props> {
 
@@ -113,8 +119,8 @@ class AnswerController extends PageController<Props> {
       recordClassName !== prevProps?.ownProps.recordClass ||
       !isEqual(parameters, prevProps?.ownProps.parameters)
     ) {
-      let pagination = { numRecords: MAXROWS, offset: 0 };
-      let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
+      let pagination = DEFAULT_PAGINATION;
+      let sorting = DEFAULT_SORTING;
       let displayInfo = { pagination, sorting, customName };
       let opts = { displayInfo, parameters, filterTerm, filterAttributes, filterTables };
       dispatchProps.loadAnswer(searchName, recordClassName, opts);
@@ -234,6 +240,7 @@ class AnswerController extends PageController<Props> {
         renderCellContent={this.props.renderCellContent}
         deriveRowClassName={this.props.deriveRowClassName}
         customSortBys={this.props.customSortBys}
+        onDownloadButtonClick={this.props.onDownloadButtonClick}
       />
     );
   }
@@ -256,7 +263,13 @@ const mapDispatchToProps = ActionCreators;
 const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
   stateProps,
   dispatchProps,
-  ownProps
+  ownProps,
+  onDownloadButtonClick: makeOnDownloadButtonClick(
+    stateProps.question,
+    stateProps.allAttributes,
+    dispatchProps.downloadAnswer,
+    ownProps.parameters
+  )
 });
 
 export default connect(
@@ -264,3 +277,31 @@ export default connect(
   mapDispatchToProps,
   mergeProps
 )(wrappable(AnswerController));
+
+function makeOnDownloadButtonClick(
+  question: StateProps['question'],
+  allAttributes: StateProps['allAttributes'],
+  downloadAnswer: DispatchProps['downloadAnswer'],
+  parameters: OwnProps['parameters']
+) {
+  if (allAttributes == null || question == null) {
+    return undefined;
+  }
+
+  return () => {
+    downloadAnswer(
+      question.urlSegment,
+      {
+        parameters,
+        displayInfo: {
+          attributes: allAttributes
+            .filter(({ isDisplayable }) => isDisplayable)
+            .map(({ name }) => name),
+          customName: 'foo',
+          pagination: DEFAULT_PAGINATION,
+          sorting: DEFAULT_SORTING
+        }
+      }
+    );
+  };
+}
