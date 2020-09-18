@@ -104,7 +104,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
         duration={300}
         key={agg.geohash}
         position={[meanLat, meanLong]}
-        title={agg.geohash}
+        title={agg.geohash+' ('+agg.count+')'}
       />
   })
 
