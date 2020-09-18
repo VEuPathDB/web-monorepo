@@ -1,11 +1,12 @@
-import React, { ReactElement, useEffect } from "react"; //  { useState, useCallback } from "react";
+import React, {cloneElement, ReactElement, useEffect, useState} from "react"; //  { useState, useCallback } from "react";
 import { GeoBBox, MarkerProps, BoundsViewport } from "./Types";
 import { useLeaflet } from "react-leaflet";
 import { LatLngBounds } from 'leaflet'
 
 interface SemanticMarkersProps {
   onViewportChanged: (bvp: BoundsViewport) => void,
-  markers: Array<ReactElement<MarkerProps>>
+  markers: Array<ReactElement<MarkerProps>>,
+  setMarkerElements: (markers: ReactElement<MarkerProps>[]) => void
 }
 
 /**
@@ -14,17 +15,23 @@ interface SemanticMarkersProps {
  * 
  * @param props 
  */
-export default function SemanticMarkers({ onViewportChanged, markers }: SemanticMarkersProps) {
+export default function SemanticMarkers({ onViewportChanged, markers, setMarkerElements}: SemanticMarkersProps) {
   const { map } = useLeaflet();
+
+  const [prevMarkers, setPrevMarkers] = useState<ReactElement<MarkerProps>[]>(markers);
+
+  const [consolidatedMarkers, setConsolidatedMarkers] = useState<ReactElement<MarkerProps>[]>([]);
+  const [zoomType, setZoomType] = useState<string | null>(null);
+
   // call the prop callback to communicate bounds and zoomLevel to outside world
   useEffect(() => {
     if (map == null) return;
 
     function updateMap() {
       if (map != null) {
-	const bounds = boundsToGeoBBox(map.getBounds());
-	const zoomLevel = map.getZoom();
-	onViewportChanged({ bounds, zoomLevel });
+        const bounds = boundsToGeoBBox(map.getBounds());
+        const zoomLevel = map.getZoom();
+        onViewportChanged({ bounds, zoomLevel });
       }
     }
 
@@ -36,27 +43,81 @@ export default function SemanticMarkers({ onViewportChanged, markers }: Semantic
     };
   }, [map, onViewportChanged]);
 
-  
+  useEffect(() => {
+      if (markers.length > 0 && prevMarkers.length > 0) {
+          const prevGeoHash = prevMarkers[0].key as string;
+          const currentGeohash = markers[0].key as string;
 
-  /* also think about animating from the previous markers
-     hopefully react can do that for free?  (I saw something about prevProps in lifecycle methods.)
+          /** Zoom Out - Move existing markers to new position
+           * Existing GeoHash = gcwr
+           * New Geohash      = gcw
+           **/
+          if (prevGeoHash.length > currentGeohash.length) {
+            setZoomType('out');
+            const hashDif = prevGeoHash.length - currentGeohash.length;
+            // Get a new array of existing markers with new position property
+            const cloneArray = updateMarkers(prevMarkers, markers, hashDif);
+            // Combine the new and existing markers
+            setConsolidatedMarkers([...markers, ...cloneArray]);
+          }
+          /** Zoom In - New markers start at old position
+           * Existing GeoHash = gcw
+           * New Geohash      = gcwr
+           **/
+          else if (prevGeoHash.length < currentGeohash.length) {
+            setZoomType('in');
+            const hashDif = currentGeohash.length - prevGeoHash.length;
+            // Get a new array of new markers with existing position property
+            const cloneArray = updateMarkers(markers, prevMarkers, hashDif);
+            // Set final render markers to the cloneArray which holds the new markers with
+            // their new starting location
+            setConsolidatedMarkers(cloneArray)
+          }
+          /** No difference in geohashes - Render markers as they are **/
+          else {
+            setZoomType(null);
+            setConsolidatedMarkers([...markers])
+          }
+      }
+      /** First render of markers **/
+      else {
+        setConsolidatedMarkers([...markers]);
+      }
 
-     Have to figure out relationships between previous and current markers.
-     Easy to do using geohash strings.  Need to see how it was done in the old map.
-     Yes it was done by looking for common prefices in the markerID which was also the geohash_x value
-     https://github.com/VEuPathDB/popbio-map/blob/1dce1d83dd6142ce1938675a8e6b620623f41779/web/js/map.popbioMarkers.js#L42
+      // Update previous markers with the original markers array
+      setPrevMarkers(markers);
 
-     What if we're not using geohash strings to aggregate? (e.g. using country and admin1 fields)
-     (GADM IDs do have a prefix structure, so this could work.)
-   */
+  }, [markers]);
+
+  useEffect (() => {
+    /** If we are zooming in then reset the marker elements. When initially rendered
+    * the new markers will start at the matching existing marker's location and here we will
+    * reset marker elements so they will animated to their final position
+    **/
+    let timeoutVariable: NodeJS.Timeout;
+
+    if (zoomType == 'in') {
+      setConsolidatedMarkers([...markers])
+    }
+    /** If we are zooming out then remove the old markers after they finish animating. **/
+    else if (zoomType == 'out') {
+      timeoutVariable = setTimeout(
+          () => {
+            setConsolidatedMarkers([...markers])
+          }, 300
+      );
+    }
+
+    return () => clearTimeout(timeoutVariable)
+
+  }, [zoomType]);
 
   return (
     <>
-      {markers}
+      {consolidatedMarkers}
     </>
   );
 }
-
 
 
 function boundsToGeoBBox(bounds : LatLngBounds) : GeoBBox {
@@ -88,3 +149,28 @@ function boundsToGeoBBox(bounds : LatLngBounds) : GeoBBox {
 	   northEast: [north, east] }
 }
 
+function updateMarkers(toChangeMarkers: Array<ReactElement<MarkerProps>>,
+                       sourceMarkers: Array<ReactElement<MarkerProps>>,
+                       hashDif: number) {
+  return toChangeMarkers.map((markerObj) => {
+    // Calculate the matching geohash
+    const sourceKey = markerObj.key as string;
+    const sourceHash = sourceKey.slice(0, -hashDif);
+
+    // Find the object with the matching geohash
+    const matchingMarkers = sourceMarkers.filter(obj => {
+      return obj.key === sourceHash
+    });
+
+    let markerCloneProps = {};
+    if (matchingMarkers.length == 1) {
+      // Clone marker element with new position
+      markerCloneProps = {
+        position: matchingMarkers[0].props.position
+      };
+    }
+
+    return cloneElement(markerObj, markerCloneProps);
+  });
+
+}
