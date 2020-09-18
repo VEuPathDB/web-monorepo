@@ -6,7 +6,6 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { isEmpty, ListIteratee } from 'lodash';
 import {
-  downloadAnswer,
   loadAnswer,
   changeColumnPosition,
   changeVisibleColumns,
@@ -29,7 +28,6 @@ const ActionCreators = {
   changeColumnPosition,
   changeVisibleColumns,
   changeSorting,
-  downloadAnswer,
 };
 
 // FIXME Remove this when Answer is converted to Typescript
@@ -82,7 +80,6 @@ export type Props = {
   stateProps: StateProps,
   dispatchProps: DispatchProps
   ownProps: OwnProps;
-  onDownloadButtonClick?: () => void;
 } & Options;
 
 export const DEFAULT_PAGINATION = { numRecords: MAXROWS, offset: 0 };
@@ -246,7 +243,6 @@ class AnswerController extends PageController<Props> {
         renderCellContent={this.props.renderCellContent}
         deriveRowClassName={this.props.deriveRowClassName}
         customSortBys={this.props.customSortBys}
-        onDownloadButtonClick={this.props.onDownloadButtonClick}
         additionalActions={this.props.additionalActions}
       />
     );
@@ -270,13 +266,7 @@ const mapDispatchToProps = ActionCreators;
 const mergeProps = (stateProps: StateProps, dispatchProps: DispatchProps, ownProps: OwnProps) => ({
   stateProps,
   dispatchProps,
-  ownProps,
-  onDownloadButtonClick: makeOnDownloadButtonClick(
-    stateProps.question,
-    stateProps.allAttributes,
-    dispatchProps.downloadAnswer,
-    ownProps.parameters
-  )
+  ownProps
 });
 
 export default connect(
@@ -284,31 +274,3 @@ export default connect(
   mapDispatchToProps,
   mergeProps
 )(wrappable(AnswerController));
-
-function makeOnDownloadButtonClick(
-  question: StateProps['question'],
-  allAttributes: StateProps['allAttributes'],
-  downloadAnswer: DispatchProps['downloadAnswer'],
-  parameters: OwnProps['parameters']
-) {
-  if (allAttributes == null || question == null) {
-    return undefined;
-  }
-
-  return () => {
-    downloadAnswer(
-      question.urlSegment,
-      {
-        parameters,
-        displayInfo: {
-          attributes: allAttributes
-            .filter(({ isDisplayable }) => isDisplayable)
-            .map(({ name }) => name),
-          customName: '',
-          pagination: DEFAULT_PAGINATION,
-          sorting: DEFAULT_SORTING
-        }
-      }
-    );
-  };
-}
