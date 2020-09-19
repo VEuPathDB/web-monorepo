@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from 'ebrc-client/App/Header';
+import Footer from 'ebrc-client/components/Footer';
 import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
 import StudyAnswerController from 'ebrc-client/component-wrappers/StudyAnswerController';
 import StudyRecordHeading from 'ebrc-client/component-wrappers/StudyRecordHeading';
@@ -19,13 +20,21 @@ import { studyMatchPredicate, studyFilters } from 'ebrc-client/util/homeContent'
 export default {
   SiteHeader: () => SiteHeader,
   IndexController: () => IndexController,
-  Footer: () => Footer,
+  Footer: () => SiteFooter,
   RecordHeading: DefaultComponent => props => props.recordClass.urlSegment === 'dataset'
     ? <StudyRecordHeading {...props} DefaultComponent={DefaultComponent} showSearches />
     : <DefaultComponent {...props }/>,
   AnswerController: DefaultComponent => props => props.ownProps.recordClass === 'dataset'
     ? <StudyAnswerController {...props} DefaultComponent={DefaultComponent} />
     : <DefaultComponent {...props }/>
+}
+
+function SiteFooter() {
+  return (
+    <Footer
+      siteAck={ {linkTo:"http://www.vet.upenn.edu/", imageLocation:"/a/images/PrivateLogo.png"} }
+    />
+  );
 }
 
 function SiteHeader() {
@@ -185,38 +194,3 @@ function makeHeaderMenuItems(state) {
   }
 }
 
-import NewWindowLink from 'ebrc-client/components/NewWindowLink';
-import { formatReleaseDate } from 'ebrc-client/util/formatters';
-import { buildNumber, releaseDate, displayName, webAppUrl } from 'ebrc-client/config';
-
-function Footer() {
-  return (
-    <div className="Footer">
-      <div>
-        <div>
-          <span>
-            <a href={`//${location.hostname}`}>{displayName}</a>
-            <span> {buildNumber} &nbsp;&nbsp; {formatReleaseDate(releaseDate)}</span>
-          </span>
-          <br/>
-        </div>
-        <div>
-          <a href="https://twitter.com/MicrobiomeDB" target="_blank">
-            Follow us on <i className="fa fa-twitter"/>
-          </a>
-        </div>
-        <div>©{new Date().getFullYear()} The VEuPathDB Project Team</div>
-      </div>
-      <div>
-        <div>
-          <a href="http://www.vet.upenn.edu/">
-            <img width="120" src="https://microbiomedb.org/mbio/images/PrivateLogo.png"/>
-          </a>
-        </div>
-        <div>
-          Please <NewWindowLink href={webAppUrl + '/app/contact-us'}>Contact Us</NewWindowLink> with any questions or comments
-        </div>
-      </div>
-    </div>
-  );
-}
