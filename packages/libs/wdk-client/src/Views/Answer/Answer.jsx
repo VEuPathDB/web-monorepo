@@ -197,6 +197,11 @@ class Answer extends React.Component {
             <AnswerCount />
             <AttributePopup />
             <div style={{ flex: 1, textAlign: 'right' }}>
+              {this.props.additionalActions?.map(({ key, display }) =>
+                <React.Fragment key={key}>
+                  {display}
+                </React.Fragment>
+              )}
               <button className="btn" onClick={this.openAttributeSelector}>
                 <Icon fa="plus-circle" />
                 Add / Remove Columns

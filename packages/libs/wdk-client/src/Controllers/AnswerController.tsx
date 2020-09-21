@@ -53,11 +53,17 @@ interface RowClassNameProps {
   recordClass: RecordClass;
 };
 
+interface TableAction {
+  key: string;
+  display: React.ReactNode
+}
+
 type Options = {
   // optional overrides
   renderCellContent?: (props: RenderCellProps) => React.ReactNode;
   deriveRowClassName?: (props: RowClassNameProps) => string | undefined;
-  customSortBys?: Record<string, ListIteratee<RecordInstance>[]>
+  customSortBys?: Record<string, ListIteratee<RecordInstance>[]>;
+  additionalActions?: TableAction[];
 };
 
 type OwnProps = {
@@ -75,6 +81,9 @@ export type Props = {
   dispatchProps: DispatchProps
   ownProps: OwnProps;
 } & Options;
+
+export const DEFAULT_PAGINATION = { numRecords: MAXROWS, offset: 0 };
+export const DEFAULT_SORTING = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
 
 class AnswerController extends PageController<Props> {
 
@@ -113,8 +122,8 @@ class AnswerController extends PageController<Props> {
       recordClassName !== prevProps?.ownProps.recordClass ||
       !isEqual(parameters, prevProps?.ownProps.parameters)
     ) {
-      let pagination = { numRecords: MAXROWS, offset: 0 };
-      let sorting = [{ attributeName: 'primary_key', direction: 'ASC' } as Sorting];
+      let pagination = DEFAULT_PAGINATION;
+      let sorting = DEFAULT_SORTING;
       let displayInfo = { pagination, sorting, customName };
       let opts = { displayInfo, parameters, filterTerm, filterAttributes, filterTables };
       dispatchProps.loadAnswer(searchName, recordClassName, opts);
@@ -234,6 +243,7 @@ class AnswerController extends PageController<Props> {
         renderCellContent={this.props.renderCellContent}
         deriveRowClassName={this.props.deriveRowClassName}
         customSortBys={this.props.customSortBys}
+        additionalActions={this.props.additionalActions}
       />
     );
   }
