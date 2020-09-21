@@ -4,7 +4,7 @@ import { EpicDependencies } from 'wdk-client/Core/Store';
 
 export type WdkDependencies = EpicDependencies;
 
-// Identical to React.EffectCallback, save that the callback receives WdkService as a parameter
+// Identical to React.EffectCallback, save that the callback receives one dependency as a parameter
 export type DepEffectCallback<T> = ((dep: T) => void) | ((dep: T) => void | undefined);
 
 // FIXME Figure out a way to make the context type WdkDependencies (as opposed to WdkDependencies | undefined)
