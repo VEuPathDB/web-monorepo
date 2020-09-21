@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { debounce, isEqual, memoize, noop, orderBy, throttle, get } from 'lodash';
+import { debounce, isEqual, memoize, noop, omit, orderBy, throttle, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -13,6 +13,8 @@ import { CollapsibleSection, IconAlt } from 'wdk-client/Components';
 import Tooltip from 'wdk-client/Components/Overlays/Tooltip';
 
 const DAY = 1000 * 60 * 60 * 24;
+
+const IGNORED_UI_STATE_PROPERTIES = ['loading', 'valid', 'errorMessage'];
 
 var distributionEntryPropType = PropTypes.shape({
   value: PropTypes.number.isRequired,
@@ -91,7 +93,7 @@ var Histogram = (function() {
     componentDidUpdate(prevProps) {
       if (
         !isEqual(this.props.distribution, prevProps.distribution) ||
-        !isEqual(this.props.uiState, prevProps.uiState)
+        !isEqual(omit(this.props.uiState, IGNORED_UI_STATE_PROPERTIES), omit(prevProps.uiState, IGNORED_UI_STATE_PROPERTIES))
       ) {
         this.createPlot();
         this.drawPlotSelection();
