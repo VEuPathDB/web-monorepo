@@ -6,7 +6,15 @@ import { uniqueId } from 'lodash';
 import $ from 'jquery';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { loadChemDoodleWeb } from '../common/Compound';
-import { CategoriesCheckboxTree, CollapsibleSection, Link, Loading, Dialog, HelpIcon } from 'wdk-client/Components';
+import {
+  CategoriesCheckboxTree,
+  Checkbox,
+  CollapsibleSection,
+  Dialog,
+  HelpIcon,
+  Link,
+  Loading
+} from 'wdk-client/Components';
 import * as Ontology from 'wdk-client/Utils/OntologyUtils';
 import * as Category from 'wdk-client/Utils/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
@@ -998,11 +1006,13 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     super(props, context);
     this.state = {
       openSelector: null,
+      userMouseControlsEnabled: true,
     };
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
+    this.resetVis = this.resetVis.bind(this);
     this.onGeneraChange = this.onGeneraChange.bind(this);
     this.onExperimentChange = this.onExperimentChange.bind(this);
-    this.resetVis = this.resetVis.bind(this);
+    this.onClickUserMouseControlsToggle = this.onClickUserMouseControlsToggle.bind(this);
   }
 
   componentDidMount() {
@@ -1011,10 +1021,14 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     if (this.props.nodeList) this.initVis();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     // if geneStepId is defined, and nodeList changes from not defined to defined, call initVis
     if (this.props.geneStepId && this.props.nodeList && !prevProps.nodeList) {
       this.initVis();
+    }
+
+    if (prevState.userMouseControlsEnabled !== this.state.userMouseControlsEnabled) {
+      this.toggleUserMouseControls(this.state.userMouseControlsEnabled);
     }
   }
 
@@ -1144,12 +1158,27 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
   resetVis() {
     if (this.state.cy != null) {
       this.state.cy.destroy();
+      this.onExperimentChange('');
       this.initVis();
+    }
+  }
+
+  toggleUserMouseControls(isEnabled) {
+    if (this.state.cy != null) {
+      this.state.cy.boxSelectionEnabled(isEnabled);
+      this.state.cy.userPanningEnabled(isEnabled);
+      this.state.cy.userZoomingEnabled(isEnabled);
     }
   }
 
   clearActiveNodeData() {
     this.props.setActiveNodeData(null);
+  }
+
+  onClickUserMouseControlsToggle(newValue) {
+    this.setState({
+      userMouseControlsEnabled: newValue
+    });
   }
 
   onExperimentChange(graph) {
@@ -1236,6 +1265,8 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           webAppUrl={this.props.siteConfig.webAppUrl}
           primary_key={primary_key}
           projectId={projectId}
+          userMouseControlsEnabled={this.state.userMouseControlsEnabled}
+          onClickUserMouseControlsToggle={this.onClickUserMouseControlsToggle}
           onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
           onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
           onResetDisplayClick={this.resetVis}
@@ -1268,9 +1299,11 @@ function VisMenu(props) {
   let {
     cy,
     primary_key,
+    onClickUserMouseControlsToggle,
     onGeneraSelectorClick,
     onGraphSelectorClick,
-    onResetDisplayClick
+    onResetDisplayClick,
+    userMouseControlsEnabled
   } = props;
   let jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
   return(
@@ -1278,6 +1311,21 @@ function VisMenu(props) {
       webAppUrl={props.webAppUrl}
       projectId={props.projectId}
       items={[
+        {
+          text: (
+            <label style={{ fontWeight: 'normal' }}>
+              <Checkbox
+                value={userMouseControlsEnabled}
+                onChange={onClickUserMouseControlsToggle}
+              />
+              &nbsp;Panning and Zooming Gestures
+            </label>
+          )
+        },
+        {
+          text: 'Reset Display',
+          onClick: onResetDisplayClick
+        },
         {
           text: 'File',
           children: [
@@ -1305,10 +1353,8 @@ function VisMenu(props) {
               }
             }
           ]
-        }, {
-          text: 'Reset Display',
-          onClick: onResetDisplayClick
-        }, {
+        },
+        {
           text: (
             <>
               Paint Enzymes <HelpIcon>
