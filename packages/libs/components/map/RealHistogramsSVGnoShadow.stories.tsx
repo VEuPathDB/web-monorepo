@@ -236,10 +236,11 @@ export const CollectionDateLocal = () => {
   const knob_fillArea = knob_type === 'line' ? boolean('Fill area', false) : undefined;
   const knob_spline = knob_type === 'line' ? boolean('Spline', false) : undefined;
   const knob_lineVisible = knob_fillArea ? boolean('Show line', false) : undefined;
-  const knob_colorMethod = knob_type === 'line' ? radios('Color method', {Solid: 'solid', Bins: 'discrete', Gradient: 'gradient'}, 'discrete') : undefined;
+  const knob_colorMethod = knob_type === 'line' ? radios('Color method', {Bins: 'discrete', Gradient: 'gradient'}, 'discrete') : undefined;
+  //const knob_colorMethod = knob_type === 'line' ? radios('Color method', {Solid: 'solid', Bins: 'discrete', Gradient: 'gradient'}, 'discrete') : undefined;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getSampleSizeMarkerElements(yAxisRange, knob_method, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod));
+    setMarkerElements(getCollectionDateMarkerElements(yAxisRange, knob_method, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod));
   }, [setMarkerElements, knob_method, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod])
 
   return (
