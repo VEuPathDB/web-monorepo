@@ -1,17 +1,26 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import ReactHighcharts from 'react-highcharts';
+import { withKnobs, text, boolean, number, radios } from '@storybook/addon-knobs';
 
 interface BarChartProps {
   labels: string[],
   values: number[],
-  yRange: [number, number] | [] | null,
+  yAxisRange: [number, number] | [] | null,
   width: number,
   height: number,
   type: 'bar' | 'line',
+  fillArea?: boolean,
+  spline?: boolean,
+  lineVisible?: boolean,
+  colorMethod: 'discrete' | 'gradient'
   library: 'highcharts' | 'plotly',
-  colors: string[] | null,
+  colors?: string[] | null,
 }
+
+// This appears and disappears seemingly randomly. I don't know why.
+// let knob_type = radios('Type', {Bar: 'bar', Line: 'line'}, 'Bar');
+// console.log(knob_type);
 
 /**
  * A simple, unlabeled bar chart
@@ -41,9 +50,9 @@ export default function BarChart(props: BarChartProps) {
       };
     }
 
-    if (!(props.yRange === null || props.yRange === [])) {
+    if (!(props.yAxisRange === null || props.yAxisRange === [])) {
       yAxisProps = {
-        range: props.yRange,
+        range: props.yAxisRange,
       }
     }
 
@@ -91,39 +100,61 @@ export default function BarChart(props: BarChartProps) {
     if (props.type === 'bar') {
       type = 'column';
     } else {
-      type = 'areaspline';
-    }
-
-    if (!(props.yRange === null || props.yRange === [])) {
-      yAxisProps = {
-        min: props.yRange[0],
-        max: props.yRange[1],
+      if (props.fillArea) {
+        if (props.spline) {
+          type = 'areaspline'
+        } else {
+          type = 'area';
+        }
+      } else {
+        if (props.spline) {
+          type = 'spline';
+        } else {
+          type = 'line';
+        }
       }
     }
 
-    // Construct the objects that deal with color
-    let zones;
-    let gradient;
+    if (!(props.yAxisRange === null || props.yAxisRange === [])) {
+      yAxisProps = {
+        min: props.yAxisRange[0],
+        max: props.yAxisRange[1],
+      }
+    }
 
-    if (props.colors !== null) {
-      zones = props.values.map((value, i) => {
-        return {
-          value: value,
-          color: props.colors[i],
-          fillColor: props.colors[i],
-        };
-      });
-      gradient = null;
-    } else {
-      zones = null;
-      gradient = {
-        linearGradient: {x1: 0, x2: 1, y1: 0, y2: 0},
-        stops: [
-            [0, '#8cbdff'], // start
-            //[0.5, '#ffffff'], // middle
-            [1, '#001b52'] // end
-        ],
+    // Options dealing with coloring
+    let colorProps = {};
+
+    if (props.type === 'bar') {
+      colorProps = {
+        colorByPoint: true,
+        colors: props.colors,
       };
+    } else if (props.type === 'line') {
+      if (props.colorMethod === 'discrete') {
+        colorProps = {
+          zoneAxis: 'x',
+          zones: props.values.map((value, i) => {
+            return {
+              value: i + 0.5,
+              color: props.colors[i],
+            };
+          }),
+        };
+      } else if (props.colorMethod === 'gradient') {
+        const gradientObj = {
+          linearGradient: {x1: 0, x2: 1, y1: 0, y2: 0},
+          stops: [
+              [0, '#8cbdff'], // start
+              //[0.5, '#ffffff'], // middle
+              [1, '#001b52'] // end
+          ],
+        };
+        colorProps = {
+          color: gradientObj,
+          fillColor: gradientObj,
+        };
+      }
     }
 
     let config = {
@@ -152,9 +183,7 @@ export default function BarChart(props: BarChartProps) {
       },
       series: [{
         data: props.values,
-        zones: zones,
-        //lineWidth: 0,
-        fillColor: gradient,
+        ...colorProps,
       }],
       credits: {
         enabled: false,
@@ -169,13 +198,8 @@ export default function BarChart(props: BarChartProps) {
             enabled: false,
           },
           enableMouseTracking: false,
-          lineWidth: 0,
-          zoneAxis: 'x',
-          zones: zones,
+          lineWidth: props.fillArea && !props.lineVisible ? 0 : 2,
         },
-        // area: {
-        //   fillColor: gradient,
-        // },
       },
     }
 

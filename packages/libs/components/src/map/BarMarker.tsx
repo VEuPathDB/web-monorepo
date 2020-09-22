@@ -10,7 +10,7 @@ export interface BarMarkerProps extends MarkerProps {
   id: string,
   labels: string[],
   values: number[],
-  yRange: [number, number] | [] | null,
+  yAxisRange: [number, number] | [] | null,
   type: 'bar' | 'line',
   library: 'highcharts' | 'plotly',
   colors: string[],
@@ -33,7 +33,7 @@ export default function BarMarker(props: BarMarkerProps) {
       <BarChart
         labels={props.labels}
         values={props.values}
-        yRange={props.yRange}
+        yAxisRange={props.yAxisRange}
         width={40}
         height={40}
         type={props.type}

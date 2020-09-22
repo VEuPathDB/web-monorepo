@@ -1,4 +1,5 @@
 import React, { ReactElement, useState, useCallback } from 'react';
+import { withKnobs, radios , boolean } from '@storybook/addon-knobs';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
@@ -15,6 +16,7 @@ import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; /
 export default {
   title: 'Numeric and Date SVG no Shadow',
   component: MapVEuMap,
+  decorators: [withKnobs],
 };
 
 // some colors randomly pasted from the old mapveu code
@@ -170,7 +172,7 @@ export const SampleSizeGlobal = () => {
 }
 
 
-const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
+const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_method, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod) => {
   return collectionDateData.facets.geo.buckets.map((bucket, index) => {
     const lat = bucket.ltAvg;
     const long = bucket.lnAvg;
@@ -193,6 +195,12 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
 
   return (
     <RealHistogramMarkerSVGnoShadow
+      method={knob_method}
+      type={knob_type}
+      fillArea={knob_fillArea}
+      spline={knob_spline}
+      lineVisible={knob_lineVisible}
+      colorMethod={knob_colorMethod}
       key={bucket.val}
       //DKDK change position format
       position={[lat, long]}
@@ -207,6 +215,7 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
       // onClick={handleClick}
       onMouseOut={handleMouseOut}
       onMouseOver={handleMouseOver}
+      // my_knob={boolean('My Knob', false)} // Doesn't work
     />
     )
   });
@@ -217,9 +226,21 @@ export const CollectionDateLocal = () => {
   // const yAxisRange: Array<number> | null = [0, 1104]
   const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+
+  // Knobs
+  const knob_method = radios('Method', {SVG: 'svg', Library: 'lib'}, 'svg');
+  // const knob_marker_outline_width;
+  // const knob_marker_outline_color;
+  // const knob_divider_visible;
+  const knob_type = knob_method === 'lib' ? radios('Type', {Bar: 'bar', Line: 'line'}, 'bar') : undefined;
+  const knob_fillArea = knob_type === 'line' ? boolean('Fill area', false) : undefined;
+  const knob_spline = knob_type === 'line' ? boolean('Spline', false) : undefined;
+  const knob_lineVisible = knob_fillArea ? boolean('Show line', false) : undefined;
+  const knob_colorMethod = knob_type === 'line' ? radios('Color method', {Solid: 'solid', Bins: 'discrete', Gradient: 'gradient'}, 'discrete') : undefined;
+
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getCollectionDateMarkerElements(yAxisRange));
-  }, [setMarkerElements])
+    setMarkerElements(getSampleSizeMarkerElements(yAxisRange, knob_method, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod));
+  }, [setMarkerElements, knob_method, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod])
 
   return (
     <MapVEuMap
