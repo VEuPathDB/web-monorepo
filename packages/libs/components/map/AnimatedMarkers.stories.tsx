@@ -134,4 +134,21 @@ export const GeohashIds = () => {
   );
 };
 
+export const NoAnimation = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+
+  const handleViewportChanged = useCallback((bvp: BoundsViewport, duration: number) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+  }, [setMarkerElements]);
+
+  return (
+    <MapVEuMap
+    viewport={{center: [ 20, -3 ], zoom: 6}}
+    height="96vh" width="98vw"
+    onViewportChanged={handleViewportChanged}
+    markers={markerElements}
+    />
+  );
+};
+
 
