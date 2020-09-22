@@ -681,30 +681,6 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
         cy.ready(function () {
 
-            cy.changeLayout = function (val) {
-
-                cy.zoom(1);
-                cy.reset();
-
-                // Null out all positions or the compound nodes are not being set correctly
-                cy.nodes().map(function(node){node.position({x:null, y:null});node.renderedPosition({x:null, y:null});});
-
-                if (val === 'preset') {
-                    cy.layout({name:val,
-                               fit:true,
-                               positions:function(node){return{'x':Number(node.data("x")), 'y':Number(node.data("y"))}}
-                    }).run();
-                }
-
-                else if (val === 'dagre') {
-                    cy.layout({name:val, rankDir:'LR'}).run();
-                }
-
-                else {
-                    cy.layout({name:val}).run();
-                }
-            };
-
             cy.changeExperiment = function (linkPrefix, xaxis, doAllNodes) {
 
                 let nodes = cy.elements('node[node_type= "enzyme"]');
@@ -1026,6 +1002,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
     this.onGeneraChange = this.onGeneraChange.bind(this);
     this.onExperimentChange = this.onExperimentChange.bind(this);
+    this.resetVis = this.resetVis.bind(this);
   }
 
   componentDidMount() {
@@ -1164,6 +1141,13 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
       });
   }
 
+  resetVis() {
+    if (this.state.cy != null) {
+      this.state.cy.destroy();
+      this.initVis();
+    }
+  }
+
   clearActiveNodeData() {
     this.props.setActiveNodeData(null);
   }
@@ -1254,6 +1238,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           projectId={projectId}
           onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
           onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
+          onResetDisplayClick={this.resetVis}
           cy={this.state.cy}
         />
         <div className="eupathdb-PathwayRecord-cytoscapeIcon">
@@ -1280,7 +1265,13 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 });
 
 function VisMenu(props) {
-  let { cy, source, primary_key, onGeneraSelectorClick, onGraphSelectorClick } = props;
+  let {
+    cy,
+    primary_key,
+    onGeneraSelectorClick,
+    onGraphSelectorClick,
+    onResetDisplayClick
+  } = props;
   let jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
   return(
     <Menu
@@ -1315,43 +1306,8 @@ function VisMenu(props) {
             }
           ]
         }, {
-          text: (
-            <>
-              Layout <HelpIcon>Choose a Layout for the Pathway Map</HelpIcon>
-            </>
-          ),
-          children: [
-            source === 'KEGG' ? {
-              text: 'KEGG',
-              url: '#kegg',
-              onClick(event) {
-                event.preventDefault();
-                cy.changeLayout('preset');
-              }
-            } : null,
-            {
-              text: 'Directed Graph',
-              url: '#dag',
-              onClick(event) {
-                event.preventDefault();
-                cy.changeLayout('dagre');
-              }
-            }, {
-              text: 'Compound Spring Embedder',
-              url: '#cse',
-              onClick(event) {
-                event.preventDefault();
-                cy.changeLayout('cose');
-              }
-            }, {
-              text: 'Grid',
-              url: '#grid',
-              onClick(event) {
-                event.preventDefault();
-                cy.changeLayout('grid');
-              }
-            }
-          ]
+          text: 'Reset Display',
+          onClick: onResetDisplayClick
         }, {
           text: (
             <>
