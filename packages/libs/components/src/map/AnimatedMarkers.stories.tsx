@@ -99,6 +99,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
   return Array.from(aggsByGeohash.values()).map((agg) => {
     const meanLat = agg.lat/agg.count;
     const meanLong = agg.long/agg.count;
+
     return <DriftMarker
         duration={duration}
         key={agg.geohash}

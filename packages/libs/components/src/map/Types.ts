@@ -47,7 +47,7 @@ export interface MapVEuMapProps {
     method: string,
     duration: number,
     animationFunction: AnimationFunction
-  }
+  } | null
 }
 
 
