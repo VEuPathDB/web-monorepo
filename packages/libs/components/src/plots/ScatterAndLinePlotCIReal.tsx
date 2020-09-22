@@ -44,38 +44,44 @@ export default function ScatterAndLinePlotCIReal<T extends PlotDataKey>(props: P
     },
     sliders: [{          //DKDK this slider part is manually added here!
       pad: {t: 50},
+      active: 4,         //DKDK this sets the default location of slider: from 0 (left)
       currentvalue: {
         visible: true,
         xanchor: 'left',
         offset: 10,
-        prefix: 'Opacity ',
+        prefix: 'Opacity = ',
         suffix: '',
         font: {
           color: '#888',
           size: 20
         }
       },
-      steps: [{
-        label: '1',
-        method: 'restyle',
-        args: ['opacity', '1']
-      }, {
-        label: '0.75',
-        method: 'restyle',
-        args: ['opacity', '0.75']
-      }, {
-        label: '0.5',
-        method: 'restyle',
-        args: ['opacity', '0.5']
-      }, {
-        label: '0.25',
-        method: 'restyle',
-        args: ['opacity', '0.25']
-      }, {
-        label: '0',
-        method: 'restyle',
-        args: ['opacity', '0']
-      }]
+      steps: [
+        {
+          label: '0',
+          method: 'restyle',
+          args: ['opacity', '0']
+        },
+        {
+          label: '0.25',
+          method: 'restyle',
+          args: ['opacity', '0.25']
+        },
+        {
+          label: '0.5',
+          method: 'restyle',
+          args: ['opacity', '0.5']
+        },
+        {
+          label: '0.75',
+          method: 'restyle',
+          args: ['opacity', '0.75']
+        },
+        {
+          label: '1',
+          method: 'restyle',
+          args: ['opacity', '1']
+        }]
     }]
   };
 

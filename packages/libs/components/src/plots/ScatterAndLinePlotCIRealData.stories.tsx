@@ -14,10 +14,10 @@ export default {
  *
  * Question: should x and y be defined as number[] | string[], not number[] | Date[]?
  *
- * # items that are implemeted
+ * # items that are implemented
  * - simple error checking for the case whether the number of x equal to the number of y
  * - sorting X data (and corresponding Y too), which is necessary for CI plot due to its nature of both ascending and descending format
- * - setting x-/y- axes ranges for better display: finding min/max and floor()/ceil()
+ * - dynamically setting x-/y-axes ranges for better display: finding min/max and floor()/ceil()
  * - added box (outer) border for the plot
  * - considered a default color (defaultColor) if color props is not inputted
  * - considered global opacity (globalOpacity): changed all color part to use rgba()
