@@ -76,7 +76,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
       timeoutVariable = setTimeout(
           () => {
             setConsolidatedMarkers([...markers])
-          }, animation ? animation.duration : 300
+          }, animation ? animation.duration : 0
       );
     }
 
