@@ -10,7 +10,7 @@ interface SemanticMarkersProps {
     method: string,
     duration: number,
     animationFunction: AnimationFunction
-  }
+  } | null
 }
 
 /**
@@ -35,7 +35,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
       if (map != null) {
         const bounds = boundsToGeoBBox(map.getBounds());
         const zoomLevel = map.getZoom();
-        onViewportChanged({ bounds, zoomLevel }, animation.duration);
+        onViewportChanged({ bounds, zoomLevel }, animation ? animation.duration : 300);
       }
     }
 
@@ -48,7 +48,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
   }, [map, onViewportChanged]);
 
   useEffect(() => {
-      if (markers.length > 0 && prevMarkers.length > 0) {
+      if (markers.length > 0 && prevMarkers.length > 0 && animation) {
         animation.animationFunction({prevMarkers, markers, setZoomType, setConsolidatedMarkers})
       }
       /** First render of markers **/
@@ -76,7 +76,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
       timeoutVariable = setTimeout(
           () => {
             setConsolidatedMarkers([...markers])
-          }, animation.duration
+          }, animation ? animation.duration : 300
       );
     }
 
