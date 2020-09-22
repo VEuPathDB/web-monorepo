@@ -3,14 +3,15 @@ import { connect } from 'react-redux';
 import { intersection } from 'lodash/fp'
 import { RootState } from 'wdk-client/Core/State/Types';
 import { TreeBoxVocabNode, SearchConfig } from 'wdk-client/Utils/WdkModel';
-import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
+import WdkService from 'wdk-client/Service/WdkService';
 import { Step } from 'wdk-client/Utils/WdkUser';
 import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
 import { Loading, CheckboxTree } from 'wdk-client/Components';
 import { mapStructure } from 'wdk-client/Utils/TreeUtils';
-import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { ResultType } from 'wdk-client/Utils/WdkResult';
 import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
 import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
+import { useWdkServiceWithRefresh } from 'wdk-client/Hooks/WdkServiceHook';
 
 import './OrganismFilter.scss';
 
@@ -100,15 +101,20 @@ function Container(props: ContainerProps) {
   )
 }
 
-function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
+function OrganismFilter({ resultType, ...otherProps }: Props) {
+  const step = resultType?.type === 'step' ? resultType.step : undefined;
 
-  const step = resultType && resultType.type === 'step' && resultType.step;
-
-  // don't show anything until step loaded, and after that only if a transcript step
-  if (!step || step.recordClassName !== ALLOWABLE_RECORD_CLASS_NAME) {
+  // only show Organism Filter for transcript step results
+  if (step == null || step.recordClassName !== ALLOWABLE_RECORD_CLASS_NAME) {
     return null;
   }
 
+  return <OrganismFilterForStep step={step} {...otherProps} />;
+}
+
+type OrganismFilterForStepProps = { step: Step } & Omit<Props, 'resultType'>;
+
+function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: OrganismFilterForStepProps) {
   // if temporary value assigned, use until user clears or hits apply;
   // else check step for a filter value and if present, use; else use empty string (no filter)
   let appliedFilterConfig: OrgFilterConfig = findOrganismFilterConfig(step.searchConfig);
@@ -126,10 +132,16 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
   let [ searchConfigChangeRequested, setSearchConfigChangeRequested ] = useState<boolean>(false);
 
   // organism param (including taxonomy data) retrieved from service when component is initially loaded
-  const [ taxonomyTree, setTaxonomyTree ] = useState<TreeBoxVocabNode | null>(null);
+  const taxonomyTree = useWdkServiceWithRefresh(
+    fetchTaxonomyTree,
+    []
+  );
 
   // counts of genes of each organism in the result; retrieved when component is loaded and when step is revised
-  let [ filterSummary, setFilterSummary ] = useState<OrgFilterSummary | null>(null);
+  const filterSummary = useWdkServiceWithRefresh(
+    wdkService => fetchFilterSummary(wdkService, step.id),
+    [ step ]
+  );
 
   // current value of filter shown in the tree (will be cleared if applied to the step)
   let [ temporaryFilterConfig, setTemporaryFilterConfig ] = useState<OrgFilterConfig>(appliedFilterConfig);
@@ -141,21 +153,14 @@ function OrganismFilter({resultType, requestUpdateStepSearchConfig}: Props) {
   const [ savedExpandedNodeIds, setExpandedNodeIds ] = useState<string[] | null>(null);
 
   // clear dependent data if step has changed
+  // FIXME: This logic should be moved into an effect
   if (step !== currentStep) {
     setCurrentStep(step);
-    filterSummary = null;
-    setFilterSummary(null);
     temporaryFilterConfig = appliedFilterConfig;
     setTemporaryFilterConfig(appliedFilterConfig);
     searchConfigChangeRequested = false;
     setSearchConfigChangeRequested(false);
   }
-
-  // load data from WDK service if necessary
-  useWdkEffect(wdkService => {
-    loadTaxonomyTree(wdkService, setTaxonomyTree);
-    loadFilterSummary(wdkService, step.id, setFilterSummary);
-  }, [step]);
 
   function setExpandedAndPref(isExpanded: boolean) {
     sessionStorage.setItem(ORGANISM_FILTER_PANE_EXPANSION_KEY, isExpanded.toString());
@@ -347,13 +352,12 @@ function renderTaxonomyNode(node: TaxonomyNodeWithCount) {
   );
 }
 
-function loadTaxonomyTree(wdkService: WdkService,
-    setTaxonomyTree: (t: TreeBoxVocabNode) => void): void {
-  wdkService.getQuestionAndParameters(TAXON_QUESTION_NAME)
+function fetchTaxonomyTree(wdkService: WdkService) {
+  return wdkService.getQuestionAndParameters(TAXON_QUESTION_NAME)
     .then(question => {
       let orgParam  = question.parameters.find(p => p.name == ORGANISM_PARAM_NAME);
       if (orgParam && orgParam.type == 'multi-pick-vocabulary' && orgParam.displayType == "treeBox") {
-        setTaxonomyTree(orgParam.vocabulary);
+        return orgParam.vocabulary;
       }
       else {
         throw new Error(TAXON_QUESTION_NAME + " does not contain treebox enum param " + ORGANISM_PARAM_NAME);
@@ -361,12 +365,10 @@ function loadTaxonomyTree(wdkService: WdkService,
     });
 }
 
-function loadFilterSummary(wdkService: WdkService,
-    stepId: number,
-    setFilterSummary: (s: OrgFilterSummary) => void): void {
-  wdkService.getStepColumnReport(stepId, ORGANISM_COLUMN_NAME, HISTOGRAM_REPORTER_NAME, {})
+function fetchFilterSummary(wdkService: WdkService, stepId: number) {
+  return wdkService.getStepColumnReport(stepId, ORGANISM_COLUMN_NAME, HISTOGRAM_REPORTER_NAME, {})
     .then(filterSummary => {
-      setFilterSummary(filterSummary as OrgFilterSummary);
+      return filterSummary as OrgFilterSummary;
     });
 }
 

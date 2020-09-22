@@ -100,7 +100,7 @@ export class OverviewThumbnails extends Component {
             >
               <img src={'/a/wdkCustomization/images/gene_record_thumbnails/' + thumbnail.anchor + '.png'}/>
             </a>
-            <button className="eupathdb-ThumbnailZoomButton" type="button" title="View larger image" onClick={() => this.setActiveThumbnail(thumbnail)}><i className="fa fa-search-plus"/></button>
+            {/* <button className="eupathdb-ThumbnailZoomButton" type="button" title="View larger image" onClick={() => this.setActiveThumbnail(thumbnail)}><i className="fa fa-search-plus"/></button> */}
           </div>
           )) }
           {this.renderPopover()}

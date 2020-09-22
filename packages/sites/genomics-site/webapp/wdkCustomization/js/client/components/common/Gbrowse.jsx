@@ -151,6 +151,7 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
 
   function onLoad(event) {
     const { JBrowse } = event.currentTarget.contentWindow;
+    if (JBrowse == null) throw new Error("Could not load embedded JBrowse instance.");
     JBrowse.afterMilestone('completely initialized', function() {
       jbrowseViewContainer.current = JBrowse.view;
       updateBehaviors();
@@ -198,16 +199,28 @@ export function GbrowseContext(props) {
   let jbrowseUrl = record.attributes.jbrowseLink;
   let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
-  if (attribute.name == 'GeneModelGbrowseUrl'){ 
+  if (attribute.name == 'GeneModelGbrowseUrl'){
+       
       jbrowseUrlMinimal = record.attributes.geneJbrowseUrl; 
       jbrowseUrlFull = record.attributes.geneJbrowseFullUrl; 
+      if(window.location.href.indexOf("vectorbase") != -1){
       return (
     	<div>
       	<JbrowseLink url={jbrowseUrlFull}/>
-      	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
+    	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
       	<JbrowseLink url={jbrowseUrlFull}/>
       	</div>
 	)
+      }
+      else {
+      return (
+        <div>
+        <JbrowseLink url={jbrowseUrlFull}/>
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
+        <JbrowseLink url={jbrowseUrlFull}/>
+        </div>
+        )        
+      }
   }	
   if (attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'BlatAlignmentsGbrowseUrl' || attribute.name == 'SnpsGbrowseUrl'){ 
     if (attribute.name == 'SyntenyGbrowseUrl'){ 
