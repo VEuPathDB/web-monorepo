@@ -172,7 +172,7 @@ export const SampleSizeGlobal = () => {
 }
 
 
-const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_method, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod) => {
+const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod) => {
   return collectionDateData.facets.geo.buckets.map((bucket, index) => {
     const lat = bucket.ltAvg;
     const long = bucket.lnAvg;
@@ -196,6 +196,7 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
   return (
     <RealHistogramMarkerSVGnoShadow
       method={knob_method}
+      dividerVisible={knob_dividerVisible}
       type={knob_type}
       fillArea={knob_fillArea}
       spline={knob_spline}
@@ -231,7 +232,7 @@ export const CollectionDateLocal = () => {
   const knob_method = radios('Method', {SVG: 'svg', Library: 'lib'}, 'svg');
   // const knob_marker_outline_width;
   // const knob_marker_outline_color;
-  // const knob_divider_visible;
+  const knob_dividerVisible = boolean('Divider visible', true);
   const knob_type = knob_method === 'lib' ? radios('Type', {Bar: 'bar', Line: 'line'}, 'bar') : undefined;
   const knob_fillArea = knob_type === 'line' ? boolean('Fill area', false) : undefined;
   const knob_spline = knob_type === 'line' ? boolean('Spline', false) : undefined;
@@ -240,8 +241,8 @@ export const CollectionDateLocal = () => {
   //const knob_colorMethod = knob_type === 'line' ? radios('Color method', {Solid: 'solid', Bins: 'discrete', Gradient: 'gradient'}, 'discrete') : undefined;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getCollectionDateMarkerElements(yAxisRange, knob_method, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod));
-  }, [setMarkerElements, knob_method, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod])
+    setMarkerElements(getCollectionDateMarkerElements(yAxisRange, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod));
+  }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod])
 
   return (
     <MapVEuMap
