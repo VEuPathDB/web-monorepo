@@ -18,14 +18,12 @@ import UserPasswordChangeController from 'wdk-client/Controllers/UserPasswordCha
 import UserPasswordResetController from 'wdk-client/Controllers/UserPasswordResetController';
 import UserMessageController from 'wdk-client/Controllers/UserMessageController';
 import SiteMapController from 'wdk-client/Controllers/SiteMapController';
-import UserDatasetListController from 'wdk-client/Controllers/UserDatasetListController';
 import UserDatasetDetailController from 'wdk-client/Controllers/UserDatasetDetailController';
 import FavoritesController from 'wdk-client/Controllers/FavoritesController';
 import UserCommentFormController from 'wdk-client/Controllers/UserCommentFormController';
 import UserCommentShowController from 'wdk-client/Controllers/UserCommentShowController';
 import UserLoginController from 'wdk-client/Controllers/UserLoginController';
-import UserDatasetNewUploadController from 'wdk-client/Controllers/UserDatasetNewUploadController';
-import UserDatasetAllUploadsController from 'wdk-client/Controllers/UserDatasetAllUploadsController';
+import QuestionController from 'wdk-client/Controllers/QuestionController';
 
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
@@ -77,14 +75,15 @@ const routes: RouteEntry[] = [
           }}
           pluginProps={{
             ...props.match.params,
-            hash: props.location.hash.slice(1),
             submissionMetadata: {
               type: 'create-strategy'
-            },
+            } as const,
             shouldChangeDocumentTitle: true,
             initialParamData,
-            autoRun: autoRun === '' || autoRun === 'true' || autoRun === '1'
+            autoRun: autoRun === '' || autoRun === 'true' || autoRun === '1',
+            prepopulateWithLastParamValues: true
           }}
+          defaultComponent={QuestionController}
         />
       );
     }

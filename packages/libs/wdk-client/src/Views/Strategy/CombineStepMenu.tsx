@@ -11,11 +11,11 @@ import { QuestionState, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/Qu
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { Parameter } from 'wdk-client/Utils/WdkModel';
 import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { MenuChoicesContainer, MenuChoice, inputResultSetDescription } from 'wdk-client/Views/Strategy/AddStepUtils';
+import { MenuChoicesContainer, MenuChoice } from 'wdk-client/Views/Strategy/AddStepUtils';
 import { cxStepBoxes as cxOperator } from 'wdk-client/Views/Strategy/ClassNames';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
-import { combineOperatorOrder, BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator, combineOperatorOrder } from 'wdk-client/Views/Strategy/StrategyUtils';
 
 import 'wdk-client/Views/Strategy/CombineStepMenu.scss';
 
@@ -317,6 +317,7 @@ export const CombineStepMenu = connect<StateProps, DispatchProps, OwnProps, Prop
         updateActiveQuestion({
           searchName: booleanSearchUrlSegment,
           autoRun: false,
+          prepopulateWithLastParamValues: false,
           stepId: undefined
         })
       )

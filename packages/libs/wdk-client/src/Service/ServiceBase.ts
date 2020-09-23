@@ -7,7 +7,7 @@ import * as Decode from 'wdk-client/Utils/Json';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise } from 'wdk-client/Utils/PromiseUtils';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
-import { Question, RecordClass,} from 'wdk-client/Utils/WdkModel';
+import { Question } from 'wdk-client/Utils/WdkModel';
 import { keyBy } from 'lodash';
 import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
 
@@ -94,7 +94,7 @@ export const ServiceBase = (serviceUrl: string) => {
     name: 'WdkService/' + serviceUrl
   });
   const _cache: Map<string, Promise<any>> = new Map;
-  let _initialCheck: Promise<void> | undefined;
+  let _initialCheck: Promise<number> | undefined;
   let _version: number | undefined;
   let _isInvalidating = false;
 
@@ -265,7 +265,7 @@ export const ServiceBase = (serviceUrl: string) => {
       })
       .then(serviceConfig => {
         _version = serviceConfig.startupTime;
-        return undefined;
+        return _version;
       })
     }
     return _initialCheck;
@@ -273,6 +273,10 @@ export const ServiceBase = (serviceUrl: string) => {
 
   function _clearCache() {
     return _store.clear();
+  }
+
+  function getVersion() {
+    return _checkStoreVersion();
   }
 
   function getRecordTypesPath() {
@@ -364,6 +368,7 @@ export const ServiceBase = (serviceUrl: string) => {
     submitError,
     submitErrorIfNot500,
     getConfig,
+    getVersion,
     getRecordClasses,
     findRecordClass,
     getQuestions,

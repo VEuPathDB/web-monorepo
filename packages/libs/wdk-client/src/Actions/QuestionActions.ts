@@ -7,7 +7,6 @@ import {
   SearchConfig
 } from 'wdk-client/Utils/WdkModel';
 import { AddType } from 'wdk-client/Views/Strategy/Types';
-import { alert } from 'wdk-client/Utils/Platform';
 import { NewStepSpec, Step } from 'wdk-client/Utils/WdkUser';
 import { WdkService } from 'wdk-client/Core';
 import { makeActionCreator } from 'wdk-client/Utils/ActionCreatorUtils';
@@ -44,14 +43,16 @@ export interface UpdateActiveQuestionAction {
   type: typeof UPDATE_ACTIVE_QUESTION;
   payload: QuestionPayload<{
     autoRun: boolean;
+    prepopulateWithLastParamValues: boolean;
     initialParamData?: Record<string, string>;
-    stepId: number | undefined
+    stepId: number | undefined;
   }>
 }
 
 export function updateActiveQuestion(payload: {
   searchName: string;
   autoRun: boolean,
+  prepopulateWithLastParamValues: boolean,
   initialParamData?: Record<string, string>,
   stepId: number | undefined
 }): UpdateActiveQuestionAction {
@@ -69,9 +70,11 @@ export interface QuestionLoadedAction {
   type: typeof QUESTION_LOADED;
   payload: QuestionPayload<{
     autoRun: boolean;
+    prepopulateWithLastParamValues: boolean;
     question: QuestionWithParameters;
     recordClass: RecordClass;
     paramValues: ParameterValues;
+    defaultParamValues: ParameterValues;
     initialParamData?: Record<string, string>;
     wdkWeight?: number;
     customName?: string;

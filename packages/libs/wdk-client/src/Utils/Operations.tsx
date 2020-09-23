@@ -13,7 +13,7 @@ import { CombineStepForm } from 'wdk-client/Views/Strategy/CombineStepForm';
 import { CombineWithStrategyForm } from 'wdk-client/Views/Strategy/CombineWithStrategyForm';
 import { ConvertStepForm } from 'wdk-client/Views/Strategy/ConvertStepForm';
 import { PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
-import { CombineOperator, IgnoreOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
+import { BOOLEAN_OPERATOR_PARAM_NAME, CombineOperator, IgnoreOperator } from 'wdk-client/Views/Strategy/StrategyUtils';
 import { LeafPreview, BooleanPreview, TransformPreview } from 'wdk-client/Views/Strategy/StepBoxes';
 
 type OperatorMenuItem = {
@@ -78,7 +78,7 @@ export const defaultBinaryOperations: BinaryOperation[] = [
     },
     isOperationSearchName: searchName => searchName.startsWith('boolean_question'),
     baseClassName: 'CombineOperator',
-    operatorParamName: 'bq_operator',
+    operatorParamName: BOOLEAN_OPERATOR_PARAM_NAME,
     reviseOperatorParamConfiguration: { type: 'inline' },
     operatorMenuGroup: {
       name: 'standard_boolean_operators',

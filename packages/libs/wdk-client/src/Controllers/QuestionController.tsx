@@ -1,31 +1,31 @@
-import { mapValues } from 'lodash';
+import { isEqual, mapValues } from 'lodash';
 import React, { useEffect, useCallback, FunctionComponent, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { Dispatch, bindActionCreators } from 'redux';
-import { Loading } from 'wdk-client/Components';
+import { IconAlt, Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import {
-  updateActiveQuestion,
-  updateParamValue,
-  changeGroupVisibility,
+  Action,
   SubmissionMetadata,
-  submitQuestion
+  changeGroupVisibility,
+  updateActiveQuestion,
+  updateParamValue
 } from 'wdk-client/Actions/QuestionActions';
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import Error from 'wdk-client/Components/PageStatus/Error';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
-import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Props as FormProps, ResetFormConfig } from 'wdk-client/Views/Question/DefaultQuestionForm';
 import { GlobalData } from 'wdk-client/StoreModules/GlobalData';
-import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
+import { ParameterValues, RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 
 const ActionCreators = {
   updateParamValue,
   setGroupVisibility: changeGroupVisibility
 }
 
-type OwnProps = { 
+export type OwnProps = {
   question: string, 
   recordClass: string, 
   FormComponent?: (props: FormProps) => JSX.Element, 
@@ -50,7 +50,12 @@ type OwnProps = {
    * directed to the new strategy. Any errors will appear above the search form
    * and the user will be able to correct the errors.
    */
-  autoRun?: boolean
+  autoRun?: boolean,
+  /**
+   * If true, the form will be prepopulated with the param value
+   * selections from the user's last visit to the form
+   */
+  prepopulateWithLastParamValues?: boolean
 };
 type StateProps = QuestionState & { recordClasses: GlobalData['recordClasses'] };
 type DispatchProps = { eventHandlers: typeof ActionCreators, dispatch: Dispatch };
@@ -62,7 +67,8 @@ type Props = DispatchProps & StateProps & {
   submitButtonText?: string,
   shouldChangeDocumentTitle?: boolean,
   initialParamData?: Record<string, string>,
-  autoRun: boolean;
+  autoRun: boolean,
+  prepopulateWithLastParamValues: boolean
 };
 
 function QuestionController(props: Props) {
@@ -78,6 +84,7 @@ function QuestionController(props: Props) {
     shouldChangeDocumentTitle, 
     initialParamData,
     autoRun,
+    prepopulateWithLastParamValues,
     ...state } = props;
   const stepId = submissionMetadata.type === 'edit-step' || submissionMetadata.type === 'submit-custom-form' ? submissionMetadata.stepId : undefined;
 
@@ -106,6 +113,7 @@ function QuestionController(props: Props) {
       searchName,
       autoRun,
       initialParamData: autoRun && initialParamData == null ? {} : initialParamData,
+      prepopulateWithLastParamValues,
       stepId
     }))
   }, [searchName, stepId]);
@@ -124,6 +132,15 @@ function QuestionController(props: Props) {
   // }, [state.questionStatus]);
 
   useSetSearchDocumentTitle(state.question, state.questionStatus, recordClasses, recordClass, shouldChangeDocumentTitle);
+
+  const resetFormConfig = useResetFormConfig(
+    searchName,
+    state.stepId,
+    prepopulateWithLastParamValues,
+    state.paramValues,
+    state.defaultParamValues,
+    dispatch
+  );
   
   if (state.questionStatus === 'error') return <Error/>;
   if (
@@ -183,6 +200,7 @@ function QuestionController(props: Props) {
         submissionMetadata={submissionMetadata}
         submitButtonText={submitButtonText}
         recordClass={recordClass}
+        resetFormConfig={resetFormConfig}
       />
     : <DefaultRenderForm
         parameterElements={parameterElements}
@@ -192,8 +210,60 @@ function QuestionController(props: Props) {
         submissionMetadata={submissionMetadata}
         submitButtonText={submitButtonText}
         recordClass={recordClass}
+        resetFormConfig={resetFormConfig}
       />;
 }
+
+function useResetFormConfig(
+  searchName: string,
+  stepId: number | undefined,
+  prepopulateWithLastParamValues: boolean,
+  paramValues: ParameterValues,
+  defaultParamValues: ParameterValues,
+  dispatch: Dispatch<Action>
+): ResetFormConfig {
+  const reloadFormWithSystemDefaults = useCallback(
+    () => {
+      dispatch(updateActiveQuestion({
+        autoRun: false,
+        searchName,
+        prepopulateWithLastParamValues: false,
+        initialParamData: {},
+        stepId
+      }));
+    },
+    [ searchName, stepId ]
+  );
+
+  return useMemo(
+    () => (
+      prepopulateWithLastParamValues
+        ? {
+            offered: true,
+            disabled: isEqual(
+              defaultParamValues,
+              paramValues
+            ),
+            onResetForm: reloadFormWithSystemDefaults,
+            resetFormContent: (
+              <React.Fragment>
+                <IconAlt fa="refresh" />
+                Reset values
+              </React.Fragment>
+            )
+          }
+        : {
+            offered: false
+          }
+    ),
+    [
+      defaultParamValues,
+      paramValues,
+      prepopulateWithLastParamValues,
+      reloadFormWithSystemDefaults
+    ]
+  );
+};
 
 export const useSetSearchDocumentTitle = (
   question: Question | undefined, 
@@ -239,7 +309,8 @@ const enhance = connect<StateProps, DispatchProps, OwnProps, Props, RootState>(
     submitButtonText: ownProps.submitButtonText,
     shouldChangeDocumentTitle: ownProps.shouldChangeDocumentTitle,
     initialParamData: ownProps.initialParamData,
-    autoRun: ownProps.autoRun === true
+    autoRun: ownProps.autoRun === true,
+    prepopulateWithLastParamValues: ownProps.prepopulateWithLastParamValues === true
   })
 )
 
