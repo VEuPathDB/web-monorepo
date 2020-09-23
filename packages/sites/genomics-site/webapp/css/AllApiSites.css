@@ -67,7 +67,7 @@ header {
       = Results Table: Boolean and Leaf transcript Filters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 div.MatchedTranscriptsFilter {
-  font-size: 120%;
+  font-size: 110%;
   margin-right: 2em;
   font-weight: 500;
   color: darkred;
