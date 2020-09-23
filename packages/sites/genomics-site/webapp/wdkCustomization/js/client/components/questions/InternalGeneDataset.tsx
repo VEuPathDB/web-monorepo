@@ -1,10 +1,13 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
 
-import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
 import { Loading, Link, Tooltip, HelpIcon, Tabs } from 'wdk-client/Components';
 import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
-import { useSetSearchDocumentTitle } from 'wdk-client/Controllers/QuestionController';
+import QuestionController, {
+  useSetSearchDocumentTitle,
+  OwnProps as Props
+} from 'wdk-client/Controllers/QuestionController';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
@@ -20,24 +23,6 @@ import { formatLink } from 'ebrc-client/components/records/DatasetRecordClasses.
 import './InternalGeneDataset.scss';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
-
-type StateProps = {
-  buildNumber?: string,
-  questions?: Question[],
-  ontology?: CategoryTreeNode,
-  recordClasses?: RecordClass[]
-};
-
-type OwnProps = {
-  recordClass: string,
-  question: string,
-  hash: string,
-  submissionMetadata: SubmissionMetadata,
-  submitButtonText?: string,
-  shouldChangeDocumentTitle?: boolean
-};
-
-type Props = OwnProps & StateProps;
 
 type InternalQuestionRecord = { 
   target_name: string, 
@@ -64,19 +49,28 @@ type DisplayCategory = {
   shortDisplayName: string 
 };
 
-const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
-  buildNumber,
-  questions,
-  ontology,
-  recordClasses,
-  question: internalSearchName,
-  recordClass,
-  hash: searchNameAnchorTag,
-  submissionMetadata,
-  submitButtonText,
-  shouldChangeDocumentTitle
-}) => {
+export function InternalGeneDataset(props: Props) {
+  const location = useLocation();
+  const searchNameAnchorTag = location.hash.slice(1);
+
+  const buildNumber = useSelector((state: RootState) => state.globalData?.config?.buildNumber);
+  const questions = useSelector((state: RootState) => state.globalData.questions);
+  const ontology = useSelector((state: RootState) => state.globalData.ontology?.tree);
+  const recordClasses = useSelector((state: RootState) => state.globalData.recordClasses);
+
+  const internalSearchName = props.question;
+
+  const {
+    recordClass,
+    shouldChangeDocumentTitle,
+    submissionMetadata
+  } = props;
+
   const [ selectedSearch, setSelectedSearch ] = useState<string | undefined>(searchNameAnchorTag);
+
+  useEffect(() => {
+    setSelectedSearch(searchNameAnchorTag);
+  }, [ searchNameAnchorTag ]);
 
   const [ searchName, showingRecordToggle ] = selectedSearch
     ? [ selectedSearch, true ]
@@ -250,7 +244,11 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                         displayCategoryOrder.map(
                           categoryName => {
                             const datasetName = cellProps.row.dataset_name;
-                            const categorySearchName = questionNamesByDatasetAndCategory[datasetName][categoryName];
+                            const categorySearchName = getCategorySearchName(
+                              questionNamesByDatasetAndCategory,
+                              datasetName,
+                              categoryName
+                            );
 
                             return (
                                 <div key={categoryName}>
@@ -263,14 +261,13 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                                             : "bttn bttn-cyan"
                                         } 
                                         key={categoryName} 
-                                        to={`${internalSearchName}#${categorySearchName}`}
-                                        onClick={(e: React.MouseEvent) => {
-                                          if (submissionMetadata.type !== 'create-strategy') {
-                                            e.preventDefault();
-                                          }
-
-                                          setSelectedSearch(categorySearchName);
-                                        }}
+                                        to={ `${internalSearchName}#${categorySearchName}`}
+                                        onClick={makeLinkClickHandler(
+                                          submissionMetadata,
+                                          categorySearchName,
+                                          searchName,
+                                          setSelectedSearch
+                                        )}
                                       >
                                         {displayCategoriesByName[categoryName].shortDisplayName}
                                       </Link>
@@ -307,7 +304,7 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                         }
                       >
                         <span key={categoryName}>
-                          <span className="bttn bttn-cyan bttn-active">
+                          <span className="bttn bttn-cyan bttn-legend">
                             {displayCategoriesByName[categoryName].shortDisplayName}
                           </span>
                           <span>
@@ -357,21 +354,30 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                 tabs={
                   displayCategoryOrder
                     .filter(
-                      categoryName => questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]
+                      categoryName => getCategorySearchName(
+                        questionNamesByDatasetAndCategory,
+                        selectedDataSetRecord.dataset_name,
+                        categoryName
+                      )
                     )
-                    .map(
-                      categoryName => ({
-                        key: questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName],
+                    .map(categoryName => {
+                      const categorySearchName = getCategorySearchName(
+                        questionNamesByDatasetAndCategory,
+                        selectedDataSetRecord.dataset_name,
+                        categoryName
+                      );
+
+                      return {
+                        key: categorySearchName,
                         display: (
                           <Link 
-                            to={`${internalSearchName}#${questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]}`}
-                            onClick={(e: React.MouseEvent) => {
-                              if (submissionMetadata.type) {
-                                e.preventDefault();
-                              }
-
-                              setSelectedSearch(questionNamesByDatasetAndCategory[selectedDataSetRecord.dataset_name][categoryName]);
-                            }}
+                            to={`${internalSearchName}#${categorySearchName}`}
+                            onClick={makeLinkClickHandler(
+                              submissionMetadata,
+                              categorySearchName,
+                              searchName,
+                              setSelectedSearch
+                            )}
                           >
                             {displayCategoriesByName[categoryName].displayName}
                           </Link>
@@ -384,15 +390,15 @@ const InternalGeneDatasetView: React.FunctionComponent<Props> = ({
                               recordClassName: recordClass
                             }}
                             pluginProps={{
+                              ...props,
                               question: searchName,
-                              recordClass,
-                              submissionMetadata,
-                              submitButtonText
+                              shouldChangeDocumentTitle: false
                             }}
+                            defaultComponent={QuestionController}
                           />
                         )
-                      })
-                    )
+                      };
+                    })
                 }
                 activeTab={searchName}
                 onTabSelected={(tab) => {
@@ -582,7 +588,13 @@ function getDatasetRecords(
           }
         ),
         searches: displayCategoryOrder
-          .filter(categoryName => questionNamesByDatasetAndCategory[`${datasetRecord.attributes.dataset_name}`][categoryName])
+          .filter(
+            categoryName => getCategorySearchName(
+              questionNamesByDatasetAndCategory,
+              `${datasetRecord.attributes.dataset_name}`,
+              categoryName
+            )
+          )
           .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
           .join(' ')
       };
@@ -653,14 +665,30 @@ function getDisplayCategoryMetadata(root: CategoryTreeNode, internalQuestions: I
   };
 }
 
-export const InternalGeneDataset = connect<StateProps, {}, OwnProps, RootState>(
-  (state, ownProps) => ({ 
-    ...ownProps, 
-    buildNumber: state.globalData.config && state.globalData.config.buildNumber,
-    questions: state.globalData.questions, 
-    ontology: state.globalData.ontology
-      ? state.globalData.ontology.tree
-      : undefined,
-    recordClasses: state.globalData.recordClasses
-  })
-)(InternalGeneDatasetView);
+function getCategorySearchName(
+  questionNamesByDatasetAndCategory: ReturnType<typeof getDisplayCategoryMetadata>['questionNamesByDatasetAndCategory'],
+  datasetName: string,
+  categoryName: string,
+) {
+  return questionNamesByDatasetAndCategory[datasetName][categoryName];
+}
+
+function makeLinkClickHandler(
+  submissionMetadata: Props['submissionMetadata'],
+  categorySearchName: string,
+  selectedSearchName: string,
+  setSelectedSearch: (newSearchName: string) => void
+) {
+  return function(e: React.MouseEvent) {
+    if (
+      submissionMetadata.type !== 'create-strategy' ||
+      categorySearchName === selectedSearchName
+    ) {
+      e.preventDefault();
+    }
+
+    if (categorySearchName !== selectedSearchName) {
+      setSelectedSearch(categorySearchName);
+    }
+  };
+}
