@@ -59,7 +59,8 @@ class AnswerFilterSelector extends Component {
     }
 
     let {
-      recordClass,
+      attributes,
+      tables,
       filterAttributes,
       filterTables,
       selectAll,
@@ -81,19 +82,15 @@ class AnswerFilterSelector extends Component {
           <a href="#" onClick={clearAll}>clear all</a>
         </p>
 
-        {recordClass.attributes
-          .filter(attr => attr.isDisplayable)
-          .map(attr => {
-            let isChecked = includes(filterAttributes, attr.name);
-            return renderFilterField(attr, isChecked, toggleAttribute);
-          })}
+        {attributes.map(attr => {
+          let isChecked = includes(filterAttributes, attr.name);
+          return renderFilterField(attr, isChecked, toggleAttribute);
+        })}
 
-        {recordClass.tables
-          .filter(table => table.isDisplayable)
-          .map(table => {
-            let isChecked = includes(filterTables, table.name);
-            return renderFilterField(table, isChecked, toggleTable);
-          })}
+        {tables.map(table => {
+          let isChecked = includes(filterTables, table.name);
+          return renderFilterField(table, isChecked, toggleTable);
+        })}
 
         <div className="wdk-Answer-filterFieldSelectorCloseIconWrapper">
           <button
