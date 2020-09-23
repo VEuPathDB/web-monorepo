@@ -1,6 +1,7 @@
 import React, { ReactElement, useState, useCallback } from 'react';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
+import { Tooltip } from 'react-leaflet';
 import Geohash from 'latlon-geohash';
 import './TempIconHack';
 import {DriftMarker} from "leaflet-drift-marker";
@@ -103,9 +104,15 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
     return <DriftMarker
         duration={duration}
         key={agg.geohash}
-        position={[meanLat, meanLong]}
-        title={agg.geohash+' ('+agg.count+')'}
-      />
+        position={[meanLat, meanLong]}>
+        <Tooltip>
+          <span>{`key: ${agg.geohash}`}</span><br/>
+	      <span>{`#aggregated: ${agg.count}`}</span><br/>
+          <span>{`lat: ${meanLat}`}</span><br/>
+          <span>{`lon: ${meanLong}`}</span>
+        </Tooltip>
+      </DriftMarker>
+
   })
 
 };
@@ -147,6 +154,37 @@ export const NoAnimation = () => {
     height="96vh" width="98vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    />
+  );
+};
+
+
+
+//
+// the point of this story is to make it easier to find the
+// 'egy' marker
+// which aggregates/represents two data points
+// (you may need to drag the storybook panel down to make the map bigger)
+//
+// You can move it close to the edge of the screen
+// (so that one of its points would drop off the screen)
+// to see how its position (correctly) changes and the
+// tooltip now shows just one data point represented (correctly).
+//
+export const EdgeCase = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 100000));
+  }, [setMarkerElements])
+
+  return (
+    <MapVEuMap
+    viewport={{center: [ 21.5, -1.5 ], zoom: 9}}
+    height="96vh" width="98vw"
+    onViewportChanged={handleViewportChanged}
+    markers={markerElements}
+    setMarkerElements={setMarkerElements}
     />
   );
 };
