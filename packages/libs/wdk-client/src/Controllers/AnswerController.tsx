@@ -77,8 +77,8 @@ type OwnProps = {
 }
 
 export type Props = {
-  stateProps: StateProps,
-  dispatchProps: DispatchProps
+  stateProps: StateProps;
+  dispatchProps: DispatchProps;
   ownProps: OwnProps;
 } & Options;
 
@@ -124,7 +124,7 @@ class AnswerController extends PageController<Props> {
     ) {
       let pagination = DEFAULT_PAGINATION;
       let sorting = DEFAULT_SORTING;
-      let displayInfo = { pagination, sorting, customName };
+      let displayInfo = { pagination, sorting, customName, attributes: [], tables: [] };
       let opts = { displayInfo, parameters, filterTerm, filterAttributes, filterTables };
       dispatchProps.loadAnswer(searchName, recordClassName, opts);
     }

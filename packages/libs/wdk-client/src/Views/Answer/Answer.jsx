@@ -1,5 +1,5 @@
 import { orderBy, uniq } from 'lodash';
-import React from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { withRouter } from 'react-router';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
@@ -10,117 +10,99 @@ import AnswerFilter from 'wdk-client/Views/Answer/AnswerFilter';
 import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
 import 'wdk-client/Views/Answer/wdk-Answer.scss';
 
+function Answer(props) {
+  const { question, recordClass, displayInfo, additionalActions } = props;
 
-// TODO Annotate props better
-//
-// Optional props
-// - renderCellContent
-// - deriveRowClassName
-// - customSortBys
-class Answer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.getTableState = this.getTableState.bind(this);
-    this.createRecordUrl = this.createRecordUrl.bind(this);
-    this.renderAnswerCount = this.renderAnswerCount.bind(this);
-    this.renderAttributePopup = this.renderAttributePopup.bind(this);
-    this.openAttributeSelector = this.openAttributeSelector.bind(this);
-    this.closeAttributeSelector = this.closeAttributeSelector.bind(this);
-    this.togglePendingAttribute = this.togglePendingAttribute.bind(this);
-    this.handleAttributeSelectorSubmit = this.handleAttributeSelectorSubmit.bind(this);
+  const tableState = useTableState(props);
 
-    const { visibleAttributes } = props;
+  return (
+    <div className="wdk-AnswerContainer">
+      <h1 className="wdk-AnswerHeader">
+        {displayInfo.customName || question.displayName}
+      </h1>
+      <div className="wdk-AnswerDescription">
+        {recordClass.description}
+      </div>
+      <div className="wdk-Answer">
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <AnswerFilter {...props}/>
+          <AnswerCount {...props} />
+          <div style={{ flex: 1, textAlign: 'right' }}>
+            {additionalActions?.map(({ key, display }) =>
+              <React.Fragment key={key}>
+                {display}
+              </React.Fragment>
+            )}
+            <AttributePopup {...props} />
+          </div>
+        </div>
+        <Mesa state={tableState} />
+      </div>
+    </div>
+  );
+}
 
-    this.state = {
-      attributeSelectorOpen: false,
-      pendingVisibleAttributes: visibleAttributes.map(attr => attr.name),
-    };
-  }
+function AnswerCount(props) {
+  const { recordClass, meta, records, displayInfo } = props;
+  const { displayNamePlural } = recordClass;
+  const { pagination } = displayInfo;
+  const { offset, numRecords } = pagination;
+  const { totalCount, responseCount } = meta;
+  const first = offset + 1;
+  const last = Math.min(offset + numRecords, responseCount, records.length);
+  const countPhrase = !records.length ? 0 : `${first} - ${last} of ${totalCount}`;
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.visibleAttributes !== this.props.visibleAttributes) {
-      this.setState({
-        pendingVisibleAttributes: this.props.visibleAttributes.map(attr => attr.name)
-      });
-    }
-  }
+  return (
+    <p className="wdk-Answer-count">
+      Showing {countPhrase} {displayNamePlural}
+    </p>
+  );
+}
 
-  openAttributeSelector () {
-    const attributeSelectorOpen = true;
-    this.setState({ attributeSelectorOpen });
-  }
-
-  closeAttributeSelector () {
-    const { visibleAttributes } = this.props;
-    const attributeSelectorOpen = false;
-    const pendingVisibleAttributes = visibleAttributes.map(attr => attr.name);
-    this.setState({ attributeSelectorOpen, pendingVisibleAttributes });
-  }
-
-  togglePendingAttribute (attributeName, isVisible) {
-    const pendingVisibleAttributes = isVisible
-      ? uniq([ ...this.state.pendingVisibleAttributes, attributeName])
-      : this.state.pendingVisibleAttributes.filter(attrName => attrName !== attributeName);
-    this.setState({ pendingVisibleAttributes });
-  }
-
-  handleAttributeSelectorSubmit (event) {
+function AttributePopup(props) {
+  const { allAttributes, visibleAttributes, onChangeColumns } = props;
+  const [ isOpen, setIsOpen ] = useState(false);
+  const [ selectedAttributes, setSelectedAttributes ] = useState(visibleAttributes.map(attr => attr.name));
+  const handleClose = useCallback(() => setIsOpen(false), [setIsOpen]);
+  const handleAttributeSelectorSubmit = useCallback((event) => {
     event.preventDefault();
     event.stopPropagation();
-    const { allAttributes, onChangeColumns } = this.props;
-    const { pendingVisibleAttributes } = this.state;
-    const visibleAttributes = pendingVisibleAttributes.map(attrName => allAttributes.find(attr => attr.name === attrName));
-    const attributeSelectorOpen = false;
-    onChangeColumns(visibleAttributes);
-    this.setState({ attributeSelectorOpen });
-  }
-
-  createRecordUrl ({ id }) {
-    const { recordClass, history } = this.props;
-    const { urlSegment } = recordClass;
-    const pathname = `/record/${urlSegment}/${id.map(_id => _id.value).join('/')}`;
-    return history.createHref({ pathname });
-  }
-
-  renderAnswerCount () {
-    const { recordClass, meta, records, displayInfo } = this.props;
-    const { displayNamePlural } = recordClass;
-    const { pagination } = displayInfo;
-    const { offset, numRecords } = pagination;
-    const { totalCount, responseCount } = meta;
-    const first = offset + 1;
-    const last = Math.min(offset + numRecords, responseCount, records.length);
-    const countPhrase = !records.length ? 0 : `${first} - ${last} of ${totalCount}`;
-
-    return (
-      <p className="wdk-Answer-count">
-        Showing {countPhrase} {displayNamePlural}
-      </p>
-    );
-  }
-
-  renderAttributePopup () {
-    const { allAttributes } = this.props;
-    const { attributeSelectorOpen, pendingVisibleAttributes } = this.state;
-    const { closeAttributeSelector, handleAttributeSelectorSubmit, togglePendingAttribute } = this;
-    return (
+    const nextVisibleAttributes = selectedAttributes.map(attrName => allAttributes.find(attr => attr.name === attrName));
+    onChangeColumns(nextVisibleAttributes);
+    setIsOpen(false);
+  }, [allAttributes, onChangeColumns, selectedAttributes, setIsOpen]);
+  const toggleSelectedAttribute = useCallback((attributeName, isVisible) => {
+    const nextSelectedAttributes = isVisible
+      ? uniq([ ...selectedAttributes, attributeName])
+      : selectedAttributes.filter(attrName => attrName !== attributeName);
+    setSelectedAttributes(nextSelectedAttributes);
+  }, [selectedAttributes, setSelectedAttributes]);
+  return (
+    <>
+      <button className="btn" onClick={() => setIsOpen(true)}>
+        <Icon fa="plus-circle" />
+        Add / Remove Columns
+      </button>
       <Dialog
         modal={true}
         title="Select Columns"
-        open={attributeSelectorOpen}
-        onClose={closeAttributeSelector}>
+        open={isOpen}
+        onClose={handleClose}>
         <AttributeSelector
           allAttributes={allAttributes}
-          onChange={togglePendingAttribute}
+          onChange={toggleSelectedAttribute}
           onSubmit={handleAttributeSelectorSubmit}
-          selectedAttributes={pendingVisibleAttributes}
+          selectedAttributes={selectedAttributes}
         />
       </Dialog>
-    );
-  }
+    </>
+  );
+}
 
-  getTableState () {
-    const { records, onSort, recordClass, onMoveColumn, visibleAttributes, displayInfo, renderCellContent, deriveRowClassName, customSortBys } = this.props;
+function useTableState (props) {
+  const { records, onSort, recordClass, onMoveColumn, visibleAttributes, displayInfo, renderCellContent, deriveRowClassName, customSortBys } = props;
+
+  return useMemo(() => {
     const { sorting } = displayInfo;
 
     const options = {
@@ -138,7 +120,7 @@ class Answer extends React.Component {
 
     let sortingAttribute = visibleAttributes.find( attribute => attribute.name === sorting[0].attributeName )
     const sortKeys = makeSortKeys(sortingAttribute, customSortBys);
-    const sortDirections = sortKeys.map(sortKey => sorting[0].direction.toLowerCase() || 'asc');
+    const sortDirections = sortKeys.map(_ => sorting[0].direction.toLowerCase() || 'asc');
     const rows = orderBy(records, sortKeys, sortDirections);
 
     const columns = visibleAttributes.map((attribute) => {
@@ -174,55 +156,18 @@ class Answer extends React.Component {
     };
 
     return MesaState.create({ rows, columns, options, uiState, eventHandlers });
-  }
+  }, [records, onSort, recordClass, onMoveColumn, visibleAttributes, displayInfo, renderCellContent, deriveRowClassName, customSortBys])
 
-  render () {
-    const { question, recordClass, displayInfo } = this.props;
-
-    const TableState = this.getTableState();
-    const AnswerCount = this.renderAnswerCount;
-    const AttributePopup = this.renderAttributePopup;
-
-    return (
-      <div className="wdk-AnswerContainer">
-        <h1 className="wdk-AnswerHeader">
-          {displayInfo.customName || question.displayName}
-        </h1>
-        <div className="wdk-AnswerDescription">
-          {recordClass.description}
-        </div>
-        <div className="wdk-Answer">
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <AnswerFilter {...this.props}/>
-            <AnswerCount />
-            <AttributePopup />
-            <div style={{ flex: 1, textAlign: 'right' }}>
-              {this.props.additionalActions?.map(({ key, display }) =>
-                <React.Fragment key={key}>
-                  {display}
-                </React.Fragment>
-              )}
-              <button className="btn" onClick={this.openAttributeSelector}>
-                <Icon fa="plus-circle" />
-                Add / Remove Columns
-              </button>
-            </div>
-          </div>
-          <Mesa state={TableState} />
-        </div>
-      </div>
-    );
-  }
 }
 
 function makeSortKeys(sortingAttribute, customSortBys = {}) {
   if (customSortBys[sortingAttribute.name] != null) {
     return customSortBys[sortingAttribute.name];
   } else if (sortingAttribute.type === 'number') {
-    return [                                                                                                                                                                                                  
-      record => castValue(                                                                                                                                                                            
-        record.attributes[sortingAttribute.name] &&                                                                                                                                                                             
-        record.attributes[sortingAttribute.name].replace(/,/g, '')                                                                                                                                                                           
+    return [
+      record => castValue(
+        record.attributes[sortingAttribute.name] &&
+        record.attributes[sortingAttribute.name].replace(/,/g, '')
       )
     ];
   } else if (sortingAttribute.type === 'link') {

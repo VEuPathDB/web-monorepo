@@ -8,6 +8,8 @@ import {
   ParameterValues,
   AnswerSpec
 } from "wdk-client/Utils/WdkModel";
+import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
+import { isQualifying, getId } from 'wdk-client/Utils/CategoryUtils';
 
 
 // Shared types
@@ -16,14 +18,14 @@ import {
 export type DisplayInfo = {
   customName: string;
   pagination: { offset: number, numRecords: number};
-  attributes?: string[] | '__ALL_ATTRIBUTES__';
-  tables?: string[] | '__ALL_TABLES__';
+  attributes: string[];
+  tables: string[];
   sorting: Sorting[];
 }
 
 export type Sorting = {
-  attributeName: string
-  direction: 'ASC' | 'DESC'
+  attributeName: string;
+  direction: 'ASC' | 'DESC';
 }
 
 export type AnswerOptions = {
@@ -211,17 +213,29 @@ export function loadAnswer(
       startLoading(),
       async () => {
         try {
-          const { parameters = {} as ParameterValues, displayInfo } = opts;
+          const { parameters = {}, displayInfo } = opts;
           const question = await wdkService.findQuestion(questionUrlSegment);
           const recordClass = await wdkService.findRecordClass(recordClassUrlSegment);
-          const attributes = recordClass.attributes
-          // Get all attributes for applications that need internal attributes for rendering purposes.
-          // TODO Figure out a way to allow applications to declore additional non-displayable attributes for request
-          // .filter(attr => attr.isDisplayable)
-            .map(attr => attr.name);
+          const ontology = await wdkService.getCategoriesOntology();
+          const attributes = preorderSeq(ontology.tree)
+            .filter(isQualifying({
+              scope: 'results',
+              targetType: 'attribute',
+              recordClassName: recordClass.fullName
+            }))
+            .map(getId)
+            .toArray();
+          const tables = preorderSeq(ontology.tree)
+            .filter(isQualifying({
+              scope: 'results',
+              targetType: 'table',
+              recordClassName: recordClass.fullName
+            }))
+            .map(getId)
+            .toArray();
 
           displayInfo.attributes = attributes;
-          displayInfo.tables = [];
+          displayInfo.tables = tables;
 
           // Build XHR request data for '/answer'
           const answerSpec: AnswerSpec = {
@@ -230,7 +244,7 @@ export function loadAnswer(
               parameters
             }
           };
-          const formatConfig = pick(displayInfo, ['attributes', 'pagination', 'sorting']);
+          const formatConfig = pick(displayInfo, ['attributes', 'tables', 'pagination', 'sorting']);
           const answer = await wdkService.getAnswerJson(answerSpec, formatConfig);
 
           return endLoadingWithAnswer({

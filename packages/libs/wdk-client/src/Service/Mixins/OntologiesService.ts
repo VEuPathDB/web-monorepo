@@ -22,5 +22,10 @@ export default (base: ServiceBase) => {
       });
   }
 
-  return { getOntology };
+  async function getCategoriesOntology() {
+    const { categoriesOntologyName } = await base.getConfig();
+    return getOntology(categoriesOntologyName);
+  }
+
+  return { getOntology, getCategoriesOntology };
 }
