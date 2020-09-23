@@ -9,7 +9,8 @@ import L from "leaflet";
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 interface HistogramMarkerSVGProps extends MarkerProps {
-  method: 'svg' | 'lib',
+  method?: 'svg' | 'lib',
+  dividerVisible?: boolean,
   type?: 'bar' | 'line',
   fillArea?: boolean,
   spline?: boolean,
@@ -89,7 +90,7 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
     globalMaxValue = props.yAxisRange[1]-props.yAxisRange[0];
   }
 
-  if (props.method === 'svg') {
+  if (props.method === undefined || props.method === 'svg') {
     //DKDK initialize variables for using at following if-else
     let barWidth: number, startingX: number, barHeight: number, startingY: number
 
@@ -154,7 +155,9 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
   //DKDK add horizontal line
   // svgHTML += '<line x1="0" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />'
   //DKDK add horizontal line: when using inner border (adjust x1)
-  svgHTML += '<line x1="1" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />'
+  if (props.dividerVisible === undefined || props.dividerVisible) {
+    svgHTML += '<line x1="1" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />';
+  }
 
   //DKDK set the location of total number
   svgHTML += '<text x="50%" y="89%" dominant-baseline="middle" text-anchor="middle" opacity="1">' + sumValues + '</text>'
