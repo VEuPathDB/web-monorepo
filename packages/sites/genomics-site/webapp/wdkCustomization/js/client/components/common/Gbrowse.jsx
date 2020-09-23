@@ -5,6 +5,8 @@ import { httpGet } from 'ebrc-client/util/http';
 import $ from 'jquery';
 import { Checkbox, HelpIcon, Loading } from 'wdk-client/Components';
 
+import './Gbrowse.scss';
+
 const SCROLL_AND_ZOOM_CHECKBOX_TOOLTIP_POSITION = {
   my: 'bottom right',
   at: 'top center'
@@ -132,7 +134,7 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
 
   const jbrowseViewContainer = useRef(null);
   const lockText = (
-    <small>
+    <small className="jbrowse-scroll-zoom-toggle-caption">
       Scroll and zoom
       {' '}
       <HelpIcon
@@ -175,13 +177,12 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
           marginBottom: '0.5em'
         }}
       >
-        <Checkbox
-          id="jbrowse-scroll-zoom-toggle"
-          style={{ marginRight: '0.25em' }}
-          value={!isLocked}
-          onChange={onCheckboxToggle}
-        />
-        <label htmlFor="jbrowse-scroll-zoom-toggle">
+        <label className="jbrowse-scroll-zoom-toggle">
+          <Checkbox
+            style={{ marginRight: '0.25em' }}
+            value={!isLocked}
+            onChange={onCheckboxToggle}
+          />
           {lockText}
         </label>
       </div>
