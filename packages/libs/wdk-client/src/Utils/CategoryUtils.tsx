@@ -59,7 +59,7 @@ export const EMPTY_CATEGORY_TREE_NODE: CategoryTreeNode = {
   properties: {}
 };
 
-export function getId(node: CategoryTreeNode) {
+export function getId(node: CategoryTreeNode): string {
   return isIndividual(node)
     // FIXME Remove `fullName` hack when the urlSegment/name/fullName saga is resolved.
     ? node.wdkReference.name || (node.wdkReference as any).fullName

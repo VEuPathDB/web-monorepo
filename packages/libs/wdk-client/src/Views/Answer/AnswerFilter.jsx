@@ -86,7 +86,7 @@ class AnswerFilter extends React.Component {
 
   render() {
     let { filterAttributes, filterTables, showFilterFieldSelector } = this.state;
-    let { recordClass, filterTerm } = this.props;
+    let { recordClass, question, filterTerm, displayInfo } = this.props;
     let { displayNamePlural } = recordClass;
     let tooltipContent = (
       <div>
@@ -100,6 +100,10 @@ class AnswerFilter extends React.Component {
         </ul>
       </div>
     );
+    let attributes = recordClass.attributes.concat(question.dynamicAttributes)
+      .filter(attr => displayInfo.attributes.includes(attr.name));
+    let tables = recordClass.tables
+      .filter(table => displayInfo.tables.includes(table.name));
 
     return (
       <div className="wdk-Answer-filter">
@@ -120,7 +124,8 @@ class AnswerFilter extends React.Component {
         </Tooltip>*/}
 
         <AnswerFilterSelector
-          recordClass={recordClass}
+          attributes={attributes}
+          tables={tables}
           open={showFilterFieldSelector}
           onClose={this.toggleFilterFieldSelector}
           filterAttributes={filterAttributes}

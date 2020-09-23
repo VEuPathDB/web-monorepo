@@ -68,15 +68,15 @@ export function reduce(state: State = initialState, action: Action): State {
 function addAnswer( state: State, payload: EndLoadingWithAnswerPayload ) {
   let { answer, displayInfo, question, recordClass, parameters } = payload;
 
-  // in case we used a magic string to get attributes, reset fetched attributes in displayInfo
-  displayInfo.attributes = answer.meta.attributes;
-
   // need to filter wdk_weight from multiple places;
   let isNotWeight = (attr: string | AttributeField) =>
     typeof attr === 'string' ? attr != 'wdk_weight' : attr.name != 'wdk_weight';
 
   // collect attributes from recordClass and question
-  let allAttributes = recordClass.attributes.concat(question.dynamicAttributes).filter(isNotWeight);
+  let allAttributes = recordClass.attributes
+    .filter(attr => displayInfo.attributes.includes(attr.name))
+    .concat(question.dynamicAttributes)
+    .filter(isNotWeight);
 
   // use previously selected visible attributes unless they don't exist or the question changed
   let visibleAttributes = state.visibleAttributes;
