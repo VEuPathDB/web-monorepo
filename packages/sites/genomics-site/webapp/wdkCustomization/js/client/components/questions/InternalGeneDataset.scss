@@ -107,12 +107,16 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Gradient(startColorStr=#5bc0de, endColorStr=#2f96b4)";
   }
 
-  .bttn:active, .bttn-active {
+  .bttn:active, .bttn-active, .bttn-legend {
     background-image: none;
     box-shadow: 1px 1px 0 #dddddd;
     -moz-box-shadow: 1px 1px 0 #dddddd;
     -webkit-box-shadow: 1px 1px 0 #dddddd;
     -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color='#eeeeee')";
+  }
+
+  .bttn:active, .bttn.bttn-active {
+    cursor: default;
   }
 
   &NewDataset {
