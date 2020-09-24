@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { uniqueId } from 'lodash';
+import { cloneDeep, uniqueId } from 'lodash';
 import $ from 'jquery';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { loadChemDoodleWeb } from '../common/Compound';
@@ -50,7 +50,8 @@ function loadCytoscapeJs() {
 
 
 // transform wdk row into Cyto Node
-function makeNode(obj) {
+function makeNode(oldObj) {
+    const obj = cloneDeep(oldObj);
 
     if(obj.node_type == 'molecular entity' && obj.default_structure) {
         let structure = ChemDoodle.readMOL(obj.default_structure);
@@ -923,13 +924,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 //        let nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
 //        initialAnimation(nodesWithCellularLocation);
 
-        const layoutUsed = nodes.allAre('[!x]')
-          ? { name: 'cose' }
-          : myLayout;
-
-        setLayoutUsed(cy, layoutUsed);
-
-        if (layoutUsed.name !== 'preset') {
+        if (nodes.allAre('[!x]')) {
           cy.layout(layoutUsed).run();
         }
         return cy;
@@ -1182,7 +1177,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
   resetVis() {
     if (this.state.cy != null) {
       this.state.cy.destroy();
-      this.onExperimentChange('');
       this.initVis();
     }
   }
@@ -1330,7 +1324,6 @@ function VisMenu(props) {
     userMouseControlsEnabled
   } = props;
   let jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
-  let wasPreset = wasCyPreset(cy);
 
   return(
     <Menu
@@ -1348,7 +1341,6 @@ function VisMenu(props) {
             </label>
           )
         },
-        wasPreset &&
         {
           text: 'Reset Display',
           onClick: onResetDisplayClick
