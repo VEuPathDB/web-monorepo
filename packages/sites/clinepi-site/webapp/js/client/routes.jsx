@@ -1,7 +1,7 @@
 import React from 'react';
 
 import AccessRequestController from './controllers/AccessRequestController';
-import AboutController from './controllers/AboutController';
+import StudyAccessController from './controllers/StudyAccessController';
 
 export const wrapRoutes = ebrcRoutes => { 
   return [
@@ -9,11 +9,6 @@ export const wrapRoutes = ebrcRoutes => {
     {
       path: '/request-access/:datasetId',
       component: props => <AccessRequestController {...props.match.params}/>
-    },
-
-    {
-      path: '/about',
-      component: () => <AboutController/>
     },
 
     ...ebrcRoutes
