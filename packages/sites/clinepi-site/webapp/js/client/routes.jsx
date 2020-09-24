@@ -1,7 +1,5 @@
 import React from 'react';
-
 import AccessRequestController from './controllers/AccessRequestController';
-import StudyAccessController from './controllers/StudyAccessController';
 
 export const wrapRoutes = ebrcRoutes => { 
   return [
