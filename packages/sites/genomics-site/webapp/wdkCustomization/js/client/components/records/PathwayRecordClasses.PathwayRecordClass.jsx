@@ -923,12 +923,36 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 //        let nodesWithCellularLocation = cy.nodes('node[?cellular_location]');
 //        initialAnimation(nodesWithCellularLocation);
 
-        if (nodes.allAre('[!x]')) {
-            cy.layout({name: 'cose'}).run();
+        const layoutUsed = nodes.allAre('[!x]')
+          ? { name: 'cose' }
+          : myLayout;
+
+        setLayoutUsed(cy, layoutUsed);
+
+        if (layoutUsed.name !== 'preset') {
+          cy.layout(layoutUsed).run();
         }
         return cy;
 
     });
+}
+
+function setLayoutUsed(cy, layoutUsed) {
+  cy.scratch('layoutUsed', layoutUsed);
+}
+
+function getLayoutUsed(cy) {
+  return cy.scratch('layoutUsed');
+}
+
+function wasCyPreset(maybeCy) {
+  if (maybeCy == null) {
+    return false;
+  }
+
+  const layoutUsed = getLayoutUsed(maybeCy);
+
+  return layoutUsed !== null && layoutUsed.name === 'preset';
 }
 
 function readDynamicCols(dynamicColsOfIncomingStep, globalData) {
@@ -1306,6 +1330,8 @@ function VisMenu(props) {
     userMouseControlsEnabled
   } = props;
   let jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
+  let wasPreset = wasCyPreset(cy);
+
   return(
     <Menu
       webAppUrl={props.webAppUrl}
@@ -1322,6 +1348,7 @@ function VisMenu(props) {
             </label>
           )
         },
+        wasPreset &&
         {
           text: 'Reset Display',
           onClick: onResetDisplayClick
