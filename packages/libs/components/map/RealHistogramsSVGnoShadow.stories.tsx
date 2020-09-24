@@ -184,7 +184,8 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
       const start = bucket.val.substring(0,4);
       labels.push(start);
       values.push(bucket.count);
-      colors.push(all_colors_hex[index]);     //DKDK set color palette
+      if (knob_colorMethod === 'solid') { colors.push('#7cb5ec'); }    //DKDK set color palette
+      else { colors.push(all_colors_hex[index]); }
     });
 
     //DKDK calculate the number of no data and make 6th bar
@@ -193,31 +194,33 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
     values.push(noDataValue);
     colors.push("silver");     //DKDK fill the last color
 
-  return (
-    <RealHistogramMarkerSVGnoShadow
-      method={knob_method}
-      dividerVisible={knob_dividerVisible}
-      type={knob_type}
-      fillArea={knob_fillArea}
-      spline={knob_spline}
-      lineVisible={knob_lineVisible}
-      colorMethod={knob_colorMethod}
-      key={bucket.val}
-      //DKDK change position format
-      position={[lat, long]}
-      labels={labels}
-      values={values}
-      //DKDK colors is set to be optional props, if null (e.g., comment out) then bars will have skyblue-like defaultColor
-      colors={colors}
-      //DKDK disable isAtomic for histogram
-      // isAtomic={atomicValue}
-      //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
-      yAxisRange ={yAxisRange}
-      // onClick={handleClick}
-      onMouseOut={handleMouseOut}
-      onMouseOver={handleMouseOver}
-      // my_knob={boolean('My Knob', false)} // Doesn't work
-    />
+    const new_knob_colorMethod = knob_colorMethod === 'solid' ? 'bins' : knob_colorMethod;
+
+    return (
+      <RealHistogramMarkerSVGnoShadow
+        method={knob_method}
+        dividerVisible={knob_dividerVisible}
+        type={knob_type}
+        fillArea={knob_fillArea}
+        spline={knob_spline}
+        lineVisible={knob_lineVisible}
+        colorMethod={new_knob_colorMethod}
+        key={bucket.val}
+        //DKDK change position format
+        position={[lat, long]}
+        labels={labels}
+        values={values}
+        //DKDK colors is set to be optional props, if null (e.g., comment out) then bars will have skyblue-like defaultColor
+        colors={colors}
+        //DKDK disable isAtomic for histogram
+        // isAtomic={atomicValue}
+        //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
+        yAxisRange ={yAxisRange}
+        // onClick={handleClick}
+        onMouseOut={handleMouseOut}
+        onMouseOver={handleMouseOver}
+        // my_knob={boolean('My Knob', false)} // Doesn't work
+      />
     )
   });
 }
@@ -237,7 +240,9 @@ export const CollectionDateLocal = () => {
   const knob_fillArea = knob_type === 'line' ? boolean('Fill area', false) : undefined;
   const knob_spline = knob_type === 'line' ? boolean('Spline', false) : undefined;
   const knob_lineVisible = knob_fillArea ? boolean('Show line', false) : undefined;
-  const knob_colorMethod = knob_type === 'line' ? radios('Color method', {Bins: 'discrete', Gradient: 'gradient'}, 'discrete') : undefined;
+  const knob_colorMethod = knob_type === 'line' ?
+    radios('Color method', {Bins: 'discrete', Solid: 'solid', Gradient: 'gradient'}, 'discrete') :
+    radios('Color method', {Bins: 'discrete', Solid: 'solid'}, 'discrete');
   //const knob_colorMethod = knob_type === 'line' ? radios('Color method', {Solid: 'solid', Bins: 'discrete', Gradient: 'gradient'}, 'discrete') : undefined;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
