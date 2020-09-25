@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@types/cytoscape@3.2.9":
+  version "3.2.9"
+  resolved "https://registry.yarnpkg.com/@types/cytoscape/-/cytoscape-3.2.9.tgz#2d1f2c1faf440690a4805856561604f30cfb7517"
+  integrity sha512-ycpsM1JN7DdeL0tX4tXGPL5LCekfDpE736WDZKBUPlR1MlIaPrPK6APqjEtBuMRg0f1TM9rzaN+MghJLp0f04w==
+
 ciena-dagre@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ciena-dagre/-/ciena-dagre-1.0.1.tgz#0db39d9fe5f98a1ee7f8e2946e66e06c0a88585f"
