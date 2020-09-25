@@ -925,29 +925,11 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 //        initialAnimation(nodesWithCellularLocation);
 
         if (nodes.allAre('[!x]')) {
-          cy.layout(layoutUsed).run();
+          cy.layout({ name: 'cose' }).run();
         }
         return cy;
 
     });
-}
-
-function setLayoutUsed(cy, layoutUsed) {
-  cy.scratch('layoutUsed', layoutUsed);
-}
-
-function getLayoutUsed(cy) {
-  return cy.scratch('layoutUsed');
-}
-
-function wasCyPreset(maybeCy) {
-  if (maybeCy == null) {
-    return false;
-  }
-
-  const layoutUsed = getLayoutUsed(maybeCy);
-
-  return layoutUsed !== null && layoutUsed.name === 'preset';
 }
 
 function readDynamicCols(dynamicColsOfIncomingStep, globalData) {
