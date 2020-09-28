@@ -19,7 +19,7 @@ import * as Ontology from 'wdk-client/Utils/OntologyUtils';
 import * as Category from 'wdk-client/Utils/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
 
-import { PathwaySearchSelector } from './PathwaySearchSelector';
+import { PathwaySearchByTerm } from './PathwaySearchByTerm';
 import {
   clearHighlighting,
   filterNodes,
@@ -1017,8 +1017,11 @@ const enhance = connect(
 
 const SELECTORS = {
   GENERA: 'genera',
-  GRAPH: 'graph',
-  SEARCH: 'search'
+  GRAPH: 'graph'
+};
+
+const SEARCHES = {
+  TERM: 'term'
 };
 
 const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component {
@@ -1027,6 +1030,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     super(props, context);
     this.state = {
       openSelector: null,
+      openSearch: null,
       searchCriteria: undefined,
       userMouseControlsEnabled: true,
     };
@@ -1293,11 +1297,11 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         </Dialog>
         <Dialog
           title="Search Nodes"
-          open={this.state.openSelector === SELECTORS.SEARCH}
-          onClose={() => this.setState({ openSelector: null })}
+          open={this.state.openSearch === SEARCHES.TERM}
+          onClose={() => this.setState({ openSearch: null })}
           draggable
         >
-          <PathwaySearchSelector
+          <PathwaySearchByTerm
             onSearchCriteriaChange={this.onSearchCriteriaChange}
           />
         </Dialog>
@@ -1331,7 +1335,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
           onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
           onResetDisplayClick={this.resetVis}
-          onSearchSelectorClick={() => this.setState({ openSelector: SELECTORS.SEARCH })}
+          onSearchByTermClick={() => this.setState({ openSearch: SEARCHES.TERM })}
           cy={this.state.cy}
         />
         <div className="eupathdb-PathwayRecord-cytoscapeIcon">
@@ -1366,7 +1370,7 @@ function VisMenu(props) {
     onGeneraSelectorClick,
     onGraphSelectorClick,
     onResetDisplayClick,
-    onSearchSelectorClick,
+    onSearchByTermClick,
     userMouseControlsEnabled
   } = props;
   let jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
@@ -1468,7 +1472,7 @@ function VisMenu(props) {
               url: '#search',
               onClick(event) {
                 event.preventDefault();
-                onSearchSelectorClick();
+                onSearchByTermClick();
               }
             }
           ]

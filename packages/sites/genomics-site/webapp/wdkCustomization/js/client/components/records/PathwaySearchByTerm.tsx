@@ -8,7 +8,7 @@ interface Props {
   onSearchCriteriaChange: (searchCriteria: NodeSearchCriteria | undefined) => void;
 }
 
-export function PathwaySearchSelector({ onSearchCriteriaChange }: Props) {
+export function PathwaySearchByTerm({ onSearchCriteriaChange }: Props) {
   const [ searchTerm, setSearchTerm ] = useState('');
 
   useEffect(() => {
