@@ -1326,6 +1326,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           primary_key={primary_key}
           projectId={projectId}
           userMouseControlsEnabled={this.state.userMouseControlsEnabled}
+          onClearMatchesClick={() => this.setState({ searchCriteria: undefined })}
           onClickUserMouseControlsToggle={this.onClickUserMouseControlsToggle}
           onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
           onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
@@ -1360,6 +1361,7 @@ function VisMenu(props) {
   let {
     cy,
     primary_key,
+    onClearMatchesClick,
     onClickUserMouseControlsToggle,
     onGeneraSelectorClick,
     onGraphSelectorClick,
@@ -1453,6 +1455,14 @@ function VisMenu(props) {
         {
           text: 'Search',
           children: [
+            {
+              text: 'Clear Matches',
+              url: '#clear-matches',
+              onClick(event) {
+                event.preventDefault();
+                onClearMatchesClick();
+              }
+            },
             {
               text: 'By Term',
               url: '#search',
