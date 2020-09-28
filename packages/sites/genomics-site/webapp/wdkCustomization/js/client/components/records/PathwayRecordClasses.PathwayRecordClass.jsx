@@ -18,6 +18,13 @@ import {
 import * as Ontology from 'wdk-client/Utils/OntologyUtils';
 import * as Category from 'wdk-client/Utils/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
+
+import { PathwaySearchSelector } from './PathwaySearchSelector';
+import {
+  clearHighlighting,
+  filterNodes,
+  highlightNodes
+} from './pathway-utils';
 import { renderNodeLabelMarkup } from './utils';
 
 // include menu bar files
@@ -32,6 +39,9 @@ const EC_NUMBER_SEARCH_PREFIX = '/app/search/transcript/' +
 
 const ORTHOMCL_LINK = 'https://beta.orthomcl.org/orthomcl/processQuestion.do?questionFullName=' +
   'GroupQuestions.ByEcNumber&questionSubmit=Get+Answer&ec_number_type_ahead=N/A&ec_wildcard=';
+
+const clearFoundNodes = clearHighlighting('veupathdb-CytoscapeFoundNode');
+const highlightFoundNodes = highlightNodes('veupathdb-CytoscapeFoundNode');
 
 function loadCytoscapeJs() {
   return new Promise(function(resolve, reject) {
@@ -664,6 +674,15 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
                 },
             },
 
+
+            {
+              selector: 'node.veupathdb-CytoscapeFoundNode',
+              style: {
+                'border-color': 'green',
+                'border-width': '4px'
+              },
+            },
+
             {
                 selector: 'node.eupathdb-CytoscapeActiveNode',
                 style: {
@@ -1008,6 +1027,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     super(props, context);
     this.state = {
       openSelector: null,
+      searchCriteria: undefined,
       userMouseControlsEnabled: true,
     };
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
@@ -1015,6 +1035,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     this.onGeneraChange = this.onGeneraChange.bind(this);
     this.onExperimentChange = this.onExperimentChange.bind(this);
     this.onClickUserMouseControlsToggle = this.onClickUserMouseControlsToggle.bind(this);
+    this.onSearchCriteriaChange = this.onSearchCriteriaChange.bind(this);
   }
 
   componentDidMount() {
@@ -1031,6 +1052,10 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
     if (prevState.userMouseControlsEnabled !== this.state.userMouseControlsEnabled) {
       this.toggleUserMouseControls(this.state.userMouseControlsEnabled);
+    }
+
+    if (prevState.searchCriteria !== this.state.searchCriteria) {
+      this.updateFoundNodes(this.state.searchCriteria);
     }
   }
 
@@ -1195,6 +1220,30 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     this.setState({ openSelector: null });
   }
 
+  onSearchCriteriaChange(searchCriteria) {
+    this.setState({
+      searchCriteria
+    });
+  }
+
+  updateFoundNodes(searchCriteria) {
+    if (this.state.cy != null) {
+      const cy = this.state.cy;
+      const nodes = cy.nodes();
+
+      clearFoundNodes(nodes);
+
+      if (searchCriteria != null) {
+        const foundNodes = filterNodes(
+          searchCriteria,
+          nodes
+        );
+
+        highlightFoundNodes(foundNodes);
+      }
+    }
+  }
+
   renderError() {
     if (this.props.pathwayRecord.error) {
       return (
@@ -1243,12 +1292,14 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           />
         </Dialog>
         <Dialog
-          title="Search Graph Entities"
+          title="Search Nodes"
           open={this.state.openSelector === SELECTORS.SEARCH}
           onClose={() => this.setState({ openSelector: null })}
           draggable
         >
-          TODO
+          <PathwaySearchSelector
+            onSearchCriteriaChange={this.onSearchCriteriaChange}
+          />
         </Dialog>
         <div>
           <p>
