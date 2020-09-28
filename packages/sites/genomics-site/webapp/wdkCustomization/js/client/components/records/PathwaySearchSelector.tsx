@@ -23,6 +23,7 @@ export function PathwaySearchSelector({ onSearchCriteriaChange }: Props) {
 
   return (
     <RealTimeSearchBox
+      autoFocus
       searchTerm={searchTerm}
       onSearchTermChange={setSearchTerm}
       placeholderText="Search IDs and names"
