@@ -7,10 +7,8 @@ import { UnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
 import ErrorStatus from 'wdk-client/Components/PageStatus/Error';
 import { record, string, boolean, arrayOf, objectOf } from 'wdk-client/Utils/Json';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { IconAlt } from 'wdk-client/Components';
 
 import './UnhandledErrors.scss';
-import { ServiceError } from 'wdk-client/Service/ServiceError';
 
 const cx = makeClassNameHelper('UnhandledErrors');
 
