@@ -998,7 +998,8 @@ const enhance = connect(
 
 const SELECTORS = {
   GENERA: 'genera',
-  GRAPH: 'graph'
+  GRAPH: 'graph',
+  SEARCH: 'search'
 };
 
 const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component {
@@ -1241,6 +1242,14 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
             onChange={this.onExperimentChange}
           />
         </Dialog>
+        <Dialog
+          title="Search Graph Entities"
+          open={this.state.openSelector === SELECTORS.SEARCH}
+          onClose={() => this.setState({ openSelector: null })}
+          draggable
+        >
+          TODO
+        </Dialog>
         <div>
           <p>
             <strong>NOTE </strong>
@@ -1270,6 +1279,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
           onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
           onResetDisplayClick={this.resetVis}
+          onSearchSelectorClick={() => this.setState({ openSelector: SELECTORS.SEARCH })}
           cy={this.state.cy}
         />
         <div className="eupathdb-PathwayRecord-cytoscapeIcon">
@@ -1303,6 +1313,7 @@ function VisMenu(props) {
     onGeneraSelectorClick,
     onGraphSelectorClick,
     onResetDisplayClick,
+    onSearchSelectorClick,
     userMouseControlsEnabled
   } = props;
   let jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
@@ -1384,6 +1395,19 @@ function VisMenu(props) {
               onClick(event) {
                 event.preventDefault();
                 onGeneraSelectorClick();
+              }
+            }
+          ]
+        },
+        {
+          text: 'Search',
+          children: [
+            {
+              text: 'By Term',
+              url: '#search',
+              onClick(event) {
+                event.preventDefault();
+                onSearchSelectorClick();
               }
             }
           ]
