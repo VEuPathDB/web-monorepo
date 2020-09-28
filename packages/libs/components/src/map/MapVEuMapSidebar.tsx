@@ -9,8 +9,6 @@ import 'leaflet/dist/leaflet.css';
 //DKDK import a sidebar component
 import SidebarExample from './SidebarExample'
 import { LeafletMouseEvent } from "leaflet";
-//DKDK import functions
-import * as mapveuUtils from './popbio/mapveuUtils.js'  //DKDK call util functions
 
 //DKDK for layers
 const { BaseLayer, Overlay } = LayersControl
