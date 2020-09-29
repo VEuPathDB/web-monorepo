@@ -376,7 +376,7 @@ function addCellularLocation (node, cellularLocationNode) {
 
 
 
-function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges, name) {
+function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges, name, userScrollingEnabled) {
 
   return Promise.all([loadCytoscapeJs(), loadChemDoodleWeb()])
     .then(function([ cytoscape ]) {
@@ -702,7 +702,8 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
 
         ],
         layout:myLayout,
-        zoom:1
+        zoom:1,
+        userZoomingEnabled: !userScrollingEnabled
     });
 
 
@@ -1033,13 +1034,13 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
       openSelector: null,
       openSearch: null,
       searchCriteria: undefined,
-      userMouseControlsEnabled: true,
+      userScrollingEnabled: false,
     };
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
     this.resetVis = this.resetVis.bind(this);
     this.onGeneraChange = this.onGeneraChange.bind(this);
     this.onExperimentChange = this.onExperimentChange.bind(this);
-    this.onClickUserMouseControlsToggle = this.onClickUserMouseControlsToggle.bind(this);
+    this.onClickUserScrollingToggle = this.onClickUserScrollingToggle.bind(this);
     this.onSearchCriteriaChange = this.onSearchCriteriaChange.bind(this);
   }
 
@@ -1055,8 +1056,8 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
       this.initVis();
     }
 
-    if (prevState.userMouseControlsEnabled !== this.state.userMouseControlsEnabled) {
-      this.toggleUserMouseControls(this.state.userMouseControlsEnabled);
+    if (prevState.userScrollingEnabled !== this.state.userScrollingEnabled) {
+      this.toggleUserScrolling(this.state.userScrollingEnabled);
     }
 
     if (prevState.searchCriteria !== this.state.searchCriteria) {
@@ -1068,7 +1069,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     let { primary_key, source, name } = this.props.record.attributes;
     let { PathwayNodes, PathwayEdges } = this.props.record.tables;
 
-    makeCy(this.refs.cytoContainer, primary_key, source, PathwayNodes, PathwayEdges, name)
+    makeCy(this.refs.cytoContainer, primary_key, source, PathwayNodes, PathwayEdges, name, this.state.userScrollingEnabled)
       .then(cy => {
 
         // listener for when nodes and edges are clicked
@@ -1194,11 +1195,9 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     }
   }
 
-  toggleUserMouseControls(isEnabled) {
+  toggleUserScrolling(isEnabled) {
     if (this.state.cy != null) {
-      this.state.cy.boxSelectionEnabled(isEnabled);
-      this.state.cy.userPanningEnabled(isEnabled);
-      this.state.cy.userZoomingEnabled(isEnabled);
+      this.state.cy.userZoomingEnabled(!isEnabled);
     }
   }
 
@@ -1206,9 +1205,9 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     this.props.setActiveNodeData(null);
   }
 
-  onClickUserMouseControlsToggle(newValue) {
+  onClickUserScrollingToggle(newValue) {
     this.setState({
-      userMouseControlsEnabled: newValue
+      userScrollingEnabled: newValue
     });
   }
 
@@ -1353,10 +1352,10 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           <div className="veupathdb-PathwayRecord-menuControls">
             <label>
               <Checkbox
-                value={this.state.userMouseControlsEnabled}
-                onChange={this.onClickUserMouseControlsToggle}
+                value={this.state.userScrollingEnabled}
+                onChange={this.onClickUserScrollingToggle}
               />
-              &nbsp;Panning and Zooming Gestures
+              &nbsp;Enable Scrolling
             </label>
             <button
               className="btn veupathdb-PathwayRecord-ResetDisplayButton"
