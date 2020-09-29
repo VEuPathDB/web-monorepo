@@ -10,9 +10,6 @@
 #eupathdb-PathwayRecord-cytoscape .eupathdb-Menu {
   width: 100%;
   min-width: 0px;
-  border-top-right-radius: 4px;
-  border-top-left-radius: 4px;
-  border: 1px solid black;
 }
 
 #eupathdb-PathwayRecord-cytoscape .eupathdb-MenuItem:hover {
@@ -27,11 +24,24 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
-.eupathdb-PathwayRecord-cytoscapeIcon {
-  position: absolute;
-  right: 4px;
-  top: 41px;
+.veupathdb-PathwayRecord-menuContainer {
+  display: flex;
+  justify-content: space-between;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  border: 1px solid black;
+}
+
+.veupathdb-PathwayRecord-menuControls {
   font-size: .9em;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.veupathdb-PathwayRecord-menuControls > * {
+  white-space: nowrap;
+  margin-right: 4px;
 }
 
 .eupathdb-PathwayNodeDetailsContainer {
@@ -47,7 +57,7 @@
 }
 
 .eupathdb-PathwayNodeDetailsHeader {
-  font-eight: bold;
+  font-weight: bold;
   font-size: 1.2em;
   cursor: move;
   position: relative;
@@ -120,6 +130,20 @@
   max-width: 90vw;
   height: 80vh;
   padding: 0 3em;
+}
+
+.veupathdb-PathwaySearchByTerm {
+  width: 30em;
+  padding: 0 3em;
+}
+
+.veupathdb-PathwaySearchById {
+  width: 50em;
+  padding: 0 3em;
+}
+
+.veupathdb-SearchByIdDialog .wdk-DialogContent {
+  overflow: visible;
 }
 
 .eupathdb-PathwayGeneraInfo {

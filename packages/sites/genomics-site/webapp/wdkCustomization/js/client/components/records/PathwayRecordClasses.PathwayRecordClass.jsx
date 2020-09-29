@@ -20,6 +20,7 @@ import * as Category from 'wdk-client/Utils/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
 
 import { PathwaySearchByTerm } from './PathwaySearchByTerm';
+import { PathwaySearchById } from './PathwaySearchById';
 import {
   clearHighlighting,
   filterNodes,
@@ -1305,6 +1306,18 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
             onSearchCriteriaChange={this.onSearchCriteriaChange}
           />
         </Dialog>
+        <Dialog
+          title="Search Nodes"
+          className="veupathdb-SearchByIdDialog"
+          open={this.state.openSearch === SEARCHES.ID}
+          onClose={() => this.setState({ openSearch: null })}
+          draggable
+        >
+          <PathwaySearchById
+            onSearchCriteriaChange={this.onSearchCriteriaChange}
+            nodes={this.state.cy && this.state.cy.nodes()}
+          />
+        </Dialog>
         <div>
           <p>
             <strong>NOTE </strong>
@@ -1324,26 +1337,35 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
             <br />
         </div>
-        <VisMenu
-          source={source}
-          webAppUrl={this.props.siteConfig.webAppUrl}
-          primary_key={primary_key}
-          projectId={projectId}
-          userMouseControlsEnabled={this.state.userMouseControlsEnabled}
-          onClearMatchesClick={() => this.setState({ searchCriteria: undefined })}
-          onClickUserMouseControlsToggle={this.onClickUserMouseControlsToggle}
-          onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
-          onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
-          onResetDisplayClick={this.resetVis}
-          onSearchByTermClick={() => this.setState({ openSearch: SEARCHES.TERM })}
-          cy={this.state.cy}
-        />
-        <div className="eupathdb-PathwayRecord-cytoscapeIcon">
-            <a href="http://js.cytoscape.org/">
-
-              <img src={this.props.siteConfig.webAppUrl + "/images/cytoscape-logo.png"} alt="Cytoscape JS" width="28" height="28"/>
-          </a>
-          Cytoscape JS
+        <div className="veupathdb-PathwayRecord-menuContainer">
+          <VisMenu
+            source={source}
+            webAppUrl={this.props.siteConfig.webAppUrl}
+            primary_key={primary_key}
+            projectId={projectId}
+            onClearMatchesClick={() => this.setState({ searchCriteria: undefined })}
+            onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
+            onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
+            onResetDisplayClick={this.resetVis}
+            onSearchByIdClick={() => this.setState({ openSearch: SEARCHES.ID })}
+            onSearchByTermClick={() => this.setState({ openSearch: SEARCHES.TERM })}
+            cy={this.state.cy}
+          />
+          <div className="veupathdb-PathwayRecord-menuControls">
+            <label>
+              <Checkbox
+                value={this.state.userMouseControlsEnabled}
+                onChange={this.onClickUserMouseControlsToggle}
+              />
+              &nbsp;Panning and Zooming Gestures
+            </label>
+            <div className="eupathdb-PathwayRecord-cytoscapeIcon">
+              <a href="http://js.cytoscape.org/">
+                <img src={this.props.siteConfig.webAppUrl + "/images/cytoscape-logo.png"} alt="Cytoscape JS" width="28" height="28"/>
+              </a>
+              Cytoscape JS
+            </div>
+          </div>
         </div>
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div ref="cytoContainer" className="eupathdb-PathwayRecord-CytoscapeContainer" />
@@ -1366,12 +1388,11 @@ function VisMenu(props) {
     cy,
     primary_key,
     onClearMatchesClick,
-    onClickUserMouseControlsToggle,
     onGeneraSelectorClick,
     onGraphSelectorClick,
     onResetDisplayClick,
-    onSearchByTermClick,
-    userMouseControlsEnabled
+    onSearchByIdClick,
+    onSearchByTermClick
   } = props;
   let jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
 
@@ -1380,17 +1401,6 @@ function VisMenu(props) {
       webAppUrl={props.webAppUrl}
       projectId={props.projectId}
       items={[
-        {
-          text: (
-            <label style={{ fontWeight: 'normal' }}>
-              <Checkbox
-                value={userMouseControlsEnabled}
-                onChange={onClickUserMouseControlsToggle}
-              />
-              &nbsp;Panning and Zooming Gestures
-            </label>
-          )
-        },
         {
           text: 'Reset Display',
           onClick: onResetDisplayClick
@@ -1468,8 +1478,16 @@ function VisMenu(props) {
               }
             },
             {
-              text: 'By Term',
-              url: '#search',
+              text: 'By Exact ID',
+              url: '#search-id',
+              onClick(event) {
+                event.preventDefault();
+                onSearchByIdClick();
+              }
+            },
+            {
+              text: 'By Text Match',
+              url: '#search-term',
               onClick(event) {
                 event.preventDefault();
                 onSearchByTermClick();
