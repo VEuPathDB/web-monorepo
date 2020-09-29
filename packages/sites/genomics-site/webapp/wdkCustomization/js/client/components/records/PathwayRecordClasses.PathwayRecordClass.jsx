@@ -1346,7 +1346,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
             onClearMatchesClick={() => this.setState({ searchCriteria: undefined })}
             onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
             onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
-            onResetDisplayClick={this.resetVis}
             onSearchByIdClick={() => this.setState({ openSearch: SEARCHES.ID })}
             onSearchByTermClick={() => this.setState({ openSearch: SEARCHES.TERM })}
             cy={this.state.cy}
@@ -1359,11 +1358,17 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
               />
               &nbsp;Panning and Zooming Gestures
             </label>
+            <button
+              className="btn veupathdb-PathwayRecord-ResetDisplayButton"
+              type="button"
+              onClick={this.resetVis}
+            >
+              Reset
+            </button>
             <div className="eupathdb-PathwayRecord-cytoscapeIcon">
               <a href="http://js.cytoscape.org/">
                 <img src={this.props.siteConfig.webAppUrl + "/images/cytoscape-logo.png"} alt="Cytoscape JS" width="28" height="28"/>
               </a>
-              Cytoscape JS
             </div>
           </div>
         </div>
@@ -1390,7 +1395,6 @@ function VisMenu(props) {
     onClearMatchesClick,
     onGeneraSelectorClick,
     onGraphSelectorClick,
-    onResetDisplayClick,
     onSearchByIdClick,
     onSearchByTermClick
   } = props;
@@ -1401,10 +1405,6 @@ function VisMenu(props) {
       webAppUrl={props.webAppUrl}
       projectId={props.projectId}
       items={[
-        {
-          text: 'Reset Display',
-          onClick: onResetDisplayClick
-        },
         {
           text: 'File',
           children: [

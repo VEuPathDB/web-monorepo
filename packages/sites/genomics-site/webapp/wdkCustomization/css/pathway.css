@@ -27,6 +27,7 @@
 .veupathdb-PathwayRecord-menuContainer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   border-top-right-radius: 4px;
   border-top-left-radius: 4px;
   border: 1px solid black;
@@ -41,7 +42,11 @@
 
 .veupathdb-PathwayRecord-menuControls > * {
   white-space: nowrap;
-  margin-right: 4px;
+}
+
+.veupathdb-PathwayRecord-ResetDisplayButton {
+  margin-left: 0.75em;
+  margin-right: 0.75em;
 }
 
 .eupathdb-PathwayNodeDetailsContainer {
