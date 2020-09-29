@@ -16,6 +16,8 @@ interface HistogramMarkerSVGProps extends MarkerProps {
   spline?: boolean,
   lineVisible?: boolean,
   colorMethod?: 'discrete' | 'gradient',
+  borderColor?: string,
+  borderWidth?: number,
   labels: Array<string>, // the labels (not likely to be shown at normal marker size)
   values: Array<number>, // the counts or totals to be shown in the donut
   colors?: Array<string> | null, // bar colors: set to be optional with array or null type
@@ -43,7 +45,7 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
     if (props.colors) {
       defaultColor = props.colors[i]
       // defaultLineColor = 'grey'       //DKDK this is outline of histogram
-      defaultLineColor = 'black'       //DKDK this is outline of histogram
+      defaultLineColor = '#00000088'       //DKDK this is outline of histogram
     } else {
       defaultColor = '#7cb5ec'
       defaultLineColor = '#7cb5ec'
@@ -56,6 +58,9 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
     })
   }
 
+  defaultLineColor = props.borderColor || defaultLineColor;
+  const borderWidth = props.borderWidth || 1;
+
   //DKDK construct histogram marker icon
   const size = 40   //DKDK histogram marker icon size: note that popbio/mapveu donut marker icons = 40
   const xSize = 50  //DKDK make the histogram width a bit larger considering the total number space in the bottom of histogram
@@ -63,7 +68,7 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
   let svgHTML: string = ''  //DKDK divIcon HTML contents
 
   //DKDK set drawing area: without shadow, they are (xSize x ySize)
-  svgHTML += '<svg width="' + (xSize) + '" height="' + (ySize) + '">'   //DKDK initiate svg marker icon
+  svgHTML += '<svg width="' + (xSize+2*borderWidth) + '" height="' + (ySize+2*borderWidth) + '">'   //DKDK initiate svg marker icon
 
   let count = fullStat.length
   let sumValues: number = fullStat.map(o => o.value).reduce((a, c) => { return a + c })     //DKDK summation of fullStat.value per marker icon
@@ -79,10 +84,10 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
   const marginY = 5    //DKDK margin to start drawing bars in Y
 
   // //DKDK thin line: drawing outer box with round corners: changed border color (stroke)
-  svgHTML += '<rect x="0" y="0" rx=' + roundX + ' ry=' + roundY + ' width=' + xSize + ' height=' + ySize + ' fill="white" stroke="' + defaultLineColor +'" stroke-width="0" opacity="1.0" />'
+  svgHTML += '<rect x="0" y="0" rx=' + roundX + ' ry=' + roundY + ' width=' + (xSize+2*borderWidth) + ' height=' + (ySize+2*borderWidth) + ' fill="white" stroke="' + defaultLineColor +'" stroke-width="0" opacity="1.0" />'
 
   //DKDK add inner border to avoid the issue of clipped border in svg
-  svgHTML += '<rect x=1 y=1 rx="9" ry="9" width="' + (xSize-1) + '" height="' + (ySize-1) + '" fill="white" opacity="0.5" stroke="black" stroke-width="1"/>'
+  svgHTML += '<rect x=' + (borderWidth/2) + ' y=' + (borderWidth/2) + ' rx="9" ry="9" width="' + (xSize+borderWidth) + '" height="' + (ySize+borderWidth) + '" fill="white" opacity="1" stroke="' + defaultLineColor + '" stroke-width="' + borderWidth + '"/>'
 
   //DKDK set globalMaxValue non-zero if props.yAxisRange exists
   let globalMaxValue: number = 0
@@ -99,9 +104,9 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
         // console.log('global approach')
         //DKDK for the case of y-axis range input: a global approach that take global max = icon height
         barWidth = (xSize-2*marginX)/count               //DKDK bar width
-        startingX = marginX + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
+        startingX = marginX + borderWidth + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
         barHeight = el.value/globalMaxValue*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
-        startingY = (size-marginY)-barHeight            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
+        startingY = (size-marginY)-barHeight + borderWidth            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
         //DKDK making the last bar, noData
         svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + barWidth + ' height=' + barHeight + ' fill=' + el.color + ' />'
       })
@@ -109,9 +114,9 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
       fullStat.forEach(function (el: {color: string, label: string, value: number}, index) {
         //DKDK for the case of auto-scale y-axis: a local approach that take local max = icon height
         barWidth = (xSize-2*marginX)/count               //DKDK bar width
-        startingX = marginX + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
+        startingX = marginX + borderWidth + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
         barHeight = el.value/maxValues*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
-        startingY = (size-marginY)-barHeight            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
+        startingY = (size-marginY)-barHeight + borderWidth            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
         //DKDK making the last bar, noData
         svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + (barWidth) + ' height=' + barHeight + ' fill=' + el.color + ' />'
       })
@@ -122,7 +127,7 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
     const chart_width = xSize - 2*marginX;
     const chart_height = size - 2*marginY;
 
-    svgHTML += `<foreignObject x=${marginX} y=${marginY} width=${chart_width} height=${chart_height}><div id=${id}></div></foreignObject>`;
+    svgHTML += `<foreignObject x=${marginX+borderWidth} y=${marginY+borderWidth} width=${chart_width} height=${chart_height}><div id=${id}></div></foreignObject>`;
 
     // Render the chart after the marker is rendered
     useEffect(() => {
@@ -156,11 +161,11 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
   // svgHTML += '<line x1="0" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />'
   //DKDK add horizontal line: when using inner border (adjust x1)
   if (props.dividerVisible === undefined || props.dividerVisible) {
-    svgHTML += '<line x1="1" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />';
+    svgHTML += '<line x1=' + borderWidth + ' y1="' + (size-2+borderWidth) + '" x2="' + (xSize + borderWidth) + '" y2="' + (size-2+borderWidth) + '" style="stroke:' + defaultLineColor + ';stroke-width:1" />';
   }
 
   //DKDK set the location of total number
-  svgHTML += '<text x="50%" y="89%" dominant-baseline="middle" text-anchor="middle" opacity="1">' + sumValues + '</text>'
+  svgHTML += '<text x="50%" y='+(size-2+borderWidth+7)+' dominant-baseline="middle" text-anchor="middle" opacity="1">' + sumValues + '</text>'
 
   // DKDK closing svg tag
   svgHTML += '</svg>'
