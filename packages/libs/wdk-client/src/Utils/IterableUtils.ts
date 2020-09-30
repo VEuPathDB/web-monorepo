@@ -228,6 +228,17 @@ export class Seq<T> {
     return this;
   }
 
+  groupBy<S>(fn: (t: T) => S) {
+    const groupMap = this.reduce((map: Map<S, T[]>, entry: T) => {
+      const key = fn(entry);
+      if (!map.has(key)) map.set(key, []);
+      const group: T[] = map.get(key) as T[];
+      group.push(entry);
+      return map;
+    }, new Map<S, T[]>());
+    return Seq.from(groupMap);
+  }
+
 }
 
 
