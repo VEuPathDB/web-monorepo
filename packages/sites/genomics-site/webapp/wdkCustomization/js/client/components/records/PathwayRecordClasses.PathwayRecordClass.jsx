@@ -1349,6 +1349,12 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
             onSearchByTermClick={() => this.setState({ openSearch: SEARCHES.TERM })}
             cy={this.state.cy}
           />
+          {this.state.cy && (
+            <PathwaySearchById
+              onSearchCriteriaChange={this.onSearchCriteriaChange}
+              nodes={this.state.cy.nodes()}
+            />
+          )}
           <div className="veupathdb-PathwayRecord-menuControls">
             <label>
               <Checkbox
@@ -1461,35 +1467,6 @@ function VisMenu(props) {
               onClick(event) {
                 event.preventDefault();
                 onGeneraSelectorClick();
-              }
-            }
-          ]
-        },
-        {
-          text: 'Search',
-          children: [
-            {
-              text: 'Clear Matches',
-              url: '#clear-matches',
-              onClick(event) {
-                event.preventDefault();
-                onClearMatchesClick();
-              }
-            },
-            {
-              text: 'By Exact ID',
-              url: '#search-id',
-              onClick(event) {
-                event.preventDefault();
-                onSearchByIdClick();
-              }
-            },
-            {
-              text: 'By Text Match',
-              url: '#search-term',
-              onClick(event) {
-                event.preventDefault();
-                onSearchByTermClick();
               }
             }
           ]

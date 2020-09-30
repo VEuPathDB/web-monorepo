@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Select from 'react-select';
-import { ValueType, InputActionMeta } from 'react-select/src/types';
+import { ActionMeta, InputActionMeta, ValueType } from 'react-select/src/types';
 import { Option } from 'react-select/src/filters';
 
 import { NodeCollection } from 'cytoscape';
@@ -57,9 +57,19 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
     [ nodes ]
   );
 
+  const fullOptions = useMemo(
+    () => searchTerm.length > 0
+      ? [
+          { label: `Free-text search for "${searchTerm}"`, value: `${searchTerm}\0${searchTerm}`, data: 'free-text' },
+          ...options
+        ]
+      : options,
+    [ options, searchTerm ]
+  );
+
   const [ selection, setSelection ] = useState([] as Option[]);
 
-  const onChange = useCallback((newSelection: ValueType<Option>) => {
+  const onChange = useCallback((newSelection: ValueType<Option>, meta: ActionMeta) => {
     const newSelectionArray = newSelection == null
       ? []
       : Array.isArray(newSelection)
@@ -99,17 +109,28 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
       onSearchCriteriaChange(undefined);
     } else {
       const newSearchCriteria = selection.map(item => {
+        const operator = item.data === 'free-text'
+          ? '@*='
+          : '=';
+
         const [ node_identifier, name ] = item.value.split('\0');
 
-        const nodeIdentifierSelector = node_identifier.length > 0
-          ? `[node_identifier = '${node_identifier}']`
-          : '';
+        const nodeIdentifierSelector = node_identifier.length === 0
+          ? ''
+          : `[node_identifier ${operator} '${node_identifier}']`;
 
-        const nameSelector = name.length > 0
-          ? `[name = '${name}']`
-          : '';
+        const nameSelector = name.length === 0
+          ? ''
+          : `[name ${operator} '${name}']`;
 
-        return `node${nodeIdentifierSelector}${nameSelector}`;
+        if (item.data === 'free-text') {
+          return [ nodeIdentifierSelector, nameSelector ]
+            .filter(selector => selector != null)
+            .map(selector => `node${selector}`)
+            .join(', ');
+        } else {
+          return `node${nodeIdentifierSelector}${nameSelector}`;
+        }
       });
 
       onSearchCriteriaChange(newSearchCriteria.join(', '));
@@ -119,18 +140,26 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
   return (
     <div className="veupathdb-PathwaySearchById">
       <Select
-        autoFocus
-        isMulti
+        isClearable
         isSearchable
-        options={options}
+        components={{
+          DropdownIndicator: null
+        }}
+        options={fullOptions}
         filterOption={filterOption}
         noOptionsMessage={noOptionsMessage}
         value={selection}
         onChange={onChange}
         inputValue={searchTerm}
         onInputChange={onInputChange}
-        placeholder="Select identifiers"
+        placeholder="Search all nodes"
         formatOptionLabel={formatOptionLabel}
+        styles={{
+          menu: base => ({
+            ...base,
+            zIndex: 100
+          })
+        }}
       />
     </div>
   );
