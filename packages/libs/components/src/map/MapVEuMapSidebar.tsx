@@ -9,6 +9,8 @@ import 'leaflet/dist/leaflet.css';
 //DKDK import a sidebar component
 import SidebarExample from './SidebarExample'
 import { LeafletMouseEvent } from "leaflet";
+//DKDK import legend
+import MapVeuLegendSample from './MapVeuLegendSample'
 
 //DKDK for layers
 const { BaseLayer, Overlay } = LayersControl
@@ -31,6 +33,30 @@ function removeClassNameActive(targetClass: string) {
       targetElement.classList.remove('active')
   }
 }
+
+  //DKDK make legend contents
+  // const legendClassName = 'mapveu-legend'
+
+  const legendTypeValue = 'categorical'
+  //DKDK intentionally use large value to check commas
+  const legendData = [
+    {label: 'Anopheles gambiae', value: 14236000, color: '#FFB300'},
+    {label: 'Anopheles funestus', value: 8923000, color: '#803E75'},
+    {label: 'Anopheles dirus', value: 3444000, color: '#FF6800'},
+    {label: 'Anopheles merus', value: 1903, color: '#A6BDD7'},
+    {label: 'Culex quinquefasciatus', value: 205, color: '#C10020'},
+    {label: 'Aedes albopictus', value: 145, color: '#CEA262'},
+    {label: 'Culex tarsailis', value: 98, color: '#007D34'},
+    {label: 'Aedes dorsalis', value: 45, color: '#F6768E'},
+    {label: 'Culex erraticus', value: 22, color: '#00538A'},
+    //DKDK added this fake data for checking truncate function (adding ...)
+    {label: 'testing long name quinquefasciatus', value: 11, color: '#FF7A5C'},
+    //DKDK below are Others item so their sum should be 44 (11*4) in this example data
+    {label: 'Anophleles albimanus', value: 11, color: '#FF7A5C'},
+    {label: '11th species', value: 11, color: '#53377A'},
+    {label: 'Others1', value: 11, color: 'silver'},
+    {label: 'Others2', value: 11, color: 'black'},
+  ]
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -155,6 +181,13 @@ export default function MapVEuMapSidebar({ viewport, height, width, onViewportCh
           onViewportChanged={onViewportChanged}
           markers={markers}
           nudge={nudge}
+        />
+
+        {/* DKDK legend example */}
+        <MapVeuLegendSample
+          // className={legendClassName}
+          legendType={legendTypeValue}
+          data={legendData}
         />
 
       </Map>
