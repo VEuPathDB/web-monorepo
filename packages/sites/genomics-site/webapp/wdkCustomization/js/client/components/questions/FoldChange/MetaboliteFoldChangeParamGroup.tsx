@@ -24,7 +24,7 @@ const metaboliteFoldChangePreAndPostParams = memoize((props: GroupProps): PreAnd
     postParameterContent: <span><b>Compounds</b></span>
   },
   {
-    preParameterContent: <span>and return <b>Any or All</b> compound peaks per compound</span>,
+    preParameterContent: <span>and return <b>Any or All</b> peaks per compound</span>,
     parameterName: 'any_or_all_compound_peaks',
     postParameterContent: null
   },
@@ -46,7 +46,7 @@ const metaboliteFoldChangePreAndPostParams = memoize((props: GroupProps): PreAnd
     postParameterContent: null
   },
   {
-    preParameterContent: <span>return <b>Any or All</b> compound peaks</span>,
+    preParameterContent: <span>return <b>Any or All</b> peaks</span>,
     parameterName: 'any_or_all_compound_peaks',
     postParameterContent: null
   },
