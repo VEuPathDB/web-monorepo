@@ -48,6 +48,10 @@
     max-height: 50vh;
     font-size: .9em;
     color: #000000e6;
+
+    h3 {
+      margin-top: 1em;
+    }
   }
 
   ol {
@@ -64,7 +68,7 @@
   }
 
   &--Message {
-    margin: 1em 0;
+    margin: 0;
     padding: 1em;
     background: #8888881a;
     border-radius: .5em;
