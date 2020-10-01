@@ -49,7 +49,9 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
 
   useEffect(() => {
       if (markers.length > 0 && prevMarkers.length > 0 && animation) {
-        animation.animationFunction({prevMarkers, markers, setZoomType, setConsolidatedMarkers})
+        const animationValues = animation.animationFunction({prevMarkers, markers});
+        setZoomType(animationValues.zoomType);
+        setConsolidatedMarkers(animationValues.markers)
       }
       /** First render of markers **/
       else {
