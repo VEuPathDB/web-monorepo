@@ -6,11 +6,7 @@ import { MapVEuMapProps } from "./Types";
 import { Viewport, Map, TileLayer, LayersControl, ZoomControl, ScaleControl } from "react-leaflet";
 import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
-//DKDK import a sidebar component
-import SidebarExample from './SidebarExample'
 import { LeafletMouseEvent } from "leaflet";
-//DKDK import legend
-import MapVeuLegendSample from './MapVeuLegendSample'
 
 //DKDK for layers
 const { BaseLayer, Overlay } = LayersControl
@@ -34,30 +30,6 @@ function removeClassNameActive(targetClass: string) {
   }
 }
 
-  //DKDK make legend contents
-  // const legendClassName = 'mapveu-legend'
-
-  const legendTypeValue = 'categorical'
-  //DKDK intentionally use large value to check commas
-  const legendData = [
-    {label: 'Anopheles gambiae', value: 14236000, color: '#FFB300'},
-    {label: 'Anopheles funestus', value: 8923000, color: '#803E75'},
-    {label: 'Anopheles dirus', value: 3444000, color: '#FF6800'},
-    {label: 'Anopheles merus', value: 1903, color: '#A6BDD7'},
-    {label: 'Culex quinquefasciatus', value: 205, color: '#C10020'},
-    {label: 'Aedes albopictus', value: 145, color: '#CEA262'},
-    {label: 'Culex tarsailis', value: 98, color: '#007D34'},
-    {label: 'Aedes dorsalis', value: 45, color: '#F6768E'},
-    {label: 'Culex erraticus', value: 22, color: '#00538A'},
-    //DKDK added this fake data for checking truncate function (adding ...)
-    {label: 'testing long name quinquefasciatus', value: 11, color: '#FF7A5C'},
-    //DKDK below are Others item so their sum should be 44 (11*4) in this example data
-    {label: 'Anophleles albimanus', value: 11, color: '#FF7A5C'},
-    {label: '11th species', value: 11, color: '#53377A'},
-    {label: 'Others1', value: 11, color: 'silver'},
-    {label: 'Others2', value: 11, color: 'black'},
-  ]
-
 /**
  * Renders a Leaflet map with semantic zooming markers
  *
@@ -65,7 +37,7 @@ function removeClassNameActive(targetClass: string) {
  * @param props
  */
 // export default function MapVEuMapSidebar({ viewport, height, width, onViewportChanged, markers, nudge }: MapVEuMapProps) {
-export default function MapVEuMapSidebar({ viewport, height, width, onViewportChanged, markers, nudge }: MapVEuMapProps) {
+export default function MapVEuMapSidebarSibling({ viewport, height, width, onViewportChanged, markers, nudge, sidebarOnClose }: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -75,23 +47,12 @@ export default function MapVEuMapSidebar({ viewport, height, width, onViewportCh
   // 'bookmarkable' state of the map.
   const [ state, setState ] = useState<Viewport>(viewport as Viewport);
 
-  //DKDK add sidebar state management
-  const [ sidebarCollapsed, setSidebarCollapsed ] = useState(true);
-  const [ tabSelected, setTabSelected ] = useState('');   //DKDK could be used to set default active tab, e.g., 'Home', but leave blank
-  const sidebarOnClose = () => {
-    setSidebarCollapsed(true)
-  }
-  const sidebarOnOpen = (id: string) => {
-    setSidebarCollapsed(false)
-    setTabSelected(id)
-  }
-
   //DKDK trying to add map click events: e.g., removing marker highlight, closing sidebar, etc.
   const mapClick = (e: LeafletMouseEvent) => {
     //DKDK remove marker highlight
     removeClassName('highlight-marker')
-    //DKDK close sidebar
-    sidebarOnClose()
+    //DKDK use this for closing sidebar: setSidebarCollapsed(true). Use if condition to avoid type error
+    if (sidebarOnClose) sidebarOnClose(true)
     //DKDK deactivate selected sidebar tab
     removeClassNameActive('sidebartabs active')
   }
@@ -101,16 +62,8 @@ export default function MapVEuMapSidebar({ viewport, height, width, onViewportCh
   };
 
   return (
-    <div>
-      <SidebarExample
-        id="leaflet-sidebar"
-        collapsed={sidebarCollapsed}
-        position='left'
-        selected={tabSelected}
-        closeIcon='fas fa-times'
-        onOpen={sidebarOnOpen}
-        onClose={sidebarOnClose}
-      />
+    //DKDK add fragment
+    <>
       <Map
         // className="sidebar-map"
         viewport={state}
@@ -120,11 +73,6 @@ export default function MapVEuMapSidebar({ viewport, height, width, onViewportCh
         onClick={mapClick}  //DKDK add this to handle map click
       >
         <ZoomControl position="topright" />
-
-        {/* <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-        /> */}
 
         <ScaleControl position="bottomright" />
 
@@ -183,14 +131,7 @@ export default function MapVEuMapSidebar({ viewport, height, width, onViewportCh
           nudge={nudge}
         />
 
-        {/* DKDK legend example */}
-        <MapVeuLegendSample
-          // className={legendClassName}
-          legendType={legendTypeValue}
-          data={legendData}
-        />
-
       </Map>
-    </div>
+    </>
   );
 }
