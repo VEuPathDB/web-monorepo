@@ -10,6 +10,8 @@
 #eupathdb-PathwayRecord-cytoscape .eupathdb-Menu {
   width: auto;
   min-width: 0px;
+  display: flex;
+  flex-wrap: nowrap;
 }
 
 #eupathdb-PathwayRecord-cytoscape .eupathdb-MenuItem:hover {
@@ -143,7 +145,7 @@
 }
 
 .veupathdb-PathwaySearchById {
-  width: 50em;
+  width: 100%;
   padding: 0.5em 3em;
 }
 

@@ -155,9 +155,9 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
         placeholder="Search all nodes"
         formatOptionLabel={formatOptionLabel}
         styles={{
-          menu: base => ({
+          container: base => ({
             ...base,
-            zIndex: 100
+            zIndex: 99
           })
         }}
       />

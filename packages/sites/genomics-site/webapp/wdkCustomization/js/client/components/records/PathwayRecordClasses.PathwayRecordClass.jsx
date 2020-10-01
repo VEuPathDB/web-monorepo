@@ -1337,18 +1337,20 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
             <br />
         </div>
         <div className="veupathdb-PathwayRecord-menuContainer">
-          <VisMenu
-            source={source}
-            webAppUrl={this.props.siteConfig.webAppUrl}
-            primary_key={primary_key}
-            projectId={projectId}
-            onClearMatchesClick={() => this.setState({ searchCriteria: undefined })}
-            onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
-            onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
-            onSearchByIdClick={() => this.setState({ openSearch: SEARCHES.ID })}
-            onSearchByTermClick={() => this.setState({ openSearch: SEARCHES.TERM })}
-            cy={this.state.cy}
-          />
+          <div className="veupathdb-PathwayRecord-menuItemsContainer">
+            <VisMenu
+              source={source}
+              webAppUrl={this.props.siteConfig.webAppUrl}
+              primary_key={primary_key}
+              projectId={projectId}
+              onClearMatchesClick={() => this.setState({ searchCriteria: undefined })}
+              onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
+              onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
+              onSearchByIdClick={() => this.setState({ openSearch: SEARCHES.ID })}
+              onSearchByTermClick={() => this.setState({ openSearch: SEARCHES.TERM })}
+              cy={this.state.cy}
+            />
+          </div>
           {this.state.cy && (
             <PathwaySearchById
               onSearchCriteriaChange={this.onSearchCriteriaChange}
