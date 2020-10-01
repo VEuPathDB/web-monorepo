@@ -59,8 +59,8 @@ function makeArc(x: number, y: number, radius: number, startAngle: number, endAn
     return dValue
 }
 
-// making k over 9999, e.g., 223832 -> 234k: temporarily set over 999 for displaying purpose
-export function kFormatter(num: number) {
+// making k over 9999, e.g., 223832 -> 234k
+function kFormatter(num: number) {
   return Math.abs(num) > 9999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(0)) + 'k' : Math.sign(num)*Math.abs(num)
 }
 
@@ -143,6 +143,8 @@ export default function SVGDonutMarker(props: SVGDonutMarkerProps) {
   });
 
   return (
+    //DKDK The Marker currently shows type error. I think that I resolved this in my own branch but such a change will break others' works.
+    //Thus, I will leave this for the time being
     <Marker {...props} icon={SVGDonutIcon}>
       {/* DKDK Below Tooltip also works but we may simply use title attribute as well */}
       {/* However, Connor found coordinates issue and I realized that somehow "title" did not update coordinates correctly */}
