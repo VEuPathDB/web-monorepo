@@ -5,7 +5,7 @@ import React from 'react';
 // // import L from "leaflet";
 // import { useState, useEffect } from "react";
 //DKDK import legend css for positioning
-import './legend-position.css'
+import './legend-style.css'
 //DKDK import LegendList
 import LegendList from './LegendList';
 
