@@ -1244,6 +1244,15 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         );
 
         highlightFoundNodes(foundNodes);
+
+        cy.center(foundNodes);
+
+        if (foundNodes.length === 1) {
+          const node = foundNodes[0];
+
+          this.props.setActiveNodeData(Object.assign({}, node.data()));
+          cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
+        }
       }
     }
   }
