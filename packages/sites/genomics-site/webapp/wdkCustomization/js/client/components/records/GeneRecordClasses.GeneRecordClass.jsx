@@ -930,7 +930,6 @@ class OrthologsForm extends SortKeyTable {
             <input type="hidden" name="type" value="geneOrthologs"/>
             <input type="hidden" name="project_id" value={projectId}/>
             <input type="hidden" name="gene_ids" value={source_id}/>
-            <p>To run Clustal Omega, select genes from the table below. Then choose the sequence type and initiate the alignment with the ‘Run Clustal Omega for selected genes’ button.</p>
 
             <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
             <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/>
