@@ -353,14 +353,7 @@ const mergeProps = (
                     id,
                     name,
                     description,
-                    preview: 
-                      (
-                        name.toLowerCase().includes('.png') || 
-                        name.toLowerCase().includes('.jpg') || 
-                        name.toLowerCase().includes('.jpeg')
-                      ) 
-                      ? `${webAppUrl}/service/user-comments/${comment.id}/attachments/${id}`
-                      : undefined
+                    url: `${webAppUrl}/service/user-comments/${comment.id}/attachments/${id}`
                   })
                 )
               } 
