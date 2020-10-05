@@ -7,10 +7,8 @@ import { UnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
 import ErrorStatus from 'wdk-client/Components/PageStatus/Error';
 import { record, string, boolean, arrayOf, objectOf } from 'wdk-client/Utils/Json';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { IconAlt } from 'wdk-client/Components';
 
 import './UnhandledErrors.scss';
-import { ServiceError } from 'wdk-client/Service/ServiceError';
 
 const cx = makeClassNameHelper('UnhandledErrors');
 
@@ -24,11 +22,17 @@ interface Props {
 function UnhandledErrors(props: Props) {
   const { children, clearErrors, errors, showStackTraces } = props;
   const errorsToDisplay = Seq.from(errors || [])
-    .orderBy(error => error.type)
-    .map(({ type, error, id, message }) =>
-      <li key={id}>
-        <ErrorDetail key={id} id={id} type={type} error={error} showStackTraces={showStackTraces} message={message}/>
-      </li>
+    // .orderBy(error => error.type)
+    .groupBy(error => error.message)
+    .map(([message, errors]) =>
+      <div key={message}>
+        <h3>{message}</h3>
+        <pre className={cx('--Message')}>
+          {errors.map(({ id }) =>
+            <li key={id}>{id}</li>
+          )}
+        </pre>
+      </div>
     );
 
   const modal = errors && errors.length > 0 && (
@@ -39,12 +43,10 @@ function UnhandledErrors(props: Props) {
         </button>
         <ErrorStatus
           message={!errorsToDisplay.isEmpty() &&
-            <div className={cx('--Details')}>
-              <h2>The following errors occurred</h2>
-              <ol>
-                {errorsToDisplay}
-              </ol>
-            </div>
+            <details className={cx('--Details')}>
+              <summary>Error details</summary>
+              {errorsToDisplay}
+            </details>
           }
         />
       </div>
