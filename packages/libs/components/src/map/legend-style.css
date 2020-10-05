@@ -1,0 +1,6 @@
+/* DKDK legend positioning */
+.legend {
+  position: absolute;
+  bottom: 80px;
+  right: 10px
+}
