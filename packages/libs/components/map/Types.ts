@@ -23,7 +23,7 @@ export interface MarkerProps {
 export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
   viewport: Viewport,
-  
+
   /** Height and width of plot element */
   height: CSSProperties['height'],
   width: CSSProperties['width'],
@@ -31,12 +31,15 @@ export interface MapVEuMapProps {
   onViewportChanged: (bvp: BoundsViewport) => void,
   markers: ReactElement<MarkerProps>[],
 
-  nudge?: 'geohash' | 'none'
+  nudge?: 'geohash' | 'none',
+
+  //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
+  sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
 }
 
 
 /*
-  This is the geo-related information that any marker data request will need 
+  This is the geo-related information that any marker data request will need
 */
 
 export interface BoundsViewport {
