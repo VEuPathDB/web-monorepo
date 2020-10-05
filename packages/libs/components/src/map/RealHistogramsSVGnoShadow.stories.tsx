@@ -235,18 +235,17 @@ export const CollectionDateLocal = () => {
 
   // Knobs
   const knob_method = radios('Method', {SVG: 'svg', Library: 'lib'}, 'svg');
-  const knob_borderWidth = number('Border width', 1, {range: true, min: 0.5, max: 5, step: 0.5});
-  //const knob_borderColor = color('Border color', '#ffffff');  // Isn't working
-  const knob_borderColor = radios('Border color', {Grey: '#00000088', Blue: '#7cb5ec'}, '#00000088');
-  const knob_dividerVisible = boolean('Divider visible', true);
+  const knob_borderWidth = number('Border width', 3.5, {range: true, min: 0, max: 5, step: 0.5});
+  //const knob_borderColor = color('Border color', '#00000088');  // Isn't working
+  const knob_borderColor = radios('Border color', {DarkGrey: '#000000BB', LightGrey: '#00000088', Blue: '#7cb5ec'}, '#000000BB');
+  const knob_dividerVisible = boolean('Divider visible', false);
   const knob_type = knob_method === 'lib' ? radios('Type', {Bar: 'bar', Line: 'line'}, 'bar') : undefined;
-  const knob_fillArea = knob_type === 'line' ? boolean('Fill area', false) : undefined;
+  const knob_fillArea = knob_type === 'line' ? boolean('Fill area', true) : undefined;
   const knob_spline = knob_type === 'line' ? boolean('Spline', false) : undefined;
   const knob_lineVisible = knob_fillArea ? boolean('Show line', false) : undefined;
   const knob_colorMethod = knob_type === 'line' ?
     radios('Color method', {Bins: 'discrete', Solid: 'solid', Gradient: 'gradient'}, 'discrete') :
     radios('Color method', {Bins: 'discrete', Solid: 'solid'}, 'discrete');
-  //const knob_colorMethod = knob_type === 'line' ? radios('Color method', {Solid: 'solid', Bins: 'discrete', Gradient: 'gradient'}, 'discrete') : undefined;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getCollectionDateMarkerElements(yAxisRange, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth));
