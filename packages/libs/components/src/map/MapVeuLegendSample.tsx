@@ -1,13 +1,11 @@
 //DKDK sample legend
 import React from 'react';
-// import ReactDOM, { render } from 'react-dom';
-// import { useLeaflet } from "react-leaflet";
-// // import L from "leaflet";
-// import { useState, useEffect } from "react";
 //DKDK import legend css for positioning
 import './legend-style.css'
 //DKDK import LegendList
 import LegendList from './LegendList';
+//DKDK import BarChart
+import BarChartLegend from './BarChartLegend';
 
 //DKDK type def for legend: some are set to optional for now
 interface legendProps {
@@ -31,6 +29,7 @@ const MapVeuLegendSample = (props: legendProps) => {
   //DKDK simplifying
   if (props.legendType === 'categorical') {
     return (
+      //DKDK add below divs for benefeting from pre-existing CSS (vb-popbio-maps.css)
       <div className="info legend">
         <div className="legend-contents">
           <LegendList
@@ -42,12 +41,50 @@ const MapVeuLegendSample = (props: legendProps) => {
       </div>
     )
   } else {
-      //DKDK placeholder for bar chart: will start doing soon
+    //DKDK for bar chart
+    const plotType = 'bar'
+    const plotLibrary = 'plotly'
+    const colorMethod = 'discrete'
+    //DKDK perhaps we should send x-/y-axes labels too
+    const xAxisLabel = '<b>Age</b>'
+    const yAxisLabel = '<b>count of Samples</b>'
+    //DKDK width and height are set to 250 for now
+    const plotSize = 250
+    //DKDK we may also need to consider other props such as font sizes for x-/y-axes labels, tick labels, etc.
+    const axisLabelSize = 12
+    const tickLabelSize = 10
+
+    //DKDK currently BarChart requires array data, e.g., labels: string[], etc., so need to make arrays
+    let labels: string[] = [];
+    let values: number[] = [];
+    let colors: string[] = [];
+    props.data.forEach((data) => {
+      labels.push(data.label)
+      values.push(data.value)
+      colors.push(data.color)
+    })
+
     return (
-      null
+      //DKDK add below div for benefeting from pre-existing CSS (vb-popbio-maps.css)
+      <div className="info legend">
+        <BarChartLegend
+          labels={labels}
+          values={values}
+          xAxisLabel={xAxisLabel}
+          yAxisLabel={yAxisLabel}
+          axisLabelSize={axisLabelSize}
+          tickLabelSize={tickLabelSize}
+          yAxisRange={null}
+          width={plotSize}
+          height={plotSize}
+          type={plotType}
+          library={plotLibrary}
+          colors={colors}
+          colorMethod={colorMethod}
+        />
+      </div>
     )
   }
-
 };
 
 export default MapVeuLegendSample;

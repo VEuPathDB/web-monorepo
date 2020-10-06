@@ -92,6 +92,8 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 //DKDK make legend contents
 // const legendClassName = 'mapveu-legend'
 
+//DKDK the variable names such as legendType and legendData should be consistent regardless of their values,
+// but for test purpose the variabl names are used differently for categorical and number/Date
 const legendTypeValue = 'categorical'
 //DKDK intentionally use large value to check commas
 const legendData = [
@@ -111,6 +113,19 @@ const legendData = [
   {label: '11th species', value: 11, color: '#53377A'},
   {label: 'Others1', value: 11, color: 'silver'},
   {label: 'Others2', value: 11, color: 'black'},
+]
+
+//DKDK below is for bar chart, thus variable names had Chart suffix
+const legendTypeValueChart = 'numeric'
+// const legendTypeValue = 'number'
+//DKDK intentionally use large value to check commas
+const legendDataChart = [
+  {label: '10-20', value: 15, color: '#0200C5'},
+  {label: '20-30', value: 80, color: '#6300C5'},
+  {label: '30-40', value: 60, color: '#C400C5'},
+  {label: '50-60', value: 30, color: '#C50045'},
+  {label: '70-80', value: 40, color: '#C50000'},
+  {label: 'no data', value: 20, color: 'silver'},
 ]
 
 /**
@@ -152,7 +167,7 @@ const getSpeciesMarkerElements = () => {
   });
 }
 
-export const Species = () => {
+export const SpeciesCategorical = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
   // const yAxisRange: Array<number> | null = []
@@ -161,7 +176,7 @@ export const Species = () => {
     setMarkerElements(getSpeciesMarkerElements());
   }, [setMarkerElements])
 
-  //DKDK Sidebar state managements
+  //DKDK Sidebar state managements (for categorical)
   const [ sidebarCollapsed, setSidebarCollapsed ] = useState(true);
   const [ tabSelected, setTabSelected ] = useState('');   //DKDK could be used to set default active tab, e.g., 'Home', but leave blank
   const sidebarOnClose = () => {
@@ -203,7 +218,7 @@ export const Species = () => {
   );
 }
 
-export const SpeciesNudged = () => {
+export const SpeciesNudgedChart = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
   // const yAxisRange: Array<number> | null = []
@@ -212,14 +227,47 @@ export const SpeciesNudged = () => {
     setMarkerElements(getSpeciesMarkerElements());
   }, [setMarkerElements])
 
+  //DKDK Sidebar state managements (other than categorical - test purpose)
+  const [ sidebarCollapsed, setSidebarCollapsed ] = useState(true);
+  const [ tabSelected, setTabSelected ] = useState('');   //DKDK could be used to set default active tab, e.g., 'Home', but leave blank
+  const sidebarOnClose = () => {
+    setSidebarCollapsed(true)
+  }
+  const sidebarOnOpen = (id: string) => {
+    setSidebarCollapsed(false)
+    setTabSelected(id)
+  }
+
   return (
-    <MapVEuMapSidebar
-      viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
-      height="100vh" width="100vw"
-      onViewportChanged={handleViewportChanged}
-      markers={markerElements}
-      nudge="geohash"
-    />
+    //DKDK add fragment
+    <>
+      <SidebarExample
+        id="leaflet-sidebar"
+        collapsed={sidebarCollapsed}
+        position='left'
+        selected={tabSelected}
+        closeIcon='fas fa-times'
+        onOpen={sidebarOnOpen}
+        onClose={sidebarOnClose}
+      />
+
+      <MapVeuLegendSample
+        // className={legendClassName}
+        //DKDK here, variables names are used differently (with suffix, Chart) for test purpose
+        legendType={legendTypeValueChart}
+        data={legendDataChart}
+      />
+
+      <MapVEuMapSidebar
+        viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
+        height="100vh" width="100vw"
+        onViewportChanged={handleViewportChanged}
+        markers={markerElements}
+        nudge="geohash"
+        //DKDK add this for closing sidebar at MapVEuMap(Sidebar): passing setSidebarCollapsed()
+        sidebarOnClose={setSidebarCollapsed}
+      />
+    </>
   );
 }
 
