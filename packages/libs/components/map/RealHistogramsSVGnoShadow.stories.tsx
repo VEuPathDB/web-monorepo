@@ -1,5 +1,4 @@
 import React, { ReactElement, useState, useCallback } from 'react';
-import { withKnobs, radios , boolean, number, color } from '@storybook/addon-knobs';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
@@ -16,7 +15,6 @@ import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; /
 export default {
   title: 'Numeric and Date SVG no Shadow',
   component: MapVEuMap,
-  decorators: [withKnobs],
 };
 
 // some colors randomly pasted from the old mapveu code
@@ -172,7 +170,7 @@ export const SampleSizeGlobal = () => {
 }
 
 
-const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth) => {
+const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null) => {
   return collectionDateData.facets.geo.buckets.map((bucket, index) => {
     const lat = bucket.ltAvg;
     const long = bucket.lnAvg;
@@ -184,8 +182,7 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
       const start = bucket.val.substring(0,4);
       labels.push(start);
       values.push(bucket.count);
-      if (knob_colorMethod === 'solid') { colors.push('#7cb5ec'); }    //DKDK set color palette
-      else { colors.push(all_colors_hex[index]); }
+      colors.push(all_colors_hex[index]);    //DKDK set color palette
     });
 
     //DKDK calculate the number of no data and make 6th bar
@@ -194,19 +191,8 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
     values.push(noDataValue);
     colors.push("silver");     //DKDK fill the last color
 
-    const new_knob_colorMethod = knob_colorMethod === 'solid' ? 'bins' : knob_colorMethod;
-
     return (
       <RealHistogramMarkerSVGnoShadow
-        method={knob_method}
-        dividerVisible={knob_dividerVisible}
-        type={knob_type}
-        fillArea={knob_fillArea}
-        spline={knob_spline}
-        lineVisible={knob_lineVisible}
-        colorMethod={new_knob_colorMethod}
-        borderColor={knob_borderColor}
-        borderWidth={knob_borderWidth}
         key={bucket.val}
         //DKDK change position format
         position={[lat, long]}
@@ -221,7 +207,6 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
         // onClick={handleClick}
         onMouseOut={handleMouseOut}
         onMouseOver={handleMouseOver}
-        // my_knob={boolean('My Knob', false)} // Doesn't work
       />
     )
   });
@@ -232,24 +217,9 @@ export const CollectionDateLocal = () => {
   // const yAxisRange: Array<number> | null = [0, 1104]
   const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-
-  // Knobs
-  const knob_method = radios('Method', {SVG: 'svg', Library: 'lib'}, 'svg');
-  const knob_borderWidth = number('Border width', 3.5, {range: true, min: 0, max: 5, step: 0.5});
-  //const knob_borderColor = color('Border color', '#00000088');  // Isn't working
-  const knob_borderColor = radios('Border color', {DarkGrey: '#000000BB', LightGrey: '#00000088', Blue: '#7cb5ec'}, '#000000BB');
-  const knob_dividerVisible = boolean('Divider visible', false);
-  const knob_type = knob_method === 'lib' ? radios('Type', {Bar: 'bar', Line: 'line'}, 'bar') : undefined;
-  const knob_fillArea = knob_type === 'line' ? boolean('Fill area', true) : undefined;
-  const knob_spline = knob_type === 'line' ? boolean('Spline', false) : undefined;
-  const knob_lineVisible = knob_fillArea ? boolean('Show line', false) : undefined;
-  const knob_colorMethod = knob_type === 'line' ?
-    radios('Color method', {Bins: 'discrete', Solid: 'solid', Gradient: 'gradient'}, 'discrete') :
-    radios('Color method', {Bins: 'discrete', Solid: 'solid'}, 'discrete');
-
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getCollectionDateMarkerElements(yAxisRange, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth));
-  }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth])
+    setMarkerElements(getCollectionDateMarkerElements(yAxisRange));
+  }, [setMarkerElements])
 
   return (
     <MapVEuMap
