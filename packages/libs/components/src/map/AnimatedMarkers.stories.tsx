@@ -132,6 +132,7 @@ export const GeohashIds = () => {
     height="96vh" width="98vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    level={6}
     animation={{
       method: "geohash",
       duration: 300,

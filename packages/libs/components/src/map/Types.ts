@@ -39,9 +39,9 @@ export interface MapVEuMapProps {
   /** Height and width of plot element */
   height: CSSProperties['height'],
   width: CSSProperties['width'],
-
   onViewportChanged: (bvp: BoundsViewport, duration: number) => void,
   markers: ReactElement<MarkerProps>[],
+  level: number,
   animation: {
     method: string,
     duration: number,
