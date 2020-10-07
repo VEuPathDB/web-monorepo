@@ -48,6 +48,10 @@ const all_colors_hex = [
   "#232C16" // Dark Olive Green
 ];
 
+//DKDK send x-/y-axes labels for Legend bar chart
+const variableLabel: string = '<b>Collection date</b>'  //DKDK: x-axis label
+const quantityLabel: string = '<b>Record count</b>'     //DKDK: y-axis label
+
 /**
  * DKDK gathering functions here temporarily
  * Need to add export to be used in the other component
@@ -68,7 +72,7 @@ const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendDa
   let legendSums : number[] = [];
   let legendLabels : string[] = [];
   let legendColors : string[] = [];
- 
+
   const markers = collectionDateData.facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
     return ltAvg > bounds.southWest[0] &&
 	   ltAvg < bounds.northEast[0] &&
@@ -88,7 +92,7 @@ const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendDa
       labels.push(label);
       values.push(bucket.count);
       colors.push(knob_colorMethod === 'solid' ? '#7cb5ec' : all_colors_hex[index]);
-	
+
       // sum all counts for legend
       if (legendSums[index] === undefined) {
 	legendSums[index] = 0;
@@ -108,7 +112,7 @@ const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendDa
     if (legendSums[5] === undefined) legendSums[5] = 0;
     legendSums[5] += noDataValue;
     legendColors[5] = 'silver';
-    
+
     const new_knob_colorMethod = knob_colorMethod === 'solid' ? 'bins' : knob_colorMethod;
 
     return (
@@ -149,7 +153,7 @@ const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendDa
     }
   });
   setLegendData(legendData);
-  
+
   return markers;
 }
 
@@ -175,12 +179,12 @@ export const CollectionDate = () => {
     radios('Color method', {Bins: 'discrete', Solid: 'solid'}, 'discrete');
 
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
-  
-  
+
+
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, yAxisRange, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth));
   }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth])
-  
+
   return (
     <>
       <MapVEuMap
@@ -192,6 +196,9 @@ export const CollectionDate = () => {
       <MapVeuLegendSample
         legendType="numeric"
         data={legendData}
+        //DKDK send x-/y-axes lables here
+        variableLabel={variableLabel}    //DKDK: x-axis label
+        quantityLabel={quantityLabel}    //DKDK: y-axis label
       />
     </>
   );
