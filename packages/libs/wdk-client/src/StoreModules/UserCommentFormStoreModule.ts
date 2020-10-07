@@ -134,7 +134,8 @@ export function reduce(state: State = initialState, action: Action): State {
             return { 
                 ...state,
                 attachedFiles: action.payload.userComment.editMode 
-                    ? action.payload.userComment.formValues.attachments.map(({ id, name, description }) => ({ id, name, description }))
+                    // FIXME: Confirm that we don't need to make a shallow copy of each "attachment"
+                    ? action.payload.userComment.formValues.attachments.map(attachment => ({ ...attachment }))
                     : [], 
                 userCommentPostRequest: action.payload.userComment.editMode
                     ? getResponseToPostRequest(

@@ -185,7 +185,8 @@ export interface KeyedUserCommentAttachedFileSpec extends UserCommentAttachedFil
 export interface UserCommentAttachedFile {
   id: number,
   description: string,
-  name: string
+  name: string,
+  mimeType: string
 }
 
 export type ReviewStatus =
@@ -242,7 +243,7 @@ export interface UserComment extends UserCommentPostRequest {
 
 export interface UserCommentGetResponse {
   additionalAuthors: string[];
-  attachments: { id: number, name: string, description: string, preview?: string }[];
+  attachments: UserCommentAttachedFile[];
   author: { userId: number, firstName: string, lastName: string, organization: string };
   categories: string[];
   commentDate: number;

@@ -345,15 +345,9 @@ const mergeProps = (
             <UserCommentUploadedFiles 
               uploadedFiles={
                 comment.attachments.map(
-                  ({
-                    id,
-                    name,
-                    description
-                  }) => ({
-                    id,
-                    name,
-                    description,
-                    url: `${webAppUrl}/service/user-comments/${comment.id}/attachments/${id}`
+                  (attachmentMetadata) => ({
+                    ...attachmentMetadata,
+                    url: `${webAppUrl}/service/user-comments/${comment.id}/attachments/${attachmentMetadata.id}`
                   })
                 )
               } 

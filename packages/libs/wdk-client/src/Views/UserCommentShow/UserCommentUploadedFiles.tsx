@@ -1,12 +1,14 @@
 import React from 'react';
 
-import {
-  UploadedFileRow,
-  UserCommentUploadedFileEntry
-} from 'wdk-client/Views/UserCommentShow/UploadedFileRow';
+import { UserCommentAttachedFile } from 'wdk-client/Utils/WdkUser';
+import { UploadedFileRow } from 'wdk-client/Views/UserCommentShow/UploadedFileRow';
+
+interface UploadedFileEntry extends UserCommentAttachedFile {
+  url: string;
+}
 
 interface UserCommentUploadedFilesProps {
-  uploadedFiles: UserCommentUploadedFileEntry[];
+  uploadedFiles: UploadedFileEntry[];
   headerClassName?: string;
   entryClassName?: string;
 }
