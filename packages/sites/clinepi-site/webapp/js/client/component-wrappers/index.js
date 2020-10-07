@@ -222,12 +222,12 @@ function availableStudyGuard(getRecordClassLoadingSelector, getStudyIdSelector, 
 
       const allValidStudies = studies[0];
 
-      const study = allValidStudies && allValidStudies.find(
+      const studyIsAvailable = allValidStudies.some(
         ({ id, disabled }) => id === targetId && !disabled
       );
 
       return (
-        targetId != null && study == null
+        targetId != null && !studyIsAvailable
           ? <NotFound />
           : <div>
               {defaultElement}
