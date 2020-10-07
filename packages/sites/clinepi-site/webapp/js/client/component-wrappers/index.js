@@ -56,8 +56,47 @@ export default {
     }),
     QuestionWizardController
   ),
-  DownloadFormController: withRestrictionHandler(Action.downloadPage, state => state.downloadForm.recordClass),
-  RecordController: withRestrictionHandler(Action.recordPage, state => state.record.recordClass),
+  DownloadFormController: compose(
+    withRestrictionHandler(Action.downloadPage, state => state.downloadForm.recordClass),
+    availableStudyGuard(
+      downloadFormIsLoading,
+      state => {
+        const { recordClass, resultType } = state.downloadForm;
+
+        if (
+          downloadFormIsLoading(state) ||
+          resultType == null ||
+          resultType.type !== 'answerSpec'
+        ) {
+          return undefined;
+        }
+
+        const primaryKey = resultType.answerSpec.searchConfig.parameters.primaryKeys;
+
+        return getStudyIdFromRecordClassAndPrimaryKey(
+          recordClass,
+          primaryKey
+        );
+      },
+      StudyNotFoundPage
+    )
+  ),
+  RecordController: compose(
+    withRestrictionHandler(Action.recordPage, state => state.record.recordClass),
+    availableStudyGuard(
+      recordPageIsLoading,
+      (state, props) => {
+        const recordClass = state.record.recordClass;
+        const primaryKey = props.ownProps.primaryKey;
+
+        return getStudyIdFromRecordClassAndPrimaryKey(
+          recordClass,
+          primaryKey
+        );
+      },
+      StudyNotFoundPage
+    )
+  ),
   // FIXME Add restricted results panel
   RecordHeading,
   RecordTable,
@@ -196,4 +235,32 @@ function availableStudyGuard(getRecordClassLoadingSelector, getStudyIdSelector, 
       );
     }
   }
+}
+
+function StudyNotFoundPage() {
+  useSetDocumentTitle('Page not found');
+
+  return <NotFoundController />;
+}
+
+function getStudyIdFromRecordClassAndPrimaryKey(recordClass, primaryKey) {
+  return recordClass == null
+    ? undefined
+    : recordClass.urlSegment === 'dataset'
+    ? primaryKey
+    : isStudyRecordClass(recordClass)
+    ? getIdFromRecordClassName(recordClass.fullName)
+    : undefined;
+}
+
+// TODO: Move to an appropriate utility directory/repo
+function recordPageIsLoading(state) {
+  return state.record.isLoading;
+}
+
+// TODO: Move to an appropriate utility directory/repo
+// FIXME: The Download form redux should set "isLoading" to false
+// FIXME: when an error occurs
+function downloadFormIsLoading(state) {
+  return state.downloadForm.isLoading && state.downloadForm.error;
 }
