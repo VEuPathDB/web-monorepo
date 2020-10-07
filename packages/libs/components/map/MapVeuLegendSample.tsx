@@ -8,7 +8,7 @@ import LegendList from './LegendList';
 import BarChartLegend from './BarChartLegend';
 
 //DKDK type def for legend: some are set to optional for now
-interface legendProps {
+export interface LegendProps {
   // className: string
   legendType : string,    //'categorical' | 'numeric' | 'date',
   data : {
@@ -25,7 +25,7 @@ interface legendProps {
 }
 
 //DKDK make legend at the map without using L.Control
-const MapVeuLegendSample = (props: legendProps) => {
+const MapVeuLegendSample = (props: LegendProps) => {
   //DKDK simplifying
   if (props.legendType === 'categorical') {
     return (

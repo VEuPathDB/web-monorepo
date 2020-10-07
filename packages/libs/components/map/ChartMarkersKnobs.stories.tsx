@@ -13,7 +13,7 @@ import irData from './test-data/geoclust-irrescaled-binning-testing.json';
 import { latLng, LeafletMouseEvent } from "leaflet";
 import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; // TO BE CREATED
 
-import MapVeuLegendSample from './MapVeuLegendSample'
+import MapVeuLegendSample, { LegendProps } from './MapVeuLegendSample'
 
 export default {
   title: 'Chart Markers with Knobs',
@@ -63,8 +63,18 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
   // console.log('onMouseOut', e)
 }
 
-const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth) => {
-  return collectionDateData.facets.geo.buckets.map((bucket, index) => {
+const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, yAxisRange: Array<number> | null, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth) => {
+
+  let legendSums : number[] = [];
+  let legendLabels : string[] = [];
+  let legendColors : string[] = [];
+ 
+  const markers = collectionDateData.facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
+    return ltAvg > bounds.southWest[0] &&
+	   ltAvg < bounds.northEast[0] &&
+	   lnAvg > bounds.southWest[1] &&
+	   lnAvg < bounds.northEast[1]
+  }).map((bucket) => {
     const lat = bucket.ltAvg;
     const long = bucket.lnAvg;
     let labels = [];
@@ -73,10 +83,19 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
     let noDataValue:number = 0;
     bucket.term.buckets.forEach((bucket, index) => {
       const start = bucket.val.substring(0,4);
-      labels.push(start);
+      const end = parseInt(start, 10)+3;
+      const label = `${start}-${end}`;
+      labels.push(label);
       values.push(bucket.count);
-      if (knob_colorMethod === 'solid') { colors.push('#7cb5ec'); }    //DKDK set color palette
-      else { colors.push(all_colors_hex[index]); }
+      colors.push(knob_colorMethod === 'solid' ? '#7cb5ec' : all_colors_hex[index]);
+	
+      // sum all counts for legend
+      if (legendSums[index] === undefined) {
+	legendSums[index] = 0;
+	legendLabels[index] = label;
+	legendColors[index] = knob_colorMethod === 'solid' ? '#7cb5ec' : all_colors_hex[index];
+      }
+      legendSums[index] += bucket.count;
     });
 
     //DKDK calculate the number of no data and make 6th bar
@@ -85,6 +104,11 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
     values.push(noDataValue);
     colors.push("silver");     //DKDK fill the last color
 
+    legendLabels[5] = 'no data';
+    if (legendSums[5] === undefined) legendSums[5] = 0;
+    legendSums[5] += noDataValue;
+    legendColors[5] = 'silver';
+    
     const new_knob_colorMethod = knob_colorMethod === 'solid' ? 'bins' : knob_colorMethod;
 
     return (
@@ -116,20 +140,18 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
       />
     )
   });
-}
 
-//DKDK below is for bar chart, thus variable names had Chart suffix
-const legendTypeValueChart = 'numeric'
-// const legendTypeValue = 'number'
-//DKDK intentionally use large value to check commas
-const legendDataChart = [
-  {label: '2000-2003', value: 1523, color: '#0200C5'},
-  {label: '2004-2007', value: 8012, color: '#6300C5'},
-  {label: '2008-2011', value: 6083, color: '#C400C5'},
-  {label: '2012-2015', value: 3123, color: '#C50045'},
-  {label: '2016-2019', value: 4923, color: '#C50000'},
-  {label: 'no data', value: 1033, color: 'silver'},
-]
+  const legendData = legendSums.map((count, index) => {
+    return {
+      label: legendLabels[index],
+      value: count,
+      color: legendColors[index]
+    }
+  });
+  setLegendData(legendData);
+  
+  return markers;
+}
 
 
 export const CollectionDate = () => {
@@ -142,7 +164,7 @@ export const CollectionDate = () => {
   const knob_method = radios('Method', {SVG: 'svg', Library: 'lib'}, 'svg');
   const knob_borderWidth = number('Border width', 3.5, {range: true, min: 0, max: 5, step: 0.5});
   //const knob_borderColor = color('Border color', '#00000088');  // Isn't working
-  const knob_borderColor = radios('Border color', {DarkGrey: '#000000BB', LightGrey: '#00000088', Blue: '#7cb5ec'}, '#000000BB');
+  const knob_borderColor = radios('Border color', {DarkGrey: '#00000099', LightGrey: '#00000055', Blue: '#7cb5ec'}, '#00000099');
   const knob_dividerVisible = boolean('Divider visible', false);
   const knob_type = knob_method === 'lib' ? radios('Type', {Bar: 'bar', Line: 'line'}, 'bar') : undefined;
   const knob_fillArea = knob_type === 'line' ? boolean('Fill area', true) : undefined;
@@ -152,8 +174,11 @@ export const CollectionDate = () => {
     radios('Color method', {Bins: 'discrete', Solid: 'solid', Gradient: 'gradient'}, 'discrete') :
     radios('Color method', {Bins: 'discrete', Solid: 'solid'}, 'discrete');
 
+  const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
+  
+  
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getCollectionDateMarkerElements(yAxisRange, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth));
+    setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, yAxisRange, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth));
   }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth])
   
   return (
@@ -165,8 +190,8 @@ export const CollectionDate = () => {
 	markers={markerElements}
       />
       <MapVeuLegendSample
-        legendType={legendTypeValueChart}
-        data={legendDataChart}
+        legendType="numeric"
+        data={legendData}
       />
     </>
   );
