@@ -13,6 +13,8 @@ import irData from './test-data/geoclust-irrescaled-binning-testing.json';
 import { latLng, LeafletMouseEvent } from "leaflet";
 import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; // TO BE CREATED
 
+import MapVeuLegendSample from './MapVeuLegendSample'
+
 export default {
   title: 'Chart Markers with Knobs',
   component: MapVEuMap,
@@ -116,7 +118,21 @@ const getCollectionDateMarkerElements = (yAxisRange: Array<number> | null, knob_
   });
 }
 
-export const CollectionDateLocal = () => {
+//DKDK below is for bar chart, thus variable names had Chart suffix
+const legendTypeValueChart = 'numeric'
+// const legendTypeValue = 'number'
+//DKDK intentionally use large value to check commas
+const legendDataChart = [
+  {label: '2000-2003', value: 1523, color: '#0200C5'},
+  {label: '2004-2007', value: 8012, color: '#6300C5'},
+  {label: '2008-2011', value: 6083, color: '#C400C5'},
+  {label: '2012-2015', value: 3123, color: '#C50045'},
+  {label: '2016-2019', value: 4923, color: '#C50000'},
+  {label: 'no data', value: 1033, color: 'silver'},
+]
+
+
+export const CollectionDate = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
   const yAxisRange: Array<number> | null = []
@@ -139,13 +155,19 @@ export const CollectionDateLocal = () => {
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getCollectionDateMarkerElements(yAxisRange, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth));
   }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth])
-
+  
   return (
-    <MapVEuMap
-    viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
-    height="100vh" width="100vw"
-    onViewportChanged={handleViewportChanged}
-    markers={markerElements}
-    />
+    <>
+      <MapVEuMap
+	viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
+	height="100vh" width="100vw"
+	onViewportChanged={handleViewportChanged}
+	markers={markerElements}
+      />
+      <MapVeuLegendSample
+        legendType={legendTypeValueChart}
+        data={legendDataChart}
+      />
+    </>
   );
 }
