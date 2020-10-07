@@ -8,7 +8,7 @@ import LegendList from './LegendList';
 import BarChartLegend from './BarChartLegend';
 
 //DKDK type def for legend: some are set to optional for now
-interface legendProps {
+export interface LegendProps {
   // className: string
   legendType : string,    //'categorical' | 'numeric' | 'date',
   data : {
@@ -25,7 +25,7 @@ interface legendProps {
 }
 
 //DKDK make legend at the map without using L.Control
-const MapVeuLegendSample = (props: legendProps) => {
+const MapVeuLegendSample = (props: LegendProps) => {
   //DKDK simplifying
   if (props.legendType === 'categorical') {
     return (
@@ -46,8 +46,8 @@ const MapVeuLegendSample = (props: legendProps) => {
     const plotLibrary = 'plotly'
     const colorMethod = 'discrete'
     //DKDK perhaps we should send x-/y-axes labels too
-    const xAxisLabel = '<b>Collection date</b>'
-    const yAxisLabel = '<b>Record count</b>'
+    const xAxisLabel = props.variableLabel
+    const yAxisLabel = props.quantityLabel
     //DKDK width and height are set to 250 for now
     const plotSize = 250
     //DKDK we may also need to consider other props such as font sizes for x-/y-axes labels, tick labels, etc.
