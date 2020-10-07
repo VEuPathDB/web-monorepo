@@ -1,6 +1,10 @@
 import { compose } from 'lodash/fp';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import React from 'react';
+
+import { NotFoundController } from 'wdk-client/Controllers';
+import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
+import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 
 import {
@@ -9,6 +13,7 @@ import {
   Action
 } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
 import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
+import { fetchStudies } from 'ebrc-client/App/Studies/StudyActionCreators';
 
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
 
@@ -153,4 +158,42 @@ function withRestrictionHandler(action, getRecordClassSelector) {
 function stopEvent(event) {
   event.stopPropagation();
   event.preventDefault();
+}
+
+function availableStudyGuard(getRecordClassLoadingSelector, getStudyIdSelector, NotFound) {
+  return function (DefaultComponent) {
+    return function(props) {
+      const studies = useWdkService(fetchStudies, []);
+
+      const state = useSelector(state => state);
+
+      const recordClassLoading = getRecordClassLoadingSelector(state, props);
+
+      const targetId = getStudyIdSelector(state, props);
+
+      const defaultElement = <DefaultComponent {...props} />;
+
+      if (studies == null || recordClassLoading) {
+        return (
+          <div style={{ visibility: 'hidden' }}>
+            {defaultElement}
+          </div>
+        );
+      }
+
+      const allValidStudies = studies == null ? undefined : studies[0];
+
+      const study = allValidStudies && allValidStudies.find(
+        ({ id, disabled }) => id === targetId && !disabled
+      );
+
+      return (
+        targetId != null && study == null
+          ? <NotFound />
+          : <div>
+              {defaultElement}
+            </div>
+      );
+    }
+  }
 }
