@@ -46,8 +46,8 @@ const MapVeuLegendSample = (props: legendProps) => {
     const plotLibrary = 'plotly'
     const colorMethod = 'discrete'
     //DKDK perhaps we should send x-/y-axes labels too
-    const xAxisLabel = '<b>Age</b>'
-    const yAxisLabel = '<b>count of Samples</b>'
+    const xAxisLabel = '<b>Collection date</b>'
+    const yAxisLabel = '<b>Record count</b>'
     //DKDK width and height are set to 250 for now
     const plotSize = 250
     //DKDK we may also need to consider other props such as font sizes for x-/y-axes labels, tick labels, etc.
