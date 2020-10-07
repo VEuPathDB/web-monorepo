@@ -220,7 +220,7 @@ function availableStudyGuard(getRecordClassLoadingSelector, getStudyIdSelector, 
         );
       }
 
-      const allValidStudies = studies == null ? undefined : studies[0];
+      const allValidStudies = studies[0];
 
       const study = allValidStudies && allValidStudies.find(
         ({ id, disabled }) => id === targetId && !disabled
