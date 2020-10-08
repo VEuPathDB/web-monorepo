@@ -25,21 +25,36 @@ export default function SidebarExample(props: SidebarProps) {
         <Tab id="home" header="Home" icon="fas fa-home">
             <p>{testText}</p>
         </Tab>
+        <Tab id="settings" header="Settings" icon="fas fa-cog">
+            <p>Change settings</p>
+        </Tab>
+        {/* DKDK add disabled tap to mimick blank space */}
+        <Tab id="gap1" header="" icon="" disabled>
+            <p>gap1</p>
+        </Tab>
         <Tab id="marker-table" header="Details for selected samples" icon="fas fa-table">
             <p>Detailed table???</p>
         </Tab>
         <Tab id="export" header="Export Data" icon="fas fa-download">
             <p>Download data</p>
         </Tab>
+        {/* DKDK add disabled tap to mimick blank space */}
+        <Tab id="gap2" header="" icon="" disabled>
+            <p>gap2</p>
+        </Tab>
         <Tab id="plot" header="Summary" icon="fas fa-chart-pie">
             <p>For plots</p>
         </Tab>
-        <Tab id="graph" header="Graph" icon="fas fa-chart-bar">
-            <p>This is for graphs</p>
+        {/* DKDK no box plot icon exists in fontawesome */}
+        <Tab id="boxplot" header="Box Plot" icon="fas fa-percent">
+            <p>No box plot icon exists in the fontawesome</p>
+        </Tab>
+        <Tab id="graph" header="Chart" icon="fas fa-chart-bar">
+            <p>This is for chart</p>
         </Tab>
         {/* DKDK placing bottom side using  anchor="bottom" attribute */}
-        <Tab id="settings" header="Settings" icon="fas fa-cog">
-            <p>Change settings</p>
+        <Tab id="help" header="Tutorial" icon="fas fa-question" anchor="bottom">
+            <p>Help/Tutorial</p>
         </Tab>
     </Sidebar>
   );

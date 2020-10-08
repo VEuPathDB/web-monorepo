@@ -7,6 +7,8 @@ import React from 'react'
 import { MapComponent } from 'react-leaflet'
 //DKDK customized typescript by DK for react-leaflet-sidebarv2
 import { SidebarProps, TabProps } from './type-react-leaflet-sidebarv2'
+// //DKDK add css
+// import './sidebar-style.css'
 
 class Tab extends React.Component<TabProps, any> {
   render() {
@@ -67,16 +69,36 @@ class Sidebar extends React.Component<SidebarProps, any> {
       icon = tab.props.icon;
     const active = tab.props.id === this.props.selected ? ' active' : '';
     const disabled = tab.props.disabled ? ' disabled' : '';
-    return (
-      //DKDK add title attribute here for tooltip effect
-      <li className={'sidebartabs' + active + disabled} key={tab.props.id} title={tab.props.header}>
-        <a href={'#' + tab.props.id} role="tab" onClick={e => tab.props.disabled || this.onOpen(e, tab.props.id)}>
-        {/* DKDK below works for closing active tab but cannot reopen it */}
-        {/* <a href={'#' + tab.props.id} role="tab" onClick={e => (active)? removeClassNameActive('sidebartabs active') && this.props.onClose && this.props.onClose() : tab.props.disabled || this.onOpen(e, tab.props.id)}> */}
-          {icon}
-        </a>
-      </li>
-    );
+
+    // //DKDK blank divider
+    // return (
+    //   //DKDK add title attribute here for tooltip effect
+    //   <li className={'sidebartabs' + active + disabled} key={tab.props.id} title={tab.props.header}>
+    //     <a href={'#' + tab.props.id} role="tab" onClick={e => tab.props.disabled || this.onOpen(e, tab.props.id)}>
+    //       {icon}
+    //     </a>
+    //   </li>
+    // )
+
+    //DKDK line divider using image file (made by DK)
+    if (!tab.props.disabled) {
+      return (
+        //DKDK add title attribute here for tooltip effect
+        <li className={'sidebartabs' + active + disabled} key={tab.props.id} title={tab.props.header}>
+          <a href={'#' + tab.props.id} role="tab" onClick={e => tab.props.disabled || this.onOpen(e, tab.props.id)}>
+            {icon}
+          </a>
+        </li>
+      )
+    } else {
+        return (
+          <li className={'sidebartabs' + active + disabled} key={tab.props.id} title={tab.props.header}>
+            <a href={'#' + tab.props.id} role="tab" onClick={e => tab.props.disabled || this.onOpen(e, tab.props.id)}>
+              <img src="./img/line-divider.png" />
+            </a>
+          </li>
+        )
+    }
   }
 
   //DKDK children here is a content inside <Tab> so set it as any for now
