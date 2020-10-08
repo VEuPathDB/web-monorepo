@@ -41,7 +41,6 @@ export interface MapVEuMapProps {
   width: CSSProperties['width'],
   onViewportChanged: (bvp: BoundsViewport, duration: number) => void,
   markers: ReactElement<MarkerProps>[],
-  level: number,
   animation: {
     method: string,
     duration: number,
