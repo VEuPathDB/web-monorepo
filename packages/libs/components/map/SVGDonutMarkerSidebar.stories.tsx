@@ -128,6 +128,11 @@ const legendDataChart = [
   {label: 'no data', value: 20, color: 'silver'},
 ]
 
+//DKDK send x-/y-axes labels for Legend bar chart
+const variableLabel: string = '<b>Collection date</b>'  //DKDK: x-axis label
+const quantityLabel: string = '<b>Record count</b>'     //DKDK: y-axis label
+
+
 /**
    This is a trivial marker data generator.  It returns 10 random points within the given bounds.
    The real thing should something with zoomLevel.
@@ -256,6 +261,9 @@ export const SpeciesNudgedChart = () => {
         //DKDK here, variables names are used differently (with suffix, Chart) for test purpose
         legendType={legendTypeValueChart}
         data={legendDataChart}
+        //DKDK send x-/y-axes lables here
+        variableLabel={variableLabel}    //DKDK: x-axis label
+        quantityLabel={quantityLabel}    //DKDK: y-axis label
       />
 
       <MapVEuMapSidebar
