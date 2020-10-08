@@ -1,14 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import { MapVEuMapProps } from "./Types";
 import {
     Viewport,
     Map,
-    TileLayer, Path, Rectangle, GridLayer, withLeaflet, useLeaflet
+    TileLayer,
 } from "react-leaflet";
 import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
 import '../styles/map_styles.css'
-import Geohash from "latlon-geohash";
 import CustomGridLayer from "./CustomGridLayer";
 
 /**
@@ -17,7 +16,7 @@ import CustomGridLayer from "./CustomGridLayer";
  * 
  * @param props 
  */
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, level, animation}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation}: MapVEuMapProps) {
 
 
     // this is the React Map component's onViewPortChanged handler
@@ -43,7 +42,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
                 attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
             />
 
-            <CustomGridLayer level={level} />
+            <CustomGridLayer />
 
             <SemanticMarkers
                 onViewportChanged={onViewportChanged}

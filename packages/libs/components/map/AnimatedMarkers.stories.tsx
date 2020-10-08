@@ -7,34 +7,12 @@ import './TempIconHack';
 import {DriftMarker} from "leaflet-drift-marker";
 import geohashAnimation from "./animation_functions/geohash";
 import md5 from 'md5';
+import ZoomLevelToGeoHashLevel from "./utilities/ZoomLevelToGeoHashLevel";
 
 export default {
   title: 'Animated Markers',
 //  component: MapVEuMap,
 };
-
-const maxGeohashLevel = 7;
-const zoomLevelToGeohashLevel = [
-  1, // 0
-  1, // 1
-  1, // 2
-  1, // 3
-  2, // 4
-  2, // 5
-  2, // 6
-  3, // 7
-  3, // 8
-  3, // 9
-  4, // 10
-  4, // 11
-  4, // 12
-  5, // 13
-  5, // 14
-  5, // 15
-  6, // 16
-  6, // 17
-  7  // 18
-];
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number, duration: number, scrambleKeys: boolean = false) => {
   console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
@@ -63,7 +41,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
   let longs : number[] = [];
 
   Array(numMarkers).fill(undefined).map(() => {
-    const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
+    const geohashLevel = ZoomLevelToGeoHashLevel({zoomLevel});
 
     // pick a deterministic point anywhere on the globe (hence a large value for numMarkers)
     let lat = -90 + myRandom()*180;
@@ -132,7 +110,6 @@ export const GeohashIds = () => {
     height="96vh" width="98vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
-    level={6}
     animation={{
       method: "geohash",
       duration: 300,
