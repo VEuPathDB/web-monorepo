@@ -21,7 +21,6 @@ export default function CustomGridLayer() {
             if (map != null) {
                 const zoomLevel = map.getZoom();
                 const geohashLevel = ZoomLevelToGeoHashLevel({zoomLevel});
-                console.log(geohashLevel)
                 /**
                  * bfox6 - Get current geohashes within the map boundary to a specified precision
                  * shape2geohash returns a promise so we resolve the promise and set the geohashes
@@ -49,6 +48,7 @@ export default function CustomGridLayer() {
         };
     }, [map]);
 
+    // bfox6 - When geohashes change, update the map with new Rectangles
     useEffect(() => {
          // bfox6 - Get the boundaries of every geohash in the format the Rectangle component expects
         const geohashBoundaries = geohashes.map(geohash => {
@@ -58,14 +58,16 @@ export default function CustomGridLayer() {
 
 
         // bfox6 - Create a Rectangle component for every geohash boundary
-        const geohashRectangles = geohashBoundaries.map(boundaries => {
+        const geohashRectangles = geohashBoundaries.map((boundaries, index) => {
             return (
                 <Rectangle
-                    key={boundaries.toString()}
+                    key={index}
+                    // @ts-ignore
                     bounds={boundaries}
                     color={"grey"}
                     weight={1}
                     fill={false}
+                    opacity={.2}
                 />
             )
         });
