@@ -1,23 +1,23 @@
 import React from 'react';
 
-interface UserCommentUploadedFileEntry {
-  id: number;
-  name: string;
-  description: string;
-  preview?: string;
+import { UserCommentAttachedFile } from 'wdk-client/Utils/WdkUser';
+import { UploadedFileRow } from 'wdk-client/Views/UserCommentShow/UploadedFileRow';
+
+interface UploadedFileEntry extends UserCommentAttachedFile {
+  url: string;
 }
 
-interface UserCommentUploadedFileProps {
-  uploadedFiles: UserCommentUploadedFileEntry[];
+interface UserCommentUploadedFilesProps {
+  uploadedFiles: UploadedFileEntry[];
   headerClassName?: string;
   entryClassName?: string;
 }
 
-export const UserCommentUploadedFiles: React.SFC<UserCommentUploadedFileProps> = ({
+export const UserCommentUploadedFiles = ({
   uploadedFiles,
   headerClassName,
   entryClassName
-}) => (
+}: UserCommentUploadedFilesProps) => (
   uploadedFiles.length > 0 
     ? (
       <table className="wdk-UserCommentUploadedFiles">
@@ -30,29 +30,13 @@ export const UserCommentUploadedFiles: React.SFC<UserCommentUploadedFileProps> =
           </tr>
           {
             uploadedFiles.map(
-              ({ id, name, description, preview }, index) => (
-                <tr key={id} className={entryClassName}>
-                  <td>{index + 1}</td>
-                  <td>{
-                    preview
-                      ? <a href={preview}>{name}</a>
-                      : name
-                  }</td>
-                  <td>{description}</td>
-                  <td>{
-                    preview 
-                      ? <a 
-                          href={preview}
-                        >
-                          <img 
-                            src={preview}
-                            width={80}
-                            height={80} 
-                          />
-                        </a> 
-                      : null
-                  }</td>
-                </tr>
+              (uploadedFile, index) => (
+                <UploadedFileRow
+                  key={uploadedFile.id}
+                  entryClassName={entryClassName}
+                  rowNumber={index + 1}
+                  {...uploadedFile}
+                />
               )
             )
           }
