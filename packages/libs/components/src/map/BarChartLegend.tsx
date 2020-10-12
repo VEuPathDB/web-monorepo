@@ -5,7 +5,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import ReactHighcharts from 'react-highcharts';
-// import { withKnobs, text, boolean, number, radios } from '@storybook/addon-knobs';   //DKDK comment this out
 
 interface BarChartProps {
   labels: string[],
@@ -24,12 +23,9 @@ interface BarChartProps {
   xAxisLabel?: string,
   yAxisLabel?: string,
   axisLabelSize?: number,
+  tickLabelsVisible?: boolean,
   tickLabelSize?: number,
 }
-
-// This appears and disappears seemingly randomly. I don't know why.
-// let knob_type = radios('Type', {Bar: 'bar', Line: 'line'}, 'Bar');
-// console.log(knob_type);
 
 /**
  * A simple, unlabeled bar chart
@@ -40,9 +36,7 @@ export default function BarChartLegend(props: BarChartProps) {
   //DKDK need to initialize to avoid ts error
   let element: JSX.Element = <></>
 
-  // Not updating plotly implementation currently
   if (props.library === 'plotly') {
-    // console.log('Notice: Plotly implementation not currently being updated!');   //DKDK comment this out
     let typeProps;
     let yAxisProps = {};
 
@@ -100,6 +94,7 @@ export default function BarChartLegend(props: BarChartProps) {
             color: 'black'
           }
         },
+        showticklabels: props.tickLabelsVisible,
         tickfont: {
           size: props.tickLabelSize,
         },
@@ -115,6 +110,7 @@ export default function BarChartLegend(props: BarChartProps) {
             color: 'black'
           }
         },
+        showticklabels: props.tickLabelsVisible,
         tickfont: {
           size: props.tickLabelSize,
         },
@@ -145,7 +141,9 @@ export default function BarChartLegend(props: BarChartProps) {
     element = <Plot data={data} layout={layout} config={config}></Plot>;
   }
 
+  // Not being updated - probably not needed
   else if (props.library === 'highcharts') {
+    console.log('Warning: The highcharts implementation is not being updated!');
     let type;
     let yAxisProps = {};
 

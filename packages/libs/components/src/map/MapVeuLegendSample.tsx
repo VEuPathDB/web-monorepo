@@ -19,6 +19,7 @@ export interface LegendProps {
   }[],
   variableLabel? : string, // e.g. Species or Age
   quantityLabel? : string, // ** comment below
+  tickLabelsVisible?: boolean,
 
   onShowFilter? : () => {},  // callback to open up filter panel
   onShowVariableChooser? : () => {}, // callback to open up variable selector
@@ -73,6 +74,7 @@ const MapVeuLegendSample = (props: LegendProps) => {
           xAxisLabel={xAxisLabel}
           yAxisLabel={yAxisLabel}
           axisLabelSize={axisLabelSize}
+          tickLabelsVisible={props.tickLabelsVisible}
           tickLabelSize={tickLabelSize}
           yAxisRange={null}
           width={plotSize}
