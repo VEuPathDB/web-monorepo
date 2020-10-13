@@ -4,3 +4,118 @@
   bottom: 80px;
   right: 10px
 }
+
+/* DKDK override bootstrap css for legend dropdown menu */
+
+.legend .btn-success {
+  color: #000;
+  background-color: #fff;
+  border-color: silver;
+}
+
+.legend .btn-success:hover {
+  color: #000;
+  background-color: #fff;
+  border-color: silver;
+}
+
+.legend .btn-success:focus, .legend .btn-success.focus {
+  color: #000;
+  background-color: #fff;
+  border-color: silver;
+  box-shadow: 0 0 0 0rem rgba(151, 141, 141, 0.425);
+}
+
+.legend .btn-success.disabled, .legend .btn-success:disabled {
+  color: #000;
+  background-color: #fff;
+  border-color: silver;
+}
+
+.legend .btn-success:not(:disabled):not(.disabled):active, .legend .btn-success:not(:disabled):not(.disabled).active,
+.legend .show > .btn-success.dropdown-toggle {
+  color: #333333;
+  background-color: #CECECE;
+  border-color: #ADADAD;
+}
+
+.legend .btn-success:not(:disabled):not(.disabled):active:focus, .legend .btn-success:not(:disabled):not(.disabled).active:focus,
+.legend .show > .btn-success.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0rem rgba(151, 141, 141, 0.425);
+}
+
+.legend .dropdown button {
+  border: 1px solid #e5e5e5;
+  border-color: silver;
+  border-radius: 0px;
+  background-color: white;
+  font-size: 1em;
+  color: black;
+  /* DKDK set the size of dropdown button */
+  /* width: 100%;
+  text-align: left; */
+}
+
+.legend-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  clear: both;
+  font-weight: 400;
+  color: #222;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+}
+
+.legend-dropdown-item:hover, .legend-dropdown-item:focus {
+  color: #16181b;
+  text-decoration: none;
+  background-color: #f8f9fa;
+}
+
+.legend-dropdown-item.active, .legend-dropdown-item:active {
+  color: #16181b;
+  text-decoration: none;
+  background-color: #f8f9fa;
+}
+
+.legend-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  margin: 0.125rem 0 0;
+  font-size: 0.9375rem;
+  color: #222;
+  text-align: left;
+  list-style: none;
+  background-color: #eee;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+}
+
+/* DKDK for the case when full width of dropdown button is used
+ * set different value for categorical and bar chart legends due to margin in plotly
+*/
+
+.legend .dropdown button {
+  width: 100%;
+  text-align: left;
+}
+#legend-dropdown-category.dropdown-toggle::after {
+  position: relative;
+  right: -75%;
+}
+
+#legend-dropdown-chart.dropdown-toggle::after {
+  position: relative;
+  right: -85%;
+}
