@@ -82,6 +82,10 @@ export function none(t: any): Result<void> {
     : err(t, 'undefined');
 }
 
+export function unknown(t: unknown): Result<unknown> {
+  return ok(t);
+}
+
 
 // higher order decoders
 // ---------------------
@@ -238,9 +242,13 @@ export function decode<T>(decoder: Decoder<T>, jsonString: string): T {
   }
   const r = decoder(t);
   if (r.status === 'err') {
-    throw new Error(`Could not decode string: Expected ${r.expected}${r.context ? (' at _' + r.context) : ''}, but got ${JSON.stringify(r.value)}`);
+    throw new Error(`Could not decode string: ${standardErrorReport(r)}`);
   }
   return r.value;
+}
+
+export function standardErrorReport(errResult: Err) {
+  return `Expected ${errResult.expected}${errResult.context ? (' at _' + errResult.context) : ''}, but got ${JSON.stringify(errResult.value)}.`;
 }
 
 export function decodeOrElse<T>(decoder: Decoder<T>, defaultValue: T, jsonString: string): T {
