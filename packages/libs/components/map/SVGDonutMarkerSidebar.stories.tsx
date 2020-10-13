@@ -16,7 +16,7 @@ import MapVEuMapSidebar from './MapVEuMapSidebar';
 import SidebarExample from './SidebarExample'
 // import { LeafletMouseEvent } from "leaflet";
 //DKDK import legend
-import MapVeuLegendSample from './MapVeuLegendSample'
+import MapVeuLegendSampleDropdown from './MapVeuLegendSampleDropdown'
 
 
 export default {
@@ -132,6 +132,14 @@ const legendDataChart = [
 const variableLabel: string = '<b>Collection date</b>'  //DKDK: x-axis label
 const quantityLabel: string = '<b>Record count</b>'     //DKDK: y-axis label
 
+//DKDK  props for dropdown toggle text, dropdown item's href, and its text (Categorical)
+const dropdownTitle: string = 'Species'
+const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
+const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
+//DKDK for testing purpose, use other variable names for bar chart
+const dropdownTitleBar: string = 'Age'
+const dropdownHrefBar: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4']
+const dropdownItemTextBar: string[] =['Year', 'Month', 'Date', 'Age']
 
 /**
    This is a trivial marker data generator.  It returns 10 random points within the given bounds.
@@ -205,10 +213,14 @@ export const SpeciesCategorical = () => {
         onClose={sidebarOnClose}
       />
 
-      <MapVeuLegendSample
+      <MapVeuLegendSampleDropdown
         // className={legendClassName}
         legendType={legendTypeValue}
         data={legendData}
+        //DKDK add dropdown props for Legend
+        dropdownTitle={dropdownTitle}
+        dropdownHref={dropdownHref}
+        dropdownItemText={dropdownItemText}
       />
 
       <MapVEuMapSidebar
@@ -256,7 +268,7 @@ export const SpeciesNudgedChart = () => {
         onClose={sidebarOnClose}
       />
 
-      <MapVeuLegendSample
+      <MapVeuLegendSampleDropdown
         // className={legendClassName}
         //DKDK here, variables names are used differently (with suffix, Chart) for test purpose
         legendType={legendTypeValueChart}
@@ -264,6 +276,10 @@ export const SpeciesNudgedChart = () => {
         //DKDK send x-/y-axes lables here
         variableLabel={variableLabel}    //DKDK: x-axis label
         quantityLabel={quantityLabel}    //DKDK: y-axis label
+        //DKDK add dropdown props for Legend: used different variable names for test purpose
+        dropdownTitle={dropdownTitleBar}
+        dropdownHref={dropdownHrefBar}
+        dropdownItemText={dropdownItemTextBar}
       />
 
       <MapVEuMapSidebar
