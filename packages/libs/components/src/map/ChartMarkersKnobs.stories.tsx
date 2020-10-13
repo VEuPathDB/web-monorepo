@@ -67,13 +67,37 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
   // console.log('onMouseOut', e)
 }
 
-const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, yAxisRange: Array<number> | null, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth) => {
+const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod) => {
 
   let legendSums : number[] = [];
   let legendLabels : string[] = [];
   let legendColors : string[] = [];
+  let yAxisRange : number[] = [];  // This sets range to 'local' mode
 
-  const markers = collectionDateData.facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
+  const buckets = collectionDateData.facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
+    return ltAvg > bounds.southWest[0] &&
+	   ltAvg < bounds.northEast[0] &&
+	   lnAvg > bounds.southWest[1] &&
+	   lnAvg < bounds.northEast[1]
+  });
+
+  if (knob_YAxisRangeMethod === 'regional') {
+    yAxisRange = [0, buckets.reduce(
+      (currentMax, bucket) => {
+        return Math.max(
+          currentMax,
+          bucket.count - bucket.term.before.count - bucket.term.after.count - bucket.term.between.count, // no data count
+          bucket.term.buckets.reduce(
+            (currentMax, bucket) => Math.max(currentMax, bucket.count),
+            0
+          )  // current bucket max value
+        );
+      },
+      0
+    )];
+  }
+
+  const markers = buckets.filter(({ltAvg, lnAvg}) => {
     return ltAvg > bounds.southWest[0] &&
 	   ltAvg < bounds.northEast[0] &&
 	   lnAvg > bounds.southWest[1] &&
@@ -161,7 +185,7 @@ const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendDa
 export const CollectionDate = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
-  const yAxisRange: Array<number> | null = []
+  // const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
 
   // Knobs
@@ -177,13 +201,15 @@ export const CollectionDate = () => {
   const knob_colorMethod = knob_type === 'line' ?
     radios('Color method', {Bins: 'discrete', Solid: 'solid', Gradient: 'gradient'}, 'discrete') :
     radios('Color method', {Bins: 'discrete', Solid: 'solid'}, 'discrete');
+  const knob_legendTickLabelsVisible = boolean('Show legend tick labels', true);
+  const knob_YAxisRangeMethod = radios('Y-axis range', {Local: 'local', Regional: 'regional'}, 'local');
 
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
 
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, yAxisRange, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth));
-  }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth])
+    setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod));
+  }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod])
 
   return (
     <>
@@ -199,6 +225,7 @@ export const CollectionDate = () => {
         //DKDK send x-/y-axes lables here
         variableLabel={variableLabel}    //DKDK: x-axis label
         quantityLabel={quantityLabel}    //DKDK: y-axis label
+        tickLabelsVisible={knob_legendTickLabelsVisible}
       />
     </>
   );
