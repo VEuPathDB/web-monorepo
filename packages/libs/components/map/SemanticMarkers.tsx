@@ -1,14 +1,14 @@
-import React, {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useEffect, useState, useContext} from "react";
 import {GeoBBox, MarkerProps, BoundsViewport, AnimationFunction} from "./Types";
 import { useLeaflet } from "react-leaflet";
 import { LatLngBounds } from 'leaflet'
+import { AnimationDurationContext } from "./contexts/Animation"
 
 interface SemanticMarkersProps {
-  onViewportChanged: (bvp: BoundsViewport, duration: number) => void,
+  onViewportChanged: (bvp: BoundsViewport) => void,
   markers: Array<ReactElement<MarkerProps>>,
   animation: {
     method: string,
-    duration: number,
     animationFunction: AnimationFunction
   } | null
 }
@@ -35,7 +35,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
       if (map != null) {
         const bounds = boundsToGeoBBox(map.getBounds());
         const zoomLevel = map.getZoom();
-        onViewportChanged({ bounds, zoomLevel }, animation ? animation.duration : 300);
+        onViewportChanged({ bounds, zoomLevel });
       }
     }
 
@@ -63,6 +63,8 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
 
   }, [markers]);
 
+  const duration = useContext(AnimationDurationContext);
+  
   useEffect (() => {
     /** If we are zooming in then reset the marker elements. When initially rendered
     * the new markers will start at the matching existing marker's location and here we will
@@ -78,7 +80,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
       timeoutVariable = setTimeout(
           () => {
             setConsolidatedMarkers([...markers])
-          }, animation ? animation.duration : 0
+          }, duration
       );
     }
 
