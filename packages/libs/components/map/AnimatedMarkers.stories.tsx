@@ -37,9 +37,9 @@ const zoomLevelToGeohashLevel = [
 ];
 
 
-
+//
 // when we implement the donut and histogram markers as DriftMarkers
-// maybe we can access the duration from context there
+// maybe we can access the duration from context inside those components
 // in the meantime we will have to pass the duration into the getMarkerElements function
 //
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number, duration : number, scrambleKeys: boolean = false) => {
