@@ -971,8 +971,8 @@ class TranscriptionSummaryForm extends SortKeyTable {
             <p><em>No data available</em></p>
           );
         } else {
-	  if (((this.props.value.length * 75) + 150) > 700) {
-	    height = (this.props.value.length * 50) + 150;
+	  if (((this.props.value.length + 1) * 50) > 700) {
+	    height = (this.props.value.length + 1) * 50;
 	  } 
 	}
 
