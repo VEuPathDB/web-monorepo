@@ -44,7 +44,8 @@ export interface MapVEuMapProps {
   markers: ReactElement<MarkerProps>[],
   animation: {
     method: string,
-    animationFunction: AnimationFunction
+    animationFunction: AnimationFunction,
+    duration: number
   } | null
 }
 
