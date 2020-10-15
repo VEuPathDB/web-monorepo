@@ -1021,10 +1021,6 @@ const SELECTORS = {
   GRAPH: 'graph'
 };
 
-const SEARCHES = {
-  TERM: 'term'
-};
-
 const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component {
 
   constructor(props, context) {
