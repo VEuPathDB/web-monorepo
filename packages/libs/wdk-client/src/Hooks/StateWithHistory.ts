@@ -6,8 +6,8 @@ export interface Options {
 
 type NextState<T> = T | ((nextState: T) => T);
 
-interface Return<T> {
-  state: T,
+interface Return<T, S = T> {
+  state: T | S,
   canUndo: boolean;
   canRedo: boolean;
   undo: () => void;
@@ -19,7 +19,7 @@ interface Return<T> {
  * Use state hook with a history of the size provided via `options`. The initial returned state will be `undefined`.
  * @param options 
  */
-export function useStateWithHistory<T = undefined>(options: Options): Return<T | undefined>;
+export function useStateWithHistory<T = undefined>(options: Options): Return<T, undefined>;
 /**
  * Use state hook with a history of the size provided via `options`.
  * @param options 
