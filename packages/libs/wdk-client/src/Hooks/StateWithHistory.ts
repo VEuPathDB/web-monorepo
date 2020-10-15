@@ -7,11 +7,17 @@ export interface Options {
 type NextState<T> = T | ((nextState: T) => T);
 
 interface Return<T, S = T> {
+  /** Current state of history */
   state: T | S,
+  /** Can history be undone? */
   canUndo: boolean;
+  /** Can history be redone? */
   canRedo: boolean;
+  /** Go to previous state, if available. */
   undo: () => void;
+  /** Go to next state, if available. */
   redo: () => void;
+  /** Add a new entry to history, replacing undo stack. */
   set: (nextState: NextState<T>) => void;
 }
 
