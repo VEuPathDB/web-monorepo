@@ -8,8 +8,8 @@ interface SemanticMarkersProps {
   markers: Array<ReactElement<MarkerProps>>,
   animation: {
     method: string,
-    animationFunction: AnimationFunction,
-    duration: number
+    duration: number,
+    animationFunction: AnimationFunction
   } | null
 }
 

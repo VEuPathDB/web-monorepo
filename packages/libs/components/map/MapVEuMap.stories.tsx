@@ -41,6 +41,7 @@ export const Basic = () => {
     height="600px" width="800px"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    animation={null}
     />
   );
 }
