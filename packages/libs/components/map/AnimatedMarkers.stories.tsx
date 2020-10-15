@@ -7,7 +7,6 @@ import './TempIconHack';
 import {DriftMarker} from "leaflet-drift-marker";
 import geohashAnimation from "./animation_functions/geohash";
 import md5 from 'md5';
-import { AnimationDurationContext } from "./contexts/Animation"
 
 export default {
   title: 'Animated Markers',
@@ -125,7 +124,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
 
 export const GeohashIds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-  const duration = useContext(AnimationDurationContext);
+  const duration = 300;
   
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getMarkerElements(bvp, 100000, duration));
@@ -139,32 +138,42 @@ export const GeohashIds = () => {
       markers={markerElements}
       animation={{
 	method: "geohash",
-	animationFunction: geohashAnimation
+	animationFunction: geohashAnimation,
+	duration
       }}
     />
   );
 };
 
-//
-// in the other stories in this file, the context's default value is used
-//
-// here we wrap the story in a context provider, like I presume the main app would be wrapped
-// in the configuration context
-// 
-
 export const SlowAnimation = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const duration = 2000;
+  
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+  }, [setMarkerElements]);
+
   return (
-    <AnimationDurationContext.Provider value={2000}>
-      <GeohashIds />
-    </AnimationDurationContext.Provider>
+    <MapVEuMap
+      viewport={{center: [ 20, -3 ], zoom: 6}}
+      height="96vh" width="98vw"
+      onViewportChanged={handleViewportChanged}
+      markers={markerElements}
+      animation={{
+	method: "geohash",
+	animationFunction: geohashAnimation,
+	duration
+      }}
+    />
   );
-}
+};
+
 
 
 export const NoAnimation = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-  const duration = useContext(AnimationDurationContext);
-
+  const duration = 300;
+  
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getMarkerElements(bvp, 100000, duration));
   }, [setMarkerElements]);
@@ -186,7 +195,7 @@ export const NoAnimation = () => {
 //
 export const ScrambledGeohashIds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-  const duration = useContext(AnimationDurationContext);
+  const duration = 300;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getMarkerElements(bvp, 100000, duration, true));
@@ -200,41 +209,10 @@ export const ScrambledGeohashIds = () => {
     markers={markerElements}
     animation={{
       method: "geohash",
-      animationFunction: geohashAnimation
+      animationFunction: geohashAnimation,
+      duration
     }}
     />
   );
 };
-
-
-//
-// the point of this story is to make it easier to find the
-// 'egy' marker
-// which aggregates/represents two data points
-// (you may need to drag the storybook panel down to make the map bigger)
-//
-// You can move it close to the edge of the screen
-// (so that one of its points would drop off the screen)
-// to see how its position (correctly) changes and the
-// tooltip now shows just one data point represented (correctly).
-//
-export const EdgeCase = () => {
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-  const duration = useContext(AnimationDurationContext);
-
-  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getMarkerElements(bvp, 100000, duration));
-  }, [setMarkerElements])
-
-  return (
-    <MapVEuMap
-    viewport={{center: [ 21.5, -1.5 ], zoom: 9}}
-    height="96vh" width="98vw"
-    onViewportChanged={handleViewportChanged}
-    markers={markerElements}
-    setMarkerElements={setMarkerElements}
-    />
-  );
-};
-
 
