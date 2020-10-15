@@ -42,7 +42,7 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
       const uniqueNodeOptionData = uniqWith(nodeOptionData, isEqual);
 
       const uniqueNodeOptions = uniqueNodeOptionData.map(({ node_identifier, name }) => ({
-        value: `${node_identifier || ''}\0${name || ''}`,
+        value: makeOptionValue(node_identifier, name),
         label: name != null && node_identifier != null
           ? `${node_identifier} (${name})`
           : node_identifier ?? name ?? '',
@@ -60,7 +60,11 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
   const fullOptions = useMemo(
     () => searchTerm.length > 0
       ? [
-          { label: `Free-text search for "${searchTerm}"`, value: `${searchTerm}\0${searchTerm}`, data: 'free-text' },
+          {
+            label: `Free-text search for "${searchTerm}"`,
+            value: makeOptionValue(searchTerm, searchTerm),
+            data: 'free-text'
+          },
           ...options
         ]
       : options,
@@ -113,7 +117,7 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
           ? '@*='
           : '=';
 
-        const [ node_identifier, name ] = item.value.split('\0');
+        const { node_identifier, name } = parseOptionValue(item.value);
 
         const nodeIdentifierSelector = node_identifier.length === 0
           ? ''
@@ -125,7 +129,7 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
 
         if (item.data === 'free-text') {
           return [ nodeIdentifierSelector, nameSelector ]
-            .filter(selector => selector != null)
+            .filter(selector => selector.length > 0)
             .map(selector => `node${selector}`)
             .join(', ');
         } else {
@@ -163,4 +167,17 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
       />
     </div>
   );
+}
+
+function makeOptionValue(node_identifier: string | undefined = '', name: string | undefined = '') {
+  return `${node_identifier}\0${name}`;
+}
+
+function parseOptionValue(value: string) {
+  const [ node_identifier = '', name = '' ] = value.split('\0');
+
+  return {
+    node_identifier,
+    name
+  };
 }
