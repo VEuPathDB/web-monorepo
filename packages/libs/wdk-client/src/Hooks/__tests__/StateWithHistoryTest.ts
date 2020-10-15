@@ -45,4 +45,26 @@ describe('useStateWithHistory', () => {
     expect(result.current.canUndo).toBeTruthy();
     expect(result.current.canRedo).toBeTruthy();
   });
+
+  it('should allow functional state updates', () => {
+    const { result } = renderHook(() => useStateWithHistory(1, { size: 2 }));
+    act(() => {
+      result.current.set(n => n * 3);
+    });
+    expect(result.current.state).toBe(3);
+    act(() => {
+      result.current.set(n => n * 3);
+    });
+    expect(result.current.state).toBe(9);
+  });
+
+  it('should allow to initialize with undefined', () => {
+    const { result } = renderHook(() => useStateWithHistory<number>({ size: 2 }));
+    expect(result.current.state).toBeUndefined();
+    act(() => {
+      result.current.set(1);
+      result.current.set(2);
+    });
+    expect(result.current.state).toBe(2);
+  })
 })
