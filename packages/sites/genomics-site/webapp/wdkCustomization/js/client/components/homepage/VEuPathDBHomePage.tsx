@@ -826,6 +826,15 @@ const useHeaderMenuItems = (
           tooltip: 'Login first to keep your work',
           type: 'reactRoute',
           url: '/reset-session',
+        },
+        { 
+          key: 'user-doc',
+          display: 'Downloadable User documentation',
+          type: 'externalLink',
+          url: makeExternalStaticPageUrl(
+                 communitySite,
+                 '/documents/VEuPathDB_User_Documentation_Sep2020.pdf'
+               )
         }
       ]
     },
