@@ -32,9 +32,10 @@ cytoscape-panzoom@^2.5.2:
   dependencies:
     jquery "^1.4 || ^2.0 || ^3.0"
 
-cytoscape@^3.2.9:
-  version "3.2.10"
-  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.2.10.tgz#608b7769e11aba06011df72c7680e353f1213828"
+cytoscape@3.2.9:
+  version "3.2.9"
+  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.2.9.tgz#383fa975b04e0c05926ff27fa58550ddf0681494"
+  integrity sha512-BqYJsq1Q3Bm5A/fk9nRAcF6bOdQOyo5ko+NEvh8ufAylCG6Vx3jtZu3G4CXr14b+7VlpSC8a3kA6+rd6LX+EBQ==
   dependencies:
     heap "^0.2.6"
     lodash.debounce "^4.0.8"
