@@ -1324,7 +1324,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
               webAppUrl={this.props.siteConfig.webAppUrl}
               primary_key={primary_key}
               projectId={projectId}
-              onClearMatchesClick={() => this.setState({ searchCriteria: undefined })}
               onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
               onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
               cy={this.state.cy}
