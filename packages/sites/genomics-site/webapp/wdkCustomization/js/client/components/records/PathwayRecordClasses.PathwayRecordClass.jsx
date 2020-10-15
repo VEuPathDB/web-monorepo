@@ -19,7 +19,6 @@ import * as Ontology from 'wdk-client/Utils/OntologyUtils';
 import * as Category from 'wdk-client/Utils/CategoryUtils';
 import Menu from 'ebrc-client/components/Menu';
 
-import { PathwaySearchByTerm } from './PathwaySearchByTerm';
 import { PathwaySearchById } from './PathwaySearchById';
 import {
   clearHighlighting,
@@ -1032,7 +1031,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     super(props, context);
     this.state = {
       openSelector: null,
-      openSearch: null,
       searchCriteria: undefined,
       userScrollingEnabled: false,
     };
@@ -1304,28 +1302,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
             onChange={this.onExperimentChange}
           />
         </Dialog>
-        <Dialog
-          title="Search Nodes"
-          open={this.state.openSearch === SEARCHES.TERM}
-          onClose={() => this.setState({ openSearch: null })}
-          draggable
-        >
-          <PathwaySearchByTerm
-            onSearchCriteriaChange={this.onSearchCriteriaChange}
-          />
-        </Dialog>
-        <Dialog
-          title="Search Nodes"
-          className="veupathdb-SearchByIdDialog"
-          open={this.state.openSearch === SEARCHES.ID}
-          onClose={() => this.setState({ openSearch: null })}
-          draggable
-        >
-          <PathwaySearchById
-            onSearchCriteriaChange={this.onSearchCriteriaChange}
-            nodes={this.state.cy && this.state.cy.nodes()}
-          />
-        </Dialog>
         <div>
           <p>
             <strong>NOTE </strong>
@@ -1355,8 +1331,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
               onClearMatchesClick={() => this.setState({ searchCriteria: undefined })}
               onGeneraSelectorClick={() => this.setState({ openSelector: SELECTORS.GENERA })}
               onGraphSelectorClick={() => this.setState({ openSelector: SELECTORS.GRAPH })}
-              onSearchByIdClick={() => this.setState({ openSearch: SEARCHES.ID })}
-              onSearchByTermClick={() => this.setState({ openSearch: SEARCHES.TERM })}
               cy={this.state.cy}
             />
           </div>
@@ -1408,11 +1382,8 @@ function VisMenu(props) {
   let {
     cy,
     primary_key,
-    onClearMatchesClick,
     onGeneraSelectorClick,
     onGraphSelectorClick,
-    onSearchByIdClick,
-    onSearchByTermClick
   } = props;
   let jsonKeys = ['elements', 'nodes', 'data', 'id', 'display_label', 'parent', 'cellular_location', 'node_type', 'x', 'y', 'name', 'node_identifier', 'position', 'edges', 'is_reversible', 'source', 'target', 'reaction_source_id'];
 
