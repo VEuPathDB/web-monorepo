@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useState, useContext} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {GeoBBox, MarkerProps, BoundsViewport, AnimationFunction} from "./Types";
 import { useLeaflet } from "react-leaflet";
 import { LatLngBounds } from 'leaflet'

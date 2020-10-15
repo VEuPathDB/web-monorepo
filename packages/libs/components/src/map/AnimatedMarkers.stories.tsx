@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useCallback, useContext } from 'react';
+import React, { ReactElement, useState, useCallback } from 'react';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
 import { Tooltip } from 'react-leaflet';
