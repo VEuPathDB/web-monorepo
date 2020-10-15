@@ -156,7 +156,7 @@ export const StepAnalysisPathwayEnrichmentResults: React.SFC<StepAnalysisResultP
       />
       <WordCloudModal
         imgUrl={
-          `${webAppUrl}/service/users/current/steps/${analysisConfig.stepId}/analyses/${analysisConfig.analysisId}/resources?path=${analysisResult.imageDownloadPath}`
+          `${webAppUrl}/service/users/current/steps/${analysisConfig.stepId}/analyses/${analysisConfig.analysisId}/resources?path=${analysisResult.imageDownloadPath}&_=${Date.now()}`
         }
         open={wordCloudOpen}
         onClose={() => {
