@@ -1,5 +1,4 @@
 import React from 'react';
-import { action } from '@storybook/addon-actions';
 import LinePlot from './LinePlot';
 
 export default {
@@ -8,7 +7,6 @@ export default {
 };
 
 export const Basic = () => <LinePlot
-  onPlotUpdate={action('state updated')}
   data={[{
     x: ['A','B','C','D','E'],
     y: [2,4,3,5,8],
@@ -25,7 +23,6 @@ export const Basic = () => <LinePlot
 
 
 export const BasicFilled = () => <LinePlot
-  onPlotUpdate={action('state updated')}
   data={[{
     x: [1,2,4,8,16,32,64,128],
     y: [22,54,90,12,94,38,25,82],
@@ -44,7 +41,6 @@ export const BasicFilled = () => <LinePlot
 
 const x = ['A','B','C','D','E'];
 export const MultiVariate = () => <LinePlot
-  onPlotUpdate={action('state updated')}
   data={[{
     x,
     y: [1,2,3,4,5],
@@ -84,7 +80,6 @@ export const MultiVariate = () => <LinePlot
 
 
 export const MultiVariateFilled = () => <LinePlot
-  onPlotUpdate={action('state updated')}
   data={[{
     x:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],
     y: [90,92,95,95,96,97,97,98,98,97,94,94,92,90,84,78,52,29,17,10,5,3,2,2,0,0,0,0,0,0,0,0,0,0,0,0,5,5,5,8,16,22,28,38,50,66,70,67],
