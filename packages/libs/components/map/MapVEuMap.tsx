@@ -16,7 +16,7 @@ import CustomGridLayer from "./CustomGridLayer";
  * 
  * @param props 
  */
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, showGrid}: MapVEuMapProps) {
 
 
     // this is the React Map component's onViewPortChanged handler
@@ -42,7 +42,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
                 attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
             />
 
-            <CustomGridLayer />
+            { showGrid ? <CustomGridLayer /> : null }
 
             <SemanticMarkers
                 onViewportChanged={onViewportChanged}
