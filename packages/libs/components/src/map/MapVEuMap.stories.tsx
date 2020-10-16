@@ -4,6 +4,7 @@ import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
 import { Marker } from 'react-leaflet';
 import './TempIconHack';
+import geohashAnimation from "./animation_functions/geohash";
 
 
 export default {
@@ -41,6 +42,12 @@ export const Basic = () => {
     height="600px" width="800px"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    animation={{
+      method: "geohash",
+      duration: 300,
+      animationFunction: geohashAnimation
+    }}
+    showGrid={true}
     />
   );
 }

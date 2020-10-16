@@ -7,7 +7,6 @@ import './TempIconHack';
 import {DriftMarker} from "leaflet-drift-marker";
 import geohashAnimation from "./animation_functions/geohash";
 import md5 from 'md5';
-import ZoomLevelToGeoHashLevel from "./utilities/ZoomLevelToGeoHashLevel";
 
 export default {
   title: 'Animated Markers',
@@ -137,6 +136,7 @@ export const GeohashIds = () => {
       duration: 300,
       animationFunction: geohashAnimation
     }}
+    showGrid={true}
     />
   );
 };
@@ -154,7 +154,32 @@ export const NoAnimation = () => {
     height="96vh" width="98vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    animation={null}
+    showGrid={true}
     />
+  );
+};
+
+export const NoGrid = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+
+  const handleViewportChanged = useCallback((bvp: BoundsViewport, duration: number) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+  }, [setMarkerElements]);
+
+  return (
+      <MapVEuMap
+          viewport={{center: [ 20, -3 ], zoom: 6}}
+          height="96vh" width="98vw"
+          onViewportChanged={handleViewportChanged}
+          markers={markerElements}
+          animation={{
+            method: "geohash",
+            duration: 300,
+            animationFunction: geohashAnimation
+          }}
+          showGrid={false}
+      />
   );
 };
 
@@ -181,6 +206,7 @@ export const ScrambledGeohashIds = () => {
       duration: 300,
       animationFunction: geohashAnimation
     }}
+    showGrid={true}
     />
   );
 };
@@ -200,8 +226,8 @@ export const ScrambledGeohashIds = () => {
 export const EdgeCase = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
 
-  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getMarkerElements(bvp, 100000));
+  const handleViewportChanged = useCallback((bvp: BoundsViewport, duration: number) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
   }, [setMarkerElements])
 
   return (
@@ -210,7 +236,12 @@ export const EdgeCase = () => {
     height="96vh" width="98vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
-    setMarkerElements={setMarkerElements}
+    animation={{
+      method: "geohash",
+      duration: 300,
+      animationFunction: geohashAnimation
+    }}
+    showGrid={true}
     />
   );
 };
