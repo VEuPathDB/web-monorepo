@@ -1,6 +1,14 @@
 import React from "react";
+import { PlotData } from "plotly.js";
 import PlotlyPlot from "./PlotlyPlot";
+import { PlotComponentProps } from "./Types";
 import DefaultColorGen from "./DefaultColorGen";
+
+// interface Props extends PlotComponentProps<'name'|'x'|'y'|'mode'|'fill'> {
+//   xLabel: string;
+//   yLabel: string;  
+//   plotTitle: string;
+// }
 
 type Value = number | Date;
 
@@ -10,7 +18,7 @@ type PiePlotDatum = {
   color?: string;
 };
 
-interface PieProps {
+interface Props {
   data: PiePlotDatum[];
   interior?: {
     heightPercentage: number;
@@ -21,12 +29,12 @@ interface PieProps {
   };
 }
 
-export default function Pie(props: PieProps) {
+export default function Pie(props: Props) {
   const { data, interior = null } = props;
   const defaultColorIter = DefaultColorGen();
   let interiorProps;
   let layout = {};
-  let newData = [];
+  let newData: PlotComponentProps<'values'|'labels'|'marker'|'domain'|'hoverinfo'|'textinfo'|'showlegend'>['data'] = [];
 
   if (interior) {
     interiorProps = {
@@ -56,7 +64,7 @@ export default function Pie(props: PieProps) {
 
     // To implement the donut hole background color, we add a feaux data trace
     // inside the hole with no markings
-    newData.push({
+    const feauxDataTrace: Pick<PlotData, 'values'|'labels'|'marker'|'domain'|'hoverinfo'|'textinfo'|'showlegend'> = {
       values: [1],
       labels: [''],
       marker: {
@@ -71,7 +79,8 @@ export default function Pie(props: PieProps) {
       hoverinfo: 'none',
       textinfo: 'none',
       showlegend: false,
-    });
+    };
+    newData.push(feauxDataTrace);
   }
 
   // Preprocess data for PlotlyPlot
@@ -86,13 +95,21 @@ export default function Pie(props: PieProps) {
     return accumulatorObj;
   };
 
-  newData.push({
+  interface PiePlotData extends Pick<PlotData, 'values'|'labels'|'marker'|'direction'> {
+    direction: 'clockwise' | 'counterclockwise',
+    sort: boolean,
+    hoverinfo: PlotData['textinfo'],
+  }
+
+  const primaryDataTrace: PiePlotData = {
     ...interiorProps,
     ...data.reduce(reducer, {values: [], labels: [], marker: {colors: []}}),
     direction: 'clockwise',
     sort: false,
     hoverinfo: 'label+value+percent',
-  });
+  };
 
-  return <PlotlyPlot<'values'> data={newData} layout={layout} type="pie"/>
+  newData.push(primaryDataTrace);
+
+  return <PlotlyPlot data={newData} layout={layout} type="pie"/>
 }
