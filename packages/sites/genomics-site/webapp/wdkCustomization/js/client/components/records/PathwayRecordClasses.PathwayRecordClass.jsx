@@ -1240,20 +1240,6 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
         highlightFoundNodes(foundNodes);
 
         cy.center(foundNodes);
-
-        if (foundNodes.length >= 1) {
-          cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
-
-          if (foundNodes.length === 1) {
-            // If exactly one node was matched, open its details
-            const foundNode = foundNodes[0];
-
-            this.props.setActiveNodeData(Object.assign({}, foundNode.data()));
-          } else {
-            // If multiple nodes were matched, close the open node details
-            this.clearActiveNodeData();
-          }
-        }
       }
     }
   }
