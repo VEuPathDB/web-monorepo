@@ -1,5 +1,4 @@
 import React from 'react';
-import { action } from '@storybook/addon-actions';
 import ScatterPlot from './ScatterPlot';
 
 export default {
@@ -8,7 +7,6 @@ export default {
 };
 
 export const Basic = () => <ScatterPlot
-  onPlotUpdate={action('state updated')}
   data={[{
     x: [1, 2, 5, 6, 10, 12, 14, 18, 20, 22, 24, 26, 29, 30, 35],
     y: [3, 5, 1, 8, 6,  2,  20, 5,  10, 12, 14, 16, 20, 25, 27],
@@ -19,7 +17,6 @@ export const Basic = () => <ScatterPlot
 />
 
 export const MultiVariate = () => <ScatterPlot
-  onPlotUpdate={action('state updated')}
   data={[{
     x: [1, 2, 5, 6, 10, 12, 14, 18, 20, 22, 24, 26, 29, 30, 35],
     y: [3, 5, 1, 8, 6,  2,  20, 5,  10, 12, 14, 16, 20, 25, 27],
