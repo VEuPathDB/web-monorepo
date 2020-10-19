@@ -1,14 +1,26 @@
 import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
-import { PlotComponentProps } from "./Types";
+import { PlotData } from 'plotly.js';
 
-export interface Props extends PlotComponentProps<'name'|'x'|'y'|'line'|'fill'> {
+export interface Props {
+  data: {
+    name: PlotData['name'];
+    x: PlotData['x'];
+    y: PlotData['y'];
+    fill: PlotData['fill'];
+    line: PlotData['line'];
+  }[];
   xLabel: string;
   yLabel: string;
 }
 
 export default function LinePlot(props: Props) {
-  const { xLabel, yLabel, ...plotlyProps } = props;
+  const { xLabel, yLabel, data, ...plotlyProps } = props;
+  const finalData = data.map(d => ({
+    ...d,
+    type: 'scatter',
+    mode: 'lines'
+  } as const))
   const layout = {
     xaxis: {
       title: xLabel
@@ -18,8 +30,6 @@ export default function LinePlot(props: Props) {
     }
   }
   return (
-  <
-    PlotlyPlot {...plotlyProps} layout={layout} type="scatter" mode="lines"
-    />
+  <PlotlyPlot {...plotlyProps} layout={layout} data={finalData}/>
   )
 }

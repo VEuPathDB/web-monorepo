@@ -1,5 +1,4 @@
 import React from 'react';
-import { action } from '@storybook/addon-actions';
 import ScatterAndLinePlot from './ScatterAndLinePlot';
 
 export default {
@@ -9,7 +8,6 @@ export default {
 
 
 export const Basic = () => <ScatterAndLinePlot
-  onPlotUpdate={action('state updated')}
   data={[{
     x: ['bf-ld','bf-hd'],
     y: [-1.06, -0.65],
@@ -32,7 +30,6 @@ export const Basic = () => <ScatterAndLinePlot
 
 
 export const BasicFilled = () => <ScatterAndLinePlot
-onPlotUpdate={action('state updated')}
 data={[{
   x: ['bf-ld','bf-hd'],
   y: [-1.06, -0.65],
