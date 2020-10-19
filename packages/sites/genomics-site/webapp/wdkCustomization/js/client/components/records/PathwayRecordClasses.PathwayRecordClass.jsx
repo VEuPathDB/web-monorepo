@@ -375,7 +375,7 @@ function addCellularLocation (node, cellularLocationNode) {
 
 
 
-function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges, name, userScrollingEnabled) {
+function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges, name, userZoomingEnabled) {
 
   return Promise.all([loadCytoscapeJs(), loadChemDoodleWeb()])
     .then(function([ cytoscape ]) {
@@ -702,7 +702,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
         ],
         layout:myLayout,
         zoom:1,
-        userZoomingEnabled: !userScrollingEnabled
+        userZoomingEnabled
     });
 
 
@@ -1028,13 +1028,13 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     this.state = {
       openSelector: null,
       searchCriteria: undefined,
-      userScrollingEnabled: false,
+      userZoomingEnabled: false,
     };
     this.clearActiveNodeData = this.clearActiveNodeData.bind(this);
     this.resetVis = this.resetVis.bind(this);
     this.onGeneraChange = this.onGeneraChange.bind(this);
     this.onExperimentChange = this.onExperimentChange.bind(this);
-    this.onClickUserScrollingToggle = this.onClickUserScrollingToggle.bind(this);
+    this.onClickUserZoomingToggle = this.onClickUserZoomingToggle.bind(this);
     this.onSearchCriteriaChange = this.onSearchCriteriaChange.bind(this);
   }
 
@@ -1050,8 +1050,8 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
       this.initVis();
     }
 
-    if (prevState.userScrollingEnabled !== this.state.userScrollingEnabled) {
-      this.toggleUserScrolling(this.state.userScrollingEnabled);
+    if (prevState.userZoomingEnabled !== this.state.userZoomingEnabled) {
+      this.updateUserZooming(this.state.userZoomingEnabled);
     }
 
     if (prevState.searchCriteria !== this.state.searchCriteria) {
@@ -1063,7 +1063,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     let { primary_key, source, name } = this.props.record.attributes;
     let { PathwayNodes, PathwayEdges } = this.props.record.tables;
 
-    makeCy(this.refs.cytoContainer, primary_key, source, PathwayNodes, PathwayEdges, name, this.state.userScrollingEnabled)
+    makeCy(this.refs.cytoContainer, primary_key, source, PathwayNodes, PathwayEdges, name, this.state.userZoomingEnabled)
       .then(cy => {
 
         // listener for when nodes and edges are clicked
@@ -1189,9 +1189,9 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     }
   }
 
-  toggleUserScrolling(isEnabled) {
+  updateUserZooming(isEnabled) {
     if (this.state.cy != null) {
-      this.state.cy.userZoomingEnabled(!isEnabled);
+      this.state.cy.userZoomingEnabled(isEnabled);
     }
   }
 
@@ -1199,9 +1199,9 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
     this.props.setActiveNodeData(null);
   }
 
-  onClickUserScrollingToggle(newValue) {
+  onClickUserZoomingToggle(newValue) {
     this.setState({
-      userScrollingEnabled: newValue
+      userZoomingEnabled: newValue
     });
   }
 
@@ -1241,11 +1241,18 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
 
         cy.center(foundNodes);
 
-        if (foundNodes.length === 1) {
-          const node = foundNodes[0];
-
-          this.props.setActiveNodeData(Object.assign({}, node.data()));
+        if (foundNodes.length >= 1) {
           cy.nodes().removeClass('eupathdb-CytoscapeActiveNode');
+
+          if (foundNodes.length === 1) {
+            // If exactly one node was matched, open its details
+            const foundNode = foundNodes[0];
+
+            this.props.setActiveNodeData(Object.assign({}, foundNode.data()));
+          } else {
+            // If multiple nodes were matched, close the open node details
+            this.clearActiveNodeData();
+          }
         }
       }
     }
@@ -1338,17 +1345,17 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           <div className="veupathdb-PathwayRecord-menuControls">
             <label>
               <Checkbox
-                value={this.state.userScrollingEnabled}
-                onChange={this.onClickUserScrollingToggle}
+                value={this.state.userZoomingEnabled}
+                onChange={this.onClickUserZoomingToggle}
               />
-              &nbsp;Enable Scrolling
+              &nbsp;Enable Mouse Zooming
             </label>
             <button
               className="btn veupathdb-PathwayRecord-ResetDisplayButton"
               type="button"
               onClick={this.resetVis}
             >
-              Reset
+              Reset Layout
             </button>
             <div className="eupathdb-PathwayRecord-cytoscapeIcon">
               <a href="http://js.cytoscape.org/">
