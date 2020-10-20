@@ -1,13 +1,13 @@
 import {MarkerProps} from "../Types";
-import {cloneElement, ReactElement} from "react";
+import {ReactElement} from "react";
+import updateMarkers from "./updateMarkers";
 
 interface geoHashAnimation {
     prevMarkers: Array<ReactElement<MarkerProps>>,
     markers: Array<ReactElement<MarkerProps>>
 }
 
-export default function geohashAnimation({prevMarkers,
-                                             markers}: geoHashAnimation) {
+export default function geohashAnimation({prevMarkers, markers}: geoHashAnimation) {
     const prevGeoHash = prevMarkers[0].key as string;
     const currentGeohash = markers[0].key as string;
     let zoomType, consolidatedMarkers;
@@ -45,29 +45,3 @@ export default function geohashAnimation({prevMarkers,
     return {zoomType: zoomType, markers: consolidatedMarkers}
 }
 
-function updateMarkers(toChangeMarkers: Array<ReactElement<MarkerProps>>,
-                       sourceMarkers: Array<ReactElement<MarkerProps>>,
-                       hashDif: number) {
-    return toChangeMarkers.map((markerObj) => {
-        // Calculate the matching geohash
-        const sourceKey = markerObj.key as string;
-        const sourceHash = sourceKey.slice(0, -hashDif);
-
-        // Find the object with the matching geohash
-        const matchingMarkers = sourceMarkers.filter(obj => {
-            return obj.key === sourceHash
-        });
-
-        // Clone marker element with new position
-        let markerCloneProps = {};
-        if (matchingMarkers.length == 1) {
-            // Clone marker element with new position
-            markerCloneProps = {
-                position: matchingMarkers[0].props.position
-            };
-        }
-
-        return cloneElement(markerObj, markerCloneProps);
-    });
-
-}
