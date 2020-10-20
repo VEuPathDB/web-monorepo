@@ -41,6 +41,12 @@ const initialState: State = {
 export function reduce(state: State = initialState, action: Action): State {
   switch(action.type) {
 
+    case openStrategyView.type:
+      return {
+        ...state,
+        strategySummaries: undefined
+      }
+
     case setActiveStrategy.type:
       return {
         ...state,
