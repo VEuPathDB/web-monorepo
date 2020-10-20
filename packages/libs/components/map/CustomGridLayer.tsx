@@ -16,8 +16,8 @@ export default function CustomGridLayer() {
     const { map } = useLeaflet();
 
     const [geohashes, setGeohashes] = useState<string[]>([]);
-    const [polylines, setPolylines] = useState<ReactElement<Polyline>[]>([]);
-    const [mapBounds, setMapBounds] = useState<LatLngBounds | null>(null)
+    let polylines : ReactElement<Polyline>[]= [];
+    const [mapBounds, setMapBounds] = useState<LatLngBounds | null>(null);
 
     useEffect(() => {
         if (map == null) return;
@@ -57,49 +57,46 @@ export default function CustomGridLayer() {
         };
     }, [map]);
 
-    // bfox6 - When geohashes change, update the map with new Polylines
-    useEffect(() => {
-        if (mapBounds != null) {
-            const lats: number[] = [];
-            const lons: number[] = []
+    // bfox6 - Determine and build new polylines.
+    if (mapBounds != null) {
+        const lats: number[] = [];
+        const lons: number[] = []
 
-            // bfox6 - Get the unique latitude and longitude values for each geohash NE boundary
-            geohashes.map(geohash => {
-                const latlon = Geohash.bounds(geohash);
-                if (lats.indexOf(latlon.ne.lat) < 0) {
-                    lats.push(latlon.ne.lat)
-                }
-                if (lons.indexOf(latlon.ne.lon) < 0) {
-                    lons.push(latlon.ne.lon)
-                }
-            });
+        // bfox6 - Get the unique latitude and longitude values for each geohash NE boundary
+        geohashes.forEach(geohash => {
+            const latlon = Geohash.bounds(geohash);
+            if (lats.indexOf(latlon.ne.lat) < 0) {
+                lats.push(latlon.ne.lat)
+            }
+            if (lons.indexOf(latlon.ne.lon) < 0) {
+                lons.push(latlon.ne.lon)
+            }
+        });
 
-            const latLines = lats.map((lat) => {
-                return (
-                    <Polyline color="gray"
-                              positions={[[lat, mapBounds.getWest()], [lat, mapBounds.getEast()]]}
-                              opacity={.8}
-                              weight={1}
-                              dashArray={[10]}
+        const latLines = lats.map((lat) => {
+            return (
+                <Polyline color="gray"
+                          positions={[[lat, mapBounds.getWest()], [lat, mapBounds.getEast()]]}
+                          opacity={.8}
+                          weight={1}
+                          dashArray={[10]}
 
-                    />
-                )
-            })
+                />
+            )
+        })
 
-            const lonLines = lons.map((lon) => {
-                return (
-                    <Polyline color="gray"
-                              positions={[[mapBounds.getNorth(), lon], [mapBounds.getSouth(), lon]]}
-                              opacity={.8}
-                              weight={1}
-                              dashArray={[10]}
-                    />
-                )
-            })
-            setPolylines([...latLines, ...lonLines]);
-        }
-    }, [geohashes, mapBounds]);
-
+        const lonLines = lons.map((lon) => {
+            return (
+                <Polyline color="gray"
+                          positions={[[mapBounds.getNorth(), lon], [mapBounds.getSouth(), lon]]}
+                          opacity={.8}
+                          weight={1}
+                          dashArray={[10]}
+                />
+            )
+        })
+        polylines = [...latLines, ...lonLines];
+    }
 
     return(<>{polylines}</>)
 }
