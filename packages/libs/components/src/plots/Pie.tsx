@@ -1,7 +1,12 @@
 import React from "react";
-import { PlotData } from "./Types";
 import PlotlyPlot from "./PlotlyPlot";
 import DefaultColorGen from "./DefaultColorGen";
+import { PlotData as PlotlyPlotData } from 'plotly.js';
+
+export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
+  hoverinfo: PlotlyPlotData['hoverinfo'] | PlotlyPlotData['textinfo'],
+  sort: boolean;
+}
 
 type Value = number | Date;
 
@@ -89,12 +94,6 @@ export default function Pie(props: Props) {
     return accumulatorObj;
   };
 
-  // interface PiePlotData extends Pick<PlotData, 'values'|'labels'|'marker'|'direction'|'type'> {
-  //   direction: 'clockwise' | 'counterclockwise',
-  //   sort: boolean,
-  //   hoverinfo: PlotData['textinfo'],
-  // }
-
   const primaryDataTrace: Partial<PlotData> = {
     ...interiorProps,
     ...data.reduce(reducer, {values: [], labels: [], marker: {colors: []}}),
@@ -106,5 +105,5 @@ export default function Pie(props: Props) {
 
   newData.push(primaryDataTrace);
 
-  return <PlotlyPlot data={newData} layout={layout}/>
+  return <PlotlyPlot data={newData as any} layout={layout}/>
 }

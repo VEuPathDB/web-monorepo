@@ -7,7 +7,7 @@ import { defaults } from "plotly.js/src/components/color/attributes";
  *    nextColor = defaultColorIter.next().value;   // Repeat
  */
 export default function* DefaultColorGen() {
-  let myDefaults: string[] = Array.from(defaults);
+  let myDefaults = Array.from(defaults);
 
   while (true) {
     let nextColor = myDefaults.shift() as string;
