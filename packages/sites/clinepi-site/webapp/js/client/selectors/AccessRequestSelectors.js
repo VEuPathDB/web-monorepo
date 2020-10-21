@@ -15,8 +15,15 @@ export const datasetId = ({ study }) => get(
 );
 export const studyName = ({ study }) => get(
   study,
-  'attributes.display_name',
-  []
+  'attributes.display_name'
+);
+export const requestNeedsApproval = ({ study }) => get(
+  study,
+  'attributes.request_needs_approval'
+);
+export const downloadLink = ({ study }) => get(
+  study,
+  'attributes.bulk_download_url.url'
 );
 export const labels = ({ study }) => {
   const profileLabels = {

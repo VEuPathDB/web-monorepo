@@ -34,15 +34,25 @@ export default class AccessRequestView extends Component {
     const AccessRequestForm = this.renderAccessRequestForm;
     const {
       successfullySubmitted,
+      requestNeedsApproval,
+      downloadLink,
       alreadyRequested,
       webAppUrl
     } = this.props;
 
-    if (successfullySubmitted) {
+    if (successfullySubmitted && (requestNeedsApproval!="0")) {
       return (
         <Fragment>
           <p>
             Your data access request has been submitted. We will contact you if any additional information is needed. Please <a href={`${webAppUrl}/app/contact-us`} target="_blank">contact us</a> with any questions.
+          </p>
+        </Fragment>
+      );
+    } else if (successfullySubmitted && (requestNeedsApproval=="0")) {
+      return (
+        <Fragment>
+          <p>
+          Thank you for submitting your data access registration. You can now <a href={`${downloadLink}`}>download the study data</a> .
           </p>
         </Fragment>
       );
