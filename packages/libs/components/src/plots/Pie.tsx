@@ -1,14 +1,7 @@
 import React from "react";
-import { PlotData } from "plotly.js";
+import { PlotData } from "./Types";
 import PlotlyPlot from "./PlotlyPlot";
-import { PlotComponentProps } from "./Types";
 import DefaultColorGen from "./DefaultColorGen";
-
-// interface Props extends PlotComponentProps<'name'|'x'|'y'|'mode'|'fill'> {
-//   xLabel: string;
-//   yLabel: string;  
-//   plotTitle: string;
-// }
 
 type Value = number | Date;
 
@@ -34,7 +27,7 @@ export default function Pie(props: Props) {
   const defaultColorIter = DefaultColorGen();
   let interiorProps;
   let layout = {};
-  let newData: PlotComponentProps<'values'|'labels'|'marker'|'domain'|'hoverinfo'|'textinfo'|'showlegend'>['data'] = [];
+  let newData: Partial<PlotData>[] = [];
 
   if (interior) {
     interiorProps = {
@@ -64,7 +57,8 @@ export default function Pie(props: Props) {
 
     // To implement the donut hole background color, we add a feaux data trace
     // inside the hole with no markings
-    const feauxDataTrace: Pick<PlotData, 'values'|'labels'|'marker'|'domain'|'hoverinfo'|'textinfo'|'showlegend'> = {
+    const feauxDataTrace: Partial<PlotData> = {
+      type: 'pie',
       values: [1],
       labels: [''],
       marker: {
@@ -95,15 +89,16 @@ export default function Pie(props: Props) {
     return accumulatorObj;
   };
 
-  interface PiePlotData extends Pick<PlotData, 'values'|'labels'|'marker'|'direction'> {
-    direction: 'clockwise' | 'counterclockwise',
-    sort: boolean,
-    hoverinfo: PlotData['textinfo'],
-  }
+  // interface PiePlotData extends Pick<PlotData, 'values'|'labels'|'marker'|'direction'|'type'> {
+  //   direction: 'clockwise' | 'counterclockwise',
+  //   sort: boolean,
+  //   hoverinfo: PlotData['textinfo'],
+  // }
 
-  const primaryDataTrace: PiePlotData = {
+  const primaryDataTrace: Partial<PlotData> = {
     ...interiorProps,
     ...data.reduce(reducer, {values: [], labels: [], marker: {colors: []}}),
+    type: 'pie',
     direction: 'clockwise',
     sort: false,
     hoverinfo: 'label+value+percent',
@@ -111,5 +106,5 @@ export default function Pie(props: Props) {
 
   newData.push(primaryDataTrace);
 
-  return <PlotlyPlot data={newData} layout={layout} type="pie"/>
+  return <PlotlyPlot data={newData} layout={layout}/>
 }
