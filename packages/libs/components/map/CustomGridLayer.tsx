@@ -68,8 +68,14 @@ export default function CustomGridLayer() {
             if (lats.indexOf(latlon.ne.lat) < 0) {
                 lats.push(latlon.ne.lat)
             }
+            if (lats.indexOf(latlon.sw.lat) < 0) {
+                lats.push(latlon.sw.lat)
+            }
             if (lons.indexOf(latlon.ne.lon) < 0) {
                 lons.push(latlon.ne.lon)
+            }
+            if (lons.indexOf(latlon.sw.lon) < 0) {
+                lons.push(latlon.sw.lon)
             }
         });
 
