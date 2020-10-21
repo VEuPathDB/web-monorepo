@@ -5,6 +5,32 @@
   right: 10px
 }
 
+/* DKDK reduce min-height for numeric (range data) - copy from .legend-contents at vb-popbio-maps.css */
+.legend-contents-numeric {
+    text-align    : left;
+    line-height   : 15px;
+    color         : #555555;
+    /* DKDK changed margin-bottom from 5 to 0 */
+    margin-bottom : 0px !important;
+    border-radius : 0 !important;
+    /* DKDK change these for mapveu v2
+    width         : 280px;
+    min-height    : 300px; */
+    width         : 250px;
+    /* DKDK change min-height for numeric data */
+    min-height    : 130px;
+    /* DKDK combine with other CSS defined */
+    /* padding: 6px 8px 6px 8px; */
+    padding: 0px 0px 0px 0px;
+    background: white;
+    /*max-width     : 230px;
+    position: absolute;
+    right: 0px;
+    top: 30%;*/
+    /* DKDK add margin-top for numeric - may not be necessary when using dropdown menu */
+    /* margin-top: 10px; */
+  }
+
 /* DKDK override bootstrap css for legend dropdown menu */
 
 .legend .btn-success {
@@ -119,3 +145,37 @@
   position: relative;
   right: -85%;
 }
+
+/* DKDK add square icon case with the presence of legend-square-icon className */
+.legend .legend-square-icon i {
+  border-radius: 0px;
+}
+
+/* DKDK add legend-field-text */
+.legend .legend-field-text {
+  text-align: right;
+  margin-bottom: -12px;
+}
+
+/* DKDK add legend-marker-description */
+.legend .legend-marker-description {
+  text-align: center;
+}
+
+.legend .legend-marker-description img {
+  margin: 12px auto;
+}
+
+/* DKDK legend-list-radio-button */
+.legend .legend-list-radio-button .legend-list-radio-button-title {
+  /* margin-top: 24px; */
+  margin: 12px auto 5px auto;
+  line-height: 15px;
+}
+
+.legend .legend-list-radio-button Label {
+  /* margin-top: 24px; */
+  /* margin: 12px auto 5px auto; */
+  line-height: 5px;
+}
+

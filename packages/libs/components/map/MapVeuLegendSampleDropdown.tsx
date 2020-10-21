@@ -4,6 +4,10 @@ import React from 'react';
 import LegendList from './LegendList';
 //DKDK import BarChart
 import BarChartLegend from './BarChartLegend';
+
+//DKDK legend tutorial info
+import LegendListInfo from "./LegendListInfo"
+
 //DKDk import react-boostrap
 import Dropdown from 'react-bootstrap/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -56,6 +60,12 @@ const MapVeuLegendSampleDropdown = (props: LegendProps) => {
             // legendType={legendTypeValue}
             data={props.data}
             // divElement={div}
+          />
+          <br />
+          {/* DKDK add tutorial info component here */}
+          <LegendListInfo
+            //DKDK for now no need to have props
+            legendType={props.legendType}
           />
         </div>
       </div>
@@ -113,6 +123,11 @@ const MapVeuLegendSampleDropdown = (props: LegendProps) => {
           library={plotLibrary}
           colors={colors}
           colorMethod={colorMethod}
+        />
+        <br />
+        <LegendListInfo
+          //DKDK for now no need to have props
+          legendType={props.legendType}
         />
       </div>
     )
