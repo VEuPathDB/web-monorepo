@@ -61,6 +61,12 @@ const all_colors_hex = [
 const variableLabel: string = '<b>Collection date</b>'  //DKDK: x-axis label
 const quantityLabel: string = '<b>Record count</b>'     //DKDK: y-axis label
 
+//DKDK for testing purpose, use other variable names for bar chart
+const dropdownTitleBar: string = 'Collection Date'
+const dropdownHrefBar: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5']
+const dropdownItemTextBar: string[] =['Year', 'Month', 'Date', 'Hour', 'Minute']
+
+
 /**
  * DKDK gathering functions here temporarily
  * Need to add export to be used in the other component
@@ -252,6 +258,10 @@ export const CollectionDateList = () => {
         //DKDK legend radio button props
         onChange={legendRadioChange}
         selectedOption={legendRadioValue}
+        //DKDK add dropdown props for Legend
+        dropdownTitle={dropdownTitleBar}
+        dropdownHref={dropdownHrefBar}
+        dropdownItemText={dropdownItemTextBar}
       />
     </>
   );
