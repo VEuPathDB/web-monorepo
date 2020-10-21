@@ -192,7 +192,9 @@ const fetchStudy = (datasetId, wdkService) => wdkService.getRecord(
     attributes: [
       'dataset_id',
       'display_name',
-      'request_access_fields'
+      'request_access_fields',
+      'request_needs_approval',
+      'bulk_download_url'
     ],
     tables: []
   }

@@ -19,6 +19,8 @@ import {
   fieldElements, 
   formValues,
   studyName,
+  requestNeedsApproval,
+  downloadLink,
   title
 } from '../selectors/AccessRequestSelectors';
 
@@ -62,7 +64,9 @@ const mapStateToProps = ({
   fieldElements: fieldElements(accessRequestState),
   formTitle: title(accessRequestState),
   formValues: formValues(accessRequestState),
-  studyName: studyName(accessRequestState)
+  studyName: studyName(accessRequestState),
+  requestNeedsApproval: requestNeedsApproval(accessRequestState),
+  downloadLink: downloadLink(accessRequestState)
 });
 
 const mapDispatchToProps = {
