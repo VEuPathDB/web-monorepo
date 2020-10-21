@@ -7,6 +7,9 @@ import LegendList from './LegendList';
 //DKDK import BarChart
 import BarChartLegend from './BarChartLegend';
 
+//DKDK legend tutorial info
+import LegendListInfo from "./LegendListInfo"
+
 //DKDK type def for legend: some are set to optional for now
 export interface LegendProps {
   // className: string
@@ -37,6 +40,10 @@ const MapVeuLegendSample = (props: LegendProps) => {
             // legendType={legendTypeValue}
             data={props.data}
             // divElement={div}
+          />
+          {/* DKDK add tutorial info component here */}
+          <LegendListInfo
+          //DKDK for now no need to have props
           />
         </div>
       </div>
