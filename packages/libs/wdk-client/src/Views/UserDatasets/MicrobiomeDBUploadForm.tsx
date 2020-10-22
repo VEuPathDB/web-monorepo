@@ -122,9 +122,6 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
         <br/>
         <br/>
         If possible, try including taxonomic information and rich sample details in your file. This will allow you to select groups of samples and create meaningful comparisons at a desired aggregation level, using our filtering and visualisation tools.
-        <br/>
-        <br/>
-        For more information, visit our <Link to="static-content/MicrobiomeDB/faq.html">FAQs page</Link>.
       </p>
     );
   }
