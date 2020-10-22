@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { MapVEuMapProps } from "./Types";
-const { BaseLayer, Overlay } = LayersControl
+const { BaseLayer } = LayersControl
 import { Viewport, Map, TileLayer, LayersControl } from "react-leaflet";
 import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
@@ -13,7 +13,7 @@ import CustomGridLayer from "./CustomGridLayer";
  * 
  * @param props 
  */
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, showGrid}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, showGrid}: MapVEuMapProps) {
 
 
     // this is the React Map component's onViewPortChanged handler
@@ -47,6 +47,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
       <SemanticMarkers
         onViewportChanged={onViewportChanged}
         markers={markers}
+        animation={animation}
         nudge={nudge}
       />
 

@@ -32,9 +32,8 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
 
 export const Basic = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-  const duration = 300;
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getMarkerElements(bvp, 10, duration));
+    setMarkerElements(getMarkerElements(bvp, 10));
   }, [setMarkerElements])
 
   return (
@@ -43,11 +42,7 @@ export const Basic = () => {
     height="600px" width="800px"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
-    animation={{
-      method: "geohash",
-      animationFunction: geohashAnimation,
-      duration
-    }}
+    animation={null}
     showGrid={true}
     />
   );
