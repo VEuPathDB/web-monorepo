@@ -82,12 +82,14 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 
 //DKDK use legendRadioValue instead of knob_YAxisRangeMethod
 // const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod) => {
-  const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue: string) => {
+  const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
 
   let legendSums : number[] = [];
   let legendLabels : string[] = [];
   let legendColors : string[] = [];
   let yAxisRange : number[] = [];  // This sets range to 'local' mode
+  //DKDK make a new variable to always calculate yAxisRange (to always show Reginal scale value)
+  let yAxisRangeAll : number[] = []
 
   const buckets = collectionDateData.facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
     return ltAvg > bounds.southWest[0] &&
@@ -96,23 +98,43 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 	   lnAvg < bounds.northEast[1]
   });
 
-  //DKDK change this
+  //DKDK change this to always show Reginal scale value
   // if (knob_YAxisRangeMethod === 'regional') {
+  // if (legendRadioValue === 'Regional') {
+  //   yAxisRange = [0, buckets.reduce(
+  //     (currentMax, bucket) => {
+  //       return Math.max(
+  //         currentMax,
+  //         bucket.count - bucket.term.before.count - bucket.term.after.count - bucket.term.between.count, // no data count
+  //         bucket.term.buckets.reduce(
+  //           (currentMax, bucket) => Math.max(currentMax, bucket.count),
+  //           0
+  //         )  // current bucket max value
+  //       );
+  //     },
+  //     0
+  //   )];
+  // }
+  yAxisRangeAll = [0, buckets.reduce(
+    (currentMax, bucket) => {
+      return Math.max(
+        currentMax,
+        bucket.count - bucket.term.before.count - bucket.term.after.count - bucket.term.between.count, // no data count
+        bucket.term.buckets.reduce(
+          (currentMax, bucket) => Math.max(currentMax, bucket.count),
+          0
+        )  // current bucket max value
+      );
+    },
+    0
+  )];
+  //DKDK set yAxisRange only if Regional
   if (legendRadioValue === 'Regional') {
-    yAxisRange = [0, buckets.reduce(
-      (currentMax, bucket) => {
-        return Math.max(
-          currentMax,
-          bucket.count - bucket.term.before.count - bucket.term.after.count - bucket.term.between.count, // no data count
-          bucket.term.buckets.reduce(
-            (currentMax, bucket) => Math.max(currentMax, bucket.count),
-            0
-          )  // current bucket max value
-        );
-      },
-      0
-    )];
+    yAxisRange = yAxisRangeAll
   }
+  //DKDK add setyAxisRangeValue: be careful of type of setYAxisRangeValue
+  setYAxisRangeValue(yAxisRangeAll[1])
+  // console.log('yAxisRange = ', yAxisRange)
 
   const markers = buckets.filter(({ltAvg, lnAvg}) => {
     return ltAvg > bounds.southWest[0] &&
@@ -156,6 +178,9 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 
     const new_knob_colorMethod = knob_colorMethod === 'solid' ? 'bins' : knob_colorMethod;
 
+    //DKDK check isAtomic for push pin for chart marker
+    let atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false
+
     return (
       <RealHistogramMarkerSVGnoShadow
         method={knob_method}
@@ -174,14 +199,15 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
         values={values}
         //DKDK colors is set to be optional props, if null (e.g., comment out) then bars will have skyblue-like defaultColor
         colors={colors}
-        //DKDK disable isAtomic for histogram
-        // isAtomic={atomicValue}
+        //DKDK add isAtomic for chart marker
+        isAtomic={atomicValue}
         //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
         yAxisRange ={yAxisRange}
         // onClick={handleClick}
         onMouseOut={handleMouseOut}
         onMouseOver={handleMouseOver}
         // my_knob={boolean('My Knob', false)} // Doesn't work
+
       />
     )
   });
@@ -225,18 +251,21 @@ export const CollectionDateList = () => {
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
 
   //DKDK set legend radio button value
-  const [legendRadioValue, setLegendRadioValue] = useState<string>("Regional");
+  const [legendRadioValue, setLegendRadioValue] = useState<string>('Regional')
   //DKDK Legend radio button
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
   };
+  //DKDK add state for getting yAxisRange
+  const [yAxisRangeValue, setYAxisRangeValue] = useState<number>(0)
+  // console.log('yAxisRangeValue = ', yAxisRangeValue)
 
-  //DKDK send legendRadioValue instead of knob_YAxisRangeMethod
+  //DKDK send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
   // const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
   //   setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod));
   // }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod])
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue));
+    setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue, setYAxisRangeValue));
   }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue])
 
 
@@ -262,6 +291,8 @@ export const CollectionDateList = () => {
         dropdownTitle={dropdownTitleBar}
         dropdownHref={dropdownHrefBar}
         dropdownItemText={dropdownItemTextBar}
+        //DKDK send yAxisRange[1]
+        yAxisRangeValue={yAxisRangeValue}
       />
     </>
   );

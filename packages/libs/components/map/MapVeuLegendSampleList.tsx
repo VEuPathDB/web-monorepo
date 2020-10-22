@@ -37,6 +37,8 @@ export interface LegendProps {
   dropdownTitle: string,
   dropdownHref: string[],
   dropdownItemText: string[],
+  //DKDK use yAxisRange[1]
+  yAxisRangeValue: number,
 }
 
 //DKDK make legend at the map without using L.Control: perhaps send props to make circle or square?
@@ -48,13 +50,6 @@ const MapVeuLegendSampleList = (props: LegendProps) => {
     legendIconClass = 'legend-contents'
   } else {
     legendIconClass = 'legend-contents-numeric'
-  }
-
-  //DKDK compute sum of data.value: need to check whether the data array exists and not empty
-  let sumValue: number = 0
-  if (Array.isArray(props.data) && props.data.length) {
-    //DKDK with current data and default viewport, sum = 23056
-    sumValue = props.data.map(o => o.value).reduce((a, c) => { return a + c })
   }
 
   return (
@@ -86,7 +81,7 @@ const MapVeuLegendSampleList = (props: LegendProps) => {
           legendType={props.legendType}
           onChange={props.onChange}
           selectedOption={props.selectedOption}
-          sumValue={sumValue}
+          yAxisRangeValue={props.yAxisRangeValue}
         />
         {/* DKDK add tutorial info component here */}
         <LegendListInfo
