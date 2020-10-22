@@ -1,16 +1,13 @@
 import React, { ReactElement, useState, useCallback } from 'react';
-import { withKnobs, radios , boolean, number, color } from '@storybook/addon-knobs';
+import { withKnobs, radios , boolean, number } from '@storybook/addon-knobs';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
-import { Marker, Tooltip } from 'react-leaflet';
 import './TempIconHack';
 
-import sampleSizeData from './test-data/geoclust-numeric-binning-testing.json';
 import collectionDateData from './test-data/geoclust-date-binning-testing.json';
-import irData from './test-data/geoclust-irrescaled-binning-testing.json';
 
-import { latLng, LeafletMouseEvent } from "leaflet";
+import { LeafletMouseEvent } from "leaflet";
 import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; // TO BE CREATED
 
 //DKDK change target component
@@ -276,6 +273,8 @@ export const CollectionDateList = () => {
         height="100vh" width="100vw"
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
+        animation={null}
+        showGrid={true}
       />
       <MapVeuLegendSampleList
         legendType="numeric"

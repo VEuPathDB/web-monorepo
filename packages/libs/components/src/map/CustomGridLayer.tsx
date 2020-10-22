@@ -2,6 +2,7 @@ import {Polyline, useLeaflet} from "react-leaflet";
 import React, {ReactElement, useEffect, useState} from "react";
 import Geohash from "latlon-geohash";
 import {LatLngBounds} from "leaflet";
+// import shape2geohash from "shape2geohash";  // need @types ideally...
 const shape2geohash = require("shape2geohash");
 
 interface ZoomLevelToGeoHashLevel {

@@ -57,60 +57,61 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
       const scale = map.options.crs.scale(zoomLevel)/256;
 
       markers = markers.map( marker => {
-	      const markerRadius = 35; // pixels // TEMPORARILY HARDCODED - need to get it from the marker somehow?
-	      // It should work with half the maximum dimension (50/2 = 25)
-	      // but I suspect 'position' is not in the center of the marker icon?
+	const markerRadius = 35; // pixels // TEMPORARILY HARDCODED - need to get it from the marker somehow?
+	// It should work with half the maximum dimension (50/2 = 25)
+	// but I suspect 'position' is not in the center of the marker icon?
 	
-	      const geohash = marker.key as string;
-	      const geohashCenter = Geohash.decode(geohash);
-	      const bounds = Geohash.bounds(geohash);
-	      const markerRadius2 = markerRadius/scale;
-	      let [ lat, lon ] : number[] = marker.props.position;
-	      let nudged : boolean = false;
+	const geohash = marker.key as string;
+	const geohashCenter = Geohash.decode(geohash);
+	const bounds = Geohash.bounds(geohash);
+	const markerRadius2 = markerRadius/scale;
+	let [ lat, lon ] : number[] = marker.props.position;
+	let nudged : boolean = false;
 
-	      // bottom edge
-	      if (lat - markerRadius2 < bounds.sw.lat) {
-	        // nudge it up
-	        lat = bounds.sw.lat + markerRadius2;
-	        // but don't nudge it past the center of the geohash rectangle
-	        if (lat > geohashCenter.lat) lat = geohashCenter.lat;
-	        nudged = true;
-	      }
-	      // left edge
-	      if (lon - markerRadius2 < bounds.sw.lon) {
-	        lon = bounds.sw.lon + markerRadius2;
-	        if (lon > geohashCenter.lon) lon = geohashCenter.lon;
-	         nudged = true;
-	      }
-	      // top edge
-	      if (lat + markerRadius2 > bounds.ne.lat) {
-	        lat = bounds.ne.lat - markerRadius2;
-	        if (lat < geohashCenter.lat) lat = geohashCenter.lat;
-	        nudged = true;
-	      }
-	      // right edge
-	      if (lon + markerRadius2 > bounds.ne.lon) {
-	        lon = bounds.ne.lon - markerRadius2;
-	        if (lon < geohashCenter.lon) lon = geohashCenter.lon;
-	        nudged = true;
-	      }
+	// bottom edge
+	if (lat - markerRadius2 < bounds.sw.lat) {
+	  // nudge it up
+	  lat = bounds.sw.lat + markerRadius2;
+	  // but don't nudge it past the center of the geohash rectangle
+	  if (lat > geohashCenter.lat) lat = geohashCenter.lat;
+	  nudged = true;
+	}
+	// left edge
+	if (lon - markerRadius2 < bounds.sw.lon) {
+	  lon = bounds.sw.lon + markerRadius2;
+	  if (lon > geohashCenter.lon) lon = geohashCenter.lon;
+	  nudged = true;
+	}
+	// top edge
+	if (lat + markerRadius2 > bounds.ne.lat) {
+	  lat = bounds.ne.lat - markerRadius2;
+	  if (lat < geohashCenter.lat) lat = geohashCenter.lat;
+	  nudged = true;
+	}
+	// right edge
+	if (lon + markerRadius2 > bounds.ne.lon) {
+	  lon = bounds.ne.lon - markerRadius2;
+	  if (lon < geohashCenter.lon) lon = geohashCenter.lon;
+	  nudged = true;
+	}
 
       	return nudged ? cloneElement(marker, { position: [ lat, lon ] }) : marker;
       });
     }
-    
-    if (markers.length > 0 && prevMarkers.length > 0 && animation) {
-        const animationValues = animation.animationFunction({prevMarkers, markers});
-        setZoomType(animationValues.zoomType);
-        setConsolidatedMarkers(animationValues.markers)
-      }
-      /** First render of markers **/
-      else {
-        setConsolidatedMarkers([...markers]);
-      }
 
-      // Update previous markers with the original markers array
-      setPrevMarkers(markers);
+    // now handle animation
+    if (markers.length > 0 && prevMarkers.length > 0 && animation) {
+      const animationValues = animation.animationFunction({prevMarkers, markers});
+      setZoomType(animationValues.zoomType);
+      setConsolidatedMarkers(animationValues.markers)
+    }
+    /** First render of markers **/
+    else {
+      setConsolidatedMarkers([...markers]);
+    }
+
+    // Update previous markers with the original markers array
+    setPrevMarkers(markers);
 
   }, [markers]);
 
