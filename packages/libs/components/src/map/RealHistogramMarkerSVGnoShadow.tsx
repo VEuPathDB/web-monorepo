@@ -21,7 +21,7 @@ interface HistogramMarkerSVGProps extends MarkerProps {
   labels: Array<string>, // the labels (not likely to be shown at normal marker size)
   values: Array<number>, // the counts or totals to be shown in the donut
   colors?: Array<string> | null, // bar colors: set to be optional with array or null type
-  // isAtomic?: boolean,      // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
+  isAtomic?: boolean,      // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
   yAxisRange?: Array<number> | null, // y-axis range for setting global max
   onClick?: (event: L.LeafletMouseEvent) => void | undefined,
   onMouseOver?: (event: L.LeafletMouseEvent) => void | undefined,
@@ -166,6 +166,12 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
 
   //DKDK set the location of total number
   svgHTML += '<text x="50%" y='+(size-2+borderWidth+7)+' dominant-baseline="middle" text-anchor="middle" opacity="1">' + sumValues + '</text>'
+
+  //DKDK check isAtomic: draw pushpin if true
+  if (props.isAtomic) {
+    let pushPinCode = '&#128204;'
+    svgHTML += '<text x="70%" y="48%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-weight="bold" font-size="0.9em" transform="translate(5,-5) rotate(-20)">' + pushPinCode + '</text>'
+  }
 
   // DKDK closing svg tag
   svgHTML += '</svg>'

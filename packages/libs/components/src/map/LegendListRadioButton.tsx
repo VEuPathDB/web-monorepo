@@ -5,7 +5,8 @@ interface LegendListRadioButtonProps {
   legendType: string,
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void,
   selectedOption?: string,
-  sumValue: number,
+  //DKDK use yAxisRange[1]
+  yAxisRangeValue: number,
 }
 
 //DKDK add commas
@@ -15,7 +16,6 @@ function numberWithCommas(x: number) {
 
 export default function LegendListRadioButton(props: LegendListRadioButtonProps) {
   //DKDK add tutorial image (for now)
-
   if (props.legendType == 'categorical') {
     return null
   } else {
@@ -28,12 +28,12 @@ export default function LegendListRadioButton(props: LegendListRadioButtonProps)
         <div className="legend-list-radio-button">
           <div className="legend-list-radio-button-title"><b>y-axis scaling</b></div>
             {/* DKDK for non-clickable label */}
-            {/* <input type="radio" value="Regional" name="legendListRadio" onChange={props.onChange} checked={props.selectedOption === "Regional"}/> Regional (0 - 15,213)
+            {/* <input type="radio" value="Regional" name="legendListRadio" onChange={props.onChange} checked={props.selectedOption === "Regional"}/> Regional (0 - {numberWithCommas(props.yAxisRangeValue)})
             <br />
             <input type="radio" value="Individual" name="legendListRadio" onChange={props.onChange} checked={props.selectedOption === "Individual"}/> Per-marker (varies) */}
             {/* DKDK for clickable label */}
             <input id="Regional" type="radio" value="Regional" name="legendListRadio" onChange={props.onChange} checked={props.selectedOption === "Regional"}/>&nbsp;
-            <label htmlFor="Regional"> Regional (0 - {numberWithCommas(props.sumValue)})</label>
+            <label htmlFor="Regional"> Regional (0 - {numberWithCommas(props.yAxisRangeValue)})</label>
             <br />
             <input id="Individual" type="radio" value="Individual" name="legendListRadio" onChange={props.onChange} checked={props.selectedOption === "Individual"}/>&nbsp;
             <label htmlFor="Individual"> Per-marker (varies)</label>
