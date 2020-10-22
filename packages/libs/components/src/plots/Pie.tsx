@@ -105,5 +105,8 @@ export default function Pie(props: Props) {
 
   newData.push(primaryDataTrace);
 
-  return <PlotlyPlot data={newData as any} layout={layout}/>
+  return <PlotlyPlot
+    data={newData as any}  // Casting as 'any' to avoid issues with PlotData for pie charts
+    layout={layout}
+  />
 }
