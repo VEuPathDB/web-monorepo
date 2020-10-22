@@ -64,6 +64,10 @@ export default function headerMenuItems (state) {
             text: 'Tutorials and Resources',
             route: `${STATIC_ROUTE_PATH}/ClinEpiDB/resources.html`
           },
+          { 
+            text: 'Workshops',
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/workshops.html`
+          },
           {
             text: 'Public Strategies',
             route: '/workspace/strategies/public'
