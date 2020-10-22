@@ -4,7 +4,7 @@ import { useLeaflet } from "react-leaflet";
 import { LatLngBounds } from 'leaflet'
 
 interface SemanticMarkersProps {
-  onViewportChanged: (bvp: BoundsViewport, duration: number) => void,
+  onViewportChanged: (bvp: BoundsViewport) => void,
   markers: Array<ReactElement<MarkerProps>>,
   animation: {
     method: string,
@@ -35,7 +35,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation}
       if (map != null) {
         const bounds = boundsToGeoBBox(map.getBounds());
         const zoomLevel = map.getZoom();
-        onViewportChanged({ bounds, zoomLevel }, animation ? animation.duration : 300);
+        onViewportChanged({ bounds, zoomLevel });
       }
     }
 
