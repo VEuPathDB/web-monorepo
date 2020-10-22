@@ -13,7 +13,6 @@ export default {
 //  component: MapVEuMap,
 };
 
-const maxGeohashLevel = 7;
 const zoomLevelToGeohashLevel = [
   1, // 0
   1, // 1
@@ -36,7 +35,13 @@ const zoomLevelToGeohashLevel = [
   7  // 18
 ];
 
-const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number, duration: number, scrambleKeys: boolean = false) => {
+
+//
+// when we implement the donut and histogram markers as DriftMarkers
+// maybe we can access the duration from context inside those components
+// in the meantime we will have to pass the duration into the getMarkerElements function
+//
+const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number, duration : number, scrambleKeys: boolean = false) => {
   console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
 
   let aggsByGeohash = new Map();
@@ -117,47 +122,72 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
 
 };
 
-
-
 export const GeohashIds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-
-  const handleViewportChanged = useCallback((bvp: BoundsViewport, duration: number) => {
+  const duration = 300;
+  
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getMarkerElements(bvp, 100000, duration));
   }, [setMarkerElements]);
 
   return (
     <MapVEuMap
-    viewport={{center: [ 20, -3 ], zoom: 6}}
-    height="96vh" width="98vw"
-    onViewportChanged={handleViewportChanged}
-    markers={markerElements}
-    animation={{
-      method: "geohash",
-      duration: 300,
-      animationFunction: geohashAnimation
-    }}
+      viewport={{center: [ 20, -3 ], zoom: 6}}
+      height="96vh" width="98vw"
+      onViewportChanged={handleViewportChanged}
+      markers={markerElements}
+      animation={{
+	method: "geohash",
+	animationFunction: geohashAnimation,
+	duration
+      }}
     />
   );
 };
+
+export const SlowAnimation = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const duration = 2000;
+  
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+  }, [setMarkerElements]);
+
+  return (
+    <MapVEuMap
+      viewport={{center: [ 20, -3 ], zoom: 6}}
+      height="96vh" width="98vw"
+      onViewportChanged={handleViewportChanged}
+      markers={markerElements}
+      animation={{
+	method: "geohash",
+	animationFunction: geohashAnimation,
+	duration
+      }}
+    />
+  );
+};
+
+
 
 export const NoAnimation = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-
-  const handleViewportChanged = useCallback((bvp: BoundsViewport, duration: number) => {
+  const duration = 300;
+  
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getMarkerElements(bvp, 100000, duration));
   }, [setMarkerElements]);
 
   return (
     <MapVEuMap
-    viewport={{center: [ 20, -3 ], zoom: 6}}
-    height="96vh" width="98vw"
-    onViewportChanged={handleViewportChanged}
-    markers={markerElements}
+      viewport={{center: [ 20, -3 ], zoom: 6}}
+      height="96vh" width="98vw"
+      onViewportChanged={handleViewportChanged}
+      markers={markerElements}
+      animation={null}
     />
   );
 };
-
 
 //
 // keys are junk and should not break the animation code
@@ -165,8 +195,9 @@ export const NoAnimation = () => {
 //
 export const ScrambledGeohashIds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const duration = 300;
 
-  const handleViewportChanged = useCallback((bvp: BoundsViewport, duration: number) => {
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getMarkerElements(bvp, 100000, duration, true));
   }, [setMarkerElements]);
 
@@ -178,41 +209,10 @@ export const ScrambledGeohashIds = () => {
     markers={markerElements}
     animation={{
       method: "geohash",
-      duration: 300,
-      animationFunction: geohashAnimation
+      animationFunction: geohashAnimation,
+      duration
     }}
     />
   );
 };
-
-
-//
-// the point of this story is to make it easier to find the
-// 'egy' marker
-// which aggregates/represents two data points
-// (you may need to drag the storybook panel down to make the map bigger)
-//
-// You can move it close to the edge of the screen
-// (so that one of its points would drop off the screen)
-// to see how its position (correctly) changes and the
-// tooltip now shows just one data point represented (correctly).
-//
-export const EdgeCase = () => {
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-
-  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getMarkerElements(bvp, 100000));
-  }, [setMarkerElements])
-
-  return (
-    <MapVEuMap
-    viewport={{center: [ 21.5, -1.5 ], zoom: 9}}
-    height="96vh" width="98vw"
-    onViewportChanged={handleViewportChanged}
-    markers={markerElements}
-    setMarkerElements={setMarkerElements}
-    />
-  );
-};
-
 
