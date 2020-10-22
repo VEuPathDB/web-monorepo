@@ -19,6 +19,18 @@ export interface MarkerProps {
   key: string
 }
 
+export type AnimationFunction = (
+    {
+      prevMarkers,
+      markers
+    }: {
+      prevMarkers: ReactElement<MarkerProps>[];
+      markers: ReactElement<MarkerProps>[];
+    }) => {
+        zoomType: string | null;
+        markers: ReactElement<MarkerProps>[];
+    };
+
 /** React Props that are passed to a Map Component. */
 export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
@@ -27,14 +39,18 @@ export interface MapVEuMapProps {
   /** Height and width of plot element */
   height: CSSProperties['height'],
   width: CSSProperties['width'],
-
   onViewportChanged: (bvp: BoundsViewport) => void,
   markers: ReactElement<MarkerProps>[],
-
   nudge?: 'geohash' | 'none',
 
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
   sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
+  animation: {
+    method: string,
+    duration: number,
+    animationFunction: AnimationFunction
+  } | null,
+  showGrid: boolean
 }
 
 

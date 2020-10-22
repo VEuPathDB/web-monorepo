@@ -1,11 +1,12 @@
 import React, { ReactElement, useState, useCallback } from 'react';
-// import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
-import { Marker } from 'react-leaflet';
+import { Tooltip } from 'react-leaflet';
 import Geohash from 'latlon-geohash';
 import './TempIconHack';
-
+import {DriftMarker} from "leaflet-drift-marker";
+import geohashAnimation from "./animation_functions/geohash";
+import md5 from 'md5';
 
 export default {
   title: 'Animated Markers',
@@ -16,68 +17,230 @@ const zoomLevelToGeohashLevel = [
   1, // 0
   1, // 1
   1, // 2
-  2, // 3
+  1, // 3
   2, // 4
   2, // 5
-  3, // 6
+  2, // 6
   3, // 7
   3, // 8
-  4, // 9
+  3, // 9
   4, // 10
   4, // 11
-  5, // 12
+  4, // 12
   5, // 13
   5, // 14
-  6, // 15
+  5, // 15
   6, // 16
   6, // 17
   7  // 18
 ];
 
-const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number) => {
-  console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
-  let aggsByGeohash = new Map();
-  Array(numMarkers).fill(undefined).map(() => {
-    const lat = bounds.southWest[0] + Math.random()*(bounds.northEast[0] - bounds.southWest[0]);
-    const long = bounds.southWest[1] + Math.random()*(bounds.northEast[1] - bounds.southWest[1]);
-    const geohash : string = Geohash.encode(lat, long, zoomLevelToGeohashLevel[zoomLevel]);
 
-    let agg = aggsByGeohash.get(geohash);
-    if (agg === undefined) {
-      agg = { lat: 0, long: 0, count: 0, geohash };
-      aggsByGeohash.set(geohash, agg);
+//
+// when we implement the donut and histogram markers as DriftMarkers
+// maybe we can access the duration from context inside those components
+// in the meantime we will have to pass the duration into the getMarkerElements function
+//
+const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number, duration : number, scrambleKeys: boolean = false) => {
+  console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
+
+  let aggsByGeohash = new Map();
+
+  // https://gist.github.com/mathiasbynens/5670917
+  // Here’s a 100% deterministic alternative to `Math.random`. Google’s V8 and
+  // Octane benchmark suites use this to ensure predictable results.
+
+  let myRandom = (function() {
+    var seed = 0x2F6E2B1;
+    return function() {
+      // Robert Jenkins’ 32 bit integer hash function
+      seed = ((seed + 0x7ED55D16) + (seed << 12))  & 0xFFFFFFFF;
+      seed = ((seed ^ 0xC761C23C) ^ (seed >>> 19)) & 0xFFFFFFFF;
+      seed = ((seed + 0x165667B1) + (seed << 5))   & 0xFFFFFFFF;
+      seed = ((seed + 0xD3A2646C) ^ (seed << 9))   & 0xFFFFFFFF;
+      seed = ((seed + 0xFD7046C5) + (seed << 3))   & 0xFFFFFFFF;
+      seed = ((seed ^ 0xB55A4F09) ^ (seed >>> 16)) & 0xFFFFFFFF;
+      return (seed & 0xFFFFFFF) / 0x10000000;
+    };
+  }());
+
+  let lats : number[] = [];
+  let longs : number[] = [];
+
+  Array(numMarkers).fill(undefined).map(() => {
+    const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
+
+    // pick a deterministic point anywhere on the globe (hence a large value for numMarkers)
+    let lat = -90 + myRandom()*180;
+    let long = -180 + myRandom()*360;
+
+    // move some points closer to a randomly picked previous point
+    if (lats.length > 0 && myRandom()<0.75) {
+      const idx = Math.floor(myRandom()*lats.length);
+      lat = lat + (lats[idx]-lat)*0.999;
+      long = long + (longs[idx]-long)*0.999;
     }
-    agg.lat = agg.lat + lat;
-    agg.long = agg.long + long;
-    agg.count++;
+
+    // is it within the viewport bounds?
+    if (lat > bounds.southWest[0] &&
+	lat < bounds.northEast[0] &&
+	long > bounds.southWest[1] &&
+	long < bounds.northEast[1]) {
+      const geohash : string = Geohash.encode(lat, long, geohashLevel);
+
+      let agg = aggsByGeohash.get(geohash);
+      if (agg === undefined) {
+	agg = { lat: 0, long: 0, count: 0, geohash };
+	aggsByGeohash.set(geohash, agg);
+      }
+      agg.lat = agg.lat + lat;
+      agg.long = agg.long + long;
+      agg.count++;
+    }
+    lats.push(lat);
+    longs.push(long);
     return undefined
   });
+
   return Array.from(aggsByGeohash.values()).map((agg) => {
     const meanLat = agg.lat/agg.count;
     const meanLong = agg.long/agg.count;
-    return <Marker
-      key={agg.geohash}
-      position={[meanLat, meanLong]}
-      title={agg.geohash}
-      />
+    const key = scrambleKeys ? md5(agg.geohash).substring(0, zoomLevel) : agg.geohash;
+    return <DriftMarker
+        duration={duration}
+        key={key}
+        position={[meanLat, meanLong]}>
+        <Tooltip>
+          <span>{`key: ${key}`}</span><br/>
+	      <span>{`#aggregated: ${agg.count}`}</span><br/>
+          <span>{`lat: ${meanLat}`}</span><br/>
+          <span>{`lon: ${meanLong}`}</span>
+        </Tooltip>
+      </DriftMarker>
+
   })
 
-}
-
-
+};
 
 export const GeohashIds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const duration = 300;
+  
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getMarkerElements(bvp, 500));
-  }, [setMarkerElements])
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+  }, [setMarkerElements]);
+
   return (
     <MapVEuMap
-    viewport={{center: [ 54.561781, -3.013297 ], zoom: 11}}
-    height="600px" width="800px"
+    viewport={{center: [ 20, -3 ], zoom: 6}}
+    height="96vh" width="98vw"
     onViewportChanged={handleViewportChanged}
     markers={markerElements}
+    animation={{
+      method: "geohash",
+      duration: 300,
+      animationFunction: geohashAnimation
+    }}
+    showGrid={true}
     />
   );
-}
+};
+
+export const SlowAnimation = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const duration = 2000;
+  
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+  }, [setMarkerElements]);
+
+  return (
+    <MapVEuMap
+      viewport={{center: [ 20, -3 ], zoom: 6}}
+      height="96vh" width="98vw"
+      onViewportChanged={handleViewportChanged}
+      markers={markerElements}
+      animation={{
+	      method: "geohash",
+	      animationFunction: geohashAnimation,
+	      duration
+      }}
+      showGrid={true}
+    />
+  );
+};
+
+export const NoGrid = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const duration = 300;
+  
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+  }, [setMarkerElements]);
+
+  return (
+      <MapVEuMap
+          viewport={{center: [ 20, -3 ], zoom: 6}}
+          height="96vh" width="98vw"
+          onViewportChanged={handleViewportChanged}
+          markers={markerElements}
+          animation={{
+            method: "geohash",
+            animationFunction: geohashAnimation,
+            duration,
+          }}
+          showGrid={false}
+      />
+  );
+};
+
+
+
+export const NoAnimation = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const duration = 300;
+  
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+  }, [setMarkerElements]);
+
+  return (
+    <MapVEuMap
+      viewport={{center: [ 20, -3 ], zoom: 6}}
+      height="96vh" width="98vw"
+      onViewportChanged={handleViewportChanged}
+      markers={markerElements}
+      animation={null}
+      showGrid={true}
+    />
+  );
+};
+
+//
+// keys are junk and should not break the animation code
+// they should not animate either - just appear/disappear as if animation was off
+//
+export const ScrambledGeohashIds = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const duration = 300;
+
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration, true));
+  }, [setMarkerElements]);
+
+  return (
+    <MapVEuMap
+    viewport={{center: [ 20, -3 ], zoom: 6}}
+    height="96vh" width="98vw"
+    onViewportChanged={handleViewportChanged}
+    markers={markerElements}
+    animation={{
+      method: "geohash",
+      animationFunction: geohashAnimation,
+      duration
+    }}
+    showGrid={true}
+    />
+  );
+};
 
