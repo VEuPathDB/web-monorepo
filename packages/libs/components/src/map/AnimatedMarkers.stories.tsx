@@ -132,15 +132,16 @@ export const GeohashIds = () => {
 
   return (
     <MapVEuMap
-      viewport={{center: [ 20, -3 ], zoom: 6}}
-      height="96vh" width="98vw"
-      onViewportChanged={handleViewportChanged}
-      markers={markerElements}
-      animation={{
-	method: "geohash",
-	animationFunction: geohashAnimation,
-	duration
-      }}
+    viewport={{center: [ 20, -3 ], zoom: 6}}
+    height="96vh" width="98vw"
+    onViewportChanged={handleViewportChanged}
+    markers={markerElements}
+    animation={{
+      method: "geohash",
+      duration: 300,
+      animationFunction: geohashAnimation
+    }}
+    showGrid={true}
     />
   );
 };
@@ -160,11 +161,36 @@ export const SlowAnimation = () => {
       onViewportChanged={handleViewportChanged}
       markers={markerElements}
       animation={{
-	method: "geohash",
-	animationFunction: geohashAnimation,
-	duration
+	      method: "geohash",
+	      animationFunction: geohashAnimation,
+	      duration
       }}
+      showGrid={true}
     />
+  );
+};
+
+export const NoGrid = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const duration = 300;
+  
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+  }, [setMarkerElements]);
+
+  return (
+      <MapVEuMap
+          viewport={{center: [ 20, -3 ], zoom: 6}}
+          height="96vh" width="98vw"
+          onViewportChanged={handleViewportChanged}
+          markers={markerElements}
+          animation={{
+            method: "geohash",
+            animationFunction: geohashAnimation,
+            duration,
+          }}
+          showGrid={false}
+      />
   );
 };
 
@@ -185,6 +211,7 @@ export const NoAnimation = () => {
       onViewportChanged={handleViewportChanged}
       markers={markerElements}
       animation={null}
+      showGrid={true}
     />
   );
 };
@@ -212,6 +239,7 @@ export const ScrambledGeohashIds = () => {
       animationFunction: geohashAnimation,
       duration
     }}
+    showGrid={true}
     />
   );
 };
