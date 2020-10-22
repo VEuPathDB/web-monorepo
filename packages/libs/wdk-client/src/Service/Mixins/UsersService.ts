@@ -5,8 +5,8 @@ import { Identifier } from 'wdk-client/Utils/WdkModel';
 export default (base: ServiceBase) => {
   let currentUserPromise: Promise<User> | undefined;
 
-  function getCurrentUser() {
-    if (currentUserPromise == null) {
+  function getCurrentUser(options: { force?: boolean } = {}) {
+    if (options.force || currentUserPromise == null) {
       currentUserPromise = base._fetchJson<User>('get', '/users/current');
     }
     return currentUserPromise;
