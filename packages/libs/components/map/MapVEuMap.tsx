@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import { MapVEuMapProps } from "./Types";
+import React, {useState, CSSProperties, ReactElement} from "react";
+import { BoundsViewport, MarkerProps, AnimationFunction } from "./Types";
 const { BaseLayer } = LayersControl
 import { Viewport, Map, TileLayer, LayersControl } from "react-leaflet";
 import SemanticMarkers from "./SemanticMarkers";
@@ -13,6 +13,30 @@ import CustomGridLayer from "./CustomGridLayer";
  * 
  * @param props 
  */
+
+interface MapVEuMapProps {
+  /** Center lat/long and zoom level */
+  viewport: Viewport,
+
+  /** Height and width of plot element */
+  height: CSSProperties['height'],
+  width: CSSProperties['width'],
+  onViewportChanged: (bvp: BoundsViewport) => void,
+  markers: ReactElement<MarkerProps>[],
+  nudge?: 'geohash' | 'none',
+
+  //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
+  sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
+  animation: {
+    method: string,
+    duration: number,
+    animationFunction: AnimationFunction
+  } | null,
+  showGrid: boolean
+}
+
+
+
 export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, showGrid}: MapVEuMapProps) {
 
 
