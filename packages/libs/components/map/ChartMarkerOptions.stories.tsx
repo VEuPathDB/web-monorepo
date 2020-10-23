@@ -14,7 +14,7 @@ import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; /
 import MapVeuLegendSampleList, { LegendProps } from './MapVeuLegendSampleList'
 
 export default {
-  title: 'Chart Markers with Knobs List Style',
+  title: 'Chart Markers for continuous',
   component: MapVEuMap,
   decorators: [withKnobs],
 };
@@ -222,7 +222,7 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 }
 
 
-export const CollectionDateList = () => {
+export const CollectionDate = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
   // const yAxisRange: Array<number> | null = []

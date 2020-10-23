@@ -11,6 +11,7 @@ import { latLng, LeafletMouseEvent } from "leaflet";
 import SVGDonutMarker from './SVGDonutMarker'; // TO BE CREATED
 
 //DKDK sidebar & legend
+import MapVEuMap from './MapVEuMap';
 import MapVEuMapSidebar from './MapVEuMapSidebar';
 //DKDK import a sidebar component
 import SidebarExample from './SidebarExample'
@@ -20,7 +21,7 @@ import MapVeuLegendSampleDropdown from './MapVeuLegendSampleDropdown'
 
 
 export default {
-  title: 'SVG Donut Marker Sidebar',
+  title: 'Donut Markers for categorical',
   component: MapVEuMapSidebar,
 };
 
@@ -146,13 +147,12 @@ const dropdownItemTextBar: string[] =['Year', 'Month', 'Date', 'Age']
    The real thing should something with zoomLevel.
 */
 const getSpeciesMarkerElements = () => {
-  return speciesData.facets.geo.buckets.map((bucket, index) => {
+  return speciesData.facets.geo.buckets.map((bucket) => {
     const lat = bucket.ltAvg;
     const long = bucket.lnAvg;
     let labels: string[] = [];
     let values: number[] = [];
     let colors: string[] = [];
-    let noDataValue:number = 0;
     bucket.term.buckets.forEach((bucket, index) => {
       labels.push(bucket.val);
       values.push(bucket.count);
@@ -180,7 +180,39 @@ const getSpeciesMarkerElements = () => {
   });
 }
 
-export const SpeciesCategorical = () => {
+export const Species = () => {
+  
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const handleViewportChanged = useCallback(() => {
+    setMarkerElements(getSpeciesMarkerElements());
+  }, [setMarkerElements])
+
+
+  return (
+    <>
+      <MapVEuMap
+        viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
+        height="100vh" width="100vw"
+        onViewportChanged={handleViewportChanged}
+        markers={markerElements}
+        animation={null}
+        showGrid={true}
+      />
+      <MapVeuLegendSampleDropdown
+        // className={legendClassName}
+        legendType={legendTypeValue}
+        data={legendData}
+        //DKDK add dropdown props for Legend
+        dropdownTitle={dropdownTitle}
+        dropdownHref={dropdownHref}
+        dropdownItemText={dropdownItemText}
+      />
+    </>)
+}
+
+
+// export // disabled for now
+const SpeciesSidebar = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
   // const yAxisRange: Array<number> | null = []
@@ -235,7 +267,8 @@ export const SpeciesCategorical = () => {
   );
 }
 
-export const SpeciesNudgedChart = () => {
+// export
+const SpeciesNudgedChart = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
   // const yAxisRange: Array<number> | null = []
