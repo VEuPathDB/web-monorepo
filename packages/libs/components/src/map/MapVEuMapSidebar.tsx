@@ -1,15 +1,15 @@
 //DKDK this file is only used for sidebar demo
-import React, { useState } from "react";
+import React, { useState, ReactElement, CSSProperties } from "react";
 //DKDK needs to be check later
 // import { MapVEuMapProps } from "./TypesSidebar";
-import { MapVEuMapProps } from "./Types";
+import { BoundsViewport, MarkerProps, AnimationFunction } from "./Types";
 import { Viewport, Map, TileLayer, LayersControl, ZoomControl, ScaleControl } from "react-leaflet";
 import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
 import { LeafletMouseEvent } from "leaflet";
 
 //DKDK for layers
-const { BaseLayer, Overlay } = LayersControl
+const { BaseLayer } = LayersControl
 
 //DKDK a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassName(targetClass: string) {
@@ -36,8 +36,32 @@ function removeClassNameActive(targetClass: string) {
  *
  * @param props
  */
+
+// NASTY cut and paste of props. BM is assuming MapVEuMapSidebar will go away, so this is just temporary.
+interface MapVEuMapPropsCutAndPasteCopy {
+  /** Center lat/long and zoom level */
+  viewport: Viewport,
+
+  /** Height and width of plot element */
+  height: CSSProperties['height'],
+  width: CSSProperties['width'],
+  onViewportChanged: (bvp: BoundsViewport) => void,
+  markers: ReactElement<MarkerProps>[],
+  nudge?: 'geohash' | 'none',
+
+  //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
+  sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
+  animation: {
+    method: string,
+    duration: number,
+    animationFunction: AnimationFunction
+  } | null,
+  showGrid: boolean
+}
+
+
 // export default function MapVEuMapSidebar({ viewport, height, width, onViewportChanged, markers, nudge }: MapVEuMapProps) {
-export default function MapVEuMapSidebarSibling({ viewport, height, width, onViewportChanged, markers, nudge, sidebarOnClose }: MapVEuMapProps) {
+export default function MapVEuMapSidebarSibling({ viewport, height, width, onViewportChanged, markers, nudge, sidebarOnClose }: MapVEuMapPropsCutAndPasteCopy) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
