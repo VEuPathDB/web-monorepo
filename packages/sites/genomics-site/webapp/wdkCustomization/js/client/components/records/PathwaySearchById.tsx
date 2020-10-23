@@ -3,7 +3,7 @@ import Select from 'react-select';
 import { ActionMeta, InputActionMeta, ValueType } from 'react-select/src/types';
 import { Option } from 'react-select/src/filters';
 
-import { NodeCollection } from 'cytoscape';
+import { Core } from 'cytoscape';
 import { isEqual, orderBy, uniqWith } from 'lodash';
 
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
@@ -12,7 +12,7 @@ import { stripHTML } from 'wdk-client/Views/Records/RecordUtils';
 import { NodeSearchCriteria } from './pathway-utils';
 
 interface Props {
-  nodes: NodeCollection;
+  cy: Core;
   onSearchCriteriaChange: (searchCriteria: NodeSearchCriteria | undefined) => void;
 }
 
@@ -21,11 +21,13 @@ interface NodeOptionDatum {
   node_identifier: string | undefined;
 };
 
-export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
+export function PathwaySearchById({ cy, onSearchCriteriaChange }: Props) {
   const [ searchTerm, setSearchTerm ] = useState('');
 
   const options = useMemo(
     () => {
+      const nodes = cy.nodes();
+
       const identifiableNodes = nodes.toArray().filter(
         node => node.data('node_identifier') != null || node.data('name') != null
       );
@@ -54,7 +56,7 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
         nodeOption => nodeOption.label
       );
     },
-    [ nodes ]
+    [ cy ]
   );
 
   const fullOptions = useMemo(
@@ -72,6 +74,11 @@ export function PathwaySearchById({ nodes, onSearchCriteriaChange }: Props) {
   );
 
   const [ selection, setSelection ] = useState([] as Option[]);
+
+  useEffect(() => {
+    setSearchTerm('');
+    setSelection([]);
+  }, [ cy ]);
 
   const onChange = useCallback((newSelection: ValueType<Option>, meta: ActionMeta) => {
     const newSelectionArray = newSelection == null

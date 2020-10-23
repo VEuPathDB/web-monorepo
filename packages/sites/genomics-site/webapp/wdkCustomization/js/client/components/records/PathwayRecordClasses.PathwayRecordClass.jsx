@@ -1325,7 +1325,7 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           {this.state.cy && (
             <PathwaySearchById
               onSearchCriteriaChange={this.onSearchCriteriaChange}
-              nodes={this.state.cy.nodes()}
+              cy={this.state.cy}
             />
           )}
           <div className="veupathdb-PathwayRecord-menuControls">
