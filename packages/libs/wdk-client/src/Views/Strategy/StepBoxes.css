@@ -480,11 +480,14 @@ button.StepBoxes--EditButton:hover {
 .StepBoxes--StepDetailsHeading {
   font-size: 1.2em;
   font-weight: bold;
+  display: flex;
+  align-items: center;
 }
 
 .StepBoxes--StepDetailsName {
   font-style: italic;
   font-weight: normal;
+  margin-left: 1ex;
 }
 
 .StepBoxes--StepDetailsName fieldset {
