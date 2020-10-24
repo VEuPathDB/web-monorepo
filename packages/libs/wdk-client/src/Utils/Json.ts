@@ -167,6 +167,7 @@ export function combine<T, S, R, Q, P, O, N>(decoder1: Decoder<T>, decoder2: Dec
 export function combine<T, S, R, Q, P, O, N, M>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>, decoder5: Decoder<P>, decoder6: Decoder<O>, decoder7: Decoder<N>, decoder8: Decoder<M>): Decoder<T & S & R & Q & P & O & N & M>;
 export function combine<T, S, R, Q, P, O, N, M, L>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>, decoder5: Decoder<P>, decoder6: Decoder<O>, decoder7: Decoder<N>, decoder8: Decoder<M>, decoder9: Decoder<L>): Decoder<T & S & R & Q & P & O & N & M & L>;
 export function combine<T, S, R, Q, P, O, N, M, L, K>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>, decoder5: Decoder<P>, decoder6: Decoder<O>, decoder7: Decoder<N>, decoder8: Decoder<M>, decoder9: Decoder<L>, decoder10: Decoder<K>): Decoder<T & S & R & Q & P & O & N & M & L & K>;
+export function combine<T>(...decoders: Decoder<T>[]): Decoder<T>;
 export function combine(...decoders: any[]) {
   return function combineDecoder(t: any) {
     return Seq.from(decoders).map(d => d(t)).find(r => r.status === 'err') || ok(t);
@@ -184,6 +185,7 @@ export function oneOf<T, S, R, Q, P, O, N, M>(decoder1: Decoder<T>, decoder2: De
 export function oneOf<T, S, R, Q, P, O, N, M, L>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>, decoder5: Decoder<P>, decoder6: Decoder<O>, decoder7: Decoder<N>, decoder8: Decoder<M>, decoder9: Decoder<L>): Decoder<T | S | R | Q | P | O | N | M | L>;
 export function oneOf<T, S, R, Q, P, O, N, M, L, K>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>, decoder5: Decoder<P>, decoder6: Decoder<O>, decoder7: Decoder<N>, decoder8: Decoder<M>, decoder9: Decoder<L>, decoder10: Decoder<K>): Decoder<T | S | R | Q | P | O | N | M | L | K>;
 export function oneOf<T, S, R, Q, P, O, N, M, L, K, J>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>, decoder5: Decoder<P>, decoder6: Decoder<O>, decoder7: Decoder<N>, decoder8: Decoder<M>, decoder9: Decoder<L>, decoder10: Decoder<K>, decoder11: Decoder<J>): Decoder<T | S | R | Q | P | O | N | M | L | K | J>;
+export function oneOf<T>(...decoders: Decoder<T>[]): Decoder<T>;
 export function oneOf(...decoders: any[]) {
   return function oneOfDecoder(t: any) {
     const results = Seq.from(decoders).map(d => d(t));
@@ -209,6 +211,7 @@ export function tuple<T, S, R, Q, P, O, N, M>(decoder1: Decoder<T>, decoder2: De
 export function tuple<T, S, R, Q, P, O, N, M, L>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>, decoder5: Decoder<P>, decoder6: Decoder<O>, decoder7: Decoder<N>, decoder8: Decoder<M>, decoder9: Decoder<L>): Decoder<[T,  S,  R,  Q,  P,  O,  N,  M,  L]>;
 export function tuple<T, S, R, Q, P, O, N, M, L, K>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>, decoder5: Decoder<P>, decoder6: Decoder<O>, decoder7: Decoder<N>, decoder8: Decoder<M>, decoder9: Decoder<L>, decoder10: Decoder<K>): Decoder<[T,  S,  R,  Q,  P,  O,  N,  M,  L,  K]>;
 export function tuple<T, S, R, Q, P, O, N, M, L, K, J>(decoder1: Decoder<T>, decoder2: Decoder<S>, decoder3: Decoder<R>, decoder4: Decoder<Q>, decoder5: Decoder<P>, decoder6: Decoder<O>, decoder7: Decoder<N>, decoder8: Decoder<M>, decoder9: Decoder<L>, decoder10: Decoder<K>, decoder11: Decoder<J>): Decoder<T | S | R | Q | P | O | N | M | L | K | J>;
+export function tuple<T>(...decoders: Decoder<T>[]): Decoder<T>;
 export function tuple(...decoders: Decoder<any>[]) {
   return function tupleDecoder(t: any) {
     if (!isArray(t)) return err(t, 'an array');
