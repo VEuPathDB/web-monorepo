@@ -1,0 +1,75 @@
+.EDAWorkspace {
+  padding: 1em 0;
+
+  &-Heading {
+    display: grid;
+    grid:
+      "title linkouts" auto
+      "subtitle subtitle" auto
+      "summary summary" auto
+      / 1fr;
+    gap: 1em;
+    align-items: center;
+    line-height: 1;
+    border-bottom: solid 1.5px black;
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+  }
+
+  h1 {
+    grid-area: title;
+    padding: 0;
+  }
+
+  h2 {
+    grid-area: subtitle;
+    font-weight: 400;
+    padding: 0;
+  }
+
+  &-Linkouts {
+    grid-area: linkouts;
+    font-size: 1.25em;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 1em;
+    margin-left: auto;
+  }
+
+  &-Summary {
+    grid-area: summary;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 2em;
+    font-size: 1.2em;
+    margin-right: auto;
+  }
+
+  &-AnalysisSummary {
+    display: flex;
+    align-items: center;
+    font-size: 1.65em;
+  }
+
+  &-AnalysisNameEditBox {
+    margin-right: auto;
+    font-style: italic;
+  }
+
+  &-ActionIconButton {
+    margin-left: 1em;
+    button {
+      position: relative;
+      top: 0px;
+      transition: top 200ms ease-in-out;
+      outline: none;
+      &:active {
+        top: 3px;
+      }
+      &:focus, &:hover {
+        background-color: #0b6c9d1f !important;
+      }
+    }
+  }
+
+}
