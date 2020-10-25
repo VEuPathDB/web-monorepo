@@ -9,6 +9,7 @@ import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { UserDataset } from 'wdk-client/Utils/WdkModel';
 import UserDatasetEmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
 import UserDatasetList from 'wdk-client/Views/UserDatasets/List/UserDatasetList';
+import NoDatasetsMessage from 'wdk-client/Views/UserDatasets/NoDatasetsMessage';
 import {
   loadUserDatasetList,
   removeUserDataset,
@@ -142,6 +143,7 @@ class UserDatasetListController extends PageController <Props> {
       updateProjectFilter,
     } = this.props.dispatchProps;
 
+
     const listProps = {
       user,
       location,
@@ -157,10 +159,15 @@ class UserDatasetListController extends PageController <Props> {
       updateUserDatasetDetail,
       updateProjectFilter,
     };
+    const noDatasetsForThisProject = userDatasets.map(id => userDatasetsById[id].resource.projects).flat().indexOf(projectId) == -1; 
+
     return (
       <div className="UserDatasetList-Controller">
         <div className="UserDatasetList-Content">
-          <UserDatasetList {...listProps} />
+          { noDatasetsForThisProject
+            ? <NoDatasetsMessage projectName={projectName}/>
+            : <UserDatasetList {...listProps} />
+          }
         </div>
       </div>
     )

@@ -18,7 +18,6 @@ import { User } from 'wdk-client/Utils/WdkUser';
 import UserDatasetEmptyState from 'wdk-client/Views/UserDatasets/EmptyState';
 import SharingModal from 'wdk-client/Views/UserDatasets/Sharing/UserDatasetSharingModal';
 import UserDatasetStatus from 'wdk-client/Views/UserDatasets/UserDatasetStatus';
-import UserDatasetTutorial from 'wdk-client/Views/UserDatasets/UserDatasetTutorial';
 import { normalizePercentage, textCell } from 'wdk-client/Views/UserDatasets/UserDatasetUtils';
 import 'wdk-client/Views/UserDatasets/List/UserDatasetList.scss';
 
@@ -470,7 +469,6 @@ class UserDatasetList extends React.Component <Props, State> {
     const { userDatasets, user, projectName, shareUserDatasets, unshareUserDatasets, filterByProject, quotaSize } = this.props;
     const { uiState, selectedRows, searchTerm, sharingModalOpen } = this.state;
 
-    if (userDatasets.length === 0) return <UserDatasetTutorial projectName={projectName} quotaSize={quotaSize} />;
 
     const rows = userDatasets;
     const selectedDatasets = rows.filter(isRowSelected);
@@ -552,7 +550,6 @@ class UserDatasetList extends React.Component <Props, State> {
             }
           </div>
         </Mesa>
-        {userDatasets.length ? null : <UserDatasetTutorial projectName={projectName} quotaSize={quotaSize} />}
       </div>
     )
   }
