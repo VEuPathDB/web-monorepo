@@ -40,7 +40,7 @@
   }
 }
 
-.UserDataset-TutorialMicrobiome {
+.UserDataset-NoDatasets {
   font-size: 1.4em;
   text-align: center;
   line-height: 1.5;
@@ -50,25 +50,26 @@
     font-size: 1.2em;
     font-weight: 500;
   }
+  ul {
+    list-style:none;
+  }
 }
 
-.UserDataset-Tutorial {
-  margin-top: 50px;
+.UserDataset-Help {
+  font-size: 1.2em;
 /*  text-align: center;*/
 
   ul {
     display: block;
-    margin: 0 auto;
     max-width: 90%;
     text-align: left;
-    li {
-      margin-bottom: 10px;
-    }
   }
   .box {
     padding: 10px;
   }
-
+  iframe {
+    margin-bottom: 20px;
+  }
   img {
     display: block;
     width: 100%;
