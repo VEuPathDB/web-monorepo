@@ -356,14 +356,14 @@ export function ParameterList(props: ParameterListProps) {
               parameter={parameter} 
               paramDependencyUpdating={!!paramDependenciesUpdating[parameter.name]}
             />
-            <div className={cx('ParameterControl')}>
-              {parameterElements[parameter.name]}
-              {
+            { 
                 parameter.visibleHelp !== undefined &&
                 <div className={cx('VisibleHelp')}>
                   {safeHtml(parameter.visibleHelp)}
                 </div>
-              }
+            }
+            <div className={cx('ParameterControl')}>
+              {parameterElements[parameter.name]}
             </div>
           </React.Fragment>
         ))}
