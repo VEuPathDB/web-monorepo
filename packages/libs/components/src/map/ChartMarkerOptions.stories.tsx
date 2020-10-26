@@ -5,7 +5,7 @@ import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
 import './TempIconHack';
 
-import collectionDateData from './test-data/geoclust-date-binning-testing.json';
+import collectionDateData from './test-data/geoclust-date-binning-testing-all-levels.json';
 
 import { LeafletMouseEvent } from "leaflet";
 import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; // TO BE CREATED
@@ -54,6 +54,29 @@ const all_colors_hex = [
   "#232C16" // Dark Olive Green
 ];
 
+const zoomLevelToGeohashLevel = [
+  'geohash_1', // 0
+  'geohash_1', // 1
+  'geohash_1', // 2
+  'geohash_1', // 3
+  'geohash_2', // 4
+  'geohash_2', // 5
+  'geohash_2', // 6
+  'geohash_3', // 7
+  'geohash_3', // 8
+  'geohash_3', // 9
+  'geohash_4', // 10
+  'geohash_4', // 11
+  'geohash_4', // 12
+  'geohash_5', // 13
+  'geohash_5', // 14
+  'geohash_5', // 15
+  'geohash_6', // 16
+  'geohash_6', // 17
+  'geohash_7'  // 18
+];
+
+
 //DKDK send x-/y-axes labels for Legend bar chart
 const variableLabel: string = '<b>Collection date</b>'  //DKDK: x-axis label
 const quantityLabel: string = '<b>Record count</b>'     //DKDK: y-axis label
@@ -79,7 +102,7 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 
 //DKDK use legendRadioValue instead of knob_YAxisRangeMethod
 // const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod) => {
-  const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
+  const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
 
   let legendSums : number[] = [];
   let legendLabels : string[] = [];
@@ -88,7 +111,9 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
   //DKDK make a new variable to always calculate yAxisRange (to always show Reginal scale value)
   let yAxisRangeAll : number[] = []
 
-  const buckets = collectionDateData.facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
+  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+    
+  const buckets = collectionDateData[geohash_level].facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
     return ltAvg > bounds.southWest[0] &&
 	   ltAvg < bounds.northEast[0] &&
 	   lnAvg > bounds.southWest[1] &&
