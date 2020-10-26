@@ -5,7 +5,7 @@ import { BoundsViewport, MarkerProps } from './Types';
 import { Marker, Tooltip } from 'react-leaflet';
 import './TempIconHack';
 
-import speciesData from './test-data/geoclust-species-testing.json';
+import speciesData from './test-data/geoclust-species-testing-all-levels.json';
 
 import { latLng, LeafletMouseEvent } from "leaflet";
 import SVGDonutMarker from './SVGDonutMarker'; // TO BE CREATED
@@ -50,6 +50,28 @@ const all_colors_hex = [
   "#593315", // Deep Yellowish Brown
   "#F13A13", // Vivid Reddish Orange
   "#232C16" // Dark Olive Green
+];
+
+const zoomLevelToGeohashLevel = [
+  'geohash_1', // 0
+  'geohash_1', // 1
+  'geohash_1', // 2
+  'geohash_1', // 3
+  'geohash_2', // 4
+  'geohash_2', // 5
+  'geohash_2', // 6
+  'geohash_3', // 7
+  'geohash_3', // 8
+  'geohash_3', // 9
+  'geohash_4', // 10
+  'geohash_4', // 11
+  'geohash_4', // 12
+  'geohash_5', // 13
+  'geohash_5', // 14
+  'geohash_5', // 15
+  'geohash_6', // 16
+  'geohash_6', // 17
+  'geohash_7'  // 18
 ];
 
 //DKDK a generic function to remove a class: here it is used for removing highlight-marker
@@ -146,8 +168,19 @@ const dropdownItemTextBar: string[] =['Year', 'Month', 'Date', 'Age']
    This is a trivial marker data generator.  It returns 10 random points within the given bounds.
    The real thing should something with zoomLevel.
 */
-const getSpeciesMarkerElements = () => {
-  return speciesData.facets.geo.buckets.map((bucket) => {
+const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport) => {
+  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+
+  const buckets = speciesData[geohash_level].facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
+    return ltAvg > bounds.southWest[0] &&
+	   ltAvg < bounds.northEast[0] &&
+	   lnAvg > bounds.southWest[1] &&
+	   lnAvg < bounds.northEast[1]
+  });
+
+
+
+  return buckets.map((bucket) => {
     const lat = bucket.ltAvg;
     const long = bucket.lnAvg;
     let labels: string[] = [];
@@ -183,8 +216,8 @@ const getSpeciesMarkerElements = () => {
 export const Species = () => {
   
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-  const handleViewportChanged = useCallback(() => {
-    setMarkerElements(getSpeciesMarkerElements());
+  const handleViewportChanged = useCallback((bvp : BoundsViewport) => {
+    setMarkerElements(getSpeciesMarkerElements(bvp));
   }, [setMarkerElements])
 
 
@@ -218,7 +251,7 @@ const SpeciesSidebar = () => {
   // const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getSpeciesMarkerElements());
+    setMarkerElements(getSpeciesMarkerElements(bvp));
   }, [setMarkerElements])
 
   //DKDK Sidebar state managements (for categorical)
