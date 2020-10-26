@@ -6,13 +6,20 @@ import { Option } from 'react-select/src/filters';
 import { Core } from 'cytoscape';
 import { isEqual, orderBy, uniqWith } from 'lodash';
 
+import { HelpIcon } from 'wdk-client/Components';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { stripHTML } from 'wdk-client/Views/Records/RecordUtils';
 
 import { NodeSearchCriteria } from './pathway-utils';
 
+const TOOLTIP_POSITION = {
+  my: 'bottom left',
+  at: 'top right'
+};
+
 interface Props {
   cy: Core;
+  helpText?: JSX.Element;
   onSearchCriteriaChange: (searchCriteria: NodeSearchCriteria | undefined) => void;
 }
 
@@ -21,7 +28,11 @@ interface NodeOptionDatum {
   node_identifier: string | undefined;
 };
 
-export function PathwaySearchById({ cy, onSearchCriteriaChange }: Props) {
+export function PathwaySearchById({
+  cy,
+  helpText,
+  onSearchCriteriaChange
+}: Props) {
   const [ searchTerm, setSearchTerm ] = useState('');
 
   const options = useMemo(
@@ -106,7 +117,7 @@ export function PathwaySearchById({ cy, onSearchCriteriaChange }: Props) {
   }, []);
 
   const noOptionsMessage = useCallback(
-    () => 'No identifiers match your search term',
+    () => 'No names or identifiers match your search term',
     []
   );
 
@@ -168,10 +179,18 @@ export function PathwaySearchById({ cy, onSearchCriteriaChange }: Props) {
         styles={{
           container: base => ({
             ...base,
-            zIndex: 99
+            zIndex: 99,
+            flex: 'auto',
+            paddingRight: '0.25em'
           })
         }}
       />
+      {
+        helpText &&
+        <HelpIcon tooltipPosition={TOOLTIP_POSITION}>
+          {helpText}
+        </HelpIcon>
+      }
     </div>
   );
 }
