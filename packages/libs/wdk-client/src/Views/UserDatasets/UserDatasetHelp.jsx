@@ -33,9 +33,9 @@ function UserDatasetHelp ({ projectId, quotaSize }) {
             All analyses and visualisations available for MicrobiomeDB data sets can also be used on the uploaded data set, for example:
             <br/>
             <ul>
-              <li> Whisker plot showing most abundant taxa, split by sample groups </li>
-              <li> Abundance bar chart </li>
-              <li> Alpha diversity trends for samples annotated by continuous variables like patient height or age </li>
+              <li>Box and Whisker plot showing most abundant taxa, split by sample groups </li>
+              <li>Alpha diversity trends for samples annotated by continuous variables like patient height or age </li>
+              <li>Beta diversity plots annotated by sample groups</li>
               <li> Report of differentially abundant samples between groups of samples </li>
             </ul>
       </section>
