@@ -1,27 +1,20 @@
 import React from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
-import { Analysis } from 'ebrc-client/modules/eda-workspace-core/types/analysis';
+import { useAnalysis } from 'ebrc-client/modules/eda-workspace-core/hooks/useAnalysis';
 
-interface Props {
-  analysis: Analysis;
-  setAnalysisName: (name: string) => void;
-  copyAnalysis: () => void;
-  saveAnalysis: () => void;
-  deleteAnalysis: () => void;
-}
-
-export function EDAAnalysis(props: Props) {
+export function EDAAnalysis() {
   const {
-    analysis,
-    setAnalysisName,
+    history,
+    setName,
     copyAnalysis,
     saveAnalysis,
     deleteAnalysis
-  } = props;
+  } = useAnalysis();
+  if (history.current == null) return null;
   return (
     <div className={cx('-Analysis')}>
-      <AnalysisSummary analysis={analysis} setAnalysisName={setAnalysisName} copyAnalysis={copyAnalysis} saveAnalysis={saveAnalysis} deleteAnalysis={deleteAnalysis}/>
+      <AnalysisSummary analysis={history.current} setAnalysisName={setName} copyAnalysis={copyAnalysis} saveAnalysis={saveAnalysis} deleteAnalysis={deleteAnalysis}/>
     </div>
   )
 }

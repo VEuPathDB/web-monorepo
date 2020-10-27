@@ -1,13 +1,3 @@
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-
+import './EDAWorkspace.scss';
 export const cx = makeClassNameHelper('EDAWorkspace');
-
-/**
- * Attributes that appear in the heading. They will appear in the order specified here.
- */
-export const SUMMARY_ATTRIBUTES = [
-  'Years',
-  'Study_Design',
-  'Participant_Type',
-  'disease',
-] as const;
