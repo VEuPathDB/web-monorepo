@@ -1,7 +1,14 @@
 import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
-import { PlotComponentProps } from "./Types";
+import { PlotData } from 'plotly.js';
 
-export default function Pie(props: PlotComponentProps<'labels'|'values'>) {
-  return <PlotlyPlot {...props} type="pie"/>
+export interface Props {
+  data: {
+    labels: PlotData['labels'];
+    values: PlotData['values'];
+  }[];
+}
+export default function Pie(props: Props) {
+  const data = props.data.map(d => ({...d, type: 'pie' as const }));
+  return <PlotlyPlot data={data} layout={{}} />
 }
