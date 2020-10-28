@@ -4,10 +4,10 @@ import { Link } from 'wdk-client/Components';
 
 import { cx } from './Utils';
 import { StudySummary } from './StudySummary';
-import { useStudyRecord } from 'ebrc-client/modules/eda-workspace-core/hooks/useStudyRecord';
+import { useStudy } from 'ebrc-client/modules/eda-workspace-core/hooks/useStudy';
 
 export function EDAWorkspaceHeading() {
-  const { studyRecord, studyRecordClass } = useStudyRecord();
+  const { studyRecord, studyRecordClass } = useStudy();
   return (
     <div className={cx('-Heading')}>
       <h1>Explore and Analyze</h1>

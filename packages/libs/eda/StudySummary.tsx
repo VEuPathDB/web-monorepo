@@ -1,13 +1,14 @@
 import React from 'react';
 
 import { cx } from './Utils';
-import { RecordInstance, RecordClass, AttributeField } from 'wdk-client/Utils/WdkModel';
+import { AttributeField } from 'wdk-client/Utils/WdkModel';
 import { renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
 import { Tooltip } from 'wdk-client/Components';
+import { StudyRecord, StudyRecordClass } from 'ebrc-client/modules/eda-workspace-core/types/study';
 
 interface Props {
-  studyRecord: RecordInstance;
-  studyRecordClass: RecordClass;
+  studyRecord: StudyRecord;
+  studyRecordClass: StudyRecordClass;
 }
 
 export function StudySummary(props: Props) {
