@@ -16,9 +16,9 @@ The two primiary domain objects of the _EDA Workspace_ are _Study_ and _Analysis
 
 The primary types in use by the **EDA Workspace** are:
 
-* `Study Record Instance` - The WDK record _instance_ of a **study**.
-* `Study Record Class` - The WDK record _class_ of a **study**.
-* `Study Metdata Record` - The EDA record containing information about entity types, and their variables, collected by the study.
+* `StudyRecordClass` - The WDK `RecordClass` of a **study**.
+* `StudyRecord` - The WDK `RecordInstance` of a **study**.
+* `StudyMetadata` - The EDA record containing information about entity types, and their variables, collected by the study.
 * `Analysis` - The persisted configuration of an EDA Workspace session. This includes subsetting details and condfiguration of visualizations.  _(Should this be renamed `Session`?)_
 
 ## Usage
