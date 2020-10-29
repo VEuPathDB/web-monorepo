@@ -1,0 +1,181 @@
+/* DKDK legend positioning */
+.legend {
+  position: absolute;
+  bottom: 80px;
+  right: 10px
+}
+
+/* DKDK reduce min-height for numeric (range data) - copy from .legend-contents at vb-popbio-maps.css */
+.legend-contents-numeric {
+    text-align    : left;
+    line-height   : 15px;
+    color         : #555555;
+    /* DKDK changed margin-bottom from 5 to 0 */
+    margin-bottom : 0px !important;
+    border-radius : 0 !important;
+    /* DKDK change these for mapveu v2
+    width         : 280px;
+    min-height    : 300px; */
+    width         : 250px;
+    /* DKDK change min-height for numeric data */
+    min-height    : 210px;
+    /* DKDK combine with other CSS defined */
+    /* padding: 6px 8px 6px 8px; */
+    padding: 0px 0px 0px 0px;
+    background: white;
+    /*max-width     : 230px;
+    position: absolute;
+    right: 0px;
+    top: 30%;*/
+    /* DKDK add margin-top for numeric - may not be necessary when using dropdown menu */
+    /* margin-top: 10px; */
+  }
+
+/* DKDK override bootstrap css for legend dropdown menu */
+
+.legend .btn-success {
+  color: #000;
+  background-color: #fff;
+  border-color: silver;
+}
+
+.legend .btn-success:hover {
+  color: #000;
+  background-color: #fff;
+  border-color: silver;
+}
+
+.legend .btn-success:focus, .legend .btn-success.focus {
+  color: #000;
+  background-color: #fff;
+  border-color: silver;
+  box-shadow: 0 0 0 0rem rgba(151, 141, 141, 0.425);
+}
+
+.legend .btn-success.disabled, .legend .btn-success:disabled {
+  color: #000;
+  background-color: #fff;
+  border-color: silver;
+}
+
+.legend .btn-success:not(:disabled):not(.disabled):active, .legend .btn-success:not(:disabled):not(.disabled).active,
+.legend .show > .btn-success.dropdown-toggle {
+  color: #333333;
+  background-color: #CECECE;
+  border-color: #ADADAD;
+}
+
+.legend .btn-success:not(:disabled):not(.disabled):active:focus, .legend .btn-success:not(:disabled):not(.disabled).active:focus,
+.legend .show > .btn-success.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0rem rgba(151, 141, 141, 0.425);
+}
+
+.legend .dropdown button {
+  border: 1px solid #e5e5e5;
+  border-color: silver;
+  border-radius: 0px;
+  background-color: white;
+  font-size: 1em;
+  color: black;
+  /* DKDK set the size of dropdown button */
+  /* width: 100%;
+  text-align: left; */
+}
+
+.legend-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  clear: both;
+  font-weight: 400;
+  color: #222;
+  text-align: inherit;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+}
+
+.legend-dropdown-item:hover, .legend-dropdown-item:focus {
+  color: #16181b;
+  text-decoration: none;
+  background-color: #f8f9fa;
+}
+
+.legend-dropdown-item.active, .legend-dropdown-item:active {
+  color: #16181b;
+  text-decoration: none;
+  background-color: #f8f9fa;
+}
+
+.legend-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  margin: 0.125rem 0 0;
+  font-size: 0.9375rem;
+  color: #222;
+  text-align: left;
+  list-style: none;
+  background-color: #eee;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+}
+
+/* DKDK for the case when full width of dropdown button is used
+ * set different value for categorical and bar chart legends due to margin in plotly
+*/
+
+.legend .dropdown button {
+  width: 100%;
+  text-align: left;
+}
+#legend-dropdown-category.dropdown-toggle::after {
+  position: relative;
+  right: -75%;
+}
+
+#legend-dropdown-chart.dropdown-toggle::after {
+  position: relative;
+  right: -55%;
+}
+
+/* DKDK add square icon case with the presence of legend-square-icon className */
+.legend .legend-square-icon i {
+  border-radius: 0px;
+}
+
+/* DKDK add legend-field-text */
+.legend .legend-field-text {
+  text-align: right;
+  margin-bottom: -12px;
+}
+
+/* DKDK add legend-marker-description */
+.legend .legend-marker-description {
+  text-align: center;
+}
+
+.legend .legend-marker-description img {
+  margin: 12px auto;
+}
+
+/* DKDK legend-list-radio-button */
+.legend .legend-list-radio-button .legend-list-radio-button-title {
+  /* margin-top: 24px; */
+  margin: 12px auto 5px auto;
+  line-height: 15px;
+}
+
+.legend .legend-list-radio-button Label {
+  /* margin-top: 24px; */
+  /* margin: 12px auto 5px auto; */
+  line-height: 5px;
+}
+
