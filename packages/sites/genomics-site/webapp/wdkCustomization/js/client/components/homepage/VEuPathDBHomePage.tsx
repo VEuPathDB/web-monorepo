@@ -296,9 +296,8 @@ const useHeaderMenuItems = (
           key: 'apollo',
           display: 'Apollo',
           tooltip: 'Instantaneous, collaborative, genome annotation editor',
-          type: 'externalLink',
-          url: 'https://apollo.veupathdb.org/',
-          target: '_blank',
+          type: 'reactRoute',
+          url: makeStaticPageRoute(`apolloQuickCommands.html`),
           metadata: {
             include: [ VectorBase ]
          }
