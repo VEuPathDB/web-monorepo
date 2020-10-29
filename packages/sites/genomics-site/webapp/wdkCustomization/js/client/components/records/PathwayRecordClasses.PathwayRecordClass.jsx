@@ -43,6 +43,8 @@ const ORTHOMCL_LINK = 'https://beta.orthomcl.org/orthomcl/processQuestion.do?que
 const clearFoundNodes = clearHighlighting('veupathdb-CytoscapeFoundNode');
 const highlightFoundNodes = highlightNodes('veupathdb-CytoscapeFoundNode');
 
+const FOUND_NODE_HIGHLIGHTING_COLOR = '#009E73';
+
 function loadCytoscapeJs() {
   return new Promise(function(resolve, reject) {
     try {
@@ -678,7 +680,7 @@ function makeCy(container, pathwayId, pathwaySource, PathwayNodes, PathwayEdges,
             {
               selector: 'node.veupathdb-CytoscapeFoundNode',
               style: {
-                'border-color': 'green',
+                'border-color': FOUND_NODE_HIGHLIGHTING_COLOR,
                 'border-width': '4px'
               },
             },
@@ -1325,7 +1327,21 @@ const CytoscapeDrawing = enhance(class CytoscapeDrawing extends React.Component 
           {this.state.cy && (
             <PathwaySearchById
               onSearchCriteriaChange={this.onSearchCriteriaChange}
-              nodes={this.state.cy.nodes()}
+              cy={this.state.cy}
+              helpText={
+                <span>
+                  <ul>
+                    <li>
+                      Node names and identifiers will be searched
+                    </li>
+                    <li>
+                      Nodes which match your search criteria will be highlighted with
+                      {' '}
+                      <span style={{ color: FOUND_NODE_HIGHLIGHTING_COLOR }}>this color</span>
+                    </li>
+                  </ul>
+                </span>
+              }
             />
           )}
           <div className="veupathdb-PathwayRecord-menuControls">
