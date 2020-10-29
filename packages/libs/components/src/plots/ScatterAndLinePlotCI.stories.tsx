@@ -176,56 +176,56 @@ dataSet.data.forEach(function (el: any) {
  * Thus, type errors in this function can be ignored as this would not be used in the end
  */
 export const ManualInputData = () => <ScatterAndLinePlotCI
-onPlotUpdate={action('state updated')}
-data={[{
-  x: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-  y: [5, 2.5, 5, 7.5, 5, 2.5, 7.5, 4.5, 5.5, 5],
-  line: {color: "rgb(0,176,246)", shape: 'spline',  width: 5 },
-  // line: {shape: 'spline'},
-  mode: "lines",
-  // mode: 'lines+markers',
-  name: "Curve fitting",
-  // type: "line"
-},{
-  x: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-  y: [6.5, 3, 6.5, 9, 6, 5, 8, 5, 7, 5.5, 4, 5, 4, 6, 1, 4, 5, 4.4, 1, 4],
-  fill: 'tozerox',
-  fillcolor: 'rgba(0,176,246,0.2)',
-  // fillcolor: '#00b0f6',
-  line: {color: 'transparent', shape: 'spline'},
-  name: "Confidence interval",
-  // showlegend: false,
-  // mode: "lines",
-  type: "scatter"
-},{
-  x: [1.5, 2, 2.5, 3, 3.5, 4, 5, 5.5, 6, 7, 8, 8.5, 9],
-  y: [1, 5, 5, 7, 3, 2, 7, 1, 5, 5, 7, 3, 2],
-  mode: 'markers',
-  type: 'scattergl',
-  name: 'Markers',
-  marker: {
-    color: '#000000',
-    size: 12
-  },
-}]}
-xLabel="foo"
-yLabel="bar"
-plotTitle="Example: Scatter plot with confidence interval"
-//DKDK involving CI, x & y range may need to be set. For now it is manually set
-//in most cases, autorange would work, except xRange where CI tends to extend its plot to 0,0
-xRange={[1,10]}
-yRange={[0,10]}
+  onPlotUpdate={action('state updated')}
+  data={[{
+      x: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      y: [5, 2.5, 5, 7.5, 5, 2.5, 7.5, 4.5, 5.5, 5],
+      line: {color: "rgb(0,176,246)", shape: 'spline',  width: 5 },
+      // line: {shape: 'spline'},
+      mode: "lines",
+      // mode: 'lines+markers',
+      name: "Curve fitting",
+      // type: "line"
+    },{
+      x: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+      y: [6.5, 3, 6.5, 9, 6, 5, 8, 5, 7, 5.5, 4, 5, 4, 6, 1, 4, 5, 4.4, 1, 4],
+      fill: 'tozerox',
+      fillcolor: 'rgba(0,176,246,0.2)',
+      // fillcolor: '#00b0f6',
+      line: {color: 'transparent', shape: 'spline'},
+      name: "Confidence interval",
+      // showlegend: false,
+      // mode: "lines",
+      type: "scatter"
+    },{
+      x: [1.5, 2, 2.5, 3, 3.5, 4, 5, 5.5, 6, 7, 8, 8.5, 9],
+      y: [1, 5, 5, 7, 3, 2, 7, 1, 5, 5, 7, 3, 2],
+      mode: 'markers',
+      type: 'scattergl',
+      name: 'Markers',
+      marker: {
+        color: '#000000',
+        size: 12
+      },
+  }]}
+  xLabel="foo"
+  yLabel="bar"
+  plotTitle="Example: Scatter plot with confidence interval"
+  //DKDK involving CI, x & y range may need to be set. For now it is manually set
+  //in most cases, autorange would work, except xRange where CI tends to extend its plot to 0,0
+  xRange={[1,10]}
+  yRange={[0,10]}
 />
 
 export const PreprocessedData = () => <ScatterAndLinePlotCI
-onPlotUpdate={action('state updated')}
-data={[...dataSetProcess]}
-xLabel="foo"
-yLabel="bar"
-plotTitle="Example: Scatter plot with confidence interval"
-//DKDK involving CI, x & y range may need to be set. For now it is manually set
-//in most cases, autorange would work, except xRange where CI tends to extend its plot to 0,0
-xRange={[1,10]}
-yRange={[0,10]}
+  onPlotUpdate={action('state updated')}
+  data={[...dataSetProcess]}
+  xLabel="foo"
+  yLabel="bar"
+  plotTitle="Example: Scatter plot with confidence interval"
+  //DKDK involving CI, x & y range may need to be set. For now it is manually set
+  //in most cases, autorange would work, except xRange where CI tends to extend its plot to 0,0
+  xRange={[1,10]}
+  yRange={[0,10]}
 />
 

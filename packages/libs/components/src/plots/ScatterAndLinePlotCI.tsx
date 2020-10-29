@@ -1,13 +1,14 @@
 import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
-import { PlotComponentProps } from "./Types";
+// import { PlotComponentProps } from "./Types";
 //DKDK import Layout for typing layout, especially with sliders
 import { Layout, PlotData } from "plotly.js"
 
 //DKDK following the approach used in PlotlyPlot.tsx to avoid type errors regarding data
 type PlotDataKey = keyof PlotData;
-interface Props<T extends PlotDataKey> extends PlotComponentProps<T> {
-  // interface Props extends PlotComponentProps<'x'|'y'|'name'> {
+//DKDK change interface a bit more: this could avoid error on data type
+interface Props<T extends keyof PlotData> {
+  data: Pick<PlotData, T>[];
   xLabel: string;
   yLabel: string;
   plotTitle: string;
@@ -17,7 +18,7 @@ interface Props<T extends PlotDataKey> extends PlotComponentProps<T> {
 }
 
 export default function ScatterAndLinePlotCI<T extends PlotDataKey>(props: Props<T>) {
-  const { xLabel, yLabel, plotTitle, xRange, yRange, ...plotlyProps } = props;
+  const { xLabel, yLabel, plotTitle, xRange, yRange, data } = props;
   const layout: Partial<Layout> = {
     xaxis: {
       title: xLabel,
@@ -67,11 +68,13 @@ export default function ScatterAndLinePlotCI<T extends PlotDataKey>(props: Props
     }]
   };
 
+  //DKDK add this per standard
+  const finalData = data.map(d => ({ ...d, type: 'scatter' as const }));
+
   return (
     <PlotlyPlot
-      {...plotlyProps}
+      data={finalData}
       layout={layout}
-      type="scatter"
     />
   );
 }

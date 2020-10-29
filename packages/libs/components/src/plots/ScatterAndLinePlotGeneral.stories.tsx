@@ -1,32 +1,25 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import ScatterAndLinePlotCIReal from './ScatterAndLinePlotCIReal';
+import ScatterAndLinePlotGeneral from './ScatterAndLinePlotGeneral';
+//DKDK trying to reduce type error for js functions
+// import './custom.d.ts'
 
 export default {
-  title: 'Scatter CI Real Data',
-  component: ScatterAndLinePlotCIReal,
+  title: 'Scatter Plot General',
+  component: ScatterAndLinePlotGeneral,
 };
 
 /**
- * DKDK lots of type errors can be categorized as two kinds of errors in the following:
- * a) union type (e.g., x & y with number or Date) and its mathematical operation
- * b) js built-in methods/functions like replace(), concat(), map()
+ * DKDK lots of type errors come from the use of Union type (e.g., x & y with number[] | Date[])
+ * Also, its use with its mathematical operations like JS built-in methods/functions such as concat(), map(), etc.
+ * - well known issue when using Union type with such JS functions...
  *
  * Question: should x and y be defined as number[] | string[], not number[] | Date[]?
  *
- * # items that are implemented
- * - simple error checking for the case whether the number of x equal to the number of y
- * - sorting X data (and corresponding Y too), which is necessary for CI plot due to its nature of both ascending and descending format
- * - dynamically setting x-/y-axes ranges for better display: finding min/max and floor()/ceil()
- * - added box (outer) border for the plot
- * - considered a default color (defaultColor) if color props is not inputted
- * - considered global opacity (globalOpacity): changed all color part to use rgba()
- * - considered Date input: but assumed that the Date data is comprised of ISO format, e.g., '2020-01-01T00:00:00Z'
- *   - In this regard, sorting is carefully handled
- *
  * # to-do-list: not necessarily a must-have item as of now
- * - "popupContent" prop is not considered
- * - handling types for union type that causes many type errors
+ * - "popupContent" prop is not considered yet
+ * - handling typescript errors for Union type
+ *    - generic, type assertion, type guard but complex
  *
  */
 
@@ -35,29 +28,47 @@ export default {
 interface VEuPathDBScatterPlotData {
   data : Array<{
     series: {
-      x: number[] | Date[];   //DKDK perhaps string[] is better despite Date format, e.g., ISO format?
-      y: number[] | Date[];   //DKDK will y data have a Date?
+      // x: number[] | Date[];   //DKDK perhaps string[] is better despite Date format, e.g., ISO format?
+      // y: number[] | Date[];   //DKDK will y data have a Date?
+      x: (number | Date)[];   //DKDK perhaps string[] is better despite Date format, e.g., ISO format?
+      y: (number | Date)[];   //DKDK will y data have a Date?
       popupContent?: string;
     };
     interval?: {
-      x: number[] | Date[];
-      y: number[] | Date[];
+      // x: number[] | Date[];
+      // y: number[] | Date[];
+      x: (number | Date)[];   //DKDK perhaps string[] is better despite Date format, e.g., ISO format?
+      y: (number | Date)[];   //DKDK will y data have a Date?
       orientation: string;
       standardError: number[];
     };
     color?: string;
     label: string;
+    //DKDK for general scatter component
+    showLines?: boolean;
+    showMarkers?: boolean;
+    fillArea?: boolean;
+    useSpline?: boolean;
   }>
   opacity?: number;
 }
 
 //DKDK type for hexToRgb function
 interface hexProp {
-  hex: string
+  // hex: string,
+  hexToRgb: (arg0: string) => number[];
+  replace: (arg0: RegExp, arg1: (m: string, r: string, g: string, b: string) => void) => any,
+  // replace(arg0: RegExp, arg1: (m: string, r: string, g: string, b: string)),
+}
+
+//DKDK Type workaround for union type, especially using map() etc.: https://github.com/microsoft/TypeScript/issues/30271#issuecomment-476278582
+type ArrayElem<A> = A extends Array<infer Elem> ? Elem : never
+function elemT<T>(array: T): Array<ArrayElem<T>> {
+  return array as any
 }
 
 //DKDK change HTML hex code to rgb array
-const hexToRgb = (hex: hexProp) => {
+const hexToRgb = (hex: hexProp): number[] => {
   // if (!hex) return;
   let rgbValue: number[] = hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i,(m: string, r: string, g: string, b: string): string => '#' + r + r + g + g + b + b)
                                   .substring(1).match(/.{2}/g).map((x: string) => parseInt(x, 16))
@@ -70,13 +81,13 @@ function isArrayOfNumbers(value: any) {
 }
 
 //DKDK an example data: data are assumed to be number type only
-// let boundValue = 2
 let orientationValue = 'y'
 
 //DKDK Real data comprised of numbers
 const dataSet: VEuPathDBScatterPlotData = {
   data: [
     {
+      //DKDK scatter plot with CI
       series: {
         x: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,47],
         y: [0.58,0.54,0.43,0.86,1.19,1.47,0.98,1.36,0.58,0.82,0.77,1.22,2.21,0.46,1.55,1.38,0.98,1.4,1.29,1.3,1.56,1.73,1.48,1.38,1.1,1.14,0.84,1.12,1.07,1.1,0.73,0.86,1.16,1.02,0.77,1.04,0.57,0.08,0.2,0.4,0.23,0.13,-0.51,0,-0.35,0.21,-0.08],
@@ -89,16 +100,43 @@ const dataSet: VEuPathDBScatterPlotData = {
         orientation: orientationValue,
       },
       color: '#00b0f6',       //DKDK use this as fitting line and scatter color
-      label: 'Dataset 1',     //DKDK use this as "name" in plotly
+      label: 'Data 1',     //DKDK use this as "name" in plotly
+      //DKDK below setting is for marker without line but use spline for fitting line
+      showLines: false,
+      showMarkers: true,
+      fillArea: false,
+      useSpline: true,
     },
-    // {
-    //   series: {
-    //     x: [1,3,5,7,9,11,13,15,17,19,2,4,6,8,10,12,14,16,18,20],
-    //     y: [1.5,3.5,5.5,7.5,9.5,11.5,13.5,15.5,17.5,19.5,2.5,4.5,6.5,8.5,10.5,12.5,14.5,16.5,18.5,20.5],
-    //   },
-    //   color: '#000000',       //DKDK use this as point/marker color
-    //   label: 'Dataset 2',     //DKDK use this as "name" in plotly
-    // }
+    {
+      //DKDK line plot with marker
+      series: {
+        //DKDK random data from 0 to 29
+        x: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],
+        y: [-1,-0.8,-0.4,0,0.5,0.8,1.3,1.7,2.0,2.3,2.7,3.5,4.0,4.5,4.7,4.7,4.6,4.0,3.5,2.7,2.3,2.0,1.7,1.3,0.8,0.5,0,-0.4,-0.67,-1],
+      },
+      color: '#8B0000',       //DKDK use this as point/marker color
+      label: 'Data 2',     //DKDK use this as "name" in plotly
+      //DKDK below setting is for marker with line but no spline interpolation
+      showLines: true,
+      showMarkers: true,
+      fillArea: false,
+      useSpline: false,
+    },
+    {
+      //DKDK line plot with marker
+      series: {
+        //DKDK random data from 20 to 47
+        x: [20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47],
+        y: [-1,-0.8,-0.7,-0.5,-0.2,0,0.5,0.8,1.2,1.5,2.3,2.6,2.9,3.0,2.85,2.6,2.0,1.5,1.2,1.0,0.8,0.4,0,-0.3,-0.6,-0.7,-0.8,-1],
+      },
+      color: '#006400',       //DKDK use this as point/marker color
+      label: 'Data 3',     //DKDK use this as "name" in plotly
+      //DKDK density plot: also testing for no line/marker => line seems to be defailt in this case
+      showLines: false,
+      showMarkers: false,
+      fillArea: true,
+      useSpline: true,
+    }
   ],
   // opacity: 0.2,
 }
@@ -127,39 +165,56 @@ const dataSet: VEuPathDBScatterPlotData = {
 
 //DKDK set variables for x- and yaxis ranges
 let xMin: number | Date = 0
-let xMax: number = 0
+let xMax: number | Date = 0
 let yMin: number | Date = 0
-let yMax: number = 0
+let yMax: number | Date = 0
 
 //DKDK set global Opacity value
-let globalOpacity = (dataSet.opacity)? dataSet.opacity : 1
+let globalOpacity = (dataSet.opacity) ? dataSet.opacity : 1
 
-//DKDK set a default color
+//DKDK set a default color - set to any for now
 let defaultColor: string = '#00b0f6'
 
 //DKDK making plotly input data
 let dataSetProcess: Array<{}> = []
 dataSet.data.forEach(function (el: any, index: number) {
   //DKDK initialize variables: setting with union type for future, but this causes typescript issue in the current version
-  let xSeriesValue: number[] | Date[] = []
-  let ySeriesValue: number[] | Date[] = []
-  let xIntervalLineValue: number[] | Date[] = []
-  let yIntervalLineValue: number[] | Date[] = []
-  let standardErrorValue: number[] | Date[] = []    //DKDK this is for standardError
-  let xIntervalBounds: number[] | Date[] = []
-  let yIntervalBounds: number[] | Date[] = []
-  let yUpperValues: number[] | Date[] = []
-  let yLowerValues: number[] | Date[] = []
+  // let xSeriesValue: number[] | Date[] = []
+  // let ySeriesValue: number[] | Date[] = []
+  // let xIntervalLineValue: number[] | Date[] = []
+  // let yIntervalLineValue: number[] | Date[] = []
+  // let standardErrorValue: number[] | Date[] = []    //DKDK this is for standardError
+  // let xIntervalBounds: number[] | Date[] = []
+  // let yIntervalBounds: number[] | Date[] = []
+  // let yUpperValues: number[] | Date[] = []
+  // let yLowerValues: number[] | Date[] = []
+
+  //DKDK this reduces type errors
+  let xSeriesValue: (number | Date)[] = []
+  let ySeriesValue: (number | Date)[] = []
+  let xIntervalLineValue: (number | Date)[] = []
+  let yIntervalLineValue: (number | Date)[] = []
+  let standardErrorValue: (number | Date)[] = []    //DKDK this is for standardError
+  let xIntervalBounds: (number | Date)[] = []
+  let yIntervalBounds: (number | Date)[] = []
+  let yUpperValues: (number | Date)[] = []
+  let yLowerValues: (number | Date)[] = []
+
   //DKDK set rgbValue here per dataset with a default color
-  let rgbValue: number[] = (el.color)? hexToRgb(el.color) : hexToRgb(defaultColor)
+  let rgbValue: number[] = (el.color) ? hexToRgb(el.color) : hexToRgb(defaultColor)
   let scatterPointColor: string = ''
   let fittingLineColor: string = ''
   let intervalColor: string = ''
+  //DKDK set line and marker variable
+  let modeValue: string = ''
+  let splineValue: string = ''
+  let fillAreaValue: string =''
 
   //DKDK series is for scatter plot
   if (el.series) {
     //DKDK check the number of x = number of y
     if (el.series.x.length !== el.series.y.length) {
+      console.log('x length=', el.series.x.length, '  y length=', el.series.y.length)
       alert ('The number of X data is not equal to the number of Y data');
       throw new Error("The number of X data is not equal to the number of Y data");
     }
@@ -180,34 +235,76 @@ dataSet.data.forEach(function (el: any, index: number) {
       ySeriesValue[k] = combinedArray[k].yValue;
     }
 
-    //DKDK set variables for x-/y-axes ranges including x,y data points: considering Date data for X as well
+    /*
+     * DKDK set variables for x-/y-axes ranges including x,y data points: considering Date data for X as well
+     * This is for finding global min/max values among data arrays for better display of the plot(s)
+     */
+    //DKDK check if this X array consists of numbers & add type assertion
     if (isArrayOfNumbers(xSeriesValue)) {
-      xMin = (xMin < Math.min(...xSeriesValue))? xMin : Math.min(...xSeriesValue)
-      xMax = (xMax > Math.max(...xSeriesValue))? xMax : Math.max(...xSeriesValue)
-    } else if (index == 0) {
+      xMin = (xMin < Math.min(...xSeriesValue as number[])) ? xMin : Math.min(...xSeriesValue as number[])
+      xMax = (xMax > Math.max(...xSeriesValue as number[])) ? xMax : Math.max(...xSeriesValue as number[])
+    } else {      //DKDK this array consists of Dates
+      if (index == 0) {  //DKDK to set initial min/max Date values for Date[]
         xMin = new Date(Math.min(...xSeriesValue.map(date => new Date(date))))
         xMax = new Date(Math.max(...xSeriesValue.map(date => new Date(date))))
-    } else {
-      xMin = (xMin < Math.min(...xSeriesValue.map(date => new Date(date))))? xMin : new Date(Math.min(...xSeriesValue.map(date => new Date(date))))
-      xMax = (xMax > Math.max(...xSeriesValue.map(date => new Date(date))))? xMax : new Date(Math.max(...xSeriesValue.map(date => new Date(date))))
+        // xMin = new Date(Math.min.apply(Math, elemT(xSeriesValue).map(date => new Date(date))))
+        // xMax = new Date(Math.max.apply(Math, elemT(xSeriesValue).map(date => new Date(date))))
+      } else {
+        xMin = (xMin < Math.min(...xSeriesValue.map(date => new Date(date)))) ? xMin : new Date(Math.min(...xSeriesValue.map(date => new Date(date))))
+        xMax = (xMax > Math.max(...xSeriesValue.map(date => new Date(date)))) ? xMax : new Date(Math.max(...xSeriesValue.map(date => new Date(date))))
+      }
     }
-    yMin = (yMin < Math.min(...ySeriesValue))? yMin : Math.min(...ySeriesValue)
-    yMax = (yMax > Math.max(...ySeriesValue))? yMax : Math.max(...ySeriesValue)
+
+    //DKDK check if this Y array consists of numbers & add type assertion
+    if (isArrayOfNumbers(ySeriesValue)) {
+      yMin = (yMin < Math.min(...ySeriesValue as number[])) ? yMin : Math.min(...ySeriesValue as number[])
+      yMax = (yMax > Math.max(...ySeriesValue as number[])) ? yMax : Math.max(...ySeriesValue as number[])
+    } else {
+      if (index == 0) {  //DKDK to set initial Date value for Date[]
+        yMin = new Date(Math.min(...ySeriesValue.map(date => new Date(date))))
+        yMax = new Date(Math.max(...ySeriesValue.map(date => new Date(date))))
+      } else {
+        yMin = (yMin < Math.min(...ySeriesValue.map(date => new Date(date)))) ? yMin : new Date(Math.min(...ySeriesValue.map(date => new Date(date))))
+        yMax = (yMax > Math.max(...ySeriesValue.map(date => new Date(date)))) ? yMax : new Date(Math.max(...ySeriesValue.map(date => new Date(date))))
+      }
+    }
 
     //DKDK use global opacity for coloring
     scatterPointColor = 'rgba(' + rgbValue[0] + ',' + rgbValue[1] + ',' + rgbValue[2] + ',' + globalOpacity + ')'   //DKDK set alpha/opacity as 0.2 for CI
 
-    //DKDK add scatter data
+    //DKDK check plot options: default value at plotly js seems to be lines
+    if (el.showLines == true && el.showMarkers == true) {
+      modeValue = 'lines+markers'
+    } else if (el.showLines == true && el.showMarkers == false) {
+      modeValue = 'lines'
+    } else if (el.showLines == false && el.showMarkers == true) {
+      modeValue = 'markers'
+    }
+
+    if (el.useSpline) {
+      splineValue = 'spline'
+    }
+
+    if (el.fillArea) {
+      fillAreaValue = 'toself'
+    }
+
+    //DKDK add scatter data considering input options
     dataSetProcess.push({
       x: xSeriesValue,
       y: ySeriesValue,
       name: el.label,
-      mode: 'markers',
+      // mode: 'markers',
       // mode: 'lines+markers',
-      type: 'scattergl',
+      mode: modeValue,
+      // type: 'scattergl',
+      type: 'scatter',
+      fill: fillAreaValue,
       marker: { color: scatterPointColor, size: 12 },
+      line: {color: scatterPointColor, shape: splineValue },
     })
   }
+
   //DKDK check if interval prop exists
   if (el.interval) {
     //DKDK check the number of x = number of y or standardError
@@ -232,21 +329,26 @@ dataSet.data.forEach(function (el: any, index: number) {
       standardErrorValue[k] = combinedArrayInterval[k].zValue;
     }
 
-    //DKDK set variables for x-/y-axes ranges including fitting line
+    //DKDK set variables for x-/y-axes ranges including fitting line: note that initial values of xMin and xMax are already defined earlier (el.series)
     if (isArrayOfNumbers(xIntervalLineValue)) {
-      xMin = (xMin < Math.min(...xIntervalLineValue))? xMin : Math.min(...xIntervalLineValue)
-      xMax = (xMax > Math.max(...xIntervalLineValue))? xMax : Math.max(...xIntervalLineValue)
+      xMin = (xMin < Math.min(...xIntervalLineValue as number[])) ? xMin : Math.min(...xIntervalLineValue as number[])
+      xMax = (xMax > Math.max(...xIntervalLineValue as number[])) ? xMax : Math.max(...xIntervalLineValue as number[])
     } else {
-      xMin = (xMin < Math.min(...xIntervalLineValue.map(date => new Date(date))))? xMin : new Date(Math.min(...xIntervalLineValue.map(date => new Date(date))))
-      xMax = (xMax > Math.max(...xIntervalLineValue.map(date => new Date(date))))? xMax : new Date(Math.max(...xIntervalLineValue.map(date => new Date(date))))
+      xMin = (xMin < Math.min(...xIntervalLineValue.map(date => new Date(date)))) ? xMin : new Date(Math.min(...xIntervalLineValue.map(date => new Date(date))))
+      xMax = (xMax > Math.max(...xIntervalLineValue.map(date => new Date(date)))) ? xMax : new Date(Math.max(...xIntervalLineValue.map(date => new Date(date))))
     }
-    yMin = (yMin < Math.min(...yIntervalLineValue))? yMin : Math.min(...yIntervalLineValue)
-    yMax = (yMax > Math.max(...yIntervalLineValue))? yMax : Math.max(...yIntervalLineValue)
+    if (isArrayOfNumbers(yIntervalLineValue)) {
+      yMin = (yMin < Math.min(...yIntervalLineValue as number[])) ? yMin : Math.min(...yIntervalLineValue as number[])
+      yMax = (yMax > Math.max(...yIntervalLineValue as number[])) ? yMax : Math.max(...yIntervalLineValue as number[])
+    } else {
+      yMin = (yMin < Math.min(...yIntervalLineValue.map(date => new Date(date)))) ? yMin : new Date(Math.min(...yIntervalLineValue.map(date => new Date(date))))
+      yMax = (yMax > Math.max(...yIntervalLineValue.map(date => new Date(date)))) ? yMax : new Date(Math.max(...yIntervalLineValue.map(date => new Date(date))))
+    }
 
     //DKDK use global opacity for coloring
     fittingLineColor = 'rgba(' + rgbValue[0] + ',' + rgbValue[1] + ',' + rgbValue[2] + ',' + globalOpacity + ')'
 
-    //DKDK store data for fitting line
+    //DKDK store data for fitting line: this is not affected by plot options (e.g., showLine etc.)
     dataSetProcess.push({
         x: xIntervalLineValue,
         y: yIntervalLineValue,
@@ -260,14 +362,15 @@ dataSet.data.forEach(function (el: any, index: number) {
     //DKDK make Confidence Interval (CI) or Bounds (filled area)
     xIntervalBounds = xIntervalLineValue
     xIntervalBounds = xIntervalBounds.concat(xIntervalLineValue.map((element: any) => element).reverse())
+    // xIntervalBounds = elemT(xIntervalBounds).concat(elemT(xIntervalLineValue).map((element: any) => element).reverse())
 
     //DKDK finding upper and lower bound values.
     if (el.interval.orientation == 'x') {
-      yUpperValues = xIntervalLineValue.map((num: number, idx: number) => num + 2*standardErrorValue[idx])
-      yLowerValues = xIntervalLineValue.map((num: number, idx: number) => num - 2*standardErrorValue[idx])
+      yUpperValues = xIntervalLineValue.map((num, idx: number) => num + 2*standardErrorValue[idx])
+      yLowerValues = xIntervalLineValue.map((num, idx: number) => num - 2*standardErrorValue[idx])
     } else if (el.interval.orientation == 'y') {
-      yUpperValues = yIntervalLineValue.map((num: number, idx: number) => num + 2*standardErrorValue[idx])
-      yLowerValues = yIntervalLineValue.map((num: number, idx: number) => num - 2*standardErrorValue[idx])
+      yUpperValues = yIntervalLineValue.map((num, idx: number) => num + 2*standardErrorValue[idx])
+      yLowerValues = yIntervalLineValue.map((num, idx: number) => num - 2*standardErrorValue[idx])
     }
 
     //DKDK make upper and lower bounds plotly format
@@ -278,8 +381,8 @@ dataSet.data.forEach(function (el: any, index: number) {
     intervalColor = 'rgba(' + rgbValue[0] + ',' + rgbValue[1] + ',' + rgbValue[2] + ',0.2)'
 
     //DKDK set variables for x-/y-axes ranges including CI/bounds: no need for x data as it was compared before
-    yMin = (yMin < Math.min(...yLowerValues))? yMin : Math.min(...yLowerValues)
-    yMax = (yMax > Math.max(...yUpperValues))? yMax : Math.max(...yUpperValues)
+    yMin = (yMin < Math.min(...yLowerValues)) ? yMin : Math.min(...yLowerValues)
+    yMax = (yMax > Math.max(...yUpperValues)) ? yMax : Math.max(...yUpperValues)
 
     //DKDK store data for CI/bounds
     dataSetProcess.push({
@@ -293,25 +396,38 @@ dataSet.data.forEach(function (el: any, index: number) {
     })
   }
 
-  //DKDK determine y-axis range: x-axis should be in the range of [xMin,xMax] due to CI plot
-  yMin = (yMin < 0)? Math.floor(yMin) : Math.ceil(yMin)
-  yMax = (yMax < 0)? Math.floor(yMax) : Math.ceil(yMax)
+  //DKDK determine y-axis range for numbers only: x-axis should be in the range of [xMin,xMax] due to CI plot
+  if (typeof yMin == 'number' && typeof yMax == 'number') {
+    yMin = (yMin < 0) ? Math.floor(yMin) : Math.ceil(yMin)
+    yMax = (yMax < 0) ? Math.floor(yMax) : Math.ceil(yMax)
+  }
 
 })
-
-// console.log('xyMinMax = ',xMin,xMax,yMin,yMax)
 
 /**
  * DKDK width and height of the plot are manually set at ScatterAndLinePlotCIReal (layout)
  * Opacity control (slider) is manually set at ScatterAndLinePlotCIReal (layout)
  */
-export const RealDataDate = () => <ScatterAndLinePlotCIReal
-  onPlotUpdate={action('state updated')}
-  data={[...dataSetProcess]}
-  xLabel="Hours post infection"
-  yLabel="Expression Values (log2 ratio)"
-  plotTitle="Expression Values - PF3D7_0107900 - Total mRNA Abundance"
-  xRange={[xMin, xMax]}
-  yRange={[yMin, yMax]}
-/>
+export const RealDataDate = () => {
+  //DKDK set props
+  let plotWidth = 1000
+  let plotHeight = 600
+  let xLabel = 'Hours post infection'
+  let yLabel = 'Expression Values (log2 ratio)'
+  let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance'
+
+  return (
+    <ScatterAndLinePlotGeneral
+      onPlotUpdate={action('state updated')}
+      data={[...dataSetProcess]}
+      xLabel={xLabel}
+      yLabel={yLabel}
+      plotTitle={plotTitle}
+      xRange={[xMin, xMax]}
+      yRange={[yMin, yMax]}
+      width={plotWidth}
+      height={plotHeight}
+    />
+  )
+}
 
