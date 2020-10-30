@@ -12,7 +12,6 @@ import { submitAsForm } from 'wdk-client/Utils/FormSubmitter';
 import { makeDynamicWrapper, findComponent } from './components/records';
 import * as Gbrowse from './components/common/Gbrowse';
 import Sequence from './components/common/Sequence';
-import ApiApplicationSpecificProperties from './components/ApiApplicationSpecificProperties';
 import RecordTableContainer from './components/common/RecordTableContainer';
 import { loadPathwayGeneDynamicCols } from './actioncreators/RecordViewActionCreators';
 import ApiSiteHeader from './components/SiteHeader';
@@ -296,17 +295,6 @@ export function RecordAttributeSection(DefaultComponent) {
       findComponent('RecordAttributeSection', props.recordClass.fullName) || DefaultComponent;
     return <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
   };
-}
-
-/**
- * Overrides the Preferences fieldset on the User Profile/Account form from the WDK.  The WDK
- * has no application specific properties although it provides for that possibility.  The empty
- * React component placeholder is overridden with an ApiDB specific component.
- * @returns {*} - Application specific properties component
- * @constructor
- */
-export function ApplicationSpecificProperties() {
-  return ApiApplicationSpecificProperties;
 }
 
 /**
