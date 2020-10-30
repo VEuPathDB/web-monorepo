@@ -1,4 +1,4 @@
-import { merge } from 'rxjs';
+import { of, merge } from 'rxjs';
 import { filter, mergeAll, mergeMap, withLatestFrom } from 'rxjs/operators';
 import { StaticDataActions } from 'wdk-client/Actions';
 
@@ -18,6 +18,7 @@ import {
 } from '../action-creators/AccessRequestActionCreators';
 import { datasetId, formValues, userId } from '../selectors/AccessRequestSelectors';
 import { parse } from 'querystring';
+import { userUpdate } from 'wdk-client/Actions/UserActions';
 
 export const key = 'accessRequest';
 
@@ -124,6 +125,7 @@ function observeStaticDataLoaded(action$, state$, dependencies) {
         const { redirectUrl = '/' } = parse(window.location.search.slice(1));
 
         window.location.assign(decodeURIComponent(redirectUrl));
+        return [];
       } else {
         try {
           const study = await fetchStudy(
@@ -170,13 +172,15 @@ function observeSubmitForm(action$, state$, dependencies) {
       );
 
       if (response.ok) {
-        return finishSubmission(true, false, null);
+        const user = await dependencies.wdkService.getCurrentUser({ force: true });
+        return of(userUpdate(user), finishSubmission(true, false, null));
       } else if (response.status === ALREADY_REQUESTED_STATUS) {
-        return finishSubmission(false, true, null);
+        return of(finishSubmission(false, true, null));
       } else {
-        return finishSubmission(false, false, await response.text())
+        return of(finishSubmission(false, false, await response.text()))
       }
-    })
+    }),
+    mergeAll()
   );
 }
 

@@ -35,10 +35,11 @@ export default class AccessRequestView extends Component {
     const {
       successfullySubmitted,
       requestNeedsApproval,
-      downloadLink,
+      datasetId,
       alreadyRequested,
       webAppUrl
     } = this.props;
+    const studyPageUrl = webAppUrl + '/app/record/dataset/' + datasetId;
 
     if (successfullySubmitted && (requestNeedsApproval!="0")) {
       return (
@@ -52,7 +53,7 @@ export default class AccessRequestView extends Component {
       return (
         <Fragment>
           <p>
-          Thank you for submitting your data access registration. You can now <a href={`${downloadLink}`}>download the study data</a> .
+          Thank you for submitting your data access registration. You may go to the <a href={`${studyPageUrl}`}>study page</a> to download the data files.
           </p>
         </Fragment>
       );
