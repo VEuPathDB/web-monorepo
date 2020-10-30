@@ -297,7 +297,7 @@ const useHeaderMenuItems = (
           display: 'Apollo',
           tooltip: 'Instantaneous, collaborative, genome annotation editor',
           type: 'reactRoute',
-          url: makeStaticPageRoute(`apolloQuickCommands.html`),
+          url: makeStaticPageRoute(`/apolloQuickCommands.html`),
           metadata: {
             include: [ VectorBase ]
          }
