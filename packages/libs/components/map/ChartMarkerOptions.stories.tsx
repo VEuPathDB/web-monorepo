@@ -158,12 +158,7 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
   setYAxisRangeValue(yAxisRangeAll[1])
   // console.log('yAxisRange = ', yAxisRange)
 
-  const markers = buckets.filter(({ltAvg, lnAvg}) => {
-    return ltAvg > bounds.southWest[0] &&
-	   ltAvg < bounds.northEast[0] &&
-	   lnAvg > bounds.southWest[1] &&
-	   lnAvg < bounds.northEast[1]
-  }).map((bucket) => {
+  const markers = buckets.map((bucket) => {
     const lat = bucket.ltAvg;
     const long = bucket.lnAvg;
     let labels = [];
