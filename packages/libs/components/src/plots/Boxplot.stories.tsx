@@ -8,42 +8,36 @@ export default {
 };
 
 
-const catRawData = [ 6, 3, 9, 2, 5, 7, 10, 10, 2, 19 ];
-const catQ1 = stats.percentile(catRawData, 0.25);
-const catQ3 = stats.percentile(catRawData, 0.75);
-const catIQR = catQ3-catQ1;
-const catLower = catQ1 - 1.5*catIQR;
-const catUpper = catQ3 + 1.5*catIQR;
+const catRawData = [ 6, 8, 9, 11, 5, 7, 10, 10, 12, 19 ];
+const catData = summaryStats(catRawData);
+const catMean = stats.mean(catRawData);
 
-const catData = {
-  lowerFence : catLower,
-  q1 : catQ1,
-  median : stats.median(catRawData),
-  q3 : catQ3,
-  upperFence : catUpper,
-  label : 'cats',
-  rawData : catRawData,
-  outliers : catRawData.filter((x) => x < catLower || x > catUpper)
-};
-
-const dogRawData = [ 11, 25, 6, 15, 10, 20, 8, 22, 15, 12, 16, 9, 35 ];
-const dogQ1 = stats.percentile(dogRawData, 0.25);
-const dogQ3 = stats.percentile(dogRawData, 0.75);
-const dogIQR = dogQ3-dogQ1;
-const dogLower = dogQ1 - 1.5*dogIQR;
-const dogUpper = dogQ3 + 1.5*dogIQR;
-
-const dogData = {
-  lowerFence : dogLower,
-  q1 : dogQ1,
-  median : stats.median(dogRawData),
-  q3 : dogQ3,
-  upperFence : dogUpper,
-  label : 'dogs',
-  rawData : dogRawData,
-  outliers : dogRawData.filter((x) => x < dogLower || x > dogUpper)
-};
+const dogRawData = [ 11, 25, 16, 15, 10, 20, 28, 24, 23, 22, 25, 15, 12, 16, 19, 42, 42, 45 ];
+const dogData = summaryStats(dogRawData);
+const dogMean = stats.mean(dogRawData);
 
 export const Basic = () => <Boxplot
-  data={[ catData, dogData ]}
+  data={[ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ]}
 />
+
+export const WithMean = () => <Boxplot
+  data={[ {...catData, label: 'cats', mean: catMean}, {...dogData, label: 'dogs', mean: dogMean} ]}
+/>
+
+
+
+function summaryStats(rawData : number[]) {
+  const q1 = stats.percentile(rawData, 0.25);
+  const median = stats.median(rawData);
+  const q3 = stats.percentile(rawData, 0.75);
+  const IQR = q3-q1;
+  const lowerFence = q1 - 1.5*IQR;
+  const upperFence = q3 + 1.5*IQR;
+  const outliers = rawData.filter((x) => x < lowerFence || x > upperFence);
+
+  return {
+    q1, median, q3,
+    lowerFence, upperFence, outliers
+  }
+}
+
