@@ -17,8 +17,7 @@ import MapVEuMapSidebar from './MapVEuMapSidebar';
 import SidebarExample from './SidebarExample'
 // import { LeafletMouseEvent } from "leaflet";
 //DKDK import legend
-import MapVeuLegendSampleDropdown from './MapVeuLegendSampleDropdown'
-
+import MapVeuLegendSampleDropdown, { LegendProps } from './MapVeuLegendSampleDropdown'
 
 export default {
   title: 'Donut Markers for categorical',
@@ -164,11 +163,8 @@ const dropdownTitleBar: string = 'Age'
 const dropdownHrefBar: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4']
 const dropdownItemTextBar: string[] =['Year', 'Month', 'Date', 'Age']
 
-/**
-   This is a trivial marker data generator.  It returns 10 random points within the given bounds.
-   The real thing should something with zoomLevel.
-*/
-const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport) => {
+
+const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, setLegendData) => {
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
   const buckets = speciesData[geohash_level].facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
@@ -178,7 +174,43 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport) => {
 	   lnAvg < bounds.northEast[1]
   });
 
+  // make a first pass and calculate the legend totals
+  // and rank the species for color assignment
+  let speciesToCount = new Map();
+  buckets.forEach((bucket) => {
+    bucket.term.buckets.forEach((bucket) => {
+      const species = bucket.val;
+      let prevCount = speciesToCount.get(species);
+      if (prevCount === undefined) prevCount = 0;
+      speciesToCount.set(species, prevCount + bucket.count);
+    });
+  });
+  
+  // sort by the count (Map returns keys in insertion order)
+  speciesToCount = new Map(
+    Array.from(speciesToCount).sort( ([_1,v1], [_2,v2]) => v1 > v2 ? -1 : v2 > v1 ? 1 : 0 )
+  );
 
+  // make the species to color lookup
+  const speciesToColor = new Map(
+    Array.from(speciesToCount).map( ([k, _], index) => {
+      if (index<10) {
+	return [k, all_colors_hex[index]];
+      } else {
+	return [k, 'silver']
+      }
+    })
+  );
+  
+  // reformat as legendData
+  const legendData = Array.from(speciesToCount.keys()).map((key) => (
+    {
+      label: key,
+      value: speciesToCount.get(key) || -1,
+      color: speciesToColor.get(key) || 'silver'
+    }
+  ));
+  setLegendData(legendData);
 
   return buckets.map((bucket) => {
     const lat = bucket.ltAvg;
@@ -186,10 +218,11 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport) => {
     let labels: string[] = [];
     let values: number[] = [];
     let colors: string[] = [];
-    bucket.term.buckets.forEach((bucket, index) => {
-      labels.push(bucket.val);
+    bucket.term.buckets.forEach((bucket) => {
+      const species = bucket.val;
+      labels.push(species);
       values.push(bucket.count);
-      colors.push(all_colors_hex[index]);     //DKDK set color palette
+      colors.push(speciesToColor.get(species) || 'silver');
     });
 
     //DKDK check isAtomic
@@ -216,8 +249,9 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport) => {
 export const Species = () => {
   
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
   const handleViewportChanged = useCallback((bvp : BoundsViewport) => {
-    setMarkerElements(getSpeciesMarkerElements(bvp));
+    setMarkerElements(getSpeciesMarkerElements(bvp, setLegendData));
   }, [setMarkerElements])
 
 
@@ -251,7 +285,7 @@ const SpeciesSidebar = () => {
   // const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getSpeciesMarkerElements(bvp));
+    setMarkerElements(getSpeciesMarkerElements(bvp, ()=>{}));
   }, [setMarkerElements])
 
   //DKDK Sidebar state managements (for categorical)
@@ -307,7 +341,7 @@ const SpeciesNudgedChart = () => {
   // const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getSpeciesMarkerElements());
+    setMarkerElements(getSpeciesMarkerElements(bvp, ()=>{}));
   }, [setMarkerElements])
 
   //DKDK Sidebar state managements (other than categorical - test purpose)
