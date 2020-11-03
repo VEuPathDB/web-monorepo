@@ -264,7 +264,7 @@ export const Species = () => {
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
 
   //DKDK anim
-  const duration = 1000
+  const duration = 500
   const scrambleKeys = false
 
   const handleViewportChanged = useCallback((bvp : BoundsViewport) => {
