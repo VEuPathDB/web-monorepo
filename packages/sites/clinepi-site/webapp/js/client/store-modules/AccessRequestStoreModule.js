@@ -20,6 +20,8 @@ import { datasetId, formValues, userId } from '../selectors/AccessRequestSelecto
 import { parse } from 'querystring';
 import { userUpdate } from 'wdk-client/Actions/UserActions';
 
+import { checkPermissions, isUserApprovedForStudy } from 'ebrc-client/StudyAccess/permission';
+
 export const key = 'accessRequest';
 
 const initialState = {
@@ -119,8 +121,11 @@ function observeStaticDataLoaded(action$, state$, dependencies) {
 
       const datasetId = window.location.pathname.replace(/.*\/request-access\//, '');
 
+      const permissions = await checkPermissions(payload.user);
+
       if (
-        payload.user.isGuest || payload.user.properties.approvedStudies.includes(datasetId)
+        payload.user.isGuest ||
+        isUserApprovedForStudy(permissions, payload.user.properties.approvedStudies)
       ) {
         const { redirectUrl = '/' } = parse(window.location.search.slice(1));
 
