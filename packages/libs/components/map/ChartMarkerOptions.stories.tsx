@@ -28,12 +28,12 @@ export default {
 // some colors randomly pasted from the old mapveu code
 // these are NOT the final decided colors for MapVEu 2.0
 const all_colors_hex = [
-  //DKDK Bob's one
-  "#0200C5", // Bob1
-  "#6300C5", // Bob2
-  "#C400C5", // Bob3
-  "#C50045", // Bob4
-  "#C50000", // Bob5
+  //DKDK Bob's one from https://www.schemecolor.com/red-blue-gradient.php
+  "#0018A9", // Bob1
+  "#3B1988", // Bob2
+  "#771A66", // Bob3
+  "#B21B45", // Bob4
+  "#ED1C23", // Bob5
   "#CEA262", // Grayish Yellow
   // "#817066", // Medium Gray
 
@@ -64,19 +64,19 @@ const zoomLevelToGeohashLevel = [
   'geohash_1', // 0
   'geohash_1', // 1
   'geohash_1', // 2
-  'geohash_1', // 3
+  'geohash_2', // 3
   'geohash_2', // 4
   'geohash_2', // 5
-  'geohash_2', // 6
+  'geohash_3', // 6
   'geohash_3', // 7
   'geohash_3', // 8
-  'geohash_3', // 9
+  'geohash_4', // 9
   'geohash_4', // 10
   'geohash_4', // 11
-  'geohash_4', // 12
+  'geohash_5', // 12
   'geohash_5', // 13
   'geohash_5', // 14
-  'geohash_5', // 15
+  'geohash_6', // 15
   'geohash_6', // 16
   'geohash_6', // 17
   'geohash_7'  // 18
@@ -251,7 +251,7 @@ export const CollectionDate = () => {
   const knob_method = radios('Method', {SVG: 'svg', Library: 'lib'}, 'svg');
   const knob_borderWidth = number('Border width', 3.5, {range: true, min: 0, max: 5, step: 0.5});
   //const knob_borderColor = color('Border color', '#00000088');  // Isn't working
-  const knob_borderColor = radios('Border color', {DarkGrey: '#00000099', LightGrey: '#00000055', Blue: '#7cb5ec'}, '#00000099');
+  const knob_borderColor = radios('Border color', {DarkGrey: '#00000099', LightGrey: '#00000055', Blue: '#7cb5ec'}, '#00000055');
   const knob_dividerVisible = boolean('Divider visible', false);
   const knob_type = knob_method === 'lib' ? radios('Type', {Bar: 'bar', Line: 'line'}, 'bar') : undefined;
   const knob_fillArea = knob_type === 'line' ? boolean('Fill area', true) : undefined;
@@ -260,7 +260,7 @@ export const CollectionDate = () => {
   const knob_colorMethod = knob_type === 'line' ?
     radios('Color method', {Bins: 'discrete', Solid: 'solid', Gradient: 'gradient'}, 'discrete') :
     radios('Color method', {Bins: 'discrete', Solid: 'solid'}, 'discrete');
-  const knob_legendTickLabelsVisible = boolean('Show legend tick labels', true);
+
   //DKDK block this
   // const knob_YAxisRangeMethod = radios('Y-axis range', {Local: 'local', Regional: 'regional'}, 'local');
 
@@ -308,7 +308,7 @@ export const CollectionDate = () => {
   return (
     <>
       <MapVEuMap
-        viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
+        viewport={{center: [ 13, 0 ], zoom: 6}}
         height="100vh" width="100vw"
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
@@ -327,7 +327,6 @@ export const CollectionDate = () => {
         //DKDK send x-/y-axes lables here
         variableLabel={variableLabel}    //DKDK: x-axis label
         quantityLabel={quantityLabel}    //DKDK: y-axis label
-        tickLabelsVisible={knob_legendTickLabelsVisible}
         //DKDK legend radio button props
         onChange={legendRadioChange}
         selectedOption={legendRadioValue}

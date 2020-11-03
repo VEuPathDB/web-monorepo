@@ -61,19 +61,19 @@ const zoomLevelToGeohashLevel = [
   'geohash_1', // 0
   'geohash_1', // 1
   'geohash_1', // 2
-  'geohash_1', // 3
+  'geohash_2', // 3
   'geohash_2', // 4
   'geohash_2', // 5
-  'geohash_2', // 6
+  'geohash_3', // 6
   'geohash_3', // 7
   'geohash_3', // 8
-  'geohash_3', // 9
+  'geohash_4', // 9
   'geohash_4', // 10
   'geohash_4', // 11
-  'geohash_4', // 12
+  'geohash_5', // 12
   'geohash_5', // 13
   'geohash_5', // 14
-  'geohash_5', // 15
+  'geohash_6', // 15
   'geohash_6', // 16
   'geohash_6', // 17
   'geohash_7'  // 18
@@ -286,7 +286,7 @@ export const Species = () => {
   return (
     <>
       <MapVEuMap
-        viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
+        viewport={{center: [ 13, 16 ], zoom: 4}}
         height="100vh" width="100vw"
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
