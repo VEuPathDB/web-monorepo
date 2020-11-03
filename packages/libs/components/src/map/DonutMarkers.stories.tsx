@@ -17,7 +17,13 @@ import MapVEuMapSidebar from './MapVEuMapSidebar';
 import SidebarExample from './SidebarExample'
 // import { LeafletMouseEvent } from "leaflet";
 //DKDK import legend
-import MapVeuLegendSampleDropdown, { LegendProps } from './MapVeuLegendSampleDropdown'
+import MapVeuLegendSampleList, { LegendProps } from './MapVeuLegendSampleList'
+
+//DKDK anim
+// import Geohash from 'latlon-geohash';
+// import {DriftMarker} from "leaflet-drift-marker";
+import geohashAnimation from "./animation_functions/geohash";
+import md5 from 'md5';
 
 export default {
   title: 'Donut Markers for categorical',
@@ -111,10 +117,10 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
   // console.log('onMouseOut', e)
 }
 
-//DKDK make legend contents
-// const legendClassName = 'mapveu-legend'
+// DKDK make legend contents
+const legendClassName = 'mapveu-legend'
 
-//DKDK the variable names such as legendType and legendData should be consistent regardless of their values,
+// DKDK the variable names such as legendType and legendData should be consistent regardless of their values,
 // but for test purpose the variabl names are used differently for categorical and number/Date
 const legendTypeValue = 'categorical'
 //DKDK intentionally use large value to check commas
@@ -158,13 +164,14 @@ const quantityLabel: string = '<b>Record count</b>'     //DKDK: y-axis label
 const dropdownTitle: string = 'Species'
 const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
 const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
+
 //DKDK for testing purpose, use other variable names for bar chart
 const dropdownTitleBar: string = 'Age'
 const dropdownHrefBar: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4']
 const dropdownItemTextBar: string[] =['Year', 'Month', 'Date', 'Age']
 
 
-const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, setLegendData) => {
+const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void) => {
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
   const buckets = speciesData[geohash_level].facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
@@ -185,7 +192,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, setLegen
       speciesToCount.set(species, prevCount + bucket.count);
     });
   });
-  
+
   // sort by the count (Map returns keys in insertion order)
   speciesToCount = new Map(
     Array.from(speciesToCount).sort( ([_1,v1], [_2,v2]) => v1 > v2 ? -1 : v2 > v1 ? 1 : 0 )
@@ -201,7 +208,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, setLegen
       }
     })
   );
-  
+
   // reformat as legendData
   const legendData = Array.from(speciesToCount.keys()).map((key) => (
     {
@@ -228,9 +235,12 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, setLegen
     //DKDK check isAtomic
     let atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false
 
+    //DKDK anim key
+    const key = scrambleKeys ? md5(bucket.val).substring(0, zoomLevel) : bucket.val;
+
     return (
       <SVGDonutMarker
-        key={bucket.val}
+        key={key}   //DKDK anim
         //DKDK change position format
         position={[lat, long]}
         labels={labels}
@@ -241,19 +251,37 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, setLegen
         onClick={handleClick}
         onMouseOut={handleMouseOut}
         onMouseOver={handleMouseOver}
+        //DKDK anim
+        duration={duration}
       />
       )
   });
 }
 
 export const Species = () => {
-  
+
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
+
+  //DKDK anim
+  const duration = 1000
+  const scrambleKeys = false
+
   const handleViewportChanged = useCallback((bvp : BoundsViewport) => {
-    setMarkerElements(getSpeciesMarkerElements(bvp, setLegendData));
+    //DKDK anim add duration & scrambleKeys
+    setMarkerElements(getSpeciesMarkerElements(bvp, duration, scrambleKeys, setLegendData));
   }, [setMarkerElements])
 
+  //DKDK define legendType
+  const legendType = 'categorical'
+
+  //DKDK  props for dropdown toggle text, dropdown item's href, and its text (Categorical)
+  const dropdownTitle: string = 'Species'
+  const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
+  const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
+
+  //DKDK send legend number text on top of legend list
+  const legendInfoNumberText: string = 'Species'
 
   return (
     <>
@@ -262,17 +290,33 @@ export const Species = () => {
         height="100vh" width="100vw"
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
-        animation={null}
+        //DKDK anim
+        // animation={null}
+        animation={{
+          method: "geohash",
+          animationFunction: geohashAnimation,
+          duration
+        }}
         showGrid={true}
       />
-      <MapVeuLegendSampleDropdown
-        // className={legendClassName}
-        legendType={legendTypeValue}
+      <MapVeuLegendSampleList
+        legendType={legendType}
         data={legendData}
+        // //DKDK send x-/y-axes lables here
+        // variableLabel={variableLabel}    //DKDK: x-axis label
+        // quantityLabel={quantityLabel}    //DKDK: y-axis label
+        // tickLabelsVisible={knob_legendTickLabelsVisible}
+        // //DKDK legend radio button props
+        // onChange={legendRadioChange}
+        // selectedOption={legendRadioValue}
         //DKDK add dropdown props for Legend
         dropdownTitle={dropdownTitle}
         dropdownHref={dropdownHref}
         dropdownItemText={dropdownItemText}
+        // //DKDK send yAxisRange[1]
+        // yAxisRangeValue={yAxisRangeValue}
+        // //DKDK send legend number text
+        legendInfoNumberText={legendInfoNumberText}
       />
     </>)
 }
@@ -283,9 +327,29 @@ const SpeciesSidebar = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
   // const yAxisRange: Array<number> | null = []
+
+  //DKDK define legendType
+  const legendType = 'categorical'
+
+  //DKDK  props for dropdown toggle text, dropdown item's href, and its text (Categorical)
+  const dropdownTitle: string = 'Species'
+  const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
+  const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
+
+  //DKDK send legend number text on top of legend list
+  const legendInfoNumberText: string = 'Species'
+
+  //DKDK send legendData
+  const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
+
+  //DKDK anim
+  const duration = 1000
+  const scrambleKeys = false
+
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getSpeciesMarkerElements(bvp, ()=>{}));
+    //DKDK anim add duration & scrambleKeys
+    setMarkerElements(getSpeciesMarkerElements(bvp, duration, scrambleKeys, setLegendData));
   }, [setMarkerElements])
 
   //DKDK Sidebar state managements (for categorical)
@@ -312,14 +376,24 @@ const SpeciesSidebar = () => {
         onClose={sidebarOnClose}
       />
 
-      <MapVeuLegendSampleDropdown
-        // className={legendClassName}
-        legendType={legendTypeValue}
+      <MapVeuLegendSampleList
+        legendType={legendType}
         data={legendData}
+        // //DKDK send x-/y-axes lables here
+        // variableLabel={variableLabel}    //DKDK: x-axis label
+        // quantityLabel={quantityLabel}    //DKDK: y-axis label
+        // tickLabelsVisible={knob_legendTickLabelsVisible}
+        // //DKDK legend radio button props
+        // onChange={legendRadioChange}
+        // selectedOption={legendRadioValue}
         //DKDK add dropdown props for Legend
         dropdownTitle={dropdownTitle}
         dropdownHref={dropdownHref}
         dropdownItemText={dropdownItemText}
+        // //DKDK send yAxisRange[1]
+        // yAxisRangeValue={yAxisRangeValue}
+        // //DKDK send legend number text
+        legendInfoNumberText={legendInfoNumberText}
       />
 
       <MapVEuMapSidebar
@@ -339,9 +413,29 @@ const SpeciesNudgedChart = () => {
   //DKDK set global or local
   // const yAxisRange: Array<number> | null = [0, 1104]
   // const yAxisRange: Array<number> | null = []
+
+  //DKDK define legendType
+  const legendType = 'categorical'
+
+  //DKDK  props for dropdown toggle text, dropdown item's href, and its text (Categorical)
+  const dropdownTitle: string = 'Species'
+  const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
+  const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
+
+  //DKDK send legend number text on top of legend list
+  const legendInfoNumberText: string = 'Species'
+
+  //DKDK send legendData
+  const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
+
+  //DKDK anim
+  const duration = 1000
+  const scrambleKeys = false
+
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getSpeciesMarkerElements(bvp, ()=>{}));
+    //DKDK anim add duration & scrambleKeys
+    setMarkerElements(getSpeciesMarkerElements(bvp, duration, scrambleKeys, setLegendData));
   }, [setMarkerElements])
 
   //DKDK Sidebar state managements (other than categorical - test purpose)
@@ -368,18 +462,24 @@ const SpeciesNudgedChart = () => {
         onClose={sidebarOnClose}
       />
 
-      <MapVeuLegendSampleDropdown
-        // className={legendClassName}
-        //DKDK here, variables names are used differently (with suffix, Chart) for test purpose
-        legendType={legendTypeValueChart}
-        data={legendDataChart}
-        //DKDK send x-/y-axes lables here
-        variableLabel={variableLabel}    //DKDK: x-axis label
-        quantityLabel={quantityLabel}    //DKDK: y-axis label
-        //DKDK add dropdown props for Legend: used different variable names for test purpose
-        dropdownTitle={dropdownTitleBar}
-        dropdownHref={dropdownHrefBar}
-        dropdownItemText={dropdownItemTextBar}
+      <MapVeuLegendSampleList
+        legendType={legendType}
+        data={legendData}
+        // //DKDK send x-/y-axes lables here
+        // variableLabel={variableLabel}    //DKDK: x-axis label
+        // quantityLabel={quantityLabel}    //DKDK: y-axis label
+        // tickLabelsVisible={knob_legendTickLabelsVisible}
+        // //DKDK legend radio button props
+        // onChange={legendRadioChange}
+        // selectedOption={legendRadioValue}
+        //DKDK add dropdown props for Legend
+        dropdownTitle={dropdownTitle}
+        dropdownHref={dropdownHref}
+        dropdownItemText={dropdownItemText}
+        // //DKDK send yAxisRange[1]
+        // yAxisRangeValue={yAxisRangeValue}
+        // //DKDK send legend number text
+        legendInfoNumberText={legendInfoNumberText}
       />
 
       <MapVEuMapSidebar

@@ -13,6 +13,12 @@ import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; /
 //DKDK change target component
 import MapVeuLegendSampleList, { LegendProps } from './MapVeuLegendSampleList'
 
+//DKDK anim
+// import Geohash from 'latlon-geohash';
+// import {DriftMarker} from "leaflet-drift-marker";
+import geohashAnimation from "./animation_functions/geohash";
+import md5 from 'md5';
+
 export default {
   title: 'Chart Markers for continuous',
   component: MapVEuMap,
@@ -76,17 +82,6 @@ const zoomLevelToGeohashLevel = [
   'geohash_7'  // 18
 ];
 
-
-//DKDK send x-/y-axes labels for Legend bar chart
-const variableLabel: string = '<b>Collection date</b>'  //DKDK: x-axis label
-const quantityLabel: string = '<b>Record count</b>'     //DKDK: y-axis label
-
-//DKDK for testing purpose, use other variable names for bar chart
-const dropdownTitleBar: string = 'Collection Date'
-const dropdownHrefBar: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5']
-const dropdownItemTextBar: string[] =['Year', 'Month', 'Date', 'Hour', 'Minute']
-
-
 /**
  * DKDK gathering functions here temporarily
  * Need to add export to be used in the other component
@@ -102,7 +97,7 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 
 //DKDK use legendRadioValue instead of knob_YAxisRangeMethod
 // const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod) => {
-  const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
+  const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
 
   let legendSums : number[] = [];
   let legendLabels : string[] = [];
@@ -112,7 +107,7 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
   let yAxisRangeAll : number[] = []
 
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
-    
+
   const buckets = collectionDateData[geohash_level].facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
     return ltAvg > bounds.southWest[0] &&
 	   ltAvg < bounds.northEast[0] &&
@@ -198,6 +193,9 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
     //DKDK check isAtomic for push pin for chart marker
     let atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false
 
+    //DKDK anim key
+    const key = scrambleKeys ? md5(bucket.val).substring(0, zoomLevel) : bucket.val;
+
     return (
       <RealHistogramMarkerSVGnoShadow
         method={knob_method}
@@ -209,7 +207,7 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
         colorMethod={new_knob_colorMethod}
         borderColor={knob_borderColor}
         borderWidth={knob_borderWidth}
-        key={bucket.val}
+        key={key}   //DKDK anim
         //DKDK change position format
         position={[lat, long]}
         labels={labels}
@@ -224,7 +222,8 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
         onMouseOut={handleMouseOut}
         onMouseOver={handleMouseOver}
         // my_knob={boolean('My Knob', false)} // Doesn't work
-
+        //DKDK anim
+        duration={duration}
       />
     )
   });
@@ -277,12 +276,32 @@ export const CollectionDate = () => {
   const [yAxisRangeValue, setYAxisRangeValue] = useState<number>(0)
   // console.log('yAxisRangeValue = ', yAxisRangeValue)
 
+  //DKDK define legendType
+  const legendType = 'numeric'
+
+  //DKDK send x-/y-axes labels for Legend bar chart
+  const variableLabel: string = '<b>Collection date</b>'  //DKDK: x-axis label
+  const quantityLabel: string = '<b>Record count</b>'     //DKDK: y-axis label
+
+  //DKDK for testing purpose, use other variable names for bar chart
+  const dropdownTitleBar: string = 'Collection Date'
+  const dropdownHrefBar: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5']
+  const dropdownItemTextBar: string[] =['Year', 'Month', 'Date', 'Hour', 'Minute']
+
+  //DKDK send legend number text on top of legend list
+  const legendInfoNumberText: string = 'Collections'
+
+  //DKDK anim
+  const duration = 1000
+  const scrambleKeys = false
+
   //DKDK send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
   // const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
   //   setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod));
   // }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod])
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue, setYAxisRangeValue));
+    //DKDK anim add duration & scrambleKeys
+    setMarkerElements(getCollectionDateMarkerElements(bvp, duration, scrambleKeys, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue, setYAxisRangeValue));
   }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue])
 
 
@@ -293,11 +312,17 @@ export const CollectionDate = () => {
         height="100vh" width="100vw"
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
-        animation={null}
+        //DKDK anim
+        // animation={null}
+        animation={{
+          method: "geohash",
+          animationFunction: geohashAnimation,
+          duration
+        }}
         showGrid={true}
       />
       <MapVeuLegendSampleList
-        legendType="numeric"
+        legendType={legendType}
         data={legendData}
         //DKDK send x-/y-axes lables here
         variableLabel={variableLabel}    //DKDK: x-axis label
@@ -312,6 +337,8 @@ export const CollectionDate = () => {
         dropdownItemText={dropdownItemTextBar}
         //DKDK send yAxisRange[1]
         yAxisRangeValue={yAxisRangeValue}
+        //DKDK send legend number text
+        legendInfoNumberText={legendInfoNumberText}
       />
     </>
   );
