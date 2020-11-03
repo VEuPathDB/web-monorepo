@@ -292,7 +292,7 @@ export const CollectionDate = () => {
   const legendInfoNumberText: string = 'Collections'
 
   //DKDK anim
-  const duration = 1000
+  const duration = 500
   const scrambleKeys = false
 
   //DKDK send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
