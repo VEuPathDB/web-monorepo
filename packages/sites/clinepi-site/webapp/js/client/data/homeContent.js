@@ -2,7 +2,10 @@ import { StudyCard } from 'ebrc-client/App/Studies';
 import { SearchCard } from 'ebrc-client/App/Searches';
 import { ImageCard } from 'ebrc-client/App/ImageCard';
 
+import { withPermissions } from 'ebrc-client/components/Permissions';
 import { studyMatchPredicate, studyFilters } from 'ebrc-client/util/homeContent';
+
+const ClinEpiStudyCard = withPermissions(StudyCard);
 
 export default ({ studies, searches, visualizations }) => ([
   {
@@ -15,7 +18,7 @@ export default ({ studies, searches, visualizations }) => ([
     isLoading: studies.loading,
     isExpandable: true,
     tableViewLink: '/search/dataset/Studies/result',
-    cardComponent: StudyCard,
+    cardComponent: ClinEpiStudyCard,
     getSearchStringForItem: item => 
       item.searchString,
     matchPredicate: studyMatchPredicate
