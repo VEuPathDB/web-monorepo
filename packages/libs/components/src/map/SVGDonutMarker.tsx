@@ -132,8 +132,8 @@ export default function SVGDonutMarkerAnim(props: SVGDonutMarkerProps) {
 
   //DKDK check isAtomic: draw pushpin if true
   if (props.isAtomic) {
-    let pushPinCode = '&#128204;'
-    svgHTML += '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-weight="bold" font-size="0.9em" transform="translate(5,-5) rotate(-20)">' + pushPinCode + '</text>'
+    let pushPinCode = '&#128392;'
+    svgHTML += '<text x="86%" y="14%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-size="1.2em">' + pushPinCode + '</text>'
   }
 
   // DKDK closing svg tag
