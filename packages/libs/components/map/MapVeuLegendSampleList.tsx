@@ -38,7 +38,9 @@ export interface LegendProps {
   dropdownHref: string[],
   dropdownItemText: string[],
   //DKDK use yAxisRange[1]
-  yAxisRangeValue: number,
+  yAxisRangeValue?: number,
+  //DKDK send legend number text
+  legendInfoNumberText?: string,
 }
 
 //DKDK make legend at the map without using L.Control: perhaps send props to make circle or square?
@@ -46,9 +48,12 @@ export interface LegendProps {
 const MapVeuLegendSampleList = (props: LegendProps) => {
   //DKDK simplifying
   let legendIconClass = ''
+  let dropDownID = ''
   if (props.legendType === 'categorical') {
+    dropDownID = 'legend-dropdown-category'
     legendIconClass = 'legend-contents'
   } else {
+    dropDownID = 'legend-dropdown-chart'
     legendIconClass = 'legend-contents-numeric'
   }
 
@@ -56,9 +61,9 @@ const MapVeuLegendSampleList = (props: LegendProps) => {
     //DKDK add below divs for benefeting from pre-existing CSS (vb-popbio-maps.css)
     <div className="info legend">
       <div className={legendIconClass}>
-       {/* DKDK add react-bootstrap dropdown and dynamically generate menu items */}
-       <Dropdown key={props.dropdownTitle}>
-          <Dropdown.Toggle variant="success" id="legend-dropdown-chart">
+        {/* DKDK add react-bootstrap dropdown and dynamically generate menu items */}
+        <Dropdown key={props.dropdownTitle}>
+          <Dropdown.Toggle variant="success" id={dropDownID}>
             {props.dropdownTitle}
           </Dropdown.Toggle>
           <Dropdown.Menu className="legend-dropdown-menu">
@@ -75,6 +80,8 @@ const MapVeuLegendSampleList = (props: LegendProps) => {
           // divElement={div}
           //DKDK add legendType props for handling icons
           legendType={props.legendType}
+          //DKDK used for legend info text, e.g., Collections
+          legendInfoNumberText={props.legendInfoNumberText}
         />
         {/* DKDK add radio button component here */}
         <LegendListRadioButton
@@ -85,8 +92,11 @@ const MapVeuLegendSampleList = (props: LegendProps) => {
         />
         {/* DKDK add tutorial info component here */}
         <LegendListInfo
-        //DKDK for now, let's use image
+          //DKDK for now, let's use image
           legendType={props.legendType}
+          //DKDK used for legend info texts, e.g., Collection Date, Collections
+          dropdownTitle={props.dropdownTitle}
+          legendInfoNumberText={props.legendInfoNumberText}
         />
       </div>
     </div>

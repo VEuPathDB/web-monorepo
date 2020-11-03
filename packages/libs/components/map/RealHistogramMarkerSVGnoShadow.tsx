@@ -7,6 +7,9 @@ import BarChart from './BarChart';
 //DKDK leaflet
 import L from "leaflet";
 
+//DKDK anim
+import {DriftMarker} from "leaflet-drift-marker";
+
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 interface HistogramMarkerSVGProps extends MarkerProps {
   method?: 'svg' | 'lib',
@@ -26,6 +29,8 @@ interface HistogramMarkerSVGProps extends MarkerProps {
   onClick?: (event: L.LeafletMouseEvent) => void | undefined,
   onMouseOver?: (event: L.LeafletMouseEvent) => void | undefined,
   onMouseOut?: (event: L.LeafletMouseEvent) => void | undefined,
+  //DKDK anim
+  duration?: number,
 }
 
 /**
@@ -35,7 +40,7 @@ interface HistogramMarkerSVGProps extends MarkerProps {
  * - no rounded corner
  * - accordingly icon size could be reduced
  */
-export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVGProps) {
+export default function RealHistogramMarkerSVGnoShadowAnim(props: HistogramMarkerSVGProps) {
   let fullStat = []
   //DKDK set defaultColor to be skyblue (#7cb5ec) if props.colors does not exist
   let defaultColor: string = ''
@@ -184,18 +189,43 @@ export default function RealHistogramMarkerSVGnoShadow(props: HistogramMarkerSVG
     html: svgHTML                            //DKDK divIcon HTML svg code generated above
   });
 
+  //DKDK anim check duration exists or not
+  let duration: number = (props.duration) ? props.duration : 300
+  // let duration: number = (props.duration) ? 300 : 300
+
   return (
-    <Marker {...props} icon={HistogramIcon}>
+    //DKDK anim
+    // <Marker {...props} icon={HistogramIcon}>
+    //   {/* DKDK Below Tooltip also works but we may simply use title attribute as well */}
+    //   {/* However, Connor found coordinates issue and I realized that somehow "title" did not update coordinates correctly */}
+    //   {/* But both Popup and Tooltip do not have such an issue */}
+    //   {/* <Popup>{props.position.toString()}</Popup> */}
+    //   {/* <Tooltip>{props.position.toString()}</Tooltip> */}
+    //   {/* <Tooltip>
+    //     labels: {props.labels.join(" ")} <br/>
+	  //     values: {props.values.join(" ")} <br />
+    //     latlong: {props.position.toString()}
+    //   </Tooltip> */}
+    // </Marker>
+    <DriftMarker
+      // {...props}
+      // key={props.key}
+      //DKDK to avoid type diff - LatLong vs LatLngExpression
+      //As I tried before, we have to consistently use leaflet LatLngExpression type instead of custom LatLong to avoid type error
+      position={[props.position[0], props.position[1]]}
+      icon={HistogramIcon}
+      duration={duration}
+    >
       {/* DKDK Below Tooltip also works but we may simply use title attribute as well */}
       {/* However, Connor found coordinates issue and I realized that somehow "title" did not update coordinates correctly */}
       {/* But both Popup and Tooltip do not have such an issue */}
       {/* <Popup>{props.position.toString()}</Popup> */}
       {/* <Tooltip>{props.position.toString()}</Tooltip> */}
-      {/* <Tooltip>
+      <Tooltip>
         labels: {props.labels.join(" ")} <br/>
 	      values: {props.values.join(" ")} <br />
         latlong: {props.position.toString()}
-      </Tooltip> */}
-    </Marker>
+      </Tooltip>
+    </DriftMarker>
   );
 }
