@@ -517,13 +517,6 @@ const useHeaderMenuItems = (
           url: '/search/organism/GenomeDataTypes/result'
         },
         {
-          key: 'gene-metrics',
-          display: 'Organisms - Gene metrics',
-          tooltip: 'Table summarizing gene counts for all the available genomes, and evidence supporting them',
-          type: 'reactRoute',
-          url: '/search/organism/GeneMetrics/result'
-        },
-        {
           key: 'community-download',
           display: 'User uploaded files',
           type: 'reactRoute',
