@@ -30,6 +30,7 @@ import AnswerController from './AnswerController';
 import ReporterSortMessage from './ReporterSortMessage';
 import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
 
+import { withPermissions } from 'ebrc-client/components/Permissions';
 
 export default {
   ReporterSortMessage,
@@ -104,7 +105,9 @@ export default {
     const specialInstructions = <SpecialContactUsInstructions />;
 
     return () => <DefaultComponent specialInstructions={specialInstructions} />;
-  }
+  },
+  DownloadLink: withPermissions,
+  DataRestrictionDaemon: withPermissions
 }
 
 function guard(propsPredicate) {
