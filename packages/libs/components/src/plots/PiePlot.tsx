@@ -27,7 +27,7 @@ interface Props {
   };
 }
 
-export default function Pie(props: Props) {
+export default function PiePlot(props: Props) {
   const { data, interior = null } = props;
   const defaultColorIter = DefaultColorGen();
   let interiorProps;

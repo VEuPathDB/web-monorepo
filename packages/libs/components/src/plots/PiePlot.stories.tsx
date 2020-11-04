@@ -1,9 +1,9 @@
 import React from 'react';
-import Pie from './Pie';
+import PiePlot from './PiePlot';
 
 export default {
-  title: 'Pie',
-  component: Pie,
+  title: 'PiePlot',
+  component: PiePlot,
 };
 
 let data = [
@@ -38,17 +38,17 @@ let coloredData = [
   }
 ];
 
-export const BasicPie = () => <Pie
+export const BasicPie = () => <PiePlot
   //onPlotUpdate={action('state updated')}
   data={data}
 />
 
-export const PieCustomColors = () => <Pie
+export const PieCustomColors = () => <PiePlot
   //onPlotUpdate={action('state updated')}
   data={coloredData}
 />
 
-export const BasicDonut = () => <Pie
+export const BasicDonut = () => <PiePlot
   //onPlotUpdate={action('state updated')}
   data={data}
   interior={{
@@ -56,7 +56,7 @@ export const BasicDonut = () => <Pie
   }}
 />
 
-export const DonutText = () => <Pie
+export const DonutText = () => <PiePlot
   //onPlotUpdate={action('state updated')}
   data={data}
   interior={{
@@ -67,7 +67,7 @@ export const DonutText = () => <Pie
   }}
 />
 
-export const DonutCreamyFilling = () => <Pie
+export const DonutCreamyFilling = () => <PiePlot
   //onPlotUpdate={action('state updated')}
   data={data}
   interior={{
@@ -76,7 +76,7 @@ export const DonutCreamyFilling = () => <Pie
   }}
 />
 
-export const EverythingBagel = () => <Pie
+export const EverythingBagel = () => <PiePlot
   //onPlotUpdate={action('state updated')}
   data={coloredData}
   interior={{
