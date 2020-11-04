@@ -37,7 +37,12 @@ export default function MosaicPlot(props: Props) {
     barmode: 'stack',
   } as const;
 
-  const data = props.data.map(d => ({ ...d, type: 'bar' } as const));
+  const data = props.data.map((d, i) => ({
+    x: props.exposureValues,
+    y: d,
+    name: props.outcomeValues[i],
+    type: 'bar'
+  } as const));
 
   return (
     <PlotlyPlot data={data} layout={layout}/>
