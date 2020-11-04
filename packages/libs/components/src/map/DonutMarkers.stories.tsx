@@ -2,12 +2,12 @@ import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 // import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
-import { Marker, Tooltip } from 'react-leaflet';
 import './TempIconHack';
 
-import speciesData from './test-data/geoclust-species-testing-all-levels.json';
+let speciesData : any = undefined;
+import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
-import { latLng, LeafletMouseEvent } from "leaflet";
+import { LeafletMouseEvent } from "leaflet";
 import SVGDonutMarker from './SVGDonutMarker'; // TO BE CREATED
 
 //DKDK sidebar & legend
@@ -117,64 +117,12 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
   // console.log('onMouseOut', e)
 }
 
-// DKDK make legend contents
-const legendClassName = 'mapveu-legend'
-
-// DKDK the variable names such as legendType and legendData should be consistent regardless of their values,
-// but for test purpose the variabl names are used differently for categorical and number/Date
-const legendTypeValue = 'categorical'
-//DKDK intentionally use large value to check commas
-const legendData = [
-  {label: 'Anopheles gambiae', value: 14236000, color: '#FFB300'},
-  {label: 'Anopheles funestus', value: 8923000, color: '#803E75'},
-  {label: 'Anopheles dirus', value: 3444000, color: '#FF6800'},
-  {label: 'Anopheles merus', value: 1903, color: '#A6BDD7'},
-  {label: 'Culex quinquefasciatus', value: 205, color: '#C10020'},
-  {label: 'Aedes albopictus', value: 145, color: '#CEA262'},
-  {label: 'Culex tarsailis', value: 98, color: '#007D34'},
-  {label: 'Aedes dorsalis', value: 45, color: '#F6768E'},
-  {label: 'Culex erraticus', value: 22, color: '#00538A'},
-  //DKDK added this fake data for checking truncate function (adding ...)
-  {label: 'testing long name quinquefasciatus', value: 11, color: '#FF7A5C'},
-  //DKDK below are Others item so their sum should be 44 (11*4) in this example data
-  {label: 'Anophleles albimanus', value: 11, color: '#FF7A5C'},
-  {label: '11th species', value: 11, color: '#53377A'},
-  {label: 'Others1', value: 11, color: 'silver'},
-  {label: 'Others2', value: 11, color: 'black'},
-]
-
-//DKDK below is for bar chart, thus variable names had Chart suffix
-const legendTypeValueChart = 'numeric'
-// const legendTypeValue = 'number'
-//DKDK intentionally use large value to check commas
-const legendDataChart = [
-  {label: '10-20', value: 15, color: '#0200C5'},
-  {label: '20-30', value: 80, color: '#6300C5'},
-  {label: '30-40', value: 60, color: '#C400C5'},
-  {label: '50-60', value: 30, color: '#C50045'},
-  {label: '70-80', value: 40, color: '#C50000'},
-  {label: 'no data', value: 20, color: 'silver'},
-]
-
-//DKDK send x-/y-axes labels for Legend bar chart
-const variableLabel: string = '<b>Collection date</b>'  //DKDK: x-axis label
-const quantityLabel: string = '<b>Record count</b>'     //DKDK: y-axis label
-
-//DKDK  props for dropdown toggle text, dropdown item's href, and its text (Categorical)
-const dropdownTitle: string = 'Species'
-const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
-const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
-
-//DKDK for testing purpose, use other variable names for bar chart
-const dropdownTitleBar: string = 'Age'
-const dropdownHrefBar: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4']
-const dropdownItemTextBar: string[] =['Year', 'Month', 'Date', 'Age']
-
-
 const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void) => {
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
-  const buckets = speciesData[geohash_level].facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
+  const buckets = speciesData[geohash_level].facets.geo.buckets.filter((bucket : any) => {
+    const ltAvg : number = bucket.ltAvg;
+    const lnAvg : number = bucket.lnAvg;
     return ltAvg > bounds.southWest[0] &&
 	   ltAvg < bounds.northEast[0] &&
 	   lnAvg > bounds.southWest[1] &&
@@ -184,8 +132,8 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
   // make a first pass and calculate the legend totals
   // and rank the species for color assignment
   let speciesToCount = new Map();
-  buckets.forEach((bucket) => {
-    bucket.term.buckets.forEach((bucket) => {
+  buckets.forEach((bucket : any) => {
+    bucket.term.buckets.forEach((bucket : any) => {
       const species = bucket.val;
       let prevCount = speciesToCount.get(species);
       if (prevCount === undefined) prevCount = 0;
@@ -219,13 +167,13 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
   ));
   setLegendData(legendData);
 
-  return buckets.map((bucket) => {
-    const lat = bucket.ltAvg;
-    const long = bucket.lnAvg;
+  return buckets.map((bucket : any) => {
+    const lat : number = bucket.ltAvg;
+    const long : number = bucket.lnAvg;
     let labels: string[] = [];
     let values: number[] = [];
     let colors: string[] = [];
-    bucket.term.buckets.forEach((bucket) => {
+    bucket.term.buckets.forEach((bucket : any) => {
       const species = bucket.val;
       labels.push(species);
       values.push(bucket.count);

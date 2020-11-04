@@ -5,7 +5,10 @@ import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
 import './TempIconHack';
 
-import collectionDateData from './test-data/geoclust-date-binning-testing-all-levels.json';
+// import collectionDateData from './test-data/geoclust-date-binning-testing-all-levels.json';
+let collectionDateData : any = undefined;
+import('./test-data/geoclust-date-binning-testing-all-levels.json').then((json) => collectionDateData = json);
+
 
 import { LeafletMouseEvent } from "leaflet";
 import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; // TO BE CREATED
@@ -97,7 +100,8 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 
 //DKDK use legendRadioValue instead of knob_YAxisRangeMethod
 // const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod) => {
-  const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
+
+const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
 
   let legendSums : number[] = [];
   let legendLabels : string[] = [];
@@ -108,7 +112,9 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
-  const buckets = collectionDateData[geohash_level].facets.geo.buckets.filter(({ltAvg, lnAvg}) => {
+  const buckets = collectionDateData[geohash_level].facets.geo.buckets.filter((bucket : any) => {
+    const ltAvg : number = bucket.ltAvg;
+    const lnAvg : number = bucket.lnAvg;
     return ltAvg > bounds.southWest[0] &&
 	   ltAvg < bounds.northEast[0] &&
 	   lnAvg > bounds.southWest[1] &&
