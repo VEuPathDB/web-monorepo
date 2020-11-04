@@ -25,9 +25,9 @@ export const FormGroup: React.SFC<FormGroupProps> = ({
     <div className={bodyClassName}>
       {
         formRows.map(
-          formRow => (
+          ({ key, ...formRow }) => (
             <FormRow
-              key={`${groupKey}/${formRow.key}`}
+              key={`${groupKey}/${key}`}
               {...formRow}
             />
           )

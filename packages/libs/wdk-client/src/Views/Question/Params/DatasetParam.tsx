@@ -263,7 +263,7 @@ function DatasetParamComponent(props: Props<DatasetParam, State>) {
 }
 
 const observeParam: ParamModule['observeParam'] = (action$, state$, services) => action$.pipe(
-  ofType<InitParamAction>(INIT_PARAM),
+  ofType<Action, InitParamAction>(INIT_PARAM),
   mergeMap(action =>
     from(services.wdkService.getCurrentUser()).pipe(
       mergeMap(user => {

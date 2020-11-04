@@ -13,7 +13,7 @@ function fetchWithCredentials(path: string, method: string, body: any, contentTy
   const authO = {
         'Auth-Key': authKey
   };
-  const contentTypeO = contentType != null ? {'Content-Type': contentType } : {};
+  const contentTypeO: Record<string, string> = contentType != null ? {'Content-Type': contentType } : {};
   return fetch(serviceUrl + path,
     {
       method: method.toUpperCase(),

@@ -106,17 +106,15 @@ export default (base: ServiceBase) => {
   }
 
   function updateStepAnalysisForm(stepId: number, analysisId: number, formParams: FormParams) {
+    const headers = new Headers({ 'Content-Type': 'application/json'});
+    if (base._version) headers.append(CLIENT_WDK_VERSION_HEADER, String(base._version))
     return fetch(`${base.serviceUrl}/users/current/steps/${stepId}/analyses/${analysisId}`, {
+      headers,
       method: 'PATCH',
       body: JSON.stringify({
         parameters: formParams
       }),
       credentials: 'include',
-      headers: new Headers(Object.assign({
-        'Content-Type': 'application/json'
-      }, base._version && {
-        [CLIENT_WDK_VERSION_HEADER]: base._version
-      }))
     })
       .then(response => response.ok ? '[]' : response.text())
       .then(validationErrors => {

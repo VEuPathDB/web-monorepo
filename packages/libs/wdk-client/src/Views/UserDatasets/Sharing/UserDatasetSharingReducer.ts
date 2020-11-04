@@ -1,4 +1,4 @@
-import { differenceWith, unionWith } from 'lodash';
+import { differenceWith, unionWith, union, Comparator } from 'lodash';
 import { UserDataset, UserDatasetShare } from 'wdk-client/Utils/WdkModel';
 import {
   SharingSuccessAction,
@@ -40,8 +40,9 @@ function handleOperation(operation: ShareOperation) {
       if (entry == null || entry.resource == null || shares == null) {
         return state;
       }
-      const operator = operation === 'add' ? unionWith : differenceWith;
-      const sharedWith = operator(entry.resource.sharedWith, shares, shareComparator);
+      const sharedWith = operation === 'add'
+        ?      unionWith(entry.resource.sharedWith, shares, shareComparator)
+        : differenceWith(entry.resource.sharedWith, shares, shareComparator);
 
       return {
         ...state,

@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { StepAnalysisConfig } from '../../../../Utils/StepAnalysisUtils';
 
-type StepAnalysisResultPaneProps = StepAnalysisResultState & {
+export type StepAnalysisResultPaneProps = StepAnalysisResultState & {
   resultRenderer: (props: StepAnalysisResultPluginProps) => React.ReactNode;
 };
 
@@ -9,13 +9,13 @@ export type StepAnalysisResultState = ({ type: 'complete-result' } & CompleteRes
 
 export type StepAnalysisResultPluginProps = CompleteResultState;
 
-interface CompleteResultState {
+export interface CompleteResultState {
   analysisResult: any;
   analysisConfig: StepAnalysisConfig;
   webAppUrl: string;
 }
 
-interface IncompleteResultState {
+export interface IncompleteResultState {
   className?: string;
   header: ReactNode;
   reason: ReactNode;

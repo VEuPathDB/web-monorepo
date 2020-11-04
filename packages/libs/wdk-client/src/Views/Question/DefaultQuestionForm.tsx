@@ -482,7 +482,7 @@ function WebServicesTutorialLink(props: WebServicesTutorialLinkProps) {
         title="Build a Web Services URL from this Search"
         className="wdk-ReactRouterLink wdk-RecordActionLink"
         replace={false}>
-        Build a Web Services URL from this Search >>
+        Build a Web Services URL from this Search &gt&gt;
       </Link>
     </div>
   );

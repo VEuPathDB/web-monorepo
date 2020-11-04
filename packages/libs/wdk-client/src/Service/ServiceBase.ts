@@ -181,17 +181,15 @@ export const ServiceBase = (serviceUrl: string) => {
   }
 
   function _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
+    const headers = new Headers({ 'Content-Type': 'applicaiton/json'});
+    if (_version) headers.append(CLIENT_WDK_VERSION_HEADER, String(_version));
     return fetch(
       isBaseUrl ? url : serviceUrl + url, 
       {
+        headers,
         method: method.toUpperCase(),
         body: body,
         credentials: 'include',
-        headers: new Headers(Object.assign({
-          'Content-Type': 'application/json; charset=utf-8'
-        }, _version && {
-          [CLIENT_WDK_VERSION_HEADER]: _version
-        }))
       }).then(response => {
       if (_isInvalidating) {
         return pendingPromise as Promise<T>;

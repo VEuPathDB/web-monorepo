@@ -12,7 +12,7 @@ import {
   sortTable,
   selectTab,
   changeTablePage,
-  changeTableRowsPerPage
+  changeTableRowsPerPage,
 } from 'wdk-client/Actions/AttributeAnalysisActions';
 
 import 'wdk-client/Views/AttributeAnalysis/AttributeAnalysisTabs.scss';

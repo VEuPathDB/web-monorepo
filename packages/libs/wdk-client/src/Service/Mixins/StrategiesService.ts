@@ -3,7 +3,7 @@ import { NewStrategySpec, DuplicateStrategySpec, strategySummaryDecoder, DeleteS
 import * as Decode from 'wdk-client/Utils/Json';
 import { Identifier } from 'wdk-client/Utils/WdkModel';
 
-interface PatchOptions extends StrategyProperties {
+export interface PatchOptions extends StrategyProperties {
   overwriteWith: number
 }
 

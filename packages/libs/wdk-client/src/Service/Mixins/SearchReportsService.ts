@@ -32,7 +32,7 @@ export interface CustomSearchReportRequest {
   reportConfig: object;
 }
 
-interface CustomSearchReportRequestInfo {
+export interface CustomSearchReportRequestInfo {
   url: string,
   request: CustomSearchReportRequest
 }

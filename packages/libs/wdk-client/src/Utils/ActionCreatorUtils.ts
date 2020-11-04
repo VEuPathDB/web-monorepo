@@ -7,21 +7,21 @@ import { StateObservable, ActionsObservable } from 'redux-observable';
 import { notifyUnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
 import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
 
-interface Action<Type extends string, Payload> {
+export interface Action<Type extends string, Payload> {
   readonly type: Type;
   readonly payload: Payload;
 }
 
-interface ActionTypeGuard<T extends Action<string, any>> {
+export interface ActionTypeGuard<T extends Action<string, any>> {
   (action: { type: string }): action is T;
 }
 
-interface ActionTypeGuardContainer<T extends Action<string, any>> {
+export interface ActionTypeGuardContainer<T extends Action<string, any>> {
   isOfType: ActionTypeGuard<T>;
 }
 
 
-type ActionCreator<T, Args> =
+export type ActionCreator<T, Args> =
   T extends Action<infer Type, infer Payload>
     ? Args extends any[] ? { readonly type: Type; (...args: Args): T } & ActionTypeGuardContainer<T>
     : { readonly type: Type; (): T } & ActionTypeGuardContainer<T>
@@ -60,9 +60,9 @@ export function makeActionCreator<Type extends string, Args extends any[], Paylo
 }
 
 
-type GenericActionCreator = ActionCreator<Action<string, any>, any>;
+export type GenericActionCreator = ActionCreator<Action<string, any>, any>;
 
-interface Request2Fulfill<T, State> {
+export interface Request2Fulfill<T, State> {
   (
     requestActions: T,
     state: StateObservable<State>,
@@ -70,7 +70,7 @@ interface Request2Fulfill<T, State> {
   ): Promise<AnyAction>
 }
 
-interface MapRequestActionsToEpicOptions<T, State> {
+export interface MapRequestActionsToEpicOptions<T, State> {
   areActionsNew?: (actions: T, prevActions: T) => boolean;
   areActionsCoherent?: (actions: T, state: State) => boolean;
 }
@@ -83,9 +83,7 @@ interface Pred<T> {
  * A factory for `OperatorFunction`. Examples of `OperatorFactory`
  * are `mergeMap`, `concatMap`, and `switchMap` from `rxjs/operators`.
  */
-interface MapOperatorFactory {
-  <T, R>(value: T): OperatorFunction<T, R>;
-}
+type MapOperatorFactory = typeof mergeMap;
 
 /**
  * Creates an Epic that calls `request2Fulfill` when actions matching the
@@ -367,27 +365,15 @@ export const mapRequestActionsToEpicWith = (mapOperatorFactory: MapOperatorFacto
     const actionStreams = actionCreators.map(ac => action$.pipe(filter(ac.isOfType)));
     const filterActions = makeFilterActions(options);
     // track previous filtered actions to be passed to `filterActions`
-    let prevFilteredActions: Action<string, any>[] | undefined = undefined;
-    const combined$ = combineLatestIf(actionStreams, actions => {
+    let prevFilteredActions: AnyAction[] | undefined = undefined;
+    const combined$ = combineLatestIf<AnyAction>(actionStreams, actions => {
       const ret = filterActions(actions, prevFilteredActions, state$.value);
       // only update `prevFilteredActions` if `filterActions` returns `true`
       if (ret) prevFilteredActions = actions;
       return ret;
     });
     return combined$.pipe(
-      mapOperatorFactory((actions: any) => {
-        return from(request2Fulfill(actions, state$, dependencies));
-      }),
-      // TODO Determine if we should keep this
-      // catchError((err: Error, caughtObservable: Observable<WdkAction>) => {
-      //   // TODO submit error to wdkService
-      //   console.error(err);
-      //   // continue mapping actions - hopefully this won't results in an infinite loop
-      //   return concat(
-      //     of(notifyUnhandledError(err)),
-      //     caughtObservable
-      //   );
-      // })
+      mapOperatorFactory(actions => from(request2Fulfill(actions, state$, dependencies))),
     );
   };
 }

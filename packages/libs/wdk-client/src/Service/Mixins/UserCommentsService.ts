@@ -53,16 +53,14 @@ export default (base: ServiceBase) => {
 
   // TODO: could this use the fetchJson method?
   function postUserComment(userCommentPostRequest: UserCommentPostRequest): Promise<UserCommentPostResponseData> {
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    if (base._version) headers.append(CLIENT_WDK_VERSION_HEADER, String(base._version));
     const data = JSON.stringify(userCommentPostRequest);
     const result = fetch(`${base.serviceUrl}/user-comments`, {
+      headers,
       method: 'POST',
       body: data,
       credentials: 'include',
-      headers: new Headers(Object.assign({
-        'Content-Type': 'application/json'
-      }, base._version && {
-        [CLIENT_WDK_VERSION_HEADER]: base._version
-      }))
     })
       .then(response =>
         response.text().then(

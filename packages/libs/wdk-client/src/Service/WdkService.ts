@@ -3,7 +3,7 @@ import { DependencyList } from 'react';
 import { memoize } from 'lodash';
 
 import { DepEffectCallback, useWdkDependenciesEffect } from 'wdk-client/Hooks/WdkDependenciesEffect';
-import { composeMixins, CompositeService as WdkService } from 'wdk-client/Service/ServiceMixins';
+import { composeMixins, CompositeService as WdkService } from './ServiceMixins';
 
 export default WdkService;
 

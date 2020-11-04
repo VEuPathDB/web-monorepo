@@ -77,10 +77,10 @@ function makeRootEpic<T extends Record<string, any>, A extends Action>(storeModu
     .map(({ observe }: StoreModule<T, A>): ModuleEpic<T, A> => (action$, state$, deps) => {
       return observe
         ? observe(action$, state$, deps).pipe(
-          catchError((error, caught): Observable<A> => {
+          catchError((error, caught) => {
             return caught.pipe(
               startWith(notifyUnhandledError(error))
-            );
+            ) as Observable<A>;
           })
         )
         : EMPTY;

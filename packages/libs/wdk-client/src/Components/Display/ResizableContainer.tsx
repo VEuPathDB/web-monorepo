@@ -26,7 +26,7 @@ export const ResizableContainer = React.forwardRef<HTMLDivElement | null, React.
   ...resizableOptions 
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  useImperativeHandle(ref, () => containerRef.current);
+  useImperativeHandle<HTMLDivElement|null, HTMLDivElement|null>(ref, () => containerRef.current);
   useJQueryUIResizable(containerRef, resizableOptions);
 
   return (

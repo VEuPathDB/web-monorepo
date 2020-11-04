@@ -380,14 +380,14 @@ const observeAutoRun: QuestionEpic = (action$, state$, { wdkService }) => action
 )
 
 const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
-  ofType<QuestionLoadedAction>(QUESTION_LOADED),
+  ofType<Action, QuestionLoadedAction>(QUESTION_LOADED),
   mergeMap(({ payload: { question, searchName, paramValues, initialParamData }}: QuestionLoadedAction) =>
     from(question.parameters.map(parameter =>
       initParam({ parameter, paramValues, searchName, initialParamData }))))
 );
 
 const observeUpdateParams: QuestionEpic = (action$, state$, { paramValueStore }) => action$.pipe(
-  ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE),
+  ofType<Action, UpdateParamValueAction>(UPDATE_PARAM_VALUE),
   mergeMap(async (action: UpdateParamValueAction) => {
     const searchName = action.payload.searchName;
     const questionState = state$.value.question.questions[searchName];
@@ -406,7 +406,7 @@ const observeUpdateParams: QuestionEpic = (action$, state$, { paramValueStore })
 );
 
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
-  ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE),
+  ofType<Action, UpdateParamValueAction>(UPDATE_PARAM_VALUE),
   filter(action => action.payload.parameter.dependentParams.length > 0),
   debounceTime(1000),
   mergeMap(action => {
@@ -420,7 +420,7 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
       parameters => updateParams({searchName, parameters}),
       error => paramError({ searchName, error: error.message, paramName: parameter.name })
     )).pipe(
-      takeUntil(action$.pipe(ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE))),
+      takeUntil(action$.pipe(ofType<Action, UpdateParamValueAction>(UPDATE_PARAM_VALUE))),
       takeUntil(action$.pipe(filter(killAction => (
         killAction.type === UNLOAD_QUESTION &&
         killAction.payload.searchName === action.payload.searchName
@@ -525,7 +525,7 @@ const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => actio
             }
             return undefined;
           })
-          .then(singleRecord => {
+          .then((singleRecord): Action | Promise<Action> => {
             if (singleRecord != null) {
               const { question } = questionState;
               return transitionToInternalPage(`/record/${question.outputRecordClassName}/${singleRecord.id.map(p => p.value).join('/')}`);

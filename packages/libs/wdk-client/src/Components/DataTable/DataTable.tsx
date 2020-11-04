@@ -327,7 +327,7 @@ class DataTable extends PureComponent<Props, State> {
       }));
       this.props.onSortingChange(sorting);
     })
-    .DataTable(tableOpts);
+    .DataTable(tableOpts as any);
 
     if (childRow != null) {
       this._dataTable.draw();

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "test": "jest",
+    "compile": "rm -rf ./lib && tsc --noEmit false",
     "build": "webpack --hide-modules",
     "check-ts": "tsc --version && tsc --noEmit",
     "watch-ts": "tsc --noEmit --watch -p .",
@@ -58,12 +59,14 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
     "babel-eslint": "^8.0.1",
-    "eslint": "^5.2.0",
+    "eslint": "^7.12.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-react": "^7.4.0",
     "ts-node": "^7.0.0",
-    "typescript": "^3.7.5"
+    "typescript": "3"
   },
   "jest": {
     "moduleNameMapper": {
