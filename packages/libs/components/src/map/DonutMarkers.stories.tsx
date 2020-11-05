@@ -4,8 +4,13 @@ import React, { ReactElement, useState, useCallback } from 'react';
 import { BoundsViewport, MarkerProps } from './Types';
 import './TempIconHack';
 
-let speciesData : any = undefined;
-import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
+import speciesData from './test-data/geoclust-species-testing-all-levels.json';
+
+// below was an attempt to lazy load...
+// it seemed to cause a 'black screen' error in Storybook if you refreshed the page in your browser
+//
+// let speciesData : any = undefined;
+// import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
 import { LeafletMouseEvent } from "leaflet";
 import SVGDonutMarker from './SVGDonutMarker'; // TO BE CREATED

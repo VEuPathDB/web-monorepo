@@ -5,9 +5,12 @@ import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
 import './TempIconHack';
 
-// import collectionDateData from './test-data/geoclust-date-binning-testing-all-levels.json';
-let collectionDateData : any = undefined;
-import('./test-data/geoclust-date-binning-testing-all-levels.json').then((json) => collectionDateData = json);
+import collectionDateData from './test-data/geoclust-date-binning-testing-all-levels.json';
+// below was an attempt to lazy load...
+// it seemed to cause a 'black screen' error in Storybook if you refreshed the page in your browser
+//
+// let collectionDateData : any = undefined;
+// import('./test-data/geoclust-date-binning-testing-all-levels.json').then((json) => collectionDateData = json);
 
 
 import { LeafletMouseEvent } from "leaflet";
