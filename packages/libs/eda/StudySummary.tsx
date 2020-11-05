@@ -16,7 +16,7 @@ export function StudySummary(props: Props) {
   return (
     <div className={cx('-Summary')}>
       {Object.entries(studyRecord.attributes).map(([name, value]) => value != null && (
-        <Tooltip content={getTooltipContent(studyRecordClass.attributesMap[name])} showEvent="focus mouseenter" hideEvent="blur mouseleave">
+        <Tooltip key={name} content={getTooltipContent(studyRecordClass.attributesMap[name])} showEvent="focus mouseenter" hideEvent="blur mouseleave">
           {renderAttributeValue(value, { tabIndex: 0 })}
         </Tooltip>
       ))}
