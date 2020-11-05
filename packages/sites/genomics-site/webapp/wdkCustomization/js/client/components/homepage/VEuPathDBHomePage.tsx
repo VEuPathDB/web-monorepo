@@ -499,6 +499,13 @@ const useHeaderMenuItems = (
             exclude: [ EuPathDB ]
           }
         },
+        { 
+          key: 'genomes-and-data-types',
+          display: 'Genomes Info and Stats',
+          tooltip: `Table summarizing all the genomes and their different data types available in ${displayName}`,
+          type: 'reactRoute',
+          url: '/search/organism/GenomeDataTypes/result'
+        },
         {
           key: 'mahpic-data',
           display: 'MaHPIC',
@@ -508,13 +515,6 @@ const useHeaderMenuItems = (
           metadata: {
             include: [ PlasmoDB ]
           }
-        },
-        {
-          key: 'genomes-and-data-types',
-          display: 'Organisms - Data type summary',
-          tooltip: `Table summarizing all the genomes and their different data types available in ${displayName}`,
-          type: 'reactRoute',
-          url: '/search/organism/GenomeDataTypes/result'
         },
         {
           key: 'community-download',
