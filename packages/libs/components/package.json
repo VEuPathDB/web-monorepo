@@ -5,6 +5,7 @@
   "dependencies": {
     "@babel/core": "^7.10.4",
     "@storybook/preset-typescript": "^3.0.0",
+    "@types/lodash": "^4.14.164",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-plotly.js": "^2.2.4",
