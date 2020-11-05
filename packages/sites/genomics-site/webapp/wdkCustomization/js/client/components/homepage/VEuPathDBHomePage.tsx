@@ -501,7 +501,7 @@ const useHeaderMenuItems = (
         },
         { 
           key: 'genomes-and-data-types',
-          display: 'Genomes Info and Stats',
+          display: 'Genome Info and Stats',
           tooltip: `Table summarizing all the genomes and their different data types available in ${displayName}`,
           type: 'reactRoute',
           url: '/search/organism/GenomeDataTypes/result'
