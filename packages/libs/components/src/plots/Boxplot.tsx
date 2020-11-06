@@ -28,10 +28,10 @@ export default function Boxplot(props : Props) {
 
     const orientationDependentProps = orientation === 'v' ? 
      { x0: d.label,
-       y: d.outliers.length ? [d.outliers] : undefined
+       y: d.rawData ? [d.rawData] : d.outliers.length ? [d.outliers] : undefined
      } :
      { y0: d.label,
-       x: d.outliers.length ? [d.outliers] : undefined
+       x: d.rawData ? [d.rawData] : d.outliers.length ? [d.outliers] : undefined
      };
     
     return { upperfence: [d.upperWhisker],
@@ -41,7 +41,7 @@ export default function Boxplot(props : Props) {
 	     q1: [d.q1],
 	     q3: [d.q3],
 	     name: d.label,
-	     boxpoints: 'outliers',
+	     boxpoints: d.rawData ? 'all' : 'outliers',
 	     jitter: 0.1,
 	     ...orientationDependentProps,
 	     type: 'box' } as const

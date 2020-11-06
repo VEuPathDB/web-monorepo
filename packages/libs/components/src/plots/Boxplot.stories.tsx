@@ -79,6 +79,18 @@ export const HorizontalLongLabels = () => <Boxplot
 />
 
 
+export const WithRawData = () => <Boxplot
+  data={[ {...catData, label: 'cats', rawData: catRawData}, {...dogData, label: 'dogs', rawData: dogRawData} ]}
+  xAxisLabel={"domestic animal"}
+  yAxisLabel={"height, cm"}
+/>
+
+export const HorizontalWithRawData = () => <Boxplot
+  data={[ {...catData, label: 'cats', rawData: catRawData}, {...dogData, label: 'dogs', rawData: dogRawData} ]}
+  xAxisLabel={"domestic animal"}
+  yAxisLabel={"height, cm"}
+  defaultOrientation={"horizontal"}
+/>
 
 function summaryStats(rawData : number[]) {
   const q1 = stats.percentile(rawData, 0.25);
