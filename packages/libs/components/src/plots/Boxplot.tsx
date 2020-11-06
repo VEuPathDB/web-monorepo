@@ -21,27 +21,42 @@ export interface Props {
 
 export default function Boxplot(props : Props) {
 
-  const data = props.data.map((d) => ( { upperfence: [d.upperWhisker],
-					 lowerfence: [d.lowerWhisker],
-					 median: [d.median],
-					 mean: d.mean !== undefined ? [d.mean] : undefined,
-					 q1: [d.q1],
-					 q3: [d.q3],
-					 name: d.label,
-					 x0: d.label,
-					 y: d.outliers.length ? [d.outliers] : undefined,
-					 boxpoints: 'outliers',
-					 jitter: 0.1,
-					 type: 'box' } as const ));
+  const orientation = props.defaultOrientation ?
+		      (props.defaultOrientation === 'horizontal' ? 'h' : 'v') : 'v';
 
+  const data = props.data.map((d) => {
 
+    const orientationDependentProps = orientation === 'v' ? 
+     { x0: d.label,
+       y: d.outliers.length ? [d.outliers] : undefined
+     } :
+     { y0: d.label,
+       x: d.outliers.length ? [d.outliers] : undefined
+     };
+    
+    return { upperfence: [d.upperWhisker],
+	     lowerfence: [d.lowerWhisker],
+	     median: [d.median],
+	     mean: d.mean !== undefined ? [d.mean] : undefined,
+	     q1: [d.q1],
+	     q3: [d.q3],
+	     name: d.label,
+	     boxpoints: 'outliers',
+	     jitter: 0.1,
+	     ...orientationDependentProps,
+	     type: 'box' } as const
+  });
+
+  const dependentAxis = orientation === 'v' ? 'yaxis' : 'xaxis';
+  const independentAxis = orientation === 'v' ? 'xaxis' : 'yaxis';
+  
   const layout = {
-    yaxis : {
+    [dependentAxis] : {
       rangemode: "tozero" as const,
       title: props.yAxisLabel,
       range: props.defaultYAxisRange
     },
-    xaxis : {
+    [independentAxis] : {
       title: props.xAxisLabel
     },
     showlegend: false

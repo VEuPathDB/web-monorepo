@@ -44,8 +44,10 @@ export const YAxisLabel = () => <Boxplot
   yAxisLabel={"temperature, °C"}
 />
 
-export const XAxisLabel = () => <Boxplot
-  data={[ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ]} xAxisLabel={"domestic animal"}
+export const XAndYAxisLabel = () => <Boxplot
+  data={[ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ]}
+  xAxisLabel={"domestic animal"}
+  yAxisLabel={"height, cm"}
 />
 
 export const FixedYAxisRange = () => <Boxplot
@@ -61,6 +63,21 @@ export const FixedTooSmallYAxisRange = () => <Boxplot
   xAxisLabel={"location"}
   defaultYAxisRange={[-10,10]}
 />
+
+export const Horizontal = () => <Boxplot
+  data={[ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ]}
+  xAxisLabel={"domestic animal"}
+  yAxisLabel={"height, cm"}
+  defaultOrientation={"horizontal"}
+/>
+
+export const HorizontalLongLabels = () => <Boxplot
+  data={[ {...catData, label: 'hungry domestic cats'}, {...dogData, label: 'sleepy domestic dogs'} ]}
+  xAxisLabel={"type of domestic animal"}
+  yAxisLabel={"height, cm"}
+  defaultOrientation={"horizontal"}
+/>
+
 
 
 function summaryStats(rawData : number[]) {
