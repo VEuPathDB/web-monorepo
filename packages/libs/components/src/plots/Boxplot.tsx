@@ -1,17 +1,19 @@
 import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
+import { PlotData, Datum } from 'plotly.js';
 
 export interface Props {
   data: {
     lowerWhisker? : number,
-    q1 : number,
+    q1 : number,  // would like PlotData['q1'] but is the @types module not up to date?
     median : number,
     mean? : number,
     q3 : number,
     upperWhisker? : number,
-    label : string,
-    rawData? : number[],
-    outliers : number[]
+    label : PlotData['name'],
+    rawData? : Datum[], // PlotData['y'] | PlotData['x'], // doesn't seem to work
+                        // but are we trying to remove dependencies on Plotly types?
+    outliers : Datum[]
   }[];
   xAxisLabel?: string;
   yAxisLabel?: string;
