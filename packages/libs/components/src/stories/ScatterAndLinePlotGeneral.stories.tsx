@@ -7,6 +7,9 @@ import ScatterAndLinePlotGeneral from '../plots/ScatterAndLinePlotGeneral';
 export default {
   title: 'Scatter Plot General',
   component: ScatterAndLinePlotGeneral,
+  parameters: {
+    redmine: 'https://redmine.apidb.org/issues/41310',
+  }
 };
 
 /**
