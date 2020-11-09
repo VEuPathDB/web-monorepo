@@ -65,7 +65,7 @@ public class AccessRequestSubmitter {
 
   private static String insertRequestPreparedStatementBody() {
     return "INSERT INTO\n"
-      + "  studyaccess.ValidDatasetUser (\n"
+      + "  studyaccess.end_users (\n"
       + "    user_id\n"
       + "  , dataset_presenter_id\n"
       + "  , purpose\n"
@@ -110,7 +110,7 @@ public class AccessRequestSubmitter {
     ps.setString(5, params.getAnalysisPlan());
     ps.setString(6, params.getDisseminationPlan());
     ps.setString(7, params.getPriorAuth());
-    ps.setString(7, params.getRestrictionLevel());
+    ps.setString(8, params.getRestrictionLevel());
     ps.setInt(9, params.getApprovalType());
     ps.setInt(10, params.getUserId());
     ps.setString(11, params.getDatasetId());
