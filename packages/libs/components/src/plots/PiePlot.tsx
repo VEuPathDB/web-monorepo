@@ -1,6 +1,6 @@
 import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
-import DefaultColorGen from "./DefaultColorGen";
+import defaultColorGen from "./utils/defaultColorGen";
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 
 export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
@@ -29,7 +29,7 @@ interface Props {
 
 export default function PiePlot(props: Props) {
   const { data, interior = null } = props;
-  const defaultColorIter = DefaultColorGen();
+  const defaultColorIter = defaultColorGen();
   let interiorProps;
   let layout = {};
   let newData: Partial<PlotData>[] = [];
