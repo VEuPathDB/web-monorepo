@@ -4,6 +4,9 @@ import PiePlot from '../plots/PiePlot';
 export default {
   title: 'PiePlot',
   component: PiePlot,
+  parameters: {
+    redmine: 'https://redmine.apidb.org/issues/41799'
+  }
 };
 
 let data = [

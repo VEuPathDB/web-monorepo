@@ -10,5 +10,6 @@ module.exports = {
     '@storybook/addon-links',
     '@storybook/addon-docs',
     '@storybook/addon-viewport/register',
+    './redmine-addon/register.js'
   ],
 };
