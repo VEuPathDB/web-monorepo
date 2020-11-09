@@ -825,7 +825,7 @@ const useHeaderMenuItems = (
           type: 'externalLink',
           url: makeExternalStaticPageUrl(
                  communitySite,
-                 '/documents/VEuPathDB_User_Documentation_Sep2020.pdf'
+                 '/documents/VEuPathDB_User_Documentation.pdf'
                )
         }
       ]
