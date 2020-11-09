@@ -1,6 +1,6 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import ScatterAndLinePlotGeneral from './ScatterAndLinePlotGeneral';
+import ScatterAndLinePlotGeneral from '../plots/ScatterAndLinePlotGeneral';
 //DKDK trying to reduce type error for js functions
 // import './custom.d.ts'
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import PiePlot from './PiePlot';
+import PiePlot from '../plots/PiePlot';
 
 export default {
   title: 'PiePlot',

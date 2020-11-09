@@ -1,5 +1,5 @@
 import React from 'react';
-import ScatterAndLinePlot from './ScatterAndLinePlot';
+import ScatterAndLinePlot from '../plots/ScatterAndLinePlot';
 
 export default {
   title: 'ScatterAndLinePlot',
