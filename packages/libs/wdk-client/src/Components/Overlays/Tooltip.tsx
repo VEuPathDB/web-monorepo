@@ -147,7 +147,8 @@ class Tooltip extends React.PureComponent<Props> {
 export const EagerlyLoadedTooltip = wrappable(Tooltip);
 
 const withJquery = lazy<Props>(async () => {
-  await import('lib/jquery-qtip');
+  // @ts-ignore
+  await import('!!script-loader!../../../vendored/jquery.qtip.min.js');
 });
 
 export default wrappable(withJquery(Tooltip));

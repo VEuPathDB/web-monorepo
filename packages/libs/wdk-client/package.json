@@ -1,9 +1,11 @@
 {
-  "name": "wdk-client",
+  "name": "@veupathdb/wdk-client",
   "version": "0.1.0",
   "scripts": {
     "test": "jest",
     "compile": "rm -rf ./lib && tsc --noEmit false",
+    "copy-assets": "cd src && find . -type f -not \\( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -iname '*.md' \\) | xargs cp --parents -t ../lib",
+    "prepare": "yarn compile && yarn copy-assets",
     "build": "webpack --hide-modules",
     "check-ts": "tsc --version && tsc --noEmit",
     "watch-ts": "tsc --noEmit --watch -p .",
@@ -11,9 +13,10 @@
   },
   "private": true,
   "files": [
-    "src/*"
+    "lib",
+    "vendored"
   ],
-  "main": "./src/Core",
+  "main": "./lib/Core",
   "dependencies": {
     "@types/datatables.net": "^1.10.5",
     "@types/flot": "^0.0.31",
@@ -38,7 +41,7 @@
     "json-stable-stringify": "^1.0.0",
     "localforage": "^1.5.0",
     "lodash": "^4.17.5",
-    "mansion-ui": "^2.5.2",
+    "mansion-ui": "2.5",
     "moment": "^2.21.0",
     "natural-sort": "^1.0.0",
     "prop-types": "^15.7.2",

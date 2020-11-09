@@ -28,11 +28,15 @@ type HistogramProps = {
 const cx = makeClassNameHelper('HistogramAnalysis');
 
 export const Histogram = lazy<HistogramProps>(async () => {
-  await import('lib/jquery-flot');
+  // @ts-ignore
+  await import('!!script-loader!../../../../vendored/flot/jquery.flot');
   await Promise.all([
-    import('lib/jquery-flot-categories'),
-    import('lib/jquery-flot-selection'),
-    import('lib/jquery-flot-time')
+    // @ts-ignore
+    import('!!script-loader!../../../../vendored/flot/jquery.flot.categories'),
+    // @ts-ignore
+    import('!!script-loader!../../../../vendored/flot/jquery.flot.selection'),
+    // @ts-ignore
+    import('!!script-loader!../../../../vendored/flot/jquery.flot.time')
   ]);
 })(class Histogram extends React.Component<HistogramProps> {
 

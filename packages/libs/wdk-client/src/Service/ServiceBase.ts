@@ -181,7 +181,7 @@ export const ServiceBase = (serviceUrl: string) => {
   }
 
   function _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
-    const headers = new Headers({ 'Content-Type': 'applicaiton/json'});
+    const headers = new Headers({ 'Content-Type': 'application/json'});
     if (_version) headers.append(CLIENT_WDK_VERSION_HEADER, String(_version));
     return fetch(
       isBaseUrl ? url : serviceUrl + url, 
@@ -248,7 +248,7 @@ export const ServiceBase = (serviceUrl: string) => {
     if (_initialCheck == null) {
       let serviceConfig$ = _fetchJson<ServiceConfig>('get', '/');
       let storeConfig$ = _store.getItem<ServiceConfig>('config');
-      _initialCheck = Promise.all([ serviceConfig$, storeConfig$ ])
+      _initialCheck = Promise.all([ serviceConfig$, storeConfig$ ] as const)
       .then(([ serviceConfig, storeConfig ]) => {
         if (storeConfig == null || storeConfig.startupTime != serviceConfig.startupTime) {
           return _store.clear().then(() => {

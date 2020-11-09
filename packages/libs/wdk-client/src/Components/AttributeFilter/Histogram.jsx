@@ -608,11 +608,11 @@ var Histogram = (function() {
   };
 
   return lazy(async () => {
-    await import('lib/jquery-flot');
+    await import('!!script-loader!../../../vendored/flot/jquery.flot');
     await Promise.all([
-      import('lib/jquery-flot-categories'),
-      import('lib/jquery-flot-selection'),
-      import('lib/jquery-flot-time')
+      import('!!script-loader!../../../vendored/flot/jquery.flot.categories'),
+      import('!!script-loader!../../../vendored/flot/jquery.flot.selection'),
+      import('!!script-loader!../../../vendored/flot/jquery.flot.time')
     ]);
   })(LazyHistogram);
 })();
