@@ -1,6 +1,6 @@
 import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
-import defaultColorGen from "./utils/defaultColorGen";
+import defaultColorGen from "../utils/defaultColorGen";
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 
 export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {

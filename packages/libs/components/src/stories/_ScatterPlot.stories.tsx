@@ -1,5 +1,5 @@
 import React from 'react';
-import ScatterPlot from './ScatterPlot';
+import ScatterPlot from '../plots/ScatterPlot';
 
 export default {
   title: 'ScatterPlot',
