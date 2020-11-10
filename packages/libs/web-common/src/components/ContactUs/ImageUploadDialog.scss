@@ -1,0 +1,45 @@
+.ImageUploadDialog {
+  .wdk-DialogHeader {
+    background: white;
+  }
+
+  .wdk-DialogContent {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    font-size: 1.4em;
+
+    margin-left: 0.75em;
+    margin-right: 0.75em;
+  }
+
+  &--Instructions {
+    font-size: 1.5em;
+  }
+
+  &--PasteZone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 80vh;
+    width: 85vw;
+    box-sizing: content-box;
+
+    border: 0.5em solid #aaaaaa;
+    padding: 0.5em;
+
+    background-color: #dddddd;
+  }
+
+  img {
+    max-height: calc(80vh - 5em);
+    max-width: 85vw;
+  }
+
+  &--Footer {
+    margin-top: 1em;
+  }
+}

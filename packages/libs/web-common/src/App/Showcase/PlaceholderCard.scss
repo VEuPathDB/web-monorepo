@@ -1,0 +1,24 @@
+.PlaceholderCard {
+  display: flex;
+  opacity: .7;
+  height: 335px;
+  padding: 2em;
+
+  .PlaceholderParagraph {
+    margin: 1em 0;
+  }
+
+  .PlaceholderText {
+    margin: .4em 0;
+    height: .4em;
+    width: 100%;
+    background: gray;
+
+    &__Indent {
+      width: 90%;
+      align-self: flex-end;
+    }
+
+  }
+
+}

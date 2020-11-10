@@ -1,0 +1,49 @@
+import React from 'react';
+import { RadioList, Checkbox } from 'wdk-client/Components';
+import * as ComponentUtils from 'wdk-client/Utils/ComponentUtils';
+import * as ReporterUtils from 'wdk-client/Views/ReporterForm/reporterUtils';
+
+let util = Object.assign({}, ComponentUtils, ReporterUtils);
+
+let FastaOrthoSequenceReporterForm = props => {
+
+  let { formState, updateFormState, onSubmit, includeSubmit } = props;
+  let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);
+
+  return (
+    <div>
+      <h3>Output options:</h3>
+      <div style={{marginLeft: '2em'}}>
+        <div style={{display: 'block'}}>
+          <Checkbox value={formState.includeOrganism} onChange={getUpdateHandler('includeOrganism')} /> Include organism
+        </div>
+        <div style={{display: 'block'}}>
+          <Checkbox value={formState.includeDescription} onChange={getUpdateHandler('includeDescription')} /> Include description
+        </div>
+      </div>
+      <hr/>
+      <h3>Download Type:</h3>
+      <div style={{marginLeft:"2em"}}>
+        <RadioList value={formState.attachmentType} items={util.attachmentTypes}
+            onChange={getUpdateHandler('attachmentType')}/>
+      </div>
+      { includeSubmit &&
+        <div style={{margin:'0.8em'}}>
+          <button className="btn" type="submit" onClick={onSubmit}>Download</button>
+        </div>
+      }
+    </div>
+  );
+};
+
+
+FastaOrthoSequenceReporterForm.getInitialState = () => ({
+  formState: {
+    attachmentType: 'plain',
+    includeOrganism: false,
+    includeDescription: false
+  },
+  formUiState: {}
+});
+
+export default FastaOrthoSequenceReporterForm;

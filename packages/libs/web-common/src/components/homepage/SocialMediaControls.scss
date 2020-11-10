@@ -1,0 +1,48 @@
+$tablet-width: 1000px;
+
+.ebrc-SocialMediaControls {
+  .ebrc-SocialMediaLinks {
+    background-color: rgba(255,255,255,.9);
+    a, button.link {
+      color: #00304c;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  &__news-collapsed {
+    margin-top: calc(1rem + 4.625em);
+
+    .ebrc-SocialMediaLinks {
+      margin-top: 0;
+      flex-direction: column;
+    }
+  }
+
+  &NewsToggle {
+    display: flex;
+    align-items: center;
+    font-size: 2.3em;
+
+    span {
+      margin-right: 0.5em;
+    }
+
+    &.link {
+      color: black;
+      text-decoration: none;
+      margin: 1rem 0 0 1rem !important;
+      align-self: flex-start;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  @media screen and (max-width: $tablet-width) {
+    display: none;
+  } 
+}

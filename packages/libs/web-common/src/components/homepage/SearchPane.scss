@@ -1,0 +1,87 @@
+.ebrc-SearchPane {
+  padding: 1rem 1rem 1rem 1.25rem;
+
+  h2 {
+    font-size: 2.3em;
+    margin: 0 1em 0.25em 0;
+    padding: 0;
+    white-space: nowrap;
+    font-style: italic;
+  }
+
+  &CheckboxTreeContainer {
+    font-size: 1.2em;
+  }
+
+  .wdk-CheckboxTreeLinks {
+    font-size: 0.8em;
+    margin-left: 0;
+  }
+
+  .wdk-RealTimeSearchBoxLabel {
+    cursor: text;
+  }
+
+  .wdk-RealTimeSearchBoxInput {
+    border-radius: 0.5em;
+    font-size: 0.8em;
+    background-color: #dfdfdf;
+    border-color: #999;
+
+    padding: 0.2em 1.5em 0.2em 1.75em;
+
+    &__withHelp {
+      margin-left: 0.5rem;
+      width: calc(100% - 2em);
+    }
+  }
+
+  .wdk-RealTimeSearchBoxSearchIcon {
+    left: 0.5em;
+  }
+
+  .wdk-CheckboxTree {
+    font-size: 1.33333333333em;
+
+    &Item {
+      line-height: 1em;
+    }
+  }
+
+  .wdk-CheckboxTree > .wdk-CheckboxTreeList > .wdk-CheckboxTreeItem {
+    > .wdk-CheckboxTreeNodeWrapper {
+      background-color: #dfdfdf;
+      margin: .25em 0;
+      border: 0.0625rem solid #ddd;
+      border-radius: 0.5em;
+      padding: 0.5em 0.6em 0.5em 1.2em;
+    }
+
+    > .wdk-CheckboxTreeList {
+      padding-left: 1em;
+    }
+  }
+
+  .wdk-CheckboxTreeNodeWrapper {
+    font-size: 0.9em;
+
+    align-items: flex-start;
+
+    padding-top: 0.35em;
+    padding-bottom: 0.35em;
+    padding-right: 0.6em;
+  }
+
+  .wdk-CheckboxTreeItem {
+    font-weight: 600;
+
+    &__leaf {
+      font-weight: normal;
+    }
+  }
+
+  .SubcategoryText {
+    font-style: normal;
+    font-weight: normal;
+  }
+}
