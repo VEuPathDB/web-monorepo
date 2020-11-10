@@ -1,8 +1,5 @@
 import React from 'react';
-import { action } from '@storybook/addon-actions';
 import ScatterAndLinePlotGeneral from '../plots/ScatterAndLinePlotGeneral';
-//DKDK trying to reduce type error for js functions
-// import './custom.d.ts'
 
 export default {
   title: 'Scatter Plot General',
@@ -11,20 +8,6 @@ export default {
     redmine: 'https://redmine.apidb.org/issues/41310',
   }
 };
-
-/**
- * DKDK lots of type errors come from the use of Union type (e.g., x & y with number[] | Date[])
- * Also, its use with its mathematical operations like JS built-in methods/functions such as concat(), map(), etc.
- * - well known issue when using Union type with such JS functions...
- *
- * Question: should x and y be defined as number[] | string[], not number[] | Date[]?
- *
- * # to-do-list: not necessarily a must-have item as of now
- * - "popupContent" prop is not considered yet
- * - handling typescript errors for Union type
- *    - generic, type assertion, type guard but complex
- *
- */
 
 //DKDK set data array types for VEuPathDB scatter plot: https://redmine.apidb.org/issues/41310
 // but changed to new format: most likely x & y data are row/column vector format; also standardError is not a single value but vector
@@ -60,12 +43,6 @@ interface hexProp {
   // replace(arg0: RegExp, arg1: (m: string, r: string, g: string, b: string)),
 }
 
-//DKDK Type workaround for union type, especially using map() etc.: https://github.com/microsoft/TypeScript/issues/30271#issuecomment-476278582
-type ArrayElem<A> = A extends Array<infer Elem> ? Elem : never
-function elemT<T>(array: T): Array<ArrayElem<T>> {
-  return array as any
-}
-
 //DKDK change HTML hex code to rgb array
 const hexToRgb = (hex?: string): [number, number, number] => {
   if (!hex) return [0,0,0];
@@ -78,7 +55,8 @@ const hexToRgb = (hex?: string): [number, number, number] => {
 
 //DKDK check number array and if empty
 function isArrayOfNumbers(value: any): value is number[] {
-  return Array.isArray(value) && value.length == 0 && value.every(item => typeof item === "number");
+  //DKDK value.length !==0
+  return Array.isArray(value) && value.length !== 0 && value.every(item => typeof item === "number");
 }
 
 //DKDK an example data: data are assumed to be number type only
@@ -236,8 +214,6 @@ function processInputData<T extends number | Date>(dataSet: VEuPathDBScatterPlot
         if (index == 0) {  //DKDK to set initial min/max Date values for Date[]
           xMin = getMinDate(xSeriesValue as Date[])
           xMax = getMaxDate(xSeriesValue as Date[])
-          // xMin = new Date(Math.min.apply(Math, elemT(xSeriesValue).map(date => new Date(date))))
-          // xMax = new Date(Math.max.apply(Math, elemT(xSeriesValue).map(date => new Date(date))))
         } else {
           xMin = (xMin < Math.min(...xSeriesValue.map(date => new Date(date).getTime()))) ? xMin : new Date(Math.min(...xSeriesValue.map(date => new Date(date).getTime())))
           xMax = (xMax > Math.max(...xSeriesValue.map(date => new Date(date).getTime()))) ? xMax : new Date(Math.max(...xSeriesValue.map(date => new Date(date).getTime())))
@@ -351,7 +327,6 @@ function processInputData<T extends number | Date>(dataSet: VEuPathDBScatterPlot
       //DKDK make Confidence Interval (CI) or Bounds (filled area)
       xIntervalBounds = xIntervalLineValue
       xIntervalBounds = xIntervalBounds.concat(xIntervalLineValue.map((element: any) => element).reverse())
-      // xIntervalBounds = elemT(xIntervalBounds).concat(elemT(xIntervalLineValue).map((element: any) => element).reverse())
 
       //DKDK finding upper and lower bound values.
       const {
