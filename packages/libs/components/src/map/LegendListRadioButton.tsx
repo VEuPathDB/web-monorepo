@@ -6,7 +6,7 @@ interface LegendListRadioButtonProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void,
   selectedOption?: string,
   //DKDK use yAxisRange[1]
-  yAxisRangeValue: number,
+  yAxisRangeValue?: number,
 }
 
 //DKDK add commas
@@ -33,7 +33,7 @@ export default function LegendListRadioButton(props: LegendListRadioButtonProps)
             <input type="radio" value="Individual" name="legendListRadio" onChange={props.onChange} checked={props.selectedOption === "Individual"}/> Per-marker (varies) */}
             {/* DKDK for clickable label */}
             <input id="Regional" type="radio" value="Regional" name="legendListRadio" onChange={props.onChange} checked={props.selectedOption === "Regional"}/>&nbsp;
-            <label htmlFor="Regional"> Regional (0 - {numberWithCommas(props.yAxisRangeValue)})</label>
+            <label htmlFor="Regional"> Regional (0 - {(props.yAxisRangeValue) ? numberWithCommas(props.yAxisRangeValue): 0})</label>
             <br />
             <input id="Individual" type="radio" value="Individual" name="legendListRadio" onChange={props.onChange} checked={props.selectedOption === "Individual"}/>&nbsp;
             <label htmlFor="Individual"> Per-marker (varies)</label>
