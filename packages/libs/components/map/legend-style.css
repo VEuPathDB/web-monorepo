@@ -179,3 +179,54 @@
   line-height: 5px;
 }
 
+/* DKDK legend info contents */
+/* DKDK add legend-donut-marker-description */
+.legend .legend-donut-marker-description {
+  /* text-align: center; */
+  text-align: left;
+  margin-top: 40px;
+}
+
+.legend .legend-donut-marker-description img {
+  /* margin: 12px auto; */
+  /* margin-top: 12px; */
+  margin-bottom: 12px;
+}
+
+/* DKDK add legend-chart-marker-description */
+.legend .legend-chart-marker-description {
+  /* text-align: center; */
+  text-align: left;
+  margin-top: 12px;
+}
+
+.legend .legend-chart-marker-description img {
+  /* margin: 12px auto; */
+  /* margin-top: 12px; */
+  margin-bottom: 0px;
+}
+
+.legend .legend-info-contents {
+  width: 100%;
+}
+
+.legend .legend-info-image {
+  float: left;
+  width: 40%;
+}
+
+.legend .legend-info-text {
+  width: 60%;
+  float: left;
+  /* DKDK for legend-chart-arrow.png */
+  /* margin-top: 1px;
+  margin-left: -7px;
+  font-size: 0.75em;
+  line-height: 15px; */
+  /* DKDK for legend-chart-arrow-new.png */
+  margin-top: 1px;
+  margin-left: -18px;
+  font-size: 0.84em;
+  /* font-weight: bold; */
+  line-height: 16px;
+}
