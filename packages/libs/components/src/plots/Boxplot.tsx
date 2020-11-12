@@ -45,7 +45,8 @@ export default function Boxplot(props : Props) {
 	     q3: [d.q3],
 	     name: d.label,
 	     boxpoints: d.rawData ? 'all' : 'outliers',
-	     jitter: 0.1,
+	     jitter: 0.1, // should be dependent on the number of datapoints...?
+	     marker: { opacity: 0.5 },
 	     ...orientationDependentProps,
 	     type: 'box' } as const
   });
@@ -115,7 +116,7 @@ export default function Boxplot(props : Props) {
   const opacitySliders = pointTraceIndices.length ? [
     {          // mostly copy-pasted from DKDK
       pad: {t: 50},
-      active: 4,         //DKDK this sets the default location of slider: from 0 (left)
+      active: 2,         //DKDK this sets the default location of slider: from 0 (left)
       currentvalue: {
         visible: true,
         xanchor: 'left' as const,

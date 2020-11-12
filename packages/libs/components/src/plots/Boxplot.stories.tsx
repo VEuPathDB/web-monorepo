@@ -9,7 +9,7 @@ export default {
 };
 
 
-const catRawData = [ 8, 26, 28, 19, 28, 20, 45, 38, 35, 32, 31, 25, 22, 21, 25, 22 ];
+const catRawData = [ 8, 26, 28, 19, 28, 20, 50, 38, 35, 32, 31, 25, 22, 21, 25, 22 ];
 const catData = summaryStats(catRawData);
 const catMean = stats.mean(catRawData);
 
