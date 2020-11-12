@@ -1,14 +1,13 @@
 //DKDK sample legend
 import React from 'react';
-//DKDK housing square icon case
+//DKDK import legend Dropdown component
+import LegendListDropDown from './LegendListDropDown';
+//DKDK legend list considering square icon case
 import LegendListGeneral from './LegendListGeneral';
 //DKDK legend radio button for histogram marker
 import LegendListRadioButton from './LegendListRadioButton';
 //DKDK legend tutorial info
 import LegendListInfo from "./LegendListInfo"
-//DKDk import react-boostrap & css
-import Dropdown from 'react-bootstrap/Dropdown';
-import 'bootstrap/dist/css/bootstrap.min.css';
 //DKDK import legend css for positioning: place this at the end of other CSS to override pre-existing ones
 import './legend-style.css'
 
@@ -38,7 +37,9 @@ export interface LegendProps {
   dropdownHref: string[],
   dropdownItemText: string[],
   //DKDK use yAxisRange[1]
-  yAxisRangeValue: number,
+  yAxisRangeValue?: number,
+  //DKDK send legend number text
+  legendInfoNumberText?: string,
 }
 
 //DKDK make legend at the map without using L.Control: perhaps send props to make circle or square?
@@ -56,18 +57,13 @@ const MapVeuLegendSampleList = (props: LegendProps) => {
     //DKDK add below divs for benefeting from pre-existing CSS (vb-popbio-maps.css)
     <div className="info legend">
       <div className={legendIconClass}>
-       {/* DKDK add react-bootstrap dropdown and dynamically generate menu items */}
-       <Dropdown key={props.dropdownTitle}>
-          <Dropdown.Toggle variant="success" id="legend-dropdown-chart">
-            {props.dropdownTitle}
-          </Dropdown.Toggle>
-          <Dropdown.Menu className="legend-dropdown-menu">
-            {props.dropdownItemText.map((item: string, index: number) => (
-                <Dropdown.Item key={props.dropdownItemText[index]} href={props.dropdownHref[index]} className="legend-dropdown-item">{item}</Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-        <br />
+        {/* DKDK add react-bootstrap dropdown and dynamically generate menu items */}
+        <LegendListDropDown
+          legendType={props.legendType}
+          dropdownTitle={props.dropdownTitle}
+          dropdownHref={props.dropdownHref}
+          dropdownItemText={props.dropdownItemText}
+        />
         {/* DKDK legend list  */}
         <LegendListGeneral
           // legendType={legendTypeValue}
@@ -75,6 +71,8 @@ const MapVeuLegendSampleList = (props: LegendProps) => {
           // divElement={div}
           //DKDK add legendType props for handling icons
           legendType={props.legendType}
+          //DKDK used for legend info text, e.g., Collections
+          legendInfoNumberText={props.legendInfoNumberText}
         />
         {/* DKDK add radio button component here */}
         <LegendListRadioButton
@@ -85,8 +83,11 @@ const MapVeuLegendSampleList = (props: LegendProps) => {
         />
         {/* DKDK add tutorial info component here */}
         <LegendListInfo
-        //DKDK for now, let's use image
+          //DKDK for now, let's use image
           legendType={props.legendType}
+          //DKDK used for legend info texts, e.g., Collection Date, Collections
+          dropdownTitle={props.dropdownTitle}
+          legendInfoNumberText={props.legendInfoNumberText}
         />
       </div>
     </div>

@@ -3,7 +3,10 @@ import { Marker, Tooltip } from "react-leaflet";
 import { MarkerProps } from './Types';
 
 //DKDK leaflet
-import L from "leaflet";
+import L, { LatLngExpression } from "leaflet";
+
+//DKDK anim
+import {DriftMarker} from "leaflet-drift-marker";
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 interface SVGDonutMarkerProps extends MarkerProps {
@@ -14,6 +17,8 @@ interface SVGDonutMarkerProps extends MarkerProps {
   onClick?: (event: L.LeafletMouseEvent) => void | undefined,
   onMouseOver?: (event: L.LeafletMouseEvent) => void | undefined,
   onMouseOut?: (event: L.LeafletMouseEvent) => void | undefined,
+  //DKDK anim
+  duration?: number,
 }
 
 // DKDK convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
@@ -67,7 +72,7 @@ function kFormatter(num: number) {
 /**
  * DKDK this is a SVG donut marker icon
  */
-export default function SVGDonutMarker(props: SVGDonutMarkerProps) {
+export default function SVGDonutMarkerAnim(props: SVGDonutMarkerProps) {
   let fullStat = []
   //DKDK set defaultColor to be skyblue (#7cb5ec) if props.colors does not exist
   let defaultColor: string = ''
@@ -127,8 +132,8 @@ export default function SVGDonutMarker(props: SVGDonutMarkerProps) {
 
   //DKDK check isAtomic: draw pushpin if true
   if (props.isAtomic) {
-    let pushPinCode = '&#128204;'
-    svgHTML += '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" opacity="1" fill="#505050" font-weight="bold" font-size="0.9em" transform="translate(5,-5) rotate(-20)">' + pushPinCode + '</text>'
+    let pushPinCode = '&#128392;'
+    svgHTML += '<text x="86%" y="14%" dominant-baseline="middle" text-anchor="middle" opacity="0.75" font-weight="bold" font-size="1.2em">' + pushPinCode + '</text>'
   }
 
   // DKDK closing svg tag
@@ -142,10 +147,24 @@ export default function SVGDonutMarker(props: SVGDonutMarkerProps) {
     html: svgHTML                            //DKDK divIcon HTML svg code generated above
   });
 
+  //DKDK anim check duration exists or not
+  let duration: number = (props.duration) ? props.duration : 300
+  // let duration: number = (props.duration) ? 300 : 300
+
   return (
     //DKDK The Marker currently shows type error. I think that I resolved this in my own branch but such a change will break others' works.
     //Thus, I will leave this for the time being
-    <Marker {...props} icon={SVGDonutIcon}>
+    //DKDK anim
+    // <Marker {...props} icon={SVGDonutIcon}>
+    <DriftMarker
+      // {...props}
+      // key={props.key}
+      //DKDK to avoid type diff - LatLong vs LatLngExpression
+      //As I tried before, we have to consistently use leaflet LatLngExpression type instead of custom LatLong to avoid type error
+      position={[props.position[0], props.position[1]]}
+      icon={SVGDonutIcon}
+      duration={duration}
+    >
       {/* DKDK Below Tooltip also works but we may simply use title attribute as well */}
       {/* However, Connor found coordinates issue and I realized that somehow "title" did not update coordinates correctly */}
       {/* But both Popup and Tooltip do not have such an issue */}
@@ -156,6 +175,6 @@ export default function SVGDonutMarker(props: SVGDonutMarkerProps) {
 	      values: {props.values.join(" ")} <br />
         latlong: {props.position.toString()}
       </Tooltip>
-    </Marker>
+    </DriftMarker>
   );
 }

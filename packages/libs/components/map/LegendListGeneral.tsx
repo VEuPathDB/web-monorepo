@@ -21,6 +21,8 @@ interface legendListProps {
   }[],
   //DKDK add this
   legendType: string,
+  //DKDK used for legend info text, e.g., Collections
+  legendInfoNumberText?: string,
 }
 
 // truncate any string longer than *max* and append *add* at the end (three ellipses by default)
@@ -50,9 +52,10 @@ export default function LegendListSquare(props: legendListProps) {
     maxList = props.data.length
   }
 
-  //DKDDK add text: for now, static, not props
+  //DKDDK # text from props.legendInfoNumberText
+  let legendNumberText = '#' + props.legendInfoNumberText
   labels.push(
-    '<div class="legend-field-text"> #Collections</div>'
+    '<div class="legend-field-text"> #' + props.legendInfoNumberText + '</div>'
   )
 
   //DKDK i = 0 - 9 at best
@@ -96,9 +99,9 @@ export default function LegendListSquare(props: legendListProps) {
   //DKDK use react-html-parser for converting html string to element
   //Do we need to use DOMPurify before using react-html-parser?
   return (
-    <React.Fragment>
+    <>
       {ReactHtmlParser (SingleLabels)}
-    </React.Fragment>
+    </>
     // SingleLabels
   )
 }
