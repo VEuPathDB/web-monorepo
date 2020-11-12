@@ -1,5 +1,5 @@
 import { mapValues, compose } from 'lodash/fp';
-import { Decoder, standardErrorReport } from 'wdk-client/Utils/Json';
+import { Decoder, standardErrorReport } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 /*
  * An "Api" is an abstraction for interacting with resources.

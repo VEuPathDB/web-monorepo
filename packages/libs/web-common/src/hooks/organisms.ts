@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useWdkEffect } from "wdk-client/Service/WdkService";
-import { TreeBoxVocabNode } from 'wdk-client/Utils/WdkModel';
+import { useWdkEffect } from "@veupathdb/wdk-client/lib/Service/WdkService";
+import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // TODO Make these configurable via model.prop, and when not defined, always return an empty tree.
 // This way non-genomic sites can call this without effect, while keeping the thrown error if

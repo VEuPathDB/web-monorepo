@@ -1,6 +1,6 @@
 import React from 'react';
-import { Mesa } from 'wdk-client/Components';
-import { useBodyScrollManager } from 'wdk-client/Components/Overlays/BodyScrollManager';
+import { Mesa } from '@veupathdb/wdk-client/lib/Components';
+import { useBodyScrollManager } from '@veupathdb/wdk-client/lib/Components/Overlays/BodyScrollManager';
 
 import './Modal.scss';
 

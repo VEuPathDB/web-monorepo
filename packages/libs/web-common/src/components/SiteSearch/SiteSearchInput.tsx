@@ -1,9 +1,9 @@
 import { isEmpty } from 'lodash';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Tooltip } from 'wdk-client/Components';
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
-import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { makeClassNameHelper, wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { SITE_SEARCH_ROUTE, SEARCH_TERM_PARAM, DOCUMENT_TYPE_PARAM, ORGANISM_PARAM, FILTERS_PARAM } from './SiteSearchConstants';
 
 import './SiteSearch.scss';

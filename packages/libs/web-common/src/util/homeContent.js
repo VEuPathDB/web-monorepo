@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { parseSearchQueryString, areTermsInString } from 'wdk-client/Utils/SearchUtils';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { parseSearchQueryString, areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 import { CategoryIcon } from 'ebrc-client/App/Categories';
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import NewWindowLink from './NewWindowLink';
 import { formatReleaseDate } from '../util/formatters';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import 'ebrc-client/components/homepage/ProjectLink.scss';
 

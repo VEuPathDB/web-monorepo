@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Loading } from 'wdk-client/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 const containerStyle = {
   position: 'relative',

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-import { IconAlt } from 'wdk-client/Components';
+import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { News } from 'ebrc-client/App/NewsSidebar';
 

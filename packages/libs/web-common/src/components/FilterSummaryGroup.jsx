@@ -1,6 +1,6 @@
 import React from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { IconAlt as Icon } from 'wdk-client/Components';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 
 import { makeQuestionWizardClassName as makeClassName } from '../util/classNames';
 import {

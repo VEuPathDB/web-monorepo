@@ -3,14 +3,14 @@ import { useSelector } from 'react-redux';
 
 import { memoize, noop, keyBy } from 'lodash';
 
-import { CategoriesCheckboxTree, Link, Tooltip, Loading, IconAlt } from 'wdk-client/Components';
-import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
-import { CategoryTreeNode, getDisplayName, getTargetType, getRecordClassUrlSegment, getTooltipContent } from 'wdk-client/Utils/CategoryUtils';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { decode, arrayOf, string } from 'wdk-client/Utils/Json';
-import { Question } from 'wdk-client/Utils/WdkModel';
+import { CategoriesCheckboxTree, Link, Tooltip, Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { CategoryTreeNode, getDisplayName, getTargetType, getRecordClassUrlSegment, getTooltipContent } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { decode, arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/components/homepage/Utils';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { RecordAttribute } from 'wdk-client/Components';
+import { RecordAttribute } from '@veupathdb/wdk-client/lib/Components';
 import { renderWithCustomElements } from '../util/customElements';
 import { findExportWith } from './util';
 

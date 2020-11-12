@@ -3,13 +3,13 @@ import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'reac
 import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { showLoginForm, showLogoutWarning } from 'wdk-client/Actions/UserSessionActions';
-import { Link, IconAlt } from 'wdk-client/Components';
-import DeferredDiv from 'wdk-client/Components/Display/DeferredDiv';
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { User } from 'wdk-client/Utils/WdkUser';
+import { showLoginForm, showLogoutWarning } from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
+import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import DeferredDiv from '@veupathdb/wdk-client/lib/Components/Display/DeferredDiv';
+import { DispatchAction } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import UserMenu from 'ebrc-client/App/UserMenu';
 import { SocialMediaLinks } from 'ebrc-client/components/homepage/SocialMediaLinks';

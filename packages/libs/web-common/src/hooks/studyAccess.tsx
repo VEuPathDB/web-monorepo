@@ -6,10 +6,10 @@ import {
   zipWith
  } from 'lodash';
 
-import { IconAlt, SingleSelect } from 'wdk-client/Components';
-import { usePromise } from 'wdk-client/Hooks/PromiseHook';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { OverflowingTextCell } from 'wdk-client/Views/Strategy/OverflowingTextCell';
+import { IconAlt, SingleSelect } from '@veupathdb/wdk-client/lib/Components';
+import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import { fetchStudies } from 'ebrc-client/App/Studies/StudyActionCreators';
 import { ApprovalStatus } from 'ebrc-client/StudyAccess/EntityTypes';

@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { ProjectLink } from 'ebrc-client/components/homepage/ProjectLink';
 import { SocialMediaLinks } from 'ebrc-client/components/homepage/SocialMediaLinks';

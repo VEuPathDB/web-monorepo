@@ -1,7 +1,7 @@
 import React from 'react';
 import { paramPropTypes } from '../util/paramUtil';
 
-import { NumberSelector } from 'wdk-client/Components';
+import { NumberSelector } from '@veupathdb/wdk-client/lib/Components';
 
 /**
  * Number parameters

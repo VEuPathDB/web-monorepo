@@ -1,7 +1,7 @@
 import { get, identity, keyBy, mapValues, orderBy, spread } from 'lodash';
-import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
-import { getSearchableString } from 'wdk-client/Views/Records/RecordUtils'
+import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils'
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
 import { checkPermissions } from 'ebrc-client/StudyAccess/permission';
 

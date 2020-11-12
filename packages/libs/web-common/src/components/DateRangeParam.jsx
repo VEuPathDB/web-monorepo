@@ -1,6 +1,6 @@
 import React from 'react';
 import { paramPropTypes } from '../util/paramUtil';
-import { DateRangeSelector } from 'wdk-client/Components';
+import { DateRangeSelector } from '@veupathdb/wdk-client/lib/Components';
 
 /**
  * DateRange param

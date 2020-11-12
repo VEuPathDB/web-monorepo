@@ -2,7 +2,7 @@ import './CategoryIcon.css';
 
 import { capitalize } from 'lodash';
 import React from 'react';
-import { Mesa } from 'wdk-client/Components';
+import { Mesa } from '@veupathdb/wdk-client/lib/Components';
 
 const { AnchoredTooltip } = Mesa;
 import { getCategoryColor } from './CategoryUtils';

@@ -1,4 +1,4 @@
-import { User } from 'wdk-client/Utils/WdkUser';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import {
   ApprovalStatus,

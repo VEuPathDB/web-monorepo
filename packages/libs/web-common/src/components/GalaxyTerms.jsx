@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'wdk-client/Components';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
 import GalaxyPageLayout from './GalaxyPageLayout';
 
 /**

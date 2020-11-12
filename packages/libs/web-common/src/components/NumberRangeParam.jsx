@@ -1,6 +1,6 @@
 import React from 'react';
 import { paramPropTypes } from '../util/paramUtil';
-import { NumberRangeSelector } from 'wdk-client/Components';
+import { NumberRangeSelector } from '@veupathdb/wdk-client/lib/Components';
 
 /**
  * NumberRangeParam component

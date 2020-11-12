@@ -1,5 +1,5 @@
 import React from 'react';
-import { DateSelector } from 'wdk-client/Components';
+import { DateSelector } from '@veupathdb/wdk-client/lib/Components';
 import { paramPropTypes } from '../util/paramUtil';
 
 /**

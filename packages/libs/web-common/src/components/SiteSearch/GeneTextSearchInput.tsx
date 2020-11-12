@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import './SiteSearch.scss';
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 
 const cx = makeClassNameHelper("SiteSearch");
 const TEXT_SEARCH_NAME = 'GenesByText';

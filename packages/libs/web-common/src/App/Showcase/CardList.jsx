@@ -2,7 +2,7 @@ import { upperFirst } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
-import { Link, RealTimeSearchBox } from 'wdk-client/Components';
+import { Link, RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
 
 import PlaceholderCard from './PlaceholderCard';
 

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { IconAlt as Icon, } from 'wdk-client/Components';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { getFilterValueDisplay } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { IconAlt as Icon, } from '@veupathdb/wdk-client/lib/Components';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { getFilterValueDisplay } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 
 import { makeQuestionWizardClassName as makeClassName } from '../util/classNames';
 

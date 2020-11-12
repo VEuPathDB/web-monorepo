@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { RootState } from 'wdk-client/Core/State/Types';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 export function useCommunitySiteRootUrl(): string | undefined {
   const communitySiteRootUrl = useSelector(

@@ -1,6 +1,6 @@
 import React from 'react';
-import { ViewController } from 'wdk-client/Controllers';
-import { Header } from 'wdk-client/Components';
+import { ViewController } from '@veupathdb/wdk-client/lib/Controllers';
+import { Header } from '@veupathdb/wdk-client/lib/Components';
 
 // Used for legacy jsp pages
 export default class HeaderController extends ViewController {

@@ -2,7 +2,7 @@
  * Created by dfalke on 8/22/16.
  */
 import { keyBy } from 'lodash';
-import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
 export const SITE_CONFIG_LOADED = 'eupathdb/site-config-loaded';
 export const BASKETS_LOADED = 'eupathdb/basket'

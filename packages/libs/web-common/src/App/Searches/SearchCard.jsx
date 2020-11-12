@@ -2,7 +2,7 @@ import React from 'react';
 
 import './SearchCard.scss';
 
-import { IconAlt as Icon } from 'wdk-client/Components';
+import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import { getBodyClassByType } from './SearchUtils';
 
 class SearchCard extends React.Component {

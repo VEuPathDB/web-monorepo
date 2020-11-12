@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import { keyBy } from 'lodash';
-import { Loading, IconAlt } from 'wdk-client/Components';
+import { Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 import { useCommunitySiteProjectUrl } from 'ebrc-client/hooks/staticData';
-import { useIsRefOverflowingVertically } from 'wdk-client/Hooks/Overflow';
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { decode, string } from 'wdk-client/Utils/Json';
+import { useIsRefOverflowingVertically } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 import './FeaturedTools.scss';
 

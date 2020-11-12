@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { CategoryIcon } from 'ebrc-client/App/Categories';
-import { IconAlt as Icon, Link } from 'wdk-client/Components';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import DownloadLink from './DownloadLink';
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
 import './StudyCard.scss';

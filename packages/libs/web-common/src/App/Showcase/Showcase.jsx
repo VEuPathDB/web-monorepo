@@ -2,7 +2,7 @@ import React from 'react';
 
 import { debounce } from 'lodash';
 
-import { IconAlt as Icon } from 'wdk-client/Components';
+import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import CardList from './CardList';
 
 import './Showcase.scss';

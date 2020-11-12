@@ -2,7 +2,7 @@ import React from 'react';
 
 import './ImageCard.scss';
 
-import { IconAlt as Icon } from 'wdk-client/Components';
+import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 
 class ImageCard extends React.Component {
   constructor (props) {

@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import React from 'react';
 import { connect, useSelector } from 'react-redux';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import StudySearches from 'ebrc-client/App/Studies/StudySearches';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
 import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';

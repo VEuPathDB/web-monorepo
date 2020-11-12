@@ -2,8 +2,8 @@ import React from 'react';
 
 import { compose } from 'lodash/fp';
 
-import { IconAlt as Icon, Mesa } from 'wdk-client/Components';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { IconAlt as Icon, Mesa } from '@veupathdb/wdk-client/lib/Components';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators'
 import { connect } from 'react-redux'
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';

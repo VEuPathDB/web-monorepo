@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IconAlt as Icon, Mesa } from 'wdk-client/Components';
+import { IconAlt as Icon, Mesa } from '@veupathdb/wdk-client/lib/Components';
 
 class ShowcaseFilter extends React.Component {
   constructor (props) {

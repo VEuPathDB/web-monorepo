@@ -1,4 +1,4 @@
-import { ok } from 'wdk-client/Utils/Json';
+import { ok } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 export default wdkService => ({
   ...wdkService,

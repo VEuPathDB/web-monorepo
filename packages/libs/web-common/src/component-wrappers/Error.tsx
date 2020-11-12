@@ -1,10 +1,10 @@
 import { capitalize, groupBy, uniq } from 'lodash';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'wdk-client/Components';
-import { Props } from 'wdk-client/Components/PageStatus/Error';
-import { UnhandledError } from 'wdk-client/Actions/UnhandledErrorActions';
-import { RootState } from 'wdk-client/Core/State/Types';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { Props } from '@veupathdb/wdk-client/lib/Components/PageStatus/Error';
+import { UnhandledError } from '@veupathdb/wdk-client/lib/Actions/UnhandledErrorActions';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 const borderStyle = '1px solid #00000029';
 

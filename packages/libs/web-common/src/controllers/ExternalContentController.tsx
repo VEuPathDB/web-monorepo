@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { usePromise } from 'wdk-client/Hooks/PromiseHook';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { Loading } from 'wdk-client/Components';
+import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
   url: string;

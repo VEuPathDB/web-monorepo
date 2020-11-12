@@ -2,9 +2,9 @@ import React from 'react';
 
 import { defaultMemoize } from 'reselect';
 
-import { usePromise } from 'wdk-client/Hooks/PromiseHook';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { User } from 'wdk-client/Utils/WdkUser';
+import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { UserPermissions, checkPermissions } from 'ebrc-client/StudyAccess/permission';
 

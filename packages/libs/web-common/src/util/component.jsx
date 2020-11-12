@@ -4,7 +4,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { identity } from 'lodash';
-import { wrapActions } from 'wdk-client/Utils/ComponentUtils';
+import { wrapActions } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 /**
  * A function that takes a React Component (class or function) and

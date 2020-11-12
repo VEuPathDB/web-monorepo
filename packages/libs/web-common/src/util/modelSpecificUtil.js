@@ -1,6 +1,6 @@
-import { pruneDescendantNodes } from 'wdk-client/Utils/TreeUtils';
-import { nodeHasChildren } from 'wdk-client/Utils/OntologyUtils';
-import { getNodeId } from 'wdk-client/Utils/CategoryUtils';
+import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { nodeHasChildren } from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
+import { getNodeId } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 
 let booleanQuestionPrefixes = [
   'InternalQuestions.boolean_question',

@@ -7,9 +7,9 @@ import {
   Loading,
   Sticky,
   TextBox,
-} from 'wdk-client/Components';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
+} from '@veupathdb/wdk-client/lib/Components';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { makeQuestionWizardClassName as makeClassName } from '../util/classNames';
 import {
   groupParamsValuesAreDefault

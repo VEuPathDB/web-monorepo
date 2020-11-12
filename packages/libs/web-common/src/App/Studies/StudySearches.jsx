@@ -1,7 +1,7 @@
 import { constant } from 'lodash';
 import React from 'react';
-import { Mesa, Link } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { Mesa, Link } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import './StudySearches.scss';
 

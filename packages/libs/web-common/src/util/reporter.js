@@ -1,5 +1,5 @@
-import { STANDARD_REPORTER_NAME } from 'wdk-client/Views/ReporterForm/reporterUtils';
-import WdkServiceJsonReporterForm from 'wdk-client/Views/ReporterForm/WdkServiceJsonReporterForm';
+import { STANDARD_REPORTER_NAME } from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
+import WdkServiceJsonReporterForm from '@veupathdb/wdk-client/lib/Views/ReporterForm/WdkServiceJsonReporterForm';
 
 // load individual reporter forms
 import TabularReporterForm from '../components/reporters/TabularReporterForm';

@@ -2,10 +2,10 @@ import { keyBy } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useMemo, useState } from 'react';
 import Select from 'react-select';
-import { isMulti } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
-import { getOntologyTree } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
-import { getLeaves } from 'wdk-client/Utils/TreeUtils';
-import { parseSearchQueryString, areTermsInString } from 'wdk-client/Utils/SearchUtils';
+import { isMulti } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import { getOntologyTree } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { parseSearchQueryString, areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 const cx = (suffix = '') => `ebrc-QuestionWizardFilterFinder${suffix}`;
 

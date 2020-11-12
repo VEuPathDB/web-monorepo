@@ -1,11 +1,11 @@
 import { isNull, negate } from 'lodash';
 import React from 'react';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   Dialog,
   IconAlt as Icon
-} from 'wdk-client/Components';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+} from '@veupathdb/wdk-client/lib/Components';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { makeQuestionWizardClassName as makeClassName } from '../util/classNames';
 

@@ -1,18 +1,18 @@
 import { capitalize, keyBy, add, isEmpty, isEqual, xor, intersection } from 'lodash';
 import React, { useMemo, useState, useCallback, useContext, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { CheckboxTree, CheckboxList, CollapsibleSection, LoadingOverlay } from 'wdk-client/Components';
-import { PaginationMenu, AnchoredTooltip } from 'wdk-client/Components/Mesa';
-import { WdkDepdendenciesContext } from 'wdk-client/Hooks/WdkDependenciesEffect';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
-import { getLeaves, pruneDescendantNodes } from 'wdk-client/Utils/TreeUtils';
-import { TreeBoxVocabNode } from 'wdk-client/Utils/WdkModel';
+import { CheckboxTree, CheckboxList, CollapsibleSection, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
+import { PaginationMenu, AnchoredTooltip } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
+import { getLeaves, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useProjectUrls, ProjectUrls, useOrganismToProject, OrganismToProject } from 'ebrc-client/hooks/projectUrls';
 import { SiteSearchResponse, SiteSearchDocumentType, SiteSearchDocument } from 'ebrc-client/SiteSearch/Types';
-import { NewStrategySpec, NewStepSpec } from 'wdk-client/Utils/WdkUser';
-import { DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { NewStrategySpec, NewStepSpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 
 import './SiteSearch.scss';
 

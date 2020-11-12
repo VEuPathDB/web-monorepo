@@ -1,8 +1,8 @@
 import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
-import { PageController } from 'wdk-client/Controllers';
-import { UserActions, UserSessionActions } from 'wdk-client/Actions';
+import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
+import { UserActions, UserSessionActions } from '@veupathdb/wdk-client/lib/Actions';
 import { updateSecurityAgreementStatus } from 'ebrc-client/actioncreators/GalaxyTermsActionCreators';
 import GalaxyTerms from 'ebrc-client/components/GalaxyTerms';
 import GalaxySignUp from 'ebrc-client/components/GalaxySignUp';

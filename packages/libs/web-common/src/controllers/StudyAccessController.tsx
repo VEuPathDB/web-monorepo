@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Loading, PermissionDenied } from 'wdk-client/Components';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
-import NotFound from 'wdk-client/Views/NotFound/NotFound';
+import { Loading, PermissionDenied } from '@veupathdb/wdk-client/lib/Components';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 
 import { STUDY_ACCESS_SERVICE_URL } from 'ebrc-client/StudyAccess/api';
 import { canAccessDashboard } from 'ebrc-client/StudyAccess/permission';

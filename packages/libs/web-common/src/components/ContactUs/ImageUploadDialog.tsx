@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Dialog } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { Dialog } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import {
   MAX_ATTACHMENT_SIZE,

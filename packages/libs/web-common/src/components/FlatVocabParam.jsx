@@ -1,7 +1,7 @@
 import React from 'react';
 import { paramPropTypes } from '../util/paramUtil';
 
-import { isMultiPick } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { isMultiPick } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 
 /**
  * FlatVocabParam component. Currently only supports single select.

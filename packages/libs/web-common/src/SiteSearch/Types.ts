@@ -1,4 +1,4 @@
-import { record, string, arrayOf, constant, combine, Unpack, oneOf, objectOf, number, boolean, optional } from "wdk-client/Utils/Json";
+import { record, string, arrayOf, constant, combine, Unpack, oneOf, objectOf, number, boolean, optional } from "@veupathdb/wdk-client/lib/Utils/Json";
 
 const siteSearchCategory = record({
   name: string,

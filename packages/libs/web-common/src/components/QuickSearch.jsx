@@ -2,8 +2,8 @@ import { find, get, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Mesa, Link } from 'wdk-client/Components';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { Mesa, Link } from '@veupathdb/wdk-client/lib/Components';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import * as persistence from 'ebrc-client/util/persistence';
 
 let ParamPropType = PropTypes.shape({

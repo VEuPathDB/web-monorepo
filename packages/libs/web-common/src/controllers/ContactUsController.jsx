@@ -2,8 +2,8 @@ import { compose, get } from 'lodash/fp';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { PageController } from 'wdk-client/Controllers';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { 
   updateField,

@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import * as UserSessionActions from 'wdk-client/Actions/UserSessionActions';
-import * as UserActions from 'wdk-client/Actions/UserActions';
-import { Sticky } from 'wdk-client/Components';
+import * as UserSessionActions from '@veupathdb/wdk-client/lib/Actions/UserSessionActions';
+import * as UserActions from '@veupathdb/wdk-client/lib/Actions/UserActions';
+import { Sticky } from '@veupathdb/wdk-client/lib/Components';
 import { formatReleaseDate } from '../util/formatters';
 import { makeMenuItems } from '../util/menuItems';
 import QuickSearch from './QuickSearch';

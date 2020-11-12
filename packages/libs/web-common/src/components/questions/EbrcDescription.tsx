@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { Link, Loading } from 'wdk-client/Components';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { useWdkEffect } from 'wdk-client/Service/WdkService';
-import { Question, RecordInstance, AttributeValue } from 'wdk-client/Utils/WdkModel';
-import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { useWdkEffect } from '@veupathdb/wdk-client/lib/Service/WdkService';
+import { Question, RecordInstance, AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import './EbrcDescription.scss';
 

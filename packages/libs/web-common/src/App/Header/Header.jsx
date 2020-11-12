@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Hero } from 'ebrc-client/App/Hero';
 import { requestStudies } from 'ebrc-client/App/Studies/StudyActionCreators';
-import { UserActions, UserSessionActions } from 'wdk-client/Actions';
+import { UserActions, UserSessionActions } from '@veupathdb/wdk-client/lib/Actions';
 
 import './Header.scss';
 

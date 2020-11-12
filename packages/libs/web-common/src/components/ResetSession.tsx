@@ -1,8 +1,8 @@
 import React, { useState }  from 'react';
 
-import { useWdkDependenciesEffect, WdkDependencies } from 'wdk-client/Hooks/WdkDependenciesEffect';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { alert } from 'wdk-client/Utils/Platform';
+import { useWdkDependenciesEffect, WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { alert } from '@veupathdb/wdk-client/lib/Utils/Platform';
 
 import './ResetSession.scss';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './SiteMenuItem.scss';
-import { IconAlt as Icon, Link } from 'wdk-client/Components';
+import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 
 class SiteMenuItem extends React.Component {
   constructor (props) {

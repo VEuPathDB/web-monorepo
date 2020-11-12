@@ -1,7 +1,7 @@
 // Wizard state utility functions
 
 import { memoize, pick } from 'lodash';
-import { getFilterFields } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { getFilterFields } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/FilterParamUtils';
 
 /**
  * Create initial wizard state object

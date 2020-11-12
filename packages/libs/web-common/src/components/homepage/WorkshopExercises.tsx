@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Loading, IconAlt } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
 import { useCommunitySiteRootUrl } from 'ebrc-client/hooks/staticData';

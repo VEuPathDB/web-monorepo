@@ -15,9 +15,9 @@ import { debounce, identity, uniq, flow } from 'lodash';
 
 // TODO Remove auth_tkt from url before proceeding
 
-import { initialize as initializeWdk_ } from 'wdk-client/Core/main';
-import * as WdkComponents from 'wdk-client/Components';
-import * as WdkControllers from 'wdk-client/Controllers';
+import { initialize as initializeWdk_ } from '@veupathdb/wdk-client/lib/Core/main';
+import * as WdkComponents from '@veupathdb/wdk-client/lib/Components';
+import * as WdkControllers from '@veupathdb/wdk-client/lib/Controllers';
 
 import * as siteConfig from './config';
 import { rootUrl, rootElement, endpoint, retainContainerContent } from './config';

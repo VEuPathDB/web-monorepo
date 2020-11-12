@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { UserTableDialog } from 'ebrc-client/components/StudyAccess/UserTableDialog';
 import { UserTableSection } from 'ebrc-client/components/StudyAccess/UserTableSection';

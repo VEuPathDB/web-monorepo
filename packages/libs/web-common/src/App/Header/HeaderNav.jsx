@@ -2,7 +2,7 @@ import React from 'react';
 import SiteMenu from 'ebrc-client/App/SiteMenu';
 import UserMenu from 'ebrc-client/App/UserMenu';
 import { formatReleaseDate } from 'ebrc-client/util/formatters';
-import { IconAlt as Icon, Link, Mesa } from 'wdk-client/Components';
+import { IconAlt as Icon, Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 
 import './HeaderNav.scss';
 

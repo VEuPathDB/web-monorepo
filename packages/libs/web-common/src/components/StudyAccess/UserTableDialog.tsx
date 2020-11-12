@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { partition } from 'lodash';
 
-import { Dialog, TextArea } from 'wdk-client/Components';
+import { Dialog, TextArea } from '@veupathdb/wdk-client/lib/Components';
 
 import { cx } from 'ebrc-client/components/StudyAccess/StudyAccess';
 import { EMAIL_REGEX } from 'ebrc-client/util/email';
@@ -36,7 +36,7 @@ export type ContentProps =
   | { type: 'add-users' } & AddUsersContentProps
   | { type: 'users-added' } & UsersAddedContentProps;
 
-interface AccessDenialContentProps {
+export interface AccessDenialContentProps {
   userName: string;
   onSubmit: (denialReason: string) => void;
 }
@@ -74,7 +74,7 @@ export function AccessDenialContent({ onSubmit, userName }: AccessDenialContentP
   );
 }
 
-interface AddUsersContentProps {
+export interface AddUsersContentProps {
   permissionNamePlural: string;
   onSubmit: (userEmails: string[]) => void;
 }
@@ -137,7 +137,7 @@ export function AddUsersContent({
   );
 }
 
-interface UsersAddedContentProps {
+export interface UsersAddedContentProps {
   createdUsers: string[];
   emailedUsers: string[];
   permissionName: string;

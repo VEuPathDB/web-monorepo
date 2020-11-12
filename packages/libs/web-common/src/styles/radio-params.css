@@ -1,0 +1,14 @@
+.param-item.inactive .param-item-label-wrapper,
+.param-item.inactive .param-control {
+  opacity: 0.35;
+  cursor: pointer;
+}
+.param-item.inactive:hover .param-item-label-wrapper,
+.param-item.inactive:hover .param-control {
+  opacity: 0.6;
+}
+.param-radio {
+  position: absolute;
+  left: -1.5em;
+  line-height: 1;
+}

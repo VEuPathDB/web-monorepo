@@ -1,9 +1,9 @@
 import { compose, replace, truncate } from 'lodash/fp';
 import React from 'react';
 
-import { Link } from 'wdk-client/Components';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 import TwitterTimeline from 'ebrc-client/components/TwitterTimeline';

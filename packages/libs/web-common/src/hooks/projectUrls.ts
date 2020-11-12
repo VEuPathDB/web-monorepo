@@ -1,4 +1,4 @@
-import { useWdkService } from "wdk-client/Hooks/WdkServiceHook";
+import { useWdkService } from "@veupathdb/wdk-client/lib/Hooks/WdkServiceHook";
 
 export type ProjectUrls = Record<string, string>;
 

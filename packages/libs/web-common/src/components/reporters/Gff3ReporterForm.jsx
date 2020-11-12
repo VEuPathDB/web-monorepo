@@ -1,7 +1,7 @@
 import React from 'react';
-import { RadioList, Checkbox } from 'wdk-client/Components';
-import * as ComponentUtils from 'wdk-client/Utils/ComponentUtils';
-import * as ReporterUtils from 'wdk-client/Views/ReporterForm/reporterUtils';
+import { RadioList, Checkbox } from '@veupathdb/wdk-client/lib/Components';
+import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 

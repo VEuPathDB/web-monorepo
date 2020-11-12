@@ -21,16 +21,16 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Dialog, LoadingOverlay } from 'wdk-client/Components';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { ViewController } from 'wdk-client/Controllers';
-import { isMulti, isRange } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { synchronized } from 'wdk-client/Utils/PromiseUtils';
-import { preorder } from 'wdk-client/Utils/TreeUtils';
-import * as StrategyActions from 'wdk-client/Actions/StrategyActions';
-import * as RouterActions from 'wdk-client/Actions/RouterActions';
-import { DEFAULT_STEP_WEIGHT, DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { Dialog, LoadingOverlay } from '@veupathdb/wdk-client/lib/Components';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { ViewController } from '@veupathdb/wdk-client/lib/Controllers';
+import { isMulti, isRange } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { synchronized } from '@veupathdb/wdk-client/lib/Utils/PromiseUtils';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import * as StrategyActions from '@veupathdb/wdk-client/lib/Actions/StrategyActions';
+import * as RouterActions from '@veupathdb/wdk-client/lib/Actions/RouterActions';
+import { DEFAULT_STEP_WEIGHT, DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 
 import QuestionWizard from '../components/QuestionWizard';
 import {
@@ -41,7 +41,7 @@ import {
   setFilterPopupPinned,
   resetParamValues
 } from '../util/QuestionWizardState';
-import {addStep} from 'wdk-client/Utils/StrategyUtils';
+import {addStep} from '@veupathdb/wdk-client/lib/Utils/StrategyUtils';
 
 const natSortComparator = natsort();
 
@@ -869,7 +869,7 @@ class QuestionWizardController extends ViewController {
 QuestionWizardController.propTypes = {
   wdkService: PropTypes.object.isRequired,
   questionName: PropTypes.string.isRequired,
-  /* See  import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions' */
+  /* See  import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions' */
   submissionMetadata: PropTypes.object.isRequired,
 }
 

@@ -6,8 +6,8 @@ import {
   StepAnalysisDefaultForm,
   StepAnalysisDefaultResult,
   StepAnalysisEupathExternalResult,
-} from 'wdk-client/Plugins';
-import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin';
+} from '@veupathdb/wdk-client/lib/Plugins';
+import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 import { RadioParams } from 'ebrc-client/plugins/RadioParams';

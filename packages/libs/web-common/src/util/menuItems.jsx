@@ -1,6 +1,6 @@
 import { add, reduce, keyBy } from 'lodash';
 import React from 'react';
-import { getId, getDisplayName, getTargetType } from 'wdk-client/Utils/CategoryUtils';
+import { getId, getDisplayName, getTargetType } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 
 /** Map search tree to menu items.  */
 function getSearchItems(searchTree, recordClasses) {

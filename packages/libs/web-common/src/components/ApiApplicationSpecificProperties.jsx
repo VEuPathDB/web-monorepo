@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckboxList } from 'wdk-client/Components';
+import { CheckboxList } from '@veupathdb/wdk-client/lib/Components';
 import { useSelector } from 'react-redux';
 
 /**

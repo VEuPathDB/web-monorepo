@@ -1,7 +1,7 @@
-import {Seq} from 'wdk-client/Utils/IterableUtils';
-import {pruneDescendantNodes} from 'wdk-client/Utils/TreeUtils';
-import {getTree} from 'wdk-client/Utils/OntologyUtils';
-import {getRecordClassName, isQualifying} from 'wdk-client/Utils/CategoryUtils';
+import {Seq} from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import {pruneDescendantNodes} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {getTree} from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
+import {getRecordClassName, isQualifying} from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 
 let isSearchMenuScope = isQualifying({ targetType: 'search', scope: 'menu' });
 

@@ -7,7 +7,7 @@ import DateRangeParam from './DateRangeParam';
 import NumberParam from './NumberParam';
 import NumberRangeParam from './NumberRangeParam';
 import { paramPropTypes } from '../util/paramUtil';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 /**
  * Param component

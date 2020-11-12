@@ -1,4 +1,4 @@
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 
 export function useAnnouncementsState() {
   return useSessionBackedState(

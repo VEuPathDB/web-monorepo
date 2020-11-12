@@ -2,8 +2,8 @@ import { useMemo } from 'react';
 
 import { orderBy } from 'lodash';
 
-import { CategoryTreeNode, getDisplayName } from 'wdk-client/Utils/CategoryUtils';
-import { mapStructure } from 'wdk-client/Utils/TreeUtils';
+import { CategoryTreeNode, getDisplayName } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 export const combineClassNames = (...classNames: (string | undefined )[]) =>
   classNames.filter(className => className).join(' ');

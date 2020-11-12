@@ -1,8 +1,8 @@
 import React from 'react';
-import { CategoriesCheckboxTree, Checkbox, RadioList, ReporterSortMessage } from 'wdk-client/Components';
-import * as CategoryUtils from 'wdk-client/Utils/CategoryUtils';
-import * as ComponentUtils from 'wdk-client/Utils/ComponentUtils';
-import * as ReporterUtils from 'wdk-client/Views/ReporterForm/reporterUtils';
+import { CategoriesCheckboxTree, Checkbox, RadioList, ReporterSortMessage } from '@veupathdb/wdk-client/lib/Components';
+import * as CategoryUtils from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import * as ComponentUtils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/reporterUtils';
 import TabularReporterFormSubmitButtons from './TabularReporterFormSubmitButtons';
 import ExcelNote from './ExcelNote';
 

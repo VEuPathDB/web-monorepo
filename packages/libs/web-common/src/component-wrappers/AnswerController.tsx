@@ -3,27 +3,27 @@ import { useSelector } from 'react-redux';
 
 import { memoize } from 'lodash';
 
-import { IconAlt } from 'wdk-client/Components';
+import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import {
   DEFAULT_PAGINATION,
   DEFAULT_SORTING,
   Props as AnswerControllerProps
-} from 'wdk-client/Controllers/AnswerController';
-import { WdkService } from 'wdk-client/Core';
-import { WdkDepdendenciesContext } from 'wdk-client/Hooks/WdkDependenciesEffect';
+} from '@veupathdb/wdk-client/lib/Controllers/AnswerController';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import {
   AttributeValue,
   ParameterValues,
   RecordInstance
-} from 'wdk-client/Utils/WdkModel';
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { MONTHS } from 'ebrc-client/util/formatters';
 
 import './AnswerController.scss';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
-import { isQualifying, getId } from 'wdk-client/Utils/CategoryUtils';
-import { RootState } from 'wdk-client/Core/State/Types';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { isQualifying, getId } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 const DOWNLOAD_REPORTER_NAME = 'attributesTabular';
 const DOWNLOAD_FORMAT = 'csv';

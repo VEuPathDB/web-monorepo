@@ -2,16 +2,16 @@ import { castArray, isArray } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 import SiteSearch from 'ebrc-client/components/SiteSearch/SiteSearch';
-import { getLeaves } from 'wdk-client/Utils/TreeUtils';
+import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { useOrganismTree } from 'ebrc-client/hooks/organisms';
 import { useQueryParams } from 'ebrc-client/hooks/queryParams';
-import { Loading, Error as ErrorPage } from 'wdk-client/Components';
-import { usePromise } from 'wdk-client/Hooks/PromiseHook';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
+import { Loading, Error as ErrorPage } from '@veupathdb/wdk-client/lib/Components';
+import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { SiteSearchResponse, SiteSearchRequest, siteSearchResponse } from 'ebrc-client/SiteSearch/Types';
 import { siteSearchServiceUrl } from 'ebrc-client/config';
-import { decode } from 'wdk-client/Utils/Json';
-import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
+import { decode } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { SEARCH_TERM_PARAM, OFFSET_PARAM, DOCUMENT_TYPE_PARAM, ORGANISM_PARAM, FILTERS_PARAM } from 'ebrc-client/components/SiteSearch/SiteSearchConstants';
 
 export default function SiteSearchController() {

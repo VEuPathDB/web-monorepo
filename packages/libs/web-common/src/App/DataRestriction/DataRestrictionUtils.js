@@ -1,8 +1,8 @@
 import { get, isPlainObject } from 'lodash';
 import React from 'react';
-import { BasketActions, ResultPanelActions, ResultTableSummaryViewActions } from 'wdk-client/Actions';
+import { BasketActions, ResultPanelActions, ResultTableSummaryViewActions } from '@veupathdb/wdk-client/lib/Actions';
 import { attemptAction } from './DataRestrictionActionCreators';
-import {getResultTypeDetails} from 'wdk-client/Utils/WdkResult';
+import {getResultTypeDetails} from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import { isUserApprovedForStudy } from 'ebrc-client/StudyAccess/permission';
 
 // Data stuff =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

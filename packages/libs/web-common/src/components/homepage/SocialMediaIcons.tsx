@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { IconAlt } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import './SocialMediaIcons.scss';
 

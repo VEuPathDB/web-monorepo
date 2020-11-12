@@ -1,6 +1,6 @@
 import React from 'react';
 import QuestionWizardController from 'ebrc-client/controllers/QuestionWizardController';
-import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
+import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 
 interface Props {
   searchName: string;

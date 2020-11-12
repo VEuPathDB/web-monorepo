@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { combineClassNames } from './Utils';
 
 const cx = makeClassNameHelper('ebrc-Main');

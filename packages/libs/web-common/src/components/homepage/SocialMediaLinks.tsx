@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 
 import { noop } from 'lodash';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { twitterUrl, facebookUrl, youtubeUrl } from 'ebrc-client/config';
 import { AnnouncementsToggle, Twitter, Facebook, YouTube } from './SocialMediaIcons';

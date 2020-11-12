@@ -1,11 +1,11 @@
 import { result } from 'lodash';
 import React from 'react';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { Loading } from 'wdk-client/Components';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import Parameters from './Parameters';
 import { makeQuestionWizardClassName as makeClassName } from '../util/classNames';
 import { groupParamsValuesAreDefault } from '../util/QuestionWizardState';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import QuestionWizardPropTypes from './QuestionWizardPropTypes';
 
 /**

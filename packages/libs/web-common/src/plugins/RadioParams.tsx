@@ -2,12 +2,12 @@ import React, { useCallback, useMemo } from 'react';
 
 import { get } from 'lodash';
 
-import { HelpIcon, IconAlt } from 'wdk-client/Components';
-import { Parameter, ParameterGroup } from 'wdk-client/Utils/WdkModel';
-import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import { Props, Group } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { isMultiPick, isEnumParam, toMultiValueString, toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { HelpIcon, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { Parameter, ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { Props, Group } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
+import { isMultiPick, isEnumParam, toMultiValueString, toMultiValueArray } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 

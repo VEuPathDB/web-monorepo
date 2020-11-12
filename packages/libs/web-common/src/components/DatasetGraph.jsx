@@ -1,7 +1,7 @@
 import React from 'react';
 import { httpGet } from '../util/http';
-import { CollapsibleSection, Loading } from 'wdk-client/Components';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { CollapsibleSection, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import ExternalResource from './ExternalResource';
 
 /**

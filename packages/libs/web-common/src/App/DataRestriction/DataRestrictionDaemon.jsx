@@ -4,8 +4,8 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router';
 
-import { UserSessionActions } from 'wdk-client/Actions';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { UserSessionActions } from '@veupathdb/wdk-client/lib/Actions';
+import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { clearRestrictions } from './DataRestrictionActionCreators';
 import DataRestrictionModal from './DataRestrictionModal';
