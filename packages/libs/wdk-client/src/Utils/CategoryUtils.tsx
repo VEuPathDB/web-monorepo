@@ -15,14 +15,14 @@ import {areTermsInString} from 'wdk-client/Utils/SearchUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import {Question, RecordClass} from 'wdk-client/Utils/WdkModel';
 
-type Dict<T> = {
+export type Dict<T> = {
   [key: string]: T;
 };
 
-type TargetType = 'search'|'attribute'|'table';
-type Scope = 'record' | 'record-internal' | 'results' | 'results-internal' | 'download' | 'download-internal';
+export type TargetType = 'search'|'attribute'|'table';
+export type Scope = 'record' | 'record-internal' | 'results' | 'results-internal' | 'download' | 'download-internal';
 
-interface CategoryNodeProperties {
+export interface CategoryNodeProperties {
   targetType?: [TargetType];
   scope?: [Scope];
   label?: string[];

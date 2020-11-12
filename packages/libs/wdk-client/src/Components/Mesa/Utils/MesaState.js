@@ -165,9 +165,8 @@ export const getUiState = (state) => {
 /*    Generic state "create" function   */
 
 /**
- * 
- * @param {object} options 
- * @param {object} state 
+ * @param {any} options
+ * @param {any=} state
  */
 export const create = ({ rows, filteredRows, columns, options, actions, eventHandlers, uiState }, state = {}) => {
   state = setRows(state, rows ? rows : []);
