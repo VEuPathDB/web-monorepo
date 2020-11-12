@@ -39,7 +39,7 @@ interface MapVEuMapProps {
 
 
 
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, handleMarkerClicked, selectedMarkerBounds, animation, nudge, showGrid}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, handleMarkerClicked, selectedMarkerBounds, setSelectedMarkerBounds, animation, nudge, showGrid}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -49,7 +49,9 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
   // 'bookmarkable' state of the map.
   const [state, updateState] = useState<Viewport>(viewport as Viewport);
   const handleViewportChanged = (viewport: Viewport) => {
-      updateState(viewport);
+    setSelectedMarkerBounds(null);
+    updateState(viewport);
+
   };
 
   return (
