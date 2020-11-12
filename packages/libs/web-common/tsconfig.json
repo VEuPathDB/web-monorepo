@@ -21,7 +21,8 @@
     "noEmit": true,
     "declaration": true,
     "paths": {
-      "ebrc-client/*": [ "src/*" ]
+      "ebrc-client/*": [ "src/*" ],
+      "*": [ "./node_modules/@types/*", "*" ] // prevent issues with npm/yarn link (see https://github.com/Microsoft/TypeScript/issues/11916#issuecomment-257130001)
     }
   },
   "include": [ "src/**/*" ]

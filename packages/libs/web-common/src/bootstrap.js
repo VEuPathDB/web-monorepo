@@ -31,7 +31,7 @@ import ebrcWrapStoreModules from './wrapStoreModules';
 import ebrcWrapWdkService from './wrapWdkService';
 
 // include scroll to top button
-import '../../../js/scroll-to-top';
+import './scroll-to-top';
 
 /**
  * Initialize and run application

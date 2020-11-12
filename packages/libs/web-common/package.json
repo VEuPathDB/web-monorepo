@@ -20,7 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@veupathdb/wdk-client": "../../WDKClient/Client/veupathdb-wdk-client-v0.1.0.tgz",
+    "@veupathdb/wdk-client": "../../WDKClient/Client",
     "custom-event-polyfill": "^1.0.7",
     "md5": "^2.3.0",
     "whatwg-fetch": "^3.5.0"
