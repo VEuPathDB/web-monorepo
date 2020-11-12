@@ -5,11 +5,10 @@
     "test": "jest",
     "compile": "rm -rf ./lib && tsc --noEmit false",
     "copy-assets": "cd src && find . -type f -not \\( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -iname '*.md' \\) | xargs cp --parents -t ../lib",
-    "prepare": "yarn compile && yarn copy-assets",
-    "build": "webpack --hide-modules",
+    "relativize": "ts-node-script ./scripts/relativize.ts lib wdk-client",
+    "build": "npm-run-all compile copy-assets relativize",
     "check-ts": "tsc --version && tsc --noEmit",
-    "watch-ts": "tsc --noEmit --watch -p .",
-    "examples": "cd client-examples && webpack-dev-server --content-base public/"
+    "watch-ts": "tsc --noEmit --watch -p ."
   },
   "private": true,
   "files": [
@@ -25,7 +24,7 @@
     "@types/json-stable-stringify": "^1.0.31",
     "@types/lodash": "^4.14.104",
     "@types/natural-sort": "^0.0.20",
-    "@types/node": "^11.12.2",
+    "@types/node": "^14.14.7",
     "@types/prop-types": "^15.7.3",
     "@types/qtip2": "^2.2.29",
     "@types/react": "^16.9.18",
@@ -62,13 +61,17 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
+    "@types/shelljs": "^0.8.8",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "babel-eslint": "^8.0.1",
     "eslint": "^7.12.1",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-react": "^7.4.0",
-    "ts-node": "^7.0.0",
+    "npm-run-all": "^4.1.5",
+    "shelljs": "^0.8.4",
+    "ts-node": "^9.0.0",
+    "tspath": "^1.3.7",
     "typescript": "3"
   },
   "jest": {
