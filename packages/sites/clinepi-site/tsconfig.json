@@ -2,6 +2,6 @@
   "extends": "../../EbrcWebsiteCommon/Site/tsconfig.json",
   "include": [
     "./webapp/**/*",
-    "../../WDKClient/Client/src/index.d.ts"
+    "../../EbrcWebsiteCommon/Site/node_modules/@veupathdb/wdk-client/lib/Core/index.d.ts"
   ]
 }
