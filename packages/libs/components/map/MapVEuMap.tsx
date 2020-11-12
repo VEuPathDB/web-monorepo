@@ -72,7 +72,10 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
       />
 
       { showGrid ? <CustomGridLayer /> : null }
-      { selectedMarkerBounds ? <Rectangle bounds={selectedMarkerBounds} color="gray" weight={1}/> : null }
+      { selectedMarkerBounds ?
+          <Rectangle bounds={selectedMarkerBounds} color="gray" weight={1}/>
+          : null
+      }
 
       <LayersControl position="topright">
         <BaseLayer checked name="street">

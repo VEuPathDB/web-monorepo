@@ -46,7 +46,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
           duration={duration}
           key={bucket.val}
           position={[bucket.ltAvg, bucket.lnAvg]}
-          // @ts-ignore
+          // onMouseOver={() => handleMarkerClicked([[bucket.ltMin, bucket.lnMax], [bucket.ltMax, bucket.lnMin]])}
           onClick={() => handleMarkerClicked([[bucket.ltMin, bucket.lnMax], [bucket.ltMax, bucket.lnMin]])}
       >
         <Tooltip>
@@ -77,7 +77,6 @@ export const SelectMarker = () => {
       <MapVEuMap
           viewport={{center: [ 20, -3 ], zoom: 7}}
           height="96vh" width="98vw"
-          // @ts-ignore
           onViewportChanged={handleViewportChanged}
           markers={markerElements}
           handleMarkerClicked={handleMarkerClicked}
