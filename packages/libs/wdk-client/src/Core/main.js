@@ -46,7 +46,7 @@ import { createWdkStore } from 'wdk-client/Core/Store';
  * @param {Function} [options.onLocationChange] Callback function called whenever
  *   the location of the page changes. The function is called with a Location
  *   object.
- * @param {ClientPluginRegistryEntry[]} [options.pluginConfig]
+ * @param {ClientPluginRegistryEntry<unknown>[]} [options.pluginConfig]
  * @param {ReduxMiddleware[]} [options.additionalMiddleware]
  */
 export function initialize(options) {
