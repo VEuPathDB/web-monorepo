@@ -2,7 +2,7 @@
   "name": "@veupathdb/web-common",
   "version": "0.1.0",
   "description": "Components and utilities common to VEuPathDB sites.",
-  "main": "index.js",
+  "main": "lib/bootstrap",
   "scripts": {
     "compile": "rm -rf ./lib && tsc --noEmit false",
     "copy-assets": "cd src && find . -type f -not \\( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -iname '*.md' \\) | xargs cp --parents -t ../lib",
@@ -12,6 +12,11 @@
     "prepare": "# npm-run-all build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "dist",
+    "images",
+    "lib"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
