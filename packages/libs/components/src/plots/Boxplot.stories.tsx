@@ -9,9 +9,11 @@ export default {
 };
 
 
-const catRawData = [ 16, 18, 19, 28, 15, 17, 18, 21, 20, 22 ];
+const catRawData = [ 8, 26, 28, 19, 28, 20, 45, 38, 35, 32, 31, 25, 22, 21, 25, 22 ];
 const catData = summaryStats(catRawData);
 const catMean = stats.mean(catRawData);
+
+console.log(catData.outliers);
 
 const dogRawData = [ 20, 60, 61, 77, 72, 50, 61, 80, 88, 120, 130, 131, 129, 67, 77, 87, 66, 69, 74, 56, 68 ];
 const dogData = summaryStats(dogRawData);
@@ -19,6 +21,10 @@ const dogMean = stats.mean(dogRawData);
 
 export const Basic = () => <Boxplot
   data={[ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ]}
+/>
+
+export const NoOutliersGiven = () => <Boxplot
+  data={[ {...catData, label: 'cats', outliers: []}, {...dogData, label: 'dogs', outliers: []} ]}
 />
 
 export const WithMean = () => <Boxplot
@@ -92,6 +98,15 @@ export const HorizontalWithRawData = () => <Boxplot
   defaultOrientation={"horizontal"}
 />
 
+export const HorizontalWithOneRawDataOneMean = () => <Boxplot
+  data={[ {...catData, label: 'cats with mean', mean: catMean}, {...dogData, label: 'dogs with raw', rawData: dogRawData} ]}
+  xAxisLabel={"domestic animal"}
+  yAxisLabel={"height, cm"}
+  defaultOrientation={"horizontal"}
+/>
+
+
+
 function summaryStats(rawData : number[]) {
   const q1 = stats.percentile(rawData, 0.25);
   const median = stats.median(rawData);
@@ -99,8 +114,8 @@ function summaryStats(rawData : number[]) {
   const IQR = q3-q1;
   const lowerFence = q1 - 1.5*IQR;
   const upperFence = q3 + 1.5*IQR;
-  const lowerWhisker = _.min(rawData.filter((x) => x > lowerFence));
-  const upperWhisker = _.max(rawData.filter((x) => x < upperFence));
+  const lowerWhisker = _.min(rawData.filter((x) => x >= lowerFence));
+  const upperWhisker = _.max(rawData.filter((x) => x <= upperFence));
 
   const outliers = rawData.filter((x) => x < lowerFence || x > upperFence);
 
