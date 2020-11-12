@@ -6,7 +6,7 @@ import Geohash from "latlon-geohash";
 import md5 from "md5";
 import {DriftMarker} from "leaflet-drift-marker";
 import {LatLngBounds, Tooltip} from "react-leaflet";
-import speciesData from './test-data/geoclust-species-testing.json';
+import testData from './test-data/geoclust-date-binning-testing-all-levels.json';
 import MapVEuMapSidebar from "./MapVEuMapSidebar";
 
 export default {
@@ -39,8 +39,9 @@ const zoomLevelToGeohashLevel = [
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number, duration : number, handleMarkerClicked: (markerBounds: LatLngBounds) => void, scrambleKeys: boolean = false) => {
   console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
   const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
+  const currentLevelData = testData[`geohash_${geohashLevel}`]
 
-  return speciesData.facets.geo.buckets.map((bucket) => {
+  return currentLevelData.facets.geo.buckets.map((bucket) => {
     if (bucket.val.length == geohashLevel) {
       return <DriftMarker
           duration={duration}
@@ -81,6 +82,7 @@ export const SelectMarker = () => {
           markers={markerElements}
           handleMarkerClicked={handleMarkerClicked}
           selectedMarkerBounds={selectedMarkerBounds}
+          setSelectedMarkerBounds={setSelectedMarkerBounds}
           animation={{
             method: "geohash",
             duration: 300,
