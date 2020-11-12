@@ -47,7 +47,6 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
           duration={duration}
           key={bucket.val}
           position={[bucket.ltAvg, bucket.lnAvg]}
-          // onMouseOver={() => handleMarkerClicked([[bucket.ltMin, bucket.lnMax], [bucket.ltMax, bucket.lnMin]])}
           onClick={() => handleMarkerClicked([[bucket.ltMin, bucket.lnMax], [bucket.ltMax, bucket.lnMin]])}
       >
         <Tooltip>
