@@ -1,6 +1,6 @@
 import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
-import { PlotData, Datum } from 'plotly.js';
+import { Datum } from 'plotly.js';
 
 export interface Props {
   data: {
@@ -19,6 +19,7 @@ export interface Props {
   yAxisLabel?: string;
   defaultYAxisRange? : [Datum, Datum];
   defaultOrientation?: 'vertical' | 'horizontal';
+  defaultShowRawData?: boolean;
 }
 
 export default function Boxplot(props : Props) {
@@ -30,10 +31,10 @@ export default function Boxplot(props : Props) {
 
     const orientationDependentProps = orientation === 'v' ? 
      { x0: d.label,
-       y: d.rawData ? [d.rawData] : d.outliers.length ? [d.outliers] : undefined
+       y: d.rawData && props.defaultShowRawData ? [ d.rawData ] : d.outliers.length ? [d.outliers] : undefined
      } :
      { y0: d.label,
-       x: d.rawData ? [d.rawData] : d.outliers.length ? [d.outliers] : undefined
+       x: d.rawData && props.defaultShowRawData ? [ d.rawData ] : d.outliers.length ? [d.outliers] : undefined
      };
     
     return { upperfence: [d.upperWhisker],
@@ -54,65 +55,8 @@ export default function Boxplot(props : Props) {
   const dependentAxis = orientation === 'v' ? 'yaxis' : 'xaxis';
   const independentAxis = orientation === 'v' ? 'xaxis' : 'yaxis';
 
-  const rawDataTraceIndices = props.data.map((d, index) => d.rawData ? index : -1).filter((i) => i>=0);
-  const meanTraceIndices = props.data.map((d, index) => d.mean !== undefined ? index : -1).filter((i) => i>=0);
-
   const pointTraceIndices = props.data.map((d, index) => d.rawData || d.outliers.length ? index : -1).filter((i) => i>=0);
   
-  const updatemenus = [
-    {
-      buttons: rawDataTraceIndices.length ? [
-	{
-	  args: ['boxpoints', 'all', rawDataTraceIndices],
-	  label: 'Show raw data',
-	  method: 'restyle'
-	},
-	{
-	  args: ['boxpoints', 'outliers', rawDataTraceIndices],
-	  label: 'Hide raw data',
-	  method: 'restyle'
-	}
-      ] : [],
-      type: 'buttons',
-      x: 0,
-      y: 1.25
-    },
-    {
-      buttons: meanTraceIndices.length ? [
-	{
-	  args: ['boxmean', true, meanTraceIndices],
-	  label: 'Show mean',
-	  method: 'restyle'
-	},
-	{
-	  args: ['boxmean', false, meanTraceIndices],
-	  label: 'Hide mean',
-	  method: 'restyle'
-	}
-      ] : [],
-      type: 'buttons',
-      x: 0.25,
-      y: 1.25
-    },
-    {
-      buttons: [
-	{
-	  args: [],
-	  label: 'Vertical boxes TBC',
-	  method: 'skip'
-	},
-	{
-	  args: [],
-	  label: 'Horizontal boxes TBC',
-	  method: 'skip'
-	}
-      ],
-      type: 'buttons',
-      x: 0.5,
-      y: 1.25
-    }
-  ];
-
   const opacitySliders = pointTraceIndices.length ? [
     {          // mostly copy-pasted from DKDK
       pad: {t: 50},
@@ -167,7 +111,6 @@ export default function Boxplot(props : Props) {
       title: props.xAxisLabel
     },
     showlegend: false,
-    updatemenus,
     sliders: [...opacitySliders]
   };
   return <PlotlyPlot data={data} layout={layout} />
