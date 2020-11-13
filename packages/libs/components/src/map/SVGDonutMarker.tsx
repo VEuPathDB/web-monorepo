@@ -66,7 +66,8 @@ function makeArc(x: number, y: number, radius: number, startAngle: number, endAn
 
 // making k over 9999, e.g., 223832 -> 234k
 function kFormatter(num: number) {
-  return Math.abs(num) > 9999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(0)) + 'k' : Math.sign(num)*Math.abs(num)
+  //DKDK fixed type error regarding toFixed() that returns string
+  return Math.abs(num) > 9999 ? (Math.sign(num)*(Math.abs(num)/1000)).toFixed(0) + 'k' : Math.sign(num)*Math.abs(num)
 }
 
 /**

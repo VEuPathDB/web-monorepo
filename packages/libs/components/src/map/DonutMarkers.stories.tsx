@@ -125,7 +125,15 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void) => {
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
-  const buckets = speciesData[geohash_level].facets.geo.buckets.filter((bucket : any) => {
+/* DKDK two approaches may be possible
+  a) set type for imported geoclust-species-testing-all-levels.json
+     > type speciesDataProps = typeof import('./test-data/geoclust-species-testing-all-levels.json')
+     then, speciesData[geohash_level as keyof speciesDataProps].facets ...
+  b) although a) works fine for current species data, it seems not to work for large json file
+     thus used this approach instead for consistency
+*/
+  //DKDK applying b) approach, setting key as string & any
+  const buckets = (speciesData as { [key: string]: any })[geohash_level].facets.geo.buckets.filter((bucket : any) => {
     const ltAvg : number = bucket.ltAvg;
     const lnAvg : number = bucket.lnAvg;
     return ltAvg > bounds.southWest[0] &&
@@ -349,6 +357,7 @@ const SpeciesSidebar = () => {
         legendInfoNumberText={legendInfoNumberText}
       />
 
+      {/* DKDK disabled MapVEuMapSidebar for now
       <MapVEuMapSidebar
         viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
         height="100vh" width="100vw"
@@ -356,7 +365,7 @@ const SpeciesSidebar = () => {
         markers={markerElements}
         //DKDK add this for closing sidebar at MapVEuMap(Sidebar): passing setSidebarCollapsed()
         sidebarOnClose={setSidebarCollapsed}
-      />
+      /> */}
     </>
   );
 }
@@ -435,6 +444,7 @@ const SpeciesNudgedChart = () => {
         legendInfoNumberText={legendInfoNumberText}
       />
 
+      {/* DKDK disabled MapVEuMapSidebar for now
       <MapVEuMapSidebar
         viewport={{center: [ 13.449566, -2.304301 ], zoom: 7}}
         height="100vh" width="100vw"
@@ -443,7 +453,7 @@ const SpeciesNudgedChart = () => {
         nudge="geohash"
         //DKDK add this for closing sidebar at MapVEuMap(Sidebar): passing setSidebarCollapsed()
         sidebarOnClose={setSidebarCollapsed}
-      />
+      /> */}
     </>
   );
 }

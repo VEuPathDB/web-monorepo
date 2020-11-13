@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
-import ReactDOM from 'react-dom';
-import { Marker, Tooltip } from "react-leaflet";
+import React from "react";
+import { Tooltip } from "react-leaflet";
 import { MarkerProps } from './Types';
-import BarChart from './BarChart';
 
 //DKDK leaflet
 import L from "leaflet";
@@ -12,20 +10,13 @@ import {DriftMarker} from "leaflet-drift-marker";
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 interface HistogramMarkerSVGProps extends MarkerProps {
-  method?: 'svg' | 'lib',
-  dividerVisible?: boolean,
-  type?: 'bar' | 'line',
-  fillArea?: boolean,
-  spline?: boolean,
-  lineVisible?: boolean,
-  colorMethod?: 'discrete' | 'gradient',
   borderColor?: string,
   borderWidth?: number,
   labels: Array<string>, // the labels (not likely to be shown at normal marker size)
   values: Array<number>, // the counts or totals to be shown in the donut
   colors?: Array<string> | null, // bar colors: set to be optional with array or null type
   isAtomic?: boolean,      // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
-  yAxisRange?: Array<number> | null, // y-axis range for setting global max
+  yAxisRange?: number[] | null, // y-axis range for setting global max
   onClick?: (event: L.LeafletMouseEvent) => void | undefined,
   onMouseOver?: (event: L.LeafletMouseEvent) => void | undefined,
   onMouseOut?: (event: L.LeafletMouseEvent) => void | undefined,
@@ -34,10 +25,9 @@ interface HistogramMarkerSVGProps extends MarkerProps {
 }
 
 /**
- * DKDK this is a SVG histogram marker ico
+ * DKDK this is a SVG histogram/chart marker icon
  * - no (drop) shadow
  * - no gap between bars
- * - no rounded corner
  * - accordingly icon size could be reduced
  */
 export default function RealHistogramMarkerSVGnoShadowAnim(props: HistogramMarkerSVGProps) {
@@ -100,74 +90,36 @@ export default function RealHistogramMarkerSVGnoShadowAnim(props: HistogramMarke
     globalMaxValue = props.yAxisRange[1]-props.yAxisRange[0];
   }
 
-  if (props.method === undefined || props.method === 'svg') {
-    //DKDK initialize variables for using at following if-else
-    let barWidth: number, startingX: number, barHeight: number, startingY: number
+  //DKDK initialize variables for using at following if-else
+  let barWidth: number, startingX: number, barHeight: number, startingY: number
 
-    if (globalMaxValue) {
-      fullStat.forEach(function (el: {color: string, label: string, value: number}, index) {
-        // console.log('global approach')
-        //DKDK for the case of y-axis range input: a global approach that take global max = icon height
-        barWidth = (xSize-2*marginX)/count               //DKDK bar width
-        startingX = marginX + borderWidth + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
-        barHeight = el.value/globalMaxValue*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
-        startingY = (size-marginY)-barHeight + borderWidth            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
-        //DKDK making the last bar, noData
-        svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + barWidth + ' height=' + barHeight + ' fill=' + el.color + ' />'
-      })
-    } else {
-      fullStat.forEach(function (el: {color: string, label: string, value: number}, index) {
-        //DKDK for the case of auto-scale y-axis: a local approach that take local max = icon height
-        barWidth = (xSize-2*marginX)/count               //DKDK bar width
-        startingX = marginX + borderWidth + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
-        barHeight = el.value/maxValues*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
-        startingY = (size-marginY)-barHeight + borderWidth            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
-        //DKDK making the last bar, noData
-        svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + (barWidth) + ' height=' + barHeight + ' fill=' + el.color + ' />'
-      })
-    }
-  }
-  else if (props.method === 'lib') {
-    const id = `marker_${props.position.join('_')}`;
-    const chart_width = xSize - 2*marginX;
-    const chart_height = size - 2*marginY;
-
-    svgHTML += `<foreignObject x=${marginX+borderWidth} y=${marginY+borderWidth} width=${chart_width} height=${chart_height}><div id=${id}></div></foreignObject>`;
-
-    // Render the chart after the marker is rendered
-    useEffect(() => {
-      ReactDOM.render(
-        <BarChart
-          type={props.type}
-          fillArea={props.fillArea}
-          spline={props.spline}
-          lineVisible={props.lineVisible}
-          colorMethod={props.colorMethod}
-          labels={props.labels}
-          values={props.values}
-          yAxisRange={props.yAxisRange}
-          width={chart_width}
-          height={chart_height}
-          library={'highcharts'}
-          colors={props.colors}
-        ></BarChart>,
-        document.getElementById(id)
-      );
-
-      // Deconstruct the chart on marker derender
-      return () => {
-        const el = document.getElementById(id);
-      if (el) ReactDOM.unmountComponentAtNode(el);
-      }
-    });
+  if (globalMaxValue) {
+    fullStat.forEach(function (el: {color: string, label: string, value: number}, index) {
+      // console.log('global approach')
+      //DKDK for the case of y-axis range input: a global approach that take global max = icon height
+      barWidth = (xSize-2*marginX)/count               //DKDK bar width
+      startingX = marginX + borderWidth + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
+      barHeight = el.value/globalMaxValue*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
+      startingY = (size-marginY)-barHeight + borderWidth            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
+      //DKDK making the last bar, noData
+      svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + barWidth + ' height=' + barHeight + ' fill=' + el.color + ' />'
+    })
+  } else {
+    fullStat.forEach(function (el: {color: string, label: string, value: number}, index) {
+      //DKDK for the case of auto-scale y-axis: a local approach that take local max = icon height
+      barWidth = (xSize-2*marginX)/count               //DKDK bar width
+      startingX = marginX + borderWidth + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
+      barHeight = el.value/maxValues*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
+      startingY = (size-marginY)-barHeight + borderWidth            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
+      //DKDK making the last bar, noData
+      svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + (barWidth) + ' height=' + barHeight + ' fill=' + el.color + ' />'
+    })
   }
 
   //DKDK add horizontal line
   // svgHTML += '<line x1="0" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />'
   //DKDK add horizontal line: when using inner border (adjust x1)
-  if (props.dividerVisible === undefined || props.dividerVisible) {
-    svgHTML += '<line x1=' + borderWidth + ' y1="' + (size-2+borderWidth) + '" x2="' + (xSize + borderWidth) + '" y2="' + (size-2+borderWidth) + '" style="stroke:' + defaultLineColor + ';stroke-width:1" />';
-  }
+  svgHTML += '<line x1=' + borderWidth + ' y1="' + (size-2+borderWidth) + '" x2="' + (xSize + borderWidth) + '" y2="' + (size-2+borderWidth) + '" style="stroke:' + defaultLineColor + ';stroke-width:1" />';
 
   //DKDK set the location of total number
   svgHTML += '<text x="50%" y='+(size-2+borderWidth+7)+' dominant-baseline="middle" text-anchor="middle" opacity="1">' + sumValues + '</text>'
@@ -195,23 +147,11 @@ export default function RealHistogramMarkerSVGnoShadowAnim(props: HistogramMarke
 
   return (
     //DKDK anim
-    // <Marker {...props} icon={HistogramIcon}>
-    //   {/* DKDK Below Tooltip also works but we may simply use title attribute as well */}
-    //   {/* However, Connor found coordinates issue and I realized that somehow "title" did not update coordinates correctly */}
-    //   {/* But both Popup and Tooltip do not have such an issue */}
-    //   {/* <Popup>{props.position.toString()}</Popup> */}
-    //   {/* <Tooltip>{props.position.toString()}</Tooltip> */}
-    //   {/* <Tooltip>
-    //     labels: {props.labels.join(" ")} <br/>
-	  //     values: {props.values.join(" ")} <br />
-    //     latlong: {props.position.toString()}
-    //   </Tooltip> */}
-    // </Marker>
     <DriftMarker
       // {...props}
       // key={props.key}
       //DKDK to avoid type diff - LatLong vs LatLngExpression
-      //As I tried before, we have to consistently use leaflet LatLngExpression type instead of custom LatLong to avoid type error
+      //As I tried before, we may need to consistently use leaflet LatLngExpression type instead of custom LatLong to avoid type error
       position={[props.position[0], props.position[1]]}
       icon={HistogramIcon}
       duration={duration}
