@@ -7,6 +7,7 @@
     "copy-assets": "cd src && find . -type f -not \\( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -iname '*.md' \\) | xargs cp --parents -t ../lib",
     "relativize": "ts-node-script ./scripts/relativize.ts lib wdk-client",
     "build": "npm-run-all compile copy-assets relativize",
+    "prepare": "npm-run-all build",
     "check-ts": "tsc --version && tsc --noEmit",
     "watch-ts": "tsc --noEmit --watch -p ."
   },
