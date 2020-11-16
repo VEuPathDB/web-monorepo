@@ -51,9 +51,12 @@ BelowZero.argTypes = storyArgTypes(
 });
 
 export const NoWhiskers : Story<Props> = Template.bind({});
-NoWhiskers.args = {
-  data: [ {...outdoorTemperatureData, lowerWhisker: undefined, upperWhisker: undefined, label: 'outdoor temperature'} ]
-}
+NoWhiskers.argTypes = storyArgTypes(
+  NoWhiskers.args = {
+    data: [ {...outdoorTemperatureData,
+	     lowerWhisker: undefined,
+	     upperWhisker: undefined, label: 'outdoor temperature'} ]
+});
 
 const indoorTemperatureRawData = [ 15, 17, 20, 21, 21, 21, 21, 23, 22, 25 ];
 const indoorTemperatureData = summaryStats(indoorTemperatureRawData);
@@ -75,12 +78,13 @@ XAndYAxisLabel.argTypes = storyArgTypes(
 });
 
 export const FixedYAxisRange : Story<Props> = Template.bind({});
-FixedYAxisRange.args = {
-  data: [ {...outdoorTemperatureData, label: 'outdoor'}, {...indoorTemperatureData, label: 'indoor'} ],
-  yAxisLabel: "temperature, °C",
-  xAxisLabel: "location",
-  defaultYAxisRange: [-50,50]
-}
+FixedYAxisRange.argTypes = storyArgTypes(
+  FixedYAxisRange.args = {
+    data: [ {...outdoorTemperatureData, label: 'outdoor'}, {...indoorTemperatureData, label: 'indoor'} ],
+    yAxisLabel: "temperature, °C",
+    xAxisLabel: "location",
+    defaultYAxisRange: [-50,50]
+});
 
 export const FixedTooSmallYAxisRange : Story<Props> = Template.bind({});
 FixedTooSmallYAxisRange.argTypes = storyArgTypes(
