@@ -14,26 +14,11 @@ import { ProteinType } from 'ortho-client/utils/clusterGraph';
 import { DataTableColumns } from 'ortho-client/utils/dataTables';
 import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
-interface CommonRowEntries {
+interface ProteomeSummaryRow {
   core_peripheral: ProteinType;
   name: string;
   root_taxon: string;
   three_letter_abbrev: string;
-}
-
-export interface GenomeSourcesRow extends CommonRowEntries {
-  description: string | null;
-  resource_name: string;
-  resource_url: string;
-}
-
-export interface GenomeStatisticsRow extends CommonRowEntries {
-  clustered_sequences: string;
-  groups: string;
-  sequences: string;
-}
-
-export interface ProteomeSummaryRow extends CommonRowEntries {
   clustered_sequences: string;
   groups: string;
   sequences: string;
@@ -41,10 +26,6 @@ export interface ProteomeSummaryRow extends CommonRowEntries {
   resource_name: string;
   resource_url: string;
 }
-
-export type GenomeSourcesRows = GenomeSourcesRow[];
-
-export type GenomeStatisticsRows = GenomeStatisticsRow[];
 
 export type ProteomeSummaryRows = ProteomeSummaryRow[];
 

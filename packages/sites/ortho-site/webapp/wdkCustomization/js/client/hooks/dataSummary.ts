@@ -1,7 +1,7 @@
 import { keyBy, mapValues, once } from 'lodash';
 
 import { ProteinType } from 'ortho-client/utils/clusterGraph';
-import { GenomeSourcesRows } from 'ortho-client/utils/dataSummary';
+import { ProteomeSummaryRows } from 'ortho-client/utils/dataSummary';
 
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
 
@@ -12,12 +12,12 @@ export function useProteomeSummaryRows() {
   );
 }
 
-function makeCorePeripheralMap(genomeSourcesRows: GenomeSourcesRows): Record<string, ProteinType> {
-  const speciesByAbbrev = keyBy(genomeSourcesRows, 'three_letter_abbrev');
+function makeCorePeripheralMap(proteomeSummaryRows: ProteomeSummaryRows): Record<string, ProteinType> {
+  const speciesByAbbrev = keyBy(proteomeSummaryRows, 'three_letter_abbrev');
 
   return mapValues(
     speciesByAbbrev,
-    genomeSourcesRow => genomeSourcesRow.core_peripheral
+    proteomeSummaryRow => proteomeSummaryRow.core_peripheral
   );
 }
 
