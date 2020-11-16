@@ -6,7 +6,8 @@ import _ from 'lodash';
 
 export default {
   title: 'Boxplot',
-  component: Boxplot
+  component: Boxplot,
+  decorators: [(Foo : Story) => { Foo.argTypes = { defaultShowMean: { control: { disable: true }}}; return <div ><span>hello world</span> <Foo/> </div> }]
 } as Meta;
 
 const Template = (args : Props) => <Boxplot {...args} />;
@@ -20,33 +21,35 @@ const dogData = summaryStats(dogRawData);
 const dogMean = stats.mean(dogRawData);
 
 export const Basic : Story<Props> = Template.bind({});
-Basic.argTypes = disableUnwantedControls(
+Basic.argTypes = storyArgTypes(
   Basic.args = {
     data: [ {...catData, label: 'cats'},
 	    {...dogData, label: 'dogs'} ]
 });
 
 export const NoOutliersGiven : Story<Props> = Template.bind({});
-NoOutliersGiven.args = {
-  data: [ {...catData, label: 'cats', outliers: []},
-	  {...dogData, label: 'dogs', outliers: []} ]
-};
+NoOutliersGiven.argTypes = storyArgTypes(
+  NoOutliersGiven.args = {
+    data: [ {...catData, label: 'cats', outliers: []},
+	    {...dogData, label: 'dogs', outliers: []} ]
+});
 
 export const WithMean : Story<Props> = Template.bind({});
-WithMean.args = {
-  data: [ {...catData, label: 'cats', mean: catMean},
-	  {...dogData, label: 'dogs', mean: dogMean} ],
-  defaultShowMean: true
-}
-WithMean.argTypes = disableUnwantedControls(WithMean.args);
+WithMean.argTypes = storyArgTypes(
+  WithMean.args = {
+    data: [ {...catData, label: 'cats', mean: catMean},
+	    {...dogData, label: 'dogs', mean: dogMean} ],
+    defaultShowMean: true
+});
 
 const outdoorTemperatureRawData = [ -25, -10, -5, -3, 0, 1, 2, 6, 7, 17, 18, 25, 33 ];
 const outdoorTemperatureData = summaryStats(outdoorTemperatureRawData);
 
 export const BelowZero : Story<Props> = Template.bind({});
-BelowZero.args = {
-  data: [ {...outdoorTemperatureData, label: 'outdoor temperature'} ]
-}
+BelowZero.argTypes = storyArgTypes(
+  BelowZero.args = {
+    data: [ {...outdoorTemperatureData, label: 'outdoor temperature'} ]
+});
 
 export const NoWhiskers : Story<Props> = Template.bind({});
 NoWhiskers.args = {
@@ -57,18 +60,20 @@ const indoorTemperatureRawData = [ 15, 17, 20, 21, 21, 21, 21, 23, 22, 25 ];
 const indoorTemperatureData = summaryStats(indoorTemperatureRawData);
 
 export const YAxisLabel : Story<Props> = Template.bind({});
-YAxisLabel.args = {
-  data: [ {...outdoorTemperatureData, label: 'outdoor'},
-	  {...indoorTemperatureData, label: 'indoor'} ],
-  yAxisLabel: "temperature, °C"
-}
+YAxisLabel.argTypes = storyArgTypes(
+  YAxisLabel.args = {
+    data: [ {...outdoorTemperatureData, label: 'outdoor'},
+	    {...indoorTemperatureData, label: 'indoor'} ],
+    yAxisLabel: "temperature, °C"
+});
 
 export const XAndYAxisLabel : Story<Props> = Template.bind({});
-XAndYAxisLabel.args = {
-  data: [ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ],
-  xAxisLabel: "domestic animal",
-  yAxisLabel: "height, cm"
-}
+XAndYAxisLabel.argTypes = storyArgTypes(
+  XAndYAxisLabel.args = {
+    data: [ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ],
+    xAxisLabel: "domestic animal",
+    yAxisLabel: "height, cm"
+});
 
 export const FixedYAxisRange : Story<Props> = Template.bind({});
 FixedYAxisRange.args = {
@@ -79,56 +84,62 @@ FixedYAxisRange.args = {
 }
 
 export const FixedTooSmallYAxisRange : Story<Props> = Template.bind({});
-FixedTooSmallYAxisRange.args = {
-  data: [ {...outdoorTemperatureData, label: 'outdoor'}, {...indoorTemperatureData, label: 'indoor'} ],
-  yAxisLabel: "temperature, °C",
-  xAxisLabel: "location",
-  defaultYAxisRange: [-10,10]
-}
+FixedTooSmallYAxisRange.argTypes = storyArgTypes(
+  FixedTooSmallYAxisRange.args = {
+    data: [ {...outdoorTemperatureData, label: 'outdoor'}, {...indoorTemperatureData, label: 'indoor'} ],
+    yAxisLabel: "temperature, °C",
+    xAxisLabel: "location",
+    defaultYAxisRange: [-10,10]
+});
 
 export const Horizontal : Story<Props> = Template.bind({});
-Horizontal.args = {
-  data: [ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ],
-  xAxisLabel: "domestic animal",
-  yAxisLabel: "height, cm",
-  defaultOrientation: "horizontal"
-}
+Horizontal.argTypes = storyArgTypes(
+  Horizontal.args = {
+    data: [ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ],
+    xAxisLabel: "domestic animal",
+    yAxisLabel: "height, cm",
+    defaultOrientation: "horizontal"
+});
 
 export const HorizontalLongLabels : Story<Props> = Template.bind({});
-HorizontalLongLabels.args = {
-  data: [ {...catData, label: 'hungry domestic cats'}, {...dogData, label: 'sleepy domestic dogs'} ],
-  xAxisLabel: "type of domestic animal",
-  yAxisLabel: "height, cm",
-  defaultOrientation: "horizontal"
-}
-
+HorizontalLongLabels.argTypes = storyArgTypes(
+  HorizontalLongLabels.args = {
+    data: [ {...catData, label: 'hungry domestic cats'}, {...dogData, label: 'sleepy domestic dogs'} ],
+    xAxisLabel: "type of domestic animal",
+    yAxisLabel: "height, cm",
+    defaultOrientation: "horizontal"
+});
 
 export const WithRawData : Story<Props> = Template.bind({});
-WithRawData.args = {
-  data: [ {...catData, label: 'cats', rawData: catRawData}, {...dogData, label: 'dogs', rawData: dogRawData} ],
-  defaultShowRawData: true,
-  xAxisLabel: "domestic animal",
-  yAxisLabel: "height, cm"
-}
-WithRawData.argTypes = disableUnwantedControls(WithRawData.args);
+WithRawData.argTypes = storyArgTypes(
+  WithRawData.args = {
+    data: [ {...catData, label: 'cats', rawData: catRawData}, {...dogData, label: 'dogs', rawData: dogRawData} ],
+    defaultShowRawData: true,
+    xAxisLabel: "domestic animal",
+    yAxisLabel: "height, cm"
+});
 
 export const HorizontalWithRawData : Story<Props> = Template.bind({});
-HorizontalWithRawData.args = {
-  data: [ {...catData, label: 'cats', rawData: catRawData}, {...dogData, label: 'dogs', rawData: dogRawData} ],
-  defaultShowRawData: true,
-  xAxisLabel: "domestic animal",
-  yAxisLabel: "height, cm",
-  defaultOrientation: "horizontal"
-}
+HorizontalWithRawData.argTypes = storyArgTypes(
+  HorizontalWithRawData.args = {
+    data: [ {...catData, label: 'cats', rawData: catRawData}, {...dogData, label: 'dogs', rawData: dogRawData} ],
+    defaultShowRawData: true,
+    xAxisLabel: "domestic animal",
+    yAxisLabel: "height, cm",
+    defaultOrientation: "horizontal"
+});
 
 export const HorizontalWithOneRawDataOneMean : Story<Props> = Template.bind({});
-HorizontalWithOneRawDataOneMean.args = {
-  data: [ {...catData, label: 'cats with mean', mean: catMean}, {...dogData, label: 'dogs with raw', rawData: dogRawData} ],
-  defaultShowRawData: true,
-  xAxisLabel: "domestic animal",
-  yAxisLabel: "height, cm",
-  defaultOrientation: "horizontal"
-}
+HorizontalWithOneRawDataOneMean.argTypes = storyArgTypes(
+  HorizontalWithOneRawDataOneMean.args = {
+    data: [ {...catData, label: 'cats with mean', mean: catMean},
+	    {...dogData, label: 'dogs with raw', rawData: dogRawData} ],
+    defaultShowRawData: true,
+    defaultShowMean: true,
+    xAxisLabel: "domestic animal",
+    yAxisLabel: "height, cm",
+    defaultOrientation: "horizontal"
+});
 
 
 function summaryStats(rawData : number[]) {
@@ -149,7 +160,7 @@ function summaryStats(rawData : number[]) {
   }
 }
 
-function disableUnwantedControls(args : any) : any {
+function storyArgTypes(args : any) : any {
   return {
     defaultShowRawData: {
       control: {
