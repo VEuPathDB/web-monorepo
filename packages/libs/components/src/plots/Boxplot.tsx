@@ -20,6 +20,7 @@ export interface Props {
   defaultYAxisRange? : [Datum, Datum];
   defaultOrientation?: 'vertical' | 'horizontal';
   defaultShowRawData?: boolean;
+  defaultShowMean?: boolean;
 }
 
 export default function Boxplot(props : Props) {
@@ -41,7 +42,7 @@ export default function Boxplot(props : Props) {
 	     lowerfence: [d.lowerWhisker],
 	     median: [d.median],
 	     mean: d.mean !== undefined ? [d.mean] : undefined,
-	     boxmean: d.mean !== undefined,
+	     boxmean: d.mean !== undefined && props.defaultShowMean ,
 	     q1: [d.q1],
 	     q3: [d.q3],
 	     name: d.label,

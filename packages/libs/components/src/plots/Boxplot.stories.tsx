@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 export default {
   title: 'Boxplot',
-  component: Boxplot,
+  component: Boxplot
 } as Meta;
 
 const Template = (args : Props) => <Boxplot {...args} />;
@@ -20,10 +20,11 @@ const dogData = summaryStats(dogRawData);
 const dogMean = stats.mean(dogRawData);
 
 export const Basic : Story<Props> = Template.bind({});
-Basic.args = {
-  data: [ {...catData, label: 'cats'},
-	  {...dogData, label: 'dogs'} ]
-};
+Basic.argTypes = disableUnwantedControls(
+  Basic.args = {
+    data: [ {...catData, label: 'cats'},
+	    {...dogData, label: 'dogs'} ]
+});
 
 export const NoOutliersGiven : Story<Props> = Template.bind({});
 NoOutliersGiven.args = {
@@ -34,8 +35,10 @@ NoOutliersGiven.args = {
 export const WithMean : Story<Props> = Template.bind({});
 WithMean.args = {
   data: [ {...catData, label: 'cats', mean: catMean},
-	  {...dogData, label: 'dogs', mean: dogMean} ]
+	  {...dogData, label: 'dogs', mean: dogMean} ],
+  defaultShowMean: true
 }
+WithMean.argTypes = disableUnwantedControls(WithMean.args);
 
 const outdoorTemperatureRawData = [ -25, -10, -5, -3, 0, 1, 2, 6, 7, 17, 18, 25, 33 ];
 const outdoorTemperatureData = summaryStats(outdoorTemperatureRawData);
@@ -107,6 +110,7 @@ WithRawData.args = {
   xAxisLabel: "domestic animal",
   yAxisLabel: "height, cm"
 }
+WithRawData.argTypes = disableUnwantedControls(WithRawData.args);
 
 export const HorizontalWithRawData : Story<Props> = Template.bind({});
 HorizontalWithRawData.args = {
@@ -127,7 +131,6 @@ HorizontalWithOneRawDataOneMean.args = {
 }
 
 
-
 function summaryStats(rawData : number[]) {
   const q1 = stats.percentile(rawData, 0.25);
   const median = stats.median(rawData);
@@ -144,5 +147,20 @@ function summaryStats(rawData : number[]) {
     q1, median, q3,
     lowerWhisker, upperWhisker, outliers
   }
+}
+
+function disableUnwantedControls(args : any) : any {
+  return {
+    defaultShowRawData: {
+      control: {
+	disable: args.data.filter((d : any) => d.rawData && d.rawData.length).length == 0
+      }
+    },
+    defaultShowMean: {
+      control: {
+	disable: args.data.filter((d : any) => d.mean !== undefined).length == 0
+      }
+    },
+  };
 }
 
