@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useMemo } from "react";
-import { PlotParams } from "react-plotly.js";
+import { PlotParams } from 'react-plotly.js';
 
 const config = {
   responsive: true
