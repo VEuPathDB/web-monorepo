@@ -32,7 +32,7 @@ const orthoServiceWrappers = {
       {
         useCache: true,
         method: 'get',
-        path: '/data-summary/genome-sources'
+        path: '/data-summary/proteomes'
       }
     ),
   getTaxons: (wdkService: WdkService) => () =>
