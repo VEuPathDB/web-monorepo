@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  Decoder,
+  Unpack,
   arrayOf,
   constant,
   nullValue,
@@ -10,26 +10,10 @@ import {
   string
 } from 'wdk-client/Utils/Json';
 
-import { ProteinType } from 'ortho-client/utils/clusterGraph';
 import { DataTableColumns } from 'ortho-client/utils/dataTables';
 import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 
-interface ProteomeSummaryRow {
-  core_peripheral: ProteinType;
-  name: string;
-  root_taxon: string;
-  three_letter_abbrev: string;
-  clustered_sequences: string;
-  groups: string;
-  sequences: string;
-  description: string | null;
-  resource_name: string;
-  resource_url: string;
-}
-
-export type ProteomeSummaryRows = ProteomeSummaryRow[];
-
-const proteomeSummaryRowDecoder: Decoder<ProteomeSummaryRow> = record({
+const proteomeSummaryRowDecoder = record({
   clustered_sequences: string,
   core_peripheral: oneOf(constant('Core'), constant('Peripheral')),
   description: oneOf(string, nullValue),
@@ -42,8 +26,11 @@ const proteomeSummaryRowDecoder: Decoder<ProteomeSummaryRow> = record({
   three_letter_abbrev: string
 });
 
-export const proteomeSummaryRowsDecoder: Decoder<ProteomeSummaryRows> =
-  arrayOf(proteomeSummaryRowDecoder);
+type ProteomeSummaryRow = Unpack<typeof proteomeSummaryRowDecoder>;
+
+export const proteomeSummaryRowsDecoder = arrayOf(proteomeSummaryRowDecoder);
+
+export type ProteomeSummaryRows = Unpack<typeof proteomeSummaryRowsDecoder>;
 
 export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
   ProteomeSummaryRow,
