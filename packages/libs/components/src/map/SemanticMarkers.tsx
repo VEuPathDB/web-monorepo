@@ -5,10 +5,9 @@ import { LatLngBounds } from 'leaflet'
 import Geohash from 'latlon-geohash';
 
 interface SemanticMarkersProps {
-  onViewportChanged: (bvp: BoundsViewport, handleMarkerClicked: (markerBounds: LatLngBounds) => void) => void,
+  onViewportChanged: (bvp: BoundsViewport) => void,
   markers: Array<ReactElement<MarkerProps>>,
   nudge?: "geohash" | "none",
-  handleMarkerClicked: (markerBounds: LatLngBounds) => void,
   animation: {
     method: string,
     duration: number,
@@ -22,7 +21,7 @@ interface SemanticMarkersProps {
  * 
  * @param props 
  */
-export default function SemanticMarkers({ onViewportChanged, markers, animation, nudge, handleMarkerClicked}: SemanticMarkersProps) {
+export default function SemanticMarkers({ onViewportChanged, markers, animation, nudge}: SemanticMarkersProps) {
   const { map } = useLeaflet();
 
   const [prevMarkers, setPrevMarkers] = useState<ReactElement<MarkerProps>[]>(markers);
@@ -38,7 +37,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
       if (map != null) {
         const bounds = boundsToGeoBBox(map.getBounds());
         const zoomLevel = map.getZoom();
-        onViewportChanged({ bounds, zoomLevel }, handleMarkerClicked);
+        onViewportChanged({ bounds, zoomLevel });
       }
     }
 

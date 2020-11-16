@@ -1,12 +1,11 @@
 import React, {useState, CSSProperties, ReactElement} from "react";
 import { BoundsViewport, MarkerProps, AnimationFunction } from "./Types";
 const { BaseLayer } = LayersControl
-import {Viewport, Map, TileLayer, LayersControl, Rectangle, LatLngBounds} from "react-leaflet";
+import {Viewport, Map, TileLayer, LayersControl} from "react-leaflet";
 import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
 import '../styles/map_styles.css'
 import CustomGridLayer from "./CustomGridLayer";
-import {LatLngBoundsLiteral} from "leaflet";
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -24,8 +23,6 @@ interface MapVEuMapProps {
   width: CSSProperties['width'],
   onViewportChanged: (bvp: BoundsViewport) => void,
   markers: ReactElement<MarkerProps>[],
-  handleMarkerClicked: (markerBounds: LatLngBounds) => void,
-  selectedMarkerBounds: null | LatLngBoundsLiteral,
   nudge?: 'geohash' | 'none',
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
   sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
@@ -39,7 +36,7 @@ interface MapVEuMapProps {
 
 
 
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, handleMarkerClicked, selectedMarkerBounds, setSelectedMarkerBounds, animation, nudge, showGrid}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, showGrid}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -49,9 +46,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
   // 'bookmarkable' state of the map.
   const [state, updateState] = useState<Viewport>(viewport as Viewport);
   const handleViewportChanged = (viewport: Viewport) => {
-    setSelectedMarkerBounds(null);
     updateState(viewport);
-
   };
 
   return (
@@ -70,14 +65,9 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         markers={markers}
         animation={animation}
         nudge={nudge}
-        handleMarkerClicked={handleMarkerClicked}
       />
 
       { showGrid ? <CustomGridLayer /> : null }
-      { selectedMarkerBounds ?
-          <Rectangle bounds={selectedMarkerBounds} color="gray" weight={1}/>
-          : null
-      }
 
       <LayersControl position="topright">
         <BaseLayer checked name="street">
