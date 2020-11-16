@@ -1,7 +1,8 @@
 {
   "name": "@veupathdb/wdk-client",
-  "version": "0.1.1-alpha.0",
+  "version": "0.1.1-alpha.1",
   "license": "Apache-2.0",
+  "readme": "../README.md",
   "scripts": {
     "test": "jest",
     "compile": "rm -rf ./lib && tsc --noEmit false",
