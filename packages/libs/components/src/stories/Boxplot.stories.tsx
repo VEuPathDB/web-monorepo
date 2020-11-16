@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react'
-import Boxplot, {Props} from './Boxplot';
+import Boxplot, {Props} from '../plots/Boxplot';
 import stats from 'stats-lite';
 import _ from 'lodash';
 
@@ -175,6 +175,8 @@ DateLabels.argTypes = storyArgTypes(
 // These strings are ISO-8601 compliant to specify whole months
 // but Plotly is doing strange things - mouse-over dates are the first of the correct month
 // x-axis labels are the last day of the previous month - except the first trace!
+// Even weirder is that if you switch it to horizontal mode the labels are completely correct:
+// "Jun 2002", "May 2002" etc
 export const MonthLabels : Story<Props> = Template.bind({});
 MonthLabels.argTypes = storyArgTypes(
   MonthLabels.args = {
