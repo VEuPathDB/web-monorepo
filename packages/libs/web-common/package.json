@@ -1,6 +1,10 @@
 {
   "name": "@veupathdb/web-common",
   "version": "0.1.0",
+  "repository": {
+    "url": "https://github.com/VEuPathDB/EbrcWebsiteCommon",
+    "directory": "Client"
+  },
   "description": "Components and utilities common to VEuPathDB sites.",
   "main": "lib/bootstrap",
   "scripts": {
@@ -20,7 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@veupathdb/wdk-client": "../../WDKClient/Client",
+    "@veupathdb/wdk-client": "^0.0.1",
     "custom-event-polyfill": "^1.0.7",
     "md5": "^2.3.0",
     "whatwg-fetch": "^3.5.0"
