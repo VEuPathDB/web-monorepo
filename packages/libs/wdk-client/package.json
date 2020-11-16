@@ -11,6 +11,11 @@
     "check-ts": "tsc --version && tsc --noEmit",
     "watch-ts": "tsc --noEmit --watch -p ."
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VEuPathDB/WDKClient",
+    "directory": "Client"
+  },
   "private": true,
   "files": [
     "lib",
