@@ -83,7 +83,7 @@ export default function CustomGridLayer() {
         const latLines = lats.map((lat, index) => {
             return (
                 <Polyline
-                    key={lat + index}
+                    key={`lat-${lat}-${index}`}
                     color="gray"
                     positions={[[lat, mapBounds.getWest()], [lat, mapBounds.getEast()]]}
                     opacity={.8}
@@ -97,7 +97,7 @@ export default function CustomGridLayer() {
         const lonLines = lons.map((lon, index) => {
             return (
                 <Polyline
-                    key={lon + index}
+                    key={`lon-${lon}-${index}`}
                     color="gray"
                     positions={[[mapBounds.getNorth(), lon], [mapBounds.getSouth(), lon]]}
                     opacity={.8}
