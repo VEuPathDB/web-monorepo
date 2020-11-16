@@ -38,7 +38,7 @@ $hamburger-width: 1013px;
 
     margin: 0.5em;
 
-    content: url('~eupathdb/images/project-branding.png');
+    content: url('../../../images/project-branding.png');
 
     @media screen and (max-width: $hamburger-width) {
       display: none;

@@ -50,6 +50,7 @@ let SequenceRegionInputs = props => {
   ));
 };
 
+/** @type import('./Types').ReporterFormComponent */
 let FastaOrfReporterForm = props => {
 
   let { formState, updateFormState, onSubmit, includeSubmit } = props;

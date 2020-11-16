@@ -8,6 +8,7 @@ import ExcelNote from './ExcelNote';
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, CategoryUtils);
 
+/** @type import('./Types').ReporterFormComponent */
 let TabularReporterForm = props => {
 
   let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit,  ontology, includeSubmit } = props;

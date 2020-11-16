@@ -3,9 +3,9 @@ export const MONTHS = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 
 /**
  * format release date string
  */
-export function formatReleaseDate(releaseDateString, format) {
+export function formatReleaseDate(releaseDateString, format = 'dd mm yy') {
   const date = new Date(releaseDateString);
-  return (typeof format === 'string' ? format : 'dd mm yy')
+  return format
     .replace('dd', date.getDate())
     .replace('mm', MONTHS[date.getMonth()])
     .replace('yy', date.getFullYear());

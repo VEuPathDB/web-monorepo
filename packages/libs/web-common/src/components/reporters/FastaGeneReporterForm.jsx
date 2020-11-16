@@ -125,6 +125,7 @@ let SequenceRegionInputs = props => {
   }
 };
 
+/** @type import('./Types').ReporterFormComponent */
 let FastaGeneReporterForm = props => {
   let { formState, updateFormState, onSubmit, includeSubmit } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);

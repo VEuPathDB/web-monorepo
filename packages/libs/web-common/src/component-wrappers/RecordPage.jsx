@@ -47,7 +47,7 @@ export const RecordTable = makeDynamicWrapper('RecordTable');
 // Helpers
 // -------
 
-const findRecordPageComponent = findExportWith(require.context('../components/records', true));
+const findRecordPageComponent = findExportWith(require.context('../components/records', true, /\.(js|jsx)$/));
 
 /**
  * Uses partially applied `findRecordPageComponent` function to dynamically

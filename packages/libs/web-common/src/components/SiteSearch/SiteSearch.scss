@@ -1,5 +1,3 @@
-@import 'ebrc-client/styles/themes.scss';
-
 .SiteSearch {
   position: relative;
   z-index: 0;
@@ -180,10 +178,9 @@
     padding: 1em;
     width: 24em;
     max-width: 24em;
-    @include themify() {
-      border: 1px solid themed('secondary-color-border');
-      background: themed('secondary-color')
-    }
+    // XXX Override in site
+    border: 1px solid gray;
+    background: whitesmoke;
 
     > * {
       background-color: inherit;

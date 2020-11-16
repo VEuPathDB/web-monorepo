@@ -26,6 +26,7 @@ let GffInputs = props => {
   );*/
 };
 
+/** @type import('./Types').ReporterFormComponent */
 let Gff3ReporterForm = props => {
   let { formState, recordClass, updateFormState, onSubmit, includeSubmit  } = props;
   let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);

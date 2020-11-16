@@ -5,6 +5,7 @@ import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/rep
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 
+/** @type import('./Types').ReporterFormComponent */
 let FastaOrthoSequenceReporterForm = props => {
 
   let { formState, updateFormState, onSubmit, includeSubmit } = props;

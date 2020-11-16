@@ -5,6 +5,7 @@ import TableReporterForm from './TableReporterForm';
 //   override the recordClass (Transcript) with Gene to get Gene tables for a Transcript result
 let recordClassOverride = { recordClass: { fullName: "GeneRecordClasses.GeneRecordClass" } };
 
+/** @type import('./Types').ReporterFormComponent */
 let TranscriptTableReporterForm = props => {
   let newProps = Object.assign({}, props, recordClassOverride);
   return (<TableReporterForm {...newProps}/>);

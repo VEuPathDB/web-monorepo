@@ -7,6 +7,7 @@ import SrtHelp from '../SrtHelp';
 let util = Object.assign({}, ComponentUtils, ReporterUtils);
 
 export let fastaGenomicSequenceReporterFormFactory = regionDescription => {
+  /** @type import('./Types').ReporterFormComponent */
   const FastaGenomicSequenceReporterForm = props => {
     let { formState, updateFormState, onSubmit, includeSubmit } = props;
     let getUpdateHandler = fieldName => util.getChangeHandler(fieldName, updateFormState, formState);

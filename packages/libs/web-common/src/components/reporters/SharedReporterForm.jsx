@@ -7,6 +7,7 @@ import * as ReporterUtils from '@veupathdb/wdk-client/lib/Views/ReporterForm/rep
 
 let util = Object.assign({}, ComponentUtils, ReporterUtils, OntologyUtils, CategoryUtils);
 
+/** @type import('./Types').ReporterFormComponent */
 let SharedReporterForm = props => {
 
   let { scope, question, recordClass, formState, formUiState, updateFormState, updateFormUiState, onSubmit, ontology, includeSubmit } = props;
