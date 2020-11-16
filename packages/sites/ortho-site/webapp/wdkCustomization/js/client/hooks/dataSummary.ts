@@ -5,16 +5,9 @@ import { GenomeSourcesRows } from 'ortho-client/utils/dataSummary';
 
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
 
-export function useGenomeSourcesRows() {
+export function useProteomeSummaryRows() {
   return useOrthoService(
-    orthoService => orthoService.getGenomeSources(),
-    []
-  );
-}
-
-export function useGenomeStatisticsRows() {
-  return useOrthoService(
-    orthoService => orthoService.getGenomeStatistics(),
+    orthoService => orthoService.getProteomeSummary(),
     []
   );
 }
@@ -31,9 +24,9 @@ function makeCorePeripheralMap(genomeSourcesRows: GenomeSourcesRows): Record<str
 const memoizedCorePeripheralMapMaker = once(makeCorePeripheralMap);
 
 export function useCorePeripheralMap() {
-  const genomeSourcesRows = useGenomeSourcesRows();
+  const proteomeSummaryRows = useProteomeSummaryRows();
 
-  return genomeSourcesRows == null
+  return proteomeSummaryRows == null
     ? undefined
-    : memoizedCorePeripheralMapMaker(genomeSourcesRows);
+    : memoizedCorePeripheralMapMaker(proteomeSummaryRows);
 }

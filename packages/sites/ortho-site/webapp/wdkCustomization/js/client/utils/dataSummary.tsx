@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { zipWith } from 'lodash';
-
 import {
   Decoder,
   arrayOf,
@@ -50,31 +48,21 @@ export type GenomeStatisticsRows = GenomeStatisticsRow[];
 
 export type ProteomeSummaryRows = ProteomeSummaryRow[];
 
-const genomeSourcesRowDecoder: Decoder<GenomeSourcesRow> = record({
+const proteomeSummaryRowDecoder: Decoder<ProteomeSummaryRow> = record({
+  clustered_sequences: string,
   core_peripheral: oneOf(constant('Core'), constant('Peripheral')),
   description: oneOf(string, nullValue),
+  groups: string,
   name: string,
   resource_name: string,
   resource_url: string,
-  root_taxon: string,
-  three_letter_abbrev: string
-});
-
-export const genomeSourcesRowsDecoder: Decoder<GenomeSourcesRows> =
-  arrayOf(genomeSourcesRowDecoder);
-
-const genomeStatisticsRowDecoder: Decoder<GenomeStatisticsRow> = record({
-  clustered_sequences: string,
-  core_peripheral: oneOf(constant('Core'), constant('Peripheral')),
-  groups: string,
-  name: string,
-  root_taxon: string,
   sequences: string,
+  root_taxon: string,
   three_letter_abbrev: string
 });
 
-export const genomeStatisticsRowsDecoder: Decoder<GenomeStatisticsRows> =
-  arrayOf(genomeStatisticsRowDecoder);
+export const proteomeSummaryRowsDecoder: Decoder<ProteomeSummaryRows> =
+  arrayOf(proteomeSummaryRowDecoder);
 
 export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
   ProteomeSummaryRow,
@@ -141,16 +129,12 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
 
 export function makeReleaseSummaryRows(
   { species }: TaxonUiMetadata,
-  genomeStatisticsRows: GenomeStatisticsRows,
-  genomeSourcesRows: GenomeSourcesRows
+  proteomeSummaryRows: ProteomeSummaryRows
 ): ProteomeSummaryRows {
-  return zipWith(
-    genomeStatisticsRows,
-    genomeSourcesRows,
-    (genomeStatisticsRow, genomeSummaryRow) => ({
-      ...genomeStatisticsRow,
-      ...genomeSummaryRow,
-      root_taxon: species[genomeStatisticsRow.three_letter_abbrev].rootTaxon
+  return proteomeSummaryRows.map(
+    proteomeSummaryRow => ({
+      ...proteomeSummaryRow,
+      root_taxon: species[proteomeSummaryRow.three_letter_abbrev].rootTaxon
     })
   );
 }

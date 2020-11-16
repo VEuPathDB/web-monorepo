@@ -4,11 +4,8 @@ import { Loading } from 'wdk-client/Components';
 import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
 
 import { ReleaseSummaryPage } from 'ortho-client/components/release-summary/ReleaseSummaryPage';
+import { useProteomeSummaryRows } from 'ortho-client/hooks/dataSummary';
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
-import {
-  useGenomeSourcesRows,
-  useGenomeStatisticsRows
-} from 'ortho-client/hooks/dataSummary';
 import {
   RELEASE_SUMMARY_COLUMNS,
   RELEASE_SUMMARY_COLUMN_ORDER,
@@ -35,21 +32,18 @@ export function ProteomeSummaryController() {
 
 function useDataTableRows() {
   const taxonUiMetadata = useTaxonUiMetadata();
-  const genomeStatisticsRows = useGenomeStatisticsRows();
-  const genomeSourcesRows = useGenomeSourcesRows();
+  const proteomeSummaryRows = useProteomeSummaryRows();
 
   const rows = useMemo(
     () => (
       taxonUiMetadata &&
-      genomeStatisticsRows &&
-      genomeSourcesRows &&
+      proteomeSummaryRows &&
       makeReleaseSummaryRows(
         taxonUiMetadata,
-        genomeStatisticsRows,
-        genomeSourcesRows
+        proteomeSummaryRows
       )
     ),
-    [ taxonUiMetadata, genomeStatisticsRows, genomeSourcesRows ]
+    [ taxonUiMetadata, proteomeSummaryRows ]
   );
 
   return rows;

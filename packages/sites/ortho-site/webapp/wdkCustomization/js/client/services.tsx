@@ -1,10 +1,8 @@
 import { WdkService } from 'wdk-client/Core';
 
 import {
-  GenomeSourcesRows,
-  GenomeStatisticsRows,
-  genomeSourcesRowsDecoder,
-  genomeStatisticsRowsDecoder
+  ProteomeSummaryRows,
+  proteomeSummaryRowsDecoder
 } from 'ortho-client/utils/dataSummary';
 import { GroupLayout, groupLayoutDecoder } from 'ortho-client/utils/groupLayout';
 import { TaxonEntries, taxonEntriesDecoder } from 'ortho-client/utils/taxons';
@@ -12,32 +10,13 @@ import { TaxonEntries, taxonEntriesDecoder } from 'ortho-client/utils/taxons';
 export function wrapWdkService(wdkService: WdkService): OrthoService {
   return ({
     ...wdkService,
-    getGenomeSources: orthoServiceWrappers.getGenomeSources(wdkService),
-    getGenomeStatistics: orthoServiceWrappers.getGenomeStatistics(wdkService),
     getGroupLayout: orthoServiceWrappers.getGroupLayout(wdkService),
+    getProteomeSummary: orthoServiceWrappers.getProteomeSummary(wdkService),
     getTaxons: orthoServiceWrappers.getTaxons(wdkService)
   });
 };
 
 const orthoServiceWrappers = {
-  getGenomeSources: (wdkService: WdkService) => () =>
-    wdkService.sendRequest(
-      genomeSourcesRowsDecoder,
-      {
-        useCache: true,
-        method: 'get',
-        path: '/data-summary/genome-sources'
-      }
-    ),
-  getGenomeStatistics: (wdkService: WdkService) => () =>
-    wdkService.sendRequest(
-      genomeStatisticsRowsDecoder,
-      {
-        useCache: true,
-        method: 'get',
-        path: '/data-summary/genome-statistics'
-      }
-    ),
   getGroupLayout: (wdkService: WdkService) => (groupName: string) =>
     wdkService.sendRequest(
       groupLayoutDecoder,
@@ -45,6 +24,15 @@ const orthoServiceWrappers = {
         useCache: true,
         method: 'get',
         path: `/group/${groupName}/layout`
+      }
+    ),
+  getProteomeSummary: (wdkService: WdkService) => () =>
+    wdkService.sendRequest(
+      proteomeSummaryRowsDecoder,
+      {
+        useCache: true,
+        method: 'get',
+        path: '/data-summary/genome-sources'
       }
     ),
   getTaxons: (wdkService: WdkService) => () =>
@@ -59,9 +47,8 @@ const orthoServiceWrappers = {
 };
 
 export interface OrthoService extends WdkService {
-  getGenomeSources: () => Promise<GenomeSourcesRows>;
-  getGenomeStatistics: () => Promise<GenomeStatisticsRows>;
   getGroupLayout: (groupName: string) => Promise<GroupLayout>;
+  getProteomeSummary: () => Promise<ProteomeSummaryRows>;
   getTaxons: () => Promise<TaxonEntries>;
 }
 
