@@ -167,7 +167,7 @@ async function fetchPermissions(fetchApi?: Window['fetch']) {
 }
 
 export async function checkPermissions(user: User, fetchApi?: Window['fetch']): Promise<UserPermissions> {
-  return user.isGuest
+  return user.isGuest || user.properties?.approvedStudies == null
     ? { type: 'none' }
     : await fetchPermissions(fetchApi);
 }
