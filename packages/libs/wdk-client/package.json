@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/wdk-client",
-  "version": "0.1.1-alpha.3",
+  "version": "0.1.1-alpha.4",
   "license": "Apache-2.0",
   "scripts": {
     "test": "jest",
@@ -18,6 +18,11 @@
     "directory": "Client"
   },
   "main": "./lib/Core",
+  "files": [
+    "src",
+    "lib",
+    "vendored"
+  ],
   "dependencies": {
     "@types/datatables.net": "^1.10.5",
     "@types/flot": "^0.0.31",
