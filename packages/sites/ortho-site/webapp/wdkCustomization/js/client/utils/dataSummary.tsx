@@ -125,10 +125,10 @@ export const RELEASE_SUMMARY_COLUMN_ORDER = [
   'name',
   'core_peripheral',
   'three_letter_abbrev',
-  'sequences',
-  'clustered_sequences',
-  'groups',
   'resource_name',
   'resource_url',
-  'description'
+  'description',
+  'sequences',
+  'clustered_sequences',
+  'groups'
 ] as const;
