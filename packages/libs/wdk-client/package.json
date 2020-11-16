@@ -16,7 +16,6 @@
     "url": "https://github.com/VEuPathDB/WDKClient",
     "directory": "Client"
   },
-  "private": true,
   "files": [
     "lib",
     "vendored"
