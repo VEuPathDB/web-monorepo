@@ -11,6 +11,7 @@ export interface Props {
     q3 : Datum,
     upperWhisker? : Datum,
     label : string,
+    color? : string,
     rawData? : Datum[], // PlotData['y'] | PlotData['x'], // doesn't seem to work
                         // but are we trying to remove dependencies on Plotly types?
     outliers : Datum[]
@@ -48,7 +49,10 @@ export default function Boxplot(props : Props) {
 	     name: d.label,
 	     boxpoints: d.rawData ? 'all' : 'outliers',
 	     jitter: 0.1, // should be dependent on the number of datapoints...?
-	     marker: { opacity: 0.5 },
+	     marker: {
+	       opacity: 0.5,
+ 	       color: d.color,
+	     },
 	     ...orientationDependentProps,
 	     type: 'box' } as const
   });

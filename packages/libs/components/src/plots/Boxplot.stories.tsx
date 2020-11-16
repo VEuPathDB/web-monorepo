@@ -6,8 +6,7 @@ import _ from 'lodash';
 
 export default {
   title: 'Boxplot',
-  component: Boxplot,
-  decorators: [(Foo : Story) => { Foo.argTypes = { defaultShowMean: { control: { disable: true }}}; return <div ><span>hello world</span> <Foo/> </div> }]
+  component: Boxplot
 } as Meta;
 
 const Template = (args : Props) => <Boxplot {...args} />;
@@ -139,6 +138,67 @@ HorizontalWithOneRawDataOneMean.argTypes = storyArgTypes(
     xAxisLabel: "domestic animal",
     yAxisLabel: "height, cm",
     defaultOrientation: "horizontal"
+});
+
+export const TwoColors : Story<Props> = Template.bind({});
+TwoColors.argTypes = storyArgTypes(
+  TwoColors.args = {
+    data: [ {...catData, label: 'cats', color: 'pink'},
+	    {...dogData, label: 'dogs', color: 'purple'} ]
+});
+
+
+// even though the labels are correctly provided as strings
+// Plotly is treating them as dates.
+// Is this a bug or a feature?
+export const NumberLabels : Story<Props> = Template.bind({});
+NumberLabels.argTypes = storyArgTypes(
+  NumberLabels.args = {
+    data: [ {...catData, label: '1', color: 'silver'},
+	    {...dogData, label: '2.5', color: 'silver'},
+	    {...indoorTemperatureData, label: '5', color: 'silver'},
+	    {...outdoorTemperatureData, label: '6', color: 'silver'} ]
+});
+
+// even though the labels are correctly provided as
+// Plotly is treating them as numbers.
+// Is this a bug or a feature?
+export const DateLabels : Story<Props> = Template.bind({});
+DateLabels.argTypes = storyArgTypes(
+  DateLabels.args = {
+    data: [ {...catData, label: '2002-03-04', color: 'silver'},
+	    {...dogData, label: '2002-04-01', color: 'silver'},
+	    {...indoorTemperatureData, label: '2002-04-24', color: 'silver'},
+	    {...outdoorTemperatureData, label: '2002-04-30', color: 'silver'} ]
+});
+
+// These strings are ISO-8601 compliant to specify whole months
+// but Plotly is doing strange things - mouse-over dates are the first of the correct month
+// x-axis labels are the last day of the previous month - except the first trace!
+export const MonthLabels : Story<Props> = Template.bind({});
+MonthLabels.argTypes = storyArgTypes(
+  MonthLabels.args = {
+    data: [ {...catData, label: '2002-03', color: 'silver'},
+	    {...dogData, label: '2002-04', color: 'silver'},
+	    {...indoorTemperatureData, label: '2002-05', color: 'silver'},
+	    {...outdoorTemperatureData, label: '2002-06', color: 'silver'} ]
+});
+
+// These strings are being interpreted as numbers, not dates.
+// If we wanted to use Plotly's 'box select' tool this would be a problem,
+// because the selected x range would not be date-based.
+//
+// Note that 'box select' is not showing up for any boxplots by default
+// (even those with numeric-as-string x-axes)
+//
+// To fix this we could add layout.xaxis.type = 'date'
+export const YearLabels : Story<Props> = Template.bind({});
+YearLabels.argTypes = storyArgTypes(
+  YearLabels.args = {
+    data: [ {...catData, label: '2002', color: 'silver'},
+	    {...dogData, label: '2003', color: 'silver'},
+	    {...indoorTemperatureData, label: '2004', color: 'silver'},
+	    {...outdoorTemperatureData, label: '2005', color: 'silver'} ]
 });
 
 
