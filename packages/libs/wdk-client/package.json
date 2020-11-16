@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/wdk-client",
-  "version": "0.1.1-alpha.1",
+  "version": "0.1.1-alpha.2",
   "license": "Apache-2.0",
   "scripts": {
     "test": "jest",
@@ -14,13 +14,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/VEuPathDB/WDKClient",
+    "url": "https://github.com/VEuPathDB/WDKClient.git",
     "directory": "Client"
   },
-  "files": [
-    "lib",
-    "vendored"
-  ],
   "main": "./lib/Core",
   "dependencies": {
     "@types/datatables.net": "^1.10.5",
