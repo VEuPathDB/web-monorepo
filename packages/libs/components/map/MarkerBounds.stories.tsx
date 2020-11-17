@@ -6,8 +6,7 @@ import testData from './test-data/geoclust-date-binning-testing-all-levels.json'
 import CustomDriftMarker from "./CustomDriftMarker";
 
 export default {
-  title: 'Select Marker',
-  // component: SelectMarker,
+  title: 'Marker Bounds',
 };
 
 const zoomLevelToGeohashLevel = [
@@ -43,7 +42,11 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
       return (
         <CustomDriftMarker
           duration={duration}
-          bucket={bucket}
+          bounds={[[bucket.ltMin, bucket.lnMax], [bucket.ltMax, bucket.lnMin]]}
+          val={bucket.val}
+          ltAvg={bucket.ltAvg}
+          lnAvg={bucket.lnAvg}
+          count={bucket.count}
           key={bucket.val}
         />
         )
@@ -51,7 +54,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
   })
 };
 
-export const SelectMarker = () => {
+export const MarkerBounds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
   const duration = 300;
 

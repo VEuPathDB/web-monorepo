@@ -1,43 +1,36 @@
-import {Rectangle, Tooltip} from "react-leaflet";
+import {LatLngBounds, Rectangle, Tooltip} from "react-leaflet";
 import React, {useState} from "react";
 import {DriftMarker} from "leaflet-drift-marker";
 
-interface BucketObject {
+interface CustomDriftMarkerProps {
+  bounds: LatLngBounds,
   ltAvg: number,
   lnAvg: number,
   val: number,
-  count: number,
-  ltMin: number,
-  ltMax: number,
-  lnMin: number,
-  lnMax: number
-}
-
-interface CustomDriftMarkerProps {
-  bucket: BucketObject,
+  count: number
   duration: number
 }
 
 
-export default function CustomDriftMarker({bucket, duration}: CustomDriftMarkerProps) {
+export default function CustomDriftMarker({bounds, ltAvg, lnAvg, val, count, duration}: CustomDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false)
 
   return (<DriftMarker
     duration={duration}
-    position={[bucket.ltAvg, bucket.lnAvg]}
+    position={[ltAvg, lnAvg]}
     onMouseOver={() => setDisplayBounds(true)} // Display bounds rectangle
     onMouseOut={() => setDisplayBounds(false)} // Remove bounds rectangle
   >
     <Tooltip>
-      <span>{`key: ${bucket.val}`}</span><br/>
-      <span>{`#aggregated: ${bucket.count}`}</span><br/>
-      <span>{`lat: ${bucket.ltAvg}`}</span><br/>
-      <span>{`lon: ${bucket.lnAvg}`}</span>
+      <span>{`key: ${val}`}</span><br/>
+      <span>{`#aggregated: ${count}`}</span><br/>
+      <span>{`lat: ${ltAvg}`}</span><br/>
+      <span>{`lon: ${lnAvg}`}</span>
     </Tooltip>
     {
       displayBounds
           ? <Rectangle
-              bounds={[[bucket.ltMin, bucket.lnMax], [bucket.ltMax, bucket.lnMin]]}
+              bounds={bounds}
               color={"gray"}
               weight={1}
             >
