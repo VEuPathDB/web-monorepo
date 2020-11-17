@@ -13,10 +13,10 @@ import collectionDateData from './test-data/geoclust-date-binning-testing-all-le
 // import('./test-data/geoclust-date-binning-testing-all-levels.json').then((json) => collectionDateData = json);
 
 import { LeafletMouseEvent } from "leaflet";
-import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; // TO BE CREATED
+import ChartMarker from './ChartMarker'; // TO BE CREATED
 
 //DKDK change target component
-import MapVeuLegendSampleList, { LegendProps } from './MapVeuLegendSampleList'
+import MapVEuLegendSampleList, { LegendProps } from './MapVEuLegendSampleList'
 
 //DKDK anim
 import geohashAnimation from "./animation_functions/geohash";
@@ -161,7 +161,6 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
   }
   //DKDK add setyAxisRangeValue: be careful of type of setYAxisRangeValue
   setYAxisRangeValue(yAxisRangeAll[1])
-  // console.log('yAxisRange = ', yAxisRange)
 
   const markers = buckets.map((bucket: bucketProps) => {
     const lat = bucket.ltAvg;
@@ -208,7 +207,7 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
     const yAxisRangeValue = (yAxisRange) ? (yAxisRange) : null
 
     return (
-      <RealHistogramMarkerSVGnoShadow
+      <ChartMarker
         borderColor={knob_borderColor}
         borderWidth={knob_borderWidth}
         key={key}   //DKDK anim
@@ -251,21 +250,6 @@ export const CollectionDate = () => {
   // const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
 
-  //DKDK changing knobs to constant variables
-  // Knobs
-  // const knob_method = radios('Method', {SVG: 'svg', Library: 'lib'}, 'svg');
-  // const knob_borderWidth = number('Border width', 3.5, {range: true, min: 0, max: 5, step: 0.5});
-  // //const knob_borderColor = color('Border color', '#00000088');  // Isn't working
-  // const knob_borderColor = radios('Border color', {DarkGrey: '#00000099', LightGrey: '#00000055', Blue: '#7cb5ec'}, '#00000055');
-  // const knob_dividerVisible = boolean('Divider visible', false);
-  // const knob_type = knob_method === 'lib' ? radios('Type', {Bar: 'bar', Line: 'line'}, 'bar') : undefined;
-  // const knob_fillArea = knob_type === 'line' ? boolean('Fill area', true) : undefined;
-  // const knob_spline = knob_type === 'line' ? boolean('Spline', false) : undefined;
-  // const knob_lineVisible = knob_fillArea ? boolean('Show line', false) : undefined;
-  // const knob_colorMethod = knob_type === 'line' ?
-  //   radios('Color method', {Bins: 'discrete', Solid: 'solid', Gradient: 'gradient'}, 'discrete') :
-  //   radios('Color method', {Bins: 'discrete', Solid: 'solid'}, 'discrete');
-
   const knob_borderWidth: number = 3.5
   const knob_borderColor: string = '#AAAAAA'  //DKDK light greyish
 
@@ -280,7 +264,6 @@ export const CollectionDate = () => {
   };
   //DKDK add state for getting yAxisRange
   const [yAxisRangeValue, setYAxisRangeValue] = useState<number>(0)
-  // console.log('yAxisRangeValue = ', yAxisRangeValue)
 
   //DKDK define legendType
   const legendType = 'numeric'
@@ -324,7 +307,7 @@ export const CollectionDate = () => {
         }}
         showGrid={true}
       />
-      <MapVeuLegendSampleList
+      <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
         //DKDK send x-/y-axes lables here

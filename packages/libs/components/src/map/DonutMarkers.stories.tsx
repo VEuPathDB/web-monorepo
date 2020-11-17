@@ -13,7 +13,7 @@ import speciesData from './test-data/geoclust-species-testing-all-levels.json';
 // import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
 import { LeafletMouseEvent } from "leaflet";
-import SVGDonutMarker from './SVGDonutMarker'; // TO BE CREATED
+import DonutMarker from './DonutMarker'; // TO BE CREATED
 
 //DKDK sidebar & legend
 import MapVEuMap from './MapVEuMap';
@@ -22,7 +22,7 @@ import MapVEuMapSidebar from './MapVEuMapSidebar';
 import SidebarExample from './SidebarExample'
 // import { LeafletMouseEvent } from "leaflet";
 //DKDK import legend
-import MapVeuLegendSampleList, { LegendProps } from './MapVeuLegendSampleList'
+import MapVEuLegendSampleList, { LegendProps } from './MapVEuLegendSampleList'
 
 //DKDK anim
 // import Geohash from 'latlon-geohash';
@@ -200,7 +200,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
     const key = scrambleKeys ? md5(bucket.val).substring(0, zoomLevel) : bucket.val;
 
     return (
-      <SVGDonutMarker
+      <DonutMarker
         key={key}   //DKDK anim
         //DKDK change position format
         position={[lat, long]}
@@ -260,7 +260,7 @@ export const Species = () => {
         }}
         showGrid={true}
       />
-      <MapVeuLegendSampleList
+      <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
         // //DKDK send x-/y-axes lables here
@@ -337,7 +337,7 @@ const SpeciesSidebar = () => {
         onClose={sidebarOnClose}
       />
 
-      <MapVeuLegendSampleList
+      <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
         // //DKDK send x-/y-axes lables here
@@ -424,7 +424,7 @@ const SpeciesNudgedChart = () => {
         onClose={sidebarOnClose}
       />
 
-      <MapVeuLegendSampleList
+      <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
         // //DKDK send x-/y-axes lables here
