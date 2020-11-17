@@ -2,7 +2,6 @@
   grid-area: information;
 
   max-height: 700px;
-  overflow-y: auto;
 
   .wdk-Tabs .wdk-Tab {
     padding: 0.5em;
@@ -10,6 +9,11 @@
 
   .wdk-Tabs .wdk-Tab .HelpTrigger {
     margin-left: 0.25em;
+  }
+
+  .wdk-TabContent {
+    max-height: 669px;
+    overflow-y: auto;
   }
 
   .MesaComponent .MesaComponent {

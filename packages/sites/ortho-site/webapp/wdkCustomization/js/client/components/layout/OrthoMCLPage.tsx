@@ -237,16 +237,10 @@ function useHeaderMenuItems() {
         type: 'subMenu',
         items: [
           {
-            key: 'genome-statistics',
-            display: 'Genome Statistics',
+            key: 'release-summary',
+            display: 'Proteome Sources and Statistics',
             type: 'reactRoute',
-            url: '/genome-statistics'
-          },
-          {
-            key: 'genome-sources',
-            display: 'Genome Sources',
-            type: 'reactRoute',
-            url: '/genome-sources'
+            url: '/release-summary'
           }
         ]
       },

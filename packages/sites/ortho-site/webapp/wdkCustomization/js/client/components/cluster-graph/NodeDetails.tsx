@@ -21,6 +21,8 @@ import { GraphAccordion } from 'ortho-client/components/cluster-graph/GraphAccor
 
 import './NodeDetails.scss';
 
+const TABLE_BODY_MAX_HEIGHT = 'min(33vh, 625px)';
+
 export function NodeDetails({
   layout,
   selectedNode,
@@ -61,6 +63,7 @@ export function NodeDetails({
                   columnOrder={BLAST_SCORE_COLUMN_ORDER}
                   onRowMouseOver={onBlastRowMouseOver}
                   onRowMouseOut={onBlastRowMouseOut}
+                  tableBodyMaxHeight={TABLE_BODY_MAX_HEIGHT}
                 />
               </GraphAccordion>
               <GraphAccordion title="PFam Domains">
@@ -68,6 +71,7 @@ export function NodeDetails({
                   rows={nodeDetails.pfamDomainRows}
                   columns={PFAM_DOMAIN_COLUMNS}
                   columnOrder={PFAM_DOMAIN_COLUMN_ORDER}
+                  tableBodyMaxHeight={TABLE_BODY_MAX_HEIGHT}
                 />
               </GraphAccordion>
               <GraphAccordion title="EC Numbers">
@@ -75,6 +79,7 @@ export function NodeDetails({
                   rows={nodeDetails.ecNumberRows}
                   columns={EC_NUMBER_COLUMNS}
                   columnOrder={EC_NUMBER_COLUMN_ORDER}
+                  tableBodyMaxHeight={TABLE_BODY_MAX_HEIGHT}
                 />
               </GraphAccordion>
             </React.Fragment>

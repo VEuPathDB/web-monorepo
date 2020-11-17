@@ -1,39 +1,32 @@
 import { keyBy, mapValues, once } from 'lodash';
 
 import { ProteinType } from 'ortho-client/utils/clusterGraph';
-import { GenomeSourcesRows } from 'ortho-client/utils/dataSummary';
+import { ProteomeSummaryRows } from 'ortho-client/utils/dataSummary';
 
 import { useOrthoService } from 'ortho-client/hooks/orthoService';
 
-export function useGenomeSourcesRows() {
+export function useProteomeSummaryRows() {
   return useOrthoService(
-    orthoService => orthoService.getGenomeSources(),
+    orthoService => orthoService.getProteomeSummary(),
     []
   );
 }
 
-export function useGenomeStatisticsRows() {
-  return useOrthoService(
-    orthoService => orthoService.getGenomeStatistics(),
-    []
-  );
-}
-
-function makeCorePeripheralMap(genomeSourcesRows: GenomeSourcesRows): Record<string, ProteinType> {
-  const speciesByAbbrev = keyBy(genomeSourcesRows, 'three_letter_abbrev');
+function makeCorePeripheralMap(proteomeSummaryRows: ProteomeSummaryRows): Record<string, ProteinType> {
+  const speciesByAbbrev = keyBy(proteomeSummaryRows, 'three_letter_abbrev');
 
   return mapValues(
     speciesByAbbrev,
-    genomeSourcesRow => genomeSourcesRow.core_peripheral
+    proteomeSummaryRow => proteomeSummaryRow.core_peripheral
   );
 }
 
 const memoizedCorePeripheralMapMaker = once(makeCorePeripheralMap);
 
 export function useCorePeripheralMap() {
-  const genomeSourcesRows = useGenomeSourcesRows();
+  const proteomeSummaryRows = useProteomeSummaryRows();
 
-  return genomeSourcesRows == null
+  return proteomeSummaryRows == null
     ? undefined
-    : memoizedCorePeripheralMapMaker(genomeSourcesRows);
+    : memoizedCorePeripheralMapMaker(proteomeSummaryRows);
 }

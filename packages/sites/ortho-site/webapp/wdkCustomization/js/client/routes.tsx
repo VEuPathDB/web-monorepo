@@ -6,9 +6,8 @@ import { RouteEntry } from 'wdk-client/Core/RouteEntry';
 
 import SiteSearchController from 'ebrc-client/controllers/SiteSearchController';
 
-import { GenomeSourcesController } from 'ortho-client/controllers/GenomeSourcesController';
-import { GenomeStatisticsController } from 'ortho-client/controllers/GenomeStatisticsController';
 import { OrthoMCLHomePageController } from 'ortho-client/controllers/OrthoMCLHomePageController';
+import { ProteomeSummaryController } from 'ortho-client/controllers/ProteomeSummaryController';
 import { GroupClusterGraphController } from 'ortho-client/controllers/GroupClusterGraphController';
 
 export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
@@ -18,8 +17,6 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
       component: OrthoMCLHomePageController,
       rootClassNameModifier: 'home-page'
     },
-    // TODO: Delete this route once the initial implementation
-    // TODO: of the cluster graph is complete
     {
       path: '/cluster-graph/:groupName',
       component: (props: RouteComponentProps<{ groupName: string }>) => {
@@ -29,12 +26,8 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
       }
     },
     {
-      path: '/genome-statistics',
-      component: GenomeStatisticsController
-    },
-    {
-      path: '/genome-sources',
-      component: GenomeSourcesController,
+      path: '/release-summary',
+      component: ProteomeSummaryController
     },
     {
       path: '/search',
