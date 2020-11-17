@@ -9,7 +9,7 @@ import L from "leaflet";
 import {DriftMarker} from "leaflet-drift-marker";
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
-interface HistogramMarkerSVGProps extends MarkerProps {
+interface ChartMarkerProps extends MarkerProps {
   borderColor?: string,
   borderWidth?: number,
   labels: Array<string>, // the labels (not likely to be shown at normal marker size)
@@ -30,7 +30,7 @@ interface HistogramMarkerSVGProps extends MarkerProps {
  * - no gap between bars
  * - accordingly icon size could be reduced
  */
-export default function RealHistogramMarkerSVGnoShadowAnim(props: HistogramMarkerSVGProps) {
+export default function ChartMarker(props: ChartMarkerProps) {
   let fullStat = []
   //DKDK set defaultColor to be skyblue (#7cb5ec) if props.colors does not exist
   let defaultColor: string = ''
@@ -95,29 +95,26 @@ export default function RealHistogramMarkerSVGnoShadowAnim(props: HistogramMarke
 
   if (globalMaxValue) {
     fullStat.forEach(function (el: {color: string, label: string, value: number}, index) {
-      // console.log('global approach')
       //DKDK for the case of y-axis range input: a global approach that take global max = icon height
-      barWidth = (xSize-2*marginX)/count               //DKDK bar width
-      startingX = marginX + borderWidth + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = el.value/globalMaxValue*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
-      startingY = (size-marginY)-barHeight + borderWidth            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
+      barWidth = (xSize-2*marginX)/count                      //DKDK bar width
+      startingX = marginX + borderWidth + barWidth*index      //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
+      barHeight = el.value/globalMaxValue*(size-2*marginY)    //DKDK bar height: used 2*marginY to have margins at both top and bottom
+      startingY = (size-marginY)-barHeight + borderWidth      //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
       //DKDK making the last bar, noData
       svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + barWidth + ' height=' + barHeight + ' fill=' + el.color + ' />'
     })
   } else {
     fullStat.forEach(function (el: {color: string, label: string, value: number}, index) {
       //DKDK for the case of auto-scale y-axis: a local approach that take local max = icon height
-      barWidth = (xSize-2*marginX)/count               //DKDK bar width
-      startingX = marginX + borderWidth + barWidth*index             //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = el.value/maxValues*(size-2*marginY) //DKDK bar height: used 2*marginY to have margins at both top and bottom
-      startingY = (size-marginY)-barHeight + borderWidth            //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
+      barWidth = (xSize-2*marginX)/count                      //DKDK bar width
+      startingX = marginX + borderWidth + barWidth*index      //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
+      barHeight = el.value/maxValues*(size-2*marginY)         //DKDK bar height: used 2*marginY to have margins at both top and bottom
+      startingY = (size-marginY)-barHeight + borderWidth      //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
       //DKDK making the last bar, noData
       svgHTML += '<rect x=' + startingX + ' y=' + startingY + ' width=' + (barWidth) + ' height=' + barHeight + ' fill=' + el.color + ' />'
     })
   }
 
-  //DKDK add horizontal line
-  // svgHTML += '<line x1="0" y1="' + (size-2) + '" x2="' + xSize + '" y2="' + (size-2) + '" style="stroke:grey;stroke-width:1" />'
   //DKDK add horizontal line: when using inner border (adjust x1)
   svgHTML += '<line x1=' + borderWidth + ' y1="' + (size-2+borderWidth) + '" x2="' + (xSize + borderWidth) + '" y2="' + (size-2+borderWidth) + '" style="stroke:' + defaultLineColor + ';stroke-width:1" />';
 

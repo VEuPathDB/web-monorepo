@@ -44,7 +44,7 @@ export interface LegendProps {
 
 //DKDK make legend at the map without using L.Control: perhaps send props to make circle or square?
 // For now, just use different component for square
-const MapVeuLegendSampleList = (props: LegendProps) => {
+const MapVEuLegendSampleList = (props: LegendProps) => {
   //DKDK simplifying
   let legendIconClass = ''
   if (props.legendType === 'categorical') {
@@ -95,4 +95,4 @@ const MapVeuLegendSampleList = (props: LegendProps) => {
 
 };
 
-export default MapVeuLegendSampleList;
+export default MapVEuLegendSampleList;
