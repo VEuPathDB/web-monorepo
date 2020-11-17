@@ -1,7 +1,7 @@
 import React, {useState, CSSProperties, ReactElement} from "react";
 import { BoundsViewport, MarkerProps, AnimationFunction } from "./Types";
 const { BaseLayer } = LayersControl
-import { Viewport, Map, TileLayer, LayersControl } from "react-leaflet";
+import {Viewport, Map, TileLayer, LayersControl} from "react-leaflet";
 import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
 import '../styles/map_styles.css'
@@ -24,7 +24,6 @@ interface MapVEuMapProps {
   onViewportChanged: (bvp: BoundsViewport) => void,
   markers: ReactElement<MarkerProps>[],
   nudge?: 'geohash' | 'none',
-
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
   sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
   animation: {
@@ -38,31 +37,24 @@ interface MapVEuMapProps {
 
 
 export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, showGrid}: MapVEuMapProps) {
+  // this is the React Map component's onViewPortChanged handler
+  // we may not need to use it.
+  // onViewportchanged in SemanticMarkers is more relevant
+  // because it can access the map's bounding box (aka bounds)
+  // which is useful for fetching data to show on the map.
+  // The Viewport info (center and zoom) handled here would be useful for saving a
+  // 'bookmarkable' state of the map.
+  const [state, updateState] = useState<Viewport>(viewport as Viewport);
+  const handleViewportChanged = (viewport: Viewport) => {
+    updateState(viewport);
+  };
 
-
-    // this is the React Map component's onViewPortChanged handler
-    // we may not need to use it.
-    // onViewportchanged in SemanticMarkers is more relevant
-    // because it can access the map's bounding box (aka bounds)
-    // which is useful for fetching data to show on the map.
-    // The Viewport info (center and zoom) handled here would be useful for saving a
-    // 'bookmarkable' state of the map.
-    const [state, updateState] = useState<Viewport>(viewport as Viewport);
-    const handleViewportChanged = (viewport: Viewport) => {
-        updateState(viewport);
-    };
-
-    return (
-        <Map
-            viewport={state}
-            style={{height, width}}
-            onViewportChanged={handleViewportChanged}
-        >
-            <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-            />
-
+  return (
+    <Map
+        viewport={state}
+        style={{height, width}}
+        onViewportChanged={handleViewportChanged}
+    >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
