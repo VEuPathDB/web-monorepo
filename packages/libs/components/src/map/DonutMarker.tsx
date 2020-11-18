@@ -1,24 +1,21 @@
 import React from "react";
-import { Marker, Tooltip } from "react-leaflet";
 import { MarkerProps } from './Types';
 
 //DKDK leaflet
-import L, { LatLngExpression } from "leaflet";
+import L from "leaflet";
 
 //DKDK anim
-import {DriftMarker} from "leaflet-drift-marker";
+import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
-interface DonutMarkerProps extends MarkerProps {
+interface DonutMarkerProps extends BoundsDriftMarkerProps {
   labels: Array<string>, // the labels (not likely to be shown at normal marker size)
   values: Array<number>, // the counts or totals to be shown in the donut
   colors?: Array<string> | null, // bar colors: set to be optional with array or null type
   isAtomic?: boolean,      // add a special thumbtack icon if this is true
   onClick?: (event: L.LeafletMouseEvent) => void | undefined,
   onMouseOver?: (event: L.LeafletMouseEvent) => void | undefined,
-  onMouseOut?: (event: L.LeafletMouseEvent) => void | undefined,
-  //DKDK anim
-  duration?: number,
+  onMouseOut?: (event: L.LeafletMouseEvent) => void | undefined
 }
 
 // DKDK convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
@@ -103,8 +100,6 @@ export default function DonutMarker(props: DonutMarkerProps) {
   //DKDK set drawing area
   svgHTML += '<svg width="' + size + '" height="' + size + '">'   //DKDK initiate svg marker icon
 
-  //DKDK counting number of kinds at each marker data
-  let count = fullStat.length
   //DKDK summation of fullStat.value per marker icon
   let sumValues: number = fullStat.map(o => o.value).reduce((a, c) => { return a + c })
   //DKDK convert large value with k (e.g., 12345 -> 12k): return original value if less than a criterion
@@ -116,7 +111,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
   //DKDK set start point of arc = 0
   let startValue: number = 0
   //DKDK create arcs for data
-  fullStat.forEach(function (el: {color: string, label: string, value: number}, index) {
+  fullStat.forEach(function (el: {color: string, label: string, value: number}) {
     //DKDK if sumValues = 0, do not draw arc
     if (sumValues > 0) {
       //DKDK compute the ratio of each data to the total number
@@ -150,32 +145,14 @@ export default function DonutMarker(props: DonutMarkerProps) {
 
   //DKDK anim check duration exists or not
   let duration: number = (props.duration) ? props.duration : 300
-  // let duration: number = (props.duration) ? 300 : 300
 
   return (
-    //DKDK The Marker currently shows type error. I think that I resolved this in my own branch but such a change will break others' works.
-    //Thus, I will leave this for the time being
-    //DKDK anim
-    // <Marker {...props} icon={SVGDonutIcon}>
-    <DriftMarker
-      // {...props}
-      // key={props.key}
-      //DKDK to avoid type diff - LatLong vs LatLngExpression
-      //As I tried before, we have to consistently use leaflet LatLngExpression type instead of custom LatLong to avoid type error
-      position={[props.position[0], props.position[1]]}
+    <BoundsDriftMarker
+      key={props.key}
+      position={props.position}
+      bounds={props.bounds}
       icon={SVGDonutIcon}
       duration={duration}
-    >
-      {/* DKDK Below Tooltip also works but we may simply use title attribute as well */}
-      {/* However, Connor found coordinates issue and I realized that somehow "title" did not update coordinates correctly */}
-      {/* But both Popup and Tooltip do not have such an issue */}
-      {/* <Popup>{props.position.toString()}</Popup> */}
-      {/* <Tooltip>{props.position.toString()}</Tooltip> */}
-      <Tooltip>
-        labels: {props.labels.join(" ")} <br/>
-	      values: {props.values.join(" ")} <br />
-        latlong: {props.position.toString()}
-      </Tooltip>
-    </DriftMarker>
+    />
   );
 }

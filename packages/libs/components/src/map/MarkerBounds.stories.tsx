@@ -3,7 +3,8 @@ import {BoundsViewport, MarkerProps} from "./Types";
 import MapVEuMap from "./MapVEuMap";
 import geohashAnimation from "./animation_functions/geohash";
 import testData from './test-data/geoclust-date-binning-testing-all-levels.json';
-import CustomDriftMarker from "./CustomDriftMarker";
+import BoundsDriftMarker from "./BoundsDriftMarker";
+import './TempIconHack';
 
 export default {
   title: 'Marker Bounds',
@@ -13,40 +14,37 @@ const zoomLevelToGeohashLevel = [
   1, // 0
   1, // 1
   1, // 2
-  1, // 3
+  2, // 3
   2, // 4
   2, // 5
-  2, // 6
+  3, // 6
   3, // 7
   3, // 8
-  3, // 9
+  4, // 9
   4, // 10
   4, // 11
-  4, // 12
+  5, // 12
   5, // 13
   5, // 14
-  5, // 15
+  6, // 15
   6, // 16
   6, // 17
   7  // 18
 ];
 
-const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number, duration : number, scrambleKeys: boolean = false ) => {
-  console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
+const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number) => {
+  console.log("I've been triggered with bounds=["+bounds+"] and zoom="+zoomLevel);
 
   const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
-  const currentLevelData = testData[`geohash_${geohashLevel}`]
+  const currentLevelData = (testData as { [key: string]: any })[`geohash_${geohashLevel}`]
 
-  return currentLevelData.facets.geo.buckets.map((bucket) => {
+  return currentLevelData.facets.geo.buckets.map((bucket : any) => {
     if (bucket.val.length == geohashLevel) {
-      return (
-        <CustomDriftMarker
+      return ( // CHECK THE BOUNDS is really SW/NE
+        <BoundsDriftMarker
           duration={duration}
           bounds={[[bucket.ltMin, bucket.lnMax], [bucket.ltMax, bucket.lnMin]]}
-          val={bucket.val}
-          ltAvg={bucket.ltAvg}
-          lnAvg={bucket.lnAvg}
-          count={bucket.count}
+	  position={{ lat: bucket.ltAvg, lng: bucket.lnAvg }}
           key={bucket.val}
         />
         )
@@ -59,7 +57,7 @@ export const MarkerBounds = () => {
   const duration = 300;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getMarkerElements(bvp, 100000, duration));
+    setMarkerElements(getMarkerElements(bvp, duration));
   }, [setMarkerElements]);
 
   return (

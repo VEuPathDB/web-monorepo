@@ -1,22 +1,16 @@
 import { ReactElement } from "react";
-// import type { Viewport } from "react-leaflet";  // react-leaflet is flow not TS. Not sure how to do thus
-
-export type LatLong = number[];  // TO DO: bounds checking? and enforce exactly two numbers
+import {LatLngBoundsLiteral, LatLngLiteral, Icon} from "leaflet";
 
 // does this need to be imported from react-leaflet properly? (see above)
 export interface Viewport {
-  center: LatLong,
+  center: LatLngLiteral,
   zoom: number
 }
 
-export interface GeoBBox {
-  southWest: LatLong,
-  northEast: LatLong
-}
-
 export interface MarkerProps {
-  position: LatLong,
-  key: string
+  position: LatLngLiteral,
+  key: string,
+  icon?: Icon
 }
 
 export type AnimationFunction = (
@@ -37,6 +31,6 @@ export type AnimationFunction = (
 */
 
 export interface BoundsViewport {
-  bounds: GeoBBox,
+  bounds: LatLngBoundsLiteral,
   zoomLevel: number
 }

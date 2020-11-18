@@ -1,7 +1,7 @@
 import React, {ReactElement, useEffect, useState, cloneElement} from "react";
-import {GeoBBox, MarkerProps, BoundsViewport, AnimationFunction} from "./Types";
+import {MarkerProps, BoundsViewport, AnimationFunction} from "./Types";
 import { useLeaflet } from "react-leaflet";
-import { LatLngBounds } from 'leaflet'
+import { LatLngBounds, LatLngBoundsLiteral } from 'leaflet'
 import Geohash from 'latlon-geohash';
 
 interface SemanticMarkersProps {
@@ -65,7 +65,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
 	const geohashCenter = Geohash.decode(geohash);
 	const bounds = Geohash.bounds(geohash);
 	const markerRadius2 = markerRadius/scale;
-	let [ lat, lon ] : number[] = marker.props.position;
+	let { lat, lng } = marker.props.position;
 	let nudged : boolean = false;
 
 	// bottom edge
@@ -77,9 +77,9 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
 	  nudged = true;
 	}
 	// left edge
-	if (lon - markerRadius2 < bounds.sw.lon) {
-	  lon = bounds.sw.lon + markerRadius2;
-	  if (lon > geohashCenter.lon) lon = geohashCenter.lon;
+	if (lng - markerRadius2 < bounds.sw.lon) {
+	  lng = bounds.sw.lon + markerRadius2;
+	  if (lng > geohashCenter.lon) lng = geohashCenter.lon;
 	  nudged = true;
 	}
 	// top edge
@@ -89,13 +89,13 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
 	  nudged = true;
 	}
 	// right edge
-	if (lon + markerRadius2 > bounds.ne.lon) {
-	  lon = bounds.ne.lon - markerRadius2;
-	  if (lon < geohashCenter.lon) lon = geohashCenter.lon;
+	if (lng + markerRadius2 > bounds.ne.lon) {
+	  lng = bounds.ne.lon - markerRadius2;
+	  if (lng < geohashCenter.lon) lng = geohashCenter.lon;
 	  nudged = true;
 	}
 
-      	return nudged ? cloneElement(marker, { position: [ lat, lon ] }) : marker;
+      	return nudged ? cloneElement(marker, { position: { lat, lng } }) : marker;
       });
     }
 
@@ -146,7 +146,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
 }
 
 
-function boundsToGeoBBox(bounds : LatLngBounds) : GeoBBox {
+function boundsToGeoBBox(bounds : LatLngBounds) : LatLngBoundsLiteral {
 
   var south = bounds.getSouth();
   if (south < -90) {
@@ -171,7 +171,6 @@ function boundsToGeoBBox(bounds : LatLngBounds) : GeoBBox {
     east = -180;
   }  
 
-  return { southWest: [south, west],
-	   northEast: [north, east] }
+  return [ [south, west], [north, east] ];
 }
 

@@ -2,7 +2,6 @@ import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 // import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
-import './TempIconHack';
 
 import speciesData from './test-data/geoclust-species-testing-all-levels.json';
 
@@ -12,8 +11,8 @@ import speciesData from './test-data/geoclust-species-testing-all-levels.json';
 // let speciesData : any = undefined;
 // import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
-import { LeafletMouseEvent } from "leaflet";
-import DonutMarker from './DonutMarker'; // TO BE CREATED
+import { LeafletMouseEvent, LatLngBoundsLiteral } from "leaflet";
+import DonutMarker from './DonutMarker';
 
 //DKDK sidebar & legend
 import MapVEuMap from './MapVEuMap';
@@ -136,10 +135,10 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
   const buckets = (speciesData as { [key: string]: any })[geohash_level].facets.geo.buckets.filter((bucket : any) => {
     const ltAvg : number = bucket.ltAvg;
     const lnAvg : number = bucket.lnAvg;
-    return ltAvg > bounds.southWest[0] &&
-	   ltAvg < bounds.northEast[0] &&
-	   lnAvg > bounds.southWest[1] &&
-	   lnAvg < bounds.northEast[1]
+    return ltAvg > bounds[0][0] &&
+	   ltAvg < bounds[1][0] &&
+	   lnAvg > bounds[0][1] &&
+	   lnAvg < bounds[1][1]
   });
 
   // make a first pass and calculate the legend totals
@@ -182,7 +181,8 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
 
   return buckets.map((bucket : any) => {
     const lat : number = bucket.ltAvg;
-    const long : number = bucket.lnAvg;
+    const lng : number = bucket.lnAvg;
+    const bounds : LatLngBoundsLiteral = [[bucket.ltMin, bucket.lnMax], [bucket.ltMax, bucket.lnMin]];
     let labels: string[] = [];
     let values: number[] = [];
     let colors: string[] = [];
@@ -203,7 +203,8 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
       <DonutMarker
         key={key}   //DKDK anim
         //DKDK change position format
-        position={[lat, long]}
+        position={{lat, lng}}
+        bounds={bounds}
         labels={labels}
         values={values}
         //DKDK colors is set to be optional props, if null (e.g., comment out) then bars will have skyblue-like defaultColor
