@@ -13,23 +13,20 @@ interface Props {
   colors?: Array<string>; // M
 }
 
-// {
-//   data: [
-//     [ 40, 15 ],
-//     [ 10, 35 ]
-//   ],
-//   exposureValues: [‘Men’, ‘Women’ ],
-//   outcomeValues: [ ‘Died’, ‘Survived’ ],
-//   exposureLabel: ‘Sex’,
-//   outcomeLabel: ‘Status’,
-//   widths: [ 40, 10 ]
-//   colors: [ ‘red’, ‘yellow’ ]
-// }
-
 export default function MosaicPlot(props: Props) {
+  const widths_sum = props.widths.reduce((a, b) => a + b, 0);
+  const widths_ratios = props.widths.map(a => a / widths_sum);
+  const tickvals = widths_ratios.map((val, i) => {
+    let column_start = widths_ratios.slice(0, i).reduce((a, b) => a + b, 0);
+    return column_start + val/2;
+  });
+
   const layout = {
     xaxis: {
       title: props.exposureLabel,
+      range: Array.from(Array(props.widths.length).keys()),
+      tickmode: 'array',
+      tickvals: tickvals,
     },
     yaxis: {
       title: props.outcomeLabel,
@@ -41,8 +38,15 @@ export default function MosaicPlot(props: Props) {
     x: props.exposureValues,
     y: d,
     name: props.outcomeValues[i],
-    type: 'bar'
-  } as const));
+    width: widths_ratios.map(a => a * widths_ratios.length),
+    type: 'bar',
+    marker: {
+      line: {
+        width: 2,
+        color: 'white',
+      },
+    },
+  } as const)).reverse();
 
   return (
     <PlotlyPlot data={data} layout={layout}/>
