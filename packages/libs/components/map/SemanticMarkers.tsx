@@ -1,7 +1,7 @@
 import React, {ReactElement, useEffect, useState, cloneElement} from "react";
-import {MarkerProps, BoundsViewport, AnimationFunction} from "./Types";
+import { MarkerProps, BoundsViewport, AnimationFunction, Bounds } from "./Types";
 import { useLeaflet } from "react-leaflet";
-import { LatLngBounds, LatLngBoundsLiteral } from 'leaflet'
+import { LatLngBounds } from 'leaflet'
 import Geohash from 'latlon-geohash';
 
 interface SemanticMarkersProps {
@@ -61,7 +61,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
 	// It should work with half the maximum dimension (50/2 = 25)
 	// but I suspect 'position' is not in the center of the marker icon?
 	
-	const geohash = marker.key as string;
+	const geohash = marker.props.id as string;
 	const geohashCenter = Geohash.decode(geohash);
 	const bounds = Geohash.bounds(geohash);
 	const markerRadius2 = markerRadius/scale;
@@ -146,7 +146,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
 }
 
 
-function boundsToGeoBBox(bounds : LatLngBounds) : LatLngBoundsLiteral {
+function boundsToGeoBBox(bounds : LatLngBounds) : Bounds {
 
   var south = bounds.getSouth();
   if (south < -90) {
@@ -171,6 +171,6 @@ function boundsToGeoBBox(bounds : LatLngBounds) : LatLngBoundsLiteral {
     east = -180;
   }  
 
-  return [ [south, west], [north, east] ];
+  return { southWest: {lat: south, lng: west}, northEast: {lat: north, lng: east} };
 }
 

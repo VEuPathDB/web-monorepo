@@ -1,15 +1,38 @@
 import { ReactElement } from "react";
-import {LatLngBoundsLiteral, LatLngLiteral, Icon} from "leaflet";
+import { LatLngLiteral, Icon } from "leaflet";
 
-// does this need to be imported from react-leaflet properly? (see above)
+export type LatLng = LatLngLiteral;
+// from leaflet:
+// interface LatLngLiteral {
+//    lat: number;
+//    lng: number;
+//}
+
+export interface Bounds {
+  southWest: LatLng,
+  northEast: LatLng
+};
+
+/*
+  This is the information Leaflet needs in order to show a map.
+*/
 export interface Viewport {
-  center: LatLngLiteral,
+  center: LatLng,
   zoom: number
 }
 
+/*
+  This is information Leaflet *provides* that we use for fetching/generating markers.
+*/
+
+export interface BoundsViewport {
+  bounds: Bounds,
+  zoomLevel: number
+}
+
 export interface MarkerProps {
-  position: LatLngLiteral,
-  key: string,
+  position: LatLng,
+  id: string,
   icon?: Icon
 }
 
@@ -26,11 +49,3 @@ export type AnimationFunction = (
     };
 
 
-/*
-  This is the geo-related information that any marker data request will need
-*/
-
-export interface BoundsViewport {
-  bounds: LatLngBoundsLiteral,
-  zoomLevel: number
-}

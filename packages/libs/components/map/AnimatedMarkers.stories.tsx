@@ -82,10 +82,10 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
     }
 
     // is it within the viewport bounds?
-    if (lat > bounds.southWest[0] &&
-	lat < bounds.northEast[0] &&
-	long > bounds.southWest[1] &&
-	long < bounds.northEast[1]) {
+    if (lat > bounds.southWest.lat &&
+	lat < bounds.northEast.lat &&
+	long > bounds.southWest.lng &&
+	long < bounds.northEast.lng) {
       const geohash : string = Geohash.encode(lat, long, geohashLevel);
 
       let agg = aggsByGeohash.get(geohash);
