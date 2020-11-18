@@ -11,6 +11,8 @@ import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-d
 
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 
+import { RecordTable_Sequences } from 'ortho-client/records/Sequences';
+
 import {
   RecordAttributeSectionProps,
   RecordTableProps,
@@ -38,6 +40,7 @@ const MSA_ATTRIBUTE_NAME = 'msa';
 
 const PFAMS_TABLE_NAME = 'PFams';
 const PROTEIN_PFAMS_TABLE_NAME = 'ProteinPFams';
+const SEQUENCES_TABLE_NAME = 'Sequences';
 
 const CORE_PERIPHERAL_ATTRIBUTE_NAME = 'core_peripheral';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
@@ -273,5 +276,6 @@ function makePfamDomainMarkup(rowGroup: Record<string, AttributeValue>[], maxLen
 const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {
   [PFAMS_TABLE_NAME]: RecordTable_PfamDomainGraphic,
   [PROTEIN_PFAMS_TABLE_NAME]: RecordTable_ProteinDomainArchitectures,
-  [TAXON_COUNTS_TABLE_NAME]: RecordTable_TaxonCounts
+  [TAXON_COUNTS_TABLE_NAME]: RecordTable_TaxonCounts,
+  [SEQUENCES_TABLE_NAME]: RecordTable_Sequences
 };
