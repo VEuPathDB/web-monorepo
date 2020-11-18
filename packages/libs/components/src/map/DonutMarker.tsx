@@ -72,18 +72,12 @@ function kFormatter(num: number) {
  */
 export default function DonutMarker(props: DonutMarkerProps) {
   let fullStat = []
-  //DKDK set defaultColor to be skyblue (#7cb5ec) if props.colors does not exist
   let defaultColor: string = ''
-  // let defaultLineColor: string = ''
-  //DKDK need to make a temporary stats array of objects to show marker colors - only works for demo data, not real solr data
   for (let i = 0; i < props.values.length; i++) {
     if (props.colors) {
       defaultColor = props.colors[i]
-      // // defaultLineColor = 'grey'       //DKDK this is outline of histogram
-      // defaultLineColor = 'black'       //DKDK this is outline of histogram
     } else {
-      defaultColor = '#7cb5ec'
-      // defaultLineColor = '#7cb5ec'
+      defaultColor = 'silver'
     }
     fullStat.push({
       // color: props.colors[i],
@@ -148,7 +142,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
 
   return (
     <BoundsDriftMarker
-      key={props.key}
+      id={props.id}
       position={props.position}
       bounds={props.bounds}
       icon={SVGDonutIcon}

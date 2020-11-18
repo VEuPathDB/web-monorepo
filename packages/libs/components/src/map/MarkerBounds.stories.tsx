@@ -33,18 +33,28 @@ const zoomLevelToGeohashLevel = [
 ];
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number) => {
-  console.log("I've been triggered with bounds=["+bounds+"] and zoom="+zoomLevel);
+  const { southWest: { lat: swLat, lng: swLng }, northEast : {lat: neLat, lng: neLng} } = bounds
+  console.log(`I've been triggered with bounds=[${swLat},${swLng} TO ${neLat},${neLng}] and zoom=${zoomLevel}`);
 
   const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
-  const currentLevelData = (testData as { [key: string]: any })[`geohash_${geohashLevel}`]
 
-  return currentLevelData.facets.geo.buckets.map((bucket : any) => {
+  const buckets = (testData as { [key: string]: any })[`geohash_${geohashLevel}`].facets.geo.buckets.filter((bucket: any) => {
+    const ltAvg : number = bucket.ltAvg;
+    const lnAvg : number = bucket.lnAvg;
+    return ltAvg > bounds.southWest.lat &&
+	   ltAvg < bounds.northEast.lat &&
+	   lnAvg > bounds.southWest.lng &&
+	   lnAvg < bounds.northEast.lng
+  });
+  
+  return buckets.map((bucket : any) => {
     if (bucket.val.length == geohashLevel) {
-      return ( // CHECK THE BOUNDS is really SW/NE
+      return (
         <BoundsDriftMarker
           duration={duration}
-          bounds={[[bucket.ltMin, bucket.lnMax], [bucket.ltMax, bucket.lnMin]]}
+          bounds={{ southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }}} 
 	  position={{ lat: bucket.ltAvg, lng: bucket.lnAvg }}
+          id={bucket.val}
           key={bucket.val}
         />
         )
@@ -62,7 +72,7 @@ export const MarkerBounds = () => {
 
   return (
       <MapVEuMap
-          viewport={{center: [ 20, -3 ], zoom: 7}}
+          viewport={{center: [ 10, -3 ], zoom: 5}}
           height="96vh" width="98vw"
           onViewportChanged={handleViewportChanged}
           markers={markerElements}

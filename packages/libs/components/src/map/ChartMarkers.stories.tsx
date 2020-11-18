@@ -2,8 +2,7 @@ import React, { ReactElement, useState, useCallback } from 'react';
 // import { withKnobs, radios , boolean, number } from '@storybook/addon-knobs';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
-import { BoundsViewport, MarkerProps } from './Types';
-import './TempIconHack';
+import { BoundsViewport, MarkerProps, Bounds } from './Types';
 
 import collectionDateData from './test-data/geoclust-date-binning-testing-all-levels.json';
 // below was an attempt to lazy load...
@@ -13,7 +12,7 @@ import collectionDateData from './test-data/geoclust-date-binning-testing-all-le
 // import('./test-data/geoclust-date-binning-testing-all-levels.json').then((json) => collectionDateData = json);
 
 import { LeafletMouseEvent } from "leaflet";
-import ChartMarker from './ChartMarker'; // TO BE CREATED
+import ChartMarker from './ChartMarker';
 
 //DKDK change target component
 import MapVEuLegendSampleList, { LegendProps } from './MapVEuLegendSampleList'
@@ -131,14 +130,13 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
 
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
-  //DKDK keyof approach seems not to work for large json file
-    const buckets = (collectionDateData as { [key: string]: any })[geohash_level].facets.geo.buckets.filter((bucket: bucketProps) => {
+  const buckets = (collectionDateData as { [key: string]: any })[geohash_level].facets.geo.buckets.filter((bucket: bucketProps) => {
     const ltAvg : number = bucket.ltAvg;
     const lnAvg : number = bucket.lnAvg;
-    return ltAvg > bounds.southWest[0] &&
-	   ltAvg < bounds.northEast[0] &&
-	   lnAvg > bounds.southWest[1] &&
-	   lnAvg < bounds.northEast[1]
+    return ltAvg > bounds.southWest.lat &&
+	   ltAvg < bounds.northEast.lat &&
+	   lnAvg > bounds.southWest.lng &&
+	   lnAvg < bounds.northEast.lng
   });
 
   //DKDK change this to always show Reginal scale value
@@ -164,7 +162,8 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
 
   const markers = buckets.map((bucket: bucketProps) => {
     const lat = bucket.ltAvg;
-    const long = bucket.lnAvg;
+    const lng = bucket.lnAvg;
+    const bounds : Bounds = { southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }};
     let labels = [];
     let values = [];
     let colors: string[] = [];
@@ -206,26 +205,24 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
     //DKDK need to check the presence of props.type and props.colorMethod
     const yAxisRangeValue = (yAxisRange) ? (yAxisRange) : null
 
+    // BM: important to provide the key 'prop' (which is not a true prop) at
+    // this outermost level
     return (
       <ChartMarker
         borderColor={knob_borderColor}
         borderWidth={knob_borderWidth}
-        key={key}   //DKDK anim
-        //DKDK change position format
-        position={[lat, long]}
+        id={key}
+        key={key}
+        position={{lat, lng}}
+        bounds={bounds}
         labels={labels}
         values={values}
-        //DKDK colors is set to be optional props, if null (e.g., comment out) then bars will have skyblue-like defaultColor
         colors={colors}
-        //DKDK add isAtomic for chart marker
         isAtomic={atomicValue}
-        //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
         yAxisRange ={yAxisRangeValue}
         // onClick={handleClick}
         onMouseOut={handleMouseOut}
         onMouseOver={handleMouseOver}
-        // my_knob={boolean('My Knob', false)} // Doesn't work
-        //DKDK anim
         duration={duration}
       />
     )
@@ -245,9 +242,6 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
 
 
 export const CollectionDate = () => {
-  //DKDK set global or local
-  // const yAxisRange: Array<number> | null = [0, 1104]
-  // const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
 
   const knob_borderWidth: number = 3.5
