@@ -1,6 +1,5 @@
 import React from "react";
 import PlotlyPlot from "./PlotlyPlot";
-import { PlotData } from 'plotly.js';
 
 interface Props {
   // N columns/exposure, M rows/outcome
@@ -14,19 +13,19 @@ interface Props {
 }
 
 export default function MosaicPlot(props: Props) {
-  const widths_sum = props.widths.reduce((a, b) => a + b, 0);
-  const widths_ratios = props.widths.map(a => a / widths_sum);
-  const tickvals = widths_ratios.map((val, i) => {
-    let column_start = widths_ratios.slice(0, i).reduce((a, b) => a + b, 0);
-    return column_start + val/2;
+  const column_centers = props.widths.map((width, i) => {
+    // Sum of the widths of previous columns
+    let column_start = props.widths.slice(0, i).reduce((a, b) => a + b, 0);
+    return column_start + width/2;
   });
 
   const layout = {
     xaxis: {
       title: props.exposureLabel,
-      range: Array.from(Array(props.widths.length).keys()),
-      tickmode: 'array',
-      tickvals: tickvals,
+      // Must expliticly define range for it to work consistently
+      range: [0, props.widths.reduce((a, b) => a + b, 0)] as number[],
+      tickvals: column_centers,
+      ticktext: props.exposureValues,
     },
     yaxis: {
       title: props.outcomeLabel,
@@ -34,19 +33,21 @@ export default function MosaicPlot(props: Props) {
     barmode: 'stack',
   } as const;
 
-  const data = props.data.map((d, i) => ({
-    x: props.exposureValues,
-    y: d,
+  const data = props.data.map((vals, i) => ({
+    x: column_centers,
+    y: vals,
     name: props.outcomeValues[i],
-    width: widths_ratios.map(a => a * widths_ratios.length),
+    width: props.widths,
     type: 'bar',
     marker: {
       line: {
+        // Borders between blocks
         width: 2,
         color: 'white',
       },
+      color: props.colors ? props.colors[i] : undefined,
     },
-  } as const)).reverse();
+  } as const)).reverse();  // Reverse so first trace is on top, matching data array
 
   return (
     <PlotlyPlot data={data} layout={layout}/>

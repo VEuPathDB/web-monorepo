@@ -6,7 +6,7 @@ export default {
   component: MosaicPlot,
 };
 
-export const Basic = () => <MosaicPlot
+export const TwoByTwo = () => <MosaicPlot
   data={[
     [ 40, 15 ],
     [ 10, 35 ]
@@ -16,18 +16,31 @@ export const Basic = () => <MosaicPlot
   exposureLabel={'Sex'}
   outcomeLabel={'Status'}
   widths={[ 40, 10 ]}
-  colors={[ 'red', 'yellow' ]}
+  colors={[ 'orange', 'blue' ]}
 />
 
-export const ThreeCategories = () => <MosaicPlot
+export const TwoByThree = () => <MosaicPlot
   data={[
     [ 40, 15, 30 ],
     [ 10, 35, 20 ],
   ]}
-  exposureValues={[ 'Cat', 'Dog', 'Human' ]}
-  outcomeValues={[ 'Dark', 'Light' ]}
+  exposureValues={[ 'Rabbit', 'Cat', 'Dog' ]}
+  outcomeValues={[ 'Positive', 'Negative' ]}
   exposureLabel={'Animal'}
-  outcomeLabel={'Hair Color'}
+  outcomeLabel={'Rabies'}
   widths={[ 40, 10, 25 ]}
-  colors={[ 'red', 'yellow' ]}
+/>
+
+export const FourByThree = () => <MosaicPlot
+  data={[
+    [ 50, 15, 35 ],
+    [ 10, 40, 50 ],
+    [ 20, 15, 5 ],
+    [ 20, 30, 10 ],
+  ]}
+  exposureValues={[ 'Mercury', 'Venus', 'Mars' ]}
+  outcomeValues={[ 'Nitrogen', 'Oxygen', 'Hydrogen', 'Other' ]}
+  exposureLabel={'Planet'}
+  outcomeLabel={'Atmospheric Makeup (%)'}
+  widths={[ 10, 40, 50 ]}
 />
