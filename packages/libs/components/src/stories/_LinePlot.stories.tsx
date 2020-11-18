@@ -1,5 +1,5 @@
 import React from 'react';
-import LinePlot from './LinePlot';
+import LinePlot from '../plots/LinePlot';
 
 export default {
   title: 'LinePlot',
