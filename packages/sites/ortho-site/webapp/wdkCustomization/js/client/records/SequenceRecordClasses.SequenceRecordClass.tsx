@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react';
 
+import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { AttributeValue } from 'wdk-client/Utils/WdkModel';
+
+import Sequence from 'ebrc-client/components/records/Sequence';
 
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 
@@ -16,11 +19,14 @@ import {
 } from 'ortho-client/records/utils';
 
 import {
+  RecordAttributeSectionProps,
   RecordTableProps,
   WrappedComponentProps
 } from 'ortho-client/records/Types';
 
 import './SequenceRecordClasses.SequenceRecordClass.scss';
+
+const SEQUENCE_TEXT_ATTRIBUTE_NAME = 'sequence';
 
 const PFAM_DOMAINS_TABLE_NAME = 'PFamDomains';
 
@@ -29,10 +35,44 @@ const DOMAIN_LENGTH_ATTRIBUTE_NAME = 'length';
 const DOMAIN_DESCRIPTION_ATTRIBUTE_NAME = 'description';
 const DOMAIN_SYMBOL_ATTRIBUTE_NAME = 'symbol';
 
+export function RecordAttributeSection(props: WrappedComponentProps<RecordAttributeSectionProps>) {
+  const Component = recordAttributeSectionWrappers[props.attribute.name] ?? props.DefaultComponent;
+
+  return <Component {...props} />;
+}
+
 export function RecordTable(props: WrappedComponentProps<RecordTableProps>) {
   const Component = recordTableWrappers[props.table.name] ?? props.DefaultComponent;
 
   return <Component {...props} />;
+}
+
+function SequenceAttributeSection(props: RecordAttributeSectionProps) {
+  const { isCollapsed, onCollapsedChange } = props;
+  const { name: attributeName, displayName: attributeDisplayName } = props.attribute;
+
+  const sequence = props.record.attributes[attributeName];
+
+  return (
+    <CollapsibleSection
+      id={attributeName}
+      className="wdk-RecordAttributeSectionItem"
+      headerContent={attributeDisplayName}
+      isCollapsed={isCollapsed}
+      onCollapsedChange={onCollapsedChange}
+    >
+      {
+        typeof sequence !== 'string'
+          ? <div className="MissingAttribute">
+              We cannot display the sequence for {props.recordClass.displayName} {props.record.displayName} at this time.
+              If this problem persists, please <Link to="/contact-us" >contact us</Link>.
+            </div>
+          : <div className="SequenceAttribute">
+              <Sequence sequence={sequence} />
+            </div>
+      }
+    </CollapsibleSection>
+  );
 }
 
 const makePfamDomainsAttributeFields = transformAttributeFieldsUsingSpecs([
@@ -99,6 +139,10 @@ function RecordTable_PfamDomains(props: WrappedComponentProps<RecordTableProps>)
     </div>
   )
 }
+
+const recordAttributeSectionWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordAttributeSectionProps>>> = {
+  [SEQUENCE_TEXT_ATTRIBUTE_NAME]: SequenceAttributeSection
+};
 
 const recordTableWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordTableProps>>> = {
   [PFAM_DOMAINS_TABLE_NAME]: RecordTable_PfamDomains
