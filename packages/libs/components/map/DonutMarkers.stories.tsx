@@ -2,6 +2,7 @@ import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 // import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps, Bounds } from './Types';
+import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 
 import speciesData from './test-data/geoclust-species-testing-all-levels.json';
 
@@ -11,15 +12,12 @@ import speciesData from './test-data/geoclust-species-testing-all-levels.json';
 // let speciesData : any = undefined;
 // import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
-import { LeafletMouseEvent, LatLngBoundsLiteral } from "leaflet";
+import { LeafletMouseEvent } from "leaflet";
 import DonutMarker from './DonutMarker';
 
 //DKDK sidebar & legend
 import MapVEuMap from './MapVEuMap';
 import MapVEuMapSidebar from './MapVEuMapSidebar';
-//DKDK import a sidebar component
-import SidebarExample from './SidebarExample'
-// import { LeafletMouseEvent } from "leaflet";
 //DKDK import legend
 import MapVEuLegendSampleList, { LegendProps } from './MapVEuLegendSampleList'
 
@@ -59,28 +57,6 @@ const all_colors_hex = [
   "#593315", // Deep Yellowish Brown
   "#F13A13", // Vivid Reddish Orange
   "#232C16" // Dark Olive Green
-];
-
-const zoomLevelToGeohashLevel = [
-  'geohash_1', // 0
-  'geohash_1', // 1
-  'geohash_1', // 2
-  'geohash_2', // 3
-  'geohash_2', // 4
-  'geohash_2', // 5
-  'geohash_3', // 6
-  'geohash_3', // 7
-  'geohash_3', // 8
-  'geohash_4', // 9
-  'geohash_4', // 10
-  'geohash_4', // 11
-  'geohash_5', // 12
-  'geohash_5', // 13
-  'geohash_5', // 14
-  'geohash_6', // 15
-  'geohash_6', // 16
-  'geohash_6', // 17
-  'geohash_7'  // 18
 ];
 
 //DKDK a generic function to remove a class: here it is used for removing highlight-marker
@@ -132,7 +108,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
      thus used this approach instead for consistency
 */
   //DKDK applying b) approach, setting key as string & any
-  const buckets = (speciesData as { [key: string]: any })[geohash_level].facets.geo.buckets.filter((bucket : any) => {
+  const buckets = (speciesData as { [key: string]: any })[`geohash_${geohash_level}`].facets.geo.buckets.filter((bucket : any) => {
     const ltAvg : number = bucket.ltAvg;
     const lnAvg : number = bucket.lnAvg;
     return ltAvg > bounds.southWest.lat &&
@@ -224,7 +200,7 @@ export const Species = () => {
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
 
   //DKDK anim
-  const duration = 500
+  const duration = defaultAnimationDuration
   const scrambleKeys = false
 
   const handleViewportChanged = useCallback((bvp : BoundsViewport) => {

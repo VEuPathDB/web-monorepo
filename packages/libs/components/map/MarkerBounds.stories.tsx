@@ -4,33 +4,12 @@ import MapVEuMap from "./MapVEuMap";
 import geohashAnimation from "./animation_functions/geohash";
 import testData from './test-data/geoclust-date-binning-testing-all-levels.json';
 import BoundsDriftMarker from "./BoundsDriftMarker";
+import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 import './TempIconHack';
 
 export default {
   title: 'Marker Bounds',
 };
-
-const zoomLevelToGeohashLevel = [
-  1, // 0
-  1, // 1
-  1, // 2
-  2, // 3
-  2, // 4
-  2, // 5
-  3, // 6
-  3, // 7
-  3, // 8
-  4, // 9
-  4, // 10
-  4, // 11
-  5, // 12
-  5, // 13
-  5, // 14
-  6, // 15
-  6, // 16
-  6, // 17
-  7  // 18
-];
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number) => {
   const { southWest: { lat: swLat, lng: swLng }, northEast : {lat: neLat, lng: neLng} } = bounds
@@ -64,7 +43,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : num
 
 export const MarkerBounds = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-  const duration = 300;
+  const duration = defaultAnimationDuration;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getMarkerElements(bvp, duration));
@@ -78,7 +57,7 @@ export const MarkerBounds = () => {
           markers={markerElements}
           animation={{
             method: "geohash",
-            duration: 300,
+            duration: defaultAnimationDuration,
             animationFunction: geohashAnimation
           }}
           showGrid={true}

@@ -3,6 +3,7 @@ import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps, Bounds } from './Types';
+import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 
 import collectionDateData from './test-data/geoclust-date-binning-testing-all-levels.json';
 // below was an attempt to lazy load...
@@ -83,27 +84,6 @@ const all_colors_hex = [
   "#232C16" // Dark Olive Green
 ];
 
-const zoomLevelToGeohashLevel = [
-  'geohash_1', // 0
-  'geohash_1', // 1
-  'geohash_1', // 2
-  'geohash_2', // 3
-  'geohash_2', // 4
-  'geohash_2', // 5
-  'geohash_3', // 6
-  'geohash_3', // 7
-  'geohash_3', // 8
-  'geohash_4', // 9
-  'geohash_4', // 10
-  'geohash_4', // 11
-  'geohash_5', // 12
-  'geohash_5', // 13
-  'geohash_5', // 14
-  'geohash_6', // 15
-  'geohash_6', // 16
-  'geohash_6', // 17
-  'geohash_7'  // 18
-];
 
 /**
  * DKDK gathering functions here temporarily
@@ -130,7 +110,7 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
 
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
-  const buckets = (collectionDateData as { [key: string]: any })[geohash_level].facets.geo.buckets.filter((bucket: bucketProps) => {
+  const buckets = (collectionDateData as { [key: string]: any })[`geohash_${geohash_level}`].facets.geo.buckets.filter((bucket: bucketProps) => {
     const ltAvg : number = bucket.ltAvg;
     const lnAvg : number = bucket.lnAvg;
     return ltAvg > bounds.southWest.lat &&
@@ -275,7 +255,7 @@ export const CollectionDate = () => {
   const legendInfoNumberText: string = 'Collections'
 
   //DKDK anim
-  const duration = 500
+  const duration = defaultAnimationDuration
   const scrambleKeys = false
 
   //DKDK send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue

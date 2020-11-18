@@ -4,10 +4,7 @@ import Geohash from "latlon-geohash";
 import {LatLngBounds} from "leaflet";
 // import shape2geohash from "shape2geohash";  // need @types ideally...
 const shape2geohash = require("shape2geohash");
-
-interface ZoomLevelToGeoHashLevel {
-    zoomLevel: number
-}
+import { zoomLevelToGeohashLevel } from './config/map.json';
 
 /**
  * Renders a custom grid layer made up of Rectangle components that have boundaries associated
@@ -26,7 +23,7 @@ export default function CustomGridLayer() {
         function updateMap() {
             if (map != null) {
                 const zoomLevel = map.getZoom();
-                const geohashLevel = zoomLevelToGeoHashLevel({zoomLevel});
+                const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
 
                 const currentMapBounds = map.getBounds();
                 // bfox6 - Make the current map bounds accessible to the outside world
@@ -110,29 +107,4 @@ export default function CustomGridLayer() {
     }
 
     return(<>{polylines}</>)
-}
-
-function zoomLevelToGeoHashLevel({zoomLevel}: ZoomLevelToGeoHashLevel) {
-    const zoomLevelToGeohashLevelDefs = [
-        1, // 0
-        1, // 1
-        1, // 2
-        2, // 3
-        2, // 4
-        2, // 5
-        3, // 6
-        3, // 7
-        3, // 8
-        4, // 9
-        4, // 10
-        4, // 11
-        5, // 12
-        5, // 13
-        5, // 14
-        6, // 15
-        6, // 16
-        6, // 17
-        7  // 18
-    ];
-    return(zoomLevelToGeohashLevelDefs[zoomLevel])
 }

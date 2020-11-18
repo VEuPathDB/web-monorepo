@@ -17,7 +17,8 @@ export default {
    The real thing should something with zoomLevel.
 */
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : number) => {
-  console.log("I've been triggered with bounds=["+bounds.southWest+" TO "+bounds.northEast+"] and zoom="+zoomLevel);
+  const { southWest: { lat: swLat, lng: swLng }, northEast : {lat: neLat, lng: neLng} } = bounds
+  console.log(`I've been triggered with bounds=[${swLat},${swLng} TO ${neLat},${neLng}] and zoom=${zoomLevel}`);
   return Array(numMarkers).fill(undefined).map((_, index) => {
     const lat = bounds.southWest.lat + Math.random()*(bounds.northEast.lat - bounds.southWest.lat);
     const long = bounds.southWest.lng + Math.random()*(bounds.northEast.lng - bounds.southWest.lng);
