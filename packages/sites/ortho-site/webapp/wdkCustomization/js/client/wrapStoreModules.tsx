@@ -10,9 +10,6 @@ type OrthoMclStoreModules = EbrcStoreModules;
 export function wrapStoreModules(ebrcStoreModules: EbrcStoreModules): OrthoMclStoreModules {
   return {
     ...ebrcStoreModules,
-    record: {
-      ...ebrcStoreModules.record,
-      ...record
-    }
+    record
   };
 }

@@ -7,6 +7,8 @@ import {
 
 export const key = 'record';
 
+export const getAllFields = RecordStoreModule.getAllFields;
+
 export function reduce(state = {} as RecordStoreModule.State, action: Action): RecordStoreModule.State {
   const nextState = RecordStoreModule.reduce(state, action);
 
