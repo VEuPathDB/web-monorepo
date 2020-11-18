@@ -5,21 +5,24 @@
 @import 'ebrc-client/styles/main.scss';
 @import 'ebrc-client/styles/footer.scss';
 
-.vpdb-Header {
-  background-color: #414c9b;
-  z-index: 100;
 
-  .vpdb-HeaderBranding {
-    content: url('~site/images/OrthoMCL/title_s.png');
-  }
 
-  @media screen and (min-width: $cramped-header-width + 1) {
+  .vpdb-Header {
+    background-image: url('~site/images/Header-backgrounds/header-orthoMCL.jpg');
+    z-index: 100;
+
     .vpdb-HeaderBranding {
-      height: 5em;
+      content: url('~site/images/Logos-web/orthomclDB.png');
+    }
+
+    @media screen and (min-width: $cramped-header-width + 1) {
+      .vpdb-HeaderBranding {
+        height: 5em;
+      }
+    }
+
+    .wdk-CheckboxTreeNodeWrapper {
+      position: relative;
     }
   }
 
-  .wdk-CheckboxTreeNodeWrapper {
-    position: relative;
-  }
-}
