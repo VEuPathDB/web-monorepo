@@ -23,7 +23,7 @@
     "lib"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "custom-event-polyfill": "^1.0.7",
     "md5": "^2.3.0",
