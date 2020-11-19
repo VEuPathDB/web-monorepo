@@ -1,6 +1,8 @@
 import {
   Decoder,
+  Unpack,
   arrayOf,
+  combine,
   constant,
   number,
   objectOf,
@@ -148,3 +150,13 @@ export const groupLayoutDecoder: Decoder<GroupLayout> = record({
   taxonCounts: objectOf(number),
   taxons: taxonEntriesDecoder
 });
+
+export const groupLayoutResponseDecoder = oneOf(
+  record({ layoutOffered: constant(false) }),
+  combine(
+    record({ layoutOffered: constant(true) }),
+    groupLayoutDecoder
+  )
+);
+
+export type GroupLayoutResponse = Unpack<typeof groupLayoutResponseDecoder>;
