@@ -30,6 +30,7 @@ export class RecordTable_Sequences extends SortKeyTable {
        render () {
        	      return (
        	      	     <form action="/cgi-bin/msaOrthoMCL" target="_blank" method="post">
+		     	   <input type="hidden" name="project_id" value="OrthoMCL"/>
 
 			   <this.props.DefaultComponent {...this.props} value={this.sortValue(this.props.value)}/>
 			   <input type="button" name="CheckAll" value="Check All" onClick={() => this.toggleAll(true)}/> 
