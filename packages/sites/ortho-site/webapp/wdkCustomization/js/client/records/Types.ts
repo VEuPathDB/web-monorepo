@@ -12,6 +12,12 @@ import {
 
 export type WrappedComponentProps<T> = T & { DefaultComponent: React.ComponentType<T> };
 
+export interface RecordAttributeProps {
+  attribute: AttributeField;
+  record: RecordInstance;
+  recordClass: RecordClass;
+}
+
 export interface RecordAttributeSectionProps {
   attribute: AttributeField;
   isCollapsed: boolean;

@@ -14,6 +14,7 @@ import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/Pfa
 import { RecordTable_Sequences } from 'ortho-client/records/Sequences';
 
 import {
+  RecordAttributeProps,
   RecordAttributeSectionProps,
   RecordTableProps,
   WrappedComponentProps
@@ -36,6 +37,8 @@ import {
 
 import './GroupRecordClasses.GroupRecordClass.scss';
 
+const CLUSTER_PAGE_ATTRIBUTE_NAME = 'cluster_page';
+const LAYOUT_ATTRIBUTE_NAME = 'layout';
 const MSA_ATTRIBUTE_NAME = 'msa';
 
 const PFAMS_TABLE_NAME = 'PFams';
@@ -45,6 +48,24 @@ const SEQUENCES_TABLE_NAME = 'Sequences';
 const CORE_PERIPHERAL_ATTRIBUTE_NAME = 'core_peripheral';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
 const SOURCE_ID_ATTRIBUTE_NAME = 'full_id';
+
+export function RecordAttribute(props: WrappedComponentProps<RecordAttributeProps>) {
+  const Component = recordAttributeWrappers[props.attribute.name] ?? props.DefaultComponent;
+
+  return <Component {...props} />;
+}
+
+const recordAttributeWrappers: Record<string, React.ComponentType<WrappedComponentProps<RecordAttributeProps>>> = {
+  [CLUSTER_PAGE_ATTRIBUTE_NAME]: ClusterPageAttribute
+};
+
+function ClusterPageAttribute(props: WrappedComponentProps<RecordAttributeProps>) {
+  const layoutOffered = props.record.attributes[LAYOUT_ATTRIBUTE_NAME] != null;
+
+  return !layoutOffered
+    ? <em>Cluster graph layout unavailable. This layout is offered for ortholog groups of 2 to 499 proteins.</em>
+    : <props.DefaultComponent {...props} />;
+}
 
 export function RecordAttributeSection(props: WrappedComponentProps<RecordAttributeSectionProps>) {
   const Component = recordAttributeSectionWrappers[props.attribute.name] ?? props.DefaultComponent;

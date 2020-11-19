@@ -4,7 +4,10 @@ import {
   ProteomeSummaryRows,
   proteomeSummaryRowsDecoder
 } from 'ortho-client/utils/dataSummary';
-import { GroupLayout, groupLayoutDecoder } from 'ortho-client/utils/groupLayout';
+import {
+  GroupLayoutResponse,
+  groupLayoutResponseDecoder
+} from 'ortho-client/utils/groupLayout';
 import { TaxonEntries, taxonEntriesDecoder } from 'ortho-client/utils/taxons';
 
 export function wrapWdkService(wdkService: WdkService): OrthoService {
@@ -19,7 +22,7 @@ export function wrapWdkService(wdkService: WdkService): OrthoService {
 const orthoServiceWrappers = {
   getGroupLayout: (wdkService: WdkService) => (groupName: string) =>
     wdkService.sendRequest(
-      groupLayoutDecoder,
+      groupLayoutResponseDecoder,
       {
         useCache: true,
         method: 'get',
@@ -47,7 +50,7 @@ const orthoServiceWrappers = {
 };
 
 export interface OrthoService extends WdkService {
-  getGroupLayout: (groupName: string) => Promise<GroupLayout>;
+  getGroupLayout: (groupName: string) => Promise<GroupLayoutResponse>;
   getProteomeSummary: () => Promise<ProteomeSummaryRows>;
   getTaxons: () => Promise<TaxonEntries>;
 }
