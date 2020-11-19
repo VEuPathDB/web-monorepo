@@ -1,8 +1,8 @@
 /* DKDK legend positioning */
 .legend {
   position: absolute;
-  bottom: 80px;
-  right: 10px
+  bottom: 40px;
+  right: 10px;
 }
 
 /* DKDK reduce min-height for numeric (range data) - copy from .legend-contents at vb-popbio-maps.css */

@@ -80,25 +80,29 @@ export default function CustomGridLayer() {
             }
         });
 
-        const latLines = lats.map((lat) => {
+        const latLines = lats.map((lat, index) => {
             return (
-                <Polyline color="gray"
-                          positions={[[lat, mapBounds.getWest()], [lat, mapBounds.getEast()]]}
-                          opacity={.8}
-                          weight={1}
-                          dashArray={[10]}
+                <Polyline
+                    key={`lat-${lat}-${index}`}
+                    color="gray"
+                    positions={[[lat, mapBounds.getWest()], [lat, mapBounds.getEast()]]}
+                    opacity={.8}
+                    weight={1}
+                    dashArray={[10]}
 
                 />
             )
         })
 
-        const lonLines = lons.map((lon) => {
+        const lonLines = lons.map((lon, index) => {
             return (
-                <Polyline color="gray"
-                          positions={[[mapBounds.getNorth(), lon], [mapBounds.getSouth(), lon]]}
-                          opacity={.8}
-                          weight={1}
-                          dashArray={[10]}
+                <Polyline
+                    key={`lon-${lon}-${index}`}
+                    color="gray"
+                    positions={[[mapBounds.getNorth(), lon], [mapBounds.getSouth(), lon]]}
+                    opacity={.8}
+                    weight={1}
+                    dashArray={[10]}
                 />
             )
         })
