@@ -1,7 +1,10 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import Histogram, { HistogramProps, HistogramData } from './Histogram';
+import Histogram, {
+  HistogramProps,
+  HistogramData,
+} from '../plots/HistogramVisx';
 import {
   DARK_GRAY,
   DARK_RED,
@@ -108,10 +111,28 @@ PlotTitle.args = {
   title: 'A Fancy Plot Title',
 };
 
+export const WithLegend = Template.bind({});
+WithLegend.args = {
+  ...TwoNumericSeries.args,
+  displayGrid: true,
+  displayLegend: true,
+  title: 'A Fancy Plot with Legend',
+};
+
+export const HorizontalOrientation = Template.bind({});
+HorizontalOrientation.args = {
+  ...TwoNumericSeries.args,
+  displayGrid: true,
+  displayLegend: true,
+  orientation: 'horizontal',
+  title: 'Horizontal Plot with Legend & Grid',
+};
+
 export const GradientBackground = Template.bind({});
 GradientBackground.args = {
   ...PlotTitle.args,
   title: 'A Fancy Plot Title on Gradient Background',
-  titleColor: DARK_YELLOW,
+  titleColor: 'rgba(0, 0, 0, .4)',
+  displayGrid: false,
   backgroundGradientColors: [LIGHT_YELLOW, LIGHT_GRAY],
 };
