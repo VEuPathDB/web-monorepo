@@ -6,7 +6,8 @@ import {
   RecordAttributeSection as GroupRecordAttributeSection
 } from 'ortho-client/records/GroupRecordClasses.GroupRecordClass';
 import {
-  RecordTable as SequenceRecordTable
+  RecordTable as SequenceRecordTable,
+  RecordAttributeSection as SequenceRecordAttributeSection
 } from 'ortho-client/records/SequenceRecordClasses.SequenceRecordClass';
 import {
   RecordAttributeSectionProps,
@@ -28,6 +29,7 @@ const wrappedComponentsByRecordClass: Record<string, Record<string, React.Compon
     RecordTable: GroupRecordTable
   },
   [SEQUENCE_RECORD_CLASS_NAME]: {
+    RecordAttributeSection: SequenceRecordAttributeSection,
     RecordTable: SequenceRecordTable
   }
 };
@@ -36,7 +38,7 @@ function makeDynamicWrapper<P>(componentName: string, getWrapperType: (props: P)
   return function dynamicWrapper(DefaultComponent: React.ComponentType<P>) {
     return function WrappedComponent(props: P) {
       const wrapperType = getWrapperType(props);
-      const availableWrappers = wrappedComponentsByRecordClass[wrapperType] || {};
+      const availableWrappers = wrappedComponentsByRecordClass[wrapperType] ?? {};
       const ResolvedComponent = availableWrappers[componentName] || DefaultComponent;
 
       return <ResolvedComponent {...props} DefaultComponent={DefaultComponent} />;
