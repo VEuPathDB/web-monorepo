@@ -142,7 +142,7 @@ const makeProteinDomainLocationAttributeFields = transformAttributeFieldsUsingSp
     },
     {
       name: PROTEIN_LENGTH_ATTRIBUTE_NAME,
-      displayName: 'Protein Length'
+      displayName: 'Length (aa)'
     },
     {
       name: ACCESSION_ATTRIBUTE_NAME,

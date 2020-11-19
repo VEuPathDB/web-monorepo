@@ -310,10 +310,11 @@ function useEcNumberLegendEntries(
     );
 
     return orderedEcNumberEntries.map(
-      ({ code, color, count }) => ({
+      ({ code, color, count, description }) => ({
         key: code,
         symbol: renderSimpleLegendSymbol(color),
-        description: `${code} (${count})`
+        description: `${code} (${count})`,
+	tooltip: description
       })
     );
   }, [ ecNumbers, genes ]);
