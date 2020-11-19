@@ -61,7 +61,7 @@ interface MapVEuMapPropsCutAndPasteCopy {
 
 
 // export default function MapVEuMapSidebar({ viewport, height, width, onViewportChanged, markers, nudge }: MapVEuMapProps) {
-export default function MapVEuMapSidebarSibling({ viewport, height, width, onViewportChanged, markers, nudge, sidebarOnClose }: MapVEuMapPropsCutAndPasteCopy) {
+export default function MapVEuMapSidebarSibling({ viewport, height, width, onViewportChanged, markers, animation, nudge, sidebarOnClose }: MapVEuMapPropsCutAndPasteCopy) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -152,6 +152,7 @@ export default function MapVEuMapSidebarSibling({ viewport, height, width, onVie
         <SemanticMarkers
           onViewportChanged={onViewportChanged}
           markers={markers}
+          animation={animation}
           nudge={nudge}
         />
 

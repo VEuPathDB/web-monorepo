@@ -1,5 +1,5 @@
 import React, { ReactElement, useState, useCallback } from 'react';
-import { withKnobs, radios , boolean, number } from '@storybook/addon-knobs';
+// import { withKnobs, radios , boolean, number } from '@storybook/addon-knobs';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, MarkerProps } from './Types';
@@ -12,24 +12,42 @@ import collectionDateData from './test-data/geoclust-date-binning-testing-all-le
 // let collectionDateData : any = undefined;
 // import('./test-data/geoclust-date-binning-testing-all-levels.json').then((json) => collectionDateData = json);
 
-
 import { LeafletMouseEvent } from "leaflet";
-import RealHistogramMarkerSVGnoShadow from './RealHistogramMarkerSVGnoShadow'; // TO BE CREATED
+import ChartMarker from './ChartMarker'; // TO BE CREATED
 
 //DKDK change target component
-import MapVeuLegendSampleList, { LegendProps } from './MapVeuLegendSampleList'
+import MapVEuLegendSampleList, { LegendProps } from './MapVEuLegendSampleList'
 
 //DKDK anim
-// import Geohash from 'latlon-geohash';
-// import {DriftMarker} from "leaflet-drift-marker";
 import geohashAnimation from "./animation_functions/geohash";
 import md5 from 'md5';
 
 export default {
   title: 'Chart Markers for continuous',
   component: MapVEuMap,
-  decorators: [withKnobs],
 };
+
+//DKDK define bucket prop, which is for buckets[]
+interface bucketProps {
+  term: {
+    between: { count: number },
+    after: { count: number },
+    before: { count: number },
+    buckets: Array<{
+      count: number,
+      val: string,
+    }>,
+  },
+  atomicCount: number,
+  val: string,
+  count: number,
+  ltAvg: number,
+  ltMin: number,
+  ltMax: number,
+  lnAvg: number,
+  lnMin: number,
+  lnMax: number,
+}
 
 // some colors randomly pasted from the old mapveu code
 // these are NOT the final decided colors for MapVEu 2.0
@@ -102,9 +120,7 @@ const handleMouseOut = (e: LeafletMouseEvent) => {
 }
 
 //DKDK use legendRadioValue instead of knob_YAxisRangeMethod
-// const getCollectionDateMarkerElements = ({ bounds }: BoundsViewport, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod) => {
-
-const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
+const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void, knob_borderColor: string, knob_borderWidth: number, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
 
   let legendSums : number[] = [];
   let legendLabels : string[] = [];
@@ -115,7 +131,8 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
 
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
-  const buckets = collectionDateData[geohash_level].facets.geo.buckets.filter((bucket : any) => {
+  //DKDK keyof approach seems not to work for large json file
+    const buckets = (collectionDateData as { [key: string]: any })[geohash_level].facets.geo.buckets.filter((bucket: bucketProps) => {
     const ltAvg : number = bucket.ltAvg;
     const lnAvg : number = bucket.lnAvg;
     return ltAvg > bounds.southWest[0] &&
@@ -125,29 +142,13 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
   });
 
   //DKDK change this to always show Reginal scale value
-  // if (knob_YAxisRangeMethod === 'regional') {
-  // if (legendRadioValue === 'Regional') {
-  //   yAxisRange = [0, buckets.reduce(
-  //     (currentMax, bucket) => {
-  //       return Math.max(
-  //         currentMax,
-  //         bucket.count - bucket.term.before.count - bucket.term.after.count - bucket.term.between.count, // no data count
-  //         bucket.term.buckets.reduce(
-  //           (currentMax, bucket) => Math.max(currentMax, bucket.count),
-  //           0
-  //         )  // current bucket max value
-  //       );
-  //     },
-  //     0
-  //   )];
-  // }
   yAxisRangeAll = [0, buckets.reduce(
-    (currentMax, bucket) => {
+    (currentMax: number, bucket: bucketProps) => {
       return Math.max(
         currentMax,
         bucket.count - bucket.term.before.count - bucket.term.after.count - bucket.term.between.count, // no data count
         bucket.term.buckets.reduce(
-          (currentMax, bucket) => Math.max(currentMax, bucket.count),
+          (currentMax: number, bucket: { count: number, val: string }) => Math.max(currentMax, bucket.count),
           0
         )  // current bucket max value
       );
@@ -160,28 +161,27 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
   }
   //DKDK add setyAxisRangeValue: be careful of type of setYAxisRangeValue
   setYAxisRangeValue(yAxisRangeAll[1])
-  // console.log('yAxisRange = ', yAxisRange)
 
-  const markers = buckets.map((bucket) => {
+  const markers = buckets.map((bucket: bucketProps) => {
     const lat = bucket.ltAvg;
     const long = bucket.lnAvg;
     let labels = [];
     let values = [];
     let colors: string[] = [];
     let noDataValue:number = 0;
-    bucket.term.buckets.forEach((bucket, index) => {
+    bucket.term.buckets.forEach((bucket: { count: number, val: string }, index: number) => {
       const start = bucket.val.substring(0,4);
       const end = parseInt(start, 10)+3;
       const label = `${start}-${end}`;
       labels.push(label);
       values.push(bucket.count);
-      colors.push(knob_colorMethod === 'solid' ? '#7cb5ec' : all_colors_hex[index]);
+      colors.push(all_colors_hex[index]);
 
       // sum all counts for legend
       if (legendSums[index] === undefined) {
         legendSums[index] = 0;
         legendLabels[index] = label;
-        legendColors[index] = knob_colorMethod === 'solid' ? '#7cb5ec' : all_colors_hex[index];
+        legendColors[index] = all_colors_hex[index];
       }
       legendSums[index] += bucket.count;
     });
@@ -197,23 +197,17 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
     legendSums[5] += noDataValue;
     legendColors[5] = 'silver';
 
-    const new_knob_colorMethod = knob_colorMethod === 'solid' ? 'bins' : knob_colorMethod;
-
     //DKDK check isAtomic for push pin for chart marker
     let atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false
 
     //DKDK anim key
     const key = scrambleKeys ? md5(bucket.val).substring(0, zoomLevel) : bucket.val;
 
+    //DKDK need to check the presence of props.type and props.colorMethod
+    const yAxisRangeValue = (yAxisRange) ? (yAxisRange) : null
+
     return (
-      <RealHistogramMarkerSVGnoShadow
-        method={knob_method}
-        dividerVisible={knob_dividerVisible}
-        type={knob_type}
-        fillArea={knob_fillArea}
-        spline={knob_spline}
-        lineVisible={knob_lineVisible}
-        colorMethod={new_knob_colorMethod}
+      <ChartMarker
         borderColor={knob_borderColor}
         borderWidth={knob_borderWidth}
         key={key}   //DKDK anim
@@ -226,7 +220,7 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
         //DKDK add isAtomic for chart marker
         isAtomic={atomicValue}
         //DKDK yAxisRange can be commented out - defined as optional at HistogramMarkerSVG.tsx (HistogramMarkerSVGProps)
-        yAxisRange ={yAxisRange}
+        yAxisRange ={yAxisRangeValue}
         // onClick={handleClick}
         onMouseOut={handleMouseOut}
         onMouseOver={handleMouseOver}
@@ -256,23 +250,10 @@ export const CollectionDate = () => {
   // const yAxisRange: Array<number> | null = []
   const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
 
-  // Knobs
-  const knob_method = radios('Method', {SVG: 'svg', Library: 'lib'}, 'svg');
-  const knob_borderWidth = number('Border width', 3.5, {range: true, min: 0, max: 5, step: 0.5});
-  //const knob_borderColor = color('Border color', '#00000088');  // Isn't working
-  const knob_borderColor = radios('Border color', {DarkGrey: '#00000099', LightGrey: '#00000055', Blue: '#7cb5ec'}, '#00000055');
-  const knob_dividerVisible = boolean('Divider visible', false);
-  const knob_type = knob_method === 'lib' ? radios('Type', {Bar: 'bar', Line: 'line'}, 'bar') : undefined;
-  const knob_fillArea = knob_type === 'line' ? boolean('Fill area', true) : undefined;
-  const knob_spline = knob_type === 'line' ? boolean('Spline', false) : undefined;
-  const knob_lineVisible = knob_fillArea ? boolean('Show line', false) : undefined;
-  const knob_colorMethod = knob_type === 'line' ?
-    radios('Color method', {Bins: 'discrete', Solid: 'solid', Gradient: 'gradient'}, 'discrete') :
-    radios('Color method', {Bins: 'discrete', Solid: 'solid'}, 'discrete');
+  const knob_borderWidth: number = 3.5
+  const knob_borderColor: string = '#AAAAAA'  //DKDK light greyish
 
-  //DKDK block this
-  // const knob_YAxisRangeMethod = radios('Y-axis range', {Local: 'local', Regional: 'regional'}, 'local');
-
+  //DKDK legend props
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
 
   //DKDK set legend radio button value
@@ -283,7 +264,6 @@ export const CollectionDate = () => {
   };
   //DKDK add state for getting yAxisRange
   const [yAxisRangeValue, setYAxisRangeValue] = useState<number>(0)
-  // console.log('yAxisRangeValue = ', yAxisRangeValue)
 
   //DKDK define legendType
   const legendType = 'numeric'
@@ -305,13 +285,10 @@ export const CollectionDate = () => {
   const scrambleKeys = false
 
   //DKDK send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
-  // const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-  //   setMarkerElements(getCollectionDateMarkerElements(bvp, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod));
-  // }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, knob_YAxisRangeMethod])
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     //DKDK anim add duration & scrambleKeys
-    setMarkerElements(getCollectionDateMarkerElements(bvp, duration, scrambleKeys, setLegendData, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue, setYAxisRangeValue));
-  }, [setMarkerElements, knob_method, knob_dividerVisible, knob_type, knob_fillArea, knob_spline, knob_lineVisible, knob_colorMethod, knob_borderColor, knob_borderWidth, legendRadioValue])
+    setMarkerElements(getCollectionDateMarkerElements(bvp, duration, scrambleKeys, setLegendData, knob_borderColor, knob_borderWidth, legendRadioValue, setYAxisRangeValue));
+  }, [setMarkerElements, legendRadioValue])
 
 
   return (
@@ -330,7 +307,7 @@ export const CollectionDate = () => {
         }}
         showGrid={true}
       />
-      <MapVeuLegendSampleList
+      <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
         //DKDK send x-/y-axes lables here

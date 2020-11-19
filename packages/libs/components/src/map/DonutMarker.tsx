@@ -9,7 +9,7 @@ import L, { LatLngExpression } from "leaflet";
 import {DriftMarker} from "leaflet-drift-marker";
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
-interface SVGDonutMarkerProps extends MarkerProps {
+interface DonutMarkerProps extends MarkerProps {
   labels: Array<string>, // the labels (not likely to be shown at normal marker size)
   values: Array<number>, // the counts or totals to be shown in the donut
   colors?: Array<string> | null, // bar colors: set to be optional with array or null type
@@ -66,13 +66,14 @@ function makeArc(x: number, y: number, radius: number, startAngle: number, endAn
 
 // making k over 9999, e.g., 223832 -> 234k
 function kFormatter(num: number) {
-  return Math.abs(num) > 9999 ? Math.sign(num)*((Math.abs(num)/1000).toFixed(0)) + 'k' : Math.sign(num)*Math.abs(num)
+  //DKDK fixed type error regarding toFixed() that returns string
+  return Math.abs(num) > 9999 ? (Math.sign(num)*(Math.abs(num)/1000)).toFixed(0) + 'k' : Math.sign(num)*Math.abs(num)
 }
 
 /**
  * DKDK this is a SVG donut marker icon
  */
-export default function SVGDonutMarkerAnim(props: SVGDonutMarkerProps) {
+export default function DonutMarker(props: DonutMarkerProps) {
   let fullStat = []
   //DKDK set defaultColor to be skyblue (#7cb5ec) if props.colors does not exist
   let defaultColor: string = ''
