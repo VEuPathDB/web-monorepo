@@ -1,8 +1,11 @@
-import { StudyCard } from 'ebrc-client/App/Studies';
-import { SearchCard } from 'ebrc-client/App/Searches';
-import { ImageCard } from 'ebrc-client/App/ImageCard';
+import { StudyCard } from '@veupathdb/web-common/lib/App/Studies';
+import { SearchCard } from '@veupathdb/web-common/lib/App/Searches';
+import { ImageCard } from '@veupathdb/web-common/lib/App/ImageCard';
 
-import { studyMatchPredicate, studyFilters } from 'ebrc-client/util/homeContent';
+import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import { studyMatchPredicate, studyFilters } from '@veupathdb/web-common/lib/util/homeContent';
+
+const ClinEpiStudyCard = withPermissions(StudyCard);
 
 export default ({ studies, searches, visualizations }) => ([
   {
@@ -15,7 +18,7 @@ export default ({ studies, searches, visualizations }) => ([
     isLoading: studies.loading,
     isExpandable: true,
     tableViewLink: '/search/dataset/Studies/result',
-    cardComponent: StudyCard,
+    cardComponent: ClinEpiStudyCard,
     getSearchStringForItem: item => 
       item.searchString,
     matchPredicate: studyMatchPredicate

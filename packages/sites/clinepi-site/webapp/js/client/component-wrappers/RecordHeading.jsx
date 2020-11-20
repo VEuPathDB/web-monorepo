@@ -1,8 +1,12 @@
 import React from 'react';
-import StudyRecordHeading from 'ebrc-client/component-wrappers/StudyRecordHeading';
+
+import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import StudyRecordHeading from '@veupathdb/web-common/lib/component-wrappers/StudyRecordHeading';
+
+const ClinEpiStudyRecordHeading = withPermissions(StudyRecordHeading);
 
 export default RecordHeading => props => (
   props.recordClass.urlSegment === 'dataset'
-    ? <StudyRecordHeading {...props} DefaultComponent={RecordHeading} showSearches showDownload />
+    ? <ClinEpiStudyRecordHeading {...props} DefaultComponent={RecordHeading} showSearches showDownload />
     : <RecordHeading {...props} />
 )

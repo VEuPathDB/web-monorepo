@@ -1,6 +1,6 @@
 import { of, merge } from 'rxjs';
 import { filter, mergeAll, mergeMap, withLatestFrom } from 'rxjs/operators';
-import { StaticDataActions } from 'wdk-client/Actions';
+import { StaticDataActions } from '@veupathdb/wdk-client/lib/Actions';
 
 import { 
   FINISH_SUBMISSION,
@@ -18,7 +18,9 @@ import {
 } from '../action-creators/AccessRequestActionCreators';
 import { datasetId, formValues, userId } from '../selectors/AccessRequestSelectors';
 import { parse } from 'querystring';
-import { userUpdate } from 'wdk-client/Actions/UserActions';
+import { userUpdate } from '@veupathdb/wdk-client/lib/Actions/UserActions';
+
+import { checkPermissions, isUserApprovedForStudy } from '@veupathdb/web-common/lib/StudyAccess/permission';
 
 export const key = 'accessRequest';
 
@@ -119,8 +121,11 @@ function observeStaticDataLoaded(action$, state$, dependencies) {
 
       const datasetId = window.location.pathname.replace(/.*\/request-access\//, '');
 
+      const permissions = await checkPermissions(payload.user);
+
       if (
-        payload.user.isGuest || payload.user.properties.approvedStudies.includes(datasetId)
+        payload.user.isGuest ||
+        isUserApprovedForStudy(permissions, payload.user.properties.approvedStudies)
       ) {
         const { redirectUrl = '/' } = parse(window.location.search.slice(1));
 

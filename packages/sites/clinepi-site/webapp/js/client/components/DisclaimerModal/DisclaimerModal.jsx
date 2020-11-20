@@ -1,7 +1,7 @@
 import React from 'react';
-import * as persistence from 'ebrc-client/util/persistence';
-import Modal from 'ebrc-client/App/Modal';
-import { IconAlt as Icon } from 'wdk-client/Components'
+import * as persistence from '@veupathdb/web-common/lib/util/persistence';
+import Modal from '@veupathdb/web-common/lib/App/Modal';
+import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components'
 
 import './DisclaimerModal.scss';
 

@@ -1,7 +1,6 @@
 {
-  "extends": "../../EbrcWebsiteCommon/Site/tsconfig.json",
+  "extends": "../../install/base.tsconfig.json",
   "include": [
-    "./webapp/**/*",
-    "../../EbrcWebsiteCommon/Site/node_modules/@veupathdb/wdk-client/lib/Core/index.d.ts"
+    "./webapp/**/*"
   ]
 }

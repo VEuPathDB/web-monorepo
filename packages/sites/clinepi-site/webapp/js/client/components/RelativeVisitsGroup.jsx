@@ -2,7 +2,7 @@
 /* eslint require-jsdoc: 0 */
 
 import React from 'react';
-import Param from 'ebrc-client/components/Param';
+import Param from '@veupathdb/web-common/lib/components/Param';
 
 import { createSettingsParser, groupGetter, parameterGetter } from '../util/questionSettings';
 
