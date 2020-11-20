@@ -118,6 +118,12 @@
     }
   }
 
+  // site search overrides
+  .SiteSearch--CountsContainer, .SiteSearch--ResultTypeWidgetContainer {
+    border: 1px solid themed('secondary-color-border');
+    background: themed('secondary-color')
+  }
+
 }
 
 
