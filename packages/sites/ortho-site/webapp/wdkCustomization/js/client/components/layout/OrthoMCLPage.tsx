@@ -280,9 +280,15 @@ function useHeaderMenuItems() {
         items: [
         {
           key: 'what-is',
-          display: `What is ${displayName}?`,
+          display: `What is VEuPathDB?`,
           type: 'reactRoute',
           url: makeStaticPageRoute('/about.html')
+        },
+        { 
+          key: 'what-is-ortho',
+          display: `What is OrthoMCL?`,
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/OrthoMCL/about.html')
         },
         { 
           key: 'switchsites',
