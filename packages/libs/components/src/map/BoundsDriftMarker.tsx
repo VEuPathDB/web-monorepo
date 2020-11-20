@@ -21,10 +21,9 @@ export default function BoundsDriftMarker({position, bounds, icon, duration, zoo
   // is this the most elegant way?
   const optionalIconProp = icon ? { icon } : { };
 
-  const HandleDoubleClick = () => {
-    const boundingBoxCenter = boundingBox.getCenter()
+  const handleDoubleClick = () => {
     if (map) {
-      map.setView([boundingBoxCenter.lat, boundingBoxCenter.lng], zoomLevel+2)
+      map.fitBounds(boundingBox)
     }
   }
 
@@ -34,7 +33,7 @@ export default function BoundsDriftMarker({position, bounds, icon, duration, zoo
     {...optionalIconProp}
     onMouseOver={() => setDisplayBounds(true)} // Display bounds rectangle
     onMouseOut={() => setDisplayBounds(false)} // Remove bounds rectangle
-    onDblClick={() => HandleDoubleClick()}
+    onDblClick={() => handleDoubleClick()}
   >
     {
       displayBounds
