@@ -66,26 +66,3 @@ export const MarkerBounds = () => {
   );
 };
 
-export const DoubleClick = () => {
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
-  const duration = defaultAnimationDuration;
-
-  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getMarkerElements(bvp, duration));
-  }, [setMarkerElements]);
-
-  return (
-      <MapVEuMap
-          viewport={{center: [ 10, -3 ], zoom: 5}}
-          height="96vh" width="98vw"
-          onViewportChanged={handleViewportChanged}
-          markers={markerElements}
-          animation={{
-            method: "geohash",
-            duration: defaultAnimationDuration,
-            animationFunction: geohashAnimation
-          }}
-          showGrid={true}
-      />
-  );
-}
