@@ -8,7 +8,7 @@ import {
   oneOf,
   record,
   string
-} from 'wdk-client/Utils/Json';
+} from '@veupathdb/wdk-client/lib/Utils/Json';
 
 import { DataTableColumns } from 'ortho-client/utils/dataTables';
 import { TaxonUiMetadata } from 'ortho-client/utils/taxons';

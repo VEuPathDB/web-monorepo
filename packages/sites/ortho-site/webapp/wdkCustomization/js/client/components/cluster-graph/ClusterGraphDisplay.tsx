@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { groupBy, mapValues, orderBy } from 'lodash';
 
-import { HelpIcon, Link } from 'wdk-client/Components';
+import { HelpIcon, Link } from '@veupathdb/wdk-client/lib/Components';
 
 import {
   EdgeType,

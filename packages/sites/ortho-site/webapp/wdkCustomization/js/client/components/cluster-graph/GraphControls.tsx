@@ -7,7 +7,7 @@ import {
   SliderInput,
   TextBox,
   Tooltip
-} from 'wdk-client/Components';
+} from '@veupathdb/wdk-client/lib/Components';
 
 import {
   EDGE_OPTIONS_HELP,

@@ -2,10 +2,10 @@ import { useSelector } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
-import { RootState } from 'wdk-client/Core/State/Types';
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
-import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
-import { decode, arrayOf, string } from 'wdk-client/Utils/Json';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { CategoryTreeNode } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { decode, arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 export function useSearchTree() {
   return useSelector(

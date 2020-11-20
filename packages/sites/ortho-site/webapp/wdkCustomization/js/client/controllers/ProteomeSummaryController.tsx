@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
-import { Loading } from 'wdk-client/Components';
-import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { ReleaseSummaryPage } from 'ortho-client/components/release-summary/ReleaseSummaryPage';
 import { useProteomeSummaryRows } from 'ortho-client/hooks/dataSummary';

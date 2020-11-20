@@ -1,5 +1,5 @@
-import { Action, RecordActions } from 'wdk-client/Actions';
-import * as RecordStoreModule from 'wdk-client/StoreModules/RecordStoreModule';
+import { Action, RecordActions } from '@veupathdb/wdk-client/lib/Actions';
+import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import {
   GROUP_STATISTICS_TABLE_NAME,
   TAXON_COUNTS_TABLE_NAME

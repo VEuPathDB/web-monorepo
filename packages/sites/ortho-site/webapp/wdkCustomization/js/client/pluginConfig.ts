@@ -1,4 +1,4 @@
-import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin';
+import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 
 import { Form as GroupsByPhyleticPatternForm } from '../questions/GroupsByPhyleticPattern/Form';
 

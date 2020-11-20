@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Tabs } from 'wdk-client/Components';
-import { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
+import { Tabs } from '@veupathdb/wdk-client/lib/Components';
+import { TabConfig } from '@veupathdb/wdk-client/lib/Components/Tabs/Tabs';
 
 import { GraphInformationTabKey } from 'ortho-client/utils/graphInformation';
 

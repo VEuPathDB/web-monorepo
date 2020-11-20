@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 
-import { CollapsibleSection, Link } from 'wdk-client/Components';
-import { AttributeValue } from 'wdk-client/Utils/WdkModel';
+import { CollapsibleSection, Link } from '@veupathdb/wdk-client/lib/Components';
+import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
-import Sequence from 'ebrc-client/components/records/Sequence';
+import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
 

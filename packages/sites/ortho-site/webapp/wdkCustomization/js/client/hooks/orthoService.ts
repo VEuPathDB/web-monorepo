@@ -1,4 +1,4 @@
-import { ServiceCallback, useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
+import { ServiceCallback, useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { OrthoService, isOrthoService } from 'ortho-client/services';
 

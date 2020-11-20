@@ -1,4 +1,4 @@
-import { WdkService } from 'wdk-client/Core';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
 import {
   ProteomeSummaryRows,

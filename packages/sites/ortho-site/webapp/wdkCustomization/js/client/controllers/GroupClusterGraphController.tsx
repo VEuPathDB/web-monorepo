@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Loading } from 'wdk-client/Components';
-import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { useCorePeripheralMap } from 'ortho-client/hooks/dataSummary';
 import { useOrthoService } from 'ortho-client/hooks/orthoService';

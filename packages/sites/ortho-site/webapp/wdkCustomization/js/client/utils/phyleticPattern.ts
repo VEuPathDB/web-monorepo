@@ -1,7 +1,7 @@
 import { groupBy, mapValues, orderBy, partition } from 'lodash';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { foldStructure, mapStructure } from 'wdk-client/Utils/TreeUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { foldStructure, mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import { TaxonTree } from 'ortho-client/utils/taxons';
 

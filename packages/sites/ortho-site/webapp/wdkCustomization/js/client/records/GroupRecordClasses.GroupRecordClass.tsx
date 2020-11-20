@@ -3,8 +3,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 
 import { curry, groupBy, isNaN, uniqBy } from 'lodash';
 
-import { CollapsibleSection, Loading } from 'wdk-client/Components';
-import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
+import { CollapsibleSection, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { AttributeField, AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-distribution/PhyleticDistributionCheckbox';

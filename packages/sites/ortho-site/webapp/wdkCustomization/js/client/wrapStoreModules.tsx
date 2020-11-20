@@ -1,4 +1,4 @@
-import storeModules from 'wdk-client/StoreModules';
+import storeModules from '@veupathdb/wdk-client/lib/StoreModules';
 
 import * as record from 'ortho-client/store-modules/RecordStoreModule';
 

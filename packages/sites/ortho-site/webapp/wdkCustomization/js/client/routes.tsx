@@ -2,9 +2,9 @@ import React from 'react';
 
 import { RouteComponentProps } from 'react-router';
 
-import { RouteEntry } from 'wdk-client/Core/RouteEntry';
+import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
-import SiteSearchController from 'ebrc-client/controllers/SiteSearchController';
+import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
 
 import { OrthoMCLHomePageController } from 'ortho-client/controllers/OrthoMCLHomePageController';
 import { ProteomeSummaryController } from 'ortho-client/controllers/ProteomeSummaryController';

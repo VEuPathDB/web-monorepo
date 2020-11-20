@@ -2,14 +2,14 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import produce from 'immer';
 
-import { CheckboxTree, IconAlt, Loading } from 'wdk-client/Components';
-import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
-import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
-import { Props, SubmitButton } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { CheckboxTree, IconAlt, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
+import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Props, SubmitButton } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
-import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
+import { EbrcDefaultQuestionForm } from '@veupathdb/web-common/lib/components/questions/EbrcDefaultQuestionForm';
 
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 import {

@@ -9,8 +9,8 @@ import {
   optional,
   record,
   string
-} from 'wdk-client/Utils/Json';
-import { areTermsInString } from 'wdk-client/Utils/SearchUtils';
+} from '@veupathdb/wdk-client/lib/Utils/Json';
+import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 export interface BaseTaxonEntry {
   abbrev: string;

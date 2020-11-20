@@ -2,14 +2,14 @@ import React, { useMemo, useState } from 'react';
 
 import { orderBy } from 'lodash';
 
-import { Checkbox, CheckboxTree } from 'wdk-client/Components';
-import { LinksPosition } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
+import { Checkbox, CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
   mapStructure,
   pruneDescendantNodes
-} from 'wdk-client/Utils/TreeUtils';
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 import {
   PhyleticDistributionUiTree,

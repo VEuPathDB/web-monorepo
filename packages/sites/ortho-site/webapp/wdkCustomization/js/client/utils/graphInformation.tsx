@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Link, Tooltip } from 'wdk-client/Components';
-import Icon from 'wdk-client/Components/Icon/IconAlt';
-import { TabConfig } from 'wdk-client/Components/Tabs/Tabs';
+import { Link, Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+import { TabConfig } from '@veupathdb/wdk-client/lib/Components/Tabs/Tabs';
 
 import {
   EdgeType,

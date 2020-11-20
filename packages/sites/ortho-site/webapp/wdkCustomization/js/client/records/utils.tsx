@@ -8,7 +8,7 @@ import {
   AttributeValue,
   LinkAttributeValue,
   TableValue
-} from 'wdk-client/Utils/WdkModel';
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { PfamDomain } from 'ortho-client/components/pfam-domains/PfamDomain';
 import { Domain } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';

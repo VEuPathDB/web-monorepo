@@ -2,20 +2,20 @@ import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } f
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
-import { Link } from 'wdk-client/Components';
-import { Props } from 'wdk-client/Components/Layout/Page';
-import { ErrorBoundary } from 'wdk-client/Controllers';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
+import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import Announcements from 'ebrc-client/components/Announcements';
-import CookieBanner from 'ebrc-client/components/CookieBanner';
-import { Footer } from 'ebrc-client/components/homepage/Footer';
-import { SearchCheckboxTree } from 'ebrc-client/components/homepage/SearchPane';
-import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
-import { Main } from 'ebrc-client/components/homepage/Main';
-import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
-import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
+import Announcements from '@veupathdb/web-common/lib/components/Announcements';
+import CookieBanner from '@veupathdb/web-common/lib/components/CookieBanner';
+import { Footer } from '@veupathdb/web-common/lib/components/homepage/Footer';
+import { SearchCheckboxTree } from '@veupathdb/web-common/lib/components/homepage/SearchPane';
+import { Header, HeaderMenuItem } from '@veupathdb/web-common/lib/components/homepage/Header';
+import { Main } from '@veupathdb/web-common/lib/components/homepage/Main';
+import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
+import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 
 import {
   useSearchTree,

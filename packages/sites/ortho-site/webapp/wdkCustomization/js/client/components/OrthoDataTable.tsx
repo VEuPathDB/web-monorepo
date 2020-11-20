@@ -2,13 +2,13 @@ import React, { useMemo, useState } from 'react';
 
 import { orderBy } from 'lodash';
 
-import { RealTimeSearchBox } from 'wdk-client/Components';
-import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
+import { Mesa, MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   areTermsInString,
   parseSearchQueryString
-} from 'wdk-client/Utils/SearchUtils';
+} from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 
 import {
   DataTableColumnKey,

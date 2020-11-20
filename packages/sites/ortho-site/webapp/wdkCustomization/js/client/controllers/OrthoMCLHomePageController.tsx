@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
 
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import { FeaturedTools } from 'ebrc-client/components/homepage/FeaturedTools';
-import { SearchPane } from 'ebrc-client/components/homepage/SearchPane';
-import { WorkshopExercises } from 'ebrc-client/components/homepage/WorkshopExercises';
-import { NewsPane } from 'ebrc-client/components/homepage/NewsPane';
+import { FeaturedTools } from '@veupathdb/web-common/lib/components/homepage/FeaturedTools';
+import { SearchPane } from '@veupathdb/web-common/lib/components/homepage/SearchPane';
+import { WorkshopExercises } from '@veupathdb/web-common/lib/components/homepage/WorkshopExercises';
+import { NewsPane } from '@veupathdb/web-common/lib/components/homepage/NewsPane';
 
 import { useSearchTree } from 'ortho-client/hooks/searchCheckboxTree';
 
