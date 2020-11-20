@@ -9,8 +9,8 @@ import {
   StepAnalysisGoEnrichmentResults,
   StepAnalysisEupathExternalResult,
   StepAnalysisHpiGeneListResults,
-} from 'wdk-client/Plugins';
-import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin';
+} from '@veupathdb/wdk-client/lib/Plugins';
+import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 
 import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumberCheckbox';
 

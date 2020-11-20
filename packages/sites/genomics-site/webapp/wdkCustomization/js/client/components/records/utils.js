@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 
 import { compose, defaultTo, memoize, property } from 'lodash/fp';
 
-import { RecordActions } from 'wdk-client/Actions';
-import { stripHTML } from 'wdk-client/Views/Records/RecordUtils';
+import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils';
 
 /**
  * Higher order component to ensure that record fields

@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux';
 
 import { noop } from 'lodash';
 
-import { TextArea, Loading, HelpIcon, Tabs, Link } from 'wdk-client/Components';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { TextArea, Loading, HelpIcon, Tabs, Link } from '@veupathdb/wdk-client/lib/Components';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import FastaGeneReporterForm from 'ebrc-client/components/reporters/FastaGeneReporterForm';
-import { fastaGenomicSequenceReporterFormFactory } from 'ebrc-client/components/reporters/FastaGenomicSequenceReporterForm';
+import FastaGeneReporterForm from '@veupathdb/web-common/lib/components/reporters/FastaGeneReporterForm';
+import { fastaGenomicSequenceReporterFormFactory } from '@veupathdb/web-common/lib/components/reporters/FastaGenomicSequenceReporterForm';
 
 import './Srt.scss';
 

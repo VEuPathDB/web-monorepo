@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { AddStepOperationMenuProps } from 'wdk-client/Views/Strategy/AddStepPanel';
-import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { AddStepOperationMenuProps } from '@veupathdb/wdk-client/lib/Views/Strategy/AddStepPanel';
+import { SearchInputSelector } from '@veupathdb/wdk-client/lib/Views/Strategy/SearchInputSelector';
 
 import { colocationQuestionSuffix } from './ApiBinaryOperations';
 import { makeBasketPage, makeNewSearchFormPage, makeStrategyFormPage } from './ColocateStepForm';

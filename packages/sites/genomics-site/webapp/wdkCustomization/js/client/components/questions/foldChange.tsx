@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Props, renderDefaultParamGroup } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Props, renderDefaultParamGroup } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
-import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
+import { EbrcDefaultQuestionForm } from '@veupathdb/web-common/lib/components/questions/EbrcDefaultQuestionForm';
 
 import { CompoundsByFoldChange, GenericFoldChange } from './FoldChange/foldChangeGroup';
 

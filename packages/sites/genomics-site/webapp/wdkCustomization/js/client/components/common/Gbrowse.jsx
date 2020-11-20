@@ -1,9 +1,9 @@
 import {once, debounce} from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent, useCallback, useEffect, useState, useRef } from 'react';
-import { httpGet } from 'ebrc-client/util/http';
+import { httpGet } from '@veupathdb/web-common/lib/util/http';
 import $ from 'jquery';
-import { Checkbox, HelpIcon, Loading } from 'wdk-client/Components';
+import { Checkbox, HelpIcon, Loading } from '@veupathdb/wdk-client/lib/Components';
 
 import './Gbrowse.scss';
 

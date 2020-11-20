@@ -1,4 +1,4 @@
-@import 'ebrc-client/styles/collapsed-header-mixins.scss';
+@import '@veupathdb/web-common/lib/styles/collapsed-header-mixins.scss';
 
 body.vpdb-Body .vpdb-RootContainer__jbrowse {
   @include collapsed-header-page-layout;

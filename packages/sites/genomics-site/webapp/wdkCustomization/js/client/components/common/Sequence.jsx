@@ -2,8 +2,8 @@ import { orderBy, range } from 'lodash';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useIsRefOverflowingVertically } from 'wdk-client/Hooks/Overflow';
-import { writeTextToClipboard } from 'wdk-client/Utils/DomUtils';
+import { useIsRefOverflowingVertically } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
+import { writeTextToClipboard } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 const NUM_COLS = 80;
 

@@ -1,19 +1,19 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { BinaryOperation, defaultBinaryOperations, ReviseOperationFormProps } from 'wdk-client/Utils/Operations';
-import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { BinaryOperation, defaultBinaryOperations, ReviseOperationFormProps } from '@veupathdb/wdk-client/lib/Utils/Operations';
+import { Props as FormProps } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
 import { ColocateStepMenu } from './ColocateStepMenu';
 import { ColocateStepForm } from './ColocateStepForm';
 import { SpanLogicForm } from '../questions/SpanLogicForm';
-import { WdkService } from 'wdk-client/Core';
-import { NewStepSpec, Step } from 'wdk-client/Utils/WdkUser';
-import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
-import NotFound from 'wdk-client/Views/NotFound/NotFound';
-import { cxStepBoxes } from 'wdk-client/Views/Strategy/ClassNames';
-import { LeafPreview, combinedPreviewFactory } from 'wdk-client/Views/Strategy/StepBoxes';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import { NewStepSpec, Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
+import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+import { RecordClass, Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
+import { cxStepBoxes } from '@veupathdb/wdk-client/lib/Views/Strategy/ClassNames';
+import { LeafPreview, combinedPreviewFactory } from '@veupathdb/wdk-client/lib/Views/Strategy/StepBoxes';
 
 import './ColocateStepBoxIcon.scss';
 

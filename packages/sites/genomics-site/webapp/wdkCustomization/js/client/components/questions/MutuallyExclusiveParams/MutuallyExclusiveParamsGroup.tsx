@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { Tabs } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
-import { Props, renderDefaultParamGroup } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Tabs } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Props, renderDefaultParamGroup } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import { groupXorParametersByChromosomeAndSequenceID, keyForXorGroupingByChromosomeAndSequenceID, restrictParameterGroup } from './utils';
 
 import './MutuallyExclusiveParamsGroup.scss';

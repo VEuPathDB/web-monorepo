@@ -1,11 +1,11 @@
 import React from 'react';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { FoldChangeParamPreview } from './FoldChangeParamPreview';
 import { GenericFoldChangeParamGroup } from './GenericFoldChangeParamGroup';
 import { MetaboliteFoldChangeParamGroup } from './MetaboliteFoldChangeParamGroup';
 import { FoldChangeDirection, FoldChangeOperation } from './Types';
-import { toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { toMultiValueArray } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
+import { Props } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
 import './FoldChange.scss';
 

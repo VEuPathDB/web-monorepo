@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { searchTree } from '../../selectors/QueryGridSelectors';
 
 import QueryGrid from '../QueryGrid';
-import { PageController } from 'wdk-client/Controllers';
+import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
 
 class QueryGridController extends PageController {
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
-import { TextArea } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { TextArea } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 const cx = makeClassNameHelper('api-PlasmoAp');
 

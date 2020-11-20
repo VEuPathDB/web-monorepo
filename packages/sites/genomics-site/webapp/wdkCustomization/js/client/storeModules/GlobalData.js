@@ -1,5 +1,5 @@
-import { allDataLoaded } from 'wdk-client/Actions/StaticDataActions';
-import { getLeaves } from 'wdk-client/Utils/TreeUtils';
+import { allDataLoaded } from '@veupathdb/wdk-client/lib/Actions/StaticDataActions';
+import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 export function reduce(state, action) {
   switch(action.type) {

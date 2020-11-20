@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { Srt } from '../Srt';
 

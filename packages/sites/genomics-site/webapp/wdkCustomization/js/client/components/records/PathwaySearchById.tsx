@@ -6,9 +6,9 @@ import { Option } from 'react-select/src/filters';
 import { Core } from 'cytoscape';
 import { isEqual, orderBy, uniqWith } from 'lodash';
 
-import { HelpIcon } from 'wdk-client/Components';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { stripHTML } from 'wdk-client/Views/Records/RecordUtils';
+import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils';
 
 import { NodeSearchCriteria } from './pathway-utils';
 
@@ -91,7 +91,7 @@ export function PathwaySearchById({
     setSelection([]);
   }, [ cy ]);
 
-  const onChange = useCallback((newSelection: ValueType<Option>, meta: ActionMeta) => {
+  const onChange = useCallback((newSelection: ValueType<Option>) => {
     const newSelectionArray = newSelection == null
       ? []
       : Array.isArray(newSelection)

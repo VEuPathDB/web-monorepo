@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {CollapsibleSection} from 'wdk-client/Components';
-import {pure} from 'wdk-client/Utils/ComponentUtils';
+import {CollapsibleSection} from '@veupathdb/wdk-client/lib/Components';
+import {pure} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import {CompoundStructure} from '../common/Compound';
-import DatasetGraph from 'ebrc-client/components/DatasetGraph';
+import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
 
 let expressionRE = /MassSpecGraphs$/;
 export function RecordTable(props) {

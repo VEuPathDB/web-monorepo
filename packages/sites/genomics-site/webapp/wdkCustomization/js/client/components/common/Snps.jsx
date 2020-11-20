@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { get, pick } from 'lodash';
-import { FilterParamNew } from 'wdk-client/Components';
-import { QuestionActions } from 'wdk-client/Actions';
+import { FilterParamNew } from '@veupathdb/wdk-client/lib/Components';
+import { QuestionActions } from '@veupathdb/wdk-client/lib/Actions';
 
 const headingStyle = {
   fontSize: '1.2em',

@@ -1,8 +1,8 @@
 import { get } from 'lodash';
-import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
+import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 import {
   SHOW_GALAXY_PAGE_PREFERENCE
-} from 'ebrc-client/controllers/GalaxyTermsController';
+} from '@veupathdb/web-common/lib/controllers/GalaxyTermsController';
 
 const PlasmoDB = 'PlasmoDB';
 const TriTrypDB = 'TriTrypDB';

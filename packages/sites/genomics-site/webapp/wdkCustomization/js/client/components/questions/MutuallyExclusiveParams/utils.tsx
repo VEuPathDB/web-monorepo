@@ -1,8 +1,8 @@
 import { Dictionary, mapValues, values } from 'lodash';
 import { createSelector } from 'reselect';
 
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 const findXorGroupKey = (xorGrouping: Dictionary<string[]>) => (state: QuestionState): string => {
   const xorGroup = state.question.groups.find(group => {

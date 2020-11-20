@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { defaultActions, StepAction } from 'wdk-client/Views/Strategy/StepDetailsDialog';
+import { defaultActions, StepAction } from '@veupathdb/wdk-client/lib/Views/Strategy/StepDetailsDialog';
 
 const orthologIndex = defaultActions.findIndex(action => action.key === 'insertBefore');
 

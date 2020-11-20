@@ -2,23 +2,23 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
-import { Loading, Link, Tooltip, HelpIcon, Tabs } from 'wdk-client/Components';
-import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from 'wdk-client/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
+import { Loading, Link, Tooltip, HelpIcon, Tabs } from '@veupathdb/wdk-client/lib/Components';
+import { StepAnalysisEnrichmentResultTable as InternalGeneDatasetTable } from '@veupathdb/wdk-client/lib/Core/MoveAfterRefactor/Components/StepAnalysis/StepAnalysisEnrichmentResultTable';
 import QuestionController, {
   useSetSearchDocumentTitle,
   OwnProps as Props
-} from 'wdk-client/Controllers/QuestionController';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
-import { makeClassNameHelper, safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { getPropertyValue, getPropertyValues } from 'wdk-client/Utils/OntologyUtils';
-import { Question, AttributeValue, LinkAttributeValue, Answer, RecordClass } from 'wdk-client/Utils/WdkModel';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import NotFound from 'wdk-client/Views/NotFound/NotFound';
-import { QuestionHeader } from 'wdk-client/Views/Question/DefaultQuestionForm';
+} from '@veupathdb/wdk-client/lib/Controllers/QuestionController';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { CategoryTreeNode } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { getPropertyValue, getPropertyValues } from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
+import { Question, AttributeValue, LinkAttributeValue, Answer, RecordClass } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
+import { QuestionHeader } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
-import { formatLink } from 'ebrc-client/components/records/DatasetRecordClasses.DatasetRecordClass'
+import { formatLink } from '@veupathdb/web-common/lib/components/records/DatasetRecordClasses.DatasetRecordClass'
 
 import './InternalGeneDataset.scss';
 

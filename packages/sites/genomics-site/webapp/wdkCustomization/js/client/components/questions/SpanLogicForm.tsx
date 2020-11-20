@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { partial, toUpper } from 'lodash';
 
-import { TextBox, SingleSelect } from 'wdk-client/Components';
-import { Props as DefaultFormProps, SubmitButton, useDefaultOnSubmit } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { RecordClass } from 'wdk-client/Utils/WdkModel';
+import { TextBox, SingleSelect } from '@veupathdb/wdk-client/lib/Components';
+import { Props as DefaultFormProps, SubmitButton, useDefaultOnSubmit } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
+import { RecordClass } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 const cx = makeClassNameHelper('SpanLogicForm');
 

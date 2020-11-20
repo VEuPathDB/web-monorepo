@@ -4,7 +4,7 @@ import { memoize } from 'lodash';
 
 import { PreAndPostParameterEntries, ParamLine } from './ParamLine';
 import { SamplesParamSubgroup } from './SamplesParamSubgroup';
-import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { Props } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
 type GroupProps = Props & {
   valueType: string;

@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { changeGroupVisibility, updateParamValue } from 'wdk-client/Actions/QuestionActions';
-import { DispatchAction } from 'wdk-client/Core/CommonTypes';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { changeGroupVisibility, updateParamValue } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
+import { DispatchAction } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { ParamLine } from './ParamLine';
 import { ReferenceSampleParameterPane, ComparisonSampleParameterPane } from './sampleParameterPane';
-import { toMultiValueArray } from 'wdk-client/Views/Question/Params/EnumParamUtils';
+import { toMultiValueArray } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 
 type EventHandlers = {
   setGroupVisibility: typeof changeGroupVisibility,

@@ -1,5 +1,5 @@
-import WdkService from 'wdk-client/Service/WdkService';
-import { SearchConfig, AnswerSpec } from 'wdk-client/Utils/WdkModel';
+import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
+import { SearchConfig, AnswerSpec } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export const TABLE_STATE_UPDATED = 'eupathdb-record-view/table-state-updated';
 export const PATHWAY_DYN_COLS_LOADED = 'pathway-record/dynamic-gene-cols-loaded';

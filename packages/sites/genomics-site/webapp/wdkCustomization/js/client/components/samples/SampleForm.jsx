@@ -20,8 +20,8 @@
  */
 
 import React from 'react';
-import * as utils from 'wdk-client/Utils/ComponentUtils';
-import { TextBox, TextArea, Checkbox, CheckboxList, RadioList, SingleSelect, MultiSelect } from 'wdk-client/Components';
+import * as utils from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { TextBox, TextArea, Checkbox, CheckboxList, RadioList, SingleSelect, MultiSelect } from '@veupathdb/wdk-client/lib/Components';
 
 let convert = arr => arr.map(str => ({ value: str, display: str }));
 

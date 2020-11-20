@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { cxStepBoxes } from 'wdk-client/Views/Strategy/ClassNames';
+import { cxStepBoxes } from '@veupathdb/wdk-client/lib/Views/Strategy/ClassNames';
 
 import './ColocateStepBoxIcon.scss';
 

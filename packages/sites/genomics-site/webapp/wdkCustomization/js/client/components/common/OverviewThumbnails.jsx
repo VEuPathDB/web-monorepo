@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import lodash from 'lodash';
-import { TabbableContainer } from 'wdk-client/Components';
+import { TabbableContainer } from '@veupathdb/wdk-client/lib/Components';
 
 const LEFT_ARROW_CODE = 37;
 const RIGHT_ARROW_CODE = 39;

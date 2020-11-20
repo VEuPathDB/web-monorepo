@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 
-import { Parameter } from 'wdk-client/Utils/WdkModel';
-import ParameterComponent from 'wdk-client/Views/Question/ParameterComponent';
-import { Props } from 'wdk-client/Views/Question/Params/Utils';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import ParameterComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
+import { Props } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
 export const GenesByBindingSiteFeature = (props: Props<Parameter>) => {
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { UserSessionActions } from 'wdk-client/Actions';
+import { UserSessionActions } from '@veupathdb/wdk-client/lib/Actions';
 
 const withUserAndAction = connect(
   state => ({ user: state.globalData.user, location: state.globalData.location }),
