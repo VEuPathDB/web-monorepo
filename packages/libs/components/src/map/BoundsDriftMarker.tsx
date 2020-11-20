@@ -14,7 +14,8 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
 export default function BoundsDriftMarker({position, bounds, icon, duration, zoomLevel}: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false)
   const { map } = useLeaflet();
-  const boundingBox = new LatLngBounds([[bounds.southWest.lat, bounds.southWest.lng], [bounds.northEast.lat, bounds.northEast.lng]])
+  const boundingBox = new LatLngBounds([
+      [bounds.southWest.lat, bounds.southWest.lng], [bounds.northEast.lat, bounds.northEast.lng]])
 
   // DriftMarker misbehaves if icon=undefined is provided
   // is this the most elegant way?
