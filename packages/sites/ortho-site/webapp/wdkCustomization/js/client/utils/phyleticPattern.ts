@@ -1,4 +1,4 @@
-import { groupBy, mapValues, orderBy, partition } from 'lodash';
+import { groupBy, map, mapValues, orderBy, partition } from 'lodash';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { foldStructure, mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -182,7 +182,7 @@ export function makePhyleticExpression(
         child => child.species
       );
 
-      const speciesChildrenAbbrevs = mapValues(
+      const speciesChildrenAbbrevs = map(
         speciesChildren,
         speciesChild => speciesChild.abbrev
       );
