@@ -17,6 +17,8 @@ import { Main } from 'ebrc-client/components/homepage/Main';
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
 
+import { formatReleaseDate } from 'ebrc-client/util/formatters';
+
 import {
   useSearchTree,
   useSessionBackedSearchTerm,
@@ -44,11 +46,21 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
     onShowAnnouncements
   } = useAnnouncements();
 
+  const buildNumber = useSelector((state: RootState) => state.globalData.config?.buildNumber);
+  const releaseDate = useSelector((state: RootState) => state.globalData.config?.releaseDate);
+
   const branding = (
-    <Link to="/">
-      <div className="vpdb-HeaderBranding">
+    <>
+      <Link to="/">
+        <div className="vpdb-HeaderBranding">
+        </div>
+      </Link>
+      <div className="vpdb-HeaderBrandingSuperscript">
+        {buildNumber && <span>Release {buildNumber} <em>beta</em></span>}
+        <br />
+        {releaseDate && formatReleaseDate(releaseDate)}
       </div>
-    </Link>
+    </>
   );
 
   return (
