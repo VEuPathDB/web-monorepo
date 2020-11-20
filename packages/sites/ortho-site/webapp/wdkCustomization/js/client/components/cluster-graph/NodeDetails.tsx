@@ -182,13 +182,18 @@ const PFAM_DOMAIN_COLUMNS: DataTableColumns<PfamDomainRow, 'accession' | 'symbol
 
 const PFAM_DOMAIN_COLUMN_ORDER = [ 'accession', 'symbol', 'start', 'end', 'length' ] as const;
 
-export const EC_NUMBER_COLUMNS: DataTableColumns<EcNumberRow, 'ecNumber'> = {
+export const EC_NUMBER_COLUMNS: DataTableColumns<EcNumberRow, 'ecNumber' | 'description'> = {
   ecNumber: {
     key: 'ecNumber',
     name: 'EC Number',
     sortable: true,
     makeOrder: ({ index }) => index
+  },
+  description: {
+    key: 'description',
+    name: 'Description',
+    sortable: true,
   }
 };
 
-const EC_NUMBER_COLUMN_ORDER = [ 'ecNumber' ] as const;
+const EC_NUMBER_COLUMN_ORDER = [ 'ecNumber', 'description' ] as const;
