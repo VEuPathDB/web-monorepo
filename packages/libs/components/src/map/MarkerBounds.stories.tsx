@@ -35,7 +35,6 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : num
         position={{ lat: bucket.ltAvg, lng: bucket.lnAvg }}
         id={bucket.val}
         key={bucket.val}
-        zoomLevel={zoomLevel}
       />
       )
     }
