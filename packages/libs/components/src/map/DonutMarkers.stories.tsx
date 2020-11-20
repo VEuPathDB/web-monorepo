@@ -68,6 +68,7 @@ function removeClassName(targetClass: string) {
   }
 }
 
+//DKDK this onClick event may need to be changed in the future like onMouseOver event
 const handleClick = (e: LeafletMouseEvent) => {
   /**
    * DKDK this only works when selecting other marker: not working when clicking map
@@ -80,21 +81,6 @@ const handleClick = (e: LeafletMouseEvent) => {
   e.target._icon.classList.add('highlight-marker')
   //DKDK here, perhaps we can add additional click event, like opening sidebar when clicking
   // console.log(e)
-}
-
-/**
- * DKDK gathering functions here temporarily
- * Need to add export to be used in the other component
- */
-//DKDK top-marker test: mouseOver and mouseOut
-const handleMouseOver = (e: LeafletMouseEvent) => {
-  e.target._icon.classList.add('top-marker')
-  // console.log('onMouseOver', e)
-}
-
-const handleMouseOut = (e: LeafletMouseEvent) => {
-  e.target._icon.classList.remove('top-marker')
-  // console.log('onMouseOut', e)
 }
 
 const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void) => {
@@ -186,8 +172,6 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
         colors={colors}
         isAtomic={atomicValue}
         onClick={handleClick}
-        onMouseOut={handleMouseOut}
-        onMouseOver={handleMouseOver}
         duration={duration}
       />
       )

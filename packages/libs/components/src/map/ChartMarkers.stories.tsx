@@ -85,19 +85,6 @@ const all_colors_hex = [
 ];
 
 
-/**
- * DKDK gathering functions here temporarily
- * Need to add export to be used in the other component
- */
-//DKDK top-marker test: mouseOver and mouseOut
-const handleMouseOver = (e: LeafletMouseEvent) => {
-  e.target._icon.classList.add('top-marker')
-}
-
-const handleMouseOut = (e: LeafletMouseEvent) => {
-  e.target._icon.classList.remove('top-marker')
-}
-
 //DKDK use legendRadioValue instead of knob_YAxisRangeMethod
 const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void, knob_borderColor: string, knob_borderWidth: number, legendRadioValue: string, setYAxisRangeValue: (yAxisRangeValue: number) => void) => {
 
@@ -200,9 +187,6 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
         colors={colors}
         isAtomic={atomicValue}
         yAxisRange ={yAxisRangeValue}
-        // onClick={handleClick}
-        onMouseOut={handleMouseOut}
-        onMouseOver={handleMouseOver}
         duration={duration}
       />
     )

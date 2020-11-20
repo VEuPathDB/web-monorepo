@@ -14,8 +14,6 @@ interface ChartMarkerProps extends BoundsDriftMarkerProps {
   isAtomic?: boolean,      // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
   yAxisRange?: number[] | null, // y-axis range for setting global max
   onClick?: (event: L.LeafletMouseEvent) => void | undefined,
-  onMouseOver?: (event: L.LeafletMouseEvent) => void | undefined,
-  onMouseOut?: (event: L.LeafletMouseEvent) => void | undefined
 }
 
 /**
