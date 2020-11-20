@@ -16,7 +16,7 @@ import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
 import { Main } from 'ebrc-client/components/homepage/Main';
 import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
 import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
-
+import { useCommunitySiteRootUrl } from 'ebrc-client/hooks/staticData';
 import { formatReleaseDate } from 'ebrc-client/util/formatters';
 
 import {
@@ -48,7 +48,7 @@ export const OrthoMCLPage: FunctionComponent<Props> = props => {
 
   const buildNumber = useSelector((state: RootState) => state.globalData.config?.buildNumber);
   const releaseDate = useSelector((state: RootState) => state.globalData.config?.releaseDate);
-
+ 
   const branding = (
     <>
       <Link to="/">
@@ -160,6 +160,9 @@ function useHeaderMenuItems() {
     [ searchTree, searchTerm, expandedBranches ]
   );
 
+ const displayName = useDisplayName();
+ const communitySite = useCommunitySiteRootUrl();
+
   return useMemo(() => {
     const menuItems: HeaderMenuItem[] = [
       {
@@ -181,58 +184,27 @@ function useHeaderMenuItems() {
         ]
       },
       {
-        key: 'my-workspace',
-        display: 'My Workspace',
-        type: 'subMenu',
-        items: [
-          {
-            key: 'galaxy-analyses',
-            display: 'Analyze my data (Galaxy)',
-            type: 'reactRoute',
-            url: '/galaxy-orientation'
-          },
-          {
-            key: 'basket',
-            display: 'Basket',
-            type: 'reactRoute',
-            url: '/workspace/basket'
-          },
-          {
-            key: 'favorites',
-            display: 'Favorites',
-            type: 'reactRoute',
-            url: '/workspace/favorites',
-          }
-        ]
-      },
-      {
         key: 'tools',
         display: 'Tools',
         type: 'subMenu',
         items: [
           {
+            key: 'proteome-upload',
+            display: 'Assign proteins to groups in Galaxy',
+            type: 'reactRoute',
+            url: '/galaxy-orientation'
+          },
+          { 
             key: 'blast',
             display: 'BLAST',
             type: 'reactRoute',
             url: '/search/sequence/ByBlast'
           },
           {
-            key: 'proteome-upload',
-            display: 'Assign your proteins to groups - TODO',
-            type: 'reactRoute',
-            url: '/proteome-upload'
-          },
-          {
-            key: 'downloads',
+            key: 'download-software',
             display: 'Download OrthoMCL software',
             type: 'reactRoute',
-            url: '/downloads'
-          },
-          {
-            key: 'web-services',
-            display: 'Web services',
-            type: 'reactRoute',
-            url: makeStaticPageRoute(`/content/OrthoMCL/webServices.html`)
+            url: '/downloads/software'
           },
           {
             key: 'publications',
@@ -240,14 +212,59 @@ function useHeaderMenuItems() {
             type: 'externalLink',
             target: '_blank',
             url: 'http://scholar.google.com/scholar?as_q=&num=10&as_epq=&as_oq=OrthoMCL&as_eq=encrypt+cryptography+hymenoptera&as_occt=any&as_sauthors=&as_publication=&as_ylo=&as_yhi=&as_sdt=1.&as_sdtp=on&as_sdtf=&as_sdts=39&btnG=Search+Scholar&hl=en'
+          },
+          { 
+            key: 'web-services',
+            display: 'Web services',
+            type: 'reactRoute',
+            url: makeStaticPageRoute(`/content/OrthoMCL/webServices.html`)
           }
         ]
       },
+      { 
+        key: 'my-workspace',
+        display: 'My Workspace',
+        type: 'subMenu',
+        items: [
+          { 
+            key: 'galaxy-analyses',
+            display: 'Assign my proteins to groups in Galaxy',
+            type: 'reactRoute',
+            url: '/galaxy-orientation'
+          },
+          { 
+            key: 'basket',
+            display: 'My baskets',
+            type: 'reactRoute',
+            url: '/workspace/basket'
+          },
+          { 
+            key: 'favorites',
+            display: 'My favorites',
+            type: 'reactRoute',
+            url: '/workspace/favorites',
+          }
+        ]
+      },
+
       {
         key: 'data',
         display: 'Data',
         type: 'subMenu',
         items: [
+          {
+            key: 'data-methods',
+            display: 'Analysis methods',
+            type: 'reactRoute',
+            tooltip: 'How we obtain/generate the data',
+            url: makeStaticPageRoute(`/methods.html`)
+          },
+          {
+            key: 'downloads',
+            display: 'Download data files',
+            type: 'reactRoute',
+            url: '/downloads'
+          },
           {
             key: 'release-summary',
             display: 'Proteome Sources and Statistics',
@@ -257,16 +274,285 @@ function useHeaderMenuItems() {
         ]
       },
       {
-        key: 'help',
-        display: 'Help',
-        type: 'subMenu',
-        items: [ makeTodoItem('help-content') ]
-      },
-      {
         key: 'about',
         display: 'About',
         type: 'subMenu',
-        items: [ makeTodoItem('about-content') ]
+        items: [
+        {
+          key: 'what-is',
+          display: `What is ${displayName}?`,
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/about.html')
+        },
+        { 
+          key: 'switchsites',
+          display: 'VEuPathDB sites',
+          type: 'subMenu',
+          items: [
+            { 
+              key: 'veupathdb',
+              display: 'VEuPathDB',
+              type: 'externalLink',
+              url: 'https://veupathdb.org',
+              target: '_blank'
+            },
+            { 
+              key: 'amoebadb',
+              display: 'AmoebaDB',
+              type: 'externalLink',
+              url: 'https://amoebadb.org',
+              target: '_blank'
+            },
+            {
+              key: 'cryptodb',
+              display: 'CryptoDB',
+              type: 'externalLink',
+              url: 'https://cryptodb.org',
+              target: '_blank'
+            },
+            {
+              key: 'fungidb',
+              display: 'FungiDB',
+              type: 'externalLink',
+              url: 'https://fungidb.org',
+              target: '_blank'
+            },
+            {
+              key: 'giardiadb',
+              display: 'GiardiaDB',
+              type: 'externalLink',
+              url: 'https://giardiadb.org',
+              target: '_blank'
+            },
+            {
+              key: 'hostdb',
+              display: 'HostDB',
+              type: 'externalLink',
+              url: 'https://hostdb.org',
+              target: '_blank'
+            },
+            {
+              key: 'microsporidiadb',
+              display: 'MicrosporidiaDB',
+              type: 'externalLink',
+              url: 'https://microsporidiadb.org',
+              target: '_blank'
+            },
+            {
+              key: 'piroplasmadb',
+              display: 'PiroplasmaDB',
+              type: 'externalLink',
+              url: 'https://piroplasmadb.org',
+              target: '_blank'
+            },
+            {
+              key: 'plasmodb',
+              display: 'PlasmoDB',
+              type: 'externalLink',
+              url: 'https://plasmodb.org',
+              target: '_blank'
+            },
+            {
+              key: 'toxodb',
+              display: 'ToxoDB',
+              type: 'externalLink',
+              url: 'https://toxodb.org',
+              target: '_blank'
+            },
+            {
+              key: 'trichdb',
+              display: 'TrichDB',
+              type: 'externalLink',
+              url: 'https://trichdb.org',
+              target: '_blank'
+            },
+            {
+              key: 'tritrypdb',
+              display: 'TriTrypDB',
+              type: 'externalLink',
+              url: 'https://tritrypdb.org',
+              target: '_blank'
+            },
+            {
+              key: 'vectorbase',
+              display: 'VectorBase',
+              type: 'externalLink',
+              url: 'https://vectorbase.org',
+              target: '_blank'
+            },
+            {
+              key: 'orthomcl',
+              display: 'OrthoMCL',
+              type: 'externalLink',
+              url: 'https://orthomcl.org',
+              target: '_blank'
+            }
+          ]
+        },
+        { 
+          key: 'community',
+          type: 'subMenu',
+          display: 'Community',
+          items: [
+            { 
+              key: 'news',
+              display: 'News',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/${displayName}/news.html`)
+            },
+            { 
+              key: 'public-strategies',
+              display: 'Public strategies',
+              type: 'reactRoute',
+              url: '/workspace/strategies/public'
+            },
+            { 
+              key: 'related-sites',
+              display: 'Related sites',
+              type: 'reactRoute',
+              url: makeStaticPageRoute(`/${displayName}/externalLinks.html`)
+            }
+          ]
+        },
+        { 
+          key: 'pubs',
+          type: 'subMenu',
+          display: 'Publications',
+          items: [
+            {
+              key: 'eupathdb-publications',
+              display: 'Publications on VEuPathDB sites',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/veupathPubs.html')
+            },
+            {
+              key: 'citations',
+              display: 'Publications that use our resources',
+              type: 'externalLink',
+              url: 'https://scholar.google.com/scholar?hl=en&as_sdt=0,39&q=OrthoMCL+OR+PlasmoDB+OR+ToxoDB+OR+CryptoDB+OR+TrichDB+OR+GiardiaDB+OR+TriTrypDB+OR+AmoebaDB+OR+MicrosporidiaDB+OR+%22FungiDB%22+OR+PiroplasmaDB+OR+%22vectorbase%22+OR+veupathdb+OR+ApiDB+OR+EuPathDB+-encrypt+-cryptography+-hymenoptera&scisbd=1',
+              target: '_blank'
+            }
+          ]
+        }, 
+        {
+          key: 'usage-and-citations',
+          display: 'Usage and citation',
+          type: 'subMenu',
+          items: [
+            {
+              key: 'cite',
+              display: 'Citing VEuPathDB in Publications and Presentations',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/about.html#about_citing')
+            },
+            {
+              key: 'data-access-policy',
+              display: 'Data access policy',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/about.html#about_use')
+            },
+            {
+              key: 'website-privacy-policy',
+              display: 'Website privacy policy',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/privacyPolicy.html')
+            }
+          ]
+        },
+        {
+          key: 'who-are-we',
+          display: 'Who we are',
+          type: 'subMenu',
+          items: [
+            {
+              key: 'personnel',
+              display: 'Personnel',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/personnel.html')
+            },
+            {
+              key: 'acknowledgement',
+              display: 'Acknowledgements',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/acks.html')
+            },
+            {
+              key: 'funding',
+              display: 'Funding',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/about.html#about_funding')
+            }
+          ],
+        },
+        {
+          key: 'technical',
+          display: 'Technical information',
+          type: 'subMenu',
+          items: [
+            {
+              key: 'accessibility-vpat',
+              display: 'Accessibility VPAT',
+              type: 'externalLink',
+              url: '/documents/VEuPathDB_Section_508_BRC4.pdf'
+            },
+            { 
+              key: 'tech-methods',
+              display: 'Analysis methods',
+              type: 'reactRoute',
+              tooltip: 'How we obtain/generate the data',
+              url: makeStaticPageRoute(`/methods.html`)
+            },
+            {
+              key: 'infrastructure',
+              display: 'Infrastructure',
+              type: 'reactRoute',
+              url: makeStaticPageRoute('/infrastructure.html')
+            },
+            {
+              key: 'usage-statistics',
+              display: 'Website usage statistics',
+              type: 'externalLink',
+              url: '/awstats/awstats.pl',
+              target: '_blank'
+            }
+          ]
+        }
+        ]
+      },
+      {
+        key: 'help',
+        display: 'Help',
+        type: 'subMenu',
+        items: [
+        {
+          key: 'faq',
+          display: 'FAQ',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/OrthoMCL/faq.html')
+        },
+        { 
+          key: 'landing',
+	  display: 'Learn how to use VEuPathDB',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/landing.html')
+        },
+        { 
+          key: 'reset-session',
+          display: `Reset ${displayName} session`,
+          tooltip: 'Login first to keep your work',
+          type: 'reactRoute',
+          url: '/reset-session',
+        },
+        { 
+          key: 'user-doc',
+          display: 'Downloadable User documentation',
+          type: 'externalLink',
+          url: makeExternalStaticPageUrl(
+                 communitySite,
+                 '/documents/VEuPathDB_User_Documentation.pdf'
+               )
+        }
+        ]
       },
       {
         key: 'contact-us',
@@ -291,6 +577,10 @@ function makeTodoItem(key: string): HeaderMenuItem {
 function makeStaticPageRoute(url: string) {
   return `${STATIC_ROUTE_PATH}${url}`;
 }
+function makeExternalStaticPageUrl(communitySiteUrl: string | undefined, subPath: string) {
+  return `https://${communitySiteUrl}${subPath}`;
+}
+
 
 function useAnnouncements() {
   const isHomePage = useIsHomePage();
