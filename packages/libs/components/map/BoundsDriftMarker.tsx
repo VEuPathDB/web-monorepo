@@ -6,26 +6,25 @@ import {LatLngBounds} from "leaflet";
 
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds,
-  duration: number,
-  zoomLevel: number
+  duration: number
 }
 
 
-export default function BoundsDriftMarker({position, bounds, icon, duration, zoomLevel}: BoundsDriftMarkerProps) {
+export default function BoundsDriftMarker({position, bounds, icon, duration}: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false)
   const { map } = useLeaflet();
   const boundingBox = new LatLngBounds([
       [bounds.southWest.lat, bounds.southWest.lng], [bounds.northEast.lat, bounds.northEast.lng]])
-
-  // DriftMarker misbehaves if icon=undefined is provided
-  // is this the most elegant way?
-  const optionalIconProp = icon ? { icon } : { };
 
   const handleDoubleClick = () => {
     if (map) {
       map.fitBounds(boundingBox)
     }
   }
+
+  // DriftMarker misbehaves if icon=undefined is provided
+  // is this the most elegant way?
+  const optionalIconProp = icon ? { icon } : { };
 
   return (<DriftMarker
     duration={duration}
