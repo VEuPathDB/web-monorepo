@@ -14,8 +14,6 @@ interface DonutMarkerProps extends BoundsDriftMarkerProps {
   colors?: Array<string> | null, // bar colors: set to be optional with array or null type
   isAtomic?: boolean,      // add a special thumbtack icon if this is true
   onClick?: (event: L.LeafletMouseEvent) => void | undefined,
-  onMouseOver?: (event: L.LeafletMouseEvent) => void | undefined,
-  onMouseOut?: (event: L.LeafletMouseEvent) => void | undefined
 }
 
 // DKDK convert to Cartesian coord. toCartesian(centerX, centerY, Radius for arc to draw, arc (radian))
