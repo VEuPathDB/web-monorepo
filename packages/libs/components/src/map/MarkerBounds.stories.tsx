@@ -29,14 +29,14 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : num
   return buckets.map((bucket : any) => {
     if (bucket.val.length == geohashLevel) {
       return (
-        <BoundsDriftMarker
-          duration={duration}
-          bounds={{ southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }}} 
-	  position={{ lat: bucket.ltAvg, lng: bucket.lnAvg }}
-          id={bucket.val}
-          key={bucket.val}
-        />
-        )
+      <BoundsDriftMarker
+        duration={duration}
+        bounds={{ southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }}}
+        position={{ lat: bucket.ltAvg, lng: bucket.lnAvg }}
+        id={bucket.val}
+        key={bucket.val}
+      />
+      )
     }
   })
 };
@@ -64,3 +64,4 @@ export const MarkerBounds = () => {
       />
   );
 };
+
