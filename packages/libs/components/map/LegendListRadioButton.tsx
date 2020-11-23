@@ -26,7 +26,7 @@ export default function LegendListRadioButton(props: LegendListRadioButtonProps)
         <br /><br />
         {/* DKDK add onChange inside the <input> to avoid typescript error */}
         <div className="legend-list-radio-button">
-          <div className="legend-list-radio-button-title"><b>y-axis scaling</b></div>
+          <div className="legend-list-radio-button-title"><b>Y-axis scaling</b></div>
             {/* DKDK for non-clickable label */}
             {/* <input type="radio" value="Regional" name="legendListRadio" onChange={props.onChange} checked={props.selectedOption === "Regional"}/> Regional (0 - {numberWithCommas(props.yAxisRangeValue)})
             <br />
