@@ -53,9 +53,8 @@ export default function LegendListSquare(props: legendListProps) {
   }
 
   //DKDDK # text from props.legendInfoNumberText
-  let legendNumberText = '#' + props.legendInfoNumberText
   labels.push(
-    '<div class="legend-field-text"> #' + props.legendInfoNumberText + '</div>'
+    '<div class="legend-field-text"># of ' + props.legendInfoNumberText + '</div>'
   )
 
   //DKDK i = 0 - 9 at best
