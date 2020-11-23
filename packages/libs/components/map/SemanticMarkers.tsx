@@ -42,10 +42,10 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
     }
 
     updateMap();
-    map.on('resize dragend zoomend', updateMap); // resize is there hopefully when we have full screen mode
+    map.on('resize dragend zoomend moveend', updateMap); // resize is there hopefully when we have full screen mode
 
     return () => {
-      map.off('resize dragend zoomend', updateMap);
+      map.off('resize dragend zoomend moveend', updateMap);
     };
   }, [map, onViewportChanged]);
 
