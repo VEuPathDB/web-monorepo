@@ -20,7 +20,7 @@ import {
 } from '../constants/colors';
 
 export default {
-  title: 'In Development/Histogram',
+  title: 'In Development/Histogram (Visx Prototype)',
   component: Histogram,
 } as Meta;
 

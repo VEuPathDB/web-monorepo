@@ -46,6 +46,6 @@ export const PAIRED_COLORS = [
   DARK_PURPLE,
 ];
 
-export const DARK_GRAY = '#404040';
-export const MEDIUM_GRAY = 'rgba(150, 150, 150)';
+export const DARK_GRAY = 'rgb(100, 100, 100)';
+export const MEDIUM_GRAY = 'rgb(150, 150, 150)';
 export const LIGHT_GRAY = 'rgb(240, 240, 240)';
