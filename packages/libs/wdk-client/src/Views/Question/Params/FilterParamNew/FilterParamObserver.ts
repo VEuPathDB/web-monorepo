@@ -162,7 +162,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
         const filters = getFilters(paramValues[paramName]);
         const activeField = filters.length === 0
-          ? getFilterFields(getFilterParamNewFromState(getQuestionState(state$.value, searchName), paramName)).first().term
+          ? getFilterFields(getFilterParamNewFromState(getQuestionState(state$.value, searchName), paramName)).first()?.term
           : filters[0].field;
 
         // The order here is important. We want to first merge the child
@@ -200,7 +200,7 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
 
         const activeField = ontology.findIndex(item => item.term === activeOntologyTerm) > -1
           ? activeOntologyTerm
-          : filters.length === 0 ? getFilterFields(parameter).first().term : filters[0].field;
+          : filters.length === 0 ? getFilterFields(parameter).first()?.term : filters[0].field;
 
         return merge(
           of(invalidateOntologyTerms({
