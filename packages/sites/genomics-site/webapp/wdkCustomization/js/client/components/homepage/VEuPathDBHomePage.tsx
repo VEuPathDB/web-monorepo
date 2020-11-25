@@ -227,12 +227,23 @@ const parseExpandedBranches = memoize((s: string) => decode(
   s
 ));
 
-const VectorBase = 'VectorBase';
-const PlasmoDB = 'PlasmoDB';
-const TriTrypDB = 'TriTrypDB';
-const ToxoDB = 'ToxoDB';
-const FungiDB  = 'FungiDB';
+const AmoebaDB = 'AmoebaDB';
+const CryptpDB = 'CryptoDB';
 const EuPathDB = 'EuPathDB';
+const FungiDB  = 'FungiDB';
+const GiardiaDB = 'GiardiaDB';
+const HostDB = 'HostDB';
+const MicrosporidiaDB = 'MicrosporidiaDB';
+const PiroplasmaDB = 'PiroplasmaDB';
+const PlasmoDB = 'PlasmoDB';
+const ToxoDB = 'ToxoDB';
+const TrichDB = 'TrichDB';
+const TriTrypDB = 'TriTrypDB';
+const VectorBase = 'VectorBase';
+const VEuPathDB = 'VEuPathDB';
+const DB = 'DB';
+
+
 
 function makeStaticPageRoute(subPath: string) {
   return `${STATIC_ROUTE_PATH}${subPath}`;
@@ -299,7 +310,7 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: makeStaticPageRoute(`/apollo_help.html`),
           metadata: {
-            include: [ VectorBase ]
+            include: [ AmoebaDB,PiroplasmaDB,ToxoDB,VectorBase ]
          }
         },
         {
