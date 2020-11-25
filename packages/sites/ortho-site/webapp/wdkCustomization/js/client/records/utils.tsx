@@ -44,6 +44,8 @@ const ABBREV_ATTRIBUTE_NAME = 'abbrev';
 
 export const GROUP_STATISTICS_TABLE_NAME = 'Statistics';
 export const TAXON_COUNTS_TABLE_NAME = 'TaxonCounts';
+export const SEQUENCES_TABLE_NAME = 'Sequences';
+export const PROTEIN_PFAMS_TABLE_NAME = 'ProteinPFams';
 
 interface PseudoAttributeSpec {
   name: string;

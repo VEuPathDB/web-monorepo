@@ -1,8 +1,8 @@
 import { Action, RecordActions } from 'wdk-client/Actions';
 import * as RecordStoreModule from 'wdk-client/StoreModules/RecordStoreModule';
 import {
-  GROUP_STATISTICS_TABLE_NAME,
-  TAXON_COUNTS_TABLE_NAME
+  SEQUENCES_TABLE_NAME,
+  PROTEIN_PFAMS_TABLE_NAME
 } from 'ortho-client/records/utils';
 
 export const key = 'record';
@@ -19,8 +19,8 @@ export function reduce(state = {} as RecordStoreModule.State, action: Action): R
             ...nextState,
             collapsedSections: RecordStoreModule.getAllFields(nextState).filter(
               name => (
-                name !== TAXON_COUNTS_TABLE_NAME &&
-                name !== GROUP_STATISTICS_TABLE_NAME
+                name === SEQUENCES_TABLE_NAME ||
+                name === PROTEIN_PFAMS_TABLE_NAME
               )
             )
           }

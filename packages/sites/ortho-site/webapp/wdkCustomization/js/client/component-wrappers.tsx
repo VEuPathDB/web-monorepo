@@ -15,12 +15,16 @@ import {
   RecordAttributeSectionProps,
   RecordTableProps
 } from 'ortho-client/records/Types';
+import {
+   RecordTableSection
+} from 'ortho-client/records/RecordTableSection';
 
 export default {
   Page: () => OrthoMCLPage,
   RecordAttribute: makeDynamicWrapper('RecordAttribute', (props: RecordAttributeProps) => props.recordClass.fullName),
   RecordAttributeSection: makeDynamicWrapper('RecordAttributeSection', (props: RecordAttributeSectionProps) => props.recordClass.fullName),
-  RecordTable: makeDynamicWrapper('RecordTable', (props: RecordTableProps) => props.recordClass.fullName)
+  RecordTable: makeDynamicWrapper('RecordTable', (props: RecordTableProps) => props.recordClass.fullName),
+  RecordTableSection
 };
 
 const GROUP_RECORD_CLASS_NAME = 'GroupRecordClasses.GroupRecordClass';
