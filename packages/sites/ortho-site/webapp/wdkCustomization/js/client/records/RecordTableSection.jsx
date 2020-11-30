@@ -50,11 +50,13 @@ export function RecordTableSection(DefaultComponent) {
                     fontWeight: 'normal',
                     marginLeft: '1em'
                   }}>
-                  <button type="button"
-                    className="wdk-Link"
-                    onClick={callDownloadTable}>
+                  <a
+                    role="button"
+                    tabIndex={0}
+                    onClick={callDownloadTable}
+                  >
                     <i className="fa fa-download"/> Download
-                  </button>
+                  </a>
                 </span>
               }
 
