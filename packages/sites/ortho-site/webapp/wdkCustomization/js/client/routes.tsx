@@ -31,7 +31,7 @@ export function wrapRoutes(ebrcRoutes: RouteEntry[]): RouteEntry[] {
     },
     {
       path: '/search',
-      component: SiteSearchController
+      component: () => <SiteSearchController offerOrganismFilter={false} />
     },
     ...ebrcRoutes
   ];
