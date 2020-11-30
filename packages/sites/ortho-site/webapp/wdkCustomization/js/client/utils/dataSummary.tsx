@@ -16,7 +16,7 @@ import { TaxonUiMetadata } from 'ortho-client/utils/taxons';
 const proteomeSummaryRowDecoder = record({
   clustered_sequences: string,
   core_peripheral: oneOf(constant('Core'), constant('Peripheral')),
-  description: oneOf(string, nullValue),
+  resource_version: oneOf(string, nullValue),
   groups: string,
   name: string,
   resource_name: string,
@@ -84,14 +84,14 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
     name: 'URL',
     sortable: true
   },
-  description: {
-    key: 'description',
-    name: 'Description',
+  resource_version: {
+    key: 'resource_version',
+    name: 'Proteome version',
     sortable: true,
-    makeOrder: ({ description }) => description || '',
-    makeSearchableString: description => description || 'N/A',
+    makeOrder: ({ resource_version }) => resource_version || '',
+    makeSearchableString: resource_version => resource_version || 'N/A',
     renderCell: ({ value }) =>
-      value ? value : <span className="EmptyDescription">N/A</span>
+      value ? value : <span className="EmptyResourceVersion">N/A</span>
   }
 };
 
@@ -114,7 +114,7 @@ export const RELEASE_SUMMARY_COLUMN_ORDER = [
   'three_letter_abbrev',
   'resource_name',
   'resource_url',
-  'description',
+  'resource_version',
   'sequences',
   'clustered_sequences',
   'groups'
