@@ -16,7 +16,7 @@ import {
   RecordTableProps
 } from 'ortho-client/records/Types';
 import {
-   RecordTableSection
+  RecordTableSection
 } from 'ortho-client/records/RecordTableSection';
 
 export default {
