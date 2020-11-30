@@ -16,18 +16,18 @@ type Props = WrappedComponentProps<RecordTableSectionProps>;
 
 export function RecordTableSection(DefaultComponent: React.ComponentType<WrappedComponentProps<RecordTableSectionProps>>) {
   return function OrthoRecordTableSection(props: Props) {
-    let { table, record, ontologyProperties } = props;
+    const { table, record, ontologyProperties } = props;
 
-    let wdkDependencies = useContext(WdkDepdendenciesContext);
-    let wdkService = wdkDependencies?.wdkService;
+    const wdkDependencies = useContext(WdkDepdendenciesContext);
+    const wdkService = wdkDependencies?.wdkService;
 
-    let downloadRecordTable = useMemo(
+    const downloadRecordTable = useMemo(
       () => downloadRecordTableFactory(wdkService, record, table.name),
       []
     )
 
     // FIXME Revise this since we now lazy load tables...
-    let showDownload = (
+    const showDownload = (
       record.tables[table.name] &&
       record.tables[table.name].length > 0 &&
       ontologyProperties.scope?.includes('download')
@@ -69,8 +69,8 @@ function downloadRecordTableFactory(wdkService: WdkService | undefined, record: 
   }
 
   return function downloadRecordTable(event: React.MouseEvent) {
-    let answerSpec = getSingleRecordAnswerSpec(record);
-    let formatting = {
+    const answerSpec = getSingleRecordAnswerSpec(record);
+    const formatting = {
       format: 'tableTabular',
       formatConfig: {
         tables: [ tableName ],
