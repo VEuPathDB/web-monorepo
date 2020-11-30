@@ -35,3 +35,13 @@ export interface RecordTableProps {
   table: TableField;
   value: TableValue;
 }
+
+export interface RecordTableSectionProps {
+  table: TableField;
+  isCollapsed: boolean;
+  onCollapsedChange: () => void;
+  ontologyProperties: CategoryTreeNode['properties'];
+  record: RecordInstance;
+  recordClass: RecordClass;
+  requestPartialRecord: typeof requestPartialRecord;
+}

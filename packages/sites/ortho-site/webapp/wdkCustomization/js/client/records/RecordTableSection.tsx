@@ -1,11 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
-import { getSingleRecordAnswerSpec } from 'wdk-client/Utils/WdkModel';
+import {
+  ActionCreatorServices,
+  emptyAction
+} from 'wdk-client/Core/WdkMiddleware';
+import {
+  RecordInstance,
+  getSingleRecordAnswerSpec
+} from 'wdk-client/Utils/WdkModel';
 
-function downloadRecordTable(record, tableName) {
-  return ({ wdkService }) => {
+import {
+  RecordTableSectionProps,
+  WrappedComponentProps
+} from 'ortho-client/records/Types';
+
+function downloadRecordTable(record: RecordInstance, tableName: string) {
+  return ({ wdkService }: ActionCreatorServices) => {
     let answerSpec = getSingleRecordAnswerSpec(record);
     let formatting = {
       format: 'tableTabular',
@@ -20,13 +31,16 @@ function downloadRecordTable(record, tableName) {
   };
 }
 
-export function RecordTableSection(DefaultComponent) {
-  return connect(null, { downloadRecordTable })(class ApiRecordTableSection extends React.PureComponent {
-    render () {
+interface Props extends WrappedComponentProps<RecordTableSectionProps> {
+  downloadRecordTable: (record: RecordInstance, tableName: string) => void;
+}
 
+export function RecordTableSection(DefaultComponent: React.ComponentType<WrappedComponentProps<RecordTableSectionProps>>) {
+  return connect(null, { downloadRecordTable })(class ApiRecordTableSection extends React.PureComponent<Props> {
+    render () {
       let { table, record, downloadRecordTable, ontologyProperties } = this.props;
 
-      let callDownloadTable = event => {
+      let callDownloadTable = (event: React.MouseEvent) => {
         event.stopPropagation();
         downloadRecordTable(record, table.name);
       };
@@ -35,7 +49,7 @@ export function RecordTableSection(DefaultComponent) {
       let showDownload = (
         record.tables[table.name] &&
         record.tables[table.name].length > 0 &&
-        ontologyProperties.scope.includes('download')
+        ontologyProperties.scope?.includes('download')
       );
 
       return (
