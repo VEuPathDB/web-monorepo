@@ -75,7 +75,7 @@ function downloadRecordTableFactory(wdkService: WdkService | undefined, record: 
       formatConfig: {
         tables: [ tableName ],
         includeHeader: true,
-        attachmentType: "text"
+        attachmentType: 'text'
       }
     };
     return wdkService.downloadAnswer({ answerSpec, formatting });
