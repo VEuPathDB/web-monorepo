@@ -1,4 +1,8 @@
+import React from 'react';
 import { connect } from 'react-redux';
+
+import { emptyAction } from 'wdk-client/Core/WdkMiddleware';
+import { getSingleRecordAnswerSpec } from 'wdk-client/Utils/WdkModel';
 
 function downloadRecordTable(record, tableName) {
   return ({ wdkService }) => {
