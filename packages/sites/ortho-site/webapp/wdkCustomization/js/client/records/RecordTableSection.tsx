@@ -1,10 +1,7 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useContext, useMemo } from 'react';
 
-import {
-  ActionCreatorServices,
-  emptyAction
-} from 'wdk-client/Core/WdkMiddleware';
+import { WdkService } from 'wdk-client/Core';
+import { WdkDepdendenciesContext } from 'wdk-client/Hooks/WdkDependenciesEffect';
 import {
   RecordInstance,
   getSingleRecordAnswerSpec
@@ -15,8 +12,63 @@ import {
   WrappedComponentProps
 } from 'ortho-client/records/Types';
 
-function downloadRecordTable(record: RecordInstance, tableName: string) {
-  return ({ wdkService }: ActionCreatorServices) => {
+type Props = WrappedComponentProps<RecordTableSectionProps>;
+
+export function RecordTableSection(DefaultComponent: React.ComponentType<WrappedComponentProps<RecordTableSectionProps>>) {
+  return function OrthoRecordTableSection(props: Props) {
+    let { table, record, ontologyProperties } = props;
+
+    let wdkDependencies = useContext(WdkDepdendenciesContext);
+    let wdkService = wdkDependencies?.wdkService;
+
+    let downloadRecordTable = useMemo(
+      () => downloadRecordTableFactory(wdkService, record, table.name),
+      []
+    )
+
+    // FIXME Revise this since we now lazy load tables...
+    let showDownload = (
+      record.tables[table.name] &&
+      record.tables[table.name].length > 0 &&
+      ontologyProperties.scope?.includes('download')
+    );
+
+    return (
+      <DefaultComponent {...props} table={Object.assign({}, table, {
+        displayName: (
+          <span>
+            {table.displayName}
+            {showDownload &&
+              <span
+                style={{
+                  fontSize: '.8em',
+                  fontWeight: 'normal',
+                  marginLeft: '1em'
+                }}>
+                <a
+                  role="button"
+                  tabIndex={0}
+                  onClick={downloadRecordTable}
+                >
+                  <i className="fa fa-download"/> Download
+                </a>
+              </span>
+            }
+
+          </span>
+        )
+      })}/>
+    );
+  }
+}
+
+
+function downloadRecordTableFactory(wdkService: WdkService | undefined, record: RecordInstance, tableName: string) {
+  if (wdkService == null) {
+    return undefined;
+  }
+
+  return function downloadRecordTable(event: React.MouseEvent) {
     let answerSpec = getSingleRecordAnswerSpec(record);
     let formatting = {
       format: 'tableTabular',
@@ -26,58 +78,6 @@ function downloadRecordTable(record: RecordInstance, tableName: string) {
         attachmentType: "text"
       }
     };
-    wdkService.downloadAnswer({ answerSpec, formatting });
-    return emptyAction;
-  };
-}
-
-interface Props extends WrappedComponentProps<RecordTableSectionProps> {
-  downloadRecordTable: (record: RecordInstance, tableName: string) => void;
-}
-
-export function RecordTableSection(DefaultComponent: React.ComponentType<WrappedComponentProps<RecordTableSectionProps>>) {
-  return connect(null, { downloadRecordTable })(class ApiRecordTableSection extends React.PureComponent<Props> {
-    render () {
-      let { table, record, downloadRecordTable, ontologyProperties } = this.props;
-
-      let callDownloadTable = (event: React.MouseEvent) => {
-        event.stopPropagation();
-        downloadRecordTable(record, table.name);
-      };
-
-      // FIXME Revise this since we now lazy load tables...
-      let showDownload = (
-        record.tables[table.name] &&
-        record.tables[table.name].length > 0 &&
-        ontologyProperties.scope?.includes('download')
-      );
-
-      return (
-        <DefaultComponent {...this.props} table={Object.assign({}, table, {
-          displayName: (
-            <span>
-              {table.displayName}
-              {showDownload &&
-                <span
-                  style={{
-                    fontSize: '.8em',
-                    fontWeight: 'normal',
-                    marginLeft: '1em'
-                  }}>
-                  <a
-                    role="button"
-                    tabIndex={0}
-                    onClick={callDownloadTable}
-                  >
-                    <i className="fa fa-download"/> Download
-                  </a>
-                </span>
-              }
-
-            </span>
-          )
-        })}/>
-      );
-    }
-  });
+    return wdkService.downloadAnswer({ answerSpec, formatting });
+  }
 }
