@@ -69,6 +69,8 @@ function downloadRecordTableFactory(wdkService: WdkService | undefined, record: 
   }
 
   return function downloadRecordTable(event: React.MouseEvent) {
+    event.stopPropagation();
+
     const answerSpec = getSingleRecordAnswerSpec(record);
     const formatting = {
       format: 'tableTabular',
