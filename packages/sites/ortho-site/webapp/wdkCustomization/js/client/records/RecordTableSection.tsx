@@ -23,7 +23,7 @@ export function RecordTableSection(DefaultComponent: React.ComponentType<Wrapped
 
     const downloadRecordTable = useMemo(
       () => downloadRecordTableFactory(wdkService, record, table.name),
-      []
+      [ wdkService, record, table.name ]
     )
 
     // FIXME Revise this since we now lazy load tables...
