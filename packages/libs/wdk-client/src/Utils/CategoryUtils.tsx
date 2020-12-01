@@ -74,8 +74,8 @@ export function getTargetType(node: CategoryTreeNode) {
   return getPropertyValue('targetType', node);
 }
 
-export function getScope(node: CategoryTreeNode) {
-  return getPropertyValue('scope', node);
+export function getScopes(node: CategoryTreeNode) {
+  return getPropertyValues('scope', node);
 }
 
 export function getRefName(node: CategoryTreeNode) {
