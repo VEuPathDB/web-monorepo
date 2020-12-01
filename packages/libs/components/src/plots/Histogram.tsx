@@ -50,7 +50,7 @@ export type HistogramProps = {
   /** The orientation of the plot. Defaults to `vertical` */
   defaultOrientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
-  layout: 'overlay' | 'group' | 'stack';
+  layout: 'overlay' | 'stack';
   /** Title of plot. */
   title?: string;
   /** Label for independent axis. Defaults to `Bins`. */

@@ -4,15 +4,8 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import Histogram, { HistogramData, HistogramProps } from '../plots/Histogram';
 import {
   DARK_GRAY,
-  DARK_RED,
-  DARK_YELLOW,
   LIGHT_BLUE,
-  LIGHT_GRAY,
   LIGHT_GREEN,
-  LIGHT_ORANGE,
-  LIGHT_PURPLE,
-  LIGHT_RED,
-  LIGHT_YELLOW,
   MEDIUM_GRAY,
 } from '../constants/colors';
 
@@ -159,12 +152,6 @@ export const StackedBars = Template.bind({});
 StackedBars.args = {
   ...TwoDataSeries.args,
   layout: 'stack',
-};
-
-export const GroupedBars = Template.bind({});
-GroupedBars.args = {
-  ...TwoDataSeries.args,
-  layout: 'group',
 };
 
 export const PlotTitle = Template.bind({});
