@@ -5,26 +5,26 @@ describe('useStateWithHistory', () => {
 
   it('should work with size = 1', () => {
     const { result } = renderHook(() => useStateWithHistory('foo', { size: 1 }));
-    expect(result.current.state).toBe('foo');
+    expect(result.current.current).toBe('foo');
     expect(result.current.canRedo).toBeFalsy();
     expect(result.current.canUndo).toBeFalsy();
     act(() => {
-      result.current.set('bar');
+      result.current.setCurrent('bar');
     })
-    expect(result.current.state).toBe('bar');
+    expect(result.current.current).toBe('bar');
   });
 
   it('should work with size > 1', () => {
     const { result } = renderHook(() => useStateWithHistory('a', { size: 5 }));
-    expect(result.current.state).toBe('a');
+    expect(result.current.current).toBe('a');
     act(() => {
-      result.current.set('b');
-      result.current.set('c');
-      result.current.set('d');
-      result.current.set('e');
-      result.current.set('f');
+      result.current.setCurrent('b');
+      result.current.setCurrent('c');
+      result.current.setCurrent('d');
+      result.current.setCurrent('e');
+      result.current.setCurrent('f');
     });
-    expect(result.current.state).toBe('f');
+    expect(result.current.current).toBe('f');
     expect(result.current.canUndo).toBeTruthy();
     expect(result.current.canRedo).toBeFalsy();
     act(() => {
@@ -35,13 +35,13 @@ describe('useStateWithHistory', () => {
       result.current.undo();
       result.current.undo();
     });
-    expect(result.current.state).toBe('b');
+    expect(result.current.current).toBe('b');
     expect(result.current.canUndo).toBeFalsy();
     expect(result.current.canRedo).toBeTruthy();
     act(() => {
       result.current.redo();
     });
-    expect(result.current.state).toBe('c');
+    expect(result.current.current).toBe('c');
     expect(result.current.canUndo).toBeTruthy();
     expect(result.current.canRedo).toBeTruthy();
   });
@@ -49,22 +49,22 @@ describe('useStateWithHistory', () => {
   it('should allow functional state updates', () => {
     const { result } = renderHook(() => useStateWithHistory(1, { size: 2 }));
     act(() => {
-      result.current.set(n => n * 3);
+      result.current.setCurrent(n => n * 3);
     });
-    expect(result.current.state).toBe(3);
+    expect(result.current.current).toBe(3);
     act(() => {
-      result.current.set(n => n * 3);
+      result.current.setCurrent(n => n * 3);
     });
-    expect(result.current.state).toBe(9);
+    expect(result.current.current).toBe(9);
   });
 
   it('should allow to initialize with undefined', () => {
     const { result } = renderHook(() => useStateWithHistory<number>({ size: 2 }));
-    expect(result.current.state).toBeUndefined();
+    expect(result.current.current).toBeUndefined();
     act(() => {
-      result.current.set(1);
-      result.current.set(2);
+      result.current.setCurrent(1);
+      result.current.setCurrent(2);
     });
-    expect(result.current.state).toBe(2);
+    expect(result.current.current).toBe(2);
   })
 })
