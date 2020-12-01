@@ -2,7 +2,7 @@ import React from 'react';
 import { AnalysisStore, AnalysisListContext } from '../hooks/useAnalysis';
 import { StudyMetadataStore, useWdkStudyRecord, useStudyMetadata, StudyContext } from '../hooks/useStudy';
 import { usePromise } from '../hooks/usePromise';
-import { LoadError } from 'wdk-client/Components';
+import { LoadError } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
   studyId: string;

@@ -1,6 +1,6 @@
 import { Analysis, NewAnalysis } from '../types/analysis';
-import { ApiRequest, createJsonRequest, standardTransformer } from 'ebrc-client/util/api';
-import { record, none, string } from 'wdk-client/Utils/Json';
+import { ApiRequest, createJsonRequest, standardTransformer } from '@veupathdb/web-common/lib/util/api';
+import { record, none, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 export type AnalysisApi = typeof AnalysisApi;
 

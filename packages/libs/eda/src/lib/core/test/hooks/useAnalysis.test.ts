@@ -1,7 +1,7 @@
 import { omit } from 'lodash';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useAnalysisState, Status, AnalysisStore } from '../../hooks/useAnalysis';
-import { Analysis, NewAnalysis } from '../../types/analysis';
+import { useAnalysisState, Status, AnalysisStore } from '../../src/hooks/useAnalysis';
+import { Analysis, NewAnalysis } from '../../src/types/analysis';
 
 let store: AnalysisStore;
 

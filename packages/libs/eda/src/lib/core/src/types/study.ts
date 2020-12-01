@@ -1,5 +1,5 @@
-import * as t from 'wdk-client/Utils/Json';
-import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
+import * as t from '@veupathdb/wdk-client/lib/Utils/Json';
+import { RecordClass, RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // Aliases
 // -------

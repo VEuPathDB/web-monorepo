@@ -1,4 +1,4 @@
-import * as t from 'wdk-client/Utils/Json';
+import * as t from '@veupathdb/wdk-client/lib/Utils/Json';
 
 const _FilterBase = t.record({
   entityId: t.string,

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
-import { useStateWithHistory, StateWithHistory } from 'wdk-client/Hooks/StateWithHistory';
-import { ApiRequestHandler } from 'ebrc-client/util/api';
+import { useStateWithHistory, StateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
+import { ApiRequestHandler } from '@veupathdb/web-common/lib/util/api';
 import { Analysis, NewAnalysis } from '../types/analysis';
 import { usePromise } from './usePromise';
 import { AnalysisApi } from '../api/analysis-api';

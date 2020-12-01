@@ -1,5 +1,5 @@
-import { ApiRequest, createJsonRequest, standardTransformer } from 'ebrc-client/util/api';
-import { arrayOf, number, record, Unpack } from 'wdk-client/Utils/Json';
+import { ApiRequest, createJsonRequest, standardTransformer } from '@veupathdb/web-common/lib/util/api';
+import { arrayOf, number, record, Unpack } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { Filter } from '../types/filter';
 import { StudyMetadata } from "../types/study";
 

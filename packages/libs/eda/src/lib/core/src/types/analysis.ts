@@ -1,4 +1,4 @@
-import * as t from 'wdk-client/Utils/Json';
+import * as t from '@veupathdb/wdk-client/lib/Utils/Json';
 import { Filter } from './filter';
 
 export type DerviedVariable = t.Unpack<typeof DerviedVariable>;

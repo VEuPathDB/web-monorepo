@@ -1,7 +1,7 @@
 import { createContext, useCallback } from 'react';
-import { useWdkServiceWithRefresh } from 'wdk-client/Hooks/WdkServiceHook';
-import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
-import { getTargetType, getScopes, getNodeId } from 'wdk-client/Utils/CategoryUtils';
+import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { getTargetType, getScopes, getNodeId } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { useNonNullableContext } from './useNonNullableContext';
 import { StudyMetadata, StudyRecordClass, StudyRecord } from '../types/study';
 import { usePromise } from './usePromise';
