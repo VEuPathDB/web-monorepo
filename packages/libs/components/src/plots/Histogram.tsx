@@ -5,16 +5,10 @@ import { DateTime } from 'luxon';
 import { DARK_GRAY } from '../constants/colors';
 import PlotlyPlot from './PlotlyPlot';
 
-/**
- * Steps
- * 1. Come up with a reasonable representation of pre-binned data.
- * Ideally this would be able to drop into a bar chart.
- */
-
 export type HistogramData = Array<{
-  seriesName: string;
-  seriesColor: string;
-  data: HistogramBin[];
+  name: string;
+  color: string;
+  bins: HistogramBin[];
 }>;
 
 type HistogramBin = {
@@ -54,14 +48,16 @@ export type HistogramProps = {
   /** The height of the plot in pixels. */
   height: number;
   /** The orientation of the plot. Defaults to `vertical` */
-  orientation: 'vertical' | 'horizontal';
+  defaultOrientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
-  barMode: 'overlay' | 'group' | 'stack';
+  layout: 'overlay' | 'group' | 'stack';
   /** Title of plot. */
   title?: string;
-  /** Fill color of the title, axes labels, and tick marks.
-   * Defaults to DARK_GRAY.
-   */
+  /** Label for independent axis. Defaults to `Bins`. */
+  independentAxisLabel?: string;
+  /** Label for dependent axis. Defaults to `Count`. */
+  dependentAxisLabel?: string;
+  /** Fill color of the title, axes labels, and tick marks. Defaults to DARK_GRAY. */
   textColor?: string;
   /** Color of the gridlines. Use Plotly defaults if not specified. */
   gridColor?: string;
@@ -69,7 +65,7 @@ export type HistogramProps = {
    * if there is only one data series bars are not overlayed. Otherwise,
    * defaults to .75
    */
-  barOpacity?: number;
+  defaultOpacity?: number;
   /** Control of background color. Defaults to transparent.  */
   backgroundColor?: string;
 };
@@ -78,18 +74,20 @@ export default function Histogram({
   data,
   width,
   height,
-  orientation = 'vertical',
+  defaultOrientation = 'vertical',
   title,
+  independentAxisLabel = 'Bins',
+  dependentAxisLabel = 'Count',
   textColor = DARK_GRAY,
   gridColor,
-  barOpacity,
-  barMode = 'overlay',
+  defaultOpacity,
+  layout = 'overlay',
   backgroundColor = 'transparent',
 }: HistogramProps) {
   // Determine bar opacity.
-  const calculatedBarOpacity = barOpacity
-    ? barOpacity
-    : data.length === 1 || barMode !== 'overlay'
+  const calculatedBarOpacity = defaultOpacity
+    ? defaultOpacity
+    : data.length === 1 || layout !== 'overlay'
     ? 1
     : 0.75;
 
@@ -97,22 +95,20 @@ export default function Histogram({
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
     () =>
       data.map((series) => {
-        const binLabels = series.data.map(binLabel);
-        const binCounts = series.data.map((bin) => bin.count);
+        const binLabels = series.bins.map(binLabel);
+        const binCounts = series.bins.map((bin) => bin.count);
 
         return {
           type: 'bar',
-          x: orientation === 'vertical' ? binLabels : binCounts,
-          y: orientation === 'vertical' ? binCounts : binLabels,
+          x: defaultOrientation === 'vertical' ? binLabels : binCounts,
+          y: defaultOrientation === 'vertical' ? binCounts : binLabels,
           opacity: calculatedBarOpacity,
-          orientation: orientation === 'vertical' ? 'v' : 'h',
-          name: series.seriesName,
-          ...(series.seriesColor
-            ? { marker: { color: series.seriesColor } }
-            : {}),
+          orientation: defaultOrientation === 'vertical' ? 'v' : 'h',
+          name: series.name,
+          ...(series.color ? { marker: { color: series.color } } : {}),
         };
       }),
-    [data, orientation]
+    [data, defaultOrientation]
   );
 
   return (
@@ -133,9 +129,12 @@ export default function Histogram({
         plot_bgcolor: backgroundColor,
         paper_bgcolor: backgroundColor,
         xaxis: {
-          type: orientation === 'vertical' ? 'category' : 'linear',
+          type: defaultOrientation === 'vertical' ? 'category' : 'linear',
           title: {
-            text: orientation === 'vertical' ? 'Bins' : 'Count',
+            text:
+              defaultOrientation === 'vertical'
+                ? independentAxisLabel
+                : dependentAxisLabel,
             font: {
               family: 'Arial, Helvetica, sans-serif',
               size: 14,
@@ -145,7 +144,10 @@ export default function Histogram({
         },
         yaxis: {
           title: {
-            text: orientation === 'vertical' ? 'Count' : 'Bins',
+            text:
+              defaultOrientation === 'vertical'
+                ? dependentAxisLabel
+                : independentAxisLabel,
             font: {
               family: 'Arial, Helvetica, sans-serif',
               size: 14,
@@ -154,7 +156,7 @@ export default function Histogram({
           color: textColor,
           gridcolor: gridColor,
         },
-        barmode: barMode,
+        barmode: layout,
         title: {
           text: title,
           font: {
@@ -170,41 +172,6 @@ export default function Histogram({
     />
   );
 }
-
-// type SupportedDataTypes = 'number' | 'date';
-// type UserDataTypeToNativeType<T extends SupportedDataTypes> = T extends 'number'
-//   ? number
-//   : T extends 'date'
-//   ? string
-//   : never;
-
-// interface Props<T extends 'number' | 'date'> {
-//   // This can be used by the component if special logic is required based on type
-//   // E.g., if `date`, will need `layout.xaxis.type = date`
-//   dataType: T;
-
-//   // Data, as an array. See `props.layout` for display options
-//   data: Array<{
-//     series: Array<{
-//       binStart: UserDataTypeToNativeType<T>;
-//       // defaults to something like "{binStart} - {binStart + binWidth}"
-//       binLabel?: string;
-//     }>;
-//     color?: string;
-//   }>;
-
-//   // stacked bars vs overlayed plots
-//   layout: 'stack' | 'overlay';
-
-//   // If this is not provided, it should be inferred from the data. We can just let plotly figure this out.
-//   //   defaultYAxisRange?: [T, T];
-//   //   onYAxisRangeChange: (range: [T, T]) => void;
-
-//   // Controls direction of bars
-//   defaultOrientation?: 'vertical' | 'horizontal';
-
-//   // Controls opacity of bars, gobally
-//   defaultOpacity?: number;
 
 //   // ----------------
 //   // BACKEND CONTROLS

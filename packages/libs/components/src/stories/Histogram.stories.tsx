@@ -23,9 +23,9 @@ export default {
 
 const singleSeriesMock: HistogramData = [
   {
-    seriesName: 'Tacos',
-    seriesColor: LIGHT_GREEN,
-    data: [
+    name: 'Tacos',
+    color: LIGHT_GREEN,
+    bins: [
       {
         binStart: 0,
         binEnd: 2,
@@ -53,9 +53,9 @@ const singleSeriesMock: HistogramData = [
 const doubleSeriesMock: HistogramData = [
   ...singleSeriesMock,
   {
-    seriesName: 'Pizzas',
-    seriesColor: LIGHT_BLUE,
-    data: [
+    name: 'Pizzas',
+    color: LIGHT_BLUE,
+    bins: [
       {
         binStart: 4,
         binEnd: 6,
@@ -82,9 +82,9 @@ const doubleSeriesMock: HistogramData = [
 
 const dateSeriesMock: HistogramData = [
   {
-    seriesName: 'Vaccinations',
-    seriesColor: LIGHT_BLUE,
-    data: [
+    name: 'Vaccinations',
+    color: LIGHT_BLUE,
+    bins: [
       {
         binStart: '2020-01-01',
         binEnd: '2020-01-07',
@@ -158,13 +158,13 @@ TwoDataSeries.args = {
 export const StackedBars = Template.bind({});
 StackedBars.args = {
   ...TwoDataSeries.args,
-  barMode: 'stack',
+  layout: 'stack',
 };
 
 export const GroupedBars = Template.bind({});
 GroupedBars.args = {
   ...TwoDataSeries.args,
-  barMode: 'group',
+  layout: 'group',
 };
 
 export const PlotTitle = Template.bind({});
@@ -173,17 +173,25 @@ PlotTitle.args = {
   title: 'A Fancy Plot Title',
 };
 
+export const CustomAxesLabels = Template.bind({});
+CustomAxesLabels.args = {
+  ...TwoDataSeries.args,
+  title: 'Custom Axes Labels',
+  independentAxisLabel: 'Number of Items Ordered (Binned)',
+  dependentAxisLabel: 'Count of Orders',
+};
+
 export const HorizontalOrientation = Template.bind({});
 HorizontalOrientation.args = {
   ...TwoDataSeries.args,
-  orientation: 'horizontal',
+  defaultOrientation: 'horizontal',
   title: 'Horizontal Plot with Title',
 };
 
 export const CustomBarOpacity = Template.bind({});
 CustomBarOpacity.args = {
   ...TwoDataSeries.args,
-  barOpacity: 0.25,
+  defaultOpacity: 0.25,
   title: 'Custom Bar Opacity',
 };
 
