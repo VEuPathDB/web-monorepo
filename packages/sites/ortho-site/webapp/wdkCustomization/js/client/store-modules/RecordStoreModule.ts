@@ -14,7 +14,7 @@ export function reduce(state = {} as RecordStoreModule.State, action: Action): R
 
   switch (action.type) {
     case RecordActions.RECORD_RECEIVED:
-      return action.payload.recordClass.urlSegment === 'group'
+      const nextStateWithCollapsedSections = action.payload.recordClass.urlSegment === 'group'
         ? {
             ...nextState,
             collapsedSections: RecordStoreModule.getAllFields(nextState).filter(
@@ -24,7 +24,12 @@ export function reduce(state = {} as RecordStoreModule.State, action: Action): R
               )
             )
           }
-        : nextState
+        : nextState;
+
+      return {
+        ...nextStateWithCollapsedSections,
+        navigationVisible: true
+      };
 
     default:
       return nextState;
