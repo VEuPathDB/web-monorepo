@@ -14,7 +14,7 @@ export function SiteSearchInput(DefaultComponent: React.ComponentType<Props>) {
     const placeholderText = usePlaceholderText();
 
     return <DefaultComponent {...props} placeholderText={placeholderText} />;
-  }
+  };
 }
 
 function usePlaceholderText() {
