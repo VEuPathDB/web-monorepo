@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { OrthoMCLPage } from 'ortho-client/components/layout/OrthoMCLPage';
+import { SiteSearchInput } from 'ortho-client/components/site-search/SiteSearchInput';
 import {
   RecordAttribute as GroupRecordAttribute,
   RecordAttributeSection as GroupRecordAttributeSection,
@@ -24,7 +25,8 @@ export default {
   RecordAttribute: makeDynamicWrapper('RecordAttribute', (props: RecordAttributeProps) => props.recordClass.fullName),
   RecordAttributeSection: makeDynamicWrapper('RecordAttributeSection', (props: RecordAttributeSectionProps) => props.recordClass.fullName),
   RecordTable: makeDynamicWrapper('RecordTable', (props: RecordTableProps) => props.recordClass.fullName),
-  RecordTableSection
+  RecordTableSection,
+  SiteSearchInput
 };
 
 const GROUP_RECORD_CLASS_NAME = 'GroupRecordClasses.GroupRecordClass';
