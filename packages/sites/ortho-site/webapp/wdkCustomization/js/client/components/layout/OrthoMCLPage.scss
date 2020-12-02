@@ -42,15 +42,11 @@
           font-size: 0.9em;
         }
       }
-
     }
 
 
-
-    @media screen and (min-width: $cramped-header-width + 1) {
-      .vpdb-HeaderBranding {
-        height: 6em;
-      }
+    .vpdb-HeaderBranding {
+      height: 6em;
     }
 
 
@@ -58,4 +54,3 @@
       position: relative;
     }
   }
-
