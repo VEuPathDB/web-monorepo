@@ -44,9 +44,7 @@ async function fetchTextExample(wdkService: WdkService) {
 
   const accessionExample = accessionSearch.parameters.find(p => p.name === 'accession')?.initialDisplayValue;
 
-  return accessionExample == null
-    ? undefined
-    : accessionExample.includes('*')
+  return accessionExample == null || accessionExample.includes('*')
     ? accessionExample
     : `${accessionExample.slice(0, 10)}*`;
 }
