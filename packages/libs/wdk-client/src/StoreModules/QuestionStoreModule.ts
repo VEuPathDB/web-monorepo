@@ -13,7 +13,7 @@ import {
   UPDATE_QUESTION_WEIGHT,
   UPDATE_PARAM_VALUE,
   PARAM_ERROR,
-  UPDATE_PARAMS,
+  UPDATE_DEPENDENT_PARAMS,
   UPDATE_PARAM_STATE,
   CHANGE_GROUP_VISIBILITY,
   UPDATE_GROUP_STATE,
@@ -21,7 +21,7 @@ import {
   QuestionLoadedAction,
   initParam,
   UpdateParamValueAction,
-  updateParams,
+  updateDependentParams,
   paramError,
   SubmitQuestionAction,
   questionLoaded,
@@ -226,8 +226,8 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         }
       };
 
-    case UPDATE_PARAMS: {
-      const newParamsByName = keyBy(action.payload.parameters, 'name');
+    case UPDATE_DEPENDENT_PARAMS: {
+      const newParamsByName = keyBy(action.payload.refreshedDependentParameters, 'name');
       const newParamValuesByName = mapValues(newParamsByName, param => param.initialDisplayValue || '');
       const newParamErrors = mapValues(newParamsByName, () => undefined);
       const newParamDependenciesUpdating = mapValues(newParamsByName, () => false);
@@ -411,13 +411,13 @@ const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkServic
   debounceTime(1000),
   mergeMap(action => {
     const { searchName, parameter, paramValues, paramValue } = action.payload;
-    return from(wdkService.getQuestionParamValues(
+    return from(wdkService.getRefreshedDependentParams(
       searchName,
       parameter.name,
       paramValue,
       paramValues
     ).then(
-      parameters => updateParams({searchName, parameters}),
+      refreshedDependentParameters => updateDependentParams({searchName, updatedParameter: parameter, refreshedDependentParameters}),
       error => paramError({ searchName, error: error.message, paramName: parameter.name })
     )).pipe(
       takeUntil(action$.pipe(ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE))),

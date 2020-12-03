@@ -419,7 +419,7 @@ export default (base: ServiceBase) => {
     }).then(response => response.searchData);
   }
 
-  async function getQuestionParamValues(questionUrlSegment: string, paramName: string, paramValue: ParameterValue, paramValues: ParameterValues) {
+  async function getRefreshedDependentParams(questionUrlSegment: string, paramName: string, paramValue: ParameterValue, paramValues: ParameterValues) {
     let searchPath = await getSearchPathFromUrlSegment(questionUrlSegment);
     return base.sendRequest(parametersDecoder, {
       method: 'post',
@@ -465,7 +465,7 @@ export default (base: ServiceBase) => {
   return {
     getQuestionAndParameters,
     getQuestionGivenParameters,
-    getQuestionParamValues,
+    getRefreshedDependentParams,
     getOntologyTermSummary,
     getFilterParamSummaryCounts
   }

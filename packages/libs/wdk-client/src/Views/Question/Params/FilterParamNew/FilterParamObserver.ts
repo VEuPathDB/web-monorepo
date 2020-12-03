@@ -7,11 +7,11 @@ import {
   CHANGE_GROUP_VISIBILITY,
   QUESTION_LOADED,
   UNLOAD_QUESTION,
-  UPDATE_PARAMS,
+  UPDATE_DEPENDENT_PARAMS,
   ChangeGroupVisibilityAction,
   QuestionLoadedAction,
   UnloadQuestionAction,
-  UpdateParamsAction,
+  UpdateDependentParamsAction,
   paramError,
 } from 'wdk-client/Actions/QuestionActions';
 import { State, QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
@@ -185,15 +185,19 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 );
 
 const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wdkService }) => action$.pipe(
-  filter((action): action is UpdateParamsAction => action.type === UPDATE_PARAMS),
+  filter((action): action is UpdateDependentParamsAction => action.type === UPDATE_DEPENDENT_PARAMS),
   switchMap(action => {
-    const { searchName, parameters } = action.payload;
-    return from(parameters).pipe(
+    const { searchName, updatedParameter } = action.payload;
+    const questionState = getQuestionState(state$.value, searchName);
+    if (questionState == null) return empty() as Observable<Action>;
+    const { paramValues, paramUIState } = questionState;
+
+    const dependentParameters = updatedParameter.dependentParams.map(dependentParamName => 
+      questionState.question.parametersByName[dependentParamName]!
+    );
+    return from(dependentParameters).pipe(
       filter(isType),
       mergeMap(parameter => {
-        const questionState = getQuestionState(state$.value, searchName);
-        if (questionState == null) return empty() as Observable<Action>;
-        const { paramValues, paramUIState } = questionState;
         const { activeOntologyTerm } = paramUIState[parameter.name] as FilterParamState;
         const { ontology } = parameter;
         const filters = getFilters(paramValues[parameter.name]);
@@ -201,6 +205,8 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
         const activeField = ontology.findIndex(item => item.term === activeOntologyTerm) > -1
           ? activeOntologyTerm
           : filters.length === 0 ? getFilterFields(parameter).first()?.term : filters[0].field;
+
+        const belongsToVisibleGroup = questionState.groupUIState[parameter.group].isVisible;
 
         return merge(
           of(invalidateOntologyTerms({
@@ -210,8 +216,8 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
             retainedFields: [/* activeOntologyTerm */],
             activeOntologyTerm: activeField
           })),
-          activeField ? getOntologyTermSummary(wdkService, parameter.name, questionState, activeField) : empty() as Observable<Action>,
-          getSummaryCounts(wdkService, parameter.name, questionState)
+          (activeField && belongsToVisibleGroup) ? getOntologyTermSummary(wdkService, parameter.name, questionState, activeField) : empty() as Observable<Action>,
+          belongsToVisibleGroup ? getSummaryCounts(wdkService, parameter.name, questionState):  empty() as Observable<Action>
         );
       }),
       takeUntil(getUnloadQuestionStream(action$, searchName))
