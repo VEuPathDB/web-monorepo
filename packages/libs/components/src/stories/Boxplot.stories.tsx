@@ -6,7 +6,17 @@ import _ from 'lodash';
 
 export default {
   title: 'Boxplot',
-  component: Boxplot
+  component: Boxplot,
+  argTypes: {
+    defaultOpacity: {
+      control: {
+	type: 'range',
+	min: 0,
+	max: 1,
+	step: 0.1
+      }
+    }
+  }
 } as Meta;
 
 const Template = (args : Props) => <Boxplot {...args} />;
@@ -227,6 +237,7 @@ function summaryStats(rawData : number[]) {
 }
 
 function storyArgTypes(args : any) : any {
+  const pointTraceIndices = args.data.map((d : any, index : number) => d.rawData || d.outliers.length ? index : -1).filter((i : number) => i>=0);
   return {
     defaultShowRawData: {
       control: {
@@ -238,6 +249,11 @@ function storyArgTypes(args : any) : any {
 	disable: args.data.filter((d : any) => d.mean !== undefined).length == 0
       }
     },
+    defaultOpacity: {
+      control: {
+	disable: pointTraceIndices.length == 0
+      }
+    }
   };
 }
 
