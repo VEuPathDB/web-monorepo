@@ -17,9 +17,9 @@ interface SemanticMarkersProps {
 
 /**
  * Renders the semantic markers layer
- * 
- * 
- * @param props 
+ *
+ *
+ * @param props
  */
 export default function SemanticMarkers({ onViewportChanged, markers, animation, nudge}: SemanticMarkersProps) {
   const { map } = useLeaflet();
@@ -42,10 +42,12 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
     }
 
     updateMap();
-    map.on('resize dragend zoomend moveend', updateMap); // resize is there hopefully when we have full screen mode
+    //DKDK remove moveend due to conflict with marker animation
+    map.on('resize dragend zoomend', updateMap); // resize is there hopefully when we have full screen mode
 
     return () => {
-      map.off('resize dragend zoomend moveend', updateMap);
+    //DKDK remove moveend due to conflict with marker animation
+      map.off('resize dragend zoomend', updateMap);
     };
   }, [map, onViewportChanged]);
 
@@ -60,7 +62,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
 	const markerRadius = 35; // pixels // TEMPORARILY HARDCODED - need to get it from the marker somehow?
 	// It should work with half the maximum dimension (50/2 = 25)
 	// but I suspect 'position' is not in the center of the marker icon?
-	
+
 	const geohash = marker.props.id as string;
 	const geohashCenter = Geohash.decode(geohash);
 	const bounds = Geohash.bounds(geohash);
@@ -169,7 +171,7 @@ function boundsToGeoBBox(bounds : LatLngBounds) : Bounds {
   }
   if (east < -180) {
     east = -180;
-  }  
+  }
 
   return { southWest: {lat: south, lng: west}, northEast: {lat: north, lng: east} };
 }
