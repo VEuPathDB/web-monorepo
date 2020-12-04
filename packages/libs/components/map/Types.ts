@@ -49,3 +49,8 @@ export type AnimationFunction = (
     };
 
 
+/**
+ * Utility type to extract the Props type from a React Component
+ * @example type Props = ExtractProps<typeof MyComponent>;
+ */
+export type ExtractProps<T> = T extends React.ComponentType<infer Props> ? Props : never;
