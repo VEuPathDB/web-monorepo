@@ -2,7 +2,7 @@ import { keyBy, mapValues, toString, uniqBy } from 'lodash';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
 import { EMPTY, Observable, Subject, from, merge, of } from 'rxjs';
-import { catchError, debounceTime, bufferTime, filter, map, mergeAll, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, debounceTime, concatMap, filter, map, mergeAll, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 
 import {
   UNLOAD_QUESTION,
@@ -98,7 +98,7 @@ export type QuestionState = {
   customName?: string;
   stepValidation?: Step['validation'];
   submitting: boolean;
-  paramDependenciesUpdating: Record<string, boolean>;
+  paramsUpdatingDependencies: Record<string, boolean>;
 }
 
 export type State = {
@@ -155,7 +155,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         stepId: action.payload.stepId,
         questionStatus: 'loading',
         submitting: false,
-        paramDependenciesUpdating: {}
+        paramsUpdatingDependencies: {}
       }
 
     case QUESTION_LOADED:
@@ -207,11 +207,6 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
       }
 
     case UPDATE_PARAM_VALUE:
-      const newParamDependenciesUpdating = action.payload.parameter.dependentParams.reduce(
-        (memo, dependentParam) => ({ ...memo, [dependentParam]: true }), 
-        {} as Record<string, boolean>
-      );
-
       const groupIx = state.question.groups.findIndex(group => group.name === action.payload.parameter.group);
 
       const newGroupUIState = state.question.groups.slice(groupIx).map(group => group.name).reduce(
@@ -236,9 +231,9 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           ...state.paramErrors,
           [action.payload.parameter.name]: undefined
         },
-        paramDependenciesUpdating: {
-          ...state.paramDependenciesUpdating,
-          ...newParamDependenciesUpdating
+        paramsUpdatingDependencies: {
+          ...state.paramsUpdatingDependencies,
+          [action.payload.parameter.name]: true
         },
         groupUIState: {
           ...state.groupUIState,
@@ -259,7 +254,6 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
       const newParamsByName = keyBy(action.payload.refreshedDependentParameters, 'name');
       const newParamValuesByName = mapValues(newParamsByName, param => param.initialDisplayValue || '');
       const newParamErrors = mapValues(newParamsByName, () => undefined);
-      const newParamDependenciesUpdating = mapValues(newParamsByName, () => false);
       // merge updated parameters into question and reset their values
       return {
         ...state,
@@ -280,9 +274,9 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           parameters: state.question.parameters
             .map(parameter => newParamsByName[parameter.name] || parameter)
         },
-        paramDependenciesUpdating: {
-          ...state.paramDependenciesUpdating,
-          ...newParamDependenciesUpdating
+        paramsUpdatingDependencies: {
+          ...state.paramsUpdatingDependencies,
+          [action.payload.updatedParameter.name]: false
         }
       };
     }
@@ -499,20 +493,28 @@ const observeLoadGroupCount: QuestionEpic = (action$, state$, { wdkService }) =>
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE),
   filter(action => action.payload.parameter.dependentParams.length > 0),
-  bufferTime(1000),
-  mergeMap((actions: UpdateParamValueAction[]) => {
-    const lastActionOfEachParameterName = uniqBy(actions.reverse(), 'payload.parameter.name').reverse();
+  debounceTime(1000),
+  mergeMap((action: UpdateParamValueAction) => {
+    const { searchName } = action.payload;
+    const questionState = state$.value[key].questions[searchName];
+    if (questionState == null) return EMPTY;
 
-    return from(lastActionOfEachParameterName).pipe(
-      mergeMap((action) => {
-        const { searchName, parameter, paramValue } = action.payload;
-        const questionState = state$.value[key].questions[searchName];
-        if (questionState == null) return EMPTY;
+    const xs = questionState.question.parameters
+      .filter(parameter => questionState.paramsUpdatingDependencies[parameter.name])
+      .map(parameter => ({
+        searchName,
+        parameter,
+        paramValue: questionState.paramValues[parameter.name],
+        paramValues: questionState.paramValues
+      }));
+    return from(xs).pipe(
+      concatMap((x) => {
+        const { searchName, parameter, paramValue, paramValues } = x;
         return from(wdkService.getRefreshedDependentParams(
             searchName,
             parameter.name,
             paramValue,
-            questionState.paramValues
+            paramValues
           ).then(
             refreshedDependentParameters => updateDependentParams({searchName, updatedParameter: parameter, refreshedDependentParameters}),
             error => paramError({ searchName, error: error.message, paramName: parameter.name })
