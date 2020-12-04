@@ -3,9 +3,12 @@ import { MarkerProps } from './Types';
 
 //DKDK leaflet
 import L from "leaflet";
+import { Popup } from 'react-leaflet';
 
 //DKDK anim
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
+
+// import PiePlot from 'visualization-tools/src/plots/PiePlot';
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 interface DonutMarkerProps extends BoundsDriftMarkerProps {
@@ -145,6 +148,20 @@ export default function DonutMarker(props: DonutMarkerProps) {
       bounds={props.bounds}
       icon={SVGDonutIcon}
       duration={duration}
+      popup={
+        <Popup>
+          {/* <PiePlot
+            data={props.labels.map((label, i) => ({
+              label: label,
+              value: props.values[i],
+              color: props.colors ? props.colors[i] : undefined,
+            }))}
+            interior={{heightPercentage: 0.7}}
+          /> */}
+          test
+        </Popup>
+      }
+      showPopup={props.showPopup}
     />
   );
 }

@@ -3,6 +3,7 @@ import { MarkerProps, BoundsViewport, AnimationFunction, Bounds } from "./Types"
 import { useLeaflet } from "react-leaflet";
 import { LatLngBounds } from 'leaflet'
 import Geohash from 'latlon-geohash';
+import MouseTools, { MouseMode } from './MouseTools';
 
 interface SemanticMarkersProps {
   onViewportChanged: (bvp: BoundsViewport) => void,
@@ -141,6 +142,13 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
   return (
     <>
       {consolidatedMarkers}
+      <MouseTools
+        clickHandler={(mode: MouseMode) => {
+          let showPopup = mode === 'magnification';
+          let newMarkers = consolidatedMarkers.map((marker) => cloneElement(marker, {showPopup: showPopup}));
+          setConsolidatedMarkers(newMarkers);
+        }}
+      />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import {Rectangle, useLeaflet} from "react-leaflet";
+import {Rectangle, useLeaflet, Popup} from "react-leaflet";
 import React, { useState } from "react";
 //DKDK block this
 // import { DriftMarker } from "leaflet-drift-marker";
@@ -19,7 +19,7 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
  *    For this reason, marker's props are adjusted without sending mouse event functions, but implemented here directly.
  */
 
-export default function BoundsDriftMarker({position, bounds, icon, duration}: BoundsDriftMarkerProps) {
+export default function BoundsDriftMarker({position, bounds, icon, duration, popup, showPopup}: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false)
   const { map } = useLeaflet();
   const boundingBox = new LatLngBounds([
@@ -60,5 +60,6 @@ export default function BoundsDriftMarker({position, bounds, icon, duration}: Bo
           : null
 
     }
+    {showPopup && popup}
   </DriftMarker>)
 }
