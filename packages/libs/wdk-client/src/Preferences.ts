@@ -11,6 +11,13 @@ import {useState} from 'react';
  */
 export const preferences = {
 
+  navigationVisible: memoize((recordClassUrlSegment: string) => makePreference(
+    'navigationVisible',
+    boolean,
+    PersistenceLevel.Local,
+    `wdk/navigationVisible/${recordClassUrlSegment}`
+  )),
+
   openedStrategiesVisibility: memoize(() => makePreference(
     'openedStrategiesVisibility',
     boolean,
