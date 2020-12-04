@@ -80,7 +80,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
             const { activeOntologyTerm, fieldStates } =
               questionState.paramUIState[paramName];
             const loadSummary = activeOntologyTerm != null && (
-              fieldStates[activeOntologyTerm].summary == null ||
+              fieldStates[activeOntologyTerm]?.summary == null ||
               !isEqual( prevFilters.filter(f => f.field != activeOntologyTerm)
                       , filters.filter(f => f.field !== activeOntologyTerm) )
             );
@@ -104,8 +104,8 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
             const { activeOntologyTerm, fieldStates }: FilterParamState = questionState.paramUIState[paramName];
             if (activeOntologyTerm != null && (
-              fieldStates[activeOntologyTerm].summary == null ||
-              fieldStates[activeOntologyTerm].invalid
+              fieldStates[activeOntologyTerm]?.summary == null ||
+              fieldStates[activeOntologyTerm]?.invalid
             )) {
               return of({
                 paramName,
@@ -128,8 +128,8 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
             const { activeOntologyTerm, fieldStates }: FilterParamState = questionState.paramUIState[paramName];
             if (activeOntologyTerm != null && (
-              fieldStates[activeOntologyTerm].summary == null ||
-              fieldStates[activeOntologyTerm].invalid
+              fieldStates[activeOntologyTerm]?.summary == null ||
+              fieldStates[activeOntologyTerm]?.invalid
             )) {
               return of({
                 paramName,
