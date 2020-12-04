@@ -186,7 +186,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
 const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wdkService }) => action$.pipe(
   filter((action): action is UpdateDependentParamsAction => action.type === UPDATE_DEPENDENT_PARAMS),
-  switchMap(action => {
+  mergeMap(action => {
     const { searchName, updatedParameter } = action.payload;
     const questionState = getQuestionState(state$.value, searchName);
     if (questionState == null) return empty() as Observable<Action>;

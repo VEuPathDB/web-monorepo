@@ -235,7 +235,7 @@ export interface UpdateParamValueAction {
   type: typeof UPDATE_PARAM_VALUE;
   payload: QuestionPayload<{
     parameter: Parameter;
-    paramValues: ParameterValues;
+    paramValues: ParameterValues; //FIXME remove globally, make sure the observers read from state
     paramValue: ParameterValue;
   }>;
 }

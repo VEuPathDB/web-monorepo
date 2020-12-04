@@ -1,7 +1,8 @@
-import { keyBy, mapValues, toString } from 'lodash';
+import { keyBy, mapValues, toString, uniqBy } from 'lodash';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
 import { EMPTY, Observable, Subject, from, merge, of } from 'rxjs';
-import { catchError, debounceTime, filter, map, mergeAll, mergeMap, takeUntil } from 'rxjs/operators';
+import { catchError, debounceTime, bufferTime, filter, map, mergeAll, mergeMap, takeUntil } from 'rxjs/operators';
 
 import {
   UNLOAD_QUESTION,
@@ -408,25 +409,32 @@ const observeUpdateParams: QuestionEpic = (action$, state$, { paramValueStore })
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE),
   filter(action => action.payload.parameter.dependentParams.length > 0),
-  debounceTime(1000),
-  mergeMap(action => {
-    const { searchName, parameter, paramValues, paramValue } = action.payload;
-    return from(wdkService.getRefreshedDependentParams(
-      searchName,
-      parameter.name,
-      paramValue,
-      paramValues
-    ).then(
-      refreshedDependentParameters => updateDependentParams({searchName, updatedParameter: parameter, refreshedDependentParameters}),
-      error => paramError({ searchName, error: error.message, paramName: parameter.name })
-    )).pipe(
-      takeUntil(action$.pipe(ofType<UpdateParamValueAction>(UPDATE_PARAM_VALUE))),
-      takeUntil(action$.pipe(filter(killAction => (
-        killAction.type === UNLOAD_QUESTION &&
-        killAction.payload.searchName === action.payload.searchName
-      ))))
-    )
-  })
+  bufferTime(1000),
+  mergeMap((actions: UpdateParamValueAction[]) => {
+    const lastActionOfEachParameterName = uniqBy(actions.reverse(), 'payload.parameter.name').reverse();
+
+    return from(lastActionOfEachParameterName).pipe(
+      mergeMap((action) => {
+        const { searchName, parameter, paramValue } = action.payload;
+        const questionState = state$.value[key].questions[searchName];
+        if (questionState == null) return EMPTY;
+        return from(wdkService.getRefreshedDependentParams(
+            searchName,
+            parameter.name,
+            paramValue,
+            questionState.paramValues
+          ).then(
+            refreshedDependentParameters => updateDependentParams({searchName, updatedParameter: parameter, refreshedDependentParameters}),
+            error => paramError({ searchName, error: error.message, paramName: parameter.name })
+          )).pipe(
+          takeUntil(action$.pipe(filter(killAction => (
+            killAction.type === UNLOAD_QUESTION &&
+            killAction.payload.searchName === action.payload.searchName
+          ))))
+        );
+      }),
+      );
+  }),
 );
 
 const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => action$.pipe(
