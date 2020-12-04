@@ -15,15 +15,17 @@ export function reduce(state = {} as RecordStoreModule.State, action: Action): R
 
   switch (action.type) {
     case RecordActions.RECORD_RECEIVED:
-      return {
-        ...nextState,
-        collapsedSections: RecordStoreModule.getAllFields(nextState).filter(
-          name => (
-            name === SEQUENCES_TABLE_NAME ||
-            name === PROTEIN_PFAMS_TABLE_NAME
-          )
-        )
-      };
+      return action.payload.recordClass.urlSegment === 'group'
+        ? {
+            ...nextState,
+            collapsedSections: RecordStoreModule.getAllFields(nextState).filter(
+              name => (
+                name === SEQUENCES_TABLE_NAME ||
+                name === PROTEIN_PFAMS_TABLE_NAME
+              )
+            )
+          }
+        : nextState;
 
     default:
       return nextState;
