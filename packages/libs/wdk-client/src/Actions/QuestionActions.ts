@@ -27,7 +27,7 @@ export type Action =
   | InitParamAction
   | UpdateParamStateAction
   | ChangeGroupVisibilityAction
-  | UpdateGroupStateAction
+  | GroupCountLoadedAction
   | EnableSubmissionAction
 
 
@@ -345,19 +345,20 @@ export function changeGroupVisibility(payload: ChangeGroupVisibilityAction['payl
 
 //==============================================================================
 
-export const UPDATE_GROUP_STATE = 'question/update-group-state';
+export const GROUP_COUNT_LOADED = 'question/group-count-loaded';
 
-export interface UpdateGroupStateAction {
-  type: typeof UPDATE_GROUP_STATE;
+export interface GroupCountLoadedAction {
+  type: typeof GROUP_COUNT_LOADED;
   payload: {
+    searchName: string;
     groupName: string;
-    groupState: any;
+    filteredCount: number;
   };
 }
 
-export function updateGroupState(payload: UpdateGroupStateAction['payload']): UpdateGroupStateAction {
+export function groupCountLoaded(payload: GroupCountLoadedAction['payload']): GroupCountLoadedAction {
   return {
-    type: UPDATE_GROUP_STATE,
+    type: GROUP_COUNT_LOADED,
     payload
   };
 }
