@@ -253,6 +253,8 @@ export default class HistogramField extends React.Component {
           yaxisLabel={displayName}
           uiState={activeFieldState}
           onUiStateChange={this.handleRangeScaleChange}
+          truncateYAxis={this.props.histogramTruncateYAxisDefault}
+          defaultScaleYAxis={this.props.histogramScaleYAxisDefault}
         />
 
         <FilterLegend {...this.props} />
