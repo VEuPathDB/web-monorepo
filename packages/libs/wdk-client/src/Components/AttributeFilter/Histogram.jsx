@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { debounce, isEqual, memoize, noop, omit, orderBy, throttle, get } from 'lodash';
+import { clamp, debounce, isEqual, memoize, noop, omit, orderBy, throttle, get } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -62,6 +62,7 @@ var Histogram = (function() {
       };
       this.getRange = memoize(this.getRange);
       this.getNumFixedDigits = memoize(this.getNumFixedDigits);
+      this.getDefaultBinSize = memoize(this.getDefaultBinSize);
     }
 
     componentDidMount() {
@@ -81,7 +82,8 @@ var Histogram = (function() {
       if (
         nextProps.uiState.yaxisMax !== this.state.uiState.yaxisMax ||
         nextProps.uiState.xaxisMin !== this.state.uiState.xaxisMin ||
-        nextProps.uiState.xaxisMax !== this.state.uiState.xaxisMax
+        nextProps.uiState.xaxisMax !== this.state.uiState.xaxisMax ||
+        nextProps.truncateYAxis !== this.props.truncateYAxis
       ) {
         this.setState({ uiState: this.getStateFromProps(nextProps) });
       }
@@ -113,11 +115,20 @@ var Histogram = (function() {
       if (this.tooltip) this.tooltip.qtip('destroy');
     }
 
+    isProbablity(props) {
+      const { min, max } = this.getRange(props.distribution);
+      return min >= 0 && (max === 1 || max === 100);
+
+    }
+
     getStateFromProps(props) {
       // Set default yAxis max based on distribution
-      var yaxisMax = props.uiState.yaxisMax != null ? props.uiState.yaxisMax : this.getYAxisMax(props);
       var { xaxisMin, xaxisMax } = this.getXAxisMinMax(props);
-      var { scaleYAxis = false, binSize = 0, binStart = Math.min(xaxisMin, 0), yaxisMin = 0 } = props.uiState;
+      var binStart = props.uiState.binStart ?? props.chartType === 'date' ? xaxisMin / DAY : xaxisMin;
+      var binSize = props.uiState.binSize ?? this.getDefaultBinSize(props);
+      var yaxisMax = props.uiState.yaxisMax ?? this.getYAxisMax(this.getBinnedDistribution(binSize, binStart, props.distribution), false);
+      var { scaleYAxis = props.defaultScaleYAxis, yaxisMin = 0 } = props.uiState;
+      xaxisMax = assignBin(binSize, binStart, xaxisMax) + binSize;
       return { yaxisMax, xaxisMin, xaxisMax, scaleYAxis, binSize, binStart, yaxisMin };
     }
 
@@ -128,18 +139,30 @@ var Histogram = (function() {
       }), { min: Infinity, max: -Infinity });
     }
 
+    getDefaultBinSize(props) {
+      if (props.chartType === 'date') return 1;
+      const { min, max } = this.getRange(props.distribution);
+      // Assume probablity or percentage
+      if (this.isProbablity(props)) return max / 100;
+      const numVals = props.distribution.reduce((sum, entry) => sum + entry.count, 0);
+      const padding = (max - min) / 100;
+      const binSize = (padding + max - min) / (Math.ceil(Math.log2(numVals)) + 1);
+      return binSize || (max - Math.min(0, min)) / 10;
+    }
+
     getXAxisMinMax(props) {
       const { min, max } = this.getRange(props.distribution);
       var { xaxisMin, xaxisMax } = props.uiState;
-      if (xaxisMin == null) xaxisMin = min;
-      if (xaxisMax == null) xaxisMax = max;
+      if (xaxisMin == null) xaxisMin = props.chartType === 'date' ? min : Math.min(0, min);
+      if (xaxisMax == null) xaxisMax = max === xaxisMin ? xaxisMin + 1 : max;
       return { xaxisMin, xaxisMax };
     }
 
-    getYAxisMax(props) {
-      var counts = props.distribution.map(entry => entry.count);
+    getYAxisMax(distribution, truncateYAxis) {
+      var counts = distribution.map(entry => entry.count);
       // Reverse sort, then pull out first and second highest values
       var [ max, nextMax ] = counts.sort((a, b) => a < b ? 1 : -1);
+      if (!truncateYAxis) return max;
       // If max is more than twice the size of nextMax, assume it is
       // an outlier and use nextMax as the max
       var yaxisMax = max >= nextMax * 2 ? nextMax : max;
@@ -157,8 +180,10 @@ var Histogram = (function() {
     getBarWidth(distribution) {
       // padding factor
       const padding = 0.75;
-      const { min, max } = this.getRange(distribution);
-      const minWidth = (max - min) * 0.00075
+      const { xaxisMin, xaxisMax } = this.state.uiState;
+      const length = xaxisMax - xaxisMin;
+      const minWidth = length / 1000;
+      const maxWidth = length / 100;
       // For dates, use one day as width
       if (this.props.chartType === 'date') return Math.max((1000 * 60 * 60 * 24) * padding, minWidth);
 
@@ -168,9 +193,9 @@ var Histogram = (function() {
         prevValue: entry.value,
         minDistance: prevValue == null ? minDistance : Math.min(entry.value - prevValue, minDistance)
       }), { prev: null, minDistance: Infinity });
-      return Math.max(minDistance * padding, minWidth);
+      return clamp(minDistance * padding, minWidth, maxWidth);
     }
-    
+
     getBinnedDistribution(binSize, binStart, distribution) {
       return createBinnedDistribution(
         this.props.chartType === 'date' ? binSize * DAY : binSize,
@@ -285,8 +310,8 @@ var Histogram = (function() {
         colors: [ '#AAAAAA', '#DA7272' ],
         xaxis: Object.assign({
           tickLength: 0,
-          min: binSize ? uiState.xaxisMin : uiState.xaxisMin - barWidth,
-          max: binSize ? uiState.xaxisMax  : uiState.xaxisMax + barWidth
+          min: binSize ? xaxisMin  : xaxisMin  - barWidth,
+          max: binSize ? xaxisMax : xaxisMax + barWidth
         }, xaxisBaseOptions),
         yaxis: {
           min: uiState.yaxisMin,
@@ -402,14 +427,18 @@ var Histogram = (function() {
       const distribution = binSize ? this.getBinnedDistribution(binSize, binStart, this.props.distribution) : this.props.distribution;
       const yaxisMax = binSize
         ? Math.max(...distribution.map(entry => entry.count))
-        : this.getYAxisMax(this.props)
+        : this.getYAxisMax(distribution, false)
       this.updateUIState(uiState => ({ ...uiState, binStart, binSize, yaxisMax }));
     }
 
     resetXAxisState() {
       const { min: xaxisMin, max: xaxisMax } = this.getRange(this.props.distribution);
-      this.setXAxisRange(xaxisMin, xaxisMax);
-      this.setXAxisBinState(Math.min(0, xaxisMin), 0);
+      const binSize = this.getDefaultBinSize(this.props);
+      const binStart = this.props.chartType === 'date' ? xaxisMin : Math.min(0, xaxisMin);
+      const rangeMin = binStart;
+      const rangeMax = assignBin(binSize, binStart, xaxisMax === rangeMin ? rangeMin + 1 : xaxisMax) + binSize;
+      this.setXAxisRange(rangeMin, rangeMax);
+      this.setXAxisBinState(binStart, binSize);
     }
 
     // y-axis settings
@@ -426,7 +455,7 @@ var Histogram = (function() {
     resetYAxisState() {
       const { binStart, binSize } = this.state.uiState;
       this.setXAxisBinState(binStart, binSize);
-      this.setScaleYAxis(false);
+      this.setScaleYAxis(this.props.defaultScaleYAxis);
       this.updateUIState(uiState => ({ ...uiState, yaxisMin: 0 }));
     }
 
@@ -534,14 +563,6 @@ var Histogram = (function() {
               <fieldset>
                 <legend>x-axis{/*xaxisLabel*/}</legend>
                 <table>
-                  {chartType !== 'date' &&
-                    <tr>
-                      <th>Bin start:</th>
-                      <td>
-                        <input type="number" max={valuesMin} value={this.state.uiState.binStart} onFocus={autoSelectOnFocus} onChange={e => this.setXAxisBinStart(eventToNumber(e))}/>
-                      </td>
-                    </tr>
-                  }
                   <tr>
                     <th>Bin width:</th>
                     <td>
@@ -578,6 +599,12 @@ var Histogram = (function() {
     timeformat: PropTypes.string,
     xaxisLabel: PropTypes.string,
     yaxisLabel: PropTypes.string,
+
+    // Controls if truncation logic is applied
+    // to deemphasize outliers
+    truncateYAxis: PropTypes.bool,
+
+    defaultScaleYAxis: PropTypes.bool,
 
     uiState: PropTypes.shape({
       xaxisMin: PropTypes.number,
