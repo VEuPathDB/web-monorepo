@@ -122,7 +122,6 @@ var Histogram = (function() {
     }
 
     getStateFromProps(props) {
-      // Set default yAxis max based on distribution
       var { xaxisMin, xaxisMax } = this.getXAxisMinMax(props);
       var binStart = props.uiState.binStart ?? props.chartType === 'date' ? xaxisMin / DAY : xaxisMin;
       var binSize = props.uiState.binSize ?? this.getDefaultBinSize(props);
@@ -142,11 +141,12 @@ var Histogram = (function() {
     getDefaultBinSize(props) {
       if (props.chartType === 'date') return 1;
       const { min, max } = this.getRange(props.distribution);
-      // Assume probablity or percentage
       if (this.isProbablity(props)) return max / 100;
       const numVals = props.distribution.reduce((sum, entry) => sum + entry.count, 0);
       const padding = (max - min) / 100;
-      const binSize = (padding + max - min) / (Math.ceil(Math.log2(numVals)) + 1);
+      // Compute number of bins using Sturge's rule
+      const numBins = Math.ceil(Math.log2(numVals)) + 1;
+      const binSize = (padding + max - min) / numBins;
       return binSize || (max - Math.min(0, min)) / 10;
     }
 
