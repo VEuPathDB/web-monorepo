@@ -1,11 +1,12 @@
+import { combineEpics } from 'redux-observable';
+
 import { Action, RecordActions } from 'wdk-client/Actions';
 import * as RecordStoreModule from 'wdk-client/StoreModules/RecordStoreModule';
+
 import {
   SEQUENCES_TABLE_NAME,
   PROTEIN_PFAMS_TABLE_NAME
 } from 'ortho-client/records/utils';
-
-export const key = 'record';
 
 export const getAllFields = RecordStoreModule.getAllFields;
 
@@ -24,11 +25,20 @@ export function reduce(state = {} as RecordStoreModule.State, action: Action): R
               )
             )
           }
-        : nextState
+        : nextState;
 
     default:
       return nextState;
   }
 }
 
-export const observe = RecordStoreModule.observe;
+const {
+  observeNavigationVisibilityPreference,
+  observeNavigationVisibilityState
+} = RecordStoreModule.makeNavigationVisibilityPreferenceEpics(_ => true);
+
+export const observe = combineEpics(
+  RecordStoreModule.observe,
+  observeNavigationVisibilityPreference,
+  observeNavigationVisibilityState
+);
