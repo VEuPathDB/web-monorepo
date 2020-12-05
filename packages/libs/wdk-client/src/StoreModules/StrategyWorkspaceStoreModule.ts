@@ -1,7 +1,7 @@
 import { defaultTo, difference, last, stubTrue, union, uniq } from 'lodash';
 import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
 import { empty, merge, Observable, of } from 'rxjs';
-import { distinctUntilChanged, filter, map, mergeMap, mergeMapTo, tap } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
 import { fulfillImportStrategy } from 'wdk-client/Actions/ImportStrategyActions';
 import { fulfillPublicStrategies, fulfillPublicStrategiesError, requestPublicStrategies } from 'wdk-client/Actions/PublicStrategyActions';
@@ -13,6 +13,7 @@ import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
 import { getValue, preferences, setValue } from 'wdk-client/Preferences';
 import { InferAction, mergeMapRequestActionsToEpic as mrate, switchMapRequestActionsToEpic as srate, takeEpicInWindow } from 'wdk-client/Utils/ActionCreatorUtils';
+import { stateEffect } from 'wdk-client/Utils/ObserverUtils';
 import { delay } from 'wdk-client/Utils/PromiseUtils';
 import { diffSimilarStepTrees } from 'wdk-client/Utils/StrategyUtils';
 import { StepTree, StrategyDetails, StrategySummary } from 'wdk-client/Utils/WdkUser';
@@ -338,17 +339,6 @@ function updatePreferencesEpic(action$: ActionsObservable<Action>, state$: State
         setValue(wdkService, preferences.openedStrategiesVisibility(), isVisible);
       }
     )
-  );
-}
-
-// Perform a side effect based on state changes
-function stateEffect<K>(state$: Observable<RootState>, getValue: (state: RootState) => K, effect: (value: NonNullable<K>) => void) {
-  return state$.pipe(
-    map(getValue),
-    filter((value): value is NonNullable<K> => value != null),
-    distinctUntilChanged(),
-    tap(effect),
-    mergeMapTo(empty())
   );
 }
 
