@@ -31,12 +31,18 @@ import ReporterSortMessage from './ReporterSortMessage';
 import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
 
 import { withPermissions } from 'ebrc-client/components/Permissions';
+import * as ServerSideAttributeFilter from 'wdk-client/Components/AttributeFilter/ServerSideAttributeFilter';
 
 export default {
   ReporterSortMessage,
   AnswerController,
   IndexController,
   SiteHeader,
+
+  ServerSideAttributeFilter: () => ServerSideAttributeFilter.withOptions({
+    histogramScaleYAxisDefault: false,
+    histogramTruncateYAxisDefault: true
+  }),
 
   // Related visits/case-control wizard steps
   ActiveGroup,
