@@ -3,7 +3,7 @@ import MiniDiagram from "./MiniDiagram";
 import ExpandedDiagram from "./ExpandedDiagram";
 
 export default {
-  title: 'Entity Diagram Full',
+  title: 'Entity Diagram',
 };
 
 export const EntityDiagram = () => {
