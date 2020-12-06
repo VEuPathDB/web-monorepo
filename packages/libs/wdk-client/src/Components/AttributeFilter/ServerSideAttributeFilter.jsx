@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
 import FieldList from 'wdk-client/Components/AttributeFilter/FieldList';
 import FilterList from 'wdk-client/Components/AttributeFilter/FilterList';
@@ -8,7 +9,7 @@ import FieldFilter from 'wdk-client/Components/AttributeFilter/FieldFilter';
 /**
  * Filtering UI for server-side filtering.
  */
-export default function ServerSideAttributeFilter (props) {
+function ServerSideAttributeFilter (props) {
   var { displayName, fieldTree, hideFilterPanel, hideFieldPanel } = props;
 
   if (fieldTree == null) {
@@ -54,6 +55,8 @@ ServerSideAttributeFilter.propTypes = {
   hideGlobalCounts: PropTypes.bool,
   selectByDefault: PropTypes.bool, // affects UI state for when no filter is applied
   minSelectedCount: PropTypes.number,
+  histogramScaleYAxisDefault: PropTypes.bool,
+  histogramTruncateYAxisDefault: PropTypes.bool,
 
   // state
   fieldTree: fieldTreePropType,
@@ -84,5 +87,15 @@ ServerSideAttributeFilter.defaultProps = {
   hideFilterPanel: false,
   hideFieldPanel: false,
   hideGlobalCounts: false,
-  selectByDefault: false
+  selectByDefault: false,
+  histogramScaleYAxisDefault: true,
+  histogramTruncateYAxisDefault: false,
 };
+
+export default wrappable(ServerSideAttributeFilter);
+
+export function withOptions(options) {
+  return function ServerSideAttributeFilterWithOptions(props) {
+    return <ServerSideAttributeFilter {...options} {...props}/>
+  }
+}
