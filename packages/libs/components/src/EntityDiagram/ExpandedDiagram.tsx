@@ -83,6 +83,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
                     strokeWidth={1}
                     markerEnd="url(#arrow)"
                     key={`link-${i}`}
+                    style={{"cursor": "default"}}
                   />
                 :
                   <LinkVerticalLine
@@ -91,6 +92,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
                     strokeWidth={1}
                     markerEnd="url(#arrow)"
                     key={`link-${i}`}
+                    style={{"cursor": "default"}}
                   />
             ))}
             {tree.descendants().map((node, i) => {
