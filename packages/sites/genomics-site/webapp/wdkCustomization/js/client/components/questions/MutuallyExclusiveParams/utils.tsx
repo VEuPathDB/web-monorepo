@@ -1,11 +1,11 @@
-import { Dictionary, mapValues, values } from 'lodash';
+import { Dictionary, flowRight, isNil, mapValues, negate, values } from 'lodash';
 import { createSelector } from 'reselect';
 
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
+import { ParameterGroup, Question } from 'wdk-client/Utils/WdkModel';
 
-const findXorGroupKey = (xorGrouping: Dictionary<string[]>) => (state: QuestionState): string => {
-  const xorGroup = state.question.groups.find(group => {
+const findXorGroup = (xorGrouping: Dictionary<string[]>) => (question: Question) => {
+  return question.groups.find(group => {
     const groupParameterSet = new Set(group.parameters);
 
     return values(xorGrouping).every(
@@ -14,6 +14,10 @@ const findXorGroupKey = (xorGrouping: Dictionary<string[]>) => (state: QuestionS
       )
     );
   });
+}
+
+const findXorGroupKey = (xorGrouping: Dictionary<string[]>) => (question: Question): string => {
+  const xorGroup = findXorGroup(xorGrouping)(question);
 
   return xorGroup === undefined
     ? 'hidden'
@@ -49,7 +53,7 @@ export const xorGroupingByChromosomeAndSequenceID = {
 };
 
 export const keyForXorGroupingByChromosomeAndSequenceID = createSelector(
-  (state: QuestionState) => state,
+  (state: QuestionState) => state.question,
   findXorGroupKey(xorGroupingByChromosomeAndSequenceID)
 );
 
@@ -57,6 +61,13 @@ export const groupXorParametersByChromosomeAndSequenceID = createSelector(
   (state: QuestionState) => state,
   keyForXorGroupingByChromosomeAndSequenceID,
   groupXorParameters(xorGroupingByChromosomeAndSequenceID)
+);
+
+const findChromosomeAndSequenceIDXorGrouping = findXorGroup(xorGroupingByChromosomeAndSequenceID);
+
+export const hasChromosomeAndSequenceIDXorGrouping = flowRight(
+  negate(isNil),
+  findChromosomeAndSequenceIDXorGrouping
 );
 
 export const findChromosomeOptionalKey = (paramNames: string[]) => 
