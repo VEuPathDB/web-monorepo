@@ -169,7 +169,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
   }
 
   render() {
-    let { parameter, uiState } = this.props;
+    let { parameter, uiConfig, uiState } = this.props;
     let filters = this._getFiltersFromValue(this.props.value);
     let fields = this._getFieldMap(parameter);
     let activeFieldState = uiState.activeOntologyTerm == null
@@ -192,7 +192,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
           dataCount={uiState.unfilteredCount}
           filteredDataCount={uiState.filteredCount}
           loadingFilteredCount={uiState.loadingFilteredCount}
-
+          hideGlobalCounts={uiConfig?.hideGlobalCounts}
           hideFilterPanel={numLeaves === 1}
           hideFieldPanel={numLeaves === 1}
           minSelectedCount={parameter.minSelectedCount}

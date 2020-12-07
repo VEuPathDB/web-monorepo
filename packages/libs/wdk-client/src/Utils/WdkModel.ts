@@ -74,6 +74,7 @@ export interface FilterParamNew extends ParameterBase {
   minSelectedCount: number;
   hideEmptyOntologyNodes?: boolean;
   sortLeavesBeforeBranches?: boolean;
+  hideGlobalCounts?:boolean;
   ontology: Array<{
     term: string;
     parent?: string;
