@@ -18,62 +18,62 @@ export interface Props {
   }[];
   xAxisLabel?: string;
   yAxisLabel?: string;
-  defaultYAxisRange? : [Datum, Datum];
-  defaultOrientation?: 'vertical' | 'horizontal';
-  defaultShowRawData?: boolean;
-  defaultShowMean?: boolean;
-  defaultOpacity?: number;
+  defaultYAxisRange? : [Datum, Datum];  // can be changed by plotly's built-in controls
+  orientation?: 'vertical' | 'horizontal';
+  showRawData?: boolean;
+  showMean?: boolean;
+  opacity?: number;
 }
 
-export default function Boxplot(props : Props) {
+export default function Boxplot({ data, orientation, showRawData, showMean, xAxisLabel, yAxisLabel, defaultYAxisRange, opacity } : Props) {
 
-  const data = props.data.map((d) => {
+  const pdata = data.map((d) => {
 
-    const orientationDependentProps = props.defaultOrientation === 'vertical' ? 
+    const orientationDependentProps = orientation === 'vertical' ? 
      { x0: d.label,
-       y: d.rawData && props.defaultShowRawData ? [ d.rawData ] : d.outliers.length ? [d.outliers] : undefined
+       y: d.rawData && showRawData ? [ d.rawData ] : d.outliers.length ? [d.outliers] : undefined
      } :
      { y0: d.label,
-       x: d.rawData && props.defaultShowRawData ? [ d.rawData ] : d.outliers.length ? [d.outliers] : undefined
+       x: d.rawData && showRawData ? [ d.rawData ] : d.outliers.length ? [d.outliers] : undefined
      };
     
     return { upperfence: [d.upperWhisker],
 	     lowerfence: [d.lowerWhisker],
 	     median: [d.median],
 	     mean: d.mean !== undefined ? [d.mean] : undefined,
-	     boxmean: d.mean !== undefined && props.defaultShowMean,
+	     boxmean: d.mean !== undefined && showMean,
 	     q1: [d.q1],
 	     q3: [d.q3],
 	     name: d.label,
-	     boxpoints: d.rawData ? 'all' : 'outliers',
+	     boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
 	     jitter: 0.1, // should be dependent on the number of datapoints...?
 	     marker: {
-	       opacity: props.defaultOpacity,
+	       opacity: opacity,
  	       color: d.color,
 	     },
 	     ...orientationDependentProps,
 	     type: 'box' } as const
   });
 
-  const dependentAxis = props.defaultOrientation === 'vertical' ? 'yaxis' : 'xaxis';
-  const independentAxis = props.defaultOrientation === 'vertical' ? 'xaxis' : 'yaxis';
+  const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';
+  const independentAxis = orientation === 'vertical' ? 'xaxis' : 'yaxis';
 
   const layout = {
     [dependentAxis] : {
       rangemode: "tozero" as const,
-      title: props.yAxisLabel,
-      range: props.defaultYAxisRange
+      title: yAxisLabel,
+      range: defaultYAxisRange
     },
     [independentAxis] : {
-      title: props.xAxisLabel
+      title: xAxisLabel
     },
     showlegend: false
   };
-  return <PlotlyPlot data={data} layout={layout} />
+  return <PlotlyPlot data={pdata} layout={layout} />
 }
 
 Boxplot.defaultProps = {
-  defaultOpacity: 0.5,
-  defaultOrientation: 'vertical'
+  opacity: 0.5,
+  orientation: 'vertical'
 }
 
