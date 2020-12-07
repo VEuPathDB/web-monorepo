@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { updateParamState } from 'wdk-client/Actions/QuestionActions';
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
 import { Props, getSubmitButtonText } from 'wdk-client/Views/Question/DefaultQuestionForm';
@@ -10,6 +10,7 @@ import { idListToArray } from 'wdk-client/Views/Question/Params/DatasetParamUtil
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
 import { mutuallyExclusiveParamsGroupRenderer, MutuallyExclusiveTabKey } from './MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
+import { hasChromosomeAndSequenceIDXorGrouping } from './MutuallyExclusiveParams/utils';
 
 import './DynSpansBySourceId.scss';
 
@@ -27,7 +28,10 @@ const cx = makeClassNameHelper('DynSpansBySourceId');
 export const DynSpansBySourceId: React.FunctionComponent<Props> = props => {
   const spanIdParamUIState = props.state.paramUIState[SPAN_ID_LIST_PARAM];
 
-  const [ activeTab, onTabSelected ] = useState<MutuallyExclusiveTabKey>('Chromosome');
+  const {
+    inputMethod,
+    setInputMethod
+  } = useInputMethod(props.state.question);
 
   const mutuallyExclusiveSubgroup = useMemo(
     () => makeMutuallyExclusiveSubgroup(props.state.question.groupsByName),
@@ -40,13 +44,13 @@ export const DynSpansBySourceId: React.FunctionComponent<Props> = props => {
   );
 
   const onClickAddLocation = useMemo(
-    () => makeOnClickAddLocation(props.state.paramValues, activeTab, props.dispatchAction, spanIdParamUIState),
-    [ props.state.paramValues, activeTab, props.dispatchAction, spanIdParamUIState ]
+    () => makeOnClickAddLocation(props.state.paramValues, inputMethod, props.dispatchAction, spanIdParamUIState),
+    [ props.state.paramValues, inputMethod, props.dispatchAction, spanIdParamUIState ]
   );
 
   const renderParamGroup = useMemo(
-    () => makeRenderParamGroup(mutuallyExclusiveSubgroup, activeTab, onTabSelected, onClickAddLocation),
-    [ mutuallyExclusiveSubgroup, activeTab, onTabSelected, onClickAddLocation ]
+    () => makeRenderParamGroup(mutuallyExclusiveSubgroup, inputMethod, setInputMethod, onClickAddLocation),
+    [ mutuallyExclusiveSubgroup, inputMethod, setInputMethod, onClickAddLocation ]
   );
   
   return (
@@ -82,11 +86,11 @@ const makeOnSubmit = (sourceType: string, idList?: string) => (e: React.FormEven
 
 const makeOnClickAddLocation = (
   paramValues: QuestionState['paramValues'], 
-  activeTab: MutuallyExclusiveTabKey,
+  inputMethod: MutuallyExclusiveTabKey,
   dispatchAction: Props['dispatchAction'],
   spanIdParamUIState: QuestionState['paramUIState'][typeof SPAN_ID_LIST_PARAM]
 ) => () => {
-  const validationResult = validateNewLocation(paramValues, activeTab);
+  const validationResult = validateNewLocation(paramValues, inputMethod);
 
   if (validationResult.type === 'valid') {
     const idList = (spanIdParamUIState.idList || '').trim().length === 0
@@ -187,7 +191,7 @@ const invalid = (error: string): Validation => ({
   error
 });
 
-const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTab: MutuallyExclusiveTabKey): Validation => {
+const validateNewLocation = (paramValues: QuestionState['paramValues'], inputMethod: MutuallyExclusiveTabKey): Validation => {
   const { 
     [CHROMOSOME_PARAM]: chromosomeParamValue, 
     [SEQUENCE_ID_PARAM]: sequenceIdParamValue,
@@ -197,7 +201,7 @@ const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTa
   } = paramValues;
 
   if (
-    activeTab === 'Chromosome' && 
+    inputMethod === 'Chromosome' &&
     (
       !chromosomeParamValue ||
       chromosomeParamValue === 'Choose chromosome'
@@ -207,7 +211,7 @@ const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTa
   } 
   
   if (
-    activeTab === 'Sequence ID' && 
+    inputMethod === 'Sequence ID' &&
     (
       !sequenceIdParamValue ||
       sequenceIdParamValue.startsWith('(Example')
@@ -243,7 +247,7 @@ const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTa
     return invalid(`Your segment cannot be longer than ${MAX_SEGMENT_LENGTH_DISPLAY}`);
   }
 
-  const sequenceString = activeTab === 'Chromosome' ? chromosomeParamValue : sequenceIdParamValue
+  const sequenceString = inputMethod === 'Chromosome' ? chromosomeParamValue : sequenceIdParamValue;
 
   return valid(`${sequenceString}:${startNumericValue}-${endNumericValue}:${sequenceStrandParamValue}`);
 };
@@ -309,3 +313,20 @@ const validateSegmentId = (segmentId: string): Validation => {
     ? invalid(`Your segment ID ${segmentId} has an invalid strand "${strand}"`)
     : valid(segmentId);
 };
+
+function useInputMethod(question: QuestionWithMappedParameters) {
+  const initialInputMethod = question.parametersByName[CHROMOSOME_PARAM] == null
+    ? 'Sequence ID'
+    : 'Chromosome';
+
+  const [ inputMethod, setInputMethod ] = useState<MutuallyExclusiveTabKey>(initialInputMethod);
+
+  useEffect(() => {
+    setInputMethod(initialInputMethod);
+  }, [ initialInputMethod ]);
+
+  return {
+    inputMethod,
+    setInputMethod
+  };
+}
