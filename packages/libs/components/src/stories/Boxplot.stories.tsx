@@ -8,7 +8,7 @@ export default {
   title: 'Boxplot',
   component: Boxplot,
   argTypes: {
-    opacity: {
+    markerOpacity: {
       control: {
 	type: 'range',
 	min: 0,
@@ -249,7 +249,7 @@ function storyArgTypes(args : any) : any {
 	disable: args.data.filter((d : any) => d.mean !== undefined).length == 0
       }
     },
-    opacity: {
+    markerOpacity: {
       control: {
 	disable: pointTraceIndices.length == 0
       }

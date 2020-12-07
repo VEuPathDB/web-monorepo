@@ -22,10 +22,10 @@ export interface Props {
   orientation?: 'vertical' | 'horizontal';
   showRawData?: boolean;
   showMean?: boolean;
-  opacity?: number;
+  markerOpacity?: number;
 }
 
-export default function Boxplot({ data, orientation, showRawData, showMean, independentAxisLabel, dependentAxisLabel, defaultDependentAxisRange, opacity } : Props) {
+export default function Boxplot({ data, orientation, showRawData, showMean, independentAxisLabel, dependentAxisLabel, defaultDependentAxisRange, markerOpacity } : Props) {
 
   const pdata = data.map((d) => {
 
@@ -48,7 +48,7 @@ export default function Boxplot({ data, orientation, showRawData, showMean, inde
 	     boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
 	     jitter: 0.1, // should be dependent on the number of datapoints...?
 	     marker: {
-	       opacity: opacity,
+	       opacity: markerOpacity,
  	       color: d.color,
 	     },
 	     ...orientationDependentProps,
@@ -73,7 +73,7 @@ export default function Boxplot({ data, orientation, showRawData, showMean, inde
 }
 
 Boxplot.defaultProps = {
-  opacity: 0.5,
+  markerOpacity: 0.5,
   orientation: 'vertical'
 }
 
