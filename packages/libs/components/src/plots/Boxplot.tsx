@@ -16,16 +16,16 @@ export interface Props {
                         // but are we trying to remove dependencies on Plotly types?
     outliers : Datum[]
   }[];
-  xAxisLabel?: string;
-  yAxisLabel?: string;
-  defaultYAxisRange? : [Datum, Datum];  // can be changed by plotly's built-in controls
+  independentAxisLabel?: string;
+  dependentAxisLabel?: string;
+  defaultDependentAxisRange? : [Datum, Datum];  // can be changed by plotly's built-in controls
   orientation?: 'vertical' | 'horizontal';
   showRawData?: boolean;
   showMean?: boolean;
   opacity?: number;
 }
 
-export default function Boxplot({ data, orientation, showRawData, showMean, xAxisLabel, yAxisLabel, defaultYAxisRange, opacity } : Props) {
+export default function Boxplot({ data, orientation, showRawData, showMean, independentAxisLabel, dependentAxisLabel, defaultDependentAxisRange, opacity } : Props) {
 
   const pdata = data.map((d) => {
 
@@ -61,11 +61,11 @@ export default function Boxplot({ data, orientation, showRawData, showMean, xAxi
   const layout = {
     [dependentAxis] : {
       rangemode: "tozero" as const,
-      title: yAxisLabel,
-      range: defaultYAxisRange
+      title: dependentAxisLabel,
+      range: defaultDependentAxisRange
     },
     [independentAxis] : {
-      title: xAxisLabel
+      title: independentAxisLabel
     },
     showlegend: false
   };
