@@ -228,7 +228,7 @@ export default class MultiFieldFilter extends React.Component {
   }
 
   render() {
-    const values = Seq.from(this.props.activeFieldState.summary)
+    const values = Seq.from(this.props.activeFieldState.leafSummaries)
       .flatMap(summary => summary.valueCounts)
       .map(count => count.value)
       .uniq()
@@ -240,10 +240,10 @@ export default class MultiFieldFilter extends React.Component {
     const leafFilters = get(this.props.filters.find(filter => filter.field === this.props.activeField.term), 'value.filters', []);
     const filtersByField = keyBy(leafFilters, 'field');
 
-    const hasRowWithRemaining = Seq.from(this.props.activeFieldState.summary)
+    const hasRowWithRemaining = Seq.from(this.props.activeFieldState.leafSummaries)
       .some(summary => summary.internalsFilteredCount > 0);
 
-    const rows = Seq.from(this.props.activeFieldState.summary)
+    const rows = Seq.from(this.props.activeFieldState.leafSummaries)
       .flatMap(summary => [
         {
           summary,

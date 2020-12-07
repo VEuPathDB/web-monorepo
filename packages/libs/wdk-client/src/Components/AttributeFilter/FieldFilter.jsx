@@ -37,7 +37,7 @@ function FieldFilter(props) {
           )} 
           {props.activeFieldState && props.activeFieldState.errorMessage ? (
             <div style={{ color: 'darkred' }}>{props.activeFieldState.errorMessage}</div>
-          ) : (props.activeFieldState && props.activeFieldState.summary == null || props.dataCount == null) ? (
+          ) : (props.activeFieldState && props.activeFieldState.summary == null && props.activeFieldState.leafSummaries == null || props.dataCount == null) ? (
             null
           ) : ( isMulti(props.activeField)
             ? <MultiFieldFilter {...props} />
@@ -70,7 +70,8 @@ FieldFilter.propTypes = {
   activeField: PropTypes.object,
   activeFieldState: PropTypes.shape({
     loading: PropTypes.boolean,
-    summary: PropTypes.oneOfType([ FieldSummary, MultiFieldSummary ]),
+    summary: FieldSummary,
+    leafSummaries: MultiFieldSummary
     /* member, range, multi specific settings */
   }),
 

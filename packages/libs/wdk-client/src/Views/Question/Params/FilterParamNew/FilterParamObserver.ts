@@ -1,4 +1,6 @@
-import { isEqual } from 'lodash';
+import { isEqual, partition, groupBy } from 'lodash';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { preorder } from 'wdk-client/Utils/TreeUtils';
 import { combineEpics, Epic } from 'redux-observable';
 import { concat, empty, from, merge, Observable, of } from 'rxjs';
 import { debounceTime, filter, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
@@ -15,12 +17,18 @@ import {
   paramError,
 } from 'wdk-client/Actions/QuestionActions';
 import { State, QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
+import {
+  FilterParamNew,
+  ParameterValues
+} from 'wdk-client/Utils/WdkModel';
+
 import { FieldState, MemberFieldState, State as FilterParamState } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
 import { ModuleEpic, EpicDependencies } from 'wdk-client/Core/Store';
 import { isType, getFilters, getFilterFields, isMemberField, sortDistribution } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
-import { UpdateFiltersAction, UPDATE_FILTERS, SetActiveFieldAction, SET_ACTIVE_FIELD, setActiveField, invalidateOntologyTerms, updateFieldState, summaryCountsLoaded } from 'wdk-client/Actions/FilterParamActions';
-import { Filter } from 'wdk-client/Components/AttributeFilter/Types';
+import { UpdateFieldStateAction, UpdateFiltersAction, UPDATE_FILTERS, SetActiveFieldAction, SET_ACTIVE_FIELD, setActiveField, invalidateOntologyTerms, updateFieldState, summaryCountsLoaded } from 'wdk-client/Actions/FilterParamActions';
+import { Filter, MultiFilter } from 'wdk-client/Components/AttributeFilter/Types';
 import { Action } from 'wdk-client/Actions';
+import { isMulti } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 const defaultMemberFieldSort: MemberFieldState['sort'] = {
   columnKey: 'value',
@@ -252,10 +260,65 @@ function getOntologyTermSummary(
   const parameter = getFilterParamNewFromState(state, paramName);
 
   if (ontologyTerm == null) return empty();
-
   // FIXME Add loading and invalid for fieldState
   const filters = (JSON.parse(paramValues[parameter.name]).filters as Filter[])
     .filter(filter => filter.field !== ontologyTerm);
+
+  const ontologyItem = parameter.ontology.find(item => item.term === ontologyTerm)!;
+
+  if(isMulti(ontologyItem)){
+    // find all leaves
+    const leafTerms =
+      parameter.ontology.filter(
+        item => item.parent == ontologyItem.term
+      ).map(item => item.term);
+
+    const [ [ firstFilter ], otherFilters ] = partition(filters, filter => filter.field === ontologyTerm);
+    const multiFilter = firstFilter as MultiFilter;
+
+    const getSummaries = Promise.all(leafTerms.map(
+        leafTerm => {
+          const filtersForThisLeaf = otherFilters.concat(
+              multiFilter == null || multiFilter.value.operation === 'union' ? []
+              : multiFilter.value.filters.filter(filter => filter.field !== leafTerm));
+          return wdkService.getOntologyTermSummary(searchName, parameter.name, filtersForThisLeaf, leafTerm, paramValues).then(summary => ({...summary, term: leafTerm}));
+        }));
+    
+    return concat(
+      of(updateFieldState({
+        searchName,
+        parameter,
+        paramValues,
+        field: ontologyTerm,
+        fieldState: {
+          loading: true
+        }
+      })),
+      from(getSummaries.then(summaries => updateFieldState({
+        searchName,
+        parameter,
+        paramValues,
+        field: ontologyTerm,
+        fieldState: {
+          loading: false,
+          invalid: false,
+          leafSummaries: summaries
+        }
+      })))
+    );
+
+  } else {
+      return updateOntologyTermSummary(wdkService, searchName, parameter, paramValues, ontologyTerm, filters);
+  }
+}
+function updateOntologyTermSummary(
+  wdkService: WdkService,
+  searchName: string,
+  parameter: FilterParamNew,
+  paramValues: ParameterValues,
+  ontologyTerm: string,
+  filters: Filter[]
+): Observable<UpdateFieldStateAction>{
   return concat(
     of(updateFieldState({
       searchName,

@@ -21,6 +21,7 @@ export type SortSpec = {
 
 type BaseFieldState = {
   summary?: OntologyTermSummary;
+  leafSummaries?: OntologyTermSummary[];
   loading?: boolean;
   invalid?: boolean;
   errorMessage?: string;

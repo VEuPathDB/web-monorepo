@@ -33,6 +33,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     super(props);
     this._getFiltersFromValue = memoize(this._getFiltersFromValue);
     this._handleActiveFieldChange = this._handleActiveFieldChange.bind(this);
+    this._handleFieldCountUpdateRequest = this._handleFieldCountUpdateRequest.bind(this);
     this._handleFilterChange = this._handleFilterChange.bind(this);
     this._handleMemberSort = this._handleMemberSort.bind(this);
     this._handleMemberChangeRowsPerPage = this._handleMemberChangeRowsPerPage.bind(this);
