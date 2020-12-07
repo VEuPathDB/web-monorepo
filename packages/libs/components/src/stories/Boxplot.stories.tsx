@@ -6,7 +6,17 @@ import _ from 'lodash';
 
 export default {
   title: 'Boxplot',
-  component: Boxplot
+  component: Boxplot,
+  argTypes: {
+    opacity: {
+      control: {
+	type: 'range',
+	min: 0,
+	max: 1,
+	step: 0.1
+      }
+    }
+  }
 } as Meta;
 
 const Template = (args : Props) => <Boxplot {...args} />;
@@ -38,7 +48,7 @@ WithMean.argTypes = storyArgTypes(
   WithMean.args = {
     data: [ {...catData, label: 'cats', mean: catMean},
 	    {...dogData, label: 'dogs', mean: dogMean} ],
-    defaultShowMean: true
+    showMean: true
 });
 
 const outdoorTemperatureRawData = [ -25, -10, -5, -3, 0, 1, 2, 6, 7, 17, 18, 25, 33 ];
@@ -66,70 +76,70 @@ YAxisLabel.argTypes = storyArgTypes(
   YAxisLabel.args = {
     data: [ {...outdoorTemperatureData, label: 'outdoor'},
 	    {...indoorTemperatureData, label: 'indoor'} ],
-    yAxisLabel: "temperature, °C"
+    dependentAxisLabel: "temperature, °C"
 });
 
 export const XAndYAxisLabel : Story<Props> = Template.bind({});
 XAndYAxisLabel.argTypes = storyArgTypes(
   XAndYAxisLabel.args = {
     data: [ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ],
-    xAxisLabel: "domestic animal",
-    yAxisLabel: "height, cm"
+    independentAxisLabel: "domestic animal",
+    dependentAxisLabel: "height, cm"
 });
 
 export const FixedYAxisRange : Story<Props> = Template.bind({});
 FixedYAxisRange.argTypes = storyArgTypes(
   FixedYAxisRange.args = {
     data: [ {...outdoorTemperatureData, label: 'outdoor'}, {...indoorTemperatureData, label: 'indoor'} ],
-    yAxisLabel: "temperature, °C",
-    xAxisLabel: "location",
-    defaultYAxisRange: [-50,50]
+    dependentAxisLabel: "temperature, °C",
+    independentAxisLabel: "location",
+    defaultDependentAxisRange: [-50,50]
 });
 
 export const FixedTooSmallYAxisRange : Story<Props> = Template.bind({});
 FixedTooSmallYAxisRange.argTypes = storyArgTypes(
   FixedTooSmallYAxisRange.args = {
     data: [ {...outdoorTemperatureData, label: 'outdoor'}, {...indoorTemperatureData, label: 'indoor'} ],
-    yAxisLabel: "temperature, °C",
-    xAxisLabel: "location",
-    defaultYAxisRange: [-10,10]
+    dependentAxisLabel: "temperature, °C",
+    independentAxisLabel: "location",
+    defaultDependentAxisRange: [-10,10]
 });
 
 export const Horizontal : Story<Props> = Template.bind({});
 Horizontal.argTypes = storyArgTypes(
   Horizontal.args = {
     data: [ {...catData, label: 'cats'}, {...dogData, label: 'dogs'} ],
-    xAxisLabel: "domestic animal",
-    yAxisLabel: "height, cm",
-    defaultOrientation: "horizontal"
+    independentAxisLabel: "domestic animal",
+    dependentAxisLabel: "height, cm",
+    orientation: "horizontal"
 });
 
 export const HorizontalLongLabels : Story<Props> = Template.bind({});
 HorizontalLongLabels.argTypes = storyArgTypes(
   HorizontalLongLabels.args = {
     data: [ {...catData, label: 'hungry domestic cats'}, {...dogData, label: 'sleepy domestic dogs'} ],
-    xAxisLabel: "type of domestic animal",
-    yAxisLabel: "height, cm",
-    defaultOrientation: "horizontal"
+    independentAxisLabel: "type of domestic animal",
+    dependentAxisLabel: "height, cm",
+    orientation: "horizontal"
 });
 
 export const WithRawData : Story<Props> = Template.bind({});
 WithRawData.argTypes = storyArgTypes(
   WithRawData.args = {
     data: [ {...catData, label: 'cats', rawData: catRawData}, {...dogData, label: 'dogs', rawData: dogRawData} ],
-    defaultShowRawData: true,
-    xAxisLabel: "domestic animal",
-    yAxisLabel: "height, cm"
+    showRawData: true,
+    independentAxisLabel: "domestic animal",
+    dependentAxisLabel: "height, cm"
 });
 
 export const HorizontalWithRawData : Story<Props> = Template.bind({});
 HorizontalWithRawData.argTypes = storyArgTypes(
   HorizontalWithRawData.args = {
     data: [ {...catData, label: 'cats', rawData: catRawData}, {...dogData, label: 'dogs', rawData: dogRawData} ],
-    defaultShowRawData: true,
-    xAxisLabel: "domestic animal",
-    yAxisLabel: "height, cm",
-    defaultOrientation: "horizontal"
+    showRawData: true,
+    independentAxisLabel: "domestic animal",
+    dependentAxisLabel: "height, cm",
+    orientation: "horizontal"
 });
 
 export const HorizontalWithOneRawDataOneMean : Story<Props> = Template.bind({});
@@ -137,11 +147,11 @@ HorizontalWithOneRawDataOneMean.argTypes = storyArgTypes(
   HorizontalWithOneRawDataOneMean.args = {
     data: [ {...catData, label: 'cats with mean', mean: catMean},
 	    {...dogData, label: 'dogs with raw', rawData: dogRawData} ],
-    defaultShowRawData: true,
-    defaultShowMean: true,
-    xAxisLabel: "domestic animal",
-    yAxisLabel: "height, cm",
-    defaultOrientation: "horizontal"
+    showRawData: true,
+    showMean: true,
+    independentAxisLabel: "domestic animal",
+    dependentAxisLabel: "height, cm",
+    orientation: "horizontal"
 });
 
 export const TwoColors : Story<Props> = Template.bind({});
@@ -227,17 +237,23 @@ function summaryStats(rawData : number[]) {
 }
 
 function storyArgTypes(args : any) : any {
+  const pointTraceIndices = args.data.map((d : any, index : number) => d.rawData || d.outliers.length ? index : -1).filter((i : number) => i>=0);
   return {
-    defaultShowRawData: {
+    showRawData: {
       control: {
 	disable: args.data.filter((d : any) => d.rawData && d.rawData.length).length == 0
       }
     },
-    defaultShowMean: {
+    showMean: {
       control: {
 	disable: args.data.filter((d : any) => d.mean !== undefined).length == 0
       }
     },
+    opacity: {
+      control: {
+	disable: pointTraceIndices.length == 0
+      }
+    }
   };
 }
 
