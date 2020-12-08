@@ -10,7 +10,6 @@ import { idListToArray } from 'wdk-client/Views/Question/Params/DatasetParamUtil
 import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
 
 import { mutuallyExclusiveParamsGroupRenderer, MutuallyExclusiveTabKey } from './MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
-import { hasChromosomeAndSequenceIDXorGrouping } from './MutuallyExclusiveParams/utils';
 
 import './DynSpansBySourceId.scss';
 
@@ -29,6 +28,7 @@ export const DynSpansBySourceId: React.FunctionComponent<Props> = props => {
   const spanIdParamUIState = props.state.paramUIState[SPAN_ID_LIST_PARAM];
 
   const {
+    canChangeInputMethod,
     inputMethod,
     setInputMethod
   } = useInputMethod(props.state.question);
@@ -44,8 +44,8 @@ export const DynSpansBySourceId: React.FunctionComponent<Props> = props => {
   );
 
   const onClickAddLocation = useMemo(
-    () => makeOnClickAddLocation(props.state.paramValues, inputMethod, props.dispatchAction, spanIdParamUIState),
-    [ props.state.paramValues, inputMethod, props.dispatchAction, spanIdParamUIState ]
+    () => makeOnClickAddLocation(props.state.paramValues, inputMethod, props.dispatchAction, spanIdParamUIState, canChangeInputMethod),
+    [ props.state.paramValues, inputMethod, props.dispatchAction, spanIdParamUIState, canChangeInputMethod ]
   );
 
   const renderParamGroup = useMemo(
@@ -88,9 +88,10 @@ const makeOnClickAddLocation = (
   paramValues: QuestionState['paramValues'], 
   inputMethod: MutuallyExclusiveTabKey,
   dispatchAction: Props['dispatchAction'],
-  spanIdParamUIState: QuestionState['paramUIState'][typeof SPAN_ID_LIST_PARAM]
+  spanIdParamUIState: QuestionState['paramUIState'][typeof SPAN_ID_LIST_PARAM],
+  canChangeInputMethod: boolean
 ) => () => {
-  const validationResult = validateNewLocation(paramValues, inputMethod);
+  const validationResult = validateNewLocation(paramValues, inputMethod, canChangeInputMethod);
 
   if (validationResult.type === 'valid') {
     const idList = (spanIdParamUIState.idList || '').trim().length === 0
@@ -191,7 +192,11 @@ const invalid = (error: string): Validation => ({
   error
 });
 
-const validateNewLocation = (paramValues: QuestionState['paramValues'], inputMethod: MutuallyExclusiveTabKey): Validation => {
+const validateNewLocation = (
+  paramValues: QuestionState['paramValues'],
+  inputMethod: MutuallyExclusiveTabKey,
+  canChangeInputMethod: boolean
+): Validation => {
   const { 
     [CHROMOSOME_PARAM]: chromosomeParamValue, 
     [SEQUENCE_ID_PARAM]: sequenceIdParamValue,
@@ -207,7 +212,7 @@ const validateNewLocation = (paramValues: QuestionState['paramValues'], inputMet
       chromosomeParamValue === 'Choose chromosome'
     )
   ) {
-    return invalid('Please select a chromosome (or Search by Sequence ID)');
+    return invalid(makeMissingChromosomeErrorMessage(canChangeInputMethod));
   } 
   
   if (
@@ -217,7 +222,7 @@ const validateNewLocation = (paramValues: QuestionState['paramValues'], inputMet
       sequenceIdParamValue.startsWith('(Example')
     )
   ) {
-    return invalid('Please input a sequence ID (or Search by Chromosome)');
+    return invalid(makeMissingSequenceIdErrorMessage(canChangeInputMethod));
   }
 
   if (!startParamValue) {
@@ -326,7 +331,25 @@ function useInputMethod(question: QuestionWithMappedParameters) {
   }, [ initialInputMethod ]);
 
   return {
+    canChangeInputMethod: (
+      question.parametersByName[CHROMOSOME_PARAM] != null &&
+      question.parametersByName[SEQUENCE_ID_PARAM] != null
+    ),
     inputMethod,
     setInputMethod
   };
+}
+
+function makeMissingSequenceIdErrorMessage(canChangeInputMethod: boolean) {
+  return [
+    'Please input a sequence ID',
+    canChangeInputMethod && '(or Search by Chromosome)'
+  ].filter(x => x).join(' ');
+}
+
+function makeMissingChromosomeErrorMessage(canChangeInputMethod: boolean) {
+  return [
+    'Please select a chromosome',
+    canChangeInputMethod && '(or Search by Sequence ID)'
+  ].filter(x => x).join(' ');
 }
