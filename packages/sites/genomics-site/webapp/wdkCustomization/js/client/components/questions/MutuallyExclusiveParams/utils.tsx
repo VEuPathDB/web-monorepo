@@ -71,7 +71,7 @@ const findChromosomeAndSequenceIDXorGroup = findXorGroup(xorGroupingByChromosome
 
 const groupHasParam = (groupParamNames: Set<string>) => (targetParamName: string) => {
   return groupParamNames.has(targetParamName);
-}
+};
 
 export const hasChromosomeAndSequenceIDXorGroup = (question: Question) => {
   const xorGroup = findChromosomeAndSequenceIDXorGroup(question);
