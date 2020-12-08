@@ -8,7 +8,6 @@ type Ctx = Context<FilterParamNew>
 
 export type Action =
   | SetActiveFieldAction
-  | StartFieldCountRequestAction
   | SummaryCountsLoadedAction
   | UpdateFieldStateAction
   | UpdateFiltersAction
@@ -32,24 +31,6 @@ export interface SetActiveFieldAction {
 export function setActiveField(payload: SetActiveFieldAction['payload']): SetActiveFieldAction {
   return {
     type: SET_ACTIVE_FIELD,
-    payload
-  };
-}
-
-//==============================================================================
-
-export const START_FIELD_COUNT_REQUEST = 'filter-param-new/start-field-count-request';
-
-export interface StartFieldCountRequestAction {
-  type: typeof START_FIELD_COUNT_REQUEST;
-  payload: Ctx & {
-    field: string;
-  };
-}
-
-export function startFieldCountRequest(payload: StartFieldCountRequestAction['payload']): StartFieldCountRequestAction {
-  return {
-    type: START_FIELD_COUNT_REQUEST,
     payload
   };
 }

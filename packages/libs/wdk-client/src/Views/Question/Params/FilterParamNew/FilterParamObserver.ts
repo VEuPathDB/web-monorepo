@@ -267,7 +267,8 @@ function getOntologyTermSummary(
 
   if (ontologyTerm == null) return empty();
   // FIXME Add loading and invalid for fieldState
-  const filters = (JSON.parse(paramValues[parameter.name]).filters as Filter[])
+  const filtersIncludingThisOne = (JSON.parse(paramValues[parameter.name]).filters as Filter[]);
+  const filters = filtersIncludingThisOne
     .filter(filter => filter.field !== ontologyTerm);
 
   const ontologyItem = parameter.ontology.find(item => item.term === ontologyTerm)!;
@@ -282,7 +283,7 @@ function getOntologyTermSummary(
     const sort = state.paramUIState[paramName]?.fieldStates[ontologyTerm]?.sort || defaultMultiFieldSort;
 
 
-    const [ [ firstFilter ], otherFilters ] = partition(filters, filter => filter.field === ontologyTerm);
+    const [ [ firstFilter ], otherFilters ] = partition(filtersIncludingThisOne, filter => filter.field === ontologyTerm);
     const multiFilter = firstFilter as MultiFilter;
 
     const getSummaries = Promise.all(leafTerms.map(

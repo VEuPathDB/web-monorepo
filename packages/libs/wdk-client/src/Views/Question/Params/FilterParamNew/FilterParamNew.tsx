@@ -8,7 +8,6 @@ import { FilterParamNew as TFilterParamNew } from 'wdk-client/Utils/WdkModel';
 import { Props as ParamProps } from 'wdk-client/Views/Question/Params/Utils';
 import {
   setActiveField,
-  startFieldCountRequest,
   updateFieldState,
   updateFilters,
 } from 'wdk-client/Actions/FilterParamActions';
@@ -33,7 +32,6 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     super(props);
     this._getFiltersFromValue = memoize(this._getFiltersFromValue);
     this._handleActiveFieldChange = this._handleActiveFieldChange.bind(this);
-    this._handleFieldCountUpdateRequest = this._handleFieldCountUpdateRequest.bind(this);
     this._handleFilterChange = this._handleFilterChange.bind(this);
     this._handleMemberSort = this._handleMemberSort.bind(this);
     this._handleMemberChangeRowsPerPage = this._handleMemberChangeRowsPerPage.bind(this);
@@ -57,10 +55,6 @@ export default class FilterParamNew extends React.PureComponent<Props> {
 
   _handleActiveFieldChange(term: string) {
     this.props.dispatch(setActiveField({ ...this.props.ctx, activeField: term }));
-  }
-
-  _handleFieldCountUpdateRequest(term: string) {
-    this.props.dispatch(startFieldCountRequest({ ...this.props.ctx, field: term }));
   }
 
   _handleFilterChange(filters: Filter[]) {
@@ -217,7 +211,6 @@ export default class FilterParamNew extends React.PureComponent<Props> {
 
           onFiltersChange={this._handleFilterChange}
           onActiveFieldChange={this._handleActiveFieldChange}
-          onFieldCountUpdateRequest={this._handleFieldCountUpdateRequest}
           onMemberSort={this._handleMemberSort}
           onMemberChangeCurrentPage={this._handleMemberChangeCurrentPage}
           onMemberChangeRowsPerPage={this._handleMemberChangeRowsPerPage}
