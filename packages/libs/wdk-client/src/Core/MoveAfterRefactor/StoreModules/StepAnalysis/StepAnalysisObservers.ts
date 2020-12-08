@@ -41,7 +41,7 @@ import {
 import { ActionsObservable, StateObservable } from 'redux-observable';
 import { Action } from 'redux';
 import { EpicDependencies } from '../../../Store';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { map, filter, mergeMap, withLatestFrom, delay, mergeAll } from 'rxjs/operators';
 import {
   finishLoadingTabListing,
@@ -78,9 +78,9 @@ export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>
           ...analysis
         }));
 
-        return [
-          finishLoadingTabListing(tabListing, choices)
-        ];
+        return state$.value.stepId === stepId
+          ? of(finishLoadingTabListing(tabListing, choices))
+          : EMPTY;
       }
       catch (ex) {
         return EMPTY;
