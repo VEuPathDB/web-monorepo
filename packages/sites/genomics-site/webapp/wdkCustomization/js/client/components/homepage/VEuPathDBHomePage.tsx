@@ -511,13 +511,6 @@ const useHeaderMenuItems = (
           }
         },
         { 
-          key: 'genomes-and-data-types',
-          display: 'Organisms: Genome Info & Stats',
-          tooltip: `Table summarizing all the genomes in ${displayName}`,
-          type: 'reactRoute',
-          url: '/search/organism/GenomeDataTypes/result'
-        },
-        {
           key: 'mahpic-data',
           display: 'MaHPIC',
           type: 'reactRoute',
@@ -526,6 +519,19 @@ const useHeaderMenuItems = (
           metadata: {
             include: [ PlasmoDB ]
           }
+        },
+        { 
+          key: 'genomes-and-data-types',
+          display: 'Organisms: Genome Info & Stats',
+          tooltip: `Table summarizing all the genomes in ${displayName}`,
+          type: 'reactRoute',
+          url: '/search/organism/GenomeDataTypes/result'
+        },
+        { 
+              key: 'public-strategies',
+              display: 'Public search strategies',
+              type: 'reactRoute',
+              url: '/workspace/strategies/public'
         },
         {
           key: 'community-download',
@@ -667,7 +673,7 @@ const useHeaderMenuItems = (
             },
             { 
               key: 'public-strategies',
-              display: 'Public strategies',
+              display: 'Public search strategies',
               type: 'reactRoute',
               url: '/workspace/strategies/public'
             },
