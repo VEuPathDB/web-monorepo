@@ -114,7 +114,7 @@ function makeMesaColumns(recordClassToDisplayString: (urlSegment: string | null)
   return [
     {
       key: 'name',
-      name: 'Strategies',
+      name: 'Strategy',
       className: cx('--NameCell'),
       sortable: true,
       renderCell: (props: RenderCellProps<string>) => 
