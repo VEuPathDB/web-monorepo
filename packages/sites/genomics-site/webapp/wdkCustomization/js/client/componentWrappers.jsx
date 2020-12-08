@@ -62,7 +62,7 @@ export function RecordController(WdkRecordController) {
             .concat('TranscriptionSummary' in recordClass.tablesMap ? ['TranscriptionSummary'] : [])
             .concat('PhenotypeGraphs' in recordClass.tablesMap ? ['PhenotypeGraphs'] : [])
             .concat('CrisprPhenotypeGraphs' in recordClass.tablesMap ? ['CrisprPhenotypeGraphs'] : [])
-            .concat('FungiOrgLinkoutsTable' in recordClass.attributesMap ? ['FungiOrgLinkoutsTable'] : [])
+            .concat('FungiOrgLinkoutsTable' in recordClass.tablesMap ? ['FungiOrgLinkoutsTable'] : [])
         }
       ]
     }
