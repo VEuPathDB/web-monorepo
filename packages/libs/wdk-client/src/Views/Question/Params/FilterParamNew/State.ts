@@ -19,9 +19,16 @@ export type SortSpec = {
   direction: 'asc' | 'desc';
 };
 
+export type MultiFieldSortSpec = {
+  columnKey: 'display' | keyof OntologyTermSummary['valueCounts'];
+  direction: 'asc' | 'desc';
+};
+
+type OntologySummaryAndTerm = OntologyTermSummary & {
+  term: any
+};
 type BaseFieldState = {
   summary?: OntologyTermSummary;
-  leafSummaries?: OntologyTermSummary[];
   loading?: boolean;
   invalid?: boolean;
   errorMessage?: string;
@@ -34,13 +41,20 @@ export type MemberFieldState = BaseFieldState & {
   rowsPerPage: number;
 }
 
+export type MultiFieldState = BaseFieldState & {
+  sort: MultiFieldSortSpec;
+  leafSummaries: OntologySummaryAndTerm[];
+  searchTerm: string;
+}
+
+
 export type RangeFieldState = BaseFieldState & {
   yaxisMax?: number;
   xaxisMin?: number;
   xaxisMax?: number;
 }
 
-export type FieldState = MemberFieldState | RangeFieldState;
+export type FieldState = MemberFieldState | RangeFieldState | MultiFieldState;
 
 export type State = Readonly<{
   errorMessage?: string;

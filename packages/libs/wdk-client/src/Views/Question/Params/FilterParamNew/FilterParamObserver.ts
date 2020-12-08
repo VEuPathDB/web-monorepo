@@ -22,13 +22,19 @@ import {
   ParameterValues
 } from 'wdk-client/Utils/WdkModel';
 
-import { FieldState, MemberFieldState, State as FilterParamState } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
+import { FieldState, MemberFieldState, MultiFieldState, State as FilterParamState } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
 import { ModuleEpic, EpicDependencies } from 'wdk-client/Core/Store';
-import { isType, getFilters, getFilterFields, isMemberField, sortDistribution } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { isType, getFilters, getFilterFields, isMemberField, sortDistribution, sortMultiFieldSummary } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
 import { UpdateFieldStateAction, UpdateFiltersAction, UPDATE_FILTERS, SetActiveFieldAction, SET_ACTIVE_FIELD, setActiveField, invalidateOntologyTerms, updateFieldState, summaryCountsLoaded } from 'wdk-client/Actions/FilterParamActions';
 import { Filter, MultiFilter } from 'wdk-client/Components/AttributeFilter/Types';
 import { Action } from 'wdk-client/Actions';
 import { isMulti } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+
+
+const defaultMultiFieldSort: MultiFieldState['sort'] = {
+  columnKey: 'display',
+  direction: 'asc',
+}
 
 const defaultMemberFieldSort: MemberFieldState['sort'] = {
   columnKey: 'value',
@@ -273,6 +279,9 @@ function getOntologyTermSummary(
         item => item.parent == ontologyItem.term
       ).map(item => item.term);
 
+    const sort = state.paramUIState[paramName]?.fieldStates[ontologyTerm]?.sort || defaultMultiFieldSort;
+
+
     const [ [ firstFilter ], otherFilters ] = partition(filters, filter => filter.field === ontologyTerm);
     const multiFilter = firstFilter as MultiFilter;
 
@@ -302,7 +311,9 @@ function getOntologyTermSummary(
         fieldState: {
           loading: false,
           invalid: false,
-          leafSummaries: summaries
+          sort,
+          leafSummaries: sortMultiFieldSummary(summaries, parameter.ontology, sort),
+          searchTerm: ''
         }
       })))
     );

@@ -1,12 +1,12 @@
-import { memoize, sortBy, stubTrue as T } from 'lodash';
+import { reverse, memoize, sortBy, stubTrue as T } from 'lodash';
 import natsort from 'natural-sort';
 
-import { Filter, MemberFilter, ValueCounts, FieldTreeNode } from 'wdk-client/Components/AttributeFilter/Types';
+import { OntologyTermSummary, Filter, MemberFilter, ValueCounts, FieldTreeNode } from 'wdk-client/Components/AttributeFilter/Types';
 import { getTree, isRange, removeIntermediateNodesWithSingleChild, isFilterField, sortLeavesBeforeBranches } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import { preorderSeq } from 'wdk-client/Utils/TreeUtils';
 import { FilterParamNew, Parameter } from 'wdk-client/Utils/WdkModel';
 
-import { SortSpec, State } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
+import { SortSpec, MultiFieldSortSpec, MultiFieldState, State } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
 import { Context } from 'wdk-client/Views/Question/Params/Utils';
 
 const natSortComparator = (natsort as any)();
@@ -60,6 +60,16 @@ function filteredCountIsZero(entry: Entry) {
   return entry.filteredCount === 0;
 }
 
+
+export function sortMultiFieldSummary(summaries: MultiFieldState['leafSummaries'], ontology: any[], sort: MultiFieldSortSpec): MultiFieldState['leafSummaries'] {
+  if (sort == null) return summaries;
+  const fields = new Map(ontology.map(o => [o.term, o]));
+  const sortedSummaries = sortBy(summaries, entry => sort.columnKey === 'display'
+    ? fields.get(entry.term)?.display
+    : entry.valueCounts[sort.columnKey]
+  ) as MultiFieldState['leafSummaries'];
+  return sort.direction === 'asc' ? sortedSummaries : reverse(sortedSummaries);
+}
 /**
  * Sort distribution based on sort spec. `SortSpec` is an object with two
  * properties: `columnKey` (the distribution property to sort by), and
