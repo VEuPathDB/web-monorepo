@@ -33,27 +33,27 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
 
     return (
       <Group
-          top={orientation == 'horizontal' ? node.x : node.y}
-          left={orientation == 'horizontal' ? node.y : node.x}
+        top={orientation == 'horizontal' ? node.x : node.y}
+        left={orientation == 'horizontal' ? node.y : node.x}
+      >
+        <rect
+          height={height}
+          width={width}
+          y={-height / 2}
+          x={-width / 2}
+          fill={"white"}
+          stroke={"black"}
+          style={highlightedEntityID == node.data.name ? { 'cursor': 'pointer', 'outline': 'yellow 3px solid' } : {'cursor': 'pointer'} }
+        />
+        <text
+          fontSize={12}
+          textAnchor="middle"
+          style={{'cursor': 'pointer'}}
+          dy=".33em"
         >
-          <rect
-            height={height}
-            width={width}
-            y={-height / 2}
-            x={-width / 2}
-            fill={"white"}
-            stroke={"black"}
-            style={highlightedEntityID == node.data.name ? { 'cursor': 'pointer', 'outline': 'yellow 3px solid' } : {'cursor': 'pointer'} }
-          />
-          <text
-            fontSize={12}
-            textAnchor="middle"
-            style={{'cursor': 'pointer'}}
-            dy=".33em"
-          >
-            {node.data.name}
-          </text>
-        </Group>
+          {node.data.name}
+        </text>
+      </Group>
     )
   }
 

@@ -22,25 +22,177 @@ export const EntityDiagram = () => {
     ],
   };
 
-  const expandedTreeData ={
-    name: 'Collection',
-    children: [
-      { name: 'Sample',
-        children: [
-          { name: 'Genotype', shading: '1' },
-          { name: 'Insecticide Resistance Assay', shading: '4'},
-          { name: 'Pathogen Detection Assay Result', shading: '5'},
-          { name: 'Blood Meal Host Identification Result', shading: '0'}
+  const studyData = {
+      "id":"DS12385",
+      "rootEntity":{
+            "id":"GEMS_House",
+            "displayName":"Household",
+            "description":"Households from the study area",
+            "children":[
+          {
+            "id":"GEMS_HouseObs",
+            "displayName":"Household Observation",
+            "description":"",
+            "children":[
+
+            ],
+            "variables":[
+              {
+                "id":"var-19",
+                "providerLabel":"_watersupply",
+                "displayName":"Water supply",
+                "type":"string"
+              }
+            ]
+          },
+          {
+            "id":"GEMS_Part",
+            "displayName":"Participant",
+            "description":"Participants in the study",
+            "children":[
+              {
+                "id":"GEMS_PartObs",
+                "displayName":"Participant Observation",
+                "description":"",
+                "children":[
+                  {
+                    "id":"GEMS_Sample",
+                    "displayName":"Sample",
+                    "description":"",
+                    "children":[
+
+                    ],
+                    "variables":[
+
+                    ]
+                  },
+                  {
+                    "id":"GEMS_Treat",
+                    "displayName":"Treatment",
+                    "description":"",
+                    "children":[
+
+                    ],
+                    "variables":[
+
+                    ]
+                  }
+                ],
+                "variables":[
+                  {
+                    "id":"var-12",
+                    "providerLabel":"_weight",
+                    "displayName":"Weight",
+                    "type":"number",
+                    "isContinuous":true,
+                    "precision":2,
+                    "units":"pounds"
+                  },
+                  {
+                    "id":"var-13",
+                    "providerLabel":"_favnumber",
+                    "displayName":"Favorite number",
+                    "type":"number",
+                    "isContinuous":false,
+                    "precision":0,
+                    "units":""
+                  },
+                  {
+                    "id":"var-14",
+                    "providerLabel":"_startdate",
+                    "displayName":"Start date",
+                    "type":"date",
+                    "isContinuous":false
+                  },
+                  {
+                    "id":"var-15",
+                    "providerLabel":"_visitdate",
+                    "displayName":"Visit date",
+                    "type":"number",
+                    "isContinuous":false,
+                    "precision":0
+                  },
+                  {
+                    "id":"var-16",
+                    "providerLabel":"_mood",
+                    "displayName":"Mood",
+                    "type":"string"
+                  }
+                ]
+              }
+            ],
+            "variables":[
+              {
+                "id":"var-10",
+                "providerLabel":"_networth",
+                "displayName":"Net worth",
+                "type":"number",
+                "isContinuous":true,
+                "precision":2,
+                "units":"dollars"
+              },
+              {
+                "id":"var-11",
+                "providerLabel":"_shoesize",
+                "displayName":"Shoe size",
+                "type":"number",
+                "isContinuous":true,
+                "precision":1,
+                "units":"shoe size"
+              },
+              {
+                "id":"var-17",
+                "providerLabel":"_haircolor",
+                "displayName":"Hair color",
+                "type":"string"
+              },
+              {
+                "id":"var-20",
+                "providerLabel":"_name",
+                "displayName":"Name",
+                "type":"string"
+              }
+            ]
+          }
         ],
-        shading: '1'
-      },
-      {
-        name: 'Abundance Sample',
-        shading: '2'
-      },
-    ],
-    shading: '3'
-  };
+            "variables":[
+          {
+            "id":"var-18",
+            "providerLabel":"_address",
+            "displayName":"City",
+            "type":"string"
+          }
+        ]
+      }
+    }
+
+  const shadingData = [
+    {
+      entityId: "GEMS_House",
+      value: 1,
+      color: "#e4c8c8"
+    },
+    {
+      entityId: "GEMS_HouseObs",
+      value: 2,
+      color: "#e4c8c8"
+    },
+    {
+      entityId: "GEMS_Part",
+      value: 3,
+      color: "#e4c8c8"
+    },
+    {
+      entityId: "GEMS_PartObs",
+      value: 4,
+      color: "#e4c8c8"
+    },
+    {
+      entityId: "GEMS_Treat",
+      value: 5,
+      color: "#e4c8c8"
+    }
+  ]
 
   return (
     <div style={{marginLeft: 40, marginTop: 40, width: 1000, height: 700, border: '1px black solid'}}>
@@ -65,11 +217,13 @@ export const EntityDiagram = () => {
         expanded
           ?
             <ExpandedDiagram
-              treeData={expandedTreeData}
+              treeData={studyData.rootEntity}
               orientation={orientation}
               highlightedEntityID={"Sample"}
+              shadingData={shadingData}
             />
           :
+            // ToDo: Where does the mini diagram text come from? ID in Study Data?
             <MiniDiagram
               treeData={treeData}
               orientation={orientation}

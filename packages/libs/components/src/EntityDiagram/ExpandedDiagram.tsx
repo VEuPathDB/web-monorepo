@@ -6,17 +6,38 @@ import {Group} from "@visx/group";
 import {LinkHorizontalLine, LinkVerticalLine} from "@visx/shape";
 import {Text} from "@visx/text";
 
-interface TreeDataExpanded {
-  name: string
-  children?: this[]
-  shading: string
+interface Variables {
+  id: string
+  providerLabel: string
+  displayName: string
+  type: string
+  isContinuous?: boolean
+  precision?: number
+  units?: string
+}
+
+interface StudyData {
+  id: string
+  displayName: string
+  description: string
+  children?: this[],
+  variables?: Variables[]
+}
+
+interface ShadingData {
+  entityId: string
+  value: number
+  color?: string
 }
 
 interface ExpandedDiagram {
-  treeData: TreeDataExpanded
+  treeData: StudyData
   orientation: string
   highlightedEntityID: string
+  shadingData: ShadingData[]
 }
+
+
 
 // Todo: There MUST be a smarter way to center the text
 function CalculateDYSize(nodeLength: number) {
@@ -34,7 +55,7 @@ function CalculateDYSize(nodeLength: number) {
   }
 }
 
-export default function MiniDiagram({treeData, orientation, highlightedEntityID}: ExpandedDiagram) {
+export default function MiniDiagram({treeData, orientation, highlightedEntityID, shadingData}: ExpandedDiagram) {
   const data = hierarchy(treeData);
   const width = 120;
   const height = 70;
@@ -96,7 +117,9 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
                   />
             ))}
             {tree.descendants().map((node, i) => {
-            return (
+              const shadingObject: undefined | ShadingData = shadingData.find(o => o.entityId === node.data.id);
+
+              return (
               <Group
                 top={orientation == 'horizontal' ? node.x : node.y}
                 left={orientation == 'horizontal' ? node.y : node.x}
@@ -106,18 +129,18 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
                   width={width}
                   y={-height / 2}
                   x={-width / 2}
-                  fill={`url('#rect-gradient-${node.data.shading}')`}
+                  fill={`url('#rect-gradient-${shadingObject ? shadingObject.value : 0}')`}
                   stroke={"black"}
-                  style={highlightedEntityID == node.data.name ? {'outline': 'yellow 3px solid', 'overflowWrap': 'normal' } : {'overflowWrap': 'normal'} }
+                  style={highlightedEntityID == node.data.displayName ? {'outline': 'yellow 3px solid', 'overflowWrap': 'normal' } : {'overflowWrap': 'normal'} }
                 />
                 <Text
                   fontSize={12}
                   textAnchor={"middle"}
                   style={{'cursor': 'default'}}
-                  dy={CalculateDYSize(node.data.name.split(' ').length)}
+                  dy={CalculateDYSize(node.data.displayName.split(' ').length)}
                   width={100}
                 >
-                  {node.data.name}
+                  {node.data.displayName}
                 </Text>
               </Group>)
             })}
