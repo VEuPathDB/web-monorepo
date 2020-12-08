@@ -22,7 +22,7 @@ import { DynSpansBySourceId } from './components/questions/DynSpansBySourceId';
 import { GenesByBindingSiteFeature } from './components/questions/GenesByBindingSiteFeature';
 import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
-import { hasChromosomeAndSequenceIDXorGrouping } from './components/questions/MutuallyExclusiveParams/utils';
+import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/MutuallyExclusiveParams/utils';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 
 const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
@@ -35,7 +35,7 @@ const isMutuallyExclusiveParamQuestion: ClientPluginRegistryEntry<any>['test'] =
   ({ question }) => (
     question != null &&
     question.urlSegment.endsWith('ByLocation') &&
-    hasChromosomeAndSequenceIDXorGrouping(question)
+    hasChromosomeAndSequenceIDXorGroup(question)
   );
 
 const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [

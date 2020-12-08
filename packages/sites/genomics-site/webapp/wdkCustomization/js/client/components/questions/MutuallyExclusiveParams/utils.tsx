@@ -1,8 +1,12 @@
-import { Dictionary, flowRight, isNil, mapValues, negate, values } from 'lodash';
+import { Dictionary, mapValues, values } from 'lodash';
 import { createSelector } from 'reselect';
 
 import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import { ParameterGroup, Question } from 'wdk-client/Utils/WdkModel';
+
+const ORGANISM_PARAMS = [ 'organismSinglePick' ];
+const CHROMOSOME_PARAMS = [ 'chromosomeOptional', 'chromosomeOptionalForNgsSnps' ];
+const SEQUENCE_ID_PARAMS = [ 'sequenceId' ];
 
 const findXorGroup = (xorGrouping: Dictionary<string[]>) => (question: Question) => {
   return question.groups.find(group => {
@@ -48,8 +52,8 @@ const groupXorParameters = (xorGrouping: Dictionary<string[]>) => (state: Questi
 };
 
 export const xorGroupingByChromosomeAndSequenceID = {
-  'Chromosome': ['organismSinglePick', 'chromosomeOptional', 'chromosomeOptionalForNgsSnps'],
-  'Sequence ID': ['sequenceId']
+  'Chromosome': [ ...ORGANISM_PARAMS, ...CHROMOSOME_PARAMS ],
+  'Sequence ID': SEQUENCE_ID_PARAMS
 };
 
 export const keyForXorGroupingByChromosomeAndSequenceID = createSelector(
@@ -63,12 +67,26 @@ export const groupXorParametersByChromosomeAndSequenceID = createSelector(
   groupXorParameters(xorGroupingByChromosomeAndSequenceID)
 );
 
-const findChromosomeAndSequenceIDXorGrouping = findXorGroup(xorGroupingByChromosomeAndSequenceID);
+const findChromosomeAndSequenceIDXorGroup = findXorGroup(xorGroupingByChromosomeAndSequenceID);
 
-export const hasChromosomeAndSequenceIDXorGrouping = flowRight(
-  negate(isNil),
-  findChromosomeAndSequenceIDXorGrouping
-);
+const groupHasParam = (groupParamNames: Set<string>) => (targetParamName: string) => {
+  return groupParamNames.has(targetParamName);
+}
+
+export const hasChromosomeAndSequenceIDXorGroup = (question: Question) => {
+  const xorGroup = findChromosomeAndSequenceIDXorGroup(question);
+
+  const xorGroupParamNames = new Set(xorGroup?.parameters);
+  const xorGroupHasParam = groupHasParam(xorGroupParamNames);
+
+  return [
+    ORGANISM_PARAMS,
+    CHROMOSOME_PARAMS,
+    SEQUENCE_ID_PARAMS
+  ].every(
+    validParamTypes => validParamTypes.some(xorGroupHasParam)
+  );
+};
 
 export const findChromosomeOptionalKey = (paramNames: string[]) => 
   paramNames.includes('chromosomeOptionalForNgsSnps') ? 'chromosomeOptionalForNgsSnps' : 'chromosomeOptional';
