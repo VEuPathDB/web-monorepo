@@ -104,7 +104,10 @@ interface ResultPanelControllerProps {
 class ResultPanelController extends ViewController< ResultPanelControllerProps > {
 
   loadData(prevProps?: ResultPanelControllerProps) {
-    if (prevProps == null || !isEqual(prevProps.resultType, this.props.resultType)) {
+    if (
+      prevProps == null ||
+      resultTypeHasChanged(prevProps.resultType, this.props.resultType)
+    ) {
       this.props.loadTabs(this.props.resultType);
     }
   }
@@ -301,6 +304,12 @@ const mergeProps = (
     ))
   ]
 });
+
+function resultTypeHasChanged(prevResultType: ResultType, nextResultType: ResultType) {
+  return prevResultType.type === 'step' && nextResultType.type === 'step'
+    ? prevResultType.step.id !== nextResultType.step.id
+    : !isEqual(prevResultType, nextResultType);
+}
 
 export default connect(
   mapStateToProps,
