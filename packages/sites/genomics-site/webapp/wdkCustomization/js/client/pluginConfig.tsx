@@ -15,14 +15,15 @@ import { ClientPluginRegistryEntry } from 'wdk-client/Utils/ClientPlugin';
 import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumberCheckbox';
 
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
+import { BlastQuestionForm } from './components/questions/BlastQuestionForm';
 import { ByGenotypeNumber } from './components/questions/ByGenotypeNumber';
 import { ByLocationForm, ByLocationStepDetails } from './components/questions/ByLocation';
-import { BlastQuestionForm } from './components/questions/BlastQuestionForm';
 import { DynSpansBySourceId } from './components/questions/DynSpansBySourceId';
-import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 import { GenesByBindingSiteFeature } from './components/questions/GenesByBindingSiteFeature';
 import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
+import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/MutuallyExclusiveParams/utils';
+import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 
 const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   ({ question }) => (
@@ -31,7 +32,11 @@ const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   );
 
 const isMutuallyExclusiveParamQuestion: ClientPluginRegistryEntry<any>['test'] =
-  ({ question }) => question?.urlSegment.endsWith('ByLocation') ?? false;
+  ({ question }) => (
+    question != null &&
+    question.urlSegment.endsWith('ByLocation') &&
+    hasChromosomeAndSequenceIDXorGroup(question)
+  );
 
 const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
