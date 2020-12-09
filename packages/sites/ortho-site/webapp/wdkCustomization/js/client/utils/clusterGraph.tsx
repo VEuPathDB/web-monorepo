@@ -6,8 +6,8 @@ export const edgeTypeDisplayNames: Record<EdgeType, string> = {
   'O': 'Ortholog',
   'C': 'Coortholog',
   'P': 'Inparalog',
-  'L': 'PeripheralCore',
-  'M': 'PeripheralPeripheral',
+  'L': 'Peripheral-Core',
+  'M': 'Peripheral-Peripheral',
   'N': 'Other Similarities'
 };
 
