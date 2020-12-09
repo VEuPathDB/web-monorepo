@@ -1,6 +1,7 @@
 import React from "react";
 import WorkspaceNavigation from "wdk-client/Components/Workspace/WorkspaceNavigation";
 import { Route, Switch, Redirect } from "react-router";
+import WdkRoute from 'wdk-client/Core/WdkRoute';
 import UserDatasetListController from "wdk-client/Controllers/UserDatasetListController";
 import UserDatasetNewUploadController from "wdk-client/Controllers/UserDatasetNewUploadController";
 import { UserDatasetAllUploadsController } from "wdk-client/Controllers";
@@ -10,6 +11,7 @@ import { useWdkService } from "wdk-client/Hooks/WdkServiceHook";
 
 interface Props {
   rootPath: string;
+  urlParams: Record<string, string>
 };
 
 function UserDatasetsWorkspace(props: Props) {
@@ -48,19 +50,19 @@ function UserDatasetsWorkspace(props: Props) {
         ].flat()}
       />
       <Switch>
-        <Route exact path={rootPath}>
+        <WdkRoute exact requiresLogin path={rootPath} component={() =>
           <UserDatasetListController/>
-        </Route>
-       { hasDirectUpload && <Route exact path={`${rootPath}/new`}>
-						<UserDatasetNewUploadController/>
-        </Route> }
+          }/>
+        { hasDirectUpload && <WdkRoute requiresLogin exact path={`${rootPath}/new`} component={()=> 
+						<UserDatasetNewUploadController urlParams={props.urlParams}/>
+          }/> }
        
-    { hasDirectUpload && 		<Route exact path={`${rootPath}/recent`}>
+  { hasDirectUpload && 		<WdkRoute requiresLogin exact path={`${rootPath}/recent`} component={()=>
 						<UserDatasetAllUploadsController/>
-					</Route> }
-        <Route exact path={`${rootPath}/help`}>
+          }/> }
+          <WdkRoute exact requiresLogin={false} path={`${rootPath}/help`} component={()=>
           <UserDatasetHelp projectId={config.projectId} quotaSize={quotaSize}/>
-        </Route>
+          }/>
         <Redirect to={rootPath}/>
       </Switch>
     </div>
