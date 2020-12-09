@@ -209,8 +209,8 @@ const routes: RouteEntry[] = [
   {
     path: '/workspace/datasets',
     exact: false,
-    requiresLogin: true,
-    component: (props: RouteComponentProps<{}>) => < UserDatasetsWorkspace rootPath={props.match.path}/>
+    requiresLogin: false, // uses custom guest views
+    component: (props: RouteComponentProps<{}>) => < UserDatasetsWorkspace rootPath={props.match.path} urlParams={parseQueryString(props)}/>
   },
 
   {

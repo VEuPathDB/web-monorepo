@@ -18,7 +18,12 @@ type StateProps =
   & Pick<RootState['globalData'], 'user'>
   & Pick<RootState['globalData'], 'config'>;
 type DispatchProps = typeof actionCreators;
-type MergedProps = StateProps & { userEvents: DispatchProps };
+
+type OwnProps = {
+  urlParams: Record<string, string>;
+}
+
+type MergedProps = StateProps & { userEvents: DispatchProps } & OwnProps;
 
 class UserDatasetUploadController extends PageController<MergedProps> {
 
@@ -79,14 +84,14 @@ class UserDatasetUploadController extends PageController<MergedProps> {
   }
 }
 
-const enhance = connect<StateProps, DispatchProps, {}, MergedProps, RootState>(
+const enhance = connect<StateProps, DispatchProps, OwnProps, MergedProps, RootState>(
   (state: RootState) => ({
     badUploadMessage: state.userDatasetUpload.badUploadMessage,
     user: state.globalData.user,
     config: state.globalData.config
   }),
   actionCreators,
-  (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps })
+  (stateProps, dispatchProps, ownProps) => ({ ...stateProps, ...ownProps, userEvents: dispatchProps })
 )
 
 export default enhance(wrappable(UserDatasetUploadController));
