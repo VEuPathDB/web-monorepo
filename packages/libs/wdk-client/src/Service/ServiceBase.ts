@@ -10,6 +10,7 @@ import { ServiceError } from 'wdk-client/Service/ServiceError';
 import { Question } from 'wdk-client/Utils/WdkModel';
 import { keyBy } from 'lodash';
 import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
+import { appendUrlAndRethrow } from './ServiceUtils';
 
 
 /**
@@ -218,7 +219,7 @@ export const ServiceBase = (serviceUrl: string) => {
           response.headers.get('x-log-marker') || uuid()
         );
       });
-    }) as Promise<T>
+    }).catch(appendUrlAndRethrow(serviceUrl + url)) as Promise<T>
   }
 
   /**

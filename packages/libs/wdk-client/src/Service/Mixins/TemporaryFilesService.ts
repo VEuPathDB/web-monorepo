@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
+import { appendUrlAndRethrow } from '../ServiceUtils';
 
 export default (base: ServiceBase) => {
 
@@ -27,7 +28,7 @@ export default (base: ServiceBase) => {
           uuid()
         );
       })
-    })
+    }).catch(appendUrlAndRethrow(base.serviceUrl + path))
   }
 
   return {
