@@ -25,14 +25,20 @@ interface Props {
     textColor?: string;
     fontSize?: string|number;
   };
+  width: number,
+  height: number,
 }
 
 export default function PiePlot(props: Props) {
   const { data, interior = null } = props;
   const defaultColorIter = defaultColorGen();
   let interiorProps;
-  let layout = {};
   let newData: Partial<PlotData>[] = [];
+
+  let layout = {
+    width: props.width,
+    height: props.height,
+  };
 
   if (interior) {
     interiorProps = {
@@ -40,7 +46,7 @@ export default function PiePlot(props: Props) {
     };
 
     if (interior.text) {
-      layout = {
+      Object.assign(layout, {
         annotations: [{
           font: {
             size: interior.fontSize || 12,
@@ -51,7 +57,7 @@ export default function PiePlot(props: Props) {
           x: 0.5,
           y: 0.5,
         }]
-      }
+      });
     }
 
     // The width of the donut. This is measured along invisible axes that seem
