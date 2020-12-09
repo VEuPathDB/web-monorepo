@@ -307,7 +307,10 @@ const mergeProps = (
 
 function resultTypeHasChanged(prevResultType: ResultType, nextResultType: ResultType) {
   return prevResultType.type === 'step' && nextResultType.type === 'step'
-    ? prevResultType.step.id !== nextResultType.step.id
+    ? (
+      prevResultType.step.searchName !== nextResultType.step.searchName ||
+      !isEqual(prevResultType.step.searchConfig, nextResultType.step.searchConfig)
+    )
     : !isEqual(prevResultType, nextResultType);
 }
 
