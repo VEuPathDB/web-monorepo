@@ -5,6 +5,8 @@ import {User} from 'wdk-client/Utils/WdkUser';
 import {connect} from 'react-redux';
 
 interface OwnProps {
+  toDoWhatMessage?: string;
+  extraParagraphContent?: JSX.Element;
   children?: React.ReactChild
 }
 
@@ -25,7 +27,7 @@ const style: React.CSSProperties = {
 }
 
 function LoginRequiredDisclaimer(props: Props) {
-  const { user, children } = props;
+  const { user, toDoWhatMessage, extraParagraphContent, children } = props;
 
   if (window == null || user == null) return null;
 
@@ -36,7 +38,8 @@ function LoginRequiredDisclaimer(props: Props) {
     <div style={style}>
       <h3>It looks like you are not logged in.</h3>
       <p><i className="fa fa-user-o fa-5x"/></p>
-      <p>To use this page, please <Link to={`/user/login?destination=${destination}`}>log in</Link> or <Link to={`/user/registration`}>register</Link>.</p>
+      <p>{toDoWhatMessage || 'To use this page'}, please <Link to={`/user/login?destination=${destination}`}>log in</Link> or <Link to={`/user/registration`}>register</Link>.</p>
+      { extraParagraphContent }
     </div>
   );
 }

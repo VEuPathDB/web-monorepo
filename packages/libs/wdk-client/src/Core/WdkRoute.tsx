@@ -5,15 +5,16 @@ import { ErrorBoundary } from 'wdk-client/Controllers';
 
 interface Props extends RouteProps {
   requiresLogin: boolean;
+  disclaimerProps?: { toDoWhatMessage?: string, extraParagraphContent?: JSX.Element}
 }
 
 export default function WdkRoute(routeProps: Props) {
-  const { component: Component, requiresLogin, ...restProps } = routeProps;
+  const { component: Component, requiresLogin, disclaimerProps, ...restProps } = routeProps;
 
   const render = useCallback((props: RouteComponentProps<any, StaticContext, any>) => {
     const content = Component == null ? null
       : requiresLogin ? (
-        <LoginRequiredDisclaimer>
+        <LoginRequiredDisclaimer {...disclaimerProps || {}}>
           <Component {...props}/>
         </LoginRequiredDisclaimer>
       )

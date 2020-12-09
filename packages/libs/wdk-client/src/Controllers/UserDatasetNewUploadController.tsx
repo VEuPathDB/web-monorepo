@@ -39,18 +39,6 @@ class UserDatasetUploadController extends PageController<MergedProps> {
     return "Upload My New Data Set";
   }
 
-  renderGuestView(){
-    return (
-      <UserDatasetEmptyState message={
-        <button
-          type="button"
-          className="btn"
-          onClick={() => this.props.userEvents.showLoginForm()}
-        >Please log in to upload a new data set.</button>
-      }/>
-    );
-  }
-
   renderMissingForm(){
     const projectName = this.props.config != null ? this.props.config.displayName : undefined;
     return (
@@ -62,7 +50,7 @@ class UserDatasetUploadController extends PageController<MergedProps> {
     );
   }
 
-  renderUploadForm(){
+  renderView(){
     const projectName = this.props.config != null ? this.props.config.displayName : undefined;
 
     return (
@@ -72,14 +60,6 @@ class UserDatasetUploadController extends PageController<MergedProps> {
           : this.renderMissingForm()
         }
       </div>
-    );
-  }
-
-  renderView() {
-    return (
-      this.props.user && this.props.user.isGuest
-      ? this.renderGuestView()
-      : this.renderUploadForm()
     );
   }
 }
