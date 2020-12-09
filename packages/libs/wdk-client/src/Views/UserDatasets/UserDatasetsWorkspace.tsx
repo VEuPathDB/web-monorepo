@@ -52,17 +52,32 @@ function UserDatasetsWorkspace(props: Props) {
       <Switch>
         <WdkRoute exact requiresLogin path={rootPath} component={() =>
           <UserDatasetListController/>
-          }/>
+        } disclaimerProps={{toDoWhatMessage: "To view your datasets"}}/>
         { hasDirectUpload && <WdkRoute requiresLogin exact path={`${rootPath}/new`} component={()=> 
-						<UserDatasetNewUploadController urlParams={props.urlParams}/>
-          }/> }
-       
-  { hasDirectUpload && 		<WdkRoute requiresLogin exact path={`${rootPath}/recent`} component={()=>
-						<UserDatasetAllUploadsController/>
-          }/> }
-          <WdkRoute exact requiresLogin={false} path={`${rootPath}/help`} component={()=>
+          <UserDatasetNewUploadController urlParams={props.urlParams}/>
+          } disclaimerProps={{toDoWhatMessage: `To upload your dataset`, extraParagraphContent: ( Object.entries(props.urlParams).length == 0 ? undefined:
+            <div>
+              Afterwards, you will be taken back to an upload page with these details:
+              <ul style={{listStyle: "none"}}>
+              {Object.entries(props.urlParams).map(e => 
+                <li key={e.join(" ")}>
+                  {
+                    e[0].charAt(0).toUpperCase() + e[0].slice(1).replace("_", " ") + ": "
+                  }
+                  <code>{e[1]}</code>
+                </li>
+              )}
+               </ul>
+            </div>
+          ) }}/>
+        }
+        { hasDirectUpload && <WdkRoute requiresLogin exact path={`${rootPath}/recent`} component={()=>
+					<UserDatasetAllUploadsController/>
+          } disclaimerProps={{toDoWhatMessage: "To view your recent uploads"}}/>
+        }
+        <WdkRoute exact requiresLogin={false} path={`${rootPath}/help`} component={()=>
           <UserDatasetHelp projectId={config.projectId} quotaSize={quotaSize}/>
-          }/>
+        }/>
         <Redirect to={rootPath}/>
       </Switch>
     </div>
