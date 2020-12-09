@@ -253,17 +253,17 @@ function useHeaderMenuItems() {
         type: 'subMenu',
         items: [
           {
-            key: 'data-methods',
-            display: 'Analysis methods',
-            type: 'reactRoute',
-            tooltip: 'How we obtain/generate the data',
-            url: makeStaticPageRoute(`/methods.html`)
-          },
-          {
             key: 'downloads',
             display: 'Download data files',
             type: 'reactRoute',
             url: '/downloads'
+          },
+         {
+            key: 'data-methods',
+            display: 'Analysis methods',
+            type: 'reactRoute',
+            tooltip: 'How we obtain/generate the data',
+            url: makeStaticPageRoute(`/OrthoMCL/about.html`)
           },
           {
             key: 'release-summary',
@@ -501,18 +501,18 @@ function useHeaderMenuItems() {
               type: 'externalLink',
               url: '/documents/VEuPathDB_Section_508_BRC4.pdf'
             },
-            { 
-              key: 'tech-methods',
-              display: 'Analysis methods',
-              type: 'reactRoute',
-              tooltip: 'How we obtain/generate the data',
-              url: makeStaticPageRoute(`/methods.html`)
-            },
             {
               key: 'infrastructure',
               display: 'Infrastructure',
               type: 'reactRoute',
               url: makeStaticPageRoute('/infrastructure.html')
+            },
+            { 
+              key: 'tech-methods',
+              display: 'VEuPathDB Analysis methods',
+              type: 'reactRoute',
+              tooltip: 'How we obtain/generate the data',
+              url: makeStaticPageRoute(`/methods.html`)
             },
             {
               key: 'usage-statistics',
