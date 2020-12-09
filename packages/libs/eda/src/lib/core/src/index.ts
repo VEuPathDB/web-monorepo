@@ -4,3 +4,4 @@ export * from './types/filter';
 export * from './hooks/useAnalysis';
 export * from './hooks/useStudy';
 export { EDAWorkspaceContainer } from './components/EDAWorkspaceContainer';
+export { EDAAnalysisListContainer } from './components/EDAAnalysisListContainer';
