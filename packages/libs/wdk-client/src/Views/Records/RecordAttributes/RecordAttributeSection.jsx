@@ -3,6 +3,7 @@ import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
 import RecordAttribute from 'wdk-client/Views/Records/RecordAttributes/RecordAttribute';
+import { DefaultSectionHeading } from 'wdk-client/Views/Records/SectionHeading';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 
 /** Record attribute section container for record page */
@@ -30,13 +31,17 @@ export default wrappable(RecordAttributeSection);
 /** Display attribute name and value on a single line */
 function InlineRecordAttributeSection(props) {
   let { attribute, record, recordClass } = props;
-  let { name } = attribute;
+  let { displayName, help, name } = attribute;
   return (
     <div id={name}
       className={`wdk-RecordAttributeSectionItem wdk-RecordAttributeSectionItem__${name}`}>
       <div className="wdk-RecordAttributeName">
-        {attribute.displayName}
+        <DefaultSectionHeading
+          displayName={displayName}
+          help={help}
+        />
       </div>
+      {' '}
       <div className="wdk-RecordAttributeValue">
         <ErrorBoundary>
           <RecordAttribute
@@ -53,12 +58,15 @@ function InlineRecordAttributeSection(props) {
 /** Display attribute name and value in a collapsible section */
 function BlockRecordAttributeSection(props) {
   const { attribute, record, recordClass, isCollapsed, onCollapsedChange } = props;
-  const { displayName, name } = attribute;
+  const { displayName, help, name } = attribute;
+
+  const headerContent = <DefaultSectionHeading displayName={displayName} help={help} />;
+
   return (
     <CollapsibleSection
       id={name}
       className={`wdk-RecordAttributeSectionItem`}
-      headerContent={displayName}
+      headerContent={headerContent}
       isCollapsed={isCollapsed}
       onCollapsedChange={onCollapsedChange}
     >
