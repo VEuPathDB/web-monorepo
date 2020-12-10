@@ -1,16 +1,28 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
-import RecordAttribute from 'wdk-client/Views/Records/RecordAttributes/RecordAttribute';
-import { DefaultSectionHeading } from 'wdk-client/Views/Records/SectionHeading';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
+import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
+import { AttributeField, RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
+import RecordAttribute from 'wdk-client/Views/Records/RecordAttributes/RecordAttribute';
+import { PartialRecordRequest } from 'wdk-client/Views/Records/RecordUtils';
+import { DefaultSectionHeading } from 'wdk-client/Views/Records/SectionHeading';
+
+export interface Props {
+  attribute: AttributeField;
+  isCollapsed: boolean;
+  onCollapsedChange: () => void;
+  ontologyProperties: CategoryTreeNode['properties'];
+  record: RecordInstance;
+  recordClass: RecordClass;
+  requestPartialRecord: (request: PartialRecordRequest) => void;
+}
 
 /** Record attribute section container for record page */
-function RecordAttributeSection(props) {
+function RecordAttributeSection(props: Props) {
   let value = props.record.attributes[props.attribute.name];
   if (value == null) return null;
-  if (value.length < 150) return (
+  if (typeof value === 'string' && value.length < 150) return (
     <InlineRecordAttributeSection {...props} />
   )
   else return (
@@ -18,18 +30,10 @@ function RecordAttributeSection(props) {
   )
 }
 
-RecordAttributeSection.propTypes = {
-  attribute: PropTypes.object.isRequired,
-  record: PropTypes.object.isRequired,
-  recordClass: PropTypes.object.isRequired,
-  isCollapsed: PropTypes.bool.isRequired,
-  onCollapsedChange: PropTypes.func.isRequired
-};
-
 export default wrappable(RecordAttributeSection);
 
 /** Display attribute name and value on a single line */
-function InlineRecordAttributeSection(props) {
+function InlineRecordAttributeSection(props: Props) {
   let { attribute, record, recordClass } = props;
   let { displayName, help, name } = attribute;
   return (
@@ -56,7 +60,7 @@ function InlineRecordAttributeSection(props) {
 }
 
 /** Display attribute name and value in a collapsible section */
-function BlockRecordAttributeSection(props) {
+function BlockRecordAttributeSection(props: Props) {
   const { attribute, record, recordClass, isCollapsed, onCollapsedChange } = props;
   const { displayName, help, name } = attribute;
 
