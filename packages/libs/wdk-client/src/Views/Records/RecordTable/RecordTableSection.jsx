@@ -7,11 +7,12 @@ import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
 import RecordTable from 'wdk-client/Views/Records/RecordTable/RecordTable';
 import RecordTableDescription from 'wdk-client/Views/Records/RecordTable/RecordTableDescription';
+import { DefaultSectionHeading } from 'wdk-client/Views/Records/SectionHeading';
 
 /** Record table section on record page */
 function RecordTableSection(props) {
   let { table, record, recordClass, isCollapsed, onCollapsedChange, requestPartialRecord } = props;
-  let { name, displayName, description } = table;
+  let { displayName, help, name } = table;
   let value = record.tables[name];
   let isError = includes(record.tableErrors, name);
   let isLoading = value == null;
@@ -25,11 +26,13 @@ function RecordTableSection(props) {
     requestedRef.current = true;
   }, [ isCollapsed ])
 
+  const headerContent = <DefaultSectionHeading displayName={displayName} help={help} />;
+
   return (
     <CollapsibleSection
       id={name}
       className="wdk-RecordTableContainer"
-      headerContent={displayName}
+      headerContent={headerContent}
       isCollapsed={isCollapsed}
       onCollapsedChange={onCollapsedChange}
     >
