@@ -56,7 +56,7 @@ class UserDatasetUploadController extends PageController<MergedProps> {
     return (
       <div className="stack">
         { projectName === 'MicrobiomeDB'
-          ? <MicrobiomeDBUploadForm badUploadMessage={this.props.badUploadMessage} submitForm={this.props.userEvents.submitUploadForm} />
+          ? <MicrobiomeDBUploadForm badUploadMessage={this.props.badUploadMessage} submitForm={this.props.userEvents.submitUploadForm} urlParams={this.props.urlParams}/>
           : this.renderMissingForm()
         }
       </div>
