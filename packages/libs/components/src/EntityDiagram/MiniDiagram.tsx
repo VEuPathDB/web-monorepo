@@ -79,6 +79,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
           markerHeight="10"
           orient="auto"
           fill="black"
+          style={{opacity: .7}}
         >
           <path d="M0,-5L10,0L0,5" />
         </marker>
