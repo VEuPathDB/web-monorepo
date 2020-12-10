@@ -5,6 +5,7 @@ import { curry, groupBy, isNaN, uniqBy } from 'lodash';
 
 import { CollapsibleSection, Loading } from 'wdk-client/Components';
 import { AttributeField, AttributeValue } from 'wdk-client/Utils/WdkModel';
+import { Props as RecordAttributeSectionProps } from 'wdk-client/Views/Records/RecordAttributes/RecordAttributeSection';
 
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-distribution/PhyleticDistributionCheckbox';
@@ -15,7 +16,6 @@ import { RecordTable_Sequences } from 'ortho-client/records/Sequences';
 
 import {
   RecordAttributeProps,
-  RecordAttributeSectionProps,
   RecordTableProps,
   WrappedComponentProps
 } from 'ortho-client/records/Types';

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Props as RecordAttributeSectionProps } from 'wdk-client/Views/Records/RecordAttributes/RecordAttributeSection';
+
 import { OrthoMCLPage } from 'ortho-client/components/layout/OrthoMCLPage';
 import { SiteSearchInput } from 'ortho-client/components/site-search/SiteSearchInput';
 import {
@@ -13,7 +15,6 @@ import {
 } from 'ortho-client/records/SequenceRecordClasses.SequenceRecordClass';
 import {
   RecordAttributeProps,
-  RecordAttributeSectionProps,
   RecordTableProps
 } from 'ortho-client/records/Types';
 import {

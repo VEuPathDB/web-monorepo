@@ -6,11 +6,10 @@ import {
   RecordInstance,
   getSingleRecordAnswerSpec
 } from 'wdk-client/Utils/WdkModel';
+import { Props as RecordTableSectionProps } from 'wdk-client/Views/Records/RecordTable/RecordTableSection';
+import { DefaultSectionTitle } from 'wdk-client/Views/Records/SectionTitle';
 
-import {
-  RecordTableSectionProps,
-  WrappedComponentProps
-} from 'ortho-client/records/Types';
+import { WrappedComponentProps } from 'ortho-client/records/Types';
 
 type Props = WrappedComponentProps<RecordTableSectionProps>;
 
@@ -24,7 +23,7 @@ export function RecordTableSection(DefaultComponent: React.ComponentType<Wrapped
     const downloadRecordTable = useMemo(
       () => downloadRecordTableFactory(wdkService, record, table.name),
       [ wdkService, record, table.name ]
-    )
+    );
 
     // FIXME Revise this since we now lazy load tables...
     const showDownload = (
@@ -33,32 +32,33 @@ export function RecordTableSection(DefaultComponent: React.ComponentType<Wrapped
       ontologyProperties.scope?.includes('download')
     );
 
-    return (
-      <DefaultComponent {...props} table={Object.assign({}, table, {
-        displayName: (
-          <span>
-            {table.displayName}
-            {showDownload &&
-              <span
-                style={{
-                  fontSize: '.8em',
-                  fontWeight: 'normal',
-                  marginLeft: '1em'
-                }}>
-                <a
-                  role="button"
-                  tabIndex={0}
-                  onClick={downloadRecordTable}
-                >
-                  <i className="fa fa-download"/> Download
-                </a>
-              </span>
-            }
-
+    const title = (
+      <span>
+        <DefaultSectionTitle
+          displayName={table.displayName}
+          help={table.help}
+        />
+        {' '}
+        {showDownload &&
+          <span
+            style={{
+              fontSize: '.8em',
+              fontWeight: 'normal',
+              marginLeft: '1em'
+            }}>
+            <a
+              role="button"
+              tabIndex={0}
+              onClick={downloadRecordTable}
+            >
+              <i className="fa fa-download"/> Download
+            </a>
           </span>
-        )
-      })}/>
+        }
+      </span>
     );
+
+    return <DefaultComponent {...props} title={title} />;
   }
 }
 
