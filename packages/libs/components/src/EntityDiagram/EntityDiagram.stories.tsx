@@ -10,22 +10,6 @@ export const EntityDiagram = () => {
   const [orientation, setOrientation] = useState<string>('vertical')
   const [expanded, setExpanded] = useState<boolean>(true)
 
-  const treeData = {
-    name: 'H',
-    children: [
-      { name: 'HO',
-      },
-      {
-        name: 'P',
-        children: [{ name: 'PO', children:[
-            {name: 'S'},
-            {name: 'T'}
-          ]
-        }],
-      },
-    ],
-  };
-
   const studyData = {
       "id":"DS12385",
       "rootEntity":{
@@ -229,7 +213,7 @@ export const EntityDiagram = () => {
           :
             // ToDo: Where does the mini diagram text come from? ID in Study Data?
             <MiniDiagram
-              treeData={treeData}
+              treeData={studyData.rootEntity}
               orientation={orientation}
               highlightedEntityID={"S"}
             />

@@ -1,31 +1,47 @@
 import React from 'react';
 import {hierarchy, Tree} from "@visx/hierarchy";
 import {Group} from "@visx/group";
-import {HierarchyPointNode, HierarchyPointLink} from "@visx/hierarchy/lib/types";
+import {HierarchyPointNode} from "@visx/hierarchy/lib/types";
 import OffsetLine from "./OffsetLine";
 
-interface TreeData {
-  name: string;
-  children?: this[];
+export interface Variables {
+  id: string
+  providerLabel: string
+  displayName: string
+  type: string
+  isContinuous?: boolean
+  precision?: number
+  units?: string
+}
+
+export interface StudyData {
+  id: string
+  displayName: string
+  description: string
+  children?: this[],
+  variables?: Variables[]
 }
 
 interface MiniDiagram {
-  treeData: TreeData,
+  treeData: StudyData,
   orientation: string,
   highlightedEntityID: string
 }
 
 interface CustomNode {
-  node: HierarchyPointNode<TreeData>
+  node: HierarchyPointNode<StudyData>
 }
-
 
 export default function MiniDiagram({treeData, orientation, highlightedEntityID}: MiniDiagram) {
   const data = hierarchy(treeData);
 
   function CustomNode({node}: CustomNode) {
     const width = 30;
-    const height = 20;
+    const height  = 20;
+
+    // get acronym of displayName
+    const matches = node.data.displayName.match(/\b(\w)/g);
+    const displayNameAcronym = matches.join('');
 
     return (
       <Group
@@ -39,7 +55,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
           x={-width / 2}
           fill={"white"}
           stroke={"black"}
-          style={highlightedEntityID == node.data.name ? { 'cursor': 'pointer', 'outline': 'yellow 3px solid' } : {'cursor': 'pointer'} }
+          style={highlightedEntityID == node.data.displayName ? { 'cursor': 'pointer', 'outline': 'yellow 3px solid' } : {'cursor': 'pointer'} }
         />
         <text
           fontSize={12}
@@ -47,7 +63,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
           style={{'cursor': 'pointer'}}
           dy=".33em"
         >
-          {node.data.name}
+          {displayNameAcronym}
         </text>
       </Group>
     )
