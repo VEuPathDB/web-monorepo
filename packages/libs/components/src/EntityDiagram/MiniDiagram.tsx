@@ -1,8 +1,8 @@
 import React from 'react';
 import {hierarchy, Tree} from "@visx/hierarchy";
 import {Group} from "@visx/group";
-import {LinkHorizontalLine, LinkVerticalLine} from "@visx/shape";
 import {HierarchyPointNode, HierarchyPointLink} from "@visx/hierarchy/lib/types";
+import OffsetLine from "./OffsetLine";
 
 interface TreeData {
   name: string;
@@ -17,10 +17,6 @@ interface MiniDiagram {
 
 interface CustomNode {
   node: HierarchyPointNode<TreeData>
-}
-
-interface CustomHorizontalLinkLine {
-  link: HierarchyPointLink<TreeData>
 }
 
 
@@ -57,35 +53,12 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
     )
   }
 
-  function CustomLinkHorizontalLine({link}: CustomHorizontalLinkLine) {
-    return (
-      <LinkHorizontalLine
-        data={link}
-        stroke={"black"}
-        strokeWidth={1}
-        markerEnd="url(#arrow)"
-      />
-    )
-  }
-
-  function CustomLinkVerticalLine({link}: CustomHorizontalLinkLine) {
-    return (
-      <LinkVerticalLine
-        data={link}
-        stroke={"black"}
-        strokeWidth={1}
-        markerEnd="url(#arrow)"
-      />
-    )
-  }
-
   return (
     <svg width="1000px" height="1000px">
       <defs>
         <marker
           id="arrow"
           viewBox="0 -5 10 10"
-          refX={orientation == 'horizontal' ? '26' : "21"}
           markerWidth="10"
           markerHeight="10"
           orient="auto"
@@ -103,11 +76,13 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
               left={orientation == 'horizontal' ? 50 : 10}
               top={orientation == 'horizontal' ? 0 : 50}
           >
-            {tree.links().map((link, i)=> (
-                orientation == 'horizontal'
-                ? <CustomLinkHorizontalLine link={link} key={`link-${i}`}/>
-                : <CustomLinkVerticalLine link={link} key={`link-${i}`} />
-            ))}
+            {tree.links().map((link, i)=> {
+              return <OffsetLine
+                link={link}
+                orientation={orientation }
+                key={`link-${i}`}
+              />
+            })}
             {tree.descendants().map((node, i) => (
                 <CustomNode node={node} key={`node-${i}`}/>
             ))}
