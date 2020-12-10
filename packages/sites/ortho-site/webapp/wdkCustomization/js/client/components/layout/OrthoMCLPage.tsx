@@ -243,6 +243,12 @@ function useHeaderMenuItems() {
             display: 'My favorites',
             type: 'reactRoute',
             url: '/workspace/favorites',
+          },
+          {
+              key: 'public-strategies',
+              display: 'Public search strategies',
+              type: 'reactRoute',
+              url: '/workspace/strategies/public'
           }
         ]
       },
@@ -252,18 +258,18 @@ function useHeaderMenuItems() {
         display: 'Data',
         type: 'subMenu',
         items: [
-          {
-            key: 'downloads',
-            display: 'Download data files',
-            type: 'reactRoute',
-            url: '/downloads'
-          },
-         {
+          {  
             key: 'data-methods',
             display: 'Analysis methods',
             type: 'reactRoute',
             tooltip: 'How we obtain/generate the data',
             url: makeStaticPageRoute(`/OrthoMCL/about.html`)
+          },
+          {
+            key: 'downloads',
+            display: 'Download data files',
+            type: 'reactRoute',
+            url: '/downloads'
           },
           {
             key: 'release-summary',
