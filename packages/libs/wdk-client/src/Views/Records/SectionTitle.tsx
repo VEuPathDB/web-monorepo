@@ -8,7 +8,7 @@ interface Props {
   help?: string;
 }
 
-export function DefaultSectionHeading({ displayName, help }: Props) {
+export function DefaultSectionTitle({ displayName, help }: Props) {
   return (
     <>
       {displayName}

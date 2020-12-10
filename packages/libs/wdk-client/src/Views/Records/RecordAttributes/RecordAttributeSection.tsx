@@ -6,7 +6,7 @@ import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { AttributeField, RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
 import RecordAttribute from 'wdk-client/Views/Records/RecordAttributes/RecordAttribute';
 import { PartialRecordRequest } from 'wdk-client/Views/Records/RecordUtils';
-import { DefaultSectionHeading } from 'wdk-client/Views/Records/SectionHeading';
+import { DefaultSectionTitle } from 'wdk-client/Views/Records/SectionTitle';
 
 export interface Props {
   attribute: AttributeField;
@@ -43,7 +43,7 @@ function InlineRecordAttributeSection(props: Props) {
       <div className="wdk-RecordAttributeName">
         {
           title ??
-          <DefaultSectionHeading
+          <DefaultSectionTitle
             displayName={displayName}
             help={help}
           />
@@ -65,10 +65,13 @@ function InlineRecordAttributeSection(props: Props) {
 
 /** Display attribute name and value in a collapsible section */
 function BlockRecordAttributeSection(props: Props) {
-  const { attribute, record, recordClass, isCollapsed, onCollapsedChange } = props;
+  const { attribute, record, recordClass, isCollapsed, onCollapsedChange, title } = props;
   const { displayName, help, name } = attribute;
 
-  const headerContent = <DefaultSectionHeading displayName={displayName} help={help} />;
+  const headerContent = (
+    title ??
+    <DefaultSectionTitle displayName={displayName} help={help} />
+  );
 
   return (
     <CollapsibleSection
