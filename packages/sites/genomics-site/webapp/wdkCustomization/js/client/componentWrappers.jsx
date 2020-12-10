@@ -197,6 +197,7 @@ export function RecordTableSection(DefaultComponent) {
           {showNewFeature &&
             <img src={newFeatureImage}/>
           }
+          {' '}
           {showDownload &&
             <span
               style={{
