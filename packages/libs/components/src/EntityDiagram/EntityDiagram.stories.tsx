@@ -8,7 +8,7 @@ export default {
 
 export const EntityDiagram = () => {
   const [orientation, setOrientation] = useState<string>('vertical')
-  const [expanded, setExpanded] = useState<boolean>(true)
+  const [expanded, setExpanded] = useState<boolean>(false)
 
   const studyData = {
       "id":"DS12385",
@@ -215,7 +215,7 @@ export const EntityDiagram = () => {
             <MiniDiagram
               treeData={studyData.rootEntity}
               orientation={orientation}
-              highlightedEntityID={"S"}
+              highlightedEntityID={"Sample"}
             />
       }
     </div>
