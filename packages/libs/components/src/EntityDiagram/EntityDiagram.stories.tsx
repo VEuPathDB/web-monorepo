@@ -11,13 +11,17 @@ export const EntityDiagram = () => {
   const [expanded, setExpanded] = useState<boolean>(true)
 
   const treeData = {
-    name: 'C',
+    name: 'H',
     children: [
-      { name: 'S',
-        children: [{ name: 'G' }, { name: 'IR' }, { name: 'P' }, { name: 'BM' }],
+      { name: 'HO',
       },
       {
-        name: 'AS'
+        name: 'P',
+        children: [{ name: 'PO', children:[
+            {name: 'S'},
+            {name: 'T'}
+          ]
+        }],
       },
     ],
   };

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 
 import {hierarchy, Tree} from "@visx/hierarchy";
 import {LinearGradient} from "@visx/gradient";
 import {Group} from "@visx/group";
-import {LinkHorizontalLine, LinkVerticalLine} from "@visx/shape";
+import {Line, LinkHorizontalLine, LinkVerticalLine} from "@visx/shape";
 import {Text} from "@visx/text";
 
 interface Variables {
@@ -57,8 +57,6 @@ function CalculateDYSize(nodeLength: number) {
 
 export default function MiniDiagram({treeData, orientation, highlightedEntityID, shadingData}: ExpandedDiagram) {
   const data = hierarchy(treeData);
-  const width = 120;
-  const height = 70;
 
   return (
     <svg width="1000px" height="1000px">
@@ -66,9 +64,8 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID,
         <marker
           id="arrow"
           viewBox="0 -5 10 10"
-          refX={orientation == 'horizontal' ? "40": "29"}
-          markerWidth="20"
-          markerHeight="20"
+          markerWidth="18"
+          markerHeight="18"
           orient="auto"
           fill="black"
         >
@@ -95,29 +92,37 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID,
       >
         {tree => (
           <Group left={80} top={50}>
-            {tree.links().map((link, i)=> (
-              orientation == 'horizontal'
-                ?
-                  <LinkHorizontalLine
-                    data={link}
-                    stroke={"black"}
-                    strokeWidth={1}
-                    markerEnd="url(#arrow)"
-                    key={`link-${i}`}
-                    style={{"cursor": "default"}}
-                  />
-                :
-                  <LinkVerticalLine
-                    data={link}
-                    stroke={"black"}
-                    strokeWidth={1}
-                    markerEnd="url(#arrow)"
-                    key={`link-${i}`}
-                    style={{"cursor": "default"}}
-                  />
-            ))}
+            {tree.links().map((link, i)=> {
+              let to, from;
+              // Determine a new end location for the lines. The default is to end in the middle of
+              // the target node.
+              if (orientation == 'horizontal') {
+                to = {
+                  x: ((link.target.y - link.source.y) * .45) + link.source.y,
+                  y: ((link.target.x - link.source.x) * .45) + link.source.x
+                }
+                from = {x: link.source.y, y: link.source.x}
+              }
+              else {
+                to = {
+                  x: ((link.target.x - link.source.x) * .6) + link.source.x,
+                  y: ((link.target.y - link.source.y) * .6) + link.source.y
+                }
+                from={x: link.source.x, y: link.source.y}
+              }
+
+              return <Line
+                to={to}
+                from={from}
+                stroke="black"
+                markerEnd="url(#arrow)"
+                key={`link-${i}`}
+              />
+            })}
             {tree.descendants().map((node, i) => {
               const shadingObject: undefined | ShadingData = shadingData.find(o => o.entityId === node.data.id);
+              const width = 120;
+              const height = 70;
 
               return (
               <Group
