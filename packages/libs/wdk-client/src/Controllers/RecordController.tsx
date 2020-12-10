@@ -20,7 +20,7 @@ import {
 
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { getAttributeNames, getTableNames, stripHTML } from 'wdk-client/Views/Records/RecordUtils';
+import { PartialRecordRequest, getAttributeNames, getTableNames, stripHTML } from 'wdk-client/Views/Records/RecordUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 
 const ActionCreators = {
@@ -46,7 +46,7 @@ const CastRecordUI: any = RecordUI;
 /** View Controller for record page */
 class RecordController extends PageController<Props> {
 
-  requestPartialRecord = ({ attributes, tables}: { attributes?: string[], tables?: string[] }) => {
+  requestPartialRecord = ({ attributes, tables }: PartialRecordRequest) => {
     // Important! Use info from ownProps to prevent cache misses when record is is aliased
     this.props.requestPartialRecord(
       this.props.requestId,
