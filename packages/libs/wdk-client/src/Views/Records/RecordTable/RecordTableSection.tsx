@@ -19,11 +19,12 @@ export interface Props {
   record: RecordInstance;
   recordClass: RecordClass;
   requestPartialRecord: (request: PartialRecordRequest) => void;
+  title?: React.ReactNode;
 }
 
 /** Record table section on record page */
 function RecordTableSection(props: Props) {
-  let { table, record, recordClass, isCollapsed, onCollapsedChange, requestPartialRecord } = props;
+  let { table, record, recordClass, isCollapsed, onCollapsedChange, requestPartialRecord, title } = props;
   let { displayName, help, name } = table;
   let value = record.tables[name];
   let isError = includes(record.tableErrors, name);
@@ -38,7 +39,10 @@ function RecordTableSection(props: Props) {
     requestedRef.current = true;
   }, [ isCollapsed ])
 
-  const headerContent = <DefaultSectionHeading displayName={displayName} help={help} />;
+  const headerContent = (
+    title ??
+    <DefaultSectionHeading displayName={displayName} help={help} />
+  );
 
   return (
     <CollapsibleSection

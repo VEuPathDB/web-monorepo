@@ -16,6 +16,7 @@ export interface Props {
   record: RecordInstance;
   recordClass: RecordClass;
   requestPartialRecord: (request: PartialRecordRequest) => void;
+  title?: React.ReactNode;
 }
 
 /** Record attribute section container for record page */
@@ -34,16 +35,19 @@ export default wrappable(RecordAttributeSection);
 
 /** Display attribute name and value on a single line */
 function InlineRecordAttributeSection(props: Props) {
-  let { attribute, record, recordClass } = props;
+  let { attribute, record, recordClass, title } = props;
   let { displayName, help, name } = attribute;
   return (
     <div id={name}
       className={`wdk-RecordAttributeSectionItem wdk-RecordAttributeSectionItem__${name}`}>
       <div className="wdk-RecordAttributeName">
-        <DefaultSectionHeading
-          displayName={displayName}
-          help={help}
-        />
+        {
+          title ??
+          <DefaultSectionHeading
+            displayName={displayName}
+            help={help}
+          />
+        }
       </div>
       {' '}
       <div className="wdk-RecordAttributeValue">
