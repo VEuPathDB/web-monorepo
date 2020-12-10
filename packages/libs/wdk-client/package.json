@@ -63,7 +63,13 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-react": "^7.4.0",
     "ts-node": "^7.0.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "@testing-library/react-hooks": "^3.4.2",
+    "babel-jest": "^23.1.2",
+    "jest": "^23.4.2",
+    "jest-tap-reporter": "^1.9.0",
+    "react-test-renderer": "^16.9.0",
+    "ts-jest": "^23.1.2"
   },
   "jest": {
     "moduleNameMapper": {
@@ -85,13 +91,5 @@
     "reporters": [
       "jest-tap-reporter"
     ]
-  },
-  "optionalDependencies": {
-    "@testing-library/react-hooks": "^3.4.2",
-    "babel-jest": "^23.1.2",
-    "jest": "^23.4.2",
-    "jest-tap-reporter": "^1.9.0",
-    "react-test-renderer": "^16.9.0",
-    "ts-jest": "^23.1.2"
   }
 }
