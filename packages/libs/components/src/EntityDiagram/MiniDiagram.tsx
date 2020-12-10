@@ -3,24 +3,7 @@ import {hierarchy, Tree} from "@visx/hierarchy";
 import {Group} from "@visx/group";
 import {HierarchyPointNode} from "@visx/hierarchy/lib/types";
 import OffsetLine from "./OffsetLine";
-
-export interface Variables {
-  id: string
-  providerLabel: string
-  displayName: string
-  type: string
-  isContinuous?: boolean
-  precision?: number
-  units?: string
-}
-
-export interface StudyData {
-  id: string
-  displayName: string
-  description: string
-  children?: this[],
-  variables?: Variables[]
-}
+import {StudyData} from "./Types";
 
 interface MiniDiagram {
   treeData: StudyData,
@@ -63,6 +46,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
           style={{'cursor': 'pointer'}}
           dy=".33em"
         >
+          <tooltip />
           {displayNameAcronym}
         </text>
       </Group>

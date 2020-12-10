@@ -1,28 +1,10 @@
 import React from 'react';
-
 import {hierarchy, Tree} from "@visx/hierarchy";
 import {LinearGradient} from "@visx/gradient";
 import {Group} from "@visx/group";
 import {Text} from "@visx/text";
 import OffsetLine from "./OffsetLine"
-
-export interface Variables {
-  id: string
-  providerLabel: string
-  displayName: string
-  type: string
-  isContinuous?: boolean
-  precision?: number
-  units?: string
-}
-
-export interface StudyData {
-  id: string
-  displayName: string
-  description: string
-  children?: this[],
-  variables?: Variables[]
-}
+import {StudyData} from "./Types";
 
 interface ShadingData {
   entityId: string
