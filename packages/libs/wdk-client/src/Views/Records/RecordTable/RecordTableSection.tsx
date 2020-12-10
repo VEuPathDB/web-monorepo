@@ -9,7 +9,7 @@ import { TableField, RecordInstance, RecordClass } from 'wdk-client/Utils/WdkMod
 import RecordTable from 'wdk-client/Views/Records/RecordTable/RecordTable';
 import RecordTableDescription from 'wdk-client/Views/Records/RecordTable/RecordTableDescription';
 import { PartialRecordRequest } from 'wdk-client/Views/Records/RecordUtils';
-import { DefaultSectionHeading } from 'wdk-client/Views/Records/SectionHeading';
+import { DefaultSectionTitle } from 'wdk-client/Views/Records/SectionTitle';
 
 export interface Props {
   table: TableField;
@@ -41,7 +41,7 @@ function RecordTableSection(props: Props) {
 
   const headerContent = (
     title ??
-    <DefaultSectionHeading displayName={displayName} help={help} />
+    <DefaultSectionTitle displayName={displayName} help={help} />
   );
 
   return (
