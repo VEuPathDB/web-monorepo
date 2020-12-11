@@ -63,7 +63,7 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
   clustered_sequences: {
     key: 'clustered_sequences',
     name: '# Grouped Sequences',
-    helpText: 'Number of proteins that are part of an ortholog grooup. A protein would not be part of a group if it was poor quality (e.g., many stop codons or very few amino acids).',
+    helpText: 'Number of proteins that are part of an ortholog group. A protein would not be part of a group if it was poor quality (e.g., several stop codons or very few amino acids).',
     sortable: true,
     makeOrder: ({ clustered_sequences }) => Number(clustered_sequences)
   },
@@ -90,7 +90,7 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
   resource_url: {
     key: 'resource_url',
     name: 'URL',
-    helpText: 'The URL of the site where the organism proteome was obtained.',
+    helpText: 'The URL of the site from which the organism proteome was obtained.',
     sortable: true
   },
   resource_version: {
