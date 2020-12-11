@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { Link } from 'wdk-client/Components';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 import { cx } from './Utils';
 import { StudySummary } from './StudySummary';
-import { useStudy } from 'ebrc-client/modules/eda-workspace-core/hooks/useStudy';
+import { useStudy } from '@veupathdb/eda-workspace-core';
 
 export function EDAWorkspaceHeading() {
   const { studyRecord, studyRecordClass } = useStudy();

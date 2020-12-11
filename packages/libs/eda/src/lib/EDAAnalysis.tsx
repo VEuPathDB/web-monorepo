@@ -1,7 +1,7 @@
 import React from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
-import { useAnalysis } from 'ebrc-client/modules/eda-workspace-core/hooks/useAnalysis';
+import { useAnalysis } from '@veupathdb/eda-workspace-core';
 
 export function EDAAnalysis() {
   const {

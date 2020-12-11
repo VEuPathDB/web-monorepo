@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { cx } from './Utils';
-import { AttributeField } from 'wdk-client/Utils/WdkModel';
-import { renderAttributeValue } from 'wdk-client/Utils/ComponentUtils';
-import { Tooltip } from 'wdk-client/Components';
-import { StudyRecord, StudyRecordClass } from 'ebrc-client/modules/eda-workspace-core/types/study';
+import { AttributeField } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { renderAttributeValue } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Tooltip } from '@veupathdb/wdk-client/lib/Components';
+import { StudyRecord, StudyRecordClass } from '@veupathdb/eda-workspace-core';
 
 interface Props {
   studyRecord: StudyRecord;

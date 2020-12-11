@@ -1,9 +1,9 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import { Analysis } from 'ebrc-client/modules/eda-workspace-core/types/analysis';
 import { cx } from './Utils';
-import { SaveableTextEditor } from 'wdk-client/Components';
 import { ActionIconButton } from './ActionIconButton';
+import { Analysis } from '@veupathdb/eda-workspace-core';
+import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
   analysis: Analysis;

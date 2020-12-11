@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconAlt } from 'wdk-client/Components';
+import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { cx } from './Utils';
 
 interface Props {

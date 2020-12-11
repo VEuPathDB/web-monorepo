@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import { AnalysisStore } from 'ebrc-client/modules/eda-workspace-core/hooks/useAnalysis';
-import { useStudy } from 'ebrc-client/modules/eda-workspace-core/hooks/useStudy';
-import { Link } from 'wdk-client/Components';
-import Mesa from 'wdk-client/Components/Mesa';
-import { Analysis } from 'ebrc-client/modules/eda-workspace-core/types/analysis';
+import { Analysis, AnalysisStore, useStudy } from '@veupathdb/eda-workspace-core';
+import { Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 
 export interface Props {
   analysisStore: AnalysisStore;
@@ -39,11 +36,11 @@ export function AnalysisList(props: Props) {
         newId
     }
     history.push(newLocation);
-  }, [analysisStore]);
+  }, [analysisStore, history, studyId]);
   const deleteAnalyses = React.useCallback((analysisIds: Iterable<string>) => {
     for (const analysisId of analysisIds) analysisStore.deleteAnalysis(analysisId);
     updateAnalysisList();
-  }, [updateAnalysisList]);
+  }, [analysisStore, updateAnalysisList]);
   const tableState = React.useMemo(() => ({
     options: {
       isRowSelected: (analysis: Analysis) => selected.has(analysis.id)
@@ -89,6 +86,6 @@ export function AnalysisList(props: Props) {
   }), [analysisList, createNewAnalysis, deleteAnalyses, selected]);
   if (analysisList == null) return null;
   return (
-    <Mesa state={tableState} />
+    <Mesa.Mesa state={tableState} />
   )
 }

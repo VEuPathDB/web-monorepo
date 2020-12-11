@@ -1,7 +1,5 @@
+import { StudyMetadataStore, AnalysisStore, Analysis, NewAnalysis } from '@veupathdb/eda-workspace-core';
 import localforage from 'localforage';
-import { StudyMetadataStore } from 'ebrc-client/modules/eda-workspace-core/hooks/useStudy';
-import { AnalysisStore } from 'ebrc-client/modules/eda-workspace-core/hooks/useAnalysis';
-import { Analysis, NewAnalysis } from 'ebrc-client/modules/eda-workspace-core/types/analysis';
 
 export const mockStudyMetadataStore: StudyMetadataStore = {
   async getStudyMetadata(studyId) {

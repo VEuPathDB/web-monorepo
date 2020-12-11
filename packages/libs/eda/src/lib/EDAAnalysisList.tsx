@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EDAAnalysisListContainer } from 'ebrc-client/modules/eda-workspace-core/components/EDAAnalysisListContainer';
+import { EDAAnalysisListContainer } from '@veupathdb/eda-workspace-core';
 import { mockAnalysisStore, mockStudyMetadataStore } from './Mocks';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { AnalysisList } from './AnalysisList';
