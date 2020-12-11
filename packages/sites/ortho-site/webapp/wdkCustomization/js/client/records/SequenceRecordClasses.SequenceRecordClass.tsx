@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import { CollapsibleSection, Link } from 'wdk-client/Components';
 import { AttributeValue } from 'wdk-client/Utils/WdkModel';
+import { Props as RecordAttributeSectionProps } from 'wdk-client/Views/Records/RecordAttributes/RecordAttributeSection';
 
 import Sequence from 'ebrc-client/components/records/Sequence';
 
@@ -19,7 +20,6 @@ import {
 } from 'ortho-client/records/utils';
 
 import {
-  RecordAttributeSectionProps,
   RecordTableProps,
   WrappedComponentProps
 } from 'ortho-client/records/Types';

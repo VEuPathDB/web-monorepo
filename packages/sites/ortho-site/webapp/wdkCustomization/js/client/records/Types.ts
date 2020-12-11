@@ -18,30 +18,10 @@ export interface RecordAttributeProps {
   recordClass: RecordClass;
 }
 
-export interface RecordAttributeSectionProps {
-  attribute: AttributeField;
-  isCollapsed: boolean;
-  onCollapsedChange: () => void;
-  ontologyProperties: CategoryTreeNode['properties'];
-  record: RecordInstance;
-  recordClass: RecordClass;
-  requestPartialRecord: typeof requestPartialRecord;
-}
-
 export interface RecordTableProps {
   className?: string;
   record: RecordInstance;
   recordClass: RecordClass;
   table: TableField;
   value: TableValue;
-}
-
-export interface RecordTableSectionProps {
-  table: TableField;
-  isCollapsed: boolean;
-  onCollapsedChange: () => void;
-  ontologyProperties: CategoryTreeNode['properties'];
-  record: RecordInstance;
-  recordClass: RecordClass;
-  requestPartialRecord: typeof requestPartialRecord;
 }
