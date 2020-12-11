@@ -25,3 +25,4 @@ yarn-error.log*
 # build environment
 .env.*.local
 .vscode
+.eslintcache
