@@ -1,6 +1,7 @@
 import { ServiceBase } from 'wdk-client/Service/ServiceBase';
 import { UserDatasetUpload, NewUserDataset } from 'wdk-client/Utils/WdkModel';
 import * as Decode from 'wdk-client/Utils/Json';
+import { appendUrlAndRethrow } from '../ServiceUtils';
 
 const serviceUrl = '/dataset-import';
 
@@ -21,7 +22,7 @@ function fetchWithCredentials(path: string, method: string, body: any, contentTy
       credentials: 'include',
       headers: new Headers(Object.assign({}, authO, contentTypeO))
     }
-  );
+  ).catch(appendUrlAndRethrow(serviceUrl + path));
 }
 
 /*
