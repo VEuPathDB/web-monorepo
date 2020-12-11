@@ -41,19 +41,7 @@ class UserDatasetAllUploadsController extends PageController<Props> {
     return "Recent Uploads";
   }
 
-  renderGuestView(){
-    return (
-      <UserDatasetEmptyState message={
-        <button
-          type="button"
-          className="btn"
-          onClick={() => this.props.actions.showLoginForm()}
-        >Please log in to view your data set uploads.</button>
-      }/>
-    );
-  }
-
-  renderAllUploads(){
+  renderView(){
     return (
       <div className="stack">
         <AllUploads 
@@ -62,12 +50,6 @@ class UserDatasetAllUploadsController extends PageController<Props> {
           actions={this.props.actions} />
       </div>
     );
-  }
-
-  renderView() {
-    return this.props.user && this.props.user.isGuest
-      ? this.renderGuestView()
-      : this.renderAllUploads();
   }
 }
 
