@@ -5,10 +5,8 @@ import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { getPropertyValue, nodeHasProperty } from 'wdk-client/Utils/OntologyUtils';
 import { filterItems } from 'wdk-client/Utils/SearchUtils';
 import { filterNodes } from 'wdk-client/Utils/TreeUtils';
-import { AttributeValue, RecordInstance, TableValue } from 'wdk-client/Utils/WdkModel';
+import { RecordInstance } from 'wdk-client/Utils/WdkModel';
 
-type AttributeValueDict = Record<string, AttributeValue>;
-type TableValueDict = Record<string, TableValue>;
 type FilterSpec = {
   /** Search string */
   filterTerm: string;
@@ -17,6 +15,11 @@ type FilterSpec = {
   /** Record tables to search in */
   filterTables: string[];
 };
+
+export interface PartialRecordRequest {
+  attributes?: string[];
+  tables?: string[];
+}
 
 /**
  * Filter the results of an answer and return the filtered results.

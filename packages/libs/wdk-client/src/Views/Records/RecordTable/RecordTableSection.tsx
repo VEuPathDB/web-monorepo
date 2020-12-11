@@ -1,17 +1,31 @@
 import { includes } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
 import { useEffect, useRef } from 'react';
-import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
+import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
+import { wrappable } from 'wdk-client/Utils/ComponentUtils';
+import { TableField, RecordInstance, RecordClass } from 'wdk-client/Utils/WdkModel';
 import RecordTable from 'wdk-client/Views/Records/RecordTable/RecordTable';
 import RecordTableDescription from 'wdk-client/Views/Records/RecordTable/RecordTableDescription';
+import { PartialRecordRequest } from 'wdk-client/Views/Records/RecordUtils';
+import { DefaultSectionTitle } from 'wdk-client/Views/Records/SectionTitle';
+
+export interface Props {
+  table: TableField;
+  isCollapsed: boolean;
+  onCollapsedChange: () => void;
+  ontologyProperties: CategoryTreeNode['properties'];
+  record: RecordInstance;
+  recordClass: RecordClass;
+  requestPartialRecord: (request: PartialRecordRequest) => void;
+  title?: React.ReactNode;
+}
 
 /** Record table section on record page */
-function RecordTableSection(props) {
-  let { table, record, recordClass, isCollapsed, onCollapsedChange, requestPartialRecord } = props;
-  let { name, displayName, description } = table;
+function RecordTableSection(props: Props) {
+  let { table, record, recordClass, isCollapsed, onCollapsedChange, requestPartialRecord, title } = props;
+  let { displayName, help, name } = table;
   let value = record.tables[name];
   let isError = includes(record.tableErrors, name);
   let isLoading = value == null;
@@ -25,11 +39,16 @@ function RecordTableSection(props) {
     requestedRef.current = true;
   }, [ isCollapsed ])
 
+  const headerContent = (
+    title ??
+    <DefaultSectionTitle displayName={displayName} help={help} />
+  );
+
   return (
     <CollapsibleSection
       id={name}
       className="wdk-RecordTableContainer"
-      headerContent={displayName}
+      headerContent={headerContent}
       isCollapsed={isCollapsed}
       onCollapsedChange={onCollapsedChange}
     >
@@ -42,15 +61,5 @@ function RecordTableSection(props) {
     </CollapsibleSection>
   );
 }
-
-RecordTableSection.propTypes = {
-  table: PropTypes.object.isRequired,
-  ontologyProperties: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
-  record: PropTypes.object.isRequired,
-  recordClass: PropTypes.object.isRequired,
-  isCollapsed: PropTypes.bool.isRequired,
-  onCollapsedChange: PropTypes.func.isRequired,
-  requestPartialRecord: PropTypes.func.isRequired
-};
 
 export default wrappable(RecordTableSection);
