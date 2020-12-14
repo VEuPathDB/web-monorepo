@@ -8,10 +8,11 @@ module.exports = function(app) {
       pathRewrite: { "^/service": "" },
       secure: false,
       changeOrigin: true,
-      ws: true,
-      xfwd: true,
       followRedirects: true,
-      logLevel: 'debug'
+      headers: {
+        'Cookie': `auth_tkt=${process.env.VEUPATHDB_AUTH_TKT}`
+      },
+      logLevel: 'debug',
     })
   );
 };

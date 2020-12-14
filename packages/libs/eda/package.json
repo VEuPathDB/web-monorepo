@@ -13,19 +13,19 @@
     "@veupathdb/eda-workspace-core": "^0.0.2-alpha.5",
     "@veupathdb/wdk-client": "^0.1.1-alpha.6",
     "@veupathdb/web-common": "^0.1.1-alpha.2",
+    "jquery": "file:./shims/jquery",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
     "typescript": "^4.0.3",
-    "web-vitals": "^0.2.4",
-    "jquery": "file:./shims/jquery"
+    "web-vitals": "^0.2.4"
   },
   "resolutions": {
     "@veupathdb/**/react": "^17.0.1",
     "@veupathdb/**/react-dom": "^17.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "./scripts/start.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -52,6 +52,8 @@
     "http-proxy-middleware": "^1.0.6",
     "node-sass": "4",
     "react-router": "^5.2.0",
-    "script-loader": "^0.7.2"
+    "read": "^1.0.7",
+    "script-loader": "^0.7.2",
+    "set-cookie-parser": "^2.4.6"
   }
 }
