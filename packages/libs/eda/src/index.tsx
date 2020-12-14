@@ -12,6 +12,7 @@ import { EDAWorkspace } from './lib/EDAWorkspace';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
+import Header from './Header';
 
 
 initialize({
@@ -30,11 +31,7 @@ initialize({
     ...routes
   ],
   componentWrappers: {
-    SiteHeader: () => () => <h1 style={{ background: 'black', color: 'whitesmoke' }}>
-      <code>/// ================ \\\</code><br/>
-      <code>||| DEVELOPMENT SITE |||</code><br/>
-      <code>\\\ ================ ///</code>
-    </h1>
+    SiteHeader: () => Header
   },
   endpoint
 } as any)
