@@ -1,6 +1,11 @@
 import React, { lazy, Suspense, useMemo } from "react";
 import { PlotParams } from 'react-plotly.js';
 
+export interface PlotProps {
+  width?: number,
+  height?: number,
+}
+
 const config = {
   responsive: true
 };

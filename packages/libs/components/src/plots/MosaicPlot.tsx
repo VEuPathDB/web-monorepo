@@ -1,7 +1,7 @@
 import React from "react";
-import PlotlyPlot from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
 
-interface Props {
+interface Props extends PlotProps {
   // N columns/exposure, M rows/outcome
   data: Array<Array<number>>; // MxN (M = outerLength; N = innerLength)
   exposureValues: Array<string>; // N
@@ -10,6 +10,8 @@ interface Props {
   outcomeLabel: string;
   widths: Array<number>; // N
   colors?: Array<string>; // M
+  showLegend?: boolean;
+  showModebar?: boolean;
 }
 
 export default function MosaicPlot(props: Props) {
@@ -50,6 +52,14 @@ export default function MosaicPlot(props: Props) {
   } as const)).reverse();  // Reverse so first trace is on top, matching data array
 
   return (
-    <PlotlyPlot data={data} layout={layout}/>
+    <PlotlyPlot
+      data={data}
+      layout={Object.assign(layout, {
+        width: props.width,
+        height: props.height,
+        showlegend: props.showLegend
+      })}
+      config={{displayModeBar: props.showModebar}}
+    />
   );
 }

@@ -44,15 +44,11 @@ let coloredData = [
 export const BasicPie = () => <PiePlot
   //onPlotUpdate={action('state updated')}
   data={data}
-  height={400}
-  width={400}
 />
 
 export const PieCustomColors = () => <PiePlot
   //onPlotUpdate={action('state updated')}
   data={coloredData}
-  height={400}
-  width={400}
 />
 
 export const BasicDonut = () => <PiePlot
@@ -61,8 +57,6 @@ export const BasicDonut = () => <PiePlot
   interior={{
     heightPercentage: 0.4,
   }}
-  height={400}
-  width={400}
 />
 
 export const DonutText = () => <PiePlot
@@ -74,8 +68,6 @@ export const DonutText = () => <PiePlot
     textColor: 'purple',
     fontSize: 20,
   }}
-  height={400}
-  width={400}
 />
 
 export const DonutCreamyFilling = () => <PiePlot
@@ -85,8 +77,6 @@ export const DonutCreamyFilling = () => <PiePlot
     heightPercentage: 0.4,
     backgroundColor: 'yellow',
   }}
-  height={400}
-  width={400}
 />
 
 export const EverythingBagel = () => <PiePlot
@@ -99,6 +89,4 @@ export const EverythingBagel = () => <PiePlot
     fontSize: 20,
     backgroundColor: 'yellow',
   }}
-  height={400}
-  width={400}
 />
