@@ -143,18 +143,18 @@ export default function DonutMarker(props: DonutMarkerProps) {
   let duration: number = (props.duration) ? props.duration : 300
 
   const popupPlot = <PiePlot
-      data={props.labels.map((label, i) => ({
-        label: label,
-        value: props.values[i],
-        color: props.colors ? props.colors[i] : undefined,
-      }))}
-      interior={{
-        heightPercentage: 0.7,
-        text: sumValues.toString(),
-      }}
-      width={300}
-      height={300}
-    />
+    data={props.labels.map((label, i) => ({
+      label: label,
+      value: props.values[i],
+      color: props.colors ? props.colors[i] : undefined,
+    }))}
+    interior={{
+      heightPercentage: 0.7,
+      text: sumValues.toString(),
+    }}
+    width={300}
+    height={300}
+  />;
 
   return (
     <BoundsDriftMarker
@@ -163,16 +163,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
       bounds={props.bounds}
       icon={SVGDonutIcon}
       duration={duration}
-      // popup={
-      //   <Popup
-      //     className="plot-marker-popup"
-      //     minWidth={300}
-      //     closeOnClick={false}
-      //     {popupPlot}
-      //   </Popup>
-      // }
       popupPlot={popupPlot}
-      // leafletPopup={L.popup({minWidth: 300}).setContent(ReactDOMServer.renderToString(popupPlot))}
       showPopup={props.showPopup}
     />
   );

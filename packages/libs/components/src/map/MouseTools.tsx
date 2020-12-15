@@ -27,6 +27,7 @@ export default function MouseTools(props: MouseToolsProps) {
       <a role="button"
         onClick={() => props.setMouseMode(mode.name)}
         className={'mapveu-button' + (props.mouseMode === mode.name ? ' mapveu-button-selected' : '')}
+        key={mode.name}
       >
         <i className={`fas ${mode.icon}`}></i>
       </a>
@@ -37,9 +38,9 @@ export default function MouseTools(props: MouseToolsProps) {
     // <MapControl position='topright'>
     <div className="leaflet-control-container">
       <div className="leaflet-top leaflet-right">
-        <div className="mouse-toolbar leaflet-bar leaflet-control leaflet-touch">
+        <span className="mouse-toolbar leaflet-bar mapveu-hori-bar leaflet-control leaflet-touch">
           {buttons}
-        </div>
+        </span>
       </div>
     </div>
     // </MapControl>

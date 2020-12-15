@@ -27,94 +27,42 @@ export default function BoundsDriftMarker({position, bounds, icon, duration, sho
       [bounds.southWest.lat, bounds.southWest.lng], [bounds.northEast.lat, bounds.northEast.lng]])
   const markerRef = useRef<Marker>();
   const popupRef = useRef<Popup>(null);
-  const [popupStayOpenCount, setPopupStayOpenCount] = useState<number>(0);
-
-  // Dave: try useCallback
-  const incrementPopupStayOpenCount = () => {
-    setPopupStayOpenCount(popupStayOpenCount + 1);
-  }
-
-  const decrementPopupStayOpenCount = () => {
-    setPopupStayOpenCount(popupStayOpenCount - 1);
-  }
-
-  useEffect(() => {
-    console.log(popupStayOpenCount);
-
-    if (popupStayOpenCount <= 0) {
-      markerRef.current.leafletElement.closePopup();
-      // map.closePopup(popup.leafletElement);
-    }
-  }, [popupStayOpenCount]);
 
   const popup = (<Popup
     ref={popupRef}
     className="plot-marker-popup"
     minWidth={300}
     closeOnClick={false}
-    // position={position}
-    onMouseOver={incrementPopupStayOpenCount}
-    onMouseOut={decrementPopupStayOpenCount}
   >
     {popupPlot}
   </Popup>);
 
-  useEffect(() => {
-    if (popupRef.current) {
-      popupRef.current.leafletElement.on({
-        mouseover: incrementPopupStayOpenCount,
-        mouseout: decrementPopupStayOpenCount,
-      });
-    }
-  });
-
-  // popupRef.current?.leafletElement.setLatLng(position);
-
-  // const popup = L.popup({
-  //   className: 'plot-marker-popup',
-  //   minWidth: 300,
-  //   closeOnClick: false,
-  // }).set
-
   const handleMouseOver = (e: LeafletMouseEvent) => {
     e.target._icon.classList.add('top-marker');     //DKDK marker on top
-    setDisplayBounds(true);
+    setDisplayBounds(true);  // Display bounds rectangle
 
-    if (showPopup && popup) {
-      incrementPopupStayOpenCount();
+    if (showPopup && markerRef.current) {
+      // console.log(markerRef);
+      // console.log(markerRef.current);
+      // console.log(markerRef.current.leafletElement);
+      // console.log(markerRef.current.leafletElement.getPopup());
       markerRef.current.leafletElement.openPopup();
-      // map.openPopup(popup.leafletElement);
     }
   };
 
   const handleMouseOut = (e: LeafletMouseEvent) => {
     e.target._icon.classList.remove('top-marker');  //DKDK remove marker on top
-    setDisplayBounds(false);
+    setDisplayBounds(false);  // Remove bounds rectangle
 
-    if (showPopup && popup) {
-      decrementPopupStayOpenCount();
-
-      if (popupStayOpenCount <= 0) {
-        markerRef.current.leafletElement.closePopup();
-        // map.closePopup(popup.leafletElement);
-      }
+    if (showPopup && markerRef.current && markerRef.current.leafletElement.getPopup()) {
+      markerRef.current.leafletElement.closePopup();
     }
   }
 
-  // const handleMouseLeave = () => {
-  //   console.log('mouse leave');
-  //   if (showPopup && popup) {
-  //     markerRef.current.leafletElement.closePopup();
-  //     // map.closePopup(popup.leafletElement);
-  //   }
-  // }
-
-  const handleClick = (e: LeafletMouseEvent) => {
-    // if (popupRef.current.leafletElement.isOpen()) {
-    //   markerRef.current.leafletElement.closePopup();
-    // } else {
-    //   markerRef.current.leafletElement.openPopup();
-    // }
+  const handleClick = () => {
+    if (markerRef.current) {
+      markerRef.current.leafletElement.closePopup();
+    }
   }
 
   const handleDoubleClick = () => {
@@ -131,22 +79,21 @@ export default function BoundsDriftMarker({position, bounds, icon, duration, sho
     ref={markerRef}
     duration={duration}
     position={position}
-    onMouseOver={(e: LeafletMouseEvent) => handleMouseOver(e)} // Display bounds rectangle
-    onMouseOut={(e: LeafletMouseEvent) => handleMouseOut(e)} // Remove bounds rectangle
-    // onMouseLeave={() => handleMouseLeave()}
+    onMouseOver={(e: LeafletMouseEvent) => handleMouseOver(e)}
+    onMouseOut={(e: LeafletMouseEvent) => handleMouseOut(e)}
+    onClick={handleClick}
+    onDblClick={handleDoubleClick}
     {...optionalIconProp}
-    onClick={(e: LeafletMouseEvent) => handleClick(e)}
-    onDblClick={() => handleDoubleClick()} > 
+  >
     {
       displayBounds
-          ? <Rectangle
-              bounds={boundingBox}
-              color={"gray"}
-              weight={1}
-            >
-
-            </Rectangle>
-          : null
+        ? <Rectangle
+            bounds={boundingBox}
+            color={"gray"}
+            weight={1}
+          >
+          </Rectangle>
+        : null
     }
     {showPopup && popup}
   </DriftMarker>)

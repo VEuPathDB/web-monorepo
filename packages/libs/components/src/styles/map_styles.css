@@ -2,6 +2,27 @@
     border: solid gray 1px;
 }
 
+.mouse-toolbar {
+    position: relative;
+    right: 6rem;
+}
+
+.mapveu-hori-bar > a {
+    display: inline-block !important;
+}
+
+.mapveu-hori-bar a:first-child {
+    border-radius: 4px 0 0 4px !important;
+}
+
+.mapveu-hori-bar a:last-child {
+    border-radius: 0 4px 4px 0 !important;
+}
+
+.mouse-toolbar > a:hover {
+    background-color: #f4f4f4;
+}
+
 .mapveu-button :not(.mapveu-button-selected) :hover {
     background-color: rgb(78, 78, 78) !important;
 }
@@ -12,6 +33,8 @@
 
 .mapveu-button > i {
     background: none;
+    border: inherit;
+    border-radius: inherit;
 }
 
 .mapveu-button-selected > i {
