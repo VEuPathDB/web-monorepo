@@ -173,6 +173,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
         isAtomic={atomicValue}
         onClick={handleClick}
         duration={duration}
+        showPopup={false}
       />
       )
   });

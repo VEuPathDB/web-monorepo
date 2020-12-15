@@ -1,3 +1,19 @@
 .parent-leaflet-tile .leaflet-tile{
     border: solid gray 1px;
 }
+
+.mapveu-button :not(.mapveu-button-selected) :hover {
+    background-color: rgb(78, 78, 78) !important;
+}
+
+.mapveu-button-selected {
+    background-color: rgb(1, 1, 144) !important;
+}
+
+.mapveu-button > i {
+    background: none;
+}
+
+.mapveu-button-selected > i {
+    color: white;
+}

@@ -1,4 +1,4 @@
-import React, {useState, CSSProperties, ReactElement} from "react";
+import React, {useState, CSSProperties, ReactElement, cloneElement} from "react";
 import { BoundsViewport, MarkerProps, AnimationFunction } from "./Types";
 const { BaseLayer } = LayersControl
 import {Viewport, Map, TileLayer, LayersControl} from "react-leaflet";
@@ -6,6 +6,7 @@ import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
 import '../styles/map_styles.css'
 import CustomGridLayer from "./CustomGridLayer";
+import { MouseMode } from './MouseTools';
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -45,9 +46,14 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
   // The Viewport info (center and zoom) handled here would be useful for saving a
   // 'bookmarkable' state of the map.
   const [state, updateState] = useState<Viewport>(viewport as Viewport);
+  const [mouseMode, setMouseMode] = useState<MouseMode>('default');
   const handleViewportChanged = (viewport: Viewport) => {
     updateState(viewport);
   };
+
+  if (mouseMode === 'magnification') {
+    markers = markers.map((marker) => cloneElement(marker, {showPopup: true}));
+  }
 
   return (
     <Map
@@ -65,6 +71,8 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         markers={markers}
         animation={animation}
         nudge={nudge}
+        mouseMode={mouseMode}
+        setMouseMode={setMouseMode}
       />
 
       { showGrid ? <CustomGridLayer /> : null }
