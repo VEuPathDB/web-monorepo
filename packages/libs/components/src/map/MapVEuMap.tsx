@@ -9,9 +9,9 @@ import CustomGridLayer from "./CustomGridLayer";
 
 /**
  * Renders a Leaflet map with semantic zooming markers
- * 
- * 
- * @param props 
+ *
+ *
+ * @param props
  */
 
 interface MapVEuMapProps {
@@ -54,10 +54,20 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         viewport={state}
         style={{height, width}}
         onViewportChanged={handleViewportChanged}
+        // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
+        minZoom={2}
+        // worldCopyJump={true}
+        maxBounds={[[-90,-180],[90,180]]}
+        //DKDK no panning allowed after maxBounds
+        maxBoundsViscosity={1.0}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+        // DKDK testing worldmap issue - need to set here as well!
+        bounds={[[-90,-180],[90,180]]}
+        //DKDK noWrap for loading map tile within bounds
+        noWrap={true}
       />
 
       <SemanticMarkers
@@ -74,6 +84,9 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
             attribution='Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
+            bounds={[[-90,-180],[90,180]]}
+            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="terrain">
@@ -84,12 +97,18 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
             // minZoom='0'
             // maxZoom='18'
             // ext='png'
+            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
+            bounds={[[-90,-180],[90,180]]}
+            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="satellite">
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
+            bounds={[[-90,-180],[90,180]]}
+            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="light">
@@ -97,6 +116,9 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
             url="http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             // maxZoom='18'
+            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
+            bounds={[[-90,-180],[90,180]]}
+            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="dark">
@@ -105,6 +127,9 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
             attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
             subdomains='abcd'
             // maxZoom='19'
+            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
+            bounds={[[-90,-180],[90,180]]}
+            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="OSM">
@@ -114,6 +139,9 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
             // minZoom='2'
             // maxZoom='18'
             // noWrap='0'
+            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
+            bounds={[[-90,-180],[90,180]]}
+            noWrap={true}
           />
         </BaseLayer>
       </LayersControl>
