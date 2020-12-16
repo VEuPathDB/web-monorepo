@@ -15,7 +15,7 @@ export interface Props extends PlotProps {
 
 export default function Heatmap(props: Props) {
   //DKDK add zsmooth here so that it can be treated as a Props out of data
-  const { xLabel, yLabel, plotTitle, width, height, showValue, zsmooth, data, showModebar } = props;
+  const { xLabel, yLabel, plotTitle, width, height, showValue, zsmooth, data, showModebar, margin } = props;
   const layout: Partial<Layout> = {
     width: width,
     height: height,
@@ -79,6 +79,7 @@ export default function Heatmap(props: Props) {
       layout={Object.assign(layout, {
         width: width,
         height: height,
+        margin: margin,
       })}
       config={{displayModeBar: showModebar}}
     />

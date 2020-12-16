@@ -17,7 +17,7 @@ export interface Props extends PlotProps {
 }
 
 export default function LinePlot(props: Props) {
-  const { xLabel, yLabel, data, width, height, showLegend, showModebar, ...plotlyProps } = props;
+  const { xLabel, yLabel, data, width, height, margin, showLegend, showModebar, ...plotlyProps } = props;
   const finalData = data.map(d => ({
     ...d,
     type: 'scatter',
@@ -37,7 +37,8 @@ export default function LinePlot(props: Props) {
     layout={Object.assign(layout, {
       width: width,
       height: height,
-      showlegend: showLegend
+      margin: margin,
+      showlegend: showLegend,
     })}
     config={{displayModeBar: showModebar}}
     data={finalData}
