@@ -6,17 +6,20 @@ import {Text} from "@visx/text";
 import OffsetLine from "./OffsetLine"
 import {StudyData} from "./Types";
 
-interface ShadingData {
-  entityId: string
+interface ShadingValues {
   value: number
   color?: string
+}
+
+interface ShadingData {
+  [index:string]: ShadingValues
 }
 
 interface ExpandedDiagram {
   treeData: StudyData
   orientation: string
   highlightedEntityID: string
-  shadingData: ShadingData[]
+  shadingData: ShadingData
 }
 
 
@@ -55,20 +58,12 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID,
           <path d="M0,-5L10,0L0,5" />
         </marker>
       </defs>
-
-      {/* TODO: Background definitions: Please change this if you can think of a better way! :) */}
-      <LinearGradient vertical={false} x1={0} x2={0} fromOffset={1} id="rect-gradient-0" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={.1} fromOffset={1} id="rect-gradient-1" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={.2} fromOffset={1} id="rect-gradient-2" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={.3} fromOffset={1} id="rect-gradient-3" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={.4} fromOffset={1} id="rect-gradient-4" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={.5} fromOffset={1} id="rect-gradient-5" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={.6} fromOffset={1} id="rect-gradient-6" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={.7} fromOffset={1} id="rect-gradient-7" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={.8} fromOffset={1} id="rect-gradient-8" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={.9} fromOffset={1} id="rect-gradient-9" from="#e4c8c8" to="white" />
-      <LinearGradient vertical={false} x1={0} x2={1} fromOffset={1} id="rect-gradient-10" from="#e4c8c8" to="white" />
-
+      {
+        // Node background definitions
+        Array(11).fill(null).map((_, index) =>
+          <LinearGradient vertical={false} x1={0} x2={index * 0.1} fromOffset={1} id={`rect-gradient-${index}`} from="#e4c8c8" to="white"/>
+          )
+      }
       <Tree
         root={data}
         size={[500, 500]}
@@ -83,7 +78,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID,
               />
             })}
             {tree.descendants().map((node, i) => {
-              const shadingObject: undefined | ShadingData = shadingData.find(o => o.entityId === node.data.id);
+              const shadingObject: undefined | ShadingValues = shadingData[node.data.id];
               const width = 120;
               const height = 70;
 

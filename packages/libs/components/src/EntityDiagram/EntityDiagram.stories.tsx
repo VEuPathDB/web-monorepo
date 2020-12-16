@@ -154,33 +154,28 @@ export const EntityDiagram = () => {
       }
     }
 
-  const shadingData = [
-    {
-      entityId: "GEMS_House",
+  const shadingData = {
+    "GEMS_House": {
       value: 1,
       color: "#e4c8c8"
     },
-    {
-      entityId: "GEMS_HouseObs",
+    "GEMS_HouseObs": {
       value: 2,
       color: "#e4c8c8"
     },
-    {
-      entityId: "GEMS_Part",
+    "GEMS_Part": {
       value: 3,
       color: "#e4c8c8"
     },
-    {
-      entityId: "GEMS_PartObs",
+    "GEMS_PartObs": {
       value: 4,
       color: "#e4c8c8"
     },
-    {
-      entityId: "GEMS_Treat",
+    "GEMS_Treat": {
       value: 5,
       color: "#e4c8c8"
     }
-  ]
+  }
 
   return (
     <div style={{marginLeft: 40, marginTop: 40, width: 1000, height: 700, border: '1px black solid'}}>
