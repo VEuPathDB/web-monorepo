@@ -211,7 +211,6 @@ export const EntityDiagram = () => {
               shadingData={shadingData}
             />
           :
-            // ToDo: Where does the mini diagram text come from? ID in Study Data?
             <MiniDiagram
               treeData={studyData.rootEntity}
               orientation={orientation}
