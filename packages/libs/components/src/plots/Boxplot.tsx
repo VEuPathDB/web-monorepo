@@ -1,8 +1,8 @@
 import React from "react";
-import PlotlyPlot from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
 import { Datum } from 'plotly.js';
 
-export interface Props {
+export interface Props extends PlotProps {
   data: {
     lowerWhisker? : Datum,
     q1 : Datum,  // would like PlotData['q1'] but is the @types module not up to date?
@@ -23,9 +23,10 @@ export interface Props {
   showRawData?: boolean;
   showMean?: boolean;
   markerOpacity?: number;
+  showModebar?: boolean;
 }
 
-export default function Boxplot({ data, orientation, showRawData, showMean, independentAxisLabel, dependentAxisLabel, defaultDependentAxisRange, markerOpacity } : Props) {
+export default function Boxplot({ data, orientation, showRawData, showMean, independentAxisLabel, dependentAxisLabel, defaultDependentAxisRange, markerOpacity, showModebar, width, height } : Props) {
 
   const pdata = data.map((d) => {
 
@@ -69,11 +70,17 @@ export default function Boxplot({ data, orientation, showRawData, showMean, inde
     },
     showlegend: false
   };
-  return <PlotlyPlot data={pdata} layout={layout} />
+  return <PlotlyPlot
+    data={pdata}
+    layout={Object.assign(layout, {
+      width: width,
+      height: height,
+    })}
+    config={{displayModeBar: showModebar}}
+  />
 }
 
 Boxplot.defaultProps = {
   markerOpacity: 0.5,
   orientation: 'vertical'
 }
-
