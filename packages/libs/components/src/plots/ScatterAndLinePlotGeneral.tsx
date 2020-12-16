@@ -1,5 +1,5 @@
 import React from "react";
-import PlotlyPlot from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
 //DKDK block this
 // import { PlotComponentProps } from "./Types";
 //DKDK import Layout for typing layout, especially with sliders
@@ -9,7 +9,7 @@ import { Layout, PlotData } from "plotly.js"
 type PlotDataKey = keyof PlotData;
 
 //DKDK change interface a bit more: this could avoid error on data type
-interface Props<T extends keyof PlotData> {
+interface Props<T extends keyof PlotData> extends PlotProps {
   data: Pick<PlotData, T>[];
   xLabel: string;
   yLabel: string;
@@ -17,15 +17,13 @@ interface Props<T extends keyof PlotData> {
   //DKDK involving CI, x & y range may need to be set
   xRange?: number[] | Date[];
   yRange?: number[] | Date[];
-  width: number;
-  height: number;
+  showLegend?: boolean;
+  showModebar?: boolean;
 }
 
 export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(props: Props<T>) {
   const { xLabel, yLabel, plotTitle, xRange, yRange, width, height, data } = props;
   const layout: Partial<Layout> = {
-    width: width,
-    height: height,
     xaxis: {
       title: xLabel,
       range: xRange,      //DKDK set this for better display: esp. for CI plot
@@ -96,7 +94,12 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(props: 
   return (
     <PlotlyPlot
       data={finalData}
-      layout={layout}
+      layout={Object.assign(layout, {
+        width: props.width,
+        height: props.height,
+        showlegend: props.showLegend
+      })}
+      config={{displayModeBar: props.showModebar}}
     />
   );
 }

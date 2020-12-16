@@ -1,5 +1,5 @@
 import React from "react";
-import PlotlyPlot from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
 import defaultColorGen from "../utils/defaultColorGen";
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 
@@ -16,7 +16,7 @@ type PiePlotDatum = {
   color?: string;
 };
 
-interface Props {
+interface Props extends PlotProps {
   data: PiePlotDatum[];
   interior?: {
     heightPercentage: number;
@@ -25,14 +25,16 @@ interface Props {
     textColor?: string;
     fontSize?: string|number;
   };
+  showLegend?: boolean,
 }
 
 export default function PiePlot(props: Props) {
   const { data, interior = null } = props;
   const defaultColorIter = defaultColorGen();
   let interiorProps;
-  let layout = {};
   let newData: Partial<PlotData>[] = [];
+
+  let layout = {};
 
   if (interior) {
     interiorProps = {
@@ -40,7 +42,7 @@ export default function PiePlot(props: Props) {
     };
 
     if (interior.text) {
-      layout = {
+      Object.assign(layout, {
         annotations: [{
           font: {
             size: interior.fontSize || 12,
@@ -51,7 +53,7 @@ export default function PiePlot(props: Props) {
           x: 0.5,
           y: 0.5,
         }]
-      }
+      });
     }
 
     // The width of the donut. This is measured along invisible axes that seem
@@ -107,6 +109,9 @@ export default function PiePlot(props: Props) {
 
   return <PlotlyPlot
     data={newData as any}  // Casting as 'any' to avoid issues with PlotData for pie charts
-    layout={layout}
+    layout={Object.assign(layout, {
+      width: props.width,
+      height: props.height,
+      showlegend: props.showLegend})}
   />
 }

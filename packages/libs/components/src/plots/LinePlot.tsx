@@ -1,8 +1,8 @@
 import React from "react";
-import PlotlyPlot from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
 import { PlotData } from 'plotly.js';
 
-export interface Props {
+export interface Props extends PlotProps {
   data: {
     name: PlotData['name'];
     x: PlotData['x'];
@@ -12,10 +12,12 @@ export interface Props {
   }[];
   xLabel: string;
   yLabel: string;
+  showLegend?: boolean;
+  showModebar?: boolean;
 }
 
 export default function LinePlot(props: Props) {
-  const { xLabel, yLabel, data, ...plotlyProps } = props;
+  const { xLabel, yLabel, data, width, height, showLegend, showModebar, ...plotlyProps } = props;
   const finalData = data.map(d => ({
     ...d,
     type: 'scatter',
@@ -30,6 +32,15 @@ export default function LinePlot(props: Props) {
     }
   }
   return (
-  <PlotlyPlot {...plotlyProps} layout={layout} data={finalData}/>
+  <PlotlyPlot
+    {...plotlyProps}
+    layout={Object.assign(layout, {
+      width: width,
+      height: height,
+      showlegend: showLegend
+    })}
+    config={{displayModeBar: showModebar}}
+    data={finalData}
+  />
   )
 }
