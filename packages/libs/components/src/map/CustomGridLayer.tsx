@@ -24,9 +24,7 @@ export default function CustomGridLayer() {
             if (map != null) {
                 const zoomLevel = map.getZoom();
                 const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
-
-                //DKDK set maxBounds (i.e., single world) here not to show gridline out of maxBounds
-                const currentMapBounds = L.latLngBounds(L.latLng(-90,-180), L.latLng(90,180))
+                const currentMapBounds = map.getBounds();
 
                 // bfox6 - Make the current map bounds accessible to the outside world
                 setMapBounds(currentMapBounds);

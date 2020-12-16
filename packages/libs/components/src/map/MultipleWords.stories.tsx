@@ -13,30 +13,63 @@ export default {
 };
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, data = testData) => {
-  const { southWest: { lat: swLat, lng: swLng }, northEast : {lat: neLat, lng: neLng} } = bounds
-  console.log(`I've been triggered with bounds=[${swLat},${swLng} TO ${neLat},${neLng}] and zoom=${zoomLevel}`);
+  const { southWest: { lat: south, lng: west }, northEast : {lat: north, lng: east} } = bounds
+  console.log(`I've been triggered with bounds=[${south},${west} TO ${north},${east}] and zoom=${zoomLevel}`);
 
   const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
 
+  let newEast = east;
+  let newWest = west;
+  // put longitude bounds within normal -180 to 180 range
+  while (newEast > 180) {
+    newEast -= 360
+  }
+  while (newWest < -180) {
+    newWest += 360
+  }
+  console.log(`New long bounds are [${newWest} TO ${newEast}]`);
+  
   const buckets = (data as { [key: string]: any })[`geohash_${geohashLevel}`].facets.geo.buckets.filter((bucket: any) => {
     const ltAvg : number = bucket.ltAvg;
     const lnAvg : number = bucket.lnAvg;
-    return ltAvg > bounds.southWest.lat &&
-	   ltAvg < bounds.northEast.lat &&
-	   lnAvg > bounds.southWest.lng &&
-	   lnAvg < bounds.northEast.lng
+    const lambda = 1e-08; // accommodate tiny rounding errors
+    if (newWest < newEast - lambda) {
+      return ltAvg > south &&
+	     ltAvg < north &&
+	     lnAvg > newWest &&
+	     lnAvg < newEast
+    } if (newWest > newEast + lambda) {
+      return ltAvg > south &&
+	     ltAvg < north &&
+	     !(lnAvg > newEast && lnAvg < newWest)
+    } else {
+      return true
+    }
   });
 
   return buckets.map((bucket : any) => {
     if (bucket.val.length == geohashLevel) {
+      let newLn = bucket.lnAvg;
+      let newLnMax = bucket.lnMax;
+      let newLnMin = bucket.lnMin;
+      while (newLn > east) {
+	newLn -= 360;
+	newLnMax -= 360;
+	newLnMin -= 360;
+      }
+      while (newLn < west) {
+	newLn += 360;
+	newLnMax += 360;
+	newLnMin += 360;
+      }
       return (
-      <BoundsDriftMarker
-        duration={duration}
-        bounds={{ southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }}}
-        position={{ lat: bucket.ltAvg, lng: bucket.lnAvg }}
-        id={bucket.val}
-        key={bucket.val}
-      />
+	<BoundsDriftMarker
+          duration={duration}
+          bounds={{ southWest: { lat: bucket.ltMin, lng: newLnMin }, northEast: { lat: bucket.ltMax, lng: newLnMax }}}
+          position={{ lat: bucket.ltAvg, lng: newLn }}
+          id={bucket.val}
+          key={bucket.val}
+	/>
       )
     }
   })

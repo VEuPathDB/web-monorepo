@@ -158,21 +158,15 @@ function boundsToGeoBBox(bounds : LatLngBounds) : Bounds {
   if (north > 90) {
     north = 90;
   }
-  var west = bounds.getWest();
-  if (west < -180) {
-    west = -180;
-  }
-  if (west > 180) {
-    west = 180;
-  }
   var east = bounds.getEast();
-  if (east > 180) {
-    east = 180;
+  var west = bounds.getWest();
+  
+  if (east - west > 360) {
+    const center = (east+west)/2;
+    west = center - 180;
+    east = center + 180;
   }
-  if (east < -180) {
-    east = -180;
-  }
-
+  
   return { southWest: {lat: south, lng: west}, northEast: {lat: north, lng: east} };
 }
 

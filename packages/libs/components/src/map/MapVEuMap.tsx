@@ -56,18 +56,11 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         onViewportChanged={handleViewportChanged}
         // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
         minZoom={2}
-        // worldCopyJump={true}
-        maxBounds={[[-90,-180],[90,180]]}
-        //DKDK no panning allowed after maxBounds
-        maxBoundsViscosity={1.0}
+        worldCopyJump={true}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-        // DKDK testing worldmap issue - need to set here as well!
-        bounds={[[-90,-180],[90,180]]}
-        //DKDK noWrap for loading map tile within bounds
-        noWrap={true}
       />
 
       <SemanticMarkers
@@ -84,9 +77,6 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
             attribution='Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
-            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
-            bounds={[[-90,-180],[90,180]]}
-            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="terrain">
@@ -97,9 +87,6 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
             // minZoom='0'
             // maxZoom='18'
             // ext='png'
-            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
-            bounds={[[-90,-180],[90,180]]}
-            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="satellite">
@@ -116,9 +103,6 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
             url="http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             // maxZoom='18'
-            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
-            bounds={[[-90,-180],[90,180]]}
-            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="dark">
@@ -127,9 +111,6 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
             attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
             subdomains='abcd'
             // maxZoom='19'
-            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
-            bounds={[[-90,-180],[90,180]]}
-            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="OSM">
@@ -138,10 +119,6 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
             // minZoom='2'
             // maxZoom='18'
-            // noWrap='0'
-            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
-            bounds={[[-90,-180],[90,180]]}
-            noWrap={true}
           />
         </BaseLayer>
       </LayersControl>
