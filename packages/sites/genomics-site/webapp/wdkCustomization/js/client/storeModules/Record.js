@@ -46,7 +46,7 @@ export function reduce(state, action) {
         // collapse all sections by default. later we will read state from localStorage.
         collapsedSections: action.payload.recordClass.urlSegment === 'gene'
           ? RecordStoreModule.getAllFields(state).filter(a => a !== 'GeneModelGbrowseUrl')
-          : state.collapsedSections
+          : RecordStoreModule.getAllFields(state)
       };
     default:
       return state;

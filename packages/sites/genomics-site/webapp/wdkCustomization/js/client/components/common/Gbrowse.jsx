@@ -186,7 +186,7 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
           {lockText}
         </label>
       </div>
-      <iframe onLoad={onLoad} src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height={ht} scrolling="no" allowfullscreen="false" />
+      <iframe onLoad={onLoad} src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height={ht} scrolling="no" allowFullScreen={false} />
     </div>
   );
 }
