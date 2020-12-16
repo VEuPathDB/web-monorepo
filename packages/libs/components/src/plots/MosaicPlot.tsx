@@ -57,7 +57,8 @@ export default function MosaicPlot(props: Props) {
       layout={Object.assign(layout, {
         width: props.width,
         height: props.height,
-        showlegend: props.showLegend
+        margin: props.margin,
+        showlegend: props.showLegend,
       })}
       config={{displayModeBar: props.showModebar}}
     />

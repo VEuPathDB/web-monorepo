@@ -26,7 +26,7 @@ export interface Props extends PlotProps {
   showModebar?: boolean;
 }
 
-export default function Boxplot({ data, orientation, showRawData, showMean, independentAxisLabel, dependentAxisLabel, defaultDependentAxisRange, markerOpacity, showModebar, width, height } : Props) {
+export default function Boxplot({ data, orientation, showRawData, showMean, independentAxisLabel, dependentAxisLabel, defaultDependentAxisRange, markerOpacity, showModebar, width, height, margin } : Props) {
 
   const pdata = data.map((d) => {
 
@@ -75,6 +75,7 @@ export default function Boxplot({ data, orientation, showRawData, showMean, inde
     layout={Object.assign(layout, {
       width: width,
       height: height,
+      margin: margin,
     })}
     config={{displayModeBar: showModebar}}
   />
