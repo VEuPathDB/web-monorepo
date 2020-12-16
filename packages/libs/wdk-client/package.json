@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "test": "jest",
-    "compile": "rm -rf ./lib && tsc --noEmit false",
+    "compile": "rm -rf ./lib && tsc -p tsconfig.build.json",
     "copy-assets": "cd src && find . -type f -not \\( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -iname '*.md' \\) | xargs cp --parents -t ../lib",
     "relativize": "ts-node-script ./scripts/relativize.ts lib wdk-client",
     "build": "npm-run-all compile copy-assets relativize",
