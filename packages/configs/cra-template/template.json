@@ -13,7 +13,10 @@
       "web-vitals": "^0.2.4"
     },
     "eslintConfig": {
-      "extends": ["react-app", "react-app/jest"]
-    }
+      "extends": ["@veupathdb"]
+    },
+    "browserlist": [
+      "extends @veupathdb/browserlist-config"
+    ]
   }
 }
