@@ -23,7 +23,7 @@ interface MapVEuMapProps {
   width: CSSProperties['width'],
   onViewportChanged: (bvp: BoundsViewport) => void,
   markers: ReactElement<MarkerProps>[],
-  nudge?: 'geohash' | 'none',
+  recenterMarkers?: boolean,
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
   sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
   animation: {
@@ -36,7 +36,7 @@ interface MapVEuMapProps {
 
 
 
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, showGrid}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -67,7 +67,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         onViewportChanged={onViewportChanged}
         markers={markers}
         animation={animation}
-        nudge={nudge}
+        recenterMarkers={recenterMarkers}
       />
 
       { showGrid ? <CustomGridLayer /> : null }

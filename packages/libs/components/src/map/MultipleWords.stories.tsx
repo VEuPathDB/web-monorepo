@@ -14,7 +14,7 @@ export default {
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, data = testData) => {
   const { southWest: { lat: south, lng: west }, northEast : {lat: north, lng: east} } = bounds
-  console.log(`I've been triggered with bounds=[${south},${west} TO ${north},${east}] and zoom=${zoomLevel}`);
+  console.log(`I've been triggered with long bounds=[${west} TO ${east}] and zoom=${zoomLevel}`);
 
   const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
 
@@ -24,11 +24,18 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : num
   while (newEast > 180) {
     newEast -= 360
   }
+  while (newEast < -180) {
+    newEast += 360
+  }
   while (newWest < -180) {
     newWest += 360
   }
+  while (newWest > 180) {
+    newWest -= 360
+  }
   console.log(`New long bounds are [${newWest} TO ${newEast}]`);
-  
+
+  // filter data taking care of both east<west and east>west possibilities
   const buckets = (data as { [key: string]: any })[`geohash_${geohashLevel}`].facets.geo.buckets.filter((bucket: any) => {
     const ltAvg : number = bucket.ltAvg;
     const lnAvg : number = bucket.lnAvg;
@@ -49,24 +56,11 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : num
 
   return buckets.map((bucket : any) => {
     if (bucket.val.length == geohashLevel) {
-      let newLn = bucket.lnAvg;
-      let newLnMax = bucket.lnMax;
-      let newLnMin = bucket.lnMin;
-      while (newLn > east) {
-	newLn -= 360;
-	newLnMax -= 360;
-	newLnMin -= 360;
-      }
-      while (newLn < west) {
-	newLn += 360;
-	newLnMax += 360;
-	newLnMin += 360;
-      }
       return (
 	<BoundsDriftMarker
           duration={duration}
-          bounds={{ southWest: { lat: bucket.ltMin, lng: newLnMin }, northEast: { lat: bucket.ltMax, lng: newLnMax }}}
-          position={{ lat: bucket.ltAvg, lng: newLn }}
+          bounds={{ southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }}}
+          position={{ lat: bucket.ltAvg, lng: bucket.lnAvg }}
           id={bucket.val}
           key={bucket.val}
 	/>
