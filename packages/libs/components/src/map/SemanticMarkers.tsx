@@ -55,28 +55,28 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
 
   // handle recentering (around +180/-180 longitude) and animation
   useEffect(() => {
+    let recenteredMarkers = false;
     if (recenterMarkers && bounds) {
 
-      console.log(`recentering ${markers.length} markers`);
       markers = markers.map( marker => {
 	let { lat, lng } = marker.props.position;
 	let { southWest: { lat: ltMin, lng: lnMin }, northEast: { lat: ltMax, lng: lnMax} } = marker.props.bounds;
 	let recentered : boolean = false;
 	while (lng > bounds.northEast.lng) {
-	  console.log(`marker ${marker.props.id} shifting left from ${lng}`);
+//	  console.log(`marker ${marker.props.id} shifting left from ${lng}`);
 	  lng -= 360;
 	  lnMax -= 360;
 	  lnMin -= 360;
 	  recentered = true;
 	}
 	while (lng < bounds.southWest.lng) {
-	  console.log(`marker ${marker.props.id} shifting right from ${lng}`);
+//	  console.log(`marker ${marker.props.id} shifting right from ${lng}`);
 	  lng += 360;
 	  lnMax += 360;
 	  lnMin += 360;
 	  recentered = true;
 	}
-	
+	recenteredMarkers = recenteredMarkers || recentered;
       	return recentered ? cloneElement(marker, { position: { lat, lng },
 						   bounds: {
 						     southWest: { lat: ltMin, lng: lnMin },
@@ -86,7 +86,10 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
     }
 
     // now handle animation
-    if (markers.length > 0 && prevMarkers.length > 0 && animation) {
+    // but don't animate if we moved markers by 360 deg. longitude
+    // because the DriftMarker or Leaflet.Marker.SlideTo code seems to
+    // send everything back to the 'main' world.
+    if (markers.length > 0 && prevMarkers.length > 0 && animation && !recenteredMarkers) {
       const animationValues = animation.animationFunction({prevMarkers, markers});
       setZoomType(animationValues.zoomType);
       setConsolidatedMarkers(animationValues.markers)
