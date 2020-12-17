@@ -1,0 +1,15 @@
+{
+  "name": "@veupathdb/react-scripts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "veupathdb-react-scripts": "./bin/react-scripts.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "react-scripts": "^4.0.1",
+    "read": "^1.0.7",
+    "set-cookie-parser": "^2.4.6"
+  }
+}
