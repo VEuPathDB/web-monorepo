@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { DateTime } from 'luxon';
 
@@ -14,14 +14,25 @@ export type HistogramData = Array<{
 type HistogramBin = {
   binStart: number | string;
   binEnd?: number | string;
+  binLabel?: string;
   count: number;
 };
 
-/** Determine the appropriate label for the bin.
- * Note that there is some complicated logic here due to parsing potential
+/**
+ * Determine the label for a given HistogramBin. 
+ * 
+ * If a `binLabel` is specified on the bin itself, that is used.
+ * Otherwise one is generated. Note that there is some complicated 
+ * logic here due to parsing potential
  * date strings as binStart/binEnd values.
+
+ * @param bin The bin for which to derive the label.
  */
 const binLabel = (bin: HistogramBin) => {
+  if (bin.binLabel) {
+    return bin.binLabel;
+  }
+
   if (typeof bin.binStart === 'string') {
     const binStartAsDate = DateTime.fromISO(bin.binStart);
     const binEndAsDate = DateTime.fromISO(bin.binEnd as string);
@@ -48,9 +59,9 @@ export type HistogramProps = {
   /** The height of the plot in pixels. */
   height: number;
   /** The orientation of the plot. Defaults to `vertical` */
-  defaultOrientation: 'vertical' | 'horizontal';
+  orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
-  layout: 'overlay' | 'stack';
+  layout: 'overlay' | 'stack' | 'group';
   /** Title of plot. */
   title?: string;
   /** Label for independent axis. Defaults to `Bins`. */
@@ -65,31 +76,45 @@ export type HistogramProps = {
    * if there is only one data series bars are not overlayed. Otherwise,
    * defaults to .75
    */
-  defaultOpacity?: number;
+  opacity: number;
   /** Control of background color. Defaults to transparent.  */
   backgroundColor?: string;
 };
 
+/** A Plot.ly based histogram component. */
 export default function Histogram({
   data,
   width,
   height,
-  defaultOrientation = 'vertical',
+  orientation = 'vertical',
   title,
   independentAxisLabel = 'Bins',
   dependentAxisLabel = 'Count',
   textColor = DARK_GRAY,
   gridColor,
-  defaultOpacity,
+  opacity,
   layout = 'overlay',
   backgroundColor = 'transparent',
 }: HistogramProps) {
-  // Determine bar opacity.
-  const calculatedBarOpacity = defaultOpacity
-    ? defaultOpacity
-    : data.length === 1 || layout !== 'overlay'
-    ? 1
-    : 0.75;
+  const [revision, setRevision] = useState(0);
+
+  useEffect(() => {
+    setRevision(revision + 1);
+  }, [layout]);
+
+  /**
+   * Determine bar opacity. This gets a little complicated
+   * as we have to dynamically adjust an opacity of 1 down
+   * when there is more than 1 data series and the layout
+   * is overlay.
+   */
+  let calculatedBarOpacity: number;
+  if (layout === 'overlay' && data.length > 1) {
+    calculatedBarOpacity =
+      opacity > 1 ? (opacity / 100) * 0.75 : opacity * 0.75;
+  } else {
+    calculatedBarOpacity = opacity > 1 ? opacity / 100 : opacity;
+  }
 
   // Transform `data` into a Plot.ly friendly format.
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
@@ -100,19 +125,20 @@ export default function Histogram({
 
         return {
           type: 'bar',
-          x: defaultOrientation === 'vertical' ? binLabels : binCounts,
-          y: defaultOrientation === 'vertical' ? binCounts : binLabels,
+          x: orientation === 'vertical' ? binLabels : binCounts,
+          y: orientation === 'vertical' ? binCounts : binLabels,
           opacity: calculatedBarOpacity,
-          orientation: defaultOrientation === 'vertical' ? 'v' : 'h',
+          orientation: orientation === 'vertical' ? 'v' : 'h',
           name: series.name,
           ...(series.color ? { marker: { color: series.color } } : {}),
         };
       }),
-    [data, defaultOrientation]
+    [data, orientation, calculatedBarOpacity]
   );
 
   return (
     <PlotlyPlot
+      revision={revision}
       style={{ height, width }}
       layout={{
         margin: {
@@ -129,10 +155,10 @@ export default function Histogram({
         plot_bgcolor: backgroundColor,
         paper_bgcolor: backgroundColor,
         xaxis: {
-          type: defaultOrientation === 'vertical' ? 'category' : 'linear',
+          type: orientation === 'vertical' ? 'category' : 'linear',
           title: {
             text:
-              defaultOrientation === 'vertical'
+              orientation === 'vertical'
                 ? independentAxisLabel
                 : dependentAxisLabel,
             font: {
@@ -145,7 +171,7 @@ export default function Histogram({
         yaxis: {
           title: {
             text:
-              defaultOrientation === 'vertical'
+              orientation === 'vertical'
                 ? dependentAxisLabel
                 : independentAxisLabel,
             font: {
