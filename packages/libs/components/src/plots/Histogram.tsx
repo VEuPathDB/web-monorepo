@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 
 import { DARK_GRAY } from '../constants/colors';
 import PlotlyPlot from './PlotlyPlot';
+import { action } from '@storybook/addon-actions'; // BM: temp/debugging - should not depend on storybook here!
 
 export type HistogramData = Array<{
   name: string;
@@ -195,8 +196,9 @@ export default function Histogram({
         },
       }}
       data={plotlyFriendlyData}
+      onSelected={action('made a selection')}
     />
-  );
+  );  // BM onSelected is debug only
 }
 
 //   // ----------------

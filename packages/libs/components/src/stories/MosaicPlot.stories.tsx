@@ -1,5 +1,5 @@
 import React from 'react';
-import MosaicPlot from './MosaicPlot';
+import MosaicPlot from '../plots/MosaicPlot';
 
 export default {
   title: 'MosaicPlot',
@@ -29,6 +29,10 @@ export const TwoByThree = () => <MosaicPlot
   exposureLabel={'Animal'}
   outcomeLabel={'Rabies'}
   widths={[ 40, 10, 25 ]}
+  width={400}
+  height={300}
+  showLegend={false}
+  showModebar={false}
 />
 
 export const FourByThree = () => <MosaicPlot

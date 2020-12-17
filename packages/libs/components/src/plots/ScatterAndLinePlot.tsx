@@ -1,12 +1,14 @@
 import React from "react";
-import PlotlyPlot from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
 import { PlotData } from 'plotly.js';
 
-interface Props {
+interface Props extends PlotProps {
   data: Pick<PlotData, 'name'|'x'|'y'|'mode'|'fill'>[];
   xLabel: string;
   yLabel: string;  
   plotTitle: string;
+  showLegend?: boolean;
+  showModebar?: boolean;
 }
 
 export default function ScatterAndLinePlot(props: Props) {
@@ -25,6 +27,14 @@ export default function ScatterAndLinePlot(props: Props) {
   const finalData = data.map(d => ({ ...d, type: 'scatter' as const }));
 
   return (
-    <PlotlyPlot data={finalData} layout={layout} />
+    <PlotlyPlot
+      data={finalData}
+      layout={Object.assign(layout, {
+        width: props.width,
+        height: props.height,
+        showlegend: props.showLegend
+      })}
+      config={{displayModeBar: props.showModebar}}
+    />
   );
 }

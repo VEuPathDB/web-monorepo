@@ -1,8 +1,8 @@
 import React from "react";
-import PlotlyPlot from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
 import { PlotData, Layout, Annotations } from 'plotly.js';
 
-export interface Props {
+export interface Props extends PlotProps {
   data: Array<{x: number[] | string[], y: number[] | string[], z: number[][]}>;
   xLabel?: string;
   yLabel?: string;
@@ -10,13 +10,12 @@ export interface Props {
   showValue?: boolean;
   //DKDK add zsmooth here so that it can be treated as a Props out of data
   zsmooth?: 'fast' | 'best' | false;
-  width: number;
-  height: number;
+  showModebar?: boolean;
 }
 
 export default function Heatmap(props: Props) {
   //DKDK add zsmooth here so that it can be treated as a Props out of data
-  const { xLabel, yLabel, plotTitle, width, height, showValue, zsmooth, data } = props;
+  const { xLabel, yLabel, plotTitle, width, height, showValue, zsmooth, data, showModebar } = props;
   const layout: Partial<Layout> = {
     width: width,
     height: height,
@@ -75,6 +74,13 @@ export default function Heatmap(props: Props) {
   const finalData = data.map(d => ({ ...d, type: 'heatmap' as const, zsmooth: zsmooth}));
 
   return (
-    <PlotlyPlot data={finalData} layout={layout} />
+    <PlotlyPlot
+      data={finalData}
+      layout={Object.assign(layout, {
+        width: width,
+        height: height,
+      })}
+      config={{displayModeBar: showModebar}}
+    />
   );
 }
