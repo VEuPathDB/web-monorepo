@@ -29,6 +29,7 @@ import IndexController from './IndexController';
 import AnswerController from './AnswerController';
 import ReporterSortMessage from './ReporterSortMessage';
 import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
+import { Page } from './Page';
 
 import { withPermissions } from 'ebrc-client/components/Permissions';
 import * as ServerSideAttributeFilter from 'wdk-client/Components/AttributeFilter/ServerSideAttributeFilter';
@@ -113,7 +114,8 @@ export default {
     return () => <DefaultComponent specialInstructions={specialInstructions} />;
   },
   DownloadLink: withPermissions,
-  DataRestrictionDaemon: withPermissions
+  DataRestrictionDaemon: withPermissions,
+  Page
 }
 
 function guard(propsPredicate) {

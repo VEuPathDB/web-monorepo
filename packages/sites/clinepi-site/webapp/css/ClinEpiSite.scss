@@ -624,6 +624,11 @@ b, strong, th,
   display: none;
 }
 
+/* Ensures that clicking a child of a .study-action button targets the button itself */
+button.study-action[data-study-id][data-args] * {
+  pointer-events: none;
+}
+
 
 /* ========================================================================= */
 /* Static Content  page                                                      */
