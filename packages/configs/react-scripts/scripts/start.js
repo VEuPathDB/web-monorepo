@@ -11,6 +11,7 @@ const read = promisify(_read);
 // main();
 
 export async function main() {
+  process.stdout.write('Enter the VEuPathDB BRC Pre-Release Login credentials\n');
   const username = await read({ prompt: 'Username: ' });
   const password = await read({ prompt: 'Password: ', silent: true });
   const postData = stringify({username, password});
