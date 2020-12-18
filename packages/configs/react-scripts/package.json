@@ -1,0 +1,28 @@
+{
+  "name": "@veupathdb/react-scripts",
+  "version": "1.0.1",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "veupathdb-react-scripts": "./bin/react-scripts.js"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-dev.git",
+    "directory": "packages/react-scripts"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "bugs": {
+    "url": "https://github.com/VEuPathDB/web-dev/issues"
+  },
+  "dependencies": {
+    "read": "^1.0.7",
+    "set-cookie-parser": "^2.4.6"
+  },
+  "peerDependencies": {
+    "react-scripts": "^4.0.1"
+  }
+}
