@@ -35,23 +35,32 @@
       "@veupathdb"
     ]
   },
-  "prettier": {
-    "singleQuote": true
-  },
+  "prettier": "@veupathdb/prettier-config",
   "browserslist": [
     "extends @veupathdb/browserslist-config"
   ],
   "devDependencies": {
     "@veupathdb/browserslist-config": "^1.0.0",
     "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/prettier-config": "^1.0.0",
     "@veupathdb/react-scripts": "^1.0.1",
     "@veupathdb/tsconfig": "^1.0.1",
     "http-proxy-middleware": "^1.0.6",
+    "husky": ">=4",
+    "lint-staged": ">=10",
     "node-sass": "4",
     "prettier": "2.2.1",
     "react-router": "^5.2.0",
     "read": "^1.0.7",
     "script-loader": "^0.7.2",
     "set-cookie-parser": "^2.4.6"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
   }
 }
