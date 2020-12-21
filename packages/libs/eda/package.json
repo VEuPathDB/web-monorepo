@@ -35,7 +35,12 @@
       "@veupathdb"
     ]
   },
-  "browserslist": ["extends @veupathdb/browserslist-config"],
+  "prettier": {
+    "singleQuote": true
+  },
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
   "devDependencies": {
     "@veupathdb/browserslist-config": "^1.0.0",
     "@veupathdb/eslint-config": "^1.0.0",
@@ -43,6 +48,7 @@
     "@veupathdb/tsconfig": "^1.0.1",
     "http-proxy-middleware": "^1.0.6",
     "node-sass": "4",
+    "prettier": "2.2.1",
     "react-router": "^5.2.0",
     "read": "^1.0.7",
     "script-loader": "^0.7.2",
