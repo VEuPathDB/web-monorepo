@@ -1,1 +1,1 @@
-export default window.jQuery
+export default window.jQuery;

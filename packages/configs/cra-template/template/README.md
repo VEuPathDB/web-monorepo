@@ -17,7 +17,8 @@ You will also see any lint errors in the console.
 You will be prompted to enter the VEuPathDB BRC Pre-Release Login credentials.
 
 **Required Environment Variables**
-* **`WDK_SERVICE_URL`** URL for a VEuPathDB service endpoint.
+
+- **`WDK_SERVICE_URL`** URL for a VEuPathDB service endpoint.
 
 ### `npm test`
 
