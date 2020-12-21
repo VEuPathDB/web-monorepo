@@ -16,7 +16,7 @@ module.exports = function(app) {
         const authCookie = `auth_tkt=${process.env.VEUPATHDB_AUTH_TKT}`;
         const cookieRaw = proxyReq.getHeader('cookie');
         const cookies = cookieRaw == null ? authCookie
-          ? Array.isArray(cookieRaw) : [...cookieRaw, authCookie]
+          : Array.isArray(cookieRaw) ? [...cookieRaw, authCookie]
           : [cookieRaw, authCookie];
         proxyReq.setHeader('cookie', cookies);
       }
