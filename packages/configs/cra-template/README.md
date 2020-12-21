@@ -1,4 +1,4 @@
-# cra-template-veupathdb
+# @veupathdb/cra-template
 
 This is the official create-react-app template for developing [VEuPathDB](https://github.com/VEuPathDB) web client features.
 
