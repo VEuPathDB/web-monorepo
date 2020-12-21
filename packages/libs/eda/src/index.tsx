@@ -5,15 +5,13 @@ import React from 'react';
 import reportWebVitals from './reportWebVitals';
 // import { initialize } from '@veupathdb/wdk-client/lib/Core';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry'
-import { EDAAnalysisList } from './lib/EDAAnalysisList';
+import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { RouteComponentProps } from 'react-router';
-import { EDAWorkspace } from './lib/EDAWorkspace';
+import { EDAAnalysisList, EDAWorkspace } from './lib';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 import Header from './Header';
-
 
 initialize({
   rootUrl,
@@ -21,20 +19,23 @@ initialize({
   wrapRoutes: (routes: any): RouteEntry[] => [
     {
       path: '/eda/:studyId/:analysisId',
-      component: (props: RouteComponentProps<{studyId: string; analysisId: string}>) =>
-        <EDAWorkspace {...props.match.params}/>
+      component: (
+        props: RouteComponentProps<{ studyId: string; analysisId: string }>
+      ) => <EDAWorkspace {...props.match.params} />,
     },
     {
       path: '/eda/:studyId',
-      component: (props: RouteComponentProps<{studyId: string}>) => <EDAAnalysisList studyId={props.match.params.studyId}/>
+      component: (props: RouteComponentProps<{ studyId: string }>) => (
+        <EDAAnalysisList studyId={props.match.params.studyId} />
+      ),
     },
-    ...routes
+    ...routes,
   ],
   componentWrappers: {
-    SiteHeader: () => Header
+    SiteHeader: () => Header,
   },
-  endpoint
-} as any)
+  endpoint,
+} as any);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
