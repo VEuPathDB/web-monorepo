@@ -1,6 +1,6 @@
 {
-  "name": "@veupathvb/cra-template",
-  "version": "0.1.0-alpha.0",
+  "name": "@veupathdb/cra-template",
+  "version": "1.0.0",
   "keywords": [
     "react",
     "create-react-app",
