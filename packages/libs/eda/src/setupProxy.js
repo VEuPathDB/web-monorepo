@@ -18,8 +18,8 @@ module.exports = function (app) {
         const cookies =
           cookieRaw == null
             ? authCookie
-              ? Array.isArray(cookieRaw)
-              : [...cookieRaw, authCookie]
+            : Array.isArray(cookieRaw)
+            ? [...cookieRaw, authCookie]
             : [cookieRaw, authCookie];
         proxyReq.setHeader('cookie', cookies);
       },
