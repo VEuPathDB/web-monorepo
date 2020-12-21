@@ -25,30 +25,22 @@
     "@veupathdb/**/react-dom": "^17.0.1"
   },
   "scripts": {
-    "start": "./scripts/start.js",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "veupathdb-react-scripts start",
+    "build": "veupathdb-react-scripts build",
+    "test": "veupathdb-react-scripts test",
+    "eject": "veupathdb-react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
-      "react-app",
-      "react-app/jest"
+      "@veupathdb"
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
+  "browserslist": ["extends @veupathdb/browserslist-config"],
   "devDependencies": {
+    "@veupathdb/browserslist-config": "^1.0.0",
+    "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/react-scripts": "^1.0.1",
+    "@veupathdb/tsconfig": "^1.0.1",
     "http-proxy-middleware": "^1.0.6",
     "node-sass": "4",
     "react-router": "^5.2.0",

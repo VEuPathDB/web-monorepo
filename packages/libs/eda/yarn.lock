@@ -2187,6 +2187,11 @@
     "@typescript-eslint/types" "4.9.1"
     eslint-visitor-keys "^2.0.0"
 
+"@veupathdb/browserslist-config@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
+  integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
+
 "@veupathdb/eda-workspace-core@^0.0.2-alpha.5":
   version "0.0.2-alpha.5"
   resolved "https://registry.yarnpkg.com/@veupathdb/eda-workspace-core/-/eda-workspace-core-0.0.2-alpha.5.tgz#b0795b70cd11bccc15e0f2f9bf4674600327320a"
@@ -2195,6 +2200,24 @@
     "@veupathdb/wdk-client" "^0.1.1-alpha.4"
     "@veupathdb/web-common" "^0.1.1-alpha.2"
     react "^17.0.1"
+
+"@veupathdb/eslint-config@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
+  integrity sha512-UDgRQYsIdfB9KCkBmeqMjVQOQAAGB8RLFUj4KlLAxRcT5TlRI47ZmofB3/NMbpIHP27/pk1bryPo7z4DMwWyeQ==
+
+"@veupathdb/react-scripts@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/react-scripts/-/react-scripts-1.0.1.tgz#2b13edb1801efecb72d4cbc7db59226adef090bc"
+  integrity sha512-wxgwhhTIFjadzPiys+npGTGXCJ+AlUs63doM6TkdyuCCh390IHUp2NNEPSmuEz7uMX171wOyIzJF9KXvcw0Evg==
+  dependencies:
+    read "^1.0.7"
+    set-cookie-parser "^2.4.6"
+
+"@veupathdb/tsconfig@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
+  integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
 "@veupathdb/wdk-client@^0.1.1-alpha.4", "@veupathdb/wdk-client@^0.1.1-alpha.6":
   version "0.1.1-alpha.6"
