@@ -4,9 +4,9 @@
   &-Heading {
     display: grid;
     grid:
-      "title linkouts" auto
-      "subtitle subtitle" auto
-      "summary summary" auto
+      'title linkouts' auto
+      'subtitle subtitle' auto
+      'summary summary' auto
       / 1fr;
     gap: 1em;
     align-items: center;
@@ -66,10 +66,10 @@
       &:active {
         top: 3px;
       }
-      &:focus, &:hover {
+      &:focus,
+      &:hover {
         background-color: #0b6c9d1f !important;
       }
     }
   }
-
 }

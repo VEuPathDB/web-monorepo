@@ -9,12 +9,18 @@ export function EDAAnalysis() {
     setName,
     copyAnalysis,
     saveAnalysis,
-    deleteAnalysis
+    deleteAnalysis,
   } = useAnalysis();
   if (history.current == null) return null;
   return (
     <div className={cx('-Analysis')}>
-      <AnalysisSummary analysis={history.current} setAnalysisName={setName} copyAnalysis={copyAnalysis} saveAnalysis={saveAnalysis} deleteAnalysis={deleteAnalysis}/>
+      <AnalysisSummary
+        analysis={history.current}
+        setAnalysisName={setName}
+        copyAnalysis={copyAnalysis}
+        saveAnalysis={saveAnalysis}
+        deleteAnalysis={deleteAnalysis}
+      />
     </div>
-  )
+  );
 }

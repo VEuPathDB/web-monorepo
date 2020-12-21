@@ -12,12 +12,22 @@ export function EDAWorkspaceHeading() {
     <div className={cx('-Heading')}>
       <h1>Explore and Analyze</h1>
       <h2>Study: {studyRecord.displayName}</h2>
-      <StudySummary studyRecord={studyRecord} studyRecordClass={studyRecordClass}/>
+      <StudySummary
+        studyRecord={studyRecord}
+        studyRecordClass={studyRecordClass}
+      />
       <div className={cx('-Linkouts')}>
-        <Link target="_blank" to={`/record/dataset/${studyRecord.id.map(p => p.value).join('/')}`}>Study details</Link>
+        <Link
+          target="_blank"
+          to={`/record/dataset/${studyRecord.id.map((p) => p.value).join('/')}`}
+        >
+          Study details
+        </Link>
         |
-        <button type="button" className="link" onClick={() => alert('todo')}>Bulk download</button>
+        <button type="button" className="link" onClick={() => alert('todo')}>
+          Bulk download
+        </button>
       </div>
     </div>
-  )
+  );
 }

@@ -11,10 +11,16 @@ interface Props {
   copyAnalysis: () => Promise<string>;
   saveAnalysis: () => void;
   deleteAnalysis: () => void;
-};
+}
 
 export function AnalysisSummary(props: Props) {
-  const { analysis, setAnalysisName, copyAnalysis, saveAnalysis, deleteAnalysis } = props;
+  const {
+    analysis,
+    setAnalysisName,
+    copyAnalysis,
+    saveAnalysis,
+    deleteAnalysis,
+  } = props;
   const history = useHistory();
   const handleCopy = async () => {
     const id = await copyAnalysis();
@@ -27,9 +33,21 @@ export function AnalysisSummary(props: Props) {
         value={analysis.name}
         onSave={setAnalysisName}
       />
-      <ActionIconButton iconClassName="clone" hoverText="Copy analysis" action={handleCopy}/>
-      <ActionIconButton iconClassName="floppy-o" hoverText="Save analysis" action={saveAnalysis}/>
-      <ActionIconButton iconClassName="trash" hoverText="Delete analysis" action={deleteAnalysis}/>
+      <ActionIconButton
+        iconClassName="clone"
+        hoverText="Copy analysis"
+        action={handleCopy}
+      />
+      <ActionIconButton
+        iconClassName="floppy-o"
+        hoverText="Save analysis"
+        action={saveAnalysis}
+      />
+      <ActionIconButton
+        iconClassName="trash"
+        hoverText="Delete analysis"
+        action={deleteAnalysis}
+      />
     </div>
   );
 }

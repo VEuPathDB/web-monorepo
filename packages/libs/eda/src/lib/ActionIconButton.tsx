@@ -13,7 +13,7 @@ export function ActionIconButton(props: Props) {
   return (
     <div className={cx('-ActionIconButton')}>
       <button type="button" title={hoverText} className="link" onClick={action}>
-        <IconAlt fa={iconClassName}/>
+        <IconAlt fa={iconClassName} />
       </button>
     </div>
   );

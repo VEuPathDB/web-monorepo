@@ -10,9 +10,13 @@ export interface Props {
 
 export function EDAAnalysisList(props: Props) {
   return (
-    <EDAAnalysisListContainer studyId={props.studyId} analysisStore={mockAnalysisStore} studyMetadataStore={mockStudyMetadataStore}>
-      <EDAWorkspaceHeading/>
+    <EDAAnalysisListContainer
+      studyId={props.studyId}
+      analysisStore={mockAnalysisStore}
+      studyMetadataStore={mockStudyMetadataStore}
+    >
+      <EDAWorkspaceHeading />
       <AnalysisList analysisStore={mockAnalysisStore} />
     </EDAAnalysisListContainer>
-  )
+  );
 }

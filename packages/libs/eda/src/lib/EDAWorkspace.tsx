@@ -18,8 +18,8 @@ export function EDAWorkspace(props: Props) {
       analysisStore={mockAnalysisStore}
       studyMetadataStore={mockStudyMetadataStore}
     >
-      <EDAWorkspaceHeading/>
-      <EDAAnalysis/>
+      <EDAWorkspaceHeading />
+      <EDAAnalysis />
     </EDAWorkspaceContainer>
   );
 }

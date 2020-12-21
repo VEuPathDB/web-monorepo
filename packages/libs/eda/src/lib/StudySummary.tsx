@@ -15,11 +15,19 @@ export function StudySummary(props: Props) {
   const { studyRecord, studyRecordClass } = props;
   return (
     <div className={cx('-Summary')}>
-      {Object.entries(studyRecord.attributes).map(([name, value]) => value != null && (
-        <Tooltip key={name} content={getTooltipContent(studyRecordClass.attributesMap[name])} showEvent="focus mouseenter" hideEvent="blur mouseleave">
-          {renderAttributeValue(value, { tabIndex: 0 })}
-        </Tooltip>
-      ))}
+      {Object.entries(studyRecord.attributes).map(
+        ([name, value]) =>
+          value != null && (
+            <Tooltip
+              key={name}
+              content={getTooltipContent(studyRecordClass.attributesMap[name])}
+              showEvent="focus mouseenter"
+              hideEvent="blur mouseleave"
+            >
+              {renderAttributeValue(value, { tabIndex: 0 })}
+            </Tooltip>
+          )
+      )}
     </div>
   );
 }

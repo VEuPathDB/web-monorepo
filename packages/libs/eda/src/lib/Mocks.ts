@@ -1,4 +1,9 @@
-import { StudyMetadataStore, AnalysisStore, Analysis, NewAnalysis } from '@veupathdb/eda-workspace-core';
+import {
+  StudyMetadataStore,
+  AnalysisStore,
+  Analysis,
+  NewAnalysis,
+} from '@veupathdb/eda-workspace-core';
 import localforage from 'localforage';
 
 export const mockStudyMetadataStore: StudyMetadataStore = {
@@ -11,14 +16,14 @@ export const mockStudyMetadataStore: StudyMetadataStore = {
         name: 'Foo',
         description: 'foo',
         variablesTree: [],
-        children: []
-      }
-    }
-  }
-}
+        children: [],
+      },
+    };
+  },
+};
 
 const localStore = localforage.createInstance({
-  name: 'mockAnalysisStore'
+  name: 'mockAnalysisStore',
 });
 
 export const mockAnalysisStore: AnalysisStore = {
@@ -32,7 +37,12 @@ export const mockAnalysisStore: AnalysisStore = {
   async createAnalysis(newAnalysis: NewAnalysis) {
     const id = String((await localStore.keys()).length + 1);
     const now = new Date().toISOString();
-    await localStore.setItem<Analysis>(id, { ...newAnalysis, id, created: now, modified: now });
+    await localStore.setItem<Analysis>(id, {
+      ...newAnalysis,
+      id,
+      created: now,
+      modified: now,
+    });
     return id;
   },
   async getAnalysis(id: string) {
@@ -46,5 +56,5 @@ export const mockAnalysisStore: AnalysisStore = {
   },
   async deleteAnalysis(id: string) {
     await localStore.removeItem(id);
-  }
+  },
 };
