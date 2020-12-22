@@ -35,12 +35,12 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
     return _store.getItem(USER_ID_STORE_KEY);
   }
 
-  async function _checkServiceVersionAndUserId(): Promise<[number, number]> {
+  async function _checkServiceVersionAndUserId(options: { forceUser?: boolean } = {}): Promise<[number, number]> {
     const [ storeServiceVersion, storeUserId, currentServiceVersion, { id: currentUserId } ] = await Promise.all([
       _fetchServiceVersion(),
       _fetchUserId(),
       wdkService.getVersion(),
-      wdkService.getCurrentUser()
+      wdkService.getCurrentUser({ force: options.forceUser })
     ] as const);
 
     const serviceChanged = (
@@ -68,7 +68,7 @@ function makeInstance(serviceUrl: string, wdkService: WdkService): ParamValueSto
       return _store.clear();
     },
     fetchParamValues: async paramContext => {
-      await _checkServiceVersionAndUserId();
+      await _checkServiceVersionAndUserId({ forceUser: true });
 
       const storeKey = makeParamStoreKey(paramContext);
 
