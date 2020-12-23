@@ -1,16 +1,16 @@
-import { memoize } from 'lodash';
 import localforage from 'localforage';
+import { keyBy, memoize } from 'lodash';
 import * as QueryString from 'querystring';
 import { v4 as uuid } from 'uuid';
-
+import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
+import { ServiceError } from 'wdk-client/Service/ServiceError';
+import { fetchWithRetry } from 'wdk-client/Utils/FetchWithRetry';
 import * as Decode from 'wdk-client/Utils/Json';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise } from 'wdk-client/Utils/PromiseUtils';
-import { ServiceError } from 'wdk-client/Service/ServiceError';
 import { Question } from 'wdk-client/Utils/WdkModel';
-import { keyBy } from 'lodash';
-import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
 import { appendUrlAndRethrow } from './ServiceUtils';
+
 
 
 /**
@@ -184,7 +184,8 @@ export const ServiceBase = (serviceUrl: string) => {
   function _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
     const headers = new Headers({ 'Content-Type': 'application/json'});
     if (_version) headers.append(CLIENT_WDK_VERSION_HEADER, String(_version));
-    return fetch(
+    return fetchWithRetry(
+      1,
       isBaseUrl ? url : serviceUrl + url, 
       {
         headers,
