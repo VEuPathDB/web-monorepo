@@ -48,6 +48,7 @@ const SEQUENCES_TABLE_NAME = 'Sequences';
 const CORE_PERIPHERAL_ATTRIBUTE_NAME = 'core_peripheral';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
 const SOURCE_ID_ATTRIBUTE_NAME = 'full_id';
+const TAXON_ATTRIBUTE_NAME = 'taxon_name';
 
 export function RecordAttribute(props: WrappedComponentProps<RecordAttributeProps>) {
   const Component = recordAttributeWrappers[props.attribute.name] ?? props.DefaultComponent;
@@ -158,6 +159,10 @@ const makeProteinDomainLocationAttributeFields = transformAttributeFieldsUsingSp
       displayName: 'Accession'
     },
     {
+      name: TAXON_ATTRIBUTE_NAME,
+      displayName: 'Taxon'
+    },
+    {
       name: CORE_PERIPHERAL_ATTRIBUTE_NAME,
       displayName: 'Core/Peripheral'
     },
@@ -185,6 +190,10 @@ const makeProteinDomainArchitectureAttributeFields = transformAttributeFieldsUsi
     {
       name: SOURCE_ID_ATTRIBUTE_NAME,
       displayName: 'Accession'
+    },
+    {
+      name: TAXON_ATTRIBUTE_NAME,
+      displayName: 'Taxon'
     },
     {
       name: CORE_PERIPHERAL_ATTRIBUTE_NAME,
