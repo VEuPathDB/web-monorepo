@@ -363,7 +363,7 @@ function useCorePeripheralLegendEntries(
       );
 
       return corePeripheralLegendOrder.map(proteinType => {
-        const count = legendCountsByProteinType[proteinType];
+        const count = legendCountsByProteinType[proteinType] ?? 0;
         const color = corePeripheralLegendColors[proteinType];
         const nodesOfType = nodeIdsByProteinType[proteinType];
 
