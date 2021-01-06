@@ -9,7 +9,6 @@ import { Popup } from 'react-leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import PiePlot from 'visualization-tools/src/plots/PiePlot';
-import ReactDOMServer from 'react-dom/server';
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 interface DonutMarkerProps extends BoundsDriftMarkerProps {
@@ -142,6 +141,10 @@ export default function DonutMarker(props: DonutMarkerProps) {
   //DKDK anim check duration exists or not
   let duration: number = (props.duration) ? props.duration : 300
 
+  const plotSizeInit = 150;
+  const marginSize = 20;
+  const plotSize = plotSizeInit + 2*marginSize;
+
   const popupPlot = <PiePlot
     data={props.labels.map((label, i) => ({
       label: label,
@@ -151,9 +154,12 @@ export default function DonutMarker(props: DonutMarkerProps) {
     interior={{
       heightPercentage: 0.7,
       text: sumValues.toString(),
+      fontSize: 18,
     }}
-    width={300}
-    height={300}
+    width={plotSize}
+    height={plotSize}
+    margin={{l: marginSize, r: marginSize, t: marginSize, b: marginSize}}
+    showLegend={false}
   />;
 
   return (
@@ -163,7 +169,18 @@ export default function DonutMarker(props: DonutMarkerProps) {
       bounds={props.bounds}
       icon={SVGDonutIcon}
       duration={duration}
+      // popup={
+      //   <Popup
+      //     className="plot-marker-popup"
+      //     minWidth={popupSize}
+      //     closeOnClick={false}
+      //     autoPan={false}
+      //   >
+      //     {popupPlot}
+      //   </Popup>
+      // }
       popupPlot={popupPlot}
+      popupSize={plotSize}
       showPopup={props.showPopup}
     />
   );

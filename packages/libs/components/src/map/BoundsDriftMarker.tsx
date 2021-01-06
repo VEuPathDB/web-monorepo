@@ -20,19 +20,18 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
  *    For this reason, marker's props are adjusted without sending mouse event functions, but implemented here directly.
  */
 
-export default function BoundsDriftMarker({position, bounds, icon, duration, showPopup, popupPlot}: BoundsDriftMarkerProps) {
+export default function BoundsDriftMarker({position, bounds, icon, duration, showPopup, popupPlot, popupSize}: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false)
   const { map } = useLeaflet();
   const boundingBox = new LatLngBounds([
       [bounds.southWest.lat, bounds.southWest.lng], [bounds.northEast.lat, bounds.northEast.lng]])
   const markerRef = useRef<Marker>();
-  const popupRef = useRef<Popup>(null);
 
   const popup = (<Popup
-    ref={popupRef}
     className="plot-marker-popup"
-    minWidth={300}
-    closeOnClick={false}
+    minWidth={popupSize}
+    autoPan={false}
+    closeButton={false}
   >
     {popupPlot}
   </Popup>);
@@ -42,10 +41,6 @@ export default function BoundsDriftMarker({position, bounds, icon, duration, sho
     setDisplayBounds(true);  // Display bounds rectangle
 
     if (showPopup && markerRef.current) {
-      // console.log(markerRef);
-      // console.log(markerRef.current);
-      // console.log(markerRef.current.leafletElement);
-      // console.log(markerRef.current.leafletElement.getPopup());
       markerRef.current.leafletElement.openPopup();
     }
   };
@@ -54,7 +49,7 @@ export default function BoundsDriftMarker({position, bounds, icon, duration, sho
     e.target._icon.classList.remove('top-marker');  //DKDK remove marker on top
     setDisplayBounds(false);  // Remove bounds rectangle
 
-    if (showPopup && markerRef.current && markerRef.current.leafletElement.getPopup()) {
+    if (showPopup && markerRef.current) {
       markerRef.current.leafletElement.closePopup();
     }
   }
