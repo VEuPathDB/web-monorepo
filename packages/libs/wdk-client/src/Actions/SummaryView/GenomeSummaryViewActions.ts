@@ -22,6 +22,11 @@ export const fulfillGenomeSummaryReport = makeActionCreator(
   ) => ({ viewId, genomeSummaryViewReport, recordClass })
 );
 
+export const rejectGenomeSummaryReport = makeActionCreator(
+  'genomeSummaryView/rejectGenomeSummaryReport',
+  (viewId: string, message: string) => ({ viewId, message })
+);
+
 export const showRegionDialog = makeActionCreator(
   'genomeSummaryView/showRegionDialog',
   (viewId: string, regionId: string) => ({ viewId, regionId })
@@ -45,6 +50,7 @@ export const unapplyEmptyChromosomesFilter = makeActionCreator(
 export type Action =
   | InferAction<typeof requestGenomeSummaryReport>
   | InferAction<typeof fulfillGenomeSummaryReport>
+  | InferAction<typeof rejectGenomeSummaryReport>
   | InferAction<typeof showRegionDialog>
   | InferAction<typeof hideRegionDialog>
   | InferAction<typeof applyEmptyChromosomesFilter>

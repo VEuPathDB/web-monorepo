@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { Dispatch, bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { Error } from 'wdk-client/Components';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {
@@ -33,7 +32,7 @@ import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { openAttributeAnalysis, closeAttributeAnalysis } from 'wdk-client/Actions/AttributeAnalysisActions';
 import { partial, Partial1 } from 'wdk-client/Utils/ActionCreatorUtils';
 import {ResultType} from 'wdk-client/Utils/WdkResult';
-
+import { ContentError } from 'wdk-client/Components/PageStatus/ContentError';
 interface StateProps {
   viewData: RootState['resultTableSummaryView'][string];
   derivedData: {
@@ -88,7 +87,11 @@ function ResultTableSummaryViewController(props: Props) {
   }, [ resultType ]);
 
   if (viewData == null) return null;
-  if (derivedData.errorMessage != null) return (<Error message={derivedData.errorMessage} />);
+  if (derivedData.errorMessage != null) return (
+    <ContentError>
+      {derivedData.errorMessage}
+    </ContentError>
+  );
 
   return (
     <ResultTableSummaryView
@@ -143,13 +146,16 @@ function getQuestionAndRecordClass(rootState: RootState, props: OwnProps): { que
 
 function mapStateToProps(state: RootState, props: OwnProps): StateProps {
   const viewData = state.resultTableSummaryView[props.viewId];
-  const errorMessage = viewData && !viewData.answerLoading && !viewData.answer
-    ? (
-      props.viewId.startsWith('basket')
-        ? 'Fixing your basket using the instructions above might help.'
-        : undefined
-    )
-    : undefined;
+  // This is a but messy!
+  const errorMessage = viewData?.errorMessage || (
+    viewData && !viewData.answerLoading && !viewData.answer
+      ? (
+        props.viewId.startsWith('basket')
+          ? 'Fixing your basket using the instructions above might help.'
+          : undefined
+      )
+      : undefined
+  );
 
   return {
     viewData,
