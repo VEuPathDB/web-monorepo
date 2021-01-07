@@ -137,8 +137,9 @@ export const fulfillAnswer = makeActionCreator(
 export const reportAnswerFulfillmentError = makeActionCreator(
   'requestTableSummaryView/reportAnswerFulfillmentError',
   (
-    viewId: string
-  ) => ({ viewId })
+    viewId: string,
+    message: string
+  ) => ({ viewId, message })
 );
 
 export const requestRecordsBasketStatus = makeActionCreator(
