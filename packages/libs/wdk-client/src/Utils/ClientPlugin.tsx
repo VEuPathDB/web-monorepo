@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
 import { defaultMemoize } from 'reselect';
-import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
-import { useSelector } from 'react-redux';
-import { RootState } from 'wdk-client/Core/State/Types';
+import { WdkService } from 'wdk-client/Core';
+import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
+import { Parameter, Question, RecordClass } from 'wdk-client/Utils/WdkModel';
+import NotFound from 'wdk-client/Views/NotFound/NotFound';
 
 export type PluginType =
   | 'attributeAnalysis'
@@ -25,6 +24,7 @@ export interface PluginEntryContext {
   name?: string;
   recordClassName?: string;
   searchName?: string;
+  paramName?: string;
 }
 
 type CompositePluginComponentProps<PluginProps> = {
@@ -36,6 +36,7 @@ type CompositePluginComponentProps<PluginProps> = {
 type ResolvedPluginReferences = {
   recordClass?: RecordClass;
   question?: Question;
+  parameter?: Parameter;
 }
 
 type PluginComponent<PluginProps> = React.ComponentType<PluginProps>;
@@ -92,19 +93,19 @@ function makeCompositePluginComponentUncached<T>(registry: ClientPluginRegistryE
   type Props = CompositePluginComponentProps<T>;
 
   function CompositePluginComponent(props: Props) {
-    const resolvedReferences = useSelector((state: RootState) => {
-      const { questions, recordClasses } = state.globalData;
-      if (questions == null || recordClasses == null) return null;
+    const resolvedReferences = useWdkService(async wdkService => {
       try {
-        const { searchName, recordClassName } = props.context;
-        const question = questions.find(q => q.urlSegment === searchName);
-        const recordClass = recordClasses.find(r => r.urlSegment === recordClassName);
-        return { question, recordClass };
+        const { searchName, recordClassName, paramName } = props.context;
+        const [ { parameter, question }, recordClass ] = await Promise.all([
+          resolveQuestionAndParameter(wdkService, searchName, paramName),
+          recordClassName == null ? undefined : wdkService.findRecordClass(recordClassName)
+        ]);
+        return { parameter, question, recordClass };
       }
       catch(error) {
         return { error };
       }
-    })
+    }, [ props.context.paramName, props.context.searchName, props.context.recordClassName ]);
 
     if (resolvedReferences == null) return null;
 
@@ -125,6 +126,30 @@ function makeCompositePluginComponentUncached<T>(registry: ClientPluginRegistryE
 
 // We should only re-create the composite plugin component if the plugin registry has changed
 export const makeCompositePluginComponent = defaultMemoize(makeCompositePluginComponentUncached);
+
+async function resolveQuestionAndParameter(wdkService: WdkService, searchName?: string, paramName?: string) {
+  if (searchName == null) {
+    return {
+      parameter: undefined,
+      question: undefined
+    };
+  }
+
+  if (paramName === null) {
+    return {
+      parameter: undefined,
+      question: await wdkService.findQuestion(searchName)
+    };
+  }
+
+  const question = await wdkService.getQuestionAndParameters(searchName);
+  const parameter = question?.parameters.find(({ name }) => name === paramName);
+
+  return {
+    parameter,
+    question
+  };
+}
 
 function isMatchingEntry<T>(entry: ClientPluginRegistryEntry<T>, context: PluginEntryContext, references: ResolvedPluginReferences): boolean {
   if (entry.type !== context.type) return false;
