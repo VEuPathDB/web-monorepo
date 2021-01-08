@@ -160,14 +160,6 @@ function isMatchingEntry<T>(entry: ClientPluginRegistryEntry<T>, context: Plugin
   return true;
 }
 
-function isResolved(context: PluginEntryContext, references: ResolvedPluginReferences) {
-  const { searchName, recordClassName } = context;
-  const { question, recordClass } = references;
-  const isSearchResolved = searchName == null ? true : question != null;
-  const isRecordClassResolved = recordClassName == null ? true : recordClass != null;
-  return isSearchResolved && isRecordClassResolved;
-}
-
 // Default implementations
 function DefaultPluginComponent() {
   return null;
