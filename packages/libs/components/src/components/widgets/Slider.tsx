@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
@@ -17,8 +17,6 @@ export type SliderWidgetProps = {
   valueFormatter?: (value: number) => string;
   /** The amount the value will change each time the mouse moves. Defaults to 1. */
   step?: number;
-  /** Whether to mark each step on the slider. Useful for non-continous values. Defaults to false. */
-  displayStepMarks?: boolean;
   /** Function to invoke whenever the value changes. */
   onChange: (value: number) => void;
   /** Optional label for the widget. */
@@ -38,6 +36,7 @@ export type SliderWidgetProps = {
         type: 'gradient';
         tooltip: string;
         knobColor: string;
+
         trackGradientStart: string;
         trackGradientEnd: string;
       };
@@ -52,13 +51,20 @@ export default function SliderWidget({
   value,
   valueFormatter,
   step = 1,
-  displayStepMarks = false,
   onChange,
   label,
   colorSpec,
   containerStyles = {},
 }: SliderWidgetProps) {
   const [focused, setFocused] = useState(false);
+  const [previousValue, setPreviousValue] = useState<number>();
+
+  // Clear previous value whenever a new value is received.
+  // This has to do with proper event sequencing when
+  // `onChange` is an async action.
+  useEffect(() => {
+    setPreviousValue(undefined);
+  }, [value]);
 
   const useStyles = makeStyles({
     root: {
@@ -76,7 +82,7 @@ export default function SliderWidget({
       borderRadius: 5,
     },
     track: {
-      height: 0,
+      display: 'none',
     },
     thumb: {
       height: 18,
@@ -126,8 +132,17 @@ export default function SliderWidget({
         step={step}
         valueLabelDisplay='auto'
         valueLabelFormat={valueFormatter}
-        onChange={(event, value) => onChange(value as number)}
-        marks={displayStepMarks}
+        onChange={(event, newValue) => {
+          /**
+           * Prevent multiple API calls by:
+           * 1. Ignoring events where new value and current value are equivalent.
+           * 2. When internal function has been called, but value prop has not yet been updated.
+           */
+          if (newValue !== value && !previousValue) {
+            setPreviousValue(value);
+            onChange(newValue as number);
+          }
+        }}
       />
     </div>
   );
