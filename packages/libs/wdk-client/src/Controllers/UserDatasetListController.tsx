@@ -95,30 +95,10 @@ class UserDatasetListController extends PageController <Props> {
     return this.props.stateProps.userDatasetList.status === 'error';
   }
 
-  renderGuestView() {
-    const title = this.getTitle();
-    return (
-      <div className="UserDatasetList-Controller">
-        <h1 className="UserDatasetList-Title">{title}</h1>
-        <div className="UserDatasetList-Content">
-          <UserDatasetEmptyState message={
-            <button
-              type="button"
-              className="btn"
-              onClick={() => this.props.dispatchProps.showLoginForm()}
-            >Please log in to access My Data Sets.</button>
-          } />
-        </div>
-      </div>
-    )
-  }
-
   renderView () {
     const { config, user } = this.props.stateProps.globalData;
 
     if (user == null || config == null) return this.renderDataLoading();
-
-    if (user.isGuest) return this.renderGuestView();
 
     if (this.props.stateProps.userDatasetList.status !== 'complete') return null;
 

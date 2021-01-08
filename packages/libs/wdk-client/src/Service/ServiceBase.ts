@@ -1,15 +1,16 @@
-import { memoize } from 'lodash';
 import localforage from 'localforage';
+import { keyBy, memoize } from 'lodash';
 import * as QueryString from 'querystring';
 import { v4 as uuid } from 'uuid';
-
+import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
+import { ServiceError, isServerError } from 'wdk-client/Service/ServiceError';
+import { fetchWithRetry } from 'wdk-client/Utils/FetchWithRetry';
 import * as Decode from 'wdk-client/Utils/Json';
 import { alert } from 'wdk-client/Utils/Platform';
 import { pendingPromise } from 'wdk-client/Utils/PromiseUtils';
-import { ServiceError } from 'wdk-client/Service/ServiceError';
 import { Question } from 'wdk-client/Utils/WdkModel';
-import { keyBy } from 'lodash';
-import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
+import { appendUrlAndRethrow } from './ServiceUtils';
+
 
 
 /**
@@ -176,12 +177,13 @@ export const ServiceBase = (serviceUrl: string) => {
   }
 
   async function submitErrorIfNot500(error: Error, extra?: any): Promise<void> {
-    if ('status' in error && (error as ServiceError).status >= 500) return;
+    if (isServerError(error)) return;
     return submitError(error, extra);
   }
 
   function _fetchJson<T>(method: string, url: string, body?: string, isBaseUrl?: boolean) {
-    return fetch(
+    return fetchWithRetry(
+      1,
       isBaseUrl ? url : serviceUrl + url, 
       {
         method: method.toUpperCase(),
@@ -220,7 +222,7 @@ export const ServiceBase = (serviceUrl: string) => {
           response.headers.get('x-log-marker') || uuid()
         );
       });
-    }) as Promise<T>
+    }).catch(appendUrlAndRethrow(serviceUrl + url)) as Promise<T>
   }
 
   /**

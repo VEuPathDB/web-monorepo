@@ -18,7 +18,12 @@ type StateProps =
   & Pick<RootState['globalData'], 'user'>
   & Pick<RootState['globalData'], 'config'>;
 type DispatchProps = typeof actionCreators;
-type MergedProps = StateProps & { userEvents: DispatchProps };
+
+type OwnProps = {
+  urlParams: Record<string, string>;
+}
+
+type MergedProps = StateProps & { userEvents: DispatchProps } & OwnProps;
 
 class UserDatasetUploadController extends PageController<MergedProps> {
 
@@ -34,18 +39,6 @@ class UserDatasetUploadController extends PageController<MergedProps> {
     return "Upload My New Data Set";
   }
 
-  renderGuestView(){
-    return (
-      <UserDatasetEmptyState message={
-        <button
-          type="button"
-          className="btn"
-          onClick={() => this.props.userEvents.showLoginForm()}
-        >Please log in to upload a new data set.</button>
-      }/>
-    );
-  }
-
   renderMissingForm(){
     const projectName = this.props.config != null ? this.props.config.displayName : undefined;
     return (
@@ -57,36 +50,28 @@ class UserDatasetUploadController extends PageController<MergedProps> {
     );
   }
 
-  renderUploadForm(){
+  renderView(){
     const projectName = this.props.config != null ? this.props.config.displayName : undefined;
 
     return (
       <div className="stack">
         { projectName === 'MicrobiomeDB'
-          ? <MicrobiomeDBUploadForm badUploadMessage={this.props.badUploadMessage} submitForm={this.props.userEvents.submitUploadForm} />
+          ? <MicrobiomeDBUploadForm badUploadMessage={this.props.badUploadMessage} submitForm={this.props.userEvents.submitUploadForm} urlParams={this.props.urlParams}/>
           : this.renderMissingForm()
         }
       </div>
     );
   }
-
-  renderView() {
-    return (
-      this.props.user && this.props.user.isGuest
-      ? this.renderGuestView()
-      : this.renderUploadForm()
-    );
-  }
 }
 
-const enhance = connect<StateProps, DispatchProps, {}, MergedProps, RootState>(
+const enhance = connect<StateProps, DispatchProps, OwnProps, MergedProps, RootState>(
   (state: RootState) => ({
     badUploadMessage: state.userDatasetUpload.badUploadMessage,
     user: state.globalData.user,
     config: state.globalData.config
   }),
   actionCreators,
-  (stateProps, dispatchProps) => ({ ...stateProps, userEvents: dispatchProps })
+  (stateProps, dispatchProps, ownProps) => ({ ...stateProps, ...ownProps, userEvents: dispatchProps })
 )
 
 export default enhance(wrappable(UserDatasetUploadController));

@@ -7,7 +7,8 @@ import {
   hideRegionDialog,
   requestGenomeSummaryReport,
   showRegionDialog,
-  unapplyEmptyChromosomesFilter
+  unapplyEmptyChromosomesFilter,
+  rejectGenomeSummaryReport
 } from 'wdk-client/Actions/SummaryView/GenomeSummaryViewActions';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { EpicDependencies } from 'wdk-client/Core/Store';
@@ -23,12 +24,14 @@ import {
 } from 'wdk-client/Utils/WdkModel';
 import WdkService from 'wdk-client/Service/WdkService';
 import {getCustomReport, getResultTypeDetails, ResultType} from 'wdk-client/Utils/WdkResult';
+import { isServiceError, ServiceError } from 'wdk-client/Service/ServiceError';
 
 export const key = 'genomeSummaryView';
 export type State = IndexedState<ViewState>;
 export const reduce = indexByActionProperty(reduceView, get(['payload', 'viewId']));
 
 type ViewState = {
+  errorMessage?: string;
   genomeSummaryData?: GenomeSummaryViewReport;
   recordClass?: RecordClass;
   regionDialogVisibilities: Record<string, boolean>;
@@ -53,6 +56,12 @@ function reduceView(state: ViewState = initialState, action: Action): ViewState 
         genomeSummaryData: action.payload.genomeSummaryViewReport,
         recordClass: action.payload.recordClass
       };
+    }
+    case rejectGenomeSummaryReport.type: {
+      return {
+        ...state,
+        errorMessage: action.payload.message
+      }
     }
     case showRegionDialog.type: {
       return {
@@ -112,17 +121,24 @@ async function getGenomeSummaryViewReport(
   [requestAction]: [InferAction<typeof requestGenomeSummaryReport>],
   state$: StateObservable<RootState>,
   { wdkService }: EpicDependencies
-): Promise<InferAction<typeof fulfillGenomeSummaryReport>> {
+): Promise<InferAction<typeof fulfillGenomeSummaryReport> | InferAction<typeof rejectGenomeSummaryReport>> {
   let [format, recordClass] = await getRecordClassAndFormat(
     requestAction.payload.resultType,
     wdkService
   );
-  let report = await getCustomReport<GenomeSummaryViewReport>(
-    wdkService,
-    requestAction.payload.resultType,
-    { format: format, formatConfig: {} }
-  );
-  return fulfillGenomeSummaryReport(requestAction.payload.viewId, report, recordClass);
+  try {
+    let report = await getCustomReport<GenomeSummaryViewReport>(
+      wdkService,
+      requestAction.payload.resultType,
+      { format: format, formatConfig: {} }
+    );
+    return fulfillGenomeSummaryReport(requestAction.payload.viewId, report, recordClass);
+  }
+  catch (error) {
+    wdkService.submitErrorIfNot500(error);
+    const message = isServiceError(error) ? error.response : String(error);
+    return rejectGenomeSummaryReport(requestAction.payload.viewId, message);
+  }
 }
 
 export const observe = combineEpics(

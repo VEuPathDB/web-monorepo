@@ -1,14 +1,16 @@
 import { chunk, difference, union, uniq } from 'lodash';
 import { ActionsObservable, StateObservable } from 'redux-observable';
-import { EMPTY, from, Observable } from 'rxjs';
-import { bufferTime, filter, groupBy, mergeMap } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { bufferTime, filter, groupBy, map, mergeMap, switchMap } from 'rxjs/operators';
 import { Action } from 'wdk-client/Actions';
-import { ALL_FIELD_VISIBILITY, CATEGORY_EXPANSION, NAVIGATION_QUERY, NAVIGATION_VISIBILITY, RecordUpdatedAction, RECORD_ERROR, RECORD_LOADING, RECORD_RECEIVED, RECORD_UPDATE, RequestPartialRecord, REQUEST_PARTIAL_RECORD, SECTION_VISIBILITY, SET_COLLAPSED_SECTIONS, getPrimaryKey } from 'wdk-client/Actions/RecordActions';
+import { ALL_FIELD_VISIBILITY, CATEGORY_EXPANSION, NAVIGATION_QUERY, NAVIGATION_VISIBILITY, RECORD_ERROR, RECORD_LOADING, RECORD_RECEIVED, RECORD_UPDATE, REQUEST_PARTIAL_RECORD, SECTION_VISIBILITY, SET_COLLAPSED_SECTIONS, RequestPartialRecord, RecordReceivedAction, RecordUpdatedAction, getPrimaryKey, updateNavigationVisibility } from 'wdk-client/Actions/RecordActions';
 import { BASKET_STATUS_ERROR, BASKET_STATUS_LOADING, BASKET_STATUS_RECEIVED, FAVORITES_STATUS_ERROR, FAVORITES_STATUS_LOADING, FAVORITES_STATUS_RECEIVED } from 'wdk-client/Actions/UserActions';
 import { RootState } from 'wdk-client/Core/State/Types';
-import { EpicDependencies } from 'wdk-client/Core/Store';
+import { EpicDependencies, ModuleEpic } from 'wdk-client/Core/Store';
+import { getValue, preferences, setValue, } from 'wdk-client/Preferences';
 import { ServiceError } from 'wdk-client/Service/ServiceError';
 import { CategoryTreeNode, getId, getTargetType } from 'wdk-client/Utils/CategoryUtils';
+import { stateEffect } from 'wdk-client/Utils/ObserverUtils';
 import { filterNodes } from 'wdk-client/Utils/TreeUtils';
 import { RecordClass, RecordInstance } from 'wdk-client/Utils/WdkModel';
 
@@ -238,4 +240,47 @@ function observeRecordRequests(action$: ActionsObservable<Action>, state$: State
       })
     ))
   )
+}
+
+// Utility for making epics which...
+// (1) On record load, update the "navigationVisible" state based on the "navigationVisible" preference
+// (2) On change of "navigationVisible" state, update the "navigationVisible" preference
+export function makeNavigationVisibilityPreferenceEpics(initialVisibility: (recordClass: RecordClass) => boolean) {
+  const observeNavigationVisibilityPreference: ModuleEpic<RootState, Action> = (action$, state$, deps) => action$.pipe(
+    filter((action): action is RecordReceivedAction => action.type === RECORD_RECEIVED),
+    switchMap(() => {
+      const recordClass = state$.value[key].recordClass;
+
+      const navigationVisiblePreference$ = getValue(
+        deps.wdkService,
+        preferences.navigationVisible(recordClass.urlSegment)
+      );
+
+      return from(
+        navigationVisiblePreference$
+      ).pipe(map(
+        value => updateNavigationVisibility(value ?? initialVisibility(recordClass))
+      ));
+    })
+  );
+
+  const observeNavigationVisibilityState: ModuleEpic<RootState, Action> = (action$, state$, deps) => stateEffect(
+    state$,
+    state => state[key].navigationVisible,
+    newNavigationVisibility => {
+      const recordState = state$.value[key];
+      const recordClassUrlSegment = recordState.recordClass.urlSegment;
+
+      setValue(
+        deps.wdkService,
+        preferences.navigationVisible(recordClassUrlSegment),
+        newNavigationVisibility
+      );
+    }
+  );
+
+  return {
+    observeNavigationVisibilityPreference,
+    observeNavigationVisibilityState
+  };
 }

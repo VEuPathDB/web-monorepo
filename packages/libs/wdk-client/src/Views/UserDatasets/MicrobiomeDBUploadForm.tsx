@@ -1,6 +1,6 @@
 import React from 'react';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
-import { Link, TextBox, TextArea, FileInput } from 'wdk-client/Components';
+import { Link, TextBox, TextArea, FileInput, RadioList } from 'wdk-client/Components';
 import { UserDatasetMeta, NewUserDataset } from 'wdk-client/Utils/WdkModel';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
@@ -9,11 +9,14 @@ import 'wdk-client/Views/UserDatasets/MicrobiomeDBUploadForm.scss';
 type State = UserDatasetMeta & {
   badFormStateMessages: string[];
   submitting: boolean;
+  url?: string;
+  dataUploadMode: 'url' | 'file'
   file?: File;
 };
 
 type Props = {
   badUploadMessage?: string;
+  urlParams: Record<string,string>;
   submitForm: (newUserDataset: NewUserDataset) => void;
 };
 
@@ -22,9 +25,11 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
   constructor (props: Props) {
     super(props);
     this.state = {
-      name: "",
-      summary: "",
-      description: "",
+      name: this.props.urlParams.datasetName || "",
+      summary: this.props.urlParams.datasetSummary || "",
+      description: this.props.urlParams.datasetDescription || "",
+      url: this.props.urlParams.datasetUrl || "",
+      dataUploadMode: this.props.urlParams.datasetUrl ? 'url' : 'file',
       badFormStateMessages: [],
       submitting: false
     };
@@ -40,8 +45,11 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
     if( ! this.state.description ){
       errors.push('Required: data set description');
     }
-    if( this.state.file == null ){
-      errors.push('Required: data file');
+    if( this.state.file == null && ! this.state.url ){
+      errors.push('Required: data file or URL');
+    }
+    if( this.state.url && ! isValidUrl(this.state.url) ){
+      errors.push('The provided data URL does not seem valid');
     }
     return errors;
   }
@@ -56,7 +64,7 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
         description: this.state.description as string,
         datasetType: "biom",
         projects: ["MicrobiomeDB"],
-        file: this.state.file as File
+        file: this.state.url ? new File([this.state.url], `${this.state.name.replace(/\W+/g, "_")}.path-to.biom`) : this.state.file as File
       };
       this.setState({submitting: true}, () => this.props.submitForm(newUserDataset));
     } 
@@ -86,6 +94,7 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
           <label htmlFor="data-set-name">Name<sup className="supAsterisk">*</sup>:<br/></label>
           <TextBox
             type="input" id="data-set-name" required={true} placeholder="name of the data set"
+            value={this.state.name}
             onChange={(name) => this.setState({name})} 
           />
         </div>
@@ -93,6 +102,7 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
           <label htmlFor="data-set-summary">Summary<sup className="supAsterisk">*</sup>:<br/></label>
           <TextBox
             type="input" id="data-set-summary" required={true} placeholder="brief summary of the data set contents"
+            value={this.state.summary}
             onChange={(summary) => this.setState({summary})} 
           />
         </div>
@@ -100,13 +110,36 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
           <label htmlFor="data-set-description">Description<sup className="supAsterisk">*</sup>:<br/></label>
           <TextArea
             id="data-set-description" required={true} placeholder="brief description of the data set contents"
+            value={this.state.description}
             onChange={(description) => this.setState({description})} 
           />
         </div>
-        <div className="formSection">
-          <label htmlFor="data-set-file">Data File:<br/></label>
-          <FileInput id="data-set-file" onChange={ (file) => this.setState({file: file || undefined}) } />
-          <div>Maximum size 1GB. </div>
+        <div className="formSection" style={{minHeight: "8em"}}>
+          <RadioList name="data-set-radio" value={this.state.dataUploadMode} onChange={(value) => {if(value == 'url' || value == 'file'){this.setState({dataUploadMode: value})}}}
+            items={[{
+              value: 'file',
+              display: <React.Fragment>
+                <label htmlFor="data-set-file">{this.state.dataUploadMode == 'file'? (<React.Fragment>Data File<sup className="supAsterisk">*</sup>:</React.Fragment>): "Data File"}<br/></label>
+                {
+                  this.state.dataUploadMode == 'file' &&
+                  <FileInput id="data-set-file" onChange={ (file) => this.setState(file ? {file: file, url: ""}: {file: undefined}) } />
+                }
+              </React.Fragment>
+            },{
+              value: 'url',
+              display: <React.Fragment>
+                <label htmlFor="data-set-url">{this.state.dataUploadMode == 'url'? (<React.Fragment>Data URL<sup className="supAsterisk">*</sup>:</React.Fragment>): "Data URL"}<br/></label>
+                {
+                  this.state.dataUploadMode == 'url' &&
+                  <TextBox
+                    type="input" id="data-set-url" placeholder="Address of a data BIOM file from the Web"
+                    value={this.state.url}
+                    onChange={(url) => this.setState({url})}
+                  />
+                }
+              </React.Fragment>
+            }
+            ]}/>
         </div>
       </div>
     );
@@ -118,7 +151,7 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
         <span>* </span> All form fields are required.
         <br/>
         <br/>
-        We accept any file in the <a href="http://biom-format.org">BIOM format</a>, either JSON-based (BIOM 1.0) or HDF5 (BIOM 2.0+).
+        We accept any file in the <a href="http://biom-format.org">BIOM format</a>, either JSON-based (BIOM 1.0) or HDF5 (BIOM 2.0+). The maximum allowed file size is 1GB.
         <br/>
         <br/>
         If possible, try including taxonomic information and rich sample details in your file. This will allow you to select groups of samples and create meaningful comparisons at a desired aggregation level, using our filtering and visualisation tools.
@@ -144,6 +177,15 @@ class MicrobiomeDBUploadForm extends React.Component <Props, State> {
       </div>
     );
   }
+}
+// https://stackoverflow.com/a/43467144
+function isValidUrl(string: string) {
+  try {
+    new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return true;
 }
 
 export default wrappable(MicrobiomeDBUploadForm);

@@ -9,6 +9,7 @@ import {requestBlastSummaryReport, fulfillBlastSummaryReport} from 'wdk-client/A
 import {State} from 'wdk-client/StoreModules/BlastSummaryViewStoreModule';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
 import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { ContentError } from 'wdk-client/Components/PageStatus/ContentError';
 
 
 const actionCreators = {
@@ -35,11 +36,15 @@ class BlastSummaryViewController extends ViewController< Props > {
   }
 
   isRenderDataLoadError() {
-    return false; // TODO fix this
+    return this.props.errorMessage != null;
   }
 
   renderDataLoadError() {
-    return <LoadError/>;  // TODO: make this better
+    return (
+      <ContentError>
+        {this.props.errorMessage!}
+      </ContentError>
+    );
   }
 
   renderView() {
