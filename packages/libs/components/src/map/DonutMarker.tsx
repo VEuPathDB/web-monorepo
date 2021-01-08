@@ -11,10 +11,12 @@ import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import PiePlot from 'visualization-tools/src/plots/PiePlot';
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
-interface DonutMarkerProps extends BoundsDriftMarkerProps {
-  labels: Array<string>, // the labels (not likely to be shown at normal marker size)
-  values: Array<number>, // the counts or totals to be shown in the donut
-  colors?: Array<string> | null, // bar colors: set to be optional with array or null type
+export interface DonutMarkerProps extends BoundsDriftMarkerProps {
+  data: {
+    value: number,
+    label: string,
+    color?: string,
+  }[],
   isAtomic?: boolean,      // add a special thumbtack icon if this is true
   onClick?: (event: L.LeafletMouseEvent) => void | undefined,
 }
@@ -74,17 +76,20 @@ function kFormatter(num: number) {
 export default function DonutMarker(props: DonutMarkerProps) {
   let fullStat = []
   let defaultColor: string = ''
-  for (let i = 0; i < props.values.length; i++) {
-    if (props.colors) {
-      defaultColor = props.colors[i]
+  for (let i = 0; i < props.data.length; i++) {
+    let datum = props.data[i]
+
+    if (datum.color) {
+      defaultColor = datum.color
     } else {
       defaultColor = 'silver'
     }
+
     fullStat.push({
       // color: props.colors[i],
       color: defaultColor,
-      label: props.labels[i],
-      value: props.values[i],
+      label: datum.label,
+      value: datum.value,
     })
   }
 
@@ -146,11 +151,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
   const plotSize = plotSizeInit + 2*marginSize;
 
   const popupPlot = <PiePlot
-    data={props.labels.map((label, i) => ({
-      label: label,
-      value: props.values[i],
-      color: props.colors ? props.colors[i] : undefined,
-    }))}
+    data={props.data}
     interior={{
       heightPercentage: 0.7,
       text: sumValues.toString(),

@@ -13,7 +13,7 @@ import speciesData from './test-data/geoclust-species-testing-all-levels.json';
 // import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
 import { LeafletMouseEvent } from "leaflet";
-import DonutMarker from './DonutMarker';
+import DonutMarker, { DonutMarkerProps } from './DonutMarker';
 
 //DKDK sidebar & legend
 import MapVEuMap from './MapVEuMap';
@@ -145,14 +145,15 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
     const lat : number = bucket.ltAvg;
     const lng : number = bucket.lnAvg;
     const bounds : Bounds = { southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }};
-    let labels: string[] = [];
-    let values: number[] = [];
-    let colors: string[] = [];
+    let data: DonutMarkerProps['data'] = [];
+
     bucket.term.buckets.forEach((bucket : any) => {
       const species = bucket.val;
-      labels.push(species);
-      values.push(bucket.count);
-      colors.push(speciesToColor.get(species) || 'silver');
+      data.push({
+        label: species,
+        value: bucket.count,
+        color: speciesToColor.get(species) || 'silver',
+      });
     });
 
     //DKDK check isAtomic
@@ -167,9 +168,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
         key={key}   //DKDK anim
         position={{lat, lng}}
         bounds={bounds}
-        labels={labels}
-        values={values}
-        colors={colors}
+        data={data}
         isAtomic={atomicValue}
         onClick={handleClick}
         duration={duration}
