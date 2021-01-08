@@ -1,6 +1,7 @@
 import { partial, pick, values } from 'lodash';
 
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
+import { stripHTML } from 'wdk-client/Utils/DomUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { getPropertyValue, nodeHasProperty } from 'wdk-client/Utils/OntologyUtils';
 import { filterItems } from 'wdk-client/Utils/SearchUtils';
@@ -28,15 +29,6 @@ export function filterRecords(records: RecordInstance[], filterSpec: FilterSpec)
   let { filterTerm, filterAttributes = [], filterTables = [] } = filterSpec;
   let getSearchableStringPartial = partial(getSearchableString, filterAttributes, filterTables);
   return filterItems(records, getSearchableStringPartial, filterTerm);
-}
-
-/**
- * Strip HTML characters from a string.
- */
-export function stripHTML(str: string): string {
-  let span = document.createElement('span');
-  span.innerHTML = str;
-  return span.textContent || '';
 }
 
 /**
