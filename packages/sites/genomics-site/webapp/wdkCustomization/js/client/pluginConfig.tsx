@@ -25,6 +25,8 @@ import { InternalGeneDataset } from './components/questions/InternalGeneDataset'
 import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/MutuallyExclusiveParams/utils';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 
+import { OrganismParam, isOrganismParam } from './components/questions/OrganismParam';
+
 const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   ({ question }) => (
     question?.properties?.datasetCategory != null &&
@@ -148,6 +150,14 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     name: 'genotype',
     searchName: 'ByGenotypeNumber',
     component: ByGenotypeNumberCheckbox
+  },
+  {
+    type: 'questionFormParameter',
+    test: ({ parameter }) => (
+      parameter != null &&
+      isOrganismParam(parameter)
+    ),
+    component: OrganismParam
   },
   {
     type: 'stepAnalysisResult',
