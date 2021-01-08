@@ -165,6 +165,7 @@ function QuestionController(props: Props) {
         context={{
           type: 'questionFormParameter',
           name: parameter.name,
+          paramName: parameter.name,
           searchName,
           recordClassName
         }}
