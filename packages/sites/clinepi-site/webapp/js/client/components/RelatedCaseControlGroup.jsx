@@ -15,9 +15,10 @@ export default class RelatedCaseControlGroup extends React.Component {
 
   static shouldUseLayout(props) {
     const settings = parseSettings(props.wizardState.question);
+    const activeGroup = props.wizardState.question.groups[props.wizardState.activeGroupIx];
     return (
       settings != null &&
-      settings.getCaseControlGroup() === props.wizardState.activeGroup
+      settings.getCaseControlGroup() === activeGroup
     );
   }
 
@@ -110,19 +111,27 @@ export default class RelatedCaseControlGroup extends React.Component {
     return (
       <Param
         param={param}
-        value={this.props.wizardState.paramValues[param.name]}
+        dispatch={this.props.dispatch}
+        paramValues={this.props.wizardState.paramValues}
         uiState={this.props.wizardState.paramUIState[param.name]}
-        {...this.props.parameterEventHandlers}
+        searchName={this.props.searchName}
+        recordClassName={this.props.recordClassName}
+        eventHandlers={this.props.parameterEventHandlers}
       />
     );
   }
 
   render() {
+    const { question } = this.props.wizardState;
     const settings = parseSettings(this.props.wizardState.question);
     const modifiedWizardState = Object.assign({}, this.props.wizardState, {
-      activeGroup: Object.assign({}, this.props.wizardState.activeGroup, {
-        parameters: []
-      })
+      question: {
+        ...question,
+        parameters: question.parameters.map(p => ({
+          ...p,
+          isVisible: false
+        }))
+      }
     });
 
     const keepRemoveParam = settings.getKeepRemoveParam();

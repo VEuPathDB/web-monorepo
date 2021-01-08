@@ -21,14 +21,16 @@ const FakeStep = (props) => (
 )
 
 function paramRenderer(param, props) {
-  const value = props.wizardState.paramValues[param.name];
   const uiState = props.wizardState.paramUIState[param.name];
   return (
     <Param
       param={param}
-      value={value}
+      dispatch={props.dispatch}
+      paramValues={props.wizardState.paramValues}
       uiState={uiState}
-      {...props.parameterEventHandlers}
+      searchName={props.searchName}
+      recordClassName={props.recordClassName}
+      eventHandlers={props.parameterEventHandlers}
     />
   );
 }
@@ -68,9 +70,10 @@ export default class RelativeVisitsGroup extends React.Component {
 
   static shouldUseLayout(props) {
     const settings = parseSettings(props.wizardState.question);
+    const activeGroup = props.wizardState.question.groups[props.wizardState.activeGroupIx];
     return (
       settings != null &&
-      settings.getRelatedObservationsGroup() === props.wizardState.activeGroup
+      settings.getRelatedObservationsGroup() === activeGroup
     );
   }
 
@@ -93,7 +96,7 @@ export default class RelativeVisitsGroup extends React.Component {
    * Layout for related observations.
    */
   renderLayout(eventsGroup, settings) {
-    const group = this.props.wizardState.activeGroup;
+    const group = this.props.wizardState.question.groups[this.props.wizardState.activeGroupIx];
     return (
       <div>
         <div className="RelativeVisitsLayout">
@@ -121,7 +124,8 @@ export default class RelativeVisitsGroup extends React.Component {
   }
 
   render() {
-    const { question } = this.props.wizardState;
+    const { question, activeGroupIx } = this.props.wizardState;
+    const activeGroup = question.groups[activeGroupIx];
     const settings = parseSettings(question);
     const eventsGroup = this.props.wizardState.question.groups.find(group => group === settings.getObservationGroup());
     const eventsIsDefault = eventsGroup.parameters.every(paramName =>
@@ -154,7 +158,7 @@ export default class RelativeVisitsGroup extends React.Component {
     const warningMessage = eventsIsDefault && (
       <div className="RelativeVisitsMessage RelativeVisitsMessage__warning">
         Before using
-        <FakeStep> {this.props.wizardState.activeGroup.displayName}</FakeStep>,
+        <FakeStep> {activeGroup.displayName}</FakeStep>,
         please first specify observations in the previous
         <FakeStep> {eventsGroup.displayName} </FakeStep>
         filter.
@@ -163,7 +167,7 @@ export default class RelativeVisitsGroup extends React.Component {
     const message = !eventsIsDefault && (
       <div className="RelativeVisitsMessage">
         <label>
-          {useRelativeVisitsElement} Enable the advanced <FakeStep>{this.props.wizardState.activeGroup.displayName}</FakeStep> filter below.  It allows you to restrict <FakeStep>{eventsGroup.displayName}</FakeStep> by relating them to your choice of <FakeStep>{this.props.wizardState.activeGroup.displayName}</FakeStep>.
+          {useRelativeVisitsElement} Enable the advanced <FakeStep>{activeGroup.displayName}</FakeStep> filter below.  It allows you to restrict <FakeStep>{eventsGroup.displayName}</FakeStep> by relating them to your choice of <FakeStep>{activeGroup.displayName}</FakeStep>.
         </label>
       </div>
     );
