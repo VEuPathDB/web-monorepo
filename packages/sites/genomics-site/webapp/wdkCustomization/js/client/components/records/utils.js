@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { compose, defaultTo, memoize, property } from 'lodash/fp';
 
 import { RecordActions } from 'wdk-client/Actions';
-import { stripHTML } from 'wdk-client/Views/Records/RecordUtils';
+import { stripHTML } from 'wdk-client/Utils/DomUtils';
 
 /**
  * Higher order component to ensure that record fields

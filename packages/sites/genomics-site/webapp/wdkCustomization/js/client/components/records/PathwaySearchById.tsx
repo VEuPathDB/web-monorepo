@@ -8,7 +8,7 @@ import { isEqual, orderBy, uniqWith } from 'lodash';
 
 import { HelpIcon } from 'wdk-client/Components';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { stripHTML } from 'wdk-client/Views/Records/RecordUtils';
+import { stripHTML } from 'wdk-client/Utils/DomUtils';
 
 import { NodeSearchCriteria } from './pathway-utils';
 
