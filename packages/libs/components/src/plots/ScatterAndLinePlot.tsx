@@ -1,5 +1,5 @@
 import React from "react";
-import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
 import { PlotData } from 'plotly.js';
 
 interface Props extends PlotProps {
@@ -8,7 +8,6 @@ interface Props extends PlotProps {
   yLabel: string;  
   plotTitle: string;
   showLegend?: boolean;
-  showModebar?: boolean;
 }
 
 export default function ScatterAndLinePlot(props: Props) {
@@ -35,7 +34,10 @@ export default function ScatterAndLinePlot(props: Props) {
         margin: props.margin,
         showlegend: props.showLegend
       })}
-      config={{displayModeBar: props.showModebar}}
+      config={{
+        displayModeBar: props.showModebar || ModebarDefault,
+        staticPlot: props.staticPlot,
+      }}
     />
   );
 }
