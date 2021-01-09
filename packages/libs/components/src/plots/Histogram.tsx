@@ -5,56 +5,55 @@ import { DateTime } from 'luxon';
 import { DARK_GRAY } from '../constants/colors';
 import PlotlyPlot from './PlotlyPlot';
 import { action } from '@storybook/addon-actions'; // BM: temp/debugging - should not depend on storybook here!
-
-export type HistogramData = Array<{
-  name: string;
-  color: string;
-  bins: HistogramBin[];
-}>;
-
-type HistogramBin = {
-  binStart: number | string;
-  binEnd?: number | string;
-  binLabel?: string;
-  count: number;
-};
+import { HistogramBin, HistogramData } from '../types/plots';
 
 /**
  * Determine the label for a given HistogramBin. 
  * 
  * If a `binLabel` is specified on the bin itself, that is used.
- * Otherwise one is generated. Note that there is some complicated 
- * logic here due to parsing potential
- * date strings as binStart/binEnd values.
+ * Otherwise one is generated. Note that this does NOT currently support
+ * date based bin labels.
 
  * @param bin The bin for which to derive the label.
+ * @param binWidth The currently selected binWidth.
  */
-const binLabel = (bin: HistogramBin) => {
+const binLabel = (bin: HistogramBin, binWidth: number) => {
   if (bin.binLabel) {
     return bin.binLabel;
   }
 
-  if (typeof bin.binStart === 'string') {
-    const binStartAsDate = DateTime.fromISO(bin.binStart);
-    const binEndAsDate = DateTime.fromISO(bin.binEnd as string);
+  // TODO: This doesn't work for date based labels since we don't know the possible range of availableUnits to perform calculations with.
 
-    if (binStartAsDate.isValid) {
-      return binEndAsDate.isValid
-        ? `${binStartAsDate.toLocaleString(
-            DateTime.DATE_MED
-          )}<br>to<br>${binEndAsDate.toLocaleString(DateTime.DATE_MED)}`
-        : `${binStartAsDate.toLocaleString(DateTime.DATE_MED)}`;
-    } else {
-      return bin.binEnd ? `${bin.binStart} - ${bin.binEnd}` : `${bin.binStart}`;
-    }
+  switch (typeof bin.binStart) {
+    case 'string':
+      return `Unsupported Bin Label.`;
+    case 'number':
+      return `${bin.binStart} - ${bin.binStart + binWidth}`;
+    default:
+      return `Unsupported Bin Label.`;
   }
 
-  return bin.binEnd ? `${bin.binStart} - ${bin.binEnd}` : `${bin.binStart}`;
+  // if (typeof bin.binStart === 'string') {
+  //   const binStartAsDate = DateTime.fromISO(bin.binStart);
+  //   const binEndAsDate = DateTime.fromISO(bin.binEnd as string);
+
+  //   if (binStartAsDate.isValid) {
+  //     return binEndAsDate.isValid
+  //       ? `${binStartAsDate.toLocaleString(
+  //           DateTime.DATE_MED
+  //         )}<br>to<br>${binEndAsDate.toLocaleString(DateTime.DATE_MED)}`
+  //       : `${binStartAsDate.toLocaleString(DateTime.DATE_MED)}`;
+  //   } else {
+  //     return bin.binEnd ? `${bin.binStart} - ${bin.binEnd}` : `${bin.binStart}`;
+  //   }
+  // }
 };
 
 export type HistogramProps = {
-  /** Data for the plot */
+  /** Data for the plot. */
   data: HistogramData;
+  /** Currently selected binWidth. */
+  binWidth: number;
   /** The width of the plot in pixels. */
   width: number;
   /** The height of the plot in pixels. */
@@ -85,6 +84,7 @@ export type HistogramProps = {
 /** A Plot.ly based histogram component. */
 export default function Histogram({
   data,
+  binWidth,
   width,
   height,
   orientation = 'vertical',
@@ -93,7 +93,7 @@ export default function Histogram({
   dependentAxisLabel = 'Count',
   textColor = DARK_GRAY,
   gridColor,
-  opacity,
+  opacity = 1,
   layout = 'overlay',
   backgroundColor = 'transparent',
 }: HistogramProps) {
@@ -109,6 +109,7 @@ export default function Histogram({
    * when there is more than 1 data series and the layout
    * is overlay.
    */
+  console.log(opacity);
   let calculatedBarOpacity: number;
   if (layout === 'overlay' && data.length > 1) {
     calculatedBarOpacity =
@@ -121,7 +122,7 @@ export default function Histogram({
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
     () =>
       data.map((series) => {
-        const binLabels = series.bins.map(binLabel);
+        const binLabels = series.bins.map((bin) => binLabel(bin, binWidth));
         const binCounts = series.bins.map((bin) => bin.count);
 
         return {
@@ -134,7 +135,7 @@ export default function Histogram({
           ...(series.color ? { marker: { color: series.color } } : {}),
         };
       }),
-    [data, orientation, calculatedBarOpacity]
+    [data, orientation, binWidth, calculatedBarOpacity]
   );
 
   return (
@@ -198,7 +199,7 @@ export default function Histogram({
       data={plotlyFriendlyData}
       onSelected={action('made a selection')}
     />
-  );  // BM onSelected is debug only
+  ); // BM onSelected is debug only
 }
 
 //   // ----------------
