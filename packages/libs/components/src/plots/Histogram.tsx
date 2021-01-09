@@ -4,7 +4,6 @@ import { DateTime } from 'luxon';
 
 import { DARK_GRAY } from '../constants/colors';
 import PlotlyPlot from './PlotlyPlot';
-import { action } from '@storybook/addon-actions'; // BM: temp/debugging - should not depend on storybook here!
 import { HistogramBin, HistogramData } from '../types/plots';
 
 /**
@@ -109,7 +108,6 @@ export default function Histogram({
    * when there is more than 1 data series and the layout
    * is overlay.
    */
-  console.log(opacity);
   let calculatedBarOpacity: number;
   if (layout === 'overlay' && data.length > 1) {
     calculatedBarOpacity =
@@ -140,9 +138,11 @@ export default function Histogram({
 
   return (
     <PlotlyPlot
+      useResizeHandler={true}
       revision={revision}
       style={{ height, width }}
       layout={{
+        autosize: true,
         margin: {
           pad: 5,
         },
@@ -151,13 +151,11 @@ export default function Histogram({
             color: textColor,
           },
         },
-        autosize: false,
-        width: width,
-        height: height,
         plot_bgcolor: backgroundColor,
         paper_bgcolor: backgroundColor,
         xaxis: {
           type: orientation === 'vertical' ? 'category' : 'linear',
+          automargin: true,
           title: {
             text:
               orientation === 'vertical'
@@ -171,6 +169,7 @@ export default function Histogram({
           color: textColor,
         },
         yaxis: {
+          automargin: true,
           title: {
             text:
               orientation === 'vertical'
@@ -197,27 +196,6 @@ export default function Histogram({
         },
       }}
       data={plotlyFriendlyData}
-      onSelected={action('made a selection')}
     />
-  ); // BM onSelected is debug only
+  );
 }
-
-//   // ----------------
-//   // BACKEND CONTROLS
-//   // ----------------
-//   //
-//   // component consumer is responsible for updating the data based on the settings
-
-//   // bin width related props
-//   binWidth: UserDataTypeToNativeType<T>;
-//   //   onBinWidthChange: (width: UserDataTypeToNativeType<T>) => void;
-
-//   // units related props
-//   //   units: string[];
-//   //   selectedUnits: string;
-//   //   onUnitsChange: (units: string) => void;
-
-//   // barSize related props
-//   //   barSize: 'absolute' | 'proportional';
-//   //   onBarSizeChange: (barSize: 'absolute' | 'proportional') => void;
-// }
