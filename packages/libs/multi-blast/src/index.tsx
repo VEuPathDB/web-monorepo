@@ -3,10 +3,14 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
+import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+
 import Header from './Header';
 import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
+
+import { BlastForm } from './lib/BlastForm';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
@@ -24,6 +28,13 @@ initialize({
   componentWrappers: {
     SiteHeader: () => Header,
   },
+  pluginConfig: [
+    {
+      type: 'questionForm',
+      name: 'GenesByMultiBlast',
+      component: BlastForm
+    }
+  ] as ClientPluginRegistryEntry<any>[],
   endpoint,
 } as any);
 
