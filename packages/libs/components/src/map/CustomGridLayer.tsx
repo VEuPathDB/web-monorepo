@@ -24,8 +24,8 @@ export default function CustomGridLayer() {
             if (map != null) {
                 const zoomLevel = map.getZoom();
                 const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
-
                 const currentMapBounds = map.getBounds();
+
                 // bfox6 - Make the current map bounds accessible to the outside world
                 setMapBounds(currentMapBounds);
                 /**

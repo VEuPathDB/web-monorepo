@@ -9,9 +9,9 @@ import CustomGridLayer from "./CustomGridLayer";
 
 /**
  * Renders a Leaflet map with semantic zooming markers
- * 
- * 
- * @param props 
+ *
+ *
+ * @param props
  */
 
 interface MapVEuMapProps {
@@ -24,6 +24,7 @@ interface MapVEuMapProps {
   onViewportChanged: (bvp: BoundsViewport) => void,
   markers: ReactElement<MarkerProps>[],
   nudge?: 'geohash' | 'none',
+  recenterMarkers?: boolean,
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
   sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
   animation: {
@@ -36,7 +37,7 @@ interface MapVEuMapProps {
 
 
 
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, showGrid}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, recenterMarkers = true, showGrid}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -54,6 +55,9 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         viewport={state}
         style={{height, width}}
         onViewportChanged={handleViewportChanged}
+        // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
+        minZoom={2}
+        worldCopyJump={true}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -65,6 +69,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         markers={markers}
         animation={animation}
         nudge={nudge}
+        recenterMarkers={recenterMarkers}
       />
 
       { showGrid ? <CustomGridLayer /> : null }
@@ -90,6 +95,9 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
+            bounds={[[-90,-180],[90,180]]}
+            noWrap={true}
           />
         </BaseLayer>
         <BaseLayer name="light">
