@@ -1,0 +1,1028 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/dropbox/WASHB-Kenya-Data/1-primary-outcome-datasets/Public/washb-keny
+> a-endline-anthro-public-codebook.txt
+  log type:  text
+ opened on:   9 Apr 2018, 10:03:59
+
+. desc
+
+Contains data from Public/washb-kenya-endline-anthro-public.dta
+  obs:         7,240                          
+ vars:            59                          9 Apr 2018 10:03
+ size:     2,867,040                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+clusterid       str6    %9s                   Cluster ID
+compoundid      str7    %9s                   Compound ID
+hhid            str8    %9s                   Household ID
+childid         str11   %11s                  Child ID
+block           byte    %10.0g                Randomization block
+tr              float   %15.0g     tr         Randomized treatment assignment
+time            double  %10.0g                
+targetchild     double  %10.0g                
+staffid         int     %8.0g               * ANTHRO FIELD STAFF ID
+childht         double  %10.0g                
+headc           double  %10.0g                
+motherht        float   %9.0g                 
+sex             byte    %8.0g      sexl     * Sex
+sibling         double  %10.0g                
+newbirth        double  %10.0g                
+month           double  %10.0g                
+aged            double  %10.0g                
+agem            double  %10.0g                
+agey            double  %10.0g                
+haz             double  %10.0g                Length/height-for-age Z-score
+waz             double  %10.0g                Weight-for-age Z-score
+whz             double  %10.0g                Weight-for-length/height Z-score
+bmiz06          double  %10.0g                BMI-for-age Z-score
+stunted         double  %10.0g                
+sstunted        double  %10.0g                
+wasted          double  %10.0g                
+underwt         double  %10.0g                
+waz_who         double  %10.0g                Weight-for-age z-score
+haz_who         double  %10.0g                Length/height-for-age z-score
+whz_who         double  %10.0g                Weight-for-length/height z-score
+hcz             double  %10.0g                
+underhc         double  %10.0g                
+Ncomp           byte    %10.0g                Total number of people in compound
+cow             int     %10.0g                HOW MANY CATTLE BELONG TO YOUR HOUSEHOLD? IF NONE,
+                                                ENTER “0” YOU CAN SELECT Don
+goat            byte    %10.0g                HOW MANY GOATS BELONG TO YOUR HOUSEHOLD? IF NONE,
+                                                ENTER “0” YOU CAN SELECT Don t
+chicken         int     %10.0g                HOW MANY POULTRY (CHICKEN, DUCKS, PIGEONS, etc) BELONG
+                                                TO YOUR HOUSEHOLD? IF NON
+dog             int     %10.0g                HOW MANY DOGS BELONG TO YOUR HOUSEHOLD? IF NONE, ENTER
+                                                “0” YOU CAN SELECT Don t
+mother_age      double  %10.0g                
+mother_edu      double  %18.0g     mother_edul
+                                              
+water_time      double  %10.0g                
+roof            double  %11.0g     roofl      
+walls           double  %15.0g     wallsl     
+floor           double  %15.0g     floorl     
+elec            double  %15.0g     elecl      
+radio           double  %10.0g     radiol     
+tv              double  %10.0g     tvl        
+mobilephone     double  %17.0g     mobilephonel
+                                              
+clock           double  %10.0g     clockl     
+bicycle         double  %11.0g     bicyclel   
+motorcycle      double  %14.0g     motorcyclel
+                                              
+stove           double  %10.0g     stovel     
+cooker          double  %14.0g     cookerl    
+car             double  %10.0g     carl       
+u18             double  %10.0g                
+HHS             double  %14.0g     HHSl       Hunger score
+week_baseline   float   %9.0g                 Week of baseline survey
+week_survey     float   %9.0g                 Week of measurement
+year_baseline   float   %9.0g                 Year of baseline survey
+year_survey     float   %9.0g                 Year of measurement
+                                            * indicated variables have notes
+----------------------------------------------------------------------------------------------------
+Sorted by: hhid
+
+. codebook, c
+
+Variable       Obs Unique       Mean       Min       Max  Label
+----------------------------------------------------------------------------------------------------
+clusterid     7240    702          .         .         .  Cluster ID
+compoundid    7240   6383          .         .         .  Compound ID
+hhid          7240   6558          .         .         .  Household ID
+childid       7240   7240          .         .         .  Child ID
+block         7240     89   46.04862         1        89  Randomization block
+tr            7240      8   4.057735         1         8  Randomized treatment assignment
+time          7240      1          2         2         2  
+targetchild   7240      2   .9187845         0         1  
+staffid       7240     49   6073.913       545      8884  ANTHRO FIELD STAFF ID
+childht       6811    333   81.63249      51.1      96.6  
+headc         6959    165   47.10871      32.8        55  
+motherht      6869    345   160.1467        67     180.5  
+sex           7238      2   .5187897         0         1  Sex
+sibling       7240      2   .0812155         0         1  
+newbirth      7240      2   .0812155         0         1  
+month         7240     12   5.986602         1        12  
+aged          7231    640   697.7208         1       952  
+agem          7231    640   22.93874  .0328767   31.2986  
+agey          7231    640   1.910255  .0027379  2.606434  
+haz           6801    621  -1.514452     -5.96      2.77  Length/height-for-age Z-score
+waz           6968    583  -.6930855      -5.7      2.68  Weight-for-age Z-score
+whz           6801    527   .1220321     -4.18      4.38  Weight-for-length/height Z-score
+bmiz06        6800    537   .3562015     -3.99      4.62  BMI-for-age Z-score
+stunted       6801      2    .308484         0         1  
+sstunted      6801      2   .0873401         0         1  
+wasted        6801      2   .0144096         0         1  
+underwt       6968      2   .0937141         0         1  
+waz_who       6968    582  -.6904506      -5.7      2.68  Weight-for-age z-score
+haz_who       6801    614  -1.509954     -5.96      2.78  Length/height-for-age z-score
+whz_who       6803    527   .1221094     -4.18      4.38  Weight-for-length/height z-score
+hcz           6950    565   -.252977     -4.92      4.41  
+underhc       6950      2   .0411511         0         1  
+Ncomp         7240     51   8.224033         0        72  Total number of people in compound
+cow           7232     16   1.000691         0        24  HOW MANY CATTLE BELONG TO YOUR HOUSEHOL...
+goat          7234     12   .2337573         0        34  HOW MANY GOATS BELONG TO YOUR HOUSEHOLD...
+chicken       7165     56   6.278437         0       100  HOW MANY POULTRY (CHICKEN, DUCKS, PIGEO...
+dog           7232     12   .3505254         0        12  HOW MANY DOGS BELONG TO YOUR HOUSEHOLD?...
+mother_age    7189   3934   26.08212  14.48597  47.87132  
+mother_edu    7240      4   .7288674         0         9  
+water_time    7183     30   11.02339         0       600  
+roof          7240      3   .6627072         0         9  
+walls         7240      3   .0459945         0         9  
+floor         7240      3   .0665746         0         9  
+elec          7240      3   .0776243         0         9  
+radio         7240      3   .7171271         0         9  
+tv            7240      3   .1270718         0         9  
+mobilephone   7240      3    .809116         0         9  
+clock         7240      3   .1486188         0         9  
+bicycle       7240      3   .5382597         0         9  
+motorcycle    7240      3   .0968232         0         9  
+stove         7240      3   .5051105         0         9  
+cooker        7240      3   .0236188         0         9  
+car           7240      3   .0145028         0         9  
+u18           7238     14    2.81003         0        13  
+HHS           7240      4   1.137293         1         9  Hunger score
+week_basel~e  7240     45   29.63163         3        51  Week of baseline survey
+week_survey   7240     51   24.13757         1        51  Week of measurement
+year_basel~e  7240      3   2013.297      2012      2014  Year of baseline survey
+year_survey   7240      2   2015.613      2015      2016  Year of measurement
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str6)
+
+         unique values:  702                      missing "":  0/7,240
+
+              examples:  "172680"
+                         "202960"
+                         "462660"
+                         "482970"
+
+----------------------------------------------------------------------------------------------------
+compoundid                                                                               Compound ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str7)
+
+         unique values:  6,383                    missing "":  0/7,240
+
+              examples:  "2503580"
+                         "3503560"
+                         "7235590"
+                         "7607570"
+
+----------------------------------------------------------------------------------------------------
+hhid                                                                                    Household ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str8)
+
+         unique values:  6,558                    missing "":  0/7,240
+
+              examples:  "24743130"
+                         "34742930"
+                         "72063230"
+                         "75783030"
+
+----------------------------------------------------------------------------------------------------
+childid                                                                                     Child ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str11)
+
+         unique values:  7,240                    missing "":  0/7,240
+
+              examples:  "2471093530"
+                         "3471073530"
+                         "7203103530"
+                         "7575083530"
+
+----------------------------------------------------------------------------------------------------
+block                                                                            Randomization block
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,89]                       units:  1
+         unique values:  89                       missing .:  0/7,240
+
+                  mean:   46.0486
+              std. dev:   25.7013
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 9        25        46        69        81
+
+----------------------------------------------------------------------------------------------------
+tr                                                                   Randomized treatment assignment
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+                 label:  tr
+
+                 range:  [1,8]                        units:  1
+         unique values:  8                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         1,705         1  Control
+                           790         2  Water
+                           812         3  Sanitation
+                           774         4  Handwashing
+                           786         5  WSH
+                           757         6  Nutrition
+                           839         7  Nutrition + WSH
+                           777         8  Passive Control
+
+----------------------------------------------------------------------------------------------------
+time                                                                                     (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [2,2]                        units:  1
+         unique values:  1                        missing .:  0/7,240
+
+            tabulation:  Freq.  Value
+                         7,240  2
+
+----------------------------------------------------------------------------------------------------
+targetchild                                                                              (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/7,240
+
+            tabulation:  Freq.  Value
+                           588  0
+                         6,652  1
+
+----------------------------------------------------------------------------------------------------
+staffid                                                                        ANTHRO FIELD STAFF ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (int)
+
+                 range:  [545,8884]                   units:  1
+         unique values:  49                       missing .:  0/7,240
+
+                  mean:   6073.91
+              std. dev:   1968.62
+
+           percentiles:        10%       25%       50%       75%       90%
+                              3500      4317      5451      8217      8601
+
+----------------------------------------------------------------------------------------------------
+childht                                                                                  (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [51.1,96.6]                  units:  .01
+         unique values:  333                      missing .:  429/7,240
+
+                  mean:   81.6325
+              std. dev:   4.81895
+
+           percentiles:        10%       25%       50%       75%       90%
+                                77      79.5      82.2      84.5      86.6
+
+----------------------------------------------------------------------------------------------------
+headc                                                                                    (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [32.8,55]                    units:  .01
+         unique values:  165                      missing .:  281/7,240
+
+                  mean:   47.1087
+              std. dev:   2.00843
+
+           percentiles:        10%       25%       50%       75%       90%
+                              45.1      46.2      47.3      48.3      49.2
+
+----------------------------------------------------------------------------------------------------
+motherht                                                                                 (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [67,180.5]                   units:  .00001
+         unique values:  345                      missing .:  371/7,240
+
+                  mean:   160.147
+              std. dev:   6.20079
+
+           percentiles:        10%       25%       50%       75%       90%
+                             152.6     156.1       160     164.2     167.8
+
+----------------------------------------------------------------------------------------------------
+sex                                                                                              Sex
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+                 label:  sexl
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  2/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         3,483         0  Male
+                         3,755         1  Female
+                             2         .  
+
+----------------------------------------------------------------------------------------------------
+sibling                                                                                  (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/7,240
+
+            tabulation:  Freq.  Value
+                         6,652  0
+                           588  1
+
+----------------------------------------------------------------------------------------------------
+newbirth                                                                                 (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/7,240
+
+            tabulation:  Freq.  Value
+                         6,652  0
+                           588  1
+
+----------------------------------------------------------------------------------------------------
+month                                                                                    (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [1,12]                       units:  1
+         unique values:  12                       missing .:  0/7,240
+
+                  mean:    5.9866
+              std. dev:   3.44169
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 2         3         6         9        11
+
+----------------------------------------------------------------------------------------------------
+aged                                                                                     (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [1,952]                      units:  1
+         unique values:  640                      missing .:  9/7,240
+
+                  mean:   697.721
+              std. dev:   174.265
+
+           percentiles:        10%       25%       50%       75%       90%
+                               623       691       743       785       815
+
+----------------------------------------------------------------------------------------------------
+agem                                                                                     (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [.03287668,31.298596]        units:  1.000e-09
+         unique values:  640                      missing .:  9/7,240
+
+                  mean:   22.9387
+              std. dev:   5.72925
+
+           percentiles:        10%       25%       50%       75%       90%
+                           20.4822   22.7178   24.4274   25.8082   26.7945
+
+----------------------------------------------------------------------------------------------------
+agey                                                                                     (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [.00273785,2.6064339]        units:  1.000e-11
+         unique values:  640                      missing .:  9/7,240
+
+                  mean:   1.91026
+              std. dev:   .477111
+
+           percentiles:        10%       25%       50%       75%       90%
+                           1.70568   1.89185   2.03422   2.14921   2.23135
+
+----------------------------------------------------------------------------------------------------
+haz                                                                    Length/height-for-age Z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-5.96,2.77]                 units:  .01
+         unique values:  621                      missing .:  439/7,240
+
+                  mean:  -1.51445
+              std. dev:   1.09716
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -2.91     -2.21     -1.46      -.79      -.17
+
+----------------------------------------------------------------------------------------------------
+waz                                                                           Weight-for-age Z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-5.7,2.68]                  units:  .01
+         unique values:  583                      missing .:  272/7,240
+
+                  mean:  -.693086
+              std. dev:   1.01651
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -1.97     -1.32      -.66      -.02       .55
+
+----------------------------------------------------------------------------------------------------
+whz                                                                 Weight-for-length/height Z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-4.18,4.38]                 units:  .01
+         unique values:  527                      missing .:  439/7,240
+
+                  mean:   .122032
+              std. dev:    .94007
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -1.04       -.5       .13       .74      1.32
+
+----------------------------------------------------------------------------------------------------
+bmiz06                                                                           BMI-for-age Z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-3.99,4.62]                 units:  .01
+         unique values:  537                      missing .:  440/7,240
+
+                  mean:   .356201
+              std. dev:    .94549
+
+           percentiles:        10%       25%       50%       75%       90%
+                              -.83      -.26      .365       .99      1.54
+
+----------------------------------------------------------------------------------------------------
+stunted                                                                                  (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  439/7,240
+
+            tabulation:  Freq.  Value
+                         4,703  0
+                         2,098  1
+                           439  .
+
+----------------------------------------------------------------------------------------------------
+sstunted                                                                                 (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  439/7,240
+
+            tabulation:  Freq.  Value
+                         6,207  0
+                           594  1
+                           439  .
+
+----------------------------------------------------------------------------------------------------
+wasted                                                                                   (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  439/7,240
+
+            tabulation:  Freq.  Value
+                         6,703  0
+                            98  1
+                           439  .
+
+----------------------------------------------------------------------------------------------------
+underwt                                                                                  (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  272/7,240
+
+            tabulation:  Freq.  Value
+                         6,315  0
+                           653  1
+                           272  .
+
+----------------------------------------------------------------------------------------------------
+waz_who                                                                       Weight-for-age z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-5.7,2.68]                  units:  .01
+         unique values:  582                      missing .:  272/7,240
+
+                  mean:  -.690451
+              std. dev:   1.01637
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -1.97     -1.32      -.65      -.02       .56
+
+----------------------------------------------------------------------------------------------------
+haz_who                                                                Length/height-for-age z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-5.96,2.78]                 units:  .01
+         unique values:  614                      missing .:  439/7,240
+
+                  mean:  -1.50995
+              std. dev:   1.09738
+
+           percentiles:        10%       25%       50%       75%       90%
+                              -2.9     -2.21     -1.46      -.78      -.16
+
+----------------------------------------------------------------------------------------------------
+whz_who                                                             Weight-for-length/height z-score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-4.18,4.38]                 units:  .01
+         unique values:  527                      missing .:  437/7,240
+
+                  mean:   .122109
+              std. dev:   .939975
+
+           percentiles:        10%       25%       50%       75%       90%
+                             -1.04       -.5       .13       .74      1.32
+
+----------------------------------------------------------------------------------------------------
+hcz                                                                                      (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [-4.92,4.41]                 units:  .01
+         unique values:  565                      missing .:  290/7,240
+
+                  mean:  -.252977
+              std. dev:    1.0147
+
+           percentiles:        10%       25%       50%       75%       90%
+                              -1.5      -.93      -.26        .4      1.04
+
+----------------------------------------------------------------------------------------------------
+underhc                                                                                  (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  290/7,240
+
+            tabulation:  Freq.  Value
+                         6,664  0
+                           286  1
+                           290  .
+
+----------------------------------------------------------------------------------------------------
+Ncomp                                                             Total number of people in compound
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,72]                       units:  1
+         unique values:  51                       missing .:  0/7,240
+
+                  mean:   8.22403
+              std. dev:   5.61802
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 3         5         7        10        15
+
+----------------------------------------------------------------------------------------------------
+cow                 HOW MANY CATTLE BELONG TO YOUR HOUSEHOLD? IF NONE, ENTER “0” YOU CAN SELECT Don 
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (int)
+
+                 range:  [0,24]                       units:  1
+         unique values:  16                       missing .:  8/7,240
+
+                  mean:   1.00069
+              std. dev:    1.5098
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         0         2         3
+
+----------------------------------------------------------------------------------------------------
+goat                HOW MANY GOATS BELONG TO YOUR HOUSEHOLD? IF NONE, ENTER “0” YOU CAN SELECT Don t
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [0,34]                       units:  1
+         unique values:  12                       missing .:  6/7,240
+
+                  mean:   .233757
+              std. dev:   .871672
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         0         0         1
+
+----------------------------------------------------------------------------------------------------
+chicken             HOW MANY POULTRY (CHICKEN, DUCKS, PIGEONS, etc) BELONG TO YOUR HOUSEHOLD? IF NON
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (int)
+
+                 range:  [0,100]                      units:  1
+         unique values:  56                       missing .:  75/7,240
+
+                  mean:   6.27844
+              std. dev:   7.68488
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         2         4         8        15
+
+----------------------------------------------------------------------------------------------------
+dog                 HOW MANY DOGS BELONG TO YOUR HOUSEHOLD? IF NONE, ENTER “0” YOU CAN SELECT Don t 
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (int)
+
+                 range:  [0,12]                       units:  1
+         unique values:  12                       missing .:  8/7,240
+
+                  mean:   .350525
+              std. dev:   .890058
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         0         0         0         1
+
+----------------------------------------------------------------------------------------------------
+mother_age                                                                               (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [14.485969,47.871321]        units:  1.000e-09
+         unique values:  3,934                    missing .:  51/7,240
+
+                  mean:   26.0821
+              std. dev:   6.24354
+
+           percentiles:        10%       25%       50%       75%       90%
+                           18.8392   21.0048   25.2047   29.9986   35.4798
+
+----------------------------------------------------------------------------------------------------
+mother_edu                                                                               (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  mother_edul
+
+                 range:  [0,9]                        units:  1
+         unique values:  4                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         3,804         0  Incomplete primary
+                         1,637         1  Complete primary
+                         1,793         2  Any secondary
+                             6         9  Don't know
+
+----------------------------------------------------------------------------------------------------
+water_time                                                                               (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,600]                      units:  1
+         unique values:  30                       missing .:  57/7,240
+
+                  mean:   11.0234
+              std. dev:   15.8237
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 2         3         5        15        30
+
+----------------------------------------------------------------------------------------------------
+roof                                                                                     (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  roofl
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         2,450         0  Thatch/leaf
+                         4,789         1  Iron/other
+                             1         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+walls                                                                                    (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  wallsl
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         6,915         0  Bamboo/mud/cane
+                           324         1  Concrete
+                             1         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+floor                                                                                    (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  floorl
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         6,830         0  Earth/dung
+                           401         1  Cement/concrete
+                             9         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+elec                                                                                     (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  elecl
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         6,726         0  No electricity
+                           508         1  Has electricity
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+radio                                                                                    (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  radiol
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         2,096         0  No radio
+                         5,138         1  Has radio
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+tv                                                                                       (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  tvl
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         6,368         0  No TV
+                           866         1  Owns TV
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+mobilephone                                                                              (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  mobilephonel
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         1,430         0  No mobile phone
+                         5,804         1  Any mobile phones
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+clock                                                                                    (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  clockl
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         6,212         0  No clock
+                         1,022         1  Has clock
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+bicycle                                                                                  (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  bicyclel
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         3,391         0  No bicycle
+                         3,843         1  Has bicycle
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+motorcycle                                                                               (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  motorcyclel
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         6,587         0  No motorcycle
+                           647         1  Has motorcycle
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+stove                                                                                    (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  stovel
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         3,631         0  No stove
+                         3,603         1  Has stove
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+cooker                                                                                   (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  cookerl
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         7,117         0  No gas cooker
+                           117         1  Has gas cooker
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+car                                                                                      (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  carl
+
+                 range:  [0,9]                        units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         7,183         0  No car
+                            51         1  Has car
+                             6         9  Missing/DK
+
+----------------------------------------------------------------------------------------------------
+u18                                                                                      (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+
+                 range:  [0,13]                       units:  1
+         unique values:  14                       missing .:  2/7,240
+
+                  mean:   2.81003
+              std. dev:   1.98828
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 0         1         3         4         6
+
+----------------------------------------------------------------------------------------------------
+HHS                                                                                     Hunger score
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  HHSl
+
+                 range:  [1,9]                        units:  1
+         unique values:  4                        missing .:  0/7,240
+
+            tabulation:  Freq.   Numeric  Label
+                         6,475         1  Little to none
+                           650         2  Moderate
+                            96         3  Severe
+                            19         9  Missing
+
+----------------------------------------------------------------------------------------------------
+week_baseline                                                                Week of baseline survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [3,51]                       units:  1
+         unique values:  45                       missing .:  0/7,240
+
+                  mean:   29.6316
+              std. dev:   14.6918
+
+           percentiles:        10%       25%       50%       75%       90%
+                                10        15        33        42        49
+
+----------------------------------------------------------------------------------------------------
+week_survey                                                                      Week of measurement
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [1,51]                       units:  1
+         unique values:  51                       missing .:  0/7,240
+
+                  mean:   24.1376
+              std. dev:   14.8082
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 6        11        23        38        45
+
+----------------------------------------------------------------------------------------------------
+year_baseline                                                                Year of baseline survey
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2012,2014]                  units:  1
+         unique values:  3                        missing .:  0/7,240
+
+            tabulation:  Freq.  Value
+                           443  2012
+                         4,203  2013
+                         2,594  2014
+
+----------------------------------------------------------------------------------------------------
+year_survey                                                                      Year of measurement
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [2015,2016]                  units:  1
+         unique values:  2                        missing .:  0/7,240
+
+            tabulation:  Freq.  Value
+                         2,801  2015
+                         4,439  2016
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/dropbox/WASHB-Kenya-Data/1-primary-outcome-datasets/Public/washb-keny
+> a-endline-anthro-public-codebook.txt
+  log type:  text
+ closed on:   9 Apr 2018, 10:04:01
+----------------------------------------------------------------------------------------------------

@@ -1,0 +1,166 @@
+----------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/jadederong/dropbox/WASHB-Kenya-Data/1-primary-outcome-datasets/Public/washb-keny
+> a-mortality-public-codebook.txt
+  log type:  text
+ opened on:   9 Apr 2018, 10:04:06
+
+. desc
+
+Contains data from Public/washb-kenya-mortality-public.dta
+  obs:         8,101                          
+ vars:             8                          9 Apr 2018 10:04
+ size:       396,949                          
+----------------------------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+----------------------------------------------------------------------------------------------------
+clusterid       str6    %9s                   Cluster ID
+compoundid      str7    %9s                   Compound ID
+hhid            str8    %9s                   Household ID
+childid         str11   %11s                  Child ID
+block           byte    %10.0g                Randomization block
+tr              float   %15.0g     tr         Randomized treatment assignment
+childtype       double  %25.0g     chtype   * Child type
+childdeath      float   %9.0g                 
+                                            * indicated variables have notes
+----------------------------------------------------------------------------------------------------
+Sorted by: hhid
+
+. codebook, c
+
+Variable     Obs Unique      Mean  Min  Max  Label
+----------------------------------------------------------------------------------------------------
+clusterid   8101    702         .    .    .  Cluster ID
+compoundid  8101   7707         .    .    .  Compound ID
+hhid        8101   7968         .    .    .  Household ID
+childid     8101   8101         .    .    .  Child ID
+block       8101     89  46.01308    1   89  Randomization block
+tr          8101      8  4.071966    1    8  Randomized treatment assignment
+childtype   8101      2  1.016541    1    2  Child type
+childdeath  8101      2  .0403654    0    1  
+----------------------------------------------------------------------------------------------------
+
+. codebook
+
+----------------------------------------------------------------------------------------------------
+clusterid                                                                                 Cluster ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str6)
+
+         unique values:  702                      missing "":  0/8,101
+
+              examples:  "172720"
+                         "202960"
+                         "462650"
+                         "482960"
+
+----------------------------------------------------------------------------------------------------
+compoundid                                                                               Compound ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str7)
+
+         unique values:  7,707                    missing "":  0/8,101
+
+              examples:  "2509660"
+                         "3503580"
+                         "7240570"
+                         "7603580"
+
+----------------------------------------------------------------------------------------------------
+hhid                                                                                    Household ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str8)
+
+         unique values:  7,968                    missing "":  0/8,101
+
+              examples:  "24803930"
+                         "34743130"
+                         "72113030"
+                         "75743130"
+
+----------------------------------------------------------------------------------------------------
+childid                                                                                     Child ID
+----------------------------------------------------------------------------------------------------
+
+                  type:  string (str11), but longest is str10
+
+         unique values:  8,101                    missing "":  0/8,101
+
+              examples:  "2477173530"
+                         "3471093530"
+                         "7208083530"
+                         "7571093530"
+
+----------------------------------------------------------------------------------------------------
+block                                                                            Randomization block
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (byte)
+
+                 range:  [1,89]                       units:  1
+         unique values:  89                       missing .:  0/8,101
+
+                  mean:   46.0131
+              std. dev:   25.7684
+
+           percentiles:        10%       25%       50%       75%       90%
+                                 9        25        46        69        81
+
+----------------------------------------------------------------------------------------------------
+tr                                                                   Randomized treatment assignment
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+                 label:  tr
+
+                 range:  [1,8]                        units:  1
+         unique values:  8                        missing .:  0/8,101
+
+            tabulation:  Freq.   Numeric  Label
+                         1,895         1  Control
+                           888         2  Water
+                           874         3  Sanitation
+                           903         4  Handwashing
+                           893         5  WSH
+                           835         6  Nutrition
+                           897         7  Nutrition + WSH
+                           916         8  Passive Control
+
+----------------------------------------------------------------------------------------------------
+childtype                                                                                 Child type
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (double)
+                 label:  chtype
+
+                 range:  [1,2]                        units:  1
+         unique values:  2                        missing .:  0/8,101
+
+            tabulation:  Freq.   Numeric  Label
+                         7,967         1  Study Child
+                           134         2  Study Child Twin
+
+----------------------------------------------------------------------------------------------------
+childdeath                                                                               (unlabeled)
+----------------------------------------------------------------------------------------------------
+
+                  type:  numeric (float)
+
+                 range:  [0,1]                        units:  1
+         unique values:  2                        missing .:  0/8,101
+
+            tabulation:  Freq.  Value
+                         7,774  0
+                           327  1
+
+. log close
+      name:  <unnamed>
+       log:  /Users/jadederong/dropbox/WASHB-Kenya-Data/1-primary-outcome-datasets/Public/washb-keny
+> a-mortality-public-codebook.txt
+  log type:  text
+ closed on:   9 Apr 2018, 10:04:07
+----------------------------------------------------------------------------------------------------
