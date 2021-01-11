@@ -19,8 +19,9 @@ import {
 } from 'wdk-client/Actions/RecordActions';
 
 import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
+import { stripHTML } from 'wdk-client/Utils/DomUtils';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
-import { PartialRecordRequest, getAttributeNames, getTableNames, stripHTML } from 'wdk-client/Views/Records/RecordUtils';
+import { PartialRecordRequest, getAttributeNames, getTableNames } from 'wdk-client/Views/Records/RecordUtils';
 import { RootState } from 'wdk-client/Core/State/Types';
 
 const ActionCreators = {
