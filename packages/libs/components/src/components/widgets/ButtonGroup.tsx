@@ -7,6 +7,8 @@ import { Typography } from '@material-ui/core';
 export type ButtonGroupProps = {
   /** Label for the widget. Optional. */
   label?: string;
+  /** How buttons are displayed. Vertical or Horizontal */
+  orientation?: 'vertical' | 'horizontal';
   /** Options that will be presented as buttons. */
   options: Array<string>;
   /** The currently selected option.  */
@@ -17,8 +19,13 @@ export type ButtonGroupProps = {
   containerStyles?: React.CSSProperties;
 };
 
+/**
+ * A simple group of buttons in which only a single
+ * button can be selected at any given time.
+ */
 export default function ButtonGroup({
   label = undefined,
+  orientation = 'horizontal',
   options,
   selectedOption,
   onOptionSelected,
@@ -47,6 +54,7 @@ export default function ButtonGroup({
       )}
       <ToggleButtonGroup
         value={selectedOption}
+        orientation={orientation}
         exclusive
         onChange={(event, value) => value && onOptionSelected(value)}
         aria-label={`${label} control button group`}
@@ -56,10 +64,13 @@ export default function ButtonGroup({
             value={option}
             aria-label={option}
             style={{
-              padding: '5px',
+              padding: 5,
+              paddingLeft: 7.5,
+              paddingRight: 7.5,
               fontSize: '12px',
               fontWeight: 400,
               textTransform: 'capitalize',
+              justifyContent: 'start',
             }}
           >
             {option}
