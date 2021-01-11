@@ -97,6 +97,7 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(props: 
       layout={Object.assign(layout, {
         width: props.width,
         height: props.height,
+        margin: props.margin,
         showlegend: props.showLegend
       })}
       config={{displayModeBar: props.showModebar}}

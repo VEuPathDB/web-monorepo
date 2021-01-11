@@ -112,6 +112,7 @@ export default function PiePlot(props: Props) {
     layout={Object.assign(layout, {
       width: props.width,
       height: props.height,
+      margin: props.margin,
       showlegend: props.showLegend})}
   />
 }

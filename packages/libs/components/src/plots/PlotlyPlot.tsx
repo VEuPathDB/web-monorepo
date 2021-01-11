@@ -1,9 +1,17 @@
 import React, { lazy, Suspense, useMemo } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
+type Margin = {
+  l: number,
+  r: number,
+  t: number,
+  b: number,
+}
+
 export interface PlotProps {
   width?: number,
   height?: number,
+  margin?: Partial<Margin>,
 }
 
 const config = {
