@@ -28,7 +28,7 @@ import geohashAnimation from "./animation_functions/geohash";
 import md5 from 'md5';
 
 export default {
-  title: 'Donut Markers for categorical',
+  title: 'Mouse Tools',
   component: MapVEuMapSidebar,
 };
 
@@ -153,7 +153,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
         label: species,
         value: bucket.count,
         color: speciesToColor.get(species) || 'silver',
-      })
+      });
     });
 
     //DKDK check isAtomic
@@ -172,6 +172,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
         isAtomic={atomicValue}
         onClick={handleClick}
         duration={duration}
+        showPopup={false}
       />
       )
   });

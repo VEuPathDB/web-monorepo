@@ -3,6 +3,8 @@ import { MarkerProps, BoundsViewport, AnimationFunction, Bounds } from "./Types"
 import { useLeaflet } from "react-leaflet";
 import { LatLngBounds } from 'leaflet'
 import Geohash from 'latlon-geohash';
+import MouseTools, { MouseMode } from './MouseTools';
+import { createPropertySignature } from "typescript";
 
 interface SemanticMarkersProps {
   onViewportChanged: (bvp: BoundsViewport) => void,
@@ -12,16 +14,18 @@ interface SemanticMarkersProps {
     method: string,
     duration: number,
     animationFunction: AnimationFunction
-  } | null
+  } | null,
+  mouseMode: MouseMode,
+  setMouseMode: (mode: MouseMode) => void,
 }
 
 /**
  * Renders the semantic markers layer
- *
- *
- * @param props
+ * 
+ * 
+ * @param props 
  */
-export default function SemanticMarkers({ onViewportChanged, markers, animation, nudge}: SemanticMarkersProps) {
+export default function SemanticMarkers({ onViewportChanged, markers, animation, nudge, mouseMode, setMouseMode}: SemanticMarkersProps) {
   const { map } = useLeaflet();
 
   const [prevMarkers, setPrevMarkers] = useState<ReactElement<MarkerProps>[]>(markers);
@@ -62,7 +66,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
 	const markerRadius = 35; // pixels // TEMPORARILY HARDCODED - need to get it from the marker somehow?
 	// It should work with half the maximum dimension (50/2 = 25)
 	// but I suspect 'position' is not in the center of the marker icon?
-
+	
 	const geohash = marker.props.id as string;
 	const geohashCenter = Geohash.decode(geohash);
 	const bounds = Geohash.bounds(geohash);
@@ -143,6 +147,10 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
   return (
     <>
       {consolidatedMarkers}
+      <MouseTools
+        mouseMode={mouseMode}
+        setMouseMode={setMouseMode}
+      />
     </>
   );
 }
