@@ -67,6 +67,8 @@ export default function HistogramControls({
   onSelectedUnitChange,
   containerStyles = {},
 }: HistogramControlsProps) {
+  console.log(availableUnits, selectedUnit, onSelectedUnitChange);
+
   return (
     <div
       style={{

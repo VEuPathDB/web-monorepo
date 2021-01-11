@@ -98,7 +98,7 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
 };
 
 /** Parameters that can be passed to the hook for initialization. */
-type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
+export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
   data: DataShape;
   availableUnits?: Array<string>;
   initialSelectedUnit?: string;
