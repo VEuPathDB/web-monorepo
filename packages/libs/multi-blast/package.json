@@ -2,6 +2,11 @@
   "name": "@veupathdb/multi-blast",
   "version": "0.1.1-alpha.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-multi-blast.git",
+    "directory": "src/lib"
+  },
   "files": [
     "lib"
   ],
