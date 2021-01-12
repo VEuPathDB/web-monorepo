@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react';
+import React, {useState} from 'react';
 import {hierarchy, Tree} from "@visx/hierarchy";
 import {Group} from "@visx/group";
 import {HierarchyPointNode} from "@visx/hierarchy/lib/types";
@@ -74,7 +74,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
   }
 
   return (
-      <Fragment>
+    <div className="mini-diagram">
       <svg width="1000px" height="1000px">
         <defs>
           <marker
@@ -123,6 +123,6 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
             </div>
           </Tooltip>
       }
-    </Fragment>
+    </div>
   )
 }

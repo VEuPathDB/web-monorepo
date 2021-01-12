@@ -61,8 +61,8 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID,
       {
         // Node background definitions
         Array(11).fill(null).map((_, index) =>
-          <LinearGradient vertical={false} x1={0} x2={index * 0.1} fromOffset={1} id={`rect-gradient-${index}`} from="#e4c8c8" to="white"/>
-          )
+          <LinearGradient key={index} vertical={false} x1={0} x2={index * 0.1} fromOffset={1} id={`rect-gradient-${index}`} from="#e4c8c8" to="white"/>
+        )
       }
       <Tree
         root={data}
@@ -74,7 +74,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID,
               return <OffsetLine
                 link={link}
                 orientation={orientation}
-                key={`link-${i}`}
+                key={`expanded-link-${i}`}
               />
             })}
             {tree.descendants().map((node, i) => {
@@ -86,6 +86,7 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID,
               <Group
                 top={orientation == 'horizontal' ? node.x : node.y}
                 left={orientation == 'horizontal' ? node.y : node.x}
+                key={node.x + node.y}
               >
                 <rect
                   height={height}

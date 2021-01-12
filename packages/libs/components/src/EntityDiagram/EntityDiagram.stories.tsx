@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import MiniDiagram from "./MiniDiagram";
 import ExpandedDiagram from "./ExpandedDiagram";
+import {CSSTransition, TransitionGroup} from "react-transition-group";
+import './diagram.css'
 
 export default {
   title: 'Entity Diagram'
@@ -195,23 +197,24 @@ export const EntityDiagram = () => {
       >
         Switch Size
       </button>
-
-      {
-        expanded
-          ?
+      <MiniDiagram
+          treeData={studyData.rootEntity}
+          orientation={orientation}
+          highlightedEntityID={"Sample"}
+      />
+      <TransitionGroup>
+        {
+          expanded &&
+          <CSSTransition key="expanded-transition" timeout={1000} classNames="expanded-diagram">
             <ExpandedDiagram
               treeData={studyData.rootEntity}
               orientation={orientation}
               highlightedEntityID={"Sample"}
               shadingData={shadingData}
             />
-          :
-            <MiniDiagram
-              treeData={studyData.rootEntity}
-              orientation={orientation}
-              highlightedEntityID={"Sample"}
-            />
-      }
+          </CSSTransition>
+        }
+      </TransitionGroup>
     </div>
   )
 }
