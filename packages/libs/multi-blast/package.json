@@ -8,7 +8,8 @@
     "directory": "src/lib"
   },
   "files": [
-    "lib"
+    "lib",
+    "shims"
   ],
   "dependencies": {
     "@veupathdb/wdk-client": "^0.1.1-alpha.6",
