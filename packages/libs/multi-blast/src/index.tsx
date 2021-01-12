@@ -15,6 +15,8 @@ import { BlastForm } from './lib/BlastForm';
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 
+import './index.css';
+
 initialize({
   rootUrl,
   rootElement,

@@ -1,7 +1,10 @@
 {
-  "name": "web-multi-blast",
-  "version": "0.1.0",
+  "name": "@veupathdb/multi-blast",
+  "version": "0.1.1-alpha.0",
   "private": true,
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "@veupathdb/wdk-client": "^0.1.1-alpha.6",
     "@veupathdb/web-common": "^0.1.1-alpha.2",
