@@ -1,5 +1,5 @@
 import React from "react";
-import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
 //DKDK block this
 // import { PlotComponentProps } from "./Types";
 //DKDK import Layout for typing layout, especially with sliders
@@ -18,11 +18,10 @@ interface Props<T extends keyof PlotData> extends PlotProps {
   xRange?: number[] | Date[];
   yRange?: number[] | Date[];
   showLegend?: boolean;
-  showModebar?: boolean;
 }
 
 export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(props: Props<T>) {
-  const { xLabel, yLabel, plotTitle, xRange, yRange, width, height, data } = props;
+  const { xLabel, yLabel, plotTitle, xRange, yRange, data } = props;
   const layout: Partial<Layout> = {
     xaxis: {
       title: xLabel,
@@ -94,13 +93,16 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(props: 
   return (
     <PlotlyPlot
       data={finalData}
-      layout={Object.assign(layout, {
+      layout={{...layout, ...{
         width: props.width,
         height: props.height,
         margin: props.margin,
         showlegend: props.showLegend
-      })}
-      config={{displayModeBar: props.showModebar}}
+      }}}
+      config={{
+        displayModeBar: props.showModebar || ModebarDefault,
+        staticPlot: props.staticPlot,
+      }}
     />
   );
 }

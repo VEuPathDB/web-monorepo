@@ -398,6 +398,7 @@ export const RealDataDate = () => {
       yRange={[yMin, yMax]}
       width={plotWidth}
       height={plotHeight}
+      staticPlot={true}
     />
   )
 }

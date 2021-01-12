@@ -1,5 +1,5 @@
 import React from "react";
-import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
 import { PlotData, Layout, Annotations } from 'plotly.js';
 
 export interface Props extends PlotProps {
@@ -10,12 +10,11 @@ export interface Props extends PlotProps {
   showValue?: boolean;
   //DKDK add zsmooth here so that it can be treated as a Props out of data
   zsmooth?: 'fast' | 'best' | false;
-  showModebar?: boolean;
 }
 
 export default function Heatmap(props: Props) {
   //DKDK add zsmooth here so that it can be treated as a Props out of data
-  const { xLabel, yLabel, plotTitle, width, height, showValue, zsmooth, data, showModebar, margin } = props;
+  const { xLabel, yLabel, plotTitle, width, height, showValue, zsmooth, data, margin } = props;
   const layout: Partial<Layout> = {
     width: width,
     height: height,
@@ -81,7 +80,10 @@ export default function Heatmap(props: Props) {
         height: height,
         margin: margin,
       })}
-      config={{displayModeBar: showModebar}}
+      config={{
+        displayModeBar: props.showModebar || ModebarDefault,
+        staticPlot: props.staticPlot,
+      }}
     />
   );
 }
