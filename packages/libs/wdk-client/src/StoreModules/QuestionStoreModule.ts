@@ -71,11 +71,11 @@ export const key = 'question';
 export const DEFAULT_STRATEGY_NAME = 'Unnamed Search Strategy';
 export const DEFAULT_STEP_WEIGHT = 10;
 
+export type FilteredCountState = 'initial' | 'loading' | 'invalid' | number;
+
 export type GroupState = {
   isVisible: boolean,
-  filteredCount: number,
-  loadingFilteredCount: boolean,
-  filteredCountIsValid: boolean
+  filteredCountState: FilteredCountState,
 };
 
 export type QuestionWithMappedParameters =
@@ -174,9 +174,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         groupUIState: action.payload.question.groups.reduce((groupUIState, group) =>
           Object.assign(groupUIState, { [group.name]: { 
             isVisible: group.isVisible,
-            filteredCount: 0,
-            filteredCountIsValid: false,
-            loadingFilteredCount: false
+            filteredCountState: 'initial'
           }}), {}),
         weight: toString(action.payload.wdkWeight),
         customName: toString(action.payload.customName)
@@ -211,12 +209,13 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
 
       const newGroupUIState = state.question.groups.slice(groupIx).map(group => group.name).reduce(
         (memo, groupName) => {
-          const {isVisible, filteredCount, loadingFilteredCount: alreadyLoadingFilteredCount} = state.groupUIState[groupName];
+          const {isVisible, filteredCountState} = state.groupUIState[groupName];
           return Object.assign({...memo, [groupName]: {
             isVisible,
-            filteredCount,
-            loadingFilteredCount: isVisible || alreadyLoadingFilteredCount,
-            filteredCountIsValid: isVisible
+            filteredCountState:
+              (filteredCountState === 'loading' || isVisible ) ? 'loading'
+              : (filteredCountState === 'initial' && ! isVisible ) ? 'initial'
+              : 'invalid'
           }});
         }, {} as QuestionState['groupUIState']
       );
@@ -291,16 +290,16 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
       };
 
     case CHANGE_GROUP_VISIBILITY:
-       const {filteredCount, loadingFilteredCount, filteredCountIsValid } = state.groupUIState[action.payload.groupName];
+       const {filteredCountState } = state.groupUIState[action.payload.groupName];
        return {
         ...state,
         groupUIState: {
           ...state.groupUIState,
           [action.payload.groupName]: {
-            filteredCount,
+            filteredCountState:
+              ((filteredCountState === 'initial' || filteredCountState === 'invalid') && action.payload.isVisible ) ? 'loading'
+              : filteredCountState,
             isVisible: action.payload.isVisible,
-            loadingFilteredCount: (! filteredCountIsValid && action.payload.isVisible) || loadingFilteredCount,
-            filteredCountIsValid: action.payload.isVisible || filteredCountIsValid
           }
         }
       };
@@ -325,16 +324,17 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
        * to resolve a rare sequence of load, invalidate, loaded
        * which can happen if a param value is updated, its group navigated away from, and the param value updated again
        */
-      return {
+      const o = state.groupUIState[action.payload.groupName];
+      return o == null ? state : {
         ...state,
         groupUIState: {
           ...state.groupUIState,
-          [action.payload.groupName]: Object.assign({},
-             state.groupUIState[action.payload.groupName],
-            { loadingFilteredCount: false },
-            state.groupUIState[action.payload.groupName]?.filteredCountIsValid 
-            ? { filteredCount: action.payload.filteredCount }
-            : {})
+          [action.payload.groupName]: {
+            isVisible: o.isVisible,
+            filteredCountState:
+              o.filteredCountState === 'invalid' ? 'invalid'
+              : action.payload.filteredCount
+          }
         }
       };
     }
@@ -457,7 +457,7 @@ const observeLoadGroupCount: QuestionEpic = (action$, state$, { wdkService }) =>
       return EMPTY;
     }
 
-    return from(questionState.question.groups.filter(group => questionState.groupUIState[group.name].loadingFilteredCount)).pipe(
+    return from(questionState.question.groups.filter(group => questionState.groupUIState[group.name]?.filteredCountState === 'loading' )).pipe(
       mergeMap((group) => {
       const groupNameToLoadCountFor = group.name;
 
