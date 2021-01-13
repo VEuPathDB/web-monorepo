@@ -7,7 +7,7 @@ import { PlotParams } from 'react-plotly.js';
 export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
   hoverinfo: PlotlyPlotData['hoverinfo'] | PlotlyPlotData['textinfo'],
   sort: boolean;
-  automargin?: boolean;
+  texttemplate: string | string[];
 }
 
 type PiePlotDatum = {
@@ -16,7 +16,7 @@ type PiePlotDatum = {
   color?: string;
 };
 
-interface Props extends PlotProps {
+export interface Props extends PlotProps {
   data: PiePlotDatum[];
   interior?: {
     heightPercentage: number;
@@ -26,8 +26,11 @@ interface Props extends PlotProps {
     fontSize?: string|number;
   };
   showLegend?: boolean,
+  text?: string[],
+  textinfo?: PlotData['textinfo'],
   textposition?: 'inside' | 'outside' | 'auto' | 'none',
-  automargin?: boolean,
+  texttemplate?: string | string[],
+  showHoverInfo?: boolean,
 }
 
 export default function PiePlot(props: Props) {
@@ -103,9 +106,11 @@ export default function PiePlot(props: Props) {
     type: 'pie',
     direction: 'clockwise',
     sort: false,
-    hoverinfo: 'label+value+percent',
+    text: props.text,
+    textinfo: props.textinfo,
+    hoverinfo: props.showHoverInfo ? 'label+value+percent' : 'none',
     textposition: props.textposition,
-    automargin: props.automargin,
+    texttemplate: props.texttemplate,
   };
 
   newData.push(primaryDataTrace);

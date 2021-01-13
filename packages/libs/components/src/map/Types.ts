@@ -1,6 +1,7 @@
 import { ReactElement } from "react";
 import { LatLngLiteral, Icon } from "leaflet";
 import { PopupProps } from 'react-leaflet';
+import { Props as PieProps } from '../plots/PiePlot';
 
 export type LatLng = LatLngLiteral;
 // from leaflet:
@@ -34,9 +35,9 @@ export interface BoundsViewport {
 export interface MarkerProps {
   position: LatLng,
   id: string,
-  popup?: ReactElement<PopupProps>,
-  showPopup?: boolean,
   icon?: Icon,
+  showPopup?: boolean,
+  popupPlot?: ReactElement<PieProps>,
 }
 
 export type AnimationFunction = (

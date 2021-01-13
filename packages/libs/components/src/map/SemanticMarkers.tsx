@@ -15,8 +15,8 @@ interface SemanticMarkersProps {
     duration: number,
     animationFunction: AnimationFunction
   } | null,
-  mouseMode: MouseMode,
-  setMouseMode: (mode: MouseMode) => void,
+  mouseMode?: MouseMode,
+  setMouseMode?: (mode: MouseMode) => void,
 }
 
 /**
@@ -147,10 +147,13 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
   return (
     <>
       {consolidatedMarkers}
-      <MouseTools
-        mouseMode={mouseMode}
-        setMouseMode={setMouseMode}
-      />
+      {mouseMode && setMouseMode ?
+        <MouseTools
+          mouseMode={mouseMode}
+          setMouseMode={setMouseMode}
+        />
+        : null
+      }
     </>
   );
 }

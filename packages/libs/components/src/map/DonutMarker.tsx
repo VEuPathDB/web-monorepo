@@ -9,6 +9,7 @@ import { Popup } from 'react-leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import PiePlot from '../plots/PiePlot';
+import { floor } from "lodash";
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 export interface DonutMarkerProps extends BoundsDriftMarkerProps {
@@ -68,6 +69,18 @@ function makeArc(x: number, y: number, radius: number, startAngle: number, endAn
 function kFormatter(num: number) {
   //DKDK fixed type error regarding toFixed() that returns string
   return Math.abs(num) > 9999 ? (Math.sign(num)*(Math.abs(num)/1000)).toFixed(0) + 'k' : Math.sign(num)*Math.abs(num)
+}
+
+function pieLabelFormatter(datum: {value: number, label: string}, sumValues: number, maxChars: number) {
+  // Show a concatenated label if the slice is large enough
+  const percentage = datum.value / sumValues * 100;
+  const max_chars = Math.min(maxChars, Math.max(7, 7 + floor((percentage - 12) / 1.8)));
+
+  if (percentage > 3.5) {
+    return datum.label.length > max_chars ? datum.label.substr(0, max_chars-2) + '...' : datum.label;
+  } else {
+    return '';
+  }
 }
 
 /**
@@ -146,21 +159,25 @@ export default function DonutMarker(props: DonutMarkerProps) {
   //DKDK anim check duration exists or not
   let duration: number = (props.duration) ? props.duration : 300
 
-  const plotSizeInit = 150;
-  const marginSize = 20;
-  const plotSize = plotSizeInit + 2*marginSize;
+  const plotSize = 150;
+  const marginSize = 0;
 
   const popupPlot = <PiePlot
     data={props.data}
     interior={{
-      heightPercentage: 0.7,
-      text: sumValues.toString(),
+      heightPercentage: 0.5,
+      text: sumLabel as string,
       fontSize: 18,
     }}
     width={plotSize}
     height={plotSize}
     margin={{l: marginSize, r: marginSize, t: marginSize, b: marginSize}}
     showLegend={false}
+    showHoverInfo={false}
+    textposition='inside'
+    textinfo='value'  // percent, value, label, text...
+    text={props.data.map(datum => pieLabelFormatter(datum, sumValues, 15))}
+    // texttemplate={props.data.map(datum => `${pieLabelFormatter(datum, sumValues, 10)} %{value}`)}
   />;
 
   return (
@@ -170,18 +187,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
       bounds={props.bounds}
       icon={SVGDonutIcon}
       duration={duration}
-      // popup={
-      //   <Popup
-      //     className="plot-marker-popup"
-      //     minWidth={popupSize}
-      //     closeOnClick={false}
-      //     autoPan={false}
-      //   >
-      //     {popupPlot}
-      //   </Popup>
-      // }
       popupPlot={popupPlot}
-      popupSize={plotSize}
       showPopup={props.showPopup}
     />
   );
