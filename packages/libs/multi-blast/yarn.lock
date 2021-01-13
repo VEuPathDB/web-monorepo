@@ -7257,8 +7257,9 @@ jest@26.6.0:
     import-local "^3.0.2"
     jest-cli "^26.6.0"
 
-"jquery@file:./shims/jquery":
+"jquery@link:./shims/jquery":
   version "0.0.0"
+  uid ""
 
 js-base64@^2.1.8:
   version "2.6.4"
