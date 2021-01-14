@@ -130,3 +130,38 @@ export function createFetchApiRequestHandler(options: FetchApiOptions): ApiReque
     throw new Error(`${response.status} ${response.statusText}${'\n'}${await response.text()}`);
   }
 }
+
+export abstract class FetchClient {
+  protected readonly baseUrl: string;
+  protected readonly init: RequestInit;
+  protected readonly fetchApi: Window['fetch'];
+
+  constructor(options: FetchApiOptions) {
+    this.baseUrl = options.baseUrl;
+    this.init = options.init ?? {};
+    this.fetchApi = options.fetchApi ?? window.fetch;
+  }
+  
+  protected async fetch<T>(apiRequest: ApiRequest<T>): Promise<T> {
+    const { baseUrl, init, fetchApi } = this;
+    const { transformResponse, path, body, ...restReq } = apiRequest;
+    const request = new Request(baseUrl + path, {
+      ...init,
+      ...restReq,
+      body: body,
+      headers: {
+        ...restReq.headers,
+        ...init.headers
+      }
+    });
+    const response = await fetchApi(request);
+    // TODO Make this behavior configurable
+    if (response.ok) {
+      const responseBody = response.headers.get('Content-Type')?.startsWith('application/json')
+        ? await response.json()
+        : await response.text();
+        return await transformResponse(responseBody);
+    }
+    throw new Error(`${response.status} ${response.statusText}${'\n'}${await response.text()}`);
+  }
+}
