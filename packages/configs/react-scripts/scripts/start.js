@@ -34,7 +34,7 @@ export async function main() {
           });
           if (authCookie == null) throw new Error("Could not get auth_tkt cookie value.");
           const env = { ...process.env, VEUPATHDB_AUTH_TKT: authCookie.value };
-          spawn('npx', [ 'react-scripts', 'start'], {env, stdio: 'inherit'});
+          spawn('npx', [ 'react-app-rewired', 'start'], {env, stdio: 'inherit'});
         })
         .resume()
     }
