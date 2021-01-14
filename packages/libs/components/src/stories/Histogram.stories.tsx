@@ -136,7 +136,6 @@ const TemplateWithControls: Story<HistogramProps> = (
         return await binDailyCovidStats(width);
       },
     },
-    // onSelectedUnitChange: async (unit) => await console.log('ASYNC API ACTION'),
   });
 
   return (
@@ -152,6 +151,8 @@ const TemplateWithControls: Story<HistogramProps> = (
       <div style={{ height: 25 }} />
       <HistogramControls
         label='Histogram Controls'
+        displayLegend={plotControls.displayLegend}
+        onDisplayLegendChange={plotControls.toggleDisplayLegend}
         availableUnits={plotControls.availableUnits}
         selectedUnit={plotControls.selectedUnit}
         onSelectedUnitChange={plotControls.setSelectedUnit}
@@ -234,6 +235,8 @@ export const SharedControlsMultiplePlots: Story<HistogramProps> = (
       <div style={{ height: 25 }} />
       <HistogramControls
         label='Histogram Controls'
+        displayLegend={plotControls.displayLegend}
+        onDisplayLegendChange={plotControls.toggleDisplayLegend}
         availableUnits={plotControls.availableUnits}
         selectedUnit={plotControls.selectedUnit}
         onSelectedUnitChange={plotControls.setSelectedUnit}
