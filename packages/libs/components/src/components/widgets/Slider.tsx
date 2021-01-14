@@ -70,6 +70,7 @@ export default function SliderWidget({
     root: {
       height: 0,
       paddingTop: 5,
+      flex: 1,
     },
     rail: {
       background: colorSpec
@@ -103,7 +104,9 @@ export default function SliderWidget({
     <div
       style={{
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
         ...containerStyles,
       }}
       onMouseOver={() => setFocused(true)}
@@ -112,7 +115,7 @@ export default function SliderWidget({
       {label && (
         <Typography
           variant='button'
-          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
+          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY, paddingRight: 15 }}
         >
           {label}
         </Typography>

@@ -1,7 +1,8 @@
 import React from 'react';
+import useDimensions from 'react-cool-dimensions';
 
 // Definitions
-import { LIGHT_GRAY } from '../../constants/colors';
+import { LIGHT_BLUE, LIGHT_GRAY } from '../../constants/colors';
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
@@ -10,6 +11,7 @@ import ButtonGroup from '../widgets/ButtonGroup';
 import OpacitySlider from '../widgets/OpacitySlider';
 import OrientationToggle from '../widgets/OrientationToggle';
 import SliderWidget from '../widgets/Slider';
+import Switch from '../widgets/Switch';
 
 export type HistogramControlsProps = {
   /** Label for control panel. Optional. */
@@ -18,6 +20,10 @@ export type HistogramControlsProps = {
   barLayout: string;
   /** Function to invoke when barlayout changes. */
   onBarLayoutChange: (layout: 'overlay' | 'stack') => void;
+  /** Whether or not to display the plot legend. */
+  displayLegend: boolean;
+  /** Action to take on display legend change. */
+  onDisplayLegendChange: (displayLegend: boolean) => void;
   /** Current histogram opacity. */
   opacity: number;
   /** Function to invoke when opacity changes. */
@@ -42,6 +48,9 @@ export type HistogramControlsProps = {
   binWidthStep: number;
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
+  /** Color to use as an accent in the control panel. Will accept any
+   * valid CSS color definition. Defaults to LIGHT_BLUE */
+  accentColor?: string;
 };
 
 /**
@@ -56,6 +65,8 @@ export default function HistogramControls({
   binWidthStep,
   binWidthRange,
   onBinWidthChange,
+  displayLegend,
+  onDisplayLegendChange,
   barLayout,
   onBarLayoutChange,
   opacity,
@@ -66,27 +77,35 @@ export default function HistogramControls({
   selectedUnit,
   onSelectedUnitChange,
   containerStyles = {},
+  accentColor = LIGHT_BLUE,
 }: HistogramControlsProps) {
-  console.log(availableUnits, selectedUnit, onSelectedUnitChange);
+  const { ref, width } = useDimensions<HTMLDivElement>();
 
   return (
     <div
+      ref={ref}
       style={{
         borderStyle: 'solid',
         borderWidth: 2,
         borderColor: LIGHT_GRAY,
         borderRadius: '10px',
         padding: '15px',
-        display: 'flex',
-        flexDirection: 'column',
+        minWidth: '175px',
         ...containerStyles,
       }}
     >
-      <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(max-content, 100px))',
+          marginRight: 35,
+          columnGap: 25,
+          rowGap: 15,
+        }}
+      >
         <OrientationToggle
           orientation={orientation}
           onOrientationChange={onOrientationChange}
-          containerStyles={{ paddingBottom: 10, paddingRight: 25 }}
         />
         <ButtonGroup
           label='Bar Layout'
@@ -94,7 +113,6 @@ export default function HistogramControls({
           selectedOption={barLayout}
           // @ts-ignore
           onOptionSelected={onBarLayoutChange}
-          containerStyles={{ paddingBottom: 10, paddingRight: 25 }}
         />
         {availableUnits?.length && selectedUnit && onSelectedUnitChange && (
           <ButtonGroup
@@ -102,15 +120,24 @@ export default function HistogramControls({
             options={availableUnits}
             selectedOption={selectedUnit}
             onOptionSelected={onSelectedUnitChange}
-            containerStyles={{ paddingBottom: 10, paddingRight: 25 }}
           />
         )}
       </div>
-      <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns:
+            width > 500 ? '2fr 2fr 1fr' : width > 300 ? '1fr 1fr' : '1fr',
+          marginTop: 15,
+          marginRight: 10,
+          columnGap: 25,
+          rowGap: 5,
+        }}
+      >
         <OpacitySlider
           value={opacity}
           onValueChange={onOpacityChange}
-          containerStyles={{ width: 100, paddingBottom: 10, paddingRight: 40 }}
+          color={accentColor}
         />
         <SliderWidget
           label='Bin Width'
@@ -119,13 +146,23 @@ export default function HistogramControls({
           step={binWidthStep}
           value={binWidth}
           onChange={onBinWidthChange}
-          containerStyles={{ width: 100 }}
+        />
+        <Switch
+          color={accentColor}
+          state={displayLegend}
+          // The stinky use of `any` here comes from
+          // an incomplete type definition in the
+          // material UI library.
+          onStateChange={(event: any) =>
+            onDisplayLegendChange(event.target.checked)
+          }
         />
       </div>
+
       {label && (
         <ControlsHeader
           text={label}
-          styleOverrides={{ paddingTop: 10, textAlign: 'right' }}
+          styleOverrides={{ paddingTop: 25, textAlign: 'right' }}
         />
       )}
     </div>

@@ -1,8 +1,10 @@
+import { NumberOrDate } from './general';
+
 // Commonly used type definitions for plots.
 export type BarLayoutOptions = 'overlay' | 'stack' | 'group';
 export type OrientationOptions = 'vertical' | 'horizontal';
 
-export type UnionOfPlotDataTypes = HistogramData;
+export type UnionOfPlotDataTypes = HistogramData | PiePlotData;
 
 // Histogram Type Definitions
 export type HistogramData = Array<HistogramDataSeries>;
@@ -22,4 +24,12 @@ export type HistogramBin = {
   binLabel?: string;
   /** The count of values in the bin. */
   count: number;
+};
+
+// Pie Plot Type Definitions
+export type PiePlotData = Array<PiePlotDatum>;
+export type PiePlotDatum = {
+  value: NumberOrDate;
+  label: string;
+  color?: string;
 };

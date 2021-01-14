@@ -20,7 +20,8 @@ type ActionType<DataShape> =
   | { type: 'setSelectedUnit'; payload: string }
   | { type: 'setOpacity'; payload: number }
   | { type: 'resetOpacity' }
-  | { type: 'toggleOrientation' };
+  | { type: 'toggleOrientation' }
+  | { type: 'toggleDisplayLegend' };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -48,6 +49,12 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
       return { ...state, opacity: 1 };
     case 'setSelectedUnit':
       return { ...state, selectedUnit: action.payload };
+    case 'toggleDisplayLegend': {
+      return {
+        ...state,
+        displayLegend: state.displayLegend === true ? false : true,
+      };
+    }
     case 'toggleOrientation':
       return {
         ...state,
@@ -74,6 +81,8 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
 type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
   /** The data of the plot. */
   data: DataShape;
+  /** Whether or not to display the plot legend. Defaults to true. */
+  displayLegend: boolean;
   /** The opacity of the plot. A number between 0 and 1. */
   opacity: number;
   /** The orientation of the plot. Defaults to 'vertical'. */
@@ -120,6 +129,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   // Set the initial state managed by the userReducer hook below.
   const initialState: PlotSharedState<DataShape> = {
     data: params.data,
+    displayLegend: true,
     opacity: 1,
     orientation: 'vertical',
     barLayout: 'overlay',
@@ -176,7 +186,15 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   }
 
   const [
-    { data, barLayout, histogram, opacity, orientation, selectedUnit },
+    {
+      data,
+      displayLegend,
+      barLayout,
+      histogram,
+      opacity,
+      orientation,
+      selectedUnit,
+    },
     dispatch,
   ] = useReducer<Reducer<PlotSharedState<DataShape>, ActionType<DataShape>>>(
     reducer,
@@ -218,8 +236,13 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   // Toggle Plot Orientation
   const toggleOrientation = () => dispatch({ type: 'toggleOrientation' });
 
+  // Toggle Legend
+  const toggleDisplayLegend = () => dispatch({ type: 'toggleDisplayLegend' });
+
   return {
     data,
+    displayLegend,
+    toggleDisplayLegend,
     availableUnits: params.availableUnits,
     histogram: { ...histogram, setBinWidth },
     barLayout,

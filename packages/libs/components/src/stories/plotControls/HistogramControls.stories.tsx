@@ -6,6 +6,7 @@ import usePlotControls, {
   usePlotControlsParams,
 } from '../../hooks/usePlotControls';
 import { HistogramData } from '../../types/plots';
+import { LIGHT_PURPLE } from '../../constants/colors';
 
 export default {
   title: 'Plot Controls/Histogram',
@@ -30,6 +31,8 @@ export const RequiredControls: Story<usePlotControlsParams<HistogramData>> = (
       binWidthRange={controls.histogram.binWidthRange}
       binWidthStep={controls.histogram.binWidthStep}
       onBinWidthChange={controls.histogram.setBinWidth}
+      displayLegend={controls.displayLegend}
+      onDisplayLegendChange={controls.toggleDisplayLegend}
       opacity={controls.opacity}
       onOpacityChange={controls.setOpacity}
       orientation={controls.orientation}
@@ -49,7 +52,7 @@ RequiredControls.args = {
   },
 };
 
-export const OptionalControls: Story<usePlotControlsParams<HistogramData>> = (
+export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>> = (
   args
 ) => {
   const controls = usePlotControls<HistogramData>({
@@ -62,6 +65,9 @@ export const OptionalControls: Story<usePlotControlsParams<HistogramData>> = (
   return (
     <HistogramControls
       label='Customizable Control Panel Label'
+      accentColor={LIGHT_PURPLE}
+      displayLegend={controls.displayLegend}
+      onDisplayLegendChange={controls.toggleDisplayLegend}
       availableUnits={controls.availableUnits}
       selectedUnit={controls.selectedUnit}
       onSelectedUnitChange={controls.setSelectedUnit}
@@ -79,7 +85,7 @@ export const OptionalControls: Story<usePlotControlsParams<HistogramData>> = (
   );
 };
 
-OptionalControls.args = {
+AdditionalOptions.args = {
   availableUnits: ['Celsius', 'Fahrenheit'],
   initialSelectedUnit: 'Celsius',
   onSelectedUnitChange: async () => [],
