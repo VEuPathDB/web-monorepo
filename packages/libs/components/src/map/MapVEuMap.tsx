@@ -1,5 +1,6 @@
 import React, {useState, CSSProperties, ReactElement} from "react";
-import { BoundsViewport, MarkerProps, AnimationFunction } from "./Types";
+import { BoundsViewport, AnimationFunction } from "./Types";
+import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
 const { BaseLayer } = LayersControl
 import {Viewport, Map, TileLayer, LayersControl} from "react-leaflet";
 import SemanticMarkers from "./SemanticMarkers";
@@ -22,8 +23,7 @@ interface MapVEuMapProps {
   height: CSSProperties['height'],
   width: CSSProperties['width'],
   onViewportChanged: (bvp: BoundsViewport) => void,
-  markers: ReactElement<MarkerProps>[],
-  nudge?: 'geohash' | 'none',
+  markers: ReactElement<BoundsDriftMarkerProps>[],
   recenterMarkers?: boolean,
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
   sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
@@ -37,7 +37,7 @@ interface MapVEuMapProps {
 
 
 
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, recenterMarkers = true, showGrid}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -57,7 +57,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         onViewportChanged={handleViewportChanged}
         // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
         minZoom={2}
-        worldCopyJump={true}
+        worldCopyJump={false}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -68,7 +68,6 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         onViewportChanged={onViewportChanged}
         markers={markers}
         animation={animation}
-        nudge={nudge}
         recenterMarkers={recenterMarkers}
       />
 

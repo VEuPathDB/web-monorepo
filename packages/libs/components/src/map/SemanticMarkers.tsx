@@ -39,7 +39,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
         const bounds = boundsToGeoBBox(map.getBounds());
 	setBounds(bounds);
         const zoomLevel = map.getZoom();
-        onViewportChanged({ bounds, zoomLevel });
+        onViewportChanged({ bounds : constrainLongitudeToMainWorld(bounds), zoomLevel });
       }
     }
 
@@ -53,7 +53,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
     };
   }, [map, onViewportChanged]);
 
-  // handle recentering (around +180/-180 longitude) and animation
+  // handle recentering of markers (around +180/-180 longitude) and animation
   useEffect(() => {
     let recenteredMarkers = false;
     if (recenterMarkers && bounds) {
@@ -157,3 +157,24 @@ function boundsToGeoBBox(bounds : LatLngBounds) : Bounds {
   return { southWest: {lat: south, lng: west}, northEast: {lat: north, lng: east} };
 }
 
+
+// put longitude bounds within normal -180 to 180 range
+function constrainLongitudeToMainWorld({ southWest: { lat: south, lng: west }, northEast : {lat: north, lng: east} } : Bounds) : Bounds {
+
+  let newEast = east;
+  let newWest = west;
+  while (newEast > 180) {
+    newEast -= 360
+  }
+  while (newEast < -180) {
+    newEast += 360
+  }
+  while (newWest < -180) {
+    newWest += 360
+  }
+  while (newWest > 180) {
+    newWest -= 360
+  }
+
+  return { southWest: { lat: south, lng: newWest }, northEast: {lat: north, lng: newEast} }
+}

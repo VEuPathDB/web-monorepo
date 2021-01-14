@@ -17,38 +17,20 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : num
   console.log(`I've been triggered with long bounds=[${west} TO ${east}] and zoom=${zoomLevel}`);
 
   const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
-
-  let newEast = east;
-  let newWest = west;
-  // put longitude bounds within normal -180 to 180 range
-  while (newEast > 180) {
-    newEast -= 360
-  }
-  while (newEast < -180) {
-    newEast += 360
-  }
-  while (newWest < -180) {
-    newWest += 360
-  }
-  while (newWest > 180) {
-    newWest -= 360
-  }
-  console.log(`New long bounds are [${newWest} TO ${newEast}]`);
-
   // filter data taking care of both east<west and east>west possibilities
   const buckets = (data as { [key: string]: any })[`geohash_${geohashLevel}`].facets.geo.buckets.filter((bucket: any) => {
     const ltAvg : number = bucket.ltAvg;
     const lnAvg : number = bucket.lnAvg;
     const lambda = 1e-08; // accommodate tiny rounding errors
-    if (newWest < newEast - lambda) {
+    if (west < east - lambda) {
       return ltAvg > south &&
 	     ltAvg < north &&
-	     lnAvg > newWest &&
-	     lnAvg < newEast
-    } if (newWest > newEast + lambda) {
+	     lnAvg > west &&
+	     lnAvg < east
+    } if (west > east + lambda) {
       return ltAvg > south &&
 	     ltAvg < north &&
-	     !(lnAvg > newEast && lnAvg < newWest)
+	     !(lnAvg > east && lnAvg < west)
     } else {
       return true
     }
