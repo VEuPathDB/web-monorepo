@@ -87,30 +87,30 @@ export default function CustomGridLayer() {
 			       [ // two rectangles straddling +180 deg line
 				 [ // west of the line is normal and truncated at 180
 				   [
-				     [180, currentMapBounds.getNorth()],
+				     [180.0, currentMapBounds.getNorth()],
 				     [west + longitudeCorrection, currentMapBounds.getNorth()],
 				     [west + longitudeCorrection, currentMapBounds.getSouth()],
-				     [180, currentMapBounds.getSouth()],
-				     [180, currentMapBounds.getNorth()]
+				     [180.0, currentMapBounds.getSouth()],
+				     [180.0, currentMapBounds.getNorth()]
 				   ]
 				 ],
 				 [ // east of the line needs shifting over to, e.g. -180 to -120
 				   [
-				     [-180, currentMapBounds.getNorth()],
+				     [-180.0, currentMapBounds.getNorth()],
 				     [east + longitudeCorrection - 360, currentMapBounds.getNorth()],
 				     [east + longitudeCorrection - 360, currentMapBounds.getSouth()],
-				     [-180, currentMapBounds.getSouth()],
-				     [-180, currentMapBounds.getNorth()]
+				     [-180.0, currentMapBounds.getSouth()],
+				     [-180.0, currentMapBounds.getNorth()]
 				   ]
 				 ]
 			       ] :
 			       [ // edge case return whole world rectangle
 				 [
-				   [180, 90],
-				   [-180, 90],
-				   [-180, -90],
-				   [180, -90],
-				   [180, 90]
+				   [180.0, 90.0],
+				   [-180.0, 90.0],
+				   [-180.0, -90.0],
+				   [180.0, -90.0],
+				   [180.0, 90.0]
 				 ]
 			       ];
 	      

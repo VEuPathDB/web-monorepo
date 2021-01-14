@@ -1,6 +1,6 @@
 import React, { ReactElement, useState, useCallback } from 'react';
 import MapVEuMap from './MapVEuMap';
-import { BoundsViewport, MarkerProps } from './Types';
+import { BoundsViewport } from './Types';
 // import { Tooltip } from 'react-leaflet';
 import Geohash from 'latlon-geohash';
 import './TempIconHack';

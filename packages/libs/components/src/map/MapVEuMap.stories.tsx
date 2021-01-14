@@ -1,8 +1,8 @@
 import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
-import { BoundsViewport, MarkerProps } from './Types';
-import { Marker } from 'react-leaflet';
+import { BoundsViewport } from './Types';
+import BoundsDriftMarker, { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
 import './TempIconHack';
 
 
@@ -11,6 +11,9 @@ export default {
   component: MapVEuMap,
 };
 
+//
+// 2020: suggest we remove this story!  It behaves strangely I think due to random position markers (with the same ID).
+//
 
 /*
    This is a trivial marker data generator.  It returns 10 random points within the given bounds.
@@ -22,16 +25,19 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, numMarkers : n
   return Array(numMarkers).fill(undefined).map((_, index) => {
     const lat = bounds.southWest.lat + Math.random()*(bounds.northEast.lat - bounds.southWest.lat);
     const long = bounds.southWest.lng + Math.random()*(bounds.northEast.lng - bounds.southWest.lng);
-    return <Marker
+    return <BoundsDriftMarker
+      id={`marker_${index}`}
       key={`marker_${index}`}
-      position={[lat, long]}
+      position={{lat: lat, lng: long}}
+      bounds={{ southWest: { lat: lat, lng: long }, northEast: { lat: lat, lng: long }}}
+      duration={300}
     />
   });
 }
 
 
 export const Basic = () => {
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
     setMarkerElements(getMarkerElements(bvp, 10));
   }, [setMarkerElements])
