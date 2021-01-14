@@ -9,7 +9,7 @@ import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.
 import './TempIconHack';
 
 export default {
-  title: 'DK multiple worlds/Marker Bounds',
+  title: 'Multiple Worlds',
 };
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, data = testData) => {
