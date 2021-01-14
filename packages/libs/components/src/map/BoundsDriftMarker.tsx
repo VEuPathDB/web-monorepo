@@ -1,9 +1,8 @@
-import {Rectangle, useLeaflet, Popup, Marker, MarkerProps as LeafletMarkerProps} from "react-leaflet";
-import React, { useEffect, useRef, useState } from "react";
+import {Rectangle, useLeaflet, Popup, MarkerProps as LeafletMarkerProps} from "react-leaflet";
+import React, { useState } from "react";
 import { DriftMarker } from "leaflet-drift-marker";
 import { MarkerProps, Bounds, ExtractProps } from './Types';
-import { LeafletMouseEvent, LatLngBounds, Marker as LeafletMarker } from "leaflet";
-import ReactDOMServer from "react-dom/server";
+import { LeafletMouseEvent, LatLngBounds } from "leaflet";
 
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds,
@@ -54,6 +53,8 @@ export default function BoundsDriftMarker({position, bounds, icon, duration, sho
   }
 
   const handleClick = (e: LeafletMouseEvent) => {
+    // Default popup behavior is to open on marker click
+    // Prevent by immediately closing it
     e.target.closePopup();
   }
 

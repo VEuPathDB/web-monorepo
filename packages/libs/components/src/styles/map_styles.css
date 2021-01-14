@@ -2,6 +2,10 @@
     border: solid gray 1px;
 }
 
+.cursor-zoom-in {
+    cursor: zoom-in;
+}
+
 .mouse-toolbar {
     position: relative;
     right: 6rem;

@@ -1,7 +1,6 @@
 import { ReactElement } from "react";
 import { LatLngLiteral, Icon } from "leaflet";
-import { PopupProps } from 'react-leaflet';
-import { Props as PieProps } from '../plots/PiePlot';
+import { PlotProps } from '../plots/PlotlyPlot';
 
 export type LatLng = LatLngLiteral;
 // from leaflet:
@@ -37,7 +36,7 @@ export interface MarkerProps {
   id: string,
   icon?: Icon,
   showPopup?: boolean,
-  popupPlot?: ReactElement<PieProps>,
+  popupPlot?: ReactElement<PlotProps>,
 }
 
 export type AnimationFunction = (

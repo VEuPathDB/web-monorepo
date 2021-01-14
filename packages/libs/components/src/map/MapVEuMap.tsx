@@ -6,7 +6,7 @@ import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
 import '../styles/map_styles.css'
 import CustomGridLayer from "./CustomGridLayer";
-import { MouseMode } from './MouseTools';
+import MouseTools, { MouseMode } from './MouseTools';
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -32,12 +32,13 @@ interface MapVEuMapProps {
     duration: number,
     animationFunction: AnimationFunction
   } | null,
-  showGrid: boolean
+  showGrid: boolean,
+  showMouseToolbar?: boolean,
 }
 
 
 
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, showGrid}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, showGrid, showMouseToolbar}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -60,6 +61,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         viewport={state}
         style={{height, width}}
         onViewportChanged={handleViewportChanged}
+        className={mouseMode === "magnification" ? "cursor-zoom-in": ""}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -71,9 +73,14 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         markers={markers}
         animation={animation}
         nudge={nudge}
-        mouseMode={mouseMode}
-        setMouseMode={setMouseMode}
       />
+
+      {showMouseToolbar &&
+        <MouseTools
+          mouseMode={mouseMode}
+          setMouseMode={setMouseMode}
+        />
+      }
 
       { showGrid ? <CustomGridLayer /> : null }
 

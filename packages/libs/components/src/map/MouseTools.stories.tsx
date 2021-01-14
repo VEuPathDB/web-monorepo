@@ -218,6 +218,7 @@ export const Species = () => {
           duration
         }}
         showGrid={true}
+        showMouseToolbar={true}
       />
       <MapVEuLegendSampleList
         legendType={legendType}

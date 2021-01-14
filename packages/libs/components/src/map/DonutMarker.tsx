@@ -1,15 +1,12 @@
 import React from "react";
-import { MarkerProps } from './Types';
 
 //DKDK leaflet
-import L, { LeafletMouseEvent } from "leaflet";
-import { Popup } from 'react-leaflet';
+import L from "leaflet";
 
 //DKDK anim
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import PiePlot from '../plots/PiePlot';
-import { floor } from "lodash";
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 export interface DonutMarkerProps extends BoundsDriftMarkerProps {
@@ -71,18 +68,6 @@ function kFormatter(num: number) {
   return Math.abs(num) > 9999 ? (Math.sign(num)*(Math.abs(num)/1000)).toFixed(0) + 'k' : Math.sign(num)*Math.abs(num)
 }
 
-function pieLabelFormatter(datum: {value: number, label: string}, sumValues: number, maxChars: number) {
-  // Show a concatenated label if the slice is large enough
-  const percentage = datum.value / sumValues * 100;
-  const max_chars = Math.min(maxChars, Math.max(7, 7 + floor((percentage - 12) / 1.8)));
-
-  if (percentage > 3.5) {
-    return datum.label.length > max_chars ? datum.label.substr(0, max_chars-2) + '...' : datum.label;
-  } else {
-    return '';
-  }
-}
-
 /**
  * DKDK this is a SVG donut marker icon
  */
@@ -90,6 +75,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
   let fullStat = []
   let defaultColor: string = ''
   for (let i = 0; i < props.data.length; i++) {
+    // Currently this only serves to initialize missing colors as 'silver'
     let datum = props.data[i]
 
     if (datum.color) {
@@ -163,7 +149,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
   const marginSize = 0;
 
   const popupPlot = <PiePlot
-    data={props.data}
+    data={fullStat}
     interior={{
       heightPercentage: 0.5,
       text: sumLabel as string,
@@ -175,9 +161,9 @@ export default function DonutMarker(props: DonutMarkerProps) {
     showLegend={false}
     showHoverInfo={false}
     textposition='inside'
-    textinfo='value'  // percent, value, label, text...
-    text={props.data.map(datum => pieLabelFormatter(datum, sumValues, 15))}
-    // texttemplate={props.data.map(datum => `${pieLabelFormatter(datum, sumValues, 10)} %{value}`)}
+    textinfo='text'
+    // Show value if pie slice is large enough
+    text={fullStat.map(datum => datum.value / sumValues >= 0.015 ? datum.value.toString() : '')}
   />;
 
   return (
