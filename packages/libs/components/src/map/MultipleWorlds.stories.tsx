@@ -1,5 +1,7 @@
 import React, {ReactElement, useCallback, useState} from "react";
-import {BoundsViewport, MarkerProps} from "./Types";
+//DKDK change below
+import { BoundsViewport, Bounds } from './Types';
+import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
 import MapVEuMap from "./MapVEuMap";
 import geohashAnimation from "./animation_functions/geohash";
 import testData from './test-data/geoclust-date-binning-testing-all-levels.json';
@@ -52,7 +54,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : num
 };
 
 export const MarkerBounds = () => {
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
   const duration = defaultAnimationDuration;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
@@ -77,7 +79,7 @@ export const MarkerBounds = () => {
 
 
 export const DatelineData = () => {
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
   const duration = defaultAnimationDuration;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
