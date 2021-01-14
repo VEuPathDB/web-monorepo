@@ -35,12 +35,12 @@ export default function CustomGridLayer() {
   	        }
 
 	        // work out how many 360 degrees we are away from the 'main world'
-	        let lonOffset = 0;
-	        while (west + lonOffset > 180) {
-		  lonOffset -= 360
+	        let longitudeCorrection = 0;
+	        while (west + longitudeCorrection > 180) {
+		  longitudeCorrection -= 360
 		}
-	        while (east + lonOffset < -180) {
-		  lonOffset += 360
+	        while (east + longitudeCorrection < -180) {
+		  longitudeCorrection += 360
 		}
 
                 // bfox6 - Make the current map bounds accessible to the outside world
@@ -51,24 +51,24 @@ export default function CustomGridLayer() {
                  * state within the 'then' callback.
                  **/
 
-	        const shapes = west + lonOffset >= -180 &&
-			       east + lonOffset <= 180 ?
+	        const shapes = west + longitudeCorrection >= -180 &&
+			       east + longitudeCorrection <= 180 ?
 			       [ // one rectangle
 				 [
-				   [east + lonOffset, currentMapBounds.getNorth()],
-				   [west + lonOffset, currentMapBounds.getNorth()],
-				   [west + lonOffset, currentMapBounds.getSouth()],
-				   [east + lonOffset, currentMapBounds.getSouth()],
-				   [east + lonOffset, currentMapBounds.getNorth()]
+				   [east + longitudeCorrection, currentMapBounds.getNorth()],
+				   [west + longitudeCorrection, currentMapBounds.getNorth()],
+				   [west + longitudeCorrection, currentMapBounds.getSouth()],
+				   [east + longitudeCorrection, currentMapBounds.getSouth()],
+				   [east + longitudeCorrection, currentMapBounds.getNorth()]
 				 ]
 			       ] :
-			       west + lonOffset < -180 ?
+			       west + longitudeCorrection < -180 ?
 			       [ // two rectangles straddling -180 deg line
 				 [
 				   [ // west of the line, move it over to the eastern side e.g. 120 to 180
 				     [180.0, currentMapBounds.getNorth()],
-				     [west + lonOffset + 360, currentMapBounds.getNorth()],
-				     [west + lonOffset + 360, currentMapBounds.getSouth()],
+				     [west + longitudeCorrection + 360, currentMapBounds.getNorth()],
+				     [west + longitudeCorrection + 360, currentMapBounds.getSouth()],
 				     [180.0, currentMapBounds.getSouth()],
 				     [180.0, currentMapBounds.getNorth()]
 				   ]
@@ -76,20 +76,20 @@ export default function CustomGridLayer() {
 				 [
 				   [ // east of the line
 				     [-180.0, currentMapBounds.getNorth()],
-				     [east + lonOffset, currentMapBounds.getNorth()],
-				     [east + lonOffset, currentMapBounds.getSouth()],
+				     [east + longitudeCorrection, currentMapBounds.getNorth()],
+				     [east + longitudeCorrection, currentMapBounds.getSouth()],
 				     [-180.0, currentMapBounds.getSouth()],
 				     [-180.0, currentMapBounds.getNorth()]
 				   ]
 				 ]
 			       ] :
- 			       east + lonOffset > 180 ?
+ 			       east + longitudeCorrection > 180 ?
 			       [ // two rectangles straddling +180 deg line
 				 [ // west of the line is normal and truncated at 180
 				   [
 				     [180, currentMapBounds.getNorth()],
-				     [west + lonOffset, currentMapBounds.getNorth()],
-				     [west + lonOffset, currentMapBounds.getSouth()],
+				     [west + longitudeCorrection, currentMapBounds.getNorth()],
+				     [west + longitudeCorrection, currentMapBounds.getSouth()],
 				     [180, currentMapBounds.getSouth()],
 				     [180, currentMapBounds.getNorth()]
 				   ]
@@ -97,13 +97,22 @@ export default function CustomGridLayer() {
 				 [ // east of the line needs shifting over to, e.g. -180 to -120
 				   [
 				     [-180, currentMapBounds.getNorth()],
-				     [east + lonOffset - 360, currentMapBounds.getNorth()],
-				     [east + lonOffset - 360, currentMapBounds.getSouth()],
+				     [east + longitudeCorrection - 360, currentMapBounds.getNorth()],
+				     [east + longitudeCorrection - 360, currentMapBounds.getSouth()],
 				     [-180, currentMapBounds.getSouth()],
 				     [-180, currentMapBounds.getNorth()]
 				   ]
 				 ]
-			       ] : [ ];
+			       ] :
+			       [ // edge case return whole world rectangle
+				 [
+				   [180, 90],
+				   [-180, 90],
+				   [-180, -90],
+				   [180, -90],
+				   [180, 90]
+				 ]
+			       ];
 	      
                 Promise.resolve(shape2geohash(shapes, {precision: geohashLevel})).then(function (value) {
                     setGeohashes(value);
