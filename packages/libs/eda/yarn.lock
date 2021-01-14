@@ -2280,6 +2280,15 @@
     md5 "^2.3.0"
     whatwg-fetch "^3.5.0"
 
+"@veupathdb/web-common@^0.1.1-alpha.3":
+  version "0.1.1-alpha.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.3.tgz#76cea7f95aee1885ad3b5743553bd82a383b39ed"
+  integrity sha512-RODWJm8jC6Zz9XuDq/fMXQkH3cNfKqVWtsNb1Nd8hxcsZk1cL4EatrgHraip+jCt2oBdtyQBpc38dA2fGcjAGA==
+  dependencies:
+    custom-event-polyfill "^1.0.7"
+    md5 "^2.3.0"
+    whatwg-fetch "^3.5.0"
+
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.9.0.tgz#bd850604b4042459a5a41cd7d338cbed695ed964"
