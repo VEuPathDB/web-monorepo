@@ -8,7 +8,7 @@ import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.
 import './TempIconHack';
 
 export default {
-  title: 'Marker Bounds',
+  title: 'Map/Marker Bounds',
 };
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number) => {

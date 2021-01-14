@@ -29,7 +29,7 @@ import geohashAnimation from "./animation_functions/geohash";
 import md5 from 'md5';
 
 export default {
-  title: 'Donut Markers for categorical',
+  title: 'Map/Donut Markers',
   component: MapVEuMapSidebar,
 };
 

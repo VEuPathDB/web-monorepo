@@ -10,7 +10,7 @@ import md5 from 'md5';
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 
 export default {
-  title: 'Animated Markers',
+  title: 'Map/Animated Markers',
 //  component: MapVEuMap,
 };
 
