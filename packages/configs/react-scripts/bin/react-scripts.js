@@ -12,6 +12,6 @@ switch(script) {
     });
     break;
   default:
-    spawn('npx', ['react-scripts', ...process.argv.slice(2)], { stdio: 'inherit'});
+    spawn('npx', ['react-app-rewired', ...process.argv.slice(2)], { stdio: 'inherit'});
     break;
 }
