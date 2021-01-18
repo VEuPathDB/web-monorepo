@@ -47,5 +47,5 @@ export function BlastWorkspace() {
 }
 
 function UnderConstruction() {
-  return <div>Under Construction</div>;
+  return <p style={{ fontSize: '1.2em' }}>Under Construction</p>;
 }
