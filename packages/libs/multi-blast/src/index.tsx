@@ -1,6 +1,6 @@
 import './globals';
 import React from 'react';
-import { RouteComponentProps } from 'react-router';
+import { Redirect, RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
@@ -11,6 +11,7 @@ import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
 import { BlastForm } from './lib/BlastForm';
+import { BlastWorkspace } from './lib/BlastWorkspace';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
@@ -25,6 +26,15 @@ initialize({
       path: '/',
       component: (props: RouteComponentProps<void>) => <Home />,
     },
+    {
+      path: '/workspace/blast',
+      exact: false,
+      component: BlastWorkspace,
+    },
+    {
+      path: '/search/transcript/GenesByMultiBlast',
+      component: () => <Redirect to="/workspace/blast" />,
+    },
     ...routes,
   ],
   componentWrappers: {
@@ -34,8 +44,8 @@ initialize({
     {
       type: 'questionForm',
       name: 'GenesByMultiBlast',
-      component: BlastForm
-    }
+      component: BlastForm,
+    },
   ] as ClientPluginRegistryEntry<any>[],
   endpoint,
 } as any);
