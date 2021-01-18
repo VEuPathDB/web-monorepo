@@ -2,7 +2,9 @@
 import React, { useState, ReactElement, CSSProperties } from "react";
 //DKDK needs to be check later
 // import { MapVEuMapProps } from "./TypesSidebar";
-import { BoundsViewport, MarkerProps, AnimationFunction } from "./Types";
+//DKDK change markerElement's prop
+import { BoundsViewport, AnimationFunction } from "./Types";
+import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
 import { Viewport, Map, TileLayer, LayersControl, ZoomControl, ScaleControl } from "react-leaflet";
 import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
@@ -46,7 +48,7 @@ interface MapVEuMapPropsCutAndPasteCopy {
   height: CSSProperties['height'],
   width: CSSProperties['width'],
   onViewportChanged: (bvp: BoundsViewport) => void,
-  markers: ReactElement<MarkerProps>[],
+  markers: ReactElement<BoundsDriftMarkerProps>[],
   nudge?: 'geohash' | 'none',
 
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
@@ -153,7 +155,7 @@ export default function MapVEuMapSidebarSibling({ viewport, height, width, onVie
           onViewportChanged={onViewportChanged}
           markers={markers}
           animation={animation}
-          nudge={nudge}
+          // nudge={nudge}
         />
 
       </Map>

@@ -2,7 +2,8 @@ import React, { ReactElement, useState, useCallback } from 'react';
 // import { withKnobs, radios , boolean, number } from '@storybook/addon-knobs';
 // import { action } from '@storybook/addon-actions';
 import MapVEuMap from './MapVEuMap';
-import { BoundsViewport, MarkerProps, Bounds } from './Types';
+import { BoundsViewport, Bounds } from './Types';
+import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 
 import collectionDateData from './test-data/geoclust-date-binning-testing-all-levels.json';
@@ -12,7 +13,6 @@ import collectionDateData from './test-data/geoclust-date-binning-testing-all-le
 // let collectionDateData : any = undefined;
 // import('./test-data/geoclust-date-binning-testing-all-levels.json').then((json) => collectionDateData = json);
 
-import { LeafletMouseEvent } from "leaflet";
 import ChartMarker from './ChartMarker';
 
 //DKDK change target component
@@ -23,7 +23,7 @@ import geohashAnimation from "./animation_functions/geohash";
 import md5 from 'md5';
 
 export default {
-  title: 'Chart Markers for continuous',
+  title: 'Map/Chart Markers',
   component: MapVEuMap,
 };
 
@@ -98,12 +98,19 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
   const buckets = (collectionDateData as { [key: string]: any })[`geohash_${geohash_level}`].facets.geo.buckets.filter((bucket: bucketProps) => {
-    const ltAvg : number = bucket.ltAvg;
-    const lnAvg : number = bucket.lnAvg;
-    return ltAvg > bounds.southWest.lat &&
-	   ltAvg < bounds.northEast.lat &&
-	   lnAvg > bounds.southWest.lng &&
-	   lnAvg < bounds.northEast.lng
+    const lat : number = bucket.ltAvg;
+    const long : number = bucket.lnAvg;
+
+    const south = bounds.southWest.lat;
+    const north = bounds.northEast.lat;
+    const west = bounds.southWest.lng;
+    const east = bounds.northEast.lng;
+    const lambda = 1e-08; // accommodate tiny rounding errors
+
+    return (lat > south &&
+	    lat < north &&
+	    (west < east - lambda ? (long > west && long < east) :
+		    west > east + lambda ? !(long > east && long < west) : true) );
   });
 
   //DKDK change this to always show Reginal scale value
@@ -206,7 +213,7 @@ const getCollectionDateMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, 
 
 
 export const CollectionDate = () => {
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
 
   const knob_borderWidth: number = 3.5
   const knob_borderColor: string = '#AAAAAA'  //DKDK light greyish
