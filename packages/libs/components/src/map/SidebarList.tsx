@@ -4,10 +4,13 @@ import { Sidebar, Tab } from './SidebarReactCore'
 //DKDK modified version of typescript definition for react-leaflettaken
 import { SidebarProps } from './type-react-leaflet-sidebarv2'
 
+//DKDK testing to separate a component for tab content
+import TabHomeContent from './TabHomeContent'
+
 /**
  * DKDK this is an example of Sidebar component
  */
-export default function SidebarExample(props: SidebarProps) {
+export default function SidebarList(props: SidebarProps) {
   /**
    * DKDK think it may be better to separate Tabs as sub-components in the future?
    */
@@ -23,13 +26,18 @@ export default function SidebarExample(props: SidebarProps) {
         onClose={props.onClose}
     >
         <Tab id="home" header="Home" icon="fas fa-home">
-            <p>{testText}</p>
+            {/* DKDK a test to separate tab contents into a component, TabHomeContent */}
+            <TabHomeContent
+                id={'home'}
+                header={testText}
+            />
         </Tab>
-        <Tab id="settings" header="Settings" icon="fas fa-cog">
+        {/* DKDK testing disabled - greyish icon*/}
+        <Tab id="settings" header="Settings" icon="fas fa-cog" disabled>
             <p>Change settings</p>
         </Tab>
-        {/* DKDK add disabled tap to mimick blank space */}
-        <Tab id="gap1" header="" icon="" disabled>
+        {/* DKDK add disabled tap - no header & icon, use both diabled and divider */}
+        <Tab id="gap1" header="" icon="" disabled divider>
             <p>gap1</p>
         </Tab>
         <Tab id="marker-table" header="Details for selected samples" icon="fas fa-table">
@@ -38,8 +46,8 @@ export default function SidebarExample(props: SidebarProps) {
         <Tab id="export" header="Export Data" icon="fas fa-download">
             <p>Download data</p>
         </Tab>
-        {/* DKDK add disabled tap to mimick blank space */}
-        <Tab id="gap2" header="" icon="" disabled>
+        {/* DKDK add disabled tap - no header & icon, use both diabled and divider */}
+        <Tab id="gap2" header="" icon="" disabled divider>
             <p>gap2</p>
         </Tab>
         <Tab id="plot" header="Summary" icon="fas fa-chart-pie">

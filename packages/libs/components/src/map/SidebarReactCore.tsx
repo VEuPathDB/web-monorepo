@@ -10,10 +10,17 @@ import { SidebarProps, TabProps } from './type-react-leaflet-sidebarv2'
 // //DKDK add css
 // import './sidebar-style.css'
 
-class Tab extends React.Component<TabProps, any> {
+//DKDK extend TabProps to have divider prop
+interface TabPropsAdd extends TabProps {
+  //DKDK divider=true, then use divider
+  divider?: boolean,
+}
+
+//DKDK change from TabProps to TabPropsAdd for considering divider icon
+class Tab extends React.Component<TabPropsAdd, any> {
   render() {
     const active = this.props.active ? ' active' : '';
-    var closeIcon;
+    let closeIcon;
     if (typeof(this.props.closeIcon) === 'string')
       closeIcon = <i className={this.props.closeIcon} />;
     else if (typeof(this.props.closeIcon) === 'object')
@@ -62,7 +69,7 @@ class Sidebar extends React.Component<SidebarProps, any> {
 
   //DKDK temporarily set tab as any or Tab type?
   renderTab(tab: any) {
-    var icon;
+    let icon;
     if (typeof(tab.props.icon) === 'string')
       icon = <i className={tab.props.icon} />;
     else if (typeof(tab.props.icon) === 'object')
@@ -70,33 +77,23 @@ class Sidebar extends React.Component<SidebarProps, any> {
     const active = tab.props.id === this.props.selected ? ' active' : '';
     const disabled = tab.props.disabled ? ' disabled' : '';
 
-    // //DKDK blank divider
-    // return (
-    //   //DKDK add title attribute here for tooltip effect
-    //   <li className={'sidebartabs' + active + disabled} key={tab.props.id} title={tab.props.header}>
-    //     <a href={'#' + tab.props.id} role="tab" onClick={e => tab.props.disabled || this.onOpen(e, tab.props.id)}>
-    //       {icon}
-    //     </a>
-    //   </li>
-    // )
-
     //DKDK line divider using image file (made by DK)
-    if (!tab.props.disabled) {
+    if (tab.props.disabled && tab.props.divider) {
       return (
+        <li className={'sidebartabs' + active + disabled} key={tab.props.id} title={tab.props.header}>
+          <a href={'#' + tab.props.id} role="tab" onClick={e => tab.props.disabled || this.onOpen(e, tab.props.id)}>
+            <img src="./img/line-divider.png" />
+          </a>
+        </li>
+      )
+    } else {
+        return (
         //DKDK add title attribute here for tooltip effect
         <li className={'sidebartabs' + active + disabled} key={tab.props.id} title={tab.props.header}>
           <a href={'#' + tab.props.id} role="tab" onClick={e => tab.props.disabled || this.onOpen(e, tab.props.id)}>
             {icon}
           </a>
         </li>
-      )
-    } else {
-        return (
-          <li className={'sidebartabs' + active + disabled} key={tab.props.id} title={tab.props.header}>
-            <a href={'#' + tab.props.id} role="tab" onClick={e => tab.props.disabled || this.onOpen(e, tab.props.id)}>
-              <img src="./img/line-divider.png" />
-            </a>
-          </li>
         )
     }
   }
