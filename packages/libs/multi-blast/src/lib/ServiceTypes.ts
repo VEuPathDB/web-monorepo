@@ -167,8 +167,7 @@ export const ioBlastNScoringMatrix = oneOf(
   constant('BLOSUM90'),
   constant('PAM30'),
   constant('PAM70'),
-  constant('PAM250'),
-  constant('IDENTITY')
+  constant('PAM250')
 );
 
 export type IoBlastNScoringMatrix = Unpack<typeof ioBlastNScoringMatrix>;
@@ -254,3 +253,20 @@ export const ioTBlastNTask = oneOf(
 );
 
 export type IoTBlastNTask = Unpack<typeof ioTBlastNTask>;
+
+export const ioBlastNDust = record({
+  enable: optional(boolean),
+  level: optional(number),
+  window: optional(number),
+  linker: optional(number),
+});
+
+export type IoBlastNDust = Unpack<typeof ioBlastNDust>;
+
+export const ioBlastNDcTemplateType = oneOf(
+  constant('coding'),
+  constant('optimal'),
+  constant('both')
+);
+
+export type IoBlastNDcTemplateType = Unpack<typeof ioBlastNDcTemplateType>;
