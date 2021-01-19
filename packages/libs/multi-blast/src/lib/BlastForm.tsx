@@ -45,19 +45,21 @@ export function BlastForm(props: Props) {
     [selectedBlastAlgorithm, props.state.paramDependenciesUpdating]
   );
 
-  const renderBlastParamGroup = useMemo(() => {
+  const restrictedAdvancedParamGroup = useMemo(() => {
     const fullAdvancedParamGroup =
       props.state.question.groupsByName[ADVANCED_PARAMS_GROUP_NAME];
 
-    const restrictedAdvancedParamGroup = {
+    return {
       ...fullAdvancedParamGroup,
       parameters: fullAdvancedParamGroup.parameters.filter(
         (paramName) =>
           !isOmittedParam(props.state.question.parametersByName[paramName])
       ),
     };
+  }, [selectedBlastAlgorithm, advancedParamGroupChanging]);
 
-    return (group: ParameterGroup, formProps: Props) =>
+  const renderBlastParamGroup = useCallback(
+    (group: ParameterGroup, formProps: Props) =>
       group.name !== ADVANCED_PARAMS_GROUP_NAME ? (
         renderDefaultParamGroup(group, formProps)
       ) : (
@@ -85,8 +87,9 @@ export function BlastForm(props: Props) {
             }
           />
         </ShowHideGroup>
-      );
-  }, [advancedParamGroupChanging, selectedBlastAlgorithm]);
+      ),
+    [restrictedAdvancedParamGroup]
+  );
 
   return props.submissionMetadata.type === 'create-strategy' ? (
     <NewJobForm {...props} renderParamGroup={renderBlastParamGroup} />
