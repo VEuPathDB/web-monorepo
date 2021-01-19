@@ -226,3 +226,31 @@ export const ioTBlastXScoringMatrix = oneOf(
 );
 
 export type IOTBlastXScoringMatrix = Unpack<typeof ioTBlastXScoringMatrix>;
+
+export const ioBlastNTask = oneOf(
+  constant('megablast'),
+  constant('dc-megablast'),
+  constant('blastn'),
+  constant('blastn-short')
+);
+
+export type IoBlastNTask = Unpack<typeof ioBlastNTask>;
+
+export const ioBlastPTask = oneOf(
+  constant('blastp'),
+  constant('blastp-short'),
+  constant('blastp-fast')
+);
+
+export type IoBlastPTask = Unpack<typeof ioBlastPTask>;
+
+export const ioBlastXTask = oneOf(constant('blastx'), constant('blastx-fast'));
+
+export type IoBlastXTask = Unpack<typeof ioBlastXTask>;
+
+export const ioTBlastNTask = oneOf(
+  constant('tblastn'),
+  constant('tblastn-fast')
+);
+
+export type IoTBlastNTask = Unpack<typeof ioTBlastNTask>;
