@@ -1,5 +1,7 @@
 import { FormEvent, useCallback, useMemo, useState } from 'react';
 
+import { mapValues } from 'lodash';
+
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { isEnumParam } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 import { QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
@@ -92,7 +94,11 @@ export function BlastForm(props: Props) {
   );
 
   return props.submissionMetadata.type === 'create-strategy' ? (
-    <NewJobForm {...props} renderParamGroup={renderBlastParamGroup} />
+    <NewJobForm
+      {...props}
+      renderParamGroup={renderBlastParamGroup}
+      restrictedAdvancedParamGroup={restrictedAdvancedParamGroup}
+    />
   ) : (
     <DefaultQuestionForm {...props} renderParamGroup={renderBlastParamGroup} />
   );
@@ -100,15 +106,24 @@ export function BlastForm(props: Props) {
 
 interface NewJobFormProps extends Props {
   renderParamGroup: (group: ParameterGroup, formProps: Props) => JSX.Element;
+  restrictedAdvancedParamGroup: ParameterGroup;
 }
 
 function NewJobForm(props: NewJobFormProps) {
   const [submitting, setSubmitting] = useState(false);
 
-  const onSubmit = useCallback((event: FormEvent) => {
-    event.preventDefault();
-    alert('Under Construction');
-  }, []);
+  const onSubmit = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+
+      alert('Under Construction');
+    },
+    [
+      props.state.question,
+      props.restrictedAdvancedParamGroup,
+      props.state.paramValues,
+    ]
+  );
 
   return (
     <div className={blastFormCx()}>
@@ -162,6 +177,36 @@ function findParamsWhichDependOnlyOnBlastAlgorithm(
         dependencies.size === 1 && dependencies.has(BLAST_ALGORITHM_PARAM_NAME)
     )
     .map(([paramName]) => paramName);
+}
+
+function computeRestrictedParamValues(
+  question: QuestionWithMappedParameters,
+  restrictedAdvancedParamGroup: ParameterGroup,
+  paramValues: Record<string, string>
+) {
+  const parametersToInclude = question.groups.flatMap((group) =>
+    group.name === ADVANCED_PARAMS_GROUP_NAME
+      ? restrictedAdvancedParamGroup.parameters
+      : group.parameters
+  );
+
+  const parametersToIncludeSet = new Set(parametersToInclude);
+
+  return Object.entries(paramValues).reduce((memo, [paramName, paramValue]) => {
+    if (parametersToIncludeSet.has(paramName)) {
+      memo[paramName] = paramValue;
+    }
+
+    return memo;
+  }, {} as Record<string, string>);
+}
+
+// TODO Rename parameters to their BLAST service equivalents, and
+// TODO cast them to the expected type
+function paramValuesToBlastParameters(paramValues: Record<string, string>) {
+  return mapValues(paramValues, (paramValue) =>
+    paramValue.replace(/ \(default\)$/, '')
+  );
 }
 
 type EventHandlers = {
