@@ -3,6 +3,8 @@ import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
 
 import { Redirect, Switch } from 'react-router';
 
+import { BlastWorkspaceNew } from './BlastWorkspaceNew';
+
 export function BlastWorkspace() {
   return (
     <>
@@ -28,7 +30,7 @@ export function BlastWorkspace() {
         <WdkRoute
           path="/workspace/blast/new"
           requiresLogin={false}
-          component={UnderConstruction}
+          component={BlastWorkspaceNew}
         />
         <WdkRoute
           path="/workspace/blast/all"
