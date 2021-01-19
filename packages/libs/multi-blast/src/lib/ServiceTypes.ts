@@ -158,3 +158,71 @@ export const ioJobStatus = oneOf(
 );
 
 export type IoJobStatus = Unpack<typeof ioJobStatus>;
+
+export const ioBlastNScoringMatrix = oneOf(
+  constant('BLOSUM45'),
+  constant('BLOSUM50'),
+  constant('BLOSUM62'),
+  constant('BLOSUM80'),
+  constant('BLOSUM90'),
+  constant('PAM30'),
+  constant('PAM70'),
+  constant('PAM250'),
+  constant('IDENTITY')
+);
+
+export type IoBlastNScoringMatrix = Unpack<typeof ioBlastNScoringMatrix>;
+
+export const ioBlastPScoringMatrix = oneOf(
+  constant('BLOSUM45'),
+  constant('BLOSUM50'),
+  constant('BLOSUM62'),
+  constant('BLOSUM80'),
+  constant('BLOSUM90'),
+  constant('PAM30'),
+  constant('PAM70'),
+  constant('PAM250'),
+  constant('IDENTITY')
+);
+
+export type IOBlastPScoringMatrix = Unpack<typeof ioBlastPScoringMatrix>;
+
+export const ioBlastXScoringMatrix = oneOf(
+  constant('BLOSUM45'),
+  constant('BLOSUM50'),
+  constant('BLOSUM62'),
+  constant('BLOSUM80'),
+  constant('BLOSUM90'),
+  constant('PAM30'),
+  constant('PAM70'),
+  constant('PAM250')
+);
+
+export type IOBlastXScoringMatrix = Unpack<typeof ioBlastXScoringMatrix>;
+
+export const ioTBlastNScoringMatrix = oneOf(
+  constant('BLOSUM45'),
+  constant('BLOSUM50'),
+  constant('BLOSUM62'),
+  constant('BLOSUM80'),
+  constant('BLOSUM90'),
+  constant('PAM30'),
+  constant('PAM70'),
+  constant('PAM250'),
+  constant('IDENTITY')
+);
+
+export type IOTBlastNScoringMatrix = Unpack<typeof ioTBlastNScoringMatrix>;
+
+export const ioTBlastXScoringMatrix = oneOf(
+  constant('BLOSUM45'),
+  constant('BLOSUM50'),
+  constant('BLOSUM62'),
+  constant('BLOSUM80'),
+  constant('BLOSUM90'),
+  constant('PAM30'),
+  constant('PAM70'),
+  constant('PAM250')
+);
+
+export type IOTBlastXScoringMatrix = Unpack<typeof ioTBlastXScoringMatrix>;
