@@ -26,7 +26,7 @@ const BLAST_ALGORITHM_PARAM_NAME = 'BlastAlgorithm';
 
 const OMIT_PARAM_TERM = 'none';
 
-const cx = makeClassNameHelper('wdk-QuestionForm');
+export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
 export function BlastForm(props: Props) {
   const selectedBlastAlgorithm =
@@ -89,16 +89,18 @@ export function BlastForm(props: Props) {
   }, [advancedParamGroupChanging, selectedBlastAlgorithm]);
 
   return props.submissionMetadata.type === 'create-strategy' ? (
-    <div className="wdk-QuestionForm">
+    <div className={blastFormCx()}>
       <form>
         {props.state.question.groups
           .filter((group) => group.displayType !== 'hidden')
           .map((group) => renderBlastParamGroup(group, props))}
-        <SubmitButton
-          submissionMetadata={props.submissionMetadata}
-          submitting={false}
-          submitButtonText={props.submitButtonText}
-        />
+        <div className={blastFormCx('SubmitSection')}>
+          <SubmitButton
+            submissionMetadata={props.submissionMetadata}
+            submitting={false}
+            submitButtonText={props.submitButtonText}
+          />
+        </div>
       </form>
     </div>
   ) : (
@@ -165,11 +167,11 @@ function ShowHideGroup(props: GroupProps) {
     disabled = false,
   } = props;
   return (
-    <div className={cx('ShowHideGroup')}>
+    <div className={blastFormCx('ShowHideGroup')}>
       <button
         disabled={disabled}
         type="button"
-        className={cx('ShowHideGroupToggle')}
+        className={blastFormCx('ShowHideGroupToggle')}
         onClick={() => {
           onVisibilityChange({
             searchName,
@@ -181,7 +183,7 @@ function ShowHideGroup(props: GroupProps) {
         <IconAlt fa={`caret-${isVisible ? 'down' : 'right'}`} />{' '}
         {group.displayName}
       </button>
-      <div className={cx('ShowHideGroupContent')}>
+      <div className={blastFormCx('ShowHideGroupContent')}>
         {isVisible ? props.children : null}
       </div>
     </div>
