@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { FormEvent, useCallback, useMemo, useState } from 'react';
 
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { isEnumParam } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
@@ -89,22 +89,39 @@ export function BlastForm(props: Props) {
   }, [advancedParamGroupChanging, selectedBlastAlgorithm]);
 
   return props.submissionMetadata.type === 'create-strategy' ? (
+    <NewJobForm {...props} renderParamGroup={renderBlastParamGroup} />
+  ) : (
+    <DefaultQuestionForm {...props} renderParamGroup={renderBlastParamGroup} />
+  );
+}
+
+interface NewJobFormProps extends Props {
+  renderParamGroup: (group: ParameterGroup, formProps: Props) => JSX.Element;
+}
+
+function NewJobForm(props: NewJobFormProps) {
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = useCallback((event: FormEvent) => {
+    event.preventDefault();
+    alert('Under Construction');
+  }, []);
+
+  return (
     <div className={blastFormCx()}>
-      <form>
+      <form onSubmit={onSubmit}>
         {props.state.question.groups
           .filter((group) => group.displayType !== 'hidden')
-          .map((group) => renderBlastParamGroup(group, props))}
+          .map((group) => props.renderParamGroup(group, props))}
         <div className={blastFormCx('SubmitSection')}>
           <SubmitButton
             submissionMetadata={props.submissionMetadata}
-            submitting={false}
+            submitting={submitting}
             submitButtonText={props.submitButtonText}
           />
         </div>
       </form>
     </div>
-  ) : (
-    <DefaultQuestionForm {...props} renderParamGroup={renderBlastParamGroup} />
   );
 }
 
