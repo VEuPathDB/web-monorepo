@@ -160,19 +160,6 @@ export const ioJobStatus = oneOf(
 
 export type IoJobStatus = Unpack<typeof ioJobStatus>;
 
-export const ioBlastNScoringMatrix = oneOf(
-  constant('BLOSUM45'),
-  constant('BLOSUM50'),
-  constant('BLOSUM62'),
-  constant('BLOSUM80'),
-  constant('BLOSUM90'),
-  constant('PAM30'),
-  constant('PAM70'),
-  constant('PAM250')
-);
-
-export type IoBlastNScoringMatrix = Unpack<typeof ioBlastNScoringMatrix>;
-
 export const ioBlastPScoringMatrix = oneOf(
   constant('BLOSUM45'),
   constant('BLOSUM50'),
