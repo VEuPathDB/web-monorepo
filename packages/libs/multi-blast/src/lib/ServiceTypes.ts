@@ -339,6 +339,7 @@ export const ioBlastPConfig = record({
   matrix: optional(ioBlastPScoringMatrix),
   threshold: optional(number),
   compBasedStats: optional(ioBlastCompBasedStats),
+  seg: optional(ioBlastSegMask),
   softMasking: optional(boolean),
   taxIds: optional(arrayOf(number)),
   negativeTaxIds: optional(arrayOf(number)),
