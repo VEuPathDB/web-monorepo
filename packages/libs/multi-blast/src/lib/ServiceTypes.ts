@@ -454,3 +454,45 @@ export const ioTBlastNConfig = record({
 });
 
 export type IoTBlastNConfig = Unpack<typeof ioTBlastNConfig>;
+
+export const ioTBlastXConfig = record({
+  tool: constant('tblastx'),
+  query: optional(string),
+  queryLoc: optional(ioBlastLocation),
+  eValue: optional(string),
+  outFormat: optional(ioBlastReportFormat),
+  numDescriptions: optional(number),
+  numAlignments: optional(number),
+  lineLength: optional(number),
+  sortHits: optional(ioHitSorting),
+  sortHSPs: optional(ioHspSorting),
+  lcaseMasking: optional(boolean),
+  qCovHSPPerc: optional(number),
+  maxHSPs: optional(number),
+  maxTargetSeqs: optional(number),
+  dbSize: optional(number),
+  searchSpace: optional(number),
+  xDropUngap: optional(number),
+  parseDefLines: optional(boolean),
+  strand: optional(ioBlastStrand),
+  queryGeneticCode: number,
+  wordSize: optional(number),
+  maxIntronLength: optional(number),
+  matrix: optional(ioTBlastXScoringMatrix),
+  threshold: optional(number),
+  dbGencode: optional(number),
+  seg: optional(ioBlastSegMask),
+  softMasking: optional(boolean),
+  taxIds: optional(arrayOf(number)),
+  negativeTaxIds: optional(arrayOf(number)),
+  dbSoftMask: optional(string),
+  dbHardMask: optional(string),
+  cullingLimit: optional(number),
+  bestHitOverhang: optional(number),
+  bestHitScoreEdge: optional(number),
+  subjectBestHit: optional(boolean),
+  sumStats: optional(boolean),
+  windowSize: optional(number),
+});
+
+export type IoTBlastXConfig = Unpack<typeof ioTBlastXConfig>;
