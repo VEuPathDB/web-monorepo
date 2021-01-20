@@ -312,3 +312,47 @@ export const ioBlastNConfig = record({
 });
 
 export type IoBlastNConfig = Unpack<typeof ioBlastNConfig>;
+
+export const ioBlastPConfig = record({
+  tool: constant('blastp'),
+  query: optional(string),
+  queryLoc: optional(ioBlastLocation),
+  eValue: optional(string),
+  outFormat: optional(ioBlastReportFormat),
+  numDescriptions: optional(number),
+  numAlignments: optional(number),
+  lineLength: optional(number),
+  sortHits: optional(ioHitSorting),
+  sortHSPs: optional(ioHspSorting),
+  lcaseMasking: optional(boolean),
+  qCovHSPPerc: optional(number),
+  maxHSPs: optional(number),
+  maxTargetSeqs: optional(number),
+  dbSize: optional(number),
+  searchSpace: optional(number),
+  xDropUngap: optional(number),
+  parseDefLines: optional(boolean),
+  task: optional(ioBlastPTask),
+  wordSize: optional(number),
+  gapOpen: optional(number),
+  gapExtend: optional(number),
+  matrix: optional(ioBlastPScoringMatrix),
+  threshold: optional(number),
+  compBasedStats: optional(ioBlastCompBasedStats),
+  softMasking: optional(boolean),
+  taxIds: optional(arrayOf(number)),
+  negativeTaxIds: optional(arrayOf(number)),
+  dbSoftMask: optional(string),
+  dbHardMask: optional(string),
+  cullingLimit: optional(number),
+  bestHitOverhang: optional(number),
+  bestHitScoreEdge: optional(number),
+  subjectBestHit: optional(boolean),
+  xDropGap: optional(number),
+  xDropGapFinal: optional(number),
+  windowSize: optional(number),
+  ungapped: optional(boolean),
+  useSWTraceback: optional(boolean),
+});
+
+export type IoBlastPConfig = Unpack<typeof ioBlastPConfig>;
