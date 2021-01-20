@@ -271,10 +271,11 @@
 .legend-nav-icon {
   cursor: pointer;
   transition: color .3s;
+  /* DKDK set button's background-color for firefox (due to button:hover below) */
+  background-color: #e7e7e7;
 }
 
 .legend-nav-icon:hover {
   /* color: #5eb2ff; */
   color: red;
 }
-
