@@ -78,6 +78,8 @@ export type HistogramProps = {
   opacity: number;
   /** Control of background color. Defaults to transparent.  */
   backgroundColor?: string;
+  /** function to call upon selecting a range (in x and y axes) */
+  onSelected?: () => void,
 };
 
 /** A Plot.ly based histogram component. */
@@ -95,6 +97,7 @@ export default function Histogram({
   opacity = 1,
   layout = 'overlay',
   backgroundColor = 'transparent',
+  onSelected = () => {},
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -196,6 +199,7 @@ export default function Histogram({
         },
       }}
       data={plotlyFriendlyData}
+      onSelected={onSelected}
     />
   );
 }
