@@ -25,4 +25,15 @@ module.exports = function (app) {
       },
     })
   );
+  app.use(
+    '/eda-service',
+    createProxyMiddleware({
+      target: process.env.EDA_SERVICE_URL,
+      pathRewrite: { [`^/eda-service`]: '' },
+      secure: false,
+      changeOrigin: true,
+      followRedirects: true,
+      logLevel: 'debug',
+    })
+  );
 };

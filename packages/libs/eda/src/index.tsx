@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 // import { initialize } from '@veupathdb/wdk-client/lib/Core';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
-import { RouteComponentProps } from 'react-router';
+import { Redirect, RouteComponentProps } from 'react-router';
 import { EDAAnalysisList, EDAWorkspace } from './lib';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
@@ -18,10 +18,17 @@ initialize({
   rootElement,
   wrapRoutes: (routes: any): RouteEntry[] => [
     {
+      path: '/',
+      component: () => <Redirect to="/eda/DS_841a9f5259" />,
+    },
+    {
       path: '/eda/:studyId/:analysisId',
+      exact: false,
       component: (
         props: RouteComponentProps<{ studyId: string; analysisId: string }>
-      ) => <EDAWorkspace {...props.match.params} />,
+      ) => (
+        <EDAWorkspace {...props.match.params} edaServiceUrl="/eda-service" />
+      ),
     },
     {
       path: '/eda/:studyId',

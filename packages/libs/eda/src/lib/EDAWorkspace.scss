@@ -72,4 +72,38 @@
       }
     }
   }
+
+  .WorkspaceNavigation {
+    margin-top: 1.5em;
+    h1 {
+      font-size: 1em;
+      margin-bottom: 1em;
+    }
+  }
+
+  &-Variables {
+    h3 {
+      padding: 0;
+    }
+
+    dl {
+      margin: 0;
+    }
+
+    dt,
+    dd {
+      display: inline-block;
+    }
+
+    dt {
+      font-weight: 600;
+      &::after {
+        content: ': ';
+      }
+    }
+
+    dd {
+      margin-left: 1ex;
+    }
+  }
 }
