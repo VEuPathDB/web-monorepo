@@ -22,11 +22,11 @@ import {
   updateParamValue,
 } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 import { bindApiRequestCreators } from '@veupathdb/web-common/lib/util/api';
+
 import { apiRequests, createBlastRequestHandler } from '../utils/api';
+import { BLAST_ALGORITHM_PARAM_NAME } from '../utils/params';
 
 const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
-
-const BLAST_ALGORITHM_PARAM_NAME = 'BlastAlgorithm';
 
 const OMIT_PARAM_TERM = 'none';
 
