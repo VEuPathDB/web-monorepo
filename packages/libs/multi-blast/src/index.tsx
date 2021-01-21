@@ -10,8 +10,8 @@ import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
-import { BlastForm } from './lib/BlastForm';
-import { BlastWorkspace } from './lib/BlastWorkspace';
+import { BlastForm } from './lib/components/BlastForm';
+import { BlastWorkspace } from './lib/components/BlastWorkspace';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';

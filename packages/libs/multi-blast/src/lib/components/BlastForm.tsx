@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { mapValues } from 'lodash';
 
@@ -21,6 +21,8 @@ import {
   changeGroupVisibility,
   updateParamValue,
 } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
+import { bindApiRequestCreators } from '@veupathdb/web-common/lib/util/api';
+import { apiRequests, createBlastRequestHandler } from '../utils/api';
 
 const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
 
@@ -31,6 +33,16 @@ const OMIT_PARAM_TERM = 'none';
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
 export function BlastForm(props: Props) {
+  const api = useMemo(
+    () =>
+      bindApiRequestCreators(apiRequests, createBlastRequestHandler('/blast')),
+    []
+  );
+
+  useEffect(() => {
+    (window as any).api = api;
+  }, []);
+
   const selectedBlastAlgorithm =
     props.state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
 
