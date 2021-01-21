@@ -1,29 +1,29 @@
-import * as t from '@veupathdb/wdk-client/lib/Utils/Json';
+import * as t from 'io-ts';
 import { Filter } from './filter';
 
-export type DerviedVariable = t.Unpack<typeof DerviedVariable>;
+export type DerviedVariable = t.TypeOf<typeof DerviedVariable>;
 export const DerviedVariable = t.unknown;
 
-export type VariableUISetting = t.Unpack<typeof VariableUISetting>;
+export type VariableUISetting = t.TypeOf<typeof VariableUISetting>;
 export const VariableUISetting = t.unknown;
 
-export type Visualization = t.Unpack<typeof Visualization>;
+export type Visualization = t.TypeOf<typeof Visualization>;
 export const Visualization = t.unknown;
 
-export type NewAnalysis = t.Unpack<typeof NewAnalysis>;
-export const NewAnalysis = t.record({
+export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
+export const NewAnalysis = t.type({
   name: t.string,
   studyId: t.string,
-  filters: t.arrayOf(Filter),
-  derivedVariables: t.arrayOf(DerviedVariable),
-  starredVariables: t.arrayOf(t.string),
-  variableUISettings: t.objectOf(VariableUISetting),
-  visualizations: t.arrayOf(Visualization)
+  filters: t.array(Filter),
+  derivedVariables: t.array(DerviedVariable),
+  starredVariables: t.array(t.string),
+  variableUISettings: t.record(t.string, VariableUISetting),
+  visualizations: t.array(Visualization)
 })
 
-export type Analysis = t.Unpack<typeof Analysis>;
-export const Analysis = t.combine(NewAnalysis, t.record({
+export type Analysis = t.TypeOf<typeof Analysis>;
+export const Analysis = t.intersection([NewAnalysis, t.type({
   id: t.string,
   created: t.string,
   modified: t.string
-}));
+})]);

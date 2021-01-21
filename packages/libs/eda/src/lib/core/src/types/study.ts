@@ -1,5 +1,8 @@
-import * as t from '@veupathdb/wdk-client/lib/Utils/Json';
-import { RecordClass, RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import * as t from "io-ts";
+import {
+  RecordClass,
+  RecordInstance,
+} from "@veupathdb/wdk-client/lib/Utils/WdkModel";
 
 // Aliases
 // -------
@@ -7,48 +10,64 @@ import { RecordClass, RecordInstance } from '@veupathdb/wdk-client/lib/Utils/Wdk
 export type StudyRecordClass = RecordClass;
 export type StudyRecord = RecordInstance;
 
-// VariablesTree
+// StudyVariable
 // -------------
 
-const _VariablesTreeBase = t.record({
-  id: t.string,
-  name: t.string,
-  description: t.string,
-  type: t.string,
-});
-
-export type VariablesTree = t.Unpack<typeof VariablesTree>;
-export const VariablesTree = t.combine(_VariablesTreeBase, t.record({
-  children: t.optional(t.arrayOf(_VariablesTreeBase))
-}));
-
+export type StudyVariable = t.TypeOf<typeof StudyVariable>;
+export const StudyVariable = t.intersection([
+  t.type({
+    id: t.string,
+    providerLabel: t.string,
+    displayName: t.string,
+    type: t.string,
+    displayType: t.string,
+    isMultiValued: t.boolean,
+    dataShape: t.string,
+    // description: t.string,
+  }),
+  t.partial({
+    parentId: t.string,
+  }),
+]);
 
 // StudyEntity
 // -----------
 
-const _StudyEntityBase = t.record({
+type _StudyEntityBase = t.TypeOf<typeof _StudyEntityBase>;
+const _StudyEntityBase = t.type({
   id: t.string,
-  name: t.string,
+  displayName: t.string,
   description: t.string,
-  variablesTree: t.arrayOf(VariablesTree),
+  variables: t.array(StudyVariable),
+  // displayNamePlural: t.string,
 });
 
-export type StudyEntity = t.Unpack<typeof StudyEntity>;
-export const StudyEntity = t.combine(_StudyEntityBase, t.record({
-  children: t.optional(t.arrayOf(_StudyEntityBase))
-}));
-
+// export type StudyEntity = t.Unpack<typeof StudyEntity>;
+export type StudyEntity = _StudyEntityBase & {
+  children?: StudyEntity[];
+};
+export const StudyEntity: t.Type<StudyEntity> = t.recursion("StudyEntity", () =>
+  t.intersection([
+    _StudyEntityBase,
+    t.partial({
+      children: t.array(StudyEntity),
+    }),
+  ])
+);
 
 // StudyMetadata
 // -------------
 
-export type StudyOverview = t.Unpack<typeof StudyOverview>;
-export const StudyOverview = t.record({
+export type StudyOverview = t.TypeOf<typeof StudyOverview>;
+export const StudyOverview = t.type({
   id: t.string,
-  name: t.string,
+  // name: t.string,
 });
 
-export type StudyMetadata = t.Unpack<typeof StudyMetadata>;
-export const StudyMetadata = t.combine(StudyOverview, t.record({
-  rootEntity: StudyEntity
-}));
+export type StudyMetadata = t.TypeOf<typeof StudyMetadata>;
+export const StudyMetadata = t.intersection([
+  StudyOverview,
+  t.type({
+    rootEntity: StudyEntity,
+  }),
+]);

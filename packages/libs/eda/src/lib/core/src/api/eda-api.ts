@@ -1,47 +1,40 @@
-import { ApiRequest, createJsonRequest, standardTransformer } from '@veupathdb/web-common/lib/util/api';
-import { arrayOf, number, record, Unpack } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { createJsonRequest, FetchClient } from '@veupathdb/web-common/lib/util/api';
+import { array, number, type, TypeOf } from 'io-ts';
 import { Filter } from '../types/filter';
 import { StudyMetadata } from "../types/study";
+import { ioTransformer } from './ioTransformer';
 
-export type StudyResponse = Unpack<typeof StudyResponse>;
+export type StudyResponse = TypeOf<typeof StudyResponse>;
 
-export const StudyResponse = record({
+export const StudyResponse = type({
   study: StudyMetadata
 });
 
-
 export interface HistogramRequestParams {
-  outputEntityId: string;
-  histogramVariableId: string;
   filters: Filter[];
 }
 
-export type HistogramResponse = Unpack<typeof HistogramResponse>;
+export type HistogramResponse = TypeOf<typeof HistogramResponse>;
 
-export const HistogramResponse = record({
-  counts: arrayOf(number)
+export const HistogramResponse = type({
+  counts: array(number)
 });
 
-
-// The following functions return Request objects.
-// They represent how to make a request to a store
-export type EdaApi = typeof EdaApi;
-
-export const EdaApi = {
-  getStudy(studyId: string): ApiRequest<StudyResponse> {
-    return createJsonRequest({
+export class EdaClient extends FetchClient {
+  getStudyMetadata(studyId: string): Promise<StudyMetadata> {
+    return this.fetch(createJsonRequest({
       method: 'GET',
       path: `/studies/${studyId}`,
-      transformResponse: standardTransformer(StudyResponse)
-    });
-  },
-  getHistogram(studyId: string, entityId: string, params: HistogramRequestParams): ApiRequest<HistogramResponse> {
-    return createJsonRequest({
-      method: 'POST',
-      path: `/studies/${studyId}/${entityId}/histogram`,
-      body: JSON.stringify(params),
-      transformResponse: standardTransformer(HistogramResponse)
-    })
+      transformResponse: res => ioTransformer(StudyResponse)(res).then(r => r.study)
+    }));
   }
-  
-};
+
+  getDistribution(studyId: string, entityId: string, variableId: string, params: HistogramRequestParams): Promise<HistogramResponse> {
+    return this.fetch(createJsonRequest({
+      method: 'POST',
+      path: `/studies/${studyId}/entities/${entityId}/variables/${variableId}/distribution`,
+      body: JSON.stringify(params),
+      transformResponse: ioTransformer(HistogramResponse)
+    }));
+  }
+}

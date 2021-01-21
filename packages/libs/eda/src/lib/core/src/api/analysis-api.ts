@@ -1,39 +1,48 @@
-import { Analysis, NewAnalysis } from '../types/analysis';
-import { ApiRequest, createJsonRequest, standardTransformer } from '@veupathdb/web-common/lib/util/api';
-import { record, none, string } from '@veupathdb/wdk-client/lib/Utils/Json';
-
-export type AnalysisApi = typeof AnalysisApi;
-
-export const AnalysisApi = {
-  getAnalysis(analysisId: string): ApiRequest<Analysis> {
-    return createJsonRequest({
-      path: `/analyses/${analysisId}`,
-      method: 'GET',
-      transformResponse: standardTransformer(Analysis)
-    })
-  },
-  createAnalysis(analysis: NewAnalysis): ApiRequest<{ id: string }> {
-    return createJsonRequest({
-      path: `/analyses`,
-      method: 'POST',
-      body: analysis,
-      transformResponse: standardTransformer(record({ id: string }))
-    })
-  },
-  updateAnalysis(analysis: Analysis): ApiRequest<void> {
-    return createJsonRequest({
-      path: `/analyses/${analysis.id}`,
-      method: 'PUT',
-      body: analysis,
-      transformResponse: standardTransformer(none)
-    })
-  },
-  deleteAnalysis(analysisId: string): ApiRequest<void> {
-    return createJsonRequest({
-      path: `/analyses/${analysisId}`,
-      method: 'DELETE',
-      body: { analysisId },
-      transformResponse: standardTransformer(none)
-    })
+import { Analysis, NewAnalysis } from "../types/analysis";
+import {
+  createJsonRequest,
+  FetchClient,
+} from "@veupathdb/web-common/lib/util/api";
+import { type, voidType, string } from "io-ts";
+import { ioTransformer } from "./ioTransformer";
+export class AnalysisApi extends FetchClient {
+  getAnalysis(analysisId: string): Promise<Analysis> {
+    return this.fetch(
+      createJsonRequest({
+        path: `/analyses/${analysisId}`,
+        method: "GET",
+        transformResponse: ioTransformer(Analysis),
+      })
+    );
+  }
+  createAnalysis(analysis: NewAnalysis): Promise<{ id: string }> {
+    return this.fetch(
+      createJsonRequest({
+        path: `/analyses`,
+        method: "POST",
+        body: analysis,
+        transformResponse: ioTransformer(type({ id: string })),
+      })
+    );
+  }
+  updateAnalysis(analysis: Analysis): Promise<void> {
+    return this.fetch(
+      createJsonRequest({
+        path: `/analyses/${analysis.id}`,
+        method: "PUT",
+        body: analysis,
+        transformResponse: ioTransformer(voidType),
+      })
+    );
+  }
+  deleteAnalysis(analysisId: string): Promise<void> {
+    return this.fetch(
+      createJsonRequest({
+        path: `/analyses/${analysisId}`,
+        method: "DELETE",
+        body: { analysisId },
+        transformResponse: ioTransformer(voidType),
+      })
+    );
   }
 }

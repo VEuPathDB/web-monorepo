@@ -1,47 +1,47 @@
-import * as t from '@veupathdb/wdk-client/lib/Utils/Json';
+import * as t from 'io-ts';
 
-const _FilterBase = t.record({
+const _FilterBase = t.type({
   entityId: t.string,
   variableId: t.string,
 });
 
-export type StringSetFilter = t.Unpack<typeof StringSetFilter>;
-export const StringSetFilter = t.combine(_FilterBase, t.record({
-  type: t.constant('stringSet'),
-  stringSet: t.arrayOf(t.string)
-}));
+export type StringSetFilter = t.TypeOf<typeof StringSetFilter>;
+export const StringSetFilter = t.intersection([_FilterBase, t.type({
+  type: t.literal('stringSet'),
+  stringSet: t.array(t.string)
+})]);
 
-export type NumberSetFilter = t.Unpack<typeof NumberSetFilter>;
-export const NumberSetFilter = t.combine(_FilterBase, t.record({
-  type: t.constant('numberSet'),
-  numberSet: t.arrayOf(t.number)
-}));
+export type NumberSetFilter = t.TypeOf<typeof NumberSetFilter>;
+export const NumberSetFilter = t.intersection([_FilterBase, t.type({
+  type: t.literal('numberSet'),
+  numberSet: t.array(t.number)
+})]);
 
-export type DateSetFilter = t.Unpack<typeof DateSetFilter>;
-export const DateSetFilter = t.combine(_FilterBase, t.record({
-  type: t.constant('dateSet'),
-  dateSet: t.arrayOf(t.string)
-}));
+export type DateSetFilter = t.TypeOf<typeof DateSetFilter>;
+export const DateSetFilter = t.intersection([_FilterBase, t.type({
+  type: t.literal('dateSet'),
+  dateSet: t.array(t.string)
+})]);
 
-export type NumberRangeFilter = t.Unpack<typeof NumberRangeFilter>;
-export const NumberRangeFilter = t.combine(_FilterBase, t.record({
-  type: t.constant('numberRange'),
+export type NumberRangeFilter = t.TypeOf<typeof NumberRangeFilter>;
+export const NumberRangeFilter = t.intersection([_FilterBase, t.type({
+  type: t.literal('numberRange'),
   min: t.number,
   max: t.number
-}));
+})]);
 
-export type DateRangeFilter = t.Unpack<typeof DateRangeFilter>;
-export const DateRangeFilter = t.combine(_FilterBase, t.record({
-  type: t.constant('dateRange'),
+export type DateRangeFilter = t.TypeOf<typeof DateRangeFilter>;
+export const DateRangeFilter = t.intersection([_FilterBase, t.type({
+  type: t.literal('dateRange'),
   min: t.string,
   max: t.string
-}));
+})]);
 
-export type Filter = t.Unpack<typeof Filter>;
-export const Filter = t.oneOf(
+export type Filter = t.TypeOf<typeof Filter>;
+export const Filter = t.union([
   StringSetFilter,
   NumberSetFilter,
   DateSetFilter,
   NumberRangeFilter,
   DateRangeFilter
-)
+])
