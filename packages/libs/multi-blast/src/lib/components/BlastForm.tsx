@@ -213,14 +213,6 @@ function computeRestrictedParamValues(
   }, {} as Record<string, string>);
 }
 
-// TODO Rename parameters to their BLAST service equivalents, and
-// TODO cast them to the expected type
-function paramValuesToBlastParameters(paramValues: Record<string, string>) {
-  return mapValues(paramValues, (paramValue) =>
-    paramValue.replace(/ \(default\)$/, '')
-  );
-}
-
 type EventHandlers = {
   setGroupVisibility: typeof changeGroupVisibility;
   updateParamValue: typeof updateParamValue;
