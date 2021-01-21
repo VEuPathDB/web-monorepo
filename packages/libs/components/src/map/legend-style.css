@@ -246,6 +246,12 @@
   border-radius: 5px;
 }
 
+/* DKDK set button width so that it remains the same with the text change (show/hide) */
+.legend-display-button button {
+  width: 120px;
+  display: inline-block;
+}
+
 .legend-display-button.active {
   right: 10px;
 }
