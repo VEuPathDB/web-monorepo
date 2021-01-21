@@ -13,9 +13,10 @@ export const mockStudyMetadataStore: StudyMetadataStore = {
       name: 'Foo',
       rootEntity: {
         id: 'foo',
-        name: 'Foo',
+        displayName: 'Foo',
+        displayNamePlural: 'Foos',
         description: 'foo',
-        variablesTree: [],
+        variables: [],
         children: [],
       },
     };
