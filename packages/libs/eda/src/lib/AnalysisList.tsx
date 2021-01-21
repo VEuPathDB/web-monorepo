@@ -1,3 +1,4 @@
+import * as Path from 'path';
 import * as React from 'react';
 import { useHistory } from 'react-router';
 import {
@@ -111,14 +112,22 @@ export function AnalysisList(props: Props) {
           key: 'name',
           name: 'Name',
           renderCell: (data: { row: Analysis }) => (
-            <Link to={data.row.id}>{data.row.name}</Link>
+            <Link to={Path.join(history.location.pathname, data.row.id)}>
+              {data.row.name}
+            </Link>
           ),
         },
         { key: 'created', name: 'Created' },
         { key: 'modified', name: 'Modified' },
       ],
     }),
-    [analysisList, createNewAnalysis, deleteAnalyses, selected]
+    [
+      analysisList,
+      createNewAnalysis,
+      deleteAnalyses,
+      selected,
+      history.location.pathname,
+    ]
   );
   if (analysisList == null) return null;
   return <Mesa.Mesa state={tableState} />;
