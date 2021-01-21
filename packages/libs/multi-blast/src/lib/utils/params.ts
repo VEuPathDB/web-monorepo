@@ -55,7 +55,7 @@ function paramValuesToBlastConfig(
     [MATCH_MISMATCH_SCORE]: matchMismatchStr,
   } = paramValues;
 
-  const [gapOpen, gapExtend] = gapCostsStr?.split('').map(Number);
+  const [gapOpen, gapExtend] = (gapCostsStr ?? '').split(',').map(Number);
 
   const baseConfig = {
     query,
@@ -72,8 +72,7 @@ function paramValuesToBlastConfig(
   };
 
   const compBasedStats =
-    compBasedStatsStr ===
-    'Conditional compositional score matrix adjustment (default)'
+    compBasedStatsStr === 'Conditional compositional score matrix adjustment'
       ? 'conditional-comp-based-score-adjustment'
       : compBasedStatsStr === 'No adjustment'
       ? 'none'
@@ -105,7 +104,7 @@ function paramValuesToBlastConfig(
         seg: { window: 12, locut: 2.2, hicut: 2.5 },
       };
 
-  const [reward, penalty] = matchMismatchStr?.split('').map(Number);
+  const [reward, penalty] = (matchMismatchStr ?? '').split(',').map(Number);
 
   if (selectedTool === 'blastn') {
     return {
