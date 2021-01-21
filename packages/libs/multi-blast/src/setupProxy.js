@@ -25,4 +25,20 @@ module.exports = function (app) {
       },
     })
   );
+
+  app.use(
+    '/blast',
+    createProxyMiddleware({
+      target: process.env.BLAST_SERVICE_URL,
+      pathRewrite: { ['^/blast']: '' },
+      secure: false,
+      changeOrigin: true,
+      followRedirects: true,
+      logLevel: 'debug',
+      onProxyReq(proxyReq, req, res) {
+        if (proxyReq._isRedirect) return;
+        proxyReq.setHeader('Auth-Key', process.env.WDK_CHECK_AUTH);
+      },
+    })
+  );
 };
