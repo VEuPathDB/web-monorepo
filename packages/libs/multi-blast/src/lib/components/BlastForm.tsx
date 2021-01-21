@@ -24,7 +24,10 @@ import {
 import { bindApiRequestCreators } from '@veupathdb/web-common/lib/util/api';
 
 import { apiRequests, createBlastRequestHandler } from '../utils/api';
-import { BLAST_ALGORITHM_PARAM_NAME } from '../utils/params';
+import {
+  BLAST_ALGORITHM_PARAM_NAME,
+  paramValuesToBlastConfig,
+} from '../utils/params';
 
 const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
 
@@ -128,13 +131,11 @@ function NewJobForm(props: NewJobFormProps) {
     (event: FormEvent) => {
       event.preventDefault();
 
+      console.log(paramValuesToBlastConfig(props.state.paramValues));
+
       alert('Under Construction');
     },
-    [
-      props.state.question,
-      props.restrictedAdvancedParamGroup,
-      props.state.paramValues,
-    ]
+    [props.state.paramValues]
   );
 
   return (

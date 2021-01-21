@@ -32,7 +32,7 @@ export const LOWER_CASE_MASK_PARAM_NAME = 'LowerCaseMask';
 export const GAP_COSTS_PARAM_NAME = 'GapCosts';
 export const MATCH_MISMATCH_SCORE = 'MatchMismatchScore';
 
-function paramValuesToBlastConfig(
+export function paramValuesToBlastConfig(
   rawParamValues: Record<string, string>
 ): IoBlastConfig {
   const paramValues = mapValues(rawParamValues, (paramValue) =>
