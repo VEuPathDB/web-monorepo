@@ -57,19 +57,23 @@ export function paramValuesToBlastConfig(
 
   const [gapOpen, gapExtend] = (gapCostsStr ?? '').split(',').map(Number);
 
+  const maxHSPsConfig =
+    Number(maxMatchesStr) >= 1 ? { maxHSPs: Number(maxMatchesStr) } : {};
+
   const baseConfig = {
     query,
     eValue,
-    numDescriptions: Number(numQueryResultsStr),
-    numAlignments: Number(numQueryResultsStr),
     maxTargetSeqs: Number(numQueryResultsStr),
-    maxHSPs: Number(maxMatchesStr),
     wordSize: Number(wordSizeStr),
     softMasking: Boolean(softMaskStr),
     lcaseMasking: Boolean(lowerCaseMaskStr),
     gapOpen,
     gapExtend,
-  };
+    outFormat: {
+      format: 'single-file-json',
+    },
+    ...maxHSPsConfig,
+  } as const;
 
   const compBasedStats =
     compBasedStatsStr === 'Conditional compositional score matrix adjustment'
@@ -86,12 +90,12 @@ export function paramValuesToBlastConfig(
   const dustConfig = !filterLowComplexityRegions
     ? {
         dust: {
-          offer: false,
+          enable: false,
         },
       }
     : {
         dust: {
-          offer: true,
+          enable: true,
           level: 20,
           window: 64,
           linker: 1,
