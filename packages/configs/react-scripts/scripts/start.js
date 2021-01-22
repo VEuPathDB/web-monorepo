@@ -1,19 +1,21 @@
 #!/usr/bin/env node
 
+import path from 'path';
 import { promisify } from 'util';
 import { request } from 'https';
 import { stringify } from 'querystring';
 import { parse } from 'set-cookie-parser';
 import { spawn } from 'child_process';
+import dotenv from 'dotenv';
 import _read from 'read';
 const read = promisify(_read);
 
-// main();
+// Attempt to read variables stored in `.env.local` for VEuPathDB BRC Pre-Release login
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 export async function main() {
-  process.stdout.write('Enter the VEuPathDB BRC Pre-Release Login credentials\n');
-  const username = await read({ prompt: 'Username: ' });
-  const password = await read({ prompt: 'Password: ', silent: true });
+  const username = process.env.VEUPATHDB_LOGIN_USER ?? await read({ prompt: 'VEuPathDB BRC Pre-Release Username: ' });
+  const password = process.env.VEUPATHDB_LOGIN_PASS ?? await read({ prompt: 'VEuPathDB BRC Pre-Release Password: ', silent: true });
   const postData = stringify({username, password});
   const req = request(
     'https://veupathdb.org/auth/bin/login',

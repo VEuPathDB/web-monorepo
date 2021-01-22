@@ -19,6 +19,7 @@
     "url": "https://github.com/VEuPathDB/web-dev/issues"
   },
   "dependencies": {
+    "dotenv": "^8.2.0",
     "react-app-rewired": "^2.1.8",
     "read": "^1.0.7",
     "set-cookie-parser": "^2.4.6"
