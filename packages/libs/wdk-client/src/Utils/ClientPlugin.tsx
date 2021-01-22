@@ -93,11 +93,12 @@ function makeCompositePluginComponentUncached<T>(registry: ClientPluginRegistryE
 
   function CompositePluginComponent(props: Props) {
     const resolvedReferences = useSelector((state: RootState) => {
+      const { questions, recordClasses } = state.globalData;
+      if (questions == null || recordClasses == null) return null;
       try {
         const { searchName, recordClassName } = props.context;
-        const { questions, recordClasses } = state.globalData;
-        const question = questions?.find(q => q.urlSegment === searchName);
-        const recordClass = recordClasses?.find(r => r.urlSegment === recordClassName);
+        const question = questions.find(q => q.urlSegment === searchName);
+        const recordClass = recordClasses.find(r => r.urlSegment === recordClassName);
         return { question, recordClass };
       }
       catch(error) {
