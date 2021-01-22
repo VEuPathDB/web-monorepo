@@ -59,8 +59,9 @@ export default function ButtonGroup({
         onChange={(event, value) => value && onOptionSelected(value)}
         aria-label={`${label} control button group`}
       >
-        {options.map((option) => (
+        {options.map((option, index) => (
           <ToggleButton
+            key={index}
             value={option}
             aria-label={option}
             style={{
