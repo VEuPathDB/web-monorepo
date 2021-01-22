@@ -51,7 +51,6 @@ type LoadDeps = {
   paramName: string,
   loadCounts: boolean,
   loadSummaryFor: string | null,
-  questionState: QuestionState
 };
 
 /**
@@ -100,7 +99,6 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
             );
 
             return of({
-              questionState,
               paramName,
               loadCounts: true,
               loadSummaryFor: loadSummary ? activeOntologyTerm : null
@@ -125,7 +123,6 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
                 paramName,
                 loadCounts: true,
                 loadSummaryFor: questionState.paramUIState[paramName].activeOntologyTerm,
-                questionState
               })
             }
             return empty() as Observable<LoadDeps>;
@@ -149,7 +146,6 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
                 paramName,
                 loadCounts: true,
                 loadSummaryFor: activeOntologyTerm,
-                questionState
               })
             }
             return empty() as Observable<LoadDeps>;
@@ -162,7 +158,9 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
           groupVisibilityChangeParameter$
         ).pipe(
           filter(({ paramName }) => isVisible(paramName)),
-          switchMap(({ paramName, loadCounts, loadSummaryFor, questionState }) => {
+          switchMap(({ paramName, loadCounts, loadSummaryFor }) => {
+            const questionState = getQuestionState(state$.value, searchName);
+            if (questionState == null) return empty() as Observable<LoadDeps>;
             return merge(
               loadCounts
                 ? getSummaryCounts(services.wdkService, paramName, questionState)
