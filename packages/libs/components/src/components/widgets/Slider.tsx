@@ -44,7 +44,12 @@ export type SliderWidgetProps = {
   containerStyles?: React.CSSProperties;
 };
 
-/** A customizable slider widget. */
+/** A customizable slider widget.
+ *
+ * TODO: There is a good chance that we will need to add some debounce logic
+ * to allow for us to update UI immediately and then handle backend calls
+ * as needed.
+ */
 export default function SliderWidget({
   minimum,
   maximum,
