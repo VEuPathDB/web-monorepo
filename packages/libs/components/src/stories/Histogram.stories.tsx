@@ -13,6 +13,8 @@ import HistogramControls from '../components/plotControls/HistogramControls';
 import { binDailyCovidStats } from './api/covidData';
 import { HistogramData } from '../types/plots';
 
+import { action } from '@storybook/addon-actions'; // BM: temp/debugging - should not depend on storybook here!
+
 export default {
   title: 'In Development/Histogram',
   component: Histogram,
@@ -118,7 +120,11 @@ const dateSeriesMock: HistogramData = [
   },
 ];
 
-const Template: Story<HistogramProps> = (args) => <Histogram {...args} />;
+const defaultActions = {
+  onSelected: action('made a selection')
+};
+
+const Template: Story<HistogramProps> = (args) => <Histogram {...args} {...defaultActions} />;
 
 const TemplateWithControls: Story<HistogramProps> = (
   args,
@@ -147,6 +153,7 @@ const TemplateWithControls: Story<HistogramProps> = (
         orientation={plotControls.orientation}
         layout={plotControls.barLayout}
         binWidth={plotControls.histogram.binWidth}
+        {...defaultActions}
       />
       <div style={{ height: 25 }} />
       <HistogramControls
@@ -219,6 +226,7 @@ export const SharedControlsMultiplePlots: Story<HistogramProps> = (
           orientation={plotControls.orientation}
           layout={plotControls.barLayout}
           binWidth={plotControls.histogram.binWidth}
+	  {...defaultActions}
         />
         <Histogram
           title='Current Hospitalizations'
@@ -231,6 +239,7 @@ export const SharedControlsMultiplePlots: Story<HistogramProps> = (
           orientation={plotControls.orientation}
           layout={plotControls.barLayout}
           binWidth={plotControls.histogram.binWidth}
+	  {...defaultActions}
         />
       </div>
       <div style={{ height: 25 }} />
