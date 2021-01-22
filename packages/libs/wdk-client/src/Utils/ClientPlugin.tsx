@@ -4,6 +4,8 @@ import { RecordClass, Question } from 'wdk-client/Utils/WdkModel';
 import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import LoadError from 'wdk-client/Components/PageStatus/LoadError';
+import { useSelector } from 'react-redux';
+import { RootState } from 'wdk-client/Core/State/Types';
 
 export type PluginType =
   | 'attributeAnalysis'
@@ -90,19 +92,18 @@ function makeCompositePluginComponentUncached<T>(registry: ClientPluginRegistryE
   type Props = CompositePluginComponentProps<T>;
 
   function CompositePluginComponent(props: Props) {
-    const resolvedReferences = useWdkService(async wdkService => {
+    const resolvedReferences = useSelector((state: RootState) => {
       try {
         const { searchName, recordClassName } = props.context;
-        const [ question, recordClass ] = await Promise.all([
-          searchName == null ? undefined : wdkService.findQuestion(searchName),
-          recordClassName == null ? undefined : wdkService.findRecordClass(recordClassName)
-        ]);
+        const { questions, recordClasses } = state.globalData;
+        const question = questions?.find(q => q.urlSegment === searchName);
+        const recordClass = recordClasses?.find(r => r.urlSegment === recordClassName);
         return { question, recordClass };
       }
-      catch (error) {
+      catch(error) {
         return { error };
       }
-    }, [ props.context.searchName, props.context.recordClassName ]);
+    })
 
     if (resolvedReferences == null) return null;
 
