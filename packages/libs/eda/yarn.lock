@@ -2230,10 +2230,11 @@
   integrity sha512-opFJ858b0dHwHpnRbNBNfm/IXGU7RDs8EHce442YfeY1vkPkX+bE4cJgpaBZ2jrXkUDGb6+w1lqy7Ow0Y74vOQ==
 
 "@veupathdb/react-scripts@^1.0.1":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/react-scripts/-/react-scripts-1.0.2.tgz#e383c1b62f5afc148cbb8007aa9942bf9cf15230"
-  integrity sha512-bRvqAD5Cuf6nx8apcTkwvQwmnkO+nmFnJbc51hEwq02wyn3O690YV/xQA/e0bFNibJ610n3Lh2+TJbXEWrbPYg==
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/react-scripts/-/react-scripts-1.0.3.tgz#f86a0f9fcc187c72ebb219dc2dda428c2b50fe56"
+  integrity sha512-r77s6f5UW89WVLc74vuc76TeAS/6Y+Kf+zPwneYFjAWIIoWGkPyd4LKNPLnvf7AHqRM5voZxC8UhPIDnVUK5sg==
   dependencies:
+    dotenv "^8.2.0"
     react-app-rewired "^2.1.8"
     read "^1.0.7"
     set-cookie-parser "^2.4.6"
@@ -4703,7 +4704,7 @@ dotenv-expand@5.1.0:
   resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-5.1.0.tgz#3fbaf020bfd794884072ea26b1e9791d45a629f0"
   integrity sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==
 
-dotenv@8.2.0:
+dotenv@8.2.0, dotenv@^8.2.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
