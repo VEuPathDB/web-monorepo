@@ -213,8 +213,8 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           return Object.assign({...memo, [groupName]: {
             isVisible,
             filteredCountState:
-              (filteredCountState === 'loading' || isVisible ) ? 'loading'
-              : (filteredCountState === 'initial' && ! isVisible ) ? 'initial'
+                isVisible ? 'loading'
+              : filteredCountState === 'initial' ? 'initial'
               : 'invalid'
           }});
         }, {} as QuestionState['groupUIState']
@@ -321,7 +321,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
     case GROUP_COUNT_LOADED: {
       /* 
        * Use the arriving count only if the count is valid
-       * to resolve a rare sequence of load, invalidate, loaded
+       * to resolve a sequence of load, invalidate, loaded
        * which can happen if a param value is updated, its group navigated away from, and the param value updated again
        */
       const o = state.groupUIState[action.payload.groupName];
