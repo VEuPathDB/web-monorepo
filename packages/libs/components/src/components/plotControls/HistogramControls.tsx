@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';
 
 // Definitions
 import { LIGHT_BLUE, LIGHT_GRAY } from '../../constants/colors';
+import { ErrorManagement } from '../../types/general';
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
 // Local Components
 import ButtonGroup from '../widgets/ButtonGroup';
+import Notification from '../widgets/Notification';
 import OpacitySlider from '../widgets/OpacitySlider';
 import OrientationToggle from '../widgets/OrientationToggle';
 import SliderWidget from '../widgets/Slider';
@@ -51,6 +53,8 @@ export type HistogramControlsProps = {
   /** Color to use as an accent in the control panel. Will accept any
    * valid CSS color definition. Defaults to LIGHT_BLUE */
   accentColor?: string;
+  /** Attributes and methdods for error management. */
+  errorManagement: ErrorManagement;
 };
 
 /**
@@ -78,8 +82,26 @@ export default function HistogramControls({
   onSelectedUnitChange,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
+  errorManagement,
 }: HistogramControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
+
+  const errorStacks = useMemo(() => {
+    return errorManagement.errors.reduce<
+      Array<{ error: Error; occurences: number }>
+    >((accumulatedValue, currentValue) => {
+      const existingErrorStack = accumulatedValue.find(
+        (stack) => stack.error.message === currentValue.message
+      );
+
+      if (existingErrorStack) {
+        existingErrorStack.occurences++;
+        return [...accumulatedValue];
+      } else {
+        return [...accumulatedValue, { error: currentValue, occurences: 1 }];
+      }
+    }, []);
+  }, [errorManagement.errors]);
 
   return (
     <div
@@ -158,6 +180,18 @@ export default function HistogramControls({
           }
         />
       </div>
+
+      {errorStacks.map(({ error, occurences }, index) => (
+        <Notification
+          title='Error'
+          key={index}
+          text={error.message}
+          color={accentColor}
+          occurences={occurences}
+          containerStyles={{ marginTop: 10 }}
+          onAcknowledgement={() => errorManagement.removeError(error)}
+        />
+      ))}
 
       {label && (
         <ControlsHeader

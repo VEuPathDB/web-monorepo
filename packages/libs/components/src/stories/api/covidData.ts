@@ -24,7 +24,16 @@ export const getDailyCovidStats = async (): Promise<Array<covidStateData>> => {
 export const binDailyCovidStats = async (binWidth: number) => {
   const dailyStatsByState = await getDailyCovidStats();
 
-  // console.log(dailyStatsByState);
+  // Simulate Errors
+  if (binWidth === 9000) {
+    throw new Error(
+      'Pretend error of not being able retrieve data from the backend.'
+    );
+  } else if (binWidth === 4000) {
+    throw new Error(
+      'Pretend error of some random error with a moderately long message associated to it.'
+    );
+  }
 
   const newCasesStats = dailyStatsByState.map(
     (dailyStat) => dailyStat.positiveIncrease
@@ -68,8 +77,6 @@ export const binDailyCovidStats = async (binWidth: number) => {
     accumulator: HistogramData,
     currentValue: covidStateData
   ) => {
-    // console.log(currentValue);
-
     const matchingCasesBinIndex = newCasesBins.findIndex(
       (bin) => bin.binStart >= currentValue.positiveIncrease
     );

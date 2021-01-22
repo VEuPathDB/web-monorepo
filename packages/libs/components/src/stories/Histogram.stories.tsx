@@ -162,11 +162,12 @@ const TemplateWithControls: Story<HistogramProps> = (
         onOpacityChange={plotControls.setOpacity}
         orientation={plotControls.orientation}
         onOrientationChange={plotControls.toggleOrientation}
-        containerStyles={{ width: 500 }}
+        containerStyles={{ maxWidth: 600 }}
         binWidth={plotControls.histogram.binWidth}
         binWidthRange={plotControls.histogram.binWidthRange}
         binWidthStep={plotControls.histogram.binWidthStep}
         onBinWidthChange={plotControls.histogram.setBinWidth}
+        errorManagement={plotControls.errorManagement}
       />
     </div>
   );
@@ -251,6 +252,7 @@ export const SharedControlsMultiplePlots: Story<HistogramProps> = (
         binWidthRange={plotControls.histogram.binWidthRange}
         binWidthStep={plotControls.histogram.binWidthStep}
         onBinWidthChange={plotControls.histogram.setBinWidth}
+        errorManagement={plotControls.errorManagement}
       />
     </div>
   );

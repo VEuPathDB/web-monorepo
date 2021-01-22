@@ -5,7 +5,7 @@
  */
 import { Reducer, useReducer } from 'react';
 
-import { isHistogram } from '../types/guards';
+import { isHistogramData } from '../types/guards';
 import {
   UnionOfPlotDataTypes,
   BarLayoutOptions,
@@ -16,6 +16,9 @@ import {
 type ActionType<DataShape> =
   | { type: 'setData'; payload: DataShape }
   | { type: 'setBarLayout'; payload: BarLayoutOptions }
+  | { type: 'errors/add'; payload: Error }
+  | { type: 'errors/remove'; payload: Error }
+  | { type: 'errors/clear' }
   | { type: 'histogram/setBinWidth'; payload: number }
   | { type: 'setSelectedUnit'; payload: string }
   | { type: 'setOpacity'; payload: number }
@@ -28,8 +31,20 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
   state: PlotSharedState<DataShape>,
   action: ActionType<DataShape>
 ): PlotSharedState<DataShape> {
-  // console.log(action);
   switch (action.type) {
+    case 'errors/add': {
+      return { ...state, errors: [...state.errors, action.payload] };
+    }
+    case 'errors/remove':
+      return {
+        ...state,
+        errors: state.errors.filter(
+          (error) => error.message !== action.payload.message
+        ),
+      };
+    case 'errors/clear': {
+      return { ...state, errors: [] };
+    }
     case 'setData':
       return { ...state, data: action.payload };
     case 'setBarLayout':
@@ -96,6 +111,8 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
   availableUnits: Array<string>;
   /** The unit currently selected out of the available units. */
   selectedUnit: string;
+  /** Storage for errors that we may want to display to the user. */
+  errors: Array<Error>;
   histogram: {
     /** Histogram: The width of bins. */
     binWidth: number;
@@ -129,6 +146,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   // Set the initial state managed by the userReducer hook below.
   const initialState: PlotSharedState<DataShape> = {
     data: params.data,
+    errors: [],
     displayLegend: true,
     opacity: 1,
     orientation: 'vertical',
@@ -143,7 +161,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   };
 
   // Additional intialization if data is for a histogram.
-  if (isHistogram(params.data)) {
+  if (isHistogramData(params.data)) {
     // Determine binWidthRange
     if (params.histogram?.binWidthRange) {
       initialState.histogram.binWidthRange = [
@@ -185,49 +203,16 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       : 1;
   }
 
-  const [
-    {
-      data,
-      displayLegend,
-      barLayout,
-      histogram,
-      opacity,
-      orientation,
-      selectedUnit,
-    },
-    dispatch,
-  ] = useReducer<Reducer<PlotSharedState<DataShape>, ActionType<DataShape>>>(
-    reducer,
-    initialState
-  );
+  const [reducerState, dispatch] = useReducer<
+    Reducer<PlotSharedState<DataShape>, ActionType<DataShape>>
+  >(reducer, initialState);
 
   /**
-   * Prepare various functions that will be exported from this custom
-   * hook that will allow the client to update the state of the
-   * nested reducer and/or make async function calls to change
-   * data via API requests.
-   */
-
-  // Update Bin Width w/ potential async call.
-  const setBinWidth = async (binWidth: number) => {
-    if (params.histogram) {
-      const newData = await params.histogram.onBinWidthChange(binWidth);
-      dispatch({ type: 'setData', payload: newData });
-    }
-
-    dispatch({ type: 'histogram/setBinWidth', payload: binWidth });
-  };
-
+   * Convenience Methods for Synchronous Actions
+   * */
   // Update Bar Layout
   const setBarLayout = (layout: BarLayoutOptions) =>
     dispatch({ type: 'setBarLayout', payload: layout });
-
-  // Update Selected Unit w/ potential async call.
-  const setSelectedUnit = async (unit: string) => {
-    params.onSelectedUnitChange && (await params.onSelectedUnitChange(unit));
-    dispatch({ type: 'setSelectedUnit', payload: unit });
-  };
-
   // Update and Reset Opacity
   const setOpacity = (opacity: number) =>
     dispatch({ type: 'setOpacity', payload: opacity });
@@ -239,20 +224,57 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   // Toggle Legend
   const toggleDisplayLegend = () => dispatch({ type: 'toggleDisplayLegend' });
 
+  /**
+   * Prepare various functions that will be exported from this custom
+   * hook that will allow the client to update the state of the
+   * nested reducer and/or make async function calls to change
+   * data via API requests.
+   */
+  const setBinWidth = async (binWidth: number) => {
+    if (params.histogram) {
+      try {
+        const newData = await params.histogram.onBinWidthChange(binWidth);
+        dispatch({ type: 'setData', payload: newData });
+      } catch (error) {
+        dispatch({ type: 'errors/add', payload: error });
+      } finally {
+        dispatch({ type: 'histogram/setBinWidth', payload: binWidth });
+      }
+    }
+  };
+
+  const setSelectedUnit = async (unit: string) => {
+    params.onSelectedUnitChange && (await params.onSelectedUnitChange(unit));
+    dispatch({ type: 'setSelectedUnit', payload: unit });
+  };
+
+  /**
+   * Separate errors attribute from the rest of the reducer state.
+   * This is so we can control the shape of the object returned
+   * from this hook in a way that minimizes cognitive load
+   * for users of the hook.
+   *
+   * Complexity here, simplicity there.
+   */
+  const { errors, ...rest } = reducerState;
+
   return {
-    data,
-    displayLegend,
-    toggleDisplayLegend,
+    ...rest,
+    errorManagement: {
+      errors: errors,
+      addError: (error: Error) =>
+        dispatch({ type: 'errors/add', payload: error }),
+      removeError: (error: Error) =>
+        dispatch({ type: 'errors/remove', payload: error }),
+      clearAllErrors: () => dispatch({ type: 'errors/clear' }),
+    },
     availableUnits: params.availableUnits,
-    histogram: { ...histogram, setBinWidth },
-    barLayout,
-    setBarLayout,
-    selectedUnit,
-    setSelectedUnit,
-    opacity,
-    setOpacity,
+    histogram: { ...reducerState.histogram, setBinWidth },
     resetOpacity,
-    orientation,
+    setBarLayout,
+    setSelectedUnit,
+    setOpacity,
+    toggleDisplayLegend,
     toggleOrientation,
   };
 }
