@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
-import { DateTime } from 'luxon';
 
 import { DARK_GRAY } from '../constants/colors';
 import PlotlyPlot from './PlotlyPlot';
@@ -21,8 +20,8 @@ const binLabel = (bin: HistogramBin, binWidth: number) => {
     return bin.binLabel;
   }
 
-  // TODO: This doesn't work for date based labels since we don't know the possible range of availableUnits to perform calculations with.
-
+  // TODO: This doesn't work for date based labels since we don't know the
+  // possible range of availableUnits to perform calculations with.
   switch (typeof bin.binStart) {
     case 'string':
       return `Unsupported Bin Label.`;
@@ -31,21 +30,6 @@ const binLabel = (bin: HistogramBin, binWidth: number) => {
     default:
       return `Unsupported Bin Label.`;
   }
-
-  // if (typeof bin.binStart === 'string') {
-  //   const binStartAsDate = DateTime.fromISO(bin.binStart);
-  //   const binEndAsDate = DateTime.fromISO(bin.binEnd as string);
-
-  //   if (binStartAsDate.isValid) {
-  //     return binEndAsDate.isValid
-  //       ? `${binStartAsDate.toLocaleString(
-  //           DateTime.DATE_MED
-  //         )}<br>to<br>${binEndAsDate.toLocaleString(DateTime.DATE_MED)}`
-  //       : `${binStartAsDate.toLocaleString(DateTime.DATE_MED)}`;
-  //   } else {
-  //     return bin.binEnd ? `${bin.binStart} - ${bin.binEnd}` : `${bin.binStart}`;
-  //   }
-  // }
 };
 
 export type HistogramProps = {
@@ -137,65 +121,67 @@ export default function Histogram({
   );
 
   return (
-    <PlotlyPlot
-      useResizeHandler={true}
-      revision={revision}
-      style={{ height, width }}
-      layout={{
-        autosize: true,
-        margin: {
-          pad: 5,
-        },
-        legend: {
-          font: {
-            color: textColor,
+    <div>
+      <PlotlyPlot
+        useResizeHandler={true}
+        revision={revision}
+        style={{ height, width }}
+        layout={{
+          autosize: true,
+          margin: {
+            pad: 5,
           },
-        },
-        plot_bgcolor: backgroundColor,
-        paper_bgcolor: backgroundColor,
-        xaxis: {
-          type: orientation === 'vertical' ? 'category' : 'linear',
-          automargin: true,
-          title: {
-            text:
-              orientation === 'vertical'
-                ? independentAxisLabel
-                : dependentAxisLabel,
+          legend: {
             font: {
-              family: 'Arial, Helvetica, sans-serif',
-              size: 14,
+              color: textColor,
             },
           },
-          color: textColor,
-        },
-        yaxis: {
-          automargin: true,
+          plot_bgcolor: backgroundColor,
+          paper_bgcolor: backgroundColor,
+          xaxis: {
+            type: orientation === 'vertical' ? 'category' : 'linear',
+            automargin: true,
+            title: {
+              text:
+                orientation === 'vertical'
+                  ? independentAxisLabel
+                  : dependentAxisLabel,
+              font: {
+                family: 'Arial, Helvetica, sans-serif',
+                size: 14,
+              },
+            },
+            color: textColor,
+          },
+          yaxis: {
+            automargin: true,
+            title: {
+              text:
+                orientation === 'vertical'
+                  ? dependentAxisLabel
+                  : independentAxisLabel,
+              font: {
+                family: 'Arial, Helvetica, sans-serif',
+                size: 14,
+              },
+            },
+            color: textColor,
+            gridcolor: gridColor,
+          },
+          barmode: layout,
           title: {
-            text:
-              orientation === 'vertical'
-                ? dependentAxisLabel
-                : independentAxisLabel,
+            text: title,
             font: {
               family: 'Arial, Helvetica, sans-serif',
-              size: 14,
+              color: textColor,
+              size: 24,
             },
+            xref: 'paper',
+            x: 0,
           },
-          color: textColor,
-          gridcolor: gridColor,
-        },
-        barmode: layout,
-        title: {
-          text: title,
-          font: {
-            family: 'Arial, Helvetica, sans-serif',
-            color: textColor,
-            size: 24,
-          },
-          xref: 'paper',
-          x: 0,
-        },
-      }}
-      data={plotlyFriendlyData}
-    />
+        }}
+        data={plotlyFriendlyData}
+      />
+    </div>
   );
 }
