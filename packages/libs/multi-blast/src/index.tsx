@@ -12,6 +12,7 @@ import reportWebVitals from './reportWebVitals';
 
 import { BlastForm } from './lib/components/BlastForm';
 import { BlastWorkspace } from './lib/components/BlastWorkspace';
+import { BlastWorkspaceResult } from './lib/components/BlastWorkspaceResult';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
@@ -25,6 +26,12 @@ initialize({
     {
       path: '/',
       component: (props: RouteComponentProps<void>) => <Home />,
+    },
+    {
+      path: '/workspace/blast/result/:jobId',
+      component: (props: RouteComponentProps<{ jobId: string }>) => (
+        <BlastWorkspaceResult jobId={props.match.params.jobId} />
+      ),
     },
     {
       path: '/workspace/blast',
