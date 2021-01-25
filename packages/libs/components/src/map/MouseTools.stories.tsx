@@ -23,7 +23,7 @@ import geohashAnimation from "./animation_functions/geohash";
 import md5 from 'md5';
 
 export default {
-  title: 'Mouse Tools',
+  title: 'Map/Mouse Tools',
   component: MapVEuMapSidebar,
 };
 
