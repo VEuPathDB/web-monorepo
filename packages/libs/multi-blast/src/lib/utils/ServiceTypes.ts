@@ -547,3 +547,20 @@ export const ioBlastConfig = oneOf(
 );
 
 export type IoBlastConfig = Unpack<typeof ioBlastConfig>;
+
+export const shortJobResponse = record({
+  id: string,
+  description: optional(string),
+  status: ioJobStatus,
+});
+
+export type ShortJobResponse = Unpack<typeof shortJobResponse>;
+
+export const longJobResponse = combine(
+  shortJobResponse,
+  record({
+    config: ioBlastConfig,
+  })
+);
+
+export type LongJobResponse = Unpack<typeof longJobResponse>;

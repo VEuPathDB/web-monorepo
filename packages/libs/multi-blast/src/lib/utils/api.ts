@@ -1,4 +1,4 @@
-import { string, unknown } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { arrayOf, string, unknown } from '@veupathdb/wdk-client/lib/Utils/Json';
 import {
   BoundApiRequestsObject,
   createFetchApiRequestHandler,
@@ -6,7 +6,11 @@ import {
   standardTransformer,
 } from '@veupathdb/web-common/lib/util/api';
 
-import { IoBlastConfig } from './ServiceTypes';
+import {
+  IoBlastConfig,
+  longJobResponse,
+  shortJobResponse,
+} from './ServiceTypes';
 
 export function createBlastRequestHandler(
   baseBlastUrl: string,
@@ -37,7 +41,7 @@ export const apiRequests = {
     return {
       path: JOBS_PATH,
       method: 'GET',
-      transformResponse: standardTransformer(unknown),
+      transformResponse: standardTransformer(arrayOf(shortJobResponse)),
     };
   },
   // FIXME: Remove this hardcoding once the discrepancies between the organism names + target types
@@ -64,7 +68,7 @@ export const apiRequests = {
     return {
       path: `${JOBS_PATH}/${jobId}`,
       method: 'GET',
-      transformResponse: standardTransformer(unknown),
+      transformResponse: standardTransformer(longJobResponse),
     };
   },
   fetchQuery: function (jobId: string) {
