@@ -90,12 +90,19 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
 */
   //DKDK applying b) approach, setting key as string & any
   const buckets = (speciesData as { [key: string]: any })[`geohash_${geohash_level}`].facets.geo.buckets.filter((bucket : any) => {
-    const ltAvg : number = bucket.ltAvg;
-    const lnAvg : number = bucket.lnAvg;
-    return ltAvg > bounds.southWest.lat &&
-	   ltAvg < bounds.northEast.lat &&
-	   lnAvg > bounds.southWest.lng &&
-	   lnAvg < bounds.northEast.lng
+    const lat : number = bucket.ltAvg;
+    const long : number = bucket.lnAvg;
+
+    const south = bounds.southWest.lat;
+    const north = bounds.northEast.lat;
+    const west = bounds.southWest.lng;
+    const east = bounds.northEast.lng;
+    const lambda = 1e-08; // accommodate tiny rounding errors
+
+    return (lat > south &&
+	    lat < north &&
+	    (west < east - lambda ? (long > west && long < east) :
+		    west > east + lambda ? !(long > east && long < west) : true) );
   });
 
   // make a first pass and calculate the legend totals
