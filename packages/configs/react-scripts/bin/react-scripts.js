@@ -27,4 +27,5 @@ switch(script) {
 function handleError(error) {
   if (error?.message === 'canceled') return;
   console.error(error);
+  process.exit(1);
 }
