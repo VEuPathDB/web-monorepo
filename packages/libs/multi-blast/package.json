@@ -46,7 +46,7 @@
     "@veupathdb/browserslist-config": "^1.0.0",
     "@veupathdb/eslint-config": "^1.0.0",
     "@veupathdb/prettier-config": "^1.0.0",
-    "@veupathdb/react-scripts": "^1.0.0",
+    "@veupathdb/react-scripts": "^1.1.0",
     "@veupathdb/tsconfig": "^1.0.0",
     "http-proxy-middleware": "^1.0.6",
     "husky": ">=4",
