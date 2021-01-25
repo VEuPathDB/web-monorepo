@@ -1,14 +1,14 @@
 import React, {ReactElement, useCallback, useState} from "react";
-import {BoundsViewport, MarkerProps} from "./Types";
+import { BoundsViewport } from "./Types";
 import MapVEuMap from "./MapVEuMap";
 import geohashAnimation from "./animation_functions/geohash";
 import testData from './test-data/geoclust-date-binning-testing-all-levels.json';
-import BoundsDriftMarker from "./BoundsDriftMarker";
+import BoundsDriftMarker, { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 import './TempIconHack';
 
 export default {
-  title: 'Marker Bounds',
+  title: 'Map/Marker Bounds',
 };
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number) => {
@@ -18,13 +18,20 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : num
   const geohashLevel = zoomLevelToGeohashLevel[zoomLevel];
 
   const buckets = (testData as { [key: string]: any })[`geohash_${geohashLevel}`].facets.geo.buckets.filter((bucket: any) => {
-    const ltAvg : number = bucket.ltAvg;
-    const lnAvg : number = bucket.lnAvg;
-    return ltAvg > bounds.southWest.lat &&
-	   ltAvg < bounds.northEast.lat &&
-	   lnAvg > bounds.southWest.lng &&
-	   lnAvg < bounds.northEast.lng
-  });
+    const lat : number = bucket.ltAvg;
+    const long : number = bucket.lnAvg;
+
+    const south = bounds.southWest.lat;
+    const north = bounds.northEast.lat;
+    const west = bounds.southWest.lng;
+    const east = bounds.northEast.lng;
+    const lambda = 1e-08; // accommodate tiny rounding errors
+
+    return (lat > south &&
+	    lat < north &&
+	    (west < east - lambda ? (long > west && long < east) :
+		    west > east + lambda ? !(long > east && long < west) : true) );
+ });
   
   return buckets.map((bucket : any) => {
     if (bucket.val.length == geohashLevel) {
@@ -42,7 +49,7 @@ const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : num
 };
 
 export const MarkerBounds = () => {
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
   const duration = defaultAnimationDuration;
 
   const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
