@@ -1,4 +1,4 @@
-import { unknown } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { string, unknown } from '@veupathdb/wdk-client/lib/Utils/Json';
 import {
   BoundApiRequestsObject,
   createFetchApiRequestHandler,
@@ -69,16 +69,9 @@ export const apiRequests = {
   },
   fetchQuery: function (jobId: string) {
     return {
-      path: `${JOBS_PATH}/${jobId}/query`,
+      path: `${JOBS_PATH}/${jobId}/query?download=false`,
       method: 'GET',
-      transformResponse: standardTransformer(unknown),
-    };
-  },
-  fetchBlastMetadata: function (site: string) {
-    return {
-      path: `${META_PATH}?site=${site}`,
-      method: 'GET',
-      transformResponse: standardTransformer(unknown),
+      transformResponse: standardTransformer(string),
     };
   },
 };
