@@ -160,6 +160,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
     margin={{l: marginSize, r: marginSize, t: marginSize, b: marginSize}}
     showLegend={false}
     showHoverInfo={false}
+    showModebar={false}
     textposition='inside'
     textinfo='text'
     // Show value if pie slice is large enough

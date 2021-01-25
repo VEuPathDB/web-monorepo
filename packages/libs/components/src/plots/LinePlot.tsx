@@ -40,7 +40,7 @@ export default function LinePlot(props: Props) {
       showlegend: showLegend,
     })}
     config={{
-      displayModeBar: props.showModebar || ModebarDefault,
+      displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
       staticPlot: props.staticPlot,
     }}
     data={finalData}
