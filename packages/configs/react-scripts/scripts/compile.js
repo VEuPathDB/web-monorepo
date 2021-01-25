@@ -14,7 +14,7 @@ function cleanCompilationDirectory() {
 }
 
 function executeCompilationProcess() {
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     const compilationProcess = spawn(
       'npx',
       [
