@@ -33,7 +33,7 @@ const META_PATH = '/meta';
 
 export const apiRequests = {
   // FIXME: Should be jobs be filterable by site?
-  fetchJobs: function () {
+  fetchJobList: function () {
     return {
       path: JOBS_PATH,
       method: 'GET',
@@ -59,6 +59,20 @@ export const apiRequests = {
       },
       transformResponse: standardTransformer(unknown),
     });
+  },
+  fetchJob: function (jobId: string) {
+    return {
+      path: `${JOBS_PATH}/${jobId}`,
+      method: 'GET',
+      transformResponse: standardTransformer(unknown),
+    };
+  },
+  fetchQuery: function (jobId: string) {
+    return {
+      path: `${JOBS_PATH}/${jobId}/query`,
+      method: 'GET',
+      transformResponse: standardTransformer(unknown),
+    };
   },
   fetchBlastMetadata: function (site: string) {
     return {

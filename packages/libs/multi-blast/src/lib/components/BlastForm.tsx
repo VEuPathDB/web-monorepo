@@ -1,6 +1,5 @@
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
-
-import { mapValues } from 'lodash';
+import { FormEvent, useCallback, useMemo, useState } from 'react';
+import { useHistory } from 'react-router';
 
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { isEnumParam } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
@@ -36,16 +35,6 @@ const OMIT_PARAM_TERM = 'none';
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
 export function BlastForm(props: Props) {
-  const api = useMemo(
-    () =>
-      bindApiRequestCreators(apiRequests, createBlastRequestHandler('/blast')),
-    []
-  );
-
-  useEffect(() => {
-    (window as any).api = api;
-  }, []);
-
   const selectedBlastAlgorithm =
     props.state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
 
@@ -109,11 +98,7 @@ export function BlastForm(props: Props) {
   );
 
   return props.submissionMetadata.type === 'create-strategy' ? (
-    <NewJobForm
-      {...props}
-      renderParamGroup={renderBlastParamGroup}
-      restrictedAdvancedParamGroup={restrictedAdvancedParamGroup}
-    />
+    <NewJobForm {...props} renderParamGroup={renderBlastParamGroup} />
   ) : (
     <DefaultQuestionForm {...props} renderParamGroup={renderBlastParamGroup} />
   );
@@ -121,21 +106,34 @@ export function BlastForm(props: Props) {
 
 interface NewJobFormProps extends Props {
   renderParamGroup: (group: ParameterGroup, formProps: Props) => JSX.Element;
-  restrictedAdvancedParamGroup: ParameterGroup;
 }
 
 function NewJobForm(props: NewJobFormProps) {
   const [submitting, setSubmitting] = useState(false);
 
+  const api = useMemo(
+    () =>
+      bindApiRequestCreators(apiRequests, createBlastRequestHandler('/blast')),
+    []
+  );
+
+  const history = useHistory();
+
   const onSubmit = useCallback(
-    (event: FormEvent) => {
-      event.preventDefault();
+    async (e: FormEvent) => {
+      e.preventDefault();
 
-      console.log(paramValuesToBlastConfig(props.state.paramValues));
+      setSubmitting(true);
 
-      alert('Under Construction');
+      // api.createJob(undefined, undefined, undefined, paramValuesToBlastConfig(props.state.paramValues));
+
+      setSubmitting(false);
+
+      history.push(
+        `/workspace/blast/result/24D999A7223980871D8BE884375098F78868370C446C879B7DB4B44DCC7CFCBA`
+      );
     },
-    [props.state.paramValues]
+    [api, props.state.paramValues, history]
   );
 
   return (
@@ -190,28 +188,6 @@ function findParamsWhichDependOnlyOnBlastAlgorithm(
         dependencies.size === 1 && dependencies.has(BLAST_ALGORITHM_PARAM_NAME)
     )
     .map(([paramName]) => paramName);
-}
-
-function computeRestrictedParamValues(
-  question: QuestionWithMappedParameters,
-  restrictedAdvancedParamGroup: ParameterGroup,
-  paramValues: Record<string, string>
-) {
-  const parametersToInclude = question.groups.flatMap((group) =>
-    group.name === ADVANCED_PARAMS_GROUP_NAME
-      ? restrictedAdvancedParamGroup.parameters
-      : group.parameters
-  );
-
-  const parametersToIncludeSet = new Set(parametersToInclude);
-
-  return Object.entries(paramValues).reduce((memo, [paramName, paramValue]) => {
-    if (parametersToIncludeSet.has(paramName)) {
-      memo[paramName] = paramValue;
-    }
-
-    return memo;
-  }, {} as Record<string, string>);
 }
 
 type EventHandlers = {
