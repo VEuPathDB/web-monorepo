@@ -39,7 +39,7 @@ interface MapVEuMapProps {
 
 
 
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, nudge, recenterMarkers = true, showGrid, showMouseToolbar}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid, showMouseToolbar}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
