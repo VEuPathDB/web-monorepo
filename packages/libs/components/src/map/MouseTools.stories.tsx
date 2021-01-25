@@ -1,16 +1,11 @@
 import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 // import MapVEuMap from './MapVEuMap';
-import { BoundsViewport, MarkerProps, Bounds } from './Types';
+import { BoundsViewport, Bounds } from './Types';
+import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 
 import speciesData from './test-data/geoclust-species-testing-all-levels.json';
-
-// below was an attempt to lazy load...
-// it seemed to cause a 'black screen' error in Storybook if you refreshed the page in your browser
-//
-// let speciesData : any = undefined;
-// import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
 import { LeafletMouseEvent } from "leaflet";
 import DonutMarker, { DonutMarkerProps } from './DonutMarker';
@@ -180,7 +175,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
 
 export const Species = () => {
 
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<MarkerProps>[]>([]);
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
 
   //DKDK anim
