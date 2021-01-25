@@ -12,14 +12,14 @@ interface SemanticMarkersProps {
     method: string,
     duration: number,
     animationFunction: AnimationFunction
-  } | null
+  } | null,
 }
 
 /**
  * Renders the semantic markers layer
- *
- *
- * @param props
+ * 
+ * 
+ * @param props 
  */
 export default function SemanticMarkers({ onViewportChanged, markers, animation, recenterMarkers = true}: SemanticMarkersProps) {
   const { map } = useLeaflet();
