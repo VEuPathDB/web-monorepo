@@ -1,0 +1,17 @@
+.BlastWorkspaceResult {
+  &__Loading {
+    .Caption {
+      text-align: center;
+      margin-top: 2em;
+    }
+
+    p {
+      text-align: center;
+      font-size: 1.2em;
+    }
+
+    .InlineHeader {
+      font-weight: bold;
+    }
+  }
+}
