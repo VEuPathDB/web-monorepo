@@ -20,9 +20,8 @@ import {
   changeGroupVisibility,
   updateParamValue,
 } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
-import { bindApiRequestCreators } from '@veupathdb/web-common/lib/util/api';
 
-import { apiRequests, createBlastRequestHandler } from '../utils/api';
+import { useBlastApi } from '../utils/hooks';
 import {
   BLAST_ALGORITHM_PARAM_NAME,
   paramValuesToBlastConfig,
@@ -111,11 +110,7 @@ interface NewJobFormProps extends Props {
 function NewJobForm(props: NewJobFormProps) {
   const [submitting, setSubmitting] = useState(false);
 
-  const api = useMemo(
-    () =>
-      bindApiRequestCreators(apiRequests, createBlastRequestHandler('/blast')),
-    []
-  );
+  const api = useBlastApi();
 
   const history = useHistory();
 
