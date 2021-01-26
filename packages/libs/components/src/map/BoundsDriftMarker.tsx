@@ -1,4 +1,4 @@
-import {Rectangle, useLeaflet, MarkerProps as LeafletMarkerProps} from "react-leaflet";
+import {Rectangle, useLeaflet, Popup, MarkerProps as LeafletMarkerProps} from "react-leaflet";
 import React, { useState } from "react";
 import { DriftMarker } from "leaflet-drift-marker";
 import { MarkerProps, Bounds, ExtractProps } from './Types';
@@ -19,11 +19,44 @@ const FixedDriftMarker = DriftMarker as React.ComponentType<ExtractProps<typeof 
  *    For this reason, marker's props are adjusted without sending mouse event functions, but implemented here directly.
  */
 
-export default function BoundsDriftMarker({position, bounds, icon, duration}: BoundsDriftMarkerProps) {
+export default function BoundsDriftMarker({position, bounds, icon, duration, showPopup, popupPlot}: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false)
   const { map } = useLeaflet();
   const boundingBox = new LatLngBounds([
       [bounds.southWest.lat, bounds.southWest.lng], [bounds.northEast.lat, bounds.northEast.lng]])
+
+  const popup = (<Popup
+    className="plot-marker-popup"
+    minWidth={popupPlot?.props.width}
+    autoPan={false}
+    closeButton={false}
+  >
+    {popupPlot}
+  </Popup>);
+
+  const handleMouseOver = (e: LeafletMouseEvent) => {
+    e.target._icon.classList.add('top-marker');     //DKDK marker on top
+    setDisplayBounds(true);  // Display bounds rectangle
+
+    if (showPopup) {
+      e.target.openPopup();
+    }
+  };
+
+  const handleMouseOut = (e: LeafletMouseEvent) => {
+    e.target._icon.classList.remove('top-marker');  //DKDK remove marker on top
+    setDisplayBounds(false);  // Remove bounds rectangle
+
+    if (showPopup) {
+      e.target.closePopup();
+    }
+  }
+
+  const handleClick = (e: LeafletMouseEvent) => {
+    // Default popup behavior is to open on marker click
+    // Prevent by immediately closing it
+    e.target.closePopup();
+  }
 
   const handleDoubleClick = () => {
     if (map) {
@@ -38,27 +71,22 @@ export default function BoundsDriftMarker({position, bounds, icon, duration}: Bo
   return (<FixedDriftMarker
     duration={duration}
     position={position}
-    onmouseover={(e: LeafletMouseEvent) => {
-      e.target._icon.classList.add('top-marker');     //DKDK marker on top
-      setDisplayBounds(true);
-    }} // Display bounds rectangle
-    onmouseout={(e: LeafletMouseEvent) => {
-      e.target._icon.classList.remove('top-marker');  //DKDK remove marker on top
-      setDisplayBounds(false);
-    }} // Remove bounds rectangle
+    onmouseover={(e: LeafletMouseEvent) => handleMouseOver(e)}
+    onmouseout={(e: LeafletMouseEvent) => handleMouseOut(e)}
+    onclick={(e: LeafletMouseEvent) => handleClick(e)}
+    ondblclick={handleDoubleClick}
     {...optionalIconProp}
-    ondblclick={() => handleDoubleClick()} > 
+  >
     {
       displayBounds
-          ? <Rectangle
-              bounds={boundingBox}
-              color={"gray"}
-              weight={1}
-            >
-
-            </Rectangle>
-          : null
-
+        ? <Rectangle
+            bounds={boundingBox}
+            color={"gray"}
+            weight={1}
+          >
+          </Rectangle>
+        : null
     }
+    {showPopup && popup}
   </FixedDriftMarker>)
 }

@@ -12,7 +12,13 @@ export interface PlotProps {
   width?: number,
   height?: number,
   margin?: Partial<Margin>,
+  staticPlot?: boolean,
+  showModebar?: boolean | 'hover',
 }
+
+// Passing undefined doesn't revert to default modebar behavior,
+// so use this as the default
+export const ModebarDefault = 'hover';
 
 const config = {
   responsive: true,

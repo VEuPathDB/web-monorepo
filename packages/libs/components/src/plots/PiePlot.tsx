@@ -1,22 +1,22 @@
 import React from "react";
-import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
 import defaultColorGen from "../utils/defaultColorGen";
 import { PlotData as PlotlyPlotData } from 'plotly.js';
+import { PlotParams } from 'react-plotly.js';
 
 export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
   hoverinfo: PlotlyPlotData['hoverinfo'] | PlotlyPlotData['textinfo'],
   sort: boolean;
+  texttemplate: string | string[];
 }
 
-type Value = number | Date;
-
 type PiePlotDatum = {
-  value: Value;
+  value: number;
   label: string;
   color?: string;
 };
 
-interface Props extends PlotProps {
+export interface Props extends PlotProps {
   data: PiePlotDatum[];
   interior?: {
     heightPercentage: number;
@@ -26,6 +26,11 @@ interface Props extends PlotProps {
     fontSize?: string|number;
   };
   showLegend?: boolean,
+  text?: string[],
+  textinfo?: PlotData['textinfo'],
+  textposition?: 'inside' | 'outside' | 'auto' | 'none',
+  texttemplate?: string | string[],
+  showHoverInfo?: boolean,
 }
 
 export default function PiePlot(props: Props) {
@@ -33,8 +38,7 @@ export default function PiePlot(props: Props) {
   const defaultColorIter = defaultColorGen();
   let interiorProps;
   let newData: Partial<PlotData>[] = [];
-
-  let layout = {};
+  let layout: PlotParams['layout'] = {};
 
   if (interior) {
     interiorProps = {
@@ -85,7 +89,7 @@ export default function PiePlot(props: Props) {
   }
 
   // Preprocess data for PlotlyPlot
-  const reducer = (accumulatorObj: {values: Value[], labels: string[], marker: {colors: string[]}}, currObj: PiePlotDatum) => {
+  const reducer = (accumulatorObj: {values: number[], labels: string[], marker: {colors: string[]}}, currObj: PiePlotDatum) => {
     accumulatorObj.values.push(currObj.value);
     accumulatorObj.labels.push(currObj.label);
 
@@ -102,17 +106,29 @@ export default function PiePlot(props: Props) {
     type: 'pie',
     direction: 'clockwise',
     sort: false,
-    hoverinfo: 'label+value+percent',
+    text: props.text,
+    textinfo: props.textinfo,
+    hoverinfo: props.showHoverInfo ? 'label+value+percent' : 'none',
+    textposition: props.textposition,
+    texttemplate: props.texttemplate,
   };
 
   newData.push(primaryDataTrace);
 
+  if (props.staticPlot) {
+    layout.hovermode = false;
+  }
+
   return <PlotlyPlot
     data={newData as any}  // Casting as 'any' to avoid issues with PlotData for pie charts
-    layout={Object.assign(layout, {
+    layout={{...layout, ...{
       width: props.width,
       height: props.height,
       margin: props.margin,
-      showlegend: props.showLegend})}
+      showlegend: props.showLegend}}}
+    config={{
+      displayModeBar: props.showModebar || ModebarDefault,
+      staticPlot: props.staticPlot,
+    }}
   />
 }

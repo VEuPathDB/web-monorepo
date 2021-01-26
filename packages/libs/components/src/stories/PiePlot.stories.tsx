@@ -49,6 +49,7 @@ export const BasicPie = () => <PiePlot
 export const PieCustomColors = () => <PiePlot
   //onPlotUpdate={action('state updated')}
   data={coloredData}
+  staticPlot={true}
 />
 
 export const BasicDonut = () => <PiePlot
