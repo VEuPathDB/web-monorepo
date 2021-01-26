@@ -1,3 +1,6 @@
+/**
+ * Some basic color definitions that can be used to bring consistency to UI components.
+ */
 export const LIGHT_RED = '#CC3030';
 export const LIGHT_ORANGE = '#DD6E36';
 export const LIGHT_YELLOW = '#F8CC1B';

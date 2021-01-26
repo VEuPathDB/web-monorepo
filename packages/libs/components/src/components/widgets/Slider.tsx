@@ -61,7 +61,9 @@ export default function SliderWidget({
   colorSpec,
   containerStyles = {},
 }: SliderWidgetProps) {
+  // Used to track whether or not has mouse hovering over widget.
   const [focused, setFocused] = useState(false);
+
   const [previousValue, setPreviousValue] = useState<number>();
 
   // Clear previous value whenever a new value is received.

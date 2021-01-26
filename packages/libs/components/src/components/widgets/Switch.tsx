@@ -19,6 +19,9 @@ export type SwitchProps = {
   containerStyles?: React.CSSProperties;
 };
 
+/** A simple switch UI widget.
+ *
+ * Should be used when you want to toggle something between two distinct options. */
 export default function Switch({
   state,
   onStateChange,
@@ -29,7 +32,7 @@ export default function Switch({
 
   const theme = createMuiTheme({
     palette: {
-      secondary: {
+      primary: {
         main: color,
       },
     },
@@ -53,7 +56,12 @@ export default function Switch({
         Legend
       </Typography>
       <ThemeProvider theme={theme}>
-        <MaterialSwitch checked={state} onChange={onStateChange} size='small' />
+        <MaterialSwitch
+          checked={state}
+          onChange={onStateChange}
+          size='small'
+          color='primary'
+        />
       </ThemeProvider>
     </div>
   );

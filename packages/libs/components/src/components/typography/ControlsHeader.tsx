@@ -7,6 +7,9 @@ type ControlsHeaderType = {
   styleOverrides?: React.CSSProperties;
 };
 
+/**
+ * Header for use in plot controls components.
+ */
 export default function ControlsHeader({
   text,
   color = MEDIUM_GRAY,

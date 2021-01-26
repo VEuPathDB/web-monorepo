@@ -1,6 +1,6 @@
 import React from 'react';
-import { LIGHT_GRAY, LIGHT_GREEN } from '../../constants/colors';
 
+import { LIGHT_GRAY, LIGHT_GREEN } from '../../constants/colors';
 import SliderWidget from './Slider';
 
 export type OpacitySliderProps = {

@@ -14,6 +14,9 @@ export type OrientationToggleProps = {
   containerStyles?: React.CSSProperties;
 };
 
+/**
+ * A simple UI widget for toggling plot orientation.
+ */
 export default function OrientationToggle({
   orientation,
   onOrientationChange,
