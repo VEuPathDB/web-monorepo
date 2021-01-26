@@ -1,4 +1,4 @@
-import { arrayOf, string, unknown } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import {
   BoundApiRequestsObject,
   createFetchApiRequestHandler,

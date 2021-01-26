@@ -1,4 +1,8 @@
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
+
+import { LongJobResponse } from '../utils/ServiceTypes';
+import { useBlastApi } from '../utils/hooks';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
 
@@ -8,8 +12,21 @@ interface Props {
   jobId: string;
 }
 
+const POLLING_INTERVAL = 3000;
+
 export function BlastWorkspaceResult(props: Props) {
-  return <LoadingBlastResult {...props} />;
+  const api = useBlastApi();
+
+  const jobResult = usePromise(() => makeJobPollingPromise(api, props.jobId), [
+    api,
+    props.jobId,
+  ]);
+
+  return jobResult.value == null ? (
+    <LoadingBlastResult {...props} />
+  ) : (
+    <div>It's done!</div>
+  );
 }
 
 function LoadingBlastResult(props: Props) {
@@ -35,4 +52,25 @@ function LoadingBlastResult(props: Props) {
       </Loading>
     </div>
   );
+}
+
+async function makeJobPollingPromise(
+  api: ReturnType<typeof useBlastApi>,
+  jobId: string
+): Promise<LongJobResponse> {
+  const job = await api.fetchJob(jobId);
+
+  if (job.status === 'completed' || job.status === 'errored') {
+    return job;
+  }
+
+  await waitForNextPoll();
+
+  return makeJobPollingPromise(api, jobId);
+}
+
+function waitForNextPoll() {
+  return new Promise(function (resolve, reject) {
+    setTimeout(resolve, POLLING_INTERVAL);
+  });
 }
