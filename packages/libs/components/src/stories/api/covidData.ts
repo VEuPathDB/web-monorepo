@@ -69,7 +69,7 @@ export const getDailyCovidStats = async (): Promise<Array<covidStateData>> => {
  */
 export const binDailyCovidStats = async (
   binWidth: number,
-  selectedUnit: string
+  selectedUnit: string = 'default'
 ) => {
   const statisticsByState = await getDailyCovidStats();
 
