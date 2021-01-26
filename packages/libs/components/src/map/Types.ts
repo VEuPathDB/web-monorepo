@@ -36,10 +36,12 @@ export interface MarkerProps {
   id: string,
   icon?: Icon,
   showPopup?: boolean,
-  popupPlot?: ReactElement<PlotProps>,
-  popupContentSize?: {
-    width: number,
-    height: number,
+  popupContent?: {
+    content: ReactElement,
+    size: {
+      width: number,
+      height: number,
+    },
   },
 }
 

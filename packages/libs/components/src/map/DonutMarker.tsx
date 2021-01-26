@@ -174,8 +174,13 @@ export default function DonutMarker(props: DonutMarkerProps) {
       bounds={props.bounds}
       icon={SVGDonutIcon}
       duration={duration}
-      popupPlot={popupPlot}
-      popupContentSize={{width: plotSize, height: plotSize}}
+      popupContent={{
+        content: popupPlot,
+        size: {
+          width: plotSize,
+          height: plotSize
+        },
+      }}
       showPopup={props.showPopup}
     />
   );
