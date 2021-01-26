@@ -34,7 +34,6 @@ export function createBlastRequestHandler(
 }
 
 const JOBS_PATH = '/jobs';
-const META_PATH = '/meta';
 
 export const apiRequests = {
   // FIXME: Should be jobs be filterable by site?
