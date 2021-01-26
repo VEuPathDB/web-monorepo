@@ -120,11 +120,12 @@ function NewJobForm(props: NewJobFormProps) {
 
       setSubmitting(true);
 
-      // api.createJob(undefined, undefined, undefined, paramValuesToBlastConfig(props.state.paramValues));
+      // const { jobId } = await api.createJob(undefined, undefined, undefined, paramValuesToBlastConfig(props.state.paramValues));
 
       setSubmitting(false);
 
       history.push(
+        // `/workspace/blast/result/${jobId}`
         `/workspace/blast/result/24D999A7223980871D8BE884375098F78868370C446C879B7DB4B44DCC7CFCBA`
       );
     },

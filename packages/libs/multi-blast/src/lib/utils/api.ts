@@ -8,6 +8,7 @@ import {
 
 import {
   IoBlastConfig,
+  createJobResponse,
   longJobResponse,
   shortJobResponse,
 } from './ServiceTypes';
@@ -61,7 +62,7 @@ export const apiRequests = {
         'target-type': targetType,
         config,
       },
-      transformResponse: standardTransformer(unknown),
+      transformResponse: standardTransformer(createJobResponse),
     });
   },
   fetchJob: function (jobId: string) {

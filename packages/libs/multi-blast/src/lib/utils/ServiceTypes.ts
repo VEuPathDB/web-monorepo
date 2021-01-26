@@ -564,3 +564,9 @@ export const longJobResponse = combine(
 );
 
 export type LongJobResponse = Unpack<typeof longJobResponse>;
+
+export const createJobResponse = record({
+  jobId: string,
+});
+
+export type CreateJobResponse = Unpack<typeof createJobResponse>;
