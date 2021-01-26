@@ -1,4 +1,6 @@
-// Histogram Type Definitions
+/**
+ * Type definitions related to histograms.
+ */
 export type HistogramData = Array<HistogramDataSeries>;
 export type HistogramDataSeries = {
   /** The name of the series. */

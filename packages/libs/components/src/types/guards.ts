@@ -6,12 +6,14 @@
 import { HistogramData, PiePlotData, UnionOfPlotDataTypes } from './plots';
 import { LinePlotData } from './plots/linePlot';
 
+/** Determine if data is for a histogram plot. */
 export function isHistogramData(
   data: UnionOfPlotDataTypes
 ): data is HistogramData {
   return 'length' in data && data.length && 'bins' in data[0] ? true : false;
 }
 
+/** Determine if data is for a pie plot. */
 export function isPiePlotData(data: UnionOfPlotDataTypes): data is PiePlotData {
   return 'length' in data &&
     data.length &&
@@ -21,6 +23,7 @@ export function isPiePlotData(data: UnionOfPlotDataTypes): data is PiePlotData {
     : false;
 }
 
+/** Determine if data is for a line plot. */
 export function isLinePlotData(
   data: UnionOfPlotDataTypes
 ): data is LinePlotData {

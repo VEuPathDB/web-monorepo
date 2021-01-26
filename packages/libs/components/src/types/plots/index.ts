@@ -1,3 +1,6 @@
+/**
+ * Module used as a convenience wrapper for related type definitions.
+ */
 import { HistogramData } from './histogram';
 import { LinePlotData } from './linePlot';
 import { PiePlotData } from './piePlot';
