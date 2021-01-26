@@ -23,22 +23,7 @@ export const RequiredControls: Story<usePlotControlsParams<HistogramData>> = (
     histogram: args.histogram,
   });
 
-  return (
-    <HistogramControls
-      barLayout={controls.barLayout}
-      onBarLayoutChange={controls.setBarLayout}
-      binWidth={controls.histogram.binWidth}
-      binWidthRange={controls.histogram.binWidthRange}
-      binWidthStep={controls.histogram.binWidthStep}
-      onBinWidthChange={controls.histogram.setBinWidth}
-      displayLegend={controls.displayLegend}
-      onDisplayLegendChange={controls.toggleDisplayLegend}
-      opacity={controls.opacity}
-      onOpacityChange={controls.setOpacity}
-      orientation={controls.orientation}
-      onOrientationChange={controls.toggleOrientation}
-    />
-  );
+  return <HistogramControls {...controls} {...controls.histogram} />;
 };
 
 RequiredControls.args = {
@@ -66,21 +51,8 @@ export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>> = (
     <HistogramControls
       label='Customizable Control Panel Label'
       accentColor={LIGHT_PURPLE}
-      displayLegend={controls.displayLegend}
-      onDisplayLegendChange={controls.toggleDisplayLegend}
-      availableUnits={controls.availableUnits}
-      selectedUnit={controls.selectedUnit}
-      onSelectedUnitChange={controls.setSelectedUnit}
-      barLayout={controls.barLayout}
-      onBarLayoutChange={controls.setBarLayout}
-      binWidth={controls.histogram.binWidth}
-      binWidthRange={controls.histogram.binWidthRange}
-      binWidthStep={controls.histogram.binWidthStep}
-      onBinWidthChange={controls.histogram.setBinWidth}
-      opacity={controls.opacity}
-      onOpacityChange={controls.setOpacity}
-      orientation={controls.orientation}
-      onOrientationChange={controls.toggleOrientation}
+      {...controls}
+      {...controls.histogram}
     />
   );
 };
