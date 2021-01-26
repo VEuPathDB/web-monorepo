@@ -1,16 +1,64 @@
+/**
+ * Some quick and poor code quality API calls for use in Storybook examples.
+ * If other people start to use these, I'll come and clean them up...
+ */
 import { HistogramBin, HistogramData } from '../../types/plots';
 
 type covidStateData = {
-  date: number;
+  fips: string;
+  country: string;
   state: string;
-  death: number;
-  hospitalizedCurrently: number;
-  positiveIncrease: number;
+  county: string;
+  level: 'country' | 'state' | 'county' | 'cbsa' | 'place';
+  population: number;
+  actuals: {
+    cases: number;
+    deaths: number;
+    positiveTests: number;
+    negativeTests: number;
+    contactTracers: number;
+    hospitalBeds: {
+      capacity: number;
+      currentUsageTotal: number;
+      currentUsageCovid: number;
+      typicalUsageRate: number;
+    };
+    icuBeds: {
+      capacity: number;
+      currentUsageTotal: number;
+      currentUsageCovid: number;
+      typicalUsageRate: number;
+    };
+    newCases: number;
+    vaccinesDistributed: number;
+    vaccinationsInitiated: number;
+    vaccinationsCompleted: number;
+  };
+  metrics: {
+    testPositivityRatio: number;
+    testPositivityRatioDetails: {
+      source: string;
+    };
+    caseDensity: number;
+    contactTracerCapacityRatio: number;
+    infectionRate: number;
+    infectionRateCI90: number;
+    icuHeadroomRatio: number;
+    icuHeadroomDetails: {
+      currentIcuCovid: number;
+      currentIcuCovidMethod: string;
+      currentIcuNonCovid: number;
+      currentIcuNonCovidMethod: string;
+    };
+    icuCapacityRatio: number;
+    vaccinationsInitiatedRatio: number;
+    vaccinationsCompletedRatio: number;
+  };
 };
 
 export const getDailyCovidStats = async (): Promise<Array<covidStateData>> => {
   const response = await fetch(
-    'https://api.covidtracking.com/v1/states/current.json'
+    'https://api.covidactnow.org/v2/states.json?apiKey=c85ebdd1b2ad497cb8349e777867933d'
   );
   const json = await response.json();
   return json;
@@ -18,11 +66,12 @@ export const getDailyCovidStats = async (): Promise<Array<covidStateData>> => {
 
 /**
  * Figure out the range of values and then create the bins?
- *
- * @param binWidth
  */
-export const binDailyCovidStats = async (binWidth: number) => {
-  const dailyStatsByState = await getDailyCovidStats();
+export const binDailyCovidStats = async (
+  binWidth: number,
+  selectedUnit: string
+) => {
+  const statisticsByState = await getDailyCovidStats();
 
   // Simulate Errors
   if (binWidth === 9000) {
@@ -35,8 +84,10 @@ export const binDailyCovidStats = async (binWidth: number) => {
     );
   }
 
-  const newCasesStats = dailyStatsByState.map(
-    (dailyStat) => dailyStat.positiveIncrease
+  const newCasesStats = statisticsByState.map((state) =>
+    selectedUnit === 'Per 1000 Residents'
+      ? state.actuals.newCases / state.population
+      : state.actuals.newCases
   );
   const lowNewCases = Math.min(...newCasesStats);
   const highNewCases = Math.max(...newCasesStats);
@@ -54,8 +105,10 @@ export const binDailyCovidStats = async (binWidth: number) => {
     });
   }
 
-  const hospitalizedStats = dailyStatsByState.map(
-    (dailyStat) => dailyStat.hospitalizedCurrently
+  const hospitalizedStats = statisticsByState.map((state) =>
+    selectedUnit === 'Per 1000 Residents'
+      ? state.actuals.hospitalBeds.currentUsageCovid / state.population
+      : state.actuals.hospitalBeds.currentUsageCovid
   );
   const lowHospitalized = Math.min(...hospitalizedStats);
   const highHospitalized = Math.max(...hospitalizedStats);
@@ -78,7 +131,7 @@ export const binDailyCovidStats = async (binWidth: number) => {
     currentValue: covidStateData
   ) => {
     const matchingCasesBinIndex = newCasesBins.findIndex(
-      (bin) => bin.binStart >= currentValue.positiveIncrease
+      (bin) => bin.binStart >= currentValue.actuals.newCases
     );
 
     if (matchingCasesBinIndex !== -1) {
@@ -90,7 +143,8 @@ export const binDailyCovidStats = async (binWidth: number) => {
     }
 
     const matchingBinIndex = hospitalizationBins.findIndex(
-      (bin) => bin.binStart >= currentValue.hospitalizedCurrently
+      (bin) =>
+        bin.binStart >= currentValue.actuals.hospitalBeds.currentUsageCovid
     );
 
     if (matchingBinIndex !== -1) {
@@ -104,9 +158,10 @@ export const binDailyCovidStats = async (binWidth: number) => {
     return accumulator;
   };
 
-  const binnedData = dailyStatsByState.reduce(reducer, [
+  const binnedData = statisticsByState.reduce(reducer, [
     { name: 'Current Hospitalizations', bins: hospitalizationBins },
     { name: 'New Cases', bins: newCasesBins },
   ]);
+
   return binnedData;
 };

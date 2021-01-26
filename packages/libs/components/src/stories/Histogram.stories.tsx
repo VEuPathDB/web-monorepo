@@ -121,10 +121,12 @@ const dateSeriesMock: HistogramData = [
 ];
 
 const defaultActions = {
-  onSelected: action('made a selection')
+  onSelected: action('made a selection'),
 };
 
-const Template: Story<HistogramProps> = (args) => <Histogram {...args} {...defaultActions} />;
+const Template: Story<HistogramProps> = (args) => (
+  <Histogram {...args} {...defaultActions} />
+);
 
 const TemplateWithControls: Story<HistogramProps> = (
   args,
@@ -132,14 +134,21 @@ const TemplateWithControls: Story<HistogramProps> = (
 ) => {
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
-    availableUnits: ['single items', 'dozens'],
-    initialSelectedUnit: 'single items',
+    availableUnits: ['Raw Numbers', 'Per 1000 Residents'],
+    initialSelectedUnit: 'Raw Numbers',
+    onSelectedUnitChange: async (selectedUnit, binWidth) => {
+      return await binDailyCovidStats(binWidth, selectedUnit);
+    },
     histogram: {
+      // BOB / DAVE
+      // Perhaps binWidthRange / binWidthStep should be part of `data`? It is difficult
+      // to know how to appropriately modify these values when selectedUnit changes
+      // if that information is not included in the data returned from the backend.
       binWidthRange: [2000, 10000],
       binWidthStep: 1000,
       initialBinWidth: 2000,
-      onBinWidthChange: async (width) => {
-        return await binDailyCovidStats(width);
+      onBinWidthChange: async (binWidth, selectedUnit) => {
+        return await binDailyCovidStats(binWidth, selectedUnit);
       },
     },
   });
@@ -148,33 +157,18 @@ const TemplateWithControls: Story<HistogramProps> = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Histogram
         {...args}
-        data={plotControls.data}
-        opacity={plotControls.opacity}
-        orientation={plotControls.orientation}
-        layout={plotControls.barLayout}
-        binWidth={plotControls.histogram.binWidth}
+        {...plotControls}
+        {...plotControls.histogram}
         {...defaultActions}
       />
       <div style={{ height: 25 }} />
       <HistogramControls
         label='Histogram Controls'
-        displayLegend={plotControls.displayLegend}
-        onDisplayLegendChange={plotControls.toggleDisplayLegend}
-        availableUnits={plotControls.availableUnits}
-        selectedUnit={plotControls.selectedUnit}
-        onSelectedUnitChange={plotControls.setSelectedUnit}
-        barLayout={plotControls.barLayout}
-        onBarLayoutChange={plotControls.setBarLayout}
-        opacity={plotControls.opacity}
-        onOpacityChange={plotControls.setOpacity}
-        orientation={plotControls.orientation}
-        onOrientationChange={plotControls.toggleOrientation}
-        containerStyles={{ maxWidth: 600 }}
-        binWidth={plotControls.histogram.binWidth}
-        binWidthRange={plotControls.histogram.binWidthRange}
-        binWidthStep={plotControls.histogram.binWidthStep}
-        onBinWidthChange={plotControls.histogram.setBinWidth}
-        errorManagement={plotControls.errorManagement}
+        {...plotControls}
+        {...plotControls.histogram}
+        containerStyles={{
+          maxWidth: args.width,
+        }}
       />
     </div>
   );
@@ -219,49 +213,31 @@ export const SharedControlsMultiplePlots: Story<HistogramProps> = (
           title='New Cases'
           height={args.height}
           width={args.width / 2}
+          {...plotControls}
+          {...plotControls.histogram}
           data={plotControls.data.filter(
             (series) => series.name === 'New Cases'
           )}
-          opacity={plotControls.opacity}
-          orientation={plotControls.orientation}
-          layout={plotControls.barLayout}
-          binWidth={plotControls.histogram.binWidth}
-	  {...defaultActions}
+          {...defaultActions}
         />
         <Histogram
           title='Current Hospitalizations'
           height={args.height}
           width={args.width / 2}
+          {...plotControls}
+          {...plotControls.histogram}
           data={plotControls.data.filter(
             (series) => series.name === 'Current Hospitalizations'
           )}
-          opacity={plotControls.opacity}
-          orientation={plotControls.orientation}
-          layout={plotControls.barLayout}
-          binWidth={plotControls.histogram.binWidth}
-	  {...defaultActions}
+          {...defaultActions}
         />
       </div>
       <div style={{ height: 25 }} />
       <HistogramControls
         label='Histogram Controls'
-        displayLegend={plotControls.displayLegend}
-        onDisplayLegendChange={plotControls.toggleDisplayLegend}
-        availableUnits={plotControls.availableUnits}
-        selectedUnit={plotControls.selectedUnit}
-        onSelectedUnitChange={plotControls.setSelectedUnit}
-        barLayout={plotControls.barLayout}
-        onBarLayoutChange={plotControls.setBarLayout}
-        opacity={plotControls.opacity}
-        onOpacityChange={plotControls.setOpacity}
-        orientation={plotControls.orientation}
-        onOrientationChange={plotControls.toggleOrientation}
-        containerStyles={{ width: 500 }}
-        binWidth={plotControls.histogram.binWidth}
-        binWidthRange={plotControls.histogram.binWidthRange}
-        binWidthStep={plotControls.histogram.binWidthStep}
-        onBinWidthChange={plotControls.histogram.setBinWidth}
-        errorManagement={plotControls.errorManagement}
+        {...plotControls}
+        {...plotControls.histogram}
+        containerStyles={{ maxWidth: args.width }}
       />
     </div>
   );
@@ -308,7 +284,7 @@ TwoDataSeries.args = {
 export const StackedBars = Template.bind({});
 StackedBars.args = {
   ...TwoDataSeries.args,
-  layout: 'stack',
+  barLayout: 'stack',
 };
 
 export const PlotTitle = Template.bind({});

@@ -104,7 +104,7 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
   orientation: OrientationOptions;
   /** Layout options for bar charts. Defaults to 'overlay'. */
   barLayout: BarLayoutOptions;
-  /** Different units that can be selected that will cause
+  /** Different units that can be selected. Will cause
    * backend data recalculation. For example, for a series
    * of chronological data: years, months, days.
    */
@@ -113,6 +113,7 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
   selectedUnit: string;
   /** Storage for errors that we may want to display to the user. */
   errors: Array<Error>;
+  /** Histogram specific attributes. */
   histogram: {
     /** Histogram: The width of bins. */
     binWidth: number;
@@ -128,12 +129,18 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
   data: DataShape;
   availableUnits?: Array<string>;
   initialSelectedUnit?: string;
-  onSelectedUnitChange?: (unit: string) => Promise<DataShape>;
+  onSelectedUnitChange?: (
+    selectedUnit: string,
+    binWidth: number
+  ) => Promise<DataShape>;
   histogram?: {
     initialBinWidth?: number;
     binWidthRange?: [number, number];
     binWidthStep?: number;
-    onBinWidthChange: (width: number) => Promise<DataShape>;
+    onBinWidthChange: (
+      binWidth: number,
+      selectedUnit: string
+    ) => Promise<DataShape>;
   };
 };
 
@@ -210,11 +217,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   /**
    * Convenience Methods for Synchronous Actions
    * */
-  // Update Bar Layout
-  const setBarLayout = (layout: BarLayoutOptions) =>
+  const onBarLayoutChange = (layout: BarLayoutOptions) =>
     dispatch({ type: 'setBarLayout', payload: layout });
   // Update and Reset Opacity
-  const setOpacity = (opacity: number) =>
+  const onOpacityChange = (opacity: number) =>
     dispatch({ type: 'setOpacity', payload: opacity });
   const resetOpacity = () => dispatch({ type: 'resetOpacity' });
 
@@ -230,10 +236,13 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
    * nested reducer and/or make async function calls to change
    * data via API requests.
    */
-  const setBinWidth = async (binWidth: number) => {
+  const onBinWidthChange = async (binWidth: number) => {
     if (params.histogram) {
       try {
-        const newData = await params.histogram.onBinWidthChange(binWidth);
+        const newData = await params.histogram.onBinWidthChange(
+          binWidth,
+          reducerState.selectedUnit
+        );
         dispatch({ type: 'setData', payload: newData });
       } catch (error) {
         dispatch({ type: 'errors/add', payload: error });
@@ -243,9 +252,20 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     }
   };
 
-  const setSelectedUnit = async (unit: string) => {
-    params.onSelectedUnitChange && (await params.onSelectedUnitChange(unit));
-    dispatch({ type: 'setSelectedUnit', payload: unit });
+  const onSelectedUnitChange = async (unit: string) => {
+    if (params.onSelectedUnitChange) {
+      try {
+        const newData = await params.onSelectedUnitChange(
+          unit,
+          reducerState.histogram.binWidth
+        );
+        dispatch({ type: 'setData', payload: newData });
+      } catch (error) {
+        dispatch({ type: 'errors/add', payload: error });
+      } finally {
+        dispatch({ type: 'setSelectedUnit', payload: unit });
+      }
+    }
   };
 
   /**
@@ -269,11 +289,11 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       clearAllErrors: () => dispatch({ type: 'errors/clear' }),
     },
     availableUnits: params.availableUnits,
-    histogram: { ...reducerState.histogram, setBinWidth },
+    histogram: { ...reducerState.histogram, onBinWidthChange },
     resetOpacity,
-    setBarLayout,
-    setSelectedUnit,
-    setOpacity,
+    onBarLayoutChange,
+    onSelectedUnitChange,
+    onOpacityChange,
     toggleDisplayLegend,
     toggleOrientation,
   };

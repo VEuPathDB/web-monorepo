@@ -25,7 +25,7 @@ export type HistogramControlsProps = {
   /** Whether or not to display the plot legend. */
   displayLegend: boolean;
   /** Action to take on display legend change. */
-  onDisplayLegendChange: (displayLegend: boolean) => void;
+  toggleDisplayLegend: (displayLegend: boolean) => void;
   /** Current histogram opacity. */
   opacity: number;
   /** Function to invoke when opacity changes. */
@@ -33,7 +33,7 @@ export type HistogramControlsProps = {
   /** The current orientation of the plot.  */
   orientation: OrientationOptions;
   /** Function to invoke when orientation changes. */
-  onOrientationChange: (orientation: string) => void;
+  toggleOrientation: (orientation: string) => void;
   /** Available unit options by which to bin data. */
   availableUnits?: Array<string>;
   /** The currently selected bin unit. */
@@ -70,13 +70,13 @@ export default function HistogramControls({
   binWidthRange,
   onBinWidthChange,
   displayLegend,
-  onDisplayLegendChange,
+  toggleDisplayLegend,
   barLayout,
   onBarLayoutChange,
   opacity,
   onOpacityChange,
   orientation,
-  onOrientationChange,
+  toggleOrientation,
   availableUnits,
   selectedUnit,
   onSelectedUnitChange,
@@ -127,7 +127,7 @@ export default function HistogramControls({
       >
         <OrientationToggle
           orientation={orientation}
-          onOrientationChange={onOrientationChange}
+          onOrientationChange={toggleOrientation}
         />
         <ButtonGroup
           label='Bar Layout'
@@ -176,7 +176,7 @@ export default function HistogramControls({
           // an incomplete type definition in the
           // material UI library.
           onStateChange={(event: any) =>
-            onDisplayLegendChange(event.target.checked)
+            toggleDisplayLegend(event.target.checked)
           }
         />
       </div>

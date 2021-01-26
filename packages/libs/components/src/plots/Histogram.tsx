@@ -44,7 +44,12 @@ export type HistogramProps = {
   /** The orientation of the plot. Defaults to `vertical` */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
-  layout: 'overlay' | 'stack' | 'group';
+  barLayout: 'overlay' | 'stack' | 'group';
+  /** Opacity of bars. Range is a decimal between 0 and 1. Defaults to 1
+   * if there is only one data series bars are not overlayed. Otherwise,
+   * defaults to .75
+   */
+  opacity: number;
   /** Title of plot. */
   title?: string;
   /** Label for independent axis. Defaults to `Bins`. */
@@ -55,13 +60,10 @@ export type HistogramProps = {
   textColor?: string;
   /** Color of the gridlines. Use Plotly defaults if not specified. */
   gridColor?: string;
-  /** Opacity of bars. Range is a decimal between 0 and 1. Defaults to 1
-   * if there is only one data series bars are not overlayed. Otherwise,
-   * defaults to .75
-   */
-  opacity: number;
   /** Control of background color. Defaults to transparent.  */
   backgroundColor?: string;
+  /** Should plot legend be displayed? */
+  displayLegend?: boolean;
   /** function to call upon selecting a range (in x and y axes) */
   onSelected?: () => void;
 };
@@ -79,15 +81,16 @@ export default function Histogram({
   textColor = DARK_GRAY,
   gridColor,
   opacity = 1,
-  layout = 'overlay',
+  barLayout = 'overlay',
   backgroundColor = 'transparent',
   onSelected = () => {},
+  displayLegend = true,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
   useEffect(() => {
     setRevision(revision + 1);
-  }, [layout]);
+  }, [barLayout]);
 
   /**
    * Determine bar opacity. This gets a little complicated
@@ -96,7 +99,7 @@ export default function Histogram({
    * is overlay.
    */
   let calculatedBarOpacity: number;
-  if (layout === 'overlay' && data.length > 1) {
+  if (barLayout === 'overlay' && data.length > 1) {
     calculatedBarOpacity =
       opacity > 1 ? (opacity / 100) * 0.75 : opacity * 0.75;
   } else {
@@ -134,6 +137,7 @@ export default function Histogram({
           margin: {
             pad: 5,
           },
+          showlegend: displayLegend,
           legend: {
             font: {
               color: textColor,
@@ -171,7 +175,7 @@ export default function Histogram({
             color: textColor,
             gridcolor: gridColor,
           },
-          barmode: layout,
+          barmode: barLayout,
           title: {
             text: title,
             font: {
