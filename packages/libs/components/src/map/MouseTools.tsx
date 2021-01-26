@@ -10,7 +10,7 @@ const mouseModeConfig = [
   },
   {
     name: 'magnification',
-    icon: 'fa-search-plus',
+    icon: 'fa-search',
     description: 'Magnification mode: Mouse over a marker to magnify it'
   },
 ] as const;
