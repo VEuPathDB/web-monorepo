@@ -1,5 +1,7 @@
 import { mapValues } from 'lodash';
 
+import { toMultiValueArray } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
+
 import {
   IoBlastConfig,
   IOBlastPScoringMatrix,
@@ -179,4 +181,15 @@ export function paramValuesToBlastConfig(
   }
 
   throw new Error(`The BLAST tool '${selectedTool}' is not supported`);
+}
+
+export function organismParamValueToFilenames(
+  organismParamValue: string,
+  organismFilesMap: Record<string, string>
+) {
+  const selectedOrganisms = new Set(toMultiValueArray(organismParamValue));
+
+  return Object.entries(organismFilesMap)
+    .filter(([organismName]) => selectedOrganisms.has(organismName))
+    .map(([, organismFile]) => organismFile);
 }
