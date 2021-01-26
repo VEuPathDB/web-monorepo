@@ -1,7 +1,8 @@
-import { FormEvent, useCallback, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useContext, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { isEnumParam } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 import { QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -24,8 +25,11 @@ import {
 import { useBlastApi } from '../utils/hooks';
 import {
   BLAST_ALGORITHM_PARAM_NAME,
+  BLAST_DATABASE_ORGANISM_PARAM_NAME,
+  organismParamValueToFilenames,
   paramValuesToBlastConfig,
 } from '../utils/params';
+import { fetchOrganismFilenameMap } from '../utils/organisms';
 
 const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
 
@@ -112,15 +116,35 @@ function NewJobForm(props: NewJobFormProps) {
 
   const api = useBlastApi();
 
+  const wdkDependencies = useContext(WdkDepdendenciesContext);
+
   const history = useHistory();
 
   const onSubmit = useCallback(
     async (e: FormEvent) => {
+      if (wdkDependencies == null) {
+        throw new Error(
+          'To use this form, WdkDependendenciesContext must be configured'
+        );
+      }
+
       e.preventDefault();
 
       setSubmitting(true);
 
-      // const { jobId } = await api.createJob(undefined, undefined, undefined, paramValuesToBlastConfig(props.state.paramValues));
+      const [projectId, organismFilenameMap] = await Promise.all([
+        wdkDependencies.wdkService
+          .getConfig()
+          .then(({ projectId }) => projectId),
+        fetchOrganismFilenameMap(wdkDependencies.wdkService),
+      ]);
+
+      const selectedOrganismFilenames = organismParamValueToFilenames(
+        props.state.paramValues[BLAST_DATABASE_ORGANISM_PARAM_NAME],
+        organismFilenameMap
+      );
+
+      // const { jobId } = await api.createJob(projectId, undefined, undefined, paramValuesToBlastConfig(props.state.paramValues));
 
       setSubmitting(false);
 
@@ -129,7 +153,7 @@ function NewJobForm(props: NewJobFormProps) {
         `/workspace/blast/result/24D999A7223980871D8BE884375098F78868370C446C879B7DB4B44DCC7CFCBA`
       );
     },
-    [api, props.state.paramValues, history]
+    [api, history, wdkDependencies, props.state.paramValues]
   );
 
   return (
