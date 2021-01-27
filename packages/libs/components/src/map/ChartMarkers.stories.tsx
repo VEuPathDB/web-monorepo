@@ -6,7 +6,7 @@ import { BoundsViewport, Bounds } from './Types';
 import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 
-import collectionDateData from './test-data/geoclust-date-binning-testing-all-levels.json';
+import collectionDateData from '../stories/fixture-data/geoclust-date-binning-testing-all-levels.json';
 // below was an attempt to lazy load...
 // it seemed to cause a 'black screen' error in Storybook if you refreshed the page in your browser
 //

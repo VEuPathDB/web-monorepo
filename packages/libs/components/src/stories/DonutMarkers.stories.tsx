@@ -1,11 +1,11 @@
 import React, { ReactElement, useState, useCallback } from 'react';
+import { Story, Meta } from '@storybook/react/types-6-0';
 // import { action } from '@storybook/addon-actions';
-// import MapVEuMap from './MapVEuMap';
-import { BoundsViewport, Bounds } from './Types';
-import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
-import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
+import { BoundsViewport, Bounds } from '../map/Types';
+import { BoundsDriftMarkerProps } from "../map/BoundsDriftMarker";
+import { zoomLevelToGeohashLevel, defaultAnimationDuration } from '../map/config/map.json';
 
-import speciesData from './test-data/geoclust-species-testing-all-levels.json';
+import speciesData from './fixture-data/geoclust-species-testing-all-levels.json';
 
 // below was an attempt to lazy load...
 // it seemed to cause a 'black screen' error in Storybook if you refreshed the page in your browser
@@ -14,24 +14,24 @@ import speciesData from './test-data/geoclust-species-testing-all-levels.json';
 // import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
 import { LeafletMouseEvent } from "leaflet";
-import DonutMarker, { DonutMarkerProps } from './DonutMarker';
+import DonutMarker, { DonutMarkerProps } from '../map/DonutMarker';
 
 //DKDK sidebar & legend
-import MapVEuMap from './MapVEuMap';
-import MapVEuMapSidebar from './MapVEuMapSidebar';
+import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
+import MapVEuMapSidebar from '../map/MapVEuMapSidebar';
 //DKDK import legend
-import MapVEuLegendSampleList, { LegendProps } from './MapVEuLegendSampleList'
+import MapVEuLegendSampleList, { LegendProps } from '../map/MapVEuLegendSampleList'
 
 //DKDK anim
 // import Geohash from 'latlon-geohash';
 // import {DriftMarker} from "leaflet-drift-marker";
-import geohashAnimation from "./animation_functions/geohash";
+import geohashAnimation from "../map/animation_functions/geohash";
 import md5 from 'md5';
 
 export default {
   title: 'Map/Donut Markers',
   component: MapVEuMapSidebar,
-};
+} as Meta;
 
 // some colors randomly pasted from the old mapveu code
 // these are NOT the final decided colors for MapVEu 2.0
@@ -184,6 +184,60 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
       )
   });
 }
+
+
+
+
+const Template: Story<MapVEuMapProps> = (
+  args,
+  { loaded: { markers, legendData } }
+) => {
+
+  const duration : number = 300;
+  const legendType = 'categorical'
+  const dropdownTitle: string = 'Species'
+  const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
+  const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
+  const legendInfoNumberText: string = 'Species'
+
+  return (
+    <>
+      <MapVEuMap
+        viewport={{center: [ 13, 16 ], zoom: 4}}
+        height="100vh" width="100vw"
+        onViewportChanged={args.onViewportChanged}
+        markers={markers}
+        animation={{
+          method: "geohash",
+          animationFunction: geohashAnimation,
+          duration
+        }}
+        showGrid={true}
+        showMouseToolbar={true}
+      />
+      <MapVEuLegendSampleList
+        legendType={legendType}
+        data={legendData}
+        dropdownTitle={dropdownTitle}
+        dropdownHref={dropdownHref}
+        dropdownItemText={dropdownItemText}
+        legendInfoNumberText={legendInfoNumberText}
+      />
+    </>)
+};
+
+export const AsyncVersion = Template.bind({});
+AsyncVersion.args = {
+
+
+};
+
+// @ts-ignore
+AsyncVersion.loaders = [
+  async () => ({
+    markers: await asd()
+  })
+];
 
 export const Species = () => {
 

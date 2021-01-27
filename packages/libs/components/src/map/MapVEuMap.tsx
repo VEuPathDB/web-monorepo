@@ -16,7 +16,7 @@ import MouseTools, { MouseMode } from './MouseTools';
  * @param props
  */
 
-interface MapVEuMapProps {
+export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
   viewport: Viewport,
 
