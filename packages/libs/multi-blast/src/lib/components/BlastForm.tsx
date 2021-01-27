@@ -26,6 +26,7 @@ import { useBlastApi } from '../utils/hooks';
 import {
   BLAST_ALGORITHM_PARAM_NAME,
   BLAST_DATABASE_ORGANISM_PARAM_NAME,
+  BLAST_DATABASE_TYPE_PARAM_NAME,
   organismParamValueToFilenames,
   paramValuesToBlastConfig,
 } from '../utils/params';
@@ -144,7 +145,10 @@ function NewJobForm(props: NewJobFormProps) {
         organismFilenameMap
       );
 
-      // const { jobId } = await api.createJob(projectId, undefined, undefined, paramValuesToBlastConfig(props.state.paramValues));
+      const targetType =
+        props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
+
+      // const { jobId } = await api.createJob(projectId, selectedOrganismFilenames[0], `${selectedOrganismFilenames[0]}${targetType}`, paramValuesToBlastConfig(props.state.paramValues));
 
       setSubmitting(false);
 

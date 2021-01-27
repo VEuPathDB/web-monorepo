@@ -44,12 +44,10 @@ export const apiRequests = {
       transformResponse: standardTransformer(arrayOf(shortJobResponse)),
     };
   },
-  // FIXME: Remove this hardcoding once the discrepancies between the organism names + target types
-  // of the BLAST service and GenesByMultiBlast question parameters have been resolved
   createJob: function (
-    site: string = 'PlasmoDB',
-    organisms: string = 'Pfalciparum3D7',
-    targetType: string = 'Pfalciparum3D7Genome',
+    site: string,
+    organism: string,
+    targetType: string,
     config: IoBlastConfig
   ) {
     return createJsonRequest({
@@ -57,7 +55,7 @@ export const apiRequests = {
       method: 'POST',
       body: {
         site,
-        organism: organisms,
+        organism,
         'target-type': targetType,
         config,
       },
