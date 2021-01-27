@@ -89,7 +89,7 @@ export const binDailyCovidStats = async (
       ? state.actuals.newCases / state.population
       : state.actuals.newCases
   );
-  const lowNewCases = Math.min(...newCasesStats);
+  const lowNewCases = Math.min(...newCasesStats, 0);
   const highNewCases = Math.max(...newCasesStats);
   const newCasesBins: HistogramBin[] = [];
 
@@ -162,6 +162,8 @@ export const binDailyCovidStats = async (
     { name: 'Current Hospitalizations', bins: hospitalizationBins },
     { name: 'New Cases', bins: newCasesBins },
   ]);
+
+  console.log('Binned Data', binnedData);
 
   return binnedData;
 };
