@@ -4,6 +4,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { BoundsViewport, Bounds } from '../map/Types';
 import { BoundsDriftMarkerProps } from "../map/BoundsDriftMarker";
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from '../map/config/map.json';
+import { getSpeciesDonuts } from "./api/getMarkersFromFixtureData";
 
 import speciesData from './fixture-data/geoclust-species-testing-all-levels.json';
 
@@ -70,7 +71,7 @@ function removeClassName(targetClass: string) {
 }
 
 //DKDK this onClick event may need to be changed in the future like onMouseOver event
-const handleClick = (e: LeafletMouseEvent) => {
+const handleMarkerClick = (e: LeafletMouseEvent) => {
   /**
    * DKDK this only works when selecting other marker: not working when clicking map
    * it may be achieved by setting all desirable events (e.g., map click, preserving highlight, etc.)
@@ -81,10 +82,10 @@ const handleClick = (e: LeafletMouseEvent) => {
   //DKDK native manner, but not React style? Either way this is arguably the simplest solution
   e.target._icon.classList.add('highlight-marker')
   //DKDK here, perhaps we can add additional click event, like opening sidebar when clicking
-  // console.log(e)
+  //console.log("I've been clicked")
 }
 
-const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration : number, scrambleKeys: boolean = false, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void) => {
+const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration : number, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void) => {
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
 /* DKDK two approaches may be possible
@@ -168,7 +169,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
     let atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false
 
     //DKDK anim key
-    const key = scrambleKeys ? md5(bucket.val).substring(0, zoomLevel) : bucket.val;
+    const key = bucket.val;
 
     return (
       <DonutMarker
@@ -178,7 +179,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
         bounds={bounds}
         data={data}
         isAtomic={atomicValue}
-        onClick={handleClick}
+        onClick={handleMarkerClick}
         duration={duration}
       />
       )
@@ -186,14 +187,19 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
 }
 
 
+const Template: Story<MapVEuMapProps> = ( args ) => {
 
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
+  const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
 
-const Template: Story<MapVEuMapProps> = (
-  args,
-  { loaded: { markers, legendData } }
-) => {
+  //DKDK anim
+  const duration = defaultAnimationDuration
 
-  const duration : number = 300;
+  const handleViewportChanged = useCallback(async (bvp : BoundsViewport) => {
+    const markers = await getSpeciesDonuts(bvp, duration, setLegendData, handleMarkerClick);
+    setMarkerElements(markers);
+  }, [setMarkerElements])
+
   const legendType = 'categorical'
   const dropdownTitle: string = 'Species'
   const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
@@ -203,17 +209,15 @@ const Template: Story<MapVEuMapProps> = (
   return (
     <>
       <MapVEuMap
+        {...args}
         viewport={{center: [ 13, 16 ], zoom: 4}}
-        height="100vh" width="100vw"
-        onViewportChanged={args.onViewportChanged}
-        markers={markers}
+        onViewportChanged={handleViewportChanged}
+        markers={markerElements}
         animation={{
           method: "geohash",
           animationFunction: geohashAnimation,
           duration
         }}
-        showGrid={true}
-        showMouseToolbar={true}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -228,16 +232,11 @@ const Template: Story<MapVEuMapProps> = (
 
 export const AsyncVersion = Template.bind({});
 AsyncVersion.args = {
-
-
+  height: "100vh",
+  width: "100vw",
+  showGrid: true,
+  showMouseToolbar: true,
 };
-
-// @ts-ignore
-AsyncVersion.loaders = [
-  async () => ({
-    markers: await asd()
-  })
-];
 
 export const Species = () => {
 
@@ -246,11 +245,9 @@ export const Species = () => {
 
   //DKDK anim
   const duration = defaultAnimationDuration
-  const scrambleKeys = false
 
   const handleViewportChanged = useCallback((bvp : BoundsViewport) => {
-    //DKDK anim add duration & scrambleKeys
-    setMarkerElements(getSpeciesMarkerElements(bvp, duration, scrambleKeys, setLegendData));
+    setMarkerElements(getSpeciesMarkerElements(bvp, duration, setLegendData));
   }, [setMarkerElements])
 
   //DKDK define legendType
