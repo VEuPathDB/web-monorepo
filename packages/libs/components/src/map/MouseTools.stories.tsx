@@ -2,16 +2,10 @@ import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 // import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, Bounds } from './Types';
-import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
+import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 
 import speciesData from './test-data/geoclust-species-testing-all-levels.json';
-
-// below was an attempt to lazy load...
-// it seemed to cause a 'black screen' error in Storybook if you refreshed the page in your browser
-//
-// let speciesData : any = undefined;
-// import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
 import { LeafletMouseEvent } from "leaflet";
 import DonutMarker, { DonutMarkerProps } from './DonutMarker';
@@ -29,7 +23,7 @@ import geohashAnimation from "./animation_functions/geohash";
 import md5 from 'md5';
 
 export default {
-  title: 'Map/Donut Markers',
+  title: 'Map/Mouse Tools',
   component: MapVEuMapSidebar,
 };
 
@@ -161,7 +155,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
         label: species,
         value: bucket.count,
         color: speciesToColor.get(species) || 'silver',
-      })
+      });
     });
 
     //DKDK check isAtomic
@@ -180,6 +174,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
         isAtomic={atomicValue}
         onClick={handleClick}
         duration={duration}
+        showPopup={false}
       />
       )
   });
