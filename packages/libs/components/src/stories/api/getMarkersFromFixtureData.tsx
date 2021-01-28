@@ -149,7 +149,7 @@ export const getSpeciesBasicMarkers = async ({bounds, zoomLevel} : BoundsViewpor
       {
 	label: 'unknown',
 	value: sum,
-	color: 'silver'
+	color: 'white'
       }
     ];
 
