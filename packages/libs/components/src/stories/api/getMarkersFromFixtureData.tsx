@@ -4,12 +4,18 @@ import { zoomLevelToGeohashLevel, allColorsHex } from '../../map/config/map.json
 import DonutMarker, { DonutMarkerProps } from '../../map/DonutMarker';
 import { LeafletMouseEvent } from "leaflet";
 
+function sleep(ms : number) : Promise<() => void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export const getSpeciesDonuts = async ({bounds, zoomLevel} : BoundsViewport,
 				       duration: number,
 				       setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void,
-				       handleMarkerClick: (e: LeafletMouseEvent) => void) => {
-  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+				       handleMarkerClick: (e: LeafletMouseEvent) => void,
+                                       delay: number = 0) => {
 
+  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+  delay && await sleep(delay);
   const response = await fetch('/data/geoclust-species-testing-all-levels.json');
   const speciesData = await response.json();
   
@@ -81,6 +87,71 @@ export const getSpeciesDonuts = async ({bounds, zoomLevel} : BoundsViewport,
         color: speciesToColor.get(species) || 'silver',
       })
     });
+
+    //DKDK check isAtomic
+    let atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false
+
+    //DKDK anim key
+    const key = bucket.val;
+
+    return (
+      <DonutMarker
+        id={key}   //DKDK anim
+        key={key}   //DKDK anim
+        position={{lat, lng}}
+        bounds={bounds}
+        data={data}
+        isAtomic={atomicValue}
+        onClick={handleMarkerClick}
+        duration={duration}
+      />
+      )
+  });
+}
+
+
+
+
+
+export const getSpeciesBasicMarkers = async ({bounds, zoomLevel} : BoundsViewport,
+					     duration: number,
+					     handleMarkerClick: (e: LeafletMouseEvent) => void) => {
+  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+
+  const response = await fetch('/data/geoclust-species-testing-all-levels.json');
+  const speciesData = await response.json();
+  
+  const buckets = (speciesData as { [key: string]: any })[`geohash_${geohash_level}`].facets.geo.buckets.filter((bucket : any) => {
+    const lat : number = bucket.ltAvg;
+    const long : number = bucket.lnAvg;
+
+    const south = bounds.southWest.lat;
+    const north = bounds.northEast.lat;
+    const west = bounds.southWest.lng;
+    const east = bounds.northEast.lng;
+    const lambda = 1e-08; // accommodate tiny rounding errors
+
+    return (lat > south &&
+	    lat < north &&
+	    (west < east - lambda ? (long > west && long < east) :
+		    west > east + lambda ? !(long > east && long < west) : true) );
+  });
+
+  return buckets.map((bucket : any) => {
+    const lat : number = bucket.ltAvg;
+    const lng : number = bucket.lnAvg;
+    const bounds : Bounds = { southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }};
+    
+    let sum = 0;
+    bucket.term.buckets.forEach((bucket : any) => sum += bucket.count);
+    
+    let data: DonutMarkerProps['data'] = [
+      {
+	label: 'unknown',
+	value: sum,
+	color: 'silver'
+      }
+    ];
 
     //DKDK check isAtomic
     let atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false

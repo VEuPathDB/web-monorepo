@@ -4,7 +4,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import { BoundsViewport, Bounds } from '../map/Types';
 import { BoundsDriftMarkerProps } from "../map/BoundsDriftMarker";
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from '../map/config/map.json';
-import { getSpeciesDonuts } from "./api/getMarkersFromFixtureData";
+import { getSpeciesDonuts, getSpeciesBasicMarkers } from "./api/getMarkersFromFixtureData";
 
 import speciesData from './fixture-data/geoclust-species-testing-all-levels.json';
 
@@ -34,32 +34,12 @@ export default {
   component: MapVEuMapSidebar,
 } as Meta;
 
-// some colors randomly pasted from the old mapveu code
-// these are NOT the final decided colors for MapVEu 2.0
-const all_colors_hex = [
-  "#FFB300", // Vivid Yellow
-  "#803E75", // Strong Purple
-  "#FF6800", // Vivid Orange
-  "#A6BDD7", // Very Light Blue
-  "#C10020", // Vivid Red
-  "#CEA262", // Grayish Yellow
-  // "#817066", // Medium Gray
+const legendType = 'categorical'
+const dropdownTitle: string = 'Species'
+const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
+const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
+const legendInfoNumberText: string = 'Species'
 
-  // The following don't work well for people with defective color vision
-  "#007D34", // Vivid Green
-  "#F6768E", // Strong Purplish Pink
-  "#00538A", // Strong Blue
-  "#FF7A5C", // Strong Yellowish Pink
-  "#53377A", // Strong Violet
-  "#FF8E00", // Vivid Orange Yellow
-  "#B32851", // Strong Purplish Red
-  "#F4C800", // Vivid Greenish Yellow
-  "#7F180D", // Strong Reddish Brown
-  "#93AA00", // Vivid Yellowish Green
-  "#593315", // Deep Yellowish Brown
-  "#F13A13", // Vivid Reddish Orange
-  "#232C16" // Dark Olive Green
-];
 
 //DKDK a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassName(targetClass: string) {
@@ -85,126 +65,16 @@ const handleMarkerClick = (e: LeafletMouseEvent) => {
   //console.log("I've been clicked")
 }
 
-const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration : number, setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void) => {
-  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
-/* DKDK two approaches may be possible
-  a) set type for imported geoclust-species-testing-all-levels.json
-     > type speciesDataProps = typeof import('./test-data/geoclust-species-testing-all-levels.json')
-     then, speciesData[geohash_level as keyof speciesDataProps].facets ...
-  b) although a) works fine for current species data, it seems not to work for large json file
-     thus used this approach instead for consistency
-*/
-  //DKDK applying b) approach, setting key as string & any
-  const buckets = (speciesData as { [key: string]: any })[`geohash_${geohash_level}`].facets.geo.buckets.filter((bucket : any) => {
-    const lat : number = bucket.ltAvg;
-    const long : number = bucket.lnAvg;
-
-    const south = bounds.southWest.lat;
-    const north = bounds.northEast.lat;
-    const west = bounds.southWest.lng;
-    const east = bounds.northEast.lng;
-    const lambda = 1e-08; // accommodate tiny rounding errors
-
-    return (lat > south &&
-	    lat < north &&
-	    (west < east - lambda ? (long > west && long < east) :
-		    west > east + lambda ? !(long > east && long < west) : true) );
-  });
-
-  // make a first pass and calculate the legend totals
-  // and rank the species for color assignment
-  let speciesToCount = new Map();
-  buckets.forEach((bucket : any) => {
-    bucket.term.buckets.forEach((bucket : any) => {
-      const species = bucket.val;
-      let prevCount = speciesToCount.get(species);
-      if (prevCount === undefined) prevCount = 0;
-      speciesToCount.set(species, prevCount + bucket.count);
-    });
-  });
-
-  // sort by the count (Map returns keys in insertion order)
-  speciesToCount = new Map(
-    Array.from(speciesToCount).sort( ([_1,v1], [_2,v2]) => v1 > v2 ? -1 : v2 > v1 ? 1 : 0 )
-  );
-
-  // make the species to color lookup
-  const speciesToColor = new Map(
-    Array.from(speciesToCount).map( ([k, _], index) => {
-      if (index<10) {
-	return [k, all_colors_hex[index]];
-      } else {
-	return [k, 'silver']
-      }
-    })
-  );
-
-  // reformat as legendData
-  const legendData = Array.from(speciesToCount.keys()).map((key) => (
-    {
-      label: key,
-      value: speciesToCount.get(key) || -1,
-      color: speciesToColor.get(key) || 'silver'
-    }
-  ));
-  setLegendData(legendData);
-
-  return buckets.map((bucket : any) => {
-    const lat : number = bucket.ltAvg;
-    const lng : number = bucket.lnAvg;
-    const bounds : Bounds = { southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }};
-    let data: DonutMarkerProps['data'] = [];
-
-    bucket.term.buckets.forEach((bucket : any) => {
-      const species = bucket.val;
-      data.push({
-        label: species,
-        value: bucket.count,
-        color: speciesToColor.get(species) || 'silver',
-      })
-    });
-
-    //DKDK check isAtomic
-    let atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false
-
-    //DKDK anim key
-    const key = bucket.val;
-
-    return (
-      <DonutMarker
-        id={key}   //DKDK anim
-        key={key}   //DKDK anim
-        position={{lat, lng}}
-        bounds={bounds}
-        data={data}
-        isAtomic={atomicValue}
-        onClick={handleMarkerClick}
-        duration={duration}
-      />
-      )
-  });
-}
-
-
-const Template: Story<MapVEuMapProps> = ( args ) => {
+export const AllInOneRequest: Story<MapVEuMapProps> = ( args ) => {
 
   const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
 
-  //DKDK anim
-  const duration = defaultAnimationDuration
-
   const handleViewportChanged = useCallback(async (bvp : BoundsViewport) => {
-    const markers = await getSpeciesDonuts(bvp, duration, setLegendData, handleMarkerClick);
+    const markers = await getSpeciesDonuts(bvp, defaultAnimationDuration, setLegendData, handleMarkerClick);
     setMarkerElements(markers);
   }, [setMarkerElements])
-
-  const legendType = 'categorical'
-  const dropdownTitle: string = 'Species'
-  const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
-  const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
-  const legendInfoNumberText: string = 'Species'
 
   return (
     <>
@@ -216,7 +86,7 @@ const Template: Story<MapVEuMapProps> = ( args ) => {
         animation={{
           method: "geohash",
           animationFunction: geohashAnimation,
-          duration
+          duration: defaultAnimationDuration
         }}
       />
       <MapVEuLegendSampleList
@@ -230,73 +100,99 @@ const Template: Story<MapVEuMapProps> = ( args ) => {
     </>)
 };
 
-export const AsyncVersion = Template.bind({});
-AsyncVersion.args = {
+AllInOneRequest.args = {
   height: "100vh",
   width: "100vw",
   showGrid: true,
   showMouseToolbar: true,
 };
 
-export const Species = () => {
+
+
+export const FirstRequest: Story<MapVEuMapProps> = ( args ) => {
 
   const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
-  const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
+  const [ legendData ] = useState<LegendProps["data"]>([])
 
-  //DKDK anim
-  const duration = defaultAnimationDuration
-
-  const handleViewportChanged = useCallback((bvp : BoundsViewport) => {
-    setMarkerElements(getSpeciesMarkerElements(bvp, duration, setLegendData));
+  const handleViewportChanged = useCallback(async (bvp : BoundsViewport) => {
+    const markers = await getSpeciesBasicMarkers(bvp, defaultAnimationDuration, handleMarkerClick);
+    setMarkerElements(markers);
   }, [setMarkerElements])
-
-  //DKDK define legendType
-  const legendType = 'categorical'
-
-  //DKDK  props for dropdown toggle text, dropdown item's href, and its text (Categorical)
-  const dropdownTitle: string = 'Species'
-  const dropdownHref: string[] = ['#/link-1','#/link-2','#/link-3','#/link-4','#/link-5','#/link-6','#/link-7']
-  const dropdownItemText: string[] =['Locus', 'Allele', 'Species', 'Sample type', 'Collection Protocol', 'Project', 'Protocol']
-
-  //DKDK send legend number text on top of legend list
-  const legendInfoNumberText: string = 'Species'
 
   return (
     <>
       <MapVEuMap
+        {...args}
         viewport={{center: [ 13, 16 ], zoom: 4}}
-        height="100vh" width="100vw"
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
-        //DKDK anim
-        // animation={null}
         animation={{
           method: "geohash",
           animationFunction: geohashAnimation,
-          duration
+          duration: defaultAnimationDuration
         }}
-        showGrid={true}
-        showMouseToolbar={true}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
         data={legendData}
-        // //DKDK send x-/y-axes lables here
-        // variableLabel={variableLabel}    //DKDK: x-axis label
-        // quantityLabel={quantityLabel}    //DKDK: y-axis label
-        // tickLabelsVisible={knob_legendTickLabelsVisible}
-        // //DKDK legend radio button props
-        // onChange={legendRadioChange}
-        // selectedOption={legendRadioValue}
-        //DKDK add dropdown props for Legend
         dropdownTitle={dropdownTitle}
         dropdownHref={dropdownHref}
         dropdownItemText={dropdownItemText}
-        // //DKDK send yAxisRange[1]
-        // yAxisRangeValue={yAxisRangeValue}
-        // //DKDK send legend number text
         legendInfoNumberText={legendInfoNumberText}
       />
     </>)
-}
+};
+
+FirstRequest.args = {
+  height: "100vh",
+  width: "100vw",
+  showGrid: true,
+  showMouseToolbar: true,
+};
+
+
+
+export const TwoRequests: Story<MapVEuMapProps> = ( args ) => {
+
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
+  const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
+
+  const handleViewportChanged = useCallback(async (bvp : BoundsViewport) => {
+    const markers = await getSpeciesBasicMarkers(bvp, defaultAnimationDuration, handleMarkerClick);
+    setMarkerElements(markers);
+    const fullMarkers = await getSpeciesDonuts(bvp, defaultAnimationDuration, setLegendData, handleMarkerClick, 2000);
+    setMarkerElements(fullMarkers);
+  }, [setMarkerElements])
+
+  return (
+    <>
+      <MapVEuMap
+        {...args}
+        viewport={{center: [ 13, 16 ], zoom: 4}}
+        onViewportChanged={handleViewportChanged}
+        markers={markerElements}
+        animation={{
+          method: "geohash",
+          animationFunction: geohashAnimation,
+          duration: defaultAnimationDuration
+        }}
+      />
+      <MapVEuLegendSampleList
+        legendType={legendType}
+        data={legendData}
+        dropdownTitle={dropdownTitle}
+        dropdownHref={dropdownHref}
+        dropdownItemText={dropdownItemText}
+        legendInfoNumberText={legendInfoNumberText}
+      />
+    </>)
+};
+
+TwoRequests.args = {
+  height: "100vh",
+  width: "100vw",
+  showGrid: true,
+  showMouseToolbar: true,
+};
+
 
