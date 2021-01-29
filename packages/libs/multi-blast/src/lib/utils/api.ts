@@ -1,4 +1,4 @@
-import { arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { arrayOf, string, unknown } from '@veupathdb/wdk-client/lib/Utils/Json';
 import {
   BoundApiRequestsObject,
   createFetchApiRequestHandler,
@@ -46,8 +46,7 @@ export const apiRequests = {
   },
   createJob: function (
     site: string,
-    organism: string,
-    targetType: string,
+    targets: { organism: string; target: string }[],
     config: IoBlastConfig
   ) {
     return createJsonRequest({
@@ -55,8 +54,7 @@ export const apiRequests = {
       method: 'POST',
       body: {
         site,
-        organism,
-        'target-type': targetType,
+        targets,
         config,
       },
       transformResponse: standardTransformer(createJobResponse),
@@ -67,6 +65,13 @@ export const apiRequests = {
       path: `${JOBS_PATH}/${jobId}`,
       method: 'GET',
       transformResponse: standardTransformer(longJobResponse),
+    };
+  },
+  fetchSingleFileJsonReport: function (jobId: string) {
+    return {
+      path: `${JOBS_PATH}/${jobId}/report?format=15&zip=false&inline=true`,
+      method: 'GET',
+      transformResponse: standardTransformer(unknown),
     };
   },
   fetchQuery: function (jobId: string) {
