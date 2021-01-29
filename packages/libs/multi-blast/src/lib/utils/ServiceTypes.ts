@@ -570,3 +570,110 @@ export const createJobResponse = record({
 });
 
 export type CreateJobResponse = Unpack<typeof createJobResponse>;
+
+export const reportStrand = oneOf(constant('Plus'), constant('Minus'));
+
+export type ReportStrand = Unpack<typeof reportStrand>;
+
+export const reportDescriptionJson = record({
+  id: string,
+  accession: string,
+  title: string,
+});
+
+export const reportHspJson = record({
+  num: number,
+  bit_score: number,
+  score: number,
+  evalue: number,
+  identity: number,
+  query_from: number,
+  query_to: number,
+  query_strand: optional(reportStrand),
+  hit_from: number,
+  hit_to: number,
+  hit_strand: optional(reportStrand),
+  align_len: number,
+  gaps: number,
+  qseq: string,
+  hseq: string,
+  midline: string,
+});
+
+export type ReportHspJson = Unpack<typeof reportHspJson>;
+
+export const reportHitJson = record({
+  num: number,
+  description: arrayOf(reportDescriptionJson),
+  len: number,
+  hsps: arrayOf(reportHspJson),
+});
+
+export type ReportHitJson = Unpack<typeof reportHitJson>;
+
+export const reportStatJson = record({
+  db_num: number,
+  db_len: number,
+  hsp_len: number,
+  eff_space: number,
+  kappa: number,
+  lambda: number,
+  entropy: number,
+});
+
+export type ReportStatJson = Unpack<typeof reportStatJson>;
+
+export const reportSearchJson = record({
+  query_id: string,
+  query_title: optional(string),
+  query_len: number,
+  hits: arrayOf(reportHitJson),
+  stat: reportStatJson,
+  message: optional(string),
+});
+
+export type ReportSearchJson = Unpack<typeof reportSearchJson>;
+
+export const reportResultsJson = record({
+  search: reportSearchJson,
+});
+
+export type ReportResultsJson = Unpack<typeof reportResultsJson>;
+
+export const reportParamJson = record({
+  expect: number,
+  sc_match: number,
+  sc_mismatch: number,
+  gap_open: number,
+  gap_extend: number,
+  filter: string,
+});
+
+export type ReportParamJson = Unpack<typeof reportParamJson>;
+
+export const reportSearchTargetJson = record({
+  db: string,
+});
+
+export type ReportSearchTargetJson = Unpack<typeof reportSearchTargetJson>;
+
+export const singleQueryReportJson = record({
+  program: string,
+  version: string,
+  reference: string,
+  search_target: reportSearchTargetJson,
+  params: reportParamJson,
+  results: reportResultsJson,
+});
+
+export type SingleQueryReportJson = Unpack<typeof singleQueryReportJson>;
+
+export const multiQueryReportJson = record({
+  BlastOutput2: arrayOf(
+    record({
+      report: singleQueryReportJson,
+    })
+  ),
+});
+
+export type MultiQueryReportJson = Unpack<typeof multiQueryReportJson>;

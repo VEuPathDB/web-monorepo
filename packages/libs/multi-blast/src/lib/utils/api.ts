@@ -1,4 +1,4 @@
-import { arrayOf, string, unknown } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import {
   BoundApiRequestsObject,
   createFetchApiRequestHandler,
@@ -10,6 +10,7 @@ import {
   IoBlastConfig,
   createJobResponse,
   longJobResponse,
+  multiQueryReportJson,
   shortJobResponse,
 } from './ServiceTypes';
 
@@ -71,7 +72,7 @@ export const apiRequests = {
     return {
       path: `${JOBS_PATH}/${jobId}/report?format=15&zip=false&inline=true`,
       method: 'GET',
-      transformResponse: standardTransformer(unknown),
+      transformResponse: standardTransformer(multiQueryReportJson),
     };
   },
   fetchQuery: function (jobId: string) {
