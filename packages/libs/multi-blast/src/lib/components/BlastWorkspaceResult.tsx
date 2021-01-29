@@ -22,10 +22,18 @@ export function BlastWorkspaceResult(props: Props) {
     props.jobId,
   ]);
 
-  return jobResult.value == null ? (
+  const reportResult = usePromise(
+    async () =>
+      jobResult.value?.status !== 'completed'
+        ? undefined
+        : api.fetchSingleFileJsonReport(jobResult.value.id),
+    [api, jobResult.value?.status]
+  );
+
+  return jobResult.value == null || reportResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
-    <div>It's done!</div>
+    <pre>{JSON.stringify(reportResult.value, null, 2)}</pre>
   );
 }
 
