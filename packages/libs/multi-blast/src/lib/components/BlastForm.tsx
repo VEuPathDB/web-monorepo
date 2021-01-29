@@ -148,14 +148,20 @@ function NewJobForm(props: NewJobFormProps) {
       const targetType =
         props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
 
-      // const { jobId } = await api.createJob(projectId, selectedOrganismFilenames[0], `${selectedOrganismFilenames[0]}${targetType}`, paramValuesToBlastConfig(props.state.paramValues));
+      const targets = selectedOrganismFilenames.map((organism) => ({
+        organism,
+        target: `${organism}${targetType}`,
+      }));
+
+      const { jobId } = await api.createJob(
+        projectId,
+        targets,
+        paramValuesToBlastConfig(props.state.paramValues)
+      );
 
       setSubmitting(false);
 
-      history.push(
-        // `/workspace/blast/result/${jobId}`
-        `/workspace/blast/result/24D999A7223980871D8BE884375098F78868370C446C879B7DB4B44DCC7CFCBA`
-      );
+      history.push(`/workspace/blast/result/${jobId}`);
     },
     [api, history, wdkDependencies, props.state.paramValues]
   );
