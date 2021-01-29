@@ -80,8 +80,8 @@ export function paramValuesToBlastConfig(
     eValue,
     maxTargetSeqs: Number(numQueryResultsStr),
     wordSize: Number(wordSizeStr),
-    softMasking: Boolean(softMaskStr),
-    lcaseMasking: Boolean(lowerCaseMaskStr),
+    softMasking: stringToBoolean(softMaskStr),
+    lcaseMasking: stringToBoolean(lowerCaseMaskStr),
     gapOpen,
     gapExtend,
     outFormat: {
@@ -192,4 +192,8 @@ export function organismParamValueToFilenames(
   return Object.entries(organismFilesMap)
     .filter(([organismName]) => selectedOrganisms.has(organismName))
     .map(([, organismFile]) => organismFile);
+}
+
+function stringToBoolean(str: string) {
+  return str === 'true';
 }
