@@ -16,6 +16,7 @@ interface Props {
 interface CombinedResultRow {
   accession: string;
   description: string | null;
+  queryId: string;
   rank: number;
   wdkPrimaryKey: string | null;
 }
@@ -59,6 +60,10 @@ function useCombinedResultColumns(
       renderCell: ({ row }: { row: CombinedResultRow }) =>
         row.description == null ? '' : row.description,
     },
+    {
+      key: 'queryId',
+      name: 'Query',
+    },
   ];
 }
 
@@ -78,6 +83,8 @@ function useCombinedResultRows(
         const description =
           wdkRecordType === 'gene' ? geneHitTitleToDescription(title) : null;
 
+        const queryId = queryResult.report.results.search.query_id;
+
         const wdkPrimaryKey =
           wdkRecordType === 'gene'
             ? geneHitTitleToWdkPrimaryKey(title)
@@ -86,6 +93,7 @@ function useCombinedResultRows(
         return {
           accession,
           description,
+          queryId,
           wdkPrimaryKey,
         };
       })
