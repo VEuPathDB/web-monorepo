@@ -51,6 +51,13 @@ export let contexts = [
     includeInThumbnails: false
   },
   {
+    gbrowse_url: 'GeneModelApolloUrl',
+    displayName: 'Apollo',
+    anchor: 'GeneModelApolloUrl',
+    isPbrowse: false,
+    includeInThumbnails: false
+  },
+  {
     gbrowse_url: 'SyntenyGbrowseUrl',
     displayName: 'Synteny',
     anchor: 'SyntenyGbrowseUrl',
@@ -112,10 +119,12 @@ export let contexts = [
   }
 ];
 
-const JbrowseLink = ({ url }) =>
+const JbrowseLink = ({ url, urlApollo }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
+<a href={urlApollo} className="eupathdb-BigButton" target="_blank">View in Apollo annotation editor</a>
 </div>
+
 
 const PbrowseJbrowseLink = ({ url }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
@@ -195,34 +204,39 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
 export function GbrowseContext(props) {
   let { attribute, record } = props;
   let url = record.attributes[attribute.name];
+  let urlApollo = record.attributes[attribute.name];
   let jbrowseUrlMinimal = ""
   let jbrowseUrlFull = ""
+  let apolloUrlFull = ""
   let jbrowseUrl = record.attributes.jbrowseLink;
   let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
   if (attribute.name == 'GeneModelGbrowseUrl'){
-       
-      jbrowseUrlMinimal = record.attributes.geneJbrowseUrl; 
-      jbrowseUrlFull = record.attributes.geneJbrowseFullUrl; 
+   if (attribute.name == 'GeneModelGbrowseUrl'){
+      jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
+      jbrowseUrlFull = record.attributes.geneJbrowseFullUrl;
+      apolloUrlFull = record.attributes.geneApolloFullUrl;
+      }
       if(window.location.href.indexOf("vectorbase") != -1){
       return (
-    	<div>
-      	<JbrowseLink url={jbrowseUrlFull}/>
-    	<JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
-      	<JbrowseLink url={jbrowseUrlFull}/>
-      	</div>
-	)
+        <div>
+        <JbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
+        <JbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
+        </div>
+        )
       }
       else {
       return (
         <div>
-        <JbrowseLink url={jbrowseUrlFull}/>
+        <JbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
-        <JbrowseLink url={jbrowseUrlFull}/>
+        <JbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
         </div>
-        )        
+        )
       }
-  }	
+  }
+	
   if (attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'BlatAlignmentsGbrowseUrl' || attribute.name == 'SnpsGbrowseUrl'){ 
     if (attribute.name == 'SyntenyGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
