@@ -5,6 +5,7 @@ import { LongJobResponse } from '../utils/ServiceTypes';
 import { useBlastApi } from '../utils/hooks';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
+import { CombinedBlastResult } from './CombinedBlastResult';
 
 import './BlastWorkspaceResult.scss';
 
@@ -33,7 +34,7 @@ export function BlastWorkspaceResult(props: Props) {
   return jobResult.value == null || reportResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
-    <pre>{JSON.stringify(reportResult.value, null, 2)}</pre>
+    <CombinedBlastResult combinedResult={reportResult.value} />
   );
 }
 
