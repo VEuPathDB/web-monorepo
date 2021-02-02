@@ -59,7 +59,8 @@ export type HistogramControlsProps = {
 
 /**
  * A histogram controls panel.
- * If you prefer a different layout, you can easily
+ *
+ * If you prefer a different layout or composition, you can
  * contruct you own control panel by using the various
  * widgets contained here.
  */
@@ -136,14 +137,14 @@ export default function HistogramControls({
           // @ts-ignore
           onOptionSelected={onBarLayoutChange}
         />
-        {availableUnits?.length && selectedUnit && onSelectedUnitChange && (
+        {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
           <ButtonGroup
             label='Data Units'
             options={availableUnits}
             selectedOption={selectedUnit}
             onOptionSelected={onSelectedUnitChange}
           />
-        )}
+        ) : null}
       </div>
       <div
         style={{
