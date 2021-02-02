@@ -1,7 +1,7 @@
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
-import { LongJobResponse } from '../utils/ServiceTypes';
+import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
 import { useBlastApi } from '../utils/hooks';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
@@ -23,7 +23,7 @@ export function BlastWorkspaceResult(props: Props) {
     props.jobId,
   ]);
 
-  const reportResult = usePromise(
+  const multiQueryReportResult = usePromise(
     async () =>
       jobResult.value?.status !== 'completed'
         ? undefined
@@ -31,10 +31,13 @@ export function BlastWorkspaceResult(props: Props) {
     [api, jobResult.value?.status]
   );
 
-  return jobResult.value == null || reportResult.value == null ? (
+  return jobResult.value == null || multiQueryReportResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
-    <CombinedBlastResult combinedResult={reportResult.value} />
+    <BlastSummary
+      jobDetails={jobResult.value}
+      multiQueryReport={multiQueryReportResult.value}
+    />
   );
 }
 
@@ -59,6 +62,20 @@ function LoadingBlastResult(props: Props) {
           </p>
         </div>
       </Loading>
+    </div>
+  );
+}
+
+interface BlastSummaryProps {
+  jobDetails: LongJobResponse;
+  multiQueryReport: MultiQueryReportJson;
+}
+
+function BlastSummary(props: BlastSummaryProps) {
+  return (
+    <div className={blastWorkspaceCx('Result', 'Complete')}>
+      <h1>BLAST Job - result</h1>
+      <CombinedBlastResult combinedResult={props.multiQueryReport} />
     </div>
   );
 }
