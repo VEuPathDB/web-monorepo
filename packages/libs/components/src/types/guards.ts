@@ -10,7 +10,12 @@ import { LinePlotData } from './plots/linePlot';
 export function isHistogramData(
   data: UnionOfPlotDataTypes
 ): data is HistogramData {
-  return 'length' in data && data.length && 'bins' in data[0] ? true : false;
+  return 'series' in data &&
+    'length' in data.series &&
+    data.series.length &&
+    'bins' in data.series[0]
+    ? true
+    : false;
 }
 
 /** Determine if data is for a pie plot. */
