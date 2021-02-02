@@ -20,13 +20,13 @@ export const StudyVariable = t.intersection([
     providerLabel: t.string,
     displayName: t.string,
     type: t.string,
-    displayType: t.string,
     isMultiValued: t.boolean,
-    dataShape: t.string,
     // description: t.string,
   }),
   t.partial({
     parentId: t.string,
+    displayType: t.string,
+    dataShape: t.string,
   }),
 ]);
 
