@@ -20,6 +20,8 @@ type ActionType<DataShape> =
   | { type: 'errors/remove'; payload: Error }
   | { type: 'errors/clear' }
   | { type: 'histogram/setBinWidth'; payload: number }
+  | { type: 'histogram/setBinWidthRange'; payload: [number, number] }
+  | { type: 'histogram/setBinWidthStep'; payload: number }
   | { type: 'setSelectedUnit'; payload: string }
   | { type: 'setOpacity'; payload: number }
   | { type: 'resetOpacity' }
@@ -56,6 +58,22 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
           ...state.histogram,
           binWidth:
             action.payload > 0 ? action.payload : state.histogram.binWidth,
+        },
+      };
+    case 'histogram/setBinWidthRange':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          binWidthRange: action.payload,
+        },
+      };
+    case 'histogram/setBinWidthStep':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          binWidthStep: action.payload,
         },
       };
     case 'setOpacity':
@@ -108,9 +126,9 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
    * backend data recalculation. For example, for a series
    * of chronological data: years, months, days.
    */
-  availableUnits: Array<string>;
+  availableUnits?: Array<string>;
   /** The unit currently selected out of the available units. */
-  selectedUnit: string;
+  selectedUnit?: string;
   /** Storage for errors that we may want to display to the user. */
   errors: Array<Error>;
   /** Histogram specific attributes. */
@@ -127,20 +145,20 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
 /** Parameters that can be passed to the hook for initialization. */
 export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
   data: DataShape;
-  availableUnits?: Array<string>;
-  initialSelectedUnit?: string;
-  onSelectedUnitChange?: (
-    selectedUnit: string,
-    binWidth: number
-  ) => Promise<DataShape>;
+  onSelectedUnitChange?: (params: {
+    selectedUnit: string;
+  }) => Promise<DataShape>;
   histogram?: {
-    initialBinWidth?: number;
+    /** Optional override for binWidthRange that is provided by
+     * data backend or calculated. */
     binWidthRange?: [number, number];
+    /** Optional override for binWidthStep that is provided by
+     * data backend or calculated. */
     binWidthStep?: number;
-    onBinWidthChange: (
-      binWidth: number,
-      selectedUnit: string
-    ) => Promise<DataShape>;
+    onBinWidthChange: (params: {
+      binWidth: number;
+      selectedUnit?: string;
+    }) => Promise<DataShape>;
   };
 };
 
@@ -150,7 +168,13 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
 export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   params: usePlotControlsParams<DataShape>
 ) {
-  // Set the initial state managed by the userReducer hook below.
+  /**
+   * Set the initial state managed by the userReducer hook below.
+   * Note that some data attributes for specific plot types are
+   * initialized here with dummy values. I believe I could get
+   * around this with some fancy typescript, but it doesn't seem
+   * the added complexity would be worth it.
+   */
   const initialState: PlotSharedState<DataShape> = {
     data: params.data,
     errors: [],
@@ -158,8 +182,6 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     opacity: 1,
     orientation: 'vertical',
     barLayout: 'overlay',
-    availableUnits: params.availableUnits ?? [],
-    selectedUnit: params.initialSelectedUnit ?? '',
     histogram: {
       binWidth: 0,
       binWidthRange: [0, 0],
@@ -169,18 +191,35 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
   // Additional intialization if data is for a histogram.
   if (isHistogramData(params.data)) {
-    // Determine binWidthRange
+    // Determine if `data` contains information about available/selected units.
+    initialState.availableUnits = params.data.availableUnits ?? [];
+    initialState.selectedUnit = params.data.selectedUnit ?? '';
+
+    /**
+     * Build the histogram specific state.
+     * */
+
+    let binWidthRange: [number, number];
     if (params.histogram?.binWidthRange) {
-      initialState.histogram.binWidthRange = [
+      // Case 1: Override is provided by client.
+      binWidthRange = [
         params.histogram.binWidthRange[0],
         params.histogram.binWidthRange[1],
       ];
+    } else if (params.data.binWidthRange) {
+      // Case 2: binWidthRange is specified in `data`
+
+      binWidthRange = [
+        params.data.binWidthRange[0],
+        params.data.binWidthRange[1],
+      ];
     } else {
-      // Create some reasonable defaults if not provided by client.
+      // Case 3: Create some reasonable defaults if not provided by client or data.
+
       let lowBinValue = 0;
       let highBinValue = 0;
 
-      params.data.forEach((series) => {
+      params.data.series.forEach((series) => {
         series.bins.forEach((bin) => {
           if (typeof bin.binStart === 'string') {
             console.error('String Bin Start Values are not yet supported.');
@@ -193,21 +232,19 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       });
 
       const rawBinWidthRange = highBinValue - lowBinValue;
-      initialState.histogram.binWidthRange = [
-        rawBinWidthRange / 10,
-        rawBinWidthRange / 2,
-      ];
+      binWidthRange = [rawBinWidthRange / 10, rawBinWidthRange / 2];
     }
 
-    // Calculate initial binWidth
-    initialState.histogram.binWidth = params.histogram?.initialBinWidth
-      ? params.histogram.initialBinWidth
-      : initialState.histogram.binWidthRange[1] / 10;
-
-    // Calculate initial binWidthStep
-    initialState.histogram.binWidthStep = params.histogram?.binWidthStep
+    const binWidth = params.data.binWidth ?? binWidthRange[1] / 10;
+    const binWidthStep = params.histogram?.binWidthStep
       ? params.histogram.binWidthStep
-      : 1;
+      : params.data.binWidthStep ?? (binWidthRange[1] - binWidthRange[0]) / 10;
+
+    initialState.histogram = {
+      binWidth,
+      binWidthRange,
+      binWidthStep,
+    };
   }
 
   const [reducerState, dispatch] = useReducer<
@@ -236,34 +273,65 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
    * nested reducer and/or make async function calls to change
    * data via API requests.
    */
+  const onSelectedUnitChange = async (unit: string) => {
+    if (params.onSelectedUnitChange) {
+      try {
+        const newData = await params.onSelectedUnitChange({
+          selectedUnit: unit,
+        });
+        dispatch({ type: 'setData', payload: newData });
+
+        // Additional actions to take if incoming data is for a histogram.
+        /**
+         * TODO: The ability to change units was decided NOT to be a MVP feature.
+         * So, the support here is incomplete. In a future pull request, I will
+         * add the ability to generate binWidthRange / binWidthStep from data
+         * if not explicitly provided.
+         */
+        if (isHistogramData(newData)) {
+          if (
+            newData.binWidth &&
+            newData.binWidthRange &&
+            newData.binWidthStep
+          ) {
+            dispatch({
+              type: 'histogram/setBinWidthRange',
+              payload: newData.binWidthRange,
+            });
+            dispatch({
+              type: 'histogram/setBinWidth',
+              payload: newData.binWidth,
+            });
+            dispatch({
+              type: 'histogram/setBinWidthStep',
+              payload: newData.binWidthStep,
+            });
+          } else {
+            throw new Error(
+              'usePlotControls does not yet support switch units on histogram plots without binWidth/binWidthRange/binWidthStep being specified by backend.'
+            );
+          }
+        }
+      } catch (error) {
+        dispatch({ type: 'errors/add', payload: error });
+      } finally {
+        dispatch({ type: 'setSelectedUnit', payload: unit });
+      }
+    }
+  };
+
   const onBinWidthChange = async (binWidth: number) => {
     if (params.histogram) {
       try {
-        const newData = await params.histogram.onBinWidthChange(
+        const newData = await params.histogram.onBinWidthChange({
           binWidth,
-          reducerState.selectedUnit
-        );
+          selectedUnit: reducerState.selectedUnit,
+        });
         dispatch({ type: 'setData', payload: newData });
       } catch (error) {
         dispatch({ type: 'errors/add', payload: error });
       } finally {
         dispatch({ type: 'histogram/setBinWidth', payload: binWidth });
-      }
-    }
-  };
-
-  const onSelectedUnitChange = async (unit: string) => {
-    if (params.onSelectedUnitChange) {
-      try {
-        const newData = await params.onSelectedUnitChange(
-          unit,
-          reducerState.histogram.binWidth
-        );
-        dispatch({ type: 'setData', payload: newData });
-      } catch (error) {
-        dispatch({ type: 'errors/add', payload: error });
-      } finally {
-        dispatch({ type: 'setSelectedUnit', payload: unit });
       }
     }
   };
@@ -288,7 +356,6 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
         dispatch({ type: 'errors/remove', payload: error }),
       clearAllErrors: () => dispatch({ type: 'errors/clear' }),
     },
-    availableUnits: params.availableUnits,
     histogram: { ...reducerState.histogram, onBinWidthChange },
     resetOpacity,
     onBarLayoutChange,
