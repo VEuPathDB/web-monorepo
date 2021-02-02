@@ -1,8 +1,12 @@
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 
 import { bindApiRequestCreators } from '@veupathdb/web-common/lib/util/api';
 
-import { apiRequests, createBlastRequestHandler } from './api';
+import {
+  apiRequests,
+  createBlastRequestHandler,
+  createQueryDownloader,
+} from './api';
 
 const BlastServiceUrl = createContext('/blast');
 
@@ -17,4 +21,17 @@ export function useBlastApi() {
       ),
     [blastServiceUrl]
   );
+}
+
+export function useDownloadJobQueryCallback(jobId: string) {
+  const blastServiceUrl = useContext(BlastServiceUrl);
+
+  const queryDownloader = useMemo(
+    () => createQueryDownloader(blastServiceUrl),
+    [blastServiceUrl]
+  );
+
+  return useCallback(() => {
+    queryDownloader(jobId);
+  }, [queryDownloader, jobId]);
 }

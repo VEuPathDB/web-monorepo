@@ -18,16 +18,11 @@ export function createBlastRequestHandler(
   baseBlastUrl: string,
   fetchApi?: Window['fetch']
 ) {
-  const wdkCheckAuth =
-    document.cookie.split('; ').find((x) => x.startsWith('wdk_check_auth=')) ??
-    '';
-  const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');
-
   return createFetchApiRequestHandler({
     baseUrl: baseBlastUrl,
     init: {
       headers: {
-        'Auth-Key': authKey,
+        'Auth-Key': getAuthKey(),
       },
     },
     fetchApi,
@@ -85,3 +80,48 @@ export const apiRequests = {
 };
 
 export type BlastApi = BoundApiRequestsObject<typeof apiRequests>;
+
+// FIXME: Update createRequestHandler to accommodate responses
+// with "attachment" Content-Disposition
+export function createQueryDownloader(baseBlastUrl: string) {
+  return async function downloadQuery(jobId: string) {
+    const response = await fetch(
+      `${baseBlastUrl}/jobs/${jobId}/query?download=true`,
+      { headers: { 'Auth-Key': getAuthKey() } }
+    );
+
+    const contentDisposition = response.headers.get('content-disposition');
+
+    if (!contentDisposition?.startsWith('attachment')) {
+      console.warn('Ignoring attempted download of a non-file query.');
+      return;
+    }
+
+    const blob = await response.blob();
+
+    const filenameMatch = contentDisposition.match(/filename="(.*)"/);
+
+    const filename =
+      filenameMatch == null || filenameMatch.length < 1
+        ? 'query.txt'
+        : filenameMatch[1];
+
+    // Adapted from https://stackoverflow.com/a/42274086
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+    a.click();
+    a.remove(); //afterwards we remove the element again
+  };
+}
+
+function getAuthKey() {
+  const wdkCheckAuth =
+    document.cookie.split('; ').find((x) => x.startsWith('wdk_check_auth=')) ??
+    '';
+  const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');
+
+  return authKey;
+}
