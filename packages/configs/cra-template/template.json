@@ -52,7 +52,7 @@
       "eject": "veupathdb-react-scripts eject",
       "compile": "vepoathdb-react-scripts compile",
       "copy-assets": "veupathdb-react-scripts copy-assets",
-      "prepare": "veupathdb-react-scripts prepare"
+      "prepare-npm": "veupathdb-react-scripts prepare"
     },
     "eslintConfig": {
       "extends": ["@veupathdb"]
