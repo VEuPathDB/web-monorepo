@@ -90,6 +90,13 @@ function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
       <div className="ConfigDetails">
         <span className="InlineHeader">Job:</span>
         <span>{jobDetails.id}</span>
+        <span className="InlineHeader">Program:</span>
+        <span>
+          {jobDetails.config.tool === 'tblastx' ||
+          jobDetails.config.task == null
+            ? jobDetails.config.tool
+            : jobDetails.config.task}
+        </span>
         <span className="InlineHeader">
           {databases.length > 1 ? 'Databases' : 'Database'}:
         </span>
