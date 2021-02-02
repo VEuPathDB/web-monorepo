@@ -15,9 +15,13 @@ interface Props {
 
 interface CombinedResultRow {
   accession: string;
+  alignmentLength: number;
   description: string | null;
-  queryId: string;
+  eValue: number;
+  identity: number;
+  query: string;
   rank: number;
+  score: number;
   wdkPrimaryKey: string | null;
 }
 
@@ -61,8 +65,28 @@ function useCombinedResultColumns(
         row.description == null ? '' : row.description,
     },
     {
-      key: 'queryId',
+      key: 'query',
       name: 'Query',
+    },
+    {
+      key: 'alignmentLength',
+      name: 'Aln Length',
+    },
+    {
+      key: 'eValue',
+      name: 'E-Value',
+      renderCell: ({ row }: { row: CombinedResultRow }) =>
+        row.eValue.toExponential(2),
+    },
+    {
+      key: 'score',
+      name: 'Score',
+    },
+    {
+      key: 'identity',
+      name: 'Identity',
+      renderCell: ({ row }: { row: CombinedResultRow }) =>
+        `${((row.identity / row.alignmentLength) * 100).toFixed(2)}%`,
     },
   ];
 }
@@ -83,17 +107,32 @@ function useCombinedResultRows(
         const description =
           wdkRecordType === 'gene' ? geneHitTitleToDescription(title) : null;
 
-        const queryId = queryResult.report.results.search.query_id;
+        const {
+          query_id: queryId,
+          query_title: queryTitle,
+        } = queryResult.report.results.search;
+
+        const query =
+          queryTitle == null ? queryId : `${queryTitle} (${queryId})`;
 
         const wdkPrimaryKey =
           wdkRecordType === 'gene'
             ? geneHitTitleToWdkPrimaryKey(title)
             : accession;
 
+        const alignmentLength = hsp.align_len;
+        const eValue = hsp.evalue;
+        const identity = hsp.identity;
+        const score = hsp.score;
+
         return {
           accession,
+          alignmentLength,
           description,
-          queryId,
+          eValue,
+          identity,
+          query,
+          score,
           wdkPrimaryKey,
         };
       })
