@@ -129,75 +129,75 @@ BackendProvidedBinWidthRangeAndStep.loaders = [
   }),
 ];
 
-export const SharedControlsMultiplePlots: Story<HistogramProps> = (
-  args,
-  { loaded: { apiData } }
-) => {
-  const plotControls = usePlotControls<HistogramData>({
-    data: apiData,
-    histogram: {
-      binWidthRange: [2000, 10000],
-      binWidthStep: 1000,
-      onBinWidthChange: async (width) => {
-        return await binDailyCovidStats(width);
-      },
-    },
-  });
+// export const SharedControlsMultiplePlots: Story<HistogramProps> = (
+//   args,
+//   { loaded: { apiData } }
+// ) => {
+//   const plotControls = usePlotControls<HistogramData>({
+//     data: apiData,
+//     histogram: {
+//       binWidthRange: [2000, 10000],
+//       binWidthStep: 1000,
+//       onBinWidthChange: async (width) => {
+//         return await binDailyCovidStats(width);
+//       },
+//     },
+//   });
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex' }}>
-        <Histogram
-          title='New Cases'
-          height={args.height}
-          width={args.width / 2}
-          {...plotControls}
-          {...plotControls.histogram}
-          data={{
-            ...plotControls.data,
-            series: plotControls.data.series.filter(
-              (series) => series.name === 'New Cases'
-            ),
-          }}
-          {...defaultActions}
-        />
-        <Histogram
-          title='Current Hospitalizations'
-          height={args.height}
-          width={args.width / 2}
-          {...plotControls}
-          {...plotControls.histogram}
-          data={{
-            ...plotControls.data,
-            series: plotControls.data.series.filter(
-              (series) => series.name === 'Current Hospitalizations'
-            ),
-          }}
-          {...defaultActions}
-        />
-      </div>
-      <div style={{ height: 25 }} />
-      <HistogramControls
-        label='Histogram Controls'
-        {...plotControls}
-        {...plotControls.histogram}
-        containerStyles={{ maxWidth: args.width }}
-      />
-    </div>
-  );
-};
+//   return (
+//     <div style={{ display: 'flex', flexDirection: 'column' }}>
+//       <div style={{ display: 'flex' }}>
+//         <Histogram
+//           title='New Cases'
+//           height={args.height}
+//           width={args.width / 2}
+//           {...plotControls}
+//           {...plotControls.histogram}
+//           data={{
+//             ...plotControls.data,
+//             series: plotControls.data.series.filter(
+//               (series) => series.name === 'New Cases'
+//             ),
+//           }}
+//           {...defaultActions}
+//         />
+//         <Histogram
+//           title='Current Hospitalizations'
+//           height={args.height}
+//           width={args.width / 2}
+//           {...plotControls}
+//           {...plotControls.histogram}
+//           data={{
+//             ...plotControls.data,
+//             series: plotControls.data.series.filter(
+//               (series) => series.name === 'Current Hospitalizations'
+//             ),
+//           }}
+//           {...defaultActions}
+//         />
+//       </div>
+//       <div style={{ height: 25 }} />
+//       <HistogramControls
+//         label='Histogram Controls'
+//         {...plotControls}
+//         {...plotControls.histogram}
+//         containerStyles={{ maxWidth: args.width }}
+//       />
+//     </div>
+//   );
+// };
 
-// @ts-ignore
-SharedControlsMultiplePlots.loaders = [
-  async () => ({
-    apiData: await binDailyCovidStats(2000),
-  }),
-];
+// // @ts-ignore
+// SharedControlsMultiplePlots.loaders = [
+//   async () => ({
+//     apiData: await binDailyCovidStats(2000),
+//   }),
+// ];
 
-SharedControlsMultiplePlots.args = {
-  height: 500,
-  width: 1000,
-};
+// SharedControlsMultiplePlots.args = {
+//   height: 500,
+//   width: 1000,
+// };
 
 // export const Single = Template.bind({});
 // Single.storyName = 'One Data Series';
