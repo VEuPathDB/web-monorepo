@@ -12,12 +12,12 @@ interface Props {
   edaServiceUrl: string;
 }
 export function EDAWorkspace(props: Props) {
-  const studyMetadataStore = new (class extends EdaClient {
+  const edaClient: EdaClient = new (class extends EdaClient {
     constructor() {
       super({ baseUrl: props.edaServiceUrl });
     }
     async getStudyMetadata() {
-      return super.getStudyMetadata('DS-2324');
+      return super.getStudyMetadata('GEMSCC0002-1');
     }
   })();
 
@@ -27,7 +27,7 @@ export function EDAWorkspace(props: Props) {
       studyId={props.studyId}
       className={cx()}
       analysisStore={mockAnalysisStore}
-      studyMetadataStore={studyMetadataStore}
+      edaClient={edaClient}
     >
       <EDAWorkspaceHeading />
       <EDAAnalysis />
