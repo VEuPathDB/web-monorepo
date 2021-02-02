@@ -61,6 +61,7 @@ export function BlastForm(props: Props) {
 
     return {
       ...fullAdvancedParamGroup,
+      displayName: `Advanced ${selectedBlastAlgorithm.toUpperCase()} Parameters`,
       parameters: fullAdvancedParamGroup.parameters.filter(
         (paramName) =>
           !isOmittedParam(props.state.question.parametersByName[paramName])
