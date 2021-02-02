@@ -4,7 +4,7 @@ import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
 import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
-import { useBlastApi } from '../utils/hooks';
+import { useBlastApi, useDownloadJobQueryCallback } from '../utils/hooks';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { CombinedBlastResult } from './CombinedBlastResult';
@@ -84,6 +84,8 @@ function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
 
   const databasesStr = useMemo(() => databases.join(', '), [databases]);
 
+  const downloadJobQuery = useDownloadJobQueryCallback(jobDetails.id);
+
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
@@ -104,6 +106,10 @@ function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
           {databases.length > 1 ? 'Databases' : 'Database'}:
         </span>
         <span>{databasesStr}</span>
+        <span className="InlineHeader">Query</span>
+        <Link to="#" onClick={downloadJobQuery}>
+          Download
+        </Link>
       </div>
       <CombinedBlastResult combinedResult={multiQueryReport} />
     </div>
