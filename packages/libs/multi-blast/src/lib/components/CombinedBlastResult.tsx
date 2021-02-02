@@ -48,7 +48,7 @@ export function CombinedBlastResult({ combinedResult }: Props) {
 
   const mesaState = useMemo(
     () => MesaState.create({ columns, eventHandlers, rows, uiState }),
-    [columns, eventHandlers, uiState, rows, sort]
+    [columns, eventHandlers, uiState, rows]
   );
 
   return <Mesa state={mesaState} />;
