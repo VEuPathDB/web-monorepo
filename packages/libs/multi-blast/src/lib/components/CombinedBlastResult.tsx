@@ -1,8 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+
+import { orderBy } from 'lodash';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import Mesa, { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
-import { MesaColumn } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import {
+  MesaColumn,
+  MesaSortObject,
+} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
@@ -28,12 +33,23 @@ interface CombinedResultRow {
 export function CombinedBlastResult({ combinedResult }: Props) {
   const wdkRecordType = useWdkRecordType(combinedResult);
   const columns = useCombinedResultColumns(wdkRecordType);
-  const rows = useCombinedResultRows(combinedResult, wdkRecordType);
+  const rawRows = useRawCombinedResultRows(combinedResult, wdkRecordType);
 
-  const mesaState = useMemo(() => MesaState.create({ columns, rows }), [
-    columns,
-    rows,
-  ]);
+  const [sort, setSort] = useState<MesaSortObject>({
+    columnKey: 'rank',
+    direction: 'asc',
+  });
+
+  const rows = useSortedCombinedResultRows(rawRows, sort);
+
+  const eventHandlers = useMesaEventHandlers(setSort);
+
+  const uiState = useMesaUiState(sort);
+
+  const mesaState = useMemo(
+    () => MesaState.create({ columns, eventHandlers, rows, uiState }),
+    [columns, eventHandlers, uiState, rows, sort]
+  );
 
   return <Mesa state={mesaState} />;
 }
@@ -45,6 +61,7 @@ function useCombinedResultColumns(
     {
       key: 'rank',
       name: 'Rank',
+      sortable: true,
     },
     {
       key: 'accession',
@@ -57,41 +74,48 @@ function useCombinedResultColumns(
             {row.accession}
           </Link>
         ),
+      sortable: true,
     },
     {
       key: 'description',
       name: 'Description',
       renderCell: ({ row }: { row: CombinedResultRow }) =>
         row.description == null ? '' : row.description,
+      sortable: true,
     },
     {
       key: 'query',
       name: 'Query',
+      sortable: true,
     },
     {
       key: 'alignmentLength',
       name: 'Aln Length',
+      sortable: true,
     },
     {
       key: 'eValue',
       name: 'E-Value',
       renderCell: ({ row }: { row: CombinedResultRow }) =>
         row.eValue.toExponential(2),
+      sortable: true,
     },
     {
       key: 'score',
       name: 'Score',
+      sortable: true,
     },
     {
       key: 'identity',
       name: 'Identity',
       renderCell: ({ row }: { row: CombinedResultRow }) =>
-        `${((row.identity / row.alignmentLength) * 100).toFixed(2)}%`,
+        `${(row.identity * 100).toFixed(2)}%`,
+      sortable: true,
     },
   ];
 }
 
-function useCombinedResultRows(
+function useRawCombinedResultRows(
   combinedResult: MultiQueryReportJson,
   wdkRecordType: string | null
 ): CombinedResultRow[] {
@@ -122,7 +146,7 @@ function useCombinedResultRows(
 
         const alignmentLength = hsp.align_len;
         const eValue = hsp.evalue;
-        const identity = hsp.identity;
+        const identity = hsp.identity / hsp.align_len;
         const score = hsp.score;
 
         return {
@@ -143,6 +167,34 @@ function useCombinedResultRows(
     ...unrankedHsp,
     rank: zeroIndexRank + 1,
   }));
+}
+
+function useSortedCombinedResultRows(
+  unsortedRows: CombinedResultRow[],
+  sort: MesaSortObject
+) {
+  return useMemo(
+    () => orderBy(unsortedRows, [sort.columnKey], [sort.direction]),
+    [unsortedRows, sort]
+  );
+}
+
+function useMesaEventHandlers(setSort: (newSort: MesaSortObject) => void) {
+  return useMemo(
+    () => ({
+      onSort: (
+        { key: columnKey }: { key: keyof CombinedResultRow },
+        direction: MesaSortObject['direction']
+      ) => {
+        setSort({ columnKey, direction });
+      },
+    }),
+    [setSort]
+  );
+}
+
+function useMesaUiState(sort: MesaSortObject) {
+  return useMemo(() => ({ sort }), [sort]);
 }
 
 function useWdkRecordType(combinedResult: MultiQueryReportJson) {
