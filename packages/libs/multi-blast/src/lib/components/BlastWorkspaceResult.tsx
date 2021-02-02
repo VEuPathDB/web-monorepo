@@ -87,6 +87,9 @@ function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
+      <Link className="BackToAllJobs" to="/workspace/blast/all">
+        &lt;&lt; All my BLAST Jobs
+      </Link>
       <div className="ConfigDetails">
         <span className="InlineHeader">Job:</span>
         <span>{jobDetails.id}</span>
