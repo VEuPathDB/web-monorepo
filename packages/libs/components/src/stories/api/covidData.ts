@@ -2,7 +2,11 @@
  * Some quick and poor code quality API calls for use in Storybook examples.
  * If other people start to use these, I'll come and clean them up...
  */
-import { HistogramBin, HistogramData } from '../../types/plots';
+import {
+  HistogramBin,
+  HistogramData,
+  HistogramDataSeries,
+} from '../../types/plots';
 
 type covidStateData = {
   fips: string;
@@ -68,46 +72,56 @@ export const getDailyCovidStats = async (): Promise<Array<covidStateData>> => {
  * Figure out the range of values and then create the bins?
  */
 export const binDailyCovidStats = async (
-  binWidth: number,
-  selectedUnit: string = 'default'
-) => {
+  binWidth?: number,
+  selectedUnit: string = 'default',
+  throwSampleErrors = false,
+  includeExtraDirectives = false
+): Promise<HistogramData> => {
   const statisticsByState = await getDailyCovidStats();
 
+  const calculatedBinWidth = binWidth
+    ? binWidth
+    : selectedUnit === 'Count per 100000 Residents'
+    ? 1
+    : 1000;
+
   // Simulate Errors
-  if (binWidth === 9000) {
+  if (throwSampleErrors && calculatedBinWidth === 9000) {
     throw new Error(
       'Pretend error of not being able retrieve data from the backend.'
     );
-  } else if (binWidth === 4000) {
+  } else if (throwSampleErrors && calculatedBinWidth === 4000) {
     throw new Error(
       'Pretend error of some random error with a moderately long message associated to it.'
     );
   }
 
   const newCasesStats = statisticsByState.map((state) =>
-    selectedUnit === 'Per 1000 Residents'
-      ? state.actuals.newCases / state.population
+    selectedUnit === 'Count per 100000 Residents'
+      ? state.actuals.newCases / (state.population / 100000)
       : state.actuals.newCases
   );
-  const lowNewCases = Math.min(...newCasesStats, 0);
+
+  const lowNewCases = Math.min(...newCasesStats);
   const highNewCases = Math.max(...newCasesStats);
   const newCasesBins: HistogramBin[] = [];
 
   for (
     let index = lowNewCases;
     index < highNewCases;
-    index = index + binWidth
+    index = index + calculatedBinWidth
   ) {
     newCasesBins.push({
       binStart: index,
-      binLabel: `${index} - ${index + binWidth}`,
+      binLabel: `${index} - ${index + calculatedBinWidth}`,
       count: 0,
     });
   }
 
   const hospitalizedStats = statisticsByState.map((state) =>
-    selectedUnit === 'Per 1000 Residents'
-      ? state.actuals.hospitalBeds.currentUsageCovid / state.population
+    selectedUnit === 'Count per 100000 Residents'
+      ? state.actuals.hospitalBeds.currentUsageCovid /
+        (state.population / 100000)
       : state.actuals.hospitalBeds.currentUsageCovid
   );
   const lowHospitalized = Math.min(...hospitalizedStats);
@@ -117,22 +131,27 @@ export const binDailyCovidStats = async (
   for (
     let index = lowHospitalized;
     index < highHospitalized;
-    index = index + binWidth
+    index = index + calculatedBinWidth
   ) {
     hospitalizationBins.push({
       binStart: index,
-      binLabel: `${index} - ${index + binWidth}`,
+      binLabel: `${index} - ${index + calculatedBinWidth}`,
       count: 0,
     });
   }
 
   const reducer = (
-    accumulator: HistogramData,
+    accumulator: Array<HistogramDataSeries>,
     currentValue: covidStateData
   ) => {
-    const matchingCasesBinIndex = newCasesBins.findIndex(
-      (bin) => bin.binStart >= currentValue.actuals.newCases
-    );
+    const stateNewCasesData =
+      selectedUnit === 'Count per 100000 Residents'
+        ? currentValue.actuals.newCases / (currentValue.population / 100000)
+        : currentValue.actuals.newCases;
+
+    const matchingCasesBinIndex = newCasesBins.findIndex((bin) => {
+      return bin.binStart >= stateNewCasesData;
+    });
 
     if (matchingCasesBinIndex !== -1) {
       newCasesBins[matchingCasesBinIndex].count =
@@ -142,10 +161,14 @@ export const binDailyCovidStats = async (
         newCasesBins[newCasesBins.length - 1].count + 1;
     }
 
-    const matchingBinIndex = hospitalizationBins.findIndex(
-      (bin) =>
-        bin.binStart >= currentValue.actuals.hospitalBeds.currentUsageCovid
-    );
+    const stateHospitalUsageData =
+      selectedUnit === 'Count per 100000 Residents'
+        ? currentValue.actuals.hospitalBeds.currentUsageCovid /
+          (currentValue.population / 100000)
+        : currentValue.actuals.hospitalBeds.currentUsageCovid;
+    const matchingBinIndex = hospitalizationBins.findIndex((bin) => {
+      return bin.binStart >= stateHospitalUsageData;
+    });
 
     if (matchingBinIndex !== -1) {
       hospitalizationBins[matchingBinIndex].count =
@@ -163,7 +186,24 @@ export const binDailyCovidStats = async (
     { name: 'New Cases', bins: newCasesBins },
   ]);
 
-  console.log('Binned Data', binnedData);
+  const objectToReturn = {
+    series: binnedData,
+    ...(includeExtraDirectives
+      ? {
+          availableUnits: ['Count', 'Count per 100000 Residents'],
+          selectedUnit: 'Count',
+          binWidth: selectedUnit === 'Count per 100000 Residents' ? 1 : 1000,
+          binWidthRange:
+            selectedUnit === 'Count per 100000 Residents'
+              ? [1, 15]
+              : [1000, 15000],
+          binWidthStep: selectedUnit === 'Count per 100000 Residents' ? 1 : 500,
+        }
+      : {}),
+  };
 
-  return binnedData;
+  console.log(objectToReturn);
+
+  // @ts-ignore
+  return objectToReturn;
 };

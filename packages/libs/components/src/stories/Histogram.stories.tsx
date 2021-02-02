@@ -16,109 +16,9 @@ import { HistogramData } from '../types/plots';
 import { action } from '@storybook/addon-actions'; // BM: temp/debugging - should not depend on storybook here!
 
 export default {
-  title: 'In Development/Histogram',
+  title: 'Plots/Histogram',
   component: Histogram,
 } as Meta;
-
-const singleSeriesMock: HistogramData = [
-  {
-    name: 'Tacos',
-    color: LIGHT_GREEN,
-    bins: [
-      {
-        binStart: 0,
-        count: 10,
-      },
-      {
-        binStart: 2,
-        count: 14,
-      },
-      {
-        binStart: 4,
-        count: 3,
-      },
-      {
-        binStart: 6,
-        count: 5,
-      },
-    ],
-  },
-];
-
-const doubleSeriesMock: HistogramData = [
-  ...singleSeriesMock,
-  {
-    name: 'Pizzas',
-    color: LIGHT_BLUE,
-    bins: [
-      {
-        binStart: 4,
-        count: 16,
-      },
-      {
-        binStart: 6,
-        count: 7,
-      },
-      {
-        binStart: 8,
-        count: 4,
-      },
-      {
-        binStart: 10,
-        count: 2,
-      },
-    ],
-  },
-];
-
-const dateSeriesMock: HistogramData = [
-  {
-    name: 'Vaccinations',
-    color: LIGHT_BLUE,
-    bins: [
-      {
-        binStart: '2020-01-01',
-        binLabel: '2020-01-01',
-        count: 16000,
-      },
-      {
-        binStart: '2020-01-08',
-        binLabel: '2020-01-08',
-        count: 54000,
-      },
-      {
-        binStart: '2020-01-15',
-        binLabel: '2020-01-15',
-        count: 72000,
-      },
-      {
-        binStart: '2020-01-22',
-        binLabel: '2020-01-22',
-        count: 90000,
-      },
-      {
-        binStart: '2020-01-29',
-        binLabel: '2020-01-29',
-        count: 74000,
-      },
-      {
-        binStart: '2020-02-05',
-        binLabel: '2020-02-05',
-        count: 103400,
-      },
-      {
-        binStart: '2020-02-12',
-        binLabel: '2020-02-12',
-        count: 95999,
-      },
-      {
-        binStart: '2020-02-13',
-        binLabel: '2020-02-13',
-        count: 125367,
-      },
-    ],
-  },
-];
 
 const defaultActions = {
   onSelected: action('made a selection'),
@@ -128,27 +28,34 @@ const Template: Story<HistogramProps> = (args) => (
   <Histogram {...args} {...defaultActions} />
 );
 
-const TemplateWithControls: Story<HistogramProps> = (
-  args,
-  { loaded: { apiData } }
-) => {
+const TemplateWithControls: Story<
+  HistogramProps & {
+    binWidthRange?: [number, number];
+    binWidthStep?: number;
+    throwSampleErrors: boolean;
+    includeExtraDirectives: boolean;
+  }
+> = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
-    availableUnits: ['Raw Numbers', 'Per 1000 Residents'],
-    initialSelectedUnit: 'Raw Numbers',
-    onSelectedUnitChange: async (selectedUnit, binWidth) => {
-      return await binDailyCovidStats(binWidth, selectedUnit);
+    onSelectedUnitChange: async ({ selectedUnit }) => {
+      return await binDailyCovidStats(
+        undefined,
+        selectedUnit,
+        args.throwSampleErrors,
+        args.includeExtraDirectives
+      );
     },
     histogram: {
-      // BOB / DAVE
-      // Perhaps binWidthRange / binWidthStep should be part of `data`? It is difficult
-      // to know how to appropriately modify these values when selectedUnit changes
-      // if that information is not included in the data returned from the backend.
-      binWidthRange: [2000, 10000],
-      binWidthStep: 1000,
-      initialBinWidth: 2000,
-      onBinWidthChange: async (binWidth, selectedUnit) => {
-        return await binDailyCovidStats(binWidth, selectedUnit);
+      binWidthRange: args.binWidthRange,
+      binWidthStep: args.binWidthStep,
+      onBinWidthChange: async ({ binWidth, selectedUnit }) => {
+        return await binDailyCovidStats(
+          binWidth,
+          selectedUnit,
+          args.throwSampleErrors,
+          args.includeExtraDirectives
+        );
       },
     },
   });
@@ -167,24 +74,58 @@ const TemplateWithControls: Story<HistogramProps> = (
         {...plotControls}
         {...plotControls.histogram}
         containerStyles={{
-          maxWidth: args.width,
+          maxWidth: args.width - 25,
+          marginLeft: 25,
         }}
       />
     </div>
   );
 };
 
-export const SingleWithControls = TemplateWithControls.bind({});
-SingleWithControls.args = {
+export const BinWidthRangeGeneratedFromData = TemplateWithControls.bind({});
+BinWidthRangeGeneratedFromData.args = {
   title: 'Some Current Covid Data in U.S. States',
   height: 400,
   width: 1000,
 };
 
 // @ts-ignore
-SingleWithControls.loaders = [
+BinWidthRangeGeneratedFromData.loaders = [
   async () => ({
     apiData: await binDailyCovidStats(2000),
+  }),
+];
+
+export const OverrideBinWidthRangeAndStep = TemplateWithControls.bind({});
+OverrideBinWidthRangeAndStep.args = {
+  title: 'Some Current Covid Data in U.S. States',
+  height: 400,
+  width: 1000,
+  binWidthRange: [2000, 10000],
+  binWidthStep: 1000,
+};
+
+// @ts-ignore
+OverrideBinWidthRangeAndStep.loaders = [
+  async () => ({
+    apiData: await binDailyCovidStats(2000),
+  }),
+];
+
+export const BackendProvidedBinWidthRangeAndStep = TemplateWithControls.bind(
+  {}
+);
+BackendProvidedBinWidthRangeAndStep.args = {
+  title: 'Some Current Covid Data in U.S. States',
+  height: 400,
+  width: 1000,
+  includeExtraDirectives: true,
+};
+
+// @ts-ignore
+BackendProvidedBinWidthRangeAndStep.loaders = [
+  async () => ({
+    apiData: await binDailyCovidStats(1000, undefined, false, true),
   }),
 ];
 
@@ -194,12 +135,9 @@ export const SharedControlsMultiplePlots: Story<HistogramProps> = (
 ) => {
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
-    availableUnits: ['single items', 'dozens'],
-    initialSelectedUnit: 'single items',
     histogram: {
       binWidthRange: [2000, 10000],
       binWidthStep: 1000,
-      initialBinWidth: 2000,
       onBinWidthChange: async (width) => {
         return await binDailyCovidStats(width);
       },
@@ -215,9 +153,12 @@ export const SharedControlsMultiplePlots: Story<HistogramProps> = (
           width={args.width / 2}
           {...plotControls}
           {...plotControls.histogram}
-          data={plotControls.data.filter(
-            (series) => series.name === 'New Cases'
-          )}
+          data={{
+            ...plotControls.data,
+            series: plotControls.data.series.filter(
+              (series) => series.name === 'New Cases'
+            ),
+          }}
           {...defaultActions}
         />
         <Histogram
@@ -226,9 +167,12 @@ export const SharedControlsMultiplePlots: Story<HistogramProps> = (
           width={args.width / 2}
           {...plotControls}
           {...plotControls.histogram}
-          data={plotControls.data.filter(
-            (series) => series.name === 'Current Hospitalizations'
-          )}
+          data={{
+            ...plotControls.data,
+            series: plotControls.data.series.filter(
+              (series) => series.name === 'Current Hospitalizations'
+            ),
+          }}
           {...defaultActions}
         />
       </div>
@@ -255,71 +199,71 @@ SharedControlsMultiplePlots.args = {
   width: 1000,
 };
 
-export const Single = Template.bind({});
-Single.storyName = 'One Data Series';
-Single.args = {
-  height: 500,
-  width: 1000,
-  data: singleSeriesMock,
-  binWidth: 2,
-};
+// export const Single = Template.bind({});
+// Single.storyName = 'One Data Series';
+// Single.args = {
+//   height: 500,
+//   width: 1000,
+//   data: singleSeriesMock,
+//   binWidth: 2,
+// };
 
-export const SingleDateSeries = Template.bind({});
-SingleDateSeries.storyName = 'One Date Based Series';
-SingleDateSeries.args = {
-  height: 500,
-  width: 1000,
-  data: dateSeriesMock,
-};
+// export const SingleDateSeries = Template.bind({});
+// SingleDateSeries.storyName = 'One Date Based Series';
+// SingleDateSeries.args = {
+//   height: 500,
+//   width: 1000,
+//   data: dateSeriesMock,
+// };
 
-export const TwoDataSeries = Template.bind({});
-TwoDataSeries.storyName = 'Two Data Series';
-TwoDataSeries.args = {
-  height: 500,
-  width: 1000,
-  data: doubleSeriesMock,
-  binWidth: 2,
-};
+// export const TwoDataSeries = Template.bind({});
+// TwoDataSeries.storyName = 'Two Data Series';
+// TwoDataSeries.args = {
+//   height: 500,
+//   width: 1000,
+//   data: doubleSeriesMock,
+//   binWidth: 2,
+// };
 
-export const StackedBars = Template.bind({});
-StackedBars.args = {
-  ...TwoDataSeries.args,
-  barLayout: 'stack',
-};
+// export const StackedBars = Template.bind({});
+// StackedBars.args = {
+//   ...TwoDataSeries.args,
+//   barLayout: 'stack',
+// };
 
-export const PlotTitle = Template.bind({});
-PlotTitle.args = {
-  ...TwoDataSeries.args,
-  title: 'A Fancy Plot Title',
-};
+// export const PlotTitle = Template.bind({});
+// PlotTitle.args = {
+//   ...TwoDataSeries.args,
+//   title: 'A Fancy Plot Title',
+// };
 
-export const CustomAxesLabels = Template.bind({});
-CustomAxesLabels.args = {
-  ...TwoDataSeries.args,
-  title: 'Custom Axes Labels',
-  independentAxisLabel: 'Number of Items Ordered (Binned)',
-  dependentAxisLabel: 'Count of Orders',
-};
+// export const CustomAxesLabels = Template.bind({});
+// CustomAxesLabels.args = {
+//   ...TwoDataSeries.args,
+//   title: 'Custom Axes Labels',
+//   independentAxisLabel: 'Number of Items Ordered (Binned)',
+//   dependentAxisLabel: 'Count of Orders',
+// };
 
-export const HorizontalOrientation = Template.bind({});
-HorizontalOrientation.args = {
-  ...TwoDataSeries.args,
-  orientation: 'horizontal',
-  title: 'Horizontal Plot with Title',
-};
+// export const HorizontalOrientation = Template.bind({});
+// HorizontalOrientation.args = {
+//   ...TwoDataSeries.args,
+//   orientation: 'horizontal',
+//   title: 'Horizontal Plot with Title',
+// };
 
-export const CustomBarOpacity = Template.bind({});
-CustomBarOpacity.args = {
-  ...TwoDataSeries.args,
-  opacity: 0.25,
-  title: 'Custom Bar Opacity',
-};
+// export const CustomBarOpacity = Template.bind({});
+// CustomBarOpacity.args = {
+//   ...TwoDataSeries.args,
+//   opacity: 0.25,
+//   title: 'Custom Bar Opacity',
+// };
 
-export const CustomColors = Template.bind({});
-CustomColors.args = {
-  ...TwoDataSeries.args,
-  backgroundColor: DARK_GRAY,
-  gridColor: MEDIUM_GRAY,
-  textColor: 'white',
-  title: 'Custom Background, Text, and Grid Colors',
-};
+// export const CustomColors = Template.bind({});
+// CustomColors.args = {
+//   ...TwoDataSeries.args,
+//   backgroundColor: DARK_GRAY,
+//   gridColor: MEDIUM_GRAY,
+//   textColor: 'white',
+//   title: 'Custom Background, Text, and Grid Colors',
+// };
