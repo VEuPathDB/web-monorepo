@@ -70,7 +70,7 @@ export const apiRequests = {
   },
   fetchSingleFileJsonReport: function (jobId: string) {
     return {
-      path: `${JOBS_PATH}/${jobId}/report?format=15&zip=false&inline=true`,
+      path: `${JOBS_PATH}/${jobId}/report?format=single-file-json&zip=false&inline=true`,
       method: 'GET',
       transformResponse: standardTransformer(multiQueryReportJson),
     };
