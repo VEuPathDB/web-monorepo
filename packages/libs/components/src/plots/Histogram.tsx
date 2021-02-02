@@ -3,40 +3,11 @@ import { PlotParams } from 'react-plotly.js';
 
 import { DARK_GRAY } from '../constants/colors';
 import PlotlyPlot from './PlotlyPlot';
-import { HistogramBin, HistogramData } from '../types/plots';
-
-/**
- * Determine the label for a given HistogramBin. 
- * 
- * If a `binLabel` is specified on the bin itself, that is used.
- * Otherwise one is generated. Note that this does NOT currently support
- * date based bin labels.
-
- * @param bin The bin for which to derive the label.
- * @param binWidth The currently selected binWidth.
- */
-const binLabel = (bin: HistogramBin, binWidth: number) => {
-  if (bin.binLabel) {
-    return bin.binLabel;
-  }
-
-  // TODO: This doesn't work for date based labels since we don't know the
-  // possible range of availableUnits to perform calculations with.
-  switch (typeof bin.binStart) {
-    case 'string':
-      return `Unsupported Bin Label.`;
-    case 'number':
-      return `${bin.binStart} - ${bin.binStart + binWidth}`;
-    default:
-      return `Unsupported Bin Label.`;
-  }
-};
+import { HistogramData } from '../types/plots';
 
 export type HistogramProps = {
   /** Data for the plot. */
   data: HistogramData;
-  /** Currently selected binWidth. */
-  binWidth: number;
   /** The width of the plot in pixels. */
   width: number;
   /** The height of the plot in pixels. */
@@ -49,7 +20,7 @@ export type HistogramProps = {
    * if there is only one data series bars are not overlayed. Otherwise,
    * defaults to .75
    */
-  opacity: number;
+  opacity?: number;
   /** Title of plot. */
   title?: string;
   /** Label for independent axis. Defaults to `Bins`. */
@@ -71,7 +42,6 @@ export type HistogramProps = {
 /** A Plot.ly based histogram component. */
 export default function Histogram({
   data,
-  binWidth,
   width,
   height,
   orientation = 'vertical',
@@ -88,6 +58,8 @@ export default function Histogram({
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
+  // Quirk of Plot.ly library. If you don't do this, the
+  // plot will not refresh on barLayout changes.
   useEffect(() => {
     setRevision(revision + 1);
   }, [barLayout]);
@@ -99,7 +71,7 @@ export default function Histogram({
    * is overlay.
    */
   let calculatedBarOpacity: number;
-  if (barLayout === 'overlay' && data.length > 1) {
+  if (barLayout === 'overlay' && data.series.length > 1) {
     calculatedBarOpacity =
       opacity > 1 ? (opacity / 100) * 0.75 : opacity * 0.75;
   } else {
@@ -109,8 +81,8 @@ export default function Histogram({
   // Transform `data` into a Plot.ly friendly format.
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
     () =>
-      data.map((series) => {
-        const binLabels = series.bins.map((bin) => binLabel(bin, binWidth));
+      data.series.map((series) => {
+        const binLabels = series.bins.map((bin) => bin.binLabel);
         const binCounts = series.bins.map((bin) => bin.count);
 
         return {
@@ -123,7 +95,7 @@ export default function Histogram({
           ...(series.color ? { marker: { color: series.color } } : {}),
         };
       }),
-    [data, orientation, binWidth, calculatedBarOpacity]
+    [data, orientation, calculatedBarOpacity]
   );
 
   return (
