@@ -1,4 +1,8 @@
 .BlastWorkspaceResult {
+  .InlineHeader {
+    font-weight: bold;
+  }
+
   &__Loading {
     .Caption {
       text-align: center;
@@ -9,9 +13,22 @@
       text-align: center;
       font-size: 1.2em;
     }
+  }
 
-    .InlineHeader {
-      font-weight: bold;
+  &__Complete {
+    display: grid;
+    grid-row-gap: 1em;
+
+    .ConfigDetails {
+      font-size: 1.2em;
+      background-color: #efefef;
+      border: 1px solid black;
+      border-radius: 4px;
+      padding: 1em;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-column-gap: 1em;
+      grid-row-gap: 0.5em;
     }
   }
 }

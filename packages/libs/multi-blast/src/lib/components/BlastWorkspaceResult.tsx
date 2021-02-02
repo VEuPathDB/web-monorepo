@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
@@ -71,11 +73,29 @@ interface BlastSummaryProps {
   multiQueryReport: MultiQueryReportJson;
 }
 
-function BlastSummary(props: BlastSummaryProps) {
+function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
+  const databases = useMemo(
+    () =>
+      multiQueryReport.BlastOutput2.map(({ report }) =>
+        report.search_target.db.replace(/[\s\S]*\//, '')
+      ),
+    [multiQueryReport]
+  );
+
+  const databasesStr = useMemo(() => databases.join(', '), [databases]);
+
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
-      <CombinedBlastResult combinedResult={props.multiQueryReport} />
+      <div className="ConfigDetails">
+        <span className="InlineHeader">Job:</span>
+        <span>{jobDetails.id}</span>
+        <span className="InlineHeader">
+          {databases.length > 1 ? 'Databases' : 'Database'}:
+        </span>
+        <span>{databasesStr}</span>
+      </div>
+      <CombinedBlastResult combinedResult={multiQueryReport} />
     </div>
   );
 }
