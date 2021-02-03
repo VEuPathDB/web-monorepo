@@ -9,19 +9,19 @@ import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { blastFormCx } from './BlastForm';
 
-type EventHandlers = {
-  setGroupVisibility: typeof changeGroupVisibility;
-  updateParamValue: typeof updateParamValue;
-};
-
-type Props = {
+interface Props {
   searchName: string;
   group: ParameterGroup;
   uiState: any;
   onVisibilityChange: EventHandlers['setGroupVisibility'];
   children: React.ReactChild;
   disabled?: boolean;
-};
+}
+
+interface EventHandlers {
+  setGroupVisibility: typeof changeGroupVisibility;
+  updateParamValue: typeof updateParamValue;
+}
 
 export function AdvancedParamGroup(props: Props) {
   const {
