@@ -16,7 +16,7 @@ import MouseTools, { MouseMode } from './MouseTools';
  * @param props
  */
 
-interface MapVEuMapProps {
+export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
   viewport: Viewport,
 
@@ -36,8 +36,6 @@ interface MapVEuMapProps {
   showGrid: boolean,
   showMouseToolbar?: boolean,
 }
-
-
 
 export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid, showMouseToolbar}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
