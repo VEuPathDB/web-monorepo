@@ -121,26 +121,16 @@ export default function PiePlot(props: Props) {
 
   return <PlotlyPlot
     data={newData as any}  // Casting as 'any' to avoid issues with PlotData for pie charts
-<<<<<<< HEAD
-    layout={Object.assign(layout, {
-      //DKDK set this
-      // autosize: true,
+    layout={{...layout, ...{
       width: props.width,
       height: props.height,
       margin: props.margin,
       //DKDK add legend here
       legend: props.legend,
-      showlegend: props.showLegend})}
-=======
-    layout={{...layout, ...{
-      width: props.width,
-      height: props.height,
-      margin: props.margin,
       showlegend: props.showLegend}}}
     config={{
       displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
       staticPlot: props.staticPlot,
     }}
->>>>>>> f648b96c7b549cc54c743c19928cd13adb9b923b
   />
 }

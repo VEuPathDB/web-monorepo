@@ -21,13 +21,10 @@ export interface PlotProps {
   width?: number,
   height?: number,
   margin?: Partial<Margin>,
-<<<<<<< HEAD
-  //DKDK add legend prop for positioning
-  legend?: legendProp,
-=======
   staticPlot?: boolean,
   showModebar?: boolean | 'hover',
->>>>>>> f648b96c7b549cc54c743c19928cd13adb9b923b
+  //DKDK add legend prop for positioning
+  legend?: legendProp,
 }
 
 // Passing undefined doesn't revert to default modebar behavior,
