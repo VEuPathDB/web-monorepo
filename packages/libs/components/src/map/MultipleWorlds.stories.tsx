@@ -14,33 +14,9 @@ import './TempIconHack';
 export default {
   title: 'Map/Multiple Worlds',
   component: MapVEuMap,
-  argTypes: {
-    blinkerColor: {
-      control: 'color',
-      defaultValue: 'black',
-    },
-    blinkerOpacity: {
-      control: {
-        min: 0,
-        max: 1,
-        step: 0.1,
-      },
-      defaultValue: 0.3,
-    },
-    showGrid: {defaultValue: true},
-    viewport: {table: {disable: true}},
-    height: {table: {disable: true}},
-    width: {table: {disable: true}},
-    onViewportChanged: {table: {disable: true}},
-    recenterMarkers: {table: {disable: true}},
-    markers: {table: {disable: true}},
-    sidebarOnClose: {table: {disable: true}},
-    animation: {table: {disable: true}},
-    showMouseToolbar: {table: {disable: true}},
-  },
 };
 
-const Template = (args: MapVEuMapProps) => <MapVEuMap {...getArgs()} {...args} />;
+const Template = (args: MapVEuMapProps) => <MapVEuMap {...getDatelineArgs()} {...args} />;
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, data = testData) => {
   const { southWest: { lat: south, lng: west }, northEast : {lat: north, lng: east} } = bounds
@@ -105,32 +81,7 @@ export const MarkerBounds = () => {
   );
 };
 
-
-export const DatelineData = () => {
-  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
-  const duration = defaultAnimationDuration;
-
-  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
-    setMarkerElements(getMarkerElements(bvp, duration, testDataStraddling));
-  }, [setMarkerElements]);
-
-  return (
-      <MapVEuMap
-          viewport={{center: [ 0, 0 ], zoom: 2}}
-          height="100vh" width="100vw"
-          onViewportChanged={handleViewportChanged}
-          markers={markerElements}
-          animation={{
-            method: "geohash",
-            duration: defaultAnimationDuration,
-            animationFunction: geohashAnimation
-          }}
-          showGrid={true}
-      />
-  );
-};
-
-const getArgs = () => {
+const getDatelineArgs = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
   const duration = defaultAnimationDuration;
 
@@ -139,7 +90,7 @@ const getArgs = () => {
   }, [setMarkerElements]);
 
   return {
-    viewport: {center: [ 0, 0 ], zoom: 2},
+    viewport: {center: [ 0, 0 ] as [number, number], zoom: 2},
     height: "100vh",
     width: "100vw",
     onViewportChanged: handleViewportChanged,
@@ -153,4 +104,5 @@ const getArgs = () => {
   }
 }
 
+export const DatelineData = () => <MapVEuMap {...getDatelineArgs()} />;
 export const DatelineDataControls: Story<MapVEuMapProps> = Template.bind({});

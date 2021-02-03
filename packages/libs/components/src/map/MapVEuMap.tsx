@@ -35,13 +35,9 @@ export interface MapVEuMapProps {
   } | null,
   showGrid: boolean,
   showMouseToolbar?: boolean,
-  blinkerColor?: string,
-  blinkerOpacity?: number,
 }
 
-
-
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid, showMouseToolbar, blinkerColor, blinkerOpacity}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid, showMouseToolbar}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -88,13 +84,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         />
       }
 
-      { showGrid ?
-        <CustomGridLayer
-          blinkerColor={blinkerColor || 'black'}
-          blinkerOpacity={blinkerOpacity || 0.3}
-        />
-        : null
-      }
+      { showGrid ? <CustomGridLayer /> : null }
 
       <LayersControl position="topright">
         <BaseLayer checked name="street">

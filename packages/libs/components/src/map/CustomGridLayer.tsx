@@ -6,16 +6,11 @@ import L, { LatLngBounds } from "leaflet";
 const shape2geohash = require("shape2geohash");
 import { zoomLevelToGeohashLevel } from './config/map.json';
 
-export interface Props {
-  blinkerColor: string,
-  blinkerOpacity: number,
-}
-
 /**
  * Renders a custom grid layer made up of Polyline components that have boundaries associated
  * with the geohashes available in the current map boundaries.
  **/
-export default function CustomGridLayer(props: Props) {
+export default function CustomGridLayer() {
   const { map } = useLeaflet();
 
   const [geohashes, setGeohashes] = useState<string[]>([]);
@@ -154,10 +149,8 @@ export default function CustomGridLayer(props: Props) {
       // Custom renderer that lets us draw shapes far past the map edges
       // (shapes will show while panning rather than appear after panning)
       const wideRenderer = L.svg({padding: 2});
-      // const color = 'black';
-      // const opacity = 0.3;
-      const color = props.blinkerColor;
-      const opacity = props.blinkerOpacity;
+      const color = 'black';
+      const opacity = 0.3;
 
       blinkers = [
         <Rectangle
