@@ -14,7 +14,7 @@ type legendProp = {
   y?: number,
   //DKDK xanchor is for positioning legend inside plot
   xanchor?: 'auto' | 'center' | 'left' | 'right',
-  orientation?: string,
+  orientation?: 'h' | 'v' | undefined,
 }
 
 export interface PlotProps {

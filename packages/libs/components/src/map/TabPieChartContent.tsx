@@ -15,6 +15,15 @@ interface SidebarPieChartProps {
   showLegend?: boolean;
 }
 
+//DKDK set props for legend position
+type legendProp = {
+  x?: number,
+  y?: number,
+  //DKDK xanchor is for positioning legend inside plot
+  xanchor?: 'auto' | 'center' | 'left' | 'right',
+  orientation?: 'h' | 'v' | undefined,
+}
+
 //DKDK props are not decided so just use any for now
 export default function TabPieChartConent(props: SidebarPieChartProps) {
 
@@ -38,11 +47,11 @@ export default function TabPieChartConent(props: SidebarPieChartProps) {
     t: 30,
     pad: 0,
   }
-  let legend = {
+  let legend: legendProp = {
     // x: 0.1,
     // y: -0.4,
     // y: -1,
-    orientation: 'h',
+    orientation: "h",
   }
 
   return (

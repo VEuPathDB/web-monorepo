@@ -14,7 +14,7 @@ import speciesData from './test-data/geoclust-species-testing-all-levels.json';
 // import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
 import { LeafletMouseEvent } from "leaflet";
-import DonutMarker from './DonutMarker';
+import DonutMarker, { DonutMarkerProps } from './DonutMarker';
 
 //DKDK load sidebar CSS
 import { Sidebar, Tab } from './SidebarReactCoreResizeCSS'
@@ -107,12 +107,19 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
 */
   //DKDK applying b) approach, setting key as string & any
   const buckets = (speciesData as { [key: string]: any })[`geohash_${geohash_level}`].facets.geo.buckets.filter((bucket : any) => {
-    const ltAvg : number = bucket.ltAvg;
-    const lnAvg : number = bucket.lnAvg;
-    return ltAvg > bounds.southWest.lat &&
-	   ltAvg < bounds.northEast.lat &&
-	   lnAvg > bounds.southWest.lng &&
-	   lnAvg < bounds.northEast.lng
+    const lat : number = bucket.ltAvg;
+    const long : number = bucket.lnAvg;
+
+    const south = bounds.southWest.lat;
+    const north = bounds.northEast.lat;
+    const west = bounds.southWest.lng;
+    const east = bounds.northEast.lng;
+    const lambda = 1e-08; // accommodate tiny rounding errors
+
+    return (lat > south &&
+	    lat < north &&
+	    (west < east - lambda ? (long > west && long < east) :
+		    west > east + lambda ? !(long > east && long < west) : true) );
   });
 
   // make a first pass and calculate the legend totals
@@ -157,14 +164,15 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
     const lat : number = bucket.ltAvg;
     const lng : number = bucket.lnAvg;
     const bounds : Bounds = { southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }};
-    let labels: string[] = [];
-    let values: number[] = [];
-    let colors: string[] = [];
+    let data: DonutMarkerProps['data'] = [];
+
     bucket.term.buckets.forEach((bucket : any) => {
       const species = bucket.val;
-      labels.push(species);
-      values.push(bucket.count);
-      colors.push(speciesToColor.get(species) || 'silver');
+      data.push({
+        label: species,
+        value: bucket.count,
+        color: speciesToColor.get(species) || 'silver',
+      })
     });
 
     //DKDK check isAtomic
@@ -179,9 +187,7 @@ const getSpeciesMarkerElements = ({bounds, zoomLevel} : BoundsViewport, duration
         key={key}   //DKDK anim
         position={{lat, lng}}
         bounds={bounds}
-        labels={labels}
-        values={values}
-        colors={colors}
+        data={data}
         isAtomic={atomicValue}
         onClick={handleClick}
         duration={duration}
