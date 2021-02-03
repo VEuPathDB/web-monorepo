@@ -29,23 +29,17 @@ RequiredControls.args = {
     binWidthRange: [5, 100],
     binWidthStep: 5,
     onBinWidthChange: async (width) => {
-      return { series: [{ name: 'dummy data', bins: [] }] }
+      return { series: [{ name: 'dummy data', bins: [] }] };
     },
   },
 };
 
-export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>
-		      & {
-			availableUnits: string[],
-			selectedUnit: string,
-		      }> = (
+export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>> = (
   args
 ) => {
   const controls = usePlotControls<HistogramData>({
-    data: { series: [{ name: 'dummy data', bins: [] }],
-	    availableUnits: args.availableUnits,
-	    selectedUnit: args.selectedUnit,
-    },
+    data: args.data,
+    onSelectedUnitChange: args.onSelectedUnitChange,
     histogram: args.histogram,
   });
 
@@ -60,9 +54,14 @@ export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>
 };
 
 AdditionalOptions.args = {
-  onSelectedUnitChange: async (unit) => { return { series: [{ name: 'dummy data', bins: [] }] } },
-  availableUnits: ['Celsius', 'Fahrenheit'],
-  selectedUnit: 'Celsius',
+  data: {
+    series: [{ name: 'dummy data', bins: [] }],
+    availableUnits: ['Celsius', 'Fahrenheit'],
+    selectedUnit: 'Celsius',
+  },
+  onSelectedUnitChange: async (unit) => {
+    return { series: [{ name: 'dummy data', bins: [] }] };
+  },
   histogram: {
     binWidthRange: [5, 100],
     binWidthStep: 5,
