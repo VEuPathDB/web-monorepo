@@ -54,14 +54,7 @@ export default {
 
   QuestionWizard,
   QuestionWizardController: compose(
-    withRestrictionHandler(Action.search, (state, props) => {
-      const { questions = [], recordClasses = [] } = state.globalData;
-      return Seq.from(questions)
-        .filter(question => question.urlSegment === props.questionName)
-        .flatMap(question => Seq.from(recordClasses)
-          .filter(recordClass => recordClass.urlSegment === question.outputRecordClassName))
-        .first();
-    }),
+    withRestrictionHandler(Action.search, (_, props) => props.recordClass),
     QuestionWizardController
   ),
   DownloadFormController: compose(
