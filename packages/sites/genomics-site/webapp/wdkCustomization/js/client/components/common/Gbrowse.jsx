@@ -119,7 +119,12 @@ export let contexts = [
   }
 ];
 
-const JbrowseLink = ({ url, urlApollo }) =>
+const JbrowseLink = ({ url }) =>
+    <div style={{ textAlign: 'center', margin: 25 }}>
+<a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
+</div>
+
+const ApolloJbrowseLink = ({ url, urlApollo }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
 <a href={urlApollo} className="eupathdb-BigButton" target="_blank">View in Apollo annotation editor</a>
@@ -211,31 +216,29 @@ export function GbrowseContext(props) {
   let jbrowseUrl = record.attributes.jbrowseLink;
   let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
-  if (attribute.name == 'GeneModelGbrowseUrl'){
    if (attribute.name == 'GeneModelGbrowseUrl'){
       jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
       jbrowseUrlFull = record.attributes.geneJbrowseFullUrl;
       apolloUrlFull = record.attributes.geneApolloFullUrl;
       }
-      if(window.location.href.indexOf("vectorbase") != -1){
+      if (window.location.href.indexOf("vectorbase") != -1){
       return (
         <div>
-        <JbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
+        <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
-        <JbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
+        <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
         </div>
         )
       }
-      else {
+      else{
       return (
         <div>
-        <JbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
-        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="300" />
-        <JbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
+        <JbrowseLink url={jbrowseUrlFull}/>
+        <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
+        <JbrowseLink url={jbrowseUrlFull}/>
         </div>
         )
       }
-  }
 	
   if (attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'BlatAlignmentsGbrowseUrl' || attribute.name == 'SnpsGbrowseUrl'){ 
     if (attribute.name == 'SyntenyGbrowseUrl'){ 
