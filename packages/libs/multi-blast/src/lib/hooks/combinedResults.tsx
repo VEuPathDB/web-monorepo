@@ -1,0 +1,167 @@
+import { Link } from '@veupathdb/wdk-client/lib/Components';
+import {
+  MesaColumn,
+  MesaSortObject,
+} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import { orderBy } from 'lodash';
+import { useMemo } from 'react';
+import {
+  blastDbNameToWdkRecordType,
+  CombinedResultRow,
+  geneHitTitleToDescription,
+  geneHitTitleToWdkPrimaryKey,
+} from '../utils/combinedResults';
+import { MultiQueryReportJson } from '../utils/ServiceTypes';
+
+export function useCombinedResultColumns(
+  wdkRecordType: string | null
+): MesaColumn<keyof CombinedResultRow>[] {
+  return [
+    {
+      key: 'rank',
+      name: 'Rank',
+      sortable: true,
+    },
+    {
+      key: 'accession',
+      name: 'Hit',
+      renderCell: ({ row }: { row: CombinedResultRow }) =>
+        wdkRecordType == null || row.wdkPrimaryKey == null ? (
+          row.accession
+        ) : (
+          <Link to={`/record/${wdkRecordType}/${row.wdkPrimaryKey}`}>
+            {row.accession}
+          </Link>
+        ),
+      sortable: true,
+    },
+    {
+      key: 'description',
+      name: 'Description',
+      renderCell: ({ row }: { row: CombinedResultRow }) =>
+        row.description == null ? '' : row.description,
+      sortable: true,
+    },
+    {
+      key: 'query',
+      name: 'Query',
+      sortable: true,
+    },
+    {
+      key: 'alignmentLength',
+      name: 'Aln Length',
+      sortable: true,
+    },
+    {
+      key: 'eValue',
+      name: 'E-Value',
+      renderCell: ({ row }: { row: CombinedResultRow }) =>
+        row.eValue.toExponential(2),
+      sortable: true,
+    },
+    {
+      key: 'score',
+      name: 'Score',
+      sortable: true,
+    },
+    {
+      key: 'identity',
+      name: 'Identity',
+      renderCell: ({ row }: { row: CombinedResultRow }) =>
+        `${(row.identity * 100).toFixed(2)}%`,
+      sortable: true,
+    },
+  ];
+}
+
+export function useRawCombinedResultRows(
+  combinedResult: MultiQueryReportJson,
+  wdkRecordType: string | null
+): CombinedResultRow[] {
+  const resultsByQuery = combinedResult.BlastOutput2;
+
+  const unrankedHsps = resultsByQuery.flatMap((queryResult) =>
+    queryResult.report.results.search.hits.flatMap((hit) =>
+      hit.hsps.map((hsp) => {
+        const title = hit.description[0].title;
+
+        const accession = title.replace(/\s+[\s\S]*/, '');
+
+        const description =
+          wdkRecordType === 'gene' ? geneHitTitleToDescription(title) : null;
+
+        const {
+          query_id: queryId,
+          query_title: queryTitle,
+        } = queryResult.report.results.search;
+
+        const query =
+          queryTitle == null ? queryId : `${queryTitle} (${queryId})`;
+
+        const wdkPrimaryKey =
+          wdkRecordType === 'gene'
+            ? geneHitTitleToWdkPrimaryKey(title)
+            : accession;
+
+        const alignmentLength = hsp.align_len;
+        const eValue = hsp.evalue;
+        const identity = hsp.identity / hsp.align_len;
+        const score = hsp.score;
+
+        return {
+          accession,
+          alignmentLength,
+          description,
+          eValue,
+          identity,
+          query,
+          score,
+          wdkPrimaryKey,
+        };
+      })
+    )
+  );
+
+  return unrankedHsps.map((unrankedHsp, zeroIndexRank) => ({
+    ...unrankedHsp,
+    rank: zeroIndexRank + 1,
+  }));
+}
+
+export function useSortedCombinedResultRows(
+  unsortedRows: CombinedResultRow[],
+  sort: MesaSortObject
+) {
+  return useMemo(
+    () => orderBy(unsortedRows, [sort.columnKey], [sort.direction]),
+    [unsortedRows, sort]
+  );
+}
+
+export function useMesaEventHandlers(
+  setSort: (newSort: MesaSortObject) => void
+) {
+  return useMemo(
+    () => ({
+      onSort: (
+        { key: columnKey }: { key: keyof CombinedResultRow },
+        direction: MesaSortObject['direction']
+      ) => {
+        setSort({ columnKey, direction });
+      },
+    }),
+    [setSort]
+  );
+}
+
+export function useMesaUiState(sort: MesaSortObject) {
+  return useMemo(() => ({ sort }), [sort]);
+}
+
+export function useWdkRecordType(combinedResult: MultiQueryReportJson) {
+  return useMemo(() => {
+    const sampleDbName = combinedResult.BlastOutput2[0].report.search_target.db;
+
+    return blastDbNameToWdkRecordType(sampleDbName);
+  }, [combinedResult]);
+}
