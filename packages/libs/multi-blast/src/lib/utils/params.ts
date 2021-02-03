@@ -1,6 +1,11 @@
 import { mapValues } from 'lodash';
 
-import { toMultiValueArray } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
+import { QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  isEnumParam,
+  toMultiValueArray,
+} from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 
 import {
   IoBlastConfig,
@@ -33,6 +38,48 @@ export const LOWER_CASE_MASK_PARAM_NAME = 'LowerCaseMask';
 // Scoring config
 export const GAP_COSTS_PARAM_NAME = 'GapCosts';
 export const MATCH_MISMATCH_SCORE = 'MatchMismatchScore';
+
+export const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
+
+export const OMIT_PARAM_TERM = 'none';
+
+export function isOmittedParam(param?: Parameter) {
+  return param == null || !isEnumParam(param) || param.displayType === 'treeBox'
+    ? false
+    : param.vocabulary.length === 1 &&
+        param.vocabulary[0][0] === OMIT_PARAM_TERM;
+}
+
+export function computeParamDependencies(
+  question: QuestionWithMappedParameters
+) {
+  return question.parameters.reduce((memo, param) => {
+    param.dependentParams.forEach((depedendentParam) => {
+      if (!memo.has(depedendentParam)) {
+        memo.set(depedendentParam, new Set());
+      }
+
+      memo.get(depedendentParam)?.add(param.name);
+    });
+
+    return memo;
+  }, new Map<string, Set<string>>());
+}
+
+export function findParamsWhichDependOnlyOnBlastAlgorithm(
+  question: QuestionWithMappedParameters
+) {
+  const paramDependencies = computeParamDependencies(question);
+
+  const values = [...paramDependencies.entries()];
+
+  return values
+    .filter(
+      ([, dependencies]) =>
+        dependencies.size === 1 && dependencies.has(BLAST_ALGORITHM_PARAM_NAME)
+    )
+    .map(([paramName]) => paramName);
+}
 
 /**
  * This function transforms the parameter values of a multi-blast WDK question

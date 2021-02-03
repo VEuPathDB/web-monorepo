@@ -1,15 +1,9 @@
 import { FormEvent, useCallback, useContext, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
-import { isEnumParam } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
-import { QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import {
-  Parameter,
-  ParameterGroup,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import DefaultQuestionForm, {
   ParameterList,
   Props,
@@ -17,24 +11,20 @@ import DefaultQuestionForm, {
   renderDefaultParamGroup,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
-import {
-  changeGroupVisibility,
-  updateParamValue,
-} from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
-
 import { useBlastApi } from '../hooks/api';
 import {
+  ADVANCED_PARAMS_GROUP_NAME,
   BLAST_ALGORITHM_PARAM_NAME,
   BLAST_DATABASE_ORGANISM_PARAM_NAME,
   BLAST_DATABASE_TYPE_PARAM_NAME,
+  findParamsWhichDependOnlyOnBlastAlgorithm,
+  isOmittedParam,
   organismParamValueToFilenames,
   paramValuesToBlastConfig,
 } from '../utils/params';
 import { fetchOrganismFilenameMap } from '../utils/organisms';
 
-const ADVANCED_PARAMS_GROUP_NAME = 'advancedParams';
-
-const OMIT_PARAM_TERM = 'none';
+import { AdvancedParamGroup } from './AdvancedParamGroup';
 
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
@@ -74,7 +64,7 @@ export function BlastForm(props: Props) {
       group.name !== ADVANCED_PARAMS_GROUP_NAME ? (
         renderDefaultParamGroup(group, formProps)
       ) : (
-        <ShowHideGroup
+        <AdvancedParamGroup
           disabled={advancedParamGroupChanging}
           key={group.name}
           searchName={formProps.state.question.urlSegment}
@@ -97,7 +87,7 @@ export function BlastForm(props: Props) {
               formProps.state.paramDependenciesUpdating
             }
           />
-        </ShowHideGroup>
+        </AdvancedParamGroup>
       ),
     [restrictedAdvancedParamGroup]
   );
@@ -181,88 +171,6 @@ function NewJobForm(props: NewJobFormProps) {
           />
         </div>
       </form>
-    </div>
-  );
-}
-
-function isOmittedParam(param?: Parameter) {
-  return param == null || !isEnumParam(param) || param.displayType === 'treeBox'
-    ? false
-    : param.vocabulary.length === 1 &&
-        param.vocabulary[0][0] === OMIT_PARAM_TERM;
-}
-
-function computeParamDependencies(question: QuestionWithMappedParameters) {
-  return question.parameters.reduce((memo, param) => {
-    param.dependentParams.forEach((depedendentParam) => {
-      if (!memo.has(depedendentParam)) {
-        memo.set(depedendentParam, new Set());
-      }
-
-      memo.get(depedendentParam)?.add(param.name);
-    });
-
-    return memo;
-  }, new Map<string, Set<string>>());
-}
-
-function findParamsWhichDependOnlyOnBlastAlgorithm(
-  question: QuestionWithMappedParameters
-) {
-  const paramDependencies = computeParamDependencies(question);
-
-  const values = [...paramDependencies.entries()];
-
-  return values
-    .filter(
-      ([, dependencies]) =>
-        dependencies.size === 1 && dependencies.has(BLAST_ALGORITHM_PARAM_NAME)
-    )
-    .map(([paramName]) => paramName);
-}
-
-type EventHandlers = {
-  setGroupVisibility: typeof changeGroupVisibility;
-  updateParamValue: typeof updateParamValue;
-};
-
-type GroupProps = {
-  searchName: string;
-  group: ParameterGroup;
-  uiState: any;
-  onVisibilityChange: EventHandlers['setGroupVisibility'];
-  children: React.ReactChild;
-  disabled?: boolean;
-};
-
-function ShowHideGroup(props: GroupProps) {
-  const {
-    searchName,
-    group,
-    uiState: { isVisible },
-    onVisibilityChange,
-    disabled = false,
-  } = props;
-  return (
-    <div className={blastFormCx('ShowHideGroup')}>
-      <button
-        disabled={disabled}
-        type="button"
-        className={blastFormCx('ShowHideGroupToggle')}
-        onClick={() => {
-          onVisibilityChange({
-            searchName,
-            groupName: group.name,
-            isVisible: !isVisible,
-          });
-        }}
-      >
-        <IconAlt fa={`caret-${isVisible ? 'down' : 'right'}`} />{' '}
-        {group.displayName}
-      </button>
-      <div className={blastFormCx('ShowHideGroupContent')}>
-        {isVisible ? props.children : null}
-      </div>
     </div>
   );
 }
