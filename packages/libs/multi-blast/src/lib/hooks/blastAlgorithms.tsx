@@ -6,22 +6,15 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import {
   Answer,
   AnswerSpec,
-  getSingleRecordQuestionName,
   StandardReportConfig,
+  getSingleRecordQuestionName,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
-export type TargetDataType =
-  | 'AnnotatedTranscripts'
-  | 'AnnotatedProteins'
-  | 'Genome'
-  | 'ESTs'
-  | 'PopSet';
-
-type BlastOntologyDatabase = 'blast-est-ontology' | 'blast-orf-ontology';
-
-interface TargetMetadata {
-  blastOntologyDatabase: BlastOntologyDatabase;
-}
+import {
+  BlastOntologyDatabase,
+  TargetDataType,
+  targetMetadataByDataType,
+} from '../utils/targetTypes';
 
 const blastOntologyDatabases: BlastOntologyDatabase[] = [
   'blast-est-ontology',
@@ -40,24 +33,6 @@ const blastDatabaseSearchNames: Record<BlastOntologyDatabase, string> = {
 const algorithmTermTables: Record<BlastOntologyDatabase, string> = {
   'blast-est-ontology': 'BlastTGETerms',
   'blast-orf-ontology': 'BlastPOTerms',
-};
-
-const targetMetadataByDataType: Record<TargetDataType, TargetMetadata> = {
-  AnnotatedTranscripts: {
-    blastOntologyDatabase: 'blast-est-ontology',
-  },
-  AnnotatedProteins: {
-    blastOntologyDatabase: 'blast-orf-ontology',
-  },
-  Genome: {
-    blastOntologyDatabase: 'blast-est-ontology',
-  },
-  ESTs: {
-    blastOntologyDatabase: 'blast-est-ontology',
-  },
-  PopSet: {
-    blastOntologyDatabase: 'blast-est-ontology',
-  },
 };
 
 export function useEnabledAlgorithms(targetDataType: TargetDataType) {

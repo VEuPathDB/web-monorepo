@@ -1,17 +1,20 @@
 import { FormEvent, useCallback, useContext, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 
+import { RadioList } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import DefaultQuestionForm, {
   ParameterList,
-  Props,
+  Props as DefaultQuestionFormProps,
   SubmitButton,
   renderDefaultParamGroup,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
 import { useBlastApi } from '../hooks/api';
+import { useEnabledAlgorithms } from '../hooks/blastAlgorithms';
+import { useAlgorithmParamProps, useTargetParamProps } from '../hooks/params';
 import {
   ADVANCED_PARAMS_GROUP_NAME,
   BLAST_ALGORITHM_PARAM_NAME,
@@ -23,12 +26,20 @@ import {
   paramValuesToBlastConfig,
 } from '../utils/params';
 import { fetchOrganismFilenameMap } from '../utils/organisms';
+import { TargetDataType } from '../utils/targetTypes';
 
 import { AdvancedParamGroup } from './AdvancedParamGroup';
 
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
+export type Props = DefaultQuestionFormProps;
+
 export function BlastForm(props: Props) {
+  // FIXME: Validate this
+  const targetType = props.state.paramValues[
+    BLAST_DATABASE_TYPE_PARAM_NAME
+  ] as TargetDataType;
+
   const selectedBlastAlgorithm =
     props.state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
 
@@ -42,7 +53,10 @@ export function BlastForm(props: Props) {
       paramsWhichDependOnlyOnBlastAlgorithm.some(
         (paramName) => props.state.paramDependenciesUpdating[paramName]
       ),
-    [selectedBlastAlgorithm, props.state.paramDependenciesUpdating]
+    [
+      paramsWhichDependOnlyOnBlastAlgorithm,
+      props.state.paramDependenciesUpdating,
+    ]
   );
 
   const restrictedAdvancedParamGroup = useMemo(() => {
@@ -57,7 +71,11 @@ export function BlastForm(props: Props) {
           !isOmittedParam(props.state.question.parametersByName[paramName])
       ),
     };
-  }, [selectedBlastAlgorithm, advancedParamGroupChanging]);
+  }, [
+    selectedBlastAlgorithm,
+    props.state.question.groupsByName,
+    props.state.question.parametersByName,
+  ]);
 
   const renderBlastParamGroup = useCallback(
     (group: ParameterGroup, formProps: Props) =>
@@ -89,13 +107,53 @@ export function BlastForm(props: Props) {
           />
         </AdvancedParamGroup>
       ),
-    [restrictedAdvancedParamGroup]
+    [advancedParamGroupChanging, restrictedAdvancedParamGroup]
   );
 
-  return props.submissionMetadata.type === 'create-strategy' ? (
-    <NewJobForm {...props} renderParamGroup={renderBlastParamGroup} />
+  const enabledAlgorithms = useEnabledAlgorithms(targetType);
+
+  const targetParamProps = useTargetParamProps(
+    props.state,
+    props.eventHandlers.updateParamValue
+  );
+  const algorithmParamProps = useAlgorithmParamProps(
+    props.state,
+    props.eventHandlers.updateParamValue,
+    enabledAlgorithms
+  );
+
+  const targetParamElement = (
+    <RadioList
+      {...targetParamProps}
+      name={`${props.state.question.urlSegment}/${BLAST_DATABASE_TYPE_PARAM_NAME}`}
+    />
+  );
+  const algorithmParamElement = (
+    <RadioList
+      {...algorithmParamProps}
+      name={`${props.state.question.urlSegment}/${BLAST_ALGORITHM_PARAM_NAME}`}
+    />
+  );
+
+  const parameterElements = {
+    ...props.parameterElements,
+    [BLAST_DATABASE_TYPE_PARAM_NAME]: targetParamElement,
+    [BLAST_ALGORITHM_PARAM_NAME]: algorithmParamElement,
+  };
+
+  return enabledAlgorithms == null ? null : props.submissionMetadata.type ===
+    'create-strategy' ? (
+    <NewJobForm
+      {...props}
+      renderParamGroup={renderBlastParamGroup}
+      parameterElements={parameterElements}
+    />
   ) : (
-    <DefaultQuestionForm {...props} renderParamGroup={renderBlastParamGroup} />
+    <DefaultQuestionForm
+      {...props}
+      renderParamGroup={renderBlastParamGroup}
+      parameterElements={parameterElements}
+    />
   );
 }
 
