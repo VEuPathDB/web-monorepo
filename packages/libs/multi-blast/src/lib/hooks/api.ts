@@ -6,7 +6,7 @@ import {
   apiRequests,
   createBlastRequestHandler,
   createQueryDownloader,
-} from './api';
+} from '../utils/api';
 
 const BlastServiceUrl = createContext('/blast');
 

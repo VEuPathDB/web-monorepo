@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
+import { useBlastApi, useDownloadJobQueryCallback } from '../hooks/api';
 import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
-import { useBlastApi, useDownloadJobQueryCallback } from '../utils/hooks';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { CombinedBlastResult } from './CombinedBlastResult';

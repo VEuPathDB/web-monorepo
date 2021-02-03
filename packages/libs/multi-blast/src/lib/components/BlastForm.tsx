@@ -22,7 +22,7 @@ import {
   updateParamValue,
 } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 
-import { useBlastApi } from '../utils/hooks';
+import { useBlastApi } from '../hooks/api';
 import {
   BLAST_ALGORITHM_PARAM_NAME,
   BLAST_DATABASE_ORGANISM_PARAM_NAME,
