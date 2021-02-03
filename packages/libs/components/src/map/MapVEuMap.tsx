@@ -1,5 +1,5 @@
-import React, {useState, CSSProperties, ReactElement} from "react";
-import { BoundsViewport, AnimationFunction } from "./Types";
+import React, {useState, CSSProperties, ReactElement, cloneElement} from "react";
+import { BoundsViewport, MarkerProps, AnimationFunction } from "./Types";
 import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
 const { BaseLayer } = LayersControl
 import {Viewport, Map, TileLayer, LayersControl} from "react-leaflet";
@@ -7,6 +7,7 @@ import SemanticMarkers from "./SemanticMarkers";
 import 'leaflet/dist/leaflet.css';
 import '../styles/map_styles.css'
 import CustomGridLayer from "./CustomGridLayer";
+import MouseTools, { MouseMode } from './MouseTools';
 
 /**
  * Renders a Leaflet map with semantic zooming markers
@@ -32,12 +33,13 @@ interface MapVEuMapProps {
     duration: number,
     animationFunction: AnimationFunction
   } | null,
-  showGrid: boolean
+  showGrid: boolean,
+  showMouseToolbar?: boolean,
 }
 
 
 
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid}: MapVEuMapProps) {
+export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid, showMouseToolbar}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -46,15 +48,21 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
   // The Viewport info (center and zoom) handled here would be useful for saving a
   // 'bookmarkable' state of the map.
   const [state, updateState] = useState<Viewport>(viewport as Viewport);
+  const [mouseMode, setMouseMode] = useState<MouseMode>('default');
   const handleViewportChanged = (viewport: Viewport) => {
     updateState(viewport);
   };
+
+  if (mouseMode === 'magnification') {
+    markers = markers.map((marker) => cloneElement(marker, {showPopup: true}));
+  }
 
   return (
     <Map
         viewport={state}
         style={{height, width}}
         onViewportChanged={handleViewportChanged}
+        className={mouseMode === "magnification" ? "cursor-zoom-in": ""}
         // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
         minZoom={2}
         worldCopyJump={false}
@@ -70,6 +78,13 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         animation={animation}
         recenterMarkers={recenterMarkers}
       />
+
+      {showMouseToolbar &&
+        <MouseTools
+          mouseMode={mouseMode}
+          setMouseMode={setMouseMode}
+        />
+      }
 
       { showGrid ? <CustomGridLayer /> : null }
 

@@ -159,7 +159,7 @@ export default function CustomGridLayer() {
             opacity={.8}
             weight={1}
             dashArray={[10]}
-  
+            interactive={false}
           />
         )
       })
@@ -196,6 +196,7 @@ export default function CustomGridLayer() {
             opacity={opacity}
             weight={1}
             dashArray={[10]}
+            interactive={false}
           />
         )
       })

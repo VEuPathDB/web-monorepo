@@ -1,5 +1,5 @@
 import React from "react";
-import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
 import { Datum } from 'plotly.js';
 
 export interface Props extends PlotProps {
@@ -23,10 +23,9 @@ export interface Props extends PlotProps {
   showRawData?: boolean;
   showMean?: boolean;
   markerOpacity?: number;
-  showModebar?: boolean;
 }
 
-export default function Boxplot({ data, orientation, showRawData, showMean, independentAxisLabel, dependentAxisLabel, defaultDependentAxisRange, markerOpacity, showModebar, width, height, margin } : Props) {
+export default function Boxplot({ data, orientation, showRawData, showMean, independentAxisLabel, dependentAxisLabel, defaultDependentAxisRange, markerOpacity, showModebar, width, height, margin, staticPlot } : Props) {
 
   const pdata = data.map((d) => {
 
@@ -77,7 +76,10 @@ export default function Boxplot({ data, orientation, showRawData, showMean, inde
       height: height,
       margin: margin,
     })}
-    config={{displayModeBar: showModebar}}
+    config={{
+      displayModeBar: showModebar !== undefined ? showModebar : ModebarDefault,
+      staticPlot: staticPlot,
+    }}
   />
 }
 

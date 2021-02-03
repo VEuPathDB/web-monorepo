@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useMemo } from "react";
+import React, { lazy, Suspense, useMemo } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
 type Margin = {
@@ -21,12 +21,21 @@ export interface PlotProps {
   width?: number,
   height?: number,
   margin?: Partial<Margin>,
+<<<<<<< HEAD
   //DKDK add legend prop for positioning
   legend?: legendProp,
+=======
+  staticPlot?: boolean,
+  showModebar?: boolean | 'hover',
+>>>>>>> f648b96c7b549cc54c743c19928cd13adb9b923b
 }
 
+// Passing undefined doesn't revert to default modebar behavior,
+// so use this as the default
+export const ModebarDefault = 'hover';
+
 const config = {
-  responsive: true
+  responsive: true,
 };
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -37,16 +46,17 @@ const Plot = lazy(() => import('react-plotly.js'));
  * @param props
  */
 export default function PlotlyPlot(props: PlotParams) {
-  const finalStyle = useMemo(() => ({ height: '100%', width: '100%', ...props.style }), [props.style]);
-  const finalConfig = useMemo(() => ({ ...config, ...props.config}), [props.config]);
+  const finalStyle = useMemo(
+    () => ({ height: '100%', width: '100%', ...props.style }),
+    [props.style]
+  );
+  const finalConfig = useMemo(() => ({ ...config, ...props.config }), [
+    props.config,
+  ]);
 
   return (
-    <Suspense fallback="Loading...">
-      <Plot
-        {...props}
-        style={finalStyle}
-        config={finalConfig}
-      />
+    <Suspense fallback='Loading...'>
+      <Plot {...props} style={finalStyle} config={finalConfig} />
     </Suspense>
-  )
+  );
 }

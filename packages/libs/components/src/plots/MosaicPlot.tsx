@@ -1,5 +1,5 @@
 import React from "react";
-import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
 
 interface Props extends PlotProps {
   // N columns/exposure, M rows/outcome
@@ -60,7 +60,10 @@ export default function MosaicPlot(props: Props) {
         margin: props.margin,
         showlegend: props.showLegend,
       })}
-      config={{displayModeBar: props.showModebar}}
+      config={{
+        displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
+        staticPlot: props.staticPlot,
+      }}
     />
   );
 }
