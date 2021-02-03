@@ -8,6 +8,7 @@ import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Pa
 import { Props } from '../components/BlastForm';
 import {
   BLAST_ALGORITHM_PARAM_NAME,
+  BLAST_DATABASE_ORGANISM_PARAM_NAME,
   BLAST_DATABASE_TYPE_PARAM_NAME,
 } from '../utils/params';
 
@@ -49,6 +50,10 @@ export function useAlgorithmParamProps(
   ] as CheckBoxEnumParam;
   const algorithm = state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
 
+  const orgParamUpdating =
+    state.paramDependenciesUpdating[BLAST_DATABASE_ORGANISM_PARAM_NAME] ??
+    false;
+
   const items = useMemo(
     () =>
       parameter.vocabulary.map(([value, display]) => ({
@@ -62,10 +67,19 @@ export function useAlgorithmParamProps(
   const onChange = useChangeParamValue(parameter, state, updateParamValue);
 
   useEffect(() => {
-    if (enabledAlgorithms != null && !enabledAlgorithms.includes(algorithm)) {
+    // FIXME: The dependency on orgParamUpdating is a temporary hack meant to prevent
+    // the org param's update from being "interrupted" when a change in enabledAlgorithms
+    // triggers an update to the selected algorithm
+    // Maybe this issue will be resolved when https://github.com/VEuPathDB/WDKClient/pull/100 is merged?
+    // Commit 2dccbd1 of that PR looks relevant
+    if (
+      enabledAlgorithms != null &&
+      !enabledAlgorithms.includes(algorithm) &&
+      !orgParamUpdating
+    ) {
       onChange(enabledAlgorithms[0]);
     }
-  }, [enabledAlgorithms, algorithm, onChange]);
+  }, [algorithm, enabledAlgorithms, onChange, orgParamUpdating]);
 
   return {
     items,
