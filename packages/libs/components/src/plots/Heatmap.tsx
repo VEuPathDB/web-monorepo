@@ -81,7 +81,7 @@ export default function Heatmap(props: Props) {
         margin: margin,
       })}
       config={{
-        displayModeBar: props.showModebar || ModebarDefault,
+        displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
         staticPlot: props.staticPlot,
       }}
     />

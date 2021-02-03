@@ -77,7 +77,7 @@ export default function Boxplot({ data, orientation, showRawData, showMean, inde
       margin: margin,
     })}
     config={{
-      displayModeBar: showModebar || ModebarDefault,
+      displayModeBar: showModebar !== undefined ? showModebar : ModebarDefault,
       staticPlot: staticPlot,
     }}
   />

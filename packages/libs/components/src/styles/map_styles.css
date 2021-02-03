@@ -44,3 +44,42 @@
 .mapveu-button-selected > i {
     color: white;
 }
+
+.plot-marker-popup.popup-right,
+.plot-marker-popup.popup-left,
+.plot-marker-popup.popup-down {
+    transform-origin: center bottom;
+}
+
+.plot-marker-popup.popup-right,
+.plot-marker-popup.popup-left {
+    margin-bottom: 7px;
+}
+
+.plot-marker-popup.popup-right {
+    margin-left: 17px;
+}
+
+.plot-marker-popup.popup-left {
+    margin-left: -17px;
+}
+
+.plot-marker-popup.popup-down {
+    margin-bottom: -7px;
+}
+
+.plot-marker-popup.popup-up .leaflet-popup-content {
+    transform: rotate(0deg);
+}
+
+.plot-marker-popup.popup-right .leaflet-popup-content {
+    transform: rotate(-90deg);
+}
+
+.plot-marker-popup.popup-left .leaflet-popup-content {
+    transform: rotate(90deg);
+}
+
+.plot-marker-popup.popup-down .leaflet-popup-content {
+    transform: rotate(180deg);
+}

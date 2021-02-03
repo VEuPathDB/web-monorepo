@@ -100,7 +100,7 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(props: 
         showlegend: props.showLegend
       }}}
       config={{
-        displayModeBar: props.showModebar || ModebarDefault,
+        displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
         staticPlot: props.staticPlot,
       }}
     />
