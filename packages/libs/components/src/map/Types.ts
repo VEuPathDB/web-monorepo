@@ -36,7 +36,13 @@ export interface MarkerProps {
   id: string,
   icon?: Icon,
   showPopup?: boolean,
-  popupPlot?: ReactElement<PlotProps>,
+  popupContent?: {
+    content: ReactElement,
+    size: {
+      width: number,
+      height: number,
+    },
+  },
 }
 
 export type AnimationFunction = (

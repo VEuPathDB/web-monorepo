@@ -61,7 +61,7 @@ export default function MosaicPlot(props: Props) {
         showlegend: props.showLegend,
       })}
       config={{
-        displayModeBar: props.showModebar || ModebarDefault,
+        displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
         staticPlot: props.staticPlot,
       }}
     />
