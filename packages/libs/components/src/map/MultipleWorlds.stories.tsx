@@ -1,8 +1,9 @@
 import React, {ReactElement, useCallback, useState} from "react";
+import { Story } from '@storybook/react'
 //DKDK change below
-import { BoundsViewport, Bounds } from './Types';
+import { BoundsViewport } from './Types';
 import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
-import MapVEuMap from "./MapVEuMap";
+import MapVEuMap, { MapVEuMapProps } from "./MapVEuMap";
 import geohashAnimation from "./animation_functions/geohash";
 import testData from './test-data/geoclust-date-binning-testing-all-levels.json';
 import testDataStraddling from './test-data/geoclust-date-dateline-straddling-all-levels.json';
@@ -12,7 +13,34 @@ import './TempIconHack';
 
 export default {
   title: 'Map/Multiple Worlds',
+  component: MapVEuMap,
+  argTypes: {
+    blinkerColor: {
+      control: 'color',
+      defaultValue: 'black',
+    },
+    blinkerOpacity: {
+      control: {
+        min: 0,
+        max: 1,
+        step: 0.1,
+      },
+      defaultValue: 0.3,
+    },
+    showGrid: {defaultValue: true},
+    viewport: {table: {disable: true}},
+    height: {table: {disable: true}},
+    width: {table: {disable: true}},
+    onViewportChanged: {table: {disable: true}},
+    recenterMarkers: {table: {disable: true}},
+    markers: {table: {disable: true}},
+    sidebarOnClose: {table: {disable: true}},
+    animation: {table: {disable: true}},
+    showMouseToolbar: {table: {disable: true}},
+  },
 };
+
+const Template = (args: MapVEuMapProps) => <MapVEuMap {...getArgs()} {...args} />;
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, data = testData) => {
   const { southWest: { lat: south, lng: west }, northEast : {lat: north, lng: east} } = bounds
@@ -102,4 +130,27 @@ export const DatelineData = () => {
   );
 };
 
+const getArgs = () => {
+  const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
+  const duration = defaultAnimationDuration;
 
+  const handleViewportChanged = useCallback((bvp: BoundsViewport) => {
+    setMarkerElements(getMarkerElements(bvp, duration, testDataStraddling));
+  }, [setMarkerElements]);
+
+  return {
+    viewport: {center: [ 0, 0 ], zoom: 2},
+    height: "100vh",
+    width: "100vw",
+    onViewportChanged: handleViewportChanged,
+    markers: markerElements,
+    animation: {
+      method: "geohash",
+      duration: defaultAnimationDuration,
+      animationFunction: geohashAnimation,
+    },
+    showGrid: true,
+  }
+}
+
+export const DatelineDataControls: Story<MapVEuMapProps> = Template.bind({});

@@ -1,21 +1,30 @@
-import { Polyline, useLeaflet } from "react-leaflet";
+import { Polyline, Rectangle, useLeaflet } from "react-leaflet";
 import React, { ReactElement, useEffect, useState } from "react";
 import Geohash from "latlon-geohash";
-import { LatLngBounds } from "leaflet";
+import L, { LatLngBounds } from "leaflet";
 // import shape2geohash from "shape2geohash";  // need @types ideally...
 const shape2geohash = require("shape2geohash");
 import { zoomLevelToGeohashLevel } from './config/map.json';
+
+export interface Props {
+  blinkerColor: string,
+  blinkerOpacity: number,
+}
 
 /**
  * Renders a custom grid layer made up of Polyline components that have boundaries associated
  * with the geohashes available in the current map boundaries.
  **/
-export default function CustomGridLayer() {
+export default function CustomGridLayer(props: Props) {
   const { map } = useLeaflet();
 
   const [geohashes, setGeohashes] = useState<string[]>([]);
-  let polylines: ReactElement<Polyline>[] = [];
   const [mapBounds, setMapBounds] = useState<LatLngBounds | null>(null);
+
+  let polylines: ReactElement<Polyline>[] = [];
+  // Blinkers/blinders: rectangles on edges of viewport to visually block
+  // nonactive map areas/extra worlds
+  let blinkers: ReactElement<Rectangle>[] = [];
 
   useEffect(() => {
     if (map == null) return;
@@ -130,6 +139,49 @@ export default function CustomGridLayer() {
 
   // bfox6 - Determine and build new polylines.
   if (mapBounds != null) {
+    let west = mapBounds.getWest();
+    let east = mapBounds.getEast();
+    let adjustedWest = west;
+    let adjustedEast = east;
+    const eastWestDiff = east - west;
+
+    // if very zoomed out, trim longitude bounds to span the middle 360 deg only
+    if (eastWestDiff > 360) {
+      const middle = (east + west) / 2;
+      adjustedEast = middle + (181);
+      adjustedWest = middle - (181);
+
+      // Custom renderer that lets us draw shapes far past the map edges
+      // (shapes will show while panning rather than appear after panning)
+      const wideRenderer = L.svg({padding: 2});
+      // const color = 'black';
+      // const opacity = 0.3;
+      const color = props.blinkerColor;
+      const opacity = props.blinkerOpacity;
+
+      blinkers = [
+        <Rectangle
+          key='east-blinker'
+          bounds={[[-90, east + 1.5*eastWestDiff], [90, adjustedEast]]}
+          stroke={false}
+          color={color}
+          fillOpacity={opacity}
+          renderer={wideRenderer}
+          interactive={false}
+        >
+        </Rectangle>,
+        <Rectangle
+          key='west-blinker'
+          bounds={[[-90, west - 1.5*eastWestDiff], [90, adjustedWest]]}
+          stroke={false}
+          color={color}
+          fillOpacity={opacity}
+          renderer={wideRenderer}
+          interactive={false}
+        ></Rectangle>
+      ];
+    }
+
     const lats: number[] = [];
     const lons: number[] = [];
 
@@ -155,7 +207,7 @@ export default function CustomGridLayer() {
         <Polyline
           key={`lat-${lat}-${index}`}
           color="gray"
-          positions={[[lat, mapBounds.getWest()], [lat, mapBounds.getEast()]]}
+          positions={[[lat, adjustedEast], [lat, adjustedWest]]}
           opacity={.8}
           weight={1}
           dashArray={[10]}
@@ -164,26 +216,16 @@ export default function CustomGridLayer() {
       )
     })
 
-    let west = mapBounds.getWest();
-    let east = mapBounds.getEast();
-
-    // if very zoomed out, trim longitude bounds to span the middle 360 deg only
-    if (east - west > 360) {
-      const middle = (east + west) / 2;
-      east = middle + (181); // slightly more than 180 to
-      west = middle - (181); // get around rounding issues
-    }
-
     const lonLines = lons.map((lon, index) => {
 
       // move the longitude lines into the current viewport, if required
       let adjustedLon = lon;
       let opacity = 0.8;
-      while (adjustedLon > east) {
+      while (adjustedLon > adjustedEast) {
         adjustedLon -= 360;
         if (lon == 180) opacity = 0; // only let this line be drawn once
       }
-      while (adjustedLon < west) {
+      while (adjustedLon < adjustedWest) {
         adjustedLon += 360;
         if (lon == -180) opacity = 0; // only let this line be drawn once
       }
@@ -203,5 +245,8 @@ export default function CustomGridLayer() {
     polylines = [...latLines, ...lonLines];
   }
 
-  return (<>{polylines}</>)
+  return (<>
+    {polylines}
+    {blinkers}
+  </>)
 }
