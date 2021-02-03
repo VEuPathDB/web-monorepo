@@ -2,15 +2,16 @@
 
 import React, { useState } from 'react';
 
-//DKDK for SidebarBasic()
-import SidebarList from './SidebarList'
+import { Sidebar, Tab } from './SidebarReactCore'
+//DKDK modified version of typescript definition for react-leaflettaken
+import { SidebarProps } from './type-react-leaflet-sidebarv2'
 
-//DKDK testing to import component and send it to array
+//DKDK testing to separate a component for tab content
 import TabHomeContent from './TabHomeContent'
 
 export default {
   title: 'DK Sidebar Tests/Sidebar stand-alone',
-  component: SidebarList,
+  // component: SidebarReactCore,
 };
 
 /* DKDK SidebarOnly() simply implemented a stand-alone sidebar: manually assigned tabs
@@ -24,6 +25,8 @@ export const SidebarBasic = () => {
   //DKDK this is X button/icon behavior
   const sidebarOnClose = () => {
     setSidebarCollapsed(true)
+    //DKDK add this to fix a bug
+    setTabSelected('')
   }
 
   const sidebarOnOpen = (id: string) => {
@@ -38,18 +41,60 @@ export const SidebarBasic = () => {
     }
   }
 
+  let testText = 'this is Home'
+
   return (
     //DKDK add fragment
     <>
-      <SidebarList
-        id="leaflet-sidebar"
-        collapsed={sidebarCollapsed}
-        position='left'
-        selected={tabSelected}
-        closeIcon='fas fa-times'
-        onOpen={sidebarOnOpen}
-        onClose={sidebarOnClose}
-      />
+      <Sidebar
+          id='leaflet-sidebar'
+          collapsed={sidebarCollapsed}
+          position='left'
+          selected={tabSelected}
+          closeIcon='fas fa-times'
+          onOpen={sidebarOnOpen}
+          onClose={sidebarOnClose}
+      >
+          <Tab id="home" header="Home" icon="fas fa-home">
+              {/* DKDK a test to separate tab contents into a component, TabHomeContent */}
+              <TabHomeContent
+                  id={'home'}
+                  header={testText}
+              />
+          </Tab>
+          {/* DKDK testing disabled - greyish icon*/}
+          <Tab id="settings" header="Settings" icon="fas fa-cog" disabled>
+              <p>Change settings</p>
+          </Tab>
+          {/* DKDK add disabled tap - no header & icon, use both diabled and divider */}
+          <Tab id="gap1" header="" icon="" disabled divider>
+              <p>gap1</p>
+          </Tab>
+          <Tab id="marker-table" header="Details for selected samples" icon="fas fa-table">
+              <p>Detailed table???</p>
+          </Tab>
+          <Tab id="export" header="Export Data" icon="fas fa-download">
+              <p>Download data</p>
+          </Tab>
+          {/* DKDK add disabled tap - no header & icon, use both diabled and divider */}
+          <Tab id="gap2" header="" icon="" disabled divider>
+              <p>gap2</p>
+          </Tab>
+          <Tab id="plot" header="Summary" icon="fas fa-chart-pie">
+              <p>Donut Plot</p>
+          </Tab>
+          {/* DKDK no box plot icon exists in fontawesome */}
+          <Tab id="boxplot" header="Box Plot" icon="fas fa-percent">
+              <p>Box Plot</p>
+          </Tab>
+          <Tab id="graph" header="Chart" icon="fas fa-chart-bar">
+              <p>This is for chart</p>
+          </Tab>
+          {/* DKDK placing bottom side using  anchor="bottom" attribute */}
+          <Tab id="help" header="Tutorial" icon="fas fa-question" anchor="bottom">
+              <p>Help/Tutorial</p>
+          </Tab>
+      </Sidebar>
     </>
   );
 }

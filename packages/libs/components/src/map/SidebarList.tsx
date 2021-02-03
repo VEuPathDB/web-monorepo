@@ -6,11 +6,19 @@ import { SidebarProps } from './type-react-leaflet-sidebarv2'
 
 //DKDK testing to separate a component for tab content
 import TabHomeContent from './TabHomeContent'
+//DKDK testing Pie Chart in sidebar
+import TabPieChartContent from './TabPieChartContent'
+import TabPieChartContentLegend from './TabPieChartContentLegend'
+
+//DKDK add this for array testing purpose
+interface SidebarPropsExtend extends SidebarProps {
+    pieChartData?: Array<{color: string, label: string, value: number}>;
+}
 
 /**
  * DKDK this is an example of Sidebar component
  */
-export default function SidebarList(props: SidebarProps) {
+export default function SidebarList(props: SidebarPropsExtend) {
   /**
    * DKDK think it may be better to separate Tabs as sub-components in the future?
    */
@@ -51,11 +59,22 @@ export default function SidebarList(props: SidebarProps) {
             <p>gap2</p>
         </Tab>
         <Tab id="plot" header="Summary" icon="fas fa-chart-pie">
-            <p>For plots</p>
+            {/* DKDK a test to separate tab contents into a component, TabHomeContent */}
+            <TabPieChartContent
+                    id={'graph'}
+                    header={testText}
+                    pieChartData={props.pieChartData}
+            />
         </Tab>
         {/* DKDK no box plot icon exists in fontawesome */}
         <Tab id="boxplot" header="Box Plot" icon="fas fa-percent">
-            <p>No box plot icon exists in the fontawesome</p>
+            {/* DKDK a test to separate tab contents into a component, TabHomeContent */}
+            <TabPieChartContentLegend
+                    id={'graph'}
+                    header={testText}
+                    pieChartData={props.pieChartData}
+                    showLegend={false}
+            />
         </Tab>
         <Tab id="graph" header="Chart" icon="fas fa-chart-bar">
             <p>This is for chart</p>

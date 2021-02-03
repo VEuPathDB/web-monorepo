@@ -110,9 +110,13 @@ export default function PiePlot(props: Props) {
   return <PlotlyPlot
     data={newData as any}  // Casting as 'any' to avoid issues with PlotData for pie charts
     layout={Object.assign(layout, {
+      //DKDK set this
+      // autosize: true,
       width: props.width,
       height: props.height,
       margin: props.margin,
+      //DKDK add legend here
+      legend: props.legend,
       showlegend: props.showLegend})}
   />
 }
