@@ -68,6 +68,10 @@
     margin-bottom: -7px;
 }
 
+.plot-marker-popup.popup-up .leaflet-popup-content {
+    transform: rotate(0deg);
+}
+
 .plot-marker-popup.popup-right .leaflet-popup-content {
     transform: rotate(-90deg);
 }
