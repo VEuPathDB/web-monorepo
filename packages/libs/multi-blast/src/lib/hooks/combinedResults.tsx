@@ -81,45 +81,44 @@ export function useRawCombinedResultRows(
   const resultsByQuery = combinedResult.BlastOutput2;
 
   const unrankedHsps = resultsByQuery.flatMap((queryResult) =>
-    queryResult.report.results.search.hits.flatMap((hit) =>
-      hit.hsps.map((hsp) => {
-        const title = hit.description[0].title;
+    queryResult.report.results.search.hits.map((hit) => {
+      const bestHsp = hit.hsps[0];
 
-        const accession = title.replace(/\s+[\s\S]*/, '');
+      const title = hit.description[0].title;
 
-        const description =
-          wdkRecordType === 'gene' ? geneHitTitleToDescription(title) : null;
+      const accession = title.replace(/\s+[\s\S]*/, '');
 
-        const {
-          query_id: queryId,
-          query_title: queryTitle,
-        } = queryResult.report.results.search;
+      const description =
+        wdkRecordType === 'gene' ? geneHitTitleToDescription(title) : null;
 
-        const query =
-          queryTitle == null ? queryId : `${queryTitle} (${queryId})`;
+      const {
+        query_id: queryId,
+        query_title: queryTitle,
+      } = queryResult.report.results.search;
 
-        const wdkPrimaryKey =
-          wdkRecordType === 'gene'
-            ? geneHitTitleToWdkPrimaryKey(title)
-            : accession;
+      const query = queryTitle == null ? queryId : `${queryTitle} (${queryId})`;
 
-        const alignmentLength = hsp.align_len;
-        const eValue = hsp.evalue;
-        const identity = hsp.identity / hsp.align_len;
-        const score = hsp.score;
+      const wdkPrimaryKey =
+        wdkRecordType === 'gene'
+          ? geneHitTitleToWdkPrimaryKey(title)
+          : accession;
 
-        return {
-          accession,
-          alignmentLength,
-          description,
-          eValue,
-          identity,
-          query,
-          score,
-          wdkPrimaryKey,
-        };
-      })
-    )
+      const alignmentLength = bestHsp.align_len;
+      const eValue = bestHsp.evalue;
+      const identity = bestHsp.identity / bestHsp.align_len;
+      const score = bestHsp.score;
+
+      return {
+        accession,
+        alignmentLength,
+        description,
+        eValue,
+        identity,
+        query,
+        score,
+        wdkPrimaryKey,
+      };
+    })
   );
 
   return unrankedHsps.map((unrankedHsp, zeroIndexRank) => ({
