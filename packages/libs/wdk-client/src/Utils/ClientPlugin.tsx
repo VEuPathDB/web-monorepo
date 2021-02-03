@@ -102,7 +102,7 @@ function makeCompositePluginComponentUncached<T>(registry: ClientPluginRegistryE
         ]);
         return { parameter, question, recordClass };
       }
-      catch (error) {
+      catch(error) {
         return { error };
       }
     }, [ props.context.paramName, props.context.searchName, props.context.recordClassName ]);

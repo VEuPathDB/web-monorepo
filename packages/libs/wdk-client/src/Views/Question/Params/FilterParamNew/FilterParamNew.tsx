@@ -1,6 +1,6 @@
 import _ServerSideAttributeFilter from 'wdk-client/Components/AttributeFilter/ServerSideAttributeFilter';
 import { Field, Filter, MemberFilter } from 'wdk-client/Components/AttributeFilter/Types';
-import { isRange } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { isRange, isMulti } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 import Loading from 'wdk-client/Components/Loading/Loading';
 import { memoize } from 'lodash';
 import React from 'react';
@@ -8,13 +8,12 @@ import { FilterParamNew as TFilterParamNew } from 'wdk-client/Utils/WdkModel';
 import { Props as ParamProps } from 'wdk-client/Views/Question/Params/Utils';
 import {
   setActiveField,
-  startFieldCountRequest,
   updateFieldState,
   updateFilters,
 } from 'wdk-client/Actions/FilterParamActions';
 import 'wdk-client/Views/Question/Params/FilterParamNew/FilterParam.css';
-import { MemberFieldState, RangeFieldState, State } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
-import { getFilterFields, sortDistribution, getOntologyTree } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
+import { MemberFieldState, RangeFieldState, MultiFieldState, State } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
+import { getFilterFields, sortDistribution, sortMultiFieldSummary, getOntologyTree } from 'wdk-client/Views/Question/Params/FilterParamNew/FilterParamUtils';
 
 const ServerSideAttributeFilter: any = _ServerSideAttributeFilter;
 type FieldState = State['fieldStates'][string];
@@ -58,10 +57,6 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     this.props.dispatch(setActiveField({ ...this.props.ctx, activeField: term }));
   }
 
-  _handleFieldCountUpdateRequest(term: string) {
-    this.props.dispatch(startFieldCountRequest({ ...this.props.ctx, field: term }));
-  }
-
   _handleFilterChange(filters: Filter[]) {
     const {
       ctx,
@@ -84,27 +79,45 @@ export default class FilterParamNew extends React.PureComponent<Props> {
     dispatch(updateFilters({...ctx, prevFilters, filters}));
   }
 
-  _handleMemberSort(field: Field, sort: MemberFieldState['sort']) {
+  _handleMemberSort(field: Field, sort2: MemberFieldState['sort'] | MultiFieldState['sort'] ) {
     if (isRange(field)) {
       throw new Error(`Cannot sort a range field.`);
     }
+    if (isMulti(field)) {
+      const sort = sort2 as MultiFieldState['sort'];
+      const filters = this._getFiltersFromValue(this.props.value);
+      const filter = filters.find(filter => filter.field === field.term) as MemberFilter;
+      const fieldState = this.props.uiState.fieldStates[field.term] as MultiFieldState;
 
-    const filters = this._getFiltersFromValue(this.props.value);
-    const filter = filters.find(filter => filter.field === field.term) as MemberFilter;
-    const fieldState = this.props.uiState.fieldStates[field.term] as MemberFieldState;
-
-    this.props.dispatch(updateFieldState({
-      ...this.props.ctx,
-      field: field.term,
-      fieldState: {
-        ...fieldState,
-        sort,
-        summary: fieldState.summary && {
-          ...fieldState.summary,
-          valueCounts: sortDistribution(fieldState.summary.valueCounts, sort, filter)
+      this.props.dispatch(updateFieldState({
+        ...this.props.ctx,
+        field: field.term,
+        fieldState: {
+          ...fieldState,
+          sort,
+          leafSummaries: sortMultiFieldSummary(fieldState.leafSummaries, this.props.parameter.ontology, sort)
         }
-      }
-    }));
+      }));
+
+    } else {
+      const sort = sort2 as MemberFieldState['sort'];
+      const filters = this._getFiltersFromValue(this.props.value);
+      const filter = filters.find(filter => filter.field === field.term) as MemberFilter;
+      const fieldState = this.props.uiState.fieldStates[field.term] as MemberFieldState;
+
+      this.props.dispatch(updateFieldState({
+        ...this.props.ctx,
+        field: field.term,
+        fieldState: {
+          ...fieldState,
+          sort,
+          summary: fieldState.summary && {
+            ...fieldState.summary,
+            valueCounts: sortDistribution(fieldState.summary.valueCounts, sort, filter)
+          }
+        }
+      }));
+    }
   }
 
   _handleMemberChangeRowsPerPage(field: Field, newRowsPerPage: number) {
@@ -168,7 +181,7 @@ export default class FilterParamNew extends React.PureComponent<Props> {
   }
 
   render() {
-    let { parameter, uiState } = this.props;
+    let { parameter, uiConfig, uiState } = this.props;
     let filters = this._getFiltersFromValue(this.props.value);
     let fields = this._getFieldMap(parameter);
     let activeFieldState = uiState.activeOntologyTerm == null
@@ -191,14 +204,13 @@ export default class FilterParamNew extends React.PureComponent<Props> {
           dataCount={uiState.unfilteredCount}
           filteredDataCount={uiState.filteredCount}
           loadingFilteredCount={uiState.loadingFilteredCount}
-
+          hideGlobalCounts={uiConfig?.hideGlobalCounts}
           hideFilterPanel={numLeaves === 1}
           hideFieldPanel={numLeaves === 1}
           minSelectedCount={parameter.minSelectedCount}
 
           onFiltersChange={this._handleFilterChange}
           onActiveFieldChange={this._handleActiveFieldChange}
-          onFieldCountUpdateRequest={this._handleFieldCountUpdateRequest}
           onMemberSort={this._handleMemberSort}
           onMemberChangeCurrentPage={this._handleMemberChangeCurrentPage}
           onMemberChangeRowsPerPage={this._handleMemberChangeRowsPerPage}

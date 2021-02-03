@@ -41,16 +41,6 @@ export default class MultiFieldFilter extends React.Component {
       .map(node => node.field)
       .find(field => field.term === term);
   }
-
-  // Update counts for subfilters if the filter operation changes
-  componentDidUpdate(prevProps, prevState) {
-    const prevFilter = this.getOrCreateFilter(prevProps, prevState);
-    const filter = this.getOrCreateFilter(this.props, this.state);
-    if (prevFilter.value.operation !== filter.value.operation) {
-      this.props.onFieldCountUpdateRequest(this.props.activeField.term);
-    }
-  }
-
   // Event handlers
 
   // Invoke callback with filters array
@@ -228,7 +218,7 @@ export default class MultiFieldFilter extends React.Component {
   }
 
   render() {
-    const values = Seq.from(this.props.activeFieldState.summary)
+    const values = Seq.from(this.props.activeFieldState.leafSummaries)
       .flatMap(summary => summary.valueCounts)
       .map(count => count.value)
       .uniq()
@@ -240,10 +230,10 @@ export default class MultiFieldFilter extends React.Component {
     const leafFilters = get(this.props.filters.find(filter => filter.field === this.props.activeField.term), 'value.filters', []);
     const filtersByField = keyBy(leafFilters, 'field');
 
-    const hasRowWithRemaining = Seq.from(this.props.activeFieldState.summary)
+    const hasRowWithRemaining = Seq.from(this.props.activeFieldState.leafSummaries)
       .some(summary => summary.internalsFilteredCount > 0);
 
-    const rows = Seq.from(this.props.activeFieldState.summary)
+    const rows = Seq.from(this.props.activeFieldState.leafSummaries)
       .flatMap(summary => [
         {
           summary,
@@ -267,24 +257,6 @@ export default class MultiFieldFilter extends React.Component {
 
     return (
       <div className={cx()}>
-        <button
-          type="button"
-          className={cx('UpdateCountsButton') + " btn"}
-          disabled={(
-            filter.value.operation === 'union' ||
-            !this.props.activeFieldState.multiLeafInvalid ||
-            this.props.activeFieldState.loading
-          )}
-          onClick={() => this.props.onFieldCountUpdateRequest(this.props.activeField.term)}
-          title={filter.value.operation === 'union'
-            ? 'When "any" is chosen, the selected options below do not impact each other.'
-            : 'Update the counts of the options in the table below.'}
-        >
-          {this.props.activeFieldState.loading
-            ? <div><Icon fa="circle-o-notch" className="fa-spin"/> Loading...</div>
-            : 'Update counts'}
-        </button>
-
         {/*
           padding: .5em;
           border: 1px solid #cccccc;

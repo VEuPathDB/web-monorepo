@@ -1,3 +1,4 @@
+import { fromPairs } from 'lodash';
 import * as React from 'react';
 
 import { HelpIcon, IconAlt, Link } from 'wdk-client/Components';
@@ -253,7 +254,12 @@ function ResetFormButton({
 
 export function renderDefaultParamGroup(group: ParameterGroup, formProps: Props) {
   let { state, eventHandlers, parameterElements } = formProps;
-  let { question, groupUIState, paramDependenciesUpdating } = state;
+  let { question, groupUIState, paramsUpdatingDependencies } = state;
+  const paramDependenciesUpdating = fromPairs(
+    question.parameters.filter(
+      parameter => paramsUpdatingDependencies[parameter.name]
+    ).flatMap(parameter => parameter.dependentParams.map(pn => [pn, true]))
+  );
   return (
     <DefaultGroup
       key={group.name}
