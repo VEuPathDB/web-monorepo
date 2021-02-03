@@ -1,8 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { zip } from 'lodash';
 
-import { useWdkEffect } from '@veupathdb/wdk-client/lib/Service/WdkService';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import {
   Answer,
   AnswerSpec,
@@ -14,15 +14,13 @@ export type TargetDataType =
   | 'AnnotatedTranscripts'
   | 'AnnotatedProteins'
   | 'Genome'
-  | 'EST'
+  | 'ESTs'
   | 'PopSet';
 
 type BlastOntologyDatabase = 'blast-est-ontology' | 'blast-orf-ontology';
 
 interface TargetMetadata {
   blastOntologyDatabase: BlastOntologyDatabase;
-  recordClassFullName: string;
-  searchName: string;
 }
 
 const blastOntologyDatabases: BlastOntologyDatabase[] = [
@@ -47,58 +45,48 @@ const algorithmTermTables: Record<BlastOntologyDatabase, string> = {
 const targetMetadataByDataType: Record<TargetDataType, TargetMetadata> = {
   AnnotatedTranscripts: {
     blastOntologyDatabase: 'blast-est-ontology',
-    recordClassFullName: 'TranscriptRecordClasses.TranscriptRecordClass',
-    searchName: 'GenesBySimilarity',
   },
   AnnotatedProteins: {
     blastOntologyDatabase: 'blast-orf-ontology',
-    recordClassFullName: 'TranscriptRecordClasses.TranscriptRecordClass',
-    searchName: 'GenesBySimilarity',
   },
   Genome: {
     blastOntologyDatabase: 'blast-est-ontology',
-    recordClassFullName: 'SequenceRecordClasses.SequenceRecordClass',
-    searchName: 'SequencesBySimilarity',
   },
-  EST: {
+  ESTs: {
     blastOntologyDatabase: 'blast-est-ontology',
-    recordClassFullName: 'EstRecordClasses.EstRecordClass',
-    searchName: 'EstsBySimilarity',
   },
   PopSet: {
     blastOntologyDatabase: 'blast-est-ontology',
-    recordClassFullName: 'PopsetRecordClasses.PopsetRecordClass',
-    searchName: 'PopsetsBySimilarity',
   },
 };
 
-export function useEnabledAlgorithms(
-  targetDataType: TargetDataType,
-  projectId: string | undefined
-) {
-  const algorithmTermsByDatabase = useAlgorithmTermsByDatabase(projectId);
+export function useEnabledAlgorithms(targetDataType: TargetDataType) {
+  const algorithmTermsByDatabase = useAlgorithmTermsByDatabase();
 
-  const enabledAlgorithms = useMemo(
-    () =>
-      algorithmTermsByDatabase &&
-      algorithmTermsByDatabase[
-        targetMetadataByDataType[targetDataType].blastOntologyDatabase
-      ],
-    [algorithmTermsByDatabase, targetDataType]
-  );
+  const enabledAlgorithms = useMemo(() => {
+    if (algorithmTermsByDatabase == null) {
+      return;
+    }
+
+    const targetMetaData = targetMetadataByDataType[targetDataType];
+    const ontologyDatabaseName = targetMetaData.blastOntologyDatabase;
+
+    return algorithmTermsByDatabase[ontologyDatabaseName];
+  }, [algorithmTermsByDatabase, targetDataType]);
 
   return enabledAlgorithms;
 }
 
-function useAlgorithmTermsByDatabase(projectId: string | undefined) {
-  const [algorithmTermsByDatabase, setAlgorithmTermsByDatabase] = useState<
-    Record<BlastOntologyDatabase, string[]> | undefined
-  >(undefined);
+function useAlgorithmTermsByDatabase() {
+  const projectId = useWdkService(
+    (wdkService) => wdkService.getConfig().then(({ projectId }) => projectId),
+    []
+  );
 
-  useWdkEffect(
-    (wdkService) => {
-      if (!projectId) {
-        return;
+  const algorithmTermsByDatabase = useWdkService(
+    async (wdkService) => {
+      if (projectId == null) {
+        return undefined;
       }
 
       const answerPromises = blastOntologyDatabases.map((databaseName) =>
@@ -108,22 +96,20 @@ function useAlgorithmTermsByDatabase(projectId: string | undefined) {
         )
       );
 
-      (async () => {
-        const answersByDatabase = await Promise.all(answerPromises);
+      const answersByDatabase = await Promise.all(answerPromises);
 
-        const result = zip(blastOntologyDatabases, answersByDatabase).reduce(
-          (memo, [databaseName, answer]) => ({
-            ...memo,
-            [databaseName as BlastOntologyDatabase]: answerToTerms(
-              databaseName as BlastOntologyDatabase,
-              answer as Answer
-            ).map(({ term }) => term),
-          }),
-          {} as Record<BlastOntologyDatabase, string[]>
-        );
+      const result = zip(blastOntologyDatabases, answersByDatabase).reduce(
+        (memo, [databaseName, answer]) => ({
+          ...memo,
+          [databaseName as BlastOntologyDatabase]: answerToTerms(
+            databaseName as BlastOntologyDatabase,
+            answer as Answer
+          ).map(({ term }) => term),
+        }),
+        {} as Record<BlastOntologyDatabase, string[]>
+      );
 
-        setAlgorithmTermsByDatabase(result);
-      })();
+      return result;
     },
     [projectId]
   );
