@@ -84,7 +84,7 @@ export function useEnabledAlgorithms(
       algorithmTermsByDatabase[
         targetMetadataByDataType[targetDataType].blastOntologyDatabase
       ],
-    [algorithmTermsByDatabase, targetMetadataByDataType, targetDataType]
+    [algorithmTermsByDatabase, targetDataType]
   );
 
   return enabledAlgorithms;
