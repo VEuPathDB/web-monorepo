@@ -154,11 +154,19 @@ function makeAllowedAlgorithmsReportConfig(
 }
 
 function answerToTerms(databaseName: BlastOntologyDatabase, answer: Answer) {
-  const termTable = algorithmTermTables[databaseName];
+  const termTableName = algorithmTermTables[databaseName];
 
-  if (answer.records[0].tableErrors.includes(termTable)) {
-    throw new Error(`Missing expected table ${termTable}`);
+  if (answer.records[0].tableErrors.includes(termTableName)) {
+    throw new Error(`Missing expected table ${termTableName}`);
   }
 
-  return answer.records[0].tables[termTable];
+  const termTable = answer.records[0].tables[termTableName];
+
+  if (termTable.some((row) => row.term == null || row.internal == null)) {
+    throw new Error(
+      `Expected all rows of table '${termTableName}' to have 'term' and 'internal' fields.`
+    );
+  }
+
+  return termTable;
 }
