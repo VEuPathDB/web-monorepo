@@ -271,6 +271,7 @@ export const CollectionDate = () => {
           duration
         }}
         showGrid={true}
+        showMouseToolbar={true}
       />
       <MapVEuLegendSampleList
         legendType={legendType}

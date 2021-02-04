@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
 import { DARK_GRAY } from '../constants/colors';
-import PlotlyPlot from './PlotlyPlot';
+import PlotlyPlot, { ModebarDefault, PlotProps } from './PlotlyPlot';
 import { HistogramData } from '../types/plots';
 
-export type HistogramProps = {
+export interface HistogramProps extends PlotProps {
   /** Data for the plot. */
   data: HistogramData;
   /** The width of the plot in pixels. */
@@ -34,9 +34,13 @@ export type HistogramProps = {
   /** Control of background color. Defaults to transparent.  */
   backgroundColor?: string;
   /** Should plot legend be displayed? */
-  displayLegend?: boolean;
+  showLegend?: boolean;
   /** function to call upon selecting a range (in x and y axes) */
   onSelected?: () => void;
+  /** Max value for the y-axis */
+  yAxisRange?: [number, number];
+  /** Show value for each bar */
+  showBarValues?: boolean,
 };
 
 /** A Plot.ly based histogram component. */
@@ -54,7 +58,12 @@ export default function Histogram({
   barLayout = 'overlay',
   backgroundColor = 'transparent',
   onSelected = () => {},
-  displayLegend = true,
+  showLegend = true,
+  margin,
+  staticPlot,
+  showModebar,
+  yAxisRange,
+  showBarValues,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -92,6 +101,8 @@ export default function Histogram({
           opacity: calculatedBarOpacity,
           orientation: orientation === 'vertical' ? 'v' : 'h',
           name: series.name,
+          text: showBarValues ? binCounts.map(String) : undefined,
+          textposition: showBarValues ? 'auto' : undefined,
           ...(series.color ? { marker: { color: series.color } } : {}),
         };
       }),
@@ -106,10 +117,10 @@ export default function Histogram({
         style={{ height, width }}
         layout={{
           autosize: true,
-          margin: {
+          margin: margin || {
             pad: 5,
           },
-          showlegend: displayLegend,
+          showlegend: showLegend,
           legend: {
             font: {
               color: textColor,
@@ -146,6 +157,7 @@ export default function Histogram({
             },
             color: textColor,
             gridcolor: gridColor,
+            range: yAxisRange || undefined,
           },
           barmode: barLayout,
           title: {
@@ -161,6 +173,10 @@ export default function Histogram({
         }}
         data={plotlyFriendlyData}
         onSelected={onSelected}
+        config={{
+          displayModeBar: showModebar !== undefined ? showModebar : ModebarDefault,
+          staticPlot: staticPlot,
+        }}
       />
     </div>
   );
