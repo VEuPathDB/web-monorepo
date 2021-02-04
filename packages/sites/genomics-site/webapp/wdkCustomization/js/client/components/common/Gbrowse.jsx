@@ -127,7 +127,7 @@ const JbrowseLink = ({ url }) =>
 const ApolloJbrowseLink = ({ url, urlApollo }) =>
     <div style={{ textAlign: 'center', margin: 25 }}>
 <a href={url} className="eupathdb-BigButton" target="_blank">View in JBrowse genome browser</a>
-<a href={urlApollo} className="eupathdb-BigButton" target="_blank">View in Apollo annotation editor</a>
+<a href={urlApollo} className="eupathdb-BigButton" target="_blank">&emsp;&emsp;&emsp;&emsp;Annotate in Apollo&emsp;&emsp;&emsp;&emsp;</a>
 </div>
 
 
