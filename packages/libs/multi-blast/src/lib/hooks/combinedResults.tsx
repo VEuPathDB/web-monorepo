@@ -3,7 +3,7 @@ import {
   MesaColumn,
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
-import { orderBy } from 'lodash';
+import { groupBy, mapValues, orderBy } from 'lodash';
 import { useMemo } from 'react';
 import {
   blastDbNameToWdkRecordType,
@@ -17,11 +17,6 @@ export function useCombinedResultColumns(
   wdkRecordType: string | null
 ): MesaColumn<keyof CombinedResultRow>[] {
   return [
-    {
-      key: 'rank',
-      name: 'Rank',
-      sortable: true,
-    },
     {
       key: 'accession',
       name: 'Hit',
@@ -45,6 +40,11 @@ export function useCombinedResultColumns(
     {
       key: 'query',
       name: 'Query',
+      sortable: true,
+    },
+    {
+      key: 'rank',
+      name: 'Rank',
       sortable: true,
     },
     {
@@ -80,51 +80,73 @@ export function useRawCombinedResultRows(
 ): CombinedResultRow[] {
   const resultsByQuery = combinedResult.BlastOutput2;
 
-  const unrankedHsps = resultsByQuery.flatMap((queryResult) =>
-    queryResult.report.results.search.hits.map((hit) => {
-      const bestHsp = hit.hsps[0];
+  return useMemo(() => {
+    const unrankedHits = resultsByQuery.flatMap((queryResult) =>
+      queryResult.report.results.search.hits.map((hit) => {
+        const bestHsp = hit.hsps[0];
 
-      const title = hit.description[0].title;
+        const title = hit.description[0].title;
 
-      const accession = title.replace(/\s+[\s\S]*/, '');
+        const accession = title.replace(/\s+[\s\S]*/, '');
 
-      const description =
-        wdkRecordType === 'gene' ? geneHitTitleToDescription(title) : null;
+        const description =
+          wdkRecordType === 'gene' ? geneHitTitleToDescription(title) : null;
 
-      const {
-        query_id: queryId,
-        query_title: queryTitle,
-      } = queryResult.report.results.search;
+        const {
+          query_id: queryId,
+          query_title: queryTitle,
+        } = queryResult.report.results.search;
 
-      const query = queryTitle == null ? queryId : `${queryTitle} (${queryId})`;
+        const query =
+          queryTitle == null ? queryId : `${queryTitle} (${queryId})`;
 
-      const wdkPrimaryKey =
-        wdkRecordType === 'gene'
-          ? geneHitTitleToWdkPrimaryKey(title)
-          : accession;
+        const wdkPrimaryKey =
+          wdkRecordType === 'gene'
+            ? geneHitTitleToWdkPrimaryKey(title)
+            : accession;
 
-      const alignmentLength = bestHsp.align_len;
-      const eValue = bestHsp.evalue;
-      const identity = bestHsp.identity / bestHsp.align_len;
-      const score = bestHsp.score;
+        const alignmentLength = bestHsp.align_len;
+        const eValue = bestHsp.evalue;
+        const identity = bestHsp.identity / bestHsp.align_len;
+        const score = bestHsp.score;
 
-      return {
-        accession,
-        alignmentLength,
-        description,
-        eValue,
-        identity,
-        query,
-        score,
-        wdkPrimaryKey,
-      };
-    })
-  );
+        return {
+          accession,
+          alignmentLength,
+          description,
+          eValue,
+          identity,
+          query,
+          score,
+          wdkPrimaryKey,
+        };
+      })
+    );
 
-  return unrankedHsps.map((unrankedHsp, zeroIndexRank) => ({
-    ...unrankedHsp,
-    rank: zeroIndexRank + 1,
-  }));
+    const hitsGroupedByTarget = groupBy(unrankedHits, 'accession');
+
+    const groupedHitsWithRank = mapValues(
+      hitsGroupedByTarget,
+      (hitsByTarget) => {
+        const hitsOrderedBySignificance = orderBy(
+          hitsByTarget,
+          ['eValue', 'score', 'identity'],
+          ['asc', 'desc', 'asc']
+        );
+
+        return hitsOrderedBySignificance.map((unrankedHit, zeroIndexRank) => ({
+          ...unrankedHit,
+          rank: zeroIndexRank + 1,
+        }));
+      }
+    );
+
+    return Object.values(groupedHitsWithRank).reduce((memo, hitGroup) => {
+      memo.push(...hitGroup);
+
+      return memo;
+    }, [] as CombinedResultRow[]);
+  }, [resultsByQuery, wdkRecordType]);
 }
 
 export function useSortedCombinedResultRows(
