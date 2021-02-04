@@ -1,21 +1,12 @@
-import React, { ReactElement, useState, useCallback } from 'react';
+import React, { ReactElement, useState, useCallback, useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 // import { action } from '@storybook/addon-actions';
-import { BoundsViewport, Bounds } from '../map/Types';
+import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from "../map/BoundsDriftMarker";
-import { zoomLevelToGeohashLevel, defaultAnimationDuration } from '../map/config/map.json';
+import { defaultAnimationDuration } from '../map/config/map.json';
 import { getSpeciesDonuts, getSpeciesBasicMarkers } from "./api/getMarkersFromFixtureData";
 
-import speciesData from './fixture-data/geoclust-species-testing-all-levels.json';
-
-// below was an attempt to lazy load...
-// it seemed to cause a 'black screen' error in Storybook if you refreshed the page in your browser
-//
-// let speciesData : any = undefined;
-// import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
-
 import { LeafletMouseEvent } from "leaflet";
-import DonutMarker, { DonutMarkerProps } from '../map/DonutMarker';
 
 //DKDK sidebar & legend
 import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
@@ -27,7 +18,6 @@ import MapVEuLegendSampleList, { LegendProps } from '../map/MapVEuLegendSampleLi
 // import Geohash from 'latlon-geohash';
 // import {DriftMarker} from "leaflet-drift-marker";
 import geohashAnimation from "../map/animation_functions/geohash";
-import md5 from 'md5';
 
 export default {
   title: 'Map/Donut Markers',
@@ -154,16 +144,37 @@ FirstRequest.args = {
 
 export const TwoRequests: Story<MapVEuMapProps> = ( args ) => {
 
+  // With this approach, the handler simply updates the state `bvp`.
+  // The `useEffect` hook runs when the value of `bvp` changes. Within this
+  // hook, we use the variable `isCancelled` to determine if `setMarkerElements`
+  // should be called. It's possible to get fancier and cancel any in-flight requests,
+  // but this will require a bit of refactoring and even more indirection.
+  const [bvp, setBvp] = useState<BoundsViewport | null>(null);
   const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
   const [ legendData, setLegendData ] = useState<LegendProps["data"]>([])
 
   const handleViewportChanged = useCallback(async (bvp : BoundsViewport) => {
-    const markers = await getSpeciesBasicMarkers(bvp, defaultAnimationDuration, handleMarkerClick);
-    setMarkerElements(markers);
-    const fullMarkers = await getSpeciesDonuts(bvp, defaultAnimationDuration, setLegendData, handleMarkerClick, 2000);
-    setMarkerElements(fullMarkers);
-  }, [setMarkerElements])
+    setBvp(bvp);
+  }, [setBvp])
 
+  useEffect(() => {
+    // track if effect has been cancelled
+    let isCancelled = false;
+    if (bvp == null) return;
+    // Create an anonymous async function, and call it immediately.
+    // This way we can use async-await
+    (async () => { 
+      const markers = await getSpeciesBasicMarkers(bvp, defaultAnimationDuration, handleMarkerClick);
+      if (!isCancelled) setMarkerElements(markers);
+      if (isCancelled) return; // avoid the next request if this effect has already been cancelled
+      const fullMarkers = await getSpeciesDonuts(bvp, defaultAnimationDuration, setLegendData, handleMarkerClick, 2000);
+      if (!isCancelled) setMarkerElements(fullMarkers);
+    })();
+    // Cleanup function to set `isCancelled` to `true`
+    return () => { isCancelled = true };
+  }, [bvp]);
+
+  
   return (
     <>
       <MapVEuMap
