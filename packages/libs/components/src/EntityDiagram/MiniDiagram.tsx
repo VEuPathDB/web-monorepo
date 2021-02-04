@@ -28,7 +28,8 @@ export default function MiniDiagram({treeData, orientation, highlightedEntityID}
 
     // get acronym of displayName
     const matches = node.data.displayName.match(/\b(\w)/g);
-    const displayNameAcronym = matches.join('');
+    //DKDK could use ! or ? to avoid ts error, but used ? here (optional chaining)
+    const displayNameAcronym = matches?.join('');
 
     const handleTooltipOpen = () => {
       const topOffset = (orientation == 'horizontal' ? 30 : 80) // offsets are based on margins
