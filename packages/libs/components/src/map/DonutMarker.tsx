@@ -1,5 +1,4 @@
 import React from "react";
-import { MarkerProps } from './Types';
 
 //DKDK leaflet
 import L from "leaflet";
@@ -7,11 +6,15 @@ import L from "leaflet";
 //DKDK anim
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
+import PiePlot from '../plots/PiePlot';
+
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
-interface DonutMarkerProps extends BoundsDriftMarkerProps {
-  labels: Array<string>, // the labels (not likely to be shown at normal marker size)
-  values: Array<number>, // the counts or totals to be shown in the donut
-  colors?: Array<string> | null, // bar colors: set to be optional with array or null type
+export interface DonutMarkerProps extends BoundsDriftMarkerProps {
+  data: {
+    value: number,
+    label: string,
+    color?: string,
+  }[],
   isAtomic?: boolean,      // add a special thumbtack icon if this is true
   onClick?: (event: L.LeafletMouseEvent) => void | undefined,
 }
@@ -71,17 +74,21 @@ function kFormatter(num: number) {
 export default function DonutMarker(props: DonutMarkerProps) {
   let fullStat = []
   let defaultColor: string = ''
-  for (let i = 0; i < props.values.length; i++) {
-    if (props.colors) {
-      defaultColor = props.colors[i]
+  for (let i = 0; i < props.data.length; i++) {
+    // Currently this only serves to initialize missing colors as 'silver'
+    let datum = props.data[i]
+
+    if (datum.color) {
+      defaultColor = datum.color
     } else {
       defaultColor = 'silver'
     }
+
     fullStat.push({
       // color: props.colors[i],
       color: defaultColor,
-      label: props.labels[i],
-      value: props.values[i],
+      label: datum.label,
+      value: datum.value,
     })
   }
 
@@ -138,6 +145,28 @@ export default function DonutMarker(props: DonutMarkerProps) {
   //DKDK anim check duration exists or not
   let duration: number = (props.duration) ? props.duration : 300
 
+  const plotSize = 150;
+  const marginSize = 0;
+
+  const popupPlot = <PiePlot
+    data={fullStat}
+    interior={{
+      heightPercentage: 0.5,
+      text: sumLabel as string,
+      fontSize: 18,
+    }}
+    width={plotSize}
+    height={plotSize}
+    margin={{l: marginSize, r: marginSize, t: marginSize, b: marginSize}}
+    showLegend={false}
+    showHoverInfo={false}
+    showModebar={false}
+    textposition='inside'
+    textinfo='text'
+    // Show value if pie slice is large enough
+    text={fullStat.map(datum => datum.value / sumValues >= 0.015 ? datum.value.toString() : '')}
+  />;
+
   return (
     <BoundsDriftMarker
       id={props.id}
@@ -145,6 +174,14 @@ export default function DonutMarker(props: DonutMarkerProps) {
       bounds={props.bounds}
       icon={SVGDonutIcon}
       duration={duration}
+      popupContent={{
+        content: popupPlot,
+        size: {
+          width: plotSize,
+          height: plotSize
+        },
+      }}
+      showPopup={props.showPopup}
     />
   );
 }

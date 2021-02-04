@@ -1,5 +1,5 @@
 import React from "react";
-import PlotlyPlot, { PlotProps } from "./PlotlyPlot";
+import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
 import { PlotData } from 'plotly.js';
 
 export interface Props extends PlotProps {
@@ -13,7 +13,6 @@ export interface Props extends PlotProps {
   xLabel: string;
   yLabel: string;
   showLegend?: boolean;
-  showModebar?: boolean;
 }
 
 export default function LinePlot(props: Props) {
@@ -40,7 +39,10 @@ export default function LinePlot(props: Props) {
       margin: margin,
       showlegend: showLegend,
     })}
-    config={{displayModeBar: showModebar}}
+    config={{
+      displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
+      staticPlot: props.staticPlot,
+    }}
     data={finalData}
   />
   )

@@ -1,8 +1,10 @@
 /* DKDK legend positioning */
 .legend {
   position: absolute;
-  bottom: 40px;
+  /* DKDK change from 40 to 50 to have show/hide button */
+  bottom: 50px;
   right: 10px;
+  /* z-index:10000; */
 }
 
 /* DKDK reduce min-height for numeric (range data) - copy from .legend-contents at vb-popbio-maps.css */
@@ -233,4 +235,53 @@
   font-size: 0.84em;
   /* font-weight: bold; */
   line-height: 16px;
+}
+
+/* DKDK a right side button */
+.legend-display-button {
+  position: absolute;
+  z-index: 1000;
+  bottom: 0px;
+  height: 50px;
+  border-radius: 5px;
+}
+
+/* DKDK set button width so that it remains the same with the text change (show/hide) */
+.legend-display-button button {
+  width: 120px;
+  display: inline-block;
+}
+
+.legend-display-button.active {
+  right: 10px;
+}
+
+/* DKDK legend wrapper to show and hide */
+.legend-wrapper {
+  display: flex;
+  width: 300px;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+.legend-wrapper.hiding-legend {
+  display: none;
+}
+
+.legend-nav {
+  position: relative;
+  width: 300px;
+}
+
+.legend-nav-icon {
+  cursor: pointer;
+  transition: color .3s;
+  /* DKDK set button's background-color for firefox (due to button:hover below) */
+  background-color: #e7e7e7;
+}
+
+.legend-nav-icon:hover {
+  /* color: #5eb2ff; */
+  color: red;
 }

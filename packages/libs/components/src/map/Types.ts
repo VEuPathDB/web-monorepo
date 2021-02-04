@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
 import { LatLngLiteral, Icon } from "leaflet";
+import { PlotProps } from '../plots/PlotlyPlot';
 
 export type LatLng = LatLngLiteral;
 // from leaflet:
@@ -33,7 +34,15 @@ export interface BoundsViewport {
 export interface MarkerProps {
   position: LatLng,
   id: string,
-  icon?: Icon
+  icon?: Icon,
+  showPopup?: boolean,
+  popupContent?: {
+    content: ReactElement,
+    size: {
+      width: number,
+      height: number,
+    },
+  },
 }
 
 export type AnimationFunction = (
