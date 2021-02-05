@@ -9,17 +9,21 @@ import {
   useMesaUiState,
   useRawCombinedResultRows,
   useSortedCombinedResultRows,
-  useWdkRecordType,
 } from '../hooks/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
 interface Props {
   combinedResult: MultiQueryReportJson;
+  hitTypeDisplayName: string;
+  wdkRecordType: string | null;
 }
 
-export function CombinedBlastResult({ combinedResult }: Props) {
-  const wdkRecordType = useWdkRecordType(combinedResult);
-  const columns = useCombinedResultColumns(wdkRecordType);
+export function CombinedBlastResult({
+  combinedResult,
+  hitTypeDisplayName,
+  wdkRecordType,
+}: Props) {
+  const columns = useCombinedResultColumns(hitTypeDisplayName, wdkRecordType);
   const rawRows = useRawCombinedResultRows(combinedResult, wdkRecordType);
 
   const [sort, setSort] = useState<MesaSortObject>({

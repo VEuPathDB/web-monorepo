@@ -3,8 +3,12 @@ import {
   MesaColumn,
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+
 import { groupBy, mapValues, orderBy } from 'lodash';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+
 import {
   blastDbNameToWdkRecordType,
   CombinedResultRow,
@@ -14,64 +18,68 @@ import {
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
 export function useCombinedResultColumns(
+  hitTypeDisplayName: string,
   wdkRecordType: string | null
 ): MesaColumn<keyof CombinedResultRow>[] {
-  return [
-    {
-      key: 'accession',
-      name: 'Hit',
-      renderCell: ({ row }: { row: CombinedResultRow }) =>
-        wdkRecordType == null || row.wdkPrimaryKey == null ? (
-          row.accession
-        ) : (
-          <Link to={`/record/${wdkRecordType}/${row.wdkPrimaryKey}`}>
-            {row.accession}
-          </Link>
-        ),
-      sortable: true,
-    },
-    {
-      key: 'description',
-      name: 'Description',
-      renderCell: ({ row }: { row: CombinedResultRow }) =>
-        row.description == null ? '' : row.description,
-      sortable: true,
-    },
-    {
-      key: 'query',
-      name: 'Query',
-      sortable: true,
-    },
-    {
-      key: 'rank',
-      name: 'Rank',
-      sortable: true,
-    },
-    {
-      key: 'alignmentLength',
-      name: 'Aln Length',
-      sortable: true,
-    },
-    {
-      key: 'eValue',
-      name: 'E-Value',
-      renderCell: ({ row }: { row: CombinedResultRow }) =>
-        row.eValue.toExponential(2),
-      sortable: true,
-    },
-    {
-      key: 'score',
-      name: 'Score',
-      sortable: true,
-    },
-    {
-      key: 'identity',
-      name: 'Identity',
-      renderCell: ({ row }: { row: CombinedResultRow }) =>
-        `${(row.identity * 100).toFixed(2)}%`,
-      sortable: true,
-    },
-  ];
+  return useMemo(
+    () => [
+      {
+        key: 'accession',
+        name: hitTypeDisplayName,
+        renderCell: ({ row }: { row: CombinedResultRow }) =>
+          wdkRecordType == null || row.wdkPrimaryKey == null ? (
+            row.accession
+          ) : (
+            <Link to={`/record/${wdkRecordType}/${row.wdkPrimaryKey}`}>
+              {row.accession}
+            </Link>
+          ),
+        sortable: true,
+      },
+      {
+        key: 'description',
+        name: 'Description',
+        renderCell: ({ row }: { row: CombinedResultRow }) =>
+          row.description == null ? '' : row.description,
+        sortable: true,
+      },
+      {
+        key: 'query',
+        name: 'Query',
+        sortable: true,
+      },
+      {
+        key: 'rank',
+        name: 'Rank',
+        sortable: true,
+      },
+      {
+        key: 'alignmentLength',
+        name: 'Aln Length',
+        sortable: true,
+      },
+      {
+        key: 'eValue',
+        name: 'E-Value',
+        renderCell: ({ row }: { row: CombinedResultRow }) =>
+          row.eValue.toExponential(2),
+        sortable: true,
+      },
+      {
+        key: 'score',
+        name: 'Score',
+        sortable: true,
+      },
+      {
+        key: 'identity',
+        name: 'Identity',
+        renderCell: ({ row }: { row: CombinedResultRow }) =>
+          `${(row.identity * 100).toFixed(2)}%`,
+        sortable: true,
+      },
+    ],
+    [hitTypeDisplayName, wdkRecordType]
+  );
 }
 
 export function useRawCombinedResultRows(
@@ -185,4 +193,18 @@ export function useWdkRecordType(combinedResult: MultiQueryReportJson) {
 
     return blastDbNameToWdkRecordType(sampleDbName);
   }, [combinedResult]);
+}
+
+export function useHitTypeDisplayName(wdkRecordType: string | null) {
+  const recordClasses = useSelector(
+    (state: RootState) => state.globalData.recordClasses
+  );
+
+  return useMemo(() => {
+    const recordClass = recordClasses?.find(
+      ({ urlSegment }) => urlSegment === wdkRecordType
+    );
+
+    return recordClass == null ? 'Hit' : recordClass.shortDisplayName;
+  }, [recordClasses, wdkRecordType]);
 }

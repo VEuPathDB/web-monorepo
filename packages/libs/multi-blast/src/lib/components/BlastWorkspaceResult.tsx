@@ -4,6 +4,10 @@ import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
 import { useBlastApi, useDownloadJobQueryCallback } from '../hooks/api';
+import {
+  useHitTypeDisplayName,
+  useWdkRecordType,
+} from '../hooks/combinedResults';
 import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
@@ -86,6 +90,10 @@ function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
 
   const downloadJobQuery = useDownloadJobQueryCallback(jobDetails.id);
 
+  const wdkRecordType = useWdkRecordType(multiQueryReport);
+
+  const hitTypeDisplayName = useHitTypeDisplayName(wdkRecordType);
+
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
@@ -102,6 +110,8 @@ function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
             ? jobDetails.config.tool
             : jobDetails.config.task}
         </span>
+        <span className="InlineHeader">Target Type:</span>
+        <span>{hitTypeDisplayName}</span>
         <span className="InlineHeader">
           {databases.length > 1 ? 'Databases' : 'Database'}:
         </span>
@@ -111,7 +121,11 @@ function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
           Download
         </Link>
       </div>
-      <CombinedBlastResult combinedResult={multiQueryReport} />
+      <CombinedBlastResult
+        combinedResult={multiQueryReport}
+        hitTypeDisplayName={hitTypeDisplayName}
+        wdkRecordType={wdkRecordType}
+      />
     </div>
   );
 }
