@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { uniq } from 'lodash';
+
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
@@ -78,13 +80,13 @@ interface BlastSummaryProps {
 }
 
 function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
-  const databases = useMemo(
-    () =>
-      multiQueryReport.BlastOutput2.map(({ report }) =>
-        report.search_target.db.replace(/[\s\S]*\//, '')
-      ),
-    [multiQueryReport]
-  );
+  const databases = useMemo(() => {
+    const databasesEntries = multiQueryReport.BlastOutput2.map(({ report }) =>
+      report.search_target.db.replace(/[\s\S]*\//, '')
+    );
+
+    return uniq(databasesEntries);
+  }, [multiQueryReport]);
 
   const databasesStr = useMemo(() => databases.join(', '), [databases]);
 
