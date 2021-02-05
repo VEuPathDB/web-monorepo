@@ -1,7 +1,7 @@
 import { FormEvent, useCallback, useContext, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 
-import { RadioList } from '@veupathdb/wdk-client/lib/Components';
+import { RadioList, TextArea } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -14,12 +14,17 @@ import DefaultQuestionForm, {
 
 import { useBlastApi } from '../hooks/api';
 import { useEnabledAlgorithms } from '../hooks/blastAlgorithms';
-import { useAlgorithmParamProps, useTargetParamProps } from '../hooks/params';
+import {
+  useAlgorithmParamProps,
+  useSequenceParamProps,
+  useTargetParamProps,
+} from '../hooks/params';
 import {
   ADVANCED_PARAMS_GROUP_NAME,
   BLAST_ALGORITHM_PARAM_NAME,
   BLAST_DATABASE_ORGANISM_PARAM_NAME,
   BLAST_DATABASE_TYPE_PARAM_NAME,
+  BLAST_QUERY_SEQUENCE_PARAM_NAME,
   findParamsWhichDependOnlyOnBlastAlgorithm,
   isOmittedParam,
   organismParamValueToFilenames,
@@ -30,7 +35,11 @@ import { TargetDataType } from '../utils/targetTypes';
 
 import { AdvancedParamGroup } from './AdvancedParamGroup';
 
+import './BlastForm.scss';
+
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
+
+const BLAST_FORM_CONTAINER_NAME = 'BlastForm';
 
 export type Props = DefaultQuestionFormProps;
 
@@ -121,6 +130,10 @@ export function BlastForm(props: Props) {
     props.eventHandlers.updateParamValue,
     enabledAlgorithms
   );
+  const sequenceParamProps = useSequenceParamProps(
+    props.state,
+    props.eventHandlers.updateParamValue
+  );
 
   const targetParamElement = (
     <RadioList
@@ -134,23 +147,34 @@ export function BlastForm(props: Props) {
       name={`${props.state.question.urlSegment}/${BLAST_ALGORITHM_PARAM_NAME}`}
     />
   );
+  const sequenceParamElement = (
+    <TextArea
+      {...sequenceParamProps}
+      name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
+    />
+  );
 
   const parameterElements = {
     ...props.parameterElements,
     [BLAST_DATABASE_TYPE_PARAM_NAME]: targetParamElement,
     [BLAST_ALGORITHM_PARAM_NAME]: algorithmParamElement,
+    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: sequenceParamElement,
   };
+
+  const containerClassName = `${blastFormCx()} ${blastFormCx('MultiBlast')}`;
 
   return enabledAlgorithms == null ? null : props.submissionMetadata.type ===
     'create-strategy' ? (
     <NewJobForm
       {...props}
+      containerClassName={containerClassName}
       renderParamGroup={renderBlastParamGroup}
       parameterElements={parameterElements}
     />
   ) : (
     <DefaultQuestionForm
       {...props}
+      containerClassName={containerClassName}
       renderParamGroup={renderBlastParamGroup}
       parameterElements={parameterElements}
     />
@@ -216,7 +240,7 @@ function NewJobForm(props: NewJobFormProps) {
   );
 
   return (
-    <div className={blastFormCx()}>
+    <div className={props.containerClassName}>
       <form onSubmit={onSubmit}>
         {props.state.question.groups
           .filter((group) => group.displayType !== 'hidden')

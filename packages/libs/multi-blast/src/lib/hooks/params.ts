@@ -10,6 +10,7 @@ import {
   BLAST_ALGORITHM_PARAM_NAME,
   BLAST_DATABASE_ORGANISM_PARAM_NAME,
   BLAST_DATABASE_TYPE_PARAM_NAME,
+  BLAST_QUERY_SEQUENCE_PARAM_NAME,
 } from '../utils/params';
 
 export function useTargetParamProps(
@@ -86,5 +87,24 @@ export function useAlgorithmParamProps(
     value: algorithm,
     onChange,
     required: true,
+  };
+}
+
+export function useSequenceParamProps(
+  state: QuestionState,
+  updateParamValue: Props['eventHandlers']['updateParamValue']
+) {
+  const parameter =
+    state.question.parametersByName[BLAST_QUERY_SEQUENCE_PARAM_NAME];
+
+  const onChange = useChangeParamValue(parameter, state, updateParamValue);
+
+  return {
+    className: 'SequenceParam',
+    value: state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME],
+    onChange,
+    required: true,
+    cols: 80,
+    rows: 10,
   };
 }
