@@ -1,7 +1,8 @@
 import React from 'react';
 import { BoundsViewport, Bounds } from '../../map/Types';
-import { zoomLevelToGeohashLevel, allColorsHex } from '../../map/config/map.json';
+import { zoomLevelToGeohashLevel, allColorsHex, chartMarkerColorsHex } from '../../map/config/map.json';
 import DonutMarker, { DonutMarkerProps } from '../../map/DonutMarker';
+import ChartMarker from '../../map/ChartMarker';
 import { LeafletMouseEvent } from "leaflet";
 
 function sleep(ms : number) : Promise<() => void> {
@@ -142,13 +143,13 @@ export const getSpeciesBasicMarkers = async ({bounds, zoomLevel} : BoundsViewpor
     const lng : number = bucket.lnAvg;
     const bounds : Bounds = { southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }};
     
-    let sum = 0;
-    bucket.term.buckets.forEach((bucket : any) => sum += bucket.count);
+    // let sum = 0;
+    // bucket.term.buckets.forEach((bucket : any) => sum += bucket.count);
     
-    let data: DonutMarkerProps['data'] = [
+    const data: DonutMarkerProps['data'] = [
       {
 	label: 'unknown',
-	value: sum,
+	value: bucket.count,
 	color: 'white'
       }
     ];
@@ -173,4 +174,236 @@ export const getSpeciesBasicMarkers = async ({bounds, zoomLevel} : BoundsViewpor
       )
   });
 }
+
+
+
+//DKDK define bucket prop, which is for buckets[]
+interface bucketProps {
+  term: {
+    between: { count: number },
+    after: { count: number },
+    before: { count: number },
+    buckets: Array<{
+      count: number,
+      val: string,
+    }>,
+  },
+  atomicCount: number,
+  val: string,
+  count: number,
+  ltAvg: number,
+  ltMin: number,
+  ltMax: number,
+  lnAvg: number,
+  lnMin: number,
+  lnMax: number,
+}
+
+
+export const getCollectionDateChartMarkers =
+  async ({bounds, zoomLevel} : BoundsViewport,
+	 duration: number,
+	 setLegendData: (legendData: Array<{label: string, value: number, color: string}>) => void,
+	 handleMarkerClick: (e: LeafletMouseEvent) => void,
+	 legendRadioValue: string,
+	 setYAxisRangeValue: (yAxisRangeValue: number) => void,
+	 delay: number = 0,
+  ) => {
+
+  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+  delay && await sleep(delay);
+  const response = await fetch('/data/geoclust-date-binning-testing-all-levels.json');
+  const collectionDateData = await response.json();
+  
+  let legendSums : number[] = [];
+  let legendLabels : string[] = [];
+  let legendColors : string[] = [];
+  let yAxisRange : number[] = [];  // This sets range to 'local' mode
+  let yAxisRangeAll : number[] = [];
+
+  const buckets = (collectionDateData as { [key: string]: any })[`geohash_${geohash_level}`].facets.geo.buckets.filter((bucket : any) => {
+    const lat : number = bucket.ltAvg;
+    const long : number = bucket.lnAvg;
+
+    const south = bounds.southWest.lat;
+    const north = bounds.northEast.lat;
+    const west = bounds.southWest.lng;
+    const east = bounds.northEast.lng;
+    const lambda = 1e-08; // accommodate tiny rounding errors
+
+    return (lat > south &&
+	    lat < north &&
+	    (west < east - lambda ? (long > west && long < east) :
+		    west > east + lambda ? !(long > east && long < west) : true) );
+  });
+
+  //DKDK change this to always show Reginal scale value
+  yAxisRangeAll = [0, buckets.reduce(
+    (currentMax: number, bucket: bucketProps) => {
+      return Math.max(
+        currentMax,
+        bucket.count - bucket.term.before.count - bucket.term.after.count - bucket.term.between.count, // no data count
+        bucket.term.buckets.reduce(
+          (currentMax: number, bucket: { count: number, val: string }) => Math.max(currentMax, bucket.count),
+          0
+        )  // current bucket max value
+      );
+    },
+    0
+  )];
+  //DKDK set yAxisRange only if Regional
+  if (legendRadioValue === 'Regional') {
+    yAxisRange = yAxisRangeAll
+  }
+  //DKDK add setyAxisRangeValue: be careful of type of setYAxisRangeValue
+  setYAxisRangeValue(yAxisRangeAll[1])
+
+  const markers = buckets.map((bucket: bucketProps) => {
+    const lat = bucket.ltAvg;
+    const lng = bucket.lnAvg;
+    const bounds : Bounds = { southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }};
+    let labels = [];
+    let values = [];
+    let colors: string[] = [];
+    let noDataValue:number = 0;
+    bucket.term.buckets.forEach((bucket: { count: number, val: string }, index: number) => {
+      const start = bucket.val.substring(0,4);
+      const end = parseInt(start, 10)+3;
+      const label = `${start}-${end}`;
+      labels.push(label);
+      values.push(bucket.count);
+      colors.push(chartMarkerColorsHex[index]);
+
+      // sum all counts for legend
+      if (legendSums[index] === undefined) {
+        legendSums[index] = 0;
+        legendLabels[index] = label;
+        legendColors[index] = chartMarkerColorsHex[index];
+      }
+      legendSums[index] += bucket.count;
+    });
+
+    // calculate the number of no data (or data before first bin, or after last bin) and make 6th bar
+    noDataValue = bucket.count - bucket.term.between.count
+    labels.push("noDataOrOutOfBounds");
+    values.push(noDataValue);
+    colors.push("silver");     //DKDK fill the last color
+
+    legendLabels[5] = 'no data/out of bounds';
+    if (legendSums[5] === undefined) legendSums[5] = 0;
+    legendSums[5] += noDataValue;
+    legendColors[5] = 'silver';
+
+    //DKDK check isAtomic for push pin for chart marker
+    let atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false
+
+    //DKDK anim key
+    const key = bucket.val;
+
+    //DKDK need to check the presence of props.type and props.colorMethod
+    const yAxisRangeValue = (yAxisRange) ? (yAxisRange) : null
+
+    // BM: important to provide the key 'prop' (which is not a true prop) at
+    // this outermost level
+    return (
+      <ChartMarker
+        borderColor={"#AAAAAA"}
+        borderWidth={3.5}
+        id={key}
+        key={key}
+        position={{lat, lng}}
+        bounds={bounds}
+        labels={labels}
+        values={values}
+        colors={colors}
+        isAtomic={atomicValue}
+        yAxisRange ={yAxisRangeValue}
+        duration={duration}
+        onClick={handleMarkerClick}
+      />
+    )
+  });
+
+  const legendData = legendSums.map((count, index) => {
+    return {
+      label: legendLabels[index],
+      value: count,
+      color: legendColors[index]
+    }
+  });
+  setLegendData(legendData);
+
+  return markers;
+}
+
+
+
+export const getCollectionDateBasicMarkers =
+  async ({bounds, zoomLevel} : BoundsViewport,
+	 duration: number,
+	 handleMarkerClick: (e: LeafletMouseEvent) => void,
+  ) => {
+
+  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
+  const response = await fetch('/data/geoclust-date-binning-testing-all-levels.json');
+  const collectionDateData = await response.json();
+
+  const buckets = (collectionDateData as { [key: string]: any })[`geohash_${geohash_level}`].facets.geo.buckets.filter((bucket : any) => {
+    const lat : number = bucket.ltAvg;
+    const long : number = bucket.lnAvg;
+
+    const south = bounds.southWest.lat;
+    const north = bounds.northEast.lat;
+    const west = bounds.southWest.lng;
+    const east = bounds.northEast.lng;
+    const lambda = 1e-08; // accommodate tiny rounding errors
+
+    return (lat > south &&
+	    lat < north &&
+	    (west < east - lambda ? (long > west && long < east) :
+		    west > east + lambda ? !(long > east && long < west) : true) );
+  });
+
+  // go through all buckets to get sum(count) of each bucket and make a single barchart value (color white)
+  const markers = buckets.map((bucket: bucketProps) => {
+    const lat = bucket.ltAvg;
+    const lng = bucket.lnAvg;
+    const bounds : Bounds = { southWest: { lat: bucket.ltMin, lng: bucket.lnMin }, northEast: { lat: bucket.ltMax, lng: bucket.lnMax }};
+
+    const labels = [ "count" ];
+    const values = [ bucket.count ];
+    const colors: string[] = [ "white" ];
+    
+    //DKDK check isAtomic for push pin for chart marker
+    const atomicValue = (bucket.atomicCount && bucket.atomicCount === 1) ? true : false
+
+    //DKDK anim key
+    const key = bucket.val;
+
+    // BM: important to provide the key 'prop' (which is not a true prop) at
+    // this outermost level
+    return (
+      <ChartMarker
+        borderColor={"#AAAAAA"}
+        borderWidth={3.5}
+        id={key}
+        key={key}
+        position={{lat, lng}}
+        bounds={bounds}
+        labels={labels}
+        values={values}
+        colors={colors}
+        isAtomic={atomicValue}
+        yAxisRange ={null}
+        duration={duration}
+        onClick={handleMarkerClick}
+      />
+    )
+  });
+
+  return markers;
+}
+
+
+
 
