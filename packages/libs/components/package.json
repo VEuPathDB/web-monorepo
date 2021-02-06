@@ -31,7 +31,8 @@
   },
   "scripts": {
     "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public"
+    "build-storybook": "build-storybook -s public",
+    "build-npm-modules": "tsc -p tsconfig.build.json"
   },
   "eslintConfig": {
     "extends": "@veupathdb"
