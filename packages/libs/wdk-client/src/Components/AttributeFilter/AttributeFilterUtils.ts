@@ -62,7 +62,7 @@ export function shouldAddFilter(filter: Filter, valueCounts: ValueCounts, select
   return filter.value.length !== valueCounts.filter(item => item.value != null).length;
 }
 
-const dateStringRe = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/;
+const dateStringRe = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?(T\d{2}:\d{2}:\d{2})?$/;
 
 /**
  * Returns an strftime style format string.
