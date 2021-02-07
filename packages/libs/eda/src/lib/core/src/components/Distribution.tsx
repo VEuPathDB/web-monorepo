@@ -133,7 +133,7 @@ function toEdaFilter(filter: Filter, entityId: string): EdaFilter {
         entityId,
         variableId,
         type,
-        dateSet: (filter as DateMemberFilter).value.map((d) => d + " 00:00"),
+        dateSet: (filter as DateMemberFilter).value.map((d) => d + "T00:00:00"),
       }
     : type === "numberSet"
     ? {
@@ -154,8 +154,8 @@ function toEdaFilter(filter: Filter, entityId: string): EdaFilter {
         entityId,
         variableId,
         type,
-        min: (filter as DateRangeFilter).value.min + " 00:00",
-        max: (filter as DateRangeFilter).value.max + " 00:00",
+        min: (filter as DateRangeFilter).value.min + "T00:00:00",
+        max: (filter as DateRangeFilter).value.max + "T00:00:00",
       }
     : {
         entityId,
@@ -174,11 +174,11 @@ function fromEdaFilter(filter: EdaFilter): Filter {
     type: filter.type.replace(/(Set|Range)/, ""),
     value: filter.type.endsWith("Range")
       ? {
-          min: (filter as any).min.replace(" 00:00", ""),
-          max: (filter as any).max.replace(" 00:00", ""),
+          min: (filter as any).min.replace("T00:00:00", ""),
+          max: (filter as any).max.replace("T00:00:00", ""),
         }
       : (filter as any)[filter.type].map((d: string) =>
-          d.replace(" 00:00", "")
+          d.replace("T00:00:00", "")
         ),
     __entityId: filter.entityId,
   } as Filter;
