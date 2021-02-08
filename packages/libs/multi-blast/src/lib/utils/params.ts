@@ -1,7 +1,10 @@
 import { mapValues } from 'lodash';
 
 import { QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
-import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  Parameter,
+  ParameterValues,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import {
   isEnumParam,
   toMultiValueArray,
@@ -95,12 +98,8 @@ export function findParamsWhichDependOnlyOnBlastAlgorithm(
  * @author jtlong
  */
 export function paramValuesToBlastConfig(
-  rawParamValues: Record<string, string>
+  paramValues: ParameterValues
 ): IoBlastConfig {
-  const paramValues = mapValues(rawParamValues, (paramValue) =>
-    paramValue.replace(/ \(default\)$/, '')
-  );
-
   const {
     [BLAST_QUERY_SEQUENCE_PARAM_NAME]: query,
     [BLAST_ALGORITHM_PARAM_NAME]: selectedTool,
@@ -228,6 +227,97 @@ export function paramValuesToBlastConfig(
   }
 
   throw new Error(`The BLAST tool '${selectedTool}' is not supported`);
+}
+
+export function blastConfigToParamValues(
+  blastConfig: IoBlastConfig
+): ParameterValues {
+  const parameterValues: ParameterValues = {
+    [BLAST_ALGORITHM_PARAM_NAME]: blastConfig.tool,
+  };
+
+  if (blastConfig.eValue != null) {
+    parameterValues[EXPECTATION_VALUE_PARAM_NAME] = blastConfig.eValue;
+  }
+
+  if (
+    blastConfig.maxTargetSeqs != null ||
+    blastConfig.numDescriptions != null ||
+    blastConfig.numAlignments != null
+  ) {
+    const resultSetBound = Math.min(
+      blastConfig.maxTargetSeqs ?? Infinity,
+      Math.max(
+        blastConfig.numDescriptions ?? Infinity,
+        blastConfig.numAlignments ?? Infinity
+      )
+    );
+
+    parameterValues[NUM_QUERY_RESULTS_PARAM_NAME] = String(resultSetBound);
+  }
+
+  if (blastConfig.maxHSPs != null) {
+    parameterValues[MAX_MATCHES_QUERY_RANGE_PARAM_NAME] = String(
+      blastConfig.maxHSPs
+    );
+  }
+
+  if (blastConfig.wordSize != null) {
+    parameterValues[WORD_SIZE_PARAM_NAME] = String(blastConfig.wordSize);
+  }
+
+  if (blastConfig.tool !== 'blastn' && blastConfig.matrix) {
+    parameterValues[SCORING_MATRIX_PARAM_NAME] = blastConfig.matrix;
+  }
+
+  if (blastConfig.tool === 'blastn') {
+    parameterValues[FILTER_LOW_COMPLEX_PARAM_NAME] = blastConfig.dust?.enable
+      ? 'dust'
+      : 'no filter';
+  }
+
+  if (blastConfig.tool !== 'blastn') {
+    parameterValues[FILTER_LOW_COMPLEX_PARAM_NAME] =
+      blastConfig.seg != null ? 'seg' : 'no filter';
+  }
+
+  if (blastConfig.softMasking != null) {
+    parameterValues[SOFT_MASK_PARAM_NAME] = String(blastConfig.softMasking);
+  }
+
+  if (blastConfig.lcaseMasking != null) {
+    parameterValues[LOWER_CASE_MASK_PARAM_NAME] = String(
+      blastConfig.lcaseMasking
+    );
+  }
+
+  if (
+    blastConfig.tool !== 'tblastx' &&
+    blastConfig.gapOpen != null &&
+    blastConfig.gapExtend != null
+  ) {
+    parameterValues[
+      GAP_COSTS_PARAM_NAME
+    ] = `${blastConfig.gapOpen},${blastConfig.gapExtend}`;
+  }
+
+  if (
+    blastConfig.tool === 'blastn' &&
+    blastConfig.reward != null &&
+    blastConfig.penalty != null
+  ) {
+    parameterValues[
+      MATCH_MISMATCH_SCORE
+    ] = `${blastConfig.reward},${blastConfig.penalty}`;
+  }
+
+  return {
+    ...parameterValues,
+    // [BLAST_DATABASE_ORGANISM_PARAM_NAME]:
+    // [BLAST_DATABASE_TYPE_PARAM_NAME]:
+    // [BLAST_QUERY_SEQUENCE_PARAM_NAME]:
+    // [COMP_ADJUST_PARAM_NAME]:
+  };
 }
 
 export function organismParamValueToFilenames(
