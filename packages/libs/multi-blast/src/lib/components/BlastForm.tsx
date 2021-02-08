@@ -30,7 +30,7 @@ import {
   organismParamValueToFilenames,
   paramValuesToBlastConfig,
 } from '../utils/params';
-import { fetchOrganismFilenameMap } from '../utils/organisms';
+import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 import { TargetDataType } from '../utils/targetTypes';
 
 import { AdvancedParamGroup } from './AdvancedParamGroup';
@@ -208,16 +208,16 @@ function NewJobForm(props: NewJobFormProps) {
 
       setSubmitting(true);
 
-      const [projectId, organismFilenameMap] = await Promise.all([
+      const [projectId, { organismsToFiles }] = await Promise.all([
         wdkDependencies.wdkService
           .getConfig()
           .then(({ projectId }) => projectId),
-        fetchOrganismFilenameMap(wdkDependencies.wdkService),
+        fetchOrganismToFilenameMaps(wdkDependencies.wdkService),
       ]);
 
       const selectedOrganismFilenames = organismParamValueToFilenames(
         props.state.paramValues[BLAST_DATABASE_ORGANISM_PARAM_NAME],
-        organismFilenameMap
+        organismsToFiles
       );
 
       const targetType =

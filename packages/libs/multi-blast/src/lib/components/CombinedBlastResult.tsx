@@ -14,17 +14,23 @@ import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
 interface Props {
   combinedResult: MultiQueryReportJson;
+  filesToOrganisms: Record<string, string>;
   hitTypeDisplayName: string;
   wdkRecordType: string | null;
 }
 
 export function CombinedBlastResult({
   combinedResult,
+  filesToOrganisms,
   hitTypeDisplayName,
   wdkRecordType,
 }: Props) {
   const columns = useCombinedResultColumns(hitTypeDisplayName, wdkRecordType);
-  const rawRows = useRawCombinedResultRows(combinedResult, wdkRecordType);
+  const rawRows = useRawCombinedResultRows(
+    combinedResult,
+    wdkRecordType,
+    filesToOrganisms
+  );
 
   const [sort, setSort] = useState<MesaSortObject>({
     columnKey: 'rank',

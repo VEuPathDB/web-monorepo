@@ -1,9 +1,9 @@
 export interface CombinedResultRow {
   accession: string;
   alignmentLength: number;
-  description: string | null;
   eValue: number;
   identity: number;
+  organism: string | null;
   query: string;
   rank: number;
   score: number;
@@ -11,7 +11,11 @@ export interface CombinedResultRow {
 }
 
 const GENE_REGEX = /\|\s*gene=([^|\s]+) /;
-const GENE_PRODUCT_REGEX = /\|\s*gene_product=([^|]+) \|/;
+const TARGET_NAME_REGEX = /[\s\S]*\//;
+
+export function dbToTargetName(db: string) {
+  return db.replace(TARGET_NAME_REGEX, '');
+}
 
 export function blastDbNameToWdkRecordType(blastDbName: string) {
   if (
@@ -41,6 +45,17 @@ export function retrieveDataFromHitTitleFactory(regex: RegExp) {
 export const geneHitTitleToWdkPrimaryKey = retrieveDataFromHitTitleFactory(
   GENE_REGEX
 );
-export const geneHitTitleToDescription = retrieveDataFromHitTitleFactory(
-  GENE_PRODUCT_REGEX
-);
+
+export function dbToOrganismFactory(filesToOrganisms: Record<string, string>) {
+  const filesToOrganismsEntries = Object.entries(filesToOrganisms);
+
+  return function dbToOrganism(db: string) {
+    const targetName = dbToTargetName(db);
+
+    const fileToOrganismPair = filesToOrganismsEntries.find(([filename]) =>
+      targetName.startsWith(filename)
+    );
+
+    return fileToOrganismPair == null ? null : fileToOrganismPair[1];
+  };
+}

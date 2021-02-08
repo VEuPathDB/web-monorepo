@@ -1,3 +1,5 @@
+import { invert } from 'lodash';
+
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
 const ORGANISMS_URL_SEGMENT = 'GenomeDataTypes';
@@ -5,7 +7,7 @@ const ORGANISMS_URL_SEGMENT = 'GenomeDataTypes';
 const ORGANISM_NAME_ATTRIBUTE_NAME = 'organism_name';
 const NAME_FOR_FILENAMES_ATTRIBUTE_NAME = 'name_for_filenames';
 
-export async function fetchOrganismFilenameMap(wdkService: WdkService) {
+export async function fetchOrganismToFilenameMaps(wdkService: WdkService) {
   const answer = await wdkService.getAnswerJson(
     {
       searchName: ORGANISMS_URL_SEGMENT,
@@ -21,7 +23,7 @@ export async function fetchOrganismFilenameMap(wdkService: WdkService) {
     }
   );
 
-  return answer.records.reduce((memo, { attributes }) => {
+  const organismsToFiles = answer.records.reduce((memo, { attributes }) => {
     const organismName = attributes[ORGANISM_NAME_ATTRIBUTE_NAME];
     const nameForFileNames = attributes[NAME_FOR_FILENAMES_ATTRIBUTE_NAME];
 
@@ -41,4 +43,9 @@ export async function fetchOrganismFilenameMap(wdkService: WdkService) {
 
     return memo;
   }, {} as Record<string, string>);
+
+  return {
+    filesToOrganisms: invert(organismsToFiles),
+    organismsToFiles,
+  };
 }

@@ -10,9 +10,9 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  blastDbNameToWdkRecordType,
   CombinedResultRow,
-  geneHitTitleToDescription,
+  blastDbNameToWdkRecordType,
+  dbToOrganismFactory,
   geneHitTitleToWdkPrimaryKey,
 } from '../utils/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
@@ -37,10 +37,10 @@ export function useCombinedResultColumns(
         sortable: true,
       },
       {
-        key: 'description',
-        name: 'Description',
+        key: 'organism',
+        name: 'Organism',
         renderCell: ({ row }: { row: CombinedResultRow }) =>
-          row.description == null ? '' : row.description,
+          row.organism == null ? '' : row.organism,
         sortable: true,
       },
       {
@@ -84,11 +84,14 @@ export function useCombinedResultColumns(
 
 export function useRawCombinedResultRows(
   combinedResult: MultiQueryReportJson,
-  wdkRecordType: string | null
+  wdkRecordType: string | null,
+  filesToOrganisms: Record<string, string>
 ): CombinedResultRow[] {
   const resultsByQuery = combinedResult.BlastOutput2;
 
   return useMemo(() => {
+    const dbToOrganism = dbToOrganismFactory(filesToOrganisms);
+
     const unrankedHits = resultsByQuery.flatMap((queryResult) =>
       queryResult.report.results.search.hits.map((hit) => {
         const bestHsp = hit.hsps[0];
@@ -97,8 +100,7 @@ export function useRawCombinedResultRows(
 
         const accession = title.replace(/\s+[\s\S]*/, '');
 
-        const description =
-          wdkRecordType === 'gene' ? geneHitTitleToDescription(title) : null;
+        const organism = dbToOrganism(queryResult.report.search_target.db);
 
         const {
           query_id: queryId,
@@ -121,9 +123,9 @@ export function useRawCombinedResultRows(
         return {
           accession,
           alignmentLength,
-          description,
           eValue,
           identity,
+          organism,
           query,
           score,
           wdkPrimaryKey,
@@ -154,7 +156,7 @@ export function useRawCombinedResultRows(
 
       return memo;
     }, [] as CombinedResultRow[]);
-  }, [resultsByQuery, wdkRecordType]);
+  }, [filesToOrganisms, resultsByQuery, wdkRecordType]);
 }
 
 export function useSortedCombinedResultRows(

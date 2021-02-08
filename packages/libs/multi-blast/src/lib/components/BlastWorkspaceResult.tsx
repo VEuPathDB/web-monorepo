@@ -4,6 +4,7 @@ import { uniq } from 'lodash';
 
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { useBlastApi, useDownloadJobQueryCallback } from '../hooks/api';
 import {
@@ -11,6 +12,8 @@ import {
   useWdkRecordType,
 } from '../hooks/combinedResults';
 import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
+import { dbToTargetName } from '../utils/combinedResults';
+import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { CombinedBlastResult } from './CombinedBlastResult';
@@ -26,6 +29,11 @@ const POLLING_INTERVAL = 3000;
 export function BlastWorkspaceResult(props: Props) {
   const api = useBlastApi();
 
+  const organismToFilenameMapsResult = useWdkService(
+    (wdkService) => fetchOrganismToFilenameMaps(wdkService),
+    []
+  );
+
   const jobResult = usePromise(() => makeJobPollingPromise(api, props.jobId), [
     api,
     props.jobId,
@@ -39,10 +47,13 @@ export function BlastWorkspaceResult(props: Props) {
     [api, jobResult.value?.status]
   );
 
-  return jobResult.value == null || multiQueryReportResult.value == null ? (
+  return organismToFilenameMapsResult == null ||
+    jobResult.value == null ||
+    multiQueryReportResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
     <BlastSummary
+      filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
       jobDetails={jobResult.value}
       multiQueryReport={multiQueryReportResult.value}
     />
@@ -75,14 +86,19 @@ function LoadingBlastResult(props: Props) {
 }
 
 interface BlastSummaryProps {
+  filesToOrganisms: Record<string, string>;
   jobDetails: LongJobResponse;
   multiQueryReport: MultiQueryReportJson;
 }
 
-function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
+function BlastSummary({
+  filesToOrganisms,
+  jobDetails,
+  multiQueryReport,
+}: BlastSummaryProps) {
   const databases = useMemo(() => {
     const databasesEntries = multiQueryReport.BlastOutput2.map(({ report }) =>
-      report.search_target.db.replace(/[\s\S]*\//, '')
+      dbToTargetName(report.search_target.db)
     );
 
     return uniq(databasesEntries);
@@ -125,6 +141,7 @@ function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
       </div>
       <CombinedBlastResult
         combinedResult={multiQueryReport}
+        filesToOrganisms={filesToOrganisms}
         hitTypeDisplayName={hitTypeDisplayName}
         wdkRecordType={wdkRecordType}
       />

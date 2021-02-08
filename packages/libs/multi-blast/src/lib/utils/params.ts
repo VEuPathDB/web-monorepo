@@ -1,5 +1,3 @@
-import { mapValues } from 'lodash';
-
 import { QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import {
   Parameter,
