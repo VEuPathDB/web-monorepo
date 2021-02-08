@@ -16,10 +16,6 @@ You will also see any lint errors in the console.
 
 You will be prompted to enter the VEuPathDB BRC Pre-Release Login credentials.
 
-**Required Environment Variables**
-
-- **`WDK_SERVICE_URL`** URL for a VEuPathDB service endpoint.
-
 ### `yarn test`
 
 Launches the test runner in the interactive watch mode.\
@@ -44,6 +40,22 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Environment Variables
+
+_The `yarn start` script makes use of environment variables when running in development mode. These variables are not required when using artifacts published to npm. They are specific to `yarn start`._
+
+The following environment variables are used by the `yarn start` script:
+
+| Variable name          | Required | Description                                                                     |
+| ---------------------- | -------- | ------------------------------------------------------------------------------- |
+| `WDK_SERVICE_URL`      | Yes      | Full url to a running WDK REST Service                                          |
+| `BLAST_SERVICE_URL`    | Yes      | Full url to a running MultiBLAST Service                                        |
+| `WDK_CHECK_AUTH`       | Yes      | WDK Auth Key to use for BLAST service authentication                            |
+| `VEUPATHDB_LOGIN_USER` | No       | Prerelease login username for the WDK REST Service located at `WDK_SERVICE_URL` |
+| `VEUPATHDB_LOGIN_PASS` | No       | Prerelease login passowrd for the WDK REST Service located at `WDK_SERVICE_URL` |
+
+**Warning:** `WDK_CHECK_AUTH`, `VEUPATHDB_LOGIN_USER`, and `VEUPATHDB_LOGIN_PASS` should be defined in .env.local, so as to avoid exposing sensitive credentials on GitHub.
 
 ## Learn More
 
