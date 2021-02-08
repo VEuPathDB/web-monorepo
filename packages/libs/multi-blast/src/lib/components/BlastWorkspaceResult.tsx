@@ -118,9 +118,9 @@ function BlastSummary({ jobDetails, multiQueryReport }: BlastSummaryProps) {
           {databases.length > 1 ? 'Databases' : 'Database'}:
         </span>
         <span>{databasesStr}</span>
-        <span className="InlineHeader">Query</span>
+        <span className="InlineHeader">Query:</span>
         <Link to="#" onClick={downloadJobQuery}>
-          Download
+          Download Query File
         </Link>
       </div>
       <CombinedBlastResult
