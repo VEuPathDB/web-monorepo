@@ -39,7 +39,7 @@ import './BlastForm.scss';
 
 export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
-const BLAST_FORM_CONTAINER_NAME = 'BlastForm';
+const BLAST_FORM_CONTAINER_NAME = 'MultiBlast';
 
 export type Props = DefaultQuestionFormProps;
 
@@ -161,7 +161,9 @@ export function BlastForm(props: Props) {
     [BLAST_QUERY_SEQUENCE_PARAM_NAME]: sequenceParamElement,
   };
 
-  const containerClassName = `${blastFormCx()} ${blastFormCx('MultiBlast')}`;
+  const containerClassName = `${blastFormCx()} ${blastFormCx(
+    BLAST_FORM_CONTAINER_NAME
+  )}`;
 
   return enabledAlgorithms == null ? null : props.submissionMetadata.type ===
     'create-strategy' ? (
