@@ -10,8 +10,6 @@ import {
   getCollectionDateBasicMarkers,
 } from './api/getMarkersFromFixtureData';
 
-import { LeafletMouseEvent } from 'leaflet';
-
 //DKDK change target component
 import MapVEuLegendSampleList, {
   LegendProps,
@@ -40,7 +38,7 @@ const variableProps = {
   legendInfoNumberText: 'Collections',
 };
 
-export const CollectionDateOneRequest = () => {
+export const AllInOneRequest = () => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
@@ -103,7 +101,7 @@ export const CollectionDateOneRequest = () => {
   );
 };
 
-export const CollectionDateTwoRequests = () => {
+export const TwoRequests = () => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
