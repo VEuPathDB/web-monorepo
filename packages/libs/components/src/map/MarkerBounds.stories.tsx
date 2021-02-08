@@ -2,7 +2,7 @@ import React, {ReactElement, useCallback, useState} from "react";
 import { BoundsViewport } from "./Types";
 import MapVEuMap from "./MapVEuMap";
 import geohashAnimation from "./animation_functions/geohash";
-import testData from './test-data/geoclust-date-binning-testing-all-levels.json';
+import testData from '../stories/fixture-data/geoclust-date-binning-testing-all-levels.json';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 import './TempIconHack';
