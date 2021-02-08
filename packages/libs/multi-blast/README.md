@@ -51,7 +51,7 @@ The following environment variables are used by the `yarn start` script:
 | ---------------------- | -------- | ------------------------------------------------------------------------------- |
 | `WDK_SERVICE_URL`      | Yes      | Full url to a running WDK REST Service                                          |
 | `BLAST_SERVICE_URL`    | Yes      | Full url to a running MultiBLAST Service                                        |
-| `WDK_CHECK_AUTH`       | Yes      | WDK Auth Key to use for BLAST service authentication                            |
+| `WDK_CHECK_AUTH`       | Yes      | WDK Auth Key to use for MultiBLAST Service authentication                       |
 | `VEUPATHDB_LOGIN_USER` | No       | Prerelease login username for the WDK REST Service located at `WDK_SERVICE_URL` |
 | `VEUPATHDB_LOGIN_PASS` | No       | Prerelease login passowrd for the WDK REST Service located at `WDK_SERVICE_URL` |
 
