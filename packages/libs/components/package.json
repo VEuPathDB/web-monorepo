@@ -1,5 +1,5 @@
 {
-  "name": "visualization-tools",
+  "name": "@veupathdb/web-components",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -29,6 +29,10 @@
     "react-transition-group": "^4.4.1",
     "shape2geohash": "^1.2.5"
   },
+  "files": [
+    "lib",
+    "src"
+  ],
   "scripts": {
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
