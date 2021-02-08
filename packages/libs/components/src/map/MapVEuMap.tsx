@@ -37,8 +37,6 @@ export interface MapVEuMapProps {
   showMouseToolbar?: boolean,
 }
 
-
-
 export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid, showMouseToolbar}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.

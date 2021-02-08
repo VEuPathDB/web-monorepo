@@ -35,7 +35,7 @@ export default function ScatterAndLinePlot(props: Props) {
         showlegend: props.showLegend
       })}
       config={{
-        displayModeBar: props.showModebar || ModebarDefault,
+        displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
         staticPlot: props.staticPlot,
       }}
     />

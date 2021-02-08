@@ -160,6 +160,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
     margin={{l: marginSize, r: marginSize, t: marginSize, b: marginSize}}
     showLegend={false}
     showHoverInfo={false}
+    showModebar={false}
     textposition='inside'
     textinfo='text'
     // Show value if pie slice is large enough
@@ -173,7 +174,13 @@ export default function DonutMarker(props: DonutMarkerProps) {
       bounds={props.bounds}
       icon={SVGDonutIcon}
       duration={duration}
-      popupPlot={popupPlot}
+      popupContent={{
+        content: popupPlot,
+        size: {
+          width: plotSize,
+          height: plotSize
+        },
+      }}
       showPopup={props.showPopup}
     />
   );

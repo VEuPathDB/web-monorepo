@@ -1,8 +1,9 @@
 import React, {ReactElement, useCallback, useState} from "react";
+import { Story } from '@storybook/react'
 //DKDK change below
-import { BoundsViewport, Bounds } from './Types';
+import { BoundsViewport } from './Types';
 import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
-import MapVEuMap from "./MapVEuMap";
+import MapVEuMap, { MapVEuMapProps } from "./MapVEuMap";
 import geohashAnimation from "./animation_functions/geohash";
 import testData from '../stories/fixture-data/geoclust-date-binning-testing-all-levels.json';
 import testDataStraddling from '../stories/fixture-data/geoclust-date-dateline-straddling-all-levels.json';
@@ -12,7 +13,10 @@ import './TempIconHack';
 
 export default {
   title: 'Map/Multiple Worlds',
+  component: MapVEuMap,
 };
+
+const Template = (args: MapVEuMapProps) => <MapVEuMap {...getDatelineArgs()} {...args} />;
 
 const getMarkerElements = ({ bounds, zoomLevel }: BoundsViewport, duration : number, data = testData) => {
   const { southWest: { lat: south, lng: west }, northEast : {lat: north, lng: east} } = bounds
@@ -77,8 +81,7 @@ export const MarkerBounds = () => {
   );
 };
 
-
-export const DatelineData = () => {
+const getDatelineArgs = () => {
   const [ markerElements, setMarkerElements ] = useState<ReactElement<BoundsDriftMarkerProps>[]>([]);
   const duration = defaultAnimationDuration;
 
@@ -86,20 +89,20 @@ export const DatelineData = () => {
     setMarkerElements(getMarkerElements(bvp, duration, testDataStraddling));
   }, [setMarkerElements]);
 
-  return (
-      <MapVEuMap
-          viewport={{center: [ 0, 0 ], zoom: 2}}
-          height="100vh" width="100vw"
-          onViewportChanged={handleViewportChanged}
-          markers={markerElements}
-          animation={{
-            method: "geohash",
-            duration: defaultAnimationDuration,
-            animationFunction: geohashAnimation
-          }}
-          showGrid={true}
-      />
-  );
-};
+  return {
+    viewport: {center: [ 0, 0 ] as [number, number], zoom: 2},
+    height: "100vh",
+    width: "100vw",
+    onViewportChanged: handleViewportChanged,
+    markers: markerElements,
+    animation: {
+      method: "geohash",
+      duration: defaultAnimationDuration,
+      animationFunction: geohashAnimation,
+    },
+    showGrid: true,
+  }
+}
 
-
+export const DatelineData = () => <MapVEuMap {...getDatelineArgs()} />;
+export const DatelineDataControls: Story<MapVEuMapProps> = Template.bind({});
