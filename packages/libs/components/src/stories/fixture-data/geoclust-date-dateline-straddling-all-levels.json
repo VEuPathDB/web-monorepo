@@ -1,0 +1,2032 @@
+{
+  "geohash_7": {
+    "facets": {
+      "geo": {
+        "buckets": [
+          {
+            "term": {
+              "between": {
+                "count": 72
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 60,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 12,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2svsk8x",
+            "count": 72,
+            "ltAvg": -17.531099999999995,
+            "ltMin": -17.5311,
+            "ltMax": -17.5311,
+            "lnAvg": -149.5580000000002,
+            "lnMin": -149.558,
+            "lnMax": -149.558
+          },
+          {
+            "term": {
+              "between": {
+                "count": 9
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 9,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "88256cp",
+            "count": 9,
+            "ltAvg": 1.9840000000000002,
+            "ltMin": 1.984,
+            "ltMax": 1.984,
+            "lnAvg": -157.369,
+            "lnMin": -157.369,
+            "lnMax": -157.369
+          },
+          {
+            "term": {
+              "between": {
+                "count": 8
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 8,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4vsf",
+            "count": 8,
+            "ltAvg": -17.771,
+            "ltMin": -17.771,
+            "ltMax": -17.771,
+            "lnAvg": 177.433,
+            "lnMin": 177.433,
+            "lnMax": 177.433
+          },
+          {
+            "term": {
+              "between": {
+                "count": 2
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 2,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4vmr",
+            "count": 2,
+            "ltAvg": -17.768,
+            "ltMin": -17.768,
+            "ltMax": -17.768,
+            "lnAvg": 177.428,
+            "lnMin": 177.428,
+            "lnMax": 177.428
+          },
+          {
+            "term": {
+              "between": {
+                "count": 2
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 2,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4vse",
+            "count": 2,
+            "ltAvg": -17.773,
+            "ltMin": -17.773,
+            "ltMax": -17.773,
+            "lnAvg": 177.434,
+            "lnMin": 177.434,
+            "lnMax": 177.434
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2svekjr",
+            "count": 1,
+            "ltAvg": -17.68,
+            "ltMin": -17.68,
+            "ltMax": -17.68,
+            "lnAvg": -149.58,
+            "lnMin": -149.58,
+            "lnMax": -149.58
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2th45k3",
+            "count": 1,
+            "ltAvg": -16.5,
+            "ltMin": -16.5,
+            "ltMax": -16.5,
+            "lnAvg": -151.73,
+            "lnMin": -151.73,
+            "lnMax": -151.73
+          },
+          {
+            "term": {
+              "between": {
+                "count": 1
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 1,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4sg3",
+            "count": 1,
+            "ltAvg": -17.823,
+            "ltMin": -17.823,
+            "ltMax": -17.823,
+            "lnAvg": 177.398,
+            "lnMin": 177.398,
+            "lnMax": 177.398
+          },
+          {
+            "term": {
+              "between": {
+                "count": 1
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 1,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4vyh",
+            "count": 1,
+            "ltAvg": -17.764,
+            "ltMin": -17.764,
+            "ltMax": -17.764,
+            "lnAvg": 177.446,
+            "lnMin": 177.446,
+            "lnMax": 177.446
+          },
+          {
+            "term": {
+              "between": {
+                "count": 1
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 1,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4yt2",
+            "count": 1,
+            "ltAvg": -17.769,
+            "ltMin": -17.769,
+            "ltMax": -17.769,
+            "lnAvg": 177.474,
+            "lnMin": 177.474,
+            "lnMax": 177.474
+          }
+        ]
+      },
+      "count": 98
+    },
+    "response": {
+      "docs": [],
+      "start": 0,
+      "numFound": 98
+    },
+    "responseHeader": {
+      "params": {
+        "wt": "json",
+        "rows": "0",
+        "sort": "id asc",
+        "json": "{\n\t\t\"filter\": [\n                  \"bundle:pop_sample\",\n\t\t  \"has_geodata:true\",\n                  \"geolocations_cvterms:(\\\"French Polynesia\\\" OR Fiji OR Kiribati)\"\n                ],\n\t\t\"facet\": {\n\t          \"geo\": {\n\t \t    \"type\": \"terms\",\n\t\t    \"field\": \"${geo:geohash_3}\",\n\t\t    \"limit\": -1,\n\t\t    \"mincount\": 1,\n\t\t    \"sort\": {\n\t\t\t\"count\": \"desc\"\n\t\t    },\n\t\t    \"facet\": {\n\t\t\t\"ltAvg\": \"avg(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMin\": \"min(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMax\": \"max(geo_coords_ll_0_coordinate)\",\n\t\t\t\"lnAvg\": \"avg(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMin\": \"min(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMax\": \"max(geo_coords_ll_1_coordinate)\",\n\t\t\tatomicCount: \"unique(${geomax:geohash_7})\",\n\t\t\t\"term\": {\n\t\t\t\t\"type\": \"range\",\n\t\t\t\t\"field\": \"${term:collection_date}\",\n\t\t\t\t\"start\": \"2000-01-01T00:00:00Z\",\n                                \"end\": \"2020-01-01T00:00:00Z\",\n                                \"gap\": \"+4YEARS\",\n\t\t\t\t\"mincount\": 0,\n                                \"other\": \"all\"\n\t\t\t}\n\t\t    }\n                 }\n               }\n            }",
+        "q": "*:*",
+        "geo": "geohash_7"
+      },
+      "QTime": 401,
+      "status": 0
+    }
+  },
+  "geohash_6": {
+    "facets": {
+      "geo": {
+        "buckets": [
+          {
+            "term": {
+              "between": {
+                "count": 72
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 60,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 12,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2svsk8",
+            "count": 72,
+            "ltAvg": -17.531099999999995,
+            "ltMin": -17.5311,
+            "ltMax": -17.5311,
+            "lnAvg": -149.5580000000002,
+            "lnMin": -149.558,
+            "lnMax": -149.558
+          },
+          {
+            "term": {
+              "between": {
+                "count": 10
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 10,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 2,
+            "val": "ruy4vs",
+            "count": 10,
+            "ltAvg": -17.7714,
+            "ltMin": -17.773,
+            "ltMax": -17.771,
+            "lnAvg": 177.4332,
+            "lnMin": 177.433,
+            "lnMax": 177.434
+          },
+          {
+            "term": {
+              "between": {
+                "count": 9
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 9,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "88256c",
+            "count": 9,
+            "ltAvg": 1.9840000000000002,
+            "ltMin": 1.984,
+            "ltMax": 1.984,
+            "lnAvg": -157.369,
+            "lnMin": -157.369,
+            "lnMax": -157.369
+          },
+          {
+            "term": {
+              "between": {
+                "count": 2
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 2,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4vm",
+            "count": 2,
+            "ltAvg": -17.768,
+            "ltMin": -17.768,
+            "ltMax": -17.768,
+            "lnAvg": 177.428,
+            "lnMin": 177.428,
+            "lnMax": 177.428
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2svekj",
+            "count": 1,
+            "ltAvg": -17.68,
+            "ltMin": -17.68,
+            "ltMax": -17.68,
+            "lnAvg": -149.58,
+            "lnMin": -149.58,
+            "lnMax": -149.58
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2th45k",
+            "count": 1,
+            "ltAvg": -16.5,
+            "ltMin": -16.5,
+            "ltMax": -16.5,
+            "lnAvg": -151.73,
+            "lnMin": -151.73,
+            "lnMax": -151.73
+          },
+          {
+            "term": {
+              "between": {
+                "count": 1
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 1,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4sg",
+            "count": 1,
+            "ltAvg": -17.823,
+            "ltMin": -17.823,
+            "ltMax": -17.823,
+            "lnAvg": 177.398,
+            "lnMin": 177.398,
+            "lnMax": 177.398
+          },
+          {
+            "term": {
+              "between": {
+                "count": 1
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 1,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4vy",
+            "count": 1,
+            "ltAvg": -17.764,
+            "ltMin": -17.764,
+            "ltMax": -17.764,
+            "lnAvg": 177.446,
+            "lnMin": 177.446,
+            "lnMax": 177.446
+          },
+          {
+            "term": {
+              "between": {
+                "count": 1
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 1,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4yt",
+            "count": 1,
+            "ltAvg": -17.769,
+            "ltMin": -17.769,
+            "ltMax": -17.769,
+            "lnAvg": 177.474,
+            "lnMin": 177.474,
+            "lnMax": 177.474
+          }
+        ]
+      },
+      "count": 98
+    },
+    "response": {
+      "docs": [],
+      "start": 0,
+      "numFound": 98
+    },
+    "responseHeader": {
+      "params": {
+        "wt": "json",
+        "rows": "0",
+        "sort": "id asc",
+        "json": "{\n\t\t\"filter\": [\n                  \"bundle:pop_sample\",\n\t\t  \"has_geodata:true\",\n                  \"geolocations_cvterms:(\\\"French Polynesia\\\" OR Fiji OR Kiribati)\"\n                ],\n\t\t\"facet\": {\n\t          \"geo\": {\n\t \t    \"type\": \"terms\",\n\t\t    \"field\": \"${geo:geohash_3}\",\n\t\t    \"limit\": -1,\n\t\t    \"mincount\": 1,\n\t\t    \"sort\": {\n\t\t\t\"count\": \"desc\"\n\t\t    },\n\t\t    \"facet\": {\n\t\t\t\"ltAvg\": \"avg(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMin\": \"min(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMax\": \"max(geo_coords_ll_0_coordinate)\",\n\t\t\t\"lnAvg\": \"avg(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMin\": \"min(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMax\": \"max(geo_coords_ll_1_coordinate)\",\n\t\t\tatomicCount: \"unique(${geomax:geohash_7})\",\n\t\t\t\"term\": {\n\t\t\t\t\"type\": \"range\",\n\t\t\t\t\"field\": \"${term:collection_date}\",\n\t\t\t\t\"start\": \"2000-01-01T00:00:00Z\",\n                                \"end\": \"2020-01-01T00:00:00Z\",\n                                \"gap\": \"+4YEARS\",\n\t\t\t\t\"mincount\": 0,\n                                \"other\": \"all\"\n\t\t\t}\n\t\t    }\n                 }\n               }\n            }",
+        "q": "*:*",
+        "geo": "geohash_6"
+      },
+      "QTime": 82,
+      "status": 0
+    }
+  },
+  "geohash_5": {
+    "facets": {
+      "geo": {
+        "buckets": [
+          {
+            "term": {
+              "between": {
+                "count": 72
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 60,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 12,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2svsk",
+            "count": 72,
+            "ltAvg": -17.531099999999995,
+            "ltMin": -17.5311,
+            "ltMax": -17.5311,
+            "lnAvg": -149.5580000000002,
+            "lnMin": -149.558,
+            "lnMax": -149.558
+          },
+          {
+            "term": {
+              "between": {
+                "count": 13
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 13,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 4,
+            "val": "ruy4v",
+            "count": 13,
+            "ltAvg": -17.77030769230769,
+            "ltMin": -17.773,
+            "ltMax": -17.764,
+            "lnAvg": 177.43338461538463,
+            "lnMin": 177.428,
+            "lnMax": 177.446
+          },
+          {
+            "term": {
+              "between": {
+                "count": 9
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 9,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "88256",
+            "count": 9,
+            "ltAvg": 1.9840000000000002,
+            "ltMin": 1.984,
+            "ltMax": 1.984,
+            "lnAvg": -157.369,
+            "lnMin": -157.369,
+            "lnMax": -157.369
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2svek",
+            "count": 1,
+            "ltAvg": -17.68,
+            "ltMin": -17.68,
+            "ltMax": -17.68,
+            "lnAvg": -149.58,
+            "lnMin": -149.58,
+            "lnMax": -149.58
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2th45",
+            "count": 1,
+            "ltAvg": -16.5,
+            "ltMin": -16.5,
+            "ltMax": -16.5,
+            "lnAvg": -151.73,
+            "lnMin": -151.73,
+            "lnMax": -151.73
+          },
+          {
+            "term": {
+              "between": {
+                "count": 1
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 1,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4s",
+            "count": 1,
+            "ltAvg": -17.823,
+            "ltMin": -17.823,
+            "ltMax": -17.823,
+            "lnAvg": 177.398,
+            "lnMin": 177.398,
+            "lnMax": 177.398
+          },
+          {
+            "term": {
+              "between": {
+                "count": 1
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 1,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "ruy4y",
+            "count": 1,
+            "ltAvg": -17.769,
+            "ltMin": -17.769,
+            "ltMax": -17.769,
+            "lnAvg": 177.474,
+            "lnMin": 177.474,
+            "lnMax": 177.474
+          }
+        ]
+      },
+      "count": 98
+    },
+    "response": {
+      "docs": [],
+      "start": 0,
+      "numFound": 98
+    },
+    "responseHeader": {
+      "params": {
+        "wt": "json",
+        "rows": "0",
+        "sort": "id asc",
+        "json": "{\n\t\t\"filter\": [\n                  \"bundle:pop_sample\",\n\t\t  \"has_geodata:true\",\n                  \"geolocations_cvterms:(\\\"French Polynesia\\\" OR Fiji OR Kiribati)\"\n                ],\n\t\t\"facet\": {\n\t          \"geo\": {\n\t \t    \"type\": \"terms\",\n\t\t    \"field\": \"${geo:geohash_3}\",\n\t\t    \"limit\": -1,\n\t\t    \"mincount\": 1,\n\t\t    \"sort\": {\n\t\t\t\"count\": \"desc\"\n\t\t    },\n\t\t    \"facet\": {\n\t\t\t\"ltAvg\": \"avg(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMin\": \"min(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMax\": \"max(geo_coords_ll_0_coordinate)\",\n\t\t\t\"lnAvg\": \"avg(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMin\": \"min(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMax\": \"max(geo_coords_ll_1_coordinate)\",\n\t\t\tatomicCount: \"unique(${geomax:geohash_7})\",\n\t\t\t\"term\": {\n\t\t\t\t\"type\": \"range\",\n\t\t\t\t\"field\": \"${term:collection_date}\",\n\t\t\t\t\"start\": \"2000-01-01T00:00:00Z\",\n                                \"end\": \"2020-01-01T00:00:00Z\",\n                                \"gap\": \"+4YEARS\",\n\t\t\t\t\"mincount\": 0,\n                                \"other\": \"all\"\n\t\t\t}\n\t\t    }\n                 }\n               }\n            }",
+        "q": "*:*",
+        "geo": "geohash_5"
+      },
+      "QTime": 69,
+      "status": 0
+    }
+  },
+  "geohash_4": {
+    "facets": {
+      "geo": {
+        "buckets": [
+          {
+            "term": {
+              "between": {
+                "count": 72
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 60,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 12,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2svs",
+            "count": 72,
+            "ltAvg": -17.531099999999995,
+            "ltMin": -17.5311,
+            "ltMax": -17.5311,
+            "lnAvg": -149.5580000000002,
+            "lnMin": -149.558,
+            "lnMax": -149.558
+          },
+          {
+            "term": {
+              "between": {
+                "count": 15
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 15,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 6,
+            "val": "ruy4",
+            "count": 15,
+            "ltAvg": -17.77373333333333,
+            "ltMin": -17.823,
+            "ltMax": -17.764,
+            "lnAvg": 177.43373333333332,
+            "lnMin": 177.398,
+            "lnMax": 177.474
+          },
+          {
+            "term": {
+              "between": {
+                "count": 9
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 9,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "8825",
+            "count": 9,
+            "ltAvg": 1.9840000000000002,
+            "ltMin": 1.984,
+            "ltMax": 1.984,
+            "lnAvg": -157.369,
+            "lnMin": -157.369,
+            "lnMax": -157.369
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2sve",
+            "count": 1,
+            "ltAvg": -17.68,
+            "ltMin": -17.68,
+            "ltMax": -17.68,
+            "lnAvg": -149.58,
+            "lnMin": -149.58,
+            "lnMax": -149.58
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2th4",
+            "count": 1,
+            "ltAvg": -16.5,
+            "ltMin": -16.5,
+            "ltMax": -16.5,
+            "lnAvg": -151.73,
+            "lnMin": -151.73,
+            "lnMax": -151.73
+          }
+        ]
+      },
+      "count": 98
+    },
+    "response": {
+      "docs": [],
+      "start": 0,
+      "numFound": 98
+    },
+    "responseHeader": {
+      "params": {
+        "wt": "json",
+        "rows": "0",
+        "sort": "id asc",
+        "json": "{\n\t\t\"filter\": [\n                  \"bundle:pop_sample\",\n\t\t  \"has_geodata:true\",\n                  \"geolocations_cvterms:(\\\"French Polynesia\\\" OR Fiji OR Kiribati)\"\n                ],\n\t\t\"facet\": {\n\t          \"geo\": {\n\t \t    \"type\": \"terms\",\n\t\t    \"field\": \"${geo:geohash_3}\",\n\t\t    \"limit\": -1,\n\t\t    \"mincount\": 1,\n\t\t    \"sort\": {\n\t\t\t\"count\": \"desc\"\n\t\t    },\n\t\t    \"facet\": {\n\t\t\t\"ltAvg\": \"avg(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMin\": \"min(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMax\": \"max(geo_coords_ll_0_coordinate)\",\n\t\t\t\"lnAvg\": \"avg(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMin\": \"min(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMax\": \"max(geo_coords_ll_1_coordinate)\",\n\t\t\tatomicCount: \"unique(${geomax:geohash_7})\",\n\t\t\t\"term\": {\n\t\t\t\t\"type\": \"range\",\n\t\t\t\t\"field\": \"${term:collection_date}\",\n\t\t\t\t\"start\": \"2000-01-01T00:00:00Z\",\n                                \"end\": \"2020-01-01T00:00:00Z\",\n                                \"gap\": \"+4YEARS\",\n\t\t\t\t\"mincount\": 0,\n                                \"other\": \"all\"\n\t\t\t}\n\t\t    }\n                 }\n               }\n            }",
+        "q": "*:*",
+        "geo": "geohash_4"
+      },
+      "QTime": 65,
+      "status": 0
+    }
+  },
+  "geohash_3": {
+    "facets": {
+      "geo": {
+        "buckets": [
+          {
+            "term": {
+              "between": {
+                "count": 72
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 60,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 12,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 2,
+            "val": "2sv",
+            "count": 73,
+            "ltAvg": -17.533139726027393,
+            "ltMin": -17.68,
+            "ltMax": -17.5311,
+            "lnAvg": -149.55830136986322,
+            "lnMin": -149.58,
+            "lnMax": -149.558
+          },
+          {
+            "term": {
+              "between": {
+                "count": 15
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 15,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 6,
+            "val": "ruy",
+            "count": 15,
+            "ltAvg": -17.77373333333333,
+            "ltMin": -17.823,
+            "ltMax": -17.764,
+            "lnAvg": 177.43373333333332,
+            "lnMin": 177.398,
+            "lnMax": 177.474
+          },
+          {
+            "term": {
+              "between": {
+                "count": 9
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 9,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "882",
+            "count": 9,
+            "ltAvg": 1.9840000000000002,
+            "ltMin": 1.984,
+            "ltMax": 1.984,
+            "lnAvg": -157.369,
+            "lnMin": -157.369,
+            "lnMax": -157.369
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2th",
+            "count": 1,
+            "ltAvg": -16.5,
+            "ltMin": -16.5,
+            "ltMax": -16.5,
+            "lnAvg": -151.73,
+            "lnMin": -151.73,
+            "lnMax": -151.73
+          }
+        ]
+      },
+      "count": 98
+    },
+    "response": {
+      "docs": [],
+      "start": 0,
+      "numFound": 98
+    },
+    "responseHeader": {
+      "params": {
+        "wt": "json",
+        "rows": "0",
+        "sort": "id asc",
+        "json": "{\n\t\t\"filter\": [\n                  \"bundle:pop_sample\",\n\t\t  \"has_geodata:true\",\n                  \"geolocations_cvterms:(\\\"French Polynesia\\\" OR Fiji OR Kiribati)\"\n                ],\n\t\t\"facet\": {\n\t          \"geo\": {\n\t \t    \"type\": \"terms\",\n\t\t    \"field\": \"${geo:geohash_3}\",\n\t\t    \"limit\": -1,\n\t\t    \"mincount\": 1,\n\t\t    \"sort\": {\n\t\t\t\"count\": \"desc\"\n\t\t    },\n\t\t    \"facet\": {\n\t\t\t\"ltAvg\": \"avg(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMin\": \"min(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMax\": \"max(geo_coords_ll_0_coordinate)\",\n\t\t\t\"lnAvg\": \"avg(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMin\": \"min(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMax\": \"max(geo_coords_ll_1_coordinate)\",\n\t\t\tatomicCount: \"unique(${geomax:geohash_7})\",\n\t\t\t\"term\": {\n\t\t\t\t\"type\": \"range\",\n\t\t\t\t\"field\": \"${term:collection_date}\",\n\t\t\t\t\"start\": \"2000-01-01T00:00:00Z\",\n                                \"end\": \"2020-01-01T00:00:00Z\",\n                                \"gap\": \"+4YEARS\",\n\t\t\t\t\"mincount\": 0,\n                                \"other\": \"all\"\n\t\t\t}\n\t\t    }\n                 }\n               }\n            }",
+        "q": "*:*",
+        "geo": "geohash_3"
+      },
+      "QTime": 62,
+      "status": 0
+    }
+  },
+  "geohash_2": {
+    "facets": {
+      "geo": {
+        "buckets": [
+          {
+            "term": {
+              "between": {
+                "count": 72
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 60,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 12,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 2,
+            "val": "2s",
+            "count": 73,
+            "ltAvg": -17.533139726027393,
+            "ltMin": -17.68,
+            "ltMax": -17.5311,
+            "lnAvg": -149.55830136986322,
+            "lnMin": -149.58,
+            "lnMax": -149.558
+          },
+          {
+            "term": {
+              "between": {
+                "count": 15
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 15,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 6,
+            "val": "ru",
+            "count": 15,
+            "ltAvg": -17.77373333333333,
+            "ltMin": -17.823,
+            "ltMax": -17.764,
+            "lnAvg": 177.43373333333332,
+            "lnMin": 177.398,
+            "lnMax": 177.474
+          },
+          {
+            "term": {
+              "between": {
+                "count": 9
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 9,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "88",
+            "count": 9,
+            "ltAvg": 1.9840000000000002,
+            "ltMin": 1.984,
+            "ltMax": 1.984,
+            "lnAvg": -157.369,
+            "lnMin": -157.369,
+            "lnMax": -157.369
+          },
+          {
+            "term": {
+              "between": {
+                "count": 0
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 1
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "2t",
+            "count": 1,
+            "ltAvg": -16.5,
+            "ltMin": -16.5,
+            "ltMax": -16.5,
+            "lnAvg": -151.73,
+            "lnMin": -151.73,
+            "lnMax": -151.73
+          }
+        ]
+      },
+      "count": 98
+    },
+    "response": {
+      "docs": [],
+      "start": 0,
+      "numFound": 98
+    },
+    "responseHeader": {
+      "params": {
+        "wt": "json",
+        "rows": "0",
+        "sort": "id asc",
+        "json": "{\n\t\t\"filter\": [\n                  \"bundle:pop_sample\",\n\t\t  \"has_geodata:true\",\n                  \"geolocations_cvterms:(\\\"French Polynesia\\\" OR Fiji OR Kiribati)\"\n                ],\n\t\t\"facet\": {\n\t          \"geo\": {\n\t \t    \"type\": \"terms\",\n\t\t    \"field\": \"${geo:geohash_3}\",\n\t\t    \"limit\": -1,\n\t\t    \"mincount\": 1,\n\t\t    \"sort\": {\n\t\t\t\"count\": \"desc\"\n\t\t    },\n\t\t    \"facet\": {\n\t\t\t\"ltAvg\": \"avg(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMin\": \"min(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMax\": \"max(geo_coords_ll_0_coordinate)\",\n\t\t\t\"lnAvg\": \"avg(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMin\": \"min(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMax\": \"max(geo_coords_ll_1_coordinate)\",\n\t\t\tatomicCount: \"unique(${geomax:geohash_7})\",\n\t\t\t\"term\": {\n\t\t\t\t\"type\": \"range\",\n\t\t\t\t\"field\": \"${term:collection_date}\",\n\t\t\t\t\"start\": \"2000-01-01T00:00:00Z\",\n                                \"end\": \"2020-01-01T00:00:00Z\",\n                                \"gap\": \"+4YEARS\",\n\t\t\t\t\"mincount\": 0,\n                                \"other\": \"all\"\n\t\t\t}\n\t\t    }\n                 }\n               }\n            }",
+        "q": "*:*",
+        "geo": "geohash_2"
+      },
+      "QTime": 4,
+      "status": 0
+    }
+  },
+  "geohash_1": {
+    "facets": {
+      "geo": {
+        "buckets": [
+          {
+            "term": {
+              "between": {
+                "count": 72
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 2
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 60,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 12,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 3,
+            "val": "2",
+            "count": 74,
+            "ltAvg": -17.519178378378374,
+            "ltMin": -17.68,
+            "ltMax": -16.5,
+            "lnAvg": -149.58764864864887,
+            "lnMin": -151.73,
+            "lnMax": -149.558
+          },
+          {
+            "term": {
+              "between": {
+                "count": 15
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 15,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 6,
+            "val": "r",
+            "count": 15,
+            "ltAvg": -17.77373333333333,
+            "ltMin": -17.823,
+            "ltMax": -17.764,
+            "lnAvg": 177.43373333333332,
+            "lnMin": 177.398,
+            "lnMax": 177.474
+          },
+          {
+            "term": {
+              "between": {
+                "count": 9
+              },
+              "after": {
+                "count": 0
+              },
+              "before": {
+                "count": 0
+              },
+              "buckets": [
+                {
+                  "count": 0,
+                  "val": "2000-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2004-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2008-01-01T00:00:00Z"
+                },
+                {
+                  "count": 0,
+                  "val": "2012-01-01T00:00:00Z"
+                },
+                {
+                  "count": 9,
+                  "val": "2016-01-01T00:00:00Z"
+                }
+              ]
+            },
+            "atomicCount": 1,
+            "val": "8",
+            "count": 9,
+            "ltAvg": 1.9840000000000002,
+            "ltMin": 1.984,
+            "ltMax": 1.984,
+            "lnAvg": -157.369,
+            "lnMin": -157.369,
+            "lnMax": -157.369
+          }
+        ]
+      },
+      "count": 98
+    },
+    "response": {
+      "docs": [],
+      "start": 0,
+      "numFound": 98
+    },
+    "responseHeader": {
+      "params": {
+        "wt": "json",
+        "rows": "0",
+        "sort": "id asc",
+        "json": "{\n\t\t\"filter\": [\n                  \"bundle:pop_sample\",\n\t\t  \"has_geodata:true\",\n                  \"geolocations_cvterms:(\\\"French Polynesia\\\" OR Fiji OR Kiribati)\"\n                ],\n\t\t\"facet\": {\n\t          \"geo\": {\n\t \t    \"type\": \"terms\",\n\t\t    \"field\": \"${geo:geohash_3}\",\n\t\t    \"limit\": -1,\n\t\t    \"mincount\": 1,\n\t\t    \"sort\": {\n\t\t\t\"count\": \"desc\"\n\t\t    },\n\t\t    \"facet\": {\n\t\t\t\"ltAvg\": \"avg(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMin\": \"min(geo_coords_ll_0_coordinate)\",\n\t\t\t\"ltMax\": \"max(geo_coords_ll_0_coordinate)\",\n\t\t\t\"lnAvg\": \"avg(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMin\": \"min(geo_coords_ll_1_coordinate)\",\n\t\t\t\"lnMax\": \"max(geo_coords_ll_1_coordinate)\",\n\t\t\tatomicCount: \"unique(${geomax:geohash_7})\",\n\t\t\t\"term\": {\n\t\t\t\t\"type\": \"range\",\n\t\t\t\t\"field\": \"${term:collection_date}\",\n\t\t\t\t\"start\": \"2000-01-01T00:00:00Z\",\n                                \"end\": \"2020-01-01T00:00:00Z\",\n                                \"gap\": \"+4YEARS\",\n\t\t\t\t\"mincount\": 0,\n                                \"other\": \"all\"\n\t\t\t}\n\t\t    }\n                 }\n               }\n            }",
+        "q": "*:*",
+        "geo": "geohash_1"
+      },
+      "QTime": 549,
+      "status": 0
+    }
+  }
+}
