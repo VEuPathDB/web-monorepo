@@ -1,7 +1,7 @@
 import React, { ReactElement, useState, useCallback, useEffect } from 'react';
-// import { withKnobs, radios , boolean, number } from '@storybook/addon-knobs';
+import { Story, Meta } from '@storybook/react/types-6-0';
 // import { action } from '@storybook/addon-actions';
-import MapVEuMap from '../map/MapVEuMap';
+import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 import { BoundsViewport } from '../map/Types';
 import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import { defaultAnimationDuration } from '../map/config/map.json';
@@ -21,6 +21,12 @@ import geohashAnimation from '../map/animation_functions/geohash';
 export default {
   title: 'Map/Chart Markers',
   component: MapVEuMap,
+} as Meta;
+
+const defaultAnimation = {
+  method: 'geohash',
+  animationFunction: geohashAnimation,
+  duration: defaultAnimationDuration,
 };
 
 // no op
@@ -38,7 +44,7 @@ const variableProps = {
   legendInfoNumberText: 'Collections',
 };
 
-export const AllInOneRequest = () => {
+export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
@@ -76,17 +82,11 @@ export const AllInOneRequest = () => {
   return (
     <>
       <MapVEuMap
+        {...args}
         viewport={{ center: [13, 0], zoom: 6 }}
-        height="100vh"
-        width="100vw"
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
-        animation={{
-          method: 'geohash',
-          animationFunction: geohashAnimation,
-          duration,
-        }}
-        showGrid={true}
+        animation={defaultAnimation}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -101,7 +101,14 @@ export const AllInOneRequest = () => {
   );
 };
 
-export const TwoRequests = () => {
+AllInOneRequest.args = {
+  height: '100vh',
+  width: '100vw',
+  showGrid: true,
+  showMouseToolbar: false, // not yet implemented
+};
+
+export const TwoRequests: Story<MapVEuMapProps> = (args) => {
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
@@ -160,17 +167,11 @@ export const TwoRequests = () => {
   return (
     <>
       <MapVEuMap
+        {...args}
         viewport={{ center: [13, 0], zoom: 6 }}
-        height="100vh"
-        width="100vw"
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
-        animation={{
-          method: 'geohash',
-          animationFunction: geohashAnimation,
-          duration,
-        }}
-        showGrid={true}
+        animation={defaultAnimation}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -183,4 +184,11 @@ export const TwoRequests = () => {
       />
     </>
   );
+};
+
+TwoRequests.args = {
+  height: '100vh',
+  width: '100vw',
+  showGrid: true,
+  showMouseToolbar: false, // not yet implemented
 };
