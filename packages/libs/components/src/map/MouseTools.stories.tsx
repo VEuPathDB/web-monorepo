@@ -5,7 +5,7 @@ import { BoundsViewport, Bounds } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import { zoomLevelToGeohashLevel, defaultAnimationDuration } from './config/map.json';
 
-import speciesData from './test-data/geoclust-species-testing-all-levels.json';
+import speciesData from '../stories/fixture-data/geoclust-species-testing-all-levels.json';
 
 import { LeafletMouseEvent } from "leaflet";
 import DonutMarker, { DonutMarkerProps } from './DonutMarker';
