@@ -55,7 +55,7 @@ export default function Button({
             width: '100%',
             color: textColor ? textColor : 'white',
           }}
-          color='primary'
+          color="primary"
           onClick={onClick}
         >
           {text}

@@ -47,7 +47,7 @@ export default function Notification({
           justifyContent: 'space-between',
         }}
       >
-        <Typography variant='button' style={{ color: 'white' }}>
+        <Typography variant="button" style={{ color: 'white' }}>
           {title}
         </Typography>
         <div
@@ -85,9 +85,9 @@ export default function Notification({
           {text}
         </span>
         <Button
-          text='Ok'
-          type='outlined'
-          color='#FFFFFF'
+          text="Ok"
+          type="outlined"
+          color="#FFFFFF"
           onClick={onAcknowledgement}
           containerStyles={{
             paddingTop: 10,

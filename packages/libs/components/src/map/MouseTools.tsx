@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import '../styles/map_styles.css';
 
 // Add new mouse modes here
@@ -11,16 +11,16 @@ const mouseModeConfig = [
   {
     name: 'magnification',
     icon: 'fa-search',
-    description: 'Magnification mode: Mouse over a marker to magnify it'
+    description: 'Magnification mode: Mouse over a marker to magnify it',
   },
 ] as const;
 
-const mouseModesArray = mouseModeConfig.map(mode => mode.name);
-export type MouseMode = (typeof mouseModesArray)[number];  // Union of mode names
+const mouseModesArray = mouseModeConfig.map((mode) => mode.name);
+export type MouseMode = typeof mouseModesArray[number]; // Union of mode names
 
 export interface MouseToolsProps {
-  mouseMode: MouseMode,
-  setMouseMode: (mode: MouseMode) => void,
+  mouseMode: MouseMode;
+  setMouseMode: (mode: MouseMode) => void;
 }
 
 export default function MouseTools(props: MouseToolsProps) {
@@ -29,9 +29,13 @@ export default function MouseTools(props: MouseToolsProps) {
    */
   const buttons = mouseModeConfig.map((mode) => {
     return (
-      <a role="button"
+      <a
+        role="button"
         onClick={() => props.setMouseMode(mode.name)}
-        className={'mapveu-button' + (props.mouseMode === mode.name ? ' mapveu-button-selected' : '')}
+        className={
+          'mapveu-button' +
+          (props.mouseMode === mode.name ? ' mapveu-button-selected' : '')
+        }
         title={mode.description}
         key={mode.name}
       >
