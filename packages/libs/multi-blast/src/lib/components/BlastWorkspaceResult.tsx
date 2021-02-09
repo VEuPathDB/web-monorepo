@@ -30,7 +30,7 @@ interface Props {
 
 type SelectedResult =
   | { type: 'combined' }
-  | { type: 'individual'; individualIndex: number };
+  | { type: 'individual'; resultIndex: number };
 
 const POLLING_INTERVAL = 3000;
 

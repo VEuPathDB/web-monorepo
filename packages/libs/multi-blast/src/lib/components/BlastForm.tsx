@@ -87,37 +87,38 @@ export function BlastForm(props: Props) {
   ]);
 
   const renderBlastParamGroup = useCallback(
-    (group: ParameterGroup, formProps: Props) =>
-      group.name !== ADVANCED_PARAMS_GROUP_NAME ? (
-        <div className={blastFormCx('Group', group.name)}>
-          {renderDefaultParamGroup(group, formProps)}
-        </div>
-      ) : (
-        <AdvancedParamGroup
-          disabled={advancedParamGroupChanging}
-          key={group.name}
-          searchName={formProps.state.question.urlSegment}
-          group={restrictedAdvancedParamGroup}
-          uiState={
-            !advancedParamGroupChanging
-              ? formProps.state.groupUIState[group.name]
-              : {
-                  ...formProps.state.groupUIState[group.name],
-                  isVisible: false,
-                }
-          }
-          onVisibilityChange={formProps.eventHandlers.setGroupVisibility}
-        >
-          <ParameterList
-            parameters={restrictedAdvancedParamGroup.parameters}
-            parameterMap={formProps.state.question.parametersByName}
-            parameterElements={formProps.parameterElements}
-            paramDependenciesUpdating={
-              formProps.state.paramDependenciesUpdating
+    (group: ParameterGroup, formProps: Props) => (
+      <div key={group.name} className={blastFormCx('Group', group.name)}>
+        {group.name !== ADVANCED_PARAMS_GROUP_NAME ? (
+          renderDefaultParamGroup(group, formProps)
+        ) : (
+          <AdvancedParamGroup
+            disabled={advancedParamGroupChanging}
+            key={group.name}
+            searchName={formProps.state.question.urlSegment}
+            group={restrictedAdvancedParamGroup}
+            uiState={
+              !advancedParamGroupChanging
+                ? formProps.state.groupUIState[group.name]
+                : {
+                    ...formProps.state.groupUIState[group.name],
+                    isVisible: false,
+                  }
             }
-          />
-        </AdvancedParamGroup>
-      ),
+            onVisibilityChange={formProps.eventHandlers.setGroupVisibility}
+          >
+            <ParameterList
+              parameters={restrictedAdvancedParamGroup.parameters}
+              parameterMap={formProps.state.question.parametersByName}
+              parameterElements={formProps.parameterElements}
+              paramDependenciesUpdating={
+                formProps.state.paramDependenciesUpdating
+              }
+            />
+          </AdvancedParamGroup>
+        )}
+      </div>
+    ),
     [advancedParamGroupChanging, restrictedAdvancedParamGroup]
   );
 
