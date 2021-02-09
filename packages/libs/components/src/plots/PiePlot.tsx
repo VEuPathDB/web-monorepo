@@ -1,11 +1,11 @@
-import React from "react";
-import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
-import defaultColorGen from "../utils/defaultColorGen";
+import React from 'react';
+import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
+import defaultColorGen from '../utils/defaultColorGen';
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
 
 export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
-  hoverinfo: PlotlyPlotData['hoverinfo'] | PlotlyPlotData['textinfo'],
+  hoverinfo: PlotlyPlotData['hoverinfo'] | PlotlyPlotData['textinfo'];
   sort: boolean;
   texttemplate: string | string[];
 }
@@ -23,14 +23,14 @@ export interface Props extends PlotProps {
     text?: string;
     backgroundColor?: string;
     textColor?: string;
-    fontSize?: string|number;
+    fontSize?: string | number;
   };
-  showLegend?: boolean,
-  text?: string[],
-  textinfo?: PlotData['textinfo'],
-  textposition?: 'inside' | 'outside' | 'auto' | 'none',
-  texttemplate?: string | string[],
-  showHoverInfo?: boolean,
+  showLegend?: boolean;
+  text?: string[];
+  textinfo?: PlotData['textinfo'];
+  textposition?: 'inside' | 'outside' | 'auto' | 'none';
+  texttemplate?: string | string[];
+  showHoverInfo?: boolean;
 }
 
 export default function PiePlot(props: Props) {
@@ -47,16 +47,18 @@ export default function PiePlot(props: Props) {
 
     if (interior.text) {
       Object.assign(layout, {
-        annotations: [{
-          font: {
-            size: interior.fontSize || 12,
-            color: interior.textColor || 'black',
+        annotations: [
+          {
+            font: {
+              size: interior.fontSize || 12,
+              color: interior.textColor || 'black',
+            },
+            showarrow: false,
+            text: interior.text,
+            x: 0.5,
+            y: 0.5,
           },
-          showarrow: false,
-          text: interior.text,
-          x: 0.5,
-          y: 0.5,
-        }]
+        ],
       });
     }
 
@@ -89,12 +91,19 @@ export default function PiePlot(props: Props) {
   }
 
   // Preprocess data for PlotlyPlot
-  const reducer = (accumulatorObj: {values: number[], labels: string[], marker: {colors: string[]}}, currObj: PiePlotDatum) => {
+  const reducer = (
+    accumulatorObj: {
+      values: number[];
+      labels: string[];
+      marker: { colors: string[] };
+    },
+    currObj: PiePlotDatum
+  ) => {
     accumulatorObj.values.push(currObj.value);
     accumulatorObj.labels.push(currObj.label);
 
     // Use the provided color or the next default plotly color if none is provided
-    let color = currObj.color || defaultColorIter.next().value as string;
+    let color = currObj.color || (defaultColorIter.next().value as string);
     accumulatorObj.marker.colors.push(color);
 
     return accumulatorObj;
@@ -102,7 +111,7 @@ export default function PiePlot(props: Props) {
 
   const primaryDataTrace: Partial<PlotData> = {
     ...interiorProps,
-    ...data.reduce(reducer, {values: [], labels: [], marker: {colors: []}}),
+    ...data.reduce(reducer, { values: [], labels: [], marker: { colors: [] } }),
     type: 'pie',
     direction: 'clockwise',
     sort: false,
@@ -119,16 +128,23 @@ export default function PiePlot(props: Props) {
     layout.hovermode = false;
   }
 
-  return <PlotlyPlot
-    data={newData as any}  // Casting as 'any' to avoid issues with PlotData for pie charts
-    layout={{...layout, ...{
-      width: props.width,
-      height: props.height,
-      margin: props.margin,
-      showlegend: props.showLegend}}}
-    config={{
-      displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
-      staticPlot: props.staticPlot,
-    }}
-  />
+  return (
+    <PlotlyPlot
+      data={newData as any} // Casting as 'any' to avoid issues with PlotData for pie charts
+      layout={{
+        ...layout,
+        ...{
+          width: props.width,
+          height: props.height,
+          margin: props.margin,
+          showlegend: props.showLegend,
+        },
+      }}
+      config={{
+        displayModeBar:
+          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
+        staticPlot: props.staticPlot,
+      }}
+    />
+  );
 }

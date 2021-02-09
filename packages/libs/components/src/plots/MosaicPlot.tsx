@@ -1,5 +1,5 @@
-import React from "react";
-import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
+import React from 'react';
+import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
 
 interface Props extends PlotProps {
   // N columns/exposure, M rows/outcome
@@ -18,7 +18,7 @@ export default function MosaicPlot(props: Props) {
   const column_centers = props.widths.map((width, i) => {
     // Sum of the widths of previous columns
     let column_start = props.widths.slice(0, i).reduce((a, b) => a + b, 0);
-    return column_start + width/2;
+    return column_start + width / 2;
   });
 
   const layout = {
@@ -35,21 +35,26 @@ export default function MosaicPlot(props: Props) {
     barmode: 'stack',
   } as const;
 
-  const data = props.data.map((vals, i) => ({
-    x: column_centers,
-    y: vals,
-    name: props.outcomeValues[i],
-    width: props.widths,
-    type: 'bar',
-    marker: {
-      line: {
-        // Borders between blocks
-        width: 2,
-        color: 'white',
-      },
-      color: props.colors ? props.colors[i] : undefined,
-    },
-  } as const)).reverse();  // Reverse so first trace is on top, matching data array
+  const data = props.data
+    .map(
+      (vals, i) =>
+        ({
+          x: column_centers,
+          y: vals,
+          name: props.outcomeValues[i],
+          width: props.widths,
+          type: 'bar',
+          marker: {
+            line: {
+              // Borders between blocks
+              width: 2,
+              color: 'white',
+            },
+            color: props.colors ? props.colors[i] : undefined,
+          },
+        } as const)
+    )
+    .reverse(); // Reverse so first trace is on top, matching data array
 
   return (
     <PlotlyPlot
@@ -61,7 +66,8 @@ export default function MosaicPlot(props: Props) {
         showlegend: props.showLegend,
       })}
       config={{
-        displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
+        displayModeBar:
+          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
         staticPlot: props.staticPlot,
       }}
     />

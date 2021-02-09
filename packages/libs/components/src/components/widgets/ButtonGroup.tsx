@@ -46,7 +46,7 @@ export default function ButtonGroup({
     >
       {label && (
         <Typography
-          variant='button'
+          variant="button"
           style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
         >
           {label}

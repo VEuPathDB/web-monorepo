@@ -7,39 +7,39 @@ import LegendListGeneral from './LegendListGeneral';
 //DKDK legend radio button for histogram marker
 import LegendListRadioButton from './LegendListRadioButton';
 //DKDK legend tutorial info
-import LegendListInfo from "./LegendListInfo"
+import LegendListInfo from './LegendListInfo';
 //DKDK import legend css for positioning: place this at the end of other CSS to override pre-existing ones
-import './legend-style.css'
+import './legend-style.css';
 
 //DKDK type def for legend: some are set to optional for now
 export interface LegendProps {
   // className: string
-  legendType : string,    //'categorical' | 'numeric' | 'date',
-  data : {
-    label : string, // categorical e.g. "Anopheles gambiae"
-                    // numeric e.g. "10-20"
-    value : number,
-    color : string,
-  }[],
-  variableLabel? : string, // e.g. Species or Age
-  quantityLabel? : string, // ** comment below
-  tickLabelsVisible?: boolean,
+  legendType: string; //'categorical' | 'numeric' | 'date',
+  data: {
+    label: string; // categorical e.g. "Anopheles gambiae"
+    // numeric e.g. "10-20"
+    value: number;
+    color: string;
+  }[];
+  variableLabel?: string; // e.g. Species or Age
+  quantityLabel?: string; // ** comment below
+  tickLabelsVisible?: boolean;
 
-  onShowFilter? : () => {},  // callback to open up filter panel
-  onShowVariableChooser? : () => {}, // callback to open up variable selector
+  onShowFilter?: () => {}; // callback to open up filter panel
+  onShowVariableChooser?: () => {}; // callback to open up variable selector
 
   //DKDK send state for legend radio button
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void,
-  selectedOption?: string,
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  selectedOption?: string;
 
   //DKDK add dropdown props for dynamic change
-  dropdownTitle: string,
-  dropdownHref: string[],
-  dropdownItemText: string[],
+  dropdownTitle: string;
+  dropdownHref: string[];
+  dropdownItemText: string[];
   //DKDK use yAxisRange[1]
-  yAxisRangeValue?: number,
+  yAxisRangeValue?: number;
   //DKDK send legend number text
-  legendInfoNumberText?: string,
+  legendInfoNumberText?: string;
 }
 
 //DKDK make legend at the map without using L.Control: perhaps send props to make circle or square?
@@ -47,31 +47,33 @@ export interface LegendProps {
 //DKDK show/hide legend
 const MapVEuLegendSampleListHide = (props: LegendProps) => {
   //DKDK simplifying
-  let legendIconClass = ''
+  let legendIconClass = '';
   if (props.legendType === 'categorical') {
-    legendIconClass = 'legend-contents'
+    legendIconClass = 'legend-contents';
   } else {
-    legendIconClass = 'legend-contents-numeric'
+    legendIconClass = 'legend-contents-numeric';
   }
 
   //DKDK make ref & typing
-  const legendWrapper = useRef() as React.MutableRefObject<HTMLInputElement>
+  const legendWrapper = useRef() as React.MutableRefObject<HTMLInputElement>;
   //DKDK check legend status to determine show/hide text at button: default is false so that legend is hidden
-  const [ legendStatus, setlegendStatus ] = useState(false)
+  const [legendStatus, setlegendStatus] = useState(false);
   const legendShowHideButtonClick = (e: React.MouseEvent) => {
-    const wrapper = legendWrapper? legendWrapper.current: undefined
+    const wrapper = legendWrapper ? legendWrapper.current : undefined;
     if (wrapper) {
-      wrapper.classList.toggle('hiding-legend')
-      setlegendStatus(wrapper.classList.contains('hiding-legend')? true : false)
+      wrapper.classList.toggle('hiding-legend');
+      setlegendStatus(
+        wrapper.classList.contains('hiding-legend') ? true : false
+      );
     }
-  }
+  };
 
   return (
     //DKDK add wrapper divs for showing and hiding legend
     <>
-      <div ref={legendWrapper} className="legend-wrapper" >
+      <div ref={legendWrapper} className="legend-wrapper">
         <div className="legend-nav">
-        {/* DKDK add below divs for benefeting from pre-existing CSS (vb-popbio-maps.css)         */}
+          {/* DKDK add below divs for benefeting from pre-existing CSS (vb-popbio-maps.css)         */}
           <div className="info legend">
             <div className={legendIconClass}>
               {/* DKDK add react-bootstrap dropdown and dynamically generate menu items */}
@@ -112,11 +114,16 @@ const MapVEuLegendSampleListHide = (props: LegendProps) => {
       </div>
       {/* DKDK button to control show/hide legend */}
       <div className="legend-display-button active">
-          <button className="legend-nav-icon" onClick={(e) => legendShowHideButtonClick(e)}> {legendStatus? 'Show' : ' Hide'} Legend </button>
+        <button
+          className="legend-nav-icon"
+          onClick={(e) => legendShowHideButtonClick(e)}
+        >
+          {' '}
+          {legendStatus ? 'Show' : ' Hide'} Legend{' '}
+        </button>
       </div>
     </>
-  )
-
+  );
 };
 
 //DKDK hide

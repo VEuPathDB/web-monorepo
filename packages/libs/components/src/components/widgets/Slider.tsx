@@ -121,7 +121,7 @@ export default function SliderWidget({
     >
       {label && (
         <Typography
-          variant='button'
+          variant="button"
           style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY, paddingRight: 15 }}
         >
           {label}
@@ -140,7 +140,7 @@ export default function SliderWidget({
         max={maximum}
         value={value}
         step={step}
-        valueLabelDisplay='auto'
+        valueLabelDisplay="auto"
         valueLabelFormat={valueFormatter}
         onChange={(event, newValue) => {
           /**
