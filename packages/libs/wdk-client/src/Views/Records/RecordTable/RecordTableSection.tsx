@@ -56,6 +56,7 @@ function RecordTableSection(props: Props) {
         <RecordTableDescription table={table} record={record} recordClass={recordClass}/>
         { isError ? <p style={{ color: 'darkred', fontStyle: 'italic' }}>Unable to load data due to a server error.</p>
         : isLoading ? <p>Loading...</p>
+        // @ts-ignore
         : <RecordTable className={className} value={value} table={table} record={record} recordClass={recordClass}/> }
       </ErrorBoundary>
     </CollapsibleSection>
