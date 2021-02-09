@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { uniq } from 'lodash';
 
-import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { IconAlt, Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-import { useBlastApi, useDownloadJobQueryCallback } from '../hooks/api';
+import { useBlastApi } from '../hooks/api';
 import {
   useHitTypeDisplayName,
   useWdkRecordType,
@@ -34,6 +34,11 @@ export function BlastWorkspaceResult(props: Props) {
     []
   );
 
+  const queryResult = usePromise(() => api.fetchQuery(props.jobId), [
+    api,
+    props.jobId,
+  ]);
+
   const jobResult = usePromise(() => makeJobPollingPromise(api, props.jobId), [
     api,
     props.jobId,
@@ -48,6 +53,7 @@ export function BlastWorkspaceResult(props: Props) {
   );
 
   return organismToFilenameMapsResult == null ||
+    queryResult.value == null ||
     jobResult.value == null ||
     multiQueryReportResult.value == null ? (
     <LoadingBlastResult {...props} />
@@ -56,6 +62,7 @@ export function BlastWorkspaceResult(props: Props) {
       filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
       jobDetails={jobResult.value}
       multiQueryReport={multiQueryReportResult.value}
+      query={queryResult.value}
     />
   );
 }
@@ -89,12 +96,14 @@ interface BlastSummaryProps {
   filesToOrganisms: Record<string, string>;
   jobDetails: LongJobResponse;
   multiQueryReport: MultiQueryReportJson;
+  query: string;
 }
 
 function BlastSummary({
   filesToOrganisms,
   jobDetails,
   multiQueryReport,
+  query,
 }: BlastSummaryProps) {
   const databases = useMemo(() => {
     const databasesEntries = multiQueryReport.BlastOutput2.map(({ report }) =>
@@ -105,8 +114,6 @@ function BlastSummary({
   }, [multiQueryReport]);
 
   const databasesStr = useMemo(() => databases.join(', '), [databases]);
-
-  const downloadJobQuery = useDownloadJobQueryCallback(jobDetails.id);
 
   const wdkRecordType = useWdkRecordType(multiQueryReport);
 
@@ -135,9 +142,7 @@ function BlastSummary({
         </span>
         <span>{databasesStr}</span>
         <span className="InlineHeader">Query:</span>
-        <Link to="#" onClick={downloadJobQuery}>
-          Download Query File
-        </Link>
+        <Query query={query} />
       </div>
       <CombinedBlastResult
         combinedResult={multiQueryReport}
@@ -146,6 +151,74 @@ function BlastSummary({
         wdkRecordType={wdkRecordType}
       />
     </div>
+  );
+}
+
+interface QueryProps {
+  query: string;
+}
+
+function Query({ query }: QueryProps) {
+  const lines = useMemo(() => query.split(/\r\n|\r|\n/), [query]);
+
+  const [readMoreState, setReadMoreState] = useState<ReadMoreState>(
+    initialReadMoreState(lines.length)
+  );
+
+  useEffect(() => {
+    setReadMoreState(initialReadMoreState(lines.length));
+  }, [lines]);
+
+  const linesToDisplay = useMemo(
+    () => (readMoreState !== 'collapsed' ? lines : lines.slice(0, 2)),
+    [lines, readMoreState]
+  );
+
+  const toggleExpanded = useCallback(() => {
+    if (readMoreState !== 'not-offered') {
+      setReadMoreState(
+        readMoreState === 'collapsed' ? 'expanded' : 'collapsed'
+      );
+    }
+  }, [readMoreState]);
+
+  return (
+    <span className="QueryContainer">
+      <div className="Query">
+        {linesToDisplay.map((line, i) => (
+          <Fragment key={i}>
+            {line}
+            {i < linesToDisplay.length - 1 && <br />}
+          </Fragment>
+        ))}
+      </div>
+      {readMoreState !== 'not-offered' && (
+        <ReadMoreButton
+          expanded={readMoreState === 'expanded'}
+          onClick={toggleExpanded}
+        />
+      )}
+    </span>
+  );
+}
+
+type ReadMoreState = 'not-offered' | 'expanded' | 'collapsed';
+
+function initialReadMoreState(nLines: number) {
+  return nLines <= 2 ? 'not-offered' : 'collapsed';
+}
+
+interface ReadMoreButtonProps {
+  expanded: boolean;
+  onClick: () => void;
+}
+
+function ReadMoreButton({ expanded, onClick }: ReadMoreButtonProps) {
+  return (
+    <button onClick={onClick} type="button" className="ReadMore link">
+      <IconAlt fa={expanded ? 'chevron-up' : 'chevron-down'} />{' '}
+      {expanded ? 'Hide Full Query' : 'Show Full Query'}
+    </button>
   );
 }
 

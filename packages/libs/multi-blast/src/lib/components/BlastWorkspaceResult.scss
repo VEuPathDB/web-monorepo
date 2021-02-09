@@ -3,6 +3,21 @@
     font-weight: bold;
   }
 
+  .Query {
+    font-family: Courier, monospace;
+    line-height: 2.5ex;
+    max-height: 50ex;
+    overflow-y: auto;
+  }
+
+  .ReadMore {
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
   &__Loading {
     .Caption {
       text-align: center;
