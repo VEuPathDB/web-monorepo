@@ -23,7 +23,7 @@ export default function OpacitySlider({
 }: OpacitySliderProps) {
   return (
     <SliderWidget
-      label='Opacity'
+      label="Opacity"
       minimum={0}
       maximum={1}
       step={0.1}

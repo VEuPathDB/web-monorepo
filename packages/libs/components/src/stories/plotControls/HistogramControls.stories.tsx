@@ -45,7 +45,7 @@ export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>> = (
 
   return (
     <HistogramControls
-      label='Customizable Control Panel Label'
+      label="Customizable Control Panel Label"
       accentColor={LIGHT_PURPLE}
       {...controls}
       {...controls.histogram}
