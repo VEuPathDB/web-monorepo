@@ -23,11 +23,11 @@ export type Action =
   | SubmitQuestionAction
   | UpdateParamValueAction
   | ParamErrorAction
-  | UpdateParamsAction
+  | UpdateDependentParamsAction
   | InitParamAction
   | UpdateParamStateAction
   | ChangeGroupVisibilityAction
-  | UpdateGroupStateAction
+  | GroupCountLoadedAction
   | EnableSubmissionAction
 
 
@@ -235,7 +235,7 @@ export interface UpdateParamValueAction {
   type: typeof UPDATE_PARAM_VALUE;
   payload: QuestionPayload<{
     parameter: Parameter;
-    paramValues: ParameterValues;
+    paramValues: ParameterValues; //FIXME remove globally, make sure the observers read from state
     paramValue: ParameterValue;
   }>;
 }
@@ -268,18 +268,19 @@ export function paramError(payload: ParamErrorAction['payload']): ParamErrorActi
 
 //==============================================================================
 
-export const UPDATE_PARAMS = 'question/update-params';
+export const UPDATE_DEPENDENT_PARAMS = 'question/update-dependent-params';
 
-export interface UpdateParamsAction {
-  type: typeof UPDATE_PARAMS;
+export interface UpdateDependentParamsAction {
+  type: typeof UPDATE_DEPENDENT_PARAMS;
   payload: QuestionPayload<{
-    parameters: Parameter[];
+    updatedParameter: Parameter,
+    refreshedDependentParameters: Parameter[];
   }>;
 }
 
-export function updateParams(payload: UpdateParamsAction['payload']): UpdateParamsAction {
+export function updateDependentParams(payload: UpdateDependentParamsAction['payload']): UpdateDependentParamsAction {
   return {
-    type: UPDATE_PARAMS,
+    type: UPDATE_DEPENDENT_PARAMS,
     payload
   };
 }
@@ -344,19 +345,20 @@ export function changeGroupVisibility(payload: ChangeGroupVisibilityAction['payl
 
 //==============================================================================
 
-export const UPDATE_GROUP_STATE = 'question/update-group-state';
+export const GROUP_COUNT_LOADED = 'question/group-count-loaded';
 
-export interface UpdateGroupStateAction {
-  type: typeof UPDATE_GROUP_STATE;
+export interface GroupCountLoadedAction {
+  type: typeof GROUP_COUNT_LOADED;
   payload: {
+    searchName: string;
     groupName: string;
-    groupState: any;
+    filteredCount: number;
   };
 }
 
-export function updateGroupState(payload: UpdateGroupStateAction['payload']): UpdateGroupStateAction {
+export function groupCountLoaded(payload: GroupCountLoadedAction['payload']): GroupCountLoadedAction {
   return {
-    type: UPDATE_GROUP_STATE,
+    type: GROUP_COUNT_LOADED,
     payload
   };
 }

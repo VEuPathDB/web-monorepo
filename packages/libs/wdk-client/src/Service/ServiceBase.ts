@@ -3,7 +3,7 @@ import { keyBy, memoize } from 'lodash';
 import * as QueryString from 'querystring';
 import { v4 as uuid } from 'uuid';
 import { expandedRecordClassDecoder } from 'wdk-client/Service/Decoders/RecordClassDecoders';
-import { ServiceError } from 'wdk-client/Service/ServiceError';
+import { ServiceError, isServerError } from 'wdk-client/Service/ServiceError';
 import { fetchWithRetry } from 'wdk-client/Utils/FetchWithRetry';
 import * as Decode from 'wdk-client/Utils/Json';
 import { alert } from 'wdk-client/Utils/Platform';
@@ -177,7 +177,7 @@ export const ServiceBase = (serviceUrl: string) => {
   }
 
   async function submitErrorIfNot500(error: Error, extra?: any): Promise<void> {
-    if ('status' in error && (error as ServiceError).status >= 500) return;
+    if (isServerError(error)) return;
     return submitError(error, extra);
   }
 

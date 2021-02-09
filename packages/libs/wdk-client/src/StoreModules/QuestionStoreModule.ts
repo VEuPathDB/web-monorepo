@@ -1,7 +1,8 @@
 import { keyBy, mapValues, toString } from 'lodash';
+import { Seq } from 'wdk-client/Utils/IterableUtils';
 import { combineEpics, ofType, StateObservable, ActionsObservable } from 'redux-observable';
 import { EMPTY, Observable, Subject, from, merge, of } from 'rxjs';
-import { catchError, debounceTime, filter, map, mergeAll, mergeMap, takeUntil } from 'rxjs/operators';
+import { catchError, debounceTime, concatMap, filter, map, mergeAll, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 
 import {
   UNLOAD_QUESTION,
@@ -13,15 +14,17 @@ import {
   UPDATE_QUESTION_WEIGHT,
   UPDATE_PARAM_VALUE,
   PARAM_ERROR,
-  UPDATE_PARAMS,
+  UPDATE_DEPENDENT_PARAMS,
   UPDATE_PARAM_STATE,
   CHANGE_GROUP_VISIBILITY,
-  UPDATE_GROUP_STATE,
+  GROUP_COUNT_LOADED,
+  groupCountLoaded,
+  ChangeGroupVisibilityAction,
   UpdateActiveQuestionAction,
   QuestionLoadedAction,
   initParam,
   UpdateParamValueAction,
-  updateParams,
+  updateDependentParams,
   paramError,
   SubmitQuestionAction,
   questionLoaded,
@@ -68,9 +71,12 @@ export const key = 'question';
 export const DEFAULT_STRATEGY_NAME = 'Unnamed Search Strategy';
 export const DEFAULT_STEP_WEIGHT = 10;
 
-interface GroupState {
-  isVisible: boolean;
-}
+export type FilteredCountState = 'initial' | 'loading' | 'invalid' | number;
+
+export type GroupState = {
+  isVisible: boolean,
+  filteredCountState: FilteredCountState,
+};
 
 export type QuestionWithMappedParameters =
   QuestionWithParameters & {
@@ -92,7 +98,7 @@ export type QuestionState = {
   customName?: string;
   stepValidation?: Step['validation'];
   submitting: boolean;
-  paramDependenciesUpdating: Record<string, boolean>;
+  paramsUpdatingDependencies: Record<string, boolean>;
 }
 
 export type State = {
@@ -149,7 +155,7 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         stepId: action.payload.stepId,
         questionStatus: 'loading',
         submitting: false,
-        paramDependenciesUpdating: {}
+        paramsUpdatingDependencies: {}
       }
 
     case QUESTION_LOADED:
@@ -166,7 +172,10 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         paramUIState: action.payload.question.parameters.reduce((paramUIState, parameter) =>
           Object.assign(paramUIState, { [parameter.name]: paramReducer(parameter, undefined, { type: '@@parm-stub@@' }) }), {}),
         groupUIState: action.payload.question.groups.reduce((groupUIState, group) =>
-          Object.assign(groupUIState, { [group.name]: { isVisible: group.isVisible }}), {}),
+          Object.assign(groupUIState, { [group.name]: { 
+            isVisible: group.isVisible,
+            filteredCountState: 'initial'
+          }}), {}),
         weight: toString(action.payload.wdkWeight),
         customName: toString(action.payload.customName)
       }
@@ -196,9 +205,19 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
       }
 
     case UPDATE_PARAM_VALUE:
-      const newParamDependenciesUpdating = action.payload.parameter.dependentParams.reduce(
-        (memo, dependentParam) => ({ ...memo, [dependentParam]: true }), 
-        {} as Record<string, boolean>
+      const groupIx = state.question.groups.findIndex(group => group.name === action.payload.parameter.group);
+
+      const newGroupUIState = state.question.groups.slice(groupIx).map(group => group.name).reduce(
+        (memo, groupName) => {
+          const {isVisible, filteredCountState} = state.groupUIState[groupName];
+          return Object.assign({...memo, [groupName]: {
+            isVisible,
+            filteredCountState:
+                isVisible ? 'loading'
+              : filteredCountState === 'initial' ? 'initial'
+              : 'invalid'
+          }});
+        }, {} as QuestionState['groupUIState']
       );
 
       return {
@@ -211,9 +230,13 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           ...state.paramErrors,
           [action.payload.parameter.name]: undefined
         },
-        paramDependenciesUpdating: {
-          ...state.paramDependenciesUpdating,
-          ...newParamDependenciesUpdating
+        paramsUpdatingDependencies: {
+          ...state.paramsUpdatingDependencies,
+          [action.payload.parameter.name]: true
+        },
+        groupUIState: {
+          ...state.groupUIState,
+          ...newGroupUIState
         }
       };
 
@@ -226,11 +249,10 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         }
       };
 
-    case UPDATE_PARAMS: {
-      const newParamsByName = keyBy(action.payload.parameters, 'name');
+    case UPDATE_DEPENDENT_PARAMS: {
+      const newParamsByName = keyBy(action.payload.refreshedDependentParameters, 'name');
       const newParamValuesByName = mapValues(newParamsByName, param => param.initialDisplayValue || '');
       const newParamErrors = mapValues(newParamsByName, () => undefined);
-      const newParamDependenciesUpdating = mapValues(newParamsByName, () => false);
       // merge updated parameters into question and reset their values
       return {
         ...state,
@@ -251,9 +273,9 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           parameters: state.question.parameters
             .map(parameter => newParamsByName[parameter.name] || parameter)
         },
-        paramDependenciesUpdating: {
-          ...state.paramDependenciesUpdating,
-          ...newParamDependenciesUpdating
+        paramsUpdatingDependencies: {
+          ...state.paramsUpdatingDependencies,
+          [action.payload.updatedParameter.name]: false
         }
       };
     }
@@ -268,23 +290,17 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
       };
 
     case CHANGE_GROUP_VISIBILITY:
+       const {filteredCountState } = state.groupUIState[action.payload.groupName];
        return {
         ...state,
         groupUIState: {
           ...state.groupUIState,
           [action.payload.groupName]: {
-            ...state.groupUIState[action.payload.groupName],
-            isVisible: action.payload.isVisible
+            filteredCountState:
+              ((filteredCountState === 'initial' || filteredCountState === 'invalid') && action.payload.isVisible ) ? 'loading'
+              : filteredCountState,
+            isVisible: action.payload.isVisible,
           }
-        }
-      };
-
-    case UPDATE_GROUP_STATE:
-      return {
-        ...state,
-        groupUIState: {
-          ...state.groupUIState,
-          [action.payload.groupName]: action.payload.groupState
         }
       };
 
@@ -300,6 +316,26 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
         ...state,
         submitting: false,
         stepValidation: action.payload.stepValidation ? action.payload.stepValidation : state.stepValidation
+      };
+    }
+    case GROUP_COUNT_LOADED: {
+      /* 
+       * Use the arriving count only if the count is valid
+       * to resolve a sequence of load, invalidate, loaded
+       * which can happen if a param value is updated, its group navigated away from, and the param value updated again
+       */
+      const o = state.groupUIState[action.payload.groupName];
+      return o == null ? state : {
+        ...state,
+        groupUIState: {
+          ...state.groupUIState,
+          [action.payload.groupName]: {
+            isVisible: o.isVisible,
+            filteredCountState:
+              o.filteredCountState === 'invalid' ? 'invalid'
+              : action.payload.filteredCount
+          }
+        }
       };
     }
 
@@ -386,7 +422,7 @@ const observeLoadQuestionSuccess: QuestionEpic = (action$) => action$.pipe(
       initParam({ parameter, paramValues, searchName, initialParamData }))))
 );
 
-const observeUpdateParams: QuestionEpic = (action$, state$, { paramValueStore }) => action$.pipe(
+const observeStoreUpdatedParams: QuestionEpic = (action$, state$, { paramValueStore }) => action$.pipe(
   ofType<Action, UpdateParamValueAction>(UPDATE_PARAM_VALUE),
   mergeMap(async (action: UpdateParamValueAction) => {
     const searchName = action.payload.searchName;
@@ -399,34 +435,98 @@ const observeUpdateParams: QuestionEpic = (action$, state$, { paramValueStore })
     const newParamValues = questionState.paramValues;
 
     await updateLastParamValues(paramValueStore, searchName, newParamValues);
-
     return EMPTY;
   }),
   mergeAll()
 );
 
+type ActionAffectingGroupCount = ChangeGroupVisibilityAction | UpdateParamValueAction;
+
+const observeLoadGroupCount: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
+  ofType<Action, ActionAffectingGroupCount>(CHANGE_GROUP_VISIBILITY, UPDATE_PARAM_VALUE),
+  debounceTime(1000),
+  switchMap((action: ActionAffectingGroupCount) => {
+    const {searchName} = action.payload;
+    const questionState = state$.value.question.questions[searchName];
+
+    if (questionState == null) {
+      throw new Error(`Tried to load group count of a nonexistent or unloaded question ${searchName}`);
+    }
+
+    if (questionState.question.properties?.websiteProperties?.includes('useWizard') != true){
+      return EMPTY;
+    }
+
+    return from(questionState.question.groups.filter(group => questionState.groupUIState[group.name]?.filteredCountState === 'loading' )).pipe(
+      mergeMap((group) => {
+      const groupNameToLoadCountFor = group.name;
+
+      const groupsUntilHere = Seq.from(questionState.question.groups)
+        .takeWhile(group => group.name !== groupNameToLoadCountFor)
+        .concat(Seq.of(group));
+
+      const answerSpec = {
+        searchName,
+        searchConfig: {
+          parameters: groupsUntilHere.reduce((paramValues: ParameterValues, group: ParameterGroup) => {
+            return group.parameters.reduce((paramValues: ParameterValues, paramName:string) => {
+              return Object.assign(paramValues, {
+                [paramName]: questionState.paramValues[paramName]
+              });
+            }, paramValues);
+          }, Object.assign({}, questionState.defaultParamValues) as ParameterValues)
+        }
+      };
+
+      const formatConfig = {
+        pagination: { offset: 0, numRecords: 0 }
+      };
+
+      return from(wdkService.getAnswerJson(answerSpec, formatConfig).then(answer => groupCountLoaded({searchName, groupName: groupNameToLoadCountFor, filteredCount: answer.meta.totalCount})));
+
+      })
+    );
+  })
+);
+
+
 const observeUpdateDependentParams: QuestionEpic = (action$, state$, { wdkService }) => action$.pipe(
   ofType<Action, UpdateParamValueAction>(UPDATE_PARAM_VALUE),
   filter(action => action.payload.parameter.dependentParams.length > 0),
   debounceTime(1000),
-  mergeMap(action => {
-    const { searchName, parameter, paramValues, paramValue } = action.payload;
-    return from(wdkService.getQuestionParamValues(
-      searchName,
-      parameter.name,
-      paramValue,
-      paramValues
-    ).then(
-      parameters => updateParams({searchName, parameters}),
-      error => paramError({ searchName, error: error.message, paramName: parameter.name })
-    )).pipe(
-      takeUntil(action$.pipe(ofType<Action, UpdateParamValueAction>(UPDATE_PARAM_VALUE))),
-      takeUntil(action$.pipe(filter(killAction => (
-        killAction.type === UNLOAD_QUESTION &&
-        killAction.payload.searchName === action.payload.searchName
-      ))))
-    )
-  })
+  mergeMap((action: UpdateParamValueAction) => {
+    const { searchName } = action.payload;
+    const questionState = state$.value[key].questions[searchName];
+    if (questionState == null) return EMPTY;
+
+    const xs = questionState.question.parameters
+      .filter(parameter => questionState.paramsUpdatingDependencies[parameter.name])
+      .map(parameter => ({
+        searchName,
+        parameter,
+        paramValue: questionState.paramValues[parameter.name],
+        paramValues: questionState.paramValues
+      }));
+    return from(xs).pipe(
+      concatMap((x) => {
+        const { searchName, parameter, paramValue, paramValues } = x;
+        return from(wdkService.getRefreshedDependentParams(
+            searchName,
+            parameter.name,
+            paramValue,
+            paramValues
+          ).then(
+            refreshedDependentParameters => updateDependentParams({searchName, updatedParameter: parameter, refreshedDependentParameters}),
+            error => paramError({ searchName, error: error.message, paramName: parameter.name })
+          )).pipe(
+          takeUntil(action$.pipe(filter(killAction => (
+            killAction.type === UNLOAD_QUESTION &&
+            killAction.payload.searchName === action.payload.searchName
+          ))))
+        );
+      }),
+      );
+  }),
 );
 
 const observeQuestionSubmit: QuestionEpic = (action$, state$, services) => action$.pipe(
@@ -628,8 +728,9 @@ export const observeQuestion: QuestionEpic = combineEpics(
   observeLoadQuestion,
   observeLoadQuestionSuccess,
   observeAutoRun,
-  observeUpdateParams,
+  observeStoreUpdatedParams,
   observeUpdateDependentParams,
+  observeLoadGroupCount,
   observeQuestionSubmit,
   mrate([submitQuestion, fulfillCreateStrategy], goToStrategyPage, {
     areActionsCoherent: ([ submitAction ]) => (

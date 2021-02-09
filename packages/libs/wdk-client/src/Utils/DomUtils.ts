@@ -281,3 +281,12 @@ function writeText(str: string): Promise<void> {
     success ? resolve(): reject();
   });
 }
+
+/**
+ * Strip HTML characters from a string.
+ */
+export function stripHTML(str: string): string {
+  let span = document.createElement('span');
+  span.innerHTML = str;
+  return span.textContent || '';
+}

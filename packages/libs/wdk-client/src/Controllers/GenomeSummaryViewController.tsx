@@ -23,16 +23,20 @@ import { GenomeSummaryViewReportModel, toReportModel } from 'wdk-client/Utils/Ge
 import { identity } from 'rxjs';
 import { Partial1 } from 'wdk-client/Utils/ActionCreatorUtils';
 import {ResultType} from 'wdk-client/Utils/WdkResult';
+import { ContentError } from 'wdk-client/Components/PageStatus/ContentError';
 
-type StateProps = { status: 'loading' } | {
-  status: 'complete'
-  genomeSummaryData?: GenomeSummaryViewReportModel;
-  displayName: string;
-  displayNamePlural: string;
-  recordType: string;
-  regionDialogVisibilities: Record<string, boolean>;
-  emptyChromosomeFilterApplied: boolean;
-};
+type StateProps = 
+  | { status: 'loading' }
+  | { status: 'error', message: string }
+  | {
+    status: 'complete'
+    genomeSummaryData?: GenomeSummaryViewReportModel;
+    displayName: string;
+    displayNamePlural: string;
+    recordType: string;
+    regionDialogVisibilities: Record<string, boolean>;
+    emptyChromosomeFilterApplied: boolean;
+  };
 
 type DispatchProps = {
   requestGenomeSummaryReport: Partial1<typeof requestGenomeSummaryReport>;
@@ -63,14 +67,18 @@ class GenomeSummaryViewController extends ViewController< Props > {
   }
 
   isRenderDataLoadError() {
-    return false; // TODO: fix this
+    return this.props.state.status === 'error';
   }
 
   renderDataLoadError() {
-    return <LoadError/>;  // TODO: make this better
+    if (this.props.state.status === 'error') {
+      return <ContentError>{this.props.state.message}</ContentError>
+    }
+    return <LoadError/>
   }
 
   renderView() {
+    if (this.props.state.status === 'error') return <LoadError/>;
     if (this.props.state.status == 'loading' || this.props.state.genomeSummaryData == null) return <Loading/>;
 
     return (
@@ -105,6 +113,11 @@ function mapStateToProps(state: RootState, props: OwnProps): StateProps {
   const globalDataState = state.globalData;
 
   if (genomeSummaryViewState == null) return { status: 'loading' };
+
+  if (genomeSummaryViewState.errorMessage != null) return {
+    status: 'error',
+    message: genomeSummaryViewState.errorMessage
+  }
 
   return {
     status: 'complete',

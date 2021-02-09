@@ -25,7 +25,7 @@ const Checkbox = (props: Props) => {
   } = props;
   let changeHandler = useCallback((_event: React.FormEvent<HTMLInputElement>) => {
     onChange(!value);
-  }, [ value ]);
+  }, [ value, onChange ]);
 
   return (
     <input

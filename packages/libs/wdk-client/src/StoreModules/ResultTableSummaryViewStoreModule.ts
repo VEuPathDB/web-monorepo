@@ -66,6 +66,7 @@ import {
 } from 'wdk-client/Utils/WdkModel';
 import { IndexedState, indexByActionProperty } from 'wdk-client/Utils/ReducerUtils';
 import {ResultType, getResultTypeDetails, getStandardReport, ResultTypeDetails} from 'wdk-client/Utils/WdkResult';
+import { ServiceError, isServiceError } from 'wdk-client/Service/ServiceError';
 
 export const key = 'resultTableSummaryView';
 
@@ -82,6 +83,7 @@ type ViewState = {
   resultTypeDetails?: ResultTypeDetails;
   answer?: Answer;
   answerLoading: boolean;
+  errorMessage?: string;
   addingStepToBasket: boolean;
   searchName?: string; // remember question so can validate sorting and columns fulfill actions
   basketStatusArray?: Array<BasketStatus>; // cardinality == pageSize
@@ -162,7 +164,7 @@ function reduceView(state: ViewState = initialViewState, action: Action): ViewSt
       return { ...state, answer: action.payload.answer, answerLoading: false };
     }
     case reportAnswerFulfillmentError.type: {
-      return { ...state, answerLoading: false };
+      return { ...state, answerLoading: false, errorMessage: action.payload.message };
     }
     case fulfillRecordsBasketStatus.type: {
       return {
@@ -596,8 +598,15 @@ async function getFulfillAnswer(
     pagination: r.pagination
   };
 
-  const answer = await getStandardReport(wdkService, r.resultType, formatConfig, r.viewFilters)
-  return fulfillAnswer(openAction.payload.viewId, r.resultType, r.columnsConfig, r.pagination, r.viewFilters, answer);
+  try {
+    const answer = await getStandardReport(wdkService, r.resultType, formatConfig, r.viewFilters)
+    return fulfillAnswer(openAction.payload.viewId, r.resultType, r.columnsConfig, r.pagination, r.viewFilters, answer);
+  }
+  catch (error) {
+    wdkService.submitErrorIfNot500(error);
+    const message = isServiceError(error) ? error.response : String(error);
+    return reportAnswerFulfillmentError(r.viewId, message)
+  }
 }
 
 function filterFulfillAnswerActions([openAction, requestAction]: [

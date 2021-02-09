@@ -13,6 +13,12 @@ export const fulfillBlastSummaryReport = makeActionCreator(
   (viewId: string, resultType: ResultType, blastInfo: BlastSummaryViewReport) => ({ viewId, blastInfo, resultType })
 );
 
+export const rejectBlastSummaryReport = makeActionCreator(
+  'blastSummaryView/rejectBlastSummaryReport',
+  (viewId: string, message: string) => ({ viewId, message })
+);
+
 export type Action =
   | InferAction<typeof requestBlastSummaryReport>
   | InferAction<typeof fulfillBlastSummaryReport>
+  | InferAction<typeof rejectBlastSummaryReport>

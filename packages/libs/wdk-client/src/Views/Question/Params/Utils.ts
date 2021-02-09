@@ -23,6 +23,7 @@ export type Props<T extends Parameter, S = void> = {
   ctx: Context<T>;
   parameter: T;
   value: string;
+  uiConfig?: Record<string, boolean>;
   uiState: S;
   dispatch: DispatchAction;
   onParamValueChange: (value: string) => void;
