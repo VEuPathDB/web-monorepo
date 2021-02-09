@@ -1,7 +1,12 @@
 {
-  "name": "@veupathdb/web-components",
+  "name": "@veupathdb/components",
   "version": "0.1.0",
-  "private": true,
+  "license": "Apache-2.0",
+  "description": "React Components for VEuPathDB Websites",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-components.git"
+  },
   "dependencies": {
     "@material-ui/core": "^4.11.2",
     "@material-ui/icons": "^4.11.2",
