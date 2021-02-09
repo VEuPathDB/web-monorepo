@@ -1,7 +1,7 @@
 /* DKDK a test component for tab home content
-*/
+ */
 
-import React from "react";
+import React from 'react';
 
 //DKDK import pie/donut chart
 import PiePlot from '../plots/PiePlot';
@@ -10,55 +10,58 @@ import PiePlot from '../plots/PiePlot';
 interface SidebarPieChartProps {
   id: string;
   header: string;
-  pieChartData?: Array<{color: string, label: string, value: number}>;
+  pieChartData?: Array<{ color: string; label: string; value: number }>;
   //DKDK add showLegend to hide/show legend
   showLegend?: boolean;
 }
 
 //DKDK set props for legend position
 type legendProp = {
-  x?: number,
-  y?: number,
+  x?: number;
+  y?: number;
   //DKDK xanchor is for positioning legend inside plot
-  xanchor?: 'auto' | 'center' | 'left' | 'right',
-  orientation?: 'h' | 'v' | undefined,
-}
+  xanchor?: 'auto' | 'center' | 'left' | 'right';
+  orientation?: 'h' | 'v' | undefined;
+};
 
 //DKDK props are not decided so just use any for now
 export default function TabPieChartConent(props: SidebarPieChartProps) {
-
   //DKDK summation of fullStat.value per marker icon
-  let sumValues: number | null
+  let sumValues: number | null;
   if (props.pieChartData) {
-    sumValues = props.pieChartData.map(o => o.value).reduce((a, c) => { return a + c })
+    sumValues = props.pieChartData
+      .map((o) => o.value)
+      .reduce((a, c) => {
+        return a + c;
+      });
   } else {
-    sumValues = null
+    sumValues = null;
   }
 
   //DKDK width, height, margin - legend.y is the bottom of legend list, which makes things difficult to adjust
-  let width = 300
+  let width = 300;
   //DKDK dynamically change height per the number of legend
-  let numberLegend = (props.pieChartData) ? props.pieChartData.length : 0
-  let height = 300 + numberLegend*30
+  let numberLegend = props.pieChartData ? props.pieChartData.length : 0;
+  let height = 300 + numberLegend * 30;
   let margin = {
     l: 0,
     r: 0,
     b: 0,
     t: 30,
     pad: 0,
-  }
+  };
   let legend: legendProp = {
     // x: 0.1,
     // y: -0.4,
     // y: -1,
-    orientation: "h",
-  }
+    orientation: 'h',
+  };
 
   return (
     <>
       <PiePlot
         //DKDK set props.pieChartData not to be undefined
-        data={(props.pieChartData) ? props.pieChartData : []}
+        data={props.pieChartData ? props.pieChartData : []}
         interior={{
           heightPercentage: 0.4,
           text: sumValues?.toString(),
@@ -70,9 +73,8 @@ export default function TabPieChartConent(props: SidebarPieChartProps) {
         height={height}
         margin={margin}
         legend={legend}
-        showLegend={(props.showLegend !== undefined) ? props.showLegend : true}
+        showLegend={props.showLegend !== undefined ? props.showLegend : true}
       />
     </>
   );
 }
-

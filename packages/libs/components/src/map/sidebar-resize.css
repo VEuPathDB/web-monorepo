@@ -1,33 +1,19 @@
 /* DKDK override overflow from auto to visible for reziable */
 .leaflet-sidebar {
-  /* DKDK when using css resize */
   overflow: visible;
-  /* DKDK when using re-resizble */
-  /* overflow-x: visible;
-  overflow-y: hidden; */
 }
 
 /* DKDK remove border as it does not work well with resize & no bordr in popbio map either */
 .leaflet-sidebar.leaflet-touch {
-  border: 0px solid rgba(0,0,0,0.2);
+  border: 0px solid rgba(0, 0, 0, 0.2);
 }
 
 /* DKDK add border for sidebar tabs */
 .leaflet-sidebar-left .leaflet-sidebar-tabs {
   /* left: 0; */
-  border: 1px solid rgba(0,0,0,0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-/* .sidebar-resize { */
-  /* border: 2px solid black; */
-  /* border: 2px solid rgba(0,0,0,.2); */
-  /* overflow: auto; */
-  /* z-index: 90; */
-  /* cursor: col-resize; */
-  /* cursor: e-resize; */
-  /* background: url(https://image.flaticon.com/icons/svg/133/133889.svg) no-repeat 99.9% 100%;
-  background-size: 20px; */
-/* } */
 .sidebar-resize.horizontal {
   resize: horizontal;
 }
@@ -38,75 +24,26 @@
   resize: both;
 }
 
-/* .sidebar-resize::-webkit-resizer {
-  border-width: 8px;
-  border-style: solid;
-  border-color: transparent orangered orangered transparent;
-} */
-
-/* .sidebar-wrap {
-  max-width: 80%;
-} */
-
-/* DKDK from vectorbase.css */
-/* .ui-resizable-handle {
-  position  : absolute;
-  font-size : .1px;
-  display   : block;
-} */
-/* .ui-resizable-s {
-  cursor : s-resize;
-  width  : 100%;
-  height : 7px;
-  left   : 0;
-  bottom : -5px;
-}
-.ui-resizable-e {
-  cursor : e-resize;
-  width  : 7px;
-  height : 100%;
-  right  : -5px;
-  top    : 0;
-}
-.ui-resizable-se {
-  cursor : se-resize;
-  width  : 12px;
-  height : 12px;
-  right  : 1px;
-  bottom : 1px;
-} */
-
 /* DKDK from vb-popbio-maps.css - overriding */
 .ui-resizable-e {
   font-size: 30px;
   width: 15px;
   height: 30px;
-  right: 0px;
+  right: -2px;
   top: 50%;
   bottom: 50%;
-  color: #BCBCBC;
+  color: #bcbcbc;
   position: absolute;
-  cursor: ew-resize;
+  cursor: none;
 }
 
-/* DKDK centering donut chart at sidebar */
-/* div.leaflet-sidebar-content #plot .svg-container {
-  margin: 0 auto;
-} */
 /* DKDK centering all plotly plots */
 div.leaflet-sidebar-content .plot-container.plotly .svg-container {
   margin: 0 auto;
 }
 
-/* DKDK centering manually generated legend */
-/* div.leaflet-sidebar-content ul.SidebarPieLegendList { */
-  /* display: flex; */
-  /* justify-content: center; */
-  /* text-align: center; */
-  /* margin-left: 40%; */
-  /* width: 30%;
-  margin: auto;
-  list-style: inside;
-  padding-inline-start: 0px;
-} */
-
+/* DKDK changing sidebar header style */
+.leaflet-sidebar-header {
+  color: gray;
+  background-color: white;
+}
