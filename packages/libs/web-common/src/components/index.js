@@ -1,7 +1,6 @@
 // export wrappable components here
 export { default as Parameters } from './Parameters';
-export { default as FilterSummary } from './FilterSummary';
-export { default as Param } from './Param';
+export { default as FilterSummaryDialog } from './FilterSummaryDialog';
 export { default as QuestionWizard } from './QuestionWizard';
 export { default as FilterSummaryParameter } from './FilterSummaryParameter';
 export { default as FilterSummaryGroup } from './FilterSummaryGroup';

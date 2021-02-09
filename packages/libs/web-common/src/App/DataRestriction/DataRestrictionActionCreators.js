@@ -66,6 +66,6 @@ function handleAction(permissions, user, studies, action, { studyId, onAllow, on
   return restricted(study, action);
 }
 
-function label(str) {
+export function label(str) {
   return `[DataRestriction] ${str}`;
 }

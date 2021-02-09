@@ -429,6 +429,10 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   margin: 1em 0;
 }
 
+.ebrc-QuestionWizardParam__filter {
+  min-height: 36em;
+}
+
 .ebrc-QuestionWizardParam + .ebrc-QuestionWizardParam__filter {
   margin-top: 3em;
   border: 1px solid #ccc;

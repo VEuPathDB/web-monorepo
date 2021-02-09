@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { get } from 'lodash';
+import { get, fromPairs } from 'lodash';
 
 import { HelpIcon, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { Parameter, ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -118,10 +118,15 @@ export const RadioParams: React.FunctionComponent<Props> = props => {
 
   const renderParamGroup = useCallback((group: ParameterGroup, props: Props) => {
       const {
-        state: { question, groupUIState, paramDependenciesUpdating },
+        state: { question, groupUIState, paramsUpdatingDependencies },
         eventHandlers: { setGroupVisibility },
         parameterElements
       } = props;
+      const paramDependenciesUpdating = fromPairs(
+        question.parameters.filter(
+          parameter => paramsUpdatingDependencies[parameter.name]
+        ).flatMap(parameter => parameter.dependentParams.map(pn => [pn, true]))
+      );
 
       return (
         <Group

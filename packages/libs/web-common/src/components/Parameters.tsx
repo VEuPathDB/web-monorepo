@@ -1,40 +1,46 @@
 import React from 'react';
+import { Dispatch } from 'redux';
 import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import Param from './Param';
+import { Parameter, ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { makeQuestionWizardClassName as makeClassName } from '../util/classNames';
-import { paramGroupPropTypes } from '../util/paramUtil';
+import { WizardState, ParameterEventHandlers } from '../util/WizardTypes';
+import Param from './Param';
 
-/**
- * Parameters that belong to a Paramter group
- */
-function Parameters(props) {
-  const {
-    parameters,
-    paramValues,
-    paramUIState,
-    eventHandlers
-  } = props;
-  const showLabel = parameters.length > 1;
+type Props = {
+  //group: ActiveGroup was needed by previous param
+  searchName: string,
+  recordClassName: string,
+  parameters: Parameter[],
+  paramValues: ParameterValues,
+  paramUIState: WizardState['paramUIState'],
+  eventHandlers: ParameterEventHandlers,
+  dispatch: Dispatch
+}
+
+function Parameters(props: Props) {
+
+  const {paramValues, paramUIState, eventHandlers, searchName, recordClassName, dispatch} = props;
+  const showLabel = props.parameters.length > 1;
   return (
     <div className={makeClassName('ParamContainer')}>
-      {parameters.map(param => {
+      {props.parameters.map(parameter => {
         return (
-          <div key={param.name} className={makeClassName('Param', param.type)}>
+          <div key={parameter.name} className={makeClassName('Param', parameter.type)}>
             {showLabel && (
-              <div className={makeClassName('ParamLabel', param.type)}>
-                <label>{param.displayName}</label>
+              <div className={makeClassName('ParamLabel', parameter.type)}>
+                <label>{parameter.displayName}</label>
               </div>
             )}
             {showLabel && (
-              <div className={makeClassName('ParamHelp', param.type)}>
+              <div className={makeClassName('ParamHelp', parameter.type)}>
                 <HelpIcon>
-                  {param.help}
+                  {parameter.help}
                 </HelpIcon>
               </div>
             )}
             <div
-              className={makeClassName('ParamControl', param.type)}
+              className={makeClassName('ParamControl', parameter.type)}
               onKeyPress={event => {
                 // Prevent form submission of ENTER is pressed while an input
                 // field has focus. This is a hack and may bite us in the future
@@ -53,10 +59,13 @@ function Parameters(props) {
               }}
             >
               <Param
-                param={param}
-                value={paramValues[param.name]}
-                uiState={paramUIState[param.name]}
-                {...eventHandlers}
+                dispatch={dispatch}
+                param={parameter}
+                paramValues={paramValues}
+                uiState={paramUIState[parameter.name]}
+                eventHandlers={eventHandlers}
+                searchName={searchName}
+                recordClassName={recordClassName}
               />
             </div>
           </div>
@@ -65,7 +74,5 @@ function Parameters(props) {
     </div>
   );
 }
-
-Parameters.propTypes = paramGroupPropTypes;
 
 export default wrappable(Parameters);

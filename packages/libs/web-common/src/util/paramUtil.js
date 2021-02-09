@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 const paramEventHandlerPropTypes = {
-  onOntologyTermSelect: PropTypes.func.isRequired,
+  onOntologyTermSelectCurrentFilters: PropTypes.func.isRequired,
   onOntologyTermSummaryUpdate: PropTypes.func.isRequired,
   onOntologyTermSort: PropTypes.func.isRequired,
   onOntologyTermSearch: PropTypes.func.isRequired,

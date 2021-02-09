@@ -4,7 +4,8 @@ import { Loading, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { combineClassNames } from 'ebrc-client/components/homepage/Utils';
-import { useCommunitySiteRootUrl } from 'ebrc-client/hooks/staticData';
+import { useCommunitySiteRootUrl, useCommunitySiteContentProjectUrl } from 'ebrc-client/hooks/staticData';
+import { ContentError } from './ContentError';
 
 import './WorkshopExercises.scss';
 
@@ -51,20 +52,32 @@ type ExerciseEntry = {
   description: string
 };
 
-function useCardMetadata(): CardMetadata | undefined {
-  const communitySiteUrl = useCommunitySiteRootUrl();
+type Result<T> =
+  | { status: 'ok', value: T }
+  | { status: 'error', message: string }
+
+function useCardMetadata(): Result<CardMetadata> | undefined {
+  const communitySiteUrl = useCommunitySiteContentProjectUrl();
   const [ workshopExercisesResponseData, setWorkshopExercisesResponseData ] = useState<WorkshopExercisesResponseData | undefined>(undefined);
+  const [ workshopExercisesResponseError, setWorkshopExercisesResponseError ] = useState<string | undefined>();
 
   useEffect(() => {
     if (communitySiteUrl != null) {
       (async () => {
-        // FIXME Add basic error-handling
-        const response = await fetch(`https://${communitySiteUrl}${WORKSHOP_EXERCISES_URL_SEGMENT}`, { mode: 'cors' });
-
-        // FIXME Validate this JSON using a Decoder
-        const responseData = await response.json() as WorkshopExercisesResponseData;
-
-        setWorkshopExercisesResponseData(responseData);
+        try {
+          const response = await fetch(`https://${communitySiteUrl}/${WORKSHOP_EXERCISES_URL_SEGMENT}`, { mode: 'cors' });
+          if (response.ok) {
+            // FIXME Validate this JSON using a Decoder
+            const responseData = await response.json() as WorkshopExercisesResponseData;
+            setWorkshopExercisesResponseData(responseData);
+          }
+          else {
+            setWorkshopExercisesResponseError(response.statusText);
+          }
+        }
+        catch (error) {
+          setWorkshopExercisesResponseError(error.message);
+        }
       })();
     }
   }, [ communitySiteUrl ]);
@@ -92,8 +105,9 @@ function useCardMetadata(): CardMetadata | undefined {
       },
     [ workshopExercisesResponseData ]
   );
-
-  return cardMetadata;
+  return workshopExercisesResponseError != null ? { status: 'error', message: workshopExercisesResponseError }
+    : cardMetadata != null ? { status: 'ok', value: cardMetadata }
+    : undefined;
 }
 
 export const WorkshopExercises = () => {
@@ -126,8 +140,9 @@ export const WorkshopExercises = () => {
       {
         !cardMetadata
           ? <Loading />
+          : cardMetadata.status === 'error' ? <ContentError message={cardMetadata.message}/>
           : <CardList
-              cardMetadata={cardMetadata}
+              cardMetadata={cardMetadata.value}
               isExpanded={isExpanded}
             />
       }

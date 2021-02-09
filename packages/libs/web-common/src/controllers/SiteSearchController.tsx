@@ -14,7 +14,11 @@ import { decode } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { SEARCH_TERM_PARAM, OFFSET_PARAM, DOCUMENT_TYPE_PARAM, ORGANISM_PARAM, FILTERS_PARAM } from 'ebrc-client/components/SiteSearch/SiteSearchConstants';
 
-export default function SiteSearchController() {
+interface Props {
+  offerOrganismFilter?: boolean;
+}
+
+export default function SiteSearchController({ offerOrganismFilter = true }: Props) {
   const [ params, updateParams ] = useQueryParams(
     SEARCH_TERM_PARAM,
     OFFSET_PARAM,
@@ -30,7 +34,7 @@ export default function SiteSearchController() {
   const numRecords = 20;
 
   // Organism Tree, set selectedOrganims
-  const organismTree = useOrganismTree();
+  const organismTree = useOrganismTree(offerOrganismFilter);
 
   const allOrganisms = useMemo(
     () => organismTree && getLeaves(organismTree, node => node.children).map(node => node.data.term),
@@ -38,7 +42,14 @@ export default function SiteSearchController() {
   );
 
   const { value, loading } = useSiteSearchResponse(
-    { searchString, allOrganisms, organisms, documentType, filters },
+    {
+      searchString,
+      offerOrganismFilter,
+      allOrganisms,
+      organisms,
+      documentType,
+      filters
+    },
     { offset, numRecords }
   );
 
@@ -129,7 +140,10 @@ export default function SiteSearchController() {
     )
   }
 
-  if (value == null || organismTree == null) {
+  if (
+    value == null ||
+    (offerOrganismFilter && organismTree == null)
+  ) {
     return <Loading/>;
   }
 
@@ -149,6 +163,7 @@ export default function SiteSearchController() {
       offset={value.resultSettings.offset}
       numRecords={value.resultSettings.numRecords}
       organismTree={organismTree}
+      offerOrganismFilter={offerOrganismFilter}
       onSearch={setSearchString}
       onPageOffsetChange={setOffset}
     />
@@ -161,6 +176,7 @@ type Value =
 
 type SearchSettings = {
   searchString: string;
+  offerOrganismFilter: boolean;
   organisms?: string[];
   allOrganisms?: string[];
   documentType?: string;
@@ -173,7 +189,7 @@ type ResultSettings = {
 }
 
 function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: ResultSettings) {
-  const { searchString, allOrganisms, organisms, documentType, filters } = searchSettings;
+  const { searchString, offerOrganismFilter, allOrganisms, organisms, documentType, filters } = searchSettings;
   const { numRecords, offset } = resultSettings
 
   const [ lastSearchSubmissionTime, setLastSearchSubmissionTime ] = useState(Date.now());
@@ -194,7 +210,17 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
   }, []);
 
   return usePromise(async (): Promise<Value|undefined> => {
-    if (!siteSearchServiceUrl || searchString === '' || organisms == null || allOrganisms == null || projectId == null) return undefined;
+    if (!siteSearchServiceUrl || searchString === '' || projectId == null) return undefined;
+
+    if (
+      offerOrganismFilter &&
+      (
+        organisms == null ||
+        allOrganisms == null
+      )
+    ) {
+      return undefined;
+    }
 
     try {
       const requestBody: SiteSearchRequest = {
@@ -204,8 +230,14 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
           numRecords
         },
         restrictToProject: (projectId === 'EuPathDB' ? 'VEuPathDB' : projectId),
-        restrictMetadataToOrganisms: allOrganisms,
-        restrictSearchToOrganisms: organisms.length === 0 ? allOrganisms : organisms,
+        restrictMetadataToOrganisms: !offerOrganismFilter
+          ? undefined
+          : allOrganisms,
+        restrictSearchToOrganisms: !offerOrganismFilter
+          ? undefined
+          : organisms?.length === 0
+          ? allOrganisms
+          : organisms,
         documentTypeFilter: documentType == null ? undefined : {
           documentType,
           foundOnlyInFields: filters
@@ -256,7 +288,7 @@ function useSiteSearchResponse(searchSettings: SearchSettings, resultSettings: R
       return { type: 'error', error };
     }
 
-  }, [ searchString, offset, numRecords, organisms, allOrganisms, documentType, filters, projectId, lastSearchSubmissionTime ]);
+  }, [ searchString, offset, numRecords, offerOrganismFilter, organisms, allOrganisms, documentType, filters, projectId, lastSearchSubmissionTime ]);
 }
 
 async function runRequest(requestBody: SiteSearchRequest): Promise<string> {

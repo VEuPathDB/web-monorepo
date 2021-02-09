@@ -21,6 +21,9 @@ let FastaOrthoSequenceReporterForm = props => {
         <div style={{display: 'block'}}>
           <Checkbox value={formState.includeDescription} onChange={getUpdateHandler('includeDescription')} /> Include description
         </div>
+        <div style={{display: 'block'}}>
+          <Checkbox value={formState.includeGroup} onChange={getUpdateHandler('includeGroup')} /> Include group
+        </div>
       </div>
       <hr/>
       <h3>Download Type:</h3>
@@ -41,8 +44,9 @@ let FastaOrthoSequenceReporterForm = props => {
 FastaOrthoSequenceReporterForm.getInitialState = () => ({
   formState: {
     attachmentType: 'plain',
-    includeOrganism: false,
-    includeDescription: false
+    includeOrganism: true,
+    includeDescription: true,
+    includeGroup: true
   },
   formUiState: {}
 });

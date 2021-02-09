@@ -9,6 +9,20 @@ export function useCommunitySiteRootUrl(): string | undefined {
   return communitySiteRootUrl;
 };
 
+export function useCommunitySiteContentProjectUrl(): string | undefined {
+  const communitySiteRootUrl = useCommunitySiteRootUrl();
+
+  const displayName = useSelector(
+    (state: RootState) => state.globalData.config?.displayName
+  );
+
+  // FIXME: Remove the OrthoMCL-related hardcoding
+  return displayName == null || communitySiteRootUrl == null
+    ? undefined
+    : `${communitySiteRootUrl}content/${displayName}`;
+};
+
+
 export function useCommunitySiteProjectUrl(): string | undefined {
   const communitySiteRootUrl = useCommunitySiteRootUrl();
 
@@ -19,7 +33,5 @@ export function useCommunitySiteProjectUrl(): string | undefined {
   // FIXME: Remove the OrthoMCL-related hardcoding
   return displayName == null || communitySiteRootUrl == null
     ? undefined
-    : displayName === 'OrthoMCL'
-    ? `${communitySiteRootUrl}VEuPathDB`
     : `${communitySiteRootUrl}${displayName}`;
 };

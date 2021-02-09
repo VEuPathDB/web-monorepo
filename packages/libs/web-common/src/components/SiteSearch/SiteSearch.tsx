@@ -8,7 +8,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { getLeaves, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { TreeBoxVocabNode, StringParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useProjectUrls, ProjectUrls, useOrganismToProject, OrganismToProject } from 'ebrc-client/hooks/projectUrls';
 import { SiteSearchResponse, SiteSearchDocumentType, SiteSearchDocument } from 'ebrc-client/SiteSearch/Types';
 import { NewStrategySpec, NewStepSpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
@@ -26,7 +26,8 @@ interface Props {
   hideDocumentTypeClearButton?: boolean;
   filters?: string[];
   filterOrganisms?: string[];
-  organismTree: TreeBoxVocabNode;
+  offerOrganismFilter: boolean;
+  organismTree?: TreeBoxVocabNode;
   onSearch: (searchString: string) => void;
   onPageOffsetChange: (offset: number) => void;
   onDocumentTypeChange: (documentType?: string) => void;
@@ -134,19 +135,23 @@ function ResultInfo(props: Props) {
 }
 
 function SearchCounts(props: Props) {
-  const { searchString, response, documentType, hideDocumentTypeClearButton, organismTree, filterOrganisms, onOrganismsChange, onDocumentTypeChange } = props;
+  const { searchString, response, documentType, hideDocumentTypeClearButton, offerOrganismFilter, organismTree, filterOrganisms, onOrganismsChange, onDocumentTypeChange } = props;
   const { categories, documentTypes, organismCounts } = response || {};
   const [ onlyShowMatches, setOnlyShowMatches ] = useState(true);
   const docTypesById = useMemo(() => keyBy(documentTypes, 'id'), [ documentTypes ]);
   const finalOrganismTree = useMemo(() => (
-    onlyShowMatches
+    !offerOrganismFilter || organismTree == null
+      ? undefined
+      : onlyShowMatches
       ? pruneDescendantNodes(
           node => node.children.length > 0 || organismCounts[node.data.term] > 0 || Boolean(filterOrganisms && filterOrganisms.includes(node.data.term)),
           organismTree
         )
       : organismTree
-    ), [ organismTree, organismCounts, onlyShowMatches ]);
-  const showOrganismFilter = documentType == null
+    ), [ offerOrganismFilter, organismTree, organismCounts, onlyShowMatches ]);
+  const showOrganismFilter = !offerOrganismFilter
+    ? false
+    : documentType == null
     ? documentTypes.some(d => d.hasOrganismField)
     : docTypesById[documentType]?.hasOrganismField;
 
@@ -196,7 +201,7 @@ function SearchCounts(props: Props) {
         </tbody>
       </table>
       <WdkRecordFields {...props} onlyShowMatches={onlyShowMatches} />
-      {showOrganismFilter && organismTree && filterOrganisms && (
+      {showOrganismFilter && finalOrganismTree && filterOrganisms && (
         <OrganismFilter
           organismTree={finalOrganismTree}
           filterOrganisms={filterOrganisms}
@@ -480,8 +485,11 @@ function StrategyLinkout(props: Props) {
     history.push(`/workspace/strategies/${strategyResp.id}`);
   }, [question, docType, filters, filterOrganisms, searchString]);
 
+  const stringParam = question?.parameters.find(p => p.name === 'text_expression') as StringParam | undefined;
+
   if (docType == null) return <StrategyLinkoutLink tooltipContent="To export, select a result type (like Genes) on the left."/>
   if (!docType.isWdkRecordType || question == null) return <StrategyLinkoutLink tooltipContent={`This feature is not available for ${docType.displayNamePlural}`}/>
+  if (stringParam && searchString.length > stringParam.length) return <StrategyLinkoutLink tooltipContent="Your search string is too large to export to a strategy. Try a smaller search string."/>
   return <StrategyLinkoutLink onClick={onClick} tooltipContent="Download or data mine using the search strategy system." />;
 }
 

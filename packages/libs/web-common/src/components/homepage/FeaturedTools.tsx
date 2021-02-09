@@ -11,6 +11,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 
 import './FeaturedTools.scss';
+import { ContentError } from './ContentError';
 
 const cx = makeClassNameHelper('vpdb-FeaturedTools');
 const bgDarkCx = makeClassNameHelper('vpdb-BgDark');
@@ -32,20 +33,32 @@ type FeaturedToolEntry = {
   output: string
 };
 
-function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
+type Result<T> =
+  | { status: 'ok', value: T }
+  | { status: 'error', message: string }
+
+function useFeaturedToolMetadata(): Result<FeaturedToolMetadata> | undefined {
   const communitySiteUrl = useCommunitySiteProjectUrl();
   const [ featuredToolResponseData, setFeaturedToolResponseData ] = useState<FeaturedToolResponseData | undefined>(undefined);
+  const [ featuredToolError, setFeaturedToolError ] = useState<string|undefined>(undefined);
   
   useEffect(() => {
     if (communitySiteUrl != null) {
       (async () => {
-        // FIXME Add basic error-handling 
-        const response = await fetch(`https://${communitySiteUrl}${FEATURED_TOOL_URL_SEGMENT}`, { mode: 'cors' });
-
-        // FIXME Validate this JSON using a Decoder
-        const responseData = await response.json() as FeaturedToolResponseData;
-
-        setFeaturedToolResponseData(responseData);
+        try {
+          const response = await fetch(`https://${communitySiteUrl}${FEATURED_TOOL_URL_SEGMENT}`, { mode: 'cors' });
+          if (response.ok) {
+            // FIXME Validate this JSON using a Decoder
+            const responseData = await response.json() as FeaturedToolResponseData;
+            setFeaturedToolResponseData(responseData);
+          }
+          else {
+            setFeaturedToolError(response.statusText);
+          }
+        }
+        catch(error) {
+          setFeaturedToolError(error.message);
+        }
       })();
     }
   }, [ communitySiteUrl ]);
@@ -60,7 +73,9 @@ function useFeaturedToolMetadata(): FeaturedToolMetadata | undefined {
     [ featuredToolResponseData ]
   );
 
-  return featuredToolMetadata;
+  return featuredToolError != null ? { status: 'error', message: featuredToolError }
+    : featuredToolMetadata != null ? { status: 'ok', value: featuredToolMetadata }
+    : undefined;
 }
 
 const FEATURED_TOOL_KEY = 'homepage-featured-tool';
@@ -74,19 +89,20 @@ export const FeaturedTools = () => {
     JSON.stringify,
     (s: string) => decode(string, s)
   );
-  const selectedToolEntry = !toolMetadata || !selectedTool || !toolMetadata.toolEntries[selectedTool]
+  const selectedToolEntry = !toolMetadata || !selectedTool || !(toolMetadata.status === 'ok' && toolMetadata.value.toolEntries[selectedTool])
     ? undefined
-    : hash.slice(1) ? toolMetadata.toolEntries[hash.slice(1)]
-    : toolMetadata.toolEntries[selectedTool];
+    : hash.slice(1) ? toolMetadata.value.toolEntries[hash.slice(1)]
+    : toolMetadata.value.toolEntries[selectedTool];
 
   useEffect(() => {
     if (
       toolMetadata && 
-      toolMetadata.toolListOrder.length > 0 && 
-      toolMetadata.toolEntries[toolMetadata.toolListOrder[1]] &&
+      toolMetadata.status === 'ok' &&
+      toolMetadata.value.toolListOrder.length > 0 && 
+      toolMetadata.value.toolEntries[toolMetadata.value.toolListOrder[1]] &&
       (!selectedToolEntry)
     ) {
-      setSelectedTool(toolMetadata.toolListOrder[1]);
+      setSelectedTool(toolMetadata.value.toolListOrder[1]);
     }
   }, [ toolMetadata ]);
 
@@ -98,9 +114,11 @@ export const FeaturedTools = () => {
       {
         !toolMetadata 
           ? <Loading />
+          : toolMetadata.status === 'error'
+            ? <ContentError message={toolMetadata.message}/>
           : <div className={cx('List')}>          
               <FeaturedToolList
-                toolMetadata={toolMetadata}
+                toolMetadata={toolMetadata.value}
                 setSelectedTool={setSelectedTool}
                 selectedTool={selectedToolEntry?.identifier}
               />

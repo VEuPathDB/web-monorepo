@@ -64,6 +64,22 @@ const siteAnnouncements = [
     }
   },
 
+ // clinepi workshop
+/*
+  {
+    id: 'clinepi-workshop',
+    renderDisplay: (props) => {
+    if (props.projectId == 'ClinEpiDB' || props.projectId == 'AllClinEpiDB' ) {
+        return (
+          <div>
+            WEBINAR Dec 9, 10am EST: We present <span style={{fontWeight: 'bold'}}>Clinical and Epidemiologic Data Exploration for Genomic Researchers</span>. We will cover key features and studies in ClinEpiDB that may be of interest to biologists working on infectious diseases. <a target="_blank" href="https://attendee.gotowebinar.com/register/3656141554042311437">Register here.</a>
+          </div>
+        );
+      }
+      return null;
+    }
+  },
+*/
 
 
   // beta
@@ -244,7 +260,7 @@ function AnnouncementBanner({
       padding: '.5em',
       borderRadius: '0.5em',
       borderWidth: '1px',
-      borderColor: 'black',
+      borderColor: 'lightgrey',
       borderStyle: 'solid',
       background: '#E3F2FD',
       display: isOpen ? 'block' : 'none'

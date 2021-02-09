@@ -32,11 +32,7 @@ const styles = {
   })
 }
 
-export default function FilterFinder({
-  wizardState: { question },
-  wizardEventHandlers: { onGroupSelect },
-  parameterEventHandlers: { onOntologyTermSelect }
-}) {
+export default function FilterFinder({question, onSelectGroup, onSelectFilterParamField}){
   const [ inputValue, setInputValue ] = useState('');
   const options = useMemo(() => makeOptions(question), [question]);
   return (
@@ -58,23 +54,25 @@ export default function FilterFinder({
 
   function handleChange(option, { action }) {
     if (action !== 'select-option') return;
-    const { group, parameter, ontologyItem } = option;
-    onGroupSelect(group);
-    onOntologyTermSelect(parameter, [], ontologyItem.term);
+    const { groupIx, parameter, ontologyItem } = option;
+    onSelectFilterParamField(groupIx, parameter, ontologyItem);
   }
 
   function handleInputChange(value, { action }) {
     if (action === 'input-change') setInputValue(value);
   }
 }
-
 FilterFinder.propTypes = {
-  wizardState: PropTypes.object.isRequired
+  question: PropTypes.object.isRequired,
+  onSelectGroup: PropTypes.func.isRequired,
+  onSelectFilterParamField: PropTypes.func.isRequired
 }
-
 function findPath(ontologyItemsByTerm, ontologyTerm) {
   const path = [];
   const ontologyItem = ontologyItemsByTerm[ontologyTerm];
+  if(!ontologyItem){
+    return null;
+  }
   let parent = ontologyItem.parent;
   while (parent != null) {
     const parentItem = ontologyItemsByTerm[parent];
@@ -143,28 +141,32 @@ function FilterFinderOption(props) {
 }
 
 function makeOptions(question) {
-  const groupsByName = keyBy(question.groups, 'name');
+  const groupPairsByName = keyBy(question.groups.map((group, ix) => [group, ix]), p => p[0].name);
   return question.parameters
     .filter(parameter => parameter.type === 'filter')
     .flatMap(parameter => {
       const ontologyItemsByTerm = keyBy(parameter.ontology, 'term');
-      const group = groupsByName[parameter.group];
+      const [ group, groupIx ] = groupPairsByName[parameter.group];
       const tree = getOntologyTree(parameter);
       const leaves = getLeaves(tree, node => isMulti(node.field) ? [] : node.children);
       const options = leaves
         .map(node => {
           const path = findPath(ontologyItemsByTerm, node.field.term);
-          const values = parameter.values[node.field.term];
-          const matchString = makeMatchString(node, path, values);
-          return {
-            group,
-            matchString,
-            ontologyItem: node.field,
-            parameter,
-            path,
-            value: parameter.name + '/' + node.field.term
-          };
-        });
+          const matchString = makeMatchString(node, path, parameter.values[node.field.term]);
+          if (path && matchString) {
+            return {
+              group,
+              groupIx,
+              matchString,
+              ontologyItem: node.field,
+              parameter,
+              path,
+              value: parameter.name + '/' + node.field.term
+            };
+          } else {
+              return null;
+          }
+        }).filter(e => e);
       return options;
     });
   }
@@ -173,7 +175,7 @@ function makeOptions(question) {
     return getLeaves(node, node => node.children).map(node => node.field) // multiFilter children
       .concat(path)
       .concat([node.field])
-      .flatMap(field => [field.display, field.description, field.variableName])
+      .flatMap(field => field ? [field.display, field.description, field.variableName]: [])
       .concat(values)
       .join(' ');
   }
