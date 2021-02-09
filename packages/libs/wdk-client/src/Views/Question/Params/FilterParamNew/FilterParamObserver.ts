@@ -189,7 +189,7 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
             paramValues,
             activeField
           }))
-        );
+        ) as Observable<Action>;
       }),
       takeUntil(getUnloadQuestionStream(action$, searchName))
     );
