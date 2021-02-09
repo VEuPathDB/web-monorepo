@@ -28,9 +28,14 @@ initialize({
       component: (props: RouteComponentProps<void>) => <Home />,
     },
     {
-      path: '/workspace/blast/result/:jobId',
-      component: (props: RouteComponentProps<{ jobId: string }>) => (
-        <BlastWorkspaceResult jobId={props.match.params.jobId} />
+      path: '/workspace/blast/result/:jobId/:subPath*',
+      component: (
+        props: RouteComponentProps<{ jobId: string; subPath: string }>
+      ) => (
+        <BlastWorkspaceResult
+          jobId={props.match.params.jobId}
+          subPath={props.match.params.subPath}
+        />
       ),
     },
     {
