@@ -3,5 +3,31 @@
     textarea.SequenceParam {
       font-family: Courier, monospace;
     }
+
+    .wdk-QuestionFormGroup__empty {
+      .wdk-QuestionFormParameterList {
+        display: grid;
+        grid-template-columns: 15em auto;
+        column-gap: 1em;
+      }
+
+      .wdk-QuestionFormParameterHeading {
+        border-bottom: unset;
+        font-size: 0.9em;
+      }
+
+      .wdk-QuestionFormParameterControl .wdk-RadioList {
+        display: flex;
+        gap: 1em;
+
+        label {
+          display: flex;
+        }
+      }
+
+      .wdk-QuestionFormParameterControl {
+        padding: 1.1em 0;
+      }
+    }
   }
 }

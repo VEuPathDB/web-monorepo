@@ -89,7 +89,9 @@ export function BlastForm(props: Props) {
   const renderBlastParamGroup = useCallback(
     (group: ParameterGroup, formProps: Props) =>
       group.name !== ADVANCED_PARAMS_GROUP_NAME ? (
-        renderDefaultParamGroup(group, formProps)
+        <div className={blastFormCx('Group', group.name)}>
+          {renderDefaultParamGroup(group, formProps)}
+        </div>
       ) : (
         <AdvancedParamGroup
           disabled={advancedParamGroupChanging}
