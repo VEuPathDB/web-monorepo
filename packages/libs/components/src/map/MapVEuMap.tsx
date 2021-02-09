@@ -1,12 +1,17 @@
-import React, {useState, CSSProperties, ReactElement, cloneElement} from "react";
-import { BoundsViewport, MarkerProps, AnimationFunction } from "./Types";
-import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
-const { BaseLayer } = LayersControl
-import {Viewport, Map, TileLayer, LayersControl} from "react-leaflet";
-import SemanticMarkers from "./SemanticMarkers";
+import React, {
+  useState,
+  CSSProperties,
+  ReactElement,
+  cloneElement,
+} from 'react';
+import { BoundsViewport, MarkerProps, AnimationFunction } from './Types';
+import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
+const { BaseLayer } = LayersControl;
+import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
+import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
-import '../styles/map_styles.css'
-import CustomGridLayer from "./CustomGridLayer";
+import '../styles/map_styles.css';
+import CustomGridLayer from './CustomGridLayer';
 import MouseTools, { MouseMode } from './MouseTools';
 
 /**
@@ -18,26 +23,36 @@ import MouseTools, { MouseMode } from './MouseTools';
 
 export interface MapVEuMapProps {
   /** Center lat/long and zoom level */
-  viewport: Viewport,
+  viewport: Viewport;
 
   /** Height and width of plot element */
-  height: CSSProperties['height'],
-  width: CSSProperties['width'],
-  onViewportChanged: (bvp: BoundsViewport) => void,
-  markers: ReactElement<BoundsDriftMarkerProps>[],
-  recenterMarkers?: boolean,
+  height: CSSProperties['height'];
+  width: CSSProperties['width'];
+  onViewportChanged: (bvp: BoundsViewport) => void;
+  markers: ReactElement<BoundsDriftMarkerProps>[];
+  recenterMarkers?: boolean;
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
-  sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
+  sidebarOnClose?: (value: React.SetStateAction<boolean>) => void;
   animation: {
-    method: string,
-    duration: number,
-    animationFunction: AnimationFunction
-  } | null,
-  showGrid: boolean,
-  showMouseToolbar?: boolean,
+    method: string;
+    duration: number;
+    animationFunction: AnimationFunction;
+  } | null;
+  showGrid: boolean;
+  showMouseToolbar?: boolean;
 }
 
-export default function MapVEuMap({viewport, height, width, onViewportChanged, markers, animation, recenterMarkers = true, showGrid, showMouseToolbar}: MapVEuMapProps) {
+export default function MapVEuMap({
+  viewport,
+  height,
+  width,
+  onViewportChanged,
+  markers,
+  animation,
+  recenterMarkers = true,
+  showGrid,
+  showMouseToolbar,
+}: MapVEuMapProps) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -52,22 +67,24 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
   };
 
   if (mouseMode === 'magnification') {
-    markers = markers.map((marker) => cloneElement(marker, {showPopup: true}));
+    markers = markers.map((marker) =>
+      cloneElement(marker, { showPopup: true })
+    );
   }
 
   return (
     <Map
-        viewport={state}
-        style={{height, width}}
-        onViewportChanged={handleViewportChanged}
-        className={mouseMode === "magnification" ? "cursor-zoom-in": ""}
-        // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
-        minZoom={2}
-        worldCopyJump={false}
+      viewport={state}
+      style={{ height, width }}
+      onViewportChanged={handleViewportChanged}
+      className={mouseMode === 'magnification' ? 'cursor-zoom-in' : ''}
+      // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
+      minZoom={2}
+      worldCopyJump={false}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       />
 
       <SemanticMarkers
@@ -77,27 +94,24 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         recenterMarkers={recenterMarkers}
       />
 
-      {showMouseToolbar &&
-        <MouseTools
-          mouseMode={mouseMode}
-          setMouseMode={setMouseMode}
-        />
-      }
+      {showMouseToolbar && (
+        <MouseTools mouseMode={mouseMode} setMouseMode={setMouseMode} />
+      )}
 
-      { showGrid ? <CustomGridLayer /> : null }
+      {showGrid ? <CustomGridLayer /> : null}
 
       <LayersControl position="topright">
         <BaseLayer checked name="street">
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
-            attribution='Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+            attribution="Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012"
           />
         </BaseLayer>
         <BaseLayer name="terrain">
           <TileLayer
             url="https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}"
             attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            subdomains='abcd'
+            subdomains="abcd"
             // minZoom='0'
             // maxZoom='18'
             // ext='png'
@@ -106,9 +120,12 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
         <BaseLayer name="satellite">
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
             // DKDK testing worldmap issue - with bounds props, message like 'map data not yet availalbe' is not shown
-            bounds={[[-90,-180],[90,180]]}
+            bounds={[
+              [-90, -180],
+              [90, 180],
+            ]}
             noWrap={true}
           />
         </BaseLayer>
@@ -123,7 +140,7 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
           <TileLayer
             url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-            subdomains='abcd'
+            subdomains="abcd"
             // maxZoom='19'
           />
         </BaseLayer>
@@ -140,4 +157,3 @@ export default function MapVEuMap({viewport, height, width, onViewportChanged, m
     </Map>
   );
 }
-

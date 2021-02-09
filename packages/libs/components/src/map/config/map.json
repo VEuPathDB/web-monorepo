@@ -18,7 +18,7 @@
     6,
     6,
     6,
-    7 
+    7
   ],
 
   "defaultAnimationDuration": 300,
@@ -42,7 +42,7 @@
     "#93AA00",
     "#593315",
     "#F13A13",
-    "#232C16" 
+    "#232C16"
   ],
 
   "chartMarkerColorsHex": [
@@ -53,4 +53,3 @@
     "#ED1C23"
   ]
 }
-  

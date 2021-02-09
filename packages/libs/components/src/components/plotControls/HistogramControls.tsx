@@ -131,7 +131,7 @@ export default function HistogramControls({
           onOrientationChange={toggleOrientation}
         />
         <ButtonGroup
-          label='Bar Layout'
+          label="Bar Layout"
           options={['overlay', 'stack']}
           selectedOption={barLayout}
           // @ts-ignore
@@ -139,7 +139,7 @@ export default function HistogramControls({
         />
         {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
           <ButtonGroup
-            label='Data Units'
+            label="Data Units"
             options={availableUnits}
             selectedOption={selectedUnit}
             onOptionSelected={onSelectedUnitChange}
@@ -163,7 +163,7 @@ export default function HistogramControls({
           color={accentColor}
         />
         <SliderWidget
-          label='Bin Width'
+          label="Bin Width"
           minimum={binWidthRange[0]}
           maximum={binWidthRange[1]}
           step={binWidthStep}
@@ -184,7 +184,7 @@ export default function HistogramControls({
 
       {errorStacks.map(({ error, occurences }, index) => (
         <Notification
-          title='Error'
+          title="Error"
           key={index}
           text={error.message}
           color={accentColor}

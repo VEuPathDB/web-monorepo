@@ -1,4 +1,4 @@
-import { defaults } from "plotly.js/src/components/color/attributes";
+import { defaults } from 'plotly.js/src/components/color/attributes';
 
 /** A generator function for the default plotly.js colors.
  *

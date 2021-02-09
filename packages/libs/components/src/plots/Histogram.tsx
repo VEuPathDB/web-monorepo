@@ -40,8 +40,8 @@ export interface HistogramProps extends PlotProps {
   /** Max value for the y-axis */
   yAxisRange?: [number, number];
   /** Show value for each bar */
-  showBarValues?: boolean,
-};
+  showBarValues?: boolean;
+}
 
 /** A Plot.ly based histogram component. */
 export default function Histogram({
@@ -174,7 +174,8 @@ export default function Histogram({
         data={plotlyFriendlyData}
         onSelected={onSelected}
         config={{
-          displayModeBar: showModebar !== undefined ? showModebar : ModebarDefault,
+          displayModeBar:
+            showModebar !== undefined ? showModebar : ModebarDefault,
           staticPlot: staticPlot,
         }}
       />

@@ -6,7 +6,6 @@ as building blocks for data visualizations. The plots use
 [Storybook](https://storybook.js.org/) is used as a development aide in creating
 test cases for different plots, and for showcasing plot features.
 
-
 # Steps for Development
 
 First, you must have [Node.js](https://nodejs.org) and
