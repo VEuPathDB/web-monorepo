@@ -1,11 +1,14 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { useHistory } from 'react-router';
 
 import { uniq } from 'lodash';
 
 import { IconAlt, Link, Loading } from '@veupathdb/wdk-client/lib/Components';
+import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
+import { UnderConstruction } from './BlastWorkspace';
 import { useBlastApi } from '../hooks/api';
 import {
   useHitTypeDisplayName,
@@ -22,11 +25,28 @@ import './BlastWorkspaceResult.scss';
 
 interface Props {
   jobId: string;
+  subPath?: string;
 }
+
+type SelectedResult =
+  | { type: 'combined' }
+  | { type: 'individual'; individualIndex: number };
 
 const POLLING_INTERVAL = 3000;
 
 export function BlastWorkspaceResult(props: Props) {
+  const history = useHistory();
+
+  const selectedResult = useMemo(
+    () =>
+      props.subPath == null || props.subPath === ''
+        ? undefined
+        : ((props.subPath === 'combined'
+            ? { type: 'combined' }
+            : { type: 'individual', individualIndex: 1 }) as SelectedResult),
+    [props.subPath]
+  );
+
   const api = useBlastApi();
 
   const organismToFilenameMapsResult = useWdkService(
@@ -52,7 +72,31 @@ export function BlastWorkspaceResult(props: Props) {
     [api, jobResult.value?.status]
   );
 
-  return organismToFilenameMapsResult == null ||
+  const queryCount = useMemo(() => {
+    if (multiQueryReportResult.value == null) {
+      return undefined;
+    }
+
+    const queryIds = multiQueryReportResult.value.BlastOutput2.map(
+      ({ report }) => report.results.search.query_id
+    );
+
+    return uniq(queryIds).length;
+  }, [multiQueryReportResult]);
+
+  useEffect(() => {
+    if (queryCount != null && selectedResult == null) {
+      const selectedResultPath = queryCount > 1 ? '/combined' : '/invididual/1';
+
+      history.push(
+        `/workspace/blast/result/${props.jobId}${selectedResultPath}`
+      );
+    }
+  }, [props.jobId, queryCount, selectedResult]);
+
+  return selectedResult == null ||
+    queryCount == null ||
+    organismToFilenameMapsResult == null ||
     queryResult.value == null ||
     jobResult.value == null ||
     multiQueryReportResult.value == null ? (
@@ -63,6 +107,8 @@ export function BlastWorkspaceResult(props: Props) {
       jobDetails={jobResult.value}
       multiQueryReport={multiQueryReportResult.value}
       query={queryResult.value}
+      queryCount={queryCount}
+      selectedResult={selectedResult}
     />
   );
 }
@@ -97,6 +143,8 @@ interface BlastSummaryProps {
   jobDetails: LongJobResponse;
   multiQueryReport: MultiQueryReportJson;
   query: string;
+  queryCount: number;
+  selectedResult: SelectedResult;
 }
 
 function BlastSummary({
@@ -104,6 +152,8 @@ function BlastSummary({
   jobDetails,
   multiQueryReport,
   query,
+  queryCount,
+  selectedResult,
 }: BlastSummaryProps) {
   const databases = useMemo(() => {
     const databasesEntries = multiQueryReport.BlastOutput2.map(({ report }) =>
@@ -144,12 +194,37 @@ function BlastSummary({
         <span className="InlineHeader">Query:</span>
         <Query query={query} />
       </div>
-      <CombinedBlastResult
-        combinedResult={multiQueryReport}
-        filesToOrganisms={filesToOrganisms}
-        hitTypeDisplayName={hitTypeDisplayName}
-        wdkRecordType={wdkRecordType}
-      />
+      {queryCount > 1 && (
+        <WorkspaceNavigation
+          heading={null}
+          routeBase={`/workspace/blast/result/${jobDetails.id}`}
+          items={[
+            {
+              display: 'Combined',
+              route: '/combined',
+            },
+            {
+              display: (
+                <>
+                  <span className="QueryCount">{queryCount}</span> Individual
+                  Results
+                </>
+              ),
+              route: '/individual/1',
+            },
+          ]}
+        />
+      )}
+      {selectedResult.type === 'combined' ? (
+        <CombinedBlastResult
+          combinedResult={multiQueryReport}
+          filesToOrganisms={filesToOrganisms}
+          hitTypeDisplayName={hitTypeDisplayName}
+          wdkRecordType={wdkRecordType}
+        />
+      ) : (
+        <UnderConstruction />
+      )}
     </div>
   );
 }

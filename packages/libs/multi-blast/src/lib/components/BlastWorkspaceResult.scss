@@ -1,23 +1,4 @@
 .BlastWorkspaceResult {
-  .InlineHeader {
-    font-weight: bold;
-  }
-
-  .Query {
-    font-family: Courier, monospace;
-    line-height: 2.5ex;
-    max-height: 50ex;
-    overflow-y: auto;
-  }
-
-  .ReadMore {
-    font-weight: bold;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
-
   &__Loading {
     .Caption {
       text-align: center;
@@ -48,6 +29,35 @@
       grid-template-columns: auto 1fr;
       grid-column-gap: 1em;
       grid-row-gap: 0.5em;
+    }
+  }
+
+  .WorkspaceNavigation {
+    h1 {
+      display: none;
+    }
+  }
+
+  .InlineHeader {
+    font-weight: bold;
+  }
+
+  .Query {
+    font-family: Courier, monospace;
+    line-height: 2.5ex;
+    max-height: 50ex;
+    overflow-y: auto;
+  }
+
+  .QueryCount {
+    font-weight: bold;
+  }
+
+  .ReadMore {
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: none;
     }
   }
 }

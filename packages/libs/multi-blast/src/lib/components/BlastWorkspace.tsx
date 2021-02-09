@@ -53,6 +53,6 @@ export function BlastWorkspace() {
   );
 }
 
-function UnderConstruction() {
+export function UnderConstruction() {
   return <p style={{ fontSize: '1.2em' }}>Under Construction</p>;
 }
