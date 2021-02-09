@@ -1,14 +1,14 @@
 import React, { ReactElement, useState, useCallback } from 'react';
 // import { action } from '@storybook/addon-actions';
 // import MapVEuMap from './MapVEuMap';
-import { BoundsViewport, Bounds } from './Types';
-import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
+import { BoundsViewport, Bounds } from '../map/Types';
+import { BoundsDriftMarkerProps } from '../map/BoundsDriftMarker';
 import {
   zoomLevelToGeohashLevel,
   defaultAnimationDuration,
-} from './config/map.json';
+} from '../map/config/map.json';
 
-import speciesData from '../stories/fixture-data/geoclust-species-testing-all-levels.json';
+import speciesData from './fixture-data/geoclust-species-testing-all-levels.json';
 
 // below was an attempt to lazy load...
 // it seemed to cause a 'black screen' error in Storybook if you refreshed the page in your browser
@@ -17,27 +17,29 @@ import speciesData from '../stories/fixture-data/geoclust-species-testing-all-le
 // import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
 import { LeafletMouseEvent } from 'leaflet';
-import DonutMarker, { DonutMarkerProps } from './DonutMarker';
+import DonutMarker, { DonutMarkerProps } from '../map/DonutMarker';
 
 //DKDK load sidebar CSS
-import { Sidebar, Tab } from './SidebarReactCore';
+import { Sidebar, Tab } from '../map/SidebarReactCore';
 
 //DKDK testing to separate a component for tab content
-import TabHomeContent from './TabHomeContent';
+import TabHomeContent from '../map/TabHomeContent';
 //DKDK testing Pie Chart in sidebar
-import TabPieChartContent from './TabPieChartContent';
-import TabPieChartContentLegend from './TabPieChartContentLegend';
+import TabPieChartContent from '../map/TabPieChartContent';
+import TabPieChartContentLegend from '../map/TabPieChartContentLegend';
 
 //DKDK map
-import MapVEuMap from './MapVEuMap';
+import MapVEuMap from '../map/MapVEuMap';
 
 //DKDK import legend
-import MapVEuLegendSampleList, { LegendProps } from './MapVEuLegendSampleList';
+import MapVEuLegendSampleList, {
+  LegendProps,
+} from '../map/MapVEuLegendSampleList';
 
 //DKDK anim
 // import Geohash from 'latlon-geohash';
 // import {DriftMarker} from "leaflet-drift-marker";
-import geohashAnimation from './animation_functions/geohash';
+import geohashAnimation from '../map/animation_functions/geohash';
 import md5 from 'md5';
 
 export default {

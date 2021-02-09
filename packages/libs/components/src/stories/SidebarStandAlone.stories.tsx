@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 
-import { Sidebar, Tab } from './SidebarReactCore';
+import { Sidebar, Tab } from '../map/SidebarReactCore';
 
 //DKDK testing to separate a component for tab content
-import TabHomeContent from './TabHomeContent';
+import TabHomeContent from '../map/TabHomeContent';
 
 export default {
   title: 'Sidebar/Sidebar stand-alone',
