@@ -12,7 +12,7 @@ import { LeafletMouseEvent, LatLngBounds } from 'leaflet';
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
-  // popupClass: string,
+  popupClass?: string;
 }
 
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
@@ -36,6 +36,7 @@ export default function BoundsDriftMarker({
   duration,
   showPopup,
   popupContent,
+  popupClass,
 }: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false);
   const { map } = useLeaflet();
@@ -50,7 +51,7 @@ export default function BoundsDriftMarker({
   const popup = popupContent && (
     <Popup
       ref={popupRef}
-      className="plot-marker-popup"
+      className={'plot-marker-popup' + (popupClass ? ` ${popupClass}` : '')}
       minWidth={popupContent.size.width}
       maxWidth={popupContent.size.width}
       maxHeight={popupContent.size.height}
@@ -80,44 +81,44 @@ export default function BoundsDriftMarker({
           left: -90,
         }[orientation];
 
-        const iconSize =
-          icon && icon.options.iconSize
-            ? icon.options.iconSize
-            : { x: 55, y: 55 };
-
         // Have to add rotate here to preserve the existing transform, which varies
         popupDOMNode.style.transform += ` rotate(${angle}deg)`;
         popupDOMNode.classList.add('popup-' + orientation);
 
-        const popupStyle = getComputedStyle(popupDOMNode);
-        const margin_bottom = popupStyle.getPropertyValue('margin-bottom');
-        console.log(margin_bottom);
+        // const iconSize =
+        // icon && icon.options.iconSize
+        //   ? icon.options.iconSize
+        //   : { x: 55, y: 55 };
 
-        switch (orientation) {
-          case 'up':
-            // popupDOMNode.style['margin-bottom'] += 16;
-            console.log(iconSize.y / 2 + 15);
-            // popupStyle.setProperty('margin-bottom', String(iconSize.y / 2 + 15), 'important');
-            popupDOMNode.style.marginBottom = iconSize.y / 2 + 15;
-            console.log(
-              getComputedStyle(popupDOMNode).getPropertyValue('margin-bottom')
-            );
-            break;
-          case 'down':
-            popupDOMNode.style['margin-bottom'] -= 16;
-            break;
-          case 'left':
-            popupDOMNode.style['margin-left'] = -29;
-            break;
-          case 'right':
-            popupDOMNode.style['margin-left'] = 29;
-            break;
-        }
+        // const popupStyle = getComputedStyle(popupDOMNode);
+        // const margin_bottom = popupStyle.getPropertyValue('margin-bottom');
+        // console.log(margin_bottom);
+
+        // switch (orientation) {
+        //   case 'up':
+        //     // popupDOMNode.style['margin-bottom'] += 16;
+        //     console.log(iconSize.y / 2 + 15);
+        //     // popupStyle.setProperty('margin-bottom', String(iconSize.y / 2 + 15), 'important');
+        //     popupDOMNode.style.marginBottom = iconSize.y / 2 + 15;
+        //     console.log(
+        //       getComputedStyle(popupDOMNode).getPropertyValue('margin-bottom')
+        //     );
+        //     break;
+        //   case 'down':
+        //     popupDOMNode.style['margin-bottom'] -= 16;
+        //     break;
+        //   case 'left':
+        //     popupDOMNode.style['margin-left'] = -29;
+        //     break;
+        //   case 'right':
+        //     popupDOMNode.style['margin-left'] = 29;
+        //     break;
+        // }
       }
     }
   };
 
-  useEffect(() => orientPopup(popupOrientationRef.current));
+  // useEffect(() => orientPopup(popupOrientationRef.current));
 
   const handleMouseOver = (e: LeafletMouseEvent) => {
     e.target._icon.classList.add('top-marker'); //DKDK marker on top
@@ -152,7 +153,7 @@ export default function BoundsDriftMarker({
     setDisplayBounds(false); // Remove bounds rectangle
 
     if (showPopup && popupContent) {
-      // e.target.closePopup();
+      e.target.closePopup();
       // Have to do this again because styling is changed again on close
       orientPopup(popupOrientationRef.current);
     }

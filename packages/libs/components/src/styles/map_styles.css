@@ -61,37 +61,31 @@
 }
 
 .plot-marker-popup.popup-right.histogram-popup {
-  margin-left: 29px;
-  /* margin-left: 17px; */
+  margin-left: 30px;
 }
 
 .plot-marker-popup.popup-left.histogram-popup {
-  margin-left: -29px;
-  /* margin-left: -17px; */
+  margin-left: -30px;
 }
 
 .plot-marker-popup.popup-down.histogram-popup {
-  margin-bottom: -21px;
-  /* margin-bottom: -7px; */
+  margin-bottom: -22px;
 }
 
 .plot-marker-popup.popup-up.donut-popup {
-  margin-bottom: 36px;
+  margin-bottom: 27px;
 }
 
 .plot-marker-popup.popup-right.donut-popup {
-  margin-left: 29px;
-  /* margin-left: 17px; */
+  margin-left: 20px;
 }
 
 .plot-marker-popup.popup-left.donut-popup {
-  margin-left: -29px;
-  /* margin-left: -17px; */
+  margin-left: -20px;
 }
 
 .plot-marker-popup.popup-down.donut-popup {
-  margin-bottom: -21px;
-  /* margin-bottom: -7px; */
+  margin-bottom: -12px;
 }
 
 .plot-marker-popup.popup-up .leaflet-popup-content {

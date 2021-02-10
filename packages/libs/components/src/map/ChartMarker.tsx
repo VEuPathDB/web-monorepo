@@ -266,9 +266,9 @@ export default function ChartMarker(props: ChartMarkerProps) {
           height: popupSize,
           width: popupSize,
         },
-        // className: 'histogram-popup'
       }}
       showPopup={props.showPopup}
+      popupClass="histogram-popup"
     />
   );
 }

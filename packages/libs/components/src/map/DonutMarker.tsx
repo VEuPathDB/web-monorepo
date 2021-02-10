@@ -248,6 +248,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
         },
       }}
       showPopup={props.showPopup}
+      popupClass="donut-popup"
     />
   );
 }
