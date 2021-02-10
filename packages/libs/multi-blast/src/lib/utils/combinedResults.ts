@@ -59,3 +59,12 @@ export function dbToOrganismFactory(filesToOrganisms: Record<string, string>) {
     return fileToOrganismPair == null ? null : fileToOrganismPair[1];
   };
 }
+
+export const ACCESSION_HELP_TEXT = 'FILL ME IN';
+export const ORGANISM_HELP_TEXT = 'FILL ME IN';
+export const QUERY_HELP_TEXT = 'FILL ME IN';
+export const RANK_BY_SUBJECT_HELP_TEXT = 'FILL ME IN';
+export const ALIGNMENT_LENGTH_HELP_TEXT = 'FILL ME IN';
+export const E_VALUE_HELP_TEXT = 'FILL ME IN';
+export const SCORE_HELP_TEXT = 'FILL ME IN';
+export const PERCENT_IDENTITY_HELP_TEXT = 'FILL ME IN';

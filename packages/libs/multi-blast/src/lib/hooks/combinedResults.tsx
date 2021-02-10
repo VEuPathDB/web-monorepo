@@ -10,6 +10,14 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
+  ACCESSION_HELP_TEXT,
+  ALIGNMENT_LENGTH_HELP_TEXT,
+  E_VALUE_HELP_TEXT,
+  ORGANISM_HELP_TEXT,
+  PERCENT_IDENTITY_HELP_TEXT,
+  QUERY_HELP_TEXT,
+  RANK_BY_SUBJECT_HELP_TEXT,
+  SCORE_HELP_TEXT,
   CombinedResultRow,
   blastDbNameToWdkRecordType,
   dbToOrganismFactory,
@@ -35,6 +43,7 @@ export function useCombinedResultColumns(
             </Link>
           ),
         sortable: true,
+        helpText: ACCESSION_HELP_TEXT,
       },
       {
         key: 'organism',
@@ -42,21 +51,25 @@ export function useCombinedResultColumns(
         renderCell: ({ row }: { row: CombinedResultRow }) =>
           row.organism == null ? '' : row.organism,
         sortable: true,
+        helpText: ORGANISM_HELP_TEXT,
       },
       {
         key: 'query',
         name: 'Query',
         sortable: true,
+        helpText: QUERY_HELP_TEXT,
       },
       {
         key: 'rank',
         name: 'Rank',
         sortable: true,
+        helpText: RANK_BY_SUBJECT_HELP_TEXT,
       },
       {
         key: 'alignmentLength',
         name: 'Aln Length',
         sortable: true,
+        helpText: ALIGNMENT_LENGTH_HELP_TEXT,
       },
       {
         key: 'eValue',
@@ -64,11 +77,13 @@ export function useCombinedResultColumns(
         renderCell: ({ row }: { row: CombinedResultRow }) =>
           row.eValue.toExponential(2),
         sortable: true,
+        helpText: E_VALUE_HELP_TEXT,
       },
       {
         key: 'score',
         name: 'Score',
         sortable: true,
+        helpText: SCORE_HELP_TEXT,
       },
       {
         key: 'identity',
@@ -76,6 +91,7 @@ export function useCombinedResultColumns(
         renderCell: ({ row }: { row: CombinedResultRow }) =>
           `${(row.identity * 100).toFixed(2)}%`,
         sortable: true,
+        helpText: PERCENT_IDENTITY_HELP_TEXT,
       },
     ],
     [hitTypeDisplayName, wdkRecordType]
