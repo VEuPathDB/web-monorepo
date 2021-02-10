@@ -91,7 +91,7 @@ export function PathwaySearchById({
     setSelection([]);
   }, [ cy ]);
 
-  const onChange = useCallback((newSelection: ValueType<Option>) => {
+  const onChange = useCallback((newSelection: unknown) => {
     const newSelectionArray = newSelection == null
       ? []
       : Array.isArray(newSelection)
@@ -162,6 +162,7 @@ export function PathwaySearchById({
   return (
     <div className="veupathdb-PathwaySearchById">
       <Select
+        isMulti
         isClearable
         isSearchable
         components={{

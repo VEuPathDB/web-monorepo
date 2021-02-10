@@ -13,7 +13,7 @@ import {makeClassNameHelper} from '@veupathdb/wdk-client/lib/Utils/ComponentUtil
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-import { pruneNodesWithSingleExtendingChild } from 'ebrc-client/util/organisms';
+import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
 
 import './OrganismFilter.scss';
 
