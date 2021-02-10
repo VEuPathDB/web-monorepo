@@ -11,6 +11,7 @@ import { LeafletMouseEvent } from 'leaflet';
 
 function sleep(ms: number): Promise<() => void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+  fet;
 }
 
 export const getSpeciesDonuts = async (
@@ -24,9 +25,7 @@ export const getSpeciesDonuts = async (
 ) => {
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
   delay && (await sleep(delay));
-  const response = await fetch(
-    '/data/geoclust-species-testing-all-levels.json'
-  );
+  const response = await fetch('data/geoclust-species-testing-all-levels.json');
   const speciesData = await response.json();
 
   const buckets = (speciesData as { [key: string]: any })[
@@ -137,9 +136,7 @@ export const getSpeciesBasicMarkers = async (
 ) => {
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
 
-  const response = await fetch(
-    '/data/geoclust-species-testing-all-levels.json'
-  );
+  const response = await fetch('data/geoclust-species-testing-all-levels.json');
   const speciesData = await response.json();
 
   const buckets = (speciesData as { [key: string]: any })[
@@ -242,7 +239,7 @@ export const getCollectionDateChartMarkers = async (
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
   delay && (await sleep(delay));
   const response = await fetch(
-    '/data/geoclust-date-binning-testing-all-levels.json'
+    'data/geoclust-date-binning-testing-all-levels.json'
   );
   const collectionDateData = await response.json();
 
@@ -391,7 +388,7 @@ export const getCollectionDateBasicMarkers = async (
 ) => {
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
   const response = await fetch(
-    '/data/geoclust-date-binning-testing-all-levels.json'
+    'data/geoclust-date-binning-testing-all-levels.json'
   );
   const collectionDateData = await response.json();
 
