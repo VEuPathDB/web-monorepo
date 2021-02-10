@@ -92,7 +92,7 @@ export function BlastWorkspaceResult(props: Props) {
         `/workspace/blast/result/${props.jobId}${selectedResultPath}`
       );
     }
-  }, [props.jobId, queryCount, selectedResult]);
+  }, [history, props.jobId, queryCount, selectedResult]);
 
   return selectedResult == null ||
     queryCount == null ||
