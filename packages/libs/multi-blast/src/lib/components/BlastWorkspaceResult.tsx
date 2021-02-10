@@ -294,7 +294,7 @@ function ReadMoreButton({ expanded, onClick }: ReadMoreButtonProps) {
   return (
     <button onClick={onClick} type="button" className="ReadMore link">
       <IconAlt fa={expanded ? 'chevron-up' : 'chevron-down'} />{' '}
-      {expanded ? 'Hide Full Query' : 'Show Full Query'}
+      {expanded ? 'Show Less' : 'Show More'}
     </button>
   );
 }
