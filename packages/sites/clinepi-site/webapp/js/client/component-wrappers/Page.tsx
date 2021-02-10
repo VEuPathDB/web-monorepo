@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Props } from 'wdk-client/Components/Layout/Page';
+import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
 
-import { useAttemptActionClickHandler } from 'ebrc-client/hooks/dataRestriction';
+import { useAttemptActionClickHandler } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 
 export function Page(DefaultComponent: React.ComponentType<Props>) {
   return function ClinEpiPage(props: Props) {
