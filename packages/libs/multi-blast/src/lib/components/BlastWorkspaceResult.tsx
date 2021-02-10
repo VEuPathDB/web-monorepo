@@ -192,7 +192,7 @@ function BlastSummary({
         </span>
         <span>{databasesStr}</span>
         <span className="InlineHeader">
-          Query {queryCount == 1 ? 'Sequence' : 'Sequences'}:
+          Query {queryCount === 1 ? 'Sequence' : 'Sequences'}:
         </span>
         <Query query={query} />
       </div>
