@@ -6,6 +6,7 @@ export interface CombinedResultRow {
   eValue: number;
   identity: number;
   organism: string | null;
+  queryCoverage: number;
   queryDescription: string;
   queryId: string;
   queryRank: number;
@@ -68,12 +69,13 @@ export function dbToOrganismFactory(filesToOrganisms: Record<string, string>) {
 export const ACCESSION_HELP_TEXT = 'FILL ME IN';
 export const ORGANISM_HELP_TEXT = 'FILL ME IN';
 export const QUERY_HELP_TEXT = 'FILL ME IN';
-export const RANK_BY_QUERY_HELP_TEXT = 'FILL ME IN';
-export const RANK_BY_SUBJECT_HELP_TEXT = 'FILL ME IN';
+export const RANK_PER_QUERY_HELP_TEXT = 'FILL ME IN';
+export const RANK_PER_SUBJECT_HELP_TEXT = 'FILL ME IN';
 export const ALIGNMENT_LENGTH_HELP_TEXT = 'FILL ME IN';
 export const E_VALUE_HELP_TEXT = 'FILL ME IN';
 export const SCORE_HELP_TEXT = 'FILL ME IN';
 export const PERCENT_IDENTITY_HELP_TEXT = 'FILL ME IN';
+export const QUERY_COVERAGE_HELP_TEXT = 'FILL ME IN';
 
 const SIGNIFICANCE_SORT_COLUMNS = ['eValue', 'score', 'identity'] as const;
 const SIGNIFICANCE_SORT_ORDERS = ['asc', 'desc', 'asc'] as const;
@@ -82,4 +84,36 @@ export function orderHitsBySignificance<
   T extends Record<string, string | number | null>
 >(hits: T[]) {
   return orderBy(hits, SIGNIFICANCE_SORT_COLUMNS, SIGNIFICANCE_SORT_ORDERS);
+}
+
+interface Interval {
+  left: number;
+  right: number;
+}
+
+export function mergeIntervals(intervals: Interval[]): Interval[] {
+  if (intervals.length === 0) {
+    return intervals;
+  }
+
+  const orderedIntervals = orderBy(intervals, 'left');
+
+  const result = [orderedIntervals[0]];
+
+  for (let i = 1; i < orderedIntervals.length; i++) {
+    const nextInterval = orderedIntervals[i];
+    const latestMergedInterval = result.pop() as Interval;
+
+    if (latestMergedInterval.right < nextInterval.left) {
+      result.push(latestMergedInterval);
+      result.push(nextInterval);
+    } else {
+      result.push({
+        left: latestMergedInterval.left,
+        right: Math.max(latestMergedInterval.right, nextInterval.right),
+      });
+    }
+  }
+
+  return result;
 }

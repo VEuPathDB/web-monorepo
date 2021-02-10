@@ -15,14 +15,16 @@ import {
   E_VALUE_HELP_TEXT,
   ORGANISM_HELP_TEXT,
   PERCENT_IDENTITY_HELP_TEXT,
+  QUERY_COVERAGE_HELP_TEXT,
   QUERY_HELP_TEXT,
-  RANK_BY_QUERY_HELP_TEXT,
-  RANK_BY_SUBJECT_HELP_TEXT,
+  RANK_PER_QUERY_HELP_TEXT,
+  RANK_PER_SUBJECT_HELP_TEXT,
   SCORE_HELP_TEXT,
   CombinedResultRow,
   blastDbNameToWdkRecordType,
   dbToOrganismFactory,
   geneHitTitleToWdkPrimaryKey,
+  mergeIntervals,
   orderHitsBySignificance,
 } from '../utils/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
@@ -63,15 +65,15 @@ export function useCombinedResultColumns(
       },
       {
         key: 'queryRank',
-        name: 'Rank By Query',
+        name: 'Rank Per Query',
         sortable: true,
-        helpText: RANK_BY_QUERY_HELP_TEXT,
+        helpText: RANK_PER_QUERY_HELP_TEXT,
       },
       {
         key: 'subjectRank',
-        name: 'Rank By Subject',
+        name: 'Rank Per Subject',
         sortable: true,
-        helpText: RANK_BY_SUBJECT_HELP_TEXT,
+        helpText: RANK_PER_SUBJECT_HELP_TEXT,
       },
       {
         key: 'alignmentLength',
@@ -101,6 +103,14 @@ export function useCombinedResultColumns(
         sortable: true,
         helpText: PERCENT_IDENTITY_HELP_TEXT,
       },
+      {
+        key: 'queryCoverage',
+        name: 'Query Coverage',
+        renderCell: ({ row }: { row: CombinedResultRow }) =>
+          `${(row.queryCoverage * 100).toFixed(2)}%`,
+        sortable: true,
+        helpText: QUERY_COVERAGE_HELP_TEXT,
+      },
     ],
     [hitTypeDisplayName, wdkRecordType]
   );
@@ -129,6 +139,7 @@ export function useRawCombinedResultRows(
         const {
           query_id: queryId,
           query_title: queryTitle,
+          query_len: queryLength,
         } = queryResult.report.results.search;
 
         const wdkPrimaryKey =
@@ -141,12 +152,24 @@ export function useRawCombinedResultRows(
         const identity = bestHsp.identity / bestHsp.align_len;
         const score = bestHsp.score;
 
+        const queryIntervals = hit.hsps.map(({ query_from, query_to }) => ({
+          left: query_from,
+          right: query_to,
+        }));
+        const mergedQueryIntervals = mergeIntervals(queryIntervals);
+        const coveredQueryLength = mergedQueryIntervals.reduce(
+          (memo, { left, right }) => memo + right - left + 1,
+          0
+        );
+        const queryCoverage = coveredQueryLength / queryLength;
+
         return {
           accession,
           alignmentLength,
           eValue,
           identity,
           organism,
+          queryCoverage,
           queryDescription: queryTitle == null ? queryId : queryTitle,
           queryId,
           queryTitle: queryTitle ?? null,
