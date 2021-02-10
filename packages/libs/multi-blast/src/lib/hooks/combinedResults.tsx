@@ -107,8 +107,7 @@ export function useRawCombinedResultRows(
           query_title: queryTitle,
         } = queryResult.report.results.search;
 
-        const query =
-          queryTitle == null ? queryId : `${queryTitle} (${queryId})`;
+        const query = queryTitle == null ? queryId : queryTitle;
 
         const wdkPrimaryKey =
           wdkRecordType === 'gene'
