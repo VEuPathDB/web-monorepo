@@ -29,6 +29,12 @@ export default {
   component: MapVEuMapSidebar,
 } as Meta;
 
+const defaultAnimation = {
+  method: 'geohash',
+  animationFunction: geohashAnimation,
+  duration: defaultAnimationDuration,
+};
+
 const legendType = 'categorical';
 const dropdownTitle: string = 'Species';
 const dropdownHref: string[] = [
@@ -101,11 +107,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         viewport={{ center: [13, 16], zoom: 4 }}
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
-        animation={{
-          method: 'geohash',
-          animationFunction: geohashAnimation,
-          duration: defaultAnimationDuration,
-        }}
+        animation={defaultAnimation}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -151,11 +153,7 @@ export const FirstRequest: Story<MapVEuMapProps> = (args) => {
         viewport={{ center: [13, 16], zoom: 4 }}
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
-        animation={{
-          method: 'geohash',
-          animationFunction: geohashAnimation,
-          duration: defaultAnimationDuration,
-        }}
+        animation={defaultAnimation}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
@@ -231,11 +229,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         viewport={{ center: [13, 16], zoom: 4 }}
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
-        animation={{
-          method: 'geohash',
-          animationFunction: geohashAnimation,
-          duration: defaultAnimationDuration,
-        }}
+        animation={defaultAnimation}
       />
       <MapVEuLegendSampleList
         legendType={legendType}
