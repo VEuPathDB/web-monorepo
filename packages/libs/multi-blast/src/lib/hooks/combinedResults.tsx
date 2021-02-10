@@ -5,7 +5,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
-import { groupBy, mapValues, orderBy } from 'lodash';
+import { groupBy, orderBy } from 'lodash';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -16,12 +16,14 @@ import {
   ORGANISM_HELP_TEXT,
   PERCENT_IDENTITY_HELP_TEXT,
   QUERY_HELP_TEXT,
+  RANK_BY_QUERY_HELP_TEXT,
   RANK_BY_SUBJECT_HELP_TEXT,
   SCORE_HELP_TEXT,
   CombinedResultRow,
   blastDbNameToWdkRecordType,
   dbToOrganismFactory,
   geneHitTitleToWdkPrimaryKey,
+  orderHitsBySignificance,
 } from '../utils/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
@@ -54,10 +56,16 @@ export function useCombinedResultColumns(
         helpText: ORGANISM_HELP_TEXT,
       },
       {
-        key: 'query',
+        key: 'queryDescription',
         name: 'Query',
         sortable: true,
         helpText: QUERY_HELP_TEXT,
+      },
+      {
+        key: 'queryRank',
+        name: 'Rank By Query',
+        sortable: true,
+        helpText: RANK_BY_QUERY_HELP_TEXT,
       },
       {
         key: 'subjectRank',
@@ -123,8 +131,6 @@ export function useRawCombinedResultRows(
           query_title: queryTitle,
         } = queryResult.report.results.search;
 
-        const query = queryTitle == null ? queryId : queryTitle;
-
         const wdkPrimaryKey =
           wdkRecordType === 'gene'
             ? geneHitTitleToWdkPrimaryKey(title)
@@ -141,38 +147,61 @@ export function useRawCombinedResultRows(
           eValue,
           identity,
           organism,
-          query,
+          queryDescription: queryTitle == null ? queryId : queryTitle,
+          queryId,
+          queryTitle: queryTitle ?? null,
           score,
           wdkPrimaryKey,
         };
       })
     );
 
+    const hitsGroupedByQuery = groupBy(unrankedHits, 'queryId');
     const hitsGroupedBySubject = groupBy(unrankedHits, 'accession');
 
-    const groupedHitsWithRank = mapValues(
-      hitsGroupedBySubject,
-      (hitsByTarget) => {
-        const hitsOrderedBySignificance = orderBy(
-          hitsByTarget,
-          ['eValue', 'score', 'identity'],
-          ['asc', 'desc', 'asc']
+    const byQueryRanks = Object.entries(hitsGroupedByQuery).reduce(
+      (memo, [queryId, queryGroup]) => {
+        const queryGroupOrderedBySignificance = orderHitsBySignificance(
+          queryGroup
         );
 
-        return hitsOrderedBySignificance.map(
-          (unrankedHit, zeroIndexSubjectRank) => ({
-            ...unrankedHit,
-            subjectRank: zeroIndexSubjectRank + 1,
-          })
+        queryGroupOrderedBySignificance.forEach(
+          ({ accession: subjectId }, zeroIndexRank) => {
+            memo[`${queryId}/${subjectId}`] = zeroIndexRank + 1;
+          }
         );
-      }
+
+        return memo;
+      },
+      {} as Record<string, number>
     );
 
-    return Object.values(groupedHitsWithRank).reduce((memo, hitGroup) => {
-      memo.push(...hitGroup);
+    const bySubjectRanks = Object.entries(hitsGroupedBySubject).reduce(
+      (memo, [subjectId, subjectGroup]) => {
+        const subjectGroupOrderedBySignificance = orderHitsBySignificance(
+          subjectGroup
+        );
 
-      return memo;
-    }, [] as CombinedResultRow[]);
+        subjectGroupOrderedBySignificance.forEach(
+          ({ queryId }, zeroIndexRank) => {
+            memo[`${queryId}/${subjectId}`] = zeroIndexRank + 1;
+          }
+        );
+
+        return memo;
+      },
+      {} as Record<string, number>
+    );
+
+    return unrankedHits.map((unrankedHit) => {
+      const querySubjectPairKey = `${unrankedHit.queryId}/${unrankedHit.accession}`;
+
+      return {
+        ...unrankedHit,
+        queryRank: byQueryRanks[querySubjectPairKey],
+        subjectRank: bySubjectRanks[querySubjectPairKey],
+      };
+    });
   }, [filesToOrganisms, resultsByQuery, wdkRecordType]);
 }
 

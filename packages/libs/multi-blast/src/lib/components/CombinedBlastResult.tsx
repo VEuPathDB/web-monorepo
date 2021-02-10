@@ -33,7 +33,7 @@ export function CombinedBlastResult({
   );
 
   const [sort, setSort] = useState<MesaSortObject>({
-    columnKey: 'subjectRank',
+    columnKey: 'queryRank',
     direction: 'asc',
   });
 
