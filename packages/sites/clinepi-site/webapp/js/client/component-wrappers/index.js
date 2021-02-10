@@ -29,14 +29,21 @@ import IndexController from './IndexController';
 import AnswerController from './AnswerController';
 import ReporterSortMessage from './ReporterSortMessage';
 import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
+import { Page } from './Page';
 
 import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import * as ServerSideAttributeFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/ServerSideAttributeFilter';
 
 export default {
   ReporterSortMessage,
   AnswerController,
   IndexController,
   SiteHeader,
+
+  ServerSideAttributeFilter: () => ServerSideAttributeFilter.withOptions({
+    histogramScaleYAxisDefault: false,
+    histogramTruncateYAxisDefault: true
+  }),
 
   // Related visits/case-control wizard steps
   ActiveGroup,
@@ -47,14 +54,7 @@ export default {
 
   QuestionWizard,
   QuestionWizardController: compose(
-    withRestrictionHandler(Action.search, (state, props) => {
-      const { questions = [], recordClasses = [] } = state.globalData;
-      return Seq.from(questions)
-        .filter(question => question.urlSegment === props.questionName)
-        .flatMap(question => Seq.from(recordClasses)
-          .filter(recordClass => recordClass.urlSegment === question.outputRecordClassName))
-        .first();
-    }),
+    withRestrictionHandler(Action.search, (_, props) => props.recordClass),
     QuestionWizardController
   ),
   DownloadFormController: compose(
@@ -107,7 +107,8 @@ export default {
     return () => <DefaultComponent specialInstructions={specialInstructions} />;
   },
   DownloadLink: withPermissions,
-  DataRestrictionDaemon: withPermissions
+  DataRestrictionDaemon: withPermissions,
+  Page
 }
 
 function guard(propsPredicate) {

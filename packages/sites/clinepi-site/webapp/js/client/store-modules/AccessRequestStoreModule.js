@@ -22,6 +22,8 @@ import { userUpdate } from '@veupathdb/wdk-client/lib/Actions/UserActions';
 
 import { checkPermissions, isUserApprovedForStudy } from '@veupathdb/web-common/lib/StudyAccess/permission';
 
+import { checkPermissions, isUserApprovedForStudy } from 'ebrc-client/StudyAccess/permission';
+
 export const key = 'accessRequest';
 
 const initialState = {

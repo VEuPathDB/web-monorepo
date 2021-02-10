@@ -1,14 +1,9 @@
 package org.clinepi.service.accessRequest;
 
-import static org.gusdb.fgputil.FormatUtil.escapeHtml;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.eupathdb.common.model.contact.EmailSender;
@@ -16,6 +11,8 @@ import org.gusdb.fgputil.db.SqlUtils;
 import org.gusdb.wdk.model.WdkModel;
 import org.gusdb.wdk.model.WdkModelException;
 import org.gusdb.wdk.model.config.ModelConfig;
+
+import static org.gusdb.fgputil.FormatUtil.escapeHtml;
 
 public class AccessRequestSubmitter {
   private static final Logger LOG = Logger.getLogger(AccessRequestSubmitter.class);
@@ -67,35 +64,39 @@ public class AccessRequestSubmitter {
   }
 
   private static String insertRequestPreparedStatementBody() {
-    List<String> insertStatementColumns = Arrays.asList(
-      "user_id",
-      "dataset_presenter_id",
-      "restriction_level",
-      "purpose",
-      "prior_auth",
-      "research_question",
-      "analysis_plan",
-      "dissemination_plan",
-      "approval_status"
-    );
-
-    List<String> insertStatementPlaceholders = insertStatementColumns
-      .stream()
-      .map(x -> "?")
-      .collect(Collectors.toList());
-
-    return String.format(
-      "INSERT INTO studyaccess.ValidDatasetUser (%s)    " +
-      "SELECT                                    %s     " +
-      "FROM dual                                        " +
-      "WHERE NOT EXISTS (                               " +
-      "  SELECT user_id, dataset_presenter_id           " +
-      "  FROM studyaccess.ValidDatasetUser              " +
-      "  WHERE user_id = ? AND dataset_presenter_id = ? " +
-      ")                                                ",
-      String.join(", ", insertStatementColumns),
-      String.join(", ", insertStatementPlaceholders)
-    );
+    return "INSERT INTO\n"
+      + "  studyaccess.end_users (\n"
+      + "    user_id\n"
+      + "  , dataset_presenter_id\n"
+      + "  , purpose\n"
+      + "  , research_question\n"
+      + "  , analysis_plan\n"
+      + "  , dissemination_plan\n"
+      + "  , prior_auth\n"
+      + "  , restriction_level_id\n"
+      + "  , approval_status_id\n"
+      + "  )\n"
+      + "SELECT\n"
+      + "  ? -- user_id\n"
+      + ", ? -- dataset_presenter_id\n"
+      + ", ? -- purpose\n"
+      + ", ? -- research_question\n"
+      + ", ? -- analysis_plan\n"
+      + ", ? -- dissemination_plan\n"
+      + ", ? -- prior_auth\n"
+      + ", (\n"
+      + "    SELECT restriction_level_id\n"
+      + "    FROM studyaccess.restriction_level"
+      + "    WHERE name = ?"
+      + "  ) -- restriction_level\n"
+      + ", ? -- approval_status\n"
+      + "FROM dual\n"
+      + "WHERE NOT EXISTS (\n"
+      + "  SELECT user_id, dataset_presenter_id\n"
+      + "  FROM studyaccess.ValidDatasetUser\n"
+      + "  WHERE user_id = ?\n"
+      + "    AND dataset_presenter_id = ?\n"
+      + ")";
   }
 
   private static PreparedStatement insertRequestPreparedStatement(Connection conn, String psBody, AccessRequestParams params)
@@ -104,12 +105,12 @@ public class AccessRequestSubmitter {
 
     ps.setInt(1, params.getUserId());
     ps.setString(2, params.getDatasetId());
-    ps.setString(3, params.getRestrictionLevel());
-    ps.setString(4, params.getPurpose());
-    ps.setString(5, params.getPriorAuth());
-    ps.setString(6, params.getResearchQuestion());
-    ps.setString(7, params.getAnalysisPlan());
-    ps.setString(8, params.getDisseminationPlan());
+    ps.setString(3, params.getPurpose());
+    ps.setString(4, params.getResearchQuestion());
+    ps.setString(5, params.getAnalysisPlan());
+    ps.setString(6, params.getDisseminationPlan());
+    ps.setString(7, params.getPriorAuth());
+    ps.setString(8, params.getRestrictionLevel());
     ps.setInt(9, params.getApprovalType());
     ps.setInt(10, params.getUserId());
     ps.setString(11, params.getDatasetId());
