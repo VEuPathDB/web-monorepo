@@ -5,8 +5,8 @@ export interface CombinedResultRow {
   identity: number;
   organism: string | null;
   query: string;
-  rank: number;
   score: number;
+  subjectRank: number;
   wdkPrimaryKey: string | null;
 }
 

@@ -60,8 +60,8 @@ export function useCombinedResultColumns(
         helpText: QUERY_HELP_TEXT,
       },
       {
-        key: 'rank',
-        name: 'Rank',
+        key: 'subjectRank',
+        name: 'Rank By Subject',
         sortable: true,
         helpText: RANK_BY_SUBJECT_HELP_TEXT,
       },
@@ -148,10 +148,10 @@ export function useRawCombinedResultRows(
       })
     );
 
-    const hitsGroupedByTarget = groupBy(unrankedHits, 'accession');
+    const hitsGroupedBySubject = groupBy(unrankedHits, 'accession');
 
     const groupedHitsWithRank = mapValues(
-      hitsGroupedByTarget,
+      hitsGroupedBySubject,
       (hitsByTarget) => {
         const hitsOrderedBySignificance = orderBy(
           hitsByTarget,
@@ -159,10 +159,12 @@ export function useRawCombinedResultRows(
           ['asc', 'desc', 'asc']
         );
 
-        return hitsOrderedBySignificance.map((unrankedHit, zeroIndexRank) => ({
-          ...unrankedHit,
-          rank: zeroIndexRank + 1,
-        }));
+        return hitsOrderedBySignificance.map(
+          (unrankedHit, zeroIndexSubjectRank) => ({
+            ...unrankedHit,
+            subjectRank: zeroIndexSubjectRank + 1,
+          })
+        );
       }
     );
 
