@@ -62,7 +62,7 @@ export function RecordController(WdkRecordController) {
             .concat('TranscriptionSummary' in recordClass.tablesMap ? ['TranscriptionSummary'] : [])
             .concat('PhenotypeGraphs' in recordClass.tablesMap ? ['PhenotypeGraphs'] : [])
             .concat('CrisprPhenotypeGraphs' in recordClass.tablesMap ? ['CrisprPhenotypeGraphs'] : [])
-            .concat('FungiOrgLinkoutsTable' in recordClass.attributesMap ? ['FungiOrgLinkoutsTable'] : [])
+            .concat('FungiOrgLinkoutsTable' in recordClass.tablesMap ? ['FungiOrgLinkoutsTable'] : [])
         }
       ]
     }
@@ -191,65 +191,66 @@ export function RecordTableSection(DefaultComponent) {
         hasTaxonId = 1;
       }
 
-      return (
-        <DefaultComponent {...this.props} table={Object.assign({}, table, {
-          displayName: (
-            <span>
-              {table.displayName}
-	      {showNewFeature &&
-	        <img src={newFeatureImage}/>
-	      }
-              {showDownload &&
-                <span
-                  style={{
-                    fontSize: '.8em',
-                    fontWeight: 'normal',
-                    marginLeft: '1em'
-                  }}>
-                  <button type="button"
-                    className="wdk-Link"
-                    onClick={callDownloadTable}>
-                    <i className="fa fa-download"/> Download
-                  </button>
-                </span>
-              }
-              { hasTaxonId == 0 && showDatasetsLink &&
-              <Link
-                style={{
-                  fontSize: '.8em',
-                  fontWeight: 'normal',
-                  marginLeft: '1em'
-                }}
-                onClick={stopPropagation}
-                to={{
-                  pathname: `/search/dataset/DatasetsByReferenceNameNoTaxon:${customName}/result`,
-                  search: QueryString.stringify({
-                    'param.record_class': record.recordClassName,
-                    'param.reference_name': table.name,
-                  })
-                }}
-              ><i className="fa fa-database"/> Data Sets</Link>}
-              { hasTaxonId == 1 && showDatasetsLink &&
-              <Link
-                style={{
-                  fontSize: '.8em',
-                  fontWeight: 'normal',
-                  marginLeft: '1em'
-                }}
-                onClick={stopPropagation}
-                to={{
-                  pathname: `/search/dataset/DatasetsByReferenceName:${customName}/result`,
-                  search: QueryString.stringify({
-                    'param.record_class': record.recordClassName,
-                    'param.reference_name': table.name,
-                    'param.taxon': record.attributes.organism_full
-                  })
-                }}
-              ><i className="fa fa-database"/> Data sets</Link>}
-
+      const title = (
+        <span>
+          {table.displayName}
+          {showNewFeature &&
+            <img src={newFeatureImage}/>
+          }
+          {' '}
+          {showDownload &&
+            <span
+              style={{
+                fontSize: '.8em',
+                fontWeight: 'normal',
+                marginLeft: '1em'
+              }}>
+              <button type="button"
+                className="wdk-Link"
+                onClick={callDownloadTable}>
+                <i className="fa fa-download"/> Download
+              </button>
             </span>
-          )
-        })}/>
+          }
+          { hasTaxonId == 0 && showDatasetsLink &&
+          <Link
+            style={{
+              fontSize: '.8em',
+              fontWeight: 'normal',
+              marginLeft: '1em'
+            }}
+            onClick={stopPropagation}
+            to={{
+              pathname: `/search/dataset/DatasetsByReferenceNameNoTaxon:${customName}/result`,
+              search: QueryString.stringify({
+                'param.record_class': record.recordClassName,
+                'param.reference_name': table.name,
+              })
+            }}
+          ><i className="fa fa-database"/> Data Sets</Link>}
+          { hasTaxonId == 1 && showDatasetsLink &&
+          <Link
+            style={{
+              fontSize: '.8em',
+              fontWeight: 'normal',
+              marginLeft: '1em'
+            }}
+            onClick={stopPropagation}
+            to={{
+              pathname: `/search/dataset/DatasetsByReferenceName:${customName}/result`,
+              search: QueryString.stringify({
+                'param.record_class': record.recordClassName,
+                'param.reference_name': table.name,
+                'param.taxon': record.attributes.organism_full
+              })
+            }}
+          ><i className="fa fa-database"/> Data sets</Link>}
+
+        </span>
+      );
+
+      return (
+        <DefaultComponent {...this.props} title={title} />
       );
     }
   });

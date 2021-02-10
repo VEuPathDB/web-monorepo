@@ -15,14 +15,17 @@ import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/Clien
 import { ByGenotypeNumberCheckbox } from './components/questions/ByGenotypeNumberCheckbox';
 
 import PopsetResultSummaryViewTableController from './components/controllers/PopsetResultSummaryViewTableController';
+import { BlastQuestionForm } from './components/questions/BlastQuestionForm';
 import { ByGenotypeNumber } from './components/questions/ByGenotypeNumber';
 import { ByLocationForm, ByLocationStepDetails } from './components/questions/ByLocation';
-import { BlastQuestionForm } from './components/questions/BlastQuestionForm';
 import { DynSpansBySourceId } from './components/questions/DynSpansBySourceId';
-import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 import { GenesByBindingSiteFeature } from './components/questions/GenesByBindingSiteFeature';
 import { GenesByOrthologPattern } from './components/questions/GenesByOrthologPattern';
 import { InternalGeneDataset } from './components/questions/InternalGeneDataset';
+import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/MutuallyExclusiveParams/utils';
+import { OrganismParam, isOrganismParam } from './components/questions/OrganismParam';
+import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
+
 
 const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   ({ question }) => (
@@ -31,7 +34,11 @@ const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   );
 
 const isMutuallyExclusiveParamQuestion: ClientPluginRegistryEntry<any>['test'] =
-  ({ question }) => question?.urlSegment.endsWith('ByLocation') ?? false;
+  ({ question }) => (
+    question != null &&
+    question.urlSegment.endsWith('ByLocation') &&
+    hasChromosomeAndSequenceIDXorGroup(question)
+  );
 
 const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   {
@@ -143,6 +150,14 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     name: 'genotype',
     searchName: 'ByGenotypeNumber',
     component: ByGenotypeNumberCheckbox
+  },
+  {
+    type: 'questionFormParameter',
+    test: ({ parameter }) => (
+      parameter != null &&
+      isOrganismParam(parameter)
+    ),
+    component: OrganismParam
   },
   {
     type: 'stepAnalysisResult',

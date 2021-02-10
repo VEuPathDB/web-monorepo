@@ -227,12 +227,23 @@ const parseExpandedBranches = memoize((s: string) => decode(
   s
 ));
 
-const VectorBase = 'VectorBase';
-const PlasmoDB = 'PlasmoDB';
-const TriTrypDB = 'TriTrypDB';
-const ToxoDB = 'ToxoDB';
-const FungiDB  = 'FungiDB';
+const AmoebaDB = 'AmoebaDB';
+const CryptpDB = 'CryptoDB';
 const EuPathDB = 'EuPathDB';
+const FungiDB  = 'FungiDB';
+const GiardiaDB = 'GiardiaDB';
+const HostDB = 'HostDB';
+const MicrosporidiaDB = 'MicrosporidiaDB';
+const PiroplasmaDB = 'PiroplasmaDB';
+const PlasmoDB = 'PlasmoDB';
+const ToxoDB = 'ToxoDB';
+const TrichDB = 'TrichDB';
+const TriTrypDB = 'TriTrypDB';
+const VectorBase = 'VectorBase';
+const VEuPathDB = 'VEuPathDB';
+const DB = 'DB';
+
+
 
 function makeStaticPageRoute(subPath: string) {
   return `${STATIC_ROUTE_PATH}${subPath}`;
@@ -299,7 +310,7 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: makeStaticPageRoute(`/apollo_help.html`),
           metadata: {
-            include: [ VectorBase ]
+            include: [ AmoebaDB,PiroplasmaDB,ToxoDB,VectorBase ]
          }
         },
         {
@@ -469,6 +480,12 @@ const useHeaderMenuItems = (
           metadata: {
             exclude: [ EuPathDB ]
           }
+        },
+        {
+              key: 'public-strategies',
+              display: 'Public search strategies',
+              type: 'reactRoute',
+              url: '/workspace/strategies/public'
         }
       ]
     },
@@ -500,13 +517,6 @@ const useHeaderMenuItems = (
           }
         },
         { 
-          key: 'genomes-and-data-types',
-          display: 'Organisms: Genome Info & Stats',
-          tooltip: `Table summarizing all the genomes in ${displayName}`,
-          type: 'reactRoute',
-          url: '/search/organism/GenomeDataTypes/result'
-        },
-        {
           key: 'mahpic-data',
           display: 'MaHPIC',
           type: 'reactRoute',
@@ -515,6 +525,13 @@ const useHeaderMenuItems = (
           metadata: {
             include: [ PlasmoDB ]
           }
+        },
+        { 
+          key: 'genomes-and-data-types',
+          display: 'Organisms: Genome Info & Stats',
+          tooltip: `Table summarizing all the genomes in ${displayName}`,
+          type: 'reactRoute',
+          url: '/search/organism/GenomeDataTypes/result'
         },
         {
           key: 'community-download',
@@ -656,7 +673,7 @@ const useHeaderMenuItems = (
             },
             { 
               key: 'public-strategies',
-              display: 'Public strategies',
+              display: 'Public search strategies',
               type: 'reactRoute',
               url: '/workspace/strategies/public'
             },

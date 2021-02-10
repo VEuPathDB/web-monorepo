@@ -8,7 +8,7 @@ import { isEqual, orderBy, uniqWith } from 'lodash';
 
 import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { stripHTML } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils';
+import { stripHTML } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 
 import { NodeSearchCriteria } from './pathway-utils';
 

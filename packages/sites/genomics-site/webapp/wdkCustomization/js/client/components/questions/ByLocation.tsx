@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { isEnumParam } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
-import { ParameterGroup, SelectEnumParam, QuestionWithParameters } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { ParameterGroup, QuestionWithParameters } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { Props } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import {
@@ -27,7 +28,7 @@ const SEQUENCE_ID_EMPTY = /(\(Example: .*\)|No match)/i;
 
 export function ByLocationForm(props: Props) {
   const chromosomeOptionalKey = findChromosomeOptionalKey(props.state.question.paramNames);
-  const chromosomeOptionalParam = props.state.question.parametersByName[chromosomeOptionalKey] as SelectEnumParam;
+  const chromosomeOptionalParam = props.state.question.parametersByName[chromosomeOptionalKey];
 
   const sequenceIdKey = findSequenceIdKey(props.state.question.paramNames);
 
@@ -58,7 +59,12 @@ export function ByLocationForm(props: Props) {
   );
 
   const clearChromosomeOptional = useCallback(() => {
-    changeChromosomeOptional(chromosomeOptionalParam.vocabulary[0][0]);
+    if (
+      isEnumParam(chromosomeOptionalParam) &&
+      chromosomeOptionalParam.displayType === 'select'
+    ) {
+      changeChromosomeOptional(chromosomeOptionalParam.vocabulary[0][0]);
+    }
   }, [ chromosomeOptionalParam, changeChromosomeOptional ]);
 
   const clearSequenceId = useCallback(() => {
@@ -75,7 +81,7 @@ export function ByLocationForm(props: Props) {
     }
 
     return true;
-  }, [ clearChromosomeOptional, activeTab ]);
+  }, [ clearChromosomeOptional, clearSequenceId, activeTab ]);
 
   return (
     <EbrcDefaultQuestionForm

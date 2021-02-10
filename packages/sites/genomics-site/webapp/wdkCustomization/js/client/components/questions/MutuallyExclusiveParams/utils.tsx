@@ -2,10 +2,14 @@ import { Dictionary, mapValues, values } from 'lodash';
 import { createSelector } from 'reselect';
 
 import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
-import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { ParameterGroup, Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
-const findXorGroupKey = (xorGrouping: Dictionary<string[]>) => (state: QuestionState): string => {
-  const xorGroup = state.question.groups.find(group => {
+const ORGANISM_PARAMS = [ 'organismSinglePick' ];
+const CHROMOSOME_PARAMS = [ 'chromosomeOptional', 'chromosomeOptionalForNgsSnps' ];
+const SEQUENCE_ID_PARAMS = [ 'sequenceId' ];
+
+const findXorGroup = (xorGrouping: Dictionary<string[]>) => (question: Question) => {
+  return question.groups.find(group => {
     const groupParameterSet = new Set(group.parameters);
 
     return values(xorGrouping).every(
@@ -14,6 +18,10 @@ const findXorGroupKey = (xorGrouping: Dictionary<string[]>) => (state: QuestionS
       )
     );
   });
+}
+
+const findXorGroupKey = (xorGrouping: Dictionary<string[]>) => (question: Question): string => {
+  const xorGroup = findXorGroup(xorGrouping)(question);
 
   return xorGroup === undefined
     ? 'hidden'
@@ -44,12 +52,12 @@ const groupXorParameters = (xorGrouping: Dictionary<string[]>) => (state: Questi
 };
 
 export const xorGroupingByChromosomeAndSequenceID = {
-  'Chromosome': ['organismSinglePick', 'chromosomeOptional', 'chromosomeOptionalForNgsSnps'],
-  'Sequence ID': ['sequenceId']
+  'Chromosome': [ ...ORGANISM_PARAMS, ...CHROMOSOME_PARAMS ],
+  'Sequence ID': SEQUENCE_ID_PARAMS
 };
 
 export const keyForXorGroupingByChromosomeAndSequenceID = createSelector(
-  (state: QuestionState) => state,
+  (state: QuestionState) => state.question,
   findXorGroupKey(xorGroupingByChromosomeAndSequenceID)
 );
 
@@ -58,6 +66,27 @@ export const groupXorParametersByChromosomeAndSequenceID = createSelector(
   keyForXorGroupingByChromosomeAndSequenceID,
   groupXorParameters(xorGroupingByChromosomeAndSequenceID)
 );
+
+const findChromosomeAndSequenceIDXorGroup = findXorGroup(xorGroupingByChromosomeAndSequenceID);
+
+const groupHasParam = (groupParamNames: Set<string>) => (targetParamName: string) => {
+  return groupParamNames.has(targetParamName);
+};
+
+export const hasChromosomeAndSequenceIDXorGroup = (question: Question) => {
+  const xorGroup = findChromosomeAndSequenceIDXorGroup(question);
+
+  const xorGroupParamNames = new Set(xorGroup?.parameters);
+  const xorGroupHasParam = groupHasParam(xorGroupParamNames);
+
+  return [
+    ORGANISM_PARAMS,
+    CHROMOSOME_PARAMS,
+    SEQUENCE_ID_PARAMS
+  ].every(
+    validParamTypes => validParamTypes.some(xorGroupHasParam)
+  );
+};
 
 export const findChromosomeOptionalKey = (paramNames: string[]) => 
   paramNames.includes('chromosomeOptionalForNgsSnps') ? 'chromosomeOptionalForNgsSnps' : 'chromosomeOptional';

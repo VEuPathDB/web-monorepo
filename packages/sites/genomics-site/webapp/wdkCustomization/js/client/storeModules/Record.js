@@ -44,9 +44,7 @@ export function reduce(state, action) {
       return {
         ...pruneCategories(state),
         // collapse all sections by default. later we will read state from localStorage.
-        collapsedSections: action.payload.recordClass.urlSegment === 'gene'
-          ? RecordStoreModule.getAllFields(state).filter(a => a !== 'GeneModelGbrowseUrl')
-          : state.collapsedSections
+        collapsedSections: RecordStoreModule.getAllFields(state)
       };
     default:
       return state;
@@ -206,7 +204,7 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
 function observeUserSettings(action$, state$) {
   return action$.pipe(
     filter(action => action.type === RecordActions.RECORD_RECEIVED),
-    switchMap(() => {
+    switchMap(action => {
       let state = state$.value[key];
       
       /** Show navigation for genes, but hide for all other record types */
@@ -221,7 +219,10 @@ function observeUserSettings(action$, state$) {
       /** merge stored visibleSections */
       let expandedSections = getStateFromStorage(
         storageItems.expandedSections,
-        state
+        state,
+        action.payload.recordClass.urlSegment === 'gene'
+          ? ['GeneModelGbrowseUrl']
+          : allFields
       );
 
       let collapsedSections = expandedSections

@@ -13,6 +13,8 @@ import {makeClassNameHelper} from '@veupathdb/wdk-client/lib/Utils/ComponentUtil
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
+import { pruneNodesWithSingleExtendingChild } from 'ebrc-client/util/organisms';
+
 import './OrganismFilter.scss';
 
 const cx = makeClassNameHelper('OrganismFilter')
@@ -356,8 +358,8 @@ function fetchTaxonomyTree(wdkService: WdkService) {
   return wdkService.getQuestionAndParameters(TAXON_QUESTION_NAME)
     .then(question => {
       let orgParam  = question.parameters.find(p => p.name == ORGANISM_PARAM_NAME);
-      if (orgParam && orgParam.type == 'multi-pick-vocabulary' && orgParam.displayType == "treeBox") {
-        return orgParam.vocabulary;
+      if (orgParam?.type == 'multi-pick-vocabulary' && orgParam?.displayType == 'treeBox') {
+        return pruneNodesWithSingleExtendingChild(orgParam.vocabulary);
       }
       else {
         throw new Error(TAXON_QUESTION_NAME + " does not contain treebox enum param " + ORGANISM_PARAM_NAME);

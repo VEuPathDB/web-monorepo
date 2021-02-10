@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { updateParamState } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
-import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import { QuestionState, QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Props, getSubmitButtonText } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
@@ -27,7 +27,11 @@ const cx = makeClassNameHelper('DynSpansBySourceId');
 export const DynSpansBySourceId: React.FunctionComponent<Props> = props => {
   const spanIdParamUIState = props.state.paramUIState[SPAN_ID_LIST_PARAM];
 
-  const [ activeTab, onTabSelected ] = useState<MutuallyExclusiveTabKey>('Chromosome');
+  const {
+    canChangeInputMethod,
+    inputMethod,
+    setInputMethod
+  } = useInputMethod(props.state.question);
 
   const mutuallyExclusiveSubgroup = useMemo(
     () => makeMutuallyExclusiveSubgroup(props.state.question.groupsByName),
@@ -40,13 +44,13 @@ export const DynSpansBySourceId: React.FunctionComponent<Props> = props => {
   );
 
   const onClickAddLocation = useMemo(
-    () => makeOnClickAddLocation(props.state.paramValues, activeTab, props.dispatchAction, spanIdParamUIState),
-    [ props.state.paramValues, activeTab, props.dispatchAction, spanIdParamUIState ]
+    () => makeOnClickAddLocation(props.state.paramValues, inputMethod, props.dispatchAction, spanIdParamUIState, canChangeInputMethod),
+    [ props.state.paramValues, inputMethod, props.dispatchAction, spanIdParamUIState, canChangeInputMethod ]
   );
 
   const renderParamGroup = useMemo(
-    () => makeRenderParamGroup(mutuallyExclusiveSubgroup, activeTab, onTabSelected, onClickAddLocation),
-    [ mutuallyExclusiveSubgroup, activeTab, onTabSelected, onClickAddLocation ]
+    () => makeRenderParamGroup(mutuallyExclusiveSubgroup, inputMethod, setInputMethod, onClickAddLocation),
+    [ mutuallyExclusiveSubgroup, inputMethod, setInputMethod, onClickAddLocation ]
   );
   
   return (
@@ -82,11 +86,12 @@ const makeOnSubmit = (sourceType: string, idList?: string) => (e: React.FormEven
 
 const makeOnClickAddLocation = (
   paramValues: QuestionState['paramValues'], 
-  activeTab: MutuallyExclusiveTabKey,
+  inputMethod: MutuallyExclusiveTabKey,
   dispatchAction: Props['dispatchAction'],
-  spanIdParamUIState: QuestionState['paramUIState'][typeof SPAN_ID_LIST_PARAM]
+  spanIdParamUIState: QuestionState['paramUIState'][typeof SPAN_ID_LIST_PARAM],
+  canChangeInputMethod: boolean
 ) => () => {
-  const validationResult = validateNewLocation(paramValues, activeTab);
+  const validationResult = validateNewLocation(paramValues, inputMethod, canChangeInputMethod);
 
   if (validationResult.type === 'valid') {
     const idList = (spanIdParamUIState.idList || '').trim().length === 0
@@ -187,7 +192,11 @@ const invalid = (error: string): Validation => ({
   error
 });
 
-const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTab: MutuallyExclusiveTabKey): Validation => {
+const validateNewLocation = (
+  paramValues: QuestionState['paramValues'],
+  inputMethod: MutuallyExclusiveTabKey,
+  canChangeInputMethod: boolean
+): Validation => {
   const { 
     [CHROMOSOME_PARAM]: chromosomeParamValue, 
     [SEQUENCE_ID_PARAM]: sequenceIdParamValue,
@@ -197,23 +206,23 @@ const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTa
   } = paramValues;
 
   if (
-    activeTab === 'Chromosome' && 
+    inputMethod === 'Chromosome' &&
     (
       !chromosomeParamValue ||
       chromosomeParamValue === 'Choose chromosome'
     )
   ) {
-    return invalid('Please select a chromosome (or Search by Sequence ID)');
+    return invalid(makeMissingChromosomeErrorMessage(canChangeInputMethod));
   } 
   
   if (
-    activeTab === 'Sequence ID' && 
+    inputMethod === 'Sequence ID' &&
     (
       !sequenceIdParamValue ||
       sequenceIdParamValue.startsWith('(Example')
     )
   ) {
-    return invalid('Please input a sequence ID (or Search by Chromosome)');
+    return invalid(makeMissingSequenceIdErrorMessage(canChangeInputMethod));
   }
 
   if (!startParamValue) {
@@ -243,7 +252,7 @@ const validateNewLocation = (paramValues: QuestionState['paramValues'], activeTa
     return invalid(`Your segment cannot be longer than ${MAX_SEGMENT_LENGTH_DISPLAY}`);
   }
 
-  const sequenceString = activeTab === 'Chromosome' ? chromosomeParamValue : sequenceIdParamValue
+  const sequenceString = inputMethod === 'Chromosome' ? chromosomeParamValue : sequenceIdParamValue;
 
   return valid(`${sequenceString}:${startNumericValue}-${endNumericValue}:${sequenceStrandParamValue}`);
 };
@@ -309,3 +318,38 @@ const validateSegmentId = (segmentId: string): Validation => {
     ? invalid(`Your segment ID ${segmentId} has an invalid strand "${strand}"`)
     : valid(segmentId);
 };
+
+function useInputMethod(question: QuestionWithMappedParameters) {
+  const initialInputMethod = question.parametersByName[CHROMOSOME_PARAM] == null
+    ? 'Sequence ID'
+    : 'Chromosome';
+
+  const [ inputMethod, setInputMethod ] = useState<MutuallyExclusiveTabKey>(initialInputMethod);
+
+  useEffect(() => {
+    setInputMethod(initialInputMethod);
+  }, [ initialInputMethod ]);
+
+  return {
+    canChangeInputMethod: (
+      question.parametersByName[CHROMOSOME_PARAM] != null &&
+      question.parametersByName[SEQUENCE_ID_PARAM] != null
+    ),
+    inputMethod,
+    setInputMethod
+  };
+}
+
+function makeMissingSequenceIdErrorMessage(canChangeInputMethod: boolean) {
+  return [
+    'Please input a sequence ID',
+    canChangeInputMethod && '(or Search by Chromosome)'
+  ].filter(x => x).join(' ');
+}
+
+function makeMissingChromosomeErrorMessage(canChangeInputMethod: boolean) {
+  return [
+    'Please select a chromosome',
+    canChangeInputMethod && '(or Search by Sequence ID)'
+  ].filter(x => x).join(' ');
+}
