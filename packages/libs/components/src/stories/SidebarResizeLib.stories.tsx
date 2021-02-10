@@ -1,4 +1,5 @@
 import React, { ReactElement, useState, useCallback } from 'react';
+import { Story, Meta } from '@storybook/react/types-6-0';
 // import { action } from '@storybook/addon-actions';
 // import MapVEuMap from './MapVEuMap';
 import { BoundsViewport, Bounds } from '../map/Types';
@@ -8,7 +9,8 @@ import {
   defaultAnimationDuration,
 } from '../map/config/map.json';
 
-import speciesData from './fixture-data/geoclust-species-testing-all-levels.json';
+//DKDK let's use new approach for data retrieval
+import { getSpeciesDonuts } from './api/getMarkersFromFixtureData';
 
 // below was an attempt to lazy load...
 // it seemed to cause a 'black screen' error in Storybook if you refreshed the page in your browser
@@ -17,7 +19,6 @@ import speciesData from './fixture-data/geoclust-species-testing-all-levels.json
 // import('./test-data/geoclust-species-testing-all-levels.json').then((json) => speciesData = json);
 
 import { LeafletMouseEvent } from 'leaflet';
-import DonutMarker, { DonutMarkerProps } from '../map/DonutMarker';
 
 //DKDK load sidebar CSS
 import { Sidebar, Tab } from '../map/SidebarReactCore';
@@ -29,7 +30,7 @@ import TabPieChartContent from '../map/TabPieChartContent';
 import TabPieChartContentLegend from '../map/TabPieChartContentLegend';
 
 //DKDK map
-import MapVEuMap from '../map/MapVEuMap';
+import MapVEuMap, { MapVEuMapProps } from '../map/MapVEuMap';
 
 //DKDK import legend
 import MapVEuLegendSampleList, {
@@ -44,7 +45,8 @@ import md5 from 'md5';
 
 export default {
   title: 'Sidebar/Sidebar resize Lib',
-  // component: SidebarReactCore,
+  component: Sidebar,
+  subcomponents: { Tab },
 };
 
 // some colors randomly pasted from the old mapveu code
@@ -74,6 +76,12 @@ const all_colors_hex = [
   '#232C16', // Dark Olive Green
 ];
 
+const defaultAnimation = {
+  method: 'geohash',
+  animationFunction: geohashAnimation,
+  duration: defaultAnimationDuration,
+};
+
 //DKDK a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassName(targetClass: string) {
   //DKDK much convenient to use jquery here but try not to use it
@@ -84,7 +92,7 @@ function removeClassName(targetClass: string) {
 }
 
 //DKDK this onClick event may need to be changed in the future like onMouseOver event
-const handleClick = (e: LeafletMouseEvent) => {
+const handleMarkerClick = (e: LeafletMouseEvent) => {
   /**
    * DKDK this only works when selecting other marker: not working when clicking map
    * it may be achieved by setting all desirable events (e.g., map click, preserving highlight, etc.)
@@ -95,147 +103,25 @@ const handleClick = (e: LeafletMouseEvent) => {
   //DKDK native manner, but not React style? Either way this is arguably the simplest solution
   e.target._icon.classList.add('highlight-marker');
   //DKDK here, perhaps we can add additional click event, like opening sidebar when clicking
-  // console.log(e)
+  //console.log("I've been clicked")
 };
 
-const getSpeciesMarkerElements = (
-  { bounds, zoomLevel }: BoundsViewport,
-  duration: number,
-  scrambleKeys: boolean = false,
-  setLegendData: (
-    legendData: Array<{ label: string; value: number; color: string }>
-  ) => void
-) => {
-  const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
-
-  /* DKDK two approaches may be possible
-  a) set type for imported geoclust-species-testing-all-levels.json
-     > type speciesDataProps = typeof import('./test-data/geoclust-species-testing-all-levels.json')
-     then, speciesData[geohash_level as keyof speciesDataProps].facets ...
-  b) although a) works fine for current species data, it seems not to work for large json file
-     thus used this approach instead for consistency
-*/
-  //DKDK applying b) approach, setting key as string & any
-  const buckets = (speciesData as { [key: string]: any })[
-    `geohash_${geohash_level}`
-  ].facets.geo.buckets.filter((bucket: any) => {
-    const lat: number = bucket.ltAvg;
-    const long: number = bucket.lnAvg;
-
-    const south = bounds.southWest.lat;
-    const north = bounds.northEast.lat;
-    const west = bounds.southWest.lng;
-    const east = bounds.northEast.lng;
-    const lambda = 1e-8; // accommodate tiny rounding errors
-
-    return (
-      lat > south &&
-      lat < north &&
-      (west < east - lambda
-        ? long > west && long < east
-        : west > east + lambda
-        ? !(long > east && long < west)
-        : true)
-    );
-  });
-
-  // make a first pass and calculate the legend totals
-  // and rank the species for color assignment
-  let speciesToCount = new Map();
-  buckets.forEach((bucket: any) => {
-    bucket.term.buckets.forEach((bucket: any) => {
-      const species = bucket.val;
-      let prevCount = speciesToCount.get(species);
-      if (prevCount === undefined) prevCount = 0;
-      speciesToCount.set(species, prevCount + bucket.count);
-    });
-  });
-
-  // sort by the count (Map returns keys in insertion order)
-  speciesToCount = new Map(
-    Array.from(speciesToCount).sort(([_1, v1], [_2, v2]) =>
-      v1 > v2 ? -1 : v2 > v1 ? 1 : 0
-    )
-  );
-
-  // make the species to color lookup
-  const speciesToColor = new Map(
-    Array.from(speciesToCount).map(([k, _], index) => {
-      if (index < 10) {
-        return [k, all_colors_hex[index]];
-      } else {
-        return [k, 'silver'];
-      }
-    })
-  );
-
-  // reformat as legendData
-  const legendData = Array.from(speciesToCount.keys()).map((key) => ({
-    label: key,
-    value: speciesToCount.get(key) || -1,
-    color: speciesToColor.get(key) || 'silver',
-  }));
-  setLegendData(legendData);
-
-  return buckets.map((bucket: any) => {
-    const lat: number = bucket.ltAvg;
-    const lng: number = bucket.lnAvg;
-    const bounds: Bounds = {
-      southWest: { lat: bucket.ltMin, lng: bucket.lnMin },
-      northEast: { lat: bucket.ltMax, lng: bucket.lnMax },
-    };
-    let data: DonutMarkerProps['data'] = [];
-
-    bucket.term.buckets.forEach((bucket: any) => {
-      const species = bucket.val;
-      data.push({
-        label: species,
-        value: bucket.count,
-        color: speciesToColor.get(species) || 'silver',
-      });
-    });
-
-    //DKDK check isAtomic
-    let atomicValue =
-      bucket.atomicCount && bucket.atomicCount === 1 ? true : false;
-
-    //DKDK anim key
-    const key = scrambleKeys
-      ? md5(bucket.val).substring(0, zoomLevel)
-      : bucket.val;
-
-    return (
-      <DonutMarker
-        id={key} //DKDK anim
-        key={key} //DKDK anim
-        position={{ lat, lng }}
-        bounds={bounds}
-        data={data}
-        isAtomic={atomicValue}
-        onClick={handleClick}
-        duration={duration}
-      />
-    );
-  });
-};
-
-export const SidebarLibResize = () => {
+export const SidebarLibResize: Story<MapVEuMapProps> = (args) => {
   //MapVeuMap stuff
   const [markerElements, setMarkerElements] = useState<
     ReactElement<BoundsDriftMarkerProps>[]
   >([]);
   const [legendData, setLegendData] = useState<LegendProps['data']>([]);
 
-  //DKDK anim
-  const duration = defaultAnimationDuration;
-  const scrambleKeys = false;
-
   const handleViewportChanged = useCallback(
-    (bvp: BoundsViewport) => {
-      //DKDK anim add duration & scrambleKeys
-      setMarkerElements(
-        getSpeciesMarkerElements(bvp, duration, scrambleKeys, setLegendData)
+    async (bvp: BoundsViewport) => {
+      const markers = await getSpeciesDonuts(
+        bvp,
+        defaultAnimationDuration,
+        setLegendData,
+        handleMarkerClick
       );
+      setMarkerElements(markers);
     },
     [setMarkerElements]
   );
@@ -370,20 +256,19 @@ export const SidebarLibResize = () => {
         </Tab>
       </Sidebar>
       <MapVEuMap
+        {...args}
         viewport={{ center: [13, 16], zoom: 4 }}
-        height="100vh"
-        width="100vw"
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
-        //DKDK anim
-        // animation={null}
-        animation={{
-          method: 'geohash',
-          animationFunction: geohashAnimation,
-          duration,
-        }}
-        showGrid={true}
+        animation={defaultAnimation}
       />
     </>
   );
+};
+
+SidebarLibResize.args = {
+  height: '100vh',
+  width: '100vw',
+  showGrid: true,
+  showMouseToolbar: true,
 };
