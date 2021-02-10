@@ -156,8 +156,8 @@ function BlastSummary({
   selectedResult,
 }: BlastSummaryProps) {
   const databases = useMemo(() => {
-    const databasesEntries = multiQueryReport.BlastOutput2.map(({ report }) =>
-      dbToTargetName(report.search_target.db)
+    const databasesEntries = multiQueryReport.BlastOutput2.flatMap(
+      ({ report }) => report.search_target.db.split(' ').map(dbToTargetName)
     );
 
     return uniq(databasesEntries);
