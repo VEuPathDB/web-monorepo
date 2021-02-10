@@ -4,24 +4,23 @@ import React from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 //DKDK import legend css for positioning: place this at the end of other CSS to override pre-existing ones
-import './legend-style.css'
+import './legend-style.css';
 
 interface LegendListDropDownProps {
-  legendType: string,
+  legendType: string;
   //DKDK add dropdown props for dynamic change
-  dropdownTitle: string,
-  dropdownHref: string[],
-  dropdownItemText: string[],
+  dropdownTitle: string;
+  dropdownHref: string[];
+  dropdownItemText: string[];
 }
-
 
 export default function LegendListDropDown(props: LegendListDropDownProps) {
   //DKDK set ID for CSS styling
-  let dropDownID = ''
+  let dropDownID = '';
   if (props.legendType === 'categorical') {
-    dropDownID = 'legend-dropdown-category'
+    dropDownID = 'legend-dropdown-category';
   } else {
-    dropDownID = 'legend-dropdown-chart'
+    dropDownID = 'legend-dropdown-chart';
   }
 
   return (
@@ -32,12 +31,17 @@ export default function LegendListDropDown(props: LegendListDropDownProps) {
         </Dropdown.Toggle>
         <Dropdown.Menu className="legend-dropdown-menu">
           {props.dropdownItemText.map((item: string, index: number) => (
-              <Dropdown.Item key={props.dropdownItemText[index]} href={props.dropdownHref[index]} className="legend-dropdown-item">{item}</Dropdown.Item>
+            <Dropdown.Item
+              key={props.dropdownItemText[index]}
+              href={props.dropdownHref[index]}
+              className="legend-dropdown-item"
+            >
+              {item}
+            </Dropdown.Item>
           ))}
         </Dropdown.Menu>
       </Dropdown>
       <br />
     </>
-  )
+  );
 }
-

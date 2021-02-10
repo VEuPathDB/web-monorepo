@@ -1,33 +1,47 @@
-import React, {ReactElement, useEffect, useState, cloneElement} from "react";
-import { MarkerProps, BoundsViewport, AnimationFunction, Bounds } from "./Types";
-import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
-import { useLeaflet } from "react-leaflet";
-import { LatLngBounds } from 'leaflet'
+import React, { ReactElement, useEffect, useState, cloneElement } from 'react';
+import {
+  MarkerProps,
+  BoundsViewport,
+  AnimationFunction,
+  Bounds,
+} from './Types';
+import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
+import { useLeaflet } from 'react-leaflet';
+import { LatLngBounds } from 'leaflet';
 
 interface SemanticMarkersProps {
-  onViewportChanged: (bvp: BoundsViewport) => void,
-  markers: Array<ReactElement<BoundsDriftMarkerProps>>,
-  recenterMarkers?: boolean,
+  onViewportChanged: (bvp: BoundsViewport) => void;
+  markers: Array<ReactElement<BoundsDriftMarkerProps>>;
+  recenterMarkers?: boolean;
   animation: {
-    method: string,
-    duration: number,
-    animationFunction: AnimationFunction
-  } | null,
+    method: string;
+    duration: number;
+    animationFunction: AnimationFunction;
+  } | null;
 }
 
 /**
  * Renders the semantic markers layer
- * 
- * 
- * @param props 
+ *
+ *
+ * @param props
  */
-export default function SemanticMarkers({ onViewportChanged, markers, animation, recenterMarkers = true}: SemanticMarkersProps) {
+export default function SemanticMarkers({
+  onViewportChanged,
+  markers,
+  animation,
+  recenterMarkers = true,
+}: SemanticMarkersProps) {
   const { map } = useLeaflet();
 
-  const [prevMarkers, setPrevMarkers] = useState<ReactElement<BoundsDriftMarkerProps>[]>(markers);
+  const [prevMarkers, setPrevMarkers] = useState<
+    ReactElement<BoundsDriftMarkerProps>[]
+  >(markers);
   const [bounds, setBounds] = useState<Bounds>();
-  
-  const [consolidatedMarkers, setConsolidatedMarkers] = useState<ReactElement<MarkerProps>[]>([]);
+
+  const [consolidatedMarkers, setConsolidatedMarkers] = useState<
+    ReactElement<MarkerProps>[]
+  >([]);
   const [zoomType, setZoomType] = useState<string | null>(null);
 
   // call the prop callback to communicate bounds and zoomLevel to outside world
@@ -37,9 +51,12 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
     function updateMap() {
       if (map != null) {
         const bounds = boundsToGeoBBox(map.getBounds());
-	setBounds(bounds);
+        setBounds(bounds);
         const zoomLevel = map.getZoom();
-        onViewportChanged({ bounds : constrainLongitudeToMainWorld(bounds), zoomLevel });
+        onViewportChanged({
+          bounds: constrainLongitudeToMainWorld(bounds),
+          zoomLevel,
+        });
       }
     }
 
@@ -48,7 +65,7 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
     map.on('resize dragend zoomend', updateMap); // resize is there hopefully when we have full screen mode
 
     return () => {
-    //DKDK remove moveend due to conflict with marker animation
+      //DKDK remove moveend due to conflict with marker animation
       map.off('resize dragend zoomend', updateMap);
     };
   }, [map, onViewportChanged]);
@@ -57,31 +74,37 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
   useEffect(() => {
     let recenteredMarkers = false;
     if (recenterMarkers && bounds) {
-
-      markers = markers.map( marker => {
-	let { lat, lng } = marker.props.position;
-	let { southWest: { lat: ltMin, lng: lnMin }, northEast: { lat: ltMax, lng: lnMax} } = marker.props.bounds;
-	let recentered : boolean = false;
-	while (lng > bounds.northEast.lng) {
-//	  console.log(`marker ${marker.props.id} shifting left from ${lng}`);
-	  lng -= 360;
-	  lnMax -= 360;
-	  lnMin -= 360;
-	  recentered = true;
-	}
-	while (lng < bounds.southWest.lng) {
-//	  console.log(`marker ${marker.props.id} shifting right from ${lng}`);
-	  lng += 360;
-	  lnMax += 360;
-	  lnMin += 360;
-	  recentered = true;
-	}
-	recenteredMarkers = recenteredMarkers || recentered;
-      	return recentered ? cloneElement(marker, { position: { lat, lng },
-						   bounds: {
-						     southWest: { lat: ltMin, lng: lnMin },
-						     northEast: { lat: ltMax, lng: lnMax }
-						   } }) : marker;
+      markers = markers.map((marker) => {
+        let { lat, lng } = marker.props.position;
+        let {
+          southWest: { lat: ltMin, lng: lnMin },
+          northEast: { lat: ltMax, lng: lnMax },
+        } = marker.props.bounds;
+        let recentered: boolean = false;
+        while (lng > bounds.northEast.lng) {
+          //	  console.log(`marker ${marker.props.id} shifting left from ${lng}`);
+          lng -= 360;
+          lnMax -= 360;
+          lnMin -= 360;
+          recentered = true;
+        }
+        while (lng < bounds.southWest.lng) {
+          //	  console.log(`marker ${marker.props.id} shifting right from ${lng}`);
+          lng += 360;
+          lnMax += 360;
+          lnMin += 360;
+          recentered = true;
+        }
+        recenteredMarkers = recenteredMarkers || recentered;
+        return recentered
+          ? cloneElement(marker, {
+              position: { lat, lng },
+              bounds: {
+                southWest: { lat: ltMin, lng: lnMin },
+                northEast: { lat: ltMax, lng: lnMax },
+              },
+            })
+          : marker;
       });
     }
 
@@ -89,54 +112,53 @@ export default function SemanticMarkers({ onViewportChanged, markers, animation,
     // but don't animate if we moved markers by 360 deg. longitude
     // because the DriftMarker or Leaflet.Marker.SlideTo code seems to
     // send everything back to the 'main' world.
-    if (markers.length > 0 && prevMarkers.length > 0 && animation && !recenteredMarkers) {
-      const animationValues = animation.animationFunction({prevMarkers, markers});
+    if (
+      markers.length > 0 &&
+      prevMarkers.length > 0 &&
+      animation &&
+      !recenteredMarkers
+    ) {
+      const animationValues = animation.animationFunction({
+        prevMarkers,
+        markers,
+      });
       setZoomType(animationValues.zoomType);
-      setConsolidatedMarkers(animationValues.markers)
-    }
-    /** First render of markers **/
-    else {
+      setConsolidatedMarkers(animationValues.markers);
+    } else {
+      /** First render of markers **/
       setConsolidatedMarkers([...markers]);
     }
 
     // Update previous markers with the original markers array
     setPrevMarkers(markers);
-
   }, [markers]);
 
-  useEffect (() => {
+  useEffect(() => {
     /** If we are zooming in then reset the marker elements. When initially rendered
-    * the new markers will start at the matching existing marker's location and here we will
-    * reset marker elements so they will animated to their final position
-    **/
+     * the new markers will start at the matching existing marker's location and here we will
+     * reset marker elements so they will animated to their final position
+     **/
     let timeoutVariable: NodeJS.Timeout;
 
     if (zoomType == 'in') {
-      setConsolidatedMarkers([...markers])
-    }
-    /** If we are zooming out then remove the old markers after they finish animating. **/
-    else if (zoomType == 'out') {
+      setConsolidatedMarkers([...markers]);
+    } else if (zoomType == 'out') {
+      /** If we are zooming out then remove the old markers after they finish animating. **/
       timeoutVariable = setTimeout(
-          () => {
-            setConsolidatedMarkers([...markers])
-          }, animation ? animation.duration : 0
+        () => {
+          setConsolidatedMarkers([...markers]);
+        },
+        animation ? animation.duration : 0
       );
     }
 
-    return () => clearTimeout(timeoutVariable)
-
+    return () => clearTimeout(timeoutVariable);
   }, [zoomType]);
 
-  return (
-    <>
-      {consolidatedMarkers}
-    </>
-  );
+  return <>{consolidatedMarkers}</>;
 }
 
-
-function boundsToGeoBBox(bounds : LatLngBounds) : Bounds {
-
+function boundsToGeoBBox(bounds: LatLngBounds): Bounds {
   var south = bounds.getSouth();
   if (south < -90) {
     south = -90;
@@ -147,34 +169,41 @@ function boundsToGeoBBox(bounds : LatLngBounds) : Bounds {
   }
   var east = bounds.getEast();
   var west = bounds.getWest();
-  
+
   if (east - west > 360) {
-    const center = (east+west)/2;
+    const center = (east + west) / 2;
     west = center - 180;
     east = center + 180;
   }
 
-  return { southWest: {lat: south, lng: west}, northEast: {lat: north, lng: east} };
+  return {
+    southWest: { lat: south, lng: west },
+    northEast: { lat: north, lng: east },
+  };
 }
 
-
 // put longitude bounds within normal -180 to 180 range
-function constrainLongitudeToMainWorld({ southWest: { lat: south, lng: west }, northEast : {lat: north, lng: east} } : Bounds) : Bounds {
-
+function constrainLongitudeToMainWorld({
+  southWest: { lat: south, lng: west },
+  northEast: { lat: north, lng: east },
+}: Bounds): Bounds {
   let newEast = east;
   let newWest = west;
   while (newEast > 180) {
-    newEast -= 360
+    newEast -= 360;
   }
   while (newEast < -180) {
-    newEast += 360
+    newEast += 360;
   }
   while (newWest < -180) {
-    newWest += 360
+    newWest += 360;
   }
   while (newWest > 180) {
-    newWest -= 360
+    newWest -= 360;
   }
 
-  return { southWest: { lat: south, lng: newWest }, northEast: {lat: north, lng: newEast} }
+  return {
+    southWest: { lat: south, lng: newWest },
+    northEast: { lat: north, lng: newEast },
+  };
 }

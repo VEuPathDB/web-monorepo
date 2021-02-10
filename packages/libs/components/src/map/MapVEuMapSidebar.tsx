@@ -1,34 +1,41 @@
 //DKDK this file is only used for sidebar demo
-import React, { useState, ReactElement, CSSProperties } from "react";
+import React, { useState, ReactElement, CSSProperties } from 'react';
 //DKDK needs to be check later
 // import { MapVEuMapProps } from "./TypesSidebar";
 //DKDK change markerElement's prop
-import { BoundsViewport, AnimationFunction } from "./Types";
-import { BoundsDriftMarkerProps } from "./BoundsDriftMarker";
-import { Viewport, Map, TileLayer, LayersControl, ZoomControl, ScaleControl } from "react-leaflet";
-import SemanticMarkers from "./SemanticMarkers";
+import { BoundsViewport, AnimationFunction } from './Types';
+import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
+import {
+  Viewport,
+  Map,
+  TileLayer,
+  LayersControl,
+  ZoomControl,
+  ScaleControl,
+} from 'react-leaflet';
+import SemanticMarkers from './SemanticMarkers';
 import 'leaflet/dist/leaflet.css';
-import { LeafletMouseEvent } from "leaflet";
+import { LeafletMouseEvent } from 'leaflet';
 
 //DKDK for layers
-const { BaseLayer } = LayersControl
+const { BaseLayer } = LayersControl;
 
 //DKDK a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassName(targetClass: string) {
   //DKDK much convenient to use jquery here but try not to use it
-  let targetElement = document.getElementsByClassName(targetClass)[0]
-  if(targetElement !== undefined) {
-      targetElement.classList.remove(targetClass)
+  let targetElement = document.getElementsByClassName(targetClass)[0];
+  if (targetElement !== undefined) {
+    targetElement.classList.remove(targetClass);
   }
 }
 
 //DKDK a generic function to remove a class: here it is used for removing highlight-marker
 function removeClassNameActive(targetClass: string) {
   //DKDK much convenient to use jquery here but try not to use it
-  let targetElement = document.getElementsByClassName(targetClass)[0]
+  let targetElement = document.getElementsByClassName(targetClass)[0];
   // console.log(targetElement)
-  if(targetElement !== undefined) {
-      targetElement.classList.remove('active')
+  if (targetElement !== undefined) {
+    targetElement.classList.remove('active');
   }
 }
 
@@ -42,28 +49,36 @@ function removeClassNameActive(targetClass: string) {
 // NASTY cut and paste of props. BM is assuming MapVEuMapSidebar will go away, so this is just temporary.
 interface MapVEuMapPropsCutAndPasteCopy {
   /** Center lat/long and zoom level */
-  viewport: Viewport,
+  viewport: Viewport;
 
   /** Height and width of plot element */
-  height: CSSProperties['height'],
-  width: CSSProperties['width'],
-  onViewportChanged: (bvp: BoundsViewport) => void,
-  markers: ReactElement<BoundsDriftMarkerProps>[],
-  nudge?: 'geohash' | 'none',
+  height: CSSProperties['height'];
+  width: CSSProperties['width'];
+  onViewportChanged: (bvp: BoundsViewport) => void;
+  markers: ReactElement<BoundsDriftMarkerProps>[];
+  nudge?: 'geohash' | 'none';
 
   //DKDK add this for closing sidebar at MapVEuMap: passing setSidebarCollapsed()
-  sidebarOnClose?: (value: React.SetStateAction<boolean>) => void
+  sidebarOnClose?: (value: React.SetStateAction<boolean>) => void;
   animation: {
-    method: string,
-    duration: number,
-    animationFunction: AnimationFunction
-  } | null,
-  showGrid: boolean
+    method: string;
+    duration: number;
+    animationFunction: AnimationFunction;
+  } | null;
+  showGrid: boolean;
 }
 
-
 // export default function MapVEuMapSidebar({ viewport, height, width, onViewportChanged, markers, nudge }: MapVEuMapProps) {
-export default function MapVEuMapSidebarSibling({ viewport, height, width, onViewportChanged, markers, animation, nudge, sidebarOnClose }: MapVEuMapPropsCutAndPasteCopy) {
+export default function MapVEuMapSidebarSibling({
+  viewport,
+  height,
+  width,
+  onViewportChanged,
+  markers,
+  animation,
+  nudge,
+  sidebarOnClose,
+}: MapVEuMapPropsCutAndPasteCopy) {
   // this is the React Map component's onViewPortChanged handler
   // we may not need to use it.
   // onViewportchanged in SemanticMarkers is more relevant
@@ -71,19 +86,19 @@ export default function MapVEuMapSidebarSibling({ viewport, height, width, onVie
   // which is useful for fetching data to show on the map.
   // The Viewport info (center and zoom) handled here would be useful for saving a
   // 'bookmarkable' state of the map.
-  const [ state, setState ] = useState<Viewport>(viewport as Viewport);
+  const [state, setState] = useState<Viewport>(viewport as Viewport);
 
   //DKDK trying to add map click events: e.g., removing marker highlight, closing sidebar, etc.
   const mapClick = (e: LeafletMouseEvent) => {
     //DKDK remove marker highlight
-    removeClassName('highlight-marker')
+    removeClassName('highlight-marker');
     //DKDK use this for closing sidebar: setSidebarCollapsed(true). Use if condition to avoid type error
-    if (sidebarOnClose) sidebarOnClose(true)
+    if (sidebarOnClose) sidebarOnClose(true);
     //DKDK deactivate selected sidebar tab
-    removeClassNameActive('sidebartabs active')
-  }
+    removeClassNameActive('sidebartabs active');
+  };
 
-  const handleViewportChanged = (viewport : Viewport) => {
+  const handleViewportChanged = (viewport: Viewport) => {
     setState(viewport);
   };
 
@@ -96,7 +111,7 @@ export default function MapVEuMapSidebarSibling({ viewport, height, width, onVie
         style={{ height, width }}
         onViewportChanged={handleViewportChanged}
         zoomControl={false} //DKDK this is for disabling default zoomControl at top left
-        onClick={mapClick}  //DKDK add this to handle map click
+        onClick={mapClick} //DKDK add this to handle map click
       >
         <ZoomControl position="topright" />
 
@@ -106,14 +121,14 @@ export default function MapVEuMapSidebarSibling({ viewport, height, width, onVie
           <BaseLayer checked name="street">
             <TileLayer
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
-              attribution='Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+              attribution="Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012"
             />
           </BaseLayer>
           <BaseLayer name="terrain">
             <TileLayer
               url="https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.{ext}"
               attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              subdomains='abcd'
+              subdomains="abcd"
               // minZoom='0'
               // maxZoom='18'
               // ext='png'
@@ -122,7 +137,7 @@ export default function MapVEuMapSidebarSibling({ viewport, height, width, onVie
           <BaseLayer name="satellite">
             <TileLayer
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+              attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
             />
           </BaseLayer>
           <BaseLayer name="light">
@@ -136,7 +151,7 @@ export default function MapVEuMapSidebarSibling({ viewport, height, width, onVie
             <TileLayer
               url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}{r}.png"
               attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-              subdomains='abcd'
+              subdomains="abcd"
               // maxZoom='19'
             />
           </BaseLayer>
@@ -157,7 +172,6 @@ export default function MapVEuMapSidebarSibling({ viewport, height, width, onVie
           animation={animation}
           // nudge={nudge}
         />
-
       </Map>
     </>
   );

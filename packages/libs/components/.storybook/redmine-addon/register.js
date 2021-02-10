@@ -12,7 +12,11 @@ addons.register(ADDON_ID, () => {
     render: () => {
       const redmineUrl = useParameter('redmine');
       if (redmineUrl == null) return null;
-      return <a style={{ alignSelf: 'center' }} target="_blank" href={redmineUrl}>Redmine issue</a>
+      return (
+        <a style={{ alignSelf: 'center' }} target="_blank" href={redmineUrl}>
+          Redmine issue
+        </a>
+      );
     },
   });
 });

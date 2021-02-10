@@ -1,5 +1,5 @@
-import { ReactElement } from "react";
-import { LatLngLiteral, Icon } from "leaflet";
+import { ReactElement } from 'react';
+import { LatLngLiteral, Icon } from 'leaflet';
 import { PlotProps } from '../plots/PlotlyPlot';
 
 export type LatLng = LatLngLiteral;
@@ -10,16 +10,16 @@ export type LatLng = LatLngLiteral;
 //}
 
 export interface Bounds {
-  southWest: LatLng,
-  northEast: LatLng
-};
+  southWest: LatLng;
+  northEast: LatLng;
+}
 
 /*
   This is the information Leaflet needs in order to show a map.
 */
 export interface Viewport {
-  center: LatLng,
-  zoom: number
+  center: LatLng;
+  zoom: number;
 }
 
 /*
@@ -27,39 +27,39 @@ export interface Viewport {
 */
 
 export interface BoundsViewport {
-  bounds: Bounds,
-  zoomLevel: number
+  bounds: Bounds;
+  zoomLevel: number;
 }
 
 export interface MarkerProps {
-  position: LatLng,
-  id: string,
-  icon?: Icon,
-  showPopup?: boolean,
+  position: LatLng;
+  id: string;
+  icon?: Icon;
+  showPopup?: boolean;
   popupContent?: {
-    content: ReactElement,
+    content: ReactElement;
     size: {
-      width: number,
-      height: number,
-    },
-  },
+      width: number;
+      height: number;
+    };
+  };
 }
 
-export type AnimationFunction = (
-    {
-      prevMarkers,
-      markers
-    }: {
-      prevMarkers: ReactElement<MarkerProps>[];
-      markers: ReactElement<MarkerProps>[];
-    }) => {
-        zoomType: string | null;
-        markers: ReactElement<MarkerProps>[];
-    };
-
+export type AnimationFunction = ({
+  prevMarkers,
+  markers,
+}: {
+  prevMarkers: ReactElement<MarkerProps>[];
+  markers: ReactElement<MarkerProps>[];
+}) => {
+  zoomType: string | null;
+  markers: ReactElement<MarkerProps>[];
+};
 
 /**
  * Utility type to extract the Props type from a React Component
  * @example type Props = ExtractProps<typeof MyComponent>;
  */
-export type ExtractProps<T> = T extends React.ComponentType<infer Props> ? Props : never;
+export type ExtractProps<T> = T extends React.ComponentType<infer Props>
+  ? Props
+  : never;

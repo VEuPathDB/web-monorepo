@@ -1,9 +1,9 @@
-import { Polyline, Rectangle, useLeaflet } from "react-leaflet";
-import React, { ReactElement, useEffect, useState } from "react";
-import Geohash from "latlon-geohash";
-import L, { LatLngBounds } from "leaflet";
+import { Polyline, Rectangle, useLeaflet } from 'react-leaflet';
+import React, { ReactElement, useEffect, useState } from 'react';
+import Geohash from 'latlon-geohash';
+import L, { LatLngBounds } from 'leaflet';
 // import shape2geohash from "shape2geohash";  // need @types ideally...
-const shape2geohash = require("shape2geohash");
+const shape2geohash = require('shape2geohash');
 import { zoomLevelToGeohashLevel } from './config/map.json';
 
 /**
@@ -41,10 +41,10 @@ export default function CustomGridLayer() {
         // work out how many 360 degrees we are away from the 'main world'
         let longitudeCorrection = 0;
         while (west + longitudeCorrection > 180) {
-          longitudeCorrection -= 360
+          longitudeCorrection -= 360;
         }
         while (east + longitudeCorrection < -180) {
-          longitudeCorrection += 360
+          longitudeCorrection += 360;
         }
 
         // bfox6 - Make the current map bounds accessible to the outside world
@@ -55,70 +55,93 @@ export default function CustomGridLayer() {
          * state within the 'then' callback.
          **/
 
-        const shapes = west + longitudeCorrection >= -180 &&
-          east + longitudeCorrection <= 180 ?
-            [ // one rectangle
-              [
-                [east + longitudeCorrection, currentMapBounds.getNorth()],
-                [west + longitudeCorrection, currentMapBounds.getNorth()],
-                [west + longitudeCorrection, currentMapBounds.getSouth()],
-                [east + longitudeCorrection, currentMapBounds.getSouth()],
-                [east + longitudeCorrection, currentMapBounds.getNorth()]
-              ]
-            ] :
-          west + longitudeCorrection < -180 ?
-            [ // two rectangles straddling -180 deg line
-              [
-                [ // west of the line, move it over to the eastern side e.g. 120 to 180
-                  [180.0, currentMapBounds.getNorth()],
-                  [west + longitudeCorrection + 360, currentMapBounds.getNorth()],
-                  [west + longitudeCorrection + 360, currentMapBounds.getSouth()],
-                  [180.0, currentMapBounds.getSouth()],
-                  [180.0, currentMapBounds.getNorth()]
-                ]
-              ],
-              [
-                [ // east of the line
-                  [-180.0, currentMapBounds.getNorth()],
-                  [east + longitudeCorrection, currentMapBounds.getNorth()],
-                  [east + longitudeCorrection, currentMapBounds.getSouth()],
-                  [-180.0, currentMapBounds.getSouth()],
-                  [-180.0, currentMapBounds.getNorth()]
-                ]
-              ]
-            ] :
-          east + longitudeCorrection > 180 ?
-            [ // two rectangles straddling +180 deg line
-              [ // west of the line is normal and truncated at 180
+        const shapes =
+          west + longitudeCorrection >= -180 &&
+          east + longitudeCorrection <= 180
+            ? [
+                // one rectangle
                 [
-                  [180.0, currentMapBounds.getNorth()],
+                  [east + longitudeCorrection, currentMapBounds.getNorth()],
                   [west + longitudeCorrection, currentMapBounds.getNorth()],
                   [west + longitudeCorrection, currentMapBounds.getSouth()],
-                  [180.0, currentMapBounds.getSouth()],
-                  [180.0, currentMapBounds.getNorth()]
-                ]
-              ],
-              [ // east of the line needs shifting over to, e.g. -180 to -120
-                [
-                  [-180.0, currentMapBounds.getNorth()],
-                  [east + longitudeCorrection - 360, currentMapBounds.getNorth()],
-                  [east + longitudeCorrection - 360, currentMapBounds.getSouth()],
-                  [-180.0, currentMapBounds.getSouth()],
-                  [-180.0, currentMapBounds.getNorth()]
-                ]
+                  [east + longitudeCorrection, currentMapBounds.getSouth()],
+                  [east + longitudeCorrection, currentMapBounds.getNorth()],
+                ],
               ]
-            ] :
-          [ // edge case return whole world rectangle
-            [
-              [180.0, 90.0],
-              [-180.0, 90.0],
-              [-180.0, -90.0],
-              [180.0, -90.0],
-              [180.0, 90.0]
-            ]
-          ];
+            : west + longitudeCorrection < -180
+            ? [
+                // two rectangles straddling -180 deg line
+                [
+                  [
+                    // west of the line, move it over to the eastern side e.g. 120 to 180
+                    [180.0, currentMapBounds.getNorth()],
+                    [
+                      west + longitudeCorrection + 360,
+                      currentMapBounds.getNorth(),
+                    ],
+                    [
+                      west + longitudeCorrection + 360,
+                      currentMapBounds.getSouth(),
+                    ],
+                    [180.0, currentMapBounds.getSouth()],
+                    [180.0, currentMapBounds.getNorth()],
+                  ],
+                ],
+                [
+                  [
+                    // east of the line
+                    [-180.0, currentMapBounds.getNorth()],
+                    [east + longitudeCorrection, currentMapBounds.getNorth()],
+                    [east + longitudeCorrection, currentMapBounds.getSouth()],
+                    [-180.0, currentMapBounds.getSouth()],
+                    [-180.0, currentMapBounds.getNorth()],
+                  ],
+                ],
+              ]
+            : east + longitudeCorrection > 180
+            ? [
+                // two rectangles straddling +180 deg line
+                [
+                  // west of the line is normal and truncated at 180
+                  [
+                    [180.0, currentMapBounds.getNorth()],
+                    [west + longitudeCorrection, currentMapBounds.getNorth()],
+                    [west + longitudeCorrection, currentMapBounds.getSouth()],
+                    [180.0, currentMapBounds.getSouth()],
+                    [180.0, currentMapBounds.getNorth()],
+                  ],
+                ],
+                [
+                  // east of the line needs shifting over to, e.g. -180 to -120
+                  [
+                    [-180.0, currentMapBounds.getNorth()],
+                    [
+                      east + longitudeCorrection - 360,
+                      currentMapBounds.getNorth(),
+                    ],
+                    [
+                      east + longitudeCorrection - 360,
+                      currentMapBounds.getSouth(),
+                    ],
+                    [-180.0, currentMapBounds.getSouth()],
+                    [-180.0, currentMapBounds.getNorth()],
+                  ],
+                ],
+              ]
+            : [
+                // edge case return whole world rectangle
+                [
+                  [180.0, 90.0],
+                  [-180.0, 90.0],
+                  [-180.0, -90.0],
+                  [180.0, -90.0],
+                  [180.0, 90.0],
+                ],
+              ];
 
-        Promise.resolve(shape2geohash(shapes, { precision: geohashLevel })).then(function (value) {
+        Promise.resolve(
+          shape2geohash(shapes, { precision: geohashLevel })
+        ).then(function (value) {
           setGeohashes(value);
         });
       }
@@ -143,35 +166,40 @@ export default function CustomGridLayer() {
     // if very zoomed out, trim longitude bounds to span the middle 360 deg only
     if (eastWestDiff > 360) {
       const middle = (east + west) / 2;
-      adjustedEast = middle + (181);
-      adjustedWest = middle - (181);
+      adjustedEast = middle + 181;
+      adjustedWest = middle - 181;
 
       // Custom renderer that lets us draw shapes far past the map edges
       // (shapes will show while panning rather than appear after panning)
-      const wideRenderer = L.svg({padding: 2});
+      const wideRenderer = L.svg({ padding: 2 });
       const color = 'black';
       const opacity = 0.3;
 
       blinkers = [
         <Rectangle
-          key='east-blinker'
-          bounds={[[-90, east + 1.5*eastWestDiff], [90, adjustedEast]]}
+          key="east-blinker"
+          bounds={[
+            [-90, east + 1.5 * eastWestDiff],
+            [90, adjustedEast],
+          ]}
           stroke={false}
           color={color}
           fillOpacity={opacity}
           renderer={wideRenderer}
           interactive={false}
-        >
-        </Rectangle>,
+        ></Rectangle>,
         <Rectangle
-          key='west-blinker'
-          bounds={[[-90, west - 1.5*eastWestDiff], [90, adjustedWest]]}
+          key="west-blinker"
+          bounds={[
+            [-90, west - 1.5 * eastWestDiff],
+            [90, adjustedWest],
+          ]}
           stroke={false}
           color={color}
           fillOpacity={opacity}
           renderer={wideRenderer}
           interactive={false}
-        ></Rectangle>
+        ></Rectangle>,
       ];
     }
 
@@ -179,19 +207,19 @@ export default function CustomGridLayer() {
     const lons: number[] = [];
 
     // bfox6 - Get the unique latitude and longitude values for each geohash NE boundary
-    geohashes.forEach(geohash => {
+    geohashes.forEach((geohash) => {
       const latlon = Geohash.bounds(geohash);
       if (lats.indexOf(latlon.ne.lat) < 0) {
-        lats.push(latlon.ne.lat)
+        lats.push(latlon.ne.lat);
       }
       if (lats.indexOf(latlon.sw.lat) < 0) {
-        lats.push(latlon.sw.lat)
+        lats.push(latlon.sw.lat);
       }
       if (lons.indexOf(latlon.ne.lon) < 0) {
-        lons.push(latlon.ne.lon)
+        lons.push(latlon.ne.lon);
       }
       if (lons.indexOf(latlon.sw.lon) < 0) {
-        lons.push(latlon.sw.lon)
+        lons.push(latlon.sw.lon);
       }
     });
 
@@ -200,17 +228,19 @@ export default function CustomGridLayer() {
         <Polyline
           key={`lat-${lat}-${index}`}
           color="gray"
-          positions={[[lat, adjustedEast], [lat, adjustedWest]]}
-          opacity={.8}
+          positions={[
+            [lat, adjustedEast],
+            [lat, adjustedWest],
+          ]}
+          opacity={0.8}
           weight={1}
           dashArray={[10]}
           interactive={false}
         />
-      )
-    })
+      );
+    });
 
     const lonLines = lons.map((lon, index) => {
-
       // move the longitude lines into the current viewport, if required
       let adjustedLon = lon;
       let opacity = 0.8;
@@ -227,19 +257,24 @@ export default function CustomGridLayer() {
         <Polyline
           key={`lon-${adjustedLon}-${index}`}
           color="gray"
-          positions={[[mapBounds.getNorth(), adjustedLon], [mapBounds.getSouth(), adjustedLon]]}
+          positions={[
+            [mapBounds.getNorth(), adjustedLon],
+            [mapBounds.getSouth(), adjustedLon],
+          ]}
           opacity={opacity}
           weight={1}
           dashArray={[10]}
           interactive={false}
         />
-      )
-    })
+      );
+    });
     polylines = [...latLines, ...lonLines];
   }
 
-  return (<>
-    {polylines}
-    {blinkers}
-  </>)
+  return (
+    <>
+      {polylines}
+      {blinkers}
+    </>
+  );
 }

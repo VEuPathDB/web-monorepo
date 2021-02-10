@@ -4,4 +4,4 @@ import '@storybook/addon-console';
 export const parameters = {
   controls: { expanded: true },
   layout: 'fullscreen',
-}
+};

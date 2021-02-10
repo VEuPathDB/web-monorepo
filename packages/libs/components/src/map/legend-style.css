@@ -9,29 +9,29 @@
 
 /* DKDK reduce min-height for numeric (range data) - copy from .legend-contents at vb-popbio-maps.css */
 .legend-contents-numeric {
-    text-align    : left;
-    line-height   : 15px;
-    color         : #555555;
-    /* DKDK changed margin-bottom from 5 to 0 */
-    margin-bottom : 0px !important;
-    border-radius : 0 !important;
-    /* DKDK change these for mapveu v2
+  text-align: left;
+  line-height: 15px;
+  color: #555555;
+  /* DKDK changed margin-bottom from 5 to 0 */
+  margin-bottom: 0px !important;
+  border-radius: 0 !important;
+  /* DKDK change these for mapveu v2
     width         : 280px;
     min-height    : 300px; */
-    width         : 250px;
-    /* DKDK change min-height for numeric data */
-    min-height    : 210px;
-    /* DKDK combine with other CSS defined */
-    /* padding: 6px 8px 6px 8px; */
-    padding: 0px 0px 0px 0px;
-    background: white;
-    /*max-width     : 230px;
+  width: 250px;
+  /* DKDK change min-height for numeric data */
+  min-height: 210px;
+  /* DKDK combine with other CSS defined */
+  /* padding: 6px 8px 6px 8px; */
+  padding: 0px 0px 0px 0px;
+  background: white;
+  /*max-width     : 230px;
     position: absolute;
     right: 0px;
     top: 30%;*/
-    /* DKDK add margin-top for numeric - may not be necessary when using dropdown menu */
-    /* margin-top: 10px; */
-  }
+  /* DKDK add margin-top for numeric - may not be necessary when using dropdown menu */
+  /* margin-top: 10px; */
+}
 
 /* DKDK override bootstrap css for legend dropdown menu */
 
@@ -47,27 +47,31 @@
   border-color: silver;
 }
 
-.legend .btn-success:focus, .legend .btn-success.focus {
+.legend .btn-success:focus,
+.legend .btn-success.focus {
   color: #000;
   background-color: #fff;
   border-color: silver;
   box-shadow: 0 0 0 0rem rgba(151, 141, 141, 0.425);
 }
 
-.legend .btn-success.disabled, .legend .btn-success:disabled {
+.legend .btn-success.disabled,
+.legend .btn-success:disabled {
   color: #000;
   background-color: #fff;
   border-color: silver;
 }
 
-.legend .btn-success:not(:disabled):not(.disabled):active, .legend .btn-success:not(:disabled):not(.disabled).active,
+.legend .btn-success:not(:disabled):not(.disabled):active,
+.legend .btn-success:not(:disabled):not(.disabled).active,
 .legend .show > .btn-success.dropdown-toggle {
   color: #333333;
-  background-color: #CECECE;
-  border-color: #ADADAD;
+  background-color: #cecece;
+  border-color: #adadad;
 }
 
-.legend .btn-success:not(:disabled):not(.disabled):active:focus, .legend .btn-success:not(:disabled):not(.disabled).active:focus,
+.legend .btn-success:not(:disabled):not(.disabled):active:focus,
+.legend .btn-success:not(:disabled):not(.disabled).active:focus,
 .legend .show > .btn-success.dropdown-toggle:focus {
   box-shadow: 0 0 0 0rem rgba(151, 141, 141, 0.425);
 }
@@ -97,13 +101,15 @@
   border: 0;
 }
 
-.legend-dropdown-item:hover, .legend-dropdown-item:focus {
+.legend-dropdown-item:hover,
+.legend-dropdown-item:focus {
   color: #16181b;
   text-decoration: none;
   background-color: #f8f9fa;
 }
 
-.legend-dropdown-item.active, .legend-dropdown-item:active {
+.legend-dropdown-item.active,
+.legend-dropdown-item:active {
   color: #16181b;
   text-decoration: none;
   background-color: #f8f9fa;
@@ -127,11 +133,11 @@
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 0px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
 }
 
 #legend-dropdown-chart {
-  padding: .6rem .75rem .375rem .75rem; /* Artificially center text inside dropdown button */
+  padding: 0.6rem 0.75rem 0.375rem 0.75rem; /* Artificially center text inside dropdown button */
 }
 
 /* DKDK for the case when full width of dropdown button is used
@@ -276,7 +282,7 @@
 
 .legend-nav-icon {
   cursor: pointer;
-  transition: color .3s;
+  transition: color 0.3s;
   /* DKDK set button's background-color for firefox (due to button:hover below) */
   background-color: #e7e7e7;
 }

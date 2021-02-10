@@ -2,18 +2,18 @@ import React, { lazy, Suspense, useMemo } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
 type Margin = {
-  l: number,
-  r: number,
-  t: number,
-  b: number,
-}
+  l: number;
+  r: number;
+  t: number;
+  b: number;
+};
 
 export interface PlotProps {
-  width?: number,
-  height?: number,
-  margin?: Partial<Margin>,
-  staticPlot?: boolean,
-  showModebar?: boolean | 'hover',
+  width?: number;
+  height?: number;
+  margin?: Partial<Margin>;
+  staticPlot?: boolean;
+  showModebar?: boolean | 'hover';
 }
 
 // Passing undefined doesn't revert to default modebar behavior,
@@ -41,7 +41,7 @@ export default function PlotlyPlot(props: PlotParams) {
   ]);
 
   return (
-    <Suspense fallback='Loading...'>
+    <Suspense fallback="Loading...">
       <Plot {...props} style={finalStyle} config={finalConfig} />
     </Suspense>
   );

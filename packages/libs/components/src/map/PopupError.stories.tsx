@@ -13,27 +13,26 @@ export default {
   component: Map,
 };
 
-const position: [number,number] = [51.505, -0.09];
+const position: [number, number] = [51.505, -0.09];
 
 export const PopupError = () => {
   const [showPopup, setShowPopup] = React.useState(false);
   return (
     <>
-    <button onClick={() => setShowPopup(val => !val)}>Toggle popups</button> (show: {showPopup ? 'true' : 'false'})
-    <Map
-      style={{ height: 500, width: 500 }}
-      viewport={{center: position, zoom: 12}}
-    >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-      />
-      <Marker position={position}>
-        {showPopup && <Popup>
-          Hello, world
-        </Popup>}
-      </Marker>
-    </Map>
+      <button onClick={() => setShowPopup((val) => !val)}>Toggle popups</button>{' '}
+      (show: {showPopup ? 'true' : 'false'})
+      <Map
+        style={{ height: 500, width: 500 }}
+        viewport={{ center: position, zoom: 12 }}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        />
+        <Marker position={position}>
+          {showPopup && <Popup>Hello, world</Popup>}
+        </Marker>
+      </Map>
     </>
-  )
-}
+  );
+};
