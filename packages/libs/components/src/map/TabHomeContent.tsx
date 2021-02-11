@@ -1,9 +1,9 @@
-/* DKDK a test component for tab home content
+/* a test component for tab home content
  */
 
 import React from 'react';
 
-//DKDK props are not decided so just use any for now
+//props are not decided so just use any for now
 export default function TabHomeConent(props: any) {
   return (
     <>

@@ -1,15 +1,15 @@
 /**
- * DKDK based on react-sidebar-v2: https://github.com/condense/react-leaflet-sidebarv2/blob/master/src/Sidebar.js
+ * based on react-sidebar-v2: https://github.com/condense/react-leaflet-sidebarv2/blob/master/src/Sidebar.js
  * converting prop-types to typescript, additional features, cleanning typescript errors, and converting to function component
  */
 
 import React from 'react';
 // import { MapComponent } from 'react-leaflet'
 
-//DKDK resize css test
+//resize CSS
 import './sidebar-resize.css';
 
-//DKDK re-resizable
+//re-resizable
 import { Resizable } from 're-resizable';
 const resizeRightOnly = {
   top: false,
@@ -23,7 +23,7 @@ const resizeRightOnly = {
 };
 
 /**
- * DKDK Type definitions for react-leaflet-sidebarv2 0.6, taken from Definitely Typed
+ * Type definitions for react-leaflet-sidebarv2 0.6, taken from Definitely Typed
  * But some modifications are made
  * Project: https://github.com/condense/react-leaflet-sidebarv2
  * Definitions by: Vikram Pareddy <https://github.com/vikram-gsu>
@@ -57,31 +57,31 @@ export interface SidebarProps {
   closeIcon?: Icon;
   onClose?: () => void;
   onOpen?: (id: string) => void;
-  //DKDK change children as optional for component
+  //change children as optional for component
   children?: TabType;
 }
 
-//DKDK extend TabProps to have divider prop
+//extend TabProps to have divider prop
 interface TabPropsAdd extends TabProps {
-  //DKDK divider=true, then use divider
+  //divider=true, then use divider
   divider?: boolean;
 }
 
-//DKDK change from TabProps to TabPropsAdd for considering divider icon
-function Tab(props: TabPropsAdd) {
+//change from TabProps to TabPropsAdd for considering divider icon
+export function Tab(props: TabPropsAdd) {
   const active = props.active ? ' active' : '';
   let closeIcon;
   if (typeof props.closeIcon === 'string')
     closeIcon = <i className={props.closeIcon} />;
   else if (typeof props.closeIcon === 'object') closeIcon = props.closeIcon;
   else {
-    //DKDK change fontawesome fa to fas
+    //change fontawesome fa to fas
     const closecls =
       props.position === 'right' ? 'fas fa-caret-right' : 'fas fa-caret-left';
     closeIcon = <i className={closecls} />;
   }
   return (
-    // DKDK change className
+    // change className
     <div id={props.id} className={'leaflet-sidebar-pane' + active}>
       <h1 className="leaflet-sidebar-header">
         {props.header}
@@ -94,15 +94,15 @@ function Tab(props: TabPropsAdd) {
   );
 }
 
-//DKDK using type definition from type-react-leaflet-sidebarv2.ts
+//using type definition from type-react-leaflet-sidebarv2.ts
 // // https://github.com/facebook/react/issues/2979#issuecomment-222379916
 // const TabType = PropTypes.shape({
 //   type: PropTypes.oneOf([Tab])
 // });
 // type TabType = React.ReactElement<Tab> | Array<React.ReactElement<Tab>>;
 
-//DKDK changed MapComponent to React.Component
-function Sidebar(props: SidebarProps) {
+//changed MapComponent to React.Component
+export function Sidebar(props: SidebarProps) {
   function onClose(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
@@ -115,7 +115,7 @@ function Sidebar(props: SidebarProps) {
     props.onOpen && props.onOpen(tabid);
   }
 
-  //DKDK set tab as any for now
+  //set tab as any for now
   function renderTab(tab: any) {
     let icon;
     if (typeof tab.props.icon === 'string')
@@ -124,7 +124,7 @@ function Sidebar(props: SidebarProps) {
     const active = tab.props.id === props.selected ? ' active' : '';
     const disabled = tab.props.disabled ? ' disabled' : '';
 
-    //DKDK line divider using image file (made by DK)
+    //line divider using image file (made by DK)
     if (tab.props.disabled && tab.props.divider) {
       return (
         <li
@@ -143,7 +143,7 @@ function Sidebar(props: SidebarProps) {
       );
     } else {
       return (
-        //DKDK add title attribute here for tooltip effect
+        //add title attribute here for tooltip effect
         <li
           className={'sidebartabs' + active + disabled}
           key={tab.props.id}
@@ -161,7 +161,7 @@ function Sidebar(props: SidebarProps) {
     }
   }
 
-  //DKDK children here is a content inside <Tab> so set it as any for now
+  //children here is a content inside <Tab> so set it as any for now
   function renderPanes(children: any) {
     return React.Children.map(children, (p) =>
       React.cloneElement(p, {
@@ -174,19 +174,19 @@ function Sidebar(props: SidebarProps) {
   }
 
   // Override render() so the <Map> element contains a div we can render to
-  //DKDK change sidebar -> leaflet-sidebar
+  //change sidebar -> leaflet-sidebar
   const position = ' leaflet-sidebar-' + (props.position || 'left');
   const collapsed = props.collapsed ? ' collapsed' : '';
 
   const allTabs = React.Children.toArray(props.children).filter((c) => !!c);
-  //DKDK for now tab type at filter() is set to any for avoiding the type error on tab.props
+  //for now tab type at filter() is set to any for avoiding the type error on tab.props
   const bottomtabs = allTabs.filter(
     (tab: any) => tab.props.anchor === 'bottom'
   );
   const toptabs = allTabs.filter((tab: any) => tab.props.anchor !== 'bottom');
 
   return (
-    // DKDK change className; not clear why ref is used here so it is removed for now
+    // change className; not clear why ref is used here so it is removed for now
     // <div id={this.props.id} className={"leaflet-sidebar leaflet-touch" + position + collapsed}
     //   ref={el => this.rootElement = el}>
     <div
@@ -205,18 +205,16 @@ function Sidebar(props: SidebarProps) {
           {bottomtabs.map((bottomtab) => renderTab(bottomtab))}
         </ul>
       </div>
-      {/* DKDK set re-resizable here for implementing resize functionality */}
+      {/* set re-resizable here for implementing resize functionality */}
       <Resizable
         className="leaflet-sidebar-content"
         minWidth={420}
         enable={resizeRightOnly}
       >
         {renderPanes(allTabs)}
-        {/* DKDK icon for showing two vertical bar like displaying resizable */}
+        {/* icon for showing two vertical bar like displaying resizable */}
         <div className="ui-resizable-e fas fa-grip-lines-vertical"></div>
       </Resizable>
     </div>
   );
 }
-
-export { Sidebar, Tab };

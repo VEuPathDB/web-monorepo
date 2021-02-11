@@ -1,32 +1,32 @@
-/* DKDK a test component for tab home content
+/* a test component for tab home content
  */
 
 import React from 'react';
 
-//DKDK import pie/donut chart
+//import pie/donut chart
 import PiePlot from '../plots/PiePlot';
 
-//DKDK props
+//props
 interface SidebarPieChartProps {
   id: string;
   header: string;
   pieChartData?: Array<{ color: string; label: string; value: number }>;
-  //DKDK add showLegend to hide/show legend
+  //add showLegend to hide/show legend
   showLegend?: boolean;
 }
 
-//DKDK set props for legend position
+//set props for legend position
 type legendProp = {
   x?: number;
   y?: number;
-  //DKDK xanchor is for positioning legend inside plot
+  //xanchor is for positioning legend inside plot
   xanchor?: 'auto' | 'center' | 'left' | 'right';
   orientation?: 'h' | 'v' | undefined;
 };
 
-//DKDK props are not decided so just use any for now
+//props are not decided so just use any for now
 export default function TabPieChartConent(props: SidebarPieChartProps) {
-  //DKDK summation of fullStat.value per marker icon
+  //summation of fullStat.value per marker icon
   let sumValues: number | null;
   if (props.pieChartData) {
     sumValues = props.pieChartData
@@ -38,9 +38,9 @@ export default function TabPieChartConent(props: SidebarPieChartProps) {
     sumValues = null;
   }
 
-  //DKDK width, height, margin - legend.y is the bottom of legend list, which makes things difficult to adjust
+  //width, height, margin - legend.y is the bottom of legend list, which makes things difficult to adjust
   let width = 300;
-  //DKDK dynamically change height per the number of legend
+  //dynamically change height per the number of legend
   let numberLegend = props.pieChartData ? props.pieChartData.length : 0;
   let height = 300 + numberLegend * 30;
   let margin = {
@@ -60,7 +60,7 @@ export default function TabPieChartConent(props: SidebarPieChartProps) {
   return (
     <>
       <PiePlot
-        //DKDK set props.pieChartData not to be undefined
+        //set props.pieChartData not to be undefined
         data={props.pieChartData ? props.pieChartData : []}
         interior={{
           heightPercentage: 0.4,
@@ -68,7 +68,7 @@ export default function TabPieChartConent(props: SidebarPieChartProps) {
           textColor: 'black',
           fontSize: 20,
         }}
-        //DKDK set layout
+        //set layout
         width={width}
         height={height}
         margin={margin}

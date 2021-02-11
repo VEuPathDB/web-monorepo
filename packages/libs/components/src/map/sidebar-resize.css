@@ -1,14 +1,14 @@
-/* DKDK override overflow from auto to visible for reziable */
+/* override overflow from auto to visible for reziable */
 .leaflet-sidebar {
   overflow: visible;
 }
 
-/* DKDK remove border as it does not work well with resize & no bordr in popbio map either */
+/* remove border as it does not work well with resize & no bordr in popbio map either */
 .leaflet-sidebar.leaflet-touch {
   border: 0px solid rgba(0, 0, 0, 0.2);
 }
 
-/* DKDK add border for sidebar tabs */
+/* add border for sidebar tabs */
 .leaflet-sidebar-left .leaflet-sidebar-tabs {
   /* left: 0; */
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -24,7 +24,7 @@
   resize: both;
 }
 
-/* DKDK from vb-popbio-maps.css - overriding */
+/* from vb-popbio-maps.css - overriding */
 .ui-resizable-e {
   font-size: 30px;
   width: 15px;
@@ -37,12 +37,12 @@
   cursor: none;
 }
 
-/* DKDK centering all plotly plots */
+/* centering all plotly plots */
 div.leaflet-sidebar-content .plot-container.plotly .svg-container {
   margin: 0 auto;
 }
 
-/* DKDK changing sidebar header style */
+/* changing sidebar header style */
 .leaflet-sidebar-header {
   color: gray;
   background-color: white;
