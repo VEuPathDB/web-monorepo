@@ -1,0 +1,49 @@
+/* override overflow from auto to visible for reziable */
+.leaflet-sidebar {
+  overflow: visible;
+}
+
+/* remove border as it does not work well with resize & no bordr in popbio map either */
+.leaflet-sidebar.leaflet-touch {
+  border: 0px solid rgba(0, 0, 0, 0.2);
+}
+
+/* add border for sidebar tabs */
+.leaflet-sidebar-left .leaflet-sidebar-tabs {
+  /* left: 0; */
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-resize.horizontal {
+  resize: horizontal;
+}
+.sidebar-resize.vertical {
+  resize: vertical;
+}
+.sidebar-resize.both {
+  resize: both;
+}
+
+/* from vb-popbio-maps.css - overriding */
+.ui-resizable-e {
+  font-size: 30px;
+  width: 15px;
+  height: 30px;
+  right: -2px;
+  top: 50%;
+  bottom: 50%;
+  color: #bcbcbc;
+  position: absolute;
+  cursor: none;
+}
+
+/* centering all plotly plots */
+div.leaflet-sidebar-content .plot-container.plotly .svg-container {
+  margin: 0 auto;
+}
+
+/* changing sidebar header style */
+.leaflet-sidebar-header {
+  color: gray;
+  background-color: white;
+}

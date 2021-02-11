@@ -137,6 +137,8 @@ export default function PiePlot(props: Props) {
           width: props.width,
           height: props.height,
           margin: props.margin,
+          //DKDK add legend here
+          legend: props.legend,
           showlegend: props.showLegend,
         },
       }}
