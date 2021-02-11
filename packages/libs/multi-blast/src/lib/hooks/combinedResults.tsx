@@ -1,3 +1,6 @@
+import { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import {
   MesaColumn,
@@ -6,8 +9,6 @@ import {
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 
 import { groupBy, orderBy } from 'lodash';
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 
 import {
   ACCESSION_HELP_TEXT,
