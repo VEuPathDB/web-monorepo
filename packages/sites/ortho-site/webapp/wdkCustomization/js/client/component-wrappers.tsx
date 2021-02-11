@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Props as RecordAttributeSectionProps } from 'wdk-client/Views/Records/RecordAttributes/RecordAttributeSection';
+import { Props as RecordAttributeSectionProps } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 import { OrthoMCLPage } from 'ortho-client/components/layout/OrthoMCLPage';
 import { SiteSearchInput } from 'ortho-client/components/site-search/SiteSearchInput';

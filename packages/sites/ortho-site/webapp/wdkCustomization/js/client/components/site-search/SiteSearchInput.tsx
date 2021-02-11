@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { WdkService } from 'wdk-client/Core';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { DatasetParam } from 'wdk-client/Utils/WdkModel';
-import { idListToArray } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { DatasetParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { idListToArray } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 
-import { Props } from 'ebrc-client/components/SiteSearch/SiteSearchInput';
+import { Props } from '@veupathdb/web-common/lib/components/SiteSearch/SiteSearchInput';
 
 import { WrappedComponentProps } from 'ortho-client/records/Types';
 

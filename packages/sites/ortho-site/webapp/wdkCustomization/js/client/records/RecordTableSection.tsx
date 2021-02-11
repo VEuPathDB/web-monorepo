@@ -1,13 +1,13 @@
 import React, { useContext, useMemo } from 'react';
 
-import { WdkService } from 'wdk-client/Core';
-import { WdkDepdendenciesContext } from 'wdk-client/Hooks/WdkDependenciesEffect';
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import {
   RecordInstance,
   getSingleRecordAnswerSpec
-} from 'wdk-client/Utils/WdkModel';
-import { Props as RecordTableSectionProps } from 'wdk-client/Views/Records/RecordTable/RecordTableSection';
-import { DefaultSectionTitle } from 'wdk-client/Views/Records/SectionTitle';
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Props as RecordTableSectionProps } from '@veupathdb/wdk-client/lib/Views/Records/RecordTable/RecordTableSection';
+import { DefaultSectionTitle } from '@veupathdb/wdk-client/lib/Views/Records/SectionTitle';
 
 import { WrappedComponentProps } from 'ortho-client/records/Types';
 
