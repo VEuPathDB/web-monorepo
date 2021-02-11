@@ -202,16 +202,11 @@ function BlastSummary({
           routeBase={`/workspace/blast/result/${jobDetails.id}`}
           items={[
             {
-              display: 'Combined',
+              display: 'Combined Result',
               route: '/combined',
             },
             {
-              display: (
-                <>
-                  <span className="QueryCount">{queryCount}</span> Individual
-                  Results
-                </>
-              ),
+              display: 'Individual Results',
               route: '/individual/1',
             },
           ]}
