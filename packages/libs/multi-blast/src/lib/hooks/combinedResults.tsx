@@ -13,6 +13,7 @@ import { groupBy, orderBy } from 'lodash';
 import {
   ACCESSION_HELP_TEXT,
   ALIGNMENT_LENGTH_HELP_TEXT,
+  DESCRIPTION_HELP_TEXT,
   E_VALUE_HELP_TEXT,
   ORGANISM_HELP_TEXT,
   PERCENT_IDENTITY_HELP_TEXT,
@@ -24,7 +25,9 @@ import {
   CombinedResultRow,
   blastDbNameToWdkRecordType,
   dbToOrganismFactory,
-  geneHitTitleToWdkPrimaryKey,
+  defaultDeflineToDescription,
+  defaultDeflineToSourceId,
+  defaultGeneDeflineToWdkPrimaryKey,
   mergeIntervals,
   orderHitsBySignificance,
 } from '../utils/combinedResults';
@@ -57,6 +60,14 @@ export function useCombinedResultColumns(
           row.organism == null ? '' : row.organism,
         sortable: true,
         helpText: ORGANISM_HELP_TEXT,
+      },
+      {
+        key: 'subjectDescription',
+        name: 'Description',
+        renderCell: ({ row }: { row: CombinedResultRow }) =>
+          row.subjectDescription,
+        sortable: true,
+        helpText: DESCRIPTION_HELP_TEXT,
       },
       {
         key: 'queryDescription',
@@ -131,9 +142,12 @@ export function useRawCombinedResultRows(
       queryResult.report.results.search.hits.map((hit) => {
         const bestHsp = hit.hsps[0];
 
-        const title = hit.description[0].title;
+        const defline = hit.description[0].title;
 
-        const accession = title.replace(/\s+[\s\S]*/, '');
+        const accession = defaultDeflineToSourceId(defline) ?? defline;
+
+        const subjectDescription =
+          defaultDeflineToDescription(defline) ?? defline;
 
         const organism = dbToOrganism(queryResult.report.search_target.db);
 
@@ -145,7 +159,7 @@ export function useRawCombinedResultRows(
 
         const wdkPrimaryKey =
           wdkRecordType === 'gene'
-            ? geneHitTitleToWdkPrimaryKey(title)
+            ? defaultGeneDeflineToWdkPrimaryKey(defline)
             : accession;
 
         const alignmentLength = bestHsp.align_len;
@@ -175,6 +189,7 @@ export function useRawCombinedResultRows(
           queryId,
           queryTitle: queryTitle ?? null,
           score,
+          subjectDescription,
           wdkPrimaryKey,
         };
       })

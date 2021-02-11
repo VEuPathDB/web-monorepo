@@ -12,15 +12,56 @@ export interface CombinedResultRow {
   queryRank: number;
   queryTitle: string | null;
   score: number;
+  subjectDescription: string;
   subjectRank: number;
   wdkPrimaryKey: string | null;
 }
 
-const GENE_REGEX = /\|\s*gene=([^|\s]+) /;
-const TARGET_NAME_REGEX = /[\s\S]*\//;
+export const DEFAULT_SOURCE_ID_REGEX_STR =
+  '^(?:>)?(?:\\s)*(?:[^|]*\\|)?(\\S+)\\s*\\|?\\s*';
+export const DEFAULT_SOURCE_ID_REGEX = new RegExp(DEFAULT_SOURCE_ID_REGEX_STR);
+
+export const DEFAULT_ORGANISM_REGEX_STR = '\\s*\\|?\\s*organism=([^|\\s]+)';
+export const DEFAULT_ORGANISM_REGEX = new RegExp(DEFAULT_ORGANISM_REGEX_STR);
+
+export const DEFAULT_GENE_REGEX_STR = '\\s*\\|?\\s*gene=([^|\\s]+)';
+export const DEFAULT_GENE_REGEX = new RegExp(DEFAULT_GENE_REGEX_STR);
+
+function deflineToDescriptionFactory(regexStrs: string[]) {
+  const descriptionTrimmingSubstring = regexStrs.join('|');
+
+  const descriptionTrimmingRegex = new RegExp(
+    `(${descriptionTrimmingSubstring})`,
+    'g'
+  );
+
+  return function deflineToDescription(defline: string) {
+    return defline.replace(descriptionTrimmingRegex, '');
+  };
+}
+
+export const defaultDeflineToDescription = deflineToDescriptionFactory([
+  DEFAULT_SOURCE_ID_REGEX_STR,
+  DEFAULT_ORGANISM_REGEX_STR,
+]);
+
+export function retrieveDataFromHitTitleFactory(regex: RegExp) {
+  return function retrieveDataFromHitTitle(hitTitle: string) {
+    const match = hitTitle.match(regex);
+
+    return match == null || match[1] == null ? null : match[1];
+  };
+}
+
+export const defaultDeflineToSourceId = retrieveDataFromHitTitleFactory(
+  DEFAULT_SOURCE_ID_REGEX
+);
+export const defaultGeneDeflineToWdkPrimaryKey = retrieveDataFromHitTitleFactory(
+  DEFAULT_GENE_REGEX
+);
 
 export function dbToTargetName(db: string) {
-  return db.replace(TARGET_NAME_REGEX, '');
+  return db.replace(/[\s\S]*\//, '');
 }
 
 export function blastDbNameToWdkRecordType(blastDbName: string) {
@@ -40,18 +81,6 @@ export function blastDbNameToWdkRecordType(blastDbName: string) {
   }
 }
 
-export function retrieveDataFromHitTitleFactory(regex: RegExp) {
-  return function retrieveDataFromHitTitle(hitTitle: string) {
-    const match = hitTitle.match(regex);
-
-    return match == null || match[1] == null ? null : match[1];
-  };
-}
-
-export const geneHitTitleToWdkPrimaryKey = retrieveDataFromHitTitleFactory(
-  GENE_REGEX
-);
-
 export function dbToOrganismFactory(filesToOrganisms: Record<string, string>) {
   const filesToOrganismsEntries = Object.entries(filesToOrganisms);
 
@@ -68,6 +97,7 @@ export function dbToOrganismFactory(filesToOrganisms: Record<string, string>) {
 
 export const ACCESSION_HELP_TEXT = 'FILL ME IN';
 export const ORGANISM_HELP_TEXT = 'FILL ME IN';
+export const DESCRIPTION_HELP_TEXT = 'FILL ME IN';
 export const QUERY_HELP_TEXT = 'FILL ME IN';
 export const RANK_PER_QUERY_HELP_TEXT = 'FILL ME IN';
 export const RANK_PER_SUBJECT_HELP_TEXT = 'FILL ME IN';
