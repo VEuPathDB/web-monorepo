@@ -36,7 +36,7 @@ function deflineToDescriptionFactory(regexStrs: string[]) {
   );
 
   return function deflineToDescription(defline: string) {
-    return defline.replace(descriptionTrimmingRegex, '');
+    return defline.replace(descriptionTrimmingRegex, '').replace(/^\s*\|/, '');
   };
 }
 
