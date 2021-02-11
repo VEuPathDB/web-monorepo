@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
@@ -7,6 +7,7 @@ import {
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { groupBy, orderBy } from 'lodash';
 
@@ -64,9 +65,14 @@ export function useCombinedResultColumns(
       {
         key: 'subjectDescription',
         name: 'Description',
-        renderCell: ({ row }: { row: CombinedResultRow }) =>
-          row.subjectDescription,
-        sortable: true,
+        width: '25em',
+        renderCell: ({ row }: { row: CombinedResultRow }) => (
+          <DescriptionCell
+            key={`${row.queryId}/${row.accession}`}
+            value={row.subjectDescription}
+          />
+        ),
+        sortable: false,
         helpText: DESCRIPTION_HELP_TEXT,
       },
       {
@@ -125,6 +131,43 @@ export function useCombinedResultColumns(
       },
     ],
     [hitTypeDisplayName, wdkRecordType]
+  );
+}
+
+const descriptionCellCx = makeClassNameHelper('OverflowingTextCell');
+
+function DescriptionCell(props: { value: string }) {
+  const [isExpanded, setExpanded] = useState(false);
+
+  const textContents = props.value;
+  const htmlContents = !isExpanded
+    ? textContents
+    : textContents.split(/\s*\|\s*/g).map((line, i, lines) => (
+        <Fragment key={i}>
+          {line}
+          {i < lines.length - 1 && <br />}
+          {i < lines.length - 1 && <br />}
+        </Fragment>
+      ));
+
+  const contentsClassName = descriptionCellCx(
+    '--OverflowableContents',
+    isExpanded && 'expanded'
+  );
+
+  const toggleExpansion = useCallback(() => {
+    setExpanded((isExpanded) => !isExpanded);
+  }, []);
+
+  return (
+    <div className={contentsClassName}>
+      {htmlContents}
+      <div>
+        <button type="button" className="link" onClick={toggleExpansion}>
+          {isExpanded ? 'Read Less' : 'Read More'}
+        </button>
+      </div>
+    </div>
   );
 }
 
