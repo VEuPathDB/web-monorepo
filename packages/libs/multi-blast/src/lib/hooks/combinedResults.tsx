@@ -233,10 +233,19 @@ export function useSortedCombinedResultRows(
   unsortedRows: CombinedResultRow[],
   sort: MesaSortObject
 ) {
-  return useMemo(
-    () => orderBy(unsortedRows, [sort.columnKey], [sort.direction]),
-    [unsortedRows, sort]
-  );
+  const [sortedRows, setSortedRows] = useState(unsortedRows);
+
+  useEffect(() => {
+    setSortedRows(unsortedRows);
+  }, [unsortedRows]);
+
+  useEffect(() => {
+    setSortedRows((sortedRows) =>
+      orderBy(sortedRows, [sort.columnKey], [sort.direction])
+    );
+  }, [sort]);
+
+  return sortedRows;
 }
 
 export function useMesaEventHandlers(
