@@ -11,5 +11,11 @@
   "dependencies": {
     "@veupathdb/wdk-client": "^0.1.1-alpha.4",
     "@veupathdb/web-common": "^0.1.1-alpha.2"
+  },
+  "resolutions": {
+    "react": "16",
+    "react-dom": "16",
+    "@types/react": "16",
+    "@types/react-dom": "16"
   }
 }
