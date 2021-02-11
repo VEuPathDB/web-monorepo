@@ -3,6 +3,7 @@ import SiteMenu from 'ebrc-client/App/SiteMenu';
 import UserMenu from 'ebrc-client/App/UserMenu';
 import { formatReleaseDate } from 'ebrc-client/util/formatters';
 import { IconAlt as Icon, Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
+import partofveupath from '../../../images/partofveupath.png';
 
 import './HeaderNav.scss';
 
@@ -162,7 +163,7 @@ class HeaderNav extends React.Component {
             </div>
           </div>
           <a href="https://veupathdb.org" target="_blank">
-            <img src={webAppUrl + '/images/partofveupath.png'} id="VEuPathLogo" />
+            <img src={partofveupath} id="VEuPathLogo" />
           </a>
         </div>
       </div>

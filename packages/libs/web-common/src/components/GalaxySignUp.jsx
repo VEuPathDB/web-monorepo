@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import GalaxyPageLayout from './GalaxyPageLayout';
+import linkAccount from '../../images/globus-02-link-account.png';
+import accountTerms from '../../images/globus-03-account-terms.png';
+import oauthPerms from '../../images/globus-04-oauth-perms.png';
 
 /**
  * Sign up page
@@ -24,7 +27,7 @@ export default function GalaxySignUp(props) {
           <div className="eupathdb-GalaxySignUpScreenHeader">
             <strong>1. Create new or link existing Globus account.</strong>
           </div>
-          <img title="Option to link an existing Globus Account" src="/a/wdkCustomization/images/globus-02-link-account.png"/>
+          <img title="Option to link an existing Globus Account" src={linkAccount}/>
           <div className="eupathdb-GalaxySignUpScreenCaption">
             If you already have a Globus account, you may choose to link it to
             your VEuPathDB account. If you don't have an existing Globus account,
@@ -35,7 +38,7 @@ export default function GalaxySignUp(props) {
           <div className="eupathdb-GalaxySignUpScreenHeader">
             <strong>2. Register your credentials.</strong>
           </div>
-          <img title="Agree to Globus account terms" src="/a/wdkCustomization/images/globus-03-account-terms.png"/>
+          <img title="Agree to Globus account terms" src={accountTerms}/>
           <div className="eupathdb-GalaxySignUpScreenCaption">
             Tell Globus how you will use your account, read and agree to their
             Terms and Conditions, then click <strong>Continue</strong>
@@ -45,7 +48,7 @@ export default function GalaxySignUp(props) {
           <div className="eupathdb-GalaxySignUpScreenHeader">
             <strong>3. Grant VEuPathDB Galaxy access to your account.</strong>
           </div>
-          <img title="Grant permission to access your Globus account" src="/a/wdkCustomization/images/globus-04-oauth-perms.png"/>
+          <img title="Grant permission to access your Globus account" src={oauthPerms}/>
           <div className="eupathdb-GalaxySignUpScreenCaption">
             Click <strong>Allow</strong> to grant permission to share the
             account with us. We will only perform file transfers that you explicitly request.

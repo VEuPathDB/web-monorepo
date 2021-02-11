@@ -3,6 +3,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import GalaxyPageLayout from './GalaxyPageLayout';
+import welcomeImage from '../../images/globus-01-welcome-page.png';
 
 /**
  * Galaxy page component
@@ -33,7 +34,7 @@ export default function GalaxyTerms(props) {
           <p>First log into OrthoMCL and then press the "Go to Galaxy" button.</p>
         </div>)}
         <div>
-          <img src="/a/wdkCustomization/images/globus-01-welcome-page.png"/>
+          <img src={welcomeImage}/>
         </div>
       </div>
 
