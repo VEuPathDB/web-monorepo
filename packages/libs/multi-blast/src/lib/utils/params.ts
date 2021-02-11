@@ -1,4 +1,3 @@
-import { QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import {
   Parameter,
   ParameterValues,
@@ -49,37 +48,6 @@ export function isOmittedParam(param?: Parameter) {
     ? false
     : param.vocabulary.length === 1 &&
         param.vocabulary[0][0] === OMIT_PARAM_TERM;
-}
-
-export function computeParamDependencies(
-  question: QuestionWithMappedParameters
-) {
-  return question.parameters.reduce((memo, param) => {
-    param.dependentParams.forEach((depedendentParam) => {
-      if (!memo.has(depedendentParam)) {
-        memo.set(depedendentParam, new Set());
-      }
-
-      memo.get(depedendentParam)?.add(param.name);
-    });
-
-    return memo;
-  }, new Map<string, Set<string>>());
-}
-
-export function findParamsWhichDependOnlyOnBlastAlgorithm(
-  question: QuestionWithMappedParameters
-) {
-  const paramDependencies = computeParamDependencies(question);
-
-  const values = [...paramDependencies.entries()];
-
-  return values
-    .filter(
-      ([, dependencies]) =>
-        dependencies.size === 1 && dependencies.has(BLAST_ALGORITHM_PARAM_NAME)
-    )
-    .map(([paramName]) => paramName);
 }
 
 /**

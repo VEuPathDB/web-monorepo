@@ -1,6 +1,8 @@
 import { FormEvent, useCallback, useContext, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 
+import { fromPairs } from 'lodash';
+
 import { RadioList, TextArea } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -25,7 +27,6 @@ import {
   BLAST_DATABASE_ORGANISM_PARAM_NAME,
   BLAST_DATABASE_TYPE_PARAM_NAME,
   BLAST_QUERY_SEQUENCE_PARAM_NAME,
-  findParamsWhichDependOnlyOnBlastAlgorithm,
   isOmittedParam,
   organismParamValueToFilenames,
   paramValuesToBlastConfig,
@@ -52,21 +53,8 @@ export function BlastForm(props: Props) {
   const selectedBlastAlgorithm =
     props.state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
 
-  const paramsWhichDependOnlyOnBlastAlgorithm = useMemo(
-    () => findParamsWhichDependOnlyOnBlastAlgorithm(props.state.question),
-    [props.state.question]
-  );
-
-  const advancedParamGroupChanging = useMemo(
-    () =>
-      paramsWhichDependOnlyOnBlastAlgorithm.some(
-        (paramName) => props.state.paramDependenciesUpdating[paramName]
-      ),
-    [
-      paramsWhichDependOnlyOnBlastAlgorithm,
-      props.state.paramDependenciesUpdating,
-    ]
-  );
+  const advancedParamGroupChanging =
+    props.state.paramsUpdatingDependencies[BLAST_ALGORITHM_PARAM_NAME];
 
   const restrictedAdvancedParamGroup = useMemo(() => {
     const fullAdvancedParamGroup =
@@ -111,9 +99,16 @@ export function BlastForm(props: Props) {
               parameters={restrictedAdvancedParamGroup.parameters}
               parameterMap={formProps.state.question.parametersByName}
               parameterElements={formProps.parameterElements}
-              paramDependenciesUpdating={
-                formProps.state.paramDependenciesUpdating
-              }
+              paramDependenciesUpdating={fromPairs(
+                formProps.state.question.parameters
+                  .filter(
+                    (parameter) =>
+                      formProps.state.paramsUpdatingDependencies[parameter.name]
+                  )
+                  .flatMap((parameter) =>
+                    parameter.dependentParams.map((pn) => [pn, true])
+                  )
+              )}
             />
           </AdvancedParamGroup>
         )}
