@@ -640,17 +640,6 @@ export const reportResultsJson = record({
 
 export type ReportResultsJson = Unpack<typeof reportResultsJson>;
 
-export const reportParamJson = record({
-  expect: number,
-  sc_match: number,
-  sc_mismatch: number,
-  gap_open: number,
-  gap_extend: number,
-  filter: string,
-});
-
-export type ReportParamJson = Unpack<typeof reportParamJson>;
-
 export const reportSearchTargetJson = record({
   db: string,
 });
@@ -662,7 +651,6 @@ export const singleQueryReportJson = record({
   version: string,
   reference: string,
   search_target: reportSearchTargetJson,
-  params: reportParamJson,
   results: reportResultsJson,
 });
 
