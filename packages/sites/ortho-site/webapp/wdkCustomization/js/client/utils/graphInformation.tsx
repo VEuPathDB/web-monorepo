@@ -84,6 +84,7 @@ export interface PfamDomainRow {
 
 export interface EcNumberRow {
   ecNumber: string;
+  description: string;
   index: number;
 }
 
@@ -146,7 +147,8 @@ export function layoutAndAccessionToEcNumberRows(layout: GroupLayout, accession:
   return layout.group.genes[accession].ecNumbers.map(
     ecNumber => ({
       ecNumber,
-      index: layout.group.ecNumbers[ecNumber].index
+      index: layout.group.ecNumbers[ecNumber].index,
+      description: layout.group.ecNumbers[ecNumber].description
     })
   );
 }

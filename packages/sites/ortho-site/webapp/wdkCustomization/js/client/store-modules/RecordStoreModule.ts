@@ -1,11 +1,11 @@
+import { combineEpics } from 'redux-observable';
+
 import { Action, RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import {
-  GROUP_STATISTICS_TABLE_NAME,
-  TAXON_COUNTS_TABLE_NAME
+  SEQUENCES_TABLE_NAME,
+  PROTEIN_PFAMS_TABLE_NAME
 } from 'ortho-client/records/utils';
-
-export const key = 'record';
 
 export const getAllFields = RecordStoreModule.getAllFields;
 
@@ -19,16 +19,25 @@ export function reduce(state = {} as RecordStoreModule.State, action: Action): R
             ...nextState,
             collapsedSections: RecordStoreModule.getAllFields(nextState).filter(
               name => (
-                name !== TAXON_COUNTS_TABLE_NAME &&
-                name !== GROUP_STATISTICS_TABLE_NAME
+                name === SEQUENCES_TABLE_NAME ||
+                name === PROTEIN_PFAMS_TABLE_NAME
               )
             )
           }
-        : nextState
+        : nextState;
 
     default:
       return nextState;
   }
 }
 
-export const observe = RecordStoreModule.observe;
+const {
+  observeNavigationVisibilityPreference,
+  observeNavigationVisibilityState
+} = RecordStoreModule.makeNavigationVisibilityPreferenceEpics(_ => true);
+
+export const observe = combineEpics(
+  RecordStoreModule.observe,
+  observeNavigationVisibilityPreference,
+  observeNavigationVisibilityState
+);

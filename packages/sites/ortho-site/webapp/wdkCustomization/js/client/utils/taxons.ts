@@ -67,7 +67,6 @@ export function makeTaxonTree(taxonEntries: TaxonEntries): TaxonTree {
     const orderedChildren = orderBy(
       Object.values(unorderedChildren),
       [
-        childEntry => taxonEntries[childEntry.abbrev].species,
         childEntry => taxonEntries[childEntry.abbrev].sortIndex
       ]
     );

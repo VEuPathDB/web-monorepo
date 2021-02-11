@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { CollapsibleSection, Link } from '@veupathdb/wdk-client/lib/Components';
 import { AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
-
+import { Props as RecordAttributeSectionProps } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 import Sequence from '@veupathdb/web-common/lib/components/records/Sequence';
 
 import { PfamDomainArchitecture } from 'ortho-client/components/pfam-domains/PfamDomainArchitecture';
@@ -19,7 +19,6 @@ import {
 } from 'ortho-client/records/utils';
 
 import {
-  RecordAttributeSectionProps,
   RecordTableProps,
   WrappedComponentProps
 } from 'ortho-client/records/Types';

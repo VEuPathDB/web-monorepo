@@ -23,15 +23,42 @@
     background-position: center;
     z-index: 100;
 
-    .vpdb-HeaderBranding {
-      content: url('~site/images/Logos-web/orthomclDB.png');
-    }
 
-    @media screen and (min-width: $cramped-header-width + 1) {
+    .ebrc-HeaderBrandingContainer {
+      position: relative;
+
+
       .vpdb-HeaderBranding {
-       /* height: 5em;*/
+        content: url('~site/images/Logos-web/orthomclDB.png');
+      }
+
+      .vpdb-HeaderBrandingSuperscript {
+        position: absolute;
+        top: 0em;
+        left: 28em;
+        font-size: 0.9em;
+        font-weight: 500;
+        color: white;
+        white-space: nowrap;
+      }
+    }  
+  
+
+    &__collapsed {
+      .ebrc-HeaderBrandingContainer {
+        .vpdb-HeaderBrandingSuperscript {
+          top: 0em;
+          left: 28em;
+          font-size: 0.9em;
+        }
       }
     }
+
+
+    .vpdb-HeaderBranding {
+      height: 6em;
+    }
+
 
     .wdk-CheckboxTreeNodeWrapper {
       position: relative;

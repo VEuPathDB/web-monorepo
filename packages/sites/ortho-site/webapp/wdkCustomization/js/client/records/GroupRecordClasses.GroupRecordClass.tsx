@@ -5,6 +5,7 @@ import { curry, groupBy, isNaN, uniqBy } from 'lodash';
 
 import { CollapsibleSection, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { AttributeField, AttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Props as RecordAttributeSectionProps } from '@veupathdb/wdk-client/lib/Views/Records/RecordAttributes/RecordAttributeSection';
 
 import { useTaxonUiMetadata } from 'ortho-client/hooks/taxons';
 import { PhyleticDistributionCheckbox } from 'ortho-client/components/phyletic-distribution/PhyleticDistributionCheckbox';
@@ -15,7 +16,6 @@ import { RecordTable_Sequences } from 'ortho-client/records/Sequences';
 
 import {
   RecordAttributeProps,
-  RecordAttributeSectionProps,
   RecordTableProps,
   WrappedComponentProps
 } from 'ortho-client/records/Types';
@@ -48,6 +48,7 @@ const SEQUENCES_TABLE_NAME = 'Sequences';
 const CORE_PERIPHERAL_ATTRIBUTE_NAME = 'core_peripheral';
 const PROTEIN_LENGTH_ATTRIBUTE_NAME = 'protein_length';
 const SOURCE_ID_ATTRIBUTE_NAME = 'full_id';
+const TAXON_ATTRIBUTE_NAME = 'taxon_name';
 
 export function RecordAttribute(props: WrappedComponentProps<RecordAttributeProps>) {
   const Component = recordAttributeWrappers[props.attribute.name] ?? props.DefaultComponent;
@@ -158,12 +159,16 @@ const makeProteinDomainLocationAttributeFields = transformAttributeFieldsUsingSp
       displayName: 'Accession'
     },
     {
+      name: TAXON_ATTRIBUTE_NAME,
+      displayName: 'Taxon'
+    },
+    {
       name: CORE_PERIPHERAL_ATTRIBUTE_NAME,
       displayName: 'Core/Peripheral'
     },
     {
       name: PROTEIN_LENGTH_ATTRIBUTE_NAME,
-      displayName: 'Protein Length'
+      displayName: 'Length (aa)'
     },
     {
       name: ACCESSION_ATTRIBUTE_NAME,
@@ -185,6 +190,10 @@ const makeProteinDomainArchitectureAttributeFields = transformAttributeFieldsUsi
     {
       name: SOURCE_ID_ATTRIBUTE_NAME,
       displayName: 'Accession'
+    },
+    {
+      name: TAXON_ATTRIBUTE_NAME,
+      displayName: 'Taxon'
     },
     {
       name: CORE_PERIPHERAL_ATTRIBUTE_NAME,

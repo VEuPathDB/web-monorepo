@@ -1,6 +1,9 @@
 import React from 'react';
 
+import { Props as RecordAttributeSectionProps } from 'wdk-client/Views/Records/RecordAttributes/RecordAttributeSection';
+
 import { OrthoMCLPage } from 'ortho-client/components/layout/OrthoMCLPage';
+import { SiteSearchInput } from 'ortho-client/components/site-search/SiteSearchInput';
 import {
   RecordAttribute as GroupRecordAttribute,
   RecordAttributeSection as GroupRecordAttributeSection,
@@ -12,15 +15,19 @@ import {
 } from 'ortho-client/records/SequenceRecordClasses.SequenceRecordClass';
 import {
   RecordAttributeProps,
-  RecordAttributeSectionProps,
   RecordTableProps
 } from 'ortho-client/records/Types';
+import {
+  RecordTableSection
+} from 'ortho-client/records/RecordTableSection';
 
 export default {
   Page: () => OrthoMCLPage,
   RecordAttribute: makeDynamicWrapper('RecordAttribute', (props: RecordAttributeProps) => props.recordClass.fullName),
   RecordAttributeSection: makeDynamicWrapper('RecordAttributeSection', (props: RecordAttributeSectionProps) => props.recordClass.fullName),
-  RecordTable: makeDynamicWrapper('RecordTable', (props: RecordTableProps) => props.recordClass.fullName)
+  RecordTable: makeDynamicWrapper('RecordTable', (props: RecordTableProps) => props.recordClass.fullName),
+  RecordTableSection,
+  SiteSearchInput
 };
 
 const GROUP_RECORD_CLASS_NAME = 'GroupRecordClasses.GroupRecordClass';

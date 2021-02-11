@@ -310,10 +310,11 @@ function useEcNumberLegendEntries(
     );
 
     return orderedEcNumberEntries.map(
-      ({ code, color, count }) => ({
+      ({ code, color, count, description }) => ({
         key: code,
         symbol: renderSimpleLegendSymbol(color),
-        description: `${code} (${count})`
+        description: `${code} (${count})`,
+	tooltip: description
       })
     );
   }, [ ecNumbers, genes ]);
@@ -362,7 +363,7 @@ function useCorePeripheralLegendEntries(
       );
 
       return corePeripheralLegendOrder.map(proteinType => {
-        const count = legendCountsByProteinType[proteinType];
+        const count = legendCountsByProteinType[proteinType] ?? 0;
         const color = corePeripheralLegendColors[proteinType];
         const nodesOfType = nodeIdsByProteinType[proteinType];
 

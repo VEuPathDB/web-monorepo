@@ -60,6 +60,7 @@ export interface EcNumberEntry {
   code: string;
   color: string;
   count: number;
+  description: string;
   index: number;
 }
 
@@ -114,6 +115,7 @@ export const ecNumberEntryDecoder: Decoder<EcNumberEntry> = record({
   code: string,
   color: string,
   count: number,
+  description: string,
   index: number
 });
 

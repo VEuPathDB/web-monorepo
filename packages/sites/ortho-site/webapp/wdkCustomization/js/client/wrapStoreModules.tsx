@@ -1,6 +1,6 @@
 import storeModules from '@veupathdb/wdk-client/lib/StoreModules';
 
-import * as record from 'ortho-client/store-modules/RecordStoreModule';
+import * as orthoRecord from 'ortho-client/store-modules/RecordStoreModule';
 
 // FIXME: Refine these types once EbrcWebsiteCommon's Redux has
 // been converted to TypeScript
@@ -10,6 +10,9 @@ type OrthoMclStoreModules = EbrcStoreModules;
 export function wrapStoreModules(ebrcStoreModules: EbrcStoreModules): OrthoMclStoreModules {
   return {
     ...ebrcStoreModules,
-    record
+    record: {
+      ...ebrcStoreModules.record,
+      ...orthoRecord
+    }
   };
 }
