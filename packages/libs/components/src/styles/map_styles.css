@@ -56,35 +56,35 @@
   margin-bottom: 7px;
 }
 
-.plot-marker-popup.popup-up.histogram-popup {
+.plot-marker-popup.histogram-popup.popup-up {
   margin-bottom: 36px;
 }
 
-.plot-marker-popup.popup-right.histogram-popup {
+.plot-marker-popup.histogram-popup.popup-right {
   margin-left: 30px;
 }
 
-.plot-marker-popup.popup-left.histogram-popup {
+.plot-marker-popup.histogram-popup.popup-left {
   margin-left: -30px;
 }
 
-.plot-marker-popup.popup-down.histogram-popup {
+.plot-marker-popup.histogram-popup.popup-down {
   margin-bottom: -22px;
 }
 
-.plot-marker-popup.popup-up.donut-popup {
+.plot-marker-popup.donut-popup.popup-up {
   margin-bottom: 27px;
 }
 
-.plot-marker-popup.popup-right.donut-popup {
+.plot-marker-popup.donut-popup.popup-right {
   margin-left: 20px;
 }
 
-.plot-marker-popup.popup-left.donut-popup {
+.plot-marker-popup.donut-popup.popup-left {
   margin-left: -20px;
 }
 
-.plot-marker-popup.popup-down.donut-popup {
+.plot-marker-popup.donut-popup.popup-down {
   margin-bottom: -12px;
 }
 

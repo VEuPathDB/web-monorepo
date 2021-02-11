@@ -210,7 +210,6 @@ export default function ChartMarker(props: ChartMarkerProps) {
     className: 'leaflet-canvas-icon', //DKDK need to change this className but just leave it as it for now
     iconSize: new L.Point(totalSize, totalSize), //DKDKset iconSize = 0
     iconAnchor: new L.Point(totalSize / 2, totalSize / 2), //DKDK location of topleft corner: this is used for centering of the icon like transform/translate in CSS
-    // popupAnchor: [0, -16],
     html: svgHTML, //DKDK divIcon HTML svg code generated above
   });
 

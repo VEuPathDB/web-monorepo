@@ -10,8 +10,6 @@ import {
   getCollectionDateBasicMarkers,
 } from './api/getMarkersFromFixtureData';
 
-import { LeafletMouseEvent } from 'leaflet';
-
 //DKDK change target component
 import MapVEuLegendSampleList, {
   LegendProps,

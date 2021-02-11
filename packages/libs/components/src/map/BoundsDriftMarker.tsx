@@ -4,7 +4,7 @@ import {
   Popup,
   MarkerProps as LeafletMarkerProps,
 } from 'react-leaflet';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { DriftMarker } from 'leaflet-drift-marker';
 import { MarkerProps, Bounds, ExtractProps } from './Types';
 import { LeafletMouseEvent, LatLngBounds } from 'leaflet';
@@ -84,41 +84,9 @@ export default function BoundsDriftMarker({
         // Have to add rotate here to preserve the existing transform, which varies
         popupDOMNode.style.transform += ` rotate(${angle}deg)`;
         popupDOMNode.classList.add('popup-' + orientation);
-
-        // const iconSize =
-        // icon && icon.options.iconSize
-        //   ? icon.options.iconSize
-        //   : { x: 55, y: 55 };
-
-        // const popupStyle = getComputedStyle(popupDOMNode);
-        // const margin_bottom = popupStyle.getPropertyValue('margin-bottom');
-        // console.log(margin_bottom);
-
-        // switch (orientation) {
-        //   case 'up':
-        //     // popupDOMNode.style['margin-bottom'] += 16;
-        //     console.log(iconSize.y / 2 + 15);
-        //     // popupStyle.setProperty('margin-bottom', String(iconSize.y / 2 + 15), 'important');
-        //     popupDOMNode.style.marginBottom = iconSize.y / 2 + 15;
-        //     console.log(
-        //       getComputedStyle(popupDOMNode).getPropertyValue('margin-bottom')
-        //     );
-        //     break;
-        //   case 'down':
-        //     popupDOMNode.style['margin-bottom'] -= 16;
-        //     break;
-        //   case 'left':
-        //     popupDOMNode.style['margin-left'] = -29;
-        //     break;
-        //   case 'right':
-        //     popupDOMNode.style['margin-left'] = 29;
-        //     break;
-        // }
       }
     }
   };
-
-  // useEffect(() => orientPopup(popupOrientationRef.current));
 
   const handleMouseOver = (e: LeafletMouseEvent) => {
     e.target._icon.classList.add('top-marker'); //DKDK marker on top
