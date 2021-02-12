@@ -28,6 +28,10 @@ export function Distribution(props: Props) {
   } = useAnalysis();
   const edaClient = useEdaApi();
   const variableSummary = usePromise(async () => {
+    // remove filter for active variable so it is not reflected in the foreground
+    const filters = analysis?.filters.filter(
+      (f) => f.entityId !== entity.id || f.variableId !== variable.id
+    );
     const bg$ = edaClient.getDistribution(
       studyMetadata.id,
       entity.id,
@@ -36,12 +40,11 @@ export function Distribution(props: Props) {
         filters: [],
       }
     );
-    const fg$ = analysis?.filters
+    // If there are no filters, reuse background for foreground.
+    // This is an optimization that saves a call to the backend.
+    const fg$ = filters?.length
       ? edaClient.getDistribution(studyMetadata.id, entity.id, variable.id, {
-          filters: analysis.filters.filter(
-            // FIXME Bad logic
-            (f) => f.entityId !== entity.id || f.variableId !== variable.id
-          ),
+          filters,
         })
       : bg$;
     const [bg, fg] = await Promise.all([bg$, fg$]);
