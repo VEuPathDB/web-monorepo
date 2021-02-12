@@ -5,6 +5,7 @@ import { uniq } from 'lodash';
 
 import { IconAlt, Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
+import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
@@ -22,7 +23,6 @@ import { blastWorkspaceCx } from './BlastWorkspace';
 import { CombinedBlastResult } from './CombinedBlastResult';
 
 import './BlastWorkspaceResult.scss';
-import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
 interface Props {
   jobId: string;
