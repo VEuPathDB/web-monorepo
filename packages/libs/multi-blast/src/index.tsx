@@ -2,6 +2,7 @@ import './globals';
 import React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
+import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 
@@ -13,6 +14,7 @@ import reportWebVitals from './reportWebVitals';
 import { BlastForm } from './lib/components/BlastForm';
 import { BlastWorkspace } from './lib/components/BlastWorkspace';
 import { BlastWorkspaceResult } from './lib/components/BlastWorkspaceResult';
+import { parseBlastResultSubpath } from './lib/utils/routes';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
@@ -28,20 +30,31 @@ initialize({
       component: (props: RouteComponentProps<void>) => <Home />,
     },
     {
-      path: '/workspace/blast/result/:jobId/:subPath*',
-      component: (
-        props: RouteComponentProps<{ jobId: string; subPath: string }>
-      ) => (
-        <BlastWorkspaceResult
-          jobId={props.match.params.jobId}
-          subPath={props.match.params.subPath}
-        />
-      ),
+      path: '/workspace/blast/:tab(new|all|help)',
+      component: BlastWorkspace,
     },
     {
-      path: '/workspace/blast',
-      exact: false,
-      component: BlastWorkspace,
+      path:
+        '/workspace/blast/result/:jobId/:subPath(combined|individual/\\d+)?',
+      component: (
+        props: RouteComponentProps<{
+          jobId: string;
+          subPath: string | undefined;
+        }>
+      ) => {
+        const selectedResult = parseBlastResultSubpath(
+          props.match.params.subPath
+        );
+
+        return selectedResult != null && selectedResult.type === 'unknown' ? (
+          <NotFoundController />
+        ) : (
+          <BlastWorkspaceResult
+            jobId={props.match.params.jobId}
+            selectedResult={selectedResult}
+          />
+        );
+      },
     },
     {
       path: '/search/transcript/GenesByMultiBlast',

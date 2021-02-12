@@ -22,13 +22,14 @@ import { blastWorkspaceCx } from './BlastWorkspace';
 import { CombinedBlastResult } from './CombinedBlastResult';
 
 import './BlastWorkspaceResult.scss';
+import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 
 interface Props {
   jobId: string;
-  subPath?: string;
+  selectedResult?: SelectedResult;
 }
 
-type SelectedResult =
+export type SelectedResult =
   | { type: 'combined' }
   | { type: 'individual'; resultIndex: number };
 
@@ -36,16 +37,6 @@ const POLLING_INTERVAL = 3000;
 
 export function BlastWorkspaceResult(props: Props) {
   const history = useHistory();
-
-  const selectedResult = useMemo(
-    () =>
-      props.subPath == null || props.subPath === ''
-        ? undefined
-        : ((props.subPath === 'combined'
-            ? { type: 'combined' }
-            : { type: 'individual', individualIndex: 1 }) as SelectedResult),
-    [props.subPath]
-  );
 
   const api = useBlastApi();
 
@@ -85,22 +76,28 @@ export function BlastWorkspaceResult(props: Props) {
   }, [multiQueryReportResult]);
 
   useEffect(() => {
-    if (queryCount != null && selectedResult == null) {
+    if (queryCount != null && props.selectedResult == null) {
       const selectedResultPath = queryCount > 1 ? '/combined' : '/invididual/1';
 
-      history.push(
+      history.replace(
         `/workspace/blast/result/${props.jobId}${selectedResultPath}`
       );
     }
-  }, [history, props.jobId, queryCount, selectedResult]);
+  }, [history, props.jobId, queryCount, props.selectedResult]);
 
-  return selectedResult == null ||
+  return props.selectedResult == null ||
     queryCount == null ||
     organismToFilenameMapsResult == null ||
     queryResult.value == null ||
     jobResult.value == null ||
     multiQueryReportResult.value == null ? (
     <LoadingBlastResult {...props} />
+  ) : props.selectedResult.type === 'combined' && queryCount == 1 ? (
+    <NotFoundController />
+  ) : props.selectedResult.type === 'individual' &&
+    (props.selectedResult.resultIndex == 0 ||
+      props.selectedResult.resultIndex > queryCount) ? (
+    <NotFoundController />
   ) : (
     <BlastSummary
       filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
@@ -108,7 +105,7 @@ export function BlastWorkspaceResult(props: Props) {
       multiQueryReport={multiQueryReportResult.value}
       query={queryResult.value}
       queryCount={queryCount}
-      selectedResult={selectedResult}
+      selectedResult={props.selectedResult}
     />
   );
 }
@@ -207,7 +204,11 @@ function BlastSummary({
             },
             {
               display: 'Individual Results',
-              route: '/individual/1',
+              route: `/individual/${
+                selectedResult.type === 'combined'
+                  ? 1
+                  : selectedResult.resultIndex
+              }`,
             },
           ]}
         />
