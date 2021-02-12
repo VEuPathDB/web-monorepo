@@ -19,7 +19,8 @@ import {
 import { State, QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
 import {
   FilterParamNew,
-  ParameterValues
+  ParameterValues,
+  Parameter
 } from 'wdk-client/Utils/WdkModel';
 
 import { FieldState, MemberFieldState, MultiFieldState, State as FilterParamState } from 'wdk-client/Views/Question/Params/FilterParamNew/State';
@@ -198,15 +199,12 @@ const observeInit: Observer = (action$, state$, services) => action$.pipe(
 
 const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wdkService }) => action$.pipe(
   filter((action): action is UpdateDependentParamsAction => action.type === UPDATE_DEPENDENT_PARAMS),
-  mergeMap(action => {
+  mergeMap((action: UpdateDependentParamsAction) => {
     const { searchName, updatedParameter } = action.payload;
     const questionState = getQuestionState(state$.value, searchName);
     if (questionState == null) return empty() as Observable<Action>;
     const { paramValues, paramUIState } = questionState;
-
-    const dependentParameters = updatedParameter.dependentParams.map(dependentParamName => 
-      questionState.question.parametersByName[dependentParamName]!
-    );
+    const dependentParameters = getAllDependencies(updatedParameter, questionState.question.parametersByName);
     return from(dependentParameters).pipe(
       filter(isType),
       mergeMap(parameter => {
@@ -237,6 +235,19 @@ const observeUpdateDependentParamsActiveField: Observer = (action$, state$, { wd
 
   })
 );
+
+/** Recursively find all dependencies of a given parameter. */
+function getAllDependencies(parameter: Parameter, parameters: Record<string, Parameter>): Parameter[] {
+  return parameter.dependentParams.flatMap(dependentParamName => {
+    const dependentParameter = parameters[dependentParamName];
+    return [dependentParameter].concat(
+      getAllDependencies(
+        parameters[dependentParamName],
+        parameters
+      )
+    );
+  });
+}
 
 const observeParam: Epic<Action, Action, State, EpicDependencies> =
   combineEpics<Epic<Action, Action, State>>(observeInit, observeUpdateDependentParamsActiveField);
