@@ -1,23 +1,18 @@
 import { Loading } from "@veupathdb/wdk-client/lib/Components";
 import FieldFilter from "@veupathdb/wdk-client/lib/Components/AttributeFilter/FieldFilter";
-import {
-  DateMemberFilter,
-  DateRangeFilter,
-  Filter,
-  NumberRangeFilter,
-} from "@veupathdb/wdk-client/lib/Components/AttributeFilter/Types";
+import { Filter } from "@veupathdb/wdk-client/lib/Components/AttributeFilter/Types";
 import EmptyState from "@veupathdb/wdk-client/lib/Components/Mesa/Ui/EmptyState";
 import { ErrorBoundary } from "@veupathdb/wdk-client/lib/Controllers";
 import React from "react";
-import {
-  StudyEntity,
-  StudyMetadata,
-  StudyVariable,
-  useAnalysis,
-  useEdaApi,
-  Filter as EdaFilter,
-} from "..";
+import { useAnalysis } from "../hooks/useAnalysis";
+import { useEdaApi } from "../hooks/useEdaApi";
 import { usePromise } from "../hooks/usePromise";
+import { StudyEntity, StudyMetadata, StudyVariable } from "../types/study";
+import {
+  fromEdaFilter,
+  toEdaFilter,
+  toWdkVariableSummary,
+} from "../utils/wdk-filter-param-adapter";
 
 interface Props {
   studyMetadata: StudyMetadata;
@@ -32,16 +27,7 @@ export function Distribution(props: Props) {
     history: { current: analysis },
   } = useAnalysis();
   const edaClient = useEdaApi();
-  const distribution = usePromise(async () => {
-    const activeField = {
-      display: variable.displayName,
-      isRange: variable.dataShape === "continuous",
-      parent: variable.parentId,
-      precision: 1,
-      term: variable.id,
-      type: variable.type,
-      variableName: variable.providerLabel,
-    };
+  const variableSummary = usePromise(async () => {
     const bg$ = edaClient.getDistribution(
       studyMetadata.id,
       entity.id,
@@ -59,23 +45,14 @@ export function Distribution(props: Props) {
         })
       : bg$;
     const [bg, fg] = await Promise.all([bg$, fg$]);
-    return {
-      distribution: Object.entries(bg.distribution).map(([value, count]) => ({
-        count,
-        filteredCount: fg.distribution[value],
-        value,
-      })),
-      entitiesCount: bg.entitiesCount,
-      filteredEntitiesCount: fg.entitiesCount,
-      activeField,
-    };
+    return toWdkVariableSummary(fg, bg, variable);
   }, [edaClient, studyMetadata, variable, entity, analysis?.filters]);
-  return distribution.pending ? (
+  return variableSummary.pending ? (
     <Loading />
-  ) : distribution.error ? (
-    <div>{String(distribution.error)}</div>
-  ) : distribution.value ? (
-    distribution.value.distribution.length === 0 ? (
+  ) : variableSummary.error ? (
+    <div>{String(variableSummary.error)}</div>
+  ) : variableSummary.value ? (
+    variableSummary.value.distribution.length === 0 ? (
       <div className="MesaComponent">
         <EmptyState culprit="nodata" />
       </div>
@@ -83,16 +60,17 @@ export function Distribution(props: Props) {
       <ErrorBoundary>
         <FieldFilter
           displayName={entity.displayName}
-          dataCount={distribution.value.entitiesCount}
-          filteredDataCount={distribution.value.filteredEntitiesCount}
+          dataCount={variableSummary.value.entitiesCount}
+          filteredDataCount={variableSummary.value.filteredEntitiesCount}
           filters={analysis?.filters.map((f) => fromEdaFilter(f)) ?? []}
-          activeField={distribution.value?.activeField}
+          activeField={variableSummary.value?.activeField}
           activeFieldState={{
             loading: false,
             summary: {
-              valueCounts: distribution.value.distribution,
-              internalsCount: distribution.value.entitiesCount,
-              internalsFilteredCount: distribution.value.filteredEntitiesCount,
+              valueCounts: variableSummary.value.distribution,
+              internalsCount: variableSummary.value.entitiesCount,
+              internalsFilteredCount:
+                variableSummary.value.filteredEntitiesCount,
             },
           }}
           onFiltersChange={(filters) =>
@@ -114,72 +92,4 @@ function logEvent(tag: string) {
   return function noop(...args: unknown[]) {
     console.log("Tagged event ::", tag + " ::", ...args);
   };
-}
-
-function toEdaFilter(filter: Filter, entityId: string): EdaFilter {
-  const variableId = filter.field;
-  if ("__entityId" in filter) entityId = (filter as any).__entityId;
-  const type: EdaFilter["type"] = filter.isRange
-    ? filter.type === "number"
-      ? "numberRange"
-      : "dateRange"
-    : filter.type === "string"
-    ? "stringSet"
-    : filter.type === "number"
-    ? "numberSet"
-    : "dateSet";
-  return (type === "dateSet"
-    ? {
-        entityId,
-        variableId,
-        type,
-        dateSet: (filter as DateMemberFilter).value.map((d) => d + "T00:00:00"),
-      }
-    : type === "numberSet"
-    ? {
-        entityId,
-        variableId,
-        type,
-        numberSet: filter.value,
-      }
-    : type === "stringSet"
-    ? {
-        entityId,
-        variableId,
-        type,
-        stringSet: filter.value,
-      }
-    : type === "dateRange"
-    ? {
-        entityId,
-        variableId,
-        type,
-        min: (filter as DateRangeFilter).value.min + "T00:00:00",
-        max: (filter as DateRangeFilter).value.max + "T00:00:00",
-      }
-    : {
-        entityId,
-        variableId,
-        type,
-        min: (filter as NumberRangeFilter).value.min,
-        max: (filter as NumberRangeFilter).value.max,
-      }) as EdaFilter;
-}
-
-function fromEdaFilter(filter: EdaFilter): Filter {
-  return {
-    field: filter.variableId,
-    isRange: filter.type.endsWith("Range"),
-    includeUnknown: false,
-    type: filter.type.replace(/(Set|Range)/, ""),
-    value: filter.type.endsWith("Range")
-      ? {
-          min: (filter as any).min.replace("T00:00:00", ""),
-          max: (filter as any).max.replace("T00:00:00", ""),
-        }
-      : (filter as any)[filter.type].map((d: string) =>
-          d.replace("T00:00:00", "")
-        ),
-    __entityId: filter.entityId,
-  } as Filter;
 }

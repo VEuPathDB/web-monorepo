@@ -1,5 +1,5 @@
 import { createJsonRequest, FetchClient } from '@veupathdb/web-common/lib/util/api';
-import { array, number, record, string, type, TypeOf } from 'io-ts';
+import { number, record, string, type, TypeOf } from 'io-ts';
 import { Filter } from '../types/filter';
 import { StudyMetadata } from "../types/study";
 import { ioTransformer } from './ioTransformer';
@@ -10,13 +10,13 @@ export const StudyResponse = type({
   study: StudyMetadata
 });
 
-export interface HistogramRequestParams {
+export interface DistributionRequestParams {
   filters: Filter[];
 }
 
-export type HistogramResponse = TypeOf<typeof HistogramResponse>;
+export type DistributionResponse = TypeOf<typeof DistributionResponse>;
 
-export const HistogramResponse = type({
+export const DistributionResponse = type({
   entitiesCount: number,
   distribution: record(string, number)
 });
@@ -37,12 +37,12 @@ export class EdaClient extends FetchClient {
       transformResponse: ioTransformer(type({ count: number }))
     }));
   }
-  getDistribution(studyId: string, entityId: string, variableId: string, params: HistogramRequestParams): Promise<HistogramResponse> {
+  getDistribution(studyId: string, entityId: string, variableId: string, params: DistributionRequestParams): Promise<DistributionResponse> {
     return this.fetch(createJsonRequest({
       method: 'POST',
       path: `/studies/${studyId}/entities/${entityId}/variables/${variableId}/distribution`,
       body: params,
-      transformResponse: ioTransformer(HistogramResponse)
+      transformResponse: ioTransformer(DistributionResponse)
     }));
   }
 }
