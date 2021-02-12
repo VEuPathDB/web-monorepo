@@ -2242,10 +2242,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/eda-workspace-core@^0.0.2-alpha.10":
-  version "0.0.2-alpha.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda-workspace-core/-/eda-workspace-core-0.0.2-alpha.11.tgz#66126c0b89cb6c193445102e08caf9a90344f900"
-  integrity sha512-2KPIm3p1/phZOCirpyQkni3FI8IDzYYBlc2d+n83iSzjljL9c6ih3Lc6QOO0qj/PfPLOHtovKiOl8G9Nifv43w==
+"@veupathdb/eda-workspace-core@^0.0.2-alpha.12":
+  version "0.0.2-alpha.12"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda-workspace-core/-/eda-workspace-core-0.0.2-alpha.12.tgz#7adcd86a0e604868075b9c1235344bba7ad260af"
+  integrity sha512-GyqKEo075tHSMGyXxbrKcMk+eto4BuCClu8wK5wW9rPJfXZCjNMC7xakEwGGKZ7Bl3anRDFCGRuhTila1nXGcA==
   dependencies:
     "@veupathdb/wdk-client" "^0.1.1-alpha.4"
     "@veupathdb/web-common" "^0.1.1-alpha.2"
