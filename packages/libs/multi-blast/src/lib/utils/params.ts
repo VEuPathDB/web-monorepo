@@ -269,13 +269,7 @@ export function blastConfigToParamValues(
     ] = `${blastConfig.reward},${blastConfig.penalty}`;
   }
 
-  return {
-    ...parameterValues,
-    // [BLAST_DATABASE_ORGANISM_PARAM_NAME]:
-    // [BLAST_DATABASE_TYPE_PARAM_NAME]:
-    // [BLAST_QUERY_SEQUENCE_PARAM_NAME]:
-    // [COMP_ADJUST_PARAM_NAME]:
-  };
+  return parameterValues;
 }
 
 export function organismParamValueToFilenames(
