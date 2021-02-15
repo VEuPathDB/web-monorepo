@@ -8,6 +8,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 
 import {
+  IoBlastCompBasedStats,
   IoBlastConfig,
   IOBlastPScoringMatrix,
   IOBlastXScoringMatrix,
@@ -74,7 +75,7 @@ export function paramValuesToBlastConfig(
     [MAX_MATCHES_QUERY_RANGE_PARAM_NAME]: maxMatchesStr,
     [WORD_SIZE_PARAM_NAME]: wordSizeStr,
     [SCORING_MATRIX_PARAM_NAME]: scoringMatrixStr,
-    [COMP_ADJUST_PARAM_NAME]: compBasedStatsStr,
+    [COMP_ADJUST_PARAM_NAME]: compBasedStats,
     [FILTER_LOW_COMPLEX_PARAM_NAME]: filterLowComplexityRegionsStr,
     [SOFT_MASK_PARAM_NAME]: softMaskStr,
     [LOWER_CASE_MASK_PARAM_NAME]: lowerCaseMaskStr,
@@ -101,15 +102,6 @@ export function paramValuesToBlastConfig(
     },
     ...maxHSPsConfig,
   } as const;
-
-  const compBasedStats =
-    compBasedStatsStr === 'Conditional compositional score matrix adjustment'
-      ? 'conditional-comp-based-score-adjustment'
-      : compBasedStatsStr === 'No adjustment'
-      ? 'none'
-      : compBasedStatsStr === 'Composition-based statistics'
-      ? 'comp-based-stats'
-      : 'unconditional-comp-based-score-adjustment';
 
   const filterLowComplexityRegions =
     filterLowComplexityRegionsStr !== 'no filter';
@@ -155,7 +147,7 @@ export function paramValuesToBlastConfig(
       ...baseConfig,
       ...segConfig,
       matrix: scoringMatrixStr as IOBlastPScoringMatrix,
-      compBasedStats,
+      compBasedStats: compBasedStats as IoBlastCompBasedStats,
     };
   }
 
@@ -167,7 +159,7 @@ export function paramValuesToBlastConfig(
       ...baseConfig,
       ...segConfig,
       matrix: scoringMatrixStr as IOBlastXScoringMatrix,
-      compBasedStats,
+      compBasedStats: compBasedStats as IoBlastCompBasedStats,
     };
   }
 
@@ -178,7 +170,7 @@ export function paramValuesToBlastConfig(
       ...baseConfig,
       ...segConfig,
       matrix: scoringMatrixStr as IOTBlastNScoringMatrix,
-      compBasedStats,
+      compBasedStats: compBasedStats as IoBlastCompBasedStats,
     };
   }
 

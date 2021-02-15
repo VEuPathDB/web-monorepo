@@ -22,7 +22,7 @@ export default function Home() {
         <p>Work under development:</p>
         <ul>
           <li>
-            <Link to="/workspace/blast">BLAST workspace</Link>
+            <Link to="/workspace/blast/new">BLAST workspace</Link>
           </li>
         </ul>
       </div>
