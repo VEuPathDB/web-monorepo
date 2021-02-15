@@ -3,6 +3,8 @@ import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
 import defaultColorGen from '../utils/defaultColorGen';
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
+import { PiePlotData, PiePlotDatum } from '../types/plots';
+import { NumberOrDate } from '../types/general';
 
 export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
   hoverinfo: PlotlyPlotData['hoverinfo'] | PlotlyPlotData['textinfo'];
@@ -10,14 +12,8 @@ export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
   texttemplate: string | string[];
 }
 
-type PiePlotDatum = {
-  value: number;
-  label: string;
-  color?: string;
-};
-
 export interface Props extends PlotProps {
-  data: PiePlotDatum[];
+  data: PiePlotData;
   interior?: {
     heightPercentage: number;
     text?: string;
@@ -93,7 +89,7 @@ export default function PiePlot(props: Props) {
   // Preprocess data for PlotlyPlot
   const reducer = (
     accumulatorObj: {
-      values: number[];
+      values: NumberOrDate[];
       labels: string[];
       marker: { colors: string[] };
     },
