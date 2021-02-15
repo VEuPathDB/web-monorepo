@@ -9,7 +9,6 @@ import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-import { UnderConstruction } from './BlastWorkspace';
 import { useBlastApi } from '../hooks/api';
 import {
   useHitTypeDisplayName,
@@ -18,6 +17,7 @@ import {
 import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
 import { dbToTargetName } from '../utils/combinedResults';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
+import { reportToParamValues } from '../utils/params';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { CombinedBlastResult } from './CombinedBlastResult';
@@ -221,7 +221,18 @@ function BlastSummary({
           wdkRecordType={wdkRecordType}
         />
       ) : (
-        <UnderConstruction />
+        <pre>
+          {JSON.stringify(
+            reportToParamValues(
+              jobDetails.config,
+              query,
+              databases,
+              filesToOrganisms
+            ),
+            null,
+            2
+          )}
+        </pre>
       )}
     </div>
   );

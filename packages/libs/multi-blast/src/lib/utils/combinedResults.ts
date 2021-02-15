@@ -64,17 +64,32 @@ export function dbToTargetName(db: string) {
   return db.replace(/[\s\S]*\//, '');
 }
 
+export function dbToOrgDirAndTargetType(db: string) {
+  const targetName = dbToTargetName(db);
+
+  const match = targetName.match(
+    /^(.*)(AnnotatedTranscripts|AnnotatedProteins|Genome|ESTs|PopSet)$/
+  );
+
+  return {
+    orgDir: match == null || match.length < 3 ? null : match[1],
+    targetType: match == null || match.length < 3 ? null : match[2],
+  };
+}
+
 export function blastDbNameToWdkRecordType(blastDbName: string) {
+  const { targetType } = dbToOrgDirAndTargetType(blastDbName);
+
   if (
-    blastDbName.endsWith('AnnotatedTranscripts') ||
-    blastDbName.endsWith('AnnotatedProteins')
+    targetType === 'AnnotatedTranscripts' ||
+    targetType === 'AnnotatedProteins'
   ) {
     return 'gene';
-  } else if (blastDbName.endsWith('Genome')) {
+  } else if (targetType === 'Genome') {
     return 'genomic-sequence';
-  } else if (blastDbName.endsWith('ESTs')) {
+  } else if (targetType === 'ESTs') {
     return 'est';
-  } else if (blastDbName.endsWith('PopSet')) {
+  } else if (targetType === 'PopSet') {
     return 'popsetSequence';
   } else {
     return null;
@@ -82,16 +97,12 @@ export function blastDbNameToWdkRecordType(blastDbName: string) {
 }
 
 export function dbToOrganismFactory(filesToOrganisms: Record<string, string>) {
-  const filesToOrganismsEntries = Object.entries(filesToOrganisms);
-
   return function dbToOrganism(db: string) {
-    const targetName = dbToTargetName(db);
+    const { orgDir } = dbToOrgDirAndTargetType(db);
 
-    const fileToOrganismPair = filesToOrganismsEntries.find(([filename]) =>
-      targetName.startsWith(filename)
-    );
-
-    return fileToOrganismPair == null ? null : fileToOrganismPair[1];
+    return orgDir == null || filesToOrganisms[orgDir] == null
+      ? null
+      : filesToOrganisms[orgDir];
   };
 }
 

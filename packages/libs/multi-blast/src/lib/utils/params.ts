@@ -5,6 +5,7 @@ import {
 import {
   isEnumParam,
   toMultiValueArray,
+  toMultiValueString,
 } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
 
 import {
@@ -15,6 +16,10 @@ import {
   IOTBlastNScoringMatrix,
   IOTBlastXScoringMatrix,
 } from './ServiceTypes';
+import {
+  dbToOrganismFactory,
+  dbToOrgDirAndTargetType,
+} from './combinedResults';
 
 export const BLAST_DATABASE_ORGANISM_PARAM_NAME = 'MultiBlastDatabaseOrganism';
 export const BLAST_DATABASE_TYPE_PARAM_NAME = 'MultiBlastDatabaseType';
@@ -270,6 +275,42 @@ export function blastConfigToParamValues(
   }
 
   return parameterValues;
+}
+
+export function databaseStringsToOrganismParamValue(
+  dbs: string[],
+  dirsToOrganisms: Record<string, string>
+) {
+  const dbToOrganism = dbToOrganismFactory(dirsToOrganisms);
+
+  const selectedOrganisms = dbs
+    .map(dbToOrganism)
+    .filter((organism): organism is string => organism != null);
+
+  return toMultiValueString(selectedOrganisms);
+}
+
+export function reportToParamValues(
+  blastConfig: IoBlastConfig,
+  query: string,
+  dbs: string[],
+  dirsToOrganisms: Record<string, string>
+) {
+  const configParamValues = blastConfigToParamValues(blastConfig);
+
+  const organismParamValue = databaseStringsToOrganismParamValue(
+    dbs,
+    dirsToOrganisms
+  );
+
+  const { targetType } = dbToOrgDirAndTargetType(dbs[0]);
+
+  return {
+    ...configParamValues,
+    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: query,
+    [BLAST_DATABASE_ORGANISM_PARAM_NAME]: organismParamValue,
+    [BLAST_DATABASE_TYPE_PARAM_NAME]: targetType ?? '',
+  };
 }
 
 export function organismParamValueToFilenames(
