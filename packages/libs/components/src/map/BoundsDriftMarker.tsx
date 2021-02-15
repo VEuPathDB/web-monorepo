@@ -4,7 +4,7 @@ import {
   Popup,
   MarkerProps as LeafletMarkerProps,
 } from 'react-leaflet';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DriftMarker } from 'leaflet-drift-marker';
 import { MarkerProps, Bounds, ExtractProps } from './Types';
 import { LeafletMouseEvent, LatLngBounds } from 'leaflet';
@@ -47,20 +47,28 @@ export default function BoundsDriftMarker({
   const markerRef = useRef<any>();
   const popupRef = useRef<any>();
   const popupOrientationRef = useRef<PopupOrientation>('up');
+  const draggingRef = useRef(false);
 
-  const popup = popupContent && (
-    <Popup
-      ref={popupRef}
-      className={'plot-marker-popup' + (popupClass ? ` ${popupClass}` : '')}
-      minWidth={popupContent.size.width}
-      maxWidth={popupContent.size.width}
-      maxHeight={popupContent.size.height}
-      autoPan={false}
-      closeButton={false}
-    >
-      {popupContent.content}
-    </Popup>
-  );
+  const updatePopupOrientationRef = () => {
+    if (popupContent) {
+      // Figure out if we're close to the viewport edge
+      const markerRect = markerRef.current.leafletElement._icon.getBoundingClientRect();
+      const markerCenterX = (markerRect.left + markerRect.right) / 2;
+
+      if (markerRect.top < popupContent.size.height) {
+        popupOrientationRef.current = 'down';
+      } else if (markerCenterX < popupContent.size.width / 2) {
+        popupOrientationRef.current = 'right';
+      } else if (
+        window.innerWidth - markerCenterX <
+        popupContent.size.width / 2
+      ) {
+        popupOrientationRef.current = 'left';
+      } else {
+        popupOrientationRef.current = 'up';
+      }
+    }
+  };
 
   const orientPopup = (orientation: PopupOrientation) => {
     if (popupRef.current) {
@@ -88,31 +96,72 @@ export default function BoundsDriftMarker({
     }
   };
 
+  function handleMapMoveStart() {
+    draggingRef.current = true;
+    console.log('here3');
+  }
+
+  function handleMapMoveEnd() {
+    draggingRef.current = false;
+    console.log('here4');
+  }
+
+  const observer = new MutationObserver((mutationRecord) => {
+    const popupDOMNode = mutationRecord[0].target as HTMLElement;
+    if (
+      !draggingRef.current &&
+      !popupDOMNode.style.transform.includes('rotate')
+    ) {
+      console.log('reorienting popup');
+      orientPopup(popupOrientationRef.current);
+    }
+  });
+
+  const handlePopupOpen = () => {
+    updatePopupOrientationRef();
+    orientPopup(popupOrientationRef.current);
+
+    map?.on('movestart', handleMapMoveStart);
+    map?.on('moveend', handleMapMoveEnd);
+
+    const popupDOMNode = popupRef.current.leafletElement
+      ._container as HTMLElement;
+    observer.observe(popupDOMNode, { attributeFilter: ['style'] });
+  };
+
+  const handlePopupClose = () => {
+    observer.disconnect();
+
+    // Have to do this again because styling is changed again on close
+    orientPopup(popupOrientationRef.current);
+
+    map?.off('movestart', handleMapMoveStart);
+    map?.off('moveend', handleMapMoveEnd);
+    console.log('popup closing');
+  };
+
+  const popup = popupContent && (
+    <Popup
+      ref={popupRef}
+      className={'plot-marker-popup' + (popupClass ? ` ${popupClass}` : '')}
+      minWidth={popupContent.size.width}
+      maxWidth={popupContent.size.width}
+      maxHeight={popupContent.size.height}
+      autoPan={false}
+      closeButton={false}
+      onOpen={() => handlePopupOpen()}
+      onClose={() => handlePopupClose()}
+    >
+      {popupContent.content}
+    </Popup>
+  );
+
   const handleMouseOver = (e: LeafletMouseEvent) => {
     e.target._icon.classList.add('top-marker'); //DKDK marker on top
     setDisplayBounds(true); // Display bounds rectangle
 
-    if (showPopup && popupContent) {
+    if (showPopup && popupContent && !draggingRef.current) {
       e.target.openPopup();
-
-      // Figure out if we're close to the viewport edge
-      const markerRect = markerRef.current.leafletElement._icon.getBoundingClientRect();
-      const markerCenterX = (markerRect.left + markerRect.right) / 2;
-
-      if (markerRect.top < popupContent.size.height) {
-        popupOrientationRef.current = 'down';
-      } else if (markerCenterX < popupContent.size.width / 2) {
-        popupOrientationRef.current = 'right';
-      } else if (
-        window.innerWidth - markerCenterX <
-        popupContent.size.width / 2
-      ) {
-        popupOrientationRef.current = 'left';
-      } else {
-        popupOrientationRef.current = 'up';
-      }
-
-      orientPopup(popupOrientationRef.current);
     }
   };
 
@@ -120,10 +169,8 @@ export default function BoundsDriftMarker({
     e.target._icon.classList.remove('top-marker'); //DKDK remove marker on top
     setDisplayBounds(false); // Remove bounds rectangle
 
-    if (showPopup && popupContent) {
+    if (showPopup && popupContent && !draggingRef.current) {
       e.target.closePopup();
-      // Have to do this again because styling is changed again on close
-      orientPopup(popupOrientationRef.current);
     }
   };
 

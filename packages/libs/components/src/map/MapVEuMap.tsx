@@ -3,6 +3,7 @@ import React, {
   CSSProperties,
   ReactElement,
   cloneElement,
+  useRef,
 } from 'react';
 import { BoundsViewport, MarkerProps, AnimationFunction } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
@@ -65,6 +66,7 @@ export default function MapVEuMap({
   const handleViewportChanged = (viewport: Viewport) => {
     updateState(viewport);
   };
+  const ref = useRef<any>();
 
   if (mouseMode === 'magnification') {
     markers = markers.map((marker) =>
@@ -74,6 +76,7 @@ export default function MapVEuMap({
 
   return (
     <Map
+      ref={ref}
       viewport={state}
       style={{ height, width }}
       onViewportChanged={handleViewportChanged}
@@ -81,6 +84,14 @@ export default function MapVEuMap({
       // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
       minZoom={2}
       worldCopyJump={false}
+      ondragstart={() => {
+        console.log('here');
+        ref.current?.leafletElement.closePopup();
+      }}
+      ondragend={() => {
+        console.log('here2');
+        ref.current?.leafletElement.closePopup();
+      }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
