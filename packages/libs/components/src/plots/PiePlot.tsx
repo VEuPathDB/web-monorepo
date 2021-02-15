@@ -1,8 +1,9 @@
 import React from 'react';
-import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
-import defaultColorGen from '../utils/defaultColorGen';
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
+import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
+
+import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
 import { NumberOrDate } from '../types/general';
 
@@ -12,8 +13,15 @@ export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
   texttemplate: string | string[];
 }
 
-export interface Props extends PlotProps {
+export interface Props {
+  /** Data for the plot. */
   data: PiePlotData;
+  /** The width of the plot in pixels. */
+  width: number;
+  /** The height of the plot in pixels. */
+  height: number;
+  /** Should plot legend be displayed? */
+  displayLegend?: boolean;
   interior?: {
     heightPercentage: number;
     text?: string;
@@ -21,7 +29,6 @@ export interface Props extends PlotProps {
     textColor?: string;
     fontSize?: string | number;
   };
-  showLegend?: boolean;
   text?: string[];
   textinfo?: PlotData['textinfo'];
   textposition?: 'inside' | 'outside' | 'auto' | 'none';
@@ -29,6 +36,7 @@ export interface Props extends PlotProps {
   showHoverInfo?: boolean;
 }
 
+/** A Plot.ly based Pie plot. */
 export default function PiePlot(props: Props) {
   const { data, interior = null } = props;
   const defaultColorIter = defaultColorGen();
@@ -120,29 +128,29 @@ export default function PiePlot(props: Props) {
 
   newData.push(primaryDataTrace);
 
-  if (props.staticPlot) {
-    layout.hovermode = false;
-  }
+  // if (props.staticPlot) {
+  //   layout.hovermode = false;
+  // }
 
   return (
     <PlotlyPlot
-      data={newData as any} // Casting as 'any' to avoid issues with PlotData for pie charts
+      data={newData as any} // TODO: Casting as 'any' to avoid issues with PlotData for pie charts
       layout={{
         ...layout,
         ...{
           width: props.width,
           height: props.height,
-          margin: props.margin,
-          //DKDK add legend here
-          legend: props.legend,
-          showlegend: props.showLegend,
+          margin: {
+            pad: 5,
+          },
+          showlegend: props.displayLegend,
         },
       }}
-      config={{
-        displayModeBar:
-          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
-        staticPlot: props.staticPlot,
-      }}
+      // config={{
+      //   displayModeBar:
+      //     props.showModebar !== undefined ? props.showModebar : ModebarDefault,
+      //   staticPlot: props.staticPlot,
+      // }}
     />
   );
 }
