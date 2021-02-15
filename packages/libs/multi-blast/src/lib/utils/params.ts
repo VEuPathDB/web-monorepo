@@ -229,7 +229,7 @@ export function blastConfigToParamValues(
     parameterValues[WORD_SIZE_PARAM_NAME] = String(blastConfig.wordSize);
   }
 
-  if (blastConfig.tool !== 'blastn' && blastConfig.matrix) {
+  if (blastConfig.tool !== 'blastn' && blastConfig.matrix != null) {
     parameterValues[SCORING_MATRIX_PARAM_NAME] = blastConfig.matrix;
   }
 
