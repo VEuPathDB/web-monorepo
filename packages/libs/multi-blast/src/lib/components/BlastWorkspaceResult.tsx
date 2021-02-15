@@ -92,10 +92,10 @@ export function BlastWorkspaceResult(props: Props) {
     jobResult.value == null ||
     multiQueryReportResult.value == null ? (
     <LoadingBlastResult {...props} />
-  ) : props.selectedResult.type === 'combined' && queryCount == 1 ? (
+  ) : props.selectedResult.type === 'combined' && queryCount === 1 ? (
     <NotFoundController />
   ) : props.selectedResult.type === 'individual' &&
-    (props.selectedResult.resultIndex == 0 ||
+    (props.selectedResult.resultIndex === 0 ||
       props.selectedResult.resultIndex > queryCount) ? (
     <NotFoundController />
   ) : (
