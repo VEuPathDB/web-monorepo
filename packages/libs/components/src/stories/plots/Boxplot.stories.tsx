@@ -1,11 +1,11 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import Boxplot, { Props } from '../plots/Boxplot';
+import Boxplot, { Props } from '../../plots/Boxplot';
 import stats from 'stats-lite';
 import _ from 'lodash';
 
 export default {
-  title: 'Boxplot',
+  title: 'Plots/Box',
   component: Boxplot,
   argTypes: {
     markerOpacity: {

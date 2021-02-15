@@ -1,8 +1,8 @@
 import React from 'react';
-import ScatterAndLinePlotGeneral from '../plots/ScatterAndLinePlotGeneral';
+import ScatterAndLinePlotGeneral from '../../plots/ScatterAndLinePlotGeneral';
 
 export default {
-  title: 'Scatter Plot General',
+  title: 'Plots/Scatter',
   component: ScatterAndLinePlotGeneral,
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/41310',

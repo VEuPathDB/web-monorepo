@@ -1,8 +1,8 @@
 import React from 'react';
-import MosaicPlot from '../plots/MosaicPlot';
+import MosaicPlot from '../../plots/MosaicPlot';
 
 export default {
-  title: 'MosaicPlot',
+  title: 'Plots/Mosaic',
   component: MosaicPlot,
 };
 

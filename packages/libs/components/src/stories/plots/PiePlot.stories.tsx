@@ -1,8 +1,8 @@
 import React from 'react';
-import PiePlot from '../plots/PiePlot';
+import PiePlot from '../../plots/PiePlot';
 
 export default {
-  title: 'PiePlot',
+  title: 'Plots/Pie',
   component: PiePlot,
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/41799',
