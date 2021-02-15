@@ -233,6 +233,14 @@ export function blastConfigToParamValues(
     parameterValues[SCORING_MATRIX_PARAM_NAME] = blastConfig.matrix;
   }
 
+  if (
+    blastConfig.tool !== 'blastn' &&
+    blastConfig.tool !== 'tblastx' &&
+    blastConfig.compBasedStats != null
+  ) {
+    parameterValues[COMP_ADJUST_PARAM_NAME] = blastConfig.compBasedStats;
+  }
+
   if (blastConfig.tool === 'blastn') {
     parameterValues[FILTER_LOW_COMPLEX_PARAM_NAME] = blastConfig.dust?.enable
       ? 'dust'
@@ -295,7 +303,7 @@ export function reportToParamValues(
   query: string,
   dbs: string[],
   dirsToOrganisms: Record<string, string>
-) {
+): ParameterValues {
   const configParamValues = blastConfigToParamValues(blastConfig);
 
   const organismParamValue = databaseStringsToOrganismParamValue(
