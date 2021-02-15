@@ -77,7 +77,7 @@ export function BlastWorkspaceResult(props: Props) {
 
   useEffect(() => {
     if (queryCount != null && props.selectedResult == null) {
-      const selectedResultPath = queryCount > 1 ? '/combined' : '/invididual/1';
+      const selectedResultPath = queryCount > 1 ? '/combined' : '/individual/1';
 
       history.replace(
         `/workspace/blast/result/${props.jobId}${selectedResultPath}`
