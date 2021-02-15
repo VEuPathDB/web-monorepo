@@ -70,7 +70,7 @@ const TemplateWithControls: Story<
       />
       <div style={{ height: 25 }} />
       <HistogramControls
-        label='Histogram Controls'
+        label="Histogram Controls"
         {...plotControls}
         {...plotControls.histogram}
         containerStyles={{

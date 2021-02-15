@@ -50,7 +50,7 @@ export default function Switch({
       onMouseOut={() => setFocused(false)}
     >
       <Typography
-        variant='button'
+        variant="button"
         style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY, paddingRight: 15 }}
       >
         Legend
@@ -59,8 +59,8 @@ export default function Switch({
         <MaterialSwitch
           checked={state}
           onChange={onStateChange}
-          size='small'
-          color='primary'
+          size="small"
+          color="primary"
         />
       </ThemeProvider>
     </div>

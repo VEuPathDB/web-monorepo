@@ -1,5 +1,5 @@
-import React from "react";
-import PlotlyPlot, { PlotProps, ModebarDefault } from "./PlotlyPlot";
+import React from 'react';
+import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
 import { PlotData } from 'plotly.js';
 
 export interface Props extends PlotProps {
@@ -16,34 +16,48 @@ export interface Props extends PlotProps {
 }
 
 export default function LinePlot(props: Props) {
-  const { xLabel, yLabel, data, width, height, margin, showLegend, showModebar, ...plotlyProps } = props;
-  const finalData = data.map(d => ({
-    ...d,
-    type: 'scatter',
-    mode: 'lines'
-  } as const))
+  const {
+    xLabel,
+    yLabel,
+    data,
+    width,
+    height,
+    margin,
+    showLegend,
+    showModebar,
+    ...plotlyProps
+  } = props;
+  const finalData = data.map(
+    (d) =>
+      ({
+        ...d,
+        type: 'scatter',
+        mode: 'lines',
+      } as const)
+  );
   const layout = {
     xaxis: {
-      title: xLabel
+      title: xLabel,
     },
     yaxis: {
-      title: yLabel
-    }
-  }
+      title: yLabel,
+    },
+  };
   return (
-  <PlotlyPlot
-    {...plotlyProps}
-    layout={Object.assign(layout, {
-      width: width,
-      height: height,
-      margin: margin,
-      showlegend: showLegend,
-    })}
-    config={{
-      displayModeBar: props.showModebar !== undefined ? props.showModebar : ModebarDefault,
-      staticPlot: props.staticPlot,
-    }}
-    data={finalData}
-  />
-  )
+    <PlotlyPlot
+      {...plotlyProps}
+      layout={Object.assign(layout, {
+        width: width,
+        height: height,
+        margin: margin,
+        showlegend: showLegend,
+      })}
+      config={{
+        displayModeBar:
+          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
+        staticPlot: props.staticPlot,
+      }}
+      data={finalData}
+    />
+  );
 }

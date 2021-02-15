@@ -36,7 +36,7 @@ export default function OrientationToggle({
       onMouseOut={() => setFocused(false)}
     >
       <Typography
-        variant='button'
+        variant="button"
         style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
       >
         Orientation
@@ -45,11 +45,11 @@ export default function OrientationToggle({
         value={orientation}
         exclusive
         onChange={(event, value) => onOrientationChange(value)}
-        aria-label='Plot Orientation Control'
+        aria-label="Plot Orientation Control"
       >
         <ToggleButton
-          value='vertical'
-          aria-label='vertical'
+          value="vertical"
+          aria-label="vertical"
           style={{ padding: '5px' }}
         >
           <FormatAlignLeftIcon
@@ -57,8 +57,8 @@ export default function OrientationToggle({
           />
         </ToggleButton>
         <ToggleButton
-          value='horizontal'
-          aria-label='horizontal'
+          value="horizontal"
+          aria-label="horizontal"
           style={{ padding: '5px' }}
         >
           <FormatAlignLeftIcon style={{ fontSize: '18px' }} />
