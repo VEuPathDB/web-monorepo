@@ -43,7 +43,8 @@ export const apiRequests = {
   createJob: function (
     site: string,
     targets: { organism: string; target: string }[],
-    config: IoBlastConfig
+    config: IoBlastConfig,
+    description?: string
   ) {
     return createJsonRequest({
       path: JOBS_PATH,
@@ -52,6 +53,7 @@ export const apiRequests = {
         site,
         targets,
         config,
+        description,
       },
       transformResponse: standardTransformer(createJobResponse),
     });

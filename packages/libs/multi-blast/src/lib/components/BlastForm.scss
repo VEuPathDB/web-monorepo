@@ -28,6 +28,10 @@
       .wdk-QuestionFormParameterControl {
         padding: 1.1em 0;
       }
+
+      input[type='text'] {
+        width: 90ch;
+      }
     }
 
     .wdk-QuestionFormGroup__advancedParams {

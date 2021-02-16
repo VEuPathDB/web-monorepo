@@ -27,6 +27,7 @@ import {
   BLAST_DATABASE_ORGANISM_PARAM_NAME,
   BLAST_DATABASE_TYPE_PARAM_NAME,
   BLAST_QUERY_SEQUENCE_PARAM_NAME,
+  JOB_DESCRIPTION_PARAM_NAME,
   isOmittedParam,
   organismParamValueToFilenames,
   paramValuesToBlastConfig,
@@ -229,7 +230,8 @@ function NewJobForm(props: NewJobFormProps) {
       const { jobId } = await api.createJob(
         projectId,
         targets,
-        paramValuesToBlastConfig(props.state.paramValues)
+        paramValuesToBlastConfig(props.state.paramValues),
+        props.state.paramValues[JOB_DESCRIPTION_PARAM_NAME]
       );
 
       setSubmitting(false);

@@ -15,6 +15,7 @@ import {
   IOBlastXScoringMatrix,
   IOTBlastNScoringMatrix,
   IOTBlastXScoringMatrix,
+  LongJobResponse,
 } from './ServiceTypes';
 import {
   dbToOrganismFactory,
@@ -25,6 +26,7 @@ export const BLAST_DATABASE_ORGANISM_PARAM_NAME = 'MultiBlastDatabaseOrganism';
 export const BLAST_DATABASE_TYPE_PARAM_NAME = 'MultiBlastDatabaseType';
 export const BLAST_QUERY_SEQUENCE_PARAM_NAME = 'BlastQuerySequence';
 export const BLAST_ALGORITHM_PARAM_NAME = 'BlastAlgorithm';
+export const JOB_DESCRIPTION_PARAM_NAME = 'BlastJobDescription';
 
 // General config for all BLAST applications
 export const EXPECTATION_VALUE_PARAM_NAME = 'ExpectationValue';
@@ -299,12 +301,12 @@ export function databaseStringsToOrganismParamValue(
 }
 
 export function reportToParamValues(
-  blastConfig: IoBlastConfig,
+  jobDetails: LongJobResponse,
   query: string,
   dbs: string[],
   dirsToOrganisms: Record<string, string>
 ): ParameterValues {
-  const configParamValues = blastConfigToParamValues(blastConfig);
+  const configParamValues = blastConfigToParamValues(jobDetails.config);
 
   const organismParamValue = databaseStringsToOrganismParamValue(
     dbs,
@@ -315,6 +317,7 @@ export function reportToParamValues(
 
   return {
     ...configParamValues,
+    [JOB_DESCRIPTION_PARAM_NAME]: jobDetails.description ?? '',
     [BLAST_QUERY_SEQUENCE_PARAM_NAME]: query,
     [BLAST_DATABASE_ORGANISM_PARAM_NAME]: organismParamValue,
     [BLAST_DATABASE_TYPE_PARAM_NAME]: targetType ?? '',

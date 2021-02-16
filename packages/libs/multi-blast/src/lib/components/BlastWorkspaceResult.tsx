@@ -167,14 +167,8 @@ function BlastSummary({
   const hitTypeDisplayName = useHitTypeDisplayName(wdkRecordType);
 
   const initialMultiQueryParamValues = useMemo(
-    () =>
-      reportToParamValues(
-        jobDetails.config,
-        query,
-        databases,
-        filesToOrganisms
-      ),
-    [databases, filesToOrganisms, jobDetails.config, query]
+    () => reportToParamValues(jobDetails, query, databases, filesToOrganisms),
+    [databases, filesToOrganisms, jobDetails, query]
   );
 
   // FIXME: Converts this into an ARRAY of resultTypes
@@ -238,6 +232,12 @@ function BlastSummary({
         <div className="ConfigDetails">
           <span className="InlineHeader">Job:</span>
           <span>{jobDetails.id}</span>
+          {jobDetails.description != null && (
+            <Fragment>
+              <span className="InlineHeader">Description:</span>
+              <span>{jobDetails.description}</span>
+            </Fragment>
+          )}
           <span className="InlineHeader">Program:</span>
           <span>
             {jobDetails.config.tool === 'tblastx' ||
