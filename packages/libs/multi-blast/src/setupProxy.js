@@ -13,15 +13,7 @@ module.exports = function (app) {
       logLevel: 'debug',
       onProxyReq(proxyReq, req, res) {
         if (proxyReq._isRedirect) return;
-        const authCookie = `auth_tkt=${process.env.VEUPATHDB_AUTH_TKT}`;
-        const cookieRaw = proxyReq.getHeader('cookie');
-        const cookies =
-          cookieRaw == null
-            ? authCookie
-            : Array.isArray(cookieRaw)
-            ? [...cookieRaw, authCookie]
-            : [cookieRaw, authCookie];
-        proxyReq.setHeader('cookie', cookies);
+        addVEuPathAuthToProxyReq(proxyReq);
       },
     })
   );
@@ -37,8 +29,21 @@ module.exports = function (app) {
       logLevel: 'debug',
       onProxyReq(proxyReq, req, res) {
         if (proxyReq._isRedirect) return;
+        addVEuPathAuthToProxyReq(proxyReq);
         proxyReq.setHeader('Auth-Key', process.env.WDK_CHECK_AUTH);
       },
     })
   );
 };
+
+function addVEuPathAuthToProxyReq(proxyReq) {
+  const authCookie = `auth_tkt=${process.env.VEUPATHDB_AUTH_TKT}`;
+  const cookieRaw = proxyReq.getHeader('cookie');
+  const cookies =
+    cookieRaw == null
+      ? authCookie
+      : Array.isArray(cookieRaw)
+      ? [...cookieRaw, authCookie]
+      : [cookieRaw, authCookie];
+  proxyReq.setHeader('cookie', cookies);
+}
