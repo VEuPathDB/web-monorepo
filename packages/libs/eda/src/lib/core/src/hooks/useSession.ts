@@ -1,12 +1,10 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 import { useStateWithHistory, StateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
-import { ApiRequestHandler } from '@veupathdb/web-common/lib/util/api';
-import { Analysis, NewAnalysis } from '../types/analysis';
+import { Session, NewSession } from '../types/session';
 import { usePromise } from './usePromise';
-import { AnalysisApi } from '../api/analysis-api';
 import { useNonNullableContext } from './useNonNullableContext';
 
-type Setter<T extends keyof Analysis> = (value: Analysis[T]) => void;
+type Setter<T extends keyof Session> = (value: Session[T]) => void;
 
 export const enum Status {
   InProgress = 'in-progress',
@@ -15,63 +13,63 @@ export const enum Status {
   Error = 'error',
 }
 
-export type AnalysisState = {
+export type SessionState = {
   status: Status;
   hasUnsavedChanges: boolean;
-  history: Omit<StateWithHistory<Analysis|undefined>, 'setCurrent'>;
+  history: Omit<StateWithHistory<Session|undefined>, 'setCurrent'>;
   setName: Setter<'name'>;
   setFilters: Setter<'filters'>;
   setVisualizations: Setter<'visualizations'>;
   setDerivedVariables: Setter<'derivedVariables'>;
   setStarredVariables: Setter<'starredVariables'>;
   setVariableUISettings: Setter<'variableUISettings'>;
-  copyAnalysis: () => Promise<string>;
-  deleteAnalysis: () => Promise<void>;
-  saveAnalysis: () => Promise<void>;
+  copySession: () => Promise<string>;
+  deleteSession: () => Promise<void>;
+  saveSession: () => Promise<void>;
 }
 
-export interface AnalysisStore {
-  getAnalyses(): Promise<Analysis[]>;
-  createAnalysis(newAnalysis: NewAnalysis): Promise<string>;
-  getAnalysis(analysisId: string): Promise<Analysis>;
-  updateAnalysis(analysis: Analysis): Promise<void>;
-  deleteAnalysis(analysisId: string): Promise<void>;
+export interface SessionStore {
+  getSessions(): Promise<Session[]>;
+  createSession(newSession: NewSession): Promise<string>;
+  getSession(sessionId: string): Promise<Session>;
+  updateSession(session: Session): Promise<void>;
+  deleteSession(sessionId: string): Promise<void>;
 }
 
-export const AnalysisListContext = createContext<Analysis[] | undefined>(undefined);
+export const SessionListContext = createContext<Session[] | undefined>(undefined);
 
-export function useAnalysisList() {
-  return useNonNullableContext(AnalysisListContext);
+export function useSessionList() {
+  return useNonNullableContext(SessionListContext);
 }
 
-export const AnalysisContext = createContext<AnalysisState | undefined>(undefined);
+export const SessionContext = createContext<SessionState | undefined>(undefined);
 
-export function useAnalysis() {
-  return useNonNullableContext(AnalysisContext);
+export function useSession() {
+  return useNonNullableContext(SessionContext);
 }
 
-export function useAnalysisState(analysisId: string, store: AnalysisStore): AnalysisState {
+export function useSessionState(sessionId: string, store: SessionStore): SessionState {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const history = useStateWithHistory<Analysis>({
+  const history = useStateWithHistory<Session>({
     size: 10,
     onUndo: useCallback(() => setHasUnsavedChanges(true), [setHasUnsavedChanges]),
     onRedo: useCallback(() => setHasUnsavedChanges(true), [setHasUnsavedChanges])
   });
-  const savedAnalysis = usePromise(useCallback((): Promise<Analysis> => {
-    return store.getAnalysis(analysisId);
-  }, [analysisId, store]));
+  const savedSession = usePromise(useCallback((): Promise<Session> => {
+    return store.getSession(sessionId);
+  }, [sessionId, store]));
 
   useEffect(() => {
-    if (savedAnalysis.value) {
-      history.setCurrent(savedAnalysis.value);
+    if (savedSession.value) {
+      history.setCurrent(savedSession.value);
     }
-  }, [savedAnalysis.value]);
+  }, [savedSession.value]);
 
-  const status = savedAnalysis.pending ? Status.InProgress
-               : savedAnalysis.error   ? Status.Error
+  const status = savedSession.pending ? Status.InProgress
+               : savedSession.error   ? Status.Error
                : Status.Loaded;
 
-  const useSetter = <T extends keyof Analysis>(propertyName: T) => useCallback((value: Analysis[T]) => {
+  const useSetter = <T extends keyof Session>(propertyName: T) => useCallback((value: Session[T]) => {
     history.setCurrent(_a => _a && ({ ..._a, [propertyName]: value }));
     setHasUnsavedChanges(true);
   }, [propertyName]);
@@ -83,21 +81,21 @@ export function useAnalysisState(analysisId: string, store: AnalysisStore): Anal
   const setStarredVariables = useSetter('starredVariables');
   const setVariableUISettings = useSetter('variableUISettings');
 
-  const saveAnalysis = useCallback(async () => {
-    if (history.current == null) throw new Error("Attempt to save an analysis that hasn't been loaded.");
-    await store.updateAnalysis(history.current);
+  const saveSession = useCallback(async () => {
+    if (history.current == null) throw new Error("Attempt to save an session that hasn't been loaded.");
+    await store.updateSession(history.current);
     setHasUnsavedChanges(false);
   }, [store, history.current])
 
-  const copyAnalysis = useCallback(async () => {
-    if (history.current == null) throw new Error("Attempt to copy an analysis that hasn't been loaded.");
-    if (hasUnsavedChanges) await saveAnalysis();
-    return await store.createAnalysis(history.current);
-  }, [store, history.current, saveAnalysis, hasUnsavedChanges]);
+  const copySession = useCallback(async () => {
+    if (history.current == null) throw new Error("Attempt to copy an session that hasn't been loaded.");
+    if (hasUnsavedChanges) await saveSession();
+    return await store.createSession(history.current);
+  }, [store, history.current, saveSession, hasUnsavedChanges]);
 
-  const deleteAnalysis = useCallback(async () => {
-    return store.deleteAnalysis(analysisId);
-  }, [store, analysisId]);
+  const deleteSession = useCallback(async () => {
+    return store.deleteSession(sessionId);
+  }, [store, sessionId]);
 
   return {
     status,
@@ -109,8 +107,8 @@ export function useAnalysisState(analysisId: string, store: AnalysisStore): Anal
     setDerivedVariables,
     setStarredVariables,
     setVariableUISettings,
-    copyAnalysis,
-    deleteAnalysis,
-    saveAnalysis
+    copySession,
+    deleteSession,
+    saveSession
   };
 }

@@ -1,46 +1,46 @@
-import { Analysis, NewAnalysis } from "../types/analysis";
+import { Session, NewSession } from "../types/session";
 import {
   createJsonRequest,
   FetchClient,
 } from "@veupathdb/web-common/lib/util/api";
 import { type, voidType, string } from "io-ts";
 import { ioTransformer } from "./ioTransformer";
-export class AnalysisApi extends FetchClient {
-  getAnalysis(analysisId: string): Promise<Analysis> {
+export class SessionApi extends FetchClient {
+  getSession(sessionId: string): Promise<Session> {
     return this.fetch(
       createJsonRequest({
-        path: `/analyses/${analysisId}`,
+        path: `/sessions/${sessionId}`,
         method: "GET",
-        transformResponse: ioTransformer(Analysis),
+        transformResponse: ioTransformer(Session),
       })
     );
   }
-  createAnalysis(analysis: NewAnalysis): Promise<{ id: string }> {
+  createSession(session: NewSession): Promise<{ id: string }> {
     return this.fetch(
       createJsonRequest({
-        path: `/analyses`,
+        path: `/sessions`,
         method: "POST",
-        body: analysis,
+        body: session,
         transformResponse: ioTransformer(type({ id: string })),
       })
     );
   }
-  updateAnalysis(analysis: Analysis): Promise<void> {
+  updateSession(session: Session): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: `/analyses/${analysis.id}`,
+        path: `/sessions/${session.id}`,
         method: "PUT",
-        body: analysis,
+        body: session,
         transformResponse: ioTransformer(voidType),
       })
     );
   }
-  deleteAnalysis(analysisId: string): Promise<void> {
+  deleteSession(sessionId: string): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: `/analyses/${analysisId}`,
+        path: `/sessions/${sessionId}`,
         method: "DELETE",
-        body: { analysisId },
+        body: { sessionId },
         transformResponse: ioTransformer(voidType),
       })
     );

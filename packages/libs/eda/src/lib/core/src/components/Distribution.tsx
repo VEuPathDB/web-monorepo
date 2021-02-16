@@ -4,7 +4,7 @@ import { Filter } from "@veupathdb/wdk-client/lib/Components/AttributeFilter/Typ
 import EmptyState from "@veupathdb/wdk-client/lib/Components/Mesa/Ui/EmptyState";
 import { ErrorBoundary } from "@veupathdb/wdk-client/lib/Controllers";
 import React from "react";
-import { useAnalysis } from "../hooks/useAnalysis";
+import { useSession } from "../hooks/useSession";
 import { useEdaApi } from "../hooks/useEdaApi";
 import { usePromise } from "../hooks/usePromise";
 import { StudyEntity, StudyMetadata, StudyVariable } from "../types/study";
@@ -24,12 +24,12 @@ export function Distribution(props: Props) {
   const { studyMetadata, entity, variable } = props;
   const {
     setFilters,
-    history: { current: analysis },
-  } = useAnalysis();
+    history: { current: session },
+  } = useSession();
   const edaClient = useEdaApi();
   const variableSummary = usePromise(async () => {
     // remove filter for active variable so it is not reflected in the foreground
-    const filters = analysis?.filters.filter(
+    const filters = session?.filters.filter(
       (f) => f.entityId !== entity.id || f.variableId !== variable.id
     );
     const bg$ = edaClient.getDistribution(
@@ -49,7 +49,7 @@ export function Distribution(props: Props) {
       : bg$;
     const [bg, fg] = await Promise.all([bg$, fg$]);
     return toWdkVariableSummary(fg, bg, variable);
-  }, [edaClient, studyMetadata, variable, entity, analysis?.filters]);
+  }, [edaClient, studyMetadata, variable, entity, session?.filters]);
   return variableSummary.pending ? (
     <Loading />
   ) : variableSummary.error ? (
@@ -65,7 +65,7 @@ export function Distribution(props: Props) {
           displayName={entity.displayName}
           dataCount={variableSummary.value.entitiesCount}
           filteredDataCount={variableSummary.value.filteredEntitiesCount}
-          filters={analysis?.filters.map((f) => fromEdaFilter(f)) ?? []}
+          filters={session?.filters.map((f) => fromEdaFilter(f)) ?? []}
           activeField={variableSummary.value?.activeField}
           activeFieldState={{
             loading: false,

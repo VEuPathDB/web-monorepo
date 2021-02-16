@@ -10,8 +10,8 @@ export const VariableUISetting = t.UnknownRecord;
 export type Visualization = t.TypeOf<typeof Visualization>;
 export const Visualization = t.unknown;
 
-export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
-export const NewAnalysis = t.type({
+export type NewSession = t.TypeOf<typeof NewSession>;
+export const NewSession = t.type({
   name: t.string,
   studyId: t.string,
   filters: t.array(Filter),
@@ -21,9 +21,9 @@ export const NewAnalysis = t.type({
   visualizations: t.array(Visualization),
 });
 
-export type Analysis = t.TypeOf<typeof Analysis>;
-export const Analysis = t.intersection([
-  NewAnalysis,
+export type Session = t.TypeOf<typeof Session>;
+export const Session = t.intersection([
+  NewSession,
   t.type({
     id: t.string,
     created: t.string,
