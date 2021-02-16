@@ -78,7 +78,8 @@ export function useAlgorithmParamProps(
 
 export function useSequenceParamProps(
   state: QuestionState,
-  updateParamValue: Props['eventHandlers']['updateParamValue']
+  updateParamValue: Props['eventHandlers']['updateParamValue'],
+  queryFileProvided: boolean
 ) {
   const parameter =
     state.question.parametersByName[BLAST_QUERY_SEQUENCE_PARAM_NAME];
@@ -86,10 +87,9 @@ export function useSequenceParamProps(
   const onChange = useChangeParamValue(parameter, state, updateParamValue);
 
   return {
-    className: 'SequenceParam',
     value: state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME],
     onChange,
-    required: true,
+    required: !queryFileProvided,
     cols: 80,
     rows: 10,
   };

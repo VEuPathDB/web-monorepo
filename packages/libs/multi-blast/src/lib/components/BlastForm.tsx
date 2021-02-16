@@ -1,4 +1,11 @@
-import { FormEvent, useCallback, useContext, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 import { useHistory } from 'react-router';
 
 import { fromPairs } from 'lodash';
@@ -120,6 +127,17 @@ export function BlastForm(props: Props) {
 
   const enabledAlgorithms = useEnabledAlgorithms(targetType);
 
+  const [queryFileProvided, setQueryFileProvided] = useState(false);
+
+  const onQueryFileInputChanged = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setQueryFileProvided(
+        event.target.files != null && event.target.files.length > 0
+      );
+    },
+    [setQueryFileProvided]
+  );
+
   const targetParamProps = useTargetParamProps(
     props.state,
     props.eventHandlers.updateParamValue
@@ -131,7 +149,8 @@ export function BlastForm(props: Props) {
   );
   const sequenceParamProps = useSequenceParamProps(
     props.state,
-    props.eventHandlers.updateParamValue
+    props.eventHandlers.updateParamValue,
+    queryFileProvided
   );
 
   const targetParamElement = (
@@ -147,10 +166,17 @@ export function BlastForm(props: Props) {
     />
   );
   const sequenceParamElement = (
-    <TextArea
-      {...sequenceParamProps}
-      name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
-    />
+    <div className="SequenceParam">
+      <TextArea
+        {...sequenceParamProps}
+        name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
+      />
+      <input
+        type="file"
+        name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`}
+        onChange={onQueryFileInputChanged}
+      />
+    </div>
   );
 
   const parameterElements = {

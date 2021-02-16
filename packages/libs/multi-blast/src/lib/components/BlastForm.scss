@@ -1,7 +1,13 @@
 .wdk-QuestionForm {
   &MultiBlast {
-    textarea.SequenceParam {
-      font-family: Courier, monospace;
+    .SequenceParam {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 1em;
+
+      textarea {
+        font-family: Courier, monospace;
+      }
     }
 
     .wdk-QuestionFormParameterHeading {
