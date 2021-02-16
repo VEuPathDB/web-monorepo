@@ -1,8 +1,8 @@
 import {
   StudyMetadataStore,
-  AnalysisStore,
-  Analysis,
-  NewAnalysis,
+  SessionStore,
+  Session,
+  NewSession,
 } from '@veupathdb/eda-workspace-core';
 import localforage from 'localforage';
 
@@ -24,38 +24,38 @@ export const mockStudyMetadataStore: StudyMetadataStore = {
 };
 
 const localStore = localforage.createInstance({
-  name: 'mockAnalysisStore',
+  name: 'mockSessionStore',
 });
 
-export const mockAnalysisStore: AnalysisStore = {
-  async getAnalyses() {
-    const records: Analysis[] = [];
+export const mockSessionStore: SessionStore = {
+  async getSessions() {
+    const records: Session[] = [];
     await localStore.iterate((value) => {
-      records.push(value as Analysis);
+      records.push(value as Session);
     });
     return records;
   },
-  async createAnalysis(newAnalysis: NewAnalysis) {
+  async createSession(newSession: NewSession) {
     const id = String((await localStore.keys()).length + 1);
     const now = new Date().toISOString();
-    await localStore.setItem<Analysis>(id, {
-      ...newAnalysis,
+    await localStore.setItem<Session>(id, {
+      ...newSession,
       id,
       created: now,
       modified: now,
     });
     return id;
   },
-  async getAnalysis(id: string) {
-    const analysis = await localStore.getItem(id);
-    if (analysis) return analysis as Analysis;
-    throw new Error(`Could not find analysis with id "${id}".`);
+  async getSession(id: string) {
+    const session = await localStore.getItem(id);
+    if (session) return session as Session;
+    throw new Error(`Could not find session with id "${id}".`);
   },
-  async updateAnalysis(analysis: Analysis) {
+  async updateSession(session: Session) {
     const now = new Date().toISOString();
-    await localStore.setItem(analysis.id, { ...analysis, modified: now });
+    await localStore.setItem(session.id, { ...session, modified: now });
   },
-  async deleteAnalysis(id: string) {
+  async deleteSession(id: string) {
     await localStore.removeItem(id);
   },
 };

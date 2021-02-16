@@ -1,14 +1,14 @@
 import React from 'react';
 import { EDAWorkspaceContainer } from '@veupathdb/eda-workspace-core';
 import { EdaClient } from '@veupathdb/eda-workspace-core/lib/api/eda-api';
-import { EDAAnalysis } from './EDAAnalysis';
+import { EDASession } from './EDASession';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
-import { mockAnalysisStore } from './Mocks';
+import { mockSessionStore } from './Mocks';
 import { cx } from './Utils';
 
 interface Props {
   studyId: string;
-  analysisId: string;
+  sessionId: string;
   edaServiceUrl: string;
 }
 export function EDAWorkspace(props: Props) {
@@ -23,14 +23,14 @@ export function EDAWorkspace(props: Props) {
 
   return (
     <EDAWorkspaceContainer
-      analysisId={props.analysisId}
+      sessionId={props.sessionId}
       studyId={props.studyId}
       className={cx()}
-      analysisStore={mockAnalysisStore}
+      sessionStore={mockSessionStore}
       edaClient={edaClient}
     >
       <EDAWorkspaceHeading />
-      <EDAAnalysis />
+      <EDASession />
     </EDAWorkspaceContainer>
   );
 }

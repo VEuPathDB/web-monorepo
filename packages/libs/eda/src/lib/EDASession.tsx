@@ -1,34 +1,34 @@
 import React from 'react';
 import { cx } from './Utils';
-import { AnalysisSummary } from './AnalysisSummary';
-import { useAnalysis, useStudy } from '@veupathdb/eda-workspace-core';
+import { SessionSummary } from './SessionSummary';
+import { useSession, useStudy } from '@veupathdb/eda-workspace-core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { Redirect, Route } from 'react-router';
 import { Variables } from './Variables';
 
-export function EDAAnalysis() {
+export function EDASession() {
   const {
     history,
     setName,
-    copyAnalysis,
-    saveAnalysis,
-    deleteAnalysis,
-  } = useAnalysis();
+    copySession,
+    saveSession,
+    deleteSession,
+  } = useSession();
   const { studyRecord } = useStudy();
   if (history.current == null) return null;
   const routeBase = `/eda/${studyRecord.id.map((p) => p.value).join('/')}/${
     history.current.id
   }`;
   return (
-    <div className={cx('-Analysis')}>
+    <div className={cx('-Session')}>
       <WorkspaceNavigation
         heading={
-          <AnalysisSummary
-            analysis={history.current}
-            setAnalysisName={setName}
-            copyAnalysis={copyAnalysis}
-            saveAnalysis={saveAnalysis}
-            deleteAnalysis={deleteAnalysis}
+          <SessionSummary
+            session={history.current}
+            setSessionName={setName}
+            copySession={copySession}
+            saveSession={saveSession}
+            deleteSession={deleteSession}
           />
         }
         routeBase={routeBase}

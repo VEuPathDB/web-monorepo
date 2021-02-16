@@ -1,2 +1,2 @@
-export { EDAAnalysisList } from './EDAAnalysisList';
+export { EDASessionList } from './EDASessionList';
 export { EDAWorkspace } from './EDAWorkspace';

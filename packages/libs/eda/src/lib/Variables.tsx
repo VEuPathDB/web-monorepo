@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   StudyVariable,
-  useAnalysis,
+  useSession,
   useEdaApi,
   useStudy,
   Distribution,
@@ -27,12 +27,12 @@ export function Variables() {
     preorder(studyMetadata.rootEntity, (e) => e.children || [])
   );
   const {
-    history: { current: analysis },
+    history: { current: session },
     setFilters,
-  } = useAnalysis();
+  } = useSession();
   const entity = entities[selectedEntity];
   const variable = entity.variables[selectedVariable];
-  const filters = analysis?.filters ?? [];
+  const filters = session?.filters ?? [];
   const entityCount = usePromise(
     () => edaApi.getEntityCount(studyMetadata.id, entity.id, []),
     [studyMetadata.id, entity.id]

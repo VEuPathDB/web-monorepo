@@ -1,34 +1,30 @@
 import * as Path from 'path';
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import {
-  Analysis,
-  AnalysisStore,
-  useStudy,
-} from '@veupathdb/eda-workspace-core';
+import { Session, SessionStore, useStudy } from '@veupathdb/eda-workspace-core';
 import { Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 
 export interface Props {
-  analysisStore: AnalysisStore;
+  sessionStore: SessionStore;
 }
 
-export function AnalysisList(props: Props) {
-  const { analysisStore } = props;
+export function SessionList(props: Props) {
+  const { sessionStore } = props;
   const { studyRecord } = useStudy();
   const studyId = studyRecord.id.map((part) => part.value).join('/');
-  const [analysisList, setAnalysisList] = React.useState<Analysis[]>();
+  const [sessionList, setSessionList] = React.useState<Session[]>();
   const history = useHistory();
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
-  const updateAnalysisList = React.useCallback(async () => {
-    const list = await analysisStore.getAnalyses();
-    setAnalysisList(list.filter((a) => a.studyId === studyId));
-  }, [analysisStore, studyId]);
+  const updateSessionList = React.useCallback(async () => {
+    const list = await sessionStore.getSessions();
+    setSessionList(list.filter((a) => a.studyId === studyId));
+  }, [sessionStore, studyId]);
   React.useEffect(() => {
-    updateAnalysisList();
-  }, [updateAnalysisList]);
-  const createNewAnalysis = React.useCallback(async () => {
-    const newId = await analysisStore.createAnalysis({
-      name: 'Unnamed Analysis',
+    updateSessionList();
+  }, [updateSessionList]);
+  const createNewSession = React.useCallback(async () => {
+    const newId = await sessionStore.createSession({
+      name: 'Unnamed Session',
       studyId,
       filters: [],
       starredVariables: [],
@@ -44,43 +40,42 @@ export function AnalysisList(props: Props) {
         newId,
     };
     history.push(newLocation);
-  }, [analysisStore, history, studyId]);
-  const deleteAnalyses = React.useCallback(
-    (analysisIds: Iterable<string>) => {
-      for (const analysisId of analysisIds)
-        analysisStore.deleteAnalysis(analysisId);
-      updateAnalysisList();
+  }, [sessionStore, history, studyId]);
+  const deleteSessions = React.useCallback(
+    (sessionIds: Iterable<string>) => {
+      for (const sessionId of sessionIds) sessionStore.deleteSession(sessionId);
+      updateSessionList();
     },
-    [analysisStore, updateAnalysisList]
+    [sessionStore, updateSessionList]
   );
   const tableState = React.useMemo(
     () => ({
       options: {
-        isRowSelected: (analysis: Analysis) => selected.has(analysis.id),
+        isRowSelected: (session: Session) => selected.has(session.id),
       },
       eventHandlers: {
-        onRowSelect: (analysis: Analysis) =>
+        onRowSelect: (session: Session) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            newSet.add(analysis.id);
+            newSet.add(session.id);
             return newSet;
           }),
-        onRowDeselect: (analysis: Analysis) =>
+        onRowDeselect: (session: Session) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            newSet.delete(analysis.id);
+            newSet.delete(session.id);
             return newSet;
           }),
-        onMultipleRowSelect: (analyses: Analysis[]) =>
+        onMultipleRowSelect: (sessions: Session[]) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            for (const analysis of analyses) newSet.add(analysis.id);
+            for (const session of sessions) newSet.add(session.id);
             return newSet;
           }),
-        onMultipleRowDeselect: (analyses: Analysis[]) =>
+        onMultipleRowDeselect: (sessions: Session[]) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            for (const analysis of analyses) newSet.delete(analysis.id);
+            for (const session of sessions) newSet.delete(session.id);
             return newSet;
           }),
       },
@@ -91,27 +86,27 @@ export function AnalysisList(props: Props) {
             <button
               type="button"
               className="btn"
-              onClick={() => deleteAnalyses(selected)}
+              onClick={() => deleteSessions(selected)}
             >
-              Delete selected analyses
+              Delete selected sessions
             </button>
           ),
         },
         {
           selectionRequired: false,
           element: (
-            <button type="button" className="btn" onClick={createNewAnalysis}>
-              Start a new analysis
+            <button type="button" className="btn" onClick={createNewSession}>
+              Start a new session
             </button>
           ),
         },
       ],
-      rows: analysisList,
+      rows: sessionList,
       columns: [
         {
           key: 'name',
           name: 'Name',
-          renderCell: (data: { row: Analysis }) => (
+          renderCell: (data: { row: Session }) => (
             <Link to={Path.join(history.location.pathname, data.row.id)}>
               {data.row.name}
             </Link>
@@ -122,13 +117,13 @@ export function AnalysisList(props: Props) {
       ],
     }),
     [
-      analysisList,
-      createNewAnalysis,
-      deleteAnalyses,
+      sessionList,
+      createNewSession,
+      deleteSessions,
       selected,
       history.location.pathname,
     ]
   );
-  if (analysisList == null) return null;
+  if (sessionList == null) return null;
   return <Mesa.Mesa state={tableState} />;
 }
