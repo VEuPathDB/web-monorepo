@@ -4,7 +4,7 @@ import {
   Popup,
   MarkerProps as LeafletMarkerProps,
 } from 'react-leaflet';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { DriftMarker } from 'leaflet-drift-marker';
 import { MarkerProps, Bounds, ExtractProps } from './Types';
 import { LeafletMouseEvent, LatLngBounds } from 'leaflet';
@@ -13,6 +13,7 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
   popupClass?: string;
+  getDragging?: () => boolean;
 }
 
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
@@ -37,6 +38,7 @@ export default function BoundsDriftMarker({
   showPopup,
   popupContent,
   popupClass,
+  getDragging,
 }: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false);
   const { map } = useLeaflet();
@@ -47,7 +49,7 @@ export default function BoundsDriftMarker({
   const markerRef = useRef<any>();
   const popupRef = useRef<any>();
   const popupOrientationRef = useRef<PopupOrientation>('up');
-  const draggingRef = useRef(false);
+  // const draggingRef = useRef(false);
 
   const updatePopupOrientationRef = () => {
     if (popupContent) {
@@ -96,20 +98,21 @@ export default function BoundsDriftMarker({
     }
   };
 
-  function handleMapMoveStart() {
-    draggingRef.current = true;
-    console.log('here3');
-  }
+  // function handleMapMoveStart() {
+  //   draggingRef.current = true;
+  //   console.log('here3');
+  // }
 
-  function handleMapMoveEnd() {
-    draggingRef.current = false;
-    console.log('here4');
-  }
+  // function handleMapMoveEnd() {
+  //   draggingRef.current = false;
+  //   console.log('here4');
+  // }
 
   const observer = new MutationObserver((mutationRecord) => {
     const popupDOMNode = mutationRecord[0].target as HTMLElement;
     if (
-      !draggingRef.current &&
+      getDragging &&
+      !getDragging() &&
       !popupDOMNode.style.transform.includes('rotate')
     ) {
       console.log('reorienting popup');
@@ -118,11 +121,9 @@ export default function BoundsDriftMarker({
   });
 
   const handlePopupOpen = () => {
+    console.log('popup opening');
     updatePopupOrientationRef();
     orientPopup(popupOrientationRef.current);
-
-    map?.on('movestart', handleMapMoveStart);
-    map?.on('moveend', handleMapMoveEnd);
 
     const popupDOMNode = popupRef.current.leafletElement
       ._container as HTMLElement;
@@ -130,14 +131,11 @@ export default function BoundsDriftMarker({
   };
 
   const handlePopupClose = () => {
+    console.log('popup closing');
     observer.disconnect();
 
     // Have to do this again because styling is changed again on close
     orientPopup(popupOrientationRef.current);
-
-    map?.off('movestart', handleMapMoveStart);
-    map?.off('moveend', handleMapMoveEnd);
-    console.log('popup closing');
   };
 
   const popup = popupContent && (
@@ -160,7 +158,8 @@ export default function BoundsDriftMarker({
     e.target._icon.classList.add('top-marker'); //DKDK marker on top
     setDisplayBounds(true); // Display bounds rectangle
 
-    if (showPopup && popupContent && !draggingRef.current) {
+    console.log(getDragging);
+    if (showPopup && popupContent && getDragging && !getDragging()) {
       e.target.openPopup();
     }
   };
@@ -169,7 +168,7 @@ export default function BoundsDriftMarker({
     e.target._icon.classList.remove('top-marker'); //DKDK remove marker on top
     setDisplayBounds(false); // Remove bounds rectangle
 
-    if (showPopup && popupContent && !draggingRef.current) {
+    if (showPopup && popupContent && getDragging && !getDragging()) {
       e.target.closePopup();
     }
   };

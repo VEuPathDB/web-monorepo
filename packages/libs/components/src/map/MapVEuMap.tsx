@@ -67,6 +67,17 @@ export default function MapVEuMap({
     updateState(viewport);
   };
   const ref = useRef<any>();
+  const draggingRef = useRef(false);
+
+  function getDragging() {
+    console.log('sending draggingRef.current');
+    return draggingRef.current;
+  }
+
+  markers = markers.map((marker) => {
+    console.log('cloning');
+    return cloneElement(marker, { getDragging: getDragging });
+  });
 
   if (mouseMode === 'magnification') {
     markers = markers.map((marker) =>
@@ -85,12 +96,14 @@ export default function MapVEuMap({
       minZoom={2}
       worldCopyJump={false}
       ondragstart={() => {
-        console.log('here');
+        console.log('dragstart (MapVEuMap)');
         ref.current?.leafletElement.closePopup();
+        draggingRef.current = true;
       }}
       ondragend={() => {
-        console.log('here2');
+        console.log('dragend (MapVEuMap)');
         ref.current?.leafletElement.closePopup();
+        draggingRef.current = false;
       }}
     >
       <TileLayer
