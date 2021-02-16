@@ -226,13 +226,13 @@ function BlastSummary({
       <div className="ConfigDetailsContainer">
         {initialMultiQueryParamValues && (
           <Link
-            className="EditJob"
+            className="EditBlastSearch"
             to={{
               pathname: '/workspace/blast/new',
               state: initialMultiQueryParamValues,
             }}
           >
-            Edit this job
+            <IconAlt fa="pencil-square-o" /> Edit BLAST Search
           </Link>
         )}
         <div className="ConfigDetails">

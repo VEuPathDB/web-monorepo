@@ -28,9 +28,16 @@
       padding: 1em;
     }
 
-    a.EditJob {
+    a.EditBlastSearch {
       position: absolute;
       right: 1em;
+      background: white;
+      padding: 0.5em 0.75em;
+      color: #069;
+      font-size: 1.2em;
+      border-radius: 0.75em;
+      border: 1px solid #069;
+      box-shadow: -1px 1px #069;
     }
 
     .ConfigDetails {
