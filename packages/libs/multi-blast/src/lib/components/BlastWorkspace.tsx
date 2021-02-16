@@ -1,4 +1,4 @@
-import { Switch } from 'react-router';
+import { Redirect, Switch } from 'react-router';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
@@ -47,6 +47,7 @@ export function BlastWorkspace() {
           requiresLogin={false}
           component={UnderConstruction}
         />
+        <Redirect to="/workspace/blast/all" />
       </Switch>
     </div>
   );

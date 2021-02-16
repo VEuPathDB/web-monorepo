@@ -30,7 +30,7 @@ initialize({
       component: (props: RouteComponentProps<void>) => <Home />,
     },
     {
-      path: '/workspace/blast/:tab(new|all|help)',
+      path: '/workspace/blast/:tab(new|all|help)?',
       component: BlastWorkspace,
     },
     {
