@@ -4,16 +4,16 @@
       font-family: Courier, monospace;
     }
 
+    .wdk-QuestionFormParameterHeading {
+      border-bottom: unset;
+      font-size: 0.9em;
+    }
+
     .wdk-QuestionFormGroup__empty {
       .wdk-QuestionFormParameterList {
         display: grid;
         grid-template-columns: 15em auto;
         column-gap: 1em;
-      }
-
-      .wdk-QuestionFormParameterHeading {
-        border-bottom: unset;
-        font-size: 0.9em;
       }
 
       .wdk-QuestionFormParameterControl .wdk-RadioList {
@@ -27,6 +27,14 @@
 
       .wdk-QuestionFormParameterControl {
         padding: 1.1em 0;
+      }
+    }
+
+    .wdk-QuestionFormGroup__advancedParams {
+      .wdk-QuestionFormParameterList {
+        display: grid;
+        grid-template-columns: 30em auto;
+        align-items: center;
       }
     }
   }
