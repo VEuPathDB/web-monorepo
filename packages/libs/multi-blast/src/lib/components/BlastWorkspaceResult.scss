@@ -19,12 +19,21 @@
       font-size: 1.2em;
     }
 
-    .ConfigDetails {
+    .ConfigDetailsContainer {
+      position: relative;
       font-size: 1.2em;
       background-color: #efefef;
       border: 1px solid black;
       border-radius: 4px;
       padding: 1em;
+    }
+
+    a.EditJob {
+      position: absolute;
+      right: 1em;
+    }
+
+    .ConfigDetails {
       display: grid;
       grid-template-columns: auto 1fr;
       grid-column-gap: 1em;

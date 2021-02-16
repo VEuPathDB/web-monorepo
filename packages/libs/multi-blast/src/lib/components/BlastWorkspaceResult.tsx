@@ -166,32 +166,96 @@ function BlastSummary({
 
   const hitTypeDisplayName = useHitTypeDisplayName(wdkRecordType);
 
+  const initialMultiQueryParamValues = useMemo(
+    () =>
+      reportToParamValues(
+        jobDetails.config,
+        query,
+        databases,
+        filesToOrganisms
+      ),
+    [databases, filesToOrganisms, jobDetails.config, query]
+  );
+
+  // FIXME: Converts this into an ARRAY of resultTypes
+  const individualResultType = useWdkService(
+    async (wdkService) => {
+      const { parameters } = await wdkService.getQuestionGivenParameters(
+        'GenesByMultiBlast',
+        initialMultiQueryParamValues
+      );
+
+      const paramValues = parameters.reduce(
+        (memo, { initialDisplayValue, name }) => {
+          const paramValue =
+            initialMultiQueryParamValues[name] != null
+              ? initialMultiQueryParamValues[name]
+              : initialDisplayValue;
+
+          if (paramValue != null) {
+            memo[name] = paramValue;
+          }
+
+          return memo;
+        },
+        {} as Record<string, string>
+      );
+
+      const answerSpec = {
+        searchName: 'GenesByMultiBlast',
+        searchConfig: {
+          parameters: paramValues,
+        },
+      };
+
+      return {
+        type: 'answerSpec',
+        answerSpec,
+        displayName: 'BLAST',
+      } as const;
+    },
+    [initialMultiQueryParamValues]
+  );
+
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
       <Link className="BackToAllJobs" to="/workspace/blast/all">
         &lt;&lt; All my BLAST Jobs
       </Link>
-      <div className="ConfigDetails">
-        <span className="InlineHeader">Job:</span>
-        <span>{jobDetails.id}</span>
-        <span className="InlineHeader">Program:</span>
-        <span>
-          {jobDetails.config.tool === 'tblastx' ||
-          jobDetails.config.task == null
-            ? jobDetails.config.tool
-            : jobDetails.config.task}
-        </span>
-        <span className="InlineHeader">Target Type:</span>
-        <span>{hitTypeDisplayName}</span>
-        <span className="InlineHeader">
-          {databases.length > 1 ? 'Databases' : 'Database'}:
-        </span>
-        <span>{databasesStr}</span>
-        <span className="InlineHeader">
-          Query {queryCount === 1 ? 'Sequence' : 'Sequences'}:
-        </span>
-        <Query query={query} />
+      <div className="ConfigDetailsContainer">
+        {initialMultiQueryParamValues && (
+          <Link
+            className="EditJob"
+            to={{
+              pathname: '/workspace/blast/new',
+              state: initialMultiQueryParamValues,
+            }}
+          >
+            Edit this job
+          </Link>
+        )}
+        <div className="ConfigDetails">
+          <span className="InlineHeader">Job:</span>
+          <span>{jobDetails.id}</span>
+          <span className="InlineHeader">Program:</span>
+          <span>
+            {jobDetails.config.tool === 'tblastx' ||
+            jobDetails.config.task == null
+              ? jobDetails.config.tool
+              : jobDetails.config.task}
+          </span>
+          <span className="InlineHeader">Target Type:</span>
+          <span>{hitTypeDisplayName}</span>
+          <span className="InlineHeader">
+            {databases.length > 1 ? 'Databases' : 'Database'}:
+          </span>
+          <span>{databasesStr}</span>
+          <span className="InlineHeader">
+            Query {queryCount === 1 ? 'Sequence' : 'Sequences'}:
+          </span>
+          <Query query={query} />
+        </div>
       </div>
       {queryCount > 1 && (
         <WorkspaceNavigation
