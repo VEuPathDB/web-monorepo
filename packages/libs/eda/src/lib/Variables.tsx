@@ -68,7 +68,7 @@ export function Variables() {
             (variable, idx) =>
               variable.dataShape && (
                 <option value={idx}>
-                  {variable.displayName} ({variable.dataShape})
+                  {variable.displayName} ({variable.dataShape} {variable.type})
                 </option>
               )
           )}
