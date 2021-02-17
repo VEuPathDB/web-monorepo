@@ -1,9 +1,9 @@
 import React from 'react';
-import { StudyMenuItem } from 'ebrc-client/App/Studies';
-import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/Utils/Utils';
+import { StudyMenuItem } from '@veupathdb/web-common/lib/App/Studies';
+import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
-import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
-import { withPermissions } from 'ebrc-client/components/Permissions';
+import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
+import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
 
 const ClinEpiStudyMenuItem = withPermissions(StudyMenuItem);
 

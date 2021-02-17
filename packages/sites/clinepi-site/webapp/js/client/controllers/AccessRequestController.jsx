@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { PageController } from 'wdk-client/Controllers';
+import { PageController } from '@veupathdb/wdk-client/lib/Controllers';
 
 import { 
   onChangeFieldFactory, 
