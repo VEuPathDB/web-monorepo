@@ -287,12 +287,7 @@ function BlastSummary({
       ) : (
         <pre>
           {JSON.stringify(
-            reportToParamValues(
-              jobDetails.config,
-              query,
-              databases,
-              filesToOrganisms
-            ),
+            reportToParamValues(jobDetails, query, databases, filesToOrganisms),
             null,
             2
           )}
