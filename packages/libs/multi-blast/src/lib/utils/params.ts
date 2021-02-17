@@ -22,7 +22,7 @@ import {
   dbToOrgDirAndTargetType,
 } from './combinedResults';
 
-export const BLAST_DATABASE_ORGANISM_PARAM_NAME = 'MultiBlastDatabaseOrganism';
+export const BLAST_DATABASE_ORGANISM_PARAM_NAME = 'BlastDatabaseOrganism';
 export const BLAST_DATABASE_TYPE_PARAM_NAME = 'MultiBlastDatabaseType';
 export const BLAST_QUERY_SEQUENCE_PARAM_NAME = 'BlastQuerySequence';
 export const BLAST_ALGORITHM_PARAM_NAME = 'BlastAlgorithm';
