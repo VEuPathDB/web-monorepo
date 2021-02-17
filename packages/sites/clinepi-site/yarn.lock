@@ -276,10 +276,10 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
   integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
 
-"@veupathdb/wdk-client@^0.1.1-alpha.4":
-  version "0.1.1-alpha.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.1-alpha.7.tgz#ac5b040b7e6040fddeb9acbc653526dfc843eefe"
-  integrity sha512-2Z6A6/y8RmibQBJyzCvRM6qm7HfGcQj3NYqss2Zc499bBCxbmDelXAR78HX8R2X+N3/ZHK3QRV/Bh/qXXK11hQ==
+"@veupathdb/wdk-client@^0.1.1-alpha.9":
+  version "0.1.1-alpha.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.1-alpha.9.tgz#fe493b1335f37da438f86650e09bd340c4f70fab"
+  integrity sha512-6+rAHvO/jIx/+3PldCs+0LDlU9i9OcJxenWwAdlOOeuJMGHCUVwl1+DMlYQPC8CfbZJ9Y8kK7S8Ffnw9YCQQlA==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
@@ -323,10 +323,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.1.1-alpha.2":
-  version "0.1.1-alpha.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.5.tgz#99e0087b29a6e1bc0a60e8b011d2c666f15e21c4"
-  integrity sha512-3nMpgBG5lmP7LThrQHwM+cEPbokr/setY7QmjSsoSCUiKG32ZRPYV73A3EhKufmV9NRwt1KDdov12ZcqrGW7xQ==
+"@veupathdb/web-common@^0.1.1-alpha.6":
+  version "0.1.1-alpha.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.6.tgz#03cea796534358cff3a94ec28902ab8abb5b5fae"
+  integrity sha512-mVfKGdHZ2nETrqCQbumDyKfVr+BKASq+I1tgipbHww+3lvZzbgRwPN9IPY0v5u9JdkM0yXW2onWwjVIFexY5kA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
