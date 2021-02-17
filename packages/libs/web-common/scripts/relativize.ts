@@ -9,9 +9,11 @@ if (!workingDir || !alias) {
   process.exit(1);
 }
 
+const imageRe = /\.(png|jpg|gif|svg|eot|ttf|woff|woff2)$/i;
+
 shell.cd(workingDir);
 shell.find('*')
-  .filter(file => shell.test('-f', file))
+  .filter(file => shell.test('-f', file) && !imageRe.test(file))
   .forEach(file => {
     const relPart = path.dirname(file.replace(/[^\/]*\//g, '../'));
     shell.sed('-i', alias, relPart, file);
