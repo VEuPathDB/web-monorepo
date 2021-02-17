@@ -1,7 +1,14 @@
+import { PathReporter } from 'io-ts/PathReporter';
+import { isLeft } from 'fp-ts/Either';
 import * as Path from 'path';
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import { Session, SessionStore, useStudy } from '@veupathdb/eda-workspace-core';
+import {
+  NewSession,
+  Session,
+  SessionStore,
+  useStudy,
+} from '@veupathdb/eda-workspace-core';
 import { Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 
 export interface Props {
@@ -47,6 +54,46 @@ export function SessionList(props: Props) {
       updateSessionList();
     },
     [sessionStore, updateSessionList]
+  );
+  const loadSession = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.currentTarget.files && event.currentTarget.files[0];
+      if (file == null) return;
+      const reader = new FileReader();
+      reader.readAsText(file, 'utf-8');
+      reader.onload = (loadEvent) => {
+        try {
+          const result = loadEvent.target?.result;
+          if (typeof result !== 'string') return null;
+          const json = JSON.parse(result);
+          const decodeResult = NewSession.decode(json);
+          if (isLeft(decodeResult)) {
+            console.error(
+              'Error parsing file\n',
+              PathReporter.report(decodeResult)
+            );
+            alert(
+              'Error parsing file. See developer tools console for details.'
+            );
+            return;
+          }
+          sessionStore.createSession(decodeResult.right).then((id) => {
+            const newLocation = {
+              ...history.location,
+              pathname:
+                history.location.pathname +
+                (history.location.pathname.endsWith('/') ? '' : '/') +
+                id,
+            };
+            history.push(newLocation);
+          });
+        } catch (error) {
+          console.error('Error loading file: ' + error);
+          alert('Error loading file. See developer tools console for details.');
+        }
+      };
+    },
+    [sessionStore, history]
   );
   const tableState = React.useMemo(
     () => ({
@@ -100,6 +147,24 @@ export function SessionList(props: Props) {
             </button>
           ),
         },
+        {
+          selectionRequired: false,
+          element: (
+            <>
+              <input
+                hidden
+                id="upload-file"
+                type="file"
+                className="btn"
+                multiple={false}
+                onChange={loadSession}
+              />
+              <label className="btn" htmlFor="upload-file">
+                Upload a session from JSON
+              </label>
+            </>
+          ),
+        },
       ],
       rows: sessionList,
       columns: [
@@ -114,12 +179,27 @@ export function SessionList(props: Props) {
         },
         { key: 'created', name: 'Created' },
         { key: 'modified', name: 'Modified' },
+        {
+          key: 'download',
+          name: 'Download JSON',
+          renderCell: (data: { row: Session }) => (
+            <a
+              href={`data:text/plain;charset=utf-8,${encodeURIComponent(
+                JSON.stringify(data.row, null, 2)
+              )}`}
+              download={`${data.row.name}.json`}
+            >
+              Download JSON
+            </a>
+          ),
+        },
       ],
     }),
     [
       sessionList,
       createNewSession,
       deleteSessions,
+      loadSession,
       selected,
       history.location.pathname,
     ]
