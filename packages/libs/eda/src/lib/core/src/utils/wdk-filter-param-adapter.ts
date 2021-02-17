@@ -72,14 +72,22 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
     isRange: filter.type.endsWith("Range"),
     includeUnknown: false,
     type: filter.type.replace(/(Set|Range)/, ""),
-    value: filter.type.endsWith("Range")
-      ? {
-          min: (filter as any).min.replace("T00:00:00", ""),
-          max: (filter as any).max.replace("T00:00:00", ""),
-        }
-      : (filter as any)[filter.type].map((d: string) =>
-          d.replace("T00:00:00", "")
-        ),
+    value:
+      filter.type === "dateRange"
+        ? {
+            min: filter.min.replace("T00:00:00", ""),
+            max: filter.max.replace("T00:00:00", ""),
+          }
+        : filter.type === "numberRange"
+        ? {
+            min: filter.min,
+            max: filter.max,
+          }
+        : filter.type === "dateSet"
+        ? filter[filter.type].map((d) => d.replace("T00:00:00", ""))
+        : filter.type === "stringSet"
+        ? filter[filter.type]
+        : filter[filter.type],
     __entityId: filter.entityId,
   } as WdkFilter;
 }
