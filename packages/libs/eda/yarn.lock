@@ -2250,9 +2250,9 @@
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
 "@veupathdb/eda-workspace-core@^0.0.2-alpha.12":
-  version "0.0.2-alpha.13"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda-workspace-core/-/eda-workspace-core-0.0.2-alpha.13.tgz#0482d5e69aea32edd6d1cb379edd8c99a919de86"
-  integrity sha512-+3vm2iCi2QJLasS9AuMbhVOokRNoiJwfw3WypAXpGsUtv1PNHM277NLE0p4lBZzqysvp/083FJUYlfBG5ZZ6OQ==
+  version "0.0.2-alpha.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda-workspace-core/-/eda-workspace-core-0.0.2-alpha.14.tgz#fb0e0eb9dfb96fed6d3fd3e4ea82f2b1cb878539"
+  integrity sha512-FVROTxt2JKA1DcRSPO2KBZPfSvkRbIViGbrjXnNhJD+MJtIjguYhk8iv6oZrgYcIKz/stbJggPAe376hIbHyEg==
   dependencies:
     "@veupathdb/wdk-client" "^0.1.1-alpha.4"
     "@veupathdb/web-common" "^0.1.1-alpha.2"
