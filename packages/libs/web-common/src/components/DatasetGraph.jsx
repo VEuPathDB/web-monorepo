@@ -1,6 +1,6 @@
 import React from 'react';
 import { httpGet } from '../util/http';
-import { CollapsibleSection, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { CollapsibleSection, Loading, Link } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import ExternalResource from './ExternalResource';
 
@@ -29,6 +29,7 @@ export default class DatasetGraph extends React.PureComponent {
       descriptionCollapsed: true,
       dataTableCollapsed: true,
       coverageCollapsed: true,
+      wgcnaCollapsed: true,
       showLogScale: (this.props.rowData.assay_type == 'RNA-Seq')? false:true,
       showSpecialGraph: this.props.rowData.has_special_jbrowse,
       graphId: graphIds[0],
@@ -44,6 +45,9 @@ export default class DatasetGraph extends React.PureComponent {
     };
     this.handleCoverageCollapseChange = coverageCollapsed => {
       this.setState({ coverageCollapsed });
+    };
+    this.handleWGCNACollapseChange = wgcnaCollapsed => {
+      this.setState({ wgcnaCollapsed });
     };
   }
 
@@ -77,7 +81,6 @@ export default class DatasetGraph extends React.PureComponent {
   }
 
   makeDatasetUrl({ rowData }, isUserDataset) {
-
     if(isUserDataset) {
         return('/a/app/workspace/datasets/' + rowData.dataset_id);
     }
@@ -148,6 +151,8 @@ export default class DatasetGraph extends React.PureComponent {
       dataset_id,
       dataset_name,
       description,
+      project_id,
+      project_id_url,
       x_axis,
       y_axis
     } } = this.props;
@@ -169,8 +174,6 @@ export default class DatasetGraph extends React.PureComponent {
 
     let dataset_link = this.makeDatasetUrl(this.props, isUserDataset);
     let tutorial_link = this.makeTutorialUrl(this.props);
-
-
 
     return (
       <div className="eupathdb-DatasetGraphContainer2">
@@ -244,6 +247,7 @@ hook: HostResponseGraphs
               id={dataset_name + "Coverage"}
               className="eupathdb-GbrowseContext"
               headerContent="Coverage"
+              headerComponent='h4'
               isCollapsed={this.state.coverageCollapsed}
               onCollapsedChange={this.handleCoverageCollapseChange}>
 
@@ -257,6 +261,23 @@ hook: HostResponseGraphs
               <div><iframe src={covImgUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height="200" scrolling="no" allowfullscreen="false" /></div>
             </CollapsibleSection>
           : null}
+
+          {(assay_type == 'RNA-Seq' && module !== 'SpliceSites' && !isUserDataset  && project_id_url =='EuPathDB' && dataset_name == 'pfal3D7_Lee_Gambian_rnaSeq_RSRC'  && covImgUrl) ? 
+            <CollapsibleSection
+              id={dataset_name + "WGCNA"}
+              className="eupathdb-WGCNA"
+              headerContent="WGCNA search"
+	      headerComponent='h4'
+              isCollapsed={this.state.wgcnaCollapsed}
+              onCollapsedChange={this.handleWGCNACollapseChange}>
+
+              <div> 
+                {<Link target='_new' to={'/search/transcript/GenesByRNASeqEvidence?param.wgcna_prrofileGeneId=' + source_id + '#GenesByRNASeqWGCNA' + dataset_name}>Search other genes in the same module</Link>}
+                <br/><br/>
+              </div>
+            </CollapsibleSection>
+          : null}
+
 
           {assay_type == 'Phenotype' && showSpecialGraph == 'true' && specialImgUrl ?
             <CollapsibleSection
@@ -279,7 +300,7 @@ hook: HostResponseGraphs
 
 
         <div className="eupathdb-DatasetGraphDetails">
-          {this.props.dataTable &&
+          {this.props.taTable &&
             <CollapsibleSection
               className={"eupathdb-" + this.props.dataTable.table.name + "Container"}
               headerContent="Data table"

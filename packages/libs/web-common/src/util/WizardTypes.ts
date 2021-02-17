@@ -30,7 +30,7 @@ export type WizardState = {
     pinned: boolean  
   },
   parameterGroupUIs: ParameterGroupUI[],
-  initialCount: number,
+  initialCount: GroupState['filteredCountState'],
   paramUIState: Record<string, ParameterValues>,
   paramValues: ParameterValues,
   question: QuestionWithParameters,

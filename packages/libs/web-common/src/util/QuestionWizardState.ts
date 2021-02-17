@@ -23,13 +23,6 @@ import {
   State as FilterParamState
 } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/State'
 
-export function constructInitialCount(question: QuestionWithParameters, paramUIState: WizardState['paramUIState'], activeGroupIx: number) {
-
-  return (question.parameters?.[0].type === 'filter' ?
-    ((paramUIState[question.parameters?.[0].name] as unknown) as FilterParamState).unfilteredCount : undefined
-  );
-
-}
 export function constructParameterGroupUIs(question: QuestionWithParameters, paramValues: ParameterValues, defaultParamValues: ParameterValues, groupUIState: Record<string, GroupState>, activeGroupIx: number): ParameterGroupUI[]{
 
   return question.groups.map((group, ix) => Object.assign({},

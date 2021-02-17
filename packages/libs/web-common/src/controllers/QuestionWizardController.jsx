@@ -12,7 +12,7 @@ import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { addStep } from '@veupathdb/wdk-client/lib/Utils/StrategyUtils';
 import QuestionWizard from '../components/QuestionWizard';
-import { constructInitialCount, constructParameterGroupUIs, setFilterPopupPinned, setFilterPopupVisiblity } from '../util/QuestionWizardState';
+import { constructParameterGroupUIs, setFilterPopupPinned, setFilterPopupVisiblity } from '../util/QuestionWizardState';
 
 
 
@@ -113,6 +113,12 @@ class QuestionWizardController extends ViewController {
     const recordClass = recordClasses && recordClasses.find(({ urlSegment }) => urlSegment === recordClassName);
 
     document.title = `Search for ${recordClass.displayName} by ${question.displayName}`;
+
+    this.props.dispatch(changeGroupVisibility({
+      searchName: this.props.searchName,
+      groupName: '__total__',
+      isVisible: true
+    }));
     this.onSelectGroup(0);
   }
   // Top level action creator methods
@@ -125,7 +131,6 @@ class QuestionWizardController extends ViewController {
    */
   onSelectGroup(activeGroupIx) {
     const prevActiveGroupIx = this._activeGroupIx();
-
 
     if (prevActiveGroupIx < activeGroupIx) {
       this.props.question.groups.slice(prevActiveGroupIx + 1, activeGroupIx + 1)
@@ -387,7 +392,7 @@ class QuestionWizardController extends ViewController {
                 this.props.question, this.props.paramValues, this.props.defaultParamValues,
                 this.props.groupUIState, activeGroupIx
               ),
-              initialCount: constructInitialCount(this.props.question, this.props.paramUIState, activeGroupIx),
+              initialCount: this.props.groupUIState['__total__'].filteredCountState,
               paramUIState: this.props.paramUIState,
               paramValues: this.props.paramValues,
               question: this.props.question,
