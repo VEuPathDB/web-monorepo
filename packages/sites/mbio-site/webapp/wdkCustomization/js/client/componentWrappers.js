@@ -1,21 +1,21 @@
 import React from 'react';
-import Header from 'ebrc-client/App/Header';
-import Footer from 'ebrc-client/components/Footer';
-import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
-import StudyAnswerController from 'ebrc-client/component-wrappers/StudyAnswerController';
-import StudyRecordHeading from 'ebrc-client/component-wrappers/StudyRecordHeading';
-import { menuItemsFromSocials, iconMenuItemsFromSocials } from 'ebrc-client/App/Utils/Utils';
-import { StudyMenuItem } from 'ebrc-client/App/Studies';
+import Header from '@veupathdb/web-common/lib/App/Header';
+import Footer from '@veupathdb/web-common/lib/components/Footer';
+import CardBasedIndexController from '@veupathdb/web-common/lib/controllers/CardBasedIndexController';
+import StudyAnswerController from '@veupathdb/web-common/lib/component-wrappers/StudyAnswerController';
+import StudyRecordHeading from '@veupathdb/web-common/lib/component-wrappers/StudyRecordHeading';
+import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
+import { StudyMenuItem } from '@veupathdb/web-common/lib/App/Studies';
 import logoUrl from 'site/images/18170.png';
 import heroImageUrl from 'site/images/mbio_hero.png';
 import vizData from './visualizations.json';
-import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
+import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 
-import { StudyCard } from 'ebrc-client/App/Studies';
-import { SearchCard } from 'ebrc-client/App/Searches';
-import { ImageCard } from 'ebrc-client/App/ImageCard';
+import { StudyCard } from '@veupathdb/web-common/lib/App/Studies';
+import { SearchCard } from '@veupathdb/web-common/lib/App/Searches';
+import { ImageCard } from '@veupathdb/web-common/lib/App/ImageCard';
 
-import { studyMatchPredicate, studyFilters } from 'ebrc-client/util/homeContent';
+import { studyMatchPredicate, studyFilters } from '@veupathdb/web-common/lib/util/homeContent';
 
 export default {
   SiteHeader: () => SiteHeader,

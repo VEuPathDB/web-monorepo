@@ -1,6 +1,6 @@
-import { initialize } from 'eupathdb/wdkCustomization/js/client/bootstrap';
+import { initialize } from '@veupathdb/web-common';
 
-import 'eupathdb/wdkCustomization/css/client.scss';
+import '@veupathdb/web-common/lib/styles/client.scss';
 
 import componentWrappers from './componentWrappers';
 import wrapStoreModules from './wrapStoreModules';

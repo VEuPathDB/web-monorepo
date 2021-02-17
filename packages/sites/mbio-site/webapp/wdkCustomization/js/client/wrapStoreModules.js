@@ -1,5 +1,5 @@
 import { compose, curryN, update, partition } from 'lodash/fp';
-import { getLeaves } from 'wdk-client/Utils/TreeUtils';
+import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 /** Compose reducer functions from right to left */
 const composeReducers = (...reducers) => (state, action) =>
