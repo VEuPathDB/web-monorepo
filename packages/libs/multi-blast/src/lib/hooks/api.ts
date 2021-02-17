@@ -8,7 +8,7 @@ import {
   createQueryDownloader,
 } from '../utils/api';
 
-const BlastServiceUrl = createContext('/blast');
+const BlastServiceUrl = createContext('/multi-blast');
 
 export function useBlastApi() {
   const blastServiceUrl = useContext(BlastServiceUrl);

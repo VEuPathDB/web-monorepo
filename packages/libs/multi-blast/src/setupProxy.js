@@ -19,10 +19,10 @@ module.exports = function (app) {
   );
 
   app.use(
-    '/blast',
+    '/multi-blast',
     createProxyMiddleware({
       target: process.env.BLAST_SERVICE_URL,
-      pathRewrite: { ['^/blast']: '' },
+      pathRewrite: { ['^/multi-blast']: '' },
       secure: false,
       changeOrigin: true,
       followRedirects: true,
