@@ -175,7 +175,11 @@ function reduceQuestionState(state = {} as QuestionState, action: Action): Quest
           Object.assign(groupUIState, { [group.name]: { 
             isVisible: group.isVisible,
             filteredCountState: 'initial'
-          }}), {}),
+          }}), {
+            "__total__": {
+              isVisible: false,
+              filteredCountState: 'initial'
+          }}),
         weight: toString(action.payload.wdkWeight),
         customName: toString(action.payload.customName)
       }
@@ -457,7 +461,7 @@ const observeLoadGroupCount: QuestionEpic = (action$, state$, { wdkService }) =>
       return EMPTY;
     }
 
-    return from(questionState.question.groups.filter(group => questionState.groupUIState[group.name]?.filteredCountState === 'loading' )).pipe(
+    return from([{name: '__total__'}].concat(questionState.question.groups).filter(group => questionState.groupUIState[group.name]?.filteredCountState === 'loading' )).pipe(
       mergeMap((group) => {
       const groupNameToLoadCountFor = group.name;
 
@@ -465,16 +469,20 @@ const observeLoadGroupCount: QuestionEpic = (action$, state$, { wdkService }) =>
         .takeWhile(group => group.name !== groupNameToLoadCountFor)
         .concat(Seq.of(group));
 
+      const parameters = groupNameToLoadCountFor === '__total__'
+        ? questionState.defaultParamValues
+        : groupsUntilHere.reduce((paramValues: ParameterValues, group: ParameterGroup) => {
+          return group.parameters.reduce((paramValues: ParameterValues, paramName:string) => {
+            return Object.assign(paramValues, {
+              [paramName]: questionState.paramValues[paramName]
+            });
+          }, paramValues);
+        }, Object.assign({}, questionState.defaultParamValues) as ParameterValues);
+
       const answerSpec = {
         searchName,
         searchConfig: {
-          parameters: groupsUntilHere.reduce((paramValues: ParameterValues, group: ParameterGroup) => {
-            return group.parameters.reduce((paramValues: ParameterValues, paramName:string) => {
-              return Object.assign(paramValues, {
-                [paramName]: questionState.paramValues[paramName]
-              });
-            }, paramValues);
-          }, Object.assign({}, questionState.defaultParamValues) as ParameterValues)
+          parameters
         }
       };
 
