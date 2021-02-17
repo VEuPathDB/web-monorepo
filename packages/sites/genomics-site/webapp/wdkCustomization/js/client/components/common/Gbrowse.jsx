@@ -216,11 +216,10 @@ export function GbrowseContext(props) {
   let jbrowseUrl = record.attributes.jbrowseLink;
   let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
-   if (attribute.name == 'GeneModelGbrowseUrl'){
+  if (attribute.name == 'GeneModelGbrowseUrl'){
       jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
       jbrowseUrlFull = record.attributes.geneJbrowseFullUrl;
       apolloUrlFull = record.attributes.geneApolloFullUrl;
-      }
       if (window.location.href.indexOf("vectorbase") != -1){
       return (
         <div>
@@ -239,7 +238,7 @@ export function GbrowseContext(props) {
         </div>
         )
       }
-	
+  }	
   if (attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'BlatAlignmentsGbrowseUrl' || attribute.name == 'SnpsGbrowseUrl'){ 
     if (attribute.name == 'SyntenyGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;
