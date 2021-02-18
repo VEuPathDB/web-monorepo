@@ -315,9 +315,9 @@ const useHeaderMenuItems = (
         },
         {
           key: 'blast',
-          display: 'BLAST',
+          display: <>BLAST<sup>{' '}<em>beta</em></sup></>,
           type: 'reactRoute',
-          url: '/search/transcript/UnifiedBlast'
+          url: '/search/transcript/GenesByMultiBlast'
         },
         { 
           key: 'companion',

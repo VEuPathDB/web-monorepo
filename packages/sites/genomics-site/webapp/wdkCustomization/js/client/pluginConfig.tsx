@@ -26,6 +26,7 @@ import { hasChromosomeAndSequenceIDXorGroup } from './components/questions/Mutua
 import { OrganismParam, isOrganismParam } from './components/questions/OrganismParam';
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 
+import { BlastForm } from '@veupathdb/multi-blast/lib/components/BlastForm';
 
 const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   ({ question }) => (
@@ -121,6 +122,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
       question?.queryName === 'GenesByUserDatasetRnaSeq'
     ),
     component: GenericFoldChangeForm,
+  },
+  {
+    type: 'questionForm',
+    name: 'GenesByMultiBlast',
+    component: BlastForm,
   },
   {
     type: 'questionFormParameter',
