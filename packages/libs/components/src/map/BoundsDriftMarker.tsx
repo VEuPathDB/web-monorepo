@@ -13,7 +13,6 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
   popupClass?: string;
-  getDragging?: () => boolean;
 }
 
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
@@ -38,7 +37,6 @@ export default function BoundsDriftMarker({
   showPopup,
   popupContent,
   popupClass,
-  getDragging,
 }: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false);
   const { map } = useLeaflet();
@@ -110,11 +108,7 @@ export default function BoundsDriftMarker({
 
   const observer = new MutationObserver((mutationRecord) => {
     const popupDOMNode = mutationRecord[0].target as HTMLElement;
-    if (
-      getDragging &&
-      !getDragging() &&
-      !popupDOMNode.style.transform.includes('rotate')
-    ) {
+    if (!popupDOMNode.style.transform.includes('rotate')) {
       console.log('reorienting popup');
       orientPopup(popupOrientationRef.current);
     }
@@ -158,8 +152,7 @@ export default function BoundsDriftMarker({
     e.target._icon.classList.add('top-marker'); //DKDK marker on top
     setDisplayBounds(true); // Display bounds rectangle
 
-    console.log(getDragging);
-    if (showPopup && popupContent && getDragging && !getDragging()) {
+    if (showPopup && popupContent) {
       e.target.openPopup();
     }
   };
@@ -168,7 +161,7 @@ export default function BoundsDriftMarker({
     e.target._icon.classList.remove('top-marker'); //DKDK remove marker on top
     setDisplayBounds(false); // Remove bounds rectangle
 
-    if (showPopup && popupContent && getDragging && !getDragging()) {
+    if (showPopup && popupContent) {
       e.target.closePopup();
     }
   };
