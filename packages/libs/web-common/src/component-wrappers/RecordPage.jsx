@@ -61,7 +61,9 @@ const findRecordPageComponent = findExportWith(require.context('../components/re
 function makeDynamicWrapper(componentName) {
   return function dynamicWrapper(DefaultComponent) {
     return function DynamicWrapper(props) {
-      const ResolvedComponent = findRecordPageComponent(componentName)(`./${props.recordClass.fullName}`) || DefaultComponent;
+      // Need to append the .js suffix for this to work. Not sure why this
+      // changed, but probably related to the prepublish build. @dmfalke
+      const ResolvedComponent = findRecordPageComponent(componentName)(`./${props.recordClass.fullName}.js`) || DefaultComponent;
       return (
         <ResolvedComponent {...props} DefaultComponent={DefaultComponent}/>
       );
