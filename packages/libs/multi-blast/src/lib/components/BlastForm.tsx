@@ -131,6 +131,8 @@ export function BlastForm(props: Props) {
 
   const onQueryFileInputChanged = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
+      alert('Under Construction');
+
       setQueryFileProvided(
         event.target.files != null && event.target.files.length > 0
       );
