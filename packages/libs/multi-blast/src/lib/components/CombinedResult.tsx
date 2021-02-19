@@ -23,7 +23,7 @@ interface Props {
   wdkRecordType: string | null;
 }
 
-export function CombinedBlastResult({
+export function CombinedResult({
   combinedResult,
   filesToOrganisms,
   hitTypeDisplayName,

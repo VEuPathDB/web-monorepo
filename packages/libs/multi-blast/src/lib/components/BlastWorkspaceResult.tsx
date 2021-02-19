@@ -20,7 +20,7 @@ import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 import { reportToParamValues } from '../utils/params';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
-import { CombinedBlastResult } from './CombinedBlastResult';
+import { ResultContainer } from './ResultContainer';
 
 import './BlastWorkspaceResult.scss';
 
@@ -278,23 +278,14 @@ function BlastSummary({
           ]}
         />
       )}
-      {selectedResult.type === 'combined' ? (
-        <CombinedBlastResult
-          combinedResult={multiQueryReport}
-          filesToOrganisms={filesToOrganisms}
-          hitTypeDisplayName={hitTypeDisplayName}
-          hitTypeDisplayNamePlural={hitTypeDisplayNamePlural}
-          wdkRecordType={wdkRecordType}
-        />
-      ) : (
-        <pre>
-          {JSON.stringify(
-            reportToParamValues(jobDetails, query, databases, filesToOrganisms),
-            null,
-            2
-          )}
-        </pre>
-      )}
+      <ResultContainer
+        combinedResult={multiQueryReport}
+        filesToOrganisms={filesToOrganisms}
+        hitTypeDisplayName={hitTypeDisplayName}
+        hitTypeDisplayNamePlural={hitTypeDisplayNamePlural}
+        selectedResult={selectedResult}
+        wdkRecordType={wdkRecordType}
+      />
     </div>
   );
 }
