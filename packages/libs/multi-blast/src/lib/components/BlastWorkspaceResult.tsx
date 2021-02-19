@@ -253,10 +253,6 @@ function BlastSummary({
             {databases.length > 1 ? 'Databases' : 'Database'}:
           </span>
           <span>{databasesStr}</span>
-          <span className="InlineHeader">
-            Query {queryCount === 1 ? 'Sequence' : 'Sequences'}:
-          </span>
-          <Query query={query} />
         </div>
       </div>
       {queryCount > 1 && (
@@ -296,74 +292,6 @@ function BlastSummary({
         </pre>
       )}
     </div>
-  );
-}
-
-interface QueryProps {
-  query: string;
-}
-
-function Query({ query }: QueryProps) {
-  const lines = useMemo(() => query.split(/\r\n|\r|\n/), [query]);
-
-  const [readMoreState, setReadMoreState] = useState<ReadMoreState>(
-    initialReadMoreState(lines.length)
-  );
-
-  useEffect(() => {
-    setReadMoreState(initialReadMoreState(lines.length));
-  }, [lines]);
-
-  const linesToDisplay = useMemo(
-    () => (readMoreState !== 'collapsed' ? lines : lines.slice(0, 2)),
-    [lines, readMoreState]
-  );
-
-  const toggleExpanded = useCallback(() => {
-    if (readMoreState !== 'not-offered') {
-      setReadMoreState(
-        readMoreState === 'collapsed' ? 'expanded' : 'collapsed'
-      );
-    }
-  }, [readMoreState]);
-
-  return (
-    <span className="QueryContainer">
-      <div className="Query">
-        {linesToDisplay.map((line, i) => (
-          <Fragment key={i}>
-            {line}
-            {i < linesToDisplay.length - 1 && <br />}
-          </Fragment>
-        ))}
-      </div>
-      {readMoreState !== 'not-offered' && (
-        <ReadMoreButton
-          expanded={readMoreState === 'expanded'}
-          onClick={toggleExpanded}
-        />
-      )}
-    </span>
-  );
-}
-
-type ReadMoreState = 'not-offered' | 'expanded' | 'collapsed';
-
-function initialReadMoreState(nLines: number) {
-  return nLines <= 2 ? 'not-offered' : 'collapsed';
-}
-
-interface ReadMoreButtonProps {
-  expanded: boolean;
-  onClick: () => void;
-}
-
-function ReadMoreButton({ expanded, onClick }: ReadMoreButtonProps) {
-  return (
-    <button onClick={onClick} type="button" className="ReadMore link">
-      <IconAlt fa={expanded ? 'chevron-up' : 'chevron-down'} />{' '}
-      {expanded ? 'Show Less' : 'Show More'}
-    </button>
   );
 }
 

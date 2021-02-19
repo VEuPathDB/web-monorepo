@@ -56,23 +56,4 @@
   .InlineHeader {
     font-weight: bold;
   }
-
-  .Query {
-    font-family: Courier, monospace;
-    line-height: 2.5ex;
-    max-height: 50ex;
-    overflow-y: auto;
-  }
-
-  .QueryCount {
-    font-weight: bold;
-  }
-
-  .ReadMore {
-    font-weight: bold;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
 }
