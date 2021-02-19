@@ -11,7 +11,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { useBlastApi } from '../hooks/api';
 import {
-  useHitTypeDisplayName,
+  useHitTypeDisplayNames,
   useWdkRecordType,
 } from '../hooks/combinedResults';
 import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
@@ -164,7 +164,10 @@ function BlastSummary({
 
   const wdkRecordType = useWdkRecordType(multiQueryReport);
 
-  const hitTypeDisplayName = useHitTypeDisplayName(wdkRecordType);
+  const {
+    hitTypeDisplayName,
+    hitTypeDisplayNamePlural,
+  } = useHitTypeDisplayNames(wdkRecordType);
 
   const initialMultiQueryParamValues = useMemo(
     () => reportToParamValues(jobDetails, query, databases, filesToOrganisms),
@@ -280,6 +283,7 @@ function BlastSummary({
           combinedResult={multiQueryReport}
           filesToOrganisms={filesToOrganisms}
           hitTypeDisplayName={hitTypeDisplayName}
+          hitTypeDisplayNamePlural={hitTypeDisplayNamePlural}
           wdkRecordType={wdkRecordType}
         />
       ) : (

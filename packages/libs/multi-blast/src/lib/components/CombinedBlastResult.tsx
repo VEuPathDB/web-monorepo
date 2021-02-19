@@ -5,6 +5,7 @@ import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 
 import {
   useCombinedResultColumns,
+  useHitCounts,
   useMesaEventHandlers,
   useMesaUiState,
   useRawCombinedResultRows,
@@ -12,10 +13,13 @@ import {
 } from '../hooks/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
+import './CombinedResult.scss';
+
 interface Props {
   combinedResult: MultiQueryReportJson;
   filesToOrganisms: Record<string, string>;
   hitTypeDisplayName: string;
+  hitTypeDisplayNamePlural: string;
   wdkRecordType: string | null;
 }
 
@@ -23,8 +27,13 @@ export function CombinedBlastResult({
   combinedResult,
   filesToOrganisms,
   hitTypeDisplayName,
+  hitTypeDisplayNamePlural,
   wdkRecordType,
 }: Props) {
+  const { hitQueryCount, hitSubjectCount, totalQueryCount } = useHitCounts(
+    combinedResult
+  );
+
   const columns = useCombinedResultColumns(hitTypeDisplayName, wdkRecordType);
   const rawRows = useRawCombinedResultRows(
     combinedResult,
@@ -48,5 +57,13 @@ export function CombinedBlastResult({
     [columns, eventHandlers, uiState, rows]
   );
 
-  return <Mesa state={mesaState} />;
+  return (
+    <div className="CombinedResult">
+      <div className="ResultSummary">
+        {hitQueryCount} of your {totalQueryCount} query sequences hit{' '}
+        {hitSubjectCount} {hitTypeDisplayNamePlural.toLowerCase()}
+      </div>
+      <Mesa state={mesaState} />
+    </div>
+  );
 }

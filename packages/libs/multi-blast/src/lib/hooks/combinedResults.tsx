@@ -34,6 +34,28 @@ import {
 } from '../utils/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
+export function useHitCounts(combinedResult: MultiQueryReportJson) {
+  const resultsByQuery = combinedResult.BlastOutput2;
+
+  return useMemo(() => {
+    const hitQueries = new Set<string>();
+    const hitIds = new Set<string>();
+
+    resultsByQuery.forEach((queryResult) => {
+      queryResult.report.results.search.hits.forEach((hit) => {
+        hitQueries.add(queryResult.report.results.search.query_id);
+        hitIds.add(hit.description[0].id);
+      });
+    });
+
+    return {
+      hitQueryCount: hitQueries.size,
+      hitSubjectCount: hitIds.size,
+      totalQueryCount: resultsByQuery.length,
+    };
+  }, [resultsByQuery]);
+}
+
 export function useCombinedResultColumns(
   hitTypeDisplayName: string,
   wdkRecordType: string | null
@@ -334,7 +356,7 @@ export function useWdkRecordType(combinedResult: MultiQueryReportJson) {
   }, [combinedResult]);
 }
 
-export function useHitTypeDisplayName(wdkRecordType: string | null) {
+export function useHitTypeDisplayNames(wdkRecordType: string | null) {
   const recordClasses = useSelector(
     (state: RootState) => state.globalData.recordClasses
   );
@@ -344,6 +366,14 @@ export function useHitTypeDisplayName(wdkRecordType: string | null) {
       ({ urlSegment }) => urlSegment === wdkRecordType
     );
 
-    return recordClass == null ? 'Hit' : recordClass.shortDisplayName;
+    return recordClass == null
+      ? {
+          hitTypeDisplayName: 'Hit',
+          hitTypeDisplayNamePlural: 'Hits',
+        }
+      : {
+          hitTypeDisplayName: recordClass.shortDisplayName,
+          hitTypeDisplayNamePlural: recordClass.shortDisplayNamePlural,
+        };
   }, [recordClasses, wdkRecordType]);
 }
