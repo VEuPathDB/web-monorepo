@@ -3,6 +3,11 @@ import React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
+import {
+  BlastSummaryViewPlugin,
+  GenomeSummaryViewPlugin,
+  ResultTableSummaryViewPlugin,
+} from '@veupathdb/wdk-client/lib/Plugins';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { ClientPluginRegistryEntry } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 
@@ -70,6 +75,21 @@ initialize({
       type: 'questionForm',
       name: 'GenesByMultiBlast',
       component: BlastForm,
+    },
+    {
+      type: 'summaryView',
+      name: '_default',
+      component: ResultTableSummaryViewPlugin,
+    },
+    {
+      type: 'summaryView',
+      name: 'genomic-view',
+      component: GenomeSummaryViewPlugin,
+    },
+    {
+      type: 'summaryView',
+      name: 'blast-view',
+      component: BlastSummaryViewPlugin,
     },
   ] as ClientPluginRegistryEntry<any>[],
   endpoint,

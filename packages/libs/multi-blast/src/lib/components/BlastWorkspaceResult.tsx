@@ -169,49 +169,9 @@ function BlastSummary({
     hitTypeDisplayNamePlural,
   } = useHitTypeDisplayNames(wdkRecordType);
 
-  const initialMultiQueryParamValues = useMemo(
+  const multiQueryParamValues = useMemo(
     () => reportToParamValues(jobDetails, query, databases, filesToOrganisms),
     [databases, filesToOrganisms, jobDetails, query]
-  );
-
-  // FIXME: Converts this into an ARRAY of resultTypes
-  const individualResultType = useWdkService(
-    async (wdkService) => {
-      const { parameters } = await wdkService.getQuestionGivenParameters(
-        'GenesByMultiBlast',
-        initialMultiQueryParamValues
-      );
-
-      const paramValues = parameters.reduce(
-        (memo, { initialDisplayValue, name }) => {
-          const paramValue =
-            initialMultiQueryParamValues[name] != null
-              ? initialMultiQueryParamValues[name]
-              : initialDisplayValue;
-
-          if (paramValue != null) {
-            memo[name] = paramValue;
-          }
-
-          return memo;
-        },
-        {} as Record<string, string>
-      );
-
-      const answerSpec = {
-        searchName: 'GenesByMultiBlast',
-        searchConfig: {
-          parameters: paramValues,
-        },
-      };
-
-      return {
-        type: 'answerSpec',
-        answerSpec,
-        displayName: 'BLAST',
-      } as const;
-    },
-    [initialMultiQueryParamValues]
   );
 
   return (
@@ -225,12 +185,12 @@ function BlastSummary({
           <span className="InlineHeader">Job Id:</span>
           <span className="JobId">
             {jobDetails.id}
-            {initialMultiQueryParamValues && (
+            {multiQueryParamValues && (
               <Link
                 className="EditJob"
                 to={{
                   pathname: '/workspace/blast/new',
-                  state: initialMultiQueryParamValues,
+                  state: multiQueryParamValues,
                 }}
               >
                 Revise and rerun
@@ -283,6 +243,7 @@ function BlastSummary({
         filesToOrganisms={filesToOrganisms}
         hitTypeDisplayName={hitTypeDisplayName}
         hitTypeDisplayNamePlural={hitTypeDisplayNamePlural}
+        multiQueryParamValues={multiQueryParamValues}
         selectedResult={selectedResult}
         wdkRecordType={wdkRecordType}
       />
