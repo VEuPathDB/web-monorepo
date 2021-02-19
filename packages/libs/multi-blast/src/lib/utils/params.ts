@@ -90,8 +90,6 @@ export function paramValuesToBlastConfig(
     [MATCH_MISMATCH_SCORE]: matchMismatchStr,
   } = paramValues;
 
-  const [gapOpen, gapExtend] = (gapCostsStr ?? '').split(',').map(Number);
-
   const maxHSPsConfig =
     Number(maxMatchesStr) >= 1 ? { maxHSPs: Number(maxMatchesStr) } : {};
 
@@ -102,8 +100,6 @@ export function paramValuesToBlastConfig(
     wordSize: Number(wordSizeStr),
     softMasking: stringToBoolean(softMaskStr),
     lcaseMasking: stringToBoolean(lowerCaseMaskStr),
-    gapOpen,
-    gapExtend,
     outFormat: {
       format: 'single-file-json',
     },
@@ -135,6 +131,7 @@ export function paramValuesToBlastConfig(
       };
 
   const [reward, penalty] = (matchMismatchStr ?? '').split(',').map(Number);
+  const [gapOpen, gapExtend] = (gapCostsStr ?? '').split(',').map(Number);
 
   if (selectedTool === 'blastn') {
     return {
@@ -144,6 +141,8 @@ export function paramValuesToBlastConfig(
       ...dustConfig,
       reward,
       penalty,
+      gapOpen,
+      gapExtend,
     };
   }
 
@@ -153,6 +152,8 @@ export function paramValuesToBlastConfig(
       task: selectedTool,
       ...baseConfig,
       ...segConfig,
+      gapOpen,
+      gapExtend,
       matrix: scoringMatrixStr as IOBlastPScoringMatrix,
       compBasedStats: compBasedStats as IoBlastCompBasedStats,
     };
@@ -165,6 +166,8 @@ export function paramValuesToBlastConfig(
       task: selectedTool,
       ...baseConfig,
       ...segConfig,
+      gapOpen,
+      gapExtend,
       matrix: scoringMatrixStr as IOBlastXScoringMatrix,
       compBasedStats: compBasedStats as IoBlastCompBasedStats,
     };
@@ -176,6 +179,8 @@ export function paramValuesToBlastConfig(
       task: selectedTool,
       ...baseConfig,
       ...segConfig,
+      gapOpen,
+      gapExtend,
       matrix: scoringMatrixStr as IOTBlastNScoringMatrix,
       compBasedStats: compBasedStats as IoBlastCompBasedStats,
     };
