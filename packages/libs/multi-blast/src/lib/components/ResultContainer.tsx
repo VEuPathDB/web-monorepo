@@ -1,3 +1,4 @@
+import { useCombinedResultProps } from '../hooks/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
 import { UnderConstruction } from './BlastWorkspace';
@@ -21,16 +22,18 @@ export function ResultContainer({
   selectedResult,
   wdkRecordType,
 }: Props) {
+  const combinedResultProps = useCombinedResultProps(
+    combinedResult,
+    filesToOrganisms,
+    hitTypeDisplayName,
+    hitTypeDisplayNamePlural,
+    wdkRecordType
+  );
+
   return (
     <div className="ResultContainer">
       {selectedResult.type === 'combined' ? (
-        <CombinedResult
-          combinedResult={combinedResult}
-          filesToOrganisms={filesToOrganisms}
-          hitTypeDisplayName={hitTypeDisplayName}
-          hitTypeDisplayNamePlural={hitTypeDisplayNamePlural}
-          wdkRecordType={wdkRecordType}
-        />
+        <CombinedResult {...combinedResultProps} />
       ) : (
         <UnderConstruction />
       )}

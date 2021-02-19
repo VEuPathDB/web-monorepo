@@ -2,6 +2,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
 import {
   MesaColumn,
   MesaSortObject,
@@ -11,6 +12,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 
 import { groupBy, orderBy } from 'lodash';
 
+import { Props as CombinedResultProps } from '../components/CombinedResult';
 import {
   ACCESSION_HELP_TEXT,
   ALIGNMENT_LENGTH_HELP_TEXT,
@@ -34,7 +36,50 @@ import {
 } from '../utils/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
-export function useHitCounts(combinedResult: MultiQueryReportJson) {
+export function useCombinedResultProps(
+  combinedResult: MultiQueryReportJson,
+  filesToOrganisms: Record<string, string>,
+  hitTypeDisplayName: string,
+  hitTypeDisplayNamePlural: string,
+  wdkRecordType: string | null
+): CombinedResultProps {
+  const { hitQueryCount, hitSubjectCount, totalQueryCount } = useHitCounts(
+    combinedResult
+  );
+
+  const columns = useCombinedResultColumns(hitTypeDisplayName, wdkRecordType);
+  const rawRows = useRawCombinedResultRows(
+    combinedResult,
+    wdkRecordType,
+    filesToOrganisms
+  );
+
+  const [sort, setSort] = useState<MesaSortObject>({
+    columnKey: 'queryRank',
+    direction: 'asc',
+  });
+
+  const rows = useSortedCombinedResultRows(rawRows, sort);
+
+  const eventHandlers = useMesaEventHandlers(setSort);
+
+  const uiState = useMesaUiState(sort);
+
+  const mesaState = useMemo(
+    () => MesaState.create({ columns, eventHandlers, rows, uiState }),
+    [columns, eventHandlers, uiState, rows]
+  );
+
+  return {
+    hitQueryCount,
+    hitSubjectCount,
+    hitTypeDisplayNamePlural,
+    mesaState,
+    totalQueryCount,
+  };
+}
+
+function useHitCounts(combinedResult: MultiQueryReportJson) {
   const resultsByQuery = combinedResult.BlastOutput2;
 
   return useMemo(() => {
@@ -56,7 +101,7 @@ export function useHitCounts(combinedResult: MultiQueryReportJson) {
   }, [resultsByQuery]);
 }
 
-export function useCombinedResultColumns(
+function useCombinedResultColumns(
   hitTypeDisplayName: string,
   wdkRecordType: string | null
 ): MesaColumn<keyof CombinedResultRow>[] {
@@ -193,7 +238,7 @@ function DescriptionCell(props: { value: string }) {
   );
 }
 
-export function useRawCombinedResultRows(
+function useRawCombinedResultRows(
   combinedResult: MultiQueryReportJson,
   wdkRecordType: string | null,
   filesToOrganisms: Record<string, string>
@@ -309,7 +354,7 @@ export function useRawCombinedResultRows(
   }, [filesToOrganisms, resultsByQuery, wdkRecordType]);
 }
 
-export function useSortedCombinedResultRows(
+function useSortedCombinedResultRows(
   unsortedRows: CombinedResultRow[],
   sort: MesaSortObject
 ) {
@@ -328,9 +373,7 @@ export function useSortedCombinedResultRows(
   return sortedRows;
 }
 
-export function useMesaEventHandlers(
-  setSort: (newSort: MesaSortObject) => void
-) {
+function useMesaEventHandlers(setSort: (newSort: MesaSortObject) => void) {
   return useMemo(
     () => ({
       onSort: (
@@ -344,7 +387,7 @@ export function useMesaEventHandlers(
   );
 }
 
-export function useMesaUiState(sort: MesaSortObject) {
+function useMesaUiState(sort: MesaSortObject) {
   return useMemo(() => ({ sort }), [sort]);
 }
 
