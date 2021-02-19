@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { IconAlt, Link } from 'wdk-client/Components';
+import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
 import { getStudyByQuestionName } from '../selectors/siteData';
 
 const injectSearchStudy = connect((state, props) => ({

@@ -2,18 +2,18 @@ import { compose } from 'lodash/fp';
 import { connect, useSelector } from 'react-redux';
 import React from 'react';
 
-import { NotFoundController } from 'wdk-client/Controllers';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
+import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 
 import {
   getIdFromRecordClassName,
   isStudyRecordClass,
   Action
-} from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
-import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
-import { fetchStudies } from 'ebrc-client/App/Studies/StudyActionCreators';
+} from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
+import { attemptAction } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionActionCreators';
+import { fetchStudies } from '@veupathdb/web-common/lib/App/Studies/StudyActionCreators';
 
 import RelativeVisitsGroup from '../components/RelativeVisitsGroup';
 
@@ -31,8 +31,8 @@ import ReporterSortMessage from './ReporterSortMessage';
 import { SpecialContactUsInstructions } from './SpecialContactUsInstructions';
 import { Page } from './Page';
 
-import { withPermissions } from 'ebrc-client/components/Permissions';
-import * as ServerSideAttributeFilter from 'wdk-client/Components/AttributeFilter/ServerSideAttributeFilter';
+import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import * as ServerSideAttributeFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/ServerSideAttributeFilter';
 
 export default {
   ReporterSortMessage,

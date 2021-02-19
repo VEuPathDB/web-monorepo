@@ -1,6 +1,6 @@
 import { of, merge } from 'rxjs';
 import { filter, mergeAll, mergeMap, withLatestFrom } from 'rxjs/operators';
-import { StaticDataActions } from 'wdk-client/Actions';
+import { StaticDataActions } from '@veupathdb/wdk-client/lib/Actions';
 
 import { 
   FINISH_SUBMISSION,
@@ -18,9 +18,9 @@ import {
 } from '../action-creators/AccessRequestActionCreators';
 import { datasetId, formValues, userId } from '../selectors/AccessRequestSelectors';
 import { parse } from 'querystring';
-import { userUpdate } from 'wdk-client/Actions/UserActions';
+import { userUpdate } from '@veupathdb/wdk-client/lib/Actions/UserActions';
 
-import { checkPermissions, isUserApprovedForStudy } from 'ebrc-client/StudyAccess/permission';
+import { checkPermissions, isUserApprovedForStudy } from '@veupathdb/web-common/lib/StudyAccess/permission';
 
 export const key = 'accessRequest';
 

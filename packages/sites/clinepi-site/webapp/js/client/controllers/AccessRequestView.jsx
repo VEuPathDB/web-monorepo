@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from 'react';
 
-import { Link } from 'wdk-client/Components'
+import { Link } from '@veupathdb/wdk-client/lib/Components'
 
-import SupportFormBase from 'ebrc-client/components/SupportForm/SupportFormBase';
-import SupportFormBody from 'ebrc-client/components/SupportForm/SupportFormBody';
+import SupportFormBase from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBase';
+import SupportFormBody from '@veupathdb/web-common/lib/components/SupportForm/SupportFormBody';
 
 export default class AccessRequestView extends Component {
   constructor(...args) {

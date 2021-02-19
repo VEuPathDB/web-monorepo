@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { withPermissions } from 'ebrc-client/components/Permissions';
-import StudyAnswerController from 'ebrc-client/component-wrappers/StudyAnswerController';
+import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import StudyAnswerController from '@veupathdb/web-common/lib/component-wrappers/StudyAnswerController';
 
 const ClinEpiStudyAnswerController = withPermissions(StudyAnswerController);
 

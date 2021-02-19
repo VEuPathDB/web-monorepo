@@ -1,5 +1,5 @@
 import React from 'react';
-import CardBasedIndexController from 'ebrc-client/controllers/CardBasedIndexController';
+import CardBasedIndexController from '@veupathdb/web-common/lib/controllers/CardBasedIndexController';
 
 import { getStaticSiteData } from '../selectors/siteData';
 import getHomeContent from '../data/homeContent';

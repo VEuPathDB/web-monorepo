@@ -1,8 +1,8 @@
-import { Action, RecordActions } from 'wdk-client/Actions';
-import * as RecordStoreModule from 'wdk-client/StoreModules/RecordStoreModule';
-import { pruneDescendantNodes } from 'wdk-client/Utils/TreeUtils';
-import { getRefName, getTargetType } from 'wdk-client/Utils/CategoryUtils';
-import { RecordInstance } from 'wdk-client/Utils/WdkModel';
+import { Action, RecordActions } from '@veupathdb/wdk-client/lib/Actions';
+import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
+import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { getRefName, getTargetType } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export const key = 'record';
 

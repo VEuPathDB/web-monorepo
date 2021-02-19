@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { withPermissions } from 'ebrc-client/components/Permissions';
-import StudyRecordHeading from 'ebrc-client/component-wrappers/StudyRecordHeading';
+import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
+import StudyRecordHeading from '@veupathdb/web-common/lib/component-wrappers/StudyRecordHeading';
 
 const ClinEpiStudyRecordHeading = withPermissions(StudyRecordHeading);
 

@@ -1,6 +1,6 @@
 import React from 'react';
-import Header from 'ebrc-client/App/Header';
-import { DataRestrictionDaemon } from 'ebrc-client/App/DataRestriction';
+import Header from '@veupathdb/web-common/lib/App/Header';
+import { DataRestrictionDaemon } from '@veupathdb/web-common/lib/App/DataRestriction';
 import DisclaimerModal from '../components/DisclaimerModal';
 
 import makeHeaderMenuItems from '../data/headerMenuItems';
