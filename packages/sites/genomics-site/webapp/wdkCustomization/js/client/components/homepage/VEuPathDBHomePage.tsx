@@ -314,10 +314,16 @@ const useHeaderMenuItems = (
          }
         },
         {
-          key: 'blast',
+          key: 'blast-beta',
           display: <>BLAST<sup>{' '}<em>beta</em></sup></>,
           type: 'reactRoute',
           url: '/search/transcript/GenesByMultiBlast'
+        },
+        {
+          key: 'blast',
+          display: 'BLAST',
+          type: 'reactRoute',
+          url: '/search/transcript/UnifiedBlast'
         },
         { 
           key: 'companion',

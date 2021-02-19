@@ -6,11 +6,13 @@ import { BlastWorkspace } from '@veupathdb/multi-blast/lib/components/BlastWorks
 import { BlastWorkspaceResult } from '@veupathdb/multi-blast/lib/components/BlastWorkspaceResult';
 import { parseBlastResultSubpath } from '@veupathdb/multi-blast/lib/utils/routes';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
+import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 
-export const blastRoutes = [
+export const blastRoutes: RouteEntry[] = [
   {
     path: '/workspace/blast/:tab(new|all|help)?',
     component: BlastWorkspace,
+    requiresLogin: true,
   },
   {
     path:
@@ -34,6 +36,7 @@ export const blastRoutes = [
         />
       );
     },
+    requiresLogin: true,
   },
   {
     path: '/search/transcript/GenesByMultiBlast',
