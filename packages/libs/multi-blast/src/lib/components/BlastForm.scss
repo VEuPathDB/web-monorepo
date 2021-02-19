@@ -5,6 +5,10 @@
       flex-direction: column;
       gap: 1em;
 
+      &Instructions {
+        font-size: 1.2em;
+      }
+
       textarea {
         font-family: Courier, monospace;
       }

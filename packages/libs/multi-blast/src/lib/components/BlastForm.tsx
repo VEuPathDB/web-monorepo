@@ -167,6 +167,9 @@ export function BlastForm(props: Props) {
   );
   const sequenceParamElement = (
     <div className="SequenceParam">
+      <div className="SequenceParamInstructions">
+        Paste one or several sequences, or provide a FASTA file.
+      </div>
       <TextArea
         {...sequenceParamProps}
         name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}`}
