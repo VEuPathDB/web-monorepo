@@ -115,7 +115,7 @@ function LoadingBlastResult(props: Props) {
     <div className={blastWorkspaceCx('Result', 'Loading')}>
       <h1>BLAST Job - pending</h1>
       <p className="JobId">
-        <span className="InlineHeader">Job:</span> {props.jobId}
+        <span className="InlineHeader">Job Id:</span> {props.jobId}
       </p>
       <Loading>
         <div className="Caption">
@@ -218,20 +218,22 @@ function BlastSummary({
         &lt;&lt; All my BLAST Jobs
       </Link>
       <div className="ConfigDetailsContainer">
-        {initialMultiQueryParamValues && (
-          <Link
-            className="EditBlastSearch"
-            to={{
-              pathname: '/workspace/blast/new',
-              state: initialMultiQueryParamValues,
-            }}
-          >
-            <IconAlt fa="pencil-square-o" /> Edit BLAST Search
-          </Link>
-        )}
         <div className="ConfigDetails">
-          <span className="InlineHeader">Job:</span>
-          <span>{jobDetails.id}</span>
+          <span className="InlineHeader">Job Id:</span>
+          <span className="JobId">
+            {jobDetails.id}
+            {initialMultiQueryParamValues && (
+              <Link
+                className="EditJob"
+                to={{
+                  pathname: '/workspace/blast/new',
+                  state: initialMultiQueryParamValues,
+                }}
+              >
+                Revise and rerun
+              </Link>
+            )}
+          </span>
           {jobDetails.description != null && (
             <Fragment>
               <span className="InlineHeader">Description:</span>
