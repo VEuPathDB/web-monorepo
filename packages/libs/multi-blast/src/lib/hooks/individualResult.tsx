@@ -34,7 +34,7 @@ export function useIndividualResultProps(
 
   const answerResultConfig = useMemo(
     (): AnswerSpecResultTypeConfig =>
-      baseAnswerSpec == undefined
+      baseAnswerSpec == null
         ? { status: 'loading' }
         : !baseAnswerSpec.offered
         ? { status: 'not-offered' }
