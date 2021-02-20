@@ -15,6 +15,7 @@ interface Props {
   hitTypeDisplayName: string;
   hitTypeDisplayNamePlural: string;
   jobId: string;
+  lastSelectedIndividualResult: number;
   multiQueryParamValues: ParameterValues;
   selectedResult: SelectedResult;
   wdkRecordType: string | null;
@@ -26,6 +27,7 @@ export function ResultContainer({
   hitTypeDisplayName,
   hitTypeDisplayNamePlural,
   jobId,
+  lastSelectedIndividualResult,
   multiQueryParamValues,
   selectedResult,
   wdkRecordType,
@@ -41,7 +43,8 @@ export function ResultContainer({
   const individualResultProps = useIndividualResultProps(
     multiQueryParamValues,
     jobId,
-    selectedResult
+    selectedResult,
+    lastSelectedIndividualResult
   );
 
   return (

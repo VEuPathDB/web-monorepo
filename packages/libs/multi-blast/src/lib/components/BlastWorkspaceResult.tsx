@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { uniq } from 'lodash';
@@ -174,6 +174,19 @@ function BlastSummary({
     [databases, filesToOrganisms, jobDetails, query]
   );
 
+  const [
+    lastSelectedIndividualResult,
+    setLastSelectedIndividualResult,
+  ] = useState(
+    selectedResult.type === 'combined' ? 1 : selectedResult.resultIndex
+  );
+
+  useEffect(() => {
+    if (selectedResult.type === 'individual') {
+      setLastSelectedIndividualResult(selectedResult.resultIndex);
+    }
+  }, [selectedResult]);
+
   return (
     <div className={blastWorkspaceCx('Result', 'Complete')}>
       <h1>BLAST Job - result</h1>
@@ -244,6 +257,7 @@ function BlastSummary({
         hitTypeDisplayName={hitTypeDisplayName}
         hitTypeDisplayNamePlural={hitTypeDisplayNamePlural}
         jobId={jobDetails.id}
+        lastSelectedIndividualResult={lastSelectedIndividualResult}
         multiQueryParamValues={multiQueryParamValues}
         selectedResult={selectedResult}
         wdkRecordType={wdkRecordType}

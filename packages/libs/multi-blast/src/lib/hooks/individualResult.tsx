@@ -10,10 +10,13 @@ import { Props as IndividualResultProps } from '../components/IndividualResult';
 export function useIndividualResultProps(
   multiQueryParamValues: ParameterValues,
   jobId: string,
-  selectedResult: SelectedResult
+  selectedResult: SelectedResult,
+  lastSelectedIndividualResult: number
 ): IndividualResultProps {
-  const selectedResultIndex =
-    selectedResult.type === 'individual' ? selectedResult.resultIndex : 1;
+  const resultIndex =
+    selectedResult.type === 'individual'
+      ? selectedResult.resultIndex
+      : lastSelectedIndividualResult;
 
   const baseAnswerResultConfig = useBaseAnswerResultConfig(
     multiQueryParamValues
@@ -26,7 +29,7 @@ export function useIndividualResultProps(
         : {
             loading: false,
             answerResultConfig: baseAnswerResultConfig,
-            viewId: `blast-workspace-result-individual__${jobId}__${selectedResultIndex}`,
+            viewId: `blast-workspace-result-individual__${jobId}__${resultIndex}`,
           },
     [baseAnswerResultConfig]
   );
