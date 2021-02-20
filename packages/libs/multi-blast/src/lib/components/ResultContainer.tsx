@@ -1,4 +1,3 @@
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { useCombinedResultProps } from '../hooks/combinedResults';
@@ -44,7 +43,8 @@ export function ResultContainer({
     multiQueryParamValues,
     jobId,
     selectedResult,
-    lastSelectedIndividualResult
+    lastSelectedIndividualResult,
+    wdkRecordType
   );
 
   return (

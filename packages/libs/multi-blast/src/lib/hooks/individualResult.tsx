@@ -1,45 +1,95 @@
 import { useMemo } from 'react';
 
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  AnswerSpec,
+  ParameterValues,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { AnswerSpecResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 
 import { SelectedResult } from '../components/BlastWorkspaceResult';
 import { Props as IndividualResultProps } from '../components/IndividualResult';
 
+export type AnswerSpecResultTypeConfig =
+  | { status: 'loading' }
+  | { status: 'not-offered' }
+  | { status: 'complete'; value: AnswerSpecResultType };
+
 export function useIndividualResultProps(
   multiQueryParamValues: ParameterValues,
   jobId: string,
   selectedResult: SelectedResult,
-  lastSelectedIndividualResult: number
+  lastSelectedIndividualResult: number,
+  wdkRecordType: string | null
 ): IndividualResultProps {
   const resultIndex =
     selectedResult.type === 'individual'
       ? selectedResult.resultIndex
       : lastSelectedIndividualResult;
 
-  const baseAnswerResultConfig = useBaseAnswerResultConfig(
-    multiQueryParamValues
+  const baseAnswerSpec = useBaseAnswerSpec(
+    multiQueryParamValues,
+    wdkRecordType
+  );
+
+  const answerResultConfig = useMemo(
+    (): AnswerSpecResultTypeConfig =>
+      baseAnswerSpec == undefined
+        ? { status: 'loading' }
+        : !baseAnswerSpec.offered
+        ? { status: 'not-offered' }
+        : {
+            status: 'complete',
+            value: {
+              type: 'answerSpec',
+              answerSpec: baseAnswerSpec.value,
+              displayName: 'BLAST',
+            },
+          },
+    [baseAnswerSpec]
   );
 
   return useMemo(
     () =>
-      baseAnswerResultConfig == null
-        ? { loading: true }
+      answerResultConfig.status === 'loading'
+        ? { status: 'loading' }
+        : answerResultConfig.status === 'not-offered'
+        ? { status: 'not-offered' }
         : {
-            loading: false,
-            answerResultConfig: baseAnswerResultConfig,
+            status: 'complete',
+            answerResultConfig: answerResultConfig.value,
             viewId: `blast-workspace-result-individual__${jobId}__${resultIndex}`,
           },
-    [baseAnswerResultConfig]
+    [answerResultConfig, jobId, resultIndex]
   );
 }
 
-function useBaseAnswerResultConfig(multiQueryParamValues: ParameterValues) {
+type BaseAnswerSpec = { offered: false } | { offered: true; value: AnswerSpec };
+
+function useBaseAnswerSpec(
+  multiQueryParamValues: ParameterValues,
+  wdkRecordType: string | null
+) {
   return useWdkService(
-    async (wdkService): Promise<AnswerSpecResultType> => {
+    async (wdkService): Promise<BaseAnswerSpec> => {
+      if (wdkRecordType == null) {
+        return { offered: false };
+      }
+
+      const recordClass = await wdkService.findRecordClass(wdkRecordType);
+
+      console.log(recordClass.searches);
+
+      const question = recordClass.searches.find(({ urlSegment }) =>
+        urlSegment.endsWith('MultiBlast')
+      );
+
+      if (question == null) {
+        return { offered: false };
+      }
+
       const { parameters } = await wdkService.getQuestionGivenParameters(
-        'GenesByMultiBlast',
+        question.urlSegment,
         multiQueryParamValues
       );
 
@@ -59,17 +109,14 @@ function useBaseAnswerResultConfig(multiQueryParamValues: ParameterValues) {
         {} as ParameterValues
       );
 
-      const answerSpec = {
-        searchName: 'GenesByMultiBlast',
-        searchConfig: {
-          parameters: paramValues,
-        },
-      };
-
       return {
-        type: 'answerSpec',
-        answerSpec,
-        displayName: 'BLAST',
+        offered: true,
+        value: {
+          searchName: question.urlSegment,
+          searchConfig: {
+            parameters: paramValues,
+          },
+        },
       };
     },
     [multiQueryParamValues]

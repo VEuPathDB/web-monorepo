@@ -84,7 +84,7 @@ export function blastDbNameToWdkRecordType(blastDbName: string) {
     targetType === 'AnnotatedTranscripts' ||
     targetType === 'AnnotatedProteins'
   ) {
-    return 'gene';
+    return 'transcript';
   } else if (targetType === 'Genome') {
     return 'genomic-sequence';
   } else if (targetType === 'ESTs') {

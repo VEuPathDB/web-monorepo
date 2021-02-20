@@ -268,7 +268,7 @@ function useRawCombinedResultRows(
         } = queryResult.report.results.search;
 
         const wdkPrimaryKey =
-          wdkRecordType === 'gene'
+          wdkRecordType === 'transcript'
             ? defaultGeneDeflineToWdkPrimaryKey(defline)
             : accession;
 
