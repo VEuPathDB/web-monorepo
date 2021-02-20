@@ -243,6 +243,7 @@ function BlastSummary({
         filesToOrganisms={filesToOrganisms}
         hitTypeDisplayName={hitTypeDisplayName}
         hitTypeDisplayNamePlural={hitTypeDisplayNamePlural}
+        jobId={jobDetails.id}
         multiQueryParamValues={multiQueryParamValues}
         selectedResult={selectedResult}
         wdkRecordType={wdkRecordType}
