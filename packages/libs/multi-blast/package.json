@@ -14,7 +14,7 @@
   "dependencies": {
     "@types/react-redux": "^7.1.5",
     "@veupathdb/wdk-client": "^0.1.1-alpha.11",
-    "@veupathdb/web-common": "^0.1.1-alpha.7",
+    "@veupathdb/web-common": "^0.1.1-alpha.9",
     "lodash": "^4.17.20",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
