@@ -29,13 +29,13 @@ export async function fetchOrganismToFilenameMaps(wdkService: WdkService) {
 
     if (typeof organismName !== 'string') {
       throw new Error(
-        `The '${ORGANISM_NAME_ATTRIBUTE_NAME}' attribute should be a string`
+        `The '${ORGANISM_NAME_ATTRIBUTE_NAME}' attribute should be a string.`
       );
     }
 
     if (typeof nameForFileNames !== 'string') {
       throw new Error(
-        `The '${NAME_FOR_FILENAMES_ATTRIBUTE_NAME}' attribute should be a string`
+        `The '${NAME_FOR_FILENAMES_ATTRIBUTE_NAME}' attribute should be a string.`
       );
     }
 

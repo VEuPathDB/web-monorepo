@@ -118,7 +118,7 @@ function answerToTerms(databaseName: BlastOntologyDatabase, answer: Answer) {
   const termTableName = algorithmTermTables[databaseName];
 
   if (answer.records[0].tableErrors.includes(termTableName)) {
-    throw new Error(`Missing expected table ${termTableName}`);
+    throw new Error(`Missing expected table '${termTableName}'.`);
   }
 
   const termTable = answer.records[0].tables[termTableName];

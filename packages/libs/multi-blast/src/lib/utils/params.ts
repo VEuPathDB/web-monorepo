@@ -196,7 +196,7 @@ export function paramValuesToBlastConfig(
     };
   }
 
-  throw new Error(`The BLAST tool '${selectedTool}' is not supported`);
+  throw new Error(`The BLAST tool '${selectedTool}' is not supported.`);
 }
 
 export function blastConfigToParamValues(

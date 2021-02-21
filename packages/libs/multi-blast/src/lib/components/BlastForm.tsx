@@ -230,7 +230,7 @@ function NewJobForm(props: NewJobFormProps) {
     async (e: FormEvent) => {
       if (wdkDependencies == null) {
         throw new Error(
-          'To use this form, WdkDependendenciesContext must be configured'
+          'To use this form, WdkDependendenciesContext must be configured.'
         );
       }
 
