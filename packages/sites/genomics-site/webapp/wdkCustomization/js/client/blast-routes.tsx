@@ -39,7 +39,7 @@ export const blastRoutes: RouteEntry[] = [
     requiresLogin: true,
   },
   {
-    path: '/search/transcript/GenesByMultiBlast',
-    component: () => <Redirect to="/workspace/blast" />,
-  }
+    path: '/search/:recordClass/:searchName(.*MultiBlast)',
+    component: () => <Redirect to="/workspace/blast/new" />,
+  },
 ];
