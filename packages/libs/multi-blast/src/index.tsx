@@ -62,8 +62,8 @@ initialize({
       },
     },
     {
-      path: '/search/transcript/GenesByMultiBlast',
-      component: () => <Redirect to="/workspace/blast" />,
+      path: '/search/:recordClass/:searchName(.*MultiBlast)',
+      component: () => <Redirect to="/workspace/blast/new" />,
     },
     ...routes,
   ],
