@@ -8,6 +8,7 @@ import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { useBlastApi } from '../hooks/api';
 import {
@@ -36,6 +37,8 @@ export type SelectedResult =
 const POLLING_INTERVAL = 3000;
 
 export function BlastWorkspaceResult(props: Props) {
+  useSetDocumentTitle(`BLAST Job ${props.jobId}`);
+
   const history = useHistory();
 
   const api = useBlastApi();

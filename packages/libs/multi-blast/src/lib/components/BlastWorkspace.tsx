@@ -2,7 +2,10 @@ import { Redirect, Switch } from 'react-router';
 
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import WdkRoute from '@veupathdb/wdk-client/lib/Core/WdkRoute';
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {
+  makeClassNameHelper,
+  useSetDocumentTitle,
+} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { BlastWorkspaceNew } from './BlastWorkspaceNew';
 
@@ -11,6 +14,8 @@ import './BlastWorkspace.scss';
 export const blastWorkspaceCx = makeClassNameHelper('BlastWorkspace');
 
 export function BlastWorkspace() {
+  useSetDocumentTitle('BLAST Workspace');
+
   return (
     <div className={blastWorkspaceCx()}>
       <WorkspaceNavigation
