@@ -17,6 +17,8 @@ export type Props =
       answerResultConfig: AnswerSpecResultType;
       hitCountDescription: string;
       individualQueryOptions: IndividualQueryOption[];
+      linkOutTooltipContent: string;
+      onLinkOutClick?: () => void;
       onSelectedOptionChange: (
         options: ValueType<IndividualQueryOption, false>,
         actionMeta: ActionMeta<IndividualQueryOption>
@@ -51,8 +53,8 @@ export function IndividualResult(props: Props) {
                 />
               )}
               <StrategyLinkOut
-                onClick={undefined}
-                tooltipContent="FILL ME IN"
+                onClick={props.onLinkOutClick}
+                tooltipContent={props.linkOutTooltipContent}
               />
               <p className="HitCountDescription">{props.hitCountDescription}</p>
             </div>

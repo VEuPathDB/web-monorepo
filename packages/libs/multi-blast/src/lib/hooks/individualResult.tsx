@@ -1,14 +1,20 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 
 import { useHistory } from 'react-router';
 import { ActionMeta, ValueType } from 'react-select';
 
+import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import {
   AnswerSpec,
   ParameterValues,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { AnswerSpecResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
+import {
+  NewStepSpec,
+  NewStrategySpec,
+} from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
 import { SelectedResult } from '../components/BlastWorkspaceResult';
 import {
@@ -40,6 +46,8 @@ export function useIndividualResultProps(
   hitTypeDisplayNamePlural: string
 ): IndividualResultProps {
   const history = useHistory();
+  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const wdkService = wdkDependencies?.wdkService;
 
   const resultIndex =
     selectedResult.type === 'individual'
@@ -136,6 +144,51 @@ export function useIndividualResultProps(
     resultIndex,
   ]);
 
+  const linkOutProps = useMemo(() => {
+    if (wdkService == null) {
+      throw new Error(
+        'To export to a strategy, WdkDependendenciesContext must be configured.'
+      );
+    }
+
+    if (answerResultConfig.status === 'loading') {
+      return {
+        linkOutTooltipContent: 'Loading.',
+      };
+    }
+
+    if (answerResultConfig.status === 'not-offered') {
+      return {
+        linkOutTooltipContent: `This feature is not available for ${hitTypeDisplayNamePlural}.`,
+      };
+    }
+
+    const onLinkOutClick = async () => {
+      const answerSpec = answerResultConfig.value.answerSpec;
+      const customName = answerResultConfig.value.displayName;
+
+      const stepSpec: NewStepSpec = {
+        ...answerSpec,
+        customName,
+      };
+      const stepResp = await wdkService.createStep(stepSpec);
+      const strategySpec: NewStrategySpec = {
+        stepTree: { stepId: stepResp.id },
+        name: DEFAULT_STRATEGY_NAME,
+        isSaved: false,
+        isPublic: false,
+      };
+      const strategyResp = await wdkService.createStrategy(strategySpec);
+      history.push(`/workspace/strategies/${strategyResp.id}`);
+    };
+
+    return {
+      linkOutTooltipContent:
+        'Download or data mine using the search strategy system.',
+      onLinkOutClick,
+    };
+  }, [answerResultConfig, history, hitTypeDisplayNamePlural, wdkService]);
+
   return useMemo(
     () =>
       answerResultConfig.status === 'loading'
@@ -150,12 +203,14 @@ export function useIndividualResultProps(
             onSelectedOptionChange,
             selectedQueryOption: individualQueryOptions[resultIndex - 1],
             viewId: `blast-workspace-result-individual__${jobId}__${resultIndex}`,
+            ...linkOutProps,
           },
     [
       answerResultConfig,
       hitCountDescription,
       individualQueryOptions,
       jobId,
+      linkOutProps,
       onSelectedOptionChange,
       resultIndex,
     ]
