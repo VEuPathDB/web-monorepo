@@ -45,7 +45,9 @@ export function ResultContainer({
     selectedResult,
     lastSelectedIndividualResult,
     wdkRecordType,
-    combinedResult
+    combinedResult,
+    hitTypeDisplayName,
+    hitTypeDisplayNamePlural
   );
 
   return (

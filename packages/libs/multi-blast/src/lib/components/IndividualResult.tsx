@@ -13,6 +13,7 @@ export type Props =
   | {
       status: 'complete';
       answerResultConfig: AnswerSpecResultType;
+      hitCountDescription: string;
       individualQueryOptions: IndividualQueryOption[];
       onSelectedOptionChange: (
         options: ValueType<IndividualQueryOption, false>,
@@ -36,17 +37,20 @@ export function IndividualResult(props: Props) {
         </p>
       ) : (
         <ResultPanelController
-          renderHeader={
-            props.individualQueryOptions.length > 1
-              ? () => (
-                  <Select
-                    options={props.individualQueryOptions}
-                    value={props.selectedQueryOption}
-                    onChange={props.onSelectedOptionChange}
-                  />
-                )
-              : undefined
-          }
+          renderHeader={() => (
+            <div className="Header">
+              {props.individualQueryOptions.length > 1 ? (
+                <Select
+                  className="IndividualQueryOptionsContainer"
+                  classNamePrefix="IndividualQueryOptions"
+                  options={props.individualQueryOptions}
+                  value={props.selectedQueryOption}
+                  onChange={props.onSelectedOptionChange}
+                />
+              ) : null}
+              <p>{props.hitCountDescription}</p>
+            </div>
+          )}
           resultType={props.answerResultConfig}
           viewId={props.viewId}
         />

@@ -35,7 +35,9 @@ export function useIndividualResultProps(
   selectedResult: SelectedResult,
   lastSelectedIndividualResult: number,
   wdkRecordType: string | null,
-  combinedResult: MultiQueryReportJson
+  combinedResult: MultiQueryReportJson,
+  hitTypeDisplayName: string,
+  hitTypeDisplayNamePlural: string
 ): IndividualResultProps {
   const history = useHistory();
 
@@ -61,7 +63,7 @@ export function useIndividualResultProps(
       const queryTitle = queryResult.report.results.search.query_title;
 
       const label =
-        queryTitle == null ? `${i + 1}: Untitled` : `${i + 1}: ${queryTitle}`;
+        queryTitle == null ? `${i + 1}: Untitled` : `${i + 1}: >${queryTitle}`;
 
       return {
         value: i + 1,
@@ -110,6 +112,30 @@ export function useIndividualResultProps(
     [baseAnswerSpec, querySequence]
   );
 
+  const hitCountDescription = useMemo(() => {
+    const resultsByQuery = combinedResult.BlastOutput2;
+
+    const queryCount = resultsByQuery.length;
+
+    const individualResultReport = resultsByQuery[resultIndex - 1].report;
+    const hitCount = individualResultReport.results.search.hits.length;
+
+    const querySubDescription = queryCount === 1 ? 'Your query' : 'This query';
+
+    const hitSubDescription = `${hitCount} ${
+      hitCount === 1
+        ? hitTypeDisplayName.toLowerCase()
+        : hitTypeDisplayNamePlural.toLowerCase()
+    }`;
+
+    return `${querySubDescription} hit ${hitSubDescription}`;
+  }, [
+    combinedResult,
+    hitTypeDisplayName,
+    hitTypeDisplayNamePlural,
+    resultIndex,
+  ]);
+
   return useMemo(
     () =>
       answerResultConfig.status === 'loading'
@@ -119,6 +145,7 @@ export function useIndividualResultProps(
         : {
             status: 'complete',
             answerResultConfig: answerResultConfig.value,
+            hitCountDescription,
             individualQueryOptions,
             onSelectedOptionChange,
             selectedQueryOption: individualQueryOptions[resultIndex - 1],
@@ -126,6 +153,7 @@ export function useIndividualResultProps(
           },
     [
       answerResultConfig,
+      hitCountDescription,
       individualQueryOptions,
       jobId,
       onSelectedOptionChange,
