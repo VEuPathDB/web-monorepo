@@ -9,6 +9,13 @@ import { AnswerSpecResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult'
 
 import { SelectedResult } from '../components/BlastWorkspaceResult';
 import { Props as IndividualResultProps } from '../components/IndividualResult';
+import { BLAST_QUERY_SEQUENCE_PARAM_NAME } from '../utils/params';
+
+// Coarse regex which matches a single defline-free sequence,
+// or one or more deflined sequences. The production version
+// of our client will retrieve individual sequences from the
+// multi-blast service
+const INDIVIDUAL_SEQUENCE_REGEX = /^[^>\s]+$|>.+(\n[^>\s]+)+/g;
 
 export type AnswerSpecResultTypeConfig =
   | { status: 'loading' }
@@ -32,6 +39,11 @@ export function useIndividualResultProps(
     wdkRecordType
   );
 
+  const querySequence = useIndividualQuerySequence(
+    multiQueryParamValues[BLAST_QUERY_SEQUENCE_PARAM_NAME],
+    resultIndex
+  );
+
   const answerResultConfig = useMemo(
     (): AnswerSpecResultTypeConfig =>
       baseAnswerSpec == null
@@ -42,7 +54,16 @@ export function useIndividualResultProps(
             status: 'complete',
             value: {
               type: 'answerSpec',
-              answerSpec: baseAnswerSpec.value,
+              answerSpec: {
+                ...baseAnswerSpec.value,
+                searchConfig: {
+                  ...baseAnswerSpec.value.searchConfig,
+                  parameters: {
+                    ...baseAnswerSpec.value.searchConfig.parameters,
+                    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: querySequence,
+                  },
+                },
+              },
               displayName: 'BLAST',
             },
           },
@@ -121,4 +142,13 @@ function useBaseAnswerSpec(
     },
     [multiQueryParamValues]
   );
+}
+
+function useIndividualQuerySequence(multiQuery: string, resultIndex: number) {
+  const individualSequences = useMemo(
+    () => multiQuery.trim().match(INDIVIDUAL_SEQUENCE_REGEX) ?? [],
+    [multiQuery]
+  );
+
+  return individualSequences[resultIndex - 1] ?? multiQuery;
 }
