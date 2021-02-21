@@ -5,6 +5,8 @@ import { ActionMeta, ValueType } from 'react-select/src/types';
 import { ResultPanelController } from '@veupathdb/wdk-client/lib/Controllers';
 import { AnswerSpecResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 
+import { StrategyLinkOut } from './StrategyLinkOut';
+
 import './IndividualResult.scss';
 
 export type Props =
@@ -39,7 +41,7 @@ export function IndividualResult(props: Props) {
         <ResultPanelController
           renderHeader={() => (
             <div className="Header">
-              {props.individualQueryOptions.length > 1 ? (
+              {props.individualQueryOptions.length > 1 && (
                 <Select
                   className="IndividualQueryOptionsContainer"
                   classNamePrefix="IndividualQueryOptions"
@@ -47,8 +49,12 @@ export function IndividualResult(props: Props) {
                   value={props.selectedQueryOption}
                   onChange={props.onSelectedOptionChange}
                 />
-              ) : null}
-              <p>{props.hitCountDescription}</p>
+              )}
+              <StrategyLinkOut
+                onClick={undefined}
+                tooltipContent="FILL ME IN"
+              />
+              <p className="HitCountDescription">{props.hitCountDescription}</p>
             </div>
           )}
           resultType={props.answerResultConfig}

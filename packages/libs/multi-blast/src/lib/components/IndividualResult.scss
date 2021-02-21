@@ -1,13 +1,21 @@
 .IndividualResult {
   .Header {
-    p {
-      font-size: 1.2em;
-      margin: 1.5em 0 0.5em 0;
-    }
+    display: grid;
+    grid-template-areas:
+      'query-options strategy-link-out'
+      'hit-count     strategy-link-out';
+  }
+
+  p.HitCountDescription {
+    grid-area: hit-count;
+
+    font-size: 1.2em;
+    margin: 1.5em 0 0.5em 0;
   }
 
   .IndividualQueryOptions {
     &Container {
+      grid-area: query-options;
       max-width: 25em;
       font-size: 1.2em;
     }
@@ -17,6 +25,12 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+  }
+
+  .StrategyLinkOut {
+    grid-area: strategy-link-out;
+    justify-self: flex-end;
+    align-self: flex-end;
   }
 
   p.NotOffered {
