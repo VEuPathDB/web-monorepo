@@ -341,13 +341,37 @@ const useHeaderMenuItems = (
             include: [ FungiDB ]
           }
         },
-        { 
+        {
+          key: 'EuPaGDT',
+          display: 'EuPaGDT',
+          type: 'externalLink',
+          tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
+          url: 'https://www.flyrnai.org/tools/fly2mosquito/web/',
+          target: '_blank',
+          metadata: {
+            include: [ VectorBase ]
+          }
+        },
+        {
           key: 'EuPaGDT',
           display: 'EuPaGDT',
           type: 'externalLink',
           tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
           url: 'http://grna.ctegd.uga.edu',
-          target: '_blank'
+          target: '_blank',
+          metadata: {
+            exclude: [ VectorBase ]
+          }
+        },
+        { 
+          key: 'user-provided-links',
+          display: 'External tools & resources',
+          tooltip: 'User-provided resources',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/VectorBase/externalLinks.html#external-resources'),
+          metadata: {
+            include: [ VectorBase ]
+          }
         },
         { 
           key: 'galaxy',
