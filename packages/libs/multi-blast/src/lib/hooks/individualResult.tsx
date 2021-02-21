@@ -67,7 +67,7 @@ export function useIndividualResultProps(
               displayName: 'BLAST',
             },
           },
-    [baseAnswerSpec]
+    [baseAnswerSpec, querySequence]
   );
 
   return useMemo(
