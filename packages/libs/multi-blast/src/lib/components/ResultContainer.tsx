@@ -44,7 +44,8 @@ export function ResultContainer({
     jobId,
     selectedResult,
     lastSelectedIndividualResult,
-    wdkRecordType
+    wdkRecordType,
+    combinedResult
   );
 
   return (

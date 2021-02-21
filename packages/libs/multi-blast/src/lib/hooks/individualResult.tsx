@@ -1,4 +1,7 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+
+import { useHistory } from 'react-router';
+import { ActionMeta, ValueType } from 'react-select';
 
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import {
@@ -8,7 +11,11 @@ import {
 import { AnswerSpecResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 
 import { SelectedResult } from '../components/BlastWorkspaceResult';
-import { Props as IndividualResultProps } from '../components/IndividualResult';
+import {
+  Props as IndividualResultProps,
+  IndividualQueryOption,
+} from '../components/IndividualResult';
+import { MultiQueryReportJson } from '../utils/ServiceTypes';
 import { BLAST_QUERY_SEQUENCE_PARAM_NAME } from '../utils/params';
 
 // Coarse regex which matches a single defline-free sequence,
@@ -27,8 +34,11 @@ export function useIndividualResultProps(
   jobId: string,
   selectedResult: SelectedResult,
   lastSelectedIndividualResult: number,
-  wdkRecordType: string | null
+  wdkRecordType: string | null,
+  combinedResult: MultiQueryReportJson
 ): IndividualResultProps {
+  const history = useHistory();
+
   const resultIndex =
     selectedResult.type === 'individual'
       ? selectedResult.resultIndex
@@ -42,6 +52,36 @@ export function useIndividualResultProps(
   const querySequence = useIndividualQuerySequence(
     multiQueryParamValues[BLAST_QUERY_SEQUENCE_PARAM_NAME],
     resultIndex
+  );
+
+  const individualQueryOptions = useMemo(() => {
+    const resultsByQuery = combinedResult.BlastOutput2;
+
+    return resultsByQuery.map((queryResult, i) => {
+      const queryTitle = queryResult.report.results.search.query_title;
+
+      const label =
+        queryTitle == null ? `${i + 1}: Untitled` : `${i + 1}: ${queryTitle}`;
+
+      return {
+        value: i + 1,
+        label,
+      };
+    });
+  }, [combinedResult]);
+
+  const onSelectedOptionChange = useCallback(
+    (
+      selection: ValueType<IndividualQueryOption, false>,
+      actionMeta: ActionMeta<IndividualQueryOption>
+    ) => {
+      if (actionMeta.action === 'select-option' && selection != null) {
+        history.push(
+          `/workspace/blast/result/${jobId}/individual/${selection.value}`
+        );
+      }
+    },
+    [history, jobId]
   );
 
   const answerResultConfig = useMemo(
@@ -79,9 +119,18 @@ export function useIndividualResultProps(
         : {
             status: 'complete',
             answerResultConfig: answerResultConfig.value,
+            individualQueryOptions,
+            onSelectedOptionChange,
+            selectedQueryOption: individualQueryOptions[resultIndex - 1],
             viewId: `blast-workspace-result-individual__${jobId}__${resultIndex}`,
           },
-    [answerResultConfig, jobId, resultIndex]
+    [
+      answerResultConfig,
+      individualQueryOptions,
+      jobId,
+      onSelectedOptionChange,
+      resultIndex,
+    ]
   );
 }
 
