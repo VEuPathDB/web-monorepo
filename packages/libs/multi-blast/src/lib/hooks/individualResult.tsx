@@ -99,8 +99,6 @@ function useBaseAnswerSpec(
 
       const recordClass = await wdkService.findRecordClass(wdkRecordType);
 
-      console.log(recordClass.searches);
-
       const question = recordClass.searches.find(({ urlSegment }) =>
         urlSegment.endsWith('MultiBlast')
       );
