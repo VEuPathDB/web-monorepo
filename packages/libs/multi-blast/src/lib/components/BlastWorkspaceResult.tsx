@@ -244,7 +244,7 @@ function BlastSummary({
               display: 'Individual Results',
               route: `/individual/${
                 selectedResult.type === 'combined'
-                  ? 1
+                  ? lastSelectedIndividualResult
                   : selectedResult.resultIndex
               }`,
             },
