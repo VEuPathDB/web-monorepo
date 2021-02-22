@@ -131,9 +131,7 @@ export function useIndividualResultProps(
     const querySubDescription = queryCount === 1 ? 'Your query' : 'This query';
 
     const hitSubDescription = `${hitCount} ${
-      hitCount === 1
-        ? hitTypeDisplayName.toLowerCase()
-        : hitTypeDisplayNamePlural.toLowerCase()
+      hitCount === 1 ? hitTypeDisplayName : hitTypeDisplayNamePlural
     }`;
 
     return `${querySubDescription} hit ${hitSubDescription}`;

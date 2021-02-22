@@ -84,6 +84,7 @@ export function useCombinedResultProps(
   return {
     hitQueryCount,
     hitSubjectCount,
+    hitTypeDisplayName,
     hitTypeDisplayNamePlural,
     mesaState,
     totalQueryCount,
