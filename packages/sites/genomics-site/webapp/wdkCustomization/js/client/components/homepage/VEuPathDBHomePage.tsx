@@ -317,7 +317,7 @@ const useHeaderMenuItems = (
           key: 'blast-beta',
           display: <>BLAST<sup>{' '}<em>beta</em></sup></>,
           type: 'reactRoute',
-          url: '/search/transcript/GenesByMultiBlast'
+          url: '/workspace/blast/new'
         },
         {
           key: 'blast',

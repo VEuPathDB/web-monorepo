@@ -125,7 +125,10 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
   },
   {
     type: 'questionForm',
-    name: 'GenesByMultiBlast',
+    test: ({ question }) => (
+      question != null &&
+      question.urlSegment.endsWith('MultiBlast')
+    ),
     component: BlastForm,
   },
   {

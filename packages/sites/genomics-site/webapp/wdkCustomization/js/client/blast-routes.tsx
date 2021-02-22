@@ -40,6 +40,14 @@ export const blastRoutes: RouteEntry[] = [
   },
   {
     path: '/search/:recordClass/:searchName(.*MultiBlast)',
-    component: () => <Redirect to="/workspace/blast/new" />,
-  },
+    component: (
+      props: RouteComponentProps<{
+        recordClass: string;
+      }>
+    ) => (
+      <Redirect
+        to={`/workspace/blast/new?recordType=${props.match.params.recordClass}`}
+      />
+    ),
+  }
 ];

@@ -281,10 +281,10 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
   integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
 
-"@veupathdb/multi-blast@^0.1.1-alpha.14":
-  version "0.1.1-alpha.14"
-  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.1.1-alpha.14.tgz#215cba55b5c78d69c5866ec7e9d479f8a2d13191"
-  integrity sha512-6wGPSdXw40voE2v2rIIQVqPgewSAXOWZu4E6gfdJkg4tWv89a3o+qvIFCKxaqR6fUEbz6oqpNwE9fYcqKtM2Eg==
+"@veupathdb/multi-blast@^0.1.1-alpha.15":
+  version "0.1.1-alpha.15"
+  resolved "https://registry.yarnpkg.com/@veupathdb/multi-blast/-/multi-blast-0.1.1-alpha.15.tgz#ff01b1d6e43420111a13d62cec74e59b880f1112"
+  integrity sha512-ld46u2wexdY592m4f4RadMPQqlZWmoxRI+MgLmKYjzAzbC4nVCcVf9ufvxPUQGG4AF/yGkTAEpjgX2vwObb+Yw==
   dependencies:
     "@types/react-redux" "^7.1.5"
     "@veupathdb/wdk-client" "^0.1.1-alpha.11"
