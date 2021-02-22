@@ -22,6 +22,11 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { groupBy, orderBy } from 'lodash';
 
 import { Props as CombinedResultProps } from '../components/CombinedResult';
+import { MultiQueryReportJson } from '../utils/ServiceTypes';
+import {
+  TargetMetadataByDataType,
+  dbNameToTargetTypeTerm,
+} from '../utils/targetTypes';
 import {
   ACCESSION_HELP_TEXT,
   ALIGNMENT_LENGTH_HELP_TEXT,
@@ -43,24 +48,24 @@ import {
   mergeIntervals,
   orderHitsBySignificance,
 } from '../utils/combinedResults';
-import { MultiQueryReportJson } from '../utils/ServiceTypes';
-import {
-  dbNameToTargetTypeTerm,
-  TargetMetadataByDataType,
-} from '../utils/targetTypes';
 
 export function useCombinedResultProps(
   combinedResult: MultiQueryReportJson,
   filesToOrganisms: Record<string, string>,
   hitTypeDisplayName: string,
   hitTypeDisplayNamePlural: string,
-  wdkRecordType: string | null
+  targetTypeTerm: string,
+  wdkRecordType: string
 ): CombinedResultProps {
   const { hitQueryCount, hitSubjectCount, totalQueryCount } = useHitCounts(
     combinedResult
   );
 
-  const columns = useCombinedResultColumns(hitTypeDisplayName, wdkRecordType);
+  const columns = useCombinedResultColumns(
+    hitTypeDisplayName,
+    targetTypeTerm,
+    wdkRecordType
+  );
   const rawRows = useRawCombinedResultRows(
     combinedResult,
     wdkRecordType,
@@ -117,18 +122,27 @@ function useHitCounts(combinedResult: MultiQueryReportJson) {
 
 function useCombinedResultColumns(
   hitTypeDisplayName: string,
-  wdkRecordType: string | null
+  targetTypeTerm: string,
+  wdkRecordType: string
 ): MesaColumn<keyof CombinedResultRow>[] {
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
+
+  const recordLinkUrlSegment =
+    targetMetadataByDataType[targetTypeTerm] == null
+      ? undefined
+      : targetMetadataByDataType[targetTypeTerm].recordLinkUrlSegment ??
+        targetMetadataByDataType[targetTypeTerm].recordClassUrlSegment;
+
   return useMemo(
     () => [
       {
         key: 'accession',
         name: hitTypeDisplayName,
         renderCell: ({ row }: { row: CombinedResultRow }) =>
-          wdkRecordType == null || row.wdkPrimaryKey == null ? (
+          recordLinkUrlSegment == null || row.wdkPrimaryKey == null ? (
             row.accession
           ) : (
-            <Link to={`/record/${wdkRecordType}/${row.wdkPrimaryKey}`}>
+            <Link to={`/record/${recordLinkUrlSegment}/${row.wdkPrimaryKey}`}>
               {row.accession}
             </Link>
           ),
@@ -211,7 +225,7 @@ function useCombinedResultColumns(
         helpText: QUERY_COVERAGE_HELP_TEXT,
       },
     ],
-    [hitTypeDisplayName, wdkRecordType]
+    [hitTypeDisplayName, recordLinkUrlSegment]
   );
 }
 

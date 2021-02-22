@@ -3,6 +3,7 @@ import { createContext } from 'react';
 export interface TargetMetadata {
   blastOntologyDatabase: BlastOntologyDatabase;
   recordClassUrlSegment: string;
+  recordLinkUrlSegment?: string;
   searchUrlSegment: string;
 }
 
@@ -12,11 +13,13 @@ const targetMetadataByDataType: Record<string, TargetMetadata> = {
   AnnotatedTranscripts: {
     blastOntologyDatabase: 'blast-est-ontology',
     recordClassUrlSegment: 'transcript',
+    recordLinkUrlSegment: 'gene',
     searchUrlSegment: 'GenesByMultiBlast',
   },
   AnnotatedProteins: {
     blastOntologyDatabase: 'blast-orf-ontology',
     recordClassUrlSegment: 'transcript',
+    recordLinkUrlSegment: 'gene',
     searchUrlSegment: 'GenesByMultiBlast',
   },
   Genome: {

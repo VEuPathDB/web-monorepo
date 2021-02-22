@@ -292,6 +292,7 @@ function BlastSummary({
         lastSelectedIndividualResult={lastSelectedIndividualResult}
         multiQueryParamValues={multiQueryParamValues}
         selectedResult={selectedResult}
+        targetTypeTerm={targetTypeTerm}
         wdkRecordType={wdkRecordType}
       />
     </div>

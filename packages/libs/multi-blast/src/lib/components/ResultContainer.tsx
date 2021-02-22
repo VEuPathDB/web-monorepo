@@ -17,7 +17,8 @@ interface Props {
   lastSelectedIndividualResult: number;
   multiQueryParamValues: ParameterValues;
   selectedResult: SelectedResult;
-  wdkRecordType: string | null;
+  targetTypeTerm: string;
+  wdkRecordType: string;
 }
 
 export function ResultContainer({
@@ -29,6 +30,7 @@ export function ResultContainer({
   lastSelectedIndividualResult,
   multiQueryParamValues,
   selectedResult,
+  targetTypeTerm,
   wdkRecordType,
 }: Props) {
   const combinedResultProps = useCombinedResultProps(
@@ -36,6 +38,7 @@ export function ResultContainer({
     filesToOrganisms,
     hitTypeDisplayName,
     hitTypeDisplayNamePlural,
+    targetTypeTerm,
     wdkRecordType
   );
 
