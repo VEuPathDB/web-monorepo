@@ -3,8 +3,8 @@ import { cx } from './Utils';
 import { SessionSummary } from './SessionSummary';
 import { useSession, useStudyRecord } from '@veupathdb/eda-workspace-core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
-import { Redirect, Route } from 'react-router';
-import { Variables } from './Variables';
+import { Redirect, Route, RouteComponentProps } from 'react-router';
+import { Variables, VariablesRoute } from './Variables';
 
 interface Props {
   sessionId: string;
@@ -54,8 +54,10 @@ export function EDASession(props: Props) {
         render={() => <Redirect to={`${routeBase}/variables`} />}
       />
       <Route
-        path={`${routeBase}/variables`}
-        render={() => <Variables sessionId={session.id} />}
+        path={`${routeBase}/variables/:entityId?/:variableId?`}
+        render={(
+          props: RouteComponentProps<{ entityId?: string; variableId?: string }>
+        ) => <VariablesRoute sessionId={session.id} {...props.match.params} />}
       />
       <Route
         path={`${routeBase}/visualizations`}
