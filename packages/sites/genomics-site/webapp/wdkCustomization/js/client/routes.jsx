@@ -1,6 +1,6 @@
 import React from 'react';
 
-import SiteSearchController from 'ebrc-client/controllers/SiteSearchController';
+import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
 
 // load api-specific page controllers
 import FastaConfigController from './components/controllers/FastaConfigController';
@@ -8,8 +8,8 @@ import QueryGridController from './components/controllers/QueryGridController';
 import { JBrowseController } from './components/controllers/JBrowseController';
 import { PlasmoApController } from './components/controllers/PlasmoApController';
 
-import { FeaturedTools } from 'ebrc-client/components/homepage/FeaturedTools';
-import { WorkshopExercises } from 'ebrc-client/components/homepage/WorkshopExercises';
+import { FeaturedTools } from '@veupathdb/web-common/lib/components/homepage/FeaturedTools';
+import { WorkshopExercises } from '@veupathdb/web-common/lib/components/homepage/WorkshopExercises';
 
 import SampleForm from './components/samples/SampleForm';
 

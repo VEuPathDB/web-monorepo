@@ -1,16 +1,16 @@
 import React, { useState, useMemo, useCallback } from 'react';
 
-import { Loading } from 'wdk-client/Components';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { StepTree, NewStepSpec } from 'wdk-client/Utils/WdkUser';
-import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { StepTree, NewStepSpec } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { AddStepOperationFormProps } from '@veupathdb/wdk-client/lib/Views/Strategy/AddStepPanel';
 
-import { SubmissionMetadata } from 'wdk-client/Actions/QuestionActions';
-import WdkService, { useWdkEffect } from 'wdk-client/Service/WdkService';
-import { Plugin } from 'wdk-client/Utils/ClientPlugin';
-import { DEFAULT_STRATEGY_NAME } from 'wdk-client/StoreModules/QuestionStoreModule';
-import NotFound from 'wdk-client/Views/NotFound/NotFound';
-import { Props as FormProps } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { SubmissionMetadata } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
+import WdkService, { useWdkEffect } from '@veupathdb/wdk-client/lib/Service/WdkService';
+import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
+import { DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
+import { Props as FormProps } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
 import { colocationQuestionSuffix } from './ApiBinaryOperations';
 

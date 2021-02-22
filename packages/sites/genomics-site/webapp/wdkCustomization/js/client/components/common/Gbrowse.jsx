@@ -1,9 +1,9 @@
 import {once, debounce} from 'lodash';
 import PropTypes from 'prop-types';
 import React, { PureComponent, useCallback, useEffect, useState, useRef } from 'react';
-import { httpGet } from 'ebrc-client/util/http';
+import { httpGet } from '@veupathdb/web-common/lib/util/http';
 import $ from 'jquery';
-import { Checkbox, HelpIcon, Loading } from 'wdk-client/Components';
+import { Checkbox, HelpIcon, Loading } from '@veupathdb/wdk-client/lib/Components';
 
 import './Gbrowse.scss';
 
@@ -216,11 +216,10 @@ export function GbrowseContext(props) {
   let jbrowseUrl = record.attributes.jbrowseLink;
   let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
-   if (attribute.name == 'GeneModelGbrowseUrl'){
+  if (attribute.name == 'GeneModelGbrowseUrl'){
       jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
       jbrowseUrlFull = record.attributes.geneJbrowseFullUrl;
       apolloUrlFull = record.attributes.geneApolloFullUrl;
-      }
       if (window.location.href.indexOf("vectorbase") != -1){
       return (
         <div>
@@ -239,7 +238,7 @@ export function GbrowseContext(props) {
         </div>
         )
       }
-	
+  }	
   if (attribute.name == 'SyntenyGbrowseUrl' || attribute.name == 'BlatAlignmentsGbrowseUrl' || attribute.name == 'SnpsGbrowseUrl'){ 
     if (attribute.name == 'SyntenyGbrowseUrl'){ 
       jbrowseUrlMinimal = record.attributes.syntenyJbrowseUrl;

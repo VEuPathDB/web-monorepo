@@ -1,12 +1,12 @@
-@import 'ebrc-client/styles/themes.scss';
-@import 'ebrc-client/styles/breakpoints.scss';
-@import 'ebrc-client/styles/default-layout.scss';
-@import 'ebrc-client/styles/header.scss';
-@import 'ebrc-client/styles/announcements.scss';
-@import 'ebrc-client/styles/search-pane.scss';
-@import 'ebrc-client/styles/main.scss';
-@import 'ebrc-client/styles/news.scss';
-@import 'ebrc-client/styles/footer.scss';
+@import './themes.scss';
+@import '@veupathdb/web-common/lib/styles/breakpoints.scss';
+@import '@veupathdb/web-common/lib/styles/default-layout.scss';
+@import '@veupathdb/web-common/lib/styles/header.scss';
+@import '@veupathdb/web-common/lib/styles/announcements.scss';
+@import '@veupathdb/web-common/lib/styles/search-pane.scss';
+@import '@veupathdb/web-common/lib/styles/main.scss';
+@import '@veupathdb/web-common/lib/styles/news.scss';
+@import '@veupathdb/web-common/lib/styles/footer.scss';
 @import '~site/wdkCustomization/js/client/styles/home-page-layout.scss';
 
 @include themify($child: '') {
@@ -116,6 +116,12 @@
     &__selected:active, &__selected:hover, &__selected:link, &__selected:visited {
       border-color: $primary-color;
     }
+  }
+
+  // site search overrides
+  .SiteSearch--CountsContainer, .SiteSearch--ResultTypeWidgetContainer {
+    border: 1px solid themed('secondary-color-border');
+    background: themed('secondary-color')
   }
 
 }

@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 
-import { EnumParam, Parameter } from 'wdk-client/Utils/WdkModel';
-import ParamComponent from 'wdk-client/Views/Question/ParameterComponent';
-import EnumParamModule from 'wdk-client/Views/Question/Params/EnumParam';
-import { Props, isPropsType } from 'wdk-client/Views/Question/Params/Utils';
+import { EnumParam, Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import ParamComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
+import EnumParamModule from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParam';
+import { Props, isPropsType } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
-import { pruneNodesWithSingleExtendingChild } from 'ebrc-client/util/organisms';
+import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
 
 const ORGANISM_PROPERTIES_KEY = 'organismProperties';
 

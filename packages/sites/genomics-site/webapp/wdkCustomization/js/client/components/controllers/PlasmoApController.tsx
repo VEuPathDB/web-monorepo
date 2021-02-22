@@ -2,7 +2,7 @@ import React from 'react';
 
 import { PlasmoAp } from '../PlasmoAp';
 
-import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 
 export function PlasmoApController() {

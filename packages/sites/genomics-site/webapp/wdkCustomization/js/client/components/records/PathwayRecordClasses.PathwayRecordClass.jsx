@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { cloneDeep, uniqueId } from 'lodash';
 import $ from 'jquery';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { loadChemDoodleWeb } from '../common/Compound';
 import {
   CategoriesCheckboxTree,
@@ -14,10 +14,10 @@ import {
   HelpIcon,
   Link,
   Loading
-} from 'wdk-client/Components';
-import * as Ontology from 'wdk-client/Utils/OntologyUtils';
-import * as Category from 'wdk-client/Utils/CategoryUtils';
-import Menu from 'ebrc-client/components/Menu';
+} from '@veupathdb/wdk-client/lib/Components';
+import * as Ontology from '@veupathdb/wdk-client/lib/Utils/OntologyUtils';
+import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import Menu from '@veupathdb/web-common/lib/components/Menu';
 
 import { PathwaySearchById } from './PathwaySearchById';
 import {

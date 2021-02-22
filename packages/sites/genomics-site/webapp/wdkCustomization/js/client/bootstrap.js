@@ -1,4 +1,4 @@
-import { initialize as initializeEbrc } from 'ebrc-client/bootstrap';
+import { initialize as initializeEbrc } from '@veupathdb/web-common/lib/bootstrap';
 // import apicomm wrappers and additional routes
 import * as componentWrappers from './componentWrappers';
 import { wrapRoutes } from './routes';
@@ -6,7 +6,7 @@ import wrapStoreModules from './wrapStoreModules';
 import pluginConfig from './pluginConfig';
 
 // import CSS files
-import 'eupathdb/wdkCustomization/css/client.scss';
+import '@veupathdb/web-common/lib/styles/client.scss';
 import 'site/css/AllApiSites.css';
 import 'site/wdkCustomization/css/client.scss';
 

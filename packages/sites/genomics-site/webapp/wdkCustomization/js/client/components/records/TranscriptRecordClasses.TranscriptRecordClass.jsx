@@ -6,8 +6,8 @@ import {
   isTranscripFilterEnabled,
   requestTranscriptFilterUpdate
 } from '../../util/transcriptFilters';
-import {useWdkEffect} from 'wdk-client/Service/WdkService';
-import {alert} from 'wdk-client/Utils/Platform';
+import {useWdkEffect} from '@veupathdb/wdk-client/lib/Service/WdkService';
+import {alert} from '@veupathdb/wdk-client/lib/Utils/Platform';
 
 // --------------
 // GeneRecordLink

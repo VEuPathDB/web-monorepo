@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Props } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
-import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
+import { EbrcDefaultQuestionForm } from '@veupathdb/web-common/lib/components/questions/EbrcDefaultQuestionForm';
 
 import './ByGenotypeNumber.scss';
 

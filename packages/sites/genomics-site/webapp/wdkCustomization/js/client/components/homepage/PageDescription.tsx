@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 
-import { Link } from 'wdk-client/Components';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { makeVpdbClassNameHelper } from './Utils';
 

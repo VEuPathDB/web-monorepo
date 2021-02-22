@@ -1,18 +1,18 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { isEnumParam } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import { useChangeParamValue } from 'wdk-client/Views/Question/Params/Utils';
-import { ParameterGroup, QuestionWithParameters } from 'wdk-client/Utils/WdkModel';
-import { Step } from 'wdk-client/Utils/WdkUser';
-import { Props } from 'wdk-client/Views/Question/DefaultQuestionForm';
+import { isEnumParam } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
+import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
+import { ParameterGroup, QuestionWithParameters } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { Props } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import {
   DefaultStepDetailsContent,
   LeafStepDetailsProps,
   useStepDetailsData,
   useStepDetailsWeightControls
-} from 'wdk-client/Views/Strategy/StepDetails';
+} from '@veupathdb/wdk-client/lib/Views/Strategy/StepDetails';
 
-import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
+import { EbrcDefaultQuestionForm } from '@veupathdb/web-common/lib/components/questions/EbrcDefaultQuestionForm';
 
 import {
   mutuallyExclusiveParamsGroupRenderer,

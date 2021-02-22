@@ -1,6 +1,6 @@
 import React from 'react';
-import { TextBox } from 'wdk-client/Components';
-import { getChangeHandler } from 'wdk-client/Utils/ComponentUtils';
+import { TextBox } from '@veupathdb/wdk-client/lib/Components';
+import { getChangeHandler } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 /**
  * This React stateless function is an override of the WDK React component that displays the Identification fieldset of the User Profile / Account form.

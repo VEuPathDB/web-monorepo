@@ -1,5 +1,5 @@
 import React from 'react';
-import ClassicSiteHeader from 'ebrc-client/components/ClassicSiteHeader';
+import ClassicSiteHeader from '@veupathdb/web-common/lib/components/ClassicSiteHeader';
 
 import makeMainMenuItems from '../mainMenuItems';
 import makeSmallMenuItems from '../smallMenuItems';

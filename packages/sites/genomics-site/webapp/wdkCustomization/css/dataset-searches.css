@@ -186,13 +186,13 @@ th.searches {
   text-indent: 1.5em;
 }
 .dataTable th.sorting {
-  background-image: url('~wdk-client/Core/Style/images/sort_both.png');
+  background-image: url('~@veupathdb/wdk-client/lib/Core/Style/images/sort_both.png');
 }
 .dataTable th.sorting_asc {
-  background-image: url('~wdk-client/Core/Style/images/sort_asc.png');
+  background-image: url('~@veupathdb/wdk-client/lib/Core/Style/images/sort_asc.png');
 }
 .dataTable th.sorting_desc {
-  background-image: url('~wdk-client/Core/Style/images/sort_desc.png');
+  background-image: url('~@veupathdb/wdk-client/lib/Core/Style/images/sort_desc.png');
 }
 .dataTable td.description {
   padding: 0 .5em;

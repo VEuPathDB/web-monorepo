@@ -1,5 +1,5 @@
 import React from 'react';
-import {CollapsibleSection} from 'wdk-client/Components';
+import {CollapsibleSection} from '@veupathdb/wdk-client/lib/Components';
 import {SnpsAlignmentForm} from '../common/Snps';
 
 export function RecordAttributeSection(props) {

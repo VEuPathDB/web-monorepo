@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { capitalize } from 'lodash';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 const toTitleCase = (str: string) => str.split(' ').map(capitalize).join(' ');
 

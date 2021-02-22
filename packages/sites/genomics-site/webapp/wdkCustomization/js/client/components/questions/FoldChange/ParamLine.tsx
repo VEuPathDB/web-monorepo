@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
 
-import { HelpIcon }  from 'wdk-client/Components';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
-import { Parameter } from 'wdk-client/Utils/WdkModel';
+import { HelpIcon }  from '@veupathdb/wdk-client/lib/Components';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 export interface PreAndPostParameterEntries {
   preParameterContent: ReactNode;

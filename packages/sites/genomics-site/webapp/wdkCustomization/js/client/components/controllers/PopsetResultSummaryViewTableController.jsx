@@ -1,6 +1,6 @@
 import React from 'react';
 import { projectId } from '../../config';
-import { ResultTableSummaryViewPlugin } from 'wdk-client/Plugins';
+import { ResultTableSummaryViewPlugin } from '@veupathdb/wdk-client/lib/Plugins';
 
 const title =
 `Please select at least two isolates to run Clustal Omega. Note: only isolates from a single page will be aligned. 

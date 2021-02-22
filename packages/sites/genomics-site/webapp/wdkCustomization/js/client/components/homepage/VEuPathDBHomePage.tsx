@@ -3,31 +3,31 @@ import { connect } from 'react-redux';
 
 import { get, memoize } from 'lodash';
 
-import { Loading, Link } from 'wdk-client/Components';
-import { ErrorBoundary } from 'wdk-client/Controllers';
-import { RootState } from 'wdk-client/Core/State/Types';
-import { CategoryTreeNode } from 'wdk-client/Utils/CategoryUtils';
-import { arrayOf, decode, string } from 'wdk-client/Utils/Json';
+import { Loading, Link } from '@veupathdb/wdk-client/lib/Components';
+import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { CategoryTreeNode } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { arrayOf, decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 
-import Announcements from 'ebrc-client/components/Announcements';
-import CookieBanner from 'ebrc-client/components/CookieBanner';
-import { Footer } from 'ebrc-client/components/homepage/Footer';
-import { Header, HeaderMenuItem } from 'ebrc-client/components/homepage/Header';
-import { Main } from 'ebrc-client/components/homepage/Main';
-import { NewsPane } from 'ebrc-client/components/homepage/NewsPane';
-import { SearchPane, SearchCheckboxTree } from 'ebrc-client/components/homepage/SearchPane';
-import { combineClassNames, useAlphabetizedSearchTree } from 'ebrc-client/components/homepage/Utils';
-import { useAnnouncementsState } from 'ebrc-client/hooks/announcements';
+import Announcements from '@veupathdb/web-common/lib/components/Announcements';
+import CookieBanner from '@veupathdb/web-common/lib/components/CookieBanner';
+import { Footer } from '@veupathdb/web-common/lib/components/homepage/Footer';
+import { Header, HeaderMenuItem } from '@veupathdb/web-common/lib/components/homepage/Header';
+import { Main } from '@veupathdb/web-common/lib/components/homepage/Main';
+import { NewsPane } from '@veupathdb/web-common/lib/components/homepage/NewsPane';
+import { SearchPane, SearchCheckboxTree } from '@veupathdb/web-common/lib/components/homepage/SearchPane';
+import { combineClassNames, useAlphabetizedSearchTree } from '@veupathdb/web-common/lib/components/homepage/Utils';
+import { useAnnouncementsState } from '@veupathdb/web-common/lib/hooks/announcements';
 
-import { useCommunitySiteRootUrl } from 'ebrc-client/hooks/staticData';
+import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticData';
 
-import { formatReleaseDate } from 'ebrc-client/util/formatters';
+import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
 
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
-import { useSessionBackedState } from 'wdk-client/Hooks/SessionBackedState';
-import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
+import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
+import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 
 import './VEuPathDBHomePage.scss';
 
@@ -341,13 +341,37 @@ const useHeaderMenuItems = (
             include: [ FungiDB ]
           }
         },
-        { 
+        {
+          key: 'EuPaGDT',
+          display: 'EuPaGDT',
+          type: 'externalLink',
+          tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
+          url: 'https://www.flyrnai.org/tools/fly2mosquito/web/',
+          target: '_blank',
+          metadata: {
+            include: [ VectorBase ]
+          }
+        },
+        {
           key: 'EuPaGDT',
           display: 'EuPaGDT',
           type: 'externalLink',
           tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
           url: 'http://grna.ctegd.uga.edu',
-          target: '_blank'
+          target: '_blank',
+          metadata: {
+            exclude: [ VectorBase ]
+          }
+        },
+        { 
+          key: 'user-provided-links',
+          display: 'External tools & resources',
+          tooltip: 'User-provided resources',
+          type: 'reactRoute',
+          url: makeStaticPageRoute('/VectorBase/externalLinks.html#external-resources'),
+          metadata: {
+            include: [ VectorBase ]
+          }
         },
         { 
           key: 'galaxy',

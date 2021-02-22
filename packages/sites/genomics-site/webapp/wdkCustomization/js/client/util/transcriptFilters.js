@@ -1,5 +1,5 @@
 import { get, negate, some } from "lodash/fp";
-import { ResultTableSummaryViewActions } from "wdk-client/Actions";
+import { ResultTableSummaryViewActions } from "@veupathdb/wdk-client/lib/Actions";
 
 const REPRESENTATIVE_TRANSCRIPT_FILTER_NAME =
   "representativeTranscriptOnly";

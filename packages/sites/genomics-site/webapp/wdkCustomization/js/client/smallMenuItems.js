@@ -2,7 +2,7 @@
  * Get small menu entries
  * @return {Array<Entry>}
  */
-import { STATIC_ROUTE_PATH } from 'ebrc-client/routes';
+import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
 
 export default function smallMenuEntries({ siteConfig: { projectId } }, defaultEntries) {
   const aboutRoute = `${STATIC_ROUTE_PATH}/${projectId}/about.html`;

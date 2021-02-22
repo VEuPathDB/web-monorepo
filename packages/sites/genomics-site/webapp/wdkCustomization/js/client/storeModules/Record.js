@@ -1,11 +1,11 @@
 import { empty, of, merge } from 'rxjs';
 import { filter, map, mergeMap, switchMap } from 'rxjs/operators';
-import * as RecordStoreModule from 'wdk-client/StoreModules/RecordStoreModule';
-import { QuestionActions, RecordActions } from 'wdk-client/Actions';
+import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
+import { QuestionActions, RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import { difference, get } from 'lodash';
-import * as tree from 'wdk-client/Utils/TreeUtils';
-import * as cat from 'wdk-client/Utils/CategoryUtils';
-import * as persistence from 'ebrc-client/util/persistence';
+import * as tree from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import * as cat from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import * as persistence from '@veupathdb/web-common/lib/util/persistence';
 import { TABLE_STATE_UPDATED, PATHWAY_DYN_COLS_LOADED } from '../actioncreators/RecordViewActionCreators';
 
 export const key = 'record';

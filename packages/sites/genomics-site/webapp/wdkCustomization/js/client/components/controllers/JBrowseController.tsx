@@ -2,9 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
 
-import { RootState } from 'wdk-client/Core/State/Types';
-import { useSetDocumentTitle } from 'wdk-client/Utils/ComponentUtils';
-import { webAppUrl } from 'ebrc-client/config';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { webAppUrl } from '@veupathdb/web-common/lib/config';
 
 import Jbrowse from '../Jbrowse';
 

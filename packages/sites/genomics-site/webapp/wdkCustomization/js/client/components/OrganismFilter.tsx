@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { intersection } from 'lodash/fp'
-import { RootState } from 'wdk-client/Core/State/Types';
-import { TreeBoxVocabNode, SearchConfig } from 'wdk-client/Utils/WdkModel';
-import WdkService from 'wdk-client/Service/WdkService';
-import { Step } from 'wdk-client/Utils/WdkUser';
-import { requestUpdateStepSearchConfig } from 'wdk-client/Actions/StrategyActions';
-import { Loading, CheckboxTree } from 'wdk-client/Components';
-import { mapStructure } from 'wdk-client/Utils/TreeUtils';
-import { ResultType } from 'wdk-client/Utils/WdkResult';
-import {makeClassNameHelper} from 'wdk-client/Utils/ComponentUtils';
-import { areTermsInString, makeSearchHelpText } from 'wdk-client/Utils/SearchUtils';
-import { useWdkServiceWithRefresh } from 'wdk-client/Hooks/WdkServiceHook';
+import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
+import { TreeBoxVocabNode, SearchConfig } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
+import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
+import { requestUpdateStepSearchConfig } from '@veupathdb/wdk-client/lib/Actions/StrategyActions';
+import { Loading, CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
+import {makeClassNameHelper} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
+import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
-import { pruneNodesWithSingleExtendingChild } from 'ebrc-client/util/organisms';
+import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
 
 import './OrganismFilter.scss';
 

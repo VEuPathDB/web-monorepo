@@ -1,8 +1,8 @@
 import { Dictionary, mapValues, values } from 'lodash';
 import { createSelector } from 'reselect';
 
-import { QuestionState } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { ParameterGroup, Question } from 'wdk-client/Utils/WdkModel';
+import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import { ParameterGroup, Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 const ORGANISM_PARAMS = [ 'organismSinglePick' ];
 const CHROMOSOME_PARAMS = [ 'chromosomeOptional', 'chromosomeOptionalForNgsSnps' ];

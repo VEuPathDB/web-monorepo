@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { updateParamState } from 'wdk-client/Actions/QuestionActions';
-import { QuestionState, QuestionWithMappedParameters } from 'wdk-client/StoreModules/QuestionStoreModule';
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
-import { ParameterGroup } from 'wdk-client/Utils/WdkModel';
-import { Props, getSubmitButtonText } from 'wdk-client/Views/Question/DefaultQuestionForm';
-import { idListToArray } from 'wdk-client/Views/Question/Params/DatasetParamUtils';
+import { updateParamState } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
+import { QuestionState, QuestionWithMappedParameters } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Props, getSubmitButtonText } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
+import { idListToArray } from '@veupathdb/wdk-client/lib/Views/Question/Params/DatasetParamUtils';
 
-import { EbrcDefaultQuestionForm } from 'ebrc-client/components/questions/EbrcDefaultQuestionForm';
+import { EbrcDefaultQuestionForm } from '@veupathdb/web-common/lib/components/questions/EbrcDefaultQuestionForm';
 
 import { mutuallyExclusiveParamsGroupRenderer, MutuallyExclusiveTabKey } from './MutuallyExclusiveParams/MutuallyExclusiveParamsGroup';
 

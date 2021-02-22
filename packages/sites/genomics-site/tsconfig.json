@@ -1,7 +1,10 @@
 {
-  "extends": "../../EbrcWebsiteCommon/Site/tsconfig.json",
-  "include": [
-    "./webapp/**/*",
-    "../../WDKClient/Client/src/index.d.ts"
-  ]
+  "extends": "../../install/base.tsconfig.json",
+  // "compilerOptions": {
+  //   "baseUrl": ".",
+  //   "paths": {
+  //     "*": [ "./node_modules/@types/*", "*" ]
+  //   }
+  // },
+  "include": [ "./webapp/**/*" ]
 }

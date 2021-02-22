@@ -1,8 +1,8 @@
 import React, { useMemo, useCallback } from 'react';
 
-import { Parameter } from 'wdk-client/Utils/WdkModel';
-import { toMultiValueArray, toMultiValueString } from 'wdk-client/Views/Question/Params/EnumParamUtils';
-import { Props as ParameterProps } from 'wdk-client/Views/Question/Params/Utils';
+import { Parameter } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { toMultiValueArray, toMultiValueString } from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParamUtils';
+import { Props as ParameterProps } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
 const detailTypes = ["I", "II", "III", "II or III", "nd", "u-1", "u-2", "u-3"];
 const rawRows = [

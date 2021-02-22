@@ -3,16 +3,16 @@ import React, { Component, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
-import { RecordActions } from 'wdk-client/Actions';
-import * as Category from 'wdk-client/Utils/CategoryUtils';
-import { CollapsibleSection, CategoriesCheckboxTree, RecordTable as WdkRecordTable } from 'wdk-client/Components';
-import { renderAttributeValue, pure } from 'wdk-client/Utils/ComponentUtils';
-import {Seq} from 'wdk-client/Utils/IterableUtils';
-import {preorderSeq} from 'wdk-client/Utils/TreeUtils';
+import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
+import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
+import { CollapsibleSection, CategoriesCheckboxTree, RecordTable as WdkRecordTable } from '@veupathdb/wdk-client/lib/Components';
+import { renderAttributeValue, pure } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import {Seq} from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import {preorderSeq} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
-import DatasetGraph from 'ebrc-client/components/DatasetGraph';
-import ExternalResource from 'ebrc-client/components/ExternalResource';
-import {findChildren, isNodeOverflowing} from 'ebrc-client/util/domUtils';
+import DatasetGraph from '@veupathdb/web-common/lib/components/DatasetGraph';
+import ExternalResource from '@veupathdb/web-common/lib/components/ExternalResource';
+import {findChildren, isNodeOverflowing} from '@veupathdb/web-common/lib/util/domUtils';
 
 import { projectId, webAppUrl } from '../../config';
 import * as Gbrowse from '../common/Gbrowse';
