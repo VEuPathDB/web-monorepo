@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
-import { usePromise } from '../../src/hooks/usePromise';
+import { usePromise } from '../../src/hooks/promise';
 
 jest.useFakeTimers();
 

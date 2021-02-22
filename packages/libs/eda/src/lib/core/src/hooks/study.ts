@@ -2,9 +2,9 @@ import { createContext, useCallback } from 'react';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getTargetType, getScopes, getNodeId } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import { useNonNullableContext } from './useNonNullableContext';
 import { StudyMetadata, StudyRecordClass, StudyRecord } from '../types/study';
-import { usePromise } from './usePromise';
+import { usePromise } from './promise';
+import { SubsettingClient } from '../api/eda-api';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -15,10 +15,6 @@ interface StudyState {
 }
 
 export const StudyContext = createContext<StudyState | undefined>(undefined);
-
-export function useStudy() {
-  return useNonNullableContext(StudyContext);
-}
 
 export function useWdkStudyRecord(studyId: string) {
   return useWdkServiceWithRefresh(async wdkService => {
@@ -40,10 +36,6 @@ export function useWdkStudyRecord(studyId: string) {
   }, [studyId]);
 }
 
-export interface StudyMetadataStore {
-  getStudyMetadata(studyId: string): Promise<StudyMetadata>;
-}
-
-export function useStudyMetadata(studyId: string, store: StudyMetadataStore) {
+export function useStudyMetadata(studyId: string, store: SubsettingClient) {
   return usePromise(useCallback(() => store.getStudyMetadata(studyId), [ store, studyId]));
 }

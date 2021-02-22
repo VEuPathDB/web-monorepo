@@ -3,9 +3,18 @@ import {
   createJsonRequest,
   FetchClient,
 } from "@veupathdb/web-common/lib/util/api";
-import { type, voidType, string } from "io-ts";
+import { type, voidType, string, array } from "io-ts";
 import { ioTransformer } from "./ioTransformer";
-export class SessionApi extends FetchClient {
+export class SessionClient extends FetchClient {
+  getSessions(): Promise<Session[]> {
+    return this.fetch(
+      createJsonRequest({
+        path: '/sessions',
+        method: 'GET',
+        transformResponse: ioTransformer(array(Session))
+      })
+    )
+  }
   getSession(sessionId: string): Promise<Session> {
     return this.fetch(
       createJsonRequest({

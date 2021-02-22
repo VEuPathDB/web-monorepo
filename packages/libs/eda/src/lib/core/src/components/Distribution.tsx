@@ -1,38 +1,36 @@
 import { Loading } from "@veupathdb/wdk-client/lib/Components";
 import FieldFilter from "@veupathdb/wdk-client/lib/Components/AttributeFilter/FieldFilter";
-import { Filter } from "@veupathdb/wdk-client/lib/Components/AttributeFilter/Types";
 import EmptyState from "@veupathdb/wdk-client/lib/Components/Mesa/Ui/EmptyState";
 import { ErrorBoundary } from "@veupathdb/wdk-client/lib/Controllers";
 import React from "react";
-import { useSession } from "../hooks/useSession";
-import { useEdaApi } from "../hooks/useEdaApi";
-import { usePromise } from "../hooks/usePromise";
+import { usePromise } from "../hooks/promise";
 import { StudyEntity, StudyMetadata, StudyVariable } from "../types/study";
 import {
   fromEdaFilter,
   toEdaFilter,
   toWdkVariableSummary,
 } from "../utils/wdk-filter-param-adapter";
+import { useSubsettingClient } from "../hooks/workspace";
+import { Filter as EdaFilter } from "../types/filter";
+import { Filter as WdkFilter } from "@veupathdb/wdk-client/lib/Components/AttributeFilter/Types";
 
 interface Props {
   studyMetadata: StudyMetadata;
   entity: StudyEntity;
   variable: StudyVariable;
+  filters: EdaFilter[];
+  onFiltersChange: (filters: EdaFilter[]) => void;
 }
 
 export function Distribution(props: Props) {
-  const { studyMetadata, entity, variable } = props;
-  const {
-    setFilters,
-    history: { current: session },
-  } = useSession();
-  const edaClient = useEdaApi();
+  const { studyMetadata, entity, variable, filters, onFiltersChange } = props;
+  const subsettingClient = useSubsettingClient();
   const variableSummary = usePromise(async () => {
     // remove filter for active variable so it is not reflected in the foreground
-    const filters = session?.filters.filter(
+    const otherFilters = filters.filter(
       (f) => f.entityId !== entity.id || f.variableId !== variable.id
     );
-    const bg$ = edaClient.getDistribution(
+    const bg$ = subsettingClient.getDistribution(
       studyMetadata.id,
       entity.id,
       variable.id,
@@ -42,14 +40,19 @@ export function Distribution(props: Props) {
     );
     // If there are no filters, reuse background for foreground.
     // This is an optimization that saves a call to the backend.
-    const fg$ = filters?.length
-      ? edaClient.getDistribution(studyMetadata.id, entity.id, variable.id, {
-          filters,
-        })
+    const fg$ = otherFilters?.length
+      ? subsettingClient.getDistribution(
+          studyMetadata.id,
+          entity.id,
+          variable.id,
+          {
+            filters: otherFilters,
+          }
+        )
       : bg$;
     const [bg, fg] = await Promise.all([bg$, fg$]);
     return toWdkVariableSummary(fg, bg, variable);
-  }, [edaClient, studyMetadata, variable, entity, session?.filters]);
+  }, [subsettingClient, studyMetadata, variable, entity, filters]);
   return variableSummary.pending ? (
     <Loading />
   ) : variableSummary.error ? (
@@ -65,7 +68,7 @@ export function Distribution(props: Props) {
           displayName={entity.displayName}
           dataCount={variableSummary.value.entitiesCount}
           filteredDataCount={variableSummary.value.filteredEntitiesCount}
-          filters={session?.filters.map((f) => fromEdaFilter(f)) ?? []}
+          filters={filters.map((f) => fromEdaFilter(f)) ?? []}
           activeField={variableSummary.value?.activeField}
           activeFieldState={{
             loading: false,
@@ -76,10 +79,8 @@ export function Distribution(props: Props) {
                 variableSummary.value.filteredEntitiesCount,
             },
           }}
-          onFiltersChange={(filters) =>
-            // This doesn't work when filters are for different entities.
-            // We need another way to associate filter w/ entity here.
-            setFilters(filters.map((f: Filter) => toEdaFilter(f, entity.id)))
+          onFiltersChange={(filters: WdkFilter[]) =>
+            onFiltersChange(filters.map((f) => toEdaFilter(f, entity.id)))
           }
           onMemberSort={logEvent("onMemberSort")}
           onMemberSearch={logEvent("onMemberSearch")}

@@ -21,7 +21,7 @@ export const DistributionResponse = type({
   distribution: record(string, number)
 });
 
-export class EdaClient extends FetchClient {
+export class SubsettingClient extends FetchClient {
   getStudyMetadata(studyId: string): Promise<StudyMetadata> {
     return this.fetch(createJsonRequest({
       method: 'GET',

@@ -10,7 +10,7 @@ export function usePromise<T>(promiseFactory: () => Promise<T>, deps?: unknown[]
   const [state, setState] = useState<PromiseHookState<T>>({
     pending: true,
   });
-  const callback = deps ? useCallback(promiseFactory, deps) : promiseFactory;
+  const callback = useCallback(promiseFactory, deps ?? [promiseFactory]);
   useEffect(() => {
     let ignoreResolve = false;
     setState({ pending: true });

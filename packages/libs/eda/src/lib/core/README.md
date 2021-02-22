@@ -21,10 +21,26 @@ The primary types in use by the **EDA Workspace** are:
 * `StudyMetadata` - The EDA record containing information about entity types, and their variables, collected by the study.
 * `Session` - The persisted configuration of an EDA Workspace session. This includes subsetting details and condfiguration of visualizations.
 
+## Session Management
+
+TODO - Describe session management once fully implemented.
+
 ## Usage
 
-The following exports can be used to implement an EDA Workspace client:
+The following exports can be used to implement an EDA Workspace client.
 
-* `EDAWorkspaceContainer` - A React Component that loads the above types.
-* `useSession` - A React hook that can be used to access and interact with the current state of the workspace session.
-* `useStudy` - A React hook that can be used to access the study record types defined above.
+### Compnents
+
+* **`EDAWorkspaceContainer`** - A React Component that loads the above types.
+
+
+### Hooks
+
+All hooks can only be used in a component that is used as a descendant of `EDAWorkspaceContainer`.
+
+* **`useSession`** - Get and interact with the current state of the workspace session.
+* **`useStudyRecordClass`** - Get the active study record class.
+* **`useStudyRecord`** - Get the active study record instance.
+* **`useStudyMetadata`** - Get the active study metadata.
+* **`useSubsettingClient`** - Get the configured subsetting client.
+* **`useSessionClient`** - Get the configured session client.
