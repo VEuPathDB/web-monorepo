@@ -24,18 +24,8 @@ function renderPrimaryPublication(publication) {
   return formatLink(publication.pubmed_link, { newWindow: true });
 }
 
-export function formatContactEmail(email) {
-
-  return (
-  	<a href={"mailto:" + email }></a>
-  );
-}
-
-
-function renderPrimaryContact(contact,institution,email,dataset_id) {
-	 
-	 return(!!(email) ? contact + ', ' + formatContactEmail(email) + ', ' + institution : contact + ', ' + institution);
-
+function renderPrimaryContact(contact,institution) {
+	return contact + ', ' + institution;
 
 }
 
@@ -60,8 +50,6 @@ export function RecordHeading(props) {
     summary,
     eupath_release,
     contact,
-    email,
-    dataset_id,
     institution,
     organism_prefix
   } = attributes;
@@ -96,7 +84,7 @@ export function RecordHeading(props) {
           <div className="eupathdb-RecordOverviewItem">
             <strong>Primary contact: </strong>
 
-            <span>{renderPrimaryContact(contact, institution, email, dataset_id)}</span>
+            <span>{renderPrimaryContact(contact, institution)}</span>
 
           </div>
         ) : null}
