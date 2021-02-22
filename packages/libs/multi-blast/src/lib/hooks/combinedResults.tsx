@@ -33,7 +33,7 @@ import {
   RANK_PER_SUBJECT_HELP_TEXT,
   SCORE_HELP_TEXT,
   CombinedResultRow,
-  dbToOrgDirAndTargetType,
+  dbToOrgDirAndTargetDbName,
   dbToOrganismFactory,
   defaultDeflineToDescription,
   defaultDeflineToSourceId,
@@ -42,7 +42,10 @@ import {
   orderHitsBySignificance,
 } from '../utils/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
-import { TargetMetadataByDataType } from '../utils/targetTypes';
+import {
+  dbNameToTargetTypeTerm,
+  TargetMetadataByDataType,
+} from '../utils/targetTypes';
 
 export function useCombinedResultProps(
   combinedResult: MultiQueryReportJson,
@@ -399,16 +402,39 @@ function useMesaUiState(sort: MesaSortObject) {
   return useMemo(() => ({ sort }), [sort]);
 }
 
-export function useWdkRecordType(combinedResult: MultiQueryReportJson) {
+export function useTargetTypeTermAndWdkRecordType(
+  combinedResult: MultiQueryReportJson | undefined
+) {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   return useMemo(() => {
-    const sampleDbName = combinedResult.BlastOutput2[0].report.search_target.db;
-    const { targetType } = dbToOrgDirAndTargetType(sampleDbName);
+    if (combinedResult == null) {
+      return {
+        targetTypeTerm: undefined,
+        wdkRecordType: undefined,
+      };
+    }
 
-    return targetType == null || targetMetadataByDataType[targetType] == null
-      ? null
-      : targetMetadataByDataType[targetType].recordClassUrlSegment;
+    const sampleDbName = combinedResult.BlastOutput2[0].report.search_target.db;
+    const { targetDbName } = dbToOrgDirAndTargetDbName(sampleDbName);
+
+    const targetTypeTerm = targetDbName && dbNameToTargetTypeTerm(targetDbName);
+
+    const wdkRecordType =
+      targetTypeTerm == null || targetMetadataByDataType[targetTypeTerm] == null
+        ? undefined
+        : targetMetadataByDataType[targetTypeTerm].recordClassUrlSegment;
+
+    if (targetTypeTerm == null || wdkRecordType == null) {
+      throw new Error(
+        `Unable to infer the record type of the DB named ${sampleDbName}`
+      );
+    }
+
+    return {
+      targetTypeTerm,
+      wdkRecordType,
+    };
   }, [combinedResult, targetMetadataByDataType]);
 }
 

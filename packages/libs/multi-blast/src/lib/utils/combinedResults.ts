@@ -64,41 +64,22 @@ export function dbToTargetName(db: string) {
   return db.replace(/[\s\S]*\//, '');
 }
 
-export function dbToOrgDirAndTargetType(db: string) {
+export function dbToOrgDirAndTargetDbName(db: string) {
   const targetName = dbToTargetName(db);
 
   const match = targetName.match(
-    /^(.*)(AnnotatedTranscripts|AnnotatedProteins|Genome|ESTs|PopSet)$/
+    /^(.*)(AnnotatedTranscripts|AnnotatedProteins|Genome|ESTs|Isolates)$/
   );
 
   return {
     orgDir: match == null || match.length < 3 ? null : match[1],
-    targetType: match == null || match.length < 3 ? null : match[2],
+    targetDbName: match == null || match.length < 3 ? null : match[2],
   };
-}
-
-export function blastDbNameToWdkRecordType(blastDbName: string) {
-  const { targetType } = dbToOrgDirAndTargetType(blastDbName);
-
-  if (
-    targetType === 'AnnotatedTranscripts' ||
-    targetType === 'AnnotatedProteins'
-  ) {
-    return 'transcript';
-  } else if (targetType === 'Genome') {
-    return 'genomic-sequence';
-  } else if (targetType === 'ESTs') {
-    return 'est';
-  } else if (targetType === 'PopSet') {
-    return 'popsetSequence';
-  } else {
-    return null;
-  }
 }
 
 export function dbToOrganismFactory(filesToOrganisms: Record<string, string>) {
   return function dbToOrganism(db: string) {
-    const { orgDir } = dbToOrgDirAndTargetType(db);
+    const { orgDir } = dbToOrgDirAndTargetDbName(db);
 
     return orgDir == null || filesToOrganisms[orgDir] == null
       ? null

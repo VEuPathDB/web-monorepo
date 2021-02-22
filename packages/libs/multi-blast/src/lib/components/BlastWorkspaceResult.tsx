@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { uniq } from 'lodash';
@@ -7,18 +7,19 @@ import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { useBlastApi } from '../hooks/api';
 import {
   useHitTypeDisplayNames,
-  useWdkRecordType,
+  useTargetTypeTermAndWdkRecordType,
 } from '../hooks/combinedResults';
+import { useBlastCompatibleWdkService } from '../hooks/wdkServiceIntegration';
 import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
 import { dbToTargetName } from '../utils/combinedResults';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 import { reportToParamValues } from '../utils/params';
+import { TargetMetadataByDataType } from '../utils/targetTypes';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { ResultContainer } from './ResultContainer';
@@ -41,12 +42,9 @@ export function BlastWorkspaceResult(props: Props) {
 
   const history = useHistory();
 
-  const api = useBlastApi();
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
-  const organismToFilenameMapsResult = useWdkService(
-    (wdkService) => fetchOrganismToFilenameMaps(wdkService),
-    []
-  );
+  const api = useBlastApi();
 
   const queryResult = usePromise(() => api.fetchQuery(props.jobId), [
     api,
@@ -78,6 +76,24 @@ export function BlastWorkspaceResult(props: Props) {
     return uniq(queryIds).length;
   }, [multiQueryReportResult]);
 
+  const { targetTypeTerm, wdkRecordType } = useTargetTypeTermAndWdkRecordType(
+    multiQueryReportResult.value == null
+      ? undefined
+      : multiQueryReportResult.value
+  );
+
+  const organismToFilenameMapsResult = useBlastCompatibleWdkService(
+    async (wdkService) =>
+      targetTypeTerm == null
+        ? undefined
+        : fetchOrganismToFilenameMaps(
+            wdkService,
+            targetTypeTerm,
+            targetMetadataByDataType
+          ),
+    [targetMetadataByDataType, targetTypeTerm]
+  );
+
   useEffect(() => {
     if (queryCount != null && props.selectedResult == null) {
       const selectedResultPath = queryCount > 1 ? '/combined' : '/individual/1';
@@ -93,7 +109,9 @@ export function BlastWorkspaceResult(props: Props) {
     organismToFilenameMapsResult == null ||
     queryResult.value == null ||
     jobResult.value == null ||
-    multiQueryReportResult.value == null ? (
+    multiQueryReportResult.value == null ||
+    targetTypeTerm == null ||
+    wdkRecordType == null ? (
     <LoadingBlastResult {...props} />
   ) : props.selectedResult.type === 'combined' && queryCount === 1 ? (
     <NotFoundController />
@@ -109,6 +127,8 @@ export function BlastWorkspaceResult(props: Props) {
       query={queryResult.value}
       queryCount={queryCount}
       selectedResult={props.selectedResult}
+      targetTypeTerm={targetTypeTerm}
+      wdkRecordType={wdkRecordType}
     />
   );
 }
@@ -145,6 +165,8 @@ interface BlastSummaryProps {
   query: string;
   queryCount: number;
   selectedResult: SelectedResult;
+  targetTypeTerm: string;
+  wdkRecordType: string;
 }
 
 function BlastSummary({
@@ -154,6 +176,8 @@ function BlastSummary({
   query,
   queryCount,
   selectedResult,
+  targetTypeTerm,
+  wdkRecordType,
 }: BlastSummaryProps) {
   const databases = useMemo(() => {
     const databasesEntries = multiQueryReport.BlastOutput2.flatMap(
@@ -165,16 +189,21 @@ function BlastSummary({
 
   const databasesStr = useMemo(() => databases.join(', '), [databases]);
 
-  const wdkRecordType = useWdkRecordType(multiQueryReport);
-
   const {
     hitTypeDisplayName,
     hitTypeDisplayNamePlural,
   } = useHitTypeDisplayNames(wdkRecordType);
 
   const multiQueryParamValues = useMemo(
-    () => reportToParamValues(jobDetails, query, databases, filesToOrganisms),
-    [databases, filesToOrganisms, jobDetails, query]
+    () =>
+      reportToParamValues(
+        jobDetails,
+        query,
+        targetTypeTerm,
+        databases,
+        filesToOrganisms
+      ),
+    [databases, filesToOrganisms, jobDetails, targetTypeTerm, query]
   );
 
   const [

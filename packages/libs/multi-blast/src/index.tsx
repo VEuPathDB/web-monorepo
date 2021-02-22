@@ -20,6 +20,7 @@ import { BlastForm } from './lib/components/BlastForm';
 import { BlastWorkspace } from './lib/components/BlastWorkspace';
 import { BlastWorkspaceResult } from './lib/components/BlastWorkspaceResult';
 import { parseBlastResultSubpath } from './lib/utils/routes';
+import { wrapWdkService } from './lib/utils/wdkServiceIntegration';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
@@ -100,6 +101,7 @@ initialize({
       component: BlastSummaryViewPlugin,
     },
   ] as ClientPluginRegistryEntry<any>[],
+  wrapWdkService,
   endpoint,
 } as any);
 

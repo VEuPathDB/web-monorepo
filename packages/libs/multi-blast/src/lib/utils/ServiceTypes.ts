@@ -11,6 +11,7 @@ import {
   err,
   number,
   ok,
+  objectOf,
   oneOf,
   optional,
   record,
@@ -665,3 +666,12 @@ export const multiQueryReportJson = record({
 });
 
 export type MultiQueryReportJson = Unpack<typeof multiQueryReportJson>;
+
+export const blastParamInternalValues = objectOf(
+  record({
+    organismValues: objectOf(string),
+    dbTypeInternal: string,
+  })
+);
+
+export type BlastParamInternalValues = Unpack<typeof blastParamInternalValues>;

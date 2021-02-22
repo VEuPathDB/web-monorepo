@@ -37,3 +37,11 @@ const targetMetadataByDataType: Record<string, TargetMetadata> = {
 };
 
 export const TargetMetadataByDataType = createContext(targetMetadataByDataType);
+
+export function targetTypeTermToDbName(targetTypeTerm: string) {
+  return targetTypeTerm === 'PopSet' ? 'Isolates' : targetTypeTerm;
+}
+
+export function dbNameToTargetTypeTerm(dbName: string) {
+  return dbName === 'Isolates' ? 'PopSet' : dbName;
+}

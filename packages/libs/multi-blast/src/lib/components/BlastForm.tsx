@@ -40,6 +40,11 @@ import {
   paramValuesToBlastConfig,
 } from '../utils/params';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
+import {
+  TargetMetadataByDataType,
+  targetTypeTermToDbName,
+} from '../utils/targetTypes';
+import { isBlastCompatibleWdkService } from '../utils/wdkServiceIntegration';
 
 import { AdvancedParamGroup } from './AdvancedParamGroup';
 
@@ -224,6 +229,7 @@ function NewJobForm(props: NewJobFormProps) {
   const api = useBlastApi();
 
   const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const history = useHistory();
 
@@ -235,28 +241,42 @@ function NewJobForm(props: NewJobFormProps) {
         );
       }
 
+      if (!isBlastCompatibleWdkService(wdkDependencies.wdkService)) {
+        throw new Error(
+          'To use this form, the webapp must be configured with a BLAST-compatible WdkService.'
+        );
+      }
+
       e.preventDefault();
 
       setSubmitting(true);
 
+      const targetType =
+        props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
+
+      // FIXME: The projectId should be derived from the organism
+      // This is necessary to handle the portal site
       const [projectId, { organismsToFiles }] = await Promise.all([
         wdkDependencies.wdkService
           .getConfig()
           .then(({ projectId }) => projectId),
-        fetchOrganismToFilenameMaps(wdkDependencies.wdkService),
+        fetchOrganismToFilenameMaps(
+          wdkDependencies.wdkService,
+          targetType,
+          targetMetadataByDataType
+        ),
       ]);
+
+      const dbTargetName = targetTypeTermToDbName(targetType);
 
       const selectedOrganismFilenames = organismParamValueToFilenames(
         props.state.paramValues[BLAST_DATABASE_ORGANISM_PARAM_NAME],
         organismsToFiles
       );
 
-      const targetType =
-        props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
-
       const targets = selectedOrganismFilenames.map((organism) => ({
         organism,
-        target: `${organism}${targetType}`,
+        target: `${organism}${dbTargetName}`,
       }));
 
       const { jobId } = await api.createJob(
@@ -270,7 +290,13 @@ function NewJobForm(props: NewJobFormProps) {
 
       history.push(`/workspace/blast/result/${jobId}`);
     },
-    [api, history, wdkDependencies, props.state.paramValues]
+    [
+      api,
+      history,
+      targetMetadataByDataType,
+      wdkDependencies,
+      props.state.paramValues,
+    ]
   );
 
   return (

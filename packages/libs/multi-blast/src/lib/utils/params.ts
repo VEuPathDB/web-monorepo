@@ -17,10 +17,7 @@ import {
   IOTBlastXScoringMatrix,
   LongJobResponse,
 } from './ServiceTypes';
-import {
-  dbToOrganismFactory,
-  dbToOrgDirAndTargetType,
-} from './combinedResults';
+import { dbToOrganismFactory } from './combinedResults';
 
 export const BLAST_DATABASE_ORGANISM_PARAM_NAME = 'BlastDatabaseOrganism';
 export const BLAST_DATABASE_TYPE_PARAM_NAME = 'MultiBlastDatabaseType';
@@ -308,6 +305,7 @@ export function databaseStringsToOrganismParamValue(
 export function reportToParamValues(
   jobDetails: LongJobResponse,
   query: string,
+  targetTypeTerm: string,
   dbs: string[],
   dirsToOrganisms: Record<string, string>
 ): ParameterValues {
@@ -318,14 +316,12 @@ export function reportToParamValues(
     dirsToOrganisms
   );
 
-  const { targetType } = dbToOrgDirAndTargetType(dbs[0]);
-
   return {
     ...configParamValues,
     [JOB_DESCRIPTION_PARAM_NAME]: jobDetails.description ?? '',
     [BLAST_QUERY_SEQUENCE_PARAM_NAME]: query,
     [BLAST_DATABASE_ORGANISM_PARAM_NAME]: organismParamValue,
-    [BLAST_DATABASE_TYPE_PARAM_NAME]: targetType ?? '',
+    [BLAST_DATABASE_TYPE_PARAM_NAME]: targetTypeTerm,
   };
 }
 
