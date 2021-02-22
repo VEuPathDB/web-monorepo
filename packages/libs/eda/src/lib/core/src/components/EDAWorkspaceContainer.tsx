@@ -12,6 +12,7 @@ export interface Props {
   className?: string;
   sessionClient: SessionClient;
   subsettingClient: SubsettingClient;
+  makeVariableLink?: (entityId: string, variableId: string) => string;
 }
 
 export function EDAWorkspaceContainer(props: Props) {
@@ -21,6 +22,7 @@ export function EDAWorkspaceContainer(props: Props) {
     subsettingClient,
     children,
     className = "EDAWorkspace",
+    makeVariableLink,
   } = props;
   const wdkStudyRecordState = useWdkStudyRecord(studyId);
   const { value: studyMetadata, error: studyMetadataError } = useStudyMetadata(
@@ -42,6 +44,7 @@ export function EDAWorkspaceContainer(props: Props) {
         studyMetadata,
         sessionClient,
         subsettingClient,
+        makeVariableLink
       }}
     >
       <div className={className}>{children}</div>

@@ -19,3 +19,11 @@ export function useSubsettingClient(): SubsettingClient {
 export function useSessionClient(): SessionClient {
   return useNonNullableContext(WorkspaceContext).sessionClient;
 }
+export function useVariableLink(entityId: string, variableId: string): string {
+  const { makeVariableLink = defaultMakeVariableLink } = useNonNullableContext(WorkspaceContext);
+  return makeVariableLink(entityId, variableId);
+}
+
+function defaultMakeVariableLink(entityId: string, variableId: string): string {
+  return `/variables/${entityId}/${variableId}`;
+}
