@@ -49,9 +49,13 @@ export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 
 const BLAST_FORM_CONTAINER_NAME = 'MultiBlast';
 
-export type Props = DefaultQuestionFormProps;
+export interface Props extends DefaultQuestionFormProps {
+  canChangeRecordType?: boolean;
+}
 
 export function BlastForm(props: Props) {
+  const canChangeRecordType = props.canChangeRecordType ?? false;
+
   const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
 
   const selectedBlastAlgorithm =
@@ -138,7 +142,8 @@ export function BlastForm(props: Props) {
 
   const targetParamProps = useTargetParamProps(
     props.state,
-    props.eventHandlers.updateParamValue
+    props.eventHandlers.updateParamValue,
+    canChangeRecordType
   );
   const algorithmParamProps = useAlgorithmParamProps(
     props.state,

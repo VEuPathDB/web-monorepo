@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import { RouteComponentProps, StaticContext } from 'react-router';
 
 import {
@@ -8,8 +8,11 @@ import {
 import { parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { Props as FormProps } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
 import { TargetMetadataByDataType } from '../utils/targetTypes';
+
+import { BlastForm } from './BlastForm';
 
 type WorkspaceMetadata =
   | { searchName: null }
@@ -36,7 +39,7 @@ export function BlastWorkspaceNew(
         ? { searchName: null }
         : {
             canChangeRecordType: true,
-            recordClassName: selectedRecordClassUrlSegment,
+            recordClassName: availableTargetDataTypes[0].recordClassUrlSegment,
             searchName: availableTargetDataTypes[0].searchUrlSegment,
           };
     }
@@ -54,6 +57,19 @@ export function BlastWorkspaceNew(
           searchName: compatibleTargetDataTypeEntry.searchUrlSegment,
         };
   }, [props, targetMetadataByDataType]);
+
+  const FormComponent = useCallback(
+    (props: FormProps) =>
+      workspaceMetadata.searchName == null ? (
+        <></>
+      ) : (
+        <BlastForm
+          {...props}
+          canChangeRecordType={workspaceMetadata.canChangeRecordType}
+        />
+      ),
+    [workspaceMetadata]
+  );
 
   return workspaceMetadata.searchName == null ? (
     <NotFoundController />
@@ -75,6 +91,7 @@ export function BlastWorkspaceNew(
         prepopulateWithLastParamValues: false,
         submitButtonText: 'BLAST',
         initialParamData: props.location.state ?? undefined,
+        FormComponent,
       }}
       defaultComponent={QuestionController}
     />

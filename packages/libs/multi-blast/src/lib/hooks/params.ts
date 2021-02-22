@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 
 import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -11,23 +11,33 @@ import {
   BLAST_DATABASE_TYPE_PARAM_NAME,
   BLAST_QUERY_SEQUENCE_PARAM_NAME,
 } from '../utils/params';
+import { TargetMetadataByDataType } from '../utils/targetTypes';
 
 export function useTargetParamProps(
   state: QuestionState,
-  updateParamValue: Props['eventHandlers']['updateParamValue']
+  updateParamValue: Props['eventHandlers']['updateParamValue'],
+  canChangeTargetType: boolean
 ) {
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
+
   // FIXME: Validate this
   const parameter = state.question.parametersByName[
     BLAST_DATABASE_TYPE_PARAM_NAME
   ] as CheckBoxEnumParam;
 
+  const selectedType = state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
+
   const items = useMemo(
     () =>
       parameter.vocabulary.map(([value, display]) => ({
         value,
+        disabled:
+          !canChangeTargetType &&
+          targetMetadataByDataType[selectedType].recordClassUrlSegment !==
+            targetMetadataByDataType[value].recordClassUrlSegment,
         display: safeHtml(display),
       })),
-    [parameter]
+    [canChangeTargetType, parameter, selectedType, targetMetadataByDataType]
   );
 
   const onChange = useChangeParamValue(parameter, state, updateParamValue);
