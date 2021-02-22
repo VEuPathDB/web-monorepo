@@ -22,5 +22,18 @@ module.exports = function override(config, env) {
         ...(config.resolveLoader.modules || ['node_modules']),
       ],
     },
+    externals: [{ jquery: 'jQuery' }],
+    module: {
+      ...config.module,
+      rules: [
+        ...config.module.rules,
+        {
+          test: /\.(js|jsx|ts|tsx)$/,
+          exclude: /node_modules\/(?!(@veupathdb))/,
+          enforce: 'pre',
+          use: 'source-map-loader',
+        },
+      ],
+    },
   };
 };
