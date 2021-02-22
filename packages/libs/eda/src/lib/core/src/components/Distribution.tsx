@@ -18,7 +18,7 @@ interface Props {
   studyMetadata: StudyMetadata;
   entity: StudyEntity;
   variable: StudyVariable;
-  filters: EdaFilter[];
+  filters?: EdaFilter[];
   onFiltersChange: (filters: EdaFilter[]) => void;
 }
 
@@ -27,7 +27,7 @@ export function Distribution(props: Props) {
   const subsettingClient = useSubsettingClient();
   const variableSummary = usePromise(async () => {
     // remove filter for active variable so it is not reflected in the foreground
-    const otherFilters = filters.filter(
+    const otherFilters = filters?.filter(
       (f) => f.entityId !== entity.id || f.variableId !== variable.id
     );
     const bg$ = subsettingClient.getDistribution(
@@ -68,7 +68,7 @@ export function Distribution(props: Props) {
           displayName={entity.displayName}
           dataCount={variableSummary.value.entitiesCount}
           filteredDataCount={variableSummary.value.filteredEntitiesCount}
-          filters={filters.map((f) => fromEdaFilter(f)) ?? []}
+          filters={filters?.map((f) => fromEdaFilter(f))}
           activeField={variableSummary.value?.activeField}
           activeFieldState={{
             loading: false,
