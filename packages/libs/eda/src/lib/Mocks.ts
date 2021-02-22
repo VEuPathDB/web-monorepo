@@ -1,33 +1,12 @@
-import {
-  StudyMetadataStore,
-  SessionStore,
-  Session,
-  NewSession,
-} from '@veupathdb/eda-workspace-core';
+import { Session, NewSession } from '@veupathdb/eda-workspace-core';
+import { SessionClient } from '@veupathdb/eda-workspace-core/lib/api/session-api';
 import localforage from 'localforage';
-
-export const mockStudyMetadataStore: StudyMetadataStore = {
-  async getStudyMetadata(studyId) {
-    return {
-      id: studyId,
-      name: 'Foo',
-      rootEntity: {
-        id: 'foo',
-        displayName: 'Foo',
-        displayNamePlural: 'Foos',
-        description: 'foo',
-        variables: [],
-        children: [],
-      },
-    };
-  },
-};
 
 const localStore = localforage.createInstance({
   name: 'mockSessionStore',
 });
 
-export const mockSessionStore: SessionStore = {
+export const mockSessionStore: SessionClient = {
   async getSessions() {
     const records: Session[] = [];
     await localStore.iterate((value) => {
@@ -44,7 +23,7 @@ export const mockSessionStore: SessionStore = {
       created: now,
       modified: now,
     });
-    return id;
+    return { id };
   },
   async getSession(id: string) {
     const session = await localStore.getItem(id);
@@ -58,4 +37,4 @@ export const mockSessionStore: SessionStore = {
   async deleteSession(id: string) {
     await localStore.removeItem(id);
   },
-};
+} as SessionClient;

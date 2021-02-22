@@ -8,7 +8,7 @@ import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 interface Props {
   session: Session;
   setSessionName: (name: string) => void;
-  copySession: () => Promise<string>;
+  copySession: () => Promise<{ id: string }>;
   saveSession: () => void;
   deleteSession: () => void;
 }
@@ -23,8 +23,8 @@ export function SessionSummary(props: Props) {
   } = props;
   const history = useHistory();
   const handleCopy = async () => {
-    const id = await copySession();
-    history.push(id);
+    const res = await copySession();
+    history.push(res.id);
   };
   return (
     <div className={cx('-SessionSummary')}>

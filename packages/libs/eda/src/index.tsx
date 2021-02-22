@@ -33,7 +33,7 @@ initialize({
     {
       path: '/eda/:studyId',
       component: (props: RouteComponentProps<{ studyId: string }>) => (
-        <EDASessionList studyId={props.match.params.studyId} />
+        <EDASessionList {...props.match.params} edaServiceUrl="/eda-service" />
       ),
     },
     ...routes,

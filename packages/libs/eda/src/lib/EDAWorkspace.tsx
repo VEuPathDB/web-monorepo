@@ -1,6 +1,6 @@
 import React from 'react';
 import { EDAWorkspaceContainer } from '@veupathdb/eda-workspace-core';
-import { EdaClient } from '@veupathdb/eda-workspace-core/lib/api/eda-api';
+import { SubsettingClient } from '@veupathdb/eda-workspace-core/lib/api/eda-api';
 import { EDASession } from './EDASession';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockSessionStore } from './Mocks';
@@ -12,7 +12,7 @@ interface Props {
   edaServiceUrl: string;
 }
 export function EDAWorkspace(props: Props) {
-  const edaClient: EdaClient = new (class extends EdaClient {
+  const subsettingClient: SubsettingClient = new (class extends SubsettingClient {
     constructor() {
       super({ baseUrl: props.edaServiceUrl });
     }
@@ -26,11 +26,11 @@ export function EDAWorkspace(props: Props) {
       sessionId={props.sessionId}
       studyId={props.studyId}
       className={cx()}
-      sessionStore={mockSessionStore}
-      edaClient={edaClient}
+      sessionClient={mockSessionStore}
+      subsettingClient={subsettingClient}
     >
       <EDAWorkspaceHeading />
-      <EDASession />
+      <EDASession sessionId={props.sessionId} />
     </EDAWorkspaceContainer>
   );
 }

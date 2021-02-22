@@ -6,18 +6,18 @@ import { useHistory } from 'react-router';
 import {
   NewSession,
   Session,
-  SessionStore,
-  useStudy,
+  useStudyRecord,
 } from '@veupathdb/eda-workspace-core';
 import { Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
+import { SessionClient } from '@veupathdb/eda-workspace-core/lib/api/session-api';
 
 export interface Props {
-  sessionStore: SessionStore;
+  sessionStore: SessionClient;
 }
 
 export function SessionList(props: Props) {
   const { sessionStore } = props;
-  const { studyRecord } = useStudy();
+  const studyRecord = useStudyRecord();
   const studyId = studyRecord.id.map((part) => part.value).join('/');
   const [sessionList, setSessionList] = React.useState<Session[]>();
   const history = useHistory();

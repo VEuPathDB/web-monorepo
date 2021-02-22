@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import {
   StudyVariable,
   useSession,
-  useEdaApi,
-  useStudy,
   Distribution,
+  useStudyMetadata,
+  useSubsettingClient,
 } from '@veupathdb/eda-workspace-core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { startCase } from 'lodash';
 import { cx } from './Utils';
-import { usePromise } from '@veupathdb/eda-workspace-core/lib/hooks/usePromise';
+import { usePromise } from '@veupathdb/eda-workspace-core/lib/hooks/promise';
 
 const variableKeys: (keyof StudyVariable)[] = [
   // 'displayName',
@@ -18,27 +18,29 @@ const variableKeys: (keyof StudyVariable)[] = [
   'dataShape',
 ];
 
-export function Variables() {
+interface Props {
+  sessionId: string;
+}
+
+export function Variables(props: Props) {
+  const { sessionId } = props;
   const [selectedEntity, setSelectedEntity] = useState<number>(0);
   const [selectedVariable, setSelectedVariable] = useState<number>(0);
-  const { studyMetadata } = useStudy();
-  const edaApi = useEdaApi();
+  const studyMetadata = useStudyMetadata();
+  const subsettingClient = useSubsettingClient();
   const entities = Array.from(
     preorder(studyMetadata.rootEntity, (e) => e.children || [])
   );
-  const {
-    history: { current: session },
-    setFilters,
-  } = useSession();
+  const { session, setFilters } = useSession(sessionId);
   const entity = entities[selectedEntity];
   const variable = entity.variables[selectedVariable];
   const filters = session?.filters ?? [];
   const entityCount = usePromise(
-    () => edaApi.getEntityCount(studyMetadata.id, entity.id, []),
+    () => subsettingClient.getEntityCount(studyMetadata.id, entity.id, []),
     [studyMetadata.id, entity.id]
   );
   const filteredCount = usePromise(
-    () => edaApi.getEntityCount(studyMetadata.id, entity.id, filters),
+    () => subsettingClient.getEntityCount(studyMetadata.id, entity.id, filters),
     [studyMetadata.id, entity.id, filters]
   );
 
@@ -111,6 +113,8 @@ export function Variables() {
         <h4>Distribution</h4>
         <div className="filter-param">
           <Distribution
+            filters={session?.filters ?? []}
+            onFiltersChange={setFilters}
             studyMetadata={studyMetadata}
             entity={entity}
             variable={variable}
