@@ -314,6 +314,12 @@ const useHeaderMenuItems = (
          }
         },
         {
+          key: 'blast-beta',
+          display: <>BLAST<sup>{' '}<em>beta</em></sup></>,
+          type: 'reactRoute',
+          url: '/workspace/blast/new'
+        },
+        {
           key: 'blast',
           display: 'BLAST',
           type: 'reactRoute',

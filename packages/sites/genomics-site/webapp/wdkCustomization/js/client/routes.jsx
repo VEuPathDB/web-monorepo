@@ -15,6 +15,8 @@ import SampleForm from './components/samples/SampleForm';
 
 import { projectId } from './config';
 
+import { blastRoutes } from './blast-routes';
+
 // Project id is not needed for these record classes.
 // Matches urlSegment.
 const RECORD_CLASSES_WITHOUT_PROJECT_ID = [ 'dataset', 'sample' ];
@@ -121,6 +123,8 @@ export const wrapRoutes = ebrcRoutes => [
     path: '/plasmoap',
     component: PlasmoApController
   },
+
+  ...blastRoutes,
 
   ...ebrcRoutes.map(route => route.path.includes(':primaryKey+')
     ? { ...route, component: addProjectIdPkValueWrapper(route.component) }
