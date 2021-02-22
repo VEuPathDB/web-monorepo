@@ -29,7 +29,7 @@ TODO - Describe session management once fully implemented.
 
 The following exports can be used to implement an EDA Workspace client.
 
-### Compnents
+### Components
 
 * **`EDAWorkspaceContainer`** - A React Component that loads the above types.
 
