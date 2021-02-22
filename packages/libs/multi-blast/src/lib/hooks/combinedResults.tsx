@@ -1,4 +1,11 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useSelector } from 'react-redux';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
@@ -26,7 +33,7 @@ import {
   RANK_PER_SUBJECT_HELP_TEXT,
   SCORE_HELP_TEXT,
   CombinedResultRow,
-  blastDbNameToWdkRecordType,
+  dbToOrgDirAndTargetType,
   dbToOrganismFactory,
   defaultDeflineToDescription,
   defaultDeflineToSourceId,
@@ -35,6 +42,7 @@ import {
   orderHitsBySignificance,
 } from '../utils/combinedResults';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
+import { TargetMetadataByDataType } from '../utils/targetTypes';
 
 export function useCombinedResultProps(
   combinedResult: MultiQueryReportJson,
@@ -392,11 +400,16 @@ function useMesaUiState(sort: MesaSortObject) {
 }
 
 export function useWdkRecordType(combinedResult: MultiQueryReportJson) {
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
+
   return useMemo(() => {
     const sampleDbName = combinedResult.BlastOutput2[0].report.search_target.db;
+    const { targetType } = dbToOrgDirAndTargetType(sampleDbName);
 
-    return blastDbNameToWdkRecordType(sampleDbName);
-  }, [combinedResult]);
+    return targetType == null || targetMetadataByDataType[targetType] == null
+      ? null
+      : targetMetadataByDataType[targetType].recordClassUrlSegment;
+  }, [combinedResult, targetMetadataByDataType]);
 }
 
 export function useHitTypeDisplayNames(wdkRecordType: string | null) {

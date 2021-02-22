@@ -63,7 +63,15 @@ initialize({
     },
     {
       path: '/search/:recordClass/:searchName(.*MultiBlast)',
-      component: () => <Redirect to="/workspace/blast/new" />,
+      component: (
+        props: RouteComponentProps<{
+          recordClass: string;
+        }>
+      ) => (
+        <Redirect
+          to={`/workspace/blast/new?recordType=${props.match.params.recordClass}`}
+        />
+      ),
     },
     ...routes,
   ],
@@ -73,7 +81,7 @@ initialize({
   pluginConfig: [
     {
       type: 'questionForm',
-      name: 'GenesByMultiBlast',
+      test: ({ question }) => question?.urlSegment.endsWith('MultiBlast'),
       component: BlastForm,
     },
     {

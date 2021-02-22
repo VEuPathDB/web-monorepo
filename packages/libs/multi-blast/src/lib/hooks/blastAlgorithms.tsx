@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
 import { zip } from 'lodash';
 
@@ -12,8 +12,7 @@ import {
 
 import {
   BlastOntologyDatabase,
-  TargetDataType,
-  targetMetadataByDataType,
+  TargetMetadataByDataType,
 } from '../utils/targetTypes';
 
 const blastOntologyDatabases: BlastOntologyDatabase[] = [
@@ -35,8 +34,9 @@ const algorithmTermTables: Record<BlastOntologyDatabase, string> = {
   'blast-orf-ontology': 'BlastPOTerms',
 };
 
-export function useEnabledAlgorithms(targetDataType: TargetDataType) {
+export function useEnabledAlgorithms(targetDataType: string) {
   const algorithmTermsByDatabase = useAlgorithmTermsByDatabase();
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const enabledAlgorithms = useMemo(() => {
     if (algorithmTermsByDatabase == null) {
@@ -47,7 +47,7 @@ export function useEnabledAlgorithms(targetDataType: TargetDataType) {
     const ontologyDatabaseName = targetMetaData.blastOntologyDatabase;
 
     return algorithmTermsByDatabase[ontologyDatabaseName];
-  }, [algorithmTermsByDatabase, targetDataType]);
+  }, [algorithmTermsByDatabase, targetDataType, targetMetadataByDataType]);
 
   return enabledAlgorithms;
 }

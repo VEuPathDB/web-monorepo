@@ -40,7 +40,6 @@ import {
   paramValuesToBlastConfig,
 } from '../utils/params';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
-import { TargetDataType } from '../utils/targetTypes';
 
 import { AdvancedParamGroup } from './AdvancedParamGroup';
 
@@ -53,10 +52,7 @@ const BLAST_FORM_CONTAINER_NAME = 'MultiBlast';
 export type Props = DefaultQuestionFormProps;
 
 export function BlastForm(props: Props) {
-  // FIXME: Validate this
-  const targetType = props.state.paramValues[
-    BLAST_DATABASE_TYPE_PARAM_NAME
-  ] as TargetDataType;
+  const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
 
   const selectedBlastAlgorithm =
     props.state.paramValues[BLAST_ALGORITHM_PARAM_NAME];

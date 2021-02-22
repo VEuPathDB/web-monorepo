@@ -1,22 +1,72 @@
+import { useContext, useMemo } from 'react';
 import { RouteComponentProps, StaticContext } from 'react-router';
 
-import { QuestionController } from '@veupathdb/wdk-client/lib/Controllers';
+import {
+  NotFoundController,
+  QuestionController,
+} from '@veupathdb/wdk-client/lib/Controllers';
+import { parseQueryString } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
+import { TargetMetadataByDataType } from '../utils/targetTypes';
+
+type WorkspaceMetadata =
+  | { searchName: null }
+  | {
+      canChangeRecordType: boolean;
+      recordClassName: string;
+      searchName: string;
+    };
 
 export function BlastWorkspaceNew(
   props: RouteComponentProps<{}, StaticContext, ParameterValues | undefined>
 ) {
-  return (
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
+
+  const workspaceMetadata = useMemo((): WorkspaceMetadata => {
+    const parsedQueryString = parseQueryString(props);
+
+    const selectedRecordClassUrlSegment = parsedQueryString['recordType'];
+
+    const availableTargetDataTypes = Object.values(targetMetadataByDataType);
+
+    if (selectedRecordClassUrlSegment == null) {
+      return availableTargetDataTypes.length === 0
+        ? { searchName: null }
+        : {
+            canChangeRecordType: true,
+            recordClassName: selectedRecordClassUrlSegment,
+            searchName: availableTargetDataTypes[0].searchUrlSegment,
+          };
+    }
+
+    const compatibleTargetDataTypeEntry = availableTargetDataTypes.find(
+      ({ recordClassUrlSegment }) =>
+        recordClassUrlSegment === selectedRecordClassUrlSegment
+    );
+
+    return compatibleTargetDataTypeEntry == null
+      ? { searchName: null }
+      : {
+          canChangeRecordType: false,
+          recordClassName: selectedRecordClassUrlSegment,
+          searchName: compatibleTargetDataTypeEntry.searchUrlSegment,
+        };
+  }, [props, targetMetadataByDataType]);
+
+  return workspaceMetadata.searchName == null ? (
+    <NotFoundController />
+  ) : (
     <Plugin
       context={{
         type: 'questionController',
-        recordClassName: 'transcript',
-        searchName: 'GenesByMultiBlast',
+        recordClassName: workspaceMetadata.recordClassName,
+        searchName: workspaceMetadata.searchName,
       }}
       pluginProps={{
-        question: 'GenesByMultiBlast',
-        recordClass: 'transcript',
+        question: workspaceMetadata.searchName,
+        recordClass: workspaceMetadata.recordClassName,
         submissionMetadata: {
           type: 'create-strategy',
         } as const,
