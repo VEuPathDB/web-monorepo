@@ -31,7 +31,8 @@ The following exports can be used to implement an EDA Workspace client.
 
 ### Components
 
-* **`EDAWorkspaceContainer`** - A React Component that loads the above types.
+* **`EDAWorkspaceContainer`** - Initializes the EDA Workspace by loading the above types and preparing the context value used by hooks. This component must be rendered as a root element of your workspace.
+* **`VariableLink`** - Renders a `Link` that will navigate to the variable route of your workspace.
 
 
 ### Hooks
