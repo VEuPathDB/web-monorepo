@@ -125,6 +125,7 @@ export default function CardList(props) {
       helpText={`Find ${contentNamePlural} by searching the visible content.`}
     />
 
+  // unused redmine #43134. it was being rendered in <div className="filters"> after {filterInput} as {categorySelector}
   const categorySelector = filters &&
     <Select
       placeholder={`Select a ${filtersLabel}`}
@@ -148,7 +149,6 @@ export default function CardList(props) {
       {expandButton}
       <div className="filters">
         {filterInput}
-        {categorySelector}
       </div>
       {cardList}
       {loadingIndicator}
