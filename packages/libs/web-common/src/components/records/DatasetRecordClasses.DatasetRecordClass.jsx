@@ -24,9 +24,9 @@ function renderPrimaryPublication(publication) {
   return formatLink(publication.pubmed_link, { newWindow: true });
 }
 
-function renderPrimaryContact(contact, institution, email) {
-  return ( !!(email)
-           ?  <span><a href={'mailto:' + email} >{contact}</a>, {institution}</span>
+function renderPrimaryContact(contact, institution, email, record) {
+  return ( (record.id[0].value == 'DS_010e5612b8' || record.id[0].value == 'DS_c56b76b581')?  
+  	   <span>{contact}, <a href={'mailto:' + email} >{email}</a>, {institution}</span>
            :  contact + ', ' + institution
         );
 }
@@ -85,7 +85,7 @@ export function RecordHeading(props) {
           <div className="eupathdb-RecordOverviewItem">
             <strong>Primary contact: </strong>
 
-            <span>{renderPrimaryContact(contact, institution, email)}</span>
+            <span>{renderPrimaryContact(contact, institution, email, record)}</span>
 
           </div>
         ) : null}
