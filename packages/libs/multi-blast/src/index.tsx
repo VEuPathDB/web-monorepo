@@ -82,7 +82,8 @@ initialize({
   pluginConfig: [
     {
       type: 'questionForm',
-      test: ({ question }) => question?.urlSegment.endsWith('MultiBlast'),
+      test: ({ question }) =>
+        question != null && question.urlSegment.endsWith('MultiBlast'),
       component: BlastForm,
     },
     {
