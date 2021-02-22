@@ -190,7 +190,7 @@ function useCombinedResultColumns(
       },
       {
         key: 'alignmentLength',
-        name: 'Aln Length',
+        name: 'Align Length',
         sortable: true,
         helpText: ALIGNMENT_LENGTH_HELP_TEXT,
       },
