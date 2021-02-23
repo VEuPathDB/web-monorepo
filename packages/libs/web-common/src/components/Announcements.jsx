@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { groupBy, noop } from 'lodash';
 
-import { Link, IconAlt } from 'wdk-client/Components';
-import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
-import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
+import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 const stopIcon = (
   <span className="fa-stack" style={{ fontSize: '1.2em' }}>
