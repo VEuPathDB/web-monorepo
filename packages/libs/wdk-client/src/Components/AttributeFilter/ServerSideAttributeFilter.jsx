@@ -74,7 +74,6 @@ ServerSideAttributeFilter.propTypes = {
 
   // event handlers
   onActiveFieldChange: PropTypes.func.isRequired,
-  onFieldCountUpdateRequest: PropTypes.func.isRequired,
   onFiltersChange: PropTypes.func.isRequired,
   onMemberSort: PropTypes.func.isRequired,
   onMemberSearch: PropTypes.func.isRequired,
