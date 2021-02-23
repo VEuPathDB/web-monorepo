@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';
 
 // Definitions

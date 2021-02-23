@@ -7,10 +7,11 @@ import MaterialSwitch from '@material-ui/core/Switch';
 import { DARK_GRAY, LIGHT_BLUE, MEDIUM_GRAY } from '../../constants/colors';
 
 export type SwitchProps = {
+  /** Optional label for widget. */
+  label?: string;
   /** If the switch is on or off. */
   state: boolean;
   /** What action to take when state changes. */
-  // Probably don't want it this vague.
   onStateChange: (event: object) => void;
   /** Color to use. Will accept any valid CSS color definition.
    * Defaults to LIGHT_BLUE */
@@ -19,10 +20,13 @@ export type SwitchProps = {
   containerStyles?: React.CSSProperties;
 };
 
-/** A simple switch UI widget.
+/**
+ * A simple switch UI widget.
  *
- * Should be used when you want to toggle something between two distinct options. */
+ * Should be used when you want to toggle something
+ * between two distinct options. */
 export default function Switch({
+  label,
   state,
   onStateChange,
   color = LIGHT_BLUE,
@@ -49,12 +53,14 @@ export default function Switch({
       onMouseOver={() => setFocused(true)}
       onMouseOut={() => setFocused(false)}
     >
-      <Typography
-        variant="button"
-        style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY, paddingRight: 15 }}
-      >
-        Legend
-      </Typography>
+      {label && (
+        <Typography
+          variant="button"
+          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY, paddingRight: 5 }}
+        >
+          {label}
+        </Typography>
+      )}
       <ThemeProvider theme={theme}>
         <MaterialSwitch
           checked={state}

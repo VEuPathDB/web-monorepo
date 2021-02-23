@@ -5,7 +5,6 @@ import OrientationToggle, {
   OrientationToggleProps,
 } from '../../components/widgets/OrientationToggle';
 import { OrientationOptions } from '../../types/plots';
-import { LIGHT_GREEN } from '../../constants/colors';
 
 export default {
   title: 'Widgets/Orientation Toggle',
@@ -31,7 +30,7 @@ export const BasicOrientationToggle: Story<OrientationToggleProps> = (args) => {
         );
         setOrientation(orientation === 'vertical' ? 'horizontal' : 'vertical');
       }}
-      containerStyles={args.containerStyles}
+      containerStyles={{ ...args.containerStyles, padding: 25 }}
     />
   );
 };
