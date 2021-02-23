@@ -3,6 +3,7 @@ import { initialize as initializeEbrc } from '@veupathdb/web-common/lib/bootstra
 import * as componentWrappers from './componentWrappers';
 import { wrapRoutes } from './routes';
 import wrapStoreModules from './wrapStoreModules';
+import { wrapWdkService } from './wrapWdkService';
 import pluginConfig from './pluginConfig';
 
 // import CSS files
@@ -16,5 +17,6 @@ export const initialize =  initializeWdk => initializeEbrc({
   componentWrappers,
   wrapRoutes,
   wrapStoreModules,
+  wrapWdkService,
   pluginConfig
 })
