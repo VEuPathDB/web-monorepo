@@ -152,9 +152,9 @@ export function getTree(ontologyEntries: Iterable<Field>): FieldTreeNode {
     : { field: GENERATED_ROOT, children: rootChildren };
 }
 
-export function getLeavesOfSubTree(ontologyEntries: Iterable<Field>, rootTerm: Field): Field[] {
+export function getLeavesOfSubTree(ontologyEntries: Iterable<Field>, rootTerm: Field): FilterField[] {
   const entriesByParentTerm = mapBy(ontologyEntries, term => term.parent) as Map<string, Field[]>;
-  let result = [] as Field[];
+  let result = [] as FilterField[];
   let nodesToSearch = [rootTerm] as Field[];
   while(nodesToSearch.length > 0 ){
     let nodesToSearchNext = [] as Field[];
@@ -162,8 +162,9 @@ export function getLeavesOfSubTree(ontologyEntries: Iterable<Field>, rootTerm: F
       const children = entriesByParentTerm.get(node.term);
       if(children != null && children.length > 0){
         nodesToSearchNext = nodesToSearchNext.concat(children);
-      } else {
-        result.push(node);
+      }
+      if (isFilterField(node)){
+        result.push(node as FilterField);
       }
     }
     nodesToSearch = nodesToSearchNext;
