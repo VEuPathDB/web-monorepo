@@ -1,18 +1,18 @@
-import { Loading } from "@veupathdb/wdk-client/lib/Components";
-import FieldFilter from "@veupathdb/wdk-client/lib/Components/AttributeFilter/FieldFilter";
-import EmptyState from "@veupathdb/wdk-client/lib/Components/Mesa/Ui/EmptyState";
-import { ErrorBoundary } from "@veupathdb/wdk-client/lib/Controllers";
-import React from "react";
-import { usePromise } from "../hooks/promise";
-import { StudyEntity, StudyMetadata, StudyVariable } from "../types/study";
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import FieldFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/FieldFilter';
+import EmptyState from '@veupathdb/wdk-client/lib/Components/Mesa/Ui/EmptyState';
+import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
+import React from 'react';
+import { usePromise } from '../hooks/promise';
+import { StudyEntity, StudyMetadata, StudyVariable } from '../types/study';
 import {
   fromEdaFilter,
   toEdaFilter,
   toWdkVariableSummary,
-} from "../utils/wdk-filter-param-adapter";
-import { useSubsettingClient } from "../hooks/workspace";
-import { Filter as EdaFilter } from "../types/filter";
-import { Filter as WdkFilter } from "@veupathdb/wdk-client/lib/Components/AttributeFilter/Types";
+} from '../utils/wdk-filter-param-adapter';
+import { useSubsettingClient } from '../hooks/workspace';
+import { Filter as EdaFilter } from '../types/filter';
+import { Filter as WdkFilter } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 interface Props {
   studyMetadata: StudyMetadata;
@@ -82,9 +82,9 @@ export function Distribution(props: Props) {
           onFiltersChange={(filters: WdkFilter[]) =>
             onFiltersChange(filters.map((f) => toEdaFilter(f, entity.id)))
           }
-          onMemberSort={logEvent("onMemberSort")}
-          onMemberSearch={logEvent("onMemberSearch")}
-          onRangeScaleChange={logEvent("onRangeScaleChange")}
+          onMemberSort={logEvent('onMemberSort')}
+          onMemberSearch={logEvent('onMemberSearch')}
+          onRangeScaleChange={logEvent('onRangeScaleChange')}
           selectByDefault={false}
         />
       </ErrorBoundary>
@@ -94,6 +94,6 @@ export function Distribution(props: Props) {
 
 function logEvent(tag: string) {
   return function noop(...args: unknown[]) {
-    console.log("Tagged event ::", tag + " ::", ...args);
+    console.log('Tagged event ::', tag + ' ::', ...args);
   };
 }

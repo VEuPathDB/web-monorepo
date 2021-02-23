@@ -3,7 +3,12 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { useSession, Status } from '../../src/hooks/session';
 import { Session, NewSession } from '../../src/types/session';
 import { SessionClient } from '../../src/api/session-api';
-import { StudyMetadata, StudyRecord, StudyRecordClass, WorkspaceContext } from '../../src';
+import {
+  StudyMetadata,
+  StudyRecord,
+  StudyRecordClass,
+  WorkspaceContext,
+} from '../../src';
 import { SubsettingClient } from '../../src/api/eda-api';
 
 const stubSession: NewSession = {
@@ -14,9 +19,9 @@ const stubSession: NewSession = {
   starredVariables: [],
   variableUISettings: {},
   visualizations: [],
-}
+};
 
-const key = '123'
+const key = '123';
 
 let records: Record<string, Session>;
 let nextId: number;
@@ -27,7 +32,7 @@ const sessionClient: SessionClient = {
   },
   async getSession(id: string) {
     if (id in records) return records[id];
-    throw new Error("Could not find session for id " + id);
+    throw new Error('Could not find session for id ' + id);
   },
   async createSession(newSession: NewSession) {
     const id = String(nextId++);
@@ -35,7 +40,7 @@ const sessionClient: SessionClient = {
       ...newSession,
       id,
       created: new Date().toISOString(),
-      modified: new Date().toISOString()
+      modified: new Date().toISOString(),
     };
     return { id };
   },
@@ -44,21 +49,22 @@ const sessionClient: SessionClient = {
   },
   async deleteSession(id: string) {
     delete records[id];
-  }
+  },
 } as SessionClient;
 
-
 const wrapper: React.ComponentType = ({ children }) => (
-  <WorkspaceContext.Provider value={{
-    sessionClient,
-    studyMetadata: {} as StudyMetadata,
-    studyRecord: {} as StudyRecord,
-    studyRecordClass: {} as StudyRecordClass,
-    subsettingClient: {} as SubsettingClient
-  }}>
+  <WorkspaceContext.Provider
+    value={{
+      sessionClient,
+      studyMetadata: {} as StudyMetadata,
+      studyRecord: {} as StudyRecord,
+      studyRecordClass: {} as StudyRecordClass,
+      subsettingClient: {} as SubsettingClient,
+    }}
+  >
     {children}
   </WorkspaceContext.Provider>
-)
+);
 
 beforeEach(() => {
   records = {
@@ -66,16 +72,15 @@ beforeEach(() => {
       ...stubSession,
       id: key,
       created: new Date().toISOString(),
-      modified: new Date().toISOString()
-    }
+      modified: new Date().toISOString(),
+    },
   };
-  nextId = 1;  
+  nextId = 1;
 });
 
 const render = () => renderHook(() => useSession(key), { wrapper });
 
 describe('useSession', () => {
-
   it('should have the correct status on success path', async () => {
     const { result, waitForValueToChange } = render();
     expect(result.current.status === Status.InProgress);
@@ -99,7 +104,7 @@ describe('useSession', () => {
 
   it('should allow updates', async () => {
     const { result, waitFor } = render();
-    await waitFor(() => result.current.status === Status.Loaded)
+    await waitFor(() => result.current.status === Status.Loaded);
     act(() => {
       result.current.setName('New Name');
     });
@@ -108,12 +113,12 @@ describe('useSession', () => {
 
   it('should update store on save', async () => {
     const { result, waitFor } = render();
-    await waitFor(() => result.current.status === Status.Loaded)
+    await waitFor(() => result.current.status === Status.Loaded);
     act(() => result.current.setName('New Name'));
     expect(result.current.hasUnsavedChanges).toBeTruthy();
     await act(() => result.current.saveSession());
     const sessions = await sessionClient.getSessions();
-    const session = sessions.find(session => session.id === key);
+    const session = sessions.find((session) => session.id === key);
     expect(session?.name).toBe('New Name');
     expect(result.current.hasUnsavedChanges).toBeFalsy();
   });
@@ -123,7 +128,7 @@ describe('useSession', () => {
     await waitFor(() => result.current.status === Status.Loaded);
     const res = await result.current.copySession();
     const sessions = await sessionClient.getSessions();
-    const newSession = sessions.find(session => session.id === res.id);
+    const newSession = sessions.find((session) => session.id === res.id);
     expect(omit(result.current.session, 'id')).toEqual(omit(newSession, 'id'));
     expect(result.current.session).not.toBe(newSession);
   });
@@ -133,8 +138,7 @@ describe('useSession', () => {
     await waitFor(() => result.current.status === Status.Loaded);
     await result.current.deleteSession();
     const sessions = await sessionClient.getSessions();
-    const session = sessions.find(session => session.id === key);
+    const session = sessions.find((session) => session.id === key);
     expect(session).toBeUndefined();
   });
-
 });

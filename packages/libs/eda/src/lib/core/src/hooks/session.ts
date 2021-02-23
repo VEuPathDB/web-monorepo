@@ -1,16 +1,16 @@
-import { useStateWithHistory } from "@veupathdb/wdk-client/lib/Hooks/StateWithHistory";
-import { useCallback, useEffect, useState } from "react";
-import { useSessionClient } from "./workspace";
-import { Session } from "../types/session";
-import { usePromise } from "./promise";
+import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
+import { useCallback, useEffect, useState } from 'react';
+import { useSessionClient } from './workspace';
+import { Session } from '../types/session';
+import { usePromise } from './promise';
 
 type Setter<T extends keyof Session> = (value: Session[T]) => void;
 
 export const enum Status {
-  InProgress = "in-progress",
-  Loaded = "loaded",
-  NotFound = "not-found",
-  Error = "error",
+  InProgress = 'in-progress',
+  Loaded = 'loaded',
+  NotFound = 'not-found',
+  Error = 'error',
 }
 
 export type SessionState = {
@@ -21,12 +21,12 @@ export type SessionState = {
   canRedo: boolean;
   undo: () => void;
   redo: () => void;
-  setName: Setter<"name">;
-  setFilters: Setter<"filters">;
-  setVisualizations: Setter<"visualizations">;
-  setDerivedVariables: Setter<"derivedVariables">;
-  setStarredVariables: Setter<"starredVariables">;
-  setVariableUISettings: Setter<"variableUISettings">;
+  setName: Setter<'name'>;
+  setFilters: Setter<'filters'>;
+  setVisualizations: Setter<'visualizations'>;
+  setDerivedVariables: Setter<'derivedVariables'>;
+  setStarredVariables: Setter<'starredVariables'>;
+  setVariableUISettings: Setter<'variableUISettings'>;
   copySession: () => Promise<{ id: string }>;
   deleteSession: () => Promise<void>;
   saveSession: () => Promise<void>;
@@ -78,12 +78,12 @@ export function useSession(sessionId: string): SessionState {
       [propertyName]
     );
 
-  const setName = useSetter("name");
-  const setFilters = useSetter("filters");
-  const setVisualizations = useSetter("visualizations");
-  const setDerivedVariables = useSetter("derivedVariables");
-  const setStarredVariables = useSetter("starredVariables");
-  const setVariableUISettings = useSetter("variableUISettings");
+  const setName = useSetter('name');
+  const setFilters = useSetter('filters');
+  const setVisualizations = useSetter('visualizations');
+  const setDerivedVariables = useSetter('derivedVariables');
+  const setStarredVariables = useSetter('starredVariables');
+  const setVariableUISettings = useSetter('variableUISettings');
 
   const saveSession = useCallback(async () => {
     if (session == null)

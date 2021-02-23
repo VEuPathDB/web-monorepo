@@ -1,5 +1,5 @@
-import * as t from "io-ts";
-import { Filter } from "./filter";
+import * as t from 'io-ts';
+import { Filter } from './filter';
 
 export type DerviedVariable = t.TypeOf<typeof DerviedVariable>;
 export const DerviedVariable = t.unknown;

@@ -10,6 +10,5 @@ export function ioTransformer<I, A>(decoder: Decoder<I, A>) {
       throw new Error(message);
     }
     return result.right;
-  }  
+  };
 }
-

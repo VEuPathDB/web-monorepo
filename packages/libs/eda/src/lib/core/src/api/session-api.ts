@@ -1,25 +1,25 @@
-import { Session, NewSession } from "../types/session";
+import { Session, NewSession } from '../types/session';
 import {
   createJsonRequest,
   FetchClient,
-} from "@veupathdb/web-common/lib/util/api";
-import { type, voidType, string, array } from "io-ts";
-import { ioTransformer } from "./ioTransformer";
+} from '@veupathdb/web-common/lib/util/api';
+import { type, voidType, string, array } from 'io-ts';
+import { ioTransformer } from './ioTransformer';
 export class SessionClient extends FetchClient {
   getSessions(): Promise<Session[]> {
     return this.fetch(
       createJsonRequest({
         path: '/sessions',
         method: 'GET',
-        transformResponse: ioTransformer(array(Session))
+        transformResponse: ioTransformer(array(Session)),
       })
-    )
+    );
   }
   getSession(sessionId: string): Promise<Session> {
     return this.fetch(
       createJsonRequest({
         path: `/sessions/${sessionId}`,
-        method: "GET",
+        method: 'GET',
         transformResponse: ioTransformer(Session),
       })
     );
@@ -28,7 +28,7 @@ export class SessionClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         path: `/sessions`,
-        method: "POST",
+        method: 'POST',
         body: session,
         transformResponse: ioTransformer(type({ id: string })),
       })
@@ -38,7 +38,7 @@ export class SessionClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         path: `/sessions/${session.id}`,
-        method: "PUT",
+        method: 'PUT',
         body: session,
         transformResponse: ioTransformer(voidType),
       })
@@ -48,7 +48,7 @@ export class SessionClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         path: `/sessions/${sessionId}`,
-        method: "DELETE",
+        method: 'DELETE',
         body: { sessionId },
         transformResponse: ioTransformer(voidType),
       })

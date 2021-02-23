@@ -1,8 +1,8 @@
-import * as t from "io-ts";
+import * as t from 'io-ts';
 import {
   RecordClass,
   RecordInstance,
-} from "@veupathdb/wdk-client/lib/Utils/WdkModel";
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 // Aliases
 // -------
@@ -46,7 +46,7 @@ const _StudyEntityBase = t.type({
 export type StudyEntity = _StudyEntityBase & {
   children?: StudyEntity[];
 };
-export const StudyEntity: t.Type<StudyEntity> = t.recursion("StudyEntity", () =>
+export const StudyEntity: t.Type<StudyEntity> = t.recursion('StudyEntity', () =>
   t.intersection([
     _StudyEntityBase,
     t.partial({
