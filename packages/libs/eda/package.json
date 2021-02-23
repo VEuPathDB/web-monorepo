@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@veupathdb/eda-workspace-core": "^0.0.2-alpha.19",
+    "@veupathdb/eda-workspace-core": "^0.0.2-alpha.20",
     "@veupathdb/wdk-client": "^0.1.1-alpha.12",
     "@veupathdb/web-common": "^0.1.1-alpha.11",
     "lodash": "^4.17.20",
