@@ -562,52 +562,6 @@ ul.menubar {
   background:#fafafa;
 }
 
-/* kanged from Amazon */
-.psGradient {
-   z-index: 2;
-   position: relative;
-   height: 24px;
-   margin-top: -24px;
-   overflow: hidden;
-   background: -moz-linear-gradient(
-     bottom,
-     rgb(245, 245, 245) 15%,
-     rgba(245, 245, 245, 0) 100%
-   );
-   background: -webkit-gradient(
-     linear,
-     bottom,
-     top,
-     color-stop(15%, rgb(245, 245, 245)),
-     color-stop(100%, rgba(245, 245, 245, 0))
-   );
-   background: -webkit-linear-gradient(
-     bottom,
-     rgb(245,245,245) 15%,
-     rgba(245, 245, 245, 0) 100%
-   );
-   background: -o-linear-gradient(
-     bottom,
-     rgb(245,245,245) 15%,
-     rgba(245, 245, 245, 0) 100%
-   );
-   background: -ms-linear-gradient(
-     bottom,
-     rgb(245,245,245) 15%,
-     rgba(245, 245, 245, 0) 100%
-   );
-   filter:
-     progid:DXImageTransform.Microsoft.gradient(
-     startColorstr='#03ffffff',
-     endColorstr='#ffffff', GradientType=0
-   );
-   background: linear-gradient(
-     bottom,
-     rgb(245, 245, 245) 15%,
-     rgba(245, 245, 245, 0) 100%
-   );
-}
-
 .snippet .ui-icon-arrowthickstop-1-s,
 .snippet .ui-icon-arrowthickstop-1-n ,
 .truncate .ui-icon-arrowthickstop-1-s,
