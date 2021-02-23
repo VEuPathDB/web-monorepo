@@ -2,9 +2,9 @@ import React, { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { groupBy, noop } from 'lodash';
 
-import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { Link, IconAlt } from 'wdk-client/Components';
+import { useWdkService } from 'wdk-client/Hooks/WdkServiceHook';
+import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 
 const stopIcon = (
   <span className="fa-stack" style={{ fontSize: '1.2em' }}>
@@ -49,21 +49,31 @@ const siteAnnouncements = [
       }
     }
   },
-
- { 
+/*
+  { 
     id: 'live-beta',
     renderDisplay: props => {
-      if ( isGenomicHomePage(props.projectId, props.location) ) return (
-        <div key="live-beta">
-          Welcome to {props.displayName} <i>beta</i> where you will find the newest versions of our interface, features, tools and data.  
-          While we transition to making this beta site permanent, <a target="_blank" href={`https://legacy.${props.projectId.toLowerCase()}.${props.projectId === 'SchistoDB' ? 'net' : 'org'}`}>
+      if ( isGenomicHomePage(props.projectId, props.location) ) {
+        if (props.projectId == 'VectorBase' || props.projectId == 'OrthoMCL') return (
+          <div key="live-beta">
+            Welcome to {props.displayName} <i>beta</i> where you will find the newest versions of our interface, features, tools and data.  
+            While we transition to making this beta site permanent, <a target="_blank" href={`https://legacy.${props.projectId.toLowerCase()}.${props.projectId === 'SchistoDB' ? 'net' : 'org'}`}>
             legacy.{props.projectId.toLowerCase()}.org</a> is still available. 
-          Here is a <a target="_blank" href="https://upenn.co1.qualtrics.com/jfe/form/SV_9N2RTXq7ljpZnDv">form for sending your feedback</a> on the beta sites.
-        </div>
-      )
+            Here is a <a target="_blank" href="https://upenn.co1.qualtrics.com/jfe/form/SV_9N2RTXq7ljpZnDv">form for sending your feedback</a> on the beta sites.
+          </div>
+        )
+        else return (
+          <div key="live-beta">
+            Welcome to {props.displayName} <i>beta</i> where you will find the newest versions of our interface, features, tools and data.
+            While we transition to making this beta site permanent, <a target="_blank" href={`https://legacy.${props.projectId.toLowerCase()}.${props.projectId === 'SchistoDB' ? 'net' : 'org'}`}>
+            legacy.{props.projectId.toLowerCase()}.org</a> is still available (to be retired March 2nd).
+            Here is a <a target="_blank" href="https://upenn.co1.qualtrics.com/jfe/form/SV_9N2RTXq7ljpZnDv">form for sending your feedback</a> on the beta sites.
+          </div> 
+        )
+      }
     }
   },
-
+*/
  // clinepi workshop
 /*
   {
@@ -115,6 +125,19 @@ const siteAnnouncements = [
               Use the <a rel="noreferrer" href={`https://${props.projectId.toLowerCase()}.${props.projectId === 'SchistoDB' ? 'net' : 'org'}`}>legacy site</a> to save them permanently.
             </React.Fragment>
           }
+        </div>
+      )
+    }
+  },
+*/
+/*
+  { 
+    id: 'apollo-galaxy-off',
+    category: 'degraded',
+    renderDisplay: props => {
+      if ( isGalaxy(props.location) || isApollo(props.location) ) return (
+        <div>
+          Apollo and the Galaxy Data export to VEuPathDB are currently <b>unavailable</b>.  We are working on fixing this issue and hope to have the export service back ASAP.
         </div>
       )
     }
@@ -350,11 +373,15 @@ function param(name, { search = '' }) {
 function isGenomicSite(projectId) {
   return !/ClinEpiDB|MicrobiomeDB/i.test(projectId);
 }
-
 function isBetaSite() {
   return param('beta', window.location) === 'true' || /^(beta|b1|b2)/.test(window.location.hostname);
 }
-
+function isGalaxy(routerLocation) {
+  return routerLocation.pathname.startsWith('/galaxy-orientation');
+}
+function isApollo(routerLocation) {
+  return routerLocation.pathname.startsWith('/static-content/apollo');
+}
 function isStrategies(routerLocation) {
   return routerLocation.pathname.startsWith('/workspace/strategies');
 }
@@ -364,7 +391,6 @@ function isBasket(routerLocation) {
 function isFavorites(routerLocation) {
   return routerLocation.pathname.startsWith('/workspace/favorites');
 }
-
 function isGenomicHomePage(projectId, routerLocation) {
   return isGenomicSite(projectId) && routerLocation.pathname === '/';
 }

@@ -20,7 +20,6 @@ const EMAIL_PREFERENCE_DATA_GENOMICS = [
   {value:'preference_global_email_microsporidiadb', display:'MicrosporidiaDB'},
   {value:'preference_global_email_piroplasmadb', display:'PiroplasmaDB'},
   {value:'preference_global_email_plasmodb', display:'PlasmoDB'},
-  {value:'preference_global_email_schistodb', display:'SchistoDB'},
   {value:'preference_global_email_toxodb', display:'ToxoDB'},
   {value:'preference_global_email_trichdb', display:'TrichDB'},
   {value:'preference_global_email_tritrypdb', display:'TriTrypDB'},
