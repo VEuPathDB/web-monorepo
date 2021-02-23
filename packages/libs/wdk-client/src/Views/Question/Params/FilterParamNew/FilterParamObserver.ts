@@ -29,7 +29,7 @@ import { isType, getFilters, getFilterFields, isMemberField, sortDistribution, s
 import { UpdateFieldStateAction, UpdateFiltersAction, UPDATE_FILTERS, SetActiveFieldAction, SET_ACTIVE_FIELD, setActiveField, invalidateOntologyTerms, updateFieldState, summaryCountsLoaded } from 'wdk-client/Actions/FilterParamActions';
 import { Filter, MultiFilter } from 'wdk-client/Components/AttributeFilter/Types';
 import { Action } from 'wdk-client/Actions';
-import { isMulti } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
+import { isMulti, getLeavesOfSubTree } from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
 
 
 const defaultMultiFieldSort: MultiFieldState['sort'] = {
@@ -283,11 +283,7 @@ function getOntologyTermSummary(
   const ontologyItem = parameter.ontology.find(item => item.term === ontologyTerm)!;
 
   if(isMulti(ontologyItem)){
-    // find all leaves
-    const leafTerms =
-      parameter.ontology.filter(
-        item => item.parent == ontologyItem.term
-      ).map(item => item.term);
+    const leafTerms = getLeavesOfSubTree(parameter.ontology, ontologyItem).map(item => item.term);
 
     const sort = state.paramUIState[paramName]?.fieldStates[ontologyTerm]?.sort || defaultMultiFieldSort;
 
