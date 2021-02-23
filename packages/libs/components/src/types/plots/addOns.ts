@@ -1,4 +1,4 @@
-/** Additional controls for legend layout / appearance. */
+/** Additional controls for legend layout & appearance. */
 export type PlotLegendAddon = {
   /** Are legend items presented horizontally or vertically? */
   orientation: 'vertical' | 'horizontal';
@@ -8,7 +8,7 @@ export type PlotLegendAddon = {
   horizontalPaddingAdjustment?: number;
   /** General vertical position of the legend. */
   verticalPosition: 'auto' | 'top' | 'middle' | 'bottom';
-  /** Positive numbers will adjust legend to down, negative numbers will adjust up. */
+  /** Positive numbers will adjust legend up, negative numbers will adjust it down. */
   verticalPaddingAdjustment?: number;
   font?: {
     family: string;
@@ -19,9 +19,14 @@ export type PlotLegendAddon = {
 
 /** Specification to control plot margins and padding. */
 export type PlotSpacingAddon = {
+  /** The margin between the top edge of the container and the plot. */
   marginTop?: number;
+  /** The margin between the right edge of the container and the plot. */
   marginRight?: number;
+  /** The margin between the bottom edge of the container and the plot. */
   marginBottom?: number;
+  /** The margin between the left edge of the container and the plot. */
   marginLeft?: number;
+  /** Padding, applied equally on all sides. */
   padding?: number;
 };

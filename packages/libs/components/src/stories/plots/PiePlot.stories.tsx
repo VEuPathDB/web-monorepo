@@ -1,15 +1,25 @@
 import React from 'react';
-import PiePlot from '../../plots/PiePlot';
+import { Story } from '@storybook/react/types-6-0';
+
+import PiePlot, { PiePlotProps } from '../../plots/PiePlot';
+import { PiePlotData } from '../../types/plots';
+import {
+  DARK_GRAY,
+  DARK_GREEN,
+  LIGHT_BLUE,
+  LIGHT_GREEN,
+  LIGHT_YELLOW,
+} from '../../constants/colors';
 
 export default {
-  title: 'Plots/Pie',
+  title: 'Plots/Pie & Donut',
   component: PiePlot,
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/41799',
   },
 };
 
-let data = [
+let data: PiePlotData = [
   {
     value: 10,
     label: 'Foo',
@@ -24,82 +34,82 @@ let data = [
   },
 ];
 
-let coloredData = [
+let coloredData: PiePlotData = [
   {
     value: 10,
-    label: 'Green',
-    color: 'green',
+    label: 'Light Green',
+    color: LIGHT_GREEN,
   },
   {
     value: 2,
-    label: 'Red',
-    color: 'red',
+    label: 'Dark Green',
+    color: DARK_GREEN,
   },
   {
     value: 30,
-    label: 'Default',
+    color: LIGHT_BLUE,
+    label: 'Light Blue',
   },
 ];
 
-export const BasicPie = () => (
-  <PiePlot
-    //onPlotUpdate={action('state updated')}
-    data={data}
-  />
-);
+const NoControlsTemplate: Story<PiePlotProps> = (args) => <PiePlot {...args} />;
 
-export const PieCustomColors = () => (
-  <PiePlot
-    //onPlotUpdate={action('state updated')}
-    data={coloredData}
-    staticPlot={true}
-  />
-);
+export const Basic = NoControlsTemplate.bind({});
+Basic.args = {
+  data: data,
+  width: 600,
+  height: 450,
+  title: 'Pie Plot',
+  legendOptions: {
+    horizontalPosition: 'right',
+    horizontalPaddingAdjustment: 0.1,
+    verticalPosition: 'top',
+    verticalPaddingAdjustment: 0,
+    orientation: 'vertical',
+  },
+  spacingOptions: {
+    marginBottom: 80,
+    marginLeft: 50,
+    marginRight: 80,
+    marginTop: 100,
+    padding: 0,
+  },
+};
 
-export const BasicDonut = () => (
-  <PiePlot
-    //onPlotUpdate={action('state updated')}
-    data={data}
-    interior={{
-      heightPercentage: 0.4,
-    }}
-  />
-);
+export const CustomSliceColors = NoControlsTemplate.bind({});
+CustomSliceColors.args = {
+  ...Basic.args,
+  data: coloredData,
+  title: 'Pie Plot w/ Custom Colors',
+};
 
-export const DonutText = () => (
-  <PiePlot
-    //onPlotUpdate={action('state updated')}
-    data={data}
-    interior={{
-      heightPercentage: 0.4,
-      text: 'Pie Hole',
-      textColor: 'purple',
-      fontSize: 20,
-    }}
-  />
-);
+export const BasicDonut = NoControlsTemplate.bind({});
+BasicDonut.args = {
+  ...Basic.args,
+  title: 'Basic Donut Plot',
+  donutOptions: {
+    size: 0.3,
+  },
+};
 
-export const DonutCreamyFilling = () => (
-  <PiePlot
-    //onPlotUpdate={action('state updated')}
-    data={data}
-    interior={{
-      heightPercentage: 0.4,
-      backgroundColor: 'yellow',
-    }}
-  />
-);
+export const DonutText = NoControlsTemplate.bind({});
+DonutText.args = {
+  ...Basic.args,
+  title: 'Donut Plot w/Text',
+  donutOptions: {
+    size: 0.4,
+    text: 'Donut Text',
+  },
+};
 
-export const EverythingBagel = () => (
-  <PiePlot
-    //onPlotUpdate={action('state updated')}
-    data={coloredData}
-    interior={{
-      heightPercentage: 0.4,
-      text: 'Pie Hole',
-      textColor: 'purple',
-      fontSize: 20,
-      backgroundColor: 'yellow',
-    }}
-  />
-);
+export const FilledDonut = NoControlsTemplate.bind({});
+FilledDonut.args = {
+  ...Basic.args,
+  title: 'Filled Donut',
+  donutOptions: {
+    size: 0.4,
+    backgroundColor: DARK_GRAY,
+    text: 'Text',
+    textColor: 'white',
+  },
+};
