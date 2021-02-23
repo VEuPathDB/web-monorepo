@@ -12,7 +12,7 @@ export type SwitchProps = {
   /** If the switch is on or off. */
   state: boolean;
   /** What action to take when state changes. */
-  onStateChange: (event: object) => void;
+  onStateChange: (event: { target: HTMLInputElement }) => void;
   /** Color to use. Will accept any valid CSS color definition.
    * Defaults to LIGHT_BLUE */
   color?: string;
