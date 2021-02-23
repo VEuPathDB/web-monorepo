@@ -4,7 +4,7 @@ import { SessionSummary } from './SessionSummary';
 import { useSession, useStudyRecord } from '@veupathdb/eda-workspace-core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { Redirect, Route, RouteComponentProps } from 'react-router';
-import { Variables, VariablesRoute } from './Variables';
+import { VariablesRoute } from './Variables';
 
 interface Props {
   sessionId: string;
