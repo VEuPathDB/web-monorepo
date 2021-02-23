@@ -26,6 +26,12 @@ export type HistogramControlsProps = {
   displayLegend: boolean;
   /** Action to take on display legend change. */
   toggleDisplayLegend: (displayLegend: boolean) => void;
+  /** Whether or not to display the additionally controls that
+   * may be provided by the charting library used to generate the plot.
+   * For example, Plot.ly controls.*/
+  displayLibraryControls: boolean;
+  /** Action to take on display library controls change. */
+  toggleLibraryControls: (displayLegend: boolean) => void;
   /** Current histogram opacity. */
   opacity: number;
   /** Function to invoke when opacity changes. */
@@ -72,6 +78,8 @@ export default function HistogramControls({
   onBinWidthChange,
   displayLegend,
   toggleDisplayLegend,
+  displayLibraryControls,
+  toggleLibraryControls,
   barLayout,
   onBarLayoutChange,
   opacity,
@@ -152,7 +160,7 @@ export default function HistogramControls({
           gridTemplateColumns:
             width > 500 ? '2fr 2fr 1fr' : width > 300 ? '1fr 1fr' : '1fr',
           marginTop: 15,
-          marginRight: 10,
+          marginRight: 15,
           columnGap: 25,
           rowGap: 5,
         }}
@@ -170,7 +178,10 @@ export default function HistogramControls({
           value={binWidth}
           onChange={onBinWidthChange}
         />
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 5 }}>
         <Switch
+          label="Legend"
           color={accentColor}
           state={displayLegend}
           // The stinky use of `any` here comes from
@@ -178,6 +189,15 @@ export default function HistogramControls({
           // material UI library.
           onStateChange={(event: any) =>
             toggleDisplayLegend(event.target.checked)
+          }
+          containerStyles={{ paddingRight: 25 }}
+        />
+        <Switch
+          label="Plot.ly Controls"
+          color={accentColor}
+          state={displayLibraryControls}
+          onStateChange={(event: any) =>
+            toggleLibraryControls(event.target.checked)
           }
         />
       </div>

@@ -5,7 +5,7 @@ import PlotlyPlot from './PlotlyPlot';
 
 import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
-import { DARK_GRAY, LIGHT_YELLOW, MEDIUM_GRAY } from '../constants/colors';
+import { DARK_GRAY, MEDIUM_GRAY } from '../constants/colors';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
@@ -28,8 +28,8 @@ export type PiePlotProps = {
   opacity?: number;
   /** Control of background color. Defaults to transparent.  */
   backgroundColor?: string;
-  /** Should external library controls be displayed? Ex. Plot.ly */
-  display3rdPartyControls?: boolean;
+  /** Should plotting library controls be displayed? Ex. Plot.ly */
+  displayLibraryControls?: boolean;
   /** Display pop-up with extra slice information on hover.
    * Defaults to false. */
   showHoverInfo?: boolean;
@@ -77,7 +77,7 @@ export default function PiePlot({
   height,
   opacity = 1,
   displayLegend = true,
-  display3rdPartyControls = true,
+  displayLibraryControls = true,
   title,
   backgroundColor = 'transparent',
   showHoverInfo = false,
@@ -230,7 +230,7 @@ export default function PiePlot({
         },
       }}
       config={{
-        displayModeBar: display3rdPartyControls,
+        displayModeBar: displayLibraryControls,
         displaylogo: false,
       }}
     />

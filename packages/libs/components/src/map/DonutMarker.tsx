@@ -228,7 +228,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
       }}
       displayLegend={false}
       showHoverInfo={false}
-      display3rdPartyControls={false}
+      displayLibraryControls={false}
       textOptions={{
         displayPosition: 'inside',
         displayOption: 'text',

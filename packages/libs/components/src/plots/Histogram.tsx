@@ -35,6 +35,8 @@ export type HistogramProps = {
   backgroundColor?: string;
   /** Should plot legend be displayed? */
   displayLegend?: boolean;
+  /** Should plotting library controls be displayed? Ex. Plot.ly */
+  displayLibraryControls?: boolean;
   /** function to call upon selecting a range (in x and y axes) */
   onSelected?: () => void;
 };
@@ -55,6 +57,7 @@ export default function Histogram({
   backgroundColor = 'transparent',
   onSelected = () => {},
   displayLegend = true,
+  displayLibraryControls = false,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -158,6 +161,10 @@ export default function Histogram({
             xref: 'paper',
             x: 0,
           },
+        }}
+        config={{
+          displayModeBar: displayLibraryControls,
+          displaylogo: false,
         }}
         data={plotlyFriendlyData}
         onSelected={onSelected}
