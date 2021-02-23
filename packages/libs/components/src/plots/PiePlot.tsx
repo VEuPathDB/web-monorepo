@@ -5,7 +5,7 @@ import PlotlyPlot from './PlotlyPlot';
 
 import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
-import { DARK_GRAY, MEDIUM_GRAY } from '../constants/colors';
+import { DARK_GRAY, LIGHT_YELLOW, MEDIUM_GRAY } from '../constants/colors';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
@@ -15,7 +15,7 @@ export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
   texttemplate: string | string[];
 }
 
-export interface Props {
+export type PiePlotProps = {
   /** Data for the plot. */
   data: PiePlotData;
   /** The width of the plot in pixels. */
@@ -35,7 +35,9 @@ export interface Props {
   showHoverInfo?: boolean;
   /** Should plot legend be displayed? */
   displayLegend?: boolean;
+  /** Options for customizing plot legend. */
   legendOptions?: PlotLegendAddon;
+  /** Options for customizing plot placement. */
   spacingOptions?: PlotSpacingAddon;
   /** Extra specification for "donut" plot variation. */
   donutOptions?: {
@@ -66,7 +68,7 @@ export interface Props {
      * */
     displayTemplate?: string | string[];
   };
-}
+};
 
 /** A Plot.ly based Pie plot. */
 export default function PiePlot({
@@ -83,7 +85,7 @@ export default function PiePlot({
   donutOptions,
   textOptions,
   spacingOptions,
-}: Props) {
+}: PiePlotProps) {
   const defaultColorIter = defaultColorGen();
   let newData: Partial<PlotData>[] = [];
 
@@ -136,20 +138,22 @@ export default function PiePlot({
     const feauxDataTrace: Partial<PlotData> = {
       type: 'pie',
       values: [1],
-      labels: [],
       marker: {
-        colors: [donutOptions.backgroundColor || 'white'],
+        colors: [donutOptions.backgroundColor ?? 'transparent'],
       },
       // Where this data trace should be "plotted" on the "axes".
       // This places it in the center of the donut.
-      domain: {
-        x: [donutWidth, 1 - donutWidth],
-        y: [donutWidth, 1 - donutWidth],
-      },
+      // TODO: I'm not sure this is needed. Deprecated.
+      // domain: {
+      //   x: [donutWidth, 1 - donutWidth],
+      //   y: [donutWidth, 1 - donutWidth],
+      // },
+      opacity: 1,
       hoverinfo: 'none',
       textinfo: 'none',
       showlegend: false,
     };
+
     newData.push(feauxDataTrace);
   }
 

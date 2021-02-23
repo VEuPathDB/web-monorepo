@@ -1,31 +1,17 @@
-/* a test component for tab home content
- */
-
 import React from 'react';
 
-//import pie/donut chart
 import PiePlot from '../plots/PiePlot';
+import { PiePlotData } from '../types/plots';
 
-//props
 interface SidebarPieChartProps {
   id: string;
   header: string;
-  pieChartData?: Array<{ color: string; label: string; value: number }>;
+  pieChartData?: PiePlotData;
   //add showLegend to hide/show legend
   showLegend?: boolean;
 }
 
-//set props for legend position
-type legendProp = {
-  x?: number;
-  y?: number;
-  //xanchor is for positioning legend inside plot
-  xanchor?: 'auto' | 'center' | 'left' | 'right';
-  orientation?: 'h' | 'v' | undefined;
-};
-
-//props are not decided so just use any for now
-export default function TabPieChartConent(props: SidebarPieChartProps) {
+export default function TabPieChartContent(props: SidebarPieChartProps) {
   //summation of fullStat.value per marker icon
   let sumValues: number | null;
   if (props.pieChartData) {
@@ -43,38 +29,32 @@ export default function TabPieChartConent(props: SidebarPieChartProps) {
   //dynamically change height per the number of legend
   let numberLegend = props.pieChartData ? props.pieChartData.length : 0;
   let height = 300 + numberLegend * 30;
-  let margin = {
-    l: 0,
-    r: 0,
-    b: 0,
-    t: 30,
-    pad: 0,
-  };
-  let legend: legendProp = {
-    // x: 0.1,
-    // y: -0.4,
-    // y: -1,
-    orientation: 'h',
-  };
 
   return (
-    <>
-      <PiePlot
-        //set props.pieChartData not to be undefined
-        data={props.pieChartData ? props.pieChartData : []}
-        interior={{
-          heightPercentage: 0.4,
-          text: sumValues?.toString(),
-          textColor: 'black',
-          fontSize: 20,
-        }}
-        //set layout
-        width={width}
-        height={height}
-        margin={margin}
-        legend={legend}
-        showLegend={props.showLegend !== undefined ? props.showLegend : true}
-      />
-    </>
+    <PiePlot
+      data={props.pieChartData ?? []}
+      donutOptions={{
+        size: 0.4,
+        text: sumValues?.toString(),
+        fontSize: 20,
+      }}
+      width={width}
+      height={height}
+      spacingOptions={{
+        marginTop: 0,
+        marginBottom: 0,
+        marginLeft: 10,
+        marginRight: 20,
+        padding: 0,
+      }}
+      legendOptions={{
+        orientation: 'horizontal',
+        horizontalPosition: 'left',
+        verticalPosition: 'bottom',
+        verticalPaddingAdjustment: -0.5,
+      }}
+      displayLegend={props.showLegend !== undefined ? props.showLegend : true}
+      display3rdPartyControls={false}
+    />
   );
 }

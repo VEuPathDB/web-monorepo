@@ -213,23 +213,29 @@ export default function DonutMarker(props: DonutMarkerProps) {
   const popupPlot = (
     <PiePlot
       data={fullStat}
-      interior={{
-        heightPercentage: 0.5,
+      donutOptions={{
+        size: 0.5,
         text: sumLabel as string,
         fontSize: 18,
       }}
       width={plotSize}
       height={plotSize}
-      margin={{ l: marginSize, r: marginSize, t: marginSize, b: marginSize }}
-      showLegend={false}
+      spacingOptions={{
+        marginLeft: marginSize,
+        marginRight: marginSize,
+        marginTop: marginSize,
+        marginBottom: marginSize,
+      }}
+      displayLegend={false}
       showHoverInfo={false}
-      showModebar={false}
-      textposition="inside"
-      textinfo="text"
-      // Show value if pie slice is large enough
-      text={fullStat.map((datum) =>
-        datum.value / sumValues >= 0.015 ? datum.value.toString() : ''
-      )}
+      display3rdPartyControls={false}
+      textOptions={{
+        displayPosition: 'inside',
+        displayOption: 'text',
+        sliceOverrides: fullStat.map((datum) =>
+          datum.value / sumValues >= 0.015 ? datum.value.toString() : ''
+        ),
+      }}
     />
   );
 
