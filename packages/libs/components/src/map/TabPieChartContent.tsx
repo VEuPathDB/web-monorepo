@@ -15,7 +15,7 @@ export default function TabPieChartContent(props: SidebarPieChartProps) {
   //summation of fullStat.value per marker icon
   let sumValues: number | null;
   if (props.pieChartData) {
-    sumValues = props.pieChartData
+    sumValues = props.pieChartData.slices
       .map((o) => o.value)
       .reduce((a, c) => {
         return a + c;
@@ -27,12 +27,12 @@ export default function TabPieChartContent(props: SidebarPieChartProps) {
   //width, height, margin - legend.y is the bottom of legend list, which makes things difficult to adjust
   let width = 300;
   //dynamically change height per the number of legend
-  let numberLegend = props.pieChartData ? props.pieChartData.length : 0;
+  let numberLegend = props.pieChartData ? props.pieChartData.slices.length : 0;
   let height = 300 + numberLegend * 30;
 
   return (
     <PiePlot
-      data={props.pieChartData ?? []}
+      data={props.pieChartData ? props.pieChartData : { slices: [] }}
       donutOptions={{
         size: 0.4,
         text: sumValues?.toString(),
