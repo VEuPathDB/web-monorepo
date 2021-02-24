@@ -1,3 +1,4 @@
+import { Legend } from 'plotly.js';
 import { PlotLegendAddon } from '../../types/plots/addOns';
 
 /**
@@ -8,7 +9,7 @@ import { PlotLegendAddon } from '../../types/plots/addOns';
  * on this sparately here.
  *
  * */
-export default (args: PlotLegendAddon) => {
+export default (args: PlotLegendAddon): Partial<Legend> => {
   let xPosition: number;
   switch (args.horizontalPosition) {
     case 'left':
@@ -53,5 +54,6 @@ export default (args: PlotLegendAddon) => {
     xanchor: 'auto',
     y: yPosition,
     yanchor: 'auto',
+    font: args.font,
   };
 };
