@@ -6,10 +6,16 @@ import { PiePlotData } from '../../types/plots';
 import {
   DARK_GRAY,
   DARK_GREEN,
+  DARK_ORANGE,
   LIGHT_BLUE,
   LIGHT_GREEN,
+  LIGHT_ORANGE,
+  LIGHT_PURPLE,
+  LIGHT_RED,
   LIGHT_YELLOW,
 } from '../../constants/colors';
+import usePlotControls from '../../hooks/usePlotControls';
+import PieControls from '../../components/plotControls/PieControls';
 
 export default {
   title: 'Plots/Pie & Donut',
@@ -19,38 +25,64 @@ export default {
   },
 };
 
-let data: PiePlotData = [
-  {
-    value: 10,
-    label: 'Foo',
-  },
-  {
-    value: 2,
-    label: 'Bar',
-  },
-  {
-    value: 30,
-    label: 'Baz',
-  },
-];
+let data: PiePlotData = {
+  slices: [
+    {
+      value: 10,
+      label: 'Foo',
+    },
+    {
+      value: 2,
+      label: 'Bar',
+    },
+    {
+      value: 30,
+      label: 'Baz',
+    },
+  ],
+};
 
-let coloredData: PiePlotData = [
-  {
-    value: 10,
-    label: 'Light Green',
-    color: LIGHT_GREEN,
-  },
-  {
-    value: 2,
-    label: 'Dark Green',
-    color: DARK_GREEN,
-  },
-  {
-    value: 30,
-    color: LIGHT_BLUE,
-    label: 'Light Blue',
-  },
-];
+let coloredData: PiePlotData = {
+  slices: [
+    {
+      value: 10,
+      label: 'Light Green',
+      color: LIGHT_GREEN,
+    },
+    {
+      value: 2,
+      label: 'Dark Green',
+      color: DARK_GREEN,
+    },
+    {
+      value: 30,
+      color: LIGHT_BLUE,
+      label: 'Light Blue',
+    },
+  ],
+};
+
+let dataWithAvailableUnits: PiePlotData = {
+  slices: [
+    {
+      value: 10,
+      label: 'Purple',
+      color: LIGHT_PURPLE,
+    },
+    {
+      value: 2,
+      label: 'Green',
+      color: LIGHT_GREEN,
+    },
+    {
+      value: 30,
+      color: LIGHT_BLUE,
+      label: 'Blue',
+    },
+  ],
+  availableUnits: ['Not Yet', 'Implemented'],
+  selectedUnit: 'Not Yet',
+};
 
 const NoControlsTemplate: Story<PiePlotProps> = (args) => <PiePlot {...args} />;
 
@@ -112,4 +144,75 @@ FilledDonut.args = {
     text: 'Text',
     textColor: 'white',
   },
+};
+
+export const BasicControlPanel: Story<PiePlotProps> = (args) => {
+  const plotControls = usePlotControls<PiePlotData>({ data: args.data });
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', margin: 25 }}>
+      <PiePlot
+        {...args}
+        spacingOptions={{
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          marginTop: 10,
+        }}
+        {...plotControls}
+      />
+      <div style={{ height: 25 }} />
+      <PieControls
+        label="Pie Plot Controls"
+        {...plotControls}
+        containerStyles={{
+          maxWidth: args.width,
+        }}
+      />
+    </div>
+  );
+};
+
+BasicControlPanel.args = {
+  data: coloredData,
+  width: 500,
+  height: 300,
+};
+
+export const ControlPanelWithAvailableUnits: Story<PiePlotProps> = (args) => {
+  const plotControls = usePlotControls<PiePlotData>({
+    data: args.data,
+    onSelectedUnitChange: async (unit) => {
+      return args.data;
+    },
+  });
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', margin: 25 }}>
+      <PiePlot
+        {...args}
+        spacingOptions={{
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          marginTop: 10,
+        }}
+        {...plotControls}
+      />
+      <div style={{ height: 25 }} />
+      <PieControls
+        label="Pie Plot Controls W/ Available Units"
+        {...plotControls}
+        containerStyles={{
+          maxWidth: args.width,
+        }}
+      />
+    </div>
+  );
+};
+
+ControlPanelWithAvailableUnits.args = {
+  data: dataWithAvailableUnits,
+  width: 500,
+  height: 300,
 };

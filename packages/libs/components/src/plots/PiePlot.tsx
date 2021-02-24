@@ -179,7 +179,11 @@ export default function PiePlot({
   const primaryDataTrace: Partial<PlotData> = {
     type: 'pie',
     opacity,
-    ...data.reduce(reducer, { values: [], labels: [], marker: { colors: [] } }),
+    ...data.slices.reduce(reducer, {
+      values: [],
+      labels: [],
+      marker: { colors: [] },
+    }),
     hole: donutOptions?.size,
     direction: 'clockwise',
     sort: false,

@@ -91,10 +91,7 @@ export default function PieControls({
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          alignItems:
-            availableUnits?.length && selectedUnit && onSelectedUnitChange
-              ? 'flex-start'
-              : 'center',
+          alignItems: 'flex-start',
         }}
       >
         {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
