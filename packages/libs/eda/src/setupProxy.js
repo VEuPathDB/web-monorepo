@@ -11,18 +11,7 @@ module.exports = function (app) {
       changeOrigin: true,
       followRedirects: true,
       logLevel: 'debug',
-      onProxyReq(proxyReq, req, res) {
-        if (proxyReq._isRedirect) return;
-        const authCookie = `auth_tkt=${process.env.VEUPATHDB_AUTH_TKT}`;
-        const cookieRaw = proxyReq.getHeader('cookie');
-        const cookies =
-          cookieRaw == null
-            ? authCookie
-            : Array.isArray(cookieRaw)
-            ? [...cookieRaw, authCookie]
-            : [cookieRaw, authCookie];
-        proxyReq.setHeader('cookie', cookies);
-      },
+      onProxyReq: addAuthCookie,
     })
   );
   app.use(
@@ -34,6 +23,20 @@ module.exports = function (app) {
       changeOrigin: true,
       followRedirects: true,
       logLevel: 'debug',
+      onProxyReq: addAuthCookie,
     })
   );
 };
+
+function addAuthCookie(proxyReq) {
+  if (proxyReq._isRedirect) return;
+  const authCookie = `auth_tkt=${process.env.VEUPATHDB_AUTH_TKT}`;
+  const cookieRaw = proxyReq.getHeader('cookie');
+  const cookies =
+    cookieRaw == null
+      ? authCookie
+      : Array.isArray(cookieRaw)
+      ? [...cookieRaw, authCookie]
+      : [cookieRaw, authCookie];
+  proxyReq.setHeader('cookie', cookies);
+}
