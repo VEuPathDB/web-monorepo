@@ -3,9 +3,8 @@ import React, {
   CSSProperties,
   ReactElement,
   cloneElement,
-  useRef,
 } from 'react';
-import { BoundsViewport, MarkerProps, AnimationFunction } from './Types';
+import { BoundsViewport, AnimationFunction } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 const { BaseLayer } = LayersControl;
 import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
@@ -63,31 +62,22 @@ export default function MapVEuMap({
   // 'bookmarkable' state of the map.
   const [state, updateState] = useState<Viewport>(viewport as Viewport);
   const [mouseMode, setMouseMode] = useState<MouseMode>('default');
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const handleViewportChanged = (viewport: Viewport) => {
     updateState(viewport);
   };
-  const ref = useRef<any>();
-  const draggingRef = useRef(false);
 
-  function getDragging() {
-    console.log('sending draggingRef.current');
-    return draggingRef.current;
-  }
-
-  markers = markers.map((marker) => {
-    console.log('cloning');
-    return cloneElement(marker, { getDragging: getDragging });
-  });
-
-  if (mouseMode === 'magnification') {
+  // BM: Why doesn't this work when wrapped in useEffect()?
+  // useEffect(() => {
+  if (mouseMode === 'magnification' && !isDragging) {
     markers = markers.map((marker) =>
       cloneElement(marker, { showPopup: true })
     );
   }
+  //  }, [ markers, isDragging, mouseMode ]);
 
   return (
     <Map
-      ref={ref}
       viewport={state}
       style={{ height, width }}
       onViewportChanged={handleViewportChanged}
@@ -95,16 +85,8 @@ export default function MapVEuMap({
       // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
       minZoom={2}
       worldCopyJump={false}
-      ondragstart={() => {
-        console.log('dragstart (MapVEuMap)');
-        ref.current?.leafletElement.closePopup();
-        draggingRef.current = true;
-      }}
-      ondragend={() => {
-        console.log('dragend (MapVEuMap)');
-        ref.current?.leafletElement.closePopup();
-        draggingRef.current = false;
-      }}
+      ondragstart={() => setIsDragging(true)}
+      ondragend={() => setIsDragging(false)}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

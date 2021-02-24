@@ -13,7 +13,6 @@ export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
   popupClass?: string;
-  getDragging?: () => boolean;
 }
 
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
@@ -38,7 +37,6 @@ export default function BoundsDriftMarker({
   showPopup,
   popupContent,
   popupClass,
-  getDragging,
 }: BoundsDriftMarkerProps) {
   const [displayBounds, setDisplayBounds] = useState<boolean>(false);
   const { map } = useLeaflet();
@@ -49,7 +47,6 @@ export default function BoundsDriftMarker({
   const markerRef = useRef<any>();
   const popupRef = useRef<any>();
   const popupOrientationRef = useRef<PopupOrientation>('up');
-  // const draggingRef = useRef(false);
 
   const updatePopupOrientationRef = () => {
     if (popupContent) {
@@ -98,30 +95,14 @@ export default function BoundsDriftMarker({
     }
   };
 
-  // function handleMapMoveStart() {
-  //   draggingRef.current = true;
-  //   console.log('here3');
-  // }
-
-  // function handleMapMoveEnd() {
-  //   draggingRef.current = false;
-  //   console.log('here4');
-  // }
-
   const observer = new MutationObserver((mutationRecord) => {
     const popupDOMNode = mutationRecord[0].target as HTMLElement;
-    if (
-      getDragging &&
-      !getDragging() &&
-      !popupDOMNode.style.transform.includes('rotate')
-    ) {
-      console.log('reorienting popup');
+    if (!popupDOMNode.style.transform.includes('rotate')) {
       orientPopup(popupOrientationRef.current);
     }
   });
 
   const handlePopupOpen = () => {
-    console.log('popup opening');
     updatePopupOrientationRef();
     orientPopup(popupOrientationRef.current);
 
@@ -131,7 +112,6 @@ export default function BoundsDriftMarker({
   };
 
   const handlePopupClose = () => {
-    console.log('popup closing');
     observer.disconnect();
 
     // Have to do this again because styling is changed again on close
@@ -158,8 +138,7 @@ export default function BoundsDriftMarker({
     e.target._icon.classList.add('top-marker'); //DKDK marker on top
     setDisplayBounds(true); // Display bounds rectangle
 
-    console.log(getDragging);
-    if (showPopup && popupContent && getDragging && !getDragging()) {
+    if (showPopup && popupContent) {
       e.target.openPopup();
     }
   };
@@ -168,7 +147,7 @@ export default function BoundsDriftMarker({
     e.target._icon.classList.remove('top-marker'); //DKDK remove marker on top
     setDisplayBounds(false); // Remove bounds rectangle
 
-    if (showPopup && popupContent && getDragging && !getDragging()) {
+    if (showPopup && popupContent) {
       e.target.closePopup();
     }
   };
@@ -176,6 +155,7 @@ export default function BoundsDriftMarker({
   const handleClick = (e: LeafletMouseEvent) => {
     // Default popup behavior is to open on marker click
     // Prevent by immediately closing it
+    orientPopup(popupOrientationRef.current);
     e.target.closePopup();
   };
 
