@@ -6,13 +6,9 @@ import { PiePlotData } from '../../types/plots';
 import {
   DARK_GRAY,
   DARK_GREEN,
-  DARK_ORANGE,
   LIGHT_BLUE,
   LIGHT_GREEN,
-  LIGHT_ORANGE,
   LIGHT_PURPLE,
-  LIGHT_RED,
-  LIGHT_YELLOW,
 } from '../../constants/colors';
 import usePlotControls from '../../hooks/usePlotControls';
 import PieControls from '../../components/plotControls/PieControls';
