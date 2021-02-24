@@ -9,8 +9,8 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@veupathdb/wdk-client": "^0.1.1-alpha.11",
-    "@veupathdb/web-common": "^0.1.1-alpha.9"
+    "@veupathdb/wdk-client": "^0.1.1-alpha.12",
+    "@veupathdb/web-common": "^0.1.1-alpha.11"
   },
   "resolutions": {
     "react": "16",
