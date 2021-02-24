@@ -5,7 +5,7 @@
  */
 import { Reducer, useReducer } from 'react';
 
-import { isHistogramData } from '../types/guards';
+import { isHistogramData, isPiePlotData } from '../types/guards';
 import {
   UnionOfPlotDataTypes,
   BarLayoutOptions,
@@ -202,12 +202,14 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     },
   };
 
-  // Additional intialization if data is for a histogram.
-  if (isHistogramData(params.data)) {
-    // Determine if `data` contains information about available/selected units.
+  // Determine if `data` contains information about available/selected units.
+  if (isPiePlotData(params.data) || isHistogramData(params.data)) {
     initialState.availableUnits = params.data.availableUnits ?? [];
     initialState.selectedUnit = params.data.selectedUnit ?? '';
+  }
 
+  // Additional intialization if data is for a histogram.
+  if (isHistogramData(params.data)) {
     /**
      * Build the histogram specific state.
      * */

@@ -20,12 +20,14 @@ export function isHistogramData(
 
 /** Determine if data is for a pie plot. */
 export function isPiePlotData(data: UnionOfPlotDataTypes): data is PiePlotData {
-  return 'length' in data &&
-    data.length &&
-    'value' in data[0] &&
-    'label' in data[0]
+  return 'slices' in data &&
+    'length' in data.slices &&
+    data.slices.length &&
+    'value' in data.slices[0] &&
+    'label' in data.slices[0]
     ? true
     : false;
+  // 'label' in data.slices[0]
 }
 
 /** Determine if data is for a line plot. */
