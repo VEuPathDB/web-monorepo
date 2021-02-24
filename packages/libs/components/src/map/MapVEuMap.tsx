@@ -62,7 +62,7 @@ export default function MapVEuMap({
   // 'bookmarkable' state of the map.
   const [state, updateState] = useState<Viewport>(viewport as Viewport);
   const [mouseMode, setMouseMode] = useState<MouseMode>('default');
-  const [isDragging, updateIsDragging] = useState<boolean>(false);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const handleViewportChanged = (viewport: Viewport) => {
     updateState(viewport);
   };
@@ -85,12 +85,8 @@ export default function MapVEuMap({
       // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
       minZoom={2}
       worldCopyJump={false}
-      ondragstart={() => {
-        updateIsDragging(true);
-      }}
-      ondragend={() => {
-        updateIsDragging(false);
-      }}
+      ondragstart={() => setIsDragging(true)}
+      ondragend={() => setIsDragging(false)}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

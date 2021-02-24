@@ -47,7 +47,6 @@ export default function BoundsDriftMarker({
   const markerRef = useRef<any>();
   const popupRef = useRef<any>();
   const popupOrientationRef = useRef<PopupOrientation>('up');
-  // const draggingRef = useRef(false);
 
   const updatePopupOrientationRef = () => {
     if (popupContent) {
@@ -96,26 +95,14 @@ export default function BoundsDriftMarker({
     }
   };
 
-  // function handleMapMoveStart() {
-  //   draggingRef.current = true;
-  //   console.log('here3');
-  // }
-
-  // function handleMapMoveEnd() {
-  //   draggingRef.current = false;
-  //   console.log('here4');
-  // }
-
   const observer = new MutationObserver((mutationRecord) => {
     const popupDOMNode = mutationRecord[0].target as HTMLElement;
     if (!popupDOMNode.style.transform.includes('rotate')) {
-      console.log('reorienting popup');
       orientPopup(popupOrientationRef.current);
     }
   });
 
   const handlePopupOpen = () => {
-    console.log('popup opening');
     updatePopupOrientationRef();
     orientPopup(popupOrientationRef.current);
 
@@ -125,7 +112,6 @@ export default function BoundsDriftMarker({
   };
 
   const handlePopupClose = () => {
-    console.log('popup closing');
     observer.disconnect();
 
     // Have to do this again because styling is changed again on close
