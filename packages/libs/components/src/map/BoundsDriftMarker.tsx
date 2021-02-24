@@ -169,6 +169,7 @@ export default function BoundsDriftMarker({
   const handleClick = (e: LeafletMouseEvent) => {
     // Default popup behavior is to open on marker click
     // Prevent by immediately closing it
+    orientPopup(popupOrientationRef.current);
     e.target.closePopup();
   };
 
