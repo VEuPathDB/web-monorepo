@@ -27,7 +27,6 @@ export function isPiePlotData(data: UnionOfPlotDataTypes): data is PiePlotData {
     'label' in data.slices[0]
     ? true
     : false;
-  // 'label' in data.slices[0]
 }
 
 /** Determine if data is for a line plot. */

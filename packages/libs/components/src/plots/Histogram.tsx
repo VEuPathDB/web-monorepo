@@ -33,7 +33,8 @@ export type HistogramProps = {
   /** Label for dependent axis. Defaults to `Count`. */
   dependentAxisLabel?: string;
   /** Fill color of the title, axes labels, tick marks, and legend.
-   * Defaults to DARK_GRAY. Note*/
+   * Defaults to DARK_GRAY. Note that textColor can be overridden
+   * for the legend if `legendOptions` is provided. */
   textColor?: string;
   /** Color of the gridlines. Use Plotly defaults if not specified. */
   gridColor?: string;
