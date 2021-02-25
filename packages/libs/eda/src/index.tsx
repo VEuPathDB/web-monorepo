@@ -12,6 +12,7 @@ import { EDASessionList, EDAWorkspace } from './lib/workspace';
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 import Header from './Header';
+import { MapVeuContainer } from './lib/mapveu';
 
 initialize({
   rootUrl,
@@ -35,6 +36,11 @@ initialize({
       component: (props: RouteComponentProps<{ studyId: string }>) => (
         <EDASessionList {...props.match.params} edaServiceUrl="/eda-service" />
       ),
+    },
+    {
+      path: '/mapveu',
+      component: MapVeuContainer,
+      exact: false,
     },
     ...routes,
   ],
