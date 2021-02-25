@@ -1,5 +1,5 @@
 import React from 'react';
-import { StudyMenuItem } from '@veupathdb/web-common/lib/App/Studies';
+import { StudyMenuItem, StudyMenuSearch } from '@veupathdb/web-common/lib/App/Studies';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
 import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
@@ -7,25 +7,32 @@ import { withPermissions } from '@veupathdb/web-common/lib/components/Permission
 
 const ClinEpiStudyMenuItem = withPermissions(StudyMenuItem);
 
-export default function headerMenuItems (state) {
+export default function headerMenuItems (state, props) {
   const { siteConfig } = state.globalData;
   const siteData = getStaticSiteData(state);
   const { studies } = siteData;
   const { youtubeUrl } = siteConfig;
   const socialIcons = iconMenuItemsFromSocials(siteConfig);
   const socialLinks = menuItemsFromSocials(siteConfig);
+  const searchTerm = props.searchTerm;
+  const setSearchTerm = props.setSearchTerm;
 
   return {
     mainMenu: [
       {
         id: 'search',
         text: 'Search a Study',
-        children:[{
+        children:[
+          {
             text: <div style={{ padding: '0.5em 0' }}>All Studies</div>,
             route: '/search/dataset/Studies/result'
-          }].concat(  
+          },
+          {
+            text: <StudyMenuSearch searchTerm={searchTerm} onSearchTermChange={setSearchTerm}/>
+          }
+        ].concat(  
           studies.entities != null
-          ? studies.entities.map(study => ({ text: <ClinEpiStudyMenuItem study={study} config={siteConfig} /> }))
+          ? studies.entities.filter(study => (study.name.toLowerCase().includes(searchTerm.toLowerCase()))).map(study => ({ text: <ClinEpiStudyMenuItem study={study} config={siteConfig} /> }))
           : [{ text: <i style={{ fontSize: '13em' }} className="fa fa-align-justify"/> }])
       },
       {
