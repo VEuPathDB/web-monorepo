@@ -3,6 +3,8 @@ export * from './types/study';
 export * from './types/filter';
 export * from './hooks/session';
 export * from './hooks/workspace';
+export * from './api/eda-api';
+export * from './api/session-api';
 export * from './context/WorkspaceContext';
 export { EDAWorkspaceContainer } from './components/EDAWorkspaceContainer';
 export { EDASessionListContainer } from './components/EDASessionListContainer';

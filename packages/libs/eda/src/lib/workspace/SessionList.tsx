@@ -4,8 +4,7 @@ import { PathReporter } from 'io-ts/PathReporter';
 import * as Path from 'path';
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import { NewSession, Session, useStudyRecord } from '../core';
-import { SessionClient } from '../core/api/session-api';
+import { NewSession, Session, useStudyRecord, SessionClient } from '../core';
 
 export interface Props {
   sessionStore: SessionClient;
