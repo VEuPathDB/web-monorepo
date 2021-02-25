@@ -1,8 +1,16 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import Mesa, { MesaState } from '@veupathdb/wdk-client/lib/Components/Mesa';
+import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 
-import { useAllJobsColumns, useRawJobRows } from '../hooks/allJobs';
+import {
+  useAllJobsColumns,
+  useMesaEventHandlers,
+  useMesaUiState,
+  useRawJobRows,
+  useSortedJobRows,
+} from '../hooks/allJobs';
 import { BlastApi } from '../utils/api';
 
 import { withBlastApi } from './withBlastApi';
@@ -32,14 +40,32 @@ function BlastWorkspaceAllWithLoadedApi({
 
   const jobRows = useRawJobRows(blastApi);
 
+  const [sort, setSort] = useState<MesaSortObject>({
+    columnKey: 'created',
+    direction: 'desc',
+  });
+
+  const sortedRows = useSortedJobRows(jobRows, sort);
+
+  const uiState = useMesaUiState(sort);
+
+  const eventHandlers = useMesaEventHandlers(setSort);
+
   const mesaState = useMemo(
-    () => MesaState.create({ rows: jobRows, columns: allJobsColumns }),
-    [allJobsColumns, jobRows]
+    () =>
+      sortedRows &&
+      MesaState.create({
+        rows: sortedRows,
+        columns: allJobsColumns,
+        eventHandlers,
+        uiState,
+      }),
+    [allJobsColumns, eventHandlers, sortedRows, uiState]
   );
 
   return (
     <div className="BlastWorkspaceAll">
-      <Mesa state={mesaState} />
+      {mesaState == null ? <Loading /> : <Mesa state={mesaState} />}
     </div>
   );
 }

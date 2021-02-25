@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 
+import { orderBy } from 'lodash';
+
 import { Link } from '@veupathdb/wdk-client/lib/Components';
-import { MesaColumn } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
+import {
+  MesaColumn,
+  MesaSortObject,
+} from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 
 import { JobRow } from '../components/BlastWorkspaceAll';
@@ -20,23 +25,28 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
         renderCell: ({ row }: { row: JobRow }) => (
           <Link to={`/workspace/blast/result/${row.jobId}`}>{row.jobId}</Link>
         ),
+        sortable: true,
       },
       {
         key: 'description',
         name: 'Description',
         renderCell: ({ row }: { row: JobRow }) => row.description ?? 'Untitled',
+        sortable: true,
       },
       {
         key: 'created',
         name: 'Submission Date',
+        sortable: true,
       },
       {
         key: 'status',
         name: 'Status',
+        sortable: true,
       },
       {
         key: 'expires',
         name: 'Expiration Date',
+        sortable: true,
       },
     ],
     []
@@ -57,4 +67,35 @@ export function useRawJobRows(blastApi: BlastApi): JobRow[] | undefined {
   }, []);
 
   return result.value;
+}
+
+export function useSortedJobRows(
+  unsortedRows: JobRow[] | undefined,
+  sort: MesaSortObject
+) {
+  return useMemo(
+    () =>
+      unsortedRows && orderBy(unsortedRows, [sort.columnKey], [sort.direction]),
+    [unsortedRows, sort]
+  );
+}
+
+export function useMesaUiState(sort: MesaSortObject) {
+  return useMemo(() => ({ sort }), [sort]);
+}
+
+export function useMesaEventHandlers(
+  setSort: (newSort: MesaSortObject) => void
+) {
+  return useMemo(
+    () => ({
+      onSort: (
+        { key: columnKey }: { key: keyof JobRow },
+        direction: MesaSortObject['direction']
+      ) => {
+        setSort({ columnKey, direction });
+      },
+    }),
+    [setSort]
+  );
 }
