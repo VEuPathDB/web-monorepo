@@ -553,6 +553,10 @@ export const shortJobResponse = record({
   id: string,
   description: optional(string),
   status: ioJobStatus,
+  created: string,
+  expires: string,
+  isPrimary: boolean,
+  parentJobs: optional(arrayOf(record({ id: string, index: number }))),
 });
 
 export type ShortJobResponse = Unpack<typeof shortJobResponse>;

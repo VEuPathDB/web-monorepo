@@ -36,8 +36,7 @@ export function createBlastRequestHandler(
 const JOBS_PATH = '/jobs';
 
 export const apiRequests = {
-  // FIXME: Should jobs be filterable by site?
-  fetchJobList: function () {
+  fetchJobEntities: function () {
     return {
       path: JOBS_PATH,
       method: 'GET',

@@ -7,6 +7,7 @@ import {
   useSetDocumentTitle,
 } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
+import { BlastWorkspaceAll } from './BlastWorkspaceAll';
 import { BlastWorkspaceNew } from './BlastWorkspaceNew';
 
 import './BlastWorkspace.scss';
@@ -53,7 +54,7 @@ export function BlastWorkspace() {
         <WdkRoute
           path="/workspace/blast/all"
           requiresLogin={false}
-          component={UnderConstruction}
+          component={BlastWorkspaceAll}
         />
         <WdkRoute
           path="/workspace/blast/help"
