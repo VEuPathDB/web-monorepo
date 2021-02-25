@@ -16,7 +16,7 @@ export default function StudyMenuSearch (props: Props) {
     <RealTimeSearchBox 
       searchTerm={props.searchTerm}
       onSearchTermChange={props.onSearchTermChange}
-      placeholderText= "Filter the menus below..."
+      placeholderText= "Filter the studies below..."
     />
   );
 
