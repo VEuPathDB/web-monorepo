@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
 import { Link, RealTimeSearchBox } from '@veupathdb/wdk-client/lib/Components';
-
+import { projectId } from '@veupathdb/web-common/lib/config';
 import PlaceholderCard from './PlaceholderCard';
 
 const CLASS_NAME = 'CardList';
@@ -125,8 +125,8 @@ export default function CardList(props) {
       helpText={`Find ${contentNamePlural} by searching the visible content.`}
     />
 
-  // unused redmine #43134. it was being rendered in <div className="filters"> after {filterInput} as {categorySelector}
-  const categorySelector = filters &&
+// not in clinepi, redmine #43134
+  const categorySelector = filters && (projectId != 'ClinEpiDB') &&
     <Select
       placeholder={`Select a ${filtersLabel}`}
       isClearable
@@ -149,6 +149,7 @@ export default function CardList(props) {
       {expandButton}
       <div className="filters">
         {filterInput}
+        {categorySelector}
       </div>
       {cardList}
       {loadingIndicator}
