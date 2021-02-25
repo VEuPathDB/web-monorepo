@@ -9,13 +9,13 @@ import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import { useBlastApi } from '../hooks/api';
 import {
   useHitTypeDisplayNames,
   useTargetTypeTermAndWdkRecordType,
 } from '../hooks/combinedResults';
 import { useBlastCompatibleWdkService } from '../hooks/wdkServiceIntegration';
 import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
+import { BlastApi } from '../utils/api';
 import { dbToTargetName } from '../utils/combinedResults';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 import { reportToParamValues } from '../utils/params';
@@ -23,6 +23,7 @@ import { TargetMetadataByDataType } from '../utils/targetTypes';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
 import { ResultContainer } from './ResultContainer';
+import { withBlastApi } from './withBlastApi';
 
 import './BlastWorkspaceResult.scss';
 
@@ -37,31 +38,39 @@ export type SelectedResult =
 
 const POLLING_INTERVAL = 3000;
 
-export function BlastWorkspaceResult(props: Props) {
+export const BlastWorkspaceResult = withBlastApi(
+  BlastWorkspaceResultWithLoadedApi
+);
+
+interface BlastResultWithLoadedApiProps extends Props {
+  blastApi: BlastApi;
+}
+
+function BlastWorkspaceResultWithLoadedApi(
+  props: BlastResultWithLoadedApiProps
+) {
   useSetDocumentTitle(`BLAST Job ${props.jobId}`);
 
   const history = useHistory();
 
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
-  const api = useBlastApi();
-
-  const queryResult = usePromise(() => api.fetchQuery(props.jobId), [
-    api,
+  const queryResult = usePromise(() => props.blastApi.fetchQuery(props.jobId), [
+    props.blastApi,
     props.jobId,
   ]);
 
-  const jobResult = usePromise(() => makeJobPollingPromise(api, props.jobId), [
-    api,
-    props.jobId,
-  ]);
+  const jobResult = usePromise(
+    () => makeJobPollingPromise(props.blastApi, props.jobId),
+    [props.blastApi, props.jobId]
+  );
 
   const multiQueryReportResult = usePromise(
     async () =>
       jobResult.value?.status !== 'completed'
         ? undefined
-        : api.fetchSingleFileJsonReport(jobResult.value.id),
-    [api, jobResult.value?.status]
+        : props.blastApi.fetchSingleFileJsonReport(jobResult.value.id),
+    [props.blastApi, jobResult.value?.status]
   );
 
   const queryCount = useMemo(() => {
@@ -300,10 +309,10 @@ function BlastSummary({
 }
 
 async function makeJobPollingPromise(
-  api: ReturnType<typeof useBlastApi>,
+  blastApi: BlastApi,
   jobId: string
 ): Promise<LongJobResponse> {
-  const job = await api.fetchJob(jobId);
+  const job = await blastApi.fetchJob(jobId);
 
   if (job.status === 'completed' || job.status === 'errored') {
     return job;
@@ -311,7 +320,7 @@ async function makeJobPollingPromise(
 
   await waitForNextPoll();
 
-  return makeJobPollingPromise(api, jobId);
+  return makeJobPollingPromise(blastApi, jobId);
 }
 
 function waitForNextPoll() {

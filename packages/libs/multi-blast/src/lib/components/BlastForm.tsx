@@ -132,17 +132,19 @@ export function BlastForm(props: Props) {
 
   const enabledAlgorithms = useEnabledAlgorithms(targetType);
 
-  const [queryFileProvided, setQueryFileProvided] = useState(false);
+  const [queryFile, setQueryFile] = useState<File | null>(null);
+
+  const queryFileProvided = queryFile != null;
 
   const onQueryFileInputChanged = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      alert('Under Construction');
-
-      setQueryFileProvided(
-        event.target.files != null && event.target.files.length > 0
+      setQueryFile(
+        event.target.files == null || event.target.files.length === 0
+          ? null
+          : event.target.files[0]
       );
     },
-    [setQueryFileProvided]
+    [setQueryFile]
   );
 
   const targetParamProps = useTargetParamProps(
@@ -208,6 +210,7 @@ export function BlastForm(props: Props) {
       containerClassName={containerClassName}
       renderParamGroup={renderBlastParamGroup}
       parameterElements={parameterElements}
+      queryFile={queryFile}
     />
   ) : (
     <DefaultQuestionForm
@@ -221,6 +224,7 @@ export function BlastForm(props: Props) {
 
 interface NewJobFormProps extends Props {
   renderParamGroup: (group: ParameterGroup, formProps: Props) => JSX.Element;
+  queryFile: File | null;
 }
 
 function NewJobForm(props: NewJobFormProps) {
@@ -234,7 +238,11 @@ function NewJobForm(props: NewJobFormProps) {
   const history = useHistory();
 
   const onSubmit = useCallback(
-    async (e: FormEvent) => {
+    async (event: FormEvent) => {
+      if (api == null) {
+        throw new Error('To use this form, the BLAST api must be configured.');
+      }
+
       if (wdkDependencies == null) {
         throw new Error(
           'To use this form, WdkDependendenciesContext must be configured.'
@@ -247,7 +255,7 @@ function NewJobForm(props: NewJobFormProps) {
         );
       }
 
-      e.preventDefault();
+      event.preventDefault();
 
       setSubmitting(true);
 
@@ -279,11 +287,22 @@ function NewJobForm(props: NewJobFormProps) {
         target: `${organism}${dbTargetName}`,
       }));
 
+      const query =
+        props.queryFile == null
+          ? props.state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME]
+          : props.queryFile;
+
+      const config = paramValuesToBlastConfig(props.state.paramValues);
+
+      const jobDescription =
+        props.state.paramValues[JOB_DESCRIPTION_PARAM_NAME];
+
       const { jobId } = await api.createJob(
         projectId,
         targets,
-        paramValuesToBlastConfig(props.state.paramValues),
-        props.state.paramValues[JOB_DESCRIPTION_PARAM_NAME]
+        query,
+        config,
+        jobDescription
       );
 
       setSubmitting(false);
@@ -293,13 +312,14 @@ function NewJobForm(props: NewJobFormProps) {
     [
       api,
       history,
+      props.queryFile,
       targetMetadataByDataType,
       wdkDependencies,
       props.state.paramValues,
     ]
   );
 
-  return (
+  return api == null ? null : (
     <div className={props.containerClassName}>
       <form onSubmit={onSubmit}>
         {props.state.question.groups

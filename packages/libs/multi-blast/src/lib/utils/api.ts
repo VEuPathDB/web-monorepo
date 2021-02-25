@@ -1,10 +1,13 @@
 import { arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
   BoundApiRequestsObject,
   createFetchApiRequestHandler,
   createJsonRequest,
   standardTransformer,
 } from '@veupathdb/web-common/lib/util/api';
+
+import { omit } from 'lodash';
 
 import {
   IoBlastConfig,
@@ -16,13 +19,14 @@ import {
 
 export function createBlastRequestHandler(
   baseBlastUrl: string,
+  user: User,
   fetchApi?: Window['fetch']
 ) {
   return createFetchApiRequestHandler({
     baseUrl: baseBlastUrl,
     init: {
       headers: {
-        'Auth-Key': getAuthKey(),
+        'Auth-Key': user.isGuest ? `${user.id}` : getAuthKey(),
       },
     },
     fetchApi,
@@ -43,20 +47,44 @@ export const apiRequests = {
   createJob: function (
     site: string,
     targets: { organism: string; target: string }[],
+    query: string | File,
     config: IoBlastConfig,
     description?: string
   ) {
-    return createJsonRequest({
-      path: JOBS_PATH,
-      method: 'POST',
-      body: {
-        site,
-        targets,
-        config,
-        description,
-      },
-      transformResponse: standardTransformer(createJobResponse),
-    });
+    const requestProperties = {
+      site,
+      targets,
+      config:
+        query instanceof File
+          ? omit(config, 'query')
+          : {
+              ...config,
+              query,
+            },
+      description,
+    };
+
+    if (query instanceof File) {
+      const requestBody = new FormData();
+
+      requestBody.append('properties', JSON.stringify(requestProperties));
+
+      requestBody.append('query', query);
+
+      return {
+        path: JOBS_PATH,
+        method: 'POST',
+        body: requestBody,
+        transformResponse: standardTransformer(createJobResponse),
+      };
+    } else {
+      return createJsonRequest({
+        path: JOBS_PATH,
+        method: 'POST',
+        body: requestProperties,
+        transformResponse: standardTransformer(createJobResponse),
+      });
+    }
   },
   fetchJob: function (jobId: string) {
     return {
