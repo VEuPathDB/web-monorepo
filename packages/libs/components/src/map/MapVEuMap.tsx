@@ -62,6 +62,7 @@ export default function MapVEuMap({
   // 'bookmarkable' state of the map.
   const [state, updateState] = useState<Viewport>(viewport as Viewport);
   const [mouseMode, setMouseMode] = useState<MouseMode>('default');
+  // Whether the user is currently dragging the map
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const handleViewportChanged = (viewport: Viewport) => {
     updateState(viewport);
@@ -69,6 +70,8 @@ export default function MapVEuMap({
 
   // BM: Why doesn't this work when wrapped in useEffect()?
   // useEffect(() => {
+  // Show popups if we're in magnification mouse mode and we're not dragging.
+  // Dragging messes with our popup implementation.
   if (mouseMode === 'magnification' && !isDragging) {
     markers = markers.map((marker) =>
       cloneElement(marker, { showPopup: true })

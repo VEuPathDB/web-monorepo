@@ -12,9 +12,11 @@ import { LeafletMouseEvent, LatLngBounds } from 'leaflet';
 export interface BoundsDriftMarkerProps extends MarkerProps {
   bounds: Bounds;
   duration: number;
+  // A class to add to the popup element
   popupClass?: string;
 }
 
+// Which direction the popup should come out from the marker
 export type PopupOrientation = 'up' | 'down' | 'left' | 'right';
 
 // Wrapper component for DriftMarker to "fix" its Props type.
@@ -48,6 +50,8 @@ export default function BoundsDriftMarker({
   const popupRef = useRef<any>();
   const popupOrientationRef = useRef<PopupOrientation>('up');
 
+  // Update popupOrientationRef based on whether the marker is close to the viewport edge.
+  // Does not actually change the popup, just the ref.
   const updatePopupOrientationRef = () => {
     if (popupContent) {
       // Figure out if we're close to the viewport edge
@@ -69,6 +73,7 @@ export default function BoundsDriftMarker({
     }
   };
 
+  // Change the popup's orientation
   const orientPopup = (orientation: PopupOrientation) => {
     if (popupRef.current) {
       const popupDOMNode = popupRef.current.leafletElement._container;
@@ -95,17 +100,27 @@ export default function BoundsDriftMarker({
     }
   };
 
+  // Leaflet likes to change the popup's styling often, which throws off our
+  // custom orientation styling. To fix this, we will watch for changes to the
+  // popup's styling. If the transform property has no rotation, then our
+  // changes have been wiped. In that case, redo them.
   const observer = new MutationObserver((mutationRecord) => {
     const popupDOMNode = mutationRecord[0].target as HTMLElement;
     if (!popupDOMNode.style.transform.includes('rotate')) {
+      // When this observer callback is invoked, we end up getting to this
+      // point multiple times in quick succession. This doesn't seem to cause a
+      // performance issue currently, but it could be worth optimizing in the
+      // future.
       orientPopup(popupOrientationRef.current);
     }
   });
 
   const handlePopupOpen = () => {
+    // Orient the popup correctly
     updatePopupOrientationRef();
     orientPopup(popupOrientationRef.current);
 
+    // Watch for changes to the popup's styling
     const popupDOMNode = popupRef.current.leafletElement
       ._container as HTMLElement;
     observer.observe(popupDOMNode, { attributeFilter: ['style'] });
@@ -153,9 +168,10 @@ export default function BoundsDriftMarker({
   };
 
   const handleClick = (e: LeafletMouseEvent) => {
+    // Sometimes clicking throws off the popup's orientation, so reorient it
+    orientPopup(popupOrientationRef.current);
     // Default popup behavior is to open on marker click
     // Prevent by immediately closing it
-    orientPopup(popupOrientationRef.current);
     e.target.closePopup();
   };
 
