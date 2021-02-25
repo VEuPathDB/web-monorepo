@@ -30,8 +30,8 @@ module.exports = function (app) {
       onProxyReq(proxyReq, req, res) {
         if (proxyReq._isRedirect) return;
         addVEuPathAuthToProxyReq(proxyReq);
-        if (process.env.WDK_CHECK_AUTH) {
-          proxyReq.setHeader('Auth-Key', process.env.WDK_CHECK_AUTH);
+        if (process.env.WDK_AUTH_KEY) {
+          proxyReq.setHeader('Auth-Key', process.env.WDK_AUTH_KEY);
         }
       },
     })
