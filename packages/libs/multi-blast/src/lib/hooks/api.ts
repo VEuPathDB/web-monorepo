@@ -1,12 +1,13 @@
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { bindApiRequestCreators } from '@veupathdb/web-common/lib/util/api';
 
+import { IoBlastFormat } from '../utils/ServiceTypes';
 import {
   apiRequests,
   createBlastRequestHandler,
-  createQueryDownloader,
+  createJobContentDownloader,
 } from '../utils/api';
 
 const BlastServiceUrl = createContext('/multi-blast');
@@ -27,15 +28,24 @@ export function useBlastApi() {
   );
 }
 
-export function useDownloadJobQueryCallback(jobId: string) {
+export function useDownloadReportCallback() {
   const blastServiceUrl = useContext(BlastServiceUrl);
 
-  const queryDownloader = useMemo(
-    () => createQueryDownloader(blastServiceUrl),
-    [blastServiceUrl]
+  const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
+
+  const reportDownloader = useMemo(
+    () => user && createJobContentDownloader(user),
+    [user]
   );
 
-  return useCallback(() => {
-    queryDownloader(jobId);
-  }, [queryDownloader, jobId]);
+  return useMemo(
+    () =>
+      reportDownloader &&
+      ((jobId: string, format: IoBlastFormat) =>
+        reportDownloader(
+          `${blastServiceUrl}/jobs/${jobId}/report?format=${format}&zip=false`,
+          `${jobId}-${format}-report`
+        )),
+    [blastServiceUrl, reportDownloader]
+  );
 }

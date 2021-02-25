@@ -26,7 +26,7 @@ export function createBlastRequestHandler(
     baseUrl: baseBlastUrl,
     init: {
       headers: {
-        'Auth-Key': user.isGuest ? `${user.id}` : getAuthKey(),
+        'Auth-Key': getAuthKey(user),
       },
     },
     fetchApi,
@@ -112,12 +112,14 @@ export type BlastApi = BoundApiRequestsObject<typeof apiRequests>;
 
 // FIXME: Update createRequestHandler to accommodate responses
 // with "attachment" Content-Disposition
-export function createQueryDownloader(baseBlastUrl: string) {
-  return async function downloadQuery(jobId: string) {
-    const response = await fetch(
-      `${baseBlastUrl}/jobs/${jobId}/query?download=true`,
-      { headers: { 'Auth-Key': getAuthKey() } }
-    );
+export function createJobContentDownloader(user: User) {
+  return async function downloadJobContent(
+    contentUrl: string,
+    filename: string
+  ) {
+    const response = await fetch(contentUrl, {
+      headers: { 'Auth-Key': getAuthKey(user) },
+    });
 
     const contentDisposition = response.headers.get('content-disposition');
 
@@ -127,13 +129,6 @@ export function createQueryDownloader(baseBlastUrl: string) {
     }
 
     const blob = await response.blob();
-
-    const filenameMatch = contentDisposition.match(/filename="(.*)"/);
-
-    const filename =
-      filenameMatch == null || filenameMatch.length < 1
-        ? 'query.txt'
-        : filenameMatch[1];
 
     // Adapted from https://stackoverflow.com/a/42274086
     const url = window.URL.createObjectURL(blob);
@@ -146,7 +141,11 @@ export function createQueryDownloader(baseBlastUrl: string) {
   };
 }
 
-function getAuthKey() {
+function getAuthKey(user: User) {
+  if (user.isGuest) {
+    return `${user.id}`;
+  }
+
   const wdkCheckAuth =
     document.cookie.split('; ').find((x) => x.startsWith('wdk_check_auth=')) ??
     '';
