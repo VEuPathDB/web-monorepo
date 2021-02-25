@@ -68,7 +68,7 @@ export function Distribution(props: Props) {
   ) : variableSummary.error ? (
     <div>{String(variableSummary.error)}</div>
   ) : variableSummary.value ? (
-    variableSummary.value.bg[0][0].value.length == 0 ? ( // TO DO: check these zero indices will always be valid
+    variableSummary.value.bg[0][0].value.length === 0 ? ( // TO DO: check these zero indices will always be valid
       <div className="MesaComponent">
         <EmptyState culprit="nodata" />
       </div>
