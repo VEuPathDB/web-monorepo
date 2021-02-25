@@ -26,6 +26,18 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
         name: 'Description',
         renderCell: ({ row }: { row: JobRow }) => row.description ?? 'Untitled',
       },
+      {
+        key: 'created',
+        name: 'Submission Date',
+      },
+      {
+        key: 'status',
+        name: 'Status',
+      },
+      {
+        key: 'expires',
+        name: 'Expiration Date',
+      },
     ],
     []
   );
@@ -38,8 +50,8 @@ export function useRawJobRows(blastApi: BlastApi): JobRow[] | undefined {
     return jobEntities?.filter(shouldIncludeInJobsTable).map((jobEntity) => ({
       jobId: jobEntity.id,
       description: jobEntity.description ?? null,
-      created: jobEntity.created,
-      expires: jobEntity.expires,
+      created: new Date(jobEntity.created).toLocaleDateString(),
+      expires: new Date(jobEntity.expires).toLocaleDateString(),
       status: entityStatusToReadableStatus(jobEntity.status),
     }));
   }, []);
