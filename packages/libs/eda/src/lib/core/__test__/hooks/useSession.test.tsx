@@ -3,6 +3,7 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { useSession, Status } from '../../hooks/session';
 import { Session, NewSession } from '../../types/session';
 import { SessionClient } from '../../api/session-api';
+import { DataClient } from '../../api/data-service';
 import {
   StudyMetadata,
   StudyRecord,
@@ -60,6 +61,7 @@ const wrapper: React.ComponentType = ({ children }) => (
       studyRecord: {} as StudyRecord,
       studyRecordClass: {} as StudyRecordClass,
       subsettingClient: {} as SubsettingClient,
+      dataClient: {} as DataClient,
     }}
   >
     {children}
