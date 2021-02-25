@@ -7,7 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import { Redirect, RouteComponentProps } from 'react-router';
-import { EDASessionList, EDAWorkspace } from './lib';
+import { EDASessionList, EDAWorkspace } from './lib/workspace';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
