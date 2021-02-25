@@ -11,7 +11,7 @@ import HeaderNav from './HeaderNav';
 const enhance = connect(
   (state, props) => {
     const { getSiteData, makeHeaderMenuItems } = props;
-    const headerMenuItems = makeHeaderMenuItems(state);
+    const headerMenuItems = makeHeaderMenuItems(state, props);
     const siteData = getSiteData(state);
     const { dataRestriction, globalData } = state;
     const { user = {}, config, siteConfig, preferences } = globalData;
