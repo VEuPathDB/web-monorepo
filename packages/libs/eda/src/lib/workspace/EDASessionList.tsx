@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { EDASessionListContainer } from '@veupathdb/eda-workspace-core';
+import { EDASessionListContainer } from '../core';
+import { SubsettingClient } from '../core/api/eda-api';
 import { mockSessionStore } from './Mocks';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { SessionList } from './SessionList';
 import { cx } from './Utils';
-import { SubsettingClient } from '@veupathdb/eda-workspace-core/lib/api/eda-api';
 
 export interface Props {
   studyId: string;

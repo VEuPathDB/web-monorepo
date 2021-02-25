@@ -1,9 +1,9 @@
+import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import React from 'react';
 import { useHistory } from 'react-router';
-import { cx } from './Utils';
+import { Session } from '../core';
 import { ActionIconButton } from './ActionIconButton';
-import { Session } from '@veupathdb/eda-workspace-core';
-import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
+import { cx } from './Utils';
 
 interface Props {
   session: Session;

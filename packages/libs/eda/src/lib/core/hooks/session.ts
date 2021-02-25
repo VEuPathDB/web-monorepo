@@ -6,7 +6,7 @@ import { usePromise } from './promise';
 
 type Setter<T extends keyof Session> = (value: Session[T]) => void;
 
-export const enum Status {
+export enum Status {
   InProgress = 'in-progress',
   Loaded = 'loaded',
   NotFound = 'not-found',

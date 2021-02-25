@@ -2231,17 +2231,6 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/eda-workspace-core@^0.0.2-alpha.20":
-  version "0.0.2-alpha.20"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda-workspace-core/-/eda-workspace-core-0.0.2-alpha.20.tgz#a4b8bd30779d33dd655ef302e718abed9b4b9df1"
-  integrity sha512-HM69rdvuPASX30Z62a5bmtX2yOK12CWuHwQGRLxDYq0M6paqBHTDuJ1CbuLF9jv/xW4BLRF3JDlNPh2QrHrELg==
-  dependencies:
-    "@veupathdb/wdk-client" "^0.1.1-alpha.4"
-    "@veupathdb/web-common" "^0.1.1-alpha.2"
-    fp-ts "^2.9.3"
-    io-ts "^2.2.13"
-    react "^17.0.1"
-
 "@veupathdb/eslint-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@veupathdb/eslint-config/-/eslint-config-1.0.0.tgz#40dc855b263bd3fd68f8f61508ef55b1dc163caf"
@@ -2315,66 +2304,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/wdk-client@^0.1.1-alpha.4":
-  version "0.1.1-alpha.7"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.1-alpha.7.tgz#ac5b040b7e6040fddeb9acbc653526dfc843eefe"
-  integrity sha512-2Z6A6/y8RmibQBJyzCvRM6qm7HfGcQj3NYqss2Zc499bBCxbmDelXAR78HX8R2X+N3/ZHK3QRV/Bh/qXXK11hQ==
-  dependencies:
-    "@types/datatables.net" "^1.10.5"
-    "@types/flot" "^0.0.31"
-    "@types/history" "^4.7.4"
-    "@types/jqueryui" "^1.11.35"
-    "@types/json-stable-stringify" "^1.0.31"
-    "@types/lodash" "^4.14.104"
-    "@types/natural-sort" "^0.0.20"
-    "@types/node" "^14.14.7"
-    "@types/prop-types" "^15.7.3"
-    "@types/qtip2" "^2.2.29"
-    "@types/react" "^16.9.18"
-    "@types/react-autocomplete" "^1.8.4"
-    "@types/react-dom" "^16.9.5"
-    "@types/react-redux" "^7.1.5"
-    "@types/react-router" "^5.1.4"
-    "@types/react-router-dom" "^5.1.3"
-    "@types/react-select" "^3.0.4"
-    "@types/uuid" "^8.0.0"
-    classnames "^2.2.0"
-    history "^4.10.1"
-    json-stable-stringify "^1.0.0"
-    localforage "^1.5.0"
-    lodash "^4.17.5"
-    mansion-ui "2.5"
-    moment "^2.21.0"
-    natural-sort "^1.0.0"
-    prop-types "^15.7.2"
-    react "^16.12.0"
-    react-autocomplete "^1.8.1"
-    react-dom "^16.12.0"
-    react-redux "^7.1.3"
-    react-router "^5.1.2"
-    react-router-dom "^5.1.2"
-    react-select "^3.0.4"
-    react-transition-group "^2.2.1"
-    redux "^4.0.0"
-    redux-observable "^1.2.0"
-    reselect "^3.0.1"
-    rxjs "^6.2.2"
-    spin.js "^4.0.0"
-    uuid "^8.1.0"
-
 "@veupathdb/web-common@^0.1.1-alpha.11":
   version "0.1.1-alpha.11"
   resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.11.tgz#66598c0433755ef7961571d9939c0b5932a76610"
   integrity sha512-0oIKjRjaiO27T1JFEbRRqeDYwHqMmrtOxrCbkmvIytkeaONiiLXNWNyhEIs9UnWtYDebYX9+LVMCQUD6v9BXCA==
-  dependencies:
-    custom-event-polyfill "^1.0.7"
-    md5 "^2.3.0"
-    whatwg-fetch "^3.5.0"
-
-"@veupathdb/web-common@^0.1.1-alpha.2":
-  version "0.1.1-alpha.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.5.tgz#99e0087b29a6e1bc0a60e8b011d2c666f15e21c4"
-  integrity sha512-3nMpgBG5lmP7LThrQHwM+cEPbokr/setY7QmjSsoSCUiKG32ZRPYV73A3EhKufmV9NRwt1KDdov12ZcqrGW7xQ==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"

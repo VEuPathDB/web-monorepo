@@ -1,7 +1,7 @@
-import { EDAWorkspaceContainer } from '@veupathdb/eda-workspace-core';
-import { SubsettingClient } from '@veupathdb/eda-workspace-core/lib/api/eda-api';
 import React, { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
+import { EDAWorkspaceContainer } from '../core';
+import { SubsettingClient } from '../core/api/eda-api';
 import { EDASession } from './EDASession';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockSessionStore } from './Mocks';

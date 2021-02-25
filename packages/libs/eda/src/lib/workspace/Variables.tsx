@@ -6,11 +6,11 @@ import {
   useStudyMetadata,
   useSubsettingClient,
   StudyEntity,
-} from '@veupathdb/eda-workspace-core';
+} from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { startCase } from 'lodash';
 import { cx } from './Utils';
-import { usePromise } from '@veupathdb/eda-workspace-core/lib/hooks/promise';
+import { usePromise } from '../core/hooks/promise';
 import { useHistory } from 'react-router';
 
 const variableKeys: (keyof StudyVariable)[] = [

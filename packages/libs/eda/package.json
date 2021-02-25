@@ -2,9 +2,10 @@
   "name": "@veupathdb/eda",
   "version": "0.1.0",
   "dependencies": {
-    "@veupathdb/eda-workspace-core": "^0.0.2-alpha.20",
     "@veupathdb/wdk-client": "^0.1.1-alpha.12",
     "@veupathdb/web-common": "^0.1.1-alpha.11",
+    "fp-ts": "^2.9.3",
+    "io-ts": "^2.2.13",
     "lodash": "^4.17.20",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"

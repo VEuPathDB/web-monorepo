@@ -1,6 +1,6 @@
-import { Session, NewSession } from '@veupathdb/eda-workspace-core';
-import { SessionClient } from '@veupathdb/eda-workspace-core/lib/api/session-api';
 import localforage from 'localforage';
+import { Session, NewSession } from '../core';
+import { SessionClient } from '../core/api/session-api';
 
 const localStore = localforage.createInstance({
   name: 'mockSessionStore',

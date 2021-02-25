@@ -1,15 +1,11 @@
-import { PathReporter } from 'io-ts/PathReporter';
+import { Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { isLeft } from 'fp-ts/Either';
+import { PathReporter } from 'io-ts/PathReporter';
 import * as Path from 'path';
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import {
-  NewSession,
-  Session,
-  useStudyRecord,
-} from '@veupathdb/eda-workspace-core';
-import { Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
-import { SessionClient } from '@veupathdb/eda-workspace-core/lib/api/session-api';
+import { NewSession, Session, useStudyRecord } from '../core';
+import { SessionClient } from '../core/api/session-api';
 
 export interface Props {
   sessionStore: SessionClient;
