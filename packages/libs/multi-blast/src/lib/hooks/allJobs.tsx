@@ -21,6 +21,11 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
           <Link to={`/workspace/blast/result/${row.jobId}`}>{row.jobId}</Link>
         ),
       },
+      {
+        key: 'description',
+        name: 'Description',
+        renderCell: ({ row }: { row: JobRow }) => row.description ?? 'Untitled',
+      },
     ],
     []
   );
@@ -32,6 +37,7 @@ export function useRawJobRows(blastApi: BlastApi): JobRow[] | undefined {
 
     return jobEntities?.filter(shouldIncludeInJobsTable).map((jobEntity) => ({
       jobId: jobEntity.id,
+      description: jobEntity.description ?? null,
       created: jobEntity.created,
       expires: jobEntity.expires,
       status: entityStatusToReadableStatus(jobEntity.status),

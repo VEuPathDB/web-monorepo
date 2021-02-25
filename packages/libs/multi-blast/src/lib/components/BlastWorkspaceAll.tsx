@@ -13,6 +13,7 @@ export interface Props {}
 
 export interface JobRow {
   jobId: string;
+  description: string | null;
   created: string;
   status: 'queued' | 'running' | 'finished' | 'errored';
   expires: string;
