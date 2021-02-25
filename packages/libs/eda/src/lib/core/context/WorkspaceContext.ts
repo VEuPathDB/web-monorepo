@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 import { SubsettingClient } from '../api/eda-api';
+import { DataClient } from '../api/data-service';
 import { SessionClient } from '../api/session-api';
 import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
 
@@ -9,7 +10,7 @@ interface WorkspaceContextValue {
   studyMetadata: StudyMetadata;
   sessionClient: SessionClient;
   subsettingClient: SubsettingClient;
-  // dataClient: DataClient;
+  dataClient: DataClient;
   makeVariableLink?: (entityId: string, variableId: string) => string;
 }
 

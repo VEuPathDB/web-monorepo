@@ -26,6 +26,18 @@ module.exports = function (app) {
       onProxyReq: addAuthCookie,
     })
   );
+  app.use(
+    '/eda-data-service',
+    createProxyMiddleware({
+      target: process.env.EDA_DATA_SERVICE_URL,
+      pathRewrite: { [`^/eda-data-service`]: '' },
+      secure: false,
+      changeOrigin: true,
+      followRedirects: true,
+      logLevel: 'debug',
+      onProxyReq: addAuthCookie,
+    })
+  );
 };
 
 function addAuthCookie(proxyReq) {

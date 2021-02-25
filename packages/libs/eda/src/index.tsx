@@ -28,13 +28,21 @@ initialize({
       component: (
         props: RouteComponentProps<{ studyId: string; sessionId: string }>
       ) => (
-        <EDAWorkspace {...props.match.params} edaServiceUrl="/eda-service" />
+        <EDAWorkspace
+          {...props.match.params}
+          edaServiceUrl="/eda-service"
+          dataServiceUrl="/eda-data-service"
+        />
       ),
     },
     {
       path: '/eda/:studyId',
       component: (props: RouteComponentProps<{ studyId: string }>) => (
-        <EDASessionList {...props.match.params} edaServiceUrl="/eda-service" />
+        <EDASessionList
+          {...props.match.params}
+          edaServiceUrl="/eda-service"
+          dataServiceUrl="/eda-data-service"
+        />
       ),
     },
     {

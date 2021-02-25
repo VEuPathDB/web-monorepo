@@ -1,6 +1,7 @@
 import ErrorStatus from '@veupathdb/wdk-client/lib/Components/PageStatus/Error';
 import React from 'react';
 import { SubsettingClient } from '../api/eda-api';
+import { DataClient } from '../api/data-service';
 import { SessionClient } from '../api/session-api';
 import { WorkspaceContext } from '../context/WorkspaceContext';
 import { useStudyMetadata, useWdkStudyRecord } from '../hooks/study';
@@ -12,6 +13,7 @@ export interface Props {
   className?: string;
   sessionClient: SessionClient;
   subsettingClient: SubsettingClient;
+  dataClient: DataClient;
   makeVariableLink?: (entityId: string, variableId: string) => string;
 }
 
@@ -20,6 +22,7 @@ export function EDAWorkspaceContainer(props: Props) {
     studyId,
     sessionClient,
     subsettingClient,
+    dataClient,
     children,
     className = 'EDAWorkspace',
     makeVariableLink,
@@ -44,6 +47,7 @@ export function EDAWorkspaceContainer(props: Props) {
         studyMetadata,
         sessionClient,
         subsettingClient,
+        dataClient,
         makeVariableLink,
       }}
     >
