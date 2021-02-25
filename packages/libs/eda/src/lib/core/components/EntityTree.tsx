@@ -4,6 +4,4 @@ interface Props {
   entityTree: StudyEntity;
 }
 
-function EntityTree(props: Props) {
-  const { entityTree } = props;
-}
+export function EntityTree(props: Props) {}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-redeclare */
 import * as t from 'io-ts';
 
 const _FilterBase = t.type({

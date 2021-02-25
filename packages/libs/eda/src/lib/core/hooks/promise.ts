@@ -13,6 +13,7 @@ export function usePromise<T>(
   const [state, setState] = useState<PromiseHookState<T>>({
     pending: true,
   });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const callback = useCallback(promiseFactory, deps ?? [promiseFactory]);
   useEffect(() => {
     let ignoreResolve = false;

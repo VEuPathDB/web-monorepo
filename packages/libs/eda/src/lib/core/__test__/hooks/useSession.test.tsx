@@ -1,15 +1,15 @@
 import { omit } from 'lodash';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useSession, Status } from '../../src/hooks/session';
-import { Session, NewSession } from '../../src/types/session';
-import { SessionClient } from '../../src/api/session-api';
+import { useSession, Status } from '../../hooks/session';
+import { Session, NewSession } from '../../types/session';
+import { SessionClient } from '../../api/session-api';
 import {
   StudyMetadata,
   StudyRecord,
   StudyRecordClass,
   WorkspaceContext,
-} from '../../src';
-import { SubsettingClient } from '../../src/api/eda-api';
+} from '../..';
+import { SubsettingClient } from '../../api/eda-api';
 
 const stubSession: NewSession = {
   name: 'My Session',
@@ -83,16 +83,16 @@ const render = () => renderHook(() => useSession(key), { wrapper });
 describe('useSession', () => {
   it('should have the correct status on success path', async () => {
     const { result, waitForValueToChange } = render();
-    expect(result.current.status === Status.InProgress);
+    expect(result.current.status).toBe(Status.InProgress);
     await waitForValueToChange(() => result.current.status);
-    expect(result.current.status === Status.Loaded);
+    expect(result.current.status).toBe(Status.Loaded);
   });
 
   it('should have the correct status on failure path', async () => {
     const { result, waitForValueToChange } = render();
-    expect(result.current.status === Status.InProgress);
+    expect(result.current.status).toBe(Status.InProgress);
     await waitForValueToChange(() => result.current.status);
-    expect(result.current.status === Status.Error);
+    expect(result.current.status).toBe(Status.Error);
   });
 
   it('should load an session', async () => {
