@@ -13,6 +13,7 @@ export interface HistogramRequestParams {
   config: {
     numBins: number;
     entityId: string;
+    valueSpec: 'count' | 'proportion';
     xAxisVariable: {
       entityId: string;
       variableId: string;
