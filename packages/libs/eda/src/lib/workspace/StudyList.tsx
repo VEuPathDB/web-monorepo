@@ -1,7 +1,8 @@
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useRouteMatch } from 'react-router';
 import { SubsettingClient } from '../core';
 import { usePromise } from '../core/hooks/promise';
 
@@ -9,6 +10,7 @@ interface Props {
   edaServiceUrl: string;
 }
 export function StudyList(props: Props) {
+  const { url } = useRouteMatch();
   const subsettingClient = SubsettingClient.getClient(props.edaServiceUrl);
   const datasets = useWdkService(
     (wdkService) =>
@@ -41,7 +43,7 @@ export function StudyList(props: Props) {
           );
           return dataset ? (
             <li>
-              <Link to={`/eda-session/${dataset.attributes.dataset_id}`}>
+              <Link to={`${url}/${dataset.attributes.dataset_id}`}>
                 {safeHtml(dataset.displayName)}
               </Link>
             </li>
