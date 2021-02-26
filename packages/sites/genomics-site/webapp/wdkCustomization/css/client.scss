@@ -131,6 +131,15 @@
   display: initial;
 }
 
+/*Hide Apollo link based on attribute */
+.eupathdb-RecordOverview [data-show-apollo] {
+    display: none;
+}
+
+.eupathdb-RecordOverview[data-apollo="1"] [data-show-apollo="1"] {
+    display: initial;
+}
+
 .GeneOverviewIntent {
   font-size: 1.2em;
   font-style: italic;
