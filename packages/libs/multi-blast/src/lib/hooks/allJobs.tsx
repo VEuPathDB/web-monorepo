@@ -7,7 +7,7 @@ import {
   MesaColumn,
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
-import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { JobRow } from '../components/BlastWorkspaceAll';
 import {
@@ -54,19 +54,20 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
 }
 
 export function useRawJobRows(blastApi: BlastApi): JobRow[] | undefined {
-  const result = usePromise(async () => {
+  return useWdkService(async (wdkService) => {
     const jobEntities = await blastApi.fetchJobEntities();
+    const { projectId } = await wdkService.getConfig();
 
-    return jobEntities?.filter(shouldIncludeInJobsTable).map((jobEntity) => ({
-      jobId: jobEntity.id,
-      description: jobEntity.description ?? null,
-      created: new Date(jobEntity.created).toLocaleDateString(),
-      expires: new Date(jobEntity.expires).toLocaleDateString(),
-      status: entityStatusToReadableStatus(jobEntity.status),
-    }));
+    return jobEntities
+      ?.filter((jobEntity) => shouldIncludeInJobsTable(jobEntity, projectId))
+      .map((jobEntity) => ({
+        jobId: jobEntity.id,
+        description: jobEntity.description ?? null,
+        created: new Date(jobEntity.created).toLocaleDateString(),
+        expires: new Date(jobEntity.expires).toLocaleDateString(),
+        status: entityStatusToReadableStatus(jobEntity.status),
+      }));
   }, []);
-
-  return result.value;
 }
 
 export function useSortedJobRows(

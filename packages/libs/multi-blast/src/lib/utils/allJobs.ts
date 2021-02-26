@@ -2,9 +2,15 @@ import { JobRow } from '../components/BlastWorkspaceAll';
 
 import { ShortJobResponse } from './ServiceTypes';
 
-export function shouldIncludeInJobsTable(jobEntity: ShortJobResponse) {
-  // FIXME: Also need to filter out jobs created on other sites
-  return !isJobExpired(jobEntity) && isJobPrimary(jobEntity);
+export function shouldIncludeInJobsTable(
+  jobEntity: ShortJobResponse,
+  projectId: string
+) {
+  return (
+    !isJobExpired(jobEntity) &&
+    isJobPrimary(jobEntity) &&
+    isJobFromSite(jobEntity, projectId)
+  );
 }
 
 function isJobExpired(jobEntity: ShortJobResponse) {
@@ -13,6 +19,10 @@ function isJobExpired(jobEntity: ShortJobResponse) {
 
 function isJobPrimary(jobEntity: ShortJobResponse) {
   return jobEntity.isPrimary;
+}
+
+function isJobFromSite(jobEntity: ShortJobResponse, projectId: string) {
+  return jobEntity.site === projectId;
 }
 
 export function entityStatusToReadableStatus(

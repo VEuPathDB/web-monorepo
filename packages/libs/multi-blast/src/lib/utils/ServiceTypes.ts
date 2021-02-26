@@ -557,6 +557,8 @@ export const shortJobResponse = record({
   expires: string,
   isPrimary: boolean,
   parentJobs: optional(arrayOf(record({ id: string, index: number }))),
+  site: string,
+  targets: arrayOf(record({ organism: string, target: string })),
 });
 
 export type ShortJobResponse = Unpack<typeof shortJobResponse>;
