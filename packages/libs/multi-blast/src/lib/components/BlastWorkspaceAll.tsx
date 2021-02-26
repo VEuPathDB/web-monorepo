@@ -7,6 +7,7 @@ import { MesaSortObject } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import {
   useAllJobsColumns,
   useMesaEventHandlers,
+  useMesaOptions,
   useMesaUiState,
   useRawJobRows,
   useSortedJobRows,
@@ -51,6 +52,8 @@ function BlastWorkspaceAllWithLoadedApi({
 
   const eventHandlers = useMesaEventHandlers(setSort);
 
+  const options = useMesaOptions();
+
   const mesaState = useMemo(
     () =>
       sortedRows &&
@@ -58,9 +61,10 @@ function BlastWorkspaceAllWithLoadedApi({
         rows: sortedRows,
         columns: allJobsColumns,
         eventHandlers,
+        options,
         uiState,
       }),
-    [allJobsColumns, eventHandlers, sortedRows, uiState]
+    [allJobsColumns, eventHandlers, options, sortedRows, uiState]
   );
 
   return (

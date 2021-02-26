@@ -100,3 +100,18 @@ export function useMesaEventHandlers(
     [setSort]
   );
 }
+
+export function useMesaOptions() {
+  return {
+    renderEmptyState: () => (
+      <div className="EmptyState">
+        <div className="EmptyState-BodyWrapper">
+          <p>You do not have any BLAST jobs</p>
+          <p>
+            Please run a <Link to="/workspace/blast/new">new job</Link>{' '}
+          </p>
+        </div>
+      </div>
+    ),
+  };
+}
