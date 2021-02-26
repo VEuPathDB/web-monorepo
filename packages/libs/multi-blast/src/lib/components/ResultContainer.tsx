@@ -34,6 +34,7 @@ export function ResultContainer({
   wdkRecordType,
 }: Props) {
   const combinedResultProps = useCombinedResultProps(
+    jobId,
     combinedResult,
     filesToOrganisms,
     hitTypeDisplayName,

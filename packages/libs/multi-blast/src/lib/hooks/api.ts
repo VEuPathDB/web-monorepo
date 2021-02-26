@@ -43,7 +43,7 @@ export function useDownloadReportCallback() {
       reportDownloader &&
       ((jobId: string, format: IoBlastFormat) =>
         reportDownloader(
-          `${blastServiceUrl}/jobs/${jobId}/report?format=${format}&zip=false`,
+          `${blastServiceUrl}/jobs/${jobId}/report?format=${format}`,
           `${jobId}-${format}-report`
         )),
     [blastServiceUrl, reportDownloader]

@@ -1,6 +1,17 @@
 .CombinedResult {
+  .TableToolbar-Children {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0;
+  }
+
   .ResultSummary {
     font-size: 1.2em;
-    margin-bottom: 0.5em;
+  }
+
+  .ReportSelectContainer {
+    min-width: 25em;
   }
 }

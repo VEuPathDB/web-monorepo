@@ -121,20 +121,13 @@ export function createJobContentDownloader(user: User) {
       headers: { 'Auth-Key': getAuthKey(user) },
     });
 
-    const contentDisposition = response.headers.get('content-disposition');
-
-    if (!contentDisposition?.startsWith('attachment')) {
-      console.warn('Ignoring attempted download of a non-file query.');
-      return;
-    }
-
     const blob = await response.blob();
 
     // Adapted from https://stackoverflow.com/a/42274086
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = filename;
+    a.download = `${filename}.zip`;
     document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
     a.click();
     a.remove(); //afterwards we remove the element again

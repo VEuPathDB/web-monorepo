@@ -50,6 +50,7 @@ import {
 } from '../utils/combinedResults';
 
 export function useCombinedResultProps(
+  jobId: string,
   combinedResult: MultiQueryReportJson,
   filesToOrganisms: Record<string, string>,
   hitTypeDisplayName: string,
@@ -61,11 +62,7 @@ export function useCombinedResultProps(
     combinedResult
   );
 
-  const columns = useCombinedResultColumns(
-    hitTypeDisplayName,
-    targetTypeTerm,
-    wdkRecordType
-  );
+  const columns = useCombinedResultColumns(hitTypeDisplayName, targetTypeTerm);
   const rawRows = useRawCombinedResultRows(
     combinedResult,
     wdkRecordType,
@@ -83,12 +80,15 @@ export function useCombinedResultProps(
 
   const uiState = useMesaUiState(sort);
 
+  const options = useMesaOptions();
+
   const mesaState = useMemo(
-    () => MesaState.create({ columns, eventHandlers, rows, uiState }),
-    [columns, eventHandlers, uiState, rows]
+    () => MesaState.create({ columns, eventHandlers, options, rows, uiState }),
+    [columns, eventHandlers, options, rows, uiState]
   );
 
   return {
+    jobId,
     hitQueryCount,
     hitSubjectCount,
     hitTypeDisplayName,
@@ -122,8 +122,7 @@ function useHitCounts(combinedResult: MultiQueryReportJson) {
 
 function useCombinedResultColumns(
   hitTypeDisplayName: string,
-  targetTypeTerm: string,
-  wdkRecordType: string
+  targetTypeTerm: string
 ): MesaColumn<keyof CombinedResultRow>[] {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
@@ -421,6 +420,10 @@ function useMesaEventHandlers(setSort: (newSort: MesaSortObject) => void) {
 
 function useMesaUiState(sort: MesaSortObject) {
   return useMemo(() => ({ sort }), [sort]);
+}
+
+function useMesaOptions() {
+  return useMemo(() => ({ toolbar: true }), []);
 }
 
 export function useTargetTypeTermAndWdkRecordType(
