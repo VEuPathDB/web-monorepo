@@ -220,7 +220,7 @@ export function GbrowseContext(props) {
       jbrowseUrlMinimal = record.attributes.geneJbrowseUrl;
       jbrowseUrlFull = record.attributes.geneJbrowseFullUrl;
       apolloUrlFull = record.attributes.geneApolloFullUrl;
-      if (window.location.href.indexOf("vectorbase") != -1){
+      if (window.location.href.indexOf("vectorbase") != -1 || window.location.href.indexOf("piroplasmadb") != -1 || window.location.href.indexOf("toxodb") != -1 || window.location.href.indexOf("amoebadb") != -1){
       return (
         <div>
         <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
