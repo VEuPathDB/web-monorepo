@@ -1,8 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
-import { EDAWorkspaceContainer } from '../core';
-import { SubsettingClient } from '../core/api/eda-api';
-import { DataClient } from '../core/api/data-service';
+import { EDAWorkspaceContainer, SubsettingClient, DataClient } from '../core';
 import { EDASession } from './EDASession';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockSessionStore } from './Mocks';

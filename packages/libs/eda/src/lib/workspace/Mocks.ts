@@ -1,6 +1,5 @@
 import localforage from 'localforage';
-import { Session, NewSession } from '../core';
-import { SessionClient } from '../core/api/session-api';
+import { Session, NewSession, SessionClient } from '../core';
 
 const localStore = localforage.createInstance({
   name: 'mockSessionStore',

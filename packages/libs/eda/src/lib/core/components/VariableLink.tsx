@@ -5,7 +5,7 @@ import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 import { useVariableLink } from '../hooks/workspace';
 
-export interface Props<S = unknown> extends LinkProps<S> {
+export interface Props<S = unknown> extends Omit<LinkProps<S>, 'to'> {
   entityId: string;
   variableId: string;
 }
