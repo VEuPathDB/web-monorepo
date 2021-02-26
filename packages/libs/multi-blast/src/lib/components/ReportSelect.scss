@@ -1,4 +1,8 @@
 .ReportSelect {
+  &Container {
+    font-size: 1.2em;
+  }
+
   &Container &__placeholder {
     color: black;
   }
