@@ -99,10 +99,13 @@ const makeRenderCellContent = (user, permissions) => props => {
   if (props.attribute.name === 'disease') {
     const disease = props.record.attributes.disease || 'Unknown';
     const categories = disease.split(/\s*,\s*/);
-    return <div style={{ textAlign: 'center' }}>
-      {categories.map(cat => <CategoryIcon category={cat} key={cat}/>)}
-      <strong>{disease}</strong>
-    </div>;
+    return (categories[0] === 'Unknown'
+      ? <div>&nbsp;</div>
+      : <div style={{ textAlign: 'center' }}>
+          {categories.map(cat => <CategoryIcon category={cat} key={cat}/>)}
+          <strong>{disease}</strong>
+        </div>
+      );
   }
   if (props.attribute.name === 'card_questions') { 
     return (!shouldRenderAsPrerelease)
