@@ -7,6 +7,7 @@ import { TypeOf, string, number, array, type, tuple } from 'io-ts';
 import { Filter } from '../types/filter';
 import { ioTransformer } from './ioTransformer';
 
+// TO DO: handle other three histogram queries and their responses
 export interface HistogramRequestParams {
   studyId: string;
   filters: Filter[];
@@ -22,7 +23,6 @@ export interface HistogramRequestParams {
   };
 }
 
-// TO DO: handle other three histogram queries and their responses
 export type HistogramResponse = TypeOf<typeof HistogramResponse>;
 export const HistogramResponse = tuple([
   array(
@@ -47,6 +47,38 @@ export const HistogramResponse = tuple([
   }),
 ]);
 
+export interface BarplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  //  derivedVariables:  // TO DO
+  config: {
+    entityId: string;
+    valueSpec: 'count' | 'identity';
+    xAxisVariable: {
+      // TO DO: refactor repetition with HistogramRequestParams
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+export type BarplotResponse = TypeOf<typeof BarplotResponse>;
+export const BarplotResponse = tuple([
+  array(
+    type({
+      label: string,
+      value: number,
+    })
+  ),
+  type({
+    completeCases: array(number),
+    xVariableDetails: type({
+      variableId: array(string),
+      entityId: type({}), // checking with Danielle about this
+    }),
+  }),
+]);
+
 export class DataClient extends FetchClient {
   getNumericHistogramNumBins(
     params: HistogramRequestParams
@@ -57,6 +89,17 @@ export class DataClient extends FetchClient {
         path: '/analyses/numeric-histogram-num-bins',
         body: params,
         transformResponse: ioTransformer(HistogramResponse),
+      })
+    );
+  }
+
+  getBarplot(params: BarplotRequestParams): Promise<BarplotResponse> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'POST',
+        path: '/analyses/barplot',
+        body: params,
+        transformResponse: ioTransformer(BarplotResponse),
       })
     );
   }

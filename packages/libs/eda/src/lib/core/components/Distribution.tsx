@@ -13,6 +13,7 @@ import {
 import { useDataClient } from '../hooks/workspace';
 import { Filter as EdaFilter } from '../types/filter';
 import { Filter as WdkFilter } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+import { HistogramResponse, BarplotResponse } from '../api/data-service';
 
 interface Props {
   studyMetadata: StudyMetadata;
@@ -30,45 +31,74 @@ export function Distribution(props: Props) {
     const otherFilters = filters?.filter(
       (f) => f.entityId !== entity.id || f.variableId !== variable.id
     );
-    const bg$ = dataClient.getNumericHistogramNumBins({
-      studyId: studyMetadata.id,
-      filters: [],
-      config: {
-        numBins: 10,
-        entityId: entity.id, // for subsetting filters, this is the same entity as...
-        valueSpec: 'count',
-        xAxisVariable: {
-          entityId: entity.id, // ...the variable's entity
-          variableId: variable.id,
-        },
+    const dataRequestConfig = {
+      entityId: entity.id, // for subsetting filters, this is the same entity as...
+      xAxisVariable: {
+        entityId: entity.id, // ...the variable's entity
+        variableId: variable.id,
       },
-    });
-    // If there are no filters, reuse background for foreground.
-    // This is an optimization that saves a call to the backend.
-    const fg$ = otherFilters?.length
-      ? dataClient.getNumericHistogramNumBins({
-          studyId: studyMetadata.id,
-          filters: otherFilters,
-          config: {
-            numBins: 10,
-            entityId: entity.id,
-            valueSpec: 'count',
-            xAxisVariable: {
-              entityId: entity.id,
-              variableId: variable.id,
+    };
+
+    if (variable.type === 'string') {
+      const bg$ = dataClient.getBarplot({
+        studyId: studyMetadata.id,
+        filters: [],
+        config: {
+          ...dataRequestConfig,
+          valueSpec: 'count',
+        },
+      });
+      // If there are no filters, reuse background for foreground.
+      // This is an optimization that saves a call to the backend.
+      const fg$ = otherFilters?.length
+        ? dataClient.getBarplot({
+            studyId: studyMetadata.id,
+            filters: [],
+            config: {
+              ...dataRequestConfig,
+              valueSpec: 'count',
             },
-          },
-        })
-      : bg$;
-    const [bg, fg] = await Promise.all([bg$, fg$]);
-    return { bg, fg };
+          })
+        : bg$;
+
+      const [bg, fg] = await Promise.all([bg$, fg$]);
+      return { bg, fg };
+    } else if (variable.type === 'number') {
+      const bg$ = dataClient.getNumericHistogramNumBins({
+        studyId: studyMetadata.id,
+        filters: [],
+        config: {
+          ...dataRequestConfig,
+          numBins: 10,
+          valueSpec: 'count',
+        },
+      });
+      // If there are no filters, reuse background for foreground.
+      // This is an optimization that saves a call to the backend.
+      const fg$ = otherFilters?.length
+        ? dataClient.getNumericHistogramNumBins({
+            studyId: studyMetadata.id,
+            filters: otherFilters,
+            config: {
+              ...dataRequestConfig,
+              numBins: 10,
+              valueSpec: 'count',
+            },
+          })
+        : bg$;
+      const [bg, fg] = await Promise.all([bg$, fg$]);
+      return { bg, fg };
+    } else {
+      return Promise.reject(new Error('not string or number variable'));
+    }
   }, [dataClient, studyMetadata, variable, entity, filters]);
   return variableSummary.pending ? (
     <Loading />
   ) : variableSummary.error ? (
     <div>{String(variableSummary.error)}</div>
   ) : variableSummary.value ? (
-    variableSummary.value.bg[0][0].value.length === 0 ? ( // TO DO: check these zero indices will always be valid
+    // variableSummary.value.bg[0][0].value.length === 0 ? ( // TO DO: check these zero indices will always be valid
+    false ? ( // TO DO: check these zero indices will always be valid
       <div className="MesaComponent">
         <EmptyState culprit="nodata" />
       </div>
