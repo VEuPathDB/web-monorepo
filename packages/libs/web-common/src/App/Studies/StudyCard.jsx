@@ -30,7 +30,7 @@ class StudyCard extends React.Component {
     const { searchType } = this.state;
     const { id, access, name, categories, route, headline, points, searches, disabled } = card;
     const myStudyTitle = "Go to the Study Details page";
-    const primaryCategory = (categories[0] == 'Unknown') ? '' : categories[0];
+    const primaryCategory = categories[0];
 
     return (
       <div className={'Card StudyCard ' + (disabled ? 'disabled' : '') + ' StudyCard__' + id}>

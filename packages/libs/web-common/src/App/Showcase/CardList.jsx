@@ -7,6 +7,7 @@ import { projectId } from '@veupathdb/web-common/lib/config';
 import PlaceholderCard from './PlaceholderCard';
 
 const CLASS_NAME = 'CardList';
+const SHOW_CATEGORIES_DROPDOWN = (projectId === 'MicrobiomeDB');
 
 const EXPANDED_CLASS_NAME = `${CLASS_NAME}_Expanded`;
 const LOADING_CLASS_NAME = `${CLASS_NAME}_Loading`;
@@ -126,7 +127,7 @@ export default function CardList(props) {
     />
 
 // not in clinepi, redmine #43134
-  const categorySelector = filters && (projectId != 'ClinEpiDB') &&
+  const categorySelector = filters && SHOW_CATEGORIES_DROPDOWN &&
     <Select
       placeholder={`Select a ${filtersLabel}`}
       isClearable

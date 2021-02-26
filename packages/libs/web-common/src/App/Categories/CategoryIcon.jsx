@@ -10,7 +10,7 @@ import { getCategoryColor } from './CategoryUtils';
 class CategoryIcon extends React.Component {
   render () {
     const { category } = this.props;
-    if (!category) return null;
+    if (!category || category === 'Unknown') return null;
     const categoryName = capitalize(category);
     const categoryColor = getCategoryColor(category);
     const categoryStyle = { backgroundColor: categoryColor };
