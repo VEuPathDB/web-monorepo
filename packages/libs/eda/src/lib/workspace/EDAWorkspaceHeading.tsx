@@ -3,6 +3,7 @@ import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { cx } from './Utils';
 import { StudySummary } from './StudySummary';
 import { useStudyRecord, useStudyRecordClass } from '../core';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 export function EDAWorkspaceHeading() {
   const studyRecord = useStudyRecord();
@@ -10,7 +11,7 @@ export function EDAWorkspaceHeading() {
   return (
     <div className={cx('-Heading')}>
       <h1>Explore and Analyze</h1>
-      <h2>Study: {studyRecord.displayName}</h2>
+      <h2>Study: {safeHtml(studyRecord.displayName)}</h2>
       <StudySummary
         studyRecord={studyRecord}
         studyRecordClass={studyRecordClass}

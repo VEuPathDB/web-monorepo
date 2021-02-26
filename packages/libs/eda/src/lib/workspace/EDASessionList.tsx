@@ -5,6 +5,7 @@ import { mockSessionStore } from './Mocks';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { SessionList } from './SessionList';
 import { cx } from './Utils';
+import { useMemo } from 'react';
 
 export interface Props {
   studyId: string;
@@ -12,14 +13,13 @@ export interface Props {
 }
 
 export function EDASessionList(props: Props) {
-  const subsettingClient: SubsettingClient = new (class extends SubsettingClient {
-    constructor() {
-      super({ baseUrl: props.edaServiceUrl });
-    }
-    async getStudyMetadata() {
-      return super.getStudyMetadata('GEMSCC0002-1');
-    }
-  })();
+  const subsettingClient = useMemo(
+    () =>
+      new SubsettingClient({
+        baseUrl: props.edaServiceUrl,
+      }),
+    [props.edaServiceUrl]
+  );
   return (
     <EDASessionListContainer
       studyId={props.studyId}

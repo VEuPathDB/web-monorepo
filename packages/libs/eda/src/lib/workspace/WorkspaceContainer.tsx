@@ -13,19 +13,13 @@ interface Props {
 }
 export function WorkspaceContainer(props: Props) {
   const { url } = useRouteMatch();
-  const subsettingClient: SubsettingClient = useMemo(
+  const subsettingClient = useMemo(
     () =>
-      new (class extends SubsettingClient {
-        constructor() {
-          super({ baseUrl: props.edaServiceUrl });
-        }
-        async getStudyMetadata() {
-          return super.getStudyMetadata('GEMSCC0002-1');
-        }
-      })(),
+      new SubsettingClient({
+        baseUrl: props.edaServiceUrl,
+      }),
     [props.edaServiceUrl]
   );
-
   const makeVariableLink = useCallback(
     (entityId: string, variableId: string) =>
       `${url}/variables/${entityId}/${variableId}`,

@@ -3,9 +3,10 @@ import {
   createJsonRequest,
   FetchClient,
 } from '@veupathdb/web-common/lib/util/api';
-import { number, record, string, type, TypeOf } from 'io-ts';
+import { array, number, record, string, type, TypeOf } from 'io-ts';
+import { memoize } from 'lodash';
 import { Filter } from '../types/filter';
-import { StudyMetadata } from '../types/study';
+import { StudyMetadata, StudyOverview } from '../types/study';
 import { ioTransformer } from './ioTransformer';
 
 export type StudyResponse = TypeOf<typeof StudyResponse>;
@@ -26,6 +27,22 @@ export const DistributionResponse = type({
 });
 
 export class SubsettingClient extends FetchClient {
+  static getClient = memoize(
+    (baseUrl: string): SubsettingClient => new SubsettingClient({ baseUrl })
+  );
+
+  getStudies(): Promise<StudyOverview[]> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'GET',
+        path: '/studies',
+        transformResponse: (res) =>
+          ioTransformer(type({ studies: array(StudyOverview) }))(res).then(
+            (r) => r.studies
+          ),
+      })
+    );
+  }
   getStudyMetadata(studyId: string): Promise<StudyMetadata> {
     return this.fetch(
       createJsonRequest({
