@@ -11,49 +11,49 @@ interface Props {
 }
 
 interface ReportOption {
-  value: IoBlastFormat;
+  value: { format: IoBlastFormat; shouldZip: boolean };
   label: string;
 }
 
 const reportOptions: ReportOption[] = [
   {
-    value: 'pairwise',
+    value: { format: 'pairwise', shouldZip: false },
     label: 'Text',
   },
   {
-    value: 'xml',
+    value: { format: 'xml', shouldZip: false },
     label: 'XML',
   },
   {
-    value: 'archive-asn-1',
+    value: { format: 'archive-asn-1', shouldZip: false },
     label: 'ASN.1',
   },
   {
-    value: 'seqalign-json',
+    value: { format: 'seqalign-json', shouldZip: false },
     label: 'JSON Seq-align',
   },
   {
-    value: 'tabular',
+    value: { format: 'tabular', shouldZip: false },
     label: 'Hit Table (text)',
   },
   {
-    value: 'csv',
+    value: { format: 'csv', shouldZip: false },
     label: 'Hit Table (csv)',
   },
   {
-    value: 'multi-file-xml2',
+    value: { format: 'multi-file-xml2', shouldZip: true },
     label: 'Multiple-file XML2',
   },
   {
-    value: 'single-file-xml2',
+    value: { format: 'single-file-xml2', shouldZip: false },
     label: 'Single-file XML2',
   },
   {
-    value: 'multi-file-json',
+    value: { format: 'multi-file-json', shouldZip: true },
     label: 'Multiple-file JSON',
   },
   {
-    value: 'single-file-json',
+    value: { format: 'single-file-json', shouldZip: false },
     label: 'Single-file JSON',
   },
 ];
@@ -83,7 +83,11 @@ export function ReportSelect({ jobId }: Props) {
     (async () => {
       if (downloadReportCallback != null && selectedReportOption != null) {
         try {
-          await downloadReportCallback(jobId, selectedReportOption.value);
+          await downloadReportCallback(
+            jobId,
+            selectedReportOption.value.format,
+            selectedReportOption.value.shouldZip
+          );
         } finally {
           if (!canceled) {
             setSelectedReportOption(undefined);

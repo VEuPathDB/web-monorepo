@@ -41,10 +41,10 @@ export function useDownloadReportCallback() {
   return useMemo(
     () =>
       reportDownloader &&
-      ((jobId: string, format: IoBlastFormat) =>
+      ((jobId: string, format: IoBlastFormat, zip: boolean) =>
         reportDownloader(
-          `${blastServiceUrl}/jobs/${jobId}/report?format=${format}`,
-          `${jobId}-${format}-report`
+          `${blastServiceUrl}/jobs/${jobId}/report?format=${format}&zip=${zip}`,
+          zip ? `${jobId}-${format}-report.zip` : `${jobId}-${format}-report`
         )),
     [blastServiceUrl, reportDownloader]
   );
