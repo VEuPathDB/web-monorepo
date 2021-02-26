@@ -271,7 +271,7 @@ function DescriptionCell(props: { value: string }) {
 
 function useRawCombinedResultRows(
   combinedResult: MultiQueryReportJson,
-  wdkRecordType: string | null,
+  wdkRecordType: string,
   filesToOrganisms: Record<string, string>
 ): CombinedResultRow[] {
   const resultsByQuery = combinedResult.BlastOutput2;
@@ -462,7 +462,7 @@ export function useTargetTypeTermAndWdkRecordType(
   }, [combinedResult, targetMetadataByDataType]);
 }
 
-export function useHitTypeDisplayNames(wdkRecordType: string | null) {
+export function useHitTypeDisplayNames(wdkRecordType: string) {
   const recordClasses = useSelector(
     (state: RootState) => state.globalData.recordClasses
   );

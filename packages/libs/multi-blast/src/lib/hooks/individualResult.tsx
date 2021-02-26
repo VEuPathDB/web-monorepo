@@ -39,7 +39,7 @@ export function useIndividualResultProps(
   jobId: string,
   selectedResult: SelectedResult,
   lastSelectedIndividualResult: number,
-  wdkRecordType: string | null,
+  wdkRecordType: string,
   combinedResult: MultiQueryReportJson,
   hitTypeDisplayName: string,
   hitTypeDisplayNamePlural: string
@@ -218,14 +218,10 @@ type BaseAnswerSpec = { offered: false } | { offered: true; value: AnswerSpec };
 
 function useBaseAnswerSpec(
   multiQueryParamValues: ParameterValues,
-  wdkRecordType: string | null
+  wdkRecordType: string
 ) {
   return useWdkService(
     async (wdkService): Promise<BaseAnswerSpec> => {
-      if (wdkRecordType == null) {
-        return { offered: false };
-      }
-
       const recordClass = await wdkService.findRecordClass(wdkRecordType);
 
       const question = recordClass.searches.find(({ urlSegment }) =>
