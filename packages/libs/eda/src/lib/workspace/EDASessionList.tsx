@@ -15,12 +15,7 @@ export interface Props {
 
 export function EDASessionList(props: Props) {
   const subsettingClient: SubsettingClient = useMemo(
-    () =>
-      new (class extends SubsettingClient {
-        async getStudyMetadata() {
-          return super.getStudyMetadata('GEMSCC0002-1');
-        }
-      })({ baseUrl: props.edaServiceUrl }),
+    () => new SubsettingClient({ baseUrl: props.edaServiceUrl }),
     [props.edaServiceUrl]
   );
 

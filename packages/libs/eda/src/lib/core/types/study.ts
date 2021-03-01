@@ -62,6 +62,7 @@ export const StudyEntity: t.Type<StudyEntity> = t.recursion('StudyEntity', () =>
 export type StudyOverview = t.TypeOf<typeof StudyOverview>;
 export const StudyOverview = t.type({
   id: t.string,
+  datasetId: t.string,
   // name: t.string,
 });
 

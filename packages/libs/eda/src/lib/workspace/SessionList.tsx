@@ -25,7 +25,7 @@ export function SessionList(props: Props) {
     updateSessionList();
   }, [updateSessionList]);
   const createNewSession = React.useCallback(async () => {
-    const newId = await sessionStore.createSession({
+    const { id } = await sessionStore.createSession({
       name: 'Unnamed Session',
       studyId,
       filters: [],
@@ -39,7 +39,7 @@ export function SessionList(props: Props) {
       pathname:
         history.location.pathname +
         (history.location.pathname.endsWith('/') ? '' : '/') +
-        newId,
+        id,
     };
     history.push(newLocation);
   }, [sessionStore, history, studyId]);

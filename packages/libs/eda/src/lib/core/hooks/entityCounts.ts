@@ -3,7 +3,7 @@ import { Filter } from '../types/filter';
 import { usePromise } from './promise';
 import { useStudyMetadata, useSubsettingClient } from './workspace';
 
-export function useEntityCounts(filters: Filter[]) {
+export function useEntityCounts(filters?: Filter[]) {
   const { id, rootEntity } = useStudyMetadata();
   const subsettingClient = useSubsettingClient();
   return usePromise(async () => {
@@ -12,7 +12,7 @@ export function useEntityCounts(filters: Filter[]) {
       const { count } = await subsettingClient.getEntityCount(
         id,
         entity.id,
-        filters
+        filters ?? []
       );
       counts[entity.id] = count;
     }

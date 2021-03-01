@@ -133,4 +133,31 @@
       margin-left: 1ex;
     }
   }
+
+  &-Subsetting {
+    padding: 1em 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    > div {
+      flex: 1 auto;
+      &:last-of-type {
+        width: 100%;
+      }
+    }
+    .filter-param .field-detail {
+      margin: 0;
+      padding: 0;
+      width: auto;
+    }
+  }
+
+  &-VariableEntityHeader {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    > div {
+      font-size: 1.333em;
+    }
+  }
 }
