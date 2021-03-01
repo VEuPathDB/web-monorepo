@@ -34,6 +34,7 @@ const Template: Story<SliderWidgetProps> = (args) => {
         args.onChange(value);
         setValue(value);
       }}
+      containerStyles={{ ...args.containerStyles, padding: 25 }}
     />
   );
 };
@@ -43,7 +44,7 @@ Basic.args = {
   minimum: 0,
   maximum: 255,
   value: 1,
-  containerStyles: { width: 150, paddingTop: 35, paddingLeft: 10 },
+  containerStyles: { width: 150 },
 };
 Basic.argTypes = {
   onChange: {
@@ -54,7 +55,7 @@ Basic.argTypes = {
 export const Labelled = Template.bind({});
 Labelled.args = {
   ...Basic.args,
-  containerStyles: { width: 150, paddingTop: 5 },
+  containerStyles: { width: 300 },
   label: 'Widget Label',
 };
 Labelled.argTypes = { ...Basic.argTypes };

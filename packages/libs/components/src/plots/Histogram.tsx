@@ -1,9 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
+// Definitions
 import { DARK_GRAY } from '../constants/colors';
-import PlotlyPlot from './PlotlyPlot';
 import { HistogramData } from '../types/plots';
+import { PlotLegendAddon } from '../types/plots/addOns';
+import { legendSpecification } from '../utils/plotly';
+
+// Components
+import PlotlyPlot from './PlotlyPlot';
 
 export type HistogramProps = {
   /** Data for the plot. */
@@ -27,7 +32,9 @@ export type HistogramProps = {
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
   dependentAxisLabel?: string;
-  /** Fill color of the title, axes labels, and tick marks. Defaults to DARK_GRAY. */
+  /** Fill color of the title, axes labels, tick marks, and legend.
+   * Defaults to DARK_GRAY. Note that textColor can be overridden
+   * for the legend if `legendOptions` is provided. */
   textColor?: string;
   /** Color of the gridlines. Use Plotly defaults if not specified. */
   gridColor?: string;
@@ -35,6 +42,10 @@ export type HistogramProps = {
   backgroundColor?: string;
   /** Should plot legend be displayed? */
   displayLegend?: boolean;
+  /** Options for customizing plot legend. */
+  legendOptions?: PlotLegendAddon;
+  /** Should plotting library controls be displayed? Ex. Plot.ly */
+  displayLibraryControls?: boolean;
   /** function to call upon selecting a range (in x and y axes) */
   onSelected?: () => void;
 };
@@ -55,6 +66,8 @@ export default function Histogram({
   backgroundColor = 'transparent',
   onSelected = () => {},
   displayLegend = true,
+  legendOptions,
+  displayLibraryControls = false,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -114,6 +127,7 @@ export default function Histogram({
             font: {
               color: textColor,
             },
+            ...(legendOptions ? legendSpecification(legendOptions) : {}),
           },
           plot_bgcolor: backgroundColor,
           paper_bgcolor: backgroundColor,
@@ -158,6 +172,10 @@ export default function Histogram({
             xref: 'paper',
             x: 0,
           },
+        }}
+        config={{
+          displayModeBar: displayLibraryControls,
+          displaylogo: false,
         }}
         data={plotlyFriendlyData}
         onSelected={onSelected}

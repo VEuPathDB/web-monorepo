@@ -102,7 +102,7 @@ export const binDailyCovidStats = async (
       : state.actuals.newCases
   );
 
-  const lowNewCases = Math.min(...newCasesStats);
+  const lowNewCases = Math.min(...newCasesStats, 0);
   const highNewCases = Math.max(...newCasesStats);
   const newCasesBins: HistogramBin[] = [];
 

@@ -1,17 +1,17 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import Histogram, { HistogramProps } from '../plots/Histogram';
+import Histogram, { HistogramProps } from '../../plots/Histogram';
 import {
   DARK_GRAY,
   LIGHT_BLUE,
   LIGHT_GREEN,
   MEDIUM_GRAY,
-} from '../constants/colors';
-import usePlotControls from '../hooks/usePlotControls';
-import HistogramControls from '../components/plotControls/HistogramControls';
-import { binDailyCovidStats } from './api/covidData';
-import { HistogramData } from '../types/plots';
+} from '../../constants/colors';
+import usePlotControls from '../../hooks/usePlotControls';
+import HistogramControls from '../../components/plotControls/HistogramControls';
+import { binDailyCovidStats } from '../api/covidData';
+import { HistogramData } from '../../types/plots';
 
 import { action } from '@storybook/addon-actions'; // BM: temp/debugging - should not depend on storybook here!
 

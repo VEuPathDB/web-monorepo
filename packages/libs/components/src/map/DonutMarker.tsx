@@ -7,6 +7,7 @@ import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 
 import PiePlot from '../plots/PiePlot';
+import { PiePlotData, PiePlotDatum } from '../types/plots';
 
 //DKDK ts definition for HistogramMarkerSVGProps: need some adjustment but for now, just use Donut marker one
 export interface DonutMarkerProps extends BoundsDriftMarkerProps {
@@ -102,7 +103,7 @@ function kFormatter(num: number) {
  * DKDK this is a SVG donut marker icon
  */
 export default function DonutMarker(props: DonutMarkerProps) {
-  let fullStat = [];
+  let fullStat: PiePlotData = { slices: [] };
   let defaultColor: string = '';
   for (let i = 0; i < props.data.length; i++) {
     // Currently this only serves to initialize missing colors as 'silver'
@@ -114,7 +115,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
       defaultColor = 'silver';
     }
 
-    fullStat.push({
+    fullStat.slices.push({
       // color: props.colors[i],
       color: defaultColor,
       label: datum.label,
@@ -130,7 +131,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
   svgHTML += '<svg width="' + size + '" height="' + size + '">'; //DKDK initiate svg marker icon
 
   //DKDK summation of fullStat.value per marker icon
-  let sumValues: number = fullStat
+  let sumValues: number = fullStat.slices
     .map((o) => o.value)
     .reduce((a, c) => {
       return a + c;
@@ -151,11 +152,7 @@ export default function DonutMarker(props: DonutMarkerProps) {
   //DKDK set start point of arc = 0
   let startValue: number = 0;
   //DKDK create arcs for data
-  fullStat.forEach(function (el: {
-    color: string;
-    label: string;
-    value: number;
-  }) {
+  fullStat.slices.forEach(function (el: PiePlotDatum) {
     //DKDK if sumValues = 0, do not draw arc
     if (sumValues > 0) {
       //DKDK compute the ratio of each data to the total number
@@ -213,23 +210,29 @@ export default function DonutMarker(props: DonutMarkerProps) {
   const popupPlot = (
     <PiePlot
       data={fullStat}
-      interior={{
-        heightPercentage: 0.5,
+      donutOptions={{
+        size: 0.5,
         text: sumLabel as string,
         fontSize: 18,
       }}
       width={plotSize}
       height={plotSize}
-      margin={{ l: marginSize, r: marginSize, t: marginSize, b: marginSize }}
-      showLegend={false}
+      spacingOptions={{
+        marginLeft: marginSize,
+        marginRight: marginSize,
+        marginTop: marginSize,
+        marginBottom: marginSize,
+      }}
+      displayLegend={false}
       showHoverInfo={false}
-      showModebar={false}
-      textposition="inside"
-      textinfo="text"
-      // Show value if pie slice is large enough
-      text={fullStat.map((datum) =>
-        datum.value / sumValues >= 0.015 ? datum.value.toString() : ''
-      )}
+      displayLibraryControls={false}
+      textOptions={{
+        displayPosition: 'inside',
+        displayOption: 'text',
+        sliceOverrides: fullStat.slices.map((datum) =>
+          datum.value / sumValues >= 0.015 ? datum.value.toString() : ''
+        ),
+      }}
     />
   );
 

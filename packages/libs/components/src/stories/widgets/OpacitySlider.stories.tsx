@@ -21,13 +21,13 @@ export const Basic: Story<OpacitySliderProps> = (args) => {
         setOpacity(value);
       }}
       color={args.color}
-      containerStyles={args.containerStyles}
+      containerStyles={{ ...args.containerStyles, padding: 25 }}
     />
   );
 };
 Basic.args = {
   value: 1,
-  containerStyles: { width: 150, paddingTop: 5 },
+  containerStyles: { width: 250 },
   color: LIGHT_GREEN,
 };
 Basic.argTypes = {
