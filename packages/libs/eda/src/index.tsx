@@ -16,6 +16,7 @@ import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceContainer } from './lib/workspace/WorkspaceContainer';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { StudyList } from './lib/workspace/StudyList';
+import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
 
 initialize({
   rootUrl,
@@ -53,27 +54,9 @@ initialize({
       ),
     },
     {
-      path: '/eda-session/:studyId/:sessionId',
-      exact: false,
-      component: (
-        props: RouteComponentProps<{ studyId: string; sessionId: string }>
-      ) => (
-        <WorkspaceContainer
-          {...props.match.params}
-          edaServiceUrl="/eda-service"
-        />
-      ),
-    },
-    {
-      path: '/eda-session/:studyId/',
-      exact: false,
-      component: (props: RouteComponentProps<{ studyId: string }>) => (
-        <EDASessionList {...props.match.params} edaServiceUrl="/eda-service" />
-      ),
-    },
-    {
       path: '/eda-session',
-      component: () => <StudyList edaServiceUrl="/eda-service" />,
+      exact: false,
+      component: WorkspaceRouter,
     },
     {
       path: '/mapveu',
