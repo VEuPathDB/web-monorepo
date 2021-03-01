@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { StudyMetadata, StudyRecordClass, StudyRecord } from '../types/study';
 import { usePromise } from './promise';
-import { SubsettingClient } from '../api/eda-api';
+import { SubsettingClient } from '../api/subsetting-api';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 

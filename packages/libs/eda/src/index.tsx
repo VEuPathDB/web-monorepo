@@ -46,7 +46,7 @@ initialize({
       ) => (
         <EDAWorkspace
           {...props.match.params}
-          edaServiceUrl="/eda-service"
+          subsettingServiceUrl="/eda-subsetting-service"
           dataServiceUrl="/eda-data-service"
         />
       ),
@@ -56,7 +56,7 @@ initialize({
       component: (props: RouteComponentProps<{ studyId: string }>) => (
         <EDASessionList
           {...props.match.params}
-          edaServiceUrl="/eda-service"
+          subsettingServiceUrl="/eda-subsetting-service"
           dataServiceUrl="/eda-data-service"
         />
       ),

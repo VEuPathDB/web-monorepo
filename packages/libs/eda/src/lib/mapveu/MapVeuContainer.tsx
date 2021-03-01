@@ -1,5 +1,5 @@
 import { EDASessionListContainer, EDAWorkspaceContainer } from '../core';
-import { SubsettingClient } from '../core/api/eda-api';
+import { SubsettingClient } from '../core/api/subsetting-api';
 import React from 'react';
 import {
   Route,
@@ -20,7 +20,7 @@ const edaClient = new (class extends SubsettingClient {
     // study record.
     return super.getStudyMetadata('SCORECX01-1');
   }
-})({ baseUrl: '/eda-service' });
+})({ baseUrl: '/eda-subsetting-service' });
 
 const dataClient = new DataClient({ baseUrl: '/eda-data-service' });
 

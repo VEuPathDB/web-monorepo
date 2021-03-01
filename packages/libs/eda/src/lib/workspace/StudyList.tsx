@@ -7,11 +7,13 @@ import { SubsettingClient } from '../core';
 import { usePromise } from '../core/hooks/promise';
 
 interface Props {
-  edaServiceUrl: string;
+  subsettingServiceUrl: string;
 }
 export function StudyList(props: Props) {
   const { url } = useRouteMatch();
-  const subsettingClient = SubsettingClient.getClient(props.edaServiceUrl);
+  const subsettingClient = SubsettingClient.getClient(
+    props.subsettingServiceUrl
+  );
   const datasets = useWdkService(
     (wdkService) =>
       wdkService.getAnswerJson(

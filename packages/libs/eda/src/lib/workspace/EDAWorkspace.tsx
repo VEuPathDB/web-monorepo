@@ -9,7 +9,7 @@ import { cx } from './Utils';
 interface Props {
   studyId: string;
   sessionId: string;
-  edaServiceUrl: string;
+  subsettingServiceUrl: string;
   dataServiceUrl: string;
 }
 export function EDAWorkspace(props: Props) {
@@ -20,8 +20,8 @@ export function EDAWorkspace(props: Props) {
         async getStudyMetadata() {
           return super.getStudyMetadata('GEMSCC0002-1');
         }
-      })({ baseUrl: props.edaServiceUrl }),
-    [props.edaServiceUrl]
+      })({ baseUrl: props.subsettingServiceUrl }),
+    [props.subsettingServiceUrl]
   );
 
   const dataClient: DataClient = useMemo(

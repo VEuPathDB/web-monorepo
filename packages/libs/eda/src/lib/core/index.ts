@@ -3,7 +3,7 @@ export * from './types/study';
 export * from './types/filter';
 export * from './hooks/session';
 export * from './hooks/workspace';
-export * from './api/eda-api';
+export * from './api/subsetting-api';
 export * from './api/data-service';
 export * from './api/session-api';
 export * from './context/WorkspaceContext';

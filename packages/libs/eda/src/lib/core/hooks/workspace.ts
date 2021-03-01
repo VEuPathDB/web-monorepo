@@ -1,4 +1,4 @@
-import { SubsettingClient } from '../api/eda-api';
+import { SubsettingClient } from '../api/subsetting-api';
 import { DataClient } from '../api/data-service';
 import { SessionClient } from '../api/session-api';
 import { WorkspaceContext } from '../context/WorkspaceContext';

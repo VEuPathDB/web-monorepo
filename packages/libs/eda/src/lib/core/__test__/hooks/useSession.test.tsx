@@ -10,7 +10,7 @@ import {
   StudyRecordClass,
   WorkspaceContext,
 } from '../..';
-import { SubsettingClient } from '../../api/eda-api';
+import { SubsettingClient } from '../../api/subsetting-api';
 
 const stubSession: NewSession = {
   name: 'My Session',

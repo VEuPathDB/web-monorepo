@@ -9,14 +9,15 @@ import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 
 export function WorkspaceRouter() {
-  const edaServiceUrl = '/eda-service';
+  const subsettingServiceUrl = '/eda-subsetting-service';
+  const dataServiceUrl = '/eda-data-service';
   const { path } = useRouteMatch();
   return (
     <Switch>
       <Route
         path={path}
         exact
-        render={() => <StudyList edaServiceUrl={edaServiceUrl} />}
+        render={() => <StudyList subsettingServiceUrl={subsettingServiceUrl} />}
       />
       <Route
         path={`${path}/:studyId`}
@@ -24,7 +25,8 @@ export function WorkspaceRouter() {
         render={(props: RouteComponentProps<{ studyId: string }>) => (
           <EDASessionList
             {...props.match.params}
-            edaServiceUrl={edaServiceUrl}
+            subsettingServiceUrl={subsettingServiceUrl}
+            dataServiceUrl={dataServiceUrl}
           />
         )}
       />
@@ -36,7 +38,8 @@ export function WorkspaceRouter() {
         ) => (
           <WorkspaceContainer
             {...props.match.params}
-            edaServiceUrl={edaServiceUrl}
+            subsettingServiceUrl={subsettingServiceUrl}
+            dataServiceUrl={dataServiceUrl}
           />
         )}
       />
