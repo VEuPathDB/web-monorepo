@@ -1,4 +1,4 @@
-import { arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { arrayOf, decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
   BoundApiRequestsObject,
@@ -10,8 +10,11 @@ import {
 import { omit } from 'lodash';
 
 import {
+  ApiResult,
+  ErrorDetails,
   IoBlastConfig,
   createJobResponse,
+  errorDetails,
   longJobResponse,
   multiQueryReportJson,
   shortJobResponse,
@@ -145,4 +148,33 @@ function getAuthKey(user: User) {
   const authKey = wdkCheckAuth.replace('wdk_check_auth=', '');
 
   return authKey;
+}
+
+export async function handleApiRequest<T>(
+  apiRequest: Promise<T>
+): Promise<ApiResult<T, ErrorDetails>> {
+  try {
+    return {
+      status: 'ok',
+      value: await apiRequest,
+    };
+  } catch (error) {
+    if (
+      typeof error === 'object' &&
+      error != null &&
+      typeof error.message === 'string'
+    ) {
+      const decodedErrorDetails = decode(
+        errorDetails,
+        error.message.replace(/^[^{]*(\{.*\})[^}]*$/, '$1')
+      );
+
+      return {
+        status: 'error',
+        details: decodedErrorDetails,
+      };
+    } else {
+      throw error;
+    }
+  }
 }
