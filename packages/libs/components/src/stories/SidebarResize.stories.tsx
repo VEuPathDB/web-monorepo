@@ -143,18 +143,28 @@ export const SidebarResize: Story<MapVEuMapProps> = (args) => {
   //5 data
   // let pieChartData = [{color: "#FFB300", label: "Anopheles gambiae sensu stricto", value: 130},{color: "#803E75", label: "Anopheles coluzzii", value: 127},{color: "#C10020", label: "Anopheles gambiae sensu lato", value: 47},{color: "silver", label: "Anopheles funestus", value: 10},{color: "#FF7A5C", label: "Culex quinquefasciatus", value: 6}];
   //test more data like 10
-  let pieChartData = [
-    { color: '#FFB300', label: 'Anopheles gambiae sensu stricto', value: 130 },
-    { color: '#803E75', label: 'Anopheles coluzzii', value: 127 },
-    { color: '#C10020', label: 'Anopheles gambiae sensu lato', value: 47 },
-    { color: 'silver', label: 'Anopheles funestus', value: 10 },
-    { color: '#FF7A5C', label: 'Culex quinquefasciatus', value: 6 },
-    { color: '#FFB300', label: 'Anopheles gambiae sensu stricto1', value: 130 },
-    { color: '#803E75', label: 'Anopheles coluzzii1', value: 127 },
-    { color: '#C10020', label: 'Anopheles gambiae sensu lato1', value: 47 },
-    { color: 'silver', label: 'Anopheles funestus1', value: 10 },
-    { color: '#FF7A5C', label: 'Culex quinquefasciatus1', value: 6 },
-  ];
+  let pieChartData = {
+    slices: [
+      {
+        color: '#FFB300',
+        label: 'Anopheles gambiae sensu stricto',
+        value: 130,
+      },
+      { color: '#803E75', label: 'Anopheles coluzzii', value: 127 },
+      { color: '#C10020', label: 'Anopheles gambiae sensu lato', value: 47 },
+      { color: 'silver', label: 'Anopheles funestus', value: 10 },
+      { color: '#FF7A5C', label: 'Culex quinquefasciatus', value: 6 },
+      {
+        color: '#FFB300',
+        label: 'Anopheles gambiae sensu stricto1',
+        value: 130,
+      },
+      { color: '#803E75', label: 'Anopheles coluzzii1', value: 127 },
+      { color: '#C10020', label: 'Anopheles gambiae sensu lato1', value: 47 },
+      { color: 'silver', label: 'Anopheles funestus1', value: 10 },
+      { color: '#FF7A5C', label: 'Culex quinquefasciatus1', value: 6 },
+    ],
+  };
 
   let testText = 'this is Home';
 

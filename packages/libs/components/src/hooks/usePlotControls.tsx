@@ -5,7 +5,7 @@
  */
 import { Reducer, useReducer } from 'react';
 
-import { isHistogramData } from '../types/guards';
+import { isHistogramData, isPiePlotData } from '../types/guards';
 import {
   UnionOfPlotDataTypes,
   BarLayoutOptions,
@@ -26,7 +26,8 @@ type ActionType<DataShape> =
   | { type: 'setOpacity'; payload: number }
   | { type: 'resetOpacity' }
   | { type: 'toggleOrientation' }
-  | { type: 'toggleDisplayLegend' };
+  | { type: 'toggleDisplayLegend' }
+  | { type: 'toggleLibraryControls' };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -88,6 +89,13 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
         displayLegend: state.displayLegend === true ? false : true,
       };
     }
+    case 'toggleLibraryControls': {
+      return {
+        ...state,
+        displayLibraryControls:
+          state.displayLibraryControls === true ? false : true,
+      };
+    }
     case 'toggleOrientation':
       return {
         ...state,
@@ -116,6 +124,10 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
   data: DataShape;
   /** Whether or not to display the plot legend. Defaults to true. */
   displayLegend: boolean;
+  /** Whether or not to display the additionally controls that
+   * may be provided by the charting library used to generate the plot.
+   * For example, Plot.ly controls.*/
+  displayLibraryControls: boolean;
   /** The opacity of the plot. A number between 0 and 1. */
   opacity: number;
   /** The orientation of the plot. Defaults to 'vertical'. */
@@ -179,6 +191,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     data: params.data,
     errors: [],
     displayLegend: true,
+    displayLibraryControls: false,
     opacity: 1,
     orientation: 'vertical',
     barLayout: 'overlay',
@@ -189,12 +202,14 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     },
   };
 
-  // Additional intialization if data is for a histogram.
-  if (isHistogramData(params.data)) {
-    // Determine if `data` contains information about available/selected units.
+  // Determine if `data` contains information about available/selected units.
+  if (isPiePlotData(params.data) || isHistogramData(params.data)) {
     initialState.availableUnits = params.data.availableUnits ?? [];
     initialState.selectedUnit = params.data.selectedUnit ?? '';
+  }
 
+  // Additional intialization if data is for a histogram.
+  if (isHistogramData(params.data)) {
     /**
      * Build the histogram specific state.
      * */
@@ -266,6 +281,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
   // Toggle Legend
   const toggleDisplayLegend = () => dispatch({ type: 'toggleDisplayLegend' });
+
+  // Toggle Library Specific Controls
+  const toggleLibraryControls = () =>
+    dispatch({ type: 'toggleLibraryControls' });
 
   /**
    * Prepare various functions that will be exported from this custom
@@ -363,5 +382,6 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     onOpacityChange,
     toggleDisplayLegend,
     toggleOrientation,
+    toggleLibraryControls,
   };
 }

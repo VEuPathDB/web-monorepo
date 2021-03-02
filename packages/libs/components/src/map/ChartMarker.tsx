@@ -241,7 +241,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
       width={plotSize}
       height={plotSize}
       margin={{ l: marginSize, r: marginSize, t: marginSize, b: marginSize }}
-      showLegend={false}
+      displayLegend={false}
       showModebar={false}
       staticPlot={true}
       dependentAxisLabel=""

@@ -18,6 +18,7 @@ const Template: Story<ButtonGroupProps> = (args) => {
       {...args}
       onOptionSelected={setSelectedOption}
       selectedOption={selectedOption}
+      containerStyles={{ ...args.containerStyles, margin: 25 }}
     />
   );
 };

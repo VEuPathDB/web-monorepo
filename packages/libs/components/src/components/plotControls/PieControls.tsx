@@ -1,27 +1,19 @@
 import React, { useMemo } from 'react';
-import useDimensions from 'react-cool-dimensions';
 
 // Definitions
 import { LIGHT_BLUE, LIGHT_GRAY } from '../../constants/colors';
 import { ErrorManagement } from '../../types/general';
-import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
 // Local Components
 import ButtonGroup from '../widgets/ButtonGroup';
 import Notification from '../widgets/Notification';
 import OpacitySlider from '../widgets/OpacitySlider';
-import OrientationToggle from '../widgets/OrientationToggle';
-import SliderWidget from '../widgets/Slider';
 import Switch from '../widgets/Switch';
 
-export type HistogramControlsProps = {
+export type PieControlsProps = {
   /** Label for control panel. Optional. */
   label?: string;
-  /** Currently selected bar layout. */
-  barLayout: string;
-  /** Function to invoke when barlayout changes. */
-  onBarLayoutChange: (layout: 'overlay' | 'stack') => void;
   /** Whether or not to display the plot legend. */
   displayLegend: boolean;
   /** Action to take on display legend change. */
@@ -37,24 +29,11 @@ export type HistogramControlsProps = {
   /** Function to invoke when opacity changes. */
   onOpacityChange: (opacity: number) => void;
   /** The current orientation of the plot.  */
-  orientation: OrientationOptions;
-  /** Function to invoke when orientation changes. */
-  toggleOrientation: (orientation: string) => void;
-  /** Available unit options by which to bin data. */
   availableUnits?: Array<string>;
   /** The currently selected bin unit. */
   selectedUnit?: string;
   /** Function to invoke when the selected bin unit changes. */
   onSelectedUnitChange?: (unit: string) => void;
-  /** The current binWidth */
-  binWidth: number;
-  /** Function to invoke when bin width changes. */
-  onBinWidthChange: (newWidth: number) => void;
-  /** The acceptable range of binWidthValues. */
-  binWidthRange: [number, number];
-  /** The step to take when adjusting binWidth */
-  binWidthStep: number;
-  /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
   /** Color to use as an accent in the control panel. Will accept any
    * valid CSS color definition. Defaults to LIGHT_BLUE */
@@ -63,38 +42,22 @@ export type HistogramControlsProps = {
   errorManagement: ErrorManagement;
 };
 
-/**
- * A histogram controls panel.
- *
- * If you prefer a different layout or composition, you can
- * contruct you own control panel by using the various
- * widgets contained here.
- */
-export default function HistogramControls({
+/** A default pie/donut plot control panel. */
+export default function PieControls({
   label,
-  binWidth,
-  binWidthStep,
-  binWidthRange,
-  onBinWidthChange,
   displayLegend,
   toggleDisplayLegend,
   displayLibraryControls,
   toggleLibraryControls,
-  barLayout,
-  onBarLayoutChange,
   opacity,
   onOpacityChange,
-  orientation,
-  toggleOrientation,
   availableUnits,
   selectedUnit,
   onSelectedUnitChange,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
   errorManagement,
-}: HistogramControlsProps) {
-  const { ref, width } = useDimensions<HTMLDivElement>();
-
+}: PieControlsProps) {
   const errorStacks = useMemo(() => {
     return errorManagement.errors.reduce<
       Array<{ error: Error; occurences: number }>
@@ -114,92 +77,70 @@ export default function HistogramControls({
 
   return (
     <div
-      ref={ref}
       style={{
         borderStyle: 'solid',
         borderWidth: 2,
         borderColor: LIGHT_GRAY,
         borderRadius: '10px',
         padding: '15px',
-        minWidth: '175px',
+        minWidth: '280px',
         ...containerStyles,
       }}
     >
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(max-content, 100px))',
-          marginRight: 35,
-          columnGap: 25,
-          rowGap: 15,
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
         }}
       >
-        <OrientationToggle
-          orientation={orientation}
-          onOrientationChange={toggleOrientation}
-        />
-        <ButtonGroup
-          label="Bar Layout"
-          options={['overlay', 'stack']}
-          selectedOption={barLayout}
-          // @ts-ignore
-          onOptionSelected={onBarLayoutChange}
-        />
         {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
           <ButtonGroup
             label="Data Units"
             options={availableUnits}
             selectedOption={selectedUnit}
             onOptionSelected={onSelectedUnitChange}
+            containerStyles={{ paddingRight: 25, paddingBottom: 10 }}
           />
         ) : null}
-      </div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns:
-            width > 500 ? '2fr 2fr 1fr' : width > 300 ? '1fr 1fr' : '1fr',
-          marginTop: 15,
-          marginRight: 15,
-          columnGap: 25,
-          rowGap: 5,
-        }}
-      >
-        <OpacitySlider
-          value={opacity}
-          onValueChange={onOpacityChange}
-          color={accentColor}
-        />
-        <SliderWidget
-          label="Bin Width"
-          minimum={binWidthRange[0]}
-          maximum={binWidthRange[1]}
-          step={binWidthStep}
-          value={binWidth}
-          onChange={onBinWidthChange}
-        />
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 5 }}>
-        <Switch
-          label="Legend"
-          color={accentColor}
-          state={displayLegend}
-          // The stinky use of `any` here comes from
-          // an incomplete type definition in the
-          // material UI library.
-          onStateChange={(event: any) =>
-            toggleDisplayLegend(event.target.checked)
-          }
-          containerStyles={{ paddingRight: 25 }}
-        />
-        <Switch
-          label="Plot.ly Controls"
-          color={accentColor}
-          state={displayLibraryControls}
-          onStateChange={(event: any) =>
-            toggleLibraryControls(event.target.checked)
-          }
-        />
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'flex-start',
+          }}
+        >
+          <OpacitySlider
+            value={opacity}
+            onValueChange={onOpacityChange}
+            color={accentColor}
+            containerStyles={{
+              minWidth: 250,
+              paddingRight: 25,
+              paddingBottom: 10,
+            }}
+          />
+          <Switch
+            label="Legend"
+            color={accentColor}
+            state={displayLegend}
+            // The stinky use of `any` here comes from
+            // an incomplete type definition in the
+            // material UI library.
+            onStateChange={(event: any) =>
+              toggleDisplayLegend(event.target.checked)
+            }
+            containerStyles={{ paddingRight: 25, paddingBottom: 10 }}
+          />
+          <Switch
+            label="Plot.ly Controls"
+            color={accentColor}
+            state={displayLibraryControls}
+            onStateChange={(event: any) =>
+              toggleLibraryControls(event.target.checked)
+            }
+          />
+        </div>
       </div>
 
       {errorStacks.map(({ error, occurences }, index) => (

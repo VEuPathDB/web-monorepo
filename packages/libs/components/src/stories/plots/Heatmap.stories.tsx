@@ -1,9 +1,9 @@
 import React from 'react';
-import Heatmap, { Props } from '../plots/Heatmap';
+import Heatmap, { Props } from '../../plots/Heatmap';
 import { Meta, Story } from '@storybook/react';
 
 export default {
-  title: 'Heatmap',
+  title: 'Plots/Heatmap',
   component: Heatmap,
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/42052',
