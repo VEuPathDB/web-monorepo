@@ -3,12 +3,7 @@ import { useHistory } from 'react-router';
 
 import { uniq } from 'lodash';
 
-import {
-  Error as ErrorPage,
-  Link,
-  Loading,
-  PermissionDenied,
-} from '@veupathdb/wdk-client/lib/Components';
+import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
@@ -31,6 +26,7 @@ import { reportToParamValues } from '../utils/params';
 import { TargetMetadataByDataType } from '../utils/targetTypes';
 
 import { blastWorkspaceCx } from './BlastWorkspace';
+import { BlastRequestError } from './BlastRequestError';
 import { ResultContainer } from './ResultContainer';
 import { withBlastApi } from './withBlastApi';
 
@@ -124,7 +120,7 @@ function BlastWorkspaceResultWithLoadedApi(
 
   return jobResult.value != null &&
     jobResult.value.status === 'request-error' ? (
-    <BlastJobRequestError jobLoadingError={jobResult.value} />
+    <BlastRequestError errorDetails={jobResult.value.details} />
   ) : props.selectedResult == null ||
     queryCount == null ||
     organismToFilenameMapsResult == null ||
@@ -176,20 +172,6 @@ function LoadingBlastResult(props: Props) {
         </div>
       </Loading>
     </div>
-  );
-}
-
-interface BlastJobRequestErrorProps {
-  jobLoadingError: JobPollingError;
-}
-
-function BlastJobRequestError({ jobLoadingError }: BlastJobRequestErrorProps) {
-  return jobLoadingError.details.status === 'not-found' ? (
-    <NotFoundController />
-  ) : jobLoadingError.details.status === 'unauthorized' ? (
-    <PermissionDenied />
-  ) : (
-    <ErrorPage />
   );
 }
 
