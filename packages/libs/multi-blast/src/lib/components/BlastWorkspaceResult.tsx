@@ -122,7 +122,10 @@ function BlastWorkspaceResultWithLoadedApi(
     }
   }, [history, props.jobId, queryCount, props.selectedResult]);
 
-  return props.selectedResult == null ||
+  return jobResult.value != null &&
+    jobResult.value.status === 'request-error' ? (
+    <BlastJobRequestError jobLoadingError={jobResult.value} />
+  ) : props.selectedResult == null ||
     queryCount == null ||
     organismToFilenameMapsResult == null ||
     queryResult.value == null ||
@@ -131,8 +134,6 @@ function BlastWorkspaceResultWithLoadedApi(
     targetTypeTerm == null ||
     wdkRecordType == null ? (
     <LoadingBlastResult {...props} />
-  ) : jobResult.value.status === 'request-error' ? (
-    <BlastResultRequestError jobLoadingError={jobResult.value} />
   ) : props.selectedResult.type === 'combined' && queryCount === 1 ? (
     <NotFoundController />
   ) : props.selectedResult.type === 'individual' &&
@@ -178,13 +179,11 @@ function LoadingBlastResult(props: Props) {
   );
 }
 
-interface BlastResultRequestErrorProps {
+interface BlastJobRequestErrorProps {
   jobLoadingError: JobPollingError;
 }
 
-function BlastResultRequestError({
-  jobLoadingError,
-}: BlastResultRequestErrorProps) {
+function BlastJobRequestError({ jobLoadingError }: BlastJobRequestErrorProps) {
   return jobLoadingError.details.status === 'not-found' ? (
     <NotFoundController />
   ) : jobLoadingError.details.status === 'unauthorized' ? (
