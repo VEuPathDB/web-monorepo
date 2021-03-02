@@ -681,3 +681,69 @@ export const blastParamInternalValues = objectOf(
 );
 
 export type BlastParamInternalValues = Unpack<typeof blastParamInternalValues>;
+
+export const badRequestError = record({
+  status: constant('bad-request'),
+  message: string,
+});
+
+export type BadRequestError = Unpack<typeof badRequestError>;
+
+export const unauthorizedError = record({
+  status: constant('unauthorized'),
+  message: string,
+});
+
+export type UnauthorizedError = Unpack<typeof unauthorizedError>;
+
+export const forbiddenError = record({
+  status: constant('forbidden'),
+  message: string,
+});
+
+export type ForbiddenError = Unpack<typeof forbiddenError>;
+
+export const notFoundError = record({
+  status: constant('not-found'),
+  message: string,
+});
+
+export type NotFoundError = Unpack<typeof notFoundError>;
+
+export const methodNotAllowedError = record({
+  status: constant('bad-method'),
+  message: string,
+});
+
+export type MethodNotAllowedError = Unpack<typeof methodNotAllowedError>;
+
+export const unprocessableEntityError = record({
+  status: constant('invalid-input'),
+  message: string,
+  errors: record({
+    general: arrayOf(string),
+    byKey: objectOf(arrayOf(string)),
+  }),
+});
+
+export type UnprocessableEntityError = Unpack<typeof unprocessableEntityError>;
+
+export const serverError = record({
+  status: constant('server-error'),
+  message: string,
+  requestId: string,
+});
+
+export type ServerError = Unpack<typeof serverError>;
+
+export const errorDetails = oneOf(
+  badRequestError,
+  unauthorizedError,
+  forbiddenError,
+  notFoundError,
+  methodNotAllowedError,
+  unprocessableEntityError,
+  serverError
+);
+
+export type ErrorDetails = Unpack<typeof errorDetails>;
