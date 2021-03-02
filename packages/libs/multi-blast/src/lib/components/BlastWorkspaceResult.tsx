@@ -3,7 +3,12 @@ import { useHistory } from 'react-router';
 
 import { uniq } from 'lodash';
 
-import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Error as ErrorPage,
+  Link,
+  Loading,
+  PermissionDenied,
+} from '@veupathdb/wdk-client/lib/Components';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
@@ -14,8 +19,12 @@ import {
   useTargetTypeTermAndWdkRecordType,
 } from '../hooks/combinedResults';
 import { useBlastCompatibleWdkService } from '../hooks/wdkServiceIntegration';
-import { LongJobResponse, MultiQueryReportJson } from '../utils/ServiceTypes';
-import { BlastApi } from '../utils/api';
+import {
+  ErrorDetails,
+  LongJobResponse,
+  MultiQueryReportJson,
+} from '../utils/ServiceTypes';
+import { BlastApi, handleApiRequest } from '../utils/api';
 import { dbToTargetName } from '../utils/combinedResults';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 import { reportToParamValues } from '../utils/params';
@@ -67,9 +76,9 @@ function BlastWorkspaceResultWithLoadedApi(
 
   const multiQueryReportResult = usePromise(
     async () =>
-      jobResult.value?.status !== 'completed'
+      jobResult.value?.status !== 'job-completed'
         ? undefined
-        : props.blastApi.fetchSingleFileJsonReport(jobResult.value.id),
+        : props.blastApi.fetchSingleFileJsonReport(jobResult.value.job.id),
     [props.blastApi, jobResult.value?.status]
   );
 
@@ -122,6 +131,8 @@ function BlastWorkspaceResultWithLoadedApi(
     targetTypeTerm == null ||
     wdkRecordType == null ? (
     <LoadingBlastResult {...props} />
+  ) : jobResult.value.status === 'request-error' ? (
+    <BlastResultRequestError jobLoadingError={jobResult.value} />
   ) : props.selectedResult.type === 'combined' && queryCount === 1 ? (
     <NotFoundController />
   ) : props.selectedResult.type === 'individual' &&
@@ -131,7 +142,7 @@ function BlastWorkspaceResultWithLoadedApi(
   ) : (
     <BlastSummary
       filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
-      jobDetails={jobResult.value}
+      jobDetails={jobResult.value.job}
       multiQueryReport={multiQueryReportResult.value}
       query={queryResult.value}
       queryCount={queryCount}
@@ -164,6 +175,22 @@ function LoadingBlastResult(props: Props) {
         </div>
       </Loading>
     </div>
+  );
+}
+
+interface BlastResultRequestErrorProps {
+  jobLoadingError: JobPollingError;
+}
+
+function BlastResultRequestError({
+  jobLoadingError,
+}: BlastResultRequestErrorProps) {
+  return jobLoadingError.details.status === 'not-found' ? (
+    <NotFoundController />
+  ) : jobLoadingError.details.status === 'unauthorized' ? (
+    <PermissionDenied />
+  ) : (
+    <ErrorPage />
   );
 }
 
@@ -308,19 +335,43 @@ function BlastSummary({
   );
 }
 
+type JobPollingResult = JobPollingSuccess | JobPollingError;
+
+interface JobPollingSuccess {
+  status: 'job-completed' | 'queueing-error';
+  job: LongJobResponse;
+}
+
+interface JobPollingError {
+  status: 'request-error';
+  details: ErrorDetails;
+}
+
 async function makeJobPollingPromise(
   blastApi: BlastApi,
   jobId: string
-): Promise<LongJobResponse> {
-  const job = await blastApi.fetchJob(jobId);
+): Promise<JobPollingResult> {
+  const jobRequest = await handleApiRequest(blastApi.fetchJob(jobId));
 
-  if (job.status === 'completed' || job.status === 'errored') {
-    return job;
+  if (jobRequest.status === 'ok') {
+    const job = jobRequest.value;
+
+    if (job.status === 'completed' || job.status === 'errored') {
+      return {
+        status: job.status === 'completed' ? 'job-completed' : 'queueing-error',
+        job,
+      };
+    }
+
+    await waitForNextPoll();
+
+    return makeJobPollingPromise(blastApi, jobId);
+  } else {
+    return {
+      ...jobRequest,
+      status: 'request-error',
+    };
   }
-
-  await waitForNextPoll();
-
-  return makeJobPollingPromise(blastApi, jobId);
 }
 
 function waitForNextPoll() {
