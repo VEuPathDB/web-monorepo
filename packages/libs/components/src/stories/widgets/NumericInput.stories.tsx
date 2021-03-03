@@ -11,14 +11,10 @@ export default {
 } as Meta;
 
 const Template: Story<NumericInputProps> = (args) => {
-  const [value, setValue] = useState<number | undefined>(args.value);
-
   return (
     <NumericInput
       {...args}
-      value={value}
       onValueChange={(newValue) => {
-        setValue(newValue);
         console.log(`set new value = ${newValue}`);
       }}
       containerStyles={{ ...args.containerStyles, margin: 25 }}
@@ -28,7 +24,7 @@ const Template: Story<NumericInputProps> = (args) => {
 
 export const Basic = Template.bind({});
 Basic.args = {
-  value: 42,
+  defaultValue: 42,
 };
 
 export const Labelled = Template.bind({});
@@ -48,4 +44,19 @@ NotSoWide.args = {
   containerStyles: {
     width: 100,
   },
+};
+
+export const Bounded = Template.bind({});
+Bounded.args = {
+  label: '0 <= x <= 5',
+  minValue: 0,
+  maxValue: 5,
+};
+
+export const BoundedInitialized = Template.bind({});
+BoundedInitialized.args = {
+  defaultValue: 3,
+  label: '0 <= x <= 5',
+  minValue: 0,
+  maxValue: 5,
 };
