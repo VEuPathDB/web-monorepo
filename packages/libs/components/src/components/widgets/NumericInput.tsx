@@ -27,7 +27,7 @@ export default function NumericInput({
   label,
   containerStyles,
 }: NumericInputProps) {
-  const [myValue, setMyValue] = useState(defaultValue);
+  const [value, setValue] = useState(defaultValue);
   const [focused, setFocused] = useState(false);
   const [errorState, setErrorState] = useState({
     error: false,
@@ -58,7 +58,7 @@ export default function NumericInput({
     } else {
       setErrorState({ error: false, helperText: '' });
     }
-    setMyValue(newValue);
+    setValue(newValue);
     onValueChange(newValue);
   };
 
@@ -79,7 +79,7 @@ export default function NumericInput({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <TextField
           InputProps={{ classes }}
-          value={myValue}
+          value={value}
           type="number"
           variant="outlined"
           onChange={handleChange}
