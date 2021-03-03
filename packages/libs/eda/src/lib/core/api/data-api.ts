@@ -38,6 +38,8 @@ type NumericViewPortRangeOrNone =
       viewportMax?: never;
     };
 
+type ZeroToTwoVariables = [] | [Variable] | [Variable, Variable];
+
 export interface NumericHistogramRequestParams {
   studyId: string;
   filters: Filter[];
@@ -47,7 +49,7 @@ export interface NumericHistogramRequestParams {
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
-    facetVariable?: [Variable] | [Variable, Variable];
+    facetVariable?: ZeroToTwoVariables;
   } & NumBinsOrNumericWidth &
     NumericViewPortRangeOrNone;
 }
@@ -81,7 +83,7 @@ export interface DateHistogramRequestParams {
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
-    facetVariable?: [Variable] | [Variable, Variable];
+    facetVariable?: ZeroToTwoVariables;
   } & NumBinsOrDateWidth &
     DateViewPortRangeOrNone;
 }
