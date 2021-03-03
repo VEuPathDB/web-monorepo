@@ -23,7 +23,8 @@ const proteomeSummaryRowDecoder = record({
   resource_url: string,
   sequences: string,
   root_taxon: string,
-  three_letter_abbrev: string
+  three_letter_abbrev: string,
+  most_recent: string
 });
 
 type ProteomeSummaryRow = Unpack<typeof proteomeSummaryRowDecoder>;
@@ -51,7 +52,7 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
   root_taxon: {
     key: 'root_taxon',
     name: 'Category',
-    helpText: 'The taxonomic category of the organism. ALVE: Alveolata, AMOE: Amoeba, ARCH: Archaea, EUGL: Eugelnozoa, FUNG: Fungi, META: Metazoa, OBAC: Other Bacteria, OEUK: Other Eukaryota, PROT: Proteobactera, VIRI: Viridiplantae',
+    helpText: 'The taxonomic category of the organism. ALVE: Alveolata, AMOE: Amoeba, ARCH: Archaea, EUGL: Euglenozoa, FUNG: Fungi, META: Metazoa, OBAC: Other Bacteria, OEUK: Other Eukaryota, PROT: Proteobacteria, VIRI: Viridiplantae',
     sortable: true
   },
   three_letter_abbrev: {
@@ -93,6 +94,12 @@ export const RELEASE_SUMMARY_COLUMNS: DataTableColumns<
     helpText: 'The URL of the site from which the organism proteome was obtained.',
     sortable: true
   },
+  most_recent: {
+    key: 'most_recent',
+    name: 'Most recent version',
+    sortable: true,
+    helpText: 'Type most_recent in the search box to show only the most recent version.',
+  },
   resource_version: {
     key: 'resource_version',
     name: 'Proteome version',
@@ -124,6 +131,7 @@ export const RELEASE_SUMMARY_COLUMN_ORDER = [
   'resource_name',
   'resource_url',
   'resource_version',
+  'most_recent',
   'sequences',
   'clustered_sequences',
   'groups'
