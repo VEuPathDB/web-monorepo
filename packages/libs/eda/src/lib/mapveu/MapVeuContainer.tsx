@@ -10,7 +10,7 @@ import {
 import { SessionList } from './MapVeuSessionList';
 import { MapVeuSession } from './MapVeuSession';
 import { mockSessionStore } from './Mocks';
-import { DataClient } from '../core/api/data-service';
+import { DataClient } from '../core/api/data-api';
 import { StudyList } from './StudyList';
 
 const edaClient = new (class extends SubsettingClient {

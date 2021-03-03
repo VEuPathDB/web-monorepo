@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { EDASessionListContainer } from '../core';
 import { SubsettingClient } from '../core/api/subsetting-api';
-import { DataClient } from '../core/api/data-service';
+import { DataClient } from '../core/api/data-api';
 import { mockSessionStore } from './Mocks';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { SessionList } from './SessionList';

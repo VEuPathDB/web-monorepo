@@ -1,5 +1,5 @@
 import { SubsettingClient } from '../api/subsetting-api';
-import { DataClient } from '../api/data-service';
+import { DataClient } from '../api/data-api';
 import { SessionClient } from '../api/session-api';
 import { WorkspaceContext } from '../context/WorkspaceContext';
 import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
