@@ -41,3 +41,11 @@ export const StartsEmpty = Template.bind({});
 StartsEmpty.args = {
   label: 'Starts Empty',
 };
+
+export const NotSoWide = Template.bind({});
+NotSoWide.args = {
+  label: 'Not so wide',
+  containerStyles: {
+    width: 100,
+  },
+};
