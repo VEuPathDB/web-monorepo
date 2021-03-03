@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import { Typography } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
+import { Typography, OutlinedInput } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 
 export type NumericInputProps = {
@@ -23,6 +23,13 @@ export default function NumericInput({
 }: NumericInputProps) {
   const [focused, setFocused] = useState(false);
 
+  const useStyles = makeStyles({
+    root: {
+      height: 30, // default height is 56 and is waaaay too tall
+    },
+  });
+  const classes = useStyles();
+
   return (
     <div
       style={{ ...containerStyles }}
@@ -38,10 +45,9 @@ export default function NumericInput({
         </Typography>
       )}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <TextField
+        <OutlinedInput
+          classes={classes}
           defaultValue={value}
-          variant="outlined"
-          size="small"
           type="number"
           onChange={(event) => {
             const newValue = Number(event.target.value);
