@@ -73,13 +73,9 @@ export function useRawJobRows(blastApi: BlastApi): JobRow[] | undefined {
   }, []);
 }
 
-export function useSortedJobRows(
-  unsortedRows: JobRow[] | undefined,
-  sort: MesaSortObject
-) {
+export function useSortedJobRows(unsortedRows: JobRow[], sort: MesaSortObject) {
   return useMemo(
-    () =>
-      unsortedRows && orderBy(unsortedRows, [sort.columnKey], [sort.direction]),
+    () => orderBy(unsortedRows, [sort.columnKey], [sort.direction]),
     [unsortedRows, sort]
   );
 }

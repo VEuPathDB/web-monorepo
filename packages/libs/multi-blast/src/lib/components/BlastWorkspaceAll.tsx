@@ -34,19 +34,31 @@ interface BlastWorkspaceAllWithLoadedApiProps extends Props {
   blastApi: BlastApi;
 }
 
-function BlastWorkspaceAllWithLoadedApi({
-  blastApi,
-}: BlastWorkspaceAllWithLoadedApiProps) {
-  const allJobsColumns = useAllJobsColumns();
+function BlastWorkspaceAllWithLoadedApi(
+  props: BlastWorkspaceAllWithLoadedApiProps
+) {
+  const jobRows = useRawJobRows(props.blastApi);
 
-  const jobRows = useRawJobRows(blastApi);
+  return (
+    <div className="BlastWorkspaceAll">
+      {jobRows == null ? <Loading /> : <AllJobsTable jobRows={jobRows} />}
+    </div>
+  );
+}
+
+interface AllJobsTableProps {
+  jobRows: JobRow[];
+}
+
+export function AllJobsTable(props: AllJobsTableProps) {
+  const allJobsColumns = useAllJobsColumns();
 
   const [sort, setSort] = useState<MesaSortObject>({
     columnKey: 'created',
     direction: 'desc',
   });
 
-  const sortedRows = useSortedJobRows(jobRows, sort);
+  const sortedRows = useSortedJobRows(props.jobRows, sort);
 
   const uiState = useMesaUiState(sort);
 
@@ -56,7 +68,6 @@ function BlastWorkspaceAllWithLoadedApi({
 
   const mesaState = useMemo(
     () =>
-      sortedRows &&
       MesaState.create({
         rows: sortedRows,
         columns: allJobsColumns,
@@ -67,9 +78,5 @@ function BlastWorkspaceAllWithLoadedApi({
     [allJobsColumns, eventHandlers, options, sortedRows, uiState]
   );
 
-  return (
-    <div className="BlastWorkspaceAll">
-      {mesaState == null ? <Loading /> : <Mesa state={mesaState} />}
-    </div>
-  );
+  return <Mesa state={mesaState} />;
 }
