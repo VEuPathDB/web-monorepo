@@ -60,3 +60,28 @@ BoundedInitialized.args = {
   minValue: 0,
   maxValue: 5,
 };
+
+export const ExternallyControlled: Story = () => {
+  const [linkedValue, setLinkedValue] = useState<number | undefined>();
+
+  return (
+    <>
+      <NumericInput
+        label="Master (unbounded)"
+        onValueChange={(newValue) => {
+          console.log(`master set new value = ${newValue}`);
+          setLinkedValue(newValue);
+        }}
+      />
+      <NumericInput
+        slaveValue={linkedValue}
+        label="Slave (0 <= x <= 5)"
+        minValue={0}
+        maxValue={5}
+        onValueChange={(newValue) => {
+          console.log(`slave set new value = ${newValue}`);
+        }}
+      />
+    </>
+  );
+};

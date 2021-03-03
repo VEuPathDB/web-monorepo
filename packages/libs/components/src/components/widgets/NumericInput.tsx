@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Typography, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,7 +6,9 @@ import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 
 export type NumericInputProps = {
   /** The starting value of the widget. */
-  defaultValue: number | undefined;
+  defaultValue?: number;
+  /** Externally controlled value. */
+  slaveValue?: number;
   /** Minimum allowed value (inclusive) */
   minValue?: number;
   /** Maximum allowed value (inclusive) */
@@ -21,6 +23,7 @@ export type NumericInputProps = {
 
 export default function NumericInput({
   defaultValue,
+  slaveValue,
   minValue,
   maxValue,
   onValueChange,
@@ -41,8 +44,10 @@ export default function NumericInput({
   });
   const classes = useStyles();
 
-  const handleChange = (event: any) => {
-    let newValue = Number(event.target.value);
+  const setValueSafely = (newValue?: number) => {
+    if (newValue === undefined) {
+      return;
+    }
     if (minValue !== undefined && newValue < minValue) {
       newValue = minValue;
       setErrorState({
@@ -61,6 +66,17 @@ export default function NumericInput({
     setValue(newValue);
     onValueChange(newValue);
   };
+
+  const handleChange = (event: any) => {
+    let newValue = Number(event.target.value);
+    setValueSafely(newValue);
+  };
+
+  // watch slaveValue for changes
+  // and set our value to the same thing
+  useEffect(() => {
+    setValueSafely(slaveValue);
+  }, [slaveValue]);
 
   return (
     <div
