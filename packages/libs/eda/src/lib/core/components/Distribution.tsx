@@ -13,7 +13,6 @@ import {
 import { useDataClient } from '../hooks/workspace';
 import { Filter as EdaFilter } from '../types/filter';
 import { Filter as WdkFilter } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { HistogramResponse, BarplotResponse } from '../api/data-api';
 
 interface Props {
   studyMetadata: StudyMetadata;

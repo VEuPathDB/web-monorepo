@@ -3,49 +3,135 @@ import {
   createJsonRequest,
   FetchClient,
 } from '@veupathdb/web-common/lib/util/api';
-import { TypeOf, string, number, array, type, tuple } from 'io-ts';
+import {
+  TypeOf,
+  string,
+  number,
+  array,
+  type,
+  tuple,
+  union,
+  intersection,
+  partial,
+} from 'io-ts';
 import { Filter } from '../types/filter';
+import { Variable, StringVariableValue } from '../types/variable';
 import { ioTransformer } from './ioTransformer';
 
-// TO DO: handle other three histogram queries and their responses
-export interface HistogramRequestParams {
+type NumBinsOrNumericWidth =
+  | {
+      numBins: number;
+      binWidth?: never;
+    }
+  | {
+      numBins?: undefined;
+      binWidth: number;
+    };
+
+export interface NumericHistogramRequestParams {
   studyId: string;
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    numBins: number;
     entityId: string;
     valueSpec: 'count' | 'proportion';
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-  };
+    xAxisVariable: Variable;
+    overlayVariable?: Variable;
+    facetVariable?: Variable;
+    viewportMin?: number; // do we want some fancy both-or-none
+    viewportMax?: number; // constraint here?
+  } & NumBinsOrNumericWidth;
 }
 
-export type HistogramResponse = TypeOf<typeof HistogramResponse>;
-export const HistogramResponse = tuple([
-  array(
+type NumBinsOrDateWidth =
+  | {
+      numBins: number;
+      binWidth?: never;
+    }
+  | {
+      numBins?: undefined;
+      binWidth: string; // Dates widths are strings
+    };
+
+export interface DateHistogramRequestParams {
+  studyId: string;
+  filters: Filter[];
+  //  derivedVariables:  // TO DO
+  config: {
+    entityId: string;
+    valueSpec: 'count' | 'proportion';
+    xAxisVariable: Variable;
+    overlayVariable?: Variable;
+    facetVariable?: Variable;
+    viewportMin?: string;
+    viewportMax?: string;
+  } & NumBinsOrDateWidth;
+}
+
+const HistogramResponseData = array(
+  intersection([
     type({
       binLabel: array(string),
       binStart: array(string),
       value: array(number),
-    })
-  ),
-  type({
-    incompleteCases: array(number),
-    binSlider: type({
-      min: array(number),
-      max: array(number),
-      step: array(number),
     }),
-    numBins: array(number),
-    xVariableDetails: type({
-      variableId: array(string),
-      entityId: array(string),
+    partial({
+      overlayVariableDetails: StringVariableValue,
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
     }),
+  ])
+);
+
+const HistogramResponseBaseConfig = type({
+  incompleteCases: number,
+  binSlider: type({
+    min: number,
+    max: number,
+    step: number,
   }),
-]);
+  xVariableDetails: Variable,
+});
+
+// works for date or numeric 'num-bins' responses
+export type HistogramNumBinsResponse = TypeOf<typeof HistogramNumBinsResponse>;
+export const HistogramNumBinsResponse = type({
+  data: HistogramResponseData,
+  config: intersection([
+    HistogramResponseBaseConfig,
+    type({
+      numBins: number,
+    }),
+  ]),
+});
+
+export type NumericHistogramBinWidthResponse = TypeOf<
+  typeof NumericHistogramBinWidthResponse
+>;
+export const NumericHistogramBinWidthResponse = type({
+  data: HistogramResponseData,
+  config: intersection([
+    HistogramResponseBaseConfig,
+    type({
+      binWidth: number,
+    }),
+  ]),
+});
+
+export type DateHistogramBinWidthResponse = TypeOf<
+  typeof DateHistogramBinWidthResponse
+>;
+export const DateHistogramBinWidthResponse = type({
+  data: HistogramResponseData,
+  config: intersection([
+    HistogramResponseBaseConfig,
+    type({
+      binWidth: string,
+    }),
+  ]),
+});
 
 export interface BarplotRequestParams {
   studyId: string;
@@ -80,19 +166,60 @@ export const BarplotResponse = tuple([
 ]);
 
 export class DataClient extends FetchClient {
+  // Histogram
   getNumericHistogramNumBins(
-    params: HistogramRequestParams
-  ): Promise<HistogramResponse> {
+    params: NumericHistogramRequestParams
+  ): Promise<HistogramNumBinsResponse> {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
         path: '/analyses/numeric-histogram-num-bins',
         body: params,
-        transformResponse: ioTransformer(HistogramResponse),
+        transformResponse: ioTransformer(HistogramNumBinsResponse),
       })
     );
   }
 
+  getNumericHistogramBinWidth(
+    params: NumericHistogramRequestParams
+  ): Promise<NumericHistogramBinWidthResponse> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'POST',
+        path: '/analyses/numeric-histogram-bin-width',
+        body: params,
+        transformResponse: ioTransformer(NumericHistogramBinWidthResponse),
+      })
+    );
+  }
+
+  getDateHistogramNumBins(
+    params: DateHistogramRequestParams
+  ): Promise<HistogramNumBinsResponse> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'POST',
+        path: '/analyses/date-histogram-num-bins',
+        body: params,
+        transformResponse: ioTransformer(HistogramNumBinsResponse),
+      })
+    );
+  }
+
+  getDateHistogramBinWidth(
+    params: DateHistogramRequestParams
+  ): Promise<DateHistogramBinWidthResponse> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'POST',
+        path: '/analyses/date-histogram-bin-width',
+        body: params,
+        transformResponse: ioTransformer(DateHistogramBinWidthResponse),
+      })
+    );
+  }
+
+  // Barplot
   getBarplot(params: BarplotRequestParams): Promise<BarplotResponse> {
     return this.fetch(
       createJsonRequest({
