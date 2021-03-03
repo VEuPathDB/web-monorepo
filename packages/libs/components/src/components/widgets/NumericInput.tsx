@@ -45,9 +45,7 @@ export default function NumericInput({
   const classes = useStyles();
 
   const setValueSafely = (newValue?: number) => {
-    if (newValue === undefined) {
-      return;
-    }
+    if (newValue === undefined) return;
     if (minValue !== undefined && newValue < minValue) {
       newValue = minValue;
       setErrorState({
