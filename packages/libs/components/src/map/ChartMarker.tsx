@@ -4,6 +4,7 @@ import React from 'react';
 import L from 'leaflet';
 
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
+import Histogram from '../plots/Histogram';
 
 interface ChartMarkerProps extends BoundsDriftMarkerProps {
   borderColor?: string;
@@ -202,17 +203,58 @@ export default function ChartMarker(props: ChartMarkerProps) {
   // DKDK closing svg tag
   svgHTML += '</svg>';
 
+  const totalSize = xSize + marginX + borderWidth;
+
   //DKDK set icon
   let HistogramIcon: any = L.divIcon({
     className: 'leaflet-canvas-icon', //DKDK need to change this className but just leave it as it for now
-    iconSize: new L.Point(0, 0), //DKDKset iconSize = 0
-    iconAnchor: new L.Point(size / 2, size / 2), //DKDK location of topleft corner: this is used for centering of the icon like transform/translate in CSS
+    iconSize: new L.Point(totalSize, totalSize), //DKDKset iconSize = 0
+    iconAnchor: new L.Point(totalSize / 2, totalSize / 2), //DKDK location of topleft corner: this is used for centering of the icon like transform/translate in CSS
     html: svgHTML, //DKDK divIcon HTML svg code generated above
   });
 
   //DKDK anim check duration exists or not
   let duration: number = props.duration ? props.duration : 300;
   // let duration: number = (props.duration) ? 300 : 300
+
+  const plotSize = 200;
+  const marginSize = 5;
+  const popupSize = plotSize + 2 * marginSize;
+
+  const popupPlot = (
+    <Histogram
+      data={{
+        series: props.labels.map((label, i) => ({
+          name: label,
+          color: props.colors ? props.colors[i] : undefined,
+          bins: [
+            {
+              binStart: label,
+              binLabel: '',
+              count: props.values[i],
+            },
+          ],
+        })),
+      }}
+      orientation="vertical"
+      barLayout="group"
+      width={plotSize}
+      height={plotSize}
+      spacingOptions={{
+        marginLeft: marginSize,
+        marginRight: marginSize,
+        marginTop: marginSize,
+        marginBottom: marginSize,
+      }}
+      displayLegend={false}
+      displayLibraryControls={false}
+      interactive={false}
+      dependentAxisLabel=""
+      independentAxisLabel={`Total: ${sumValues.toString()}`}
+      yAxisRange={(props.yAxisRange as [number, number]) || undefined}
+      showBarValues={true}
+    />
+  );
 
   return (
     //DKDK anim
@@ -222,6 +264,15 @@ export default function ChartMarker(props: ChartMarkerProps) {
       bounds={props.bounds}
       icon={HistogramIcon}
       duration={duration}
+      popupContent={{
+        content: popupPlot,
+        size: {
+          height: popupSize,
+          width: popupSize,
+        },
+      }}
+      showPopup={props.showPopup}
+      popupClass="histogram-popup"
     />
   );
 }

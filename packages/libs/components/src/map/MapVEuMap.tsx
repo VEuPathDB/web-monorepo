@@ -4,7 +4,7 @@ import React, {
   ReactElement,
   cloneElement,
 } from 'react';
-import { BoundsViewport, MarkerProps, AnimationFunction } from './Types';
+import { BoundsViewport, AnimationFunction } from './Types';
 import { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 const { BaseLayer } = LayersControl;
 import { Viewport, Map, TileLayer, LayersControl } from 'react-leaflet';
@@ -62,15 +62,22 @@ export default function MapVEuMap({
   // 'bookmarkable' state of the map.
   const [state, updateState] = useState<Viewport>(viewport as Viewport);
   const [mouseMode, setMouseMode] = useState<MouseMode>('default');
+  // Whether the user is currently dragging the map
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const handleViewportChanged = (viewport: Viewport) => {
     updateState(viewport);
   };
 
-  if (mouseMode === 'magnification') {
+  // BM: Why doesn't this work when wrapped in useEffect()?
+  // useEffect(() => {
+  // Show popups if we're in magnification mouse mode and we're not dragging.
+  // Dragging messes with our popup implementation.
+  if (mouseMode === 'magnification' && !isDragging) {
     markers = markers.map((marker) =>
       cloneElement(marker, { showPopup: true })
     );
   }
+  //  }, [ markers, isDragging, mouseMode ]);
 
   return (
     <Map
@@ -81,6 +88,8 @@ export default function MapVEuMap({
       // DKDK testing worldmap issue: minZomm needs to be 2 (FHD) or 3 (4K): set to be 2
       minZoom={2}
       worldCopyJump={false}
+      ondragstart={() => setIsDragging(true)}
+      ondragend={() => setIsDragging(false)}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

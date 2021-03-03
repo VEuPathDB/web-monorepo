@@ -86,6 +86,8 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         viewport={{ center: [13, 0], zoom: 6 }}
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
+        showGrid={true}
+        showMouseToolbar={true}
         animation={defaultAnimation}
       />
       <MapVEuLegendSampleList
@@ -171,6 +173,8 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         viewport={{ center: [13, 0], zoom: 6 }}
         onViewportChanged={handleViewportChanged}
         markers={markerElements}
+        showGrid={true}
+        showMouseToolbar={true}
         animation={defaultAnimation}
       />
       <MapVEuLegendSampleList
