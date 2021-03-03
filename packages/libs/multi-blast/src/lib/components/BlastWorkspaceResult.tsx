@@ -56,10 +56,6 @@ function BlastWorkspaceResultWithLoadedApi(
 ) {
   useSetDocumentTitle(`BLAST Job ${props.jobId}`);
 
-  const history = useHistory();
-
-  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
-
   const queryResult = usePromise(() => props.blastApi.fetchQuery(props.jobId), [
     props.blastApi,
     props.jobId,
@@ -78,49 +74,6 @@ function BlastWorkspaceResultWithLoadedApi(
     [props.blastApi, jobResult.value?.status]
   );
 
-  const queryCount = useMemo(() => {
-    if (multiQueryReportResult.value == null) {
-      return undefined;
-    }
-
-    if (multiQueryReportResult.value.status === 'ok') {
-      const queryIds = multiQueryReportResult.value.value.BlastOutput2.map(
-        ({ report }) => report.results.search.query_id
-      );
-
-      return uniq(queryIds).length;
-    }
-  }, [multiQueryReportResult]);
-
-  const { targetTypeTerm, wdkRecordType } = useTargetTypeTermAndWdkRecordType(
-    multiQueryReportResult.value == null ||
-      multiQueryReportResult.value.status === 'error'
-      ? undefined
-      : multiQueryReportResult.value.value
-  );
-
-  const organismToFilenameMapsResult = useBlastCompatibleWdkService(
-    async (wdkService) =>
-      targetTypeTerm == null
-        ? undefined
-        : fetchOrganismToFilenameMaps(
-            wdkService,
-            targetTypeTerm,
-            targetMetadataByDataType
-          ),
-    [targetMetadataByDataType, targetTypeTerm]
-  );
-
-  useEffect(() => {
-    if (queryCount != null && props.selectedResult == null) {
-      const selectedResultPath = queryCount > 1 ? '/combined' : '/individual/1';
-
-      history.replace(
-        `/workspace/blast/result/${props.jobId}${selectedResultPath}`
-      );
-    }
-  }, [history, props.jobId, queryCount, props.selectedResult]);
-
   // FIXME: Handling the case where the job fails due to a 'queueing-error'
   return jobResult.value != null &&
     jobResult.value.status === 'request-error' ? (
@@ -130,31 +83,16 @@ function BlastWorkspaceResultWithLoadedApi(
   ) : multiQueryReportResult.value != null &&
     multiQueryReportResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={multiQueryReportResult.value.details} />
-  ) : props.selectedResult == null ||
-    queryCount == null ||
-    organismToFilenameMapsResult == null ||
-    queryResult.value == null ||
+  ) : queryResult.value == null ||
     jobResult.value == null ||
-    multiQueryReportResult.value == null ||
-    targetTypeTerm == null ||
-    wdkRecordType == null ? (
+    multiQueryReportResult.value == null ? (
     <LoadingBlastResult {...props} />
-  ) : props.selectedResult.type === 'combined' && queryCount === 1 ? (
-    <NotFoundController />
-  ) : props.selectedResult.type === 'individual' &&
-    (props.selectedResult.resultIndex === 0 ||
-      props.selectedResult.resultIndex > queryCount) ? (
-    <NotFoundController />
   ) : (
-    <BlastSummary
-      filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
+    <BlastResultWithLoadedReport
+      {...props}
       jobDetails={jobResult.value.job}
-      multiQueryReport={multiQueryReportResult.value.value}
       query={queryResult.value.value}
-      queryCount={queryCount}
-      selectedResult={props.selectedResult}
-      targetTypeTerm={targetTypeTerm}
-      wdkRecordType={wdkRecordType}
+      multiQueryReport={multiQueryReportResult.value.value}
     />
   );
 }
@@ -181,6 +119,72 @@ function LoadingBlastResult(props: Props) {
         </div>
       </Loading>
     </div>
+  );
+}
+
+interface BlastResultWithLoadedReportProps extends Props {
+  jobDetails: LongJobResponse;
+  multiQueryReport: MultiQueryReportJson;
+  query: string;
+}
+
+function BlastResultWithLoadedReport(props: BlastResultWithLoadedReportProps) {
+  const history = useHistory();
+
+  const targetMetadataByDataType = useContext(TargetMetadataByDataType);
+
+  const queryCount = useMemo(() => {
+    const queryIds = props.multiQueryReport.BlastOutput2.map(
+      ({ report }) => report.results.search.query_id
+    );
+
+    return uniq(queryIds).length;
+  }, [props.multiQueryReport]);
+
+  const { targetTypeTerm, wdkRecordType } = useTargetTypeTermAndWdkRecordType(
+    props.multiQueryReport
+  );
+
+  const organismToFilenameMapsResult = useBlastCompatibleWdkService(
+    async (wdkService) =>
+      fetchOrganismToFilenameMaps(
+        wdkService,
+        targetTypeTerm,
+        targetMetadataByDataType
+      ),
+    [targetMetadataByDataType, targetTypeTerm]
+  );
+
+  useEffect(() => {
+    if (queryCount != null && props.selectedResult == null) {
+      const selectedResultPath = queryCount > 1 ? '/combined' : '/individual/1';
+
+      history.replace(
+        `/workspace/blast/result/${props.jobId}${selectedResultPath}`
+      );
+    }
+  }, [history, props.jobId, queryCount, props.selectedResult]);
+
+  return props.selectedResult == null ||
+    organismToFilenameMapsResult == null ? (
+    <LoadingBlastResult {...props} />
+  ) : props.selectedResult.type === 'combined' && queryCount === 1 ? (
+    <NotFoundController />
+  ) : props.selectedResult.type === 'individual' &&
+    (props.selectedResult.resultIndex === 0 ||
+      props.selectedResult.resultIndex > queryCount) ? (
+    <NotFoundController />
+  ) : (
+    <BlastSummary
+      filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
+      jobDetails={props.jobDetails}
+      multiQueryReport={props.multiQueryReport}
+      query={props.query}
+      queryCount={queryCount}
+      selectedResult={props.selectedResult}
+      targetTypeTerm={targetTypeTerm}
+      wdkRecordType={wdkRecordType}
+    />
   );
 }
 

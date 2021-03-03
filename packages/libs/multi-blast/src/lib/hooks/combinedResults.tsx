@@ -427,18 +427,11 @@ function useMesaOptions() {
 }
 
 export function useTargetTypeTermAndWdkRecordType(
-  combinedResult: MultiQueryReportJson | undefined
+  combinedResult: MultiQueryReportJson
 ) {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   return useMemo(() => {
-    if (combinedResult == null) {
-      return {
-        targetTypeTerm: undefined,
-        wdkRecordType: undefined,
-      };
-    }
-
     const sampleDbName = combinedResult.BlastOutput2[0].report.search_target.db;
     const { targetDbName } = dbToOrgDirAndTargetDbName(sampleDbName);
 
