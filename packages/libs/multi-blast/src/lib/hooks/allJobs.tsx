@@ -58,15 +58,18 @@ export function useRawJobRows(blastApi: BlastApi): JobRow[] | undefined {
     const jobEntities = await blastApi.fetchJobEntities();
     const { projectId } = await wdkService.getConfig();
 
-    return jobEntities
-      ?.filter((jobEntity) => shouldIncludeInJobsTable(jobEntity, projectId))
-      .map((jobEntity) => ({
-        jobId: jobEntity.id,
-        description: jobEntity.description ?? null,
-        created: new Date(jobEntity.created).toLocaleDateString(),
-        expires: new Date(jobEntity.expires).toLocaleDateString(),
-        status: entityStatusToReadableStatus(jobEntity.status),
-      }));
+    // FIXME: Handle the case where the job entities cannot be fetched
+    return jobEntities == null || jobEntities.status === 'error'
+      ? undefined
+      : jobEntities.value
+          .filter((jobEntity) => shouldIncludeInJobsTable(jobEntity, projectId))
+          .map((jobEntity) => ({
+            jobId: jobEntity.id,
+            description: jobEntity.description ?? null,
+            created: new Date(jobEntity.created).toLocaleDateString(),
+            expires: new Date(jobEntity.expires).toLocaleDateString(),
+            status: entityStatusToReadableStatus(jobEntity.status),
+          }));
   }, []);
 }
 

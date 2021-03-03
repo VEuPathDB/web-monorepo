@@ -1,13 +1,15 @@
+import { flowRight, mapValues, omit, partial } from 'lodash';
+
 import { arrayOf, decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
-  BoundApiRequestsObject,
+  ApiRequestCreator,
+  ApiRequestHandler,
+  ApiRequestsObject,
   createFetchApiRequestHandler,
   createJsonRequest,
   standardTransformer,
 } from '@veupathdb/web-common/lib/util/api';
-
-import { omit } from 'lodash';
 
 import {
   ApiResult,
@@ -111,8 +113,6 @@ export const apiRequests = {
   },
 };
 
-export type BlastApi = BoundApiRequestsObject<typeof apiRequests>;
-
 // FIXME: Update createRequestHandler to accommodate responses
 // with "attachment" Content-Disposition
 export function createJobContentDownloader(user: User) {
@@ -150,7 +150,8 @@ function getAuthKey(user: User) {
   return authKey;
 }
 
-export async function handleApiRequest<T>(
+export async function apiErrorHandler<T>(
+  reportError: (error: any) => void,
   apiRequest: Promise<T>
 ): Promise<ApiResult<T, ErrorDetails>> {
   try {
@@ -169,6 +170,10 @@ export async function handleApiRequest<T>(
         error.message.replace(/^[^{]*(\{.*\})[^}]*$/, '$1')
       );
 
+      if (decodedErrorDetails.status !== 'invalid-input') {
+        reportError(error);
+      }
+
       return {
         status: 'error',
         details: decodedErrorDetails,
@@ -177,4 +182,24 @@ export async function handleApiRequest<T>(
       throw error;
     }
   }
+}
+
+export type BlastApi = BoundBlastApiRequestsObject<typeof apiRequests>;
+
+export type BoundBlastApiRequestsObject<T extends ApiRequestsObject> = {
+  [P in keyof T]: T[P] extends ApiRequestCreator<infer A, infer B>
+    ? (...args: B) => Promise<ApiResult<A, ErrorDetails>>
+    : never;
+};
+
+export function bindBlastApiRequestCreators<T extends ApiRequestsObject>(
+  requestCreators: T,
+  successHandler: ApiRequestHandler,
+  reportError: (error: any) => void
+): BoundBlastApiRequestsObject<T> {
+  const errorHandler = partial(apiErrorHandler, reportError);
+
+  return mapValues(requestCreators, (requestCreator) =>
+    flowRight(errorHandler, successHandler, requestCreator)
+  ) as BoundBlastApiRequestsObject<T>;
 }

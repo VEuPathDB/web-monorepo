@@ -19,7 +19,7 @@ import {
   LongJobResponse,
   MultiQueryReportJson,
 } from '../utils/ServiceTypes';
-import { BlastApi, handleApiRequest } from '../utils/api';
+import { BlastApi } from '../utils/api';
 import { dbToTargetName } from '../utils/combinedResults';
 import { fetchOrganismToFilenameMaps } from '../utils/organisms';
 import { reportToParamValues } from '../utils/params';
@@ -83,17 +83,20 @@ function BlastWorkspaceResultWithLoadedApi(
       return undefined;
     }
 
-    const queryIds = multiQueryReportResult.value.BlastOutput2.map(
-      ({ report }) => report.results.search.query_id
-    );
+    if (multiQueryReportResult.value.status === 'ok') {
+      const queryIds = multiQueryReportResult.value.value.BlastOutput2.map(
+        ({ report }) => report.results.search.query_id
+      );
 
-    return uniq(queryIds).length;
+      return uniq(queryIds).length;
+    }
   }, [multiQueryReportResult]);
 
   const { targetTypeTerm, wdkRecordType } = useTargetTypeTermAndWdkRecordType(
-    multiQueryReportResult.value == null
+    multiQueryReportResult.value == null ||
+      multiQueryReportResult.value.status === 'error'
       ? undefined
-      : multiQueryReportResult.value
+      : multiQueryReportResult.value.value
   );
 
   const organismToFilenameMapsResult = useBlastCompatibleWdkService(
@@ -118,9 +121,15 @@ function BlastWorkspaceResultWithLoadedApi(
     }
   }, [history, props.jobId, queryCount, props.selectedResult]);
 
+  // FIXME: Handling the case where the job fails due to a 'queueing-error'
   return jobResult.value != null &&
     jobResult.value.status === 'request-error' ? (
     <BlastRequestError errorDetails={jobResult.value.details} />
+  ) : queryResult.value != null && queryResult.value.status === 'error' ? (
+    <BlastRequestError errorDetails={queryResult.value.details} />
+  ) : multiQueryReportResult.value != null &&
+    multiQueryReportResult.value.status === 'error' ? (
+    <BlastRequestError errorDetails={multiQueryReportResult.value.details} />
   ) : props.selectedResult == null ||
     queryCount == null ||
     organismToFilenameMapsResult == null ||
@@ -140,8 +149,8 @@ function BlastWorkspaceResultWithLoadedApi(
     <BlastSummary
       filesToOrganisms={organismToFilenameMapsResult.filesToOrganisms}
       jobDetails={jobResult.value.job}
-      multiQueryReport={multiQueryReportResult.value}
-      query={queryResult.value}
+      multiQueryReport={multiQueryReportResult.value.value}
+      query={queryResult.value.value}
       queryCount={queryCount}
       selectedResult={props.selectedResult}
       targetTypeTerm={targetTypeTerm}
@@ -332,7 +341,7 @@ async function makeJobPollingPromise(
   blastApi: BlastApi,
   jobId: string
 ): Promise<JobPollingResult> {
-  const jobRequest = await handleApiRequest(blastApi.fetchJob(jobId));
+  const jobRequest = await blastApi.fetchJob(jobId);
 
   if (jobRequest.status === 'ok') {
     const job = jobRequest.value;

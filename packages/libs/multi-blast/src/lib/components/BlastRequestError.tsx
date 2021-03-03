@@ -1,6 +1,5 @@
 import {
   Error as ErrorPage,
-  Link,
   PermissionDenied,
 } from '@veupathdb/wdk-client/lib/Components';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
@@ -17,11 +16,6 @@ export function BlastRequestError({ errorDetails }: Props) {
   ) : errorDetails.status === 'unauthorized' ? (
     <PermissionDenied />
   ) : (
-    <ErrorPage>
-      <p>
-        Please try again later, and <Link to="/contact-us">contact us</Link> if
-        the problem persists.
-      </p>
-    </ErrorPage>
+    <ErrorPage />
   );
 }

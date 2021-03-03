@@ -297,7 +297,7 @@ function NewJobForm(props: NewJobFormProps) {
       const jobDescription =
         props.state.paramValues[JOB_DESCRIPTION_PARAM_NAME];
 
-      const { jobId } = await api.createJob(
+      const createJobResult = await api.createJob(
         projectId,
         targets,
         query,
@@ -305,9 +305,14 @@ function NewJobForm(props: NewJobFormProps) {
         jobDescription
       );
 
-      setSubmitting(false);
+      // FIXME: Handle the case where job creation fails
+      if (createJobResult.status === 'ok') {
+        const jobId = createJobResult.value.jobId;
 
-      history.push(`/workspace/blast/result/${jobId}`);
+        setSubmitting(false);
+
+        history.push(`/workspace/blast/result/${jobId}`);
+      }
     },
     [
       api,
