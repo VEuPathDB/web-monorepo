@@ -10,6 +10,7 @@ import {
   array,
   type,
   tuple,
+  union,
   intersection,
   partial,
 } from 'io-ts';
@@ -76,7 +77,10 @@ const HistogramResponseData = array(
     }),
     partial({
       overlayVariableDetails: StringVariableValue,
-      facetVariableDetails: StringVariableValue,
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
     }),
   ])
 );
