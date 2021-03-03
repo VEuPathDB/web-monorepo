@@ -28,7 +28,7 @@ type NumBinsOrNumericWidth =
       binWidth: number;
     };
 
-type NumericViewPortRangeOrNone =
+type NumericViewportRangeOrNone =
   | {
       viewportMin: number;
       viewportMax: number;
@@ -51,7 +51,7 @@ export interface NumericHistogramRequestParams {
     overlayVariable?: Variable;
     facetVariable?: ZeroToTwoVariables;
   } & NumBinsOrNumericWidth &
-    NumericViewPortRangeOrNone;
+    NumericViewportRangeOrNone;
 }
 
 type NumBinsOrDateWidth =
@@ -64,7 +64,7 @@ type NumBinsOrDateWidth =
       binWidth: string; // Dates widths are strings
     };
 
-type DateViewPortRangeOrNone =
+type DateViewportRangeOrNone =
   | {
       viewportMin: string;
       viewportMax: string;
@@ -85,7 +85,7 @@ export interface DateHistogramRequestParams {
     overlayVariable?: Variable;
     facetVariable?: ZeroToTwoVariables;
   } & NumBinsOrDateWidth &
-    DateViewPortRangeOrNone;
+    DateViewportRangeOrNone;
 }
 
 const HistogramResponseData = array(
