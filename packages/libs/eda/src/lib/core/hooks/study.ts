@@ -8,7 +8,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import { StudyMetadata, StudyRecordClass, StudyRecord } from '../types/study';
 import { usePromise } from './promise';
-import { SubsettingClient } from '../api/eda-api';
+import { SubsettingClient } from '../api/subsetting-api';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -20,7 +20,7 @@ interface StudyState {
 
 export const StudyContext = createContext<StudyState | undefined>(undefined);
 
-export function useWdkStudyRecord(studyId: string) {
+export function useWdkStudyRecord(datasetId: string) {
   return useWdkServiceWithRefresh(
     async (wdkService) => {
       const studyRecordClass = await wdkService.findRecordClass(
@@ -39,7 +39,7 @@ export function useWdkStudyRecord(studyId: string) {
         .toArray();
       const studyRecord = await wdkService.getRecord(
         STUDY_RECORD_CLASS_NAME,
-        [{ name: 'dataset_id', value: studyId }],
+        [{ name: 'dataset_id', value: datasetId }],
         { attributes }
       );
       return {
@@ -47,12 +47,18 @@ export function useWdkStudyRecord(studyId: string) {
         studyRecordClass,
       };
     },
-    [studyId]
+    [datasetId]
   );
 }
 
-export function useStudyMetadata(studyId: string, store: SubsettingClient) {
-  return usePromise(
-    useCallback(() => store.getStudyMetadata(studyId), [store, studyId])
-  );
+export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
+  return usePromise(async () => {
+    const studies = await store.getStudies();
+    const study = studies.find((s) => s.datasetId === datasetId);
+    if (study == null)
+      throw new Error(
+        'Could not find study with associated dataset id `' + datasetId + '`.'
+      );
+    return store.getStudyMetadata(study.id);
+  }, [datasetId, store]);
 }

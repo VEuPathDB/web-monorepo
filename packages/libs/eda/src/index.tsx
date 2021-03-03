@@ -15,6 +15,8 @@ import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceContainer } from './lib/workspace/WorkspaceContainer';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { StudyList } from './lib/workspace/StudyList';
+import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
 
 initialize({
   rootUrl,
@@ -42,33 +44,27 @@ initialize({
       component: (
         props: RouteComponentProps<{ studyId: string; sessionId: string }>
       ) => (
-        <EDAWorkspace {...props.match.params} edaServiceUrl="/eda-service" />
+        <EDAWorkspace
+          {...props.match.params}
+          subsettingServiceUrl="/eda-subsetting-service"
+          dataServiceUrl="/eda-data-service"
+        />
       ),
     },
     {
       path: '/eda/:studyId',
       component: (props: RouteComponentProps<{ studyId: string }>) => (
-        <EDASessionList {...props.match.params} edaServiceUrl="/eda-service" />
-      ),
-    },
-    {
-      path: '/eda-session/:studyId/:sessionId',
-      exact: false,
-      component: (
-        props: RouteComponentProps<{ studyId: string; sessionId: string }>
-      ) => (
-        <WorkspaceContainer
+        <EDASessionList
           {...props.match.params}
-          edaServiceUrl="/eda-service"
+          subsettingServiceUrl="/eda-subsetting-service"
+          dataServiceUrl="/eda-data-service"
         />
       ),
     },
     {
-      path: '/eda-session/:studyId/',
+      path: '/eda-session',
       exact: false,
-      component: (props: RouteComponentProps<{ studyId: string }>) => (
-        <EDASessionList {...props.match.params} edaServiceUrl="/eda-service" />
-      ),
+      component: WorkspaceRouter,
     },
     {
       path: '/mapveu',

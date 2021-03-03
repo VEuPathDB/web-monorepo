@@ -1,4 +1,5 @@
-import { SubsettingClient } from '../api/eda-api';
+import { SubsettingClient } from '../api/subsetting-api';
+import { DataClient } from '../api/data-api';
 import { SessionClient } from '../api/session-api';
 import { WorkspaceContext } from '../context/WorkspaceContext';
 import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
@@ -15,6 +16,9 @@ export function useStudyRecordClass(): StudyRecordClass {
 }
 export function useSubsettingClient(): SubsettingClient {
   return useNonNullableContext(WorkspaceContext).subsettingClient;
+}
+export function useDataClient(): DataClient {
+  return useNonNullableContext(WorkspaceContext).dataClient;
 }
 export function useSessionClient(): SessionClient {
   return useNonNullableContext(WorkspaceContext).sessionClient;

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
-import { EDAWorkspaceContainer, SubsettingClient } from '../core';
+import { DataClient, EDAWorkspaceContainer, SubsettingClient } from '../core';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockSessionStore } from './Mocks';
 import { SessionPanel } from './SessionPanel';
@@ -9,23 +9,19 @@ import { cx } from './Utils';
 interface Props {
   studyId: string;
   sessionId: string;
-  edaServiceUrl: string;
+  subsettingServiceUrl: string;
+  dataServiceUrl: string;
 }
 export function WorkspaceContainer(props: Props) {
   const { url } = useRouteMatch();
-  const subsettingClient: SubsettingClient = useMemo(
-    () =>
-      new (class extends SubsettingClient {
-        constructor() {
-          super({ baseUrl: props.edaServiceUrl });
-        }
-        async getStudyMetadata() {
-          return super.getStudyMetadata('GEMSCC0002-1');
-        }
-      })(),
-    [props.edaServiceUrl]
+  const subsettingClient = useMemo(
+    () => new SubsettingClient({ baseUrl: props.subsettingServiceUrl }),
+    [props.subsettingServiceUrl]
   );
-
+  const dataClient = useMemo(
+    () => new DataClient({ baseUrl: props.subsettingServiceUrl }),
+    [props.dataServiceUrl]
+  );
   const makeVariableLink = useCallback(
     (entityId: string, variableId: string) =>
       `${url}/variables/${entityId}/${variableId}`,
@@ -37,6 +33,7 @@ export function WorkspaceContainer(props: Props) {
       studyId={props.studyId}
       className={cx()}
       sessionClient={mockSessionStore}
+      dataClient={dataClient}
       subsettingClient={subsettingClient}
       makeVariableLink={makeVariableLink}
     >

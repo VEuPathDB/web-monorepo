@@ -2,7 +2,8 @@ import React from 'react';
 import { useWdkStudyRecord, useStudyMetadata } from '../hooks/study';
 import { LoadError } from '@veupathdb/wdk-client/lib/Components';
 import { SessionClient } from '../api/session-api';
-import { SubsettingClient } from '../api/eda-api';
+import { SubsettingClient } from '../api/subsetting-api';
+import { DataClient } from '../api/data-api';
 import { WorkspaceContext } from '../context/WorkspaceContext';
 
 interface Props {
@@ -11,12 +12,14 @@ interface Props {
   className?: string;
   sessionClient: SessionClient;
   subsettingClient: SubsettingClient;
+  dataClient: DataClient;
 }
 
 export function EDASessionListContainer(props: Props) {
   const {
     studyId,
     subsettingClient,
+    dataClient,
     sessionClient,
     className = 'EDAWorkspace',
     children,
@@ -33,6 +36,7 @@ export function EDASessionListContainer(props: Props) {
           studyMetadata: studyMetadata.value,
           sessionClient,
           subsettingClient,
+          dataClient,
         }}
       >
         {children}

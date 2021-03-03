@@ -1,5 +1,5 @@
 import { EDASessionListContainer, EDAWorkspaceContainer } from '../core';
-import { SubsettingClient } from '../core/api/eda-api';
+import { SubsettingClient } from '../core/api/subsetting-api';
 import React from 'react';
 import {
   Route,
@@ -10,6 +10,7 @@ import {
 import { SessionList } from './MapVeuSessionList';
 import { MapVeuSession } from './MapVeuSession';
 import { mockSessionStore } from './Mocks';
+import { DataClient } from '../core/api/data-api';
 import { StudyList } from './StudyList';
 
 const edaClient = new (class extends SubsettingClient {
@@ -19,7 +20,9 @@ const edaClient = new (class extends SubsettingClient {
     // study record.
     return super.getStudyMetadata('SCORECX01-1');
   }
-})({ baseUrl: '/eda-service' });
+})({ baseUrl: '/eda-subsetting-service' });
+
+const dataClient = new DataClient({ baseUrl: '/eda-data-service' });
 
 export function MapVeuContainer() {
   // This will get the matched path of the active parent route.
@@ -39,6 +42,7 @@ export function MapVeuContainer() {
               sessionId={props.match.params.sessionId}
               subsettingClient={edaClient}
               sessionClient={mockSessionStore}
+              dataClient={dataClient}
             >
               <MapVeuSession sessionId={props.match.params.sessionId} />
             </EDAWorkspaceContainer>
@@ -51,6 +55,7 @@ export function MapVeuContainer() {
               studyId={props.match.params.studyId}
               sessionClient={mockSessionStore}
               subsettingClient={edaClient}
+              dataClient={dataClient}
             >
               <SessionList
                 studyId={props.match.params.studyId}
