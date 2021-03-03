@@ -240,10 +240,15 @@ export default function ChartMarker(props: ChartMarkerProps) {
       barLayout="group"
       width={plotSize}
       height={plotSize}
-      margin={{ l: marginSize, r: marginSize, t: marginSize, b: marginSize }}
+      spacingOptions={{
+        marginLeft: marginSize,
+        marginRight: marginSize,
+        marginTop: marginSize,
+        marginBottom: marginSize,
+      }}
       displayLegend={false}
-      showModebar={false}
-      staticPlot={true}
+      displayLibraryControls={false}
+      interactive={false}
       dependentAxisLabel=""
       independentAxisLabel={`Total: ${sumValues.toString()}`}
       yAxisRange={(props.yAxisRange as [number, number]) || undefined}

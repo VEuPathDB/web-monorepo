@@ -4,13 +4,13 @@ import { PlotParams } from 'react-plotly.js';
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
 import { HistogramData } from '../types/plots';
-import { PlotLegendAddon } from '../types/plots/addOns';
+import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
 // Components
-import PlotlyPlot, { ModebarDefault, PlotProps } from './PlotlyPlot';
+import PlotlyPlot from './PlotlyPlot';
 
-export interface HistogramProps extends PlotProps {
+export interface HistogramProps {
   /** Data for the plot. */
   data: HistogramData;
   /** The width of the plot in pixels. */
@@ -50,6 +50,13 @@ export interface HistogramProps extends PlotProps {
   yAxisRange?: [number, number];
   /** Show value for each bar */
   showBarValues?: boolean;
+  /** Should plotting library controls be displayed? Ex. Plot.ly */
+  displayLibraryControls?: boolean;
+  /** Options for customizing plot placement. */
+  spacingOptions?: PlotSpacingAddon;
+  /** Whether the plot is interactive. If false, overrides
+   * displayLibraryControls. */
+  interactive?: boolean;
 }
 
 /** A Plot.ly based histogram component. */
@@ -67,13 +74,13 @@ export default function Histogram({
   barLayout = 'overlay',
   backgroundColor = 'transparent',
   onSelected = () => {},
-  margin,
-  staticPlot,
-  showModebar,
   yAxisRange,
   showBarValues,
   displayLegend = true,
   legendOptions,
+  displayLibraryControls = true,
+  spacingOptions,
+  interactive = true,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -127,8 +134,12 @@ export default function Histogram({
         style={{ height, width }}
         layout={{
           autosize: true,
-          margin: margin || {
-            pad: 5,
+          margin: {
+            t: spacingOptions?.marginTop,
+            r: spacingOptions?.marginRight,
+            b: spacingOptions?.marginBottom,
+            l: spacingOptions?.marginLeft,
+            pad: spacingOptions?.padding || 5,
           },
           showlegend: displayLegend,
           legend: {
@@ -185,9 +196,8 @@ export default function Histogram({
         data={plotlyFriendlyData}
         onSelected={onSelected}
         config={{
-          displayModeBar:
-            showModebar !== undefined ? showModebar : ModebarDefault,
-          staticPlot: staticPlot,
+          displayModeBar: displayLibraryControls ? 'hover' : false,
+          staticPlot: !interactive,
           displaylogo: false,
         }}
       />
