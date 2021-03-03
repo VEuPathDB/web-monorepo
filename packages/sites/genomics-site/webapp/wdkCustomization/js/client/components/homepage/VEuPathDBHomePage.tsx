@@ -349,9 +349,9 @@ const useHeaderMenuItems = (
         },
         {
           key: 'EuPaGDT',
-          display: 'EuPaGDT',
+          display: 'CRISPR Guide Design Tool',
           type: 'externalLink',
-          tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
+          tooltip: 'CRISPR GuideXpress at DRSC/TRiP Functional Genomics Resources',
           url: 'https://www.flyrnai.org/tools/fly2mosquito/web/',
           target: '_blank',
           metadata: {
@@ -360,7 +360,7 @@ const useHeaderMenuItems = (
         },
         {
           key: 'EuPaGDT',
-          display: 'EuPaGDT',
+          display: 'CRISPR Guide Design Tool',
           type: 'externalLink',
           tooltip: 'Eukaryotic Pathogen CRISPR guide RNA/DNA Design Tool',
           url: 'http://grna.ctegd.uga.edu',
