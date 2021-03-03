@@ -11,8 +11,7 @@ import {
   type,
   tuple,
   intersection,
-  union,
-  undefined,
+  partial,
 } from 'io-ts';
 import { Filter } from '../types/filter';
 import { Variable, StringVariableValue } from '../types/variable';
@@ -69,13 +68,17 @@ export interface DateHistogramRequestParams {
 }
 
 const HistogramResponseData = array(
-  type({
-    binLabel: array(string),
-    binStart: array(string),
-    value: array(number),
-    overlayVariableDetails: StringVariableValue, // these may need to be optional
-    facetVariableDetails: StringVariableValue, // (which is tricky with io-ts...?)
-  })
+  intersection([
+    type({
+      binLabel: array(string),
+      binStart: array(string),
+      value: array(number),
+    }),
+    partial({
+      overlayVariableDetails: StringVariableValue,
+      facetVariableDetails: StringVariableValue,
+    }),
+  ])
 );
 
 const HistogramResponseBaseConfig = type({
