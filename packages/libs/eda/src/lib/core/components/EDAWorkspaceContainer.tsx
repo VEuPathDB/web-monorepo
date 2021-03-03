@@ -1,7 +1,7 @@
 import ErrorStatus from '@veupathdb/wdk-client/lib/Components/PageStatus/Error';
 import React from 'react';
-import { SubsettingClient } from '../api/eda-api';
-import { DataClient } from '../api/data-service';
+import { SubsettingClient } from '../api/subsetting-api';
+import { DataClient } from '../api/data-api';
 import { SessionClient } from '../api/session-api';
 import { WorkspaceContext } from '../context/WorkspaceContext';
 import { useStudyMetadata, useWdkStudyRecord } from '../hooks/study';

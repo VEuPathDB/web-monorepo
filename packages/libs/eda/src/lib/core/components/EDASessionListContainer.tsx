@@ -2,8 +2,8 @@ import React from 'react';
 import { useWdkStudyRecord, useStudyMetadata } from '../hooks/study';
 import { LoadError } from '@veupathdb/wdk-client/lib/Components';
 import { SessionClient } from '../api/session-api';
-import { SubsettingClient } from '../api/eda-api';
-import { DataClient } from '../api/data-service';
+import { SubsettingClient } from '../api/subsetting-api';
+import { DataClient } from '../api/data-api';
 import { WorkspaceContext } from '../context/WorkspaceContext';
 
 interface Props {

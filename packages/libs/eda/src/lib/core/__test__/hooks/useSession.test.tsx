@@ -3,14 +3,14 @@ import { act, renderHook } from '@testing-library/react-hooks';
 import { useSession, Status } from '../../hooks/session';
 import { Session, NewSession } from '../../types/session';
 import { SessionClient } from '../../api/session-api';
-import { DataClient } from '../../api/data-service';
+import { DataClient } from '../../api/data-api';
 import {
   StudyMetadata,
   StudyRecord,
   StudyRecordClass,
   WorkspaceContext,
 } from '../..';
-import { SubsettingClient } from '../../api/eda-api';
+import { SubsettingClient } from '../../api/subsetting-api';
 
 const stubSession: NewSession = {
   name: 'My Session',

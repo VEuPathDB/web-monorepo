@@ -1,9 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
-import { EDAWorkspaceContainer, SubsettingClient, DataClient } from '../core';
-import { EDASession } from './EDASession';
+import { DataClient, EDAWorkspaceContainer, SubsettingClient } from '../core';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockSessionStore } from './Mocks';
+import { SessionPanel } from './SessionPanel';
 import { cx } from './Utils';
 
 interface Props {
@@ -12,23 +12,16 @@ interface Props {
   subsettingServiceUrl: string;
   dataServiceUrl: string;
 }
-export function EDAWorkspace(props: Props) {
+export function WorkspaceContainer(props: Props) {
   const { url } = useRouteMatch();
-  const subsettingClient: SubsettingClient = useMemo(
-    () =>
-      new (class extends SubsettingClient {
-        async getStudyMetadata() {
-          return super.getStudyMetadata('GEMSCC0002-1');
-        }
-      })({ baseUrl: props.subsettingServiceUrl }),
+  const subsettingClient = useMemo(
+    () => new SubsettingClient({ baseUrl: props.subsettingServiceUrl }),
     [props.subsettingServiceUrl]
   );
-
-  const dataClient: DataClient = useMemo(
-    () => new DataClient({ baseUrl: props.dataServiceUrl }),
+  const dataClient = useMemo(
+    () => new DataClient({ baseUrl: props.subsettingServiceUrl }),
     [props.dataServiceUrl]
   );
-
   const makeVariableLink = useCallback(
     (entityId: string, variableId: string) =>
       `${url}/variables/${entityId}/${variableId}`,
@@ -40,12 +33,12 @@ export function EDAWorkspace(props: Props) {
       studyId={props.studyId}
       className={cx()}
       sessionClient={mockSessionStore}
-      subsettingClient={subsettingClient}
       dataClient={dataClient}
+      subsettingClient={subsettingClient}
       makeVariableLink={makeVariableLink}
     >
       <EDAWorkspaceHeading />
-      <EDASession sessionId={props.sessionId} />
+      <SessionPanel sessionId={props.sessionId} />
     </EDAWorkspaceContainer>
   );
 }

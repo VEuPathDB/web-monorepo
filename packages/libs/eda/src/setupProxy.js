@@ -15,10 +15,10 @@ module.exports = function (app) {
     })
   );
   app.use(
-    '/eda-service',
+    '/eda-subsetting-service',
     createProxyMiddleware({
-      target: process.env.EDA_SERVICE_URL,
-      pathRewrite: { [`^/eda-service`]: '' },
+      target: process.env.EDA_SUBSETTING_SERVICE_URL,
+      pathRewrite: { [`^/eda-subsetting-service`]: '' },
       secure: false,
       changeOrigin: true,
       followRedirects: true,

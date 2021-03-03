@@ -5,7 +5,7 @@ import {
   Filter as WdkFilter,
   NumberRangeFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import { DistributionResponse } from '../api/eda-api';
+import { DistributionResponse } from '../api/subsetting-api';
 import { StudyVariable } from '../types/study';
 
 /*

@@ -1,5 +1,5 @@
 import { EDASessionListContainer, EDAWorkspaceContainer } from '../core';
-import { SubsettingClient } from '../core/api/eda-api';
+import { SubsettingClient } from '../core/api/subsetting-api';
 import React from 'react';
 import {
   Route,
@@ -10,7 +10,7 @@ import {
 import { SessionList } from './MapVeuSessionList';
 import { MapVeuSession } from './MapVeuSession';
 import { mockSessionStore } from './Mocks';
-import { DataClient } from '../core/api/data-service';
+import { DataClient } from '../core/api/data-api';
 import { StudyList } from './StudyList';
 
 const edaClient = new (class extends SubsettingClient {
@@ -20,7 +20,7 @@ const edaClient = new (class extends SubsettingClient {
     // study record.
     return super.getStudyMetadata('SCORECX01-1');
   }
-})({ baseUrl: '/eda-service' });
+})({ baseUrl: '/eda-subsetting-service' });
 
 const dataClient = new DataClient({ baseUrl: '/eda-data-service' });
 

@@ -6,13 +6,17 @@ import reportWebVitals from './reportWebVitals';
 // import { initialize } from '@veupathdb/wdk-client/lib/Core';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
-import { Redirect, RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 import { EDASessionList, EDAWorkspace } from './lib/workspace';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
+import { WorkspaceContainer } from './lib/workspace/WorkspaceContainer';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { StudyList } from './lib/workspace/StudyList';
+import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
 
 initialize({
   rootUrl,
@@ -20,7 +24,19 @@ initialize({
   wrapRoutes: (routes: any): RouteEntry[] => [
     {
       path: '/',
-      component: () => <Redirect to="/eda/DS_841a9f5259" />,
+      component: () => (
+        <div>
+          <h1>EDA Links</h1>
+          <ul>
+            <li>
+              <Link to="/eda/DS_841a9f5259">Variables interface</Link>
+            </li>
+            <li>
+              <Link to="/eda-session/DS_841a9f5259">New Layout</Link>
+            </li>
+          </ul>
+        </div>
+      ),
     },
     {
       path: '/eda/:studyId/:sessionId',
@@ -30,7 +46,7 @@ initialize({
       ) => (
         <EDAWorkspace
           {...props.match.params}
-          edaServiceUrl="/eda-service"
+          subsettingServiceUrl="/eda-subsetting-service"
           dataServiceUrl="/eda-data-service"
         />
       ),
@@ -40,10 +56,15 @@ initialize({
       component: (props: RouteComponentProps<{ studyId: string }>) => (
         <EDASessionList
           {...props.match.params}
-          edaServiceUrl="/eda-service"
+          subsettingServiceUrl="/eda-subsetting-service"
           dataServiceUrl="/eda-data-service"
         />
       ),
+    },
+    {
+      path: '/eda-session',
+      exact: false,
+      component: WorkspaceRouter,
     },
     {
       path: '/mapveu',
