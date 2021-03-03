@@ -2,7 +2,7 @@ import { get, identity, keyBy, mapValues, orderBy, spread } from 'lodash';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
 
 import { getSearchableString } from '@veupathdb/wdk-client/lib/Views/Records/RecordUtils'
-import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { isPrereleaseStudyTemp } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
 import { checkPermissions } from 'ebrc-client/StudyAccess/permission';
 
 export const STUDIES_REQUESTED = 'studies/studies-requested';
@@ -165,7 +165,7 @@ function formatStudies(projectId, questions, recordClasses, answer, user, permis
     [
       ({ disabled }) => disabled,
       ({ id }) => records.appearFirst.has(id),
-      ({ access, id }) => isPrereleaseStudy(access, id, user, permissions),
+      ({ access }) => isPrereleaseStudyTemp(access),
       ({ name }) => name
     ],
     [

@@ -7,6 +7,8 @@ import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
 import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
 import './StudyRecordHeading.scss';
+import { shouldOfferLinkToDashboard } from 'ebrc-client/StudyAccess/permission' 
+import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 const cx = makeClassNameHelper('StudyRecordHeadingSearchLinks');
 
@@ -25,6 +27,9 @@ function StudyRecordHeading({
   return (
     <React.Fragment>
       <props.DefaultComponent {...props}/>
+      {study != null && permissions != null && shouldOfferLinkToDashboard(permissions) && (
+        <div><Link className={cx('DashboardLink')} to={`/study-access/${study.id}`}>Study Dashboard</Link></div>
+      )}
       {study != null &&  showSearches && (!isPrereleaseStudy(study.access, study.id, user, permissions)) && (
         <div className={cx()}>
           <div className={cx('Label')}>Search the data</div>

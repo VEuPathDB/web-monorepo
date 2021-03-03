@@ -91,6 +91,12 @@ export function canAccessDashboard(userPermissions: UserPermissions, datasetId: 
   );
 }
 
+export function shouldOfferLinkToDashboard(userPermissions: UserPermissions) {
+  return (
+    isOwner(userPermissions) 
+  );
+}
+
 export function shouldDisplayStaffTable(userPermissions: UserPermissions) {
   return isStaff(userPermissions);
 }
