@@ -59,6 +59,7 @@ function useReportError() {
       wdkDependencies.wdkService.submitErrorIfNot500(
         error instanceof Error ? error : new Error(error)
       );
+
       dispatch(notifyUnhandledError(error));
     };
   }, [dispatch, wdkDependencies]);
