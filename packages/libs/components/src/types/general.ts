@@ -10,3 +10,8 @@ export type ErrorManagement = {
   removeError: (error: Error) => void;
   clearAllErrors: () => void;
 };
+
+export type Range = {
+  min: number;
+  max: number;
+};

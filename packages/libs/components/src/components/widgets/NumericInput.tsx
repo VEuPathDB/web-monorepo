@@ -14,7 +14,7 @@ export type NumericInputProps = {
   /** Maximum allowed value (inclusive) */
   maxValue?: number;
   /** Function to invoke when value changes. */
-  onValueChange: (newValue: number) => void;
+  onValueChange: (newValue?: number) => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Additional styles for component container. Optional. */
@@ -65,14 +65,19 @@ export default function NumericInput({
   useEffect(() => {
     // if the min or max change
     // run the controlledValue through the bounds checker
-    // to reset the error states as required
+    // to fix controlledValue or reset the error states as required
     const newValue = boundsCheckedValue(controlledValue);
     if (newValue !== undefined) onValueChange(newValue);
   }, [minValue, maxValue]);
 
   const handleChange = (event: any) => {
-    const newValue = boundsCheckedValue(Number(event.target.value));
-    if (newValue !== undefined) onValueChange(newValue);
+    if (event.target.value.length > 0) {
+      const newValue = boundsCheckedValue(Number(event.target.value));
+      if (newValue !== undefined) onValueChange(newValue);
+    } else {
+      // allows user to clear the input box
+      onValueChange(undefined);
+    }
   };
 
   return (

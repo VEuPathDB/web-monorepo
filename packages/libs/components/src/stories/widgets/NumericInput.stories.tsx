@@ -134,8 +134,10 @@ export const ControlledBounds: Story = () => {
         minValue={min}
         maxValue={max}
         onValueChange={(newValue) => {
-          setValue(newValue);
           console.log(`new value = ${newValue}`);
+          // for some reason the `newValue !== undefined` is needed because
+          // the `useState<number>(0)` has an initial value provided
+          if (newValue !== undefined) setValue(newValue);
         }}
         containerStyles={{ margin: 25 }}
       />
@@ -144,7 +146,7 @@ export const ControlledBounds: Story = () => {
         maxValue={max}
         label="Min"
         onValueChange={(newValue) => {
-          setMin(newValue);
+          if (newValue !== undefined) setMin(newValue);
         }}
         containerStyles={{ margin: 25 }}
       />
@@ -153,7 +155,7 @@ export const ControlledBounds: Story = () => {
         minValue={min}
         label="Max"
         onValueChange={(newValue) => {
-          setMax(newValue);
+          if (newValue !== undefined) setMax(newValue);
         }}
         containerStyles={{ margin: 25 }}
       />
