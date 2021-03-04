@@ -9,4 +9,5 @@ export * from './api/session-api';
 export * from './context/WorkspaceContext';
 export { EDAWorkspaceContainer } from './components/EDAWorkspaceContainer';
 export { EDASessionListContainer } from './components/EDASessionListContainer';
+export { EntityDiagram } from './components/EntityDiagram';
 export * from './components/Distribution';

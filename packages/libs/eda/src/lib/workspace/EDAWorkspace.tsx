@@ -1,6 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
-import { EDAWorkspaceContainer, SubsettingClient, DataClient } from '../core';
+import {
+  EDAWorkspaceContainer,
+  SubsettingClient,
+  DataClient,
+  EntityDiagram,
+} from '../core';
 import { EDASession } from './EDASession';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockSessionStore } from './Mocks';
@@ -45,6 +50,13 @@ export function EDAWorkspace(props: Props) {
       makeVariableLink={makeVariableLink}
     >
       <EDAWorkspaceHeading />
+      <EntityDiagram
+        studyId={props.studyId}
+        sessionId={props.sessionId}
+        subsettingClient={subsettingClient}
+        expanded={true}
+        orientation="horizontal"
+      />
       <EDASession sessionId={props.sessionId} />
     </EDAWorkspaceContainer>
   );
