@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
 
 import { Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import NumericInput from './NumericInput';
 import { Range } from '../../types/general';
 
 export type RangeInputProps = {
-  /** Default value for lower end of range. Optional. */
-  defaultLower?: number;
-  /** Default value for upper end of range. Optional. */
-  defaultUpper?: number;
+  /** Default value for lower end of range. */
+  defaultLower: number;
+  /** Default value for upper end of range. */
+  defaultUpper: number;
   /** Minimum allowed value for lower bound. Optional. */
   minLower?: number;
   /** Maximum allowed value for upper bound. Optional. */
   maxUpper?: number;
+  /** Externally controlled range. Optional but recommended. */
+  controlledRange?: Range;
   /** Function to invoke when range changes. */
   onRangeChange: (newRange: Range) => void;
   /** UI Label for the widget. Optional */
@@ -32,21 +33,36 @@ export default function RangeInput({
   defaultUpper,
   minLower,
   maxUpper,
+  controlledRange,
   onRangeChange,
   label,
   lowerLabel = 'Min',
   upperLabel = 'Max',
   containerStyles,
 }: RangeInputProps) {
-  const [lower, setLowerValue] = useState<number | undefined>(defaultLower);
-  const [upper, setUpperValue] = useState<number | undefined>(defaultUpper);
+  // lower and upper ranges for internal/uncontrolled operation
+  const [lower, setLowerValue] = useState<number>(defaultLower);
+  const [upper, setUpperValue] = useState<number>(defaultUpper);
+
   const [focused, setFocused] = useState(false);
 
+  // listen for changes to the values of the two NumericInputs
+  // and communicate outwards via onRangeChange
   useEffect(() => {
     if (lower !== undefined && upper !== undefined) {
       onRangeChange({ min: lower, max: upper });
     }
   }, [lower, upper, onRangeChange]);
+
+  // listen for changes to the controlledRange min and max (if provided)
+  // and communicate those inwards to lower and upper
+  useEffect(() => {
+    if (controlledRange !== undefined) setLowerValue(controlledRange.min);
+  }, [controlledRange?.min]);
+
+  useEffect(() => {
+    if (controlledRange !== undefined) setUpperValue(controlledRange.max);
+  }, [controlledRange?.max]);
 
   return (
     <div
@@ -69,7 +85,7 @@ export default function RangeInput({
           maxValue={upper ?? maxUpper}
           label={lowerLabel}
           onValueChange={(newValue) => {
-            setLowerValue(newValue);
+            if (newValue !== undefined) setLowerValue(newValue);
           }}
           containerStyles={{ margin: 25 }}
         />
@@ -89,7 +105,7 @@ export default function RangeInput({
           maxValue={maxUpper}
           label={upperLabel}
           onValueChange={(newValue) => {
-            setUpperValue(newValue);
+            if (newValue !== undefined) setUpperValue(newValue);
           }}
           containerStyles={{ margin: 25 }}
         />
