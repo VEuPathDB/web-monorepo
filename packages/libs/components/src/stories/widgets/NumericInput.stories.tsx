@@ -15,7 +15,7 @@ const Template: Story<NumericInputProps> = (args) => {
     <NumericInput
       {...args}
       onValueChange={(newValue) => {
-        console.log(`set new value = ${newValue}`);
+        console.log(`new value = ${newValue}`);
       }}
       containerStyles={{ ...args.containerStyles, margin: 25 }}
     />
@@ -61,26 +61,101 @@ BoundedInitialized.args = {
   maxValue: 5,
 };
 
-export const ExternallyControlled: Story = () => {
-  const [linkedValue, setLinkedValue] = useState<number | undefined>();
+const ControlledTemplate: Story<NumericInputProps> = (args) => {
+  const [value, setValue] = useState<number>();
+  return (
+    <NumericInput
+      {...args}
+      controlledValue={value}
+      onValueChange={(newValue) => {
+        console.log(`new value = ${newValue}`);
+        setValue(newValue);
+      }}
+      containerStyles={{ ...args.containerStyles, margin: 25 }}
+    />
+  );
+};
+
+export const Controlled = ControlledTemplate.bind({});
+Controlled.args = {
+  label: 'Controlled uninitialised',
+};
+
+export const ControlledInitialized = ControlledTemplate.bind({});
+ControlledInitialized.args = {
+  label: 'Controlled initialised',
+  defaultValue: 5,
+};
+
+export const ControlledBounded = ControlledTemplate.bind({});
+ControlledBounded.args = {
+  label: 'Controlled (0 <= x <= 5)',
+  minValue: 0,
+  maxValue: 5,
+};
+
+export const ControlledLinkedPair: Story = () => {
+  const [linkedValue, setLinkedValue] = useState<number>();
 
   return (
     <>
       <NumericInput
-        label="Master (unbounded)"
+        controlledValue={linkedValue}
+        label="A"
         onValueChange={(newValue) => {
-          console.log(`master set new value = ${newValue}`);
+          console.log(`A new value = ${newValue}`);
           setLinkedValue(newValue);
         }}
+        containerStyles={{ margin: 25 }}
       />
       <NumericInput
-        slaveValue={linkedValue}
-        label="Slave (0 <= x <= 5)"
-        minValue={0}
-        maxValue={5}
+        controlledValue={linkedValue}
+        label="B"
         onValueChange={(newValue) => {
-          console.log(`slave set new value = ${newValue}`);
+          console.log(`B new value = ${newValue}`);
+          setLinkedValue(newValue);
         }}
+        containerStyles={{ margin: 25 }}
+      />
+    </>
+  );
+};
+
+export const ControlledBounds: Story = () => {
+  const [value, setValue] = useState<number>(0);
+  const [min, setMin] = useState<number>(-5);
+  const [max, setMax] = useState<number>(5);
+
+  return (
+    <>
+      <NumericInput
+        controlledValue={value}
+        label={`Value (${min} <= x <= ${max})`}
+        minValue={min}
+        maxValue={max}
+        onValueChange={(newValue) => {
+          setValue(newValue);
+          console.log(`new value = ${newValue}`);
+        }}
+        containerStyles={{ margin: 25 }}
+      />
+      <NumericInput
+        controlledValue={min}
+        maxValue={max}
+        label="Min"
+        onValueChange={(newValue) => {
+          setMin(newValue);
+        }}
+        containerStyles={{ margin: 25 }}
+      />
+      <NumericInput
+        controlledValue={max}
+        minValue={min}
+        label="Max"
+        onValueChange={(newValue) => {
+          setMax(newValue);
+        }}
+        containerStyles={{ margin: 25 }}
       />
     </>
   );

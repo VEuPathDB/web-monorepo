@@ -8,7 +8,7 @@ export type NumericInputProps = {
   /** The starting value of the widget. */
   defaultValue?: number;
   /** Externally controlled value. */
-  slaveValue?: number;
+  controlledValue?: number;
   /** Minimum allowed value (inclusive) */
   minValue?: number;
   /** Maximum allowed value (inclusive) */
@@ -23,28 +23,26 @@ export type NumericInputProps = {
 
 export default function NumericInput({
   defaultValue,
-  slaveValue,
+  controlledValue,
   minValue,
   maxValue,
   onValueChange,
   label,
   containerStyles,
 }: NumericInputProps) {
-  const [value, setValue] = useState(defaultValue);
   const [focused, setFocused] = useState(false);
   const [errorState, setErrorState] = useState({
     error: false,
     helperText: '',
   });
 
-  const useStyles = makeStyles({
+  const classes = makeStyles({
     root: {
       height: 32, // default height is 56 and is waaaay too tall
     },
-  });
-  const classes = useStyles();
+  })();
 
-  const setValueSafely = (newValue?: number) => {
+  const boundsCheckedValue = (newValue?: number) => {
     if (newValue === undefined) return;
     if (minValue !== undefined && newValue < minValue) {
       newValue = minValue;
@@ -61,20 +59,21 @@ export default function NumericInput({
     } else {
       setErrorState({ error: false, helperText: '' });
     }
-    setValue(newValue);
-    onValueChange(newValue);
+    return newValue;
   };
+
+  useEffect(() => {
+    // if the min or max change
+    // run the controlledValue through the bounds checker
+    // to reset the error states as required
+    const newValue = boundsCheckedValue(controlledValue);
+    if (newValue !== undefined) onValueChange(newValue);
+  }, [minValue, maxValue]);
 
   const handleChange = (event: any) => {
-    let newValue = Number(event.target.value);
-    setValueSafely(newValue);
+    const newValue = boundsCheckedValue(Number(event.target.value));
+    if (newValue !== undefined) onValueChange(newValue);
   };
-
-  // watch slaveValue for changes
-  // and set our value to the same thing
-  useEffect(() => {
-    setValueSafely(slaveValue);
-  }, [slaveValue]);
 
   return (
     <div
@@ -93,7 +92,8 @@ export default function NumericInput({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <TextField
           InputProps={{ classes }}
-          value={value}
+          defaultValue={defaultValue}
+          value={controlledValue}
           type="number"
           variant="outlined"
           onChange={handleChange}
