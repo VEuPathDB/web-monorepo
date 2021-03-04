@@ -748,6 +748,8 @@ export const errorDetails = oneOf(
 
 export type ErrorDetails = Unpack<typeof errorDetails>;
 
-export type ApiResult<T, E> =
-  | { status: 'ok'; value: T }
-  | { status: 'error'; details: E };
+export type ApiResult<T, E> = ApiResultSuccess<T> | ApiResultError<E>;
+
+export type ApiResultSuccess<T> = { status: 'ok'; value: T };
+
+export type ApiResultError<E> = { status: 'error'; details: E };

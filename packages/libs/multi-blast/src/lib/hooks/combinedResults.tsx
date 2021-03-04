@@ -22,6 +22,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { groupBy, orderBy } from 'lodash';
 
 import { Props as CombinedResultProps } from '../components/CombinedResult';
+import { Props as ResultContainerProps } from '../components/ResultContainer';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 import {
   TargetMetadataByDataType,
@@ -49,15 +50,15 @@ import {
   orderHitsBySignificance,
 } from '../utils/combinedResults';
 
-export function useCombinedResultProps(
-  jobId: string,
-  combinedResult: MultiQueryReportJson,
-  filesToOrganisms: Record<string, string>,
-  hitTypeDisplayName: string,
-  hitTypeDisplayNamePlural: string,
-  targetTypeTerm: string,
-  wdkRecordType: string
-): CombinedResultProps {
+export function useCombinedResultProps({
+  jobId,
+  combinedResult,
+  filesToOrganisms,
+  hitTypeDisplayName,
+  hitTypeDisplayNamePlural,
+  targetTypeTerm,
+  wdkRecordType,
+}: ResultContainerProps): CombinedResultProps {
   const { hitQueryCount, hitSubjectCount, totalQueryCount } = useHitCounts(
     combinedResult
   );

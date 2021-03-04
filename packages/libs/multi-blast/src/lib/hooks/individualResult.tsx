@@ -15,12 +15,11 @@ import {
   NewStrategySpec,
 } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 
-import { SelectedResult } from '../components/BlastWorkspaceResult';
 import {
   Props as IndividualResultProps,
   IndividualQueryOption,
 } from '../components/IndividualResult';
-import { MultiQueryReportJson } from '../utils/ServiceTypes';
+import { Props as ResultContainerProps } from '../components/ResultContainer';
 import { BLAST_QUERY_SEQUENCE_PARAM_NAME } from '../utils/params';
 
 // Coarse regex which matches a single defline-free sequence,
@@ -34,16 +33,16 @@ export type AnswerSpecResultTypeConfig =
   | { status: 'not-offered' }
   | { status: 'complete'; value: AnswerSpecResultType };
 
-export function useIndividualResultProps(
-  multiQueryParamValues: ParameterValues,
-  jobId: string,
-  selectedResult: SelectedResult,
-  lastSelectedIndividualResult: number,
-  wdkRecordType: string,
-  combinedResult: MultiQueryReportJson,
-  hitTypeDisplayName: string,
-  hitTypeDisplayNamePlural: string
-): IndividualResultProps {
+export function useIndividualResultProps({
+  multiQueryParamValues,
+  jobId,
+  selectedResult,
+  lastSelectedIndividualResult,
+  wdkRecordType,
+  combinedResult,
+  hitTypeDisplayName,
+  hitTypeDisplayNamePlural,
+}: ResultContainerProps): IndividualResultProps {
   const history = useHistory();
   const wdkDependencies = useContext(WdkDepdendenciesContext);
   const wdkService = wdkDependencies?.wdkService;

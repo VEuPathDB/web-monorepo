@@ -1,4 +1,4 @@
-import { SelectedResult } from '../components/BlastWorkspaceResult';
+import { SelectedResult } from '../utils/CommonTypes';
 
 export function parseBlastResultSubpath(
   subPath: string | undefined

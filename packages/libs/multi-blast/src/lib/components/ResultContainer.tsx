@@ -2,13 +2,13 @@ import { ParameterValues } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { useCombinedResultProps } from '../hooks/combinedResults';
 import { useIndividualResultProps } from '../hooks/individualResult';
+import { SelectedResult } from '../utils/CommonTypes';
 import { MultiQueryReportJson } from '../utils/ServiceTypes';
 
-import { SelectedResult } from './BlastWorkspaceResult';
 import { CombinedResult } from './CombinedResult';
 import { IndividualResult } from './IndividualResult';
 
-interface Props {
+export interface Props {
   combinedResult: MultiQueryReportJson;
   filesToOrganisms: Record<string, string>;
   hitTypeDisplayName: string;
@@ -21,42 +21,14 @@ interface Props {
   wdkRecordType: string;
 }
 
-export function ResultContainer({
-  combinedResult,
-  filesToOrganisms,
-  hitTypeDisplayName,
-  hitTypeDisplayNamePlural,
-  jobId,
-  lastSelectedIndividualResult,
-  multiQueryParamValues,
-  selectedResult,
-  targetTypeTerm,
-  wdkRecordType,
-}: Props) {
-  const combinedResultProps = useCombinedResultProps(
-    jobId,
-    combinedResult,
-    filesToOrganisms,
-    hitTypeDisplayName,
-    hitTypeDisplayNamePlural,
-    targetTypeTerm,
-    wdkRecordType
-  );
+export function ResultContainer(props: Props) {
+  const combinedResultProps = useCombinedResultProps(props);
 
-  const individualResultProps = useIndividualResultProps(
-    multiQueryParamValues,
-    jobId,
-    selectedResult,
-    lastSelectedIndividualResult,
-    wdkRecordType,
-    combinedResult,
-    hitTypeDisplayName,
-    hitTypeDisplayNamePlural
-  );
+  const individualResultProps = useIndividualResultProps(props);
 
   return (
     <div className="ResultContainer">
-      {selectedResult.type === 'combined' ? (
+      {props.selectedResult.type === 'combined' ? (
         <CombinedResult {...combinedResultProps} />
       ) : (
         <IndividualResult {...individualResultProps} />

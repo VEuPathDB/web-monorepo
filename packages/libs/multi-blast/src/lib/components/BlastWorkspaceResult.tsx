@@ -14,7 +14,10 @@ import {
   useTargetTypeTermAndWdkRecordType,
 } from '../hooks/combinedResults';
 import { useBlastCompatibleWdkService } from '../hooks/wdkServiceIntegration';
+import { IndividualQuery, SelectedResult } from '../utils/CommonTypes';
 import {
+  ApiResultError,
+  ApiResultSuccess,
   ErrorDetails,
   LongJobResponse,
   MultiQueryReportJson,
@@ -36,10 +39,6 @@ interface Props {
   jobId: string;
   selectedResult?: SelectedResult;
 }
-
-export type SelectedResult =
-  | { type: 'combined' }
-  | { type: 'individual'; resultIndex: number };
 
 const POLLING_INTERVAL = 3000;
 
@@ -74,6 +73,66 @@ function BlastWorkspaceResultWithLoadedApi(
     [props.blastApi, jobResult.value?.status]
   );
 
+  const individualQueriesResult = usePromise(async () => {
+    const jobEntitiesResult = await props.blastApi.fetchJobEntities();
+
+    if (jobEntitiesResult.status === 'error') {
+      return jobEntitiesResult;
+    }
+
+    const jobEntities = jobEntitiesResult.value;
+
+    const unorderedSubJobIds = jobEntities.reduce(
+      (memo, { id: subJobId, parentJobs }) => {
+        const parentJobEntry = parentJobs?.find(
+          ({ id: parentId }) => parentId === props.jobId
+        );
+
+        if (parentJobEntry != null) {
+          memo.push({ id: subJobId, index: parentJobEntry.index });
+        }
+
+        return memo;
+      },
+      [] as { id: string; index: number }[]
+    );
+
+    const subJobIds = unorderedSubJobIds
+      .sort((a, b) => a.index - b.index)
+      .map(({ id }) => id);
+
+    const queryResults = await Promise.all(
+      subJobIds.map((id) =>
+        props.blastApi.fetchQuery(id).then((queryResult) =>
+          queryResult.status === 'error'
+            ? queryResult
+            : {
+                status: 'ok',
+                value: {
+                  defline: queryResult.value.replace(/[\r\n][\S\s]*$/, ''),
+                  jobId: id,
+                  query: queryResult.value,
+                },
+              }
+        )
+      )
+    );
+
+    const invalidQueryResult = queryResults.find(
+      ({ status }) => status === 'error'
+    );
+
+    return invalidQueryResult != null
+      ? (invalidQueryResult as ApiResultError<ErrorDetails>)
+      : ({
+          status: 'ok',
+          value: (queryResults as {
+            status: 'ok';
+            value: IndividualQuery;
+          }[]).map((queryResult) => queryResult.value),
+        } as ApiResultSuccess<IndividualQuery[]>);
+  }, [props.blastApi, props.jobId]);
+
   // FIXME: Handling the case where the job fails due to a 'queueing-error'
   return jobResult.value != null &&
     jobResult.value.status === 'request-error' ? (
@@ -83,13 +142,18 @@ function BlastWorkspaceResultWithLoadedApi(
   ) : multiQueryReportResult.value != null &&
     multiQueryReportResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={multiQueryReportResult.value.details} />
+  ) : individualQueriesResult.value != null &&
+    individualQueriesResult.value.status === 'error' ? (
+    <BlastRequestError errorDetails={individualQueriesResult.value.details} />
   ) : queryResult.value == null ||
     jobResult.value == null ||
-    multiQueryReportResult.value == null ? (
+    multiQueryReportResult.value == null ||
+    individualQueriesResult.value == null ? (
     <LoadingBlastResult {...props} />
   ) : (
     <BlastResultWithLoadedReport
       {...props}
+      individualQueries={individualQueriesResult.value.value}
       jobDetails={jobResult.value.job}
       query={queryResult.value.value}
       multiQueryReport={multiQueryReportResult.value.value}
@@ -123,6 +187,7 @@ function LoadingBlastResult(props: Props) {
 }
 
 interface BlastResultWithLoadedReportProps extends Props {
+  individualQueries: IndividualQuery[];
   jobDetails: LongJobResponse;
   multiQueryReport: MultiQueryReportJson;
   query: string;
