@@ -7,13 +7,13 @@ import { Range } from '../../types/general';
 
 export type RangeInputProps = {
   /** Default value for lower end of range. */
-  defaultLower: number;
+  defaultLower: string | number;
   /** Default value for upper end of range. */
-  defaultUpper: number;
+  defaultUpper: string | number;
   /** Minimum allowed value for lower bound. Optional. */
-  minLower?: number;
+  minLower?: string | number;
   /** Maximum allowed value for upper bound. Optional. */
-  maxUpper?: number;
+  maxUpper?: string | number;
   /** Externally controlled range. Optional but recommended. */
   controlledRange?: Range;
   /** Function to invoke when range changes. */
@@ -41,8 +41,8 @@ export default function RangeInput({
   containerStyles,
 }: RangeInputProps) {
   // lower and upper ranges for internal/uncontrolled operation
-  const [lower, setLowerValue] = useState<number>(defaultLower);
-  const [upper, setUpperValue] = useState<number>(defaultUpper);
+  const [lower, setLowerValue] = useState<string | number>(defaultLower);
+  const [upper, setUpperValue] = useState<string | number>(defaultUpper);
 
   const [focused, setFocused] = useState(false);
 

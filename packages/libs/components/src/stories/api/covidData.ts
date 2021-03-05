@@ -202,7 +202,7 @@ export const binDailyCovidStats = async (
       : {}),
   };
 
-  console.log(objectToReturn);
+  // console.log(objectToReturn);
 
   // @ts-ignore
   return objectToReturn;

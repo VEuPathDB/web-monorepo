@@ -12,6 +12,6 @@ export type ErrorManagement = {
 };
 
 export type Range = {
-  min: number;
-  max: number;
+  min: string | number;
+  max: string | number;
 };

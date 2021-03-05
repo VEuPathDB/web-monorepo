@@ -4,6 +4,7 @@ import { PlotParams } from 'react-plotly.js';
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
 import { HistogramData } from '../types/plots';
+import { Range } from '../types/general';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
@@ -44,8 +45,6 @@ export interface HistogramProps {
   displayLegend?: boolean;
   /** Options for customizing plot legend. */
   legendOptions?: PlotLegendAddon;
-  /** function to call upon selecting a range (in x and y axes) */
-  onSelected?: () => void;
   /** Range for the y-axis */
   yAxisRange?: [number, number];
   /** Show value for each bar */
@@ -57,8 +56,10 @@ export interface HistogramProps {
   /** Whether the plot is interactive. If false, overrides
    * displayLibraryControls. */
   interactive?: boolean;
-  /** Mouse-drag behaviour is select or zoom. If displayLibrarycontrols is true, can be overridden by user */
-  mouseMode?: 'zoom' | 'select';
+  /** A range to highlight by means of opacity */
+  selectedRange?: Range;
+  /** function to call upon selecting a range (in independent axis) */
+  onSelectedRange?: (newRange: Range) => void;
 }
 
 /** A Plot.ly based histogram component. */
@@ -75,7 +76,7 @@ export default function Histogram({
   opacity = 1,
   barLayout = 'overlay',
   backgroundColor = 'transparent',
-  onSelected = () => {},
+  onSelectedRange = () => {},
   yAxisRange,
   showBarValues,
   displayLegend = true,
@@ -83,7 +84,7 @@ export default function Histogram({
   displayLibraryControls = true,
   spacingOptions,
   interactive = true,
-  mouseMode,
+  selectedRange,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -113,7 +114,25 @@ export default function Histogram({
       data.series.map((series) => {
         const binLabels = series.bins.map((bin) => bin.binLabel);
         const binCounts = series.bins.map((bin) => bin.count);
-
+        const perBarOpacity: number[] = series.bins.map((bin) => {
+          if (
+            selectedRange &&
+            selectedRange.min !== undefined &&
+            selectedRange.max !== undefined
+          ) {
+            if (
+              bin.binStart >= selectedRange.min &&
+              bin.binStart /* TO DO - ADD BIN WIDTH HERE */ < selectedRange.max
+            ) {
+              // it's complicated due to date/string values
+              return calculatedBarOpacity;
+            } else {
+              return 0.2 * calculatedBarOpacity;
+            }
+          } else {
+            return calculatedBarOpacity;
+          }
+        });
         return {
           type: 'bar',
           x: orientation === 'vertical' ? binLabels : binCounts,
@@ -123,11 +142,31 @@ export default function Histogram({
           name: series.name,
           text: showBarValues ? binCounts.map(String) : undefined,
           textposition: showBarValues ? 'auto' : undefined,
-          ...(series.color ? { marker: { color: series.color } } : {}),
+          marker: {
+            ...(series.color ? { color: series.color } : {}),
+            opacity: perBarOpacity,
+          },
         };
       }),
-    [data, orientation, calculatedBarOpacity]
+    [data, orientation, calculatedBarOpacity, selectedRange]
   );
+
+  const handleSelectedRange = (object: any) => {
+    if (object && object.range) {
+      // range reported by Plotly is in ordinal "bar index space" e.g. four bars would be 0 to 3
+      const [ordinalMin, ordinalMax] =
+        orientation === 'vertical' ? object.range.x : object.range.y;
+      // do some rounding to get the indices of the first and last bar
+      const firstBarIndex = Math.floor(ordinalMin + 1);
+      const lastBarIndex = Math.floor(ordinalMax);
+      // convert it to actual data space using the first series of the data.
+      const min = data.series[0].bins[firstBarIndex].binStart;
+      const split = data.series[0].bins[lastBarIndex].binLabel.split(' '); // NASTY split on binLabel (BM)
+      const max = Number(split[split.length - 1]);
+      // call the callback prop
+      onSelectedRange({ min, max });
+    }
+  };
 
   return (
     <div>
@@ -136,7 +175,8 @@ export default function Histogram({
         revision={revision}
         style={{ height, width }}
         layout={{
-          dragmode: mouseMode,
+          // when we implement zooming, we will still use Plotly's select mode
+          dragmode: 'select',
           // with a histogram, we can always use 1D selection
           selectdirection: orientation === 'vertical' ? 'h' : 'v',
           autosize: true,
@@ -200,7 +240,7 @@ export default function Histogram({
           },
         }}
         data={plotlyFriendlyData}
-        onSelected={onSelected}
+        onSelected={handleSelectedRange}
         config={{
           displayModeBar: displayLibraryControls ? 'hover' : false,
           staticPlot: !interactive,

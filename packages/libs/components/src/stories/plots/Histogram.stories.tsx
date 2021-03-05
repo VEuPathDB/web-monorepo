@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
+import { Range } from '../../types/general';
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
 import {
@@ -13,20 +14,16 @@ import HistogramControls from '../../components/plotControls/HistogramControls';
 import { binDailyCovidStats } from '../api/covidData';
 import { HistogramData } from '../../types/plots';
 
-import { action } from '@storybook/addon-actions'; // BM: temp/debugging - should not depend on storybook here!
-
 export default {
   title: 'Plots/Histogram',
   component: Histogram,
 } as Meta;
 
 const defaultActions = {
-  onSelected: action('made a selection'),
+  onSelectedRange: (newRange: Range) => {
+    console.log(`made a selection of ${newRange.min} to ${newRange.max}`);
+  },
 };
-
-const Template: Story<HistogramProps> = (args) => (
-  <Histogram {...args} {...defaultActions} />
-);
 
 const TemplateWithControls: Story<
   HistogramProps & {
@@ -126,6 +123,84 @@ BackendProvidedBinWidthRangeAndStep.args = {
 BackendProvidedBinWidthRangeAndStep.loaders = [
   async () => ({
     apiData: await binDailyCovidStats(1000, undefined, false, true),
+  }),
+];
+
+const TemplateWithSelectedRangeControls: Story<
+  HistogramProps & {
+    binWidthRange?: [number, number];
+    binWidthStep?: number;
+    throwSampleErrors: boolean;
+    includeExtraDirectives: boolean;
+  }
+> = (args, { loaded: { apiData } }) => {
+  const [selectedRange, setSelectedRange] = useState<Range>();
+
+  const handleSelectedRange = (newRange: Range) => {
+    console.log(
+      `The story got a new range from ${newRange.min} to ${newRange.max}`
+    );
+    setSelectedRange(newRange);
+  };
+
+  const plotControls = usePlotControls<HistogramData>({
+    data: apiData,
+    onSelectedUnitChange: async ({ selectedUnit }) => {
+      return await binDailyCovidStats(
+        undefined,
+        selectedUnit,
+        args.throwSampleErrors,
+        args.includeExtraDirectives
+      );
+    },
+    histogram: {
+      binWidthRange: args.binWidthRange,
+      binWidthStep: args.binWidthStep,
+      onBinWidthChange: async ({ binWidth, selectedUnit }) => {
+        return await binDailyCovidStats(
+          binWidth,
+          selectedUnit,
+          args.throwSampleErrors,
+          args.includeExtraDirectives
+        );
+      },
+    },
+  });
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <Histogram
+        {...args}
+        {...plotControls}
+        {...plotControls.histogram}
+        selectedRange={selectedRange}
+        onSelectedRange={handleSelectedRange}
+      />
+      <div style={{ height: 25 }} />
+      <HistogramControls
+        label="Histogram Controls"
+        {...plotControls}
+        {...plotControls.histogram}
+        containerStyles={{
+          maxWidth: args.width - 25,
+          marginLeft: 25,
+        }}
+      />
+    </div>
+  );
+};
+
+export const RangeSelection = TemplateWithSelectedRangeControls.bind({});
+RangeSelection.args = {
+  title: 'Some Current Covid Data in U.S. States',
+  height: 400,
+  width: 1000,
+};
+
+//@ts-ignore
+RangeSelection.loaders = [
+  async () => ({
+    apiData: await binDailyCovidStats(1000),
   }),
 ];
 
