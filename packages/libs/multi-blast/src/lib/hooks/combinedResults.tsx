@@ -63,7 +63,11 @@ export function useCombinedResultProps({
     combinedResult
   );
 
-  const columns = useCombinedResultColumns(hitTypeDisplayName, targetTypeTerm);
+  const columns = useCombinedResultColumns(
+    hitTypeDisplayName,
+    targetTypeTerm,
+    jobId
+  );
   const rawRows = useRawCombinedResultRows(
     combinedResult,
     wdkRecordType,
@@ -123,7 +127,8 @@ function useHitCounts(combinedResult: MultiQueryReportJson) {
 
 function useCombinedResultColumns(
   hitTypeDisplayName: string,
-  targetTypeTerm: string
+  targetTypeTerm: string,
+  jobId: string
 ): MesaColumn<keyof CombinedResultRow>[] {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
@@ -173,6 +178,13 @@ function useCombinedResultColumns(
       {
         key: 'queryDescription',
         name: 'Query',
+        renderCell: ({ row }: { row: CombinedResultRow }) => (
+          <Link
+            to={`/workspace/blast/result/${jobId}/individual/${row.queryIndex}`}
+          >
+            {row.queryDescription}
+          </Link>
+        ),
         sortable: true,
         helpText: QUERY_HELP_TEXT,
       },
@@ -225,7 +237,7 @@ function useCombinedResultColumns(
         helpText: QUERY_COVERAGE_HELP_TEXT,
       },
     ],
-    [hitTypeDisplayName, recordLinkUrlSegment]
+    [hitTypeDisplayName, jobId, recordLinkUrlSegment]
   );
 }
 
@@ -280,7 +292,7 @@ function useRawCombinedResultRows(
   return useMemo(() => {
     const dbToOrganism = dbToOrganismFactory(filesToOrganisms);
 
-    const unrankedHits = resultsByQuery.flatMap((queryResult) =>
+    const unrankedHits = resultsByQuery.flatMap((queryResult, queryZeroIndex) =>
       queryResult.report.results.search.hits.map((hit) => {
         const bestHsp = hit.hsps[0];
 
@@ -329,6 +341,7 @@ function useRawCombinedResultRows(
           queryCoverage,
           queryDescription: queryTitle == null ? queryId : queryTitle,
           queryId,
+          queryIndex: queryZeroIndex + 1,
           queryTitle: queryTitle ?? null,
           score,
           subjectDescription,

@@ -9,6 +9,7 @@ export interface CombinedResultRow {
   queryCoverage: number;
   queryDescription: string;
   queryId: string;
+  queryIndex: number;
   queryRank: number;
   queryTitle: string | null;
   score: number;
