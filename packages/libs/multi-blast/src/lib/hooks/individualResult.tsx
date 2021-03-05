@@ -20,13 +20,8 @@ import {
   IndividualQueryOption,
 } from '../components/IndividualResult';
 import { Props as ResultContainerProps } from '../components/ResultContainer';
+import { IndividualQuery } from '../utils/CommonTypes';
 import { BLAST_QUERY_SEQUENCE_PARAM_NAME } from '../utils/params';
-
-// Coarse regex which matches a single defline-free sequence,
-// or one or more deflined sequences. The production version
-// of our client will retrieve individual sequences from the
-// multi-blast service
-const INDIVIDUAL_SEQUENCE_REGEX = /^[^>\s]+$|>.+(\n[^>\s]+)+/g;
 
 export type AnswerSpecResultTypeConfig =
   | { status: 'loading' }
@@ -35,6 +30,7 @@ export type AnswerSpecResultTypeConfig =
 
 export function useIndividualResultProps({
   multiQueryParamValues,
+  individualQueries,
   jobId,
   selectedResult,
   lastSelectedIndividualResult,
@@ -58,7 +54,7 @@ export function useIndividualResultProps({
   );
 
   const querySequence = useIndividualQuerySequence(
-    multiQueryParamValues[BLAST_QUERY_SEQUENCE_PARAM_NAME],
+    individualQueries,
     resultIndex
   );
 
@@ -108,7 +104,7 @@ export function useIndividualResultProps({
                   ...baseAnswerSpec.value.searchConfig,
                   parameters: {
                     ...baseAnswerSpec.value.searchConfig.parameters,
-                    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: querySequence,
+                    [BLAST_QUERY_SEQUENCE_PARAM_NAME]: querySequence.query,
                   },
                 },
               },
@@ -198,6 +194,7 @@ export function useIndividualResultProps({
             individualQueryOptions,
             onSelectedOptionChange,
             selectedQueryOption: individualQueryOptions[resultIndex - 1],
+            individualJobId: querySequence.jobId,
             viewId: `blast-workspace-result-individual__${jobId}__${resultIndex}`,
             ...linkOutProps,
           },
@@ -209,6 +206,7 @@ export function useIndividualResultProps({
       linkOutProps,
       onSelectedOptionChange,
       resultIndex,
+      querySequence,
     ]
   );
 }
@@ -266,11 +264,12 @@ function useBaseAnswerSpec(
   );
 }
 
-function useIndividualQuerySequence(multiQuery: string, resultIndex: number) {
-  const individualSequences = useMemo(
-    () => multiQuery.trim().match(INDIVIDUAL_SEQUENCE_REGEX) ?? [],
-    [multiQuery]
-  );
-
-  return individualSequences[resultIndex - 1] ?? multiQuery;
+function useIndividualQuerySequence(
+  individualQueries: IndividualQuery[],
+  resultIndex: number
+) {
+  return useMemo(() => individualQueries[resultIndex - 1], [
+    individualQueries,
+    resultIndex,
+  ]);
 }

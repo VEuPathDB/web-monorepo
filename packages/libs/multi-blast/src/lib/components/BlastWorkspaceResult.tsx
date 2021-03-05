@@ -109,7 +109,6 @@ function BlastWorkspaceResultWithLoadedApi(
             : {
                 status: 'ok',
                 value: {
-                  defline: queryResult.value.replace(/[\r\n][\S\s]*$/, ''),
                   jobId: id,
                   query: queryResult.value,
                 },
@@ -239,7 +238,7 @@ function BlastResultWithLoadedReport(props: BlastResultWithLoadedReportProps) {
       jobDetails={props.jobDetails}
       multiQueryReport={props.multiQueryReport}
       query={props.query}
-      queryCount={queryCount}
+      individualQueries={props.individualQueries}
       selectedResult={props.selectedResult}
       targetTypeTerm={targetTypeTerm}
       wdkRecordType={wdkRecordType}
@@ -252,7 +251,7 @@ interface BlastSummaryProps {
   jobDetails: LongJobResponse;
   multiQueryReport: MultiQueryReportJson;
   query: string;
-  queryCount: number;
+  individualQueries: IndividualQuery[];
   selectedResult: SelectedResult;
   targetTypeTerm: string;
   wdkRecordType: string;
@@ -263,11 +262,13 @@ function BlastSummary({
   jobDetails,
   multiQueryReport,
   query,
-  queryCount,
+  individualQueries,
   selectedResult,
   targetTypeTerm,
   wdkRecordType,
 }: BlastSummaryProps) {
+  const queryCount = individualQueries.length;
+
   const databases = useMemo(() => {
     const databasesEntries = multiQueryReport.BlastOutput2.flatMap(
       ({ report }) => report.search_target.db.split(' ').map(dbToTargetName)
@@ -380,6 +381,7 @@ function BlastSummary({
         jobId={jobDetails.id}
         lastSelectedIndividualResult={lastSelectedIndividualResult}
         multiQueryParamValues={multiQueryParamValues}
+        individualQueries={individualQueries}
         selectedResult={selectedResult}
         targetTypeTerm={targetTypeTerm}
         wdkRecordType={wdkRecordType}

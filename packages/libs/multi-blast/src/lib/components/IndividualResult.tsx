@@ -5,6 +5,7 @@ import { ActionMeta, ValueType } from 'react-select/src/types';
 import { ResultPanelController } from '@veupathdb/wdk-client/lib/Controllers';
 import { AnswerSpecResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 
+import { ReportSelect } from './ReportSelect';
 import { StrategyLinkOut } from './StrategyLinkOut';
 
 import './IndividualResult.scss';
@@ -24,6 +25,7 @@ export type Props =
         actionMeta: ActionMeta<IndividualQueryOption>
       ) => void;
       selectedQueryOption: IndividualQueryOption;
+      individualJobId: string;
       viewId: string;
     };
 
@@ -52,6 +54,7 @@ export function IndividualResult(props: Props) {
                   onChange={props.onSelectedOptionChange}
                 />
               )}
+              <ReportSelect jobId={props.individualJobId} />
               <StrategyLinkOut
                 onClick={props.onLinkOutClick}
                 tooltipContent={props.linkOutTooltipContent}
