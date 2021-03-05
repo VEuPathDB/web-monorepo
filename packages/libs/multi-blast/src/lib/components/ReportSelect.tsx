@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Select, { ActionMeta, ValueType } from 'react-select';
-import { useDownloadReportCallback } from '../hooks/api';
 
+import { useDownloadReportCallback } from '../hooks/api';
 import { IoBlastFormat } from '../utils/ServiceTypes';
 
 import './ReportSelect.scss';
