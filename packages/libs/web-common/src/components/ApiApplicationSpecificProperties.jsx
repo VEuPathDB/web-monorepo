@@ -49,9 +49,9 @@ function ApiApplicationSpecificProperties(props) {
         global: Object.assign({}, props.user.preferences.global),
         project: Object.assign({}, props.user.preferences.project)
     });
-    // delete all existing email prefs
+    // set all existing email prefs to "off"
     Object.keys(newPrefs.global).forEach(function(key) {
-      if (key.startsWith('preference_global_email_')) delete newPrefs.global[key];
+      if (key.startsWith('preference_global_email_')) newPrefs.global[key] = "off";
     });
     // add back any remaining email prefs in new value
     newEmailPrefArray.forEach(function(key) {
@@ -61,7 +61,7 @@ function ApiApplicationSpecificProperties(props) {
   }
 
   let emailPrefValue = toNamedArray(props.user.preferences.global)
-    .filter(property => property.name.startsWith('preference_global_email_'))
+    .filter(property => property.name.startsWith('preference_global_email_') && property.value === "on")
     .map(property => property.name);
 
   let emailPrefData = ( projectId == "ClinEpiDB"
