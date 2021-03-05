@@ -57,6 +57,8 @@ export interface HistogramProps {
   /** Whether the plot is interactive. If false, overrides
    * displayLibraryControls. */
   interactive?: boolean;
+  /** Mouse-drag behaviour is select or zoom. If displayLibrarycontrols is true, can be overridden by user */
+  mouseMode?: 'zoom' | 'select';
 }
 
 /** A Plot.ly based histogram component. */
@@ -81,6 +83,7 @@ export default function Histogram({
   displayLibraryControls = true,
   spacingOptions,
   interactive = true,
+  mouseMode,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -133,6 +136,9 @@ export default function Histogram({
         revision={revision}
         style={{ height, width }}
         layout={{
+          dragmode: mouseMode,
+          // with a histogram, we can always use 1D selection
+          selectdirection: orientation === 'vertical' ? 'h' : 'v',
           autosize: true,
           margin: {
             t: spacingOptions?.marginTop,
@@ -199,6 +205,7 @@ export default function Histogram({
           displayModeBar: displayLibraryControls ? 'hover' : false,
           staticPlot: !interactive,
           displaylogo: false,
+          showTips: true, // shows 'double click to zoom out' help for new users
         }}
       />
     </div>
