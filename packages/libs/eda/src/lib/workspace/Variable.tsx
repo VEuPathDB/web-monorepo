@@ -1,10 +1,10 @@
 import {
-  Distribution,
   StudyEntity,
   StudyVariable,
   SessionState,
   useStudyMetadata,
 } from '../core';
+import { FilterContainer } from '../core/components/filter/FilterContainer';
 import { cx } from './Utils';
 
 interface Props {
@@ -55,15 +55,12 @@ export function Variable(props: Props) {
           </div>
         ))}
       </div>
-      <div className="filter-param">
-        <Distribution
-          filters={sessionState.session?.filters}
-          onFiltersChange={sessionState.setFilters}
-          studyMetadata={studyMetadata}
-          entity={entity}
-          variable={variable}
-        />
-      </div>
+      <FilterContainer
+        studyMetadata={studyMetadata}
+        variable={variable}
+        entity={entity}
+        filters={sessionState.session?.filters}
+      />
     </div>
   );
 }
