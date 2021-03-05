@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { Range } from '../../types/general';
+import { NumericRange } from '../../types/general';
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
 import {
@@ -20,7 +20,7 @@ export default {
 } as Meta;
 
 const defaultActions = {
-  onSelectedRange: (newRange: Range) => {
+  onSelectedRange: (newRange: NumericRange) => {
     console.log(`made a selection of ${newRange.min} to ${newRange.max}`);
   },
 };
@@ -134,9 +134,9 @@ const TemplateWithSelectedRangeControls: Story<
     includeExtraDirectives: boolean;
   }
 > = (args, { loaded: { apiData } }) => {
-  const [selectedRange, setSelectedRange] = useState<Range>();
+  const [selectedRange, setSelectedRange] = useState<NumericRange>();
 
-  const handleSelectedRange = (newRange: Range) => {
+  const handleSelectedRange = (newRange: NumericRange) => {
     console.log(
       `The story got a new range from ${newRange.min} to ${newRange.max}`
     );

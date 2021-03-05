@@ -3,21 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import NumericInput from './NumericInput';
-import { Range } from '../../types/general';
+import { NumericRange } from '../../types/general';
 
-export type RangeInputProps = {
+export type NumericRangeInputProps = {
   /** Default value for lower end of range. */
-  defaultLower: string | number;
+  defaultLower: number;
   /** Default value for upper end of range. */
-  defaultUpper: string | number;
+  defaultUpper: number;
   /** Minimum allowed value for lower bound. Optional. */
-  minLower?: string | number;
+  minLower?: number;
   /** Maximum allowed value for upper bound. Optional. */
-  maxUpper?: string | number;
+  maxUpper?: number;
   /** Externally controlled range. Optional but recommended. */
-  controlledRange?: Range;
+  controlledRange?: NumericRange;
   /** Function to invoke when range changes. */
-  onRangeChange: (newRange: Range) => void;
+  onRangeChange: (newRange: NumericRange) => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Label for lower bound widget. Optional. Default is Min */
@@ -28,7 +28,7 @@ export type RangeInputProps = {
   containerStyles?: React.CSSProperties;
 };
 
-export default function RangeInput({
+export default function NumericRangeInput({
   defaultLower,
   defaultUpper,
   minLower,
@@ -39,10 +39,10 @@ export default function RangeInput({
   lowerLabel = 'Min',
   upperLabel = 'Max',
   containerStyles,
-}: RangeInputProps) {
+}: NumericRangeInputProps) {
   // lower and upper ranges for internal/uncontrolled operation
-  const [lower, setLowerValue] = useState<string | number>(defaultLower);
-  const [upper, setUpperValue] = useState<string | number>(defaultUpper);
+  const [lower, setLowerValue] = useState<number>(defaultLower);
+  const [upper, setUpperValue] = useState<number>(defaultUpper);
 
   const [focused, setFocused] = useState(false);
 

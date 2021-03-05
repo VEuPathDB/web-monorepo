@@ -11,7 +11,13 @@ export type ErrorManagement = {
   clearAllErrors: () => void;
 };
 
-export type Range = {
-  min: string | number;
-  max: string | number;
+export type NumericRange = {
+  min: number;
+  max: number;
+};
+
+// still to be decided - maybe use Date type?
+export type DateRange = {
+  min: string;
+  max: string;
 };

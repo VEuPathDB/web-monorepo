@@ -1,19 +1,19 @@
 import React, { useState, useCallback } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { Range } from '../../types/general';
+import { NumericRange } from '../../types/general';
 
-import RangeInput, {
-  RangeInputProps,
-} from '../../components/widgets/RangeInput';
+import NumericRangeInput, {
+  NumericRangeInputProps,
+} from '../../components/widgets/NumericRangeInput';
 
 export default {
-  title: 'Widgets/Range Input',
-  component: RangeInput,
+  title: 'Widgets/Numeric Range Input',
+  component: NumericRangeInput,
 } as Meta;
 
-const Template: Story<RangeInputProps> = (args) => {
+const Template: Story<NumericRangeInputProps> = (args) => {
   return (
-    <RangeInput
+    <NumericRangeInput
       {...args}
       onRangeChange={(newRange) => {
         console.log(`new range = ${newRange.min} to ${newRange.max}`);
@@ -55,8 +55,8 @@ FullyLabelled.args = {
   upperLabel: 'Upper bound',
 };
 
-export const ControlledLinked: Story<RangeInputProps> = () => {
-  const [range, setRange] = useState<Range>();
+export const ControlledLinked: Story<NumericRangeInputProps> = () => {
+  const [range, setRange] = useState<NumericRange>();
 
   // there must be a cleverer way to do this
   // avoiding the cut and paste
@@ -76,7 +76,7 @@ export const ControlledLinked: Story<RangeInputProps> = () => {
     [setRange]
   );
 
-  const SharedRangeInputArgs = {
+  const SharedNumericRangeInputArgs = {
     defaultLower: 1,
     defaultUpper: 9,
     minLower: 0,
@@ -87,15 +87,15 @@ export const ControlledLinked: Story<RangeInputProps> = () => {
 
   return (
     <>
-      <RangeInput
+      <NumericRangeInput
         label="A"
         onRangeChange={handleChangeA}
-        {...SharedRangeInputArgs}
+        {...SharedNumericRangeInputArgs}
       />
-      <RangeInput
+      <NumericRangeInput
         label="B"
         onRangeChange={handleChangeB}
-        {...SharedRangeInputArgs}
+        {...SharedNumericRangeInputArgs}
       />
     </>
   );

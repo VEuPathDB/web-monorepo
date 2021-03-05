@@ -4,7 +4,7 @@ import { PlotParams } from 'react-plotly.js';
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
 import { HistogramData } from '../types/plots';
-import { Range } from '../types/general';
+import { NumericRange } from '../types/general';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
@@ -57,9 +57,9 @@ export interface HistogramProps {
    * displayLibraryControls. */
   interactive?: boolean;
   /** A range to highlight by means of opacity */
-  selectedRange?: Range;
+  selectedRange?: NumericRange;
   /** function to call upon selecting a range (in independent axis) */
-  onSelectedRange?: (newRange: Range) => void;
+  onSelectedRange?: (newRange: NumericRange) => void;
 }
 
 /** A Plot.ly based histogram component. */
@@ -76,7 +76,6 @@ export default function Histogram({
   opacity = 1,
   barLayout = 'overlay',
   backgroundColor = 'transparent',
-  onSelectedRange = () => {},
   yAxisRange,
   showBarValues,
   displayLegend = true,
@@ -85,6 +84,7 @@ export default function Histogram({
   spacingOptions,
   interactive = true,
   selectedRange,
+  onSelectedRange = () => {},
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -160,7 +160,7 @@ export default function Histogram({
       const firstBarIndex = Math.floor(ordinalMin + 1);
       const lastBarIndex = Math.floor(ordinalMax);
       // convert it to actual data space using the first series of the data.
-      const min = data.series[0].bins[firstBarIndex].binStart;
+      const min = Number(data.series[0].bins[firstBarIndex].binStart);
       const split = data.series[0].bins[lastBarIndex].binLabel.split(' '); // NASTY split on binLabel (BM)
       const max = Number(split[split.length - 1]);
       // call the callback prop
