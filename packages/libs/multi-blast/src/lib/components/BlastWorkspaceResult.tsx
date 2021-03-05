@@ -198,13 +198,7 @@ function BlastResultWithLoadedReport(props: BlastResultWithLoadedReportProps) {
 
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
-  const queryCount = useMemo(() => {
-    const queryIds = props.multiQueryReport.BlastOutput2.map(
-      ({ report }) => report.results.search.query_id
-    );
-
-    return uniq(queryIds).length;
-  }, [props.multiQueryReport]);
+  const queryCount = props.individualQueries.length;
 
   const { targetTypeTerm, wdkRecordType } = useTargetTypeTermAndWdkRecordType(
     props.multiQueryReport
