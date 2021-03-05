@@ -159,9 +159,18 @@ export default function Histogram({
       // do some rounding to get the indices of the first and last bar
       const firstBarIndex = Math.floor(ordinalMin + 1);
       const lastBarIndex = Math.floor(ordinalMax);
-      // convert it to actual data space using the first series of the data.
-      const min = Number(data.series[0].bins[firstBarIndex].binStart);
-      const split = data.series[0].bins[lastBarIndex].binLabel.split(' '); // NASTY split on binLabel (BM)
+      // convert it to actual data space using the longest series of the data.
+      // TO DO: can use data.series[0] because all series are guaranteed to have the same bins...
+      // (but Storybook test api data does not)
+      const seriesLengths = data.series.map((series) => series.bins.length);
+      const longestSeriesLength = seriesLengths.sort((a: number, b: number) =>
+        Math.sign(b - a)
+      )[0];
+      const longestSeries = data.series.filter(
+        (series) => series.bins.length == longestSeriesLength
+      );
+      const min = Number(longestSeries[0].bins[firstBarIndex].binStart);
+      const split = longestSeries[0].bins[lastBarIndex].binLabel.split(' '); // NASTY split on binLabel (BM)
       const max = Number(split[split.length - 1]);
       // call the callback prop
       onSelectedRange({ min, max });
