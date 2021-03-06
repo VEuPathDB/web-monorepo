@@ -136,7 +136,7 @@ const TemplateWithSelectedRangeControls: Story<
 > = (args, { loaded: { apiData } }) => {
   const [selectedRange, setSelectedRange] = useState<NumericRange>();
 
-  const handleSelectedRange = (newRange: NumericRange) => {
+  const handleSelectedRangeChange = (newRange: NumericRange) => {
     console.log(
       `The story got a new range from ${newRange.min} to ${newRange.max}`
     );
@@ -174,7 +174,7 @@ const TemplateWithSelectedRangeControls: Story<
         {...plotControls}
         {...plotControls.histogram}
         selectedRange={selectedRange}
-        onSelectedRangeChange={handleSelectedRange}
+        onSelectedRangeChange={handleSelectedRangeChange}
       />
       <div style={{ height: 25 }} />
       <HistogramControls
