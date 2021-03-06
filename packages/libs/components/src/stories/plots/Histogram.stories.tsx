@@ -20,7 +20,7 @@ export default {
 } as Meta;
 
 const defaultActions = {
-  onSelectedRange: (newRange: NumericRange) => {
+  onSelectedRangeChange: (newRange: NumericRange) => {
     console.log(`made a selection of ${newRange.min} to ${newRange.max}`);
   },
 };
@@ -174,7 +174,7 @@ const TemplateWithSelectedRangeControls: Story<
         {...plotControls}
         {...plotControls.histogram}
         selectedRange={selectedRange}
-        onSelectedRange={handleSelectedRange}
+        onSelectedRangeChange={handleSelectedRange}
       />
       <div style={{ height: 25 }} />
       <HistogramControls

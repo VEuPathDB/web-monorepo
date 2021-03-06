@@ -59,7 +59,7 @@ export interface HistogramProps {
   /** A range to highlight by means of opacity */
   selectedRange?: NumericRange; // TO DO: handle DateRange too
   /** function to call upon selecting a range (in independent axis) */
-  onSelectedRange?: (newRange: NumericRange) => void;
+  onSelectedRangeChange?: (newRange: NumericRange) => void;
 }
 
 /** A Plot.ly based histogram component. */
@@ -84,7 +84,7 @@ export default function Histogram({
   spacingOptions,
   interactive = true,
   selectedRange,
-  onSelectedRange = () => {},
+  onSelectedRangeChange = () => {},
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -173,7 +173,7 @@ export default function Histogram({
       const split = longestSeries[0].bins[lastBarIndex].binLabel.split(' '); // NASTY split on binLabel (BM)
       const max = Number(split[split.length - 1]);
       // call the callback prop
-      onSelectedRange({ min, max });
+      onSelectedRangeChange({ min, max });
     }
   };
 
