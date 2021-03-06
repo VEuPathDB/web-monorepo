@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { NumericRange } from '../../types/general';
 
@@ -134,14 +134,17 @@ const TemplateWithSelectedRangeControls: Story<
     includeExtraDirectives: boolean;
   }
 > = (args, { loaded: { apiData } }) => {
+  // THIS STATE MANAGEMENT NOT USED AT THE MOMENT
   const [selectedRange, setSelectedRange] = useState<NumericRange>();
-
-  const handleSelectedRangeChange = (newRange: NumericRange) => {
-    console.log(
-      `The story got a new range from ${newRange.min} to ${newRange.max}`
-    );
-    setSelectedRange(newRange);
-  };
+  const handleSelectedRangeChange = useCallback(
+    (newRange: NumericRange) => {
+      console.log(
+        `The story got a new range from ${newRange.min} to ${newRange.max}`
+      );
+      setSelectedRange(newRange);
+    },
+    [setSelectedRange]
+  );
 
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
@@ -164,18 +167,14 @@ const TemplateWithSelectedRangeControls: Story<
           args.includeExtraDirectives
         );
       },
+      //      selectedRange,
+      //      onSelectedRangeChange: handleSelectedRangeChange,
     },
   });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Histogram
-        {...args}
-        {...plotControls}
-        {...plotControls.histogram}
-        selectedRange={selectedRange}
-        onSelectedRangeChange={handleSelectedRangeChange}
-      />
+      <Histogram {...args} {...plotControls} {...plotControls.histogram} />
       <div style={{ height: 25 }} />
       <HistogramControls
         label="Histogram Controls"

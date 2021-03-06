@@ -11,6 +11,7 @@ import {
   BarLayoutOptions,
   OrientationOptions,
 } from '../types/plots';
+import { NumericRange } from '../types/general';
 
 /** Action definitions for the reducer function inside of the hook. */
 type ActionType<DataShape> =
@@ -27,7 +28,8 @@ type ActionType<DataShape> =
   | { type: 'resetOpacity' }
   | { type: 'toggleOrientation' }
   | { type: 'toggleDisplayLegend' }
-  | { type: 'toggleLibraryControls' };
+  | { type: 'toggleLibraryControls' }
+  | { type: 'histogram/setSelectedRange'; payload: NumericRange };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -102,6 +104,14 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
         orientation:
           state.orientation === 'vertical' ? 'horizontal' : 'vertical',
       };
+    case 'histogram/setSelectedRange':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          selectedRange: action.payload,
+        },
+      };
     default:
       throw new Error();
   }
@@ -151,6 +161,7 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     binWidthRange: [number, number];
     /** Increment for increasing/decrease bin width. */
     binWidthStep: number;
+    selectedRange?: NumericRange;
   };
 };
 
@@ -171,6 +182,8 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
       binWidth: number;
       selectedUnit?: string;
     }) => Promise<DataShape>;
+    selectedRange?: NumericRange;
+    onSelectedRangeChange?: (newRange: NumericRange) => void;
   };
 };
 
@@ -199,6 +212,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       binWidth: 0,
       binWidthRange: [0, 0],
       binWidthStep: 0,
+      selectedRange: { min: 0, max: 0 },
     },
   };
 
@@ -260,6 +274,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       binWidthRange,
       binWidthStep,
     };
+
+    if (params.histogram?.selectedRange)
+      initialState.histogram.selectedRange = params.histogram.selectedRange;
   }
 
   const [reducerState, dispatch] = useReducer<
@@ -355,6 +372,13 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     }
   };
 
+  const onSelectedRangeChange = (newRange: NumericRange) => {
+    if (params.histogram) {
+      //      if (params.histogram.onSelectedRangeChange) params.histogram.onSelectedRangeChange(newRange);
+      dispatch({ type: 'histogram/setSelectedRange', payload: newRange });
+    }
+  };
+
   /**
    * Separate errors attribute from the rest of the reducer state.
    * This is so we can control the shape of the object returned
@@ -375,7 +399,11 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
         dispatch({ type: 'errors/remove', payload: error }),
       clearAllErrors: () => dispatch({ type: 'errors/clear' }),
     },
-    histogram: { ...reducerState.histogram, onBinWidthChange },
+    histogram: {
+      ...reducerState.histogram,
+      onBinWidthChange,
+      onSelectedRangeChange,
+    },
     resetOpacity,
     onBarLayoutChange,
     onSelectedUnitChange,

@@ -17,7 +17,7 @@ export type NumericRangeInputProps = {
   /** Externally controlled range. Optional but recommended. */
   controlledRange?: NumericRange;
   /** Function to invoke when range changes. */
-  onRangeChange: (newRange: NumericRange) => void;
+  onRangeChange?: (newRange: NumericRange) => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Label for lower bound widget. Optional. Default is Min */
@@ -49,10 +49,10 @@ export default function NumericRangeInput({
   // listen for changes to the values of the two NumericInputs
   // and communicate outwards via onRangeChange
   useEffect(() => {
-    if (lower !== undefined && upper !== undefined) {
+    if (onRangeChange && lower !== undefined && upper !== undefined) {
       onRangeChange({ min: lower, max: upper });
     }
-  }, [lower, upper, onRangeChange]);
+  }, [lower, upper]);
 
   // listen for changes to the controlledRange min and max (if provided)
   // and communicate those inwards to lower and upper

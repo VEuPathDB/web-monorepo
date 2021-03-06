@@ -3,7 +3,7 @@ import useDimensions from 'react-cool-dimensions';
 
 // Definitions
 import { LIGHT_BLUE, LIGHT_GRAY } from '../../constants/colors';
-import { ErrorManagement } from '../../types/general';
+import { ErrorManagement, NumericRange } from '../../types/general';
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
@@ -14,6 +14,7 @@ import OpacitySlider from '../widgets/OpacitySlider';
 import OrientationToggle from '../widgets/OrientationToggle';
 import SliderWidget from '../widgets/Slider';
 import Switch from '../widgets/Switch';
+import NumericRangeInput from '../widgets/NumericRangeInput';
 
 export type HistogramControlsProps = {
   /** Label for control panel. Optional. */
@@ -54,6 +55,10 @@ export type HistogramControlsProps = {
   binWidthRange: [number, number];
   /** The step to take when adjusting binWidth */
   binWidthStep: number;
+  /** A range to highlight by means of opacity */
+  selectedRange?: NumericRange; // TO DO: handle DateRange too
+  /** function to call upon selecting a range (in independent axis) */
+  onSelectedRangeChange?: (newRange: NumericRange) => void;
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
   /** Color to use as an accent in the control panel. Will accept any
@@ -89,6 +94,8 @@ export default function HistogramControls({
   availableUnits,
   selectedUnit,
   onSelectedUnitChange,
+  selectedRange,
+  onSelectedRangeChange,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -151,6 +158,15 @@ export default function HistogramControls({
             options={availableUnits}
             selectedOption={selectedUnit}
             onOptionSelected={onSelectedUnitChange}
+          />
+        ) : null}
+        {onSelectedRangeChange ? ( // TO DO: selectedRange is sometimes undefined
+          <NumericRangeInput
+            label="Selected Range"
+            defaultLower={0}
+            defaultUpper={99000}
+            controlledRange={selectedRange}
+            onRangeChange={onSelectedRangeChange}
           />
         ) : null}
       </div>
