@@ -57,7 +57,7 @@ export interface HistogramProps {
    * displayLibraryControls. */
   interactive?: boolean;
   /** A range to highlight by means of opacity */
-  selectedRange?: NumericRange;
+  selectedRange?: NumericRange; // TO DO: handle DateRange too
   /** function to call upon selecting a range (in independent axis) */
   onSelectedRange?: (newRange: NumericRange) => void;
 }
@@ -154,12 +154,12 @@ export default function Histogram({
   const handleSelectedRange = (object: any) => {
     if (object && object.range) {
       // range reported by Plotly is in ordinal "bar index space" e.g. four bars would be 0 to 3
+      // so we need to convert it to actual data space using the longest series of the data.
       const [ordinalMin, ordinalMax] =
         orientation === 'vertical' ? object.range.x : object.range.y;
       // do some rounding to get the indices of the first and last bar
       const firstBarIndex = Math.floor(ordinalMin + 1);
       const lastBarIndex = Math.floor(ordinalMax);
-      // convert it to actual data space using the longest series of the data.
       // TO DO: can use data.series[0] because all series are guaranteed to have the same bins...
       // (but Storybook test api data does not)
       const seriesLengths = data.series.map((series) => series.bins.length);
