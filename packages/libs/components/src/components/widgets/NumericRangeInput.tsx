@@ -6,14 +6,10 @@ import NumericInput from './NumericInput';
 import { NumericRange } from '../../types/general';
 
 export type NumericRangeInputProps = {
-  /** Default value for lower end of range. */
-  defaultLower: number;
-  /** Default value for upper end of range. */
-  defaultUpper: number;
-  /** Minimum allowed value for lower bound. Optional. */
-  minLower?: number;
-  /** Maximum allowed value for upper bound. Optional. */
-  maxUpper?: number;
+  /** Default value for the range. */
+  defaultRange: NumericRange;
+  /** Minimum and maximum allowed values for the user-inputted range. Optional. */
+  rangeBounds?: NumericRange;
   /** Externally controlled range. Optional but recommended. */
   controlledRange?: NumericRange;
   /** Function to invoke when range changes. */
@@ -29,10 +25,8 @@ export type NumericRangeInputProps = {
 };
 
 export default function NumericRangeInput({
-  defaultLower,
-  defaultUpper,
-  minLower,
-  maxUpper,
+  defaultRange,
+  rangeBounds,
   controlledRange,
   onRangeChange,
   label,
@@ -41,8 +35,8 @@ export default function NumericRangeInput({
   containerStyles,
 }: NumericRangeInputProps) {
   // lower and upper ranges for internal/uncontrolled operation
-  const [lower, setLowerValue] = useState<number>(defaultLower);
-  const [upper, setUpperValue] = useState<number>(defaultUpper);
+  const [lower, setLowerValue] = useState<number>(defaultRange.min);
+  const [upper, setUpperValue] = useState<number>(defaultRange.max);
 
   const [focused, setFocused] = useState(false);
 
@@ -81,8 +75,8 @@ export default function NumericRangeInput({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <NumericInput
           controlledValue={lower}
-          minValue={minLower}
-          maxValue={upper ?? maxUpper}
+          minValue={rangeBounds?.min}
+          maxValue={upper ?? rangeBounds?.max}
           label={lowerLabel}
           onValueChange={(newValue) => {
             if (newValue !== undefined) setLowerValue(newValue);
@@ -101,8 +95,8 @@ export default function NumericRangeInput({
         </div>
         <NumericInput
           controlledValue={upper}
-          minValue={lower ?? minLower}
-          maxValue={maxUpper}
+          minValue={lower ?? rangeBounds?.min}
+          maxValue={rangeBounds?.max}
           label={upperLabel}
           onValueChange={(newValue) => {
             if (newValue !== undefined) setUpperValue(newValue);

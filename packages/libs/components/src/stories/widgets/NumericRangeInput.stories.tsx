@@ -25,8 +25,7 @@ const Template: Story<NumericRangeInputProps> = (args) => {
 
 export const Basic = Template.bind({});
 Basic.args = {
-  defaultLower: 1,
-  defaultUpper: 5,
+  defaultRange: { min: 1, max: 5 },
 };
 
 export const Labelled = Template.bind({});
@@ -38,19 +37,15 @@ Labelled.args = {
 export const Bounded = Template.bind({});
 Bounded.args = {
   label: 'Bounded (0 to 10)',
-  defaultLower: 1,
-  defaultUpper: 9,
-  minLower: 0,
-  maxUpper: 10,
+  defaultRange: { min: 1, max: 9 },
+  rangeBounds: { min: 0, max: 10 },
 };
 
 export const FullyLabelled = Template.bind({});
 FullyLabelled.args = {
   label: 'Select a range between 0 and 10',
-  defaultLower: 1,
-  defaultUpper: 9,
-  minLower: 0,
-  maxUpper: 10,
+  defaultRange: { min: 1, max: 9 },
+  rangeBounds: { min: 0, max: 10 },
   lowerLabel: 'Lower bound',
   upperLabel: 'Upper bound',
 };
@@ -77,10 +72,8 @@ export const ControlledLinked: Story<NumericRangeInputProps> = () => {
   );
 
   const SharedNumericRangeInputArgs = {
-    defaultLower: 1,
-    defaultUpper: 9,
-    minLower: 0,
-    maxUpper: 10,
+    defaultRange: { min: 1, max: 9 },
+    rangeBounds: { min: 0, max: 10 },
     controlledRange: range,
     containerStyles: { margin: 25 },
   };

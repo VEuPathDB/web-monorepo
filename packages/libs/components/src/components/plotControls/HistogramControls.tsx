@@ -163,8 +163,7 @@ export default function HistogramControls({
         {onSelectedRangeChange ? ( // TO DO: selectedRange is sometimes undefined
           <NumericRangeInput
             label="Selected Range"
-            defaultLower={0}
-            defaultUpper={99000}
+            defaultRange={{ min: 0, max: 99000 }}
             controlledRange={selectedRange}
             onRangeChange={onSelectedRangeChange}
           />
