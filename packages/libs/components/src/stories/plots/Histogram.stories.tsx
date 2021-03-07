@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { NumericRange } from '../../types/general';
+import { HistogramDataSeries, HistogramBin } from '../../types/plots/histogram';
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
 import {
@@ -134,17 +135,25 @@ const TemplateWithSelectedRangeControls: Story<
     includeExtraDirectives: boolean;
   }
 > = (args, { loaded: { apiData } }) => {
-  // THIS STATE MANAGEMENT NOT USED AT THE MOMENT
-  const [selectedRange, setSelectedRange] = useState<NumericRange>();
-  const handleSelectedRangeChange = useCallback(
-    (newRange: NumericRange) => {
-      console.log(
-        `The story got a new range from ${newRange.min} to ${newRange.max}`
-      );
-      setSelectedRange(newRange);
-    },
-    [setSelectedRange]
-  );
+  // watch apiData and calculate min and max of the x-variable
+  // and set it as `rangeBounds`
+  const [rangeBounds, setRangeBounds] = useState<NumericRange>();
+  useEffect(() => {
+    if (apiData !== undefined) {
+      const min = apiData.series[0].bins[0].binStart;
+      const binEnds = apiData.series.map((series: HistogramDataSeries) => {
+        return series.bins.map((bin: HistogramBin) => {
+          const parts = bin.binLabel.split(' ');
+          return Number(parts[parts.length - 1]);
+        });
+      });
+      const binEndsFlat = [].concat.apply([], binEnds);
+      const max = binEndsFlat.sort((a: number, b: number) =>
+        Math.sign(b - a)
+      )[0];
+      setRangeBounds({ min, max });
+    }
+  }, [apiData]);
 
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
@@ -167,8 +176,6 @@ const TemplateWithSelectedRangeControls: Story<
           args.includeExtraDirectives
         );
       },
-      //      selectedRange,
-      //      onSelectedRangeChange: handleSelectedRangeChange,
     },
   });
 
@@ -180,6 +187,7 @@ const TemplateWithSelectedRangeControls: Story<
         label="Histogram Controls"
         {...plotControls}
         {...plotControls.histogram}
+        selectedRangeBounds={rangeBounds}
         containerStyles={{
           maxWidth: args.width - 25,
           marginLeft: 25,

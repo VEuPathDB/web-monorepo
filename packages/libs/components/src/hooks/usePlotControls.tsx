@@ -162,7 +162,6 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     /** Increment for increasing/decrease bin width. */
     binWidthStep: number;
     selectedRange?: NumericRange;
-    //    selectedRangeBounds: NumericRange,
   };
 };
 

@@ -60,6 +60,8 @@ export type HistogramControlsProps = {
   /** function to call upon selecting a range (in independent axis) */
   onSelectedRangeChange?: (newRange: NumericRange) => void;
   /** Additional styles for controls container. Optional */
+  selectedRangeBounds?: NumericRange; // TO DO: handle DateRange too
+  /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
   /** Color to use as an accent in the control panel. Will accept any
    * valid CSS color definition. Defaults to LIGHT_BLUE */
@@ -96,6 +98,7 @@ export default function HistogramControls({
   onSelectedUnitChange,
   selectedRange,
   onSelectedRangeChange,
+  selectedRangeBounds,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -160,10 +163,11 @@ export default function HistogramControls({
             onOptionSelected={onSelectedUnitChange}
           />
         ) : null}
-        {onSelectedRangeChange ? ( // TO DO: selectedRange is sometimes undefined
+        {selectedRangeBounds ? (
           <NumericRangeInput
             label="Selected Range"
-            defaultRange={{ min: 0, max: 99000 }}
+            defaultRange={selectedRangeBounds}
+            rangeBounds={selectedRangeBounds}
             controlledRange={selectedRange}
             onRangeChange={onSelectedRangeChange}
           />
