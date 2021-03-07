@@ -55,11 +55,11 @@ export type HistogramControlsProps = {
   binWidthRange: [number, number];
   /** The step to take when adjusting binWidth */
   binWidthStep: number;
-  /** A range to highlight by means of opacity */
+  /** A range to highlight by means of opacity. Optional */
   selectedRange?: NumericRange; // TO DO: handle DateRange too
-  /** function to call upon selecting a range (in independent axis) */
+  /** function to call upon selecting a range (in independent axis). Optional */
   onSelectedRangeChange?: (newRange: NumericRange) => void;
-  /** Additional styles for controls container. Optional */
+  /** Min and max allowed values for the selected range. Optional */
   selectedRangeBounds?: NumericRange; // TO DO: handle DateRange too
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
@@ -163,15 +163,20 @@ export default function HistogramControls({
             onOptionSelected={onSelectedUnitChange}
           />
         ) : null}
-        {selectedRangeBounds ? (
-          <NumericRangeInput
-            label="Selected Range"
-            defaultRange={selectedRangeBounds}
-            rangeBounds={selectedRangeBounds}
-            controlledRange={selectedRange}
-            onRangeChange={onSelectedRangeChange}
-          />
-        ) : null}
+        {
+          // if we include `selectedRange` as a condition below
+          // it doesn't show the widget until a range is selected
+          // and then it goes into a crazy loop
+          selectedRangeBounds ? (
+            <NumericRangeInput
+              label="Selected Range"
+              defaultRange={selectedRangeBounds}
+              rangeBounds={selectedRangeBounds}
+              controlledRange={selectedRange}
+              onRangeChange={onSelectedRangeChange}
+            />
+          ) : null
+        }
       </div>
       <div
         style={{

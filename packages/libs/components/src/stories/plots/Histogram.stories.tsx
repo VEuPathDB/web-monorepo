@@ -140,6 +140,11 @@ const TemplateWithSelectedRangeControls: Story<
   const [rangeBounds, setRangeBounds] = useState<NumericRange>();
   useEffect(() => {
     if (apiData !== undefined) {
+      // The EDA will have consistent bins across all series
+      // so we can take the binStart and binEnd of the first
+      // and last bins of the first series, respectively.
+      // With the story data we have to be a bit more creative.
+      // (See also Histogram.tsx handleSelectedRange().)
       const min = apiData.series[0].bins[0].binStart;
       const binEnds = apiData.series.map((series: HistogramDataSeries) => {
         return series.bins.map((bin: HistogramBin) => {
@@ -153,7 +158,7 @@ const TemplateWithSelectedRangeControls: Story<
       )[0];
       setRangeBounds({ min, max });
     }
-  }, [apiData]);
+  }, [apiData, setRangeBounds]);
 
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,

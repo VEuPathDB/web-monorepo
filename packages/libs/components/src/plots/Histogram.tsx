@@ -122,7 +122,8 @@ export default function Histogram({
           ) {
             if (
               bin.binStart >= selectedRange.min &&
-              bin.binStart /* TO DO - ADD BIN WIDTH HERE */ < selectedRange.max
+              bin.binStart /* TO DO - ADD BIN WIDTH HERE or have bin.binEnd available */ <
+                selectedRange.max
             ) {
               // it's complicated due to date/string values
               return calculatedBarOpacity;
