@@ -4,7 +4,6 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import { useSelector } from 'react-redux';
@@ -16,8 +15,6 @@ import {
   MesaSortObject,
 } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-import { useIsRefOverflowingHorizontally } from '@veupathdb/wdk-client/lib/Hooks/Overflow';
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { groupBy, orderBy } from 'lodash';
 
@@ -241,43 +238,47 @@ function useCombinedResultColumns(
   );
 }
 
-const descriptionCellCx = makeClassNameHelper('OverflowingTextCell');
-
 function DescriptionCell(props: { value: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isOverflowing = useIsRefOverflowingHorizontally(ref);
   const [isExpanded, setExpanded] = useState(false);
 
   const textContents = props.value;
-  const htmlContents = !isExpanded
-    ? textContents
-    : textContents.split(/\s*\|\s*/g).map((line, i, lines) => (
-        <Fragment key={i}>
-          {line}
-          {i < lines.length - 1 && <br />}
-          {i < lines.length - 1 && <br />}
-        </Fragment>
-      ));
 
-  const contentsClassName = descriptionCellCx(
-    '--OverflowableContents',
-    isExpanded && 'expanded'
+  const fullHtmlContents = useMemo(
+    () =>
+      textContents.split(/\s*\|\s*/g).map((line, i, lines) => {
+        const [key, value] = line.split('=');
+
+        return (
+          <Fragment key={key}>
+            <strong>{key}=</strong>
+            {value}
+            {i < lines.length - 1 && <br />}
+          </Fragment>
+        );
+      }),
+    [textContents]
   );
+
+  const truncatedHtmlContents = useMemo(() => fullHtmlContents.slice(0, 2), [
+    fullHtmlContents,
+  ]);
 
   const toggleExpansion = useCallback(() => {
     setExpanded((isExpanded) => !isExpanded);
   }, []);
 
   return (
-    <div className={contentsClassName} ref={ref}>
-      {htmlContents}
-      {isOverflowing && (
-        <div>
+    <div>
+      {truncatedHtmlContents.length === fullHtmlContents.length || !isExpanded
+        ? truncatedHtmlContents
+        : fullHtmlContents}
+      <div>
+        {fullHtmlContents.length > truncatedHtmlContents.length && (
           <button type="button" className="link" onClick={toggleExpansion}>
             {isExpanded ? 'Read Less' : 'Read More'}
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
