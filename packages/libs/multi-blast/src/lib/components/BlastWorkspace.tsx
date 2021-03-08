@@ -36,7 +36,7 @@ export function BlastWorkspace() {
             route: '/new',
           },
           {
-            display: 'All jobs',
+            display: 'My jobs',
             route: '/all',
           },
           {

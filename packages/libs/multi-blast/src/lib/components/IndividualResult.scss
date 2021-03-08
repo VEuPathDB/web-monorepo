@@ -14,10 +14,16 @@
   }
 
   .IndividualQueryOptions {
+    grid-area: query-options;
+    font-size: 1.2em;
+
+    display: grid;
+    gap: 0.5em;
+  }
+
+  .IndividualQuerySelect {
     &Container {
-      grid-area: query-options;
       max-width: 25em;
-      font-size: 1.2em;
     }
 
     &__option {
@@ -29,7 +35,6 @@
 
   .LinkOuts {
     grid-area: link-outs;
-    justify-self: flex-end;
     align-self: flex-end;
 
     display: grid;

@@ -46,16 +46,26 @@ export function IndividualResult(props: Props) {
           renderHeader={() => (
             <div className="Header">
               {props.individualQueryOptions.length > 1 && (
-                <Select
-                  className="IndividualQueryOptionsContainer"
-                  classNamePrefix="IndividualQueryOptions"
-                  options={props.individualQueryOptions}
-                  value={props.selectedQueryOption}
-                  onChange={props.onSelectedOptionChange}
-                />
+                <div className="IndividualQueryOptions">
+                  Select a query sequence:{' '}
+                  <Select
+                    className="IndividualQuerySelect"
+                    classNamePrefix="IndividualQuerySelect"
+                    options={props.individualQueryOptions}
+                    value={props.selectedQueryOption}
+                    onChange={props.onSelectedOptionChange}
+                  />
+                </div>
               )}
               <div className="LinkOuts">
-                <ReportSelect jobId={props.individualJobId} />
+                <ReportSelect
+                  jobId={props.individualJobId}
+                  placeholder={
+                    props.individualQueryOptions.length > 1
+                      ? 'Download individual result'
+                      : 'Download result'
+                  }
+                />
                 <StrategyLinkOut
                   onClick={props.onLinkOutClick}
                   tooltipContent={props.linkOutTooltipContent}

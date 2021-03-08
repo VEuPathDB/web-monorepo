@@ -33,7 +33,7 @@ export function CombinedResult({
             ? hitTypeDisplayName
             : hitTypeDisplayNamePlural}
         </div>
-        <ReportSelect jobId={jobId} />
+        <ReportSelect jobId={jobId} placeholder="Download all results" />
       </Mesa>
     </div>
   );

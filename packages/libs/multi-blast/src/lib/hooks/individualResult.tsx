@@ -122,7 +122,8 @@ export function useIndividualResultProps({
     const individualResultReport = resultsByQuery[resultIndex - 1].report;
     const hitCount = individualResultReport.results.search.hits.length;
 
-    const querySubDescription = queryCount === 1 ? 'Your query' : 'This query';
+    const querySubDescription =
+      queryCount === 1 ? 'Your query sequence' : 'This query sequence';
 
     const hitSubDescription = `${hitCount} ${
       hitCount === 1 ? hitTypeDisplayName : hitTypeDisplayNamePlural

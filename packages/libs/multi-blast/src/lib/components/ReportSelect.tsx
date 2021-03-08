@@ -8,6 +8,7 @@ import './ReportSelect.scss';
 
 interface Props {
   jobId: string;
+  placeholder: string;
 }
 
 interface ReportOption {
@@ -18,7 +19,7 @@ interface ReportOption {
 const reportOptions: ReportOption[] = [
   {
     value: { format: 'pairwise', shouldZip: false },
-    label: 'Text',
+    label: 'Text (pairwise)',
   },
   {
     value: { format: 'xml', shouldZip: false },
@@ -58,7 +59,7 @@ const reportOptions: ReportOption[] = [
   },
 ];
 
-export function ReportSelect({ jobId }: Props) {
+export function ReportSelect({ jobId, placeholder }: Props) {
   const [selectedReportOption, setSelectedReportOption] = useState<
     ReportOption | undefined
   >(undefined);
@@ -106,9 +107,7 @@ export function ReportSelect({ jobId }: Props) {
       className="ReportSelectContainer"
       classNamePrefix="ReportSelect"
       placeholder={
-        selectedReportOption == null
-          ? 'Download report'
-          : 'Downloading report...'
+        selectedReportOption == null ? placeholder : 'Downloading...'
       }
       isDisabled={selectedReportOption != null}
       value={selectedReportOption}
