@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { NumericRange } from '../../types/general';
 
@@ -128,12 +128,6 @@ const TemplateWithSelectedRangeControls: Story<
     includeExtraDirectives: boolean;
   }
 > = (args, { loaded: { apiData } }) => {
-  const onSelectedRangeChange = (newRange: NumericRange) => {
-    console.log(
-      `The story received a new range: ${newRange.min} to ${newRange.max}`
-    );
-  };
-
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
     onSelectedUnitChange: async ({ selectedUnit }) => {
@@ -156,9 +150,21 @@ const TemplateWithSelectedRangeControls: Story<
         );
       },
       displaySelectedRangeControls: true,
-      onSelectedRangeChange,
     },
   });
+
+  /**
+   * Watch for changes on the histogram's selected range.
+   * Includes the initial setting (derived from the data).
+   */
+  useEffect(() => {
+    const newRange = plotControls.histogram.selectedRange;
+    if (newRange) {
+      console.log(
+        `The story received a new range: ${newRange.min} to ${newRange.max}`
+      );
+    }
+  }, [plotControls.histogram.selectedRange]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>

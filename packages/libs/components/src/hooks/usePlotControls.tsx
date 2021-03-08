@@ -3,7 +3,7 @@
  * This allows us to use a single custom hook for different types of
  * plots, but can be quite the brain trip to read through.
  */
-import { Reducer, useEffect, useReducer } from 'react';
+import { Reducer, useReducer } from 'react';
 
 import { isHistogramData, isPiePlotData } from '../types/guards';
 import {
@@ -189,9 +189,6 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     }) => Promise<DataShape>;
     /** A switch to show/hide the range controls  */
     displaySelectedRangeControls?: boolean;
-    /** A function that will be called when the plot or controls
-     * updates the selected range */
-    onSelectedRangeChange?: (newRange: NumericRange) => void;
   };
 };
 
@@ -411,31 +408,8 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   const onSelectedRangeChange = (newRange: NumericRange) => {
     if (params.histogram) {
       dispatch({ type: 'histogram/setSelectedRange', payload: newRange });
-      // do not call params.histogram.onSelectedRangeChange() with new range here (see below)
     }
   };
-
-  /**
-   * Communicate the shared state's histogram.selectedRange to the outside world.
-   * We 'watch' the state variable instead of calling `params.histogram.onSelectedRangeChange()`
-   * in the onSelectedRangeChange() function defined directly above.  This avoids it being
-   * triggered twice (by the plot and range control).
-   */
-  useEffect(() => {
-    if (
-      params.histogram &&
-      params.histogram.onSelectedRangeChange &&
-      reducerState.histogram &&
-      reducerState.histogram.selectedRange
-    ) {
-      params.histogram.onSelectedRangeChange(
-        reducerState.histogram.selectedRange
-      );
-    }
-  }, [
-    reducerState?.histogram?.selectedRange?.min,
-    reducerState?.histogram?.selectedRange?.max,
-  ]);
 
   /**
    * Separate errors attribute from the rest of the reducer state.
