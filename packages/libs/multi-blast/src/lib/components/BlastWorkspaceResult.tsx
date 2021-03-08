@@ -3,7 +3,11 @@ import { useHistory } from 'react-router';
 
 import { uniq } from 'lodash';
 
-import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
+import {
+  Error as ErrorPage,
+  Link,
+  Loading,
+} from '@veupathdb/wdk-client/lib/Components';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { usePromise } from '@veupathdb/wdk-client/lib/Hooks/PromiseHook';
@@ -153,6 +157,8 @@ function BlastWorkspaceResultWithLoadedApi(
     multiQueryReportResult.value == null ||
     individualQueriesResult.value == null ? (
     <LoadingBlastResult {...props} />
+  ) : jobResult.value.status === 'queueing-error' ? (
+    <ErrorPage message="We were unable to queue your job." />
   ) : (
     <BlastResultWithLoadedReport
       {...props}
