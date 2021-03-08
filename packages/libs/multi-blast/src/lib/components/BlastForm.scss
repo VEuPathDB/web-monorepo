@@ -27,7 +27,8 @@
       }
 
       .wdk-QuestionFormParameterControl .wdk-RadioList {
-        display: flex;
+        display: inline-grid;
+        grid-auto-flow: column;
         gap: 1em;
 
         label {
