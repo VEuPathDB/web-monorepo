@@ -97,6 +97,10 @@ function BlastWorkspaceResultWithLoadedApi(
       [] as { id: string; index: number }[]
     );
 
+    if (unorderedSubJobIds.length === 0) {
+      unorderedSubJobIds.push({ id: props.jobId, index: 1 });
+    }
+
     const subJobIds = unorderedSubJobIds
       .sort((a, b) => a.index - b.index)
       .map(({ id }) => id);
