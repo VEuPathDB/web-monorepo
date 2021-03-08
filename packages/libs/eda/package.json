@@ -2,6 +2,7 @@
   "name": "@veupathdb/eda",
   "version": "0.1.0",
   "dependencies": {
+    "@material-ui/core": "^4.11.3",
     "@veupathdb/wdk-client": "^0.1.1-alpha.12",
     "@veupathdb/web-common": "^0.1.1-alpha.11",
     "fp-ts": "^2.9.3",

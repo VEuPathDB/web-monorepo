@@ -1,226 +1,240 @@
 import { partial } from 'lodash';
-import PropTypes from 'prop-types';
 import React from 'react';
-import { Seq } from 'wdk-client/Utils/IterableUtils';
-import IconAlt from 'wdk-client/Components/Icon/IconAlt';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import IconAlt from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import {
   getFilterValueDisplay,
   getOperationDisplay,
   shouldAddFilter,
-} from 'wdk-client/Components/AttributeFilter/AttributeFilterUtils';
-import { postorderSeq } from 'wdk-client/Utils/TreeUtils';
+} from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import { postorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+
+import { Filter } from '../types/filter';
+import { Variable } from '../types/variable';
+import { useSession } from '../hooks/session';
+import FilterChip from './FilterChip';
+
+interface Props {
+  sessionId: string;
+  onActiveVariableChange: (variable: string) => void;
+  onFiltersChange: (filters: Filter[]) => void;
+  variableTree: {};
+  filters: Filter[];
+  displayName: string;
+  dataCount?: number;
+  filteredDataCount?: number;
+  hideGlobalCounts: boolean;
+  loadingFilteredCount?: boolean;
+  activeVariable?: Variable;
+  minSelectedCount?: number;
+}
 
 /**
  * List of filters configured by the user.
  *
- * Each filter can be used to update the active field
+ * Each filter can be used to update the active variable
  * or to remove a filter.
  */
-export default class FilterList extends React.Component {
-  /**
-   * @param {FilterListProps} props
-   * @return {React.Component<FilterListProps, void>}
-   */
-  constructor(props) {
-    super(props);
-    this.handleFilterSelectClick = this.handleFilterSelectClick.bind(this);
-    this.handleFilterRemoveClick = this.handleFilterRemoveClick.bind(this);
-  }
-
+export default function FilterList(props: Props) {
   /**
    * @param {Filter} filter
    * @param {Event} event
    */
-  handleFilterSelectClick(filter, containerFilter = filter, event) {
+  const handleFilterSelectClick = (
+    filter: Filter,
+    containerFilter = filter,
+    event: any
+  ) => {
     event.preventDefault();
-    this.props.onActiveFieldChange(containerFilter.field);
-  }
+    props.onActiveVariableChange(containerFilter.variableId);
+  };
 
   /**
    * @param {Filter} filter
    * @param {Event} event
    */
-  handleFilterRemoveClick(filter, containerFilter, event) {
+  const handleFilterRemoveClick = (
+    filter: Filter,
+    containerFilter = filter,
+    event: any
+  ) => {
     event.preventDefault();
     if (containerFilter != null) {
-      const otherFilters = this.props.filters.filter(
-        (f) => f !== containerFilter
-      );
+      const otherFilters = props.filters.filter((f) => f !== containerFilter);
       const nextContainerFilter = {
         ...containerFilter,
         value: {
           ...containerFilter.value,
-          filters: containerFilter.value.filters.filter((f) => f !== filter),
+          filters: containerFilter.value.filters.filter(
+            (f: Filter) => f !== filter
+          ),
         },
       };
-      this.props.onFiltersChange(
+      props.onFiltersChange(
         otherFilters.concat(
           shouldAddFilter(nextContainerFilter) ? [nextContainerFilter] : []
         )
       );
     } else {
-      this.props.onFiltersChange(
-        this.props.filters.filter((f) => f !== filter)
-      );
+      props.onFiltersChange(props.filters.filter((f) => f !== filter));
     }
-  }
+  };
 
-  renderFilterItem(filter, containerFilter) {
-    var { fieldTree } = this.props;
+  const renderFilterItem = (filter: Filter, containerFilter: any) => {
+    var { variableTree } = props;
     var handleSelectClick = partial(
-      this.handleFilterSelectClick,
+      handleFilterSelectClick,
       filter,
       containerFilter
     );
     var handleRemoveClick = partial(
-      this.handleFilterRemoveClick,
+      handleFilterRemoveClick,
       filter,
       containerFilter
     );
-    var field = postorderSeq(fieldTree)
-      .map((node) => node.field)
-      .find((field) => field.term === filter.field);
+    var variable: Variable = postorderSeq(variableTree)
+      .map((node: any) => node.variable)
+      .find((variable: Variable) => variable.variableId === filter.variableId);
     var filterDisplay = getFilterValueDisplay(filter);
 
     return (
-      <div className="filter-item">
-        <a
-          className="select"
-          onClick={handleSelectClick}
-          href={'#' + filter.field}
-          title={filterDisplay}
-        >
-          {field == null ? filter.field : field.display}
-        </a>
-        {/* Use String.fromCharCode to avoid conflicts with
-            character ecoding. Other methods detailed at
-            http://facebook.github.io/react/docs/jsx-gotchas.html#html-entities
-            cause JSX to encode. String.fromCharCode ensures that
-            the encoding is done in the browser */}
-        <span
-          className="remove"
-          onClick={handleRemoveClick}
-          title="remove restriction"
-        >
-          {String.fromCharCode(215)}
-        </span>
-      </div>
+      // <div className="filter-item">
+      //   <a
+      //     className="select"
+      //     onClick={handleSelectClick}
+      //     href={'#' + filter.variableId}
+      //     title={filterDisplay}
+      //   >
+      //     {variable == null ? filter.variableId : variable.display}
+      //   </a>
+      //   {/* Use String.fromCharCode to avoid conflicts with
+      //       character ecoding. Other methods detailed at
+      //       http://facebook.github.io/react/docs/jsx-gotchas.html#html-entities
+      //       cause JSX to encode. String.fromCharCode ensures that
+      //       the encoding is done in the browser */}
+      //   <span
+      //     className="remove"
+      //     onClick={handleRemoveClick}
+      //     title="remove restriction"
+      //   >
+      //     {String.fromCharCode(215)}
+      //   </span>
+      // </div>
+      <FilterChip
+        text={variable ? variable.display : filter.variableId}
+        tooltipText={filterDisplay}
+        active={false}
+        onClick={handleSelectClick}
+        onDelete={handleRemoveClick}
+      />
     );
-  }
+  };
 
-  render() {
-    const {
-      activeField,
-      fieldTree,
-      filters,
-      filteredDataCount,
-      dataCount,
-      displayName,
-      loadingFilteredCount,
-      hideGlobalCounts,
-      minSelectedCount,
-    } = this.props;
+  const {
+    sessionId,
+    activeVariable,
+    variableTree,
+    filters,
+    filteredDataCount,
+    dataCount,
+    displayName,
+    loadingFilteredCount,
+    hideGlobalCounts,
+    minSelectedCount,
+  } = props;
 
-    const filteredCount = hideGlobalCounts ? null : loadingFilteredCount ? (
-      <React.Fragment>
-        <i className="fa fa-circle-o-notch fa-spin fa-fw margin-bottom"></i>
-        <span className="sr-only">Loading...</span>
-      </React.Fragment>
-    ) : (
-      filteredDataCount && filteredDataCount.toLocaleString()
-    );
+  const sessionState = useSession(sessionId);
+  // const filters = sessionState.session?.filters ?? [];
 
-    const total = hideGlobalCounts ? null : (
-      <span>
-        {dataCount && dataCount.toLocaleString()} {displayName} Total
-      </span>
-    );
+  const filteredCount = hideGlobalCounts ? null : loadingFilteredCount ? (
+    <React.Fragment>
+      <i className="fa fa-circle-o-notch fa-spin fa-fw margin-bottom"></i>
+      <span className="sr-only">Loading...</span>
+    </React.Fragment>
+  ) : (
+    filteredDataCount && filteredDataCount.toLocaleString()
+  );
 
-    const needsMoreCount = minSelectedCount > filteredDataCount;
+  const total = hideGlobalCounts ? null : (
+    <span>
+      {dataCount && dataCount.toLocaleString()} {displayName} Total
+    </span>
+  );
 
-    const filtered = hideGlobalCounts ? null : (
-      <span
-        style={{ marginRight: '1em', color: needsMoreCount ? '#b40000' : '' }}
-        title={
-          needsMoreCount
-            ? `At least ${minSelectedCount} ${displayName} must be selected.`
-            : ''
-        }
-      >
-        {needsMoreCount ? (
-          <React.Fragment>
-            <IconAlt fa="warning" />
-            &nbsp;
-          </React.Fragment>
-        ) : null}
-        {filteredCount} of {dataCount && dataCount.toLocaleString()}{' '}
-        {displayName} selected
-      </span>
-    );
+  const needsMoreCount = minSelectedCount > filteredDataCount;
 
-    return (
-      <div className="filter-items-wrapper">
-        <div className="filter-list-total">{total}</div>
-        {filters.length === 0 ? null : (
-          <div className="filter-list-selected">{filtered}</div>
-        )}
-        {filters.length === 0 ? (
-          hideGlobalCounts ? null : (
-            <strong>
-              <em>No filters applied</em>
-            </strong>
-          )
-        ) : (
-          <ul className="filter-items">
-            {Seq.from(filters).map((filter) => {
-              const className =
-                activeField && activeField.term === filter.field
-                  ? `selected ${filter.type}`
-                  : filter.type;
-              const field = postorderSeq(fieldTree)
-                .map((node) => node.field)
-                .find((field) => field.term === filter.field);
-              return (
-                <li key={filter.field} className={className}>
-                  {filter.type !== 'multiFilter' ? (
-                    this.renderFilterItem(filter)
-                  ) : (
-                    <React.Fragment>
-                      <sup className="multiFilter-operation">
-                        {getOperationDisplay(
-                          filter.value.operation
-                        ).toUpperCase()}{' '}
-                        {field == null ? filter.field : field.display} filters
-                      </sup>
-                      <ul className="filter-items">
-                        {filter.value.filters.map((leaf) => (
-                          <li key={leaf.field}>
-                            {this.renderFilterItem(leaf, filter)}
-                          </li>
-                        ))}
-                      </ul>
-                    </React.Fragment>
-                  )}
-                </li>
+  const filtered = hideGlobalCounts ? null : (
+    <span
+      style={{ marginRight: '1em', color: needsMoreCount ? '#b40000' : '' }}
+      title={
+        needsMoreCount
+          ? `At least ${minSelectedCount} ${displayName} must be selected.`
+          : ''
+      }
+    >
+      {needsMoreCount ? (
+        <React.Fragment>
+          <IconAlt fa="warning" />
+          &nbsp;
+        </React.Fragment>
+      ) : null}
+      {filteredCount} of {dataCount && dataCount.toLocaleString()} {displayName}{' '}
+      selected
+    </span>
+  );
+
+  return (
+    <div className="filter-items-wrapper">
+      <div className="filter-list-total">{total}</div>
+      {filters.length === 0 ? null : (
+        <div className="filter-list-selected">{filtered}</div>
+      )}
+      {filters.length === 0 ? (
+        hideGlobalCounts ? null : (
+          <strong>
+            <em>No filters applied</em>
+          </strong>
+        )
+      ) : (
+        <ul className="filter-items">
+          {Seq.from(filters).map((filter: Filter) => {
+            const className =
+              activeVariable && activeVariable.variableId === filter.variableId
+                ? `selected ${filter.type}`
+                : filter.type;
+            const variable: Variable = postorderSeq(variableTree)
+              .map((node: any) => node.variable)
+              .find(
+                (variable: Variable) =>
+                  variable.variableId === filter.variableId
               );
-            })}
-          </ul>
-        )}
-      </div>
-    );
-  }
+            return (
+              <li key={filter.variableId} className={className}>
+                {filter.type !== 'multiFilter' ? (
+                  renderFilterItem(filter)
+                ) : (
+                  <React.Fragment>
+                    <sup className="multiFilter-operation">
+                      {getOperationDisplay(
+                        filter.value.operation
+                      ).toUpperCase()}{' '}
+                      {variable == null ? filter.variableId : variable.display}{' '}
+                      filters
+                    </sup>
+                    <ul className="filter-items">
+                      {filter.value.filters.map((leaf: any) => (
+                        <li key={leaf.variable}>
+                          {renderFilterItem(leaf, filter)}
+                        </li>
+                      ))}
+                    </ul>
+                  </React.Fragment>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
 }
-
-FilterList.propTypes = {
-  onActiveFieldChange: PropTypes.func.isRequired,
-  onFiltersChange: PropTypes.func.isRequired,
-  fieldTree: PropTypes.object.isRequired,
-  filters: PropTypes.array.isRequired,
-  displayName: PropTypes.string.isRequired,
-  dataCount: PropTypes.number,
-  filteredDataCount: PropTypes.number,
-  hideGlobalCounts: PropTypes.bool.isRequired,
-  loadingFilteredCount: PropTypes.bool,
-  activeField: PropTypes.object,
-  minSelectedCount: PropTypes.number,
-};
