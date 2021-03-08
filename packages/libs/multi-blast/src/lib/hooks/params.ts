@@ -1,12 +1,24 @@
 import { useContext, useEffect, useMemo } from 'react';
 
-import { QuestionState } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
+import { isEqual, keyBy, once, pick, zipObject } from 'lodash';
+
+import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import {
+  QuestionState,
+  QuestionWithMappedParameters,
+} from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { CheckBoxEnumParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  CheckBoxEnumParam,
+  Parameter,
+  ParameterValues,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
 import { Props } from '../components/BlastForm';
 import {
+  ADVANCED_PARAMS_GROUP_NAME,
   BLAST_ALGORITHM_PARAM_NAME,
   BLAST_DATABASE_TYPE_PARAM_NAME,
   BLAST_QUERY_SEQUENCE_PARAM_NAME,
@@ -55,6 +67,7 @@ export function useAlgorithmParamProps(
   updateParamValue: Props['eventHandlers']['updateParamValue'],
   enabledAlgorithms: string[] | undefined
 ) {
+  // FIXME: Validate this
   const parameter = state.question.parametersByName[
     BLAST_ALGORITHM_PARAM_NAME
   ] as CheckBoxEnumParam;
@@ -104,3 +117,99 @@ export function useSequenceParamProps(
     rows: 10,
   };
 }
+
+interface DefaultAdvancedParamsMetadata {
+  defaultParams: Parameter[];
+  areDefaultParamsSelected: (paramValues: ParameterValues) => boolean;
+}
+
+export function useDefaultAdvancedParams(
+  question: QuestionWithMappedParameters
+): Record<string, DefaultAdvancedParamsMetadata> | undefined {
+  const defaultAlgorithmDependentParams = useWdkService(
+    async (wdkService) => {
+      // FIXME: Validate this
+      const algorithmParameter = question.parametersByName[
+        BLAST_ALGORITHM_PARAM_NAME
+      ] as CheckBoxEnumParam;
+
+      const algorithms = algorithmParameter.vocabulary.map(([value]) => value);
+
+      return fetchDefaultAlgorithmDependentParamsOnce(
+        wdkService,
+        question,
+        algorithms
+      );
+    },
+    [question]
+  );
+
+  return defaultAlgorithmDependentParams;
+}
+
+async function fetchDefaultAlgorithmAdvancedParams(
+  wdkService: WdkService,
+  question: QuestionWithMappedParameters,
+  algorithms: string[]
+) {
+  const searchName = question.urlSegment;
+
+  const advancedParamNames =
+    question.groupsByName[ADVANCED_PARAMS_GROUP_NAME].parameters;
+  const defaultAdvancedParams = advancedParamNames.map(
+    (advancedParamName) => question.parametersByName[advancedParamName]
+  );
+
+  const dependentAdvancedParamPromises = algorithms.map((algorithm) =>
+    wdkService.getRefreshedDependentParams(
+      searchName,
+      BLAST_ALGORITHM_PARAM_NAME,
+      algorithm,
+      {}
+    )
+  );
+
+  const dependentAdvancedParamsByAlgorithm = await Promise.all(
+    dependentAdvancedParamPromises
+  );
+
+  const advancedParams = dependentAdvancedParamsByAlgorithm.map(
+    (dependentAdvancedParams) => {
+      const dependentAdvancedParamsByName = keyBy(
+        dependentAdvancedParams,
+        'name'
+      );
+
+      const defaultAdvancedParamsForAlgorithm = defaultAdvancedParams.map(
+        (advancedParam) =>
+          dependentAdvancedParamsByName[advancedParam.name] ?? advancedParam
+      );
+
+      const defaultAdvancedParamValues = defaultAdvancedParamsForAlgorithm.reduce(
+        (memo, { initialDisplayValue, name }) => {
+          if (initialDisplayValue != null) {
+            memo[name] = initialDisplayValue;
+          }
+
+          return memo;
+        },
+        {} as ParameterValues
+      );
+
+      return {
+        defaultParams: defaultAdvancedParamsForAlgorithm,
+        areDefaultParamsSelected: function (paramValues: ParameterValues) {
+          const advancedParamValues = pick(paramValues, advancedParamNames);
+
+          return isEqual(advancedParamValues, defaultAdvancedParamValues);
+        },
+      };
+    }
+  );
+
+  return zipObject(algorithms, advancedParams);
+}
+
+const fetchDefaultAlgorithmDependentParamsOnce = once(
+  fetchDefaultAlgorithmAdvancedParams
+);

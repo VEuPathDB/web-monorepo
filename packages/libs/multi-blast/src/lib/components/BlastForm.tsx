@@ -11,7 +11,12 @@ import { useHistory } from 'react-router';
 
 import { fromPairs } from 'lodash';
 
-import { RadioList, TextArea } from '@veupathdb/wdk-client/lib/Components';
+import { updateDependentParams } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
+import {
+  IconAlt,
+  RadioList,
+  TextArea,
+} from '@veupathdb/wdk-client/lib/Components';
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
@@ -27,6 +32,7 @@ import { useBlastApi } from '../hooks/api';
 import { useEnabledAlgorithms } from '../hooks/blastAlgorithms';
 import {
   useAlgorithmParamProps,
+  useDefaultAdvancedParams,
   useSequenceParamProps,
   useTargetParamProps,
 } from '../hooks/params';
@@ -91,49 +97,6 @@ export function BlastForm(props: Props) {
     props.state.question.parametersByName,
   ]);
 
-  const renderBlastParamGroup = useCallback(
-    (group: ParameterGroup, formProps: Props) => (
-      <div key={group.name} className={blastFormCx('Group', group.name)}>
-        {group.name !== ADVANCED_PARAMS_GROUP_NAME ? (
-          renderDefaultParamGroup(group, formProps)
-        ) : (
-          <AdvancedParamGroup
-            disabled={advancedParamGroupChanging}
-            key={group.name}
-            searchName={formProps.state.question.urlSegment}
-            group={restrictedAdvancedParamGroup}
-            uiState={
-              !advancedParamGroupChanging
-                ? formProps.state.groupUIState[group.name]
-                : {
-                    ...formProps.state.groupUIState[group.name],
-                    isVisible: false,
-                  }
-            }
-            onVisibilityChange={formProps.eventHandlers.setGroupVisibility}
-          >
-            <ParameterList
-              parameters={restrictedAdvancedParamGroup.parameters}
-              parameterMap={formProps.state.question.parametersByName}
-              parameterElements={formProps.parameterElements}
-              paramDependenciesUpdating={fromPairs(
-                formProps.state.question.parameters
-                  .filter(
-                    (parameter) =>
-                      formProps.state.paramsUpdatingDependencies[parameter.name]
-                  )
-                  .flatMap((parameter) =>
-                    parameter.dependentParams.map((pn) => [pn, true])
-                  )
-              )}
-            />
-          </AdvancedParamGroup>
-        )}
-      </div>
-    ),
-    [advancedParamGroupChanging, restrictedAdvancedParamGroup]
-  );
-
   const enabledAlgorithms = useEnabledAlgorithms(targetType);
 
   const [queryFile, setQueryFile] = useState<File | null>(null);
@@ -150,6 +113,47 @@ export function BlastForm(props: Props) {
     },
     [setQueryFile]
   );
+
+  const defaultAdvancedParamsMetadata = useDefaultAdvancedParams(
+    props.state.question
+  );
+
+  const selectedBlastAlgorithmParameter =
+    props.state.question.parametersByName[BLAST_ALGORITHM_PARAM_NAME];
+
+  const searchName = props.state.question.urlSegment;
+  const dispatchAction = props.dispatchAction;
+  const paramValues = props.state.paramValues;
+
+  const resetAdvancedParamGroupButtonProps = useMemo(() => {
+    if (defaultAdvancedParamsMetadata == null) {
+      return;
+    }
+
+    return {
+      onClick: () => {
+        dispatchAction(
+          updateDependentParams({
+            searchName,
+            updatedParameter: selectedBlastAlgorithmParameter,
+            refreshedDependentParameters:
+              defaultAdvancedParamsMetadata[selectedBlastAlgorithm]
+                .defaultParams,
+          })
+        );
+      },
+      disabled: defaultAdvancedParamsMetadata[
+        selectedBlastAlgorithm
+      ].areDefaultParamsSelected(paramValues),
+    };
+  }, [
+    defaultAdvancedParamsMetadata,
+    dispatchAction,
+    paramValues,
+    searchName,
+    selectedBlastAlgorithm,
+    selectedBlastAlgorithmParameter,
+  ]);
 
   const targetParamProps = useTargetParamProps(
     props.state,
@@ -203,25 +207,85 @@ export function BlastForm(props: Props) {
     [BLAST_QUERY_SEQUENCE_PARAM_NAME]: sequenceParamElement,
   };
 
+  const renderBlastParamGroup = useCallback(
+    (group: ParameterGroup, formProps: Props) => (
+      <div key={group.name} className={blastFormCx('Group', group.name)}>
+        {group.name !== ADVANCED_PARAMS_GROUP_NAME ? (
+          renderDefaultParamGroup(group, formProps)
+        ) : (
+          <AdvancedParamGroup
+            disabled={advancedParamGroupChanging}
+            key={group.name}
+            searchName={formProps.state.question.urlSegment}
+            group={restrictedAdvancedParamGroup}
+            uiState={
+              !advancedParamGroupChanging
+                ? formProps.state.groupUIState[group.name]
+                : {
+                    ...formProps.state.groupUIState[group.name],
+                    isVisible: false,
+                  }
+            }
+            onVisibilityChange={formProps.eventHandlers.setGroupVisibility}
+          >
+            <>
+              <button
+                type="button"
+                className="btn"
+                {...resetAdvancedParamGroupButtonProps}
+              >
+                <IconAlt fa="refresh" />
+                Reset Values
+              </button>
+              <ParameterList
+                parameters={restrictedAdvancedParamGroup.parameters}
+                parameterMap={formProps.state.question.parametersByName}
+                parameterElements={formProps.parameterElements}
+                paramDependenciesUpdating={fromPairs(
+                  formProps.state.question.parameters
+                    .filter(
+                      (parameter) =>
+                        formProps.state.paramsUpdatingDependencies[
+                          parameter.name
+                        ]
+                    )
+                    .flatMap((parameter) =>
+                      parameter.dependentParams.map((pn) => [pn, true])
+                    )
+                )}
+              />
+            </>
+          </AdvancedParamGroup>
+        )}
+      </div>
+    ),
+    [
+      advancedParamGroupChanging,
+      resetAdvancedParamGroupButtonProps,
+      restrictedAdvancedParamGroup,
+    ]
+  );
+
   const containerClassName = `${blastFormCx()} ${blastFormCx(
     BLAST_FORM_CONTAINER_NAME
   )}`;
 
-  return enabledAlgorithms == null ? null : props.submissionMetadata.type ===
-    'create-strategy' ? (
+  return enabledAlgorithms == null ||
+    defaultAdvancedParamsMetadata == null ? null : props.submissionMetadata
+      .type === 'create-strategy' ? (
     <NewJobForm
       {...props}
       containerClassName={containerClassName}
-      renderParamGroup={renderBlastParamGroup}
       parameterElements={parameterElements}
       queryFile={queryFile}
+      renderParamGroup={renderBlastParamGroup}
     />
   ) : (
     <DefaultQuestionForm
       {...props}
       containerClassName={containerClassName}
-      renderParamGroup={renderBlastParamGroup}
       parameterElements={parameterElements}
+      renderParamGroup={renderBlastParamGroup}
     />
   );
 }
