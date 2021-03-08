@@ -81,7 +81,6 @@ export default function NumericRangeInput({
           onValueChange={(newValue) => {
             if (newValue !== undefined) setLowerValue(newValue);
           }}
-          containerStyles={{ margin: 25 }}
         />
         <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ margin: 25 }}>
@@ -101,7 +100,6 @@ export default function NumericRangeInput({
           onValueChange={(newValue) => {
             if (newValue !== undefined) setUpperValue(newValue);
           }}
-          containerStyles={{ margin: 25 }}
         />
       </div>
     </div>
