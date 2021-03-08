@@ -3,33 +3,60 @@ import React, { useState, useEffect } from 'react';
 import { Typography, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
+import { NumberOrDate } from '../../types/general';
 
-export type NumericInputProps = {
+type MathableInputBaseProps<M extends NumberOrDate> = {
   /** The starting value of the widget. */
-  defaultValue?: number;
+  defaultValue?: M;
   /** Externally controlled value. */
-  controlledValue?: number;
+  controlledValue?: M;
   /** Minimum allowed value (inclusive) */
-  minValue?: number;
+  minValue?: M;
   /** Maximum allowed value (inclusive) */
-  maxValue?: number;
+  maxValue?: M;
   /** Function to invoke when value changes. */
-  onValueChange: (newValue?: number) => void;
+  onValueChange: (newValue: NumberOrDate | undefined) => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Additional styles for component container. Optional. */
   containerStyles?: React.CSSProperties;
 };
 
-export default function NumericInput({
+export type NumberInputProps = MathableInputBaseProps<number>;
+
+export function NumberInput(props: NumberInputProps) {
+  return <MathableInput {...props} valueType="number" />;
+}
+
+export type DateInputProps = MathableInputBaseProps<Date>;
+
+export function DateInput(props: DateInputProps) {
+  return <MathableInput {...props} valueType="date" />;
+}
+
+type MathableInputProps =
+  | (NumberInputProps & {
+      valueType: 'number';
+    })
+  | (DateInputProps & {
+      valueType: 'date';
+    });
+
+/**
+ * Input field taking a value we can do maths on.
+ * i.e. number or date.
+ * Not currently exported. But could be if needed.
+ */
+function MathableInput({
   defaultValue,
   controlledValue,
   minValue,
   maxValue,
   onValueChange,
   label,
+  valueType,
   containerStyles,
-}: NumericInputProps) {
+}: MathableInputProps) {
   const [focused, setFocused] = useState(false);
   const [errorState, setErrorState] = useState({
     error: false,
@@ -42,7 +69,7 @@ export default function NumericInput({
     },
   })();
 
-  const boundsCheckedValue = (newValue?: number) => {
+  const boundsCheckedValue = (newValue?: NumberOrDate) => {
     if (newValue === undefined) return;
     if (minValue !== undefined && newValue < minValue) {
       newValue = minValue;
@@ -72,7 +99,11 @@ export default function NumericInput({
 
   const handleChange = (event: any) => {
     if (event.target.value.length > 0) {
-      const newValue = boundsCheckedValue(Number(event.target.value));
+      const newValue = boundsCheckedValue(
+        valueType === 'number'
+          ? Number(event.target.value)
+          : new Date(event.target.value)
+      );
       if (newValue !== undefined) onValueChange(newValue);
     } else {
       // allows user to clear the input box
@@ -99,7 +130,7 @@ export default function NumericInput({
           InputProps={{ classes }}
           defaultValue={defaultValue}
           value={controlledValue}
-          type="number"
+          type={valueType}
           variant="outlined"
           onChange={handleChange}
           {...errorState}

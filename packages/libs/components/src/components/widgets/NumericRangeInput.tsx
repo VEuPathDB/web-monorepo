@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
-import NumericInput from './NumericInput';
+import { NumberInput } from './MathableInputs';
 import { NumericRange } from '../../types/general';
 
 export type NumericRangeInputProps = {
@@ -40,7 +40,7 @@ export default function NumericRangeInput({
 
   const [focused, setFocused] = useState(false);
 
-  // listen for changes to the values of the two NumericInputs
+  // listen for changes to the values of the two NumberInputs
   // and communicate outwards via onRangeChange
   useEffect(() => {
     if (onRangeChange && lower !== undefined && upper !== undefined) {
@@ -73,13 +73,13 @@ export default function NumericRangeInput({
         </Typography>
       )}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <NumericInput
+        <NumberInput
           controlledValue={lower}
           minValue={rangeBounds?.min}
           maxValue={upper ?? rangeBounds?.max}
           label={lowerLabel}
           onValueChange={(newValue) => {
-            if (newValue !== undefined) setLowerValue(newValue);
+            if (newValue !== undefined) setLowerValue(newValue as number);
           }}
         />
         <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -92,13 +92,13 @@ export default function NumericRangeInput({
             </Typography>
           </div>
         </div>
-        <NumericInput
+        <NumberInput
           controlledValue={upper}
           minValue={lower ?? rangeBounds?.min}
           maxValue={rangeBounds?.max}
           label={upperLabel}
           onValueChange={(newValue) => {
-            if (newValue !== undefined) setUpperValue(newValue);
+            if (newValue !== undefined) setUpperValue(newValue as number);
           }}
         />
       </div>

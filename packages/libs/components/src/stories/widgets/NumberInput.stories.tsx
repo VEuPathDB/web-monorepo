@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import NumericInput, {
-  NumericInputProps,
-} from '../../components/widgets/NumericInput';
+import {
+  NumberInput,
+  NumberInputProps,
+} from '../../components/widgets/MathableInputs';
 
 export default {
-  title: 'Widgets/Numeric Input',
-  component: NumericInput,
+  title: 'Widgets/Number Input',
+  component: NumberInput,
 } as Meta;
 
-const Template: Story<NumericInputProps> = (args) => {
+const Template: Story<NumberInputProps> = (args) => {
   return (
-    <NumericInput
+    <NumberInput
       {...args}
       onValueChange={(newValue) => {
         console.log(`new value = ${newValue}`);
@@ -61,15 +62,15 @@ BoundedInitialized.args = {
   maxValue: 5,
 };
 
-const ControlledTemplate: Story<NumericInputProps> = (args) => {
+const ControlledTemplate: Story<NumberInputProps> = (args) => {
   const [value, setValue] = useState<number>();
   return (
-    <NumericInput
+    <NumberInput
       {...args}
       controlledValue={value}
       onValueChange={(newValue) => {
         console.log(`new value = ${newValue}`);
-        setValue(newValue);
+        setValue(newValue as number);
       }}
       containerStyles={{ ...args.containerStyles, margin: 25 }}
     />
@@ -99,21 +100,21 @@ export const ControlledLinkedPair: Story = () => {
 
   return (
     <>
-      <NumericInput
+      <NumberInput
         controlledValue={linkedValue}
         label="A"
         onValueChange={(newValue) => {
           console.log(`A new value = ${newValue}`);
-          setLinkedValue(newValue);
+          setLinkedValue(newValue as number);
         }}
         containerStyles={{ margin: 25 }}
       />
-      <NumericInput
+      <NumberInput
         controlledValue={linkedValue}
         label="B"
         onValueChange={(newValue) => {
           console.log(`B new value = ${newValue}`);
-          setLinkedValue(newValue);
+          setLinkedValue(newValue as number);
         }}
         containerStyles={{ margin: 25 }}
       />
@@ -128,7 +129,7 @@ export const ControlledBounds: Story = () => {
 
   return (
     <>
-      <NumericInput
+      <NumberInput
         controlledValue={value}
         label={`Value (${min} <= x <= ${max})`}
         minValue={min}
@@ -137,25 +138,25 @@ export const ControlledBounds: Story = () => {
           console.log(`new value = ${newValue}`);
           // for some reason the `newValue !== undefined` is needed because
           // the `useState<number>(0)` has an initial value provided
-          if (newValue !== undefined) setValue(newValue);
+          if (newValue !== undefined) setValue(newValue as number);
         }}
         containerStyles={{ margin: 25 }}
       />
-      <NumericInput
+      <NumberInput
         controlledValue={min}
         maxValue={max}
         label="Min"
         onValueChange={(newValue) => {
-          if (newValue !== undefined) setMin(newValue);
+          if (newValue !== undefined) setMin(newValue as number);
         }}
         containerStyles={{ margin: 25 }}
       />
-      <NumericInput
+      <NumberInput
         controlledValue={max}
         minValue={min}
         label="Max"
         onValueChange={(newValue) => {
-          if (newValue !== undefined) setMax(newValue);
+          if (newValue !== undefined) setMax(newValue as number);
         }}
         containerStyles={{ margin: 25 }}
       />
