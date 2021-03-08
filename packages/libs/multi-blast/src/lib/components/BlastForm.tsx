@@ -339,7 +339,6 @@ function NewJobForm(props: NewJobFormProps) {
       targetMetadataByDataType,
       wdkDependencies,
       props.state.paramValues,
-      containerRef.current,
     ]
   );
 
