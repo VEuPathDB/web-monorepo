@@ -161,7 +161,12 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     binWidthRange: [number, number];
     /** Increment for increasing/decrease bin width. */
     binWidthStep: number;
+    /** The currently selected range along the x-axis */
     selectedRange?: NumericRange;
+    /** The min/max allowed values for the range controls */
+    selectedRangeBounds?: NumericRange;
+    /** A switch to show/hide the range controls  */
+    displaySelectedRangeControls: boolean;
   };
 };
 
@@ -182,8 +187,8 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
       binWidth: number;
       selectedUnit?: string;
     }) => Promise<DataShape>;
-    selectedRange?: NumericRange;
-    onSelectedRangeChange?: (newRange: NumericRange) => void;
+    /** A switch to show/hide the range controls  */
+    displaySelectedRangeControls?: boolean;
   };
 };
 
@@ -212,7 +217,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       binWidth: 0,
       binWidthRange: [0, 0],
       binWidthStep: 0,
-      selectedRange: { min: 0, max: 0 },
+      displaySelectedRangeControls: false,
     },
   };
 
@@ -270,13 +275,41 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       : params.data.binWidthStep ?? (binWidthRange[1] - binWidthRange[0]) / 10;
 
     initialState.histogram = {
+      ...initialState.histogram,
       binWidth,
       binWidthRange,
       binWidthStep,
     };
 
-    if (params.histogram?.selectedRange)
-      initialState.histogram.selectedRange = params.histogram.selectedRange;
+    if (params?.histogram?.displaySelectedRangeControls) {
+      // calculate min and max limits for the selected range controls from the data
+
+      // The EDA will have consistent bins across all series
+      // so we can take the binStart and binEnd of the first
+      // and last bins of the first series, respectively.
+      // With the story data we have to be a bit more creative.
+      // (See also Histogram.tsx handleSelectedRange().)
+      const seriesLengths = params.data.series.map(
+        (series) => series.bins.length
+      );
+      const longestSeriesLength = seriesLengths.sort((a: number, b: number) =>
+        Math.sign(b - a)
+      )[0];
+      const longestSeries = params.data.series.filter(
+        (series) => series.bins.length == longestSeriesLength
+      );
+      const min = Number(longestSeries[0].bins[0].binStart);
+      const split = longestSeries[0].bins[
+        longestSeriesLength - 1
+      ].binLabel.split(' '); // NASTY split on binLabel (BM)
+      const max = Number(split[split.length - 1]);
+
+      initialState.histogram = {
+        ...initialState.histogram,
+        selectedRangeBounds: { min, max },
+        displaySelectedRangeControls: true,
+      };
+    }
   }
 
   const [reducerState, dispatch] = useReducer<

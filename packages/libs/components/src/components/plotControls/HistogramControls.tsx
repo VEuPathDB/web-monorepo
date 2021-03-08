@@ -61,6 +61,8 @@ export type HistogramControlsProps = {
   onSelectedRangeChange?: (newRange: NumericRange) => void;
   /** Min and max allowed values for the selected range. Optional */
   selectedRangeBounds?: NumericRange; // TO DO: handle DateRange too
+  /** Show the range controls */
+  displaySelectedRangeControls?: boolean;
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
   /** Color to use as an accent in the control panel. Will accept any
@@ -99,6 +101,7 @@ export default function HistogramControls({
   selectedRange,
   onSelectedRangeChange,
   selectedRangeBounds,
+  displaySelectedRangeControls,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -163,20 +166,15 @@ export default function HistogramControls({
             onOptionSelected={onSelectedUnitChange}
           />
         ) : null}
-        {
-          // if we include `selectedRange` as a condition below
-          // it doesn't show the widget until a range is selected
-          // and then it goes into a crazy loop
-          selectedRangeBounds ? (
-            <NumericRangeInput
-              label="Selected Range"
-              defaultRange={selectedRangeBounds}
-              rangeBounds={selectedRangeBounds}
-              controlledRange={selectedRange}
-              onRangeChange={onSelectedRangeChange}
-            />
-          ) : null
-        }
+        {displaySelectedRangeControls && selectedRangeBounds ? (
+          <NumericRangeInput
+            label="Selected Range"
+            defaultRange={selectedRangeBounds}
+            rangeBounds={selectedRangeBounds}
+            controlledRange={selectedRange}
+            onRangeChange={onSelectedRangeChange}
+          />
+        ) : null}
       </div>
       <div
         style={{

@@ -1,15 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import { NumericRange } from '../../types/general';
-import { HistogramDataSeries, HistogramBin } from '../../types/plots/histogram';
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
-import {
-  DARK_GRAY,
-  LIGHT_BLUE,
-  LIGHT_GREEN,
-  MEDIUM_GRAY,
-} from '../../constants/colors';
 import usePlotControls from '../../hooks/usePlotControls';
 import HistogramControls from '../../components/plotControls/HistogramControls';
 import { binDailyCovidStats } from '../api/covidData';
@@ -135,31 +128,6 @@ const TemplateWithSelectedRangeControls: Story<
     includeExtraDirectives: boolean;
   }
 > = (args, { loaded: { apiData } }) => {
-  // watch apiData and calculate min and max of the x-variable
-  // and set it as `rangeBounds`
-  const [rangeBounds, setRangeBounds] = useState<NumericRange>();
-  useEffect(() => {
-    if (apiData !== undefined) {
-      // The EDA will have consistent bins across all series
-      // so we can take the binStart and binEnd of the first
-      // and last bins of the first series, respectively.
-      // With the story data we have to be a bit more creative.
-      // (See also Histogram.tsx handleSelectedRange().)
-      const min = apiData.series[0].bins[0].binStart;
-      const binEnds = apiData.series.map((series: HistogramDataSeries) => {
-        return series.bins.map((bin: HistogramBin) => {
-          const parts = bin.binLabel.split(' ');
-          return Number(parts[parts.length - 1]);
-        });
-      });
-      const binEndsFlat = [].concat.apply([], binEnds);
-      const max = binEndsFlat.sort((a: number, b: number) =>
-        Math.sign(b - a)
-      )[0];
-      setRangeBounds({ min, max });
-    }
-  }, [apiData, setRangeBounds]);
-
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
     onSelectedUnitChange: async ({ selectedUnit }) => {
@@ -181,6 +149,7 @@ const TemplateWithSelectedRangeControls: Story<
           args.includeExtraDirectives
         );
       },
+      displaySelectedRangeControls: true,
     },
   });
 
@@ -192,7 +161,6 @@ const TemplateWithSelectedRangeControls: Story<
         label="Histogram Controls"
         {...plotControls}
         {...plotControls.histogram}
-        selectedRangeBounds={rangeBounds}
         containerStyles={{
           maxWidth: args.width - 25,
           marginLeft: 25,
