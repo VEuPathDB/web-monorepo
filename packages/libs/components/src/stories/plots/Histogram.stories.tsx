@@ -128,6 +128,12 @@ const TemplateWithSelectedRangeControls: Story<
     includeExtraDirectives: boolean;
   }
 > = (args, { loaded: { apiData } }) => {
+  const onSelectedRangeChange = (newRange: NumericRange) => {
+    console.log(
+      `The story received a new range: ${newRange.min} to ${newRange.max}`
+    );
+  };
+
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
     onSelectedUnitChange: async ({ selectedUnit }) => {
@@ -150,6 +156,7 @@ const TemplateWithSelectedRangeControls: Story<
         );
       },
       displaySelectedRangeControls: true,
+      onSelectedRangeChange,
     },
   });
 
