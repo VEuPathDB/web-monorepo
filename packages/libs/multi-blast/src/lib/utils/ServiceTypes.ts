@@ -717,13 +717,16 @@ export const methodNotAllowedError = record({
 
 export type MethodNotAllowedError = Unpack<typeof methodNotAllowedError>;
 
+export const inputErrors = record({
+  general: arrayOf(string),
+  byKey: objectOf(arrayOf(string)),
+});
+
+export type InputErrors = Unpack<typeof inputErrors>;
+
 export const unprocessableEntityError = record({
   status: constant('invalid-input'),
-  message: string,
-  errors: record({
-    general: arrayOf(string),
-    byKey: objectOf(arrayOf(string)),
-  }),
+  errors: inputErrors,
 });
 
 export type UnprocessableEntityError = Unpack<typeof unprocessableEntityError>;
