@@ -70,6 +70,7 @@ import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspac
 import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
 import SliderInput from 'wdk-client/Components/InputControls/SliderInput';
+import UnhandledErrors from 'wdk-client/Views/UnhandledErrors/UnhandledErrors';
 
 export {
   AccordionButton,
@@ -140,6 +141,7 @@ export {
   TextBox,
   TextBoxMultivalued,
   Tooltip,
+  UnhandledErrors,
   AttributeCell,
   ResultTable,
   ResultPanelHeader,
