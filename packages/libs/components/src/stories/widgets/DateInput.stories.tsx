@@ -49,13 +49,13 @@ Bounded.args = {
 export const BoundedInitialized = Template.bind({});
 BoundedInitialized.args = {
   defaultValue: new Date('2005-01-01'),
-  label: '2000-01-01 <= x <= 2009-12-31',
+  label: '2000-01-01 to 2009-12-31',
   minValue: new Date('2000-01-01'),
   maxValue: new Date('2009-12-31'),
 };
 
 const ControlledTemplate: Story<DateInputProps> = (args) => {
-  const [value, setValue] = useState<Date>();
+  const [value, setValue] = useState<Date>(new Date('2005-01-01'));
   return (
     <DateInput
       {...args}
@@ -71,24 +71,18 @@ const ControlledTemplate: Story<DateInputProps> = (args) => {
 
 export const Controlled = ControlledTemplate.bind({});
 Controlled.args = {
-  label: 'Controlled uninitialised',
-};
-
-export const ControlledInitialized = ControlledTemplate.bind({});
-ControlledInitialized.args = {
-  label: 'Controlled initialised',
-  defaultValue: new Date('2005-01-01'),
+  label: 'Controlled',
 };
 
 export const ControlledBounded = ControlledTemplate.bind({});
 ControlledBounded.args = {
-  label: 'Controlled (0 <= x <= 5)',
+  label: 'Controlled (2000-01-01 to 2009-12-31)',
   minValue: new Date('2000-01-01'),
   maxValue: new Date('2009-12-31'),
 };
 
 export const ControlledLinkedPair: Story = () => {
-  const [linkedValue, setLinkedValue] = useState<Date>();
+  const [linkedValue, setLinkedValue] = useState<Date>(new Date('2020-02-20'));
 
   return (
     <>

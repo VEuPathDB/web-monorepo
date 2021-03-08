@@ -63,7 +63,7 @@ BoundedInitialized.args = {
 };
 
 const ControlledTemplate: Story<NumberInputProps> = (args) => {
-  const [value, setValue] = useState<number>();
+  const [value, setValue] = useState<number>(0);
   return (
     <NumberInput
       {...args}
@@ -79,13 +79,7 @@ const ControlledTemplate: Story<NumberInputProps> = (args) => {
 
 export const Controlled = ControlledTemplate.bind({});
 Controlled.args = {
-  label: 'Controlled uninitialised',
-};
-
-export const ControlledInitialized = ControlledTemplate.bind({});
-ControlledInitialized.args = {
-  label: 'Controlled initialised',
-  defaultValue: 5,
+  label: 'Controlled',
 };
 
 export const ControlledBounded = ControlledTemplate.bind({});
@@ -96,7 +90,7 @@ ControlledBounded.args = {
 };
 
 export const ControlledLinkedPair: Story = () => {
-  const [linkedValue, setLinkedValue] = useState<number>();
+  const [linkedValue, setLinkedValue] = useState<number>(0);
 
   return (
     <>

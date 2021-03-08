@@ -39,7 +39,7 @@ type MathableInputProps =
       valueType: 'number';
     })
   | (DateInputProps & {
-      valueType: 'date';
+      valueType: 'date'; // another possibility is 'datetime-local', but the Material UI TextField doesn't provide a date picker
     });
 
 /**
@@ -128,8 +128,16 @@ function MathableInput({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <TextField
           InputProps={{ classes }}
-          defaultValue={defaultValue}
-          value={controlledValue}
+          defaultValue={
+            valueType === 'number'
+              ? defaultValue
+              : (defaultValue as Date)?.toISOString().substr(0, 10)
+          }
+          value={
+            valueType === 'number'
+              ? controlledValue
+              : (controlledValue as Date)?.toISOString().substr(0, 10)
+          }
           type={valueType}
           variant="outlined"
           onChange={handleChange}
