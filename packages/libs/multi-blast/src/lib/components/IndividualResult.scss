@@ -2,8 +2,8 @@
   .Header {
     display: grid;
     grid-template-areas:
-      'query-options strategy-link-out'
-      'hit-count     strategy-link-out';
+      'query-options link-outs'
+      'hit-count     link-outs';
   }
 
   p.HitCountDescription {
@@ -27,10 +27,16 @@
     }
   }
 
-  .StrategyLinkOut {
-    grid-area: strategy-link-out;
+  .LinkOuts {
+    grid-area: link-outs;
     justify-self: flex-end;
     align-self: flex-end;
+
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 2em;
+    justify-content: flex-end;
+    align-items: center;
   }
 
   p.NotOffered {

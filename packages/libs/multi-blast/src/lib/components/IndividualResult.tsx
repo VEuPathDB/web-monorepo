@@ -54,11 +54,13 @@ export function IndividualResult(props: Props) {
                   onChange={props.onSelectedOptionChange}
                 />
               )}
-              <ReportSelect jobId={props.individualJobId} />
-              <StrategyLinkOut
-                onClick={props.onLinkOutClick}
-                tooltipContent={props.linkOutTooltipContent}
-              />
+              <div className="LinkOuts">
+                <ReportSelect jobId={props.individualJobId} />
+                <StrategyLinkOut
+                  onClick={props.onLinkOutClick}
+                  tooltipContent={props.linkOutTooltipContent}
+                />
+              </div>
               <p className="HitCountDescription">{props.hitCountDescription}</p>
             </div>
           )}
