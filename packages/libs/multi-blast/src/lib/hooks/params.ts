@@ -1,7 +1,8 @@
-import { useContext, useEffect, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useMemo } from 'react';
 
 import { isEqual, keyBy, once, pick, zipObject } from 'lodash';
 
+import { updateDependentParams } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import {
@@ -64,7 +65,10 @@ export function useTargetParamProps(
 
 export function useAlgorithmParamProps(
   state: QuestionState,
-  updateParamValue: Props['eventHandlers']['updateParamValue'],
+  dispatchAction: Props['dispatchAction'],
+  defaultAdvancedParamsMetadata:
+    | Record<string, DefaultAdvancedParamsMetadata>
+    | undefined,
   enabledAlgorithms: string[] | undefined
 ) {
   // FIXME: Validate this
@@ -83,7 +87,12 @@ export function useAlgorithmParamProps(
     [parameter, enabledAlgorithms]
   );
 
-  const onChange = useChangeParamValue(parameter, state, updateParamValue);
+  const onChange = useChangeAlgorithmParam(
+    defaultAdvancedParamsMetadata,
+    dispatchAction,
+    parameter,
+    state.question.urlSegment
+  );
 
   useEffect(() => {
     if (enabledAlgorithms != null && !enabledAlgorithms.includes(algorithm)) {
@@ -213,3 +222,42 @@ async function fetchDefaultAlgorithmAdvancedParams(
 const fetchDefaultAlgorithmDependentParamsOnce = once(
   fetchDefaultAlgorithmAdvancedParams
 );
+
+function useChangeAlgorithmParam(
+  defaultAdvancedParamsMetadata:
+    | Record<string, DefaultAdvancedParamsMetadata>
+    | undefined,
+  dispatchAction: Props['dispatchAction'],
+  algorithmParameter: Parameter,
+  searchName: string
+) {
+  return useCallback(
+    (newAlgorithm: string) => {
+      if (defaultAdvancedParamsMetadata == null) {
+        return;
+      }
+
+      const updatedParameter = {
+        ...algorithmParameter,
+        initialDisplayValue: newAlgorithm,
+      };
+
+      dispatchAction(
+        updateDependentParams({
+          searchName,
+          updatedParameter,
+          refreshedDependentParameters: [
+            updatedParameter,
+            ...defaultAdvancedParamsMetadata[newAlgorithm].defaultParams,
+          ],
+        })
+      );
+    },
+    [
+      algorithmParameter,
+      defaultAdvancedParamsMetadata,
+      dispatchAction,
+      searchName,
+    ]
+  );
+}

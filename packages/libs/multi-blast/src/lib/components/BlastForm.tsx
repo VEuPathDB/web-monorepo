@@ -76,9 +76,6 @@ export function BlastForm(props: Props) {
   const selectedBlastAlgorithm =
     props.state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
 
-  const advancedParamGroupChanging =
-    props.state.paramsUpdatingDependencies[BLAST_ALGORITHM_PARAM_NAME];
-
   const restrictedAdvancedParamGroup = useMemo(() => {
     const fullAdvancedParamGroup =
       props.state.question.groupsByName[ADVANCED_PARAMS_GROUP_NAME];
@@ -162,7 +159,8 @@ export function BlastForm(props: Props) {
   );
   const algorithmParamProps = useAlgorithmParamProps(
     props.state,
-    props.eventHandlers.updateParamValue,
+    props.dispatchAction,
+    defaultAdvancedParamsMetadata,
     enabledAlgorithms
   );
   const sequenceParamProps = useSequenceParamProps(
@@ -214,18 +212,10 @@ export function BlastForm(props: Props) {
           renderDefaultParamGroup(group, formProps)
         ) : (
           <AdvancedParamGroup
-            disabled={advancedParamGroupChanging}
             key={group.name}
             searchName={formProps.state.question.urlSegment}
             group={restrictedAdvancedParamGroup}
-            uiState={
-              !advancedParamGroupChanging
-                ? formProps.state.groupUIState[group.name]
-                : {
-                    ...formProps.state.groupUIState[group.name],
-                    isVisible: false,
-                  }
-            }
+            uiState={formProps.state.groupUIState[group.name]}
             onVisibilityChange={formProps.eventHandlers.setGroupVisibility}
           >
             <>
@@ -259,11 +249,7 @@ export function BlastForm(props: Props) {
         )}
       </div>
     ),
-    [
-      advancedParamGroupChanging,
-      resetAdvancedParamGroupButtonProps,
-      restrictedAdvancedParamGroup,
-    ]
+    [resetAdvancedParamGroupButtonProps, restrictedAdvancedParamGroup]
   );
 
   const containerClassName = `${blastFormCx()} ${blastFormCx(
