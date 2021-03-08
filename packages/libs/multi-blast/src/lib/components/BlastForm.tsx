@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useHistory } from 'react-router';
@@ -13,6 +14,7 @@ import { fromPairs } from 'lodash';
 import { RadioList, TextArea } from '@veupathdb/wdk-client/lib/Components';
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import DefaultQuestionForm, {
   ParameterList,
@@ -230,6 +232,8 @@ interface NewJobFormProps extends Props {
 }
 
 function NewJobForm(props: NewJobFormProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const [submitting, setSubmitting] = useState(false);
   const [inputErrors, setInputErrors] = useState<InputErrors | undefined>(
     undefined
@@ -319,6 +323,10 @@ function NewJobForm(props: NewJobFormProps) {
       } else if (createJobResult.details.status === 'invalid-input') {
         setInputErrors(createJobResult.details.errors);
 
+        if (containerRef.current != null) {
+          scrollIntoView(containerRef.current);
+        }
+
         setSubmitting(false);
       } else {
         setSubmitting(false);
@@ -331,11 +339,12 @@ function NewJobForm(props: NewJobFormProps) {
       targetMetadataByDataType,
       wdkDependencies,
       props.state.paramValues,
+      containerRef.current,
     ]
   );
 
   return api == null ? null : (
-    <div className={props.containerClassName}>
+    <div className={props.containerClassName} ref={containerRef}>
       {inputErrors != null && <BlastFormValidationInfo errors={inputErrors} />}
       <form onSubmit={onSubmit}>
         {props.state.question.groups
