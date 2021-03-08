@@ -28,6 +28,7 @@ import {
   useSequenceParamProps,
   useTargetParamProps,
 } from '../hooks/params';
+import { InputErrors } from '../utils/ServiceTypes';
 import {
   ADVANCED_PARAMS_GROUP_NAME,
   BLAST_ALGORITHM_PARAM_NAME,
@@ -47,6 +48,7 @@ import {
 import { isBlastCompatibleWdkService } from '../utils/wdkServiceIntegration';
 
 import { AdvancedParamGroup } from './AdvancedParamGroup';
+import { BlastFormValidationInfo } from './BlastFormValidationInfo';
 
 import './BlastForm.scss';
 
@@ -229,6 +231,9 @@ interface NewJobFormProps extends Props {
 
 function NewJobForm(props: NewJobFormProps) {
   const [submitting, setSubmitting] = useState(false);
+  const [inputErrors, setInputErrors] = useState<InputErrors | undefined>(
+    undefined
+  );
 
   const api = useBlastApi();
 
@@ -305,13 +310,18 @@ function NewJobForm(props: NewJobFormProps) {
         jobDescription
       );
 
-      // FIXME: Handle the case where job creation fails
       if (createJobResult.status === 'ok') {
         const jobId = createJobResult.value.jobId;
 
         setSubmitting(false);
 
         history.push(`/workspace/blast/result/${jobId}`);
+      } else if (createJobResult.details.status === 'invalid-input') {
+        setInputErrors(createJobResult.details.errors);
+
+        setSubmitting(false);
+      } else {
+        setSubmitting(false);
       }
     },
     [
@@ -326,6 +336,7 @@ function NewJobForm(props: NewJobFormProps) {
 
   return api == null ? null : (
     <div className={props.containerClassName}>
+      {inputErrors != null && <BlastFormValidationInfo errors={inputErrors} />}
       <form onSubmit={onSubmit}>
         {props.state.question.groups
           .filter((group) => group.displayType !== 'hidden')
