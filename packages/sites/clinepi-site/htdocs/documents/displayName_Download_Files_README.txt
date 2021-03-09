@@ -32,7 +32,7 @@ Data Files:
 • Key identifiers: 
   ◦ Household_Observation_Id: unique identifier given to every unique observation for every household 
   ◦ Household_Id: unique identifier given to every household 
-  ◦ Community_Observatioon_Id: unique identifier given to every unique observation for every [community] 
+  ◦ Community_Observation_Id: unique identifier given to every unique observation for every [community] 
   ◦ Community_Id: unique identifier given to every [community] 
   ◦ Participant_Id: unique identifier given to every participant 
   ◦ Observation_Id: unique identifier given to every unique observation for every participant 
