@@ -43,11 +43,6 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
         name: 'Status',
         sortable: true,
       },
-      {
-        key: 'expires',
-        name: 'Expiration Date',
-        sortable: true,
-      },
     ],
     []
   );
@@ -67,7 +62,6 @@ export function useRawJobRows(blastApi: BlastApi): JobRow[] | undefined {
             jobId: jobEntity.id,
             description: jobEntity.description ?? null,
             created: new Date(jobEntity.created).toLocaleDateString(),
-            expires: new Date(jobEntity.expires).toLocaleDateString(),
             status: entityStatusToReadableStatus(jobEntity.status),
           }));
   }, []);

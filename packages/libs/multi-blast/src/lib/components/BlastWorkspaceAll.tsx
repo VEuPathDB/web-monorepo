@@ -25,7 +25,6 @@ export interface JobRow {
   description: string | null;
   created: string;
   status: 'queued' | 'running' | 'finished' | 'errored';
-  expires: string;
 }
 
 export const BlastWorkspaceAll = withBlastApi(BlastWorkspaceAllWithLoadedApi);
