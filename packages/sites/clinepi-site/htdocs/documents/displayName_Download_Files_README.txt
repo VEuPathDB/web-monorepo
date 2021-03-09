@@ -6,16 +6,7 @@ General notes:
 • Column headers for each data file contain the variable label used on the ClinEpiDB.org website. Column headers for each data file also contain the Internationalized Resource Identifier (IRI), shown in brackets. 
 • Each variable on ClinEpiDB.org has been mapped to an ontology term via the IRI. This approach generates a unified semantic framework, where the same variables across different studies are mapped to the same ontology term. IRIs can be searched on ontobee.org. Note that while most ontology terms used in ClinEpiDB are from existing OBO Foundry ontologies, some are placeholder terms that are created as needed and may not be published yet. 
 • ISASimple_[INSERT file name]_RSRC_ontologyMetadata.txt links variables to their original study labels so users can reference study data collection forms and data dictionaries to learn more about each variable. 
-• Delimited text files are used to store data. Each line represents a single household, participant, observation, or sample. Each line has fields separated by a tab delimiter. 
-• Note that large file sizes may cause Excel to crash. We recommended using R (https://www.r-project.org/, a free software environment for statistical computing) instead. To read large files into R, we recommend using the fread( ) function from the data.table package. For example: 
-	install.packages("data.table")
-	library(data.table)
-	setwd("~/Downloads")
-	d <- fread("ISASimple_Gates_MAL-ED_phase2_RSRC.txt") 
-• If you choose to use Excel: 
-   ◦ For a primer on how to open tab delimited .txt files in Excel, see: https://support.microsoft.com/en-us/office/import-or-export-text-txt-or-csv-files-5250ac4c-663c-47ce-937b-339e391393ba 
-   ◦ When opening data files in Excel, date variables may read "00:00.0" for all values. This is not a data error, but will require reformatting the column using Excel’s ‘Text Import Wizard’ to obtain the actual data. See: https://support.office.com/en-us/article/text-import-wizard-c5b02af6-fda1-4440-899f-f78bafe41857#ID0EAAEAAA=Office_2010_-_Office_2016 
-
+• Delimited text files are used to store data. Each line represents a single household, participant, observation, or sample. Each line has fields separated by a tab delimiter.
 
 
 
@@ -41,9 +32,12 @@ Data Files:
 • Key identifiers: 
   ◦ Household_Observation_Id: unique identifier given to every unique observation for every household 
   ◦ Household_Id: unique identifier given to every household 
+  ◦ Community_Observatioon_Id: unique identifier given to every unique observation for every [community] 
+  ◦ Community_Id: unique identifier given to every [community] 
   ◦ Participant_Id: unique identifier given to every participant 
   ◦ Observation_Id: unique identifier given to every unique observation for every participant 
-  ◦ Sample_Id: unique identifier given to every sample 
+  ◦ Sample_Id: unique identifier given to every sample
+ 
 
 1. ISASimple_[INSERT file name]_RSRC_households.txt 
    • Key identifiers: [Household_Observation_Id, Household_Id] 
@@ -86,4 +80,22 @@ Data Files:
 	◦ ISASimple_[INSERT file name]_RSRC_samples.txt 
 	◦ ISASimple_[INSERT file name]_RSRC_[INSERT file type for OTHER bulk download file].txt 
    • Key identifiers: [Household_Id, Household_Observation_Id, Participant_Id, Observation_Id, Sample_Id] 
-   • [INSERT # of columns] variables (columns) & [INSERT # of rows] rows 
+   • [INSERT # of columns] variables (columns) & [INSERT # of rows] rows
+
+
+
+
+Notes on opening download files:
+
+• Note that large file sizes may cause Excel to crash. We recommended using R (https://www.r-project.org/, a free software environment for statistical computing) instead. To read large files into R, we recommend using the fread() function from the data.table package. For example: 
+      install.packages("data.table")
+      library(data.table)
+      setwd("~/Downloads")
+      d <- fread("ISASimple_Gates_WASHb_Bangladesh_rct_RSRC.txt")
+      names(d) <-  gsub(" ", "_", gsub("\\[|\\]", "", names(d)))
+
+
+• If you choose to use Excel: 
+   ◦ For a primer on how to open tab delimited .txt files in Excel, see: https://support.microsoft.com/en-us/office/import-or-export-text-txt-or-csv-files-5250ac4c-663c-47ce-937b-339e391393ba 
+   ◦ When opening data files in Excel, date variables may read "00:00.0" for all values. This is not a data error, but will require reformatting the column using Excel’s ‘Text Import Wizard’ to obtain the actual data. See: https://support.office.com/en-us/article/text-import-wizard-c5b02af6-fda1-4440-899f-f78bafe41857#ID0EAAEAAA=Office_2010_-_Office_2016 
+ 
