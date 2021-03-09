@@ -57,15 +57,15 @@ export function TableFilter({
         entityId: entity.id,
         variableId: variable.id,
         distribution: zip(
-          distribution.background[0],
-          distribution.foreground[0]
+          distribution.background.data,
+          distribution.foreground.data
         ).map(([fgEntry, bgEntry]) => ({
           value: fgEntry?.label || bgEntry?.label || '',
           count: bgEntry?.value || 0,
           filteredCount: fgEntry?.value || 0,
         })),
-        entitiesCount: distribution.background[1].completeCases.length,
-        filteredEntitiesCount: distribution.foreground[1].completeCases.length,
+        entitiesCount: distribution.background.config.incompleteCases,
+        filteredEntitiesCount: distribution.foreground.config.incompleteCases,
       };
     }, [dataClient, studyMetadata, variable, entity, filters])
   );
@@ -81,33 +81,36 @@ export function TableFilter({
     }),
     [variable]
   );
+
   return (
-    <div>
+    <div className="filter-param">
       {tableSummary.pending && <Loading radius={4} />}
-      {tableSummary.value && (
-        <MembershipField
-          displayName={entity.displayName}
-          dataCount={tableSummary.value.entitiesCount}
-          filteredDataCount={tableSummary.value.filteredEntitiesCount}
-          filters={filters?.map((f) => fromEdaFilter(f))}
-          activeField={activeField}
-          activeFieldState={{
-            loading: false,
-            summary: {
-              valueCounts: tableSummary.value.distribution,
-              internalsCount: tableSummary.value.entitiesCount,
-              internalsFilteredCount: tableSummary.value.filteredEntitiesCount,
-            },
-          }}
-          onFiltersChange={(filters: WdkFilter[]) =>
-            onFiltersChange(filters.map((f) => toEdaFilter(f, entity.id)))
-          }
-          onMemberSort={logEvent('onMemberSort')}
-          onMemberSearch={logEvent('onMemberSearch')}
-          onRangeScaleChange={logEvent('onRangeScaleChange')}
-          selectByDefault={false}
-        />
-      )}
+      {tableSummary.error && <pre>{String(tableSummary.error)}</pre>}
+      {tableSummary.value &&
+        tableSummary.value.entityId === entity.id &&
+        tableSummary.value.variableId === variable.id && (
+          <MembershipField
+            displayName={entity.displayName}
+            dataCount={tableSummary.value.entitiesCount}
+            filteredDataCount={tableSummary.value.filteredEntitiesCount}
+            filters={filters?.map((f) => fromEdaFilter(f))}
+            activeField={activeField}
+            activeFieldState={{
+              loading: false,
+              summary: {
+                valueCounts: tableSummary.value.distribution,
+                internalsCount: tableSummary.value.entitiesCount,
+                internalsFilteredCount:
+                  tableSummary.value.filteredEntitiesCount,
+              },
+            }}
+            onChange={logEvent('onChange')}
+            onMemberSort={logEvent('onMemberSort')}
+            onMemberSearch={logEvent('onMemberSearch')}
+            onRangeScaleChange={logEvent('onRangeScaleChange')}
+            selectByDefault={false}
+          />
+        )}
     </div>
   );
 }

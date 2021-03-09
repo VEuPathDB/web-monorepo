@@ -69,11 +69,15 @@ export function HistogramFilter(props: Props) {
       );
       const series = [
         histogramResponseToDataSeries(
-          variable,
+          `${variable.displayName} (remaining)`,
           distribution.background,
           'gray'
         ),
-        histogramResponseToDataSeries(variable, distribution.foreground, 'red'),
+        histogramResponseToDataSeries(
+          `${variable.displayName} (all)`,
+          distribution.foreground,
+          'red'
+        ),
       ];
       const binWidth = parseInt(
         String(distribution.foreground.config.binWidth),
@@ -97,16 +101,19 @@ export function HistogramFilter(props: Props) {
   return (
     <>
       {data.pending && <Loading radius={4} />}
-      {data.value && (
-        <HistogramPlotWithControls
-          data={data.value}
-          getData={getData}
-          width={600}
-          height={600}
-          orientation={'horizontal'}
-          barLayout={'overlay'}
-        />
-      )}
+      {data.error && <pre>{String(data.error)}</pre>}
+      {data.value &&
+        data.value.variableId === variable.id &&
+        data.value.entityId === entity.id && (
+          <HistogramPlotWithControls
+            data={data.value}
+            getData={getData}
+            width={1000}
+            height={600}
+            orientation={'horizontal'}
+            barLayout={'overlay'}
+          />
+        )}
     </>
   );
 }
@@ -143,7 +150,7 @@ function HistogramPlotWithControls({
 }
 
 function histogramResponseToDataSeries(
-  variable: StudyVariable,
+  name: string,
   response: PromiseType<
     ReturnType<
       DataClient['getDateHistogramBinWidth' | 'getNumericHistogramBinWidth']
@@ -162,7 +169,7 @@ function histogramResponseToDataSeries(
     count: data.value[index],
   }));
   return {
-    name: variable.displayName,
+    name,
     color,
     bins,
   };
@@ -183,7 +190,7 @@ function getRequestParams(
             : `${dataParams.binWidth} years`,
       }
     : {
-        numBins: 10,
+        // numBins: 10,
       };
   return {
     studyId,

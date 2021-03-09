@@ -1,3 +1,4 @@
+import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   StudyEntity,
   StudyVariable,
@@ -55,12 +56,14 @@ export function Variable(props: Props) {
           </div>
         ))}
       </div>
-      <FilterContainer
-        studyMetadata={studyMetadata}
-        variable={variable}
-        entity={entity}
-        filters={sessionState.session?.filters}
-      />
+      <ErrorBoundary>
+        <FilterContainer
+          studyMetadata={studyMetadata}
+          variable={variable}
+          entity={entity}
+          filters={sessionState.session?.filters}
+        />
+      </ErrorBoundary>
     </div>
   );
 }
