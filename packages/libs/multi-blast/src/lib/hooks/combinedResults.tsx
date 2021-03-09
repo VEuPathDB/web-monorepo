@@ -438,7 +438,14 @@ function useMesaUiState(sort: MesaSortObject) {
 }
 
 function useMesaOptions() {
-  return useMemo(() => ({ toolbar: true }), []);
+  return useMemo(
+    () => ({
+      useStickyHeader: true,
+      tableBodyMaxHeight: '60vh',
+      toolbar: true,
+    }),
+    []
+  );
 }
 
 export function useTargetTypeTermAndWdkRecordType(

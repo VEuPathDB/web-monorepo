@@ -103,6 +103,8 @@ export function useMesaEventHandlers(
 export function useMesaOptions() {
   return useMemo(
     () => ({
+      useStickyHeader: true,
+      tableBodyMaxHeight: '60vh',
       renderEmptyState: () => (
         <div className="EmptyState">
           <div className="EmptyState-BodyWrapper">

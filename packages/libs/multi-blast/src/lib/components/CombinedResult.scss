@@ -1,4 +1,8 @@
 .CombinedResult {
+  .MesaComponent .MesaComponent {
+    overflow-x: auto;
+  }
+
   .TableToolbar-Children {
     width: 100%;
     display: flex;
