@@ -32,7 +32,6 @@ export function WorkspaceRouter() {
       />
       <Route
         path={`${path}/:studyId/:sessionId`}
-        exact
         render={(
           props: RouteComponentProps<{ studyId: string; sessionId: string }>
         ) => (
