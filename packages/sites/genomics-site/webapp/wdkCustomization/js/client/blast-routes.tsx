@@ -12,7 +12,6 @@ export const blastRoutes: RouteEntry[] = [
   {
     path: '/workspace/blast/:tab(new|all|help)?',
     component: BlastWorkspace,
-    requiresLogin: true,
   },
   {
     path:
@@ -36,7 +35,6 @@ export const blastRoutes: RouteEntry[] = [
         />
       );
     },
-    requiresLogin: true,
   },
   {
     path: '/search/:recordClass/:searchName(.*MultiBlast)',

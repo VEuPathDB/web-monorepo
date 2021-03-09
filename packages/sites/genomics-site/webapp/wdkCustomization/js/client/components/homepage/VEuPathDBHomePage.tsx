@@ -493,6 +493,12 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: '/workspace/basket'
         },
+        {
+          key: 'blasta',
+          display: <>My BLAST<sup>{' '}<em>beta</em></sup>{' '}jobs</>,
+          type: 'reactRoute',
+          url: '/workspace/blast/all'
+        },
         { 
           key: 'user-data-sets',
           display: 'My data sets',
