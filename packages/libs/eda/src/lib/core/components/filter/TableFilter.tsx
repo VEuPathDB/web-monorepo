@@ -2,7 +2,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import MembershipField from '@veupathdb/wdk-client/lib/Components/AttributeFilter/MembershipField';
 import { Filter as WdkFilter } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import { zip } from 'lodash';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { BarplotResponse } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
 import { useDataClient } from '../../hooks/workspace';
@@ -30,7 +30,7 @@ export function TableFilter({
 }: Props) {
   const dataClient = useDataClient();
   const tableSummary = usePromise(
-    async () => {
+    useCallback(async () => {
       const distribution = await getDistribution<BarplotResponse>(
         {
           entityId: entity.id,
@@ -67,11 +67,7 @@ export function TableFilter({
         entitiesCount: distribution.background[1].completeCases.length,
         filteredEntitiesCount: distribution.foreground[1].completeCases.length,
       };
-    },
-    (prevValue) =>
-      prevValue?.entityId !== entity.id ||
-      prevValue?.variableId !== variable.id,
-    [dataClient, studyMetadata, variable, entity, filters]
+    }, [dataClient, studyMetadata, variable, entity, filters])
   );
   const activeField = useMemo(
     () => ({

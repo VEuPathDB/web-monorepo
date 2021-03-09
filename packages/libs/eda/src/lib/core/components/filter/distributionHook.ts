@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { DataClient } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
 import { useDataClient } from '../../hooks/workspace';
@@ -16,17 +17,19 @@ export function useDataEndpoint<T>(
   fetchSummary: SummaryFetcher<T>
 ) {
   const dataClient = useDataClient();
-  return usePromise(async () => {
-    const foregroundFilters = filters?.filter(
-      (f) => f.entityId !== entity.id || f.variableId !== variable.id
-    );
-    const background = await fetchSummary(dataClient, []);
-    const foreground = foregroundFilters?.length
-      ? await fetchSummary(dataClient, foregroundFilters)
-      : background;
-    return {
-      background,
-      foreground,
-    };
-  }, [variable, filters, fetchSummary]);
+  return usePromise(
+    useCallback(async () => {
+      const foregroundFilters = filters?.filter(
+        (f) => f.entityId !== entity.id || f.variableId !== variable.id
+      );
+      const background = await fetchSummary(dataClient, []);
+      const foreground = foregroundFilters?.length
+        ? await fetchSummary(dataClient, foregroundFilters)
+        : background;
+      return {
+        background,
+        foreground,
+      };
+    }, [variable, filters, fetchSummary])
+  );
 }

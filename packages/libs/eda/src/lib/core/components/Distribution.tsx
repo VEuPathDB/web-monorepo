@@ -2,7 +2,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import FieldFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/FieldFilter';
 import EmptyState from '@veupathdb/wdk-client/lib/Components/Mesa/Ui/EmptyState';
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { usePromise } from '../hooks/promise';
 import { StudyEntity, StudyMetadata, StudyVariable } from '../types/study';
 import {
@@ -25,72 +25,74 @@ interface Props {
 export function Distribution(props: Props) {
   const { studyMetadata, entity, variable, filters, onFiltersChange } = props;
   const dataClient = useDataClient();
-  const variableSummary = usePromise(async () => {
-    // remove filter for active variable so it is not reflected in the foreground
-    const otherFilters = filters?.filter(
-      (f) => f.entityId !== entity.id || f.variableId !== variable.id
-    );
-    const dataRequestConfig = {
-      entityId: entity.id, // for subsetting filters, this is the same entity as...
-      xAxisVariable: {
-        entityId: entity.id, // ...the variable's entity
-        variableId: variable.id,
-      },
-    };
-
-    if (variable.type === 'string') {
-      const bg$ = dataClient.getBarplot({
-        studyId: studyMetadata.id,
-        filters: [],
-        config: {
-          ...dataRequestConfig,
-          valueSpec: 'count',
+  const variableSummary = usePromise(
+    useCallback(async () => {
+      // remove filter for active variable so it is not reflected in the foreground
+      const otherFilters = filters?.filter(
+        (f) => f.entityId !== entity.id || f.variableId !== variable.id
+      );
+      const dataRequestConfig = {
+        entityId: entity.id, // for subsetting filters, this is the same entity as...
+        xAxisVariable: {
+          entityId: entity.id, // ...the variable's entity
+          variableId: variable.id,
         },
-      });
-      // If there are no filters, reuse background for foreground.
-      // This is an optimization that saves a call to the backend.
-      const fg$ = otherFilters?.length
-        ? dataClient.getBarplot({
-            studyId: studyMetadata.id,
-            filters: [],
-            config: {
-              ...dataRequestConfig,
-              valueSpec: 'count',
-            },
-          })
-        : bg$;
+      };
 
-      const [bg, fg] = await Promise.all([bg$, fg$]);
-      return { bg, fg };
-    } else if (variable.type === 'number') {
-      const bg$ = dataClient.getNumericHistogramNumBins({
-        studyId: studyMetadata.id,
-        filters: [],
-        config: {
-          ...dataRequestConfig,
-          numBins: 10,
-          valueSpec: 'count',
-        },
-      });
-      // If there are no filters, reuse background for foreground.
-      // This is an optimization that saves a call to the backend.
-      const fg$ = otherFilters?.length
-        ? dataClient.getNumericHistogramNumBins({
-            studyId: studyMetadata.id,
-            filters: otherFilters,
-            config: {
-              ...dataRequestConfig,
-              numBins: 10,
-              valueSpec: 'count',
-            },
-          })
-        : bg$;
-      const [bg, fg] = await Promise.all([bg$, fg$]);
-      return { bg, fg };
-    } else {
-      return Promise.reject(new Error('not string or number variable'));
-    }
-  }, [dataClient, studyMetadata, variable, entity, filters]);
+      if (variable.type === 'string') {
+        const bg$ = dataClient.getBarplot({
+          studyId: studyMetadata.id,
+          filters: [],
+          config: {
+            ...dataRequestConfig,
+            valueSpec: 'count',
+          },
+        });
+        // If there are no filters, reuse background for foreground.
+        // This is an optimization that saves a call to the backend.
+        const fg$ = otherFilters?.length
+          ? dataClient.getBarplot({
+              studyId: studyMetadata.id,
+              filters: [],
+              config: {
+                ...dataRequestConfig,
+                valueSpec: 'count',
+              },
+            })
+          : bg$;
+
+        const [bg, fg] = await Promise.all([bg$, fg$]);
+        return { bg, fg };
+      } else if (variable.type === 'number') {
+        const bg$ = dataClient.getNumericHistogramNumBins({
+          studyId: studyMetadata.id,
+          filters: [],
+          config: {
+            ...dataRequestConfig,
+            numBins: 10,
+            valueSpec: 'count',
+          },
+        });
+        // If there are no filters, reuse background for foreground.
+        // This is an optimization that saves a call to the backend.
+        const fg$ = otherFilters?.length
+          ? dataClient.getNumericHistogramNumBins({
+              studyId: studyMetadata.id,
+              filters: otherFilters,
+              config: {
+                ...dataRequestConfig,
+                numBins: 10,
+                valueSpec: 'count',
+              },
+            })
+          : bg$;
+        const [bg, fg] = await Promise.all([bg$, fg$]);
+        return { bg, fg };
+      } else {
+        return Promise.reject(new Error('not string or number variable'));
+      }
+    }, [dataClient, studyMetadata, variable, entity, filters])
+  );
   return variableSummary.pending ? (
     <Loading />
   ) : variableSummary.error ? (

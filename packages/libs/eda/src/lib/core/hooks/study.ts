@@ -52,13 +52,15 @@ export function useWdkStudyRecord(datasetId: string) {
 }
 
 export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
-  return usePromise(async () => {
-    const studies = await store.getStudies();
-    const study = studies.find((s) => s.datasetId === datasetId);
-    if (study == null)
-      throw new Error(
-        'Could not find study with associated dataset id `' + datasetId + '`.'
-      );
-    return store.getStudyMetadata(study.id);
-  }, [datasetId, store]);
+  return usePromise(
+    useCallback(async () => {
+      const studies = await store.getStudies();
+      const study = studies.find((s) => s.datasetId === datasetId);
+      if (study == null)
+        throw new Error(
+          'Could not find study with associated dataset id `' + datasetId + '`.'
+        );
+      return store.getStudyMetadata(study.id);
+    }, [datasetId, store])
+  );
 }

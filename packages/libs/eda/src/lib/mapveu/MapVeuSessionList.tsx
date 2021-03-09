@@ -14,10 +14,12 @@ interface Props {
 export function SessionList(props: Props) {
   const { sessionStore, studyId } = props;
   const studyRecord = useStudyRecord();
-  const list = usePromise(async () => {
-    const studies = await sessionStore.getSessions();
-    return studies.filter((study) => study.id === studyId);
-  }, [studyId, sessionStore]);
+  const list = usePromise(
+    useCallback(async () => {
+      const studies = await sessionStore.getSessions();
+      return studies.filter((study) => study.id === studyId);
+    }, [studyId, sessionStore])
+  );
   const { url } = useRouteMatch();
   const history = useHistory();
   const createSession = useCallback(async () => {

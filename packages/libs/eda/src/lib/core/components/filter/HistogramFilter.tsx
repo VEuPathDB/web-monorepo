@@ -93,10 +93,7 @@ export function HistogramFilter(props: Props) {
     },
     [dataClient, entity, filters, studyId, variable]
   );
-  const data = usePromise(
-    getData,
-    (prev) => prev?.variableId !== variable.id || prev.entityId !== entity.id
-  );
+  const data = usePromise(getData);
   return (
     <>
       {data.pending && <Loading radius={4} />}
