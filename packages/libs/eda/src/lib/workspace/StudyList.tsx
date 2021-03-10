@@ -43,13 +43,13 @@ export function StudyList(props: Props) {
           const dataset = datasets.records.find(
             (r) => r.attributes.dataset_id === study.datasetId
           );
-          return dataset ? (
+          return (
             <li>
-              <Link to={`${url}/${dataset.attributes.dataset_id}`}>
-                {safeHtml(dataset.displayName)}
+              <Link to={`${url}/${study.datasetId}`}>
+                {dataset ? safeHtml(dataset.displayName) : study.id}
               </Link>
             </li>
-          ) : null;
+          );
         })}
       </ul>
     </div>
