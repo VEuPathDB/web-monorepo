@@ -8,6 +8,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { BlastWorkspaceAll } from './BlastWorkspaceAll';
+import { BlastWorkspaceHelp } from './BlastWorkspaceHelp';
 import { BlastWorkspaceNew } from './BlastWorkspaceNew';
 
 import './BlastWorkspace.scss';
@@ -60,14 +61,10 @@ export function BlastWorkspace() {
         <WdkRoute
           path="/workspace/blast/help"
           requiresLogin={false}
-          component={UnderConstruction}
+          component={BlastWorkspaceHelp}
         />
         <Redirect to="/workspace/blast/all" />
       </Switch>
     </div>
   );
-}
-
-export function UnderConstruction() {
-  return <p style={{ fontSize: '1.2em' }}>Under Construction</p>;
 }
