@@ -9,6 +9,10 @@ import {
 import { StudyMetadata, StudyRecordClass, StudyRecord } from '../types/study';
 import { usePromise } from './promise';
 import { SubsettingClient } from '../api/subsetting-api';
+import {
+  RecordClass,
+  RecordInstance,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -37,11 +41,33 @@ export function useWdkStudyRecord(datasetId: string) {
         )
         .map(getNodeId)
         .toArray();
-      const studyRecord = await wdkService.getRecord(
-        STUDY_RECORD_CLASS_NAME,
-        [{ name: 'dataset_id', value: datasetId }],
-        { attributes }
-      );
+      const studyRecord = await wdkService
+        .getRecord(
+          STUDY_RECORD_CLASS_NAME,
+          [{ name: 'dataset_id', value: datasetId }],
+          { attributes }
+        )
+        .catch((error) => {
+          console.warn(
+            'Unable to load study dataset record. See error below. Using stub record.'
+          );
+          console.error(error);
+          const attrs = attributes.reduce(
+            (attrs, name) =>
+              Object.assign(attrs, {
+                [name]: '######',
+              }),
+            {}
+          );
+          return {
+            displayName: 'Fake Study',
+            id: [{ name: 'dataset_id', value: datasetId }],
+            recordClassName: STUDY_RECORD_CLASS_NAME,
+            attributes: attrs,
+            tables: {},
+            tableErrors: [],
+          };
+        });
       return {
         studyRecord,
         studyRecordClass,

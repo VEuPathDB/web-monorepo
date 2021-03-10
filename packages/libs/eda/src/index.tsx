@@ -29,10 +29,10 @@ initialize({
           <h1>EDA Links</h1>
           <ul>
             <li>
-              <Link to="/eda/DS_841a9f5259">Variables interface</Link>
+              <Link to="/eda">Variables interface</Link>
             </li>
             <li>
-              <Link to="/eda-session/DS_841a9f5259">New Layout</Link>
+              <Link to="/eda-session">New Layout</Link>
             </li>
           </ul>
         </div>
@@ -58,6 +58,15 @@ initialize({
           {...props.match.params}
           subsettingServiceUrl="/eda-subsetting-service"
           dataServiceUrl="/eda-data-service"
+        />
+      ),
+    },
+    {
+      path: '/eda',
+      component: (props: RouteComponentProps<{ studyId: string }>) => (
+        <StudyList
+          {...props.match.params}
+          subsettingServiceUrl="/eda-subsetting-service"
         />
       ),
     },

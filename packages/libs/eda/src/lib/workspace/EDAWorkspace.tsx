@@ -15,12 +15,7 @@ interface Props {
 export function EDAWorkspace(props: Props) {
   const { url } = useRouteMatch();
   const subsettingClient: SubsettingClient = useMemo(
-    () =>
-      new (class extends SubsettingClient {
-        async getStudyMetadata() {
-          return super.getStudyMetadata('GEMSCC0002-1');
-        }
-      })({ baseUrl: props.subsettingServiceUrl }),
+    () => new SubsettingClient({ baseUrl: props.subsettingServiceUrl }),
     [props.subsettingServiceUrl]
   );
 
