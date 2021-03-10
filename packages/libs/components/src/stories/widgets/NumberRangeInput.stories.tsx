@@ -1,19 +1,19 @@
 import React, { useState, useCallback } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { NumericRange } from '../../types/general';
+import { NumberRange } from '../../types/general';
 
-import NumericRangeInput, {
-  NumericRangeInputProps,
-} from '../../components/widgets/NumericRangeInput';
+import NumberRangeInput, {
+  NumberRangeInputProps,
+} from '../../components/widgets/NumberRangeInput';
 
 export default {
   title: 'Widgets/Numeric Range Input',
-  component: NumericRangeInput,
+  component: NumberRangeInput,
 } as Meta;
 
-const Template: Story<NumericRangeInputProps> = (args) => {
+const Template: Story<NumberRangeInputProps> = (args) => {
   return (
-    <NumericRangeInput
+    <NumberRangeInput
       {...args}
       onRangeChange={(newRange) => {
         console.log(`new range = ${newRange.min} to ${newRange.max}`);
@@ -50,8 +50,8 @@ FullyLabelled.args = {
   upperLabel: 'Upper bound',
 };
 
-export const ControlledLinked: Story<NumericRangeInputProps> = () => {
-  const [range, setRange] = useState<NumericRange>();
+export const ControlledLinked: Story<NumberRangeInputProps> = () => {
+  const [range, setRange] = useState<NumberRange>();
 
   // there must be a cleverer way to do this
   // avoiding the cut and paste
@@ -71,7 +71,7 @@ export const ControlledLinked: Story<NumericRangeInputProps> = () => {
     [setRange]
   );
 
-  const SharedNumericRangeInputArgs = {
+  const SharedNumberRangeInputArgs = {
     defaultRange: { min: 1, max: 9 },
     rangeBounds: { min: 0, max: 10 },
     controlledRange: range,
@@ -80,15 +80,15 @@ export const ControlledLinked: Story<NumericRangeInputProps> = () => {
 
   return (
     <>
-      <NumericRangeInput
+      <NumberRangeInput
         label="A"
         onRangeChange={handleChangeA}
-        {...SharedNumericRangeInputArgs}
+        {...SharedNumberRangeInputArgs}
       />
-      <NumericRangeInput
+      <NumberRangeInput
         label="B"
         onRangeChange={handleChangeB}
-        {...SharedNumericRangeInputArgs}
+        {...SharedNumberRangeInputArgs}
       />
     </>
   );

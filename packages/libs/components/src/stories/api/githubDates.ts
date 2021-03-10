@@ -30,7 +30,7 @@ export const getEventData = async (): Promise<Array<EventData>> => {
  * binWidth takes priority over numBins if both are given
  * (yes it ought to be done more formally than this)
  */
-export const binDailyCovidStats = async (args: {
+export const binGithubEventDates = async (args: {
   binWidth?: TimeDelta;
   numBins?: number;
 }): Promise<HistogramData> => {
@@ -88,7 +88,7 @@ export const binDailyCovidStats = async (args: {
     ],
   };
 
-  // console.log(objectToReturn);
+  console.log(objectToReturn);
 
   // @ts-ignore
   return objectToReturn;

@@ -1,5 +1,5 @@
 import { AvailableUnitsAddon } from '.';
-import { TimeDelta } from '../general';
+import { NumberOrTimeDeltaRange, NumberOrTimeDelta } from '../general';
 
 /**
  * Type definitions related to histograms.
@@ -7,12 +7,12 @@ import { TimeDelta } from '../general';
 export type HistogramData = {
   series: Array<HistogramDataSeries>;
   /** Current binWidth. */
-  binWidth?: number | TimeDelta;
+  binWidth?: NumberOrTimeDelta;
   /** The acceptable range of binWidth values. */
-  binWidthRange?: [number, number] | [TimeDelta, TimeDelta];
+  binWidthRange?: NumberOrTimeDeltaRange;
   /** The amount that binWidth should be adjusted each time the
    * user drags the slider to the left or right. */
-  binWidthStep?: number | [TimeDelta];
+  binWidthStep?: NumberOrTimeDelta;
 } & AvailableUnitsAddon;
 
 export type HistogramDataSeries = {

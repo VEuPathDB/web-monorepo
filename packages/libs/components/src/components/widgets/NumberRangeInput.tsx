@@ -3,17 +3,17 @@ import React, { useState, useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberInput } from './MathableInputs';
-import { NumericRange } from '../../types/general';
+import { NumberRange } from '../../types/general';
 
-export type NumericRangeInputProps = {
+export type NumberRangeInputProps = {
   /** Default value for the range. */
-  defaultRange: NumericRange;
+  defaultRange: NumberRange;
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
-  rangeBounds?: NumericRange;
+  rangeBounds?: NumberRange;
   /** Externally controlled range. Optional but recommended. */
-  controlledRange?: NumericRange;
+  controlledRange?: NumberRange;
   /** Function to invoke when range changes. */
-  onRangeChange?: (newRange: NumericRange) => void;
+  onRangeChange?: (newRange: NumberRange) => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Label for lower bound widget. Optional. Default is Min */
@@ -24,7 +24,7 @@ export type NumericRangeInputProps = {
   containerStyles?: React.CSSProperties;
 };
 
-export default function NumericRangeInput({
+export default function NumberRangeInput({
   defaultRange,
   rangeBounds,
   controlledRange,
@@ -33,7 +33,7 @@ export default function NumericRangeInput({
   lowerLabel = 'Min',
   upperLabel = 'Max',
   containerStyles,
-}: NumericRangeInputProps) {
+}: NumberRangeInputProps) {
   // lower and upper ranges for internal/uncontrolled operation
   const [lower, setLowerValue] = useState<number>(defaultRange.min);
   const [upper, setUpperValue] = useState<number>(defaultRange.max);

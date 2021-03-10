@@ -3,7 +3,7 @@ import useDimensions from 'react-cool-dimensions';
 
 // Definitions
 import { LIGHT_BLUE, LIGHT_GRAY } from '../../constants/colors';
-import { ErrorManagement, NumericRange } from '../../types/general';
+import { ErrorManagement, NumberRange } from '../../types/general';
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
@@ -14,7 +14,7 @@ import OpacitySlider from '../widgets/OpacitySlider';
 import OrientationToggle from '../widgets/OrientationToggle';
 import SliderWidget from '../widgets/Slider';
 import Switch from '../widgets/Switch';
-import NumericRangeInput from '../widgets/NumericRangeInput';
+import NumberRangeInput from '../widgets/NumberRangeInput';
 
 export type HistogramControlsProps = {
   /** Label for control panel. Optional. */
@@ -56,11 +56,11 @@ export type HistogramControlsProps = {
   /** The step to take when adjusting binWidth */
   binWidthStep: number;
   /** A range to highlight by means of opacity. Optional */
-  selectedRange?: NumericRange; // TO DO: handle DateRange too
+  selectedRange?: NumberRange; // TO DO: handle DateRange too
   /** function to call upon selecting a range (in independent axis). Optional */
-  onSelectedRangeChange?: (newRange: NumericRange) => void;
+  onSelectedRangeChange?: (newRange: NumberRange) => void;
   /** Min and max allowed values for the selected range. Optional */
-  selectedRangeBounds?: NumericRange; // TO DO: handle DateRange too
+  selectedRangeBounds?: NumberRange; // TO DO: handle DateRange too
   /** Show the range controls */
   displaySelectedRangeControls?: boolean;
   /** Additional styles for controls container. Optional */
@@ -167,7 +167,7 @@ export default function HistogramControls({
           />
         ) : null}
         {displaySelectedRangeControls && selectedRangeBounds ? (
-          <NumericRangeInput
+          <NumberRangeInput
             label="Selected Range"
             defaultRange={selectedRangeBounds}
             rangeBounds={selectedRangeBounds}

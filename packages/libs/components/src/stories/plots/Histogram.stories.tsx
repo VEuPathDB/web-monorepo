@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { NumericRange } from '../../types/general';
+import { NumberRange } from '../../types/general';
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
 import usePlotControls from '../../hooks/usePlotControls';
 import HistogramControls from '../../components/plotControls/HistogramControls';
 import { binDailyCovidStats } from '../api/covidData';
+import { binGithubEventDates } from '../api/githubDates';
 import { HistogramData } from '../../types/plots';
 
 export default {
@@ -14,7 +15,7 @@ export default {
 } as Meta;
 
 const defaultActions = {
-  onSelectedRangeChange: (newRange: NumericRange) => {
+  onSelectedRangeChange: (newRange: NumberRange) => {
     console.log(`made a selection of ${newRange.min} to ${newRange.max}`);
   },
 };
@@ -197,141 +198,24 @@ RangeSelection.loaders = [
   }),
 ];
 
-// export const SharedControlsMultiplePlots: Story<HistogramProps> = (
-//   args,
-//   { loaded: { apiData } }
-// ) => {
-//   const plotControls = usePlotControls<HistogramData>({
-//     data: apiData,
-//     histogram: {
-//       binWidthRange: [2000, 10000],
-//       binWidthStep: 1000,
-//       onBinWidthChange: async (width) => {
-//         return await binDailyCovidStats(width);
-//       },
-//     },
-//   });
+// no controls
+const SimpleDateTemplate: Story<HistogramProps> = (
+  args,
+  { loaded: { apiData } }
+) => {
+  return <Histogram {...args} data={apiData} />;
+};
 
-//   return (
-//     <div style={{ display: 'flex', flexDirection: 'column' }}>
-//       <div style={{ display: 'flex' }}>
-//         <Histogram
-//           title='New Cases'
-//           height={args.height}
-//           width={args.width / 2}
-//           {...plotControls}
-//           {...plotControls.histogram}
-//           data={{
-//             ...plotControls.data,
-//             series: plotControls.data.series.filter(
-//               (series) => series.name === 'New Cases'
-//             ),
-//           }}
-//           {...defaultActions}
-//         />
-//         <Histogram
-//           title='Current Hospitalizations'
-//           height={args.height}
-//           width={args.width / 2}
-//           {...plotControls}
-//           {...plotControls.histogram}
-//           data={{
-//             ...plotControls.data,
-//             series: plotControls.data.series.filter(
-//               (series) => series.name === 'Current Hospitalizations'
-//             ),
-//           }}
-//           {...defaultActions}
-//         />
-//       </div>
-//       <div style={{ height: 25 }} />
-//       <HistogramControls
-//         label='Histogram Controls'
-//         {...plotControls}
-//         {...plotControls.histogram}
-//         containerStyles={{ maxWidth: args.width }}
-//       />
-//     </div>
-//   );
-// };
+export const DateNoControls = SimpleDateTemplate.bind({});
+DateNoControls.args = {
+  title: 'Recent VEuPathDB github events',
+  height: 400,
+  width: 1000,
+};
 
-// // @ts-ignore
-// SharedControlsMultiplePlots.loaders = [
-//   async () => ({
-//     apiData: await binDailyCovidStats(2000),
-//   }),
-// ];
-
-// SharedControlsMultiplePlots.args = {
-//   height: 500,
-//   width: 1000,
-// };
-
-// export const Single = Template.bind({});
-// Single.storyName = 'One Data Series';
-// Single.args = {
-//   height: 500,
-//   width: 1000,
-//   data: singleSeriesMock,
-//   binWidth: 2,
-// };
-
-// export const SingleDateSeries = Template.bind({});
-// SingleDateSeries.storyName = 'One Date Based Series';
-// SingleDateSeries.args = {
-//   height: 500,
-//   width: 1000,
-//   data: dateSeriesMock,
-// };
-
-// export const TwoDataSeries = Template.bind({});
-// TwoDataSeries.storyName = 'Two Data Series';
-// TwoDataSeries.args = {
-//   height: 500,
-//   width: 1000,
-//   data: doubleSeriesMock,
-//   binWidth: 2,
-// };
-
-// export const StackedBars = Template.bind({});
-// StackedBars.args = {
-//   ...TwoDataSeries.args,
-//   barLayout: 'stack',
-// };
-
-// export const PlotTitle = Template.bind({});
-// PlotTitle.args = {
-//   ...TwoDataSeries.args,
-//   title: 'A Fancy Plot Title',
-// };
-
-// export const CustomAxesLabels = Template.bind({});
-// CustomAxesLabels.args = {
-//   ...TwoDataSeries.args,
-//   title: 'Custom Axes Labels',
-//   independentAxisLabel: 'Number of Items Ordered (Binned)',
-//   dependentAxisLabel: 'Count of Orders',
-// };
-
-// export const HorizontalOrientation = Template.bind({});
-// HorizontalOrientation.args = {
-//   ...TwoDataSeries.args,
-//   orientation: 'horizontal',
-//   title: 'Horizontal Plot with Title',
-// };
-
-// export const CustomBarOpacity = Template.bind({});
-// CustomBarOpacity.args = {
-//   ...TwoDataSeries.args,
-//   opacity: 0.25,
-//   title: 'Custom Bar Opacity',
-// };
-
-// export const CustomColors = Template.bind({});
-// CustomColors.args = {
-//   ...TwoDataSeries.args,
-//   backgroundColor: DARK_GRAY,
-//   gridColor: MEDIUM_GRAY,
-//   textColor: 'white',
-//   title: 'Custom Background, Text, and Grid Colors',
-// };
+//@ts-ignore
+DateNoControls.loaders = [
+  async () => ({
+    apiData: await binGithubEventDates({ numBins: 10 }),
+  }),
+];

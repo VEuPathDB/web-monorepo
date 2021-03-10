@@ -3,6 +3,7 @@
  * plot data type you have when `UnionOfPlotDataTypes` is allowed.
  */
 
+import { NumberOrDate } from './general';
 import { HistogramData, PiePlotData, UnionOfPlotDataTypes } from './plots';
 import { LinePlotData } from './plots/linePlot';
 
@@ -40,4 +41,9 @@ export function isLinePlotData(
     Object.keys(data).every((key) => key in linePlotDataKeys)
     ? true
     : false;
+}
+
+/** Determine if a NumberOrDate variable is the built-in Date type */
+export function isDate(date: NumberOrDate): date is Date {
+  return (date as Date).toISOString !== undefined;
 }

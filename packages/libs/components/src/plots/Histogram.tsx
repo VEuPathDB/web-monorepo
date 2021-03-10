@@ -4,7 +4,7 @@ import { PlotParams } from 'react-plotly.js';
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
 import { HistogramData } from '../types/plots';
-import { NumericRange } from '../types/general';
+import { NumberRange } from '../types/general';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
@@ -57,9 +57,9 @@ export interface HistogramProps {
    * displayLibraryControls. */
   interactive?: boolean;
   /** A range to highlight by means of opacity */
-  selectedRange?: NumericRange; // TO DO: handle DateRange too
+  selectedRange?: NumberRange; // TO DO: handle DateRange too
   /** function to call upon selecting a range (in independent axis) */
-  onSelectedRangeChange?: (newRange: NumericRange) => void;
+  onSelectedRangeChange?: (newRange: NumberRange) => void;
 }
 
 /** A Plot.ly based histogram component. */
