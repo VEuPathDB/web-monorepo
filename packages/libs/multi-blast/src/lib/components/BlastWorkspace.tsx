@@ -26,7 +26,8 @@ export function BlastWorkspace() {
             <sup>
               {' '}
               <em>beta</em>
-            </sup>
+            </sup>{' '}
+            (multi-BLAST capable)
           </>
         }
         routeBase="/workspace/blast"
