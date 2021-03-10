@@ -32,7 +32,7 @@ import {
 export function useTargetParamProps(
   state: QuestionState,
   updateParamValue: Props['eventHandlers']['updateParamValue'],
-  canChangeTargetType: boolean
+  canChangeWdkRecordType: boolean
 ) {
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
@@ -48,12 +48,12 @@ export function useTargetParamProps(
       parameter.vocabulary
         .filter(
           ([value]) =>
-            canChangeTargetType ||
+            canChangeWdkRecordType ||
             targetMetadataByDataType[selectedType].recordClassUrlSegment ===
               targetMetadataByDataType[value].recordClassUrlSegment
         )
         .map(([value, display]) => ({ value, display: safeHtml(display) })),
-    [canChangeTargetType, parameter, selectedType, targetMetadataByDataType]
+    [canChangeWdkRecordType, parameter, selectedType, targetMetadataByDataType]
   );
 
   const onChange = useChangeParamValue(parameter, state, updateParamValue);
@@ -72,7 +72,8 @@ export function useAlgorithmParamProps(
   defaultAdvancedParamsMetadata:
     | Record<string, DefaultAdvancedParamsMetadata>
     | undefined,
-  enabledAlgorithms: EnabledAlgorithms | undefined
+  enabledAlgorithms: EnabledAlgorithms | undefined,
+  canChangeWdkRecordType: boolean
 ) {
   // FIXME: Validate this
   const parameter = state.question.parametersByName[
@@ -88,7 +89,11 @@ export function useAlgorithmParamProps(
   const items = useMemo(
     () =>
       parameter.vocabulary
-        .filter(([value]) => enabledAlgorithmsForWdkRecordType?.includes(value))
+        .filter(
+          ([value]) =>
+            canChangeWdkRecordType ||
+            enabledAlgorithmsForWdkRecordType?.includes(value)
+        )
         .map(([value, display]) => ({
           value,
           display: safeHtml(display),
@@ -96,6 +101,7 @@ export function useAlgorithmParamProps(
         })),
     [
       parameter,
+      canChangeWdkRecordType,
       enabledAlgorithmsForTargetType,
       enabledAlgorithmsForWdkRecordType,
     ]

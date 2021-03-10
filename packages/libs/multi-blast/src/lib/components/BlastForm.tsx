@@ -181,7 +181,8 @@ function BlastFormWithTransformedQuestion(props: Props) {
     props.state,
     props.dispatchAction,
     defaultAdvancedParamsMetadata,
-    enabledAlgorithms
+    enabledAlgorithms,
+    canChangeRecordType
   );
   const sequenceParamProps = useSequenceParamProps(
     props.state,
