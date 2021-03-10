@@ -80,7 +80,7 @@ export function Variables(props: Props) {
   const entityCount = usePromise(
     useCallback(
       () => subsettingClient.getEntityCount(studyMetadata.id, entity.id, []),
-      [studyMetadata.id, entity]
+      [subsettingClient, studyMetadata.id, entity.id]
     )
   );
   const filteredCount = usePromise(
@@ -91,7 +91,7 @@ export function Variables(props: Props) {
         entity.id,
         session?.filters ?? []
       );
-    }, [studyMetadata.id, entity, session])
+    }, [session, subsettingClient, studyMetadata.id, entity.id])
   );
 
   if (session == null) return null;

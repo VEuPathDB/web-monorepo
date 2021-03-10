@@ -17,6 +17,7 @@ import {
   NumericHistogramRequestParams,
 } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
+import { SessionState } from '../../hooks/session';
 import { useDataClient } from '../../hooks/workspace';
 import { Filter } from '../../types/filter';
 import { StudyEntity, StudyMetadata, StudyVariable } from '../../types/study';
@@ -28,7 +29,7 @@ type Props = {
   studyMetadata: StudyMetadata;
   variable: HistogramVariable;
   entity: StudyEntity;
-  filters?: Filter[];
+  sessionState: SessionState;
 };
 
 type GetDataParams = {
@@ -37,7 +38,7 @@ type GetDataParams = {
 };
 
 export function HistogramFilter(props: Props) {
-  const { variable, entity, filters, studyMetadata } = props;
+  const { variable, entity, sessionState, studyMetadata } = props;
   const { id: studyId } = studyMetadata;
   const dataClient = useDataClient();
   const getData = useCallback(
@@ -48,7 +49,7 @@ export function HistogramFilter(props: Props) {
         {
           entityId: entity.id,
           variableId: variable.id,
-          filters,
+          filters: sessionState.session?.filters,
         },
         (filters) => {
           const params = getRequestParams(
@@ -95,7 +96,7 @@ export function HistogramFilter(props: Props) {
         entityId: entity.id,
       };
     },
-    [dataClient, entity, filters, studyId, variable]
+    [dataClient, entity, sessionState, studyId, variable]
   );
   const data = usePromise(getData);
   return (

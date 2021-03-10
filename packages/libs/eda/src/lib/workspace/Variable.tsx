@@ -57,12 +57,16 @@ export function Variable(props: Props) {
         ))}
       </div>
       <ErrorBoundary>
-        <FilterContainer
-          studyMetadata={studyMetadata}
-          variable={variable}
-          entity={entity}
-          filters={sessionState.session?.filters}
-        />
+        {totalEntityCount && filteredEntityCount ? (
+          <FilterContainer
+            studyMetadata={studyMetadata}
+            variable={variable}
+            entity={entity}
+            sessionState={sessionState}
+            totalEntityCount={totalEntityCount}
+            filteredEntityCount={filteredEntityCount}
+          />
+        ) : null}
       </ErrorBoundary>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Filter } from '../../types/filter';
+import { SessionState } from '../../hooks/session';
 import { StudyEntity, StudyMetadata, StudyVariable } from '../../types/study';
 import { isHistogramVariable, isTableVariable } from './guards';
 import { HistogramFilter } from './HistogramFilter';
@@ -10,7 +10,9 @@ interface Props {
   studyMetadata: StudyMetadata;
   variable: StudyVariable;
   entity: StudyEntity;
-  filters?: Filter[];
+  sessionState: SessionState;
+  totalEntityCount: number;
+  filteredEntityCount: number;
 }
 
 export function FilterContainer(props: Props) {
