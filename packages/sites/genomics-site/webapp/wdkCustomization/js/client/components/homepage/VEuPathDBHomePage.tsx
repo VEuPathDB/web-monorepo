@@ -313,17 +313,17 @@ const useHeaderMenuItems = (
             include: [ AmoebaDB,PiroplasmaDB,ToxoDB,VectorBase ]
          }
         },
-        {
-          key: 'blast-beta',
-          display: <>BLAST<sup>{' '}<em>beta</em></sup></>,
-          type: 'reactRoute',
-          url: '/workspace/blast/new'
-        },
-        {
+        { 
           key: 'blast',
           display: 'BLAST',
           type: 'reactRoute',
           url: '/search/transcript/UnifiedBlast'
+        },
+        {
+          key: 'blast-beta',
+          display: <>BLAST<sup>{' '}<em>beta</em></sup> (multi-BLAST capable)</>,
+          type: 'reactRoute',
+          url: '/workspace/blast/new'
         },
         { 
           key: 'companion',
@@ -836,6 +836,24 @@ const useHeaderMenuItems = (
               display: 'Infrastructure',
               type: 'reactRoute',
               url: makeStaticPageRoute('/infrastructure.html')
+            },
+            {
+              key: 'usage-metrics',
+              display: 'Monthly Usage Metrics',
+              type: 'externalLink',
+              url: makeExternalStaticPageUrl(
+                     communitySite,
+                     '/documents/VEuPathDB_BRC4_usage_metrics_report.pdf'
+                   )
+            },
+            {
+              key: 'perf-metrics',
+              display: 'Monthly Performance Metrics',
+              type: 'externalLink',
+              url: makeExternalStaticPageUrl(
+                     communitySite,
+                     '/documents/VEuPathDB_BRC4_performance_metrics_report.pdf'
+                   )
             },
             {
               key: 'usage-statistics',
