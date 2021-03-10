@@ -42,7 +42,7 @@ export function observe(action$: ActionsObservable<Action>, state$: StateObserva
   // map unhandled errors to unhandledError action
   const error$: Observable<Action> = fromEvent<ErrorEvent>(window, 'error').pipe(
     map((event: ErrorEvent) => {
-      return notifyUnhandledError(event.error)
+      return notifyUnhandledError(event.error ?? event.message)
     })
   );
   // clear errors when route changes
