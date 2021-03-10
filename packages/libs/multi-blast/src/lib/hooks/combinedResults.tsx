@@ -30,6 +30,7 @@ import {
   ALIGNMENT_LENGTH_HELP_TEXT,
   DESCRIPTION_HELP_TEXT,
   E_VALUE_HELP_TEXT,
+  INDIVIDUAL_RESULT_HELP_TEXT,
   ORGANISM_HELP_TEXT,
   PERCENT_IDENTITY_HELP_TEXT,
   QUERY_COVERAGE_HELP_TEXT,
@@ -175,15 +176,20 @@ function useCombinedResultColumns(
       {
         key: 'queryDescription',
         name: 'Query',
+        sortable: true,
+        helpText: QUERY_HELP_TEXT,
+      },
+      {
+        key: 'queryIndex',
+        name: 'Individual Result',
         renderCell: ({ row }: { row: CombinedResultRow }) => (
           <Link
             to={`/workspace/blast/result/${jobId}/individual/${row.queryIndex}`}
           >
-            {row.queryDescription}
+            See Result
           </Link>
         ),
-        sortable: true,
-        helpText: QUERY_HELP_TEXT,
+        helpText: INDIVIDUAL_RESULT_HELP_TEXT,
       },
       {
         key: 'queryRank',

@@ -92,6 +92,7 @@ export const ACCESSION_HELP_TEXT = 'FILL ME IN';
 export const ORGANISM_HELP_TEXT = 'FILL ME IN';
 export const DESCRIPTION_HELP_TEXT = 'FILL ME IN';
 export const QUERY_HELP_TEXT = 'FILL ME IN';
+export const INDIVIDUAL_RESULT_HELP_TEXT = 'FILL ME IN';
 export const RANK_PER_QUERY_HELP_TEXT =
   'For each query sequence, hits are ranked by e-value.';
 export const RANK_PER_SUBJECT_HELP_TEXT =
