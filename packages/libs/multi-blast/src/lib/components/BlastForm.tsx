@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { useHistory } from 'react-router';
 
-import { fromPairs } from 'lodash';
+import { fromPairs, keyBy } from 'lodash';
 
 import { updateDependentParams } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 import {
@@ -20,7 +20,10 @@ import {
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { scrollIntoView } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
-import { ParameterGroup } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  Parameter,
+  ParameterGroup,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import DefaultQuestionForm, {
   ParameterList,
   Props as DefaultQuestionFormProps,
@@ -69,6 +72,17 @@ export interface Props extends DefaultQuestionFormProps {
 }
 
 export function BlastForm(props: Props) {
+  const formPropsWithTransformedQuestion = transformFormQuestion(
+    props,
+    props.isMultiBlast
+  );
+
+  return (
+    <BlastFormWithTransformedQuestion {...formPropsWithTransformedQuestion} />
+  );
+}
+
+function BlastFormWithTransformedQuestion(props: Props) {
   const canChangeRecordType = props.isMultiBlast ?? false;
 
   const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
@@ -184,7 +198,9 @@ export function BlastForm(props: Props) {
   const sequenceParamElement = (
     <div className="SequenceParam">
       <div className="SequenceParamInstructions">
-        Paste one or several sequences, or provide a FASTA file.
+        {props.isMultiBlast
+          ? 'Paste one or several sequences, or provide a FASTA file.'
+          : 'Paste one sequence, or provide a one-sequence FASTA file.'}
       </div>
       <TextArea
         {...sequenceParamProps}
@@ -408,4 +424,66 @@ function NewJobForm(props: NewJobFormProps) {
       </form>
     </div>
   );
+}
+
+function transformFormQuestion(
+  formProps: Props,
+  isMultiBlast?: boolean
+): Props {
+  const transformedParameters = formProps.state.question.parameters.reduce(
+    (memo, parameter) => {
+      if (parameter.name === JOB_DESCRIPTION_PARAM_NAME && !isMultiBlast) {
+        return memo;
+      } else if (
+        parameter.name === BLAST_QUERY_SEQUENCE_PARAM_NAME &&
+        isMultiBlast
+      ) {
+        memo.push({
+          ...parameter,
+          displayName: 'Input Sequence(s)',
+          help:
+            'Paste your Input Sequence(s) in the text box, or provide a FASTA file.',
+        });
+
+        return memo;
+      } else {
+        memo.push(parameter);
+
+        return memo;
+      }
+    },
+    [] as Parameter[]
+  );
+
+  const transformedParameterNames = new Set(
+    transformedParameters.map(({ name }) => name)
+  );
+
+  const transformedGroups = formProps.state.question.groups.map((group) => {
+    const transformedGroupParameters = group.parameters.filter((parameter) =>
+      transformedParameterNames.has(parameter)
+    );
+
+    return {
+      ...group,
+      parameters: transformedGroupParameters,
+    };
+  });
+
+  const transformedParametersByName = keyBy(transformedParameters, 'name');
+  const transformedGroupsByName = keyBy(transformedGroups, 'name');
+
+  return {
+    ...formProps,
+    state: {
+      ...formProps.state,
+      question: {
+        ...formProps.state.question,
+        parameters: transformedParameters,
+        groups: transformedGroups,
+        parametersByName: transformedParametersByName,
+        groupsByName: transformedGroupsByName,
+      },
+    },
+  };
 }
