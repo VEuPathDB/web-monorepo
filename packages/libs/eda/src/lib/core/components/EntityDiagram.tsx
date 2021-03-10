@@ -23,6 +23,10 @@ export function EntityDiagram(props: Props) {
     subsettingClient
   );
   const { session } = useSession(sessionId);
+  // const { value: filteredCounts, error: filteredCountsError} = useEntityCounts(sessionState.session?.filters);
+  const { value: filteredCounts, error: filteredCountsError } = useEntityCounts(
+    session?.filters
+  );
 
   if (studyMetadata) {
     setSelectedEntity(studyMetadata.rootEntity.displayName);
@@ -33,11 +37,6 @@ export function EntityDiagram(props: Props) {
     };
 
     if (expanded) {
-      // const { value: filteredCounts, error: filteredCountsError} = useEntityCounts(sessionState.session?.filters);
-      const {
-        value: filteredCounts,
-        error: filteredCountsError,
-      } = useEntityCounts(session?.filters);
       const shadingData: {
         [index: string]: { value: number; color?: string };
       } = {};
