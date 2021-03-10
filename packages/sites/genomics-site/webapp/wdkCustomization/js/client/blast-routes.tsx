@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Redirect, RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 
 import { BlastWorkspace } from '@veupathdb/multi-blast/lib/components/BlastWorkspace';
 import { BlastWorkspaceResult } from '@veupathdb/multi-blast/lib/components/BlastWorkspaceResult';
@@ -36,16 +36,4 @@ export const blastRoutes: RouteEntry[] = [
       );
     },
   },
-  {
-    path: '/search/:recordClass/:searchName(.*MultiBlast)',
-    component: (
-      props: RouteComponentProps<{
-        recordClass: string;
-      }>
-    ) => (
-      <Redirect
-        to={`/workspace/blast/new?recordType=${props.match.params.recordClass}`}
-      />
-    ),
-  }
 ];
