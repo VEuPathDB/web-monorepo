@@ -26,9 +26,9 @@ export const RequiredControls: Story<usePlotControlsParams<HistogramData>> = (
 
 RequiredControls.args = {
   histogram: {
-    binWidthRange: [5, 100],
+    binWidthRange: { min: 5, max: 100 },
     binWidthStep: 5,
-    onBinWidthChange: async (width) => {
+    onBinWidthChange: async () => {
       return { series: [{ name: 'dummy data', bins: [] }] };
     },
   },
@@ -59,13 +59,13 @@ AdditionalOptions.args = {
     availableUnits: ['Celsius', 'Fahrenheit'],
     selectedUnit: 'Celsius',
   },
-  onSelectedUnitChange: async (unit) => {
+  onSelectedUnitChange: async () => {
     return { series: [{ name: 'dummy data', bins: [] }] };
   },
   histogram: {
-    binWidthRange: [5, 100],
+    binWidthRange: { min: 5, max: 100 },
     binWidthStep: 5,
-    onBinWidthChange: async (width) => {
+    onBinWidthChange: async () => {
       return { series: [{ name: 'dummy data', bins: [] }] };
     },
   },

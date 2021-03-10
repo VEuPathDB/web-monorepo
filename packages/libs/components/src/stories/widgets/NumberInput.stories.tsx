@@ -4,7 +4,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NumberInput,
   NumberInputProps,
-} from '../../components/widgets/MathableInputs';
+} from '../../components/widgets/NumberAndDateInputs';
 
 export default {
   title: 'Widgets/Number Input',

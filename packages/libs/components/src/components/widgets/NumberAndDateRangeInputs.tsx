@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
-import { NumberInput } from './MathableInputs';
+import { NumberInput } from './NumberAndDateInputs';
 import { NumberRange } from '../../types/general';
 
 export type NumberRangeInputProps = {

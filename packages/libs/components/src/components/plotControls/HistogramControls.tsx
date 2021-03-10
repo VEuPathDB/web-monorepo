@@ -3,7 +3,13 @@ import useDimensions from 'react-cool-dimensions';
 
 // Definitions
 import { LIGHT_BLUE, LIGHT_GRAY } from '../../constants/colors';
-import { ErrorManagement, NumberRange } from '../../types/general';
+import {
+  ErrorManagement,
+  NumberOrDateRange,
+  NumberOrTimeDelta,
+  NumberOrTimeDeltaRange,
+  NumberRange,
+} from '../../types/general';
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
@@ -48,19 +54,19 @@ export type HistogramControlsProps = {
   /** Function to invoke when the selected bin unit changes. */
   onSelectedUnitChange?: (unit: string) => void;
   /** The current binWidth */
-  binWidth: number;
+  binWidth: NumberOrTimeDelta;
   /** Function to invoke when bin width changes. */
-  onBinWidthChange: (newWidth: number) => void;
+  onBinWidthChange: (newWidth: NumberOrTimeDelta) => void;
   /** The acceptable range of binWidthValues. */
-  binWidthRange: [number, number];
+  binWidthRange: NumberOrTimeDeltaRange;
   /** The step to take when adjusting binWidth */
-  binWidthStep: number;
+  binWidthStep: NumberOrTimeDelta;
   /** A range to highlight by means of opacity. Optional */
-  selectedRange?: NumberRange; // TO DO: handle DateRange too
+  selectedRange?: NumberOrDateRange; // TO DO: handle DateRange too
   /** function to call upon selecting a range (in independent axis). Optional */
-  onSelectedRangeChange?: (newRange: NumberRange) => void;
+  onSelectedRangeChange?: (newRange: NumberOrDateRange) => void;
   /** Min and max allowed values for the selected range. Optional */
-  selectedRangeBounds?: NumberRange; // TO DO: handle DateRange too
+  selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Show the range controls */
   displaySelectedRangeControls?: boolean;
   /** Additional styles for controls container. Optional */
@@ -193,11 +199,15 @@ export default function HistogramControls({
           color={accentColor}
         />
         <SliderWidget
-          label="Bin Width"
-          minimum={binWidthRange[0]}
-          maximum={binWidthRange[1]}
-          step={binWidthStep}
-          value={binWidth}
+          label={`Bin Width${
+            typeof binWidth === 'number' ? '' : ' (binWidth[1])'
+          }`}
+          minimum={binWidthRange.min}
+          maximum={binWidthRange.max}
+          step={
+            typeof binWidthStep === 'number' ? binWidthStep : binWidthStep[0]
+          }
+          value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
           onChange={onBinWidthChange}
         />
       </div>
