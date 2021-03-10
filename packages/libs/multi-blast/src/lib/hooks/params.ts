@@ -24,7 +24,10 @@ import {
   BLAST_DATABASE_TYPE_PARAM_NAME,
   BLAST_QUERY_SEQUENCE_PARAM_NAME,
 } from '../utils/params';
-import { TargetMetadataByDataType } from '../utils/targetTypes';
+import {
+  EnabledAlgorithms,
+  TargetMetadataByDataType,
+} from '../utils/targetTypes';
 
 export function useTargetParamProps(
   state: QuestionState,
@@ -42,14 +45,14 @@ export function useTargetParamProps(
 
   const items = useMemo(
     () =>
-      parameter.vocabulary.map(([value, display]) => ({
-        value,
-        disabled:
-          !canChangeTargetType &&
-          targetMetadataByDataType[selectedType].recordClassUrlSegment !==
-            targetMetadataByDataType[value].recordClassUrlSegment,
-        display: safeHtml(display),
-      })),
+      parameter.vocabulary
+        .filter(
+          ([value]) =>
+            canChangeTargetType ||
+            targetMetadataByDataType[selectedType].recordClassUrlSegment ===
+              targetMetadataByDataType[value].recordClassUrlSegment
+        )
+        .map(([value, display]) => ({ value, display: safeHtml(display) })),
     [canChangeTargetType, parameter, selectedType, targetMetadataByDataType]
   );
 
@@ -57,7 +60,7 @@ export function useTargetParamProps(
 
   return {
     items,
-    value: state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME],
+    value: selectedType,
     onChange,
     required: true,
   };
@@ -69,7 +72,7 @@ export function useAlgorithmParamProps(
   defaultAdvancedParamsMetadata:
     | Record<string, DefaultAdvancedParamsMetadata>
     | undefined,
-  enabledAlgorithms: string[] | undefined
+  enabledAlgorithms: EnabledAlgorithms | undefined
 ) {
   // FIXME: Validate this
   const parameter = state.question.parametersByName[
@@ -77,14 +80,25 @@ export function useAlgorithmParamProps(
   ] as CheckBoxEnumParam;
   const algorithm = state.paramValues[BLAST_ALGORITHM_PARAM_NAME];
 
+  const enabledAlgorithmsForTargetType =
+    enabledAlgorithms?.enabledAlgorithmsForTargetType;
+  const enabledAlgorithmsForWdkRecordType =
+    enabledAlgorithms?.enabledAlgorithmsForWdkRecordType;
+
   const items = useMemo(
     () =>
-      parameter.vocabulary.map(([value, display]) => ({
-        value,
-        display: safeHtml(display),
-        disabled: !enabledAlgorithms?.includes(value),
-      })),
-    [parameter, enabledAlgorithms]
+      parameter.vocabulary
+        .filter(([value]) => enabledAlgorithmsForWdkRecordType?.includes(value))
+        .map(([value, display]) => ({
+          value,
+          display: safeHtml(display),
+          disabled: !enabledAlgorithmsForTargetType?.includes(value),
+        })),
+    [
+      parameter,
+      enabledAlgorithmsForTargetType,
+      enabledAlgorithmsForWdkRecordType,
+    ]
   );
 
   const onChange = useChangeAlgorithmParam(
@@ -95,10 +109,13 @@ export function useAlgorithmParamProps(
   );
 
   useEffect(() => {
-    if (enabledAlgorithms != null && !enabledAlgorithms.includes(algorithm)) {
-      onChange(enabledAlgorithms[0]);
+    if (
+      enabledAlgorithmsForTargetType != null &&
+      !enabledAlgorithmsForTargetType.includes(algorithm)
+    ) {
+      onChange(enabledAlgorithmsForTargetType[0]);
     }
-  }, [algorithm, enabledAlgorithms, onChange]);
+  }, [algorithm, enabledAlgorithmsForTargetType, onChange]);
 
   return {
     items,

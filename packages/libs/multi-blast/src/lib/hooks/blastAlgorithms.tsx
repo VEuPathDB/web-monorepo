@@ -12,6 +12,7 @@ import {
 
 import {
   BlastOntologyDatabase,
+  EnabledAlgorithms,
   TargetMetadataByDataType,
 } from '../utils/targetTypes';
 
@@ -34,19 +35,38 @@ const algorithmTermTables: Record<BlastOntologyDatabase, string> = {
   'blast-orf-ontology': 'BlastPOTerms',
 };
 
-export function useEnabledAlgorithms(targetDataType: string) {
+export function useEnabledAlgorithms(
+  targetDataType: string
+): EnabledAlgorithms | undefined {
   const algorithmTermsByDatabase = useAlgorithmTermsByDatabase();
   const targetMetadataByDataType = useContext(TargetMetadataByDataType);
 
   const enabledAlgorithms = useMemo(() => {
     if (algorithmTermsByDatabase == null) {
-      return;
+      return undefined;
     }
 
-    const targetMetaData = targetMetadataByDataType[targetDataType];
-    const ontologyDatabaseName = targetMetaData.blastOntologyDatabase;
+    const targetMetadata = targetMetadataByDataType[targetDataType];
+    const targetOntologyDatabaseName = targetMetadata.blastOntologyDatabase;
+    const targetwdkRecordType = targetMetadata.recordClassUrlSegment;
 
-    return algorithmTermsByDatabase[ontologyDatabaseName];
+    const enabledAlgorithmsForTargetType =
+      algorithmTermsByDatabase[targetOntologyDatabaseName];
+
+    const enabledAlgorithmsForWdkRecordType = Object.values(
+      targetMetadataByDataType
+    ).reduce((memo, { blastOntologyDatabase, recordClassUrlSegment }) => {
+      if (recordClassUrlSegment === targetwdkRecordType) {
+        memo.push(...algorithmTermsByDatabase[blastOntologyDatabase]);
+      }
+
+      return memo;
+    }, [] as string[]);
+
+    return {
+      enabledAlgorithmsForTargetType,
+      enabledAlgorithmsForWdkRecordType,
+    };
   }, [algorithmTermsByDatabase, targetDataType, targetMetadataByDataType]);
 
   return enabledAlgorithms;

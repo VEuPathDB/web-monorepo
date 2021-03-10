@@ -48,3 +48,8 @@ export function targetTypeTermToDbName(targetTypeTerm: string) {
 export function dbNameToTargetTypeTerm(dbName: string) {
   return dbName === 'Isolates' ? 'PopSet' : dbName;
 }
+
+export interface EnabledAlgorithms {
+  enabledAlgorithmsForTargetType: string[];
+  enabledAlgorithmsForWdkRecordType: string[];
+}
