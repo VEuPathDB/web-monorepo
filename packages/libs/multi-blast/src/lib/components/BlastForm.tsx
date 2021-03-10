@@ -30,6 +30,7 @@ import DefaultQuestionForm, {
   SubmitButton,
   renderDefaultParamGroup,
 } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
+import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
 
 import { useBlastApi } from '../hooks/api';
 import { useEnabledAlgorithms } from '../hooks/blastAlgorithms';
@@ -110,19 +111,24 @@ function BlastFormWithTransformedQuestion(props: Props) {
 
   const enabledAlgorithms = useEnabledAlgorithms(targetType);
 
-  const [queryFile, setQueryFile] = useState<File | null>(null);
-
-  const queryFileProvided = queryFile != null;
+  const updateQueryParam = useChangeParamValue(
+    props.state.question.parametersByName[BLAST_QUERY_SEQUENCE_PARAM_NAME],
+    props.state,
+    props.eventHandlers.updateParamValue
+  );
 
   const onQueryFileInputChanged = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      setQueryFile(
+      const file =
         event.target.files == null || event.target.files.length === 0
           ? null
-          : event.target.files[0]
-      );
+          : event.target.files[0];
+
+      if (file != null) {
+        file.text().then(updateQueryParam);
+      }
     },
-    [setQueryFile]
+    [updateQueryParam]
   );
 
   const defaultAdvancedParamsMetadata = useDefaultAdvancedParams(
@@ -179,8 +185,7 @@ function BlastFormWithTransformedQuestion(props: Props) {
   );
   const sequenceParamProps = useSequenceParamProps(
     props.state,
-    props.eventHandlers.updateParamValue,
-    queryFileProvided
+    props.eventHandlers.updateParamValue
   );
 
   const targetParamElement = (
@@ -199,8 +204,8 @@ function BlastFormWithTransformedQuestion(props: Props) {
     <div className="SequenceParam">
       <div className="SequenceParamInstructions">
         {props.isMultiBlast
-          ? 'Paste one or several sequences, or provide a FASTA file.'
-          : 'Paste one sequence, or provide a one-sequence FASTA file.'}
+          ? 'Paste one or several sequences, or upload a FASTA file.'
+          : 'Paste one sequence, or upload a one-sequence FASTA file.'}
       </div>
       <TextArea
         {...sequenceParamProps}
@@ -208,6 +213,7 @@ function BlastFormWithTransformedQuestion(props: Props) {
       />
       <input
         type="file"
+        accept="text/*"
         name={`${props.state.question.urlSegment}/${BLAST_QUERY_SEQUENCE_PARAM_NAME}__file`}
         onChange={onQueryFileInputChanged}
       />
@@ -278,7 +284,6 @@ function BlastFormWithTransformedQuestion(props: Props) {
       {...props}
       containerClassName={containerClassName}
       parameterElements={parameterElements}
-      queryFile={queryFile}
       renderParamGroup={renderBlastParamGroup}
     />
   ) : (
@@ -293,7 +298,6 @@ function BlastFormWithTransformedQuestion(props: Props) {
 
 interface NewJobFormProps extends Props {
   renderParamGroup: (group: ParameterGroup, formProps: Props) => JSX.Element;
-  queryFile: File | null;
 }
 
 function NewJobForm(props: NewJobFormProps) {
@@ -361,10 +365,7 @@ function NewJobForm(props: NewJobFormProps) {
         target: `${organism}${dbTargetName}`,
       }));
 
-      const query =
-        props.queryFile == null
-          ? props.state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME]
-          : props.queryFile;
+      const query = props.state.paramValues[BLAST_QUERY_SEQUENCE_PARAM_NAME];
 
       const config = paramValuesToBlastConfig(props.state.paramValues);
 
@@ -400,7 +401,6 @@ function NewJobForm(props: NewJobFormProps) {
     [
       api,
       history,
-      props.queryFile,
       targetMetadataByDataType,
       wdkDependencies,
       props.state.paramValues,
@@ -442,7 +442,7 @@ function transformFormQuestion(
           ...parameter,
           displayName: 'Input Sequence(s)',
           help:
-            'Paste your Input Sequence(s) in the text box, or provide a FASTA file.',
+            'Paste your Input Sequence(s) in the text box, or upload a FASTA file.',
         });
 
         return memo;
