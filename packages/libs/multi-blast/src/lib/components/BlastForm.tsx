@@ -65,11 +65,11 @@ export const blastFormCx = makeClassNameHelper('wdk-QuestionForm');
 const BLAST_FORM_CONTAINER_NAME = 'MultiBlast';
 
 export interface Props extends DefaultQuestionFormProps {
-  canChangeRecordType?: boolean;
+  isMultiBlast?: boolean;
 }
 
 export function BlastForm(props: Props) {
-  const canChangeRecordType = props.canChangeRecordType ?? false;
+  const canChangeRecordType = props.isMultiBlast ?? false;
 
   const targetType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
 
@@ -257,8 +257,7 @@ export function BlastForm(props: Props) {
   )}`;
 
   return enabledAlgorithms == null ||
-    defaultAdvancedParamsMetadata == null ? null : props.submissionMetadata
-      .type === 'create-strategy' ? (
+    defaultAdvancedParamsMetadata == null ? null : props.isMultiBlast ? (
     <NewJobForm
       {...props}
       containerClassName={containerClassName}

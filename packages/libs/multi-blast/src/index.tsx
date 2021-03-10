@@ -1,6 +1,6 @@
 import './globals';
 import React from 'react';
-import { Redirect, RouteComponentProps } from 'react-router';
+import { RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import {
@@ -61,18 +61,6 @@ initialize({
           />
         );
       },
-    },
-    {
-      path: '/search/:recordClass/:searchName(.*MultiBlast)',
-      component: (
-        props: RouteComponentProps<{
-          recordClass: string;
-        }>
-      ) => (
-        <Redirect
-          to={`/workspace/blast/new?recordType=${props.match.params.recordClass}`}
-        />
-      ),
     },
     ...routes,
   ],
