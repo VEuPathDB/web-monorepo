@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import CollapsibleSection from 'wdk-client/Components/Display/CollapsibleSection';
 import ErrorBoundary from 'wdk-client/Core/Controllers/ErrorBoundary';
@@ -7,6 +7,7 @@ import { AttributeField, RecordClass, RecordInstance } from 'wdk-client/Utils/Wd
 import RecordAttribute from 'wdk-client/Views/Records/RecordAttributes/RecordAttribute';
 import { PartialRecordRequest } from 'wdk-client/Views/Records/RecordUtils';
 import { DefaultSectionTitle } from 'wdk-client/Views/Records/SectionTitle';
+import { stripHTML } from 'wdk-client/Utils/DomUtils';
 
 export interface Props {
   attribute: AttributeField;
@@ -22,8 +23,14 @@ export interface Props {
 /** Record attribute section container for record page */
 function RecordAttributeSection(props: Props) {
   let value = props.record.attributes[props.attribute.name];
+  const textLength = useMemo(() => {
+    return value == null ? -1
+      : typeof value === 'string' ? stripHTML(value).length
+      : value.displayText != null ? stripHTML(value.displayText).length
+      : value.url.length;
+  }, [value])
   if (value == null) return null;
-  if (typeof value === 'string' && value.length < 150) return (
+  if (textLength !== -1 && textLength < 150) return (
     <InlineRecordAttributeSection {...props} />
   )
   else return (
