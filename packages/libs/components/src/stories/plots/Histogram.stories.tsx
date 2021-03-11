@@ -36,10 +36,10 @@ const TemplateWithControls: Story<
 > = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
-    onSelectedUnitChange: async ({ selectedUnit }) => {
+    onSelectedUnitChange: async (newUnit: string) => {
       return await binDailyCovidStats(
         undefined,
-        selectedUnit,
+        newUnit,
         args.throwSampleErrors,
         args.includeExtraDirectives
       );
@@ -138,10 +138,10 @@ const TemplateWithSelectedRangeControls: Story<
 > = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
     data: apiData,
-    onSelectedUnitChange: async ({ selectedUnit }) => {
+    onSelectedUnitChange: async (newUnit: string) => {
       return await binDailyCovidStats(
         undefined,
-        selectedUnit,
+        newUnit,
         args.throwSampleErrors,
         args.includeExtraDirectives
       );

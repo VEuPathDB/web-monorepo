@@ -19,7 +19,7 @@ import {
   TimeDelta,
   TimeDeltaRange,
 } from '../types/general';
-import DateMath from 'date-arithmetic';
+import * as DateMath from 'date-arithmetic';
 
 /** Action definitions for the reducer function inside of the hook. */
 type ActionType<DataShape> =

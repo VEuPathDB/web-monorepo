@@ -2,13 +2,9 @@
  * Grab 100 items with dates from github API
  * https://api.github.com/users/VEuPathDB/events?per_page=100
  */
-import {
-  HistogramBin,
-  HistogramData,
-  HistogramDataSeries,
-} from '../../types/plots';
+import { HistogramBin, HistogramData } from '../../types/plots';
 import { TimeDelta } from '../../types/general';
-import DateMath, { Unit } from 'date-arithmetic';
+import * as DateMath from 'date-arithmetic';
 
 type EventData = {
   id: string;
