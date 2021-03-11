@@ -67,8 +67,7 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
         ...state,
         histogram: {
           ...state.histogram,
-          binWidth:
-            action.payload > 0 ? action.payload : state.histogram.binWidth,
+          binWidth: action.payload, //  > 0 ? action.payload : state.histogram.binWidth,
         },
       };
     case 'histogram/setBinWidthRange':
@@ -181,9 +180,7 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
 /** Parameters that can be passed to the hook for initialization. */
 export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
   data: DataShape;
-  onSelectedUnitChange?: (params: {
-    selectedUnit: string;
-  }) => Promise<DataShape>;
+  onSelectedUnitChange?: (newUnit: string) => Promise<DataShape>;
   histogram?: {
     /** Optional override for binWidthRange that is provided by
      * data backend or calculated. */
@@ -291,22 +288,24 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
         binWidthRange = { min: 1, max: 1 };
       }
     }
-
     const binWidth =
-      params.data.binWidth ?? typeof binWidthRange === 'number'
-        ? binWidthRange.max / 10
-        : ([
+      params.data.binWidth ??
+      ('unit' in binWidthRange
+        ? ([
             binWidthRange.max / 10,
             (binWidthRange as TimeDeltaRange).unit,
-          ] as TimeDelta);
+          ] as TimeDelta)
+        : binWidthRange.max / 10);
+
     const binWidthStep = params.histogram?.binWidthStep
       ? params.histogram.binWidthStep
-      : params.data.binWidthStep ?? typeof binWidthRange === 'number'
-      ? (binWidthRange.max - binWidthRange.min) / 10
-      : ([
-          (binWidthRange.max - binWidthRange.min) / 10,
-          (binWidthRange as TimeDeltaRange).unit,
-        ] as TimeDelta);
+      : params.data.binWidthStep ??
+        ('unit' in binWidthRange
+          ? ([
+              (binWidthRange.max - binWidthRange.min) / 10,
+              (binWidthRange as TimeDeltaRange).unit,
+            ] as TimeDelta)
+          : (binWidthRange.max - binWidthRange.min) / 10);
 
     initialState.histogram = {
       ...initialState.histogram,
@@ -376,12 +375,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
    * nested reducer and/or make async function calls to change
    * data via API requests.
    */
-  const onSelectedUnitChange = async (unit: string) => {
+  const onSelectedUnitChange = async (newUnit: string) => {
     if (params.onSelectedUnitChange) {
       try {
-        const newData = await params.onSelectedUnitChange({
-          selectedUnit: unit,
-        });
+        const newData = await params.onSelectedUnitChange(newUnit);
         dispatch({ type: 'setData', payload: newData });
 
         // Additional actions to take if incoming data is for a histogram.
@@ -418,23 +415,26 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       } catch (error) {
         dispatch({ type: 'errors/add', payload: error });
       } finally {
-        dispatch({ type: 'setSelectedUnit', payload: unit });
+        dispatch({ type: 'setSelectedUnit', payload: newUnit });
       }
     }
   };
 
-  const onBinWidthChange = async (binWidth: number) => {
+  const onBinWidthChange = async (args: {
+    binWidth: NumberOrTimeDelta;
+    selectedUnit?: string;
+  }) => {
     if (params.histogram) {
       try {
         const newData = await params.histogram.onBinWidthChange({
-          binWidth,
+          binWidth: args.binWidth,
           selectedUnit: reducerState.selectedUnit,
         });
         dispatch({ type: 'setData', payload: newData });
       } catch (error) {
         dispatch({ type: 'errors/add', payload: error });
       } finally {
-        dispatch({ type: 'histogram/setBinWidth', payload: binWidth });
+        dispatch({ type: 'histogram/setBinWidth', payload: args.binWidth });
       }
     }
   };

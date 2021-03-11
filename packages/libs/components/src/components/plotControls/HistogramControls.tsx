@@ -9,6 +9,8 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   NumberRange,
+  DateRange,
+  TimeDelta,
 } from '../../types/general';
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
@@ -20,7 +22,10 @@ import OpacitySlider from '../widgets/OpacitySlider';
 import OrientationToggle from '../widgets/OrientationToggle';
 import SliderWidget from '../widgets/Slider';
 import Switch from '../widgets/Switch';
-import NumberRangeInput from '../widgets/NumberRangeInput';
+import {
+  NumberRangeInput,
+  DateRangeInput,
+} from '../widgets/NumberAndDateRangeInputs';
 
 export type HistogramControlsProps = {
   /** Label for control panel. Optional. */
@@ -47,6 +52,8 @@ export type HistogramControlsProps = {
   orientation: OrientationOptions;
   /** Function to invoke when orientation changes. */
   toggleOrientation: (orientation: string) => void;
+  /** Type of x-variable 'number' or 'date' */
+  valueType: 'number' | 'date';
   /** Available unit options by which to bin data. */
   availableUnits?: Array<string>;
   /** The currently selected bin unit. */
@@ -56,7 +63,10 @@ export type HistogramControlsProps = {
   /** The current binWidth */
   binWidth: NumberOrTimeDelta;
   /** Function to invoke when bin width changes. */
-  onBinWidthChange: (newWidth: NumberOrTimeDelta) => void;
+  onBinWidthChange: (params: {
+    binWidth: NumberOrTimeDelta;
+    selectedUnit?: string;
+  }) => void;
   /** The acceptable range of binWidthValues. */
   binWidthRange: NumberOrTimeDeltaRange;
   /** The step to take when adjusting binWidth */
@@ -101,6 +111,7 @@ export default function HistogramControls({
   onOpacityChange,
   orientation,
   toggleOrientation,
+  valueType,
   availableUnits,
   selectedUnit,
   onSelectedUnitChange,
@@ -173,13 +184,23 @@ export default function HistogramControls({
           />
         ) : null}
         {displaySelectedRangeControls && selectedRangeBounds ? (
-          <NumberRangeInput
-            label="Selected Range"
-            defaultRange={selectedRangeBounds}
-            rangeBounds={selectedRangeBounds}
-            controlledRange={selectedRange}
-            onRangeChange={onSelectedRangeChange}
-          />
+          valueType === 'number' ? (
+            <NumberRangeInput
+              label="Selected Range"
+              defaultRange={selectedRangeBounds as NumberRange}
+              rangeBounds={selectedRangeBounds as NumberRange}
+              controlledRange={selectedRange as NumberRange}
+              onRangeChange={onSelectedRangeChange}
+            />
+          ) : (
+            <DateRangeInput
+              label="Selected Range"
+              defaultRange={selectedRangeBounds as DateRange}
+              rangeBounds={selectedRangeBounds as DateRange}
+              controlledRange={selectedRange as DateRange}
+              onRangeChange={onSelectedRangeChange}
+            />
+          )
         ) : null}
       </div>
       <div
@@ -200,15 +221,27 @@ export default function HistogramControls({
         />
         <SliderWidget
           label={`Bin Width${
-            typeof binWidth === 'number' ? '' : ' (binWidth[1])'
+            valueType === 'number'
+              ? ''
+              : ' (' + (binWidth as TimeDelta)[1] + ')'
           }`}
           minimum={binWidthRange.min}
           maximum={binWidthRange.max}
           step={
-            typeof binWidthStep === 'number' ? binWidthStep : binWidthStep[0]
+            valueType === 'number'
+              ? (binWidthStep as number)
+              : (binWidth as TimeDelta)[0]
           }
           value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
-          onChange={onBinWidthChange}
+          onChange={(newValue: number) => {
+            onBinWidthChange({
+              binWidth:
+                valueType === 'number'
+                  ? newValue
+                  : ([newValue, selectedUnit] as TimeDelta),
+              selectedUnit,
+            });
+          }}
         />
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 5 }}>

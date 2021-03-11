@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberOrDate } from '../../types/general';
 
-type MathableInputBaseProps<M extends NumberOrDate> = {
+type BaseProps<M extends NumberOrDate> = {
   /** The starting value of the widget. */
   defaultValue?: M;
   /** Externally controlled value. */
@@ -22,19 +22,19 @@ type MathableInputBaseProps<M extends NumberOrDate> = {
   containerStyles?: React.CSSProperties;
 };
 
-export type NumberInputProps = MathableInputBaseProps<number>;
+export type NumberInputProps = BaseProps<number>;
 
 export function NumberInput(props: NumberInputProps) {
-  return <MathableInput {...props} valueType="number" />;
+  return <BaseInput {...props} valueType="number" />;
 }
 
-export type DateInputProps = MathableInputBaseProps<Date>;
+export type DateInputProps = BaseProps<Date>;
 
 export function DateInput(props: DateInputProps) {
-  return <MathableInput {...props} valueType="date" />;
+  return <BaseInput {...props} valueType="date" />;
 }
 
-type MathableInputProps =
+type BaseInputProps =
   | (NumberInputProps & {
       valueType: 'number';
     })
@@ -43,11 +43,11 @@ type MathableInputProps =
     });
 
 /**
- * Input field taking a value we can do maths on.
+ * Input field taking a value we can do < > <= => comparisons with
  * i.e. number or date.
  * Not currently exported. But could be if needed.
  */
-function MathableInput({
+function BaseInput({
   defaultValue,
   controlledValue,
   minValue,
@@ -56,7 +56,7 @@ function MathableInput({
   label,
   valueType,
   containerStyles,
-}: MathableInputProps) {
+}: BaseInputProps) {
   const [focused, setFocused] = useState(false);
   const [errorState, setErrorState] = useState({
     error: false,

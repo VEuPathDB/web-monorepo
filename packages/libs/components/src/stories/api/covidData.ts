@@ -195,8 +195,8 @@ export const binDailyCovidStats = async (
           binWidth: selectedUnit === 'Count per 100000 Residents' ? 1 : 1000,
           binWidthRange:
             selectedUnit === 'Count per 100000 Residents'
-              ? [1, 15]
-              : [1000, 15000],
+              ? { min: 1, max: 15 }
+              : { min: 1000, max: 15000 },
           binWidthStep: selectedUnit === 'Count per 100000 Residents' ? 1 : 500,
         }
       : {}),

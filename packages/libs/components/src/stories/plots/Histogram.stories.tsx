@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
-import { NumberRange } from '../../types/general';
+import {
+  NumberRange,
+  DateRange,
+  NumberOrDateRange,
+  NumberOrTimeDelta,
+  NumberOrTimeDeltaRange,
+} from '../../types/general';
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
 import usePlotControls from '../../hooks/usePlotControls';
@@ -15,14 +21,14 @@ export default {
 } as Meta;
 
 const defaultActions = {
-  onSelectedRangeChange: (newRange: NumberRange) => {
+  onSelectedRangeChange: (newRange: NumberOrDateRange) => {
     console.log(`made a selection of ${newRange.min} to ${newRange.max}`);
   },
 };
 
 const TemplateWithControls: Story<
   HistogramProps & {
-    binWidthRange?: [number, number];
+    binWidthRange?: NumberRange;
     binWidthStep?: number;
     throwSampleErrors: boolean;
     includeExtraDirectives: boolean;
@@ -43,7 +49,7 @@ const TemplateWithControls: Story<
       binWidthStep: args.binWidthStep,
       onBinWidthChange: async ({ binWidth, selectedUnit }) => {
         return await binDailyCovidStats(
-          binWidth,
+          binWidth as number,
           selectedUnit,
           args.throwSampleErrors,
           args.includeExtraDirectives
@@ -63,6 +69,7 @@ const TemplateWithControls: Story<
       <div style={{ height: 25 }} />
       <HistogramControls
         label="Histogram Controls"
+        valueType="number"
         {...plotControls}
         {...plotControls.histogram}
         containerStyles={{
@@ -93,7 +100,7 @@ OverrideBinWidthRangeAndStep.args = {
   title: 'Some Current Covid Data in U.S. States',
   height: 400,
   width: 1000,
-  binWidthRange: [2000, 10000],
+  binWidthRange: { min: 2000, max: 10000 },
   binWidthStep: 1000,
 };
 
@@ -123,7 +130,7 @@ BackendProvidedBinWidthRangeAndStep.loaders = [
 
 const TemplateWithSelectedRangeControls: Story<
   HistogramProps & {
-    binWidthRange?: [number, number];
+    binWidthRange?: NumberRange;
     binWidthStep?: number;
     throwSampleErrors: boolean;
     includeExtraDirectives: boolean;
@@ -144,7 +151,7 @@ const TemplateWithSelectedRangeControls: Story<
       binWidthStep: args.binWidthStep,
       onBinWidthChange: async ({ binWidth, selectedUnit }) => {
         return await binDailyCovidStats(
-          binWidth,
+          binWidth as number,
           selectedUnit,
           args.throwSampleErrors,
           args.includeExtraDirectives
@@ -172,6 +179,7 @@ const TemplateWithSelectedRangeControls: Story<
       <Histogram {...args} {...plotControls} {...plotControls.histogram} />
       <div style={{ height: 25 }} />
       <HistogramControls
+        valueType="number"
         label="Histogram Controls"
         {...plotControls}
         {...plotControls.histogram}
