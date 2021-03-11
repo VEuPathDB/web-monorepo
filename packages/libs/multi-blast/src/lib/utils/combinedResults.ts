@@ -88,20 +88,20 @@ export function dbToOrganismFactory(filesToOrganisms: Record<string, string>) {
   };
 }
 
-export const ACCESSION_HELP_TEXT = 'FILL ME IN';
-export const ORGANISM_HELP_TEXT = 'FILL ME IN';
-export const DESCRIPTION_HELP_TEXT = 'FILL ME IN';
-export const QUERY_HELP_TEXT = 'FILL ME IN';
-export const INDIVIDUAL_RESULT_HELP_TEXT = 'FILL ME IN';
+export const ACCESSION_HELP_TEXT = undefined;
+export const ORGANISM_HELP_TEXT = undefined;
+export const DESCRIPTION_HELP_TEXT = undefined;
+export const QUERY_HELP_TEXT = undefined;
+export const INDIVIDUAL_RESULT_HELP_TEXT = undefined;
 export const RANK_PER_QUERY_HELP_TEXT =
   'For each query sequence, hits are ranked by e-value.';
 export const RANK_PER_SUBJECT_HELP_TEXT =
   'For each subject sequence, hits are ranked by e-value.';
-export const ALIGNMENT_LENGTH_HELP_TEXT = 'FILL ME IN';
-export const E_VALUE_HELP_TEXT = 'FILL ME IN';
-export const SCORE_HELP_TEXT = 'FILL ME IN';
-export const PERCENT_IDENTITY_HELP_TEXT = 'FILL ME IN';
-export const QUERY_COVERAGE_HELP_TEXT = 'FILL ME IN';
+export const ALIGNMENT_LENGTH_HELP_TEXT = undefined;
+export const E_VALUE_HELP_TEXT = undefined;
+export const SCORE_HELP_TEXT = undefined;
+export const PERCENT_IDENTITY_HELP_TEXT = undefined;
+export const QUERY_COVERAGE_HELP_TEXT = undefined;
 
 const SIGNIFICANCE_SORT_COLUMNS = ['eValue', 'score', 'identity'] as const;
 const SIGNIFICANCE_SORT_ORDERS = ['asc', 'desc', 'asc'] as const;
