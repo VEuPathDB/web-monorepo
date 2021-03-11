@@ -4,6 +4,7 @@ import React, { PureComponent, useCallback, useEffect, useState, useRef } from '
 import { httpGet } from '@veupathdb/web-common/lib/util/http';
 import $ from 'jquery';
 import { Checkbox, HelpIcon, Loading } from '@veupathdb/wdk-client/lib/Components';
+import newFeatureImage from '@veupathdb/wdk-client/lib/Core/Style/images/new-feature.png';
 
 import './Gbrowse.scss';
 
@@ -225,7 +226,7 @@ export function GbrowseContext(props) {
       if (window.location.href.indexOf("vectorbase") != -1 || window.location.href.indexOf("piroplasmadb") != -1 || window.location.href.indexOf("toxodb") != -1 || window.location.href.indexOf("amoebadb") != -1){
       return (
         <div>
-        <p>This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a></p>
+        <p>This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a><img src={newFeatureImage}/></p>
         <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
         <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
