@@ -19,6 +19,8 @@ import reportWebVitals from './reportWebVitals';
 import { BlastForm } from './lib/components/BlastForm';
 import { BlastWorkspace } from './lib/components/BlastWorkspace';
 import { BlastWorkspaceResult } from './lib/components/BlastWorkspaceResult';
+import { BlastController } from './lib/controllers/BlastController';
+import { isMultiBlastQuestion } from './lib/utils/pluginConfig';
 import { parseBlastResultSubpath } from './lib/utils/routes';
 import { wrapWdkService } from './lib/utils/wdkServiceIntegration';
 
@@ -69,9 +71,13 @@ initialize({
   },
   pluginConfig: [
     {
+      type: 'questionController',
+      test: isMultiBlastQuestion,
+      component: BlastController,
+    },
+    {
       type: 'questionForm',
-      test: ({ question }) =>
-        question != null && question.urlSegment.endsWith('MultiBlast'),
+      test: isMultiBlastQuestion,
       component: BlastForm,
     },
     {
