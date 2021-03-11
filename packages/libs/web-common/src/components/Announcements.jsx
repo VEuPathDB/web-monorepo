@@ -144,6 +144,17 @@ const siteAnnouncements = [
   },
 */
 
+  {
+    id: 'blast-beta',
+    renderDisplay: props => {
+      if (isLegacyBlast(props.projectId, props.location)) {
+        return null;
+      }
+
+      return null;
+    }
+  },
+
   // TriTryp gene page for Bodo saltans strain Lake Konstanz
   {
     id: 'geneFungi',
@@ -393,4 +404,7 @@ function isFavorites(routerLocation) {
 }
 function isGenomicHomePage(projectId, routerLocation) {
   return isGenomicSite(projectId) && routerLocation.pathname === '/';
+}
+function isLegacyBlast(projectId, routerLocation) {
+  return isGenomicSite(projectId) && routerLocation.pathname === '/search/transcript/UnifiedBlast';
 }
