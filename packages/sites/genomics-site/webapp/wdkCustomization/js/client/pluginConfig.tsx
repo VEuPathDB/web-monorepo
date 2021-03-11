@@ -27,6 +27,8 @@ import { OrganismParam, isOrganismParam } from './components/questions/OrganismP
 import { CompoundsByFoldChangeForm, GenericFoldChangeForm } from './components/questions/foldChange';
 
 import { BlastForm } from '@veupathdb/multi-blast/lib/components/BlastForm';
+import { BlastController } from '@veupathdb/multi-blast/lib/controllers/BlastController';
+import { isMultiBlastQuestion } from '@veupathdb/multi-blast/lib/utils/pluginConfig';
 
 const isInternalGeneDatasetQuestion: ClientPluginRegistryEntry<any>['test'] =
   ({ question }) => (
@@ -91,6 +93,11 @@ const apiPluginConfig: ClientPluginRegistryEntry<any>[] = [
     type: 'questionController',
     test: isInternalGeneDatasetQuestion,
     component: InternalGeneDataset
+  },
+  {
+    type: 'questionController',
+    test: isMultiBlastQuestion,
+    component: BlastController,
   },
   {
     type: 'questionForm',
