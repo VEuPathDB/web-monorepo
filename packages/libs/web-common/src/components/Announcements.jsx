@@ -148,7 +148,13 @@ const siteAnnouncements = [
     id: 'blast-beta',
     renderDisplay: props => {
       if (isLegacyBlast(props.projectId, props.location)) {
-        return null;
+        return (
+          <div key="blast-beta">
+            Would you like to submit multiple sequences in a single BLAST search?{' '}
+            Try our <Link to="/workspace/blast/new">new beta release of BLAST</Link>{' '}
+            and <Link to="/contact-us" target="_blank">let us know what you think</Link>.
+          </div>
+        );
       }
 
       return null;
