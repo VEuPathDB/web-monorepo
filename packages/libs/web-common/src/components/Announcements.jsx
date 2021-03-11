@@ -406,5 +406,12 @@ function isGenomicHomePage(projectId, routerLocation) {
   return isGenomicSite(projectId) && routerLocation.pathname === '/';
 }
 function isLegacyBlast(projectId, routerLocation) {
-  return isGenomicSite(projectId) && routerLocation.pathname === '/search/transcript/UnifiedBlast';
+  return (
+    isGenomicSite(projectId) &&
+    routerLocation.pathname.startsWith('/search') &&
+    (
+      routerLocation.pathname.endsWith('UnifiedBlast') ||
+      routerLocation.pathname.endsWith('BySimilarity')
+    )
+  );
 }
