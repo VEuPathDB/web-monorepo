@@ -3,7 +3,7 @@ import MembershipField from '@veupathdb/wdk-client/lib/Components/AttributeFilte
 import { MultiFieldSortSpec } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/State';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
-import { keyof, number, string, type, TypeOf } from 'io-ts';
+import { boolean, keyof, number, string, type, TypeOf } from 'io-ts';
 import { orderBy, zip } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { BarplotResponse } from '../../api/data-api';
@@ -34,12 +34,13 @@ const UIState = type({
     columnKey: keyof({
       value: null,
       count: null,
-      filteredcount: null,
+      filteredCount: null,
     }),
     direction: keyof({
       asc: null,
       desc: null,
     }),
+    groupBySelected: boolean,
   }),
   searchTerm: string,
   currentPage: number,
@@ -123,15 +124,15 @@ export function TableFilter({
     return pipe(
       UIState.decode(sessionState.session?.variableUISettings[uiStateKey]),
       getOrElse(
-        () =>
-          ({
-            sort: {
-              columnKey: 'value',
-              direction: 'desc',
-            },
-            searchTerm: '',
-            currentPage: 1, // 1-based index
-          } as TypeOf<typeof UIState>)
+        (): TypeOf<typeof UIState> => ({
+          sort: {
+            columnKey: 'value',
+            direction: 'desc',
+            groupBySelected: false,
+          },
+          searchTerm: '',
+          currentPage: 1, // 1-based index
+        })
       )
     );
   }, [sessionState.session?.variableUISettings, uiStateKey]);
@@ -174,40 +175,47 @@ export function TableFilter({
     (_: unknown, sort: MultiFieldSortSpec) => {
       sessionState.setVariableUISettings({
         [uiStateKey]: {
-          ...sessionState.session?.variableUISettings[uiStateKey],
+          ...uiState,
           sort,
         },
       });
     },
-    [sessionState, uiStateKey]
+    [sessionState, uiStateKey, uiState]
   );
 
   const handleSearch = useCallback(
     (_: unknown, searchTerm: string) => {
       sessionState.setVariableUISettings({
         [uiStateKey]: {
-          ...sessionState.session?.variableUISettings[uiStateKey],
+          ...uiState,
           searchTerm,
         },
       });
     },
-    [sessionState, uiStateKey]
+    [sessionState, uiStateKey, uiState]
   );
 
   const handlePagination = useCallback(
     (_: unknown, currentPage: number) => {
       sessionState.setVariableUISettings({
         [uiStateKey]: {
-          ...sessionState.session?.variableUISettings[uiStateKey],
+          ...uiState,
           currentPage,
         },
       });
     },
-    [sessionState, uiStateKey]
+    [sessionState, uiStateKey, uiState]
   );
 
+  const allValues = useMemo(() => {
+    return (
+      tableSummary.value?.distribution.map((entry) => entry.value) ??
+      ([] as TableVariable['type'][])
+    );
+  }, [tableSummary.value]);
+
   const handleChange = useCallback(
-    (_: unknown, values: TableVariable['type'][]) => {
+    (_: unknown, values: string[] = allValues) => {
       const otherFilters = (sessionState.session?.filters ?? []).filter(
         (f) => f.entityId !== entity.id || f.variableId !== variable.id
       );
