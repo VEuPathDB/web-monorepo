@@ -18,7 +18,7 @@ export const getEventData = async (): Promise<Array<EventData>> => {
   const json = await response.json();
   return json.map((event: any) => ({
     id: event.id,
-    date: new Date(event.created_at.substr(0, 10)),
+    date: new Date(event.created_at),
   }));
 };
 
@@ -39,7 +39,7 @@ export const binGithubEventDates = async (args: {
   const lastDate = dates[0];
   const bins: HistogramBin[] = [];
 
-  // bin width in whole days (for now)
+  // bin width in whole hours (for now)
   // TO DO: Math.max(1, ...) protection added due to the Math.floor() could return zero days
   // ideally the units should adapt automatically (e.g. to hours if needed)
   const calculatedBinWidth = args.binWidth
@@ -49,12 +49,12 @@ export const binGithubEventDates = async (args: {
         Math.max(
           1,
           Math.floor(
-            DateMath.diff(lastDate, firstDate, 'day', true) / args.numBins
+            DateMath.diff(firstDate, lastDate, 'hours', true) / args.numBins
           )
         ),
-        'day',
+        'hours',
       ] as TimeDelta)
-    : ([1, 'day'] as TimeDelta);
+    : ([1, 'hours'] as TimeDelta);
 
   for (
     let date = firstDate;
@@ -69,10 +69,16 @@ export const binGithubEventDates = async (args: {
   }
 
   dates.forEach((date) => {
+    // find the bin *after* the one this belongs to
     const matchingBinIndex = bins.findIndex((bin) => {
-      return bin.binStart >= date;
+      return date < bin.binStart;
     });
-    bins[matchingBinIndex].count += 1;
+    // but if we don't find that bin, we must need the final bin
+    if (matchingBinIndex < 0) {
+      bins[bins.length - 1].count += 1;
+    } else {
+      bins[matchingBinIndex - 1].count += 1;
+    }
   });
 
   const objectToReturn = {
