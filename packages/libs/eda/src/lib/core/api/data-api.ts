@@ -28,6 +28,18 @@ type NumBinsOrNumericWidth =
       binWidth: number;
     };
 
+type NumericViewportRangeOrNone =
+  | {
+      viewportMin: number;
+      viewportMax: number;
+    }
+  | {
+      viewportMin?: never;
+      viewportMax?: never;
+    };
+
+type ZeroToTwoVariables = [] | [Variable] | [Variable, Variable];
+
 export interface NumericHistogramRequestParams {
   studyId: string;
   filters: Filter[];
@@ -37,10 +49,9 @@ export interface NumericHistogramRequestParams {
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
-    facetVariable?: Variable;
-    viewportMin?: number; // do we want some fancy both-or-none
-    viewportMax?: number; // constraint here?
-  } & NumBinsOrNumericWidth;
+    facetVariable?: ZeroToTwoVariables;
+  } & NumBinsOrNumericWidth &
+    NumericViewportRangeOrNone;
 }
 
 type NumBinsOrDateWidth =
@@ -53,6 +64,16 @@ type NumBinsOrDateWidth =
       binWidth: string; // Dates widths are strings
     };
 
+type DateViewportRangeOrNone =
+  | {
+      viewportMin: string;
+      viewportMax: string;
+    }
+  | {
+      viewportMin?: never;
+      viewportMax?: never;
+    };
+
 export interface DateHistogramRequestParams {
   studyId: string;
   filters: Filter[];
@@ -62,10 +83,9 @@ export interface DateHistogramRequestParams {
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
-    facetVariable?: Variable;
-    viewportMin?: string;
-    viewportMax?: string;
-  } & NumBinsOrDateWidth;
+    facetVariable?: ZeroToTwoVariables;
+  } & NumBinsOrDateWidth &
+    DateViewportRangeOrNone;
 }
 
 const HistogramResponseData = array(
