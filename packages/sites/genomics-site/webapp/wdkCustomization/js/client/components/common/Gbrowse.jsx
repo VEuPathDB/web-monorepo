@@ -226,7 +226,7 @@ export function GbrowseContext(props) {
       if (window.location.href.indexOf("vectorbase") != -1 || window.location.href.indexOf("piroplasmadb") != -1 || window.location.href.indexOf("toxodb") != -1 || window.location.href.indexOf("amoebadb") != -1){
       return (
         <div>
-        <p>This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a><img src={newFeatureImage}/></p>
+        <p><img src={newFeatureImage}/>This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a></p>
         <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
         <JbrowseIframe jbrowseUrl={jbrowseUrlMinimal} ht="400" />
         <ApolloJbrowseLink url={jbrowseUrlFull} urlApollo={apolloUrlFull}/>
