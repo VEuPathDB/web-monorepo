@@ -5,12 +5,21 @@
  */
 import { Reducer, useReducer } from 'react';
 
-import { isHistogramData, isPiePlotData } from '../types/guards';
+import { isHistogramData, isPiePlotData, isDate } from '../types/guards';
 import {
   UnionOfPlotDataTypes,
   BarLayoutOptions,
   OrientationOptions,
 } from '../types/plots';
+import {
+  NumberOrDate,
+  NumberOrDateRange,
+  NumberOrTimeDelta,
+  NumberOrTimeDeltaRange,
+  TimeDelta,
+  TimeDeltaRange,
+} from '../types/general';
+import * as DateMath from 'date-arithmetic';
 
 /** Action definitions for the reducer function inside of the hook. */
 type ActionType<DataShape> =
@@ -19,15 +28,16 @@ type ActionType<DataShape> =
   | { type: 'errors/add'; payload: Error }
   | { type: 'errors/remove'; payload: Error }
   | { type: 'errors/clear' }
-  | { type: 'histogram/setBinWidth'; payload: number }
-  | { type: 'histogram/setBinWidthRange'; payload: [number, number] }
-  | { type: 'histogram/setBinWidthStep'; payload: number }
+  | { type: 'histogram/setBinWidth'; payload: NumberOrTimeDelta }
+  | { type: 'histogram/setBinWidthRange'; payload: NumberOrTimeDeltaRange }
+  | { type: 'histogram/setBinWidthStep'; payload: NumberOrTimeDelta }
   | { type: 'setSelectedUnit'; payload: string }
   | { type: 'setOpacity'; payload: number }
   | { type: 'resetOpacity' }
   | { type: 'toggleOrientation' }
   | { type: 'toggleDisplayLegend' }
-  | { type: 'toggleLibraryControls' };
+  | { type: 'toggleLibraryControls' }
+  | { type: 'histogram/setSelectedRange'; payload: NumberOrDateRange };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -57,8 +67,7 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
         ...state,
         histogram: {
           ...state.histogram,
-          binWidth:
-            action.payload > 0 ? action.payload : state.histogram.binWidth,
+          binWidth: action.payload, //  > 0 ? action.payload : state.histogram.binWidth,
         },
       };
     case 'histogram/setBinWidthRange':
@@ -101,6 +110,14 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
         ...state,
         orientation:
           state.orientation === 'vertical' ? 'horizontal' : 'vertical',
+      };
+    case 'histogram/setSelectedRange':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          selectedRange: action.payload,
+        },
       };
     default:
       throw new Error();
@@ -146,31 +163,41 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
   /** Histogram specific attributes. */
   histogram: {
     /** Histogram: The width of bins. */
-    binWidth: number;
+    binWidth: NumberOrTimeDelta;
     /** Histogram: Range of bin width values. */
-    binWidthRange: [number, number];
+    binWidthRange: NumberOrTimeDeltaRange;
     /** Increment for increasing/decrease bin width. */
-    binWidthStep: number;
+    binWidthStep: NumberOrTimeDelta;
+    /** The currently selected range along the x-axis */
+    selectedRange?: NumberOrDateRange;
+    /** The min/max allowed values for the range controls */
+    selectedRangeBounds?: NumberOrDateRange;
+    /** A switch to show/hide the range controls  */
+    displaySelectedRangeControls: boolean;
+    /** Type of x-variable 'number' or 'date' */
+    valueType?: 'number' | 'date';
   };
 };
 
 /** Parameters that can be passed to the hook for initialization. */
 export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
   data: DataShape;
-  onSelectedUnitChange?: (params: {
-    selectedUnit: string;
-  }) => Promise<DataShape>;
+  onSelectedUnitChange?: (newUnit: string) => Promise<DataShape>;
   histogram?: {
     /** Optional override for binWidthRange that is provided by
      * data backend or calculated. */
-    binWidthRange?: [number, number];
+    binWidthRange?: NumberOrTimeDeltaRange;
     /** Optional override for binWidthStep that is provided by
      * data backend or calculated. */
-    binWidthStep?: number;
+    binWidthStep?: NumberOrTimeDelta;
     onBinWidthChange: (params: {
-      binWidth: number;
+      binWidth: NumberOrTimeDelta;
       selectedUnit?: string;
     }) => Promise<DataShape>;
+    /** A switch to show/hide the range controls  */
+    displaySelectedRangeControls?: boolean;
+    /** Type of x-variable 'number' or 'date' */
+    valueType?: 'number' | 'date';
   };
 };
 
@@ -197,8 +224,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     barLayout: 'overlay',
     histogram: {
       binWidth: 0,
-      binWidthRange: [0, 0],
+      binWidthRange: { min: 0, max: 0 },
       binWidthStep: 0,
+      displaySelectedRangeControls: false,
     },
   };
 
@@ -214,52 +242,102 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
      * Build the histogram specific state.
      * */
 
-    let binWidthRange: [number, number];
+    let binWidthRange: NumberOrTimeDeltaRange;
     if (params.histogram?.binWidthRange) {
       // Case 1: Override is provided by client.
-      binWidthRange = [
-        params.histogram.binWidthRange[0],
-        params.histogram.binWidthRange[1],
-      ];
+      binWidthRange = params.histogram.binWidthRange;
     } else if (params.data.binWidthRange) {
       // Case 2: binWidthRange is specified in `data`
-
-      binWidthRange = [
-        params.data.binWidthRange[0],
-        params.data.binWidthRange[1],
-      ];
+      binWidthRange = params.data.binWidthRange;
     } else {
       // Case 3: Create some reasonable defaults if not provided by client or data.
 
-      let lowBinValue = 0;
-      let highBinValue = 0;
+      let lowBinValue: NumberOrDate | null = null;
+      let highBinValue: NumberOrDate | null = null;
 
       params.data.series.forEach((series) => {
         series.bins.forEach((bin) => {
-          if (typeof bin.binStart === 'string') {
-            console.error('String Bin Start Values are not yet supported.');
-          } else if (bin.binStart < lowBinValue) {
+          if (lowBinValue === null || bin.binStart < lowBinValue) {
             lowBinValue = bin.binStart;
-          } else if (bin.binStart > highBinValue) {
-            highBinValue = bin.binStart;
+          } else if (highBinValue === null || bin.binStart > highBinValue) {
+            highBinValue = bin.binStart; // TO DO: binEnd is more appropriate
           }
         });
       });
-
-      const rawBinWidthRange = highBinValue - lowBinValue;
-      binWidthRange = [rawBinWidthRange / 10, rawBinWidthRange / 2];
+      if (typeof highBinValue === 'number' && typeof lowBinValue === 'number') {
+        const rawBinWidthRange = highBinValue - lowBinValue;
+        binWidthRange = {
+          min: rawBinWidthRange / 10,
+          max: rawBinWidthRange / 2,
+        };
+      } else if (
+        highBinValue &&
+        isDate(highBinValue) &&
+        lowBinValue &&
+        isDate(lowBinValue)
+      ) {
+        const rawBinWidthRange = DateMath.diff(
+          highBinValue,
+          lowBinValue,
+          'day',
+          true
+        );
+        binWidthRange = {
+          min: rawBinWidthRange / 10,
+          max: rawBinWidthRange / 2,
+          unit: 'day',
+        };
+      } else {
+        // high or lowBinValue were null - which means there was no data...
+        binWidthRange = { min: 1, max: 1 };
+      }
     }
+    const binWidth =
+      params.data.binWidth ??
+      ('unit' in binWidthRange
+        ? ([
+            binWidthRange.max / 10,
+            (binWidthRange as TimeDeltaRange).unit,
+          ] as TimeDelta)
+        : binWidthRange.max / 10);
 
-    const binWidth = params.data.binWidth ?? binWidthRange[1] / 10;
     const binWidthStep = params.histogram?.binWidthStep
       ? params.histogram.binWidthStep
-      : params.data.binWidthStep ?? (binWidthRange[1] - binWidthRange[0]) / 10;
+      : params.data.binWidthStep ??
+        ('unit' in binWidthRange
+          ? ([
+              (binWidthRange.max - binWidthRange.min) / 10,
+              (binWidthRange as TimeDeltaRange).unit,
+            ] as TimeDelta)
+          : (binWidthRange.max - binWidthRange.min) / 10);
 
     initialState.histogram = {
+      ...initialState.histogram,
       binWidth,
       binWidthRange,
       binWidthStep,
+      valueType: params.histogram?.valueType,
     };
+
+    if (params?.histogram?.displaySelectedRangeControls) {
+      // calculate min and max limits for the selected range controls from the data
+      const min: NumberOrDate = params.data.series
+        .map((series) => series.bins[0].binStart)
+        .sort(
+          (a: NumberOrDate, b: NumberOrDate) => a.valueOf() - b.valueOf()
+        )[0];
+      const max: NumberOrDate = params.data.series
+        .map((series) => series.bins[series.bins.length - 1].binEnd)
+        .sort(
+          (a: NumberOrDate, b: NumberOrDate) => b.valueOf() - a.valueOf()
+        )[0];
+
+      initialState.histogram = {
+        ...initialState.histogram,
+        selectedRangeBounds: { min, max } as NumberOrDateRange,
+        displaySelectedRangeControls: true,
+      };
+    }
   }
 
   const [reducerState, dispatch] = useReducer<
@@ -292,12 +370,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
    * nested reducer and/or make async function calls to change
    * data via API requests.
    */
-  const onSelectedUnitChange = async (unit: string) => {
+  const onSelectedUnitChange = async (newUnit: string) => {
     if (params.onSelectedUnitChange) {
       try {
-        const newData = await params.onSelectedUnitChange({
-          selectedUnit: unit,
-        });
+        const newData = await params.onSelectedUnitChange(newUnit);
         dispatch({ type: 'setData', payload: newData });
 
         // Additional actions to take if incoming data is for a histogram.
@@ -334,24 +410,33 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       } catch (error) {
         dispatch({ type: 'errors/add', payload: error });
       } finally {
-        dispatch({ type: 'setSelectedUnit', payload: unit });
+        dispatch({ type: 'setSelectedUnit', payload: newUnit });
       }
     }
   };
 
-  const onBinWidthChange = async (binWidth: number) => {
+  const onBinWidthChange = async (args: {
+    binWidth: NumberOrTimeDelta;
+    selectedUnit?: string;
+  }) => {
     if (params.histogram) {
       try {
         const newData = await params.histogram.onBinWidthChange({
-          binWidth,
+          binWidth: args.binWidth,
           selectedUnit: reducerState.selectedUnit,
         });
         dispatch({ type: 'setData', payload: newData });
       } catch (error) {
         dispatch({ type: 'errors/add', payload: error });
       } finally {
-        dispatch({ type: 'histogram/setBinWidth', payload: binWidth });
+        dispatch({ type: 'histogram/setBinWidth', payload: args.binWidth });
       }
+    }
+  };
+
+  const onSelectedRangeChange = (newRange: NumberOrDateRange) => {
+    if (params.histogram) {
+      dispatch({ type: 'histogram/setSelectedRange', payload: newRange });
     }
   };
 
@@ -375,7 +460,11 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
         dispatch({ type: 'errors/remove', payload: error }),
       clearAllErrors: () => dispatch({ type: 'errors/clear' }),
     },
-    histogram: { ...reducerState.histogram, onBinWidthChange },
+    histogram: {
+      ...reducerState.histogram,
+      onBinWidthChange,
+      onSelectedRangeChange,
+    },
     resetOpacity,
     onBarLayoutChange,
     onSelectedUnitChange,

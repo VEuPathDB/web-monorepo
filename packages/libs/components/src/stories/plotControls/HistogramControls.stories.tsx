@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import HistogramControls from '../../components/plotControls/HistogramControls';
@@ -7,6 +7,7 @@ import usePlotControls, {
 } from '../../hooks/usePlotControls';
 import { HistogramData } from '../../types/plots';
 import { LIGHT_PURPLE } from '../../constants/colors';
+import { NumberOrTimeDelta, TimeDelta } from '../../types/general';
 
 export default {
   title: 'Plot Controls/Histogram',
@@ -21,14 +22,20 @@ export const RequiredControls: Story<usePlotControlsParams<HistogramData>> = (
     histogram: args.histogram,
   });
 
-  return <HistogramControls {...controls} {...controls.histogram} />;
+  return (
+    <HistogramControls
+      {...controls}
+      {...controls.histogram}
+      valueType="number"
+    />
+  );
 };
 
 RequiredControls.args = {
   histogram: {
-    binWidthRange: [5, 100],
+    binWidthRange: { min: 5, max: 100 },
     binWidthStep: 5,
-    onBinWidthChange: async (width) => {
+    onBinWidthChange: async () => {
       return { series: [{ name: 'dummy data', bins: [] }] };
     },
   },
@@ -43,6 +50,10 @@ export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>> = (
     histogram: args.histogram,
   });
 
+  useEffect(() => {
+    console.log(`Story got new binWidth ${controls.data.binWidth}`);
+  }, [controls.data.binWidth]);
+
   return (
     <HistogramControls
       label="Customizable Control Panel Label"
@@ -53,20 +64,37 @@ export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>> = (
   );
 };
 
-AdditionalOptions.args = {
-  data: {
+const dummyData = (args: {
+  binWidth?: NumberOrTimeDelta;
+  selectedUnit?: string;
+}) => {
+  return {
     series: [{ name: 'dummy data', bins: [] }],
-    availableUnits: ['Celsius', 'Fahrenheit'],
-    selectedUnit: 'Celsius',
-  },
-  onSelectedUnitChange: async (unit) => {
-    return { series: [{ name: 'dummy data', bins: [] }] };
+    availableUnits: ['day', 'hours'],
+    selectedUnit: args.selectedUnit ?? 'hours',
+    binWidth: args.binWidth ?? ([6, args.selectedUnit ?? 'hours'] as TimeDelta),
+    binWidthRange: { min: 1, max: 24, unit: args.selectedUnit ?? 'hours' },
+    binWidthStep: [1, args.selectedUnit ?? 'hours'] as TimeDelta,
+  };
+};
+
+AdditionalOptions.args = {
+  data: dummyData({ binWidth: [6, 'hours'], selectedUnit: 'hours' }),
+  onSelectedUnitChange: async (newUnit: string) => {
+    return dummyData({ selectedUnit: newUnit });
   },
   histogram: {
-    binWidthRange: [5, 100],
-    binWidthStep: 5,
-    onBinWidthChange: async (width) => {
-      return { series: [{ name: 'dummy data', bins: [] }] };
+    valueType: 'date',
+    binWidthRange: { min: 1, max: 24, unit: 'hours' },
+    binWidthStep: [1, 'hours'],
+    onBinWidthChange: async (args: {
+      binWidth: NumberOrTimeDelta;
+      selectedUnit?: string;
+    }) => {
+      return dummyData({
+        binWidth: args.binWidth,
+        selectedUnit: args.selectedUnit,
+      });
     },
   },
 };

@@ -2475,6 +2475,11 @@
   resolved "https://registry.yarnpkg.com/@types/d3/-/d3-3.5.44.tgz#28635f8bb9adf1cef5bbef2b06778174a9d34383"
   integrity sha512-hFEcf03YGJ2uQoDYEp3nFD5mXWxly5kf6KOstuOQFEs9sUCN7kNlKhcYkpZ3gK6PiHz4XRLkoHa80NVCJNeLBw==
 
+"@types/date-arithmetic@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@types/date-arithmetic/-/date-arithmetic-4.1.1.tgz#03bd30047b71d6eab66f0f03cb14289479ca277a"
+  integrity sha512-o9ILUTMSRiOC73o7h30mgLpuDwOJWqMHZfnEIwNQlfZsGY6Kw2gK5Gz6nXAjNt9zm3Qpr12pM4FDqssfdtBzGA==
+
 "@types/domutils@*":
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/@types/domutils/-/domutils-1.7.3.tgz#890de5a79d86896e9e6a7445a43c9512e62d6f04"
@@ -5633,6 +5638,11 @@ d@1, d@^1.0.1:
   dependencies:
     es5-ext "^0.10.50"
     type "^1.0.1"
+
+date-arithmetic@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/date-arithmetic/-/date-arithmetic-4.1.0.tgz#e5d6434e9deb71f79760a37b729e4a515e730ddf"
+  integrity sha512-QWxYLR5P/6GStZcdem+V1xoto6DMadYWpMXU82ES3/RfR3Wdwr3D0+be7mgOJ+Ov0G9D5Dmb9T17sNLQYj9XOg==
 
 de-indent@^1.0.2:
   version "1.0.2"

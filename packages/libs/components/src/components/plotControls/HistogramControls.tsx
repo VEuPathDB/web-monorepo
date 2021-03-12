@@ -3,7 +3,15 @@ import useDimensions from 'react-cool-dimensions';
 
 // Definitions
 import { LIGHT_BLUE, LIGHT_GRAY } from '../../constants/colors';
-import { ErrorManagement } from '../../types/general';
+import {
+  ErrorManagement,
+  NumberOrDateRange,
+  NumberOrTimeDelta,
+  NumberOrTimeDeltaRange,
+  NumberRange,
+  DateRange,
+  TimeDelta,
+} from '../../types/general';
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
@@ -14,6 +22,10 @@ import OpacitySlider from '../widgets/OpacitySlider';
 import OrientationToggle from '../widgets/OrientationToggle';
 import SliderWidget from '../widgets/Slider';
 import Switch from '../widgets/Switch';
+import {
+  NumberRangeInput,
+  DateRangeInput,
+} from '../widgets/NumberAndDateRangeInputs';
 
 export type HistogramControlsProps = {
   /** Label for control panel. Optional. */
@@ -40,6 +52,8 @@ export type HistogramControlsProps = {
   orientation: OrientationOptions;
   /** Function to invoke when orientation changes. */
   toggleOrientation: (orientation: string) => void;
+  /** Type of x-variable 'number' or 'date' */
+  valueType?: 'number' | 'date';
   /** Available unit options by which to bin data. */
   availableUnits?: Array<string>;
   /** The currently selected bin unit. */
@@ -47,13 +61,24 @@ export type HistogramControlsProps = {
   /** Function to invoke when the selected bin unit changes. */
   onSelectedUnitChange?: (unit: string) => void;
   /** The current binWidth */
-  binWidth: number;
+  binWidth: NumberOrTimeDelta;
   /** Function to invoke when bin width changes. */
-  onBinWidthChange: (newWidth: number) => void;
+  onBinWidthChange: (params: {
+    binWidth: NumberOrTimeDelta;
+    selectedUnit?: string;
+  }) => void;
   /** The acceptable range of binWidthValues. */
-  binWidthRange: [number, number];
+  binWidthRange: NumberOrTimeDeltaRange;
   /** The step to take when adjusting binWidth */
-  binWidthStep: number;
+  binWidthStep: NumberOrTimeDelta;
+  /** A range to highlight by means of opacity. Optional */
+  selectedRange?: NumberOrDateRange; // TO DO: handle DateRange too
+  /** function to call upon selecting a range (in independent axis). Optional */
+  onSelectedRangeChange?: (newRange: NumberOrDateRange) => void;
+  /** Min and max allowed values for the selected range. Optional */
+  selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
+  /** Show the range controls */
+  displaySelectedRangeControls?: boolean;
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
   /** Color to use as an accent in the control panel. Will accept any
@@ -86,9 +111,14 @@ export default function HistogramControls({
   onOpacityChange,
   orientation,
   toggleOrientation,
+  valueType,
   availableUnits,
   selectedUnit,
   onSelectedUnitChange,
+  selectedRange,
+  onSelectedRangeChange,
+  selectedRangeBounds,
+  displaySelectedRangeControls,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -153,6 +183,25 @@ export default function HistogramControls({
             onOptionSelected={onSelectedUnitChange}
           />
         ) : null}
+        {displaySelectedRangeControls && selectedRangeBounds ? (
+          valueType !== undefined && valueType === 'date' ? (
+            <DateRangeInput
+              label="Selected Range"
+              defaultRange={selectedRangeBounds as DateRange}
+              rangeBounds={selectedRangeBounds as DateRange}
+              controlledRange={selectedRange as DateRange}
+              onRangeChange={onSelectedRangeChange}
+            />
+          ) : (
+            <NumberRangeInput
+              label="Selected Range"
+              defaultRange={selectedRangeBounds as NumberRange}
+              rangeBounds={selectedRangeBounds as NumberRange}
+              controlledRange={selectedRange as NumberRange}
+              onRangeChange={onSelectedRangeChange}
+            />
+          )
+        ) : null}
       </div>
       <div
         style={{
@@ -171,12 +220,28 @@ export default function HistogramControls({
           color={accentColor}
         />
         <SliderWidget
-          label="Bin Width"
-          minimum={binWidthRange[0]}
-          maximum={binWidthRange[1]}
-          step={binWidthStep}
-          value={binWidth}
-          onChange={onBinWidthChange}
+          label={`Bin Width${
+            valueType !== undefined && valueType === 'date'
+              ? ' (' + (binWidth as TimeDelta)[1] + ')'
+              : ''
+          }`}
+          minimum={binWidthRange.min}
+          maximum={binWidthRange.max}
+          step={
+            valueType !== undefined && valueType === 'date'
+              ? (binWidth as TimeDelta)[0]
+              : (binWidthStep as number)
+          }
+          value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
+          onChange={(newValue: number) => {
+            onBinWidthChange({
+              binWidth:
+                valueType !== undefined && valueType === 'date'
+                  ? ([newValue, selectedUnit] as TimeDelta)
+                  : newValue,
+              selectedUnit,
+            });
+          }}
         />
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 5 }}>
