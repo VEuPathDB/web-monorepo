@@ -4,7 +4,7 @@ import { MultiFieldSortSpec } from '@veupathdb/wdk-client/lib/Views/Question/Par
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { boolean, keyof, number, string, type, TypeOf } from 'io-ts';
-import { orderBy, zip } from 'lodash';
+import { zip } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { BarplotResponse } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
@@ -118,6 +118,10 @@ export function TableFilter({
     [variable]
   );
 
+  const filter = sessionState.session?.filters.find(
+    (f) => f.entityId === entity.id && f.variableId === variable.id
+  );
+
   const uiStateKey = `${entity.id}/${variable.id}`;
 
   const uiState = useMemo(() => {
@@ -138,12 +142,40 @@ export function TableFilter({
   }, [sessionState.session?.variableUISettings, uiStateKey]);
 
   const sortedDistribution = useMemo(() => {
-    return orderBy(
-      tableSummary.value?.distribution,
-      [uiState.sort.columnKey],
-      [uiState.sort.direction]
-    );
-  }, [tableSummary.value, uiState.sort.columnKey, uiState.sort.direction]);
+    const values: any[] =
+      filter == null
+        ? []
+        : filter.type === 'stringSet'
+        ? filter.stringSet
+        : filter.type === 'numberSet'
+        ? filter.numberSet
+        : filter.type === 'dateSet'
+        ? filter.dateSet
+        : [];
+    const newDist = tableSummary.value?.distribution
+      .slice()
+      // first sort by value
+      .sort((a, b) =>
+        uiState.sort.columnKey === 'value'
+          ? // Handle strings w/ numbers, case insensitive
+            a.value.localeCompare(b.value, 'en', {
+              numeric: true,
+              sensitivity: 'base',
+            })
+          : // Otherwise, numeric comparison
+            a[uiState.sort.columnKey] - b[uiState.sort.columnKey]
+      );
+    // Reverse sort, if direction is 'desc'
+    if (uiState.sort.direction === 'desc') newDist?.reverse();
+    // Finally, stable sort selected values before unselected values
+    if (uiState.sort.groupBySelected)
+      newDist?.sort((a, b) => {
+        const aSelected = values.includes(a.value);
+        const bSelected = values.includes(b.value);
+        return aSelected && bSelected ? 0 : aSelected ? -1 : bSelected ? 1 : 0;
+      });
+    return newDist;
+  }, [tableSummary.value, uiState.sort, filter]);
 
   const activeFieldState = useMemo(
     () => ({
@@ -161,10 +193,6 @@ export function TableFilter({
       tableSummary.value?.filteredEntitiesCount,
       uiState,
     ]
-  );
-
-  const filter = sessionState.session?.filters.find(
-    (f) => f.entityId === entity.id && f.variableId === variable.id
   );
 
   const tableFilter = useMemo(() => {
