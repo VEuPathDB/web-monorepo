@@ -18,6 +18,9 @@ import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { StudyList } from './lib/workspace/StudyList';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
 
+const subsettingServiceUrl = '/eda-subsetting-service';
+const dataServiceUrl = '/eda-data-service';
+
 initialize({
   rootUrl,
   rootElement,
@@ -46,8 +49,8 @@ initialize({
       ) => (
         <EDAWorkspace
           {...props.match.params}
-          subsettingServiceUrl="/eda-subsetting-service"
-          dataServiceUrl="/eda-data-service"
+          subsettingServiceUrl={subsettingServiceUrl}
+          dataServiceUrl={dataServiceUrl}
         />
       ),
     },
@@ -56,8 +59,8 @@ initialize({
       component: (props: RouteComponentProps<{ studyId: string }>) => (
         <EDASessionList
           {...props.match.params}
-          subsettingServiceUrl="/eda-subsetting-service"
-          dataServiceUrl="/eda-data-service"
+          subsettingServiceUrl={subsettingServiceUrl}
+          dataServiceUrl={dataServiceUrl}
         />
       ),
     },
@@ -66,14 +69,19 @@ initialize({
       component: (props: RouteComponentProps<{ studyId: string }>) => (
         <StudyList
           {...props.match.params}
-          subsettingServiceUrl="/eda-subsetting-service"
+          subsettingServiceUrl={subsettingServiceUrl}
         />
       ),
     },
     {
       path: '/eda-session',
       exact: false,
-      component: WorkspaceRouter,
+      component: () => (
+        <WorkspaceRouter
+          subsettingServiceUrl={subsettingServiceUrl}
+          dataServiceUrl={dataServiceUrl}
+        />
+      ),
     },
     {
       path: '/mapveu',
