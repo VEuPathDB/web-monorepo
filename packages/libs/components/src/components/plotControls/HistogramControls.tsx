@@ -53,7 +53,7 @@ export type HistogramControlsProps = {
   /** Function to invoke when orientation changes. */
   toggleOrientation: (orientation: string) => void;
   /** Type of x-variable 'number' or 'date' */
-  valueType: 'number' | 'date';
+  valueType?: 'number' | 'date';
   /** Available unit options by which to bin data. */
   availableUnits?: Array<string>;
   /** The currently selected bin unit. */
@@ -184,20 +184,20 @@ export default function HistogramControls({
           />
         ) : null}
         {displaySelectedRangeControls && selectedRangeBounds ? (
-          valueType === 'number' ? (
-            <NumberRangeInput
-              label="Selected Range"
-              defaultRange={selectedRangeBounds as NumberRange}
-              rangeBounds={selectedRangeBounds as NumberRange}
-              controlledRange={selectedRange as NumberRange}
-              onRangeChange={onSelectedRangeChange}
-            />
-          ) : (
+          valueType !== undefined && valueType === 'date' ? (
             <DateRangeInput
               label="Selected Range"
               defaultRange={selectedRangeBounds as DateRange}
               rangeBounds={selectedRangeBounds as DateRange}
               controlledRange={selectedRange as DateRange}
+              onRangeChange={onSelectedRangeChange}
+            />
+          ) : (
+            <NumberRangeInput
+              label="Selected Range"
+              defaultRange={selectedRangeBounds as NumberRange}
+              rangeBounds={selectedRangeBounds as NumberRange}
+              controlledRange={selectedRange as NumberRange}
               onRangeChange={onSelectedRangeChange}
             />
           )
@@ -221,24 +221,24 @@ export default function HistogramControls({
         />
         <SliderWidget
           label={`Bin Width${
-            valueType === 'number'
-              ? ''
-              : ' (' + (binWidth as TimeDelta)[1] + ')'
+            valueType !== undefined && valueType === 'date'
+              ? ' (' + (binWidth as TimeDelta)[1] + ')'
+              : ''
           }`}
           minimum={binWidthRange.min}
           maximum={binWidthRange.max}
           step={
-            valueType === 'number'
-              ? (binWidthStep as number)
-              : (binWidth as TimeDelta)[0]
+            valueType !== undefined && valueType === 'date'
+              ? (binWidth as TimeDelta)[0]
+              : (binWidthStep as number)
           }
           value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
           onChange={(newValue: number) => {
             onBinWidthChange({
               binWidth:
-                valueType === 'number'
-                  ? newValue
-                  : ([newValue, selectedUnit] as TimeDelta),
+                valueType !== undefined && valueType === 'date'
+                  ? ([newValue, selectedUnit] as TimeDelta)
+                  : newValue,
               selectedUnit,
             });
           }}

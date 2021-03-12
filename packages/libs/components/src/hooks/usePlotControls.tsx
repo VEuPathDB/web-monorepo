@@ -174,6 +174,8 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     selectedRangeBounds?: NumberOrDateRange;
     /** A switch to show/hide the range controls  */
     displaySelectedRangeControls: boolean;
+    /** Type of x-variable 'number' or 'date' */
+    valueType?: 'number' | 'date';
   };
 };
 
@@ -194,6 +196,8 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     }) => Promise<DataShape>;
     /** A switch to show/hide the range controls  */
     displaySelectedRangeControls?: boolean;
+    /** Type of x-variable 'number' or 'date' */
+    valueType?: 'number' | 'date';
   };
 };
 
@@ -312,6 +316,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       binWidth,
       binWidthRange,
       binWidthStep,
+      valueType: params.histogram?.valueType,
     };
 
     if (params?.histogram?.displaySelectedRangeControls) {

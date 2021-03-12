@@ -188,9 +188,13 @@ export default function Histogram({
 
   const handleSelectedRange = (object: any) => {
     if (object && object.range) {
+      console.log(object.range);
       const [min, max] =
         orientation === 'vertical' ? object.range.x : object.range.y;
-      onSelectedRangeChange({ min, max });
+      onSelectedRangeChange({
+        min: typeof min === 'number' ? min : new Date(min),
+        max: typeof max === 'number' ? max : new Date(max),
+      } as NumberOrDateRange);
     }
   };
 

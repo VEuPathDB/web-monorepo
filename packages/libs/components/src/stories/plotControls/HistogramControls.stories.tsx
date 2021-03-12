@@ -56,7 +56,6 @@ export const AdditionalOptions: Story<usePlotControlsParams<HistogramData>> = (
 
   return (
     <HistogramControls
-      valueType="date"
       label="Customizable Control Panel Label"
       accentColor={LIGHT_PURPLE}
       {...controls}
@@ -85,6 +84,7 @@ AdditionalOptions.args = {
     return dummyData({ selectedUnit: newUnit });
   },
   histogram: {
+    valueType: 'date',
     binWidthRange: { min: 1, max: 24, unit: 'hours' },
     binWidthStep: [1, 'hours'],
     onBinWidthChange: async (args: {
