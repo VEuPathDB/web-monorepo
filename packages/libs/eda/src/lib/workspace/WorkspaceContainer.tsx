@@ -1,6 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
-import { DataClient, EDAWorkspaceContainer, SubsettingClient } from '../core';
+import {
+  DataClient,
+  EDAWorkspaceContainer,
+  EntityDiagram,
+  SubsettingClient,
+} from '../core';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockSessionStore } from './Mocks';
 import { SessionPanel } from './SessionPanel';
@@ -20,7 +25,7 @@ export function WorkspaceContainer(props: Props) {
   );
   const dataClient = useMemo(
     () => new DataClient({ baseUrl: props.subsettingServiceUrl }),
-    [props.dataServiceUrl]
+    [props.subsettingServiceUrl]
   );
   const makeVariableLink = useCallback(
     (entityId: string, variableId: string) =>
@@ -38,6 +43,13 @@ export function WorkspaceContainer(props: Props) {
       makeVariableLink={makeVariableLink}
     >
       <EDAWorkspaceHeading />
+      <EntityDiagram
+        studyId={props.studyId}
+        sessionId={props.sessionId}
+        subsettingClient={subsettingClient}
+        expanded={true}
+        orientation="horizontal"
+      />
       <SessionPanel sessionId={props.sessionId} />
     </EDAWorkspaceContainer>
   );
