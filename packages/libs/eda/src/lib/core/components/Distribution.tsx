@@ -32,7 +32,7 @@ export function Distribution(props: Props) {
         (f) => f.entityId !== entity.id || f.variableId !== variable.id
       );
       const dataRequestConfig = {
-        entityId: entity.id, // for subsetting filters, this is the same entity as...
+        outputEntityId: entity.id, // for subsetting filters, this is the same entity as...
         xAxisVariable: {
           entityId: entity.id, // ...the variable's entity
           variableId: variable.id,

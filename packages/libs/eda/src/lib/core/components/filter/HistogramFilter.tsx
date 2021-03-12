@@ -197,7 +197,7 @@ function getRequestParams(
     studyId,
     filters,
     config: {
-      entityId: entity.id,
+      outputEntityId: entity.id,
       valueSpec: 'count',
       xAxisVariable: {
         entityId: entity.id,

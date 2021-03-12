@@ -45,7 +45,7 @@ export interface NumericHistogramRequestParams {
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    entityId: string;
+    outputEntityId: string;
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
@@ -79,7 +79,7 @@ export interface DateHistogramRequestParams {
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    entityId: string;
+    outputEntityId: string;
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
@@ -158,7 +158,7 @@ export interface BarplotRequestParams {
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    entityId: string;
+    outputEntityId: string;
     valueSpec: 'count' | 'identity';
     xAxisVariable: {
       // TO DO: refactor repetition with HistogramRequestParams
