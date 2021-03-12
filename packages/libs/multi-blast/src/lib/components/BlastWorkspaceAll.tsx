@@ -14,6 +14,7 @@ import {
 } from '../hooks/allJobs';
 import { BlastApi } from '../utils/api';
 
+import { BlastRequestError } from './BlastRequestError';
 import { withBlastApi } from './withBlastApi';
 
 import './BlastWorkspaceAll.scss';
@@ -40,7 +41,13 @@ function BlastWorkspaceAllWithLoadedApi(
 
   return (
     <div className="BlastWorkspaceAll">
-      {jobRows == null ? <Loading /> : <AllJobsTable jobRows={jobRows} />}
+      {jobRows == null ? (
+        <Loading />
+      ) : jobRows.status === 'error' ? (
+        <BlastRequestError errorDetails={jobRows.details} />
+      ) : (
+        <AllJobsTable jobRows={jobRows.value} />
+      )}
     </div>
   );
 }

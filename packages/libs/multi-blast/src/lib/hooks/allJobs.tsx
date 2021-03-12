@@ -10,6 +10,7 @@ import {
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { JobRow } from '../components/BlastWorkspaceAll';
+import { ApiResult, ErrorDetails } from '../utils/ServiceTypes';
 import {
   entityStatusToReadableStatus,
   shouldIncludeInJobsTable,
@@ -50,22 +51,30 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
   );
 }
 
-export function useRawJobRows(blastApi: BlastApi): JobRow[] | undefined {
+export function useRawJobRows(
+  blastApi: BlastApi
+): ApiResult<JobRow[], ErrorDetails> | undefined {
   return useWdkService(async (wdkService) => {
     const jobEntities = await blastApi.fetchJobEntities();
     const { projectId } = await wdkService.getConfig();
 
-    // FIXME: Handle the case where the job entities cannot be fetched
-    return jobEntities == null || jobEntities.status === 'error'
+    return jobEntities == null
       ? undefined
-      : jobEntities.value
-          .filter((jobEntity) => shouldIncludeInJobsTable(jobEntity, projectId))
-          .map((jobEntity) => ({
-            jobId: jobEntity.id,
-            description: jobEntity.description ?? null,
-            created: jobEntity.created,
-            status: entityStatusToReadableStatus(jobEntity.status),
-          }));
+      : jobEntities.status === 'error'
+      ? jobEntities
+      : {
+          status: 'ok',
+          value: jobEntities.value
+            .filter((jobEntity) =>
+              shouldIncludeInJobsTable(jobEntity, projectId)
+            )
+            .map((jobEntity) => ({
+              jobId: jobEntity.id,
+              description: jobEntity.description ?? null,
+              created: jobEntity.created,
+              status: entityStatusToReadableStatus(jobEntity.status),
+            })),
+        };
   }, []);
 }
 

@@ -739,6 +739,13 @@ export const serverError = record({
 
 export type ServerError = Unpack<typeof serverError>;
 
+export const unknownError = record({
+  status: constant('unknown'),
+  message: string,
+});
+
+export type UnknownError = Unpack<typeof unknownError>;
+
 export const errorDetails = oneOf(
   badRequestError,
   unauthorizedError,
@@ -746,7 +753,8 @@ export const errorDetails = oneOf(
   notFoundError,
   methodNotAllowedError,
   unprocessableEntityError,
-  serverError
+  serverError,
+  unknownError
 );
 
 export type ErrorDetails = Unpack<typeof errorDetails>;

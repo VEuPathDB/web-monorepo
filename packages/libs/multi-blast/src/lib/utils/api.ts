@@ -1,6 +1,10 @@
 import { flowRight, mapValues, omit, partial } from 'lodash';
 
-import { arrayOf, decode, string } from '@veupathdb/wdk-client/lib/Utils/Json';
+import {
+  arrayOf,
+  decodeOrElse,
+  string,
+} from '@veupathdb/wdk-client/lib/Utils/Json';
 import { User } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import {
   ApiRequestCreator,
@@ -165,8 +169,12 @@ export async function apiErrorHandler<T>(
       error != null &&
       typeof error.message === 'string'
     ) {
-      const decodedErrorDetails = decode(
+      const decodedErrorDetails = decodeOrElse(
         errorDetails,
+        {
+          status: 'unknown',
+          message: error,
+        },
         error.message.replace(/^[^{]*(\{.*\})[^}]*$/, '$1')
       );
 
