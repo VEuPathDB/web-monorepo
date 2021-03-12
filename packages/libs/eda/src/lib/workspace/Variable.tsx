@@ -57,7 +57,7 @@ export function Variable(props: Props) {
         ))}
       </div>
       <ErrorBoundary>
-        {totalEntityCount && filteredEntityCount ? (
+        {totalEntityCount != null && filteredEntityCount != null ? (
           <FilterContainer
             studyMetadata={studyMetadata}
             variable={variable}
