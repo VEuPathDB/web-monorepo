@@ -4,12 +4,16 @@ import { PlotParams } from 'react-plotly.js';
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
 import { HistogramData } from '../types/plots';
-import { NumberOrDateRange, NumberRange } from '../types/general';
+import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
+// Libraries
+import * as DateMath from 'date-arithmetic';
+
 // Components
 import PlotlyPlot from './PlotlyPlot';
+import { Layout } from 'plotly.js';
 
 export interface HistogramProps {
   /** Data for the plot. */
@@ -45,7 +49,9 @@ export interface HistogramProps {
   displayLegend?: boolean;
   /** Options for customizing plot legend. */
   legendOptions?: PlotLegendAddon;
-  /** Range for the y-axis */
+  /** Range for the dependent axis (usually y-axis) */
+  // TO DO: rename to dependentAxisRange and
+  //        change to NumberRange but affects quite a few files (e.g. map's ChartMarkers)
   yAxisRange?: [number, number];
   /** Show value for each bar */
   showBarValues?: boolean;
@@ -100,32 +106,41 @@ export default function Histogram({
    * when there is more than 1 data series and the layout
    * is overlay.
    */
-  let calculatedBarOpacity: number;
-  if (barLayout === 'overlay' && data.series.length > 1) {
-    calculatedBarOpacity =
-      opacity > 1 ? (opacity / 100) * 0.75 : opacity * 0.75;
-  } else {
-    calculatedBarOpacity = opacity > 1 ? opacity / 100 : opacity;
-  }
+  const calculatedBarOpacity: number = useMemo(() => {
+    if (barLayout === 'overlay' && data.series.length > 1) {
+      return opacity > 1 ? (opacity / 100) * 0.75 : opacity * 0.75;
+    } else {
+      return opacity > 1 ? opacity / 100 : opacity;
+    }
+  }, [barLayout, data.series.length, opacity]);
+
+  /**
+   * Calculate min binStart and max binEnd values
+   */
+  const minBinStart: NumberOrDate = useMemo(() => {
+    return data.series
+      .map((series) => series.bins[0].binStart)
+      .sort((a: NumberOrDate, b: NumberOrDate) => a.valueOf() - b.valueOf())[0];
+  }, [data.series]);
+  const maxBinEnd: NumberOrDate = useMemo(() => {
+    return data.series
+      .map((series) => series.bins[series.bins.length - 1].binEnd)
+      .sort((a: NumberOrDate, b: NumberOrDate) => b.valueOf() - a.valueOf())[0];
+  }, [data.series]);
 
   // Transform `data` into a Plot.ly friendly format.
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
     () =>
       data.series.map((series) => {
-        const binLabels = series.bins.map((bin) => bin.binLabel);
+        const binStarts = series.bins.map((bin) => bin.binStart);
+        // const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
         const binCounts = series.bins.map((bin) => bin.count);
         const perBarOpacity: number[] = series.bins.map((bin) => {
-          if (
-            selectedRange &&
-            selectedRange.min !== undefined &&
-            selectedRange.max !== undefined
-          ) {
+          if (selectedRange) {
             if (
               bin.binStart >= selectedRange.min &&
-              bin.binStart /* TO DO - ADD BIN WIDTH HERE or have bin.binEnd available */ <
-                selectedRange.max
+              bin.binEnd <= selectedRange.max
             ) {
-              // it's complicated due to date/string values
               return calculatedBarOpacity;
             } else {
               return 0.2 * calculatedBarOpacity;
@@ -134,19 +149,38 @@ export default function Histogram({
             return calculatedBarOpacity;
           }
         });
+        const binWidths = series.bins.map((bin) => {
+          if (data.valueType !== undefined && data.valueType === 'date') {
+            // date, needs to be in milliseconds
+            // TO DO: bars seem very slightly too narrow at monthly resolution (multiplying by 1009 fixes it)
+            return (
+              DateMath.diff(
+                bin.binStart as Date,
+                bin.binEnd as Date,
+                'seconds',
+                false
+              ) * 1000
+            );
+          } else {
+            return (bin.binEnd as number) - (bin.binStart as number);
+          }
+        });
         return {
           type: 'bar',
-          x: orientation === 'vertical' ? binLabels : binCounts,
-          y: orientation === 'vertical' ? binCounts : binLabels,
+          x: orientation === 'vertical' ? binStarts : binCounts,
+          y: orientation === 'vertical' ? binCounts : binStarts,
           opacity: calculatedBarOpacity,
           orientation: orientation === 'vertical' ? 'v' : 'h',
           name: series.name,
+          // text: binLabels, // TO DO: find a way to show concise bin labels
           text: showBarValues ? binCounts.map(String) : undefined,
           textposition: showBarValues ? 'auto' : undefined,
           marker: {
             ...(series.color ? { color: series.color } : {}),
             opacity: perBarOpacity,
           },
+          offset: 0,
+          width: binWidths,
         };
       }),
     [data, orientation, calculatedBarOpacity, selectedRange]
@@ -154,28 +188,38 @@ export default function Histogram({
 
   const handleSelectedRange = (object: any) => {
     if (object && object.range) {
-      // range reported by Plotly is in ordinal "bar index space" e.g. four bars would be 0 to 3
-      // so we need to convert it to actual data space using the longest series of the data.
-      const [ordinalMin, ordinalMax] =
+      const [min, max] =
         orientation === 'vertical' ? object.range.x : object.range.y;
-      // do some rounding to get the indices of the first and last bar
-      const firstBarIndex = Math.floor(ordinalMin + 1);
-      const lastBarIndex = Math.floor(ordinalMax);
-      // TO DO: can use data.series[0] because all series are guaranteed to have the same bins...
-      // (but Storybook test api data does not)
-      const seriesLengths = data.series.map((series) => series.bins.length);
-      const longestSeriesLength = seriesLengths.sort((a: number, b: number) =>
-        Math.sign(b - a)
-      )[0];
-      const longestSeries = data.series.filter(
-        (series) => series.bins.length == longestSeriesLength
-      );
-      const min = Number(longestSeries[0].bins[firstBarIndex].binStart);
-      const split = longestSeries[0].bins[lastBarIndex].binLabel.split(' '); // NASTY split on binLabel (BM)
-      const max = Number(split[split.length - 1]);
-      // call the callback prop
       onSelectedRangeChange({ min, max });
     }
+  };
+
+  const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
+    type: data?.valueType === 'date' ? 'date' : 'linear',
+    automargin: true,
+    title: {
+      text: independentAxisLabel,
+      font: {
+        family: 'Arial, Helvetica, sans-serif',
+        size: 14,
+      },
+    },
+    color: textColor,
+    range: [minBinStart, maxBinEnd],
+  };
+  const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
+    type: 'linear',
+    automargin: true,
+    title: {
+      text: dependentAxisLabel,
+      font: {
+        family: 'Arial, Helvetica, sans-serif',
+        size: 14,
+      },
+    },
+    color: textColor,
+    gridcolor: gridColor,
+    range: yAxisRange || undefined,
   };
 
   return (
@@ -206,37 +250,14 @@ export default function Histogram({
           },
           plot_bgcolor: backgroundColor,
           paper_bgcolor: backgroundColor,
-          xaxis: {
-            type: orientation === 'vertical' ? 'category' : 'linear',
-            automargin: true,
-            title: {
-              text:
-                orientation === 'vertical'
-                  ? independentAxisLabel
-                  : dependentAxisLabel,
-              font: {
-                family: 'Arial, Helvetica, sans-serif',
-                size: 14,
-              },
-            },
-            color: textColor,
-          },
-          yaxis: {
-            automargin: true,
-            title: {
-              text:
-                orientation === 'vertical'
-                  ? dependentAxisLabel
-                  : independentAxisLabel,
-              font: {
-                family: 'Arial, Helvetica, sans-serif',
-                size: 14,
-              },
-            },
-            color: textColor,
-            gridcolor: gridColor,
-            range: yAxisRange || undefined,
-          },
+          xaxis:
+            orientation === 'vertical'
+              ? independentAxisLayout
+              : dependentAxisLayout,
+          yaxis:
+            orientation === 'vertical'
+              ? dependentAxisLayout
+              : independentAxisLayout,
           barmode: barLayout,
           title: {
             text: title,

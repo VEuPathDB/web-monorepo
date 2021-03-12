@@ -214,16 +214,38 @@ const SimpleDateTemplate: Story<HistogramProps> = (
   return <Histogram {...args} data={apiData} />;
 };
 
-export const DateNoControls = SimpleDateTemplate.bind({});
-DateNoControls.args = {
+export const EventHoursNoControls = SimpleDateTemplate.bind({});
+EventHoursNoControls.args = {
   title: 'Recent VEuPathDB github events',
   height: 400,
   width: 1000,
 };
 
 //@ts-ignore
-DateNoControls.loaders = [
+EventHoursNoControls.loaders = [
   async () => ({
-    apiData: await binGithubEventDates({ numBins: 10 }),
+    apiData: await binGithubEventDates({
+      numBins: 10,
+      url: 'https://api.github.com/users/VEuPathDB/events?per_page=100',
+      unit: 'hours',
+    }),
+  }),
+];
+
+export const RepoMonthsNoControls = SimpleDateTemplate.bind({});
+RepoMonthsNoControls.args = {
+  title: 'VEuPathDB github repo creation dates',
+  height: 400,
+  width: 1000,
+};
+
+//@ts-ignore
+RepoMonthsNoControls.loaders = [
+  async () => ({
+    apiData: await binGithubEventDates({
+      numBins: 10,
+      url: 'https://api.github.com/users/VEuPathDB/repos?sort=created',
+      unit: 'month',
+    }),
   }),
 ];

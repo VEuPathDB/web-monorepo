@@ -316,30 +316,20 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
     if (params?.histogram?.displaySelectedRangeControls) {
       // calculate min and max limits for the selected range controls from the data
-
-      // The EDA will have consistent bins across all series
-      // so we can take the binStart and binEnd of the first
-      // and last bins of the first series, respectively.
-      // With the story data we have to be a bit more creative.
-      // (See also Histogram.tsx handleSelectedRange().)
-      const seriesLengths = params.data.series.map(
-        (series) => series.bins.length
-      );
-      const longestSeriesLength = seriesLengths.sort((a: number, b: number) =>
-        Math.sign(b - a)
-      )[0];
-      const longestSeries = params.data.series.filter(
-        (series) => series.bins.length == longestSeriesLength
-      );
-      const min = Number(longestSeries[0].bins[0].binStart);
-      const split = longestSeries[0].bins[
-        longestSeriesLength - 1
-      ].binLabel.split(' '); // NASTY split on binLabel (BM)
-      const max = Number(split[split.length - 1]);
+      const min: NumberOrDate = params.data.series
+        .map((series) => series.bins[0].binStart)
+        .sort(
+          (a: NumberOrDate, b: NumberOrDate) => a.valueOf() - b.valueOf()
+        )[0];
+      const max: NumberOrDate = params.data.series
+        .map((series) => series.bins[series.bins.length - 1].binEnd)
+        .sort(
+          (a: NumberOrDate, b: NumberOrDate) => b.valueOf() - a.valueOf()
+        )[0];
 
       initialState.histogram = {
         ...initialState.histogram,
-        selectedRangeBounds: { min, max },
+        selectedRangeBounds: { min, max } as NumberOrDateRange,
         displaySelectedRangeControls: true,
       };
     }

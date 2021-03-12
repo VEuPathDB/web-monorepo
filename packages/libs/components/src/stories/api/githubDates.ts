@@ -11,14 +11,14 @@ type EventData = {
   date: Date;
 };
 
-export const getEventData = async (): Promise<Array<EventData>> => {
-  const response = await fetch(
-    'https://api.github.com/users/VEuPathDB/events?per_page=100'
-  );
+export const getCreatedDateData = async (
+  url: string
+): Promise<Array<EventData>> => {
+  const response = await fetch(url);
   const json = await response.json();
-  return json.map((event: any) => ({
-    id: event.id,
-    date: new Date(event.created_at),
+  return json.map((item: any) => ({
+    id: item.id,
+    date: new Date(item.created_at),
   }));
 };
 
@@ -26,44 +26,57 @@ export const getEventData = async (): Promise<Array<EventData>> => {
  * binWidth takes priority over numBins if both are given
  * (yes it ought to be done more formally than this)
  */
-export const binGithubEventDates = async (args: {
+export const binGithubEventDates = async ({
+  url,
+  unit,
+  binWidth,
+  numBins,
+}: {
+  url: string;
+  unit: DateMath.Unit;
   binWidth?: TimeDelta;
   numBins?: number;
 }): Promise<HistogramData> => {
-  const eventData = await getEventData();
+  const eventData = await getCreatedDateData(url);
 
   const dates = eventData.map((event) => event.date);
 
   // the dates come in reverse order from github, so exploit that to save time
-  const firstDate = dates[dates.length - 1];
+  const rawFirstDate = dates[dates.length - 1];
+  // round it down to the nearest 'unit'
+  // TO DO: phase 3 or 4 - handle epiweeks
+  const firstDate =
+    unit === 'week'
+      ? DateMath.startOf(rawFirstDate, unit, 0)
+      : DateMath.startOf(rawFirstDate, unit);
   const lastDate = dates[0];
   const bins: HistogramBin[] = [];
 
-  // bin width in whole hours (for now)
+  // bin width in whole time-units
   // TO DO: Math.max(1, ...) protection added due to the Math.floor() could return zero days
   // ideally the units should adapt automatically (e.g. to hours if needed)
-  const calculatedBinWidth = args.binWidth
-    ? args.binWidth
-    : args.numBins
+  const calculatedBinWidth = binWidth
+    ? binWidth
+    : numBins
     ? ([
         Math.max(
           1,
-          Math.floor(
-            DateMath.diff(firstDate, lastDate, 'hours', true) / args.numBins
-          )
+          Math.floor(DateMath.diff(firstDate, lastDate, unit, true) / numBins)
         ),
-        'hours',
+        unit,
       ] as TimeDelta)
-    : ([1, 'hours'] as TimeDelta);
+    : ([1, unit] as TimeDelta);
 
   for (
     let date = firstDate;
     date < lastDate;
     date = DateMath.add(date, ...calculatedBinWidth)
   ) {
+    const binEnd = DateMath.add(date, ...calculatedBinWidth);
     bins.push({
       binStart: date,
-      binLabel: `${date} - ${DateMath.add(date, ...calculatedBinWidth)}}`,
+      binEnd: binEnd,
+      binLabel: `${date} - ${binEnd}`,
       count: 0,
     });
   }
@@ -88,6 +101,7 @@ export const binGithubEventDates = async (args: {
         bins,
       },
     ],
+    valueType: 'date',
   };
 
   console.log(objectToReturn);

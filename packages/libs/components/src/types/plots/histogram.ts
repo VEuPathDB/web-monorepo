@@ -6,6 +6,10 @@ import { NumberOrTimeDeltaRange, NumberOrTimeDelta } from '../general';
  */
 export type HistogramData = {
   series: Array<HistogramDataSeries>;
+  /** Is the continous variable that was binned numeric or date (date-time actually).
+   * The implementation will assume 'number' if not provided.
+   */
+  valueType?: 'number' | 'date';
   /** Current binWidth. */
   binWidth?: NumberOrTimeDelta;
   /** The acceptable range of binWidth values. */
@@ -27,6 +31,8 @@ export type HistogramDataSeries = {
 export type HistogramBin = {
   /** The starting value of the bin.  */
   binStart: number | Date;
+  /** The ending value of the bin.  */
+  binEnd: number | Date;
   /** A label for the bin. */
   binLabel: string;
   /** The count of values in the bin. */

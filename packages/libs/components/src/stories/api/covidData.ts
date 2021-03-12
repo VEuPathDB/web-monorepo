@@ -111,9 +111,11 @@ export const binDailyCovidStats = async (
     index < highNewCases;
     index = index + calculatedBinWidth
   ) {
+    const binEnd = index + calculatedBinWidth;
     newCasesBins.push({
       binStart: index,
-      binLabel: `${index} - ${index + calculatedBinWidth}`,
+      binEnd: binEnd,
+      binLabel: `${index} - ${binEnd}`,
       count: 0,
     });
   }
@@ -133,9 +135,11 @@ export const binDailyCovidStats = async (
     index < highHospitalized;
     index = index + calculatedBinWidth
   ) {
+    const binEnd = index + calculatedBinWidth;
     hospitalizationBins.push({
       binStart: index,
-      binLabel: `${index} - ${index + calculatedBinWidth}`,
+      binEnd: binEnd,
+      binLabel: `${index} - ${binEnd}`,
       count: 0,
     });
   }
