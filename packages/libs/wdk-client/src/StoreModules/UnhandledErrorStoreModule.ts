@@ -34,13 +34,26 @@ export function reduce(state: State = initialState, action: Action): State {
   }
 }
 
+// TODO Allow this to be configured by wdk-client consumer
+function ignoreError(message: string): boolean {
+  return (
+    /ResizeObserver loop limit exceeded/.test(message)
+  )
+}
+
 export function observe(action$: ActionsObservable<Action>, state$: StateObservable<RootState>, { wdkService }: EpicDependencies): Observable<Action> {
   // map unhandled promise rejections to unhandledError action
   const rejection$: Observable<Action> = fromEvent<PromiseRejectionEvent>(window, 'unhandledrejection').pipe(
+    filter((event: PromiseRejectionEvent) => {
+      return !ignoreError(String(event.reason));
+    }),
     map((event: PromiseRejectionEvent) => notifyUnhandledError(event.reason))
   );
   // map unhandled errors to unhandledError action
   const error$: Observable<Action> = fromEvent<ErrorEvent>(window, 'error').pipe(
+    filter((event: ErrorEvent) => {
+      return !ignoreError(event.message);
+    }),
     map((event: ErrorEvent) => {
       return notifyUnhandledError(event.error ?? event.message)
     })
