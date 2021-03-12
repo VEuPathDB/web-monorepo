@@ -140,7 +140,6 @@ function BlastWorkspaceResultWithLoadedApi(
         } as ApiResultSuccess<IndividualQuery[]>);
   }, [props.blastApi, props.jobId]);
 
-  // FIXME: Handling the case where the job fails due to a 'queueing-error'
   return jobResult.value != null &&
     jobResult.value.status === 'request-error' ? (
     <BlastRequestError errorDetails={jobResult.value.details} />

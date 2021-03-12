@@ -341,8 +341,6 @@ function NewJobForm(props: NewJobFormProps) {
       const targetType =
         props.state.paramValues[BLAST_DATABASE_TYPE_PARAM_NAME];
 
-      // FIXME: The projectId should be derived from the organism
-      // This is necessary to handle the portal site
       const [projectId, { organismsToFiles }] = await Promise.all([
         wdkDependencies.wdkService
           .getConfig()
