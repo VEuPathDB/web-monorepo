@@ -36,6 +36,8 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
       {
         key: 'created',
         name: 'Submission Date',
+        renderCell: ({ row }: { row: JobRow }) =>
+          new Date(row.created).toLocaleDateString(),
         sortable: true,
       },
       {
@@ -61,7 +63,7 @@ export function useRawJobRows(blastApi: BlastApi): JobRow[] | undefined {
           .map((jobEntity) => ({
             jobId: jobEntity.id,
             description: jobEntity.description ?? null,
-            created: new Date(jobEntity.created).toLocaleDateString(),
+            created: jobEntity.created,
             status: entityStatusToReadableStatus(jobEntity.status),
           }));
   }, []);
