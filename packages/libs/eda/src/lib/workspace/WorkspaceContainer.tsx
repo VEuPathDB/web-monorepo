@@ -44,9 +44,7 @@ export function WorkspaceContainer(props: Props) {
     >
       <EDAWorkspaceHeading />
       <EntityDiagram
-        studyId={props.studyId}
         sessionId={props.sessionId}
-        subsettingClient={subsettingClient}
         expanded={true}
         orientation="horizontal"
       />
