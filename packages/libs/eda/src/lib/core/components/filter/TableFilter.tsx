@@ -83,8 +83,8 @@ export function TableFilter({
         entityId: entity.id,
         variableId: variable.id,
         distribution: zip(
-          distribution.background.data,
-          distribution.foreground.data
+          distribution.foreground.data,
+          distribution.background.data
         ).map(([fgEntry, bgEntry]) => ({
           value: fgEntry?.label || bgEntry?.label || '',
           count: bgEntry?.value || 0,
@@ -131,7 +131,7 @@ export function TableFilter({
         (): TypeOf<typeof UIState> => ({
           sort: {
             columnKey: 'value',
-            direction: 'desc',
+            direction: 'asc',
             groupBySelected: false,
           },
           searchTerm: '',
@@ -271,8 +271,10 @@ export function TableFilter({
   );
 
   return (
-    <div className="filter-param">
-      {tableSummary.pending && <Loading radius={4} />}
+    <div style={{ position: 'relative' }} className="filter-param">
+      {tableSummary.pending && (
+        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
+      )}
       {tableSummary.error && <pre>{String(tableSummary.error)}</pre>}
       {tableSummary.value &&
         tableSummary.value.entityId === entity.id &&

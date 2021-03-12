@@ -22,6 +22,7 @@ import { useDataClient } from '../../hooks/workspace';
 import { Filter } from '../../types/filter';
 import { StudyEntity, StudyMetadata, StudyVariable } from '../../types/study';
 import { PromiseType } from '../../types/utility';
+import { gray, red } from './colors';
 import { HistogramVariable } from './types';
 import { getDistribution } from './util';
 
@@ -70,14 +71,14 @@ export function HistogramFilter(props: Props) {
       );
       const series = [
         histogramResponseToDataSeries(
-          `${variable.displayName} (remaining)`,
+          `Remaining ${variable.displayName}`,
           distribution.background,
-          'gray'
+          gray
         ),
         histogramResponseToDataSeries(
-          `${variable.displayName} (all)`,
+          `All ${variable.displayName}`,
           distribution.foreground,
-          'red'
+          red
         ),
       ];
       const binWidth = parseInt(
@@ -100,8 +101,10 @@ export function HistogramFilter(props: Props) {
   );
   const data = usePromise(getData);
   return (
-    <>
-      {data.pending && <Loading radius={4} />}
+    <div style={{ position: 'relative' }}>
+      {data.pending && (
+        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
+      )}
       {data.error && <pre>{String(data.error)}</pre>}
       {data.value &&
         data.value.variableId === variable.id &&
@@ -115,7 +118,7 @@ export function HistogramFilter(props: Props) {
             barLayout={'overlay'}
           />
         )}
-    </>
+    </div>
   );
 }
 
