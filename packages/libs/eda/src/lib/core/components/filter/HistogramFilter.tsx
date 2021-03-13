@@ -4,6 +4,10 @@ import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
 import {
+  NumberOrTimeDelta,
+  NumberOrTimeDeltaRange,
+} from '@veupathdb/components/lib/types/general';
+import {
   HistogramData,
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
@@ -34,7 +38,7 @@ type Props = {
 };
 
 type GetDataParams = {
-  binWidth?: number;
+  binWidth?: NumberOrTimeDelta;
   selectedUnit?: string;
 };
 
@@ -43,7 +47,14 @@ export function HistogramFilter(props: Props) {
   const { id: studyId } = studyMetadata;
   const dataClient = useDataClient();
   const getData = useCallback(
-    async (dataParams?: GetDataParams) => {
+    async (
+      dataParams?: GetDataParams
+    ): Promise<
+      HistogramData & {
+        variableId: string;
+        entityId: string;
+      }
+    > => {
       const distribution = await getDistribution<
         DateHistogramBinWidthResponse | NumericHistogramBinWidthResponse
       >(
@@ -86,7 +97,9 @@ export function HistogramFilter(props: Props) {
         10
       );
       const { min, max, step } = distribution.foreground.config.binSlider;
-      const binWidthRange = [min, max] as [number, number];
+      const binWidthRange = (variable.type === 'number'
+        ? ([min, max] as [number, number])
+        : { min, max, unit: 'day' }) as NumberOrTimeDeltaRange;
       const binWidthStep = step;
       return {
         series,
@@ -168,7 +181,8 @@ function histogramResponseToDataSeries(
     );
   const data = response.data[0];
   const bins = data.value.map((_, index) => ({
-    binStart: data.binStart[index],
+    binStart: Number(data.binStart[index]),
+    binEnd: Number(data.binStart[index]) + Number(response.config.binWidth),
     binLabel: data.binLabel[index],
     count: data.value[index],
   }));

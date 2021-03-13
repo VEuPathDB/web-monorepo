@@ -2378,6 +2378,11 @@
   dependencies:
     "@types/jquery" "*"
 
+"@types/date-arithmetic@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@types/date-arithmetic/-/date-arithmetic-4.1.1.tgz#03bd30047b71d6eab66f0f03cb14289479ca277a"
+  integrity sha512-o9ILUTMSRiOC73o7h30mgLpuDwOJWqMHZfnEIwNQlfZsGY6Kw2gK5Gz6nXAjNt9zm3Qpr12pM4FDqssfdtBzGA==
+
 "@types/eslint@^7.2.4":
   version "7.2.6"
   resolved "https://registry.yarnpkg.com/@types/eslint/-/eslint-7.2.6.tgz#5e9aff555a975596c03a98b59ecd103decc70c3c"
@@ -2849,14 +2854,15 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.1.2.tgz#fa8bb93504bc4d923fc13e870f3ddae5b0bbf742"
-  integrity sha512-cbwlssnagPW8sFtb4gaHF/azanYHC1mpSqVTtL1id9iUEQMfuUswn3bFHkyUd/30fulxV/jWmoM9x8iSaKQ7eg==
+"@veupathdb/components@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.0.tgz#5245b67a4d6227339dc45a2f836f92cadaa00d09"
+  integrity sha512-9Uf9iwv3oSGlrIylGk/YRNpZtC1HQFYhH3wgqMkYAN7nP6HniyVI4vBi2QB2t2Qc01n8OFzwXA948LpA46NMFw==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
     "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/date-arithmetic" "^4.1.1"
     "@visx/gradient" "^1.0.0"
     "@visx/group" "^1.0.0"
     "@visx/hierarchy" "^1.0.0"
@@ -2865,6 +2871,7 @@
     "@visx/tooltip" "^1.3.0"
     "@visx/visx" "^1.1.0"
     bootstrap "^4.5.2"
+    date-arithmetic "^4.1.0"
     latlon-geohash "^2.0.0"
     leaflet "^1.6.0"
     leaflet-drift-marker "^1.0.3"
@@ -6036,6 +6043,11 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
+
+date-arithmetic@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/date-arithmetic/-/date-arithmetic-4.1.0.tgz#e5d6434e9deb71f79760a37b729e4a515e730ddf"
+  integrity sha512-QWxYLR5P/6GStZcdem+V1xoto6DMadYWpMXU82ES3/RfR3Wdwr3D0+be7mgOJ+Ov0G9D5Dmb9T17sNLQYj9XOg==
 
 debounce@^1.2.0:
   version "1.2.0"
