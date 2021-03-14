@@ -49,10 +49,57 @@ const ebrcCustomSortBys = {
     (record: RecordInstance) => eupathReleaseToSortKey(record.attributes.eupath_release)[2],
     (record: RecordInstance) => eupathReleaseToSortKey(record.attributes.eupath_release)[3],
     (record: RecordInstance) => eupathReleaseToSortKey(record.attributes.eupath_release)[4]
+  ],
+  total: [
+    (record: RecordInstance) => totalToSortKey(record.attributes.total)[0]
+  ],
+  approved: [
+    (record: RecordInstance) => approvedToSortKey(record.attributes.approved)[0]
+  ],
+  percent_approved: [
+    (record: RecordInstance) => percentToSortKey(record.attributes.percent_approved)[0]
   ]
 };
 
-const EUPATH_RELEASE_REGEX = new RegExp(/(\w+)\s(\d+\.?\d*)\s\/\s(\d\d)-(\w\w\w)-(\d\d)/);
+const EUPATH_RELEASE_REGEX = new RegExp(/(\w+)\s\w+\s(\d+\.?\d*)\,\s(\d\d\d\d)-(\w\w\w)-(\d\d)/);
+const APPROVED_REGEX = new RegExp(/(\d+)/);
+const PERCENT_REGEX = new RegExp(/(\d+)/);
+
+const totalToSortKey = memoize((total: AttributeValue) => {
+  if (typeof total !== 'string') {
+    return [ null ];
+  }
+  const [ , totalNumber ] =
+    total.match(APPROVED_REGEX) || [];
+
+  return [
+    Number(totalNumber)
+  ];
+});
+const approvedToSortKey = memoize((approved: AttributeValue) => {
+  if (typeof approved !== 'string') {
+    return [ null ];
+  }
+  const [ , approvedNumber ] =
+    approved.match(APPROVED_REGEX) || [];
+
+  return [
+    Number(approvedNumber)
+  ];
+});
+const percentToSortKey = memoize((percentApproved: AttributeValue) => {
+  if (typeof percentApproved !== 'string') {
+    return [ null ];
+  }
+  const [ , percentNumber ] =
+    percentApproved.match(PERCENT_REGEX) || [];
+
+  return [
+    Number(percentNumber)
+  ];
+});
+
+
 
 const MONTH_VALUES = MONTHS.reduce(
   (memo, month, i) => ({
@@ -66,8 +113,7 @@ const eupathReleaseToSortKey = memoize((eupathRelease: AttributeValue) => {
   if (typeof eupathRelease !== 'string') {
     return [ null, null, null, null, null ];
   }
-
-  const [ , projectName, versionStr, releaseDayStr, releaseMonthStr, releaseYearStr ] = 
+  const [ , projectName, versionStr, releaseYearStr, releaseMonthStr, releaseDayStr ] = 
     eupathRelease.match(EUPATH_RELEASE_REGEX) || [];
 
   return [
