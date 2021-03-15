@@ -195,6 +195,7 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
       binWidth: NumberOrTimeDelta;
       selectedUnit?: string;
     }) => Promise<DataShape>;
+    selectedRange?: NumberOrDateRange;
     /** A switch to show/hide the range controls  */
     displaySelectedRangeControls?: boolean;
     /** Type of x-variable 'number' or 'date' */
@@ -322,16 +323,20 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
     if (params?.histogram?.displaySelectedRangeControls) {
       // calculate min and max limits for the selected range controls from the data
-      const min: NumberOrDate = params.data.series
-        .map((series) => series.bins[0].binStart)
-        .sort(
-          (a: NumberOrDate, b: NumberOrDate) => a.valueOf() - b.valueOf()
-        )[0];
-      const max: NumberOrDate = params.data.series
-        .map((series) => series.bins[series.bins.length - 1].binEnd)
-        .sort(
-          (a: NumberOrDate, b: NumberOrDate) => b.valueOf() - a.valueOf()
-        )[0];
+      const min: NumberOrDate =
+        params.histogram?.selectedRange?.min ??
+        params.data.series
+          .map((series) => series.bins[0].binStart)
+          .sort(
+            (a: NumberOrDate, b: NumberOrDate) => a.valueOf() - b.valueOf()
+          )[0];
+      const max: NumberOrDate =
+        params.histogram?.selectedRange?.max ??
+        params.data.series
+          .map((series) => series.bins[series.bins.length - 1].binEnd)
+          .sort(
+            (a: NumberOrDate, b: NumberOrDate) => b.valueOf() - a.valueOf()
+          )[0];
 
       initialState.histogram = {
         ...initialState.histogram,
