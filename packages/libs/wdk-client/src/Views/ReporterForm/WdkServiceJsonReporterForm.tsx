@@ -6,7 +6,14 @@ import { Ontology } from 'wdk-client/Utils/OntologyUtils';
 import { Question, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { State } from 'wdk-client/StoreModules/DownloadFormStoreModule';
 import ReporterSortMessage from 'wdk-client/Views/ReporterForm/ReporterSortMessage';
-import { addPk, getAttributesChangeHandler, getAttributeSelections, getAttributeTree, getTableTree } from 'wdk-client/Views/ReporterForm/reporterUtils';
+import {
+  addPk,
+  getAttributesChangeHandler,
+  getAttributeSelections,
+  getAttributeTree,
+  getTableTree,
+  getAllReportScopedAttributes
+} from 'wdk-client/Views/ReporterForm/reporterUtils';
 
 type Props<T, U> = {
   scope: string;
@@ -81,9 +88,15 @@ namespace WdkServiceJsonReporterForm {
 
     // select all attribs and tables for record page, else column user prefs and no tables
     else {
+      let allReportScopedAttrs = getAllReportScopedAttributes(
+        ontology,
+        recordClass.fullName,
+        question
+      );
+
       attribs = (scope === 'results' ?
-        addPk(getAttributeSelections(preferences, question), recordClass) :
-        addPk(getAllLeafIds(getAttributeTree(ontology, recordClass.fullName, question)), recordClass));
+        addPk(getAttributeSelections(preferences, question, allReportScopedAttrs), recordClass) :
+        addPk(allReportScopedAttrs, recordClass));
       tables = (scope === 'results' ? [] :
         getAllLeafIds(getTableTree(ontology, recordClass.fullName)));
     }
