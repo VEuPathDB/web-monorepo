@@ -209,7 +209,7 @@ export function HistogramFilter(props: Props) {
             data={data.value}
             getData={getData}
             width={1000}
-            height={600}
+            height={400}
             orientation={'horizontal'}
             barLayout={'overlay'}
             updateFilter={updateFilter}
