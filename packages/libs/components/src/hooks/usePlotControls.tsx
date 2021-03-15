@@ -3,7 +3,8 @@
  * This allows us to use a single custom hook for different types of
  * plots, but can be quite the brain trip to read through.
  */
-import { Reducer, useReducer } from 'react';
+import { Reducer, useMemo, useReducer } from 'react';
+import debounce from 'debounce-promise';
 
 import { isHistogramData, isPiePlotData, isDate } from '../types/guards';
 import {
@@ -415,21 +416,29 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     }
   };
 
-  const onBinWidthChange = async (args: {
+  // Use debounce to defer execution while slider is updating.
+  const debouncedBinWidthHandler = useMemo(
+    () =>
+      params.histogram?.onBinWidthChange &&
+      debounce(params.histogram?.onBinWidthChange, 300),
+    [params.histogram?.onBinWidthChange]
+  );
+
+  const onBinWidthChange = (args: {
     binWidth: NumberOrTimeDelta;
     selectedUnit?: string;
   }) => {
     if (params.histogram) {
-      try {
-        const newData = await params.histogram.onBinWidthChange({
+      // immediately update binWidth so the ui is consistent
+      dispatch({ type: 'histogram/setBinWidth', payload: args.binWidth });
+      if (debouncedBinWidthHandler) {
+        debouncedBinWidthHandler({
           binWidth: args.binWidth,
           selectedUnit: reducerState.selectedUnit,
-        });
-        dispatch({ type: 'setData', payload: newData });
-      } catch (error) {
-        dispatch({ type: 'errors/add', payload: error });
-      } finally {
-        dispatch({ type: 'histogram/setBinWidth', payload: args.binWidth });
+        }).then(
+          (newData) => dispatch({ type: 'setData', payload: newData }),
+          (error) => dispatch({ type: 'errors/add', payload: error })
+        );
       }
     }
   };
