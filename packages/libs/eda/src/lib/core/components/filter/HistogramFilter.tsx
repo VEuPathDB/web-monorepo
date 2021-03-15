@@ -100,12 +100,12 @@ export function HistogramFilter(props: Props) {
       );
       const series = [
         histogramResponseToDataSeries(
-          `Remaining ${variable.displayName}`,
+          `All ${variable.displayName}`,
           distribution.background,
           gray
         ),
         histogramResponseToDataSeries(
-          `All ${variable.displayName}`,
+          `Remaining ${variable.displayName}`,
           distribution.foreground,
           red
         ),
