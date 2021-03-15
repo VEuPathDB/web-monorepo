@@ -61,45 +61,43 @@ const ebrcCustomSortBys = {
   ]
 };
 
-const EUPATH_RELEASE_REGEX = new RegExp(/(\w+)\s\w+\s(\d+\.?\d*)\,\s(\d\d\d\d)-(\w\w\w)-(\d\d)/);
+// Mar 2021: Current format for the release date field is: 
+//    ClinEpiDB rel. 13, 2020-AUG-27
+// some old/not updated yet datasets still bring the date as dy-mmm-yr, will check
+//    PlasmoDB rel. 1.0, 01-JAN-05
+const EUPATH_RELEASE_REGEX = new RegExp(/(\w+)\s[\w.]+\s(\d+\.?\d*)\,\s(\d\d\d\d)-(\w\w\w)-(\d\d)/);
 const APPROVED_REGEX = new RegExp(/(\d+)/);
-const PERCENT_REGEX = new RegExp(/(\d+)/);
 
 const totalToSortKey = memoize((total: AttributeValue) => {
   if (typeof total !== 'string') {
-    return [ null ];
+    return [ 0 ];
   }
-  const [ , totalNumber ] =
+  const [ , totalNumber=0 ] =
     total.match(APPROVED_REGEX) || [];
-
   return [
     Number(totalNumber)
   ];
 });
 const approvedToSortKey = memoize((approved: AttributeValue) => {
   if (typeof approved !== 'string') {
-    return [ null ];
+    return [ 0 ];
   }
-  const [ , approvedNumber ] =
+  const [ , approvedNumber=0 ] =
     approved.match(APPROVED_REGEX) || [];
-
   return [
     Number(approvedNumber)
   ];
 });
 const percentToSortKey = memoize((percentApproved: AttributeValue) => {
   if (typeof percentApproved !== 'string') {
-    return [ null ];
+    return [ 0 ];
   }
-  const [ , percentNumber ] =
-    percentApproved.match(PERCENT_REGEX) || [];
-
+  const [ , percentNumber=0 ] =
+    percentApproved.match(APPROVED_REGEX) || [];
   return [
     Number(percentNumber)
   ];
 });
-
-
 
 const MONTH_VALUES = MONTHS.reduce(
   (memo, month, i) => ({
@@ -111,9 +109,9 @@ const MONTH_VALUES = MONTHS.reduce(
 
 const eupathReleaseToSortKey = memoize((eupathRelease: AttributeValue) => {
   if (typeof eupathRelease !== 'string') {
-    return [ null, null, null, null, null ];
+    return [ 0, null, null, null, null ];
   }
-  const [ , projectName, versionStr, releaseYearStr, releaseMonthStr, releaseDayStr ] = 
+  const [ , projectName, versionStr, releaseYearStr=0, releaseMonthStr, releaseDayStr ] = 
     eupathRelease.match(EUPATH_RELEASE_REGEX) || [];
 
   return [
