@@ -8,11 +8,11 @@ import { State } from 'wdk-client/StoreModules/DownloadFormStoreModule';
 import ReporterSortMessage from 'wdk-client/Views/ReporterForm/ReporterSortMessage';
 import {
   addPk,
-  getAttributesChangeHandler,
+  getAllReportScopedAttributes,
   getAttributeSelections,
   getAttributeTree,
+  getAttributesChangeHandler,
   getTableTree,
-  getAllReportScopedAttributes
 } from 'wdk-client/Views/ReporterForm/reporterUtils';
 
 type Props<T, U> = {
