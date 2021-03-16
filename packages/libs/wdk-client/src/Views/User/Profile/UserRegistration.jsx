@@ -52,11 +52,11 @@ let WhyRegister = () => (
     <p><b>Why register/subscribe?</b> So you can:</p>
     <div id="cirbulletlist">
       <ul>
-        <li>Have your strategies back the next time you login</li>
-        <li>Use your basket to store temporarily IDs of interest, and either save, or download or access other tools</li>
-        <li>Use your favorites to store IDs of permanent interest, for faster access to its record page</li>
-        <li>Add a comment on genes and sequences</li>
-        <li>Set site preferences, such as items per page displayed in the query result</li>
+        <li>permanently save Search Strategies</li>
+        <li>use a Basket to make a set of IDs of interest</li>
+        <li>use Favorites to mark IDs of interest, for fast access</li>
+        <li>add a comment on Genes, Sequences and other record types</li>
+        <li>set site preferences</li>
       </ul>
     </div>
   </div>
@@ -75,8 +75,8 @@ let PrivacyPolicy = () => (
             <p><b>How we will use your email:</b></p>
             <div id="cirbulletlist">
               <ul>
-                <li>Confirm your subscription</li>
-                <li>Send you infrequent alerts if you subscribe to receive them</li>
+                <li>confirm your subscription</li>
+                <li>if you subscribe to them, send infrequent email alerts</li>
                 <li>NOTHING ELSE.  We will not release the email list.</li>
               </ul>
             </div>
@@ -85,8 +85,8 @@ let PrivacyPolicy = () => (
             <p><b>How we will use your name and institution:</b></p>
             <div id="cirbulletlist">
               <ul>
-                <li>If you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment.</li>
-                <li>If you make one of your strategies Public, your name and institution will be displayed with it.</li>
+                <li>if you add a comment to a Gene or a Sequence, your name and institution will be displayed with the comment.</li>
+                <li>if you make a search strategy public, your name and institution will be displayed with it.</li>
                 <li>NOTHING ELSE.  We will not release your name or institution.</li>
               </ul>
             </div>
