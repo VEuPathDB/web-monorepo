@@ -14,20 +14,43 @@ export type StudyRecord = RecordInstance;
 // StudyVariable
 // -------------
 
+// See https://github.com/gcanti/io-ts/blob/master/index.md#union-of-string-literals
+
+const StudyVariableType = t.keyof({
+  category: null,
+  string: null,
+  number: null,
+  date: null,
+  longitude: null,
+});
+
+const StudyVariableDataShape = t.keyof({
+  continuous: null,
+  categorical: null,
+  ordinal: null,
+  binary: null,
+});
+
+const StudyVariableDisplayType = t.keyof({
+  default: null,
+  multifilter: null,
+  hidden: null,
+});
+
 export type StudyVariable = t.TypeOf<typeof StudyVariable>;
 export const StudyVariable = t.intersection([
   t.type({
     id: t.string,
     providerLabel: t.string,
     displayName: t.string,
-    type: t.string,
+    type: StudyVariableType,
     isMultiValued: t.boolean,
     // description: t.string,
   }),
   t.partial({
     parentId: t.string,
-    displayType: t.string,
-    dataShape: t.string,
+    displayType: StudyVariableDisplayType,
+    dataShape: StudyVariableDataShape,
   }),
 ]);
 

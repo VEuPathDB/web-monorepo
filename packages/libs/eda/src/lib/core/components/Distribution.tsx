@@ -2,7 +2,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import FieldFilter from '@veupathdb/wdk-client/lib/Components/AttributeFilter/FieldFilter';
 import EmptyState from '@veupathdb/wdk-client/lib/Components/Mesa/Ui/EmptyState';
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { usePromise } from '../hooks/promise';
 import { StudyEntity, StudyMetadata, StudyVariable } from '../types/study';
 import {
@@ -10,7 +10,7 @@ import {
   toEdaFilter,
   toWdkVariableSummary,
 } from '../utils/wdk-filter-param-adapter';
-import { useSubsettingClient } from '../hooks/workspace';
+import { useDataClient } from '../hooks/workspace';
 import { Filter as EdaFilter } from '../types/filter';
 import { Filter as WdkFilter } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
@@ -24,69 +24,88 @@ interface Props {
 
 export function Distribution(props: Props) {
   const { studyMetadata, entity, variable, filters, onFiltersChange } = props;
-  const subsettingClient = useSubsettingClient();
-  const variableSummary = usePromise(async () => {
-    // remove filter for active variable so it is not reflected in the foreground
-    const otherFilters = filters?.filter(
-      (f) => f.entityId !== entity.id || f.variableId !== variable.id
-    );
-    const bg$ = subsettingClient.getDistribution(
-      studyMetadata.id,
-      entity.id,
-      variable.id,
-      {
-        filters: [],
+  const dataClient = useDataClient();
+  const variableSummary = usePromise(
+    useCallback(async () => {
+      // remove filter for active variable so it is not reflected in the foreground
+      const otherFilters = filters?.filter(
+        (f) => f.entityId !== entity.id || f.variableId !== variable.id
+      );
+      const dataRequestConfig = {
+        outputEntityId: entity.id, // for subsetting filters, this is the same entity as...
+        xAxisVariable: {
+          entityId: entity.id, // ...the variable's entity
+          variableId: variable.id,
+        },
+      };
+
+      if (variable.type === 'string') {
+        const bg$ = dataClient.getBarplot({
+          studyId: studyMetadata.id,
+          filters: [],
+          config: {
+            ...dataRequestConfig,
+            valueSpec: 'count',
+          },
+        });
+        // If there are no filters, reuse background for foreground.
+        // This is an optimization that saves a call to the backend.
+        const fg$ = otherFilters?.length
+          ? dataClient.getBarplot({
+              studyId: studyMetadata.id,
+              filters: [],
+              config: {
+                ...dataRequestConfig,
+                valueSpec: 'count',
+              },
+            })
+          : bg$;
+
+        const [bg, fg] = await Promise.all([bg$, fg$]);
+        return { bg, fg };
+      } else if (variable.type === 'number') {
+        const bg$ = dataClient.getNumericHistogramNumBins({
+          studyId: studyMetadata.id,
+          filters: [],
+          config: {
+            ...dataRequestConfig,
+            numBins: 10,
+            valueSpec: 'count',
+          },
+        });
+        // If there are no filters, reuse background for foreground.
+        // This is an optimization that saves a call to the backend.
+        const fg$ = otherFilters?.length
+          ? dataClient.getNumericHistogramNumBins({
+              studyId: studyMetadata.id,
+              filters: otherFilters,
+              config: {
+                ...dataRequestConfig,
+                numBins: 10,
+                valueSpec: 'count',
+              },
+            })
+          : bg$;
+        const [bg, fg] = await Promise.all([bg$, fg$]);
+        return { bg, fg };
+      } else {
+        return Promise.reject(new Error('not string or number variable'));
       }
-    );
-    // If there are no filters, reuse background for foreground.
-    // This is an optimization that saves a call to the backend.
-    const fg$ = otherFilters?.length
-      ? subsettingClient.getDistribution(
-          studyMetadata.id,
-          entity.id,
-          variable.id,
-          {
-            filters: otherFilters,
-          }
-        )
-      : bg$;
-    const [bg, fg] = await Promise.all([bg$, fg$]);
-    return toWdkVariableSummary(fg, bg, variable);
-  }, [subsettingClient, studyMetadata, variable, entity, filters]);
+    }, [dataClient, studyMetadata, variable, entity, filters])
+  );
   return variableSummary.pending ? (
     <Loading />
   ) : variableSummary.error ? (
     <div>{String(variableSummary.error)}</div>
   ) : variableSummary.value ? (
-    variableSummary.value.distribution.length === 0 ? (
+    // variableSummary.value.bg[0][0].value.length === 0 ? ( // TO DO: check these zero indices will always be valid
+    false ? ( // TO DO: check these zero indices will always be valid
       <div className="MesaComponent">
         <EmptyState culprit="nodata" />
       </div>
     ) : (
       <ErrorBoundary>
-        <FieldFilter
-          displayName={entity.displayName}
-          dataCount={variableSummary.value.entitiesCount}
-          filteredDataCount={variableSummary.value.filteredEntitiesCount}
-          filters={filters?.map((f) => fromEdaFilter(f))}
-          activeField={variableSummary.value?.activeField}
-          activeFieldState={{
-            loading: false,
-            summary: {
-              valueCounts: variableSummary.value.distribution,
-              internalsCount: variableSummary.value.entitiesCount,
-              internalsFilteredCount:
-                variableSummary.value.filteredEntitiesCount,
-            },
-          }}
-          onFiltersChange={(filters: WdkFilter[]) =>
-            onFiltersChange(filters.map((f) => toEdaFilter(f, entity.id)))
-          }
-          onMemberSort={logEvent('onMemberSort')}
-          onMemberSearch={logEvent('onMemberSearch')}
-          onRangeScaleChange={logEvent('onRangeScaleChange')}
-          selectByDefault={false}
-        />
+        <pre>{JSON.stringify(variableSummary.value, null, 2)}</pre>
       </ErrorBoundary>
     )
   ) : null;

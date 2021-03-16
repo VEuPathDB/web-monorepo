@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   StudyVariable,
   useSession,
@@ -78,17 +78,21 @@ export function Variables(props: Props) {
   );
   const { session, setFilters } = useSession(sessionId);
   const entityCount = usePromise(
-    () => subsettingClient.getEntityCount(studyMetadata.id, entity.id, []),
-    [studyMetadata.id, entity]
+    useCallback(
+      () => subsettingClient.getEntityCount(studyMetadata.id, entity.id, []),
+      [subsettingClient, studyMetadata.id, entity.id]
+    )
   );
-  const filteredCount = usePromise(async () => {
-    if (session == null) return;
-    return subsettingClient.getEntityCount(
-      studyMetadata.id,
-      entity.id,
-      session?.filters ?? []
-    );
-  }, [studyMetadata.id, entity, session]);
+  const filteredCount = usePromise(
+    useCallback(async () => {
+      if (session == null) return;
+      return subsettingClient.getEntityCount(
+        studyMetadata.id,
+        entity.id,
+        session?.filters ?? []
+      );
+    }, [session, subsettingClient, studyMetadata.id, entity.id])
+  );
 
   if (session == null) return null;
 

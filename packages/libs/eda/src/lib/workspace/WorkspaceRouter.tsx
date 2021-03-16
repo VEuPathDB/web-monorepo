@@ -8,9 +8,15 @@ import { EDASessionList } from './EDASessionList';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 
-export function WorkspaceRouter() {
-  const subsettingServiceUrl = '/eda-subsetting-service';
-  const dataServiceUrl = '/eda-data-service';
+type Props = {
+  subsettingServiceUrl: string;
+  dataServiceUrl: string;
+};
+
+export function WorkspaceRouter({
+  subsettingServiceUrl,
+  dataServiceUrl,
+}: Props) {
   const { path } = useRouteMatch();
   return (
     <Switch>

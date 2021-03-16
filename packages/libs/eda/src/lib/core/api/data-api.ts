@@ -45,7 +45,7 @@ export interface NumericHistogramRequestParams {
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    entityId: string;
+    outputEntityId: string;
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
@@ -79,7 +79,7 @@ export interface DateHistogramRequestParams {
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    entityId: string;
+    outputEntityId: string;
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
@@ -158,7 +158,7 @@ export interface BarplotRequestParams {
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    entityId: string;
+    outputEntityId: string;
     valueSpec: 'count' | 'identity';
     xAxisVariable: {
       // TO DO: refactor repetition with HistogramRequestParams
@@ -169,21 +169,21 @@ export interface BarplotRequestParams {
 }
 
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
-export const BarplotResponse = tuple([
-  array(
+export const BarplotResponse = type({
+  config: type({
+    incompleteCases: number,
+    xVariableDetails: type({
+      variableId: string,
+      // entityId: type({}), // checking with Danielle about this
+    }),
+  }),
+  data: array(
     type({
       label: string,
       value: number,
     })
   ),
-  type({
-    completeCases: array(number),
-    xVariableDetails: type({
-      variableId: array(string),
-      entityId: type({}), // checking with Danielle about this
-    }),
-  }),
-]);
+});
 
 export class DataClient extends FetchClient {
   // Histogram
@@ -193,7 +193,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/numeric-histogram-num-bins',
+        path: '/apps/pass/visualizations/numeric-histogram-num-bins',
         body: params,
         transformResponse: ioTransformer(HistogramNumBinsResponse),
       })
@@ -206,7 +206,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/numeric-histogram-bin-width',
+        path: '/apps/pass/visualizations/numeric-histogram-bin-width',
         body: params,
         transformResponse: ioTransformer(NumericHistogramBinWidthResponse),
       })
@@ -219,7 +219,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/date-histogram-num-bins',
+        path: '/apps/pass/visualizations/date-histogram-num-bins',
         body: params,
         transformResponse: ioTransformer(HistogramNumBinsResponse),
       })
@@ -232,7 +232,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/date-histogram-bin-width',
+        path: '/apps/pass/visualizations/date-histogram-bin-width',
         body: params,
         transformResponse: ioTransformer(DateHistogramBinWidthResponse),
       })
@@ -244,7 +244,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/barplot',
+        path: '/apps/pass/visualizations/barplot',
         body: params,
         transformResponse: ioTransformer(BarplotResponse),
       })
