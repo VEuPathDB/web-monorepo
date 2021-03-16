@@ -130,12 +130,7 @@ function References(props) {
     let name = row.target_name;
     let question = questions.find(q => q.fullName === name);
 
-    if (question == null) {
-      // throw new Error("cannot find question with name:" + name) ;
-      // There are too many cases that are difficult to address right now, so we opt to ignore
-      console.warn("Ignoring dataset reference `", name, "`. Unable to resolve with model.");
-      return null;
-    }
+    if (question == null) throw new Error("cannot find question with name:" + name) ;
 
     let recordClass = recordClasses.find(r => r.urlSegment === question.outputRecordClassName);
     let searchName = `Identify ${recordClass.displayNamePlural} based on ${question.displayName}`;
