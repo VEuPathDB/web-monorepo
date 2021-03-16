@@ -1,7 +1,15 @@
 import { getTree } from 'wdk-client/Utils/OntologyUtils';
-import { isQualifying, addSearchSpecificSubtree, CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
+import {
+  addSearchSpecificSubtree,
+  getAllLeafIds,
+  isQualifying,
+  CategoryOntology
+} from 'wdk-client/Utils/CategoryUtils';
+import { prefSpecs } from 'wdk-client/Utils/UserPreferencesUtils';
 import { AttributeField, Question, RecordClass, TableField } from 'wdk-client/Utils/WdkModel';
 import { UserPreferences } from 'wdk-client/Utils/WdkUser';
+
+import { compose } from 'lodash/fp';
 
 export const STANDARD_REPORTER_NAME = 'standard';
 
@@ -55,10 +63,12 @@ export function getAllTables(recordClass: RecordClass, predicate: (table: TableF
  */
 export function getAttributeSelections(userPrefs: UserPreferences, question: Question, allReportScopedAttrs: string[] = []) {
   // try initializing based on user prefs
-  let userPrefKey = question.fullName + "_summary";
-  let initialAttrs = (userPrefKey in userPrefs ?
-      // preference key found; use user preference
-      userPrefs.project[userPrefKey].split(',') :
+  let [ userPrefScope, userPrefKey ] = prefSpecs.summary(question.fullName);
+  let userPrefAttrs = userPrefs[userPrefScope][userPrefKey]?.split(',');
+
+  let initialAttrs = (userPrefAttrs != null ?
+      // if available, use user-preferred attributes
+      userPrefAttrs :
       // otherwise, use default attribs from question
       question.defaultAttributes);
   // now must trim off any that do not appear in the tree (probably results-page scoped)
@@ -82,6 +92,11 @@ export function getTableTree(categoriesOntology: CategoryOntology, recordClassFu
   }));
   return categoryTree;
 }
+
+export const getAllReportScopedAttributes = compose(
+  getAllLeafIds,
+  getAttributeTree
+);
 
 /**
  * Special implementation of a regular form change handler that adds the
