@@ -1,11 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
-import {
-  DataClient,
-  EDAWorkspaceContainer,
-  EntityDiagram,
-  SubsettingClient,
-} from '../core';
+import { DataClient, EDAWorkspaceContainer, SubsettingClient } from '../core';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockSessionStore } from './Mocks';
 import { SessionPanel } from './SessionPanel';
@@ -43,11 +38,6 @@ export function WorkspaceContainer(props: Props) {
       makeVariableLink={makeVariableLink}
     >
       <EDAWorkspaceHeading />
-      <EntityDiagram
-        sessionId={props.sessionId}
-        expanded={true}
-        orientation="horizontal"
-      />
       <SessionPanel sessionId={props.sessionId} />
     </EDAWorkspaceContainer>
   );

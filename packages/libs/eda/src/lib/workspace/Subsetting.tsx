@@ -134,15 +134,14 @@ export function Subsetting(props: Props) {
           )}
         </ul>
       </div>
-      {/* <div>
+      <div>
         <EntityDiagram
-          studyId={sessionState.session?.studyId}
-          sessionId={sessionState.session?.id}
-          subsettingClient={subsettingClient}
+          sessionState={sessionState}
           expanded={true}
           orientation="horizontal"
+          selectedEntity={entity.displayName}
         />
-      </div> */}
+      </div>
       <div>
         <Variable
           entity={entity}

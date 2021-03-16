@@ -1,27 +1,26 @@
 import { useStudyMetadata } from '../hooks/workspace';
 import { useEntityCounts } from '../hooks/entityCounts';
-import { useSession } from '../hooks/session';
-import MiniDiagram from '@veupathdb/components/lib/EntityDiagram/MiniDiagram';
-import ExpandedDiagram from '@veupathdb/components/lib/EntityDiagram/ExpandedDiagram';
-import { useState } from 'react';
+import { SessionState } from '../../core';
+import MiniDiagram from '@veupathdb/components/src/EntityDiagram/MiniDiagram';
+import ExpandedDiagram from '@veupathdb/components/src/EntityDiagram/ExpandedDiagram';
+import { StudyEntity } from '../types/study';
+import { VariableLink } from './VariableLink';
 
 interface Props {
-  sessionId: string;
+  sessionState: SessionState;
   expanded: boolean;
   orientation: 'horizontal' | 'vertical';
+  selectedEntity: string;
 }
 
 export function EntityDiagram(props: Props) {
-  const { sessionId, expanded, orientation } = props;
+  const { sessionState, expanded, orientation, selectedEntity } = props;
 
   const studyMetadata = useStudyMetadata();
-  const { session } = useSession(sessionId);
+  const { session } = sessionState;
   const { value: counts, error: countsError } = useEntityCounts();
   const { value: filteredCounts, error: filteredCountsError } = useEntityCounts(
     session?.filters
-  );
-  const [selectedEntity, setSelectedEntity] = useState(
-    studyMetadata.rootEntity.displayName
   );
 
   const commonProps = {
@@ -38,14 +37,37 @@ export function EntityDiagram(props: Props) {
     if (counts && filteredCounts) {
       Object.keys(counts).forEach((key, i) => {
         shadingData[key] = {
-          value: (filteredCounts[key] / counts[key]) * 10,
+          value: Math.floor((filteredCounts[key] / counts[key]) * 10),
         };
       });
     } else {
       console.log('Could not retrieve entity counts.');
     }
 
-    return <ExpandedDiagram {...commonProps} shadingData={shadingData} />;
+    const renderNode = (
+      node: StudyEntity,
+      children?: Array<React.ReactElement>
+    ) => {
+      const variable = node.variables.find(
+        (variable) => variable.displayType != null
+      );
+      if (variable == null) return null;
+      return (
+        <VariableLink
+          entityId={node.id}
+          variableId={variable.id}
+          children={children}
+        ></VariableLink>
+      );
+    };
+
+    return (
+      <ExpandedDiagram
+        {...commonProps}
+        shadingData={shadingData}
+        renderNode={renderNode}
+      />
+    );
   } else {
     return <MiniDiagram {...commonProps} />;
   }
