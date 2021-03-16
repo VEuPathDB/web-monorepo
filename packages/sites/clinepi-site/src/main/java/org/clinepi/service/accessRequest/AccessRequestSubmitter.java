@@ -93,7 +93,7 @@ public class AccessRequestSubmitter {
       + "FROM dual\n"
       + "WHERE NOT EXISTS (\n"
       + "  SELECT user_id, dataset_presenter_id\n"
-      + "  FROM studyaccess.ValidDatasetUser\n"
+      + "  FROM studyaccess.end_users\n"
       + "  WHERE user_id = ?\n"
       + "    AND dataset_presenter_id = ?\n"
       + ")";
