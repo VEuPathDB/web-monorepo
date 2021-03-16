@@ -48,6 +48,13 @@ import {
   orderHitsBySignificance,
 } from '../utils/combinedResults';
 
+const MAX_ROWS = 5000;
+
+interface CombinedResultRows {
+  displayable: boolean;
+  rows: CombinedResultRow[];
+}
+
 export function useCombinedResultProps({
   jobId,
   combinedResult,
@@ -77,17 +84,24 @@ export function useCombinedResultProps({
     direction: 'asc',
   });
 
-  const rows = useSortedCombinedResultRows(rawRows, sort);
+  const sortedRows = useSortedCombinedResultRows(rawRows, sort);
 
   const eventHandlers = useMesaEventHandlers(setSort);
 
   const uiState = useMesaUiState(sort);
 
-  const options = useMesaOptions();
+  const options = useMesaOptions(sortedRows.displayable);
 
   const mesaState = useMemo(
-    () => MesaState.create({ columns, eventHandlers, options, rows, uiState }),
-    [columns, eventHandlers, options, rows, uiState]
+    () =>
+      MesaState.create({
+        columns,
+        eventHandlers,
+        options,
+        rows: sortedRows.rows,
+        uiState,
+      }),
+    [columns, eventHandlers, options, sortedRows.rows, uiState]
   );
 
   return {
@@ -293,10 +307,10 @@ function useRawCombinedResultRows(
   combinedResult: MultiQueryReportJson,
   wdkRecordType: string,
   filesToOrganisms: Record<string, string>
-): CombinedResultRow[] {
+): CombinedResultRows {
   const resultsByQuery = combinedResult.BlastOutput2;
 
-  return useMemo(() => {
+  const rawRows = useMemo(() => {
     const dbToOrganism = dbToOrganismFactory(filesToOrganisms);
 
     const unrankedHits = resultsByQuery.flatMap((queryResult, queryZeroIndex) =>
@@ -404,12 +418,20 @@ function useRawCombinedResultRows(
       };
     });
   }, [filesToOrganisms, resultsByQuery, wdkRecordType]);
+
+  return useMemo(
+    () =>
+      rawRows.length > MAX_ROWS
+        ? { displayable: false, rows: [] }
+        : { displayable: true, rows: rawRows },
+    [rawRows]
+  );
 }
 
 function useSortedCombinedResultRows(
-  unsortedRows: CombinedResultRow[],
+  unsortedRows: CombinedResultRows,
   sort: MesaSortObject
-) {
+): CombinedResultRows {
   const [sortedRows, setSortedRows] = useState(unsortedRows);
 
   useEffect(() => {
@@ -418,7 +440,12 @@ function useSortedCombinedResultRows(
 
   useEffect(() => {
     setSortedRows((sortedRows) =>
-      orderBy(sortedRows, [sort.columnKey], [sort.direction])
+      !sortedRows.displayable
+        ? sortedRows
+        : {
+            displayable: true,
+            rows: orderBy(sortedRows.rows, [sort.columnKey], [sort.direction]),
+          }
     );
   }, [sort]);
 
@@ -443,14 +470,28 @@ function useMesaUiState(sort: MesaSortObject) {
   return useMemo(() => ({ sort }), [sort]);
 }
 
-function useMesaOptions() {
+function useMesaOptions(rowsDisplayable: boolean) {
   return useMemo(
     () => ({
       useStickyHeader: true,
       tableBodyMaxHeight: '60vh',
       toolbar: true,
+      renderEmptyState: rowsDisplayable
+        ? undefined
+        : () => (
+            <div className="EmptyState">
+              <div className="EmptyState-BodyWrapper">
+                <p>Your combined result is too large for us to display here.</p>
+                <p>
+                  If you would like to view your combined results, please use
+                  the <span className="InlineHeader">Download all results</span>{' '}
+                  dropdown to download them in a format of your choice.
+                </p>
+              </div>
+            </div>
+          ),
     }),
-    []
+    [rowsDisplayable]
   );
 }
 

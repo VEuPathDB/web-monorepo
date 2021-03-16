@@ -16,4 +16,17 @@
   .ResultSummary {
     font-size: 1.2em;
   }
+
+  .EmptyState {
+    border: 1px solid #aaa;
+
+    p {
+      font-size: 1.8em;
+    }
+
+    p:first-child,
+    p > span {
+      font-weight: 500;
+    }
+  }
 }
