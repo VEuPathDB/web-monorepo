@@ -6,6 +6,7 @@ export interface Variables {
   isContinuous?: boolean;
   precision?: number;
   units?: string;
+  isMultiValued: boolean;
 }
 
 export interface StudyData {
@@ -13,5 +14,5 @@ export interface StudyData {
   displayName: string;
   description: string;
   children?: this[];
-  variables?: Variables[];
+  variables: Variables[];
 }

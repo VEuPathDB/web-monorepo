@@ -20,6 +20,10 @@ interface ExpandedDiagram {
   orientation: string;
   highlightedEntityID: string;
   shadingData: ShadingData;
+  renderNode?: (
+    node: StudyData,
+    children: Array<React.ReactElement>
+  ) => React.ReactElement | null;
 }
 
 // Todo: There MUST be a smarter way to center the text
@@ -38,11 +42,12 @@ function CalculateDYSize(nodeLength: number) {
   }
 }
 
-export default function MiniDiagram({
+export default function ExpandedDiagram({
   treeData,
   orientation,
   highlightedEntityID,
   shadingData,
+  renderNode,
 }: ExpandedDiagram) {
   const data = hierarchy(treeData);
 
@@ -96,41 +101,49 @@ export default function MiniDiagram({
               const width = 120;
               const height = 70;
 
+              const rectangle = (
+                <rect
+                  height={height}
+                  width={width}
+                  y={-height / 2}
+                  x={-width / 2}
+                  fill={`url('#rect-gradient-${
+                    shadingObject ? shadingObject.value : 0
+                  }')`}
+                  stroke={'black'}
+                  style={
+                    highlightedEntityID == node.data.displayName
+                      ? {
+                          outline: 'yellow 3px solid',
+                          overflowWrap: 'normal',
+                        }
+                      : { overflowWrap: 'normal' }
+                  }
+                />
+              );
+
+              const text = (
+                <Text
+                  fontSize={12}
+                  textAnchor={'middle'}
+                  style={{ cursor: 'default' }}
+                  dy={CalculateDYSize(node.data.displayName.split(' ').length)}
+                  width={100}
+                >
+                  {node.data.displayName}
+                </Text>
+              );
+
               return (
                 <Group
                   top={orientation == 'horizontal' ? node.x : node.y}
                   left={orientation == 'horizontal' ? node.y : node.x}
                   key={node.x + node.y}
                 >
-                  <rect
-                    height={height}
-                    width={width}
-                    y={-height / 2}
-                    x={-width / 2}
-                    fill={`url('#rect-gradient-${
-                      shadingObject ? shadingObject.value : 0
-                    }')`}
-                    stroke={'black'}
-                    style={
-                      highlightedEntityID == node.data.displayName
-                        ? {
-                            outline: 'yellow 3px solid',
-                            overflowWrap: 'normal',
-                          }
-                        : { overflowWrap: 'normal' }
-                    }
-                  />
-                  <Text
-                    fontSize={12}
-                    textAnchor={'middle'}
-                    style={{ cursor: 'default' }}
-                    dy={CalculateDYSize(
-                      node.data.displayName.split(' ').length
-                    )}
-                    width={100}
-                  >
-                    {node.data.displayName}
-                  </Text>
+                  {renderNode?.(node.data, [rectangle, text]) ?? [
+                    rectangle,
+                    text,
+                  ]}
                 </Group>
               );
             })}
