@@ -11,6 +11,10 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
+  "files":[
+    "lib",
+    "src/lib"
+  ],
   "resolutions": {
     "@veupathdb/**/react": "^17.0.1",
     "@veupathdb/**/react-dom": "^17.0.1"
