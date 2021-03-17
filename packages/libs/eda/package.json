@@ -19,7 +19,8 @@
     "start": "veupathdb-react-scripts start",
     "build": "veupathdb-react-scripts build",
     "test": "veupathdb-react-scripts test",
-    "eject": "veupathdb-react-scripts eject"
+    "eject": "veupathdb-react-scripts eject",
+    "build-npm-modules": "veupathdb-react-scripts prepare"
   },
   "eslintConfig": {
     "extends": [
