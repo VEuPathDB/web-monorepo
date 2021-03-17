@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 
-export function main() {
-  return fs.copy('src/lib', 'lib', {
+export function main(srcDir, targetDir) {
+  return fs.copy(srcDir, targetDir, {
     filter: src => {
       if (fs.lstatSync(src).isDirectory()) {
         return true;
