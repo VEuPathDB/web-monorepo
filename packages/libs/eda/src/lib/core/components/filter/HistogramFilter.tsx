@@ -20,9 +20,7 @@ import { number, partial, TypeOf } from 'io-ts';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import {
   DataClient,
-  DateHistogramBinWidthResponse,
   DateHistogramRequestParams,
-  NumericHistogramBinWidthResponse,
   NumericHistogramRequestParams,
 } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
@@ -33,7 +31,6 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { PromiseType } from '../../types/utility';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { getDistribution } from './util';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -73,50 +70,45 @@ export function HistogramFilter(props: Props) {
         entityId: string;
       }
     > => {
-      const distribution = await getDistribution<
-        DateHistogramBinWidthResponse | NumericHistogramBinWidthResponse
-      >(
-        {
-          entityId: entity.id,
-          variableId: variable.id,
-          filters,
-        },
-        (filters) => {
-          const params = getRequestParams(
-            studyId,
-            filters,
-            entity,
-            variable,
-            dataParams
-          );
-          return variable.type === 'date'
-            ? dataClient.getDateHistogramBinWidth(
-                params as DateHistogramRequestParams
-              )
-            : dataClient.getNumericHistogramBinWidth(
-                params as NumericHistogramRequestParams
-              );
-        }
+      const foregroundFilters = filters?.filter(
+        (f) => f.entityId !== entity.id || f.variableId !== variable.id
       );
+      const background = await getHistogram(
+        dataClient,
+        studyId,
+        [],
+        entity,
+        variable,
+        dataParams
+      );
+      const foreground =
+        foregroundFilters && foregroundFilters.length !== 0
+          ? await getHistogram(
+              dataClient,
+              studyId,
+              foregroundFilters,
+              entity,
+              variable,
+              { binWidth: background.config.binWidth as NumberOrTimeDelta }
+            )
+          : background;
+
       const series = [
         histogramResponseToDataSeries(
           `All ${variable.displayName}`,
-          distribution.background,
+          background,
           gray
         ),
         histogramResponseToDataSeries(
           `Remaining ${variable.displayName}`,
-          distribution.foreground,
+          foreground,
           red
         ),
       ];
-      const binWidth = parseInt(
-        String(distribution.foreground.config.binWidth),
-        10
-      );
-      const { min, max, step } = distribution.foreground.config.binSlider;
+      const binWidth = parseInt(String(background.config.binWidth), 10);
+      const { min, max, step } = background.config.binSlider;
       const binWidthRange = (variable.type === 'number'
-        ? ([min, max] as [number, number])
+        ? { min, max }
         : { min, max, unit: 'day' }) as NumberOrTimeDeltaRange;
       const binWidthStep = step;
       return {
@@ -258,26 +250,21 @@ function HistogramPlotWithControls({
   });
 
   useEffect(() => {
-    if (
-      plotControls.histogram.selectedRange &&
-      plotControls.histogram.selectedRangeBounds
-    ) {
+    if (plotControls.histogram.selectedRange) {
+      // FIXME Compare selection to data min/max
+      const bins = plotControls.data.series[0].bins;
+      const min = bins[0].binStart;
+      const max = bins[bins.length - 1].binEnd;
       if (
-        plotControls.histogram.selectedRangeBounds.min ===
-          plotControls.histogram.selectedRange.min &&
-        plotControls.histogram.selectedRangeBounds.max ===
-          plotControls.histogram.selectedRange.max
+        plotControls.histogram.selectedRange.min <= min &&
+        plotControls.histogram.selectedRange.max >= max
       ) {
         updateFilter();
       } else {
         updateFilter(plotControls.histogram.selectedRange);
       }
     }
-  }, [
-    plotControls.histogram.selectedRange,
-    plotControls.histogram.selectedRangeBounds,
-    updateFilter,
-  ]);
+  }, [plotControls.histogram.selectedRange, plotControls.data, updateFilter]);
 
   useEffect(() => {
     if (data.binWidth == null) return;
@@ -318,12 +305,14 @@ function histogramResponseToDataSeries(
       `Expected a single data series, but got ${response.data.length}`
     );
   const data = response.data[0];
-  const bins = data.value.map((_, index) => ({
-    binStart: Number(data.binStart[index]),
-    binEnd: Number(data.binStart[index]) + Number(response.config.binWidth),
-    binLabel: data.binLabel[index],
-    count: data.value[index],
-  }));
+  const bins = data.value
+    .map((_, index) => ({
+      binStart: Number(data.binStart[index]),
+      binEnd: Number(data.binStart[index]) + Number(response.config.binWidth),
+      binLabel: data.binLabel[index],
+      count: data.value[index],
+    }))
+    .sort((a, b) => a.binStart - b.binStart);
   return {
     name,
     color,
@@ -361,4 +350,33 @@ function getRequestParams(
       ...binOption,
     },
   } as NumericHistogramRequestParams | DateHistogramRequestParams;
+}
+
+async function getHistogram(
+  dataClient: DataClient,
+  studyId: string,
+  filters: Filter[],
+  entity: StudyEntity,
+  variable: HistogramVariable,
+  dataParams?: GetDataParams
+) {
+  return variable.type === 'date'
+    ? dataClient.getDateHistogramBinWidth(
+        getRequestParams(
+          studyId,
+          filters,
+          entity,
+          variable,
+          dataParams
+        ) as DateHistogramRequestParams
+      )
+    : dataClient.getNumericHistogramBinWidth(
+        getRequestParams(
+          studyId,
+          filters,
+          entity,
+          variable,
+          dataParams
+        ) as NumericHistogramRequestParams
+      );
 }
