@@ -260,7 +260,7 @@ function HistogramPlotWithControls({
   // TODO Use UIState
   const [barLayout, setBarLayout] = useState('overlay');
   const [displayLegend, setDisplayLegend] = useState(true);
-  const [displyLibraryControls, setDisplayLibraryControls] = useState(false);
+  const [displayLibraryControls, setDisplayLibraryControls] = useState(false);
   const [opacity, setOpacity] = useState(100);
   const [orientation, setOrientation] = useState<string>(
     histogramProps.orientation
@@ -295,7 +295,7 @@ function HistogramPlotWithControls({
         selectedRange={selectedRange}
         opacity={opacity}
         displayLegend={displayLegend}
-        displayLibraryControls={displyLibraryControls}
+        displayLibraryControls={displayLibraryControls}
         onSelectedRangeChange={handleSelectedRangeChange}
       />
       <HistogramControls
@@ -304,7 +304,7 @@ function HistogramPlotWithControls({
         onBarLayoutChange={setBarLayout}
         displayLegend={displayLegend}
         toggleDisplayLegend={() => setDisplayLegend((v) => !v)}
-        displayLibraryControls={displyLibraryControls}
+        displayLibraryControls={displayLibraryControls}
         toggleLibraryControls={() => setDisplayLibraryControls((v) => !v)}
         opacity={opacity}
         onOpacityChange={setOpacity}
