@@ -51,7 +51,11 @@ export default function headerMenuItems (state, props) {
           {
             text: 'Public Search Strategies',
             route: '/workspace/strategies/public'
-          }
+          },
+          {
+            text: 'EDA',
+            route: '/eda',
+          },
         ]
       },
       {
