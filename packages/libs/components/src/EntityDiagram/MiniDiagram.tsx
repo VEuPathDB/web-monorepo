@@ -5,11 +5,26 @@ import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import OffsetLine from './OffsetLine';
 import { StudyData } from './Types';
 import { Tooltip } from '@visx/tooltip';
+import { LinearGradient } from '@visx/gradient';
+
+interface ShadingValues {
+  value: number;
+  color?: string;
+}
+
+interface ShadingData {
+  [index: string]: ShadingValues;
+}
 
 interface MiniDiagram {
   treeData: StudyData;
   orientation: string;
   highlightedEntityID: string;
+  shadingData: ShadingData;
+  renderNode?: (
+    node: StudyData,
+    children: Array<React.ReactElement>
+  ) => React.ReactElement | null;
 }
 
 interface CustomNode {
@@ -20,6 +35,8 @@ export default function MiniDiagram({
   treeData,
   orientation,
   highlightedEntityID,
+  shadingData,
+  renderNode,
 }: MiniDiagram) {
   const data = hierarchy(treeData);
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
@@ -50,36 +67,47 @@ export default function MiniDiagram({
       setTooltipNode(node);
     };
 
+    const shadingObject: undefined | ShadingValues = shadingData[node.data.id];
+
+    const rectangle = (
+      <rect
+        height={height}
+        width={width}
+        y={-height / 2}
+        x={-width / 2}
+        fill={`url('#rect-gradient-${
+          shadingObject ? shadingObject.value : 0
+        }')`}
+        stroke={'black'}
+        style={
+          highlightedEntityID == node.data.displayName
+            ? { cursor: 'pointer', outline: 'yellow 3px solid' }
+            : { cursor: 'pointer' }
+        }
+        onMouseEnter={() => handleTooltipOpen()}
+        onMouseLeave={() => setTooltipOpen(false)}
+      />
+    );
+
+    const text = (
+      <text
+        fontSize={12}
+        textAnchor="middle"
+        style={{ cursor: 'pointer' }}
+        dy=".33em"
+        onMouseEnter={() => handleTooltipOpen()}
+        onMouseLeave={() => setTooltipOpen(false)}
+      >
+        {displayNameAcronym}
+      </text>
+    );
+
     return (
       <Group
         top={orientation == 'horizontal' ? node.x : node.y}
         left={orientation == 'horizontal' ? node.y : node.x}
       >
-        <rect
-          height={height}
-          width={width}
-          y={-height / 2}
-          x={-width / 2}
-          fill={'white'}
-          stroke={'black'}
-          style={
-            highlightedEntityID == node.data.displayName
-              ? { cursor: 'pointer', outline: 'yellow 3px solid' }
-              : { cursor: 'pointer' }
-          }
-          onMouseEnter={() => handleTooltipOpen()}
-          onMouseLeave={() => setTooltipOpen(false)}
-        />
-        <text
-          fontSize={12}
-          textAnchor="middle"
-          style={{ cursor: 'pointer' }}
-          dy=".33em"
-          onMouseEnter={() => handleTooltipOpen()}
-          onMouseLeave={() => setTooltipOpen(false)}
-        >
-          {displayNameAcronym}
-        </text>
+        {renderNode?.(node.data, [rectangle, text]) ?? [rectangle, text]}
       </Group>
     );
   }
@@ -100,6 +128,23 @@ export default function MiniDiagram({
             <path d="M0,-5L10,0L0,5" />
           </marker>
         </defs>
+        {
+          // Node background definitions
+          Array(11)
+            .fill(null)
+            .map((_, index) => (
+              <LinearGradient
+                key={index}
+                vertical={false}
+                x1={0}
+                x2={index * 0.1}
+                fromOffset={1}
+                id={`rect-gradient-${index}`}
+                from="#e4c8c8"
+                to="white"
+              />
+            ))
+        }
         <Tree root={data} size={[150, 200]}>
           {(tree) => (
             <Group

@@ -211,6 +211,7 @@ export const EntityDiagram = () => {
         treeData={studyData.rootEntity}
         orientation={orientation}
         highlightedEntityID={'Sample'}
+        shadingData={shadingData}
       />
       <TransitionGroup>
         {expanded && (
