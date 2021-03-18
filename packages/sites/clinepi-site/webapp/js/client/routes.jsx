@@ -14,6 +14,7 @@ export const wrapRoutes = ebrcRoutes => {
 
     {
       path: '/eda',
+      exact: false,
       component: () => <WorkspaceRouter
         dataServiceUrl={edaServiceUrl}
         subsettingServiceUrl={edaServiceUrl}
