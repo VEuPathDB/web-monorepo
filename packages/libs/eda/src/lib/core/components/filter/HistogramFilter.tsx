@@ -5,6 +5,8 @@ import Histogram, {
 } from '@veupathdb/components/lib/plots/Histogram';
 import {
   DateRange,
+  ErrorManagement,
+  NumberOrDateRange,
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   NumberRange,
@@ -12,12 +14,13 @@ import {
 import {
   HistogramData,
   HistogramDataSeries,
+  OrientationOptions,
 } from '@veupathdb/components/lib/types/plots';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf } from 'io-ts';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   DataClient,
   DateHistogramRequestParams,
@@ -105,7 +108,7 @@ export function HistogramFilter(props: Props) {
           red
         ),
       ];
-      const binWidth = parseInt(String(background.config.binWidth), 10);
+      const binWidth = parseInt(String(background.config.binWidth), 10) || 1;
       const { min, max, step } = background.config.binSlider;
       const binWidthRange = (variable.type === 'number'
         ? { min, max }
@@ -202,7 +205,7 @@ export function HistogramFilter(props: Props) {
             getData={getData}
             width={1000}
             height={400}
-            orientation={'horizontal'}
+            orientation={'vertical'}
             barLayout={'overlay'}
             updateFilter={updateFilter}
             updateUIState={updateUIState}
@@ -227,65 +230,94 @@ function HistogramPlotWithControls({
   filter,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
-  const plotControls = usePlotControls<HistogramData>({
-    data: data,
-    histogram: {
-      binWidthRange: data.binWidthRange,
-      binWidthStep: data.binWidthStep,
-      onBinWidthChange: getData,
-      displaySelectedRangeControls: true,
-      selectedRange:
-        filter &&
-        (filter.type === 'dateRange'
-          ? {
-              min: new Date(filter.min),
-              max: new Date(filter.max),
-            }
-          : {
-              min: filter.min,
-              max: filter.max,
-            }),
-    },
-    // onSelectedUnitChange: getData
-  });
-
-  useEffect(() => {
-    if (plotControls.histogram.selectedRange) {
-      // FIXME Compare selection to data min/max
-      const bins = plotControls.data.series[0].bins;
-      const min = bins[0].binStart;
-      const max = bins[bins.length - 1].binEnd;
-      if (
-        plotControls.histogram.selectedRange.min <= min &&
-        plotControls.histogram.selectedRange.max >= max
-      ) {
-        updateFilter();
-      } else {
-        updateFilter(plotControls.histogram.selectedRange);
+  const handleSelectedRangeChange = useCallback(
+    (range: NumberOrDateRange) => {
+      if (range) {
+        // FIXME Compare selection to data min/max
+        const bins = data.series[0].bins;
+        const min = bins[0].binStart;
+        const max = bins[bins.length - 1].binEnd;
+        if (range.min <= min && range.max >= max) {
+          updateFilter();
+        } else {
+          updateFilter(range);
+        }
       }
-    }
-  }, [plotControls.histogram.selectedRange, plotControls.data, updateFilter]);
+    },
+    [data, updateFilter]
+  );
 
-  useEffect(() => {
-    if (data.binWidth == null) return;
-    const newBinWidth =
-      typeof data.binWidth === 'number' ? data.binWidth : data.binWidth[0];
-    updateUIState({
-      binWidth: newBinWidth,
-    });
-  }, [data.binWidth, updateUIState]);
+  const handleBinWidthChange = useCallback(
+    ({ binWidth }: { binWidth: NumberOrTimeDelta }) => {
+      const newBinWidth = typeof binWidth === 'number' ? binWidth : binWidth[0];
+      updateUIState({
+        binWidth: newBinWidth,
+      });
+    },
+    [updateUIState]
+  );
+
+  // TODO Use UIState
+  const [barLayout, setBarLayout] = useState('overlay');
+  const [displayLegend, setDisplayLegend] = useState(true);
+  const [displyLibraryControls, setDisplayLibraryControls] = useState(false);
+  const [opacity, setOpacity] = useState(100);
+  const [orientation, setOrientation] = useState<string>(
+    histogramProps.orientation
+  );
+  const errorManagement = useMemo((): ErrorManagement => {
+    return {
+      errors: [],
+      addError: (error: Error) => {},
+      removeError: (error: Error) => {},
+      clearAllErrors: () => {},
+    };
+  }, []);
+
+  const selectedRange = useMemo((): NumberOrDateRange | undefined => {
+    if (filter == null) return;
+    return filter.type === 'numberRange'
+      ? { min: filter.min, max: filter.max }
+      : { min: new Date(filter.min), max: new Date(filter.max) };
+  }, [filter]);
+
+  const selectedRangeBounds = useMemo((): NumberOrDateRange => {
+    const min = data.series[0].bins[0].binStart;
+    const max = data.series[0].bins[data.series[0].bins.length - 1].binEnd;
+    return { min, max } as NumberOrDateRange;
+  }, [data]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Histogram
         {...histogramProps}
-        {...plotControls}
-        {...plotControls.histogram}
+        data={data}
+        selectedRange={selectedRange}
+        opacity={opacity}
+        displayLegend={displayLegend}
+        displayLibraryControls={displyLibraryControls}
+        onSelectedRangeChange={handleSelectedRangeChange}
       />
       <HistogramControls
         label="Histogram Controls"
-        {...plotControls}
-        {...plotControls.histogram}
+        barLayout={barLayout}
+        onBarLayoutChange={setBarLayout}
+        displayLegend={displayLegend}
+        toggleDisplayLegend={() => setDisplayLegend((v) => !v)}
+        displayLibraryControls={displyLibraryControls}
+        toggleLibraryControls={() => setDisplayLibraryControls((v) => !v)}
+        opacity={opacity}
+        onOpacityChange={setOpacity}
+        orientation={orientation as OrientationOptions}
+        toggleOrientation={setOrientation}
+        binWidth={data.binWidth!}
+        onBinWidthChange={handleBinWidthChange}
+        binWidthRange={data.binWidthRange!}
+        binWidthStep={data.binWidthStep!}
+        errorManagement={errorManagement}
+        selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
+        onSelectedRangeChange={handleSelectedRangeChange}
       />
     </div>
   );
@@ -306,6 +338,7 @@ function histogramResponseToDataSeries(
     );
   const data = response.data[0];
   const bins = data.value
+    // FIXME Handle Dates properly
     .map((_, index) => ({
       binStart: Number(data.binStart[index]),
       binEnd: Number(data.binStart[index]) + Number(response.config.binWidth),
