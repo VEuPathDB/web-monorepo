@@ -106,13 +106,15 @@ const HistogramResponseData = array(
 );
 
 const HistogramResponseBaseConfig = type({
-  incompleteCases: number,
+  incompleteCases: array(number),
   binSlider: type({
     min: number,
     max: number,
     step: number,
   }),
-  xVariableDetails: Variable,
+  xVariableDetails: type({
+    xVariableDetails: Variable,
+  }),
 });
 
 // works for date or numeric 'num-bins' responses
@@ -171,16 +173,18 @@ export interface BarplotRequestParams {
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
 export const BarplotResponse = type({
   config: type({
-    incompleteCases: number,
+    incompleteCases: array(number),
     xVariableDetails: type({
-      variableId: string,
-      // entityId: type({}), // checking with Danielle about this
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
     }),
   }),
   data: array(
     type({
-      label: string,
-      value: number,
+      label: array(string),
+      value: array(number),
     })
   ),
 });
