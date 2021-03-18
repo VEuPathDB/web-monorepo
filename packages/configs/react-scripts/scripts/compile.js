@@ -1,14 +1,16 @@
 import { spawn } from 'child_process';
 import { rm } from 'fs/promises';
 
-export async function main() {
-  await cleanCompilationDirectory();
+// TODO: Break cleanCompilationDirectory off
+// into its own react-script (as in @veupathdb/wdk-client)
+export async function main(targetDir) {
+  await cleanCompilationDirectory(targetDir);
   await executeCompilationProcess();
 }
 
-function cleanCompilationDirectory() {
+function cleanCompilationDirectory(targetDir) {
   return rm(
-    'lib',
+    targetDir,
     { recursive: true, force: true }
   );
 }
