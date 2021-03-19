@@ -112,9 +112,7 @@ const HistogramResponseBaseConfig = type({
     max: number,
     step: number,
   }),
-  xVariableDetails: type({
-    xVariableDetails: Variable,
-  }),
+  xVariableDetails: Variable,
 });
 
 // works for date or numeric 'num-bins' responses
@@ -175,10 +173,8 @@ export const BarplotResponse = type({
   config: type({
     incompleteCases: array(number),
     xVariableDetails: type({
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
-      }),
+      variableId: string,
+      entityId: string,
     }),
   }),
   data: array(
