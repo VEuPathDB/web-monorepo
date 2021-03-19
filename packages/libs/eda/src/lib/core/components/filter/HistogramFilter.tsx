@@ -11,6 +11,7 @@ import {
   NumberRange,
 } from '@veupathdb/components/lib/types/general';
 import {
+  BarLayoutOptions,
   HistogramData,
   HistogramDataSeries,
   OrientationOptions,
@@ -287,12 +288,6 @@ function HistogramPlotWithControls({
       : { min: new Date(filter.min + 'Z'), max: new Date(filter.max + 'Z') };
   }, [filter]);
 
-  const selectedRangeBounds = useMemo((): NumberOrDateRange => {
-    const min = data.series[0].bins[0].binStart;
-    const max = data.series[0].bins[data.series[0].bins.length - 1].binEnd;
-    return { min, max } as NumberOrDateRange;
-  }, [data]);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Histogram
@@ -303,9 +298,12 @@ function HistogramPlotWithControls({
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
         onSelectedRangeChange={handleSelectedRangeChange}
+        orientation={orientation as OrientationOptions}
+        barLayout={barLayout as BarLayoutOptions}
       />
       <HistogramControls
         label="Histogram Controls"
+        valueType={data.valueType}
         barLayout={barLayout}
         onBarLayoutChange={setBarLayout}
         displayLegend={displayLegend}
@@ -323,7 +321,6 @@ function HistogramPlotWithControls({
         errorManagement={errorManagement}
         displaySelectedRangeControls
         selectedRange={selectedRange}
-        selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
       />
     </div>
@@ -345,7 +342,6 @@ function histogramResponseToDataSeries(
       `Expected a single data series, but got ${response.data.length}`
     );
   const data = response.data[0];
-  const binWidth = Number(response.config.binWidth) ?? 1;
   const bins = data.value
     // FIXME Handle Dates properly
     .map((_, index) => ({
@@ -427,10 +423,4 @@ async function getHistogram(
           dataParams
         ) as NumericHistogramRequestParams
       );
-}
-
-function addYear(isoString: string, numYears: number) {
-  var d = new Date(isoString);
-  d.setFullYear(d.getFullYear() + numYears);
-  return d;
 }
