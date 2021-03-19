@@ -103,6 +103,10 @@ export function useSession(sessionId: string): SessionState {
     return sessionClient.deleteSession(sessionId);
   }, [sessionClient, sessionId]);
 
+  useEffect(() => {
+    if (hasUnsavedChanges) saveSession();
+  }, [saveSession, hasUnsavedChanges]);
+
   return {
     status,
     session,

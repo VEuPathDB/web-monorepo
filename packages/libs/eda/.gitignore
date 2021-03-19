@@ -13,6 +13,7 @@
 /lib
 
 # misc
+/scratch
 .DS_Store
 .env.local
 .env.development.local

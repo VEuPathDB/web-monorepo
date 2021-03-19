@@ -1,14 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { usePromise } from '../../hooks/promise';
 
-jest.useFakeTimers();
-
-function delay<T>(value: T, time: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time, value);
-  });
-}
-
 function resolve() {
   return Promise.resolve(10);
 }
@@ -40,12 +32,11 @@ describe('usePromise', () => {
     const { result, waitForNextUpdate, rerender } = renderHook(
       ({ callback }) => usePromise(callback),
       {
-        initialProps: { callback: () => delay('one', 20) },
+        initialProps: { callback: () => Promise.resolve('one') },
       }
     );
-    jest.advanceTimersByTime(10);
-    rerender({ callback: () => delay('two', 30) });
-    jest.advanceTimersByTime(50);
+    rerender({ callback: () => Promise.resolve('two') });
+    expect(result.current.value).toBeUndefined();
     await waitForNextUpdate();
     expect(result.current.value).toBe('two');
   });
