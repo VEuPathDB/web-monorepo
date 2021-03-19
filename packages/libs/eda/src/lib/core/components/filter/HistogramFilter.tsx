@@ -321,6 +321,7 @@ function HistogramPlotWithControls({
         binWidthRange={data.binWidthRange!}
         binWidthStep={data.binWidthStep!}
         errorManagement={errorManagement}
+        displaySelectedRangeControls
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
