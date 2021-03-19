@@ -355,8 +355,8 @@ function histogramResponseToDataSeries(
           : new Date(data.binStart[index]),
       binEnd:
         type === 'number'
-          ? Number(data.binStart[index]) + binWidth
-          : addYear(data.binStart[index], 1),
+          ? Number(data.binEnd[index])
+          : new Date(data.binEnd[index]),
       binLabel: data.binLabel[index],
       count: data.value[index],
     }))

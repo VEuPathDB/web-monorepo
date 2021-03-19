@@ -93,6 +93,7 @@ const HistogramResponseData = array(
     type({
       binLabel: array(string),
       binStart: array(string),
+      binEnd: array(string),
       value: array(number),
     }),
     partial({
