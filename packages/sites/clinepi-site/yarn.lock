@@ -915,10 +915,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.2.tgz#b880dd485389561867ccee167e21dd9e053fbda6"
-  integrity sha512-4u3VtF9Xv4ZNn5jdxUm58mWCvNJURjJM3mPngqZvOTKz5I7jNzmXYj7hUgtJ7Hyr68XDBWFQc0f96ZXgFYk7Vg==
+"@veupathdb/eda@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.4.tgz#6f583ba8772c122311891855f34ce4c44be94c2a"
+  integrity sha512-8NZHqnt1LJyVs59kzm9OuNqT+HEfDzIcTuJBVt2oxmAeybN8VdsPhzeqm6fvHiXpO0Auqc6zcTOky0QRjsCNPA==
   dependencies:
     "@veupathdb/components" "^0.2.1"
     "@veupathdb/wdk-client" "^0.1.1-alpha.14"
