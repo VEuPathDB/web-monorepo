@@ -25,7 +25,7 @@ const Template: Story<DateInputProps> = (args) => {
 
 export const Basic = Template.bind({});
 Basic.args = {
-  defaultValue: new Date('2021-12-21'),
+  value: new Date('2021-12-21'),
 };
 
 export const Labelled = Template.bind({});
@@ -48,7 +48,7 @@ Bounded.args = {
 
 export const BoundedInitialized = Template.bind({});
 BoundedInitialized.args = {
-  defaultValue: new Date('2005-01-01'),
+  value: new Date('2005-01-01'),
   label: '2000-01-01 to 2009-12-31',
   minValue: new Date('2000-01-01'),
   maxValue: new Date('2009-12-31'),
@@ -59,7 +59,7 @@ const ControlledTemplate: Story<DateInputProps> = (args) => {
   return (
     <DateInput
       {...args}
-      controlledValue={value}
+      value={value}
       onValueChange={(newValue) => {
         console.log(`new value = ${newValue}`);
         setValue(newValue as Date);
@@ -87,7 +87,7 @@ export const ControlledLinkedPair: Story = () => {
   return (
     <>
       <DateInput
-        controlledValue={linkedValue}
+        value={linkedValue}
         label="A"
         onValueChange={(newValue) => {
           console.log(`A new value = ${newValue}`);
@@ -96,7 +96,7 @@ export const ControlledLinkedPair: Story = () => {
         containerStyles={{ margin: 25 }}
       />
       <DateInput
-        controlledValue={linkedValue}
+        value={linkedValue}
         label="B"
         onValueChange={(newValue) => {
           console.log(`B new value = ${newValue}`);
@@ -116,7 +116,7 @@ export const ControlledBounds: Story = () => {
   return (
     <>
       <DateInput
-        controlledValue={value}
+        value={value}
         label={`Value (${min} <= x <= ${max})`}
         minValue={min}
         maxValue={max}
@@ -129,7 +129,7 @@ export const ControlledBounds: Story = () => {
         containerStyles={{ margin: 25 }}
       />
       <DateInput
-        controlledValue={min}
+        value={min}
         maxValue={max}
         label="Min"
         onValueChange={(newValue) => {
@@ -138,7 +138,7 @@ export const ControlledBounds: Story = () => {
         containerStyles={{ margin: 25 }}
       />
       <DateInput
-        controlledValue={max}
+        value={max}
         minValue={min}
         label="Max"
         onValueChange={(newValue) => {

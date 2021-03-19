@@ -6,10 +6,8 @@ import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberOrDate } from '../../types/general';
 
 type BaseProps<M extends NumberOrDate> = {
-  /** The starting value of the widget. */
-  defaultValue?: M;
   /** Externally controlled value. */
-  controlledValue?: M;
+  value?: M;
   /** Minimum allowed value (inclusive) */
   minValue?: M;
   /** Maximum allowed value (inclusive) */
@@ -48,8 +46,7 @@ type BaseInputProps =
  * Not currently exported. But could be if needed.
  */
 function BaseInput({
-  defaultValue,
-  controlledValue,
+  value,
   minValue,
   maxValue,
   onValueChange,
@@ -70,7 +67,7 @@ function BaseInput({
   })();
 
   const boundsCheckedValue = (newValue?: NumberOrDate) => {
-    if (newValue === undefined) return;
+    if (newValue === undefined) return undefined;
     if (minValue !== undefined && newValue < minValue) {
       newValue = minValue;
       setErrorState({
@@ -86,15 +83,15 @@ function BaseInput({
     } else {
       setErrorState({ error: false, helperText: '' });
     }
-    return newValue;
+    return undefined;
   };
 
   useEffect(() => {
     // if the min or max change
     // run the controlledValue through the bounds checker
     // to fix controlledValue or reset the error states as required
-    const newValue = boundsCheckedValue(controlledValue);
-    if (newValue !== undefined) onValueChange(newValue);
+    const newValue = boundsCheckedValue(value);
+    if (newValue != null) onValueChange(newValue);
   }, [minValue, maxValue]);
 
   const handleChange = (event: any) => {
@@ -128,15 +125,10 @@ function BaseInput({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <TextField
           InputProps={{ classes }}
-          defaultValue={
-            valueType === 'number'
-              ? defaultValue
-              : (defaultValue as Date)?.toISOString().substr(0, 10)
-          }
           value={
             valueType === 'number'
-              ? controlledValue
-              : (controlledValue as Date)?.toISOString().substr(0, 10)
+              ? value
+              : (value as Date)?.toISOString().substr(0, 10)
           }
           type={valueType}
           variant="outlined"
