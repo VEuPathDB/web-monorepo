@@ -284,7 +284,7 @@ function HistogramPlotWithControls({
     if (filter == null) return;
     return filter.type === 'numberRange'
       ? { min: filter.min, max: filter.max }
-      : { min: new Date(filter.min), max: new Date(filter.max) };
+      : { min: new Date(filter.min + 'Z'), max: new Date(filter.max + 'Z') };
   }, [filter]);
 
   const selectedRangeBounds = useMemo((): NumberOrDateRange => {
