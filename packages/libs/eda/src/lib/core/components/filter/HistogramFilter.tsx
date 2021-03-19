@@ -1,5 +1,4 @@
 import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
-import usePlotControls from '@veupathdb/components/lib/hooks/usePlotControls';
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
@@ -20,7 +19,7 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf } from 'io-ts';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   DataClient,
   DateHistogramRequestParams,
@@ -100,12 +99,14 @@ export function HistogramFilter(props: Props) {
         histogramResponseToDataSeries(
           `All ${variable.displayName}`,
           background,
-          gray
+          gray,
+          variable.type
         ),
         histogramResponseToDataSeries(
           `Remaining ${variable.displayName}`,
           foreground,
-          red
+          red,
+          variable.type
         ),
       ];
       const binWidth = parseInt(String(background.config.binWidth), 10) || 1;
@@ -115,6 +116,7 @@ export function HistogramFilter(props: Props) {
         : { min, max, unit: 'day' }) as NumberOrTimeDeltaRange;
       const binWidthStep = step;
       return {
+        valueType: variable.type,
         series,
         binWidth,
         binWidthRange,
@@ -157,8 +159,12 @@ export function HistogramFilter(props: Props) {
                   variableId: variable.id,
                   entityId: entity.id,
                   type: 'dateRange',
-                  min: (selectedRange as DateRange).min.toISOString(),
-                  max: (selectedRange as DateRange).max.toISOString(),
+                  min: (selectedRange as DateRange).min
+                    .toISOString()
+                    .slice(0, 19),
+                  max: (selectedRange as DateRange).max
+                    .toISOString()
+                    .slice(0, 19),
                 }
               : {
                   variableId: variable.id,
@@ -330,22 +336,30 @@ function histogramResponseToDataSeries(
       DataClient['getDateHistogramBinWidth' | 'getNumericHistogramBinWidth']
     >
   >,
-  color: string
+  color: string,
+  type: HistogramVariable['type']
 ): HistogramDataSeries {
   if (response.data.length !== 1)
     throw Error(
       `Expected a single data series, but got ${response.data.length}`
     );
   const data = response.data[0];
+  const binWidth = Number(response.config.binWidth) ?? 1;
   const bins = data.value
     // FIXME Handle Dates properly
     .map((_, index) => ({
-      binStart: Number(data.binStart[index]),
-      binEnd: Number(data.binStart[index]) + Number(response.config.binWidth),
+      binStart:
+        type === 'number'
+          ? Number(data.binStart[index])
+          : new Date(data.binStart[index]),
+      binEnd:
+        type === 'number'
+          ? Number(data.binStart[index]) + binWidth
+          : addYear(data.binStart[index], 1),
       binLabel: data.binLabel[index],
       count: data.value[index],
     }))
-    .sort((a, b) => a.binStart - b.binStart);
+    .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf());
   return {
     name,
     color,
@@ -412,4 +426,10 @@ async function getHistogram(
           dataParams
         ) as NumericHistogramRequestParams
       );
+}
+
+function addYear(isoString: string, numYears: number) {
+  var d = new Date(isoString);
+  d.setFullYear(d.getFullYear() + numYears);
+  return d;
 }
