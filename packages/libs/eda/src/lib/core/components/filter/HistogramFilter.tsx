@@ -352,11 +352,11 @@ function histogramResponseToDataSeries(
       binStart:
         type === 'number'
           ? Number(data.binStart[index])
-          : new Date(data.binStart[index]),
+          : new Date(data.binStart[index] + 'Z'),
       binEnd:
         type === 'number'
           ? Number(data.binEnd[index])
-          : new Date(data.binEnd[index]),
+          : new Date(data.binEnd[index] + 'Z'),
       binLabel: data.binLabel[index],
       count: data.value[index],
     }))
