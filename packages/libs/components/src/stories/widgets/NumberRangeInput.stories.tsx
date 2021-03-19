@@ -26,7 +26,7 @@ const Template: Story<NumberRangeInputProps> = (args) => {
 
 export const Basic = Template.bind({});
 Basic.args = {
-  defaultRange: { min: 1, max: 5 },
+  range: { min: 1, max: 5 },
 };
 
 export const Labelled = Template.bind({});
@@ -38,14 +38,14 @@ Labelled.args = {
 export const Bounded = Template.bind({});
 Bounded.args = {
   label: 'Bounded (0 to 10)',
-  defaultRange: { min: 1, max: 9 },
+  range: { min: 1, max: 9 },
   rangeBounds: { min: 0, max: 10 },
 };
 
 export const FullyLabelled = Template.bind({});
 FullyLabelled.args = {
   label: 'Select a range between 0 and 10',
-  defaultRange: { min: 1, max: 9 },
+  range: { min: 1, max: 9 },
   rangeBounds: { min: 0, max: 10 },
   lowerLabel: 'Lower bound',
   upperLabel: 'Upper bound',
