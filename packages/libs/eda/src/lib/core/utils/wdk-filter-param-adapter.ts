@@ -2,6 +2,7 @@ import { Filter as EdaFilter } from '../types/filter';
 import {
   DateMemberFilter,
   DateRangeFilter,
+  Field,
   Filter as WdkFilter,
   NumberRangeFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
@@ -90,6 +91,18 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
         : filter[filter.type],
     __entityId: filter.entityId,
   } as WdkFilter;
+}
+
+export function edaVariableToWdkField(variable: StudyVariable): Field {
+  return {
+    display: variable.displayName,
+    isRange: variable.dataShape === 'continuous',
+    parent: variable.parentId,
+    // precision: 1,
+    term: variable.id,
+    type: variable.type !== 'category' ? variable.type : undefined,
+    // variableName: variable.providerLabel,
+  };
 }
 
 export function toWdkVariableSummary(
