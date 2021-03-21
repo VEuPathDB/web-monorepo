@@ -4,12 +4,14 @@ import { noop } from 'lodash';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import { twitterUrl, facebookUrl, youtubeUrl } from 'ebrc-client/config';
+import { twitterUrl, twitterUrl2, facebookUrl, youtubeUrl } from 'ebrc-client/config';
 import { AnnouncementsToggle, Twitter, Facebook, YouTube } from './SocialMediaIcons';
 
 import './SocialMediaLinks.scss';
 
 const cx = makeClassNameHelper('ebrc-SocialMediaLinks');
+
+const finalTwitterUrl = twitterUrl2 ? twitterUrl2 : twitterUrl;
 
 interface Props {
   showAnnouncementsToggle?: boolean;
@@ -37,7 +39,7 @@ export const SocialMediaLinks = ({
         </a>
       }
 
-      <a href={twitterUrl} target="_blank">
+      <a href={finalTwitterUrl} target="_blank">
         <Twitter />
       </a>
 
