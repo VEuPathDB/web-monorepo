@@ -98,11 +98,13 @@ export function edaVariableToWdkField(variable: StudyVariable): Field {
     display: variable.displayName,
     isRange: variable.dataShape === 'continuous',
     parent: variable.parentId,
-    // precision: 1,
+    precision: 1,
     term: variable.id,
     type: variable.type !== 'category' ? variable.type : undefined,
-    // variableName: variable.providerLabel,
-  };
+    variableName: variable.providerLabel,
+    // cast to handle additional props `precision` and `variableName` that
+    // do not exist on the `Field` type
+  } as Field;
 }
 
 export function toWdkVariableSummary(
@@ -110,15 +112,6 @@ export function toWdkVariableSummary(
   background: DistributionResponse,
   variable: StudyVariable
 ) {
-  const activeField = {
-    display: variable.displayName,
-    isRange: variable.dataShape === 'continuous',
-    parent: variable.parentId,
-    precision: 1,
-    term: variable.id,
-    type: variable.type,
-    variableName: variable.providerLabel,
-  };
   return {
     distribution: Object.entries(background.distribution).map(
       ([value, count]) => ({
@@ -129,6 +122,6 @@ export function toWdkVariableSummary(
     ),
     entitiesCount: background.entitiesCount,
     filteredEntitiesCount: foreground.entitiesCount,
-    activeField,
+    activeField: edaVariableToWdkField(variable),
   };
 }
