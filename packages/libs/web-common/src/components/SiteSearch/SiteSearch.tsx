@@ -441,7 +441,9 @@ function StrategyLinkout(props: Props) {
           value = JSON.stringify(docType.searchFields.flatMap(f =>
             filters.length === 0 || filters.includes(f.name) ? [ f.term ] : []));
           break;
-        case 'text_search_organism': {
+        case 'genes_text_search_organism':
+        case 'text_search_organism': 
+        {
           if (parameter.type !== 'multi-pick-vocabulary') {
             value = parameter.initialDisplayValue || '';
             break;
