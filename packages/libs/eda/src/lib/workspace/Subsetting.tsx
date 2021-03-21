@@ -6,16 +6,13 @@ import {
   useStudyMetadata,
 } from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import { cx } from './Utils';
 import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { VariableLink } from '../core/components/VariableLink';
-import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import { edaVariableToWdkField } from '../core/utils/wdk-filter-param-adapter';
-import FieldList from '@veupathdb/wdk-client/lib/Components/AttributeFilter/FieldList';
-import { uniqBy } from 'lodash';
+import { VariableTree } from '../core/components/VariableTree';
 
 interface RouteProps {
   sessionId: string;
@@ -71,24 +68,13 @@ interface Props {
 
 export function Subsetting(props: Props) {
   const { entity, entities, variable, sessionState } = props;
+  const history = useHistory();
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(sessionState.session?.filters);
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
   const filteredEntityCount =
     filteredCounts.value && filteredCounts.value[entity.id];
 
-  const fieldTree = useMemo(() => {
-    const fields = entities.flatMap((entity) => [
-      {
-        term: entity.id,
-        display: entity.displayName,
-      },
-      ...uniqBy(entity.variables, (v) => v.id).map(edaVariableToWdkField),
-    ]);
-    const fieldTree = getTree(fields);
-    console.log('field tree', fieldTree);
-    return fieldTree;
-  }, [entities]);
   return (
     <div className={cx('-Subsetting')}>
       <div>
@@ -121,11 +107,10 @@ export function Subsetting(props: Props) {
       </div>
       <div>
         <h2>VARIABLES</h2>
-        <FieldList
-          activeField={undefined}
-          onActiveFieldChange={() => {}}
-          valuesMap={{}}
-          fieldTree={fieldTree}
+        <VariableTree
+          entities={entities}
+          entityId={entity.id}
+          variableId={variable.id}
         />
         {/* <ul
           style={{
