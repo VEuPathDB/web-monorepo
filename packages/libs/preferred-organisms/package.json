@@ -1,0 +1,68 @@
+{
+  "name": "web-app-preferred-organisms",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@veupathdb/wdk-client": "^0.1.1-alpha.6",
+    "@veupathdb/web-common": "^0.1.1-alpha.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.3"
+  },
+  "scripts": {
+    "start": "veupathdb-react-scripts start",
+    "build": "veupathdb-react-scripts build",
+    "test": "veupathdb-react-scripts test",
+    "eject": "veupathdb-react-scripts eject",
+    "compile": "vepoathdb-react-scripts compile",
+    "copy-assets": "veupathdb-react-scripts copy-assets",
+    "prepare-npm": "veupathdb-react-scripts prepare"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@veupathdb"
+    ]
+  },
+  "browserslist": [
+    "extends @veupathdb/browserslist-config"
+  ],
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.53",
+    "@types/react-dom": "^16.9.8",
+    "@veupathdb/browserslist-config": "^1.0.0",
+    "@veupathdb/eslint-config": "^1.0.0",
+    "@veupathdb/prettier-config": "^1.0.0",
+    "@veupathdb/react-scripts": "^1.0.0",
+    "@veupathdb/tsconfig": "^1.0.0",
+    "http-proxy-middleware": "^1.0.6",
+    "husky": ">=4",
+    "jquery": "link:./shims/jquery",
+    "lint-staged": ">=10",
+    "node-sass": "^4.12.0",
+    "prettier": "2.2.1",
+    "react-router": "^5.2.0",
+    "read": "^1.0.7",
+    "script-loader": "^0.7.2",
+    "set-cookie-parser": "^2.4.6",
+    "typescript": "^4.0.3",
+    "web-vitals": "^0.2.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,scss,md}": "prettier --write"
+  },
+  "prettier": "@veupathdb/prettier-config",
+  "resolutions": {
+    "@veupathdb/**/react": "^17.0.1",
+    "@veupathdb/**/react-dom": "^17.0.1"
+  }
+}
