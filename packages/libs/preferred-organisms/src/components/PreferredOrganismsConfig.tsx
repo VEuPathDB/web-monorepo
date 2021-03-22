@@ -75,7 +75,7 @@ export function PreferredOrganismsConfig({
   return (
     <div className={cx()}>
       <h1>Configure My Organisms</h1>
-      <p>
+      <p className={cx('--Instructions')}>
         Set your <span className={cx('--InlineTitle')}>My Organisms</span> list
         in order to constrain the taxa you see on various pages in {projectId}.
       </p>

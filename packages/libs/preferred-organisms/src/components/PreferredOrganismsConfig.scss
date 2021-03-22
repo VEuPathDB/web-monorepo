@@ -1,6 +1,11 @@
 $red: #cc0000;
 
 .PreferredOrganismsConfig {
+  &--Instructions {
+    font-size: 1.4em;
+    margin-bottom: 2em;
+  }
+
   &--Main {
     display: grid;
     grid-template-columns: 1fr 1fr;
