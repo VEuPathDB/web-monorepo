@@ -112,6 +112,10 @@ export function Subsetting(props: Props) {
           style={{
             border: '1px solid',
             borderRadius: '.25em',
+            padding: '.5em',
+            height: '80vh',
+            width: '30em',
+            overflow: 'auto',
           }}
         >
           <VariableTree
