@@ -115,7 +115,7 @@ export function HistogramFilter(props: Props) {
       const binWidthRange = (variable.type === 'number'
         ? { min, max }
         : { min, max, unit: 'day' }) as NumberOrTimeDeltaRange;
-      const binWidthStep = step;
+      const binWidthStep = step || 0.1;
       return {
         valueType: variable.type,
         series,
