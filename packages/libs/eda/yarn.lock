@@ -2875,10 +2875,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.2.3":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.3.tgz#1bd0cb887d6c4bf2953a617ced64ac553ff880e0"
-  integrity sha512-NGSgWtB5OvmKnjCpiWd1YCOe8YkPCAFoM3CCnCzm00PVifRYuTzHruZPksLH7eB7ti6HGcSVmm+XGw34Z4mUug==
+"@veupathdb/components@^0.2.6":
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.6.tgz#7aded05fd26ccf67646e768f55ca875293bea3c2"
+  integrity sha512-BpvTY5ZUv1swg70OTSi16K0y1kGA7PlBUK5ocnCWCKSrNcvQRd87EAFz2YSoq4eHYIFZA26NqY7U9Egoj7cFtw==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -9012,6 +9012,7 @@ internal-slot@^1.0.3:
     side-channel "^1.0.4"
 
 internmap@^1.0.0, interval-tree-1d@^1.0.1:
+  name internmap
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/interval-tree-1d/-/interval-tree-1d-1.0.3.tgz#8fdbde02b6b2c7dbdead636bcbed8e08710d85c1"
   integrity sha1-j9veArayx9verWNry+2OCHENhcE=
