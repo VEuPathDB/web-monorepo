@@ -1,10 +1,19 @@
 {
-  "name": "web-app-preferred-organisms",
+  "name": "@veupathdb/preferred-organisms",
   "version": "0.1.0",
-  "private": true,
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veupathdb/web-app-preferred-organisms.git",
+    "directory": "src/lib"
+  },
+  "files": [
+    "lib",
+    "shims"
+  ],
   "dependencies": {
-    "@veupathdb/wdk-client": "^0.1.1-alpha.6",
-    "@veupathdb/web-common": "^0.1.1-alpha.2",
+    "@veupathdb/wdk-client": "^0.1.1-alpha.16",
+    "@veupathdb/web-common": "^0.1.1-alpha.11",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.3"
