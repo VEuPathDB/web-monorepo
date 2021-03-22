@@ -1,5 +1,4 @@
 import './globals';
-import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
@@ -7,6 +6,8 @@ import Header from './Header';
 import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
+
+import { PreferredOrganismsConfigController } from './controllers/PreferredOrganismsConfigController';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
@@ -18,6 +19,10 @@ initialize({
     {
       path: '/',
       component: (props: RouteComponentProps<void>) => <Home />,
+    },
+    {
+      path: '/preferred-organisms',
+      component: PreferredOrganismsConfigController
     },
     ...routes,
   ],
