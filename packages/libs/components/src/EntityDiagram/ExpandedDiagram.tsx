@@ -4,27 +4,7 @@ import { LinearGradient } from '@visx/gradient';
 import { Group } from '@visx/group';
 import { Text } from '@visx/text';
 import OffsetLine from './OffsetLine';
-import { StudyData } from './Types';
-
-interface ShadingValues {
-  value: number;
-  color?: string;
-}
-
-interface ShadingData {
-  [index: string]: ShadingValues;
-}
-
-interface ExpandedDiagram {
-  treeData: StudyData;
-  orientation: string;
-  highlightedEntityID: string;
-  shadingData: ShadingData;
-  renderNode?: (
-    node: StudyData,
-    children: Array<React.ReactElement>
-  ) => React.ReactElement | null;
-}
+import { EntityDiagramProps, ShadingValues } from './Types';
 
 // Todo: There MUST be a smarter way to center the text
 function CalculateDYSize(nodeLength: number) {
@@ -48,7 +28,7 @@ export default function ExpandedDiagram({
   highlightedEntityID,
   shadingData,
   renderNode,
-}: ExpandedDiagram) {
+}: EntityDiagramProps) {
   const data = hierarchy(treeData);
 
   return (
@@ -67,7 +47,7 @@ export default function ExpandedDiagram({
         </marker>
       </defs>
       {
-        // Node background definitions
+        // Node background shading definitions
         Array(11)
           .fill(null)
           .map((_, index) => (

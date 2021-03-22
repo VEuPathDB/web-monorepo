@@ -6,26 +6,7 @@ import OffsetLine from './OffsetLine';
 import { StudyData } from './Types';
 import { Tooltip } from '@visx/tooltip';
 import { LinearGradient } from '@visx/gradient';
-
-interface ShadingValues {
-  value: number;
-  color?: string;
-}
-
-interface ShadingData {
-  [index: string]: ShadingValues;
-}
-
-interface MiniDiagram {
-  treeData: StudyData;
-  orientation: string;
-  highlightedEntityID: string;
-  shadingData: ShadingData;
-  renderNode?: (
-    node: StudyData,
-    children: Array<React.ReactElement>
-  ) => React.ReactElement | null;
-}
+import { EntityDiagramProps, ShadingValues } from './Types';
 
 interface CustomNode {
   node: HierarchyPointNode<StudyData>;
@@ -37,7 +18,7 @@ export default function MiniDiagram({
   highlightedEntityID,
   shadingData,
   renderNode,
-}: MiniDiagram) {
+}: EntityDiagramProps) {
   const data = hierarchy(treeData);
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
   const [tooltipLeft, setTooltipLeft] = useState<number>(0);
@@ -114,7 +95,7 @@ export default function MiniDiagram({
 
   return (
     <div className="mini-diagram">
-      <svg width="1000px" height="1000px">
+      <svg width="150px" height="300px">
         <defs>
           <marker
             id="arrow"
@@ -129,7 +110,7 @@ export default function MiniDiagram({
           </marker>
         </defs>
         {
-          // Node background definitions
+          // Node background shading definitions
           Array(11)
             .fill(null)
             .map((_, index) => (
