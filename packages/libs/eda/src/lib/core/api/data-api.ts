@@ -93,6 +93,7 @@ const HistogramResponseData = array(
     type({
       binLabel: array(string),
       binStart: array(string),
+      binEnd: array(string),
       value: array(number),
     }),
     partial({
@@ -106,7 +107,7 @@ const HistogramResponseData = array(
 );
 
 const HistogramResponseBaseConfig = type({
-  incompleteCases: number,
+  incompleteCases: array(number),
   binSlider: type({
     min: number,
     max: number,
@@ -171,16 +172,16 @@ export interface BarplotRequestParams {
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
 export const BarplotResponse = type({
   config: type({
-    incompleteCases: number,
+    incompleteCases: array(number),
     xVariableDetails: type({
       variableId: string,
-      // entityId: type({}), // checking with Danielle about this
+      entityId: string,
     }),
   }),
   data: array(
     type({
-      label: string,
-      value: number,
+      label: array(string),
+      value: array(number),
     })
   ),
 });

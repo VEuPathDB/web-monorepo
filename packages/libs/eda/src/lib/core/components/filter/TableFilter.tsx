@@ -78,22 +78,32 @@ export function TableFilter({
           });
         }
       );
+      const fgValueByLabel = Object.fromEntries(
+        distribution.foreground.data[0].label.map((label, index) => [
+          label,
+          distribution.foreground.data[0].value[index] ?? 0,
+        ])
+      );
+      const bgValueByLabel = Object.fromEntries(
+        distribution.background.data[0].label.map((label, index) => [
+          label,
+          distribution.background.data[0].value[index] ?? 0,
+        ])
+      );
       return {
         // first two are used to make sure we're showing the correct distrubution
         entityId: entity.id,
         variableId: variable.id,
-        distribution: zip(
-          distribution.foreground.data,
-          distribution.background.data
-        ).map(([fgEntry, bgEntry]) => ({
-          value: fgEntry?.label || bgEntry?.label || '',
-          count: bgEntry?.value || 0,
-          filteredCount: fgEntry?.value || 0,
+        distribution: Object.keys(bgValueByLabel).map((label) => ({
+          value: label,
+          count: bgValueByLabel[label],
+          filteredCount: fgValueByLabel[label] ?? 0,
         })),
         entitiesCount:
-          totalEntityCount - distribution.background.config.incompleteCases,
+          totalEntityCount - distribution.background.config.incompleteCases[0],
         filteredEntitiesCount:
-          filteredEntityCount - distribution.foreground.config.incompleteCases,
+          filteredEntityCount -
+          distribution.foreground.config.incompleteCases[0],
       };
     }, [
       entity.id,

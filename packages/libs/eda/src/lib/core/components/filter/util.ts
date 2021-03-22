@@ -23,10 +23,14 @@ export async function getDistribution<T>(
   const foregroundFilters = filters?.filter(
     (f) => f.entityId !== entityId || f.variableId !== variableId
   );
-  const background = await fetchSummary([]);
-  const foreground = foregroundFilters?.length
-    ? await fetchSummary(foregroundFilters)
-    : background;
+  const background$ = fetchSummary([]);
+  const foreground$ = foregroundFilters?.length
+    ? fetchSummary(foregroundFilters)
+    : background$;
+  const [background, foreground] = await Promise.all([
+    background$,
+    foreground$,
+  ]);
   return {
     background,
     foreground,

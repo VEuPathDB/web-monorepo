@@ -24,7 +24,11 @@ interface StudyState {
 
 export const StudyContext = createContext<StudyState | undefined>(undefined);
 
-export function useWdkStudyRecord(datasetId: string) {
+interface HookValue {
+  studyRecordClass: StudyRecordClass;
+  studyRecord: StudyRecord;
+}
+export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
   return useWdkServiceWithRefresh(
     async (wdkService) => {
       const studyRecordClass = await wdkService.findRecordClass(
