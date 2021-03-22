@@ -27,31 +27,37 @@ import {
   DateRangeInput,
 } from '../widgets/NumberAndDateRangeInputs';
 
+/**
+ * Props for histogram controls.
+ *
+ * The presence or absence of an optional callback will
+ * determine if that control is displayed.
+ */
 export type HistogramControlsProps = {
   /** Label for control panel. Optional. */
   label?: string;
   /** Currently selected bar layout. */
   barLayout: string;
   /** Function to invoke when barlayout changes. */
-  onBarLayoutChange: (layout: 'overlay' | 'stack') => void;
+  onBarLayoutChange?: (layout: 'overlay' | 'stack') => void;
   /** Whether or not to display the plot legend. */
   displayLegend: boolean;
   /** Action to take on display legend change. */
-  toggleDisplayLegend: (displayLegend: boolean) => void;
+  toggleDisplayLegend?: (displayLegend: boolean) => void;
   /** Whether or not to display the additionally controls that
    * may be provided by the charting library used to generate the plot.
    * For example, Plot.ly controls.*/
   displayLibraryControls: boolean;
   /** Action to take on display library controls change. */
-  toggleLibraryControls: (displayLegend: boolean) => void;
+  toggleLibraryControls?: (displayLegend: boolean) => void;
   /** Current histogram opacity. */
   opacity: number;
   /** Function to invoke when opacity changes. */
-  onOpacityChange: (opacity: number) => void;
+  onOpacityChange?: (opacity: number) => void;
   /** The current orientation of the plot.  */
   orientation: OrientationOptions;
   /** Function to invoke when orientation changes. */
-  toggleOrientation: (orientation: string) => void;
+  toggleOrientation?: (orientation: string) => void;
   /** Type of x-variable 'number' or 'date' */
   valueType?: 'number' | 'date';
   /** Available unit options by which to bin data. */
@@ -63,7 +69,7 @@ export type HistogramControlsProps = {
   /** The current binWidth */
   binWidth: NumberOrTimeDelta;
   /** Function to invoke when bin width changes. */
-  onBinWidthChange: (params: {
+  onBinWidthChange?: (params: {
     binWidth: NumberOrTimeDelta;
     selectedUnit?: string;
   }) => void;
@@ -77,8 +83,6 @@ export type HistogramControlsProps = {
   onSelectedRangeChange?: (newRange: NumberOrDateRange) => void;
   /** Min and max allowed values for the selected range. Optional */
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
-  /** Show the range controls */
-  displaySelectedRangeControls?: boolean;
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
   /** Color to use as an accent in the control panel. Will accept any
@@ -118,7 +122,6 @@ export default function HistogramControls({
   selectedRange,
   onSelectedRangeChange,
   selectedRangeBounds,
-  displaySelectedRangeControls,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -164,17 +167,21 @@ export default function HistogramControls({
           rowGap: 15,
         }}
       >
-        <OrientationToggle
-          orientation={orientation}
-          onOrientationChange={toggleOrientation}
-        />
-        <ButtonGroup
-          label="Bar Layout"
-          options={['overlay', 'stack']}
-          selectedOption={barLayout}
-          // @ts-ignore
-          onOptionSelected={onBarLayoutChange}
-        />
+        {toggleOrientation && (
+          <OrientationToggle
+            orientation={orientation}
+            onOrientationChange={toggleOrientation}
+          />
+        )}
+        {onBarLayoutChange && (
+          <ButtonGroup
+            label="Bar Layout"
+            options={['overlay', 'stack']}
+            selectedOption={barLayout}
+            // @ts-ignore
+            onOptionSelected={onBarLayoutChange}
+          />
+        )}
         {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
           <ButtonGroup
             label="Data Units"
@@ -183,7 +190,7 @@ export default function HistogramControls({
             onOptionSelected={onSelectedUnitChange}
           />
         ) : null}
-        {displaySelectedRangeControls ? (
+        {onSelectedRangeChange ? (
           valueType !== undefined && valueType === 'date' ? (
             <DateRangeInput
               label="Selected Range"
@@ -212,57 +219,65 @@ export default function HistogramControls({
           rowGap: 5,
         }}
       >
-        <OpacitySlider
-          value={opacity}
-          onValueChange={onOpacityChange}
-          color={accentColor}
-        />
-        <SliderWidget
-          label={`Bin Width${
-            valueType !== undefined && valueType === 'date'
-              ? ' (' + (binWidth as TimeDelta)[1] + ')'
-              : ''
-          }`}
-          minimum={binWidthRange.min}
-          maximum={binWidthRange.max}
-          step={
-            valueType !== undefined && valueType === 'date'
-              ? (binWidth as TimeDelta)[0]
-              : (binWidthStep as number)
-          }
-          value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
-          onChange={(newValue: number) => {
-            onBinWidthChange({
-              binWidth:
-                valueType !== undefined && valueType === 'date'
-                  ? ([newValue, selectedUnit] as TimeDelta)
-                  : newValue,
-              selectedUnit,
-            });
-          }}
-        />
+        {onOpacityChange && (
+          <OpacitySlider
+            value={opacity}
+            onValueChange={onOpacityChange}
+            color={accentColor}
+          />
+        )}
+        {onBinWidthChange && (
+          <SliderWidget
+            label={`Bin Width${
+              valueType !== undefined && valueType === 'date'
+                ? ' (' + (binWidth as TimeDelta)[1] + ')'
+                : ''
+            }`}
+            minimum={binWidthRange.min}
+            maximum={binWidthRange.max}
+            step={
+              valueType !== undefined && valueType === 'date'
+                ? (binWidth as TimeDelta)[0]
+                : (binWidthStep as number)
+            }
+            value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
+            onChange={(newValue: number) => {
+              onBinWidthChange({
+                binWidth:
+                  valueType !== undefined && valueType === 'date'
+                    ? ([newValue, selectedUnit] as TimeDelta)
+                    : newValue,
+                selectedUnit,
+              });
+            }}
+          />
+        )}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 5 }}>
-        <Switch
-          label="Legend"
-          color={accentColor}
-          state={displayLegend}
-          // The stinky use of `any` here comes from
-          // an incomplete type definition in the
-          // material UI library.
-          onStateChange={(event: any) =>
-            toggleDisplayLegend(event.target.checked)
-          }
-          containerStyles={{ paddingRight: 25 }}
-        />
-        <Switch
-          label="Plot.ly Controls"
-          color={accentColor}
-          state={displayLibraryControls}
-          onStateChange={(event: any) =>
-            toggleLibraryControls(event.target.checked)
-          }
-        />
+        {toggleDisplayLegend && (
+          <Switch
+            label="Legend"
+            color={accentColor}
+            state={displayLegend}
+            // The stinky use of `any` here comes from
+            // an incomplete type definition in the
+            // material UI library.
+            onStateChange={(event: any) =>
+              toggleDisplayLegend(event.target.checked)
+            }
+            containerStyles={{ paddingRight: 25 }}
+          />
+        )}
+        {toggleLibraryControls && (
+          <Switch
+            label="Plot.ly Controls"
+            color={accentColor}
+            state={displayLibraryControls}
+            onStateChange={(event: any) =>
+              toggleLibraryControls(event.target.checked)
+            }
+          />
+        )}
       </div>
 
       {errorStacks.map(({ error, occurences }, index) => (
