@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+import { useWdkEffect } from '@veupathdb/wdk-client/lib/Service/WdkService';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -15,7 +16,10 @@ import {
   renderNode,
   searchPredicate,
 } from '../utils/configTrees';
-import { OrganismPreference } from '../utils/preferredOrganisms';
+import {
+  OrganismPreference,
+  updatePreferredOrganisms,
+} from '../utils/preferredOrganisms';
 
 import './PreferredOrganismsConfig.scss';
 
@@ -59,6 +63,13 @@ export function PreferredOrganismsConfig({
   const previewTree = useMemo(
     () => makePreviewTree(organismTree, configSelection),
     [organismTree, configSelection]
+  );
+
+  useWdkEffect(
+    (wdkService) => {
+      updatePreferredOrganisms(wdkService, configSelection);
+    },
+    [configSelection]
   );
 
   return (
