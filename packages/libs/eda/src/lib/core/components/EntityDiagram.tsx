@@ -1,8 +1,12 @@
 import { useStudyMetadata } from '../hooks/workspace';
 import { useEntityCounts } from '../hooks/entityCounts';
 import { SessionState } from '../../core';
-import MiniDiagram from '@veupathdb/components/src/EntityDiagram/MiniDiagram';
-import ExpandedDiagram from '@veupathdb/components/src/EntityDiagram/ExpandedDiagram';
+import MiniDiagram from '@veupathdb/components/lib/EntityDiagram/MiniDiagram';
+import ExpandedDiagram from '@veupathdb/components/lib/EntityDiagram/ExpandedDiagram';
+import {
+  ShadingData,
+  ShadingValue,
+} from '@veupathdb/components/lib/EntityDiagram/Types';
 import { StudyEntity } from '../types/study';
 import { VariableLink } from './VariableLink';
 
@@ -23,52 +27,50 @@ export function EntityDiagram(props: Props) {
     session?.filters
   );
 
-  const commonProps = {
+  const shadingData: ShadingData = {};
+
+  if (counts && filteredCounts) {
+    Object.keys(counts).forEach((key, i) => {
+      shadingData[key] = {
+        value: Math.floor(
+          (filteredCounts[key] / counts[key]) * 10
+        ) as ShadingValue,
+      };
+    });
+  } else {
+    console.log('Could not retrieve entity counts.');
+  }
+
+  // Renders a VariableLink with optional children passed through
+  const renderNode = (
+    node: StudyEntity,
+    children?: Array<React.ReactElement>
+  ) => {
+    const variable = node.variables.find(
+      (variable) => variable.displayType != null
+    );
+    if (variable == null) return null;
+    return (
+      <VariableLink
+        entityId={node.id}
+        variableId={variable.id}
+        children={children}
+        replace={true}
+      ></VariableLink>
+    );
+  };
+
+  const diagramProps = {
     treeData: studyMetadata.rootEntity,
     highlightedEntityID: selectedEntity,
     orientation: orientation,
+    shadingData: shadingData,
+    renderNode: renderNode,
   };
 
   if (expanded) {
-    const shadingData: {
-      [index: string]: { value: number; color?: string };
-    } = {};
-
-    if (counts && filteredCounts) {
-      Object.keys(counts).forEach((key, i) => {
-        shadingData[key] = {
-          value: Math.floor((filteredCounts[key] / counts[key]) * 10),
-        };
-      });
-    } else {
-      console.log('Could not retrieve entity counts.');
-    }
-
-    const renderNode = (
-      node: StudyEntity,
-      children?: Array<React.ReactElement>
-    ) => {
-      const variable = node.variables.find(
-        (variable) => variable.displayType != null
-      );
-      if (variable == null) return null;
-      return (
-        <VariableLink
-          entityId={node.id}
-          variableId={variable.id}
-          children={children}
-        ></VariableLink>
-      );
-    };
-
-    return (
-      <ExpandedDiagram
-        {...commonProps}
-        shadingData={shadingData}
-        renderNode={renderNode}
-      />
-    );
+    return <ExpandedDiagram {...diagramProps} />;
   } else {
-    return <MiniDiagram {...commonProps} />;
+    return <MiniDiagram {...diagramProps} />;
   }
 }
