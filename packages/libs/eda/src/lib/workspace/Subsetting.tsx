@@ -1,4 +1,5 @@
 import {
+  EntityDiagram,
   SessionState,
   StudyEntity,
   StudyVariable,
@@ -79,31 +80,12 @@ export function Subsetting(props: Props) {
     <div className={cx('-Subsetting')}>
       <div>
         <h2>ENTITIES</h2>
-        <ul
-          style={{
-            border: '1px solid',
-            borderRadius: '.25em',
-            height: '80vh',
-            overflow: 'auto',
-            padding: '1em 2em',
-            margin: 0,
-          }}
-        >
-          {entities.map((e) => (
-            <li>
-              <VariableLink
-                replace
-                style={e.id === entity.id ? { fontWeight: 'bold' } : undefined}
-                entityId={e.id}
-                variableId={
-                  e.variables.find((v) => v.displayType != null)?.id ?? ''
-                }
-              >
-                {e.displayName}
-              </VariableLink>
-            </li>
-          ))}
-        </ul>
+        <EntityDiagram
+          sessionState={sessionState}
+          expanded={false}
+          orientation="vertical"
+          selectedEntity={entity.displayName}
+        />
       </div>
       <div>
         <h2>VARIABLES</h2>
