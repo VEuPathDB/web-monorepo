@@ -107,11 +107,19 @@ export function Subsetting(props: Props) {
       </div>
       <div>
         <h2>VARIABLES</h2>
-        <VariableTree
-          entities={entities}
-          entityId={entity.id}
-          variableId={variable.id}
-        />
+        {/* add box? */}
+        <div
+          style={{
+            border: '1px solid',
+            borderRadius: '.25em',
+          }}
+        >
+          <VariableTree
+            entities={entities}
+            entityId={entity.id}
+            variableId={variable.id}
+          />
+        </div>
         {/* <ul
           style={{
             border: '1px solid',

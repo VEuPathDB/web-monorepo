@@ -5,6 +5,11 @@ import { useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import { StudyEntity } from '../types/study';
 import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
+//import css for coloring activeField in variable tree
+import '../../workspace/VariableTreeCSS.css';
+//import VariableList that is a copy of FieldList
+import VariableList from '../../workspace/VariableList';
+
 interface Props {
   entities: StudyEntity[];
   entityId: string;
@@ -76,7 +81,7 @@ export function VariableTree(props: Props) {
   const valuesMap: Record<string, string> = {};
 
   return (
-    <FieldList
+    <VariableList
       activeField={activeField}
       onActiveFieldChange={(term: string) => {
         history.replace(`../${term}`);
