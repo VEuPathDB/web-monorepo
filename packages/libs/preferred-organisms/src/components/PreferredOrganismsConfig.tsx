@@ -7,6 +7,7 @@ import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
+  countAvailableOrganisms,
   getNodeChildren,
   getNodeId,
   makeInitialConfigSelection,
@@ -26,6 +27,11 @@ interface Props {
 }
 
 export function PreferredOrganismsConfig({ organismTree, projectId }: Props) {
+  const availableOrganismsCount = useMemo(
+    () => countAvailableOrganisms(organismTree),
+    [organismTree]
+  );
+
   const initialConfigSelection = useMemo(
     () => makeInitialConfigSelection(organismTree),
     [organismTree]
@@ -58,35 +64,61 @@ export function PreferredOrganismsConfig({ organismTree, projectId }: Props) {
         Set your <span className={cx('--InlineTitle')}>My Organisms</span> list
         in order to constrain the taxa you see on various pages in {projectId}.
       </p>
-      <CheckboxTree<TreeBoxVocabNode>
-        tree={organismTree}
-        getNodeId={getNodeId}
-        getNodeChildren={getNodeChildren}
-        isSearchable
-        searchTerm={configFilterTerm}
-        onSearchTermChange={setConfigFilterTerm}
-        searchPredicate={searchPredicate}
-        searchBoxHelp={makeSearchHelpText('the list below')}
-        searchBoxPlaceholder="Type a taxonomic name"
-        renderNode={renderNode}
-        expandedList={configExpansion}
-        onExpansionChange={setConfigExpansion}
-        shouldExpandDescendantsWithOneChild
-        isSelectable
-        selectedList={configSelection}
-        onSelectionChange={setConfigSelection}
-        linksPosition={CheckboxTree.LinkPlacement.Both}
-      />
-      <CheckboxTree<TreeBoxVocabNode>
-        tree={previewTree}
-        getNodeId={getNodeId}
-        getNodeChildren={getNodeChildren}
-        renderNode={renderNode}
-        expandedList={previewExpansion}
-        onExpansionChange={setPreviewExpansion}
-        shouldExpandDescendantsWithOneChild
-        linksPosition={CheckboxTree.LinkPlacement.None}
-      />
+      <div className={cx('--Main')}>
+        <div className={cx('--Selections')}>
+          <h2>Choose taxa or organisms to keep</h2>
+          <CheckboxTree<TreeBoxVocabNode>
+            tree={organismTree}
+            getNodeId={getNodeId}
+            getNodeChildren={getNodeChildren}
+            isSearchable
+            searchTerm={configFilterTerm}
+            onSearchTermChange={setConfigFilterTerm}
+            searchPredicate={searchPredicate}
+            searchBoxHelp={makeSearchHelpText('the list below')}
+            searchBoxPlaceholder="Type a taxonomic name"
+            renderNode={renderNode}
+            expandedList={configExpansion}
+            onExpansionChange={setConfigExpansion}
+            shouldExpandDescendantsWithOneChild
+            isSelectable
+            selectedList={configSelection}
+            onSelectionChange={setConfigSelection}
+            linksPosition={CheckboxTree.LinkPlacement.Both}
+          />
+        </div>
+        <div className={cx('--Preview')}>
+          <h2>
+            Preview of <span className={cx('--InlineTitle')}>My Organisms</span>{' '}
+            (
+            <span
+              className={cx(
+                '--SelectionCount',
+                configSelection.length === 0 && 'empty'
+              )}
+            >
+              {configSelection.length}
+            </span>{' '}
+            of {availableOrganismsCount})
+          </h2>
+          {configSelection.length === 0 ? (
+            <div className={cx('--NoPreferencesSelected')}>
+              Please select at least one organism
+            </div>
+          ) : (
+            <CheckboxTree<TreeBoxVocabNode>
+              tree={previewTree}
+              getNodeId={getNodeId}
+              getNodeChildren={getNodeChildren}
+              renderNode={renderNode}
+              expandedList={previewExpansion}
+              onExpansionChange={setPreviewExpansion}
+              shouldExpandDescendantsWithOneChild
+              linksPosition={CheckboxTree.LinkPlacement.None}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

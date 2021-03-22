@@ -1,4 +1,42 @@
+$red: #cc0000;
+
 .PreferredOrganismsConfig {
+  &--Main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+    align-items: flex-start;
+  }
+
+  &--Main > * {
+    padding: 0em 2em 1em 2em;
+  }
+
+  &--Preview {
+    background-color: #eee;
+
+    .wdk-CheckboxTree {
+      background-color: white;
+      padding: 0.5em;
+    }
+  }
+
+  &--SelectionCount__empty {
+    color: $red;
+  }
+
+  &--NoPreferencesSelected {
+    font-size: 1.2em;
+    font-style: italic;
+    background-color: white;
+    color: $red;
+    padding: 1em;
+  }
+
+  h2 {
+    font-weight: 400;
+  }
+
   &--InlineTitle {
     font-weight: bold;
   }
