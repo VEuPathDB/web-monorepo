@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import MiniDiagram from './MiniDiagram';
 import ExpandedDiagram from './ExpandedDiagram';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { StudyData } from './Types';
+import { StudyData, ShadingData } from './Types';
 import './diagram.css';
 
 export default {
@@ -10,7 +10,9 @@ export default {
 };
 
 export const EntityDiagram = () => {
-  const [orientation, setOrientation] = useState<string>('vertical');
+  const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>(
+    'vertical'
+  );
   const [expanded, setExpanded] = useState<boolean>(false);
 
   const rootEntity: StudyData = {
@@ -160,26 +162,21 @@ export const EntityDiagram = () => {
     rootEntity: rootEntity,
   };
 
-  const shadingData = {
+  const shadingData: ShadingData = {
     GEMS_House: {
       value: 1,
-      color: '#e4c8c8',
     },
     GEMS_HouseObs: {
       value: 2,
-      color: '#e4c8c8',
     },
     GEMS_Part: {
       value: 3,
-      color: '#e4c8c8',
     },
     GEMS_PartObs: {
       value: 4,
-      color: '#e4c8c8',
     },
     GEMS_Treat: {
       value: 5,
-      color: '#e4c8c8',
     },
   };
 
