@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import * as t from 'io-ts';
 import { Filter } from './filter';
+import { Visualization } from './visualization';
 
 export type DerviedVariable = t.TypeOf<typeof DerviedVariable>;
 export const DerviedVariable = t.unknown;
 
 export type VariableUISetting = t.TypeOf<typeof VariableUISetting>;
 export const VariableUISetting = t.UnknownRecord;
-
-export type Visualization = t.TypeOf<typeof Visualization>;
-export const Visualization = t.unknown;
 
 export type NewSession = t.TypeOf<typeof NewSession>;
 export const NewSession = t.type({
