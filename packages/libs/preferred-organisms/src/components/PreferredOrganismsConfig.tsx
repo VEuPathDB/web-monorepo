@@ -22,9 +22,10 @@ const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
 interface Props {
   organismTree: Node<TreeBoxVocabNode>;
+  projectId: string;
 }
 
-export function PreferredOrganismsConfig({ organismTree }: Props) {
+export function PreferredOrganismsConfig({ organismTree, projectId }: Props) {
   const initialConfigSelection = useMemo(
     () => makeInitialConfigSelection(organismTree),
     [organismTree]
@@ -53,6 +54,10 @@ export function PreferredOrganismsConfig({ organismTree }: Props) {
   return (
     <div className={cx()}>
       <h1>Configure My Organisms</h1>
+      <p>
+        Set your <span className={cx('--InlineTitle')}>My Organisms</span> list
+        in order to constrain the taxa you see on various pages in {projectId}.
+      </p>
       <CheckboxTree<TreeBoxVocabNode>
         tree={organismTree}
         getNodeId={getNodeId}
