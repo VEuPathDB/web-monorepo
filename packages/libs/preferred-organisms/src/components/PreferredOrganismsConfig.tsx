@@ -10,32 +10,36 @@ import {
   countAvailableOrganisms,
   getNodeChildren,
   getNodeId,
-  makeInitialConfigSelection,
   makeInitialPreviewExpansion,
   makePreviewTree,
   renderNode,
   searchPredicate,
 } from '../utils/configTrees';
+import { OrganismPreference } from '../utils/preferredOrganisms';
 
 import './PreferredOrganismsConfig.scss';
 
 const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
 interface Props {
+  organismPreference: OrganismPreference;
   organismTree: Node<TreeBoxVocabNode>;
   projectId: string;
 }
 
-export function PreferredOrganismsConfig({ organismTree, projectId }: Props) {
+export function PreferredOrganismsConfig({
+  organismPreference,
+  organismTree,
+  projectId,
+}: Props) {
   const availableOrganismsCount = useMemo(
     () => countAvailableOrganisms(organismTree),
     [organismTree]
   );
 
-  const initialConfigSelection = useMemo(
-    () => makeInitialConfigSelection(organismTree),
-    [organismTree]
-  );
+  const initialConfigSelection = useMemo(() => organismPreference.organisms, [
+    organismPreference,
+  ]);
 
   const initialPreviewExpansion = useMemo(
     () => makeInitialPreviewExpansion(organismTree),

@@ -3,9 +3,12 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { useOrganismTree } from '@veupathdb/web-common/lib/hooks/organisms';
 
 import { PreferredOrganismsConfig } from '../components/PreferredOrganismsConfig';
+import { useOrganismPerference } from '../hooks/preferredOrganisms';
 
 export function PreferredOrganismsConfigController() {
   useSetDocumentTitle('Configure My Organisms');
+
+  const organismPreference = useOrganismPerference();
 
   const organismTree = useOrganismTree(true);
 
@@ -13,8 +16,11 @@ export function PreferredOrganismsConfigController() {
     return (await wdkService.getConfig()).projectId;
   }, []);
 
-  return organismTree == null || projectId == null ? null : (
+  return organismPreference == null ||
+    organismTree == null ||
+    projectId == null ? null : (
     <PreferredOrganismsConfig
+      organismPreference={organismPreference}
       organismTree={organismTree}
       projectId={projectId}
     />
