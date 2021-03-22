@@ -116,6 +116,7 @@ export function Subsetting(props: Props) {
             height: '80vh',
             width: '30em',
             overflow: 'auto',
+            position: 'relative',
           }}
         >
           <VariableTree
