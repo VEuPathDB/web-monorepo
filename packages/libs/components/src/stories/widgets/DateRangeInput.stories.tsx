@@ -26,7 +26,7 @@ const Template: Story<DateRangeInputProps> = (args) => {
 
 export const Basic = Template.bind({});
 Basic.args = {
-  defaultRange: { min: new Date('2001-01-01'), max: new Date('2001-01-31') },
+  range: { min: new Date('2001-01-01'), max: new Date('2001-01-31') },
 };
 
 export const Labelled = Template.bind({});
@@ -38,14 +38,14 @@ Labelled.args = {
 export const Bounded = Template.bind({});
 Bounded.args = {
   label: 'Bounded (2001-01-01 to 2001-12-31)',
-  defaultRange: { min: new Date('2001-01-01'), max: new Date('2001-01-31') },
+  range: { min: new Date('2001-01-01'), max: new Date('2001-01-31') },
   rangeBounds: { min: new Date('2001-01-01'), max: new Date('2001-12-31') },
 };
 
 export const FullyLabelled = Template.bind({});
 FullyLabelled.args = {
   label: 'Select a range between 2001-01-01 and 2001-12-31',
-  defaultRange: { min: new Date('2001-01-01'), max: new Date('2001-01-31') },
+  range: { min: new Date('2001-01-01'), max: new Date('2001-01-31') },
   rangeBounds: { min: new Date('2001-01-01'), max: new Date('2001-12-31') },
   lowerLabel: 'Lower bound',
   upperLabel: 'Upper bound',

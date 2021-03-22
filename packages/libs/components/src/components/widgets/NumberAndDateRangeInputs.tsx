@@ -11,12 +11,10 @@ import {
 } from '../../types/general';
 
 export type BaseProps<M extends NumberOrDateRange> = {
-  /** Default value for the range. */
-  defaultRange: M;
+  /** Externally controlled range. */
+  range?: M;
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
   rangeBounds?: M;
-  /** Externally controlled range. Optional but recommended. */
-  controlledRange?: M;
   /** Function to invoke when range changes. */
   onRangeChange?: (newRange: NumberOrDateRange) => void;
   /** UI Label for the widget. Optional */
@@ -55,9 +53,8 @@ type BaseInputProps =
  * Not currently exported. But could be if needed.
  */
 function BaseInput({
-  defaultRange,
+  range,
   rangeBounds,
-  controlledRange,
   onRangeChange,
   label,
   lowerLabel = 'Min',
@@ -65,30 +62,9 @@ function BaseInput({
   valueType,
   containerStyles,
 }: BaseInputProps) {
-  // lower and upper ranges for internal/uncontrolled operation
-  const [lower, setLower] = useState<NumberOrDate>(defaultRange.min);
-  const [upper, setUpper] = useState<NumberOrDate>(defaultRange.max);
-
   const [focused, setFocused] = useState(false);
 
-  // listen for changes to the values of the two NumberInputs
-  // and communicate outwards via onRangeChange
-  useEffect(() => {
-    if (onRangeChange && lower !== undefined && upper !== undefined) {
-      onRangeChange({ min: lower, max: upper } as NumberOrDateRange);
-    }
-  }, [lower, upper]);
-
-  // listen for changes to the controlledRange min and max (if provided)
-  // and communicate those inwards to lower and upper
-  useEffect(() => {
-    if (controlledRange !== undefined) setLower(controlledRange.min);
-  }, [controlledRange?.min]);
-
-  useEffect(() => {
-    if (controlledRange !== undefined) setUpper(controlledRange.max);
-  }, [controlledRange?.max]);
-
+  const { min, max } = range ?? {};
   return (
     <div
       style={{ ...containerStyles }}
@@ -106,22 +82,24 @@ function BaseInput({
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         {valueType === 'number' ? (
           <NumberInput
-            controlledValue={lower as number}
+            value={min as number}
             minValue={rangeBounds?.min as number}
-            maxValue={(upper ?? rangeBounds?.max) as number}
+            maxValue={(max ?? rangeBounds?.max) as number}
             label={lowerLabel}
             onValueChange={(newValue) => {
-              if (newValue !== undefined) setLower(newValue as number);
+              if (newValue !== undefined && onRangeChange)
+                onRangeChange({ min: newValue, max } as NumberRange);
             }}
           />
         ) : (
           <DateInput
-            controlledValue={lower as Date}
+            value={min as Date}
             minValue={rangeBounds?.min as Date}
-            maxValue={(upper ?? rangeBounds?.max) as Date}
+            maxValue={(max ?? rangeBounds?.max) as Date}
             label={lowerLabel}
             onValueChange={(newValue) => {
-              if (newValue !== undefined) setLower(newValue as Date);
+              if (newValue !== undefined && onRangeChange)
+                onRangeChange({ min: newValue, max } as DateRange);
             }}
           />
         )}
@@ -137,22 +115,24 @@ function BaseInput({
         </div>
         {valueType === 'number' ? (
           <NumberInput
-            controlledValue={upper as number}
-            minValue={(lower ?? rangeBounds?.min) as number}
+            value={max as number}
+            minValue={(min ?? rangeBounds?.min) as number}
             maxValue={rangeBounds?.max as number}
             label={upperLabel}
             onValueChange={(newValue) => {
-              if (newValue !== undefined) setUpper(newValue as number);
+              if (newValue !== undefined && onRangeChange)
+                onRangeChange({ min, max: newValue } as NumberRange);
             }}
           />
         ) : (
           <DateInput
-            controlledValue={upper as Date}
-            minValue={(lower ?? rangeBounds?.min) as Date}
+            value={max as Date}
+            minValue={(min ?? rangeBounds?.min) as Date}
             maxValue={rangeBounds?.max as Date}
             label={upperLabel}
             onValueChange={(newValue) => {
-              if (newValue !== undefined) setUpper(newValue as Date);
+              if (newValue !== undefined && onRangeChange)
+                onRangeChange({ min, max: newValue } as DateRange);
             }}
           />
         )}

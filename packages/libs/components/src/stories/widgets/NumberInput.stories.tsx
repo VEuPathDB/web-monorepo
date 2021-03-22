@@ -25,7 +25,7 @@ const Template: Story<NumberInputProps> = (args) => {
 
 export const Basic = Template.bind({});
 Basic.args = {
-  defaultValue: 42,
+  value: 42,
 };
 
 export const Labelled = Template.bind({});
@@ -56,7 +56,7 @@ Bounded.args = {
 
 export const BoundedInitialized = Template.bind({});
 BoundedInitialized.args = {
-  defaultValue: 3,
+  value: 3,
   label: '0 <= x <= 5',
   minValue: 0,
   maxValue: 5,
@@ -67,7 +67,7 @@ const ControlledTemplate: Story<NumberInputProps> = (args) => {
   return (
     <NumberInput
       {...args}
-      controlledValue={value}
+      value={value}
       onValueChange={(newValue) => {
         console.log(`new value = ${newValue}`);
         setValue(newValue as number);
@@ -95,7 +95,7 @@ export const ControlledLinkedPair: Story = () => {
   return (
     <>
       <NumberInput
-        controlledValue={linkedValue}
+        value={linkedValue}
         label="A"
         onValueChange={(newValue) => {
           console.log(`A new value = ${newValue}`);
@@ -104,7 +104,7 @@ export const ControlledLinkedPair: Story = () => {
         containerStyles={{ margin: 25 }}
       />
       <NumberInput
-        controlledValue={linkedValue}
+        value={linkedValue}
         label="B"
         onValueChange={(newValue) => {
           console.log(`B new value = ${newValue}`);
@@ -124,7 +124,7 @@ export const ControlledBounds: Story = () => {
   return (
     <>
       <NumberInput
-        controlledValue={value}
+        value={value}
         label={`Value (${min} <= x <= ${max})`}
         minValue={min}
         maxValue={max}
@@ -137,7 +137,7 @@ export const ControlledBounds: Story = () => {
         containerStyles={{ margin: 25 }}
       />
       <NumberInput
-        controlledValue={min}
+        value={min}
         maxValue={max}
         label="Min"
         onValueChange={(newValue) => {
@@ -146,7 +146,7 @@ export const ControlledBounds: Story = () => {
         containerStyles={{ margin: 25 }}
       />
       <NumberInput
-        controlledValue={max}
+        value={max}
         minValue={min}
         label="Max"
         onValueChange={(newValue) => {

@@ -183,21 +183,19 @@ export default function HistogramControls({
             onOptionSelected={onSelectedUnitChange}
           />
         ) : null}
-        {displaySelectedRangeControls && selectedRangeBounds ? (
+        {displaySelectedRangeControls ? (
           valueType !== undefined && valueType === 'date' ? (
             <DateRangeInput
               label="Selected Range"
-              defaultRange={selectedRangeBounds as DateRange}
               rangeBounds={selectedRangeBounds as DateRange}
-              controlledRange={selectedRange as DateRange}
+              range={selectedRange as DateRange}
               onRangeChange={onSelectedRangeChange}
             />
           ) : (
             <NumberRangeInput
               label="Selected Range"
-              defaultRange={selectedRangeBounds as NumberRange}
               rangeBounds={selectedRangeBounds as NumberRange}
-              controlledRange={selectedRange as NumberRange}
+              range={selectedRange as NumberRange}
               onRangeChange={onSelectedRangeChange}
             />
           )
