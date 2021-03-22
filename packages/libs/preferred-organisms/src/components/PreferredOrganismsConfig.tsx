@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -14,6 +15,10 @@ import {
   renderNode,
   searchPredicate,
 } from '../utils/configTrees';
+
+import './PreferredOrganismsConfig.scss';
+
+const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
 interface Props {
   organismTree: Node<TreeBoxVocabNode>;
@@ -46,7 +51,8 @@ export function PreferredOrganismsConfig({ organismTree }: Props) {
   );
 
   return (
-    <>
+    <div className={cx()}>
+      <h1>Configure My Organisms</h1>
       <CheckboxTree<TreeBoxVocabNode>
         tree={organismTree}
         getNodeId={getNodeId}
@@ -76,6 +82,6 @@ export function PreferredOrganismsConfig({ organismTree }: Props) {
         shouldExpandDescendantsWithOneChild
         linksPosition={CheckboxTree.LinkPlacement.None}
       />
-    </>
+    </div>
   );
 }
