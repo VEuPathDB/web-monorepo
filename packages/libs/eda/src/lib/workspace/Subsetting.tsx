@@ -13,6 +13,7 @@ import { cx } from './Utils';
 import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { VariableLink } from '../core/components/VariableLink';
+import { VariableTree } from '../core/components/VariableTree';
 
 interface RouteProps {
   sessionId: string;
@@ -68,11 +69,13 @@ interface Props {
 
 export function Subsetting(props: Props) {
   const { entity, entities, variable, sessionState } = props;
+  const history = useHistory();
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(sessionState.session?.filters);
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
   const filteredEntityCount =
     filteredCounts.value && filteredCounts.value[entity.id];
+
   return (
     <div className={cx('-Subsetting')}>
       <div>
@@ -86,7 +89,25 @@ export function Subsetting(props: Props) {
       </div>
       <div>
         <h2>VARIABLES</h2>
-        <ul
+        {/* add box? */}
+        <div
+          style={{
+            border: '1px solid',
+            borderRadius: '.25em',
+            padding: '.5em',
+            height: '80vh',
+            width: '30em',
+            overflow: 'auto',
+            position: 'relative',
+          }}
+        >
+          <VariableTree
+            entities={entities}
+            entityId={entity.id}
+            variableId={variable.id}
+          />
+        </div>
+        {/* <ul
           style={{
             border: '1px solid',
             borderRadius: '.25em',
@@ -113,7 +134,7 @@ export function Subsetting(props: Props) {
                 </li>
               )
           )}
-        </ul>
+        </ul> */}
       </div>
       <div>
         <Variable
