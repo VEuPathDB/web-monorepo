@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
-import { useWdkEffect } from '@veupathdb/wdk-client/lib/Service/WdkService';
+import { CheckboxTree, Link } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -16,34 +15,28 @@ import {
   renderNode,
   searchPredicate,
 } from '../utils/configTrees';
-import {
-  OrganismPreference,
-  updatePreferredOrganisms,
-} from '../utils/preferredOrganisms';
 
 import './PreferredOrganismsConfig.scss';
 
 const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
 interface Props {
-  organismPreference: OrganismPreference;
+  configSelection: string[];
   organismTree: Node<TreeBoxVocabNode>;
   projectId: string;
+  setConfigSelection: (newPreferredOrganisms: string[]) => void;
 }
 
 export function PreferredOrganismsConfig({
-  organismPreference,
+  configSelection,
   organismTree,
   projectId,
+  setConfigSelection,
 }: Props) {
   const availableOrganismsCount = useMemo(
     () => countAvailableOrganisms(organismTree),
     [organismTree]
   );
-
-  const initialConfigSelection = useMemo(() => organismPreference.organisms, [
-    organismPreference,
-  ]);
 
   const initialPreviewExpansion = useMemo(
     () => makeInitialPreviewExpansion(organismTree),
@@ -52,9 +45,6 @@ export function PreferredOrganismsConfig({
 
   const [configFilterTerm, setConfigFilterTerm] = useState('');
   const [configExpansion, setConfigExpansion] = useState<string[]>([]);
-  const [configSelection, setConfigSelection] = useState(
-    initialConfigSelection
-  );
 
   const [previewExpansion, setPreviewExpansion] = useState(
     initialPreviewExpansion
@@ -63,13 +53,6 @@ export function PreferredOrganismsConfig({
   const previewTree = useMemo(
     () => makePreviewTree(organismTree, configSelection),
     [organismTree, configSelection]
-  );
-
-  useWdkEffect(
-    (wdkService) => {
-      updatePreferredOrganisms(wdkService, configSelection);
-    },
-    [configSelection]
   );
 
   return (

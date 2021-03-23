@@ -1,28 +1,32 @@
-import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { useRecoilState, useRecoilValue } from 'recoil';
+
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { useOrganismTree } from '@veupathdb/web-common/lib/hooks/organisms';
 
 import { PreferredOrganismsConfig } from '../components/PreferredOrganismsConfig';
-import { useOrganismPerference } from '../hooks/preferredOrganisms';
+
+import {
+  organismTreeRecoilValue,
+  preferredOrganismsRecoilState,
+  projectIdRecoilValue,
+} from '../index';
 
 export function PreferredOrganismsConfigController() {
   useSetDocumentTitle('Configure My Organisms');
 
-  const organismPreference = useOrganismPerference();
+  const organismTreeValue = useRecoilValue(organismTreeRecoilValue);
 
-  const organismTree = useOrganismTree(true);
+  const [preferredOrganismsState, setPreferredOrganismsState] = useRecoilState(
+    preferredOrganismsRecoilState
+  );
 
-  const projectId = useWdkService(async (wdkService) => {
-    return (await wdkService.getConfig()).projectId;
-  }, []);
+  const projectIdValue = useRecoilValue(projectIdRecoilValue);
 
-  return organismPreference == null ||
-    organismTree == null ||
-    projectId == null ? null : (
+  return (
     <PreferredOrganismsConfig
-      organismPreference={organismPreference}
-      organismTree={organismTree}
-      projectId={projectId}
+      configSelection={preferredOrganismsState}
+      organismTree={organismTreeValue}
+      projectId={projectIdValue}
+      setConfigSelection={setPreferredOrganismsState}
     />
   );
 }
