@@ -115,7 +115,7 @@ export function Subsetting(props: Props) {
             padding: '.5em',
             height: '80vh',
             width: '30em',
-            overflow: 'auto',
+            // overflow: 'auto',
             position: 'relative',
           }}
         >

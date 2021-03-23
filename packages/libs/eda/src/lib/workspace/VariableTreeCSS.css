@@ -7,3 +7,15 @@
 .EDAWorkspace-Subsetting .wdk-AttributeFilterFieldParent__active {
   background: #bad6fc;
 }
+
+/* height of CheckboxTree - use vh */
+.EDAWorkspace-Subsetting .wdk-CheckboxTree {
+  height: 50vh;
+}
+
+/* configuring scrolling for CheckboxTree list only: anchoring search bar */
+.EDAWorkspace-Subsetting .wdk-CheckboxTree .wdk-CheckboxTreeList {
+  position: relative;
+  height: 100%;
+  overflow: auto;
+}
