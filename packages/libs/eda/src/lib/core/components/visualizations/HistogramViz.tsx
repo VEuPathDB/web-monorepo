@@ -229,7 +229,7 @@ export function histogramResponseToData(
     throw Error(`Expected one or more data series, but got zero`);
   return {
     series: response.data.map((data, index) => ({
-      name: `series ${index}`, // TO DO get from res
+      name: data.overlayVariableDetails?.value ?? `series ${index}`,
       // color: TO DO
       bins: data.value.map((_, index) => ({
         binStart: Number(data.binStart[index]),
