@@ -2,6 +2,7 @@ import { Filter as EdaFilter } from '../types/filter';
 import {
   DateMemberFilter,
   DateRangeFilter,
+  Field,
   Filter as WdkFilter,
   NumberRangeFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
@@ -92,20 +93,25 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
   } as WdkFilter;
 }
 
-export function toWdkVariableSummary(
-  foreground: DistributionResponse,
-  background: DistributionResponse,
-  variable: StudyVariable
-) {
-  const activeField = {
+export function edaVariableToWdkField(variable: StudyVariable): Field {
+  return {
     display: variable.displayName,
     isRange: variable.dataShape === 'continuous',
     parent: variable.parentId,
     precision: 1,
     term: variable.id,
-    type: variable.type,
+    type: variable.type !== 'category' ? variable.type : undefined,
     variableName: variable.providerLabel,
-  };
+    // cast to handle additional props `precision` and `variableName` that
+    // do not exist on the `Field` type
+  } as Field;
+}
+
+export function toWdkVariableSummary(
+  foreground: DistributionResponse,
+  background: DistributionResponse,
+  variable: StudyVariable
+) {
   return {
     distribution: Object.entries(background.distribution).map(
       ([value, count]) => ({
@@ -116,6 +122,6 @@ export function toWdkVariableSummary(
     ),
     entitiesCount: background.entitiesCount,
     filteredEntitiesCount: foreground.entitiesCount,
-    activeField,
+    activeField: edaVariableToWdkField(variable),
   };
 }

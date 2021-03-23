@@ -1,0 +1,9 @@
+/* background color for activeField */
+.EDAWorkspace-Subsetting .wdk-AttributeFilterFieldItem__active {
+  background: #eaeaea;
+}
+
+/* background color for the parent entity of the activeField */
+.EDAWorkspace-Subsetting .wdk-AttributeFilterFieldParent__active {
+  background: #bad6fc;
+}
