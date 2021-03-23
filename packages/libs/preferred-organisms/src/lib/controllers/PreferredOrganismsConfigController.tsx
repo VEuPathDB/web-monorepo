@@ -8,7 +8,7 @@ import {
   organismTreeRecoilValue,
   preferredOrganismsRecoilState,
   projectIdRecoilValue,
-} from '../index';
+} from '../../index';
 
 export function PreferredOrganismsConfigController() {
   useSetDocumentTitle('Configure My Organisms');

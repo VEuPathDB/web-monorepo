@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { CheckboxTree, Link } from '@veupathdb/wdk-client/lib/Components';
+import { CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';

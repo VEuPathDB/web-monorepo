@@ -9,14 +9,14 @@ import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
-import { PreferredOrganismsConfigController } from './controllers/PreferredOrganismsConfigController';
+import { PreferredOrganismsConfigController } from './lib/controllers/PreferredOrganismsConfigController';
 
 import { RecoilRoot } from 'recoil';
 
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 
-import { makePreferredOrganismsRecoilState } from './recoil-state/preferredOrganisms';
+import { makePreferredOrganismsRecoilState } from './lib/recoil-state/preferredOrganisms';
 
 const { wdkService }: { wdkService: WdkService } = initialize({
   rootUrl,
@@ -24,7 +24,11 @@ const { wdkService }: { wdkService: WdkService } = initialize({
   wrapRoutes: (routes: any): RouteEntry[] => [
     {
       path: '/',
-      component: (props: RouteComponentProps<void>) => <Home />,
+      component: (props: RouteComponentProps<void>) => (
+        <Suspense fallback={null}>
+          <Home />
+        </Suspense>
+      ),
     },
     {
       path: '/preferred-organisms',
