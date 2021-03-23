@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { CSSProperties, useCallback, useState } from 'react';
 import { SessionState, StudyEntity, StudyMetadata } from '../../../core';
 import Histogram, {
   HistogramProps,
@@ -42,67 +42,70 @@ export default function HistogramViz(props: Props) {
   const { id: studyId } = studyMetadata;
   const dataClient: DataClient = useDataClient();
 
-  // Entity and variable for main histogram x-axis variable
-  const [variable, entity] = [
-    vizState.independentVariable,
-    vizState.independentVariableEntity,
-  ];
+  const {
+    independentVariable,
+    independentVariableEntity,
+    overlayVariable,
+    overlayVariableEntity,
+  } = vizState;
 
-  // TO DO: if/when VariableTree can take a callback, use something like this
-  const onVariableChange = (
-    newEntity: StudyEntity,
-    newVariable: StudyVariable
-  ) => {
-    if (newEntity && newVariable) {
-      onVizStateChange({
-        ...vizState,
-        independentVariable: newVariable,
-        independentVariableEntity: newEntity,
-      });
+  const onVariableChange = (term: string) => {
+    if (term) {
+      const [newEntityId, newVariableId] = term.split('/');
+      const newEntity = entities.find((entity) => entity.id === newEntityId);
+      const newVariable = newEntity?.variables.find(
+        (variable) => variable.id === newVariableId
+      );
+      if (newEntity && newVariable) {
+        onVizStateChange({
+          ...vizState,
+          independentVariable: newVariable,
+          independentVariableEntity: newEntity,
+        });
+      }
     }
   };
 
-  // Entity and variable for the first 'overlay' stratification
-  const [overlayVariable, overlayEntity] = [
-    vizState.overlayVariable,
-    vizState.overlayVariableEntity,
-  ];
-  const onOverlayVariableChange = (
-    newEntity: StudyEntity,
-    newVariable: StudyVariable
-  ) => {
-    if (newEntity && newVariable) {
-      onVizStateChange({
-        ...vizState,
-        overlayVariable: newVariable,
-        overlayVariableEntity: newEntity,
-      });
+  const onOverlayVariableChange = (term: string) => {
+    if (term) {
+      const [newEntityId, newVariableId] = term.split('/');
+      const newEntity = entities.find((entity) => entity.id === newEntityId);
+      const newVariable = newEntity?.variables.find(
+        (variable) => variable.id === newVariableId
+      );
+      if (newEntity && newVariable) {
+        onVizStateChange({
+          ...vizState,
+          overlayVariable: newVariable,
+          overlayVariableEntity: newEntity,
+        });
+      }
     }
   };
 
   const getData = useCallback(
     async (dataParams?: GetDataParams): Promise<HistogramData> => {
-      if (!variable || !entity)
+      if (!independentVariable || !independentVariableEntity)
         return Promise.reject(new Error('Please choose a main variable'));
 
-      if (variable && !isHistogramVariable(variable))
+      if (independentVariable && !isHistogramVariable(independentVariable))
         return Promise.reject(
           new Error(
-            `Please choose another main variable. '${variable.displayName}' is not suitable for histograms`
+            `Please choose another main variable. '${independentVariable.displayName}' is not suitable for histograms`
           )
         );
 
       const params = getRequestParams(
         studyId,
         sessionState.session?.filters ?? [],
-        entity,
-        variable as HistogramVariable,
-        overlayEntity,
+        independentVariableEntity,
+        independentVariable,
+        overlayVariableEntity,
         overlayVariable,
         dataParams
       );
       const response =
-        variable.type === 'date'
+        independentVariable.type === 'date'
           ? dataClient.getDateHistogramBinWidth(
               params as DateHistogramRequestParams
             )
@@ -113,14 +116,24 @@ export default function HistogramViz(props: Props) {
     },
     [
       studyId,
-      entity,
-      variable,
+      independentVariableEntity,
+      independentVariable,
       dataClient,
       sessionState.session?.filters,
-      overlayEntity,
+      overlayVariableEntity,
       overlayVariable,
     ]
   );
+
+  const variableTreeContainerCSS: CSSProperties = {
+    border: '1px solid',
+    borderRadius: '.25em',
+    padding: '.5em',
+    height: '30vh',
+    width: '30em',
+    overflow: 'auto',
+    position: 'relative',
+  };
 
   const data = usePromise(getData);
   return (
@@ -128,19 +141,21 @@ export default function HistogramViz(props: Props) {
       <div>
         <h1>Histogram</h1>
         <h2>Choose the main variable</h2>
-        <div style={{ height: 200, overflow: 'auto' }}>
+        <div style={variableTreeContainerCSS}>
           <VariableTree
             entities={entities}
-            entityId={entity.id}
-            variableId={variable.id}
+            entityId={independentVariableEntity?.id}
+            variableId={independentVariable?.id}
+            onActiveFieldChange={onVariableChange}
           />
         </div>
         <h2>Choose the overlay variable</h2>
-        <div style={{ height: 200, overflow: 'auto' }}>
+        <div style={variableTreeContainerCSS}>
           <VariableTree
             entities={entities}
-            entityId={entity.id}
-            variableId={variable.id}
+            entityId={overlayVariableEntity?.id}
+            variableId={overlayVariable?.id}
+            onActiveFieldChange={onOverlayVariableChange}
           />
         </div>
       </div>

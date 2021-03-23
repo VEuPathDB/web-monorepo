@@ -2,7 +2,6 @@ import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/At
 import FieldList from '@veupathdb/wdk-client/lib/Components/AttributeFilter/FieldList';
 import { keyBy } from 'lodash';
 import { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
 import { StudyEntity } from '../types/study';
 import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 //import css for coloring activeField in variable tree
@@ -12,12 +11,13 @@ import VariableList from '../../workspace/VariableList';
 
 interface Props {
   entities: StudyEntity[];
-  entityId: string;
-  variableId: string;
+  entityId?: string;
+  variableId?: string;
+  /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
+  onActiveFieldChange: (term: string) => void;
 }
 export function VariableTree(props: Props) {
-  const { entities, entityId, variableId } = props;
-  const history = useHistory();
+  const { entities, entityId, variableId, onActiveFieldChange } = props;
   const fields = useMemo(() => {
     return entities.flatMap((entity) => {
       // Create a Set of variableId so we can lookup parentIds
@@ -71,7 +71,8 @@ export function VariableTree(props: Props) {
   const fieldsByTerm = useMemo(() => keyBy(fields, (f) => f.term), [fields]);
 
   // Lookup activeField
-  const activeField = fieldsByTerm[`${entityId}/${variableId}`];
+  const activeField =
+    entityId && variableId ? fieldsByTerm[`${entityId}/${variableId}`] : null;
 
   // TODO Populate valuesMap with properties of variables.
   // This is used by the search functionality of FieldList.
@@ -83,9 +84,7 @@ export function VariableTree(props: Props) {
   return (
     <VariableList
       activeField={activeField}
-      onActiveFieldChange={(term: string) => {
-        history.replace(`../${term}`);
-      }}
+      onActiveFieldChange={onActiveFieldChange}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
     />

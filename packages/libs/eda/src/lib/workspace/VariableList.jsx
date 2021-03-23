@@ -143,11 +143,13 @@ export default class VariableList extends React.Component {
             <FieldNode
               node={node}
               searchTerm={this.state.searchTerm}
-              isActive={node.field.term === activeField.term}
+              isActive={
+                activeField != null && node.field.term === activeField.term
+              }
               handleFieldSelect={this.handleFieldSelect}
               //add activefieldEntity prop (parent entity obtained from activeField)
               //alternatively, send activeField and isActive is directly checked at FieldNode
-              activeFieldEntity={activeField.term.split('/')[0]}
+              activeFieldEntity={activeField?.term.split('/')[0]}
             />
           )}
         />
@@ -214,7 +216,8 @@ function FieldNode({
         <div
           className={
             'wdk-Link wdk-AttributeFilterFieldParent' +
-            (node.field.term.split(':')[1] === activeFieldEntity
+            (activeFieldEntity &&
+            node.field.term.split(':')[1] === activeFieldEntity
               ? ' wdk-AttributeFilterFieldParent__active'
               : '')
           }
