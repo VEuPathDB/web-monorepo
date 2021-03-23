@@ -51,5 +51,8 @@ export interface EntityDiagramProps {
     node: StudyData,
     children?: Array<React.ReactElement>
   ) => React.ReactElement | null;
-  // size: {}
+  size: {
+    height: number;
+    width: number;
+  };
 }

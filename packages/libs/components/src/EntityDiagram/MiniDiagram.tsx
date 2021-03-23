@@ -18,6 +18,7 @@ export default function MiniDiagram({
   highlightedEntityID,
   shadingData,
   renderNode,
+  size,
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
@@ -26,10 +27,19 @@ export default function MiniDiagram({
   const [tooltipNode, setTooltipNode] = useState<null | HierarchyPointNode<
     StudyData
   >>(null);
-  function CustomNode({ node }: CustomNode) {
-    const width = 30;
-    const height = 20;
 
+  const nodeWidth = 30;
+  const nodeHeight = 20;
+  const nodeStrokeWidth = 1;
+  const treeWidth = orientation === 'horizontal' ? size.height : size.width;
+  const treeHeight =
+    orientation === 'horizontal'
+      ? size.width - nodeWidth
+      : size.height - nodeHeight;
+  const treeLeft = orientation === 'horizontal' ? nodeWidth / 2 : 0;
+  const treeTop = orientation === 'horizontal' ? 0 : nodeHeight / 2;
+
+  function CustomNode({ node }: CustomNode) {
     // get acronym of displayName
     const matches = node.data.displayName.match(/\b(\w)/g);
     //DKDK could use ! or ? to avoid ts error, but used ? here (optional chaining)
@@ -52,14 +62,15 @@ export default function MiniDiagram({
 
     const rectangle = (
       <rect
-        height={height}
-        width={width}
-        y={-height / 2}
-        x={-width / 2}
+        height={nodeHeight - nodeStrokeWidth * 2}
+        width={nodeWidth - nodeStrokeWidth * 2}
+        y={-nodeHeight / 2}
+        x={-nodeWidth / 2}
         fill={`url('#rect-gradient-${
           shadingObject ? shadingObject.value : 0
         }')`}
         stroke={'black'}
+        strokeWidth={nodeStrokeWidth}
         style={
           highlightedEntityID == node.data.displayName
             ? { cursor: 'pointer', outline: 'yellow 3px solid' }
@@ -95,7 +106,7 @@ export default function MiniDiagram({
 
   return (
     <div className="mini-diagram">
-      <svg width="150px" height="300px">
+      <svg width={size.width} height={size.height}>
         <defs>
           <marker
             id="arrow"
@@ -126,12 +137,9 @@ export default function MiniDiagram({
               />
             ))
         }
-        <Tree root={data} size={[150, 200]}>
+        <Tree root={data} size={[treeWidth, treeHeight]}>
           {(tree) => (
-            <Group
-              left={orientation == 'horizontal' ? 50 : 10}
-              top={orientation == 'horizontal' ? 0 : 50}
-            >
+            <Group left={treeLeft} top={treeTop}>
               {tree.links().map((link, i) => {
                 return (
                   <OffsetLine

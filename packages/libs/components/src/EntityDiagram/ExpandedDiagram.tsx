@@ -28,11 +28,23 @@ export default function ExpandedDiagram({
   highlightedEntityID,
   shadingData,
   renderNode,
+  size,
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
 
+  const nodeWidth = 120;
+  const nodeHeight = 70;
+  const nodeStrokeWidth = 1;
+  const treeWidth = orientation === 'horizontal' ? size.height : size.width;
+  const treeHeight =
+    orientation === 'horizontal'
+      ? size.width - nodeWidth
+      : size.height - nodeHeight;
+  const treeLeft = orientation === 'horizontal' ? nodeWidth / 2 : 0;
+  const treeTop = orientation === 'horizontal' ? 0 : nodeHeight / 2;
+
   return (
-    <svg width="1000px" height="1000px">
+    <svg width={size.width} height={size.height}>
       <defs>
         <marker
           id="arrow"
@@ -63,9 +75,9 @@ export default function ExpandedDiagram({
             />
           ))
       }
-      <Tree root={data} size={[500, 500]}>
+      <Tree root={data} size={[treeWidth, treeHeight]}>
         {(tree) => (
-          <Group left={80} top={50}>
+          <Group left={treeLeft} top={treeTop}>
             {tree.links().map((link, i) => {
               return (
                 <OffsetLine
@@ -78,19 +90,18 @@ export default function ExpandedDiagram({
             {tree.descendants().map((node, i) => {
               const shadingObject: undefined | ShadingValues =
                 shadingData[node.data.id];
-              const width = 120;
-              const height = 70;
 
               const rectangle = (
                 <rect
-                  height={height}
-                  width={width}
-                  y={-height / 2}
-                  x={-width / 2}
+                  height={nodeHeight - nodeStrokeWidth * 2}
+                  width={nodeWidth - nodeStrokeWidth * 2}
+                  y={-nodeHeight / 2}
+                  x={-nodeWidth / 2}
                   fill={`url('#rect-gradient-${
                     shadingObject ? shadingObject.value : 0
                   }')`}
                   stroke={'black'}
+                  strokeWidth={nodeStrokeWidth}
                   style={
                     highlightedEntityID == node.data.displayName
                       ? {
