@@ -3,10 +3,7 @@ import { useEntityCounts } from '../hooks/entityCounts';
 import { SessionState } from '../../core';
 import MiniDiagram from '@veupathdb/components/lib/EntityDiagram/MiniDiagram';
 import ExpandedDiagram from '@veupathdb/components/lib/EntityDiagram/ExpandedDiagram';
-import {
-  ShadingData,
-  ShadingValue,
-} from '@veupathdb/components/lib/EntityDiagram/Types';
+import { ShadingData } from '@veupathdb/components/lib/EntityDiagram/Types';
 import { StudyEntity } from '../types/study';
 import { VariableLink } from './VariableLink';
 
@@ -38,11 +35,7 @@ export function EntityDiagram(props: Props) {
 
   if (counts && filteredCounts) {
     Object.keys(counts).forEach((key, i) => {
-      shadingData[key] = {
-        value: Math.floor(
-          (filteredCounts[key] / counts[key]) * 10
-        ) as ShadingValue,
-      };
+      shadingData[key] = filteredCounts[key] / counts[key];
     });
   } else {
     console.log('Could not retrieve entity counts.');
