@@ -32,6 +32,7 @@ export function SessionList(props: Props) {
       starredVariables: [],
       derivedVariables: [],
       visualizations: [],
+      apps: [],
       variableUISettings: {},
     });
     const newLocation = {

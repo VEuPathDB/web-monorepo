@@ -31,6 +31,7 @@ export function SessionList(props: Props) {
       derivedVariables: [],
       starredVariables: [],
       filters: [],
+      apps: [],
     });
     history.push(`${url}/${id}`);
   }, [sessionStore, history, studyId, url]);
