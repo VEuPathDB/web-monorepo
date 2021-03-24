@@ -344,7 +344,7 @@ function histogramResponseToDataSeries(
       binLabel: data.binLabel[index],
       count: data.value[index],
     }))
-    .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf());
+    .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf()); // TO DO: review necessity of sort if back end (or plot component) does sorting?
   return {
     name,
     color,

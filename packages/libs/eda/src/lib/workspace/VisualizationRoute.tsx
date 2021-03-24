@@ -24,7 +24,7 @@ export default function VisualizationRoute(props: RouteProps) {
     (viz) => viz.visualizationId === visualizationId
   ) ?? { visualizationId: visualizationId, type: 'histogram' };
 
-  const handleStateChange = (newState: Visualization) => {
+  const handleVizStateChange = (newState: Visualization) => {
     const newVisualizations = visualizations
       .filter((viz) => viz.visualizationId !== newState.visualizationId)
       .concat([newState]);
@@ -38,8 +38,8 @@ export default function VisualizationRoute(props: RouteProps) {
     <Component
       studyMetadata={studyMetadata}
       sessionState={session}
-      vizState={visualisation as HistogramConfig}
-      onVizStateChange={handleStateChange}
+      vizConfig={visualisation as HistogramConfig}
+      onVizConfigChange={handleVizStateChange}
       entities={entities}
     />
   );

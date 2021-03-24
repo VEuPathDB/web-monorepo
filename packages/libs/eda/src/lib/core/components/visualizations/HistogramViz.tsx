@@ -1,11 +1,14 @@
-import React, { CSSProperties, useCallback, useState } from 'react';
+import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
 import { SessionState, StudyEntity, StudyMetadata } from '../../../core';
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
 import { HistogramData } from '@veupathdb/components/lib/types/plots';
-import { NumberOrTimeDelta } from '@veupathdb/components/lib/types/general';
-import usePlotControls from '@veupathdb/components/lib/hooks/usePlotControls';
+import {
+  ErrorManagement,
+  NumberOrTimeDelta,
+  NumberOrTimeDeltaRange,
+} from '@veupathdb/components/lib/types/general';
 import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
 import { useDataClient } from '../../hooks/workspace';
 import { StudyVariable } from '../../types/study';
@@ -26,8 +29,8 @@ import { HistogramConfig } from '../../types/visualization';
 interface Props {
   studyMetadata: StudyMetadata;
   sessionState: SessionState;
-  vizState: HistogramConfig;
-  onVizStateChange: (newState: HistogramConfig) => void;
+  vizConfig: HistogramConfig;
+  onVizConfigChange: (newConfig: HistogramConfig) => void;
   entities: StudyEntity[];
 }
 
@@ -35,8 +38,8 @@ export default function HistogramViz(props: Props) {
   const {
     entities,
     sessionState,
-    vizState,
-    onVizStateChange,
+    vizConfig,
+    onVizConfigChange,
     studyMetadata,
   } = props;
   const { id: studyId } = studyMetadata;
@@ -47,18 +50,25 @@ export default function HistogramViz(props: Props) {
     independentVariableEntity,
     overlayVariable,
     overlayVariableEntity,
-  } = vizState;
+    binWidth,
+    binWidthTimeUnit,
+  } = vizConfig;
 
-  const onVariableChange = (term: string) => {
+  const updateVizState = (newConfig: Partial<HistogramConfig>) => {
+    onVizConfigChange({
+      ...vizConfig,
+      ...newConfig,
+    });
+  };
+
+  const onMainVariableChange = (term: string) => {
     if (term) {
-      const [newEntityId, newVariableId] = term.split('/');
-      const newEntity = entities.find((entity) => entity.id === newEntityId);
-      const newVariable = newEntity?.variables.find(
-        (variable) => variable.id === newVariableId
+      const { entity: newEntity, variable: newVariable } = splitTerm(
+        term,
+        entities
       );
       if (newEntity && newVariable) {
-        onVizStateChange({
-          ...vizState,
+        updateVizState({
           independentVariable: newVariable,
           independentVariableEntity: newEntity,
         });
@@ -68,14 +78,12 @@ export default function HistogramViz(props: Props) {
 
   const onOverlayVariableChange = (term: string) => {
     if (term) {
-      const [newEntityId, newVariableId] = term.split('/');
-      const newEntity = entities.find((entity) => entity.id === newEntityId);
-      const newVariable = newEntity?.variables.find(
-        (variable) => variable.id === newVariableId
+      const { entity: newEntity, variable: newVariable } = splitTerm(
+        term,
+        entities
       );
       if (newEntity && newVariable) {
-        onVizStateChange({
-          ...vizState,
+        updateVizState({
           overlayVariable: newVariable,
           overlayVariableEntity: newEntity,
         });
@@ -83,8 +91,22 @@ export default function HistogramViz(props: Props) {
     }
   };
 
+  const onBinWidthChange = (newBinWidth: number) => {
+    console.log(`in onBinWidthChange ${newBinWidth}`);
+    if (newBinWidth) {
+      updateVizState({ binWidth: newBinWidth });
+    }
+  };
+
   const getData = useCallback(
-    async (dataParams?: GetDataParams): Promise<HistogramData> => {
+    async ({
+      independentVariable,
+      independentVariableEntity,
+      overlayVariable,
+      overlayVariableEntity,
+      binWidth,
+      binWidthTimeUnit,
+    }: HistogramConfig): Promise<HistogramData> => {
       if (!independentVariable || !independentVariableEntity)
         return Promise.reject(new Error('Please choose a main variable'));
 
@@ -102,7 +124,8 @@ export default function HistogramViz(props: Props) {
         independentVariable,
         overlayVariableEntity,
         overlayVariable,
-        dataParams
+        binWidth,
+        binWidthTimeUnit
       );
       const response =
         independentVariable.type === 'date'
@@ -112,7 +135,7 @@ export default function HistogramViz(props: Props) {
           : dataClient.getNumericHistogramBinWidth(
               params as NumericHistogramRequestParams
             );
-      return histogramResponseToData(await response);
+      return histogramResponseToData(await response, independentVariable.type);
     },
     [
       studyId,
@@ -135,7 +158,13 @@ export default function HistogramViz(props: Props) {
     position: 'relative',
   };
 
-  const data = usePromise(getData);
+  //  const data = usePromise(
+  //    useCallback(() => getData(uiState), [getData, uiState])
+  //  );
+
+  const data = usePromise(
+    useCallback(() => getData(vizConfig), [getData, vizConfig])
+  );
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       <div>
@@ -146,7 +175,7 @@ export default function HistogramViz(props: Props) {
             entities={entities}
             entityId={independentVariableEntity?.id}
             variableId={independentVariable?.id}
-            onActiveFieldChange={onVariableChange}
+            onActiveFieldChange={onMainVariableChange}
           />
         </div>
         <h2>Choose the overlay variable</h2>
@@ -166,48 +195,76 @@ export default function HistogramViz(props: Props) {
       {data.value && (
         <HistogramPlotWithControls
           data={data.value}
-          getData={getData}
+          onBinWidthChange={onBinWidthChange}
           width={800}
           height={400}
-          orientation={'horizontal'}
-          barLayout={'overlay'}
+          orientation={'vertical'}
+          barLayout={'stack'}
         />
       )}
     </div>
   );
 }
 
-type GetDataParams = {
-  binWidth?: NumberOrTimeDelta;
-  selectedUnit?: string;
-};
-
 type HistogramPlotWithControlsProps = HistogramProps & {
-  getData: (params?: GetDataParams) => Promise<HistogramData>;
+  onBinWidthChange: (newBinWidth: number) => void;
 };
 
 function HistogramPlotWithControls({
   data,
-  getData,
+  onBinWidthChange,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
-  const plotControls = usePlotControls<HistogramData>({
-    data: data,
-    histogram: {
-      binWidthRange: data.binWidthRange,
-      binWidthStep: data.binWidthStep,
-      onBinWidthChange: getData,
+  const handleBinWidthChange = useCallback(
+    ({ binWidth }: { binWidth: NumberOrTimeDelta }) => {
+      console.log(`handleBinWidthChange ${binWidth}`);
+      const newBinWidth = typeof binWidth === 'number' ? binWidth : binWidth[0];
+      onBinWidthChange(newBinWidth);
     },
-    // onSelectedUnitChange: getData
-  });
+    [onBinWidthChange]
+  );
+
+  // TODO Use UIState
+  const barLayout = 'stack';
+  const displayLegend = true;
+  const displayLibraryControls = false;
+  const opacity = 100;
+  const errorManagement = useMemo((): ErrorManagement => {
+    return {
+      errors: [],
+      addError: (error: Error) => {},
+      removeError: (error: Error) => {},
+      clearAllErrors: () => {},
+    };
+  }, []);
+  console.log(data.binWidthRange);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Histogram {...histogramProps} {...plotControls} />
+      <Histogram
+        {...histogramProps}
+        data={data}
+        opacity={opacity}
+        displayLegend={displayLegend}
+        displayLibraryControls={displayLibraryControls}
+        barLayout={barLayout}
+      />
       <HistogramControls
         label="Histogram Controls"
-        {...plotControls}
-        {...plotControls.histogram}
+        valueType={data.valueType}
+        barLayout={barLayout}
+        displayLegend={displayLegend}
+        displayLibraryControls={displayLibraryControls}
+        opacity={opacity}
+        orientation={histogramProps.orientation}
+        binWidth={data.binWidth!}
+        onBinWidthChange={(val) => {
+          console.log(val);
+          handleBinWidthChange(val);
+        }}
+        binWidthRange={data.binWidthRange!}
+        binWidthStep={data.binWidthStep!}
+        errorManagement={errorManagement}
       />
     </div>
   );
@@ -223,22 +280,44 @@ export function histogramResponseToData(
     ReturnType<
       DataClient['getDateHistogramBinWidth' | 'getNumericHistogramBinWidth']
     >
-  >
+  >,
+  type: HistogramVariable['type']
 ): HistogramData {
   if (response.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
+
+  const binWidth = parseInt(String(response.config.binWidth), 10) || 1;
+  const { min, max, step } = response.config.binSlider;
+  const binWidthRange = (type === 'number'
+    ? { min, max }
+    : { min, max, unit: 'day' }) as NumberOrTimeDeltaRange;
+  const binWidthStep = step || 0.1;
+  console.log(
+    `response binwidth ${binWidth} and range ${binWidthRange.min} - ${binWidthRange.max}`
+  );
   return {
     series: response.data.map((data, index) => ({
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
       // color: TO DO
-      bins: data.value.map((_, index) => ({
-        binStart: Number(data.binStart[index]),
-        binEnd: Number(data.binStart[index]) + Number(response.config.binWidth),
-        binLabel: data.binLabel[index],
-        count: data.value[index],
-      })),
+      bins: data.value
+        .map((_, index) => ({
+          binStart:
+            type === 'number'
+              ? Number(data.binStart[index])
+              : new Date(data.binStart[index] + 'Z'),
+          binEnd:
+            type === 'number'
+              ? Number(data.binEnd[index])
+              : new Date(data.binEnd[index] + 'Z'),
+          binLabel: data.binLabel[index],
+          count: data.value[index],
+        }))
+        .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf()),
+      // TO DO: review necessity of sort if back end (or plot component) does sorting?
     })),
-    // TO DO binWidthStuff
+    binWidth,
+    binWidthRange,
+    binWidthStep,
   };
 }
 
@@ -249,18 +328,20 @@ function getRequestParams(
   variable: HistogramVariable,
   overlayEntity?: StudyEntity,
   overlayVariable?: StudyVariable, // TO DO: ?CategoricalVariable?
-  dataParams?: GetDataParams
+  binWidth?: number,
+  binWidthTimeUnit?: string
 ): NumericHistogramRequestParams | DateHistogramRequestParams {
-  const binOption = dataParams?.binWidth
+  const binOption = binWidth
     ? {
         binWidth:
           variable.type === 'number'
-            ? dataParams.binWidth
-            : `${dataParams.binWidth} years`,
+            ? binWidth
+            : `${binWidth} ${binWidthTimeUnit}`,
       }
     : {
         // numBins: 10,
       };
+
   return {
     studyId,
     filters,
@@ -281,4 +362,16 @@ function getRequestParams(
       ...binOption,
     },
   } as NumericHistogramRequestParams | DateHistogramRequestParams;
+}
+
+function splitTerm(term: string, entities: StudyEntity[]) {
+  if (term) {
+    const [newEntityId, newVariableId] = term.split('/');
+    const newEntity = entities.find((entity) => entity.id === newEntityId);
+    const newVariable = newEntity?.variables.find(
+      (variable) => variable.id === newVariableId
+    ) as StudyVariable;
+    return { entity: newEntity, variable: newVariable };
+  }
+  return {};
 }

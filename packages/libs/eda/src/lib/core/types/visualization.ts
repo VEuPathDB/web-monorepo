@@ -17,6 +17,8 @@ export const HistogramConfig = t.intersection([
     independentVariableEntity: StudyEntity,
     overlayVariable: StudyVariable, // TO DO: make this categorical
     overlayVariableEntity: StudyEntity,
+    binWidth: t.number,
+    binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
   }),
 ]);
 
