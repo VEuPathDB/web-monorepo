@@ -2,13 +2,13 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import { PreferredOrganismsConfig } from '../components/PreferredOrganismsConfig';
+import { PreferredOrganismsConfig } from './lib/components/PreferredOrganismsConfig';
 
 import {
   organismTreeRecoilValue,
   preferredOrganismsRecoilState,
   projectIdRecoilValue,
-} from '../../index';
+} from './index';
 
 export function PreferredOrganismsConfigController() {
   useSetDocumentTitle('Configure My Organisms');

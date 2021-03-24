@@ -9,7 +9,7 @@ import Home from './Home';
 import { endpoint, rootElement, rootUrl } from './constants';
 import reportWebVitals from './reportWebVitals';
 
-import { PreferredOrganismsConfigController } from './lib/controllers/PreferredOrganismsConfigController';
+import { PreferredOrganismsConfigController } from './PreferredOrganismsConfigController';
 
 import { RecoilRoot } from 'recoil';
 
