@@ -4,22 +4,18 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 
 import { PreferredOrganismsConfig } from './lib/components/PreferredOrganismsConfig';
 
-import {
-  organismTreeRecoilValue,
-  preferredOrganismsRecoilState,
-  projectIdRecoilValue,
-} from './index';
+import { organismTree, preferredOrganisms, projectId } from './index';
 
 export function PreferredOrganismsConfigController() {
   useSetDocumentTitle('Configure My Organisms');
 
-  const organismTreeValue = useRecoilValue(organismTreeRecoilValue);
+  const organismTreeValue = useRecoilValue(organismTree);
 
   const [preferredOrganismsState, setPreferredOrganismsState] = useRecoilState(
-    preferredOrganismsRecoilState
+    preferredOrganisms
   );
 
-  const projectIdValue = useRecoilValue(projectIdRecoilValue);
+  const projectIdValue = useRecoilValue(projectId);
 
   return (
     <PreferredOrganismsConfig

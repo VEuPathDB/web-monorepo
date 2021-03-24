@@ -51,15 +51,11 @@ const { wdkService }: { wdkService: WdkService } = initialize({
   endpoint,
 } as any);
 
-const {
+export const {
   preferredOrganisms,
   projectId,
   organismTree,
 } = makePreferredOrganismsRecoilState(wdkService);
-
-export const organismTreeRecoilValue = organismTree;
-export const preferredOrganismsRecoilState = preferredOrganisms;
-export const projectIdRecoilValue = projectId;
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

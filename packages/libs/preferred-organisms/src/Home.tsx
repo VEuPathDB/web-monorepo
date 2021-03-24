@@ -2,10 +2,10 @@ import { useRecoilValue } from 'recoil';
 
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
-import { preferredOrganismsRecoilState } from '.';
+import { preferredOrganisms } from '.';
 
 export default function Home() {
-  const preferredOrganisms = useRecoilValue(preferredOrganismsRecoilState);
+  const preferredOrganismsValue = useRecoilValue(preferredOrganisms);
 
   return (
     <div style={{ fontSize: '1.2em' }}>
@@ -26,7 +26,7 @@ export default function Home() {
       </div>
       <div>
         <p>
-          You have selected <strong>{preferredOrganisms.length}</strong>{' '}
+          You have selected <strong>{preferredOrganismsValue.length}</strong>{' '}
           preferred organisms.{' '}
           <Link to="/preferred-organisms">
             Configure your preferred organisms?
