@@ -29,15 +29,11 @@ export function FilterContainer(props: Props) {
     );
   };
   return narrowProps(isHistogramVariable, props) ? (
-    //DKDK
-    // <HistogramFilter {...props} />
     <>
       <AdditionalDescription />
       <HistogramFilter {...props} />
     </>
   ) : narrowProps(isTableVariable, props) ? (
-    //DKDK
-    // <TableFilter {...props} />
     <>
       <AdditionalDescription />
       <TableFilter {...props} />
