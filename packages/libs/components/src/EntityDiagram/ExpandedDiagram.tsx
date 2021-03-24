@@ -4,7 +4,7 @@ import { LinearGradient } from '@visx/gradient';
 import { Group } from '@visx/group';
 import { Text } from '@visx/text';
 import OffsetLine from './OffsetLine';
-import { EntityDiagramProps, ShadingValues } from './Types';
+import { EntityDiagramProps } from './Types';
 
 // Todo: There MUST be a smarter way to center the text
 function CalculateDYSize(nodeLength: number) {
@@ -71,20 +71,18 @@ export default function ExpandedDiagram({
       </defs>
       {
         // Node background shading definitions
-        Array(11)
-          .fill(null)
-          .map((_, index) => (
-            <LinearGradient
-              key={index}
-              vertical={false}
-              x1={0}
-              x2={index * 0.1}
-              fromOffset={1}
-              id={`rect-gradient-${index}`}
-              from="#e4c8c8"
-              to="white"
-            />
-          ))
+        Object.keys(shadingData).map((key, index) => (
+          <LinearGradient
+            key={index}
+            vertical={false}
+            x1={0}
+            x2={shadingData[key]}
+            fromOffset={1}
+            id={`rect-gradient-${key}`}
+            from="#e4c8c8"
+            to="white"
+          />
+        ))
       }
       <Tree root={data} size={[treeWidth, treeHeight]}>
         {(tree) => (
@@ -99,9 +97,6 @@ export default function ExpandedDiagram({
               );
             })}
             {tree.descendants().map((node, i) => {
-              const shadingObject: undefined | ShadingValues =
-                shadingData[node.data.id];
-
               const rectangle = (
                 <rect
                   // These props don't account for stroke width, so we shrink
@@ -111,9 +106,11 @@ export default function ExpandedDiagram({
                   width={nodeWidth - nodeStrokeWidth * 2}
                   y={-nodeHeight / 2}
                   x={-nodeWidth / 2}
-                  fill={`url('#rect-gradient-${
-                    shadingObject ? shadingObject.value : 0
-                  }')`}
+                  fill={
+                    shadingData[node.data.id]
+                      ? `url('#rect-gradient-${node.data.id}')`
+                      : 'white'
+                  }
                   stroke={'black'}
                   strokeWidth={nodeStrokeWidth}
                   style={

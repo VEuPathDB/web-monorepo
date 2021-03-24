@@ -24,17 +24,10 @@ export interface StudyData {
   variables: Variables[];
 }
 
-export type ShadingValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
-
-export interface ShadingValues {
-  /** The portion of the rectangle to shade (0: 0%, 1: 10%, ... 10: 100%) */
-  value: ShadingValue;
-  // color?: string;  // Not implemented yet
-}
-
 export interface ShadingData {
-  /** The key should be the entity ID */
-  [index: string]: ShadingValues;
+  /** The key is the entity ID and the value is a decimal representing the
+   * fraction of the node to shade */
+  [index: string]: number;
 }
 
 export interface EntityDiagramProps {

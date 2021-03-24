@@ -163,21 +163,11 @@ export const EntityDiagram = () => {
   };
 
   const shadingData: ShadingData = {
-    GEMS_House: {
-      value: 1,
-    },
-    GEMS_HouseObs: {
-      value: 2,
-    },
-    GEMS_Part: {
-      value: 3,
-    },
-    GEMS_PartObs: {
-      value: 4,
-    },
-    GEMS_Treat: {
-      value: 5,
-    },
+    GEMS_House: 0.05,
+    GEMS_HouseObs: 0.2,
+    GEMS_Part: 0.41,
+    GEMS_PartObs: 0.66,
+    GEMS_Treat: 0.98,
   };
 
   return (
