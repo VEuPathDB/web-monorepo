@@ -1,4 +1,9 @@
+import { DefaultValue, atom, selector } from 'recoil';
+
+import { debounce } from 'lodash';
+
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
+import { WdkDependencies } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import {
   Unpack,
   arrayOf,
@@ -9,8 +14,76 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
 
+import { findAvailableOrganisms } from './configTrees';
+
 export const ORGANISM_PREFERENCE_KEY = 'organism_preference';
 export const ORGANISM_PREFERENCE_SCOPE = 'project';
+
+export function makePreferredOrganismsRecoilState(
+  wdkDependencies: WdkDependencies | undefined
+) {
+  if (wdkDependencies == null) {
+    throw new Error(
+      'To use Preferred Organisms, WdkDependendenciesContext must be configured.'
+    );
+  }
+
+  const { wdkService } = wdkDependencies;
+
+  const config = selector({
+    key: 'wdk-service-config',
+    get: () => wdkService.getConfig(),
+  });
+
+  const projectId = selector({
+    key: 'project-id',
+    get: ({ get }) => get(config).projectId,
+  });
+
+  const organismTree = selector({
+    key: 'organism-tree',
+    get: () => fetchOrganismTree(wdkService),
+  });
+
+  const availableOrganisms = selector({
+    key: 'available-organisms',
+    get: ({ get }) => findAvailableOrganisms(get(organismTree)),
+  });
+
+  const initialOrganismsPreference = selector({
+    key: 'initial-organisms-preference',
+    get: ({ get }) =>
+      fetchPreferredOrganisms(wdkService, get(availableOrganisms)),
+  });
+
+  const initialPreferredOrganisms = selector({
+    key: 'initial-preferred-organisms',
+    get: ({ get }) => get(initialOrganismsPreference).organisms,
+  });
+
+  const preferredOrganisms = atom({
+    key: 'preferred-organisms',
+    default: initialPreferredOrganisms,
+    effects_UNSTABLE: [
+      ({ onSet }) => {
+        function onPreferredOrganismsChange(params: string[] | DefaultValue) {
+          if (!(params instanceof DefaultValue)) {
+            updatePreferredOrganisms(wdkService, params);
+          }
+        }
+
+        onSet(debounce(onPreferredOrganismsChange, 2000));
+      },
+    ],
+  });
+
+  return {
+    availableOrganisms,
+    organismTree,
+    preferredOrganisms,
+    projectId,
+  };
+}
 
 // FIXME: DRY this up by porting to @veupathdb/web-common
 // TODO Make these configurable via model.prop, and when not defined, always return an empty tree.
@@ -19,7 +92,7 @@ export const ORGANISM_PREFERENCE_SCOPE = 'project';
 const TAXON_QUESTION_NAME = 'SequencesByTaxon';
 const ORGANISM_PARAM_NAME = 'organism';
 
-export async function fetchOrganismTree(wdkService: WdkService) {
+async function fetchOrganismTree(wdkService: WdkService) {
   const taxonQuestion = await wdkService.getQuestionAndParameters(
     TAXON_QUESTION_NAME
   );
@@ -41,7 +114,7 @@ export async function fetchOrganismTree(wdkService: WdkService) {
   );
 }
 
-export async function fetchPreferredOrganisms(
+async function fetchPreferredOrganisms(
   wdkService: WdkService,
   availableOrganisms: string[]
 ) {
@@ -65,7 +138,7 @@ export async function fetchPreferredOrganisms(
   );
 }
 
-export async function updatePreferredOrganisms(
+async function updatePreferredOrganisms(
   wdkService: WdkService,
   newOrganisms: string[]
 ) {
@@ -87,9 +160,9 @@ async function fetchBuildNumber(wdkService: WdkService) {
   return Number(buildNumberStr);
 }
 
-export const organismPreference = record({
+const organismPreference = record({
   buildNumber: number,
   organisms: arrayOf(string),
 });
 
-export type OrganismPreference = Unpack<typeof organismPreference>;
+type OrganismPreference = Unpack<typeof organismPreference>;
