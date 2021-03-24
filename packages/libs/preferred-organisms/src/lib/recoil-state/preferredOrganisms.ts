@@ -3,6 +3,7 @@ import { DefaultValue, atom, selector } from 'recoil';
 
 import { WdkService } from '@veupathdb/wdk-client/lib/Core';
 
+import { findAvailableOrganisms } from '../utils/configTrees';
 import {
   fetchOrganismTree,
   fetchPreferredOrganisms,
@@ -25,9 +26,15 @@ export function makePreferredOrganismsRecoilState(wdkService: WdkService) {
     get: () => fetchOrganismTree(wdkService),
   });
 
+  const availableOrganisms = selector({
+    key: 'available-organisms',
+    get: ({ get }) => findAvailableOrganisms(get(organismTree)),
+  });
+
   const initialOrganismsPreference = selector({
     key: 'initial-organisms-preference',
-    get: ({ get }) => fetchPreferredOrganisms(wdkService, get(organismTree)),
+    get: ({ get }) =>
+      fetchPreferredOrganisms(wdkService, get(availableOrganisms)),
   });
 
   const initialPreferredOrganisms = selector({
@@ -52,6 +59,7 @@ export function makePreferredOrganismsRecoilState(wdkService: WdkService) {
   });
 
   return {
+    availableOrganisms,
     organismTree,
     preferredOrganisms,
     projectId,

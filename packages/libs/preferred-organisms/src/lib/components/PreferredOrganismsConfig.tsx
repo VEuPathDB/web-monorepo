@@ -7,7 +7,6 @@ import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
-  countAvailableOrganisms,
   getNodeChildren,
   getNodeId,
   makeInitialPreviewExpansion,
@@ -21,6 +20,7 @@ import './PreferredOrganismsConfig.scss';
 const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
 interface Props {
+  availableOrganisms: string[];
   configSelection: string[];
   organismTree: Node<TreeBoxVocabNode>;
   projectId: string;
@@ -28,16 +28,12 @@ interface Props {
 }
 
 export function PreferredOrganismsConfig({
+  availableOrganisms,
   configSelection,
   organismTree,
   projectId,
   setConfigSelection,
 }: Props) {
-  const availableOrganismsCount = useMemo(
-    () => countAvailableOrganisms(organismTree),
-    [organismTree]
-  );
-
   const initialPreviewExpansion = useMemo(
     () => makeInitialPreviewExpansion(organismTree),
     [organismTree]
@@ -97,7 +93,7 @@ export function PreferredOrganismsConfig({
             >
               {configSelection.length}
             </span>{' '}
-            of {availableOrganismsCount})
+            of {availableOrganisms.length})
           </h2>
           {configSelection.length === 0 ? (
             <div className={cx('--NoPreferencesSelected')}>

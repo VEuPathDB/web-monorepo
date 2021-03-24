@@ -23,11 +23,7 @@ export function renderNode(node: TreeBoxVocabNode) {
   return safeHtml(node.data.display);
 }
 
-export function countAvailableOrganisms(organismTree: TreeBoxVocabNode) {
-  return getLeaves(organismTree, getNodeChildren).length;
-}
-
-export function makeInitialConfigSelection(organismTree: TreeBoxVocabNode) {
+export function findAvailableOrganisms(organismTree: TreeBoxVocabNode) {
   return getLeaves(organismTree, getNodeChildren).map(getNodeId);
 }
 

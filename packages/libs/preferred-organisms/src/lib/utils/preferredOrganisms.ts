@@ -7,11 +7,7 @@ import {
   record,
   string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
-import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
-
-import { makeInitialConfigSelection } from './configTrees';
 
 export const ORGANISM_PREFERENCE_KEY = 'organism_preference';
 export const ORGANISM_PREFERENCE_SCOPE = 'project';
@@ -47,7 +43,7 @@ export async function fetchOrganismTree(wdkService: WdkService) {
 
 export async function fetchPreferredOrganisms(
   wdkService: WdkService,
-  organismTree: Node<TreeBoxVocabNode>
+  availableOrganisms: string[]
 ) {
   const [buildNumber, userPreferences] = await Promise.all([
     fetchBuildNumber(wdkService),
@@ -56,7 +52,7 @@ export async function fetchPreferredOrganisms(
 
   const defaultPreferredOrganisms = {
     buildNumber,
-    organisms: makeInitialConfigSelection(organismTree),
+    organisms: availableOrganisms,
   };
 
   const preferenceStr =

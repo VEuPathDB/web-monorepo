@@ -52,6 +52,7 @@ const { wdkService }: { wdkService: WdkService } = initialize({
 } as any);
 
 export const {
+  availableOrganisms,
   preferredOrganisms,
   projectId,
   organismTree,
