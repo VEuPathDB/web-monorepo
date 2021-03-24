@@ -1,6 +1,5 @@
 import './globals';
 import { Suspense } from 'react';
-import { RouteComponentProps } from 'react-router';
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import Header from './Header';
