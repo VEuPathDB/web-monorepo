@@ -34,14 +34,25 @@ export default function ExpandedDiagram({
 
   const nodeWidth = 120;
   const nodeHeight = 70;
+  // Node border width
   const nodeStrokeWidth = 1;
-  const treeWidth = orientation === 'horizontal' ? size.height : size.width;
+  // Width of the highlight border around the highlighted node
+  const nodeHighlightWidth = 3;
+  // treeHeight is always from root to furthest leaf, regardless of orientation
+  // (it's not always vertical on screen)
   const treeHeight =
-    orientation === 'horizontal'
+    (orientation === 'horizontal'
       ? size.width - nodeWidth
-      : size.height - nodeHeight;
-  const treeLeft = orientation === 'horizontal' ? nodeWidth / 2 : 0;
-  const treeTop = orientation === 'horizontal' ? 0 : nodeHeight / 2;
+      : size.height - nodeHeight) -
+    nodeHighlightWidth * 2;
+  // Likewise for treeWidth (it's not always horizontal on screen)
+  const treeWidth = orientation === 'horizontal' ? size.height : size.width;
+  // The tree's edge is in the middle of the boundary nodes, so we shift it by
+  // half a node dimension
+  const treeLeft =
+    orientation === 'horizontal' ? nodeWidth / 2 + nodeHighlightWidth : 0;
+  const treeTop =
+    (orientation === 'horizontal' ? 0 : nodeHeight / 2) + nodeHighlightWidth; // Where the baby rocks
 
   return (
     <svg width={size.width} height={size.height}>
@@ -93,6 +104,9 @@ export default function ExpandedDiagram({
 
               const rectangle = (
                 <rect
+                  // These props don't account for stroke width, so we shrink
+                  // them accordingly to make sure the node is exactly the
+                  // dimensions we want
                   height={nodeHeight - nodeStrokeWidth * 2}
                   width={nodeWidth - nodeStrokeWidth * 2}
                   y={-nodeHeight / 2}
@@ -105,7 +119,7 @@ export default function ExpandedDiagram({
                   style={
                     highlightedEntityID == node.data.displayName
                       ? {
-                          outline: 'yellow 3px solid',
+                          outline: `yellow ${nodeHighlightWidth}px solid`,
                           overflowWrap: 'normal',
                         }
                       : { overflowWrap: 'normal' }
