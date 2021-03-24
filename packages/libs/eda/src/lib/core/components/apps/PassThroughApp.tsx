@@ -1,47 +1,46 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
+import { useSession } from '../../hooks/session';
+import { Visualization } from '../../types/visualization';
+import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
+import { VisualizationType } from '../visualizations/VisualizationTypes';
 
-interface Props {}
-
-interface Visualization {
-  title: string;
-  component: React.ComponentType;
+interface Props {
+  sessionId: string;
 }
 
-const visualizations: Record<string, Visualization> = {
-  histogram: {
-    title: 'Histogram',
-    component: NotImplemented,
+const visualizationTypes: VisualizationType[] = [
+  {
+    type: 'test',
+    displayName: 'Test visualization',
+    gridComponent: () => <div>Test in grid</div>,
+    selectorComponent: () => <div>Test in selector</div>,
+    fullscreenComponent: () => <div>Test in fullscreen</div>,
+    createDefaultConfig: () => undefined,
   },
-};
+];
 
 export function PassThroughApp(props: Props) {
-  const [selectedVizName, setSelectedVizName] = useState('none');
-  const selectedViz = visualizations[selectedVizName];
-  return (
-    <div>
-      <h3>Choose a visualization</h3>
-      <select
-        value={selectedVizName}
-        onChange={(e) => setSelectedVizName(e.target.value)}
-      >
-        <option value="none"></option>
-        {Object.entries(visualizations).map(([key, visualization]) => (
-          <option key={key} value={key}>
-            {visualization.title}
-          </option>
-        ))}
-      </select>
-      <hr />
-      {selectedViz && (
-        <div>
-          <h4>{selectedViz.title}</h4>
-          <selectedViz.component />
-        </div>
-      )}
-    </div>
+  const { session, setVisualizations } = useSession(props.sessionId);
+  const addVisualization = useCallback(
+    (visualization: Visualization) => {
+      setVisualizations([...(session?.visualizations ?? []), visualization]);
+    },
+    [setVisualizations, session]
   );
-}
-
-function NotImplemented() {
-  return <div>This visualization has not been implemented.</div>;
+  if (session == null) return <div>Session not found</div>;
+  return (
+    <VisualizationsContainer
+      appId="pass-through"
+      apps={[
+        {
+          id: 'pass-through',
+          type: 'pass',
+          configuration: undefined,
+        },
+      ]}
+      visualizations={session.visualizations}
+      addVisualization={addVisualization}
+      visualizationTypes={visualizationTypes}
+    />
+  );
 }

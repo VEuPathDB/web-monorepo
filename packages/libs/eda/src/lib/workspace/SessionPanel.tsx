@@ -11,7 +11,7 @@ import {
 } from 'react-router';
 import { SubsettingRoute } from './Subsetting';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
-import { VisualizationsRoute } from './VisualizationsRoute';
+import { AppRoute } from './AppRoute';
 
 interface Props {
   sessionId: string;
@@ -72,7 +72,7 @@ export function SessionPanel(props: Props) {
       />
       <Route
         path={`${routeBase}/visualizations`}
-        component={VisualizationsRoute}
+        render={() => <AppRoute sessionId={sessionId} />}
       />
     </div>
   );
