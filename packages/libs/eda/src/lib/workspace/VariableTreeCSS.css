@@ -14,7 +14,7 @@
 }
 
 /* configuring scrolling for CheckboxTree list only: anchoring search bar */
-.EDAWorkspace-Subsetting .wdk-CheckboxTree .wdk-CheckboxTreeList {
+.EDAWorkspace-Subsetting .wdk-CheckboxTree > .wdk-CheckboxTreeList {
   position: relative;
   height: 100%;
   overflow: auto;
