@@ -238,10 +238,13 @@ const FieldNode = ({
           <Icon fa={getIcon(node.field)} /> {node.field.display}
         </a>
       ) : (
-        //add condition for making background color of parent entity
+        //add condition for identifying entity parent and entity parent of activeField
         <div
           className={
             'wdk-Link wdk-AttributeFilterFieldParent' +
+            (node.field.term.includes('entity:')
+              ? ' wdk-AttributeFilterFieldEntityParent'
+              : '') +
             (node.field.term.split(':')[1] === activeFieldEntity
               ? ' wdk-AttributeFilterFieldParent__active'
               : '')
