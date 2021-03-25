@@ -8,6 +8,7 @@ import {
   ErrorManagement,
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
+  TimeDelta,
 } from '@veupathdb/components/lib/types/general';
 import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
 import { useDataClient } from '../../hooks/workspace';
@@ -25,6 +26,8 @@ import { HistogramVariable } from '../filter/types';
 import { isHistogramVariable } from '../filter/guards';
 import { VariableTree } from '../VariableTree';
 import { HistogramConfig } from '../../types/visualization';
+import { ISODateStringToZuluDate } from '../../utils/date-conversion';
+
 import debounce from 'debounce-promise';
 
 interface Props {
@@ -51,8 +54,6 @@ export default function HistogramViz(props: Props) {
     independentVariableEntity,
     overlayVariable,
     overlayVariableEntity,
-    binWidth,
-    binWidthTimeUnit,
   } = vizConfig;
 
   const updateVizState = (newConfig: Partial<HistogramConfig>) => {
@@ -72,6 +73,8 @@ export default function HistogramViz(props: Props) {
         updateVizState({
           independentVariable: newVariable,
           independentVariableEntity: newEntity,
+          binWidth: undefined,
+          binWidthTimeUnit: undefined, // reset binWidth if changing variables
         });
       }
     }
@@ -289,7 +292,10 @@ export function histogramResponseToData(
   if (response.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
-  const binWidth = parseInt(String(response.config.binWidth), 10) || 1;
+  const binWidth =
+    type === 'number'
+      ? parseInt(String(response.config.binWidth), 10) || 1
+      : ([1, 'month'] as TimeDelta);
   const { min, max, step } = response.config.binSlider;
   const binWidthRange = (type === 'number'
     ? { min, max }
@@ -307,17 +313,18 @@ export function histogramResponseToData(
           binStart:
             type === 'number'
               ? Number(data.binStart[index])
-              : new Date(data.binStart[index] + 'Z'),
+              : ISODateStringToZuluDate(data.binStart[index]),
           binEnd:
             type === 'number'
               ? Number(data.binEnd[index])
-              : new Date(data.binEnd[index] + 'Z'),
+              : ISODateStringToZuluDate(data.binEnd[index]),
           binLabel: data.binLabel[index],
           count: data.value[index],
         }))
         .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf()),
       // TO DO: review necessity of sort if back end (or plot component) does sorting?
     })),
+    valueType: type,
     binWidth,
     binWidthRange,
     binWidthStep,
