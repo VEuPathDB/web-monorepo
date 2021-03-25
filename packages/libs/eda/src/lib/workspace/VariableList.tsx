@@ -2,13 +2,16 @@
  * This is based on FieldList.jsx for typing
  */
 
-import { memoize, uniq } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useLayoutEffect, useRef, useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { uniq } from 'lodash';
+import React, {
+  useLayoutEffect,
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 //correct paths as this is a copy of FieldList component at @veupathdb/
 import { scrollIntoViewIfNeeded } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
-import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {
   areTermsInString,
   makeSearchHelpText,
@@ -30,7 +33,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 
 //defining types - some are not used (need cleanup later)
-interface activeFieldProp {
+interface VariableField {
   type?: string;
   term: string;
   display: string;
@@ -41,26 +44,26 @@ interface activeFieldProp {
   description?: string;
 }
 
-interface FieldExtendType extends FieldTreeNode {
-  field: activeFieldProp;
-  children: [];
+interface VariableFieldTreeNode extends FieldTreeNode {
+  field: VariableField;
+  children: VariableFieldTreeNode[];
 }
 
-interface FieldNodeType {
-  node: FieldExtendType;
+interface FieldNodeProps {
+  node: VariableFieldTreeNode;
   searchTerm: string;
   isActive: boolean;
-  handleFieldSelect: (node: FieldTreeNode) => void;
-  activeFieldEntity: string;
+  handleFieldSelect: (node: VariableFieldTreeNode) => void;
+  activeFieldEntity?: string;
 }
 
 type valuesMapType = Record<string, string>;
 
 interface VariableListProps {
-  activeField: activeFieldProp;
+  activeField?: VariableField;
   onActiveFieldChange: (term: string) => void;
   valuesMap: valuesMapType;
-  fieldTree: FieldTreeNode;
+  fieldTree: VariableFieldTreeNode;
   autoFocus: boolean;
 }
 
@@ -74,14 +77,6 @@ interface getNodeSearchStringType {
 }
 
 export default function VariableList(props: VariableListProps) {
-  const _getPathToField = (field: Field) => {
-    if (field == null) return [];
-
-    return findAncestorFields(fieldTree, field.term)
-      .map((field) => field.term)
-      .toArray();
-  };
-
   const {
     activeField,
     onActiveFieldChange,
@@ -90,66 +85,91 @@ export default function VariableList(props: VariableListProps) {
     autoFocus,
   } = props;
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const getPathToField = useCallback(
+    (field?: Field) => {
+      if (field == null) return [];
+
+      return findAncestorFields(fieldTree, field.term)
+        .map((field) => field.term)
+        .toArray();
+    },
+    [fieldTree]
+  );
+
   const [expandedNodes, setExpandedNodes] = useState(
-    _getPathToField(activeField)
+    getPathToField(activeField)
   );
 
   useEffect(() => {
-    if (
-      activeField.parent != null &&
-      expandedNodes.includes(activeField.parent)
-    ) {
-      setExpandedNodes(
-        uniq(expandedNodes.concat(_getPathToField(activeField)))
+    if (activeField == null) return;
+    setExpandedNodes((expandedNodes) => {
+      if (activeField.parent && expandedNodes.includes(activeField.parent)) {
+        // This is effectively a noop. Returning the same value tells react to bail on the next render.
+        // See https://reactjs.org/docs/hooks-reference.html#functional-updates
+        return expandedNodes;
+      }
+      const newExpandedNodes = uniq(
+        expandedNodes.concat(getPathToField(activeField))
       );
-    }
-  }, [activeField]);
-
-  const handleCheckboxTreeRef = (component: CheckboxTree<FieldTreeNode>) => {
-    const treeDomNode = ReactDOM.findDOMNode(component);
-  };
+      return newExpandedNodes;
+    });
+  }, [activeField, getPathToField]);
 
   const handleExpansionChange = (expandedNodes: string[]) => {
     setExpandedNodes(expandedNodes);
   };
 
-  const handleFieldSelect = (node: FieldTreeNode) => {
-    onActiveFieldChange(node.field.term);
-    const expandedNodesNew = Seq.from(expandedNodes)
-      .concat(_getPathToField(node.field))
-      .concat(node.children.length > 0 ? Seq.of(node.field.term) : Seq.empty())
-      .uniq()
-      .toArray();
-    setExpandedNodes(expandedNodesNew);
-  };
+  const handleFieldSelect = useCallback(
+    (node: FieldTreeNode) => {
+      onActiveFieldChange(node.field.term);
+    },
+    [onActiveFieldChange]
+  );
 
-  const handleSearchTermChange = (searchTerm: string) => {
-    // update search term, then if it is empty, make sure selected field is visible
-    setSearchTerm(searchTerm);
-  };
-
-  const getNodeId = (node: FieldTreeNode) => {
+  const getNodeId = useCallback((node: FieldTreeNode) => {
     return node.field.term;
-  };
+  }, []);
 
-  const getNodeChildren = (node: FieldTreeNode) => {
+  const getNodeChildren = useCallback((node: FieldTreeNode) => {
     return isMulti(node.field) ? [] : node.children;
-  };
+  }, []);
 
-  const getFieldSearchString = (node: FieldTreeNode) => {
-    return isMulti(node.field)
-      ? preorderSeq(node).map(getNodeSearchString(valuesMap)).join(' ')
-      : getNodeSearchString(valuesMap)(node);
-  };
+  const getFieldSearchString = useCallback(
+    (node: FieldTreeNode) => {
+      return isMulti(node.field)
+        ? preorderSeq(node).map(getNodeSearchString(valuesMap)).join(' ')
+        : getNodeSearchString(valuesMap)(node);
+    },
+    [valuesMap]
+  );
 
-  const searchPredicate = (node: FieldTreeNode, searchTerms: string[]) => {
-    return areTermsInString(searchTerms, getFieldSearchString(node));
-  };
+  const searchPredicate = useCallback(
+    (node: FieldTreeNode, searchTerms: string[]) => {
+      return areTermsInString(searchTerms, getFieldSearchString(node));
+    },
+    [getFieldSearchString]
+  );
+
+  const renderNode = useCallback(
+    (node: FieldTreeNode) => {
+      return (
+        <FieldNode
+          node={node}
+          searchTerm={searchTerm}
+          isActive={node.field.term === activeField?.term}
+          handleFieldSelect={handleFieldSelect}
+          //add activefieldEntity prop (parent entity obtained from activeField)
+          //alternatively, send activeField and isActive is directly checked at FieldNode
+          activeFieldEntity={activeField?.term.split('/')[0]}
+        />
+      );
+    },
+    [activeField?.term, handleFieldSelect, searchTerm]
+  );
 
   return (
     <div className="field-list">
       <CheckboxTree
-        ref={handleCheckboxTreeRef}
         autoFocusSearchBox={autoFocus}
         tree={fieldTree}
         expandedList={expandedNodes}
@@ -163,19 +183,9 @@ export default function VariableList(props: VariableListProps) {
           'the variables by name or description'
         )}
         searchTerm={searchTerm}
-        onSearchTermChange={handleSearchTermChange}
+        onSearchTermChange={setSearchTerm}
         searchPredicate={searchPredicate}
-        renderNode={(node: FieldTreeNode) => (
-          <FieldNode
-            node={node}
-            searchTerm={searchTerm}
-            isActive={node.field.term === activeField.term}
-            handleFieldSelect={handleFieldSelect}
-            //add activefieldEntity prop (parent entity obtained from activeField)
-            //alternatively, send activeField and isActive is directly checked at FieldNode
-            activeFieldEntity={activeField.term.split('/')[0]}
-          />
-        )}
+        renderNode={renderNode}
       />
     </div>
   );
@@ -194,22 +204,20 @@ const getNodeSearchString = (valuesMap: valuesMapType) => {
   };
 };
 
-//FieldNodeType type causes a ts error (tried several), so let's use any for now
 const FieldNode = ({
   node,
   searchTerm,
   isActive,
   handleFieldSelect,
   activeFieldEntity,
-}: any) => {
-  //useRef typing is tricky (tried several), so let's use any for now
-  const nodeRef = useRef<any>(null);
+}: FieldNodeProps) => {
+  const nodeRef = useRef<HTMLAnchorElement>(null);
 
   useLayoutEffect(() => {
-    if (isActive && nodeRef.current && nodeRef?.current?.offsetParent) {
-      scrollIntoViewIfNeeded(nodeRef?.current?.offsetParent);
+    if (isActive && nodeRef.current?.offsetParent instanceof HTMLElement) {
+      scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
     }
-  }, [isActive, nodeRef.current, searchTerm]);
+  }, [isActive, searchTerm]);
 
   return (
     <Tooltip content={node.field.description} hideDelay={0}>
