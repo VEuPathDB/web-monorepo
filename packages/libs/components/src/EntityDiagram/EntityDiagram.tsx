@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { hierarchy, Tree } from '@visx/hierarchy';
 import { Group } from '@visx/group';
+import { Text } from '@visx/text';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import OffsetLine from './OffsetLine';
 import { Tooltip } from '@visx/tooltip';
@@ -174,7 +175,7 @@ export default function EntityDiagram({
     );
 
     const text = (
-      <text
+      <Text
         fontSize={12}
         textAnchor="middle"
         style={{ cursor: 'default' }}
@@ -188,7 +189,7 @@ export default function EntityDiagram({
         onMouseLeave={isExpanded ? undefined : () => setTooltipOpen(false)}
       >
         {displayText}
-      </text>
+      </Text>
     );
 
     return (
