@@ -1,10 +1,19 @@
+.EDAWorkspace-Subsetting .wdk-CheckboxTree .wdk-AttributeFilterFieldItem,
+.EDAWorkspace-Subsetting
+  .wdk-CheckboxTree
+  .wdk-Link.wdk-AttributeFilterFieldParent {
+  padding: 0.2em 0.35em;
+  border-radius: 0.25em;
+  font-weight: bold;
+}
+
 /* background color for Entity parent and font color */
 .EDAWorkspace-Subsetting
   .wdk-CheckboxTree
   .wdk-Link.wdk-AttributeFilterFieldEntityParent {
   background-color: #a4c2f4;
   opacity: 1;
-  color: white;
+  color: #444;
 }
 
 /* background color for activeField */
@@ -17,6 +26,7 @@
   .wdk-CheckboxTree
   .wdk-Link.wdk-AttributeFilterFieldParent__active {
   background: #3c78d8;
+  color: white;
 }
 
 .EDAWorkspace-Subsetting .field-list {
