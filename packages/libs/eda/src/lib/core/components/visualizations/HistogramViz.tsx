@@ -25,6 +25,7 @@ import { HistogramVariable } from '../filter/types';
 import { isHistogramVariable } from '../filter/guards';
 import { VariableTree } from '../VariableTree';
 import { HistogramConfig } from '../../types/visualization';
+import debounce from 'debounce-promise';
 
 interface Props {
   studyMetadata: StudyMetadata;
@@ -99,44 +100,50 @@ export default function HistogramViz(props: Props) {
   };
 
   const getData = useCallback(
-    async ({
-      independentVariable,
-      independentVariableEntity,
-      overlayVariable,
-      overlayVariableEntity,
-      binWidth,
-      binWidthTimeUnit,
-    }: HistogramConfig): Promise<HistogramData> => {
-      if (!independentVariable || !independentVariableEntity)
-        return Promise.reject(new Error('Please choose a main variable'));
-
-      if (independentVariable && !isHistogramVariable(independentVariable))
-        return Promise.reject(
-          new Error(
-            `Please choose another main variable. '${independentVariable.displayName}' is not suitable for histograms`
-          )
-        );
-
-      const params = getRequestParams(
-        studyId,
-        sessionState.session?.filters ?? [],
-        independentVariableEntity,
+    debounce(
+      async ({
         independentVariable,
-        overlayVariableEntity,
+        independentVariableEntity,
         overlayVariable,
+        overlayVariableEntity,
         binWidth,
-        binWidthTimeUnit
-      );
-      const response =
-        independentVariable.type === 'date'
-          ? dataClient.getDateHistogramBinWidth(
-              params as DateHistogramRequestParams
+        binWidthTimeUnit,
+      }: HistogramConfig): Promise<HistogramData> => {
+        if (!independentVariable || !independentVariableEntity)
+          return Promise.reject(new Error('Please choose a main variable'));
+
+        if (independentVariable && !isHistogramVariable(independentVariable))
+          return Promise.reject(
+            new Error(
+              `Please choose another main variable. '${independentVariable.displayName}' is not suitable for histograms`
             )
-          : dataClient.getNumericHistogramBinWidth(
-              params as NumericHistogramRequestParams
-            );
-      return histogramResponseToData(await response, independentVariable.type);
-    },
+          );
+
+        const params = getRequestParams(
+          studyId,
+          sessionState.session?.filters ?? [],
+          independentVariableEntity,
+          independentVariable,
+          overlayVariableEntity,
+          overlayVariable,
+          binWidth,
+          binWidthTimeUnit
+        );
+        const response =
+          independentVariable.type === 'date'
+            ? dataClient.getDateHistogramBinWidth(
+                params as DateHistogramRequestParams
+              )
+            : dataClient.getNumericHistogramBinWidth(
+                params as NumericHistogramRequestParams
+              );
+        return histogramResponseToData(
+          await response,
+          independentVariable.type
+        );
+      },
+      500
+    ),
     [
       studyId,
       independentVariableEntity,
@@ -157,10 +164,6 @@ export default function HistogramViz(props: Props) {
     overflow: 'auto',
     position: 'relative',
   };
-
-  //  const data = usePromise(
-  //    useCallback(() => getData(uiState), [getData, uiState])
-  //  );
 
   const data = usePromise(
     useCallback(() => getData(vizConfig), [getData, vizConfig])
