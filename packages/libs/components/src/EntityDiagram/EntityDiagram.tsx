@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { hierarchy, Tree } from '@visx/hierarchy';
 import { Group } from '@visx/group';
 import { Text } from '@visx/text';
 import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
 import OffsetLine from './OffsetLine';
-import { Tooltip } from '@visx/tooltip';
 import { LinearGradient } from '@visx/gradient';
 
 interface CustomNode {
@@ -94,12 +93,6 @@ export default function EntityDiagram({
   size,
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
-  const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
-  const [tooltipLeft, setTooltipLeft] = useState<number>(0);
-  const [tooltipTop, setTooltipTop] = useState<number>(0);
-  const [tooltipNode, setTooltipNode] = useState<null | HierarchyPointNode<
-    StudyData
-  >>(null);
 
   const nodeWidth = isExpanded ? 120 : 30;
   const nodeHeight = isExpanded ? 70 : 20;
@@ -135,19 +128,6 @@ export default function EntityDiagram({
       displayText = matches.join('');
     }
 
-    const handleTooltipOpen = () => {
-      const topOffset = orientation == 'horizontal' ? 30 : 80; // offsets are based on margins
-      const leftOffset = orientation == 'horizontal' ? 95 : 55; // offsets are based on margins
-      setTooltipOpen(true);
-      setTooltipLeft(
-        (orientation == 'horizontal' ? node.y : node.x) + leftOffset
-      );
-      setTooltipTop(
-        (orientation == 'horizontal' ? node.x : node.y) + topOffset
-      );
-      setTooltipNode(node);
-    };
-
     const rectangle = (
       <rect
         // These props don't account for stroke width, so we shrink them
@@ -169,8 +149,6 @@ export default function EntityDiagram({
             : undefined,
           overflowWrap: isExpanded ? 'normal' : undefined,
         }}
-        onMouseEnter={isExpanded ? undefined : handleTooltipOpen}
-        onMouseLeave={isExpanded ? undefined : () => setTooltipOpen(false)}
       />
     );
 
@@ -178,15 +156,13 @@ export default function EntityDiagram({
       <Text
         fontSize={12}
         textAnchor="middle"
-        style={{ cursor: 'default' }}
+        style={{ userSelect: 'none' }}
         dy={
           isExpanded
             ? CalculateDYSize(node.data.displayName.split(' ').length)
             : '.33em'
         }
         width={isExpanded ? 100 : undefined}
-        onMouseEnter={isExpanded ? undefined : handleTooltipOpen}
-        onMouseLeave={isExpanded ? undefined : () => setTooltipOpen(false)}
       >
         {displayText}
       </Text>
@@ -199,6 +175,7 @@ export default function EntityDiagram({
         key={node.x + node.y}
       >
         {renderNode?.(node.data, [rectangle, text]) ?? [rectangle, text]}
+        {!isExpanded && <title>{node.data.displayName}</title>}
       </Group>
     );
   }
@@ -253,11 +230,6 @@ export default function EntityDiagram({
           )}
         </Tree>
       </svg>
-      {tooltipOpen && tooltipNode && (
-        <Tooltip left={tooltipLeft} top={tooltipTop}>
-          <div>{tooltipNode.data.displayName}</div>
-        </Tooltip>
-      )}
     </div>
   );
 }
