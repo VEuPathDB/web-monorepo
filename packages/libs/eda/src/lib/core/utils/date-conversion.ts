@@ -1,3 +1,6 @@
+import { TimeDelta, TimeUnit } from '@veupathdb/components/lib/types/general';
+import { isTimeUnit } from '@veupathdb/components/lib/types/guards';
+
 /**
  * Convenience function to get around issue with Firefox new Date() not being able to convert
  * 2001Z or 2001-01-01Z
@@ -18,6 +21,23 @@ export function ISODateStringToZuluDate(ISODate: string): Date {
   if (!fixedISODate.endsWith('Z')) {
     fixedISODate = fixedISODate + 'Z';
   }
-  console.log(`${ISODate} to ${fixedISODate}`);
   return new Date(fixedISODate);
+}
+
+/**
+ * Parse, for example, the time-based binWidth returned from the
+ * back end, which originates from an R package (insert here)
+ */
+export function parseTimeDelta(input: string): TimeDelta {
+  const splitInput = input.split(/\s+/);
+  const value = splitInput.length === 2 ? Number(splitInput[0]) : 1;
+  const unitRaw = splitInput.length === 2 ? splitInput[1] : splitInput[0];
+  const unitSingular = unitRaw.replace(/s$/, '');
+  const unitPlural = unitSingular + 's';
+  const unit = isTimeUnit(unitSingular)
+    ? unitSingular
+    : isTimeUnit(unitPlural)
+    ? unitPlural
+    : 'month';
+  return [value, unit];
 }

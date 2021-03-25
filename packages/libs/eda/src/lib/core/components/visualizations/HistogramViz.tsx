@@ -9,6 +9,7 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
+  TimeUnit,
 } from '@veupathdb/components/lib/types/general';
 import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
 import { useDataClient } from '../../hooks/workspace';
@@ -26,7 +27,11 @@ import { HistogramVariable } from '../filter/types';
 import { isHistogramVariable } from '../filter/guards';
 import { VariableTree } from '../VariableTree';
 import { HistogramConfig } from '../../types/visualization';
-import { ISODateStringToZuluDate } from '../../utils/date-conversion';
+import {
+  ISODateStringToZuluDate,
+  parseTimeDelta,
+} from '../../utils/date-conversion';
+import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 
 import debounce from 'debounce-promise';
 
@@ -95,10 +100,16 @@ export default function HistogramViz(props: Props) {
     }
   };
 
-  const onBinWidthChange = (newBinWidth: number) => {
-    console.log(`in onBinWidthChange ${newBinWidth}`);
+  const onBinWidthChange = ({
+    binWidth: newBinWidth,
+  }: {
+    binWidth: NumberOrTimeDelta;
+  }) => {
     if (newBinWidth) {
-      updateVizState({ binWidth: newBinWidth });
+      updateVizState({
+        binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
+        binWidthTimeUnit: isTimeDelta(newBinWidth) ? newBinWidth[1] : undefined,
+      });
     }
   };
 
@@ -213,7 +224,11 @@ export default function HistogramViz(props: Props) {
 }
 
 type HistogramPlotWithControlsProps = HistogramProps & {
-  onBinWidthChange: (newBinWidth: number) => void;
+  onBinWidthChange: ({
+    binWidth: newBinWidth,
+  }: {
+    binWidth: NumberOrTimeDelta;
+  }) => void;
 };
 
 function HistogramPlotWithControls({
@@ -221,15 +236,6 @@ function HistogramPlotWithControls({
   onBinWidthChange,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
-  const handleBinWidthChange = useCallback(
-    ({ binWidth }: { binWidth: NumberOrTimeDelta }) => {
-      console.log(`handleBinWidthChange ${binWidth}`);
-      const newBinWidth = typeof binWidth === 'number' ? binWidth : binWidth[0];
-      onBinWidthChange(newBinWidth);
-    },
-    [onBinWidthChange]
-  );
-
   // TODO Use UIState
   const barLayout = 'stack';
   const displayLegend = true;
@@ -243,7 +249,6 @@ function HistogramPlotWithControls({
       clearAllErrors: () => {},
     };
   }, []);
-  console.log(data.binWidthRange);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -253,6 +258,7 @@ function HistogramPlotWithControls({
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
+        showBarValues={false}
         barLayout={barLayout}
       />
       <HistogramControls
@@ -264,9 +270,13 @@ function HistogramPlotWithControls({
         opacity={opacity}
         orientation={histogramProps.orientation}
         binWidth={data.binWidth!}
-        onBinWidthChange={(val) => {
-          console.log(val);
-          handleBinWidthChange(val);
+        selectedUnit={
+          data.binWidth && isTimeDelta(data.binWidth)
+            ? data.binWidth[1]
+            : undefined
+        }
+        onBinWidthChange={({ binWidth: newBinWidth }) => {
+          onBinWidthChange({ binWidth: newBinWidth });
         }}
         binWidthRange={data.binWidthRange!}
         binWidthStep={data.binWidthStep!}
@@ -295,15 +305,17 @@ export function histogramResponseToData(
   const binWidth =
     type === 'number'
       ? parseInt(String(response.config.binWidth), 10) || 1
-      : ([1, 'month'] as TimeDelta);
+      : parseTimeDelta(response.config.binWidth as string);
   const { min, max, step } = response.config.binSlider;
+  // FIXME - remove max/100 when sorted
   const binWidthRange = (type === 'number'
     ? { min, max }
-    : { min, max, unit: 'day' }) as NumberOrTimeDeltaRange;
+    : {
+        min,
+        max: max / 100,
+        unit: (binWidth as TimeDelta)[1],
+      }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
-  console.log(
-    `response binwidth ${binWidth} and range ${binWidthRange.min} - ${binWidthRange.max}`
-  );
   return {
     series: response.data.map((data, index) => ({
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
