@@ -173,14 +173,14 @@ function FungiOrgLinkoutsTable(props) {
   if (props.value == null || props.value.length === 0) return null;
   const groupedLinks = lodash.groupBy(props.value, 'dataset');
   return (
-    <div style={{marginTop: '2em', overflow: 'auto'}}>
+    <div style={{marginTop: '2em'}}>
       <div className="eupathdb-RecordOverviewItem"><strong>Model Organism Orthologs</strong></div>
       {Object.entries(groupedLinks).map(([dataset, rows]) =>
-        <div key={dataset} className="eupathdb-RecordOverviewItem" style={{overflow: 'visible'}}>
+        <div key={dataset} className="eupathdb-RecordOverviewItem" >
           <strong>{dataset}:</strong> {rows.map((row, index) => 
             <React.Fragment key={index}>
               {renderAttributeValue(row.link)}
-              {index === rows.length - 1 ? null : ','}
+              {index === rows.length - 1 ? null : ', '}
             </React.Fragment>
           )}
         </div>
