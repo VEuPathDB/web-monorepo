@@ -20,7 +20,7 @@ export function WorkspaceContainer(props: Props) {
   );
   const dataClient = useMemo(
     () => new DataClient({ baseUrl: props.subsettingServiceUrl }),
-    [props.dataServiceUrl]
+    [props.subsettingServiceUrl]
   );
   const makeVariableLink = useCallback(
     (entityId: string, variableId: string) =>

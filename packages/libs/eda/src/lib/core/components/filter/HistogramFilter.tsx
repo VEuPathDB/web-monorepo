@@ -11,16 +11,14 @@ import {
   NumberRange,
 } from '@veupathdb/components/lib/types/general';
 import {
-  BarLayoutOptions,
   HistogramData,
   HistogramDataSeries,
-  OrientationOptions,
 } from '@veupathdb/components/lib/types/plots';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf } from 'io-ts';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
   DateHistogramRequestParams,
@@ -115,7 +113,7 @@ export function HistogramFilter(props: Props) {
       const binWidthRange = (variable.type === 'number'
         ? { min, max }
         : { min, max, unit: 'day' }) as NumberOrTimeDeltaRange;
-      const binWidthStep = step;
+      const binWidthStep = step || 0.1;
       return {
         valueType: variable.type,
         series,
@@ -265,13 +263,10 @@ function HistogramPlotWithControls({
   );
 
   // TODO Use UIState
-  const [barLayout, setBarLayout] = useState('overlay');
-  const [displayLegend, setDisplayLegend] = useState(true);
-  const [displayLibraryControls, setDisplayLibraryControls] = useState(false);
-  const [opacity, setOpacity] = useState(100);
-  const [orientation, setOrientation] = useState<string>(
-    histogramProps.orientation
-  );
+  const barLayout = 'overlay';
+  const displayLegend = true;
+  const displayLibraryControls = false;
+  const opacity = 100;
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
@@ -298,28 +293,21 @@ function HistogramPlotWithControls({
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
         onSelectedRangeChange={handleSelectedRangeChange}
-        orientation={orientation as OrientationOptions}
-        barLayout={barLayout as BarLayoutOptions}
+        barLayout={barLayout}
       />
       <HistogramControls
         label="Histogram Controls"
         valueType={data.valueType}
         barLayout={barLayout}
-        onBarLayoutChange={setBarLayout}
         displayLegend={displayLegend}
-        toggleDisplayLegend={() => setDisplayLegend((v) => !v)}
         displayLibraryControls={displayLibraryControls}
-        toggleLibraryControls={() => setDisplayLibraryControls((v) => !v)}
         opacity={opacity}
-        onOpacityChange={setOpacity}
-        orientation={orientation as OrientationOptions}
-        toggleOrientation={setOrientation}
+        orientation={histogramProps.orientation}
         binWidth={data.binWidth!}
         onBinWidthChange={handleBinWidthChange}
         binWidthRange={data.binWidthRange!}
         binWidthStep={data.binWidthStep!}
         errorManagement={errorManagement}
-        displaySelectedRangeControls
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
       />
