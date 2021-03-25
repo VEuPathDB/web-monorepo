@@ -18,6 +18,7 @@ export default function MiniDiagram({
   highlightedEntityID,
   shadingData,
   renderNode,
+  size,
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
   const [tooltipOpen, setTooltipOpen] = useState<boolean>(false);
@@ -26,10 +27,30 @@ export default function MiniDiagram({
   const [tooltipNode, setTooltipNode] = useState<null | HierarchyPointNode<
     StudyData
   >>(null);
-  function CustomNode({ node }: CustomNode) {
-    const width = 30;
-    const height = 20;
 
+  const nodeWidth = 30;
+  const nodeHeight = 20;
+  // Node border width
+  const nodeStrokeWidth = 1;
+  // Width of the highlight border around the highlighted node
+  const nodeHighlightWidth = 3;
+  // treeHeight is always from root to furthest leaf, regardless of orientation
+  // (it's not always vertical on screen)
+  const treeHeight =
+    (orientation === 'horizontal'
+      ? size.width - nodeWidth
+      : size.height - nodeHeight) -
+    nodeHighlightWidth * 2;
+  // Likewise for treeWidth (it's not always horizontal on screen)
+  const treeWidth = orientation === 'horizontal' ? size.height : size.width;
+  // The tree's edge is in the middle of the boundary nodes, so we shift it by
+  // half a node dimension
+  const treeLeft =
+    orientation === 'horizontal' ? nodeWidth / 2 + nodeHighlightWidth : 0;
+  const treeTop =
+    (orientation === 'horizontal' ? 0 : nodeHeight / 2) + nodeHighlightWidth; // Where the baby rocks
+
+  function CustomNode({ node }: CustomNode) {
     // get acronym of displayName
     const matches = node.data.displayName.match(/\b(\w)/g);
     //DKDK could use ! or ? to avoid ts error, but used ? here (optional chaining)
@@ -52,17 +73,23 @@ export default function MiniDiagram({
 
     const rectangle = (
       <rect
-        height={height}
-        width={width}
-        y={-height / 2}
-        x={-width / 2}
+        // These props don't account for stroke width, so we shrink them
+        // accordingly to make sure the node is exactly the dimensions we want
+        height={nodeHeight - nodeStrokeWidth * 2}
+        width={nodeWidth - nodeStrokeWidth * 2}
+        y={-nodeHeight / 2}
+        x={-nodeWidth / 2}
         fill={`url('#rect-gradient-${
           shadingObject ? shadingObject.value : 0
         }')`}
         stroke={'black'}
+        strokeWidth={nodeStrokeWidth}
         style={
           highlightedEntityID == node.data.displayName
-            ? { cursor: 'pointer', outline: 'yellow 3px solid' }
+            ? {
+                cursor: 'pointer',
+                outline: `yellow ${nodeHighlightWidth}px solid`,
+              }
             : { cursor: 'pointer' }
         }
         onMouseEnter={() => handleTooltipOpen()}
@@ -95,7 +122,7 @@ export default function MiniDiagram({
 
   return (
     <div className="mini-diagram">
-      <svg width="150px" height="300px">
+      <svg width={size.width} height={size.height}>
         <defs>
           <marker
             id="arrow"
@@ -126,12 +153,9 @@ export default function MiniDiagram({
               />
             ))
         }
-        <Tree root={data} size={[150, 200]}>
+        <Tree root={data} size={[treeWidth, treeHeight]}>
           {(tree) => (
-            <Group
-              left={orientation == 'horizontal' ? 50 : 10}
-              top={orientation == 'horizontal' ? 0 : 50}
-            >
+            <Group left={treeLeft} top={treeTop}>
               {tree.links().map((link, i) => {
                 return (
                   <OffsetLine

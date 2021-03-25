@@ -204,12 +204,15 @@ export const EntityDiagram = () => {
       >
         Switch Size
       </button>
-      <MiniDiagram
-        treeData={studyData.rootEntity}
-        orientation={orientation}
-        highlightedEntityID={'Sample'}
-        shadingData={shadingData}
-      />
+      <div style={{ height: 300, width: 150, border: '1px solid' }}>
+        <MiniDiagram
+          treeData={studyData.rootEntity}
+          orientation={orientation}
+          highlightedEntityID={'Sample'}
+          shadingData={shadingData}
+          size={{ height: 300, width: 150 }}
+        />
+      </div>
       <TransitionGroup>
         {expanded && (
           <CSSTransition
@@ -217,12 +220,15 @@ export const EntityDiagram = () => {
             timeout={1000}
             classNames="expanded-diagram"
           >
-            <ExpandedDiagram
-              treeData={studyData.rootEntity}
-              orientation={orientation}
-              highlightedEntityID={'Sample'}
-              shadingData={shadingData}
-            />
+            <div style={{ height: 500, width: 600, border: '1px solid' }}>
+              <ExpandedDiagram
+                treeData={studyData.rootEntity}
+                orientation={orientation}
+                highlightedEntityID={'Sample'}
+                shadingData={shadingData}
+                size={{ height: 500, width: 600 }}
+              />
+            </div>
           </CSSTransition>
         )}
       </TransitionGroup>
