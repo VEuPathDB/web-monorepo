@@ -121,17 +121,14 @@ td.wdk-DataTableCell__thumbnail {
 }
 
 .eupathdb-RecordOverviewItem {
-  white-space: nowrap;
   width: 100%;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
 }
 
 .eupathdb-RecordOverviewItem, .eupathdb-RecordOverviewLink {
   margin: .2em 0;
   font-size: 1.4em;
   font-weight: 300;
-  max-width: 75em;
+  max-width: 95%;
 }
 
 .eupathdb-RecordOverviewItem[data-label]:before {
