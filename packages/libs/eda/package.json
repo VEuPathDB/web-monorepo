@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "dependencies": {
     "@veupathdb/components": "^0.2.8",
     "@veupathdb/wdk-client": "^0.1.1-alpha.14",
