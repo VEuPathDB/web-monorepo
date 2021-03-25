@@ -8,9 +8,15 @@
   background: #bad6fc;
 }
 
+.EDAWorkspace-Subsetting .field-list {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
 /* height of CheckboxTree - use vh */
 .EDAWorkspace-Subsetting .wdk-CheckboxTree {
-  height: 50vh;
+  height: calc(100% - 6em);
 }
 
 /* configuring scrolling for CheckboxTree list only: anchoring search bar */
