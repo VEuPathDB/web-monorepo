@@ -22,7 +22,11 @@ export default function VisualizationRoute(props: RouteProps) {
 
   const visualisation = visualizations.find(
     (viz) => viz.visualizationId === visualizationId
-  ) ?? { visualizationId: visualizationId, type: 'histogram' };
+  ) ?? {
+    visualizationId: visualizationId,
+    type: 'histogram',
+    enableOverlay: true,
+  };
 
   const handleVizStateChange = (newState: Visualization) => {
     const newVisualizations = visualizations

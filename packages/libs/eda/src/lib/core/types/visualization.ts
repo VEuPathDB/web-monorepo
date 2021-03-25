@@ -11,6 +11,7 @@ export const HistogramConfig = t.intersection([
   _VisualizationConfigBase,
   t.type({
     type: t.literal('histogram'),
+    enableOverlay: t.boolean,
   }),
   t.partial({
     independentVariable: StudyVariable, // TO DO: make this numeric/date continuous?

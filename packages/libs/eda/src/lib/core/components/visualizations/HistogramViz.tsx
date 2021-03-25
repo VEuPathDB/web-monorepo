@@ -9,9 +9,9 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
-  TimeUnit,
 } from '@veupathdb/components/lib/types/general';
 import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import { useDataClient } from '../../hooks/workspace';
 import { StudyVariable } from '../../types/study';
 import { usePromise } from '../../hooks/promise';
@@ -59,6 +59,7 @@ export default function HistogramViz(props: Props) {
     independentVariableEntity,
     overlayVariable,
     overlayVariableEntity,
+    enableOverlay,
   } = vizConfig;
 
   const updateVizState = (newConfig: Partial<HistogramConfig>) => {
@@ -138,8 +139,8 @@ export default function HistogramViz(props: Props) {
           sessionState.session?.filters ?? [],
           independentVariableEntity,
           independentVariable,
-          overlayVariableEntity,
-          overlayVariable,
+          enableOverlay ? overlayVariableEntity : undefined,
+          enableOverlay ? overlayVariable : undefined,
           binWidth,
           binWidthTimeUnit
         );
@@ -158,15 +159,7 @@ export default function HistogramViz(props: Props) {
       },
       500
     ),
-    [
-      studyId,
-      independentVariableEntity,
-      independentVariable,
-      dataClient,
-      sessionState.session?.filters,
-      overlayVariableEntity,
-      overlayVariable,
-    ]
+    [studyId, dataClient, sessionState.session?.filters, vizConfig]
   );
 
   const variableTreeContainerCSS: CSSProperties = {
@@ -196,6 +189,13 @@ export default function HistogramViz(props: Props) {
           />
         </div>
         <h2>Choose the overlay variable</h2>
+        <Switch
+          label="Enable overlay"
+          state={enableOverlay}
+          onStateChange={() => {
+            updateVizState({ enableOverlay: !enableOverlay });
+          }}
+        />
         <div style={variableTreeContainerCSS}>
           <VariableTree
             entities={entities}
@@ -217,6 +217,7 @@ export default function HistogramViz(props: Props) {
           height={400}
           orientation={'vertical'}
           barLayout={'stack'}
+          displayLegend={data.value?.series.length > 1}
         />
       )}
     </div>
@@ -238,7 +239,6 @@ function HistogramPlotWithControls({
 }: HistogramPlotWithControlsProps) {
   // TODO Use UIState
   const barLayout = 'stack';
-  const displayLegend = true;
   const displayLibraryControls = false;
   const opacity = 100;
   const errorManagement = useMemo((): ErrorManagement => {
@@ -256,7 +256,6 @@ function HistogramPlotWithControls({
         {...histogramProps}
         data={data}
         opacity={opacity}
-        displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
         showBarValues={false}
         barLayout={barLayout}
@@ -265,7 +264,7 @@ function HistogramPlotWithControls({
         label="Histogram Controls"
         valueType={data.valueType}
         barLayout={barLayout}
-        displayLegend={displayLegend}
+        displayLegend={false /* should not be a required prop */}
         displayLibraryControls={displayLibraryControls}
         opacity={opacity}
         orientation={histogramProps.orientation}
