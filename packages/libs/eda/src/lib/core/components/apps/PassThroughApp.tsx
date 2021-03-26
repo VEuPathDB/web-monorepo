@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSession } from '../../hooks/session';
 import { Visualization } from '../../types/visualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
@@ -27,6 +27,7 @@ export function PassThroughApp(props: Props) {
     },
     [setVisualizations, session]
   );
+  const filters = useMemo(() => session?.filters ?? [], [session?.filters]);
   if (session == null) return <div>Session not found</div>;
   return (
     <VisualizationsContainer
@@ -41,6 +42,7 @@ export function PassThroughApp(props: Props) {
       visualizations={session.visualizations}
       addVisualization={addVisualization}
       visualizationTypes={visualizationTypes}
+      filters={filters}
     />
   );
 }

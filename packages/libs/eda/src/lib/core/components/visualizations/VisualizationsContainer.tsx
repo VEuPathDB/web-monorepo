@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
+import { Filter } from '../../types/filter';
 import { App, Visualization } from '../../types/visualization';
 import { Grid } from '../Grid';
 import { VisualizationType } from './VisualizationTypes';
@@ -14,6 +15,7 @@ interface Props {
   apps: App[];
   addVisualization: (visualization: Visualization) => void;
   visualizationTypes: VisualizationType[];
+  filters: Filter[];
 }
 
 /**
@@ -44,7 +46,7 @@ export function VisualizationsContainer(props: Props) {
 }
 
 function ConfiguredVisualizations(props: Props) {
-  const { appId, apps, visualizations, visualizationTypes } = props;
+  const { appId, apps, visualizations, visualizationTypes, filters } = props;
   const { url } = useRouteMatch();
   const app = useMemo(() => apps.find((app) => app.id === appId), [
     appId,
@@ -118,7 +120,11 @@ function ConfiguredVisualizations(props: Props) {
                   <i className="fa fa-arrows-alt"></i>
                 </Link>
               </div>
-              <type.gridComponent visualization={viz} app={app} />
+              <type.gridComponent
+                visualization={viz}
+                app={app}
+                filters={filters}
+              />
             </div>
           );
         })
@@ -202,7 +208,14 @@ function NewVisualizationPicker(props: Props) {
 }
 
 function FullScreenVisualization(props: Props & { id: string }) {
-  const { visualizationTypes, id, appId, visualizations, apps } = props;
+  const {
+    visualizationTypes,
+    id,
+    appId,
+    visualizations,
+    apps,
+    filters,
+  } = props;
   const viz = visualizations.find((v) => v.id === id && v.appId === appId);
   const app = apps.find((a) => a.id === appId);
   const vizType = visualizationTypes.find((t) => t.type === viz?.type);
@@ -231,7 +244,11 @@ function FullScreenVisualization(props: Props & { id: string }) {
           <i className="fa fa-window-restore"></i>
         </Link>
       </div>
-      <vizType.fullscreenComponent visualization={viz} app={app} />
+      <vizType.fullscreenComponent
+        visualization={viz}
+        app={app}
+        filters={filters}
+      />
     </div>
   );
 }
