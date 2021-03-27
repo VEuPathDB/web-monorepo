@@ -1,4 +1,5 @@
 import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { keyBy } from 'lodash';
 import React, { useMemo } from 'react';
 import { RouteComponentProps } from 'react-router';
@@ -8,6 +9,10 @@ import { Filter } from '../../types/filter';
 import { App, Visualization } from '../../types/visualization';
 import { Grid } from '../Grid';
 import { VisualizationType } from './VisualizationTypes';
+
+import './Visualizations.scss';
+
+const cx = makeClassNameHelper('VisualizationsContainer');
 
 interface Props {
   appId: string;
@@ -63,26 +68,8 @@ function ConfiguredVisualizations(props: Props) {
   if (app == null) return <div>App not found</div>;
   return (
     <Grid>
-      <div
-        style={{
-          height: '8em',
-          width: '15em',
-          border: '.2em dashed black',
-          borderRadius: '.5em',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background: '#eee',
-        }}
-      >
-        <Link
-          to={`${url}/new`}
-          style={{
-            fontSize: '1.35em',
-            display: 'block',
-            textAlign: 'center',
-          }}
-        >
+      <div className={cx('-NewVisualization')}>
+        <Link to={`${url}/new`}>
           <i className="fa fa-plus"></i>
           <br />
           Add a visualization
@@ -94,28 +81,8 @@ function ConfiguredVisualizations(props: Props) {
           if (type == null)
             return <div>Viz type not implemented: {viz.type}</div>;
           return (
-            <div
-              style={{
-                height: '15em',
-                width: '25em',
-                border: '1px solid black',
-                borderRadius: '.5em',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                position: 'relative',
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 0,
-                  padding: '.5em',
-                  fontSize: '1.8em',
-                }}
-              >
+            <div className={cx('-ConfiguredVisualization')}>
+              <div className={cx('-ConfiguredVisualizationActions')}>
                 <Link to={`${url}/${viz.id}`}>
                   <i className="fa fa-arrows-alt"></i>
                 </Link>
@@ -142,42 +109,18 @@ function NewVisualizationPicker(props: Props) {
   const history = useHistory();
   if (app == null) return <div>App not found</div>;
   return (
-    <div style={{ position: 'relative' }}>
-      <div
-        style={{
-          padding: '2em 0',
-          position: 'absolute',
-          right: 0,
-        }}
-      >
-        <Link
-          to={`../${appId}`}
-          style={{
-            fontSize: '1.35em',
-          }}
-        >
+    <div className={cx('-PickerContainer')}>
+      <div className={cx('-PickerActions')}>
+        <Link to={`../${appId}`}>
           <i className="fa fa-close"></i>
         </Link>
       </div>
       <h3>Select a visualization</h3>
       <Grid>
         {visualizationTypes.map((vizType) => (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
+          <div className={cx('-PickerEntry')}>
             <button
               type="button"
-              style={{
-                height: '10em',
-                width: '10em',
-                background: '#eee',
-                marginBottom: '1em',
-                border: '.15em solid black',
-              }}
               onClick={async () => {
                 const id = uuid();
                 addVisualization({
@@ -191,15 +134,7 @@ function NewVisualizationPicker(props: Props) {
             >
               <vizType.selectorComponent />
             </button>
-            <div
-              style={{
-                textTransform: 'uppercase',
-                color: '#444',
-                fontWeight: 500,
-              }}
-            >
-              {vizType.displayName}
-            </div>
+            <div className={cx('-PickerEntryName')}>{vizType.displayName}</div>
           </div>
         ))}
       </Grid>
@@ -223,24 +158,9 @@ function FullScreenVisualization(props: Props & { id: string }) {
   if (app == null) return <div>App not found.</div>;
   if (vizType == null) return <div>Visualization type not implemented.</div>;
   return (
-    <div
-      style={{
-        position: 'relative',
-        padding: '2em 0',
-      }}
-    >
-      <div
-        style={{
-          position: 'absolute',
-          right: 0,
-        }}
-      >
-        <Link
-          to={`../${appId}`}
-          style={{
-            fontSize: '1.35em',
-          }}
-        >
+    <div className={cx('-FullScreenContainer')}>
+      <div className={cx('-FullScreenActions')}>
+        <Link to={`../${appId}`}>
           <i className="fa fa-window-restore"></i>
         </Link>
       </div>
