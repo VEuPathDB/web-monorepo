@@ -14,11 +14,18 @@ interface Props {
   sessionState: SessionState;
   expanded: boolean;
   orientation: 'horizontal' | 'vertical';
+  /** The tree's dimensions. If the tree is horizontal, it may not take up
+   * the whole height; if it's vertical, it may not take up the full
+   * width. */
+  size: {
+    height: number;
+    width: number;
+  };
   selectedEntity: string;
 }
 
 export function EntityDiagram(props: Props) {
-  const { sessionState, expanded, orientation, selectedEntity } = props;
+  const { sessionState, expanded, orientation, size, selectedEntity } = props;
 
   const studyMetadata = useStudyMetadata();
   const { session } = sessionState;
@@ -64,6 +71,7 @@ export function EntityDiagram(props: Props) {
     treeData: studyMetadata.rootEntity,
     highlightedEntityID: selectedEntity,
     orientation: orientation,
+    size: size,
     shadingData: shadingData,
     renderNode: renderNode,
   };
