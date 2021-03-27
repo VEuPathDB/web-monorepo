@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useSession } from '../../hooks/session';
 import { Visualization } from '../../types/visualization';
+import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 
@@ -8,16 +9,7 @@ interface Props {
   sessionId: string;
 }
 
-const visualizationTypes: VisualizationType[] = [
-  {
-    type: 'test',
-    displayName: 'Test visualization',
-    gridComponent: () => <div>Test in grid</div>,
-    selectorComponent: () => <div>Test in selector</div>,
-    fullscreenComponent: () => <div>Test in fullscreen</div>,
-    createDefaultConfig: () => undefined,
-  },
-];
+const visualizationTypes: VisualizationType[] = [testVisualization];
 
 export function PassThroughApp(props: Props) {
   const { session, setVisualizations } = useSession(props.sessionId);
