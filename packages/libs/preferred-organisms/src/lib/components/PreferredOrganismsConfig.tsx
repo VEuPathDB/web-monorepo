@@ -56,7 +56,7 @@ export function PreferredOrganismsConfig({
       <h1>Configure My Organisms</h1>
       <p className={cx('--Instructions')}>
         Set your <span className={cx('--InlineTitle')}>My Organisms</span> list
-        in order to constrain the taxa you see on various pages in {projectId}.
+        to limit the organisms you see throughout {projectId}.
       </p>
       <div className={cx('--Main')}>
         <div className={cx('--Selections')}>

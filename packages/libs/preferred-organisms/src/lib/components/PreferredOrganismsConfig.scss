@@ -1,4 +1,5 @@
 $red: #cc0000;
+$gray: #f0f0f0;
 
 .PreferredOrganismsConfig {
   &--Instructions {
@@ -18,10 +19,9 @@ $red: #cc0000;
   }
 
   &--Preview {
-    background-color: #eee;
+    background-color: $gray;
 
     .wdk-CheckboxTree {
-      background-color: white;
       padding: 0.5em;
     }
   }
@@ -33,7 +33,6 @@ $red: #cc0000;
   &--NoPreferencesSelected {
     font-size: 1.2em;
     font-style: italic;
-    background-color: white;
     color: $red;
     padding: 1em;
   }
