@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useSession } from '../../hooks/session';
 import { Visualization } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
+import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 
@@ -9,7 +10,10 @@ interface Props {
   sessionId: string;
 }
 
-const visualizationTypes: VisualizationType[] = [testVisualization];
+const visualizationTypes: VisualizationType[] = [
+  testVisualization,
+  histogramVisualization,
+];
 
 export function PassThroughApp(props: Props) {
   const { sessionId } = props;

@@ -71,7 +71,9 @@ export function VariableTree(props: Props) {
 
   // Lookup activeField
   const activeField =
-    entityId && variableId ? fieldsByTerm[`${entityId}/${variableId}`] : null;
+    entityId && variableId
+      ? fieldsByTerm[`${entityId}/${variableId}`]
+      : undefined;
 
   // TODO Populate valuesMap with properties of variables.
   // This is used by the search functionality of FieldList.

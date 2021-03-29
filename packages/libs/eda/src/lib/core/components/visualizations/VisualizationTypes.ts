@@ -6,7 +6,7 @@ import { App, Visualization } from '../../types/visualization';
  */
 export interface VisualizationProps {
   visualization: Visualization;
-  updateVisualization: (newViz: Visualization) => void;
+  updateVisualization?: (newViz: Visualization) => void;
   app: App;
   filters: Filter[];
 }

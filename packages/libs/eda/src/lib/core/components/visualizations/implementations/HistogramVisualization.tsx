@@ -49,7 +49,15 @@ export const histogramVisualization: VisualizationType = {
 };
 
 function GridComponent(props: VisualizationProps) {
-  return <div>An instance of a histogram.</div>;
+  const { visualization, updateVisualization, app, filters } = props;
+  return (
+    <HistogramViz
+      visualization={visualization}
+      app={app}
+      filters={filters}
+      fullscreen={false}
+    />
+  );
 }
 
 function SelectorComponent() {
@@ -96,7 +104,7 @@ type Props = VisualizationProps & {
 
 function HistogramViz(props: Props) {
   const {
-    app,
+    app, // TO DO: pass 'pass' path through to dataClient service call
     visualization,
     updateVisualization,
     filters,
@@ -124,60 +132,72 @@ function HistogramViz(props: Props) {
     enableOverlay,
   } = vizConfig;
 
-  const updateVizState = (newConfig: Partial<HistogramConfig>) => {
-    updateVisualization({
-      ...visualization,
-      configuration: {
-        ...vizConfig,
-        ...newConfig,
-      },
-    });
-  };
-
-  const onMainVariableChange = (term: string) => {
-    if (term) {
-      const { entity: newEntity, variable: newVariable } = splitTerm(
-        term,
-        entities
-      );
-      if (newEntity && newVariable) {
-        updateVizState({
-          independentVariable: newVariable,
-          independentVariableEntity: newEntity,
-          binWidth: undefined,
-          binWidthTimeUnit: undefined, // reset binWidth if changing variables
+  const updateVizConfig = useCallback(
+    (newConfig: Partial<HistogramConfig>) => {
+      if (updateVisualization) {
+        updateVisualization({
+          ...visualization,
+          configuration: {
+            ...vizConfig,
+            ...newConfig,
+          },
         });
       }
-    }
-  };
+    },
+    [updateVisualization, visualization, vizConfig]
+  );
 
-  const onOverlayVariableChange = (term: string) => {
-    if (term) {
-      const { entity: newEntity, variable: newVariable } = splitTerm(
-        term,
-        entities
-      );
-      if (newEntity && newVariable) {
-        updateVizState({
-          overlayVariable: newVariable,
-          overlayVariableEntity: newEntity,
+  const onMainVariableChange = useCallback(
+    (term: string) => {
+      if (term) {
+        const { entity: newEntity, variable: newVariable } = splitTerm(
+          term,
+          entities
+        );
+        if (newEntity && newVariable) {
+          updateVizConfig({
+            independentVariable: newVariable,
+            independentVariableEntity: newEntity,
+            binWidth: undefined,
+            binWidthTimeUnit: undefined, // reset binWidth if changing variables
+          });
+        }
+      }
+    },
+    [updateVizConfig, entities]
+  );
+
+  const onOverlayVariableChange = useCallback(
+    (term: string) => {
+      if (term) {
+        const { entity: newEntity, variable: newVariable } = splitTerm(
+          term,
+          entities
+        );
+        if (newEntity && newVariable) {
+          updateVizConfig({
+            overlayVariable: newVariable,
+            overlayVariableEntity: newEntity,
+          });
+        }
+      }
+    },
+    [updateVizConfig, entities]
+  );
+
+  const onBinWidthChange = useCallback(
+    ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
+      if (newBinWidth) {
+        updateVizConfig({
+          binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
+          binWidthTimeUnit: isTimeDelta(newBinWidth)
+            ? newBinWidth[1]
+            : undefined,
         });
       }
-    }
-  };
-
-  const onBinWidthChange = ({
-    binWidth: newBinWidth,
-  }: {
-    binWidth: NumberOrTimeDelta;
-  }) => {
-    if (newBinWidth) {
-      updateVizState({
-        binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
-        binWidthTimeUnit: isTimeDelta(newBinWidth) ? newBinWidth[1] : undefined,
-      });
-    }
-  };
+    },
+    [updateVizConfig]
+  );
 
   const getData = useCallback(
     debounce(
@@ -242,49 +262,65 @@ function HistogramViz(props: Props) {
   );
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div>
-        <h1>Histogram</h1>
-        <h2>Choose the main variable</h2>
-        <div style={variableTreeContainerCSS}>
-          <VariableTree
-            entities={entities}
-            entityId={independentVariableEntity?.id}
-            variableId={independentVariable?.id}
-            onActiveFieldChange={onMainVariableChange}
+      {fullscreen && (
+        <div>
+          <h1>Histogram</h1>
+          <h2>Choose the main variable</h2>
+          <div style={variableTreeContainerCSS}>
+            <VariableTree
+              entities={entities}
+              entityId={independentVariableEntity?.id}
+              variableId={independentVariable?.id}
+              onActiveFieldChange={onMainVariableChange}
+            />
+          </div>
+          <h2>Choose the overlay variable</h2>
+          <Switch
+            label="Enable overlay"
+            state={enableOverlay}
+            onStateChange={() => {
+              updateVizConfig({ enableOverlay: !enableOverlay });
+            }}
           />
+          <div style={variableTreeContainerCSS}>
+            <VariableTree
+              entities={entities}
+              entityId={overlayVariableEntity?.id}
+              variableId={overlayVariable?.id}
+              onActiveFieldChange={onOverlayVariableChange}
+            />
+          </div>
         </div>
-        <h2>Choose the overlay variable</h2>
-        <Switch
-          label="Enable overlay"
-          state={enableOverlay}
-          onStateChange={() => {
-            updateVizState({ enableOverlay: !enableOverlay });
-          }}
-        />
-        <div style={variableTreeContainerCSS}>
-          <VariableTree
-            entities={entities}
-            entityId={overlayVariableEntity?.id}
-            variableId={overlayVariable?.id}
-            onActiveFieldChange={onOverlayVariableChange}
-          />
-        </div>
-      </div>
+      )}
       {data.pending && (
         <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
       )}
       {data.error && <pre>{String(data.error)}</pre>}
-      {data.value && (
-        <HistogramPlotWithControls
-          data={data.value}
-          onBinWidthChange={onBinWidthChange}
-          width={800}
-          height={400}
-          orientation={'vertical'}
-          barLayout={'stack'}
-          displayLegend={data.value?.series.length > 1}
-        />
-      )}
+      {data.value &&
+        (fullscreen ? (
+          <HistogramPlotWithControls
+            data={data.value}
+            onBinWidthChange={onBinWidthChange}
+            width={800}
+            height={400}
+            orientation={'vertical'}
+            barLayout={'stack'}
+            displayLegend={data.value?.series.length > 1}
+          />
+        ) : (
+          // thumbnail/grid view
+          <Histogram
+            data={data.value}
+            width={300}
+            height={250}
+            orientation={'vertical'}
+            barLayout={'stack'}
+            displayLibraryControls={false}
+            displayLegend={false}
+            independentAxisLabel=""
+            dependentAxisLabel=""
+          />
+        ))}
     </div>
   );
 }
