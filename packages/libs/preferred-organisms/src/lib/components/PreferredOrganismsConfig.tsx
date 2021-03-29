@@ -60,7 +60,7 @@ export function PreferredOrganismsConfig({
       </p>
       <div className={cx('--Main')}>
         <div className={cx('--Selections')}>
-          <h2>Choose taxa or organisms to keep</h2>
+          <h2>Choose organisms to keep</h2>
           <CheckboxTree<TreeBoxVocabNode>
             tree={organismTree}
             getNodeId={getNodeId}
