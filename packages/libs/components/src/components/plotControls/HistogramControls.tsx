@@ -62,7 +62,7 @@ export type HistogramControlsProps = {
   valueType?: 'number' | 'date';
   /** Available unit options by which to bin data. */
   availableUnits?: Array<string>;
-  /** The currently selected bin unit. */
+  /** The currently selected binWidth unit. */
   selectedUnit?: string;
   /** Function to invoke when the selected bin unit changes. */
   onSelectedUnitChange?: (unit: string) => void;
