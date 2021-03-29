@@ -12,7 +12,8 @@ interface Props {
 const visualizationTypes: VisualizationType[] = [testVisualization];
 
 export function PassThroughApp(props: Props) {
-  const { session, setVisualizations } = useSession(props.sessionId);
+  const { sessionId } = props;
+  const { session, setVisualizations } = useSession(sessionId);
   const addVisualization = useCallback(
     (visualization: Visualization) => {
       setVisualizations([...(session?.visualizations ?? []), visualization]);
@@ -23,6 +24,7 @@ export function PassThroughApp(props: Props) {
   if (session == null) return <div>Session not found</div>;
   return (
     <VisualizationsContainer
+      sessionId={sessionId}
       appId="pass-through"
       apps={[
         {

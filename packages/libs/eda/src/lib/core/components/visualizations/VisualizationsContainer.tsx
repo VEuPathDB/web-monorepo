@@ -15,6 +15,7 @@ import './Visualizations.scss';
 const cx = makeClassNameHelper('VisualizationsContainer');
 
 interface Props {
+  sessionId: string;
   appId: string;
   visualizations: Visualization[];
   apps: App[];
@@ -144,6 +145,7 @@ function NewVisualizationPicker(props: Props) {
 
 function FullScreenVisualization(props: Props & { id: string }) {
   const {
+    sessionId,
     visualizationTypes,
     id,
     appId,
@@ -165,6 +167,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </Link>
       </div>
       <vizType.fullscreenComponent
+        sessionId={sessionId}
         visualization={viz}
         app={app}
         filters={filters}

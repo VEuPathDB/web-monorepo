@@ -5,6 +5,7 @@ import { App, Visualization } from '../../types/visualization';
  * Props passed to viz components
  */
 export interface VisualizationProps {
+  sessionId: string;
   visualization: Visualization;
   app: App;
   filters: Filter[];
