@@ -1,9 +1,22 @@
+import { useMemo } from 'react';
+
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
-import { usePreferredOrganismsState } from './lib/hooks/preferredOrganisms';
+import {
+  usePreferredOrganismsState,
+  useProjectId,
+} from './lib/hooks/preferredOrganisms';
+import { useReferenceStrains } from './lib/hooks/referenceStrains';
 
 export default function Home() {
   const [preferredOrganisms] = usePreferredOrganismsState();
+  const projectId = useProjectId();
+
+  const referenceStrains = useReferenceStrains();
+
+  const referenceStrainsList = useMemo(() => [...referenceStrains].sort(), [
+    referenceStrains,
+  ]);
 
   return (
     <div style={{ fontSize: '1.2em' }}>
@@ -29,6 +42,14 @@ export default function Home() {
           <Link to="/preferred-organisms">
             Configure your preferred organisms?
           </Link>
+        </p>
+        <p>
+          These are the reference strains for {projectId}:
+          <ul>
+            {referenceStrainsList.map((referenceStrain) => (
+              <li key={referenceStrain}>{referenceStrain}</li>
+            ))}
+          </ul>
         </p>
       </div>
     </div>

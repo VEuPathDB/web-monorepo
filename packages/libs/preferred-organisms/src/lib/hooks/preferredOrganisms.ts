@@ -1,7 +1,7 @@
-import { memoize } from 'lodash';
 import { useContext } from 'react';
-
 import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { memoize } from 'lodash';
 
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
