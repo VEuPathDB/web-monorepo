@@ -79,13 +79,16 @@ export function Subsetting(props: Props) {
   return (
     <div className={cx('-Subsetting')}>
       <div>
-        <h2>ENTITIES</h2>
-        <EntityDiagram
-          sessionState={sessionState}
-          expanded={false}
-          orientation="vertical"
-          selectedEntity={entity.displayName}
-        />
+        <h2 style={{ textAlign: 'center' }}>ENTITIES</h2>
+        <div style={{ paddingTop: '10px' }}>
+          <EntityDiagram
+            sessionState={sessionState}
+            expanded={false}
+            orientation="vertical"
+            size={{ height: 300, width: 150 }}
+            selectedEntity={entity.displayName}
+          />
+        </div>
       </div>
       <div>
         <h2>VARIABLES</h2>
@@ -97,7 +100,7 @@ export function Subsetting(props: Props) {
             padding: '.5em',
             height: '80vh',
             width: '30em',
-            overflow: 'auto',
+            // overflow: 'auto',
             position: 'relative',
           }}
         >

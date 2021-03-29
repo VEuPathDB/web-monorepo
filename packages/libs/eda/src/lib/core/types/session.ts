@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 import * as t from 'io-ts';
 import { Filter } from './filter';
-import { Visualization } from './visualization';
+import { App, Visualization } from './visualization';
 
 export type DerviedVariable = t.TypeOf<typeof DerviedVariable>;
 export const DerviedVariable = t.unknown;
@@ -18,6 +18,7 @@ export const NewSession = t.type({
   starredVariables: t.array(t.string),
   variableUISettings: t.record(t.string, VariableUISetting),
   visualizations: t.array(Visualization),
+  apps: t.array(App),
 });
 
 export type Session = t.TypeOf<typeof Session>;

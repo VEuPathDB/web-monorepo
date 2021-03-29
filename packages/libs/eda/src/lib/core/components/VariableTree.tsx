@@ -1,5 +1,4 @@
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import FieldList from '@veupathdb/wdk-client/lib/Components/AttributeFilter/FieldList';
 import { keyBy } from 'lodash';
 import { useMemo } from 'react';
 import { StudyEntity } from '../types/study';
@@ -87,6 +86,7 @@ export function VariableTree(props: Props) {
       onActiveFieldChange={onActiveFieldChange}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
+      autoFocus={false}
     />
   );
 }

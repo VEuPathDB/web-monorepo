@@ -12,7 +12,7 @@ import {
 import { Link } from 'react-router-dom';
 import { SubsettingRoute } from './Subsetting';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
-import VisualizationRoute from './VisualizationRoute';
+import { AppRoute } from './AppRoute';
 
 interface Props {
   sessionId: string;
@@ -73,31 +73,7 @@ export function SessionPanel(props: Props) {
       />
       <Route
         path={`${routeBase}/visualizations`}
-        exact
-        component={() => (
-          <div>
-            <h3>Viz picker/adder TO DO</h3>
-            So here's a hardcoded list for now
-            <ul>
-              <li>
-                <Link to={`${routeBase}/visualizations/1`}>
-                  Hello World Histogram
-                </Link>
-              </li>
-            </ul>
-          </div>
-        )}
-      />
-      <Route
-        path={`${routeBase}/visualizations/:visualizationId`}
-        component={(
-          props: RouteComponentProps<{ visualizationId: string }>
-        ) => (
-          <VisualizationRoute
-            sessionId={session.id}
-            visualizationId={props.match.params.visualizationId}
-          />
-        )}
+        render={() => <AppRoute sessionId={sessionId} />}
       />
     </div>
   );

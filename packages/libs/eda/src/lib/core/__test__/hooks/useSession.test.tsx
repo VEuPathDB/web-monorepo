@@ -20,6 +20,7 @@ const stubSession: NewSession = {
   starredVariables: [],
   variableUISettings: {},
   visualizations: [],
+  apps: [],
 };
 
 const key = '123';
