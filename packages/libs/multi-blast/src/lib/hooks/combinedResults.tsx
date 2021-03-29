@@ -234,6 +234,8 @@ function useCombinedResultColumns(
       {
         key: 'score',
         name: 'Score',
+        renderCell: ({ row }: { row: CombinedResultRow }) =>
+          row.score.toFixed(1),
         sortable: true,
         helpText: SCORE_HELP_TEXT,
       },
@@ -340,7 +342,7 @@ function useRawCombinedResultRows(
         const alignmentLength = bestHsp.align_len;
         const eValue = bestHsp.evalue;
         const identity = bestHsp.identity / bestHsp.align_len;
-        const score = bestHsp.score;
+        const score = bestHsp.bit_score;
 
         const queryIntervals = hit.hsps.map(({ query_from, query_to }) => ({
           left: query_from,
