@@ -1,7 +1,7 @@
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
-import React, { CSSProperties, useCallback, useMemo, useState } from 'react';
-import { SessionState, StudyEntity, StudyMetadata } from '../../../../core';
+import React, { CSSProperties, useCallback, useMemo } from 'react';
+import { StudyEntity, StudyVariable } from '../../../../core';
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
@@ -15,7 +15,6 @@ import {
 import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { StudyVariable } from '../../../types/study';
 import { usePromise } from '../../../hooks/promise';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import {
@@ -35,11 +34,10 @@ import {
 import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 
 import debounce from 'debounce-promise';
-import { useSession } from '../../../hooks/session';
 import * as t from 'io-ts';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { pipe } from 'fp-ts/lib/function';
-import { getOrElse } from 'fp-ts/lib/Option';
+import { getOrElse } from 'fp-ts/lib/Either';
 
 export const histogramVisualization: VisualizationType = {
   type: 'histogram',
@@ -47,10 +45,7 @@ export const histogramVisualization: VisualizationType = {
   gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
-  createDefaultConfig: () =>
-    ({
-      enableOverlay: true,
-    } as HistogramConfig),
+  createDefaultConfig: createDefaultConfig,
 };
 
 function GridComponent(props: VisualizationProps) {
@@ -62,16 +57,22 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  const { sessionId, visualization, app, filters } = props;
+  const { visualization, updateVisualization, app, filters } = props;
   return (
     <HistogramViz
-      sessionId={sessionId}
       visualization={visualization}
+      updateVisualization={updateVisualization}
       app={app}
       filters={filters}
       fullscreen={true}
     />
   );
+}
+
+function createDefaultConfig(): HistogramConfig {
+  return {
+    enableOverlay: true,
+  };
 }
 
 type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
@@ -94,8 +95,13 @@ type Props = VisualizationProps & {
 };
 
 function HistogramViz(props: Props) {
-  const { sessionId, app, visualization, filters, fullscreen } = props;
-  const session = useSession(sessionId);
+  const {
+    app,
+    visualization,
+    updateVisualization,
+    filters,
+    fullscreen,
+  } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = Array.from(
@@ -106,10 +112,7 @@ function HistogramViz(props: Props) {
   const vizConfig = useMemo(() => {
     return pipe(
       HistogramConfig.decode(visualization.configuration),
-      getOrElse(
-        (): t.TypeOf<typeof HistogramConfig> =>
-          histogramVisualization.createDefaultConfig()
-      )
+      getOrElse((): t.TypeOf<typeof HistogramConfig> => createDefaultConfig())
     );
   }, [visualization.configuration]);
 
@@ -122,9 +125,12 @@ function HistogramViz(props: Props) {
   } = vizConfig;
 
   const updateVizState = (newConfig: Partial<HistogramConfig>) => {
-    onVizConfigChange({
-      ...vizConfig,
-      ...newConfig,
+    updateVisualization({
+      ...visualization,
+      configuration: {
+        ...vizConfig,
+        ...newConfig,
+      },
     });
   };
 

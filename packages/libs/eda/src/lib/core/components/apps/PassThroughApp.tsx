@@ -20,11 +20,22 @@ export function PassThroughApp(props: Props) {
     },
     [setVisualizations, session]
   );
+  const updateVisualization = useCallback(
+    (visualization: Visualization) => {
+      setVisualizations([
+        ...(session?.visualizations.filter(
+          (viz) => viz.id !== visualization.id
+        ) ?? []),
+        visualization,
+      ]);
+    },
+    [setVisualizations, session]
+  );
+
   const filters = useMemo(() => session?.filters ?? [], [session?.filters]);
   if (session == null) return <div>Session not found</div>;
   return (
     <VisualizationsContainer
-      sessionId={sessionId}
       appId="pass-through"
       apps={[
         {
@@ -35,6 +46,7 @@ export function PassThroughApp(props: Props) {
       ]}
       visualizations={session.visualizations}
       addVisualization={addVisualization}
+      updateVisualization={updateVisualization}
       visualizationTypes={visualizationTypes}
       filters={filters}
     />

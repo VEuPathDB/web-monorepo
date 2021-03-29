@@ -15,11 +15,11 @@ import './Visualizations.scss';
 const cx = makeClassNameHelper('VisualizationsContainer');
 
 interface Props {
-  sessionId: string;
   appId: string;
   visualizations: Visualization[];
   apps: App[];
   addVisualization: (visualization: Visualization) => void;
+  updateVisualization: (visualization: Visualization) => void;
   visualizationTypes: VisualizationType[];
   filters: Filter[];
 }
@@ -145,11 +145,11 @@ function NewVisualizationPicker(props: Props) {
 
 function FullScreenVisualization(props: Props & { id: string }) {
   const {
-    sessionId,
     visualizationTypes,
     id,
     appId,
     visualizations,
+    updateVisualization,
     apps,
     filters,
   } = props;
@@ -159,6 +159,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
   if (viz == null) return <div>Visualization not found.</div>;
   if (app == null) return <div>App not found.</div>;
   if (vizType == null) return <div>Visualization type not implemented.</div>;
+
   return (
     <div className={cx('-FullScreenContainer')}>
       <div className={cx('-FullScreenActions')}>
@@ -167,8 +168,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </Link>
       </div>
       <vizType.fullscreenComponent
-        sessionId={sessionId}
         visualization={viz}
+        updateVisualization={updateVisualization}
         app={app}
         filters={filters}
       />
