@@ -3,7 +3,12 @@
  * plot data type you have when `UnionOfPlotDataTypes` is allowed.
  */
 
-import { NumberOrDate } from './general';
+import {
+  NumberOrDate,
+  TimeUnit,
+  TimeDelta,
+  NumberOrTimeDelta,
+} from './general';
 import { HistogramData, PiePlotData, UnionOfPlotDataTypes } from './plots';
 import { LinePlotData } from './plots/linePlot';
 
@@ -46,4 +51,30 @@ export function isLinePlotData(
 /** Determine if a NumberOrDate variable is the built-in Date type */
 export function isDate(date: NumberOrDate): date is Date {
   return (date as Date).toISOString !== undefined;
+}
+
+/** Determine if a date/time quantity is a TimeUnit */
+export function isTimeUnit(maybeTimeUnit: string): maybeTimeUnit is TimeUnit {
+  switch (maybeTimeUnit) {
+    case 'milliseconds':
+    case 'seconds':
+    case 'minutes':
+    case 'hours':
+    case 'day':
+    case 'week':
+    case 'month':
+    case 'year':
+    case 'decade':
+    case 'century':
+      return true;
+    default:
+      return false;
+  }
+}
+
+/** Determine if a NumberOrTimeDelta is a TimeDelta */
+export function isTimeDelta(
+  maybeTimeDelta: NumberOrTimeDelta
+): maybeTimeDelta is TimeDelta {
+  return Array.isArray(maybeTimeDelta);
 }

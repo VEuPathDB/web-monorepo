@@ -42,14 +42,20 @@ export interface EntityDiagramProps {
   treeData: StudyData;
   /** Which direction the tree is oriented */
   orientation: 'horizontal' | 'vertical';
+  /** The tree's dimensions. If the tree is horizontal, it may not take up the
+   * whole height; if it's vertical, it may not take up the full width. */
+  size: {
+    height: number;
+    width: number;
+  };
   /** Which entity to highlight */
   highlightedEntityID: string;
   /** Data defining the background shading of each node */
   shadingData: ShadingData;
-  /** An optional function returning the element to render for a node given its data */
+  /** An optional function returning the element to render for a node given its
+   * data */
   renderNode?: (
     node: StudyData,
     children?: Array<React.ReactElement>
   ) => React.ReactElement | null;
-  // size: {}
 }

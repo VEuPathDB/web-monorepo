@@ -1,29 +1,13 @@
 import { Line } from '@visx/shape';
 import React from 'react';
 import { HierarchyPointLink } from '@visx/hierarchy/lib/types';
+import { StudyData } from './Types';
 
-export interface Variables {
-  id: string;
-  providerLabel: string;
-  displayName: string;
-  type: string;
-  isContinuous?: boolean;
-  precision?: number;
-  units?: string;
-}
-
-export interface StudyData {
-  id: string;
-  displayName: string;
-  description: string;
-  children?: this[];
-  variables?: Variables[];
-}
-// ToDo: Add StudyData as a global type in a separate file
 interface OffsetLine {
   link: HierarchyPointLink<StudyData>;
   orientation: string;
 }
+
 export default function OffsetLine({ link, orientation }: OffsetLine) {
   let to, from;
   if (orientation == 'horizontal') {

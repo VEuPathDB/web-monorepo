@@ -36,6 +36,7 @@ export type TimeDeltaRange = {
 // e.g.
 // const offset : TimeDelta = [ 1, 'week' ];
 // const newDate : date = DateMath.add(oldDate, ...offset);
+export type TimeUnit = Unit;
 export type TimeDelta = [number, Unit];
 export type NumberOrTimeDelta = number | TimeDelta;
 export type NumberOrDateRange = NumberRange | DateRange;
