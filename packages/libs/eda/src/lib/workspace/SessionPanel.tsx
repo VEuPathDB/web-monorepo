@@ -9,7 +9,6 @@ import {
   RouteComponentProps,
   useRouteMatch,
 } from 'react-router';
-import { Link } from 'react-router-dom';
 import { SubsettingRoute } from './Subsetting';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
 import { AppRoute } from './AppRoute';
