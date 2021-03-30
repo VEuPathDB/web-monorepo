@@ -1,0 +1,47 @@
+.EDAWorkspace {
+  .wdk-CheckboxTree .wdk-AttributeFilterFieldItem,
+  .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent {
+    padding: 0.2em 0.35em;
+    border-radius: 0.25em;
+    font-weight: bold;
+  }
+
+  /* background color for Entity parent and font color */
+  .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldEntityParent {
+    background-color: #a4c2f4;
+    opacity: 1;
+    color: #444;
+  }
+
+  /* background color for activeField */
+  .wdk-AttributeFilterFieldItem__active {
+    background: #eaeaea;
+  }
+
+  /* background color for the parent entity of the activeField */
+  .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent__active {
+    background: #3c78d8;
+    color: white;
+  }
+
+  .field-list {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  /* height of CheckboxTree - use vh */
+  .wdk-CheckboxTree {
+    height: calc(100% - 6em);
+  }
+
+  /* configuring scrolling for CheckboxTree list only: anchoring search bar */
+  .wdk-CheckboxTree > .wdk-CheckboxTreeList {
+    position: relative;
+    height: 100%;
+    overflow: auto;
+    padding: 0 1em;
+  }
+}
