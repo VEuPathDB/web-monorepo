@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import { Filter } from '../../types/filter';
-import { App, Visualization } from '../../types/visualization';
+import { Computation, Visualization } from '../../types/visualization';
 import { Grid } from '../Grid';
 import { VisualizationType } from './VisualizationTypes';
 
@@ -15,9 +15,9 @@ import './Visualizations.scss';
 const cx = makeClassNameHelper('VisualizationsContainer');
 
 interface Props {
-  appId: string;
+  computationId: string;
   visualizations: Visualization[];
-  apps: App[];
+  computations: Computation[];
   addVisualization: (visualization: Visualization) => void;
   updateVisualization: (visualization: Visualization) => void;
   visualizationTypes: VisualizationType[];
@@ -26,7 +26,7 @@ interface Props {
 
 /**
  * Responsible for rendering the following:
- * - list of existing visualizations, scoped to the given app
+ * - list of existing visualizations, scoped to the given computation
  * - dialog for selecting a new visualization
  * - displaying a configured visualization in "fullscreen" mode
  * @param props Props
@@ -52,21 +52,27 @@ export function VisualizationsContainer(props: Props) {
 }
 
 function ConfiguredVisualizations(props: Props) {
-  const { appId, apps, visualizations, visualizationTypes, filters } = props;
+  const {
+    computationId,
+    computations,
+    visualizations,
+    visualizationTypes,
+    filters,
+  } = props;
   const { url } = useRouteMatch();
-  const app = useMemo(() => apps.find((app) => app.id === appId), [
-    appId,
-    apps,
-  ]);
+  const computation = useMemo(
+    () => computations.find((computation) => computation.id === computationId),
+    [computationId, computations]
+  );
   const scopedVisualizations = useMemo(
-    () => visualizations.filter((viz) => viz.appId === appId),
-    [appId, visualizations]
+    () => visualizations.filter((viz) => viz.computationId === computationId),
+    [computationId, visualizations]
   );
   const vizTypesByType = useMemo(
     () => keyBy(visualizationTypes, (v) => v.type),
     [visualizationTypes]
   );
-  if (app == null) return <div>App not found</div>;
+  if (computation == null) return <div>Computation not found</div>;
   return (
     <Grid>
       <div className={cx('-NewVisualization')}>
@@ -90,7 +96,7 @@ function ConfiguredVisualizations(props: Props) {
               </div>
               <type.gridComponent
                 visualization={viz}
-                app={app}
+                computation={computation}
                 filters={filters}
               />
             </div>
@@ -102,17 +108,22 @@ function ConfiguredVisualizations(props: Props) {
 }
 
 function NewVisualizationPicker(props: Props) {
-  const { visualizationTypes, addVisualization, appId, apps } = props;
-  const app = useMemo(() => apps.find((app) => appId === app.id), [
-    apps,
-    appId,
-  ]);
+  const {
+    visualizationTypes,
+    addVisualization,
+    computationId,
+    computations,
+  } = props;
+  const computation = useMemo(
+    () => computations.find((computation) => computationId === computation.id),
+    [computations, computationId]
+  );
   const history = useHistory();
-  if (app == null) return <div>App not found</div>;
+  if (computation == null) return <div>Computation not found</div>;
   return (
     <div className={cx('-PickerContainer')}>
       <div className={cx('-PickerActions')}>
-        <Link to={`../${appId}`}>
+        <Link to={`../${computationId}`}>
           <i className="fa fa-close"></i>
         </Link>
       </div>
@@ -126,11 +137,11 @@ function NewVisualizationPicker(props: Props) {
                 const id = uuid();
                 addVisualization({
                   id,
-                  appId: appId,
+                  computationId: computationId,
                   type: vizType.type,
                   configuration: vizType.createDefaultConfig(),
                 });
-                history.push(`../${appId}`);
+                history.push(`../${computationId}`);
               }}
             >
               <vizType.selectorComponent />
@@ -147,30 +158,32 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const {
     visualizationTypes,
     id,
-    appId,
+    computationId,
     visualizations,
     updateVisualization,
-    apps,
+    computations,
     filters,
   } = props;
-  const viz = visualizations.find((v) => v.id === id && v.appId === appId);
-  const app = apps.find((a) => a.id === appId);
+  const viz = visualizations.find(
+    (v) => v.id === id && v.computationId === computationId
+  );
+  const computation = computations.find((a) => a.id === computationId);
   const vizType = visualizationTypes.find((t) => t.type === viz?.type);
   if (viz == null) return <div>Visualization not found.</div>;
-  if (app == null) return <div>App not found.</div>;
+  if (computation == null) return <div>Computation not found.</div>;
   if (vizType == null) return <div>Visualization type not implemented.</div>;
 
   return (
     <div className={cx('-FullScreenContainer')}>
       <div className={cx('-FullScreenActions')}>
-        <Link to={`../${appId}`}>
+        <Link to={`../${computationId}`}>
           <i className="fa fa-window-restore"></i>
         </Link>
       </div>
       <vizType.fullscreenComponent
         visualization={viz}
         updateVisualization={updateVisualization}
-        app={app}
+        computation={computation}
         filters={filters}
       />
     </div>

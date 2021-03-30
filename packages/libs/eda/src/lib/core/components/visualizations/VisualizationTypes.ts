@@ -1,5 +1,5 @@
 import { Filter } from '../../types/filter';
-import { App, Visualization } from '../../types/visualization';
+import { Computation, Visualization } from '../../types/visualization';
 
 /**
  * Props passed to viz components
@@ -7,7 +7,7 @@ import { App, Visualization } from '../../types/visualization';
 export interface VisualizationProps {
   visualization: Visualization;
   updateVisualization?: (newViz: Visualization) => void;
-  app: App;
+  computation: Computation;
   filters: Filter[];
 }
 

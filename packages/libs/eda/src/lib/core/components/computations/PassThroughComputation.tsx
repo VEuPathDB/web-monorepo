@@ -15,7 +15,7 @@ const visualizationTypes: VisualizationType[] = [
   histogramVisualization,
 ];
 
-export function PassThroughApp(props: Props) {
+export function PassThroughComputation(props: Props) {
   const { sessionId } = props;
   const { session, setVisualizations } = useSession(sessionId);
   const addVisualization = useCallback(
@@ -40,8 +40,8 @@ export function PassThroughApp(props: Props) {
   if (session == null) return <div>Session not found</div>;
   return (
     <VisualizationsContainer
-      appId="pass-through"
-      apps={[
+      computationId="pass-through"
+      computations={[
         {
           id: 'pass-through',
           type: 'pass',

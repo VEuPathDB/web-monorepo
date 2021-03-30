@@ -5,7 +5,7 @@ import { useSession, useStudyRecord } from '../core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import { Redirect, Route, RouteComponentProps } from 'react-router';
 import { VariablesRoute } from './Variables';
-import { AppRoute } from './AppRoute';
+import { ComputationRoute } from './ComputationRoute';
 
 interface Props {
   sessionId: string;
@@ -63,7 +63,7 @@ export function EDASession(props: Props) {
       <Route
         exact={false}
         path={`${routeBase}/visualizations`}
-        component={AppRoute}
+        component={ComputationRoute}
       />
     </div>
   );

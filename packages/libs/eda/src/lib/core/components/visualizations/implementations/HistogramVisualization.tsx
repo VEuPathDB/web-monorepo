@@ -49,11 +49,11 @@ export const histogramVisualization: VisualizationType = {
 };
 
 function GridComponent(props: VisualizationProps) {
-  const { visualization, updateVisualization, app, filters } = props;
+  const { visualization, updateVisualization, computation, filters } = props;
   return (
     <HistogramViz
       visualization={visualization}
-      app={app}
+      computation={computation}
       filters={filters}
       fullscreen={false}
     />
@@ -65,12 +65,12 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  const { visualization, updateVisualization, app, filters } = props;
+  const { visualization, updateVisualization, computation, filters } = props;
   return (
     <HistogramViz
       visualization={visualization}
       updateVisualization={updateVisualization}
-      app={app}
+      computation={computation}
       filters={filters}
       fullscreen={true}
     />
@@ -104,7 +104,7 @@ type Props = VisualizationProps & {
 
 function HistogramViz(props: Props) {
   const {
-    app, // TO DO: pass 'pass' path through to dataClient service call
+    computation, // TO DO: pass 'pass' path through to dataClient service call
     visualization,
     updateVisualization,
     filters,

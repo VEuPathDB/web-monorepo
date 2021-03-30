@@ -7,7 +7,7 @@ import * as t from 'io-ts';
 export type Visualization = t.TypeOf<typeof Visualization>;
 export const Visualization = t.type({
   id: t.string,
-  appId: t.string,
+  computationId: t.string,
   type: t.string,
   configuration: t.unknown,
 });
@@ -15,8 +15,8 @@ export const Visualization = t.type({
 /**
  * App object stored in user's session
  */
-export type App = t.TypeOf<typeof App>;
-export const App = t.type({
+export type Computation = t.TypeOf<typeof Computation>;
+export const Computation = t.type({
   id: t.string,
   type: t.string,
   configuration: t.unknown,
