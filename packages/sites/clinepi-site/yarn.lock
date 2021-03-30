@@ -712,6 +712,11 @@
   resolved "https://registry.yarnpkg.com/@types/date-arithmetic/-/date-arithmetic-4.1.1.tgz#03bd30047b71d6eab66f0f03cb14289479ca277a"
   integrity sha512-o9ILUTMSRiOC73o7h30mgLpuDwOJWqMHZfnEIwNQlfZsGY6Kw2gK5Gz6nXAjNt9zm3Qpr12pM4FDqssfdtBzGA==
 
+"@types/debounce-promise@^3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@types/debounce-promise/-/debounce-promise-3.1.3.tgz#dd0d6b96ee61da0dd4c413e3ea03a425ffa36b3f"
+  integrity sha512-mjcCf//DAUQ6YLQMhqYJAv/+a4BsE1GQFmy1el5K62wLJJmQwGi3TsnshhOFynPpuBF9Gh2Vvb+5ImPi47KaZw==
+
 "@types/flot@^0.0.31":
   version "0.0.31"
   resolved "https://registry.yarnpkg.com/@types/flot/-/flot-0.0.31.tgz#0daca37c6c855b69a0a7e2e37dd0f84b3db8c8c1"
@@ -880,10 +885,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.2.8":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.8.tgz#4875f926ab0273dd18961458e2c0029f9c0d8981"
-  integrity sha512-Sr7zYJgGm98+U3L4ZtHHwm/fiR1vzf2/83k2Oc0F8F0VByJVYyyGiNyTIROoGuLr1lRhtI2IpDNSGNuVACujXw==
+"@veupathdb/components@^0.2.9":
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.9.tgz#d6a642d7b9cc2bf0aeefda224b7ad8d46fe0bb1c"
+  integrity sha512-Bj+uGA+fECHc6fatq6H2RaVEl7zCa5mfamGIuNHrB5fH2E+fU76N/dgox6G0HYD9MXRl1Et/urWWyPJT5ENQ/w==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -915,19 +920,22 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.1.14":
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.14.tgz#81704bf2d1c819162009f7acd928e522cbd3cc8a"
-  integrity sha512-2cvgEpzvgcGzLbkE2zKeKK1YUf6JxZHgh77clOmeqKM2Mnd9jW2KFkYfUFlWGNB4shdqg2r6SNdVDuaAWVoX3g==
+"@veupathdb/eda@^0.1.15":
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.15.tgz#a80055631ff209431ead8b836886ba5e053c535e"
+  integrity sha512-smOKehkeYdj0tbnRHvLIEnX+M0zGPHQVfW7QAoq6wks0EwLT57Q4MIzqjw2QUEH1R3nu2as5/fh2Mfc0gfIoCw==
   dependencies:
-    "@veupathdb/components" "^0.2.8"
+    "@types/debounce-promise" "^3.1.3"
+    "@veupathdb/components" "^0.2.9"
     "@veupathdb/wdk-client" "^0.1.1-alpha.14"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
+    debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
     io-ts "^2.2.13"
     lodash "^4.17.20"
     react "^17.0.1"
     react-dom "^17.0.1"
+    uuid "^8.3.2"
 
 "@veupathdb/wdk-client@^0.1.1-alpha.12":
   version "0.1.1-alpha.12"
@@ -5313,7 +5321,7 @@ utils-regex-from-string@^1.0.0:
     regex-regex "^1.0.0"
     validate.io-string-primitive "^1.0.0"
 
-uuid@^8.1.0:
+uuid@^8.1.0, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
