@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useSession } from '../../hooks/session';
+import { SessionState, useSession } from '../../hooks/session';
 import { Visualization } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
@@ -7,7 +7,7 @@ import { VisualizationsContainer } from '../visualizations/VisualizationsContain
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 
 interface Props {
-  sessionId: string;
+  sessionState: SessionState;
 }
 
 const visualizationTypes: VisualizationType[] = [
@@ -16,8 +16,9 @@ const visualizationTypes: VisualizationType[] = [
 ];
 
 export function PassThroughComputation(props: Props) {
-  const { sessionId } = props;
-  const { session, setVisualizations } = useSession(sessionId);
+  const {
+    sessionState: { session, setVisualizations },
+  } = props;
   const addVisualization = useCallback(
     (visualization: Visualization) => {
       setVisualizations([...(session?.visualizations ?? []), visualization]);
