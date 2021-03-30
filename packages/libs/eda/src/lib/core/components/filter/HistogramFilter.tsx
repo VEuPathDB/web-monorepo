@@ -32,6 +32,7 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { PromiseType } from '../../types/utility';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
+import { ISODateStringToZuluDate } from '../../utils/date-conversion';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -280,7 +281,10 @@ function HistogramPlotWithControls({
     if (filter == null) return;
     return filter.type === 'numberRange'
       ? { min: filter.min, max: filter.max }
-      : { min: new Date(filter.min + 'Z'), max: new Date(filter.max + 'Z') };
+      : {
+          min: ISODateStringToZuluDate(filter.min),
+          max: ISODateStringToZuluDate(filter.max),
+        };
   }, [filter]);
 
   return (
@@ -336,15 +340,15 @@ function histogramResponseToDataSeries(
       binStart:
         type === 'number'
           ? Number(data.binStart[index])
-          : new Date(data.binStart[index] + 'Z'),
+          : ISODateStringToZuluDate(data.binStart[index]),
       binEnd:
         type === 'number'
           ? Number(data.binEnd[index])
-          : new Date(data.binEnd[index] + 'Z'),
+          : ISODateStringToZuluDate(data.binEnd[index]),
       binLabel: data.binLabel[index],
       count: data.value[index],
     }))
-    .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf());
+    .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf()); // TO DO: review necessity of sort if back end (or plot component) does sorting?
   return {
     name,
     color,

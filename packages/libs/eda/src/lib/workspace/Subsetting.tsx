@@ -16,14 +16,13 @@ import { VariableLink } from '../core/components/VariableLink';
 import { VariableTree } from '../core/components/VariableTree';
 
 interface RouteProps {
-  sessionId: string;
+  sessionState: SessionState;
   entityId?: string;
   variableId?: string;
 }
 
 export function SubsettingRoute(props: RouteProps) {
-  const { variableId, entityId, sessionId } = props;
-  const session = useSession(sessionId);
+  const { variableId, entityId, sessionState } = props;
   const studyMetadata = useStudyMetadata();
   const history = useHistory();
   const entities = Array.from(
@@ -52,7 +51,7 @@ export function SubsettingRoute(props: RouteProps) {
   if (entityId == null || variableId == null) return null;
   return (
     <Subsetting
-      sessionState={session}
+      sessionState={sessionState}
       entity={entity}
       entities={entities}
       variable={variable}
@@ -108,6 +107,9 @@ export function Subsetting(props: Props) {
             entities={entities}
             entityId={entity.id}
             variableId={variable.id}
+            onActiveFieldChange={(term: string) => {
+              history.replace(`../${term}`);
+            }}
           />
         </div>
         {/* <ul
