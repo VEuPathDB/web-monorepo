@@ -15,11 +15,33 @@ export function getNodeChildren(node: TreeBoxVocabNode) {
   return node.children;
 }
 
-export function searchPredicate(node: TreeBoxVocabNode, searchTerms: string[]) {
-  return areTermsInString(searchTerms, node.data.display);
+export function makeConfigSearchPredicate(referenceStrains: Set<string>) {
+  return function (node: TreeBoxVocabNode, searchTerms: string[]) {
+    const searchableString = !referenceStrains.has(node.data.term)
+      ? node.data.display
+      : `${node.data.display} reference`;
+
+    return areTermsInString(searchTerms, searchableString);
+  };
 }
 
-export function renderNode(node: TreeBoxVocabNode) {
+export function makeConfigRenderNode(referenceStrains: Set<string>) {
+  return function configRenderNode(node: TreeBoxVocabNode) {
+    const organismName = node.data.term;
+    const taxonDisplay = safeHtml(node.data.display);
+
+    return (
+      <div>
+        {taxonDisplay}
+        {referenceStrains.has(organismName) && (
+          <span className="IsReferenceStrain">[Reference]</span>
+        )}
+      </div>
+    );
+  };
+}
+
+export function previewRenderNode(node: TreeBoxVocabNode) {
   return safeHtml(node.data.display);
 }
 

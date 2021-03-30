@@ -7,6 +7,7 @@ import {
   usePreferredOrganismsState,
   useProjectId,
 } from '../hooks/preferredOrganisms';
+import { useReferenceStrains } from '../hooks/referenceStrains';
 
 export function PreferredOrganismsConfigController() {
   useSetDocumentTitle('Configure My Organisms');
@@ -22,12 +23,15 @@ export function PreferredOrganismsConfigController() {
 
   const projectIdValue = useProjectId();
 
+  const referenceStrains = useReferenceStrains();
+
   return (
     <PreferredOrganismsConfig
       availableOrganisms={availableOrganisms}
       configSelection={preferredOrganismsState}
       organismTree={organismTree}
       projectId={projectIdValue}
+      referenceStrains={referenceStrains}
       setConfigSelection={setPreferredOrganismsState}
     />
   );
