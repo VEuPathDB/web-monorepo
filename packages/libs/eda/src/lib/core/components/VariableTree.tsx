@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { StudyEntity } from '../types/study';
 import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
-import './VariableTree.css';
+import './VariableTree.scss';
 
 interface Props {
   entities: StudyEntity[];
