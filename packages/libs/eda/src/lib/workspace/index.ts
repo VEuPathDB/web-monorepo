@@ -1,2 +1,1 @@
-export { EDASessionList } from './EDASessionList';
-export { EDAWorkspace } from './EDAWorkspace';
+export { WorkspaceRouter } from './WorkspaceRouter';

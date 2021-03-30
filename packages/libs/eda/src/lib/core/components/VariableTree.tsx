@@ -3,10 +3,8 @@ import { keyBy } from 'lodash';
 import { useMemo } from 'react';
 import { StudyEntity } from '../types/study';
 import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
-//import css for coloring activeField in variable tree
-import '../../workspace/VariableTreeCSS.css';
-//import VariableList that is a copy of FieldList
-import VariableList from '../../workspace/VariableList';
+import VariableList from './VariableList';
+import './VariableTree.css';
 
 interface Props {
   entities: StudyEntity[];
