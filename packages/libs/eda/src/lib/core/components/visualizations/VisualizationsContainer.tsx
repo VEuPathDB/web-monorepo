@@ -141,7 +141,7 @@ function NewVisualizationPicker(props: Props) {
                   type: vizType.type,
                   configuration: vizType.createDefaultConfig(),
                 });
-                history.push(`../${computationId}`);
+                history.push(`../${computationId}/${id}`);
               }}
             >
               <vizType.selectorComponent />
