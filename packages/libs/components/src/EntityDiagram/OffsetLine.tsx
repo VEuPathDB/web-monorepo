@@ -1,7 +1,7 @@
 import { Line } from '@visx/shape';
 import React from 'react';
 import { HierarchyPointLink } from '@visx/hierarchy/lib/types';
-import { StudyData } from './Types';
+import { StudyData } from './EntityDiagram';
 
 interface OffsetLine {
   link: HierarchyPointLink<StudyData>;

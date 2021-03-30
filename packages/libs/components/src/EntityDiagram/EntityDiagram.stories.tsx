@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import MiniDiagram from './MiniDiagram';
-import ExpandedDiagram from './ExpandedDiagram';
 import EntityDiagram from './EntityDiagram';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { StudyData, ShadingData } from './Types';
+import { StudyData, ShadingData } from './EntityDiagram';
 import './diagram.css';
 
 export default {
@@ -167,67 +164,6 @@ const shadingData: ShadingData = {
 
 const miniSize = { height: 300, width: 150 };
 const expandedSize = { height: 500, width: 600 };
-
-export const EntityDiagramSeparate = () => {
-  const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>(
-    'vertical'
-  );
-  const [expanded, setExpanded] = useState<boolean>(false);
-
-  return (
-    <div
-      style={{
-        marginLeft: 40,
-        marginTop: 40,
-        width: 1000,
-        height: 700,
-      }}
-    >
-      <button
-        onClick={() =>
-          orientation == 'horizontal'
-            ? setOrientation('vertical')
-            : setOrientation('horizontal')
-        }
-      >
-        Switch Orientation
-      </button>
-      <button
-        onClick={() => (expanded ? setExpanded(false) : setExpanded(true))}
-      >
-        Switch Size
-      </button>
-      <div style={{ ...miniSize, border: '1px solid' }}>
-        <MiniDiagram
-          treeData={studyData.rootEntity}
-          orientation={orientation}
-          highlightedEntityID={'Sample'}
-          shadingData={shadingData}
-          size={miniSize}
-        />
-      </div>
-      <TransitionGroup>
-        {expanded && (
-          <CSSTransition
-            key="expanded-transition"
-            timeout={1000}
-            classNames="expanded-diagram"
-          >
-            <div style={{ ...expandedSize, border: '1px solid' }}>
-              <ExpandedDiagram
-                treeData={studyData.rootEntity}
-                orientation={orientation}
-                highlightedEntityID={'Sample'}
-                shadingData={shadingData}
-                size={expandedSize}
-              />
-            </div>
-          </CSSTransition>
-        )}
-      </TransitionGroup>
-    </div>
-  );
-};
 
 export const EntityDiagramUnified = () => {
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>(
