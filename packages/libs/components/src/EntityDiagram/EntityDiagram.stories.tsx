@@ -167,6 +167,11 @@ const shadingData: ShadingData = {
 
 const miniSize = { height: 300, width: 150 };
 const expandedSize = { height: 500, width: 600 };
+const miniDivSize = { height: miniSize.height + 3, width: miniSize.width + 3 };
+const expandedDivSize = {
+  height: expandedSize.height + 2,
+  width: expandedSize.width + 2,
+};
 
 export const EntityDiagramSeparate = () => {
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>(
@@ -175,14 +180,7 @@ export const EntityDiagramSeparate = () => {
   const [expanded, setExpanded] = useState<boolean>(false);
 
   return (
-    <div
-      style={{
-        marginLeft: 40,
-        marginTop: 40,
-        width: 1000,
-        height: 700,
-      }}
-    >
+    <>
       <button
         onClick={() =>
           orientation == 'horizontal'
@@ -197,7 +195,7 @@ export const EntityDiagramSeparate = () => {
       >
         Switch Size
       </button>
-      <div style={{ ...miniSize, border: '1px solid' }}>
+      <div style={{ ...miniDivSize, border: '1px solid', padding: '1px' }}>
         <MiniDiagram
           treeData={studyData.rootEntity}
           orientation={orientation}
@@ -213,7 +211,13 @@ export const EntityDiagramSeparate = () => {
             timeout={1000}
             classNames="expanded-diagram"
           >
-            <div style={{ ...expandedSize, border: '1px solid' }}>
+            <div
+              style={{
+                ...expandedDivSize,
+                border: '1px solid',
+                padding: '1px',
+              }}
+            >
               <ExpandedDiagram
                 treeData={studyData.rootEntity}
                 orientation={orientation}
@@ -225,7 +229,7 @@ export const EntityDiagramSeparate = () => {
           </CSSTransition>
         )}
       </TransitionGroup>
-    </div>
+    </>
   );
 };
 
@@ -235,6 +239,7 @@ export const EntityDiagramUnified = () => {
   );
   const [expanded, setExpanded] = useState<boolean>(false);
   const size = expanded ? expandedSize : miniSize;
+  const divSize = expanded ? expandedDivSize : miniDivSize;
 
   return (
     <div
@@ -259,7 +264,7 @@ export const EntityDiagramUnified = () => {
       >
         Switch Size
       </button>
-      <div style={{ ...size, border: '1px solid' }}>
+      <div style={{ ...divSize, border: '1px solid', padding: '1px' }}>
         <EntityDiagram
           treeData={studyData.rootEntity}
           orientation={orientation}
@@ -267,8 +272,70 @@ export const EntityDiagramUnified = () => {
           highlightedEntityID={'Sample'}
           shadingData={shadingData}
           size={size}
+          selectedBorderWeight={1}
+          selectedHighlightColor="yellow"
+          selectedHighlightWeight={3}
+          selectedTextBold={false}
         />
       </div>
     </div>
   );
+};
+
+const Template = ({ width, height, ...args }: any) => (
+  <EntityDiagram size={{ width: width, height: height }} {...args} />
+);
+
+export const EntityDiagramControls: any = Template.bind({});
+EntityDiagramControls.args = {
+  width: miniSize.width,
+  height: miniSize.height,
+  orientation: 'vertical',
+  isExpanded: false,
+  selectedBorderWeight: 1,
+  selectedHighlightColor: 'orange',
+  selectedHighlightWeight: 3,
+  selectedTextBold: false,
+  shadowDx: 1,
+  shadowDy: 1,
+  shadowDispersion: 0,
+  shadowOpacity: 1,
+  highlightedEntityID: 'Sample',
+  treeData: studyData.rootEntity,
+  shadingData: shadingData,
+};
+EntityDiagramControls.argTypes = {
+  orientation: {
+    control: {
+      type: 'radio',
+      options: ['vertical', 'horizontal'],
+    },
+  },
+  selectedHighlightColor: {
+    control: 'color',
+  },
+  selectedBorderWeight: {
+    control: { type: 'number', min: 0, step: 1 },
+  },
+  selectedHighlightWeight: {
+    control: { type: 'number', min: 0, step: 1 },
+  },
+  shadowDx: {
+    control: { type: 'number', min: 0, step: 1 },
+  },
+  shadowDy: {
+    control: { type: 'number', min: 0, step: 1 },
+  },
+  shadowDispection: {
+    control: { type: 'number', min: 0, step: 0.1 },
+  },
+  shadowOpacity: {
+    control: { type: 'number', min: 0, max: 1, step: 0.1 },
+  },
+  width: {
+    control: { type: 'number', min: 0, step: 50 },
+  },
+  height: {
+    control: { type: 'number', min: 0, step: 50 },
+  },
 };

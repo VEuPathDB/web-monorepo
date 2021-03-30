@@ -81,6 +81,14 @@ export interface EntityDiagramProps {
     node: StudyData,
     children?: Array<React.ReactElement>
   ) => React.ReactElement | null;
+  selectedTextBold?: boolean;
+  selectedBorderWeight?: number;
+  selectedHighlightWeight?: number;
+  selectedHighlightColor?: string;
+  shadowDx?: number;
+  shadowDy?: number;
+  shadowDispersion?: number;
+  shadowOpacity?: number;
 }
 
 export default function EntityDiagram({
@@ -91,6 +99,14 @@ export default function EntityDiagram({
   shadingData,
   renderNode,
   size,
+  selectedTextBold = true,
+  selectedBorderWeight = 2,
+  selectedHighlightWeight = 2,
+  selectedHighlightColor = 'orange',
+  shadowDx = 1,
+  shadowDy = 1,
+  shadowDispersion = 0,
+  shadowOpacity = 1,
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
 
@@ -99,7 +115,7 @@ export default function EntityDiagram({
   // Node border width
   const nodeStrokeWidth = 1;
   // Width of the highlight border around the highlighted node
-  const nodeHighlightWidth = 3;
+  const nodeHighlightWidth = selectedHighlightWeight;
   // treeHeight is always from root to furthest leaf, regardless of orientation
   // (it's not always vertical on screen)
   const treeHeight =
@@ -142,10 +158,11 @@ export default function EntityDiagram({
             : 'white'
         }
         stroke={'black'}
-        strokeWidth={nodeStrokeWidth}
+        strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
+        // strokeWidth={nodeStrokeWidth}
         style={{
           outline: isHighlighted
-            ? `yellow ${nodeHighlightWidth}px solid`
+            ? `${selectedHighlightColor} ${nodeHighlightWidth}px solid`
             : undefined,
           overflowWrap: isExpanded ? 'normal' : undefined,
         }}
@@ -156,7 +173,10 @@ export default function EntityDiagram({
       <Text
         fontSize={12}
         textAnchor="middle"
-        style={{ userSelect: 'none' }}
+        style={{
+          userSelect: 'none',
+          fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
+        }}
         dy={
           isExpanded
             ? CalculateDYSize(node.data.displayName.split(' ').length)
@@ -173,6 +193,7 @@ export default function EntityDiagram({
         top={orientation == 'horizontal' ? node.x : node.y}
         left={orientation == 'horizontal' ? node.y : node.x}
         key={node.x + node.y}
+        style={{ filter: 'url(#shadow)' }}
       >
         {renderNode?.(node.data, [rectangle, text]) ?? [rectangle, text]}
         {!isExpanded && <title>{node.data.displayName}</title>}
@@ -195,6 +216,14 @@ export default function EntityDiagram({
           >
             <path d="M0,-5L10,0L0,5" />
           </marker>
+          <filter id="shadow">
+            <feDropShadow
+              dx={shadowDx}
+              dy={shadowDy}
+              stdDeviation={shadowDispersion}
+              floodOpacity={shadowOpacity}
+            />
+          </filter>
         </defs>
         {
           // Node background shading definitions
