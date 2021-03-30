@@ -29,10 +29,8 @@ export function EntityDiagram(props: Props) {
 
   const studyMetadata = useStudyMetadata();
   const { session } = sessionState;
-  const { value: counts, error: countsError } = useEntityCounts();
-  const { value: filteredCounts, error: filteredCountsError } = useEntityCounts(
-    session?.filters
-  );
+  const { value: counts } = useEntityCounts();
+  const { value: filteredCounts } = useEntityCounts(session?.filters);
 
   const shadingData: ShadingData = {};
 

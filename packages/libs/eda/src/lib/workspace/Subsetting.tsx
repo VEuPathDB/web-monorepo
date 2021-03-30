@@ -1,18 +1,16 @@
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router';
 import {
   EntityDiagram,
   SessionState,
   StudyEntity,
   StudyVariable,
-  useSession,
   useStudyMetadata,
 } from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import React, { useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { cx } from './Utils';
 import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
-import { VariableLink } from '../core/components/VariableLink';
 import { VariableTree } from '../core/components/VariableTree';
 
 interface RouteProps {

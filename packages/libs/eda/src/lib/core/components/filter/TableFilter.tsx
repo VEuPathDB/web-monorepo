@@ -4,7 +4,6 @@ import { MultiFieldSortSpec } from '@veupathdb/wdk-client/lib/Views/Question/Par
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { boolean, keyof, number, string, type, TypeOf } from 'io-ts';
-import { zip } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { BarplotResponse } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
@@ -277,7 +276,7 @@ export function TableFilter({
         );
       }
     },
-    [entity.id, sessionState, variable.id, variable.type]
+    [entity.id, sessionState, variable.id, variable.type, allValues]
   );
 
   return (

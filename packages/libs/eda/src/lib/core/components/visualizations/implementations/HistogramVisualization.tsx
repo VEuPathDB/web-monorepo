@@ -49,7 +49,7 @@ export const histogramVisualization: VisualizationType = {
 };
 
 function GridComponent(props: VisualizationProps) {
-  const { visualization, updateVisualization, computation, filters } = props;
+  const { visualization, computation, filters } = props;
   return (
     <HistogramViz
       visualization={visualization}
@@ -84,6 +84,7 @@ function createDefaultConfig(): HistogramConfig {
 }
 
 type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const HistogramConfig = t.intersection([
   t.type({
     enableOverlay: t.boolean,
@@ -103,13 +104,7 @@ type Props = VisualizationProps & {
 };
 
 function HistogramViz(props: Props) {
-  const {
-    computation, // TO DO: pass 'pass' path through to dataClient service call
-    visualization,
-    updateVisualization,
-    filters,
-    fullscreen,
-  } = props;
+  const { visualization, updateVisualization, filters, fullscreen } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
   const entities = Array.from(
@@ -199,52 +194,54 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const getData = useCallback(
-    debounce(
-      async ({
-        independentVariable,
-        independentVariableEntity,
-        overlayVariable,
-        overlayVariableEntity,
-        binWidth,
-        binWidthTimeUnit,
-      }: HistogramConfig): Promise<HistogramData> => {
-        if (!independentVariable || !independentVariableEntity)
-          return Promise.reject(new Error('Please choose a main variable'));
-
-        if (independentVariable && !isHistogramVariable(independentVariable))
-          return Promise.reject(
-            new Error(
-              `Please choose another main variable. '${independentVariable.displayName}' is not suitable for histograms`
-            )
-          );
-
-        const params = getRequestParams(
-          studyId,
-          filters ?? [],
-          independentVariableEntity,
+  const getData = useMemo(
+    () =>
+      debounce(
+        async ({
+          enableOverlay,
           independentVariable,
-          enableOverlay ? overlayVariableEntity : undefined,
-          enableOverlay ? overlayVariable : undefined,
+          independentVariableEntity,
+          overlayVariable,
+          overlayVariableEntity,
           binWidth,
-          binWidthTimeUnit
-        );
-        const response =
-          independentVariable.type === 'date'
-            ? dataClient.getDateHistogramBinWidth(
-                params as DateHistogramRequestParams
+          binWidthTimeUnit,
+        }: HistogramConfig): Promise<HistogramData> => {
+          if (!independentVariable || !independentVariableEntity)
+            return Promise.reject(new Error('Please choose a main variable'));
+
+          if (independentVariable && !isHistogramVariable(independentVariable))
+            return Promise.reject(
+              new Error(
+                `Please choose another main variable. '${independentVariable.displayName}' is not suitable for histograms`
               )
-            : dataClient.getNumericHistogramBinWidth(
-                params as NumericHistogramRequestParams
-              );
-        return histogramResponseToData(
-          await response,
-          independentVariable.type
-        );
-      },
-      500
-    ),
-    [studyId, dataClient, filters, vizConfig]
+            );
+
+          const params = getRequestParams(
+            studyId,
+            filters ?? [],
+            independentVariableEntity,
+            independentVariable,
+            enableOverlay ? overlayVariableEntity : undefined,
+            enableOverlay ? overlayVariable : undefined,
+            binWidth,
+            binWidthTimeUnit
+          );
+          const response =
+            independentVariable.type === 'date'
+              ? dataClient.getDateHistogramBinWidth(
+                  params as DateHistogramRequestParams
+                )
+              : dataClient.getNumericHistogramBinWidth(
+                  params as NumericHistogramRequestParams
+                );
+          return histogramResponseToData(
+            await response,
+            independentVariable.type
+          );
+        },
+        500
+      ),
+    [studyId, filters, dataClient]
   );
 
   const variableTreeContainerCSS: CSSProperties = {

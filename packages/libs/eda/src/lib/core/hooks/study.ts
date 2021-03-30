@@ -9,10 +9,6 @@ import {
 import { StudyMetadata, StudyRecordClass, StudyRecord } from '../types/study';
 import { usePromise } from './promise';
 import { SubsettingClient } from '../api/subsetting-api';
-import {
-  RecordClass,
-  RecordInstance,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 

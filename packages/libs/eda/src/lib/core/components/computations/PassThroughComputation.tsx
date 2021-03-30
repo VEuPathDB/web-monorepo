@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { SessionState, useSession } from '../../hooks/session';
+import { SessionState } from '../../hooks/session';
 import { Visualization } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
