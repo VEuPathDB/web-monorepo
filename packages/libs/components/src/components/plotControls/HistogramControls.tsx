@@ -336,7 +336,7 @@ export default function HistogramControls({
             />
           ) : (
             <NumberRangeInput
-              label="Selected Range"
+              label="Y-Axis Range"
               // rangeBounds={selectedRangeBounds as NumberRange}
               range={yMinMaxRange as NumberRange}
               onRangeChange={onYMinMaxRange}
