@@ -64,15 +64,6 @@ export default function SliderWidget({
   // Used to track whether or not has mouse hovering over widget.
   const [focused, setFocused] = useState(false);
 
-  const [previousValue, setPreviousValue] = useState<number>();
-
-  // Clear previous value whenever a new value is received.
-  // This has to do with proper event sequencing when
-  // `onChange` is an async action.
-  useEffect(() => {
-    setPreviousValue(undefined);
-  }, [value]);
-
   const useStyles = makeStyles({
     root: {
       height: 0,
@@ -143,15 +134,7 @@ export default function SliderWidget({
         valueLabelDisplay="auto"
         valueLabelFormat={valueFormatter}
         onChange={(event, newValue) => {
-          /**
-           * Prevent multiple API calls by:
-           * 1. Ignoring events where new value and current value are equivalent.
-           * 2. When internal function has been called, but value prop has not yet been updated.
-           */
-          if (newValue !== value && !previousValue) {
-            setPreviousValue(value);
-            onChange(newValue as number);
-          }
+          onChange(newValue as number);
         }}
       />
     </div>

@@ -133,7 +133,7 @@ export default function Histogram({
     () =>
       data.series.map((series) => {
         const binStarts = series.bins.map((bin) => bin.binStart);
-        // const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
+        const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
         const binCounts = series.bins.map((bin) => bin.count);
         const perBarOpacity: number[] = series.bins.map((bin) => {
           if (selectedRange) {
@@ -173,7 +173,7 @@ export default function Histogram({
           orientation: orientation === 'vertical' ? 'v' : 'h',
           name: series.name,
           // text: binLabels, // TO DO: find a way to show concise bin labels
-          text: showBarValues ? binCounts.map(String) : undefined,
+          text: showBarValues ? binCounts.map(String) : binLabels,
           textposition: showBarValues ? 'auto' : undefined,
           marker: {
             ...(series.color ? { color: series.color } : {}),
