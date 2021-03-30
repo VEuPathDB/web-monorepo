@@ -90,6 +90,19 @@ export type HistogramControlsProps = {
   accentColor?: string;
   /** Attributes and methdods for error management. */
   errorManagement: ErrorManagement;
+  // add y-axis controls
+  /** Whether or not to show y-axis log scale. */
+  yLogScale?: boolean;
+  /** Action to take on y-axis log scale change. */
+  toggleYLogScale?: (yLogScale: boolean) => void;
+  /** Whether or not to set y-axis min/max range. */
+  yMinMaxRange?: NumberOrDateRange;
+  /** Action to take on y-axis min/max range change. */
+  onYMinMaxRange?: (newRange: NumberOrDateRange) => void;
+  /** Whether or not to display y-axis absolute Relative. */
+  yAbsoluteRelative?: string;
+  /** Action to take on display legend change. */
+  onYAbsoluteRelative?: (layout: 'absolute' | 'relative') => void;
 };
 
 /**
@@ -122,6 +135,13 @@ export default function HistogramControls({
   selectedRange,
   onSelectedRangeChange,
   selectedRangeBounds,
+  // add y-axis controls
+  yLogScale,
+  toggleYLogScale,
+  yMinMaxRange,
+  onYMinMaxRange,
+  yAbsoluteRelative,
+  onYAbsoluteRelative,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -276,8 +296,65 @@ export default function HistogramControls({
             onStateChange={(event: any) =>
               toggleLibraryControls(event.target.checked)
             }
+            // add paddingRight
+            containerStyles={{ paddingRight: 25 }}
           />
         )}
+      </div>
+      {/* y-axis controls */}
+      <div>
+        {
+          <ControlsHeader
+            text={'<Y-Axis Controls>'}
+            styleOverrides={{ paddingTop: 30, textAlign: 'left' }}
+          />
+        }
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 0 }}>
+        {valueType === 'number' && toggleYLogScale && yLogScale !== undefined && (
+          <Switch
+            label="Y-Axis Log Scale"
+            color={accentColor}
+            state={yLogScale}
+            // The stinky use of `any` here comes from
+            // an incomplete type definition in the
+            // material UI library.
+            onStateChange={(event: any) =>
+              toggleYLogScale(event.target.checked)
+            }
+            containerStyles={{ paddingRight: 25 }}
+          />
+        )}
+        {onYMinMaxRange ? (
+          valueType !== undefined && valueType === 'date' ? (
+            <DateRangeInput
+              label="Selected Range"
+              // rangeBounds={selectedRangeBounds as DateRange}
+              range={yMinMaxRange as DateRange}
+              onRangeChange={onYMinMaxRange}
+              containerStyles={{ paddingRight: 25 }}
+            />
+          ) : (
+            <NumberRangeInput
+              label="Selected Range"
+              // rangeBounds={selectedRangeBounds as NumberRange}
+              range={yMinMaxRange as NumberRange}
+              onRangeChange={onYMinMaxRange}
+              containerStyles={{ paddingRight: 25 }}
+            />
+          )
+        ) : null}
+        {valueType === 'number' &&
+          onYAbsoluteRelative &&
+          yAbsoluteRelative !== undefined && (
+            <ButtonGroup
+              label="Y-Axis Absolute/Relative"
+              options={['absolute', 'relative']}
+              selectedOption={yAbsoluteRelative}
+              // @ts-ignore
+              onOptionSelected={onYAbsoluteRelative}
+            />
+          )}
       </div>
 
       {errorStacks.map(({ error, occurences }, index) => (

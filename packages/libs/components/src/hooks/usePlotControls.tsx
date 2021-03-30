@@ -38,7 +38,11 @@ type ActionType<DataShape> =
   | { type: 'toggleOrientation' }
   | { type: 'toggleDisplayLegend' }
   | { type: 'toggleLibraryControls' }
-  | { type: 'histogram/setSelectedRange'; payload: NumberOrDateRange };
+  | { type: 'histogram/setSelectedRange'; payload: NumberOrDateRange }
+  // add y-axis controls
+  | { type: 'histogram/toggleYLogScale' }
+  | { type: 'histogram/onYMinMaxRange'; payload: NumberOrDateRange }
+  | { type: 'histogram/onYAbsoluteRelative' };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -120,6 +124,34 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
           selectedRange: action.payload,
         },
       };
+    // add y-axis controls
+    case 'histogram/toggleYLogScale':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          yLogScale: state?.histogram?.yLogScale === true ? false : true,
+        },
+      };
+    case 'histogram/onYMinMaxRange':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          yMinMaxRange: action.payload,
+        },
+      };
+    case 'histogram/onYAbsoluteRelative':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          yAbsoluteRelative:
+            state?.histogram?.yAbsoluteRelative === 'absolute'
+              ? 'relative'
+              : 'absolute',
+        },
+      };
     default:
       throw new Error();
   }
@@ -177,6 +209,13 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     displaySelectedRangeControls: boolean;
     /** Type of x-variable 'number' or 'date' */
     valueType?: 'number' | 'date';
+    // add y-axis controls
+    /** Histogram: Type of y-axis log scale */
+    yLogScale?: boolean;
+    /** Histogram: Range of y-axis min/max values */
+    yMinMaxRange?: NumberOrDateRange;
+    /** Histogram: Toggle absolute and relative.*/
+    yAbsoluteRelative?: string;
   };
 };
 
@@ -200,6 +239,10 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     displaySelectedRangeControls?: boolean;
     /** Type of x-variable 'number' or 'date' */
     valueType?: 'number' | 'date';
+    // add y-axis controls
+    yLogScale?: boolean;
+    yMinMaxRange?: NumberOrDateRange;
+    yAbsoluteRelative?: string;
   };
 };
 
@@ -229,6 +272,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       binWidthRange: { min: 0, max: 0 },
       binWidthStep: 0,
       displaySelectedRangeControls: false,
+      // add y-axis controls
+      yLogScale: false,
+      yAbsoluteRelative: 'absolute',
     },
   };
 
@@ -454,6 +500,18 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     }
   };
 
+  // Toggle y-axis logScale
+  const toggleYLogScale = () => dispatch({ type: 'histogram/toggleYLogScale' });
+  // on y-axis yMinMaxRange
+  const onYMinMaxRange = (newRange: NumberOrDateRange) => {
+    if (params.histogram) {
+      dispatch({ type: 'histogram/onYMinMaxRange', payload: newRange });
+    }
+  };
+  //K on y-axis absoluteRelative
+  const onYAbsoluteRelative = () =>
+    dispatch({ type: 'histogram/onYAbsoluteRelative' });
+
   /**
    * Separate errors attribute from the rest of the reducer state.
    * This is so we can control the shape of the object returned
@@ -478,6 +536,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       ...reducerState.histogram,
       onBinWidthChange,
       onSelectedRangeChange,
+      // add y-axis controls
+      toggleYLogScale,
+      onYMinMaxRange,
+      onYAbsoluteRelative,
     },
     resetOpacity,
     onBarLayoutChange,

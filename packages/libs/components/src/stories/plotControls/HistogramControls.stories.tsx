@@ -98,3 +98,72 @@ AdditionalOptions.args = {
     },
   },
 };
+
+export const YAxisControls: Story<usePlotControlsParams<HistogramData>> = (
+  args
+) => {
+  const controls = usePlotControls<HistogramData>({
+    data: {
+      series: [
+        {
+          name: 'dummy data',
+          bins: [
+            {
+              binStart: -1.6,
+              binEnd: 1.6,
+              binLabel: '[-1.6,1.6]',
+              count: 7642,
+            },
+            {
+              binStart: 1.6,
+              binEnd: 4.8,
+              binLabel: '(1.6,4.8]',
+              count: 10045,
+            },
+            {
+              binStart: 4.8,
+              binEnd: 8,
+              binLabel: '(4.8,8]',
+              count: 2514,
+            },
+            {
+              binStart: 8,
+              binEnd: 11.2,
+              binLabel: '(8,11.2]',
+              count: 945,
+            },
+            {
+              binStart: 11.2,
+              binEnd: 14.4,
+              binLabel: '(11.2,14.4]',
+              count: 515,
+            },
+          ],
+        },
+      ],
+    },
+    histogram: args.histogram,
+  });
+
+  return (
+    <HistogramControls
+      // label="Customizable Control Panel Label"
+      {...controls}
+      {...controls.histogram}
+      valueType="number"
+    />
+  );
+};
+
+YAxisControls.args = {
+  histogram: {
+    binWidthRange: { min: 5, max: 100 },
+    binWidthStep: 5,
+    onBinWidthChange: async () => {
+      return { series: [{ name: 'dummy data', bins: [] }] };
+    },
+    // add y-axis controls at histogram for now
+    yLogScale: false,
+    yAbsoluteRelative: 'absolute',
+  },
+};
