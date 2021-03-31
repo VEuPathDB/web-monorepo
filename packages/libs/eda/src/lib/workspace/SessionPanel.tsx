@@ -1,7 +1,7 @@
 import React from 'react';
 import { cx } from './Utils';
 import { SessionSummary } from './SessionSummary';
-import { useSession } from '../core';
+import { Status, useSession } from '../core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import {
   Redirect,
@@ -12,6 +12,7 @@ import {
 import { SubsettingRoute } from './Subsetting';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
 import { ComputationRoute } from './ComputationRoute';
+import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 
 interface Props {
   sessionId: string;
@@ -28,6 +29,12 @@ export function SessionPanel(props: Props) {
     deleteSession,
   } = sessionState;
   const { url: routeBase } = useRouteMatch();
+  if (sessionState.status === Status.Error)
+    return (
+      <ContentError>
+        <pre>{String(sessionState.error)}</pre>
+      </ContentError>
+    );
   if (session == null) return null;
   return (
     <div className={cx('-Session')}>

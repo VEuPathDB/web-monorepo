@@ -17,6 +17,7 @@ export type SessionState = {
   status: Status;
   hasUnsavedChanges: boolean;
   session?: Session;
+  error?: unknown;
   canUndo: boolean;
   canRedo: boolean;
   undo: () => void;
@@ -110,6 +111,7 @@ export function useSession(sessionId: string): SessionState {
   return {
     status,
     session,
+    error: savedSession.error,
     canRedo,
     canUndo,
     hasUnsavedChanges,

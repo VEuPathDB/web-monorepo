@@ -1,4 +1,4 @@
-import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { Link, SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { keyBy } from 'lodash';
 import React, { useMemo } from 'react';
@@ -138,6 +138,7 @@ function NewVisualizationPicker(props: Props) {
                 addVisualization({
                   id,
                   computationId: computationId,
+                  displayName: `Unnamed ${vizType.type}`,
                   type: vizType.type,
                   configuration: vizType.createDefaultConfig(),
                 });
@@ -180,12 +181,17 @@ function FullScreenVisualization(props: Props & { id: string }) {
           <i className="fa fa-window-restore"></i>
         </Link>
       </div>
-      <vizType.fullscreenComponent
-        visualization={viz}
-        updateVisualization={updateVisualization}
-        computation={computation}
-        filters={filters}
-      />
+      <div>
+        <h1>
+          <SaveableTextEditor value={viz.displayName} onSave={() => {}} />
+        </h1>
+        <vizType.fullscreenComponent
+          visualization={viz}
+          updateVisualization={updateVisualization}
+          computation={computation}
+          filters={filters}
+        />
+      </div>
     </div>
   );
 }

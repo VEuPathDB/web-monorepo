@@ -46,6 +46,7 @@ export function PassThroughComputation(props: Props) {
         {
           id: 'pass-through',
           type: 'pass',
+          displayName: 'Passthrough',
           configuration: undefined,
         },
       ]}

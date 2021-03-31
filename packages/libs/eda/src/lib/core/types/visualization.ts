@@ -9,6 +9,7 @@ export const Visualization = t.type({
   id: t.string,
   computationId: t.string,
   type: t.string,
+  displayName: t.string,
   configuration: t.unknown,
 });
 
@@ -19,5 +20,6 @@ export type Computation = t.TypeOf<typeof Computation>;
 export const Computation = t.type({
   id: t.string,
   type: t.string,
+  displayName: t.string,
   configuration: t.unknown,
 });
