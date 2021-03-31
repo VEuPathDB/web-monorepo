@@ -1,12 +1,7 @@
 import { useStudyMetadata } from '../hooks/workspace';
 import { useEntityCounts } from '../hooks/entityCounts';
 import { SessionState } from '../../core';
-import MiniDiagram from '@veupathdb/components/lib/EntityDiagram/MiniDiagram';
-import ExpandedDiagram from '@veupathdb/components/lib/EntityDiagram/ExpandedDiagram';
-import {
-  ShadingData,
-  ShadingValue,
-} from '@veupathdb/components/lib/EntityDiagram/Types';
+import EntityDiagramComponent from '@veupathdb/components/lib/EntityDiagram/EntityDiagram';
 import { StudyEntity } from '../types/study';
 import { VariableLink } from './VariableLink';
 
@@ -32,20 +27,15 @@ export function EntityDiagram(props: Props) {
   const { value: counts } = useEntityCounts();
   const { value: filteredCounts } = useEntityCounts(session?.filters);
 
-  const shadingData: ShadingData = {};
-
-  if (counts && filteredCounts) {
-    Object.keys(counts).forEach((key, i) => {
-      shadingData[key] = {
-        value: Math.floor(
-          (filteredCounts[key] / counts[key]) * 10
-        ) as ShadingValue,
-      };
-    });
-  } else {
-    console.log('Could not retrieve entity counts.');
-  }
-
+  const shadingData: Record<string, number> =
+    counts && filteredCounts
+      ? Object.fromEntries(
+          Object.entries(counts).map(([key, value]) => [
+            key,
+            filteredCounts[key] / value,
+          ])
+        )
+      : {};
   // Renders a VariableLink with optional children passed through
   const renderNode = (
     node: StudyEntity,
@@ -74,9 +64,5 @@ export function EntityDiagram(props: Props) {
     renderNode: renderNode,
   };
 
-  if (expanded) {
-    return <ExpandedDiagram {...diagramProps} />;
-  } else {
-    return <MiniDiagram {...diagramProps} />;
-  }
+  return <EntityDiagramComponent isExpanded={expanded} {...diagramProps} />;
 }
