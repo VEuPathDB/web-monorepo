@@ -631,7 +631,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
 
     // create new isLeafVisible if relevant props have changed
     let recreateIsLeafVisible = propsDiffer(this.props, nextProps,
-        ['isSearchable', 'searchTerm', 'searchPredicate']);
+        ['isSearchable', 'searchTerm', 'searchPredicate', 'isAdditionalFilterApplied']);
     let isLeafVisible = (recreateIsLeafVisible ? createIsLeafVisible(nextProps) : this.state.isLeafVisible);
 
     // if certain props have changed, then recreate stateful tree from scratch;
