@@ -93,6 +93,17 @@
     text-align: center;
   }
 
+  &Filters {
+    display: grid;
+    grid-template-areas: "searchbox additional-filters";
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  & .wdk-RealTimeSearchBox {
+    grid-area: searchbox;
+  }
+
   & .wdk-RealTimeSearchBox__withHelp {
     width: calc(100% - 2rem);
   }
@@ -100,6 +111,10 @@
   & .wdk-RealTimeSearchBox,
   &Links {
     margin-left: 1rem;
+  }
+
+  &AdditionalFilters {
+    grid-area: additional-filters;
   }
 
 }
