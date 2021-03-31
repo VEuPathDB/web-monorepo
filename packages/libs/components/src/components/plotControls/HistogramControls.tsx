@@ -241,6 +241,7 @@ export default function HistogramControls({
                 : (binWidthStep as number)
             }
             value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
+            debounceRateMs={250}
             onChange={(newValue: number) => {
               onBinWidthChange({
                 binWidth:

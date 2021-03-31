@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 
 import { DARK_GRAY, LIGHT_GRAY, MEDIUM_GRAY } from '../../constants/colors';
+import { debounce } from 'lodash';
 
 export type SliderWidgetProps = {
   /** The minimum value of the slider. */
@@ -17,6 +18,8 @@ export type SliderWidgetProps = {
   valueFormatter?: (value: number) => string;
   /** The amount the value will change each time the mouse moves. Defaults to 1. */
   step?: number;
+  /** Rate at which to debounce onChange calls, in milliseconds. Defaults to 100. */
+  debounceRateMs?: number;
   /** Function to invoke whenever the value changes. */
   onChange: (value: number) => void;
   /** Optional label for the widget. */
@@ -56,6 +59,7 @@ export default function SliderWidget({
   value,
   valueFormatter,
   step = 1,
+  debounceRateMs = 100,
   onChange,
   label,
   colorSpec,
@@ -98,6 +102,26 @@ export default function SliderWidget({
 
   const classes = useStyles();
 
+  const [localValue, setLocalValue] = useState<number>(value);
+
+  // XXX We may want a generic useDebouncedCallback hook.
+  const debouncedOnChange = useMemo(() => debounce(onChange, debounceRateMs), [
+    onChange,
+  ]);
+
+  // cancel any lingering calls to onChange
+  useEffect(() => debouncedOnChange.cancel, []);
+
+  const handleChange = useCallback(
+    (_: unknown, value: number | number[]) => {
+      if (Array.isArray(value))
+        throw new Error('Expected a number, but got an array.');
+      setLocalValue(value);
+      debouncedOnChange(value);
+    },
+    [debouncedOnChange]
+  );
+
   return (
     <div
       style={{
@@ -129,13 +153,11 @@ export default function SliderWidget({
         aria-label={label ?? 'slider'}
         min={minimum}
         max={maximum}
-        value={value}
+        value={localValue}
         step={step}
         valueLabelDisplay="auto"
         valueLabelFormat={valueFormatter}
-        onChange={(event, newValue) => {
-          onChange(newValue as number);
-        }}
+        onChange={handleChange}
       />
     </div>
   );
