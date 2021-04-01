@@ -293,16 +293,16 @@ EntityDiagramControls.args = {
   orientation: 'vertical',
   isExpanded: false,
   selectedBorderWeight: 1,
-  selectedHighlightColor: 'orange',
+  selectedHighlightColor: 'yellow',
   selectedHighlightWeight: 3,
   selectedTextBold: false,
   shadowDx: 1,
   shadowDy: 1,
   shadowDispersion: 0,
-  shadowOpacity: 1,
+  shadowOpacity: 0,
   highlightedEntityID: 'Sample',
-  treeData: studyData.rootEntity,
   shadingData: shadingData,
+  treeData: studyData.rootEntity,
 };
 EntityDiagramControls.argTypes = {
   orientation: {
@@ -326,7 +326,7 @@ EntityDiagramControls.argTypes = {
   shadowDy: {
     control: { type: 'number', min: 0, step: 1 },
   },
-  shadowDispection: {
+  shadowDispersion: {
     control: { type: 'number', min: 0, step: 0.1 },
   },
   shadowOpacity: {

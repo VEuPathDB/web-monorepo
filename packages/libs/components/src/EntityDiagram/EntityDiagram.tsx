@@ -193,7 +193,12 @@ export default function EntityDiagram({
         top={orientation == 'horizontal' ? node.x : node.y}
         left={orientation == 'horizontal' ? node.y : node.x}
         key={node.x + node.y}
-        style={{ filter: 'url(#shadow)' }}
+        style={{
+          filter:
+            shadowOpacity == 0 || (isHighlighted && nodeHighlightWidth > 0)
+              ? undefined
+              : 'url(#shadow)',
+        }}
       >
         {renderNode?.(node.data, [rectangle, text]) ?? [rectangle, text]}
         {!isExpanded && <title>{node.data.displayName}</title>}
