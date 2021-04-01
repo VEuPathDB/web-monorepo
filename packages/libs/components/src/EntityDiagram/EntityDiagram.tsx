@@ -230,8 +230,8 @@ export default function EntityDiagram({
 
     if (orientation == 'horizontal') {
       to = {
-        x: link.target.y - nodeWidth / 2,
-        y: link.target.x - 5,
+        x: link.target.y - nodeWidth / 2 - 5,
+        y: link.target.x,
       };
       from = { x: link.source.y, y: link.source.x };
     } else {
