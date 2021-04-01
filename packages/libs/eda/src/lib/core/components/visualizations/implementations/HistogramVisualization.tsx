@@ -261,7 +261,6 @@ function HistogramViz(props: Props) {
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {fullscreen && (
         <div>
-          <h1>Histogram</h1>
           <h2>Choose the main variable</h2>
           <div style={variableTreeContainerCSS}>
             <VariableTree
