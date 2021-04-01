@@ -192,7 +192,12 @@ function FullScreenVisualization(props: Props & { id: string }) {
       </div>
       <div>
         <h1>
-          <SaveableTextEditor value={viz.displayName} onSave={() => {}} />
+          <SaveableTextEditor
+            value={viz.displayName}
+            onSave={(value) =>
+              updateVisualization({ ...viz, displayName: value })
+            }
+          />
         </h1>
         <vizType.fullscreenComponent
           visualization={viz}
