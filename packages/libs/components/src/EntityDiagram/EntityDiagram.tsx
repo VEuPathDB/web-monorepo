@@ -2,12 +2,22 @@ import React from 'react';
 import { hierarchy, Tree } from '@visx/hierarchy';
 import { Group } from '@visx/group';
 import { Text } from '@visx/text';
-import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
-import OffsetLine from './OffsetLine';
+import {
+  HierarchyPointLink,
+  HierarchyPointNode,
+} from '@visx/hierarchy/lib/types';
+import { Line } from '@visx/shape';
 import { LinearGradient } from '@visx/gradient';
 
 interface CustomNode {
   node: HierarchyPointNode<StudyData>;
+}
+
+interface OffsetLine {
+  link: HierarchyPointLink<StudyData>;
+  nodeHeight: number;
+  nodeWidth: number;
+  orientation: Orientation;
 }
 
 // Todo: There MUST be a smarter way to center the text
@@ -58,11 +68,13 @@ export interface ShadingData {
   [index: string]: number;
 }
 
+export type Orientation = 'horizontal' | 'vertical';
+
 export interface EntityDiagramProps {
   /** Data that defines the tree structure */
   treeData: StudyData;
   /** Which direction the tree is oriented */
-  orientation: 'horizontal' | 'vertical';
+  orientation: Orientation;
   /** Whether the diagram is expanded */
   isExpanded: boolean;
   /** The tree's dimensions. If the tree is horizontal, it may not take up the
@@ -208,6 +220,31 @@ export default function EntityDiagram({
     );
   }
 
+  function OffsetLine({
+    link,
+    nodeHeight,
+    nodeWidth,
+    orientation,
+  }: OffsetLine) {
+    let to, from;
+
+    if (orientation == 'horizontal') {
+      to = {
+        x: link.target.y - nodeWidth / 2 - link.source.y + link.source.y,
+        y: link.target.x - link.source.x + link.source.x - 5,
+      };
+      from = { x: link.source.y, y: link.source.x };
+    } else {
+      to = {
+        x: link.target.x - link.source.x + link.source.x,
+        y: link.target.y - link.source.y + link.source.y - nodeHeight / 2 - 5,
+      };
+      from = { x: link.source.x, y: link.source.y };
+    }
+
+    return <Line to={to} from={from} stroke="black" markerEnd="url(#arrow)" />;
+  }
+
   return (
     <div className={isExpanded ? '' : 'mini-diagram'}>
       <svg width={size.width} height={size.height}>
@@ -219,7 +256,7 @@ export default function EntityDiagram({
             markerHeight={isExpanded ? '18' : '10'}
             orient="auto"
             fill="black"
-            style={{ opacity: 0.7 }}
+            refX={10}
           >
             <path d="M0,-5L10,0L0,5" />
           </marker>
@@ -250,15 +287,15 @@ export default function EntityDiagram({
         <Tree root={data} size={[treeWidth, treeHeight]}>
           {(tree) => (
             <Group left={treeLeft} top={treeTop}>
-              {tree.links().map((link, i) => {
-                return (
-                  <OffsetLine
-                    link={link}
-                    orientation={orientation}
-                    key={isExpanded ? `expanded-link-${i}` : `link-${i}`}
-                  />
-                );
-              })}
+              {tree.links().map((link, i) => (
+                <OffsetLine
+                  link={link}
+                  nodeHeight={nodeHeight}
+                  nodeWidth={nodeWidth}
+                  orientation={orientation}
+                  key={`link-${i}`}
+                />
+              ))}
               {tree.descendants().map((node, i) => (
                 <CustomNode node={node} key={`node-${i}`} />
               ))}
