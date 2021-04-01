@@ -1,7 +1,7 @@
 import 'wdk-client/Views/Question/Params/TreeBoxParam.scss';
 
 import { intersection } from 'lodash';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
@@ -141,11 +141,15 @@ export function reduce(state: State = {} as State, action: Action): State {
 export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   const tree = props.parameter.vocabulary;
   const selectedNodes = props.selectedValues;
-  const selectedLeaves = removeBranches(tree, selectedNodes);
-  const allCount = getLeaves(tree, getNodeChildren).length;
-  const selectedCount = props.parameter.countOnlyLeaves
-    ? selectedLeaves.length
-    : selectedNodes.length;
+  const selectedLeaves = useSelectedLeaves(tree, selectedNodes);
+
+  const allCount = useAllCount(tree);
+  const selectedCount = findSelectedCount(
+    props.parameter.countOnlyLeaves,
+    selectedLeaves.length,
+    selectedNodes.length
+  );
+
   const handleExpansionChange = useCallback((expandedList: string[]) => {
     props.dispatch(setExpandedList({ ...props.context, expandedList }));
   }, [props.dispatch, props.context])
@@ -200,3 +204,27 @@ function renderNoResults(searchTerm: string) {
 }
 
 export default TreeBoxEnumParamComponent;
+
+export function useSelectedLeaves(tree: TreeBoxVocabNode, selectedNodes: string[]) {
+  return useMemo(
+    () => removeBranches(tree, selectedNodes),
+    [ tree, selectedNodes ]
+  );
+}
+
+export function useAllCount(tree: TreeBoxVocabNode) {
+  return useMemo(
+    () => getLeaves(tree, getNodeChildren).length,
+    []
+  );
+}
+
+export function findSelectedCount(
+  countOnlyLeaves: boolean,
+  selectedLeavesCount: number,
+  selectedNodesCount: number
+) {
+  return countOnlyLeaves
+    ? selectedLeavesCount
+    : selectedNodesCount;
+}
