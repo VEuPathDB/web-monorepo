@@ -189,7 +189,6 @@ export default function Histogram({
   const handleSelectedRange = useCallback(
     (object: any) => {
       if (object && object.range) {
-        console.log(object.range);
         const [val1, val2] =
           orientation === 'vertical' ? object.range.x : object.range.y;
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
