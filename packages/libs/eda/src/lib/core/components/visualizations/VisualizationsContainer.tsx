@@ -90,7 +90,7 @@ function ConfiguredVisualizations(props: Props) {
           if (type == null)
             return <div>Viz type not implemented: {viz.type}</div>;
           return (
-            <div className={cx('-ConfiguredVisualization')}>
+            <div key={viz.id} className={cx('-ConfiguredVisualization')}>
               <div className={cx('-ConfiguredVisualizationActions')}>
                 <Link to={`${url}/${viz.id}`}>
                   <i className="fa fa-arrows-alt"></i>
@@ -139,7 +139,7 @@ function NewVisualizationPicker(props: Props) {
       <h3>Select a visualization</h3>
       <Grid>
         {visualizationTypes.map((vizType) => (
-          <div className={cx('-PickerEntry')}>
+          <div key={vizType.type} className={cx('-PickerEntry')}>
             <button
               type="button"
               onClick={async () => {
