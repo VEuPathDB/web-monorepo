@@ -20,6 +20,7 @@ interface Props {
   computations: Computation[];
   addVisualization: (visualization: Visualization) => void;
   updateVisualization: (visualization: Visualization) => void;
+  deleteVisualization: (id: string) => void;
   visualizationTypes: VisualizationType[];
   filters: Filter[];
 }
@@ -55,6 +56,7 @@ function ConfiguredVisualizations(props: Props) {
   const {
     computationId,
     computations,
+    deleteVisualization,
     visualizations,
     visualizationTypes,
     filters,
@@ -93,6 +95,13 @@ function ConfiguredVisualizations(props: Props) {
                 <Link to={`${url}/${viz.id}`}>
                   <i className="fa fa-arrows-alt"></i>
                 </Link>
+                <button
+                  type="button"
+                  className="link"
+                  onClick={() => deleteVisualization(viz.id)}
+                >
+                  <i className="fa fa-close"></i>
+                </button>
               </div>
               <type.gridComponent
                 visualization={viz}
