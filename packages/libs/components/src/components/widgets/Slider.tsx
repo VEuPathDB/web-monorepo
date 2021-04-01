@@ -109,8 +109,13 @@ export default function SliderWidget({
     onChange,
   ]);
 
-  // cancel any lingering calls to onChange
+  // cancel any lingering calls to onChange (via useEffect cleanup fn)
   useEffect(() => debouncedOnChange.cancel, []);
+
+  // watch external 'value' for changes and set localValue
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value, setLocalValue]);
 
   const handleChange = useCallback(
     (_: unknown, value: number | number[]) => {
