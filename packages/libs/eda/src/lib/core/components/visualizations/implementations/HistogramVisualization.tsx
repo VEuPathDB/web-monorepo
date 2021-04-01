@@ -406,12 +406,11 @@ export function histogramResponseToData(
       ? parseFloat(response.config.binWidth as string) || 1
       : parseTimeDelta(response.config.binWidth as string);
   const { min, max, step } = response.config.binSlider;
-  // FIXME - remove max/100 when sorted
   const binWidthRange = (type === 'number'
     ? { min, max }
     : {
         min,
-        max: Math.floor(max / 100),
+        max,
         unit: (binWidth as TimeDelta)[1],
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
