@@ -160,6 +160,7 @@ const shadingData: ShadingData = {
   GEMS_Part: 0.41,
   GEMS_PartObs: 0.66,
   GEMS_Treat: 0.98,
+  GEMS_Sample: 0.3,
 };
 
 const miniSize = { height: 300, width: 150 };
@@ -240,6 +241,11 @@ EntityDiagramControls.args = {
   highlightedEntityID: 'Sample',
   shadingData: shadingData,
   treeData: studyData.rootEntity,
+  fontSize: 12,
+  miniNodeWidth: 30,
+  miniNodeHeight: 20,
+  expandedNodeWidth: 120,
+  expandedNodeHeight: 40,
 };
 EntityDiagramControls.argTypes = {
   orientation: {
@@ -250,29 +256,75 @@ EntityDiagramControls.argTypes = {
   },
   selectedHighlightColor: {
     control: 'color',
+    table: {
+      category: 'selected node style',
+    },
   },
   selectedBorderWeight: {
     control: { type: 'number', min: 0, step: 1 },
+    table: {
+      category: 'selected node style',
+    },
   },
   selectedHighlightWeight: {
     control: { type: 'number', min: 0, step: 1 },
+    table: {
+      category: 'selected node style',
+    },
+  },
+  selectedTextBold: {
+    table: {
+      category: 'selected node style',
+    },
   },
   shadowDx: {
     control: { type: 'number', min: 0, step: 1 },
+    table: {
+      category: 'drop shadow',
+    },
   },
   shadowDy: {
     control: { type: 'number', min: 0, step: 1 },
+    table: {
+      category: 'drop shadow',
+    },
   },
   shadowDispersion: {
     control: { type: 'number', min: 0, step: 0.1 },
+    table: {
+      category: 'drop shadow',
+    },
   },
   shadowOpacity: {
     control: { type: 'number', min: 0, max: 1, step: 0.1 },
+    table: {
+      category: 'drop shadow',
+    },
   },
   width: {
     control: { type: 'number', min: 0, step: 50 },
   },
   height: {
     control: { type: 'number', min: 0, step: 50 },
+  },
+  miniNodeWidth: {
+    table: {
+      category: 'mini',
+    },
+  },
+  miniNodeHeight: {
+    table: {
+      category: 'mini',
+    },
+  },
+  expandedNodeWidth: {
+    table: {
+      category: 'expanded',
+    },
+  },
+  expandedNodeHeight: {
+    table: {
+      category: 'expanded',
+    },
   },
 };

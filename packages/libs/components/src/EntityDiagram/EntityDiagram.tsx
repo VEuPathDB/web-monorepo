@@ -101,6 +101,11 @@ export interface EntityDiagramProps {
   shadowDy?: number;
   shadowDispersion?: number;
   shadowOpacity?: number;
+  miniNodeWidth?: number;
+  miniNodeHeight?: number;
+  expandedNodeWidth?: number;
+  expandedNodeHeight?: number;
+  fontSize?: number;
 }
 
 export default function EntityDiagram({
@@ -119,11 +124,16 @@ export default function EntityDiagram({
   shadowDy = 1,
   shadowDispersion = 0,
   shadowOpacity = 1,
+  miniNodeWidth = 30,
+  miniNodeHeight = 20,
+  expandedNodeWidth = 120,
+  expandedNodeHeight = 40,
+  fontSize = 12,
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
 
-  const nodeWidth = isExpanded ? 120 : 30;
-  const nodeHeight = isExpanded ? 70 : 20;
+  const nodeWidth = isExpanded ? expandedNodeWidth : miniNodeWidth;
+  const nodeHeight = isExpanded ? expandedNodeHeight : miniNodeHeight;
   // Node border width
   const nodeStrokeWidth = 1;
   // Width of the highlight border around the highlighted node
@@ -184,7 +194,7 @@ export default function EntityDiagram({
 
     const text = (
       <Text
-        fontSize={12}
+        fontSize={fontSize}
         textAnchor="middle"
         style={{
           userSelect: 'none',
@@ -195,7 +205,7 @@ export default function EntityDiagram({
             ? CalculateDYSize(node.data.displayName.split(' ').length)
             : '.33em'
         }
-        width={isExpanded ? 100 : undefined}
+        width={isExpanded ? nodeWidth - 10 : undefined}
         key={`text-${node.data.id}`}
       >
         {displayText}
