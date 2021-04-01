@@ -31,7 +31,7 @@ type ActionType<DataShape> =
   | { type: 'errors/clear' }
   | { type: 'histogram/setBinWidth'; payload: NumberOrTimeDelta }
   | { type: 'histogram/setBinWidthRange'; payload: NumberOrTimeDeltaRange }
-  | { type: 'histogram/setBinWidthStep'; payload: NumberOrTimeDelta }
+  | { type: 'histogram/setBinWidthStep'; payload: number }
   | { type: 'setSelectedUnit'; payload: string }
   | { type: 'setOpacity'; payload: number }
   | { type: 'resetOpacity' }
@@ -168,7 +168,7 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     /** Histogram: Range of bin width values. */
     binWidthRange: NumberOrTimeDeltaRange;
     /** Increment for increasing/decrease bin width. */
-    binWidthStep: NumberOrTimeDelta;
+    binWidthStep: number;
     /** The currently selected range along the x-axis */
     selectedRange?: NumberOrDateRange;
     /** The min/max allowed values for the range controls */
@@ -190,7 +190,7 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     binWidthRange?: NumberOrTimeDeltaRange;
     /** Optional override for binWidthStep that is provided by
      * data backend or calculated. */
-    binWidthStep?: NumberOrTimeDelta;
+    binWidthStep?: number;
     onBinWidthChange: (params: {
       binWidth: NumberOrTimeDelta;
       selectedUnit?: string;
@@ -303,15 +303,11 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
           ] as TimeDelta)
         : binWidthRange.max / 10);
 
-    const binWidthStep = params.histogram?.binWidthStep
-      ? params.histogram.binWidthStep
-      : params.data.binWidthStep ??
-        ('unit' in binWidthRange
-          ? ([
-              (binWidthRange.max - binWidthRange.min) / 10,
-              (binWidthRange as TimeDeltaRange).unit,
-            ] as TimeDelta)
-          : (binWidthRange.max - binWidthRange.min) / 10);
+    const binWidthStep =
+      params.histogram?.binWidthStep ??
+      params.histogram?.binWidthStep ??
+      params.data.binWidthStep ??
+      (binWidthRange.max - binWidthRange.min) / 10;
 
     initialState.histogram = {
       ...initialState.histogram,
