@@ -143,50 +143,19 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   const selectedNodes = props.selectedValues;
   const selectedLeaves = useSelectedLeaves(tree, selectedNodes);
 
-  const allCount = useAllCount(tree);
-  const selectedCount = findSelectedCount(
+  const selectionCounts = useSelectionCounts(
     props.parameter.countOnlyLeaves,
-    selectedLeaves.length,
-    selectedNodes.length
+    tree,
+    selectedLeaves,
+    selectedNodes
   );
 
-  const handleExpansionChange = useCallback((expandedList: string[]) => {
-    props.dispatch(setExpandedList({ ...props.context, expandedList }));
-  }, [props.dispatch, props.context])
-  const handleSelectionChange = useCallback((ids: string[]) => {
-    const idsWithBranches = ids.concat(deriveSelectedBranches(tree, ids));
-    props.onChange(idsWithBranches);
-  }, [props.onChange, tree]);
-  const handleSearchTermChange = useCallback((searchTerm: string) => {
-    props.dispatch(setSearchTerm({ ...props.context, searchTerm }));
-  }, [props.dispatch, props.context]);
+  const checkboxTreeProps = useDefaultCheckboxTreeProps(props, tree, selectedLeaves);
 
   return (
     <div className="wdk-TreeBoxParam">
-      <SelectionInfo parameter={props.parameter} selectedCount={selectedCount} allCount={allCount} alwaysShowCount />
-      <CheckboxTree
-        isSelectable={true}
-        isMultiPick={isMultiPick(props.parameter)}
-        linksPosition={CheckboxTree.LinkPlacement.Both}
-        showRoot={false}
-        shouldExpandDescendantsWithOneChild
-        tree={tree}
-        getNodeId={getNodeId}
-        getNodeChildren={getNodeChildren}
-        renderNode={renderNode}
-        onExpansionChange={handleExpansionChange}
-        expandedList={props.uiState.expandedList}
-        selectedList={selectedLeaves}
-        onSelectionChange={handleSelectionChange}
-        isSearchable={true}
-        searchBoxPlaceholder="Filter list below..."
-        searchBoxHelp={makeSearchHelpText("the list below")}
-        searchIconName="filter"
-        renderNoResults={renderNoResults}
-        searchTerm={props.uiState.searchTerm}
-        searchPredicate={searchPredicate}
-        onSearchTermChange={handleSearchTermChange}
-      />
+      <SelectionInfo parameter={props.parameter} {...selectionCounts} alwaysShowCount />
+      <CheckboxTree {...checkboxTreeProps} />
     </div>
   );
 }
@@ -212,14 +181,28 @@ export function useSelectedLeaves(tree: TreeBoxVocabNode, selectedNodes: string[
   );
 }
 
-export function useAllCount(tree: TreeBoxVocabNode) {
-  return useMemo(
+export function useSelectionCounts(
+  countOnlyLeaves: boolean,
+  tree: TreeBoxVocabNode,
+  selectedLeaves: string[],
+  selectedNodes: string[]
+) {
+  const allCount = useMemo(
     () => getLeaves(tree, getNodeChildren).length,
-    []
+    [ tree ]
   );
+
+  return {
+    allCount,
+    selectedCount: findSelectedCount(
+      countOnlyLeaves,
+      selectedLeaves.length,
+      selectedNodes.length
+    )
+  };
 }
 
-export function findSelectedCount(
+function findSelectedCount(
   countOnlyLeaves: boolean,
   selectedLeavesCount: number,
   selectedNodesCount: number
@@ -227,4 +210,45 @@ export function findSelectedCount(
   return countOnlyLeaves
     ? selectedLeavesCount
     : selectedNodesCount;
+}
+
+export function useDefaultCheckboxTreeProps(
+  props: TreeBoxProps,
+  tree: TreeBoxVocabNode,
+  selectedLeaves: string[]
+) {
+  const handleExpansionChange = useCallback((expandedList: string[]) => {
+    props.dispatch(setExpandedList({ ...props.context, expandedList }));
+  }, [props.dispatch, props.context])
+  const handleSelectionChange = useCallback((ids: string[]) => {
+    const idsWithBranches = ids.concat(deriveSelectedBranches(tree, ids));
+    props.onChange(idsWithBranches);
+  }, [props.onChange, tree]);
+  const handleSearchTermChange = useCallback((searchTerm: string) => {
+    props.dispatch(setSearchTerm({ ...props.context, searchTerm }));
+  }, [props.dispatch, props.context]);
+
+  return {
+    isSelectable: true,
+    isMultiPick: isMultiPick(props.parameter),
+    linksPosition: CheckboxTree.LinkPlacement.Both,
+    showRoot: false,
+    shouldExpandDescendantsWithOneChild: false,
+    tree,
+    getNodeId,
+    getNodeChildren,
+    renderNode,
+    onExpansionChange: handleExpansionChange,
+    expandedList: props.uiState.expandedList,
+    selectedList: selectedLeaves,
+    onSelectionChange: handleSelectionChange,
+    isSearchable: true,
+    searchBoxPlaceholder: 'Filter list below...',
+    searchBoxHelp: makeSearchHelpText('the list below'),
+    searchIconName: 'filter',
+    renderNoResults,
+    searchTerm: props.uiState.searchTerm,
+    searchPredicate,
+    onSearchTermChange: handleSearchTermChange
+  };
 }
