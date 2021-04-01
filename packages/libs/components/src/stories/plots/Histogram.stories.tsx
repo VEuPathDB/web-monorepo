@@ -299,11 +299,15 @@ const TemplateWithSelectedDateRangeControls: Story<
         label="Histogram Controls"
         {...plotControls}
         {...plotControls.histogram}
+        binWidthRange={{ min: 1, max: 12, unit: 'month' }}
+        binWidthStep={1}
+        selectedUnit={'month'}
         containerStyles={{
           maxWidth: args.width - 25,
           marginLeft: 25,
         }}
       />
+      <div>Note: bin width slider is known to be broken.</div>
     </div>
   );
 };

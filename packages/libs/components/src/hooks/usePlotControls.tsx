@@ -305,7 +305,6 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
     const binWidthStep =
       params.histogram?.binWidthStep ??
-      params.histogram?.binWidthStep ??
       params.data.binWidthStep ??
       (binWidthRange.max - binWidthRange.min) / 10;
 
