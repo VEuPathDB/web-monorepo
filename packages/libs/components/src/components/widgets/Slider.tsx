@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 
 import { DARK_GRAY, LIGHT_GRAY, MEDIUM_GRAY } from '../../constants/colors';
+import { debounce } from 'lodash';
 
 export type SliderWidgetProps = {
   /** The minimum value of the slider. */
@@ -17,6 +18,8 @@ export type SliderWidgetProps = {
   valueFormatter?: (value: number) => string;
   /** The amount the value will change each time the mouse moves. Defaults to 1. */
   step?: number;
+  /** Rate at which to debounce onChange calls, in milliseconds. Defaults to 100. */
+  debounceRateMs?: number;
   /** Function to invoke whenever the value changes. */
   onChange: (value: number) => void;
   /** Optional label for the widget. */
@@ -56,6 +59,7 @@ export default function SliderWidget({
   value,
   valueFormatter,
   step = 1,
+  debounceRateMs = 100,
   onChange,
   label,
   colorSpec,
@@ -63,15 +67,6 @@ export default function SliderWidget({
 }: SliderWidgetProps) {
   // Used to track whether or not has mouse hovering over widget.
   const [focused, setFocused] = useState(false);
-
-  const [previousValue, setPreviousValue] = useState<number>();
-
-  // Clear previous value whenever a new value is received.
-  // This has to do with proper event sequencing when
-  // `onChange` is an async action.
-  useEffect(() => {
-    setPreviousValue(undefined);
-  }, [value]);
 
   const useStyles = makeStyles({
     root: {
@@ -107,6 +102,26 @@ export default function SliderWidget({
 
   const classes = useStyles();
 
+  const [localValue, setLocalValue] = useState<number>(value);
+
+  // XXX We may want a generic useDebouncedCallback hook.
+  const debouncedOnChange = useMemo(() => debounce(onChange, debounceRateMs), [
+    onChange,
+  ]);
+
+  // cancel any lingering calls to onChange
+  useEffect(() => debouncedOnChange.cancel, []);
+
+  const handleChange = useCallback(
+    (_: unknown, value: number | number[]) => {
+      if (Array.isArray(value))
+        throw new Error('Expected a number, but got an array.');
+      setLocalValue(value);
+      debouncedOnChange(value);
+    },
+    [debouncedOnChange]
+  );
+
   return (
     <div
       style={{
@@ -138,21 +153,11 @@ export default function SliderWidget({
         aria-label={label ?? 'slider'}
         min={minimum}
         max={maximum}
-        value={value}
+        value={localValue}
         step={step}
         valueLabelDisplay="auto"
         valueLabelFormat={valueFormatter}
-        onChange={(event, newValue) => {
-          /**
-           * Prevent multiple API calls by:
-           * 1. Ignoring events where new value and current value are equivalent.
-           * 2. When internal function has been called, but value prop has not yet been updated.
-           */
-          if (newValue !== value && !previousValue) {
-            setPreviousValue(value);
-            onChange(newValue as number);
-          }
-        }}
+        onChange={handleChange}
       />
     </div>
   );

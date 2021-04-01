@@ -166,6 +166,7 @@ export default function EntityDiagram({
             : undefined,
           overflowWrap: isExpanded ? 'normal' : undefined,
         }}
+        key={`rect-${node.data.id}`}
       />
     );
 
@@ -183,6 +184,7 @@ export default function EntityDiagram({
             : '.33em'
         }
         width={isExpanded ? 100 : undefined}
+        key={`text-${node.data.id}`}
       >
         {displayText}
       </Text>

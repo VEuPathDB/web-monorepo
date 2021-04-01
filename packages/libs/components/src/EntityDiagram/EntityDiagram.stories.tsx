@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import MiniDiagram from './MiniDiagram';
-import ExpandedDiagram from './ExpandedDiagram';
 import EntityDiagram from './EntityDiagram';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { StudyData, ShadingData } from './Types';
+import { StudyData, ShadingData } from './EntityDiagram';
 import './diagram.css';
 
 export default {
@@ -171,66 +168,6 @@ const miniDivSize = { height: miniSize.height + 3, width: miniSize.width + 3 };
 const expandedDivSize = {
   height: expandedSize.height + 2,
   width: expandedSize.width + 2,
-};
-
-export const EntityDiagramSeparate = () => {
-  const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>(
-    'vertical'
-  );
-  const [expanded, setExpanded] = useState<boolean>(false);
-
-  return (
-    <>
-      <button
-        onClick={() =>
-          orientation == 'horizontal'
-            ? setOrientation('vertical')
-            : setOrientation('horizontal')
-        }
-      >
-        Switch Orientation
-      </button>
-      <button
-        onClick={() => (expanded ? setExpanded(false) : setExpanded(true))}
-      >
-        Switch Size
-      </button>
-      <div style={{ ...miniDivSize, border: '1px solid', padding: '1px' }}>
-        <MiniDiagram
-          treeData={studyData.rootEntity}
-          orientation={orientation}
-          highlightedEntityID={'Sample'}
-          shadingData={shadingData}
-          size={miniSize}
-        />
-      </div>
-      <TransitionGroup>
-        {expanded && (
-          <CSSTransition
-            key="expanded-transition"
-            timeout={1000}
-            classNames="expanded-diagram"
-          >
-            <div
-              style={{
-                ...expandedDivSize,
-                border: '1px solid',
-                padding: '1px',
-              }}
-            >
-              <ExpandedDiagram
-                treeData={studyData.rootEntity}
-                orientation={orientation}
-                highlightedEntityID={'Sample'}
-                shadingData={shadingData}
-                size={expandedSize}
-              />
-            </div>
-          </CSSTransition>
-        )}
-      </TransitionGroup>
-    </>
-  );
 };
 
 export const EntityDiagramUnified = () => {
