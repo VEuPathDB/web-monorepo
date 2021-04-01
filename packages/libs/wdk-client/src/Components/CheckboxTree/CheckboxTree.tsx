@@ -128,6 +128,12 @@ type Props<T> = {
 
   /** Additional actions to render with links */
   additionalActions?: React.ReactNode[];
+
+  /** Additional filter controls to render with searchbox */
+  additionalFilters?: React.ReactNode[];
+
+  /** Indicates if an additional filter has been applied; optional, defaults to false */
+  isAdditionalFilterApplied?: boolean;
 };
 
 type TreeLinkHandler = MouseEventHandler<HTMLButtonElement>;
@@ -268,6 +274,32 @@ function getInitialNodeState<T>(node: T, getNodeChildren: (t: T) => T[]) {
     // these state properties only apply to branch nodes (not leaves)
     isExpanded: false, isIndeterminate: false
   })
+}
+
+interface AdditionalFiltersProps {
+  filters?: React.ReactNode[];
+}
+
+/**
+ * Renders additional filters to supplement the default searchbox
+ */
+function AdditionalFilters({ filters }: AdditionalFiltersProps) {
+  return (
+    <>
+      {
+        filters != null && filters.length > 0 &&
+        <div className="wdk-CheckboxTreeAdditionalFilters">
+          {
+            filters.map((filter, index) => (
+              <span key={index}>
+                {filter}
+              </span>
+            ))
+          }
+        </div>
+      }
+    </>
+  );
 }
 
 /**
@@ -412,10 +444,22 @@ function applyPropsToStatefulTree<T>(root: StatefulNode<T>, props: Props<T>, isL
 
 /**
  * Returns true if a search is being actively performed (i.e. if this tree is
- * searchable, and search text is non-empty).
+ * searchable, and at least one filter has been applied).
  */
-function isActiveSearch({ isSearchable, searchTerm }: Props<any>) {
-  return isSearchable && searchTerm.length > 0;
+function isActiveSearch({ isAdditionalFilterApplied, isSearchable, searchTerm }: Props<any>) {
+  return isSearchable && isFiltered(searchTerm, isAdditionalFilterApplied);
+}
+
+/**
+ * Returns true if at least one filter has been applied, that is, if:
+ * 1. the search term is non-empty, or
+ * 2. an "additional filter" has been applied
+ */
+function isFiltered(searchTerm: string, isAdditionalFilterApplied?: boolean) {
+  return (
+    searchTerm.length > 0 ||
+    Boolean(isAdditionalFilterApplied)
+  );
 }
 
 /**
@@ -587,7 +631,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
 
     // create new isLeafVisible if relevant props have changed
     let recreateIsLeafVisible = propsDiffer(this.props, nextProps,
-        ['isSearchable', 'searchTerm', 'searchPredicate']);
+        ['isSearchable', 'searchTerm', 'searchPredicate', 'isAdditionalFilterApplied']);
     let isLeafVisible = (recreateIsLeafVisible ? createIsLeafVisible(nextProps) : this.state.isLeafVisible);
 
     // if certain props have changed, then recreate stateful tree from scratch;
@@ -692,6 +736,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
       isSearchable, currentList, defaultList, showSearchBox, searchTerm,
       searchBoxPlaceholder, searchBoxHelp, searchIconName,
       linksPosition = LinksPosition.Both, additionalActions,
+      additionalFilters, isAdditionalFilterApplied,
       onSearchTermChange, autoFocusSearchBox, shouldExpandOnClick = true
     } = this.props;
     let topLevelNodes = (showRoot ? [ this.state.generated.statefulTree ] :
@@ -703,7 +748,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
 
     let treeLinks = (
       <TreeLinks
-        isFiltered={Boolean(searchTerm)}
+        isFiltered={isFiltered(searchTerm, isAdditionalFilterApplied)}
         selectAll={this.selectAll}
         selectNone={this.selectNone}
         addVisible={this.addVisible}
@@ -727,13 +772,19 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
       <div className="wdk-CheckboxTree">
         {linksPosition & LinksPosition.Top ? treeLinks : null}
         {!isSearchable || !showSearchBox ? "" : (
-          <RealTimeSearchBox
-            autoFocus={autoFocusSearchBox}
-            searchTerm={searchTerm}
-            onSearchTermChange={onSearchTermChange}
-            placeholderText={searchBoxPlaceholder}
-            iconName={searchIconName}
-            helpText={searchBoxHelp} />
+          <div className="wdk-CheckboxTreeFilters">
+            <RealTimeSearchBox
+              autoFocus={autoFocusSearchBox}
+              searchTerm={searchTerm}
+              onSearchTermChange={onSearchTermChange}
+              placeholderText={searchBoxPlaceholder}
+              iconName={searchIconName}
+              helpText={searchBoxHelp}
+            />
+            <AdditionalFilters
+              filters={additionalFilters}
+            />
+          </div>
         )}
         {noResultsMessage}
         <ul className={listClassName}>
