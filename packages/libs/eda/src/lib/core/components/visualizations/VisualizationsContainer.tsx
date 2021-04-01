@@ -35,20 +35,25 @@ interface Props {
 export function VisualizationsContainer(props: Props) {
   const { url } = useRouteMatch();
   return (
-    <Switch>
-      <Route exact path={url}>
-        <ConfiguredVisualizations {...props} />
-      </Route>
-      <Route exact path={`${url}/new`}>
-        <NewVisualizationPicker {...props} />
-      </Route>
-      <Route
-        path={`${url}/:id`}
-        render={(routeProps: RouteComponentProps<{ id: string }>) => (
-          <FullScreenVisualization id={routeProps.match.params.id} {...props} />
-        )}
-      />
-    </Switch>
+    <div className={cx()}>
+      <Switch>
+        <Route exact path={url}>
+          <ConfiguredVisualizations {...props} />
+        </Route>
+        <Route exact path={`${url}/new`}>
+          <NewVisualizationPicker {...props} />
+        </Route>
+        <Route
+          path={`${url}/:id`}
+          render={(routeProps: RouteComponentProps<{ id: string }>) => (
+            <FullScreenVisualization
+              id={routeProps.match.params.id}
+              {...props}
+            />
+          )}
+        />
+      </Switch>
+    </div>
   );
 }
 

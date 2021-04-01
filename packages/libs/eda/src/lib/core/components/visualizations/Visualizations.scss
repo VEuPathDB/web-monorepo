@@ -69,6 +69,9 @@
   &-FullScreenContainer {
     position: relative;
     padding: 2em 0;
+    h1 {
+      padding: 0;
+    }
   }
   &-FullScreenActions {
     position: absolute;
