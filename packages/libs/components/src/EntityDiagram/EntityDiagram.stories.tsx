@@ -160,10 +160,16 @@ const shadingData: ShadingData = {
   GEMS_Part: 0.41,
   GEMS_PartObs: 0.66,
   GEMS_Treat: 0.98,
+  GEMS_Sample: 0.3,
 };
 
 const miniSize = { height: 300, width: 150 };
 const expandedSize = { height: 500, width: 600 };
+const miniDivSize = { height: miniSize.height + 3, width: miniSize.width + 3 };
+const expandedDivSize = {
+  height: expandedSize.height + 2,
+  width: expandedSize.width + 2,
+};
 
 export const EntityDiagramUnified = () => {
   const [orientation, setOrientation] = useState<'horizontal' | 'vertical'>(
@@ -171,6 +177,7 @@ export const EntityDiagramUnified = () => {
   );
   const [expanded, setExpanded] = useState<boolean>(false);
   const size = expanded ? expandedSize : miniSize;
+  const divSize = expanded ? expandedDivSize : miniDivSize;
 
   return (
     <div
@@ -195,7 +202,7 @@ export const EntityDiagramUnified = () => {
       >
         Switch Size
       </button>
-      <div style={{ ...size, border: '1px solid' }}>
+      <div style={{ ...divSize, border: '1px solid', padding: '1px' }}>
         <EntityDiagram
           treeData={studyData.rootEntity}
           orientation={orientation}
@@ -203,8 +210,121 @@ export const EntityDiagramUnified = () => {
           highlightedEntityID={'Sample'}
           shadingData={shadingData}
           size={size}
+          selectedBorderWeight={1}
+          selectedHighlightColor="yellow"
+          selectedHighlightWeight={3}
+          selectedTextBold={false}
         />
       </div>
     </div>
   );
+};
+
+const Template = ({ width, height, ...args }: any) => (
+  <EntityDiagram size={{ width: width, height: height }} {...args} />
+);
+
+export const EntityDiagramControls: any = Template.bind({});
+EntityDiagramControls.args = {
+  width: miniSize.width,
+  height: miniSize.height,
+  orientation: 'vertical',
+  isExpanded: false,
+  selectedBorderWeight: 1,
+  selectedHighlightColor: 'yellow',
+  selectedHighlightWeight: 3,
+  selectedTextBold: false,
+  shadowDx: 1,
+  shadowDy: 1,
+  shadowDispersion: 0,
+  shadowOpacity: 0,
+  highlightedEntityID: 'Sample',
+  shadingData: shadingData,
+  treeData: studyData.rootEntity,
+  fontSize: 12,
+  miniNodeWidth: 30,
+  miniNodeHeight: 20,
+  expandedNodeWidth: 120,
+  expandedNodeHeight: 40,
+};
+EntityDiagramControls.argTypes = {
+  orientation: {
+    control: {
+      type: 'radio',
+      options: ['vertical', 'horizontal'],
+    },
+  },
+  selectedHighlightColor: {
+    control: 'color',
+    table: {
+      category: 'selected node style',
+    },
+  },
+  selectedBorderWeight: {
+    control: { type: 'number', min: 0, step: 1 },
+    table: {
+      category: 'selected node style',
+    },
+  },
+  selectedHighlightWeight: {
+    control: { type: 'number', min: 0, step: 1 },
+    table: {
+      category: 'selected node style',
+    },
+  },
+  selectedTextBold: {
+    table: {
+      category: 'selected node style',
+    },
+  },
+  shadowDx: {
+    control: { type: 'number', min: 0, step: 1 },
+    table: {
+      category: 'drop shadow',
+    },
+  },
+  shadowDy: {
+    control: { type: 'number', min: 0, step: 1 },
+    table: {
+      category: 'drop shadow',
+    },
+  },
+  shadowDispersion: {
+    control: { type: 'number', min: 0, step: 0.1 },
+    table: {
+      category: 'drop shadow',
+    },
+  },
+  shadowOpacity: {
+    control: { type: 'number', min: 0, max: 1, step: 0.1 },
+    table: {
+      category: 'drop shadow',
+    },
+  },
+  width: {
+    control: { type: 'number', min: 0, step: 50 },
+  },
+  height: {
+    control: { type: 'number', min: 0, step: 50 },
+  },
+  miniNodeWidth: {
+    table: {
+      category: 'mini',
+    },
+  },
+  miniNodeHeight: {
+    table: {
+      category: 'mini',
+    },
+  },
+  expandedNodeWidth: {
+    table: {
+      category: 'expanded',
+    },
+  },
+  expandedNodeHeight: {
+    table: {
+      category: 'expanded',
+    },
+  },
 };
