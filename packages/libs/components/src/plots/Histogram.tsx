@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
 // Definitions
@@ -186,17 +186,21 @@ export default function Histogram({
     [data, orientation, calculatedBarOpacity, selectedRange]
   );
 
-  const handleSelectedRange = (object: any) => {
-    if (object && object.range) {
-      console.log(object.range);
-      const [min, max] =
-        orientation === 'vertical' ? object.range.x : object.range.y;
-      onSelectedRangeChange({
-        min: typeof min === 'number' ? min : new Date(min),
-        max: typeof max === 'number' ? max : new Date(max),
-      } as NumberOrDateRange);
-    }
-  };
+  const handleSelectedRange = useCallback(
+    (object: any) => {
+      if (object && object.range) {
+        const [val1, val2] =
+          orientation === 'vertical' ? object.range.x : object.range.y;
+        const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
+        // TO DO: think about time zones?
+        onSelectedRangeChange({
+          min: data.valueType === 'number' ? min : new Date(min),
+          max: data.valueType === 'number' ? max : new Date(max),
+        } as NumberOrDateRange);
+      }
+    },
+    [data.valueType, onSelectedRangeChange]
+  );
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',

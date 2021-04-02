@@ -16,7 +16,7 @@ export type HistogramData = {
   binWidthRange?: NumberOrTimeDeltaRange;
   /** The amount that binWidth should be adjusted each time the
    * user drags the slider to the left or right. */
-  binWidthStep?: NumberOrTimeDelta;
+  binWidthStep?: number;
 } & AvailableUnitsAddon;
 
 export type HistogramDataSeries = {
