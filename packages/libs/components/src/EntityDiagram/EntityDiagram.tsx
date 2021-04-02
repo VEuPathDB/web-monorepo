@@ -2,12 +2,22 @@ import React from 'react';
 import { hierarchy, Tree } from '@visx/hierarchy';
 import { Group } from '@visx/group';
 import { Text } from '@visx/text';
-import { HierarchyPointNode } from '@visx/hierarchy/lib/types';
-import OffsetLine from './OffsetLine';
+import {
+  HierarchyPointLink,
+  HierarchyPointNode,
+} from '@visx/hierarchy/lib/types';
+import { Line } from '@visx/shape';
 import { LinearGradient } from '@visx/gradient';
 
 interface CustomNode {
   node: HierarchyPointNode<StudyData>;
+}
+
+interface OffsetLine {
+  link: HierarchyPointLink<StudyData>;
+  nodeHeight: number;
+  nodeWidth: number;
+  orientation: Orientation;
 }
 
 // Todo: There MUST be a smarter way to center the text
@@ -58,11 +68,13 @@ export interface ShadingData {
   [index: string]: number;
 }
 
+export type Orientation = 'horizontal' | 'vertical';
+
 export interface EntityDiagramProps {
   /** Data that defines the tree structure */
   treeData: StudyData;
   /** Which direction the tree is oriented */
-  orientation: 'horizontal' | 'vertical';
+  orientation: Orientation;
   /** Whether the diagram is expanded */
   isExpanded: boolean;
   /** The tree's dimensions. If the tree is horizontal, it may not take up the
@@ -81,6 +93,19 @@ export interface EntityDiagramProps {
     node: StudyData,
     children?: Array<React.ReactElement>
   ) => React.ReactElement | null;
+  selectedTextBold?: boolean;
+  selectedBorderWeight?: number;
+  selectedHighlightWeight?: number;
+  selectedHighlightColor?: string;
+  shadowDx?: number;
+  shadowDy?: number;
+  shadowDispersion?: number;
+  shadowOpacity?: number;
+  miniNodeWidth?: number;
+  miniNodeHeight?: number;
+  expandedNodeWidth?: number;
+  expandedNodeHeight?: number;
+  fontSize?: number;
 }
 
 export default function EntityDiagram({
@@ -91,15 +116,28 @@ export default function EntityDiagram({
   shadingData,
   renderNode,
   size,
+  selectedTextBold = true,
+  selectedBorderWeight = 2,
+  selectedHighlightWeight = 2,
+  selectedHighlightColor = 'orange',
+  shadowDx = 1,
+  shadowDy = 1,
+  shadowDispersion = 0,
+  shadowOpacity = 1,
+  miniNodeWidth = 30,
+  miniNodeHeight = 20,
+  expandedNodeWidth = 120,
+  expandedNodeHeight = 40,
+  fontSize = 12,
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
 
-  const nodeWidth = isExpanded ? 120 : 30;
-  const nodeHeight = isExpanded ? 70 : 20;
+  const nodeWidth = isExpanded ? expandedNodeWidth : miniNodeWidth;
+  const nodeHeight = isExpanded ? expandedNodeHeight : miniNodeHeight;
   // Node border width
   const nodeStrokeWidth = 1;
   // Width of the highlight border around the highlighted node
-  const nodeHighlightWidth = 3;
+  const nodeHighlightWidth = selectedHighlightWeight;
   // treeHeight is always from root to furthest leaf, regardless of orientation
   // (it's not always vertical on screen)
   const treeHeight =
@@ -142,10 +180,11 @@ export default function EntityDiagram({
             : 'white'
         }
         stroke={'black'}
-        strokeWidth={nodeStrokeWidth}
+        strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
+        // strokeWidth={nodeStrokeWidth}
         style={{
           outline: isHighlighted
-            ? `yellow ${nodeHighlightWidth}px solid`
+            ? `${selectedHighlightColor} ${nodeHighlightWidth}px solid`
             : undefined,
           overflowWrap: isExpanded ? 'normal' : undefined,
         }}
@@ -155,15 +194,18 @@ export default function EntityDiagram({
 
     const text = (
       <Text
-        fontSize={12}
+        fontSize={fontSize}
         textAnchor="middle"
-        style={{ userSelect: 'none' }}
+        style={{
+          userSelect: 'none',
+          fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
+        }}
         dy={
           isExpanded
             ? CalculateDYSize(node.data.displayName.split(' ').length)
             : '.33em'
         }
-        width={isExpanded ? 100 : undefined}
+        width={isExpanded ? nodeWidth - 10 : undefined}
         key={`text-${node.data.id}`}
       >
         {displayText}
@@ -175,11 +217,42 @@ export default function EntityDiagram({
         top={orientation == 'horizontal' ? node.x : node.y}
         left={orientation == 'horizontal' ? node.y : node.x}
         key={node.x + node.y}
+        style={{
+          filter:
+            shadowOpacity == 0 || (isHighlighted && nodeHighlightWidth > 0)
+              ? undefined
+              : 'url(#shadow)',
+        }}
       >
         {renderNode?.(node.data, [rectangle, text]) ?? [rectangle, text]}
         {!isExpanded && <title>{node.data.displayName}</title>}
       </Group>
     );
+  }
+
+  function OffsetLine({
+    link,
+    nodeHeight,
+    nodeWidth,
+    orientation,
+  }: OffsetLine) {
+    let to, from;
+
+    if (orientation == 'horizontal') {
+      to = {
+        x: link.target.y - nodeWidth / 2 - 5,
+        y: link.target.x,
+      };
+      from = { x: link.source.y, y: link.source.x };
+    } else {
+      to = {
+        x: link.target.x,
+        y: link.target.y - nodeHeight / 2 - 5,
+      };
+      from = { x: link.source.x, y: link.source.y };
+    }
+
+    return <Line to={to} from={from} stroke="black" markerEnd="url(#arrow)" />;
   }
 
   return (
@@ -193,10 +266,18 @@ export default function EntityDiagram({
             markerHeight={isExpanded ? '18' : '10'}
             orient="auto"
             fill="black"
-            style={{ opacity: 0.7 }}
+            refX={10}
           >
             <path d="M0,-5L10,0L0,5" />
           </marker>
+          <filter id="shadow">
+            <feDropShadow
+              dx={shadowDx}
+              dy={shadowDy}
+              stdDeviation={shadowDispersion}
+              floodOpacity={shadowOpacity}
+            />
+          </filter>
         </defs>
         {
           // Node background shading definitions
@@ -216,15 +297,15 @@ export default function EntityDiagram({
         <Tree root={data} size={[treeWidth, treeHeight]}>
           {(tree) => (
             <Group left={treeLeft} top={treeTop}>
-              {tree.links().map((link, i) => {
-                return (
-                  <OffsetLine
-                    link={link}
-                    orientation={orientation}
-                    key={isExpanded ? `expanded-link-${i}` : `link-${i}`}
-                  />
-                );
-              })}
+              {tree.links().map((link, i) => (
+                <OffsetLine
+                  link={link}
+                  nodeHeight={nodeHeight}
+                  nodeWidth={nodeWidth}
+                  orientation={orientation}
+                  key={`link-${i}`}
+                />
+              ))}
               {tree.descendants().map((node, i) => (
                 <CustomNode node={node} key={`node-${i}`} />
               ))}
