@@ -32,7 +32,7 @@ export type State = {
   searchTerm: string;
 }
 
-type TreeBoxProps = {
+export type TreeBoxProps = {
   parameter: TreeBoxEnumParam;
   selectedValues: string[];
   onChange: (newValue: string[]) => void;
