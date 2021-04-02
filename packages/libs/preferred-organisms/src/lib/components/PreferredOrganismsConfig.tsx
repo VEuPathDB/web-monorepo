@@ -7,17 +7,18 @@ import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
+  useOrganismSearchPredicate,
+  useRenderOrganismNode,
+} from '../hooks/referenceStrains';
+
+import {
   getNodeChildren,
   getNodeId,
   makeInitialPreviewExpansion,
-  makeConfigRenderNode,
-  makeConfigSearchPredicate,
   makePreviewTree,
-  previewRenderNode,
 } from '../utils/configTrees';
 
 import './PreferredOrganismsConfig.scss';
-import './ReferenceStrains.scss';
 
 const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
@@ -38,27 +39,22 @@ export function PreferredOrganismsConfig({
   referenceStrains,
   setConfigSelection,
 }: Props) {
+  const renderNode = useRenderOrganismNode(referenceStrains, true);
+
+  const [configFilterTerm, setConfigFilterTerm] = useState('');
+  const [configExpansion, setConfigExpansion] = useState<string[]>([]);
+  const configSearchPredicate = useOrganismSearchPredicate(
+    referenceStrains,
+    true
+  );
+
   const initialPreviewExpansion = useMemo(
     () => makeInitialPreviewExpansion(organismTree),
     [organismTree]
   );
-
-  const [configFilterTerm, setConfigFilterTerm] = useState('');
-  const [configExpansion, setConfigExpansion] = useState<string[]>([]);
-
-  const configRenderNode = useMemo(
-    () => makeConfigRenderNode(referenceStrains),
-    [referenceStrains]
-  );
-  const configSearchPredicate = useMemo(
-    () => makeConfigSearchPredicate(referenceStrains),
-    [referenceStrains]
-  );
-
   const [previewExpansion, setPreviewExpansion] = useState(
     initialPreviewExpansion
   );
-
   const previewTree = useMemo(
     () => makePreviewTree(organismTree, configSelection),
     [organismTree, configSelection]
@@ -84,7 +80,7 @@ export function PreferredOrganismsConfig({
             searchPredicate={configSearchPredicate}
             searchBoxHelp={makeSearchHelpText('the list below')}
             searchBoxPlaceholder="Type a taxonomic name"
-            renderNode={configRenderNode}
+            renderNode={renderNode}
             expandedList={configExpansion}
             onExpansionChange={setConfigExpansion}
             shouldExpandDescendantsWithOneChild
@@ -117,7 +113,7 @@ export function PreferredOrganismsConfig({
               tree={previewTree}
               getNodeId={getNodeId}
               getNodeChildren={getNodeChildren}
-              renderNode={previewRenderNode}
+              renderNode={renderNode}
               expandedList={previewExpansion}
               onExpansionChange={setPreviewExpansion}
               shouldExpandDescendantsWithOneChild

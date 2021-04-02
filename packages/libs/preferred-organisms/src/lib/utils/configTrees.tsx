@@ -1,3 +1,5 @@
+import { partition } from 'lodash';
+
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { areTermsInString } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
@@ -15,34 +17,65 @@ export function getNodeChildren(node: TreeBoxVocabNode) {
   return node.children;
 }
 
-export function makeConfigSearchPredicate(referenceStrains: Set<string>) {
+export function makeSearchPredicate(
+  referenceStrains: Set<string>,
+  shouldHighlightReferenceStrains: boolean
+) {
   return function (node: TreeBoxVocabNode, searchTerms: string[]) {
-    const searchableString = !referenceStrains.has(node.data.term)
-      ? node.data.display
-      : `${node.data.display} reference`;
+    const searchableString =
+      shouldHighlightReferenceStrains && referenceStrains.has(getNodeId(node))
+        ? `${node.data.display} reference`
+        : node.data.display;
 
-    return areTermsInString(searchTerms, searchableString);
+    const normalizedSearchTerms = makeNormalizedSearchTerms(
+      searchTerms,
+      shouldHighlightReferenceStrains
+    );
+
+    return areTermsInString(normalizedSearchTerms, searchableString);
   };
 }
 
-export function makeConfigRenderNode(referenceStrains: Set<string>) {
-  return function configRenderNode(node: TreeBoxVocabNode) {
-    const organismName = node.data.term;
+function makeNormalizedSearchTerms(
+  rawSearchTerms: string[],
+  shouldHighlightReferenceStrains: boolean
+) {
+  if (!shouldHighlightReferenceStrains) {
+    return rawSearchTerms;
+  }
+
+  const [
+    referenceStrainSearchTerms,
+    freeTextSearchTerms,
+  ] = partition(rawSearchTerms, (rawSearchTerm) =>
+    '[Reference]'.toLowerCase().includes(rawSearchTerm.toLowerCase())
+  );
+
+  const shouldIncludeReferenceStrains = referenceStrainSearchTerms.length > 0;
+
+  return shouldIncludeReferenceStrains
+    ? [...freeTextSearchTerms, 'reference']
+    : freeTextSearchTerms;
+}
+
+export function makeRenderNode(
+  referenceStrains: Set<string>,
+  shouldHighlightReferenceStrains: boolean
+) {
+  return function renderNode(node: TreeBoxVocabNode) {
+    const organismName = getNodeId(node);
     const taxonDisplay = safeHtml(node.data.display);
 
     return (
       <div>
         {taxonDisplay}
-        {referenceStrains.has(organismName) && (
-          <span className="IsReferenceStrain">[Reference]</span>
-        )}
+        {shouldHighlightReferenceStrains &&
+          referenceStrains.has(organismName) && (
+            <span className="IsReferenceStrain">[Reference]</span>
+          )}
       </div>
     );
   };
-}
-
-export function previewRenderNode(node: TreeBoxVocabNode) {
-  return safeHtml(node.data.display);
 }
 
 export function findAvailableOrganisms(organismTree: TreeBoxVocabNode) {

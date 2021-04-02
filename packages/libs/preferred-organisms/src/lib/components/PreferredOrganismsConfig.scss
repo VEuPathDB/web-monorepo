@@ -18,6 +18,12 @@ $gray: #f0f0f0;
     padding: 0em 2em 1em 2em;
   }
 
+  &--Selections {
+    .wdk-CheckboxTreeLinks > div {
+      text-align: left;
+    }
+  }
+
   &--Preview {
     background-color: $gray;
 
