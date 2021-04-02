@@ -43,7 +43,7 @@
     "src"
   ],
   "scripts": {
-    "storybook": "start-storybook -p 9009 -s public",
+    "storybook": "start-storybook -s public",
     "build-storybook": "build-storybook -s public",
     "build-npm-modules": "tsc -p tsconfig.build.json"
   },
