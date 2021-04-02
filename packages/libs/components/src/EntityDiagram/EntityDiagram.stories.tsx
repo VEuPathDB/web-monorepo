@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import EntityDiagram from './EntityDiagram';
+import EntityDiagram, { EntityDiagramProps } from './EntityDiagram';
 import { StudyData, ShadingData } from './EntityDiagram';
+import { Meta, Story } from '@storybook/react';
 import './diagram.css';
 
 export default {
   title: 'Entity Diagram',
-};
+  component: EntityDiagram,
+} as Meta;
 
 const rootEntity: StudyData = {
   id: 'GEMS_House',
@@ -220,11 +222,13 @@ export const EntityDiagramUnified = () => {
   );
 };
 
-const Template = ({ width, height, ...args }: any) => (
-  <EntityDiagram size={{ width: width, height: height }} {...args} />
+const Template: Story<
+  EntityDiagramProps & { width: number; height: number }
+> = ({ width, height, ...args }) => (
+  <EntityDiagram {...args} size={{ width: width, height: height }} />
 );
 
-export const EntityDiagramControls: any = Template.bind({});
+export const EntityDiagramControls = Template.bind({});
 EntityDiagramControls.args = {
   width: miniSize.width,
   height: miniSize.height,
