@@ -358,27 +358,29 @@ function HistogramPlotWithControls({
         showBarValues={false}
         barLayout={barLayout}
       />
-      <HistogramControls
-        label="Histogram Controls"
-        valueType={data.valueType}
-        barLayout={barLayout}
-        displayLegend={false /* should not be a required prop */}
-        displayLibraryControls={displayLibraryControls}
-        opacity={opacity}
-        orientation={histogramProps.orientation}
-        binWidth={data.binWidth!}
-        selectedUnit={
-          data.binWidth && isTimeDelta(data.binWidth)
-            ? data.binWidth[1]
-            : undefined
-        }
-        onBinWidthChange={({ binWidth: newBinWidth }) => {
-          onBinWidthChange({ binWidth: newBinWidth });
-        }}
-        binWidthRange={data.binWidthRange!}
-        binWidthStep={data.binWidthStep!}
-        errorManagement={errorManagement}
-      />
+      {data.binWidth && data.binWidthRange && data.binWidthStep && (
+        <HistogramControls
+          label="Histogram Controls"
+          valueType={data.valueType}
+          barLayout={barLayout}
+          displayLegend={false /* should not be a required prop */}
+          displayLibraryControls={displayLibraryControls}
+          opacity={opacity}
+          orientation={histogramProps.orientation}
+          binWidth={data.binWidth}
+          selectedUnit={
+            data.binWidth && isTimeDelta(data.binWidth)
+              ? data.binWidth[1]
+              : undefined
+          }
+          onBinWidthChange={({ binWidth: newBinWidth }) => {
+            onBinWidthChange({ binWidth: newBinWidth });
+          }}
+          binWidthRange={data.binWidthRange}
+          binWidthStep={data.binWidthStep}
+          errorManagement={errorManagement}
+        />
+      )}
     </div>
   );
 }
@@ -401,15 +403,14 @@ export function histogramResponseToData(
 
   const binWidth =
     type === 'number'
-      ? parseInt(String(response.config.binWidth), 10) || 1
+      ? parseFloat(response.config.binWidth as string) || 1
       : parseTimeDelta(response.config.binWidth as string);
   const { min, max, step } = response.config.binSlider;
-  // FIXME - remove max/100 when sorted
   const binWidthRange = (type === 'number'
     ? { min, max }
     : {
         min,
-        max: max / 100,
+        max,
         unit: (binWidth as TimeDelta)[1],
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;

@@ -9,6 +9,7 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   NumberRange,
+  TimeDelta,
 } from '@veupathdb/components/lib/types/general';
 import {
   HistogramData,
@@ -17,7 +18,7 @@ import {
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
-import { number, partial, TypeOf } from 'io-ts';
+import { number, string, partial, TypeOf } from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
@@ -32,7 +33,11 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { PromiseType } from '../../types/utility';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { ISODateStringToZuluDate } from '../../utils/date-conversion';
+import {
+  ISODateStringToZuluDate,
+  parseTimeDelta,
+} from '../../utils/date-conversion';
+import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -41,13 +46,10 @@ type Props = {
   sessionState: SessionState;
 };
 
-type GetDataParams = {
-  binWidth?: NumberOrTimeDelta;
-  selectedUnit?: string;
-};
-
+type UIState = TypeOf<typeof UIState>;
 const UIState = partial({
   binWidth: number,
+  binWidthTimeUnit: string,
 });
 
 export function HistogramFilter(props: Props) {
@@ -65,7 +67,7 @@ export function HistogramFilter(props: Props) {
   const dataClient = useDataClient();
   const getData = useCallback(
     async (
-      dataParams?: GetDataParams
+      dataParams?: UIState
     ): Promise<
       HistogramData & {
         variableId: string;
@@ -91,7 +93,8 @@ export function HistogramFilter(props: Props) {
               foregroundFilters,
               entity,
               variable,
-              { binWidth: background.config.binWidth as NumberOrTimeDelta }
+              {},
+              background.config.binWidth
             )
           : background;
 
@@ -109,12 +112,20 @@ export function HistogramFilter(props: Props) {
           variable.type
         ),
       ];
-      const binWidth = parseInt(String(background.config.binWidth), 10) || 1;
+      const binWidth =
+        variable.type === 'number'
+          ? parseFloat(background.config.binWidth as string) || 1
+          : parseTimeDelta(background.config.binWidth as string);
       const { min, max, step } = background.config.binSlider;
       const binWidthRange = (variable.type === 'number'
         ? { min, max }
-        : { min, max, unit: 'day' }) as NumberOrTimeDeltaRange;
+        : {
+            min,
+            max,
+            unit: (binWidth as TimeDelta)[1],
+          }) as NumberOrTimeDeltaRange;
       const binWidthStep = step || 0.1;
+
       return {
         valueType: variable.type,
         series,
@@ -175,7 +186,6 @@ export function HistogramFilter(props: Props) {
           ])
         );
       }
-      console.log('new selected range', selectedRange);
     },
     [entity.id, filters, filter, setFilters, variable.id, variable.type]
   );
@@ -222,7 +232,7 @@ export function HistogramFilter(props: Props) {
 }
 
 type HistogramPlotWithControlsProps = HistogramProps & {
-  getData: (params?: GetDataParams) => Promise<HistogramData>;
+  getData: (params?: UIState) => Promise<HistogramData>;
   updateFilter: (selectedRange?: NumberRange | DateRange) => void;
   updateUIState: (uiState: TypeOf<typeof UIState>) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
@@ -254,10 +264,10 @@ function HistogramPlotWithControls({
   );
 
   const handleBinWidthChange = useCallback(
-    ({ binWidth }: { binWidth: NumberOrTimeDelta }) => {
-      const newBinWidth = typeof binWidth === 'number' ? binWidth : binWidth[0];
+    ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
       updateUIState({
-        binWidth: newBinWidth,
+        binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
+        binWidthTimeUnit: isTimeDelta(newBinWidth) ? newBinWidth[1] : undefined,
       });
     },
     [updateUIState]
@@ -308,6 +318,11 @@ function HistogramPlotWithControls({
         opacity={opacity}
         orientation={histogramProps.orientation}
         binWidth={data.binWidth!}
+        selectedUnit={
+          data.binWidth && isTimeDelta(data.binWidth)
+            ? data.binWidth[1]
+            : undefined
+        }
         onBinWidthChange={handleBinWidthChange}
         binWidthRange={data.binWidthRange!}
         binWidthStep={data.binWidthStep!}
@@ -361,18 +376,19 @@ function getRequestParams(
   filters: Filter[],
   entity: StudyEntity,
   variable: HistogramVariable,
-  dataParams?: GetDataParams
+  dataParams?: UIState,
+  rawBinWidth?: string | number
 ): NumericHistogramRequestParams | DateHistogramRequestParams {
-  const binOption = dataParams?.binWidth
+  const binOption = rawBinWidth
+    ? { binWidth: rawBinWidth }
+    : dataParams?.binWidth
     ? {
         binWidth:
-          variable.type === 'number'
+          variable.type == 'number'
             ? dataParams.binWidth
-            : `${dataParams.binWidth} years`,
+            : `${dataParams.binWidth} ${dataParams.binWidthTimeUnit}`,
       }
-    : {
-        // numBins: 10,
-      };
+    : {};
   return {
     studyId,
     filters,
@@ -394,7 +410,8 @@ async function getHistogram(
   filters: Filter[],
   entity: StudyEntity,
   variable: HistogramVariable,
-  dataParams?: GetDataParams
+  dataParams?: UIState,
+  rawBinWidth?: string | number
 ) {
   return variable.type === 'date'
     ? dataClient.getDateHistogramBinWidth(
@@ -403,7 +420,8 @@ async function getHistogram(
           filters,
           entity,
           variable,
-          dataParams
+          dataParams,
+          rawBinWidth
         ) as DateHistogramRequestParams
       )
     : dataClient.getNumericHistogramBinWidth(
@@ -412,7 +430,8 @@ async function getHistogram(
           filters,
           entity,
           variable,
-          dataParams
+          dataParams,
+          rawBinWidth
         ) as NumericHistogramRequestParams
       );
 }
