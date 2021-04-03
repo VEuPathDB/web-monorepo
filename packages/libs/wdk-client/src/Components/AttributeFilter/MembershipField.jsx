@@ -124,6 +124,10 @@ class MembershipField extends React.PureComponent {
 
 }
 
+MembershipField.defaultProps = {
+  filteredCountHeadingPrefix: 'Remaining',
+}
+
 function filterBySearchTerm(rows, searchTerm){
   if (searchTerm !== ''){
     let re = new RegExp(escapeRegExp(searchTerm), 'i');
@@ -457,7 +461,7 @@ class MembershipTable extends React.PureComponent {
   }
 
   renderFilteredCountHeading1() {
-    return this.renderCountHeading1('Remaining');
+    return this.renderCountHeading1(this.props.filteredCountHeadingPrefix);
   }
 
   renderFilteredCountHeading2() {
