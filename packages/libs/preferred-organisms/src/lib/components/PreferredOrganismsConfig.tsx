@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 
+import { noop } from 'lodash';
+
 import { CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
@@ -48,12 +50,9 @@ export function PreferredOrganismsConfig({
     true
   );
 
-  const initialPreviewExpansion = useMemo(
+  const previewExpansion = useMemo(
     () => makeInitialPreviewExpansion(organismTree),
     [organismTree]
-  );
-  const [previewExpansion, setPreviewExpansion] = useState(
-    initialPreviewExpansion
   );
   const previewTree = useMemo(
     () => makePreviewTree(organismTree, configSelection),
@@ -119,7 +118,7 @@ export function PreferredOrganismsConfig({
               getNodeChildren={getNodeChildren}
               renderNode={renderNode}
               expandedList={previewExpansion}
-              onExpansionChange={setPreviewExpansion}
+              onExpansionChange={noop}
               shouldExpandDescendantsWithOneChild
               linksPosition={CheckboxTree.LinkPlacement.None}
             />
