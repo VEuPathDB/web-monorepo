@@ -16,6 +16,7 @@ import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
 // Local Components
+import Button from '../widgets/Button';
 import ButtonGroup from '../widgets/ButtonGroup';
 import Notification from '../widgets/Notification';
 import OpacitySlider from '../widgets/OpacitySlider';
@@ -92,17 +93,19 @@ export type HistogramControlsProps = {
   errorManagement: ErrorManagement;
   // add y-axis controls
   /** Whether or not to show y-axis log scale. */
-  yLogScale?: boolean;
+  dependentAxisLogScale?: boolean;
   /** Action to take on y-axis log scale change. */
-  toggleYLogScale?: (yLogScale: boolean) => void;
+  toggleDependentAxisLogScale?: (dependentAxisLogScale: boolean) => void;
   /** Whether or not to set y-axis min/max range. */
-  yMinMaxRange?: NumberOrDateRange;
+  dependentAxisRange?: NumberOrDateRange;
   /** Action to take on y-axis min/max range change. */
-  onYMinMaxRange?: (newRange: NumberOrDateRange) => void;
+  onDependentAxisRangeChange?: (newRange: NumberOrDateRange) => void;
   /** Whether or not to display y-axis absolute Relative. */
-  yAbsoluteRelative?: string;
+  dependentAxisMode?: string;
   /** Action to take on display legend change. */
-  onYAbsoluteRelative?: (layout: 'absolute' | 'relative') => void;
+  onDependentAxisModeChange?: (layout: 'absolute' | 'relative') => void;
+  /** Reset all to default. */
+  onResetAll?: () => void;
 };
 
 /**
@@ -136,12 +139,14 @@ export default function HistogramControls({
   onSelectedRangeChange,
   selectedRangeBounds,
   // add y-axis controls
-  yLogScale,
-  toggleYLogScale,
-  yMinMaxRange,
-  onYMinMaxRange,
-  yAbsoluteRelative,
-  onYAbsoluteRelative,
+  dependentAxisLogScale,
+  toggleDependentAxisLogScale,
+  dependentAxisRange,
+  onDependentAxisRangeChange,
+  dependentAxisMode,
+  onDependentAxisModeChange,
+  // add reset all
+  onResetAll,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -311,50 +316,55 @@ export default function HistogramControls({
         }
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 0 }}>
-        {valueType === 'number' && toggleYLogScale && yLogScale !== undefined && (
+        {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
           <Switch
             label="Y-Axis Log Scale"
             color={accentColor}
-            state={yLogScale}
+            state={dependentAxisLogScale}
             // The stinky use of `any` here comes from
             // an incomplete type definition in the
             // material UI library.
             onStateChange={(event: any) =>
-              toggleYLogScale(event.target.checked)
+              toggleDependentAxisLogScale(event.target.checked)
             }
             containerStyles={{ paddingRight: 25 }}
           />
         )}
-        {onYMinMaxRange ? (
+        {onDependentAxisRangeChange ? (
           valueType !== undefined && valueType === 'date' ? (
             <DateRangeInput
               label="Selected Range"
               // rangeBounds={selectedRangeBounds as DateRange}
-              range={yMinMaxRange as DateRange}
-              onRangeChange={onYMinMaxRange}
+              range={dependentAxisRange as DateRange}
+              onRangeChange={onDependentAxisRangeChange}
               containerStyles={{ paddingRight: 25 }}
             />
           ) : (
             <NumberRangeInput
               label="Y-Axis Range"
               // rangeBounds={selectedRangeBounds as NumberRange}
-              range={yMinMaxRange as NumberRange}
-              onRangeChange={onYMinMaxRange}
+              range={dependentAxisRange as NumberRange}
+              onRangeChange={onDependentAxisRangeChange}
               containerStyles={{ paddingRight: 25 }}
             />
           )
         ) : null}
-        {valueType === 'number' &&
-          onYAbsoluteRelative &&
-          yAbsoluteRelative !== undefined && (
-            <ButtonGroup
-              label="Y-Axis Absolute/Relative"
-              options={['absolute', 'relative']}
-              selectedOption={yAbsoluteRelative}
-              // @ts-ignore
-              onOptionSelected={onYAbsoluteRelative}
-            />
-          )}
+        {dependentAxisMode && onDependentAxisModeChange && (
+          <ButtonGroup
+            label="Y-Axis Absolute/Relative"
+            options={['absolute', 'relative']}
+            selectedOption={dependentAxisMode}
+            // @ts-ignore
+            onOptionSelected={onDependentAxisModeChange}
+            containerStyles={{ paddingRight: 25 }}
+          />
+        )}
+      </div>
+      {/* add reset all - for now large button without specifying width */}
+      <div style={{ paddingTop: 25 }}>
+        {onResetAll && (
+          <Button type={'solid'} text={'Reset'} onClick={onResetAll} />
+        )}
       </div>
 
       {errorStacks.map(({ error, occurences }, index) => (

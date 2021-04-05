@@ -163,7 +163,7 @@ YAxisControls.args = {
       return { series: [{ name: 'dummy data', bins: [] }] };
     },
     // add y-axis controls at histogram for now
-    yLogScale: false,
-    yAbsoluteRelative: 'absolute',
+    dependentAxisLogScale: false,
+    dependentAxisMode: 'absolute',
   },
 };
