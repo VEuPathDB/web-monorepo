@@ -1,6 +1,16 @@
 import FilterChip from './FilterChip';
 import { SessionState, StudyEntity } from '..';
 import { VariableLink } from './VariableLink';
+import { makeStyles } from '@material-ui/core/styles';
+
+// Material UI CSS declarations
+const useStyles = makeStyles((theme) => ({
+  root: {
+    '& > *': {
+      margin: theme.spacing(0.5),
+    },
+  },
+}));
 
 interface Props {
   sessionState: SessionState;
@@ -10,10 +20,12 @@ interface Props {
 }
 
 export default function FilterChipList(props: Props) {
+  const classes = useStyles();
   const session = props.sessionState.session;
+
   if (session && session.filters) {
     return (
-      <div>
+      <div className={classes.root}>
         {session.filters.map((f) => {
           // <div key={`${f.entityId}_${f.variableId}`}>
           //   <button

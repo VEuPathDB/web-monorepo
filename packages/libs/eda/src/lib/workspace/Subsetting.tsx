@@ -119,6 +119,7 @@ export function Subsetting(props: Props) {
           selectedEntityId={entity.id}
           selectedVariableId={variable.id}
         />
+        <br />
         <Variable
           entity={entity}
           variable={variable}
