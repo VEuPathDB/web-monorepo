@@ -35,7 +35,7 @@ let Bar = () => <span> | </span>;
 
 type ChangeHandler = (ids: string[]) => void;
 
-type Props<T> = {
+export type Props<T> = {
 
   //%%%%%%%%%%% Basic expandable tree props %%%%%%%%%%%
 
