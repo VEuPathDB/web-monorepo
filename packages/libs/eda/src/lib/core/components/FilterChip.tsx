@@ -4,7 +4,7 @@ interface Props {
   text: string;
   tooltipText: string;
   active: boolean;
-  onClick: () => void;
+  onClick?: () => void;
   onDelete: () => void;
 }
 

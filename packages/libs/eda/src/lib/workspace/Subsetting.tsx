@@ -12,6 +12,7 @@ import { cx } from './Utils';
 import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { VariableTree } from '../core/components/VariableTree';
+import FilterChipList from '../core/components/FilterChipList';
 
 interface RouteProps {
   sessionState: SessionState;
@@ -110,36 +111,14 @@ export function Subsetting(props: Props) {
             }}
           />
         </div>
-        {/* <ul
-          style={{
-            border: '1px solid',
-            borderRadius: '.25em',
-            height: '80vh',
-            overflow: 'auto',
-            padding: '1em 2em',
-            margin: 0,
-          }}
-        >
-          {entity.variables.map(
-            (v) =>
-              v.dataShape && (
-                <li>
-                  <VariableLink
-                    replace
-                    style={
-                      v.id === variable.id ? { fontWeight: 'bold' } : undefined
-                    }
-                    entityId={entity.id}
-                    variableId={v.id}
-                  >
-                    {v.displayName} ({v.dataShape} {v.type})
-                  </VariableLink>
-                </li>
-              )
-          )}
-        </ul> */}
       </div>
       <div>
+        <FilterChipList
+          sessionState={sessionState}
+          entities={entities}
+          selectedEntityId={entity.id}
+          selectedVariableId={variable.id}
+        />
         <Variable
           entity={entity}
           variable={variable}
