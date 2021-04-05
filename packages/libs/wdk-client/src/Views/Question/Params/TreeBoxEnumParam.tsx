@@ -3,7 +3,7 @@ import 'wdk-client/Views/Question/Params/TreeBoxParam.scss';
 import { intersection } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
-import CheckboxTree from 'wdk-client/Components/CheckboxTree/CheckboxTree';
+import CheckboxTree, { Props as CheckboxTreeProps } from 'wdk-client/Components/CheckboxTree/CheckboxTree';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
 import { safeHtml } from 'wdk-client/Utils/ComponentUtils';
 import { Seq } from 'wdk-client/Utils/IterableUtils';
@@ -39,6 +39,7 @@ export type TreeBoxProps = {
   uiState: State;
   context: Context<TreeBoxEnumParam>;
   dispatch: DispatchAction;
+  wrapCheckboxTreeProps?: (props: CheckboxTreeProps<TreeBoxVocabNode>) => CheckboxTreeProps<TreeBoxVocabNode>;
 }
 
 
@@ -151,11 +152,14 @@ export function TreeBoxEnumParamComponent(props: TreeBoxProps) {
   );
 
   const checkboxTreeProps = useDefaultCheckboxTreeProps(props, tree, selectedLeaves);
+  const wrappedCheckboxTreeProps = props.wrapCheckboxTreeProps == null
+    ? checkboxTreeProps
+    : props.wrapCheckboxTreeProps(checkboxTreeProps);
 
   return (
     <div className="wdk-TreeBoxParam">
       <SelectionInfo parameter={props.parameter} {...selectionCounts} alwaysShowCount />
-      <CheckboxTree {...checkboxTreeProps} />
+      <CheckboxTree {...wrappedCheckboxTreeProps} />
     </div>
   );
 }
