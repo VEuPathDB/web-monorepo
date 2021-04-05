@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type PromiseHookState<T> = {
   value?: T;
@@ -6,19 +6,27 @@ export type PromiseHookState<T> = {
   error?: unknown;
 };
 
-export function usePromise<T>(
-  promiseFactory: () => Promise<T>,
-  deps?: unknown[]
-): PromiseHookState<T> {
+/**
+ * Invokes `task` and returns an object representing its current state and resolved value.
+ * The last resolved value will remain util a new promise is resolved.
+ * Note that `usePromise` will invoke `task` any time it detects a new function. Consider using
+ * `useCallback` to prevent excessive executions.
+ *
+ * @param task A function that returns a promise
+ * @returns PromiseHookState<T>
+ */
+export function usePromise<T>(task: () => Promise<T>): PromiseHookState<T> {
   const [state, setState] = useState<PromiseHookState<T>>({
     pending: true,
   });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const callback = useCallback(promiseFactory, deps ?? [promiseFactory]);
   useEffect(() => {
     let ignoreResolve = false;
-    setState({ pending: true });
-    callback().then(
+    setState((prev) => ({
+      pending: true,
+      value: prev.value,
+      error: undefined,
+    }));
+    task().then(
       (value) => {
         if (ignoreResolve) return;
         setState({
@@ -37,6 +45,6 @@ export function usePromise<T>(
     return function cleanup() {
       ignoreResolve = true;
     };
-  }, [callback]);
+  }, [task]);
   return state;
 }

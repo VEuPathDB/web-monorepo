@@ -1,22 +1,20 @@
 import './globals';
 import { endpoint, rootElement, rootUrl } from './constants';
 import React from 'react';
-// import './index.css';
 import reportWebVitals from './reportWebVitals';
-// import { initialize } from '@veupathdb/wdk-client/lib/Core';
-import { initialize } from '@veupathdb/web-common/lib/bootstrap';
-import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
-import { RouteComponentProps } from 'react-router';
-import { EDASessionList, EDAWorkspace } from './lib/workspace';
 
+import { initialize } from '@veupathdb/web-common/lib/bootstrap';
+import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
+
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
-import { WorkspaceContainer } from './lib/workspace/WorkspaceContainer';
-import { Link } from '@veupathdb/wdk-client/lib/Components';
-import { StudyList } from './lib/workspace/StudyList';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
+
+const subsettingServiceUrl = '/eda-subsetting-service';
+const dataServiceUrl = '/eda-data-service';
 
 initialize({
   rootUrl,
@@ -29,42 +27,21 @@ initialize({
           <h1>EDA Links</h1>
           <ul>
             <li>
-              <Link to="/eda/DS_841a9f5259">Variables interface</Link>
-            </li>
-            <li>
-              <Link to="/eda-session/DS_841a9f5259">New Layout</Link>
+              <Link to="/eda">EDA Workspace</Link>
             </li>
           </ul>
         </div>
       ),
     },
     {
-      path: '/eda/:studyId/:sessionId',
+      path: '/eda',
       exact: false,
-      component: (
-        props: RouteComponentProps<{ studyId: string; sessionId: string }>
-      ) => (
-        <EDAWorkspace
-          {...props.match.params}
-          subsettingServiceUrl="/eda-subsetting-service"
-          dataServiceUrl="/eda-data-service"
+      component: () => (
+        <WorkspaceRouter
+          subsettingServiceUrl={subsettingServiceUrl}
+          dataServiceUrl={dataServiceUrl}
         />
       ),
-    },
-    {
-      path: '/eda/:studyId',
-      component: (props: RouteComponentProps<{ studyId: string }>) => (
-        <EDASessionList
-          {...props.match.params}
-          subsettingServiceUrl="/eda-subsetting-service"
-          dataServiceUrl="/eda-data-service"
-        />
-      ),
-    },
-    {
-      path: '/eda-session',
-      exact: false,
-      component: WorkspaceRouter,
     },
     {
       path: '/mapveu',

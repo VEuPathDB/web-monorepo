@@ -11,6 +11,7 @@ import {
 } from 'react-router';
 import { SubsettingRoute } from './Subsetting';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
+import { ComputationRoute } from './ComputationRoute';
 
 interface Props {
   sessionId: string;
@@ -18,13 +19,14 @@ interface Props {
 
 export function SessionPanel(props: Props) {
   const { sessionId } = props;
+  const sessionState = useSession(sessionId);
   const {
     session,
     setName,
     copySession,
     saveSession,
     deleteSession,
-  } = useSession(sessionId);
+  } = sessionState;
   const { url: routeBase } = useRouteMatch();
   if (session == null) return null;
   return (
@@ -67,11 +69,16 @@ export function SessionPanel(props: Props) {
         path={`${routeBase}/variables/:entityId/:variableId`}
         render={(
           props: RouteComponentProps<{ entityId: string; variableId: string }>
-        ) => <SubsettingRoute sessionId={session.id} {...props.match.params} />}
+        ) => (
+          <SubsettingRoute
+            sessionState={sessionState}
+            {...props.match.params}
+          />
+        )}
       />
       <Route
         path={`${routeBase}/visualizations`}
-        component={() => <h3>TODO</h3>}
+        render={() => <ComputationRoute sessionState={sessionState} />}
       />
     </div>
   );

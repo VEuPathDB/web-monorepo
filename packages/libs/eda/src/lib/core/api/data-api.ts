@@ -28,19 +28,30 @@ type NumBinsOrNumericWidth =
       binWidth: number;
     };
 
+type NumericViewportRangeOrNone =
+  | {
+      viewportMin: number;
+      viewportMax: number;
+    }
+  | {
+      viewportMin?: never;
+      viewportMax?: never;
+    };
+
+type ZeroToTwoVariables = [] | [Variable] | [Variable, Variable];
+
 export interface NumericHistogramRequestParams {
   studyId: string;
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    entityId: string;
+    outputEntityId: string;
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
-    facetVariable?: Variable;
-    viewportMin?: number; // do we want some fancy both-or-none
-    viewportMax?: number; // constraint here?
-  } & NumBinsOrNumericWidth;
+    facetVariable?: ZeroToTwoVariables;
+  } & NumBinsOrNumericWidth &
+    NumericViewportRangeOrNone;
 }
 
 type NumBinsOrDateWidth =
@@ -53,19 +64,28 @@ type NumBinsOrDateWidth =
       binWidth: string; // Dates widths are strings
     };
 
+type DateViewportRangeOrNone =
+  | {
+      viewportMin: string;
+      viewportMax: string;
+    }
+  | {
+      viewportMin?: never;
+      viewportMax?: never;
+    };
+
 export interface DateHistogramRequestParams {
   studyId: string;
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    entityId: string;
+    outputEntityId: string;
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
     overlayVariable?: Variable;
-    facetVariable?: Variable;
-    viewportMin?: string;
-    viewportMax?: string;
-  } & NumBinsOrDateWidth;
+    facetVariable?: ZeroToTwoVariables;
+  } & NumBinsOrDateWidth &
+    DateViewportRangeOrNone;
 }
 
 const HistogramResponseData = array(
@@ -73,6 +93,7 @@ const HistogramResponseData = array(
     type({
       binLabel: array(string),
       binStart: array(string),
+      binEnd: array(string),
       value: array(number),
     }),
     partial({
@@ -86,7 +107,7 @@ const HistogramResponseData = array(
 );
 
 const HistogramResponseBaseConfig = type({
-  incompleteCases: number,
+  incompleteCases: array(number),
   binSlider: type({
     min: number,
     max: number,
@@ -138,7 +159,7 @@ export interface BarplotRequestParams {
   filters: Filter[];
   //  derivedVariables:  // TO DO
   config: {
-    entityId: string;
+    outputEntityId: string;
     valueSpec: 'count' | 'identity';
     xAxisVariable: {
       // TO DO: refactor repetition with HistogramRequestParams
@@ -149,21 +170,21 @@ export interface BarplotRequestParams {
 }
 
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
-export const BarplotResponse = tuple([
-  array(
-    type({
-      label: string,
-      value: number,
-    })
-  ),
-  type({
-    completeCases: array(number),
+export const BarplotResponse = type({
+  config: type({
+    incompleteCases: array(number),
     xVariableDetails: type({
-      variableId: array(string),
-      entityId: type({}), // checking with Danielle about this
+      variableId: string,
+      entityId: string,
     }),
   }),
-]);
+  data: array(
+    type({
+      label: array(string),
+      value: array(number),
+    })
+  ),
+});
 
 export class DataClient extends FetchClient {
   // Histogram
@@ -173,7 +194,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/numeric-histogram-num-bins',
+        path: '/apps/pass/visualizations/numeric-histogram-num-bins',
         body: params,
         transformResponse: ioTransformer(HistogramNumBinsResponse),
       })
@@ -186,7 +207,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/numeric-histogram-bin-width',
+        path: '/apps/pass/visualizations/numeric-histogram-bin-width',
         body: params,
         transformResponse: ioTransformer(NumericHistogramBinWidthResponse),
       })
@@ -199,7 +220,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/date-histogram-num-bins',
+        path: '/apps/pass/visualizations/date-histogram-num-bins',
         body: params,
         transformResponse: ioTransformer(HistogramNumBinsResponse),
       })
@@ -212,7 +233,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/date-histogram-bin-width',
+        path: '/apps/pass/visualizations/date-histogram-bin-width',
         body: params,
         transformResponse: ioTransformer(DateHistogramBinWidthResponse),
       })
@@ -224,7 +245,7 @@ export class DataClient extends FetchClient {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/analyses/barplot',
+        path: '/apps/pass/visualizations/barplot',
         body: params,
         transformResponse: ioTransformer(BarplotResponse),
       })

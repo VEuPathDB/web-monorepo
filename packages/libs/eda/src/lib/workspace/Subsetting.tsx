@@ -1,27 +1,26 @@
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router';
 import {
+  EntityDiagram,
   SessionState,
   StudyEntity,
   StudyVariable,
-  useSession,
   useStudyMetadata,
 } from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import React, { useEffect } from 'react';
-import { useHistory } from 'react-router';
 import { cx } from './Utils';
 import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
-import { VariableLink } from '../core/components/VariableLink';
+import { VariableTree } from '../core/components/VariableTree';
 
 interface RouteProps {
-  sessionId: string;
+  sessionState: SessionState;
   entityId?: string;
   variableId?: string;
 }
 
 export function SubsettingRoute(props: RouteProps) {
-  const { variableId, entityId, sessionId } = props;
-  const session = useSession(sessionId);
+  const { variableId, entityId, sessionState } = props;
   const studyMetadata = useStudyMetadata();
   const history = useHistory();
   const entities = Array.from(
@@ -50,7 +49,7 @@ export function SubsettingRoute(props: RouteProps) {
   if (entityId == null || variableId == null) return null;
   return (
     <Subsetting
-      sessionState={session}
+      sessionState={sessionState}
       entity={entity}
       entities={entities}
       variable={variable}
@@ -67,44 +66,51 @@ interface Props {
 
 export function Subsetting(props: Props) {
   const { entity, entities, variable, sessionState } = props;
+  const history = useHistory();
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(sessionState.session?.filters);
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
   const filteredEntityCount =
     filteredCounts.value && filteredCounts.value[entity.id];
+
   return (
     <div className={cx('-Subsetting')}>
       <div>
-        <h2>ENTITIES</h2>
-        <ul
-          style={{
-            border: '1px solid',
-            borderRadius: '.25em',
-            height: '80vh',
-            overflow: 'auto',
-            padding: '1em 2em',
-            margin: 0,
-          }}
-        >
-          {entities.map((e) => (
-            <li>
-              <VariableLink
-                replace
-                style={e.id === entity.id ? { fontWeight: 'bold' } : undefined}
-                entityId={e.id}
-                variableId={
-                  e.variables.find((v) => v.displayType != null)?.id ?? ''
-                }
-              >
-                {e.displayName}
-              </VariableLink>
-            </li>
-          ))}
-        </ul>
+        <h2 style={{ textAlign: 'center' }}>ENTITIES</h2>
+        <div style={{ paddingTop: '10px' }}>
+          <EntityDiagram
+            sessionState={sessionState}
+            expanded={false}
+            orientation="vertical"
+            size={{ height: 300, width: 150 }}
+            selectedEntity={entity.displayName}
+          />
+        </div>
       </div>
       <div>
         <h2>VARIABLES</h2>
-        <ul
+        {/* add box? */}
+        <div
+          style={{
+            border: '1px solid',
+            borderRadius: '.25em',
+            padding: '.5em',
+            height: '80vh',
+            width: '30em',
+            // overflow: 'auto',
+            position: 'relative',
+          }}
+        >
+          <VariableTree
+            entities={entities}
+            entityId={entity.id}
+            variableId={variable.id}
+            onActiveFieldChange={(term: string) => {
+              history.replace(`../${term}`);
+            }}
+          />
+        </div>
+        {/* <ul
           style={{
             border: '1px solid',
             borderRadius: '.25em',
@@ -131,7 +137,7 @@ export function Subsetting(props: Props) {
                 </li>
               )
           )}
-        </ul>
+        </ul> */}
       </div>
       <div>
         <Variable

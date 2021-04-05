@@ -1,0 +1,77 @@
+.VisualizationsContainer {
+  &-NewVisualization {
+    height: 8em;
+    width: 15em;
+    border: 0.2em dashed black;
+    border-radius: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #eee;
+
+    a {
+      font-size: 1.35em;
+      display: block;
+      text-align: center;
+    }
+  }
+
+  &-ConfiguredVisualization {
+    height: 15em;
+    width: 25em;
+    border: 1px solid black;
+    border-radius: 0.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+
+    &Actions {
+      position: absolute;
+      right: 0;
+      top: 0;
+      padding: 0.5em;
+      font-size: 1.8em;
+    }
+  }
+  &-PickerContainer {
+    position: relative;
+  }
+  &-PickerActions {
+    padding: 2em 0;
+    position: absolute;
+    right: 0;
+    a {
+      font-size: 1.35em;
+    }
+  }
+  &-PickerEntry {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    button {
+      height: 10em;
+      width: 10em;
+      background: #eee;
+      margin-bottom: 1em;
+      border: 0.15em solid black;
+    }
+    &Name {
+      text-transform: uppercase;
+      color: #444;
+      font-weight: 500;
+    }
+  }
+  &-FullScreenContainer {
+    position: relative;
+    padding: 2em 0;
+  }
+  &-FullScreenActions {
+    position: absolute;
+    right: 0;
+    a {
+      font-size: 1.35em;
+    }
+  }
+}

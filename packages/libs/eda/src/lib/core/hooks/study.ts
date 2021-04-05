@@ -20,7 +20,11 @@ interface StudyState {
 
 export const StudyContext = createContext<StudyState | undefined>(undefined);
 
-export function useWdkStudyRecord(datasetId: string) {
+interface HookValue {
+  studyRecordClass: StudyRecordClass;
+  studyRecord: StudyRecord;
+}
+export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
   return useWdkServiceWithRefresh(
     async (wdkService) => {
       const studyRecordClass = await wdkService.findRecordClass(
@@ -37,11 +41,33 @@ export function useWdkStudyRecord(datasetId: string) {
         )
         .map(getNodeId)
         .toArray();
-      const studyRecord = await wdkService.getRecord(
-        STUDY_RECORD_CLASS_NAME,
-        [{ name: 'dataset_id', value: datasetId }],
-        { attributes }
-      );
+      const studyRecord = await wdkService
+        .getRecord(
+          STUDY_RECORD_CLASS_NAME,
+          [{ name: 'dataset_id', value: datasetId }],
+          { attributes }
+        )
+        .catch((error) => {
+          console.warn(
+            'Unable to load study dataset record. See error below. Using stub record.'
+          );
+          console.error(error);
+          const attrs = attributes.reduce(
+            (attrs, name) =>
+              Object.assign(attrs, {
+                [name]: '######',
+              }),
+            {}
+          );
+          return {
+            displayName: 'Fake Study',
+            id: [{ name: 'dataset_id', value: datasetId }],
+            recordClassName: STUDY_RECORD_CLASS_NAME,
+            attributes: attrs,
+            tables: {},
+            tableErrors: [],
+          };
+        });
       return {
         studyRecord,
         studyRecordClass,
@@ -52,13 +78,15 @@ export function useWdkStudyRecord(datasetId: string) {
 }
 
 export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
-  return usePromise(async () => {
-    const studies = await store.getStudies();
-    const study = studies.find((s) => s.datasetId === datasetId);
-    if (study == null)
-      throw new Error(
-        'Could not find study with associated dataset id `' + datasetId + '`.'
-      );
-    return store.getStudyMetadata(study.id);
-  }, [datasetId, store]);
+  return usePromise(
+    useCallback(async () => {
+      const studies = await store.getStudies();
+      const study = studies.find((s) => s.datasetId === datasetId);
+      if (study == null)
+        throw new Error(
+          'Could not find study with associated dataset id `' + datasetId + '`.'
+        );
+      return store.getStudyMetadata(study.id);
+    }, [datasetId, store])
+  );
 }
