@@ -104,6 +104,10 @@ export function PreferredOrganismsConfig({
             </span>{' '}
             of {availableOrganisms.length})
           </h2>
+          <div className={cx('--PreviewInstructions')}>
+            {projectId} will restrict the organisms it displays, throughout the
+            site, to those you have chosen, as shown below.
+          </div>
           {configSelection.length === 0 ? (
             <div className={cx('--NoPreferencesSelected')}>
               Please select at least one organism

@@ -19,6 +19,13 @@ $gray: #f0f0f0;
   }
 
   &--Selections {
+    .wdk-CheckboxTreeLinks {
+      display: grid;
+      grid-template-rows: 1fr;
+      align-items: flex-end;
+      height: 2.22222222222em;
+    }
+
     .wdk-CheckboxTreeLinks > div {
       text-align: left;
     }
@@ -30,6 +37,11 @@ $gray: #f0f0f0;
     .wdk-CheckboxTree {
       padding: 0.5em;
     }
+  }
+
+  &--PreviewInstructions {
+    font-size: 1.3em;
+    margin: 0.5em 0;
   }
 
   &--SelectionCount__empty {
