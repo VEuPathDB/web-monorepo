@@ -1,0 +1,16 @@
+.PreferredOrganismsLink {
+  font-size: 1.4em;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0.25em;
+  align-items: center;
+
+  &:link {
+    text-decoration: none;
+  }
+
+  i {
+    font-size: 1.4em;
+    color: slategray;
+  }
+}
