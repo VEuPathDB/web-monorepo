@@ -64,28 +64,28 @@ export default function FilterChipList(props: Props) {
             }
 
             return (
-              // Handles clicking chip to go to filtered variable
-              <VariableLink
-                entityId={entity.id}
-                variableId={variable.id}
-                replace={true}
+              <FilterChip
+                tooltipText={filterValueDisplay}
+                isActive={
+                  entity.id === props.selectedEntityId &&
+                  variable.id === props.selectedVariableId
+                }
+                // Remove this filter on click of X button
+                onDelete={() =>
+                  props.sessionState.setFilters(
+                    session.filters.filter((f) => f !== filter)
+                  )
+                }
                 key={`filter-chip-${entity.id}-${variable.id}`}
               >
-                <FilterChip
-                  text={variable.displayName}
-                  tooltipText={filterValueDisplay}
-                  isActive={
-                    entity.id === props.selectedEntityId &&
-                    variable.id === props.selectedVariableId
-                  }
-                  // Remove this filter on click of X button
-                  onDelete={() =>
-                    props.sessionState.setFilters(
-                      session.filters.filter((f) => f !== filter)
-                    )
-                  }
-                />
-              </VariableLink>
+                <VariableLink
+                  entityId={entity.id}
+                  variableId={variable.id}
+                  replace={true}
+                >
+                  {variable.displayName}
+                </VariableLink>
+              </FilterChip>
             );
           } else {
             return <></>;
