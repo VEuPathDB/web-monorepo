@@ -69,6 +69,7 @@ export default function FilterChipList(props: Props) {
                 entityId={entity.id}
                 variableId={variable.id}
                 replace={true}
+                key={`filter-chip-${entity.id}-${variable.id}`}
               >
                 <FilterChip
                   text={variable.displayName}
