@@ -8,6 +8,7 @@ import pluginConfig from './pluginConfig';
 
 // import CSS files
 import '@veupathdb/web-common/lib/styles/client.scss';
+import '@veupathdb/preferred-organisms/lib/components/ReferenceStrains.scss';
 import 'site/css/AllApiSites.css';
 import 'site/wdkCustomization/css/client.scss';
 
