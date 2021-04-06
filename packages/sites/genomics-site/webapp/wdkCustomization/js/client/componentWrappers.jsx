@@ -2,6 +2,7 @@ import { isEqual } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router';
+import { RecoilRoot } from 'recoil';
 import Cookies from 'js-cookie';
 import QueryString from 'querystring';
 import { emptyAction } from '@veupathdb/wdk-client/lib/Core/WdkMiddleware';
@@ -384,7 +385,11 @@ export function Page() {
     const location = useLocation();
     const isHomePage = location.pathname === '/';
 
-    return <VEuPathDBHomePage {...props} isHomePage={isHomePage} />;
+    return (
+      <RecoilRoot>
+        <VEuPathDBHomePage {...props} isHomePage={isHomePage} />
+      </RecoilRoot>
+    );
   };
 }
 
