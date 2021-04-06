@@ -23,6 +23,8 @@ import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticD
 
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
 
+import { PreferredOrganismsLink } from '../PreferredOrganismsLink';
+
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
 
@@ -99,7 +101,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
   );
 
   const updateHeaderAndFooter = useCallback(() => {
-    setHeaderExpanded(document.body.scrollTop <= 80 && document.documentElement.scrollTop <= 80);
+    setHeaderExpanded(document.body.scrollTop <= 30 && document.documentElement.scrollTop <= 30);
 
     // Modern adaptation of https://stackoverflow.com/a/22394544
     const scrollTop = document.documentElement?.scrollTop || document.body.scrollTop;
@@ -138,6 +140,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
     props.projectId
   );
   const headerClassName = vpdbCx('Header', headerExpanded ? 'expanded' : 'collapsed');
+  const subHeaderClassName = vpdbCx('SubHeader', headerExpanded ? 'expanded' : 'collapsed');
   const searchPaneClassName = combineClassNames(vpdbCx('SearchPane'), vpdbCx('BgWash'), vpdbCx('BdDark'));
   const mainClassName = vpdbCx('Main');
   const newsPaneClassName = combineClassNames(
@@ -181,6 +184,9 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
           branding={branding}
         />
       </ErrorBoundary>
+      <div className={subHeaderClassName}>
+        <PreferredOrganismsLink />
+      </div>
       <div className={vpdbCx('Announcements')}>
         <Announcements
           closedBanners={closedBanners}

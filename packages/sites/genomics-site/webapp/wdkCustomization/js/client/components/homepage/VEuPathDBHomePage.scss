@@ -62,6 +62,8 @@
     }
 
     &__collapsed {
+      box-shadow: unset;
+
       .ebrc-HeaderBrandingContainer {
         .vpdb-HeaderBrandingSuperscript {
           top: $superscript-position-top-small;
@@ -87,6 +89,34 @@
       .vpdb-HeaderBranding {
         content: $small-logo;
       }
+    }
+  }
+
+  .vpdb-SubHeader {
+    grid-area: subheader;
+    z-index: 99;
+    background: white;
+    width: 100%;
+
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 0.0625rem solid $primary-color;
+    padding: 0.5em 0;
+
+    .PreferredOrganismsLink {
+      margin-right: 1em;
+    }
+
+    &__collapsed {
+      position: fixed;
+      top: 5.5em;
+      box-shadow: 0 1px 1px #00000066;
+    }
+
+    @media screen and (max-width: $hamburger-width) {
+      position: relative;
+      top: 0;
+      box-shadow: unset;
     }
   }
 
@@ -126,17 +156,22 @@
 
 }
 
+// Fix for question page sticky header
+body.vpdb-Body .wdk-QuestionFormQuestionHeader {
+  top: 8.5em;
+}
 
 body.vpdb-Body .vpdb-RootContainer {
   @media screen and (max-width: $mobile-width) {
     grid-template-areas:
       "header"
+      "subheader"
       "banner"
       "nav"
       "content"
       "side"
       "footer";
 
-    grid-template-rows: auto auto auto 1fr auto auto;
+    grid-template-rows: auto auto auto auto 1fr auto auto;
   }
 }
