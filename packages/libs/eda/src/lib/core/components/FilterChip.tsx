@@ -3,16 +3,20 @@ import { Chip } from '@material-ui/core';
 interface Props {
   text: string;
   tooltipText: string;
-  active: boolean;
+  isActive: boolean;
   onClick?: () => void;
   onDelete: () => void;
 }
 
+/**
+ * A chip (small informational element) representing a filter applied to a
+ * variable
+ */
 export default function FilterChip(props: Props) {
   return (
     <Chip
       size="small"
-      color={props.active ? 'primary' : 'default'}
+      color={props.isActive ? 'primary' : 'default'}
       label={props.text}
       title={props.tooltipText}
       clickable={true}

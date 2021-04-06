@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   root: {
     '& > *': {
+      // Spacing between chips
       margin: theme.spacing(0.5),
     },
   },
@@ -19,6 +20,10 @@ interface Props {
   selectedVariableId: string;
 }
 
+/**
+ * A list (displayed horizontally) of chips representing filters applied to
+ * variables in the current session
+ */
 export default function FilterChipList(props: Props) {
   const classes = useStyles();
   const session = props.sessionState.session;
@@ -26,45 +31,40 @@ export default function FilterChipList(props: Props) {
   if (session && session.filters) {
     return (
       <div className={classes.root}>
-        {session.filters.map((f) => {
-          // <div key={`${f.entityId}_${f.variableId}`}>
-          //   <button
-          //     type="button"
-          //     onClick={() =>
-          //       sessionState.setFilters(filters.filter((_f) => _f !== f))
-          //     }
-          //   >
-          //     remove
-          //   </button>
-          //   <code>{JSON.stringify(f)}</code>
-          // </div>
-          const entity = props.entities.find((e) => e.id === f.entityId);
-          const variable = entity?.variables.find((v) => v.id === f.variableId);
+        {session.filters.map((filter) => {
+          // Get this filter's entity and variable
+          const entity = props.entities.find(
+            (entity) => entity.id === filter.entityId
+          );
+          const variable = entity?.variables.find(
+            (variable) => variable.id === filter.variableId
+          );
 
           if (entity && variable) {
+            // The string to be displayed for the filter's value
             let filterValueDisplay: string;
 
-            switch (f.type) {
+            // Set filterValueDisplay based on the filter's type
+            switch (filter.type) {
               case 'stringSet':
-                filterValueDisplay = f.stringSet.join(', ');
+                filterValueDisplay = filter.stringSet.join(', ');
                 break;
               case 'numberSet':
-                filterValueDisplay = f.numberSet.join(', ');
+                filterValueDisplay = filter.numberSet.join(', ');
                 break;
               case 'dateSet':
-                filterValueDisplay = f.dateSet.join(', ');
+                filterValueDisplay = filter.dateSet.join(', ');
                 break;
               case 'numberRange':
-                filterValueDisplay = `from ${f.min} to ${f.max}`;
-                break;
               case 'dateRange':
-                filterValueDisplay = `from ${f.min} to ${f.max}`;
+                filterValueDisplay = `from ${filter.min} to ${filter.max}`;
                 break;
               default:
                 filterValueDisplay = '';
             }
 
             return (
+              // Handles clicking chip to go to filtered variable
               <VariableLink
                 entityId={entity.id}
                 variableId={variable.id}
@@ -73,13 +73,14 @@ export default function FilterChipList(props: Props) {
                 <FilterChip
                   text={variable.displayName}
                   tooltipText={filterValueDisplay}
-                  active={
-                    entity?.id === props.selectedEntityId &&
-                    variable?.id === props.selectedVariableId
+                  isActive={
+                    entity.id === props.selectedEntityId &&
+                    variable.id === props.selectedVariableId
                   }
+                  // Remove this filter on click of X button
                   onDelete={() =>
                     props.sessionState.setFilters(
-                      session.filters.filter((_f) => _f !== f)
+                      session.filters.filter((f) => f !== filter)
                     )
                   }
                 />
