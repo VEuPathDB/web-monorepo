@@ -13,7 +13,7 @@ import * as DateMath from 'date-arithmetic';
 
 // Components
 import PlotlyPlot from './PlotlyPlot';
-import { Layout } from 'plotly.js';
+import { Layout, Shape } from 'plotly.js';
 
 export interface HistogramProps {
   /** Data for the plot. */
@@ -199,7 +199,65 @@ export default function Histogram({
         } as NumberOrDateRange);
       }
     },
-    [data.valueType, onSelectedRangeChange]
+    [data.valueType, orientation, onSelectedRangeChange]
+  );
+
+  const [selectedRangeHighlighting, setSelectedRangeHighlighting] = useState<
+    Partial<Shape>[]
+  >([]);
+
+  const handleSelectingRange = useCallback(
+    (object: any) => {
+      if (object && object.range) {
+        const [val1, val2] =
+          orientation === 'vertical' ? object.range.x : object.range.y;
+        const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
+        // TO DO: think about time zones?
+        const rawRange: NumberOrDateRange = {
+          min: data.valueType === 'date' ? new Date(min) : min,
+          max: data.valueType === 'date' ? new Date(max) : max,
+        };
+        // now snap to bin boundaries
+        const leftBinStarts = data.series
+          .map((series) => [
+            series.bins
+              .filter((bin) => bin.binStart > rawRange.min)
+              .map((bin) => bin.binStart),
+          ])
+          .flat(2)
+          .sort((a, b) => (a > b ? 1 : a === b ? 0 : -1));
+
+        const rightBinEnds = data.series
+          .map((series) => [
+            series.bins
+              .filter((bin) => bin.binEnd < rawRange.max)
+              .map((bin) => bin.binEnd),
+          ])
+          .flat(2)
+          .sort((a, b) => (a < b ? 1 : a === b ? 0 : -1));
+
+        if (leftBinStarts.length > 0 && rightBinEnds.length > 0) {
+          setSelectedRangeHighlighting([
+            {
+              type: 'rect',
+              xref: orientation === 'vertical' ? 'x' : 'paper',
+              yref: orientation === 'vertical' ? 'paper' : 'y',
+              x0: orientation === 'vertical' ? leftBinStarts[0] : 0,
+              x1: orientation === 'vertical' ? rightBinEnds[0] : 1,
+              y0: orientation === 'vertical' ? 0 : leftBinStarts[0],
+              y1: orientation === 'vertical' ? 1 : rightBinEnds[0],
+              line: {
+                color: 'blue',
+                width: 1,
+              },
+              fillcolor: 'blue',
+              opacity: 0.5,
+            },
+          ]);
+        }
+      }
+    },
+    [data.valueType, data.series, orientation, onSelectedRangeChange]
   );
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
@@ -237,6 +295,7 @@ export default function Histogram({
         revision={revision}
         style={{ height, width }}
         layout={{
+          shapes: selectedRangeHighlighting,
           // when we implement zooming, we will still use Plotly's select mode
           dragmode: 'select',
           // with a histogram, we can always use 1D selection
@@ -280,6 +339,7 @@ export default function Histogram({
         }}
         data={plotlyFriendlyData}
         onSelected={handleSelectedRange}
+        onSelecting={handleSelectingRange}
         config={{
           displayModeBar: displayLibraryControls ? 'hover' : false,
           staticPlot: !interactive,
