@@ -100,7 +100,18 @@ export function VariableTreeDropdown(props: Props) {
   const label = variable?.displayName ?? 'Select a variable';
   return (
     <PopoverButton label={label}>
-      <VariableTree {...props} />
+      <div
+        style={{
+          border: '1px solid',
+          borderRadius: ' 0.25em',
+          padding: '0.5em',
+          height: '60vh',
+          width: '30em',
+          position: 'relative',
+        }}
+      >
+        <VariableTree {...props} />
+      </div>
     </PopoverButton>
   );
 }

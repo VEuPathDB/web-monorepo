@@ -31,6 +31,7 @@ import {
   Field,
   FieldTreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+import { cx } from '../../workspace/Utils';
 
 //defining types - some are not used (need cleanup later)
 interface VariableField {
@@ -168,7 +169,7 @@ export default function VariableList(props: VariableListProps) {
   );
 
   return (
-    <div className="field-list">
+    <div className={cx('-VariableList')}>
       <CheckboxTree
         autoFocusSearchBox={autoFocus}
         tree={fieldTree}
