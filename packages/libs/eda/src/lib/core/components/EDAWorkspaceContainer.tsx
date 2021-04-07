@@ -5,7 +5,14 @@ import { DataClient } from '../api/data-api';
 import { SessionClient } from '../api/session-api';
 import { WorkspaceContext } from '../context/WorkspaceContext';
 import { useStudyMetadata, useWdkStudyRecord } from '../hooks/study';
+import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core';
 
+const theme = createMuiTheme({
+  typography: {
+    fontSize: 12,
+  },
+});
 export interface Props {
   studyId: string;
   sessionId: string;
@@ -51,7 +58,9 @@ export function EDAWorkspaceContainer(props: Props) {
         makeVariableLink,
       }}
     >
-      <div className={className}>{children}</div>
+      <ThemeProvider theme={theme}>
+        <div className={className}>{children}</div>
+      </ThemeProvider>
     </WorkspaceContext.Provider>
   );
 }
