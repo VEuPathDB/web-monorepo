@@ -1,7 +1,6 @@
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
-import DropdownMenu from '@veupathdb/components/lib/components/widgets/DropdownMenu';
 
-import React, { CSSProperties, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { StudyEntity, StudyVariable } from '../../../../core';
 import Histogram, {
   HistogramProps,
@@ -27,7 +26,7 @@ import { PromiseType } from '../../../types/utility';
 import { Filter } from '../../../types/filter';
 import { HistogramVariable } from '../../filter/types';
 import { isHistogramVariable } from '../../filter/guards';
-import { VariableTree, VariableTreeDropdown } from '../../VariableTree';
+import { VariableTreeDropdown } from '../../VariableTree';
 import {
   ISODateStringToZuluDate,
   parseTimeDelta,
@@ -244,16 +243,6 @@ function HistogramViz(props: Props) {
       ),
     [studyId, filters, dataClient]
   );
-
-  const variableTreeContainerCSS: CSSProperties = {
-    border: '1px solid',
-    borderRadius: '.25em',
-    padding: '.5em',
-    height: '30vh',
-    width: '30em',
-    overflow: 'auto',
-    position: 'relative',
-  };
 
   const data = usePromise(
     useCallback(() => getData(vizConfig), [getData, vizConfig])
