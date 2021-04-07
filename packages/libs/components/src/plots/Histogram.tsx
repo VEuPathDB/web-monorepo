@@ -194,8 +194,8 @@ export default function Histogram({
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
         // TO DO: think about time zones?
         onSelectedRangeChange({
-          min: data.valueType === 'number' ? min : new Date(min),
-          max: data.valueType === 'number' ? max : new Date(max),
+          min: data.valueType === 'date' ? new Date(min) : min,
+          max: data.valueType === 'date' ? new Date(max) : max,
         } as NumberOrDateRange);
       }
     },
