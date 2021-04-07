@@ -40,6 +40,15 @@ export function makePreferredOrganismsRecoilState(
     get: ({ get }) => get(config).projectId,
   });
 
+  const buildNumber = selector({
+    key: 'build-number',
+    get: ({ get }) => {
+      const buildNumberStr = get(config).buildNumber;
+
+      return Number(buildNumberStr);
+    },
+  });
+
   const organismTree = selector({
     key: 'organism-tree',
     get: () => fetchOrganismTree(wdkService),
@@ -50,35 +59,63 @@ export function makePreferredOrganismsRecoilState(
     get: ({ get }) => findAvailableOrganisms(get(organismTree)),
   });
 
-  const initialOrganismsPreference = selector({
-    key: 'initial-organisms-preference',
+  const initialOrganismPreference = selector({
+    key: 'initial-organism-preference',
     get: ({ get }) =>
       fetchPreferredOrganisms(wdkService, get(availableOrganisms)),
   });
 
-  const initialPreferredOrganisms = selector({
-    key: 'initial-preferred-organisms',
-    get: ({ get }) => get(initialOrganismsPreference).organisms,
-  });
-
-  const preferredOrganisms = atom({
-    key: 'preferred-organisms',
-    default: initialPreferredOrganisms,
+  const organismPreference = atom({
+    key: 'organism-preference',
+    default: initialOrganismPreference,
     effects_UNSTABLE: [
       ({ onSet }) => {
-        function onPreferredOrganismsChange(params: string[] | DefaultValue) {
-          if (!(params instanceof DefaultValue)) {
-            updatePreferredOrganisms(wdkService, params);
+        function onPreferredOrganismsChange(
+          newOrganismPreference: OrganismPreference | DefaultValue
+        ) {
+          if (!(newOrganismPreference instanceof DefaultValue)) {
+            updatePreferredOrganisms(wdkService, newOrganismPreference);
           }
         }
 
-        onSet(debounce(onPreferredOrganismsChange, 2000));
+        onSet(
+          debounce(onPreferredOrganismsChange, 200, {
+            leading: true,
+            trailing: true,
+          })
+        );
       },
     ],
   });
 
+  const preferredOrganisms = selector({
+    key: 'preferred-organisms',
+    get: ({ get }) => get(organismPreference).organisms,
+    set: (
+      { get, reset, set },
+      newPreferredOrganisms: string[] | DefaultValue
+    ) => {
+      if (newPreferredOrganisms instanceof DefaultValue) {
+        reset(organismPreference);
+      } else {
+        set(organismPreference, {
+          ...get(organismPreference),
+          organisms: newPreferredOrganisms,
+        });
+      }
+    },
+  });
+
+  const organismPreferenceBuildNumber = selector({
+    key: 'organism-preference-build-number',
+    get: ({ get }) => get(organismPreference).buildNumber,
+  });
+
   return {
     availableOrganisms,
+    buildNumber,
+    organismPreference,
+    organismPreferenceBuildNumber,
     organismTree,
     preferredOrganisms,
     projectId,
@@ -140,17 +177,10 @@ async function fetchPreferredOrganisms(
 
 async function updatePreferredOrganisms(
   wdkService: WdkService,
-  newOrganisms: string[]
+  organismPreference: OrganismPreference
 ) {
-  const buildNumber = await fetchBuildNumber(wdkService);
-
-  const newOrganismPreference: OrganismPreference = {
-    buildNumber,
-    organisms: newOrganisms,
-  };
-
   await wdkService.patchScopedUserPreferences(ORGANISM_PREFERENCE_SCOPE, {
-    [ORGANISM_PREFERENCE_KEY]: JSON.stringify(newOrganismPreference),
+    [ORGANISM_PREFERENCE_KEY]: JSON.stringify(organismPreference),
   });
 }
 

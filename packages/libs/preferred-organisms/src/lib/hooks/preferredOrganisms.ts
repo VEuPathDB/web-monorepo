@@ -1,5 +1,5 @@
-import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useCallback, useContext } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { memoize } from 'lodash';
 
@@ -39,4 +39,22 @@ export function usePreferredOrganismsRecoilState() {
   const wdkDependencies = useContext(WdkDepdendenciesContext);
 
   return memoizedPreferredOrganismsRecoilStateMaker(wdkDependencies);
+}
+
+export function useUpdateBuildNumberCallback() {
+  const wdkDependencies = useContext(WdkDepdendenciesContext);
+  const {
+    buildNumber,
+    organismPreference,
+  } = memoizedPreferredOrganismsRecoilStateMaker(wdkDependencies);
+
+  const buildNumberValue = useRecoilValue(buildNumber);
+  const setOrganismPreference = useSetRecoilState(organismPreference);
+
+  return useCallback(() => {
+    setOrganismPreference((organismPreference) => ({
+      ...organismPreference,
+      buildNumber: buildNumberValue,
+    }));
+  }, [buildNumberValue, setOrganismPreference]);
 }
