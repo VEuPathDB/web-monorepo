@@ -1,3 +1,4 @@
+import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { keyBy } from 'lodash';
 import { useMemo } from 'react';
@@ -6,7 +7,7 @@ import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
 
-interface Props {
+export interface Props {
   entities: StudyEntity[];
   entityId?: string;
   variableId?: string;
@@ -88,5 +89,18 @@ export function VariableTree(props: Props) {
       fieldTree={fieldTree}
       autoFocus={false}
     />
+  );
+}
+
+export function VariableTreeDropdown(props: Props) {
+  const { entities, entityId, variableId } = props;
+  const variable = entities
+    .find((e) => e.id === entityId)
+    ?.variables.find((v) => v.id === variableId);
+  const label = variable?.displayName ?? 'Select a variable';
+  return (
+    <PopoverButton label={label}>
+      <VariableTree {...props} />
+    </PopoverButton>
   );
 }

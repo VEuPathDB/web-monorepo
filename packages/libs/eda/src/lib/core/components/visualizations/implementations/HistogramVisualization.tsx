@@ -1,4 +1,5 @@
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import DropdownMenu from '@veupathdb/components/lib/components/widgets/DropdownMenu';
 
 import React, { CSSProperties, useCallback, useMemo } from 'react';
 import { StudyEntity, StudyVariable } from '../../../../core';
@@ -26,7 +27,7 @@ import { PromiseType } from '../../../types/utility';
 import { Filter } from '../../../types/filter';
 import { HistogramVariable } from '../../filter/types';
 import { isHistogramVariable } from '../../filter/guards';
-import { VariableTree } from '../../VariableTree';
+import { VariableTree, VariableTreeDropdown } from '../../VariableTree';
 import {
   ISODateStringToZuluDate,
   parseTimeDelta,
@@ -263,14 +264,12 @@ function HistogramViz(props: Props) {
         <div>
           <h1>Histogram</h1>
           <h2>Choose the main variable</h2>
-          <div style={variableTreeContainerCSS}>
-            <VariableTree
-              entities={entities}
-              entityId={independentVariableEntity?.id}
-              variableId={independentVariable?.id}
-              onActiveFieldChange={onMainVariableChange}
-            />
-          </div>
+          <VariableTreeDropdown
+            entities={entities}
+            entityId={independentVariableEntity?.id}
+            variableId={independentVariable?.id}
+            onActiveFieldChange={onMainVariableChange}
+          />
           <h2>Choose the overlay variable</h2>
           <Switch
             label="Enable overlay"
@@ -279,14 +278,12 @@ function HistogramViz(props: Props) {
               updateVizConfig({ enableOverlay: !enableOverlay });
             }}
           />
-          <div style={variableTreeContainerCSS}>
-            <VariableTree
-              entities={entities}
-              entityId={overlayVariableEntity?.id}
-              variableId={overlayVariable?.id}
-              onActiveFieldChange={onOverlayVariableChange}
-            />
-          </div>
+          <VariableTreeDropdown
+            entities={entities}
+            entityId={overlayVariableEntity?.id}
+            variableId={overlayVariable?.id}
+            onActiveFieldChange={onOverlayVariableChange}
+          />
         </div>
       )}
       {data.pending && (
