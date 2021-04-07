@@ -306,19 +306,34 @@ export default function HistogramControls({
           />
         )}
       </div>
-      {/* y-axis controls */}
-      <div>
-        {
-          <ControlsHeader
-            text={'<Y-Axis Controls>'}
-            styleOverrides={{ paddingTop: 30, textAlign: 'left' }}
-          />
-        }
-      </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 0 }}>
+      {/* y-axis controls with box */}
+      <div
+        style={{
+          borderStyle: 'solid',
+          borderWidth: 2,
+          borderColor: 'rgb(240, 240, 240)',
+          borderRadius: 0,
+          padding: '1em',
+          width: 400,
+          minWidth: 175,
+          marginTop: 25,
+        }}
+      >
+        <div
+          style={{
+            width: 50,
+            marginTop: '-1.8em',
+            marginLeft: '-.3em',
+            marginBottom: '.3em',
+            background: 'white',
+            textAlign: 'center',
+          }}
+        >
+          y-Axis
+        </div>
         {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
           <Switch
-            label="Y-Axis Log Scale"
+            label="Log Scale:"
             color={accentColor}
             state={dependentAxisLogScale}
             // The stinky use of `any` here comes from
@@ -327,44 +342,45 @@ export default function HistogramControls({
             onStateChange={(event: any) =>
               toggleDependentAxisLogScale(event.target.checked)
             }
-            containerStyles={{ paddingRight: 25 }}
+            containerStyles={{ paddingBottom: 5 }}
           />
         )}
         {onDependentAxisRangeChange ? (
           valueType !== undefined && valueType === 'date' ? (
             <DateRangeInput
-              label="Selected Range"
+              label="Range:"
               // rangeBounds={selectedRangeBounds as DateRange}
               range={dependentAxisRange as DateRange}
               onRangeChange={onDependentAxisRangeChange}
-              containerStyles={{ paddingRight: 25 }}
             />
           ) : (
             <NumberRangeInput
-              label="Y-Axis Range"
+              label="Range:"
               // rangeBounds={selectedRangeBounds as NumberRange}
               range={dependentAxisRange as NumberRange}
               onRangeChange={onDependentAxisRangeChange}
-              containerStyles={{ paddingRight: 25 }}
             />
           )
         ) : null}
         {dependentAxisMode && onDependentAxisModeChange && (
           <ButtonGroup
-            label="Y-Axis Absolute/Relative"
+            label="Absolute/Relative:"
             options={['absolute', 'relative']}
             selectedOption={dependentAxisMode}
             // @ts-ignore
             onOptionSelected={onDependentAxisModeChange}
-            containerStyles={{ paddingRight: 25 }}
           />
         )}
-      </div>
-      {/* add reset all - for now large button without specifying width */}
-      <div style={{ paddingTop: 25 }}>
-        {onResetAll && (
-          <Button type={'solid'} text={'Reset'} onClick={onResetAll} />
-        )}
+        {/* add small reset button here with specified width */}
+        <div style={{ paddingTop: 25, width: 170 }}>
+          {onResetAll && (
+            <Button
+              type={'solid'}
+              text={'Reset to defaults'}
+              onClick={onResetAll}
+            />
+          )}
+        </div>
       </div>
 
       {errorStacks.map(({ error, occurences }, index) => (
