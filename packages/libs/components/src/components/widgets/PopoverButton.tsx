@@ -36,7 +36,6 @@ export default function PopoverButton(props: PopoverButtonProps) {
 
   const button = (
     <Button
-      aria-label="account of current user"
       aria-controls="dropdown"
       aria-haspopup="true"
       color="default"
