@@ -190,22 +190,6 @@ export default function Histogram({
     [data, orientation, calculatedBarOpacity, selectedRange]
   );
 
-  const handleSelectedRange = useCallback(
-    (object: any) => {
-      if (object && object.range) {
-        const [val1, val2] =
-          orientation === 'vertical' ? object.range.x : object.range.y;
-        const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
-        // TO DO: think about time zones?
-        onSelectedRangeChange({
-          min: data.valueType === 'date' ? new Date(min) : min,
-          max: data.valueType === 'date' ? new Date(max) : max,
-        } as NumberOrDateRange);
-      }
-    },
-    [data.valueType, orientation, onSelectedRangeChange]
-  );
-
   /**
    * calculate midpoints of a unique set of bins
    */
@@ -249,10 +233,8 @@ export default function Histogram({
     }));
   }, [data.series, data.valueType]);
 
-  // local selected range state needed for orientation switches
-  const [localSelectedRange, setLocalSelectedRange] = useState<
-    NumberOrDateRange
-  >();
+  // local state for range **while selecting** graphically
+  const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
 
   const handleSelectingRange = useCallback(
     (object: any) => {
@@ -276,27 +258,53 @@ export default function Histogram({
           .reverse()
           .find((bin) => rawRange.max > bin.binMiddle);
         if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
-          setLocalSelectedRange({
+          setSelectingRange({
             min: leftBin.binStart,
             max: rightBin.binEnd,
           } as NumberOrDateRange);
+        } else {
+          setSelectingRange(undefined);
         }
       }
     },
-    [data.valueType, binSummaries, setLocalSelectedRange]
+    [data.valueType, orientation, binSummaries, setSelectingRange]
   );
 
+  // handle finshed/completed (graphical) range selection
+  const handleSelectedRange = useCallback(() => {
+    if (selectingRange) {
+      onSelectedRangeChange(selectingRange);
+    } else {
+      // TO DO: be able to reset/unset the selected range
+      // by passing undefined to onSelectedRangeChange
+      // when a selection of zero bins has been made
+    }
+    setSelectingRange(undefined);
+  }, [selectingRange, onSelectedRangeChange, setSelectingRange]);
+
   const selectedRangeHighlighting = useMemo(() => {
-    if (localSelectedRange) {
+    const range = selectingRange ?? selectedRange;
+    if (range) {
       return [
         {
           type: 'rect',
-          xref: orientation === 'vertical' ? 'x' : 'paper',
-          yref: orientation === 'vertical' ? 'paper' : 'y',
-          x0: orientation === 'vertical' ? localSelectedRange.min : 0,
-          x1: orientation === 'vertical' ? localSelectedRange.max : 1,
-          y0: orientation === 'vertical' ? 0 : localSelectedRange.min,
-          y1: orientation === 'vertical' ? 1 : localSelectedRange.max,
+          ...(orientation === 'vertical'
+            ? {
+                xref: 'x',
+                yref: 'paper',
+                x0: range.min,
+                x1: range.max,
+                y0: 0,
+                y1: 1,
+              }
+            : {
+                xref: 'paper',
+                yref: 'y',
+                x0: 0,
+                x1: 1,
+                y0: range.min,
+                y1: range.max,
+              }),
           line: {
             color: 'blue',
             width: 1,
@@ -308,7 +316,7 @@ export default function Histogram({
     } else {
       return [];
     }
-  }, [localSelectedRange, orientation]);
+  }, [selectingRange, selectedRange, orientation]);
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
