@@ -3,6 +3,7 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { PreferredOrganismsConfig } from '../components/PreferredOrganismsConfig';
 import {
   useAvailableOrganisms,
+  useNewOrganisms,
   useOrganismTree,
   usePreferredOrganismsState,
   useProjectId,
@@ -25,10 +26,13 @@ export function PreferredOrganismsConfigController() {
 
   const referenceStrains = useReferenceStrains();
 
+  const newOrganisms = useNewOrganisms();
+
   return (
     <PreferredOrganismsConfig
       availableOrganisms={availableOrganisms}
       configSelection={preferredOrganismsState}
+      newOrganisms={newOrganisms}
       organismTree={organismTree}
       projectId={projectIdValue}
       referenceStrains={referenceStrains}

@@ -11,14 +11,13 @@ import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import {
   useOrganismSearchPredicate,
   useRenderOrganismNode,
-} from '../hooks/referenceStrains';
+} from '../hooks/organismNodes';
 
 import {
-  getNodeChildren,
-  getNodeId,
   makeInitialPreviewExpansion,
   makePreviewTree,
 } from '../utils/configTrees';
+import { getNodeChildren, getNodeId } from '../utils/organismNodes';
 
 import './PreferredOrganismsConfig.scss';
 
@@ -27,6 +26,7 @@ const cx = makeClassNameHelper('PreferredOrganismsConfig');
 interface Props {
   availableOrganisms: Set<string>;
   configSelection: string[];
+  newOrganisms: Set<string>;
   organismTree: Node<TreeBoxVocabNode>;
   projectId: string;
   referenceStrains: Set<string>;
@@ -36,19 +36,17 @@ interface Props {
 export function PreferredOrganismsConfig({
   availableOrganisms,
   configSelection,
+  newOrganisms,
   organismTree,
   projectId,
   referenceStrains,
   setConfigSelection,
 }: Props) {
-  const renderNode = useRenderOrganismNode(referenceStrains, true);
+  const renderNode = useRenderOrganismNode(referenceStrains, newOrganisms);
 
   const [configFilterTerm, setConfigFilterTerm] = useState('');
   const [configExpansion, setConfigExpansion] = useState<string[]>([]);
-  const configSearchPredicate = useOrganismSearchPredicate(
-    referenceStrains,
-    true
-  );
+  const configSearchPredicate = useOrganismSearchPredicate(referenceStrains);
 
   const previewExpansion = useMemo(
     () => makeInitialPreviewExpansion(organismTree),

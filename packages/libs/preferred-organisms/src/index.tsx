@@ -14,7 +14,7 @@ import { RecoilRoot } from 'recoil';
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
 
-import '../src/lib/components/ReferenceStrains.scss';
+import '../src/lib/components/OrganismNode.scss';
 
 initialize({
   rootUrl,
