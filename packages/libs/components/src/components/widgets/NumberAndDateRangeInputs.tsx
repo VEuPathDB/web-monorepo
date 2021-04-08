@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Typography, Box } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberInput, DateInput } from './NumberAndDateInputs';
 import {
