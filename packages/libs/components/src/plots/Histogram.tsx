@@ -282,7 +282,7 @@ export default function Histogram({
     setSelectingRange(undefined);
   }, [selectingRange, onSelectedRangeChange, setSelectingRange]);
 
-  const selectedRangeHighlighting = useMemo(() => {
+  const selectedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
     const range = selectingRange ?? selectedRange;
     if (range) {
       return [
