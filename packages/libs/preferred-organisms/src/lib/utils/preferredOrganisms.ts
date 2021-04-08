@@ -19,6 +19,11 @@ import { findAvailableOrganisms } from './configTrees';
 export const ORGANISM_PREFERENCE_KEY = 'organism_preference';
 export const ORGANISM_PREFERENCE_SCOPE = 'project';
 
+export const ALL_DATASETS_SEARCH_NAME = 'AllDatasets';
+export const BUILD_NUMBER_INTRODUCED_ATTRIBUTE = 'build_number_introduced';
+export const ORGANISMS_TABLE = 'Version';
+export const ORGANISM_TERM_ATTRIBUTE = 'organism';
+
 export function makePreferredOrganismsRecoilState(
   wdkDependencies: WdkDependencies | undefined
 ) {
@@ -52,6 +57,11 @@ export function makePreferredOrganismsRecoilState(
   const organismTree = selector({
     key: 'organism-tree',
     get: () => fetchOrganismTree(wdkService),
+  });
+
+  const organismBuildNumbers = selector({
+    key: 'organism-build-numbers',
+    get: () => fetchOrganismBuildNumbers(wdkService),
   });
 
   const availableOrganisms = selector({
@@ -114,6 +124,7 @@ export function makePreferredOrganismsRecoilState(
   return {
     availableOrganisms,
     buildNumber,
+    organismBuildNumbers,
     organismPreference,
     organismPreferenceBuildNumber,
     organismTree,
@@ -188,6 +199,52 @@ async function fetchBuildNumber(wdkService: WdkService) {
   const buildNumberStr = (await wdkService.getConfig()).buildNumber;
 
   return Number(buildNumberStr);
+}
+
+async function fetchOrganismBuildNumbers(wdkService: WdkService) {
+  const datasetRecords = await wdkService.getAnswerJson(
+    {
+      searchName: ALL_DATASETS_SEARCH_NAME,
+      searchConfig: { parameters: {} },
+    },
+    {
+      tables: [ORGANISMS_TABLE],
+      attributes: [BUILD_NUMBER_INTRODUCED_ATTRIBUTE],
+    }
+  );
+
+  return datasetRecords.records.reduce((memo, record) => {
+    const buildNumberIntroducedAttribute =
+      record.attributes[BUILD_NUMBER_INTRODUCED_ATTRIBUTE];
+
+    if (typeof buildNumberIntroducedAttribute !== 'string') {
+      throw new Error(
+        `To use this feature, each dataset record must have a string-valued '${BUILD_NUMBER_INTRODUCED_ATTRIBUTE}'`
+      );
+    }
+
+    const datasetBuildNumber = Number(buildNumberIntroducedAttribute);
+
+    const organismsTable = record.tables[ORGANISMS_TABLE];
+
+    return organismsTable.reduce(
+      (nestedMemo, { [ORGANISM_TERM_ATTRIBUTE]: organismTermAttribute }) => {
+        if (typeof organismTermAttribute !== 'string') {
+          throw new Error(
+            `To use this feature, each row of the '${ORGANISMS_TABLE}' table must have a string-valued '${ORGANISM_TERM_ATTRIBUTE}'`
+          );
+        }
+
+        const organismBuildNumber = nestedMemo.get(organismTermAttribute);
+
+        return nestedMemo.set(
+          organismTermAttribute,
+          Math.min(organismBuildNumber ?? Infinity, datasetBuildNumber)
+        );
+      },
+      memo
+    );
+  }, new Map<string, number>());
 }
 
 const organismPreference = record({
