@@ -39,11 +39,12 @@ type ActionType<DataShape> =
   | { type: 'toggleDisplayLegend' }
   | { type: 'toggleLibraryControls' }
   | { type: 'histogram/setSelectedRange'; payload: NumberOrDateRange }
-  // add y-axis controls
+  // add y-axis/dependent axis controls
   | { type: 'histogram/toggleDependentAxisLogScale' }
   | { type: 'histogram/onDependentAxisRangeChange'; payload: NumberOrDateRange }
   | { type: 'histogram/onDependentAxisModeChange' }
-  // add reset
+  | { type: 'histogram/onDependentAxisRangeReset' }
+  // add reset all
   | { type: 'onResetAll' };
 
 /** Reducer that is used inside the hook. */
@@ -155,7 +156,15 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
               : 'absolute',
         },
       };
-    // add reset: nothing here but perhaps it would eventually be a function to set all params to default
+    // add reset for dependent axis range: nothing here yet
+    case 'histogram/onDependentAxisRangeReset':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+        },
+      };
+    // add reset all: nothing here but perhaps it would eventually be a function to set all params to default
     case 'onResetAll':
       return { ...state };
     default:
@@ -224,6 +233,8 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     dependentAxisRange?: NumberOrDateRange;
     /** Histogram: Toggle absolute and relative.*/
     dependentAxisMode?: string;
+    /** Histogram: dependent axis range reset */
+    onDependentAxisRangeReset?: () => void;
   };
 };
 
@@ -523,6 +534,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   // on y-axis absoluteRelative
   const onDependentAxisModeChange = () =>
     dispatch({ type: 'histogram/onDependentAxisModeChange' });
+  // on dependent axis range reset
+  const onDependentAxisRangeReset = () =>
+    dispatch({ type: 'histogram/onDependentAxisRangeReset' });
 
   // reset all
   const onResetAll = () => dispatch({ type: 'onResetAll' });
@@ -555,6 +569,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       toggleDependentAxisLogScale,
       onDependentAxisRangeChange,
       onDependentAxisModeChange,
+      onDependentAxisRangeReset,
     },
     resetOpacity,
     onBarLayoutChange,

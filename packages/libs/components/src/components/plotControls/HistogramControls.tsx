@@ -104,7 +104,9 @@ export type HistogramControlsProps = {
   dependentAxisMode?: string;
   /** Action to take on display legend change. */
   onDependentAxisModeChange?: (layout: 'absolute' | 'relative') => void;
-  /** Reset all to default. */
+  /** Action to reset dependent axis range. */
+  onDependentAxisRangeReset?: () => void;
+  /** Action to Reset all to defaults. */
   onResetAll?: () => void;
 };
 
@@ -145,6 +147,7 @@ export default function HistogramControls({
   onDependentAxisRangeChange,
   dependentAxisMode,
   onDependentAxisModeChange,
+  onDependentAxisRangeReset,
   // add reset all
   onResetAll,
   containerStyles = {},
@@ -373,14 +376,21 @@ export default function HistogramControls({
         )}
         {/* add small reset button here with specified width */}
         <div style={{ paddingTop: 25, width: 170 }}>
-          {onResetAll && (
+          {onDependentAxisRangeReset && (
             <Button
               type={'solid'}
               text={'Reset to defaults'}
-              onClick={onResetAll}
+              onClick={onDependentAxisRangeReset}
             />
           )}
         </div>
+      </div>
+
+      {/* reset all */}
+      <div style={{ paddingTop: 25, width: 130 }}>
+        {onResetAll && (
+          <Button type={'solid'} text={'Reset All'} onClick={onResetAll} />
+        )}
       </div>
 
       {errorStacks.map(({ error, occurences }, index) => (
