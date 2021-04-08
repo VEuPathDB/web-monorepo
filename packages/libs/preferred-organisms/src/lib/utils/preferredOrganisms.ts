@@ -121,9 +121,20 @@ export function makePreferredOrganismsRecoilState(
     get: ({ get }) => get(organismPreference).buildNumber,
   });
 
+  const newOrganisms = selector({
+    key: 'new-organisms',
+    get: ({ get }) =>
+      findNewOrganisms(
+        get(availableOrganisms),
+        get(organismBuildNumbers),
+        get(organismPreferenceBuildNumber)
+      ),
+  });
+
   return {
     availableOrganisms,
     buildNumber,
+    newOrganisms,
     organismBuildNumbers,
     organismPreference,
     organismPreferenceBuildNumber,
@@ -245,6 +256,25 @@ async function fetchOrganismBuildNumbers(wdkService: WdkService) {
       memo
     );
   }, new Map<string, number>());
+}
+
+function findNewOrganisms(
+  availableOrganisms: string[],
+  organismBuildNumbers: Map<string, number>,
+  organismPreferenceBuildNumber: number
+) {
+  const availableOrganismSet = new Set(availableOrganisms);
+
+  return [...organismBuildNumbers].reduce((memo, [organism, buildNumber]) => {
+    if (
+      availableOrganismSet.has(organism) &&
+      buildNumber > organismPreferenceBuildNumber
+    ) {
+      memo.add(organism);
+    }
+
+    return memo;
+  }, new Set<string>());
 }
 
 const organismPreference = record({
