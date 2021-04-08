@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Story, Meta } from '@storybook/react/types-6-0';
+import { Meta } from '@storybook/react/types-6-0';
 
 import PopoverButton from '../../components/widgets/PopoverButton';
-import { Typography } from '@material-ui/core';
 
 export default {
   title: 'Widgets/PopoverButton',
