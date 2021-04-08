@@ -206,10 +206,10 @@ export default function Histogram({
     [data.valueType, orientation, onSelectedRangeChange]
   );
 
+  /**
+   * calculate midpoints of a unique set of bins
+   */
   const binSummaries: BinSummary[] = useMemo(() => {
-    // find all unique bins from all series (may not be strictly necessary)
-    // assume binLabels are sufficient to 'uniquify' bins
-
     const allBins: HistogramBin[] = data.series
       .map((series) => [series.bins])
       .flat(2);
@@ -249,14 +249,14 @@ export default function Histogram({
     }));
   }, [data.series, data.valueType]);
 
-  const [selectedRangeHighlighting, setSelectedRangeHighlighting] = useState<
-    Partial<Shape>[]
-  >([]);
+  // local selected range state needed for orientation switches
+  const [localSelectedRange, setLocalSelectedRange] = useState<
+    NumberOrDateRange
+  >();
 
   const handleSelectingRange = useCallback(
     (object: any) => {
       if (object && object.range) {
-        setSelectedRangeHighlighting([]);
         const [val1, val2] =
           orientation === 'vertical' ? object.range.x : object.range.y;
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
@@ -276,28 +276,39 @@ export default function Histogram({
           .reverse()
           .find((bin) => rawRange.max > bin.binMiddle);
         if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
-          setSelectedRangeHighlighting([
-            {
-              type: 'rect',
-              xref: orientation === 'vertical' ? 'x' : 'paper',
-              yref: orientation === 'vertical' ? 'paper' : 'y',
-              x0: orientation === 'vertical' ? leftBin.binStart : 0,
-              x1: orientation === 'vertical' ? rightBin.binEnd : 1,
-              y0: orientation === 'vertical' ? 0 : leftBin.binStart,
-              y1: orientation === 'vertical' ? 1 : rightBin.binEnd,
-              line: {
-                color: 'blue',
-                width: 1,
-              },
-              fillcolor: 'lightblue',
-              opacity: 0.4,
-            },
-          ]);
+          setLocalSelectedRange({
+            min: leftBin.binStart,
+            max: rightBin.binEnd,
+          } as NumberOrDateRange);
         }
       }
     },
-    [data.valueType, binSummaries, orientation, setSelectedRangeHighlighting]
+    [data.valueType, binSummaries, setLocalSelectedRange]
   );
+
+  const selectedRangeHighlighting = useMemo(() => {
+    if (localSelectedRange) {
+      return [
+        {
+          type: 'rect',
+          xref: orientation === 'vertical' ? 'x' : 'paper',
+          yref: orientation === 'vertical' ? 'paper' : 'y',
+          x0: orientation === 'vertical' ? localSelectedRange.min : 0,
+          x1: orientation === 'vertical' ? localSelectedRange.max : 1,
+          y0: orientation === 'vertical' ? 0 : localSelectedRange.min,
+          y1: orientation === 'vertical' ? 1 : localSelectedRange.max,
+          line: {
+            color: 'blue',
+            width: 1,
+          },
+          fillcolor: 'lightblue',
+          opacity: 0.4,
+        },
+      ];
+    } else {
+      return [];
+    }
+  }, [localSelectedRange, orientation]);
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
