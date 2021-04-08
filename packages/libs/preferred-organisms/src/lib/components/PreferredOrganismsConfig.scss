@@ -25,6 +25,10 @@ $gray: #f5f5f5;
     .wdk-CheckboxTreeLinks > div {
       text-align: left;
     }
+
+    .wdk-CheckboxTree .wdk-RealTimeSearchBox__withHelp {
+      width: calc(35em - 2rem);
+    }
   }
 
   &--PreviewContent {
