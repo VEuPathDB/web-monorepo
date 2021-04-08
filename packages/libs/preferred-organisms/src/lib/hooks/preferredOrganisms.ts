@@ -35,18 +35,11 @@ export function usePreferredOrganismsState() {
   return useRecoilState(preferredOrganisms);
 }
 
-export function usePreferredOrganismsRecoilState() {
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
-
-  return memoizedPreferredOrganismsRecoilStateMaker(wdkDependencies);
-}
-
 export function useUpdateBuildNumberCallback() {
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
   const {
     buildNumber,
     organismPreference,
-  } = memoizedPreferredOrganismsRecoilStateMaker(wdkDependencies);
+  } = usePreferredOrganismsRecoilState();
 
   const buildNumberValue = useRecoilValue(buildNumber);
   const setOrganismPreference = useSetRecoilState(organismPreference);
@@ -57,4 +50,10 @@ export function useUpdateBuildNumberCallback() {
       buildNumber: buildNumberValue,
     }));
   }, [buildNumberValue, setOrganismPreference]);
+}
+
+export function usePreferredOrganismsRecoilState() {
+  const wdkDependencies = useContext(WdkDepdendenciesContext);
+
+  return memoizedPreferredOrganismsRecoilStateMaker(wdkDependencies);
 }
