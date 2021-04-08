@@ -3,8 +3,8 @@ import { PlotParams } from 'react-plotly.js';
 
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
-import { HistogramData } from '../types/plots';
-import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
+import { HistogramData, HistogramBin } from '../types/plots';
+import { NumberOrDate, NumberOrDateRange } from '../types/general';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
@@ -14,7 +14,6 @@ import * as DateMath from 'date-arithmetic';
 // Components
 import PlotlyPlot from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
-import { HistogramBin } from '../../lib/types/plots';
 
 // bin middles needed for highlighting
 interface BinSummary {
