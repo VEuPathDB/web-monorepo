@@ -25,7 +25,7 @@ import './PreferredOrganismsConfig.scss';
 const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
 interface Props {
-  availableOrganisms: string[];
+  availableOrganisms: Set<string>;
   configSelection: string[];
   organismTree: Node<TreeBoxVocabNode>;
   projectId: string;
@@ -101,7 +101,7 @@ export function PreferredOrganismsConfig({
             >
               {configSelection.length}
             </span>{' '}
-            of {availableOrganisms.length})
+            of {availableOrganisms.size})
           </h2>
           <div className={cx('--PreviewInstructions')}>
             {projectId} will restrict the organisms it displays, throughout the

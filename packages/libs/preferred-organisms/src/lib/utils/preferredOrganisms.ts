@@ -175,7 +175,7 @@ async function fetchOrganismTree(wdkService: WdkService) {
 
 async function fetchPreferredOrganisms(
   wdkService: WdkService,
-  availableOrganisms: string[]
+  availableOrganisms: Set<string>
 ) {
   const [buildNumber, userPreferences] = await Promise.all([
     fetchBuildNumber(wdkService),
@@ -184,7 +184,7 @@ async function fetchPreferredOrganisms(
 
   const defaultPreferredOrganisms = {
     buildNumber,
-    organisms: availableOrganisms,
+    organisms: [...availableOrganisms],
   };
 
   const preferenceStr =
@@ -259,7 +259,7 @@ async function fetchOrganismBuildNumbers(wdkService: WdkService) {
 }
 
 function findNewOrganisms(
-  availableOrganisms: string[],
+  availableOrganisms: Set<string>,
   organismBuildNumbers: Map<string, number>,
   organismPreferenceBuildNumber: number
 ) {

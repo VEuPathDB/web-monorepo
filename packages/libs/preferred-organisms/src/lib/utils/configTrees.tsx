@@ -79,7 +79,11 @@ export function makeRenderNode(
 }
 
 export function findAvailableOrganisms(organismTree: TreeBoxVocabNode) {
-  return getLeaves(organismTree, getNodeChildren).map(getNodeId);
+  const availableOrganismsList = getLeaves(organismTree, getNodeChildren).map(
+    getNodeId
+  );
+
+  return new Set(availableOrganismsList);
 }
 
 export function makePreviewTree(
