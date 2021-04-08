@@ -42,12 +42,16 @@ export function PreferredOrganismsConfig({
   referenceStrains,
   setConfigSelection,
 }: Props) {
-  const renderNode = useRenderOrganismNode(referenceStrains, newOrganisms);
+  const renderConfigNode = useRenderOrganismNode(
+    referenceStrains,
+    newOrganisms
+  );
 
   const [configFilterTerm, setConfigFilterTerm] = useState('');
   const [configExpansion, setConfigExpansion] = useState<string[]>([]);
   const configSearchPredicate = useOrganismSearchPredicate(referenceStrains);
 
+  const renderPreviewNode = useRenderOrganismNode(referenceStrains, undefined);
   const previewExpansion = useMemo(
     () => makeInitialPreviewExpansion(organismTree),
     [organismTree]
@@ -59,10 +63,11 @@ export function PreferredOrganismsConfig({
 
   return (
     <div className={cx()}>
-      <h1>Configure My Organisms</h1>
+      <h1>My Organism Preferences</h1>
       <p className={cx('--Instructions')}>
-        Set your <span className={cx('--InlineTitle')}>My Organisms</span> list
-        to limit the organisms you see throughout {projectId}.
+        Set your{' '}
+        <span className={cx('--InlineTitle')}>My Organism Preferences</span> to
+        limit the organisms you see throughout {projectId}.
       </p>
       <div className={cx('--Main')}>
         <div className={cx('--Selections')}>
@@ -77,7 +82,7 @@ export function PreferredOrganismsConfig({
             searchPredicate={configSearchPredicate}
             searchBoxHelp={makeSearchHelpText('the list below')}
             searchBoxPlaceholder="Type a taxonomic name"
-            renderNode={renderNode}
+            renderNode={renderConfigNode}
             expandedList={configExpansion}
             onExpansionChange={setConfigExpansion}
             shouldExpandDescendantsWithOneChild
@@ -89,7 +94,8 @@ export function PreferredOrganismsConfig({
         </div>
         <div className={cx('--Preview')}>
           <h2>
-            Preview of <span className={cx('--InlineTitle')}>My Organisms</span>{' '}
+            Preview of{' '}
+            <span className={cx('--InlineTitle')}>My Organism Preferences</span>{' '}
             (
             <span
               className={cx(
@@ -101,26 +107,28 @@ export function PreferredOrganismsConfig({
             </span>{' '}
             of {availableOrganisms.size})
           </h2>
-          <div className={cx('--PreviewInstructions')}>
-            {projectId} will restrict the organisms it displays, throughout the
-            site, to those you have chosen, as shown below.
-          </div>
-          {configSelection.length === 0 ? (
-            <div className={cx('--NoPreferencesSelected')}>
-              Please select at least one organism
+          <div className={cx('--PreviewContent')}>
+            <div className={cx('--PreviewInstructions')}>
+              {projectId} will restrict the organisms it displays, throughout
+              the site, to those you have chosen, as shown below.
             </div>
-          ) : (
-            <CheckboxTree<TreeBoxVocabNode>
-              tree={previewTree}
-              getNodeId={getNodeId}
-              getNodeChildren={getNodeChildren}
-              renderNode={renderNode}
-              expandedList={previewExpansion}
-              onExpansionChange={noop}
-              shouldExpandDescendantsWithOneChild
-              linksPosition={CheckboxTree.LinkPlacement.None}
-            />
-          )}
+            {configSelection.length === 0 ? (
+              <div className={cx('--NoPreferencesSelected')}>
+                Please select at least one organism
+              </div>
+            ) : (
+              <CheckboxTree<TreeBoxVocabNode>
+                tree={previewTree}
+                getNodeId={getNodeId}
+                getNodeChildren={getNodeChildren}
+                renderNode={renderPreviewNode}
+                expandedList={previewExpansion}
+                onExpansionChange={noop}
+                shouldExpandDescendantsWithOneChild
+                linksPosition={CheckboxTree.LinkPlacement.None}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

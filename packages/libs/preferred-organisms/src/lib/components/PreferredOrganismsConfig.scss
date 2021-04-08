@@ -1,5 +1,5 @@
 $red: #cc0000;
-$gray: #f0f0f0;
+$gray: #f5f5f5;
 
 .PreferredOrganismsConfig {
   &--Instructions {
@@ -12,10 +12,6 @@ $gray: #f0f0f0;
     grid-template-columns: 1fr 1fr;
     gap: 1em;
     align-items: flex-start;
-  }
-
-  &--Main > * {
-    padding: 0em 2em 1em 2em;
   }
 
   &--Selections {
@@ -31,8 +27,11 @@ $gray: #f0f0f0;
     }
   }
 
-  &--Preview {
+  &--PreviewContent {
     background-color: $gray;
+    border: 0.125rem solid #eee;
+    border-radius: 0.5rem;
+    padding: 1.5em;
 
     .wdk-CheckboxTree {
       padding: 0.5em;
@@ -41,7 +40,6 @@ $gray: #f0f0f0;
 
   &--PreviewInstructions {
     font-size: 1.3em;
-    margin: 0.5em 0;
   }
 
   &--SelectionCount__empty {

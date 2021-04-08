@@ -11,7 +11,7 @@ import {
 import { useReferenceStrains } from '../hooks/referenceStrains';
 
 export function PreferredOrganismsConfigController() {
-  useSetDocumentTitle('Configure My Organisms');
+  useSetDocumentTitle('My Organism Preferences');
 
   const availableOrganisms = useAvailableOrganisms();
 
