@@ -14,6 +14,14 @@ import * as DateMath from 'date-arithmetic';
 // Components
 import PlotlyPlot from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
+import { HistogramBin } from '../../lib/types/plots';
+
+// bin middles needed for highlighting
+interface BinSummary {
+  binStart: HistogramBin['binStart'];
+  binEnd: HistogramBin['binEnd'];
+  binMiddle: HistogramBin['binEnd'];
+}
 
 export interface HistogramProps {
   /** Data for the plot. */
@@ -135,20 +143,6 @@ export default function Histogram({
         const binStarts = series.bins.map((bin) => bin.binStart);
         const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
         const binCounts = series.bins.map((bin) => bin.count);
-        const perBarOpacity: number[] = series.bins.map((bin) => {
-          if (selectedRange) {
-            if (
-              bin.binStart >= selectedRange.min &&
-              bin.binEnd <= selectedRange.max
-            ) {
-              return calculatedBarOpacity;
-            } else {
-              return 0.2 * calculatedBarOpacity;
-            }
-          } else {
-            return calculatedBarOpacity;
-          }
-        });
         const binWidths = series.bins.map((bin) => {
           if (data.valueType !== undefined && data.valueType === 'date') {
             // date, needs to be in milliseconds
@@ -177,10 +171,20 @@ export default function Histogram({
           textposition: showBarValues ? 'auto' : undefined,
           marker: {
             ...(series.color ? { color: series.color } : {}),
-            opacity: perBarOpacity,
           },
           offset: 0,
           width: binWidths,
+          selected: {
+            marker: {
+              opacity: 1,
+            },
+          },
+          unselected: {
+            // switch off fading of unselected bars while selecting
+            marker: {
+              opacity: 1,
+            },
+          },
         };
       }),
     [data, orientation, calculatedBarOpacity, selectedRange]
@@ -202,6 +206,49 @@ export default function Histogram({
     [data.valueType, orientation, onSelectedRangeChange]
   );
 
+  const binSummaries: BinSummary[] = useMemo(() => {
+    // find all unique bins from all series (may not be strictly necessary)
+    // assume binLabels are sufficient to 'uniquify' bins
+
+    const allBins: HistogramBin[] = data.series
+      .map((series) => [series.bins])
+      .flat(2);
+
+    const seenLabels: string[] = [];
+    const uniqueBins = allBins.filter((bin) => {
+      const seenBefore = seenLabels.indexOf(bin.binLabel);
+      seenLabels.push(bin.binLabel);
+      return seenBefore < 0;
+    });
+    // sort them on binStart just in case
+    uniqueBins.sort((bina, binb) =>
+      bina.binStart > binb.binStart
+        ? 1
+        : bina.binStart === binb.binStart
+        ? 0
+        : -1
+    );
+
+    // return the list of summaries - note the binMiddle prop
+    return uniqueBins.map((bin) => ({
+      binStart: bin.binStart,
+      binEnd: bin.binEnd,
+      binMiddle:
+        data.valueType === 'date'
+          ? DateMath.add(
+              bin.binStart as Date,
+              DateMath.diff(
+                bin.binStart as Date,
+                bin.binEnd as Date,
+                'seconds',
+                false
+              ) * 500,
+              'milliseconds'
+            )
+          : ((bin.binStart as number) + (bin.binEnd as number)) / 2.0,
+    }));
+  }, [data.series, data.valueType]);
+
   const [selectedRangeHighlighting, setSelectedRangeHighlighting] = useState<
     Partial<Shape>[]
   >([]);
@@ -209,6 +256,7 @@ export default function Histogram({
   const handleSelectingRange = useCallback(
     (object: any) => {
       if (object && object.range) {
+        setSelectedRangeHighlighting([]);
         const [val1, val2] =
           orientation === 'vertical' ? object.range.x : object.range.y;
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
@@ -217,47 +265,38 @@ export default function Histogram({
           min: data.valueType === 'date' ? new Date(min) : min,
           max: data.valueType === 'date' ? new Date(max) : max,
         };
-        // now snap to bin boundaries
-        const leftBinStarts = data.series
-          .map((series) => [
-            series.bins
-              .filter((bin) => bin.binStart > rawRange.min)
-              .map((bin) => bin.binStart),
-          ])
-          .flat(2)
-          .sort((a, b) => (a > b ? 1 : a === b ? 0 : -1));
 
-        const rightBinEnds = data.series
-          .map((series) => [
-            series.bins
-              .filter((bin) => bin.binEnd < rawRange.max)
-              .map((bin) => bin.binEnd),
-          ])
-          .flat(2)
-          .sort((a, b) => (a < b ? 1 : a === b ? 0 : -1));
-
-        if (leftBinStarts.length > 0 && rightBinEnds.length > 0) {
+        // now snap to bin boundaries using same logic that Plotly uses
+        // (dragging range past middle of bin selects it)
+        const leftBin = binSummaries.find(
+          (bin) => rawRange.min < bin.binMiddle
+        );
+        const rightBin = binSummaries
+          .slice()
+          .reverse()
+          .find((bin) => rawRange.max > bin.binMiddle);
+        if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
           setSelectedRangeHighlighting([
             {
               type: 'rect',
               xref: orientation === 'vertical' ? 'x' : 'paper',
               yref: orientation === 'vertical' ? 'paper' : 'y',
-              x0: orientation === 'vertical' ? leftBinStarts[0] : 0,
-              x1: orientation === 'vertical' ? rightBinEnds[0] : 1,
-              y0: orientation === 'vertical' ? 0 : leftBinStarts[0],
-              y1: orientation === 'vertical' ? 1 : rightBinEnds[0],
+              x0: orientation === 'vertical' ? leftBin.binStart : 0,
+              x1: orientation === 'vertical' ? rightBin.binEnd : 1,
+              y0: orientation === 'vertical' ? 0 : leftBin.binStart,
+              y1: orientation === 'vertical' ? 1 : rightBin.binEnd,
               line: {
                 color: 'blue',
                 width: 1,
               },
-              fillcolor: 'blue',
-              opacity: 0.5,
+              fillcolor: 'lightblue',
+              opacity: 0.4,
             },
           ]);
         }
       }
     },
-    [data.valueType, data.series, orientation, onSelectedRangeChange]
+    [data.valueType, binSummaries, orientation, setSelectedRangeHighlighting]
   );
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
