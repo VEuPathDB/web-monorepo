@@ -223,7 +223,7 @@ export function GbrowseContext(props) {
       jbrowseUrlFull = record.attributes.geneJbrowseFullUrl;
       apolloUrlFull = record.attributes.geneApolloFullUrl;
       apolloHelp = record.attributes.apolloHelp;
-      if (window.location.href.indexOf("vectorbase") != -1 || window.location.href.indexOf("piroplasmadb") != -1 || window.location.href.indexOf("toxodb") != -1 || window.location.href.indexOf("amoebadb") != -1){
+      if (window.location.href.indexOf("vectorbase") != -1 || window.location.href.indexOf("piroplasmadb") != -1 || window.location.href.indexOf("toxodb") != -1 || window.location.href.indexOf("amoebadb") != -1 || window.location.href.indexOf("tritrypdb") != -1 || window.location.href.indexOf("fungidb") != -1 || window.location.href.indexOf("plasmodb") != -1 || window.location.href.indexOf("cryptodb") != -1 ){
       return (
         <div>
         <p><img src={newFeatureImage}/>This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a></p>
