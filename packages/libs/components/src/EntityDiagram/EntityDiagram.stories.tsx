@@ -243,6 +243,7 @@ EntityDiagramControls.args = {
   shadowDispersion: 0.2,
   shadowOpacity: 0.3,
   highlightedEntityID: 'Sample',
+  shadingColor: '#e4c8c8',
   shadingData: shadingData,
   treeData: studyData.rootEntity,
   fontSize: 12,
@@ -257,6 +258,9 @@ EntityDiagramControls.argTypes = {
       type: 'radio',
       options: ['vertical', 'horizontal'],
     },
+  },
+  shadingColor: {
+    control: 'color',
   },
   selectedHighlightColor: {
     control: 'color',

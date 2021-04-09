@@ -106,6 +106,7 @@ export interface EntityDiagramProps {
   expandedNodeWidth?: number;
   expandedNodeHeight?: number;
   fontSize?: number;
+  shadingColor?: string;
 }
 
 export default function EntityDiagram({
@@ -129,6 +130,7 @@ export default function EntityDiagram({
   expandedNodeWidth = 120,
   expandedNodeHeight = 40,
   fontSize = 12,
+  shadingColor = '#e4c8c8',
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
 
@@ -311,7 +313,7 @@ export default function EntityDiagram({
               x2={shadingData[key]}
               fromOffset={1}
               id={`rect-gradient-${key}`}
-              from="#e4c8c8"
+              from={shadingColor}
               to="white"
             />
           ))
