@@ -86,7 +86,7 @@ export interface EntityDiagramProps {
   /** Which entity to highlight */
   highlightedEntityID: string;
   /** Data defining the background shading of each node */
-  shadingData: ShadingData;
+  shadingData?: ShadingData;
   /** An optional function returning the element to render for a node given its
    * data */
   renderNode?: (
@@ -181,7 +181,7 @@ export default function EntityDiagram({
         y={-rectHeight / 2}
         x={-rectWidth / 2}
         fill={
-          shadingData[node.data.id]
+          shadingData?.[node.data.id]
             ? `url('#rect-gradient-${node.data.id}')`
             : 'white'
         }
@@ -303,7 +303,7 @@ export default function EntityDiagram({
             />
           </filter>
         </defs>
-        {
+        {shadingData &&
           // Node background shading definitions
           Object.keys(shadingData).map((key, index) => (
             <LinearGradient
@@ -316,8 +316,7 @@ export default function EntityDiagram({
               from={shadingColor}
               to="white"
             />
-          ))
-        }
+          ))}
         <Tree root={data} size={[treeWidth, treeHeight]}>
           {(tree) => (
             <Group left={treeLeft} top={treeTop}>
