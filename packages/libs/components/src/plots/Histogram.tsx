@@ -200,8 +200,11 @@ export default function Histogram({
     const seenLabels: string[] = [];
     const uniqueBins = allBins.filter((bin) => {
       const seenBefore = seenLabels.indexOf(bin.binLabel);
-      seenLabels.push(bin.binLabel);
-      return seenBefore < 0;
+      if (seenBefore < 0) {
+        seenLabels.push(bin.binLabel);
+        return true;
+      }
+      return false;
     });
     // sort them on binStart just in case
     uniqueBins.sort((bina, binb) =>
