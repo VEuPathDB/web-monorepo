@@ -221,15 +221,6 @@ export default function HistogramControls({
             containerStyles={{ paddingRight: 25 }}
           />
         )}
-        {/* commend this out as it moves to x-axis control group */}
-        {/* {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
-          <ButtonGroup
-            label="Data Units"
-            options={availableUnits}
-            selectedOption={selectedUnit}
-            onOptionSelected={onSelectedUnitChange}
-          />
-        ) : null} */}
         {onSelectedRangeChange ? (
           valueType !== undefined && valueType === 'date' ? (
             <DateRangeInput
@@ -266,33 +257,6 @@ export default function HistogramControls({
             color={accentColor}
           />
         )}
-        {/* commend this out as it moves to x-axis control group */}
-        {/* {onBinWidthChange && (
-          <SliderWidget
-            label={`Bin Width${
-              valueType !== undefined && valueType === 'date'
-                ? ' (' + (binWidth as TimeDelta)[1] + ')'
-                : ''
-            }`}
-            minimum={binWidthRange.min}
-            maximum={binWidthRange.max}
-            step={
-              valueType !== undefined && valueType === 'date'
-                ? (binWidth as TimeDelta)[0]
-                : (binWidthStep as number)
-            }
-            value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
-            onChange={(newValue: number) => {
-              onBinWidthChange({
-                binWidth:
-                  valueType !== undefined && valueType === 'date'
-                    ? ([newValue, selectedUnit] as TimeDelta)
-                    : newValue,
-                selectedUnit,
-              });
-            }}
-          />
-        )} */}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 5 }}>
         {toggleDisplayLegend && (
@@ -370,14 +334,12 @@ export default function HistogramControls({
             valueType !== undefined && valueType === 'date' ? (
               <DateRangeInput
                 label="Range:"
-                // rangeBounds={selectedRangeBounds as DateRange}
                 range={dependentAxisRange as DateRange}
                 onRangeChange={onDependentAxisRangeChange}
               />
             ) : (
               <NumberRangeInput
                 label="Range:"
-                // rangeBounds={selectedRangeBounds as NumberRange}
                 range={dependentAxisRange as NumberRange}
                 onRangeChange={onDependentAxisRangeChange}
               />
@@ -477,14 +439,12 @@ export default function HistogramControls({
             valueType !== undefined && valueType === 'date' ? (
               <DateRangeInput
                 label="Range:"
-                // rangeBounds={selectedRangeBounds as DateRange}
                 range={independentAxisRange as DateRange}
                 onRangeChange={onIndependentAxisRangeChange}
               />
             ) : (
               <NumberRangeInput
                 label="Range:"
-                // rangeBounds={selectedRangeBounds as NumberRange}
                 range={independentAxisRange as NumberRange}
                 onRangeChange={onIndependentAxisRangeChange}
               />
