@@ -83,7 +83,7 @@ function BaseInput({
     } else {
       setErrorState({ error: false, helperText: '' });
     }
-    return undefined;
+    return newValue;
   };
 
   useEffect(() => {
