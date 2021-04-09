@@ -21,12 +21,12 @@ import { Props, isPropsType } from '@veupathdb/wdk-client/lib/Views/Question/Par
 
 import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
 
-import { usePreferredOrganismsState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import {
   useRenderOrganismNode,
-  useReferenceStrains,
   useOrganismSearchPredicate
-} from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
+} from '@veupathdb/preferred-organisms/lib/hooks/organismNodes';
+import { usePreferredOrganismsState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
+import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
 
 import './OrganismParam.scss';
 
@@ -85,8 +85,11 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
 
   const shouldHighlightReferenceOrganisms = props.parameter.properties?.[ORGANISM_PROPERTIES_KEY].includes(HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY) ?? false;
 
-  const renderNode = useRenderOrganismNode(referenceStrains, shouldHighlightReferenceOrganisms);
-  const searchPredicate = useOrganismSearchPredicate(referenceStrains, shouldHighlightReferenceOrganisms);
+  const renderNode = useRenderOrganismNode(
+    shouldHighlightReferenceOrganisms ? referenceStrains : undefined,
+    undefined
+  );
+  const searchPredicate = useOrganismSearchPredicate(referenceStrains);
 
   const wrapCheckboxTreeProps = useCallback((props: CheckboxTreeProps<TreeBoxVocabNode>) => ({
     ...props,
@@ -96,9 +99,12 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
 
   return paramWithPrunedVocab.vocabulary.children.length === 0
     ? <p className="EmptyTree">
-        This search applies only to organisms not in <strong>My Organisms</strong>.
-        <br />
-        To use this search, please first <Link to="/preferred-organisms">adjust My Organism Preferences</Link>.
+        <div className="Instructions">
+          To use this search, please first <Link to="/preferred-organisms">adjust My Organism Preferences</Link>.
+        </div>
+        <div className="Explanation">
+          (Your current preferences exclude all organisms used in this search.)
+        </div>
       </p>
     : <TreeBoxEnumParamComponent
         {...props}

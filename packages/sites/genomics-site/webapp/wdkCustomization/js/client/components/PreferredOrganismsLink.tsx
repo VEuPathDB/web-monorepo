@@ -24,5 +24,5 @@ function PreferredOrganismsCount() {
   const availableOrganisms = useAvailableOrganisms();
   const [ preferredOrganisms ] = usePreferredOrganismsState();
 
-  return <>({preferredOrganisms.length} of {availableOrganisms.length})</>;
+  return <>({preferredOrganisms.length} of {availableOrganisms.size})</>;
 }
