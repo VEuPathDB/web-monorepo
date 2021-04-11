@@ -16,7 +16,12 @@ import {
 } from 'io-ts';
 import { Filter } from '../types/filter';
 import { Variable, StringVariableValue } from '../types/variable';
+import { ComputationAppOverview } from '../types/visualization';
 import { ioTransformer } from './ioTransformer';
+
+const AppsResponse = type({
+  apps: array(ComputationAppOverview),
+});
 
 type NumBinsOrNumericWidth =
   | {
@@ -187,6 +192,16 @@ export const BarplotResponse = type({
 });
 
 export class DataClient extends FetchClient {
+  getApps(): Promise<TypeOf<typeof AppsResponse>> {
+    return this.fetch(
+      createJsonRequest({
+        method: 'GET',
+        path: '/apps',
+        transformResponse: ioTransformer(AppsResponse),
+      })
+    );
+  }
+
   // Histogram
   getNumericHistogramNumBins(
     params: NumericHistogramRequestParams
