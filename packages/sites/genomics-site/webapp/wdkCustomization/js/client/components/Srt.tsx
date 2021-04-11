@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { noop } from 'lodash';
 
+import { projectId } from '@veupathdb/web-common/lib/config';
 import { TextArea, Loading, HelpIcon, Tabs, Link } from '@veupathdb/wdk-client/lib/Components';
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
@@ -130,9 +131,15 @@ export function Srt() {
           ? <Loading />
           : <React.Fragment>
               <p className={cx('--BulkDownloadLink')}>
-                Use this tool to retrieve FASTA sequences based on identifiers you supply. (If instead you would like to download sequences in bulk, please visit our
+                Use this tool to retrieve FASTA sequences based on identifiers you supply. <br />
+                (If instead you would like to download sequences in bulk, please visit our
                 {' '}
-                <Link to={BULK_DOWNLOAD_URL} target="_blank">file download section</Link>.)
+                { (projectId === 'EuPathDB') ? ' file download section in your component site of interest, eg: ' : '' }
+                { (projectId === 'EuPathDB')
+                  ? <a href="https://plasmodb.org/plasmo/app/downloads/" target="_blank"> PlasmoDB file download section</a>
+                  : <Link to={BULK_DOWNLOAD_URL} target="_blank">file download section</Link>
+                } 
+                .)
               </p>
               <Tabs
                 containerClassName={cx('--SrtForms')}
