@@ -1,12 +1,20 @@
+import React, { useMemo } from 'react';
+import {
+  Route,
+  Switch,
+  useHistory,
+  useRouteMatch,
+  RouteComponentProps,
+} from 'react-router-dom';
+import { v4 as uuid } from 'uuid';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { keyBy } from 'lodash';
-import React, { useMemo } from 'react';
-import { RouteComponentProps } from 'react-router';
-import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
-import { v4 as uuid } from 'uuid';
 import { Filter } from '../../types/filter';
-import { Computation, Visualization } from '../../types/visualization';
+import {
+  Computation,
+  Visualization,
+  VisualizationOverview,
+} from '../../types/visualization';
 import { Grid } from '../Grid';
 import { VisualizationType } from './VisualizationTypes';
 
@@ -20,7 +28,8 @@ interface Props {
   computations: Computation[];
   addVisualization: (visualization: Visualization) => void;
   updateVisualization: (visualization: Visualization) => void;
-  visualizationTypes: VisualizationType[];
+  visualizationTypes: Partial<Record<string, VisualizationType>>;
+  visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
 }
 
@@ -68,10 +77,6 @@ function ConfiguredVisualizations(props: Props) {
     () => visualizations.filter((viz) => viz.computationId === computationId),
     [computationId, visualizations]
   );
-  const vizTypesByType = useMemo(
-    () => keyBy(visualizationTypes, (v) => v.type),
-    [visualizationTypes]
-  );
   if (computation == null) return <div>Computation not found</div>;
   return (
     <Grid>
@@ -84,7 +89,7 @@ function ConfiguredVisualizations(props: Props) {
       </div>
       {scopedVisualizations
         .map((viz) => {
-          const type = vizTypesByType[viz.type];
+          const type = visualizationTypes[viz.type];
           if (type == null)
             return <div>Viz type not implemented: {viz.type}</div>;
           return (
@@ -110,6 +115,7 @@ function ConfiguredVisualizations(props: Props) {
 function NewVisualizationPicker(props: Props) {
   const {
     visualizationTypes,
+    visualizationsOverview,
     addVisualization,
     computationId,
     computations,
@@ -129,26 +135,39 @@ function NewVisualizationPicker(props: Props) {
       </div>
       <h3>Select a visualization</h3>
       <Grid>
-        {visualizationTypes.map((vizType) => (
-          <div className={cx('-PickerEntry')}>
-            <button
-              type="button"
-              onClick={async () => {
-                const id = uuid();
-                addVisualization({
-                  id,
-                  computationId: computationId,
-                  type: vizType.type,
-                  configuration: vizType.createDefaultConfig(),
-                });
-                history.push(`../${computationId}/${id}`);
-              }}
-            >
-              <vizType.selectorComponent />
-            </button>
-            <div className={cx('-PickerEntryName')}>{vizType.displayName}</div>
-          </div>
-        ))}
+        {visualizationsOverview.map((vizOverview) => {
+          const vizType = visualizationTypes[vizOverview.name!];
+          return (
+            <div className={cx('-PickerEntry', vizType == null && 'disabled')}>
+              <button
+                type="button"
+                disabled={vizType == null}
+                onClick={async () => {
+                  const id = uuid();
+                  addVisualization({
+                    id,
+                    computationId: computationId,
+                    type: vizOverview.name!,
+                    configuration: vizType?.createDefaultConfig(),
+                  });
+                  history.push(`../${computationId}/${id}`);
+                }}
+              >
+                {vizType ? (
+                  <vizType.selectorComponent />
+                ) : (
+                  <div>NOT IMPLEMENTED</div>
+                )}
+              </button>
+              <div className={cx('-PickerEntryName')}>
+                <div>{vizOverview.displayName}</div>
+                <div>
+                  <small>{vizOverview.name}</small>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </Grid>
     </div>
   );
@@ -157,6 +176,7 @@ function NewVisualizationPicker(props: Props) {
 function FullScreenVisualization(props: Props & { id: string }) {
   const {
     visualizationTypes,
+    visualizationsOverview,
     id,
     computationId,
     visualizations,
@@ -168,7 +188,9 @@ function FullScreenVisualization(props: Props & { id: string }) {
     (v) => v.id === id && v.computationId === computationId
   );
   const computation = computations.find((a) => a.id === computationId);
-  const vizType = visualizationTypes.find((t) => t.type === viz?.type);
+  const vizType = viz && visualizationTypes[viz.type];
+  const constraints = visualizationsOverview.find((v) => v.name === viz?.type)
+    ?.dataElementConstraints;
   if (viz == null) return <div>Visualization not found.</div>;
   if (computation == null) return <div>Computation not found.</div>;
   if (vizType == null) return <div>Visualization type not implemented.</div>;
@@ -181,6 +203,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </Link>
       </div>
       <vizType.fullscreenComponent
+        dataElementConstraints={constraints}
         visualization={viz}
         updateVisualization={updateVisualization}
         computation={computation}

@@ -1,47 +1,43 @@
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
-
-import React, { useCallback, useMemo } from 'react';
-import { StudyEntity, StudyVariable } from '../../../../core';
+import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
-import { HistogramData } from '@veupathdb/components/lib/types/plots';
 import {
   ErrorManagement,
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
 } from '@veupathdb/components/lib/types/general';
-import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
-import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
-import { usePromise } from '../../../hooks/promise';
+import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
+import { HistogramData } from '@veupathdb/components/lib/types/plots';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { getOrElse } from 'fp-ts/lib/Either';
+import { pipe } from 'fp-ts/lib/function';
+import * as t from 'io-ts';
+import { isEqual } from 'lodash';
+import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
   DateHistogramRequestParams,
   NumericHistogramRequestParams,
 } from '../../../api/data-api';
-import { PromiseType } from '../../../types/utility';
+import { usePromise } from '../../../hooks/promise';
+import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { HistogramVariable } from '../../filter/types';
-import { isHistogramVariable } from '../../filter/guards';
-import { VariableTreeDropdown } from '../../VariableTree';
+import { PromiseType } from '../../../types/utility';
+import { Variable } from '../../../types/variable';
+import { DataElementConstraint } from '../../../types/visualization';
 import {
   ISODateStringToZuluDate,
   parseTimeDelta,
 } from '../../../utils/date-conversion';
-import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
-
-import debounce from 'debounce-promise';
-import * as t from 'io-ts';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { pipe } from 'fp-ts/lib/function';
-import { getOrElse } from 'fp-ts/lib/Either';
+import { isHistogramVariable } from '../../filter/guards';
+import { HistogramVariable } from '../../filter/types';
+import { InputVariables } from '../InputVariables';
+import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 export const histogramVisualization: VisualizationType = {
-  type: 'histogram',
-  displayName: 'Unnamed Histogram',
   gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
@@ -65,7 +61,13 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  const { visualization, updateVisualization, computation, filters } = props;
+  const {
+    visualization,
+    updateVisualization,
+    computation,
+    filters,
+    dataElementConstraints,
+  } = props;
   return (
     <HistogramViz
       visualization={visualization}
@@ -73,6 +75,7 @@ function FullscreenComponent(props: VisualizationProps) {
       computation={computation}
       filters={filters}
       fullscreen={true}
+      constraints={dataElementConstraints}
     />
   );
 }
@@ -90,10 +93,8 @@ const HistogramConfig = t.intersection([
     enableOverlay: t.boolean,
   }),
   t.partial({
-    independentVariable: StudyVariable,
-    independentVariableEntity: StudyEntity,
-    overlayVariable: StudyVariable,
-    overlayVariableEntity: StudyEntity,
+    xAxisVariable: Variable,
+    overlayVariable: Variable,
     binWidth: t.number,
     binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
   }),
@@ -101,14 +102,23 @@ const HistogramConfig = t.intersection([
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
+  constraints?: Record<string, DataElementConstraint>[];
 };
 
 function HistogramViz(props: Props) {
-  const { visualization, updateVisualization, filters, fullscreen } = props;
+  const {
+    visualization,
+    updateVisualization,
+    filters,
+    fullscreen,
+    constraints,
+  } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
-  const entities = Array.from(
-    preorder(studyMetadata.rootEntity, (e) => e.children || [])
+  const entities = useMemo(
+    () =>
+      Array.from(preorder(studyMetadata.rootEntity, (e) => e.children || [])),
+    [studyMetadata]
   );
   const dataClient: DataClient = useDataClient();
 
@@ -118,14 +128,6 @@ function HistogramViz(props: Props) {
       getOrElse((): t.TypeOf<typeof HistogramConfig> => createDefaultConfig())
     );
   }, [visualization.configuration]);
-
-  const {
-    independentVariable,
-    independentVariableEntity,
-    overlayVariable,
-    overlayVariableEntity,
-    enableOverlay,
-  } = vizConfig;
 
   const updateVizConfig = useCallback(
     (newConfig: Partial<HistogramConfig>) => {
@@ -142,42 +144,23 @@ function HistogramViz(props: Props) {
     [updateVisualization, visualization, vizConfig]
   );
 
-  const onMainVariableChange = useCallback(
-    (term: string) => {
-      if (term) {
-        const { entity: newEntity, variable: newVariable } = splitTerm(
-          term,
-          entities
-        );
-        if (newEntity && newVariable) {
-          updateVizConfig({
-            independentVariable: newVariable,
-            independentVariableEntity: newEntity,
-            binWidth: undefined,
-            binWidthTimeUnit: undefined, // reset binWidth if changing variables
-          });
-        }
-      }
+  const handleInputVariableChange = useCallback(
+    (
+      values: Record<
+        string,
+        { entityId: string; variableId: string } | undefined
+      >
+    ) => {
+      const { xAxisVariable, overlayVariable } = values;
+      const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
+      updateVizConfig({
+        xAxisVariable,
+        overlayVariable,
+        binWidth: keepBin ? vizConfig.binWidth : undefined,
+        binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
+      });
     },
-    [updateVizConfig, entities]
-  );
-
-  const onOverlayVariableChange = useCallback(
-    (term: string) => {
-      if (term) {
-        const { entity: newEntity, variable: newVariable } = splitTerm(
-          term,
-          entities
-        );
-        if (newEntity && newVariable) {
-          updateVizConfig({
-            overlayVariable: newVariable,
-            overlayVariableEntity: newEntity,
-          });
-        }
-      }
-    },
-    [updateVizConfig, entities]
+    [updateVizConfig, vizConfig]
   );
 
   const onBinWidthChange = useCallback(
@@ -194,87 +177,75 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const getData = useMemo(
-    () =>
-      debounce(
-        async ({
-          enableOverlay,
-          independentVariable,
-          independentVariableEntity,
-          overlayVariable,
-          overlayVariableEntity,
-          binWidth,
-          binWidthTimeUnit,
-        }: HistogramConfig): Promise<HistogramData> => {
-          if (!independentVariable || !independentVariableEntity)
-            return Promise.reject(new Error('Please choose a main variable'));
-
-          if (independentVariable && !isHistogramVariable(independentVariable))
-            return Promise.reject(
-              new Error(
-                `Please choose another main variable. '${independentVariable.displayName}' is not suitable for histograms`
-              )
-            );
-
-          const params = getRequestParams(
-            studyId,
-            filters ?? [],
-            independentVariableEntity,
-            independentVariable,
-            enableOverlay ? overlayVariableEntity : undefined,
-            enableOverlay ? overlayVariable : undefined,
-            binWidth,
-            binWidthTimeUnit
-          );
-          const response =
-            independentVariable.type === 'date'
-              ? dataClient.getDateHistogramBinWidth(
-                  params as DateHistogramRequestParams
-                )
-              : dataClient.getNumericHistogramBinWidth(
-                  params as NumericHistogramRequestParams
-                );
-          return histogramResponseToData(
-            await response,
-            independentVariable.type
-          );
-        },
-        500
-      ),
-    [studyId, filters, dataClient]
+  const findVariable = useCallback(
+    (variable?: Variable) => {
+      if (variable == null) return undefined;
+      return entities
+        .find((e) => e.id === variable.entityId)
+        ?.variables.find((v) => v.id === variable.variableId);
+    },
+    [entities]
   );
 
   const data = usePromise(
-    useCallback(() => getData(vizConfig), [getData, vizConfig])
+    useCallback(async (): Promise<HistogramData> => {
+      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
+      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
+        return Promise.reject(new Error('Please choose a main variable'));
+
+      if (xAxisVariable && !isHistogramVariable(xAxisVariable))
+        throw new Error(
+          `Please choose another main variable. '${xAxisVariable.displayName}' is not suitable for histograms`
+        );
+
+      const params = getRequestParams(
+        studyId,
+        filters ?? [],
+        vizConfig.xAxisVariable,
+        xAxisVariable.type,
+        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
+        vizConfig.binWidth,
+        vizConfig.binWidthTimeUnit
+      );
+      const response =
+        xAxisVariable.type === 'date'
+          ? dataClient.getDateHistogramBinWidth(
+              params as DateHistogramRequestParams
+            )
+          : dataClient.getNumericHistogramBinWidth(
+              params as NumericHistogramRequestParams
+            );
+      return histogramResponseToData(await response, xAxisVariable.type);
+    }, [studyId, filters, dataClient, vizConfig, findVariable])
   );
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {fullscreen && <h1>Histogram</h1>}
       {fullscreen && (
-        <div>
-          <h1>Histogram</h1>
-          <h2>Choose the main variable</h2>
-          <VariableTreeDropdown
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <InputVariables
+            inputs={[
+              {
+                name: 'xAxisVariable',
+                label: 'Main variable',
+              },
+              {
+                name: 'overlayVariable',
+                label: 'Overlay variable',
+              },
+            ]}
             entities={entities}
-            entityId={independentVariableEntity?.id}
-            variableId={independentVariable?.id}
-            onActiveFieldChange={onMainVariableChange}
-          />
-          <h2>Choose the overlay variable</h2>
-          <Switch
-            label="Enable overlay"
-            state={enableOverlay}
-            onStateChange={() => {
-              updateVizConfig({ enableOverlay: !enableOverlay });
+            values={{
+              xAxisVariable: vizConfig.xAxisVariable,
+              overlayVariable: vizConfig.overlayVariable,
             }}
-          />
-          <VariableTreeDropdown
-            entities={entities}
-            entityId={overlayVariableEntity?.id}
-            variableId={overlayVariable?.id}
-            onActiveFieldChange={onOverlayVariableChange}
+            onChange={handleInputVariableChange}
+            constraints={constraints}
           />
         </div>
       )}
+
       {data.pending && (
         <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
       )}
@@ -284,7 +255,7 @@ function HistogramViz(props: Props) {
           <HistogramPlotWithControls
             data={data.value}
             onBinWidthChange={onBinWidthChange}
-            width={800}
+            width="100%"
             height={400}
             orientation={'vertical'}
             barLayout={'stack'}
@@ -430,17 +401,16 @@ export function histogramResponseToData(
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  entity: StudyEntity,
-  variable: HistogramVariable,
-  overlayEntity?: StudyEntity,
-  overlayVariable?: StudyVariable, // TO DO: ?CategoricalVariable?
+  variable: Variable,
+  variableType: 'number' | 'date',
+  overlayVariable?: Variable,
   binWidth?: number,
   binWidthTimeUnit?: string
 ): NumericHistogramRequestParams | DateHistogramRequestParams {
   const binOption = binWidth
     ? {
         binWidth:
-          variable.type === 'number'
+          variableType === 'number'
             ? binWidth
             : `${binWidth} ${binWidthTimeUnit}`,
       }
@@ -452,32 +422,11 @@ function getRequestParams(
     studyId,
     filters,
     config: {
-      outputEntityId: entity.id,
+      outputEntityId: variable.entityId,
       valueSpec: 'count',
-      xAxisVariable: {
-        entityId: entity.id,
-        variableId: variable.id,
-      },
-      overlayVariable:
-        overlayEntity && overlayVariable
-          ? {
-              entityId: overlayEntity.id,
-              variableId: overlayVariable.id,
-            }
-          : undefined,
+      xAxisVariable: variable,
+      overlayVariable,
       ...binOption,
     },
   } as NumericHistogramRequestParams | DateHistogramRequestParams;
-}
-
-function splitTerm(term: string, entities: StudyEntity[]) {
-  if (term) {
-    const [newEntityId, newVariableId] = term.split('/');
-    const newEntity = entities.find((entity) => entity.id === newEntityId);
-    const newVariable = newEntity?.variables.find(
-      (variable) => variable.id === newVariableId
-    ) as StudyVariable;
-    return { entity: newEntity, variable: newVariable };
-  }
-  return {};
 }
