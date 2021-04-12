@@ -246,7 +246,8 @@ const FieldNode = ({
             (node.field.term.includes('entity:')
               ? ' wdk-AttributeFilterFieldEntityParent'
               : '') +
-            (node.field.term.split(':')[1] === activeFieldEntity
+            (activeFieldEntity != null &&
+            node.field.term.split(':')[1] === activeFieldEntity
               ? ' wdk-AttributeFilterFieldParent__active'
               : '')
           }
