@@ -105,3 +105,25 @@ AuxillaryTextInput.args = {
   showTextInput: true,
 };
 AuxillaryTextInput.argTypes = { ...Basic.argTypes };
+
+export const AuxillaryTextInputBigNum = Template.bind({});
+AuxillaryTextInputBigNum.args = {
+  ...Labelled.args,
+  minimum: -10000,
+  maximum: 10000,
+  containerStyles: { height: 100, width: 600 },
+  label: 'Special Number',
+  showTextInput: true,
+};
+AuxillaryTextInputBigNum.argTypes = { ...Basic.argTypes };
+
+export const AuxillaryTextInputHugeNum = Template.bind({});
+AuxillaryTextInputHugeNum.args = {
+  ...Labelled.args,
+  minimum: -100000000,
+  maximum: 100000000,
+  containerStyles: { height: 100, width: 600 },
+  label: 'Special Number',
+  showTextInput: true,
+};
+AuxillaryTextInputHugeNum.argTypes = { ...Basic.argTypes };

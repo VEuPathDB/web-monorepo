@@ -7,17 +7,19 @@ import { NumberOrDate } from '../../types/general';
 
 type BaseProps<M extends NumberOrDate> = {
   /** Externally controlled value. */
-  value: M | '';
+  value: M;
   /** Minimum allowed value (inclusive) */
   minValue?: M;
   /** Maximum allowed value (inclusive) */
   maxValue?: M;
   /** Function to invoke when value changes. */
-  onValueChange: (newValue: NumberOrDate | '') => void;
+  onValueChange: (newValue: NumberOrDate) => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Additional styles for component container. Optional. */
   containerStyles?: React.CSSProperties;
+  /** Do not flag up value range violations */
+  displayRangeViolationWarnings?: boolean;
 };
 
 export type NumberInputProps = BaseProps<number>;
@@ -53,6 +55,7 @@ function BaseInput({
   label,
   valueType,
   containerStyles,
+  displayRangeViolationWarnings = true,
 }: BaseInputProps) {
   const [focused, setFocused] = useState(false);
   const [errorState, setErrorState] = useState({
@@ -66,20 +69,21 @@ function BaseInput({
     },
   })();
 
-  const boundsCheckedValue = (newValue: NumberOrDate | '') => {
-    if (newValue === '') return newValue;
+  const boundsCheckedValue = (newValue: NumberOrDate) => {
     if (minValue !== undefined && newValue < minValue) {
       newValue = minValue;
-      setErrorState({
-        error: true,
-        helperText: `Sorry, value can't go below ${minValue}!`,
-      });
+      displayRangeViolationWarnings &&
+        setErrorState({
+          error: true,
+          helperText: `Sorry, value can't go below ${minValue}!`,
+        });
     } else if (maxValue !== undefined && newValue > maxValue) {
       newValue = maxValue;
-      setErrorState({
-        error: true,
-        helperText: `Sorry, value can't go above ${maxValue}!`,
-      });
+      displayRangeViolationWarnings &&
+        setErrorState({
+          error: true,
+          helperText: `Sorry, value can't go above ${maxValue}!`,
+        });
     } else {
       setErrorState({ error: false, helperText: '' });
     }

@@ -46,6 +46,15 @@ ControlledBoundedNonZero.args = {
   maxValue: 9,
 };
 
+export const SilentBoundsCheck = ControlledTemplate.bind({});
+SilentBoundsCheck.args = {
+  label: 'Controlled (10 <= x <= 12)',
+  value: 11,
+  minValue: 10,
+  maxValue: 12,
+  displayRangeViolationWarnings: false,
+};
+
 export const ControlledLinkedPair: Story = () => {
   const [linkedValue, setLinkedValue] = useState<number>(0);
 

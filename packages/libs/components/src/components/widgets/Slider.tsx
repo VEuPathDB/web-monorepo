@@ -162,6 +162,14 @@ export default function SliderWidget({
           onValueChange={(newValue?: NumberOrDate) =>
             setLocalValue(newValue as number)
           }
+          displayRangeViolationWarnings={false}
+          containerStyles={{
+            width:
+              Math.max(String(maximum).length, String(minimum).length) +
+              5 +
+              'ch',
+            marginRight: 10,
+          }}
         />
       )}
       <Slider
