@@ -19,7 +19,7 @@ export function PreferredOrganismsToggle({ enabled, onClick }: Props) {
       type="button"
       onClick={onClick}
     >
-      <Toggle on={enabled} /> Enable{' '}
+      <Toggle on={!enabled} /> Disable{' '}
       <span className={cx('--InlineTitle')}>My Organism Preferences</span>
     </button>
   );
