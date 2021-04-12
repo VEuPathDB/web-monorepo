@@ -58,7 +58,10 @@ export function PreferredOrganismsConfig({
 
   const [configFilterTerm, setConfigFilterTerm] = useState('');
   const [configExpansion, setConfigExpansion] = useState<string[]>([]);
-  const configSearchPredicate = useOrganismSearchPredicate(referenceStrains);
+  const configSearchPredicate = useOrganismSearchPredicate(
+    referenceStrains,
+    newOrganisms
+  );
 
   const renderPreviewNode = useRenderOrganismNode(referenceStrains, undefined);
   const previewExpansion = useMemo(
@@ -80,7 +83,7 @@ export function PreferredOrganismsConfig({
           to limit the organisms you see throughout {projectId}.
         </span>
         <span>
-          {location.search.includes('useWipFeatures=true') && (
+          {location.search.includes('showWipFeatures=true') && (
             <PreferredOrganismsToggle
               enabled={preferredOrganismsEnabled}
               onClick={togglePreferredOrganisms}

@@ -1,13 +1,12 @@
-$red: #cc0000;
-
 .OrganismNode--Container {
-  &__new {
-    color: $red;
-  }
-
-  .IsReferenceStrain {
+  .IsReferenceStrain,
+  .IsNewOrganism {
     font-weight: 500;
     margin-left: 0.5em;
     font-size: 0.95em;
+  }
+
+  .IsNewOrganism {
+    color: #3fa415;
   }
 }

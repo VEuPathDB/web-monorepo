@@ -41,7 +41,7 @@ export function useNewOrganisms() {
   const location = useLocation();
 
   return useRecoilValue(
-    newOrganisms(location.search.includes('useWipFeatures=true'))
+    newOrganisms(location.search.includes('showWipFeatures=true'))
   );
 }
 

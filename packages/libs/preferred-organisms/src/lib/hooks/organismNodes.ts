@@ -6,8 +6,8 @@ import {
 } from '../utils/organismNodes';
 
 export function useRenderOrganismNode(
-  referenceStrains: Set<string> | undefined,
-  newOrganisms: Set<string> | undefined
+  referenceStrains?: Set<string>,
+  newOrganisms?: Set<string>
 ) {
   return useMemo(
     () => makeRenderOrganismNode({ newOrganisms, referenceStrains }),
@@ -15,8 +15,12 @@ export function useRenderOrganismNode(
   );
 }
 
-export function useOrganismSearchPredicate(referenceStrains?: Set<string>) {
-  return useMemo(() => makeOrganismSearchPredicate(referenceStrains), [
-    referenceStrains,
-  ]);
+export function useOrganismSearchPredicate(
+  referenceStrains?: Set<string>,
+  newOrganisms?: Set<string>
+) {
+  return useMemo(
+    () => makeOrganismSearchPredicate(referenceStrains, newOrganisms),
+    [referenceStrains, newOrganisms]
+  );
 }

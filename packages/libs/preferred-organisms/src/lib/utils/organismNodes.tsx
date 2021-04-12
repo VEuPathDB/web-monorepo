@@ -1,5 +1,3 @@
-import { partition } from 'lodash';
-
 import {
   makeClassNameHelper,
   safeHtml,
@@ -18,19 +16,29 @@ export function getNodeChildren(node: TreeBoxVocabNode) {
 }
 
 export function makeOrganismSearchPredicate(
-  referenceStrains: Set<string> | undefined
+  referenceStrains?: Set<string>,
+  newOrganisms?: Set<string>
 ) {
   const shouldHighlightReferenceStrains = referenceStrains != null;
+  const shouldHighlightNewOrganisms = newOrganisms != null;
 
   return function (node: TreeBoxVocabNode, searchTerms: string[]) {
-    const searchableString =
-      shouldHighlightReferenceStrains && referenceStrains?.has(getNodeId(node))
-        ? `${node.data.display} reference`
-        : node.data.display;
+    const searchableSubstrings = [
+      node.data.display,
+      shouldHighlightReferenceStrains &&
+        referenceStrains?.has(getNodeId(node)) &&
+        'reference',
+      shouldHighlightNewOrganisms &&
+        newOrganisms?.has(getNodeId(node)) &&
+        'new',
+    ];
+
+    const searchableString = searchableSubstrings.join(' ');
 
     const normalizedSearchTerms = makeNormalizedSearchTerms(
       searchTerms,
-      shouldHighlightReferenceStrains
+      shouldHighlightReferenceStrains,
+      shouldHighlightNewOrganisms
     );
 
     return areTermsInString(normalizedSearchTerms, searchableString);
@@ -39,24 +47,24 @@ export function makeOrganismSearchPredicate(
 
 function makeNormalizedSearchTerms(
   rawSearchTerms: string[],
-  shouldHighlightReferenceStrains: boolean
+  shouldHighlightReferenceStrains: boolean,
+  shouldHighlightNewOrganisms: boolean
 ) {
-  if (!shouldHighlightReferenceStrains) {
+  if (!shouldHighlightReferenceStrains && !shouldHighlightNewOrganisms) {
     return rawSearchTerms;
   }
 
-  const [
-    referenceStrainSearchTerms,
-    freeTextSearchTerms,
-  ] = partition(rawSearchTerms, (rawSearchTerm) =>
-    '[Reference]'.toLowerCase().includes(rawSearchTerm.toLowerCase())
-  );
+  return rawSearchTerms.reduce((memo, rawSearchTerm) => {
+    if ('[Reference]'.toLowerCase().includes(rawSearchTerm.toLowerCase())) {
+      memo.push('reference');
+    } else if ('[NEW]'.toLowerCase().includes(rawSearchTerm.toLowerCase())) {
+      memo.push('new');
+    } else {
+      memo.push(rawSearchTerm);
+    }
 
-  const shouldIncludeReferenceStrains = referenceStrainSearchTerms.length > 0;
-
-  return shouldIncludeReferenceStrains
-    ? [...freeTextSearchTerms, 'reference']
-    : freeTextSearchTerms;
+    return memo;
+  }, [] as string[]);
 }
 
 interface OrganismNodeConfig {
@@ -79,6 +87,9 @@ export function makeRenderOrganismNode({
         {taxonDisplay}
         {referenceStrains?.has(organismName) && (
           <span className="IsReferenceStrain">[Reference]</span>
+        )}
+        {newOrganisms?.has(organismName) && (
+          <span className="IsNewOrganism">[NEW]</span>
         )}
       </div>
     );
