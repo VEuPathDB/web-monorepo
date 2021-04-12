@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Typography, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -69,43 +69,49 @@ function BaseInput({
     },
   })();
 
-  const boundsCheckedValue = (newValue: NumberOrDate) => {
-    if (minValue !== undefined && newValue < minValue) {
-      newValue = minValue;
-      displayRangeViolationWarnings &&
-        setErrorState({
-          error: true,
-          helperText: `Sorry, value can't go below ${minValue}!`,
-        });
-    } else if (maxValue !== undefined && newValue > maxValue) {
-      newValue = maxValue;
-      displayRangeViolationWarnings &&
-        setErrorState({
-          error: true,
-          helperText: `Sorry, value can't go above ${maxValue}!`,
-        });
-    } else {
-      setErrorState({ error: false, helperText: '' });
-    }
-    return newValue;
-  };
+  const boundsCheckedValue = useCallback(
+    (newValue: NumberOrDate) => {
+      if (minValue !== undefined && newValue < minValue) {
+        newValue = minValue;
+        displayRangeViolationWarnings &&
+          setErrorState({
+            error: true,
+            helperText: `Sorry, value can't go below ${minValue}!`,
+          });
+      } else if (maxValue !== undefined && newValue > maxValue) {
+        newValue = maxValue;
+        displayRangeViolationWarnings &&
+          setErrorState({
+            error: true,
+            helperText: `Sorry, value can't go above ${maxValue}!`,
+          });
+      } else {
+        setErrorState({ error: false, helperText: '' });
+      }
+      return newValue;
+    },
+    [minValue, maxValue, displayRangeViolationWarnings, setErrorState]
+  );
 
   useEffect(() => {
     // if the min or max change
     // run the controlledValue through the bounds checker
     // to fix controlledValue or reset the error states as required
     const newValue = boundsCheckedValue(value);
-    if (newValue != null) onValueChange(newValue);
-  }, [minValue, maxValue]);
+    if (newValue !== value) onValueChange(newValue);
+  }, [boundsCheckedValue, value, onValueChange]);
 
-  const handleChange = (event: any) => {
-    const newValue = boundsCheckedValue(
-      valueType === 'number'
-        ? Number(event.target.value)
-        : new Date(event.target.value)
-    );
-    onValueChange(newValue);
-  };
+  const handleChange = useCallback(
+    (event: any) => {
+      const newValue = boundsCheckedValue(
+        valueType === 'number'
+          ? Number(event.target.value)
+          : new Date(event.target.value)
+      );
+      if (newValue !== value) onValueChange(newValue);
+    },
+    [value, boundsCheckedValue, onValueChange]
+  );
 
   return (
     <div
