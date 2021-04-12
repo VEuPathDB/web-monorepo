@@ -160,7 +160,7 @@ export default function SliderWidget({
           minValue={minimum}
           maxValue={maximum}
           onValueChange={(newValue?: NumberOrDate) =>
-            setLocalValue(newValue as number)
+            handleChange(null, newValue as number)
           }
           displayRangeViolationWarnings={false}
           containerStyles={{
