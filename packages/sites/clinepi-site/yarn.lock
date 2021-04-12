@@ -196,7 +196,7 @@
   resolved "https://registry.yarnpkg.com/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz#497c67a1cef50d1a2459ba60f315e448d2ad87fe"
   integrity sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==
 
-"@material-ui/core@^4.11.2":
+"@material-ui/core@^4.11.2", "@material-ui/core@^4.11.3":
   version "4.11.3"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.11.3.tgz#f22e41775b0bd075e36a7a093d43951bf7f63850"
   integrity sha512-Adt40rGW6Uds+cAyk3pVgcErpzU/qxc7KBR94jFHBYretU4AtWZltYcNsbeMn9tXL86jjVL1kuGcIHsgLgFGRw==
@@ -920,11 +920,47 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.1.18":
-  version "0.1.18"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.18.tgz#482b8931ec469add78400c73f6af816a198867ee"
-  integrity sha512-anJaoCNopFhhr5JUonqsjzDF/pwW0IVLlA6cdD2xonr5WTqA0CFl9yNYCp/FcRBiK0DnXGQxxWR/ImsIHzuZ/w==
+"@veupathdb/components@^0.2.17":
+  version "0.2.17"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.17.tgz#e591a731461b3b19db4223b1faecf0e791d36f52"
+  integrity sha512-99bUAZw3kAHmCNC/Jv7wBTZm99jhdOZftRoLzwWtbnF8OeUH6zeH+5Dx3CxheLo1mILAN701SqWsLu8pQa570A==
   dependencies:
+    "@material-ui/core" "^4.11.2"
+    "@material-ui/icons" "^4.11.2"
+    "@material-ui/lab" "^4.0.0-alpha.57"
+    "@types/date-arithmetic" "^4.1.1"
+    "@visx/gradient" "^1.0.0"
+    "@visx/group" "^1.0.0"
+    "@visx/hierarchy" "^1.0.0"
+    "@visx/shape" "^1.4.0"
+    "@visx/text" "^1.3.0"
+    "@visx/tooltip" "^1.3.0"
+    "@visx/visx" "^1.1.0"
+    bootstrap "^4.5.2"
+    date-arithmetic "^4.1.0"
+    debounce-promise "^3.1.2"
+    latlon-geohash "^2.0.0"
+    leaflet "^1.6.0"
+    leaflet-drift-marker "^1.0.3"
+    luxon "^1.25.0"
+    plotly.js "^1.54.1"
+    re-resizable "^6.9.0"
+    react "^16.13.1"
+    react-bootstrap "^1.3.0"
+    react-cool-dimensions "^1.1.11"
+    react-dom "^16.13.1"
+    react-html-parser "^2.0.2"
+    react-leaflet "^2.7.0"
+    react-plotly.js "^2.4.0"
+    react-transition-group "^4.4.1"
+    shape2geohash "^1.2.5"
+
+"@veupathdb/eda@^0.1.19":
+  version "0.1.19"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.19.tgz#5c550fea616cc85cf0045dcd26aacdc7ded1ddef"
+  integrity sha512-UN6iWRHXyQYkPO/Ce1C9qZXFPelJFtBL0Uu2NvNxJbOktxfiqsTztdC4JphN2Iz8y0NVCtNZbyv76gl+hR3i1A==
+  dependencies:
+    "@material-ui/core" "^4.11.3"
     "@types/debounce-promise" "^3.1.3"
     "@veupathdb/components" "^0.2.13"
     "@veupathdb/wdk-client" "^0.1.1-alpha.14"
