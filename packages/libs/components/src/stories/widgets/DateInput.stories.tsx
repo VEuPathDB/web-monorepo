@@ -11,49 +11,6 @@ export default {
   component: DateInput,
 } as Meta;
 
-const Template: Story<DateInputProps> = (args) => {
-  return (
-    <DateInput
-      {...args}
-      onValueChange={(newValue) => {
-        console.log(`new value = ${newValue}`);
-      }}
-      containerStyles={{ ...args.containerStyles, margin: 25 }}
-    />
-  );
-};
-
-export const Basic = Template.bind({});
-Basic.args = {
-  value: new Date('2021-12-21'),
-};
-
-export const Labelled = Template.bind({});
-Labelled.args = {
-  ...Basic.args,
-  label: 'Labelled',
-};
-
-export const StartsEmpty = Template.bind({});
-StartsEmpty.args = {
-  label: 'Starts Empty',
-};
-
-export const Bounded = Template.bind({});
-Bounded.args = {
-  label: '2000-01-01 <= x <= 2009-12-31',
-  minValue: new Date('2000-01-01'),
-  maxValue: new Date('2009-12-31'),
-};
-
-export const BoundedInitialized = Template.bind({});
-BoundedInitialized.args = {
-  value: new Date('2005-01-01'),
-  label: '2000-01-01 to 2009-12-31',
-  minValue: new Date('2000-01-01'),
-  maxValue: new Date('2009-12-31'),
-};
-
 const ControlledTemplate: Story<DateInputProps> = (args) => {
   const [value, setValue] = useState<Date>(new Date('2005-01-01'));
   return (

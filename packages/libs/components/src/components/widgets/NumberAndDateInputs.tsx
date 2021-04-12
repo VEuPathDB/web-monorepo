@@ -7,13 +7,13 @@ import { NumberOrDate } from '../../types/general';
 
 type BaseProps<M extends NumberOrDate> = {
   /** Externally controlled value. */
-  value?: M;
+  value: M | '';
   /** Minimum allowed value (inclusive) */
   minValue?: M;
   /** Maximum allowed value (inclusive) */
   maxValue?: M;
   /** Function to invoke when value changes. */
-  onValueChange: (newValue: NumberOrDate | undefined) => void;
+  onValueChange: (newValue: NumberOrDate | '') => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Additional styles for component container. Optional. */
@@ -66,8 +66,8 @@ function BaseInput({
     },
   })();
 
-  const boundsCheckedValue = (newValue?: NumberOrDate) => {
-    if (newValue === undefined) return undefined;
+  const boundsCheckedValue = (newValue: NumberOrDate | '') => {
+    if (newValue === '') return newValue;
     if (minValue !== undefined && newValue < minValue) {
       newValue = minValue;
       setErrorState({
@@ -95,17 +95,12 @@ function BaseInput({
   }, [minValue, maxValue]);
 
   const handleChange = (event: any) => {
-    if (event.target.value.length > 0) {
-      const newValue = boundsCheckedValue(
-        valueType === 'number'
-          ? Number(event.target.value)
-          : new Date(event.target.value)
-      );
-      if (newValue !== undefined) onValueChange(newValue);
-    } else {
-      // allows user to clear the input box
-      onValueChange(undefined);
-    }
+    const newValue = boundsCheckedValue(
+      valueType === 'number'
+        ? Number(event.target.value)
+        : new Date(event.target.value)
+    );
+    onValueChange(newValue);
   };
 
   return (

@@ -98,6 +98,8 @@ CustomGradientColors.argTypes = { ...Basic.argTypes };
 export const AuxillaryTextInput = Template.bind({});
 AuxillaryTextInput.args = {
   ...Labelled.args,
+  minimum: 0,
+  maximum: 11,
   containerStyles: { height: 100, width: 600 },
   label: 'Special Number',
   showTextInput: true,
