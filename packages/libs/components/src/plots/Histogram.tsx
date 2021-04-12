@@ -18,10 +18,10 @@ import { Layout } from 'plotly.js';
 export interface HistogramProps {
   /** Data for the plot. */
   data: HistogramData;
-  /** The width of the plot in pixels. */
-  width: number;
-  /** The height of the plot in pixels. */
-  height: number;
+  /** The width of the plot in pixels (if number), or CSS length. */
+  width: number | string;
+  /** The height of the plot in pixels (if number), or CSS length. */
+  height: number | string;
   /** The orientation of the plot. Defaults to `vertical` */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */

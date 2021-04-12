@@ -72,7 +72,7 @@ const TemplateWithControls: Story<
         {...plotControls}
         {...plotControls.histogram}
         containerStyles={{
-          maxWidth: args.width - 25,
+          maxWidth: `calc(${toCSSLength(args.width)} - 25px)`,
           marginLeft: 25,
         }}
       />
@@ -182,7 +182,7 @@ const TemplateWithSelectedRangeControls: Story<
         {...plotControls}
         {...plotControls.histogram}
         containerStyles={{
-          maxWidth: args.width - 25,
+          maxWidth: `calc(${toCSSLength(args.width)} - 25px)`,
           marginLeft: 25,
         }}
       />
@@ -303,7 +303,7 @@ const TemplateWithSelectedDateRangeControls: Story<
         binWidthStep={1}
         selectedUnit={'month'}
         containerStyles={{
-          maxWidth: args.width - 25,
+          maxWidth: `calc(${toCSSLength(args.width)} - 25px)`,
           marginLeft: 25,
         }}
       />
@@ -332,3 +332,7 @@ DateRangeSelection.loaders = [
     }),
   }),
 ];
+
+function toCSSLength(length: string | number): string {
+  return typeof length === 'number' ? `${length}px` : length;
+}
