@@ -95,8 +95,8 @@ CustomGradientColors.args = {
 };
 CustomGradientColors.argTypes = { ...Basic.argTypes };
 
-export const AuxillaryTextInput = Template.bind({});
-AuxillaryTextInput.args = {
+export const AuxiliaryTextInput = Template.bind({});
+AuxiliaryTextInput.args = {
   ...Labelled.args,
   minimum: 0,
   maximum: 11,
@@ -104,10 +104,10 @@ AuxillaryTextInput.args = {
   label: 'Special Number',
   showTextInput: true,
 };
-AuxillaryTextInput.argTypes = { ...Basic.argTypes };
+AuxiliaryTextInput.argTypes = { ...Basic.argTypes };
 
-export const AuxillaryTextInputBigNum = Template.bind({});
-AuxillaryTextInputBigNum.args = {
+export const AuxiliaryTextInputBigNum = Template.bind({});
+AuxiliaryTextInputBigNum.args = {
   ...Labelled.args,
   minimum: -10000,
   maximum: 10000,
@@ -115,10 +115,10 @@ AuxillaryTextInputBigNum.args = {
   label: 'Special Number',
   showTextInput: true,
 };
-AuxillaryTextInputBigNum.argTypes = { ...Basic.argTypes };
+AuxiliaryTextInputBigNum.argTypes = { ...Basic.argTypes };
 
-export const AuxillaryTextInputHugeNum = Template.bind({});
-AuxillaryTextInputHugeNum.args = {
+export const AuxiliaryTextInputHugeNum = Template.bind({});
+AuxiliaryTextInputHugeNum.args = {
   ...Labelled.args,
   minimum: -100000000,
   maximum: 100000000,
@@ -126,4 +126,4 @@ AuxillaryTextInputHugeNum.args = {
   label: 'Special Number',
   showTextInput: true,
 };
-AuxillaryTextInputHugeNum.argTypes = { ...Basic.argTypes };
+AuxiliaryTextInputHugeNum.argTypes = { ...Basic.argTypes };
