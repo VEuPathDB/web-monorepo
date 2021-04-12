@@ -1,4 +1,5 @@
 import { useCallback, useContext } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { memoize } from 'lodash';
@@ -37,8 +38,9 @@ export function usePreferredOrganismsState() {
 
 export function useNewOrganisms() {
   const { newOrganisms } = usePreferredOrganismsRecoilState();
+  const location = useLocation();
 
-  return useRecoilValue(newOrganisms);
+  return useRecoilValue(newOrganisms(location.search.length > 0));
 }
 
 export function useUpdateBuildNumberCallback() {
@@ -56,6 +58,12 @@ export function useUpdateBuildNumberCallback() {
       buildNumber: buildNumberValue,
     }));
   }, [buildNumberValue, setOrganismPreference]);
+}
+
+export function usePreferredOrganismsEnabled() {
+  const { preferredOrganismsEnabled } = usePreferredOrganismsRecoilState();
+
+  return useRecoilState(preferredOrganismsEnabled);
 }
 
 export function usePreferredOrganismsRecoilState() {

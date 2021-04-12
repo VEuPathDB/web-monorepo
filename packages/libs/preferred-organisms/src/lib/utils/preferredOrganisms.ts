@@ -1,4 +1,4 @@
-import { DefaultValue, atom, selector } from 'recoil';
+import { DefaultValue, atom, selector, selectorFamily } from 'recoil';
 
 import { debounce } from 'lodash';
 
@@ -121,14 +121,24 @@ export function makePreferredOrganismsRecoilState(
     get: ({ get }) => get(organismPreference).buildNumber,
   });
 
-  const newOrganisms = selector({
+  const newOrganisms = selectorFamily({
     key: 'new-organisms',
-    get: ({ get }) =>
-      findNewOrganisms(
-        get(availableOrganisms),
-        get(organismBuildNumbers),
-        get(organismPreferenceBuildNumber)
-      ),
+    get: (mockNewOrganisms: boolean = false) => ({ get }) =>
+      mockNewOrganisms
+        ? new Set([
+            'Hepatocystis sp. ex Piliocolobus tephrosceles 2019',
+            'Plasmodium cynomolgi strain M',
+          ])
+        : findNewOrganisms(
+            get(availableOrganisms),
+            get(organismBuildNumbers),
+            get(organismPreferenceBuildNumber)
+          ),
+  });
+
+  const preferredOrganismsEnabled = atom({
+    key: 'only-show-preferred-organisms',
+    default: true,
   });
 
   return {
@@ -140,6 +150,7 @@ export function makePreferredOrganismsRecoilState(
     organismPreferenceBuildNumber,
     organismTree,
     preferredOrganisms,
+    preferredOrganismsEnabled,
     projectId,
   };
 }

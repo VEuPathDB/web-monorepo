@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { noop } from 'lodash';
 
@@ -19,18 +20,22 @@ import {
 } from '../utils/configTrees';
 import { getNodeChildren, getNodeId } from '../utils/organismNodes';
 
+import { PreferredOrganismsToggle } from './PreferredOrganismsToggle';
+
 import './PreferredOrganismsConfig.scss';
 
-const cx = makeClassNameHelper('PreferredOrganismsConfig');
+export const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
 interface Props {
   availableOrganisms: Set<string>;
   configSelection: string[];
   newOrganisms: Set<string>;
   organismTree: Node<TreeBoxVocabNode>;
+  preferredOrganismsEnabled: boolean;
   projectId: string;
   referenceStrains: Set<string>;
   setConfigSelection: (newPreferredOrganisms: string[]) => void;
+  togglePreferredOrganisms: () => void;
 }
 
 export function PreferredOrganismsConfig({
@@ -38,10 +43,14 @@ export function PreferredOrganismsConfig({
   configSelection,
   newOrganisms,
   organismTree,
+  preferredOrganismsEnabled,
   projectId,
   referenceStrains,
   setConfigSelection,
+  togglePreferredOrganisms,
 }: Props) {
+  const location = useLocation();
+
   const renderConfigNode = useRenderOrganismNode(
     referenceStrains,
     newOrganisms
@@ -68,6 +77,14 @@ export function PreferredOrganismsConfig({
         Set your{' '}
         <span className={cx('--InlineTitle')}>My Organism Preferences</span> to
         limit the organisms you see throughout {projectId}.
+      </p>
+      <p>
+        {location.search.length > 0 && (
+          <PreferredOrganismsToggle
+            enabled={preferredOrganismsEnabled}
+            onClick={togglePreferredOrganisms}
+          />
+        )}
       </p>
       <div className={cx('--Main')}>
         <div className={cx('--Selections')}>

@@ -2,7 +2,7 @@ $red: #cc0000;
 $gray: #f5f5f5;
 
 .PreferredOrganismsConfig {
-  &--Instructions {
+  > p {
     font-size: 1.4em;
     margin-bottom: 2em;
   }
