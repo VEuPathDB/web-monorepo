@@ -7,13 +7,13 @@ import { NumberOrDate } from '../../types/general';
 
 type BaseProps<M extends NumberOrDate> = {
   /** Externally controlled value. */
-  value: M;
+  value: M | '';
   /** Minimum allowed value (inclusive) */
   minValue?: M;
   /** Maximum allowed value (inclusive) */
   maxValue?: M;
   /** Function to invoke when value changes. */
-  onValueChange: (newValue: NumberOrDate) => void;
+  onValueChange: (newValue: NumberOrDate | '') => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Additional styles for component container. Optional. */
@@ -70,7 +70,8 @@ function BaseInput({
   })();
 
   const boundsCheckedValue = useCallback(
-    (newValue: NumberOrDate) => {
+    (newValue: NumberOrDate | '') => {
+      if (newValue === '') return newValue;
       if (minValue !== undefined && newValue < minValue) {
         newValue = minValue;
         displayRangeViolationWarnings &&
@@ -102,9 +103,11 @@ function BaseInput({
   }, [boundsCheckedValue, value, onValueChange]);
 
   const handleChange = useCallback(
-    (event: any) => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       const newValue = boundsCheckedValue(
-        valueType === 'number'
+        event.target.value === ''
+          ? ''
+          : valueType === 'number'
           ? Number(event.target.value)
           : new Date(event.target.value)
       );
@@ -133,6 +136,8 @@ function BaseInput({
           value={
             valueType === 'number'
               ? value
+              : value === ''
+              ? ''
               : (value as Date)?.toISOString().substr(0, 10)
           }
           type={valueType}
