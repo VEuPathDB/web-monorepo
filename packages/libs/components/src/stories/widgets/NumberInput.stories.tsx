@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import {
@@ -13,14 +13,20 @@ export default {
 
 const ControlledTemplate: Story<NumberInputProps> = (args) => {
   const [value, setValue] = useState<number | ''>(args.value ?? 1);
+
+  const onValueChange = useCallback(
+    (newValue) => {
+      console.log(`new value = ${newValue}`);
+      setValue(newValue as number);
+    },
+    [setValue]
+  );
+
   return (
     <NumberInput
       {...args}
       value={value}
-      onValueChange={(newValue) => {
-        console.log(`new value = ${newValue}`);
-        setValue(newValue as number);
-      }}
+      onValueChange={onValueChange}
       containerStyles={{ ...args.containerStyles, margin: 25 }}
     />
   );

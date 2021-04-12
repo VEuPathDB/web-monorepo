@@ -129,7 +129,7 @@ export default function SliderWidget({
       setLocalValue(value);
       debouncedOnChange(value);
     },
-    [debouncedOnChange]
+    [setLocalValue, debouncedOnChange]
   );
 
   const valueLabelDisplay = showTextInput ? 'off' : 'auto';

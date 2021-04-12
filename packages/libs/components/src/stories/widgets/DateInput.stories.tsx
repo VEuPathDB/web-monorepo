@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import {
@@ -13,14 +13,19 @@ export default {
 
 const ControlledTemplate: Story<DateInputProps> = (args) => {
   const [value, setValue] = useState<Date>(new Date('2005-01-01'));
+  const onValueChange = useCallback(
+    (newValue) => {
+      console.log(`new value = ${newValue}`);
+      setValue(newValue as Date);
+    },
+    [setValue]
+  );
+
   return (
     <DateInput
       {...args}
       value={value}
-      onValueChange={(newValue) => {
-        console.log(`new value = ${newValue}`);
-        setValue(newValue as Date);
-      }}
+      onValueChange={onValueChange}
       containerStyles={{ ...args.containerStyles, margin: 25 }}
     />
   );
