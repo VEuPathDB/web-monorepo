@@ -5,6 +5,12 @@ $gray: #f5f5f5;
   > p {
     font-size: 1.4em;
     margin-bottom: 2em;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &--Toggle {
+    margin-right: 1em;
   }
 
   &--Main {
@@ -31,11 +37,21 @@ $gray: #f5f5f5;
     }
   }
 
+  h2 {
+    padding-bottom: 1rem;
+  }
+
+  &--Preview {
+    h2 {
+      margin-left: 1rem;
+    }
+  }
+
   &--PreviewContent {
     background-color: $gray;
-    border: 0.125rem solid #eee;
+    border: 0.125rem solid #ccc;
     border-radius: 0.5rem;
-    padding: 1.5em;
+    padding: calc(1.5em - 0.2025rem) 1.5em 1.5em 1.5em;
 
     .wdk-CheckboxTree {
       padding: 0.5em;

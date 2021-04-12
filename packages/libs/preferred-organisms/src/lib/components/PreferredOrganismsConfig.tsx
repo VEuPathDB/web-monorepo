@@ -73,18 +73,20 @@ export function PreferredOrganismsConfig({
   return (
     <div className={cx()}>
       <h1>My Organism Preferences</h1>
-      <p className={cx('--Instructions')}>
-        Set your{' '}
-        <span className={cx('--InlineTitle')}>My Organism Preferences</span> to
-        limit the organisms you see throughout {projectId}.
-      </p>
       <p>
-        {location.search.length > 0 && (
-          <PreferredOrganismsToggle
-            enabled={preferredOrganismsEnabled}
-            onClick={togglePreferredOrganisms}
-          />
-        )}
+        <div>
+          Set your{' '}
+          <span className={cx('--InlineTitle')}>My Organism Preferences</span>{' '}
+          to limit the organisms you see throughout {projectId}.
+        </div>
+        <div>
+          {location.search.length > 0 && (
+            <PreferredOrganismsToggle
+              enabled={preferredOrganismsEnabled}
+              onClick={togglePreferredOrganisms}
+            />
+          )}
+        </div>
       </p>
       <div className={cx('--Main')}>
         <div className={cx('--Selections')}>
