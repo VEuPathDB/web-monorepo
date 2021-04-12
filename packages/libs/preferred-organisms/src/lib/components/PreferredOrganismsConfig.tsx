@@ -74,19 +74,19 @@ export function PreferredOrganismsConfig({
     <div className={cx()}>
       <h1>My Organism Preferences</h1>
       <p>
-        <div>
+        <span>
           Set your{' '}
           <span className={cx('--InlineTitle')}>My Organism Preferences</span>{' '}
           to limit the organisms you see throughout {projectId}.
-        </div>
-        <div>
-          {location.search.length > 0 && (
+        </span>
+        <span>
+          {location.search.includes('useWipFeatures=true') && (
             <PreferredOrganismsToggle
               enabled={preferredOrganismsEnabled}
               onClick={togglePreferredOrganisms}
             />
           )}
-        </div>
+        </span>
       </p>
       <div className={cx('--Main')}>
         <div className={cx('--Selections')}>

@@ -1,22 +1,17 @@
-import { useLocation } from 'react-router-dom';
-
-import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
+  onDismiss: () => void;
   newOrganismCount: number;
   projectId: string;
 }
 
 export function NewOrganismsBanner({ newOrganismCount, projectId }: Props) {
-  const location = useLocation();
-  const linkToMockNewOrganisms = location.search.length > 0;
-
   return (
     <div
       style={{
-        color: '#cc0000',
-        display: 'grid',
-        gridTemplateColumns: 'auto 1fr',
+        display: 'inline-grid',
+        gridAutoFlow: 'column',
         gap: '1em',
       }}
     >
@@ -33,15 +28,21 @@ export function NewOrganismsBanner({ newOrganismCount, projectId }: Props) {
       <div>
         {makeNewOrganismDescription(newOrganismCount, projectId)}
         <br />
-        Please{' '}
-        <Link
-          to={`/preferred-organisms${
-            linkToMockNewOrganisms ? '?showWipFeatures=true' : ''
-          }`}
-        >
-          review My Organisms Preferences.
+        <Link to="/preferred-organisms">
+          Please review My Organism Preferences.
         </Link>
       </div>
+      <button
+        type="button"
+        style={{
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          color: '#7c7c7c',
+        }}
+      >
+        <IconAlt fa="times fa-2x" />
+      </button>
     </div>
   );
 }

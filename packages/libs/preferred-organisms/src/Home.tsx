@@ -47,12 +47,13 @@ export default function Home() {
             Configure your preferred organisms?
           </Link>
         </p>
-        <p>
+        <div style={{ margin: '1em 0' }}>
           <NewOrganismsBanner
+            onDismiss={() => {}}
             newOrganismCount={newOrganisms.size}
             projectId={projectId}
           />
-        </p>
+        </div>
         <div>
           These are the reference strains for {projectId}:
           <ul>

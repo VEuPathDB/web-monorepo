@@ -40,7 +40,9 @@ export function useNewOrganisms() {
   const { newOrganisms } = usePreferredOrganismsRecoilState();
   const location = useLocation();
 
-  return useRecoilValue(newOrganisms(location.search.length > 0));
+  return useRecoilValue(
+    newOrganisms(location.search.includes('useWipFeatures=true'))
+  );
 }
 
 export function useUpdateBuildNumberCallback() {
