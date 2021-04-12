@@ -45,6 +45,7 @@ Basic.args = {
   maximum: 255,
   value: 1,
   containerStyles: { width: 150 },
+  debounceRateMs: 100,
 };
 Basic.argTypes = {
   onChange: {

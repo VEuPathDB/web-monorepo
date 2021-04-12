@@ -74,7 +74,7 @@ const dummyData = (args: {
     selectedUnit: args.selectedUnit ?? 'hours',
     binWidth: args.binWidth ?? ([6, args.selectedUnit ?? 'hours'] as TimeDelta),
     binWidthRange: { min: 1, max: 24, unit: args.selectedUnit ?? 'hours' },
-    binWidthStep: [1, args.selectedUnit ?? 'hours'] as TimeDelta,
+    binWidthStep: 1,
   };
 };
 
@@ -86,7 +86,7 @@ AdditionalOptions.args = {
   histogram: {
     valueType: 'date',
     binWidthRange: { min: 1, max: 24, unit: 'hours' },
-    binWidthStep: [1, 'hours'],
+    binWidthStep: 1,
     onBinWidthChange: async (args: {
       binWidth: NumberOrTimeDelta;
       selectedUnit?: string;

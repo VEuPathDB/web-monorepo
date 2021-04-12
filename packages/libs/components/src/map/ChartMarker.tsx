@@ -1,10 +1,10 @@
 import React from 'react';
-
-//DKDK leaflet
 import L from 'leaflet';
 
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import Histogram from '../plots/Histogram';
+// import NumberRange type def
+import { NumberOrDateRange, NumberRange } from '../types/general';
 
 interface ChartMarkerProps extends BoundsDriftMarkerProps {
   borderColor?: string;
@@ -13,27 +13,28 @@ interface ChartMarkerProps extends BoundsDriftMarkerProps {
   values: Array<number>; // the counts or totals to be shown in the donut
   colors?: Array<string> | null; // bar colors: set to be optional with array or null type
   isAtomic?: boolean; // add a special thumbtack icon if this is true (it's a marker that won't disaggregate if zoomed in further)
-  yAxisRange?: number[] | null; // y-axis range for setting global max
+  // changed to dependentAxisRange
+  dependentAxisRange?: NumberRange | null; // y-axis range for setting global max
   onClick?: (event: L.LeafletMouseEvent) => void | undefined;
 }
 
 /**
- * DKDK this is a SVG histogram/chart marker icon
+ *  this is a SVG histogram/chart marker icon
  * - no (drop) shadow
  * - no gap between bars
  * - accordingly icon size could be reduced
  */
 export default function ChartMarker(props: ChartMarkerProps) {
   let fullStat = [];
-  //DKDK set defaultColor to be skyblue (#7cb5ec) if props.colors does not exist
+  // set defaultColor to be skyblue (#7cb5ec) if props.colors does not exist
   let defaultColor: string = '';
   let defaultLineColor: string = '';
-  //DKDK need to make a temporary stats array of objects to show marker colors - only works for demo data, not real solr data
+  // need to make a temporary stats array of objects to show marker colors - only works for demo data, not real solr data
   for (let i = 0; i < props.values.length; i++) {
     if (props.colors) {
       defaultColor = props.colors[i];
-      // defaultLineColor = 'grey'       //DKDK this is outline of histogram
-      defaultLineColor = '#00000088'; //DKDK this is outline of histogram
+      // defaultLineColor = 'grey'       // this is outline of histogram
+      defaultLineColor = '#00000088'; // this is outline of histogram
     } else {
       defaultColor = '#7cb5ec';
       defaultLineColor = '#7cb5ec';
@@ -49,38 +50,38 @@ export default function ChartMarker(props: ChartMarkerProps) {
   defaultLineColor = props.borderColor || defaultLineColor;
   const borderWidth = props.borderWidth || 1;
 
-  //DKDK construct histogram marker icon
-  const size = 40; //DKDK histogram marker icon size: note that popbio/mapveu donut marker icons = 40
-  const xSize = 50; //DKDK make the histogram width a bit larger considering the total number space in the bottom of histogram
-  const ySize = 50; //DKDK set height differently to host total number at the bottom side
-  let svgHTML: string = ''; //DKDK divIcon HTML contents
+  // construct histogram marker icon
+  const size = 40; // histogram marker icon size: note that popbio/mapveu donut marker icons = 40
+  const xSize = 50; // make the histogram width a bit larger considering the total number space in the bottom of histogram
+  const ySize = 50; // set height differently to host total number at the bottom side
+  let svgHTML: string = ''; // divIcon HTML contents
 
-  //DKDK set drawing area: without shadow, they are (xSize x ySize)
+  // set drawing area: without shadow, they are (xSize x ySize)
   svgHTML +=
     '<svg width="' +
     (xSize + 2 * borderWidth) +
     '" height="' +
     (ySize + 2 * borderWidth) +
-    '">'; //DKDK initiate svg marker icon
+    '">'; // initiate svg marker icon
 
   let count = fullStat.length;
   let sumValues: number = fullStat
     .map((o) => o.value)
     .reduce((a, c) => {
       return a + c;
-    }); //DKDK summation of fullStat.value per marker icon
-  var maxValues: number = Math.max(...fullStat.map((o) => o.value)); //DKDK max of fullStat.value per marker icon
-  //DKDK for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
+    }); // summation of fullStat.value per marker icon
+  var maxValues: number = Math.max(...fullStat.map((o) => o.value)); // max of fullStat.value per marker icon
+  // for local max, need to check the case wherer all values are zeros that lead to maxValues equals to 0 -> "divided by 0" can happen
   if (maxValues == 0) {
-    maxValues = 1; //DKDK this doesn't matter as all values are zeros
+    maxValues = 1; // this doesn't matter as all values are zeros
   }
 
-  const roundX = 10; //DKDK round corner in pixel: 0 = right angle
-  const roundY = 10; //DKDK round corner in pixel: 0 = right angle
-  const marginX = 5; //DKDK margin to start drawing bars in left and right ends of svg marker: plot area = (size - 2*marginX)
-  const marginY = 5; //DKDK margin to start drawing bars in Y
+  const roundX = 10; // round corner in pixel: 0 = right angle
+  const roundY = 10; // round corner in pixel: 0 = right angle
+  const marginX = 5; // margin to start drawing bars in left and right ends of svg marker: plot area = (size - 2*marginX)
+  const marginY = 5; // margin to start drawing bars in Y
 
-  // //DKDK thin line: drawing outer box with round corners: changed border color (stroke)
+  // // thin line: drawing outer box with round corners: changed border color (stroke)
   svgHTML +=
     '<rect x="0" y="0" rx=' +
     roundX +
@@ -94,7 +95,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
     defaultLineColor +
     '" stroke-width="0" opacity="1.0" />';
 
-  //DKDK add inner border to avoid the issue of clipped border in svg
+  // add inner border to avoid the issue of clipped border in svg
   svgHTML +=
     '<rect x=' +
     borderWidth / 2 +
@@ -110,13 +111,15 @@ export default function ChartMarker(props: ChartMarkerProps) {
     borderWidth +
     '"/>';
 
-  //DKDK set globalMaxValue non-zero if props.yAxisRange exists
+  // set globalMaxValue non-zero if props.yAxisRange exists
   let globalMaxValue: number = 0;
-  if (props.yAxisRange) {
-    globalMaxValue = props.yAxisRange[1] - props.yAxisRange[0];
+  // dependentAxisRange is an object with {min,max} (NumberRange)
+  if (props.dependentAxisRange) {
+    globalMaxValue =
+      props.dependentAxisRange.max - props.dependentAxisRange.min;
   }
 
-  //DKDK initialize variables for using at following if-else
+  // initialize variables for using at following if-else
   let barWidth: number, startingX: number, barHeight: number, startingY: number;
 
   if (globalMaxValue) {
@@ -124,12 +127,12 @@ export default function ChartMarker(props: ChartMarkerProps) {
       el: { color: string; label: string; value: number },
       index
     ) {
-      //DKDK for the case of y-axis range input: a global approach that take global max = icon height
-      barWidth = (xSize - 2 * marginX) / count; //DKDK bar width
-      startingX = marginX + borderWidth + barWidth * index; //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = (el.value / globalMaxValue) * (size - 2 * marginY); //DKDK bar height: used 2*marginY to have margins at both top and bottom
-      startingY = size - marginY - barHeight + borderWidth; //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
-      //DKDK making the last bar, noData
+      // for the case of y-axis range input: a global approach that take global max = icon height
+      barWidth = (xSize - 2 * marginX) / count; // bar width
+      startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
+      barHeight = (el.value / globalMaxValue) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+      startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
+      // making the last bar, noData
       svgHTML +=
         '<rect x=' +
         startingX +
@@ -148,12 +151,12 @@ export default function ChartMarker(props: ChartMarkerProps) {
       el: { color: string; label: string; value: number },
       index
     ) {
-      //DKDK for the case of auto-scale y-axis: a local approach that take local max = icon height
-      barWidth = (xSize - 2 * marginX) / count; //DKDK bar width
-      startingX = marginX + borderWidth + barWidth * index; //DKDK x in <react> tag: note that (0,0) is top left of the marker icon
-      barHeight = (el.value / maxValues) * (size - 2 * marginY); //DKDK bar height: used 2*marginY to have margins at both top and bottom
-      startingY = size - marginY - barHeight + borderWidth; //DKDK y in <react> tag: note that (0,0) is top left of the marker icon
-      //DKDK making the last bar, noData
+      // for the case of auto-scale y-axis: a local approach that take local max = icon height
+      barWidth = (xSize - 2 * marginX) / count; // bar width
+      startingX = marginX + borderWidth + barWidth * index; // x in <react> tag: note that (0,0) is top left of the marker icon
+      barHeight = (el.value / maxValues) * (size - 2 * marginY); // bar height: used 2*marginY to have margins at both top and bottom
+      startingY = size - marginY - barHeight + borderWidth; // y in <react> tag: note that (0,0) is top left of the marker icon
+      // making the last bar, noData
       svgHTML +=
         '<rect x=' +
         startingX +
@@ -169,7 +172,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
     });
   }
 
-  //DKDK add horizontal line: when using inner border (adjust x1)
+  // add horizontal line: when using inner border (adjust x1)
   svgHTML +=
     '<line x1=' +
     borderWidth +
@@ -183,7 +186,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
     defaultLineColor +
     ';stroke-width:1" />';
 
-  //DKDK set the location of total number
+  // set the location of total number
   svgHTML +=
     '<text x="50%" y=' +
     (size - 2 + borderWidth + 7) +
@@ -191,7 +194,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
     sumValues +
     '</text>';
 
-  //DKDK check isAtomic: draw pushpin if true
+  // check isAtomic: draw pushpin if true
   if (props.isAtomic) {
     let pushPinCode = '&#128392;';
     svgHTML +=
@@ -200,20 +203,20 @@ export default function ChartMarker(props: ChartMarkerProps) {
       '</text>';
   }
 
-  // DKDK closing svg tag
+  //  closing svg tag
   svgHTML += '</svg>';
 
   const totalSize = xSize + marginX + borderWidth;
 
-  //DKDK set icon
+  // set icon
   let HistogramIcon: any = L.divIcon({
-    className: 'leaflet-canvas-icon', //DKDK need to change this className but just leave it as it for now
-    iconSize: new L.Point(totalSize, totalSize), //DKDKset iconSize = 0
-    iconAnchor: new L.Point(totalSize / 2, totalSize / 2), //DKDK location of topleft corner: this is used for centering of the icon like transform/translate in CSS
-    html: svgHTML, //DKDK divIcon HTML svg code generated above
+    className: 'leaflet-canvas-icon', // need to change this className but just leave it as it for now
+    iconSize: new L.Point(totalSize, totalSize), //set iconSize = 0
+    iconAnchor: new L.Point(totalSize / 2, totalSize / 2), // location of topleft corner: this is used for centering of the icon like transform/translate in CSS
+    html: svgHTML, // divIcon HTML svg code generated above
   });
 
-  //DKDK anim check duration exists or not
+  // anim check duration exists or not
   let duration: number = props.duration ? props.duration : 300;
   // let duration: number = (props.duration) ? 300 : 300
 
@@ -252,13 +255,14 @@ export default function ChartMarker(props: ChartMarkerProps) {
       interactive={false}
       dependentAxisLabel=""
       independentAxisLabel={`Total: ${sumValues.toString()}`}
-      yAxisRange={(props.yAxisRange as [number, number]) || undefined}
+      // dependentAxisRange is an object with {min, max} (NumberRange)
+      dependentAxisRange={props.dependentAxisRange ?? undefined}
       showBarValues={true}
     />
   );
 
   return (
-    //DKDK anim
+    // anim
     <BoundsDriftMarker
       id={props.id}
       position={props.position}

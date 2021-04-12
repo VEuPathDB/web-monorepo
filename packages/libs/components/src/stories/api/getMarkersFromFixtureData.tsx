@@ -106,17 +106,17 @@ export const getSpeciesDonuts = async (
       });
     });
 
-    //DKDK check isAtomic
+    // check isAtomic
     let atomicValue =
       bucket.atomicCount && bucket.atomicCount === 1 ? true : false;
 
-    //DKDK anim key
+    // anim key
     const key = bucket.val;
 
     return (
       <DonutMarker
-        id={key} //DKDK anim
-        key={key} //DKDK anim
+        id={key} // anim
+        key={key} // anim
         position={{ lat, lng }}
         bounds={bounds}
         data={data}
@@ -180,17 +180,17 @@ export const getSpeciesBasicMarkers = async (
       },
     ];
 
-    //DKDK check isAtomic
+    // check isAtomic
     let atomicValue =
       bucket.atomicCount && bucket.atomicCount === 1 ? true : false;
 
-    //DKDK anim key
+    // anim key
     const key = bucket.val;
 
     return (
       <DonutMarker
-        id={key} //DKDK anim
-        key={key} //DKDK anim
+        id={key} // anim
+        key={key} // anim
         position={{ lat, lng }}
         bounds={bounds}
         data={data}
@@ -202,7 +202,7 @@ export const getSpeciesBasicMarkers = async (
   });
 };
 
-//DKDK define bucket prop, which is for buckets[]
+// define bucket prop, which is for buckets[]
 interface bucketProps {
   term: {
     between: { count: number };
@@ -232,7 +232,7 @@ export const getCollectionDateChartMarkers = async (
   ) => void,
   handleMarkerClick: (e: LeafletMouseEvent) => void,
   legendRadioValue: string,
-  setYAxisRangeValue: (yAxisRangeValue: number) => void,
+  setDependentAxisRange: (dependentAxisRange: number[]) => void,
   delay: number = 0
 ) => {
   const geohash_level = zoomLevelToGeohashLevel[zoomLevel];
@@ -271,7 +271,7 @@ export const getCollectionDateChartMarkers = async (
     );
   });
 
-  //DKDK change this to always show Reginal scale value
+  // change this to always show Reginal scale value
   yAxisRangeAll = [
     0,
     buckets.reduce((currentMax: number, bucket: bucketProps) => {
@@ -289,12 +289,12 @@ export const getCollectionDateChartMarkers = async (
       );
     }, 0),
   ];
-  //DKDK set yAxisRange only if Regional
+  // set yAxisRange only if Regional
   if (legendRadioValue === 'Regional') {
     yAxisRange = yAxisRangeAll;
   }
-  //DKDK add setyAxisRangeValue: be careful of type of setYAxisRangeValue
-  setYAxisRangeValue(yAxisRangeAll[1]);
+  // add setDependentAxisRange: be careful of type of setDependentAxisRange
+  setDependentAxisRange(yAxisRangeAll);
 
   const markers = buckets.map((bucket: bucketProps) => {
     const lat = bucket.ltAvg;
@@ -330,21 +330,21 @@ export const getCollectionDateChartMarkers = async (
     noDataValue = bucket.count - bucket.term.between.count;
     labels.push('noDataOrOutOfBounds');
     values.push(noDataValue);
-    colors.push('silver'); //DKDK fill the last color
+    colors.push('silver'); // fill the last color
 
     legendLabels[5] = 'no data/out of bounds';
     if (legendSums[5] === undefined) legendSums[5] = 0;
     legendSums[5] += noDataValue;
     legendColors[5] = 'silver';
 
-    //DKDK check isAtomic for push pin for chart marker
+    // check isAtomic for push pin for chart marker
     let atomicValue =
       bucket.atomicCount && bucket.atomicCount === 1 ? true : false;
 
-    //DKDK anim key
+    // anim key
     const key = bucket.val;
 
-    //DKDK need to check the presence of props.type and props.colorMethod
+    // need to check the presence of props.type and props.colorMethod
     const yAxisRangeValue = yAxisRange ? yAxisRange : null;
 
     // BM: important to provide the key 'prop' (which is not a true prop) at
@@ -361,7 +361,12 @@ export const getCollectionDateChartMarkers = async (
         values={values}
         colors={colors}
         isAtomic={atomicValue}
-        yAxisRange={yAxisRangeValue}
+        // dependentAxisRange is an object with {min,max} (NumberRange)
+        dependentAxisRange={
+          yAxisRangeValue
+            ? { min: yAxisRangeValue[0], max: yAxisRangeValue[1] }
+            : null
+        }
         duration={duration}
         onClick={handleMarkerClick}
       />
@@ -427,11 +432,11 @@ export const getCollectionDateBasicMarkers = async (
     const values = [bucket.count];
     const colors: string[] = ['white'];
 
-    //DKDK check isAtomic for push pin for chart marker
+    // check isAtomic for push pin for chart marker
     const atomicValue =
       bucket.atomicCount && bucket.atomicCount === 1 ? true : false;
 
-    //DKDK anim key
+    // anim key
     const key = bucket.val;
 
     // BM: important to provide the key 'prop' (which is not a true prop) at
@@ -448,7 +453,8 @@ export const getCollectionDateBasicMarkers = async (
         values={values}
         colors={colors}
         isAtomic={atomicValue}
-        yAxisRange={null}
+        // change to dependentAxisRange
+        dependentAxisRange={null}
         duration={duration}
         onClick={handleMarkerClick}
       />

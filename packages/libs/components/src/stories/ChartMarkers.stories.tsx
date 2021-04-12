@@ -10,12 +10,12 @@ import {
   getCollectionDateBasicMarkers,
 } from './api/getMarkersFromFixtureData';
 
-//DKDK change target component
+// change target component
 import MapVEuLegendSampleList, {
   LegendProps,
 } from '../map/MapVEuLegendSampleList';
 
-//DKDK anim
+// anim
 import geohashAnimation from '../map/animation_functions/geohash';
 
 export default {
@@ -56,23 +56,26 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
   const legendRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLegendRadioValue(e.target.value);
   };
-  const [yAxisRangeValue, setYAxisRangeValue] = useState<number>(0);
+  const [dependentAxisRange, setDependentAxisRange] = useState<number[]>([
+    0,
+    0,
+  ]);
 
   const legendType = 'numeric';
 
   const duration = defaultAnimationDuration;
 
-  //DKDK send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
+  // send legendRadioValue instead of knob_YAxisRangeMethod: also send setYAxisRangeValue
   const handleViewportChanged = useCallback(
     async (bvp: BoundsViewport) => {
-      //DKDK anim add duration & scrambleKeys
+      // anim add duration & scrambleKeys
       const markers = await getCollectionDateChartMarkers(
         bvp,
         duration,
         setLegendData,
         handleMarkerClick,
         legendRadioValue,
-        setYAxisRangeValue
+        setDependentAxisRange
       );
       setMarkerElements(markers);
     },
@@ -97,7 +100,7 @@ export const AllInOneRequest: Story<MapVEuMapProps> = (args) => {
         {...variableProps}
         onChange={legendRadioChange}
         selectedOption={legendRadioValue}
-        yAxisRangeValue={yAxisRangeValue}
+        dependentAxisRange={dependentAxisRange}
       />
     </>
   );
@@ -130,7 +133,10 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
     [setBvp]
   );
 
-  const [yAxisRangeValue, setYAxisRangeValue] = useState<number>(0);
+  const [dependentAxisRange, setDependentAxisRange] = useState<number[]>([
+    0,
+    0,
+  ]);
 
   const legendType = 'numeric';
   const duration = defaultAnimationDuration;
@@ -155,7 +161,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         setLegendData,
         handleMarkerClick,
         legendRadioValue,
-        setYAxisRangeValue,
+        setDependentAxisRange,
         2000
       );
       if (!isCancelled) setMarkerElements(fullMarkers);
@@ -184,7 +190,7 @@ export const TwoRequests: Story<MapVEuMapProps> = (args) => {
         {...variableProps}
         onChange={legendRadioChange}
         selectedOption={legendRadioValue}
-        yAxisRangeValue={yAxisRangeValue}
+        dependentAxisRange={dependentAxisRange}
       />
     </>
   );

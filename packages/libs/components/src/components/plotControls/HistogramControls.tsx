@@ -63,7 +63,7 @@ export type HistogramControlsProps = {
   valueType?: 'number' | 'date';
   /** Available unit options by which to bin data. */
   availableUnits?: Array<string>;
-  /** The currently selected bin unit. */
+  /** The currently selected binWidth unit. */
   selectedUnit?: string;
   /** Function to invoke when the selected bin unit changes. */
   onSelectedUnitChange?: (unit: string) => void;
@@ -77,7 +77,7 @@ export type HistogramControlsProps = {
   /** The acceptable range of binWidthValues. */
   binWidthRange: NumberOrTimeDeltaRange;
   /** The step to take when adjusting binWidth */
-  binWidthStep: NumberOrTimeDelta;
+  binWidthStep: number;
   /** A range to highlight by means of opacity. Optional */
   selectedRange?: NumberOrDateRange; // TO DO: handle DateRange too
   /** function to call upon selecting a range (in independent axis). Optional */
@@ -315,7 +315,6 @@ export default function HistogramControls({
           >
             y-Axis
           </div>
-
           {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
             <Switch
               label="Log Scale:"
@@ -416,12 +415,9 @@ export default function HistogramControls({
               }`}
               minimum={binWidthRange.min}
               maximum={binWidthRange.max}
-              step={
-                valueType !== undefined && valueType === 'date'
-                  ? (binWidth as TimeDelta)[0]
-                  : (binWidthStep as number)
-              }
+              step={binWidthStep}
               value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
+              debounceRateMs={250}
               onChange={(newValue: number) => {
                 onBinWidthChange({
                   binWidth:
@@ -431,7 +427,6 @@ export default function HistogramControls({
                   selectedUnit,
                 });
               }}
-              containerStyles={{ paddingBottom: 5 }}
             />
           )}
 

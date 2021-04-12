@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
 // Definitions
@@ -18,10 +18,10 @@ import { Layout } from 'plotly.js';
 export interface HistogramProps {
   /** Data for the plot. */
   data: HistogramData;
-  /** The width of the plot in pixels. */
-  width: number;
-  /** The height of the plot in pixels. */
-  height: number;
+  /** The width of the plot in pixels (if number), or CSS length. */
+  width: number | string;
+  /** The height of the plot in pixels (if number), or CSS length. */
+  height: number | string;
   /** The orientation of the plot. Defaults to `vertical` */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
@@ -50,9 +50,8 @@ export interface HistogramProps {
   /** Options for customizing plot legend. */
   legendOptions?: PlotLegendAddon;
   /** Range for the dependent axis (usually y-axis) */
-  // TO DO: rename to dependentAxisRange and
-  //        change to NumberRange but affects quite a few files (e.g. map's ChartMarkers)
-  yAxisRange?: [number, number];
+  // changed to dependentAxisRange
+  dependentAxisRange?: NumberOrDateRange | undefined;
   /** Show value for each bar */
   showBarValues?: boolean;
   /** Should plotting library controls be displayed? Ex. Plot.ly */
@@ -82,7 +81,8 @@ export default function Histogram({
   opacity = 1,
   barLayout = 'overlay',
   backgroundColor = 'transparent',
-  yAxisRange,
+  // changed to dependentAxisRange
+  dependentAxisRange,
   showBarValues,
   displayLegend = true,
   legendOptions,
@@ -133,7 +133,7 @@ export default function Histogram({
     () =>
       data.series.map((series) => {
         const binStarts = series.bins.map((bin) => bin.binStart);
-        // const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
+        const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
         const binCounts = series.bins.map((bin) => bin.count);
         const perBarOpacity: number[] = series.bins.map((bin) => {
           if (selectedRange) {
@@ -173,7 +173,7 @@ export default function Histogram({
           orientation: orientation === 'vertical' ? 'v' : 'h',
           name: series.name,
           // text: binLabels, // TO DO: find a way to show concise bin labels
-          text: showBarValues ? binCounts.map(String) : undefined,
+          text: showBarValues ? binCounts.map(String) : binLabels,
           textposition: showBarValues ? 'auto' : undefined,
           marker: {
             ...(series.color ? { color: series.color } : {}),
@@ -186,17 +186,21 @@ export default function Histogram({
     [data, orientation, calculatedBarOpacity, selectedRange]
   );
 
-  const handleSelectedRange = (object: any) => {
-    if (object && object.range) {
-      console.log(object.range);
-      const [min, max] =
-        orientation === 'vertical' ? object.range.x : object.range.y;
-      onSelectedRangeChange({
-        min: typeof min === 'number' ? min : new Date(min),
-        max: typeof max === 'number' ? max : new Date(max),
-      } as NumberOrDateRange);
-    }
-  };
+  const handleSelectedRange = useCallback(
+    (object: any) => {
+      if (object && object.range) {
+        const [val1, val2] =
+          orientation === 'vertical' ? object.range.x : object.range.y;
+        const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
+        // TO DO: think about time zones?
+        onSelectedRangeChange({
+          min: data.valueType === 'date' ? new Date(min) : min,
+          max: data.valueType === 'date' ? new Date(max) : max,
+        } as NumberOrDateRange);
+      }
+    },
+    [data.valueType, onSelectedRangeChange]
+  );
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
@@ -223,7 +227,8 @@ export default function Histogram({
     },
     color: textColor,
     gridcolor: gridColor,
-    range: yAxisRange || undefined,
+    // range should be an array
+    range: [dependentAxisRange?.min, dependentAxisRange?.max],
   };
 
   return (

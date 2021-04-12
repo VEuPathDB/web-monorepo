@@ -2,10 +2,7 @@ import React, { useEffect } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NumberRange,
-  DateRange,
   NumberOrDateRange,
-  NumberOrTimeDelta,
-  NumberOrTimeDeltaRange,
   TimeDeltaRange,
   TimeDelta,
 } from '../../types/general';
@@ -14,7 +11,7 @@ import Histogram, { HistogramProps } from '../../plots/Histogram';
 import usePlotControls from '../../hooks/usePlotControls';
 import HistogramControls from '../../components/plotControls/HistogramControls';
 import { binDailyCovidStats } from '../api/covidData';
-import { binGithubEventDates, getCreatedDateData } from '../api/githubDates';
+import { binGithubEventDates } from '../api/githubDates';
 import { HistogramData } from '../../types/plots';
 
 export default {
@@ -75,7 +72,7 @@ const TemplateWithControls: Story<
         {...plotControls}
         {...plotControls.histogram}
         containerStyles={{
-          maxWidth: args.width - 25,
+          maxWidth: `calc(${toCSSLength(args.width)} - 25px)`,
           marginLeft: 25,
         }}
       />
@@ -185,7 +182,7 @@ const TemplateWithSelectedRangeControls: Story<
         {...plotControls}
         {...plotControls.histogram}
         containerStyles={{
-          maxWidth: args.width - 25,
+          maxWidth: `calc(${toCSSLength(args.width)} - 25px)`,
           marginLeft: 25,
         }}
       />
@@ -254,7 +251,7 @@ RepoMonthsNoControls.loaders = [
 const TemplateWithSelectedDateRangeControls: Story<
   HistogramProps & {
     binWidthRange?: TimeDeltaRange;
-    binWidthStep?: TimeDelta;
+    binWidthStep?: number;
   }
 > = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
@@ -302,11 +299,15 @@ const TemplateWithSelectedDateRangeControls: Story<
         label="Histogram Controls"
         {...plotControls}
         {...plotControls.histogram}
+        binWidthRange={{ min: 1, max: 12, unit: 'month' }}
+        binWidthStep={1}
+        selectedUnit={'month'}
         containerStyles={{
-          maxWidth: args.width - 25,
+          maxWidth: `calc(${toCSSLength(args.width)} - 25px)`,
           marginLeft: 25,
         }}
       />
+      <div>Note: bin width slider is known to be broken.</div>
     </div>
   );
 };
@@ -331,3 +332,7 @@ DateRangeSelection.loaders = [
     }),
   }),
 ];
+
+function toCSSLength(length: string | number): string {
+  return typeof length === 'number' ? `${length}px` : length;
+}
