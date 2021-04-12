@@ -1,7 +1,7 @@
 import React from 'react';
 import { cx } from './Utils';
 import { SessionSummary } from './SessionSummary';
-import { useSession } from '../core';
+import { Status, useSession } from '../core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import {
   Redirect,
@@ -21,6 +21,7 @@ export function SessionPanel(props: Props) {
   const { sessionId } = props;
   const sessionState = useSession(sessionId);
   const {
+    status,
     session,
     setName,
     copySession,
@@ -28,6 +29,13 @@ export function SessionPanel(props: Props) {
     deleteSession,
   } = sessionState;
   const { url: routeBase } = useRouteMatch();
+  if (status === Status.Error)
+    return (
+      <div>
+        <h2>Error</h2>
+        <p>Could not load the analysis session.</p>
+      </div>
+    );
   if (session == null) return null;
   return (
     <div className={cx('-Session')}>
