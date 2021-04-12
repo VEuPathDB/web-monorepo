@@ -24,7 +24,7 @@ export default class AccessRequestView extends Component {
     if (successfullySubmitted) {
       return <h1>Data Access Request Submitted</h1>;
     } else if (alreadyRequested) {
-      return <h1>Data Access Request Already In Progress</h1>;
+      return <h1>Data Access Request Already Submitted</h1>;
     } else {
       return <h1>{formTitle}</h1>;
     }
