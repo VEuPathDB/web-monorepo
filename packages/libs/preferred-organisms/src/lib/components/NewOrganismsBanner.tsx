@@ -18,7 +18,7 @@ export function NewOrganismsBanner({
   const showWipFeatures = useShowWipFeatures();
   const location = useLocation();
 
-  if (location.pathname.startsWith('preferred-organisms')) {
+  if (location.pathname.startsWith('/preferred-organisms')) {
     return null;
   }
 
