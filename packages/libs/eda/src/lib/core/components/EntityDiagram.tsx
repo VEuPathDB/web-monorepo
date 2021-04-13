@@ -1,12 +1,9 @@
 import { useStudyMetadata } from '../hooks/workspace';
-import { useEntityCounts } from '../hooks/entityCounts';
-import { SessionState } from '../../core';
 import EntityDiagramComponent from '@veupathdb/components/lib/EntityDiagram/EntityDiagram';
 import { StudyEntity } from '../types/study';
 import { VariableLink } from './VariableLink';
 
 interface Props {
-  sessionState: SessionState;
   expanded: boolean;
   orientation: 'horizontal' | 'vertical';
   /** The tree's dimensions. If the tree is horizontal, it may not take up
@@ -17,25 +14,23 @@ interface Props {
     width: number;
   };
   selectedEntity: string;
+  entityCounts?: Record<string, number>;
+  filteredEntityCounts?: Record<string, number>;
 }
 
 export function EntityDiagram(props: Props) {
-  const { sessionState, expanded, orientation, size, selectedEntity } = props;
-
   const studyMetadata = useStudyMetadata();
-  const { session } = sessionState;
-  const { value: counts } = useEntityCounts();
-  const { value: filteredCounts } = useEntityCounts(session?.filters);
 
   const shadingData: Record<string, number> =
-    counts && filteredCounts
+    props.entityCounts && props.filteredEntityCounts
       ? Object.fromEntries(
-          Object.entries(counts).map(([key, value]) => [
+          Object.entries(props.entityCounts).map(([key, value]) => [
             key,
-            filteredCounts[key] / value,
+            props.filteredEntityCounts![key] / value,
           ])
         )
       : {};
+
   // Renders a VariableLink with optional children passed through
   const renderNode = (
     node: StudyEntity,
@@ -57,12 +52,14 @@ export function EntityDiagram(props: Props) {
 
   const diagramProps = {
     treeData: studyMetadata.rootEntity,
-    highlightedEntityID: selectedEntity,
-    orientation: orientation,
-    size: size,
+    highlightedEntityID: props.selectedEntity,
+    orientation: props.orientation,
+    size: props.size,
     shadingData: shadingData,
     renderNode: renderNode,
   };
 
-  return <EntityDiagramComponent isExpanded={expanded} {...diagramProps} />;
+  return (
+    <EntityDiagramComponent isExpanded={props.expanded} {...diagramProps} />
+  );
 }
