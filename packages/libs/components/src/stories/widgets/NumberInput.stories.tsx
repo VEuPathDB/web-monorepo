@@ -12,7 +12,7 @@ export default {
 } as Meta;
 
 const ControlledTemplate: Story<NumberInputProps> = (args) => {
-  const [value, setValue] = useState<number | ''>(args.value ?? 1);
+  const [value, setValue] = useState<number | undefined>(args.value ?? 1);
 
   const onValueChange = useCallback(
     (newValue) => {

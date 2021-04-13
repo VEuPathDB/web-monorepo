@@ -159,9 +159,9 @@ export default function SliderWidget({
           value={localValue}
           minValue={minimum}
           maxValue={maximum}
-          onValueChange={(newValue: NumberOrDate | '') =>
+          onValueChange={(newValue?: NumberOrDate) =>
             /** disable clearing of text field by ignoring empty string */
-            newValue !== '' && handleChange(null, newValue as number)
+            newValue != null && handleChange(null, newValue as number)
           }
           displayRangeViolationWarnings={false}
           containerStyles={{
