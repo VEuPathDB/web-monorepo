@@ -10,7 +10,11 @@ interface Props {
   projectId: string;
 }
 
-export function NewOrganismsBanner({ newOrganismCount, projectId }: Props) {
+export function NewOrganismsBanner({
+  newOrganismCount,
+  onDismiss,
+  projectId,
+}: Props) {
   const showWipFeatures = useShowWipFeatures();
   const location = useLocation();
 
@@ -55,6 +59,7 @@ export function NewOrganismsBanner({ newOrganismCount, projectId }: Props) {
           padding: 0,
           color: '#7c7c7c',
         }}
+        onClick={onDismiss}
       >
         <IconAlt fa="times fa-2x" />
       </button>
