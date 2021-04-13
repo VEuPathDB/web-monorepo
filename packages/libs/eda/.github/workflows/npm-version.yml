@@ -2,8 +2,7 @@ name: "NPM Version Bump"
 
 on:
   push:
-    branches:
-      - $default-branch
+    branches: [ $default-branch ]
 
 jobs:
   bump-version:
