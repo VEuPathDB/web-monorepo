@@ -30,6 +30,10 @@ jobs:
         uses: "phips28/gh-action-bump-version@master"
         with:
           tag-prefix: ''
+          commit-message: |
+            ci: version bump to {{version}}
+
+            skip-checks: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "cat package.json"
