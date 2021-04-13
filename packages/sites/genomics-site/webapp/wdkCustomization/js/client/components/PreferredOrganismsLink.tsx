@@ -6,8 +6,9 @@ import { NewOrganismsBanner } from '@veupathdb/preferred-organisms/lib/component
 import {
   useAvailableOrganisms,
   useNewOrganisms,
+  usePreferredOrganismsEnabled,
   usePreferredOrganismsState,
-  useProjectId
+  useProjectId,
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
 import './PreferredOrganismsLink.scss';
@@ -33,9 +34,12 @@ export function PreferredOrganismsLink() {
 
 function PreferredOrganismsCount() {
   const availableOrganisms = useAvailableOrganisms();
+  const [ preferredOrganismEnabled ] = usePreferredOrganismsEnabled();
   const [ preferredOrganisms ] = usePreferredOrganismsState();
 
-  return <>({preferredOrganisms.length} of {availableOrganisms.size})</>;
+  return !preferredOrganismEnabled
+    ? <>(disabled)</>
+    : <>({preferredOrganisms.length} of {availableOrganisms.size})</>;
 }
 
 function NewOrganismsBannerController() {
