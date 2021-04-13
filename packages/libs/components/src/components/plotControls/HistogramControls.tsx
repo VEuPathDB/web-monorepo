@@ -16,6 +16,7 @@ import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
 // Local Components
+import Button from '../widgets/Button';
 import ButtonGroup from '../widgets/ButtonGroup';
 import Notification from '../widgets/Notification';
 import OpacitySlider from '../widgets/OpacitySlider';
@@ -90,6 +91,29 @@ export type HistogramControlsProps = {
   accentColor?: string;
   /** Attributes and methdods for error management. */
   errorManagement: ErrorManagement;
+  // add y-axis controls
+  /** Whether or not to show y-axis log scale. */
+  dependentAxisLogScale?: boolean;
+  /** Action to take on y-axis log scale change. */
+  toggleDependentAxisLogScale?: (dependentAxisLogScale: boolean) => void;
+  /** Whether or not to set y-axis min/max range. */
+  dependentAxisRange?: NumberOrDateRange;
+  /** Action to take on y-axis min/max range change. */
+  onDependentAxisRangeChange?: (newRange: NumberOrDateRange) => void;
+  /** Whether or not to display y-axis absolute Relative. */
+  dependentAxisMode?: string;
+  /** Action to take on display legend change. */
+  onDependentAxisModeChange?: (layout: 'absolute' | 'relative') => void;
+  /** Action to reset dependent axis range. */
+  onDependentAxisRangeReset?: () => void;
+  /** Whether or not to set x-axis min/max range. */
+  independentAxisRange?: NumberOrDateRange;
+  /** Action to take on x-axis min/max range change. */
+  onIndependentAxisRangeChange?: (newRange: NumberOrDateRange) => void;
+  /** Action to reset independent axis range. */
+  onIndependentAxisRangeReset?: () => void;
+  /** Action to Reset all to defaults. */
+  onResetAll?: () => void;
 };
 
 /**
@@ -122,6 +146,20 @@ export default function HistogramControls({
   selectedRange,
   onSelectedRangeChange,
   selectedRangeBounds,
+  // add y-axis controls
+  dependentAxisLogScale,
+  toggleDependentAxisLogScale,
+  dependentAxisRange,
+  onDependentAxisRangeChange,
+  dependentAxisMode,
+  onDependentAxisModeChange,
+  onDependentAxisRangeReset,
+  // add x-axis/independent axis controls: axis range and range reset
+  independentAxisRange,
+  onIndependentAxisRangeChange,
+  onIndependentAxisRangeReset,
+  // add reset all
+  onResetAll,
   containerStyles = {},
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -150,11 +188,11 @@ export default function HistogramControls({
       ref={ref}
       style={{
         borderStyle: 'solid',
-        borderWidth: 2,
+        borderWidth: '0.125em',
         borderColor: LIGHT_GRAY,
-        borderRadius: '10px',
-        padding: '15px',
-        minWidth: '175px',
+        borderRadius: '0.6125em',
+        padding: '0.9375em',
+        minWidth: '11em',
         ...containerStyles,
       }}
     >
@@ -162,9 +200,9 @@ export default function HistogramControls({
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(max-content, 100px))',
-          marginRight: 35,
-          columnGap: 25,
-          rowGap: 15,
+          marginRight: '2.1875em',
+          columnGap: '1.5625em',
+          rowGap: '0.9375em',
         }}
       >
         {toggleOrientation && (
@@ -180,16 +218,9 @@ export default function HistogramControls({
             selectedOption={barLayout}
             // @ts-ignore
             onOptionSelected={onBarLayoutChange}
+            containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
-        {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
-          <ButtonGroup
-            label="Data Units"
-            options={availableUnits}
-            selectedOption={selectedUnit}
-            onOptionSelected={onSelectedUnitChange}
-          />
-        ) : null}
         {onSelectedRangeChange ? (
           valueType !== undefined && valueType === 'date' ? (
             <DateRangeInput
@@ -213,10 +244,10 @@ export default function HistogramControls({
           display: 'grid',
           gridTemplateColumns:
             width > 500 ? '2fr 2fr 1fr' : width > 300 ? '1fr 1fr' : '1fr',
-          marginTop: 15,
-          marginRight: 15,
-          columnGap: 25,
-          rowGap: 5,
+          marginTop: '0.9375em',
+          marginRight: '0.9375em',
+          columnGap: '1.5625em',
+          rowGap: '0.3125em',
         }}
       >
         {onOpacityChange && (
@@ -226,31 +257,10 @@ export default function HistogramControls({
             color={accentColor}
           />
         )}
-        {onBinWidthChange && (
-          <SliderWidget
-            label={`Bin Width${
-              valueType !== undefined && valueType === 'date'
-                ? ' (' + (binWidth as TimeDelta)[1] + ')'
-                : ''
-            }`}
-            minimum={binWidthRange.min}
-            maximum={binWidthRange.max}
-            step={binWidthStep}
-            value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
-            debounceRateMs={250}
-            onChange={(newValue: number) => {
-              onBinWidthChange({
-                binWidth:
-                  valueType !== undefined && valueType === 'date'
-                    ? ([newValue, selectedUnit] as TimeDelta)
-                    : newValue,
-                selectedUnit,
-              });
-            }}
-          />
-        )}
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 5 }}>
+      <div
+        style={{ display: 'flex', flexWrap: 'wrap', paddingTop: '0.3125em' }}
+      >
         {toggleDisplayLegend && (
           <Switch
             label="Legend"
@@ -262,7 +272,7 @@ export default function HistogramControls({
             onStateChange={(event: any) =>
               toggleDisplayLegend(event.target.checked)
             }
-            containerStyles={{ paddingRight: 25 }}
+            containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
         {toggleLibraryControls && (
@@ -273,7 +283,188 @@ export default function HistogramControls({
             onStateChange={(event: any) =>
               toggleLibraryControls(event.target.checked)
             }
+            // add paddingRight
+            containerStyles={{ paddingRight: '1.5625em' }}
           />
+        )}
+      </div>
+      {/* y-axis controls with box */}
+      <div
+        style={{
+          display: 'inline-flex',
+          borderStyle: 'solid',
+          borderWidth: '0.125em',
+          borderColor: 'rgb(240, 240, 240)',
+          borderRadius: 0,
+          padding: '1em',
+          width: '30em',
+          minWidth: '11em',
+          marginTop: '1.5625em',
+          marginRight: '1.5625em',
+        }}
+      >
+        {/* wrapper div to prevent from inline-flex */}
+        <div>
+          <div
+            style={{
+              width: '3.125em',
+              marginTop: '-1.8em',
+              marginLeft: '-.3em',
+              marginBottom: '.3em',
+              background: 'white',
+              textAlign: 'center',
+            }}
+          >
+            y-Axis
+          </div>
+          {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
+            <Switch
+              label="Log Scale:"
+              color={accentColor}
+              state={dependentAxisLogScale}
+              // The stinky use of `any` here comes from
+              // an incomplete type definition in the
+              // material UI library.
+              onStateChange={(event: any) =>
+                toggleDependentAxisLogScale(event.target.checked)
+              }
+              containerStyles={{ paddingBottom: '0.3125em' }}
+            />
+          )}
+          {onDependentAxisRangeChange ? (
+            valueType !== undefined && valueType === 'date' ? (
+              <DateRangeInput
+                label="Range:"
+                range={dependentAxisRange as DateRange}
+                onRangeChange={onDependentAxisRangeChange}
+              />
+            ) : (
+              <NumberRangeInput
+                label="Range:"
+                range={dependentAxisRange as NumberRange}
+                onRangeChange={onDependentAxisRangeChange}
+              />
+            )
+          ) : null}
+          {dependentAxisMode && onDependentAxisModeChange && (
+            <ButtonGroup
+              label="Absolute/Relative:"
+              options={['absolute', 'relative']}
+              selectedOption={dependentAxisMode}
+              // @ts-ignore
+              onOptionSelected={onDependentAxisModeChange}
+            />
+          )}
+          {/* add dependent axis range reset button */}
+          <div style={{ paddingTop: '1.5625em', width: '11.25em' }}>
+            {onDependentAxisRangeReset && (
+              <Button
+                type={'solid'}
+                text={'Reset to defaults'}
+                onClick={onDependentAxisRangeReset}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* x-axis controls with box */}
+      <div
+        style={{
+          display: 'inline-flex',
+          borderStyle: 'solid',
+          borderWidth: '0.125em',
+          borderColor: 'rgb(240, 240, 240)',
+          borderRadius: 0,
+          padding: '1em',
+          width: '30em',
+          minWidth: '11em',
+          marginTop: '1.5625em',
+          marginRight: '1.5625em',
+        }}
+      >
+        {/* wrapper div to prevent from inline-flex */}
+        <div>
+          <div
+            style={{
+              width: '3.125em',
+              marginTop: '-1.8em',
+              marginLeft: '-.3em',
+              marginBottom: '.3em',
+              background: 'white',
+              textAlign: 'center',
+            }}
+          >
+            x-Axis
+          </div>
+
+          {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
+            <ButtonGroup
+              label="Data Units"
+              options={availableUnits}
+              selectedOption={selectedUnit}
+              onOptionSelected={onSelectedUnitChange}
+              containerStyles={{ paddingBottom: '0.9375em' }}
+            />
+          ) : null}
+
+          {onBinWidthChange && (
+            <SliderWidget
+              label={`Bin Width${
+                valueType !== undefined && valueType === 'date'
+                  ? ' (' + (binWidth as TimeDelta)[1] + ')'
+                  : ''
+              }`}
+              minimum={binWidthRange.min}
+              maximum={binWidthRange.max}
+              step={binWidthStep}
+              value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
+              debounceRateMs={250}
+              onChange={(newValue: number) => {
+                onBinWidthChange({
+                  binWidth:
+                    valueType !== undefined && valueType === 'date'
+                      ? ([newValue, selectedUnit] as TimeDelta)
+                      : newValue,
+                  selectedUnit,
+                });
+              }}
+            />
+          )}
+
+          {onIndependentAxisRangeChange ? (
+            valueType !== undefined && valueType === 'date' ? (
+              <DateRangeInput
+                label="Range:"
+                range={independentAxisRange as DateRange}
+                onRangeChange={onIndependentAxisRangeChange}
+              />
+            ) : (
+              <NumberRangeInput
+                label="Range:"
+                range={independentAxisRange as NumberRange}
+                onRangeChange={onIndependentAxisRangeChange}
+              />
+            )
+          ) : null}
+
+          {/* add dependent axis range reset button */}
+          <div style={{ paddingTop: '0.625em', width: '11.25em' }}>
+            {onIndependentAxisRangeReset && (
+              <Button
+                type={'solid'}
+                text={'Reset to defaults'}
+                onClick={onIndependentAxisRangeReset}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* reset all */}
+      <div style={{ paddingTop: '1.5625em', width: '8.125em' }}>
+        {onResetAll && (
+          <Button type={'solid'} text={'Reset All'} onClick={onResetAll} />
         )}
       </div>
 
@@ -284,7 +475,7 @@ export default function HistogramControls({
           text={error.message}
           color={accentColor}
           occurences={occurences}
-          containerStyles={{ marginTop: 10 }}
+          containerStyles={{ marginTop: '0.625em' }}
           onAcknowledgement={() => errorManagement.removeError(error)}
         />
       ))}
@@ -292,7 +483,7 @@ export default function HistogramControls({
       {label && (
         <ControlsHeader
           text={label}
-          styleOverrides={{ paddingTop: 25, textAlign: 'right' }}
+          styleOverrides={{ paddingTop: '1.5625em', textAlign: 'right' }}
         />
       )}
     </div>

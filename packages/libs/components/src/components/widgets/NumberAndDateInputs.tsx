@@ -114,14 +114,6 @@ function BaseInput({
       onMouseOver={() => setFocused(true)}
       onMouseOut={() => setFocused(false)}
     >
-      {label && (
-        <Typography
-          variant="button"
-          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
-        >
-          {label}
-        </Typography>
-      )}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <TextField
           InputProps={{ classes }}

@@ -104,7 +104,8 @@ function BaseInput({
           />
         )}
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div style={{ margin: 25 }}>
+          {/* change margin */}
+          <div style={{ margin: '3px 15px 15px 15px' }}>
             <Typography
               variant="button"
               style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}

@@ -361,7 +361,12 @@ export const getCollectionDateChartMarkers = async (
         values={values}
         colors={colors}
         isAtomic={atomicValue}
-        yAxisRange={yAxisRangeValue}
+        // dependentAxisRange is an object with {min,max} (NumberRange)
+        dependentAxisRange={
+          yAxisRangeValue
+            ? { min: yAxisRangeValue[0], max: yAxisRangeValue[1] }
+            : null
+        }
         duration={duration}
         onClick={handleMarkerClick}
       />
@@ -448,7 +453,8 @@ export const getCollectionDateBasicMarkers = async (
         values={values}
         colors={colors}
         isAtomic={atomicValue}
-        yAxisRange={null}
+        // change to dependentAxisRange
+        dependentAxisRange={null}
         duration={duration}
         onClick={handleMarkerClick}
       />
