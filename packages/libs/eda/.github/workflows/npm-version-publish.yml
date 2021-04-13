@@ -33,3 +33,12 @@ jobs:
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new tag $NEW_TAG"
+      - name: Install and Build 🔧
+        run: |
+          yarn install
+          yarn build-npm-modules
+      - name: Publish 🚀
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          access: public
