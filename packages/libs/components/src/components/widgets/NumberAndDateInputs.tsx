@@ -120,11 +120,10 @@ function BaseInput({
     [minValue, maxValue]
   );
 
-  // Handle incoming value changes
+  // Handle incoming value changes (including changes in minValue/maxValue, which affect boundsCheckedValue)
   useEffect(() => {
-    if (value === localValue) return;
-    setLocalValue(value);
     boundsCheckedValue(value);
+    if (value !== localValue) setLocalValue(value);
   }, [value, boundsCheckedValue]);
 
   const handleChange = useCallback(
