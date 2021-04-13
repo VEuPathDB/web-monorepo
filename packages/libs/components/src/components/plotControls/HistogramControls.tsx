@@ -188,11 +188,11 @@ export default function HistogramControls({
       ref={ref}
       style={{
         borderStyle: 'solid',
-        borderWidth: 2,
+        borderWidth: '0.125em',
         borderColor: LIGHT_GRAY,
-        borderRadius: '10px',
-        padding: '15px',
-        minWidth: '175px',
+        borderRadius: '0.6125em',
+        padding: '0.9375em',
+        minWidth: '11em',
         ...containerStyles,
       }}
     >
@@ -200,9 +200,9 @@ export default function HistogramControls({
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(max-content, 100px))',
-          marginRight: 35,
-          columnGap: 25,
-          rowGap: 15,
+          marginRight: '2.1875em',
+          columnGap: '1.5625em',
+          rowGap: '0.9375em',
         }}
       >
         {toggleOrientation && (
@@ -218,7 +218,7 @@ export default function HistogramControls({
             selectedOption={barLayout}
             // @ts-ignore
             onOptionSelected={onBarLayoutChange}
-            containerStyles={{ paddingRight: 25 }}
+            containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
         {onSelectedRangeChange ? (
@@ -244,10 +244,10 @@ export default function HistogramControls({
           display: 'grid',
           gridTemplateColumns:
             width > 500 ? '2fr 2fr 1fr' : width > 300 ? '1fr 1fr' : '1fr',
-          marginTop: 15,
-          marginRight: 15,
-          columnGap: 25,
-          rowGap: 5,
+          marginTop: '0.9375em',
+          marginRight: '0.9375em',
+          columnGap: '1.5625em',
+          rowGap: '0.3125em',
         }}
       >
         {onOpacityChange && (
@@ -258,7 +258,9 @@ export default function HistogramControls({
           />
         )}
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', paddingTop: 5 }}>
+      <div
+        style={{ display: 'flex', flexWrap: 'wrap', paddingTop: '0.3125em' }}
+      >
         {toggleDisplayLegend && (
           <Switch
             label="Legend"
@@ -270,7 +272,7 @@ export default function HistogramControls({
             onStateChange={(event: any) =>
               toggleDisplayLegend(event.target.checked)
             }
-            containerStyles={{ paddingRight: 25 }}
+            containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
         {toggleLibraryControls && (
@@ -282,7 +284,7 @@ export default function HistogramControls({
               toggleLibraryControls(event.target.checked)
             }
             // add paddingRight
-            containerStyles={{ paddingRight: 25 }}
+            containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
       </div>
@@ -291,21 +293,21 @@ export default function HistogramControls({
         style={{
           display: 'inline-flex',
           borderStyle: 'solid',
-          borderWidth: 2,
+          borderWidth: '0.125em',
           borderColor: 'rgb(240, 240, 240)',
           borderRadius: 0,
           padding: '1em',
-          // width: 400,
-          minWidth: 175,
-          marginTop: 25,
-          marginRight: 25,
+          width: '30em',
+          minWidth: '11em',
+          marginTop: '1.5625em',
+          marginRight: '1.5625em',
         }}
       >
         {/* wrapper div to prevent from inline-flex */}
         <div>
           <div
             style={{
-              width: 50,
+              width: '3.125em',
               marginTop: '-1.8em',
               marginLeft: '-.3em',
               marginBottom: '.3em',
@@ -326,7 +328,7 @@ export default function HistogramControls({
               onStateChange={(event: any) =>
                 toggleDependentAxisLogScale(event.target.checked)
               }
-              containerStyles={{ paddingBottom: 5 }}
+              containerStyles={{ paddingBottom: '0.3125em' }}
             />
           )}
           {onDependentAxisRangeChange ? (
@@ -354,7 +356,7 @@ export default function HistogramControls({
             />
           )}
           {/* add dependent axis range reset button */}
-          <div style={{ paddingTop: 25, width: 170 }}>
+          <div style={{ paddingTop: '1.5625em', width: '11.25em' }}>
             {onDependentAxisRangeReset && (
               <Button
                 type={'solid'}
@@ -371,21 +373,21 @@ export default function HistogramControls({
         style={{
           display: 'inline-flex',
           borderStyle: 'solid',
-          borderWidth: 2,
+          borderWidth: '0.125em',
           borderColor: 'rgb(240, 240, 240)',
           borderRadius: 0,
           padding: '1em',
-          // width: 400,
-          minWidth: 175,
-          marginTop: 25,
-          marginRight: 25,
+          width: '30em',
+          minWidth: '11em',
+          marginTop: '1.5625em',
+          marginRight: '1.5625em',
         }}
       >
         {/* wrapper div to prevent from inline-flex */}
         <div>
           <div
             style={{
-              width: 50,
+              width: '3.125em',
               marginTop: '-1.8em',
               marginLeft: '-.3em',
               marginBottom: '.3em',
@@ -402,7 +404,7 @@ export default function HistogramControls({
               options={availableUnits}
               selectedOption={selectedUnit}
               onOptionSelected={onSelectedUnitChange}
-              containerStyles={{ paddingBottom: 15 }}
+              containerStyles={{ paddingBottom: '0.9375em' }}
             />
           ) : null}
 
@@ -447,7 +449,7 @@ export default function HistogramControls({
           ) : null}
 
           {/* add dependent axis range reset button */}
-          <div style={{ paddingTop: 10, width: 170 }}>
+          <div style={{ paddingTop: '0.625em', width: '11.25em' }}>
             {onIndependentAxisRangeReset && (
               <Button
                 type={'solid'}
@@ -460,7 +462,7 @@ export default function HistogramControls({
       </div>
 
       {/* reset all */}
-      <div style={{ paddingTop: 25, width: 130 }}>
+      <div style={{ paddingTop: '1.5625em', width: '8.125em' }}>
         {onResetAll && (
           <Button type={'solid'} text={'Reset All'} onClick={onResetAll} />
         )}
@@ -473,7 +475,7 @@ export default function HistogramControls({
           text={error.message}
           color={accentColor}
           occurences={occurences}
-          containerStyles={{ marginTop: 10 }}
+          containerStyles={{ marginTop: '0.625em' }}
           onAcknowledgement={() => errorManagement.removeError(error)}
         />
       ))}
@@ -481,7 +483,7 @@ export default function HistogramControls({
       {label && (
         <ControlsHeader
           text={label}
-          styleOverrides={{ paddingTop: 25, textAlign: 'right' }}
+          styleOverrides={{ paddingTop: '1.5625em', textAlign: 'right' }}
         />
       )}
     </div>
