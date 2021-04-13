@@ -5,6 +5,9 @@ $gray: #f5f5f5;
   > p {
     font-size: 1.4em;
     margin-bottom: 2em;
+  }
+
+  &--Instructions {
     display: flex;
     justify-content: space-between;
   }

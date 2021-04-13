@@ -1,4 +1,8 @@
+import { useLocation } from 'react-router-dom';
+
 import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
+
+import { useShowWipFeatures } from '../hooks/preferredOrganisms';
 
 interface Props {
   onDismiss: () => void;
@@ -7,6 +11,13 @@ interface Props {
 }
 
 export function NewOrganismsBanner({ newOrganismCount, projectId }: Props) {
+  const showWipFeatures = useShowWipFeatures();
+  const location = useLocation();
+
+  if (location.pathname.startsWith('preferred-organisms')) {
+    return null;
+  }
+
   return (
     <div
       style={{
@@ -28,7 +39,11 @@ export function NewOrganismsBanner({ newOrganismCount, projectId }: Props) {
       <div>
         {makeNewOrganismDescription(newOrganismCount, projectId)}
         <br />
-        <Link to="/preferred-organisms">
+        <Link
+          to={`/preferred-organisms${
+            showWipFeatures ? '?showWipFeatures=true' : ''
+          }`}
+        >
           Please review My Organism Preferences.
         </Link>
       </div>

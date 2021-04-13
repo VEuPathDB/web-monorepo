@@ -36,13 +36,16 @@ export function usePreferredOrganismsState() {
   return useRecoilState(preferredOrganisms);
 }
 
+export function useShowWipFeatures() {
+  const location = useLocation();
+  return location.search.includes('showWipFeatures=true');
+}
+
 export function useNewOrganisms() {
   const { newOrganisms } = usePreferredOrganismsRecoilState();
-  const location = useLocation();
+  const showWipFeatures = useShowWipFeatures();
 
-  return useRecoilValue(
-    newOrganisms(location.search.includes('showWipFeatures=true'))
-  );
+  return useRecoilValue(newOrganisms(showWipFeatures));
 }
 
 export function useUpdateBuildNumberCallback() {

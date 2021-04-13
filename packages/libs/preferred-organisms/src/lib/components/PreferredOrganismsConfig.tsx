@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { noop } from 'lodash';
 
-import { CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
+import { CheckboxTree, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { Node } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -49,8 +48,6 @@ export function PreferredOrganismsConfig({
   setConfigSelection,
   togglePreferredOrganisms,
 }: Props) {
-  const location = useLocation();
-
   const renderConfigNode = useRenderOrganismNode(
     referenceStrains,
     newOrganisms
@@ -73,24 +70,44 @@ export function PreferredOrganismsConfig({
     [organismTree, configSelection]
   );
 
+  const [describeNewOrganisms, setDescribeNewOrganisms] = useState(true);
+
   return (
     <div className={cx()}>
       <h1>My Organism Preferences</h1>
-      <p>
+      <p className={cx('--Instructions')}>
         <span>
           Set your{' '}
           <span className={cx('--InlineTitle')}>My Organism Preferences</span>{' '}
           to limit the organisms you see throughout {projectId}.
         </span>
         <span>
-          {location.search.includes('showWipFeatures=true') && (
-            <PreferredOrganismsToggle
-              enabled={preferredOrganismsEnabled}
-              onClick={togglePreferredOrganisms}
-            />
-          )}
+          <PreferredOrganismsToggle
+            enabled={preferredOrganismsEnabled}
+            onClick={togglePreferredOrganisms}
+          />
         </span>
       </p>
+      {describeNewOrganisms && newOrganisms.size > 0 && (
+        <p className={cx('--NewOrganisms')}>
+          In this release of {projectId},{' '}
+          {makeNewOrganismDescription(newOrganisms.size)}{' '}
+          <button
+            type="button"
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              color: '#7c7c7c',
+            }}
+            onClick={() => {
+              setDescribeNewOrganisms(false);
+            }}
+          >
+            <IconAlt fa="times" />
+          </button>
+        </p>
+      )}
       <div className={cx('--Main')}>
         <div className={cx('--Selections')}>
           <h2>Choose organisms to keep</h2>
@@ -155,4 +172,10 @@ export function PreferredOrganismsConfig({
       </div>
     </div>
   );
+}
+
+function makeNewOrganismDescription(newOrganismCount: number) {
+  return newOrganismCount === 1
+    ? 'there is 1 new organism. You may view it by typing "new" into the search box below.'
+    : `there are ${newOrganismCount} new organisms. You may view them by typing "new" into the search box below.`;
 }
