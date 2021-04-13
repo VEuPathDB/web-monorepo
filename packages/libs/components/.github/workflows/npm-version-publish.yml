@@ -3,7 +3,7 @@ name: "NPM Version Bump"
 on:
   push:
     branches:
-      - $default-branch
+      - master
 
 jobs:
   bump-version:
@@ -20,7 +20,11 @@ jobs:
       - name: "Setup Node.js"
         uses: "actions/setup-node@v1"
         with:
-          node-version: 12
+          node-version: 14
+      - name: Install and Build 🔧
+        run: |
+          yarn install
+          yarn build-npm-modules
       - name: "Automated Version Bump"
         id: version-bump
         uses: "phips28/gh-action-bump-version@master"
@@ -34,3 +38,8 @@ jobs:
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new tag $NEW_TAG"
+      - name: Publish 🚀
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          access: public
