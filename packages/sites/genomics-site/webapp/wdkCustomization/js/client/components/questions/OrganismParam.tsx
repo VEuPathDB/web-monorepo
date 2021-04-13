@@ -25,7 +25,7 @@ import {
   useRenderOrganismNode,
   useOrganismSearchPredicate
 } from '@veupathdb/preferred-organisms/lib/hooks/organismNodes';
-import { usePreferredOrganismsState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
+import { usePreferredOrganismsState, usePreferredOrganismsEnabled } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
 
 import './OrganismParam.scss';
@@ -131,6 +131,8 @@ function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: st
     [ isSearchPage, preferredOrganisms ]
   );
 
+  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabled();
+
   useEffect(() => {
     const filteredInitialSelectedValues = initialSelectedValues.current.filter(selectedValue => preferredValues.has(selectedValue));
 
@@ -149,7 +151,7 @@ function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: st
 
       const shouldOnlyShowPreferredOrganisms = parameter.properties?.[ORGANISM_PROPERTIES_KEY].includes(SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY);
 
-      const preferredVocabulary = shouldOnlyShowPreferredOrganisms
+      const preferredVocabulary = shouldOnlyShowPreferredOrganisms && preferredOrganismsEnabled
         ? pruneDescendantNodes(
             node => (
               node.children.length > 0 ||
@@ -166,7 +168,7 @@ function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: st
             vocabulary: preferredVocabulary
           };
     },
-    [ isSearchPage, parameter, preferredValues ]
+    [ isSearchPage, parameter, preferredOrganismsEnabled, preferredValues ]
   );
 }
 
