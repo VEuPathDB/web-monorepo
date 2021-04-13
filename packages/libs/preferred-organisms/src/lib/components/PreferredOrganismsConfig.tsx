@@ -89,23 +89,56 @@ export function PreferredOrganismsConfig({
         </span>
       </p>
       {describeNewOrganisms && newOrganisms.size > 0 && (
-        <p className={cx('--NewOrganisms')}>
-          In this release of {projectId},{' '}
-          {makeNewOrganismDescription(newOrganisms.size)}{' '}
-          <button
-            type="button"
+        <p
+          className={cx('--NewOrganisms')}
+          style={{
+            margin: '3px',
+            padding: '.5em',
+            borderRadius: '0.5em',
+            borderWidth: '1px',
+            borderColor: 'lightgrey',
+            borderStyle: 'solid',
+            background: '#E3F2FD',
+            display: 'inline-block',
+          }}
+        >
+          <div
             style={{
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              color: '#7c7c7c',
-            }}
-            onClick={() => {
-              setDescribeNewOrganisms(false);
+              display: 'flex',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
             }}
           >
-            <IconAlt fa="times" />
-          </button>
+            <span className="fa-stack" style={{ fontSize: '1rem' }}>
+              <i
+                className="fa fa-exclamation-triangle fa-stack-2x"
+                style={{ color: '#ffeb3b' }}
+              />
+              <i
+                className="fa fa-exclamation fa-stack-1x"
+                style={{ color: 'black', fontSize: '1.3em', top: 2 }}
+              />
+            </span>
+            <div style={{ marginLeft: '1rem' }}>
+              In this release of {projectId},{' '}
+              {makeNewOrganismDescription(newOrganisms.size)}{' '}
+            </div>
+            <button
+              type="button"
+              style={{
+                background: 'none',
+                marginLeft: '1rem',
+                border: 'none',
+                padding: 0,
+                color: '#7c7c7c',
+              }}
+              onClick={() => {
+                setDescribeNewOrganisms(false);
+              }}
+            >
+              <IconAlt fa="times" />
+            </button>
+          </div>
         </p>
       )}
       <div className={cx('--Main')}>
@@ -175,7 +208,21 @@ export function PreferredOrganismsConfig({
 }
 
 function makeNewOrganismDescription(newOrganismCount: number) {
-  return newOrganismCount === 1
-    ? 'there is 1 new organism. You may view it by typing "new" into the search box below.'
-    : `there are ${newOrganismCount} new organisms. You may view them by typing "new" into the search box below.`;
+  const NEW = <span style={{ color: '#3fa415' }}>NEW</span>;
+
+  return (
+    <>
+      {newOrganismCount === 1 ? (
+        <>
+          there is 1 {NEW} organism. View it by typing "new" into the search
+          box.
+        </>
+      ) : (
+        <>
+          there are {newOrganismCount} {NEW} organisms. View them by typing
+          "new" into the search box.
+        </>
+      )}
+    </>
+  );
 }
