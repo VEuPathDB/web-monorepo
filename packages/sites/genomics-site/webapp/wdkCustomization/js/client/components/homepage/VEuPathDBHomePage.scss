@@ -161,6 +161,21 @@ body.vpdb-Body .wdk-QuestionFormQuestionHeader {
   top: 8.5em;
 }
 
+// Fix for All Datasets sticky header
+body.vpdb-Body .wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTable-Header {
+  top: 103px;
+}
+
+// Various offsets for page header
+body.vpdb-Body .wdk-RecordAttributeSectionItem:before,
+body.vpdb-Body .wdk-RecordTableContainer:before,
+body.vpdb-Body .wdk-RecordSubsection:before,
+body.vpdb-Body .wdk-RecordSection:before,
+body.vpdb-Body .ExternalContentController a[name]::before {
+  height: 103px;
+  margin-top: -103px;
+}
+
 body.vpdb-Body .vpdb-RootContainer {
   @media screen and (max-width: $mobile-width) {
     grid-template-areas:
