@@ -11,17 +11,21 @@ type Props = {
 };
 
 export default function SelectionInfo(props: Props) {
-  const { alwaysShowCount = false } = props;
+  const { alwaysShowCount = false, selectedCount } = props;
   const { minSelectedCount, maxSelectedCount } = props.parameter;
   const hasMin = minSelectedCount > 0;
   const hasMax = maxSelectedCount > 0;
+
   const message = hasMin && hasMax
-    ? `You may only selected between ${minSelectedCount} and ${maxSelectedCount} values for this parameter.`
-    : hasMin ? `You must select at least ${minSelectedCount} values for this parameter.`
-    : hasMax ? `You may select up to ${maxSelectedCount} values for this parameter.`
+    ? `between ${minSelectedCount} and ${maxSelectedCount} values required`
+    : (hasMin && selectedCount > 0) ? `at least ${minSelectedCount} ${valueDescription(minSelectedCount)} required`
+    : hasMax ? `at most ${maxSelectedCount} ${valueDescription(maxSelectedCount)} required`
     : null;
+
+  const isCountInBounds = countInBounds(selectedCount, Math.max(minSelectedCount,1), maxSelectedCount);
+
   // This is usd in TreeBoxParam (eg organism): red if 0 selected
-  const countColor = countInBounds(props.selectedCount, Math.max(minSelectedCount,1), maxSelectedCount)
+  const countColor = isCountInBounds
     ? 'black'
     : 'red';
 
@@ -29,8 +33,20 @@ export default function SelectionInfo(props: Props) {
 
   return (
     <div className="treeCount">
-      {message && <div>Note: {message}</div>}
-      <div><span className={countColor}>{props.selectedCount} selected</span>, out of {props.allCount}</div>
+      <span className={countColor}>{props.selectedCount} selected</span>, out of {props.allCount}
+      {
+        !isCountInBounds && message &&
+        <>
+          {' '}
+          <span className="mediumgray-text">({message})</span>
+        </>
+      }
     </div>
   );
+}
+
+function valueDescription(count: number) {
+  return count === 1
+    ? 'value'
+    : 'values';
 }
