@@ -33,6 +33,7 @@ jobs:
           commit-message: |
             ci: version bump to {{version}}
 
+
             skip-checks: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
