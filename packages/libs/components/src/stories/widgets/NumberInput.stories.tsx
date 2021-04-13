@@ -13,7 +13,6 @@ export default {
 
 const ControlledTemplate: Story<NumberInputProps> = (args) => {
   const [value, setValue] = useState<number | undefined>(args.value ?? 1);
-
   const onValueChange = useCallback(
     (newValue) => {
       console.log(`new value = ${newValue}`);
@@ -42,6 +41,14 @@ ControlledBounded.args = {
   label: 'Controlled (0 <= x <= 5)',
   minValue: 0,
   maxValue: 5,
+};
+
+export const ExternallyOutOfBounds = ControlledTemplate.bind({});
+ExternallyOutOfBounds.args = {
+  label: 'Controlled (0 <= x <= 5)',
+  minValue: 0,
+  maxValue: 5,
+  value: 10,
 };
 
 export const ControlledBoundedNonZero = ControlledTemplate.bind({});

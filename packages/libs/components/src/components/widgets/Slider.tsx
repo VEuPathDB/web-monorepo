@@ -120,7 +120,7 @@ export default function SliderWidget({
   // watch external 'value' for changes and set localValue
   useEffect(() => {
     setLocalValue(value);
-  }, [value, setLocalValue]);
+  }, [value]);
 
   const handleChange = useCallback(
     (_: unknown, value: number | number[]) => {
@@ -129,7 +129,7 @@ export default function SliderWidget({
       setLocalValue(value);
       debouncedOnChange(value);
     },
-    [setLocalValue, debouncedOnChange]
+    [debouncedOnChange]
   );
 
   const valueLabelDisplay = showTextInput ? 'off' : 'auto';

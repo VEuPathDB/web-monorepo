@@ -96,7 +96,7 @@ function BaseInput({
           error: true,
           helperText: `Please enter a ${valueType}.`,
         });
-        return false;
+        return undefined;
       }
       if (minValue !== undefined && newValue < minValue) {
         newValue = minValue;
@@ -104,17 +104,17 @@ function BaseInput({
           error: true,
           helperText: `Sorry, value can't go below ${minValue}!`,
         });
-        return false;
+        return newValue;
       } else if (maxValue !== undefined && newValue > maxValue) {
         newValue = maxValue;
         setErrorState({
           error: true,
           helperText: `Sorry, value can't go above ${maxValue}!`,
         });
-        return false;
+        return newValue;
       } else {
         setErrorState({ error: false, helperText: '' });
-        return true;
+        return newValue;
       }
     },
     [minValue, maxValue]
@@ -135,15 +135,10 @@ function BaseInput({
           ? Number(event.target.value)
           : new Date(event.target.value);
       setLocalValue(newValue);
-      const isValid = boundsCheckedValue(newValue);
-      if (isValid) {
-        debouncedOnChange(newValue);
-      } else {
-        // cancel pending invocations
-        debouncedOnChange.cancel();
-      }
+      const boundedValue = boundsCheckedValue(newValue);
+      if (boundedValue !== value) debouncedOnChange(boundedValue);
     },
-    [boundsCheckedValue, debouncedOnChange]
+    [boundsCheckedValue, value, debouncedOnChange]
   );
 
   return (
