@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { Typography, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberOrDate } from '../../types/general';
+import { debounce } from 'lodash';
 
 type BaseProps<M extends NumberOrDate> = {
   /** Externally controlled value. */
@@ -13,11 +14,13 @@ type BaseProps<M extends NumberOrDate> = {
   /** Maximum allowed value (inclusive) */
   maxValue?: M;
   /** Function to invoke when value changes. */
-  onValueChange: (newValue: NumberOrDate | undefined) => void;
+  onValueChange: (newValue?: NumberOrDate) => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Additional styles for component container. Optional. */
   containerStyles?: React.CSSProperties;
+  /** Do not flag up value range violations */
+  displayRangeViolationWarnings?: boolean;
 };
 
 export type NumberInputProps = BaseProps<number>;
@@ -44,6 +47,17 @@ type BaseInputProps =
  * Input field taking a value we can do < > <= => comparisons with
  * i.e. number or date.
  * Not currently exported. But could be if needed.
+ *
+ * This component will allow out-of-range and empty values, but it will only
+ * call `onValueChange` when the new value is valid. An error message will be
+ * displayed when the value is invalid, but the consumer of this component will
+ * not be notified of the invalid state. It's possible we will want to add a
+ * callback to allow observing invalid states, in the future.
+ *
+ * The `onValueChange` callback is debounced at 500ms. This allows the user to
+ * type a value at a reasonable pace, without invoking the callback for
+ * intermediate values. We use a local state variable to track the input's
+ * actual value.
  */
 function BaseInput({
   value,
@@ -53,7 +67,9 @@ function BaseInput({
   label,
   valueType,
   containerStyles,
+  displayRangeViolationWarnings = true,
 }: BaseInputProps) {
+  const [localValue, setLocalValue] = useState<NumberOrDate | undefined>(value);
   const [focused, setFocused] = useState(false);
   const [errorState, setErrorState] = useState({
     error: false,
@@ -66,47 +82,69 @@ function BaseInput({
     },
   })();
 
-  const boundsCheckedValue = (newValue?: NumberOrDate) => {
-    if (newValue === undefined) return undefined;
-    if (minValue !== undefined && newValue < minValue) {
-      newValue = minValue;
-      setErrorState({
-        error: true,
-        helperText: `Sorry, value can't go below ${minValue}!`,
-      });
-    } else if (maxValue !== undefined && newValue > maxValue) {
-      newValue = maxValue;
-      setErrorState({
-        error: true,
-        helperText: `Sorry, value can't go above ${maxValue}!`,
-      });
-    } else {
-      setErrorState({ error: false, helperText: '' });
-    }
-    return undefined;
-  };
+  const debouncedOnChange = useMemo(() => debounce(onValueChange, 500), [
+    onValueChange,
+  ]);
 
+  // Cancel pending onChange request when this component is unmounted.
+  useEffect(() => debouncedOnChange.cancel, []);
+
+  const boundsCheckedValue = useCallback(
+    (newValue?: NumberOrDate) => {
+      if (newValue == null) {
+        setErrorState({
+          error: true,
+          helperText: `Please enter a ${valueType}.`,
+        });
+        return false;
+      }
+      if (minValue !== undefined && newValue < minValue) {
+        newValue = minValue;
+        setErrorState({
+          error: true,
+          helperText: `Sorry, value can't go below ${minValue}!`,
+        });
+        return false;
+      } else if (maxValue !== undefined && newValue > maxValue) {
+        newValue = maxValue;
+        setErrorState({
+          error: true,
+          helperText: `Sorry, value can't go above ${maxValue}!`,
+        });
+        return false;
+      } else {
+        setErrorState({ error: false, helperText: '' });
+        return true;
+      }
+    },
+    [minValue, maxValue]
+  );
+
+  // Handle incoming value changes (including changes in minValue/maxValue, which affect boundsCheckedValue)
   useEffect(() => {
-    // if the min or max change
-    // run the controlledValue through the bounds checker
-    // to fix controlledValue or reset the error states as required
-    const newValue = boundsCheckedValue(value);
-    if (newValue != null) onValueChange(newValue);
-  }, [minValue, maxValue]);
+    boundsCheckedValue(value);
+    if (value !== localValue) setLocalValue(value);
+  }, [value, boundsCheckedValue]);
 
-  const handleChange = (event: any) => {
-    if (event.target.value.length > 0) {
-      const newValue = boundsCheckedValue(
-        valueType === 'number'
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue =
+        event.target.value === ''
+          ? undefined
+          : valueType === 'number'
           ? Number(event.target.value)
-          : new Date(event.target.value)
-      );
-      if (newValue !== undefined) onValueChange(newValue);
-    } else {
-      // allows user to clear the input box
-      onValueChange(undefined);
-    }
-  };
+          : new Date(event.target.value);
+      setLocalValue(newValue);
+      const isValid = boundsCheckedValue(newValue);
+      if (isValid) {
+        debouncedOnChange(newValue);
+      } else {
+        // immediately send the last valid value to onChange
+        debouncedOnChange.flush();
+      }
+    },
+    [boundsCheckedValue, debouncedOnChange]
+  );
 
   return (
     <div
@@ -118,14 +156,18 @@ function BaseInput({
         <TextField
           InputProps={{ classes }}
           value={
-            valueType === 'number'
-              ? value
-              : (value as Date)?.toISOString().substr(0, 10)
+            localValue == null
+              ? ''
+              : valueType === 'number'
+              ? localValue
+              : (localValue as Date)?.toISOString().substr(0, 10)
           }
           type={valueType}
           variant="outlined"
           onChange={handleChange}
-          {...errorState}
+          onFocus={(event) => event.currentTarget.select()}
+          error={errorState.error}
+          helperText={displayRangeViolationWarnings && errorState.helperText}
         />
       </div>
     </div>

@@ -1,22 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberInput, DateInput } from './NumberAndDateInputs';
-import {
-  NumberRange,
-  DateRange,
-  NumberOrDateRange,
-  NumberOrDate,
-} from '../../types/general';
+import { NumberRange, DateRange, NumberOrDateRange } from '../../types/general';
 
 export type BaseProps<M extends NumberOrDateRange> = {
   /** Externally controlled range. */
-  range?: M;
+  range: M;
+  /** Function to invoke when range changes. */
+  onRangeChange: (newRange: NumberOrDateRange) => void;
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
   rangeBounds?: M;
-  /** Function to invoke when range changes. */
-  onRangeChange?: (newRange: NumberOrDateRange) => void;
   /** UI Label for the widget. Optional */
   label?: string;
   /** Label for lower bound widget. Optional. Default is Min */

@@ -3,8 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Slider from '@material-ui/core/Slider';
 import Typography from '@material-ui/core/Typography';
 
+import { NumberInput } from './NumberAndDateInputs';
 import { DARK_GRAY, LIGHT_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { debounce } from 'lodash';
+import { NumberOrDate } from '../../types/general';
 
 export type SliderWidgetProps = {
   /** The minimum value of the slider. */
@@ -45,6 +47,8 @@ export type SliderWidgetProps = {
       };
   /** Additional styles to apply to component container. */
   containerStyles?: React.CSSProperties;
+  /** Show an auxillary text input box */
+  showTextInput?: boolean;
 };
 
 /** A customizable slider widget.
@@ -64,6 +68,7 @@ export default function SliderWidget({
   label,
   colorSpec,
   containerStyles = {},
+  showTextInput,
 }: SliderWidgetProps) {
   // Used to track whether or not has mouse hovering over widget.
   const [focused, setFocused] = useState(false);
@@ -115,7 +120,7 @@ export default function SliderWidget({
   // watch external 'value' for changes and set localValue
   useEffect(() => {
     setLocalValue(value);
-  }, [value, setLocalValue]);
+  }, [value]);
 
   const handleChange = useCallback(
     (_: unknown, value: number | number[]) => {
@@ -126,6 +131,8 @@ export default function SliderWidget({
     },
     [debouncedOnChange]
   );
+
+  const valueLabelDisplay = showTextInput ? 'off' : 'auto';
 
   return (
     <div
@@ -147,6 +154,25 @@ export default function SliderWidget({
           {label}
         </Typography>
       )}
+      {showTextInput && (
+        <NumberInput
+          value={localValue}
+          minValue={minimum}
+          maxValue={maximum}
+          onValueChange={(newValue?: NumberOrDate) =>
+            /** disable clearing of text field by ignoring empty string */
+            newValue != null && handleChange(null, newValue as number)
+          }
+          displayRangeViolationWarnings={false}
+          containerStyles={{
+            width:
+              Math.max(String(maximum).length, String(minimum).length) +
+              5 +
+              'ch',
+            marginRight: 10,
+          }}
+        />
+      )}
       <Slider
         classes={{
           root: classes.root,
@@ -160,7 +186,7 @@ export default function SliderWidget({
         max={maximum}
         value={localValue}
         step={step}
-        valueLabelDisplay="auto"
+        valueLabelDisplay={valueLabelDisplay}
         valueLabelFormat={valueFormatter}
         onChange={handleChange}
       />

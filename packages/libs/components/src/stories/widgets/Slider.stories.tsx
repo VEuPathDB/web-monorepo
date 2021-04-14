@@ -44,7 +44,7 @@ Basic.args = {
   minimum: 0,
   maximum: 255,
   value: 1,
-  containerStyles: { width: 150 },
+  containerStyles: { height: 100, width: 150 },
   debounceRateMs: 100,
 };
 Basic.argTypes = {
@@ -56,7 +56,7 @@ Basic.argTypes = {
 export const Labelled = Template.bind({});
 Labelled.args = {
   ...Basic.args,
-  containerStyles: { width: 300 },
+  containerStyles: { height: 100, width: 300 },
   label: 'Widget Label',
 };
 Labelled.argTypes = { ...Basic.argTypes };
@@ -94,3 +94,36 @@ CustomGradientColors.args = {
   },
 };
 CustomGradientColors.argTypes = { ...Basic.argTypes };
+
+export const AuxiliaryTextInput = Template.bind({});
+AuxiliaryTextInput.args = {
+  ...Labelled.args,
+  minimum: 0,
+  maximum: 11,
+  containerStyles: { height: 100, width: 600 },
+  label: 'Special Number',
+  showTextInput: true,
+};
+AuxiliaryTextInput.argTypes = { ...Basic.argTypes };
+
+export const AuxiliaryTextInputBigNum = Template.bind({});
+AuxiliaryTextInputBigNum.args = {
+  ...Labelled.args,
+  minimum: -10000,
+  maximum: 10000,
+  containerStyles: { height: 100, width: 600 },
+  label: 'Special Number',
+  showTextInput: true,
+};
+AuxiliaryTextInputBigNum.argTypes = { ...Basic.argTypes };
+
+export const AuxiliaryTextInputHugeNum = Template.bind({});
+AuxiliaryTextInputHugeNum.args = {
+  ...Labelled.args,
+  minimum: -100000000,
+  maximum: 100000000,
+  containerStyles: { height: 100, width: 600 },
+  label: 'Special Number',
+  showTextInput: true,
+};
+AuxiliaryTextInputHugeNum.argTypes = { ...Basic.argTypes };
