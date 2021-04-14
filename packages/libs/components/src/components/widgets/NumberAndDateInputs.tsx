@@ -13,6 +13,8 @@ type BaseProps<M extends NumberOrDate> = {
   minValue?: M;
   /** Maximum allowed value (inclusive) */
   maxValue?: M;
+  /** If true, warn about empty value. Default is false. */
+  required?: boolean;
   /** Function to invoke when value changes. */
   onValueChange: (newValue?: NumberOrDate) => void;
   /** UI Label for the widget. Optional */
@@ -63,6 +65,7 @@ function BaseInput({
   value,
   minValue,
   maxValue,
+  required = false,
   onValueChange,
   label,
   valueType,
@@ -92,10 +95,11 @@ function BaseInput({
   const boundsCheckedValue = useCallback(
     (newValue?: NumberOrDate) => {
       if (newValue == null) {
-        setErrorState({
-          error: true,
-          helperText: `Please enter a ${valueType}.`,
-        });
+        required &&
+          setErrorState({
+            error: true,
+            helperText: `Please enter a ${valueType}.`,
+          });
         return false;
       }
       if (minValue !== undefined && newValue < minValue) {
@@ -117,7 +121,7 @@ function BaseInput({
         return true;
       }
     },
-    [minValue, maxValue]
+    [required, minValue, maxValue]
   );
 
   // Handle incoming value changes (including changes in minValue/maxValue, which affect boundsCheckedValue)
@@ -152,6 +156,14 @@ function BaseInput({
       onMouseOver={() => setFocused(true)}
       onMouseOut={() => setFocused(false)}
     >
+      {label && (
+        <Typography
+          variant="button"
+          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY }}
+        >
+          {label}
+        </Typography>
+      )}
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <TextField
           InputProps={{ classes }}

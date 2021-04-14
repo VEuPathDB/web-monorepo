@@ -47,8 +47,11 @@ export const ControlledLinked: Story<NumberRangeInputProps> = () => {
         {...SharedNumberRangeInputArgs}
       />
       <NumberRangeInput
-        label="B"
+        label="B (no min and max labels, required=true )"
         onRangeChange={handleChangeB}
+        lowerLabel=""
+        upperLabel=""
+        required={true}
         {...SharedNumberRangeInputArgs}
       />
     </>

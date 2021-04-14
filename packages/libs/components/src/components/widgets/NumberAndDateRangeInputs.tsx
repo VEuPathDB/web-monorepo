@@ -8,6 +8,8 @@ import { NumberRange, DateRange, NumberOrDateRange } from '../../types/general';
 export type BaseProps<M extends NumberOrDateRange> = {
   /** Externally controlled range. */
   range: M;
+  /** If true, warn about empty lower or upper values. Default is false */
+  required?: boolean;
   /** Function to invoke when range changes. */
   onRangeChange: (newRange: NumberOrDateRange) => void;
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
@@ -49,6 +51,7 @@ type BaseInputProps =
  */
 function BaseInput({
   range,
+  required = false,
   rangeBounds,
   onRangeChange,
   label,
@@ -81,6 +84,7 @@ function BaseInput({
             minValue={rangeBounds?.min as number}
             maxValue={(max ?? rangeBounds?.max) as number}
             label={lowerLabel}
+            required={required}
             onValueChange={(newValue) => {
               if (newValue !== undefined && onRangeChange)
                 onRangeChange({ min: newValue, max } as NumberRange);
@@ -92,6 +96,7 @@ function BaseInput({
             minValue={rangeBounds?.min as Date}
             maxValue={(max ?? rangeBounds?.max) as Date}
             label={lowerLabel}
+            required={required}
             onValueChange={(newValue) => {
               if (newValue !== undefined && onRangeChange)
                 onRangeChange({ min: newValue, max } as DateRange);
@@ -115,6 +120,7 @@ function BaseInput({
             minValue={(min ?? rangeBounds?.min) as number}
             maxValue={rangeBounds?.max as number}
             label={upperLabel}
+            required={required}
             onValueChange={(newValue) => {
               if (newValue !== undefined && onRangeChange)
                 onRangeChange({ min, max: newValue } as NumberRange);
@@ -126,6 +132,7 @@ function BaseInput({
             minValue={(min ?? rangeBounds?.min) as Date}
             maxValue={rangeBounds?.max as Date}
             label={upperLabel}
+            required={required}
             onValueChange={(newValue) => {
               if (newValue !== undefined && onRangeChange)
                 onRangeChange({ min, max: newValue } as DateRange);

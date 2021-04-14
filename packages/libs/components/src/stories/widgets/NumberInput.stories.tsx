@@ -31,16 +31,27 @@ const ControlledTemplate: Story<NumberInputProps> = (args) => {
   );
 };
 
-export const Controlled = ControlledTemplate.bind({});
-Controlled.args = {
+export const NoBounds = ControlledTemplate.bind({});
+NoBounds.args = {
   label: 'Controlled',
 };
 
-export const ControlledBounded = ControlledTemplate.bind({});
-ControlledBounded.args = {
+export const NoLabel = ControlledTemplate.bind({});
+NoLabel.args = {};
+
+export const Bounded = ControlledTemplate.bind({});
+Bounded.args = {
   label: 'Controlled (0 <= x <= 5)',
   minValue: 0,
   maxValue: 5,
+};
+
+export const RequiredBounded = ControlledTemplate.bind({});
+RequiredBounded.args = {
+  label: 'Controlled (0 <= x <= 5)',
+  minValue: 0,
+  maxValue: 5,
+  required: true,
 };
 
 export const ExternallyOutOfBounds = ControlledTemplate.bind({});
@@ -51,8 +62,8 @@ ExternallyOutOfBounds.args = {
   value: 10,
 };
 
-export const ControlledBoundedNonZero = ControlledTemplate.bind({});
-ControlledBoundedNonZero.args = {
+export const BoundedNonZero = ControlledTemplate.bind({});
+BoundedNonZero.args = {
   label: 'Controlled (3 <= x <= 9)',
   value: 6,
   minValue: 3,
@@ -68,7 +79,7 @@ SilentBoundsCheck.args = {
   displayRangeViolationWarnings: false,
 };
 
-export const ControlledLinkedPair: Story = () => {
+export const LinkedPair: Story = () => {
   const [linkedValue, setLinkedValue] = useState<number>(0);
 
   return (
