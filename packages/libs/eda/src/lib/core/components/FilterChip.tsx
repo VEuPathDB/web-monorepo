@@ -12,9 +12,9 @@ interface Props {
 const useStyles = makeStyles({
   root: (props: Props) => ({
     cursor: 'default',
-    backgroundColor: props.isActive ? '#3c78d8' : '#e0e0e0',
+    border: props.isActive ? 'solid 3px #3c78d8' : undefined,
     '& a': {
-      color: props.isActive ? 'white' : 'black',
+      color: 'black',
       textDecoration: 'none',
       outline: '0',
     },
@@ -32,7 +32,7 @@ export default function FilterChip(props: Props) {
     <Chip
       className={classes.root}
       size="small"
-      color={props.isActive ? 'primary' : 'default'}
+      color={'default'}
       label={props.children}
       title={props.tooltipText}
       clickable={true}
