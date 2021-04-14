@@ -86,7 +86,7 @@ export interface EntityDiagramProps {
   /** Which entity to highlight */
   highlightedEntityID: string;
   /** Data defining the background shading of each node */
-  shadingData: ShadingData;
+  shadingData?: ShadingData;
   /** An optional function returning the element to render for a node given its
    * data */
   renderNode?: (
@@ -106,6 +106,7 @@ export interface EntityDiagramProps {
   expandedNodeWidth?: number;
   expandedNodeHeight?: number;
   fontSize?: number;
+  shadingColor?: string;
 }
 
 export default function EntityDiagram({
@@ -117,18 +118,19 @@ export default function EntityDiagram({
   renderNode,
   size,
   selectedTextBold = true,
-  selectedBorderWeight = 2,
-  selectedHighlightWeight = 2,
-  selectedHighlightColor = 'orange',
-  shadowDx = 1,
-  shadowDy = 1,
-  shadowDispersion = 0,
-  shadowOpacity = 1,
-  miniNodeWidth = 30,
+  selectedBorderWeight = 1,
+  selectedHighlightWeight = 3,
+  selectedHighlightColor = 'rgba(60, 120, 216, 1)',
+  shadowDx = 2,
+  shadowDy = 2,
+  shadowDispersion = 0.2,
+  shadowOpacity = 0.3,
+  miniNodeWidth = 35,
   miniNodeHeight = 20,
   expandedNodeWidth = 120,
   expandedNodeHeight = 40,
   fontSize = 12,
+  shadingColor = '#e4c8c8',
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
 
@@ -144,7 +146,8 @@ export default function EntityDiagram({
     (orientation === 'horizontal'
       ? size.width - nodeWidth
       : size.height - nodeHeight) -
-    nodeHighlightWidth * 2;
+    nodeHighlightWidth * 2 -
+    shadowDy;
   // Likewise for treeWidth (it's not always horizontal on screen)
   const treeWidth = orientation === 'horizontal' ? size.height : size.width;
   // The tree's edge is in the middle of the boundary nodes, so we shift it by
@@ -166,26 +169,25 @@ export default function EntityDiagram({
       displayText = matches.join('');
     }
 
-    const rectangle = (
+    // <rect>'s props don't account for stroke width, so we shrink them
+    // accordingly to make sure the node is exactly the dimensions we want
+    const rectHeight = nodeHeight - nodeStrokeWidth * 2;
+    const rectWidth = nodeWidth - nodeStrokeWidth * 2;
+
+    const rect = (
       <rect
-        // These props don't account for stroke width, so we shrink them
-        // accordingly to make sure the node is exactly the dimensions we want
-        height={nodeHeight - nodeStrokeWidth * 2}
-        width={nodeWidth - nodeStrokeWidth * 2}
-        y={-nodeHeight / 2}
-        x={-nodeWidth / 2}
+        height={rectHeight}
+        width={rectWidth}
+        y={-rectHeight / 2}
+        x={-rectWidth / 2}
         fill={
-          shadingData[node.data.id]
+          shadingData?.[node.data.id]
             ? `url('#rect-gradient-${node.data.id}')`
             : 'white'
         }
         stroke={'black'}
         strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
-        // strokeWidth={nodeStrokeWidth}
         style={{
-          outline: isHighlighted
-            ? `${selectedHighlightColor} ${nodeHighlightWidth}px solid`
-            : undefined,
           overflowWrap: isExpanded ? 'normal' : undefined,
         }}
         key={`rect-${node.data.id}`}
@@ -212,6 +214,28 @@ export default function EntityDiagram({
       </Text>
     );
 
+    let children = [rect, text];
+
+    if (isHighlighted) {
+      // Make the highlight around the selected node
+      const rectHighlightHeight = nodeHeight + 2 * nodeHighlightWidth;
+      const rectHighlightWidth = nodeWidth + 2 * nodeHighlightWidth;
+
+      const rectHighlight = (
+        <rect
+          height={rectHighlightHeight}
+          width={rectHighlightWidth}
+          y={-rectHighlightHeight / 2}
+          x={-rectHighlightWidth / 2}
+          fill={selectedHighlightColor}
+          rx={3}
+          key={`rect-highlight-${node.data.id}`}
+        />
+      );
+
+      children.unshift(rectHighlight);
+    }
+
     return (
       <Group
         top={orientation == 'horizontal' ? node.x : node.y}
@@ -224,7 +248,7 @@ export default function EntityDiagram({
               : 'url(#shadow)',
         }}
       >
-        {renderNode?.(node.data, [rectangle, text]) ?? [rectangle, text]}
+        {renderNode?.(node.data, children) ?? children}
         {!isExpanded && <title>{node.data.displayName}</title>}
       </Group>
     );
@@ -270,7 +294,7 @@ export default function EntityDiagram({
           >
             <path d="M0,-5L10,0L0,5" />
           </marker>
-          <filter id="shadow">
+          <filter id="shadow" x="-20%" y="-40%" width="150%" height="200%">
             <feDropShadow
               dx={shadowDx}
               dy={shadowDy}
@@ -279,7 +303,7 @@ export default function EntityDiagram({
             />
           </filter>
         </defs>
-        {
+        {shadingData &&
           // Node background shading definitions
           Object.keys(shadingData).map((key, index) => (
             <LinearGradient
@@ -289,11 +313,10 @@ export default function EntityDiagram({
               x2={shadingData[key]}
               fromOffset={1}
               id={`rect-gradient-${key}`}
-              from="#e4c8c8"
+              from={shadingColor}
               to="white"
             />
-          ))
-        }
+          ))}
         <Tree root={data} size={[treeWidth, treeHeight]}>
           {(tree) => (
             <Group left={treeLeft} top={treeTop}>

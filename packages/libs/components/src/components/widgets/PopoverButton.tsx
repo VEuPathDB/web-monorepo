@@ -36,6 +36,7 @@ export default function PopoverButton(props: PopoverButtonProps) {
 
   const button = (
     <Button
+      disableRipple
       aria-controls="dropdown"
       aria-haspopup="true"
       color="default"

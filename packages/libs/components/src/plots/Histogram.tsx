@@ -26,10 +26,10 @@ interface BinSummary {
 export interface HistogramProps {
   /** Data for the plot. */
   data: HistogramData;
-  /** The width of the plot in pixels. */
-  width: number;
-  /** The height of the plot in pixels. */
-  height: number;
+  /** The width of the plot in pixels (if number), or CSS length. */
+  width: number | string;
+  /** The height of the plot in pixels (if number), or CSS length. */
+  height: number | string;
   /** The orientation of the plot. Defaults to `vertical` */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
@@ -58,9 +58,8 @@ export interface HistogramProps {
   /** Options for customizing plot legend. */
   legendOptions?: PlotLegendAddon;
   /** Range for the dependent axis (usually y-axis) */
-  // TO DO: rename to dependentAxisRange and
-  //        change to NumberRange but affects quite a few files (e.g. map's ChartMarkers)
-  yAxisRange?: [number, number];
+  // changed to dependentAxisRange
+  dependentAxisRange?: NumberOrDateRange | undefined;
   /** Show value for each bar */
   showBarValues?: boolean;
   /** Should plotting library controls be displayed? Ex. Plot.ly */
@@ -90,7 +89,8 @@ export default function Histogram({
   opacity = 1,
   barLayout = 'overlay',
   backgroundColor = 'transparent',
-  yAxisRange,
+  // changed to dependentAxisRange
+  dependentAxisRange,
   showBarValues,
   displayLegend = true,
   legendOptions,
@@ -331,7 +331,8 @@ export default function Histogram({
     },
     color: textColor,
     gridcolor: gridColor,
-    range: yAxisRange || undefined,
+    // range should be an array
+    range: [dependentAxisRange?.min, dependentAxisRange?.max],
   };
 
   return (

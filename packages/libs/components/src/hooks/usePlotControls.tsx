@@ -38,7 +38,20 @@ type ActionType<DataShape> =
   | { type: 'toggleOrientation' }
   | { type: 'toggleDisplayLegend' }
   | { type: 'toggleLibraryControls' }
-  | { type: 'histogram/setSelectedRange'; payload: NumberOrDateRange };
+  | { type: 'histogram/setSelectedRange'; payload: NumberOrDateRange }
+  // add y-axis/dependent axis controls
+  | { type: 'histogram/toggleDependentAxisLogScale' }
+  | { type: 'histogram/onDependentAxisRangeChange'; payload: NumberOrDateRange }
+  | { type: 'histogram/onDependentAxisModeChange' }
+  | { type: 'histogram/onDependentAxisRangeReset' }
+  // add x-axis/independent axis controls: axis range and range reset
+  | {
+      type: 'histogram/onIndependentAxisRangeChange';
+      payload: NumberOrDateRange;
+    }
+  | { type: 'histogram/onIndependentAxisRangeReset' }
+  // add reset all
+  | { type: 'onResetAll' };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -120,6 +133,61 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
           selectedRange: action.payload,
         },
       };
+    // add y-axis controls
+    case 'histogram/toggleDependentAxisLogScale':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          dependentAxisLogScale:
+            state?.histogram?.dependentAxisLogScale === true ? false : true,
+        },
+      };
+    case 'histogram/onDependentAxisRangeChange':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          dependentAxisRange: action.payload,
+        },
+      };
+    case 'histogram/onDependentAxisModeChange':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          dependentAxisMode:
+            state?.histogram?.dependentAxisMode === 'absolute'
+              ? 'relative'
+              : 'absolute',
+        },
+      };
+    // add x-axis/independent axis controls: axis range and range reset
+    case 'histogram/onIndependentAxisRangeChange':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+          independentAxisRange: action.payload,
+        },
+      };
+    case 'histogram/onDependentAxisRangeReset':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+        },
+      };
+    case 'histogram/onIndependentAxisRangeReset':
+      return {
+        ...state,
+        histogram: {
+          ...state.histogram,
+        },
+      };
+    // add reset all: nothing here but perhaps it would eventually be a function to set all params to default
+    case 'onResetAll':
+      return { ...state };
     default:
       throw new Error();
   }
@@ -161,6 +229,8 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
   selectedUnit?: string;
   /** Storage for errors that we may want to display to the user. */
   errors: Array<Error>;
+  /** reset all to default. Type may be an array of object? */
+  onResetAll?: () => void;
   /** Histogram specific attributes. */
   histogram: {
     /** Histogram: The width of bins. */
@@ -177,6 +247,19 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     displaySelectedRangeControls: boolean;
     /** Type of x-variable 'number' or 'date' */
     valueType?: 'number' | 'date';
+    // add y-axis controls
+    /** Histogram: Type of y-axis log scale */
+    dependentAxisLogScale?: boolean;
+    /** Histogram: Range of y-axis min/max values */
+    dependentAxisRange?: NumberOrDateRange;
+    /** Histogram: Toggle absolute and relative.*/
+    dependentAxisMode?: string;
+    /** Histogram: dependent axis range reset */
+    onDependentAxisRangeReset?: () => void;
+    /** Histogram: Range of x-axis min/max values */
+    independentAxisRange?: NumberOrDateRange;
+    /** Histogram: independent axis range reset */
+    onIndependentAxisRangeReset?: () => void;
   };
 };
 
@@ -200,6 +283,12 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     displaySelectedRangeControls?: boolean;
     /** Type of x-variable 'number' or 'date' */
     valueType?: 'number' | 'date';
+    // add y-axis controls
+    dependentAxisLogScale?: boolean;
+    dependentAxisRange?: NumberOrDateRange;
+    dependentAxisMode?: string;
+    // add x-axis range
+    independentAxisRange?: NumberOrDateRange;
   };
 };
 
@@ -229,6 +318,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       binWidthRange: { min: 0, max: 0 },
       binWidthStep: 0,
       displaySelectedRangeControls: false,
+      // add y-axis controls
+      dependentAxisLogScale: false,
+      dependentAxisMode: 'absolute',
     },
   };
 
@@ -449,6 +541,40 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     }
   };
 
+  // Toggle y-axis logScale
+  const toggleDependentAxisLogScale = () =>
+    dispatch({ type: 'histogram/toggleDependentAxisLogScale' });
+  // on y-axis dependentAxisRange
+  const onDependentAxisRangeChange = (newRange: NumberOrDateRange) => {
+    if (params.histogram) {
+      dispatch({
+        type: 'histogram/onDependentAxisRangeChange',
+        payload: newRange,
+      });
+    }
+  };
+  // on y-axis absoluteRelative
+  const onDependentAxisModeChange = () =>
+    dispatch({ type: 'histogram/onDependentAxisModeChange' });
+  // on dependent axis range reset
+  const onDependentAxisRangeReset = () =>
+    dispatch({ type: 'histogram/onDependentAxisRangeReset' });
+  // on independent axis range change
+  const onIndependentAxisRangeChange = (newRange: NumberOrDateRange) => {
+    if (params.histogram) {
+      dispatch({
+        type: 'histogram/onIndependentAxisRangeChange',
+        payload: newRange,
+      });
+    }
+  };
+  // on independent axis range reset
+  const onIndependentAxisRangeReset = () =>
+    dispatch({ type: 'histogram/onIndependentAxisRangeReset' });
+
+  // reset all
+  const onResetAll = () => dispatch({ type: 'onResetAll' });
+
   /**
    * Separate errors attribute from the rest of the reducer state.
    * This is so we can control the shape of the object returned
@@ -473,6 +599,14 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       ...reducerState.histogram,
       onBinWidthChange,
       onSelectedRangeChange,
+      // add y-axis controls
+      toggleDependentAxisLogScale,
+      onDependentAxisRangeChange,
+      onDependentAxisModeChange,
+      onDependentAxisRangeReset,
+      // add x-axis/independent axis controls: axis range and range reset
+      onIndependentAxisRangeChange,
+      onIndependentAxisRangeReset,
     },
     resetOpacity,
     onBarLayoutChange,
@@ -481,5 +615,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     toggleDisplayLegend,
     toggleOrientation,
     toggleLibraryControls,
+    // add reset all
+    onResetAll,
   };
 }

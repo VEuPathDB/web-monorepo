@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
 import {
@@ -11,67 +11,21 @@ export default {
   component: NumberInput,
 } as Meta;
 
-const Template: Story<NumberInputProps> = (args) => {
-  return (
-    <NumberInput
-      {...args}
-      onValueChange={(newValue) => {
-        console.log(`new value = ${newValue}`);
-      }}
-      containerStyles={{ ...args.containerStyles, margin: 25 }}
-    />
-  );
-};
-
-export const Basic = Template.bind({});
-Basic.args = {
-  value: 42,
-};
-
-export const Labelled = Template.bind({});
-Labelled.args = {
-  ...Basic.args,
-  label: 'Labelled',
-};
-
-export const StartsEmpty = Template.bind({});
-StartsEmpty.args = {
-  label: 'Starts Empty',
-};
-
-export const NotSoWide = Template.bind({});
-NotSoWide.args = {
-  label: 'Not so wide',
-  containerStyles: {
-    width: 100,
-  },
-};
-
-export const Bounded = Template.bind({});
-Bounded.args = {
-  label: '0 <= x <= 5',
-  minValue: 0,
-  maxValue: 5,
-};
-
-export const BoundedInitialized = Template.bind({});
-BoundedInitialized.args = {
-  value: 3,
-  label: '0 <= x <= 5',
-  minValue: 0,
-  maxValue: 5,
-};
-
 const ControlledTemplate: Story<NumberInputProps> = (args) => {
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number | undefined>(args.value ?? 1);
+  const onValueChange = useCallback(
+    (newValue) => {
+      console.log(`new value = ${newValue}`);
+      setValue(newValue as number);
+    },
+    [setValue]
+  );
+
   return (
     <NumberInput
       {...args}
       value={value}
-      onValueChange={(newValue) => {
-        console.log(`new value = ${newValue}`);
-        setValue(newValue as number);
-      }}
+      onValueChange={onValueChange}
       containerStyles={{ ...args.containerStyles, margin: 25 }}
     />
   );
@@ -87,6 +41,31 @@ ControlledBounded.args = {
   label: 'Controlled (0 <= x <= 5)',
   minValue: 0,
   maxValue: 5,
+};
+
+export const ExternallyOutOfBounds = ControlledTemplate.bind({});
+ExternallyOutOfBounds.args = {
+  label: 'Controlled (0 <= x <= 5)',
+  minValue: 0,
+  maxValue: 5,
+  value: 10,
+};
+
+export const ControlledBoundedNonZero = ControlledTemplate.bind({});
+ControlledBoundedNonZero.args = {
+  label: 'Controlled (3 <= x <= 9)',
+  value: 6,
+  minValue: 3,
+  maxValue: 9,
+};
+
+export const SilentBoundsCheck = ControlledTemplate.bind({});
+SilentBoundsCheck.args = {
+  label: 'Controlled (10 <= x <= 12)',
+  value: 11,
+  minValue: 10,
+  maxValue: 12,
+  displayRangeViolationWarnings: false,
 };
 
 export const ControlledLinkedPair: Story = () => {
