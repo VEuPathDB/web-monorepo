@@ -249,9 +249,27 @@ function HistogramViz(props: Props) {
       {data.pending && (
         <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
       )}
-      {data.error && <pre>{String(data.error)}</pre>}
-      {data.value &&
-        (fullscreen ? (
+      {data.error && (
+        <div
+          style={{
+            fontSize: '1.2em',
+            padding: '1em',
+            background: 'rgb(255, 233, 233) none repeat scroll 0% 0%',
+            borderRadius: '.5em',
+            margin: '.5em 0',
+            color: '#333',
+            border: '1px solid #d9cdcd',
+            display: 'flex',
+          }}
+        >
+          <i className="fa fa-warning" style={{ marginRight: '1ex' }}></i>{' '}
+          {data.error instanceof Error
+            ? data.error.message
+            : String(data.error)}
+        </div>
+      )}
+      {data.value ? (
+        fullscreen ? (
           <HistogramPlotWithControls
             data={data.value}
             onBinWidthChange={onBinWidthChange}
@@ -274,7 +292,16 @@ function HistogramViz(props: Props) {
             independentAxisLabel=""
             dependentAxisLabel=""
           />
-        ))}
+        )
+      ) : (
+        <i
+          className="fa fa-bar-chart"
+          style={{
+            fontSize: '34em',
+            color: '#aaa',
+          }}
+        ></i>
+      )}
     </div>
   );
 }
