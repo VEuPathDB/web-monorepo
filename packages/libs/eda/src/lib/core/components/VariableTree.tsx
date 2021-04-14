@@ -12,7 +12,7 @@ export interface Props {
   entityId?: string;
   variableId?: string;
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
-  onActiveFieldChange: (term: string) => void;
+  onActiveFieldChange: (term?: string) => void;
 }
 export function VariableTree(props: Props) {
   const { entities, entityId, variableId, onActiveFieldChange } = props;
@@ -93,25 +93,40 @@ export function VariableTree(props: Props) {
 }
 
 export function VariableTreeDropdown(props: Props) {
-  const { entities, entityId, variableId } = props;
+  const { entities, entityId, variableId, onActiveFieldChange } = props;
   const variable = entities
     .find((e) => e.id === entityId)
     ?.variables.find((v) => v.id === variableId);
   const label = variable?.displayName ?? 'Select a variable';
   return (
-    <PopoverButton label={label}>
-      <div
-        style={{
-          border: '1px solid',
-          borderRadius: ' 0.25em',
-          padding: '0.5em',
-          height: '60vh',
-          width: '30em',
-          position: 'relative',
-        }}
-      >
-        <VariableTree {...props} />
-      </div>
-    </PopoverButton>
+    <div
+      style={{
+        position: 'relative',
+      }}
+    >
+      <PopoverButton label={label} key={`${entityId}/${variableId}`}>
+        <div
+          style={{
+            border: '1px solid',
+            borderRadius: ' 0.25em',
+            padding: '0.5em',
+            height: '60vh',
+            width: '30em',
+            position: 'relative',
+          }}
+        >
+          <VariableTree {...props} />
+        </div>
+      </PopoverButton>
+      {variable && (
+        <button
+          style={{ position: 'absolute', bottom: '-1.5em', right: 0 }}
+          className="link"
+          onClick={() => onActiveFieldChange()}
+        >
+          clear
+        </button>
+      )}
+    </div>
   );
 }
