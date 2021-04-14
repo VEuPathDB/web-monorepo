@@ -10,6 +10,7 @@ import { legendSpecification } from '../utils/plotly';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
+import { sortBy, sortedUniqBy } from 'lodash';
 
 // Components
 import PlotlyPlot from './PlotlyPlot';
@@ -193,27 +194,12 @@ export default function Histogram({
    * calculate midpoints of a unique set of bins
    */
   const binSummaries: BinSummary[] = useMemo(() => {
-    const allBins: HistogramBin[] = data.series
-      .map((series) => [series.bins])
-      .flat(2);
-
-    const seenLabels: string[] = [];
-    const uniqueBins = allBins.filter((bin) => {
-      const seenBefore = seenLabels.indexOf(bin.binLabel);
-      if (seenBefore < 0) {
-        seenLabels.push(bin.binLabel);
-        return true;
-      }
-      return false;
-    });
-    // sort them on binStart just in case
-    uniqueBins.sort((bina, binb) =>
-      bina.binStart > binb.binStart
-        ? 1
-        : bina.binStart === binb.binStart
-        ? 0
-        : -1
+    const allBins: HistogramBin[] = data.series.flatMap(
+      (series) => series.bins
     );
+
+    const sortedBins = sortBy(allBins, (bin) => bin.binStart);
+    const uniqueBins = sortedUniqBy(sortedBins, (bin) => bin.binLabel);
 
     // return the list of summaries - note the binMiddle prop
     return uniqueBins.map((bin) => ({
