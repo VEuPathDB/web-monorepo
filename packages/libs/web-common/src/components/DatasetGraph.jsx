@@ -300,7 +300,7 @@ hook: HostResponseGraphs
 
 
         <div className="eupathdb-DatasetGraphDetails">
-          {this.props.taTable &&
+          {this.props.dataTable &&
             <CollapsibleSection
               className={"eupathdb-" + this.props.dataTable.table.name + "Container"}
               headerContent="Data table"
