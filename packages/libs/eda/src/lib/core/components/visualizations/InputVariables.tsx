@@ -98,7 +98,11 @@ export function InputVariables(props: Props) {
               entityId={values[input.name]?.entityId}
               variableId={values[input.name]?.variableId}
               onActiveFieldChange={(fieldId) => {
-                const [entityId, variableId] = fieldId?.split('/') ?? [];
+                if (fieldId == null) {
+                  handleChange(input.name, undefined);
+                  return;
+                }
+                const [entityId, variableId] = fieldId.split('/');
                 handleChange(input.name, { entityId, variableId });
               }}
             />
