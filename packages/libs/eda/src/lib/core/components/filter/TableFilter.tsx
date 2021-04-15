@@ -63,7 +63,7 @@ export function TableFilter({
           filters: sessionState.session?.filters,
         },
         (filters) => {
-          return dataClient.getBarplot({
+          return dataClient.getBarplot('pass', {
             studyId: studyMetadata.id,
             filters,
             config: {

@@ -13,6 +13,7 @@ import {
   union,
   intersection,
   partial,
+  Decoder,
 } from 'io-ts';
 import { Filter } from '../types/filter';
 import { Variable, StringVariableValue } from '../types/variable';
@@ -202,68 +203,81 @@ export class DataClient extends FetchClient {
     );
   }
 
-  // Histogram
-  getNumericHistogramNumBins(
-    params: NumericHistogramRequestParams
-  ): Promise<HistogramNumBinsResponse> {
+  getVisualizationData<T>(
+    computationName: string,
+    visualizationName: string,
+    params: unknown,
+    decoder: Decoder<unknown, T>
+  ): Promise<T> {
     return this.fetch(
       createJsonRequest({
         method: 'POST',
-        path: '/apps/pass/visualizations/numeric-histogram-num-bins',
+        path: `/apps/${computationName}/visualizations/${visualizationName}`,
         body: params,
-        transformResponse: ioTransformer(HistogramNumBinsResponse),
+        transformResponse: ioTransformer(decoder),
       })
+    );
+  }
+
+  // Histogram
+  getNumericHistogramNumBins(
+    computationName: string,
+    params: NumericHistogramRequestParams
+  ): Promise<HistogramNumBinsResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'numeric-histogram-num-bins',
+      params,
+      HistogramNumBinsResponse
     );
   }
 
   getNumericHistogramBinWidth(
+    computationName: string,
     params: NumericHistogramRequestParams
   ): Promise<NumericHistogramBinWidthResponse> {
-    return this.fetch(
-      createJsonRequest({
-        method: 'POST',
-        path: '/apps/pass/visualizations/numeric-histogram-bin-width',
-        body: params,
-        transformResponse: ioTransformer(NumericHistogramBinWidthResponse),
-      })
+    return this.getVisualizationData(
+      computationName,
+      'numeric-histogram-bin-width',
+      params,
+      NumericHistogramBinWidthResponse
     );
   }
 
   getDateHistogramNumBins(
+    computationName: string,
     params: DateHistogramRequestParams
   ): Promise<HistogramNumBinsResponse> {
-    return this.fetch(
-      createJsonRequest({
-        method: 'POST',
-        path: '/apps/pass/visualizations/date-histogram-num-bins',
-        body: params,
-        transformResponse: ioTransformer(HistogramNumBinsResponse),
-      })
+    return this.getVisualizationData(
+      computationName,
+      'date-histogram-num-bins',
+      params,
+      HistogramNumBinsResponse
     );
   }
 
   getDateHistogramBinWidth(
+    computationName: string,
     params: DateHistogramRequestParams
   ): Promise<DateHistogramBinWidthResponse> {
-    return this.fetch(
-      createJsonRequest({
-        method: 'POST',
-        path: '/apps/pass/visualizations/date-histogram-bin-width',
-        body: params,
-        transformResponse: ioTransformer(DateHistogramBinWidthResponse),
-      })
+    return this.getVisualizationData(
+      computationName,
+      'date-histogram-bin-width',
+      params,
+      DateHistogramBinWidthResponse
     );
   }
 
   // Barplot
-  getBarplot(params: BarplotRequestParams): Promise<BarplotResponse> {
-    return this.fetch(
-      createJsonRequest({
-        method: 'POST',
-        path: '/apps/pass/visualizations/barplot',
-        body: params,
-        transformResponse: ioTransformer(BarplotResponse),
-      })
+  getBarplot(
+    computationName: string,
+    params: BarplotRequestParams
+  ): Promise<BarplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'barplot',
+      params,
+      BarplotResponse
     );
   }
 }

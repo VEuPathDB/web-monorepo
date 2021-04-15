@@ -107,6 +107,7 @@ type Props = VisualizationProps & {
 
 function HistogramViz(props: Props) {
   const {
+    computation,
     visualization,
     updateVisualization,
     filters,
@@ -210,13 +211,22 @@ function HistogramViz(props: Props) {
       const response =
         xAxisVariable.type === 'date'
           ? dataClient.getDateHistogramBinWidth(
+              computation.type,
               params as DateHistogramRequestParams
             )
           : dataClient.getNumericHistogramBinWidth(
+              computation.type,
               params as NumericHistogramRequestParams
             );
       return histogramResponseToData(await response, xAxisVariable.type);
-    }, [studyId, filters, dataClient, vizConfig, findVariable])
+    }, [
+      studyId,
+      filters,
+      dataClient,
+      vizConfig,
+      findVariable,
+      computation.type,
+    ])
   );
 
   return (

@@ -416,6 +416,7 @@ async function getHistogram(
 ) {
   return variable.type === 'date'
     ? dataClient.getDateHistogramBinWidth(
+        'pass',
         getRequestParams(
           studyId,
           filters,
@@ -426,6 +427,7 @@ async function getHistogram(
         ) as DateHistogramRequestParams
       )
     : dataClient.getNumericHistogramBinWidth(
+        'pass',
         getRequestParams(
           studyId,
           filters,
