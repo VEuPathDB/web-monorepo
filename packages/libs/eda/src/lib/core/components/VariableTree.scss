@@ -9,25 +9,39 @@
   .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent {
     padding: 0.2em 0.35em;
     border-radius: 0.25em;
-    font-weight: bold;
   }
 
-  /* background color for Entity parent and font color */
+  /* All entities */
   .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldEntityParent {
-    background-color: #a4c2f4;
-    opacity: 1;
-    color: #444;
+    font-weight: bold;
+    // color: black;
   }
 
-  /* background color for activeField */
-  .wdk-AttributeFilterFieldItem__active {
+  /* Active entity */
+  .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent__active {
+    // border: 3px solid #3c78d8;
+    // font-weight: bold;
+    // color: black;
     background: #eaeaea;
   }
 
-  /* background color for the parent entity of the activeField */
-  .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent__active {
+  // /* All middle-level tree elements (not variables and not entities) */
+  // .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent:not(.wdk-AttributeFilterFieldEntityParent) {
+  //   // color: grey;
+  //   color: black;
+  // }
+
+  /* All variables */
+  // .wdk-AttributeFilterFieldItem {
+  // }
+
+  /* Active variable */
+  .wdk-AttributeFilterFieldItem__active {
+    // background: #eaeaea;
+    // border: 1px solid #3c78d8;
     background: #3c78d8;
     color: white;
+    font-weight: bold;
   }
 
   /* height of CheckboxTree - use vh */

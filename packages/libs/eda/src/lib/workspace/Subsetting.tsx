@@ -80,11 +80,12 @@ export function Subsetting(props: Props) {
         <h2 style={{ textAlign: 'center' }}>ENTITIES</h2>
         <div style={{ paddingTop: '10px' }}>
           <EntityDiagram
-            sessionState={sessionState}
             expanded={false}
             orientation="vertical"
             size={{ height: 300, width: 150 }}
             selectedEntity={entity.displayName}
+            entityCounts={totalCounts.value}
+            filteredEntityCounts={filteredCounts.value}
           />
         </div>
       </div>

@@ -226,6 +226,8 @@ export function HistogramFilter(props: Props) {
             barLayout={'overlay'}
             updateFilter={updateFilter}
             updateUIState={updateUIState}
+            // add variableName for independentAxisLabel
+            variableName={variable.displayName}
           />
         )}
     </div>
@@ -237,6 +239,8 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   updateFilter: (selectedRange?: NumberRange | DateRange) => void;
   updateUIState: (uiState: TypeOf<typeof UIState>) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
+  // add variableName for independentAxisLabel
+  variableName?: string;
 };
 
 function HistogramPlotWithControls({
@@ -245,6 +249,8 @@ function HistogramPlotWithControls({
   updateFilter,
   updateUIState,
   filter,
+  // variableName for independentAxisLabel
+  variableName,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const handleSelectedRangeChange = useCallback(
@@ -309,6 +315,12 @@ function HistogramPlotWithControls({
         displayLibraryControls={displayLibraryControls}
         onSelectedRangeChange={handleSelectedRangeChange}
         barLayout={barLayout}
+        // add independentAxisLabel
+        independentAxisLabel={
+          data.binWidth && isTimeDelta(data.binWidth)
+            ? variableName + ' (' + data.binWidth[1] + ')'
+            : variableName
+        }
       />
       <HistogramControls
         label="Histogram Controls"
