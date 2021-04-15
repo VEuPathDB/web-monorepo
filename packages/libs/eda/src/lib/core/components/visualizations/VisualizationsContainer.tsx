@@ -162,6 +162,7 @@ function NewVisualizationPicker(props: Props) {
                     id,
                     computationId: computationId,
                     type: vizOverview.name!,
+                    displayName: 'Unnamed visualization',
                     configuration: vizType?.createDefaultConfig(),
                   });
                   history.push(`../${computationId}/${id}`);
