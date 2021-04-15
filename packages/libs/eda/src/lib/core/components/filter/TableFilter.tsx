@@ -300,6 +300,8 @@ export function TableFilter({
             onMemberSearch={handleSearch}
             onMemberChangeCurrentPage={handlePagination}
             selectByDefault={false}
+            // set Heading1 prefix
+            filteredCountHeadingPrefix={'Subset of'}
           />
         )}
     </div>
