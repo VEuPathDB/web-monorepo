@@ -90,7 +90,7 @@ export function InputVariables(props: Props) {
   return (
     <div className={classes.root}>
       <div className={classes.inputs}>
-        {inputs.map((input, index) => (
+        {inputs.map((input) => (
           <div key={input.name} className={classes.input}>
             <div className={classes.label}>{input.label}</div>
             <VariableTreeDropdown
