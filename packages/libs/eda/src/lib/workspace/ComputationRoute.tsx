@@ -3,6 +3,7 @@ import { Redirect, Route, Switch } from 'react-router';
 import { useRouteMatch } from 'react-router-dom';
 import { SessionState, useDataClient } from '../core';
 import { PassThroughComputation } from '../core/components/computations/PassThroughComputation';
+import { PromiseResult } from '../core/components/Promise';
 import { usePromise } from '../core/hooks/promise';
 
 export interface Props {
@@ -13,29 +14,33 @@ export function ComputationRoute(props: Props) {
   const { sessionState } = props;
   const { url } = useRouteMatch();
   const dataClient = useDataClient();
-  const computations = usePromise(
-    useCallback(() => dataClient.getApps(), [dataClient])
+  const promiseState = usePromise(
+    useCallback(async () => {
+      const { apps } = await dataClient.getApps();
+      const app = apps.find((app) => app.name === 'pass');
+      if (app == null)
+        throw new Error('Could not find default computation app.');
+      return app;
+    }, [dataClient])
   );
-  const computationAppOverview = computations.value?.apps.find(
-    (app) => app.name === 'pass'
-  );
-  if (computationAppOverview == null) return null;
 
   // TODO Get configured apps from context.
   // For now, just use passthrough app.
   return (
-    <>
-      <Switch>
-        <Route exact path={url}>
-          <Redirect to={`${url}/pass-through`} />
-        </Route>
-        <Route path={`${url}/pass-through`}>
-          <PassThroughComputation
-            sessionState={sessionState}
-            computationAppOverview={computationAppOverview}
-          />
-        </Route>
-      </Switch>
-    </>
+    <PromiseResult state={promiseState}>
+      {(computationAppOverview) => (
+        <Switch>
+          <Route exact path={url}>
+            <Redirect to={`${url}/pass-through`} />
+          </Route>
+          <Route path={`${url}/pass-through`}>
+            <PassThroughComputation
+              sessionState={sessionState}
+              computationAppOverview={computationAppOverview}
+            />
+          </Route>
+        </Switch>
+      )}
+    </PromiseResult>
   );
 }
