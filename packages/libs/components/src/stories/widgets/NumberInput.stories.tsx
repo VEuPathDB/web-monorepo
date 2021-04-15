@@ -106,6 +106,35 @@ export const LinkedPair: Story = () => {
   );
 };
 
+export const LinkedRequiredPair: Story = () => {
+  const [linkedValue, setLinkedValue] = useState<number>(0);
+
+  return (
+    <>
+      <NumberInput
+        value={linkedValue}
+        label="A"
+        onValueChange={(newValue) => {
+          console.log(`A new value = ${newValue}`);
+          setLinkedValue(newValue as number);
+        }}
+        required={true}
+        containerStyles={{ margin: 25 }}
+      />
+      <NumberInput
+        value={linkedValue}
+        label="B"
+        onValueChange={(newValue) => {
+          console.log(`B new value = ${newValue}`);
+          setLinkedValue(newValue as number);
+        }}
+        required={true}
+        containerStyles={{ margin: 25 }}
+      />
+    </>
+  );
+};
+
 export const ControlledBounds: Story = () => {
   const [value, setValue] = useState<number>(0);
   const [min, setMin] = useState<number>(-5);

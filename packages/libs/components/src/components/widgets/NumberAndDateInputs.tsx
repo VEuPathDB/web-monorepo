@@ -100,7 +100,7 @@ function BaseInput({
             error: true,
             helperText: `Please enter a ${valueType}.`,
           });
-        return false;
+        return !required;
       }
       if (minValue !== undefined && newValue < minValue) {
         newValue = minValue;
