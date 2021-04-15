@@ -120,6 +120,7 @@ export function VariableTreeDropdown(props: Props) {
       </PopoverButton>
       {variable && (
         <button
+          type="button"
           style={{ position: 'absolute', bottom: '-1.5em', right: 0 }}
           className="link"
           onClick={() => onActiveFieldChange()}
