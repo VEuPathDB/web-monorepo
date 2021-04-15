@@ -297,7 +297,7 @@ function HistogramViz(props: Props) {
         <i
           className="fa fa-bar-chart"
           style={{
-            fontSize: '12em',
+            fontSize: fullscreen ? '34em' : '12em',
             color: '#aaa',
           }}
         ></i>
