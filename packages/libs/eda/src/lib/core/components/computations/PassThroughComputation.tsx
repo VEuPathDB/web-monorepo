@@ -14,6 +14,9 @@ interface Props {
   computationAppOverview: ComputationAppOverview;
 }
 
+/**
+ * Maps a visualization plugin name to a `VisualizationType`
+ */
 const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
   'date-histogram-bin-width': histogramVisualization,
