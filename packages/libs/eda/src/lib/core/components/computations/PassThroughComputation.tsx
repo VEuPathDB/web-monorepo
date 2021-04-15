@@ -1,6 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { SessionState } from '../../hooks/session';
-import { Visualization } from '../../types/visualization';
+import {
+  Visualization,
+  ComputationAppOverview,
+} from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
@@ -8,16 +11,22 @@ import { VisualizationType } from '../visualizations/VisualizationTypes';
 
 interface Props {
   sessionState: SessionState;
+  computationAppOverview: ComputationAppOverview;
 }
 
-const visualizationTypes: VisualizationType[] = [
+/**
+ * Maps a visualization plugin name to a `VisualizationType`
+ */
+const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
-  histogramVisualization,
-];
+  'date-histogram-bin-width': histogramVisualization,
+  'numeric-histogram-bin-width': histogramVisualization,
+};
 
 export function PassThroughComputation(props: Props) {
   const {
     sessionState: { session, setVisualizations },
+    computationAppOverview,
   } = props;
   const addVisualization = useCallback(
     (visualization: Visualization) => {
@@ -59,6 +68,7 @@ export function PassThroughComputation(props: Props) {
         },
       ]}
       visualizations={session.visualizations}
+      visualizationsOverview={computationAppOverview.visualizations!}
       addVisualization={addVisualization}
       updateVisualization={updateVisualization}
       deleteVisualization={deleteVisualization}

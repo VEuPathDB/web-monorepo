@@ -1,8 +1,6 @@
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 export const testVisualization: VisualizationType = {
-  type: 'test',
-  displayName: 'Test visualization',
   gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,

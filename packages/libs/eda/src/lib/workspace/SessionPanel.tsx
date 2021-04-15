@@ -22,6 +22,7 @@ export function SessionPanel(props: Props) {
   const { sessionId } = props;
   const sessionState = useSession(sessionId);
   const {
+    status,
     session,
     setName,
     copySession,
@@ -29,11 +30,12 @@ export function SessionPanel(props: Props) {
     deleteSession,
   } = sessionState;
   const { url: routeBase } = useRouteMatch();
-  if (sessionState.status === Status.Error)
+  if (status === Status.Error)
     return (
-      <ContentError>
-        <pre>{String(sessionState.error)}</pre>
-      </ContentError>
+      <div>
+        <h2>Error</h2>
+        <p>Could not load the analysis session.</p>
+      </div>
     );
   if (session == null) return null;
   return (

@@ -63,7 +63,7 @@ export function TableFilter({
           filters: sessionState.session?.filters,
         },
         (filters) => {
-          return dataClient.getBarplot({
+          return dataClient.getBarplot('pass', {
             studyId: studyMetadata.id,
             filters,
             config: {
@@ -300,6 +300,8 @@ export function TableFilter({
             onMemberSearch={handleSearch}
             onMemberChangeCurrentPage={handlePagination}
             selectByDefault={false}
+            // set Heading1 prefix
+            filteredCountHeadingPrefix={'Subset of'}
           />
         )}
     </div>

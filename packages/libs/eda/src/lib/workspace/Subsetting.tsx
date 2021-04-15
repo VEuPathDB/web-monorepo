@@ -12,6 +12,7 @@ import { cx } from './Utils';
 import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { VariableTree } from '../core/components/VariableTree';
+import FilterChipList from '../core/components/FilterChipList';
 
 interface RouteProps {
   sessionState: SessionState;
@@ -79,11 +80,12 @@ export function Subsetting(props: Props) {
         <h2 style={{ textAlign: 'center' }}>ENTITIES</h2>
         <div style={{ paddingTop: '10px' }}>
           <EntityDiagram
-            sessionState={sessionState}
             expanded={false}
             orientation="vertical"
             size={{ height: 300, width: 150 }}
             selectedEntity={entity.displayName}
+            entityCounts={totalCounts.value}
+            filteredEntityCounts={filteredCounts.value}
           />
         </div>
       </div>
@@ -105,41 +107,21 @@ export function Subsetting(props: Props) {
             entities={entities}
             entityId={entity.id}
             variableId={variable.id}
-            onActiveFieldChange={(term: string) => {
-              history.replace(`../${term}`);
+            onActiveFieldChange={(term?: string) => {
+              if (term) history.replace(`../${term}`);
+              else history.replace('`..');
             }}
           />
         </div>
-        {/* <ul
-          style={{
-            border: '1px solid',
-            borderRadius: '.25em',
-            height: '80vh',
-            overflow: 'auto',
-            padding: '1em 2em',
-            margin: 0,
-          }}
-        >
-          {entity.variables.map(
-            (v) =>
-              v.dataShape && (
-                <li>
-                  <VariableLink
-                    replace
-                    style={
-                      v.id === variable.id ? { fontWeight: 'bold' } : undefined
-                    }
-                    entityId={entity.id}
-                    variableId={v.id}
-                  >
-                    {v.displayName} ({v.dataShape} {v.type})
-                  </VariableLink>
-                </li>
-              )
-          )}
-        </ul> */}
       </div>
       <div>
+        <FilterChipList
+          sessionState={sessionState}
+          entities={entities}
+          selectedEntityId={entity.id}
+          selectedVariableId={variable.id}
+        />
+        <br />
         <Variable
           entity={entity}
           variable={variable}

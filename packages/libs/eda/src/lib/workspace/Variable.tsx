@@ -31,7 +31,7 @@ export function Variable(props: Props) {
     (filteredEntityCount / totalEntityCount).toLocaleString(undefined, {
       style: 'percent',
     });
-  const filters = sessionState.session?.filters ?? [];
+
   return (
     <div>
       <div className={cx('-VariableEntityHeader')}>
@@ -40,21 +40,6 @@ export function Variable(props: Props) {
           Your subset includes {filteredEntityCount?.toLocaleString()}{' '}
           {entity.displayName} ({percent}).
         </div>
-      </div>
-      <div>
-        {sessionState.session?.filters.map((f) => (
-          <div key={`${f.entityId}_${f.variableId}`}>
-            <button
-              type="button"
-              onClick={() =>
-                sessionState.setFilters(filters.filter((_f) => _f !== f))
-              }
-            >
-              remove
-            </button>
-            <code>{JSON.stringify(f)}</code>
-          </div>
-        ))}
       </div>
       <ErrorBoundary>
         {totalEntityCount != null && filteredEntityCount != null ? (
