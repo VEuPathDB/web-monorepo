@@ -19,6 +19,7 @@ import { Grid } from '../Grid';
 import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
+import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -97,27 +98,30 @@ function ConfiguredVisualizations(props: Props) {
       {scopedVisualizations
         .map((viz) => {
           const type = visualizationTypes[viz.type];
-          if (type == null)
-            return <div>Viz type not implemented: {viz.type}</div>;
           return (
             <div key={viz.id} className={cx('-ConfiguredVisualization')}>
               <div className={cx('-ConfiguredVisualizationActions')}>
-                <Link to={`${url}/${viz.id}`}>
+                <Link to={`${url}/${viz.id}`} title="View fullscreen">
                   <i className="fa fa-arrows-alt"></i>
                 </Link>
                 <button
+                  title="Delete visualization"
                   type="button"
                   className="link"
                   onClick={() => deleteVisualization(viz.id)}
                 >
-                  <i className="fa fa-close"></i>
+                  <i className="fa fa-trash"></i>
                 </button>
               </div>
-              <type.gridComponent
-                visualization={viz}
-                computation={computation}
-                filters={filters}
-              />
+              {type ? (
+                <type.gridComponent
+                  visualization={viz}
+                  computation={computation}
+                  filters={filters}
+                />
+              ) : (
+                <div>Visualization type not implemented: {viz.type}</div>
+              )}
             </div>
           );
         })
@@ -206,9 +210,6 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const vizType = viz && visualizationTypes[viz.type];
   const constraints = visualizationsOverview.find((v) => v.name === viz?.type)
     ?.dataElementConstraints;
-  if (viz == null) return <div>Visualization not found.</div>;
-  if (computation == null) return <div>Computation not found.</div>;
-  if (vizType == null) return <div>Visualization type not implemented.</div>;
 
   return (
     <div className={cx('-FullScreenContainer')}>
@@ -217,23 +218,33 @@ function FullScreenVisualization(props: Props & { id: string }) {
           <i className="fa fa-window-restore"></i>
         </Link>
       </div>
-      <div>
-        <h1>
-          <SaveableTextEditor
-            value={viz.displayName}
-            onSave={(value) =>
-              updateVisualization({ ...viz, displayName: value })
-            }
+      {viz == null ? (
+        <ContentError>Visualization not found.</ContentError>
+      ) : computation == null ? (
+        <ContentError>Computation not found.</ContentError>
+      ) : vizType == null ? (
+        <ContentError>
+          <>Visualization type not implemented: {viz.type}</>
+        </ContentError>
+      ) : (
+        <div>
+          <h1>
+            <SaveableTextEditor
+              value={viz.displayName ?? 'Unnamed visualization'}
+              onSave={(value) =>
+                updateVisualization({ ...viz, displayName: value })
+              }
+            />
+          </h1>
+          <vizType.fullscreenComponent
+            dataElementConstraints={constraints}
+            visualization={viz}
+            updateVisualization={updateVisualization}
+            computation={computation}
+            filters={filters}
           />
-        </h1>
-        <vizType.fullscreenComponent
-          dataElementConstraints={constraints}
-          visualization={viz}
-          updateVisualization={updateVisualization}
-          computation={computation}
-          filters={filters}
-        />
-      </div>
+        </div>
+      )}
     </div>
   );
 }
