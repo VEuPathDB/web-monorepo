@@ -17,24 +17,32 @@ import { StudyVariableDataShape, StudyVariableType } from './study';
  * Visualization object stored in user's session
  */
 export type Visualization = TypeOf<typeof Visualization>;
-export const Visualization = type({
-  id: string,
-  computationId: string,
-  type: string,
-  displayName: string,
-  configuration: unknown,
-});
+export const Visualization = intersection([
+  type({
+    id: string,
+    computationId: string,
+    type: string,
+    configuration: unknown,
+  }),
+  partial({
+    displayName: string,
+  }),
+]);
 
 /**
  * App object stored in user's session
  */
 export type Computation = TypeOf<typeof Computation>;
-export const Computation = type({
-  id: string,
-  type: string,
-  displayName: string,
-  configuration: unknown,
-});
+export const Computation = intersection([
+  type({
+    id: string,
+    type: string,
+    configuration: unknown,
+  }),
+  partial({
+    displayName: string,
+  }),
+]);
 
 const Thing = partial({
   name: string,
