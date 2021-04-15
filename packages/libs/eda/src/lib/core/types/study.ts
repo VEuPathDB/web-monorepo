@@ -16,7 +16,7 @@ export type StudyRecord = RecordInstance;
 
 // See https://github.com/gcanti/io-ts/blob/master/index.md#union-of-string-literals
 
-const StudyVariableType = t.keyof({
+export const StudyVariableType = t.keyof({
   category: null,
   string: null,
   number: null,
@@ -24,7 +24,7 @@ const StudyVariableType = t.keyof({
   longitude: null,
 });
 
-const StudyVariableDataShape = t.keyof({
+export const StudyVariableDataShape = t.keyof({
   continuous: null,
   categorical: null,
   ordinal: null,

@@ -47,6 +47,7 @@ type Props = {
 };
 
 type UIState = TypeOf<typeof UIState>;
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 const UIState = partial({
   binWidth: number,
   binWidthTimeUnit: string,
@@ -396,7 +397,7 @@ function getRequestParams(
     : dataParams?.binWidth
     ? {
         binWidth:
-          variable.type == 'number'
+          variable.type === 'number'
             ? dataParams.binWidth
             : `${dataParams.binWidth} ${dataParams.binWidthTimeUnit}`,
       }
@@ -427,6 +428,7 @@ async function getHistogram(
 ) {
   return variable.type === 'date'
     ? dataClient.getDateHistogramBinWidth(
+        'pass',
         getRequestParams(
           studyId,
           filters,
@@ -437,6 +439,7 @@ async function getHistogram(
         ) as DateHistogramRequestParams
       )
     : dataClient.getNumericHistogramBinWidth(
+        'pass',
         getRequestParams(
           studyId,
           filters,
