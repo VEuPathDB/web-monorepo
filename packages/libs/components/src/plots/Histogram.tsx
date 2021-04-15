@@ -3,17 +3,25 @@ import { PlotParams } from 'react-plotly.js';
 
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
-import { HistogramData } from '../types/plots';
-import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
+import { HistogramData, HistogramBin } from '../types/plots';
+import { NumberOrDate, NumberOrDateRange } from '../types/general';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
+import { sortBy, sortedUniqBy } from 'lodash';
 
 // Components
 import PlotlyPlot from './PlotlyPlot';
-import { Layout } from 'plotly.js';
+import { Layout, Shape } from 'plotly.js';
+
+// bin middles needed for highlighting
+interface BinSummary {
+  binStart: HistogramBin['binStart'];
+  binEnd: HistogramBin['binEnd'];
+  binMiddle: HistogramBin['binEnd'];
+}
 
 export interface HistogramProps {
   /** Data for the plot. */
@@ -135,20 +143,6 @@ export default function Histogram({
         const binStarts = series.bins.map((bin) => bin.binStart);
         const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
         const binCounts = series.bins.map((bin) => bin.count);
-        const perBarOpacity: number[] = series.bins.map((bin) => {
-          if (selectedRange) {
-            if (
-              bin.binStart >= selectedRange.min &&
-              bin.binEnd <= selectedRange.max
-            ) {
-              return calculatedBarOpacity;
-            } else {
-              return 0.2 * calculatedBarOpacity;
-            }
-          } else {
-            return calculatedBarOpacity;
-          }
-        });
         const binWidths = series.bins.map((bin) => {
           if (data.valueType !== undefined && data.valueType === 'date') {
             // date, needs to be in milliseconds
@@ -177,30 +171,140 @@ export default function Histogram({
           textposition: showBarValues ? 'auto' : undefined,
           marker: {
             ...(series.color ? { color: series.color } : {}),
-            opacity: perBarOpacity,
           },
           offset: 0,
           width: binWidths,
+          selected: {
+            marker: {
+              opacity: 1,
+            },
+          },
+          unselected: {
+            // switch off fading of unselected bars while selecting
+            marker: {
+              opacity: 1,
+            },
+          },
         };
       }),
     [data, orientation, calculatedBarOpacity, selectedRange]
   );
 
-  const handleSelectedRange = useCallback(
+  /**
+   * calculate midpoints of a unique set of bins
+   */
+  const binSummaries: BinSummary[] = useMemo(() => {
+    const allBins: HistogramBin[] = data.series.flatMap(
+      (series) => series.bins
+    );
+
+    const sortedBins = sortBy(allBins, (bin) => bin.binStart);
+    const uniqueBins = sortedUniqBy(sortedBins, (bin) => bin.binLabel);
+
+    // return the list of summaries - note the binMiddle prop
+    return uniqueBins.map((bin) => ({
+      binStart: bin.binStart,
+      binEnd: bin.binEnd,
+      binMiddle:
+        data.valueType === 'date'
+          ? DateMath.add(
+              bin.binStart as Date,
+              DateMath.diff(
+                bin.binStart as Date,
+                bin.binEnd as Date,
+                'seconds',
+                false
+              ) * 500,
+              'milliseconds'
+            )
+          : ((bin.binStart as number) + (bin.binEnd as number)) / 2.0,
+    }));
+  }, [data.series, data.valueType]);
+
+  // local state for range **while selecting** graphically
+  const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
+
+  const handleSelectingRange = useCallback(
     (object: any) => {
       if (object && object.range) {
         const [val1, val2] =
           orientation === 'vertical' ? object.range.x : object.range.y;
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
         // TO DO: think about time zones?
-        onSelectedRangeChange({
+        const rawRange: NumberOrDateRange = {
           min: data.valueType === 'date' ? new Date(min) : min,
           max: data.valueType === 'date' ? new Date(max) : max,
-        } as NumberOrDateRange);
+        };
+
+        // now snap to bin boundaries using same logic that Plotly uses
+        // (dragging range past middle of bin selects it)
+        const leftBin = binSummaries.find(
+          (bin) => rawRange.min < bin.binMiddle
+        );
+        const rightBin = binSummaries
+          .slice()
+          .reverse()
+          .find((bin) => rawRange.max > bin.binMiddle);
+        if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
+          setSelectingRange({
+            min: leftBin.binStart,
+            max: rightBin.binEnd,
+          } as NumberOrDateRange);
+        } else {
+          setSelectingRange(undefined);
+        }
       }
     },
-    [data.valueType, onSelectedRangeChange]
+    [data.valueType, orientation, binSummaries, setSelectingRange]
   );
+
+  // handle finshed/completed (graphical) range selection
+  const handleSelectedRange = useCallback(() => {
+    if (selectingRange) {
+      onSelectedRangeChange(selectingRange);
+    } else {
+      // TO DO: be able to reset/unset the selected range
+      // by passing undefined to onSelectedRangeChange
+      // when a selection of zero bins has been made
+    }
+    setSelectingRange(undefined);
+  }, [selectingRange, onSelectedRangeChange, setSelectingRange]);
+
+  const selectedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
+    const range = selectingRange ?? selectedRange;
+    if (range) {
+      return [
+        {
+          type: 'rect',
+          ...(orientation === 'vertical'
+            ? {
+                xref: 'x',
+                yref: 'paper',
+                x0: range.min,
+                x1: range.max,
+                y0: 0,
+                y1: 1,
+              }
+            : {
+                xref: 'paper',
+                yref: 'y',
+                x0: 0,
+                x1: 1,
+                y0: range.min,
+                y1: range.max,
+              }),
+          line: {
+            color: 'blue',
+            width: 1,
+          },
+          fillcolor: 'lightblue',
+          opacity: 0.4,
+        },
+      ];
+    } else {
+      return [];
+    }
+  }, [selectingRange, selectedRange, orientation]);
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
@@ -238,6 +342,7 @@ export default function Histogram({
         revision={revision}
         style={{ height, width }}
         layout={{
+          shapes: selectedRangeHighlighting,
           // when we implement zooming, we will still use Plotly's select mode
           dragmode: 'select',
           // with a histogram, we can always use 1D selection
@@ -281,6 +386,7 @@ export default function Histogram({
         }}
         data={plotlyFriendlyData}
         onSelected={handleSelectedRange}
+        onSelecting={handleSelectingRange}
         config={{
           displayModeBar: displayLibraryControls ? 'hover' : false,
           staticPlot: !interactive,
