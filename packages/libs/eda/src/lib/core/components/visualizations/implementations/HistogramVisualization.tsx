@@ -249,7 +249,7 @@ function HistogramViz(props: Props) {
       {data.pending && (
         <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
       )}
-      {data.error && (
+      {data.error && fullscreen && (
         <div
           style={{
             fontSize: '1.2em',
@@ -283,8 +283,8 @@ function HistogramViz(props: Props) {
           // thumbnail/grid view
           <Histogram
             data={data.value}
-            width={300}
-            height={250}
+            width={350}
+            height={280}
             orientation={'vertical'}
             barLayout={'stack'}
             displayLibraryControls={false}
@@ -297,7 +297,7 @@ function HistogramViz(props: Props) {
         <i
           className="fa fa-bar-chart"
           style={{
-            fontSize: '34em',
+            fontSize: '12em',
             color: '#aaa',
           }}
         ></i>
