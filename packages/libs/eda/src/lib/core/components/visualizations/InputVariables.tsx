@@ -1,15 +1,14 @@
-import { makeStyles } from '@material-ui/core';
 import React from 'react';
+import { makeStyles } from '@material-ui/core';
 import { StudyEntity } from '../../types/study';
-import { DataElementConstraint } from '../../types/visualization';
+import { Variable } from '../../types/variable';
+import {
+  DataElementConstraintRecord,
+  filterVariablesByConstraint,
+  flattenConstraints,
+  ValueByInputName,
+} from '../../utils/data-element-constraints';
 import { VariableTreeDropdown } from '../VariableTree';
-
-interface VariableDescriptor {
-  variableId: string;
-  entityId: string;
-}
-
-type ValueByInputName = Record<string, VariableDescriptor | undefined>;
 
 interface InputSpec {
   name: string;
@@ -38,7 +37,7 @@ export interface Props {
   /**
    * Constraints to apply to `inputs`
    */
-  constraints?: Record<string, DataElementConstraint>[];
+  constraints?: DataElementConstraintRecord[];
   /**
    * Order in which to apply entity-specific relationships between inputs.
    * TODO Describe what the order means.
@@ -82,11 +81,14 @@ const useStyles = makeStyles(
 );
 
 export function InputVariables(props: Props) {
-  const { inputs, entities, values, onChange } = props;
+  const { inputs, entities, values, onChange, constraints } = props;
   const classes = useStyles();
-  const handleChange = (inputName: string, value?: VariableDescriptor) => {
+  const handleChange = (inputName: string, value?: Variable) => {
     onChange({ ...values, [inputName]: value });
   };
+  const flattenedConstraints =
+    constraints && flattenConstraints(values, entities, constraints);
+  console.log({ flattenedConstraints });
   return (
     <div className={classes.root}>
       <div className={classes.inputs}>
@@ -94,16 +96,14 @@ export function InputVariables(props: Props) {
           <div key={input.name} className={classes.input}>
             <div className={classes.label}>{input.label}</div>
             <VariableTreeDropdown
-              entities={entities}
+              entities={filterVariablesByConstraint(
+                entities,
+                flattenedConstraints && flattenedConstraints[input.name]
+              )}
               entityId={values[input.name]?.entityId}
               variableId={values[input.name]?.variableId}
-              onActiveFieldChange={(fieldId) => {
-                if (fieldId == null) {
-                  handleChange(input.name, undefined);
-                  return;
-                }
-                const [entityId, variableId] = fieldId.split('/');
-                handleChange(input.name, { entityId, variableId });
+              onChange={(variable) => {
+                handleChange(input.name, variable);
               }}
             />
           </div>
