@@ -31,7 +31,7 @@ export function NumberInput(props: NumberInputProps) {
   return <BaseInput {...props} valueType="number" />;
 }
 
-export type DateInputProps = BaseProps<Date>;
+export type DateInputProps = BaseProps<string>;
 
 export function DateInput(props: DateInputProps) {
   return <BaseInput {...props} valueType="date" />;
@@ -137,7 +137,7 @@ function BaseInput({
           ? undefined
           : valueType === 'number'
           ? Number(event.target.value)
-          : new Date(event.target.value);
+          : String(event.target.value);
       setLocalValue(newValue);
       const isValid = boundsCheckedValue(newValue);
       if (isValid) {
@@ -172,7 +172,7 @@ function BaseInput({
               ? ''
               : valueType === 'number'
               ? localValue
-              : (localValue as Date)?.toISOString().substr(0, 10)
+              : (localValue as string)?.substr(0, 10) // MUI date picker can't handle date-times
           }
           type={valueType}
           variant="outlined"
