@@ -51,6 +51,7 @@ type UIState = TypeOf<typeof UIState>;
 const UIState = partial({
   binWidth: number,
   binWidthTimeUnit: string,
+  independentAxisRange: unknown,
 });
 
 export function HistogramFilter(props: Props) {
@@ -284,6 +285,15 @@ function HistogramPlotWithControls({
     [updateUIState]
   );
 
+  const handleIndependentRangeChange = useCallback(
+    (newRange: NumberOrDateRange) => {
+      updateUIState({
+        independentAxisRange: newRange,
+      });
+    },
+    [updateUIState]
+  );
+
   // TODO Use UIState
   const barLayout = 'overlay';
   const displayLegend = true;
@@ -346,6 +356,8 @@ function HistogramPlotWithControls({
         errorManagement={errorManagement}
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
+        independentAxisRange={independentAxisRange}
+        onIndependentAxisRangeChange={handleIndependentRangeChange}
       />
     </div>
   );
