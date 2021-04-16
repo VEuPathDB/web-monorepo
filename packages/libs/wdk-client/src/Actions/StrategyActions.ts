@@ -118,7 +118,7 @@ export const fulfillGetDuplicatedStrategyStepTree = makeActionCreator(
 
 export const requestRemoveStepFromStepTree = makeActionCreator(
     'requestRemoveStepFromStepTree',
-    (strategyId: number, stepIdToRemove: number, stepTree: StepTree) => ({ strategyId, stepIdToRemove, stepTree })
+    (strategyId: number, stepIdToRemove: number, stepTree: StepTree, isNestedControlStep: boolean = false) => ({ strategyId, stepIdToRemove, stepTree, isNestedControlStep })
 )
 
 export const requestUpdateStepProperties = makeActionCreator(

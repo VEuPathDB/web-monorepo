@@ -153,7 +153,7 @@ function StepTree(props: StepBoxesProps) {
                     props.onShowInsertStep({ type: 'insert-before', stepId: step.id, selectedOperation, pageHistory }),
                   insertStepAfter: (selectedOperation?: string, pageHistory?: string[]) => 
                     props.onShowInsertStep({ type: 'append', stepId: secondaryInput.step.id, selectedOperation, pageHistory }),
-                  deleteStep: () => props.onDeleteStep(step.id)
+                  deleteStep: () => props.onDeleteStep(step.id, secondaryInput.isNested)
                 }}
                 defaultComponent={StepBox}
               />
