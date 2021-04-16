@@ -417,6 +417,7 @@ export default function HistogramControls({
               }`}
               minimum={binWidthRange.min}
               maximum={binWidthRange.max}
+              showTextInput={true}
               step={binWidthStep}
               value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
               debounceRateMs={250}
