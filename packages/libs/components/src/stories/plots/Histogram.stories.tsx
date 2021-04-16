@@ -94,6 +94,23 @@ BinWidthRangeGeneratedFromData.loaders = [
   }),
 ];
 
+export const NoTitle = TemplateWithControls.bind({});
+NoTitle.args = {
+  height: 400,
+  width: '100%',
+  spacingOptions: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+};
+
+// @ts-ignore
+NoTitle.loaders = [
+  async () => ({
+    apiData: await binDailyCovidStats(2000),
+  }),
+];
+
 export const OverrideBinWidthRangeAndStep = TemplateWithControls.bind({});
 OverrideBinWidthRangeAndStep.args = {
   title: 'Some Current Covid Data in U.S. States',
