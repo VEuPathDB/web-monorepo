@@ -149,12 +149,14 @@ export function TableFilter({
 
   const uiStateKey = `${entity.id}/${variable.id}`;
 
-  const uiState = useMemo(() => {
+  const uiState: Required<UIState> = useMemo(() => {
     return pipe(
       sessionState.session?.variableUISettings[uiStateKey],
       UIState.decode,
-      map((stored) => ({ ...defaultUIState, ...stored } as Required<UIState>)),
-      getOrElse((): Required<UIState> => defaultUIState)
+      // This will overwrite default props with store props.
+      // The result is a `Required<UIState>` object.
+      map((stored) => ({ ...defaultUIState, ...stored })),
+      getOrElse(() => defaultUIState)
     );
   }, [sessionState.session?.variableUISettings, uiStateKey]);
 
