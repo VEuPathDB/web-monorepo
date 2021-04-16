@@ -220,8 +220,12 @@ export function HistogramFilter(props: Props) {
             filter={filter}
             data={data.value}
             getData={getData}
-            width={1000}
+            width="100%"
             height={400}
+            spacingOptions={{
+              marginTop: 20,
+              marginBottom: 20,
+            }}
             orientation={'vertical'}
             barLayout={'overlay'}
             updateFilter={updateFilter}
