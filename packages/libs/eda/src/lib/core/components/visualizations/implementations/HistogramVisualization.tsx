@@ -32,6 +32,7 @@ import {
   ISODateStringToZuluDate,
   parseTimeDelta,
 } from '../../../utils/date-conversion';
+import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
@@ -178,19 +179,10 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useCallback(
-    (variable?: Variable) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
-    },
-    [entities]
-  );
-
   const data = usePromise(
     useCallback(async (): Promise<HistogramData> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
+      const { variable: xAxisVariable } =
+        findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return Promise.reject(new Error('Please choose a main variable'));
 
@@ -219,14 +211,7 @@ function HistogramViz(props: Props) {
               params as NumericHistogramRequestParams
             );
       return histogramResponseToData(await response, xAxisVariable.type);
-    }, [
-      studyId,
-      filters,
-      dataClient,
-      vizConfig,
-      findVariable,
-      computation.type,
-    ])
+    }, [studyId, filters, dataClient, vizConfig, entities, computation.type])
   );
 
   return (
