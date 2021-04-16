@@ -107,8 +107,11 @@ export function Subsetting(props: Props) {
             entities={entities}
             entityId={entity.id}
             variableId={variable.id}
-            onActiveFieldChange={(term?: string) => {
-              if (term) history.replace(`../${term}`);
+            onChange={(variable) => {
+              if (variable)
+                history.replace(
+                  `../${variable.entityId}/${variable.variableId}`
+                );
               else history.replace('`..');
             }}
           />
