@@ -267,10 +267,10 @@ export default function EntityDiagram({
             id="arrow"
             viewBox="0 -5 10 10"
             markerWidth={isExpanded ? '18' : '10'}
-            markerHeight={isExpanded ? '18' : '10'}
+            markerHeight={isExpanded ? '12' : '10'}
             orient="auto"
             fill="black"
-            refX={10}
+            refX={5}
           >
             <path d="M0,-5L10,0L0,5" />
           </marker>
