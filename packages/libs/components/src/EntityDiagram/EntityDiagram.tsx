@@ -20,22 +20,6 @@ interface OffsetLine {
   orientation: Orientation;
 }
 
-// Todo: There MUST be a smarter way to center the text
-function CalculateDYSize(nodeLength: number) {
-  switch (nodeLength) {
-    case 1:
-      return '.33em';
-    case 2:
-      return '.80em';
-    case 3:
-      return '1.35em';
-    case 4:
-      return '1.8em';
-    case 5:
-      return '1.8em';
-  }
-}
-
 export type VariableType =
   | 'category'
   | 'string'
@@ -198,15 +182,11 @@ export default function EntityDiagram({
       <Text
         fontSize={fontSize}
         textAnchor="middle"
+        verticalAnchor="middle"
         style={{
           userSelect: 'none',
           fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
         }}
-        dy={
-          isExpanded
-            ? CalculateDYSize(node.data.displayName.split(' ').length)
-            : '.33em'
-        }
         width={isExpanded ? nodeWidth - 10 : undefined}
         key={`text-${node.data.id}`}
       >
