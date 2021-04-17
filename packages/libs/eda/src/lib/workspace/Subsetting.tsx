@@ -13,6 +13,7 @@ import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { VariableTree } from '../core/components/VariableTree';
 import FilterChipList from '../core/components/FilterChipList';
+import { count } from 'node:console';
 
 interface RouteProps {
   sessionState: SessionState;
@@ -76,22 +77,16 @@ export function Subsetting(props: Props) {
 
   return (
     <div className={cx('-Subsetting')}>
-      <div>
-        <h2 style={{ textAlign: 'center' }}>ENTITIES</h2>
-        <div style={{ paddingTop: '10px' }}>
-          <EntityDiagram
-            expanded={false}
-            orientation="vertical"
-            size={{ height: 300, width: 150 }}
-            selectedEntity={entity.displayName}
-            entityCounts={totalCounts.value}
-            filteredEntityCounts={filteredCounts.value}
-          />
-        </div>
+      <div className="Entities">
+        <EntityDiagram
+          expanded
+          orientation="horizontal"
+          selectedEntity={entity.displayName}
+          entityCounts={totalCounts.value}
+          filteredEntityCounts={filteredCounts.value}
+        />
       </div>
-      <div>
-        <h2>VARIABLES</h2>
-        {/* add box? */}
+      <div className="Variables">
         <div
           style={{
             border: '1px solid',
@@ -114,14 +109,27 @@ export function Subsetting(props: Props) {
           />
         </div>
       </div>
-      <div>
+      <div className="EntityDetails">
+        <h2>{entity.displayName}</h2>
+        {filteredEntityCount && totalEntityCount && (
+          <h3>
+            {filteredEntityCount.toLocaleString()} of{' '}
+            {totalEntityCount.toLocaleString()} (
+            {(filteredEntityCount / totalEntityCount).toLocaleString('en-us', {
+              style: 'percent',
+            })}
+            )
+          </h3>
+        )}
         <FilterChipList
-          sessionState={sessionState}
+          filters={sessionState.session?.filters}
+          setFilters={sessionState.setFilters}
           entities={entities}
           selectedEntityId={entity.id}
           selectedVariableId={variable.id}
         />
-        <br />
+      </div>
+      <div className="Filter">
         <Variable
           entity={entity}
           variable={variable}
