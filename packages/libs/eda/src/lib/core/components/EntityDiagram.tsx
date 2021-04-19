@@ -50,7 +50,11 @@ export function EntityDiagram(props: Props) {
     );
   };
 
-  const dimensions = getDimensions(studyMetadata.rootEntity, props.orientation);
+  const dimensions = getDimensions(
+    studyMetadata.rootEntity,
+    props.orientation,
+    props.expanded
+  );
 
   return (
     <EntityDiagramComponent
@@ -76,49 +80,42 @@ interface Dimensions {
   };
   expandedNodeHeight: number;
   expandedNodeWidth: number;
+  miniNodeHeight: number;
+  miniNodeWidth: number;
 }
 
 function getDimensions(
   tree: StudyEntity,
-  orientation: Orientation
+  orientation: Orientation,
+  isExpanded: boolean
 ): Dimensions {
-  switch (orientation) {
-    case 'horizontal': {
-      const treeWidth = getTreeWidth(tree);
-      const treeHeight = getTreeHeight(tree);
-      const expandedNodeHeight = 30;
-      const expandedNodeWidth = 200;
-      const height = treeWidth * (expandedNodeHeight + expandedNodeHeight / 2);
-      const width = treeHeight * (expandedNodeWidth + expandedNodeWidth / 3);
-      return {
-        size: {
-          height,
-          width,
-        },
-        expandedNodeHeight,
-        expandedNodeWidth,
-      };
-    }
-    case 'vertical': {
-      const treeWidth = getTreeWidth(tree);
-      const treeHeight = getTreeHeight(tree);
-      const expandedNodeHeight = 30;
-      const expandedNodeWidth = 200;
-      const height = treeHeight * (expandedNodeHeight + expandedNodeHeight / 2);
-      const width = treeWidth * (expandedNodeWidth + expandedNodeWidth / 3);
-      return {
-        size: {
-          height,
-          width,
-        },
-        expandedNodeHeight,
-        expandedNodeWidth,
-      };
-    }
-    default: {
-      throw new Error('No defaults allowed!');
-    }
-  }
+  const isVertical = orientation === 'vertical';
+  const treeWidth = getTreeWidth(tree);
+  const treeHeight = getTreeHeight(tree);
+  const expandedNodeHeight = 30;
+  const expandedNodeWidth = 200;
+  const miniNodeHeight = 30;
+  const miniNodeWidth = 40;
+  const nodeVerticalSpacingConstant = isExpanded ? 1 / 3 : 3 / 4;
+  const nodeHorizontalSpacingConstant = isVertical ? 3 / 2 : 3 / 4;
+  const nodeHeight = isExpanded ? expandedNodeHeight : miniNodeHeight;
+  const nodeWidth = isExpanded ? expandedNodeWidth : miniNodeWidth;
+  const height =
+    (isVertical ? treeHeight : treeWidth) *
+    (nodeHeight + nodeHeight * nodeHorizontalSpacingConstant);
+  const width =
+    (isVertical ? treeWidth : treeHeight) *
+    (nodeWidth + nodeWidth * nodeVerticalSpacingConstant);
+  return {
+    size: {
+      height,
+      width,
+    },
+    expandedNodeHeight,
+    expandedNodeWidth,
+    miniNodeHeight,
+    miniNodeWidth,
+  };
 }
 
 function getTreeHeight(tree: StudyEntity): number {
