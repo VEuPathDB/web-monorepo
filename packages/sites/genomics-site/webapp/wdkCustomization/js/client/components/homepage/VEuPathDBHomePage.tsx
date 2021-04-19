@@ -234,7 +234,7 @@ const parseExpandedBranches = memoize((s: string) => decode(
 ));
 
 const AmoebaDB = 'AmoebaDB';
-const CryptpDB = 'CryptoDB';
+const CryptoDB = 'CryptoDB';
 const EuPathDB = 'EuPathDB';
 const FungiDB  = 'FungiDB';
 const GiardiaDB = 'GiardiaDB';
@@ -316,7 +316,7 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: makeStaticPageRoute(`/apollo_help.html`),
           metadata: {
-            include: [ AmoebaDB,PiroplasmaDB,ToxoDB,VectorBase ]
+            include: [ AmoebaDB,CryptoDB,FungiDB,PlasmoDB,PiroplasmaDB,ToxoDB,VectorBase ]
          }
         },
         { 
