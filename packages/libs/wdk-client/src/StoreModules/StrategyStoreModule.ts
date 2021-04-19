@@ -430,10 +430,10 @@ async function getFulfillStrategy_SaveAs(
     state$: StateObservable<RootState>,
     { wdkService }: EpicDependencies
   ): Promise<InferAction<typeof requestPutStrategyStepTree | typeof requestDeleteStrategy>> {
-    const { strategyId, stepIdToRemove, stepTree, isNestedControlStep } = requestAction.payload;
+    const { strategyId, stepIdToRemove, stepTree, deleteSubtree } = requestAction.payload;
     // First, we have to remove the step from the step tree, and then
     // we have to delete the step.
-    const newStepTree = removeStep(stepTree, stepIdToRemove, isNestedControlStep);
+    const newStepTree = removeStep(stepTree, stepIdToRemove, deleteSubtree);
     return newStepTree ? requestPutStrategyStepTree(strategyId, newStepTree) : requestDeleteStrategy(strategyId);
     // const removedSteps = difference(
     //   getStepIds(stepTree),

@@ -182,7 +182,7 @@ describe('removeStep', () => {
       }
     };
 
-    it('should remove the entire nested strategy, if isNestedControlStep is true', () => {
+    it('should remove the entire nested strategy, if deleteSubtree is true', () => {
       //    8 -> 7
       //         |
       //         v
@@ -226,7 +226,7 @@ describe('removeStep', () => {
       expect(removeStep(stepTree, 7, true)).toEqual(resultStepTree2);
     });
 
-    it('should preserve the other steps of the nested strategy, if isNestedControlStep is false', () => {
+    it('should preserve the other steps of the nested strategy, if deleteSubtree is false', () => {
       //     8 -> 7        6
       //          |        |
       //          v        v
