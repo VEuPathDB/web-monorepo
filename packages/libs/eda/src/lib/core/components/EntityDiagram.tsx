@@ -61,8 +61,9 @@ export function EntityDiagram(props: Props) {
       shadingData={shadingData}
       renderNode={renderNode}
       selectedHighlightColor="#069"
-      shadowDispersion={3}
-      shadowOpacity={0.3}
+      shadingColor="#E39C9C"
+      shadowDispersion={2}
+      shadowOpacity={0.4}
       {...dimensions}
     />
   );
