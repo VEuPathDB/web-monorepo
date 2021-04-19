@@ -174,6 +174,7 @@ function SrtForm({
   return (
     <form action={formActionUrl} method="post" target="_blank">
       <input type="hidden" name="project_id" value={projectId} />
+      <input type="hidden" name="downloadType" value={String(formState.attachmentType)} />
       <h3 className={cx('--IdsHeader')} >
         Enter a list of {display} (each ID on a separate line):
         {' '}
