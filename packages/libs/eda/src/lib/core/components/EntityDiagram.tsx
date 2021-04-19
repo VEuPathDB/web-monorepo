@@ -23,7 +23,10 @@ export function EntityDiagram(props: Props) {
       ? Object.fromEntries(
           Object.entries(props.entityCounts).map(([key, value]) => [
             key,
-            props.filteredEntityCounts![key] / value,
+            props.filteredEntityCounts![key] === 0
+              ? 0
+              : // min width is 1%
+                Math.max(0.01, props.filteredEntityCounts![key] / value),
           ])
         )
       : {};
