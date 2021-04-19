@@ -20,22 +20,6 @@ interface OffsetLine {
   orientation: Orientation;
 }
 
-// Todo: There MUST be a smarter way to center the text
-function CalculateDYSize(nodeLength: number) {
-  switch (nodeLength) {
-    case 1:
-      return '.33em';
-    case 2:
-      return '.80em';
-    case 3:
-      return '1.35em';
-    case 4:
-      return '1.8em';
-    case 5:
-      return '1.8em';
-  }
-}
-
 export type VariableType =
   | 'category'
   | 'string'
@@ -174,21 +158,50 @@ export default function EntityDiagram({
     const rectHeight = nodeHeight - nodeStrokeWidth * 2;
     const rectWidth = nodeWidth - nodeStrokeWidth * 2;
 
-    const rect = (
+    const backgroundRect = (
       <rect
         height={rectHeight}
         width={rectWidth}
         y={-rectHeight / 2}
+        x={-rectWidth / 2}
+        fill="white"
+        strokeWidth={0}
+        key={`bg-rect-${node.data.id}`}
+      />
+    );
+
+    const shadingRect = (
+      <rect
+        height={isExpanded ? 6 : rectHeight}
+        width={rectWidth}
+        y={isExpanded ? -rectHeight / 2 + rectHeight - 6 : -rectHeight / 2}
         x={-rectWidth / 2}
         fill={
           shadingData?.[node.data.id]
             ? `url('#rect-gradient-${node.data.id}')`
             : 'white'
         }
+        stroke={'transparent'}
+        strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
+        style={{
+          overflowWrap: isExpanded ? 'normal' : undefined,
+        }}
+        key={`shading-rect-${node.data.id}`}
+      />
+    );
+
+    const borderRect = (
+      <rect
+        height={rectHeight}
+        width={rectWidth}
+        y={-rectHeight / 2}
+        x={-rectWidth / 2}
+        fill="none"
         stroke={'black'}
         strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
         style={{
           overflowWrap: isExpanded ? 'normal' : undefined,
+          overflow: 'hidden',
         }}
         key={`rect-${node.data.id}`}
       />
@@ -198,15 +211,11 @@ export default function EntityDiagram({
       <Text
         fontSize={fontSize}
         textAnchor="middle"
+        verticalAnchor="middle"
         style={{
           userSelect: 'none',
           fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
         }}
-        dy={
-          isExpanded
-            ? CalculateDYSize(node.data.displayName.split(' ').length)
-            : '.33em'
-        }
         width={isExpanded ? nodeWidth - 10 : undefined}
         key={`text-${node.data.id}`}
       >
@@ -214,7 +223,7 @@ export default function EntityDiagram({
       </Text>
     );
 
-    let children = [rect, text];
+    let children = [backgroundRect, shadingRect, text, borderRect];
 
     if (isHighlighted) {
       // Make the highlight around the selected node
@@ -228,7 +237,7 @@ export default function EntityDiagram({
           y={-rectHighlightHeight / 2}
           x={-rectHighlightWidth / 2}
           fill={selectedHighlightColor}
-          rx={3}
+          rx=".2em"
           key={`rect-highlight-${node.data.id}`}
         />
       );
@@ -287,10 +296,10 @@ export default function EntityDiagram({
             id="arrow"
             viewBox="0 -5 10 10"
             markerWidth={isExpanded ? '18' : '10'}
-            markerHeight={isExpanded ? '18' : '10'}
+            markerHeight={isExpanded ? '12' : '10'}
             orient="auto"
             fill="black"
-            refX={10}
+            refX={5}
           >
             <path d="M0,-5L10,0L0,5" />
           </marker>
@@ -314,7 +323,7 @@ export default function EntityDiagram({
               fromOffset={1}
               id={`rect-gradient-${key}`}
               from={shadingColor}
-              to="white"
+              to={isExpanded ? '#cccccc' : 'white'}
             />
           ))}
         <Tree root={data} size={[treeWidth, treeHeight]}>
