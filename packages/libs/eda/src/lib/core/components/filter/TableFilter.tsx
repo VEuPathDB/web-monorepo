@@ -1,9 +1,9 @@
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import MembershipField from '@veupathdb/wdk-client/lib/Components/AttributeFilter/MembershipField';
 import { MultiFieldSortSpec } from '@veupathdb/wdk-client/lib/Views/Question/Params/FilterParamNew/State';
-import { getOrElse } from 'fp-ts/lib/Either';
+import { getOrElse, map } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
-import { boolean, keyof, number, string, type, TypeOf } from 'io-ts';
+import { boolean, keyof, number, partial, string, type, TypeOf } from 'io-ts';
 import { useCallback, useMemo } from 'react';
 import { BarplotResponse } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
@@ -24,11 +24,15 @@ type Props = {
   filteredEntityCount: number;
 };
 
+type UIState = TypeOf<typeof UIState>;
 // `io-ts` decoder to validate the stored ui state for this variable.
 // If this validation fails, we will fallback to a default value.
 // This means that if this type changes, users will lose their settings,
-// which is better than complete failure.
-const UIState = type({
+// which is better than complete failure. Using a `partial` type helps with
+// this.
+//
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+const UIState = partial({
   sort: type({
     columnKey: keyof({
       value: null,
@@ -43,7 +47,19 @@ const UIState = type({
   }),
   searchTerm: string,
   currentPage: number,
+  rowsPerPage: number,
 });
+
+const defaultUIState: Required<UIState> = {
+  sort: {
+    columnKey: 'value',
+    direction: 'asc',
+    groupBySelected: false,
+  },
+  searchTerm: '',
+  currentPage: 1, // 1-based index,
+  rowsPerPage: 50,
+};
 
 export function TableFilter({
   studyMetadata,
@@ -133,20 +149,14 @@ export function TableFilter({
 
   const uiStateKey = `${entity.id}/${variable.id}`;
 
-  const uiState = useMemo(() => {
+  const uiState: Required<UIState> = useMemo(() => {
     return pipe(
-      UIState.decode(sessionState.session?.variableUISettings[uiStateKey]),
-      getOrElse(
-        (): TypeOf<typeof UIState> => ({
-          sort: {
-            columnKey: 'value',
-            direction: 'asc',
-            groupBySelected: false,
-          },
-          searchTerm: '',
-          currentPage: 1, // 1-based index
-        })
-      )
+      sessionState.session?.variableUISettings[uiStateKey],
+      UIState.decode,
+      // This will overwrite default props with store props.
+      // The result is a `Required<UIState>` object.
+      map((stored) => ({ ...defaultUIState, ...stored })),
+      getOrElse(() => defaultUIState)
     );
   }, [sessionState.session?.variableUISettings, uiStateKey]);
 
@@ -244,6 +254,18 @@ export function TableFilter({
     [sessionState, uiStateKey, uiState]
   );
 
+  const handleRowsPerPage = useCallback(
+    (_: unknown, rowsPerPage: number) => {
+      sessionState.setVariableUISettings({
+        [uiStateKey]: {
+          ...uiState,
+          rowsPerPage,
+        },
+      });
+    },
+    [sessionState, uiStateKey, uiState]
+  );
+
   const allValues = useMemo(() => {
     return (
       tableSummary.value?.distribution.map((entry) => entry.value) ??
@@ -299,6 +321,7 @@ export function TableFilter({
             onMemberSort={handleSort}
             onMemberSearch={handleSearch}
             onMemberChangeCurrentPage={handlePagination}
+            onMemberChangeRowsPerPage={handleRowsPerPage}
             selectByDefault={false}
             // set Heading1 prefix
             filteredCountHeadingPrefix={'Subset of'}
