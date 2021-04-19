@@ -235,10 +235,7 @@ export default function Histogram({
           orientation === 'vertical' ? object.range.x : object.range.y;
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
         // TO DO: think about time zones?
-        const rawRange: NumberOrDateRange = {
-          min: data.valueType === 'date' ? new Date(min) : min,
-          max: data.valueType === 'date' ? new Date(max) : max,
-        };
+        const rawRange: NumberOrDateRange = { min, max };
 
         // now snap to bin boundaries using same logic that Plotly uses
         // (dragging range past middle of bin selects it)

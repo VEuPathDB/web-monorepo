@@ -354,8 +354,8 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
         series.bins.forEach((bin) => {
           if (lowBinValue === null || bin.binStart < lowBinValue) {
             lowBinValue = bin.binStart;
-          } else if (highBinValue === null || bin.binStart > highBinValue) {
-            highBinValue = bin.binStart; // TO DO: binEnd is more appropriate
+          } else if (highBinValue === null || bin.binEnd > highBinValue) {
+            highBinValue = bin.binEnd;
           }
         });
       });
@@ -372,8 +372,8 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
         isDate(lowBinValue)
       ) {
         const rawBinWidthRange = DateMath.diff(
-          highBinValue,
-          lowBinValue,
+          new Date(highBinValue),
+          new Date(lowBinValue),
           'day',
           true
         );
