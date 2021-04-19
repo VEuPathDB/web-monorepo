@@ -89,12 +89,9 @@ export function Subsetting(props: Props) {
       <div className="Variables">
         <div
           style={{
-            border: '1px solid',
-            borderRadius: '.25em',
             padding: '.5em',
-            height: '80vh',
+            height: '60vh',
             width: '30em',
-            // overflow: 'auto',
             position: 'relative',
           }}
         >
@@ -121,6 +118,8 @@ export function Subsetting(props: Props) {
             )
           </h3>
         )}
+      </div>
+      <div className="FilterChips">
         <FilterChipList
           filters={sessionState.session?.filters}
           setFilters={sessionState.setFilters}

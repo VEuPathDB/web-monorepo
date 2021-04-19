@@ -1,5 +1,5 @@
 import FilterChip from './FilterChip';
-import { SessionState, StudyEntity } from '..';
+import { StudyEntity } from '..';
 import { VariableLink } from './VariableLink';
 import { makeStyles } from '@material-ui/core/styles';
 import { Filter } from '../types/filter';
@@ -7,9 +7,11 @@ import { Filter } from '../types/filter';
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
   root: {
-    '& > *': {
+    display: 'flex',
+    flexWrap: 'wrap',
+    '& > *:not(:last-of-type)': {
       // Spacing between chips
-      margin: theme.spacing(0.5),
+      marginRight: theme.spacing(),
     },
   },
 }));

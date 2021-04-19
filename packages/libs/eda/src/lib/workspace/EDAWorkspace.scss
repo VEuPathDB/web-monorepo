@@ -137,17 +137,20 @@
 
   &-Subsetting {
     display: grid;
-    grid-template-areas:
-      'entities entities'
+    grid:
+      'entities      entities'
       'entity-detail entity-detail'
-      'variables filter';
-    grid-template-columns: auto 1fr;
+      '.             filter-chips'
+      'variables     filter'
+      / auto 1fr;
     gap: 1em 3em;
     .Entities {
       grid-area: entities;
       margin: auto;
     }
     .EntityDetails {
+      border-bottom: 1px solid #cccccc;
+      padding-bottom: 0.5em;
       grid-area: entity-detail;
       display: flex;
       align-items: center;
@@ -159,6 +162,9 @@
     }
     .Variables {
       grid-area: variables;
+    }
+    .FilterChips {
+      grid-area: filter-chips;
     }
     .Filter {
       grid-area: filter;
