@@ -148,6 +148,141 @@ describe('removeStep', () => {
 
     });
   });
+
+  describe('with a nested strategy root target', () => {
+    //                   9
+    //                   |
+    //                   v
+    //     8 -> 7   6 -> 5
+    //          |        |
+    //          v        v
+    // 3 -----> 2 -----> 1
+    const stepTree: StepTree = {
+      stepId: 1,
+      primaryInput: {
+        stepId: 2,
+        primaryInput: {
+          stepId: 3
+        },
+        secondaryInput: {
+          stepId: 7,
+          primaryInput: {
+            stepId: 8
+          }
+        }
+      },
+      secondaryInput: {
+        stepId: 5,
+        primaryInput: {
+          stepId: 6
+        },
+        secondaryInput: {
+          stepId: 9
+        }
+      }
+    };
+
+    it('should remove the entire nested strategy, if deleteSubtree is true', () => {
+      //    8 -> 7
+      //         |
+      //         v
+      // 3 ----> 2
+      const resultStepTree1: StepTree = {
+        stepId: 2,
+        primaryInput: {
+          stepId: 3
+        },
+        secondaryInput: {
+          stepId: 7,
+          primaryInput: {
+            stepId: 8
+          }
+        }
+      };
+      expect(removeStep(stepTree, 5, true)).toEqual(resultStepTree1);
+
+      //          9
+      //          |
+      //          v
+      //     6 -> 5
+      //          |
+      //          v
+      // 3 -----> 1
+      const resultStepTree2: StepTree = {
+        stepId: 1,
+        primaryInput: {
+          stepId: 3
+        },
+        secondaryInput: {
+          stepId: 5,
+          primaryInput: {
+            stepId: 6
+          },
+          secondaryInput: {
+            stepId: 9
+          }
+        }
+      };
+      expect(removeStep(stepTree, 7, true)).toEqual(resultStepTree2);
+    });
+
+    it('should preserve the other steps of the nested strategy, if deleteSubtree is false', () => {
+      //     8 -> 7        6
+      //          |        |
+      //          v        v
+      // 3 -----> 2 -----> 1
+      const resultStepTree1: StepTree = {
+        stepId: 1,
+        primaryInput: {
+          stepId: 2,
+          primaryInput: {
+            stepId: 3
+          },
+          secondaryInput: {
+            stepId: 7,
+            primaryInput: {
+              stepId: 8
+            }
+          }
+        },
+        secondaryInput: {
+          stepId: 6
+        }
+      };
+      expect(removeStep(stepTree, 5, false)).toEqual(resultStepTree1);
+
+      //                   9
+      //                   |
+      //                   v
+      //          8   6 -> 5
+      //          |        |
+      //          v        v
+      // 3 -----> 2 -----> 1
+      const resultStepTree2: StepTree = {
+        stepId: 1,
+        primaryInput: {
+          stepId: 2,
+          primaryInput: {
+            stepId: 3
+          },
+          secondaryInput: {
+            stepId: 8
+          }
+        },
+        secondaryInput: {
+          stepId: 5,
+          primaryInput: {
+            stepId: 6
+          },
+          secondaryInput: {
+            stepId: 9
+          }
+        }
+      };
+      expect(removeStep(stepTree, 7, false)).toEqual(resultStepTree2);
+
+    });
+  });
 })
 
 describe('addStep', () => {

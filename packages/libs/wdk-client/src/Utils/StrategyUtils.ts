@@ -284,31 +284,52 @@ export const findPrimaryBranchLeaf = (stepTree: StepTree): StepTree =>
  * removal of the target step is a valid operation, or b) that code downstream
  * of this function will handle invalid step trees.
  */
-export const removeStep = (stepTree: StepTree, targetStepId: number): StepTree | undefined => {
+export const removeStep = (
+  stepTree: StepTree,
+  targetStepId: number,
+  deleteSubtree: boolean = false
+): StepTree | undefined => {
   return _recurse(stepTree);
 
   function _recurse(stepTree: StepTree | undefined): StepTree | undefined {
     if (stepTree == null) return stepTree;
 
-    // Remove a step from head position if a strategy (e.g., a root step)
-    // Return its primary input
-    if (
-      stepTree.stepId === targetStepId ||
-      (stepTree.secondaryInput && stepTree.secondaryInput.stepId === targetStepId)
-    ) {
+    // Remove a step which the root of the stepTree
+    // In this case, return its primary input
+    if (stepTree.stepId === targetStepId) {
       return stepTree.primaryInput;
     }
-    
+
+    // Remove a step which is the secondary input of the stepTree's root
+    if (stepTree.secondaryInput?.stepId === targetStepId) {
+      // If the target is a secondary leaf of stepTree's root, or deleteSubtree is true,
+      // return the primary input of stepTree (that is, "delete every step of the nested strategy, not just the target")
+      if (
+        stepTree.secondaryInput.primaryInput == null ||
+        deleteSubtree
+      ) {
+        return stepTree.primaryInput;
+      }
+
+      // Otherwise, replace the target with its primary input
+      return {
+        ...stepTree,
+        secondaryInput: stepTree.secondaryInput.primaryInput
+      };
+    }
+
     // Remove a step from non-head position of a strategy.
     // Replace the primary input for which it is the primary input with its primary input.
     if (
       stepTree.primaryInput != null &&
       (
-        (stepTree.primaryInput.stepId === targetStepId) ||
-        (stepTree.primaryInput.secondaryInput && stepTree.primaryInput.secondaryInput.stepId === targetStepId)
+        stepTree.primaryInput.stepId === targetStepId ||
+        (
+          stepTree.primaryInput.secondaryInput?.stepId === targetStepId &&
+          deleteSubtree
+        )
       )
     ) {
-
       return stepTree.primaryInput.primaryInput == null
         ? stepTree.secondaryInput
         : {
@@ -321,7 +342,7 @@ export const removeStep = (stepTree: StepTree, targetStepId: number): StepTree |
       ...stepTree,
       primaryInput: _recurse(stepTree.primaryInput),
       secondaryInput: _recurse(stepTree.secondaryInput)
-    }
+    };
   }
 }
 

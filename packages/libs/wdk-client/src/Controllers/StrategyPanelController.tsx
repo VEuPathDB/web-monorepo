@@ -49,7 +49,7 @@ interface MappedDispatch {
   onAnalyzeStep: () => void;
   onMakeNestedStrategy: (branchStepId: number) => void;
   onMakeUnnestedStrategy: (branchStepId: number) => void;
-  onDeleteStep: (stepTree: StepTree, stepId: number) => void;
+  onDeleteStep: (stepTree: StepTree, stepId: number, deleteSubtree?: boolean) => void;
 }
 
 type Props = OwnProps & MappedProps & MappedDispatch;
@@ -105,7 +105,7 @@ function mapDispatchToProps(dispatch: Dispatch, props: OwnProps): MappedDispatch
     }),
     onMakeNestedStrategy: (branchStepId: number) => nestStrategy(viewId, branchStepId),
     onMakeUnnestedStrategy: (branchStepId: number) => unnestStrategy(viewId, branchStepId),
-    onDeleteStep: (stepTree: StepTree, stepId: number) => requestRemoveStepFromStepTree(strategyId, stepId, stepTree)
+    onDeleteStep: (stepTree: StepTree, stepId: number, deleteSubtree: boolean = false) => requestRemoveStepFromStepTree(strategyId, stepId, stepTree, deleteSubtree)
   }, dispatch);
 }
 

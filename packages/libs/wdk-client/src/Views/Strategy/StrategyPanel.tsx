@@ -37,7 +37,7 @@ interface Props {
   onRenameStep: (stepId: number, newName: string) => void;
   onRenameNestedStrategy: (branchStepId: number, newName: string) => void;
   onAnalyzeStep: () => void;
-  onDeleteStep: (stepId: number) => void;
+  onDeleteStep: (stepId: number, deleteSubtree?: boolean) => void;
 }
 
 export default function StrategyPanel(props: Props) {
