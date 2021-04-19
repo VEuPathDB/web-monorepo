@@ -158,21 +158,50 @@ export default function EntityDiagram({
     const rectHeight = nodeHeight - nodeStrokeWidth * 2;
     const rectWidth = nodeWidth - nodeStrokeWidth * 2;
 
-    const rect = (
+    const backgroundRect = (
       <rect
         height={rectHeight}
         width={rectWidth}
         y={-rectHeight / 2}
+        x={-rectWidth / 2}
+        fill="white"
+        strokeWidth={0}
+        key={`bg-rect-${node.data.id}`}
+      />
+    );
+
+    const shadingRect = (
+      <rect
+        height={isExpanded ? 6 : rectHeight}
+        width={rectWidth}
+        y={isExpanded ? -rectHeight / 2 + rectHeight - 6 : -rectHeight / 2}
         x={-rectWidth / 2}
         fill={
           shadingData?.[node.data.id]
             ? `url('#rect-gradient-${node.data.id}')`
             : 'white'
         }
+        stroke={'transparent'}
+        strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
+        style={{
+          overflowWrap: isExpanded ? 'normal' : undefined,
+        }}
+        key={`shading-rect-${node.data.id}`}
+      />
+    );
+
+    const borderRect = (
+      <rect
+        height={rectHeight}
+        width={rectWidth}
+        y={-rectHeight / 2}
+        x={-rectWidth / 2}
+        fill="none"
         stroke={'black'}
         strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
         style={{
           overflowWrap: isExpanded ? 'normal' : undefined,
+          overflow: 'hidden',
         }}
         key={`rect-${node.data.id}`}
       />
@@ -194,7 +223,7 @@ export default function EntityDiagram({
       </Text>
     );
 
-    let children = [rect, text];
+    let children = [backgroundRect, shadingRect, text, borderRect];
 
     if (isHighlighted) {
       // Make the highlight around the selected node
@@ -208,7 +237,7 @@ export default function EntityDiagram({
           y={-rectHighlightHeight / 2}
           x={-rectHighlightWidth / 2}
           fill={selectedHighlightColor}
-          rx={3}
+          rx=".2em"
           key={`rect-highlight-${node.data.id}`}
         />
       );
@@ -294,7 +323,7 @@ export default function EntityDiagram({
               fromOffset={1}
               id={`rect-gradient-${key}`}
               from={shadingColor}
-              to="white"
+              to={isExpanded ? '#cccccc' : 'white'}
             />
           ))}
         <Tree root={data} size={[treeWidth, treeHeight]}>

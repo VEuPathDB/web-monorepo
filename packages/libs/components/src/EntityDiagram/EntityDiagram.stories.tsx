@@ -161,7 +161,7 @@ const shadingData: ShadingData = {
   GEMS_HouseObs: 0.2,
   GEMS_Part: 0.41,
   GEMS_PartObs: 0.66,
-  GEMS_Treat: 0.98,
+  GEMS_Treat: 1,
   GEMS_Sample: 0.3,
 };
 
