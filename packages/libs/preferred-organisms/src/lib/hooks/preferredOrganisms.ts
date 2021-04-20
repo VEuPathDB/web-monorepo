@@ -35,7 +35,7 @@ export function useNewOrganisms() {
   return useRecoilValue(newOrganisms);
 }
 
-export function useUpdateBuildNumberCallback() {
+export function useUpdatePreferredOrganisms() {
   const {
     buildNumber,
     organismPreference,
@@ -44,12 +44,15 @@ export function useUpdateBuildNumberCallback() {
   const buildNumberValue = useRecoilValue(buildNumber);
   const setOrganismPreference = useSetRecoilState(organismPreference);
 
-  return useCallback(() => {
-    setOrganismPreference((organismPreference) => ({
-      ...organismPreference,
-      buildNumber: buildNumberValue,
-    }));
-  }, [buildNumberValue, setOrganismPreference]);
+  return useCallback(
+    (newPreferredOrganisms: string[]) => {
+      setOrganismPreference({
+        organisms: newPreferredOrganisms,
+        buildNumber: buildNumberValue,
+      });
+    },
+    [buildNumberValue, setOrganismPreference]
+  );
 }
 
 export function usePreferredOrganismsEnabled() {

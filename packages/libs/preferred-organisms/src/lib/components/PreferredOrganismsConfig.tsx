@@ -27,25 +27,25 @@ export const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
 interface Props {
   availableOrganisms: Set<string>;
-  configSelection: string[];
   newOrganisms: Set<string>;
   organismTree: Node<TreeBoxVocabNode>;
+  preferredOrganisms: string[];
   preferredOrganismsEnabled: boolean;
   projectId: string;
   referenceStrains: Set<string>;
-  setConfigSelection: (newPreferredOrganisms: string[]) => void;
+  savePreferredOrganisms: (newPreferredOrganisms: string[]) => void;
   togglePreferredOrganisms: () => void;
 }
 
 export function PreferredOrganismsConfig({
   availableOrganisms,
-  configSelection,
   newOrganisms,
   organismTree,
+  preferredOrganisms,
   preferredOrganismsEnabled,
   projectId,
   referenceStrains,
-  setConfigSelection,
+  savePreferredOrganisms,
   togglePreferredOrganisms,
 }: Props) {
   const renderConfigNode = useRenderOrganismNode(
@@ -53,6 +53,7 @@ export function PreferredOrganismsConfig({
     newOrganisms
   );
 
+  const [configSelection, setConfigSelection] = useState(preferredOrganisms);
   const [configFilterTerm, setConfigFilterTerm] = useState('');
   const [configExpansion, setConfigExpansion] = useState<string[]>([]);
   const configSearchPredicate = useOrganismSearchPredicate(

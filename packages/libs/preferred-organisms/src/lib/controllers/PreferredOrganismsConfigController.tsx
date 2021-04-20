@@ -10,6 +10,7 @@ import {
   usePreferredOrganismsEnabled,
   usePreferredOrganismsState,
   useProjectId,
+  useUpdatePreferredOrganisms,
 } from '../hooks/preferredOrganisms';
 import { useReferenceStrains } from '../hooks/referenceStrains';
 
@@ -20,10 +21,8 @@ export function PreferredOrganismsConfigController() {
 
   const organismTree = useOrganismTree();
 
-  const [
-    preferredOrganismsState,
-    setPreferredOrganismsState,
-  ] = usePreferredOrganismsState();
+  const [preferredOrganisms] = usePreferredOrganismsState();
+  const updatePreferredOrganisms = useUpdatePreferredOrganisms();
 
   const projectIdValue = useProjectId();
 
@@ -45,13 +44,13 @@ export function PreferredOrganismsConfigController() {
   return (
     <PreferredOrganismsConfig
       availableOrganisms={availableOrganisms}
-      configSelection={preferredOrganismsState}
       newOrganisms={newOrganisms}
       organismTree={organismTree}
+      preferredOrganisms={preferredOrganisms}
       preferredOrganismsEnabled={preferredOrganismsEnabled}
       projectId={projectIdValue}
       referenceStrains={referenceStrains}
-      setConfigSelection={setPreferredOrganismsState}
+      savePreferredOrganisms={updatePreferredOrganisms}
       togglePreferredOrganisms={togglePreferredOrganisms}
     />
   );
