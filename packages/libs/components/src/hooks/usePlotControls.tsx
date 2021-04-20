@@ -21,6 +21,7 @@ import {
   TimeDeltaRange,
 } from '../types/general';
 import * as DateMath from 'date-arithmetic';
+import { orderBy } from 'lodash';
 
 /** Action definitions for the reducer function inside of the hook. */
 type ActionType<DataShape> =
@@ -353,8 +354,8 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
         series.bins.forEach((bin) => {
           if (lowBinValue === null || bin.binStart < lowBinValue) {
             lowBinValue = bin.binStart;
-          } else if (highBinValue === null || bin.binStart > highBinValue) {
-            highBinValue = bin.binStart; // TO DO: binEnd is more appropriate
+          } else if (highBinValue === null || bin.binEnd > highBinValue) {
+            highBinValue = bin.binEnd;
           }
         });
       });
@@ -371,8 +372,8 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
         isDate(lowBinValue)
       ) {
         const rawBinWidthRange = DateMath.diff(
-          highBinValue,
-          lowBinValue,
+          new Date(highBinValue),
+          new Date(lowBinValue),
           'day',
           true
         );
@@ -410,20 +411,15 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
     if (params?.histogram?.displaySelectedRangeControls) {
       // calculate min and max limits for the selected range controls from the data
+      const allBins = params.data.series.flatMap((series) => series.bins);
       const min: NumberOrDate =
         params.histogram?.selectedRange?.min ??
-        params.data.series
-          .map((series) => series.bins[0].binStart)
-          .sort(
-            (a: NumberOrDate, b: NumberOrDate) => a.valueOf() - b.valueOf()
-          )[0];
-      const max: NumberOrDate =
-        params.histogram?.selectedRange?.max ??
-        params.data.series
-          .map((series) => series.bins[series.bins.length - 1].binEnd)
-          .sort(
-            (a: NumberOrDate, b: NumberOrDate) => b.valueOf() - a.valueOf()
-          )[0];
+        orderBy(allBins, [(bin) => bin.binStart], ['asc'])[0].binStart;
+      const max: NumberOrDate = orderBy(
+        allBins,
+        [(bin) => bin.binEnd],
+        ['desc']
+      )[0].binEnd;
 
       initialState.histogram = {
         ...initialState.histogram,

@@ -10,7 +10,7 @@ import { legendSpecification } from '../utils/plotly';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
-import { sortBy, sortedUniqBy } from 'lodash';
+import { sortBy, sortedUniqBy, orderBy } from 'lodash';
 
 // Components
 import PlotlyPlot from './PlotlyPlot';
@@ -126,14 +126,18 @@ export default function Histogram({
    * Calculate min binStart and max binEnd values
    */
   const minBinStart: NumberOrDate = useMemo(() => {
-    return data.series
-      .map((series) => series.bins[0].binStart)
-      .sort((a: NumberOrDate, b: NumberOrDate) => a.valueOf() - b.valueOf())[0];
+    return orderBy(
+      data.series.flatMap((series) => series.bins),
+      [(bin) => bin.binStart],
+      'asc'
+    )[0].binStart;
   }, [data.series]);
   const maxBinEnd: NumberOrDate = useMemo(() => {
-    return data.series
-      .map((series) => series.bins[series.bins.length - 1].binEnd)
-      .sort((a: NumberOrDate, b: NumberOrDate) => b.valueOf() - a.valueOf())[0];
+    return orderBy(
+      data.series.flatMap((series) => series.bins),
+      [(bin) => bin.binEnd],
+      'desc'
+    )[0].binEnd;
   }, [data.series]);
 
   // Transform `data` into a Plot.ly friendly format.
@@ -149,8 +153,8 @@ export default function Histogram({
             // TO DO: bars seem very slightly too narrow at monthly resolution (multiplying by 1009 fixes it)
             return (
               DateMath.diff(
-                bin.binStart as Date,
-                bin.binEnd as Date,
+                new Date(bin.binStart as string),
+                new Date(bin.binEnd as string),
                 'seconds',
                 false
               ) * 1000
@@ -208,15 +212,15 @@ export default function Histogram({
       binMiddle:
         data.valueType === 'date'
           ? DateMath.add(
-              bin.binStart as Date,
+              new Date(bin.binStart as string),
               DateMath.diff(
-                bin.binStart as Date,
-                bin.binEnd as Date,
+                new Date(bin.binStart as string),
+                new Date(bin.binEnd as string),
                 'seconds',
                 false
               ) * 500,
               'milliseconds'
-            )
+            ).toISOString()
           : ((bin.binStart as number) + (bin.binEnd as number)) / 2.0,
     }));
   }, [data.series, data.valueType]);
@@ -231,10 +235,7 @@ export default function Histogram({
           orientation === 'vertical' ? object.range.x : object.range.y;
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
         // TO DO: think about time zones?
-        const rawRange: NumberOrDateRange = {
-          min: data.valueType === 'date' ? new Date(min) : min,
-          max: data.valueType === 'date' ? new Date(max) : max,
-        };
+        const rawRange: NumberOrDateRange = { min, max };
 
         // now snap to bin boundaries using same logic that Plotly uses
         // (dragging range past middle of bin selects it)

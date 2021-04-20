@@ -30,9 +30,9 @@ export type HistogramDataSeries = {
 
 export type HistogramBin = {
   /** The starting value of the bin.  */
-  binStart: number | Date;
+  binStart: number | string;
   /** The ending value of the bin.  */
-  binEnd: number | Date;
+  binEnd: number | string;
   /** A label for the bin. */
   binLabel: string;
   /** The count of values in the bin. */
