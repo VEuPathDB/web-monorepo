@@ -27,25 +27,29 @@ export const cx = makeClassNameHelper('PreferredOrganismsConfig');
 
 interface Props {
   availableOrganisms: Set<string>;
+  configSelection: string[];
   newOrganisms: Set<string>;
   organismTree: Node<TreeBoxVocabNode>;
-  preferredOrganisms: string[];
   preferredOrganismsEnabled: boolean;
   projectId: string;
   referenceStrains: Set<string>;
-  savePreferredOrganisms: (newPreferredOrganisms: string[]) => void;
+  savePreferredOrganisms: () => void;
+  savingPreferredOrganismsDisabled?: boolean;
+  setConfigSelection: (newConfigSelection: string[]) => void;
   togglePreferredOrganisms: () => void;
 }
 
 export function PreferredOrganismsConfig({
   availableOrganisms,
+  configSelection,
   newOrganisms,
   organismTree,
-  preferredOrganisms,
   preferredOrganismsEnabled,
   projectId,
   referenceStrains,
   savePreferredOrganisms,
+  savingPreferredOrganismsDisabled,
+  setConfigSelection,
   togglePreferredOrganisms,
 }: Props) {
   const renderConfigNode = useRenderOrganismNode(
@@ -53,7 +57,6 @@ export function PreferredOrganismsConfig({
     newOrganisms
   );
 
-  const [configSelection, setConfigSelection] = useState(preferredOrganisms);
   const [configFilterTerm, setConfigFilterTerm] = useState('');
   const [configExpansion, setConfigExpansion] = useState<string[]>([]);
   const configSearchPredicate = useOrganismSearchPredicate(
@@ -89,6 +92,14 @@ export function PreferredOrganismsConfig({
           />
         </span>
       </p>
+      <button
+        type="button"
+        className="btn"
+        onClick={savePreferredOrganisms}
+        disabled={savingPreferredOrganismsDisabled}
+      >
+        Save
+      </button>
       {describeNewOrganisms && newOrganisms.size > 0 && (
         <p
           className={cx('--NewOrganisms')}

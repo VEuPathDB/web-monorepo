@@ -1,3 +1,5 @@
+import { useMemo, useState } from 'react';
+
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { PreferredOrganismsConfig } from '../components/PreferredOrganismsConfig';
@@ -8,8 +10,8 @@ import {
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
   useProjectId,
+  useSavePreferredOrganisms,
   useTogglePreferredOrganisms,
-  useUpdatePreferredOrganisms,
 } from '../hooks/preferredOrganisms';
 import { useReferenceStrains } from '../hooks/referenceStrains';
 
@@ -21,7 +23,27 @@ export function PreferredOrganismsConfigController() {
   const organismTree = useOrganismTree();
 
   const [preferredOrganisms] = usePreferredOrganismsState();
-  const updatePreferredOrganisms = useUpdatePreferredOrganisms();
+  const [configSelection, setConfigSelection] = useState(preferredOrganisms);
+
+  const savingPreferredOrganismsDisabled = useMemo(() => {
+    const configSelectionSet = new Set(configSelection);
+    const preferredOrganismsSet = new Set(preferredOrganisms);
+
+    if (configSelectionSet.size !== preferredOrganismsSet.size) {
+      return false;
+    }
+
+    return (
+      configSelection.every((configOrganism) =>
+        preferredOrganismsSet.has(configOrganism)
+      ) &&
+      preferredOrganisms.every((preferredOrganism) =>
+        configSelectionSet.has(preferredOrganism)
+      )
+    );
+  }, [configSelection, preferredOrganisms]);
+
+  const savePreferredOrganisms = useSavePreferredOrganisms(configSelection);
 
   const projectIdValue = useProjectId();
 
@@ -36,13 +58,15 @@ export function PreferredOrganismsConfigController() {
   return (
     <PreferredOrganismsConfig
       availableOrganisms={availableOrganisms}
+      configSelection={configSelection}
       newOrganisms={newOrganisms}
       organismTree={organismTree}
-      preferredOrganisms={preferredOrganisms}
       preferredOrganismsEnabled={preferredOrganismsEnabled}
       projectId={projectIdValue}
       referenceStrains={referenceStrains}
-      savePreferredOrganisms={updatePreferredOrganisms}
+      savePreferredOrganisms={savePreferredOrganisms}
+      savingPreferredOrganismsDisabled={savingPreferredOrganismsDisabled}
+      setConfigSelection={setConfigSelection}
       togglePreferredOrganisms={togglePreferredOrganisms}
     />
   );

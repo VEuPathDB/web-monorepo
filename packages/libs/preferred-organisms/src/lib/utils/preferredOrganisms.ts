@@ -91,7 +91,7 @@ export const makePreferredOrganismsRecoilState = memoize(
           }
 
           onSet(
-            debounce(onPreferredOrganismsChange, 200, {
+            debounce(onPreferredOrganismsChange, 2000, {
               leading: true,
               trailing: true,
             })
