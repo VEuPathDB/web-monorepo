@@ -135,15 +135,38 @@
   }
 
   &-Subsetting {
-    padding: 1em 0;
-    display: flex;
-    justify-content: space-between;
-    gap: 1em;
-    > div {
-      flex: 1 auto;
-      &:last-of-type {
-        width: 100%;
+    display: grid;
+    grid:
+      'entities      entities'
+      'entity-detail entity-detail'
+      '.             filter-chips'
+      'variables     filter'
+      / auto 1fr;
+    gap: 1em 3em;
+    .Entities {
+      grid-area: entities;
+      margin: auto;
+    }
+    .EntityDetails {
+      border-bottom: 1px solid #cccccc;
+      padding-bottom: 0.5em;
+      grid-area: entity-detail;
+      display: flex;
+      align-items: center;
+      h2,
+      h3 {
+        margin-right: 1em;
+        padding: 0;
       }
+    }
+    .Variables {
+      grid-area: variables;
+    }
+    .FilterChips {
+      grid-area: filter-chips;
+    }
+    .Filter {
+      grid-area: filter;
     }
     .filter-param .field-detail {
       margin: 0;
