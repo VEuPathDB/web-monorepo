@@ -5,7 +5,6 @@ import Histogram, {
 import {
   DateRange,
   ErrorManagement,
-  NumberOrDateRange,
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   NumberRange,
@@ -31,6 +30,7 @@ import { useDataClient } from '../../hooks/workspace';
 import { DateRangeFilter, Filter, NumberRangeFilter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
 import { PromiseType } from '../../types/utility';
+import { NumberOrDateRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
 import { parseTimeDelta, padISODateTime } from '../../utils/date-conversion';
@@ -48,7 +48,7 @@ type UIState = TypeOf<typeof UIState>;
 const UIState = partial({
   binWidth: number,
   binWidthTimeUnit: string,
-  independentAxisRange: unknown,
+  independentAxisRange: NumberOrDateRange,
 });
 
 export function HistogramFilter(props: Props) {
@@ -187,7 +187,7 @@ export function HistogramFilter(props: Props) {
 
   const updateUIState = useCallback(
     (newUiState: TypeOf<typeof UIState>) => {
-      if (uiState.binWidth === newUiState.binWidth) return;
+      // if (uiState.binWidth === newUiState.binWidth) return;
       sessionState.setVariableUISettings({
         [uiStateKey]: {
           ...uiState,
@@ -223,6 +223,7 @@ export function HistogramFilter(props: Props) {
             orientation={'vertical'}
             barLayout={'overlay'}
             updateFilter={updateFilter}
+            uiState={uiState}
             updateUIState={updateUIState}
             // add variableName for independentAxisLabel
             variableName={variable.displayName}
@@ -235,6 +236,7 @@ export function HistogramFilter(props: Props) {
 type HistogramPlotWithControlsProps = HistogramProps & {
   getData: (params?: UIState) => Promise<HistogramData>;
   updateFilter: (selectedRange?: NumberRange | DateRange) => void;
+  uiState: UIState;
   updateUIState: (uiState: TypeOf<typeof UIState>) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
   // add variableName for independentAxisLabel
@@ -245,6 +247,7 @@ function HistogramPlotWithControls({
   data,
   getData,
   updateFilter,
+  uiState,
   updateUIState,
   filter,
   // variableName for independentAxisLabel
@@ -278,8 +281,11 @@ function HistogramPlotWithControls({
     [updateUIState]
   );
 
-  const handleIndependentRangeChange = useCallback(
+  const handleIndependentAxisRangeChange = useCallback(
     (newRange: NumberOrDateRange) => {
+      console.log(
+        `handleIndependentAxisRangeChange newRange: ${newRange.min} to ${newRange.max}`
+      );
       updateUIState({
         independentAxisRange: newRange,
       });
@@ -344,8 +350,8 @@ function HistogramPlotWithControls({
         errorManagement={errorManagement}
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
-        independentAxisRange={independentAxisRange}
-        onIndependentAxisRangeChange={handleIndependentRangeChange}
+        independentAxisRange={uiState.independentAxisRange}
+        onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
       />
     </div>
   );
@@ -403,6 +409,14 @@ function getRequestParams(
             : `${dataParams.binWidth} ${dataParams.binWidthTimeUnit}`,
       }
     : {};
+
+  const viewportOption = dataParams?.independentAxisRange
+    ? {
+        viewportMin: dataParams.independentAxisRange.min,
+        viewportMax: dataParams.independentAxisRange.max,
+      }
+    : {};
+
   return {
     studyId,
     filters,
@@ -414,6 +428,7 @@ function getRequestParams(
         variableId: variable.id,
       },
       ...binOption,
+      ...viewportOption,
     },
   } as NumericHistogramRequestParams | DateHistogramRequestParams;
 }

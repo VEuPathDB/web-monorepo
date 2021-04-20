@@ -1,4 +1,5 @@
-import { Type, type, number, string, failure, success } from 'io-ts';
+/* eslint-disable @typescript-eslint/no-redeclare */
+import { Type, type, number, string, union } from 'io-ts';
 import {
   NumberRange as NumberRangeT,
   DateRange as DateRangeT,
@@ -12,3 +13,10 @@ export const NumberRange: Type<NumberRangeT> = type({
 
 export type DateRange = DateRangeT;
 export const DateRange: Type<DateRangeT> = type({ min: string, max: string });
+
+type NumberOrDateRangeT = NumberRange | DateRange;
+export type NumberOrDateRange = NumberOrDateRangeT;
+export const NumberOrDateRange: Type<NumberOrDateRangeT> = union([
+  NumberRange,
+  DateRange,
+]);
