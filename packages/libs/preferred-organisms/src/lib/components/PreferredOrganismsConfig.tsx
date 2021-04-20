@@ -92,14 +92,6 @@ export function PreferredOrganismsConfig({
           />
         </span>
       </p>
-      <button
-        type="button"
-        className="btn"
-        onClick={savePreferredOrganisms}
-        disabled={savingPreferredOrganismsDisabled}
-      >
-        Save
-      </button>
       {describeNewOrganisms && newOrganisms.size > 0 && (
         <p
           className={cx('--NewOrganisms')}
@@ -178,18 +170,30 @@ export function PreferredOrganismsConfig({
         </div>
         <div className={cx('--Preview')}>
           <h2>
-            Preview of{' '}
-            <span className={cx('--InlineTitle')}>My Organism Preferences</span>{' '}
-            (
-            <span
-              className={cx(
-                '--SelectionCount',
-                configSelection.length === 0 && 'empty'
-              )}
+            <div>
+              Preview of{' '}
+              <span className={cx('--InlineTitle')}>
+                My Organism Preferences
+              </span>{' '}
+              (
+              <span
+                className={cx(
+                  '--SelectionCount',
+                  configSelection.length === 0 && 'empty'
+                )}
+              >
+                {configSelection.length}
+              </span>{' '}
+              of {availableOrganisms.size})
+            </div>
+            <button
+              type="button"
+              className={`btn ${cx('--SaveButton')}`}
+              onClick={savePreferredOrganisms}
+              disabled={savingPreferredOrganismsDisabled}
             >
-              {configSelection.length}
-            </span>{' '}
-            of {availableOrganisms.size})
+              Save
+            </button>
           </h2>
           <div className={cx('--PreviewContent')}>
             <div className={cx('--PreviewInstructions')}>
