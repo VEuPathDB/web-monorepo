@@ -19,10 +19,10 @@ export function FilterContainer(props: Props) {
   const AdditionalDescription = () => {
     return (
       <div>
-        <h3 style={{ padding: '5px 0px 0px 0px' }}>
+        <h3 style={{ padding: '0', margin: '.5em 0' }}>
           {props.variable.displayName}
         </h3>
-        <h4 style={{ padding: '5px 0px 0px 0px' }}>
+        <h4 style={{ padding: '0', margin: '.5em 0' }}>
           Provider label: {props.variable.providerLabel}
         </h4>
       </div>

@@ -33,10 +33,7 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { PromiseType } from '../../types/utility';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import {
-  ISODateStringToZuluDate,
-  parseTimeDelta,
-} from '../../utils/date-conversion';
+import { parseTimeDelta, padISODateTime } from '../../utils/date-conversion';
 import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 
 type Props = {
@@ -172,12 +169,8 @@ export function HistogramFilter(props: Props) {
                   variableId: variable.id,
                   entityId: entity.id,
                   type: 'dateRange',
-                  min: (selectedRange as DateRange).min
-                    .toISOString()
-                    .slice(0, 19),
-                  max: (selectedRange as DateRange).max
-                    .toISOString()
-                    .slice(0, 19),
+                  min: padISODateTime((selectedRange as DateRange).min),
+                  max: padISODateTime((selectedRange as DateRange).max),
                 }
               : {
                   variableId: variable.id,
@@ -310,12 +303,7 @@ function HistogramPlotWithControls({
 
   const selectedRange = useMemo((): NumberOrDateRange | undefined => {
     if (filter == null) return;
-    return filter.type === 'numberRange'
-      ? { min: filter.min, max: filter.max }
-      : {
-          min: ISODateStringToZuluDate(filter.min),
-          max: ISODateStringToZuluDate(filter.max),
-        };
+    return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
   return (
@@ -378,21 +366,18 @@ function histogramResponseToDataSeries(
       `Expected a single data series, but got ${response.data.length}`
     );
   const data = response.data[0];
-  const bins = data.value
-    // FIXME Handle Dates properly
-    .map((_, index) => ({
-      binStart:
-        type === 'number'
-          ? Number(data.binStart[index])
-          : ISODateStringToZuluDate(data.binStart[index]),
-      binEnd:
-        type === 'number'
-          ? Number(data.binEnd[index])
-          : ISODateStringToZuluDate(data.binEnd[index]),
-      binLabel: data.binLabel[index],
-      count: data.value[index],
-    }))
-    .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf()); // TO DO: review necessity of sort if back end (or plot component) does sorting?
+  const bins = data.value.map((_, index) => ({
+    binStart:
+      type === 'number'
+        ? Number(data.binStart[index])
+        : String(data.binStart[index]),
+    binEnd:
+      type === 'number'
+        ? Number(data.binEnd[index])
+        : String(data.binEnd[index]),
+    binLabel: data.binLabel[index],
+    count: data.value[index],
+  }));
   return {
     name,
     color,

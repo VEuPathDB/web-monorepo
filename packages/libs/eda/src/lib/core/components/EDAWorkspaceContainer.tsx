@@ -7,12 +7,9 @@ import { WorkspaceContext } from '../context/WorkspaceContext';
 import { useStudyMetadata, useWdkStudyRecord } from '../hooks/study';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core';
+import { workspaceTheme } from './workspaceTheme';
 
-const theme = createMuiTheme({
-  typography: {
-    fontSize: 12,
-  },
-});
+const theme = createMuiTheme(workspaceTheme);
 export interface Props {
   studyId: string;
   sessionId: string;

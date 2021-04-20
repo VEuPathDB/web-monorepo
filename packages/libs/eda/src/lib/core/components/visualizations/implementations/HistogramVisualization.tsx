@@ -28,10 +28,7 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 import { DataElementConstraint } from '../../../types/visualization';
-import {
-  ISODateStringToZuluDate,
-  parseTimeDelta,
-} from '../../../utils/date-conversion';
+import { parseTimeDelta } from '../../../utils/date-conversion';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
@@ -412,21 +409,18 @@ export function histogramResponseToData(
     series: response.data.map((data, index) => ({
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
       // color: TO DO
-      bins: data.value
-        .map((_, index) => ({
-          binStart:
-            type === 'number'
-              ? Number(data.binStart[index])
-              : ISODateStringToZuluDate(data.binStart[index]),
-          binEnd:
-            type === 'number'
-              ? Number(data.binEnd[index])
-              : ISODateStringToZuluDate(data.binEnd[index]),
-          binLabel: data.binLabel[index],
-          count: data.value[index],
-        }))
-        .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf()),
-      // TO DO: review necessity of sort if back end (or plot component) does sorting?
+      bins: data.value.map((_, index) => ({
+        binStart:
+          type === 'number'
+            ? Number(data.binStart[index])
+            : String(data.binStart[index]),
+        binEnd:
+          type === 'number'
+            ? Number(data.binEnd[index])
+            : String(data.binEnd[index]),
+        binLabel: data.binLabel[index],
+        count: data.value[index],
+      })),
     })),
     valueType: type,
     binWidth,

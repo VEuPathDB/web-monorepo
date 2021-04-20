@@ -9,17 +9,20 @@ interface Props {
 }
 
 // Material UI CSS declarations
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: (props: Props) => ({
     cursor: 'default',
-    border: props.isActive ? 'solid 3px #3c78d8' : undefined,
+    borderRadius: '.5em',
+    fontWeight: props.isActive ? 600 : 500,
     '& a': {
-      color: 'black',
+      color: props.isActive
+        ? theme.palette.primary.contrastText
+        : theme.palette.grey[900],
       textDecoration: 'none',
       outline: '0',
     },
   }),
-});
+}));
 
 /**
  * A chip (small informational element) representing a filter applied to a
@@ -32,7 +35,7 @@ export default function FilterChip(props: Props) {
     <Chip
       className={classes.root}
       size="small"
-      color={'default'}
+      color={props.isActive ? 'primary' : 'default'}
       label={props.children}
       title={props.tooltipText}
       clickable={true}
