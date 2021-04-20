@@ -55,10 +55,24 @@ export function useUpdatePreferredOrganisms() {
   );
 }
 
-export function usePreferredOrganismsEnabled() {
+export function usePreferredOrganismsEnabledState() {
   const { preferredOrganismsEnabled } = usePreferredOrganismsRecoilState();
 
   return useRecoilState(preferredOrganismsEnabled);
+}
+
+export function useTogglePreferredOrganisms() {
+  const { preferredOrganismsEnabled } = usePreferredOrganismsRecoilState();
+
+  const setPreferredOrganismsEnabled = useSetRecoilState(
+    preferredOrganismsEnabled
+  );
+
+  return useCallback(() => {
+    setPreferredOrganismsEnabled(
+      (preferredOrganismsEnabled) => !preferredOrganismsEnabled
+    );
+  }, [setPreferredOrganismsEnabled]);
 }
 
 export function usePreferredOrganismsRecoilState() {

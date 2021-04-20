@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { PreferredOrganismsConfig } from '../components/PreferredOrganismsConfig';
@@ -7,9 +5,10 @@ import {
   useAvailableOrganisms,
   useNewOrganisms,
   useOrganismTree,
-  usePreferredOrganismsEnabled,
+  usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
   useProjectId,
+  useTogglePreferredOrganisms,
   useUpdatePreferredOrganisms,
 } from '../hooks/preferredOrganisms';
 import { useReferenceStrains } from '../hooks/referenceStrains';
@@ -30,16 +29,9 @@ export function PreferredOrganismsConfigController() {
 
   const newOrganisms = useNewOrganisms();
 
-  const [
-    preferredOrganismsEnabled,
-    setPreferredOrganismsEnabled,
-  ] = usePreferredOrganismsEnabled();
+  const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
 
-  const togglePreferredOrganisms = useCallback(() => {
-    setPreferredOrganismsEnabled(
-      (preferredOrganismsEnabled) => !preferredOrganismsEnabled
-    );
-  }, [setPreferredOrganismsEnabled]);
+  const togglePreferredOrganisms = useTogglePreferredOrganisms();
 
   return (
     <PreferredOrganismsConfig
