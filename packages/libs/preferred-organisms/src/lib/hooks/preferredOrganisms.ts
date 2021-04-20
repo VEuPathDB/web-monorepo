@@ -1,16 +1,9 @@
 import { useCallback, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-
-import { memoize } from 'lodash';
 
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 
 import { makePreferredOrganismsRecoilState } from '../utils/preferredOrganisms';
-
-const memoizedPreferredOrganismsRecoilStateMaker = memoize(
-  makePreferredOrganismsRecoilState
-);
 
 export function useAvailableOrganisms() {
   const { availableOrganisms } = usePreferredOrganismsRecoilState();
@@ -36,16 +29,10 @@ export function usePreferredOrganismsState() {
   return useRecoilState(preferredOrganisms);
 }
 
-export function useShowWipFeatures() {
-  const location = useLocation();
-  return location.search.includes('showWipFeatures=true');
-}
-
 export function useNewOrganisms() {
   const { newOrganisms } = usePreferredOrganismsRecoilState();
-  const showWipFeatures = useShowWipFeatures();
 
-  return useRecoilValue(newOrganisms(showWipFeatures));
+  return useRecoilValue(newOrganisms);
 }
 
 export function useUpdateBuildNumberCallback() {
@@ -74,5 +61,5 @@ export function usePreferredOrganismsEnabled() {
 export function usePreferredOrganismsRecoilState() {
   const wdkDependencies = useContext(WdkDepdendenciesContext);
 
-  return memoizedPreferredOrganismsRecoilStateMaker(wdkDependencies);
+  return makePreferredOrganismsRecoilState(wdkDependencies);
 }
