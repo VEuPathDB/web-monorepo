@@ -7,7 +7,7 @@ import { NumberRange, DateRange, NumberOrDateRange } from '../../types/general';
 
 export type BaseProps<M extends NumberOrDateRange> = {
   /** Externally controlled range. */
-  range: M;
+  range?: M;
   /** If true, warn about empty lower or upper values. Default is false */
   required?: boolean;
   /** Function to invoke when range changes. */
@@ -55,8 +55,8 @@ function BaseInput({
   rangeBounds,
   onRangeChange,
   label,
-  lowerLabel = 'Min',
-  upperLabel = 'Max',
+  lowerLabel = '',
+  upperLabel = '',
   valueType,
   containerStyles,
 }: BaseInputProps) {

@@ -12,6 +12,22 @@ export default {
   component: NumberRangeInput,
 } as Meta;
 
+export const EmptyAtStart: Story<NumberRangeInputProps> = () => {
+  const [range, setRange] = useState<NumberRange | undefined>();
+
+  const handleChange = useCallback(
+    (newRange) => {
+      console.log(`new range = ${newRange.min} to ${newRange.max}`);
+      setRange(newRange);
+    },
+    [setRange]
+  );
+
+  return (
+    <NumberRangeInput label="A" onRangeChange={handleChange} range={range} />
+  );
+};
+
 export const ControlledLinked: Story<NumberRangeInputProps> = () => {
   const [range, setRange] = useState<NumberRange>({ min: 1, max: 9 });
 
@@ -47,10 +63,10 @@ export const ControlledLinked: Story<NumberRangeInputProps> = () => {
         {...SharedNumberRangeInputArgs}
       />
       <NumberRangeInput
-        label="B (no min and max labels, required=true )"
+        label="B (with extra labels, required=true )"
         onRangeChange={handleChangeB}
-        lowerLabel=""
-        upperLabel=""
+        lowerLabel="minimum"
+        upperLabel="maximum"
         required={true}
         {...SharedNumberRangeInputArgs}
       />
