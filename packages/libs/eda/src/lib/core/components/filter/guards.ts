@@ -1,5 +1,5 @@
 import { StudyVariable } from '../../types/study';
-import { HistogramVariable, TableVariable } from './types';
+import { HistogramVariable, TableVariable, MosaicVariable } from './types';
 
 export function isHistogramVariable(
   variable: StudyVariable
@@ -26,6 +26,19 @@ export function isTableVariable(
         case 'date':
         case 'number':
         case 'string':
+          return true;
+      }
+  }
+  return false;
+}
+
+export function isMosaicVariable(
+  variable: StudyVariable
+): variable is MosaicVariable {
+  switch (variable.dataShape) {
+    case 'categorical':
+      switch (variable.type) {
+        case 'number':
           return true;
       }
   }

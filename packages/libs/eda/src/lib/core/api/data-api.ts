@@ -192,6 +192,50 @@ export const BarplotResponse = type({
   ),
 });
 
+export interface MosaicRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+export type MosaicResponse = TypeOf<typeof MosaicResponse>;
+export const MosaicResponse = type({
+  config: type({
+    incompleteCases: number,
+    xVariableDetails: type({
+      variableId: string,
+      entityId: string,
+    }),
+    yVariableDetails: type({
+      variableId: string,
+      entityId: string,
+    }),
+  }),
+  data: array(
+    type({
+      oddsratio: array(number),
+      pvalue: array(number),
+      x: array(number),
+      xLabel: array(string),
+      orInterval: array(number),
+      yLabel: array(string),
+      y: array(array(number)),
+      relativerisk: array(number),
+      rrInterval: array(number),
+    })
+  ),
+});
+
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
@@ -278,6 +322,18 @@ export class DataClient extends FetchClient {
       'barplot',
       params,
       BarplotResponse
+    );
+  }
+
+  getMosaic(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<MosaicResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'mosaic',
+      params,
+      MosaicResponse
     );
   }
 }

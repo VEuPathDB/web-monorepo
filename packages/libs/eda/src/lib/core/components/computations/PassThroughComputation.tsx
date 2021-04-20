@@ -6,6 +6,7 @@ import {
 } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
+import { mosaicVisualization } from '../visualizations/implementations/MosaicVisualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 
@@ -21,6 +22,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
   'date-histogram-bin-width': histogramVisualization,
   'numeric-histogram-bin-width': histogramVisualization,
+  mosaic: mosaicVisualization,
 };
 
 export function PassThroughComputation(props: Props) {

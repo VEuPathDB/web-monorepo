@@ -1,15 +1,9 @@
-import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
-import Histogram, {
-  HistogramProps,
-} from '@veupathdb/components/lib/plots/Histogram';
-import {
-  ErrorManagement,
-  NumberOrTimeDelta,
-  NumberOrTimeDeltaRange,
-  TimeDelta,
-} from '@veupathdb/components/lib/types/general';
-import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
-import { HistogramData } from '@veupathdb/components/lib/types/plots';
+// import MosaicControls from '@veupathdb/components/lib/components/plotControls/MosaicControls';
+import Mosaic, {
+  Props as MosaicProps,
+} from '@veupathdb/components/lib/plots/MosaicPlot';
+import { ErrorManagement } from '@veupathdb/components/lib/types/general';
+// import { MosaicData } from '@veupathdb/components/lib/types/plots';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -19,8 +13,8 @@ import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
-  DateHistogramRequestParams,
-  NumericHistogramRequestParams,
+  MosaicRequestParams,
+  // NumericMosaicRequestParams,
 } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
@@ -28,16 +22,17 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 import { DataElementConstraint } from '../../../types/visualization';
-import {
-  ISODateStringToZuluDate,
-  parseTimeDelta,
-} from '../../../utils/date-conversion';
-import { isHistogramVariable } from '../../filter/guards';
-import { HistogramVariable } from '../../filter/types';
+import { isMosaicVariable } from '../../filter/guards';
+import { MosaicVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
-export const histogramVisualization: VisualizationType = {
+type MosaicData = Pick<
+  MosaicProps,
+  'data' | 'exposureValues' | 'outcomeValues' | 'widths'
+>;
+
+export const mosaicVisualization: VisualizationType = {
   gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
@@ -47,7 +42,7 @@ export const histogramVisualization: VisualizationType = {
 function GridComponent(props: VisualizationProps) {
   const { visualization, computation, filters } = props;
   return (
-    <HistogramViz
+    <MosaicViz
       visualization={visualization}
       computation={computation}
       filters={filters}
@@ -57,7 +52,7 @@ function GridComponent(props: VisualizationProps) {
 }
 
 function SelectorComponent() {
-  return <div>Pick me, I'm a histogram!</div>;
+  return <div>Pick me, I'm a mosaic plot!</div>;
 }
 
 function FullscreenComponent(props: VisualizationProps) {
@@ -69,7 +64,7 @@ function FullscreenComponent(props: VisualizationProps) {
     dataElementConstraints,
   } = props;
   return (
-    <HistogramViz
+    <MosaicViz
       visualization={visualization}
       updateVisualization={updateVisualization}
       computation={computation}
@@ -80,32 +75,25 @@ function FullscreenComponent(props: VisualizationProps) {
   );
 }
 
-function createDefaultConfig(): HistogramConfig {
+function createDefaultConfig(): MosaicConfig {
   return {
-    enableOverlay: true,
+    // enableOverlay: true,
   };
 }
 
-type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
+type MosaicConfig = t.TypeOf<typeof MosaicConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const HistogramConfig = t.intersection([
-  t.type({
-    enableOverlay: t.boolean,
-  }),
-  t.partial({
-    xAxisVariable: Variable,
-    overlayVariable: Variable,
-    binWidth: t.number,
-    binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
-  }),
-]);
+const MosaicConfig = t.partial({
+  xAxisVariable: Variable,
+  yAxisVariable: Variable,
+});
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
   constraints?: Record<string, DataElementConstraint>[];
 };
 
-function HistogramViz(props: Props) {
+function MosaicViz(props: Props) {
   const {
     computation,
     visualization,
@@ -125,13 +113,13 @@ function HistogramViz(props: Props) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      HistogramConfig.decode(visualization.configuration),
-      getOrElse((): t.TypeOf<typeof HistogramConfig> => createDefaultConfig())
+      MosaicConfig.decode(visualization.configuration),
+      getOrElse((): t.TypeOf<typeof MosaicConfig> => createDefaultConfig())
     );
   }, [visualization.configuration]);
 
   const updateVizConfig = useCallback(
-    (newConfig: Partial<HistogramConfig>) => {
+    (newConfig: Partial<MosaicConfig>) => {
       if (updateVisualization) {
         updateVisualization({
           ...visualization,
@@ -152,30 +140,14 @@ function HistogramViz(props: Props) {
         { entityId: string; variableId: string } | undefined
       >
     ) => {
-      const { xAxisVariable, overlayVariable } = values;
-      const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
+      const { xAxisVariable, yAxisVariable } = values;
+
       updateVizConfig({
         xAxisVariable,
-        overlayVariable,
-        binWidth: keepBin ? vizConfig.binWidth : undefined,
-        binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
+        yAxisVariable,
       });
     },
     [updateVizConfig, vizConfig]
-  );
-
-  const onBinWidthChange = useCallback(
-    ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
-      if (newBinWidth) {
-        updateVizConfig({
-          binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
-          binWidthTimeUnit: isTimeDelta(newBinWidth)
-            ? newBinWidth[1]
-            : undefined,
-        });
-      }
-    },
-    [updateVizConfig]
   );
 
   const findVariable = useCallback(
@@ -189,36 +161,40 @@ function HistogramViz(props: Props) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<HistogramData> => {
+    useCallback(async (): Promise<MosaicData> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return Promise.reject(new Error('Please choose a main variable'));
+      const yAxisVariable = findVariable(vizConfig.yAxisVariable);
+      if (
+        vizConfig.xAxisVariable == null ||
+        xAxisVariable == null ||
+        vizConfig.yAxisVariable == null ||
+        yAxisVariable == null
+      )
+        return Promise.reject(
+          new Error('Please choose a variable for each axis')
+        );
 
-      if (xAxisVariable && !isHistogramVariable(xAxisVariable))
+      if (xAxisVariable && !isMosaicVariable(xAxisVariable))
         throw new Error(
-          `Please choose another main variable. '${xAxisVariable.displayName}' is not suitable for histograms`
+          `Please choose another x-axis variable. '${xAxisVariable.displayName}' is not suitable for mosaics`
+        );
+
+      if (yAxisVariable && !isMosaicVariable(yAxisVariable))
+        throw new Error(
+          `Please choose another y-axis variable. '${yAxisVariable.displayName}' is not suitable for mosaics`
         );
 
       const params = getRequestParams(
         studyId,
         filters ?? [],
         vizConfig.xAxisVariable,
-        xAxisVariable.type,
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
-        vizConfig.binWidth,
-        vizConfig.binWidthTimeUnit
+        vizConfig.yAxisVariable
       );
-      const response =
-        xAxisVariable.type === 'date'
-          ? dataClient.getDateHistogramBinWidth(
-              computation.type,
-              params as DateHistogramRequestParams
-            )
-          : dataClient.getNumericHistogramBinWidth(
-              computation.type,
-              params as NumericHistogramRequestParams
-            );
-      return histogramResponseToData(await response, xAxisVariable.type);
+      const response = dataClient.getMosaic(
+        computation.type,
+        params as MosaicRequestParams
+      );
+      return mosaicResponseToData(await response);
     }, [
       studyId,
       filters,
@@ -231,24 +207,24 @@ function HistogramViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && <h1>Histogram</h1>}
+      {fullscreen && <h1>Mosaic</h1>}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'Main variable',
+                label: 'x-axis variable',
               },
               {
-                name: 'overlayVariable',
-                label: 'Overlay variable',
+                name: 'yAxisVariable',
+                label: 'y-axis variable',
               },
             ]}
             entities={entities}
             values={{
               xAxisVariable: vizConfig.xAxisVariable,
-              overlayVariable: vizConfig.overlayVariable,
+              yAxisVariable: vizConfig.yAxisVariable,
             }}
             onChange={handleInputVariableChange}
             constraints={constraints}
@@ -280,27 +256,30 @@ function HistogramViz(props: Props) {
       )}
       {data.value ? (
         fullscreen ? (
-          <HistogramPlotWithControls
-            data={data.value}
-            onBinWidthChange={onBinWidthChange}
+          <MosaicPlotWithControls
+            data={data.value.data}
+            exposureValues={data.value.exposureValues}
+            outcomeValues={data.value.outcomeValues}
+            exposureLabel={vizConfig.xAxisVariable!.variableId}
+            outcomeLabel={vizConfig.yAxisVariable!.variableId}
+            widths={data.value.widths}
             width="100%"
             height={400}
-            orientation={'vertical'}
-            barLayout={'stack'}
-            displayLegend={data.value?.series.length > 1}
+            showLegend={true}
           />
         ) : (
           // thumbnail/grid view
-          <Histogram
-            data={data.value}
+          <Mosaic
+            data={data.value.data}
+            exposureValues={data.value.exposureValues}
+            outcomeValues={data.value.outcomeValues}
+            widths={data.value.widths}
             width={350}
             height={280}
-            orientation={'vertical'}
-            barLayout={'stack'}
-            displayLibraryControls={false}
-            displayLegend={false}
-            independentAxisLabel=""
-            dependentAxisLabel=""
+            showModebar={false}
+            showLegend={false}
+            exposureLabel=""
+            outcomeLabel=""
           />
         )
       ) : (
@@ -316,23 +295,14 @@ function HistogramViz(props: Props) {
   );
 }
 
-type HistogramPlotWithControlsProps = HistogramProps & {
-  onBinWidthChange: ({
-    binWidth: newBinWidth,
-  }: {
-    binWidth: NumberOrTimeDelta;
-  }) => void;
-};
+type MosaicPlotWithControlsProps = MosaicProps;
 
-function HistogramPlotWithControls({
+function MosaicPlotWithControls({
   data,
-  onBinWidthChange,
-  ...histogramProps
-}: HistogramPlotWithControlsProps) {
+  ...mosaicProps
+}: MosaicPlotWithControlsProps) {
   // TODO Use UIState
-  const barLayout = 'stack';
   const displayLibraryControls = false;
-  const opacity = 100;
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
@@ -344,126 +314,52 @@ function HistogramPlotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Histogram
-        {...histogramProps}
+      <Mosaic
+        {...mosaicProps}
         data={data}
-        opacity={opacity}
-        displayLibraryControls={displayLibraryControls}
-        showBarValues={false}
-        barLayout={barLayout}
+        showModebar={displayLibraryControls}
       />
-      {data.binWidth && data.binWidthRange && data.binWidthStep && (
-        <HistogramControls
-          label="Histogram Controls"
-          valueType={data.valueType}
-          barLayout={barLayout}
-          displayLegend={false /* should not be a required prop */}
-          displayLibraryControls={displayLibraryControls}
-          opacity={opacity}
-          orientation={histogramProps.orientation}
-          binWidth={data.binWidth}
-          selectedUnit={
-            data.binWidth && isTimeDelta(data.binWidth)
-              ? data.binWidth[1]
-              : undefined
-          }
-          onBinWidthChange={({ binWidth: newBinWidth }) => {
-            onBinWidthChange({ binWidth: newBinWidth });
-          }}
-          binWidthRange={data.binWidthRange}
-          binWidthStep={data.binWidthStep}
-          errorManagement={errorManagement}
-        />
-      )}
+      {/* <MosaicControls
+        label="Mosaic Controls"
+        displayLegend={false}
+        displayLibraryControls={displayLibraryControls}
+        errorManagement={errorManagement}
+      /> */}
     </div>
   );
 }
 
 /**
- * Reformat response from histogram endpoints into complete HistogramData
+ * Reformat response from mosaic endpoints into complete MosaicData
  * @param response
- * @returns HistogramData
+ * @returns MosaicData
  */
-export function histogramResponseToData(
-  response: PromiseType<
-    ReturnType<
-      DataClient['getDateHistogramBinWidth' | 'getNumericHistogramBinWidth']
-    >
-  >,
-  type: HistogramVariable['type']
-): HistogramData {
+export function mosaicResponseToData(
+  response: PromiseType<ReturnType<DataClient['getMosaic']>>
+): MosaicData {
   if (response.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
-
-  const binWidth =
-    type === 'number'
-      ? parseFloat(response.config.binWidth as string) || 1
-      : parseTimeDelta(response.config.binWidth as string);
-  const { min, max, step } = response.config.binSlider;
-  const binWidthRange = (type === 'number'
-    ? { min, max }
-    : {
-        min,
-        max,
-        unit: (binWidth as TimeDelta)[1],
-      }) as NumberOrTimeDeltaRange;
-  const binWidthStep = step || 0.1;
   return {
-    series: response.data.map((data, index) => ({
-      name: data.overlayVariableDetails?.value ?? `series ${index}`,
-      // color: TO DO
-      bins: data.value
-        .map((_, index) => ({
-          binStart:
-            type === 'number'
-              ? Number(data.binStart[index])
-              : ISODateStringToZuluDate(data.binStart[index]),
-          binEnd:
-            type === 'number'
-              ? Number(data.binEnd[index])
-              : ISODateStringToZuluDate(data.binEnd[index]),
-          binLabel: data.binLabel[index],
-          count: data.value[index],
-        }))
-        .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf()),
-      // TO DO: review necessity of sort if back end (or plot component) does sorting?
-    })),
-    valueType: type,
-    binWidth,
-    binWidthRange,
-    binWidthStep,
+    data: response.data[0].y,
+    widths: response.data[0].x,
+    exposureValues: response.data[0].xLabel,
+    outcomeValues: response.data[0].yLabel,
   };
 }
 
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  variable: Variable,
-  variableType: 'number' | 'date',
-  overlayVariable?: Variable,
-  binWidth?: number,
-  binWidthTimeUnit?: string
-): NumericHistogramRequestParams | DateHistogramRequestParams {
-  const binOption = binWidth
-    ? {
-        binWidth:
-          variableType === 'number'
-            ? binWidth
-            : `${binWidth} ${binWidthTimeUnit}`,
-      }
-    : {
-        // numBins: 10,
-      };
-
+  xAxisVariable: Variable,
+  yAxisVariable: Variable
+): MosaicRequestParams {
   return {
     studyId,
     filters,
     config: {
-      outputEntityId: variable.entityId,
-      valueSpec: 'count',
-      xAxisVariable: variable,
-      overlayVariable,
-      ...binOption,
+      outputEntityId: xAxisVariable.entityId,
+      xAxisVariable: xAxisVariable,
+      yAxisVariable: yAxisVariable,
     },
-  } as NumericHistogramRequestParams | DateHistogramRequestParams;
+  } as MosaicRequestParams;
 }
