@@ -1,3 +1,11 @@
-.PrefferedOrganismsConfig--Toggle {
+.PreferredOrganismsConfig--Toggle {
   color: black;
+  display: grid;
+  gap: 0.5em;
+  grid-auto-flow: column;
+  align-items: center;
+
+  .wdk-Icon {
+    font-size: 1.3em;
+  }
 }

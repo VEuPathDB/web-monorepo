@@ -2,12 +2,19 @@ import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 
 import { cx } from './PreferredOrganismsConfig';
 
+import './PreferredOrganismsToggle.scss';
+
 interface Props {
   enabled: boolean;
   onClick: () => void;
+  showLabel?: boolean;
 }
 
-export function PreferredOrganismsToggle({ enabled, onClick }: Props) {
+export function PreferredOrganismsToggle({
+  enabled,
+  onClick,
+  showLabel = true,
+}: Props) {
   return (
     <button
       className={cx('--Toggle')}
@@ -19,8 +26,12 @@ export function PreferredOrganismsToggle({ enabled, onClick }: Props) {
       type="button"
       onClick={onClick}
     >
-      <Toggle on={!enabled} /> Disable{' '}
-      <span className={cx('--InlineTitle')}>My Organism Preferences</span>
+      <Toggle on={!enabled} />
+      {showLabel && (
+        <div>
+          Disable <strong>My Organism Preferences</strong>
+        </div>
+      )}
     </button>
   );
 }
