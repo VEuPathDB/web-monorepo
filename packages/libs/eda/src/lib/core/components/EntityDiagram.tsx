@@ -12,6 +12,7 @@ interface Props {
   orientation: 'horizontal' | 'vertical';
   selectedEntity: string;
   entityCounts?: Record<string, number>;
+  filteredEntities?: string[];
   filteredEntityCounts?: Record<string, number>;
 }
 
@@ -63,8 +64,10 @@ export function EntityDiagram(props: Props) {
       highlightedEntityID={props.selectedEntity}
       orientation={props.orientation}
       shadingData={shadingData}
+      filteredEntities={props.filteredEntities}
       renderNode={renderNode}
-      selectedHighlightColor="#069"
+      selectedBorderWeight={4}
+      selectedHighlightColor="#666685"
       shadingColor="#E39C9C"
       shadowDispersion={2}
       shadowOpacity={0.4}

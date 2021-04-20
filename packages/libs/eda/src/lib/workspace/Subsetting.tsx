@@ -13,7 +13,7 @@ import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { VariableTree } from '../core/components/VariableTree';
 import FilterChipList from '../core/components/FilterChipList';
-import { count } from 'node:console';
+import { uniq } from 'lodash';
 
 interface RouteProps {
   sessionState: SessionState;
@@ -74,6 +74,9 @@ export function Subsetting(props: Props) {
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
   const filteredEntityCount =
     filteredCounts.value && filteredCounts.value[entity.id];
+  const filteredEntities = uniq(
+    sessionState.session?.filters.map((f) => f.entityId)
+  );
 
   return (
     <div className={cx('-Subsetting')}>
@@ -84,6 +87,7 @@ export function Subsetting(props: Props) {
           selectedEntity={entity.displayName}
           entityCounts={totalCounts.value}
           filteredEntityCounts={filteredCounts.value}
+          filteredEntities={filteredEntities}
         />
       </div>
       <div className="Variables">
