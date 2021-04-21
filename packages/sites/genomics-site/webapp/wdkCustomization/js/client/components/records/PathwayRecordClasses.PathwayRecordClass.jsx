@@ -37,8 +37,7 @@ export const RECORD_CLASS_NAME = 'PathwayRecordClasses.PathwayRecordClass';
 const EC_NUMBER_SEARCH_PREFIX = '/app/search/transcript/' +
   'InternalGenesByEcNumber?param.organism=all&param.ec_source=all&param.ec_number_pattern=N/A&autoRun=1&param.ec_wildcard=';
 
-const ORTHOMCL_LINK = 'https://beta.orthomcl.org/orthomcl/processQuestion.do?questionFullName=' +
-  'GroupQuestions.ByEcNumber&questionSubmit=Get+Answer&ec_number_type_ahead=N/A&ec_wildcard=';
+const ORTHOMCL_LINK = 'https://orthomcl.org/orthomcl/app/search/group/GroupsByEcNumber?ec_number_type_ahead=N/A&autoRun=1&ec_wildcard=';
 
 const clearFoundNodes = clearHighlighting('veupathdb-CytoscapeFoundNode');
 const highlightFoundNodes = highlightNodes('veupathdb-CytoscapeFoundNode');
