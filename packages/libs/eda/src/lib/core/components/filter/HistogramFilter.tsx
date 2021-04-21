@@ -29,11 +29,10 @@ import { SessionState } from '../../hooks/session';
 import { useDataClient } from '../../hooks/workspace';
 import { DateRangeFilter, Filter, NumberRangeFilter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
-import { PromiseType } from '../../types/utility';
-import { NumberOrDateRange } from '../../types/general';
+import { NumberOrDateRange, TimeUnit } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { parseTimeDelta, padISODateTime } from '../../utils/date-conversion';
+import { padISODateTime } from '../../utils/date-conversion';
 import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 
 type Props = {
@@ -47,7 +46,7 @@ type UIState = TypeOf<typeof UIState>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const UIState = partial({
   binWidth: number,
-  binWidthTimeUnit: string,
+  binWidthTimeUnit: TimeUnit,
   independentAxisRange: NumberOrDateRange,
 });
 
@@ -390,9 +389,7 @@ function histogramResponseToDataSeries(
   };
 }
 
-// TO DO: understand why Partial<> is needed below.
-// binSpec.value should be optional because it is defined in a t.partial({ ... })
-type BinSpec = Partial<HistogramRequestParams['config']['binSpec']>;
+type BinSpec = HistogramRequestParams['config']['binSpec'];
 
 function getRequestParams(
   studyId: string,
@@ -402,27 +399,27 @@ function getRequestParams(
   dataParams?: UIState,
   rawBinSpec?: BinSpec
 ): HistogramRequestParams {
-  const binSpec = rawBinSpec
+  const binSpec: BinSpec = rawBinSpec
     ? rawBinSpec
     : dataParams?.binWidth
     ? {
-        binSpec: {
-          type: 'binWidth',
-          value: dataParams.binWidth,
-          ...(variable.type === 'date'
-            ? { unit: dataParams.binWidthTimeUnit }
-            : {}),
-        },
+        type: 'binWidth',
+        value: dataParams.binWidth,
+        ...(variable.type === 'date'
+          ? { units: dataParams.binWidthTimeUnit }
+          : {}),
       }
-    : { binSpec: { type: 'binWidth' } };
+    : { type: 'binWidth' };
 
-  const viewportOption =
+  const viewport =
     dataParams?.independentAxisRange &&
     dataParams?.independentAxisRange.min != null &&
     dataParams?.independentAxisRange.max != null
       ? {
-          viewportMin: dataParams.independentAxisRange.min,
-          viewportMax: dataParams.independentAxisRange.max,
+          viewport: {
+            xMin: String(dataParams.independentAxisRange.min),
+            xMax: String(dataParams.independentAxisRange.max),
+          },
         }
       : {};
 
@@ -436,10 +433,10 @@ function getRequestParams(
         entityId: entity.id,
         variableId: variable.id,
       },
-      ...binSpec,
-      ...viewportOption,
+      binSpec,
+      ...viewport,
     },
-  } as HistogramRequestParams;
+  };
 }
 
 async function getHistogram(

@@ -39,11 +39,13 @@ export interface HistogramRequestParams {
     facetVariable?: ZeroToTwoVariables; // ditto here
     binSpec: {
       type: 'binWidth' | 'numBins';
-      value: number;
-      units: 'day' | 'week' | 'month' | 'year';
+      value?: number;
+      units?: 'day' | 'week' | 'month' | 'year';
     };
-    viewportMin: string;
-    viewportMax: string;
+    viewport?: {
+      xMin: string;
+      xMax: string;
+    };
   };
 }
 
@@ -81,6 +83,7 @@ export const HistogramResponse = type({
         units: keyof({ day: null, week: null, month: null, year: null }),
       }),
     ]),
+    // TO DO: viewport and summary
   }),
 });
 
