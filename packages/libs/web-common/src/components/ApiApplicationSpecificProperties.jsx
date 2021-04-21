@@ -49,7 +49,7 @@ function ApiApplicationSpecificProperties(props) {
         global: Object.assign({}, props.user.preferences.global),
         project: Object.assign({}, props.user.preferences.project)
     });
-    // set all existing email prefs to "off"
+    // set all existing email prefs to null
     Object.keys(newPrefs.global).forEach(function(key) {
       if (key.startsWith('preference_global_email_')) newPrefs.global[key] = null;
     });
