@@ -51,7 +51,7 @@ function ApiApplicationSpecificProperties(props) {
     });
     // set all existing email prefs to "off"
     Object.keys(newPrefs.global).forEach(function(key) {
-      if (key.startsWith('preference_global_email_')) newPrefs.global[key] = "off";
+      if (key.startsWith('preference_global_email_')) newPrefs.global[key] = null;
     });
     // add back any remaining email prefs in new value
     newEmailPrefArray.forEach(function(key) {
