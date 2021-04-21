@@ -126,7 +126,7 @@ export default function EntityDiagram({
   const nodeWidth = isExpanded ? expandedNodeWidth : miniNodeWidth;
   const nodeHeight = isExpanded ? expandedNodeHeight : miniNodeHeight;
   // Node border width
-  const nodeStrokeWidth = 1;
+  const nodeStrokeWidth = 2;
   // Width of the highlight border around the highlighted node
   const nodeHighlightWidth = selectedHighlightWeight;
   // treeHeight is always from root to furthest leaf, regardless of orientation
@@ -163,55 +163,56 @@ export default function EntityDiagram({
     const rectHeight = nodeHeight - nodeStrokeWidth * 2;
     const rectWidth = nodeWidth - nodeStrokeWidth * 2;
 
+    const borderWidth = isHighlighted ? selectedBorderWeight : nodeStrokeWidth;
+
+    const shadingHeight = 8;
+
     const backgroundRect = (
       <rect
-        height={rectHeight}
-        width={rectWidth}
-        y={-rectHeight / 2}
-        x={-rectWidth / 2}
+        height={rectHeight + borderWidth}
+        width={rectWidth + borderWidth}
+        y={-rectHeight / 2 - borderWidth / 2}
+        x={-rectWidth / 2 - borderWidth / 2}
         rx={radius}
         fill="white"
-        strokeWidth={0}
+        key={`bg-rect-${node.data.id}`}
+        strokeWidth={borderWidth}
+        stroke="transparent"
+        style={{
+          filter: shadowOpacity == 0 ? undefined : 'url(#shadow)',
+        }}
+      />
+    );
+
+    const borderRect = (
+      <rect
+        height={rectHeight + borderWidth}
+        width={rectWidth + borderWidth}
+        y={-rectHeight / 2 - borderWidth / 2}
+        x={-rectWidth / 2 - borderWidth / 2}
+        rx={radius}
+        fill="none"
+        stroke={isHighlighted ? selectedHighlightColor : '#666'}
+        strokeWidth={borderWidth}
         key={`bg-rect-${node.data.id}`}
       />
     );
 
     const shadingRect = (
       <rect
-        height={isExpanded ? 6 : rectHeight}
+        height={isExpanded ? shadingHeight : rectHeight}
         width={rectWidth}
-        y={isExpanded ? -rectHeight / 2 + rectHeight - 6 : -rectHeight / 2}
+        y={isExpanded ? rectHeight / 2 - shadingHeight : -rectHeight / 2}
         x={-rectWidth / 2}
-        rx={radius}
         fill={
           shadingData?.[node.data.id]
             ? `url('#rect-gradient-${node.data.id}')`
             : 'white'
         }
-        stroke={'transparent'}
-        strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
         style={{
           overflowWrap: isExpanded ? 'normal' : undefined,
         }}
         key={`shading-rect-${node.data.id}`}
-      />
-    );
-
-    const borderRect = (
-      <rect
-        height={rectHeight}
-        width={rectWidth}
-        y={-rectHeight / 2}
-        x={-rectWidth / 2}
-        rx={radius}
-        fill="none"
-        stroke={isHighlighted ? selectedHighlightColor : 'black'}
-        strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
-        style={{
-          overflowWrap: isExpanded ? 'normal' : undefined,
-          overflow: 'hidden',
-        }}
-        key={`rect-${node.data.id}`}
       />
     );
 
@@ -224,7 +225,8 @@ export default function EntityDiagram({
           userSelect: 'none',
           fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
         }}
-        width={isExpanded ? nodeWidth - 10 : undefined}
+        dy={-4}
+        width={isExpanded ? nodeWidth - 40 : undefined}
         key={`text-${node.data.id}`}
       >
         {displayText}
@@ -232,16 +234,21 @@ export default function EntityDiagram({
     );
 
     const filterIcon = filteredEntities?.includes(node.data.id) ? (
-      <Text
-        key="filter-icon"
-        fontFamily="FontAwesome"
-        fill="green"
-        textAnchor="start"
-        x={rectWidth / 2 - 14}
-        verticalAnchor="end"
-      >
-        &#xf0b0;
-      </Text>
+      <Group>
+        <title>This entity has filters</title>
+        <Text
+          key="filter-icon"
+          fontSize={14}
+          fontFamily="FontAwesome"
+          fill="green"
+          textAnchor="start"
+          x={rectWidth / 2 - 16}
+          dy={-shadingHeight / 2}
+          verticalAnchor="middle"
+        >
+          &#xf0b0;
+        </Text>
+      </Group>
     ) : (
       <></>
     );
@@ -253,9 +260,6 @@ export default function EntityDiagram({
         top={orientation == 'horizontal' ? node.x : node.y}
         left={orientation == 'horizontal' ? node.y : node.x}
         key={node.x + node.y}
-        style={{
-          filter: shadowOpacity == 0 ? undefined : 'url(#shadow)',
-        }}
       >
         {renderNode?.(node.data, children) ?? children}
         {!isExpanded && <title>{node.data.displayName}</title>}
