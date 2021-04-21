@@ -21,8 +21,8 @@ import { number, string, partial, TypeOf } from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
-  DateHistogramRequestParams,
-  NumericHistogramRequestParams,
+  HistogramRequestParams,
+  HistogramResponse,
 } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
 import { SessionState } from '../../hooks/session';
@@ -92,8 +92,8 @@ export function HistogramFilter(props: Props) {
               foregroundFilters,
               entity,
               variable,
-              {},
-              background.config.binWidth
+              {}, // TO DO: dataParams here???
+              background.config.binSpec
             )
           : background;
 
@@ -113,8 +113,11 @@ export function HistogramFilter(props: Props) {
       ];
       const binWidth =
         variable.type === 'number'
-          ? parseFloat(background.config.binWidth as string) || 1
-          : parseTimeDelta(background.config.binWidth as string);
+          ? background.config.binSpec.value || 1
+          : ([
+              background.config.binSpec.value || 1,
+              background.config.binSpec.units,
+            ] as TimeDelta);
       const { min, max, step } = background.config.binSlider;
       const binWidthRange = (variable.type === 'number'
         ? { min, max }
@@ -234,7 +237,7 @@ export function HistogramFilter(props: Props) {
 }
 
 type HistogramPlotWithControlsProps = HistogramProps & {
-  getData: (params?: UIState) => Promise<HistogramData>;
+  getData: (params?: UIState) => Promise<HistogramData>; // TO DO: not used - get rid of?
   updateFilter: (selectedRange?: NumberRange | DateRange) => void;
   uiState: UIState;
   updateUIState: (uiState: TypeOf<typeof UIState>) => void;
@@ -359,11 +362,7 @@ function HistogramPlotWithControls({
 
 function histogramResponseToDataSeries(
   name: string,
-  response: PromiseType<
-    ReturnType<
-      DataClient['getDateHistogramBinWidth' | 'getNumericHistogramBinWidth']
-    >
-  >,
+  response: HistogramResponse,
   color: string,
   type: HistogramVariable['type']
 ): HistogramDataSeries {
@@ -391,31 +390,41 @@ function histogramResponseToDataSeries(
   };
 }
 
+// TO DO: understand why Partial<> is needed below.
+// binSpec.value should be optional because it is defined in a t.partial({ ... })
+type BinSpec = Partial<HistogramRequestParams['config']['binSpec']>;
+
 function getRequestParams(
   studyId: string,
   filters: Filter[],
   entity: StudyEntity,
   variable: HistogramVariable,
   dataParams?: UIState,
-  rawBinWidth?: string | number
-): NumericHistogramRequestParams | DateHistogramRequestParams {
-  const binOption = rawBinWidth
-    ? { binWidth: rawBinWidth }
+  rawBinSpec?: BinSpec
+): HistogramRequestParams {
+  const binSpec = rawBinSpec
+    ? rawBinSpec
     : dataParams?.binWidth
     ? {
-        binWidth:
-          variable.type === 'number'
-            ? dataParams.binWidth
-            : `${dataParams.binWidth} ${dataParams.binWidthTimeUnit}`,
+        binSpec: {
+          type: 'binWidth',
+          value: dataParams.binWidth,
+          ...(variable.type === 'date'
+            ? { unit: dataParams.binWidthTimeUnit }
+            : {}),
+        },
       }
-    : {};
+    : { binSpec: { type: 'binWidth' } };
 
-  const viewportOption = dataParams?.independentAxisRange
-    ? {
-        viewportMin: dataParams.independentAxisRange.min,
-        viewportMax: dataParams.independentAxisRange.max,
-      }
-    : {};
+  const viewportOption =
+    dataParams?.independentAxisRange &&
+    dataParams?.independentAxisRange.min != null &&
+    dataParams?.independentAxisRange.max != null
+      ? {
+          viewportMin: dataParams.independentAxisRange.min,
+          viewportMax: dataParams.independentAxisRange.max,
+        }
+      : {};
 
   return {
     studyId,
@@ -427,10 +436,10 @@ function getRequestParams(
         entityId: entity.id,
         variableId: variable.id,
       },
-      ...binOption,
+      ...binSpec,
       ...viewportOption,
     },
-  } as NumericHistogramRequestParams | DateHistogramRequestParams;
+  } as HistogramRequestParams;
 }
 
 async function getHistogram(
@@ -440,29 +449,10 @@ async function getHistogram(
   entity: StudyEntity,
   variable: HistogramVariable,
   dataParams?: UIState,
-  rawBinWidth?: string | number
+  rawBinSpec?: BinSpec
 ) {
-  return variable.type === 'date'
-    ? dataClient.getDateHistogramBinWidth(
-        'pass',
-        getRequestParams(
-          studyId,
-          filters,
-          entity,
-          variable,
-          dataParams,
-          rawBinWidth
-        ) as DateHistogramRequestParams
-      )
-    : dataClient.getNumericHistogramBinWidth(
-        'pass',
-        getRequestParams(
-          studyId,
-          filters,
-          entity,
-          variable,
-          dataParams,
-          rawBinWidth
-        ) as NumericHistogramRequestParams
-      );
+  return dataClient.getHistogram(
+    'pass',
+    getRequestParams(studyId, filters, entity, variable, dataParams, rawBinSpec)
+  );
 }

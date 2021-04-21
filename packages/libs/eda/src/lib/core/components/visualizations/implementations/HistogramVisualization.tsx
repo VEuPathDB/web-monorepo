@@ -19,8 +19,8 @@ import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
-  DateHistogramRequestParams,
-  NumericHistogramRequestParams,
+  HistogramRequestParams,
+  HistogramResponse,
 } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
@@ -205,16 +205,7 @@ function HistogramViz(props: Props) {
         vizConfig.binWidth,
         vizConfig.binWidthTimeUnit
       );
-      const response =
-        xAxisVariable.type === 'date'
-          ? dataClient.getDateHistogramBinWidth(
-              computation.type,
-              params as DateHistogramRequestParams
-            )
-          : dataClient.getNumericHistogramBinWidth(
-              computation.type,
-              params as NumericHistogramRequestParams
-            );
+      const response = dataClient.getHistogram(computation.type, params);
       return histogramResponseToData(await response, xAxisVariable.type);
     }, [
       studyId,
@@ -382,11 +373,7 @@ function HistogramPlotWithControls({
  * @returns HistogramData
  */
 export function histogramResponseToData(
-  response: PromiseType<
-    ReturnType<
-      DataClient['getDateHistogramBinWidth' | 'getNumericHistogramBinWidth']
-    >
-  >,
+  response: HistogramResponse,
   type: HistogramVariable['type']
 ): HistogramData {
   if (response.data.length === 0)
@@ -394,8 +381,11 @@ export function histogramResponseToData(
 
   const binWidth =
     type === 'number'
-      ? parseFloat(response.config.binWidth as string) || 1
-      : parseTimeDelta(response.config.binWidth as string);
+      ? response.config.binSpec.value || 1
+      : ([
+          response.config.binSpec.value || 1,
+          response.config.binSpec.units,
+        ] as TimeDelta);
   const { min, max, step } = response.config.binSlider;
   const binWidthRange = (type === 'number'
     ? { min, max }
@@ -437,17 +427,16 @@ function getRequestParams(
   overlayVariable?: Variable,
   binWidth?: number,
   binWidthTimeUnit?: string
-): NumericHistogramRequestParams | DateHistogramRequestParams {
-  const binOption = binWidth
+): HistogramRequestParams {
+  const binSpec = binWidth
     ? {
-        binWidth:
-          variableType === 'number'
-            ? binWidth
-            : `${binWidth} ${binWidthTimeUnit}`,
+        binSpec: {
+          type: 'binWidth',
+          value: binWidth,
+          ...(variableType === 'date' ? { unit: binWidthTimeUnit } : {}),
+        },
       }
-    : {
-        // numBins: 10,
-      };
+    : { binSpec: { type: 'binWidth' } };
 
   return {
     studyId,
@@ -457,7 +446,7 @@ function getRequestParams(
       valueSpec: 'count',
       xAxisVariable: variable,
       overlayVariable,
-      ...binOption,
+      ...binSpec,
     },
-  } as NumericHistogramRequestParams | DateHistogramRequestParams;
+  } as HistogramRequestParams;
 }
