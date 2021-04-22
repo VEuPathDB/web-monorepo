@@ -88,6 +88,11 @@ export function PreferredOrganismsConfig({
         <span>
           <PreferredOrganismsToggle
             enabled={preferredOrganismsEnabled}
+            label={
+              <span>
+                Enable <strong>My Organism Preferences</strong>
+              </span>
+            }
             onClick={togglePreferredOrganisms}
           />
         </span>

@@ -1,4 +1,4 @@
-import { PreferredOrganismsLink } from './lib/components/PreferredOrganismsLink';
+import { PreferredOrganismsSummary } from './lib/components/PreferredOrganismsSummary';
 
 import './Header.scss';
 
@@ -22,7 +22,7 @@ export default function Header() {
           padding: '0.5em 0',
         }}
       >
-        <PreferredOrganismsLink />
+        <PreferredOrganismsSummary />
       </div>
     </header>
   );

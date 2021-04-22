@@ -1,27 +1,45 @@
-import React, { Suspense, useCallback, useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 
 import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
+import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 import { NewOrganismsBanner } from './NewOrganismsBanner';
+import { PreferredOrganismsToggle } from './PreferredOrganismsToggle';
+
 import {
   useAvailableOrganisms,
   useNewOrganisms,
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
   useProjectId,
+  useTogglePreferredOrganisms,
 } from '../hooks/preferredOrganisms';
 
-import './PreferredOrganismsLink.scss';
+import './PreferredOrganismsSummary.scss';
 
-export function PreferredOrganismsLink() {
+const cx = makeClassNameHelper('PreferredOrganisms');
+
+export function PreferredOrganismsSummary() {
+  const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
+  const togglePreferredOrganisms = useTogglePreferredOrganisms();
+
   return (
-    <div className="PreferredOrganismsLink--Container">
-      <Link className="PreferredOrganismsLink" to="/preferred-organisms">
-        <IconAlt fa="gear" /> My Organism Preferences{' '}
-        <Suspense fallback={null}>
-          <PreferredOrganismsCount />
-        </Suspense>
-      </Link>
+    <div className={cx()}>
+      <div className={cx('--Summary')}>
+        <Link className={cx('--Link')} to="/preferred-organisms">
+          <IconAlt fa="gear" /> My Organism Preferences{' '}
+          <Suspense fallback={null}>
+            <PreferredOrganismsCount />
+          </Suspense>
+        </Link>
+        <PreferredOrganismsToggle
+          enabled={preferredOrganismsEnabled}
+          onClick={togglePreferredOrganisms}
+          label={
+            <span>{preferredOrganismsEnabled ? 'enabled' : 'disabled'}</span>
+          }
+        />
+      </div>
       <Suspense fallback={null}>
         <NewOrganismsBannerController />
       </Suspense>
@@ -31,12 +49,9 @@ export function PreferredOrganismsLink() {
 
 function PreferredOrganismsCount() {
   const availableOrganisms = useAvailableOrganisms();
-  const [preferredOrganismEnabled] = usePreferredOrganismsEnabledState();
   const [preferredOrganisms] = usePreferredOrganismsState();
 
-  return !preferredOrganismEnabled ? (
-    <>(disabled)</>
-  ) : (
+  return (
     <>
       ({preferredOrganisms.length} of {availableOrganisms.size})
     </>
