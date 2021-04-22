@@ -8,6 +8,7 @@ import { testVisualization } from '../visualizations/implementations/TestVisuali
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
+import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
 
 interface Props {
   sessionState: SessionState;
@@ -21,6 +22,8 @@ const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
   'date-histogram-bin-width': histogramVisualization,
   'numeric-histogram-bin-width': histogramVisualization,
+  //DKDK
+  scatterplot: scatterplotVisualization,
 };
 
 export function PassThroughComputation(props: Props) {

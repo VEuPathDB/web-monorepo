@@ -192,6 +192,66 @@ export const BarplotResponse = type({
   ),
 });
 
+//DKDK scatterplot
+export interface ScatterplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    //DKDK seems like they would change smoothedMean to valueSpec later
+    valueSpec: 'raw' | 'smoothedMean' | 'smoothedMeanWithRaw';
+    // smoothedMean: boolean;
+    // //DKDK not quite sure of overlayVariable and facetVariable yet
+    // overlayVariable?: Variable;
+    // facetVariable?: ZeroToTwoVariables;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+//DKDK unlike API doc, data (response) shows series.x, series.y, interval.x, interval.y, interval.se
+const ScatterplotResponseData = array(
+  intersection([
+    type({
+      'series.x': array(number),
+      'series.y': array(number),
+    }),
+    partial({
+      //DKDK valueSpec = smoothedMean only returns interval data (no series data)
+      'interval.x': array(number),
+      'interval.y': array(number),
+      'interval.se': array(number),
+      overlayVariableDetails: StringVariableValue,
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
+    }),
+  ])
+);
+
+export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
+export const ScatterplotResponse = type({
+  data: ScatterplotResponseData,
+  config: type({
+    incompleteCases: array(number),
+    xVariableDetails: type({
+      variableId: string,
+      entityId: string,
+    }),
+    yVariableDetails: type({
+      variableId: string,
+      entityId: string,
+    }),
+  }),
+});
+
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
@@ -278,6 +338,22 @@ export class DataClient extends FetchClient {
       'barplot',
       params,
       BarplotResponse
+    );
+  }
+
+  //DKDK Scatterplot
+  getScatterplot(
+    computationName: string,
+    params: ScatterplotRequestParams
+  ): Promise<ScatterplotResponse> {
+    //DKDK
+    console.log('Im at getScatterPlot');
+
+    return this.getVisualizationData(
+      computationName,
+      'scatterplot',
+      params,
+      ScatterplotResponse
     );
   }
 }
