@@ -25,7 +25,7 @@ import {
   useRenderOrganismNode,
   useOrganismSearchPredicate
 } from '@veupathdb/preferred-organisms/lib/hooks/organismNodes';
-import { usePreferredOrganismsState, usePreferredOrganismsEnabled } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
+import { usePreferredOrganismsState, usePreferredOrganismsEnabledState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
 
 import './OrganismParam.scss';
@@ -131,7 +131,7 @@ function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: st
     [ isSearchPage, preferredOrganisms ]
   );
 
-  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabled();
+  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
 
   useEffect(() => {
     const filteredInitialSelectedValues = initialSelectedValues.current.filter(selectedValue => preferredValues.has(selectedValue));
