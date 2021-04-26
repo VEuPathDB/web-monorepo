@@ -70,9 +70,17 @@ export const binGithubEventDates = async ({
   for (
     let date = firstDate;
     date < lastDate;
-    date = DateMath.add(date, ...calculatedBinWidth)
+    date = DateMath.add(
+      date,
+      calculatedBinWidth[0],
+      calculatedBinWidth[1] as DateMath.Unit
+    )
   ) {
-    const binEnd = DateMath.add(date, ...calculatedBinWidth);
+    const binEnd = DateMath.add(
+      date,
+      calculatedBinWidth[0],
+      calculatedBinWidth[1] as DateMath.Unit
+    );
     bins.push({
       binStart: date.toISOString(),
       binEnd: binEnd.toISOString(),
