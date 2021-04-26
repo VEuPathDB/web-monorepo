@@ -28,6 +28,27 @@ export const EmptyAtStart: Story<NumberRangeInputProps> = () => {
   );
 };
 
+export const EmptyAtStartUseLimits: Story<NumberRangeInputProps> = () => {
+  const [range, setRange] = useState<NumberRange | undefined>();
+
+  const handleChange = useCallback(
+    (newRange) => {
+      console.log(`new range = ${newRange.min} to ${newRange.max}`);
+      setRange(newRange);
+    },
+    [setRange]
+  );
+
+  return (
+    <NumberRangeInput
+      label="Between 0 and 100"
+      onRangeChange={handleChange}
+      range={range}
+      rangeBounds={{ min: 0, max: 100 }}
+    />
+  );
+};
+
 export const ControlledLinked: Story<NumberRangeInputProps> = () => {
   const [range, setRange] = useState<NumberRange>({ min: 1, max: 9 });
 
