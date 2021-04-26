@@ -4,7 +4,7 @@
  */
 import { Unit } from 'date-arithmetic';
 
-export type NumberOrDate = number | Date;
+export type NumberOrDate = number | string;
 
 export type ErrorManagement = {
   errors: Array<Error>;
@@ -19,8 +19,8 @@ export type NumberRange = {
 };
 
 export type DateRange = {
-  min: Date;
-  max: Date;
+  min: string;
+  max: string;
 };
 
 export type TimeDeltaRange = {

@@ -92,9 +92,9 @@ function BaseInput({
           />
         ) : (
           <DateInput
-            value={min as Date}
-            minValue={rangeBounds?.min as Date}
-            maxValue={(max ?? rangeBounds?.max) as Date}
+            value={min as string}
+            minValue={rangeBounds?.min as string}
+            maxValue={(max ?? rangeBounds?.max) as string}
             label={lowerLabel}
             required={required}
             onValueChange={(newValue) => {
@@ -128,9 +128,9 @@ function BaseInput({
           />
         ) : (
           <DateInput
-            value={max as Date}
-            minValue={(min ?? rangeBounds?.min) as Date}
-            maxValue={rangeBounds?.max as Date}
+            value={max as string}
+            minValue={(min ?? rangeBounds?.min) as string}
+            maxValue={rangeBounds?.max as string}
             label={upperLabel}
             required={required}
             onValueChange={(newValue) => {

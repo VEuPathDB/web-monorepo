@@ -12,11 +12,11 @@ export default {
 } as Meta;
 
 const ControlledTemplate: Story<DateInputProps> = (args) => {
-  const [value, setValue] = useState<Date>(new Date('2005-01-01'));
+  const [value, setValue] = useState<string>('2005-01-01');
   const onValueChange = useCallback(
     (newValue) => {
       console.log(`new value = ${newValue}`);
-      setValue(newValue as Date);
+      setValue(newValue as string);
     },
     [setValue]
   );
@@ -39,12 +39,12 @@ Controlled.args = {
 export const ControlledBounded = ControlledTemplate.bind({});
 ControlledBounded.args = {
   label: 'Controlled (2000-01-01 to 2009-12-31)',
-  minValue: new Date('2000-01-01'),
-  maxValue: new Date('2009-12-31'),
+  minValue: '2000-01-01',
+  maxValue: '2009-12-31',
 };
 
 export const ControlledLinkedPair: Story = () => {
-  const [linkedValue, setLinkedValue] = useState<Date>(new Date('2020-02-20'));
+  const [linkedValue, setLinkedValue] = useState<string>('2020-02-20');
 
   return (
     <>
@@ -53,7 +53,7 @@ export const ControlledLinkedPair: Story = () => {
         label="A"
         onValueChange={(newValue) => {
           console.log(`A new value = ${newValue}`);
-          setLinkedValue(newValue as Date);
+          setLinkedValue(newValue as string);
         }}
         containerStyles={{ margin: 25 }}
       />
@@ -62,7 +62,7 @@ export const ControlledLinkedPair: Story = () => {
         label="B"
         onValueChange={(newValue) => {
           console.log(`B new value = ${newValue}`);
-          setLinkedValue(newValue as Date);
+          setLinkedValue(newValue as string);
         }}
         containerStyles={{ margin: 25 }}
       />
@@ -71,9 +71,9 @@ export const ControlledLinkedPair: Story = () => {
 };
 
 export const ControlledBounds: Story = () => {
-  const [value, setValue] = useState<Date>(new Date('2020-01-04'));
-  const [min, setMin] = useState<Date>(new Date('2020-01-01'));
-  const [max, setMax] = useState<Date>(new Date('2020-01-09'));
+  const [value, setValue] = useState<string>('2020-01-04');
+  const [min, setMin] = useState<string>('2020-01-01');
+  const [max, setMax] = useState<string>('2020-01-09');
 
   return (
     <>
@@ -85,8 +85,8 @@ export const ControlledBounds: Story = () => {
         onValueChange={(newValue) => {
           console.log(`new value = ${newValue}`);
           // for some reason the `newValue !== undefined` is needed because
-          // the `useState<Date>(0)` has an initial value provided
-          if (newValue !== undefined) setValue(newValue as Date);
+          // the `useState<string>(0)` has an initial value provided
+          if (newValue !== undefined) setValue(newValue as string);
         }}
         containerStyles={{ margin: 25 }}
       />
@@ -95,7 +95,7 @@ export const ControlledBounds: Story = () => {
         maxValue={max}
         label="Min"
         onValueChange={(newValue) => {
-          if (newValue !== undefined) setMin(newValue as Date);
+          if (newValue !== undefined) setMin(newValue as string);
         }}
         containerStyles={{ margin: 25 }}
       />
@@ -104,7 +104,7 @@ export const ControlledBounds: Story = () => {
         minValue={min}
         label="Max"
         onValueChange={(newValue) => {
-          if (newValue !== undefined) setMax(newValue as Date);
+          if (newValue !== undefined) setMax(newValue as string);
         }}
         containerStyles={{ margin: 25 }}
       />
