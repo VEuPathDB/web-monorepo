@@ -9,11 +9,11 @@ import { Layout, PlotData } from 'plotly.js';
 type PlotDataKey = keyof PlotData;
 
 //DKDK change interface a bit more: this could avoid error on data type
-interface Props<T extends keyof PlotData> extends PlotProps {
+export interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
   data: Pick<PlotData, T>[];
-  xLabel: string;
-  yLabel: string;
-  plotTitle: string;
+  xLabel?: string;
+  yLabel?: string;
+  plotTitle?: string;
   //DKDK involving CI, x & y range may need to be set
   xRange?: number[] | Date[];
   yRange?: number[] | Date[];
@@ -21,12 +21,12 @@ interface Props<T extends keyof PlotData> extends PlotProps {
 }
 
 export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
-  props: Props<T>
+  props: ScatterplotProps<T>
 ) {
   const { xLabel, yLabel, plotTitle, xRange, yRange, data } = props;
   const layout: Partial<Layout> = {
     xaxis: {
-      title: xLabel,
+      title: xLabel ? xLabel : '',
       range: xRange, //DKDK set this for better display: esp. for CI plot
       zeroline: false, //DKDK disable yaxis line
       //DKDK make plot border
@@ -35,7 +35,7 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
       mirror: true,
     },
     yaxis: {
-      title: yLabel,
+      title: yLabel ? yLabel : '',
       range: yRange, //DKDK set this for better display: esp. for CI plot
       zeroline: false, //DKDK disable xaxis line
       //DKDK make plot border
@@ -44,53 +44,8 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
       mirror: true,
     },
     title: {
-      text: plotTitle,
+      text: plotTitle ? plotTitle : '',
     },
-    sliders: [
-      {
-        //DKDK this slider part is manually added here!
-        pad: { t: 50 },
-        active: 4, //DKDK this sets the default location of slider: from 0 (left)
-        currentvalue: {
-          visible: true,
-          xanchor: 'left',
-          offset: 10,
-          prefix: 'Opacity = ',
-          suffix: '',
-          font: {
-            color: '#888',
-            size: 20,
-          },
-        },
-        steps: [
-          {
-            label: '0',
-            method: 'restyle',
-            args: ['opacity', '0'],
-          },
-          {
-            label: '0.25',
-            method: 'restyle',
-            args: ['opacity', '0.25'],
-          },
-          {
-            label: '0.5',
-            method: 'restyle',
-            args: ['opacity', '0.5'],
-          },
-          {
-            label: '0.75',
-            method: 'restyle',
-            args: ['opacity', '0.75'],
-          },
-          {
-            label: '1',
-            method: 'restyle',
-            args: ['opacity', '1'],
-          },
-        ],
-      },
-    ],
   };
 
   //DKDK add this per standard

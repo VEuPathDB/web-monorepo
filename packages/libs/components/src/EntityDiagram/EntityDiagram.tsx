@@ -20,22 +20,6 @@ interface OffsetLine {
   orientation: Orientation;
 }
 
-// Todo: There MUST be a smarter way to center the text
-function CalculateDYSize(nodeLength: number) {
-  switch (nodeLength) {
-    case 1:
-      return '.33em';
-    case 2:
-      return '.80em';
-    case 3:
-      return '1.35em';
-    case 4:
-      return '1.8em';
-    case 5:
-      return '1.8em';
-  }
-}
-
 export type VariableType =
   | 'category'
   | 'string'
@@ -77,6 +61,8 @@ export interface EntityDiagramProps {
   orientation: Orientation;
   /** Whether the diagram is expanded */
   isExpanded: boolean;
+  /** Array of entity IDs that have filters applied */
+  filteredEntities?: string[];
   /** The tree's dimensions. If the tree is horizontal, it may not take up the
    * whole height; if it's vertical, it may not take up the full width. */
   size: {
@@ -114,6 +100,7 @@ export default function EntityDiagram({
   orientation,
   isExpanded,
   highlightedEntityID,
+  filteredEntities,
   shadingData,
   renderNode,
   size,
@@ -134,10 +121,12 @@ export default function EntityDiagram({
 }: EntityDiagramProps) {
   const data = hierarchy(treeData);
 
+  const radius = '.3em';
+
   const nodeWidth = isExpanded ? expandedNodeWidth : miniNodeWidth;
   const nodeHeight = isExpanded ? expandedNodeHeight : miniNodeHeight;
   // Node border width
-  const nodeStrokeWidth = 1;
+  const nodeStrokeWidth = 2;
   // Width of the highlight border around the highlighted node
   const nodeHighlightWidth = selectedHighlightWeight;
   // treeHeight is always from root to furthest leaf, regardless of orientation
@@ -174,23 +163,56 @@ export default function EntityDiagram({
     const rectHeight = nodeHeight - nodeStrokeWidth * 2;
     const rectWidth = nodeWidth - nodeStrokeWidth * 2;
 
-    const rect = (
+    const borderWidth = isHighlighted ? selectedBorderWeight : nodeStrokeWidth;
+
+    const shadingHeight = 8;
+
+    const backgroundRect = (
       <rect
-        height={rectHeight}
+        height={rectHeight + borderWidth}
+        width={rectWidth + borderWidth}
+        y={-rectHeight / 2 - borderWidth / 2}
+        x={-rectWidth / 2 - borderWidth / 2}
+        rx={radius}
+        fill="white"
+        key={`bg-rect-${node.data.id}`}
+        strokeWidth={borderWidth}
+        stroke="transparent"
+        style={{
+          filter: shadowOpacity == 0 ? undefined : 'url(#shadow)',
+        }}
+      />
+    );
+
+    const borderRect = (
+      <rect
+        height={rectHeight + borderWidth}
+        width={rectWidth + borderWidth}
+        y={-rectHeight / 2 - borderWidth / 2}
+        x={-rectWidth / 2 - borderWidth / 2}
+        rx={radius}
+        fill="none"
+        stroke={isHighlighted ? selectedHighlightColor : '#666'}
+        strokeWidth={borderWidth}
+        key={`bg-rect-${node.data.id}`}
+      />
+    );
+
+    const shadingRect = (
+      <rect
+        height={isExpanded ? shadingHeight : rectHeight}
         width={rectWidth}
-        y={-rectHeight / 2}
+        y={isExpanded ? rectHeight / 2 - shadingHeight : -rectHeight / 2}
         x={-rectWidth / 2}
         fill={
           shadingData?.[node.data.id]
             ? `url('#rect-gradient-${node.data.id}')`
             : 'white'
         }
-        stroke={'black'}
-        strokeWidth={isHighlighted ? selectedBorderWeight : nodeStrokeWidth}
         style={{
           overflowWrap: isExpanded ? 'normal' : undefined,
         }}
-        key={`rect-${node.data.id}`}
+        key={`shading-rect-${node.data.id}`}
       />
     );
 
@@ -198,55 +220,46 @@ export default function EntityDiagram({
       <Text
         fontSize={fontSize}
         textAnchor="middle"
+        verticalAnchor="middle"
         style={{
           userSelect: 'none',
           fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
         }}
-        dy={
-          isExpanded
-            ? CalculateDYSize(node.data.displayName.split(' ').length)
-            : '.33em'
-        }
-        width={isExpanded ? nodeWidth - 10 : undefined}
+        dy={-4}
+        width={isExpanded ? nodeWidth - 40 : undefined}
         key={`text-${node.data.id}`}
       >
         {displayText}
       </Text>
     );
 
-    let children = [rect, text];
+    const filterIcon = filteredEntities?.includes(node.data.id) ? (
+      <Group>
+        <title>This entity has filters</title>
+        <Text
+          key="filter-icon"
+          fontSize={14}
+          fontFamily="FontAwesome"
+          fill="green"
+          textAnchor="start"
+          x={rectWidth / 2 - 16}
+          dy={-shadingHeight / 2}
+          verticalAnchor="middle"
+        >
+          &#xf0b0;
+        </Text>
+      </Group>
+    ) : (
+      <></>
+    );
 
-    if (isHighlighted) {
-      // Make the highlight around the selected node
-      const rectHighlightHeight = nodeHeight + 2 * nodeHighlightWidth;
-      const rectHighlightWidth = nodeWidth + 2 * nodeHighlightWidth;
-
-      const rectHighlight = (
-        <rect
-          height={rectHighlightHeight}
-          width={rectHighlightWidth}
-          y={-rectHighlightHeight / 2}
-          x={-rectHighlightWidth / 2}
-          fill={selectedHighlightColor}
-          rx={3}
-          key={`rect-highlight-${node.data.id}`}
-        />
-      );
-
-      children.unshift(rectHighlight);
-    }
+    let children = [backgroundRect, shadingRect, filterIcon, text, borderRect];
 
     return (
       <Group
         top={orientation == 'horizontal' ? node.x : node.y}
         left={orientation == 'horizontal' ? node.y : node.x}
         key={node.x + node.y}
-        style={{
-          filter:
-            shadowOpacity == 0 || (isHighlighted && nodeHighlightWidth > 0)
-              ? undefined
-              : 'url(#shadow)',
-        }}
       >
         {renderNode?.(node.data, children) ?? children}
         {!isExpanded && <title>{node.data.displayName}</title>}
@@ -262,12 +275,16 @@ export default function EntityDiagram({
   }: OffsetLine) {
     let to, from;
 
+    // TODO Compute angle of line so it points into center of node or edge,
+    // but begins in same place as now. Use pythagorean theorem to compute
+    // x coordinates, and use `link.source.children` to determine y coordinates.
+
     if (orientation == 'horizontal') {
       to = {
-        x: link.target.y - nodeWidth / 2 - 5,
+        x: link.target.y - nodeWidth / 2 - 5 - 15,
         y: link.target.x,
       };
-      from = { x: link.source.y, y: link.source.x };
+      from = { x: link.source.y + nodeWidth / 2 + 15, y: link.source.x };
     } else {
       to = {
         x: link.target.x,
@@ -276,7 +293,15 @@ export default function EntityDiagram({
       from = { x: link.source.x, y: link.source.y };
     }
 
-    return <Line to={to} from={from} stroke="black" markerEnd="url(#arrow)" />;
+    return (
+      <Line
+        to={to}
+        from={from}
+        stroke="#777"
+        strokeWidth={3}
+        markerEnd="url(#arrow)"
+      />
+    );
   }
 
   return (
@@ -286,11 +311,11 @@ export default function EntityDiagram({
           <marker
             id="arrow"
             viewBox="0 -5 10 10"
-            markerWidth={isExpanded ? '18' : '10'}
-            markerHeight={isExpanded ? '18' : '10'}
+            markerWidth={isExpanded ? '6' : '3'}
+            markerHeight={isExpanded ? '4' : '3'}
             orient="auto"
-            fill="black"
-            refX={10}
+            fill="#777"
+            refX={5}
           >
             <path d="M0,-5L10,0L0,5" />
           </marker>
@@ -314,7 +339,7 @@ export default function EntityDiagram({
               fromOffset={1}
               id={`rect-gradient-${key}`}
               from={shadingColor}
-              to="white"
+              to={isExpanded ? '#cccccc' : 'white'}
             />
           ))}
         <Tree root={data} size={[treeWidth, treeHeight]}>
