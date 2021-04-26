@@ -110,20 +110,20 @@ export function HistogramFilter(props: Props) {
           variable.type
         ),
       ];
-      const binWidth =
+      const binWidth: NumberOrTimeDelta =
         variable.type === 'number'
           ? background.config.binSpec.value || 1
-          : ([
-              background.config.binSpec.value || 1,
-              background.config.binSpec.units,
-            ] as TimeDelta);
+          : {
+              value: background.config.binSpec.value || 1,
+              unit: background.config.binSpec.units ?? 'month',
+            };
       const { min, max, step } = background.config.binSlider;
       const binWidthRange = (variable.type === 'number'
         ? { min, max }
         : {
             min,
             max,
-            unit: (binWidth as TimeDelta)[1],
+            unit: (binWidth as TimeDelta).unit,
           }) as NumberOrTimeDeltaRange;
       const binWidthStep = step || 0.1;
 
@@ -276,9 +276,9 @@ function HistogramPlotWithControls({
   const handleBinWidthChange = useCallback(
     ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
       updateUIState({
-        binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
+        binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
         binWidthTimeUnit: isTimeDelta(newBinWidth)
-          ? (newBinWidth[1] as TimeUnit)
+          ? (newBinWidth.unit as TimeUnit)
           : undefined,
       });
     },
@@ -333,7 +333,7 @@ function HistogramPlotWithControls({
           // rationale: it doesn't matter if a date variable is binned in days, months or years,
           // it's still just a date variable (e.g. "date of birth", not "date of birth (months)")
           data.binWidth && isTimeDelta(data.binWidth)
-            ? variableName + ' (' + data.binWidth[1] + ')'
+            ? variableName + ' (' + data.binWidth.unit + ')'
             : variableName
         }
       />
@@ -348,7 +348,7 @@ function HistogramPlotWithControls({
         binWidth={data.binWidth!}
         selectedUnit={
           data.binWidth && isTimeDelta(data.binWidth)
-            ? data.binWidth[1]
+            ? data.binWidth.unit
             : undefined
         }
         onBinWidthChange={handleBinWidthChange}

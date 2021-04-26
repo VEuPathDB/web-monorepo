@@ -165,9 +165,9 @@ function HistogramViz(props: Props) {
     ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
       if (newBinWidth) {
         updateVizConfig({
-          binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
+          binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
           binWidthTimeUnit: isTimeDelta(newBinWidth)
-            ? newBinWidth[1]
+            ? newBinWidth.unit
             : undefined,
         });
       }
@@ -352,7 +352,7 @@ function HistogramPlotWithControls({
           binWidth={data.binWidth}
           selectedUnit={
             data.binWidth && isTimeDelta(data.binWidth)
-              ? data.binWidth[1]
+              ? data.binWidth.unit
               : undefined
           }
           onBinWidthChange={({ binWidth: newBinWidth }) => {
@@ -382,17 +382,17 @@ export function histogramResponseToData(
   const binWidth =
     type === 'number'
       ? response.config.binSpec.value || 1
-      : ([
-          response.config.binSpec.value || 1,
-          response.config.binSpec.units,
-        ] as TimeDelta);
+      : {
+          value: response.config.binSpec.value || 1,
+          unit: response.config.binSpec.units || 'month',
+        };
   const { min, max, step } = response.config.binSlider;
   const binWidthRange = (type === 'number'
     ? { min, max }
     : {
         min,
         max,
-        unit: (binWidth as TimeDelta)[1],
+        unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
   return {
