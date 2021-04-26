@@ -168,6 +168,18 @@ export const apiRequests = {
       transformResponse: noContent
     });
   },
+  deleteEndUserEntry: function(wdkUserId: number, datasetId: string) {
+    const endUserId = makeEndUserId(
+      wdkUserId,
+      datasetId
+    );
+
+    return {
+      path: `${END_USERS_PATH}/${endUserId}`,
+      method: 'DELETE',
+      transformResponse: noContent
+    };
+  },
   fetchPermissions: function() {
     return {
       path: PERMISSIONS_PATH,

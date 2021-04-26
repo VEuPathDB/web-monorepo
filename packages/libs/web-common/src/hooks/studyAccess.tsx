@@ -21,6 +21,7 @@ import {
 import {
   UserPermissions,
   canAddEndUsers,
+  canRemoveEndUsers,
   canUpdateApprovalStatus,
   canUpdateProviders,
   canUpdateStaff,
@@ -28,7 +29,7 @@ import {
   permittedApprovalStatusChanges,
   shouldDisplayEndUsersTable,
   shouldDisplayProvidersTable,
-  shouldDisplayStaffTable
+  shouldDisplayStaffTable,
 } from 'ebrc-client/StudyAccess/permission';
 import { cx } from 'ebrc-client/components/StudyAccess/StudyAccess';
 import {
@@ -515,6 +516,7 @@ export function useEndUserTableSectionConfig(
   fetchEndUserList: StudyAccessApi['fetchEndUserList'],
   createEndUserEntry: StudyAccessApi['createEndUserEntry'],
   updateEndUserEntry: StudyAccessApi['updateEndUserEntry'],
+  deleteEndUserEntry: StudyAccessApi['deleteEndUserEntry'],
   activeDatasetId: string,
   endUserTableUiState: EndUserTableUiState,
   setEndUserTableUiState: (newState: EndUserTableUiState) => void,
@@ -529,6 +531,7 @@ export function useEndUserTableSectionConfig(
   );
 
   const endUsersAddable = userPermissions && canAddEndUsers(userPermissions, activeDatasetId);
+  const endUsersRemovable = userPermissions && canRemoveEndUsers(userPermissions);
 
   const {
     approvalStatusEditable,
@@ -681,9 +684,11 @@ export function useEndUserTableSectionConfig(
             actions: makeEndUserTableActions(
               activeDatasetId,
               createEndUserEntry,
+              deleteEndUserEntry,
               changeOpenDialogConfig,
               reloadEndUsersTable,
-              endUsersAddable
+              endUsersAddable,
+              endUsersRemovable
             )
           }
         },
@@ -696,6 +701,7 @@ export function useEndUserTableSectionConfig(
       reloadEndUsersTable,
       activeDatasetId,
       endUsersAddable,
+      endUsersRemovable,
       changeOpenDialogConfig
     ]
   );
@@ -935,11 +941,14 @@ function useApprovalStatusColumnConfig(
 function makeEndUserTableActions(
   activeDatasetId: string,
   createEndUserEntry: StudyAccessApi['createEndUserEntry'],
+  deleteEndUserEntry: StudyAccessApi['deleteEndUserEntry'],
   changeOpenDialogConfig: (newDialogContentProps: ContentProps | undefined) => void,
   reloadEndUsersTable: () => void,
   endUsersAddable: boolean | undefined,
+  endUsersRemovable: boolean | undefined,
 ) {
   const addEndUsers = !endUsersAddable ? undefined : {
+    selectionRequired: false,
     element: (
       <button type="button" className="btn">
         <IconAlt fa="plus" />
@@ -999,9 +1008,41 @@ function makeEndUserTableActions(
     }
   };
 
-  return addEndUsers == null
+  const removeEndUsers = !endUsersRemovable ? undefined : {
+    selectionRequired: true,
+    element: (selection: EndUserTableRow[]) => (
+      <button
+        type="button"
+        className="btn"
+        disabled={selection.length === 0}
+      >
+        <IconAlt fa="trash" />
+        Remove {selection.length === 1 ? 'End User' : 'End Users'}
+      </button>
+    ),
+    callback: async (selection: EndUserTableRow[]) => {
+      await Promise.all(
+        selection.map(({ userId }) => deleteEndUserEntry(userId, activeDatasetId))
+      );
+
+      reloadEndUsersTable();
+    }
+  };
+
+  const availableActions = [
+    addEndUsers,
+    removeEndUsers
+  ].filter(
+    (action): action is ({
+      selectionRequired: boolean,
+      element: (selection: EndUserTableRow[]) => JSX.Element,
+      callback: (selection: EndUserTableRow[]) => Promise<void>
+    }) => action != null
+  );
+
+  return availableActions.length === 0
     ? undefined
-    : [ addEndUsers ];
+    : availableActions;
 }
 
 type ConditionalFetchResult<T> =
