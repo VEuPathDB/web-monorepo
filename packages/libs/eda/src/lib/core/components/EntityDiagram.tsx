@@ -12,6 +12,7 @@ interface Props {
   orientation: 'horizontal' | 'vertical';
   selectedEntity: string;
   entityCounts?: Record<string, number>;
+  filteredEntities?: string[];
   filteredEntityCounts?: Record<string, number>;
 }
 
@@ -46,6 +47,7 @@ export function EntityDiagram(props: Props) {
         variableId={variable.id}
         children={children}
         replace={true}
+        style={{ textDecoration: 'none' }}
       ></VariableLink>
     );
   };
@@ -63,8 +65,10 @@ export function EntityDiagram(props: Props) {
       highlightedEntityID={props.selectedEntity}
       orientation={props.orientation}
       shadingData={shadingData}
+      filteredEntities={props.filteredEntities}
       renderNode={renderNode}
-      selectedHighlightColor="#069"
+      selectedBorderWeight={4}
+      selectedHighlightColor="#666685"
       shadingColor="#E39C9C"
       shadowDispersion={2}
       shadowOpacity={0.4}
@@ -92,8 +96,8 @@ function getDimensions(
   const isVertical = orientation === 'vertical';
   const treeWidth = getTreeWidth(tree);
   const treeHeight = getTreeHeight(tree);
-  const expandedNodeHeight = 30;
-  const expandedNodeWidth = 200;
+  const expandedNodeHeight = 35;
+  const expandedNodeWidth = 210;
   const miniNodeHeight = 30;
   const miniNodeWidth = 40;
   const nodeVerticalSpacingConstant = isExpanded ? 1 / 3 : 3 / 4;
