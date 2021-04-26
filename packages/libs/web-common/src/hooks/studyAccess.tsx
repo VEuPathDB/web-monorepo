@@ -121,7 +121,7 @@ export function useStudy(datasetId: string): StudyStatus {
         ? { status: 'not-found' }
         : { status: 'success', record: study };
     },
-    [ studies ]
+    [ datasetId, studies ]
   );
 }
 
@@ -134,7 +134,7 @@ export function useStudyAccessApi(
       const handler = createStudyAccessRequestHandler(baseStudyAccessUrl, fetchApi);
       return bindApiRequestCreators(apiRequests, handler);
     },
-    []
+    [ baseStudyAccessUrl, fetchApi ]
   );
 }
 
@@ -147,7 +147,7 @@ export function useUserPermissions(fetchPermissions: StudyAccessApi['fetchPermis
         permissionsResponse
       );
     },
-    []
+    [ fetchPermissions ]
   );
 }
 
