@@ -35,6 +35,12 @@ export function useNewOrganisms() {
   return useRecoilValue(newOrganisms);
 }
 
+export function usePreferredSpecies() {
+  const { preferredSpecies } = usePreferredOrganismsRecoilState();
+
+  return useRecoilValue(preferredSpecies);
+}
+
 export function useSavePreferredOrganisms(newPreferredOrganisms: string[]) {
   const {
     buildNumber,

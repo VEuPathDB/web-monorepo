@@ -12,6 +12,9 @@ import {
   record,
   string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
+import { foldStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
 import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
 
 import { findAvailableOrganisms } from './configTrees';
@@ -61,9 +64,15 @@ export const makePreferredOrganismsRecoilState = memoize(
       },
     });
 
+    const fullOrganismTree = selector({
+      key: 'full-organism-tree',
+      get: () => fetchOrganismTree(wdkService),
+    });
+
     const organismTree = selector({
       key: 'organism-tree',
-      get: () => fetchOrganismTree(wdkService),
+      get: ({ get }) =>
+        pruneNodesWithSingleExtendingChild(get(fullOrganismTree)),
     });
 
     const availableOrganisms = selector({
@@ -138,6 +147,12 @@ export const makePreferredOrganismsRecoilState = memoize(
       default: true,
     });
 
+    const preferredSpecies = selector({
+      key: 'preferred-species',
+      get: ({ get }) =>
+        findPreferredSpecies(get(fullOrganismTree), get(preferredOrganisms)),
+    });
+
     return {
       availableOrganisms,
       buildNumber,
@@ -147,6 +162,7 @@ export const makePreferredOrganismsRecoilState = memoize(
       organismTree,
       preferredOrganisms,
       preferredOrganismsEnabled,
+      preferredSpecies,
       projectId,
     };
   }
@@ -171,7 +187,7 @@ async function fetchOrganismTree(wdkService: WdkService) {
     orgParam?.type === 'multi-pick-vocabulary' &&
     orgParam?.displayType === 'treeBox'
   ) {
-    return pruneNodesWithSingleExtendingChild(orgParam.vocabulary);
+    return orgParam.vocabulary;
   }
 
   throw new Error(
@@ -239,6 +255,29 @@ function findNewOrganisms(
       return memo;
     },
     new Set<string>()
+  );
+}
+
+function findPreferredSpecies(
+  organismTree: TreeBoxVocabNode,
+  preferredOrganisms: string[]
+) {
+  const preferredOrganismsSet = new Set(preferredOrganisms);
+
+  return foldStructure(
+    (preferredSpecies, node) => {
+      if (
+        node.children.some((child) =>
+          preferredOrganismsSet.has(child.data.term)
+        )
+      ) {
+        preferredSpecies.add(node.data.term);
+      }
+
+      return preferredSpecies;
+    },
+    new Set<string>(),
+    organismTree
   );
 }
 
