@@ -17,6 +17,7 @@ import {
   Decoder,
 } from 'io-ts';
 import { Filter } from '../types/filter';
+import { TimeUnit } from '../types/general';
 import { Variable, StringVariableValue } from '../types/variable';
 import { ComputationAppOverview } from '../types/visualization';
 import { ioTransformer } from './ioTransformer';
@@ -40,7 +41,7 @@ export interface HistogramRequestParams {
     binSpec: {
       type: 'binWidth' | 'numBins';
       value?: number;
-      units?: 'day' | 'week' | 'month' | 'year';
+      units?: TimeUnit;
     };
     viewport?: {
       xMin: string;
@@ -69,7 +70,7 @@ export const HistogramResponse = type({
     ])
   ),
   config: type({
-    incompleteCases: number,
+    incompleteCases: array(number), // TO DO: DC says this will be a plain number
     binSlider: type({
       min: number,
       max: number,
@@ -80,7 +81,7 @@ export const HistogramResponse = type({
       type({ type: keyof({ binWidth: null, numBins: null }) }),
       partial({
         value: number,
-        units: keyof({ day: null, week: null, month: null, year: null }),
+        units: TimeUnit,
       }),
     ]),
     // TO DO: viewport and summary

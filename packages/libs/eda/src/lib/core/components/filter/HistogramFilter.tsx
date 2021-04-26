@@ -5,11 +5,12 @@ import Histogram, {
 import {
   DateRange,
   ErrorManagement,
-  NumberOrTimeDelta,
-  NumberOrTimeDeltaRange,
   NumberRange,
   TimeDelta,
+  NumberOrTimeDelta,
+  NumberOrTimeDeltaRange,
 } from '@veupathdb/components/lib/types/general';
+import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import {
   HistogramData,
   HistogramDataSeries,
@@ -29,11 +30,10 @@ import { SessionState } from '../../hooks/session';
 import { useDataClient } from '../../hooks/workspace';
 import { DateRangeFilter, Filter, NumberRangeFilter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
-import { NumberOrDateRange, TimeUnit } from '../../types/general';
+import { TimeUnit, NumberOrDateRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
 import { padISODateTime } from '../../utils/date-conversion';
-import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -277,7 +277,9 @@ function HistogramPlotWithControls({
     ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
       updateUIState({
         binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
-        binWidthTimeUnit: isTimeDelta(newBinWidth) ? newBinWidth[1] : undefined,
+        binWidthTimeUnit: isTimeDelta(newBinWidth)
+          ? (newBinWidth[1] as TimeUnit)
+          : undefined,
       });
     },
     [updateUIState]
@@ -327,6 +329,9 @@ function HistogramPlotWithControls({
         barLayout={barLayout}
         // add independentAxisLabel
         independentAxisLabel={
+          // TO DO: revert the following to plain `variableName`
+          // rationale: it doesn't matter if a date variable is binned in days, months or years,
+          // it's still just a date variable (e.g. "date of birth", not "date of birth (months)")
           data.binWidth && isTimeDelta(data.binWidth)
             ? variableName + ' (' + data.binWidth[1] + ')'
             : variableName
