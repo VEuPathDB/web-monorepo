@@ -390,10 +390,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     const binWidth =
       params.data.binWidth ??
       ('unit' in binWidthRange
-        ? ([
-            binWidthRange.max / 10,
-            (binWidthRange as TimeDeltaRange).unit,
-          ] as TimeDelta)
+        ? ({
+            value: binWidthRange.max / 10,
+            unit: binWidthRange.unit,
+          } as TimeDelta)
         : binWidthRange.max / 10);
 
     const binWidthStep =

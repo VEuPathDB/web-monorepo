@@ -76,5 +76,5 @@ export function isTimeUnit(maybeTimeUnit: string): maybeTimeUnit is TimeUnit {
 export function isTimeDelta(
   maybeTimeDelta: NumberOrTimeDelta
 ): maybeTimeDelta is TimeDelta {
-  return Array.isArray(maybeTimeDelta);
+  return typeof maybeTimeDelta !== 'number' && 'unit' in maybeTimeDelta;
 }

@@ -412,20 +412,20 @@ export default function HistogramControls({
             <SliderWidget
               label={`Bin Width${
                 valueType !== undefined && valueType === 'date'
-                  ? ' (' + (binWidth as TimeDelta)[1] + ')'
+                  ? ' (' + (binWidth as TimeDelta).unit + ')'
                   : ''
               }`}
               minimum={binWidthRange.min}
               maximum={binWidthRange.max}
               showTextInput={true}
               step={binWidthStep}
-              value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
+              value={typeof binWidth === 'number' ? binWidth : binWidth.value}
               debounceRateMs={250}
               onChange={(newValue: number) => {
                 onBinWidthChange({
                   binWidth:
                     valueType !== undefined && valueType === 'date'
-                      ? ([newValue, selectedUnit] as TimeDelta)
+                      ? ({ value: newValue, unit: selectedUnit } as TimeDelta)
                       : newValue,
                   selectedUnit,
                 });
