@@ -141,6 +141,7 @@ export interface UsersAddedContentProps {
   createdUsers: string[];
   emailedUsers: string[];
   permissionName: string;
+  permissionNamePlural: string;
   onConfirm: () => void;
 }
 
@@ -148,6 +149,7 @@ export function UsersAddedContent({
   createdUsers,
   emailedUsers,
   permissionName,
+  permissionNamePlural,
   onConfirm
 }: UsersAddedContentProps) {
   return (

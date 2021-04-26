@@ -201,7 +201,7 @@ export function useOpenDialogConfig() {
       });
     } else if (newDialogContentProps.type === 'add-users') {
       setOpenDialogConfig({
-        title: `Adding ${newDialogContentProps.permissionNamePlural.split(' ').map(capitalize).join(' ')}`,
+        title: `Adding ${capitalizeRole(newDialogContentProps.permissionNamePlural)}`,
         onClose: () => {
           setOpenDialogConfig(undefined);
         },
@@ -209,7 +209,7 @@ export function useOpenDialogConfig() {
       });
     } else if (newDialogContentProps.type === 'users-added') {
       setOpenDialogConfig({
-        title: 'New Providers',
+        title: `New ${capitalizeRole(newDialogContentProps.permissionNamePlural)}`,
         onClose: () => {
           setOpenDialogConfig(undefined);
         },
@@ -464,6 +464,7 @@ export function useProviderTableSectionConfig(
                         createdUsers: createdUsers.map(({ email }) => email),
                         emailedUsers: emailedUsers.map(({ email }) => email),
                         permissionName: 'provider',
+                        permissionNamePlural: 'providers',
                         onConfirm: () => {
                           changeOpenDialogConfig(undefined);
                         }
@@ -997,6 +998,7 @@ function makeEndUserTableActions(
             createdUsers: createdUsers.map(({ email }) => email),
             emailedUsers: emailedUsers.map(({ email }) => email),
             permissionName: 'end user',
+            permissionNamePlural: 'end users',
             onConfirm: () => {
               changeOpenDialogConfig(undefined);
             }
@@ -1193,4 +1195,8 @@ function isoToUtcString(value: string | undefined) {
 
 function dateToUtcString(date: Date) {
   return date.toUTCString().replace(/^[A-Z][a-z][a-z],\s/i, '');
+}
+
+function capitalizeRole(role: string) {
+  return role.split(' ').map(capitalize).join(' ');
 }
