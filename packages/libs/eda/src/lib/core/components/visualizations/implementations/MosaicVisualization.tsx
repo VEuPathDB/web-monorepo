@@ -9,7 +9,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { isEqual } from 'lodash';
+import { isEqual, sum, unzip } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
@@ -235,7 +235,7 @@ function MosaicViz(props: Props) {
       {data.pending && (
         <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
       )}
-      {data.error && fullscreen && (
+      {data.error && fullscreen && console.log(data.error) && (
         <div
           style={{
             fontSize: '1.2em',
@@ -339,11 +339,12 @@ export function mosaicResponseToData(
 ): MosaicData {
   if (response.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
+  const data = response.data[0].y;
   return {
-    data: response.data[0].y,
-    widths: response.data[0].x,
-    exposureValues: response.data[0].xLabel,
-    outcomeValues: response.data[0].yLabel,
+    data: data,
+    widths: data.map((arr) => sum(arr)),
+    exposureValues: response.data[0]['x.label'],
+    outcomeValues: response.data[0]['y.label'],
   };
 }
 

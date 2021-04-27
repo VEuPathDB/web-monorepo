@@ -22,7 +22,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
   'date-histogram-bin-width': histogramVisualization,
   'numeric-histogram-bin-width': histogramVisualization,
-  mosaic: mosaicVisualization,
+  twobytwo: mosaicVisualization,
 };
 
 export function PassThroughComputation(props: Props) {

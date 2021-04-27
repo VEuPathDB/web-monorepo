@@ -11,6 +11,6 @@ export interface TableVariable extends StudyVariable {
 }
 
 export interface MosaicVariable extends StudyVariable {
-  type: 'number';
-  dataShape: 'categorical';
+  type: 'string' | 'number' | 'category';
+  dataShape: 'categorical' | 'binary' | 'ordinal';
 }

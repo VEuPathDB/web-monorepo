@@ -211,7 +211,7 @@ export interface MosaicRequestParams {
 export type MosaicResponse = TypeOf<typeof MosaicResponse>;
 export const MosaicResponse = type({
   config: type({
-    incompleteCases: number,
+    incompleteCases: array(number),
     xVariableDetails: type({
       variableId: string,
       entityId: string,
@@ -224,14 +224,14 @@ export const MosaicResponse = type({
   data: array(
     type({
       oddsratio: array(number),
-      pvalue: array(number),
-      x: array(number),
-      xLabel: array(string),
-      orInterval: array(number),
-      yLabel: array(string),
+      ['p.value']: array(union([string, number])),
+      // x: array(number),
+      ['x.label']: array(string),
+      ['or.interval']: array(string),
+      ['y.label']: array(string),
       y: array(array(number)),
       relativerisk: array(number),
-      rrInterval: array(number),
+      ['rr.interval']: array(string),
     })
   ),
 });
@@ -331,7 +331,7 @@ export class DataClient extends FetchClient {
   ): Promise<MosaicResponse> {
     return this.getVisualizationData(
       computationName,
-      'mosaic',
+      'twobytwo',
       params,
       MosaicResponse
     );

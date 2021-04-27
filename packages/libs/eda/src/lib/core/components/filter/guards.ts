@@ -37,8 +37,12 @@ export function isMosaicVariable(
 ): variable is MosaicVariable {
   switch (variable.dataShape) {
     case 'categorical':
+    case 'binary':
+    case 'ordinal':
       switch (variable.type) {
         case 'number':
+        case 'category':
+        case 'string':
           return true;
       }
   }
