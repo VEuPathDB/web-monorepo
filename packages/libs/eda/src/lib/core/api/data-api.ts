@@ -198,10 +198,8 @@ export interface ScatterplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    //DKDK seems like they would change smoothedMean to valueSpec later
     valueSpec: 'raw' | 'smoothedMean' | 'smoothedMeanWithRaw';
-    // smoothedMean: boolean;
-    // //DKDK not quite sure of overlayVariable and facetVariable yet
+    //DKDK not quite sure of overlayVariable and facetVariable yet
     // overlayVariable?: Variable;
     // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: {
@@ -217,23 +215,20 @@ export interface ScatterplotRequestParams {
 
 //DKDK unlike API doc, data (response) shows series.x, series.y, interval.x, interval.y, interval.se
 const ScatterplotResponseData = array(
-  intersection([
-    type({
-      'series.x': array(number),
-      'series.y': array(number),
-    }),
-    partial({
-      //DKDK valueSpec = smoothedMean only returns interval data (no series data)
-      'interval.x': array(number),
-      'interval.y': array(number),
-      'interval.se': array(number),
-      overlayVariableDetails: StringVariableValue,
-      facetVariableDetails: union([
-        tuple([StringVariableValue]),
-        tuple([StringVariableValue, StringVariableValue]),
-      ]),
-    }),
-  ])
+  partial({
+    //DKDK valueSpec = smoothedMean only returns interval data (no series data)
+    'series.x': array(number),
+    'series.y': array(number),
+    'interval.x': array(number),
+    'interval.y': array(number),
+    'interval.se': array(number),
+    //DKDK need to make sure if below is correct (untested)
+    overlayVariableDetails: StringVariableValue,
+    facetVariableDetails: union([
+      tuple([StringVariableValue]),
+      tuple([StringVariableValue, StringVariableValue]),
+    ]),
+  })
 );
 
 export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
@@ -346,9 +341,6 @@ export class DataClient extends FetchClient {
     computationName: string,
     params: ScatterplotRequestParams
   ): Promise<ScatterplotResponse> {
-    //DKDK
-    console.log('Im at getScatterPlot');
-
     return this.getVisualizationData(
       computationName,
       'scatterplot',

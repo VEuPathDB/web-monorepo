@@ -1,9 +1,4 @@
-//DKDK block histogram stuffs
-// import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
-//DKDK scatter plot props may be imported but for now manually set here before changing
-// import Histogram, {
-//   HistogramProps,
-// } from '@veupathdb/components/lib/plots/Histogram';
+//DKDK this may not be needed if import ScatterplotProps from Scatter plot component
 import PlotlyPlot, {
   PlotProps,
   ModebarDefault,
@@ -15,15 +10,9 @@ import PlotlyPlot, {
 import ScatterAndLinePlotGeneral from '@veupathdb/components/lib/plots/ScatterAndLinePlotGeneral';
 // import ScatterAndLinePlotGeneral from '@veupathdb/components/src/plots/ScatterAndLinePlotGeneral';
 
-import {
-  ErrorManagement,
-  NumberOrTimeDelta,
-  NumberOrTimeDeltaRange,
-  TimeDelta,
-} from '@veupathdb/components/lib/types/general';
-import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
+import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
-//DKDK may need to make a new ScatterplotData ts
+//DKDK import it from scatter plot component or may need to make a new ScatterplotData ts
 // import { HistogramData } from '@veupathdb/components/lib/types/plots';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -35,12 +24,7 @@ import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
 //DKDK need to set for Scatterplot
-import {
-  DataClient,
-  ScatterplotRequestParams,
-  // DateHistogramRequestParams,
-  // NumericHistogramRequestParams,
-} from '../../../api/data-api';
+import { DataClient, ScatterplotRequestParams } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
@@ -53,9 +37,9 @@ import {
   parseTimeDelta,
 } from '../../../utils/date-conversion';
 
-//DKDK need to make ts for Scatterplot?
-// import { isHistogramVariable } from '../../filter/guards';
-// import { HistogramVariable } from '../../filter/types';
+//DKDK need to make ts for Scatterplot? need to know dataShape and type
+import { isScatterplotVariable } from '../../filter/guards';
+import { ScatterplotVariable } from '../../filter/types';
 
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
@@ -67,8 +51,7 @@ export const scatterplotVisualization: VisualizationType = {
   createDefaultConfig: createDefaultConfig,
 };
 
-//DKDK copy Scatter Plot props here for now
-//DKDK change interface a bit more: this could avoid error on data type
+//DKDK copy Scatter Plot props here for now instead of import
 
 // interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
 interface ScatterplotProps<T extends keyof any> extends PlotProps {
@@ -222,34 +205,15 @@ function ScatterplotViz(props: Props) {
     ) => {
       //DKDK yAxisVariable
       const { xAxisVariable, yAxisVariable, overlayVariable } = values;
-      // const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
       updateVizConfig({
         xAxisVariable,
         //DKDK yAxisVariable
         yAxisVariable,
         overlayVariable,
-        //DKDK block below
-        // binWidth: keepBin ? vizConfig.binWidth : undefined,
-        // binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
       });
     },
     [updateVizConfig, vizConfig]
   );
-
-  //DKDK block
-  // const onBinWidthChange = useCallback(
-  //   ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
-  //     if (newBinWidth) {
-  //       updateVizConfig({
-  //         binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
-  //         binWidthTimeUnit: isTimeDelta(newBinWidth)
-  //           ? newBinWidth[1]
-  //           : undefined,
-  //       });
-  //     }
-  //   },
-  //   [updateVizConfig]
-  // );
 
   const findVariable = useCallback(
     (variable?: Variable) => {
@@ -271,15 +235,20 @@ function ScatterplotViz(props: Props) {
       //DKDK yAxisVariable
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return Promise.reject(new Error('Please choose a X-axis variable'));
+      else if (!isScatterplotVariable(xAxisVariable))
+        return Promise.reject(
+          new Error(
+            `'${xAxisVariable.displayName}' is not suitable for this plot`
+          )
+        );
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
         return Promise.reject(new Error('Please choose a Y-axis variable'));
-
-      //DKDK isHistogramVariable is a type guard
-      // if (xAxisVariable && !isHistogramVariable(xAxisVariable))
-      // if (xAxisVariable)
-      //   throw new Error(
-      //     `Please choose another main variable. '${xAxisVariable.displayName}' is not suitable for Scatter Plots`
-      //   );
+      else if (!isScatterplotVariable(yAxisVariable))
+        return Promise.reject(
+          new Error(
+            `'${yAxisVariable.displayName}' is not suitable for this plot`
+          )
+        );
 
       const params = getRequestParams(
         studyId,
@@ -287,17 +256,13 @@ function ScatterplotViz(props: Props) {
         vizConfig.xAxisVariable,
         //DKDK yAxisVariable
         vizConfig.yAxisVariable,
-        //DKDK
-        // xAxisVariable.type,
+        //DKDK overlay...
         vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined
-        // vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
-        // vizConfig.binWidth,
-        // vizConfig.binWidthTimeUnit,
       );
 
-      // DKDK
-      console.log('params = ', params);
-      console.log('computation = ', computation);
+      // // DKDK
+      // console.log('params = ', params)
+      // console.log('computation = ', computation)
 
       //DKDK
       const response = dataClient.getScatterplot(
@@ -305,10 +270,10 @@ function ScatterplotViz(props: Props) {
         params as ScatterplotRequestParams
       );
 
-      console.log('dataClient->response = ', response);
+      // console.log('dataClient->response = ', response)
 
       //DKDK send visualization.type as well
-      return scatterplotResponseToData(await response);
+      return scatterplotResponseToData(await response, visualization.type);
     }, [
       studyId,
       filters,
@@ -337,7 +302,7 @@ function ScatterplotViz(props: Props) {
                 name: 'yAxisVariable',
                 label: 'y-axis variable',
               },
-              // DKDK block this for now
+              // DKDK block overlay for now
               // {
               //   name: 'overlayVariable',
               //   label: 'Overlay variable',
@@ -348,7 +313,7 @@ function ScatterplotViz(props: Props) {
               xAxisVariable: vizConfig.xAxisVariable,
               //DKDK yAxisVariable
               yAxisVariable: vizConfig.yAxisVariable,
-              //DKDK block this for now
+              // DKDK block overlay for now
               // overlayVariable: vizConfig.overlayVariable,
             }}
             onChange={handleInputVariableChange}
@@ -379,29 +344,33 @@ function ScatterplotViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {/* DKDK no data.value ?*/}
       {data.value ? (
         fullscreen ? (
           <ScatterplotWithControls
             //DKDK data.value
-            data={[data.value]}
+            // data={data.value}
+            data={[...data.value.dataSetProcess]}
             width={1000}
             height={600}
             xLabel={'xLabel'}
             yLabel={'yLabel'}
             plotTitle={'plotTitle'}
+            xRange={[data.value.xMin, data.value.xMax]}
+            yRange={[data.value.yMin, data.value.yMax]}
           />
         ) : (
           // thumbnail/grid view
           <ScatterAndLinePlotGeneral
             //DKDK data.value
-            data={[data.value]}
+            // data={data.value}
+            data={[...data.value.dataSetProcess]}
             width={350}
             height={280}
-            // height={200}
             xLabel={'xLabel'}
             yLabel={'yLabel'}
             plotTitle={'plotTitle'}
+            xRange={[data.value.xMin, data.value.xMax]}
+            yRange={[data.value.yMin, data.value.yMax]}
           />
         )
       ) : (
@@ -417,12 +386,11 @@ function ScatterplotViz(props: Props) {
   );
 }
 
-// //DKDK block some
-// type ScatterplotWithControlsProps = ScatterplotProps;
+// //DKDK block for now
+// type ScatterplotWithControlsProps = ScatterplotProps
 
 function ScatterplotWithControls({
   data,
-  // onBinWidthChange,
   ...ScatterplotProps
 }: //DKDK
 // }: ScatterplotWithControlsProps) {
@@ -450,6 +418,14 @@ any) {
       />
     </div>
   );
+  //DKDK making a control later
+  // <ScatterplotControls
+  //   label="Scatter Plot Controls"
+  //   valueType={data.valueType}
+  //   displayLegend={false /* should not be a required prop */}
+  //   displayLibraryControls={displayLibraryControls}
+  //   errorManagement={errorManagement}
+  // />
 }
 
 /**
@@ -459,24 +435,48 @@ any) {
  */
 export function scatterplotResponseToData(
   //DKDK getScatterplot may also need to be changed in the future for hosting other plots
-  response: PromiseType<ReturnType<DataClient['getScatterplot']>>
+  response: PromiseType<ReturnType<DataClient['getScatterplot']>>,
+  //DKDK vizType is visualization.type. This may be used for handling other plots in this component like line and density
+  vizType: string
 ): any {
   if (response.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
   else console.log('Im at scatterplotResponseToData');
 
+  console.log('visualization type at scatterplotResponseToData = ', vizType);
   console.log('response.data =', response);
 
-  return {
-    x: response.data[0]['series.x'],
-    y: response.data[0]['series.y'],
-    name: 'hardcorded label',
-    mode: 'markers',
-    type: 'scatter',
-    // fill: fillAreaValue,
-    marker: { color: 'blue', size: 12 },
-    line: { color: 'blue', shape: 'spline' },
-  };
+  if (vizType === 'scatterplot') {
+    //DKDK scatterplot
+    const modeValue = 'markers';
+    const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(
+      response,
+      vizType,
+      modeValue
+    );
+
+    console.log('dataSetProcess =', dataSetProcess);
+    console.log('xMin, xMax, yMin, yMax =', xMin, xMax, yMin, yMax);
+
+    return {
+      dataSetProcess: dataSetProcess,
+      xMin: xMin,
+      xMax: xMax,
+      yMin: yMin,
+      yMax: yMax,
+    };
+  }
+
+  // return {
+  //   x: response.data[0]['series.x'],
+  //   y: response.data[0]['series.y'],
+  //   name: 'hardcorded label',
+  //   mode: 'markers',
+  //   type: 'scatter',
+  //   // fill: fillAreaValue,
+  //   marker: { color: 'blue', size: 12 },
+  //   line: { color: 'blue', shape: 'spline' },
+  // };
 }
 
 function getRequestParams(
@@ -490,7 +490,7 @@ function getRequestParams(
     studyId,
     filters,
     config: {
-      //DKDK is this correct???
+      //DKDK is outputEntityId correct?
       outputEntityId: xAxisVariable.entityId,
       //DKDK valueSpect may be used in the future
       valueSpec: 'raw',
@@ -503,4 +503,450 @@ function getRequestParams(
       // overlayVariable: overlayVariable,
     },
   } as ScatterplotRequestParams;
+}
+
+//DKDK making plotly input data
+function processInputData<T extends number | Date>(
+  //DKDK any
+  // dataSet: VEuPathDBScatterPlotData<T>
+  dataSet: any,
+  //DKDK use vizType or perhaps use different argument when calling processInputData?
+  vizType: string,
+  //DKDK line, marker,
+  modeValue: string,
+  //DKDK fillAreaValue default is empty (): set tto 'toself' for density plot
+  fillAreaValue = ''
+) {
+  //DKDK set a default color
+  const defaultColor: string = '#00b0f6';
+  //DKDK set global Opacity value
+  const globalOpacity = 1;
+  // //DKDK an example data: data are assumed to be number type only
+  // const orientationValue = 'y';
+
+  //DKDK set variables for x- and yaxis ranges
+  let xMin: number | Date = 0;
+  let xMax: number | Date = 0;
+  let yMin: number | Date = 0;
+  let yMax: number | Date = 0;
+
+  let dataSetProcess: Array<{}> = [];
+  dataSet.data.forEach(function (el: any, index: number) {
+    //DKDK initialize variables: setting with union type for future, but this causes typescript issue in the current version
+    let xSeriesValue: T[] = [];
+    let ySeriesValue: T[] = [];
+    let xIntervalLineValue: T[] = [];
+    let yIntervalLineValue: T[] = [];
+    let standardErrorValue: T[] = []; //DKDK this is for standardError
+    let xIntervalBounds: T[] = [];
+    let yIntervalBounds: T[] = [];
+
+    //DKDK set rgbValue here per dataset with a default color
+    let rgbValue: number[] = el.color
+      ? hexToRgb(el.color)
+      : hexToRgb(defaultColor);
+    let scatterPointColor: string = '';
+    let fittingLineColor: string = '';
+    let intervalColor: string = '';
+    //DKDK set line and marker variable - get these as args
+    // let modeValue: string = '';
+    // let splineValue: string = '';
+    // let fillAreaValue: string = '';
+
+    //DKDK series is for scatter plot
+    if (el['series.x'] && el['series.y']) {
+      //DKDK check the number of x = number of y
+      if (el['series.x'].length !== el['series.y'].length) {
+        console.log(
+          'x length=',
+          el['series.x'].length,
+          '  y length=',
+          el['series.y'].length
+        );
+        alert('The number of X data is not equal to the number of Y data');
+        throw new Error(
+          'The number of X data is not equal to the number of Y data'
+        );
+      }
+
+      //DKDK probably no need to have this for series data, though
+      //1) combine the arrays:
+      let combinedArray = [];
+      for (let j = 0; j < el['series.x'].length; j++) {
+        combinedArray.push({
+          xValue: el['series.x'][j],
+          yValue: el['series.y'][j],
+        });
+      }
+      //2) sort:
+      combinedArray.sort(function (a, b) {
+        return a.xValue < b.xValue ? -1 : a.xValue == b.xValue ? 0 : 1;
+      });
+      //3) separate them back out:
+      for (let k = 0; k < combinedArray.length; k++) {
+        xSeriesValue[k] = combinedArray[k].xValue;
+        ySeriesValue[k] = combinedArray[k].yValue;
+      }
+
+      /*
+       * DKDK set variables for x-/y-axes ranges including x,y data points: considering Date data for X as well
+       * This is for finding global min/max values among data arrays for better display of the plot(s)
+       */
+      //DKDK check if this X array consists of numbers & add type assertion
+      if (isArrayOfNumbers(xSeriesValue)) {
+        if (index == 0) {
+          //DKDK need to set initial xMin/xMax
+          xMin = xSeriesValue[0];
+          xMax = xSeriesValue[xSeriesValue.length - 1];
+        } else {
+          xMin =
+            xMin < Math.min(...(xSeriesValue as number[]))
+              ? xMin
+              : Math.min(...(xSeriesValue as number[]));
+          xMax =
+            xMax > Math.max(...(xSeriesValue as number[]))
+              ? xMax
+              : Math.max(...(xSeriesValue as number[]));
+        }
+      } else {
+        //DKDK this array consists of Dates
+        if (index == 0) {
+          //DKDK to set initial min/max Date values for Date[]
+          xMin = getMinDate(xSeriesValue as Date[]);
+          xMax = getMaxDate(xSeriesValue as Date[]);
+        } else {
+          xMin =
+            xMin <
+            Math.min(...xSeriesValue.map((date) => new Date(date).getTime()))
+              ? xMin
+              : new Date(
+                  Math.min(
+                    ...xSeriesValue.map((date) => new Date(date).getTime())
+                  )
+                );
+          xMax =
+            xMax >
+            Math.max(...xSeriesValue.map((date) => new Date(date).getTime()))
+              ? xMax
+              : new Date(
+                  Math.max(
+                    ...xSeriesValue.map((date) => new Date(date).getTime())
+                  )
+                );
+        }
+      }
+
+      //DKDK check if this Y array consists of numbers & add type assertion
+      if (isArrayOfNumbers(ySeriesValue)) {
+        yMin =
+          yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
+        yMax =
+          yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
+      } else {
+        if (index == 0) {
+          //DKDK to set initial Date value for Date[]
+          yMin = getMinDate(ySeriesValue as Date[]);
+          yMax = getMaxDate(ySeriesValue as Date[]);
+        } else {
+          yMin =
+            yMin < getMinDate(ySeriesValue as Date[])
+              ? yMin
+              : getMinDate(ySeriesValue as Date[]);
+          yMax =
+            yMax > getMaxDate(ySeriesValue as Date[])
+              ? yMax
+              : getMaxDate(ySeriesValue as Date[]);
+        }
+      }
+
+      //DKDK use global opacity for coloring
+      scatterPointColor =
+        'rgba(' +
+        rgbValue[0] +
+        ',' +
+        rgbValue[1] +
+        ',' +
+        rgbValue[2] +
+        ',' +
+        globalOpacity +
+        ')'; //DKDK set alpha/opacity as 0.2 for CI
+
+      // //DKDK scatterplot this needs to be considered...
+      // //DKDK check plot options: default value at plotly js seems to be lines
+      // if (el.showLines == true && el.showMarkers == true) {
+      //   modeValue = 'lines+markers';
+      // } else if (el.showLines == true && el.showMarkers == false) {
+      //   modeValue = 'lines';
+      // } else if (el.showLines == false && el.showMarkers == true) {
+      //   modeValue = 'markers';
+      // }
+
+      // if (el.useSpline) {
+      //   splineValue = 'spline';
+      // }
+
+      // if (el.fillArea) {
+      //   fillAreaValue = 'toself';
+      // }
+
+      //DKDK add scatter data considering input options
+      dataSetProcess.push({
+        x: xSeriesValue,
+        y: ySeriesValue,
+        //DKDK set name as a string
+        name: 'data',
+        // mode: 'markers',
+        // mode: 'lines+markers',
+        mode: modeValue,
+        // type: 'scattergl',
+        type: 'scatter',
+        fill: fillAreaValue,
+        marker: { color: scatterPointColor, size: 12 },
+        //DKDK always use spline
+        line: { color: scatterPointColor, shape: 'spline' },
+      });
+    }
+
+    //DKDK check if interval prop exists
+    if (el['interval.x'] && el['interval.y'] && el['interval.se']) {
+      //DKDK check the number of x = number of y or standardError
+      if (el['interval.x'].length !== el['interval.y'].length) {
+        // alert(
+        //   'The number of X data is not equal to the number of Y data or standardError data'
+        // );
+        throw new Error(
+          'The number of X data is not equal to the number of Y data or standardError data'
+        );
+      }
+      //DKDK sorting function
+      //1) combine the arrays: including standardError
+      let combinedArrayInterval = [];
+      for (let j = 0; j < el['interval.x'].length; j++) {
+        combinedArrayInterval.push({
+          xValue: el['interval.x'][j],
+          yValue: el['interval.y'][j],
+          zValue: el['interval.se'][j],
+        });
+      }
+      //2) sort:
+      combinedArrayInterval.sort(function (a, b) {
+        return a.xValue < b.xValue ? -1 : a.xValue == b.xValue ? 0 : 1;
+      });
+      //3) separate them back out:
+      for (let k = 0; k < combinedArrayInterval.length; k++) {
+        xIntervalLineValue[k] = combinedArrayInterval[k].xValue;
+        yIntervalLineValue[k] = combinedArrayInterval[k].yValue;
+        standardErrorValue[k] = combinedArrayInterval[k].zValue;
+      }
+
+      //DKDK set variables for x-/y-axes ranges including fitting line
+      if (isArrayOfNumbers(xIntervalLineValue)) {
+        //DKDK add additional condition for the case of smoothedMean (without series data)
+        xMin = el['series.x']
+          ? xMin < Math.min(...xIntervalLineValue)
+            ? xMin
+            : Math.min(...xIntervalLineValue)
+          : Math.min(...xIntervalLineValue);
+        xMax = el['series.x']
+          ? xMax > Math.max(...xIntervalLineValue)
+            ? xMax
+            : Math.max(...xIntervalLineValue)
+          : Math.max(...xIntervalLineValue);
+      } else {
+        xMin = el['series.x']
+          ? xMin < getMinDate(xIntervalLineValue as Date[])
+            ? xMin
+            : getMinDate(xIntervalLineValue as Date[])
+          : getMinDate(xIntervalLineValue as Date[]);
+        xMax = el['series.x']
+          ? xMax > getMaxDate(xIntervalLineValue as Date[])
+            ? xMax
+            : getMaxDate(xIntervalLineValue as Date[])
+          : getMaxDate(xIntervalLineValue as Date[]);
+      }
+
+      if (isArrayOfNumbers(yIntervalLineValue)) {
+        //DKDK add additional condition for the case of smoothedMean (without series data)
+        yMin = el['series.y']
+          ? yMin < Math.min(...yIntervalLineValue)
+            ? yMin
+            : Math.min(...yIntervalLineValue)
+          : Math.min(...yIntervalLineValue);
+        yMax = el['series.y']
+          ? yMax > Math.max(...yIntervalLineValue)
+            ? yMax
+            : Math.max(...yIntervalLineValue)
+          : Math.max(...yIntervalLineValue);
+      } else {
+        yMin = el['series.y']
+          ? yMin < getMinDate(yIntervalLineValue as Date[])
+            ? yMin
+            : getMinDate(yIntervalLineValue as Date[])
+          : getMinDate(yIntervalLineValue as Date[]);
+        yMax = el['series.y']
+          ? yMax > getMaxDate(yIntervalLineValue as Date[])
+            ? yMax
+            : getMaxDate(yIntervalLineValue as Date[])
+          : getMaxDate(yIntervalLineValue as Date[]);
+      }
+
+      const xMinCheck = isArrayOfNumbers(xIntervalLineValue)
+        ? Math.min(...xIntervalLineValue)
+        : null;
+      const xMaxCheck = isArrayOfNumbers(xIntervalLineValue)
+        ? Math.max(...xIntervalLineValue)
+        : null;
+      console.log('xMin xMax at process function =', xMinCheck, xMinCheck);
+
+      //DKDK use global opacity for coloring
+      // fittingLineColor =
+      //   'rgba(' +
+      //   rgbValue[0] +
+      //   ',' +
+      //   rgbValue[1] +
+      //   ',' +
+      //   rgbValue[2] +
+      //   ',' +
+      //   globalOpacity +
+      //   ')';
+      fittingLineColor = 'rgba(144,12,63,' + globalOpacity + ')';
+
+      //DKDK store data for fitting line: this is not affected by plot options (e.g., showLine etc.)
+      dataSetProcess.push({
+        x: xIntervalLineValue,
+        y: yIntervalLineValue,
+        name: 'fitted line',
+        // mode: 'lines+markers',
+        mode: 'lines', //DKDK no data point is displayed: only line
+        // type: 'line',
+        // line: {color: el.color, shape: 'spline',  width: 5 },
+        //DKDK line width
+        line: { color: fittingLineColor, shape: 'spline', width: 2 },
+      });
+
+      //DKDK make Confidence Interval (CI) or Bounds (filled area)
+      xIntervalBounds = xIntervalLineValue;
+      xIntervalBounds = xIntervalBounds.concat(
+        xIntervalLineValue.map((element: any) => element).reverse()
+      );
+
+      console.log('xMin xMax =', xMin, xMax);
+
+      //DKDK need to compare xMin/xMax
+      xMin =
+        xMin < Math.min(...xIntervalBounds.map(Number))
+          ? xMin
+          : Math.min(...xIntervalBounds.map(Number));
+      xMax =
+        xMax > Math.max(...xIntervalBounds.map(Number))
+          ? xMax
+          : Math.max(...xIntervalBounds.map(Number));
+
+      //DKDK finding upper and lower bound values.
+      const { yUpperValues, yLowerValues } = getBounds(
+        //DKDK scatterplot - use yIntervalLineValue
+        // el.interval.orientation === 'x'
+        // ? xIntervalLineValue
+        // : yIntervalLineValue,
+        yIntervalLineValue,
+        standardErrorValue
+      );
+
+      //DKDK make upper and lower bounds plotly format
+      yIntervalBounds = yUpperValues;
+      yIntervalBounds = yIntervalBounds.concat(
+        yLowerValues.map((element: any) => element).reverse()
+      );
+
+      //DKDK set alpha/opacity as 0.2 for CI
+      // intervalColor =
+      //   'rgba(' + rgbValue[0] + ',' + rgbValue[1] + ',' + rgbValue[2] + ',0.2)';
+      intervalColor = 'rgba(144,12,63,0.2)';
+
+      //DKDK set variables for x-/y-axes ranges including CI/bounds: no need for x data as it was compared before
+      yMin =
+        yMin < Math.min(...yLowerValues.map(Number))
+          ? yMin
+          : Math.min(...yLowerValues.map(Number));
+      yMax =
+        yMax > Math.max(...yUpperValues.map(Number))
+          ? yMax
+          : Math.max(...yUpperValues.map(Number));
+
+      //DKDK store data for CI/bounds
+      dataSetProcess.push({
+        x: xIntervalBounds,
+        y: yIntervalBounds,
+        name: 'Confidence interval',
+        fill: 'tozerox',
+        fillcolor: intervalColor,
+        type: 'line',
+        line: { color: 'transparent', shape: 'spline' }, //DKDK here, line means upper and lower bounds
+      });
+    }
+
+    //DKDK determine y-axis range for numbers only: x-axis should be in the range of [xMin,xMax] due to CI plot
+    if (typeof yMin == 'number' && typeof yMax == 'number') {
+      yMin = yMin < 0 ? Math.floor(yMin) : Math.ceil(yMin);
+      yMax = yMax < 0 ? Math.floor(yMax) : Math.ceil(yMax);
+    }
+  });
+
+  return { dataSetProcess, xMin, xMax, yMin, yMax };
+}
+
+//DKDK util functions for processInputData()
+//DKDK change HTML hex code to rgb array
+const hexToRgb = (hex?: string): [number, number, number] => {
+  if (!hex) return [0, 0, 0];
+  const fullHex = hex.replace(
+    /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+    (m: string, r: string, g: string, b: string): string =>
+      '#' + r + r + g + g + b + b
+  );
+  const hexDigits = fullHex.substring(1);
+  const matches = hexDigits.match(/.{2}/g);
+  if (matches == null) return [0, 0, 0];
+  return matches.map((x: string) => parseInt(x, 16)) as [
+    number,
+    number,
+    number
+  ];
+};
+
+//DKDK check number array and if empty
+function isArrayOfNumbers(value: any): value is number[] {
+  //DKDK value.length !==0
+  return (
+    Array.isArray(value) &&
+    value.length !== 0 &&
+    value.every((item) => typeof item === 'number')
+  );
+}
+
+function getMinDate(dates: Date[]) {
+  return new Date(Math.min(...dates.map(Number)));
+}
+
+function getMaxDate(dates: Date[]) {
+  return new Date(Math.max(...dates.map(Number)));
+}
+
+function getBounds<T extends number | Date>(
+  values: T[],
+  standardErrors: T[]
+): {
+  yUpperValues: T[];
+  yLowerValues: T[];
+} {
+  const yUpperValues = values.map((value, idx) => {
+    const tmp = Number(value) + 2 * Number(standardErrors[idx]);
+    return value instanceof Date ? (new Date(tmp) as T) : (tmp as T);
+  });
+  const yLowerValues = values.map((value, idx) => {
+    const tmp = Number(value) - 2 * Number(standardErrors[idx]);
+    return value instanceof Date ? (new Date(tmp) as T) : (tmp as T);
+  });
+
+  return { yUpperValues, yLowerValues };
 }
