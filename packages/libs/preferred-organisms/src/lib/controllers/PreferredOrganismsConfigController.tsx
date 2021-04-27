@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Prompt } from 'react-router-dom';
 
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
@@ -62,20 +63,41 @@ export function PreferredOrganismsConfigController() {
 
   const togglePreferredOrganisms = useTogglePreferredOrganisms();
 
+  useEffect(() => {
+    function onBeforeUnload(e: BeforeUnloadEvent) {
+      if (!savingPreferredOrganismsDisabled) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    }
+
+    window.addEventListener('beforeunload', onBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload);
+    };
+  }, [savingPreferredOrganismsDisabled]);
+
   return (
-    <PreferredOrganismsConfig
-      availableOrganisms={availableOrganisms}
-      configSelection={configSelection}
-      newOrganisms={newOrganisms}
-      organismTree={organismTree}
-      preferredOrganismsEnabled={preferredOrganismsEnabled}
-      projectId={projectIdValue}
-      referenceStrains={referenceStrains}
-      savePreferredOrganisms={savePreferredOrganisms}
-      savingPreferredOrganismsDisabled={savingPreferredOrganismsDisabled}
-      setConfigSelection={setConfigSelection}
-      revertConfigSelection={revertConfigSelection}
-      togglePreferredOrganisms={togglePreferredOrganisms}
-    />
+    <>
+      <PreferredOrganismsConfig
+        availableOrganisms={availableOrganisms}
+        configSelection={configSelection}
+        newOrganisms={newOrganisms}
+        organismTree={organismTree}
+        preferredOrganismsEnabled={preferredOrganismsEnabled}
+        projectId={projectIdValue}
+        referenceStrains={referenceStrains}
+        savePreferredOrganisms={savePreferredOrganisms}
+        savingPreferredOrganismsDisabled={savingPreferredOrganismsDisabled}
+        setConfigSelection={setConfigSelection}
+        revertConfigSelection={revertConfigSelection}
+        togglePreferredOrganisms={togglePreferredOrganisms}
+      />
+      <Prompt
+        when={!savingPreferredOrganismsDisabled}
+        message="Do you want to leave this page? Your unsaved changes to My Organism Preferences will be discarded."
+      />
+    </>
   );
 }
