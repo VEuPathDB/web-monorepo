@@ -67,26 +67,27 @@ function BaseInput({
   const [localRange, setLocalRange] = useState<
     NumberRange | DateRange | undefined
   >(range);
+  const [isReceiving, setIsReceiving] = useState<boolean>(false);
 
   // handle incoming value changes
   useEffect(() => {
+    setIsReceiving(true);
     setLocalRange(range);
   }, [range]);
 
-  // pass changes in localRange up to consumer
+  // if we are not currently receiving incoming data
+  // pass localRange (if it differs from `range`) out to consumer
   // respecting `allowPartialRanges`
   useEffect(() => {
-    if (localRange) {
-      if (
-        allowPartialRanges ||
-        (localRange.min != null && localRange.max != null)
-      ) {
-        onRangeChange(localRange);
-      }
+    if (
+      !isReceiving &&
+      localRange &&
+      (localRange.min !== range?.min || localRange.max !== range?.max) &&
+      (allowPartialRanges || (localRange.min != null && localRange.max != null))
+    ) {
+      onRangeChange(localRange);
     }
-  }, [localRange, /* onRangeChange, */ allowPartialRanges]);
-  // ranges changed by mouse gestures get into an infinite loop
-  // if onRangeChange is included as a dependency
+  }, [localRange, range, isReceiving, onRangeChange, allowPartialRanges]);
 
   const { min, max } = localRange ?? {};
   return (
@@ -112,6 +113,7 @@ function BaseInput({
             label={lowerLabel}
             required={required}
             onValueChange={(newValue) => {
+              setIsReceiving(false);
               setLocalRange({ min: newValue, max } as NumberRange);
             }}
           />
@@ -123,6 +125,7 @@ function BaseInput({
             label={lowerLabel}
             required={required}
             onValueChange={(newValue) => {
+              setIsReceiving(false);
               setLocalRange({ min: newValue, max } as DateRange);
             }}
           />
@@ -146,6 +149,7 @@ function BaseInput({
             label={upperLabel}
             required={required}
             onValueChange={(newValue) => {
+              setIsReceiving(false);
               setLocalRange({ min, max: newValue } as NumberRange);
             }}
           />
@@ -157,6 +161,7 @@ function BaseInput({
             label={upperLabel}
             required={required}
             onValueChange={(newValue) => {
+              setIsReceiving(false);
               setLocalRange({ min, max: newValue } as DateRange);
             }}
           />
