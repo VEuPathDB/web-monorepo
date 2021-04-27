@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
@@ -12,6 +12,8 @@ export type BaseProps<M extends NumberOrDateRange> = {
   required?: boolean;
   /** Function to invoke when range changes. */
   onRangeChange: (newRange: NumberOrDateRange) => void;
+  /** When true, allow undefined min or max. Default is true */
+  allowPartialRanges?: boolean;
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
   rangeBounds?: M;
   /** UI Label for the widget. Optional */
@@ -54,6 +56,7 @@ function BaseInput({
   required = false,
   rangeBounds,
   onRangeChange,
+  allowPartialRanges = true,
   label,
   lowerLabel = '',
   upperLabel = '',
@@ -61,8 +64,31 @@ function BaseInput({
   containerStyles,
 }: BaseInputProps) {
   const [focused, setFocused] = useState(false);
+  const [localRange, setLocalRange] = useState<
+    NumberRange | DateRange | undefined
+  >(range);
 
-  const { min, max } = range ?? {};
+  // handle incoming value changes
+  useEffect(() => {
+    setLocalRange(range);
+  }, [range]);
+
+  // pass changes in localRange up to consumer
+  // respecting `allowPartialRanges`
+  useEffect(() => {
+    if (localRange) {
+      if (
+        allowPartialRanges ||
+        (localRange.min != null && localRange.max != null)
+      ) {
+        onRangeChange(localRange);
+      }
+    }
+  }, [localRange, /* onRangeChange, */ allowPartialRanges]);
+  // ranges changed by mouse gestures get into an infinite loop
+  // if onRangeChange is included as a dependency
+
+  const { min, max } = localRange ?? {};
   return (
     <div
       style={{ ...containerStyles }}
@@ -86,8 +112,7 @@ function BaseInput({
             label={lowerLabel}
             required={required}
             onValueChange={(newValue) => {
-              if (newValue !== undefined && onRangeChange)
-                onRangeChange({ min: newValue, max } as NumberRange);
+              setLocalRange({ min: newValue, max } as NumberRange);
             }}
           />
         ) : (
@@ -98,8 +123,7 @@ function BaseInput({
             label={lowerLabel}
             required={required}
             onValueChange={(newValue) => {
-              if (newValue !== undefined && onRangeChange)
-                onRangeChange({ min: newValue, max } as DateRange);
+              setLocalRange({ min: newValue, max } as DateRange);
             }}
           />
         )}
@@ -122,8 +146,7 @@ function BaseInput({
             label={upperLabel}
             required={required}
             onValueChange={(newValue) => {
-              if (newValue !== undefined && onRangeChange)
-                onRangeChange({ min, max: newValue } as NumberRange);
+              setLocalRange({ min, max: newValue } as NumberRange);
             }}
           />
         ) : (
@@ -134,8 +157,7 @@ function BaseInput({
             label={upperLabel}
             required={required}
             onValueChange={(newValue) => {
-              if (newValue !== undefined && onRangeChange)
-                onRangeChange({ min, max: newValue } as DateRange);
+              setLocalRange({ min, max: newValue } as DateRange);
             }}
           />
         )}

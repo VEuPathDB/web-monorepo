@@ -28,7 +28,7 @@ export const EmptyAtStart: Story<NumberRangeInputProps> = () => {
   );
 };
 
-export const EmptyAtStartUseLimits: Story<NumberRangeInputProps> = () => {
+export const NoPartialRangesReported: Story<NumberRangeInputProps> = () => {
   const [range, setRange] = useState<NumberRange | undefined>();
 
   const handleChange = useCallback(
@@ -45,6 +45,7 @@ export const EmptyAtStartUseLimits: Story<NumberRangeInputProps> = () => {
       onRangeChange={handleChange}
       range={range}
       rangeBounds={{ min: 0, max: 100 }}
+      allowPartialRanges={false}
     />
   );
 };
