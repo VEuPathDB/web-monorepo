@@ -32,6 +32,10 @@ export function PreferredOrganismsConfigController() {
     const configSelectionSet = new Set(configSelection);
     const preferredOrganismsSet = new Set(preferredOrganisms);
 
+    if (configSelectionSet.size === 0) {
+      return true;
+    }
+
     if (configSelectionSet.size !== preferredOrganismsSet.size) {
       return false;
     }
