@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
@@ -24,6 +24,9 @@ export function PreferredOrganismsConfigController() {
 
   const [preferredOrganisms] = usePreferredOrganismsState();
   const [configSelection, setConfigSelection] = useState(preferredOrganisms);
+  const revertConfigSelection = useCallback(() => {
+    setConfigSelection(preferredOrganisms);
+  }, [preferredOrganisms]);
 
   const savingPreferredOrganismsDisabled = useMemo(() => {
     const configSelectionSet = new Set(configSelection);
@@ -67,6 +70,7 @@ export function PreferredOrganismsConfigController() {
       savePreferredOrganisms={savePreferredOrganisms}
       savingPreferredOrganismsDisabled={savingPreferredOrganismsDisabled}
       setConfigSelection={setConfigSelection}
+      revertConfigSelection={revertConfigSelection}
       togglePreferredOrganisms={togglePreferredOrganisms}
     />
   );

@@ -24,12 +24,15 @@ $gray: #f5f5f5;
   }
 
   h2 {
+    position: relative;
     padding-bottom: 1rem;
   }
 
   &--Selections {
     h2 {
-      padding-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .wdk-CheckboxTreeLinks {
@@ -51,15 +54,48 @@ $gray: #f5f5f5;
   &--Preview {
     h2 {
       margin-left: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
   }
 
-  &--SaveButton.btn {
+  &--ConfigButtons {
+    position: absolute;
+    right: 0;
+    background: inherit;
+    font-weight: bold;
+    transition: all 250ms ease-in-out;
+    white-space: nowrap;
+
+    &__visible {
+      opacity: 1;
+    }
+
+    &__hidden {
+      opacity: 0;
+    }
+  }
+
+  &--ConfigButtons > button.btn {
+    color: white;
     font-size: 1rem;
     margin: 0 1rem 0 0;
+  }
+
+  &--ApplyButton.btn {
+    background: green;
+
+    &:hover,
+    &:focus {
+      background: green;
+    }
+  }
+
+  &--CancelButton.btn {
+    background: #b71c1c;
+
+    &:hover,
+    &:focus {
+      background: #b71c1c;
+    }
   }
 
   &--PreviewContent {

@@ -36,6 +36,7 @@ interface Props {
   savePreferredOrganisms: () => void;
   savingPreferredOrganismsDisabled?: boolean;
   setConfigSelection: (newConfigSelection: string[]) => void;
+  revertConfigSelection: () => void;
   togglePreferredOrganisms: () => void;
 }
 
@@ -50,6 +51,7 @@ export function PreferredOrganismsConfig({
   savePreferredOrganisms,
   savingPreferredOrganismsDisabled,
   setConfigSelection,
+  revertConfigSelection,
   togglePreferredOrganisms,
 }: Props) {
   const renderConfigNode = useRenderOrganismNode(
@@ -152,7 +154,36 @@ export function PreferredOrganismsConfig({
       )}
       <div className={cx('--Main')}>
         <div className={cx('--Selections')}>
-          <h2>Choose organisms to keep</h2>
+          <h2>
+            Choose organisms to keep
+            {
+              <div
+                className={cx(
+                  '--ConfigButtons',
+                  savingPreferredOrganismsDisabled ? 'hidden' : 'visible'
+                )}
+              >
+                {!savingPreferredOrganismsDisabled && (
+                  <>
+                    <button
+                      type="button"
+                      className={`btn ${cx('--ApplyButton')}`}
+                      onClick={savePreferredOrganisms}
+                    >
+                      Apply
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn ${cx('--CancelButton')}`}
+                      onClick={revertConfigSelection}
+                    >
+                      X
+                    </button>
+                  </>
+                )}
+              </div>
+            }
+          </h2>
           <CheckboxTree<TreeBoxVocabNode>
             tree={organismTree}
             getNodeId={getNodeId}
@@ -191,14 +222,6 @@ export function PreferredOrganismsConfig({
               </span>{' '}
               of {availableOrganisms.size})
             </div>
-            <button
-              type="button"
-              className={`btn ${cx('--SaveButton')}`}
-              onClick={savePreferredOrganisms}
-              disabled={savingPreferredOrganismsDisabled}
-            >
-              Save
-            </button>
           </h2>
           <div className={cx('--PreviewContent')}>
             <div className={cx('--PreviewInstructions')}>
