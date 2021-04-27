@@ -207,7 +207,7 @@ export function PreferredOrganismsConfig({
         <div className={cx('--Preview')}>
           <h2>
             <div>
-              Preview of{' '}
+              {!savingPreferredOrganismsDisabled && <>Preview of </>}
               <span className={cx('--InlineTitle')}>
                 My Organism Preferences
               </span>{' '}
