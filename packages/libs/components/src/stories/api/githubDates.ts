@@ -74,8 +74,8 @@ export const binGithubEventDates = async ({
   ) {
     const binEnd = DateMath.add(date, ...calculatedBinWidth);
     bins.push({
-      binStart: date,
-      binEnd: binEnd,
+      binStart: date.toISOString(),
+      binEnd: binEnd.toISOString(),
       binLabel: `${date} - ${binEnd}`,
       count: 0,
     });
@@ -84,7 +84,7 @@ export const binGithubEventDates = async ({
   dates.forEach((date) => {
     // find the bin *after* the one this belongs to
     const matchingBinIndex = bins.findIndex((bin) => {
-      return date < bin.binStart;
+      return date.toISOString() < bin.binStart;
     });
     // but if we don't find that bin, we must need the final bin
     if (matchingBinIndex < 0) {

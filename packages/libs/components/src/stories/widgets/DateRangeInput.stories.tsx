@@ -14,8 +14,8 @@ export default {
 
 export const ControlledLinked: Story<DateRangeInputProps> = () => {
   const [range, setRange] = useState<DateRange>({
-    min: new Date('2001-01-01'),
-    max: new Date('2001-01-31'),
+    min: '2001-01-01',
+    max: '2001-01-31',
   });
 
   // there must be a cleverer way to do this
@@ -37,7 +37,7 @@ export const ControlledLinked: Story<DateRangeInputProps> = () => {
   );
 
   const SharedDateRangeInputArgs = {
-    rangeBounds: { min: new Date('2001-01-01'), max: new Date('2001-12-31') },
+    rangeBounds: { min: '2001-01-01', max: '2001-12-31' },
     range: range,
     containerStyles: { margin: 25 },
   };

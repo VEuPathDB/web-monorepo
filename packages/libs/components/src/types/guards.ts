@@ -48,9 +48,9 @@ export function isLinePlotData(
     : false;
 }
 
-/** Determine if a NumberOrDate variable is the built-in Date type */
-export function isDate(date: NumberOrDate): date is Date {
-  return (date as Date).toISOString !== undefined;
+/** Determine if a NumberOrDate variable is a string that can be converted to a date */
+export function isDate(date: NumberOrDate): date is string {
+  return new Date(date as string).toString() !== 'Invalid Date';
 }
 
 /** Determine if a date/time quantity is a TimeUnit */
