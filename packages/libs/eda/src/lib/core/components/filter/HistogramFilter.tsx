@@ -154,8 +154,7 @@ export function HistogramFilter(props: Props) {
     (selectedRange?: NumberRange | DateRange) => {
       const otherFilters = filters?.filter((f) => f !== filter) ?? [];
       if (selectedRange == null) {
-        if (otherFilters.length === 0 || filter == null) return;
-        setFilters(otherFilters);
+        if (otherFilters.length != filters?.length) setFilters(otherFilters);
       } else {
         if (
           filter &&
@@ -257,9 +256,11 @@ function HistogramPlotWithControls({
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const handleSelectedRangeChange = useCallback(
-    (range: NumberOrDateRange) => {
+    (range?: NumberOrDateRange) => {
       if (range) {
         // FIXME Compare selection to data min/max
+        // UPDATE: back end now returns bins in order
+        // note that the range check below is only using bins from the first (background) series
         const bins = data.series[0].bins;
         const min = bins[0].binStart;
         const max = bins[bins.length - 1].binEnd;
@@ -268,6 +269,8 @@ function HistogramPlotWithControls({
         } else {
           updateFilter(range);
         }
+      } else {
+        updateFilter(); // clear the filter if range is undefined
       }
     },
     [data, updateFilter]
@@ -286,9 +289,9 @@ function HistogramPlotWithControls({
   );
 
   const handleIndependentAxisRangeChange = useCallback(
-    (newRange: NumberOrDateRange) => {
+    (newRange?: NumberOrDateRange) => {
       console.log(
-        `handleIndependentAxisRangeChange newRange: ${newRange.min} to ${newRange.max}`
+        `handleIndependentAxisRangeChange newRange: ${newRange?.min} to ${newRange?.max}`
       );
       updateUIState({
         independentAxisRange: newRange,
