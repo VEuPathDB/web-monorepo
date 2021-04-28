@@ -92,7 +92,7 @@ export function HistogramFilter(props: Props) {
               entity,
               variable,
               {}, // TO DO: dataParams here???
-              background.config.binSpec
+              background.histogram.config.binSpec
             )
           : background;
 
@@ -112,12 +112,12 @@ export function HistogramFilter(props: Props) {
       ];
       const binWidth: NumberOrTimeDelta =
         variable.type === 'number'
-          ? background.config.binSpec.value || 1
+          ? background.histogram.config.binSpec.value || 1
           : {
-              value: background.config.binSpec.value || 1,
-              unit: background.config.binSpec.units ?? 'month',
+              value: background.histogram.config.binSpec.value || 1,
+              unit: background.histogram.config.binSpec.units ?? 'month',
             };
-      const { min, max, step } = background.config.binSlider;
+      const { min, max, step } = background.histogram.config.binSlider;
       const binWidthRange = (variable.type === 'number'
         ? { min, max }
         : {
@@ -373,11 +373,11 @@ function histogramResponseToDataSeries(
   color: string,
   type: HistogramVariable['type']
 ): HistogramDataSeries {
-  if (response.data.length !== 1)
+  if (response.histogram.data.length !== 1)
     throw Error(
-      `Expected a single data series, but got ${response.data.length}`
+      `Expected a single data series, but got ${response.histogram.data.length}`
     );
-  const data = response.data[0];
+  const data = response.histogram.data[0];
   const bins = data.value.map((_, index) => ({
     binStart:
       type === 'number'

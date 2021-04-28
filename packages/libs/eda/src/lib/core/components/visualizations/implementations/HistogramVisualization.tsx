@@ -376,17 +376,17 @@ export function histogramResponseToData(
   response: HistogramResponse,
   type: HistogramVariable['type']
 ): HistogramData {
-  if (response.data.length === 0)
+  if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
   const binWidth =
     type === 'number'
-      ? response.config.binSpec.value || 1
+      ? response.histogram.config.binSpec.value || 1
       : {
-          value: response.config.binSpec.value || 1,
-          unit: response.config.binSpec.units || 'month',
+          value: response.histogram.config.binSpec.value || 1,
+          unit: response.histogram.config.binSpec.units || 'month',
         };
-  const { min, max, step } = response.config.binSlider;
+  const { min, max, step } = response.histogram.config.binSlider;
   const binWidthRange = (type === 'number'
     ? { min, max }
     : {
@@ -396,7 +396,7 @@ export function histogramResponseToData(
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
   return {
-    series: response.data.map((data, index) => ({
+    series: response.histogram.data.map((data, index) => ({
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
       // color: TO DO
       bins: data.value.map((_, index) => ({

@@ -52,40 +52,43 @@ export interface HistogramRequestParams {
 
 export type HistogramResponse = TypeOf<typeof HistogramResponse>;
 export const HistogramResponse = type({
-  data: array(
-    intersection([
-      type({
-        binLabel: array(string),
-        binStart: array(string),
-        binEnd: array(string),
-        value: array(number),
+  histogram: type({
+    data: array(
+      intersection([
+        type({
+          binLabel: array(string),
+          binStart: array(string),
+          binEnd: array(string),
+          value: array(number),
+        }),
+        partial({
+          overlayVariableDetails: StringVariableValue,
+          facetVariableDetails: union([
+            tuple([StringVariableValue]),
+            tuple([StringVariableValue, StringVariableValue]),
+          ]),
+        }),
+      ])
+    ),
+    config: type({
+      incompleteCases: number,
+      binSlider: type({
+        min: number,
+        max: number,
+        step: number,
       }),
-      partial({
-        overlayVariableDetails: StringVariableValue,
-        facetVariableDetails: union([
-          tuple([StringVariableValue]),
-          tuple([StringVariableValue, StringVariableValue]),
-        ]),
-      }),
-    ])
-  ),
-  config: type({
-    incompleteCases: array(number), // TO DO: DC says this will be a plain number
-    binSlider: type({
-      min: number,
-      max: number,
-      step: number,
+      xVariableDetails: Variable,
+      binSpec: intersection([
+        type({ type: keyof({ binWidth: null, numBins: null }) }),
+        partial({
+          value: number,
+          units: TimeUnit,
+        }),
+      ]),
+      // TO DO: config.viewport and config.summary
     }),
-    xVariableDetails: Variable,
-    binSpec: intersection([
-      type({ type: keyof({ binWidth: null, numBins: null }) }),
-      partial({
-        value: number,
-        units: TimeUnit,
-      }),
-    ]),
-    // TO DO: viewport and summary
   }),
+  // TO DO: sampleSizeTable
 });
 
 export interface BarplotRequestParams {
