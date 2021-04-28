@@ -2,26 +2,26 @@ import { TimeDelta } from '@veupathdb/components/lib/types/general';
 import { isTimeUnit } from '@veupathdb/components/lib/types/guards';
 
 /**
- * Convenience function to get around issue with Firefox new Date() not being able to convert
- * 2001Z or 2001-01-01Z
+ * Convenience function to pad an incomplete date to Jan-01 as required
+ * and to add the time component (as midnight UTC/Zulu)
  */
-export function ISODateStringToZuluDate(ISODate: string): Date {
+export function padISODateTime(ISODate: string): string {
   // extend 2001 or 2001-02 to 2001-01-01 and 2001-02-01 respectively
-  let fixedISODate = ISODate;
-  while (fixedISODate.length === 4 || fixedISODate.length === 7) {
-    fixedISODate = fixedISODate + '-01';
+  let fixedISODateTime = ISODate;
+  while (fixedISODateTime.length === 4 || fixedISODateTime.length === 7) {
+    fixedISODateTime = fixedISODateTime + '-01';
   }
 
   // add the time as T00:00.000 if needed
-  if (fixedISODate.indexOf('T') < 0) {
-    fixedISODate = fixedISODate + 'T00:00';
+  if (fixedISODateTime.indexOf('T') < 0) {
+    fixedISODateTime = fixedISODateTime + 'T00:00';
   }
 
   // add the Z for Zulu time zone
-  if (!fixedISODate.endsWith('Z')) {
-    fixedISODate = fixedISODate + 'Z';
+  if (!fixedISODateTime.endsWith('Z')) {
+    fixedISODateTime = fixedISODateTime + 'Z';
   }
-  return new Date(fixedISODate);
+  return fixedISODateTime;
 }
 
 /**
