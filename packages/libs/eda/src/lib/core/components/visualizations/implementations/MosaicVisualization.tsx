@@ -11,11 +11,7 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import { isEqual, sum, unzip } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
-import {
-  DataClient,
-  MosaicRequestParams,
-  // NumericMosaicRequestParams,
-} from '../../../api/data-api';
+import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
@@ -27,10 +23,7 @@ import { MosaicVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
-type MosaicData = Pick<
-  MosaicProps,
-  'data' | 'exposureValues' | 'outcomeValues' | 'widths'
->;
+type MosaicData = Pick<MosaicProps, 'data' | 'xValues' | 'yValues'>;
 
 export const mosaicVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -258,11 +251,10 @@ function MosaicViz(props: Props) {
         fullscreen ? (
           <MosaicPlotWithControls
             data={data.value.data}
-            exposureValues={data.value.exposureValues}
-            outcomeValues={data.value.outcomeValues}
-            exposureLabel={vizConfig.xAxisVariable!.variableId}
-            outcomeLabel={vizConfig.yAxisVariable!.variableId}
-            widths={data.value.widths}
+            xValues={data.value.xValues}
+            yValues={data.value.yValues}
+            xLabel={vizConfig.xAxisVariable!.variableId}
+            yLabel={vizConfig.yAxisVariable!.variableId}
             width="100%"
             height={400}
             showLegend={true}
@@ -271,15 +263,14 @@ function MosaicViz(props: Props) {
           // thumbnail/grid view
           <Mosaic
             data={data.value.data}
-            exposureValues={data.value.exposureValues}
-            outcomeValues={data.value.outcomeValues}
-            widths={data.value.widths}
+            xValues={data.value.xValues}
+            yValues={data.value.yValues}
             width={350}
             height={280}
             showModebar={false}
             showLegend={false}
-            exposureLabel=""
-            outcomeLabel=""
+            xLabel=""
+            yLabel=""
           />
         )
       ) : (
@@ -339,12 +330,11 @@ export function mosaicResponseToData(
 ): MosaicData {
   if (response.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
-  const data = response.data[0].y;
+
   return {
-    data: data,
-    widths: data.map((arr) => sum(arr)),
-    exposureValues: response.data[0]['x.label'],
-    outcomeValues: response.data[0]['y.label'],
+    data: response.data[0].y,
+    xValues: response.data[0]['x.label'],
+    yValues: response.data[0]['y.label'],
   };
 }
 
