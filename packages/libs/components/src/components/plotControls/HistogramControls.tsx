@@ -101,9 +101,9 @@ export type HistogramControlsProps = {
   /** Action to take on y-axis min/max range change. */
   onDependentAxisRangeChange?: (newRange?: NumberOrDateRange) => void;
   /** Whether or not to display y-axis absolute Relative. */
-  dependentAxisMode?: string;
+  dependentAxisMode?: 'absolute' | 'relative';
   /** Action to take on display legend change. */
-  onDependentAxisModeChange?: (layout: 'absolute' | 'relative') => void;
+  onDependentAxisModeChange?: (newMode: 'absolute' | 'relative') => void;
   /** Action to reset dependent axis range. */
   onDependentAxisRangeReset?: () => void;
   /** Whether or not to set x-axis min/max range. */
@@ -441,12 +441,14 @@ export default function HistogramControls({
                 label="Range:"
                 range={independentAxisRange as DateRange}
                 onRangeChange={onIndependentAxisRangeChange}
+                allowPartialRanges={false}
               />
             ) : (
               <NumberRangeInput
                 label="Range:"
                 range={independentAxisRange as NumberRange}
                 onRangeChange={onIndependentAxisRangeChange}
+                allowPartialRanges={false}
               />
             )
           ) : null}

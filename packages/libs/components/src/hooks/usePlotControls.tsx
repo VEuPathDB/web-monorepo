@@ -257,7 +257,7 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     /** Histogram: Range of y-axis min/max values */
     dependentAxisRange?: NumberOrDateRange;
     /** Histogram: Toggle absolute and relative.*/
-    dependentAxisMode?: string;
+    dependentAxisMode?: 'absolute' | 'relative';
     /** Histogram: dependent axis range reset */
     onDependentAxisRangeReset?: () => void;
     /** Histogram: Range of x-axis min/max values */
@@ -290,7 +290,7 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     // add y-axis controls
     dependentAxisLogScale?: boolean;
     dependentAxisRange?: NumberOrDateRange;
-    dependentAxisMode?: string;
+    dependentAxisMode?: 'absolute' | 'relative';
     // add x-axis range
     independentAxisRange?: NumberOrDateRange;
   };
