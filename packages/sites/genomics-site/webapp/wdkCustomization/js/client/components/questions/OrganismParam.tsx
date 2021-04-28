@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { Suspense, useCallback, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router';
 
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -117,8 +117,6 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
 }
 
 function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: string[], onChange: (newValue: string[]) => void) {
-  const initialSelectedValues = useRef(selectedValues);
-
   const [ preferredOrganisms ] = usePreferredOrganismsState();
 
   const { pathname } = useLocation();
@@ -127,19 +125,21 @@ function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: st
   const preferredValues = useMemo(
     () => isSearchPage
       ? new Set(preferredOrganisms)
-      : new Set([...initialSelectedValues.current, ...preferredOrganisms]),
+      : new Set([...selectedValues, ...preferredOrganisms]),
     [ isSearchPage, preferredOrganisms ]
   );
 
   const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
 
   useEffect(() => {
-    const filteredInitialSelectedValues = initialSelectedValues.current.filter(selectedValue => preferredValues.has(selectedValue));
+    if (preferredOrganismsEnabled) {
+      const filteredSelectedValues = selectedValues.filter(selectedValue => preferredValues.has(selectedValue));
 
-    if (filteredInitialSelectedValues.length !== initialSelectedValues.current.length) {
-      onChange(filteredInitialSelectedValues);
+      if (filteredSelectedValues.length !== selectedValues.length) {
+        onChange(filteredSelectedValues);
+      }
     }
-  }, []);
+  }, [ preferredOrganismsEnabled ]);
 
   return useMemo(
     () => {
