@@ -1,5 +1,10 @@
 import { StudyVariable } from '../../types/study';
-import { HistogramVariable, TableVariable, MosaicVariable } from './types';
+import {
+  HistogramVariable,
+  TableVariable,
+  MosaicVariable,
+  TwoByTwoVariable,
+} from './types';
 
 export function isHistogramVariable(
   variable: StudyVariable
@@ -39,6 +44,21 @@ export function isMosaicVariable(
     case 'categorical':
     case 'binary':
     case 'ordinal':
+      switch (variable.type) {
+        case 'number':
+        case 'category':
+        case 'string':
+          return true;
+      }
+  }
+  return false;
+}
+
+export function isTwoByTwoVariable(
+  variable: StudyVariable
+): variable is TwoByTwoVariable {
+  switch (variable.dataShape) {
+    case 'binary':
       switch (variable.type) {
         case 'number':
         case 'category':

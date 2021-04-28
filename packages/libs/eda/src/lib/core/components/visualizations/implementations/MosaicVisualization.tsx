@@ -9,7 +9,6 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { isEqual, sum, unzip } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
@@ -18,8 +17,7 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 import { DataElementConstraint } from '../../../types/visualization';
-import { isMosaicVariable } from '../../filter/guards';
-import { MosaicVariable } from '../../filter/types';
+import { isMosaicVariable, isTwoByTwoVariable } from '../../filter/guards';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
@@ -29,6 +27,13 @@ export const mosaicVisualization: VisualizationType = {
   gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
+  createDefaultConfig: createDefaultConfig,
+};
+
+export const twoByTwoVisualization: VisualizationType = {
+  gridComponent: TwoByTwoGridComponent,
+  selectorComponent: TwoByTwoSelectorComponent,
+  fullscreenComponent: TwoByTwoFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
 
@@ -45,7 +50,7 @@ function GridComponent(props: VisualizationProps) {
 }
 
 function SelectorComponent() {
-  return <div>Pick me, I'm a mosaic plot!</div>;
+  return <div>Pick me, I'm a contingency table!</div>;
 }
 
 function FullscreenComponent(props: VisualizationProps) {
@@ -68,6 +73,44 @@ function FullscreenComponent(props: VisualizationProps) {
   );
 }
 
+function TwoByTwoGridComponent(props: VisualizationProps) {
+  const { visualization, computation, filters } = props;
+  return (
+    <MosaicViz
+      visualization={visualization}
+      computation={computation}
+      filters={filters}
+      fullscreen={false}
+      isTwoByTwo={true}
+    />
+  );
+}
+
+function TwoByTwoSelectorComponent() {
+  return <div>Pick me, I'm a 2x2 contingency table!</div>;
+}
+
+function TwoByTwoFullscreenComponent(props: VisualizationProps) {
+  const {
+    visualization,
+    updateVisualization,
+    computation,
+    filters,
+    dataElementConstraints,
+  } = props;
+  return (
+    <MosaicViz
+      visualization={visualization}
+      updateVisualization={updateVisualization}
+      computation={computation}
+      filters={filters}
+      fullscreen={true}
+      constraints={dataElementConstraints}
+      isTwoByTwo={true}
+    />
+  );
+}
+
 function createDefaultConfig(): MosaicConfig {
   return {
     // enableOverlay: true,
@@ -83,6 +126,7 @@ const MosaicConfig = t.partial({
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
+  isTwoByTwo?: boolean;
   constraints?: Record<string, DataElementConstraint>[];
 };
 
@@ -93,6 +137,7 @@ function MosaicViz(props: Props) {
     updateVisualization,
     filters,
     fullscreen,
+    isTwoByTwo = false,
     constraints,
   } = props;
   const studyMetadata = useStudyMetadata();
@@ -167,14 +212,22 @@ function MosaicViz(props: Props) {
           new Error('Please choose a variable for each axis')
         );
 
-      if (xAxisVariable && !isMosaicVariable(xAxisVariable))
+      const isValidVariable = isTwoByTwo
+        ? isTwoByTwoVariable
+        : isMosaicVariable;
+
+      if (xAxisVariable && !isValidVariable(xAxisVariable))
         throw new Error(
-          `Please choose another x-axis variable. '${xAxisVariable.displayName}' is not suitable for mosaics`
+          `Please choose another x-axis variable. '${
+            xAxisVariable.displayName
+          }' is not suitable for ${isTwoByTwo ?? '2x2'} contingency tables`
         );
 
-      if (yAxisVariable && !isMosaicVariable(yAxisVariable))
+      if (yAxisVariable && !isValidVariable(yAxisVariable))
         throw new Error(
-          `Please choose another y-axis variable. '${yAxisVariable.displayName}' is not suitable for mosaics`
+          `Please choose another y-axis variable. '${
+            yAxisVariable.displayName
+          }' is not suitable for ${isTwoByTwo ?? '2x2'} contingency tables`
         );
 
       const params = getRequestParams(
@@ -328,13 +381,13 @@ function MosaicPlotWithControls({
 export function mosaicResponseToData(
   response: PromiseType<ReturnType<DataClient['getMosaic']>>
 ): MosaicData {
-  if (response.data.length === 0)
+  if (response.mosaic.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
   return {
-    data: response.data[0].y,
-    xValues: response.data[0]['x.label'],
-    yValues: response.data[0]['y.label'],
+    data: response.mosaic.data[0].value,
+    xValues: response.mosaic.data[0].xLabel,
+    yValues: response.mosaic.data[0].yLabel,
   };
 }
 

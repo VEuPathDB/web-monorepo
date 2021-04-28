@@ -14,3 +14,7 @@ export interface MosaicVariable extends StudyVariable {
   type: 'string' | 'number' | 'category';
   dataShape: 'categorical' | 'binary' | 'ordinal';
 }
+
+export interface TwoByTwoVariable extends MosaicVariable {
+  dataShape: 'binary';
+}

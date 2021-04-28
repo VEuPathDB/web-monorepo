@@ -210,30 +210,26 @@ export interface MosaicRequestParams {
 
 export type MosaicResponse = TypeOf<typeof MosaicResponse>;
 export const MosaicResponse = type({
-  config: type({
-    incompleteCases: array(number),
-    xVariableDetails: type({
-      variableId: string,
-      entityId: string,
-    }),
-    yVariableDetails: type({
-      variableId: string,
-      entityId: string,
+  mosaic: type({
+    data: array(
+      type({
+        xLabel: array(string),
+        yLabel: array(string),
+        value: array(array(number)),
+      })
+    ),
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
     }),
   }),
-  data: array(
-    type({
-      oddsratio: array(number),
-      ['p.value']: array(union([string, number])),
-      // x: array(number),
-      ['x.label']: array(string),
-      ['or.interval']: array(string),
-      ['y.label']: array(string),
-      y: array(array(number)),
-      relativerisk: array(number),
-      ['rr.interval']: array(string),
-    })
-  ),
 });
 
 export class DataClient extends FetchClient {
