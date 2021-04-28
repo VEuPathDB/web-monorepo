@@ -8,11 +8,9 @@ import {
   useAvailableOrganisms,
   useNewOrganisms,
   useOrganismTree,
-  usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
   useProjectId,
   useSavePreferredOrganisms,
-  useTogglePreferredOrganisms,
 } from '../hooks/preferredOrganisms';
 import { useReferenceStrains } from '../hooks/referenceStrains';
 
@@ -59,10 +57,6 @@ export function PreferredOrganismsConfigController() {
 
   const newOrganisms = useNewOrganisms();
 
-  const [preferredOrganismsEnabled] = usePreferredOrganismsEnabledState();
-
-  const togglePreferredOrganisms = useTogglePreferredOrganisms();
-
   useEffect(() => {
     function onBeforeUnload(e: BeforeUnloadEvent) {
       if (!savingPreferredOrganismsDisabled) {
@@ -85,14 +79,12 @@ export function PreferredOrganismsConfigController() {
         configSelection={configSelection}
         newOrganisms={newOrganisms}
         organismTree={organismTree}
-        preferredOrganismsEnabled={preferredOrganismsEnabled}
         projectId={projectIdValue}
         referenceStrains={referenceStrains}
         savePreferredOrganisms={savePreferredOrganisms}
         savingPreferredOrganismsDisabled={savingPreferredOrganismsDisabled}
         setConfigSelection={setConfigSelection}
         revertConfigSelection={revertConfigSelection}
-        togglePreferredOrganisms={togglePreferredOrganisms}
       />
       <Prompt
         when={!savingPreferredOrganismsDisabled}

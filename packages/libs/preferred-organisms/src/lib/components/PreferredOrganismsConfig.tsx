@@ -19,7 +19,7 @@ import {
 } from '../utils/configTrees';
 import { getNodeChildren, getNodeId } from '../utils/organismNodes';
 
-import { PreferredOrganismsToggle } from './PreferredOrganismsToggle';
+import { PreferredOrganismsToggleHelp } from './PreferredOrganismsToggleHelp';
 
 import './PreferredOrganismsConfig.scss';
 
@@ -30,14 +30,12 @@ interface Props {
   configSelection: string[];
   newOrganisms: Set<string>;
   organismTree: Node<TreeBoxVocabNode>;
-  preferredOrganismsEnabled: boolean;
   projectId: string;
   referenceStrains: Set<string>;
   savePreferredOrganisms: () => void;
   savingPreferredOrganismsDisabled?: boolean;
   setConfigSelection: (newConfigSelection: string[]) => void;
   revertConfigSelection: () => void;
-  togglePreferredOrganisms: () => void;
 }
 
 export function PreferredOrganismsConfig({
@@ -45,14 +43,12 @@ export function PreferredOrganismsConfig({
   configSelection,
   newOrganisms,
   organismTree,
-  preferredOrganismsEnabled,
   projectId,
   referenceStrains,
   savePreferredOrganisms,
   savingPreferredOrganismsDisabled,
   setConfigSelection,
   revertConfigSelection,
-  togglePreferredOrganisms,
 }: Props) {
   const renderConfigNode = useRenderOrganismNode(
     referenceStrains,
@@ -80,23 +76,15 @@ export function PreferredOrganismsConfig({
 
   return (
     <div className={cx()}>
-      <h1>My Organism Preferences</h1>
+      <h1>
+        My Organism Preferences
+        <PreferredOrganismsToggleHelp />
+      </h1>
       <p className={cx('--Instructions')}>
         <span>
           Set your{' '}
           <span className={cx('--InlineTitle')}>My Organism Preferences</span>{' '}
           to limit the organisms you see throughout {projectId}.
-        </span>
-        <span>
-          <PreferredOrganismsToggle
-            enabled={preferredOrganismsEnabled}
-            label={
-              <span>
-                Enable <strong>My Organism Preferences</strong>
-              </span>
-            }
-            onClick={togglePreferredOrganisms}
-          />
         </span>
       </p>
       {describeNewOrganisms && newOrganisms.size > 0 && (
