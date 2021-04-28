@@ -194,7 +194,7 @@ export default function EntityDiagram({
         fill="none"
         stroke={isHighlighted ? selectedHighlightColor : '#666'}
         strokeWidth={borderWidth}
-        key={`bg-rect-${node.data.id}`}
+        key={`bd-rect-${node.data.id}`}
       />
     );
 
@@ -259,7 +259,7 @@ export default function EntityDiagram({
       <Group
         top={orientation == 'horizontal' ? node.x : node.y}
         left={orientation == 'horizontal' ? node.y : node.x}
-        key={node.x + node.y}
+        key={node.x + ':' + node.y}
       >
         {renderNode?.(node.data, children) ?? children}
         {!isExpanded && <title>{node.data.displayName}</title>}

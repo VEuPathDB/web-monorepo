@@ -20,8 +20,8 @@ export default {
 } as Meta;
 
 const defaultActions = {
-  onSelectedRangeChange: (newRange: NumberOrDateRange) => {
-    console.log(`made a selection of ${newRange.min} to ${newRange.max}`);
+  onSelectedRangeChange: (newRange?: NumberOrDateRange) => {
+    console.log(`made a selection of ${newRange?.min} to ${newRange?.max}`);
   },
 };
 

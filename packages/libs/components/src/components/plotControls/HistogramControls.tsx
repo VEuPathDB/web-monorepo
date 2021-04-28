@@ -81,7 +81,7 @@ export type HistogramControlsProps = {
   /** A range to highlight by means of opacity. Optional */
   selectedRange?: NumberOrDateRange; // TO DO: handle DateRange too
   /** function to call upon selecting a range (in independent axis). Optional */
-  onSelectedRangeChange?: (newRange: NumberOrDateRange) => void;
+  onSelectedRangeChange?: (newRange?: NumberOrDateRange) => void;
   /** Min and max allowed values for the selected range. Optional */
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Additional styles for controls container. Optional */
@@ -99,7 +99,7 @@ export type HistogramControlsProps = {
   /** Whether or not to set y-axis min/max range. */
   dependentAxisRange?: NumberOrDateRange;
   /** Action to take on y-axis min/max range change. */
-  onDependentAxisRangeChange?: (newRange: NumberOrDateRange) => void;
+  onDependentAxisRangeChange?: (newRange?: NumberOrDateRange) => void;
   /** Whether or not to display y-axis absolute Relative. */
   dependentAxisMode?: string;
   /** Action to take on display legend change. */
@@ -109,7 +109,7 @@ export type HistogramControlsProps = {
   /** Whether or not to set x-axis min/max range. */
   independentAxisRange?: NumberOrDateRange;
   /** Action to take on x-axis min/max range change. */
-  onIndependentAxisRangeChange?: (newRange: NumberOrDateRange) => void;
+  onIndependentAxisRangeChange?: (newRange?: NumberOrDateRange) => void;
   /** Action to reset independent axis range. */
   onIndependentAxisRangeReset?: () => void;
   /** Action to Reset all to defaults. */
@@ -229,6 +229,7 @@ export default function HistogramControls({
               range={selectedRange as DateRange}
               onRangeChange={onSelectedRangeChange}
               allowPartialRanges={false}
+              showClearButton={true}
             />
           ) : (
             <NumberRangeInput
@@ -237,6 +238,7 @@ export default function HistogramControls({
               range={selectedRange as NumberRange}
               onRangeChange={onSelectedRangeChange}
               allowPartialRanges={false}
+              showClearButton={true}
             />
           )
         ) : null}

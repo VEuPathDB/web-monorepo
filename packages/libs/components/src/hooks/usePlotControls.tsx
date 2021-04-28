@@ -39,16 +39,19 @@ type ActionType<DataShape> =
   | { type: 'toggleOrientation' }
   | { type: 'toggleDisplayLegend' }
   | { type: 'toggleLibraryControls' }
-  | { type: 'histogram/setSelectedRange'; payload: NumberOrDateRange }
+  | { type: 'histogram/setSelectedRange'; payload?: NumberOrDateRange }
   // add y-axis/dependent axis controls
   | { type: 'histogram/toggleDependentAxisLogScale' }
-  | { type: 'histogram/onDependentAxisRangeChange'; payload: NumberOrDateRange }
+  | {
+      type: 'histogram/onDependentAxisRangeChange';
+      payload?: NumberOrDateRange;
+    }
   | { type: 'histogram/onDependentAxisModeChange' }
   | { type: 'histogram/onDependentAxisRangeReset' }
   // add x-axis/independent axis controls: axis range and range reset
   | {
       type: 'histogram/onIndependentAxisRangeChange';
-      payload: NumberOrDateRange;
+      payload?: NumberOrDateRange;
     }
   | { type: 'histogram/onIndependentAxisRangeReset' }
   // add reset all
@@ -531,7 +534,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     }
   };
 
-  const onSelectedRangeChange = (newRange: NumberOrDateRange) => {
+  const onSelectedRangeChange = (newRange?: NumberOrDateRange) => {
     if (params.histogram) {
       dispatch({ type: 'histogram/setSelectedRange', payload: newRange });
     }
@@ -541,7 +544,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   const toggleDependentAxisLogScale = () =>
     dispatch({ type: 'histogram/toggleDependentAxisLogScale' });
   // on y-axis dependentAxisRange
-  const onDependentAxisRangeChange = (newRange: NumberOrDateRange) => {
+  const onDependentAxisRangeChange = (newRange?: NumberOrDateRange) => {
     if (params.histogram) {
       dispatch({
         type: 'histogram/onDependentAxisRangeChange',
@@ -556,7 +559,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   const onDependentAxisRangeReset = () =>
     dispatch({ type: 'histogram/onDependentAxisRangeReset' });
   // on independent axis range change
-  const onIndependentAxisRangeChange = (newRange: NumberOrDateRange) => {
+  const onIndependentAxisRangeChange = (newRange?: NumberOrDateRange) => {
     if (params.histogram) {
       dispatch({
         type: 'histogram/onIndependentAxisRangeChange',

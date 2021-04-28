@@ -72,7 +72,7 @@ export interface HistogramProps {
   /** A range to highlight by means of opacity */
   selectedRange?: NumberOrDateRange;
   /** function to call upon selecting a range (in independent axis) */
-  onSelectedRangeChange?: (newRange: NumberOrDateRange) => void;
+  onSelectedRangeChange?: (newRange?: NumberOrDateRange) => void;
 }
 
 /** A Plot.ly based histogram component. */

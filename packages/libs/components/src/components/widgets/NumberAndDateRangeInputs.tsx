@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberInput, DateInput } from './NumberAndDateInputs';
+import Button from './Button';
 import { NumberRange, DateRange, NumberOrDateRange } from '../../types/general';
 
 export type BaseProps<M extends NumberOrDateRange> = {
@@ -11,7 +12,7 @@ export type BaseProps<M extends NumberOrDateRange> = {
   /** If true, warn about empty lower or upper values. Default is false */
   required?: boolean;
   /** Function to invoke when range changes. */
-  onRangeChange: (newRange: NumberOrDateRange) => void;
+  onRangeChange: (newRange?: NumberOrDateRange) => void;
   /** When true, allow undefined min or max. Default is true */
   allowPartialRanges?: boolean;
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
@@ -24,6 +25,10 @@ export type BaseProps<M extends NumberOrDateRange> = {
   upperLabel?: string;
   /** Additional styles for component container. Optional. */
   containerStyles?: React.CSSProperties;
+  /** Show cancel/clear button */
+  showClearButton?: boolean;
+  /** Text to adorn the clear button; Default is 'Clear' */
+  clearButtonLabel?: string;
 };
 
 export type NumberRangeInputProps = BaseProps<NumberRange>;
@@ -62,6 +67,8 @@ function BaseInput({
   upperLabel = '',
   valueType,
   containerStyles,
+  showClearButton = false,
+  clearButtonLabel = 'Clear',
 }: BaseInputProps) {
   const [focused, setFocused] = useState(false);
   const [localRange, setLocalRange] = useState<
@@ -79,15 +86,29 @@ function BaseInput({
   // pass localRange (if it differs from `range`) out to consumer
   // respecting `allowPartialRanges`
   useEffect(() => {
-    if (
-      !isReceiving &&
-      localRange &&
-      (localRange.min !== range?.min || localRange.max !== range?.max) &&
-      (allowPartialRanges || (localRange.min != null && localRange.max != null))
-    ) {
-      onRangeChange(localRange);
+    if (!isReceiving) {
+      if (
+        localRange &&
+        (localRange.min !== range?.min || localRange.max !== range?.max) &&
+        (allowPartialRanges ||
+          (localRange.min != null && localRange.max != null))
+      ) {
+        onRangeChange(localRange);
+      } else if (
+        localRange?.min == undefined &&
+        localRange?.max == undefined &&
+        range?.min != undefined &&
+        range?.max != undefined
+      ) {
+        onRangeChange(undefined);
+      }
     }
   }, [localRange, range, isReceiving, onRangeChange, allowPartialRanges]);
+
+  const handleClearButton = () => {
+    setIsReceiving(false);
+    setLocalRange(undefined);
+  };
 
   const { min, max } = localRange ?? {};
   return (
@@ -164,6 +185,13 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange({ min, max: newValue } as DateRange);
             }}
+          />
+        )}
+        {showClearButton && (
+          <Button
+            type={'solid'}
+            text={clearButtonLabel}
+            onClick={handleClearButton}
           />
         )}
       </div>
