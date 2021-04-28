@@ -229,7 +229,6 @@ export default function HistogramControls({
               range={selectedRange as DateRange}
               onRangeChange={onSelectedRangeChange}
               allowPartialRanges={false}
-              showClearButton={true}
             />
           ) : (
             <NumberRangeInput
@@ -238,7 +237,6 @@ export default function HistogramControls({
               range={selectedRange as NumberRange}
               onRangeChange={onSelectedRangeChange}
               allowPartialRanges={false}
-              showClearButton={true}
             />
           )
         ) : null}
