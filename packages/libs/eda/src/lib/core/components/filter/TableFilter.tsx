@@ -94,15 +94,15 @@ export function TableFilter({
         }
       );
       const fgValueByLabel = Object.fromEntries(
-        distribution.foreground.data[0].label.map((label, index) => [
+        distribution.foreground.barplot.data[0].label.map((label, index) => [
           label,
-          distribution.foreground.data[0].value[index] ?? 0,
+          distribution.foreground.barplot.data[0].value[index] ?? 0,
         ])
       );
       const bgValueByLabel = Object.fromEntries(
-        distribution.background.data[0].label.map((label, index) => [
+        distribution.background.barplot.data[0].label.map((label, index) => [
           label,
-          distribution.background.data[0].value[index] ?? 0,
+          distribution.background.barplot.data[0].value[index] ?? 0,
         ])
       );
       return {
@@ -115,10 +115,11 @@ export function TableFilter({
           filteredCount: fgValueByLabel[label] ?? 0,
         })),
         entitiesCount:
-          totalEntityCount - distribution.background.config.incompleteCases[0],
+          totalEntityCount -
+          distribution.background.barplot.config.incompleteCases,
         filteredEntitiesCount:
           filteredEntityCount -
-          distribution.foreground.config.incompleteCases[0],
+          distribution.foreground.barplot.config.incompleteCases,
       };
     }, [
       entity.id,
