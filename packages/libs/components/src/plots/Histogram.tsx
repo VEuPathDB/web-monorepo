@@ -322,6 +322,7 @@ export default function Histogram({
     },
     color: textColor,
     range: [minBinStart, maxBinEnd],
+    fixedrange: true,
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     type: dependentAxisLogScale ? 'log' : 'linear',
@@ -339,6 +340,7 @@ export default function Histogram({
     range: [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
       dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
     ),
+    fixedrange: true,
   };
 
   return (
