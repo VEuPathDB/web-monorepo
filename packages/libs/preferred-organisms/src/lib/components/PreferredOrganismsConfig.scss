@@ -91,6 +91,10 @@ $gray: #f5f5f5;
     &:focus {
       background: green;
     }
+
+    &:disabled {
+      opacity: 0.5;
+    }
   }
 
   &--CancelButton.btn {

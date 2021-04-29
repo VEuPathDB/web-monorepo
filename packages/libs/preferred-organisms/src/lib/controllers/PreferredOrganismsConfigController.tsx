@@ -27,13 +27,9 @@ export function PreferredOrganismsConfigController() {
     setConfigSelection(preferredOrganisms);
   }, [preferredOrganisms]);
 
-  const savingPreferredOrganismsDisabled = useMemo(() => {
+  const configIsUnchanged = useMemo(() => {
     const configSelectionSet = new Set(configSelection);
     const preferredOrganismsSet = new Set(preferredOrganisms);
-
-    if (configSelectionSet.size === 0) {
-      return true;
-    }
 
     if (configSelectionSet.size !== preferredOrganismsSet.size) {
       return false;
@@ -49,6 +45,9 @@ export function PreferredOrganismsConfigController() {
     );
   }, [configSelection, preferredOrganisms]);
 
+  const savingPreferredOrganismsEnabled =
+    !configIsUnchanged && configSelection.length > 0;
+
   const savePreferredOrganisms = useSavePreferredOrganisms(configSelection);
 
   const projectIdValue = useProjectId();
@@ -59,7 +58,7 @@ export function PreferredOrganismsConfigController() {
 
   useEffect(() => {
     function onBeforeUnload(e: BeforeUnloadEvent) {
-      if (!savingPreferredOrganismsDisabled) {
+      if (!configIsUnchanged) {
         e.preventDefault();
         e.returnValue = '';
       }
@@ -70,24 +69,25 @@ export function PreferredOrganismsConfigController() {
     return () => {
       window.removeEventListener('beforeunload', onBeforeUnload);
     };
-  }, [savingPreferredOrganismsDisabled]);
+  }, [configIsUnchanged]);
 
   return (
     <>
       <PreferredOrganismsConfig
         availableOrganisms={availableOrganisms}
         configSelection={configSelection}
+        configIsUnchanged={configIsUnchanged}
         newOrganisms={newOrganisms}
         organismTree={organismTree}
         projectId={projectIdValue}
         referenceStrains={referenceStrains}
         savePreferredOrganisms={savePreferredOrganisms}
-        savingPreferredOrganismsDisabled={savingPreferredOrganismsDisabled}
+        savingPreferredOrganismsEnabled={savingPreferredOrganismsEnabled}
         setConfigSelection={setConfigSelection}
         revertConfigSelection={revertConfigSelection}
       />
       <Prompt
-        when={!savingPreferredOrganismsDisabled}
+        when={!configIsUnchanged}
         message="Do you want to leave this page? Your unapplied changes will be discarded."
       />
     </>

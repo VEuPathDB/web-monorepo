@@ -28,12 +28,13 @@ export const cx = makeClassNameHelper('PreferredOrganismsConfig');
 interface Props {
   availableOrganisms: Set<string>;
   configSelection: string[];
+  configIsUnchanged: boolean;
   newOrganisms: Set<string>;
   organismTree: Node<TreeBoxVocabNode>;
   projectId: string;
   referenceStrains: Set<string>;
   savePreferredOrganisms: () => void;
-  savingPreferredOrganismsDisabled?: boolean;
+  savingPreferredOrganismsEnabled: boolean;
   setConfigSelection: (newConfigSelection: string[]) => void;
   revertConfigSelection: () => void;
 }
@@ -41,12 +42,13 @@ interface Props {
 export function PreferredOrganismsConfig({
   availableOrganisms,
   configSelection,
+  configIsUnchanged,
   newOrganisms,
   organismTree,
   projectId,
   referenceStrains,
   savePreferredOrganisms,
-  savingPreferredOrganismsDisabled,
+  savingPreferredOrganismsEnabled,
   setConfigSelection,
   revertConfigSelection,
 }: Props) {
@@ -148,7 +150,7 @@ export function PreferredOrganismsConfig({
               <div
                 className={cx(
                   '--ConfigButtons',
-                  savingPreferredOrganismsDisabled ? 'hidden' : 'visible'
+                  configIsUnchanged ? 'hidden' : 'visible'
                 )}
               >
                 {
@@ -156,6 +158,7 @@ export function PreferredOrganismsConfig({
                     <button
                       type="button"
                       className={`btn ${cx('--ApplyButton')}`}
+                      disabled={!savingPreferredOrganismsEnabled}
                       onClick={savePreferredOrganisms}
                     >
                       Apply
@@ -195,7 +198,7 @@ export function PreferredOrganismsConfig({
         <div className={cx('--Preview')}>
           <h2>
             <div>
-              {!savingPreferredOrganismsDisabled && (
+              {!configIsUnchanged && (
                 <>
                   <span className={cx('--PreviewTag')}>Preview of </span>{' '}
                 </>
