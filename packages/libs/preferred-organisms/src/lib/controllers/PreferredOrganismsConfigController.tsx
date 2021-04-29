@@ -88,7 +88,7 @@ export function PreferredOrganismsConfigController() {
       />
       <Prompt
         when={!savingPreferredOrganismsDisabled}
-        message="Do you want to leave this page? Your unsaved changes to My Organism Preferences will be discarded."
+        message="Do you want to leave this page? Your unapplied changes will be discarded."
       />
     </>
   );
