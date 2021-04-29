@@ -337,7 +337,7 @@ export default function Histogram({
     gridcolor: gridColor,
     // range should be an array
     range: [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
-      dependentAxisLogScale ? Math.log10(val || 1) : val
+      dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
     ),
   };
 
