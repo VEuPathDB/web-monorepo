@@ -30,7 +30,6 @@ $gray: #f5f5f5;
   }
 
   h2 {
-    position: relative;
     padding-bottom: 1rem;
   }
 
@@ -65,8 +64,7 @@ $gray: #f5f5f5;
 
   &--ConfigButtons {
     position: absolute;
-    right: 0;
-    background: inherit;
+    left: 14.5em;
     font-weight: bold;
     transition: all 250ms ease-in-out;
     white-space: nowrap;
@@ -132,6 +130,10 @@ $gray: #f5f5f5;
 
   h2 {
     font-weight: 400;
+  }
+
+  &--PreviewTag {
+    font-style: italic;
   }
 
   &--InlineTitle {

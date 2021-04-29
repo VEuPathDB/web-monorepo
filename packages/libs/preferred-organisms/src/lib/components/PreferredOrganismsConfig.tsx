@@ -151,7 +151,7 @@ export function PreferredOrganismsConfig({
                   savingPreferredOrganismsDisabled ? 'hidden' : 'visible'
                 )}
               >
-                {!savingPreferredOrganismsDisabled && (
+                {
                   <>
                     <button
                       type="button"
@@ -168,7 +168,7 @@ export function PreferredOrganismsConfig({
                       X
                     </button>
                   </>
-                )}
+                }
               </div>
             }
           </h2>
@@ -195,7 +195,11 @@ export function PreferredOrganismsConfig({
         <div className={cx('--Preview')}>
           <h2>
             <div>
-              {!savingPreferredOrganismsDisabled && <>Preview of </>}
+              {!savingPreferredOrganismsDisabled && (
+                <>
+                  <span className={cx('--PreviewTag')}>Preview of </span>{' '}
+                </>
+              )}
               <span className={cx('--InlineTitle')}>
                 My Organism Preferences
               </span>{' '}
