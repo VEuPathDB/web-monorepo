@@ -449,7 +449,7 @@ export default function HistogramControls({
           ) : null}
 
           {/* add dependent axis range reset button */}
-          <div style={{ paddingTop: '0.625em', width: '11.25em' }}>
+          <div style={{ paddingTop: '1.0em', width: '100%' }}>
             {onIndependentAxisSettingsReset && (
               <Button
                 type={'solid'}
