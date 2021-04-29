@@ -4,7 +4,7 @@ import { PlotParams } from 'react-plotly.js';
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
 import { HistogramData, HistogramBin } from '../types/plots';
-import { NumberOrDate, NumberOrDateRange } from '../types/general';
+import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
@@ -58,8 +58,10 @@ export interface HistogramProps {
   /** Options for customizing plot legend. */
   legendOptions?: PlotLegendAddon;
   /** Range for the dependent axis (usually y-axis) */
-  // changed to dependentAxisRange
-  dependentAxisRange?: NumberOrDateRange | undefined;
+  // can only be numeric
+  dependentAxisRange?: NumberRange;
+  /** Use a log scale for dependent axis. Default is false */
+  dependentAxisLogScale?: boolean;
   /** Show value for each bar */
   showBarValues?: boolean;
   /** Should plotting library controls be displayed? Ex. Plot.ly */
@@ -91,6 +93,7 @@ export default function Histogram({
   backgroundColor = 'transparent',
   // changed to dependentAxisRange
   dependentAxisRange,
+  dependentAxisLogScale = false,
   showBarValues,
   displayLegend = true,
   legendOptions,
@@ -321,7 +324,7 @@ export default function Histogram({
     range: [minBinStart, maxBinEnd],
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
-    type: 'linear',
+    type: dependentAxisLogScale ? 'log' : 'linear',
     automargin: true,
     title: {
       text: dependentAxisLabel,
@@ -333,7 +336,9 @@ export default function Histogram({
     color: textColor,
     gridcolor: gridColor,
     // range should be an array
-    range: [dependentAxisRange?.min, dependentAxisRange?.max],
+    range: [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
+      dependentAxisLogScale ? Math.log10(val || 1) : val
+    ),
   };
 
   return (

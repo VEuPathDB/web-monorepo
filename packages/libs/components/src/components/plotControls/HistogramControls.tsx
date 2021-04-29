@@ -97,21 +97,21 @@ export type HistogramControlsProps = {
   /** Action to take on y-axis log scale change. */
   toggleDependentAxisLogScale?: (dependentAxisLogScale: boolean) => void;
   /** Whether or not to set y-axis min/max range. */
-  dependentAxisRange?: NumberOrDateRange;
+  dependentAxisRange?: NumberRange;
   /** Action to take on y-axis min/max range change. */
-  onDependentAxisRangeChange?: (newRange?: NumberOrDateRange) => void;
+  onDependentAxisRangeChange?: (newRange?: NumberRange) => void;
   /** Whether or not to display y-axis absolute Relative. */
   dependentAxisMode?: 'absolute' | 'relative';
   /** Action to take on display legend change. */
   onDependentAxisModeChange?: (newMode: 'absolute' | 'relative') => void;
   /** Action to reset dependent axis range. */
-  onDependentAxisRangeReset?: () => void;
+  onDependentAxisSettingsReset?: () => void;
   /** Whether or not to set x-axis min/max range. */
   independentAxisRange?: NumberOrDateRange;
   /** Action to take on x-axis min/max range change. */
   onIndependentAxisRangeChange?: (newRange?: NumberOrDateRange) => void;
   /** Action to reset independent axis range. */
-  onIndependentAxisRangeReset?: () => void;
+  onIndependentAxisSettingsReset?: () => void;
   /** Action to Reset all to defaults. */
   onResetAll?: () => void;
 };
@@ -153,11 +153,11 @@ export default function HistogramControls({
   onDependentAxisRangeChange,
   dependentAxisMode,
   onDependentAxisModeChange,
-  onDependentAxisRangeReset,
+  onDependentAxisSettingsReset,
   // add x-axis/independent axis controls: axis range and range reset
   independentAxisRange,
   onIndependentAxisRangeChange,
-  onIndependentAxisRangeReset,
+  onIndependentAxisSettingsReset,
   // add reset all
   onResetAll,
   containerStyles = {},
@@ -334,19 +334,14 @@ export default function HistogramControls({
             />
           )}
           {onDependentAxisRangeChange ? (
-            valueType !== undefined && valueType === 'date' ? (
-              <DateRangeInput
-                label="Range:"
-                range={dependentAxisRange as DateRange}
-                onRangeChange={onDependentAxisRangeChange}
-              />
-            ) : (
-              <NumberRangeInput
-                label="Range:"
-                range={dependentAxisRange as NumberRange}
-                onRangeChange={onDependentAxisRangeChange}
-              />
-            )
+            <NumberRangeInput
+              label="Range:"
+              range={dependentAxisRange}
+              onRangeChange={(newRange?: NumberOrDateRange) => {
+                onDependentAxisRangeChange(newRange as NumberRange);
+              }}
+              allowPartialRanges={false}
+            />
           ) : null}
           {dependentAxisMode && onDependentAxisModeChange && (
             <ButtonGroup
@@ -358,12 +353,12 @@ export default function HistogramControls({
             />
           )}
           {/* add dependent axis range reset button */}
-          <div style={{ paddingTop: '1.5625em', width: '11.25em' }}>
-            {onDependentAxisRangeReset && (
+          <div style={{ paddingTop: '1.0em', width: '100%' }}>
+            {onDependentAxisSettingsReset && (
               <Button
                 type={'solid'}
                 text={'Reset to defaults'}
-                onClick={onDependentAxisRangeReset}
+                onClick={onDependentAxisSettingsReset}
               />
             )}
           </div>
@@ -455,11 +450,11 @@ export default function HistogramControls({
 
           {/* add dependent axis range reset button */}
           <div style={{ paddingTop: '0.625em', width: '11.25em' }}>
-            {onIndependentAxisRangeReset && (
+            {onIndependentAxisSettingsReset && (
               <Button
                 type={'solid'}
                 text={'Reset to defaults'}
-                onClick={onIndependentAxisRangeReset}
+                onClick={onIndependentAxisSettingsReset}
               />
             )}
           </div>

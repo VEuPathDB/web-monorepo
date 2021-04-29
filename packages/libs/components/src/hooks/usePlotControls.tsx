@@ -18,7 +18,7 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
-  TimeDeltaRange,
+  NumberRange,
 } from '../types/general';
 import * as DateMath from 'date-arithmetic';
 import { orderBy } from 'lodash';
@@ -44,7 +44,7 @@ type ActionType<DataShape> =
   | { type: 'histogram/toggleDependentAxisLogScale' }
   | {
       type: 'histogram/onDependentAxisRangeChange';
-      payload?: NumberOrDateRange;
+      payload?: NumberRange;
     }
   | { type: 'histogram/onDependentAxisModeChange' }
   | { type: 'histogram/onDependentAxisRangeReset' }
@@ -255,11 +255,11 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     /** Histogram: Type of y-axis log scale */
     dependentAxisLogScale?: boolean;
     /** Histogram: Range of y-axis min/max values */
-    dependentAxisRange?: NumberOrDateRange;
+    dependentAxisRange?: NumberRange;
     /** Histogram: Toggle absolute and relative.*/
     dependentAxisMode?: 'absolute' | 'relative';
     /** Histogram: dependent axis range reset */
-    onDependentAxisRangeReset?: () => void;
+    onDependentAxisSettingsReset?: () => void;
     /** Histogram: Range of x-axis min/max values */
     independentAxisRange?: NumberOrDateRange;
     /** Histogram: independent axis range reset */
@@ -544,7 +544,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   const toggleDependentAxisLogScale = () =>
     dispatch({ type: 'histogram/toggleDependentAxisLogScale' });
   // on y-axis dependentAxisRange
-  const onDependentAxisRangeChange = (newRange?: NumberOrDateRange) => {
+  const onDependentAxisRangeChange = (newRange?: NumberRange) => {
     if (params.histogram) {
       dispatch({
         type: 'histogram/onDependentAxisRangeChange',
