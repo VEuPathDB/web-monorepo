@@ -5,7 +5,6 @@ import Histogram, {
 import {
   DateRange,
   ErrorManagement,
-  NumberRange,
   TimeDelta,
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
@@ -18,7 +17,7 @@ import {
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
-import { number, string, partial, TypeOf } from 'io-ts';
+import { number, partial, TypeOf, boolean } from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
@@ -30,7 +29,7 @@ import { SessionState } from '../../hooks/session';
 import { useDataClient } from '../../hooks/workspace';
 import { DateRangeFilter, Filter, NumberRangeFilter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
-import { TimeUnit, NumberOrDateRange } from '../../types/general';
+import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
 import { padISODateTime } from '../../utils/date-conversion';
@@ -48,7 +47,13 @@ const UIState = partial({
   binWidth: number,
   binWidthTimeUnit: TimeUnit,
   independentAxisRange: NumberOrDateRange,
+  dependentAxisRange: NumberRange,
+  dependentAxisLogScale: boolean,
 });
+
+const defaultUIState: UIState = {
+  dependentAxisLogScale: false,
+};
 
 export function HistogramFilter(props: Props) {
   const { variable, entity, sessionState, studyMetadata } = props;
@@ -59,7 +64,7 @@ export function HistogramFilter(props: Props) {
   const uiState = useMemo(() => {
     return pipe(
       UIState.decode(sessionState.session?.variableUISettings[uiStateKey]),
-      getOrElse((): TypeOf<typeof UIState> => ({}))
+      getOrElse((): UIState => defaultUIState)
     );
   }, [sessionState.session?.variableUISettings, uiStateKey]);
   const dataClient = useDataClient();
@@ -91,7 +96,7 @@ export function HistogramFilter(props: Props) {
               foregroundFilters,
               entity,
               variable,
-              {}, // TO DO: dataParams here???
+              dataParams,
               background.histogram.config.binSpec
             )
           : background;
@@ -140,7 +145,14 @@ export function HistogramFilter(props: Props) {
     [dataClient, entity, filters, studyId, variable]
   );
   const data = usePromise(
-    useCallback(() => getData(uiState), [getData, uiState])
+    useCallback(() => getData(uiState), [
+      getData,
+      uiState.binWidth,
+      uiState.binWidthTimeUnit,
+      uiState.independentAxisRange,
+    ])
+    // is there some more concise utility to remove a key or keys from an object?
+    // I tried lodash.omit and it created an endless loop of API calls...!
   );
 
   const filter = filters?.find(
@@ -228,6 +240,7 @@ export function HistogramFilter(props: Props) {
             updateUIState={updateUIState}
             // add variableName for independentAxisLabel
             variableName={variable.displayName}
+            entityName={entity.displayName}
           />
         )}
     </div>
@@ -241,7 +254,8 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   updateUIState: (uiState: TypeOf<typeof UIState>) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
   // add variableName for independentAxisLabel
-  variableName?: string;
+  variableName: string;
+  entityName: string;
 };
 
 function HistogramPlotWithControls({
@@ -253,6 +267,7 @@ function HistogramPlotWithControls({
   filter,
   // variableName for independentAxisLabel
   variableName,
+  entityName,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const handleSelectedRangeChange = useCallback(
@@ -300,6 +315,34 @@ function HistogramPlotWithControls({
     [updateUIState]
   );
 
+  const handleDependentAxisRangeChange = useCallback(
+    (newRange?: NumberRange) => {
+      console.log(
+        `handleDependentAxisRangeChange newRange: ${newRange?.min} to ${newRange?.max}`
+      );
+      updateUIState({
+        dependentAxisRange: newRange,
+      });
+    },
+    [updateUIState]
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateUIState({
+      dependentAxisRange: undefined,
+      dependentAxisLogScale: defaultUIState.dependentAxisLogScale,
+    });
+  }, [updateUIState]);
+
+  const handleDependentAxisLogScale = useCallback(
+    (newState?: boolean) => {
+      updateUIState({
+        dependentAxisLogScale: newState,
+      });
+    },
+    [updateUIState]
+  );
+
   // TODO Use UIState
   const barLayout = 'overlay';
   const displayLegend = true;
@@ -330,15 +373,11 @@ function HistogramPlotWithControls({
         displayLibraryControls={displayLibraryControls}
         onSelectedRangeChange={handleSelectedRangeChange}
         barLayout={barLayout}
+        dependentAxisLabel={`Count of ${entityName}`}
         // add independentAxisLabel
-        independentAxisLabel={
-          // TO DO: revert the following to plain `variableName`
-          // rationale: it doesn't matter if a date variable is binned in days, months or years,
-          // it's still just a date variable (e.g. "date of birth", not "date of birth (months)")
-          data.binWidth && isTimeDelta(data.binWidth)
-            ? variableName + ' (' + data.binWidth.unit + ')'
-            : variableName
-        }
+        independentAxisLabel={variableName}
+        dependentAxisRange={uiState.dependentAxisRange}
+        dependentAxisLogScale={uiState.dependentAxisLogScale}
       />
       <HistogramControls
         label="Histogram Controls"
@@ -362,6 +401,11 @@ function HistogramPlotWithControls({
         onSelectedRangeChange={handleSelectedRangeChange}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
+        dependentAxisRange={uiState.dependentAxisRange}
+        onDependentAxisRangeChange={handleDependentAxisRangeChange}
+        onDependentAxisSettingsReset={handleDependentAxisSettingsReset}
+        dependentAxisLogScale={uiState.dependentAxisLogScale}
+        toggleDependentAxisLogScale={handleDependentAxisLogScale}
       />
     </div>
   );
