@@ -75,7 +75,7 @@ export function HistogramFilter(props: Props) {
       HistogramData & {
         variableId: string;
         entityId: string;
-      }
+      } & HistogramResponse['histogram']['config']['summary']
     > => {
       const foregroundFilters = filters?.filter(
         (f) => f.entityId !== entity.id || f.variableId !== variable.id
@@ -103,13 +103,13 @@ export function HistogramFilter(props: Props) {
 
       const series = [
         histogramResponseToDataSeries(
-          `All ${variable.displayName}`,
+          `Entire dataset`,
           background,
           gray,
           variable.type
         ),
         histogramResponseToDataSeries(
-          `Remaining ${variable.displayName}`,
+          `Filtered subset<br>excluding filters for this variable`,
           foreground,
           red,
           variable.type
@@ -132,6 +132,8 @@ export function HistogramFilter(props: Props) {
           }) as NumberOrTimeDeltaRange;
       const binWidthStep = step || 0.1;
 
+      const summary = foreground.histogram.config.summary;
+
       return {
         valueType: variable.type,
         series,
@@ -140,6 +142,7 @@ export function HistogramFilter(props: Props) {
         binWidthStep,
         variableId: variable.id,
         entityId: entity.id,
+        ...summary,
       };
     },
     [dataClient, entity, filters, studyId, variable]
@@ -222,26 +225,31 @@ export function HistogramFilter(props: Props) {
       {data.value &&
         data.value.variableId === variable.id &&
         data.value.entityId === entity.id && (
-          <HistogramPlotWithControls
-            key={filters?.length ?? 0}
-            filter={filter}
-            data={data.value}
-            getData={getData}
-            width="100%"
-            height={400}
-            spacingOptions={{
-              marginTop: 20,
-              marginBottom: 20,
-            }}
-            orientation={'vertical'}
-            barLayout={'overlay'}
-            updateFilter={updateFilter}
-            uiState={uiState}
-            updateUIState={updateUIState}
-            // add variableName for independentAxisLabel
-            variableName={variable.displayName}
-            entityName={entity.displayName}
-          />
+          <div>
+            <div className="histogram-summary-stats">
+              <b>Min:</b> {data.value.min} <b>Mean:</b> {data.value.mean}{' '}
+              <b>Median:</b> {data.value.median} <b>Max:</b> {data.value.max}
+            </div>
+            <HistogramPlotWithControls
+              key={filters?.length ?? 0}
+              filter={filter}
+              data={data.value}
+              getData={getData}
+              width="100%"
+              height={400}
+              spacingOptions={{
+                marginTop: 20,
+                marginBottom: 20,
+              }}
+              orientation={'vertical'}
+              barLayout={'overlay'}
+              updateFilter={updateFilter}
+              uiState={uiState}
+              updateUIState={updateUIState}
+              variableName={variable.displayName}
+              entityName={entity.displayName}
+            />
+          </div>
         )}
     </div>
   );
@@ -314,6 +322,14 @@ function HistogramPlotWithControls({
     },
     [updateUIState]
   );
+
+  const handleIndependentAxisSettingsReset = useCallback(() => {
+    updateUIState({
+      independentAxisRange: undefined,
+      binWidth: undefined,
+      binWidthTimeUnit: undefined,
+    });
+  }, [updateUIState]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
@@ -401,6 +417,7 @@ function HistogramPlotWithControls({
         onSelectedRangeChange={handleSelectedRangeChange}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
+        onIndependentAxisSettingsReset={handleIndependentAxisSettingsReset}
         dependentAxisRange={uiState.dependentAxisRange}
         onDependentAxisRangeChange={handleDependentAxisRangeChange}
         onDependentAxisSettingsReset={handleDependentAxisSettingsReset}

@@ -50,6 +50,8 @@ export interface HistogramRequestParams {
   };
 }
 
+const TEMPnumberORstring = union([string, number]);
+
 export type HistogramResponse = TypeOf<typeof HistogramResponse>;
 export const HistogramResponse = type({
   histogram: type({
@@ -85,7 +87,18 @@ export const HistogramResponse = type({
           units: TimeUnit,
         }),
       ]),
-      // TO DO: config.viewport and config.summary
+      summary: type({
+        min: TEMPnumberORstring,
+        q1: TEMPnumberORstring,
+        median: TEMPnumberORstring,
+        mean: TEMPnumberORstring,
+        q3: TEMPnumberORstring,
+        max: TEMPnumberORstring,
+      }),
+      viewport: type({
+        xMin: TEMPnumberORstring,
+        xMax: TEMPnumberORstring,
+      }),
     }),
   }),
   // TO DO: sampleSizeTable
