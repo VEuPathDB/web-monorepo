@@ -25,33 +25,33 @@
   dependencies:
     "@babel/types" "^7.13.12"
 
-"@babel/helper-validator-identifier@^7.12.11":
-  version "7.12.11"
-  resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.12.11.tgz#c9a1f021917dcb5ccf0d4e453e399022981fc9ed"
-  integrity sha512-np/lG3uARFybkoHokJUmf1QfEvRVCPbmQeUQpKow5cQ3xWrV9i3rUHodKDJPQfTVX61qKi+UdYk8kik84n7XOw==
+"@babel/helper-validator-identifier@^7.14.0":
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.14.0.tgz#d26cad8a47c65286b15df1547319a5d0bcf27288"
+  integrity sha512-V3ts7zMSu5lfiwWDVWzRDGIN+lnCEUdaXgtVHJgLb1rGaA6jMrtB9EmE7L18foXJIE8Un/A/h6NJfGQp/e1J4A==
 
 "@babel/highlight@^7.12.13":
-  version "7.13.10"
-  resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.13.10.tgz#a8b2a66148f5b27d666b15d81774347a731d52d1"
-  integrity sha512-5aPpe5XQPzflQrFwL1/QoeHkP2MsA4JCntcXHRhEsdsfPVkvPi2w7Qix4iV7t5S/oC9OodGrggd8aco1g3SZFg==
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.14.0.tgz#3197e375711ef6bf834e67d0daec88e4f46113cf"
+  integrity sha512-YSCOwxvTYEIMSGaBQb5kDDsCopDdiUGsqpatp3fOlI4+2HQSkTmEVWnVuySdAC5EWCqSWWTv0ib63RjR7dTBdg==
   dependencies:
-    "@babel/helper-validator-identifier" "^7.12.11"
+    "@babel/helper-validator-identifier" "^7.14.0"
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.13.8", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.7":
-  version "7.13.17"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.13.17.tgz#8966d1fc9593bf848602f0662d6b4d0069e3a7ec"
-  integrity sha512-NCdgJEelPTSh+FEFylhnP1ylq848l1z9t9N0j1Lfbcw0+KXGjsTvUmkxy+voLLXB5SOKMbLLx4jxYliGrYQseA==
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.13.8", "@babel/runtime@^7.3.1", "@babel/runtime@^7.4.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.3", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.0.tgz#46794bc20b612c5f75e62dd071e24dfd95f1cbe6"
+  integrity sha512-JELkvo/DlpNdJ7dlyw/eY7E0suy5i5GQH+Vlxaq1nsNJ+H7f4Vtv3jMeCEgRhZZQFXTjldYfQgv2qmM6M1v5wA==
   dependencies:
     regenerator-runtime "^0.13.4"
 
 "@babel/types@^7.13.12":
-  version "7.13.17"
-  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.13.17.tgz#48010a115c9fba7588b4437dd68c9469012b38b4"
-  integrity sha512-RawydLgxbOPDlTLJNtoIypwdmAy//uQIzlKt2+iBiJaRlVuI6QLUxVAyWGNfOzp8Yu4L4lLIacoCyTNtpb4wiA==
+  version "7.14.0"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.14.0.tgz#3fc3fc74e0cdad878182e5f66cc6bcab1915a802"
+  integrity sha512-O2LVLdcnWplaGxiPBz12d0HcdN8QdxdsWYhz5LSeuukV/5mn2xUUc3gBeU4QBYPJ18g/UToe8F532XJ608prmg==
   dependencies:
-    "@babel/helper-validator-identifier" "^7.12.11"
+    "@babel/helper-validator-identifier" "^7.14.0"
     to-fast-properties "^2.0.0"
 
 "@choojs/findup@^0.2.0":
@@ -189,14 +189,14 @@
   integrity sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==
 
 "@material-ui/core@^4.11.2", "@material-ui/core@^4.11.3":
-  version "4.11.3"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.11.3.tgz#f22e41775b0bd075e36a7a093d43951bf7f63850"
-  integrity sha512-Adt40rGW6Uds+cAyk3pVgcErpzU/qxc7KBR94jFHBYretU4AtWZltYcNsbeMn9tXL86jjVL1kuGcIHsgLgFGRw==
+  version "4.11.4"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.11.4.tgz#4fb9fe5dec5dcf780b687e3a40cff78b2b9640a4"
+  integrity sha512-oqb+lJ2Dl9HXI9orc6/aN8ZIAMkeThufA5iZELf2LQeBn2NtjVilF5D2w7e9RpntAzDb4jK5DsVhkfOvFY/8fg==
   dependencies:
     "@babel/runtime" "^7.4.4"
-    "@material-ui/styles" "^4.11.3"
+    "@material-ui/styles" "^4.11.4"
     "@material-ui/system" "^4.11.3"
-    "@material-ui/types" "^5.1.0"
+    "@material-ui/types" "5.1.0"
     "@material-ui/utils" "^4.11.2"
     "@types/react-transition-group" "^4.2.0"
     clsx "^1.0.4"
@@ -214,9 +214,9 @@
     "@babel/runtime" "^7.4.4"
 
 "@material-ui/lab@^4.0.0-alpha.57":
-  version "4.0.0-alpha.57"
-  resolved "https://registry.yarnpkg.com/@material-ui/lab/-/lab-4.0.0-alpha.57.tgz#e8961bcf6449e8a8dabe84f2700daacfcafbf83a"
-  integrity sha512-qo/IuIQOmEKtzmRD2E4Aa6DB4A87kmY6h0uYhjUmrrgmEAgbbw9etXpWPVXuRK6AGIQCjFzV6WO2i21m1R4FCw==
+  version "4.0.0-alpha.58"
+  resolved "https://registry.yarnpkg.com/@material-ui/lab/-/lab-4.0.0-alpha.58.tgz#c7ebb66f49863c5acbb20817163737caa299fafc"
+  integrity sha512-GKHlJqLxUeHH3L3dGQ48ZavYrqGOTXkFkiEiuYMAnAvXAZP4rhMIqeHOPXSUQan4Bd8QnafDcpovOSLnadDmKw==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@material-ui/utils" "^4.11.2"
@@ -224,14 +224,14 @@
     prop-types "^15.7.2"
     react-is "^16.8.0 || ^17.0.0"
 
-"@material-ui/styles@^4.11.3":
-  version "4.11.3"
-  resolved "https://registry.yarnpkg.com/@material-ui/styles/-/styles-4.11.3.tgz#1b8d97775a4a643b53478c895e3f2a464e8916f2"
-  integrity sha512-HzVzCG+PpgUGMUYEJ2rTEmQYeonGh41BYfILNFb/1ueqma+p1meSdu4RX6NjxYBMhf7k+jgfHFTTz+L1SXL/Zg==
+"@material-ui/styles@^4.11.4":
+  version "4.11.4"
+  resolved "https://registry.yarnpkg.com/@material-ui/styles/-/styles-4.11.4.tgz#eb9dfccfcc2d208243d986457dff025497afa00d"
+  integrity sha512-KNTIZcnj/zprG5LW0Sao7zw+yG3O35pviHzejMdcSGCdWbiO8qzRgOYL8JAxAsWBKOKYwVZxXtHWaB5T2Kvxew==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@emotion/hash" "^0.8.0"
-    "@material-ui/types" "^5.1.0"
+    "@material-ui/types" "5.1.0"
     "@material-ui/utils" "^4.11.2"
     clsx "^1.0.4"
     csstype "^2.5.2"
@@ -256,7 +256,7 @@
     csstype "^2.5.2"
     prop-types "^15.7.2"
 
-"@material-ui/types@^5.1.0":
+"@material-ui/types@5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@material-ui/types/-/types-5.1.0.tgz#efa1c7a0b0eaa4c7c87ac0390445f0f88b0d88f2"
   integrity sha512-7cqRjrY50b8QzRSYyhSpx4WRw2YuO0KKIGQEVk5J8uoz2BanawykgZGoWEqKm7pVIbzFDN0SpPcVV4IhOFkl8A==
@@ -771,9 +771,9 @@
   integrity sha512-+C7MFmC2Kw1nCmQsmll9VETV27OpevSD4yywEfLFrLTuEYlPlHRNQnNOVmDM4x1iiurmGwfbt+jn9lwM0cghLA==
 
 "@types/node@^14.14.7":
-  version "14.14.41"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.41.tgz#d0b939d94c1d7bd53d04824af45f1139b8c45615"
-  integrity sha512-dueRKfaJL4RTtSa7bWeTK1M+VH+Gns73oCgzvYfHZywRCoPSd8EkXBL0mZ9unPTveBn+D9phZBaxuzpwjWkW0g==
+  version "14.14.43"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.43.tgz#26bcbb0595b305400e8ceaf9a127a7f905ae49c8"
+  integrity sha512-3pwDJjp1PWacPTpH0LcfhgjvurQvrZFBrC6xxjaUEZ7ifUtT32jtjPxEMMblpqd2Mvx+k8haqQJLQxolyGN/cQ==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -858,9 +858,9 @@
     csstype "^3.0.2"
 
 "@types/sizzle@*":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
-  integrity sha512-7EJYyKTL7tFR8+gDbB6Wwz/arpGa0Mywk1TJbNzKzHtzbwVmY4HR9WqS5VV7dsBUKQmPNr192jHr/VpBluj/hg==
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.3.tgz#ff5e2f1902969d305225a047c8a0fd5c915cebef"
+  integrity sha512-JYM8x9EGF163bEyhdJBpR2QX1R5naCJHC8ucJylJ3w9/CVBaskdQ8WqBf8MmQrd1kRvp/a4TS8HJ+bxzR7ZJYQ==
 
 "@types/uuid@^8.0.0":
   version "8.3.0"
@@ -872,10 +872,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.2.26":
-  version "0.2.26"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.26.tgz#a3a1f09cf0305387e519af729fce0b705422badd"
-  integrity sha512-Px3ra7u4Iq/VK+3iM+r6niXHXAS6icPwUvgQ+FTlbkRqFiU1YtU56XZ85WBDRkh5RQo8KPKnH5VVd68Rw48UnQ==
+"@veupathdb/components@^0.2.30":
+  version "0.2.30"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.30.tgz#e0d3ea6646cdd79e2cfd572e72c66b8eef7e528f"
+  integrity sha512-0q9J09Uiw0NhT4qK1ijtxfRGxaWGkNf0AWAZS0zybey3W3oXrVxupXhTvkdo34l+dt5s9XFFdPAcBH6u2QuIlA==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -908,13 +908,13 @@
     shape2geohash "^1.2.5"
 
 "@veupathdb/eda@^0.1.30":
-  version "0.1.41"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.41.tgz#469ffbfa34c21a84c12d9ebbba2400ea199fea3d"
-  integrity sha512-PMXwBT8IKu1VE9utPSxh3p+a/W0UjB6iVB9FYc9dPst5nPpifp5k1ea9wkfyYrdMfIz7mvnrq8RyP2LPbYuQBg==
+  version "0.1.43"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.43.tgz#5504642381b26953c55ea5283d8098df321f2855"
+  integrity sha512-IAephH5fAx16EDAFUPLPBFuHdcwubpZkFAyCqGoSzutE233MXPrcMmycNaSqKj/pouEaAmjyu1x0u1w5U5r8Jg==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.2.26"
+    "@veupathdb/components" "^0.2.30"
     "@veupathdb/wdk-client" "^0.1.1"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
     debounce-promise "^3.1.2"
@@ -1147,10 +1147,10 @@
     "@types/react" "*"
     prop-types "^15.5.7"
 
-"@visx/grid@1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@visx/grid/-/grid-1.8.0.tgz#bcf9787e0eb5c6ccd0661703946b69d91cc1046a"
-  integrity sha512-ZTb2oW2ny2KHSOhaxlAD6Ps9iVz/v4qkSAYNvomwS7wRK/NtUFEznggxHc36kJdKQCUeU9MmbPfCvN4FA43BWg==
+"@visx/grid@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@visx/grid/-/grid-1.9.1.tgz#48cd452c7a71540f7e3245c838b7de87c111f26f"
+  integrity sha512-hD2Vo+Bd79vJMdf1R/w9WjxEf/ZEo/cFZ9bUzL4Uf+4u0/zZ2RynkkPh6zDN53mx1tHcYaq9JW90nNi/rsqLWA==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
@@ -1254,15 +1254,15 @@
   resolved "https://registry.yarnpkg.com/@visx/point/-/point-1.7.0.tgz#1df3c3425eae464f498473bcdda2fcae05c8ecbe"
   integrity sha512-oaoY/HXYHhmpkkeKI4rBPmFtjHWtxSrIhZCVm1ipPoyQp3voJ8L6JD5eUIVmmaUCdUGUGwL1lFLnJiQ2p1Vlwg==
 
-"@visx/react-spring@1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@visx/react-spring/-/react-spring-1.8.0.tgz#65aee693d5b357bebe81a88bde8cbc8fada281d0"
-  integrity sha512-/IG8JuZct64cWcE4g0qxqcskbinPSzcM4dBIKl4m3Q69/xJwUshz83hqzOSmABye7aZhIsBBL1ZDpx9pDEU+SQ==
+"@visx/react-spring@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@visx/react-spring/-/react-spring-1.9.1.tgz#54f4c88ffb19e0b363b2e5114e143c33b6f5cce9"
+  integrity sha512-tVCn+fkjhdG5/WyRuwKQ6zUnid81vD0Eclgg8RT4q1fDnPWp57OrHYvVVDV1bfj1YrY6hdZHkEUv0pkq3KX0dw==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/react" "*"
     "@visx/axis" "1.8.0"
-    "@visx/grid" "1.8.0"
+    "@visx/grid" "1.9.1"
     "@visx/scale" "1.7.0"
     "@visx/text" "1.7.0"
     classnames "^2.2.5"
@@ -1336,9 +1336,9 @@
     react-use-measure "^2.0.4"
 
 "@visx/visx@^1.1.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@visx/visx/-/visx-1.9.0.tgz#7016744c11575c468f250eb591f1dda9def2ea37"
-  integrity sha512-2DhENnfCfg0rLkvYfh6fn5xvkUvgoifFEoFLtfVuNTxFvTiLsuCd9ngXvi8EKu3of2eLWGGLPFp4pdfUy/uzcg==
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@visx/visx/-/visx-1.9.1.tgz#f59aef307d54efeaae156956aa46660ec07227d3"
+  integrity sha512-QZQnEtFmQupofJHOtyN3KDhy4CjoWbncIMUdJvQMJn4GJa+KJdlXSq0/aKOpEtxO30/OE71yH8tXWznvupPf8g==
   dependencies:
     "@visx/annotation" "1.9.0"
     "@visx/axis" "1.8.0"
@@ -1351,7 +1351,7 @@
     "@visx/geo" "1.7.0"
     "@visx/glyph" "1.7.0"
     "@visx/gradient" "1.7.0"
-    "@visx/grid" "1.8.0"
+    "@visx/grid" "1.9.1"
     "@visx/group" "1.7.0"
     "@visx/heatmap" "1.7.0"
     "@visx/hierarchy" "1.7.0"
@@ -1367,7 +1367,7 @@
     "@visx/text" "1.7.0"
     "@visx/tooltip" "1.7.2"
     "@visx/voronoi" "1.7.0"
-    "@visx/xychart" "1.9.0"
+    "@visx/xychart" "1.9.1"
     "@visx/zoom" "1.7.0"
 
 "@visx/voronoi@1.7.0":
@@ -1382,10 +1382,10 @@
     d3-voronoi "^1.1.2"
     prop-types "^15.6.1"
 
-"@visx/xychart@1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@visx/xychart/-/xychart-1.9.0.tgz#434cbcdc4322d683ecab8dcb81790a3e79e7fba3"
-  integrity sha512-h4yRpaOJc7n2E4Y1UC1mZJ8umV42TpO51No3qNysMbVyVHlkplGsYECCnUUPvm35771bhnQtxlIhFSha2RfvOg==
+"@visx/xychart@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@visx/xychart/-/xychart-1.9.1.tgz#a28c1b33861c05002f0ce8786beb007266fe56f3"
+  integrity sha512-Cvly7wYucmRXzdvQ4z/YKzDaRm0rmmStEKkSDkXVAv3pW34yGr9M73TIDhoMXjyy8y1QYMKIDOeswwcnKiIkxA==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/lodash" "^4.14.146"
@@ -1394,8 +1394,8 @@
     "@visx/axis" "1.8.0"
     "@visx/event" "1.7.0"
     "@visx/glyph" "1.7.0"
-    "@visx/grid" "1.8.0"
-    "@visx/react-spring" "1.8.0"
+    "@visx/grid" "1.9.1"
+    "@visx/react-spring" "1.9.1"
     "@visx/responsive" "1.7.0"
     "@visx/scale" "1.7.0"
     "@visx/shape" "1.8.0"
@@ -2269,9 +2269,9 @@ dom-helpers@^3.4.0:
     "@babel/runtime" "^7.1.2"
 
 dom-helpers@^5.0.1, dom-helpers@^5.1.2, dom-helpers@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-5.2.0.tgz#57fd054c5f8f34c52a3eeffdb7e7e93cd357d95b"
-  integrity sha512-Ru5o9+V8CpunKnz5LGgWXkmrH/20cGKwcHwS4m73zIvs54CN9epEmT/HLqFJW3kXpakAFkEdzgy1hzlJe3E4OQ==
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-5.2.1.tgz#d9400536b2bf8225ad98fe052e029451ac40e902"
+  integrity sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==
   dependencies:
     "@babel/runtime" "^7.8.7"
     csstype "^3.0.2"
@@ -3369,9 +3369,9 @@ is-buffer@^2.0.3:
   integrity sha512-i2R6zNFDwgEHJyQUtJEk0XFi1i0dPFn/oqjK3/vPCcDeJvW5NQ83V8QbicfF1SupOaB0h8ntgBC2YiE7dfyctQ==
 
 is-core-module@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.2.0.tgz#97037ef3d52224d85163f5597b2b63d9afed981a"
-  integrity sha512-XRAfAdyyY5F5cOXn7hYQDqh2Xmii+DEfIcQGxK/uNwMHhIkPWO0g8msXcbzLe+MpGoR951MlqM/2iIlU4vKDdQ==
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.3.0.tgz#d341652e3408bca69c4671b79a0954a3d349f887"
+  integrity sha512-xSphU2KG9867tsYdLD4RWQ1VqdFl4HTO9Thf3I/3dLEfr0dbPTWKsuCKrgqMljg4nPE+Gq0VCnzT3gr0CyBmsw==
   dependencies:
     has "^1.0.3"
 
@@ -3724,9 +3724,9 @@ md5@^2.3.0:
     is-buffer "~1.1.6"
 
 memoize-one@^5.0.0:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.1.1.tgz#047b6e3199b508eaec03504de71229b8eb1d75c0"
-  integrity sha512-HKeeBpWvqiVJD57ZUAsJNm71eHTykffzcLZVYWiVfQeI1rJtuEaS7hQiEpWfVVk18donPwJEcFKIkCmPJNOhHA==
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/memoize-one/-/memoize-one-5.2.1.tgz#8337aa3c4335581839ec01c3d594090cebe8f00e"
+  integrity sha512-zYiwtZUcYyXKo/np96AGZAckk+FWWsUdJ3cHGGmld7+AhvcWmQyGCYUh1hc4Q/pkOhb65dQR/pqCyK0cOaHz4Q==
 
 mini-create-react-context@^0.4.0:
   version "0.4.1"
@@ -4397,9 +4397,9 @@ react-plotly.js@^2.4.0:
     prop-types "^15.7.2"
 
 react-redux@^7.1.3:
-  version "7.2.3"
-  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.3.tgz#4c084618600bb199012687da9e42123cca3f0be9"
-  integrity sha512-ZhAmQ1lrK+Pyi0ZXNMUZuYxYAZd59wFuVDGUt536kSGdD0ya9Q7BfsE95E3TsFLE3kOSFp5m6G5qbatE+Ic1+w==
+  version "7.2.4"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.4.tgz#1ebb474032b72d806de2e0519cd07761e222e225"
+  integrity sha512-hOQ5eOSkEJEXdpIKbnRyl04LhaWabkDPV+Ix97wqQX3T3d2NQ8DUblNXXtNMavc7DpswyQM6xfaN4HQDKNY2JA==
   dependencies:
     "@babel/runtime" "^7.12.1"
     "@types/react-redux" "^7.1.16"
@@ -4550,12 +4550,11 @@ redux-observable@^1.2.0:
   integrity sha512-yeR90RP2WzZzCxxnQPlh2uFzyfFLsfXu8ROh53jGDPXVqj71uNDMmvi/YKQkd9ofiVoO4OYb1snbowO49tCEMg==
 
 redux@^4.0.0:
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/redux/-/redux-4.0.5.tgz#4db5de5816e17891de8a80c424232d06f051d93f"
-  integrity sha512-VSz1uMAH24DM6MF72vcojpYPtrTUu3ByVWfPL1nPfVRb5mZVTve5GnNCUV53QM/BZ66xfWrm0CTWoM+Xlz8V1w==
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/redux/-/redux-4.1.0.tgz#eb049679f2f523c379f1aff345c8612f294c88d4"
+  integrity sha512-uI2dQN43zqLWCt6B/BMGRMY6db7TTY4qeHHfGeKb3EOhmOKjU3KdWvNLJyqaHRksv/ErdNH7cFZWg9jXtewy4g==
   dependencies:
-    loose-envify "^1.4.0"
-    symbol-observable "^1.2.0"
+    "@babel/runtime" "^7.9.2"
 
 regenerator-runtime@^0.13.4:
   version "0.13.7"
@@ -5041,7 +5040,7 @@ svg-path-sdf@^1.1.3:
     parse-svg-path "^0.1.2"
     svg-path-bounds "^1.0.1"
 
-symbol-observable@1.2.0, symbol-observable@^1.2.0:
+symbol-observable@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
   integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==
