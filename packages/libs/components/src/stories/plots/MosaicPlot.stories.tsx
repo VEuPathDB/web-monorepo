@@ -12,10 +12,10 @@ export const TwoByTwo = () => (
       [40, 15],
       [10, 25],
     ]}
-    xValues={['Men', 'Women']}
-    yValues={['Died', 'Survived']}
-    xLabel={'Sex'}
-    yLabel={'Status'}
+    independentValues={['Men', 'Women']}
+    dependentValues={['Died', 'Survived']}
+    independentLabel={'Sex'}
+    dependentLabel={'Status'}
     colors={['orange', 'blue']}
   />
 );
@@ -26,10 +26,10 @@ export const TwoByThree = () => (
       [45, 15, 20],
       [10, 45, 20],
     ]}
-    xValues={['Rabbit', 'Cat', 'Dog']}
-    yValues={['Positive', 'Negative']}
-    xLabel={'Animal'}
-    yLabel={'Rabies'}
+    independentValues={['Rabbit', 'Cat', 'Dog']}
+    dependentValues={['Positive', 'Negative']}
+    independentLabel={'Animal'}
+    dependentLabel={'Rabies'}
     width={400}
     height={300}
     showLegend={false}
@@ -45,9 +45,9 @@ export const FourByThree = () => (
       [20, 15, 7],
       [22, 30, 10],
     ]}
-    xValues={['Mercury', 'Venus', 'Mars']}
-    yValues={['Nitrogen', 'Oxygen', 'Hydrogen', 'Other']}
-    xLabel={'Planet'}
-    yLabel={'Atmospheric Makeup'}
+    independentValues={['Mercury', 'Venus', 'Mars']}
+    dependentValues={['Nitrogen', 'Oxygen', 'Hydrogen', 'Other']}
+    independentLabel={'Planet'}
+    dependentLabel={'Atmospheric Makeup'}
   />
 );

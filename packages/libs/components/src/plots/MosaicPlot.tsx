@@ -5,10 +5,10 @@ import _ from 'lodash';
 export interface Props extends Omit<PlotProps, 'width' | 'height'> {
   // N columns, M rows
   data: Array<Array<number>>; // MxN (M = outerLength; N = innerLength)
-  xValues: Array<string>; // N
-  yValues: Array<string>; // M
-  xLabel: string;
-  yLabel: string;
+  independentValues: Array<string>; // N
+  dependentValues: Array<string>; // M
+  independentLabel: string;
+  dependentLabel: string;
   colors?: Array<string>; // M
   showLegend?: boolean;
   showModebar?: boolean;
@@ -28,16 +28,16 @@ export default function MosaicPlot(props: Props) {
 
   const layout = {
     xaxis: {
-      title: props.xLabel,
+      title: props.independentLabel,
       // Must expliticly define range for it to work consistently
       range: [0, sum_column_widths] as number[],
       tickvals: column_centers,
-      ticktext: props.xValues,
+      ticktext: props.independentValues,
       // Shows x-axis counts similar to y-axis hover labels
-      // ticktext: props.xValues.map((value, i) => `${value}: ${(column_widths[i]/sum_column_widths*100).toFixed(1)}% (${column_widths[i]})`),
+      // ticktext: props.independentValues.map((value, i) => `${value}: ${(column_widths[i]/sum_column_widths*100).toFixed(1)}% (${column_widths[i]})`),
     },
     yaxis: {
-      title: props.yLabel ? props.yLabel + ' (%)' : '',
+      title: props.dependentLabel ? props.dependentLabel + ' (%)' : '',
     },
     barmode: 'stack',
     barnorm: 'percent',
@@ -49,11 +49,11 @@ export default function MosaicPlot(props: Props) {
         ({
           x: column_centers,
           y: counts,
-          name: props.yValues[i],
+          name: props.dependentValues[i],
           hoverinfo: 'text',
           hovertext: counts.map(
             (count, j) =>
-              `${props.yValues[i]}: ${(
+              `${props.dependentValues[i]}: ${(
                 (count / column_widths[j]) *
                 100
               ).toFixed(1)}% (${count})`
