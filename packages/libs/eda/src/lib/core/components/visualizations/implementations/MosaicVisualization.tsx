@@ -21,7 +21,10 @@ import { isMosaicVariable, isTwoByTwoVariable } from '../../filter/guards';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
-type MosaicData = Pick<MosaicProps, 'data' | 'xValues' | 'yValues'>;
+type MosaicData = Pick<
+  MosaicProps,
+  'data' | 'independentValues' | 'dependentValues'
+>;
 
 export const mosaicVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -304,10 +307,12 @@ function MosaicViz(props: Props) {
         fullscreen ? (
           <MosaicPlotWithControls
             data={data.value.data}
-            xValues={data.value.xValues}
-            yValues={data.value.yValues}
-            xLabel={findVariable(vizConfig.xAxisVariable)!.displayName}
-            yLabel={findVariable(vizConfig.yAxisVariable)!.displayName}
+            independentValues={data.value.independentValues}
+            dependentValues={data.value.dependentValues}
+            independentLabel={
+              findVariable(vizConfig.xAxisVariable)!.displayName
+            }
+            dependentLabel={findVariable(vizConfig.yAxisVariable)!.displayName}
             width="100%"
             height={400}
             showLegend={true}
@@ -316,14 +321,14 @@ function MosaicViz(props: Props) {
           // thumbnail/grid view
           <Mosaic
             data={data.value.data}
-            xValues={data.value.xValues}
-            yValues={data.value.yValues}
+            independentValues={data.value.independentValues}
+            dependentValues={data.value.dependentValues}
             width={350}
             height={280}
             showModebar={false}
             showLegend={false}
-            xLabel=""
-            yLabel=""
+            independentLabel=""
+            dependentLabel=""
           />
         )
       ) : (
@@ -386,8 +391,8 @@ export function mosaicResponseToData(
 
   return {
     data: response.mosaic.data[0].value,
-    xValues: response.mosaic.data[0].xLabel,
-    yValues: response.mosaic.data[0].yLabel,
+    independentValues: response.mosaic.data[0].xLabel,
+    dependentValues: response.mosaic.data[0].yLabel,
   };
 }
 
