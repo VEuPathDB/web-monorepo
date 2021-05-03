@@ -341,6 +341,7 @@ export default function Histogram({
       dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
     ),
     fixedrange: true,
+    dtick: dependentAxisLogScale ? 1 : undefined,
   };
 
   return (
