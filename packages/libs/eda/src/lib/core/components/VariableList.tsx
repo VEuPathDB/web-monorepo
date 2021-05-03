@@ -215,9 +215,14 @@ const FieldNode = ({
   const nodeRef = useRef<HTMLAnchorElement>(null);
 
   useLayoutEffect(() => {
-    if (isActive && nodeRef.current?.offsetParent instanceof HTMLElement) {
-      scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
-    }
+    // hack: Use setTimeout since DOM may not reflect the current state of expanded nodes.
+    // hack: This ensures that the node is visible when attempting to scroll into view.
+    let timerId = setTimeout(() => {
+      if (isActive && nodeRef.current?.offsetParent instanceof HTMLElement) {
+        scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
+      }
+    });
+    return () => clearTimeout(timerId);
   }, [isActive, searchTerm]);
 
   return (
