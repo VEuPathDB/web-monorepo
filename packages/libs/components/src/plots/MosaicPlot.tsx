@@ -37,7 +37,7 @@ export default function MosaicPlot(props: Props) {
       // ticktext: props.xValues.map((value, i) => `${value}: ${(column_widths[i]/sum_column_widths*100).toFixed(1)}% (${column_widths[i]})`),
     },
     yaxis: {
-      title: props.yLabel + ' (%)',
+      title: props.yLabel ? props.yLabel + ' (%)' : '',
     },
     barmode: 'stack',
     barnorm: 'percent',
