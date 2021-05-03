@@ -200,6 +200,58 @@ export interface ScatterplotRequestParams {
     outputEntityId: string;
     valueSpec: 'raw' | 'smoothedMean' | 'smoothedMeanWithRaw';
     //DKDK not quite sure of overlayVariable and facetVariable yet
+    // facetVariable?: ZeroToTwoVariables;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+//DKDK unlike API doc, data (response) shows seriesX, seriesY, intervalX, intervalY, intervalSE
+const ScatterplotResponseData = array(
+  partial({
+    //DKDK valueSpec = smoothedMean only returns interval data (no series data)
+    seriesX: array(number),
+    seriesY: array(number),
+    intervalX: array(number),
+    intervalY: array(number),
+    intervalSE: array(number),
+  })
+);
+
+//DKDK define sampleSizeTableArray
+const sampleSizeTableArray = array(partial({ size: number }));
+export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
+export const ScatterplotResponse = type({
+  scatterplot: type({
+    data: ScatterplotResponseData,
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: sampleSizeTableArray,
+});
+
+//DKDK lineplot
+export interface LineplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    //DKDK not quite sure of overlayVariable and facetVariable yet
     // overlayVariable?: Variable;
     // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: {
@@ -213,38 +265,41 @@ export interface ScatterplotRequestParams {
   };
 }
 
-//DKDK unlike API doc, data (response) shows series.x, series.y, interval.x, interval.y, interval.se
-const ScatterplotResponseData = array(
-  partial({
-    //DKDK valueSpec = smoothedMean only returns interval data (no series data)
-    'series.x': array(number),
-    'series.y': array(number),
-    'interval.x': array(number),
-    'interval.y': array(number),
-    'interval.se': array(number),
-    //DKDK need to make sure if below is correct (untested)
-    overlayVariableDetails: StringVariableValue,
-    facetVariableDetails: union([
-      tuple([StringVariableValue]),
-      tuple([StringVariableValue, StringVariableValue]),
-    ]),
-  })
+const LineplotResponseData = array(
+  intersection([
+    type({
+      seriesX: array(number),
+      seriesY: array(number),
+    }),
+    partial({
+      //DKDK need to make sure if below is correct (untested)
+      // overlayVariableDetails: StringVariableValue,
+      // facetVariableDetails: union([
+      //   tuple([StringVariableValue]),
+      //   tuple([StringVariableValue, StringVariableValue]),
+      // ]),
+    }),
+  ])
 );
 
-export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
-export const ScatterplotResponse = type({
-  data: ScatterplotResponseData,
-  config: type({
-    incompleteCases: array(number),
-    xVariableDetails: type({
-      variableId: string,
-      entityId: string,
-    }),
-    yVariableDetails: type({
-      variableId: string,
-      entityId: string,
+export type LineplotResponse = TypeOf<typeof LineplotResponse>;
+export const LineplotResponse = type({
+  //DKDK lineplot
+  lineplot: type({
+    data: LineplotResponseData,
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
     }),
   }),
+  sampleSizeTable: sampleSizeTableArray,
 });
 
 export class DataClient extends FetchClient {
@@ -346,6 +401,19 @@ export class DataClient extends FetchClient {
       'scatterplot',
       params,
       ScatterplotResponse
+    );
+  }
+
+  //DKDK Lineplot
+  getLineplot(
+    computationName: string,
+    params: LineplotRequestParams
+  ): Promise<LineplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'lineplot',
+      params,
+      LineplotResponse
     );
   }
 }

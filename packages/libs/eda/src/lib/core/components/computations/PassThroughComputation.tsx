@@ -22,8 +22,10 @@ const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
   'date-histogram-bin-width': histogramVisualization,
   'numeric-histogram-bin-width': histogramVisualization,
-  //DKDK
   scatterplot: scatterplotVisualization,
+  lineplot: scatterplotVisualization,
+  //DKDK placeholder for densityplot
+  // densityplot: scatterplotVisualization,
 };
 
 export function PassThroughComputation(props: Props) {

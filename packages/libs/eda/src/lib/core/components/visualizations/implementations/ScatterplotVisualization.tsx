@@ -24,7 +24,12 @@ import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 
 //DKDK need to set for Scatterplot
-import { DataClient, ScatterplotRequestParams } from '../../../api/data-api';
+import {
+  DataClient,
+  // ScatterplotResponse,
+  ScatterplotRequestParams,
+  LineplotRequestParams,
+} from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
@@ -73,23 +78,23 @@ interface ScatterPlotData<T extends number | Date> {
     series: {
       x: T[]; //DKDK perhaps string[] is better despite Date format, e.g., ISO format?
       y: T[]; //DKDK will y data have a Date?
-      popupContent?: string;
+      // popupContent?: string;
     };
     interval?: {
       x: T[]; //DKDK perhaps string[] is better despite Date format, e.g., ISO format?
       y: T[]; //DKDK will y data have a Date?
-      orientation: string;
+      // orientation: string;
       standardError: number[];
     };
-    color?: string;
-    label: string;
-    //DKDK for general scatter component
-    showLines?: boolean;
-    showMarkers?: boolean;
-    fillArea?: boolean;
-    useSpline?: boolean;
+    // color?: string;
+    // label: string;
+    // //DKDK for general scatter component
+    // showLines?: boolean;
+    // showMarkers?: boolean;
+    // fillArea?: boolean;
+    // useSpline?: boolean;
   }>;
-  opacity?: number;
+  // opacity?: number;
 }
 
 function GridComponent(props: VisualizationProps) {
@@ -104,6 +109,7 @@ function GridComponent(props: VisualizationProps) {
   );
 }
 
+//DKDK this needs a handling of text for scatter, line, and density plots
 function SelectorComponent() {
   return <div>Pick me, I'm a Scatter Plot!</div>;
 }
@@ -131,7 +137,7 @@ function FullscreenComponent(props: VisualizationProps) {
 function createDefaultConfig(): ScatterplotConfig {
   return {
     //DKDK default is true but changed to false for scatterplot
-    enableOverlay: true,
+    enableOverlay: false,
   };
 }
 
@@ -225,7 +231,7 @@ function ScatterplotViz(props: Props) {
     [entities]
   );
 
-  const data: any = usePromise(
+  const data = usePromise(
     //DKDK set any for now
     // useCallback(async (): Promise<ScatterplotData> => {
     useCallback(async (): Promise<any> => {
@@ -250,6 +256,7 @@ function ScatterplotViz(props: Props) {
           )
         );
 
+      //DKDK add visualization.type here
       const params = getRequestParams(
         studyId,
         filters ?? [],
@@ -257,18 +264,32 @@ function ScatterplotViz(props: Props) {
         //DKDK yAxisVariable
         vizConfig.yAxisVariable,
         //DKDK overlay...
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined
+        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
+        //DKDK add visualization.type
+        visualization.type
       );
 
-      // // DKDK
+      // //DKDK
       // console.log('params = ', params)
       // console.log('computation = ', computation)
 
-      //DKDK
-      const response = dataClient.getScatterplot(
-        computation.type,
-        params as ScatterplotRequestParams
-      );
+      // const response = dataClient.getScatterplot(
+      //   computation.type,
+      //   params as ScatterplotRequestParams
+      // );
+
+      //DKDK scatterplot, lineplot
+      const response =
+        visualization.type === 'lineplot'
+          ? dataClient.getLineplot(
+              computation.type,
+              params as LineplotRequestParams
+            )
+          : //DKDK set default as scatterplot/getScatterplot
+            dataClient.getScatterplot(
+              computation.type,
+              params as ScatterplotRequestParams
+            );
 
       // console.log('dataClient->response = ', response)
 
@@ -289,7 +310,15 @@ function ScatterplotViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && <h1>Scatter Plot</h1>}
+      {/* DKDK change page title */}
+      {fullscreen &&
+        (visualization.type === 'scatterplot' ? (
+          <h1>Scatter Plot</h1>
+        ) : visualization.type === 'lineplot' ? (
+          <h1>Line Plot</h1>
+        ) : (
+          ''
+        ))}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables
@@ -302,19 +331,12 @@ function ScatterplotViz(props: Props) {
                 name: 'yAxisVariable',
                 label: 'y-axis variable',
               },
-              // DKDK block overlay for now
-              // {
-              //   name: 'overlayVariable',
-              //   label: 'Overlay variable',
-              // },
             ]}
             entities={entities}
             values={{
               xAxisVariable: vizConfig.xAxisVariable,
               //DKDK yAxisVariable
               yAxisVariable: vizConfig.yAxisVariable,
-              // DKDK block overlay for now
-              // overlayVariable: vizConfig.overlayVariable,
             }}
             onChange={handleInputVariableChange}
             constraints={constraints}
@@ -348,13 +370,12 @@ function ScatterplotViz(props: Props) {
         fullscreen ? (
           <ScatterplotWithControls
             //DKDK data.value
-            // data={data.value}
             data={[...data.value.dataSetProcess]}
             width={1000}
             height={600}
-            xLabel={'xLabel'}
-            yLabel={'yLabel'}
-            plotTitle={'plotTitle'}
+            xLabel={findVariable(vizConfig.xAxisVariable)?.displayName}
+            yLabel={findVariable(vizConfig.yAxisVariable)?.displayName}
+            plotTitle={''}
             xRange={[data.value.xMin, data.value.xMax]}
             yRange={[data.value.yMin, data.value.yMax]}
           />
@@ -362,7 +383,6 @@ function ScatterplotViz(props: Props) {
           // thumbnail/grid view
           <ScatterAndLinePlotGeneral
             //DKDK data.value
-            // data={data.value}
             data={[...data.value.dataSetProcess]}
             width={350}
             height={280}
@@ -435,74 +455,83 @@ any) {
  */
 export function scatterplotResponseToData(
   //DKDK getScatterplot may also need to be changed in the future for hosting other plots
-  response: PromiseType<ReturnType<DataClient['getScatterplot']>>,
+  // response: PromiseType<ReturnType<DataClient['getScatterplot']>> | PromiseType<ReturnType<DataClient['getLineplot']>>,
+  response: PromiseType<
+    ReturnType<DataClient['getScatterplot'] | DataClient['getLineplot']>
+  >,
   //DKDK vizType is visualization.type. This may be used for handling other plots in this component like line and density
   vizType: string
 ): any {
-  if (response.data.length === 0)
-    throw Error(`Expected one or more data series, but got zero`);
-  else console.log('Im at scatterplotResponseToData');
+  // if (response.data.length === 0)
+  //   throw Error(`Expected one or more data series, but got zero`);
+  // else console.log('Im at scatterplotResponseToData');
 
   console.log('visualization type at scatterplotResponseToData = ', vizType);
   console.log('response.data =', response);
 
-  if (vizType === 'scatterplot') {
-    //DKDK scatterplot
-    const modeValue = 'markers';
-    const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(
-      response,
-      vizType,
-      modeValue
-    );
+  const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; //DKDK for scatter plot
 
-    console.log('dataSetProcess =', dataSetProcess);
-    console.log('xMin, xMax, yMin, yMax =', xMin, xMax, yMin, yMax);
+  const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(
+    response,
+    vizType,
+    modeValue
+  );
 
-    return {
-      dataSetProcess: dataSetProcess,
-      xMin: xMin,
-      xMax: xMax,
-      yMin: yMin,
-      yMax: yMax,
-    };
-  }
+  console.log('dataSetProcess =', dataSetProcess);
+  console.log('xMin, xMax, yMin, yMax =', xMin, xMax, yMin, yMax);
 
-  // return {
-  //   x: response.data[0]['series.x'],
-  //   y: response.data[0]['series.y'],
-  //   name: 'hardcorded label',
-  //   mode: 'markers',
-  //   type: 'scatter',
-  //   // fill: fillAreaValue,
-  //   marker: { color: 'blue', size: 12 },
-  //   line: { color: 'blue', shape: 'spline' },
-  // };
+  return {
+    dataSetProcess: dataSetProcess,
+    xMin: xMin,
+    xMax: xMax,
+    yMin: yMin,
+    yMax: yMax,
+  };
 }
+
+//DKDK add an extended type
+type getRequestParamsProps =
+  | (ScatterplotRequestParams & { vizType?: string })
+  | (LineplotRequestParams & { vizType?: string });
 
 function getRequestParams(
   studyId: string,
   filters: Filter[],
   xAxisVariable: Variable,
-  yAxisVariable: Variable,
-  overlayVariable?: Variable
-): ScatterplotRequestParams {
-  return {
-    studyId,
-    filters,
-    config: {
-      //DKDK is outputEntityId correct?
-      outputEntityId: xAxisVariable.entityId,
-      //DKDK valueSpect may be used in the future
-      valueSpec: 'raw',
-      // valueSpec: 'smoothedMean',
-      // valueSpec: 'smoothedMeanWithRaw',
-      // smoothedMean: true,
-      xAxisVariable: xAxisVariable,
-      yAxisVariable: yAxisVariable,
-      //DKDK think about overlayVariable later
-      // overlayVariable: overlayVariable,
-    },
-  } as ScatterplotRequestParams;
+  yAxisVariable?: Variable,
+  overlayVariable?: Variable,
+  //DKDK add visualization.type
+  vizType?: string
+): getRequestParamsProps {
+  if (vizType === 'lineplot') {
+    return {
+      studyId,
+      filters,
+      config: {
+        //DKDK is outputEntityId correct?
+        outputEntityId: xAxisVariable.entityId,
+        xAxisVariable: xAxisVariable,
+        yAxisVariable: yAxisVariable,
+      },
+    } as LineplotRequestParams;
+  } else {
+    //DKDK scatterplot
+    return {
+      studyId,
+      filters,
+      config: {
+        //DKDK is outputEntityId correct?
+        outputEntityId: xAxisVariable.entityId,
+        //DKDK valueSpect may be used in the future
+        // valueSpec: 'raw',
+        // valueSpec: 'smoothedMean',
+        valueSpec: 'smoothedMeanWithRaw',
+        // smoothedMean: true,
+        xAxisVariable: xAxisVariable,
+        yAxisVariable: yAxisVariable,
+      },
+    } as ScatterplotRequestParams;
+  }
 }
 
 //DKDK making plotly input data
@@ -513,10 +542,20 @@ function processInputData<T extends number | Date>(
   //DKDK use vizType or perhaps use different argument when calling processInputData?
   vizType: string,
   //DKDK line, marker,
-  modeValue: string,
-  //DKDK fillAreaValue default is empty (): set tto 'toself' for density plot
-  fillAreaValue = ''
+  modeValue: string
 ) {
+  console.log('dataSet =', dataSet);
+
+  //DKDK set fillAreaValue
+  const fillAreaValue = '';
+
+  //DKDK distinguish data per Viztype
+  const plotDataSet =
+    vizType === 'lineplot'
+      ? //DKDK lineplot
+        dataSet.lineplot
+      : dataSet.scatterplot;
+
   //DKDK set a default color
   const defaultColor: string = '#00b0f6';
   //DKDK set global Opacity value
@@ -531,7 +570,8 @@ function processInputData<T extends number | Date>(
   let yMax: number | Date = 0;
 
   let dataSetProcess: Array<{}> = [];
-  dataSet.data.forEach(function (el: any, index: number) {
+  // dataSet.data.forEach(function (el: any, index: number) {
+  plotDataSet.data.forEach(function (el: any, index: number) {
     //DKDK initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xSeriesValue: T[] = [];
     let ySeriesValue: T[] = [];
@@ -554,14 +594,14 @@ function processInputData<T extends number | Date>(
     // let fillAreaValue: string = '';
 
     //DKDK series is for scatter plot
-    if (el['series.x'] && el['series.y']) {
+    if (el.seriesX && el.seriesY) {
       //DKDK check the number of x = number of y
-      if (el['series.x'].length !== el['series.y'].length) {
+      if (el.seriesX.length !== el.seriesY.length) {
         console.log(
           'x length=',
-          el['series.x'].length,
+          el.seriesX.length,
           '  y length=',
-          el['series.y'].length
+          el.seriesY.length
         );
         alert('The number of X data is not equal to the number of Y data');
         throw new Error(
@@ -572,10 +612,10 @@ function processInputData<T extends number | Date>(
       //DKDK probably no need to have this for series data, though
       //1) combine the arrays:
       let combinedArray = [];
-      for (let j = 0; j < el['series.x'].length; j++) {
+      for (let j = 0; j < el.seriesX.length; j++) {
         combinedArray.push({
-          xValue: el['series.x'][j],
-          yValue: el['series.y'][j],
+          xValue: el.seriesX[j],
+          yValue: el.seriesY[j],
         });
       }
       //2) sort:
@@ -671,24 +711,6 @@ function processInputData<T extends number | Date>(
         globalOpacity +
         ')'; //DKDK set alpha/opacity as 0.2 for CI
 
-      // //DKDK scatterplot this needs to be considered...
-      // //DKDK check plot options: default value at plotly js seems to be lines
-      // if (el.showLines == true && el.showMarkers == true) {
-      //   modeValue = 'lines+markers';
-      // } else if (el.showLines == true && el.showMarkers == false) {
-      //   modeValue = 'lines';
-      // } else if (el.showLines == false && el.showMarkers == true) {
-      //   modeValue = 'markers';
-      // }
-
-      // if (el.useSpline) {
-      //   splineValue = 'spline';
-      // }
-
-      // if (el.fillArea) {
-      //   fillAreaValue = 'toself';
-      // }
-
       //DKDK add scatter data considering input options
       dataSetProcess.push({
         x: xSeriesValue,
@@ -708,12 +730,9 @@ function processInputData<T extends number | Date>(
     }
 
     //DKDK check if interval prop exists
-    if (el['interval.x'] && el['interval.y'] && el['interval.se']) {
+    if (el.intervalX && el.intervalY && el.intervalSE) {
       //DKDK check the number of x = number of y or standardError
-      if (el['interval.x'].length !== el['interval.y'].length) {
-        // alert(
-        //   'The number of X data is not equal to the number of Y data or standardError data'
-        // );
+      if (el.intervalX.length !== el.intervalY.length) {
         throw new Error(
           'The number of X data is not equal to the number of Y data or standardError data'
         );
@@ -721,11 +740,11 @@ function processInputData<T extends number | Date>(
       //DKDK sorting function
       //1) combine the arrays: including standardError
       let combinedArrayInterval = [];
-      for (let j = 0; j < el['interval.x'].length; j++) {
+      for (let j = 0; j < el.intervalX.length; j++) {
         combinedArrayInterval.push({
-          xValue: el['interval.x'][j],
-          yValue: el['interval.y'][j],
-          zValue: el['interval.se'][j],
+          xValue: el.intervalX[j],
+          yValue: el.intervalY[j],
+          zValue: el.intervalSE[j],
         });
       }
       //2) sort:
@@ -742,23 +761,23 @@ function processInputData<T extends number | Date>(
       //DKDK set variables for x-/y-axes ranges including fitting line
       if (isArrayOfNumbers(xIntervalLineValue)) {
         //DKDK add additional condition for the case of smoothedMean (without series data)
-        xMin = el['series.x']
+        xMin = el.seriesX
           ? xMin < Math.min(...xIntervalLineValue)
             ? xMin
             : Math.min(...xIntervalLineValue)
           : Math.min(...xIntervalLineValue);
-        xMax = el['series.x']
+        xMax = el.seriesX
           ? xMax > Math.max(...xIntervalLineValue)
             ? xMax
             : Math.max(...xIntervalLineValue)
           : Math.max(...xIntervalLineValue);
       } else {
-        xMin = el['series.x']
+        xMin = el.seriesX
           ? xMin < getMinDate(xIntervalLineValue as Date[])
             ? xMin
             : getMinDate(xIntervalLineValue as Date[])
           : getMinDate(xIntervalLineValue as Date[]);
-        xMax = el['series.x']
+        xMax = el.seriesX
           ? xMax > getMaxDate(xIntervalLineValue as Date[])
             ? xMax
             : getMaxDate(xIntervalLineValue as Date[])
@@ -767,23 +786,23 @@ function processInputData<T extends number | Date>(
 
       if (isArrayOfNumbers(yIntervalLineValue)) {
         //DKDK add additional condition for the case of smoothedMean (without series data)
-        yMin = el['series.y']
+        yMin = el.seriesY
           ? yMin < Math.min(...yIntervalLineValue)
             ? yMin
             : Math.min(...yIntervalLineValue)
           : Math.min(...yIntervalLineValue);
-        yMax = el['series.y']
+        yMax = el.seriesY
           ? yMax > Math.max(...yIntervalLineValue)
             ? yMax
             : Math.max(...yIntervalLineValue)
           : Math.max(...yIntervalLineValue);
       } else {
-        yMin = el['series.y']
+        yMin = el.seriesY
           ? yMin < getMinDate(yIntervalLineValue as Date[])
             ? yMin
             : getMinDate(yIntervalLineValue as Date[])
           : getMinDate(yIntervalLineValue as Date[]);
-        yMax = el['series.y']
+        yMax = el.seriesY
           ? yMax > getMaxDate(yIntervalLineValue as Date[])
             ? yMax
             : getMaxDate(yIntervalLineValue as Date[])
@@ -822,6 +841,7 @@ function processInputData<T extends number | Date>(
         // line: {color: el.color, shape: 'spline',  width: 5 },
         //DKDK line width
         line: { color: fittingLineColor, shape: 'spline', width: 2 },
+        // line: { shape: 'spline', width: 2 },
       });
 
       //DKDK make Confidence Interval (CI) or Bounds (filled area)
@@ -880,6 +900,7 @@ function processInputData<T extends number | Date>(
         name: 'Confidence interval',
         fill: 'tozerox',
         fillcolor: intervalColor,
+        // opacity: 0.4,  //DKDK this works
         type: 'line',
         line: { color: 'transparent', shape: 'spline' }, //DKDK here, line means upper and lower bounds
       });
