@@ -3,6 +3,11 @@
   display: none;
 }
 
+/* Hide default record ID printed by WDK for geomic sequences */
+.wdk-RecordContainer__SequenceRecordClasses\.SequenceRecordClass .wdk-RecordHeading {
+  display: none;
+}
+
 /* Hide default record ID printed by WDK for compounds */
 .wdk-RecordContainer__CompoundRecordClasses\.CompoundRecordClass .wdk-RecordHeading {
   display: none;
