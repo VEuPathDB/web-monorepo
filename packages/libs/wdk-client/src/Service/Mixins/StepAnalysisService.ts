@@ -3,6 +3,7 @@ import * as Decode from 'wdk-client/Utils/Json';
 import { stepAnalysisDecoder, stepAnalysisConfigDecoder, stepAnalysisTypeDecoder, stepAnalysisStatusDecoder, FormParams, StepAnalysisType, StepAnalysisConfig } from 'wdk-client/Utils/StepAnalysisUtils';
 import { parametersDecoder } from 'wdk-client/Service/Mixins/SearchesService';
 import { Parameter, ParameterValues } from 'wdk-client/Utils/WdkModel';
+import { extractParamValues } from 'wdk-client/Utils/WdkUser';
 
 export type StepAnalysisWithParameters = StepAnalysisType & {
   parameters: Parameter[];
@@ -100,6 +101,7 @@ export default (base: ServiceBase) => {
         stepId, stepAnalysisConfig.analysisName, stepAnalysisConfig.parameters)
       .then(displayParams => ({
         ...stepAnalysisConfig,
+        parameters: extractParamValues(displayParams),
         displayParams
       }));
     })
