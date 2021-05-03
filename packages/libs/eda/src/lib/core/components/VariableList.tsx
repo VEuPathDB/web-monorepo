@@ -2,7 +2,7 @@
  * This is based on FieldList.jsx for typing
  */
 
-import { uniq } from 'lodash';
+import { difference, uniq } from 'lodash';
 import React, {
   useLayoutEffect,
   useRef,
@@ -116,8 +116,15 @@ export default function VariableList(props: VariableListProps) {
     });
   }, [activeField, getPathToField]);
 
-  const handleExpansionChange = (expandedNodes: string[]) => {
-    setExpandedNodes(expandedNodes);
+  const handleExpansionChange = (nextExpandedNodes: string[]) => {
+    const newNodes = difference(nextExpandedNodes, expandedNodes);
+    const newEntityNode = newNodes.find((node) => node.startsWith('entity:'));
+    if (newEntityNode) {
+      onActiveFieldChange(newEntityNode.slice(7));
+      setExpandedNodes(newNodes);
+    } else {
+      setExpandedNodes(nextExpandedNodes);
+    }
   };
 
   const handleFieldSelect = useCallback(

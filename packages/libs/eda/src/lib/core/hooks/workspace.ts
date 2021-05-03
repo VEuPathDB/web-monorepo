@@ -23,13 +23,23 @@ export function useDataClient(): DataClient {
 export function useSessionClient(): SessionClient {
   return useNonNullableContext(WorkspaceContext).sessionClient;
 }
-export function useVariableLink(entityId: string, variableId: string): string {
+export function useVariableLink(
+  entityId?: string,
+  variableId?: string
+): string {
   const { makeVariableLink = defaultMakeVariableLink } = useNonNullableContext(
     WorkspaceContext
   );
   return makeVariableLink(entityId, variableId);
 }
 
-function defaultMakeVariableLink(entityId: string, variableId: string): string {
-  return `/variables/${entityId}/${variableId}`;
+function defaultMakeVariableLink(
+  entityId?: string,
+  variableId?: string
+): string {
+  return variableId && entityId
+    ? `/variables/${entityId}/${variableId}`
+    : entityId
+    ? `/variables/${entityId}`
+    : `/variables`;
 }

@@ -37,14 +37,9 @@ export function EntityDiagram(props: Props) {
     node: StudyEntity,
     children?: Array<React.ReactElement>
   ) => {
-    const variable = node.variables.find(
-      (variable) => variable.displayType != null
-    );
-    if (variable == null) return null;
     return (
       <VariableLink
         entityId={node.id}
-        variableId={variable.id}
         children={children}
         replace={true}
         style={{ textDecoration: 'none' }}

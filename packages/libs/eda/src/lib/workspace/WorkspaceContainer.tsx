@@ -23,8 +23,12 @@ export function WorkspaceContainer(props: Props) {
     [props.subsettingServiceUrl]
   );
   const makeVariableLink = useCallback(
-    (entityId: string, variableId: string) =>
-      `${url}/variables/${entityId}/${variableId}`,
+    (entityId?: string, variableId?: string) =>
+      entityId && variableId
+        ? `${url}/variables/${entityId}/${variableId}`
+        : entityId
+        ? `${url}/variables/${entityId}`
+        : `${url}/variables`,
     [url]
   );
   return (

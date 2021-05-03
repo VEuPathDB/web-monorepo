@@ -18,7 +18,7 @@ export interface Props {
   sessionClient: SessionClient;
   subsettingClient: SubsettingClient;
   dataClient: DataClient;
-  makeVariableLink?: (entityId: string, variableId: string) => string;
+  makeVariableLink?: (entityId?: string, variableId?: string) => string;
 }
 
 export function EDAWorkspaceContainer(props: Props) {

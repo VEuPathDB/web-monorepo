@@ -6,11 +6,11 @@ import { Link, LinkProps } from 'react-router-dom';
 import { useVariableLink } from '../hooks/workspace';
 
 export interface Props<S = unknown> extends Omit<LinkProps<S>, 'to'> {
-  entityId: string;
-  variableId: string;
+  entityId?: string;
+  variableId?: string;
 }
 
 export function VariableLink(props: Props) {
   const { entityId, variableId, ...rest } = props;
-  return <Link {...rest} to={useVariableLink(entityId, variableId)} />;
+  return <Link {...rest} replace to={useVariableLink(entityId, variableId)} />;
 }

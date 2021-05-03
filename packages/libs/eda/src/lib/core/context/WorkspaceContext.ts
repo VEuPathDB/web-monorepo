@@ -11,7 +11,7 @@ interface WorkspaceContextValue {
   sessionClient: SessionClient;
   subsettingClient: SubsettingClient;
   dataClient: DataClient;
-  makeVariableLink?: (entityId: string, variableId: string) => string;
+  makeVariableLink?: (entityId?: string, variableId?: string) => string;
 }
 
 export const WorkspaceContext = createContext<
