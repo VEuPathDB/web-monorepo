@@ -306,8 +306,8 @@ function MosaicViz(props: Props) {
             data={data.value.data}
             xValues={data.value.xValues}
             yValues={data.value.yValues}
-            xLabel={vizConfig.xAxisVariable!.variableId}
-            yLabel={vizConfig.yAxisVariable!.variableId}
+            xLabel={findVariable(vizConfig.xAxisVariable)!.displayName}
+            yLabel={findVariable(vizConfig.yAxisVariable)!.displayName}
             width="100%"
             height={400}
             showLegend={true}
