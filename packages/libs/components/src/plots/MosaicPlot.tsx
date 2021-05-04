@@ -1,5 +1,6 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
+import { PlotParams } from 'react-plotly.js';
 import _ from 'lodash';
 
 export interface Props extends Omit<PlotProps, 'width' | 'height'> {
@@ -17,24 +18,36 @@ export interface Props extends Omit<PlotProps, 'width' | 'height'> {
 }
 
 export default function MosaicPlot(props: Props) {
-  const column_widths = _.unzip(props.data).map((arr) => _.sum(arr));
-  const sum_column_widths = _.sum(column_widths);
+  // Column widths
+  const raw_widths = _.unzip(props.data).map((arr) => _.sum(arr));
+  const sum_raw_widths = _.sum(raw_widths);
+  const percent_widths = raw_widths.map(
+    (width) => (width / sum_raw_widths) * 100
+  );
 
-  const column_centers = column_widths.map((width, i) => {
+  const column_centers = percent_widths.map((width, i) => {
     // Sum of the widths of previous columns
-    let column_start = _.sum(column_widths.slice(0, i));
+    const column_start = _.sum(percent_widths.slice(0, i));
     return column_start + width / 2;
   });
 
   const layout = {
+    // Bottom x axis displaying percent ticks
     xaxis: {
-      title: props.independentLabel,
+      title: props.independentLabel ? props.independentLabel + ' (%)' : '',
       // Must expliticly define range for it to work consistently
-      range: [0, sum_column_widths] as number[],
+      range: [0, 100] as number[],
+    },
+    // Top x axis displaying independent variable labels
+    xaxis2: {
       tickvals: column_centers,
-      ticktext: props.independentValues,
-      // Shows x-axis counts similar to y-axis hover labels
-      // ticktext: props.independentValues.map((value, i) => `${value}: ${(column_widths[i]/sum_column_widths*100).toFixed(1)}% (${column_widths[i]})`),
+      ticktext: props.independentValues.map(
+        (value, i) =>
+          `<b>${value}</b> ${percent_widths[i].toFixed(1)}% (${raw_widths[i]})`
+      ),
+      range: [0, 100] as number[],
+      overlaying: 'x',
+      side: 'top',
     },
     yaxis: {
       title: props.dependentLabel ? props.dependentLabel + ' (%)' : '',
@@ -43,7 +56,7 @@ export default function MosaicPlot(props: Props) {
     barnorm: 'percent',
   } as const;
 
-  const data = props.data
+  let data: PlotParams['data'] = props.data
     .map(
       (counts, i) =>
         ({
@@ -53,12 +66,12 @@ export default function MosaicPlot(props: Props) {
           hoverinfo: 'text',
           hovertext: counts.map(
             (count, j) =>
-              `${props.dependentValues[i]}: ${(
-                (count / column_widths[j]) *
+              `<b>${props.dependentValues[i]}</b> ${(
+                (count / raw_widths[j]) *
                 100
               ).toFixed(1)}% (${count})`
           ),
-          width: column_widths,
+          width: percent_widths,
           type: 'bar',
           marker: {
             line: {
@@ -71,6 +84,9 @@ export default function MosaicPlot(props: Props) {
         } as const)
     )
     .reverse(); // Reverse so first trace is on top, matching data array
+
+  // Add empty trace to show second x axis
+  data.push({ xaxis: 'x2' });
 
   return (
     <PlotlyPlot
