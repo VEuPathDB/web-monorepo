@@ -177,19 +177,22 @@ export interface BarplotRequestParams {
 
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
 export const BarplotResponse = type({
-  config: type({
-    incompleteCases: array(number),
-    xVariableDetails: type({
-      variableId: string,
-      entityId: string,
+  barplot: type({
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
     }),
+    data: array(
+      type({
+        label: array(string),
+        value: array(number),
+      })
+    ),
   }),
-  data: array(
-    type({
-      label: array(string),
-      value: array(number),
-    })
-  ),
+  // TO DO: sampleSizeTable
 });
 
 export class DataClient extends FetchClient {
