@@ -961,6 +961,8 @@ export const RealDataDate = () => {
   //DKDK set props
   let plotWidth = 1000;
   let plotHeight = 600;
+  // let plotWidth = 350;
+  // let plotHeight = 250;
   let xLabel = 'Hours post infection';
   let yLabel = 'Expression Values (log2 ratio)';
   let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
@@ -976,6 +978,10 @@ export const RealDataDate = () => {
       width={plotWidth}
       height={plotHeight}
       staticPlot={false}
+      //DKDK check enable/disable legend and built-in controls
+      displayLegend={true}
+      displayLibraryControls={true}
+      // setMargin={{l: 50, r: 10, b: 20, t: 10}}
     />
   );
 };

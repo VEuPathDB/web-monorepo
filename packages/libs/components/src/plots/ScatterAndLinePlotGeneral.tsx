@@ -17,7 +17,10 @@ export interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
   //DKDK involving CI, x & y range may need to be set
   xRange?: number[] | Date[];
   yRange?: number[] | Date[];
-  showLegend?: boolean;
+  //DKDK add enable/disable legend and built-in controls
+  displayLegend?: boolean;
+  displayLibraryControls?: boolean;
+  setMargin?: { l: number; r: number; b: number; t: number };
 }
 
 export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
@@ -59,13 +62,12 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
         ...{
           width: props.width,
           height: props.height,
-          margin: props.margin,
-          showlegend: props.showLegend,
+          margin: props.setMargin ? props.setMargin : undefined,
+          showlegend: props.displayLegend,
         },
       }}
       config={{
-        displayModeBar:
-          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
+        displayModeBar: props.displayLibraryControls ? 'hover' : false,
         staticPlot: props.staticPlot,
       }}
     />
