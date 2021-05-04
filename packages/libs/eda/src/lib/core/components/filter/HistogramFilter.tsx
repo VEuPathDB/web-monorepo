@@ -75,7 +75,7 @@ export function HistogramFilter(props: Props) {
       HistogramData & {
         variableId: string;
         entityId: string;
-      } & HistogramResponse['histogram']['config']['summary']
+      }
     > => {
       const foregroundFilters = filters?.filter(
         (f) => f.entityId !== entity.id || f.variableId !== variable.id
@@ -142,7 +142,6 @@ export function HistogramFilter(props: Props) {
         binWidthStep,
         variableId: variable.id,
         entityId: entity.id,
-        ...summary,
       };
     },
     [dataClient, entity, filters, studyId, variable]
@@ -214,6 +213,9 @@ export function HistogramFilter(props: Props) {
     [sessionState, uiStateKey, uiState]
   );
 
+  // stats from foreground
+  const fgSummaryStats = data?.value?.series[1].summary;
+
   // Note use of `key` used with HistogramPlotWithControls. This is a little hack to force
   // the range to be reset if the filter is removed.
   return (
@@ -224,11 +226,14 @@ export function HistogramFilter(props: Props) {
       {data.error && <pre>{String(data.error)}</pre>}
       {data.value &&
         data.value.variableId === variable.id &&
-        data.value.entityId === entity.id && (
+        data.value.entityId === entity.id &&
+        fgSummaryStats && (
           <div>
             <div className="histogram-summary-stats">
-              <b>Min:</b> {data.value.min} <b>Mean:</b> {data.value.mean}{' '}
-              <b>Median:</b> {data.value.median} <b>Max:</b> {data.value.max}
+              <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
+              {fgSummaryStats.mean} &emsp;
+              <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
+              {fgSummaryStats.max}
             </div>
             <HistogramPlotWithControls
               key={filters?.length ?? 0}
@@ -259,7 +264,7 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   getData: (params?: UIState) => Promise<HistogramData>; // TO DO: not used - get rid of?
   updateFilter: (selectedRange?: NumberRange | DateRange) => void;
   uiState: UIState;
-  updateUIState: (uiState: TypeOf<typeof UIState>) => void;
+  updateUIState: (uiState: UIState) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
   // add variableName for independentAxisLabel
   variableName: string;
@@ -414,6 +419,7 @@ function HistogramPlotWithControls({
         binWidthStep={data.binWidthStep!}
         errorManagement={errorManagement}
         selectedRange={selectedRange}
+        // selectedRangeBounds{ { /* TBC min: max:  */ } }
         onSelectedRangeChange={handleSelectedRangeChange}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
@@ -451,10 +457,12 @@ function histogramResponseToDataSeries(
     binLabel: data.binLabel[index],
     count: data.value[index],
   }));
+  const summary = response.histogram.config.summary;
   return {
     name,
     color,
     bins,
+    summary,
   };
 }
 
