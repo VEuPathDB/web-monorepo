@@ -981,7 +981,7 @@ export const RealDataDate = () => {
       //DKDK check enable/disable legend and built-in controls
       displayLegend={true}
       displayLibraryControls={true}
-      // setMargin={{l: 50, r: 10, b: 20, t: 10}}
+      // margin={{l: 50, r: 10, b: 20, t: 10}}
     />
   );
 };

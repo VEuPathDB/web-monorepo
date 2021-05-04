@@ -20,7 +20,6 @@ export interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
   //DKDK add enable/disable legend and built-in controls
   displayLegend?: boolean;
   displayLibraryControls?: boolean;
-  setMargin?: { l: number; r: number; b: number; t: number };
 }
 
 export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
@@ -62,7 +61,7 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
         ...{
           width: props.width,
           height: props.height,
-          margin: props.setMargin ? props.setMargin : undefined,
+          margin: props.margin ? props.margin : undefined,
           showlegend: props.displayLegend,
         },
       }}
