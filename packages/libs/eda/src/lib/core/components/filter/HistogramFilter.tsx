@@ -109,7 +109,7 @@ export function HistogramFilter(props: Props) {
           variable.type
         ),
         histogramResponseToDataSeries(
-          `Filtered subset<br>excluding filters for this variable`,
+          `Current subset`,
           foreground,
           red,
           variable.type
