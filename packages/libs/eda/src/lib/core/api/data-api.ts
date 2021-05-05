@@ -305,6 +305,46 @@ export const LineplotResponse = type({
   sampleSizeTable: sampleSizeTableArray,
 });
 
+export interface MosaicRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+export type MosaicResponse = TypeOf<typeof MosaicResponse>;
+export const MosaicResponse = type({
+  mosaic: type({
+    data: array(
+      type({
+        xLabel: array(string),
+        yLabel: array(string),
+        value: array(array(number)),
+      })
+    ),
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+});
+
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
@@ -417,6 +457,30 @@ export class DataClient extends FetchClient {
       'lineplot',
       params,
       LineplotResponse
+    );
+  }
+
+  getMosaic(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<MosaicResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'conttable',
+      params,
+      MosaicResponse
+    );
+  }
+
+  getTwoByTwo(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<MosaicResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'twobytwo',
+      params,
+      MosaicResponse
     );
   }
 }

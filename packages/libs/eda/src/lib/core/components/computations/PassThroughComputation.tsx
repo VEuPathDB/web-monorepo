@@ -6,6 +6,10 @@ import {
 } from '../../types/visualization';
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
+import {
+  mosaicVisualization,
+  twoByTwoVisualization,
+} from '../visualizations/implementations/MosaicVisualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
@@ -22,6 +26,8 @@ const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
   'date-histogram-bin-width': histogramVisualization,
   'numeric-histogram-bin-width': histogramVisualization,
+  twobytwo: twoByTwoVisualization,
+  conttable: mosaicVisualization,
   scatterplot: scatterplotVisualization,
   lineplot: scatterplotVisualization,
   //DKDK placeholder for densityplot
