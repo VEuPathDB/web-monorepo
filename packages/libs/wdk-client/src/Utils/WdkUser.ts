@@ -8,7 +8,11 @@ import {
   record,
   string,
 } from 'wdk-client/Utils/Json';
-import { AnswerSpec } from 'wdk-client/Utils/WdkModel';
+import {
+  AnswerSpec,
+  Parameter,
+  ParameterValues
+} from 'wdk-client/Utils/WdkModel';
 import { Omit } from 'wdk-client/Core/CommonTypes';
 
 export interface User {
@@ -270,3 +274,17 @@ export interface UserCommentGetResponse {
 export interface UserCommentPostResponse  {id: number};
 
 export interface UserCommentAttachedFilePostResponse  {id: number};
+
+export function extractParamValues(parameters: Parameter[], initialParams: ParameterValues = {}, step?: Step){
+  return parameters.reduce(function(values, { name, initialDisplayValue, type }) {
+    return Object.assign(values, {
+      [name]: (
+        (step == null && type === 'input-step')
+        ? ''
+        : (name in initialParams)
+          ? initialParams[name]
+          : initialDisplayValue
+      )
+    });
+  }, {} as ParameterValues);
+}

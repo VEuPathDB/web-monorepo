@@ -60,7 +60,7 @@ import {
   fulfillCreateStrategy
 } from 'wdk-client/Actions/StrategyActions';
 import { addStep } from 'wdk-client/Utils/StrategyUtils';
-import {Step} from 'wdk-client/Utils/WdkUser';
+import { Step, extractParamValues } from 'wdk-client/Utils/WdkUser';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { InferAction, mergeMapRequestActionsToEpic as mrate } from 'wdk-client/Utils/ActionCreatorUtils';
 import { ParamValueStore } from 'wdk-client/Utils/ParamValueStore';
@@ -788,8 +788,8 @@ async function loadQuestion(
 
     const recordClass = await wdkService.findRecordClass(question.outputRecordClassName);
 
-    const defaultParamValues = extractParamValues(defaultQuestion, {}, step);
-    const paramValues = extractParamValues(question, initialParams, step);
+    const defaultParamValues = extractParamValues(defaultQuestion.parameters, {}, step);
+    const paramValues = extractParamValues(question.parameters, initialParams, step);
 
     const wdkWeight = step == null ? undefined : step.searchConfig.wdkWeight;
 
@@ -846,20 +846,6 @@ function initialParamDataWithDatasetParamSpecialCase(initialParamData: Parameter
   return Object.keys(initialParamData).reduce(function(result, paramName) {
     return paramName.indexOf(".idList") > -1 ? result : Object.assign(result, {[paramName] : initialParamData[paramName]});
   }, {});
-}
-
-function extractParamValues(question: QuestionWithParameters, initialParams: ParameterValues,  step?: Step ){
-  return question.parameters.reduce(function(values, { name, initialDisplayValue, type }) {
-    return Object.assign(values, {
-      [name]: (
-        (step == null && type === 'input-step')
-        ? ''
-        : (name in initialParams)
-          ? initialParams[name]
-          : initialDisplayValue
-      )
-    });
-  }, {} as ParameterValues);
 }
 
 function updateLastParamValues(

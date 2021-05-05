@@ -61,7 +61,7 @@ import {
 
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
 import { StepAnalysisType } from 'wdk-client/Utils/StepAnalysisUtils';
-import { InvalidStepValidation } from 'wdk-client/Utils/WdkUser';
+import { InvalidStepValidation, extractParamValues } from 'wdk-client/Utils/WdkUser';
 
 export const observeStartLoadingTabListing = (action$: ActionsObservable<Action>, state$: StateObservable<StepAnalysesState>, { wdkService }: EpicDependencies) => {
   return action$.pipe(
@@ -187,13 +187,7 @@ export const observeStartLoadingChosenAnalysisTab = (action$: ActionsObservable<
             analysisType: choice,
             pollCountdown: 0,
             paramSpecs,
-            paramValues: paramSpecs.reduce(
-              (memo, { name, initialDisplayValue }) => ({
-                ...memo,
-                [name]: initialDisplayValue || ''
-              }),
-              {}
-            ),
+            paramValues: extractParamValues(paramSpecs),
             panelUiState: {
               descriptionExpanded: false,
               formExpanded: true
