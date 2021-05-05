@@ -187,6 +187,11 @@ body.vpdb-Body .ExternalContentController a[name]::before {
   margin-top: -103px;
 }
 
+// Fix for RecordSidebar sticky container
+body.vpdb-Body .wdk-RecordSidebarContainer {
+  top: 2em;
+}
+
 body.vpdb-Body .vpdb-RootContainer {
   @media screen and (max-width: $mobile-width) {
     grid-template-areas:
