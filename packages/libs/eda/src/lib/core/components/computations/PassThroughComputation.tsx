@@ -24,7 +24,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   'numeric-histogram-bin-width': histogramVisualization,
   scatterplot: scatterplotVisualization,
   lineplot: scatterplotVisualization,
-  //DKDK placeholder for densityplot
+  // placeholder for densityplot
   // densityplot: scatterplotVisualization,
 };
 
