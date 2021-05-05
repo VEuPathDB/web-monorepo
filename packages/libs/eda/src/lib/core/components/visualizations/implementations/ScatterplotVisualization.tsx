@@ -671,10 +671,9 @@ function processInputData<T extends number | Date>(
         // set name as a string
         // name: 'Data' + (index + 1),
         // distinguish X/Y Data from Overlay
-        name:
-          el.overlayVariableDetails && el.overlayVariableDetails.value === 'Yes'
-            ? 'Overlay Data'
-            : 'X-Y Data',
+        name: el.overlayVariableDetails
+          ? el.overlayVariableDetails.value
+          : 'Data',
         // mode: 'markers',
         // mode: 'lines+markers',
         mode: modeValue,
