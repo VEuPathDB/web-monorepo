@@ -2,7 +2,6 @@ import classnames from 'classnames';
 import { debounce, get } from 'lodash';
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
-import Sticky from 'wdk-client/Components/Display/Sticky';
 import { getId } from 'wdk-client/Utils/CategoryUtils';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { addScrollAnchor } from 'wdk-client/Utils/DomUtils';
@@ -105,39 +104,36 @@ class RecordUI extends Component {
           recordClass={this.props.recordClass}
           headerActions={this.props.headerActions}
         />
-        <Sticky>
-          {({isFixed}) => (
-            <div className={'wdk-RecordSidebar' + (
-              isFixed ? ' wdk-RecordSidebar__fixed' : '')}>
-              <button type="button" className="wdk-RecordSidebarToggle"
-                onClick={() => {
-                  if (!this.props.navigationVisible) window.scrollTo(0, window.scrollY);
-                  this.props.updateNavigationVisibility(!this.props.navigationVisible);
-                }}
-              >
-                {this.props.navigationVisible ? '' : 'Show Contents '}
-                <i className={sidebarIconClass}
-                  title={this.props.navigationVisible ? 'Close sidebar' : 'Open sidebar'}/>
-              </button>
-              <RecordNavigationSection
-                heading={this.props.record.displayName}
-                record={this.props.record}
-                recordClass={this.props.recordClass}
-                categoryTree={this.props.categoryTree}
-                collapsedSections={this.props.collapsedSections}
-                activeSection={this.props.activeSection}
-                navigationQuery={this.props.navigationQuery}
-                navigationExpanded={this.props.navigationExpanded}
-                navigationCategoriesExpanded={this.props.navigationCategoriesExpanded}
-                onSectionToggle={this.props.updateSectionVisibility}
-                onNavigationVisibilityChange={this.props.updateNavigationVisibility}
-                onNavigationCategoryExpansionChange={this.props.updateNavigationCategoryExpansion}
-                onNavigationQueryChange={this.props.updateNavigationQuery}
-                requestPartialRecord={this.props.requestPartialRecord}
-              />
-            </div>
-          )}
-        </Sticky>
+        <div className="wdk-RecordSidebarContainer">
+          <div className="wdk-RecordSidebar">
+            <button type="button" className="wdk-RecordSidebarToggle"
+              onClick={() => {
+                if (!this.props.navigationVisible) window.scrollTo(0, window.scrollY);
+                this.props.updateNavigationVisibility(!this.props.navigationVisible);
+              }}
+            >
+              {this.props.navigationVisible ? '' : 'Show Contents '}
+              <i className={sidebarIconClass}
+                title={this.props.navigationVisible ? 'Close sidebar' : 'Open sidebar'}/>
+            </button>
+            <RecordNavigationSection
+              heading={this.props.record.displayName}
+              record={this.props.record}
+              recordClass={this.props.recordClass}
+              categoryTree={this.props.categoryTree}
+              collapsedSections={this.props.collapsedSections}
+              activeSection={this.props.activeSection}
+              navigationQuery={this.props.navigationQuery}
+              navigationExpanded={this.props.navigationExpanded}
+              navigationCategoriesExpanded={this.props.navigationCategoriesExpanded}
+              onSectionToggle={this.props.updateSectionVisibility}
+              onNavigationVisibilityChange={this.props.updateNavigationVisibility}
+              onNavigationCategoryExpansionChange={this.props.updateNavigationCategoryExpansion}
+              onNavigationQueryChange={this.props.updateNavigationQuery}
+              requestPartialRecord={this.props.requestPartialRecord}
+            />
+          </div>
+        </div>
         <div className="wdk-RecordMain">
           {/* <div className="wdk-RecordMainSectionFieldToggles">
             <button type="button" title="Expand all content" className="wdk-Link"
