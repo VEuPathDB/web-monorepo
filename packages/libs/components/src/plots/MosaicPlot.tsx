@@ -37,13 +37,17 @@ export default function MosaicPlot(props: Props) {
       title: props.independentLabel ? props.independentLabel + ' (%)' : '',
       // Must expliticly define range for it to work consistently
       range: [0, 100] as number[],
+      tickvals: [0, 20, 40, 60, 80, 100] as number[],
+      ticktext: ['', '20', '40', '60', '80', '100'] as string[],
     },
     // Top x axis displaying independent variable labels
     xaxis2: {
       tickvals: column_centers,
       ticktext: props.independentValues.map(
         (value, i) =>
-          `<b>${value}</b> ${percent_widths[i].toFixed(1)}% (${raw_widths[i]})`
+          `<b>${value}</b> ${percent_widths[i].toFixed(1)}% (${raw_widths[
+            i
+          ].toLocaleString('en-US')})`
       ),
       range: [0, 100] as number[],
       overlaying: 'x',
@@ -69,7 +73,7 @@ export default function MosaicPlot(props: Props) {
               `<b>${props.dependentValues[i]}</b> ${(
                 (count / raw_widths[j]) *
                 100
-              ).toFixed(1)}% (${count})`
+              ).toFixed(1)}% (${count.toLocaleString('en-US')})`
           ),
           width: percent_widths,
           type: 'bar',
