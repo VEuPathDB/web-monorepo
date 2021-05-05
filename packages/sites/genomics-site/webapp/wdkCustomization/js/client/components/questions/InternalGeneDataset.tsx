@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { Suspense, useMemo, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
@@ -18,7 +18,11 @@ import { Plugin } from '@veupathdb/wdk-client/lib/Utils/ClientPlugin';
 import NotFound from '@veupathdb/wdk-client/lib/Views/NotFound/NotFound';
 import { QuestionHeader } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 
-import { formatLink } from '@veupathdb/web-common/lib/components/records/DatasetRecordClasses.DatasetRecordClass'
+import { formatLink } from '@veupathdb/web-common/lib/components/records/DatasetRecordClasses.DatasetRecordClass';
+
+import { usePreferredOrganismsState, usePreferredOrganismsEnabledState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
+
+import { isPreferredDataset } from '../../util/preferredOrganisms';
 
 import './InternalGeneDataset.scss';
 
@@ -40,7 +44,8 @@ type DatasetRecord = {
   summary: string,
   build_number_introduced: string,
   publications: LinkAttributeValue[],
-  searches: string
+  searches: string,
+  isPreferred: boolean
 };
 
 type DisplayCategory = { 
@@ -50,6 +55,14 @@ type DisplayCategory = {
 };
 
 export function InternalGeneDataset(props: Props) {
+  return (
+    <Suspense fallback={null}>
+      <InternalGeneDatasetContent {...props} />
+    </Suspense>
+  );
+}
+
+function InternalGeneDatasetContent(props: Props) {
   const location = useLocation();
   const searchNameAnchorTag = location.hash.slice(1);
 
@@ -57,6 +70,9 @@ export function InternalGeneDataset(props: Props) {
   const questions = useSelector((state: RootState) => state.globalData.questions);
   const ontology = useSelector((state: RootState) => state.globalData.ontology?.tree);
   const recordClasses = useSelector((state: RootState) => state.globalData.recordClasses);
+
+  const [ preferredOrganisms ] = usePreferredOrganismsState();
+  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
 
   const internalSearchName = props.question;
 
@@ -99,7 +115,7 @@ export function InternalGeneDataset(props: Props) {
 
     const internalQuestions = getInternalQuestions(answer, outputRecordClass.fullName);
     const displayCategoryMetadata = getDisplayCategoryMetadata(ontology, internalQuestions);
-    const datasetRecords = getDatasetRecords(answer, displayCategoryMetadata);
+    const datasetRecords = getDatasetRecords(answer, displayCategoryMetadata, preferredOrganisms);
 
     return {
       questionNamesByDatasetAndCategory: displayCategoryMetadata.questionNamesByDatasetAndCategory,
@@ -107,7 +123,7 @@ export function InternalGeneDataset(props: Props) {
       displayCategoryOrder: displayCategoryMetadata.displayCategoryOrder,
       datasetRecords
     };
-  }, [ questions, ontology, internalSearchName, outputRecordClass, datasetCategory, datasetSubtype ]);
+  }, [ questions, ontology, internalSearchName, outputRecordClass, datasetCategory, datasetSubtype, preferredOrganisms ]);
 
   const {
     questionNamesByDatasetAndCategory,
@@ -124,8 +140,8 @@ export function InternalGeneDataset(props: Props) {
   );
 
   const filteredDatasetRecords = useMemo(
-    () => getFilteredDatasetRecords(datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord),
-    [ datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord ]
+    () => getFilteredDatasetRecords(datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord, preferredOrganismsEnabled),
+    [ datasetRecords, displayCategoriesByName, showingOneRecord, selectedDataSetRecord, preferredOrganismsEnabled ]
   );
 
   useEffect(() => {
@@ -170,7 +186,7 @@ export function InternalGeneDataset(props: Props) {
             emptyResultMessage=""
             showCount={false}
             rows={
-              showingOneRecord
+              showingOneRecord || preferredOrganismsEnabled
                 ? filteredDatasetRecords
                 : datasetRecords
             }
@@ -458,12 +474,13 @@ function getFilteredDatasetRecords(
   datasetRecords: DatasetRecord[] | undefined,
   questionNamesByDatasetAndCategory: ReturnType<typeof getDisplayCategoryMetadata>['questionNamesByDatasetAndCategory'] | undefined,
   showingOneRecord: boolean,
-  selectedDataSetRecord: DatasetRecord | undefined
+  selectedDataSetRecord: DatasetRecord | undefined,
+  preferredOrganismsEnabled: boolean
 ) {
   return !datasetRecords || !questionNamesByDatasetAndCategory
     ? undefined
     : !showingOneRecord
-    ? datasetRecords
+    ? datasetRecords.filter(({ isPreferred }) => !preferredOrganismsEnabled || isPreferred)
     : datasetRecords.filter(record => record === selectedDataSetRecord)
 }
 
@@ -492,7 +509,8 @@ const REPORT_CONFIG = {
   ],
   tables: [
     "References",
-    "Publications"
+    "Publications",
+    "Version"
   ],
   pagination: {
     "offset": 0,
@@ -546,8 +564,11 @@ function getDatasetRecords(
     displayCategoriesByName,
     displayCategoryOrder,
     questionNamesByDatasetAndCategory
-  }: ReturnType<typeof getDisplayCategoryMetadata>
+  }: ReturnType<typeof getDisplayCategoryMetadata>,
+  preferredOrganisms: string[]
 ) {
+  const preferredOrganismsSet = new Set(preferredOrganisms);
+
   return answer.records
   .filter(
     ({ attributes: { dataset_name } }) => 
@@ -596,7 +617,8 @@ function getDatasetRecords(
             )
           )
           .map(categoryName => displayCategoriesByName[categoryName].shortDisplayName)
-          .join(' ')
+          .join(' '),
+        isPreferred: isPreferredDataset(datasetRecord, preferredOrganismsSet)
       };
     },
   );
