@@ -383,6 +383,11 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
+  // We are not using series[x].summary.min and max here
+  // because the bin boundaries are more appropriate
+  const xRangeMin = data.series[0].bins[0].binStart;
+  const xRangeMax = data.series[0].bins[data.series[0].bins.length - 1].binEnd;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Histogram
@@ -419,7 +424,9 @@ function HistogramPlotWithControls({
         binWidthStep={data.binWidthStep!}
         errorManagement={errorManagement}
         selectedRange={selectedRange}
-        // selectedRangeBounds{ { /* TBC min: max:  */ } }
+        selectedRangeBounds={
+          { min: xRangeMin, max: xRangeMax } as NumberOrDateRange
+        }
         onSelectedRangeChange={handleSelectedRangeChange}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
