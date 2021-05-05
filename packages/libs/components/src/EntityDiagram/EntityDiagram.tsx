@@ -9,7 +9,7 @@ import {
 import { Line } from '@visx/shape';
 import { LinearGradient } from '@visx/gradient';
 
-interface CustomNode {
+interface CustomNodeProps {
   node: HierarchyPointNode<StudyData>;
 }
 
@@ -77,7 +77,7 @@ export interface EntityDiagramProps {
    * data */
   renderNode?: (
     node: StudyData,
-    children?: Array<React.ReactElement>
+    children?: React.ReactNode
   ) => React.ReactElement | null;
   selectedTextBold?: boolean;
   selectedBorderWeight?: number;
@@ -146,7 +146,7 @@ export default function EntityDiagram({
   const treeTop =
     (orientation === 'horizontal' ? 0 : nodeHeight / 2) + nodeHighlightWidth; // Where the baby rocks
 
-  function CustomNode({ node }: CustomNode) {
+  function CustomNode({ node }: CustomNodeProps) {
     let displayText: string;
     const isHighlighted = highlightedEntityID == node.data.displayName;
 
@@ -175,7 +175,6 @@ export default function EntityDiagram({
         x={-rectWidth / 2 - borderWidth / 2}
         rx={radius}
         fill="white"
-        key={`bg-rect-${node.data.id}`}
         strokeWidth={borderWidth}
         stroke="transparent"
         style={{
@@ -194,7 +193,6 @@ export default function EntityDiagram({
         fill="none"
         stroke={isHighlighted ? selectedHighlightColor : '#666'}
         strokeWidth={borderWidth}
-        key={`bg-rect-${node.data.id}`}
       />
     );
 
@@ -212,7 +210,6 @@ export default function EntityDiagram({
         style={{
           overflowWrap: isExpanded ? 'normal' : undefined,
         }}
-        key={`shading-rect-${node.data.id}`}
       />
     );
 
@@ -227,7 +224,6 @@ export default function EntityDiagram({
         }}
         dy={-4}
         width={isExpanded ? nodeWidth - 40 : undefined}
-        key={`text-${node.data.id}`}
       >
         {displayText}
       </Text>
@@ -237,7 +233,6 @@ export default function EntityDiagram({
       <Group>
         <title>This entity has filters</title>
         <Text
-          key="filter-icon"
           fontSize={14}
           fontFamily="FontAwesome"
           fill="green"
@@ -249,17 +244,22 @@ export default function EntityDiagram({
           &#xf0b0;
         </Text>
       </Group>
-    ) : (
-      <></>
-    );
+    ) : null;
 
-    let children = [backgroundRect, shadingRect, filterIcon, text, borderRect];
+    let children = (
+      <>
+        {backgroundRect}
+        {shadingRect}
+        {filterIcon}
+        {text}
+        {borderRect}
+      </>
+    );
 
     return (
       <Group
         top={orientation == 'horizontal' ? node.x : node.y}
         left={orientation == 'horizontal' ? node.y : node.x}
-        key={node.x + node.y}
       >
         {renderNode?.(node.data, children) ?? children}
         {!isExpanded && <title>{node.data.displayName}</title>}
@@ -330,9 +330,9 @@ export default function EntityDiagram({
         </defs>
         {shadingData &&
           // Node background shading definitions
-          Object.keys(shadingData).map((key, index) => (
+          Object.keys(shadingData).map((key) => (
             <LinearGradient
-              key={index}
+              key={key}
               vertical={false}
               x1={0}
               x2={shadingData[key]}
