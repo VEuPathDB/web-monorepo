@@ -20,6 +20,7 @@ import { DataElementConstraint } from '../../../types/visualization';
 import { isMosaicVariable, isTwoByTwoVariable } from '../../filter/guards';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import _ from 'lodash';
 
 type MosaicData = Pick<
   MosaicProps,
@@ -223,14 +224,14 @@ function MosaicViz(props: Props) {
         throw new Error(
           `Please choose another x-axis variable. '${
             xAxisVariable.displayName
-          }' is not suitable for ${isTwoByTwo ?? '2x2'} contingency tables`
+          }' is not suitable for ${isTwoByTwo ? '2x2' : ''} contingency tables`
         );
 
       if (yAxisVariable && !isValidVariable(yAxisVariable))
         throw new Error(
           `Please choose another y-axis variable. '${
             yAxisVariable.displayName
-          }' is not suitable for ${isTwoByTwo ?? '2x2'} contingency tables`
+          }' is not suitable for ${isTwoByTwo ? '2x2' : ''} contingency tables`
         );
 
       const params = getRequestParams(
@@ -239,11 +240,15 @@ function MosaicViz(props: Props) {
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable
       );
-      const response = dataClient.getMosaic(
-        computation.type,
-        params as MosaicRequestParams
-      );
-      return mosaicResponseToData(await response);
+      const response = isTwoByTwo
+        ? dataClient.getTwoByTwo(
+            computation.type,
+            params as MosaicRequestParams
+          )
+        : dataClient.getMosaic(computation.type, params as MosaicRequestParams);
+      return isTwoByTwo
+        ? twoByTwoResponseToData(await response)
+        : mosaicResponseToData(await response);
     }, [
       studyId,
       filters,
@@ -256,7 +261,7 @@ function MosaicViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && <h1>Mosaic</h1>}
+      {fullscreen && <h1>{isTwoByTwo ? '2x2' : 'RxC'} Contigency Table</h1>}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables
@@ -284,7 +289,7 @@ function MosaicViz(props: Props) {
       {data.pending && (
         <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
       )}
-      {data.error && fullscreen && console.log(data.error) && (
+      {data.error && fullscreen && (
         <div
           style={{
             fontSize: '1.2em',
@@ -389,8 +394,32 @@ export function mosaicResponseToData(
   if (response.mosaic.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
+  // Transpose data table to match mosaic component expectations
+  const data = _.unzip(response.mosaic.data[0].value);
+
   return {
-    data: response.mosaic.data[0].value,
+    data: data,
+    independentValues: response.mosaic.data[0].xLabel,
+    dependentValues: response.mosaic.data[0].yLabel,
+  };
+}
+
+/**
+ * Reformat response from mosaic endpoints into complete MosaicData
+ * @param response
+ * @returns MosaicData
+ */
+export function twoByTwoResponseToData(
+  response: PromiseType<ReturnType<DataClient['getTwoByTwo']>>
+): MosaicData {
+  if (response.mosaic.data.length === 0)
+    throw Error(`Expected one or more data series, but got zero`);
+
+  // Transpose data table to match mosaic component expectations
+  const data = _.unzip(response.mosaic.data[0].value);
+
+  return {
+    data: data,
     independentValues: response.mosaic.data[0].xLabel,
     dependentValues: response.mosaic.data[0].yLabel,
   };

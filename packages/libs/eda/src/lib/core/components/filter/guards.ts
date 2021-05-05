@@ -57,14 +57,5 @@ export function isMosaicVariable(
 export function isTwoByTwoVariable(
   variable: StudyVariable
 ): variable is TwoByTwoVariable {
-  switch (variable.dataShape) {
-    case 'binary':
-      switch (variable.type) {
-        case 'number':
-        case 'category':
-        case 'string':
-          return true;
-      }
-  }
-  return false;
+  return isMosaicVariable(variable) && variable.dataShape === 'binary';
 }

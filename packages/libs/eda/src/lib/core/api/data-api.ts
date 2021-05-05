@@ -327,6 +327,18 @@ export class DataClient extends FetchClient {
   ): Promise<MosaicResponse> {
     return this.getVisualizationData(
       computationName,
+      'conttable',
+      params,
+      MosaicResponse
+    );
+  }
+
+  getTwoByTwo(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<MosaicResponse> {
+    return this.getVisualizationData(
+      computationName,
       'twobytwo',
       params,
       MosaicResponse

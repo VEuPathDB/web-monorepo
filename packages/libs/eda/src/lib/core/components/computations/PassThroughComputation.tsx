@@ -26,7 +26,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   'date-histogram-bin-width': histogramVisualization,
   'numeric-histogram-bin-width': histogramVisualization,
   twobytwo: twoByTwoVisualization,
-  // conttable: mosaicVisualization,
+  conttable: mosaicVisualization,
 };
 
 export function PassThroughComputation(props: Props) {
