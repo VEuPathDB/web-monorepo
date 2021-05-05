@@ -2,6 +2,7 @@ import { StudyVariable } from '../../types/study';
 import {
   HistogramVariable,
   TableVariable,
+  ScatterplotVariable,
   MosaicVariable,
   TwoByTwoVariable,
 } from './types';
@@ -31,6 +32,20 @@ export function isTableVariable(
         case 'date':
         case 'number':
         case 'string':
+          return true;
+      }
+  }
+  return false;
+}
+
+export function isScatterplotVariable(
+  variable: StudyVariable
+): variable is ScatterplotVariable {
+  switch (variable.dataShape) {
+    case 'continuous':
+      switch (variable.type) {
+        case 'date':
+        case 'number':
           return true;
       }
   }

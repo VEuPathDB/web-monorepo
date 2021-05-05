@@ -10,6 +10,11 @@ export interface TableVariable extends StudyVariable {
   dataShape: 'categorical' | 'binary' | 'ordinal';
 }
 
+export interface ScatterplotVariable extends StudyVariable {
+  type: 'number' | 'date';
+  dataShape: 'continuous';
+}
+
 export interface MosaicVariable extends StudyVariable {
   type: 'string' | 'number' | 'category';
   dataShape: 'categorical' | 'binary' | 'ordinal';
