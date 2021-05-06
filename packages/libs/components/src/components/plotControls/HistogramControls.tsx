@@ -228,7 +228,7 @@ export default function HistogramControls({
               rangeBounds={selectedRangeBounds as DateRange}
               range={selectedRange as DateRange}
               onRangeChange={onSelectedRangeChange}
-              allowPartialRanges={false}
+              allowPartialRange={false}
             />
           ) : (
             <NumberRangeInput
@@ -236,7 +236,7 @@ export default function HistogramControls({
               rangeBounds={selectedRangeBounds as NumberRange}
               range={selectedRange as NumberRange}
               onRangeChange={onSelectedRangeChange}
-              allowPartialRanges={false}
+              allowPartialRange={false}
             />
           )
         ) : null}
@@ -340,7 +340,7 @@ export default function HistogramControls({
               onRangeChange={(newRange?: NumberOrDateRange) => {
                 onDependentAxisRangeChange(newRange as NumberRange);
               }}
-              allowPartialRanges={false}
+              allowPartialRange={false}
             />
           ) : null}
           {dependentAxisMode && onDependentAxisModeChange && (
@@ -436,14 +436,14 @@ export default function HistogramControls({
                 label="Range:"
                 range={independentAxisRange as DateRange}
                 onRangeChange={onIndependentAxisRangeChange}
-                allowPartialRanges={false}
+                allowPartialRange={false}
               />
             ) : (
               <NumberRangeInput
                 label="Range:"
                 range={independentAxisRange as NumberRange}
                 onRangeChange={onIndependentAxisRangeChange}
-                allowPartialRanges={false}
+                allowPartialRange={false}
               />
             )
           ) : null}

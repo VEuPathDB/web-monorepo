@@ -14,7 +14,7 @@ export type BaseProps<M extends NumberOrDateRange> = {
   /** Function to invoke when range changes. */
   onRangeChange: (newRange?: NumberOrDateRange) => void;
   /** When true, allow undefined min or max. Default is true */
-  allowPartialRanges?: boolean;
+  allowPartialRange?: boolean;
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
   rangeBounds?: M;
   /** UI Label for the widget. Optional */
@@ -61,7 +61,7 @@ function BaseInput({
   required = false,
   rangeBounds,
   onRangeChange,
-  allowPartialRanges = true,
+  allowPartialRange = true,
   label,
   lowerLabel = '',
   upperLabel = '',
@@ -84,13 +84,13 @@ function BaseInput({
 
   // if we are not currently receiving incoming data
   // pass localRange (if it differs from `range`) out to consumer
-  // respecting `allowPartialRanges`
+  // respecting `allowPartialRange`
   useEffect(() => {
     if (!isReceiving) {
       if (
         localRange &&
         (localRange.min !== range?.min || localRange.max !== range?.max) &&
-        (allowPartialRanges ||
+        (allowPartialRange ||
           (localRange.min != null && localRange.max != null))
       ) {
         onRangeChange(localRange);
@@ -101,14 +101,33 @@ function BaseInput({
         range?.max != undefined
       ) {
         onRangeChange(undefined);
+      } else if (
+        // fill in the min or max for a partially entered range
+        localRange &&
+        rangeBounds &&
+        !allowPartialRange
+      ) {
+        if (localRange.min == undefined) {
+          setLocalRange({
+            min: rangeBounds.min,
+            max: localRange.max,
+          });
+        } else if (localRange.max == undefined) {
+          setLocalRange({
+            min: localRange.min,
+            max: rangeBounds.max,
+          });
+        }
       }
     }
-  }, [localRange, range, isReceiving, onRangeChange, allowPartialRanges]);
-
-  const handleClearButton = () => {
-    setIsReceiving(false);
-    setLocalRange(undefined);
-  };
+  }, [
+    localRange,
+    range,
+    isReceiving,
+    onRangeChange,
+    allowPartialRange,
+    rangeBounds,
+  ]);
 
   const { min, max } = localRange ?? {};
   return (
@@ -191,7 +210,10 @@ function BaseInput({
           <Button
             type={'solid'}
             text={clearButtonLabel}
-            onClick={handleClearButton}
+            onClick={() => {
+              setIsReceiving(false);
+              setLocalRange(undefined);
+            }}
           />
         )}
       </div>
