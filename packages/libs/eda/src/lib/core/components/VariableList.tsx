@@ -103,6 +103,9 @@ export default function VariableList(props: VariableListProps) {
 
   const activeFieldEntity = activeField?.term.split('/')[0];
 
+  // When active field changes, we want to collapse entity nodes that are not an ancestor
+  // of the active field. We also want to retain the expanded state of internal nodes, so
+  // we will only remove entity nodes from the list of expanded nodes.
   useEffect(() => {
     if (activeField == null) return;
     setExpandedNodes((expandedNodes) => {
@@ -125,6 +128,9 @@ export default function VariableList(props: VariableListProps) {
     });
   }, [activeField, activeFieldEntity, getPathToField]);
 
+  // If a new entity is expanded, we will collapse other entities and select the default
+  // variable of the newly expanded entity. Note that the logic of selecting the default
+  // variable is handled externally to this component.
   const handleExpansionChange = useCallback(
     (nextExpandedNodes: string[]) => {
       const newNodes = difference(nextExpandedNodes, expandedNodes);
