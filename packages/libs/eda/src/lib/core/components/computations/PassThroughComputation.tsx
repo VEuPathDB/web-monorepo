@@ -30,7 +30,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   conttable: mosaicVisualization,
   scatterplot: scatterplotVisualization,
   lineplot: scatterplotVisualization,
-  //DKDK placeholder for densityplot
+  // placeholder for densityplot
   // densityplot: scatterplotVisualization,
 };
 
