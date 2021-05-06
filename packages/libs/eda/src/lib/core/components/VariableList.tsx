@@ -101,31 +101,50 @@ export default function VariableList(props: VariableListProps) {
     getPathToField(activeField)
   );
 
+  const activeFieldEntity = activeField?.term.split('/')[0];
+
   useEffect(() => {
     if (activeField == null) return;
     setExpandedNodes((expandedNodes) => {
-      if (activeField.parent && expandedNodes.includes(activeField.parent)) {
+      const activeNodeLineage = getPathToField(activeField);
+      if (activeNodeLineage.every((node) => expandedNodes.includes(node))) {
         // This is effectively a noop. Returning the same value tells react to bail on the next render.
         // See https://reactjs.org/docs/hooks-reference.html#functional-updates
         return expandedNodes;
       }
       const newExpandedNodes = uniq(
-        expandedNodes.concat(getPathToField(activeField))
+        expandedNodes
+          .concat(activeNodeLineage)
+          .filter(
+            (term) =>
+              !term.startsWith('entity:') ||
+              term === `entity:${activeFieldEntity}`
+          )
       );
       return newExpandedNodes;
     });
-  }, [activeField, getPathToField]);
+  }, [activeField, activeFieldEntity, getPathToField]);
 
-  const handleExpansionChange = (nextExpandedNodes: string[]) => {
-    const newNodes = difference(nextExpandedNodes, expandedNodes);
-    const newEntityNode = newNodes.find((node) => node.startsWith('entity:'));
-    if (newEntityNode) {
-      onActiveFieldChange(newEntityNode.slice(7));
-      setExpandedNodes(newNodes);
-    } else {
-      setExpandedNodes(nextExpandedNodes);
-    }
-  };
+  const handleExpansionChange = useCallback(
+    (nextExpandedNodes: string[]) => {
+      const newNodes = difference(nextExpandedNodes, expandedNodes);
+      // FIXME Handle expandAll?? Currently only the first entity will be expanded.
+      const newEntityNode = newNodes.find((node) => node.startsWith('entity:'));
+      if (newEntityNode) {
+        const newEntityId = newEntityNode.slice(7);
+        if (activeFieldEntity !== newEntityId) {
+          onActiveFieldChange(newEntityId);
+        }
+        const nodes = nextExpandedNodes.filter(
+          (term) => !term.startsWith('entity:') || term === newEntityNode
+        );
+        setExpandedNodes(nodes);
+      } else {
+        setExpandedNodes(nextExpandedNodes);
+      }
+    },
+    [activeFieldEntity, expandedNodes, onActiveFieldChange]
+  );
 
   const handleFieldSelect = useCallback(
     (node: FieldTreeNode) => {
@@ -168,11 +187,11 @@ export default function VariableList(props: VariableListProps) {
           handleFieldSelect={handleFieldSelect}
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
-          activeFieldEntity={activeField?.term.split('/')[0]}
+          activeFieldEntity={activeFieldEntity}
         />
       );
     },
-    [activeField?.term, handleFieldSelect, searchTerm]
+    [activeField?.term, activeFieldEntity, handleFieldSelect, searchTerm]
   );
 
   return (
