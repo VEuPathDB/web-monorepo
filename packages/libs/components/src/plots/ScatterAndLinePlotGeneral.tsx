@@ -1,23 +1,23 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
-//DKDK block this
-// import { PlotComponentProps } from "./Types";
-//DKDK import Layout for typing layout, especially with sliders
+// import Layout for typing layout, especially with sliders
 import { Layout, PlotData } from 'plotly.js';
 
-//DKDK following the approach used in PlotlyPlot.tsx to avoid type errors regarding data
+// following the approach used in PlotlyPlot.tsx to avoid type errors regarding data
 type PlotDataKey = keyof PlotData;
 
-//DKDK change interface a bit more: this could avoid error on data type
+// change interface a bit more: this could avoid error on data type
 export interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
   data: Pick<PlotData, T>[];
   xLabel?: string;
   yLabel?: string;
   plotTitle?: string;
-  //DKDK involving CI, x & y range may need to be set
+  // involving CI, x & y range may need to be set
   xRange?: number[] | Date[];
   yRange?: number[] | Date[];
-  showLegend?: boolean;
+  // add enable/disable legend and built-in controls
+  displayLegend?: boolean;
+  displayLibraryControls?: boolean;
 }
 
 export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
@@ -27,18 +27,18 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
   const layout: Partial<Layout> = {
     xaxis: {
       title: xLabel ? xLabel : '',
-      range: xRange, //DKDK set this for better display: esp. for CI plot
-      zeroline: false, //DKDK disable yaxis line
-      //DKDK make plot border
+      range: xRange, // set this for better display: esp. for CI plot
+      zeroline: false, // disable yaxis line
+      // make plot border
       linecolor: 'black',
       linewidth: 1,
       mirror: true,
     },
     yaxis: {
       title: yLabel ? yLabel : '',
-      range: yRange, //DKDK set this for better display: esp. for CI plot
-      zeroline: false, //DKDK disable xaxis line
-      //DKDK make plot border
+      range: yRange, // set this for better display: esp. for CI plot
+      zeroline: false, // disable xaxis line
+      // make plot border
       linecolor: 'black',
       linewidth: 1,
       mirror: true,
@@ -48,7 +48,7 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
     },
   };
 
-  //DKDK add this per standard
+  // add this per standard
   const finalData = data.map((d) => ({ ...d, type: 'scatter' as const }));
 
   return (
@@ -59,13 +59,12 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
         ...{
           width: props.width,
           height: props.height,
-          margin: props.margin,
-          showlegend: props.showLegend,
+          margin: props.margin ? props.margin : undefined,
+          showlegend: props.displayLegend,
         },
       }}
       config={{
-        displayModeBar:
-          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
+        displayModeBar: props.displayLibraryControls ? 'hover' : false,
         staticPlot: props.staticPlot,
       }}
     />

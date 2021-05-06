@@ -9,24 +9,24 @@ export default {
   },
 };
 
-//DKDK set data array types for VEuPathDB scatter plot: https://redmine.apidb.org/issues/41310
+// set data array types for VEuPathDB scatter plot: https://redmine.apidb.org/issues/41310
 // but changed to new format: most likely x & y data are row/column vector format; also standardError is not a single value but vector
 interface VEuPathDBScatterPlotData<T extends number | Date> {
   data: Array<{
     series: {
-      x: T[]; //DKDK perhaps string[] is better despite Date format, e.g., ISO format?
-      y: T[]; //DKDK will y data have a Date?
+      x: T[]; // perhaps string[] is better despite Date format, e.g., ISO format?
+      y: T[]; // will y data have a Date?
       popupContent?: string;
     };
     interval?: {
-      x: T[]; //DKDK perhaps string[] is better despite Date format, e.g., ISO format?
-      y: T[]; //DKDK will y data have a Date?
+      x: T[]; // perhaps string[] is better despite Date format, e.g., ISO format?
+      y: T[]; // will y data have a Date?
       orientation: string;
       standardError: number[];
     };
     color?: string;
     label: string;
-    //DKDK for general scatter component
+    // for general scatter component
     showLines?: boolean;
     showMarkers?: boolean;
     fillArea?: boolean;
@@ -35,7 +35,7 @@ interface VEuPathDBScatterPlotData<T extends number | Date> {
   opacity?: number;
 }
 
-//DKDK type for hexToRgb function
+// type for hexToRgb function
 interface hexProp {
   // hex: string,
   hexToRgb: (arg0: string) => number[];
@@ -46,7 +46,7 @@ interface hexProp {
   // replace(arg0: RegExp, arg1: (m: string, r: string, g: string, b: string)),
 }
 
-//DKDK change HTML hex code to rgb array
+// change HTML hex code to rgb array
 const hexToRgb = (hex?: string): [number, number, number] => {
   if (!hex) return [0, 0, 0];
   const fullHex = hex.replace(
@@ -64,9 +64,9 @@ const hexToRgb = (hex?: string): [number, number, number] => {
   ];
 };
 
-//DKDK check number array and if empty
+// check number array and if empty
 function isArrayOfNumbers(value: any): value is number[] {
-  //DKDK value.length !==0
+  // value.length !==0
   return (
     Array.isArray(value) &&
     value.length !== 0 &&
@@ -74,14 +74,14 @@ function isArrayOfNumbers(value: any): value is number[] {
   );
 }
 
-//DKDK an example data: data are assumed to be number type only
+// an example data: data are assumed to be number type only
 let orientationValue = 'y';
 
-//DKDK Real data comprised of numbers
+// Real data comprised of numbers
 const dataSet: VEuPathDBScatterPlotData<number> = {
   data: [
     {
-      //DKDK scatter plot with CI
+      // scatter plot with CI
       series: {
         x: [
           0,
@@ -182,7 +182,7 @@ const dataSet: VEuPathDBScatterPlotData<number> = {
           -0.08,
         ],
       },
-      // popupContent?: string;   //DKDK this prop is placed at each object, {x, y, popupContent}, but not tested
+      // popupContent?: string;   // this prop is placed at each object, {x, y, popupContent}, but not tested
       interval: {
         x: [
           0,
@@ -432,18 +432,18 @@ const dataSet: VEuPathDBScatterPlotData<number> = {
         ],
         orientation: orientationValue,
       },
-      color: '#00b0f6', //DKDK use this as fitting line and scatter color
-      label: 'Data 1', //DKDK use this as "name" in plotly
-      //DKDK below setting is for marker without line but use spline for fitting line
+      color: '#00b0f6', // use this as fitting line and scatter color
+      label: 'Data 1', // use this as "name" in plotly
+      // below setting is for marker without line but use spline for fitting line
       showLines: false,
       showMarkers: true,
       fillArea: false,
       useSpline: true,
     },
     {
-      //DKDK line plot with marker
+      // line plot with marker
       series: {
-        //DKDK random data from 0 to 29
+        // random data from 0 to 29
         x: [
           0,
           1,
@@ -509,18 +509,18 @@ const dataSet: VEuPathDBScatterPlotData<number> = {
           -1,
         ],
       },
-      color: '#8B0000', //DKDK use this as point/marker color
-      label: 'Data 2', //DKDK use this as "name" in plotly
-      //DKDK below setting is for marker with line but no spline interpolation
+      color: '#8B0000', // use this as point/marker color
+      label: 'Data 2', // use this as "name" in plotly
+      // below setting is for marker with line but no spline interpolation
       showLines: true,
       showMarkers: true,
       fillArea: false,
       useSpline: false,
     },
     {
-      //DKDK line plot with marker
+      // line plot with marker
       series: {
-        //DKDK random data from 20 to 47
+        // random data from 20 to 47
         x: [
           20,
           21,
@@ -582,9 +582,9 @@ const dataSet: VEuPathDBScatterPlotData<number> = {
           -1,
         ],
       },
-      color: '#006400', //DKDK use this as point/marker color
-      label: 'Data 3', //DKDK use this as "name" in plotly
-      //DKDK density plot: also testing for no line/marker => line seems to be defailt in this case
+      color: '#006400', // use this as point/marker color
+      label: 'Data 3', // use this as "name" in plotly
+      // density plot: also testing for no line/marker => line seems to be defailt in this case
       showLines: false,
       showMarkers: false,
       fillArea: true,
@@ -594,7 +594,7 @@ const dataSet: VEuPathDBScatterPlotData<number> = {
   // opacity: 0.2,
 };
 
-// //DKDK a sample data for testing Date format: ISO format only
+// // a sample data for testing Date format: ISO format only
 // const dataSet: VEuPathDBScatterPlotData = {
 //   data: [
 //     {
@@ -602,31 +602,31 @@ const dataSet: VEuPathDBScatterPlotData<number> = {
 //         x: ['2020-01-11T00:00:00Z', '2019-01-01T00:00:00Z', '2018-01-01T00:00:00Z', '2017-12-20T00:00:00Z', '2016-07-18T00:00:00Z', '2015-07-31T00:00:00Z','2014-01-11T00:00:00Z', '2013-01-01T00:00:00Z', '2012-05-01T00:00:00Z', '2012-01-05T00:00:00Z'],
 //         y: [1,2,3,4,5,6,7,8,9,10],
 //       },
-//       // popupContent?: string;   //DKDK this prop is placed at each object, {x, y, popupContent}, but not tested
+//       // popupContent?: string;   // this prop is placed at each object, {x, y, popupContent}, but not tested
 //       interval: {
 //         x: ['2020-01-11T00:00:00Z', '2019-01-01T00:00:00Z', '2018-01-01T00:00:00Z', '2017-12-20T00:00:00Z', '2016-07-18T00:00:00Z', '2015-07-31T00:00:00Z','2014-01-11T00:00:00Z', '2013-01-01T00:00:00Z', '2012-05-01T00:00:00Z', '2012-01-05T00:00:00Z'],
 //         y: [1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.2,9.5],
 //         standardError: [0.1,0.145,0.2,0.11,0.5,0.24,0.7,0.33,0.45,0.55],
 //         orientation: orientationValue,
 //       },
-//       color: '#00b0f6',       //DKDK use this as fitting line and scatter color
-//       label: 'Dataset 1',     //DKDK use this as "name" in plotly
+//       color: '#00b0f6',       // use this as fitting line and scatter color
+//       label: 'Dataset 1',     // use this as "name" in plotly
 //     },
 //   ],
 //   // opacity: 0.2,
 // }
 
-//DKDK set global Opacity value
+// set global Opacity value
 let globalOpacity = dataSet.opacity ? dataSet.opacity : 1;
 
-//DKDK set a default color - set to any for now
+// set a default color - set to any for now
 let defaultColor: string = '#00b0f6';
 
-//DKDK making plotly input data
+// making plotly input data
 function processInputData<T extends number | Date>(
   dataSet: VEuPathDBScatterPlotData<T>
 ) {
-  //DKDK set variables for x- and yaxis ranges
+  // set variables for x- and yaxis ranges
   let xMin: number | Date = 0;
   let xMax: number | Date = 0;
   let yMin: number | Date = 0;
@@ -634,30 +634,30 @@ function processInputData<T extends number | Date>(
 
   let dataSetProcess: Array<{}> = [];
   dataSet.data.forEach(function (el: any, index: number) {
-    //DKDK initialize variables: setting with union type for future, but this causes typescript issue in the current version
+    // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xSeriesValue: T[] = [];
     let ySeriesValue: T[] = [];
     let xIntervalLineValue: T[] = [];
     let yIntervalLineValue: T[] = [];
-    let standardErrorValue: T[] = []; //DKDK this is for standardError
+    let standardErrorValue: T[] = []; // this is for standardError
     let xIntervalBounds: T[] = [];
     let yIntervalBounds: T[] = [];
 
-    //DKDK set rgbValue here per dataset with a default color
+    // set rgbValue here per dataset with a default color
     let rgbValue: number[] = el.color
       ? hexToRgb(el.color)
       : hexToRgb(defaultColor);
     let scatterPointColor: string = '';
     let fittingLineColor: string = '';
     let intervalColor: string = '';
-    //DKDK set line and marker variable
+    // set line and marker variable
     let modeValue: string = '';
     let splineValue: string = '';
     let fillAreaValue: string = '';
 
-    //DKDK series is for scatter plot
+    // series is for scatter plot
     if (el.series) {
-      //DKDK check the number of x = number of y
+      // check the number of x = number of y
       if (el.series.x.length !== el.series.y.length) {
         console.log(
           'x length=',
@@ -671,7 +671,7 @@ function processInputData<T extends number | Date>(
         );
       }
 
-      //DKDK probably no need to have this for series data, though
+      // probably no need to have this for series data, though
       //1) combine the arrays:
       let combinedArray = [];
       for (let j = 0; j < el.series.x.length; j++) {
@@ -688,10 +688,10 @@ function processInputData<T extends number | Date>(
       }
 
       /*
-       * DKDK set variables for x-/y-axes ranges including x,y data points: considering Date data for X as well
+       *  set variables for x-/y-axes ranges including x,y data points: considering Date data for X as well
        * This is for finding global min/max values among data arrays for better display of the plot(s)
        */
-      //DKDK check if this X array consists of numbers & add type assertion
+      // check if this X array consists of numbers & add type assertion
       if (isArrayOfNumbers(xSeriesValue)) {
         xMin =
           xMin < Math.min(...(xSeriesValue as number[]))
@@ -702,9 +702,9 @@ function processInputData<T extends number | Date>(
             ? xMax
             : Math.max(...(xSeriesValue as number[]));
       } else {
-        //DKDK this array consists of Dates
+        // this array consists of Dates
         if (index == 0) {
-          //DKDK to set initial min/max Date values for Date[]
+          // to set initial min/max Date values for Date[]
           xMin = getMinDate(xSeriesValue as Date[]);
           xMax = getMaxDate(xSeriesValue as Date[]);
         } else {
@@ -729,7 +729,7 @@ function processInputData<T extends number | Date>(
         }
       }
 
-      //DKDK check if this Y array consists of numbers & add type assertion
+      // check if this Y array consists of numbers & add type assertion
       if (isArrayOfNumbers(ySeriesValue)) {
         yMin =
           yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
@@ -737,7 +737,7 @@ function processInputData<T extends number | Date>(
           yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
       } else {
         if (index == 0) {
-          //DKDK to set initial Date value for Date[]
+          // to set initial Date value for Date[]
           yMin = getMinDate(ySeriesValue as Date[]);
           yMax = getMaxDate(ySeriesValue as Date[]);
         } else {
@@ -752,7 +752,7 @@ function processInputData<T extends number | Date>(
         }
       }
 
-      //DKDK use global opacity for coloring
+      // use global opacity for coloring
       scatterPointColor =
         'rgba(' +
         rgbValue[0] +
@@ -762,9 +762,9 @@ function processInputData<T extends number | Date>(
         rgbValue[2] +
         ',' +
         globalOpacity +
-        ')'; //DKDK set alpha/opacity as 0.2 for CI
+        ')'; // set alpha/opacity as 0.2 for CI
 
-      //DKDK check plot options: default value at plotly js seems to be lines
+      // check plot options: default value at plotly js seems to be lines
       if (el.showLines == true && el.showMarkers == true) {
         modeValue = 'lines+markers';
       } else if (el.showLines == true && el.showMarkers == false) {
@@ -781,7 +781,7 @@ function processInputData<T extends number | Date>(
         fillAreaValue = 'toself';
       }
 
-      //DKDK add scatter data considering input options
+      // add scatter data considering input options
       dataSetProcess.push({
         x: xSeriesValue,
         y: ySeriesValue,
@@ -797,9 +797,9 @@ function processInputData<T extends number | Date>(
       });
     }
 
-    //DKDK check if interval prop exists
+    // check if interval prop exists
     if (el.interval) {
-      //DKDK check the number of x = number of y or standardError
+      // check the number of x = number of y or standardError
       if (
         el.interval.x.length !== el.interval.y.length ||
         el.interval.x.length !== el.interval.standardError.length
@@ -811,7 +811,7 @@ function processInputData<T extends number | Date>(
           'The number of X data is not equal to the number of Y data or standardError data'
         );
       }
-      //DKDK sorting function
+      // sorting function
       //1) combine the arrays: including standardError
       let combinedArrayInterval = [];
       for (let j = 0; j < el.interval.x.length; j++) {
@@ -832,7 +832,7 @@ function processInputData<T extends number | Date>(
         standardErrorValue[k] = combinedArrayInterval[k].zValue;
       }
 
-      //DKDK set variables for x-/y-axes ranges including fitting line: note that initial values of xMin and xMax are already defined earlier (el.series)
+      // set variables for x-/y-axes ranges including fitting line: note that initial values of xMin and xMax are already defined earlier (el.series)
       if (isArrayOfNumbers(xIntervalLineValue)) {
         xMin =
           xMin < Math.min(...xIntervalLineValue)
@@ -872,7 +872,7 @@ function processInputData<T extends number | Date>(
             : getMaxDate(yIntervalLineValue as Date[]);
       }
 
-      //DKDK use global opacity for coloring
+      // use global opacity for coloring
       fittingLineColor =
         'rgba(' +
         rgbValue[0] +
@@ -884,24 +884,24 @@ function processInputData<T extends number | Date>(
         globalOpacity +
         ')';
 
-      //DKDK store data for fitting line: this is not affected by plot options (e.g., showLine etc.)
+      // store data for fitting line: this is not affected by plot options (e.g., showLine etc.)
       dataSetProcess.push({
         x: xIntervalLineValue,
         y: yIntervalLineValue,
         name: el.label + ' fitting',
         // mode: 'lines+markers',
-        mode: 'lines', //DKDK no data point is displayed: only line
+        mode: 'lines', // no data point is displayed: only line
         // type: 'line',
         // line: {color: el.color, shape: 'spline',  width: 5 },
         line: { color: fittingLineColor, shape: 'spline', width: 5 },
       });
-      //DKDK make Confidence Interval (CI) or Bounds (filled area)
+      // make Confidence Interval (CI) or Bounds (filled area)
       xIntervalBounds = xIntervalLineValue;
       xIntervalBounds = xIntervalBounds.concat(
         xIntervalLineValue.map((element: any) => element).reverse()
       );
 
-      //DKDK finding upper and lower bound values.
+      // finding upper and lower bound values.
       const { yUpperValues, yLowerValues } = getBounds(
         el.interval.orientation === 'x'
           ? xIntervalLineValue
@@ -909,17 +909,17 @@ function processInputData<T extends number | Date>(
         standardErrorValue
       );
 
-      //DKDK make upper and lower bounds plotly format
+      // make upper and lower bounds plotly format
       yIntervalBounds = yUpperValues;
       yIntervalBounds = yIntervalBounds.concat(
         yLowerValues.map((element: any) => element).reverse()
       );
 
-      //DKDK set alpha/opacity as 0.2 for CI
+      // set alpha/opacity as 0.2 for CI
       intervalColor =
         'rgba(' + rgbValue[0] + ',' + rgbValue[1] + ',' + rgbValue[2] + ',0.2)';
 
-      //DKDK set variables for x-/y-axes ranges including CI/bounds: no need for x data as it was compared before
+      // set variables for x-/y-axes ranges including CI/bounds: no need for x data as it was compared before
       yMin =
         yMin < Math.min(...yLowerValues.map(Number))
           ? yMin
@@ -929,7 +929,7 @@ function processInputData<T extends number | Date>(
           ? yMax
           : Math.max(...yUpperValues.map(Number));
 
-      //DKDK store data for CI/bounds
+      // store data for CI/bounds
       dataSetProcess.push({
         x: xIntervalBounds,
         y: yIntervalBounds,
@@ -937,11 +937,11 @@ function processInputData<T extends number | Date>(
         fill: 'tozerox',
         fillcolor: intervalColor,
         type: 'line',
-        line: { color: 'transparent', shape: 'spline' }, //DKDK here, line means upper and lower bounds
+        line: { color: 'transparent', shape: 'spline' }, // here, line means upper and lower bounds
       });
     }
 
-    //DKDK determine y-axis range for numbers only: x-axis should be in the range of [xMin,xMax] due to CI plot
+    // determine y-axis range for numbers only: x-axis should be in the range of [xMin,xMax] due to CI plot
     if (typeof yMin == 'number' && typeof yMax == 'number') {
       yMin = yMin < 0 ? Math.floor(yMin) : Math.ceil(yMin);
       yMax = yMax < 0 ? Math.floor(yMax) : Math.ceil(yMax);
@@ -954,13 +954,15 @@ function processInputData<T extends number | Date>(
 const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(dataSet);
 
 /**
- * DKDK width and height of the plot are manually set at ScatterAndLinePlotCIReal (layout)
+ *  width and height of the plot are manually set at ScatterAndLinePlotCIReal (layout)
  * Opacity control (slider) is manually set at ScatterAndLinePlotCIReal (layout)
  */
 export const RealDataDate = () => {
-  //DKDK set props
+  // set props
   let plotWidth = 1000;
   let plotHeight = 600;
+  // let plotWidth = 350;
+  // let plotHeight = 250;
   let xLabel = 'Hours post infection';
   let yLabel = 'Expression Values (log2 ratio)';
   let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
@@ -976,6 +978,10 @@ export const RealDataDate = () => {
       width={plotWidth}
       height={plotHeight}
       staticPlot={false}
+      // check enable/disable legend and built-in controls
+      displayLegend={true}
+      displayLibraryControls={true}
+      // margin={{l: 50, r: 10, b: 20, t: 10}}
     />
   );
 };
