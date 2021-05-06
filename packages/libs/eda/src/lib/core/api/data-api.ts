@@ -195,14 +195,19 @@ export const BarplotResponse = type({
   // TO DO: sampleSizeTable
 });
 
-//DKDK scatterplot
+// scatterplot
 export interface ScatterplotRequestParams {
   studyId: string;
   filters: Filter[];
   config: {
     outputEntityId: string;
-    valueSpec: 'raw' | 'smoothedMean' | 'smoothedMeanWithRaw';
-    //DKDK not quite sure of overlayVariable and facetVariable yet
+    //DKDK add bestFitLineWithRaw
+    valueSpec:
+      | 'raw'
+      | 'smoothedMean'
+      | 'smoothedMeanWithRaw'
+      | 'bestFitLineWithRaw';
+    // not quite sure of overlayVariable and facetVariable yet
     // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: {
       entityId: string;
@@ -212,23 +217,51 @@ export interface ScatterplotRequestParams {
       entityId: string;
       variableId: string;
     };
+    overlayVariable?: {
+      entityId: string;
+      variableId: string;
+    };
   };
 }
 
-//DKDK unlike API doc, data (response) shows seriesX, seriesY, intervalX, intervalY, intervalSE
+// unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
 const ScatterplotResponseData = array(
   partial({
-    //DKDK valueSpec = smoothedMean only returns interval data (no series data)
+    // valueSpec = smoothedMean only returns smoothedMean data (no series data)
     seriesX: array(number),
     seriesY: array(number),
-    intervalX: array(number),
-    intervalY: array(number),
-    intervalSE: array(number),
+    smoothedMeanX: array(number),
+    smoothedMeanY: array(number),
+    smoothedMeanSE: array(number),
+    //DKDK add bestFitLineWithRaw
+    bestFitLineX: array(number),
+    bestFitLineY: array(number),
+    r2: number,
+    // need to make sure if below is correct (untested)
+    overlayVariableDetails: type({
+      entityId: string,
+      variableId: string,
+      value: string,
+    }),
+    facetVariableDetails: union([
+      tuple([StringVariableValue]),
+      tuple([StringVariableValue, StringVariableValue]),
+    ]),
   })
 );
 
-//DKDK define sampleSizeTableArray
-const sampleSizeTableArray = array(partial({ size: number }));
+// define sampleSizeTableArray
+const sampleSizeTableArray = array(
+  partial({
+    // set union for size as it depends on the presence of overlay variable
+    size: union([number, array(number)]),
+    overlayVariableDetails: type({
+      entityId: string,
+      variableId: string,
+      value: string,
+    }),
+  })
+);
 export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
 export const ScatterplotResponse = type({
   scatterplot: type({
@@ -248,13 +281,13 @@ export const ScatterplotResponse = type({
   sampleSizeTable: sampleSizeTableArray,
 });
 
-//DKDK lineplot
+// lineplot
 export interface LineplotRequestParams {
   studyId: string;
   filters: Filter[];
   config: {
     outputEntityId: string;
-    //DKDK not quite sure of overlayVariable and facetVariable yet
+    // not quite sure of overlayVariable and facetVariable yet
     // overlayVariable?: Variable;
     // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: {
@@ -275,20 +308,21 @@ const LineplotResponseData = array(
       seriesY: array(number),
     }),
     partial({
-      //DKDK need to make sure if below is correct (untested)
-      // overlayVariableDetails: StringVariableValue,
-      // facetVariableDetails: union([
-      //   tuple([StringVariableValue]),
-      //   tuple([StringVariableValue, StringVariableValue]),
-      // ]),
+      // need to make sure if below is correct (untested)
+      overlayVariableDetails: StringVariableValue,
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
     }),
   ])
 );
 
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
 export const LineplotResponse = type({
-  //DKDK lineplot
-  lineplot: type({
+  //DKDK backend issue for lineplot returning scatterplot currently
+  // lineplot: type({
+  scatterplot: type({
     data: LineplotResponseData,
     config: type({
       incompleteCases: number,
@@ -303,6 +337,46 @@ export const LineplotResponse = type({
     }),
   }),
   sampleSizeTable: sampleSizeTableArray,
+});
+
+export interface MosaicRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+export type MosaicResponse = TypeOf<typeof MosaicResponse>;
+export const MosaicResponse = type({
+  mosaic: type({
+    data: array(
+      type({
+        xLabel: array(string),
+        yLabel: array(string),
+        value: array(array(number)),
+      })
+    ),
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
 });
 
 export class DataClient extends FetchClient {
@@ -394,7 +468,7 @@ export class DataClient extends FetchClient {
     );
   }
 
-  //DKDK Scatterplot
+  // Scatterplot
   getScatterplot(
     computationName: string,
     params: ScatterplotRequestParams
@@ -407,7 +481,7 @@ export class DataClient extends FetchClient {
     );
   }
 
-  //DKDK Lineplot
+  // Lineplot
   getLineplot(
     computationName: string,
     params: LineplotRequestParams
@@ -417,6 +491,30 @@ export class DataClient extends FetchClient {
       'lineplot',
       params,
       LineplotResponse
+    );
+  }
+
+  getMosaic(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<MosaicResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'conttable',
+      params,
+      MosaicResponse
+    );
+  }
+
+  getTwoByTwo(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<MosaicResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'twobytwo',
+      params,
+      MosaicResponse
     );
   }
 }
