@@ -15,7 +15,6 @@ import {
   intersection,
   partial,
   Decoder,
-  Any,
 } from 'io-ts';
 import { Filter } from '../types/filter';
 import { Variable, StringVariableValue } from '../types/variable';
