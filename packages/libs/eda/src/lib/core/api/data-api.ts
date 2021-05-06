@@ -200,7 +200,12 @@ export interface ScatterplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    valueSpec: 'raw' | 'smoothedMean' | 'smoothedMeanWithRaw';
+    //DKDK add bestFitLineWithRaw
+    valueSpec:
+      | 'raw'
+      | 'smoothedMean'
+      | 'smoothedMeanWithRaw'
+      | 'bestFitLineWithRaw';
     // not quite sure of overlayVariable and facetVariable yet
     // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: {
@@ -218,15 +223,19 @@ export interface ScatterplotRequestParams {
   };
 }
 
-// unlike API doc, data (response) shows seriesX, seriesY, intervalX, intervalY, intervalSE
+// unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
 const ScatterplotResponseData = array(
   partial({
-    // valueSpec = smoothedMean only returns interval data (no series data)
+    // valueSpec = smoothedMean only returns smoothedMean data (no series data)
     seriesX: array(number),
     seriesY: array(number),
-    intervalX: array(number),
-    intervalY: array(number),
-    intervalSE: array(number),
+    smoothedMeanX: array(number),
+    smoothedMeanY: array(number),
+    smoothedMeanSE: array(number),
+    //DKDK add bestFitLineWithRaw
+    bestFitLineX: array(number),
+    bestFitLineY: array(number),
+    r2: number,
     // need to make sure if below is correct (untested)
     overlayVariableDetails: type({
       entityId: string,

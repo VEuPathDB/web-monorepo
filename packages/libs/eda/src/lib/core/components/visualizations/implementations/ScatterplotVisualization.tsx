@@ -458,6 +458,8 @@ function getRequestParams(
         // valueSpec: 'raw',
         // valueSpec: 'smoothedMean',
         valueSpec: 'smoothedMeanWithRaw',
+        //DKDK add bestFitLineWithRaw
+        // valueSpec: 'bestFitLineWithRaw',
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
@@ -695,10 +697,10 @@ function processInputData<T extends number | Date>(
       });
     }
 
-    // check if interval prop exists
-    if (el.intervalX && el.intervalY && el.intervalSE) {
+    // check if smoothedMean prop exists
+    if (el.smoothedMeanX && el.smoothedMeanY && el.smoothedMeanSE) {
       // check the number of x = number of y or standardError
-      if (el.intervalX.length !== el.intervalY.length) {
+      if (el.smoothedMeanX.length !== el.smoothedMeanY.length) {
         throw new Error(
           'The number of X data is not equal to the number of Y data or standardError data'
         );
@@ -706,11 +708,11 @@ function processInputData<T extends number | Date>(
       // sorting function
       //1) combine the arrays: including standardError
       let combinedArrayInterval = [];
-      for (let j = 0; j < el.intervalX.length; j++) {
+      for (let j = 0; j < el.smoothedMeanX.length; j++) {
         combinedArrayInterval.push({
-          xValue: el.intervalX[j],
-          yValue: el.intervalY[j],
-          zValue: el.intervalSE[j],
+          xValue: el.smoothedMeanX[j],
+          yValue: el.smoothedMeanY[j],
+          zValue: el.smoothedMeanSE[j],
         });
       }
       //2) sort:
@@ -801,7 +803,7 @@ function processInputData<T extends number | Date>(
         x: xIntervalLineValue,
         y: yIntervalLineValue,
         // name: 'Data' +  + (index + 1) + ' Fitted line',
-        name: 'Smoothed line',
+        name: 'Smoothed mean',
         // name: (el.overlayVariableDetails && el.overlayVariableDetails.value === 'Yes') ?
         //   'Overlay fitted line'
         //   : 'X-Y Data fitted line',
