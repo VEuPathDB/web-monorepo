@@ -198,7 +198,7 @@ export interface ScatterplotRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    //DKDK add bestFitLineWithRaw
+    // add bestFitLineWithRaw
     valueSpec:
       | 'raw'
       | 'smoothedMean'
@@ -230,7 +230,7 @@ const ScatterplotResponseData = array(
     smoothedMeanX: array(number),
     smoothedMeanY: array(number),
     smoothedMeanSE: array(number),
-    //DKDK add bestFitLineWithRaw
+    // add bestFitLineWithRaw
     bestFitLineX: array(number),
     bestFitLineY: array(number),
     r2: number,
