@@ -1,10 +1,19 @@
+import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import React, { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
-import { DataClient, EDAWorkspaceContainer, SubsettingClient } from '../core';
+import {
+  DataClient,
+  EDAWorkspaceContainer,
+  StudyEntity,
+  StudyMetadata,
+  SubsettingClient,
+} from '../core';
+import { Variable } from '../core/types/variable';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockSessionStore } from './Mocks';
 import { SessionPanel } from './SessionPanel';
-import { cx } from './Utils';
+import { cx, findFirstVariable } from './Utils';
 
 interface Props {
   studyId: string;
@@ -23,12 +32,26 @@ export function WorkspaceContainer(props: Props) {
     [props.subsettingServiceUrl]
   );
   const makeVariableLink = useCallback(
-    (entityId?: string, variableId?: string) =>
-      entityId && variableId
+    (
+      {
+        entityId: maybeEntityId,
+        variableId: maybeVariableId,
+      }: Partial<Variable>,
+      studyMetadata: StudyMetadata
+    ) => {
+      const entityId = maybeEntityId ?? studyMetadata.rootEntity.id;
+      const entity = find(
+        (entity) => entity.id === entityId,
+        preorder(studyMetadata.rootEntity, (e) => e.children ?? [])
+      );
+      const variableId =
+        maybeVariableId ?? findFirstVariable(entity.variables, entityId)?.id;
+      return entityId && variableId
         ? `${url}/variables/${entityId}/${variableId}`
         : entityId
         ? `${url}/variables/${entityId}`
-        : `${url}/variables`,
+        : `${url}/variables`;
+    },
     [url]
   );
   return (
