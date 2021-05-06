@@ -872,10 +872,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.2.32":
-  version "0.2.32"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.32.tgz#9755996a703d0cb192a17ed513e7098e53d80822"
-  integrity sha512-g9ZZrdau+gb4a9Tn1l00bsE2WGyL/h2FNhVQj+roUWwWZwSH7xyVCVx4pgH/fimiIXkSflnqXQj5IzIdCrRL3g==
+"@veupathdb/components@^0.2.33":
+  version "0.2.33"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.33.tgz#6f840ef50429a68531fa602c0c5b16fb5907f4a4"
+  integrity sha512-AK4tpHU4liRIkAB2WuYs1qQa8T9jyQ6wX8wJPtTC2+s5fqKqp3udkcH34S1PC/aZCIevX22jkFNdgea5U0PpYg==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -908,13 +908,13 @@
     shape2geohash "^1.2.5"
 
 "@veupathdb/eda@^0.1.30":
-  version "0.1.47"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.47.tgz#d5a1d61dfc762cdcc57031dd7a78dd4157987826"
-  integrity sha512-sVcpkhx7sZx+t/OP+PFKMxKMb/dEWWfOShxF+fkcSPiNrHVXCD66NweT8vH6jn+9syJh3PTq/dfUloeq9WZL1A==
+  version "0.1.49"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.49.tgz#baedb9957111300a9b58770a9f7e6742dce00494"
+  integrity sha512-WovNE1MOx3KiPQFeU9AAenvmI+jgnn1CpkfPhZhCG3WWQtdU4OfHCE6I79wbmQkV4g8hEnEOrtuQ/iFzuQtYiA==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.2.32"
+    "@veupathdb/components" "^0.2.33"
     "@veupathdb/wdk-client" "^0.1.1"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
     debounce-promise "^3.1.2"
