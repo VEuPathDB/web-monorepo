@@ -94,7 +94,10 @@ function ConfiguredVisualizations(props: Props) {
             return <div>Viz type not implemented: {viz.type}</div>;
           return (
             <div className={cx('-ConfiguredVisualization')}>
-              <div className={cx('-ConfiguredVisualizationActions')}>
+              <div
+                className={cx('-ConfiguredVisualizationActions')}
+                style={{ zIndex: 5 }}
+              >
                 <Link to={`${url}/${viz.id}`}>
                   <i className="fa fa-arrows-alt"></i>
                 </Link>

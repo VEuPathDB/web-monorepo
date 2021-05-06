@@ -195,6 +195,190 @@ export const BarplotResponse = type({
   // TO DO: sampleSizeTable
 });
 
+// scatterplot
+export interface ScatterplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    //DKDK add bestFitLineWithRaw
+    valueSpec:
+      | 'raw'
+      | 'smoothedMean'
+      | 'smoothedMeanWithRaw'
+      | 'bestFitLineWithRaw';
+    // not quite sure of overlayVariable and facetVariable yet
+    // facetVariable?: ZeroToTwoVariables;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    overlayVariable?: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+// unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
+const ScatterplotResponseData = array(
+  partial({
+    // valueSpec = smoothedMean only returns smoothedMean data (no series data)
+    seriesX: array(number),
+    seriesY: array(number),
+    smoothedMeanX: array(number),
+    smoothedMeanY: array(number),
+    smoothedMeanSE: array(number),
+    //DKDK add bestFitLineWithRaw
+    bestFitLineX: array(number),
+    bestFitLineY: array(number),
+    r2: number,
+    // need to make sure if below is correct (untested)
+    overlayVariableDetails: type({
+      entityId: string,
+      variableId: string,
+      value: string,
+    }),
+    facetVariableDetails: union([
+      tuple([StringVariableValue]),
+      tuple([StringVariableValue, StringVariableValue]),
+    ]),
+  })
+);
+
+// define sampleSizeTableArray
+const sampleSizeTableArray = array(
+  partial({
+    // set union for size as it depends on the presence of overlay variable
+    size: union([number, array(number)]),
+    overlayVariableDetails: type({
+      entityId: string,
+      variableId: string,
+      value: string,
+    }),
+  })
+);
+export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
+export const ScatterplotResponse = type({
+  scatterplot: type({
+    data: ScatterplotResponseData,
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: sampleSizeTableArray,
+});
+
+// lineplot
+export interface LineplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    // not quite sure of overlayVariable and facetVariable yet
+    // overlayVariable?: Variable;
+    // facetVariable?: ZeroToTwoVariables;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+const LineplotResponseData = array(
+  intersection([
+    type({
+      seriesX: array(number),
+      seriesY: array(number),
+    }),
+    partial({
+      // need to make sure if below is correct (untested)
+      overlayVariableDetails: StringVariableValue,
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
+    }),
+  ])
+);
+
+export type LineplotResponse = TypeOf<typeof LineplotResponse>;
+export const LineplotResponse = type({
+  //DKDK backend issue for lineplot returning scatterplot currently
+  // lineplot: type({
+  scatterplot: type({
+    data: LineplotResponseData,
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: sampleSizeTableArray,
+});
+
+export interface MosaicRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+export type MosaicResponse = TypeOf<typeof MosaicResponse>;
+export const MosaicResponse = type({
+  mosaic: type({
+    data: array(
+      type({
+        xLabel: array(string),
+        yLabel: array(string),
+        value: array(array(number)),
+      })
+    ),
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+});
+
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
@@ -281,6 +465,56 @@ export class DataClient extends FetchClient {
       'barplot',
       params,
       BarplotResponse
+    );
+  }
+
+  // Scatterplot
+  getScatterplot(
+    computationName: string,
+    params: ScatterplotRequestParams
+  ): Promise<ScatterplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'scatterplot',
+      params,
+      ScatterplotResponse
+    );
+  }
+
+  // Lineplot
+  getLineplot(
+    computationName: string,
+    params: LineplotRequestParams
+  ): Promise<LineplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'lineplot',
+      params,
+      LineplotResponse
+    );
+  }
+
+  getMosaic(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<MosaicResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'conttable',
+      params,
+      MosaicResponse
+    );
+  }
+
+  getTwoByTwo(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<MosaicResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'twobytwo',
+      params,
+      MosaicResponse
     );
   }
 }
