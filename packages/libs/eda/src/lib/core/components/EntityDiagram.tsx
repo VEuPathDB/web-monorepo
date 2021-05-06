@@ -33,10 +33,7 @@ export function EntityDiagram(props: Props) {
       : {};
 
   // Renders a VariableLink with optional children passed through
-  const renderNode = (
-    node: StudyEntity,
-    children?: Array<React.ReactElement>
-  ) => {
+  const renderNode = (node: StudyEntity, children?: React.ReactNode) => {
     return (
       <VariableLink
         entityId={node.id}
