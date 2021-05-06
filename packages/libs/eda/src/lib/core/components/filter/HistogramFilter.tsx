@@ -97,7 +97,7 @@ export function HistogramFilter(props: Props) {
               entity,
               variable,
               dataParams,
-              background.histogram.config.binSpec
+              background.histogram.config
             )
           : background;
 
@@ -131,8 +131,6 @@ export function HistogramFilter(props: Props) {
             unit: (binWidth as TimeDelta).unit,
           }) as NumberOrTimeDeltaRange;
       const binWidthStep = step || 0.1;
-
-      const summary = foreground.histogram.config.summary;
 
       return {
         valueType: variable.type,
@@ -473,7 +471,7 @@ function histogramResponseToDataSeries(
   };
 }
 
-type BinSpec = HistogramRequestParams['config']['binSpec'];
+type Config = Partial<HistogramRequestParams['config']>;
 
 function getRequestParams(
   studyId: string,
@@ -481,10 +479,10 @@ function getRequestParams(
   entity: StudyEntity,
   variable: HistogramVariable,
   dataParams?: UIState,
-  rawBinSpec?: BinSpec
+  rawConfig?: Config
 ): HistogramRequestParams {
-  const binSpec: BinSpec = rawBinSpec
-    ? rawBinSpec
+  const binSpec: Config['binSpec'] = rawConfig?.binSpec
+    ? rawConfig.binSpec
     : dataParams?.binWidth
     ? {
         type: 'binWidth',
@@ -495,17 +493,16 @@ function getRequestParams(
       }
     : { type: 'binWidth' };
 
-  const viewport =
-    dataParams?.independentAxisRange &&
-    dataParams?.independentAxisRange.min != null &&
-    dataParams?.independentAxisRange.max != null
-      ? {
-          viewport: {
-            xMin: String(dataParams.independentAxisRange.min),
-            xMax: String(dataParams.independentAxisRange.max),
-          },
-        }
-      : {};
+  const viewport: Config['viewport'] = rawConfig?.viewport
+    ? rawConfig.viewport
+    : dataParams?.independentAxisRange &&
+      dataParams?.independentAxisRange.min != null &&
+      dataParams?.independentAxisRange.max != null
+    ? {
+        xMin: String(dataParams.independentAxisRange.min),
+        xMax: String(dataParams.independentAxisRange.max),
+      }
+    : undefined;
 
   return {
     studyId,
@@ -518,7 +515,7 @@ function getRequestParams(
         variableId: variable.id,
       },
       binSpec,
-      ...viewport,
+      viewport,
     },
   };
 }
@@ -530,10 +527,10 @@ async function getHistogram(
   entity: StudyEntity,
   variable: HistogramVariable,
   dataParams?: UIState,
-  rawBinSpec?: BinSpec
+  rawConfig?: Config
 ) {
   return dataClient.getHistogram(
     'pass',
-    getRequestParams(studyId, filters, entity, variable, dataParams, rawBinSpec)
+    getRequestParams(studyId, filters, entity, variable, dataParams, rawConfig)
   );
 }

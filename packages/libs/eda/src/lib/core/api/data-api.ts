@@ -50,8 +50,6 @@ export interface HistogramRequestParams {
   };
 }
 
-const TEMPnumberORstring = union([string, number]);
-
 export type HistogramResponse = TypeOf<typeof HistogramResponse>;
 export const HistogramResponse = type({
   histogram: type({
@@ -88,16 +86,16 @@ export const HistogramResponse = type({
         }),
       ]),
       summary: type({
-        min: TEMPnumberORstring,
-        q1: TEMPnumberORstring,
-        median: TEMPnumberORstring,
-        mean: TEMPnumberORstring,
-        q3: TEMPnumberORstring,
-        max: TEMPnumberORstring,
+        min: string,
+        q1: string,
+        median: string,
+        mean: string,
+        q3: string,
+        max: string,
       }),
       viewport: type({
-        xMin: TEMPnumberORstring,
-        xMax: TEMPnumberORstring,
+        xMin: string,
+        xMax: string,
       }),
     }),
   }),

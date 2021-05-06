@@ -24,8 +24,7 @@ interface Props {
  */
 const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
-  'date-histogram-bin-width': histogramVisualization,
-  'numeric-histogram-bin-width': histogramVisualization,
+  histogram: histogramVisualization,
   twobytwo: twoByTwoVisualization,
   conttable: mosaicVisualization,
   scatterplot: scatterplotVisualization,
