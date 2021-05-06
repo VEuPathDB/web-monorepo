@@ -111,12 +111,12 @@ function BaseInput({
           setLocalRange({
             min: rangeBounds.min,
             max: localRange.max,
-          });
+          } as NumberOrDateRange);
         } else if (localRange.max == undefined) {
           setLocalRange({
             min: localRange.min,
             max: rangeBounds.max,
-          });
+          } as NumberOrDateRange);
         }
       }
     }

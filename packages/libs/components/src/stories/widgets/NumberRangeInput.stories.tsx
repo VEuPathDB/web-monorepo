@@ -45,7 +45,7 @@ export const NoPartialRangesWithClear: Story<NumberRangeInputProps> = () => {
       onRangeChange={handleChange}
       range={range}
       rangeBounds={{ min: 0, max: 100 }}
-      allowPartialRanges={false}
+      allowPartialRange={false}
       showClearButton={true}
     />
   );
