@@ -25,10 +25,8 @@ import {
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 import { DataElementConstraint } from '../../../types/visualization';
-import { parseTimeDelta } from '../../../utils/date-conversion';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
@@ -80,6 +78,7 @@ function FullscreenComponent(props: VisualizationProps) {
 function createDefaultConfig(): HistogramConfig {
   return {
     enableOverlay: true,
+    dependentAxisLogScale: false,
   };
 }
 
@@ -88,6 +87,7 @@ type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
 const HistogramConfig = t.intersection([
   t.type({
     enableOverlay: t.boolean,
+    dependentAxisLogScale: t.boolean,
   }),
   t.partial({
     xAxisVariable: Variable,
@@ -171,6 +171,15 @@ function HistogramViz(props: Props) {
             : undefined,
         });
       }
+    },
+    [updateVizConfig]
+  );
+
+  const handleDependentAxisLogScale = useCallback(
+    (newState?: boolean) => {
+      updateVizConfig({
+        dependentAxisLogScale: newState,
+      });
     },
     [updateVizConfig]
   );
@@ -271,6 +280,8 @@ function HistogramViz(props: Props) {
           <HistogramPlotWithControls
             data={data.value}
             onBinWidthChange={onBinWidthChange}
+            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+            handleDependentAxisLogScale={handleDependentAxisLogScale}
             width="100%"
             height={400}
             orientation={'vertical'}
@@ -289,6 +300,7 @@ function HistogramViz(props: Props) {
             displayLegend={false}
             independentAxisLabel=""
             dependentAxisLabel=""
+            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           />
         )
       ) : (
@@ -310,11 +322,13 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   }: {
     binWidth: NumberOrTimeDelta;
   }) => void;
+  handleDependentAxisLogScale: (newState?: boolean) => void;
 };
 
 function HistogramPlotWithControls({
   data,
   onBinWidthChange,
+  handleDependentAxisLogScale,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // TODO Use UIState
@@ -361,6 +375,8 @@ function HistogramPlotWithControls({
           binWidthRange={data.binWidthRange}
           binWidthStep={data.binWidthStep}
           errorManagement={errorManagement}
+          dependentAxisLogScale={histogramProps.dependentAxisLogScale}
+          toggleDependentAxisLogScale={handleDependentAxisLogScale}
         />
       )}
     </div>
@@ -433,7 +449,7 @@ function getRequestParams(
         binSpec: {
           type: 'binWidth',
           value: binWidth,
-          ...(variableType === 'date' ? { unit: binWidthTimeUnit } : {}),
+          ...(variableType === 'date' ? { units: binWidthTimeUnit } : {}),
         },
       }
     : { binSpec: { type: 'binWidth' } };
