@@ -34,14 +34,9 @@ export function EntityDiagram(props: Props) {
 
   // Renders a VariableLink with optional children passed through
   const renderNode = (node: StudyEntity, children?: React.ReactNode) => {
-    const variable = node.variables.find(
-      (variable) => variable.displayType != null
-    );
-    if (variable == null) return null;
     return (
       <VariableLink
         entityId={node.id}
-        variableId={variable.id}
         children={children}
         replace={true}
         style={{ textDecoration: 'none' }}
