@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
-import { unknown } from '@veupathdb/wdk-client/lib/Utils/Json';
 import {
   createJsonRequest,
   FetchClient,
