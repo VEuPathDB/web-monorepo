@@ -128,30 +128,6 @@ export default function VariableList(props: VariableListProps) {
     });
   }, [activeField, activeFieldEntity, getPathToField]);
 
-  // If a new entity is expanded, we will collapse other entities and select the default
-  // variable of the newly expanded entity. Note that the logic of selecting the default
-  // variable is handled externally to this component.
-  const handleExpansionChange = useCallback(
-    (nextExpandedNodes: string[]) => {
-      const newNodes = difference(nextExpandedNodes, expandedNodes);
-      // FIXME Handle expandAll?? Currently only the first entity will be expanded.
-      const newEntityNode = newNodes.find((node) => node.startsWith('entity:'));
-      if (newEntityNode) {
-        const newEntityId = newEntityNode.slice(7);
-        if (activeFieldEntity !== newEntityId) {
-          onActiveFieldChange(newEntityId);
-        }
-        const nodes = nextExpandedNodes.filter(
-          (term) => !term.startsWith('entity:') || term === newEntityNode
-        );
-        setExpandedNodes(nodes);
-      } else {
-        setExpandedNodes(nextExpandedNodes);
-      }
-    },
-    [activeFieldEntity, expandedNodes, onActiveFieldChange]
-  );
-
   const handleFieldSelect = useCallback(
     (node: FieldTreeNode) => {
       onActiveFieldChange(node.field.term);
@@ -208,7 +184,7 @@ export default function VariableList(props: VariableListProps) {
         expandedList={expandedNodes}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
-        onExpansionChange={handleExpansionChange}
+        onExpansionChange={setExpandedNodes}
         isSelectable={false}
         isSearchable={true}
         searchBoxPlaceholder="Find a variable"
