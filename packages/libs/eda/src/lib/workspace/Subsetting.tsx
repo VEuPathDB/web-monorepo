@@ -1,6 +1,11 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import { EntityDiagram, SessionState, useStudyMetadata } from '../core';
+import {
+  EntityDiagram,
+  SessionState,
+  useMakeVariableLink,
+  useStudyMetadata,
+} from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from './Utils';
 import { Variable } from './Variable';
@@ -26,6 +31,7 @@ export function Subsetting(props: Props) {
   const history = useHistory();
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(sessionState.session?.filters);
+  const makeVariableLink = useMakeVariableLink();
 
   if (entity == null || variable == null)
     return <div>Could not find specified variable.</div>;
@@ -63,8 +69,12 @@ export function Subsetting(props: Props) {
             entityId={entity.id}
             variableId={variable.id}
             onActiveFieldChange={(term?: string) => {
-              if (term) history.replace(`../${term}`);
-              else history.replace('`..');
+              if (term) {
+                const [entityId, variableId] = term.split('/');
+                history.replace(
+                  makeVariableLink({ entityId, variableId }, studyMetadata)
+                );
+              } else history.replace('`..');
             }}
           />
         </div>
