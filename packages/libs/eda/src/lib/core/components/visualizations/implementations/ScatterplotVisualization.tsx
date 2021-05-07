@@ -320,7 +320,8 @@ function ScatterplotViz(props: Props) {
             xLabel={findVariable(vizConfig.xAxisVariable)?.displayName}
             yLabel={findVariable(vizConfig.yAxisVariable)?.displayName}
             xRange={[data.value.xMin, data.value.xMax]}
-            yRange={[data.value.yMin, data.value.yMax]}
+            // block this for now
+            // yRange={[data.value.yMin, data.value.yMax]}
           />
         ) : (
           // thumbnail/grid view
@@ -329,7 +330,8 @@ function ScatterplotViz(props: Props) {
             width={230}
             height={150}
             xRange={[data.value.xMin, data.value.xMax]}
-            yRange={[data.value.yMin, data.value.yMax]}
+            // block this for now
+            // yRange={[data.value.yMin, data.value.yMax]}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
@@ -791,7 +793,8 @@ function processInputData<T extends number | Date>(
         x: xIntervalBounds,
         y: yIntervalBounds,
         name: 'Confidence interval',
-        fill: 'tozerox',
+        // this is better to be tozeroy, not tozerox
+        fill: 'tozeroy',
         fillcolor: 'rgba(' + boundColors[index] + ',0.2)',
         // opacity: 0.4,  // this works but not used
         type: 'line',
