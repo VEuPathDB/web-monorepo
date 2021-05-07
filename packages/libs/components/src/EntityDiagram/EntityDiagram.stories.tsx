@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import EntityDiagram, { EntityDiagramProps } from './EntityDiagram';
-import { StudyData, ShadingData } from './EntityDiagram';
+import EntityDiagram, {
+  EntityCounts,
+  EntityDiagramProps,
+} from './EntityDiagram';
+import { StudyData } from './EntityDiagram';
 import { Meta, Story } from '@storybook/react';
 import './diagram.css';
 
@@ -156,13 +159,31 @@ const studyData = {
   rootEntity: rootEntity,
 };
 
-const shadingData: ShadingData = {
-  GEMS_House: 0.05,
-  GEMS_HouseObs: 0.2,
-  GEMS_Part: 0.41,
-  GEMS_PartObs: 0.66,
-  GEMS_Treat: 1,
-  GEMS_Sample: 0.3,
+const entityCounts: EntityCounts = {
+  GEMS_House: {
+    total: 100,
+    filtered: 5,
+  },
+  GEMS_HouseObs: {
+    total: 100,
+    filtered: 2,
+  },
+  GEMS_Part: {
+    total: 100,
+    filtered: 41,
+  },
+  GEMS_PartObs: {
+    total: 100,
+    filtered: 66,
+  },
+  GEMS_Treat: {
+    total: 100,
+    filtered: 100,
+  },
+  GEMS_Sample: {
+    total: 100,
+    filtered: 30,
+  },
 };
 
 const miniSize = { height: 300, width: 150 };
@@ -210,7 +231,7 @@ export const EntityDiagramUnified = () => {
           orientation={orientation}
           isExpanded={expanded}
           highlightedEntityID={'Sample'}
-          shadingData={shadingData}
+          entityCounts={entityCounts}
           size={size}
           selectedBorderWeight={1}
           selectedHighlightColor="yellow"
@@ -244,7 +265,7 @@ EntityDiagramControls.args = {
   shadowOpacity: 0.3,
   highlightedEntityID: 'Sample',
   shadingColor: '#e4c8c8',
-  shadingData: shadingData,
+  entityCounts: entityCounts,
   treeData: studyData.rootEntity,
   fontSize: 12,
   miniNodeWidth: 35,
