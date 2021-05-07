@@ -612,6 +612,33 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   visibility: hidden;
 }
 
+.wdk-RecordContainer .StudyRecordHeadingSearchLinksDashboardLink {
+  float: right;
+  position:relative;
+  bottom: 3em;
+  display: block;
+  margin-right: 5em;;
+  background: #3c78d8;
+  border-color: #0d47a2;
+  color: white;
+  padding: 1em;
+  position: relative;
+  min-width: 9em;
+  font-size: 130%; 
+}
+.eupathdb-RecordOverviewItem {
+  line-height: 150%;
+}
+
+.wdk-RecordMain div#Publications {
+  line-height: 200%;
+}
+
+.wdk-RecordMain div#description {
+  line-height: 200%;
+  max-width: 80em;
+}
+
 /* FONT_RELATED overrides */
 b, strong, th,
 .filter-param .wdk-AttributeFilterFieldParent,
