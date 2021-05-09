@@ -28,7 +28,7 @@ function StudyRecordHeading({
     <React.Fragment>
       <props.DefaultComponent {...props}/>
       {study != null && permissions != null && shouldOfferLinkToDashboard(permissions) && (
-        <div><Link className={cx('DashboardLink')} to={`/study-access/${study.id}`}>Study Dashboard</Link></div>
+        <div className={cx('DashboardLink')}><Link className={'btn ' + cx('DashboardLink')} to={`/study-access/${study.id}`}>Data Access Dashboard</Link></div>
       )}
       {study != null &&  showSearches && (!isPrereleaseStudy(study.access, study.id, user, permissions)) && (
         <div className={cx()}>
