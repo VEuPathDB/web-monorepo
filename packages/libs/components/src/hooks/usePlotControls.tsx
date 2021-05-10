@@ -18,7 +18,7 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
-  TimeDeltaRange,
+  NumberRange,
 } from '../types/general';
 import * as DateMath from 'date-arithmetic';
 import { orderBy } from 'lodash';
@@ -39,16 +39,19 @@ type ActionType<DataShape> =
   | { type: 'toggleOrientation' }
   | { type: 'toggleDisplayLegend' }
   | { type: 'toggleLibraryControls' }
-  | { type: 'histogram/setSelectedRange'; payload: NumberOrDateRange }
+  | { type: 'histogram/setSelectedRange'; payload?: NumberOrDateRange }
   // add y-axis/dependent axis controls
   | { type: 'histogram/toggleDependentAxisLogScale' }
-  | { type: 'histogram/onDependentAxisRangeChange'; payload: NumberOrDateRange }
+  | {
+      type: 'histogram/onDependentAxisRangeChange';
+      payload?: NumberRange;
+    }
   | { type: 'histogram/onDependentAxisModeChange' }
   | { type: 'histogram/onDependentAxisRangeReset' }
   // add x-axis/independent axis controls: axis range and range reset
   | {
       type: 'histogram/onIndependentAxisRangeChange';
-      payload: NumberOrDateRange;
+      payload?: NumberOrDateRange;
     }
   | { type: 'histogram/onIndependentAxisRangeReset' }
   // add reset all
@@ -252,11 +255,11 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     /** Histogram: Type of y-axis log scale */
     dependentAxisLogScale?: boolean;
     /** Histogram: Range of y-axis min/max values */
-    dependentAxisRange?: NumberOrDateRange;
+    dependentAxisRange?: NumberRange;
     /** Histogram: Toggle absolute and relative.*/
-    dependentAxisMode?: string;
+    dependentAxisMode?: 'absolute' | 'relative';
     /** Histogram: dependent axis range reset */
-    onDependentAxisRangeReset?: () => void;
+    onDependentAxisSettingsReset?: () => void;
     /** Histogram: Range of x-axis min/max values */
     independentAxisRange?: NumberOrDateRange;
     /** Histogram: independent axis range reset */
@@ -287,7 +290,7 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     // add y-axis controls
     dependentAxisLogScale?: boolean;
     dependentAxisRange?: NumberOrDateRange;
-    dependentAxisMode?: string;
+    dependentAxisMode?: 'absolute' | 'relative';
     // add x-axis range
     independentAxisRange?: NumberOrDateRange;
   };
@@ -390,10 +393,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     const binWidth =
       params.data.binWidth ??
       ('unit' in binWidthRange
-        ? ([
-            binWidthRange.max / 10,
-            (binWidthRange as TimeDeltaRange).unit,
-          ] as TimeDelta)
+        ? ({
+            value: binWidthRange.max / 10,
+            unit: binWidthRange.unit,
+          } as TimeDelta)
         : binWidthRange.max / 10);
 
     const binWidthStep =
@@ -531,7 +534,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     }
   };
 
-  const onSelectedRangeChange = (newRange: NumberOrDateRange) => {
+  const onSelectedRangeChange = (newRange?: NumberOrDateRange) => {
     if (params.histogram) {
       dispatch({ type: 'histogram/setSelectedRange', payload: newRange });
     }
@@ -541,7 +544,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   const toggleDependentAxisLogScale = () =>
     dispatch({ type: 'histogram/toggleDependentAxisLogScale' });
   // on y-axis dependentAxisRange
-  const onDependentAxisRangeChange = (newRange: NumberOrDateRange) => {
+  const onDependentAxisRangeChange = (newRange?: NumberRange) => {
     if (params.histogram) {
       dispatch({
         type: 'histogram/onDependentAxisRangeChange',
@@ -556,7 +559,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   const onDependentAxisRangeReset = () =>
     dispatch({ type: 'histogram/onDependentAxisRangeReset' });
   // on independent axis range change
-  const onIndependentAxisRangeChange = (newRange: NumberOrDateRange) => {
+  const onIndependentAxisRangeChange = (newRange?: NumberOrDateRange) => {
     if (params.histogram) {
       dispatch({
         type: 'histogram/onIndependentAxisRangeChange',

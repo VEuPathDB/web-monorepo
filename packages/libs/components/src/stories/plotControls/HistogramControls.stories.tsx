@@ -72,14 +72,17 @@ const dummyData = (args: {
     series: [{ name: 'dummy data', bins: [] }],
     availableUnits: ['day', 'hours'],
     selectedUnit: args.selectedUnit ?? 'hours',
-    binWidth: args.binWidth ?? ([6, args.selectedUnit ?? 'hours'] as TimeDelta),
+    binWidth: args.binWidth ?? { value: 6, unit: args.selectedUnit ?? 'hours' },
     binWidthRange: { min: 1, max: 24, unit: args.selectedUnit ?? 'hours' },
     binWidthStep: 1,
   };
 };
 
 AdditionalOptions.args = {
-  data: dummyData({ binWidth: [6, 'hours'], selectedUnit: 'hours' }),
+  data: dummyData({
+    binWidth: { value: 6, unit: 'hours' },
+    selectedUnit: 'hours',
+  }),
   onSelectedUnitChange: async (newUnit: string) => {
     return dummyData({ selectedUnit: newUnit });
   },

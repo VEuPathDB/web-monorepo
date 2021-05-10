@@ -20,8 +20,8 @@ export default {
 } as Meta;
 
 const defaultActions = {
-  onSelectedRangeChange: (newRange: NumberOrDateRange) => {
-    console.log(`made a selection of ${newRange.min} to ${newRange.max}`);
+  onSelectedRangeChange: (newRange?: NumberOrDateRange) => {
+    console.log(`made a selection of ${newRange?.min} to ${newRange?.max}`);
   },
 };
 
@@ -89,6 +89,23 @@ BinWidthRangeGeneratedFromData.args = {
 
 // @ts-ignore
 BinWidthRangeGeneratedFromData.loaders = [
+  async () => ({
+    apiData: await binDailyCovidStats(2000),
+  }),
+];
+
+export const NoTitle = TemplateWithControls.bind({});
+NoTitle.args = {
+  height: 400,
+  width: '100%',
+  spacingOptions: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+};
+
+// @ts-ignore
+NoTitle.loaders = [
   async () => ({
     apiData: await binDailyCovidStats(2000),
   }),

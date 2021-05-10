@@ -58,21 +58,29 @@ export const binGithubEventDates = async ({
   const calculatedBinWidth = binWidth
     ? binWidth
     : numBins
-    ? ([
-        Math.max(
+    ? {
+        value: Math.max(
           1,
           Math.floor(DateMath.diff(firstDate, lastDate, unit, true) / numBins)
         ),
         unit,
-      ] as TimeDelta)
-    : ([1, unit] as TimeDelta);
+      }
+    : { value: 1, unit };
 
   for (
     let date = firstDate;
     date < lastDate;
-    date = DateMath.add(date, ...calculatedBinWidth)
+    date = DateMath.add(
+      date,
+      calculatedBinWidth.value,
+      calculatedBinWidth.unit as DateMath.Unit
+    )
   ) {
-    const binEnd = DateMath.add(date, ...calculatedBinWidth);
+    const binEnd = DateMath.add(
+      date,
+      calculatedBinWidth.value,
+      calculatedBinWidth.unit as DateMath.Unit
+    );
     bins.push({
       binStart: date.toISOString(),
       binEnd: binEnd.toISOString(),
