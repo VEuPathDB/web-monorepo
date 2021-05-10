@@ -3,14 +3,22 @@
  */
 import React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
-import { useVariableLink } from '../hooks/workspace';
+import { useStudyMetadata, useMakeVariableLink } from '../hooks/workspace';
 
 export interface Props<S = unknown> extends Omit<LinkProps<S>, 'to'> {
-  entityId: string;
-  variableId: string;
+  entityId?: string;
+  variableId?: string;
 }
 
 export function VariableLink(props: Props) {
   const { entityId, variableId, ...rest } = props;
-  return <Link {...rest} to={useVariableLink(entityId, variableId)} />;
+  const studyMetadata = useStudyMetadata();
+  const makeVariableLink = useMakeVariableLink();
+  return (
+    <Link
+      {...rest}
+      replace
+      to={makeVariableLink({ entityId, variableId }, studyMetadata)}
+    />
+  );
 }
