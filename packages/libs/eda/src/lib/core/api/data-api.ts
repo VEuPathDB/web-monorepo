@@ -13,9 +13,11 @@ import {
   union,
   intersection,
   partial,
+  keyof,
   Decoder,
 } from 'io-ts';
 import { Filter } from '../types/filter';
+import { TimeUnit } from '../types/general';
 import { Variable, StringVariableValue } from '../types/variable';
 import { ComputationAppOverview } from '../types/visualization';
 import { ioTransformer } from './ioTransformer';
@@ -24,29 +26,9 @@ const AppsResponse = type({
   apps: array(ComputationAppOverview),
 });
 
-type NumBinsOrNumericWidth =
-  | {
-      numBins: number;
-      binWidth?: never;
-    }
-  | {
-      numBins?: undefined;
-      binWidth: number;
-    };
-
-type NumericViewportRangeOrNone =
-  | {
-      viewportMin: number;
-      viewportMax: number;
-    }
-  | {
-      viewportMin?: never;
-      viewportMax?: never;
-    };
-
 type ZeroToTwoVariables = [] | [Variable] | [Variable, Variable];
 
-export interface NumericHistogramRequestParams {
+export interface HistogramRequestParams {
   studyId: string;
   filters: Filter[];
   //  derivedVariables:  // TO DO
@@ -54,110 +36,70 @@ export interface NumericHistogramRequestParams {
     outputEntityId: string;
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
-    overlayVariable?: Variable;
-    facetVariable?: ZeroToTwoVariables;
-  } & NumBinsOrNumericWidth &
-    NumericViewportRangeOrNone;
+    overlayVariable?: Variable; // TO DO: should this be StringVariable??
+    facetVariable?: ZeroToTwoVariables; // ditto here
+    binSpec: {
+      type: 'binWidth' | 'numBins';
+      value?: number;
+      units?: TimeUnit;
+    };
+    viewport?: {
+      xMin: string;
+      xMax: string;
+    };
+  };
 }
 
-type NumBinsOrDateWidth =
-  | {
-      numBins: number;
-      binWidth?: never;
-    }
-  | {
-      numBins?: undefined;
-      binWidth: string; // Dates widths are strings
-    };
-
-type DateViewportRangeOrNone =
-  | {
-      viewportMin: string;
-      viewportMax: string;
-    }
-  | {
-      viewportMin?: never;
-      viewportMax?: never;
-    };
-
-export interface DateHistogramRequestParams {
-  studyId: string;
-  filters: Filter[];
-  //  derivedVariables:  // TO DO
-  config: {
-    outputEntityId: string;
-    valueSpec: 'count' | 'proportion';
-    xAxisVariable: Variable;
-    overlayVariable?: Variable;
-    facetVariable?: ZeroToTwoVariables;
-  } & NumBinsOrDateWidth &
-    DateViewportRangeOrNone;
-}
-
-const HistogramResponseData = array(
-  intersection([
-    type({
-      binLabel: array(string),
-      binStart: array(string),
-      binEnd: array(string),
-      value: array(number),
-    }),
-    partial({
-      overlayVariableDetails: StringVariableValue,
-      facetVariableDetails: union([
-        tuple([StringVariableValue]),
-        tuple([StringVariableValue, StringVariableValue]),
+export type HistogramResponse = TypeOf<typeof HistogramResponse>;
+export const HistogramResponse = type({
+  histogram: type({
+    data: array(
+      intersection([
+        type({
+          binLabel: array(string),
+          binStart: array(string),
+          binEnd: array(string),
+          value: array(number),
+        }),
+        partial({
+          overlayVariableDetails: StringVariableValue,
+          facetVariableDetails: union([
+            tuple([StringVariableValue]),
+            tuple([StringVariableValue, StringVariableValue]),
+          ]),
+        }),
+      ])
+    ),
+    config: type({
+      incompleteCases: number,
+      binSlider: type({
+        min: number,
+        max: number,
+        step: number,
+      }),
+      xVariableDetails: Variable,
+      binSpec: intersection([
+        type({ type: keyof({ binWidth: null, numBins: null }) }),
+        partial({
+          value: number,
+          units: TimeUnit,
+        }),
       ]),
+      summary: type({
+        min: string,
+        q1: string,
+        median: string,
+        mean: string,
+        q3: string,
+        max: string,
+      }),
+      viewport: type({
+        xMin: string,
+        xMax: string,
+      }),
     }),
-  ])
-);
-
-const HistogramResponseBaseConfig = type({
-  incompleteCases: array(number),
-  binSlider: type({
-    min: number,
-    max: number,
-    step: number,
   }),
-  xVariableDetails: Variable,
-});
-
-// works for date or numeric 'num-bins' responses
-export type HistogramNumBinsResponse = TypeOf<typeof HistogramNumBinsResponse>;
-export const HistogramNumBinsResponse = type({
-  data: HistogramResponseData,
-  config: intersection([
-    HistogramResponseBaseConfig,
-    type({
-      numBins: number,
-    }),
-  ]),
-});
-
-export type NumericHistogramBinWidthResponse = TypeOf<
-  typeof NumericHistogramBinWidthResponse
->;
-export const NumericHistogramBinWidthResponse = type({
-  data: HistogramResponseData,
-  config: intersection([
-    HistogramResponseBaseConfig,
-    type({
-      binWidth: number,
-    }),
-  ]),
-});
-
-export type DateHistogramBinWidthResponse = TypeOf<
-  typeof DateHistogramBinWidthResponse
->;
-export const DateHistogramBinWidthResponse = type({
-  data: HistogramResponseData,
-  config: intersection([
-    HistogramResponseBaseConfig,
-    type({
-      binWidth: string,
-    }),
-  ]),
+  // TO DO: sampleSizeTable
 });
 
 export interface BarplotRequestParams {
@@ -407,51 +349,15 @@ export class DataClient extends FetchClient {
   }
 
   // Histogram
-  getNumericHistogramNumBins(
+  getHistogram(
     computationName: string,
-    params: NumericHistogramRequestParams
-  ): Promise<HistogramNumBinsResponse> {
+    params: HistogramRequestParams
+  ): Promise<HistogramResponse> {
     return this.getVisualizationData(
       computationName,
-      'numeric-histogram-num-bins',
+      'histogram',
       params,
-      HistogramNumBinsResponse
-    );
-  }
-
-  getNumericHistogramBinWidth(
-    computationName: string,
-    params: NumericHistogramRequestParams
-  ): Promise<NumericHistogramBinWidthResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'numeric-histogram-bin-width',
-      params,
-      NumericHistogramBinWidthResponse
-    );
-  }
-
-  getDateHistogramNumBins(
-    computationName: string,
-    params: DateHistogramRequestParams
-  ): Promise<HistogramNumBinsResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'date-histogram-num-bins',
-      params,
-      HistogramNumBinsResponse
-    );
-  }
-
-  getDateHistogramBinWidth(
-    computationName: string,
-    params: DateHistogramRequestParams
-  ): Promise<DateHistogramBinWidthResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'date-histogram-bin-width',
-      params,
-      DateHistogramBinWidthResponse
+      HistogramResponse
     );
   }
 

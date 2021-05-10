@@ -39,5 +39,5 @@ export function parseTimeDelta(input: string): TimeDelta {
     : isTimeUnit(unitPlural)
     ? unitPlural
     : 'month';
-  return [value, unit];
+  return { value, unit };
 }
