@@ -872,10 +872,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.2.33":
-  version "0.2.33"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.33.tgz#6f840ef50429a68531fa602c0c5b16fb5907f4a4"
-  integrity sha512-AK4tpHU4liRIkAB2WuYs1qQa8T9jyQ6wX8wJPtTC2+s5fqKqp3udkcH34S1PC/aZCIevX22jkFNdgea5U0PpYg==
+"@veupathdb/components@^0.2.34":
+  version "0.2.34"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.34.tgz#78bc416aaa220593bef4e26ad0e7da404dbc8551"
+  integrity sha512-L0Azolw/fkIXMyHsfQ1TuQzG1h+xw6TzkvfUaoVnNZwO0rGiPdC+f9+Zxa33ZgC3CwtaSPmBvlltX2a6oxOz1Q==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -907,14 +907,14 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.1.30":
-  version "0.1.50"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.1.50.tgz#7cf5536fc62a51e267d5d6c1fbb9f28baf1da92e"
-  integrity sha512-No2DgvgX9Hf7sT18u0CC/h90O5glYhY9AK0fKMxJICyGJsgpxy0HFh6hVVei5T1pPHOMwEnL6/FVlmBTEfL1AA==
+"@veupathdb/eda@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.2.0.tgz#28f07fa57a82f5f7ba9cfdb61b03fb9ab6708a44"
+  integrity sha512-HFI9WLwwyR+4cmiP4jkobgPajHXHdzeOlYQgqRSkINnRrRWL13Y3V7CUDLtQRcGdonzh+QWHquElrgQAoS5fuA==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.2.33"
+    "@veupathdb/components" "^0.2.34"
     "@veupathdb/wdk-client" "^0.1.1"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
     debounce-promise "^3.1.2"
@@ -3192,7 +3192,7 @@ has-passive-events@^1.0.0:
   dependencies:
     is-browser "^2.0.1"
 
-has-symbols@^1.0.1:
+has-symbols@^1.0.1, has-symbols@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/has-symbols/-/has-symbols-1.0.2.tgz#165d3070c00309752a1236a479331e3ac56f1423"
   integrity sha512-chXa79rL/UC2KlX17jo3vRGz0azaWEx5tGqZg5pO3NUyEJVB17dMruQlzCCOfUvElghKcm5194+BCRvi2Rv/Gw==
@@ -3369,16 +3369,16 @@ is-buffer@^2.0.3:
   integrity sha512-i2R6zNFDwgEHJyQUtJEk0XFi1i0dPFn/oqjK3/vPCcDeJvW5NQ83V8QbicfF1SupOaB0h8ntgBC2YiE7dfyctQ==
 
 is-core-module@^2.2.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.3.0.tgz#d341652e3408bca69c4671b79a0954a3d349f887"
-  integrity sha512-xSphU2KG9867tsYdLD4RWQ1VqdFl4HTO9Thf3I/3dLEfr0dbPTWKsuCKrgqMljg4nPE+Gq0VCnzT3gr0CyBmsw==
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/is-core-module/-/is-core-module-2.4.0.tgz#8e9fc8e15027b011418026e98f0e6f4d86305cc1"
+  integrity sha512-6A2fkfq1rfeQZjxrZJGerpLCTHRNEBiSgnu0+obeJpEPZRUooHgsizvzv0ZjJwOz3iWIHdJtVWJ/tmPr3D21/A==
   dependencies:
     has "^1.0.3"
 
 is-date-object@^1.0.1:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/is-date-object/-/is-date-object-1.0.3.tgz#4c0802ae9c8097939ea8001eaae3c502f3dbe72f"
-  integrity sha512-tDpEUInNcy2Yw3lNSepK3Wdw1RnXLcIVienz6Ou631Acl15cJyRWK4dgA1vCmOEgIbtOV0W7MHg+AR2Gdg1NXQ==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/is-date-object/-/is-date-object-1.0.4.tgz#550cfcc03afada05eea3dd30981c7b09551f73e5"
+  integrity sha512-/b4ZVsG7Z5XVtIxs/h9W8nvfLgSAyKYdtGWQLbqy6jA1icmgjf8WCoTKgeS4wy5tYaPePouzFMANbnj94c2Z+A==
 
 is-finite@^1.0.1:
   version "1.1.0"
@@ -3421,12 +3421,12 @@ is-plain-obj@^1.1.0:
   integrity sha1-caUMhCnfync8kqOQpKA7OfzVHT4=
 
 is-regex@^1.0.4:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/is-regex/-/is-regex-1.1.2.tgz#81c8ebde4db142f2cf1c53fc86d6a45788266251"
-  integrity sha512-axvdhb5pdhEVThqJzYXwMlVuZwC+FF2DpcOhTS+y/8jVq4trxyPgfcwIxIKiyeuLlSQYKkmUaPQJ8ZE4yNKXDg==
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/is-regex/-/is-regex-1.1.3.tgz#d029f9aff6448b93ebbe3f33dac71511fdcbef9f"
+  integrity sha512-qSVXFz28HM7y+IWX6vLCsexdlvzT1PJNFSBuaQLQ5o0IEw8UDYW6/2+eCMVyIsbM8CNLX2a/QWmSpyxYEHY7CQ==
   dependencies:
     call-bind "^1.0.2"
-    has-symbols "^1.0.1"
+    has-symbols "^1.0.2"
 
 is-string-blank@^1.0.1:
   version "1.0.1"
