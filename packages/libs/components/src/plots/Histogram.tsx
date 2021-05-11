@@ -208,9 +208,16 @@ export default function Histogram({
     const sortedBins = sortBy(allBins, (bin) => bin.binStart);
     const uniqueBins = sortedUniqBy(sortedBins, (bin) => bin.binLabel);
 
+    const minFirstSeriesValue = data.series[0].summary?.min;
+
     // return the list of summaries - note the binMiddle prop
-    return uniqueBins.map((bin) => ({
-      binStart: bin.binStart,
+    return uniqueBins.map((bin, index) => ({
+      binStart:
+        index === 0 && minFirstSeriesValue != undefined
+          ? minFirstSeriesValue > bin.binStart
+            ? minFirstSeriesValue
+            : bin.binStart
+          : bin.binStart,
       binEnd: bin.binEnd,
       binMiddle:
         data.valueType === 'date'
@@ -249,7 +256,7 @@ export default function Histogram({
           .slice()
           .reverse()
           .find((bin) => rawRange.max > bin.binMiddle);
-        if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
+        if (leftBin && rightBin && leftBin.binStart < rightBin.binStart) {
           setSelectingRange({
             min: leftBin.binStart,
             max: rightBin.binEnd,
