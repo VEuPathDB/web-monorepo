@@ -371,18 +371,8 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
-  // FIXME: WIP
-  // We are not using series[x].summary.min and max here
-  // because the bin boundaries are more appropriate
-  //  const firstBinStart = data.series[0].bins[0].binStart;
   const xRangeMin = data.series[0].summary?.min;
-  //data.series[0].summary == undefined ||
-  //		    firstBinStart < data.series[0].summary.min ? firstBinStart : data.series[0].summary.min;
-
-  //  const lastBinEnd = data.series[0].bins[data.series[0].bins.length - 1].binEnd;
   const xRangeMax = data.series[0].summary?.max;
-  //data.series[0].summary == undefined ||
-  //		    lastBinEnd > data.series[0].summary.max ? lastBinEnd : data.series[0].summary.max;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
