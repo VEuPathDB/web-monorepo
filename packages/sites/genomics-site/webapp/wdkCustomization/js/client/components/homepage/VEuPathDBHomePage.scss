@@ -166,14 +166,19 @@ body.vpdb-Body .wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTabl
   top: 103px;
 }
 
-// Various offsets for page header
+// Various offsets for header on record pages
 body.vpdb-Body .wdk-RecordAttributeSectionItem:before,
 body.vpdb-Body .wdk-RecordTableContainer:before,
 body.vpdb-Body .wdk-RecordSubsection:before,
-body.vpdb-Body .wdk-RecordSection:before,
-body.vpdb-Body .ExternalContentController a[name]::before {
+body.vpdb-Body .wdk-RecordSection:before {
   height: 103px;
   margin-top: -103px;
+}
+
+// Offset for header on static content pages {
+body.vpdb-Body .ExternalContentController a[name]::before {
+  height: 139px;
+  margin-top: -139px;
 }
 
 // Fix for RecordSidebar sticky container
