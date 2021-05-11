@@ -371,8 +371,10 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
-  const xRangeMin = data.series[0].summary?.min;
-  const xRangeMax = data.series[0].summary?.max;
+  const selectedRangeBounds = {
+    min: data.series[0].summary?.min,
+    max: data.series[0].summary?.max,
+  } as NumberOrDateRange;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -380,6 +382,7 @@ function HistogramPlotWithControls({
         {...histogramProps}
         data={data}
         selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
@@ -388,6 +391,7 @@ function HistogramPlotWithControls({
         dependentAxisLabel={`Count of ${entityName}`}
         // add independentAxisLabel
         independentAxisLabel={variableName}
+        isZoomed={uiState.independentAxisRange ? true : false}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
       />
@@ -410,9 +414,7 @@ function HistogramPlotWithControls({
         binWidthStep={data.binWidthStep!}
         errorManagement={errorManagement}
         selectedRange={selectedRange}
-        selectedRangeBounds={
-          { min: xRangeMin, max: xRangeMax } as NumberOrDateRange
-        }
+        selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
