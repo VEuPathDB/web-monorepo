@@ -34,7 +34,7 @@ const reportOptions: ReportOption[] = [
     label: 'JSON Seq-align',
   },
   {
-    value: { format: 'tabular', shouldZip: false },
+    value: { format: 'tabular-with-comments', shouldZip: false },
     label: 'Hit Table (text)',
   },
   {
