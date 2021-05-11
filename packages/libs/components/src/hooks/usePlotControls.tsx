@@ -3,7 +3,7 @@
  * This allows us to use a single custom hook for different types of
  * plots, but can be quite the brain trip to read through.
  */
-import { Reducer, useMemo, useReducer } from 'react';
+import { Reducer, useMemo, useReducer, useState } from 'react';
 import debounce from 'debounce-promise';
 
 import { isHistogramData, isPiePlotData, isDate } from '../types/guards';
@@ -52,7 +52,9 @@ type ActionType<DataShape> =
     }
   | { type: 'histogram/onIndependentAxisRangeReset' }
   // add reset all
-  | { type: 'onResetAll' };
+  | { type: 'onResetAll' }
+  // add valueSpec for ScatterplotControls
+  | { type: 'scatterplot/onValueSpecChange'; payload: string };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -189,6 +191,15 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
     // add reset all: nothing here but perhaps it would eventually be a function to set all params to default
     case 'onResetAll':
       return { ...state };
+    // add valueSpec for ScatterplotControls
+    case 'scatterplot/onValueSpecChange':
+      return {
+        ...state,
+        scatterplot: {
+          ...state.scatterplot,
+          valueSpec: action.payload,
+        },
+      };
     default:
       throw new Error();
   }
@@ -262,6 +273,13 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     /** Histogram: independent axis range reset */
     onIndependentAxisRangeReset?: () => void;
   };
+  // valueSpecChange for ScatterplotControls
+  scatterplot?: {
+    /** Scatterplot: valueSpec */
+    valueSpec?: string;
+    /** Scatterplot: valueSpec */
+    onValueSpecChange?: () => void;
+  };
 };
 
 /** Parameters that can be passed to the hook for initialization. */
@@ -290,6 +308,10 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     dependentAxisMode?: string;
     // add x-axis range
     independentAxisRange?: NumberOrDateRange;
+  };
+  // valueSpec for ScatterplotControls
+  scatterplot?: {
+    valueSpec?: string;
   };
 };
 
@@ -322,6 +344,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       // add y-axis controls
       dependentAxisLogScale: false,
       dependentAxisMode: 'absolute',
+    },
+    scatterplot: {
+      valueSpec: 'raw',
     },
   };
 
@@ -571,6 +596,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   // reset all
   const onResetAll = () => dispatch({ type: 'onResetAll' });
 
+  // onValueSpecChange for ScatterplotControls
+  const onValueSpecChange = (value: string) =>
+    dispatch({ type: 'scatterplot/onValueSpecChange', payload: value });
+
   /**
    * Separate errors attribute from the rest of the reducer state.
    * This is so we can control the shape of the object returned
@@ -613,5 +642,11 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     toggleLibraryControls,
     // add reset all
     onResetAll,
+    // onValueSpecChange for ScatterplotControls
+    scatterplot: {
+      // need to add reducerState here for ScatterplotControls
+      ...reducerState.scatterplot,
+      onValueSpecChange,
+    },
   };
 }
