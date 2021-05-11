@@ -75,6 +75,11 @@ export interface HistogramProps {
   selectedRange?: NumberOrDateRange;
   /** function to call upon selecting a range (in independent axis) */
   onSelectedRangeChange?: (newRange?: NumberOrDateRange) => void;
+  /** Min and max allowed values for the selected range.
+   *  Used to keep graphical range selections within the range of the data. Optional. */
+  selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
+  /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
+  isZoomed?: boolean;
 }
 
 /** A Plot.ly based histogram component. */
@@ -102,6 +107,8 @@ export default function Histogram({
   interactive = true,
   selectedRange,
   onSelectedRangeChange = () => {},
+  selectedRangeBounds,
+  isZoomed = false,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -208,36 +215,24 @@ export default function Histogram({
     const sortedBins = sortBy(allBins, (bin) => bin.binStart);
     const uniqueBins = sortedUniqBy(sortedBins, (bin) => bin.binLabel);
 
-    // find the smallest summary.min from the potentially multiple series
-    const allSummaryMins = data.series
-      .map((series) => series.summary?.min)
-      .filter((min) => min != undefined);
-    const sortedSummaryMins = sortBy(allSummaryMins);
-    const minSummaryMin = sortedSummaryMins[0];
-
-    // do the same for the summary.max
-    const allSummaryMaxs = data.series
-      .map((series) => series.summary?.max)
-      .filter((max) => max != undefined);
-    const sortedSummaryMaxs = sortBy(allSummaryMaxs);
-    const maxSummaryMax = sortedSummaryMaxs[sortedSummaryMaxs.length - 1];
-
     // return the list of summaries - note the binMiddle prop
     return uniqueBins.map((bin, index) => ({
       binStart:
-        // to improve range selection, tweak the start of the leftmost bin
-        // and end of the rightmost bin using summary stats data
-        index === 0 && minSummaryMin != undefined
-          ? minSummaryMin > bin.binStart
-            ? minSummaryMin
-            : bin.binStart
+        // The first bin's binStart can outside the allowed range bounds.
+        // If we are not zoomed in, adjust the first bin's binStart to
+        // selectedRangeBounds.min if needed
+        index === 0 &&
+        selectedRangeBounds?.min != undefined &&
+        (!isZoomed || selectedRangeBounds.min > bin.binStart)
+          ? selectedRangeBounds.min
           : bin.binStart,
-      binEnd: bin.binEnd,
-      //      index === uniqueBins.length-1 && maxSummaryMax != undefined
-      //	    ? maxSummaryMax > bin.binEnd
-      //			    ? maxSummaryMax
-      //			    : bin.binEnd
-      //			    : bin.binEnd,
+      binEnd:
+        // do similar for the last bin and binEnd
+        index === uniqueBins.length - 1 &&
+        selectedRangeBounds?.max != undefined &&
+        (!isZoomed || selectedRangeBounds.max < bin.binEnd)
+          ? selectedRangeBounds.max
+          : bin.binEnd,
       binMiddle:
         data.valueType === 'date'
           ? DateMath.add(
@@ -252,7 +247,7 @@ export default function Histogram({
             ).toISOString()
           : ((bin.binStart as number) + (bin.binEnd as number)) / 2.0,
     }));
-  }, [data.series, data.valueType]);
+  }, [data.series, data.valueType, isZoomed, selectedRangeBounds]);
 
   // local state for range **while selecting** graphically
   const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
