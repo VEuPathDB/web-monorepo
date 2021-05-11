@@ -284,17 +284,7 @@ function HistogramPlotWithControls({
   const handleSelectedRangeChange = useCallback(
     (range?: NumberOrDateRange) => {
       if (range) {
-        // FIXME Compare selection to data min/max
-        // UPDATE: back end now returns bins in order
-        // note that the range check below is only using bins from the first (background) series
-        const bins = data.series[0].bins;
-        const min = bins[0].binStart;
-        const max = bins[bins.length - 1].binEnd;
-        if (range.min <= min && range.max >= max) {
-          updateFilter();
-        } else {
-          updateFilter(range);
-        }
+        updateFilter(range);
       } else {
         updateFilter(); // clear the filter if range is undefined
       }
