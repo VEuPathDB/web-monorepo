@@ -208,17 +208,36 @@ export default function Histogram({
     const sortedBins = sortBy(allBins, (bin) => bin.binStart);
     const uniqueBins = sortedUniqBy(sortedBins, (bin) => bin.binLabel);
 
-    const minFirstSeriesValue = data.series[0].summary?.min;
+    // find the smallest summary.min from the potentially multiple series
+    const allSummaryMins = data.series
+      .map((series) => series.summary?.min)
+      .filter((min) => min != undefined);
+    const sortedSummaryMins = sortBy(allSummaryMins);
+    const minSummaryMin = sortedSummaryMins[0];
+
+    // do the same for the summary.max
+    const allSummaryMaxs = data.series
+      .map((series) => series.summary?.max)
+      .filter((max) => max != undefined);
+    const sortedSummaryMaxs = sortBy(allSummaryMaxs);
+    const maxSummaryMax = sortedSummaryMaxs[sortedSummaryMaxs.length - 1];
 
     // return the list of summaries - note the binMiddle prop
     return uniqueBins.map((bin, index) => ({
       binStart:
-        index === 0 && minFirstSeriesValue != undefined
-          ? minFirstSeriesValue > bin.binStart
-            ? minFirstSeriesValue
+        // to improve range selection, tweak the start of the leftmost bin
+        // and end of the rightmost bin using summary stats data
+        index === 0 && minSummaryMin != undefined
+          ? minSummaryMin > bin.binStart
+            ? minSummaryMin
             : bin.binStart
           : bin.binStart,
       binEnd: bin.binEnd,
+      //      index === uniqueBins.length-1 && maxSummaryMax != undefined
+      //	    ? maxSummaryMax > bin.binEnd
+      //			    ? maxSummaryMax
+      //			    : bin.binEnd
+      //			    : bin.binEnd,
       binMiddle:
         data.valueType === 'date'
           ? DateMath.add(
@@ -256,7 +275,7 @@ export default function Histogram({
           .slice()
           .reverse()
           .find((bin) => rawRange.max > bin.binMiddle);
-        if (leftBin && rightBin && leftBin.binStart < rightBin.binStart) {
+        if (leftBin && rightBin && leftBin.binStart <= rightBin.binStart) {
           setSelectingRange({
             min: leftBin.binStart,
             max: rightBin.binEnd,
