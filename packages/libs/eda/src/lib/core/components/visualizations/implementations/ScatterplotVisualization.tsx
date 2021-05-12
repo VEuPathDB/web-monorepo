@@ -30,6 +30,9 @@ import { isScatterplotVariable, isTableVariable } from '../../filter/guards';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
+//DKDK ScatterplotControls
+import ScatterplotControls from '@veupathdb/components/lib/components/plotControls/ScatterplotControls';
+
 export const scatterplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
@@ -77,6 +80,8 @@ function FullscreenComponent(props: VisualizationProps) {
 function createDefaultConfig(): ScatterplotConfig {
   return {
     enableOverlay: true,
+    //DKDK ScatterplotControls
+    valueSpecConfig: 'raw',
   };
 }
 
@@ -90,6 +95,8 @@ const ScatterplotConfig = t.intersection([
     xAxisVariable: Variable,
     yAxisVariable: Variable,
     overlayVariable: Variable,
+    //DKDK ScatterplotControls
+    valueSpecConfig: t.string,
   }),
 ]);
 
@@ -165,6 +172,18 @@ function ScatterplotViz(props: Props) {
     [entities]
   );
 
+  //DKDK ScatterplotControls: add valueSpec option
+  const onValueSpecChange = useCallback(
+    (value: string) => {
+      updateVizConfig({
+        valueSpecConfig: value,
+      });
+    },
+    [updateVizConfig, vizConfig]
+  );
+
+  console.log('valueSpec at ScatterViz =', vizConfig.valueSpecConfig);
+
   const data = usePromise(
     // set any for now
     // useCallback(async (): Promise<ScatterplotData> => {
@@ -217,7 +236,9 @@ function ScatterplotViz(props: Props) {
         vizConfig.yAxisVariable,
         vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
         // add visualization.type
-        visualization.type
+        visualization.type,
+        //DKDK ScatterplotControls
+        vizConfig.valueSpecConfig ? vizConfig.valueSpecConfig : 'raw'
       );
 
       // scatterplot, lineplot
@@ -320,7 +341,14 @@ function ScatterplotViz(props: Props) {
             xLabel={findVariable(vizConfig.xAxisVariable)?.displayName}
             yLabel={findVariable(vizConfig.yAxisVariable)?.displayName}
             xRange={[data.value.xMin, data.value.xMax]}
-            yRange={[data.value.yMin, data.value.yMax]}
+            // block this for now
+            // yRange={[data.value.yMin, data.value.yMax]}
+            //DKDK ScatterplotControls valueSpecInitial
+            valueSpec={vizConfig.valueSpecConfig}
+            // valueSpec={valueSpecInitial}
+            onValueSpecChange={onValueSpecChange}
+            //DKDK send visualization.type here
+            vizType={visualization.type}
           />
         ) : (
           // thumbnail/grid view
@@ -329,7 +357,8 @@ function ScatterplotViz(props: Props) {
             width={230}
             height={150}
             xRange={[data.value.xMin, data.value.xMax]}
-            yRange={[data.value.yMin, data.value.yMax]}
+            // block this for now
+            // yRange={[data.value.yMin, data.value.yMax]}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
@@ -352,6 +381,10 @@ function ScatterplotViz(props: Props) {
 
 function ScatterplotWithControls({
   data,
+  //DKDK ScatterplotControls: set initial value as 'raw'
+  valueSpec = 'raw',
+  onValueSpecChange,
+  vizType,
   ...ScatterplotProps
 }: //
 // }: ScatterplotWithControlsProps) {
@@ -377,13 +410,20 @@ any) {
         displayLegend={true}
         displayLibraryControls={false}
       />
+      {/* DKDK ScatterplotControls: check vizType (only for scatterplot for now) */}
+      {vizType === 'scatterplot' && (
+        <ScatterplotControls
+          label="Scatter Plot Controls"
+          valueSpec={valueSpec}
+          onValueSpecChange={onValueSpecChange}
+          // valueType={data.valueType}
+          // displayLegend={false /* should not be a required prop */}
+          // displayLibraryControls={displayLibraryControls}
+          errorManagement={errorManagement}
+        />
+      )}
     </div>
   );
-  // making a control later
-  // <ScatterplotControls
-  //   label="Scatter plot control"
-  //   errorManagement={errorManagement}
-  // />
 }
 
 /**
@@ -432,7 +472,9 @@ function getRequestParams(
   yAxisVariable?: Variable,
   overlayVariable?: Variable,
   // add visualization.type
-  vizType?: string
+  vizType?: string,
+  //DKDK ScatterplotControls
+  valueSpecConfig?: string
 ): getRequestParamsProps {
   if (vizType === 'lineplot') {
     return {
@@ -457,9 +499,11 @@ function getRequestParams(
         // valueSpect will be handled by a plot control in the near future
         // valueSpec: 'raw',
         // valueSpec: 'smoothedMean',
-        valueSpec: 'smoothedMeanWithRaw',
+        // valueSpec: 'smoothedMeanWithRaw',
         // test bestFitLineWithRaw
         // valueSpec: 'bestFitLineWithRaw',
+        //DKDK ScatterplotControls
+        valueSpec: valueSpecConfig,
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
@@ -791,7 +835,8 @@ function processInputData<T extends number | Date>(
         x: xIntervalBounds,
         y: yIntervalBounds,
         name: 'Confidence interval',
-        fill: 'tozerox',
+        // this is better to be tozeroy, not tozerox
+        fill: 'tozeroy',
         fillcolor: 'rgba(' + boundColors[index] + ',0.2)',
         // opacity: 0.4,  // this works but not used
         type: 'line',
