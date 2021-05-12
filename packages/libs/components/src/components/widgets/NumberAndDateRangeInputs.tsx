@@ -214,6 +214,10 @@ function BaseInput({
               setIsReceiving(false);
               setLocalRange(undefined);
             }}
+            containerStyles={{
+              paddingLeft: '10px',
+              height: '20px',
+            }}
           />
         )}
       </div>
