@@ -378,6 +378,22 @@ function HistogramPlotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <HistogramControls
+        valueType={data.valueType}
+        barLayout={barLayout}
+        displayLegend={displayLegend}
+        displayLibraryControls={displayLibraryControls}
+        opacity={opacity}
+        orientation={histogramProps.orientation}
+        errorManagement={errorManagement}
+        selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
+        onSelectedRangeChange={handleSelectedRangeChange}
+        binWidth={data.binWidth!}
+        binWidthRange={data.binWidthRange!}
+        binWidthStep={data.binWidthStep!}
+        containerStyles={{ border: 'none' }}
+      />
       <Histogram
         {...histogramProps}
         data={data}
@@ -396,7 +412,7 @@ function HistogramPlotWithControls({
         dependentAxisLogScale={uiState.dependentAxisLogScale}
       />
       <HistogramControls
-        label="Histogram Controls"
+        label="Axis controls"
         valueType={data.valueType}
         barLayout={barLayout}
         displayLegend={displayLegend}
@@ -413,9 +429,6 @@ function HistogramPlotWithControls({
         binWidthRange={data.binWidthRange!}
         binWidthStep={data.binWidthStep!}
         errorManagement={errorManagement}
-        selectedRange={selectedRange}
-        selectedRangeBounds={selectedRangeBounds}
-        onSelectedRangeChange={handleSelectedRangeChange}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
         onIndependentAxisSettingsReset={handleIndependentAxisSettingsReset}
