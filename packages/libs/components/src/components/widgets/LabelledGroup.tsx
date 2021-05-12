@@ -1,12 +1,13 @@
 import React, { ReactNode, CSSProperties } from 'react';
+import { every } from 'lodash';
 
 export interface LabelledGroupProps {
   /** Contents of the menu when opened */
   children: ReactNode;
   /** Contents of button */
   label: ReactNode;
-  /** optional width of box (CSS width property) */
-  width?: CSSProperties['width'];
+  /** Additional styles to apply to the widget container. */
+  containerStyles?: React.CSSProperties;
 }
 
 /**
@@ -15,8 +16,12 @@ export interface LabelledGroupProps {
  * But renders nothing if no children are contained within it.
  */
 export default function LabelledGroup(props: LabelledGroupProps) {
-  const { children, label, width } = props;
-  if (children == null) return null;
+  const { children, label, containerStyles } = props;
+
+  // don't render anything if all the children (or no children) are null
+  if (every(React.Children.toArray(children), (child) => child == null))
+    return null;
+
   return (
     <div
       style={{
@@ -26,10 +31,10 @@ export default function LabelledGroup(props: LabelledGroupProps) {
         borderColor: '#cccccc',
         borderRadius: '0.2em',
         padding: '1em',
-        width: width ?? '30em',
         minWidth: '11em',
-        marginTop: '1.5625em',
+        // marginTop: '1.5625em',
         marginRight: '1.5625em',
+        ...containerStyles,
       }}
     >
       {/* wrapper div to prevent from inline-flex */}

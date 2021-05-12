@@ -190,7 +190,7 @@ export default function HistogramControls({
       style={{
         borderStyle: 'solid',
         borderWidth: '0.125em',
-        borderColor: LIGHT_GRAY,
+        borderColor: '#cccccc',
         borderRadius: '0.6125em',
         padding: '0.9375em',
         minWidth: '11em',
@@ -223,7 +223,7 @@ export default function HistogramControls({
           />
         )}
         {onSelectedRangeChange ? (
-          <LabelledGroup label="selected range">
+          <LabelledGroup label="Subset by value">
             {valueType !== undefined && valueType === 'date' ? (
               <DateRangeInput
                 rangeBounds={selectedRangeBounds as DateRange}
@@ -249,8 +249,8 @@ export default function HistogramControls({
           display: 'grid',
           gridTemplateColumns:
             width > 500 ? '2fr 2fr 1fr' : width > 300 ? '1fr 1fr' : '1fr',
-          marginTop: '0.9375em',
-          marginRight: '0.9375em',
+          // marginTop: '0.9375em',
+          // marginRight: '0.9375em',
           columnGap: '1.5625em',
           rowGap: '0.3125em',
         }}
@@ -294,7 +294,7 @@ export default function HistogramControls({
         )}
       </div>
 
-      <LabelledGroup label="y-Axis">
+      <LabelledGroup label="y-Axis" containerStyles={{}}>
         {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
           <Switch
             label="Log Scale:"
@@ -309,7 +309,7 @@ export default function HistogramControls({
             containerStyles={{ paddingBottom: '0.3125em' }}
           />
         )}
-        {onDependentAxisRangeChange ? (
+        {onDependentAxisRangeChange && (
           <NumberRangeInput
             label="Range:"
             range={dependentAxisRange}
@@ -318,7 +318,7 @@ export default function HistogramControls({
             }}
             allowPartialRange={false}
           />
-        ) : null}
+        )}
         {dependentAxisMode && onDependentAxisModeChange && (
           <ButtonGroup
             label="Absolute/Relative:"
@@ -328,20 +328,22 @@ export default function HistogramControls({
             onOptionSelected={onDependentAxisModeChange}
           />
         )}
-        {/* add dependent axis range reset button */}
-        <div style={{ paddingTop: '1.0em', width: '100%' }}>
-          {onDependentAxisSettingsReset && (
-            <Button
-              type={'solid'}
-              text={'Reset to defaults'}
-              onClick={onDependentAxisSettingsReset}
-            />
-          )}
-        </div>
+
+        {onDependentAxisSettingsReset && (
+          <Button
+            type={'solid'}
+            text={'Reset to defaults'}
+            onClick={onDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '100%',
+            }}
+          />
+        )}
       </LabelledGroup>
 
-      <LabelledGroup label="x-Axis">
-        {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
+      <LabelledGroup label="x-Axis" containerStyles={{}}>
+        {availableUnits?.length && selectedUnit && onSelectedUnitChange && (
           <ButtonGroup
             label="Data Units"
             options={availableUnits}
@@ -349,7 +351,7 @@ export default function HistogramControls({
             onOptionSelected={onSelectedUnitChange}
             containerStyles={{ paddingBottom: '0.9375em' }}
           />
-        ) : null}
+        )}
 
         {onBinWidthChange && (
           <SliderWidget
@@ -376,8 +378,8 @@ export default function HistogramControls({
           />
         )}
 
-        {onIndependentAxisRangeChange ? (
-          valueType !== undefined && valueType === 'date' ? (
+        {onIndependentAxisRangeChange &&
+          (valueType !== undefined && valueType === 'date' ? (
             <DateRangeInput
               label="Range:"
               range={independentAxisRange as DateRange}
@@ -391,27 +393,33 @@ export default function HistogramControls({
               onRangeChange={onIndependentAxisRangeChange}
               allowPartialRange={false}
             />
-          )
-        ) : null}
+          ))}
 
-        {/* add dependent axis range reset button */}
-        <div style={{ paddingTop: '1.0em', width: '100%' }}>
-          {onIndependentAxisSettingsReset && (
-            <Button
-              type={'solid'}
-              text={'Reset to defaults'}
-              onClick={onIndependentAxisSettingsReset}
-            />
-          )}
-        </div>
+        {onIndependentAxisSettingsReset && (
+          <Button
+            type={'solid'}
+            text={'Reset to defaults'}
+            onClick={onIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '100%',
+            }}
+          />
+        )}
       </LabelledGroup>
 
       {/* reset all */}
-      <div style={{ paddingTop: '1.5625em', width: '8.125em' }}>
-        {onResetAll && (
-          <Button type={'solid'} text={'Reset All'} onClick={onResetAll} />
-        )}
-      </div>
+      {onResetAll && (
+        <Button
+          type={'solid'}
+          text={'Reset All'}
+          onClick={onResetAll}
+          containerStyles={{
+            paddingTop: '1.5625em',
+            width: '8.125em',
+          }}
+        />
+      )}
 
       {errorStacks.map(({ error, occurences }, index) => (
         <Notification
