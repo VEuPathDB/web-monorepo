@@ -27,6 +27,14 @@ type MosaicData = Pick<
   'data' | 'independentValues' | 'dependentValues'
 >;
 
+type TwoByTwoData = MosaicData & {
+  pValue: number | string;
+  relativeRisk: number;
+  rrInterval: string;
+  oddsRatio: number;
+  orInterval: string;
+};
+
 export const mosaicVisualization: VisualizationType = {
   gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
@@ -203,7 +211,7 @@ function MosaicViz(props: Props) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<MosaicData> => {
+    useCallback(async (): Promise<MosaicData | TwoByTwoData> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
       if (
@@ -240,15 +248,22 @@ function MosaicViz(props: Props) {
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable
       );
-      const response = isTwoByTwo
-        ? dataClient.getTwoByTwo(
-            computation.type,
-            params as MosaicRequestParams
-          )
-        : dataClient.getMosaic(computation.type, params as MosaicRequestParams);
-      return isTwoByTwo
-        ? twoByTwoResponseToData(await response)
-        : mosaicResponseToData(await response);
+
+      if (isTwoByTwo) {
+        const response = dataClient.getTwoByTwo(
+          computation.type,
+          params as MosaicRequestParams
+        );
+
+        return twoByTwoResponseToData(await response);
+      } else {
+        const response = dataClient.getMosaic(
+          computation.type,
+          params as MosaicRequestParams
+        );
+
+        return mosaicResponseToData(await response);
+      }
     }, [
       studyId,
       filters,
@@ -310,18 +325,48 @@ function MosaicViz(props: Props) {
       )}
       {data.value ? (
         fullscreen ? (
-          <MosaicPlotWithControls
-            data={data.value.data}
-            independentValues={data.value.independentValues}
-            dependentValues={data.value.dependentValues}
-            independentLabel={
-              findVariable(vizConfig.xAxisVariable)!.displayName
-            }
-            dependentLabel={findVariable(vizConfig.yAxisVariable)!.displayName}
-            width="100%"
-            height={400}
-            showLegend={true}
-          />
+          <div className="TwoByTwoVisualization">
+            <div className="TwoByTwoVisualization-Plot">
+              <MosaicPlotWithControls
+                data={data.value.data}
+                independentValues={data.value.independentValues}
+                dependentValues={data.value.dependentValues}
+                independentLabel={
+                  findVariable(vizConfig.xAxisVariable)!.displayName
+                }
+                dependentLabel={
+                  findVariable(vizConfig.yAxisVariable)!.displayName
+                }
+                showLegend={true}
+              />
+            </div>
+            {isTwoByTwo && (
+              <div className="TwoByTwoVisualization-StatsTable">
+                <table>
+                  <tr>
+                    <th></th>
+                    <th>Value</th>
+                    <th>95% confidence interval</th>
+                  </tr>
+                  <tr>
+                    <td>p-value</td>
+                    <td>{(data.value as TwoByTwoData).pValue}</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Odds ratio</td>
+                    <td>{(data.value as TwoByTwoData).oddsRatio}</td>
+                    <td>{(data.value as TwoByTwoData).orInterval}</td>
+                  </tr>
+                  <tr>
+                    <td>Relative risk</td>
+                    <td>{(data.value as TwoByTwoData).relativeRisk}</td>
+                    <td>{(data.value as TwoByTwoData).rrInterval}</td>
+                  </tr>
+                </table>
+              </div>
+            )}
+          </div>
         ) : (
           // thumbnail/grid view
           <Mosaic
@@ -338,7 +383,7 @@ function MosaicViz(props: Props) {
         )
       ) : (
         <i
-          className="fa fa-bar-chart"
+          className="fa fa-th-large"
           style={{
             fontSize: fullscreen ? '34em' : '12em',
             color: '#aaa',
@@ -411,7 +456,7 @@ export function mosaicResponseToData(
  */
 export function twoByTwoResponseToData(
   response: PromiseType<ReturnType<DataClient['getTwoByTwo']>>
-): MosaicData {
+): TwoByTwoData {
   if (response.mosaic.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
@@ -422,6 +467,11 @@ export function twoByTwoResponseToData(
     data: data,
     independentValues: response.mosaic.data[0].xLabel,
     dependentValues: response.mosaic.data[0].yLabel,
+    pValue: response.statsTable[0].pvalue[0],
+    relativeRisk: response.statsTable[0].relativerisk[0],
+    rrInterval: response.statsTable[0].rrInterval[0],
+    oddsRatio: response.statsTable[0].oddsratio[0],
+    orInterval: response.statsTable[0].orInterval[0],
   };
 }
 

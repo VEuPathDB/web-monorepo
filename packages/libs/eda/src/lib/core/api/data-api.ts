@@ -321,6 +321,44 @@ export const MosaicResponse = type({
   }),
 });
 
+export type TwoByTwoResponse = TypeOf<typeof TwoByTwoResponse>;
+export const TwoByTwoResponse = type({
+  mosaic: type({
+    data: array(
+      type({
+        xLabel: array(string),
+        yLabel: array(string),
+        value: array(array(number)),
+      })
+    ),
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: array(
+    type({
+      size: array(number),
+    })
+  ),
+  statsTable: array(
+    type({
+      oddsratio: array(number),
+      pvalue: array(union([number, string])),
+      orInterval: array(string),
+      rrInterval: array(string),
+      relativerisk: array(number),
+    })
+  ),
+});
+
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
@@ -415,12 +453,12 @@ export class DataClient extends FetchClient {
   getTwoByTwo(
     computationName: string,
     params: MosaicRequestParams
-  ): Promise<MosaicResponse> {
+  ): Promise<TwoByTwoResponse> {
     return this.getVisualizationData(
       computationName,
       'twobytwo',
       params,
-      MosaicResponse
+      TwoByTwoResponse
     );
   }
 }
