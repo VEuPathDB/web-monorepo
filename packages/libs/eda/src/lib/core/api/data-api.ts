@@ -295,6 +295,10 @@ export interface LineplotRequestParams {
       entityId: string;
       variableId: string;
     };
+    overlayVariable?: {
+      entityId: string;
+      variableId: string;
+    };
   };
 }
 
