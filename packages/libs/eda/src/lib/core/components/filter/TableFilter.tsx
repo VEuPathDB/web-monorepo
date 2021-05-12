@@ -14,6 +14,7 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { fromEdaFilter } from '../../utils/wdk-filter-param-adapter';
 import { TableVariable } from './types';
 import { getDistribution } from './util';
+import { sum } from 'lodash';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -114,12 +115,10 @@ export function TableFilter({
           count: bgValueByLabel[label],
           filteredCount: fgValueByLabel[label] ?? 0,
         })),
-        entitiesCount:
-          totalEntityCount -
-          distribution.background.barplot.config.incompleteCases,
-        filteredEntitiesCount:
-          filteredEntityCount -
-          distribution.foreground.barplot.config.incompleteCases,
+        entitiesCount: sum(distribution.background.barplot.data[0].value), // no longer using incompleteCases from back end
+        filteredEntitiesCount: sum(
+          distribution.foreground.barplot.data[0].value
+        ), // ditto
       };
     }, [
       entity.id,
@@ -313,7 +312,7 @@ export function TableFilter({
         tableSummary.value.variableId === variable.id && (
           <MembershipField
             displayName={entity.displayName}
-            dataCount={tableSummary.value.entitiesCount}
+            dataCount={totalEntityCount}
             filteredDataCount={tableSummary.value.filteredEntitiesCount}
             filter={tableFilter}
             activeField={activeField}
