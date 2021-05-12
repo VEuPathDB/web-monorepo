@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { connect } from 'react-redux';
 import { intersection } from 'lodash/fp'
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
@@ -7,13 +7,18 @@ import WdkService from '@veupathdb/wdk-client/lib/Service/WdkService';
 import { Step } from '@veupathdb/wdk-client/lib/Utils/WdkUser';
 import { requestUpdateStepSearchConfig } from '@veupathdb/wdk-client/lib/Actions/StrategyActions';
 import { Loading, CheckboxTree } from '@veupathdb/wdk-client/lib/Components';
-import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { mapStructure, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { ResultType } from '@veupathdb/wdk-client/lib/Utils/WdkResult';
 import {makeClassNameHelper} from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 
 import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
+
+import {
+  usePreferredOrganismsEnabledState,
+  usePreferredOrganismsState
+} from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
 import './OrganismFilter.scss';
 
@@ -111,12 +116,19 @@ function OrganismFilter({ resultType, ...otherProps }: Props) {
     return null;
   }
 
-  return <OrganismFilterForStep step={step} {...otherProps} />;
+  return (
+    <Suspense fallback={null}>
+      <OrganismFilterForStep step={step} {...otherProps} />
+    </Suspense>
+  );
 }
 
 type OrganismFilterForStepProps = { step: Step } & Omit<Props, 'resultType'>;
 
 function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: OrganismFilterForStepProps) {
+  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
+  const [ preferredOrganisms ] = usePreferredOrganismsState();
+
   // if temporary value assigned, use until user clears or hits apply;
   // else check step for a filter value and if present, use; else use empty string (no filter)
   let appliedFilterConfig: OrgFilterConfig = findOrganismFilterConfig(step.searchConfig);
@@ -180,7 +192,7 @@ function OrganismFilterForStep({ step, requestUpdateStepSearchConfig }: Organism
 
   // assign record counts and short display names to tree nodes, and trim zeroes if necessary
   let taxonomyTreeWithCounts: TaxonomyNodeWithCount | undefined = taxonomyTree && filterSummary
-    ? createDisplayableTree(taxonomyTree, filterSummary, hideZeroes)
+    ? createDisplayableTree(taxonomyTree, filterSummary, hideZeroes, preferredOrganismsEnabled, preferredOrganisms)
     : undefined;
 
   // org filter config currently applied on the step (if any) - used for cancel button
@@ -298,9 +310,11 @@ function applyOrgFilterConfig(oldSearchConfig: SearchConfig, newFilterConfig: Or
 function createDisplayableTree(
   taxonomyTree: TreeBoxVocabNode,
   filterSummary: OrgFilterSummary,
-  hideZeroes: boolean
+  hideZeroes: boolean,
+  preferredOrganismsEnabled: boolean,
+  preferredOrganisms: string[]
 ): TaxonomyNodeWithCount {
-  return mapStructure(
+  const taxonomyTreeWithCount: TaxonomyNodeWithCount = mapStructure(
     (node, mappedChildren) => {
       let count = 0;
       if (filterSummary && filterSummary.values) {
@@ -327,6 +341,21 @@ function createDisplayableTree(
     },
     node => node.children,
     taxonomyTree
+  );
+
+  if (!preferredOrganismsEnabled) {
+    return taxonomyTreeWithCount;
+  }
+
+  const preferredOrganismsSet = new Set(preferredOrganisms);
+
+  return pruneDescendantNodes(
+    node => (
+      node.children.length > 0 ||
+      node.count > 0 ||
+      preferredOrganismsSet.has(node.term)
+    ),
+    taxonomyTreeWithCount
   );
 }
 
