@@ -28,6 +28,7 @@ interface Props {
   filterOrganisms?: string[];
   offerOrganismFilter: boolean;
   organismTree?: TreeBoxVocabNode;
+  preferredOrganismsEnabled?: boolean;
   onSearch: (searchString: string) => void;
   onPageOffsetChange: (offset: number) => void;
   onDocumentTypeChange: (documentType?: string) => void;
@@ -135,7 +136,7 @@ function ResultInfo(props: Props) {
 }
 
 function SearchCounts(props: Props) {
-  const { searchString, response, documentType, hideDocumentTypeClearButton, offerOrganismFilter, organismTree, filterOrganisms, onOrganismsChange, onDocumentTypeChange } = props;
+  const { searchString, response, documentType, hideDocumentTypeClearButton, offerOrganismFilter, organismTree, filterOrganisms, preferredOrganismsEnabled = false, onOrganismsChange, onDocumentTypeChange } = props;
   const { categories, documentTypes, organismCounts } = response || {};
   const [ onlyShowMatches, setOnlyShowMatches ] = useState(true);
   const docTypesById = useMemo(() => keyBy(documentTypes, 'id'), [ documentTypes ]);
@@ -205,6 +206,7 @@ function SearchCounts(props: Props) {
         <OrganismFilter
           organismTree={finalOrganismTree}
           filterOrganisms={filterOrganisms}
+          preferredOrganismsEnabled={preferredOrganismsEnabled}
           response={response}
           onOrganismsChange={onOrganismsChange}
           searchString={searchString}
@@ -215,8 +217,8 @@ function SearchCounts(props: Props) {
   )
 }
 
-function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrganisms' | 'onOrganismsChange' | 'response' | 'searchString'>> & { onlyShowMatches: boolean }) {
-  const { organismTree, filterOrganisms, onOrganismsChange, response, searchString, onlyShowMatches } = props;
+function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrganisms' | 'preferredOrganismsEnabled' | 'onOrganismsChange' | 'response' | 'searchString'>> & { onlyShowMatches: boolean }) {
+  const { organismTree, filterOrganisms, preferredOrganismsEnabled, onOrganismsChange, response, searchString, onlyShowMatches } = props;
   const initialExpandedNodes = useMemo(() => organismTree.children.length === 1 ? organismTree.children.map(node => node.data.term) : [], [ organismTree ]);
   const [ expansion, setExpansion ] = useState<string[]>(initialExpandedNodes);
   const [ selection, setSelection ] = useState<string[]>(filterOrganisms);
@@ -250,7 +252,7 @@ function OrganismFilter(props: Required<Pick<Props, 'organismTree' | 'filterOrga
 
   useEffect(() => {
     setSelection(filterOrganisms);
-  }, [ filterOrganisms ]);
+  }, [ filterOrganisms, preferredOrganismsEnabled ]);
 
   useEffect(() => {
     setFilterTerm('');

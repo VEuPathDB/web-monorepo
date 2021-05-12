@@ -2,7 +2,7 @@ import { castArray, isArray } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 import SiteSearch from 'ebrc-client/components/SiteSearch/SiteSearch';
-import { getLeaves } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { getLeaves, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { useOrganismTree } from 'ebrc-client/hooks/organisms';
 import { useQueryParams } from 'ebrc-client/hooks/queryParams';
 import { Loading, Error as ErrorPage } from '@veupathdb/wdk-client/lib/Components';
@@ -16,9 +16,15 @@ import { SEARCH_TERM_PARAM, OFFSET_PARAM, DOCUMENT_TYPE_PARAM, ORGANISM_PARAM, F
 
 interface Props {
   offerOrganismFilter?: boolean;
+  preferredOrganisms?: string[];
+  preferredOrganismsEnabled?: boolean;
 }
 
-export default function SiteSearchController({ offerOrganismFilter = true }: Props) {
+export default function SiteSearchController({
+  offerOrganismFilter = true,
+  preferredOrganisms,
+  preferredOrganismsEnabled
+}: Props) {
   const [ params, updateParams ] = useQueryParams(
     SEARCH_TERM_PARAM,
     OFFSET_PARAM,
@@ -34,7 +40,32 @@ export default function SiteSearchController({ offerOrganismFilter = true }: Pro
   const numRecords = 20;
 
   // Organism Tree, set selectedOrganims
-  const organismTree = useOrganismTree(offerOrganismFilter);
+  const fullOrganismTree = useOrganismTree(offerOrganismFilter);
+
+  const organismTree = useMemo(
+    () => {
+      if (
+        fullOrganismTree == null ||
+        preferredOrganisms == null ||
+        preferredOrganismsEnabled !== true
+      ) {
+        return fullOrganismTree;
+      }
+
+      const preferredOrganismsSet = new Set(preferredOrganisms);
+      const selectedOrganismsSet = new Set(organisms);
+
+      return pruneDescendantNodes(
+        node => (
+          node.children.length > 0 ||
+          preferredOrganismsSet.has(node.data.term) ||
+          selectedOrganismsSet.has(node.data.term)
+        ),
+        fullOrganismTree
+      );
+    },
+    [ fullOrganismTree, preferredOrganisms, preferredOrganismsEnabled, organisms ]
+  );
 
   const allOrganisms = useMemo(
     () => organismTree && getLeaves(organismTree, node => node.children).map(node => node.data.term),
@@ -157,6 +188,7 @@ export default function SiteSearchController({ offerOrganismFilter = true }: Pro
       filters={value.searchSettings.filters}
       onFiltersChange={setFilters}
       filterOrganisms={value.searchSettings.organisms}
+      preferredOrganismsEnabled={preferredOrganismsEnabled}
       onOrganismsChange={setOrganisms}
       onClearFilters={clearFilters}
       response={value.response}
