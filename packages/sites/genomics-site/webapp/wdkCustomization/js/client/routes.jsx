@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
 
@@ -10,6 +10,11 @@ import { PlasmoApController } from './components/controllers/PlasmoApController'
 
 import { FeaturedTools } from '@veupathdb/web-common/lib/components/homepage/FeaturedTools';
 import { WorkshopExercises } from '@veupathdb/web-common/lib/components/homepage/WorkshopExercises';
+
+import {
+  usePreferredOrganismsState,
+  usePreferredOrganismsEnabledState
+} from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
 import SampleForm from './components/samples/SampleForm';
 
@@ -80,6 +85,18 @@ function addProjectIdPkValueWrapper(Route) {
   }
 }
 
+function SiteSearchRouteComponent() {
+  const [ preferredOrganisms ] = usePreferredOrganismsState();
+  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
+
+  return (
+    <SiteSearchController
+      preferredOrganisms={preferredOrganisms}
+      preferredOrganismsEnabled={preferredOrganismsEnabled}
+    />
+  );
+}
+
 /**
  * Wrap Ebrc Routes
  */
@@ -117,7 +134,10 @@ export const wrapRoutes = ebrcRoutes => [
 
   {
     path: '/search',
-    component: SiteSearchController
+    component: () =>
+      <Suspense fallback={null}>
+        <SiteSearchRouteComponent />
+      </Suspense>
   },
 
   {
