@@ -15,7 +15,7 @@ import SampleForm from './components/samples/SampleForm';
 
 import { projectId } from './config';
 
-import { blastRoutes } from './blast-routes';
+import { blastRoutes } from './blastRoutes';
 import { preferredOrganismsRoutes } from './preferredOrganismRoutes';
 
 // Project id is not needed for these record classes.
