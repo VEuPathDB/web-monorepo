@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { Suspense, useCallback, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router';
 
 import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -25,7 +25,11 @@ import {
   useRenderOrganismNode,
   useOrganismSearchPredicate
 } from '@veupathdb/preferred-organisms/lib/hooks/organismNodes';
-import { usePreferredOrganismsState, usePreferredOrganismsEnabled } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
+import {
+  usePreferredOrganismsEnabledState,
+  usePreferredOrganismsState,
+  usePreferredSpecies
+} from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
 
 import './OrganismParam.scss';
@@ -35,6 +39,7 @@ const ORGANISM_PROPERTIES_KEY = 'organismProperties';
 const PRUNE_NODES_WITH_SINGLE_EXTENDING_CHILD_PROPERTY = 'pruneNodesWithSingleExtendingChild';
 const SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY = 'showOnlyPreferredOrganisms';
 const HIGHLIGHT_REFERENCE_ORGANISMS_PROPERTY = 'highlightReferenceOrganisms';
+const IS_SPECIES_PARAM_PROPERTY = 'isSpeciesParam';
 
 export function OrganismParam(props: Props<Parameter, State>) {
   if (!isOrganismParamProps(props)) {
@@ -117,29 +122,35 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
 }
 
 function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: string[], onChange: (newValue: string[]) => void) {
-  const initialSelectedValues = useRef(selectedValues);
-
   const [ preferredOrganisms ] = usePreferredOrganismsState();
+  const preferredSpecies = usePreferredSpecies();
 
   const { pathname } = useLocation();
   const isSearchPage = pathname.startsWith('/search');
 
   const preferredValues = useMemo(
-    () => isSearchPage
-      ? new Set(preferredOrganisms)
-      : new Set([...initialSelectedValues.current, ...preferredOrganisms]),
-    [ isSearchPage, preferredOrganisms ]
+    () => findPreferredValues(
+      new Set(preferredOrganisms),
+      preferredSpecies,
+      selectedValues,
+      parameter.vocabulary,
+      isSearchPage,
+      findPreferenceType(parameter)
+    ),
+    [ parameter, isSearchPage, preferredOrganisms, preferredSpecies ]
   );
 
-  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabled();
+  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
 
   useEffect(() => {
-    const filteredInitialSelectedValues = initialSelectedValues.current.filter(selectedValue => preferredValues.has(selectedValue));
+    if (preferredOrganismsEnabled) {
+      const filteredSelectedValues = selectedValues.filter(selectedValue => preferredValues.has(selectedValue));
 
-    if (filteredInitialSelectedValues.length !== initialSelectedValues.current.length) {
-      onChange(filteredInitialSelectedValues);
+      if (filteredSelectedValues.length !== selectedValues.length) {
+        onChange(filteredSelectedValues);
+      }
     }
-  }, []);
+  }, [ preferredOrganismsEnabled ]);
 
   return useMemo(
     () => {
@@ -181,4 +192,47 @@ export function isOrganismParam(parameter: Parameter): parameter is EnumParam {
     parameter?.properties?.[ORGANISM_PROPERTIES_KEY] != null &&
     EnumParamModule.isType(parameter)
   );
+}
+
+function findPreferenceType(parameter: Parameter) {
+  const isSpeciesParam = parameter.properties?.[ORGANISM_PROPERTIES_KEY].includes(IS_SPECIES_PARAM_PROPERTY);
+
+  return isSpeciesParam ? 'species' : 'organism';
+}
+
+function findPreferredValues(
+  preferredOrganismValues: Set<string>,
+  preferredSpecies: Set<string>,
+  selectedValues: string[],
+  vocabRoot: TreeBoxVocabNode,
+  isSearchPage: boolean,
+  preferenceType: 'organism' | 'species'
+) {
+  const basePreferredValues = preferenceType === 'organism'
+    ? preferredOrganismValues
+    : findPreferredSpeciesValues(vocabRoot, preferredSpecies);
+
+  return isSearchPage
+    ? basePreferredValues
+    : new Set([...basePreferredValues, ...selectedValues]);
+}
+
+function findPreferredSpeciesValues(vocabRoot: TreeBoxVocabNode, preferredSpecies: Set<string>) {
+  const preferredSpeciesValues = new Set<string>();
+
+  _traverse(vocabRoot, false);
+
+  return preferredSpeciesValues;
+
+  function _traverse(node: TreeBoxVocabNode, speciesInAncestry: boolean) {
+    const nodeIsSpecies = preferredSpecies.has(node.data.term);
+
+    if (speciesInAncestry || nodeIsSpecies) {
+      preferredSpeciesValues.add(node.data.term);
+    }
+
+    node.children.forEach(child => {
+      _traverse(child, speciesInAncestry || nodeIsSpecies);
+    });
+  }
 }

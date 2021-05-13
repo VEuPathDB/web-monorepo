@@ -166,6 +166,17 @@ body.vpdb-Body .wdk-Answer .MesaComponent .DataTable .DataTable-Sticky .DataTabl
   top: 103px;
 }
 
+// Fix for Preferred Organisms config page header
+body.vpdb-Body .PreferredOrganismsConfig {
+  h1 {
+    padding-top: 0.25rem;
+  }
+
+  &--ToggleHelp::after {
+    right: 3.15em;
+  }
+}
+
 // Various offsets for header on record pages
 body.vpdb-Body .wdk-RecordAttributeSectionItem:before,
 body.vpdb-Body .wdk-RecordTableContainer:before,

@@ -29,6 +29,7 @@ import { apiActions } from './components/strategies/ApiStepDetailsActions';
 import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 
 import { SiteSearchInput as SiteSearchInputWrapper } from './component-wrappers/SiteSearchInput';
+import { AnswerController as AnswerControllerWrapper } from './component-wrappers/AnswerController';
 
 export const SiteHeader = () => ApiSiteHeader;
 
@@ -394,3 +395,5 @@ export function Page() {
 }
 
 export const SiteSearchInput = SiteSearchInputWrapper;
+
+export const AnswerController = AnswerControllerWrapper;

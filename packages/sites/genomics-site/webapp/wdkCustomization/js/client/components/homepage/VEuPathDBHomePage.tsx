@@ -23,7 +23,7 @@ import { useCommunitySiteRootUrl } from '@veupathdb/web-common/lib/hooks/staticD
 
 import { formatReleaseDate } from '@veupathdb/web-common/lib/util/formatters';
 
-import { PreferredOrganismsLink } from '../PreferredOrganismsLink';
+import { PreferredOrganismsSummary } from '@veupathdb/preferred-organisms/lib/components/PreferredOrganismsSummary';
 
 import { PageDescription } from './PageDescription';
 import { makeVpdbClassNameHelper } from './Utils';
@@ -185,7 +185,7 @@ const VEuPathDBHomePageView: FunctionComponent<Props> = props => {
         />
       </ErrorBoundary>
       <div className={subHeaderClassName}>
-        <PreferredOrganismsLink />
+        <PreferredOrganismsSummary />
       </div>
       <div className={vpdbCx('Announcements')}>
         <Announcements
