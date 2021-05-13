@@ -14,6 +14,7 @@ import {
   DataClient,
   ScatterplotRequestParams,
   LineplotRequestParams,
+  DensityplotRequestParams,
 } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
@@ -192,42 +193,69 @@ function ScatterplotViz(props: Props) {
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
       const overlayVariable = findVariable(vizConfig.overlayVariable);
 
-      // check variable inputs
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return Promise.reject(new Error('Please choose a X-axis variable'));
-      // isHistogramVariable may be used instead
-      else if (!isScatterplotVariable(xAxisVariable))
-        return Promise.reject(
-          new Error(
-            `'${xAxisVariable.displayName}' is not suitable for this plot`
-          )
-        );
-      else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
-        return Promise.reject(new Error('Please choose a Y-axis variable'));
-      else if (!isScatterplotVariable(yAxisVariable))
-        return Promise.reject(
-          new Error(
-            `'${yAxisVariable.displayName}' is not suitable for this plot`
-          )
-        );
-      // add a condition to check whether xAxisVariable == yxAxisVariable
-      else if (xAxisVariable === yAxisVariable)
-        return Promise.reject(
-          new Error(
-            'Please choose different variables between X- and Y-axis variable'
-          )
-        );
-      // overlay
-      else if (
-        vizConfig.overlayVariable != null &&
-        overlayVariable != null &&
-        !isTableVariable(overlayVariable)
-      )
-        return Promise.reject(
-          new Error(
-            `'${overlayVariable.displayName}' is not suitable for this plot. Only categorical, binary, or ordinal type is allowed for the Overlay variable.`
-          )
-        );
+      // check variable inputs and add densityplot
+      if (
+        visualization.type === 'scatterplot' ||
+        visualization.type === 'lineplot'
+      ) {
+        if (vizConfig.xAxisVariable == null || xAxisVariable == null)
+          return Promise.reject(new Error('Please choose a X-axis variable'));
+        // isHistogramVariable may be used instead
+        else if (!isScatterplotVariable(xAxisVariable))
+          return Promise.reject(
+            new Error(
+              `'${xAxisVariable.displayName}' is not suitable for this plot`
+            )
+          );
+        else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
+          return Promise.reject(new Error('Please choose a Y-axis variable'));
+        else if (!isScatterplotVariable(yAxisVariable))
+          return Promise.reject(
+            new Error(
+              `'${yAxisVariable.displayName}' is not suitable for this plot`
+            )
+          );
+        // add a condition to check whether xAxisVariable == yxAxisVariable
+        else if (xAxisVariable === yAxisVariable)
+          return Promise.reject(
+            new Error(
+              'Please choose different variables between X- and Y-axis variable'
+            )
+          );
+        // overlay
+        else if (
+          vizConfig.overlayVariable != null &&
+          overlayVariable != null &&
+          !isTableVariable(overlayVariable)
+        )
+          return Promise.reject(
+            new Error(
+              `'${overlayVariable.displayName}' is not suitable for this plot. Only categorical, binary, or ordinal type is allowed for the Overlay variable.`
+            )
+          );
+      } else {
+        //DKDK densityplot
+        if (vizConfig.xAxisVariable == null || xAxisVariable == null)
+          return Promise.reject(new Error('Please choose a X-axis variable'));
+        else if (!isScatterplotVariable(xAxisVariable))
+          return Promise.reject(
+            new Error(
+              `'${xAxisVariable.displayName}' is not suitable for this plot`
+            )
+          );
+        // overlay
+        else if (
+          vizConfig.overlayVariable != null &&
+          overlayVariable != null &&
+          !isTableVariable(overlayVariable)
+        )
+          return Promise.reject(
+            new Error(
+              `'${overlayVariable.displayName}' is not suitable for this plot. Only categorical, binary, or ordinal type is allowed for the Overlay variable.`
+            )
+          );
+      }
+
       // add visualization.type here. valueSpec too?
       const params = getRequestParams(
         studyId,
@@ -247,6 +275,11 @@ function ScatterplotViz(props: Props) {
           ? dataClient.getLineplot(
               computation.type,
               params as LineplotRequestParams
+            )
+          : visualization.type === 'densityplot'
+          ? dataClient.getDensityplot(
+              computation.type,
+              params as DensityplotRequestParams
             )
           : // set default as scatterplot/getScatterplot
             dataClient.getScatterplot(
@@ -277,32 +310,59 @@ function ScatterplotViz(props: Props) {
           <h1>Scatter Plot</h1>
         ) : visualization.type === 'lineplot' ? (
           <h1>Line Plot</h1>
+        ) : visualization.type === 'densityplot' ? (
+          <h1>Density Plot</h1>
         ) : (
           ''
         ))}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables
-            inputs={[
-              {
-                name: 'xAxisVariable',
-                label: 'x-axis variable',
-              },
-              {
-                name: 'yAxisVariable',
-                label: 'y-axis variable',
-              },
-              {
-                name: 'overlayVariable',
-                label: 'Overlay variable (Optional)',
-              },
-            ]}
+            inputs={
+              visualization.type === 'scatterplot' ||
+              visualization.type === 'lineplot'
+                ? [
+                    {
+                      name: 'xAxisVariable',
+                      label: 'x-axis variable',
+                    },
+                    {
+                      name: 'yAxisVariable',
+                      label: 'y-axis variable',
+                    },
+                    {
+                      name: 'overlayVariable',
+                      label: 'Overlay variable (Optional)',
+                    },
+                  ]
+                : [
+                    //DKDK for densityplot
+                    {
+                      name: 'xAxisVariable',
+                      label: 'x-axis variable',
+                    },
+                    //DKDK densityplot overlay
+                    {
+                      name: 'overlayVariable',
+                      label: 'Overlay variable',
+                    },
+                  ]
+            }
             entities={entities}
-            values={{
-              xAxisVariable: vizConfig.xAxisVariable,
-              yAxisVariable: vizConfig.yAxisVariable,
-              overlayVariable: vizConfig.overlayVariable,
-            }}
+            values={
+              visualization.type === 'scatterplot' ||
+              visualization.type === 'lineplot'
+                ? {
+                    xAxisVariable: vizConfig.xAxisVariable,
+                    yAxisVariable: vizConfig.yAxisVariable,
+                    overlayVariable: vizConfig.overlayVariable,
+                  }
+                : {
+                    //DKDK for densityplot
+                    xAxisVariable: vizConfig.xAxisVariable,
+                    overlayVariable: vizConfig.overlayVariable,
+                  }
+            }
             onChange={handleInputVariableChange}
             constraints={constraints}
           />
@@ -431,9 +491,14 @@ any) {
  * @param response
  * @returns ScatterplotData
  */
+//DKDK add densityplot
 export function scatterplotResponseToData(
   response: PromiseType<
-    ReturnType<DataClient['getScatterplot'] | DataClient['getLineplot']>
+    ReturnType<
+      | DataClient['getScatterplot']
+      | DataClient['getLineplot']
+      | DataClient['getDensityplot']
+    >
   >,
   // vizType may be used for handling other plots in this component like line and density
   vizType: string
@@ -441,7 +506,8 @@ export function scatterplotResponseToData(
   // console.log('visualization type at scatterplotResponseToData = ', vizType);
   // console.log('response.data =', response);
 
-  const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatter plot
+  const modeValue =
+    vizType === 'lineplot' || vizType === 'densityplot' ? 'lines' : 'markers'; // for scatterplot
 
   const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(
     response,
@@ -463,12 +529,14 @@ export function scatterplotResponseToData(
 // add an extended type
 type getRequestParamsProps =
   | (ScatterplotRequestParams & { vizType?: string })
-  | (LineplotRequestParams & { vizType?: string });
+  | (LineplotRequestParams & { vizType?: string })
+  | (DensityplotRequestParams & { vizType?: string });
 
 function getRequestParams(
   studyId: string,
   filters: Filter[],
   xAxisVariable: Variable,
+  //DKDK set yAxisVariable as optional for densityplot
   yAxisVariable?: Variable,
   overlayVariable?: Variable,
   // add visualization.type
@@ -476,19 +544,7 @@ function getRequestParams(
   //DKDK ScatterplotControls
   valueSpecConfig?: string
 ): getRequestParamsProps {
-  if (vizType === 'lineplot') {
-    return {
-      studyId,
-      filters,
-      config: {
-        // is outputEntityId correct?
-        outputEntityId: xAxisVariable.entityId,
-        xAxisVariable: xAxisVariable,
-        yAxisVariable: yAxisVariable,
-        overlayVariable: overlayVariable,
-      },
-    } as LineplotRequestParams;
-  } else {
+  if (vizType === 'scatterplot') {
     // scatterplot
     return {
       studyId,
@@ -509,6 +565,30 @@ function getRequestParams(
         overlayVariable: overlayVariable,
       },
     } as ScatterplotRequestParams;
+  } else if (vizType === 'lineplot') {
+    return {
+      studyId,
+      filters,
+      config: {
+        // is outputEntityId correct?
+        outputEntityId: xAxisVariable.entityId,
+        xAxisVariable: xAxisVariable,
+        yAxisVariable: yAxisVariable,
+        overlayVariable: overlayVariable,
+      },
+    } as LineplotRequestParams;
+  } else {
+    //DKDK densityplot
+    return {
+      studyId,
+      filters,
+      config: {
+        //DKDK is outputEntityId correct?
+        outputEntityId: xAxisVariable.entityId,
+        xAxisVariable: xAxisVariable,
+        overlayVariable: overlayVariable,
+      },
+    } as DensityplotRequestParams;
   }
 }
 
@@ -523,8 +603,8 @@ function processInputData<T extends number | Date>(
 ) {
   // console.log('dataSet =', dataSet)
 
-  // set fillAreaValue
-  const fillAreaValue = '';
+  // set fillAreaValue for densityplot
+  const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
 
   // distinguish data per Viztype
   const plotDataSet =
@@ -532,6 +612,8 @@ function processInputData<T extends number | Date>(
       ? //DKDK backend issue for lineplot returning scatterplot currently
         // dataSet.lineplot
         dataSet.scatterplot
+      : vizType === 'densityplot'
+      ? dataSet.densityplot
       : dataSet.scatterplot;
 
   // set variables for x- and yaxis ranges
@@ -935,6 +1017,131 @@ function processInputData<T extends number | Date>(
           shape: 'spline',
           width: 2,
         },
+      });
+    }
+
+    //DKDK density.x/.y is for densityplot
+    if (el.densityX && el.densityY) {
+      //DKDK check the number of x = number of y
+      if (el.densityX.length !== el.densityY.length) {
+        console.log(
+          'x length=',
+          el.densityX.length,
+          '  y length=',
+          el.densityY.length
+        );
+        throw new Error(
+          'The number of X data is not equal to the number of Y data'
+        );
+      }
+
+      //DKDK probably no need to have this for series data, though
+      //1) combine the arrays:
+      let combinedArray = [];
+      for (let j = 0; j < el.densityX.length; j++) {
+        combinedArray.push({
+          xValue: el.densityX[j],
+          yValue: el.densityY[j],
+        });
+      }
+      //2) sort:
+      combinedArray.sort(function (a, b) {
+        return a.xValue < b.xValue ? -1 : a.xValue == b.xValue ? 0 : 1;
+      });
+      //3) separate them back out:
+      for (let k = 0; k < combinedArray.length; k++) {
+        xSeriesValue[k] = combinedArray[k].xValue;
+        ySeriesValue[k] = combinedArray[k].yValue;
+      }
+
+      //DKDK check if this X array consists of numbers & add type assertion
+      if (isArrayOfNumbers(xSeriesValue)) {
+        if (index == 0) {
+          //DKDK need to set initial xMin/xMax
+          xMin = xSeriesValue[0];
+          xMax = xSeriesValue[xSeriesValue.length - 1];
+        } else {
+          xMin =
+            xMin < Math.min(...(xSeriesValue as number[]))
+              ? xMin
+              : Math.min(...(xSeriesValue as number[]));
+          xMax =
+            xMax > Math.max(...(xSeriesValue as number[]))
+              ? xMax
+              : Math.max(...(xSeriesValue as number[]));
+        }
+      } else {
+        //DKDK this array consists of Dates
+        if (index == 0) {
+          //DKDK to set initial min/max Date values for Date[]
+          xMin = getMinDate(xSeriesValue as Date[]);
+          xMax = getMaxDate(xSeriesValue as Date[]);
+        } else {
+          xMin =
+            xMin <
+            Math.min(...xSeriesValue.map((date) => new Date(date).getTime()))
+              ? xMin
+              : new Date(
+                  Math.min(
+                    ...xSeriesValue.map((date) => new Date(date).getTime())
+                  )
+                );
+          xMax =
+            xMax >
+            Math.max(...xSeriesValue.map((date) => new Date(date).getTime()))
+              ? xMax
+              : new Date(
+                  Math.max(
+                    ...xSeriesValue.map((date) => new Date(date).getTime())
+                  )
+                );
+        }
+      }
+
+      //DKDK check if this Y array consists of numbers & add type assertion
+      if (isArrayOfNumbers(ySeriesValue)) {
+        yMin =
+          yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
+        yMax =
+          yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
+      } else {
+        if (index == 0) {
+          //DKDK to set initial Date value for Date[]
+          yMin = getMinDate(ySeriesValue as Date[]);
+          yMax = getMaxDate(ySeriesValue as Date[]);
+        } else {
+          yMin =
+            yMin < getMinDate(ySeriesValue as Date[])
+              ? yMin
+              : getMinDate(ySeriesValue as Date[]);
+          yMax =
+            yMax > getMaxDate(ySeriesValue as Date[])
+              ? yMax
+              : getMaxDate(ySeriesValue as Date[]);
+        }
+      }
+
+      //DKDK add scatter data considering input options
+      dataSetProcess.push({
+        x: xSeriesValue,
+        y: ySeriesValue,
+        // distinguish X/Y Data from Overlay
+        name: el.overlayVariableDetails
+          ? el.overlayVariableDetails.value
+          : 'Data',
+        // mode: 'markers',
+        // mode: 'lines+markers',
+        mode: modeValue,
+        // type: 'scattergl',
+        type: 'scatter',
+        fill: fillAreaValue,
+        marker: {
+          color: 'rgba(' + markerColors[index] + ',0)',
+          size: 12,
+          line: { color: 'rgba(' + markerColors[index] + ',1)', width: 2 },
+        },
+        //DKDK always use spline
+        line: { color: 'rgba(' + markerColors[index] + ',1)', shape: 'spline' },
       });
     }
 
