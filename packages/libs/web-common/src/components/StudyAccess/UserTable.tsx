@@ -17,7 +17,7 @@ export interface Props<R, C extends UserTableColumnKey<R>> {
   rows: R[];
   columns: UserTableColumns<R, C>;
   columnOrder: readonly C[];
-  idGetter: (row: R) => number;
+  idGetter: (row: R) => number | string;
   initialSort?: UserTableSortObject<R, C>;
   actions?: { element: React.ReactNode | ((selection: R[]) => React.ReactNode), callback: (selection: R[]) => void }[];
 }
@@ -47,7 +47,7 @@ export function UserTable<R, C extends UserTableColumnKey<R>>({
   idGetter,
   initialSort
 }: Props<R, C>) {
-  const [ selectedRowIds, setSelectedRowIds ] = useState(() => new Set<number>());
+  const [ selectedRowIds, setSelectedRowIds ] = useState(() => new Set<number | string>());
 
   const [ searchTerm, setSearchTerm ] = useState('');
 
@@ -174,8 +174,8 @@ function makeMesaColumns<R, C extends UserTableColumnKey<R>>(
 
 function makeMesaEventHandlers<R, C extends UserTableColumnKey<R>>(
   setSortUiState: (newSort: UserTableSortObject<R, C>) => void,
-  selectedRowIds: Set<number>,
-  setSelectedRowIds: (newSelectedRowIds: Set<number>) => void,
+  selectedRowIds: Set<number | string>,
+  setSelectedRowIds: (newSelectedRowIds: Set<number | string>) => void,
   idGetter: Props<R, C>['idGetter'],
   actions: Props<R, C>['actions']
 ) {
@@ -221,7 +221,7 @@ function makeMesaUiState<R, C extends UserTableColumnKey<R>>(sort: UserTableSort
 }
 
 function makeMesaOptions<R, C extends UserTableColumnKey<R>>(
-  selectedRowIds: Set<number>,
+  selectedRowIds: Set<number | string>,
   idGetter: Props<R, C>['idGetter'],
   actions: Props<R, C>['actions']
 ) {

@@ -30,6 +30,7 @@ import {
   shouldDisplayEndUsersTable,
   shouldDisplayProvidersTable,
   shouldDisplayStaffTable,
+  shouldDisplayHistoryTable,
 } from 'ebrc-client/StudyAccess/permission';
 import { cx } from 'ebrc-client/components/StudyAccess/StudyAccess';
 import {
@@ -80,9 +81,18 @@ interface EndUserTableFullRow extends EndUserTableRow {
   disseminationPlan: string;
 }
 
+interface HistoryTableRow extends BaseTableRow {
+
+}
+
+interface HistoryTableFullRow extends HistoryTableRow {
+  timestamp: string;
+}
+
 export type StaffTableSectionConfig = UserTableSectionConfig<StaffTableFullRow, keyof StaffTableRow>;
 export type ProviderTableSectionConfig = UserTableSectionConfig<ProviderTableFullRow, keyof ProviderTableRow>;
 export type EndUserTableSectionConfig = UserTableSectionConfig<EndUserTableFullRow, keyof EndUserTableRow>;
+export type HistoryTableSectionConfig = UserTableSectionConfig<HistoryTableFullRow, keyof HistoryTableRow>;
 
 export type OpenDialogConfig = UserTableDialogProps;
 
@@ -705,6 +715,69 @@ export function useEndUserTableSectionConfig(
       endUsersRemovable,
       changeOpenDialogConfig
     ]
+  );
+}
+
+export function useHistoryTableSectionConfig(
+  userPermissions: UserPermissions | undefined,
+  fetchHistory: StudyAccessApi['fetchHistory'],
+): HistoryTableSectionConfig {
+  const { value, loading } = usePromise(
+    fetchIfAllowed(
+      userPermissions && shouldDisplayHistoryTable(userPermissions),
+      fetchHistory
+    ),
+    [ userPermissions ]
+  );
+
+  return useMemo(
+    () => value == null
+      ? {
+          status: 'loading'
+        }
+      : value.type === 'not-allowed'
+      ? {
+          status: 'unavailable'
+        }
+      : {
+          status: 'success',
+          title: 'End User Table Updates',
+          value: {
+            rows: value.result.results.map(({ cause, row }) => ({
+              userId: row.user.userID,
+              name: `${row.user.firstName} ${row.user.lastName}`,
+              email: row.user.email,
+              timestamp: cause.timestamp
+            })),
+            columns: {
+              userId: {
+                key: 'userId',
+                name: 'User ID',
+                className: cx('--UserIdCell'),
+                sortable: true
+              },
+              name: {
+                key: 'name',
+                name: 'Name',
+                className: cx('--NameCell'),
+                sortable: true
+              },
+              email: {
+                key: 'email',
+                name: 'Email',
+                className: cx('--EmailCell'),
+                sortable: true
+              }
+            },
+            columnOrder: [
+              'userId',
+              'name',
+              'email'
+            ],
+            idGetter: row => `${row.userId}-${row.timestamp}`
+          }
+        },
+    [ value ]
   );
 }
 
