@@ -259,6 +259,74 @@ export const permissionsResponse = record({
 
 export type PermissionsResponse = Unpack<typeof permissionsResponse>;
 
+export const historyMeta = record({
+  rows: number,
+  offset: number
+});
+
+export type HistoryMeta = Unpack<typeof historyMeta>;
+
+export const historyCause = record({
+  user: userDetails,
+  action: oneOf(
+    constant('CREATE'),
+    constant('UPDATE'),
+    constant('DELETE')
+  ),
+  timestamp: string
+});
+
+export type HistoryCause = Unpack<typeof historyCause>;
+
+export const historyRow = record({
+  endUserID: number,
+  user: userDetails,
+  datasetPresenterID: string,
+  restrictionLevel: oneOf(
+    constant('PUBLIC'),
+    constant('PRERELEASE'),
+    constant('PROTECTED'),
+    constant('CONTROLLED'),
+    constant('PRIVATE')
+  ),
+  approvalStatus: oneOf(
+    constant('APPROVED'),
+    constant('REQUESTED'),
+    constant('DENIED')
+  ),
+  startDate: string,
+  duration: number,
+  // FIXME: The api docs say this is required. Who is right?
+  purpose: optional(string),
+  // FIXME: The api docs say this is required. Who is right?
+  researchQuestion: optional(string),
+  // FIXME: The api docs say this is required. Who is right?
+  analysisPlan: optional(string),
+  // FIXME: The api docs say this is required. Who is right?
+  disseminationPlan: optional(string),
+  // FIXME: The api docs say this is required. Who is right?
+  denialReason: optional(string),
+  // FIXME: The api docs say this is required. Who is right?
+  dateDenied: optional(string),
+  allowSelfEdits: boolean
+});
+
+export type HistoryRow = Unpack<typeof historyRow>;
+
+export const historyResult = record({
+  cause: historyCause,
+  row: historyRow
+});
+
+export type HistoryResult = Unpack<typeof historyResult>;
+
+export const historyResponse = record({
+  meta: historyMeta,
+  results: arrayOf(historyResult)
+});
+
+export type HistoryResponse = Unpack<typeof historyResponse>;
+
 export const badRequest = record({
   status: constant('bad-request'),
   message: string
