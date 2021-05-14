@@ -75,6 +75,11 @@ export interface HistogramProps {
   selectedRange?: NumberOrDateRange;
   /** function to call upon selecting a range (in independent axis) */
   onSelectedRangeChange?: (newRange?: NumberOrDateRange) => void;
+  /** Min and max allowed values for the selected range.
+   *  Used to keep graphical range selections within the range of the data. Optional. */
+  selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
+  /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
+  isZoomed?: boolean;
 }
 
 /** A Plot.ly based histogram component. */
@@ -102,6 +107,8 @@ export default function Histogram({
   interactive = true,
   selectedRange,
   onSelectedRangeChange = () => {},
+  selectedRangeBounds,
+  isZoomed = false,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -209,9 +216,23 @@ export default function Histogram({
     const uniqueBins = sortedUniqBy(sortedBins, (bin) => bin.binLabel);
 
     // return the list of summaries - note the binMiddle prop
-    return uniqueBins.map((bin) => ({
-      binStart: bin.binStart,
-      binEnd: bin.binEnd,
+    return uniqueBins.map((bin, index) => ({
+      binStart:
+        // The first bin's binStart can outside the allowed range bounds.
+        // If we are not zoomed in, adjust the first bin's binStart to
+        // selectedRangeBounds.min if needed
+        index === 0 &&
+        selectedRangeBounds?.min != undefined &&
+        (!isZoomed || selectedRangeBounds.min > bin.binStart)
+          ? selectedRangeBounds.min
+          : bin.binStart,
+      binEnd:
+        // do similar for the last bin and binEnd
+        index === uniqueBins.length - 1 &&
+        selectedRangeBounds?.max != undefined &&
+        (!isZoomed || selectedRangeBounds.max < bin.binEnd)
+          ? selectedRangeBounds.max
+          : bin.binEnd,
       binMiddle:
         data.valueType === 'date'
           ? DateMath.add(
@@ -226,7 +247,7 @@ export default function Histogram({
             ).toISOString()
           : ((bin.binStart as number) + (bin.binEnd as number)) / 2.0,
     }));
-  }, [data.series, data.valueType]);
+  }, [data.series, data.valueType, isZoomed, selectedRangeBounds]);
 
   // local state for range **while selecting** graphically
   const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
