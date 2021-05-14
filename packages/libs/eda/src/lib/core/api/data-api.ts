@@ -325,62 +325,6 @@ export const MosaicResponse = type({
   }),
 });
 
-//DKDK densityplot
-export interface DensityplotRequestParams {
-  studyId: string;
-  filters: Filter[];
-  config: {
-    outputEntityId: string;
-    //DKDK not quite sure of overlayVariable and facetVariable yet
-    // overlayVariable?: Variable;
-    // facetVariable?: ZeroToTwoVariables;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
-  };
-}
-
-const DensityplotResponseData = array(
-  intersection([
-    type({
-      densityX: array(number),
-      densityY: array(number),
-    }),
-    partial({
-      //DKDK need to make sure if below is correct (untested)
-      overlayVariableDetails: StringVariableValue,
-      facetVariableDetails: union([
-        tuple([StringVariableValue]),
-        tuple([StringVariableValue, StringVariableValue]),
-      ]),
-    }),
-  ])
-);
-
-export type DensityplotResponse = TypeOf<typeof DensityplotResponse>;
-export const DensityplotResponse = type({
-  densityplot: type({
-    data: DensityplotResponseData,
-    config: type({
-      incompleteCases: number,
-      xVariableDetails: type({
-        variableId: string,
-        entityId: string,
-      }),
-      yVariableDetails: type({
-        variableId: string,
-        entityId: string,
-      }),
-    }),
-  }),
-  sampleSizeTable: sampleSizeTableArray,
-});
-
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
@@ -481,19 +425,6 @@ export class DataClient extends FetchClient {
       'twobytwo',
       params,
       MosaicResponse
-    );
-  }
-
-  //DKDK densityplot
-  getDensityplot(
-    computationName: string,
-    params: DensityplotRequestParams
-  ): Promise<DensityplotResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'densityplot',
-      params,
-      DensityplotResponse
     );
   }
 }
