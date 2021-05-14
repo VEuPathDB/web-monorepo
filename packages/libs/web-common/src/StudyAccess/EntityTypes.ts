@@ -266,8 +266,18 @@ export const historyMeta = record({
 
 export type HistoryMeta = Unpack<typeof historyMeta>;
 
+export const historyUser = record({
+  userID: number,
+  firstName: string,
+  lastName: string,
+  organization: string,
+  email: string
+});
+
+export type HistoryUser = Unpack<typeof historyUser>;
+
 export const historyCause = record({
-  user: userDetails,
+  user: historyUser,
   action: oneOf(
     constant('CREATE'),
     constant('UPDATE'),
@@ -280,7 +290,7 @@ export type HistoryCause = Unpack<typeof historyCause>;
 
 export const historyRow = record({
   endUserID: number,
-  user: userDetails,
+  user: historyUser,
   datasetPresenterID: string,
   restrictionLevel: oneOf(
     constant('PUBLIC'),
