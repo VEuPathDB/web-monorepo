@@ -284,17 +284,7 @@ function HistogramPlotWithControls({
   const handleSelectedRangeChange = useCallback(
     (range?: NumberOrDateRange) => {
       if (range) {
-        // FIXME Compare selection to data min/max
-        // UPDATE: back end now returns bins in order
-        // note that the range check below is only using bins from the first (background) series
-        const bins = data.series[0].bins;
-        const min = bins[0].binStart;
-        const max = bins[bins.length - 1].binEnd;
-        if (range.min <= min && range.max >= max) {
-          updateFilter();
-        } else {
-          updateFilter(range);
-        }
+        updateFilter(range);
       } else {
         updateFilter(); // clear the filter if range is undefined
       }
@@ -381,17 +371,34 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
-  // We are not using series[x].summary.min and max here
-  // because the bin boundaries are more appropriate
-  const xRangeMin = data.series[0].bins[0].binStart;
-  const xRangeMax = data.series[0].bins[data.series[0].bins.length - 1].binEnd;
+  const selectedRangeBounds = {
+    min: data.series[0].summary?.min,
+    max: data.series[0].summary?.max,
+  } as NumberOrDateRange;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <HistogramControls
+        valueType={data.valueType}
+        barLayout={barLayout}
+        displayLegend={displayLegend}
+        displayLibraryControls={displayLibraryControls}
+        opacity={opacity}
+        orientation={histogramProps.orientation}
+        errorManagement={errorManagement}
+        selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
+        onSelectedRangeChange={handleSelectedRangeChange}
+        binWidth={data.binWidth!}
+        binWidthRange={data.binWidthRange!}
+        binWidthStep={data.binWidthStep!}
+        containerStyles={{ border: 'none' }}
+      />
       <Histogram
         {...histogramProps}
         data={data}
         selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
@@ -400,11 +407,12 @@ function HistogramPlotWithControls({
         dependentAxisLabel={`Count of ${entityName}`}
         // add independentAxisLabel
         independentAxisLabel={variableName}
+        isZoomed={uiState.independentAxisRange ? true : false}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
       />
       <HistogramControls
-        label="Histogram Controls"
+        label="Axis controls"
         valueType={data.valueType}
         barLayout={barLayout}
         displayLegend={displayLegend}
@@ -421,11 +429,6 @@ function HistogramPlotWithControls({
         binWidthRange={data.binWidthRange!}
         binWidthStep={data.binWidthStep!}
         errorManagement={errorManagement}
-        selectedRange={selectedRange}
-        selectedRangeBounds={
-          { min: xRangeMin, max: xRangeMax } as NumberOrDateRange
-        }
-        onSelectedRangeChange={handleSelectedRangeChange}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
         onIndependentAxisSettingsReset={handleIndependentAxisSettingsReset}
