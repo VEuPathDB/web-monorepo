@@ -82,11 +82,10 @@ interface EndUserTableFullRow extends EndUserTableRow {
 }
 
 interface HistoryTableRow extends BaseTableRow {
-
+  timestamp: string;
 }
 
 interface HistoryTableFullRow extends HistoryTableRow {
-  timestamp: string;
 }
 
 export type StaffTableSectionConfig = UserTableSectionConfig<StaffTableFullRow, keyof StaffTableRow>;
@@ -622,7 +621,7 @@ export function useEndUserTableSectionConfig(
               startDate: {
                 key: 'startDate',
                 name: 'Date Created',
-                className: cx('--StartDateCell'),
+                className: cx('--TimestampCell'),
                 sortable: true,
                 renderCell: ({ value }) => isoToUtcString(value),
                 makeSearchableString: isoToUtcString
@@ -770,14 +769,24 @@ export function useHistoryTableSectionConfig(
                 name: 'Email',
                 className: cx('--EmailCell'),
                 sortable: true
+              },
+              timestamp: {
+                key: 'timestamp',
+                name: 'Date Of Change',
+                className: cx('--TimestampCell'),
+                sortable: true,
+                renderCell: ({ value }) => isoToUtcString(value),
+                makeSearchableString: isoToUtcString
               }
             },
             columnOrder: [
               'userId',
               'name',
-              'email'
+              'email',
+              'timestamp'
             ],
-            idGetter: row => `${row.userId}-${row.timestamp}`
+            idGetter: row => `${row.userId}-${row.timestamp}`,
+            initialSort: { columnKey: 'timestamp', direction: 'desc' }
           }
         },
     [ activeDatasetId, loading, value ]
