@@ -249,17 +249,11 @@ function MosaicViz(props: Props) {
       );
 
       if (isTwoByTwo) {
-        const response = dataClient.getTwoByTwo(
-          computation.type,
-          params as MosaicRequestParams
-        );
+        const response = dataClient.getTwoByTwo(computation.type, params);
 
         return twoByTwoResponseToData(await response);
       } else {
-        const response = dataClient.getMosaic(
-          computation.type,
-          params as MosaicRequestParams
-        );
+        const response = dataClient.getMosaic(computation.type, params);
 
         return mosaicResponseToData(await response);
       }
@@ -514,5 +508,5 @@ function getRequestParams(
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
     },
-  } as MosaicRequestParams;
+  };
 }
