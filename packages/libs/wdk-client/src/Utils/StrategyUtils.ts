@@ -301,7 +301,10 @@ export const removeStep = (
     }
 
     // Remove a step which is the secondary input of the stepTree's root
-    if (stepTree.secondaryInput?.stepId === targetStepId) {
+    if (
+      stepTree.secondaryInput &&
+      stepTree.secondaryInput.stepId === targetStepId
+    ) {
       // If the target is a secondary leaf of stepTree's root, or deleteSubtree is true,
       // return the primary input of stepTree (that is, "delete every step of the nested strategy, not just the target")
       if (
@@ -325,7 +328,8 @@ export const removeStep = (
       (
         stepTree.primaryInput.stepId === targetStepId ||
         (
-          stepTree.primaryInput.secondaryInput?.stepId === targetStepId &&
+          stepTree.primaryInput.secondaryInput &&
+          stepTree.primaryInput.secondaryInput.stepId === targetStepId &&
           deleteSubtree
         )
       )
