@@ -721,6 +721,7 @@ export function useEndUserTableSectionConfig(
 export function useHistoryTableSectionConfig(
   userPermissions: UserPermissions | undefined,
   fetchHistory: StudyAccessApi['fetchHistory'],
+  activeDatasetId: string
 ): HistoryTableSectionConfig {
   const { value, loading } = usePromise(
     fetchIfAllowed(
@@ -731,7 +732,7 @@ export function useHistoryTableSectionConfig(
   );
 
   return useMemo(
-    () => value == null
+    () => value == null || loading
       ? {
           status: 'loading'
         }
@@ -743,12 +744,14 @@ export function useHistoryTableSectionConfig(
           status: 'success',
           title: 'End User Table Updates',
           value: {
-            rows: value.result.results.map(({ cause, row }) => ({
-              userId: row.user.userID,
-              name: `${row.user.firstName} ${row.user.lastName}`,
-              email: row.user.email,
-              timestamp: cause.timestamp
-            })),
+            rows: value.result.results
+              .filter(({ row: { datasetPresenterID } }) => datasetPresenterID === activeDatasetId)
+              .map(({ cause, row }) => ({
+                userId: row.user.userID,
+                name: `${row.user.firstName} ${row.user.lastName}`,
+                email: row.user.email,
+                timestamp: cause.timestamp
+              })),
             columns: {
               userId: {
                 key: 'userId',
@@ -777,7 +780,7 @@ export function useHistoryTableSectionConfig(
             idGetter: row => `${row.userId}-${row.timestamp}`
           }
         },
-    [ value ]
+    [ activeDatasetId, loading, value ]
   );
 }
 

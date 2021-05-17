@@ -95,7 +95,8 @@ export default function StudyAccessController({ datasetId }: Props) {
   );
   const historyTableConfig = useHistoryTableSectionConfig(
     userPermissions,
-    studyAccessApi.fetchHistory
+    studyAccessApi.fetchHistory,
+    datasetId
   );
 
   return (
