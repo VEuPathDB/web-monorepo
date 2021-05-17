@@ -90,6 +90,7 @@ interface HistoryTableRow extends BaseTableRow {
   content: string;
   approvalStatus: HistoryResult['row']['approvalStatus'];
   denialReason: NonNullable<HistoryResult['row']['denialReason']>;
+  allowSelfEdits: boolean;
 }
 
 interface HistoryTableFullRow extends HistoryTableRow {
@@ -765,7 +766,8 @@ export function useHistoryTableSectionConfig(
                   row.analysisPlan,
                   row.disseminationPlan
                 ),
-                denialReason: row.denialReason ?? ''
+                denialReason: row.denialReason ?? '',
+                allowSelfEdits: row.allowSelfEdits
               })),
             columns: {
               userId: {
@@ -839,6 +841,13 @@ export function useHistoryTableSectionConfig(
                 width: '15em',
                 renderCell: ({ value, row }) =>
                   <OverflowingTextCell key={getHistoryTableRowId(row)} value={value} />
+              },
+              allowSelfEdits: {
+                key: 'allowSelfEdits',
+                name: 'Lock/Unlock',
+                className: cx('--LockUnlockCell'),
+                sortable: false,
+                renderCell: ({ value }) => value ? 'unlocked' : 'locked'
               }
             },
             columnOrder: [
@@ -850,7 +859,8 @@ export function useHistoryTableSectionConfig(
               'action',
               'approvalStatus',
               'content',
-              'denialReason'
+              'denialReason',
+              'allowSelfEdits'
             ],
             idGetter: getHistoryTableRowId,
             initialSort: { columnKey: 'timestamp', direction: 'desc' }
