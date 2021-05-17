@@ -85,9 +85,10 @@ interface EndUserTableFullRow extends EndUserTableRow {
 
 interface HistoryTableRow extends BaseTableRow {
   timestamp: HistoryResult['cause']['timestamp'];
-  approvalStatus: HistoryResult['row']['approvalStatus'];
+  actionPerformer: string;
   action: HistoryResult['cause']['action'];
   content: string;
+  approvalStatus: HistoryResult['row']['approvalStatus'];
   denialReason: NonNullable<HistoryResult['row']['denialReason']>;
 }
 
@@ -751,6 +752,7 @@ export function useHistoryTableSectionConfig(
                 name: `${row.user.firstName} ${row.user.lastName}`,
                 email: row.user.email,
                 timestamp: cause.timestamp,
+                actionPerformer: `${cause.user.firstName} ${cause.user.lastName}`,
                 action: cause.action,
                 approvalStatus: row.approvalStatus,
                 purpose: row.purpose ?? '',
@@ -792,10 +794,17 @@ export function useHistoryTableSectionConfig(
                 renderCell: ({ value }) => isoToUtcString(value),
                 makeSearchableString: isoToUtcString
               },
+              actionPerformer: {
+                key: 'actionPerformer',
+                name: 'Who Performed Action',
+                className: cx('--NameCell'),
+                sortable: true,
+              },
               action: {
                 key: 'action',
                 name: 'Action',
                 className: cx('--ActionCell'),
+                sortable: true,
                 renderCell: ({ value }) => value.toLowerCase()
               },
               approvalStatus: {
@@ -837,6 +846,7 @@ export function useHistoryTableSectionConfig(
               'name',
               'email',
               'timestamp',
+              'actionPerformer',
               'action',
               'approvalStatus',
               'content',
