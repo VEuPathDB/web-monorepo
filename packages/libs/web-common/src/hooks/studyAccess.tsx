@@ -82,8 +82,9 @@ interface EndUserTableFullRow extends EndUserTableRow {
 }
 
 interface HistoryTableRow extends BaseTableRow {
-  timestamp: HistoryResult['cause']['timestamp']
-  approvalStatus: HistoryResult['row']['approvalStatus']
+  timestamp: HistoryResult['cause']['timestamp'];
+  approvalStatus: HistoryResult['row']['approvalStatus'];
+  action: HistoryResult['cause']['action'];
 }
 
 interface HistoryTableFullRow extends HistoryTableRow {
@@ -751,6 +752,7 @@ export function useHistoryTableSectionConfig(
                 name: `${row.user.firstName} ${row.user.lastName}`,
                 email: row.user.email,
                 timestamp: cause.timestamp,
+                action: cause.action,
                 approvalStatus: row.approvalStatus
               })),
             columns: {
@@ -774,11 +776,17 @@ export function useHistoryTableSectionConfig(
               },
               timestamp: {
                 key: 'timestamp',
-                name: 'Date Of Change',
+                name: 'Date Of Action',
                 className: cx('--TimestampCell'),
                 sortable: true,
                 renderCell: ({ value }) => isoToUtcString(value),
                 makeSearchableString: isoToUtcString
+              },
+              action: {
+                key: 'action',
+                name: 'Action',
+                className: cx('--ActionCell'),
+                renderCell: ({ value }) => value.toLowerCase()
               },
               approvalStatus: {
                 key: 'approvalStatus',
@@ -793,6 +801,7 @@ export function useHistoryTableSectionConfig(
               'name',
               'email',
               'timestamp',
+              'action',
               'approvalStatus'
             ],
             idGetter: row => `${row.userId}-${row.timestamp}`,
