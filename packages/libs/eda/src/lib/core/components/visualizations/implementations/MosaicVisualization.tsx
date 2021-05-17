@@ -274,6 +274,97 @@ function MosaicViz(props: Props) {
     ])
   );
 
+  let plotComponent: JSX.Element;
+
+  if (data.value) {
+    let statsTable = undefined;
+
+    if (isTwoByTwo) {
+      const twoByTwoData = data.value as TwoByTwoData;
+      const rangeRegex = /(\d+\.\d+)  -  (\d+\.\d+)/;
+      const orIntervalMatch = twoByTwoData.orInterval.match(rangeRegex);
+      const rrIntervalMatch = twoByTwoData.rrInterval.match(rangeRegex);
+
+      statsTable = (
+        <div className="TwoByTwoVisualization-StatsTable">
+          <table>
+            <tbody>
+              <tr>
+                <th></th>
+                <th>Value</th>
+                <th>95% confidence interval</th>
+              </tr>
+              <tr>
+                <td>p-value</td>
+                <td>{twoByTwoData.pValue}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Odds ratio</td>
+                <td>{twoByTwoData.oddsRatio}</td>
+                {orIntervalMatch && (
+                  <td>{`${Number(orIntervalMatch[1]).toFixed(4)} - ${Number(
+                    orIntervalMatch[2]
+                  ).toFixed(4)}`}</td>
+                )}
+              </tr>
+              <tr>
+                <td>Relative risk</td>
+                <td>{twoByTwoData.relativeRisk}</td>
+                {rrIntervalMatch && (
+                  <td>{`${Number(rrIntervalMatch[1]).toFixed(4)} - ${Number(
+                    rrIntervalMatch[2]
+                  ).toFixed(4)}`}</td>
+                )}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    plotComponent = fullscreen ? (
+      <div className="TwoByTwoVisualization">
+        <div className="TwoByTwoVisualization-Plot">
+          <MosaicPlotWithControls
+            data={data.value.data}
+            independentValues={data.value.independentValues}
+            dependentValues={data.value.dependentValues}
+            independentLabel={
+              findVariable(vizConfig.xAxisVariable)!.displayName
+            }
+            dependentLabel={findVariable(vizConfig.yAxisVariable)!.displayName}
+            showLegend={true}
+          />
+        </div>
+        {isTwoByTwo && statsTable}
+      </div>
+    ) : (
+      // thumbnail/grid view
+      <Mosaic
+        data={data.value.data}
+        independentValues={data.value.independentValues}
+        dependentValues={data.value.dependentValues}
+        width={350}
+        height={280}
+        showModebar={false}
+        showLegend={false}
+        independentLabel=""
+        dependentLabel=""
+      />
+    );
+  } else {
+    plotComponent = (
+      <i
+        className="fa fa-th-large"
+        style={{
+          fontSize: fullscreen ? '34em' : '12em',
+          color: '#aaa',
+        }}
+      ></i>
+    );
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {fullscreen && <h1>{isTwoByTwo ? '2x2' : 'RxC'} Contigency Table</h1>}
@@ -323,73 +414,7 @@ function MosaicViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {data.value ? (
-        fullscreen ? (
-          <div className="TwoByTwoVisualization">
-            <div className="TwoByTwoVisualization-Plot">
-              <MosaicPlotWithControls
-                data={data.value.data}
-                independentValues={data.value.independentValues}
-                dependentValues={data.value.dependentValues}
-                independentLabel={
-                  findVariable(vizConfig.xAxisVariable)!.displayName
-                }
-                dependentLabel={
-                  findVariable(vizConfig.yAxisVariable)!.displayName
-                }
-                showLegend={true}
-              />
-            </div>
-            {isTwoByTwo && (
-              <div className="TwoByTwoVisualization-StatsTable">
-                <table>
-                  <tr>
-                    <th></th>
-                    <th>Value</th>
-                    <th>95% confidence interval</th>
-                  </tr>
-                  <tr>
-                    <td>p-value</td>
-                    <td>{(data.value as TwoByTwoData).pValue}</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td>Odds ratio</td>
-                    <td>{(data.value as TwoByTwoData).oddsRatio}</td>
-                    <td>{(data.value as TwoByTwoData).orInterval}</td>
-                  </tr>
-                  <tr>
-                    <td>Relative risk</td>
-                    <td>{(data.value as TwoByTwoData).relativeRisk}</td>
-                    <td>{(data.value as TwoByTwoData).rrInterval}</td>
-                  </tr>
-                </table>
-              </div>
-            )}
-          </div>
-        ) : (
-          // thumbnail/grid view
-          <Mosaic
-            data={data.value.data}
-            independentValues={data.value.independentValues}
-            dependentValues={data.value.dependentValues}
-            width={350}
-            height={280}
-            showModebar={false}
-            showLegend={false}
-            independentLabel=""
-            dependentLabel=""
-          />
-        )
-      ) : (
-        <i
-          className="fa fa-th-large"
-          style={{
-            fontSize: fullscreen ? '34em' : '12em',
-            color: '#aaa',
-          }}
-        ></i>
-      )}
+      {plotComponent}
     </div>
   );
 }
@@ -467,11 +492,11 @@ export function twoByTwoResponseToData(
     data: data,
     independentValues: response.mosaic.data[0].xLabel,
     dependentValues: response.mosaic.data[0].yLabel,
-    pValue: response.statsTable[0].pvalue[0],
-    relativeRisk: response.statsTable[0].relativerisk[0],
-    rrInterval: response.statsTable[0].rrInterval[0],
-    oddsRatio: response.statsTable[0].oddsratio[0],
-    orInterval: response.statsTable[0].orInterval[0],
+    pValue: response.statsTable[0].pvalue[1],
+    relativeRisk: response.statsTable[0].relativerisk[1],
+    rrInterval: response.statsTable[0].rrInterval[1],
+    oddsRatio: response.statsTable[0].oddsratio[1],
+    orInterval: response.statsTable[0].orInterval[1],
   };
 }
 
