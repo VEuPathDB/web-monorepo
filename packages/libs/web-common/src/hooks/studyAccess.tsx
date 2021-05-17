@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   capitalize,
+  isNil,
+  negate,
   partition,
   zipWith
  } from 'lodash';
@@ -85,9 +87,14 @@ interface HistoryTableRow extends BaseTableRow {
   timestamp: HistoryResult['cause']['timestamp'];
   approvalStatus: HistoryResult['row']['approvalStatus'];
   action: HistoryResult['cause']['action'];
+  content: string;
 }
 
 interface HistoryTableFullRow extends HistoryTableRow {
+  purpose: NonNullable<HistoryResult['row']['purpose']>;
+  researchQuestion: NonNullable<HistoryResult['row']['researchQuestion']>;
+  analysisPlan: NonNullable<HistoryResult['row']['analysisPlan']>;
+  disseminationPlan: NonNullable<HistoryResult['row']['disseminationPlan']>;
 }
 
 export type StaffTableSectionConfig = UserTableSectionConfig<StaffTableFullRow, keyof StaffTableRow>;
@@ -574,10 +581,10 @@ export function useEndUserTableSectionConfig(
               user,
               startDate,
               approvalStatus,
-              purpose = '',
-              researchQuestion = '',
-              analysisPlan = '',
-              disseminationPlan = '',
+              purpose,
+              researchQuestion,
+              analysisPlan,
+              disseminationPlan,
               denialReason = ''
             }) => ({
               userId: user.userId,
@@ -585,20 +592,16 @@ export function useEndUserTableSectionConfig(
               email: user.email,
               startDate,
               approvalStatus: endUserTableUiState.approvalStatus[user.userId] ?? approvalStatus,
-              content: [
-                purpose && 'Purpose:',
+              content: makeContentSearchableSring(
                 purpose,
-                researchQuestion && 'Research Question:',
                 researchQuestion,
-                analysisPlan && 'Analysis Plan:',
                 analysisPlan,
-                disseminationPlan && 'Dissemination Plan:',
                 disseminationPlan
-              ].join('\0'),
-              purpose,
-              researchQuestion,
-              analysisPlan,
-              disseminationPlan,
+              ),
+              purpose: purpose ?? '',
+              researchQuestion: researchQuestion ?? '',
+              analysisPlan: analysisPlan ?? '',
+              disseminationPlan: disseminationPlan ?? '',
               denialReason: endUserTableUiState.denialReason[user.userId] ?? denialReason
             })),
             columns: {
@@ -657,17 +660,12 @@ export function useEndUserTableSectionConfig(
                 sortable: false,
                 width: '35em',
                 renderCell: ({ row: { userId, purpose, researchQuestion, analysisPlan, disseminationPlan } }) => {
-                  const contentFields = zipWith(
-                    [ 'Purpose:', 'Research Question:', 'Analysis Plan:', 'Dissemination Plan:'],
-                    [ purpose, researchQuestion, analysisPlan, disseminationPlan ],
-                    (heading, field) => {
-                      return field.length > 0
-                        ? `${heading}\n${field}`
-                        : undefined
-                    }
+                  const textValue = makeContentDisplay(
+                    purpose,
+                    researchQuestion,
+                    analysisPlan,
+                    disseminationPlan
                   );
-
-                  const textValue = contentFields.filter(contentField => contentField != null).join('\n\n');
 
                   return <OverflowingTextCell key={userId} value={textValue} />;
                 }
@@ -753,7 +751,17 @@ export function useHistoryTableSectionConfig(
                 email: row.user.email,
                 timestamp: cause.timestamp,
                 action: cause.action,
-                approvalStatus: row.approvalStatus
+                approvalStatus: row.approvalStatus,
+                purpose: row.purpose ?? '',
+                researchQuestion: row.researchQuestion ?? '',
+                analysisPlan: row.analysisPlan ?? '',
+                disseminationPlan: row.disseminationPlan ?? '',
+                content: makeContentSearchableSring(
+                  row.purpose,
+                  row.researchQuestion,
+                  row.analysisPlan,
+                  row.disseminationPlan
+                )
               })),
             columns: {
               userId: {
@@ -794,7 +802,24 @@ export function useHistoryTableSectionConfig(
                 className: cx('--ApprovalStatusCell'),
                 sortable: true,
                 renderCell: ({ value }) => value.toLowerCase()
-              }
+              },
+              content: {
+                key: 'content',
+                name: 'Content',
+                className: cx('--ContentCell'),
+                sortable: false,
+                width: '35em',
+                renderCell: ({ row: { userId, purpose, researchQuestion, analysisPlan, disseminationPlan, timestamp } }) => {
+                  const textValue = makeContentDisplay(
+                    purpose,
+                    researchQuestion,
+                    analysisPlan,
+                    disseminationPlan
+                  );
+
+                  return <OverflowingTextCell key={`${userId}-${timestamp}`} value={textValue} />;
+                }
+              },
             },
             columnOrder: [
               'userId',
@@ -802,7 +827,8 @@ export function useHistoryTableSectionConfig(
               'email',
               'timestamp',
               'action',
-              'approvalStatus'
+              'approvalStatus',
+              'content'
             ],
             idGetter: row => `${row.userId}-${row.timestamp}`,
             initialSort: { columnKey: 'timestamp', direction: 'desc' }
@@ -1303,4 +1329,41 @@ function dateToUtcString(date: Date) {
 
 function capitalizeRole(role: string) {
   return role.split(' ').map(capitalize).join(' ');
+}
+
+function makeContentSearchableSring(
+  purpose: string | undefined,
+  researchQuestion: string | undefined,
+  analysisPlan: string | undefined,
+  disseminationPlan: string | undefined
+) {
+  return [
+    purpose && 'Purpose:',
+    purpose,
+    researchQuestion && 'Research Question:',
+    researchQuestion,
+    analysisPlan && 'Analysis Plan:',
+    analysisPlan,
+    disseminationPlan && 'Dissemination Plan:',
+    disseminationPlan
+  ].filter(negate(isNil)).join('\0');
+}
+
+function makeContentDisplay(
+  purpose: string,
+  researchQuestion: string,
+  analysisPlan: string,
+  disseminationPlan: string
+) {
+  const contentFields = zipWith(
+    [ 'Purpose:', 'Research Question:', 'Analysis Plan:', 'Dissemination Plan:'],
+    [ purpose, researchQuestion, analysisPlan, disseminationPlan ],
+    (heading, field) => {
+      return field.length > 0
+        ? `${heading}\n${field}`
+        : undefined
+    }
+  );
+
+  return contentFields.filter(negate(isNil)).join('\n\n');
 }
