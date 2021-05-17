@@ -88,6 +88,7 @@ interface HistoryTableRow extends BaseTableRow {
   approvalStatus: HistoryResult['row']['approvalStatus'];
   action: HistoryResult['cause']['action'];
   content: string;
+  denialReason: NonNullable<HistoryResult['row']['denialReason']>;
 }
 
 interface HistoryTableFullRow extends HistoryTableRow {
@@ -761,7 +762,8 @@ export function useHistoryTableSectionConfig(
                   row.researchQuestion,
                   row.analysisPlan,
                   row.disseminationPlan
-                )
+                ),
+                denialReason: row.denialReason ?? ''
               })),
             columns: {
               userId: {
@@ -809,17 +811,26 @@ export function useHistoryTableSectionConfig(
                 className: cx('--ContentCell'),
                 sortable: false,
                 width: '35em',
-                renderCell: ({ row: { userId, purpose, researchQuestion, analysisPlan, disseminationPlan, timestamp } }) => {
+                renderCell: ({ row }) => {
                   const textValue = makeContentDisplay(
-                    purpose,
-                    researchQuestion,
-                    analysisPlan,
-                    disseminationPlan
+                    row.purpose,
+                    row.researchQuestion,
+                    row.analysisPlan,
+                    row.disseminationPlan
                   );
 
-                  return <OverflowingTextCell key={`${userId}-${timestamp}`} value={textValue} />;
+                  return <OverflowingTextCell key={getHistoryTableRowId(row)} value={textValue} />;
                 }
               },
+              denialReason: {
+                key: 'denialReason',
+                name: 'Notes',
+                className: cx('--NotesCell'),
+                sortable: false,
+                width: '15em',
+                renderCell: ({ value, row }) =>
+                  <OverflowingTextCell key={getHistoryTableRowId(row)} value={value} />
+              }
             },
             columnOrder: [
               'userId',
@@ -828,9 +839,10 @@ export function useHistoryTableSectionConfig(
               'timestamp',
               'action',
               'approvalStatus',
-              'content'
+              'content',
+              'denialReason'
             ],
-            idGetter: row => `${row.userId}-${row.timestamp}`,
+            idGetter: getHistoryTableRowId,
             initialSort: { columnKey: 'timestamp', direction: 'desc' }
           }
         },
@@ -1366,4 +1378,8 @@ function makeContentDisplay(
   );
 
   return contentFields.filter(negate(isNil)).join('\n\n');
+}
+
+function getHistoryTableRowId(row: HistoryTableFullRow) {
+  return `${row.userId}-${row.timestamp}`
 }
