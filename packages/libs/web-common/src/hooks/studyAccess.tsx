@@ -12,7 +12,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import { fetchStudies } from 'ebrc-client/App/Studies/StudyActionCreators';
-import { ApprovalStatus } from 'ebrc-client/StudyAccess/EntityTypes';
+import { ApprovalStatus, HistoryResult } from 'ebrc-client/StudyAccess/EntityTypes';
 import {
   StudyAccessApi,
   apiRequests,
@@ -82,7 +82,8 @@ interface EndUserTableFullRow extends EndUserTableRow {
 }
 
 interface HistoryTableRow extends BaseTableRow {
-  timestamp: string;
+  timestamp: HistoryResult['cause']['timestamp']
+  approvalStatus: HistoryResult['row']['approvalStatus']
 }
 
 interface HistoryTableFullRow extends HistoryTableRow {
@@ -749,7 +750,8 @@ export function useHistoryTableSectionConfig(
                 userId: row.user.userID,
                 name: `${row.user.firstName} ${row.user.lastName}`,
                 email: row.user.email,
-                timestamp: cause.timestamp
+                timestamp: cause.timestamp,
+                approvalStatus: row.approvalStatus
               })),
             columns: {
               userId: {
@@ -777,13 +779,21 @@ export function useHistoryTableSectionConfig(
                 sortable: true,
                 renderCell: ({ value }) => isoToUtcString(value),
                 makeSearchableString: isoToUtcString
+              },
+              approvalStatus: {
+                key: 'approvalStatus',
+                name: 'Approval Status',
+                className: cx('--ApprovalStatusCell'),
+                sortable: true,
+                renderCell: ({ value }) => value.toLowerCase()
               }
             },
             columnOrder: [
               'userId',
               'name',
               'email',
-              'timestamp'
+              'timestamp',
+              'approvalStatus'
             ],
             idGetter: row => `${row.userId}-${row.timestamp}`,
             initialSort: { columnKey: 'timestamp', direction: 'desc' }
