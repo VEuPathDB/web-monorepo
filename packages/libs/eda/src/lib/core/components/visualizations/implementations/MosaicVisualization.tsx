@@ -2,8 +2,7 @@
 import Mosaic, {
   Props as MosaicProps,
 } from '@veupathdb/components/lib/plots/MosaicPlot';
-import { ErrorManagement } from '@veupathdb/components/lib/types/general';
-// import { MosaicData } from '@veupathdb/components/lib/types/plots';
+// import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -197,7 +196,7 @@ function MosaicViz(props: Props) {
         yAxisVariable,
       });
     },
-    [updateVizConfig, vizConfig]
+    [updateVizConfig]
   );
 
   const findVariable = useCallback(
@@ -271,6 +270,7 @@ function MosaicViz(props: Props) {
       vizConfig,
       findVariable,
       computation.type,
+      isTwoByTwo,
     ])
   );
 
@@ -281,7 +281,7 @@ function MosaicViz(props: Props) {
 
     if (isTwoByTwo) {
       const twoByTwoData = data.value as TwoByTwoData;
-      const rangeRegex = /(\d+\.\d+)  -  (\d+\.\d+)/;
+      const rangeRegex = /(\d+\.\d+) {2}- {2}(\d+\.\d+)/;
       const orIntervalMatch = twoByTwoData.orInterval.match(rangeRegex);
       const rrIntervalMatch = twoByTwoData.rrInterval.match(rangeRegex);
 
@@ -427,14 +427,14 @@ function MosaicPlotWithControls({
 }: MosaicPlotWithControlsProps) {
   // TODO Use UIState
   const displayLibraryControls = false;
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
+  // const errorManagement = useMemo((): ErrorManagement => {
+  //   return {
+  //     errors: [],
+  //     addError: (error: Error) => {},
+  //     removeError: (error: Error) => {},
+  //     clearAllErrors: () => {},
+  //   };
+  // }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
