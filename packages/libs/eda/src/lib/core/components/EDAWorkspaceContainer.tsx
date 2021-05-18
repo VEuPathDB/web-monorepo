@@ -3,16 +3,16 @@ import React from 'react';
 import { SubsettingClient } from '../api/subsetting-api';
 import { DataClient } from '../api/data-api';
 import { SessionClient } from '../api/session-api';
-import { WorkspaceContext } from '../context/WorkspaceContext';
+import {
+  MakeVariableLink,
+  WorkspaceContext,
+} from '../context/WorkspaceContext';
 import { useStudyMetadata, useWdkStudyRecord } from '../hooks/study';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core';
+import { workspaceTheme } from './workspaceTheme';
 
-const theme = createMuiTheme({
-  typography: {
-    fontSize: 12,
-  },
-});
+const theme = createMuiTheme(workspaceTheme);
 export interface Props {
   studyId: string;
   sessionId: string;
@@ -21,7 +21,7 @@ export interface Props {
   sessionClient: SessionClient;
   subsettingClient: SubsettingClient;
   dataClient: DataClient;
-  makeVariableLink?: (entityId: string, variableId: string) => string;
+  makeVariableLink?: MakeVariableLink;
 }
 
 export function EDAWorkspaceContainer(props: Props) {

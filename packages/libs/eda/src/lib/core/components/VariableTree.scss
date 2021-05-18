@@ -5,43 +5,26 @@
   left: 1px;
   right: 1px;
 
+  .wdk-CheckboxTreeItem {
+    padding-left: 1.5em;
+  }
+
   .wdk-CheckboxTree .wdk-AttributeFilterFieldItem,
   .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent {
-    padding: 0.2em 0.35em;
-    border-radius: 0.25em;
+    padding: 0.25em 0.5em;
+    border-radius: 0.5em;
   }
 
   /* All entities */
   .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldEntityParent {
     font-weight: bold;
-    // color: black;
+    font-size: 1.05em;
   }
-
-  /* Active entity */
-  .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent__active {
-    // border: 3px solid #3c78d8;
-    // font-weight: bold;
-    // color: black;
-    background: #eaeaea;
-  }
-
-  // /* All middle-level tree elements (not variables and not entities) */
-  // .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent:not(.wdk-AttributeFilterFieldEntityParent) {
-  //   // color: grey;
-  //   color: black;
-  // }
-
-  /* All variables */
-  // .wdk-AttributeFilterFieldItem {
-  // }
 
   /* Active variable */
   .wdk-AttributeFilterFieldItem__active {
-    // background: #eaeaea;
-    // border: 1px solid #3c78d8;
-    background: #3c78d8;
-    color: white;
-    font-weight: bold;
+    background: #e6e6e6;
+    outline: none;
   }
 
   /* height of CheckboxTree - use vh */
@@ -55,5 +38,15 @@
     height: 100%;
     overflow: auto;
     padding: 0 1em;
+  }
+
+  .wdk-CheckboxTreeNodeContent {
+    margin-left: 1ex;
+  }
+
+  .wdk-CheckboxTreeItem__leaf {
+    .wdk-CheckboxTreeNodeContent {
+      margin-left: -1ex;
+    }
   }
 }

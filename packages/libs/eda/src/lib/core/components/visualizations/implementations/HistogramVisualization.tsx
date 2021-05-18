@@ -19,19 +19,14 @@ import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
-  DateHistogramRequestParams,
-  NumericHistogramRequestParams,
+  HistogramRequestParams,
+  HistogramResponse,
 } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 import { DataElementConstraint } from '../../../types/visualization';
-import {
-  ISODateStringToZuluDate,
-  parseTimeDelta,
-} from '../../../utils/date-conversion';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
@@ -84,6 +79,7 @@ function FullscreenComponent(props: VisualizationProps) {
 function createDefaultConfig(): HistogramConfig {
   return {
     enableOverlay: true,
+    dependentAxisLogScale: false,
   };
 }
 
@@ -92,6 +88,7 @@ type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
 const HistogramConfig = t.intersection([
   t.type({
     enableOverlay: t.boolean,
+    dependentAxisLogScale: t.boolean,
   }),
   t.partial({
     xAxisVariable: Variable,
@@ -169,12 +166,21 @@ function HistogramViz(props: Props) {
     ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
       if (newBinWidth) {
         updateVizConfig({
-          binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
+          binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
           binWidthTimeUnit: isTimeDelta(newBinWidth)
-            ? newBinWidth[1]
+            ? newBinWidth.unit
             : undefined,
         });
       }
+    },
+    [updateVizConfig]
+  );
+
+  const handleDependentAxisLogScale = useCallback(
+    (newState?: boolean) => {
+      updateVizConfig({
+        dependentAxisLogScale: newState,
+      });
     },
     [updateVizConfig]
   );
@@ -200,16 +206,7 @@ function HistogramViz(props: Props) {
         vizConfig.binWidth,
         vizConfig.binWidthTimeUnit
       );
-      const response =
-        xAxisVariable.type === 'date'
-          ? dataClient.getDateHistogramBinWidth(
-              computation.type,
-              params as DateHistogramRequestParams
-            )
-          : dataClient.getNumericHistogramBinWidth(
-              computation.type,
-              params as NumericHistogramRequestParams
-            );
+      const response = dataClient.getHistogram(computation.type, params);
       return histogramResponseToData(await response, xAxisVariable.type);
     }, [studyId, filters, dataClient, vizConfig, entities, computation.type])
   );
@@ -268,6 +265,8 @@ function HistogramViz(props: Props) {
           <HistogramPlotWithControls
             data={data.value}
             onBinWidthChange={onBinWidthChange}
+            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+            handleDependentAxisLogScale={handleDependentAxisLogScale}
             width="100%"
             height={400}
             orientation={'vertical'}
@@ -286,6 +285,7 @@ function HistogramViz(props: Props) {
             displayLegend={false}
             independentAxisLabel=""
             dependentAxisLabel=""
+            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           />
         )
       ) : (
@@ -307,11 +307,13 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   }: {
     binWidth: NumberOrTimeDelta;
   }) => void;
+  handleDependentAxisLogScale: (newState?: boolean) => void;
 };
 
 function HistogramPlotWithControls({
   data,
   onBinWidthChange,
+  handleDependentAxisLogScale,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // TODO Use UIState
@@ -349,7 +351,7 @@ function HistogramPlotWithControls({
           binWidth={data.binWidth}
           selectedUnit={
             data.binWidth && isTimeDelta(data.binWidth)
-              ? data.binWidth[1]
+              ? data.binWidth.unit
               : undefined
           }
           onBinWidthChange={({ binWidth: newBinWidth }) => {
@@ -358,6 +360,8 @@ function HistogramPlotWithControls({
           binWidthRange={data.binWidthRange}
           binWidthStep={data.binWidthStep}
           errorManagement={errorManagement}
+          dependentAxisLogScale={histogramProps.dependentAxisLogScale}
+          toggleDependentAxisLogScale={handleDependentAxisLogScale}
         />
       )}
     </div>
@@ -370,48 +374,44 @@ function HistogramPlotWithControls({
  * @returns HistogramData
  */
 export function histogramResponseToData(
-  response: PromiseType<
-    ReturnType<
-      DataClient['getDateHistogramBinWidth' | 'getNumericHistogramBinWidth']
-    >
-  >,
+  response: HistogramResponse,
   type: HistogramVariable['type']
 ): HistogramData {
-  if (response.data.length === 0)
+  if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
   const binWidth =
     type === 'number'
-      ? parseFloat(response.config.binWidth as string) || 1
-      : parseTimeDelta(response.config.binWidth as string);
-  const { min, max, step } = response.config.binSlider;
+      ? response.histogram.config.binSpec.value || 1
+      : {
+          value: response.histogram.config.binSpec.value || 1,
+          unit: response.histogram.config.binSpec.units || 'month',
+        };
+  const { min, max, step } = response.histogram.config.binSlider;
   const binWidthRange = (type === 'number'
     ? { min, max }
     : {
         min,
         max,
-        unit: (binWidth as TimeDelta)[1],
+        unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
   return {
-    series: response.data.map((data, index) => ({
+    series: response.histogram.data.map((data, index) => ({
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
       // color: TO DO
-      bins: data.value
-        .map((_, index) => ({
-          binStart:
-            type === 'number'
-              ? Number(data.binStart[index])
-              : ISODateStringToZuluDate(data.binStart[index]),
-          binEnd:
-            type === 'number'
-              ? Number(data.binEnd[index])
-              : ISODateStringToZuluDate(data.binEnd[index]),
-          binLabel: data.binLabel[index],
-          count: data.value[index],
-        }))
-        .sort((a, b) => a.binStart.valueOf() - b.binStart.valueOf()),
-      // TO DO: review necessity of sort if back end (or plot component) does sorting?
+      bins: data.value.map((_, index) => ({
+        binStart:
+          type === 'number'
+            ? Number(data.binStart[index])
+            : String(data.binStart[index]),
+        binEnd:
+          type === 'number'
+            ? Number(data.binEnd[index])
+            : String(data.binEnd[index]),
+        binLabel: data.binLabel[index],
+        count: data.value[index],
+      })),
     })),
     valueType: type,
     binWidth,
@@ -428,17 +428,16 @@ function getRequestParams(
   overlayVariable?: Variable,
   binWidth?: number,
   binWidthTimeUnit?: string
-): NumericHistogramRequestParams | DateHistogramRequestParams {
-  const binOption = binWidth
+): HistogramRequestParams {
+  const binSpec = binWidth
     ? {
-        binWidth:
-          variableType === 'number'
-            ? binWidth
-            : `${binWidth} ${binWidthTimeUnit}`,
+        binSpec: {
+          type: 'binWidth',
+          value: binWidth,
+          ...(variableType === 'date' ? { units: binWidthTimeUnit } : {}),
+        },
       }
-    : {
-        // numBins: 10,
-      };
+    : { binSpec: { type: 'binWidth' } };
 
   return {
     studyId,
@@ -448,7 +447,7 @@ function getRequestParams(
       valueSpec: 'count',
       xAxisVariable: variable,
       overlayVariable,
-      ...binOption,
+      ...binSpec,
     },
-  } as NumericHistogramRequestParams | DateHistogramRequestParams;
+  } as HistogramRequestParams;
 }

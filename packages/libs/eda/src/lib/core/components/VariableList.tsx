@@ -2,7 +2,7 @@
  * This is based on FieldList.jsx for typing
  */
 
-import { uniq } from 'lodash';
+import { difference, uniq } from 'lodash';
 import React, {
   useLayoutEffect,
   useRef,
@@ -101,24 +101,32 @@ export default function VariableList(props: VariableListProps) {
     getPathToField(activeField)
   );
 
+  const activeFieldEntity = activeField?.term.split('/')[0];
+
+  // When active field changes, we want to collapse entity nodes that are not an ancestor
+  // of the active field. We also want to retain the expanded state of internal nodes, so
+  // we will only remove entity nodes from the list of expanded nodes.
   useEffect(() => {
     if (activeField == null) return;
     setExpandedNodes((expandedNodes) => {
-      if (activeField.parent && expandedNodes.includes(activeField.parent)) {
+      const activeNodeLineage = getPathToField(activeField);
+      if (activeNodeLineage.every((node) => expandedNodes.includes(node))) {
         // This is effectively a noop. Returning the same value tells react to bail on the next render.
         // See https://reactjs.org/docs/hooks-reference.html#functional-updates
         return expandedNodes;
       }
       const newExpandedNodes = uniq(
-        expandedNodes.concat(getPathToField(activeField))
+        expandedNodes
+          .concat(activeNodeLineage)
+          .filter(
+            (term) =>
+              !term.startsWith('entity:') ||
+              term === `entity:${activeFieldEntity}`
+          )
       );
       return newExpandedNodes;
     });
-  }, [activeField, getPathToField]);
-
-  const handleExpansionChange = (expandedNodes: string[]) => {
-    setExpandedNodes(expandedNodes);
-  };
+  }, [activeField, activeFieldEntity, getPathToField]);
 
   const handleFieldSelect = useCallback(
     (node: FieldTreeNode) => {
@@ -161,11 +169,11 @@ export default function VariableList(props: VariableListProps) {
           handleFieldSelect={handleFieldSelect}
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
-          activeFieldEntity={activeField?.term.split('/')[0]}
+          activeFieldEntity={activeFieldEntity}
         />
       );
     },
-    [activeField?.term, handleFieldSelect, searchTerm]
+    [activeField?.term, activeFieldEntity, handleFieldSelect, searchTerm]
   );
 
   return (
@@ -176,7 +184,7 @@ export default function VariableList(props: VariableListProps) {
         expandedList={expandedNodes}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
-        onExpansionChange={handleExpansionChange}
+        onExpansionChange={setExpandedNodes}
         isSelectable={false}
         isSearchable={true}
         searchBoxPlaceholder="Find a variable"
@@ -215,9 +223,14 @@ const FieldNode = ({
   const nodeRef = useRef<HTMLAnchorElement>(null);
 
   useLayoutEffect(() => {
-    if (isActive && nodeRef.current?.offsetParent instanceof HTMLElement) {
-      scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
-    }
+    // hack: Use setTimeout since DOM may not reflect the current state of expanded nodes.
+    // hack: This ensures that the node is visible when attempting to scroll into view.
+    let timerId = setTimeout(() => {
+      if (isActive && nodeRef.current?.offsetParent instanceof HTMLElement) {
+        scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
+      }
+    });
+    return () => clearTimeout(timerId);
   }, [isActive, searchTerm]);
 
   return (

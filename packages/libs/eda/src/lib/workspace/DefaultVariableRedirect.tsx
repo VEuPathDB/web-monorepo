@@ -1,17 +1,28 @@
 import { useStudyMetadata } from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { Redirect, useRouteMatch } from 'react-router';
+import { findFirstVariable } from './Utils';
 
-export function DefaultVariableRedirect() {
+interface Props {
+  entityId?: string;
+}
+
+export function DefaultVariableRedirect(props: Props) {
+  const { entityId } = props;
   const { url } = useRouteMatch();
   const studyMetadata = useStudyMetadata();
   const entities = Array.from(
     preorder(studyMetadata.rootEntity, (e) => e.children || [])
   );
-  const entity = entities[0];
-  const variable = entity && entity.variables.find((v) => v.dataShape != null);
+  const entity = entityId
+    ? entities.find((e) => e.id === entityId)
+    : entities[0];
+  const variable = entity && findFirstVariable(entity.variables, entity.id);
   if (entity == null || variable == null)
     return <div>Could not find specified variable.</div>;
   // Prevent <Variables> from rendering multiple times
-  return <Redirect to={`${url}/${entity.id}/${variable.id}`} />;
+  const path = entityId
+    ? `${url}/${variable.id}`
+    : `${url}/${entity.id}/${variable.id}`;
+  return <Redirect to={path} />;
 }
