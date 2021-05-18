@@ -284,6 +284,9 @@ export function RecordTableDescription(props) {
     case 'ECNumbers':
       return typeof props.record.tables.ECNumbers != "undefined" && props.record.tables.ECNumbers.length > 0 && renderAttributeValue(props.record.attributes.ec_number_warning, null, 'p');
 
+    case 'ECNumbersInferred':
+      return typeof props.record.tables.ECNumbersInferred != "undefined" && props.record.tables.ECNumbersInferred.length > 0 && renderAttributeValue(props.record.attributes.ec_inferred_description, null, 'p');
+
     case 'MetabolicPathways':
       return typeof props.record.tables.MetabolicPathways != "undefined" && props.record.tables.MetabolicPathways.length > 0 && renderAttributeValue(props.record.attributes.ec_num_warn, null, 'p');
 
