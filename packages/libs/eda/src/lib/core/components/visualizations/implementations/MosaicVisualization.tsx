@@ -26,6 +26,12 @@ type MosaicData = Pick<
   'data' | 'independentValues' | 'dependentValues'
 >;
 
+type ContTableData = MosaicData & {
+  pValue: number | string;
+  degreesFreedom: number;
+  chisq: number;
+};
+
 type TwoByTwoData = MosaicData & {
   pValue: number | string;
   relativeRisk: number;
@@ -34,10 +40,10 @@ type TwoByTwoData = MosaicData & {
   orInterval: string;
 };
 
-export const mosaicVisualization: VisualizationType = {
-  gridComponent: GridComponent,
-  selectorComponent: SelectorComponent,
-  fullscreenComponent: FullscreenComponent,
+export const contTableVisualization: VisualizationType = {
+  gridComponent: ContTableGridComponent,
+  selectorComponent: ContTableSelectorComponent,
+  fullscreenComponent: ContTableFullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
 
@@ -48,7 +54,7 @@ export const twoByTwoVisualization: VisualizationType = {
   createDefaultConfig: createDefaultConfig,
 };
 
-function GridComponent(props: VisualizationProps) {
+function ContTableGridComponent(props: VisualizationProps) {
   const { visualization, computation, filters } = props;
   return (
     <MosaicViz
@@ -60,11 +66,11 @@ function GridComponent(props: VisualizationProps) {
   );
 }
 
-function SelectorComponent() {
+function ContTableSelectorComponent() {
   return <div>Pick me, I'm a contingency table!</div>;
 }
 
-function FullscreenComponent(props: VisualizationProps) {
+function ContTableFullscreenComponent(props: VisualizationProps) {
   const {
     visualization,
     updateVisualization,
@@ -210,7 +216,7 @@ function MosaicViz(props: Props) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<MosaicData | TwoByTwoData> => {
+    useCallback(async (): Promise<ContTableData | TwoByTwoData> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
       if (
@@ -253,9 +259,9 @@ function MosaicViz(props: Props) {
 
         return twoByTwoResponseToData(await response);
       } else {
-        const response = dataClient.getMosaic(computation.type, params);
+        const response = dataClient.getContTable(computation.type, params);
 
-        return mosaicResponseToData(await response);
+        return contTableResponseToData(await response);
       }
     }, [
       studyId,
@@ -272,10 +278,10 @@ function MosaicViz(props: Props) {
 
   if (data.value) {
     let statsTable = undefined;
+    const rangeRegex = /(\d+\.\d+) {2}- {2}(\d+\.\d+)/;
 
     if (isTwoByTwo) {
       const twoByTwoData = data.value as TwoByTwoData;
-      const rangeRegex = /(\d+\.\d+) {2}- {2}(\d+\.\d+)/;
       const orIntervalMatch = twoByTwoData.orInterval.match(rangeRegex);
       const rrIntervalMatch = twoByTwoData.rrInterval.match(rangeRegex);
 
@@ -315,6 +321,29 @@ function MosaicViz(props: Props) {
           </table>
         </div>
       );
+    } else {
+      const contTableData = data.value as ContTableData;
+
+      statsTable = (
+        <div className="TwoByTwoVisualization-StatsTable">
+          <table>
+            <tbody>
+              <tr>
+                <td>p-value</td>
+                <td>{contTableData.pValue}</td>
+              </tr>
+              <tr>
+                <td>Degrees of freedom</td>
+                <td>{contTableData.degreesFreedom}</td>
+              </tr>
+              <tr>
+                <td>Chi-squared</td>
+                <td>{contTableData.chisq}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      );
     }
 
     plotComponent = fullscreen ? (
@@ -331,7 +360,7 @@ function MosaicViz(props: Props) {
             showLegend={true}
           />
         </div>
-        {isTwoByTwo && statsTable}
+        {statsTable}
       </div>
     ) : (
       // thumbnail/grid view
@@ -452,9 +481,9 @@ function MosaicPlotWithControls({
  * @param response
  * @returns MosaicData
  */
-export function mosaicResponseToData(
-  response: PromiseType<ReturnType<DataClient['getMosaic']>>
-): MosaicData {
+export function contTableResponseToData(
+  response: PromiseType<ReturnType<DataClient['getContTable']>>
+): ContTableData {
   if (response.mosaic.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
@@ -465,6 +494,9 @@ export function mosaicResponseToData(
     data: data,
     independentValues: response.mosaic.data[0].xLabel,
     dependentValues: response.mosaic.data[0].yLabel,
+    pValue: response.statsTable[0].pvalue[1],
+    degreesFreedom: response.statsTable[0].degreesFreedom[1],
+    chisq: response.statsTable[0].chisq[1],
   };
 }
 
