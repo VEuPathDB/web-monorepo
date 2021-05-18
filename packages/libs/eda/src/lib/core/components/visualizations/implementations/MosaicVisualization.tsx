@@ -286,7 +286,7 @@ function MosaicViz(props: Props) {
       const rrIntervalMatch = twoByTwoData.rrInterval.match(rangeRegex);
 
       statsTable = (
-        <div className="TwoByTwoVisualization-StatsTable">
+        <div className="MosaicVisualization-StatsTable">
           <table>
             <tbody>
               <tr>
@@ -325,7 +325,7 @@ function MosaicViz(props: Props) {
       const contTableData = data.value as ContTableData;
 
       statsTable = (
-        <div className="TwoByTwoVisualization-StatsTable">
+        <div className="MosaicVisualization-StatsTable">
           <table>
             <tbody>
               <tr>
@@ -347,8 +347,8 @@ function MosaicViz(props: Props) {
     }
 
     plotComponent = fullscreen ? (
-      <div className="TwoByTwoVisualization">
-        <div className="TwoByTwoVisualization-Plot">
+      <div className="MosaicVisualization">
+        <div className="MosaicVisualization-Plot">
           <MosaicPlotWithControls
             data={data.value.data}
             independentValues={data.value.independentValues}
