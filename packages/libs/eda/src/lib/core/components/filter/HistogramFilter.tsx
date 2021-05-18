@@ -32,7 +32,6 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { padISODateTime } from '../../utils/date-conversion';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -182,8 +181,7 @@ export function HistogramFilter(props: Props) {
                   variableId: variable.id,
                   entityId: entity.id,
                   type: 'dateRange',
-                  min: padISODateTime((selectedRange as DateRange).min),
-                  max: padISODateTime((selectedRange as DateRange).max),
+                  ...(selectedRange as DateRange),
                 }
               : {
                   variableId: variable.id,
