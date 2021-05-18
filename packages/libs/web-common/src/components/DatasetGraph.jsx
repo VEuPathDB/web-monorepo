@@ -165,8 +165,8 @@ export default class DatasetGraph extends React.PureComponent {
     let baseUrlWithMetadata = `${baseUrlWithState}&facet=${facet}&contXAxis=${contXAxis}`;
     let imgUrl = baseUrlWithMetadata + '&fmt=svg';
     // let pngUrl = baseUrlWithMetadata + '&fmt=png';
-    let covImgUrl = dataTable && dataTable.record.attributes.CoverageJbrowseIntUrl + '%2C' + dataset_name ;
-    let covImgJbrowseUrl = dataTable && dataTable.record.attributes.CoverageJbrowseUrl + '%2C' + dataset_name;
+    let covImgUrl = dataTable && dataTable.record.attributes.CoverageJbrowseIntUrl + '%2C' + dataset_name + '%20Density%20-%20Unique%20Only';
+    let covImgJbrowseUrl = dataTable && dataTable.record.attributes.CoverageJbrowseUrl + '%2C' + dataset_name + '%20Density%20-%20Unique%20Only';
 
     let specialImgUrl = dataTable && dataTable.record.attributes.specialJbrowseUrl;
 
@@ -258,7 +258,7 @@ hook: HostResponseGraphs
                     View in genome browser
                 </a>
               </div>
-              <div><iframe src={covImgUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height="200" scrolling="no" allowfullscreen="false" /></div>
+              <div><iframe src={covImgUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height="200" scrolling="yes" allowfullscreen="false" /></div>
             </CollapsibleSection>
           : null}
 
@@ -292,7 +292,7 @@ hook: HostResponseGraphs
                   View in genome browser
                 </a>
               </div>
-              <ExternalResource><iframe src={specialImgUrl.replace('/app/jbrowse', '/jbrowse/index.html') + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height="185" scrolling="no" allowfullscreen="false" /></ExternalResource>
+              <ExternalResource><iframe src={specialImgUrl.replace('/app/jbrowse', '/jbrowse/index.html') + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height="185" scrolling="yes" allowfullscreen="false" /></ExternalResource>
               <br></br><br></br>
             </CollapsibleSection>
           : null}
