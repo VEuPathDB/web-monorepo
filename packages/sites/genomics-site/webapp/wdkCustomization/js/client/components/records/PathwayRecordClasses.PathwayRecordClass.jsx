@@ -1769,11 +1769,17 @@ function getGeneraCategoryTree() {
       ]),
       n('Apicomplexa', 'Apicomplexa', null, [
           n('Babesia', 'Babesia'),
+          n('Besnoitia', 'Besnoitia'),
           n('Cryptosporidium', 'Cryptosporidium'),
+          n('Cyclospora', 'Cyclospora'),
+          n('Cystoisospora', 'Cystoisospora'),
           n('Eimeria', 'Eimeria'),
           n('Gregarina', 'Gregarina'),
+          n('Hammondia', 'Hammondia'),
+          n('Hepatocystis', 'Hepatocystis'),
           n('Neospora', 'Neospora'),
           n('Plasmodium', 'Plasmodium'),
+          n('Sarcocystis', 'Sarcocystis'),
           n('Theileria', 'Theileria'),
           n('Toxoplasma', 'Toxoplasma')
       ]),
@@ -1788,6 +1794,8 @@ function getGeneraCategoryTree() {
                   n('Aedes', 'Aedes'),
                   n('Anopheles', 'Anopheles'),
                   n('Culex', 'Culex'),
+                  n('Culicoides', 'Culicoides'),
+                  n('Drosophila', 'Drosophila'),
                   n('Glossina', 'Glossina'),
                   n('Musca', 'Musca'),
                   n('Stomoxys', 'Stomoxys'),
@@ -1812,30 +1820,129 @@ function getGeneraCategoryTree() {
           n('Spironucleus', 'Spironucleus')
       ]),
       n('Fungi', 'Fungi', null, [
+
+          n('Dothideomycetes', 'Dothideomycetes', null, [
+              n('Cenococcum', 'Cenococcum'),
+              n('Zymoseptoria', 'Zymoseptoria')
+          ]),
+
+          n('Agaricomycetes', 'Agaricomycetes', null, [
+              n('Coprinopsis', 'Coprinopsis'),
+              n('Phanerochaete', 'Phanerochaete')
+          ]),
+
+          n('Blastocladiomycetes', 'Blastocladiomycetes', null, [
+              n('Allomyces', 'Allomyces')
+          ]),
+
+          n('Chytridiomycetes', 'Chytridiomycetes', null, [
+              n('Batrachochytrium', 'Batrachochytrium'),
+              n('Spizellomyces', 'Spizellomyces')
+          ]),
+
           n('Eurotiomycetes', 'Eurotiomycetes', null, [
               n('Aspergillus', 'Aspergillus'),
+              n('Blastomyces', 'Blastomyces'),
+              n('Cladophialophora', 'Cladophialophora'),
               n('Coccidioides', 'Coccidioides'),
-              n('Talaromyces', 'Talaromyces')
+              n('Cyphellophora', 'Cyphellophora'),
+              n('Exophiala', 'Exophiala'),
+              n('Fonsecaea', 'Fonsecaea'),
+              n('Histoplasma', 'Histoplasma'),
+              n('Paracoccidioides', 'Paracoccidioides'),
+              n('Penicilliopsis', 'Penicilliopsis'),
+              n('Penicillium', 'Penicillium'),
+              n('Talaromyces', 'Talaromyces'),
+              n('Uncinocarpus', 'Uncinocarpus')
           ]),
+
+          n('Leotiomycetes', 'Leotiomycetes', null, [
+              n('Botrytis', 'Botrytis'),
+              n('Sclerotinia', 'Sclerotinia')
+          ]),
+
+          n('Malasseziomycetes', 'Malasseziomycetes', null, [
+              n('Malassezia', 'Malassezia')
+          ]),
+
           n('Microsporidia', 'Microsporidia', null, [
+              n('Amphiamblys', 'Amphiamblys'),
               n('Anncaliia', 'Anncaliia'),
               n('Edhazardia', 'Edhazardia'),
               n('Encephalitozoon', 'Encephalitozoon'),
               n('Enterocytozoon', 'Enterocytozoon'),
+              n('Enterospora', 'Enterospora'),
+              n('Hepatospora', 'Hepatospora'),
+              n('Mitosporidium', 'Mitosporidium'),
               n('Nematocida', 'Nematocida'),
               n('Nosema', 'Nosema'),
+              n('Ordospora', 'Ordospora'),
+              n('Pseudoloma', 'Pseudoloma'),
               n('Spraguea', 'Spraguea'),
+              n('Trachipleistophora', 'Trachipleistophora'),
               n('Vavraia', 'Vavraia'),
               n('Vittaforma', 'Vittaforma')
           ]),
+
+          n('Mucoromycota', 'Mucoromycota', null, [
+              n('Mucor', 'Mucor'),
+              n('Phycomyces', 'Phycomyces'),
+              n('Rhizophagus', 'Rhizophagus'),
+              n('Rhizopus', 'Rhizopus')
+          ]),
+
+          n('Pneumocystidomycetes', 'Pneumocystidomycetes', null, [
+              n('Pneumocystis', 'Pneumocystis')
+          ]),
+
+          n('Pucciniomycetes', 'Pucciniomycetes', null, [
+              n('Melampsora', 'Melampsora'),
+              n('Puccinia', 'Puccinia')
+          ]),
+    
+          n('Saccharomycetes', 'Saccharomycetes', null, [
+              n('Candida', 'Candida'),
+              n('Clavispora', 'Clavispora'),
+              n('Hanseniaspora', 'Hanseniaspora'),
+              n('Saccharomyces', 'Saccharomyces'),
+              n('Yarrowia', 'Yarrowia')
+          ]),
+
+         n('Schizosaccharomycetes', 'Schizosaccharomycetes', null, [
+              n('Schizosaccharomyces', 'Schizosaccharomyces')
+          ]),
+
           n('Sordariomycetes', 'Sordariomycetes', null, [
               n('Fusarium', 'Fusarium'),
-              n('Neurospora', 'Neurospora')
+              n('Lomentospora', 'Lomentospora'),
+              n('Neurospora', 'Neurospora'),
+              n('Pyricularia', 'Pyricularia'),
+              n('Scedosporium', 'Scedosporium'),
+              n('Sordaria', 'Sordaria'),
+              n('Sporothrix', 'Sporothrix'),
+              n('Thermothelomyces', 'Thermothelomyces'),
+              n('Trichoderma', 'Trichoderma')
+          ]),
+
+          n('Tremellomycetes', 'Tremellomycetes', null, [
+              n('Cryptococcus', 'Cryptococcus'),
+              n('Kwoniella', 'Kwoniella'),
+              n('Tremella', 'Tremella')
+          ]),
+    
+          n('Ustilaginomycetes', 'Ustilaginomycetes', null, [
+              n('Sporisorium', 'Sporisorium'),
+              n('Ustilago', 'Ustilago')
           ])
       ]),
       n('Kinetoplastida', 'Kinetoplastida', null, [
+          n('Blechomonas', 'Blechomonas'),
+          n('Bodo', 'Bodo'),
           n('Crithidia', 'Crithidia'),
+          n('Endotrypanum', 'Endotrypanum'),
           n('Leishmania', 'Leishmania'),
+          n('Leptomonas', 'Leptomonas'),
+          n('Paratrypanosoma', 'Paratrypanosoma'),
           n('Trypanosoma', 'Trypanosoma')
       ]),
       n('Mollusca', 'Mollusca', null, [
@@ -1844,6 +1951,9 @@ function getGeneraCategoryTree() {
       n('Oomycetes', 'Oomycetes', null, [
           n('Albugo', 'Albugo'),
           n('Aphanomyces', 'Aphanomyces'),
+          n('Hyaloperonospora', 'Hyaloperonospora'),
+          n('Globisporangium', 'Globisporangium'),
+          n('Phytopythium', 'Phytopythium'),
           n('Phytophthora', 'Phytophthora'),
           n('Pythium', 'Pythium'),
           n('Saprolegnia', 'Saprolegnia')
@@ -1851,10 +1961,9 @@ function getGeneraCategoryTree() {
       n('Trichomonadida', 'Trichomonadida', null, [
           n('Trichomonas', 'Trichomonas')
       ]),
-      n('Schistosomatidae', 'Schistosomatidae', null, [
-          n('Schistosoma', 'Schistosoma')
-      ]),
+
       n('Mammalia', 'Mammalia', null, [
+          n('Bos', 'Bos'),
           n('Homo', 'Homo'),
           n('Macaca', 'Macaca'),
           n('Mus', 'Mus')
