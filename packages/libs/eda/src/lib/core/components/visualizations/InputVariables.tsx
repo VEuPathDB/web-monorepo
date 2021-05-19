@@ -49,7 +49,8 @@ export interface Props {
 const useStyles = makeStyles(
   {
     root: {
-      border: '2px solid rgb(240, 240, 240)',
+      // border: '2px solid rgb(240, 240, 240)',
+      border: 0,
       padding: '1.5em',
       borderRadius: '10px',
       color: 'rgb(150, 150, 150)',
@@ -109,7 +110,7 @@ export function InputVariables(props: Props) {
           </div>
         ))}
       </div>
-      <div className={`${classes.label} ${classes.dataLabel}`}>Data inputs</div>
+      {/* <div className={`${classes.label} ${classes.dataLabel}`}>Data inputs</div> */}
     </div>
   );
 }
