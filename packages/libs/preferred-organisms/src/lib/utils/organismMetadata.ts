@@ -37,37 +37,44 @@ export interface OrganismMetadata {
 }
 
 async function fetchOrganismMetadata(wdkService: WdkService) {
-  const organismRecords = await wdkService.getAnswerJson(
-    { searchName: ALL_ORGANISMS_SEARCH_NAME, searchConfig: { parameters: {} } },
-    {
-      attributes: [
-        ORGANISM_NAME_ATTR,
-        BUILD_INTRODUCED_ATTR,
-        IS_REFERENCE_STRAIN_ATTR,
-      ],
-    }
-  );
+  try {
+    const organismRecords = await wdkService.getAnswerJson(
+      {
+        searchName: ALL_ORGANISMS_SEARCH_NAME,
+        searchConfig: { parameters: {} },
+      },
+      {
+        attributes: [
+          ORGANISM_NAME_ATTR,
+          BUILD_INTRODUCED_ATTR,
+          IS_REFERENCE_STRAIN_ATTR,
+        ],
+      }
+    );
 
-  return organismRecords.records.reduce((memo, record) => {
-    const {
-      [ORGANISM_NAME_ATTR]: organismName,
-      [BUILD_INTRODUCED_ATTR]: buildIntroduced,
-      [IS_REFERENCE_STRAIN_ATTR]: isReference,
-    } = record.attributes;
+    return organismRecords.records.reduce((memo, record) => {
+      const {
+        [ORGANISM_NAME_ATTR]: organismName,
+        [BUILD_INTRODUCED_ATTR]: buildIntroduced,
+        [IS_REFERENCE_STRAIN_ATTR]: isReference,
+      } = record.attributes;
 
-    if (
-      typeof organismName !== 'string' ||
-      typeof buildIntroduced !== 'string' ||
-      typeof isReference !== 'string'
-    ) {
-      throw new Error(
-        `To use this feature, each organism record must have string-valued '${ORGANISM_NAME_ATTR}', '${BUILD_INTRODUCED_ATTR}' , and'${IS_REFERENCE_STRAIN_ATTR}' attributes.`
-      );
-    }
+      if (
+        typeof organismName !== 'string' ||
+        typeof buildIntroduced !== 'string' ||
+        typeof isReference !== 'string'
+      ) {
+        throw new Error(
+          `To use this feature, each organism record must have string-valued '${ORGANISM_NAME_ATTR}', '${BUILD_INTRODUCED_ATTR}' , and'${IS_REFERENCE_STRAIN_ATTR}' attributes.`
+        );
+      }
 
-    return memo.set(organismName, {
-      buildIntroduced: Number(buildIntroduced),
-      isReference: isReference === 'yes',
-    });
-  }, new Map<string, { buildIntroduced: number; isReference: boolean }>());
+      return memo.set(organismName, {
+        buildIntroduced: Number(buildIntroduced),
+        isReference: isReference === 'yes',
+      });
+    }, new Map<string, OrganismMetadata>());
+  } catch {
+    return new Map<string, OrganismMetadata>();
+  }
 }
