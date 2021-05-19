@@ -302,10 +302,10 @@
     react-redux "^7.1.5"
     react-select "^3.0.4"
 
-"@veupathdb/preferred-organisms@^0.1.1-alpha.19":
-  version "0.1.1-alpha.19"
-  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-0.1.1-alpha.19.tgz#8321a5a68ad9b431ea05557f6ca3ab7556eb5b3e"
-  integrity sha512-kVBGtswWMWgRK3+NoahxdtDXZ81U985WYwbGN1iabEjkzKhOIS1lE3SHIeYMS10oEFcKMFafxTkOXupoFTRIgg==
+"@veupathdb/preferred-organisms@^0.1.1-alpha.20":
+  version "0.1.1-alpha.20"
+  resolved "https://registry.yarnpkg.com/@veupathdb/preferred-organisms/-/preferred-organisms-0.1.1-alpha.20.tgz#74d655c8c700ad4eea3666a482a2f4c726fb5dff"
+  integrity sha512-Zz2mpwEL+d4odUNbmAfkYhnbVmZXc55V+W6DGo4uEj6Zgu6mZkGgcNjt4nrN81JBoTp+Uk4JBM/LyZwgU0M1aA==
   dependencies:
     "@veupathdb/wdk-client" "^0.1.1"
     "@veupathdb/web-common" "^0.1.1-alpha.11"
