@@ -28,6 +28,19 @@ const AppsResponse = type({
 
 type ZeroToTwoVariables = [] | [Variable] | [Variable, Variable];
 
+//DKDK define sampleSizeTableArray
+const sampleSizeTableArray = array(
+  partial({
+    // set union for size as it depends on the presence of overlay variable
+    size: union([number, array(number)]),
+    overlayVariableDetails: type({
+      entityId: string,
+      variableId: string,
+      value: string,
+    }),
+  })
+);
+
 export interface HistogramRequestParams {
   studyId: string;
   filters: Filter[];
@@ -108,9 +121,15 @@ export interface BarplotRequestParams {
   //  derivedVariables:  // TO DO
   config: {
     outputEntityId: string;
-    valueSpec: 'count' | 'identity';
+    //DKDK add proportion as it seems to be coming
+    valueSpec: 'count' | 'identity' | 'proportion';
     xAxisVariable: {
       // TO DO: refactor repetition with HistogramRequestParams
+      entityId: string;
+      variableId: string;
+    };
+    //DKDK barplot add prop
+    overlayVariable?: {
       entityId: string;
       variableId: string;
     };
@@ -128,13 +147,29 @@ export const BarplotResponse = type({
       }),
     }),
     data: array(
-      type({
-        label: array(string),
-        value: array(number),
-      })
+      intersection([
+        type({
+          //DKDK label can be number too?
+          // label: array(string),
+          label: union([array(string), array(number)]),
+          value: array(number),
+        }),
+        partial({
+          overlayVariableDetails: type({
+            entityId: string,
+            variableId: string,
+            value: string,
+          }),
+          facetVariableDetails: union([
+            tuple([StringVariableValue]),
+            tuple([StringVariableValue, StringVariableValue]),
+          ]),
+        }),
+      ])
     ),
   }),
-  // TO DO: sampleSizeTable
+  //DKDK sampleSizeTable
+  sampleSizeTable: sampleSizeTableArray,
 });
 
 // scatterplot
@@ -192,18 +227,6 @@ const ScatterplotResponseData = array(
   })
 );
 
-// define sampleSizeTableArray
-const sampleSizeTableArray = array(
-  partial({
-    // set union for size as it depends on the presence of overlay variable
-    size: union([number, array(number)]),
-    overlayVariableDetails: type({
-      entityId: string,
-      variableId: string,
-      value: string,
-    }),
-  })
-);
 export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
 export const ScatterplotResponse = type({
   scatterplot: type({
