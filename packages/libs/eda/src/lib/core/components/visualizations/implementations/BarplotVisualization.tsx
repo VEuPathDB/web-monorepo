@@ -267,8 +267,8 @@ function BarplotViz(props: Props) {
           <BarplotWithControls
             // data.value
             data={data.value}
-            width={1000}
-            height={600}
+            // width={1000}
+            // height={600}
             orientation={'vertical'}
             barLayout={'overlay'}
             displayLegend={data.value?.series.length > 1}
