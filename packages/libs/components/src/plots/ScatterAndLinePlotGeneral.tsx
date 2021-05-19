@@ -11,19 +11,23 @@ export interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
   data: Pick<PlotData, T>[];
   xLabel?: string;
   yLabel?: string;
-  plotTitle?: string;
+  // plotTitle?: string;
+  title?: string;
   // involving CI, x & y range may need to be set
   xRange?: number[] | Date[];
   yRange?: number[] | Date[];
   // add enable/disable legend and built-in controls
   displayLegend?: boolean;
   displayLibraryControls?: boolean;
+  // add style width height
+  styleWidth?: number | string;
+  styleHeight?: number | string;
 }
 
 export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
   props: ScatterplotProps<T>
 ) {
-  const { xLabel, yLabel, plotTitle, xRange, yRange, data } = props;
+  const { xLabel, yLabel, title, xRange, yRange, data } = props;
   const layout: Partial<Layout> = {
     xaxis: {
       title: xLabel ? xLabel : '',
@@ -43,8 +47,9 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
       linewidth: 1,
       mirror: true,
     },
+    // plot title
     title: {
-      text: plotTitle ? plotTitle : '',
+      text: title ? title : undefined,
     },
   };
 
@@ -66,6 +71,11 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
       config={{
         displayModeBar: props.displayLibraryControls ? 'hover' : false,
         staticPlot: props.staticPlot,
+      }}
+      // add style for width/height to accept string values
+      style={{
+        width: props.styleWidth ? props.styleWidth : undefined,
+        height: props.styleHeight ? props.styleHeight : undefined,
       }}
     />
   );

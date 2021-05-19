@@ -972,11 +972,14 @@ export const RealDataDate = () => {
       data={[...dataSetProcess]}
       xLabel={xLabel}
       yLabel={yLabel}
-      plotTitle={plotTitle}
       xRange={[xMin, xMax]}
       yRange={[yMin, yMax]}
+      // title={plotTitle}
       width={plotWidth}
       height={plotHeight}
+      // styleWidth/styleHeight are for using string values for width/height
+      // styleWidth={'100%'}
+      // styleHeight={'100%'}
       staticPlot={false}
       // check enable/disable legend and built-in controls
       displayLegend={true}

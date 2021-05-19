@@ -18,7 +18,7 @@ export const BasicControls: Story<usePlotControlsParams<any>> = (args) => {
 
   return (
     <ScatterplotControls
-      label="Scatter Plot Control Panel"
+      // label="Scatter Plot Control Panel"
       {...controls}
       {...controls.scatterplot}
     />
