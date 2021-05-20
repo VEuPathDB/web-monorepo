@@ -19,6 +19,7 @@ import {
   endUser,
   endUserCreateResponse,
   endUserList,
+  historyResponse,
   newStaffResponse,
   permissionsResponse,
   staffList
@@ -32,6 +33,7 @@ const STAFF_PATH = '/staff';
 const PROVIDERS_PATH = '/dataset-providers';
 const END_USERS_PATH = '/dataset-end-users';
 const PERMISSIONS_PATH = '/permissions';
+const HISTORY_PATH = '/history';
 
 export function createStudyAccessRequestHandler(
   baseStudyAccessUrl: string,
@@ -186,6 +188,13 @@ export const apiRequests = {
       method: 'GET',
       transformResponse: standardTransformer(permissionsResponse)
     };
+  },
+  fetchHistory: function() {
+    return {
+      path: HISTORY_PATH,
+      method: 'GET',
+      transformResponse: standardTransformer(historyResponse)
+    }
   }
 }
 

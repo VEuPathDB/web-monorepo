@@ -149,6 +149,10 @@ export function canUpdateApprovalStatus(userPermissions: UserPermissions, datase
   );
 }
 
+export function shouldDisplayHistoryTable(userPermissions: UserPermissions) {
+  return isOwner(userPermissions);
+}
+
 export function isUserApprovedForStudy(
   userPermissions: UserPermissions,
   approvedStudies: string[] | undefined,

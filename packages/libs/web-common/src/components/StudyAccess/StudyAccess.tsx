@@ -6,6 +6,7 @@ import { UserTableDialog } from 'ebrc-client/components/StudyAccess/UserTableDia
 import { UserTableSection } from 'ebrc-client/components/StudyAccess/UserTableSection';
 import {
   EndUserTableSectionConfig,
+  HistoryTableSectionConfig,
   OpenDialogConfig,
   ProviderTableSectionConfig,
   StaffTableSectionConfig
@@ -18,6 +19,7 @@ interface Props {
   staffTableConfig: StaffTableSectionConfig;
   providerTableConfig: ProviderTableSectionConfig;
   endUserTableConfig: EndUserTableSectionConfig;
+  historyTableConfig: HistoryTableSectionConfig;
   openDialogConfig?: OpenDialogConfig;
 }
 
@@ -28,6 +30,7 @@ export function StudyAccess({
   staffTableConfig,
   providerTableConfig,
   endUserTableConfig,
+  historyTableConfig,
   openDialogConfig
 }: Props) {
   return (
@@ -38,6 +41,7 @@ export function StudyAccess({
       <UserTableSection {...endUserTableConfig} />
       <UserTableSection {...providerTableConfig} />
       <UserTableSection {...staffTableConfig} />
+      <UserTableSection {...historyTableConfig} />
       {
         openDialogConfig &&
         <UserTableDialog {...openDialogConfig} />

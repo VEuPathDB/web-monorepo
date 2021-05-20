@@ -16,7 +16,8 @@ import {
   useStudy,
   useStudyAccessApi,
   useTableUiState,
-  useUserPermissions
+  useUserPermissions,
+  useHistoryTableSectionConfig
 } from 'ebrc-client/hooks/studyAccess';
 
 interface Props {
@@ -92,6 +93,11 @@ export default function StudyAccessController({ datasetId }: Props) {
     setEndUserTableUiState,
     changeOpenDialogConfig
   );
+  const historyTableConfig = useHistoryTableSectionConfig(
+    userPermissions,
+    studyAccessApi.fetchHistory,
+    datasetId
+  );
 
   return (
     userProfile == null || study.status == 'loading' || userPermissions == null
@@ -105,6 +111,7 @@ export default function StudyAccessController({ datasetId }: Props) {
           staffTableConfig={staffTableConfig}
           providerTableConfig={providerTableConfig}
           endUserTableConfig={endUserTableConfig}
+          historyTableConfig={historyTableConfig}
           openDialogConfig={openDialogConfig}
         />
   );

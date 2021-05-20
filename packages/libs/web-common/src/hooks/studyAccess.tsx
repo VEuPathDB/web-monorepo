@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   capitalize,
+  isNil,
+  negate,
   partition,
   zipWith
  } from 'lodash';
@@ -12,7 +14,7 @@ import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { OverflowingTextCell } from '@veupathdb/wdk-client/lib/Views/Strategy/OverflowingTextCell';
 
 import { fetchStudies } from 'ebrc-client/App/Studies/StudyActionCreators';
-import { ApprovalStatus } from 'ebrc-client/StudyAccess/EntityTypes';
+import { ApprovalStatus, HistoryResult } from 'ebrc-client/StudyAccess/EntityTypes';
 import {
   StudyAccessApi,
   apiRequests,
@@ -30,6 +32,7 @@ import {
   shouldDisplayEndUsersTable,
   shouldDisplayProvidersTable,
   shouldDisplayStaffTable,
+  shouldDisplayHistoryTable,
 } from 'ebrc-client/StudyAccess/permission';
 import { cx } from 'ebrc-client/components/StudyAccess/StudyAccess';
 import {
@@ -80,9 +83,27 @@ interface EndUserTableFullRow extends EndUserTableRow {
   disseminationPlan: string;
 }
 
+interface HistoryTableRow extends BaseTableRow {
+  timestamp: HistoryResult['cause']['timestamp'];
+  actionPerformer: string;
+  action: HistoryResult['cause']['action'];
+  content: string;
+  approvalStatus: HistoryResult['row']['approvalStatus'];
+  denialReason: NonNullable<HistoryResult['row']['denialReason']>;
+  allowSelfEdits: boolean;
+}
+
+interface HistoryTableFullRow extends HistoryTableRow {
+  purpose: NonNullable<HistoryResult['row']['purpose']>;
+  researchQuestion: NonNullable<HistoryResult['row']['researchQuestion']>;
+  analysisPlan: NonNullable<HistoryResult['row']['analysisPlan']>;
+  disseminationPlan: NonNullable<HistoryResult['row']['disseminationPlan']>;
+}
+
 export type StaffTableSectionConfig = UserTableSectionConfig<StaffTableFullRow, keyof StaffTableRow>;
 export type ProviderTableSectionConfig = UserTableSectionConfig<ProviderTableFullRow, keyof ProviderTableRow>;
 export type EndUserTableSectionConfig = UserTableSectionConfig<EndUserTableFullRow, keyof EndUserTableRow>;
+export type HistoryTableSectionConfig = UserTableSectionConfig<HistoryTableFullRow, keyof HistoryTableRow>;
 
 export type OpenDialogConfig = UserTableDialogProps;
 
@@ -563,10 +584,10 @@ export function useEndUserTableSectionConfig(
               user,
               startDate,
               approvalStatus,
-              purpose = '',
-              researchQuestion = '',
-              analysisPlan = '',
-              disseminationPlan = '',
+              purpose,
+              researchQuestion,
+              analysisPlan,
+              disseminationPlan,
               denialReason = ''
             }) => ({
               userId: user.userId,
@@ -574,20 +595,16 @@ export function useEndUserTableSectionConfig(
               email: user.email,
               startDate,
               approvalStatus: endUserTableUiState.approvalStatus[user.userId] ?? approvalStatus,
-              content: [
-                purpose && 'Purpose:',
+              content: makeContentSearchableSring(
                 purpose,
-                researchQuestion && 'Research Question:',
                 researchQuestion,
-                analysisPlan && 'Analysis Plan:',
                 analysisPlan,
-                disseminationPlan && 'Dissemination Plan:',
                 disseminationPlan
-              ].join('\0'),
-              purpose,
-              researchQuestion,
-              analysisPlan,
-              disseminationPlan,
+              ),
+              purpose: purpose ?? '',
+              researchQuestion: researchQuestion ?? '',
+              analysisPlan: analysisPlan ?? '',
+              disseminationPlan: disseminationPlan ?? '',
               denialReason: endUserTableUiState.denialReason[user.userId] ?? denialReason
             })),
             columns: {
@@ -612,7 +629,7 @@ export function useEndUserTableSectionConfig(
               startDate: {
                 key: 'startDate',
                 name: 'Date Created',
-                className: cx('--StartDateCell'),
+                className: cx('--TimestampCell'),
                 sortable: true,
                 renderCell: ({ value }) => isoToUtcString(value),
                 makeSearchableString: isoToUtcString
@@ -646,17 +663,12 @@ export function useEndUserTableSectionConfig(
                 sortable: false,
                 width: '35em',
                 renderCell: ({ row: { userId, purpose, researchQuestion, analysisPlan, disseminationPlan } }) => {
-                  const contentFields = zipWith(
-                    [ 'Purpose:', 'Research Question:', 'Analysis Plan:', 'Dissemination Plan:'],
-                    [ purpose, researchQuestion, analysisPlan, disseminationPlan ],
-                    (heading, field) => {
-                      return field.length > 0
-                        ? `${heading}\n${field}`
-                        : undefined
-                    }
+                  const textValue = makeContentDisplay(
+                    purpose,
+                    researchQuestion,
+                    analysisPlan,
+                    disseminationPlan
                   );
-
-                  const textValue = contentFields.filter(contentField => contentField != null).join('\n\n');
 
                   return <OverflowingTextCell key={userId} value={textValue} />;
                 }
@@ -705,6 +717,156 @@ export function useEndUserTableSectionConfig(
       endUsersRemovable,
       changeOpenDialogConfig
     ]
+  );
+}
+
+export function useHistoryTableSectionConfig(
+  userPermissions: UserPermissions | undefined,
+  fetchHistory: StudyAccessApi['fetchHistory'],
+  activeDatasetId: string
+): HistoryTableSectionConfig {
+  const { value, loading } = usePromise(
+    fetchIfAllowed(
+      userPermissions && shouldDisplayHistoryTable(userPermissions),
+      fetchHistory
+    ),
+    [ userPermissions ]
+  );
+
+  return useMemo(
+    () => value == null || loading
+      ? {
+          status: 'loading'
+        }
+      : value.type === 'not-allowed'
+      ? {
+          status: 'unavailable'
+        }
+      : {
+          status: 'success',
+          title: 'End User Table Updates',
+          value: {
+            rows: value.result.results
+              .filter(({ row: { datasetPresenterID } }) => datasetPresenterID === activeDatasetId)
+              .map(({ cause, row }) => ({
+                userId: row.user.userID,
+                name: `${row.user.firstName} ${row.user.lastName}`,
+                email: row.user.email,
+                timestamp: cause.timestamp,
+                actionPerformer: `${cause.user.firstName} ${cause.user.lastName}`,
+                action: cause.action,
+                approvalStatus: row.approvalStatus,
+                purpose: row.purpose ?? '',
+                researchQuestion: row.researchQuestion ?? '',
+                analysisPlan: row.analysisPlan ?? '',
+                disseminationPlan: row.disseminationPlan ?? '',
+                content: makeContentSearchableSring(
+                  row.purpose,
+                  row.researchQuestion,
+                  row.analysisPlan,
+                  row.disseminationPlan
+                ),
+                denialReason: row.denialReason ?? '',
+                allowSelfEdits: row.allowSelfEdits
+              })),
+            columns: {
+              userId: {
+                key: 'userId',
+                name: 'User ID',
+                className: cx('--UserIdCell'),
+                sortable: true
+              },
+              name: {
+                key: 'name',
+                name: 'Name',
+                className: cx('--NameCell'),
+                sortable: true
+              },
+              email: {
+                key: 'email',
+                name: 'Email',
+                className: cx('--EmailCell'),
+                sortable: true
+              },
+              timestamp: {
+                key: 'timestamp',
+                name: 'Date Of Action',
+                className: cx('--TimestampCell'),
+                sortable: true,
+                renderCell: ({ value }) => isoToUtcString(value),
+                makeSearchableString: isoToUtcString
+              },
+              actionPerformer: {
+                key: 'actionPerformer',
+                name: 'Who Performed Action',
+                className: cx('--NameCell'),
+                sortable: true,
+              },
+              action: {
+                key: 'action',
+                name: 'Action',
+                className: cx('--ActionCell'),
+                sortable: true,
+                renderCell: ({ value }) => value.toLowerCase()
+              },
+              approvalStatus: {
+                key: 'approvalStatus',
+                name: 'Approval Status',
+                className: cx('--ApprovalStatusCell'),
+                sortable: true,
+                renderCell: ({ value }) => value.toLowerCase()
+              },
+              content: {
+                key: 'content',
+                name: 'Content',
+                className: cx('--ContentCell'),
+                sortable: false,
+                width: '35em',
+                renderCell: ({ row }) => {
+                  const textValue = makeContentDisplay(
+                    row.purpose,
+                    row.researchQuestion,
+                    row.analysisPlan,
+                    row.disseminationPlan
+                  );
+
+                  return <OverflowingTextCell key={getHistoryTableRowId(row)} value={textValue} />;
+                }
+              },
+              denialReason: {
+                key: 'denialReason',
+                name: 'Notes',
+                className: cx('--NotesCell'),
+                sortable: false,
+                width: '15em',
+                renderCell: ({ value, row }) =>
+                  <OverflowingTextCell key={getHistoryTableRowId(row)} value={value} />
+              },
+              allowSelfEdits: {
+                key: 'allowSelfEdits',
+                name: 'Lock/Unlock',
+                className: cx('--LockUnlockCell'),
+                sortable: false,
+                renderCell: ({ value }) => value ? 'unlocked' : 'locked'
+              }
+            },
+            columnOrder: [
+              'userId',
+              'name',
+              'email',
+              'timestamp',
+              'actionPerformer',
+              'action',
+              'approvalStatus',
+              'content',
+              'denialReason',
+              'allowSelfEdits'
+            ],
+            idGetter: getHistoryTableRowId,
+            initialSort: { columnKey: 'timestamp', direction: 'desc' }
+          }
+        },
+    [ activeDatasetId, loading, value ]
   );
 }
 
@@ -1199,4 +1361,45 @@ function dateToUtcString(date: Date) {
 
 function capitalizeRole(role: string) {
   return role.split(' ').map(capitalize).join(' ');
+}
+
+function makeContentSearchableSring(
+  purpose: string | undefined,
+  researchQuestion: string | undefined,
+  analysisPlan: string | undefined,
+  disseminationPlan: string | undefined
+) {
+  return [
+    purpose && 'Purpose:',
+    purpose,
+    researchQuestion && 'Research Question:',
+    researchQuestion,
+    analysisPlan && 'Analysis Plan:',
+    analysisPlan,
+    disseminationPlan && 'Dissemination Plan:',
+    disseminationPlan
+  ].filter(negate(isNil)).join('\0');
+}
+
+function makeContentDisplay(
+  purpose: string,
+  researchQuestion: string,
+  analysisPlan: string,
+  disseminationPlan: string
+) {
+  const contentFields = zipWith(
+    [ 'Purpose:', 'Research Question:', 'Analysis Plan:', 'Dissemination Plan:'],
+    [ purpose, researchQuestion, analysisPlan, disseminationPlan ],
+    (heading, field) => {
+      return field.length > 0
+        ? `${heading}\n${field}`
+        : undefined
+    }
+  );
+
+  return contentFields.filter(negate(isNil)).join('\n\n');
+}
+
+function getHistoryTableRowId(row: HistoryTableFullRow) {
+  return `${row.userId}-${row.timestamp}`
 }
