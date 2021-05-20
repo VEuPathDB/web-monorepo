@@ -6,6 +6,7 @@ import { PaginationMenu, AnchoredTooltip } from '@veupathdb/wdk-client/lib/Compo
 import { WdkDepdendenciesContext } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { makeClassNameHelper, safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { arrayOf, decodeOrElse, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { areTermsInString, makeSearchHelpText } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import { getLeaves, pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { TreeBoxVocabNode, StringParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
@@ -715,8 +716,8 @@ function makeRecordLink(document: SiteSearchDocument, projectUrls?: ProjectUrls,
     };
   }
 
-  const documentProject = organismToProject[document.organism];
-  const baseUrl = projectUrls[documentProject];
+  const documentProject = findDocumentProject(organismToProject, document.organism);
+  const baseUrl = documentProject && projectUrls[documentProject];
 
   // if baseUrl is not found, return standard link. we _could_ throw instead...
   return {
@@ -747,4 +748,16 @@ function makeGenericSummary(document: SiteSearchDocument, documentType: SiteSear
 
 function formatSummaryFieldValue(value?: string | string[]) {
   return Array.isArray(value) ? value.join('; ') : value;
+}
+
+function findDocumentProject(
+  organismToProject: OrganismToProject,
+  organismStr: string
+): string | undefined {
+  // FIXME: Consider updating the service so that the organism field is a string[]
+  const organisms = decodeOrElse(arrayOf(string), [], organismStr);
+
+  const representativeOrganism = organisms[0];
+
+  return organismToProject[representativeOrganism];
 }
