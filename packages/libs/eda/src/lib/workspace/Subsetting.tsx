@@ -65,7 +65,7 @@ export function Subsetting(props: Props) {
           }}
         >
           <VariableTree
-            entities={entities}
+            rootEntity={entities[0]}
             entityId={entity.id}
             variableId={variable.id}
             onChange={(variable) => {

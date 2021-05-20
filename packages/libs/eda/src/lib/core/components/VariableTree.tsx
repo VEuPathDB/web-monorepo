@@ -1,6 +1,9 @@
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  preorder,
+  pruneDescendantNodes,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
 import { useCallback, useMemo } from 'react';
 import { StudyEntity } from '../types/study';
@@ -17,14 +20,15 @@ import './VariableTree.scss';
 const valuesMap: Record<string, string> = {};
 
 export interface Props {
-  entities: StudyEntity[];
+  rootEntity: StudyEntity;
   entityId?: string;
   variableId?: string;
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: Variable) => void;
 }
 export function VariableTree(props: Props) {
-  const { entities, entityId, variableId, onChange } = props;
+  const { rootEntity, entityId, variableId, onChange } = props;
+  const entities = Array.from(preorder(rootEntity, (e) => e.children ?? []));
   const fields = useMemo(() => {
     return entities.flatMap((entity) => {
       // Create a Set of variableId so we can lookup parentIds
@@ -70,7 +74,7 @@ export function VariableTree(props: Props) {
 
   // Construct the fieldTree using the fields defined above.
   const fieldTree = useMemo(() => {
-    const fieldTree = getTree(fields);
+    const fieldTree = getTree(fields, { hideSingleRoot: false });
     // Remove non-variable branches with no children.
     // This can happen if variables are filtered out due to constraints.
     return pruneDescendantNodes(
@@ -112,7 +116,8 @@ export function VariableTree(props: Props) {
 }
 
 export function VariableTreeDropdown(props: Props) {
-  const { entities, entityId, variableId, onChange } = props;
+  const { rootEntity, entityId, variableId, onChange } = props;
+  const entities = Array.from(preorder(rootEntity, (e) => e.children ?? []));
   const variable = entities
     .find((e) => e.id === entityId)
     ?.variables.find((v) => v.id === variableId);

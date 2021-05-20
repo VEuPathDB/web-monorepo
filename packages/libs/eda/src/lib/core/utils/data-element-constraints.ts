@@ -1,3 +1,4 @@
+import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { isEmpty, union } from 'lodash';
 import { StudyEntity } from '../types/study';
 import { Variable } from '../types/variable';
@@ -5,26 +6,31 @@ import { DataElementConstraint } from '../types/visualization';
 import { findEntityAndVariable } from './study-metadata';
 
 export function filterVariablesByConstraint(
-  entities: StudyEntity[],
+  rootEntity: StudyEntity,
   constraint?: DataElementConstraint
-) {
+): StudyEntity {
   if (
     constraint == null ||
     (constraint.allowedShapes == null && constraint.allowedTypes == null)
   )
-    return entities;
-  return entities.map((e) => ({
-    ...e,
-    variables: e.variables.filter(
-      (variable) =>
-        variable.dataShape == null ||
-        variable.type === 'category' ||
-        ((constraint.allowedShapes == null ||
-          constraint.allowedShapes.includes(variable.dataShape)) &&
-          (constraint.allowedTypes == null ||
-            constraint.allowedTypes.includes(variable.type)))
-    ),
-  }));
+    return rootEntity;
+  return mapStructure(
+    (entity, children) => ({
+      ...entity,
+      variables: entity.variables.filter(
+        (variable) =>
+          variable.dataShape == null ||
+          variable.type === 'category' ||
+          ((constraint.allowedShapes == null ||
+            constraint.allowedShapes.includes(variable.dataShape)) &&
+            (constraint.allowedTypes == null ||
+              constraint.allowedTypes.includes(variable.type)))
+      ),
+      children,
+    }),
+    (e) => e.children ?? [],
+    rootEntity
+  );
 }
 
 export type ValueByInputName = Partial<Record<string, Variable>>;
