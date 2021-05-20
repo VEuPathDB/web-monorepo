@@ -51,7 +51,8 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
   };
 
   // add this per standard
-  const finalData = data.map((d) => ({ ...d, type: 'scatter' as const }));
+  // const finalData = data.map((d) => ({ ...d, type: 'scatter' as const }));
+  const finalData = data.map((d) => ({ ...d }));
 
   return (
     <PlotlyPlot
