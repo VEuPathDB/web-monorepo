@@ -9,6 +9,7 @@ import {
   ValueByInputName,
 } from '../../utils/data-element-constraints';
 import { VariableTreeDropdown } from '../VariableTree';
+import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 interface InputSpec {
   name: string;
@@ -40,7 +41,8 @@ export interface Props {
   constraints?: DataElementConstraintRecord[];
   /**
    * Order in which to apply entity-specific relationships between inputs.
-   * TODO Describe what the order means.
+   * The entity of a given element in the array must be of the same entity, or
+   * lower in the tree, of the element to its right.
    */
   dataElementDependencyOrder?: string[];
 }
@@ -88,16 +90,47 @@ export function InputVariables(props: Props) {
   };
   const flattenedConstraints =
     constraints && flattenConstraints(values, entities, constraints);
-  console.log({ flattenedConstraints });
+
+  // Steps
+  // 1. Get closest prev and next values
+  // 2. If next defined, root is next's entity, otherwise default root entity
+  // 3. If prev is defined, remove prev's entity's children
+  // 4. Return tree.
+  const rootEntities = inputs.map((input, index) => {
+    // 1
+    const inputValues = inputs.map((input) => values[input.name]);
+    const prevValue = inputValues
+      .slice(0, index)
+      .reverse()
+      .find((v) => v != null);
+    const nextValue = inputValues.slice(index + 1).find((v) => v != null);
+
+    // 2
+    const rootEntityId = nextValue?.entityId ?? entities[0].id;
+    const rootEntity =
+      entities.find((entity) => entity.id === rootEntityId) ?? entities[0];
+
+    // 3
+    return prevValue == null
+      ? rootEntity
+      : mapStructure(
+          (entity) =>
+            entity.id === prevValue.entityId
+              ? { ...entity, children: [] }
+              : entity,
+          (entity) => entity.children ?? [],
+          rootEntity
+        );
+  });
   return (
     <div className={classes.root}>
       <div className={classes.inputs}>
-        {inputs.map((input) => (
+        {inputs.map((input, index) => (
           <div key={input.name} className={classes.input}>
             <div className={classes.label}>{input.label}</div>
             <VariableTreeDropdown
-              entities={filterVariablesByConstraint(
-                entities,
+              rootEntity={filterVariablesByConstraint(
+                rootEntities[index],
                 flattenedConstraints && flattenedConstraints[input.name]
               )}
               entityId={values[input.name]?.entityId}
