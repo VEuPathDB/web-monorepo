@@ -9,10 +9,9 @@ import {
   RouteComponentProps,
   useRouteMatch,
 } from 'react-router';
-import { SubsettingRoute } from './Subsetting';
-import { DefaultVariableRedirect } from './DefaultVariableRedirect';
 import { ComputationRoute } from './ComputationRoute';
-import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
+import { DefaultVariableRedirect } from './DefaultVariableRedirect';
+import { Subsetting } from './Subsetting';
 
 interface Props {
   sessionId: string;
@@ -70,20 +69,16 @@ export function SessionPanel(props: Props) {
         render={() => <Redirect to={`${routeBase}/variables`} />}
       />
       <Route
-        path={`${routeBase}/variables`}
+        path={`${routeBase}/variables/:entityId?`}
         exact
-        render={() => <DefaultVariableRedirect />}
+        render={(props) => <DefaultVariableRedirect {...props.match.params} />}
       />
       <Route
         path={`${routeBase}/variables/:entityId/:variableId`}
+        exact
         render={(
           props: RouteComponentProps<{ entityId: string; variableId: string }>
-        ) => (
-          <SubsettingRoute
-            sessionState={sessionState}
-            {...props.match.params}
-          />
-        )}
+        ) => <Subsetting sessionState={sessionState} {...props.match.params} />}
       />
       <Route
         path={`${routeBase}/visualizations`}

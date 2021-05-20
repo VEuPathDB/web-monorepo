@@ -13,9 +13,11 @@ import {
   union,
   intersection,
   partial,
+  keyof,
   Decoder,
 } from 'io-ts';
 import { Filter } from '../types/filter';
+import { TimeUnit } from '../types/general';
 import { Variable, StringVariableValue } from '../types/variable';
 import { ComputationAppOverview } from '../types/visualization';
 import { ioTransformer } from './ioTransformer';
@@ -24,29 +26,9 @@ const AppsResponse = type({
   apps: array(ComputationAppOverview),
 });
 
-type NumBinsOrNumericWidth =
-  | {
-      numBins: number;
-      binWidth?: never;
-    }
-  | {
-      numBins?: undefined;
-      binWidth: number;
-    };
-
-type NumericViewportRangeOrNone =
-  | {
-      viewportMin: number;
-      viewportMax: number;
-    }
-  | {
-      viewportMin?: never;
-      viewportMax?: never;
-    };
-
 type ZeroToTwoVariables = [] | [Variable] | [Variable, Variable];
 
-export interface NumericHistogramRequestParams {
+export interface HistogramRequestParams {
   studyId: string;
   filters: Filter[];
   //  derivedVariables:  // TO DO
@@ -54,110 +36,70 @@ export interface NumericHistogramRequestParams {
     outputEntityId: string;
     valueSpec: 'count' | 'proportion';
     xAxisVariable: Variable;
-    overlayVariable?: Variable;
-    facetVariable?: ZeroToTwoVariables;
-  } & NumBinsOrNumericWidth &
-    NumericViewportRangeOrNone;
+    overlayVariable?: Variable; // TO DO: should this be StringVariable??
+    facetVariable?: ZeroToTwoVariables; // ditto here
+    binSpec: {
+      type: 'binWidth' | 'numBins';
+      value?: number;
+      units?: TimeUnit;
+    };
+    viewport?: {
+      xMin: string;
+      xMax: string;
+    };
+  };
 }
 
-type NumBinsOrDateWidth =
-  | {
-      numBins: number;
-      binWidth?: never;
-    }
-  | {
-      numBins?: undefined;
-      binWidth: string; // Dates widths are strings
-    };
-
-type DateViewportRangeOrNone =
-  | {
-      viewportMin: string;
-      viewportMax: string;
-    }
-  | {
-      viewportMin?: never;
-      viewportMax?: never;
-    };
-
-export interface DateHistogramRequestParams {
-  studyId: string;
-  filters: Filter[];
-  //  derivedVariables:  // TO DO
-  config: {
-    outputEntityId: string;
-    valueSpec: 'count' | 'proportion';
-    xAxisVariable: Variable;
-    overlayVariable?: Variable;
-    facetVariable?: ZeroToTwoVariables;
-  } & NumBinsOrDateWidth &
-    DateViewportRangeOrNone;
-}
-
-const HistogramResponseData = array(
-  intersection([
-    type({
-      binLabel: array(string),
-      binStart: array(string),
-      binEnd: array(string),
-      value: array(number),
-    }),
-    partial({
-      overlayVariableDetails: StringVariableValue,
-      facetVariableDetails: union([
-        tuple([StringVariableValue]),
-        tuple([StringVariableValue, StringVariableValue]),
+export type HistogramResponse = TypeOf<typeof HistogramResponse>;
+export const HistogramResponse = type({
+  histogram: type({
+    data: array(
+      intersection([
+        type({
+          binLabel: array(string),
+          binStart: array(string),
+          binEnd: array(string),
+          value: array(number),
+        }),
+        partial({
+          overlayVariableDetails: StringVariableValue,
+          facetVariableDetails: union([
+            tuple([StringVariableValue]),
+            tuple([StringVariableValue, StringVariableValue]),
+          ]),
+        }),
+      ])
+    ),
+    config: type({
+      incompleteCases: number,
+      binSlider: type({
+        min: number,
+        max: number,
+        step: number,
+      }),
+      xVariableDetails: Variable,
+      binSpec: intersection([
+        type({ type: keyof({ binWidth: null, numBins: null }) }),
+        partial({
+          value: number,
+          units: TimeUnit,
+        }),
       ]),
+      summary: type({
+        min: string,
+        q1: string,
+        median: string,
+        mean: string,
+        q3: string,
+        max: string,
+      }),
+      viewport: type({
+        xMin: string,
+        xMax: string,
+      }),
     }),
-  ])
-);
-
-const HistogramResponseBaseConfig = type({
-  incompleteCases: array(number),
-  binSlider: type({
-    min: number,
-    max: number,
-    step: number,
   }),
-  xVariableDetails: Variable,
-});
-
-// works for date or numeric 'num-bins' responses
-export type HistogramNumBinsResponse = TypeOf<typeof HistogramNumBinsResponse>;
-export const HistogramNumBinsResponse = type({
-  data: HistogramResponseData,
-  config: intersection([
-    HistogramResponseBaseConfig,
-    type({
-      numBins: number,
-    }),
-  ]),
-});
-
-export type NumericHistogramBinWidthResponse = TypeOf<
-  typeof NumericHistogramBinWidthResponse
->;
-export const NumericHistogramBinWidthResponse = type({
-  data: HistogramResponseData,
-  config: intersection([
-    HistogramResponseBaseConfig,
-    type({
-      binWidth: number,
-    }),
-  ]),
-});
-
-export type DateHistogramBinWidthResponse = TypeOf<
-  typeof DateHistogramBinWidthResponse
->;
-export const DateHistogramBinWidthResponse = type({
-  data: HistogramResponseData,
-  config: intersection([
-    HistogramResponseBaseConfig,
-    type({
-      binWidth: string,
-    }),
-  ]),
+  // TO DO: sampleSizeTable
 });
 
 export interface BarplotRequestParams {
@@ -177,20 +119,246 @@ export interface BarplotRequestParams {
 
 export type BarplotResponse = TypeOf<typeof BarplotResponse>;
 export const BarplotResponse = type({
-  config: type({
-    incompleteCases: array(number),
-    xVariableDetails: type({
-      variableId: string,
+  barplot: type({
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+    data: array(
+      type({
+        label: array(string),
+        value: array(number),
+      })
+    ),
+  }),
+  // TO DO: sampleSizeTable
+});
+
+// scatterplot
+export interface ScatterplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    // add bestFitLineWithRaw
+    valueSpec:
+      | 'raw'
+      | 'smoothedMean'
+      | 'smoothedMeanWithRaw'
+      | 'bestFitLineWithRaw';
+    // not quite sure of overlayVariable and facetVariable yet
+    // facetVariable?: ZeroToTwoVariables;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    overlayVariable?: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+// unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
+const ScatterplotResponseData = array(
+  partial({
+    // valueSpec = smoothedMean only returns smoothedMean data (no series data)
+    seriesX: array(number),
+    seriesY: array(number),
+    smoothedMeanX: array(number),
+    smoothedMeanY: array(number),
+    smoothedMeanSE: array(number),
+    // add bestFitLineWithRaw
+    bestFitLineX: array(number),
+    bestFitLineY: array(number),
+    r2: number,
+    // need to make sure if below is correct (untested)
+    overlayVariableDetails: type({
       entityId: string,
+      variableId: string,
+      value: string,
+    }),
+    facetVariableDetails: union([
+      tuple([StringVariableValue]),
+      tuple([StringVariableValue, StringVariableValue]),
+    ]),
+  })
+);
+
+// define sampleSizeTableArray
+const sampleSizeTableArray = array(
+  partial({
+    // set union for size as it depends on the presence of overlay variable
+    size: union([number, array(number)]),
+    overlayVariableDetails: type({
+      entityId: string,
+      variableId: string,
+      value: string,
+    }),
+  })
+);
+export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
+export const ScatterplotResponse = type({
+  scatterplot: type({
+    data: ScatterplotResponseData,
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
     }),
   }),
-  data: array(
+  sampleSizeTable: sampleSizeTableArray,
+});
+
+// lineplot
+export interface LineplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    // not quite sure of overlayVariable and facetVariable yet
+    // overlayVariable?: Variable;
+    // facetVariable?: ZeroToTwoVariables;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    overlayVariable?: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+const LineplotResponseData = array(
+  intersection([
     type({
-      label: array(string),
-      value: array(number),
+      seriesX: array(number),
+      seriesY: array(number),
+    }),
+    partial({
+      // need to make sure if below is correct (untested)
+      overlayVariableDetails: StringVariableValue,
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
+    }),
+  ])
+);
+
+export type LineplotResponse = TypeOf<typeof LineplotResponse>;
+export const LineplotResponse = type({
+  //DKDK backend issue for lineplot returning scatterplot currently
+  // lineplot: type({
+  scatterplot: type({
+    data: LineplotResponseData,
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: sampleSizeTableArray,
+});
+
+export interface MosaicRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+export type MosaicResponse = TypeOf<typeof MosaicResponse>;
+export const MosaicResponse = type({
+  mosaic: type({
+    data: array(
+      type({
+        xLabel: array(string),
+        yLabel: array(string),
+        value: array(array(number)),
+      })
+    ),
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: array(
+    type({
+      size: array(number),
     })
   ),
 });
+
+export type ContTableResponse = TypeOf<typeof ContTableResponse>;
+export const ContTableResponse = intersection([
+  MosaicResponse,
+  type({
+    statsTable: array(
+      type({
+        pvalue: array(union([number, string])),
+        degreesFreedom: array(number),
+        chisq: array(number),
+      })
+    ),
+  }),
+]);
+
+export type TwoByTwoResponse = TypeOf<typeof TwoByTwoResponse>;
+export const TwoByTwoResponse = intersection([
+  MosaicResponse,
+  type({
+    statsTable: array(
+      type({
+        oddsratio: array(number),
+        pvalue: array(union([number, string])),
+        orInterval: array(string),
+        rrInterval: array(string),
+        relativerisk: array(number),
+      })
+    ),
+  }),
+]);
 
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
@@ -220,51 +388,15 @@ export class DataClient extends FetchClient {
   }
 
   // Histogram
-  getNumericHistogramNumBins(
+  getHistogram(
     computationName: string,
-    params: NumericHistogramRequestParams
-  ): Promise<HistogramNumBinsResponse> {
+    params: HistogramRequestParams
+  ): Promise<HistogramResponse> {
     return this.getVisualizationData(
       computationName,
-      'numeric-histogram-num-bins',
+      'histogram',
       params,
-      HistogramNumBinsResponse
-    );
-  }
-
-  getNumericHistogramBinWidth(
-    computationName: string,
-    params: NumericHistogramRequestParams
-  ): Promise<NumericHistogramBinWidthResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'numeric-histogram-bin-width',
-      params,
-      NumericHistogramBinWidthResponse
-    );
-  }
-
-  getDateHistogramNumBins(
-    computationName: string,
-    params: DateHistogramRequestParams
-  ): Promise<HistogramNumBinsResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'date-histogram-num-bins',
-      params,
-      HistogramNumBinsResponse
-    );
-  }
-
-  getDateHistogramBinWidth(
-    computationName: string,
-    params: DateHistogramRequestParams
-  ): Promise<DateHistogramBinWidthResponse> {
-    return this.getVisualizationData(
-      computationName,
-      'date-histogram-bin-width',
-      params,
-      DateHistogramBinWidthResponse
+      HistogramResponse
     );
   }
 
@@ -278,6 +410,56 @@ export class DataClient extends FetchClient {
       'barplot',
       params,
       BarplotResponse
+    );
+  }
+
+  // Scatterplot
+  getScatterplot(
+    computationName: string,
+    params: ScatterplotRequestParams
+  ): Promise<ScatterplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'scatterplot',
+      params,
+      ScatterplotResponse
+    );
+  }
+
+  // Lineplot
+  getLineplot(
+    computationName: string,
+    params: LineplotRequestParams
+  ): Promise<LineplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'lineplot',
+      params,
+      LineplotResponse
+    );
+  }
+
+  getContTable(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<ContTableResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'conttable',
+      params,
+      ContTableResponse
+    );
+  }
+
+  getTwoByTwo(
+    computationName: string,
+    params: MosaicRequestParams
+  ): Promise<TwoByTwoResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'twobytwo',
+      params,
+      TwoByTwoResponse
     );
   }
 }
