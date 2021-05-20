@@ -7,7 +7,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import React, { useCallback, useMemo } from 'react';
+import React, { Suspense, useCallback, useMemo } from 'react';
 
 // need to set for Scatterplot
 import {
@@ -339,6 +339,10 @@ function ScatterplotViz(props: Props) {
             data={[...data.value.dataSetProcess]}
             width={1000}
             height={600}
+            // title={'Scatter plot'}
+            // if setting plot width/height in string
+            // styleWidth={'50%'}
+            // styleHeight={'100%'}
             xLabel={findVariable(vizConfig.xAxisVariable)?.displayName}
             yLabel={findVariable(vizConfig.yAxisVariable)?.displayName}
             xRange={[data.value.xMin, data.value.xMax]}
@@ -408,18 +412,15 @@ any) {
         {...ScatterplotProps}
         data={data}
         // add controls
-        displayLegend={true}
+        displayLegend={data.length > 1}
         displayLibraryControls={false}
       />
       {/* DKDK ScatterplotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (
         <ScatterplotControls
-          label="Scatter Plot Controls"
+          // label="Scatter Plot Controls"
           valueSpec={valueSpec}
           onValueSpecChange={onValueSpecChange}
-          // valueType={data.valueType}
-          // displayLegend={false /* should not be a required prop */}
-          // displayLibraryControls={displayLibraryControls}
           errorManagement={errorManagement}
         />
       )}
@@ -478,6 +479,16 @@ function getRequestParams(
   //DKDK ScatterplotControls
   valueSpecConfig?: string
 ): getRequestParamsProps {
+  //DKDK valueSpec
+  let valueSpecValue = 'raw';
+  if (valueSpecConfig === 'Smoothed mean') {
+    valueSpecValue = 'smoothedMean';
+  } else if (valueSpecConfig === 'Smoothed mean with raw') {
+    valueSpecValue = 'smoothedMeanWithRaw';
+  } else if (valueSpecConfig === 'Best fit line with raw') {
+    valueSpecValue = 'bestFitLineWithRaw';
+  }
+
   if (vizType === 'lineplot') {
     return {
       studyId,
@@ -505,7 +516,7 @@ function getRequestParams(
         // test bestFitLineWithRaw
         // valueSpec: 'bestFitLineWithRaw',
         //DKDK ScatterplotControls
-        valueSpec: valueSpecConfig,
+        valueSpec: valueSpecValue,
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
@@ -542,16 +553,18 @@ function processInputData<T extends number | Date>(
   let yMin: number | Date = 0;
   let yMax: number | Date = 0;
 
-  // set marker colors: rgb values
+  //DKDK coloring: using plotly.js default colors
   const markerColors = [
-    '26, 190, 255', // #1abeff
-    '255, 153, 51', // #ff9966
-  ];
-
-  // set fitted line and CI colors: rgb values
-  const boundColors = [
-    '0, 128, 179', // #0080b3
-    '204, 102, 0', // #cc6600
+    '31, 119, 180', //'#1f77b4',  // muted blue
+    '255, 127, 14', //'#ff7f0e',  // safety orange
+    '44, 160, 44', //'#2ca02c',  // cooked asparagus green
+    '214, 39, 40', //'#d62728',  // brick red
+    '148, 103, 189', //'#9467bd',  // muted purple
+    '140, 86, 75', //'#8c564b',  // chestnut brown
+    '227, 119, 194', //'#e377c2',  // raspberry yogurt pink
+    '127, 127, 127', //'#7f7f7f',  // middle gray
+    '188, 189, 34', //'#bcbd22',  // curry yellow-green
+    '23, 190, 207', //'#17becf'   // blue-teal
   ];
 
   let dataSetProcess: Array<{}> = [];
@@ -689,12 +702,15 @@ function processInputData<T extends number | Date>(
         type: 'scatter',
         fill: fillAreaValue,
         marker: {
+          //DKDK coloring
           color: 'rgba(' + markerColors[index] + ',0)',
           size: 12,
-          line: { color: 'rgba(' + markerColors[index] + ',1)', width: 2 },
+          //DKDK coloring
+          line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
+        //DKDK coloring
         line: { color: 'rgba(' + markerColors[index] + ',1)', shape: 'spline' },
       });
     }
@@ -786,7 +802,8 @@ function processInputData<T extends number | Date>(
         name: 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: 'rgba(' + boundColors[index] + ',1)',
+          //DKDK coloring
+          color: 'rgba(' + markerColors[index] + ',1)',
           shape: 'spline',
           width: 2,
         },
@@ -839,10 +856,11 @@ function processInputData<T extends number | Date>(
         name: 'Confidence interval',
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
-        fillcolor: 'rgba(' + boundColors[index] + ',0.2)',
-        // opacity: 0.4,  // this works but not used
+        //DKDK coloring
+        fillcolor: 'rgba(' + markerColors[index] + ',0.2)',
         type: 'line',
-        line: { color: 'transparent', shape: 'spline' }, // here, line means upper and lower bounds
+        // here, line means upper and lower bounds
+        line: { color: 'transparent', shape: 'spline' },
       });
     }
 
@@ -933,7 +951,8 @@ function processInputData<T extends number | Date>(
         name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: 'rgba(' + boundColors[index] + ',1)',
+          //DKDK coloring
+          color: 'rgba(' + markerColors[index] + ',1)',
           shape: 'spline',
           width: 2,
         },
