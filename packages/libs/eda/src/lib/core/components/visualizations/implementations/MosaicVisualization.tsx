@@ -390,7 +390,6 @@ function MosaicViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && <h1>{isTwoByTwo ? '2x2' : 'RxC'} Contigency Table</h1>}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables
