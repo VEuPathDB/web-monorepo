@@ -451,7 +451,7 @@ export function scatterplotResponseToData(
     modeValue
   );
 
-  // console.log('dataSet Process = ', dataSetProcess)  ;
+  console.log('dataSet Process = ', dataSetProcess);
 
   return {
     dataSetProcess: dataSetProcess,
@@ -699,7 +699,13 @@ function processInputData<T extends number | Date>(
           : 'Data',
         mode: modeValue,
         // type: 'scattergl',
-        type: 'scatter',
+        // type: 'scatter',
+        type:
+          vizType === 'lineplot'
+            ? 'scatter'
+            : vizType === 'densityplot'
+            ? 'scatter'
+            : 'scattergl', // for the raw data of the scatterplot
         fill: fillAreaValue,
         marker: {
           //DKDK coloring
@@ -807,6 +813,7 @@ function processInputData<T extends number | Date>(
           shape: 'spline',
           width: 2,
         },
+        type: 'scatter',
       });
 
       // make Confidence Interval (CI) or Bounds (filled area)
@@ -956,6 +963,7 @@ function processInputData<T extends number | Date>(
           shape: 'spline',
           width: 2,
         },
+        type: 'scatter',
       });
     }
 
