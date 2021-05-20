@@ -57,23 +57,7 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  const {
-    visualization,
-    updateVisualization,
-    computation,
-    filters,
-    dataElementConstraints,
-  } = props;
-  return (
-    <HistogramViz
-      visualization={visualization}
-      updateVisualization={updateVisualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={true}
-      constraints={dataElementConstraints}
-    />
-  );
+  return <HistogramViz {...props} fullscreen />;
 }
 
 function createDefaultConfig(): HistogramConfig {
@@ -100,7 +84,6 @@ const HistogramConfig = t.intersection([
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
-  constraints?: Record<string, DataElementConstraint>[];
 };
 
 function HistogramViz(props: Props) {
@@ -110,7 +93,8 @@ function HistogramViz(props: Props) {
     updateVisualization,
     filters,
     fullscreen,
-    constraints,
+    dataElementConstraints,
+    dataElementDependencyOrder,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -233,7 +217,8 @@ function HistogramViz(props: Props) {
               overlayVariable: vizConfig.overlayVariable,
             }}
             onChange={handleInputVariableChange}
-            constraints={constraints}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
           />
         </div>
       )}

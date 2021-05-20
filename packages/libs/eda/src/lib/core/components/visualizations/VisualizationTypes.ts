@@ -11,6 +11,7 @@ import {
 export interface VisualizationProps {
   visualization: Visualization;
   dataElementConstraints?: Record<string, DataElementConstraint>[];
+  dataElementDependencyOrder?: string[];
   updateVisualization?: (newViz: Visualization) => void;
   computation: Computation;
   filters: Filter[];
