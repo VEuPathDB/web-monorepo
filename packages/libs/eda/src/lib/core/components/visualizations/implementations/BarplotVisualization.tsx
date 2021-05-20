@@ -270,7 +270,7 @@ function BarplotViz(props: Props) {
             // width={1000}
             // height={600}
             orientation={'vertical'}
-            barLayout={'overlay'}
+            barLayout={'group'}
             displayLegend={data.value?.series.length > 1}
             independentAxisLabel={'Label'}
             dependentAxisLabel={'Count'}
@@ -283,7 +283,7 @@ function BarplotViz(props: Props) {
             height={150}
             //DKDK check this option (possibly plot control?)
             orientation={'vertical'}
-            barLayout={'overlay'}
+            barLayout={'stack'}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
@@ -388,6 +388,8 @@ function getRequestParams(
       overlayVariable: overlayVariable,
       //DKDK valueSpec: manually inputted for now
       valueSpec: 'count',
+      //DKDK this works too
+      // valueSpec: 'proportion',
       // valueSpec: 'identity',
     },
   } as BarplotRequestParams;
