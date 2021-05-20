@@ -19,9 +19,6 @@ export interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
   // add enable/disable legend and built-in controls
   displayLegend?: boolean;
   displayLibraryControls?: boolean;
-  // add style width height
-  styleWidth?: number | string;
-  styleHeight?: number | string;
 }
 
 export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
@@ -71,11 +68,6 @@ export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
       config={{
         displayModeBar: props.displayLibraryControls ? 'hover' : false,
         staticPlot: props.staticPlot,
-      }}
-      // add style for width/height to accept string values
-      style={{
-        width: props.styleWidth ? props.styleWidth : undefined,
-        height: props.styleHeight ? props.styleHeight : undefined,
       }}
     />
   );

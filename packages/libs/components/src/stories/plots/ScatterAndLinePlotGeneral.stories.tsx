@@ -974,12 +974,9 @@ export const RealDataDate = () => {
       yLabel={yLabel}
       xRange={[xMin, xMax]}
       yRange={[yMin, yMax]}
-      // title={plotTitle}
+      title={plotTitle}
       width={plotWidth}
       height={plotHeight}
-      // styleWidth/styleHeight are for using string values for width/height
-      // styleWidth={'100%'}
-      // styleHeight={'100%'}
       staticPlot={false}
       // check enable/disable legend and built-in controls
       displayLegend={true}
