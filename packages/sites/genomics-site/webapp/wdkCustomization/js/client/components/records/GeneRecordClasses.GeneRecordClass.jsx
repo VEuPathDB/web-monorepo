@@ -422,7 +422,6 @@ const SequencesTableChildRow = pure(function SequencesTableChildRow(props) {
     <div>
       {protein_sequence == null ? null : (
         <div style={{ padding: '1em' }}>
-	  {is_pseudo == 1 ? (<div><i>{source_id} is a pseudogene and may not be translated. The Predicted Protein Sequence represents the first open reading frame, but there may be other degenerate coding sequences elsewhere in the Genomic Sequence for this gene.</i></div>) : null }
           <h3>Predicted Protein Sequence</h3>
           <div><span style={legendStyle}>{protein_length} aa</span></div>
           <Sequence
