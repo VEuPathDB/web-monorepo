@@ -76,6 +76,7 @@ function ConfiguredVisualizations(props: Props) {
     deleteVisualization,
     visualizations,
     visualizationTypes,
+    visualizationsOverview,
     filters,
   } = props;
   const { url } = useRouteMatch();
@@ -100,45 +101,54 @@ function ConfiguredVisualizations(props: Props) {
       {scopedVisualizations
         .map((viz) => {
           const type = visualizationTypes[viz.type];
+          const meta = visualizationsOverview.find((v) => v.name === viz.type);
           return (
-            <div key={viz.id} className={cx('-ConfiguredVisualization')}>
-              <div className={cx('-ConfiguredVisualizationActions')}>
-                <div>
-                  <Link to={`${url}/${viz.id}`} title="View fullscreen">
-                    <i className="fa fa-arrows-alt"></i>
-                  </Link>
+            <>
+              <div key={viz.id} className={cx('-ConfiguredVisualization')}>
+                <div className={cx('-ConfiguredVisualizationActions')}>
+                  <div>
+                    <Link to={`${url}/${viz.id}`} title="View fullscreen">
+                      <i className="fa fa-arrows-alt"></i>
+                    </Link>
+                  </div>
+                  <div>
+                    <button
+                      title="Copy visualization"
+                      type="button"
+                      className="link"
+                      onClick={() => addVisualization({ ...viz, id: uuid() })}
+                    >
+                      <i className="fa fa-clone"></i>
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      title="Delete visualization"
+                      type="button"
+                      className="link"
+                      onClick={() => deleteVisualization(viz.id)}
+                    >
+                      <i className="fa fa-trash"></i>
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <button
-                    title="Copy visualization"
-                    type="button"
-                    className="link"
-                    onClick={() => addVisualization({ ...viz, id: uuid() })}
-                  >
-                    <i className="fa fa-clone"></i>
-                  </button>
-                </div>
-                <div>
-                  <button
-                    title="Delete visualization"
-                    type="button"
-                    className="link"
-                    onClick={() => deleteVisualization(viz.id)}
-                  >
-                    <i className="fa fa-trash"></i>
-                  </button>
-                </div>
+                {type ? (
+                  <type.gridComponent
+                    visualization={viz}
+                    computation={computation}
+                    filters={filters}
+                  />
+                ) : (
+                  <div>Visualization type not implemented: {viz.type}</div>
+                )}
               </div>
-              {type ? (
-                <type.gridComponent
-                  visualization={viz}
-                  computation={computation}
-                  filters={filters}
-                />
-              ) : (
-                <div>Visualization type not implemented: {viz.type}</div>
-              )}
-            </div>
+              <div className={cx('-ConfiguredVisualizationTitle')}>
+                {viz.displayName ?? 'Unnamed visualization'}
+              </div>
+              <div className={cx('-ConfiguredVisualizationSubtitle')}>
+                {meta?.displayName}
+              </div>
+            </>
           );
         })
         .reverse()}
