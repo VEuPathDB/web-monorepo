@@ -16,7 +16,7 @@ export const mockSessionStore: SessionClient = {
     return records;
   },
   async createSession(newSession: NewSession) {
-    const id = String((await localStore.keys()).length + 1);
+    const id = String((await localStore.keys()).length + 2);
     const now = new Date().toISOString();
     await localStore.setItem<Session>(id, {
       ...newSession,
