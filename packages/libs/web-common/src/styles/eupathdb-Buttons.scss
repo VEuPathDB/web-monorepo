@@ -1,6 +1,14 @@
 @import './eupathdb-Palette.scss';
 
-a.eupathdb-BigButton, input[type="submit"], .filter-button input[type=submit], button.btn, a.btn, a:link.btn {
+// selector to exclude from button rules
+$excludeSelector: "[class*=MuiButton])";
+
+a.eupathdb-BigButton,
+input[type="submit"],
+.filter-button input[type=submit],
+button.btn,
+a.btn,
+a:link.btn {
 /*  @include transition; */
   padding: 8px 12px;
   font-size: 1em;
@@ -77,16 +85,18 @@ a.eupathdb-BigButton, input[type="submit"], .filter-button input[type=submit], b
  */
 input[type="button"],
 button {
-  background: #e8e8e8;
-  background: -webkit-linear-gradient(#f4f4f4, #dddddd);
-  background: -o-linear-gradient(#f4f4f4, #dddddd);
-  background: -moz-linear-gradient(#f4f4f4, #dddddd);
-  background: linear-gradient(#f4f4f4, #dddddd);
-  border: 1px solid #afafaf;
-  border-radius: 2px;
-  padding: 2px 6px;
-  color: #3e3e3e;
-  text-decoration: none;
+  &:not(#{$excludeSelector}) {
+    background: #e8e8e8;
+    background: -webkit-linear-gradient(#f4f4f4, #dddddd);
+    background: -o-linear-gradient(#f4f4f4, #dddddd);
+    background: -moz-linear-gradient(#f4f4f4, #dddddd);
+    background: linear-gradient(#f4f4f4, #dddddd);
+    border: 1px solid #afafaf;
+    border-radius: 2px;
+    padding: 2px 6px;
+    color: #3e3e3e;
+    text-decoration: none;
+  }
 }
 
 
@@ -100,11 +110,13 @@ a.eupathdb-BigButton:hover,
 input[type="submit"]:hover,
 input[type="button"]:hover,
 button:hover {
-  background: #ededed;
-  background: -webkit-linear-gradient(#ededed, #dddddd);
-  background: -o-linear-gradient(#ededed, #dddddd);
-  background: -moz-linear-gradient(#ededed, #dddddd);
-  background: linear-gradient(#ededed, #dddddd);
+  &:not(#{$excludeSelector}) {
+    background: #ededed;
+    background: -webkit-linear-gradient(#ededed, #dddddd);
+    background: -o-linear-gradient(#ededed, #dddddd);
+    background: -moz-linear-gradient(#ededed, #dddddd);
+    background: linear-gradient(#ededed, #dddddd);
+  }
 }
 
 a.eupathdb-BigButton:focus,
@@ -112,7 +124,9 @@ a.btn:focus,
 input[type="submit"]:focus,
 input[type="button"]:focus,
 button:focus {
-  border-color: #717171;
+  &:not(#{$excludeSelector}) {
+    border-color: #717171;
+  }
 }
 
 a.eupathdb-BigButton:active,
@@ -120,20 +134,26 @@ a.btn:active,
 input[type="submit"]:active,
 input[type="button"]:active,
 button:active {
-  background: #ddd;
+  &:not(#{$excludeSelector}) {
+    background: #ddd;
+  }
 }
 
 input[type="submit"][disabled],
 input[type="button"][disabled],
 button[disabled] {
-  color: #aaa;
-  background: #f4f4f4;
-  border-color: #ccc;
-  cursor: not-allowed;
+  &:not(#{$excludeSelector}) {
+    color: #aaa;
+    background: #f4f4f4;
+    border-color: #ccc;
+    cursor: not-allowed;
+  }
 }
 
 a.eupathdb-BigButton,
 input[type="submit"],
 button[type="submit"] {
-  font-size:  0.9rem;
+  &:not(#{$excludeSelector}) {
+    font-size:  0.9rem;
+  }
 }
