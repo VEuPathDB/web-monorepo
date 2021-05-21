@@ -6,6 +6,7 @@ import {
   useRouteMatch,
   RouteComponentProps,
 } from 'react-router-dom';
+import Path from 'path';
 import { v4 as uuid } from 'uuid';
 import { Link, SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -71,6 +72,7 @@ function ConfiguredVisualizations(props: Props) {
   const {
     computationId,
     computations,
+    addVisualization,
     deleteVisualization,
     visualizations,
     visualizationTypes,
@@ -101,17 +103,31 @@ function ConfiguredVisualizations(props: Props) {
           return (
             <div key={viz.id} className={cx('-ConfiguredVisualization')}>
               <div className={cx('-ConfiguredVisualizationActions')}>
-                <Link to={`${url}/${viz.id}`} title="View fullscreen">
-                  <i className="fa fa-arrows-alt"></i>
-                </Link>
-                <button
-                  title="Delete visualization"
-                  type="button"
-                  className="link"
-                  onClick={() => deleteVisualization(viz.id)}
-                >
-                  <i className="fa fa-trash"></i>
-                </button>
+                <div>
+                  <Link to={`${url}/${viz.id}`} title="View fullscreen">
+                    <i className="fa fa-arrows-alt"></i>
+                  </Link>
+                </div>
+                <div>
+                  <button
+                    title="Copy visualization"
+                    type="button"
+                    className="link"
+                    onClick={() => addVisualization({ ...viz, id: uuid() })}
+                  >
+                    <i className="fa fa-clone"></i>
+                  </button>
+                </div>
+                <div>
+                  <button
+                    title="Delete visualization"
+                    type="button"
+                    className="link"
+                    onClick={() => deleteVisualization(viz.id)}
+                  >
+                    <i className="fa fa-trash"></i>
+                  </button>
+                </div>
               </div>
               {type ? (
                 <type.gridComponent
@@ -199,10 +215,13 @@ function FullScreenVisualization(props: Props & { id: string }) {
     id,
     computationId,
     visualizations,
+    addVisualization,
+    deleteVisualization,
     updateVisualization,
     computations,
     filters,
   } = props;
+  const history = useHistory();
   const viz = visualizations.find(
     (v) => v.id === id && v.computationId === computationId
   );
@@ -214,9 +233,45 @@ function FullScreenVisualization(props: Props & { id: string }) {
   return (
     <div className={cx('-FullScreenContainer')}>
       <div className={cx('-FullScreenActions')}>
-        <Link to={`../${computationId}`}>
+        <Link to={`../${computationId}`} title="Minimize visualization">
           <i className="fa fa-window-restore"></i>
         </Link>
+        <div>
+          <button
+            title="Copy visualization"
+            type="button"
+            className="link"
+            onClick={() => {
+              if (viz == null) return;
+              const id = uuid();
+              addVisualization({
+                ...viz,
+                id,
+                displayName:
+                  'Copy of ' + (viz.displayName || 'unnamed visualization'),
+              });
+              history.replace(
+                Path.resolve(history.location.pathname, '..', id)
+              );
+            }}
+          >
+            <i className="fa fa-clone"></i>
+          </button>
+        </div>
+        <div>
+          <button
+            title="Delete visualization"
+            type="button"
+            className="link"
+            onClick={() => {
+              if (viz == null) return;
+              deleteVisualization(viz.id);
+              history.replace(Path.resolve(history.location.pathname, '..'));
+            }}
+          >
+            <i className="fa fa-trash"></i>
+          </button>
+        </div>
       </div>
       {viz == null ? (
         <ContentError>Visualization not found.</ContentError>
