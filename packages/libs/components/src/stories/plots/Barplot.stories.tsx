@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import Barplot, { BarplotProps, BarplotDataSeries } from '../../plots/Barplot';
+import Barplot from '../../plots/Barplot';
 // import usePlotControls from '../../hooks/usePlotControls';
 // import HistogramControls from '../../components/plotControls/HistogramControls';
 // import { HistogramData } from '../../types/plots';

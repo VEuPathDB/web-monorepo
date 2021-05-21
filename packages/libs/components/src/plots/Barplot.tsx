@@ -10,14 +10,17 @@ import { Layout } from 'plotly.js';
 
 // in this example, the main variable is 'country'
 export interface BarplotProps extends PlotProps {
-  // probably should "extends PlotProps" like in Mosaic plot)
   /** the data series - e.g. one per overlay variable value (sex: 'male', 'female') */
-  // data: Array<BarplotDataSeries>;
-  data: any;
-  /** The width of the plot in pixels (if number), or CSS length. */
-  // width?: number | string;
-  /** The height of the plot in pixels (if number), or CSS length. */
-  // height?: number | string;
+  data: {
+    series: {
+      /** The name of the data. e.g. 'male' or 'female' */
+      name: string;
+      /** The color of the data. Optional. */
+      color?: string;
+      value: number[];
+      label: string[]; // e.g. India, Pakistan, Mali
+    }[];
+  };
   /** The orientation of the plot. Defaults to `vertical`  (--> general PlotProp?) */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
@@ -26,7 +29,8 @@ export interface BarplotProps extends PlotProps {
   opacity?: number;
   /** Title of plot. (should probably move to general PlotProps) */
   title?: string; // compulsory, unlike Histogram
-  /** Label for independent axis. e.g. 'Country' */ independentAxisLabel?: string;
+  /** Label for independent axis. e.g. 'Country' */
+  independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to 'Count' */
   dependentAxisLabel?: string;
   /** Show value for each bar */
@@ -44,24 +48,6 @@ export interface BarplotProps extends PlotProps {
   /** Control of background color. Defaults to transparent.  */
   backgroundColor?: string;
 }
-
-export type BarplotDataSeries = {
-  series: [
-    {
-      /** The name of the data. e.g. 'male' or 'female' */
-      name: string;
-      /** The color of the data. Optional. */
-      color?: string;
-      /** Array of labels */
-      // counts: Array<{
-      //   value: number;
-      //   label: string; // e.g. India, Pakistan, Mali
-      // }>;
-      value: number;
-      label: string; // e.g. India, Pakistan, Mali
-    }
-  ];
-};
 
 /** A Plotly-based Barplot component. */
 export default function Barplot({
