@@ -8,6 +8,11 @@
     padding: 0.5em;
   }
 
+  &--UserTableSection .MesaComponent .MesaComponent {
+    width: 100%;
+    overflow-x: auto;
+  }
+
   &--SearchBoxContainer {
     display: flex;
     align-items: center;
