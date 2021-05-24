@@ -117,11 +117,11 @@ export function mergeConstraints(
           ? constraintA
           : {
               isRequired: constraintA.isRequired || constraintB.isRequired,
-              maxNumVars: Math.max(
+              maxNumVars: Math.min(
                 constraintA.maxNumVars,
                 constraintB.maxNumVars
               ),
-              minNumVars: Math.min(
+              minNumVars: Math.max(
                 constraintA.minNumVars,
                 constraintB.minNumVars
               ),
