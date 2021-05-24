@@ -182,8 +182,6 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig, vizConfig]
   );
 
-  console.log('valueSpec at ScatterViz =', vizConfig.valueSpecConfig);
-
   const data = usePromise(
     // set any for now
     // useCallback(async (): Promise<ScatterplotData> => {
@@ -268,8 +266,6 @@ function ScatterplotViz(props: Props) {
     ])
   );
 
-  // console.log('const data = ', data);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {/*  change title at viz page */}
@@ -347,7 +343,7 @@ function ScatterplotViz(props: Props) {
             yLabel={findVariable(vizConfig.yAxisVariable)?.displayName}
             xRange={[data.value.xMin, data.value.xMax]}
             // block this for now
-            // yRange={[data.value.yMin, data.value.yMax]}
+            yRange={[data.value.yMin, data.value.yMax]}
             //DKDK ScatterplotControls valueSpecInitial
             valueSpec={vizConfig.valueSpecConfig}
             // valueSpec={valueSpecInitial}
@@ -363,7 +359,7 @@ function ScatterplotViz(props: Props) {
             height={150}
             xRange={[data.value.xMin, data.value.xMax]}
             // block this for now
-            // yRange={[data.value.yMin, data.value.yMax]}
+            yRange={[data.value.yMin, data.value.yMax]}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
@@ -404,8 +400,6 @@ any) {
     };
   }, []);
 
-  // console.log('ScatterplotWithControls.data = ', data);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <ScatterAndLinePlotGeneral
@@ -440,9 +434,6 @@ export function scatterplotResponseToData(
   // vizType may be used for handling other plots in this component like line and density
   vizType: string
 ): any {
-  // console.log('visualization type at scatterplotResponseToData = ', vizType);
-  // console.log('response.data =', response);
-
   const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
 
   const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(
@@ -450,8 +441,6 @@ export function scatterplotResponseToData(
     vizType,
     modeValue
   );
-
-  console.log('dataSet Process = ', dataSetProcess);
 
   return {
     dataSetProcess: dataSetProcess,
@@ -534,8 +523,6 @@ function processInputData<T extends number | Date>(
   // line, marker,
   modeValue: string
 ) {
-  // console.log('dataSet =', dataSet)
-
   // set fillAreaValue for densityplot
   const fillAreaValue = '';
 
@@ -552,6 +539,12 @@ function processInputData<T extends number | Date>(
   let xMax: number | Date = 0;
   let yMin: number | Date = 0;
   let yMax: number | Date = 0;
+
+  // // set variables for x- and yaxis ranges
+  // let xMin: number | Date;
+  // let xMax: number | Date;
+  // let yMin: number | Date;
+  // let yMax: number | Date;
 
   //DKDK coloring: using plotly.js default colors
   const markerColors = [
@@ -587,12 +580,6 @@ function processInputData<T extends number | Date>(
     if (el.seriesX && el.seriesY) {
       // check the number of x = number of y
       if (el.seriesX.length !== el.seriesY.length) {
-        console.log(
-          'x length=',
-          el.seriesX.length,
-          '  y length=',
-          el.seriesY.length
-        );
         // alert('The number of X data is not equal to the number of Y data');
         throw new Error(
           'The number of X data is not equal to the number of Y data'
@@ -668,10 +655,15 @@ function processInputData<T extends number | Date>(
 
       // check if this Y array consists of numbers & add type assertion
       if (isArrayOfNumbers(ySeriesValue)) {
-        yMin =
-          yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
-        yMax =
-          yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
+        if (index == 0) {
+          yMin = Math.min(...ySeriesValue);
+          yMax = Math.max(...ySeriesValue);
+        } else {
+          yMin =
+            yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
+          yMax =
+            yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
+        }
       } else {
         if (index === 0) {
           // to set initial Date value for Date[]
@@ -822,8 +814,6 @@ function processInputData<T extends number | Date>(
         xIntervalLineValue.map((element: any) => element).reverse()
       );
 
-      // console.log('xMin xMax =', xMin, xMax);
-
       // need to compare xMin/xMax
       xMin =
         xMin < Math.min(...xIntervalBounds.map(Number))
@@ -967,10 +957,10 @@ function processInputData<T extends number | Date>(
       });
     }
 
-    // determine y-axis range for numbers only: x-axis should be in the range of [xMin,xMax] due to CI plot
+    // make some margin for y-axis range (5% of range for now)
     if (typeof yMin == 'number' && typeof yMax == 'number') {
-      yMin = yMin < 0 ? Math.floor(yMin) : Math.ceil(yMin);
-      yMax = yMax < 0 ? Math.floor(yMax) : Math.ceil(yMax);
+      yMin = yMin - (yMax - yMin) * 0.05;
+      yMax = yMax + (yMax - yMin) * 0.05;
     }
   });
 
