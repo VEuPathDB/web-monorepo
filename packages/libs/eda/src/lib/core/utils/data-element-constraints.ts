@@ -40,6 +40,23 @@ export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
  * Given an array of DataElementConstraint objects and a set of values, return
  * a unioned DataElementConstraint object that includes all of the rules for
  * which the provided values satisfy.
+ *
+ * example: one contraint allows string x number, the other date x string
+ *
+ * constraints = [ { xAxisVariable: { allowedTypes: ['string'] }, yAxisVariable: { allowedTypes: ['number'] } },
+                   { xAxisVariable: { allowedTypes: ['date'] }, yAxisVariable: { allowedTypes: ['string'] } } ]
+ *
+ * If the user has already chosen a string-type xAxisVariable, the
+ * constraints.filter() below will allow constraints[0] to pass but
+ * will exclude constraints[1] because the already chosen string
+ * x-variable is not a date. It won't even check the yAxisVariable of
+ * constraint[1] because of the all-or-nothing nature of constraints.
+ *
+ * The constraints passed by the filter are merged into one.
+ *
+ * If no variable has been selected by the user, then the final merged constraint would be
+ * { xAxisVariable: { allowedTypes: ['string','date'] }, yAxisVariable: { allowedTypes: ['number', 'string'] } }
+ *
  */
 export function flattenConstraints(
   values: ValueByInputName,
@@ -50,7 +67,7 @@ export function flattenConstraints(
   const compatibleConstraints = constraints.filter((constraintRecord) =>
     Object.entries(constraintRecord).every(([variableName, constraint]) => {
       const value = values[variableName];
-      // If a value has not been selected for this constraint, then it is considered to be "in-play"
+      // If a value (variable) has not been user-selected for this constraint, then it is considered to be "in-play"
       if (value == null) return true;
       // If a constraint does not declare shapes or types, then any value is allowed, thus the constraint is "in-play"
       if (isEmpty(constraint.allowedShapes) || isEmpty(constraint.allowedTypes))

@@ -29,6 +29,7 @@ export interface Props {
   entities: StudyEntity[];
   /**
    * Current set of values for `inputs`.
+   * In other words, the currently selected variables.
    */
   values: ValueByInputName;
   /**
