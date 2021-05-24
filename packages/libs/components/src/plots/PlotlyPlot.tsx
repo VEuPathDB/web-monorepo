@@ -8,11 +8,11 @@ type Margin = {
   b: number;
 };
 
-//DKDK set props for legend position
+// set props for legend position
 type legendProp = {
   x?: number;
   y?: number;
-  //DKDK xanchor is for positioning legend inside plot
+  // xanchor is for positioning legend inside plot
   xanchor?: 'auto' | 'center' | 'left' | 'right';
   orientation?: 'h' | 'v' | undefined;
 };
@@ -23,7 +23,7 @@ export interface PlotProps {
   margin?: Partial<Margin>;
   staticPlot?: boolean;
   showModebar?: boolean | 'hover';
-  //DKDK add legend prop for positioning
+  // add legend prop for positioning
   legend?: legendProp;
 }
 

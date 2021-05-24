@@ -1,14 +1,29 @@
-import React from 'react';
-import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
+import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 // import Layout for typing layout, especially with sliders
-import { Layout, PlotData } from 'plotly.js';
-
-// following the approach used in PlotlyPlot.tsx to avoid type errors regarding data
-type PlotDataKey = keyof PlotData;
+import { Layout } from 'plotly.js';
 
 // change interface a bit more: this could avoid error on data type
-export interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
-  data: Pick<PlotData, T>[];
+// export interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
+export interface ScatterplotProps extends PlotProps {
+  // data: any,
+  data: Array<{
+    x: number[] | Date[];
+    y: number[] | Date[];
+    name?: string;
+    mode?: string;
+    // type?: string,
+    marker?: {
+      color?: string;
+      size?: number;
+    };
+    line?: {
+      color?: string;
+      shape?: string;
+      width?: number;
+    };
+    fill?: string;
+    fillcolor?: string;
+  }>;
   xLabel?: string;
   yLabel?: string;
   // plotTitle?: string;
@@ -21,10 +36,9 @@ export interface ScatterplotProps<T extends keyof PlotData> extends PlotProps {
   displayLibraryControls?: boolean;
 }
 
-export default function ScatterAndLinePlotGeneral<T extends PlotDataKey>(
-  props: ScatterplotProps<T>
-) {
+export default function ScatterAndLinePlotGeneral(props: ScatterplotProps) {
   const { xLabel, yLabel, title, xRange, yRange, data } = props;
+
   const layout: Partial<Layout> = {
     xaxis: {
       title: xLabel ? xLabel : '',

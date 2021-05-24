@@ -632,7 +632,7 @@ function processInputData<T extends number | Date>(
   let yMin: number | Date = 0;
   let yMax: number | Date = 0;
 
-  let dataSetProcess: Array<{}> = [];
+  let dataSetProcess: any = [];
   dataSet.data.forEach(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xSeriesValue: T[] = [];
