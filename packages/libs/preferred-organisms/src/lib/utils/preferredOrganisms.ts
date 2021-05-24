@@ -26,11 +26,6 @@ import {
 export const ORGANISM_PREFERENCE_KEY = 'organism_preference';
 export const ORGANISM_PREFERENCE_SCOPE = 'project';
 
-export const ALL_DATASETS_SEARCH_NAME = 'AllDatasets';
-export const BUILD_NUMBER_INTRODUCED_ATTRIBUTE = 'build_number_introduced';
-export const ORGANISMS_TABLE = 'Version';
-export const ORGANISM_TERM_ATTRIBUTE = 'organism';
-
 export const makePreferredOrganismsRecoilState = memoize(
   (wdkDependencies: WdkDependencies | undefined) => {
     if (wdkDependencies == null) {
