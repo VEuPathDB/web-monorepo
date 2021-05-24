@@ -84,7 +84,14 @@ const useStyles = makeStyles(
 );
 
 export function InputVariables(props: Props) {
-  const { inputs, entities, values, onChange, constraints } = props;
+  const {
+    inputs,
+    entities,
+    values,
+    onChange,
+    constraints,
+    dataElementDependencyOrder,
+  } = props;
   const classes = useStyles();
   const handleChange = (inputName: string, value?: Variable) => {
     onChange({ ...values, [inputName]: value });
@@ -97,14 +104,23 @@ export function InputVariables(props: Props) {
   // 2. If next defined, root is next's entity, otherwise default root entity
   // 3. If prev is defined, remove prev's entity's children
   // 4. Return tree.
-  const rootEntities = inputs.map((input, index) => {
+  const rootEntities = inputs.map((input) => {
+    if (dataElementDependencyOrder == null) return entities[0];
+
     // 1
-    const inputValues = inputs.map((input) => values[input.name]);
-    const prevValue = inputValues
+    const index = dataElementDependencyOrder.indexOf(input.name);
+    // return root entity if dependencyOrder is not declared
+    if (index === -1) return entities[0];
+
+    const prevValue = dataElementDependencyOrder
       .slice(0, index)
+      .map((n) => values[n])
       .reverse()
       .find((v) => v != null);
-    const nextValue = inputValues.slice(index + 1).find((v) => v != null);
+    const nextValue = dataElementDependencyOrder
+      .slice(index + 1)
+      .map((n) => values[n])
+      .find((v) => v != null);
 
     // 2
     const rootEntityId = nextValue?.entityId ?? entities[0].id;
@@ -123,6 +139,7 @@ export function InputVariables(props: Props) {
           rootEntity
         );
   });
+
   return (
     <div className={classes.root}>
       <div className={classes.inputs}>
