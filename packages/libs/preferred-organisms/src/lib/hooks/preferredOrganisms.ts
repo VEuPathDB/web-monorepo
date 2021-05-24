@@ -41,6 +41,12 @@ export function usePreferredSpecies() {
   return useRecoilValue(preferredSpecies);
 }
 
+export function usePreferredQuestions() {
+  const { preferredQuestions } = usePreferredOrganismsRecoilState();
+
+  return useRecoilValue(preferredQuestions);
+}
+
 export function useSavePreferredOrganisms(newPreferredOrganisms: string[]) {
   const {
     buildNumber,

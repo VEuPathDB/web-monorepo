@@ -19,6 +19,10 @@ import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/ut
 
 import { findAvailableOrganisms } from './configTrees';
 import {
+  DatasetMetadata,
+  makeDatasetMetadataRecoilState,
+} from './datasetMetadata';
+import {
   makeOrganismMetadataRecoilState,
   OrganismMetadata,
 } from './organismMetadata';
@@ -39,6 +43,8 @@ export const makePreferredOrganismsRecoilState = memoize(
     const { organismMetadata } = makeOrganismMetadataRecoilState(
       wdkDependencies
     );
+
+    const { datasetMetadata } = makeDatasetMetadataRecoilState(wdkDependencies);
 
     const config = selector({
       key: 'wdk-service-config',
@@ -148,6 +154,12 @@ export const makePreferredOrganismsRecoilState = memoize(
         findPreferredSpecies(get(fullOrganismTree), get(preferredOrganisms)),
     });
 
+    const preferredQuestions = selector({
+      key: 'preferred-questions',
+      get: ({ get }) =>
+        findPreferredQuestions(get(datasetMetadata), get(preferredOrganisms)),
+    });
+
     return {
       availableOrganisms,
       buildNumber,
@@ -157,6 +169,7 @@ export const makePreferredOrganismsRecoilState = memoize(
       organismTree,
       preferredOrganisms,
       preferredOrganismsEnabled,
+      preferredQuestions,
       preferredSpecies,
       projectId,
     };
@@ -274,6 +287,23 @@ function findPreferredSpecies(
     new Set<string>(),
     organismTree
   );
+}
+
+function findPreferredQuestions(
+  datasetMetadata: Map<string, DatasetMetadata>,
+  preferredOrganisms: string[]
+) {
+  const preferredOrganismsSet = new Set(preferredOrganisms);
+
+  return [...datasetMetadata].reduce((memo, [, { organisms, questions }]) => {
+    if (organisms.some((organism) => preferredOrganismsSet.has(organism))) {
+      questions.forEach((questionUrlSegment) => {
+        memo.add(questionUrlSegment);
+      });
+    }
+
+    return memo;
+  }, new Set<string>());
 }
 
 const organismPreference = record({
