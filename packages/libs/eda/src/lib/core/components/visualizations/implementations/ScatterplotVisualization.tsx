@@ -81,7 +81,7 @@ function createDefaultConfig(): ScatterplotConfig {
   return {
     enableOverlay: true,
     //DKDK ScatterplotControls
-    valueSpecConfig: 'raw',
+    valueSpecConfig: 'Raw',
   };
 }
 
@@ -194,36 +194,13 @@ function ScatterplotViz(props: Props) {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return Promise.reject(new Error('Please choose a X-axis variable'));
       // isHistogramVariable may be used instead
-      else if (!isScatterplotVariable(xAxisVariable))
-        return Promise.reject(
-          new Error(
-            `'${xAxisVariable.displayName}' is not suitable for this plot`
-          )
-        );
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
         return Promise.reject(new Error('Please choose a Y-axis variable'));
-      else if (!isScatterplotVariable(yAxisVariable))
-        return Promise.reject(
-          new Error(
-            `'${yAxisVariable.displayName}' is not suitable for this plot`
-          )
-        );
       // add a condition to check whether xAxisVariable == yxAxisVariable
       else if (xAxisVariable === yAxisVariable)
         return Promise.reject(
           new Error(
             'Please choose different variables between X- and Y-axis variable'
-          )
-        );
-      // overlay
-      else if (
-        vizConfig.overlayVariable != null &&
-        overlayVariable != null &&
-        !isTableVariable(overlayVariable)
-      )
-        return Promise.reject(
-          new Error(
-            `'${overlayVariable.displayName}' is not suitable for this plot. Only categorical, binary, or ordinal type is allowed for the Overlay variable.`
           )
         );
 
@@ -237,7 +214,7 @@ function ScatterplotViz(props: Props) {
         // add visualization.type
         visualization.type,
         //DKDK ScatterplotControls
-        vizConfig.valueSpecConfig ? vizConfig.valueSpecConfig : 'raw'
+        vizConfig.valueSpecConfig ? vizConfig.valueSpecConfig : 'Raw'
       );
 
       // scatterplot, lineplot
@@ -383,7 +360,7 @@ function ScatterplotViz(props: Props) {
 function ScatterplotWithControls({
   data,
   //DKDK ScatterplotControls: set initial value as 'raw'
-  valueSpec = 'raw',
+  valueSpec = 'Raw',
   onValueSpecChange,
   vizType,
   ...ScatterplotProps
@@ -498,12 +475,6 @@ function getRequestParams(
       config: {
         // is outputEntityId correct?
         outputEntityId: xAxisVariable.entityId,
-        // valueSpect will be handled by a plot control in the near future
-        // valueSpec: 'raw',
-        // valueSpec: 'smoothedMean',
-        // valueSpec: 'smoothedMeanWithRaw',
-        // test bestFitLineWithRaw
-        // valueSpec: 'bestFitLineWithRaw',
         //DKDK ScatterplotControls
         valueSpec: valueSpecValue,
         xAxisVariable: xAxisVariable,
@@ -576,6 +547,10 @@ function processInputData<T extends number | Date>(
     let xIntervalBounds: T[] = [];
     let yIntervalBounds: T[] = [];
 
+    //DKDK initialize seriesX/Y
+    let seriesX = [];
+    let seriesY = [];
+
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
       // check the number of x = number of y
@@ -586,13 +561,19 @@ function processInputData<T extends number | Date>(
         );
       }
 
+      //DKDK change string array to number array for numeric data
+      // think of date data later
+      seriesX = el.seriesX.map(Number);
+      seriesY = el.seriesY.map(Number);
+
       // probably no need to have this for series data, though
       //1) combine the arrays:
       let combinedArray = [];
-      for (let j = 0; j < el.seriesX.length; j++) {
+      for (let j = 0; j < seriesX.length; j++) {
         combinedArray.push({
-          xValue: el.seriesX[j],
-          yValue: el.seriesY[j],
+          //DKDK use seriesX/Y instead of el.seriesX/Y
+          xValue: seriesX[j],
+          yValue: seriesY[j],
         });
       }
       //2) sort:
