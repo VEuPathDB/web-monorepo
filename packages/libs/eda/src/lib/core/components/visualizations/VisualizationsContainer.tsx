@@ -192,8 +192,9 @@ function FullScreenVisualization(props: Props & { id: string }) {
   );
   const computation = computations.find((a) => a.id === computationId);
   const vizType = viz && visualizationTypes[viz.type];
-  const constraints = visualizationsOverview.find((v) => v.name === viz?.type)
-    ?.dataElementConstraints;
+  const overview = visualizationsOverview.find((v) => v.name === viz?.type);
+  const constraints = overview?.dataElementConstraints;
+  const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
   if (viz == null) return <div>Visualization not found.</div>;
   if (computation == null) return <div>Computation not found.</div>;
   if (vizType == null) return <div>Visualization type not implemented.</div>;
@@ -207,6 +208,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
       </div>
       <vizType.fullscreenComponent
         dataElementConstraints={constraints}
+        dataElementDependencyOrder={dataElementDependencyOrder}
         visualization={viz}
         updateVisualization={updateVisualization}
         computation={computation}
