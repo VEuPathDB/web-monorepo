@@ -323,7 +323,42 @@ export const MosaicResponse = type({
       }),
     }),
   }),
+  sampleSizeTable: array(
+    type({
+      size: array(number),
+    })
+  ),
 });
+
+export type ContTableResponse = TypeOf<typeof ContTableResponse>;
+export const ContTableResponse = intersection([
+  MosaicResponse,
+  type({
+    statsTable: array(
+      type({
+        pvalue: array(union([number, string])),
+        degreesFreedom: array(number),
+        chisq: array(number),
+      })
+    ),
+  }),
+]);
+
+export type TwoByTwoResponse = TypeOf<typeof TwoByTwoResponse>;
+export const TwoByTwoResponse = intersection([
+  MosaicResponse,
+  type({
+    statsTable: array(
+      type({
+        oddsratio: array(number),
+        pvalue: array(union([number, string])),
+        orInterval: array(string),
+        rrInterval: array(string),
+        relativerisk: array(number),
+      })
+    ),
+  }),
+]);
 
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
@@ -404,27 +439,27 @@ export class DataClient extends FetchClient {
     );
   }
 
-  getMosaic(
+  getContTable(
     computationName: string,
     params: MosaicRequestParams
-  ): Promise<MosaicResponse> {
+  ): Promise<ContTableResponse> {
     return this.getVisualizationData(
       computationName,
       'conttable',
       params,
-      MosaicResponse
+      ContTableResponse
     );
   }
 
   getTwoByTwo(
     computationName: string,
     params: MosaicRequestParams
-  ): Promise<MosaicResponse> {
+  ): Promise<TwoByTwoResponse> {
     return this.getVisualizationData(
       computationName,
       'twobytwo',
       params,
-      MosaicResponse
+      TwoByTwoResponse
     );
   }
 }
