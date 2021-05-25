@@ -1,6 +1,6 @@
 .wdk-UserProfile-banner {
   font-size: 1.3em;
-  width: 45em;
+  display: inline-block;
   padding: 0.4em 1.2em;
   border-radius: 7px;
   border: 1px solid #d3d3d3;
