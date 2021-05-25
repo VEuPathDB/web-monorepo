@@ -56,6 +56,14 @@ export function PassThroughComputation(props: Props) {
     [setVisualizations, session]
   );
 
+  const deleteVisualization = useCallback(
+    (id: String) => {
+      if (session == null) return;
+      setVisualizations(session.visualizations.filter((v) => v.id !== id));
+    },
+    [session, setVisualizations]
+  );
+
   const filters = useMemo(() => session?.filters ?? [], [session?.filters]);
   if (session == null) return <div>Session not found</div>;
   return (
@@ -65,6 +73,7 @@ export function PassThroughComputation(props: Props) {
         {
           id: 'pass-through',
           type: 'pass',
+          displayName: 'Passthrough',
           configuration: undefined,
         },
       ]}
@@ -72,6 +81,7 @@ export function PassThroughComputation(props: Props) {
       visualizationsOverview={computationAppOverview.visualizations!}
       addVisualization={addVisualization}
       updateVisualization={updateVisualization}
+      deleteVisualization={deleteVisualization}
       visualizationTypes={visualizationTypes}
       filters={filters}
     />
