@@ -28,6 +28,6 @@ export const BasicControls: Story<usePlotControlsParams<any>> = (args) => {
 BasicControls.args = {
   data: { series: [{ name: 'dummy data', bins: [] }] },
   scatterplot: {
-    valueSpec: 'raw',
+    valueSpec: 'Raw',
   },
 };

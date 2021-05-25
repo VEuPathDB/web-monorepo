@@ -349,7 +349,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       dependentAxisMode: 'absolute',
     },
     scatterplot: {
-      valueSpec: 'raw',
+      valueSpec: 'Raw',
     },
   };
 
