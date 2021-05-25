@@ -123,7 +123,7 @@ export default class FieldList extends React.Component { // eslint-disable-line 
             <FieldNode
               node={node}
               searchTerm={this.state.searchTerm}
-              isActive={node.field.term === activeField.term}
+              isActive={node.field.term === activeField?.term}
               handleFieldSelect={this.handleFieldSelect}
             />
           )}
