@@ -170,8 +170,10 @@ export interface ScatterplotRequestParams {
 const ScatterplotResponseData = array(
   partial({
     // valueSpec = smoothedMean only returns smoothedMean data (no series data)
-    seriesX: array(number),
-    seriesY: array(number),
+    //DKDK changed to string array
+    seriesX: array(string),
+    seriesY: array(string),
+    // smoothedMeanX: array(string),
     smoothedMeanX: array(number),
     smoothedMeanY: array(number),
     smoothedMeanSE: array(number),
@@ -204,6 +206,19 @@ const sampleSizeTableArray = array(
     }),
   })
 );
+
+// define completeCasesTableArray
+const completeCasesTableArray = array(
+  partial({
+    // set union for size as it depends on the presence of overlay variable
+    completeCases: union([number, array(number)]),
+    variableDetails: type({
+      entityId: string,
+      variableId: string,
+    }),
+  })
+);
+
 export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
 export const ScatterplotResponse = type({
   scatterplot: type({
@@ -221,6 +236,7 @@ export const ScatterplotResponse = type({
     }),
   }),
   sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });
 
 // lineplot
@@ -250,8 +266,9 @@ export interface LineplotRequestParams {
 const LineplotResponseData = array(
   intersection([
     type({
-      seriesX: array(number),
-      seriesY: array(number),
+      //DKDK changed to string array
+      seriesX: array(string),
+      seriesY: array(string),
     }),
     partial({
       // need to make sure if below is correct (untested)
@@ -283,6 +300,7 @@ export const LineplotResponse = type({
     }),
   }),
   sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });
 
 export interface MosaicRequestParams {
