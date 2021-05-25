@@ -28,11 +28,35 @@
     position: relative;
 
     &Actions {
+      display: flex;
       position: absolute;
       right: 0;
       top: 0;
       padding: 0.5em;
-      font-size: 1.8em;
+      font-size: 1.35em;
+      > * {
+        margin: 0 0.25em;
+      }
+      z-index: 1;
+    }
+
+    &Title,
+    &Subtitle {
+      display: flex;
+      justify-content: center;
+    }
+
+    &Title {
+      margin-top: 0.5em;
+      font-weight: bold;
+      font-size: 1.15em;
+    }
+
+    &Subtitle {
+      margin-top: 0.25em;
+      text-transform: uppercase;
+      color: #444;
+      font-weight: 500;
     }
   }
   &-PickerContainer {
@@ -74,10 +98,17 @@
   &-FullScreenContainer {
     position: relative;
     padding: 2em 0;
+    h1 {
+      padding: 0;
+    }
   }
   &-FullScreenActions {
+    display: flex;
     position: absolute;
     right: 0;
+    * {
+      margin: 0 0.25em;
+    }
     a {
       font-size: 1.35em;
     }

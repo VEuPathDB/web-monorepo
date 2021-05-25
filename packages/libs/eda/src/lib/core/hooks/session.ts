@@ -17,6 +17,7 @@ export type SessionState = {
   status: Status;
   hasUnsavedChanges: boolean;
   session?: Session;
+  error?: unknown;
   canUndo: boolean;
   canRedo: boolean;
   undo: () => void;
@@ -96,7 +97,10 @@ export function useSession(sessionId: string): SessionState {
     if (session == null)
       throw new Error("Attempt to copy an session that hasn't been loaded.");
     if (hasUnsavedChanges) await saveSession();
-    return await sessionClient.createSession(session);
+    return await sessionClient.createSession({
+      ...session,
+      name: `Copy of ${session.name}`,
+    });
   }, [sessionClient, session, saveSession, hasUnsavedChanges]);
 
   const deleteSession = useCallback(async () => {
@@ -110,6 +114,7 @@ export function useSession(sessionId: string): SessionState {
   return {
     status,
     session,
+    error: savedSession.error,
     canRedo,
     canUndo,
     hasUnsavedChanges,

@@ -255,15 +255,6 @@ function ScatterplotViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {/*  change title at viz page */}
-      {fullscreen &&
-        (visualization.type === 'scatterplot' ? (
-          <h1>Scatter Plot</h1>
-        ) : visualization.type === 'lineplot' ? (
-          <h1>Line Plot</h1>
-        ) : (
-          ''
-        ))}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables

@@ -197,7 +197,6 @@ function HistogramViz(props: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && <h1>Histogram</h1>}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables
