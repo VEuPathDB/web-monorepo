@@ -27,6 +27,7 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { Variable } from '../../../types/variable';
 import { DataElementConstraint } from '../../../types/visualization';
+import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
@@ -56,23 +57,7 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  const {
-    visualization,
-    updateVisualization,
-    computation,
-    filters,
-    dataElementConstraints,
-  } = props;
-  return (
-    <HistogramViz
-      visualization={visualization}
-      updateVisualization={updateVisualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={true}
-      constraints={dataElementConstraints}
-    />
-  );
+  return <HistogramViz {...props} fullscreen />;
 }
 
 function createDefaultConfig(): HistogramConfig {
@@ -99,7 +84,6 @@ const HistogramConfig = t.intersection([
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
-  constraints?: Record<string, DataElementConstraint>[];
 };
 
 function HistogramViz(props: Props) {
@@ -109,7 +93,8 @@ function HistogramViz(props: Props) {
     updateVisualization,
     filters,
     fullscreen,
-    constraints,
+    dataElementConstraints,
+    dataElementDependencyOrder,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -184,19 +169,10 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useCallback(
-    (variable?: Variable) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
-    },
-    [entities]
-  );
-
   const data = usePromise(
     useCallback(async (): Promise<HistogramData> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
+      const { variable: xAxisVariable } =
+        findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return Promise.reject(new Error('Please choose a main variable'));
 
@@ -216,14 +192,7 @@ function HistogramViz(props: Props) {
       );
       const response = dataClient.getHistogram(computation.type, params);
       return histogramResponseToData(await response, xAxisVariable.type);
-    }, [
-      studyId,
-      filters,
-      dataClient,
-      vizConfig,
-      findVariable,
-      computation.type,
-    ])
+    }, [studyId, filters, dataClient, vizConfig, entities, computation.type])
   );
 
   return (
@@ -247,7 +216,8 @@ function HistogramViz(props: Props) {
               overlayVariable: vizConfig.overlayVariable,
             }}
             onChange={handleInputVariableChange}
-            constraints={constraints}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
           />
         </div>
       )}

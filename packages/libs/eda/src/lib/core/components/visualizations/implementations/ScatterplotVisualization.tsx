@@ -21,7 +21,6 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
-import { DataElementConstraint } from '../../../types/visualization';
 
 // tableVariable/isTableVariable fit to the condition of overlayVariable
 import { isScatterplotVariable, isTableVariable } from '../../filter/guards';
@@ -58,23 +57,7 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  const {
-    visualization,
-    updateVisualization,
-    computation,
-    filters,
-    dataElementConstraints,
-  } = props;
-  return (
-    <ScatterplotViz
-      visualization={visualization}
-      updateVisualization={updateVisualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={true}
-      constraints={dataElementConstraints}
-    />
-  );
+  return <ScatterplotViz {...props} fullscreen />;
 }
 
 function createDefaultConfig(): ScatterplotConfig {
@@ -102,7 +85,6 @@ const ScatterplotConfig = t.intersection([
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
-  constraints?: Record<string, DataElementConstraint>[];
 };
 
 function ScatterplotViz(props: Props) {
@@ -112,7 +94,8 @@ function ScatterplotViz(props: Props) {
     updateVisualization,
     filters,
     fullscreen,
-    constraints,
+    dataElementConstraints,
+    dataElementDependencyOrder,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -296,7 +279,8 @@ function ScatterplotViz(props: Props) {
               overlayVariable: vizConfig.overlayVariable,
             }}
             onChange={handleInputVariableChange}
-            constraints={constraints}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
           />
         </div>
       )}

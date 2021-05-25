@@ -65,16 +65,16 @@ export function Subsetting(props: Props) {
           }}
         >
           <VariableTree
-            entities={entities}
+            rootEntity={entities[0]}
             entityId={entity.id}
             variableId={variable.id}
-            onActiveFieldChange={(term?: string) => {
-              if (term) {
-                const [entityId, variableId] = term.split('/');
+            onChange={(variable) => {
+              if (variable) {
+                const { entityId, variableId } = variable;
                 history.replace(
                   makeVariableLink({ entityId, variableId }, studyMetadata)
                 );
-              } else history.replace('`..');
+              } else history.replace('..');
             }}
           />
         </div>

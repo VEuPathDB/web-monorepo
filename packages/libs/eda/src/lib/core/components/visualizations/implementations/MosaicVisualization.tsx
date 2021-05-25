@@ -15,7 +15,6 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
-import { DataElementConstraint } from '../../../types/visualization';
 import { isMosaicVariable, isTwoByTwoVariable } from '../../filter/guards';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
@@ -55,15 +54,7 @@ export const twoByTwoVisualization: VisualizationType = {
 };
 
 function ContTableGridComponent(props: VisualizationProps) {
-  const { visualization, computation, filters } = props;
-  return (
-    <MosaicViz
-      visualization={visualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={false}
-    />
-  );
+  return <MosaicViz {...props} fullscreen={false} />;
 }
 
 function ContTableSelectorComponent() {
@@ -71,36 +62,11 @@ function ContTableSelectorComponent() {
 }
 
 function ContTableFullscreenComponent(props: VisualizationProps) {
-  const {
-    visualization,
-    updateVisualization,
-    computation,
-    filters,
-    dataElementConstraints,
-  } = props;
-  return (
-    <MosaicViz
-      visualization={visualization}
-      updateVisualization={updateVisualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={true}
-      constraints={dataElementConstraints}
-    />
-  );
+  return <MosaicViz {...props} fullscreen />;
 }
 
 function TwoByTwoGridComponent(props: VisualizationProps) {
-  const { visualization, computation, filters } = props;
-  return (
-    <MosaicViz
-      visualization={visualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={false}
-      isTwoByTwo={true}
-    />
-  );
+  return <MosaicViz {...props} fullscreen={false} isTwoByTwo />;
 }
 
 function TwoByTwoSelectorComponent() {
@@ -108,24 +74,7 @@ function TwoByTwoSelectorComponent() {
 }
 
 function TwoByTwoFullscreenComponent(props: VisualizationProps) {
-  const {
-    visualization,
-    updateVisualization,
-    computation,
-    filters,
-    dataElementConstraints,
-  } = props;
-  return (
-    <MosaicViz
-      visualization={visualization}
-      updateVisualization={updateVisualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={true}
-      constraints={dataElementConstraints}
-      isTwoByTwo={true}
-    />
-  );
+  return <MosaicViz {...props} fullscreen isTwoByTwo />;
 }
 
 function createDefaultConfig(): MosaicConfig {
@@ -144,7 +93,6 @@ const MosaicConfig = t.partial({
 type Props = VisualizationProps & {
   fullscreen: boolean;
   isTwoByTwo?: boolean;
-  constraints?: Record<string, DataElementConstraint>[];
 };
 
 function MosaicViz(props: Props) {
@@ -155,7 +103,8 @@ function MosaicViz(props: Props) {
     filters,
     fullscreen,
     isTwoByTwo = false,
-    constraints,
+    dataElementConstraints,
+    dataElementDependencyOrder,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -409,7 +358,8 @@ function MosaicViz(props: Props) {
               yAxisVariable: vizConfig.yAxisVariable,
             }}
             onChange={handleInputVariableChange}
-            constraints={constraints}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
           />
         </div>
       )}
