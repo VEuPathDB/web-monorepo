@@ -6,8 +6,9 @@ import {
   useRouteMatch,
   RouteComponentProps,
 } from 'react-router-dom';
+import Path from 'path';
 import { v4 as uuid } from 'uuid';
-import { Link } from '@veupathdb/wdk-client/lib/Components';
+import { Link, SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Filter } from '../../types/filter';
 import {
@@ -19,6 +20,7 @@ import { Grid } from '../Grid';
 import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
+import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -28,6 +30,7 @@ interface Props {
   computations: Computation[];
   addVisualization: (visualization: Visualization) => void;
   updateVisualization: (visualization: Visualization) => void;
+  deleteVisualization: (id: string) => void;
   visualizationTypes: Partial<Record<string, VisualizationType>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
@@ -43,20 +46,25 @@ interface Props {
 export function VisualizationsContainer(props: Props) {
   const { url } = useRouteMatch();
   return (
-    <Switch>
-      <Route exact path={url}>
-        <ConfiguredVisualizations {...props} />
-      </Route>
-      <Route exact path={`${url}/new`}>
-        <NewVisualizationPicker {...props} />
-      </Route>
-      <Route
-        path={`${url}/:id`}
-        render={(routeProps: RouteComponentProps<{ id: string }>) => (
-          <FullScreenVisualization id={routeProps.match.params.id} {...props} />
-        )}
-      />
-    </Switch>
+    <div className={cx()}>
+      <Switch>
+        <Route exact path={url}>
+          <ConfiguredVisualizations {...props} />
+        </Route>
+        <Route exact path={`${url}/new`}>
+          <NewVisualizationPicker {...props} />
+        </Route>
+        <Route
+          path={`${url}/:id`}
+          render={(routeProps: RouteComponentProps<{ id: string }>) => (
+            <FullScreenVisualization
+              id={routeProps.match.params.id}
+              {...props}
+            />
+          )}
+        />
+      </Switch>
+    </div>
   );
 }
 
@@ -64,8 +72,11 @@ function ConfiguredVisualizations(props: Props) {
   const {
     computationId,
     computations,
+    addVisualization,
+    deleteVisualization,
     visualizations,
     visualizationTypes,
+    visualizationsOverview,
     filters,
   } = props;
   const { url } = useRouteMatch();
@@ -90,24 +101,54 @@ function ConfiguredVisualizations(props: Props) {
       {scopedVisualizations
         .map((viz) => {
           const type = visualizationTypes[viz.type];
-          if (type == null)
-            return <div>Viz type not implemented: {viz.type}</div>;
+          const meta = visualizationsOverview.find((v) => v.name === viz.type);
           return (
-            <div className={cx('-ConfiguredVisualization')}>
-              <div
-                className={cx('-ConfiguredVisualizationActions')}
-                style={{ zIndex: 5 }}
-              >
-                <Link to={`${url}/${viz.id}`}>
-                  <i className="fa fa-arrows-alt"></i>
-                </Link>
+            <>
+              <div key={viz.id} className={cx('-ConfiguredVisualization')}>
+                <div className={cx('-ConfiguredVisualizationActions')}>
+                  <div>
+                    <Link to={`${url}/${viz.id}`} title="View fullscreen">
+                      <i className="fa fa-arrows-alt"></i>
+                    </Link>
+                  </div>
+                  <div>
+                    <button
+                      title="Copy visualization"
+                      type="button"
+                      className="link"
+                      onClick={() => addVisualization({ ...viz, id: uuid() })}
+                    >
+                      <i className="fa fa-clone"></i>
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      title="Delete visualization"
+                      type="button"
+                      className="link"
+                      onClick={() => deleteVisualization(viz.id)}
+                    >
+                      <i className="fa fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                {type ? (
+                  <type.gridComponent
+                    visualization={viz}
+                    computation={computation}
+                    filters={filters}
+                  />
+                ) : (
+                  <div>Visualization type not implemented: {viz.type}</div>
+                )}
               </div>
-              <type.gridComponent
-                visualization={viz}
-                computation={computation}
-                filters={filters}
-              />
-            </div>
+              <div className={cx('-ConfiguredVisualizationTitle')}>
+                {viz.displayName ?? 'Unnamed visualization'}
+              </div>
+              <div className={cx('-ConfiguredVisualizationSubtitle')}>
+                {meta?.displayName}
+              </div>
+            </>
           );
         })
         .reverse()}
@@ -151,6 +192,7 @@ function NewVisualizationPicker(props: Props) {
                     id,
                     computationId: computationId,
                     type: vizOverview.name!,
+                    displayName: 'Unnamed visualization',
                     configuration: vizType?.createDefaultConfig(),
                   });
                   history.push(`../${computationId}/${id}`);
@@ -183,17 +225,21 @@ function FullScreenVisualization(props: Props & { id: string }) {
     id,
     computationId,
     visualizations,
+    addVisualization,
+    deleteVisualization,
     updateVisualization,
     computations,
     filters,
   } = props;
+  const history = useHistory();
   const viz = visualizations.find(
     (v) => v.id === id && v.computationId === computationId
   );
   const computation = computations.find((a) => a.id === computationId);
   const vizType = viz && visualizationTypes[viz.type];
-  const constraints = visualizationsOverview.find((v) => v.name === viz?.type)
-    ?.dataElementConstraints;
+  const overview = visualizationsOverview.find((v) => v.name === viz?.type);
+  const constraints = overview?.dataElementConstraints;
+  const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
   if (viz == null) return <div>Visualization not found.</div>;
   if (computation == null) return <div>Computation not found.</div>;
   if (vizType == null) return <div>Visualization type not implemented.</div>;
@@ -201,17 +247,74 @@ function FullScreenVisualization(props: Props & { id: string }) {
   return (
     <div className={cx('-FullScreenContainer')}>
       <div className={cx('-FullScreenActions')}>
-        <Link to={`../${computationId}`}>
+        <Link to={`../${computationId}`} title="Minimize visualization">
           <i className="fa fa-window-restore"></i>
         </Link>
+        <div>
+          <button
+            title="Copy visualization"
+            type="button"
+            className="link"
+            onClick={() => {
+              if (viz == null) return;
+              const id = uuid();
+              addVisualization({
+                ...viz,
+                id,
+                displayName:
+                  'Copy of ' + (viz.displayName || 'unnamed visualization'),
+              });
+              history.replace(
+                Path.resolve(history.location.pathname, '..', id)
+              );
+            }}
+          >
+            <i className="fa fa-clone"></i>
+          </button>
+        </div>
+        <div>
+          <button
+            title="Delete visualization"
+            type="button"
+            className="link"
+            onClick={() => {
+              if (viz == null) return;
+              deleteVisualization(viz.id);
+              history.replace(Path.resolve(history.location.pathname, '..'));
+            }}
+          >
+            <i className="fa fa-trash"></i>
+          </button>
+        </div>
       </div>
-      <vizType.fullscreenComponent
-        dataElementConstraints={constraints}
-        visualization={viz}
-        updateVisualization={updateVisualization}
-        computation={computation}
-        filters={filters}
-      />
+      {viz == null ? (
+        <ContentError>Visualization not found.</ContentError>
+      ) : computation == null ? (
+        <ContentError>Computation not found.</ContentError>
+      ) : vizType == null ? (
+        <ContentError>
+          <>Visualization type not implemented: {viz.type}</>
+        </ContentError>
+      ) : (
+        <div>
+          <h1>
+            <SaveableTextEditor
+              value={viz.displayName ?? 'Unnamed visualization'}
+              onSave={(value) =>
+                updateVisualization({ ...viz, displayName: value })
+              }
+            />
+          </h1>
+          <vizType.fullscreenComponent
+            dataElementConstraints={constraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            visualization={viz}
+            updateVisualization={updateVisualization}
+            computation={computation}
+            filters={filters}
+          />
+        </div>
+      )}
     </div>
   );
 }

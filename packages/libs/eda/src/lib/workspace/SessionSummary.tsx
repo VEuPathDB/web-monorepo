@@ -1,6 +1,7 @@
 import { SaveableTextEditor } from '@veupathdb/wdk-client/lib/Components';
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
+import Path from 'path';
 import { Session } from '../core';
 import { ActionIconButton } from './ActionIconButton';
 import { cx } from './Utils';
@@ -22,9 +23,14 @@ export function SessionSummary(props: Props) {
     deleteSession,
   } = props;
   const history = useHistory();
+  const { url } = useRouteMatch();
   const handleCopy = async () => {
     const res = await copySession();
-    history.push(res.id);
+    history.replace(Path.resolve(url, `../${res.id}`));
+  };
+  const handleDelete = async () => {
+    await deleteSession();
+    history.replace(Path.resolve(url, '..'));
   };
   return (
     <div className={cx('-SessionSummary')}>
@@ -46,7 +52,7 @@ export function SessionSummary(props: Props) {
       <ActionIconButton
         iconClassName="trash"
         hoverText="Delete session"
-        action={deleteSession}
+        action={handleDelete}
       />
     </div>
   );
