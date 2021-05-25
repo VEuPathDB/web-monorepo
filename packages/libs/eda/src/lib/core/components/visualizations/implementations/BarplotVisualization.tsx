@@ -17,7 +17,6 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
-import { DataElementConstraint } from '../../../types/visualization';
 
 //DKDK need to check which variable is suitable tableVariable/isTableVariable fit to the condition of overlayVariable
 import { isTableVariable, isHistogramVariable } from '../../filter/guards';
@@ -51,23 +50,7 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  const {
-    visualization,
-    updateVisualization,
-    computation,
-    filters,
-    dataElementConstraints,
-  } = props;
-  return (
-    <BarplotViz
-      visualization={visualization}
-      updateVisualization={updateVisualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={true}
-      constraints={dataElementConstraints}
-    />
-  );
+  return <BarplotViz {...props} fullscreen />;
 }
 
 function createDefaultConfig(): BarplotConfig {
@@ -90,7 +73,6 @@ const BarplotConfig = t.intersection([
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
-  constraints?: Record<string, DataElementConstraint>[];
 };
 
 function BarplotViz(props: Props) {
@@ -100,7 +82,8 @@ function BarplotViz(props: Props) {
     updateVisualization,
     filters,
     fullscreen,
-    constraints,
+    dataElementConstraints,
+    dataElementDependencyOrder,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -235,7 +218,8 @@ function BarplotViz(props: Props) {
               overlayVariable: vizConfig.overlayVariable,
             }}
             onChange={handleInputVariableChange}
-            constraints={constraints}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
           />
         </div>
       )}
@@ -283,7 +267,7 @@ function BarplotViz(props: Props) {
             height={150}
             //DKDK check this option (possibly plot control?)
             orientation={'vertical'}
-            barLayout={'stack'}
+            barLayout={'group'}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
