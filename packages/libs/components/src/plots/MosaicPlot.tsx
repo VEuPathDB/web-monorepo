@@ -15,6 +15,7 @@ export interface Props extends Omit<PlotProps, 'width' | 'height'> {
   showModebar?: boolean;
   showColumnLabels?: boolean;
   title?: string;
+  titleSize?: number;
   width?: number | string;
   height?: number | string;
 }
@@ -63,9 +64,14 @@ export default function MosaicPlot(props: Props) {
     },
     barmode: 'stack',
     barnorm: 'percent',
-    title: props.title ?? {
-      text: props.title,
-    },
+    title: props.title
+      ? {
+          text: props.title,
+          font: {
+            size: props.titleSize,
+          },
+        }
+      : undefined,
   } as const;
 
   let data: PlotParams['data'] = props.data
