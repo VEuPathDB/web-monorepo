@@ -359,10 +359,15 @@ function MosaicViz(props: Props) {
         data={data.value.data}
         independentValues={data.value.independentValues}
         dependentValues={data.value.dependentValues}
-        width={350}
-        height={280}
+        width={300}
+        height={180}
+        margin={{ t: 40, b: 40, l: 40, r: 40 }}
+        showColumnLabels={false}
         showModebar={false}
         showLegend={false}
+        title={`${isTwoByTwo ? '2x2 ' : ''}Contingency Table`}
+        titleSize={15}
+        staticPlot={true}
         independentLabel=""
         dependentLabel=""
       />
