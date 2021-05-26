@@ -54,6 +54,26 @@ export const Basic = () => {
   );
 };
 
+export const EmptyData = () => {
+  return (
+    <Barplot
+      data={{ series: [] }}
+      width={plotWidth}
+      height={plotHeight}
+      // title={plotTitle}
+      orientation={orientation}
+      //DKDK check this option later
+      barLayout={barLayout}
+      independentAxisLabel={'Independent axis name'}
+      dependentAxisLabel={'Dependent axis name'}
+      staticPlot={false}
+      displayLegend={true}
+      displayLibraryControls={true}
+      // margin={{l: 50, r: 10, b: 20, t: 10}}
+    />
+  );
+};
+
 //DKDK adding storybook control
 const Template = (args: any) => <Barplot {...args} />;
 export const WithStorybookControl: Story<any> = Template.bind({});
