@@ -611,21 +611,22 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
   visibility: hidden;
 }
+div.wdk-CollapsibleSectionContent li {
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+}
 
-.wdk-RecordContainer .StudyRecordHeadingSearchLinksDashboardLink {
-  float: right;
-  position:relative;
-  bottom: 3em;
-  display: block;
-  margin-right: 5em;;
+.wdk-RecordContainer a.btn.StudyRecordHeadingSearchLinksDashboardLink {
   background: #3c78d8;
   border-color: #0d47a2;
   color: white;
-  padding: 1em;
-  position: relative;
-  min-width: 9em;
   font-size: 130%; 
+  margin-left: 0;
 }
+.wdk-RecordContainer div.StudyRecordHeadingSearchLinksDashboardLink {
+  margin-top: 2em;
+}
+
 .eupathdb-RecordOverviewItem {
   line-height: 150%;
 }
