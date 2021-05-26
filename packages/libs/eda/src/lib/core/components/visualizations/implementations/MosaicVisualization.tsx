@@ -198,6 +198,11 @@ function MosaicViz(props: Props) {
           }' is not suitable for ${isTwoByTwo ? '2x2' : ''} contingency tables`
         );
 
+      if (xAxisVariable === yAxisVariable)
+        throw new Error(
+          'The X and Y variables must not be the same. Please choose different variables for X and Y.'
+        );
+
       const params = getRequestParams(
         studyId,
         filters ?? [],
