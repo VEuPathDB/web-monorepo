@@ -273,17 +273,34 @@ function BarplotViz(props: Props) {
             displayLibraryControls={false}
             staticPlot={true}
             //DKDK set margin for better display at thumbnail/grid view
-            margin={{ l: 40, r: 20, b: 20, t: 10 }}
+            margin={{ l: 30, r: 20, b: 15, t: 20 }}
           />
         )
+      ) : // no data case
+      fullscreen ? (
+        //DKDK add control for error case as well
+        <Barplot
+          data={{ series: [] }}
+          orientation={'vertical'}
+          barLayout={'group'}
+          independentAxisLabel={'Label'}
+          dependentAxisLabel={'Count'}
+          displayLegend={false}
+          displayLibraryControls={false}
+        />
       ) : (
-        <i
-          className="fa fa-bar-chart"
-          style={{
-            fontSize: fullscreen ? '34em' : '12em',
-            color: '#aaa',
-          }}
-        ></i>
+        // no data & grid view
+        <Barplot
+          data={{ series: [] }}
+          width={230}
+          height={150}
+          orientation={'vertical'}
+          barLayout={'group'}
+          displayLegend={false}
+          displayLibraryControls={false}
+          staticPlot={true}
+          margin={{ l: 30, r: 20, b: 15, t: 20 }}
+        />
       )}
     </div>
   );
