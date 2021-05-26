@@ -25,19 +25,21 @@ type MosaicData = Pick<
   'data' | 'independentValues' | 'dependentValues'
 >;
 
-type ContTableData = MosaicData & {
-  pValue: number | string;
-  degreesFreedom: number;
-  chisq: number;
-};
+type ContTableData = MosaicData &
+  Partial<{
+    pValue: number | string;
+    degreesFreedom: number;
+    chisq: number;
+  }>;
 
-type TwoByTwoData = MosaicData & {
-  pValue: number | string;
-  relativeRisk: number;
-  rrInterval: string;
-  oddsRatio: number;
-  orInterval: string;
-};
+type TwoByTwoData = MosaicData &
+  Partial<{
+    pValue: number | string;
+    relativeRisk: number;
+    rrInterval: string;
+    oddsRatio: number;
+    orInterval: string;
+  }>;
 
 export const contTableVisualization: VisualizationType = {
   gridComponent: ContTableGridComponent,
@@ -246,18 +248,18 @@ function MosaicViz(props: Props) {
               </tr>
               <tr>
                 <td>p-value</td>
-                <td>{twoByTwoData.pValue}</td>
-                <td></td>
+                <td>{twoByTwoData.pValue ?? 'N/A'}</td>
+                <td>N/A</td>
               </tr>
               <tr>
                 <td>Odds ratio</td>
-                <td>{twoByTwoData.oddsRatio}</td>
-                <td>{twoByTwoData.orInterval}</td>
+                <td>{twoByTwoData.oddsRatio ?? 'N/A'}</td>
+                <td>{twoByTwoData.orInterval ?? 'N/A'}</td>
               </tr>
               <tr>
                 <td>Relative risk</td>
-                <td>{twoByTwoData.relativeRisk}</td>
-                <td>{twoByTwoData.rrInterval}</td>
+                <td>{twoByTwoData.relativeRisk ?? 'N/A'}</td>
+                <td>{twoByTwoData.rrInterval ?? 'N/A'}</td>
               </tr>
             </tbody>
           </table>
@@ -272,15 +274,15 @@ function MosaicViz(props: Props) {
             <tbody>
               <tr>
                 <td>p-value</td>
-                <td>{contTableData.pValue}</td>
+                <td>{contTableData.pValue ?? 'N/A'}</td>
               </tr>
               <tr>
                 <td>Degrees of freedom</td>
-                <td>{contTableData.degreesFreedom}</td>
+                <td>{contTableData.degreesFreedom ?? 'N/A'}</td>
               </tr>
               <tr>
                 <td>Chi-squared</td>
-                <td>{contTableData.chisq}</td>
+                <td>{contTableData.chisq ?? 'N/A'}</td>
               </tr>
             </tbody>
           </table>

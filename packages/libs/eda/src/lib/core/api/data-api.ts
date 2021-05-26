@@ -335,7 +335,7 @@ export const ContTableResponse = intersection([
   MosaicResponse,
   type({
     statsTable: array(
-      type({
+      partial({
         pvalue: union([number, string]),
         degreesFreedom: number,
         chisq: number,
@@ -349,7 +349,7 @@ export const TwoByTwoResponse = intersection([
   MosaicResponse,
   type({
     statsTable: array(
-      type({
+      partial({
         oddsratio: number,
         pvalue: union([number, string]),
         orInterval: string,
