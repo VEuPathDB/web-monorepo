@@ -19,16 +19,15 @@ import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
-  DateHistogramRequestParams,
-  NumericHistogramRequestParams,
+  HistogramRequestParams,
+  HistogramResponse,
 } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 import { DataElementConstraint } from '../../../types/visualization';
-import { parseTimeDelta } from '../../../utils/date-conversion';
+import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
@@ -58,28 +57,13 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  const {
-    visualization,
-    updateVisualization,
-    computation,
-    filters,
-    dataElementConstraints,
-  } = props;
-  return (
-    <HistogramViz
-      visualization={visualization}
-      updateVisualization={updateVisualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={true}
-      constraints={dataElementConstraints}
-    />
-  );
+  return <HistogramViz {...props} fullscreen />;
 }
 
 function createDefaultConfig(): HistogramConfig {
   return {
     enableOverlay: true,
+    dependentAxisLogScale: false,
   };
 }
 
@@ -88,6 +72,7 @@ type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
 const HistogramConfig = t.intersection([
   t.type({
     enableOverlay: t.boolean,
+    dependentAxisLogScale: t.boolean,
   }),
   t.partial({
     xAxisVariable: Variable,
@@ -99,7 +84,6 @@ const HistogramConfig = t.intersection([
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
-  constraints?: Record<string, DataElementConstraint>[];
 };
 
 function HistogramViz(props: Props) {
@@ -109,7 +93,8 @@ function HistogramViz(props: Props) {
     updateVisualization,
     filters,
     fullscreen,
-    constraints,
+    dataElementConstraints,
+    dataElementDependencyOrder,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -165,9 +150,9 @@ function HistogramViz(props: Props) {
     ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
       if (newBinWidth) {
         updateVizConfig({
-          binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
+          binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
           binWidthTimeUnit: isTimeDelta(newBinWidth)
-            ? newBinWidth[1]
+            ? newBinWidth.unit
             : undefined,
         });
       }
@@ -175,19 +160,19 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useCallback(
-    (variable?: Variable) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
+  const handleDependentAxisLogScale = useCallback(
+    (newState?: boolean) => {
+      updateVizConfig({
+        dependentAxisLogScale: newState,
+      });
     },
-    [entities]
+    [updateVizConfig]
   );
 
   const data = usePromise(
     useCallback(async (): Promise<HistogramData> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
+      const { variable: xAxisVariable } =
+        findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return Promise.reject(new Error('Please choose a main variable'));
 
@@ -205,30 +190,13 @@ function HistogramViz(props: Props) {
         vizConfig.binWidth,
         vizConfig.binWidthTimeUnit
       );
-      const response =
-        xAxisVariable.type === 'date'
-          ? dataClient.getDateHistogramBinWidth(
-              computation.type,
-              params as DateHistogramRequestParams
-            )
-          : dataClient.getNumericHistogramBinWidth(
-              computation.type,
-              params as NumericHistogramRequestParams
-            );
+      const response = dataClient.getHistogram(computation.type, params);
       return histogramResponseToData(await response, xAxisVariable.type);
-    }, [
-      studyId,
-      filters,
-      dataClient,
-      vizConfig,
-      findVariable,
-      computation.type,
-    ])
+    }, [studyId, filters, dataClient, vizConfig, entities, computation.type])
   );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && <h1>Histogram</h1>}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables
@@ -248,7 +216,8 @@ function HistogramViz(props: Props) {
               overlayVariable: vizConfig.overlayVariable,
             }}
             onChange={handleInputVariableChange}
-            constraints={constraints}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
           />
         </div>
       )}
@@ -280,6 +249,8 @@ function HistogramViz(props: Props) {
           <HistogramPlotWithControls
             data={data.value}
             onBinWidthChange={onBinWidthChange}
+            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+            handleDependentAxisLogScale={handleDependentAxisLogScale}
             width="100%"
             height={400}
             orientation={'vertical'}
@@ -298,6 +269,7 @@ function HistogramViz(props: Props) {
             displayLegend={false}
             independentAxisLabel=""
             dependentAxisLabel=""
+            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           />
         )
       ) : (
@@ -319,11 +291,13 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   }: {
     binWidth: NumberOrTimeDelta;
   }) => void;
+  handleDependentAxisLogScale: (newState?: boolean) => void;
 };
 
 function HistogramPlotWithControls({
   data,
   onBinWidthChange,
+  handleDependentAxisLogScale,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // TODO Use UIState
@@ -361,7 +335,7 @@ function HistogramPlotWithControls({
           binWidth={data.binWidth}
           selectedUnit={
             data.binWidth && isTimeDelta(data.binWidth)
-              ? data.binWidth[1]
+              ? data.binWidth.unit
               : undefined
           }
           onBinWidthChange={({ binWidth: newBinWidth }) => {
@@ -370,6 +344,8 @@ function HistogramPlotWithControls({
           binWidthRange={data.binWidthRange}
           binWidthStep={data.binWidthStep}
           errorManagement={errorManagement}
+          dependentAxisLogScale={histogramProps.dependentAxisLogScale}
+          toggleDependentAxisLogScale={handleDependentAxisLogScale}
         />
       )}
     </div>
@@ -382,31 +358,30 @@ function HistogramPlotWithControls({
  * @returns HistogramData
  */
 export function histogramResponseToData(
-  response: PromiseType<
-    ReturnType<
-      DataClient['getDateHistogramBinWidth' | 'getNumericHistogramBinWidth']
-    >
-  >,
+  response: HistogramResponse,
   type: HistogramVariable['type']
 ): HistogramData {
-  if (response.data.length === 0)
+  if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
   const binWidth =
     type === 'number'
-      ? parseFloat(response.config.binWidth as string) || 1
-      : parseTimeDelta(response.config.binWidth as string);
-  const { min, max, step } = response.config.binSlider;
+      ? response.histogram.config.binSpec.value || 1
+      : {
+          value: response.histogram.config.binSpec.value || 1,
+          unit: response.histogram.config.binSpec.units || 'month',
+        };
+  const { min, max, step } = response.histogram.config.binSlider;
   const binWidthRange = (type === 'number'
     ? { min, max }
     : {
         min,
         max,
-        unit: (binWidth as TimeDelta)[1],
+        unit: (binWidth as TimeDelta).unit,
       }) as NumberOrTimeDeltaRange;
   const binWidthStep = step || 0.1;
   return {
-    series: response.data.map((data, index) => ({
+    series: response.histogram.data.map((data, index) => ({
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
       // color: TO DO
       bins: data.value.map((_, index) => ({
@@ -437,17 +412,16 @@ function getRequestParams(
   overlayVariable?: Variable,
   binWidth?: number,
   binWidthTimeUnit?: string
-): NumericHistogramRequestParams | DateHistogramRequestParams {
-  const binOption = binWidth
+): HistogramRequestParams {
+  const binSpec = binWidth
     ? {
-        binWidth:
-          variableType === 'number'
-            ? binWidth
-            : `${binWidth} ${binWidthTimeUnit}`,
+        binSpec: {
+          type: 'binWidth',
+          value: binWidth,
+          ...(variableType === 'date' ? { units: binWidthTimeUnit } : {}),
+        },
       }
-    : {
-        // numBins: 10,
-      };
+    : { binSpec: { type: 'binWidth' } };
 
   return {
     studyId,
@@ -457,7 +431,7 @@ function getRequestParams(
       valueSpec: 'count',
       xAxisVariable: variable,
       overlayVariable,
-      ...binOption,
+      ...binSpec,
     },
-  } as NumericHistogramRequestParams | DateHistogramRequestParams;
+  } as HistogramRequestParams;
 }

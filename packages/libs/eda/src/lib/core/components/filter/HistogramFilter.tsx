@@ -5,12 +5,11 @@ import Histogram, {
 import {
   DateRange,
   ErrorManagement,
-  NumberOrDateRange,
+  TimeDelta,
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
-  NumberRange,
-  TimeDelta,
 } from '@veupathdb/components/lib/types/general';
+import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import {
   HistogramData,
   HistogramDataSeries,
@@ -18,23 +17,21 @@ import {
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
-import { number, string, partial, TypeOf } from 'io-ts';
+import { number, partial, TypeOf, boolean } from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
 import {
   DataClient,
-  DateHistogramRequestParams,
-  NumericHistogramRequestParams,
+  HistogramRequestParams,
+  HistogramResponse,
 } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
 import { SessionState } from '../../hooks/session';
 import { useDataClient } from '../../hooks/workspace';
 import { DateRangeFilter, Filter, NumberRangeFilter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
-import { PromiseType } from '../../types/utility';
+import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { parseTimeDelta, padISODateTime } from '../../utils/date-conversion';
-import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -47,8 +44,15 @@ type UIState = TypeOf<typeof UIState>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const UIState = partial({
   binWidth: number,
-  binWidthTimeUnit: string,
+  binWidthTimeUnit: TimeUnit,
+  independentAxisRange: NumberOrDateRange,
+  dependentAxisRange: NumberRange,
+  dependentAxisLogScale: boolean,
 });
+
+const defaultUIState: UIState = {
+  dependentAxisLogScale: false,
+};
 
 export function HistogramFilter(props: Props) {
   const { variable, entity, sessionState, studyMetadata } = props;
@@ -59,7 +63,7 @@ export function HistogramFilter(props: Props) {
   const uiState = useMemo(() => {
     return pipe(
       UIState.decode(sessionState.session?.variableUISettings[uiStateKey]),
-      getOrElse((): TypeOf<typeof UIState> => ({}))
+      getOrElse((): UIState => defaultUIState)
     );
   }, [sessionState.session?.variableUISettings, uiStateKey]);
   const dataClient = useDataClient();
@@ -91,36 +95,39 @@ export function HistogramFilter(props: Props) {
               foregroundFilters,
               entity,
               variable,
-              {},
-              background.config.binWidth
+              dataParams,
+              background.histogram.config
             )
           : background;
 
       const series = [
         histogramResponseToDataSeries(
-          `All ${variable.displayName}`,
+          `Entire dataset`,
           background,
           gray,
           variable.type
         ),
         histogramResponseToDataSeries(
-          `Remaining ${variable.displayName}`,
+          `Current subset`,
           foreground,
           red,
           variable.type
         ),
       ];
-      const binWidth =
+      const binWidth: NumberOrTimeDelta =
         variable.type === 'number'
-          ? parseFloat(background.config.binWidth as string) || 1
-          : parseTimeDelta(background.config.binWidth as string);
-      const { min, max, step } = background.config.binSlider;
+          ? background.histogram.config.binSpec.value || 1
+          : {
+              value: background.histogram.config.binSpec.value || 1,
+              unit: background.histogram.config.binSpec.units ?? 'month',
+            };
+      const { min, max, step } = background.histogram.config.binSlider;
       const binWidthRange = (variable.type === 'number'
         ? { min, max }
         : {
             min,
             max,
-            unit: (binWidth as TimeDelta)[1],
+            unit: (binWidth as TimeDelta).unit,
           }) as NumberOrTimeDeltaRange;
       const binWidthStep = step || 0.1;
 
@@ -137,7 +144,14 @@ export function HistogramFilter(props: Props) {
     [dataClient, entity, filters, studyId, variable]
   );
   const data = usePromise(
-    useCallback(() => getData(uiState), [getData, uiState])
+    useCallback(() => getData(uiState), [
+      getData,
+      uiState.binWidth,
+      uiState.binWidthTimeUnit,
+      uiState.independentAxisRange,
+    ])
+    // is there some more concise utility to remove a key or keys from an object?
+    // I tried lodash.omit and it created an endless loop of API calls...!
   );
 
   const filter = filters?.find(
@@ -151,8 +165,7 @@ export function HistogramFilter(props: Props) {
     (selectedRange?: NumberRange | DateRange) => {
       const otherFilters = filters?.filter((f) => f !== filter) ?? [];
       if (selectedRange == null) {
-        if (otherFilters.length === 0 || filter == null) return;
-        setFilters(otherFilters);
+        if (otherFilters.length != filters?.length) setFilters(otherFilters);
       } else {
         if (
           filter &&
@@ -168,8 +181,7 @@ export function HistogramFilter(props: Props) {
                   variableId: variable.id,
                   entityId: entity.id,
                   type: 'dateRange',
-                  min: padISODateTime((selectedRange as DateRange).min),
-                  max: padISODateTime((selectedRange as DateRange).max),
+                  ...(selectedRange as DateRange),
                 }
               : {
                   variableId: variable.id,
@@ -186,7 +198,7 @@ export function HistogramFilter(props: Props) {
 
   const updateUIState = useCallback(
     (newUiState: TypeOf<typeof UIState>) => {
-      if (uiState.binWidth === newUiState.binWidth) return;
+      // if (uiState.binWidth === newUiState.binWidth) return;
       sessionState.setVariableUISettings({
         [uiStateKey]: {
           ...uiState,
@@ -196,6 +208,9 @@ export function HistogramFilter(props: Props) {
     },
     [sessionState, uiStateKey, uiState]
   );
+
+  // stats from foreground
+  const fgSummaryStats = data?.value?.series[1].summary;
 
   // Note use of `key` used with HistogramPlotWithControls. This is a little hack to force
   // the range to be reset if the filter is removed.
@@ -207,57 +222,69 @@ export function HistogramFilter(props: Props) {
       {data.error && <pre>{String(data.error)}</pre>}
       {data.value &&
         data.value.variableId === variable.id &&
-        data.value.entityId === entity.id && (
-          <HistogramPlotWithControls
-            key={filters?.length ?? 0}
-            filter={filter}
-            data={data.value}
-            getData={getData}
-            width="100%"
-            height={400}
-            orientation={'vertical'}
-            barLayout={'overlay'}
-            updateFilter={updateFilter}
-            updateUIState={updateUIState}
-            // add variableName for independentAxisLabel
-            variableName={variable.displayName}
-          />
+        data.value.entityId === entity.id &&
+        fgSummaryStats && (
+          <div>
+            <div className="histogram-summary-stats">
+              <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
+              {fgSummaryStats.mean} &emsp;
+              <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
+              {fgSummaryStats.max}
+            </div>
+            <HistogramPlotWithControls
+              key={filters?.length ?? 0}
+              filter={filter}
+              data={data.value}
+              getData={getData}
+              width="100%"
+              height={400}
+              spacingOptions={{
+                marginTop: 20,
+                marginBottom: 20,
+              }}
+              orientation={'vertical'}
+              barLayout={'overlay'}
+              updateFilter={updateFilter}
+              uiState={uiState}
+              updateUIState={updateUIState}
+              variableName={variable.displayName}
+              entityName={entity.displayName}
+            />
+          </div>
         )}
     </div>
   );
 }
 
 type HistogramPlotWithControlsProps = HistogramProps & {
-  getData: (params?: UIState) => Promise<HistogramData>;
+  getData: (params?: UIState) => Promise<HistogramData>; // TO DO: not used - get rid of?
   updateFilter: (selectedRange?: NumberRange | DateRange) => void;
-  updateUIState: (uiState: TypeOf<typeof UIState>) => void;
+  uiState: UIState;
+  updateUIState: (uiState: UIState) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
   // add variableName for independentAxisLabel
-  variableName?: string;
+  variableName: string;
+  entityName: string;
 };
 
 function HistogramPlotWithControls({
   data,
   getData,
   updateFilter,
+  uiState,
   updateUIState,
   filter,
   // variableName for independentAxisLabel
   variableName,
+  entityName,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   const handleSelectedRangeChange = useCallback(
-    (range: NumberOrDateRange) => {
+    (range?: NumberOrDateRange) => {
       if (range) {
-        // FIXME Compare selection to data min/max
-        const bins = data.series[0].bins;
-        const min = bins[0].binStart;
-        const max = bins[bins.length - 1].binEnd;
-        if (range.min <= min && range.max >= max) {
-          updateFilter();
-        } else {
-          updateFilter(range);
-        }
+        updateFilter(range);
+      } else {
+        updateFilter(); // clear the filter if range is undefined
       }
     },
     [data, updateFilter]
@@ -266,8 +293,58 @@ function HistogramPlotWithControls({
   const handleBinWidthChange = useCallback(
     ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
       updateUIState({
-        binWidth: isTimeDelta(newBinWidth) ? newBinWidth[0] : newBinWidth,
-        binWidthTimeUnit: isTimeDelta(newBinWidth) ? newBinWidth[1] : undefined,
+        binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
+        binWidthTimeUnit: isTimeDelta(newBinWidth)
+          ? (newBinWidth.unit as TimeUnit)
+          : undefined,
+      });
+    },
+    [updateUIState]
+  );
+
+  const handleIndependentAxisRangeChange = useCallback(
+    (newRange?: NumberOrDateRange) => {
+      console.log(
+        `handleIndependentAxisRangeChange newRange: ${newRange?.min} to ${newRange?.max}`
+      );
+      updateUIState({
+        independentAxisRange: newRange,
+      });
+    },
+    [updateUIState]
+  );
+
+  const handleIndependentAxisSettingsReset = useCallback(() => {
+    updateUIState({
+      independentAxisRange: undefined,
+      binWidth: undefined,
+      binWidthTimeUnit: undefined,
+    });
+  }, [updateUIState]);
+
+  const handleDependentAxisRangeChange = useCallback(
+    (newRange?: NumberRange) => {
+      console.log(
+        `handleDependentAxisRangeChange newRange: ${newRange?.min} to ${newRange?.max}`
+      );
+      updateUIState({
+        dependentAxisRange: newRange,
+      });
+    },
+    [updateUIState]
+  );
+
+  const handleDependentAxisSettingsReset = useCallback(() => {
+    updateUIState({
+      dependentAxisRange: undefined,
+      dependentAxisLogScale: defaultUIState.dependentAxisLogScale,
+    });
+  }, [updateUIState]);
+
+  const handleDependentAxisLogScale = useCallback(
+    (newState?: boolean) => {
+      updateUIState({
+        dependentAxisLogScale: newState,
       });
     },
     [updateUIState]
@@ -292,26 +369,48 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
+  const selectedRangeBounds = {
+    min: data.series[0].summary?.min,
+    max: data.series[0].summary?.max,
+  } as NumberOrDateRange;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <HistogramControls
+        valueType={data.valueType}
+        barLayout={barLayout}
+        displayLegend={displayLegend}
+        displayLibraryControls={displayLibraryControls}
+        opacity={opacity}
+        orientation={histogramProps.orientation}
+        errorManagement={errorManagement}
+        selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
+        onSelectedRangeChange={handleSelectedRangeChange}
+        binWidth={data.binWidth!}
+        binWidthRange={data.binWidthRange!}
+        binWidthStep={data.binWidthStep!}
+        containerStyles={{ border: 'none' }}
+      />
       <Histogram
         {...histogramProps}
         data={data}
         selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
         onSelectedRangeChange={handleSelectedRangeChange}
         barLayout={barLayout}
+        dependentAxisLabel={`Count of ${entityName}`}
         // add independentAxisLabel
-        independentAxisLabel={
-          data.binWidth && isTimeDelta(data.binWidth)
-            ? variableName + ' (' + data.binWidth[1] + ')'
-            : variableName
-        }
+        independentAxisLabel={variableName}
+        isZoomed={uiState.independentAxisRange ? true : false}
+        dependentAxisRange={uiState.dependentAxisRange}
+        dependentAxisLogScale={uiState.dependentAxisLogScale}
       />
       <HistogramControls
-        label="Histogram Controls"
+        label="Axis controls"
         valueType={data.valueType}
         barLayout={barLayout}
         displayLegend={displayLegend}
@@ -321,15 +420,21 @@ function HistogramPlotWithControls({
         binWidth={data.binWidth!}
         selectedUnit={
           data.binWidth && isTimeDelta(data.binWidth)
-            ? data.binWidth[1]
+            ? data.binWidth.unit
             : undefined
         }
         onBinWidthChange={handleBinWidthChange}
         binWidthRange={data.binWidthRange!}
         binWidthStep={data.binWidthStep!}
         errorManagement={errorManagement}
-        selectedRange={selectedRange}
-        onSelectedRangeChange={handleSelectedRangeChange}
+        independentAxisRange={uiState.independentAxisRange}
+        onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
+        onIndependentAxisSettingsReset={handleIndependentAxisSettingsReset}
+        dependentAxisRange={uiState.dependentAxisRange}
+        onDependentAxisRangeChange={handleDependentAxisRangeChange}
+        onDependentAxisSettingsReset={handleDependentAxisSettingsReset}
+        dependentAxisLogScale={uiState.dependentAxisLogScale}
+        toggleDependentAxisLogScale={handleDependentAxisLogScale}
       />
     </div>
   );
@@ -337,19 +442,15 @@ function HistogramPlotWithControls({
 
 function histogramResponseToDataSeries(
   name: string,
-  response: PromiseType<
-    ReturnType<
-      DataClient['getDateHistogramBinWidth' | 'getNumericHistogramBinWidth']
-    >
-  >,
+  response: HistogramResponse,
   color: string,
   type: HistogramVariable['type']
 ): HistogramDataSeries {
-  if (response.data.length !== 1)
+  if (response.histogram.data.length !== 1)
     throw Error(
-      `Expected a single data series, but got ${response.data.length}`
+      `Expected a single data series, but got ${response.histogram.data.length}`
     );
-  const data = response.data[0];
+  const data = response.histogram.data[0];
   const bins = data.value.map((_, index) => ({
     binStart:
       type === 'number'
@@ -362,12 +463,16 @@ function histogramResponseToDataSeries(
     binLabel: data.binLabel[index],
     count: data.value[index],
   }));
+  const summary = response.histogram.config.summary;
   return {
     name,
     color,
     bins,
+    summary,
   };
 }
+
+type Config = Partial<HistogramRequestParams['config']>;
 
 function getRequestParams(
   studyId: string,
@@ -375,18 +480,31 @@ function getRequestParams(
   entity: StudyEntity,
   variable: HistogramVariable,
   dataParams?: UIState,
-  rawBinWidth?: string | number
-): NumericHistogramRequestParams | DateHistogramRequestParams {
-  const binOption = rawBinWidth
-    ? { binWidth: rawBinWidth }
+  rawConfig?: Config
+): HistogramRequestParams {
+  const binSpec: Config['binSpec'] = rawConfig?.binSpec
+    ? rawConfig.binSpec
     : dataParams?.binWidth
     ? {
-        binWidth:
-          variable.type === 'number'
-            ? dataParams.binWidth
-            : `${dataParams.binWidth} ${dataParams.binWidthTimeUnit}`,
+        type: 'binWidth',
+        value: dataParams.binWidth,
+        ...(variable.type === 'date'
+          ? { units: dataParams.binWidthTimeUnit }
+          : {}),
       }
-    : {};
+    : { type: 'binWidth' };
+
+  const viewport: Config['viewport'] = rawConfig?.viewport
+    ? rawConfig.viewport
+    : dataParams?.independentAxisRange &&
+      dataParams?.independentAxisRange.min != null &&
+      dataParams?.independentAxisRange.max != null
+    ? {
+        xMin: String(dataParams.independentAxisRange.min),
+        xMax: String(dataParams.independentAxisRange.max),
+      }
+    : undefined;
+
   return {
     studyId,
     filters,
@@ -397,9 +515,10 @@ function getRequestParams(
         entityId: entity.id,
         variableId: variable.id,
       },
-      ...binOption,
+      binSpec,
+      viewport,
     },
-  } as NumericHistogramRequestParams | DateHistogramRequestParams;
+  };
 }
 
 async function getHistogram(
@@ -409,29 +528,10 @@ async function getHistogram(
   entity: StudyEntity,
   variable: HistogramVariable,
   dataParams?: UIState,
-  rawBinWidth?: string | number
+  rawConfig?: Config
 ) {
-  return variable.type === 'date'
-    ? dataClient.getDateHistogramBinWidth(
-        'pass',
-        getRequestParams(
-          studyId,
-          filters,
-          entity,
-          variable,
-          dataParams,
-          rawBinWidth
-        ) as DateHistogramRequestParams
-      )
-    : dataClient.getNumericHistogramBinWidth(
-        'pass',
-        getRequestParams(
-          studyId,
-          filters,
-          entity,
-          variable,
-          dataParams,
-          rawBinWidth
-        ) as NumericHistogramRequestParams
-      );
+  return dataClient.getHistogram(
+    'pass',
+    getRequestParams(studyId, filters, entity, variable, dataParams, rawConfig)
+  );
 }

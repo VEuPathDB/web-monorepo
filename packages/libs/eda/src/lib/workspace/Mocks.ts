@@ -1,3 +1,5 @@
+import { isRight } from 'fp-ts/lib/Either';
+import { PathReporter } from 'io-ts/lib/PathReporter';
 import localforage from 'localforage';
 import { Session, NewSession, SessionClient } from '../core';
 
@@ -14,7 +16,7 @@ export const mockSessionStore: SessionClient = {
     return records;
   },
   async createSession(newSession: NewSession) {
-    const id = String((await localStore.keys()).length + 1);
+    const id = String((await localStore.keys()).length + 2);
     const now = new Date().toISOString();
     await localStore.setItem<Session>(id, {
       ...newSession,
@@ -26,7 +28,11 @@ export const mockSessionStore: SessionClient = {
   },
   async getSession(id: string) {
     const session = await localStore.getItem(id);
-    if (session) return session as Session;
+    if (session) {
+      const result = Session.decode(session);
+      if (isRight(result)) return result.right;
+      throw new Error(PathReporter.report(result).join('\n'));
+    }
     throw new Error(`Could not find session with id "${id}".`);
   },
   async updateSession(session: Session) {
