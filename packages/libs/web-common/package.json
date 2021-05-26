@@ -8,7 +8,8 @@
   "description": "Components and utilities common to VEuPathDB sites.",
   "main": "lib/bootstrap",
   "scripts": {
-    "compile": "rm -rf ./lib && tsc --noEmit false",
+    "clean": "rm -rf ./lib",
+    "compile": "tsc --noEmit false",
     "copy-assets": "cd src && find . -type f -not \\( -name '*.ts' -o -name '*.tsx' -o -name '*.js' -o -name '*.jsx' -o -iname '*.md' \\) | xargs cp --parents -t ../lib",
     "relativize": "ts-node-script ./scripts/relativize.ts lib ebrc-client",
     "generate-icons": "mkdir -p dist && icon-font-generator icons/* -o dist -n ebrc-icons -p ebrc-icon --normalize --center --csstp ./templates/icons-css.hbs",
