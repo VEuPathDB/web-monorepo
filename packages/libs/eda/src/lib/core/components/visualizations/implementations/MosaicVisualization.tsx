@@ -297,6 +297,7 @@ function MosaicViz(props: Props) {
             data={data.value.data}
             independentValues={data.value.independentValues}
             dependentValues={data.value.dependentValues}
+            height={450}
             independentLabel={xAxisVariableName}
             dependentLabel={yAxisVariableName}
             showLegend={true}
