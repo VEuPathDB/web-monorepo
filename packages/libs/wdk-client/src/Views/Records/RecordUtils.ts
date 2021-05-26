@@ -62,10 +62,10 @@ export function getSearchableString(filterAttributes: string[], filterTables: st
 // Category tree interactions
 // --------------------------
 
-const isInternalNode = partial(nodeHasProperty, 'scope', 'record-internal');
+export const isInternalNode = partial(nodeHasProperty, 'scope', 'record-internal');
 export const isNotInternalNode = partial(nodeHasProperty, 'scope', 'record');
-const isAttributeNode = partial(nodeHasProperty, 'targetType', 'attribute');
-const isTableNode = partial(nodeHasProperty, 'targetType', 'table');
+export const isAttributeNode = partial(nodeHasProperty, 'targetType', 'attribute');
+export const isTableNode = partial(nodeHasProperty, 'targetType', 'table');
 const getAttributes = partial(filterNodes, isAttributeNode);
 const getTables = partial(filterNodes, isTableNode);
 const getNodeName = partial(getPropertyValue, 'name');
