@@ -903,9 +903,9 @@
     shape2geohash "^1.2.5"
 
 "@veupathdb/eda@^0.2.0":
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.2.8.tgz#0efe0aca90f5de61a356f4bd63f6843c6647b18b"
-  integrity sha512-vXJhH07sSrsnVCNIHj/XT3PIVa3jXCNuYgqxTqMpkSg6/Rh5QUAULX9T5kG15DoXN3InJWwpDLSLeA9X+E+wJQ==
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.2.9.tgz#fdf02d9d0614bedc3ebe7da36121031b474fc525"
+  integrity sha512-7y7M11Y5cvfFmm9MipXCKnoez+HycPvg+ii+EaBJfpUbH14xoEmThQGEXgPLvg0CcrVswJVZOHNF+NYWL6P04A==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@types/debounce-promise" "^3.1.3"
