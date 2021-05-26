@@ -15,7 +15,7 @@
     "react-dom": "^17.0.1",
     "uuid": "^8.3.2"
   },
-  "sideEffects": false,
+  "sideEffects": ["*.scss"],
   "files": [
     "lib",
     "src/lib"
