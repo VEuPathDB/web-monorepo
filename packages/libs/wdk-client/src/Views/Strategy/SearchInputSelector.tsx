@@ -12,7 +12,7 @@ import { DispatchAction } from 'wdk-client/Core/CommonTypes';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { getDisplayName, getTargetType, getRecordClassUrlSegment, CategoryTreeNode, getTooltipContent, getAllBranchIds, getRecordClassName, EMPTY_CATEGORY_TREE_NODE, isQualifying, CategoryOntology } from 'wdk-client/Utils/CategoryUtils';
 
-import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { makeClassNameHelper, wrappable } from 'wdk-client/Utils/ComponentUtils';
 import { pruneDescendantNodes, getLeaves, mapStructure } from 'wdk-client/Utils/TreeUtils';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { RecordClass } from 'wdk-client/Utils/WdkModel';
@@ -44,7 +44,7 @@ type OwnProps = {
   selectBasketButtonText: string
 };
 
-type Props = StateProps & DispatchProps & OwnProps;
+export type Props = StateProps & DispatchProps & OwnProps;
 
 const cx = makeClassNameHelper('SearchInputSelector');
 
@@ -344,4 +344,9 @@ const mapDispatchToProps = (dispatch: DispatchAction) => ({
   requestBasketCounts: compose(dispatch, requestBasketCounts)
 });
 
-export const SearchInputSelector = connect(mapStateToProps, mapDispatchToProps)(SearchInputSelectorView);
+const enhance = connect(
+  mapStateToProps,
+  mapDispatchToProps
+);
+
+export const SearchInputSelector = enhance(wrappable(SearchInputSelectorView));
