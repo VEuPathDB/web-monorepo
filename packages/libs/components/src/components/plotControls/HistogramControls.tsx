@@ -353,7 +353,7 @@ export default function HistogramControls({
           />
         )}
 
-        {onBinWidthChange && (
+        {onBinWidthChange && binWidthRange && binWidth && (
           <SliderWidget
             label={`Bin Width${
               valueType !== undefined && valueType === 'date'
