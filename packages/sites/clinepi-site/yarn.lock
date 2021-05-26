@@ -666,9 +666,9 @@
   integrity sha512-Hjfj9m68NmYZzushzEG7etPvKH/nj9b9s9+qtkNG3/dbRBjQZQg1XS6nRuHJcCASTjxXlyXZnKu2gDxyQIIu9A==
 
 "@types/d3-scale@^3.2.1":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@types/d3-scale/-/d3-scale-3.2.2.tgz#5e28d0b1c599328aaec6094219f10a2570be6d74"
-  integrity sha512-qpQe8G02tzUwt9sdWX1h8A/W0Q1+N48wMnYXVOkrzeLUkCfvzJYV9Ee3aORCS4dN4ONRLFmMvaXdziQ29XGLjQ==
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/@types/d3-scale/-/d3-scale-3.3.0.tgz#7ab91db0186bac0f24834ceb33f970e829f2fba1"
+  integrity sha512-rJj4nh/71Rw5bZgTF5cA5rW60WT3x8RbivEsScgQ66sqFnYZRmuyKSayyo7JiP+c9KJJiQhY9JXBmY16FZa3+g==
   dependencies:
     "@types/d3-time" "*"
 
@@ -680,9 +680,9 @@
     "@types/d3-path" "^1"
 
 "@types/d3-time@*", "@types/d3-time@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@types/d3-time/-/d3-time-2.0.0.tgz#831dd093db91f16b83ba980e194bb8e4bcef44d6"
-  integrity sha512-Abz8bTzy8UWDeYs9pCa3D37i29EWDjNTjemdk0ei1ApYVNqulYlGUKip/jLOpogkPSsPz/GvZCYiC7MFlEk0iQ==
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@types/d3-time/-/d3-time-2.1.0.tgz#95708e5c92b199959806fd2116eeb3dfa0e9661c"
+  integrity sha512-qVCiT93utxN0cawScyQuNx8H82vBvZXSClZfgOu3l3dRRlRO6FjKEZlaPgXG9XUFjIAOsA4kAJY101vobHeJLQ==
 
 "@types/d3-voronoi@^1.1.9":
   version "1.1.9"
@@ -756,9 +756,9 @@
   integrity sha512-q9Q6+eUEGwQkv4Sbst3J4PNgDOvpuVuKj79Hl/qnmBMEIPzB5QoFRUtjcgcg2xNUZyYUGXBk5wYIBKHt0A+Mxw==
 
 "@types/lodash@^4.14.104", "@types/lodash@^4.14.146", "@types/lodash@^4.14.160":
-  version "4.14.169"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.169.tgz#83c217688f07a4d9ef8f28a3ebd1d318f6ff4cbb"
-  integrity sha512-DvmZHoHTFJ8zhVYwCLWbQ7uAbYQEk52Ev2/ZiQ7Y7gQGeV9pjBqjnQpECMHfKS1rCYAhMI7LHVxwyZLZinJgdw==
+  version "4.14.170"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.170.tgz#0d67711d4bf7f4ca5147e9091b847479b87925d6"
+  integrity sha512-bpcvu/MKHHeYX+qeEN8GE7DIravODWdACVA1ctevD8CN24RhPZIKMn9ntfAsrvLfSX3cR5RrBKAbYm9bGs0A+Q==
 
 "@types/natural-sort@^0.0.20":
   version "0.0.20"
@@ -766,9 +766,9 @@
   integrity sha512-+C7MFmC2Kw1nCmQsmll9VETV27OpevSD4yywEfLFrLTuEYlPlHRNQnNOVmDM4x1iiurmGwfbt+jn9lwM0cghLA==
 
 "@types/node@^14.14.7":
-  version "14.17.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.0.tgz#3ba770047723b3eeb8dc9fca02cce8a7fb6378da"
-  integrity sha512-w8VZUN/f7SSbvVReb9SWp6cJFevxb4/nkG65yLAya//98WgocKm5PLDAtSs5CtJJJM+kHmJjO/6mmYW4MHShZA==
+  version "14.17.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.1.tgz#5e07e0cb2ff793aa7a1b41deae76221e6166049f"
+  integrity sha512-/tpUyFD7meeooTRwl3sYlihx2BrJE7q9XF71EguPFIySj9B7qgnRtHsHTho+0AUm4m1SvWGm6uSncrR94q6Vtw==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -903,15 +903,15 @@
     shape2geohash "^1.2.5"
 
 "@veupathdb/eda@^0.2.0":
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.2.4.tgz#5aa24c4862728a35e209c44c3774854a97ccfc91"
-  integrity sha512-AQi5EKNpV579k4tyZGsWTkfoUmvNWXf95DTFPvaIJQ7gaXIoOkLUFyC7Kl8isDvX4iFU9Wk9lVQD9eInoQeMog==
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.2.8.tgz#0efe0aca90f5de61a356f4bd63f6843c6647b18b"
+  integrity sha512-vXJhH07sSrsnVCNIHj/XT3PIVa3jXCNuYgqxTqMpkSg6/Rh5QUAULX9T5kG15DoXN3InJWwpDLSLeA9X+E+wJQ==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@types/debounce-promise" "^3.1.3"
     "@veupathdb/components" "^0.2.36"
-    "@veupathdb/wdk-client" "^0.1.1"
-    "@veupathdb/web-common" "^0.1.1-alpha.11"
+    "@veupathdb/wdk-client" "^0.1.2"
+    "@veupathdb/web-common" "^0.1.2"
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
     io-ts "^2.2.13"
@@ -919,53 +919,6 @@
     react "^17.0.1"
     react-dom "^17.0.1"
     uuid "^8.3.2"
-
-"@veupathdb/wdk-client@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.1.tgz#4c4dafbc3366af7827a0892ccbc5e862b8a2a608"
-  integrity sha512-MvnHXTmk9gs99Wh38taH1W5C7t+GI6llHPSaqJVp4gpd0AaM3997EF7sdqLXq70lzjQ5ViTjEXqZfU1iuJEDsQ==
-  dependencies:
-    "@types/datatables.net" "^1.10.5"
-    "@types/flot" "^0.0.31"
-    "@types/history" "^4.7.4"
-    "@types/jqueryui" "^1.11.35"
-    "@types/json-stable-stringify" "^1.0.31"
-    "@types/lodash" "^4.14.104"
-    "@types/natural-sort" "^0.0.20"
-    "@types/node" "^14.14.7"
-    "@types/prop-types" "^15.7.3"
-    "@types/qtip2" "^2.2.29"
-    "@types/react" "^16.9.18"
-    "@types/react-autocomplete" "^1.8.4"
-    "@types/react-dom" "^16.9.5"
-    "@types/react-redux" "^7.1.5"
-    "@types/react-router" "^5.1.4"
-    "@types/react-router-dom" "^5.1.3"
-    "@types/react-select" "^3.0.4"
-    "@types/uuid" "^8.0.0"
-    classnames "^2.2.0"
-    history "^4.10.1"
-    json-stable-stringify "^1.0.0"
-    localforage "^1.5.0"
-    lodash "^4.17.5"
-    mansion-ui "2.5"
-    moment "^2.21.0"
-    natural-sort "^1.0.0"
-    prop-types "^15.7.2"
-    react "^16.12.0"
-    react-autocomplete "^1.8.1"
-    react-dom "^16.12.0"
-    react-redux "^7.1.3"
-    react-router "^5.1.2"
-    react-router-dom "^5.1.2"
-    react-select "^3.0.4"
-    react-transition-group "^2.2.1"
-    redux "^4.0.0"
-    redux-observable "^1.2.0"
-    reselect "^3.0.1"
-    rxjs "^6.2.2"
-    spin.js "^4.0.0"
-    uuid "^8.1.0"
 
 "@veupathdb/wdk-client@^0.1.1-alpha.12":
   version "0.1.1-alpha.12"
@@ -1014,10 +967,66 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
+"@veupathdb/wdk-client@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.2.tgz#3b8b466e9ca72d8af6c07fc1dad21fd9b22e6059"
+  integrity sha512-PlUD6O0ihUfPWrcfLpi3Qgau4ew+V3lPfBq4YerxFS1Cn8fEskRRjtffpJqDNPzqDsWOrBblsBYaB9kpB1I2Dg==
+  dependencies:
+    "@types/datatables.net" "^1.10.5"
+    "@types/flot" "^0.0.31"
+    "@types/history" "^4.7.4"
+    "@types/jqueryui" "^1.11.35"
+    "@types/json-stable-stringify" "^1.0.31"
+    "@types/lodash" "^4.14.104"
+    "@types/natural-sort" "^0.0.20"
+    "@types/node" "^14.14.7"
+    "@types/prop-types" "^15.7.3"
+    "@types/qtip2" "^2.2.29"
+    "@types/react" "^16.9.18"
+    "@types/react-autocomplete" "^1.8.4"
+    "@types/react-dom" "^16.9.5"
+    "@types/react-redux" "^7.1.5"
+    "@types/react-router" "^5.1.4"
+    "@types/react-router-dom" "^5.1.3"
+    "@types/react-select" "^3.0.4"
+    "@types/uuid" "^8.0.0"
+    classnames "^2.2.0"
+    history "^4.10.1"
+    json-stable-stringify "^1.0.0"
+    localforage "^1.5.0"
+    lodash "^4.17.5"
+    mansion-ui "2.5"
+    moment "^2.21.0"
+    natural-sort "^1.0.0"
+    prop-types "^15.7.2"
+    react "^16.12.0"
+    react-autocomplete "^1.8.1"
+    react-dom "^16.12.0"
+    react-redux "^7.1.3"
+    react-router "^5.1.2"
+    react-router-dom "^5.1.2"
+    react-select "^3.0.4"
+    react-transition-group "^2.2.1"
+    redux "^4.0.0"
+    redux-observable "^1.2.0"
+    reselect "^3.0.1"
+    rxjs "^6.2.2"
+    spin.js "^4.0.0"
+    uuid "^8.1.0"
+
 "@veupathdb/web-common@^0.1.1-alpha.11":
   version "0.1.1-alpha.11"
   resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.11.tgz#66598c0433755ef7961571d9939c0b5932a76610"
   integrity sha512-0oIKjRjaiO27T1JFEbRRqeDYwHqMmrtOxrCbkmvIytkeaONiiLXNWNyhEIs9UnWtYDebYX9+LVMCQUD6v9BXCA==
+  dependencies:
+    custom-event-polyfill "^1.0.7"
+    md5 "^2.3.0"
+    whatwg-fetch "^3.5.0"
+
+"@veupathdb/web-common@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.2.tgz#8748eca36d24ea8bf1728236106cb7f07e5b2318"
+  integrity sha512-hz+l+wNGXAVz0GJdxUi40ppNSDJLFd9AkAH+FCr2OdcFKKSFXxg/CkGkQ9Hyf4YHmtdXifVRf6lqozfNfJYRVg==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -1331,9 +1340,9 @@
     react-use-measure "^2.0.4"
 
 "@visx/visx@^1.1.0":
-  version "1.11.1"
-  resolved "https://registry.yarnpkg.com/@visx/visx/-/visx-1.11.1.tgz#f824105276304f72a081544d1f5b2c7cdcda4990"
-  integrity sha512-raS4VzrHAtf33Kcub9uStdHLtFnJm8vrVjoukaSdIVezlCZZXPRJJC39Y5xCZ4fMFyiE4I+2O2Yz56IlzCQVrg==
+  version "1.11.2"
+  resolved "https://registry.yarnpkg.com/@visx/visx/-/visx-1.11.2.tgz#8ac6209625e8d9537238d06fe022e288a34118b4"
+  integrity sha512-ml5wYJeUOG2UgK068yT0r5QXUDWdr1BJbo7coEEwaZJSQUySbVKtiVMC6QD3UtrKtRuzwW+UPV0Dat0Dhf5Utg==
   dependencies:
     "@visx/annotation" "1.11.1"
     "@visx/axis" "1.11.1"
@@ -1362,7 +1371,7 @@
     "@visx/text" "1.10.0"
     "@visx/tooltip" "1.7.2"
     "@visx/voronoi" "1.7.0"
-    "@visx/xychart" "1.11.1"
+    "@visx/xychart" "1.11.2"
     "@visx/zoom" "1.11.0"
 
 "@visx/voronoi@1.7.0":
@@ -1377,10 +1386,10 @@
     d3-voronoi "^1.1.2"
     prop-types "^15.6.1"
 
-"@visx/xychart@1.11.1":
-  version "1.11.1"
-  resolved "https://registry.yarnpkg.com/@visx/xychart/-/xychart-1.11.1.tgz#fc8b57263c76d20e369e805b60a5b6ce6593a7b6"
-  integrity sha512-qwCMHEtlyZIDJEIum/zed8JbZQf3DbRS1o4oWiWNIEngNW0Sizl9ChaOjXe8Xux3V6wdPJlBHh73VeNBkJUTDw==
+"@visx/xychart@1.11.2":
+  version "1.11.2"
+  resolved "https://registry.yarnpkg.com/@visx/xychart/-/xychart-1.11.2.tgz#af7027c52d3c7b22c7e9464d9d15c15685ff1bd1"
+  integrity sha512-q5XUBjtAF14Oyf44gql/Jxs6LLZml5MSZG0UFLhwpcFOfzvigXwejs3fueCaRTTVHkdS3MTrAwGw5OQ3yfq0jQ==
   dependencies:
     "@types/classnames" "^2.2.9"
     "@types/lodash" "^4.14.146"
@@ -3995,9 +4004,9 @@ parse-unit@^1.0.1:
   integrity sha1-fhu21b7zh0wo45JSaiVBFwKR7s8=
 
 path-parse@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
-  integrity sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.7.tgz#fbc114b60ca42b30d9daf5858e4bd68bbedb6735"
+  integrity sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==
 
 path-to-regexp@^1.7.0:
   version "1.8.0"
@@ -5411,9 +5420,9 @@ webgl-context@^2.2.0:
     get-canvas-context "^1.0.1"
 
 whatwg-fetch@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.5.0.tgz#605a2cd0a7146e5db141e29d1c62ab84c0c4c868"
-  integrity sha512-jXkLtsR42xhXg7akoDKvKWE40eJeI+2KZqcp2h3NsOrRnDvtWX36KcKl30dy+hxECivdk2BVUHVNrPtoMBUx6A==
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.6.2.tgz#dced24f37f2624ed0281725d51d0e2e3fe677f8c"
+  integrity sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA==
 
 word-wrap@~1.2.3:
   version "1.2.3"
