@@ -53,3 +53,13 @@ export const FourByThree = () => (
     dependentLabel={'Atmospheric Makeup'}
   />
 );
+
+export const EmptyData = () => (
+  <MosaicPlot
+    data={[]}
+    independentValues={[]}
+    dependentValues={[]}
+    independentLabel={''}
+    dependentLabel={''}
+  />
+);
