@@ -233,10 +233,10 @@ function MosaicViz(props: Props) {
   let plotComponent: JSX.Element;
 
   if (data.value) {
-    const xAxisVariableName = findVariable(vizConfig.xAxisVariable)!
-      .displayName;
-    const yAxisVariableName = findVariable(vizConfig.yAxisVariable)!
-      .displayName;
+    const xAxisVariableName = findVariable(vizConfig.xAxisVariable)
+      ?.displayName;
+    const yAxisVariableName = findVariable(vizConfig.yAxisVariable)
+      ?.displayName;
     let statsTable = undefined;
 
     if (isTwoByTwo) {
@@ -303,8 +303,8 @@ function MosaicViz(props: Props) {
             independentValues={data.value.independentValues}
             dependentValues={data.value.dependentValues}
             height={450}
-            independentLabel={xAxisVariableName}
-            dependentLabel={yAxisVariableName}
+            independentLabel={xAxisVariableName ?? ''}
+            dependentLabel={yAxisVariableName ?? ''}
             showLegend={true}
           />
         </div>
