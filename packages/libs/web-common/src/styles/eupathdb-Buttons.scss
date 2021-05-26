@@ -1,8 +1,5 @@
 @import './eupathdb-Palette.scss';
 
-// selector to exclude from button rules
-$excludeSelector: "[class*=MuiButton])";
-
 a.eupathdb-BigButton,
 input[type="submit"],
 .filter-button input[type=submit],
@@ -15,7 +12,7 @@ a:link.btn {
   border-radius: 6px;
   line-height: 1em;
   color: $darkgray;
-  background: #f5f5f7;
+  background-color: #f5f5f7;
   border: 0.5px solid rgba(0,0,0,0.1);
   border-bottom: 3px solid #999;
   margin: 5px 5px 5px 5px;
@@ -43,25 +40,25 @@ a:link.btn {
 
   &.btn-error {
     &:hover {
-      background: $red;
+      background-color: $red;
       color: $white;
     }
   }
   &.btn-info {
     &:hover {
-      background: $blue;
+      background-color: $blue;
       color: $white;
     }
   }
   &.btn-success {
     &:hover {
-      background: $green;
+      background-color: $green;
       color: $white;
     }
   }
   &.btn-hazard {
     &:hover {
-      background: $orange;
+      background-color: $orange;
       color: $white;
     }
   }
@@ -85,18 +82,16 @@ a:link.btn {
  */
 input[type="button"],
 button {
-  &:not(#{$excludeSelector}) {
-    background: #e8e8e8;
-    background: -webkit-linear-gradient(#f4f4f4, #dddddd);
-    background: -o-linear-gradient(#f4f4f4, #dddddd);
-    background: -moz-linear-gradient(#f4f4f4, #dddddd);
-    background: linear-gradient(#f4f4f4, #dddddd);
-    border: 1px solid #afafaf;
-    border-radius: 2px;
-    padding: 2px 6px;
-    color: #3e3e3e;
-    text-decoration: none;
-  }
+  background-color: #e8e8e8;
+  background-color: -webkit-linear-gradient(#f4f4f4, #dddddd);
+  background-color: -o-linear-gradient(#f4f4f4, #dddddd);
+  background-color: -moz-linear-gradient(#f4f4f4, #dddddd);
+  background-color: linear-gradient(#f4f4f4, #dddddd);
+  border: 1px solid #afafaf;
+  border-radius: 2px;
+  padding: 2px 6px;
+  color: #3e3e3e;
+  text-decoration: none;
 }
 
 
@@ -110,13 +105,11 @@ a.eupathdb-BigButton:hover,
 input[type="submit"]:hover,
 input[type="button"]:hover,
 button:hover {
-  &:not(#{$excludeSelector}) {
-    background: #ededed;
-    background: -webkit-linear-gradient(#ededed, #dddddd);
-    background: -o-linear-gradient(#ededed, #dddddd);
-    background: -moz-linear-gradient(#ededed, #dddddd);
-    background: linear-gradient(#ededed, #dddddd);
-  }
+  background-color: #ededed;
+  background-color: -webkit-linear-gradient(#ededed, #dddddd);
+  background-color: -o-linear-gradient(#ededed, #dddddd);
+  background-color: -moz-linear-gradient(#ededed, #dddddd);
+  background-color: linear-gradient(#ededed, #dddddd);
 }
 
 a.eupathdb-BigButton:focus,
@@ -124,9 +117,7 @@ a.btn:focus,
 input[type="submit"]:focus,
 input[type="button"]:focus,
 button:focus {
-  &:not(#{$excludeSelector}) {
-    border-color: #717171;
-  }
+  border-color: #717171;
 }
 
 a.eupathdb-BigButton:active,
@@ -134,26 +125,20 @@ a.btn:active,
 input[type="submit"]:active,
 input[type="button"]:active,
 button:active {
-  &:not(#{$excludeSelector}) {
-    background: #ddd;
-  }
+  background-color: #ddd;
 }
 
 input[type="submit"][disabled],
 input[type="button"][disabled],
 button[disabled] {
-  &:not(#{$excludeSelector}) {
-    color: #aaa;
-    background: #f4f4f4;
-    border-color: #ccc;
-    cursor: not-allowed;
-  }
+  color: #aaa;
+  background-color: #f4f4f4;
+  border-color: #ccc;
+  cursor: not-allowed;
 }
 
 a.eupathdb-BigButton,
 input[type="submit"],
 button[type="submit"] {
-  &:not(#{$excludeSelector}) {
-    font-size:  0.9rem;
-  }
+  font-size:  0.9rem;
 }
