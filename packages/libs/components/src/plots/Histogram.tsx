@@ -135,19 +135,23 @@ export default function Histogram({
   /**
    * Calculate min binStart and max binEnd values
    */
-  const minBinStart: NumberOrDate = useMemo(() => {
-    return orderBy(
-      data.series.flatMap((series) => series.bins),
-      [(bin) => bin.binStart],
-      'asc'
-    )[0].binStart;
+  const minBinStart: NumberOrDate | undefined = useMemo(() => {
+    return data.series.length > 0
+      ? orderBy(
+          data.series.flatMap((series) => series.bins),
+          [(bin) => bin.binStart],
+          'asc'
+        )[0].binStart
+      : undefined;
   }, [data.series]);
-  const maxBinEnd: NumberOrDate = useMemo(() => {
-    return orderBy(
-      data.series.flatMap((series) => series.bins),
-      [(bin) => bin.binEnd],
-      'desc'
-    )[0].binEnd;
+  const maxBinEnd: NumberOrDate | undefined = useMemo(() => {
+    return data.series.length > 0
+      ? orderBy(
+          data.series.flatMap((series) => series.bins),
+          [(bin) => bin.binEnd],
+          'desc'
+        )[0].binEnd
+      : undefined;
   }, [data.series]);
 
   // Transform `data` into a Plot.ly friendly format.
