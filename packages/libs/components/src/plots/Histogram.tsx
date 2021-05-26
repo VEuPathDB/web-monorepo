@@ -4,7 +4,7 @@ import { PlotParams } from 'react-plotly.js';
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
 import { HistogramData, HistogramBin } from '../types/plots';
-import { NumberOrDate, NumberOrDateRange } from '../types/general';
+import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { legendSpecification } from '../utils/plotly';
 
@@ -58,8 +58,10 @@ export interface HistogramProps {
   /** Options for customizing plot legend. */
   legendOptions?: PlotLegendAddon;
   /** Range for the dependent axis (usually y-axis) */
-  // changed to dependentAxisRange
-  dependentAxisRange?: NumberOrDateRange | undefined;
+  // can only be numeric
+  dependentAxisRange?: NumberRange;
+  /** Use a log scale for dependent axis. Default is false */
+  dependentAxisLogScale?: boolean;
   /** Show value for each bar */
   showBarValues?: boolean;
   /** Should plotting library controls be displayed? Ex. Plot.ly */
@@ -72,7 +74,12 @@ export interface HistogramProps {
   /** A range to highlight by means of opacity */
   selectedRange?: NumberOrDateRange;
   /** function to call upon selecting a range (in independent axis) */
-  onSelectedRangeChange?: (newRange: NumberOrDateRange) => void;
+  onSelectedRangeChange?: (newRange?: NumberOrDateRange) => void;
+  /** Min and max allowed values for the selected range.
+   *  Used to keep graphical range selections within the range of the data. Optional. */
+  selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
+  /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
+  isZoomed?: boolean;
 }
 
 /** A Plot.ly based histogram component. */
@@ -91,6 +98,7 @@ export default function Histogram({
   backgroundColor = 'transparent',
   // changed to dependentAxisRange
   dependentAxisRange,
+  dependentAxisLogScale = false,
   showBarValues,
   displayLegend = true,
   legendOptions,
@@ -99,6 +107,8 @@ export default function Histogram({
   interactive = true,
   selectedRange,
   onSelectedRangeChange = () => {},
+  selectedRangeBounds,
+  isZoomed = false,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -206,9 +216,23 @@ export default function Histogram({
     const uniqueBins = sortedUniqBy(sortedBins, (bin) => bin.binLabel);
 
     // return the list of summaries - note the binMiddle prop
-    return uniqueBins.map((bin) => ({
-      binStart: bin.binStart,
-      binEnd: bin.binEnd,
+    return uniqueBins.map((bin, index) => ({
+      binStart:
+        // The first bin's binStart can outside the allowed range bounds.
+        // If we are not zoomed in, adjust the first bin's binStart to
+        // selectedRangeBounds.min if needed
+        index === 0 &&
+        selectedRangeBounds?.min != undefined &&
+        (!isZoomed || selectedRangeBounds.min > bin.binStart)
+          ? selectedRangeBounds.min
+          : bin.binStart,
+      binEnd:
+        // do similar for the last bin and binEnd
+        index === uniqueBins.length - 1 &&
+        selectedRangeBounds?.max != undefined &&
+        (!isZoomed || selectedRangeBounds.max < bin.binEnd)
+          ? selectedRangeBounds.max
+          : bin.binEnd,
       binMiddle:
         data.valueType === 'date'
           ? DateMath.add(
@@ -223,7 +247,7 @@ export default function Histogram({
             ).toISOString()
           : ((bin.binStart as number) + (bin.binEnd as number)) / 2.0,
     }));
-  }, [data.series, data.valueType]);
+  }, [data.series, data.valueType, isZoomed, selectedRangeBounds]);
 
   // local state for range **while selecting** graphically
   const [selectingRange, setSelectingRange] = useState<NumberOrDateRange>();
@@ -319,9 +343,10 @@ export default function Histogram({
     },
     color: textColor,
     range: [minBinStart, maxBinEnd],
+    fixedrange: true,
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
-    type: 'linear',
+    type: dependentAxisLogScale ? 'log' : 'linear',
     automargin: true,
     title: {
       text: dependentAxisLabel,
@@ -333,7 +358,11 @@ export default function Histogram({
     color: textColor,
     gridcolor: gridColor,
     // range should be an array
-    range: [dependentAxisRange?.min, dependentAxisRange?.max],
+    range: [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
+      dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
+    ),
+    fixedrange: true,
+    dtick: dependentAxisLogScale ? 1 : undefined,
   };
 
   return (

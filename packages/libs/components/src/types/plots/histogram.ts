@@ -26,6 +26,15 @@ export type HistogramDataSeries = {
   color?: string;
   /** Bins of data in the series. */
   bins: HistogramBin[];
+  /** Summary stats for the series */
+  summary?: {
+    min: number | string;
+    q1: number | string;
+    median: number | string;
+    mean: number | string;
+    q3: number | string;
+    max: number | string;
+  };
 };
 
 export type HistogramBin = {

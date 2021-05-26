@@ -3,7 +3,7 @@
  * This allows us to use a single custom hook for different types of
  * plots, but can be quite the brain trip to read through.
  */
-import { Reducer, useMemo, useReducer } from 'react';
+import { Reducer, useMemo, useReducer, useState } from 'react';
 import debounce from 'debounce-promise';
 
 import { isHistogramData, isPiePlotData, isDate } from '../types/guards';
@@ -18,7 +18,7 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
-  TimeDeltaRange,
+  NumberRange,
 } from '../types/general';
 import * as DateMath from 'date-arithmetic';
 import { orderBy } from 'lodash';
@@ -39,20 +39,25 @@ type ActionType<DataShape> =
   | { type: 'toggleOrientation' }
   | { type: 'toggleDisplayLegend' }
   | { type: 'toggleLibraryControls' }
-  | { type: 'histogram/setSelectedRange'; payload: NumberOrDateRange }
+  | { type: 'histogram/setSelectedRange'; payload?: NumberOrDateRange }
   // add y-axis/dependent axis controls
   | { type: 'histogram/toggleDependentAxisLogScale' }
-  | { type: 'histogram/onDependentAxisRangeChange'; payload: NumberOrDateRange }
+  | {
+      type: 'histogram/onDependentAxisRangeChange';
+      payload?: NumberRange;
+    }
   | { type: 'histogram/onDependentAxisModeChange' }
   | { type: 'histogram/onDependentAxisRangeReset' }
   // add x-axis/independent axis controls: axis range and range reset
   | {
       type: 'histogram/onIndependentAxisRangeChange';
-      payload: NumberOrDateRange;
+      payload?: NumberOrDateRange;
     }
   | { type: 'histogram/onIndependentAxisRangeReset' }
   // add reset all
-  | { type: 'onResetAll' };
+  | { type: 'onResetAll' }
+  // add valueSpec for ScatterplotControls
+  | { type: 'scatterplot/onValueSpecChange'; payload: string };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -189,6 +194,15 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
     // add reset all: nothing here but perhaps it would eventually be a function to set all params to default
     case 'onResetAll':
       return { ...state };
+    // add valueSpec for ScatterplotControls
+    case 'scatterplot/onValueSpecChange':
+      return {
+        ...state,
+        scatterplot: {
+          ...state.scatterplot,
+          valueSpec: action.payload,
+        },
+      };
     default:
       throw new Error();
   }
@@ -252,15 +266,22 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     /** Histogram: Type of y-axis log scale */
     dependentAxisLogScale?: boolean;
     /** Histogram: Range of y-axis min/max values */
-    dependentAxisRange?: NumberOrDateRange;
+    dependentAxisRange?: NumberRange;
     /** Histogram: Toggle absolute and relative.*/
-    dependentAxisMode?: string;
+    dependentAxisMode?: 'absolute' | 'relative';
     /** Histogram: dependent axis range reset */
-    onDependentAxisRangeReset?: () => void;
+    onDependentAxisSettingsReset?: () => void;
     /** Histogram: Range of x-axis min/max values */
     independentAxisRange?: NumberOrDateRange;
     /** Histogram: independent axis range reset */
     onIndependentAxisRangeReset?: () => void;
+  };
+  // valueSpecChange for ScatterplotControls
+  scatterplot?: {
+    /** Scatterplot: valueSpec */
+    valueSpec?: string;
+    /** Scatterplot: valueSpec */
+    onValueSpecChange?: () => void;
   };
 };
 
@@ -287,9 +308,13 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     // add y-axis controls
     dependentAxisLogScale?: boolean;
     dependentAxisRange?: NumberOrDateRange;
-    dependentAxisMode?: string;
+    dependentAxisMode?: 'absolute' | 'relative';
     // add x-axis range
     independentAxisRange?: NumberOrDateRange;
+  };
+  // valueSpec for ScatterplotControls
+  scatterplot?: {
+    valueSpec?: string;
   };
 };
 
@@ -322,6 +347,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       // add y-axis controls
       dependentAxisLogScale: false,
       dependentAxisMode: 'absolute',
+    },
+    scatterplot: {
+      valueSpec: 'raw',
     },
   };
 
@@ -390,10 +418,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     const binWidth =
       params.data.binWidth ??
       ('unit' in binWidthRange
-        ? ([
-            binWidthRange.max / 10,
-            (binWidthRange as TimeDeltaRange).unit,
-          ] as TimeDelta)
+        ? ({
+            value: binWidthRange.max / 10,
+            unit: binWidthRange.unit,
+          } as TimeDelta)
         : binWidthRange.max / 10);
 
     const binWidthStep =
@@ -531,7 +559,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     }
   };
 
-  const onSelectedRangeChange = (newRange: NumberOrDateRange) => {
+  const onSelectedRangeChange = (newRange?: NumberOrDateRange) => {
     if (params.histogram) {
       dispatch({ type: 'histogram/setSelectedRange', payload: newRange });
     }
@@ -541,7 +569,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   const toggleDependentAxisLogScale = () =>
     dispatch({ type: 'histogram/toggleDependentAxisLogScale' });
   // on y-axis dependentAxisRange
-  const onDependentAxisRangeChange = (newRange: NumberOrDateRange) => {
+  const onDependentAxisRangeChange = (newRange?: NumberRange) => {
     if (params.histogram) {
       dispatch({
         type: 'histogram/onDependentAxisRangeChange',
@@ -556,7 +584,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   const onDependentAxisRangeReset = () =>
     dispatch({ type: 'histogram/onDependentAxisRangeReset' });
   // on independent axis range change
-  const onIndependentAxisRangeChange = (newRange: NumberOrDateRange) => {
+  const onIndependentAxisRangeChange = (newRange?: NumberOrDateRange) => {
     if (params.histogram) {
       dispatch({
         type: 'histogram/onIndependentAxisRangeChange',
@@ -570,6 +598,10 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
   // reset all
   const onResetAll = () => dispatch({ type: 'onResetAll' });
+
+  // onValueSpecChange for ScatterplotControls
+  const onValueSpecChange = (value: string) =>
+    dispatch({ type: 'scatterplot/onValueSpecChange', payload: value });
 
   /**
    * Separate errors attribute from the rest of the reducer state.
@@ -613,5 +645,11 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     toggleLibraryControls,
     // add reset all
     onResetAll,
+    // onValueSpecChange for ScatterplotControls
+    scatterplot: {
+      // need to add reducerState here for ScatterplotControls
+      ...reducerState.scatterplot,
+      onValueSpecChange,
+    },
   };
 }

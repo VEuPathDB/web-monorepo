@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import { Typography } from '@material-ui/core';
 import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { NumberInput, DateInput } from './NumberAndDateInputs';
+import Button from './Button';
 import { NumberRange, DateRange, NumberOrDateRange } from '../../types/general';
 
 export type BaseProps<M extends NumberOrDateRange> = {
   /** Externally controlled range. */
-  range: M;
+  range?: M;
   /** If true, warn about empty lower or upper values. Default is false */
   required?: boolean;
   /** Function to invoke when range changes. */
-  onRangeChange: (newRange: NumberOrDateRange) => void;
+  onRangeChange: (newRange?: NumberOrDateRange) => void;
+  /** When true, allow undefined min or max. Default is true */
+  allowPartialRange?: boolean;
   /** Minimum and maximum allowed values for the user-inputted range. Optional. */
   rangeBounds?: M;
   /** UI Label for the widget. Optional */
@@ -22,6 +25,10 @@ export type BaseProps<M extends NumberOrDateRange> = {
   upperLabel?: string;
   /** Additional styles for component container. Optional. */
   containerStyles?: React.CSSProperties;
+  /** Show cancel/clear button */
+  showClearButton?: boolean;
+  /** Text to adorn the clear button; Default is 'Clear' */
+  clearButtonLabel?: string;
 };
 
 export type NumberRangeInputProps = BaseProps<NumberRange>;
@@ -54,15 +61,75 @@ function BaseInput({
   required = false,
   rangeBounds,
   onRangeChange,
+  allowPartialRange = true,
   label,
-  lowerLabel = 'Min',
-  upperLabel = 'Max',
+  lowerLabel = '',
+  upperLabel = '',
   valueType,
   containerStyles,
+  showClearButton = false,
+  clearButtonLabel = 'Clear',
 }: BaseInputProps) {
   const [focused, setFocused] = useState(false);
+  const [localRange, setLocalRange] = useState<
+    NumberRange | DateRange | undefined
+  >(range);
+  const [isReceiving, setIsReceiving] = useState<boolean>(false);
 
-  const { min, max } = range ?? {};
+  // handle incoming value changes
+  useEffect(() => {
+    setIsReceiving(true);
+    setLocalRange(range);
+  }, [range]);
+
+  // if we are not currently receiving incoming data
+  // pass localRange (if it differs from `range`) out to consumer
+  // respecting `allowPartialRange`
+  useEffect(() => {
+    if (!isReceiving) {
+      if (
+        localRange &&
+        (localRange.min !== range?.min || localRange.max !== range?.max) &&
+        (allowPartialRange ||
+          (localRange.min != null && localRange.max != null))
+      ) {
+        onRangeChange(localRange);
+      } else if (
+        localRange?.min == undefined &&
+        localRange?.max == undefined &&
+        range?.min != undefined &&
+        range?.max != undefined
+      ) {
+        onRangeChange(undefined);
+      } else if (
+        // fill in the min or max for a partially entered range
+        localRange &&
+        rangeBounds &&
+        !allowPartialRange
+      ) {
+        if (localRange.min == undefined) {
+          setLocalRange({
+            min: rangeBounds.min,
+            max: localRange.max,
+          } as NumberOrDateRange);
+        } else if (localRange.max == undefined) {
+          setLocalRange({
+            min: localRange.min,
+            max: rangeBounds.max,
+          } as NumberOrDateRange);
+        }
+      }
+    }
+  }, [
+    localRange,
+    range,
+    isReceiving,
+    onRangeChange,
+    allowPartialRange,
+    rangeBounds,
+  ]);
+
+  const { min, max } = localRange ?? {};
   return (
     <div
       style={{ ...containerStyles }}
@@ -86,8 +153,8 @@ function BaseInput({
             label={lowerLabel}
             required={required}
             onValueChange={(newValue) => {
-              if (newValue !== undefined && onRangeChange)
-                onRangeChange({ min: newValue, max } as NumberRange);
+              setIsReceiving(false);
+              setLocalRange({ min: newValue, max } as NumberRange);
             }}
           />
         ) : (
@@ -98,8 +165,8 @@ function BaseInput({
             label={lowerLabel}
             required={required}
             onValueChange={(newValue) => {
-              if (newValue !== undefined && onRangeChange)
-                onRangeChange({ min: newValue, max } as DateRange);
+              setIsReceiving(false);
+              setLocalRange({ min: newValue, max } as DateRange);
             }}
           />
         )}
@@ -122,8 +189,8 @@ function BaseInput({
             label={upperLabel}
             required={required}
             onValueChange={(newValue) => {
-              if (newValue !== undefined && onRangeChange)
-                onRangeChange({ min, max: newValue } as NumberRange);
+              setIsReceiving(false);
+              setLocalRange({ min, max: newValue } as NumberRange);
             }}
           />
         ) : (
@@ -134,8 +201,22 @@ function BaseInput({
             label={upperLabel}
             required={required}
             onValueChange={(newValue) => {
-              if (newValue !== undefined && onRangeChange)
-                onRangeChange({ min, max: newValue } as DateRange);
+              setIsReceiving(false);
+              setLocalRange({ min, max: newValue } as DateRange);
+            }}
+          />
+        )}
+        {showClearButton && (
+          <Button
+            type={'solid'}
+            text={clearButtonLabel}
+            onClick={() => {
+              setIsReceiving(false);
+              setLocalRange(undefined);
+            }}
+            containerStyles={{
+              paddingLeft: '10px',
+              height: '20px',
             }}
           />
         )}

@@ -27,6 +27,7 @@ import {
   NumberRangeInput,
   DateRangeInput,
 } from '../widgets/NumberAndDateRangeInputs';
+import LabelledGroup from '../widgets/LabelledGroup';
 
 /**
  * Props for histogram controls.
@@ -81,7 +82,7 @@ export type HistogramControlsProps = {
   /** A range to highlight by means of opacity. Optional */
   selectedRange?: NumberOrDateRange; // TO DO: handle DateRange too
   /** function to call upon selecting a range (in independent axis). Optional */
-  onSelectedRangeChange?: (newRange: NumberOrDateRange) => void;
+  onSelectedRangeChange?: (newRange?: NumberOrDateRange) => void;
   /** Min and max allowed values for the selected range. Optional */
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Additional styles for controls container. Optional */
@@ -97,21 +98,21 @@ export type HistogramControlsProps = {
   /** Action to take on y-axis log scale change. */
   toggleDependentAxisLogScale?: (dependentAxisLogScale: boolean) => void;
   /** Whether or not to set y-axis min/max range. */
-  dependentAxisRange?: NumberOrDateRange;
+  dependentAxisRange?: NumberRange;
   /** Action to take on y-axis min/max range change. */
-  onDependentAxisRangeChange?: (newRange: NumberOrDateRange) => void;
+  onDependentAxisRangeChange?: (newRange?: NumberRange) => void;
   /** Whether or not to display y-axis absolute Relative. */
-  dependentAxisMode?: string;
+  dependentAxisMode?: 'absolute' | 'relative';
   /** Action to take on display legend change. */
-  onDependentAxisModeChange?: (layout: 'absolute' | 'relative') => void;
+  onDependentAxisModeChange?: (newMode: 'absolute' | 'relative') => void;
   /** Action to reset dependent axis range. */
-  onDependentAxisRangeReset?: () => void;
+  onDependentAxisSettingsReset?: () => void;
   /** Whether or not to set x-axis min/max range. */
   independentAxisRange?: NumberOrDateRange;
   /** Action to take on x-axis min/max range change. */
-  onIndependentAxisRangeChange?: (newRange: NumberOrDateRange) => void;
+  onIndependentAxisRangeChange?: (newRange?: NumberOrDateRange) => void;
   /** Action to reset independent axis range. */
-  onIndependentAxisRangeReset?: () => void;
+  onIndependentAxisSettingsReset?: () => void;
   /** Action to Reset all to defaults. */
   onResetAll?: () => void;
 };
@@ -153,11 +154,11 @@ export default function HistogramControls({
   onDependentAxisRangeChange,
   dependentAxisMode,
   onDependentAxisModeChange,
-  onDependentAxisRangeReset,
+  onDependentAxisSettingsReset,
   // add x-axis/independent axis controls: axis range and range reset
   independentAxisRange,
   onIndependentAxisRangeChange,
-  onIndependentAxisRangeReset,
+  onIndependentAxisSettingsReset,
   // add reset all
   onResetAll,
   containerStyles = {},
@@ -189,7 +190,7 @@ export default function HistogramControls({
       style={{
         borderStyle: 'solid',
         borderWidth: '0.125em',
-        borderColor: LIGHT_GRAY,
+        borderColor: '#cccccc',
         borderRadius: '0.6125em',
         padding: '0.9375em',
         minWidth: '11em',
@@ -222,21 +223,25 @@ export default function HistogramControls({
           />
         )}
         {onSelectedRangeChange ? (
-          valueType !== undefined && valueType === 'date' ? (
-            <DateRangeInput
-              label="Selected Range"
-              rangeBounds={selectedRangeBounds as DateRange}
-              range={selectedRange as DateRange}
-              onRangeChange={onSelectedRangeChange}
-            />
-          ) : (
-            <NumberRangeInput
-              label="Selected Range"
-              rangeBounds={selectedRangeBounds as NumberRange}
-              range={selectedRange as NumberRange}
-              onRangeChange={onSelectedRangeChange}
-            />
-          )
+          <LabelledGroup label="Subset by value">
+            {valueType !== undefined && valueType === 'date' ? (
+              <DateRangeInput
+                rangeBounds={selectedRangeBounds as DateRange}
+                range={selectedRange as DateRange}
+                onRangeChange={onSelectedRangeChange}
+                allowPartialRange={false}
+                showClearButton={true}
+              />
+            ) : (
+              <NumberRangeInput
+                rangeBounds={selectedRangeBounds as NumberRange}
+                range={selectedRange as NumberRange}
+                onRangeChange={onSelectedRangeChange}
+                allowPartialRange={false}
+                showClearButton={true}
+              />
+            )}
+          </LabelledGroup>
         ) : null}
       </div>
       <div
@@ -244,8 +249,8 @@ export default function HistogramControls({
           display: 'grid',
           gridTemplateColumns:
             width > 500 ? '2fr 2fr 1fr' : width > 300 ? '1fr 1fr' : '1fr',
-          marginTop: '0.9375em',
-          marginRight: '0.9375em',
+          // marginTop: '0.9375em',
+          // marginRight: '0.9375em',
           columnGap: '1.5625em',
           rowGap: '0.3125em',
         }}
@@ -288,185 +293,133 @@ export default function HistogramControls({
           />
         )}
       </div>
-      {/* y-axis controls with box */}
-      <div
-        style={{
-          display: 'inline-flex',
-          borderStyle: 'solid',
-          borderWidth: '0.125em',
-          borderColor: 'rgb(240, 240, 240)',
-          borderRadius: 0,
-          padding: '1em',
-          width: '30em',
-          minWidth: '11em',
-          marginTop: '1.5625em',
-          marginRight: '1.5625em',
-        }}
-      >
-        {/* wrapper div to prevent from inline-flex */}
-        <div>
-          <div
-            style={{
-              width: '3.125em',
-              marginTop: '-1.8em',
-              marginLeft: '-.3em',
-              marginBottom: '.3em',
-              background: 'white',
-              textAlign: 'center',
+
+      <LabelledGroup label="y-Axis" containerStyles={{}}>
+        {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
+          <Switch
+            label="Log Scale:"
+            color={accentColor}
+            state={dependentAxisLogScale}
+            // The stinky use of `any` here comes from
+            // an incomplete type definition in the
+            // material UI library.
+            onStateChange={(event: any) =>
+              toggleDependentAxisLogScale(event.target.checked)
+            }
+            containerStyles={{ paddingBottom: '0.3125em' }}
+          />
+        )}
+        {onDependentAxisRangeChange && (
+          <NumberRangeInput
+            label="Range:"
+            range={dependentAxisRange}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              onDependentAxisRangeChange(newRange as NumberRange);
             }}
-          >
-            y-Axis
-          </div>
-          {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
-            <Switch
-              label="Log Scale:"
-              color={accentColor}
-              state={dependentAxisLogScale}
-              // The stinky use of `any` here comes from
-              // an incomplete type definition in the
-              // material UI library.
-              onStateChange={(event: any) =>
-                toggleDependentAxisLogScale(event.target.checked)
-              }
-              containerStyles={{ paddingBottom: '0.3125em' }}
-            />
-          )}
-          {onDependentAxisRangeChange ? (
-            valueType !== undefined && valueType === 'date' ? (
-              <DateRangeInput
-                label="Range:"
-                range={dependentAxisRange as DateRange}
-                onRangeChange={onDependentAxisRangeChange}
-              />
-            ) : (
-              <NumberRangeInput
-                label="Range:"
-                range={dependentAxisRange as NumberRange}
-                onRangeChange={onDependentAxisRangeChange}
-              />
-            )
-          ) : null}
-          {dependentAxisMode && onDependentAxisModeChange && (
-            <ButtonGroup
-              label="Absolute/Relative:"
-              options={['absolute', 'relative']}
-              selectedOption={dependentAxisMode}
-              // @ts-ignore
-              onOptionSelected={onDependentAxisModeChange}
-            />
-          )}
-          {/* add dependent axis range reset button */}
-          <div style={{ paddingTop: '1.5625em', width: '11.25em' }}>
-            {onDependentAxisRangeReset && (
-              <Button
-                type={'solid'}
-                text={'Reset to defaults'}
-                onClick={onDependentAxisRangeReset}
-              />
-            )}
-          </div>
-        </div>
-      </div>
+            allowPartialRange={false}
+          />
+        )}
+        {dependentAxisMode && onDependentAxisModeChange && (
+          <ButtonGroup
+            label="Absolute/Relative:"
+            options={['absolute', 'relative']}
+            selectedOption={dependentAxisMode}
+            // @ts-ignore
+            onOptionSelected={onDependentAxisModeChange}
+          />
+        )}
 
-      {/* x-axis controls with box */}
-      <div
-        style={{
-          display: 'inline-flex',
-          borderStyle: 'solid',
-          borderWidth: '0.125em',
-          borderColor: 'rgb(240, 240, 240)',
-          borderRadius: 0,
-          padding: '1em',
-          width: '30em',
-          minWidth: '11em',
-          marginTop: '1.5625em',
-          marginRight: '1.5625em',
-        }}
-      >
-        {/* wrapper div to prevent from inline-flex */}
-        <div>
-          <div
-            style={{
-              width: '3.125em',
-              marginTop: '-1.8em',
-              marginLeft: '-.3em',
-              marginBottom: '.3em',
-              background: 'white',
-              textAlign: 'center',
+        {onDependentAxisSettingsReset && (
+          <Button
+            type={'solid'}
+            text={'Reset to defaults'}
+            onClick={onDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '100%',
             }}
-          >
-            x-Axis
-          </div>
+          />
+        )}
+      </LabelledGroup>
 
-          {availableUnits?.length && selectedUnit && onSelectedUnitChange ? (
-            <ButtonGroup
-              label="Data Units"
-              options={availableUnits}
-              selectedOption={selectedUnit}
-              onOptionSelected={onSelectedUnitChange}
-              containerStyles={{ paddingBottom: '0.9375em' }}
+      <LabelledGroup label="x-Axis" containerStyles={{}}>
+        {availableUnits?.length && selectedUnit && onSelectedUnitChange && (
+          <ButtonGroup
+            label="Data Units"
+            options={availableUnits}
+            selectedOption={selectedUnit}
+            onOptionSelected={onSelectedUnitChange}
+            containerStyles={{ paddingBottom: '0.9375em' }}
+          />
+        )}
+
+        {onBinWidthChange && (
+          <SliderWidget
+            label={`Bin Width${
+              valueType !== undefined && valueType === 'date'
+                ? ' (' + (binWidth as TimeDelta).unit + ')'
+                : ''
+            }`}
+            minimum={binWidthRange.min}
+            maximum={binWidthRange.max}
+            showTextInput={true}
+            step={binWidthStep}
+            value={typeof binWidth === 'number' ? binWidth : binWidth.value}
+            debounceRateMs={250}
+            onChange={(newValue: number) => {
+              onBinWidthChange({
+                binWidth:
+                  valueType !== undefined && valueType === 'date'
+                    ? ({ value: newValue, unit: selectedUnit } as TimeDelta)
+                    : newValue,
+                selectedUnit,
+              });
+            }}
+          />
+        )}
+
+        {onIndependentAxisRangeChange &&
+          (valueType !== undefined && valueType === 'date' ? (
+            <DateRangeInput
+              label="Range:"
+              range={independentAxisRange as DateRange}
+              onRangeChange={onIndependentAxisRangeChange}
+              allowPartialRange={false}
             />
-          ) : null}
-
-          {onBinWidthChange && (
-            <SliderWidget
-              label={`Bin Width${
-                valueType !== undefined && valueType === 'date'
-                  ? ' (' + (binWidth as TimeDelta)[1] + ')'
-                  : ''
-              }`}
-              minimum={binWidthRange.min}
-              maximum={binWidthRange.max}
-              step={binWidthStep}
-              value={typeof binWidth === 'number' ? binWidth : binWidth[0]}
-              debounceRateMs={250}
-              onChange={(newValue: number) => {
-                onBinWidthChange({
-                  binWidth:
-                    valueType !== undefined && valueType === 'date'
-                      ? ([newValue, selectedUnit] as TimeDelta)
-                      : newValue,
-                  selectedUnit,
-                });
-              }}
+          ) : (
+            <NumberRangeInput
+              label="Range:"
+              range={independentAxisRange as NumberRange}
+              onRangeChange={onIndependentAxisRangeChange}
+              allowPartialRange={false}
             />
-          )}
+          ))}
 
-          {onIndependentAxisRangeChange ? (
-            valueType !== undefined && valueType === 'date' ? (
-              <DateRangeInput
-                label="Range:"
-                range={independentAxisRange as DateRange}
-                onRangeChange={onIndependentAxisRangeChange}
-              />
-            ) : (
-              <NumberRangeInput
-                label="Range:"
-                range={independentAxisRange as NumberRange}
-                onRangeChange={onIndependentAxisRangeChange}
-              />
-            )
-          ) : null}
-
-          {/* add dependent axis range reset button */}
-          <div style={{ paddingTop: '0.625em', width: '11.25em' }}>
-            {onIndependentAxisRangeReset && (
-              <Button
-                type={'solid'}
-                text={'Reset to defaults'}
-                onClick={onIndependentAxisRangeReset}
-              />
-            )}
-          </div>
-        </div>
-      </div>
+        {onIndependentAxisSettingsReset && (
+          <Button
+            type={'solid'}
+            text={'Reset to defaults'}
+            onClick={onIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '100%',
+            }}
+          />
+        )}
+      </LabelledGroup>
 
       {/* reset all */}
-      <div style={{ paddingTop: '1.5625em', width: '8.125em' }}>
-        {onResetAll && (
-          <Button type={'solid'} text={'Reset All'} onClick={onResetAll} />
-        )}
-      </div>
+      {onResetAll && (
+        <Button
+          type={'solid'}
+          text={'Reset All'}
+          onClick={onResetAll}
+          containerStyles={{
+            paddingTop: '1.5625em',
+            width: '8.125em',
+          }}
+        />
+      )}
 
       {errorStacks.map(({ error, occurences }, index) => (
         <Notification

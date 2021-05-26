@@ -78,6 +78,7 @@ export default function SliderWidget({
       height: 0,
       paddingTop: 5,
       flex: 1,
+      width: '11em',
     },
     rail: {
       background: colorSpec
