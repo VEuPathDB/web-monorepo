@@ -7,7 +7,7 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
 
 export interface ScatterplotProps extends PlotProps {
-  /** Data for the scatter plotplot */
+  /** Data for the scatter plot */
   data: Array<{
     /** x/y data */
     x: number[] | Date[];
@@ -45,15 +45,15 @@ export interface ScatterplotProps extends PlotProps {
     fillcolor?: string;
   }>;
   /** x-axis label */
-  xLabel?: string;
+  independentAxisLabel?: string;
   /** y-axis label */
-  yLabel?: string;
+  dependentAxisLabel?: string;
   /** plot title */
   title?: string;
   /** x-axis range: required for confidence interval */
-  xRange?: number[] | Date[];
+  independentAxisRange?: number[] | Date[];
   /** y-axis range: required for confidence interval */
-  yRange?: number[] | Date[];
+  dependentAxisRange?: number[] | Date[];
   /** show plot legend */
   displayLegend?: boolean;
   /** show plotly's built-in controls */
@@ -61,12 +61,19 @@ export interface ScatterplotProps extends PlotProps {
 }
 
 export default function ScatterAndLinePlotGeneral(props: ScatterplotProps) {
-  const { xLabel, yLabel, title, xRange, yRange, data } = props;
+  const {
+    independentAxisLabel,
+    dependentAxisLabel,
+    title,
+    independentAxisRange,
+    dependentAxisRange,
+    data,
+  } = props;
 
   const layout: Partial<Layout> = {
     xaxis: {
-      title: xLabel ? xLabel : '',
-      range: xRange, // set this for better display: esp. for CI plot
+      title: independentAxisLabel ? independentAxisLabel : '',
+      range: independentAxisRange, // set this for better display: esp. for CI plot
       zeroline: false, // disable yaxis line
       // make plot border
       linecolor: 'black',
@@ -74,8 +81,8 @@ export default function ScatterAndLinePlotGeneral(props: ScatterplotProps) {
       mirror: true,
     },
     yaxis: {
-      title: yLabel ? yLabel : '',
-      range: yRange, // set this for better display: esp. for CI plot
+      title: dependentAxisLabel ? dependentAxisLabel : '',
+      range: dependentAxisRange, // set this for better display: esp. for CI plot
       zeroline: false, // disable xaxis line
       // make plot border
       linecolor: 'black',

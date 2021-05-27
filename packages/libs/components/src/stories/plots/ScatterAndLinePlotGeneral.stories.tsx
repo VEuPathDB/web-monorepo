@@ -976,17 +976,17 @@ export const RealDataDate = () => {
   let plotHeight = 600;
   // let plotWidth = 350;
   // let plotHeight = 250;
-  let xLabel = 'Hours post infection';
-  let yLabel = 'Expression Values (log2 ratio)';
+  let independentAxisLabel = 'Hours post infection';
+  let dependentAxisLabel = 'Expression Values (log2 ratio)';
   let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
 
   return (
     <ScatterAndLinePlotGeneral
       data={[...dataSetProcess]}
-      xLabel={xLabel}
-      yLabel={yLabel}
-      xRange={[xMin, xMax]}
-      yRange={[yMin, yMax]}
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
+      independentAxisRange={[xMin, xMax]}
+      dependentAxisRange={[yMin, yMax]}
       title={plotTitle}
       width={plotWidth}
       height={plotHeight}
@@ -1005,17 +1005,17 @@ export const EmptyData = () => {
   let plotHeight = 600;
   // let plotWidth = 350;
   // let plotHeight = 250;
-  let xLabel = 'Hours post infection';
-  let yLabel = 'Expression Values (log2 ratio)';
+  let independentAxisLabel = 'Hours post infection';
+  let dependentAxisLabel = 'Expression Values (log2 ratio)';
   let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
 
   return (
     <ScatterAndLinePlotGeneral
       data={[]}
-      xLabel={xLabel}
-      yLabel={yLabel}
-      xRange={[xMin, xMax]}
-      yRange={[yMin, yMax]}
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
+      independentAxisRange={[xMin, xMax]}
+      dependentAxisRange={[yMin, yMax]}
       title={plotTitle}
       width={plotWidth}
       height={plotHeight}
