@@ -393,9 +393,6 @@ function HistogramPlotWithControls({
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
-        binWidth={data.binWidth!}
-        binWidthRange={data.binWidthRange!}
-        binWidthStep={data.binWidthStep!}
         containerStyles={{ border: 'none' }}
       />
       <Histogram
@@ -414,6 +411,12 @@ function HistogramPlotWithControls({
         isZoomed={uiState.independentAxisRange ? true : false}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
+        legendOptions={{
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+          orientation: 'horizontal',
+          verticalPaddingAdjustment: 20,
+        }}
       />
       <HistogramControls
         label="Axis controls"
@@ -423,15 +426,15 @@ function HistogramPlotWithControls({
         displayLibraryControls={displayLibraryControls}
         opacity={opacity}
         orientation={histogramProps.orientation}
-        binWidth={data.binWidth!}
+        binWidth={data.binWidth}
         selectedUnit={
           data.binWidth && isTimeDelta(data.binWidth)
             ? data.binWidth.unit
             : undefined
         }
         onBinWidthChange={handleBinWidthChange}
-        binWidthRange={data.binWidthRange!}
-        binWidthStep={data.binWidthStep!}
+        binWidthRange={data.binWidthRange}
+        binWidthStep={data.binWidthStep}
         errorManagement={errorManagement}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
