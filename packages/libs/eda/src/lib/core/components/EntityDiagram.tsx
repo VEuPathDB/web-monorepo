@@ -11,7 +11,7 @@ import { useMemo } from 'react';
 interface Props {
   expanded: boolean;
   orientation: 'horizontal' | 'vertical';
-  selectedEntity: string;
+  selectedEntity?: string;
   entityCounts?: Record<string, number>;
   filteredEntities?: string[];
   filteredEntityCounts?: Record<string, number>;

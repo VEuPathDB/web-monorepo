@@ -1,7 +1,7 @@
 import React from 'react';
 import { cx } from './Utils';
 import { SessionSummary } from './SessionSummary';
-import { Status, useSession } from '../core';
+import { EntityDiagram, Status, StudyEntity, useSession } from '../core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import {
   Redirect,
@@ -12,6 +12,8 @@ import {
 import { ComputationRoute } from './ComputationRoute';
 import { DefaultVariableRedirect } from './DefaultVariableRedirect';
 import { Subsetting } from './Subsetting';
+import { useEntityCounts } from '../core/hooks/entityCounts';
+import { uniq } from 'lodash';
 
 interface Props {
   sessionId: string;
@@ -29,6 +31,11 @@ export function SessionPanel(props: Props) {
     deleteSession,
   } = sessionState;
   const { url: routeBase } = useRouteMatch();
+  const totalCounts = useEntityCounts();
+  const filteredCounts = useEntityCounts(sessionState.session?.filters);
+  const filteredEntities = uniq(
+    sessionState.session?.filters.map((f) => f.entityId)
+  );
   if (status === Status.Error)
     return (
       <div>
@@ -41,13 +48,30 @@ export function SessionPanel(props: Props) {
     <div className={cx('-Session')}>
       <WorkspaceNavigation
         heading={
-          <SessionSummary
-            session={session}
-            setSessionName={setName}
-            copySession={copySession}
-            saveSession={saveSession}
-            deleteSession={deleteSession}
-          />
+          <>
+            <SessionSummary
+              session={session}
+              setSessionName={setName}
+              copySession={copySession}
+              saveSession={saveSession}
+              deleteSession={deleteSession}
+            />
+            <Route
+              path={[`${routeBase}/variables/:entityId?`, `${routeBase}`]}
+              render={(props: RouteComponentProps<{ entityId?: string }>) => (
+                <div className="Entities">
+                  <EntityDiagram
+                    expanded
+                    orientation="horizontal"
+                    selectedEntity={props.match.params.entityId}
+                    entityCounts={totalCounts.value}
+                    filteredEntityCounts={filteredCounts.value}
+                    filteredEntities={filteredEntities}
+                  />
+                </div>
+              )}
+            />
+          </>
         }
         routeBase={routeBase}
         items={[

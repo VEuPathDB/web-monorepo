@@ -5,25 +5,15 @@
     display: grid;
     grid:
       'title linkouts' auto
-      'subtitle subtitle' auto
-      'summary summary' auto
       / 1fr;
     gap: 1em;
     align-items: center;
     line-height: 1;
-    border-bottom: solid 1.5px black;
-    padding-bottom: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
   }
 
   h1 {
     grid-area: title;
-    padding: 0;
-  }
-
-  h2 {
-    grid-area: subtitle;
-    font-weight: 400;
     padding: 0;
   }
 
@@ -63,15 +53,6 @@
     margin-left: auto;
   }
 
-  &-Summary {
-    grid-area: summary;
-    display: grid;
-    grid-auto-flow: column;
-    gap: 2em;
-    font-size: 1.2em;
-    margin-right: auto;
-  }
-
   &-SessionSummary {
     display: flex;
     align-items: center;
@@ -101,11 +82,14 @@
   }
 
   .WorkspaceNavigation {
-    margin-top: 1.5em;
     h1 {
       font-size: 1em;
-      margin-bottom: 1em;
     }
+  }
+
+  .Entities {
+    display: flex;
+    justify-content: center;
   }
 
   &-Variables {
@@ -137,32 +121,16 @@
   &-Subsetting {
     display: grid;
     grid:
-      'entities      entities'
-      'entity-detail entity-detail'
-      '.             filter-chips'
-      'variables     filter'
+      [row1-start] 'variables     filter-chips' auto [row1-end]
+      [row2-start] 'variables     filter' 1fr [row2-end]
       / auto 1fr;
     gap: 1em 3em;
-    .Entities {
-      grid-area: entities;
-      margin: auto;
-    }
-    .EntityDetails {
-      border-bottom: 1px solid #cccccc;
-      padding-bottom: 0.5em;
-      grid-area: entity-detail;
-      display: flex;
-      align-items: center;
-      h2,
-      h3 {
-        margin-right: 1em;
-        padding: 0;
-      }
-    }
+    padding-top: 1em;
     .Variables {
       grid-area: variables;
     }
     .FilterChips {
+      height: 2em;
       grid-area: filter-chips;
     }
     .Filter {

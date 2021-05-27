@@ -1,18 +1,12 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import {
-  EntityDiagram,
-  SessionState,
-  useMakeVariableLink,
-  useStudyMetadata,
-} from '../core';
+import { SessionState, useMakeVariableLink, useStudyMetadata } from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from './Utils';
 import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { VariableTree } from '../core/components/VariableTree';
 import FilterChipList from '../core/components/FilterChipList';
-import { uniq } from 'lodash';
 
 interface Props {
   sessionState: SessionState;
@@ -39,22 +33,9 @@ export function Subsetting(props: Props) {
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
   const filteredEntityCount =
     filteredCounts.value && filteredCounts.value[entity.id];
-  const filteredEntities = uniq(
-    sessionState.session?.filters.map((f) => f.entityId)
-  );
 
   return (
     <div className={cx('-Subsetting')}>
-      <div className="Entities">
-        <EntityDiagram
-          expanded
-          orientation="horizontal"
-          selectedEntity={entity.displayName}
-          entityCounts={totalCounts.value}
-          filteredEntityCounts={filteredCounts.value}
-          filteredEntities={filteredEntities}
-        />
-      </div>
       <div className="Variables">
         <div
           style={{
@@ -78,19 +59,6 @@ export function Subsetting(props: Props) {
             }}
           />
         </div>
-      </div>
-      <div className="EntityDetails">
-        <h2>{entity.displayName}</h2>
-        {filteredEntityCount && totalEntityCount && (
-          <h3>
-            {filteredEntityCount.toLocaleString()} of{' '}
-            {totalEntityCount.toLocaleString()} (
-            {(filteredEntityCount / totalEntityCount).toLocaleString('en-us', {
-              style: 'percent',
-            })}
-            )
-          </h3>
-        )}
       </div>
       <div className="FilterChips">
         <FilterChipList
