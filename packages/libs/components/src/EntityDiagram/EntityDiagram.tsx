@@ -66,7 +66,7 @@ export interface EntityDiagramProps {
     width: number;
   };
   /** Which entity to highlight */
-  highlightedEntityID: string;
+  highlightedEntityID?: string;
   /** Counts used for red/gray bar and display */
   entityCounts?: EntityCounts;
   /** An optional function returning the element to render for a node given its
@@ -144,7 +144,7 @@ export default function EntityDiagram({
 
   function CustomNode({ node }: CustomNodeProps) {
     let displayText: string;
-    const isHighlighted = highlightedEntityID == node.data.displayName;
+    const isHighlighted = highlightedEntityID == node.data.id;
 
     if (isExpanded) {
       displayText = node.data.displayName;
