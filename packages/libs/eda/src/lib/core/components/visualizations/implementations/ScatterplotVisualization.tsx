@@ -325,11 +325,15 @@ function ScatterplotViz(props: Props) {
             width={1000}
             height={600}
             // title={'Scatter plot'}
-            xLabel={findVariable(vizConfig.xAxisVariable)?.displayName}
-            yLabel={findVariable(vizConfig.yAxisVariable)?.displayName}
-            xRange={[data.value.xMin, data.value.xMax]}
+            independentAxisLabel={
+              findVariable(vizConfig.xAxisVariable)?.displayName
+            }
+            dependentAxisLabel={
+              findVariable(vizConfig.yAxisVariable)?.displayName
+            }
+            independentAxisRange={[data.value.xMin, data.value.xMax]}
             // block this for now
-            yRange={[data.value.yMin, data.value.yMax]}
+            dependentAxisRange={[data.value.yMin, data.value.yMax]}
             //DKDK ScatterplotControls valueSpecInitial
             valueSpec={vizConfig.valueSpecConfig}
             // valueSpec={valueSpecInitial}
@@ -343,9 +347,9 @@ function ScatterplotViz(props: Props) {
             data={[...data.value.dataSetProcess]}
             width={230}
             height={150}
-            xRange={[data.value.xMin, data.value.xMax]}
+            independentAxisRange={[data.value.xMin, data.value.xMax]}
             // block this for now
-            yRange={[data.value.yMin, data.value.yMax]}
+            dependentAxisRange={[data.value.yMin, data.value.yMax]}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
@@ -360,12 +364,12 @@ function ScatterplotViz(props: Props) {
             data={[]}
             width={fullscreen ? 1000 : 230}
             height={fullscreen ? 600 : 150}
-            xLabel={
+            independentAxisLabel={
               fullscreen
                 ? findVariable(vizConfig.xAxisVariable)?.displayName
                 : undefined
             }
-            yLabel={
+            dependentAxisLabel={
               fullscreen
                 ? findVariable(vizConfig.yAxisVariable)?.displayName
                 : undefined
