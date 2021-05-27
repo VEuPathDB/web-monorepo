@@ -301,7 +301,7 @@ export default function Histogram({
 
   const selectedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
     const range = selectingRange ?? selectedRange;
-    if (range) {
+    if (data.series.length && range) {
       return [
         {
           type: 'rect',
@@ -333,7 +333,7 @@ export default function Histogram({
     } else {
       return [];
     }
-  }, [selectingRange, selectedRange, orientation]);
+  }, [selectingRange, selectedRange, orientation, data.series]);
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',

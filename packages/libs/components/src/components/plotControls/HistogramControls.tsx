@@ -69,16 +69,16 @@ export type HistogramControlsProps = {
   /** Function to invoke when the selected bin unit changes. */
   onSelectedUnitChange?: (unit: string) => void;
   /** The current binWidth */
-  binWidth: NumberOrTimeDelta;
+  binWidth?: NumberOrTimeDelta;
   /** Function to invoke when bin width changes. */
   onBinWidthChange?: (params: {
     binWidth: NumberOrTimeDelta;
     selectedUnit?: string;
   }) => void;
   /** The acceptable range of binWidthValues. */
-  binWidthRange: NumberOrTimeDeltaRange;
+  binWidthRange?: NumberOrTimeDeltaRange;
   /** The step to take when adjusting binWidth */
-  binWidthStep: number;
+  binWidthStep?: number;
   /** A range to highlight by means of opacity. Optional */
   selectedRange?: NumberOrDateRange; // TO DO: handle DateRange too
   /** function to call upon selecting a range (in independent axis). Optional */
@@ -353,18 +353,24 @@ export default function HistogramControls({
           />
         )}
 
-        {onBinWidthChange && binWidthRange && binWidth && (
+        {onBinWidthChange && (
           <SliderWidget
             label={`Bin Width${
               valueType !== undefined && valueType === 'date'
                 ? ' (' + (binWidth as TimeDelta).unit + ')'
                 : ''
             }`}
-            minimum={binWidthRange.min}
-            maximum={binWidthRange.max}
+            minimum={binWidthRange?.min}
+            maximum={binWidthRange?.max}
             showTextInput={true}
             step={binWidthStep}
-            value={typeof binWidth === 'number' ? binWidth : binWidth.value}
+            value={
+              binWidth
+                ? typeof binWidth === 'number'
+                  ? binWidth
+                  : binWidth.value
+                : undefined
+            }
             debounceRateMs={250}
             onChange={(newValue: number) => {
               onBinWidthChange({
