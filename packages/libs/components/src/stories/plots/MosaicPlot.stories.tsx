@@ -56,7 +56,7 @@ export const FourByThree = () => (
 
 export const EmptyData = () => (
   <MosaicPlot
-    data={[]}
+    data={[[]]}
     independentValues={[]}
     dependentValues={[]}
     independentLabel={''}

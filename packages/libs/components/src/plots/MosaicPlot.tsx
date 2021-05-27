@@ -42,6 +42,7 @@ export default function MosaicPlot(props: Props) {
       range: [0, 100] as number[],
       tickvals: [0, 20, 40, 60, 80, 100] as number[],
       ticktext: ['', '20', '40', '60', '80', '100'] as string[],
+      showgrid: true,
     },
     // Top x axis displaying independent variable labels
     xaxis2: {
@@ -61,6 +62,8 @@ export default function MosaicPlot(props: Props) {
     },
     yaxis: {
       title: props.dependentLabel ? props.dependentLabel + ' (%)' : '',
+      range: [0, 100] as number[],
+      tickvals: [0, 20, 40, 60, 80, 100] as number[],
     },
     barmode: 'stack',
     barnorm: 'percent',
