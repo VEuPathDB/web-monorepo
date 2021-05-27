@@ -60,7 +60,7 @@ export interface ScatterplotProps extends PlotProps {
   displayLibraryControls?: boolean;
 }
 
-export default function ScatterAndLinePlotGeneral(props: ScatterplotProps) {
+export default function XYPlot(props: ScatterplotProps) {
   const {
     independentAxisLabel,
     dependentAxisLabel,

@@ -1,9 +1,9 @@
 import React from 'react';
-import ScatterAndLinePlotGeneral from '../../plots/ScatterAndLinePlotGeneral';
+import XYPlot from '../../plots/XYPlot';
 
 export default {
-  title: 'Plots/Scatter',
-  component: ScatterAndLinePlotGeneral,
+  title: 'Plots/XYPlot',
+  component: XYPlot,
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/41310',
   },
@@ -981,7 +981,7 @@ export const RealDataDate = () => {
   let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
 
   return (
-    <ScatterAndLinePlotGeneral
+    <XYPlot
       data={[...dataSetProcess]}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
@@ -1010,7 +1010,7 @@ export const EmptyData = () => {
   let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
 
   return (
-    <ScatterAndLinePlotGeneral
+    <XYPlot
       data={[]}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
