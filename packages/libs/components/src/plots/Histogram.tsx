@@ -374,6 +374,7 @@ export default function Histogram({
     fixedrange: true,
     dtick: dependentAxisLogScale ? 1 : undefined,
     tickfont: data.series.length ? {} : { color: 'transparent' },
+    showline: true,
   };
 
   return (
@@ -394,7 +395,7 @@ export default function Histogram({
             r: spacingOptions?.marginRight,
             b: spacingOptions?.marginBottom,
             l: spacingOptions?.marginLeft,
-            pad: spacingOptions?.padding || 5,
+            pad: spacingOptions?.padding || 0, // axes don't join up if >0
           },
           showlegend: displayLegend,
           legend: {
