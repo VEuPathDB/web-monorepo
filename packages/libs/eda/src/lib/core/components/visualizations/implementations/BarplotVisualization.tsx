@@ -276,35 +276,52 @@ function BarplotViz(props: Props) {
             margin={{ l: 30, r: 20, b: 15, t: 20 }}
           />
         )
-      ) : // no data case
-      fullscreen ? (
-        //DKDK add control for error case as well
-        <Barplot
-          data={{ series: [] }}
-          orientation={'vertical'}
-          barLayout={'group'}
-          independentAxisLabel={'Label'}
-          dependentAxisLabel={'Count'}
-          displayLegend={false}
-          displayLibraryControls={false}
-        />
       ) : (
-        // no data & grid view
+        //DKDK no data case
         <Barplot
           data={{ series: [] }}
-          width={230}
-          height={150}
+          width={fullscreen ? 1000 : 230}
+          height={fullscreen ? 600 : 150}
           orientation={'vertical'}
           barLayout={'group'}
-          displayLegend={false}
+          independentAxisLabel={fullscreen ? 'Label' : undefined}
+          dependentAxisLabel={fullscreen ? 'Count' : undefined}
+          displayLegend={fullscreen ? true : false}
           displayLibraryControls={false}
-          staticPlot={true}
-          margin={{ l: 30, r: 20, b: 15, t: 20 }}
+          staticPlot={fullscreen ? false : true}
+          margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
         />
       )}
     </div>
   );
 }
+
+// ) : // no data case
+// fullscreen ? (
+//   //DKDK add control for error case as well
+//   <Barplot
+//     data={{ series: [] }}
+//     orientation={'vertical'}
+//     barLayout={'group'}
+//     independentAxisLabel={'Label'}
+//     dependentAxisLabel={'Count'}
+//     displayLegend={false}
+//     displayLibraryControls={false}
+//   />
+// ) : (
+//   // no data & grid view
+//   <Barplot
+//     data={{ series: [] }}
+//     width={230}
+//     height={150}
+//     orientation={'vertical'}
+//     barLayout={'group'}
+//     displayLegend={false}
+//     displayLibraryControls={false}
+//     staticPlot={true}
+//     margin={{ l: 30, r: 20, b: 15, t: 20 }}
+//   />
+// )}
 
 function BarplotWithControls({
   data,
