@@ -296,33 +296,6 @@ function BarplotViz(props: Props) {
   );
 }
 
-// ) : // no data case
-// fullscreen ? (
-//   //DKDK add control for error case as well
-//   <Barplot
-//     data={{ series: [] }}
-//     orientation={'vertical'}
-//     barLayout={'group'}
-//     independentAxisLabel={'Label'}
-//     dependentAxisLabel={'Count'}
-//     displayLegend={false}
-//     displayLibraryControls={false}
-//   />
-// ) : (
-//   // no data & grid view
-//   <Barplot
-//     data={{ series: [] }}
-//     width={230}
-//     height={150}
-//     orientation={'vertical'}
-//     barLayout={'group'}
-//     displayLegend={false}
-//     displayLibraryControls={false}
-//     staticPlot={true}
-//     margin={{ l: 30, r: 20, b: 15, t: 20 }}
-//   />
-// )}
-
 function BarplotWithControls({
   data,
   vizType,
