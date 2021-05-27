@@ -167,18 +167,17 @@ export interface ScatterplotRequestParams {
 }
 
 // unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
-const ScatterplotResponseData = array(
+export const ScatterplotResponseData = array(
   partial({
     // valueSpec = smoothedMean only returns smoothedMean data (no series data)
     //DKDK changed to string array
     seriesX: array(string),
     seriesY: array(string),
-    // smoothedMeanX: array(string),
-    smoothedMeanX: array(number),
+    smoothedMeanX: array(string),
     smoothedMeanY: array(number),
     smoothedMeanSE: array(number),
     // add bestFitLineWithRaw
-    bestFitLineX: array(number),
+    bestFitLineX: array(string),
     bestFitLineY: array(number),
     r2: number,
     // need to make sure if below is correct (untested)

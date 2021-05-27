@@ -7,12 +7,13 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import React, { Suspense, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 // need to set for Scatterplot
 import {
   DataClient,
   ScatterplotRequestParams,
+  ScatterplotResponse,
   LineplotRequestParams,
 } from '../../../api/data-api';
 
@@ -22,14 +23,10 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 
-// tableVariable/isTableVariable fit to the condition of overlayVariable
-import { isScatterplotVariable, isTableVariable } from '../../filter/guards';
-// import { ScatterplotVariable } from '../../filter/types';
-
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
-//DKDK ScatterplotControls
+// ScatterplotControls
 import ScatterplotControls from '@veupathdb/components/lib/components/plotControls/ScatterplotControls';
 
 export const scatterplotVisualization: VisualizationType = {
@@ -38,6 +35,49 @@ export const scatterplotVisualization: VisualizationType = {
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
+
+interface ScatterplotData<T extends number | Date> {
+  dataSetProcess: Array<{
+    /** x/y data */
+    x: T[];
+    y: T[];
+    /** legend text */
+    name?: string;
+    /** plot style */
+    mode?: 'markers' | 'lines' | 'lines+markers';
+    /** plot with marker: scatter plot with raw data */
+    marker?: {
+      /** marker color */
+      color?: string;
+      /** marker size: no unit */
+      size?: number;
+      /** marker's perimeter setting */
+      line?: {
+        /** marker's perimeter color */
+        color?: string;
+        /** marker's perimeter color: no unit */
+        width?: number;
+      };
+    };
+    /** plot with marker: scatter plot with smoothedMean and bestfitline; line and density plots */
+    line?: {
+      /** line color */
+      color?: string;
+      /** line style */
+      shape?: 'spline' | 'linear';
+      /** line width: no unit */
+      width?: number;
+    };
+    /** filling plots: tozerox - scatter plot's confidence interval; toself - density plot */
+    fill?: 'tozerox' | 'toself';
+    /** filling plots: color */
+    fillcolor?: string;
+  }>;
+  xMin: T;
+  xMax: T;
+  yMin: T;
+  yMax: T;
+}
 
 function GridComponent(props: VisualizationProps) {
   const { visualization, computation, filters } = props;
@@ -63,7 +103,6 @@ function FullscreenComponent(props: VisualizationProps) {
 function createDefaultConfig(): ScatterplotConfig {
   return {
     enableOverlay: true,
-    //DKDK ScatterplotControls
     valueSpecConfig: 'Raw',
   };
 }
@@ -78,7 +117,6 @@ const ScatterplotConfig = t.intersection([
     xAxisVariable: Variable,
     yAxisVariable: Variable,
     overlayVariable: Variable,
-    //DKDK ScatterplotControls
     valueSpecConfig: t.string,
   }),
 ]);
@@ -155,7 +193,7 @@ function ScatterplotViz(props: Props) {
     [entities]
   );
 
-  //DKDK ScatterplotControls: add valueSpec option
+  // ScatterplotControls: add valueSpec option
   const onValueSpecChange = useCallback(
     (value: string) => {
       updateVizConfig({
@@ -166,8 +204,7 @@ function ScatterplotViz(props: Props) {
   );
 
   const data = usePromise(
-    // set any for now
-    // useCallback(async (): Promise<ScatterplotData> => {
+    // useCallback(async (): Promise<ScatterplotData<number>> => {
     useCallback(async (): Promise<any> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
@@ -288,9 +325,6 @@ function ScatterplotViz(props: Props) {
             width={1000}
             height={600}
             // title={'Scatter plot'}
-            // if setting plot width/height in string
-            // styleWidth={'50%'}
-            // styleHeight={'100%'}
             xLabel={findVariable(vizConfig.xAxisVariable)?.displayName}
             yLabel={findVariable(vizConfig.yAxisVariable)?.displayName}
             xRange={[data.value.xMin, data.value.xMax]}
@@ -316,17 +350,45 @@ function ScatterplotViz(props: Props) {
             displayLegend={false}
             displayLibraryControls={false}
             staticPlot={true}
-            margin={{ l: 40, r: 20, b: 20, t: 10 }}
+            margin={{ l: 30, r: 20, b: 15, t: 20 }}
           />
         )
       ) : (
-        <i
-          className="fa fa-line-chart"
-          style={{
-            fontSize: fullscreen ? '34em' : '12em',
-            color: '#aaa',
-          }}
-        ></i>
+        //DKDK no data or data error case: with control
+        <>
+          <ScatterAndLinePlotGeneral
+            data={[]}
+            width={fullscreen ? 1000 : 230}
+            height={fullscreen ? 600 : 150}
+            xLabel={
+              fullscreen
+                ? findVariable(vizConfig.xAxisVariable)?.displayName
+                : undefined
+            }
+            yLabel={
+              fullscreen
+                ? findVariable(vizConfig.yAxisVariable)?.displayName
+                : undefined
+            }
+            displayLegend={fullscreen ? true : false}
+            displayLibraryControls={false}
+            staticPlot={fullscreen ? false : true}
+            margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
+          />
+          {visualization.type === 'scatterplot' && fullscreen && (
+            <ScatterplotControls
+              // label="Scatter Plot Controls"
+              valueSpec={vizConfig.valueSpecConfig}
+              onValueSpecChange={onValueSpecChange}
+              errorManagement={{
+                errors: [],
+                addError: (error: Error) => {},
+                removeError: (error: Error) => {},
+                clearAllErrors: () => {},
+              }}
+            />
+          )}
+        </>
       )}
     </div>
   );
@@ -334,7 +396,7 @@ function ScatterplotViz(props: Props) {
 
 function ScatterplotWithControls({
   data,
-  //DKDK ScatterplotControls: set initial value as 'raw'
+  //DKDK ScatterplotControls: set initial value as 'raw' ('Raw')
   valueSpec = 'Raw',
   onValueSpecChange,
   vizType,
@@ -462,9 +524,7 @@ function getRequestParams(
 
 // making plotly input data
 function processInputData<T extends number | Date>(
-  // any
-  // dataSet: VEuPathDBScatterPlotData<T>
-  dataSet: any,
+  dataSet: ScatterplotResponse,
   vizType: string,
   // line, marker,
   modeValue: string
@@ -485,12 +545,6 @@ function processInputData<T extends number | Date>(
   let xMax: number | Date = 0;
   let yMin: number | Date = 0;
   let yMax: number | Date = 0;
-
-  // // set variables for x- and yaxis ranges
-  // let xMin: number | Date;
-  // let xMax: number | Date;
-  // let yMin: number | Date;
-  // let yMax: number | Date;
 
   //DKDK coloring: using plotly.js default colors
   const markerColors = [
@@ -522,9 +576,11 @@ function processInputData<T extends number | Date>(
     let xIntervalBounds: T[] = [];
     let yIntervalBounds: T[] = [];
 
-    //DKDK initialize seriesX/Y
+    //DKDK initialize seriesX/Y, smoothedMeanX, bestFitLineX
     let seriesX = [];
     let seriesY = [];
+    let smoothedMeanX = [];
+    let bestFitLineX = [];
 
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
@@ -537,7 +593,6 @@ function processInputData<T extends number | Date>(
       }
 
       //DKDK change string array to number array for numeric data
-      // think of date data later
       seriesX = el.seriesX.map(Number);
       seriesY = el.seriesY.map(Number);
 
@@ -677,12 +732,16 @@ function processInputData<T extends number | Date>(
           'The number of X data is not equal to the number of Y data or standardError data'
         );
       }
+
+      //DKDK change string array to number array for numeric data
+      smoothedMeanX = el.smoothedMeanX.map(Number);
+
       // sorting function
       //1) combine the arrays: including standardError
       let combinedArrayInterval = [];
-      for (let j = 0; j < el.smoothedMeanX.length; j++) {
+      for (let j = 0; j < smoothedMeanX.length; j++) {
         combinedArrayInterval.push({
-          xValue: el.smoothedMeanX[j],
+          xValue: smoothedMeanX[j],
           yValue: el.smoothedMeanY[j],
           zValue: el.smoothedMeanSE[j],
         });
@@ -826,12 +885,16 @@ function processInputData<T extends number | Date>(
           'The number of X data is not equal to the number of Y data or standardError data'
         );
       }
+
+      //DKDK change string array to number array for numeric data
+      bestFitLineX = el.bestFitLineX.map(Number);
+
       // sorting function
       //1) combine the arrays: including standardError
       let combinedArrayInterval = [];
       for (let j = 0; j < el.bestFitLineX.length; j++) {
         combinedArrayInterval.push({
-          xValue: el.bestFitLineX[j],
+          xValue: bestFitLineX[j],
           yValue: el.bestFitLineY[j],
         });
       }
