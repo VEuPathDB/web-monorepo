@@ -17,6 +17,8 @@ export const TwoByTwo = () => (
     independentLabel={'Sex'}
     dependentLabel={'Status'}
     colors={['orange', 'blue']}
+    title="Sex & Status Mosaic"
+    titleSize={20}
   />
 );
 

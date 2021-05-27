@@ -13,6 +13,9 @@ export interface Props extends Omit<PlotProps, 'width' | 'height'> {
   colors?: Array<string>; // M
   showLegend?: boolean;
   showModebar?: boolean;
+  showColumnLabels?: boolean;
+  title?: string;
+  titleSize?: number;
   width?: number | string;
   height?: number | string;
 }
@@ -43,12 +46,15 @@ export default function MosaicPlot(props: Props) {
     // Top x axis displaying independent variable labels
     xaxis2: {
       tickvals: column_centers,
-      ticktext: props.independentValues.map(
-        (value, i) =>
-          `<b>${value}</b> ${percent_widths[i].toFixed(1)}% (${raw_widths[
-            i
-          ].toLocaleString('en-US')})`
-      ),
+      ticktext:
+        props.showColumnLabels !== false
+          ? props.independentValues.map(
+              (value, i) =>
+                `<b>${value}</b> ${percent_widths[i].toFixed(1)}% (${raw_widths[
+                  i
+                ].toLocaleString('en-US')})`
+            )
+          : undefined,
       range: [0, 100] as number[],
       overlaying: 'x',
       side: 'top',
@@ -58,6 +64,14 @@ export default function MosaicPlot(props: Props) {
     },
     barmode: 'stack',
     barnorm: 'percent',
+    title: props.title
+      ? {
+          text: props.title,
+          font: {
+            size: props.titleSize,
+          },
+        }
+      : undefined,
   } as const;
 
   let data: PlotParams['data'] = props.data
@@ -90,7 +104,7 @@ export default function MosaicPlot(props: Props) {
     .reverse(); // Reverse so first trace is on top, matching data array
 
   // Add empty trace to show second x axis
-  data.push({ xaxis: 'x2' });
+  if (props.showColumnLabels !== false) data.push({ xaxis: 'x2' });
 
   return (
     <PlotlyPlot
