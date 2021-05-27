@@ -1,5 +1,5 @@
 // load scatter plot component
-import ScatterAndLinePlotGeneral from '@veupathdb/components/lib/plots/ScatterAndLinePlotGeneral';
+import XYPlot from '@veupathdb/components/lib/plots/XYPlot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -343,7 +343,7 @@ function ScatterplotViz(props: Props) {
           />
         ) : (
           // thumbnail/grid view
-          <ScatterAndLinePlotGeneral
+          <XYPlot
             data={[...data.value.dataSetProcess]}
             width={230}
             height={150}
@@ -360,7 +360,7 @@ function ScatterplotViz(props: Props) {
       ) : (
         //DKDK no data or data error case: with control
         <>
-          <ScatterAndLinePlotGeneral
+          <XYPlot
             data={[]}
             width={fullscreen ? 1000 : 230}
             height={fullscreen ? 600 : 150}
@@ -420,7 +420,7 @@ any) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <ScatterAndLinePlotGeneral
+      <XYPlot
         {...ScatterplotProps}
         data={data}
         // add controls
