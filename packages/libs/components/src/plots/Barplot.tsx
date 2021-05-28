@@ -106,6 +106,9 @@ export default function Barplot({
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     // type: data?.valueType === 'date' ? 'date' : 'linear',
     automargin: true,
+    showgrid: false,
+    zeroline: false,
+    showline: false,
     title: {
       text: independentAxisLabel ? independentAxisLabel : '',
       font: {
@@ -113,6 +116,8 @@ export default function Barplot({
         size: 14,
       },
     },
+    range: data.series.length ? undefined : [0, 10],
+    tickfont: data.series.length ? {} : { color: 'transparent' },
   };
 
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
@@ -126,6 +131,9 @@ export default function Barplot({
     },
     color: textColor,
     gridcolor: gridColor,
+    tickfont: data.series.length ? {} : { color: 'transparent' },
+    range: data.series.length ? undefined : [0, 10],
+    showline: true,
   };
 
   const layout: Partial<Layout> = {
