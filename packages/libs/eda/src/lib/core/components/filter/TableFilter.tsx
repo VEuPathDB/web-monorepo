@@ -120,7 +120,11 @@ export function TableFilter({
           count: bgValueByLabel[label],
           filteredCount: fgValueByLabel[label] ?? 0,
         })),
-        entitiesCount: sum(distribution.background.barplot.data[0].value), // no longer using incompleteCases from back end
+        entitiesCount: Array.isArray(
+          distribution.background.completeCasesTable[0].completeCases
+        )
+          ? distribution.background.completeCasesTable[0].completeCases[0]
+          : distribution.background.completeCasesTable[0].completeCases,
         filteredEntitiesCount: sum(
           distribution.foreground.barplot.data[0].value
         ), // ditto
