@@ -1,5 +1,5 @@
 // load scatter plot component
-import ScatterAndLinePlotGeneral from '@veupathdb/components/lib/plots/ScatterAndLinePlotGeneral';
+import XYPlot from '@veupathdb/components/lib/plots/XYPlot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -7,12 +7,13 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 // need to set for Scatterplot
 import {
   DataClient,
   ScatterplotRequestParams,
+  ScatterplotResponse,
   LineplotRequestParams,
 } from '../../../api/data-api';
 
@@ -22,15 +23,11 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 
-// tableVariable/isTableVariable fit to the condition of overlayVariable
-import { isScatterplotVariable, isTableVariable } from '../../filter/guards';
-// import { ScatterplotVariable } from '../../filter/types';
-
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
-//DKDK ScatterplotControls
-import ScatterplotControls from '@veupathdb/components/lib/components/plotControls/ScatterplotControls';
+// XYPlotControls
+import XYPlotControls from '@veupathdb/components/lib/components/plotControls/XYPlotControls';
 
 export const scatterplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -38,6 +35,49 @@ export const scatterplotVisualization: VisualizationType = {
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
+
+interface ScatterplotData<T extends number | Date> {
+  dataSetProcess: Array<{
+    /** x/y data */
+    x: T[];
+    y: T[];
+    /** legend text */
+    name?: string;
+    /** plot style */
+    mode?: 'markers' | 'lines' | 'lines+markers';
+    /** plot with marker: scatter plot with raw data */
+    marker?: {
+      /** marker color */
+      color?: string;
+      /** marker size: no unit */
+      size?: number;
+      /** marker's perimeter setting */
+      line?: {
+        /** marker's perimeter color */
+        color?: string;
+        /** marker's perimeter color: no unit */
+        width?: number;
+      };
+    };
+    /** plot with marker: scatter plot with smoothedMean and bestfitline; line and density plots */
+    line?: {
+      /** line color */
+      color?: string;
+      /** line style */
+      shape?: 'spline' | 'linear';
+      /** line width: no unit */
+      width?: number;
+    };
+    /** filling plots: tozerox - scatter plot's confidence interval; toself - density plot */
+    fill?: 'tozerox' | 'toself';
+    /** filling plots: color */
+    fillcolor?: string;
+  }>;
+  xMin: T;
+  xMax: T;
+  yMin: T;
+  yMax: T;
+}
 
 function GridComponent(props: VisualizationProps) {
   const { visualization, computation, filters } = props;
@@ -63,8 +103,7 @@ function FullscreenComponent(props: VisualizationProps) {
 function createDefaultConfig(): ScatterplotConfig {
   return {
     enableOverlay: true,
-    //DKDK ScatterplotControls
-    valueSpecConfig: 'raw',
+    valueSpecConfig: 'Raw',
   };
 }
 
@@ -78,7 +117,6 @@ const ScatterplotConfig = t.intersection([
     xAxisVariable: Variable,
     yAxisVariable: Variable,
     overlayVariable: Variable,
-    //DKDK ScatterplotControls
     valueSpecConfig: t.string,
   }),
 ]);
@@ -155,7 +193,7 @@ function ScatterplotViz(props: Props) {
     [entities]
   );
 
-  //DKDK ScatterplotControls: add valueSpec option
+  // XYPlotControls: add valueSpec option
   const onValueSpecChange = useCallback(
     (value: string) => {
       updateVizConfig({
@@ -165,11 +203,8 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig, vizConfig]
   );
 
-  console.log('valueSpec at ScatterViz =', vizConfig.valueSpecConfig);
-
   const data = usePromise(
-    // set any for now
-    // useCallback(async (): Promise<ScatterplotData> => {
+    // useCallback(async (): Promise<ScatterplotData<number>> => {
     useCallback(async (): Promise<any> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
@@ -179,36 +214,13 @@ function ScatterplotViz(props: Props) {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return Promise.reject(new Error('Please choose a X-axis variable'));
       // isHistogramVariable may be used instead
-      else if (!isScatterplotVariable(xAxisVariable))
-        return Promise.reject(
-          new Error(
-            `'${xAxisVariable.displayName}' is not suitable for this plot`
-          )
-        );
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
         return Promise.reject(new Error('Please choose a Y-axis variable'));
-      else if (!isScatterplotVariable(yAxisVariable))
-        return Promise.reject(
-          new Error(
-            `'${yAxisVariable.displayName}' is not suitable for this plot`
-          )
-        );
       // add a condition to check whether xAxisVariable == yxAxisVariable
       else if (xAxisVariable === yAxisVariable)
         return Promise.reject(
           new Error(
             'Please choose different variables between X- and Y-axis variable'
-          )
-        );
-      // overlay
-      else if (
-        vizConfig.overlayVariable != null &&
-        overlayVariable != null &&
-        !isTableVariable(overlayVariable)
-      )
-        return Promise.reject(
-          new Error(
-            `'${overlayVariable.displayName}' is not suitable for this plot. Only categorical, binary, or ordinal type is allowed for the Overlay variable.`
           )
         );
 
@@ -221,8 +233,8 @@ function ScatterplotViz(props: Props) {
         vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
         // add visualization.type
         visualization.type,
-        //DKDK ScatterplotControls
-        vizConfig.valueSpecConfig ? vizConfig.valueSpecConfig : 'raw'
+        //DKDK XYPlotControls
+        vizConfig.valueSpecConfig ? vizConfig.valueSpecConfig : 'Raw'
       );
 
       // scatterplot, lineplot
@@ -250,8 +262,6 @@ function ScatterplotViz(props: Props) {
       visualization.type,
     ])
   );
-
-  // console.log('const data = ', data);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -314,12 +324,17 @@ function ScatterplotViz(props: Props) {
             data={[...data.value.dataSetProcess]}
             width={1000}
             height={600}
-            xLabel={findVariable(vizConfig.xAxisVariable)?.displayName}
-            yLabel={findVariable(vizConfig.yAxisVariable)?.displayName}
-            xRange={[data.value.xMin, data.value.xMax]}
+            // title={'Scatter plot'}
+            independentAxisLabel={
+              findVariable(vizConfig.xAxisVariable)?.displayName
+            }
+            dependentAxisLabel={
+              findVariable(vizConfig.yAxisVariable)?.displayName
+            }
+            independentAxisRange={[data.value.xMin, data.value.xMax]}
             // block this for now
-            // yRange={[data.value.yMin, data.value.yMax]}
-            //DKDK ScatterplotControls valueSpecInitial
+            dependentAxisRange={[data.value.yMin, data.value.yMax]}
+            //DKDK XYPlotControls valueSpecInitial
             valueSpec={vizConfig.valueSpecConfig}
             // valueSpec={valueSpecInitial}
             onValueSpecChange={onValueSpecChange}
@@ -328,28 +343,56 @@ function ScatterplotViz(props: Props) {
           />
         ) : (
           // thumbnail/grid view
-          <ScatterAndLinePlotGeneral
+          <XYPlot
             data={[...data.value.dataSetProcess]}
             width={230}
             height={150}
-            xRange={[data.value.xMin, data.value.xMax]}
+            independentAxisRange={[data.value.xMin, data.value.xMax]}
             // block this for now
-            // yRange={[data.value.yMin, data.value.yMax]}
+            dependentAxisRange={[data.value.yMin, data.value.yMax]}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
             staticPlot={true}
-            margin={{ l: 40, r: 20, b: 20, t: 10 }}
+            margin={{ l: 30, r: 20, b: 15, t: 20 }}
           />
         )
       ) : (
-        <i
-          className="fa fa-line-chart"
-          style={{
-            fontSize: fullscreen ? '34em' : '12em',
-            color: '#aaa',
-          }}
-        ></i>
+        //DKDK no data or data error case: with control
+        <>
+          <XYPlot
+            data={[]}
+            width={fullscreen ? 1000 : 230}
+            height={fullscreen ? 600 : 150}
+            independentAxisLabel={
+              fullscreen
+                ? findVariable(vizConfig.xAxisVariable)?.displayName
+                : undefined
+            }
+            dependentAxisLabel={
+              fullscreen
+                ? findVariable(vizConfig.yAxisVariable)?.displayName
+                : undefined
+            }
+            displayLegend={fullscreen ? true : false}
+            displayLibraryControls={false}
+            staticPlot={fullscreen ? false : true}
+            margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
+          />
+          {visualization.type === 'scatterplot' && fullscreen && (
+            <XYPlotControls
+              // label="Scatter Plot Controls"
+              valueSpec={vizConfig.valueSpecConfig}
+              onValueSpecChange={onValueSpecChange}
+              errorManagement={{
+                errors: [],
+                addError: (error: Error) => {},
+                removeError: (error: Error) => {},
+                clearAllErrors: () => {},
+              }}
+            />
+          )}
+        </>
       )}
     </div>
   );
@@ -357,8 +400,8 @@ function ScatterplotViz(props: Props) {
 
 function ScatterplotWithControls({
   data,
-  //DKDK ScatterplotControls: set initial value as 'raw'
-  valueSpec = 'raw',
+  //DKDK XYPlotControls: set initial value as 'raw' ('Raw')
+  valueSpec = 'Raw',
   onValueSpecChange,
   vizType,
   ...ScatterplotProps
@@ -375,26 +418,21 @@ any) {
     };
   }, []);
 
-  // console.log('ScatterplotWithControls.data = ', data);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <ScatterAndLinePlotGeneral
+      <XYPlot
         {...ScatterplotProps}
         data={data}
         // add controls
-        displayLegend={true}
+        displayLegend={data.length > 1}
         displayLibraryControls={false}
       />
-      {/* DKDK ScatterplotControls: check vizType (only for scatterplot for now) */}
+      {/* DKDK XYPlotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (
-        <ScatterplotControls
-          label="Scatter Plot Controls"
+        <XYPlotControls
+          // label="Scatter Plot Controls"
           valueSpec={valueSpec}
           onValueSpecChange={onValueSpecChange}
-          // valueType={data.valueType}
-          // displayLegend={false /* should not be a required prop */}
-          // displayLibraryControls={displayLibraryControls}
           errorManagement={errorManagement}
         />
       )}
@@ -414,9 +452,6 @@ export function scatterplotResponseToData(
   // vizType may be used for handling other plots in this component like line and density
   vizType: string
 ): any {
-  // console.log('visualization type at scatterplotResponseToData = ', vizType);
-  // console.log('response.data =', response);
-
   const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
 
   const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(
@@ -424,8 +459,6 @@ export function scatterplotResponseToData(
     vizType,
     modeValue
   );
-
-  // console.log('dataSet Process = ', dataSetProcess)  ;
 
   return {
     dataSetProcess: dataSetProcess,
@@ -450,9 +483,19 @@ function getRequestParams(
   overlayVariable?: Variable,
   // add visualization.type
   vizType?: string,
-  //DKDK ScatterplotControls
+  //DKDK XYPlotControls
   valueSpecConfig?: string
 ): getRequestParamsProps {
+  //DKDK valueSpec
+  let valueSpecValue = 'raw';
+  if (valueSpecConfig === 'Smoothed mean') {
+    valueSpecValue = 'smoothedMean';
+  } else if (valueSpecConfig === 'Smoothed mean with raw') {
+    valueSpecValue = 'smoothedMeanWithRaw';
+  } else if (valueSpecConfig === 'Best fit line with raw') {
+    valueSpecValue = 'bestFitLineWithRaw';
+  }
+
   if (vizType === 'lineplot') {
     return {
       studyId,
@@ -473,14 +516,8 @@ function getRequestParams(
       config: {
         // is outputEntityId correct?
         outputEntityId: xAxisVariable.entityId,
-        // valueSpect will be handled by a plot control in the near future
-        // valueSpec: 'raw',
-        // valueSpec: 'smoothedMean',
-        // valueSpec: 'smoothedMeanWithRaw',
-        // test bestFitLineWithRaw
-        // valueSpec: 'bestFitLineWithRaw',
-        //DKDK ScatterplotControls
-        valueSpec: valueSpecConfig,
+        //DKDK XYPlotControls
+        valueSpec: valueSpecValue,
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
@@ -491,15 +528,11 @@ function getRequestParams(
 
 // making plotly input data
 function processInputData<T extends number | Date>(
-  // any
-  // dataSet: VEuPathDBScatterPlotData<T>
-  dataSet: any,
+  dataSet: ScatterplotResponse,
   vizType: string,
   // line, marker,
   modeValue: string
 ) {
-  // console.log('dataSet =', dataSet)
-
   // set fillAreaValue for densityplot
   const fillAreaValue = '';
 
@@ -517,16 +550,18 @@ function processInputData<T extends number | Date>(
   let yMin: number | Date = 0;
   let yMax: number | Date = 0;
 
-  // set marker colors: rgb values
+  //DKDK coloring: using plotly.js default colors
   const markerColors = [
-    '26, 190, 255', // #1abeff
-    '255, 153, 51', // #ff9966
-  ];
-
-  // set fitted line and CI colors: rgb values
-  const boundColors = [
-    '0, 128, 179', // #0080b3
-    '204, 102, 0', // #cc6600
+    '31, 119, 180', //'#1f77b4',  // muted blue
+    '255, 127, 14', //'#ff7f0e',  // safety orange
+    '44, 160, 44', //'#2ca02c',  // cooked asparagus green
+    '214, 39, 40', //'#d62728',  // brick red
+    '148, 103, 189', //'#9467bd',  // muted purple
+    '140, 86, 75', //'#8c564b',  // chestnut brown
+    '227, 119, 194', //'#e377c2',  // raspberry yogurt pink
+    '127, 127, 127', //'#7f7f7f',  // middle gray
+    '188, 189, 34', //'#bcbd22',  // curry yellow-green
+    '23, 190, 207', //'#17becf'   // blue-teal
   ];
 
   let dataSetProcess: Array<{}> = [];
@@ -545,29 +580,34 @@ function processInputData<T extends number | Date>(
     let xIntervalBounds: T[] = [];
     let yIntervalBounds: T[] = [];
 
+    //DKDK initialize seriesX/Y, smoothedMeanX, bestFitLineX
+    let seriesX = [];
+    let seriesY = [];
+    let smoothedMeanX = [];
+    let bestFitLineX = [];
+
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
       // check the number of x = number of y
       if (el.seriesX.length !== el.seriesY.length) {
-        console.log(
-          'x length=',
-          el.seriesX.length,
-          '  y length=',
-          el.seriesY.length
-        );
         // alert('The number of X data is not equal to the number of Y data');
         throw new Error(
           'The number of X data is not equal to the number of Y data'
         );
       }
 
+      //DKDK change string array to number array for numeric data
+      seriesX = el.seriesX.map(Number);
+      seriesY = el.seriesY.map(Number);
+
       // probably no need to have this for series data, though
       //1) combine the arrays:
       let combinedArray = [];
-      for (let j = 0; j < el.seriesX.length; j++) {
+      for (let j = 0; j < seriesX.length; j++) {
         combinedArray.push({
-          xValue: el.seriesX[j],
-          yValue: el.seriesY[j],
+          //DKDK use seriesX/Y instead of el.seriesX/Y
+          xValue: seriesX[j],
+          yValue: seriesY[j],
         });
       }
       //2) sort:
@@ -630,10 +670,15 @@ function processInputData<T extends number | Date>(
 
       // check if this Y array consists of numbers & add type assertion
       if (isArrayOfNumbers(ySeriesValue)) {
-        yMin =
-          yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
-        yMax =
-          yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
+        if (index == 0) {
+          yMin = Math.min(...ySeriesValue);
+          yMax = Math.max(...ySeriesValue);
+        } else {
+          yMin =
+            yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
+          yMax =
+            yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
+        }
       } else {
         if (index === 0) {
           // to set initial Date value for Date[]
@@ -661,15 +706,24 @@ function processInputData<T extends number | Date>(
           : 'Data',
         mode: modeValue,
         // type: 'scattergl',
-        type: 'scatter',
+        // type: 'scatter',
+        type:
+          vizType === 'lineplot'
+            ? 'scatter'
+            : vizType === 'densityplot'
+            ? 'scatter'
+            : 'scattergl', // for the raw data of the scatterplot
         fill: fillAreaValue,
         marker: {
+          //DKDK coloring
           color: 'rgba(' + markerColors[index] + ',0)',
           size: 12,
-          line: { color: 'rgba(' + markerColors[index] + ',1)', width: 2 },
+          //DKDK coloring
+          line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
+        //DKDK coloring
         line: { color: 'rgba(' + markerColors[index] + ',1)', shape: 'spline' },
       });
     }
@@ -682,12 +736,16 @@ function processInputData<T extends number | Date>(
           'The number of X data is not equal to the number of Y data or standardError data'
         );
       }
+
+      //DKDK change string array to number array for numeric data
+      smoothedMeanX = el.smoothedMeanX.map(Number);
+
       // sorting function
       //1) combine the arrays: including standardError
       let combinedArrayInterval = [];
-      for (let j = 0; j < el.smoothedMeanX.length; j++) {
+      for (let j = 0; j < smoothedMeanX.length; j++) {
         combinedArrayInterval.push({
-          xValue: el.smoothedMeanX[j],
+          xValue: smoothedMeanX[j],
           yValue: el.smoothedMeanY[j],
           zValue: el.smoothedMeanSE[j],
         });
@@ -761,10 +819,12 @@ function processInputData<T extends number | Date>(
         name: 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: 'rgba(' + boundColors[index] + ',1)',
+          //DKDK coloring
+          color: 'rgba(' + markerColors[index] + ',1)',
           shape: 'spline',
           width: 2,
         },
+        type: 'scatter',
       });
 
       // make Confidence Interval (CI) or Bounds (filled area)
@@ -772,8 +832,6 @@ function processInputData<T extends number | Date>(
       xIntervalBounds = xIntervalBounds.concat(
         xIntervalLineValue.map((element: any) => element).reverse()
       );
-
-      // console.log('xMin xMax =', xMin, xMax);
 
       // need to compare xMin/xMax
       xMin =
@@ -814,10 +872,11 @@ function processInputData<T extends number | Date>(
         name: 'Confidence interval',
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
-        fillcolor: 'rgba(' + boundColors[index] + ',0.2)',
-        // opacity: 0.4,  // this works but not used
+        //DKDK coloring
+        fillcolor: 'rgba(' + markerColors[index] + ',0.2)',
         type: 'line',
-        line: { color: 'transparent', shape: 'spline' }, // here, line means upper and lower bounds
+        // here, line means upper and lower bounds
+        line: { color: 'transparent', shape: 'spline' },
       });
     }
 
@@ -830,12 +889,16 @@ function processInputData<T extends number | Date>(
           'The number of X data is not equal to the number of Y data or standardError data'
         );
       }
+
+      //DKDK change string array to number array for numeric data
+      bestFitLineX = el.bestFitLineX.map(Number);
+
       // sorting function
       //1) combine the arrays: including standardError
       let combinedArrayInterval = [];
       for (let j = 0; j < el.bestFitLineX.length; j++) {
         combinedArrayInterval.push({
-          xValue: el.bestFitLineX[j],
+          xValue: bestFitLineX[j],
           yValue: el.bestFitLineY[j],
         });
       }
@@ -908,17 +971,19 @@ function processInputData<T extends number | Date>(
         name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: 'rgba(' + boundColors[index] + ',1)',
+          //DKDK coloring
+          color: 'rgba(' + markerColors[index] + ',1)',
           shape: 'spline',
           width: 2,
         },
+        type: 'scatter',
       });
     }
 
-    // determine y-axis range for numbers only: x-axis should be in the range of [xMin,xMax] due to CI plot
+    // make some margin for y-axis range (5% of range for now)
     if (typeof yMin == 'number' && typeof yMax == 'number') {
-      yMin = yMin < 0 ? Math.floor(yMin) : Math.ceil(yMin);
-      yMax = yMax < 0 ? Math.floor(yMax) : Math.ceil(yMax);
+      yMin = yMin - (yMax - yMin) * 0.05;
+      yMax = yMax + (yMax - yMin) * 0.05;
     }
   });
 
