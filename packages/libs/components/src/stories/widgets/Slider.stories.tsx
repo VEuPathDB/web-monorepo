@@ -19,7 +19,7 @@ export default {
 } as Meta;
 
 const Template: Story<SliderWidgetProps> = (args) => {
-  const [value, setValue] = useState<number>(args.value);
+  const [value, setValue] = useState<number | undefined>(args.value);
 
   // Play nice with Storybook controls.
   useEffect(() => {

@@ -350,6 +350,18 @@ DateRangeSelection.loaders = [
   }),
 ];
 
+export const EmptyData: Story = (args) => {
+  return (
+    <Histogram
+      data={{ series: [] }}
+      width="100vw"
+      height="100vh"
+      barLayout="stack"
+      orientation="horizontal"
+    />
+  );
+};
+
 function toCSSLength(length: string | number): string {
   return typeof length === 'number' ? `${length}px` : length;
 }
