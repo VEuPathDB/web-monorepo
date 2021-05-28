@@ -124,7 +124,8 @@ export const HistogramResponse = type({
       }),
     }),
   }),
-  // TO DO: sampleSizeTable
+  sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });
 
 export interface BarplotRequestParams {
@@ -180,8 +181,8 @@ export const BarplotResponse = type({
       ])
     ),
   }),
-  //DKDK sampleSizeTable
   sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });
 
 // scatterplot

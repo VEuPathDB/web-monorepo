@@ -33,7 +33,6 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { sumBy } from 'lodash';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -83,6 +82,7 @@ export function HistogramFilter(props: Props) {
       HistogramData & {
         variableId: string;
         entityId: string;
+        hasDataEntitiesCount: number;
       }
     > => {
       const foregroundFilters = filters?.filter(
@@ -140,6 +140,12 @@ export function HistogramFilter(props: Props) {
           }) as NumberOrTimeDeltaRange;
       const binWidthStep = step || 0.1;
 
+      // {hasDataEntitiesCount} (YY%) of ZZ households have data for this variable
+      const completeCases = background.completeCasesTable[0].completeCases;
+      const hasDataEntitiesCount = Array.isArray(completeCases)
+        ? completeCases[0]
+        : completeCases;
+
       return {
         valueType: variable.type,
         series,
@@ -148,6 +154,7 @@ export function HistogramFilter(props: Props) {
         binWidthStep,
         variableId: variable.id,
         entityId: entity.id,
+        hasDataEntitiesCount: hasDataEntitiesCount ?? 0,
       };
     },
     [dataClient, entity, filters, studyId, variable]
@@ -221,16 +228,6 @@ export function HistogramFilter(props: Props) {
   // stats from foreground
   const fgSummaryStats = data?.value?.series[1].summary;
 
-  // {hasDataEntitiesCount} (YY%) of ZZ households have data for this variable
-  // FIXME: currently calculating this with a sum() but should use `total - incompleteCases`
-  // when back end response is sorted see EdaDataService/#32
-  const hasDataEntitiesCount = useMemo(() => {
-    if (data.value) {
-      return sumBy(data.value.series[0].bins, (bin) => bin.count);
-    }
-    return null;
-  }, [data]);
-
   // Note use of `key` used with HistogramPlotWithControls. This is a little hack to force
   // the range to be reset if the filter is removed.
   return (
@@ -259,7 +256,7 @@ export function HistogramFilter(props: Props) {
             </div>
             <UnknownCount
               activeFieldState={{
-                summary: { internalsCount: hasDataEntitiesCount },
+                summary: { internalsCount: data.value?.hasDataEntitiesCount },
               }}
               dataCount={totalEntityCount}
               displayName={entity.displayName}
