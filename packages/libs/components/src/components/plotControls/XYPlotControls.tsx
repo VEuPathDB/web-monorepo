@@ -16,7 +16,7 @@ import Notification from '../widgets/Notification';
  * The presence or absence of an optional callback will
  * determine if that control is displayed.
  */
-export type ScatterplotControlsProps = {
+export type XYPlotControlsProps = {
   /** Label for control panel. Optional. */
   label?: string;
   /** Additional styles for controls container. Optional */
@@ -39,7 +39,7 @@ export type ScatterplotControlsProps = {
  * contruct you own control panel by using the various
  * widgets contained here.
  */
-export default function ScatterplotControls({
+export default function XYPlotControls({
   label,
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -47,7 +47,7 @@ export default function ScatterplotControls({
   // valueSpec
   valueSpec,
   onValueSpecChange,
-}: ScatterplotControlsProps) {
+}: XYPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
   const errorStacks = useMemo(() => {
