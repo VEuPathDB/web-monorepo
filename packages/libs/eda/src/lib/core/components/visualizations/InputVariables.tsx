@@ -1,15 +1,15 @@
-import { makeStyles } from '@material-ui/core';
 import React from 'react';
+import { makeStyles } from '@material-ui/core';
 import { StudyEntity } from '../../types/study';
-import { DataElementConstraint } from '../../types/visualization';
+import { Variable } from '../../types/variable';
+import {
+  DataElementConstraintRecord,
+  filterVariablesByConstraint,
+  flattenConstraints,
+  ValueByInputName,
+} from '../../utils/data-element-constraints';
 import { VariableTreeDropdown } from '../VariableTree';
-
-interface VariableDescriptor {
-  variableId: string;
-  entityId: string;
-}
-
-type ValueByInputName = Record<string, VariableDescriptor | undefined>;
+import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 interface InputSpec {
   name: string;
@@ -29,6 +29,7 @@ export interface Props {
   entities: StudyEntity[];
   /**
    * Current set of values for `inputs`.
+   * In other words, the currently selected variables.
    */
   values: ValueByInputName;
   /**
@@ -38,10 +39,11 @@ export interface Props {
   /**
    * Constraints to apply to `inputs`
    */
-  constraints?: Record<string, DataElementConstraint>[];
+  constraints?: DataElementConstraintRecord[];
   /**
    * Order in which to apply entity-specific relationships between inputs.
-   * TODO Describe what the order means.
+   * The entity of a given element in the array must be of the same entity, or
+   * lower in the tree, of the element to its right.
    */
   dataElementDependencyOrder?: string[];
 }
@@ -49,7 +51,8 @@ export interface Props {
 const useStyles = makeStyles(
   {
     root: {
-      border: '2px solid rgb(240, 240, 240)',
+      // border: '2px solid rgb(240, 240, 240)',
+      border: 0,
       padding: '1.5em',
       borderRadius: '10px',
       color: 'rgb(150, 150, 150)',
@@ -82,11 +85,62 @@ const useStyles = makeStyles(
 );
 
 export function InputVariables(props: Props) {
-  const { inputs, entities, values, onChange } = props;
+  const {
+    inputs,
+    entities,
+    values,
+    onChange,
+    constraints,
+    dataElementDependencyOrder,
+  } = props;
   const classes = useStyles();
-  const handleChange = (inputName: string, value?: VariableDescriptor) => {
+  const handleChange = (inputName: string, value?: Variable) => {
     onChange({ ...values, [inputName]: value });
   };
+  const flattenedConstraints =
+    constraints && flattenConstraints(values, entities, constraints);
+
+  // Steps
+  // 1. Get closest prev and next values
+  // 2. If next defined, root is next's entity, otherwise default root entity
+  // 3. If prev is defined, remove prev's entity's children
+  // 4. Return tree.
+  const rootEntities = inputs.map((input) => {
+    if (dataElementDependencyOrder == null) return entities[0];
+
+    // 1
+    const index = dataElementDependencyOrder.indexOf(input.name);
+    // return root entity if dependencyOrder is not declared
+    if (index === -1) return entities[0];
+
+    const prevValue = dataElementDependencyOrder
+      .slice(0, index)
+      .map((n) => values[n])
+      .reverse()
+      .find((v) => v != null);
+    const nextValue = dataElementDependencyOrder
+      .slice(index + 1)
+      .map((n) => values[n])
+      .find((v) => v != null);
+
+    // 2
+    const rootEntityId = nextValue?.entityId ?? entities[0].id;
+    const rootEntity =
+      entities.find((entity) => entity.id === rootEntityId) ?? entities[0];
+
+    // 3
+    return prevValue == null
+      ? rootEntity
+      : mapStructure(
+          (entity) =>
+            entity.id === prevValue.entityId
+              ? { ...entity, children: [] }
+              : entity,
+          (entity) => entity.children ?? [],
+          rootEntity
+        );
+  });
+
   return (
     <div className={classes.root}>
       <div className={classes.inputs}>
@@ -94,22 +148,20 @@ export function InputVariables(props: Props) {
           <div key={input.name} className={classes.input}>
             <div className={classes.label}>{input.label}</div>
             <VariableTreeDropdown
-              entities={entities}
+              rootEntity={filterVariablesByConstraint(
+                rootEntities[index],
+                flattenedConstraints && flattenedConstraints[input.name]
+              )}
               entityId={values[input.name]?.entityId}
               variableId={values[input.name]?.variableId}
-              onActiveFieldChange={(fieldId) => {
-                if (fieldId == null) {
-                  handleChange(input.name, undefined);
-                  return;
-                }
-                const [entityId, variableId] = fieldId.split('/');
-                handleChange(input.name, { entityId, variableId });
+              onChange={(variable) => {
+                handleChange(input.name, variable);
               }}
             />
           </div>
         ))}
       </div>
-      <div className={`${classes.label} ${classes.dataLabel}`}>Data inputs</div>
+      {/* <div className={`${classes.label} ${classes.dataLabel}`}>Data inputs</div> */}
     </div>
   );
 }

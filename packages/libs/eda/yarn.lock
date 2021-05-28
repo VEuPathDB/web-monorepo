@@ -2880,10 +2880,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.2.34":
-  version "0.2.34"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.34.tgz#78bc416aaa220593bef4e26ad0e7da404dbc8551"
-  integrity sha512-L0Azolw/fkIXMyHsfQ1TuQzG1h+xw6TzkvfUaoVnNZwO0rGiPdC+f9+Zxa33ZgC3CwtaSPmBvlltX2a6oxOz1Q==
+"@veupathdb/components@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.3.1.tgz#4baada292fad7f807b781a09f3264cf4d92543b1"
+  integrity sha512-L7YgBNWvZH76ABOJ2lBdT2hh991A/NgYM8lWma1r802YiB9/ZsNiWslC4AQzZUaGUF7afAiB319H1ox8lheBAg==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -2941,10 +2941,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.1.tgz#4c4dafbc3366af7827a0892ccbc5e862b8a2a608"
-  integrity sha512-MvnHXTmk9gs99Wh38taH1W5C7t+GI6llHPSaqJVp4gpd0AaM3997EF7sdqLXq70lzjQ5ViTjEXqZfU1iuJEDsQ==
+"@veupathdb/wdk-client@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.2.tgz#3b8b466e9ca72d8af6c07fc1dad21fd9b22e6059"
+  integrity sha512-PlUD6O0ihUfPWrcfLpi3Qgau4ew+V3lPfBq4YerxFS1Cn8fEskRRjtffpJqDNPzqDsWOrBblsBYaB9kpB1I2Dg==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
@@ -2988,10 +2988,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.1.1-alpha.11":
-  version "0.1.1-alpha.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.11.tgz#66598c0433755ef7961571d9939c0b5932a76610"
-  integrity sha512-0oIKjRjaiO27T1JFEbRRqeDYwHqMmrtOxrCbkmvIytkeaONiiLXNWNyhEIs9UnWtYDebYX9+LVMCQUD6v9BXCA==
+"@veupathdb/web-common@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.2.tgz#8748eca36d24ea8bf1728236106cb7f07e5b2318"
+  integrity sha512-hz+l+wNGXAVz0GJdxUi40ppNSDJLFd9AkAH+FCr2OdcFKKSFXxg/CkGkQ9Hyf4YHmtdXifVRf6lqozfNfJYRVg==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"

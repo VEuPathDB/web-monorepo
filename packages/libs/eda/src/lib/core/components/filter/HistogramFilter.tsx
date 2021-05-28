@@ -33,7 +33,6 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { padISODateTime } from '../../utils/date-conversion';
 import { sumBy } from 'lodash';
 
 type Props = {
@@ -191,8 +190,7 @@ export function HistogramFilter(props: Props) {
                   variableId: variable.id,
                   entityId: entity.id,
                   type: 'dateRange',
-                  min: padISODateTime((selectedRange as DateRange).min),
-                  max: padISODateTime((selectedRange as DateRange).max),
+                  ...(selectedRange as DateRange),
                 }
               : {
                   variableId: variable.id,
@@ -238,57 +236,62 @@ export function HistogramFilter(props: Props) {
   return (
     <div className="filter-param" style={{ position: 'relative' }}>
       {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
+        <Loading
+          radius={16}
+          style={{ position: 'absolute', top: '200px', left: '200px' }}
+        />
       )}
       {data.error && <pre>{String(data.error)}</pre>}
-      {data.value &&
-        data.value.variableId === variable.id &&
-        data.value.entityId === entity.id &&
-        fgSummaryStats &&
-        hasDataEntitiesCount != null && (
-          <div>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div className="histogram-summary-stats">
-                <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
-                {fgSummaryStats.mean} &emsp;
-                <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
-                {fgSummaryStats.max}
-              </div>
-              <UnknownCount
-                activeFieldState={{
-                  summary: { internalsCount: hasDataEntitiesCount },
-                }}
-                dataCount={totalEntityCount}
-                displayName={entity.displayName}
-              />
+      <div>
+        {fgSummaryStats && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div className="histogram-summary-stats">
+              <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
+              {fgSummaryStats.mean} &emsp;
+              <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
+              {fgSummaryStats.max}
             </div>
-            <HistogramPlotWithControls
-              key={filters?.length ?? 0}
-              filter={filter}
-              data={data.value}
-              getData={getData}
-              width="100%"
-              height={400}
-              spacingOptions={{
-                marginTop: 20,
-                marginBottom: 20,
+            <UnknownCount
+              activeFieldState={{
+                summary: { internalsCount: hasDataEntitiesCount },
               }}
-              orientation={'vertical'}
-              barLayout={'overlay'}
-              updateFilter={updateFilter}
-              uiState={uiState}
-              updateUIState={updateUIState}
-              variableName={variable.displayName}
-              entityName={entity.displayName}
+              dataCount={totalEntityCount}
+              displayName={entity.displayName}
             />
           </div>
         )}
+        <HistogramPlotWithControls
+          key={filters?.length ?? 0}
+          filter={filter}
+          data={
+            data.value &&
+            data.value.variableId === variable.id &&
+            data.value.entityId === entity.id
+              ? data.value
+              : { series: [] }
+          }
+          getData={getData}
+          width="100%"
+          height={400}
+          spacingOptions={{
+            marginTop: 20,
+            marginBottom: 20,
+          }}
+          orientation={'vertical'}
+          barLayout={'overlay'}
+          updateFilter={updateFilter}
+          uiState={uiState}
+          updateUIState={updateUIState}
+          variableName={variable.displayName}
+          entityName={entity.displayName}
+        />
+      </div>
     </div>
   );
 }
@@ -319,17 +322,7 @@ function HistogramPlotWithControls({
   const handleSelectedRangeChange = useCallback(
     (range?: NumberOrDateRange) => {
       if (range) {
-        // FIXME Compare selection to data min/max
-        // UPDATE: back end now returns bins in order
-        // note that the range check below is only using bins from the first (background) series
-        const bins = data.series[0].bins;
-        const min = bins[0].binStart;
-        const max = bins[bins.length - 1].binEnd;
-        if (range.min <= min && range.max >= max) {
-          updateFilter();
-        } else {
-          updateFilter(range);
-        }
+        updateFilter(range);
       } else {
         updateFilter(); // clear the filter if range is undefined
       }
@@ -416,17 +409,31 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
-  // We are not using series[x].summary.min and max here
-  // because the bin boundaries are more appropriate
-  const xRangeMin = data.series[0].bins[0].binStart;
-  const xRangeMax = data.series[0].bins[data.series[0].bins.length - 1].binEnd;
+  const selectedRangeBounds = {
+    min: data.series[0]?.summary?.min,
+    max: data.series[0]?.summary?.max,
+  } as NumberOrDateRange;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <HistogramControls
+        valueType={data.valueType}
+        barLayout={barLayout}
+        displayLegend={displayLegend}
+        displayLibraryControls={displayLibraryControls}
+        opacity={opacity}
+        orientation={histogramProps.orientation}
+        errorManagement={errorManagement}
+        selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
+        onSelectedRangeChange={handleSelectedRangeChange}
+        containerStyles={{ border: 'none' }}
+      />
       <Histogram
         {...histogramProps}
         data={data}
         selectedRange={selectedRange}
+        selectedRangeBounds={selectedRangeBounds}
         opacity={opacity}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
@@ -435,32 +442,34 @@ function HistogramPlotWithControls({
         dependentAxisLabel={`Count of ${entityName}`}
         // add independentAxisLabel
         independentAxisLabel={variableName}
+        isZoomed={uiState.independentAxisRange ? true : false}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
+        legendOptions={{
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+          orientation: 'horizontal',
+          verticalPaddingAdjustment: 20,
+        }}
       />
       <HistogramControls
-        label="Histogram Controls"
+        label="Axis controls"
         valueType={data.valueType}
         barLayout={barLayout}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
         opacity={opacity}
         orientation={histogramProps.orientation}
-        binWidth={data.binWidth!}
+        binWidth={data.binWidth}
         selectedUnit={
           data.binWidth && isTimeDelta(data.binWidth)
             ? data.binWidth.unit
             : undefined
         }
         onBinWidthChange={handleBinWidthChange}
-        binWidthRange={data.binWidthRange!}
-        binWidthStep={data.binWidthStep!}
+        binWidthRange={data.binWidthRange}
+        binWidthStep={data.binWidthStep}
         errorManagement={errorManagement}
-        selectedRange={selectedRange}
-        selectedRangeBounds={
-          { min: xRangeMin, max: xRangeMax } as NumberOrDateRange
-        }
-        onSelectedRangeChange={handleSelectedRangeChange}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
         onIndependentAxisSettingsReset={handleIndependentAxisSettingsReset}

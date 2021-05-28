@@ -167,16 +167,17 @@ export interface ScatterplotRequestParams {
 }
 
 // unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
-const ScatterplotResponseData = array(
+export const ScatterplotResponseData = array(
   partial({
     // valueSpec = smoothedMean only returns smoothedMean data (no series data)
-    seriesX: array(number),
-    seriesY: array(number),
-    smoothedMeanX: array(number),
+    //DKDK changed to string array
+    seriesX: array(string),
+    seriesY: array(string),
+    smoothedMeanX: array(string),
     smoothedMeanY: array(number),
     smoothedMeanSE: array(number),
     // add bestFitLineWithRaw
-    bestFitLineX: array(number),
+    bestFitLineX: array(string),
     bestFitLineY: array(number),
     r2: number,
     // need to make sure if below is correct (untested)
@@ -204,6 +205,19 @@ const sampleSizeTableArray = array(
     }),
   })
 );
+
+// define completeCasesTableArray
+const completeCasesTableArray = array(
+  partial({
+    // set union for size as it depends on the presence of overlay variable
+    completeCases: union([number, array(number)]),
+    variableDetails: type({
+      entityId: string,
+      variableId: string,
+    }),
+  })
+);
+
 export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
 export const ScatterplotResponse = type({
   scatterplot: type({
@@ -221,6 +235,7 @@ export const ScatterplotResponse = type({
     }),
   }),
   sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });
 
 // lineplot
@@ -240,14 +255,19 @@ export interface LineplotRequestParams {
       entityId: string;
       variableId: string;
     };
+    overlayVariable?: {
+      entityId: string;
+      variableId: string;
+    };
   };
 }
 
 const LineplotResponseData = array(
   intersection([
     type({
-      seriesX: array(number),
-      seriesY: array(number),
+      //DKDK changed to string array
+      seriesX: array(string),
+      seriesY: array(string),
     }),
     partial({
       // need to make sure if below is correct (untested)
@@ -279,6 +299,7 @@ export const LineplotResponse = type({
     }),
   }),
   sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });
 
 export interface MosaicRequestParams {
@@ -319,7 +340,42 @@ export const MosaicResponse = type({
       }),
     }),
   }),
+  sampleSizeTable: array(
+    type({
+      size: array(number),
+    })
+  ),
 });
+
+export type ContTableResponse = TypeOf<typeof ContTableResponse>;
+export const ContTableResponse = intersection([
+  MosaicResponse,
+  type({
+    statsTable: array(
+      partial({
+        pvalue: union([number, string]),
+        degreesFreedom: number,
+        chisq: number,
+      })
+    ),
+  }),
+]);
+
+export type TwoByTwoResponse = TypeOf<typeof TwoByTwoResponse>;
+export const TwoByTwoResponse = intersection([
+  MosaicResponse,
+  type({
+    statsTable: array(
+      partial({
+        oddsratio: number,
+        pvalue: union([number, string]),
+        orInterval: string,
+        rrInterval: string,
+        relativerisk: number,
+      })
+    ),
+  }),
+]);
 
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
@@ -400,27 +456,27 @@ export class DataClient extends FetchClient {
     );
   }
 
-  getMosaic(
+  getContTable(
     computationName: string,
     params: MosaicRequestParams
-  ): Promise<MosaicResponse> {
+  ): Promise<ContTableResponse> {
     return this.getVisualizationData(
       computationName,
       'conttable',
       params,
-      MosaicResponse
+      ContTableResponse
     );
   }
 
   getTwoByTwo(
     computationName: string,
     params: MosaicRequestParams
-  ): Promise<MosaicResponse> {
+  ): Promise<TwoByTwoResponse> {
     return this.getVisualizationData(
       computationName,
       'twobytwo',
       params,
-      MosaicResponse
+      TwoByTwoResponse
     );
   }
 }

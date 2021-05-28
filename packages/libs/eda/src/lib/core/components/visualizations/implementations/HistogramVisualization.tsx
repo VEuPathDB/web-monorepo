@@ -27,6 +27,7 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { Variable } from '../../../types/variable';
 import { DataElementConstraint } from '../../../types/visualization';
+import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
@@ -56,23 +57,7 @@ function SelectorComponent() {
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  const {
-    visualization,
-    updateVisualization,
-    computation,
-    filters,
-    dataElementConstraints,
-  } = props;
-  return (
-    <HistogramViz
-      visualization={visualization}
-      updateVisualization={updateVisualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={true}
-      constraints={dataElementConstraints}
-    />
-  );
+  return <HistogramViz {...props} fullscreen />;
 }
 
 function createDefaultConfig(): HistogramConfig {
@@ -99,7 +84,6 @@ const HistogramConfig = t.intersection([
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
-  constraints?: Record<string, DataElementConstraint>[];
 };
 
 function HistogramViz(props: Props) {
@@ -109,7 +93,8 @@ function HistogramViz(props: Props) {
     updateVisualization,
     filters,
     fullscreen,
-    constraints,
+    dataElementConstraints,
+    dataElementDependencyOrder,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -184,19 +169,14 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useCallback(
-    (variable?: Variable) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
-    },
-    [entities]
-  );
+  const xAxisVariable = useMemo(() => {
+    const { variable } =
+      findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
+    return variable;
+  }, [entities, vizConfig.xAxisVariable]);
 
   const data = usePromise(
     useCallback(async (): Promise<HistogramData> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return Promise.reject(new Error('Please choose a main variable'));
 
@@ -220,15 +200,18 @@ function HistogramViz(props: Props) {
       studyId,
       filters,
       dataClient,
-      vizConfig,
-      findVariable,
+      vizConfig.xAxisVariable,
+      vizConfig.enableOverlay,
+      vizConfig.overlayVariable,
+      vizConfig.binWidth,
+      vizConfig.binWidthTimeUnit,
+      entities,
       computation.type,
     ])
   );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {fullscreen && <h1>Histogram</h1>}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables
@@ -248,13 +231,17 @@ function HistogramViz(props: Props) {
               overlayVariable: vizConfig.overlayVariable,
             }}
             onChange={handleInputVariableChange}
-            constraints={constraints}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
           />
         </div>
       )}
 
       {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
+        <Loading
+          style={{ position: 'absolute', top: '400px', left: '50vw' }}
+          radius={16}
+        />
       )}
       {data.error && fullscreen && (
         <div
@@ -275,42 +262,40 @@ function HistogramViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {data.value ? (
-        fullscreen ? (
-          <HistogramPlotWithControls
-            data={data.value}
-            onBinWidthChange={onBinWidthChange}
-            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-            handleDependentAxisLogScale={handleDependentAxisLogScale}
-            width="100%"
-            height={400}
-            orientation={'vertical'}
-            barLayout={'stack'}
-            displayLegend={data.value?.series.length > 1}
-          />
-        ) : (
-          // thumbnail/grid view
-          <Histogram
-            data={data.value}
-            width={350}
-            height={280}
-            orientation={'vertical'}
-            barLayout={'stack'}
-            displayLibraryControls={false}
-            displayLegend={false}
-            independentAxisLabel=""
-            dependentAxisLabel=""
-            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-          />
-        )
+      {fullscreen ? (
+        <HistogramPlotWithControls
+          data={data.value && !data.pending ? data.value : { series: [] }}
+          onBinWidthChange={onBinWidthChange}
+          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+          handleDependentAxisLogScale={handleDependentAxisLogScale}
+          width="100%"
+          height={400}
+          orientation={'vertical'}
+          barLayout={'stack'}
+          displayLegend={
+            data.value?.series?.length && data.value.series.length > 1
+              ? true
+              : false
+          }
+          independentAxisLabel={
+            xAxisVariable ? xAxisVariable.displayName : 'Bins'
+          }
+        />
       ) : (
-        <i
-          className="fa fa-bar-chart"
-          style={{
-            fontSize: fullscreen ? '34em' : '12em',
-            color: '#aaa',
-          }}
-        ></i>
+        // thumbnail/grid view
+        <Histogram
+          data={data.value && !data.pending ? data.value : { series: [] }}
+          width={350}
+          height={280}
+          orientation={'vertical'}
+          barLayout={'stack'}
+          displayLibraryControls={false}
+          displayLegend={false}
+          independentAxisLabel=""
+          dependentAxisLabel=""
+          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+          interactive={false}
+        />
       )}
     </div>
   );
@@ -354,31 +339,29 @@ function HistogramPlotWithControls({
         showBarValues={false}
         barLayout={barLayout}
       />
-      {data.binWidth && data.binWidthRange && data.binWidthStep && (
-        <HistogramControls
-          label="Histogram Controls"
-          valueType={data.valueType}
-          barLayout={barLayout}
-          displayLegend={false /* should not be a required prop */}
-          displayLibraryControls={displayLibraryControls}
-          opacity={opacity}
-          orientation={histogramProps.orientation}
-          binWidth={data.binWidth}
-          selectedUnit={
-            data.binWidth && isTimeDelta(data.binWidth)
-              ? data.binWidth.unit
-              : undefined
-          }
-          onBinWidthChange={({ binWidth: newBinWidth }) => {
-            onBinWidthChange({ binWidth: newBinWidth });
-          }}
-          binWidthRange={data.binWidthRange}
-          binWidthStep={data.binWidthStep}
-          errorManagement={errorManagement}
-          dependentAxisLogScale={histogramProps.dependentAxisLogScale}
-          toggleDependentAxisLogScale={handleDependentAxisLogScale}
-        />
-      )}
+      <HistogramControls
+        label="Histogram Controls"
+        valueType={data.valueType}
+        barLayout={barLayout}
+        displayLegend={false /* should not be a required prop */}
+        displayLibraryControls={displayLibraryControls}
+        opacity={opacity}
+        orientation={histogramProps.orientation}
+        binWidth={data.binWidth}
+        selectedUnit={
+          data.binWidth && isTimeDelta(data.binWidth)
+            ? data.binWidth.unit
+            : undefined
+        }
+        onBinWidthChange={({ binWidth: newBinWidth }) => {
+          onBinWidthChange({ binWidth: newBinWidth });
+        }}
+        binWidthRange={data.binWidthRange}
+        binWidthStep={data.binWidthStep}
+        errorManagement={errorManagement}
+        dependentAxisLogScale={histogramProps.dependentAxisLogScale}
+        toggleDependentAxisLogScale={handleDependentAxisLogScale}
+      />
     </div>
   );
 }
