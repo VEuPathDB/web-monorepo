@@ -169,10 +169,14 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
+  const xAxisVariable = useMemo(() => {
+    const { variable } =
+      findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
+    return variable;
+  }, [entities, vizConfig.xAxisVariable]);
+
   const data = usePromise(
     useCallback(async (): Promise<HistogramData> => {
-      const { variable: xAxisVariable } =
-        findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return Promise.reject(new Error('Please choose a main variable'));
 
@@ -192,7 +196,18 @@ function HistogramViz(props: Props) {
       );
       const response = dataClient.getHistogram(computation.type, params);
       return histogramResponseToData(await response, xAxisVariable.type);
-    }, [studyId, filters, dataClient, vizConfig, entities, computation.type])
+    }, [
+      studyId,
+      filters,
+      dataClient,
+      vizConfig.xAxisVariable,
+      vizConfig.enableOverlay,
+      vizConfig.overlayVariable,
+      vizConfig.binWidth,
+      vizConfig.binWidthTimeUnit,
+      entities,
+      computation.type,
+    ])
   );
 
   return (
@@ -223,7 +238,10 @@ function HistogramViz(props: Props) {
       )}
 
       {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
+        <Loading
+          style={{ position: 'absolute', top: '400px', left: '50vw' }}
+          radius={16}
+        />
       )}
       {data.error && fullscreen && (
         <div
@@ -244,42 +262,40 @@ function HistogramViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {data.value ? (
-        fullscreen ? (
-          <HistogramPlotWithControls
-            data={data.value}
-            onBinWidthChange={onBinWidthChange}
-            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-            handleDependentAxisLogScale={handleDependentAxisLogScale}
-            width="100%"
-            height={400}
-            orientation={'vertical'}
-            barLayout={'stack'}
-            displayLegend={data.value?.series.length > 1}
-          />
-        ) : (
-          // thumbnail/grid view
-          <Histogram
-            data={data.value}
-            width={350}
-            height={280}
-            orientation={'vertical'}
-            barLayout={'stack'}
-            displayLibraryControls={false}
-            displayLegend={false}
-            independentAxisLabel=""
-            dependentAxisLabel=""
-            dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-          />
-        )
+      {fullscreen ? (
+        <HistogramPlotWithControls
+          data={data.value && !data.pending ? data.value : { series: [] }}
+          onBinWidthChange={onBinWidthChange}
+          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+          handleDependentAxisLogScale={handleDependentAxisLogScale}
+          width="100%"
+          height={400}
+          orientation={'vertical'}
+          barLayout={'stack'}
+          displayLegend={
+            data.value?.series?.length && data.value.series.length > 1
+              ? true
+              : false
+          }
+          independentAxisLabel={
+            xAxisVariable ? xAxisVariable.displayName : 'Bins'
+          }
+        />
       ) : (
-        <i
-          className="fa fa-bar-chart"
-          style={{
-            fontSize: fullscreen ? '34em' : '12em',
-            color: '#aaa',
-          }}
-        ></i>
+        // thumbnail/grid view
+        <Histogram
+          data={data.value && !data.pending ? data.value : { series: [] }}
+          width={350}
+          height={280}
+          orientation={'vertical'}
+          barLayout={'stack'}
+          displayLibraryControls={false}
+          displayLegend={false}
+          independentAxisLabel=""
+          dependentAxisLabel=""
+          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+          interactive={false}
+        />
       )}
     </div>
   );
@@ -323,31 +339,29 @@ function HistogramPlotWithControls({
         showBarValues={false}
         barLayout={barLayout}
       />
-      {data.binWidth && data.binWidthRange && data.binWidthStep && (
-        <HistogramControls
-          label="Histogram Controls"
-          valueType={data.valueType}
-          barLayout={barLayout}
-          displayLegend={false /* should not be a required prop */}
-          displayLibraryControls={displayLibraryControls}
-          opacity={opacity}
-          orientation={histogramProps.orientation}
-          binWidth={data.binWidth}
-          selectedUnit={
-            data.binWidth && isTimeDelta(data.binWidth)
-              ? data.binWidth.unit
-              : undefined
-          }
-          onBinWidthChange={({ binWidth: newBinWidth }) => {
-            onBinWidthChange({ binWidth: newBinWidth });
-          }}
-          binWidthRange={data.binWidthRange}
-          binWidthStep={data.binWidthStep}
-          errorManagement={errorManagement}
-          dependentAxisLogScale={histogramProps.dependentAxisLogScale}
-          toggleDependentAxisLogScale={handleDependentAxisLogScale}
-        />
-      )}
+      <HistogramControls
+        label="Histogram Controls"
+        valueType={data.valueType}
+        barLayout={barLayout}
+        displayLegend={false /* should not be a required prop */}
+        displayLibraryControls={displayLibraryControls}
+        opacity={opacity}
+        orientation={histogramProps.orientation}
+        binWidth={data.binWidth}
+        selectedUnit={
+          data.binWidth && isTimeDelta(data.binWidth)
+            ? data.binWidth.unit
+            : undefined
+        }
+        onBinWidthChange={({ binWidth: newBinWidth }) => {
+          onBinWidthChange({ binWidth: newBinWidth });
+        }}
+        binWidthRange={data.binWidthRange}
+        binWidthStep={data.binWidthStep}
+        errorManagement={errorManagement}
+        dependentAxisLogScale={histogramProps.dependentAxisLogScale}
+        toggleDependentAxisLogScale={handleDependentAxisLogScale}
+      />
     </div>
   );
 }

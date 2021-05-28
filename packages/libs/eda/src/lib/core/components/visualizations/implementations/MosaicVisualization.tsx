@@ -230,114 +230,114 @@ function MosaicViz(props: Props) {
     ])
   );
 
-  let plotComponent: JSX.Element;
+  const xAxisVariableName = findVariable(vizConfig.xAxisVariable)?.displayName;
+  const yAxisVariableName = findVariable(vizConfig.yAxisVariable)?.displayName;
+  let statsTable = undefined;
 
-  if (data.value) {
-    const xAxisVariableName = findVariable(vizConfig.xAxisVariable)
-      ?.displayName;
-    const yAxisVariableName = findVariable(vizConfig.yAxisVariable)
-      ?.displayName;
-    let statsTable = undefined;
+  if (isTwoByTwo) {
+    const twoByTwoData = data.value as TwoByTwoData | undefined;
 
-    if (isTwoByTwo) {
-      const twoByTwoData = data.value as TwoByTwoData;
-
-      statsTable = (
-        <div className="MosaicVisualization-StatsTable">
-          <table>
-            <tbody>
-              <tr>
-                <th></th>
-                <th>Value</th>
-                <th>95% confidence interval</th>
-              </tr>
-              <tr>
-                <td>p-value</td>
-                <td>{twoByTwoData.pValue ?? 'N/A'}</td>
-                <td>N/A</td>
-              </tr>
-              <tr>
-                <td>Odds ratio</td>
-                <td>{twoByTwoData.oddsRatio ?? 'N/A'}</td>
-                <td>{twoByTwoData.orInterval ?? 'N/A'}</td>
-              </tr>
-              <tr>
-                <td>Relative risk</td>
-                <td>{twoByTwoData.relativeRisk ?? 'N/A'}</td>
-                <td>{twoByTwoData.rrInterval ?? 'N/A'}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      );
-    } else {
-      const contTableData = data.value as ContTableData;
-
-      statsTable = (
-        <div className="MosaicVisualization-StatsTable">
-          <table>
-            <tbody>
-              <tr>
-                <td>p-value</td>
-                <td>{contTableData.pValue ?? 'N/A'}</td>
-              </tr>
-              <tr>
-                <td>Degrees of freedom</td>
-                <td>{contTableData.degreesFreedom ?? 'N/A'}</td>
-              </tr>
-              <tr>
-                <td>Chi-squared</td>
-                <td>{contTableData.chisq ?? 'N/A'}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      );
-    }
-
-    plotComponent = fullscreen ? (
-      <div className="MosaicVisualization">
-        <div className="MosaicVisualization-Plot">
-          <MosaicPlotWithControls
-            data={data.value.data}
-            independentValues={data.value.independentValues}
-            dependentValues={data.value.dependentValues}
-            height={450}
-            independentLabel={xAxisVariableName ?? ''}
-            dependentLabel={yAxisVariableName ?? ''}
-            showLegend={true}
-          />
-        </div>
-        {statsTable}
+    statsTable = (
+      <div className="MosaicVisualization-StatsTable">
+        <table>
+          <tbody>
+            <tr>
+              <th></th>
+              <th>Value</th>
+              <th>95% confidence interval</th>
+            </tr>
+            <tr>
+              <td>p-value</td>
+              <td>{twoByTwoData?.pValue ?? 'N/A'}</td>
+              <td>N/A</td>
+            </tr>
+            <tr>
+              <td>Odds ratio</td>
+              <td>{twoByTwoData?.oddsRatio ?? 'N/A'}</td>
+              <td>{twoByTwoData?.orInterval ?? 'N/A'}</td>
+            </tr>
+            <tr>
+              <td>Relative risk</td>
+              <td>{twoByTwoData?.relativeRisk ?? 'N/A'}</td>
+              <td>{twoByTwoData?.rrInterval ?? 'N/A'}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    ) : (
-      // thumbnail/grid view
-      <Mosaic
-        data={data.value.data}
-        independentValues={data.value.independentValues}
-        dependentValues={data.value.dependentValues}
-        width={300}
-        height={180}
-        margin={{ t: 40, b: 20, l: 20, r: 10 }}
-        showColumnLabels={false}
-        showModebar={false}
-        showLegend={false}
-        staticPlot={true}
-        independentLabel=""
-        dependentLabel=""
-      />
     );
   } else {
-    plotComponent = (
-      <i
-        className="fa fa-th-large"
-        style={{
-          fontSize: fullscreen ? '34em' : '12em',
-          color: '#aaa',
-        }}
-      ></i>
+    const contTableData = data.value as ContTableData | undefined;
+
+    statsTable = (
+      <div className="MosaicVisualization-StatsTable">
+        <table>
+          <tbody>
+            <tr>
+              <td>p-value</td>
+              <td>{contTableData?.pValue ?? 'N/A'}</td>
+            </tr>
+            <tr>
+              <td>Degrees of freedom</td>
+              <td>{contTableData?.degreesFreedom ?? 'N/A'}</td>
+            </tr>
+            <tr>
+              <td>Chi-squared</td>
+              <td>{contTableData?.chisq ?? 'N/A'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     );
   }
+
+  const plotComponent = fullscreen ? (
+    <div className="MosaicVisualization">
+      <div className="MosaicVisualization-Plot">
+        <MosaicPlotWithControls
+          data={data.value && !data.pending ? data.value.data : [[]]}
+          independentValues={
+            data.value && !data.pending ? data.value.independentValues : []
+          }
+          dependentValues={
+            data.value && !data.pending ? data.value.dependentValues : []
+          }
+          height={450}
+          independentLabel={
+            data.value && !data.pending && xAxisVariableName
+              ? xAxisVariableName
+              : ''
+          }
+          dependentLabel={
+            data.value && !data.pending && yAxisVariableName
+              ? yAxisVariableName
+              : ''
+          }
+          showLegend={true}
+        />
+      </div>
+      {statsTable}
+    </div>
+  ) : (
+    // thumbnail/grid view
+    <Mosaic
+      data={data.value && !data.pending ? data.value.data : [[]]}
+      independentValues={
+        data.value && !data.pending ? data.value.independentValues : []
+      }
+      dependentValues={
+        data.value && !data.pending ? data.value.dependentValues : []
+      }
+      width={300}
+      height={180}
+      margin={{ t: 40, b: 20, l: 20, r: 10 }}
+      showColumnLabels={false}
+      showModebar={false}
+      showLegend={false}
+      staticPlot={true}
+      independentLabel=""
+      dependentLabel=""
+    />
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
