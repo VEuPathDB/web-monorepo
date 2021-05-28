@@ -26,8 +26,8 @@ import { Variable } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
-// ScatterplotControls
-import ScatterplotControls from '@veupathdb/components/lib/components/plotControls/ScatterplotControls';
+// XYPlotControls
+import XYPlotControls from '@veupathdb/components/lib/components/plotControls/XYPlotControls';
 
 export const scatterplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -193,7 +193,7 @@ function ScatterplotViz(props: Props) {
     [entities]
   );
 
-  // ScatterplotControls: add valueSpec option
+  // XYPlotControls: add valueSpec option
   const onValueSpecChange = useCallback(
     (value: string) => {
       updateVizConfig({
@@ -233,7 +233,7 @@ function ScatterplotViz(props: Props) {
         vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
         // add visualization.type
         visualization.type,
-        //DKDK ScatterplotControls
+        //DKDK XYPlotControls
         vizConfig.valueSpecConfig ? vizConfig.valueSpecConfig : 'Raw'
       );
 
@@ -334,7 +334,7 @@ function ScatterplotViz(props: Props) {
             independentAxisRange={[data.value.xMin, data.value.xMax]}
             // block this for now
             dependentAxisRange={[data.value.yMin, data.value.yMax]}
-            //DKDK ScatterplotControls valueSpecInitial
+            //DKDK XYPlotControls valueSpecInitial
             valueSpec={vizConfig.valueSpecConfig}
             // valueSpec={valueSpecInitial}
             onValueSpecChange={onValueSpecChange}
@@ -380,7 +380,7 @@ function ScatterplotViz(props: Props) {
             margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
           />
           {visualization.type === 'scatterplot' && fullscreen && (
-            <ScatterplotControls
+            <XYPlotControls
               // label="Scatter Plot Controls"
               valueSpec={vizConfig.valueSpecConfig}
               onValueSpecChange={onValueSpecChange}
@@ -400,7 +400,7 @@ function ScatterplotViz(props: Props) {
 
 function ScatterplotWithControls({
   data,
-  //DKDK ScatterplotControls: set initial value as 'raw' ('Raw')
+  //DKDK XYPlotControls: set initial value as 'raw' ('Raw')
   valueSpec = 'Raw',
   onValueSpecChange,
   vizType,
@@ -427,9 +427,9 @@ any) {
         displayLegend={data.length > 1}
         displayLibraryControls={false}
       />
-      {/* DKDK ScatterplotControls: check vizType (only for scatterplot for now) */}
+      {/* DKDK XYPlotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (
-        <ScatterplotControls
+        <XYPlotControls
           // label="Scatter Plot Controls"
           valueSpec={valueSpec}
           onValueSpecChange={onValueSpecChange}
@@ -483,7 +483,7 @@ function getRequestParams(
   overlayVariable?: Variable,
   // add visualization.type
   vizType?: string,
-  //DKDK ScatterplotControls
+  //DKDK XYPlotControls
   valueSpecConfig?: string
 ): getRequestParamsProps {
   //DKDK valueSpec
@@ -516,7 +516,7 @@ function getRequestParams(
       config: {
         // is outputEntityId correct?
         outputEntityId: xAxisVariable.entityId,
-        //DKDK ScatterplotControls
+        //DKDK XYPlotControls
         valueSpec: valueSpecValue,
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
