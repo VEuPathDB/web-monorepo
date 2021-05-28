@@ -1,13 +1,13 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
 
-import ScatterplotControls from '../../components/plotControls/ScatterplotControls';
+import XYPlotControls from '../../components/plotControls/XYPlotControls';
 import usePlotControls, {
   usePlotControlsParams,
 } from '../../hooks/usePlotControls';
 
 export default {
   title: 'Plot Controls/Scatterplot',
-  component: ScatterplotControls,
+  component: XYPlotControls,
 } as Meta;
 
 export const BasicControls: Story<usePlotControlsParams<any>> = (args) => {
@@ -17,8 +17,8 @@ export const BasicControls: Story<usePlotControlsParams<any>> = (args) => {
   });
 
   return (
-    <ScatterplotControls
-      label="Scatter Plot Control Panel"
+    <XYPlotControls
+      // label="Scatter Plot Control Panel"
       {...controls}
       {...controls.scatterplot}
     />
@@ -28,6 +28,6 @@ export const BasicControls: Story<usePlotControlsParams<any>> = (args) => {
 BasicControls.args = {
   data: { series: [{ name: 'dummy data', bins: [] }] },
   scatterplot: {
-    valueSpec: 'raw',
+    valueSpec: 'Raw',
   },
 };

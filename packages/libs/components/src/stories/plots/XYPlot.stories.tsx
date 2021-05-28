@@ -1,9 +1,9 @@
 import React from 'react';
-import ScatterAndLinePlotGeneral from '../../plots/ScatterAndLinePlotGeneral';
+import XYPlot from '../../plots/XYPlot';
 
 export default {
-  title: 'Plots/Scatter',
-  component: ScatterAndLinePlotGeneral,
+  title: 'Plots/XYPlot',
+  component: XYPlot,
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/41310',
   },
@@ -632,7 +632,7 @@ function processInputData<T extends number | Date>(
   let yMin: number | Date = 0;
   let yMax: number | Date = 0;
 
-  let dataSetProcess: Array<{}> = [];
+  let dataSetProcess: any = [];
   dataSet.data.forEach(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xSeriesValue: T[] = [];
@@ -731,10 +731,15 @@ function processInputData<T extends number | Date>(
 
       // check if this Y array consists of numbers & add type assertion
       if (isArrayOfNumbers(ySeriesValue)) {
-        yMin =
-          yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
-        yMax =
-          yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
+        if (index == 0) {
+          yMin = Math.min(...ySeriesValue);
+          yMax = Math.max(...ySeriesValue);
+        } else {
+          yMin =
+            yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
+          yMax =
+            yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
+        }
       } else {
         if (index == 0) {
           // to set initial Date value for Date[]
@@ -834,44 +839,52 @@ function processInputData<T extends number | Date>(
 
       // set variables for x-/y-axes ranges including fitting line: note that initial values of xMin and xMax are already defined earlier (el.series)
       if (isArrayOfNumbers(xIntervalLineValue)) {
-        xMin =
-          xMin < Math.min(...xIntervalLineValue)
+        xMin = el.series.x
+          ? xMin < Math.min(...xIntervalLineValue)
             ? xMin
-            : Math.min(...xIntervalLineValue);
-        xMax =
-          xMax > Math.max(...xIntervalLineValue)
+            : Math.min(...xIntervalLineValue)
+          : Math.min(...xIntervalLineValue);
+        xMax = el.series.x
+          ? xMax > Math.max(...xIntervalLineValue)
             ? xMax
-            : Math.max(...xIntervalLineValue);
+            : Math.max(...xIntervalLineValue)
+          : Math.max(...xIntervalLineValue);
       } else {
-        xMin =
-          xMin < getMinDate(xIntervalLineValue as Date[])
+        xMin = el.series.x
+          ? xMin < getMinDate(xIntervalLineValue as Date[])
             ? xMin
-            : getMinDate(xIntervalLineValue as Date[]);
-        xMax =
-          xMax > getMaxDate(xIntervalLineValue as Date[])
+            : getMinDate(xIntervalLineValue as Date[])
+          : getMinDate(xIntervalLineValue as Date[]);
+        xMax = el.series.x
+          ? xMax > getMaxDate(xIntervalLineValue as Date[])
             ? xMax
-            : getMaxDate(xIntervalLineValue as Date[]);
-      }
-      if (isArrayOfNumbers(yIntervalLineValue)) {
-        yMin =
-          yMin < Math.min(...yIntervalLineValue)
-            ? yMin
-            : Math.min(...yIntervalLineValue);
-        yMax =
-          yMax > Math.max(...yIntervalLineValue)
-            ? yMax
-            : Math.max(...yIntervalLineValue);
-      } else {
-        yMin =
-          yMin < getMinDate(yIntervalLineValue as Date[])
-            ? yMin
-            : getMinDate(yIntervalLineValue as Date[]);
-        yMax =
-          yMax > getMaxDate(yIntervalLineValue as Date[])
-            ? yMax
-            : getMaxDate(yIntervalLineValue as Date[]);
+            : getMaxDate(xIntervalLineValue as Date[])
+          : getMaxDate(xIntervalLineValue as Date[]);
       }
 
+      if (isArrayOfNumbers(yIntervalLineValue)) {
+        yMin = el.series.y
+          ? yMin < Math.min(...yIntervalLineValue)
+            ? yMin
+            : Math.min(...yIntervalLineValue)
+          : Math.min(...yIntervalLineValue);
+        yMax = el.series.y
+          ? yMax > Math.max(...yIntervalLineValue)
+            ? yMax
+            : Math.max(...yIntervalLineValue)
+          : Math.max(...yIntervalLineValue);
+      } else {
+        yMin = el.series.y
+          ? yMin < getMinDate(yIntervalLineValue as Date[])
+            ? yMin
+            : getMinDate(yIntervalLineValue as Date[])
+          : getMinDate(yIntervalLineValue as Date[]);
+        yMax = el.series.y
+          ? yMax > getMaxDate(yIntervalLineValue as Date[])
+            ? yMax
+            : getMaxDate(yIntervalLineValue as Date[])
+          : getMaxDate(yIntervalLineValue as Date[]);
+      }
       // use global opacity for coloring
       fittingLineColor =
         'rgba(' +
@@ -941,10 +954,10 @@ function processInputData<T extends number | Date>(
       });
     }
 
-    // determine y-axis range for numbers only: x-axis should be in the range of [xMin,xMax] due to CI plot
+    // make some margin for y-axis range (5% of range for now)
     if (typeof yMin == 'number' && typeof yMax == 'number') {
-      yMin = yMin < 0 ? Math.floor(yMin) : Math.ceil(yMin);
-      yMax = yMax < 0 ? Math.floor(yMax) : Math.ceil(yMax);
+      yMin = yMin - (yMax - yMin) * 0.05;
+      yMax = yMax + (yMax - yMin) * 0.05;
     }
   });
 
@@ -963,24 +976,53 @@ export const RealDataDate = () => {
   let plotHeight = 600;
   // let plotWidth = 350;
   // let plotHeight = 250;
-  let xLabel = 'Hours post infection';
-  let yLabel = 'Expression Values (log2 ratio)';
+  let independentAxisLabel = 'Hours post infection';
+  let dependentAxisLabel = 'Expression Values (log2 ratio)';
   let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
 
   return (
-    <ScatterAndLinePlotGeneral
+    <XYPlot
       data={[...dataSetProcess]}
-      xLabel={xLabel}
-      yLabel={yLabel}
-      plotTitle={plotTitle}
-      xRange={[xMin, xMax]}
-      yRange={[yMin, yMax]}
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
+      independentAxisRange={[xMin, xMax]}
+      dependentAxisRange={[yMin, yMax]}
+      title={plotTitle}
       width={plotWidth}
       height={plotHeight}
       staticPlot={false}
       // check enable/disable legend and built-in controls
       displayLegend={true}
       displayLibraryControls={true}
+      // margin={{l: 50, r: 10, b: 20, t: 10}}
+    />
+  );
+};
+
+export const EmptyData = () => {
+  // set props
+  let plotWidth = 1000;
+  let plotHeight = 600;
+  // let plotWidth = 350;
+  // let plotHeight = 250;
+  let independentAxisLabel = 'Hours post infection';
+  let dependentAxisLabel = 'Expression Values (log2 ratio)';
+  let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
+
+  return (
+    <XYPlot
+      data={[]}
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
+      independentAxisRange={[xMin, xMax]}
+      dependentAxisRange={[yMin, yMax]}
+      title={plotTitle}
+      width={plotWidth}
+      height={plotHeight}
+      staticPlot={true}
+      // check enable/disable legend and built-in controls
+      displayLegend={false}
+      displayLibraryControls={false}
       // margin={{l: 50, r: 10, b: 20, t: 10}}
     />
   );
