@@ -136,18 +136,22 @@ export default function Histogram({
    * Calculate min binStart and max binEnd values
    */
   const minBinStart: NumberOrDate = useMemo(() => {
-    return orderBy(
-      data.series.flatMap((series) => series.bins),
-      [(bin) => bin.binStart],
-      'asc'
-    )[0].binStart;
+    return data.series.length > 0
+      ? orderBy(
+          data.series.flatMap((series) => series.bins),
+          [(bin) => bin.binStart],
+          'asc'
+        )[0].binStart
+      : 0;
   }, [data.series]);
   const maxBinEnd: NumberOrDate = useMemo(() => {
-    return orderBy(
-      data.series.flatMap((series) => series.bins),
-      [(bin) => bin.binEnd],
-      'desc'
-    )[0].binEnd;
+    return data.series.length > 0
+      ? orderBy(
+          data.series.flatMap((series) => series.bins),
+          [(bin) => bin.binEnd],
+          'desc'
+        )[0].binEnd
+      : 10;
   }, [data.series]);
 
   // Transform `data` into a Plot.ly friendly format.
@@ -297,7 +301,7 @@ export default function Histogram({
 
   const selectedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
     const range = selectingRange ?? selectedRange;
-    if (range) {
+    if (data.series.length && range) {
       return [
         {
           type: 'rect',
@@ -329,11 +333,14 @@ export default function Histogram({
     } else {
       return [];
     }
-  }, [selectingRange, selectedRange, orientation]);
+  }, [selectingRange, selectedRange, orientation, data.series]);
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
     automargin: true,
+    showgrid: false,
+    zeroline: false,
+    showline: false,
     title: {
       text: independentAxisLabel,
       font: {
@@ -344,6 +351,7 @@ export default function Histogram({
     color: textColor,
     range: [minBinStart, maxBinEnd],
     fixedrange: true,
+    tickfont: data.series.length ? {} : { color: 'transparent' },
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     type: dependentAxisLogScale ? 'log' : 'linear',
@@ -358,11 +366,15 @@ export default function Histogram({
     color: textColor,
     gridcolor: gridColor,
     // range should be an array
-    range: [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
-      dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
-    ),
+    range: data.series.length
+      ? [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
+          dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
+        )
+      : [0, 10],
     fixedrange: true,
     dtick: dependentAxisLogScale ? 1 : undefined,
+    tickfont: data.series.length ? {} : { color: 'transparent' },
+    showline: true,
   };
 
   return (
@@ -383,7 +395,7 @@ export default function Histogram({
             r: spacingOptions?.marginRight,
             b: spacingOptions?.marginBottom,
             l: spacingOptions?.marginLeft,
-            pad: spacingOptions?.padding || 5,
+            pad: spacingOptions?.padding || 0, // axes don't join up if >0
           },
           showlegend: displayLegend,
           legend: {

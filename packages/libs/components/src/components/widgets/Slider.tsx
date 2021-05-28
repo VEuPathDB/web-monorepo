@@ -10,11 +10,11 @@ import { NumberOrDate } from '../../types/general';
 
 export type SliderWidgetProps = {
   /** The minimum value of the slider. */
-  minimum: number;
+  minimum?: number;
   /** The maximum value of the slider. */
-  maximum: number;
+  maximum?: number;
   /** The current value of the slider. */
-  value: number;
+  value?: number;
   /** An optional function which returns a string
    * representation of the value. Used in the tooltip. */
   valueFormatter?: (value: number) => string;
@@ -108,7 +108,7 @@ export default function SliderWidget({
 
   const classes = useStyles();
 
-  const [localValue, setLocalValue] = useState<number>(value);
+  const [localValue, setLocalValue] = useState<number | undefined>(value);
 
   // XXX We may want a generic useDebouncedCallback hook.
   const debouncedOnChange = useMemo(() => debounce(onChange, debounceRateMs), [
@@ -167,8 +167,13 @@ export default function SliderWidget({
           displayRangeViolationWarnings={false}
           containerStyles={{
             width:
-              Math.max(String(maximum).length, String(minimum).length) +
-              5 +
+              Math.max(
+                String(maximum).length,
+                String(minimum).length,
+                String(localValue).length,
+                String(undefined).length
+              ) +
+              7 +
               'ch',
             marginRight: 10,
           }}
