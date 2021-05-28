@@ -14,7 +14,6 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { fromEdaFilter } from '../../utils/wdk-filter-param-adapter';
 import { TableVariable } from './types';
 import { getDistribution } from './util';
-import { sum } from 'lodash';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -125,9 +124,11 @@ export function TableFilter({
         )
           ? distribution.background.completeCasesTable[0].completeCases[0]
           : distribution.background.completeCasesTable[0].completeCases,
-        filteredEntitiesCount: sum(
-          distribution.foreground.barplot.data[0].value
-        ), // ditto
+        filteredEntitiesCount: Array.isArray(
+          distribution.foreground.completeCasesTable[0].completeCases
+        )
+          ? distribution.foreground.completeCasesTable[0].completeCases[0]
+          : distribution.foreground.completeCasesTable[0].completeCases,
       };
     }, [
       entity.id,
