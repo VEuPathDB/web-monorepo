@@ -56,7 +56,7 @@ type ActionType<DataShape> =
   | { type: 'histogram/onIndependentAxisRangeReset' }
   // add reset all
   | { type: 'onResetAll' }
-  // add valueSpec for ScatterplotControls
+  // add valueSpec for XYPlotControls
   | { type: 'scatterplot/onValueSpecChange'; payload: string };
 
 /** Reducer that is used inside the hook. */
@@ -194,7 +194,7 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
     // add reset all: nothing here but perhaps it would eventually be a function to set all params to default
     case 'onResetAll':
       return { ...state };
-    // add valueSpec for ScatterplotControls
+    // add valueSpec for XYPlotControls
     case 'scatterplot/onValueSpecChange':
       return {
         ...state,
@@ -276,7 +276,7 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     /** Histogram: independent axis range reset */
     onIndependentAxisRangeReset?: () => void;
   };
-  // valueSpecChange for ScatterplotControls
+  // valueSpecChange for XYPlotControls
   scatterplot?: {
     /** Scatterplot: valueSpec */
     valueSpec?: string;
@@ -312,7 +312,7 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     // add x-axis range
     independentAxisRange?: NumberOrDateRange;
   };
-  // valueSpec for ScatterplotControls
+  // valueSpec for XYPlotControls
   scatterplot?: {
     valueSpec?: string;
   };
@@ -349,7 +349,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       dependentAxisMode: 'absolute',
     },
     scatterplot: {
-      valueSpec: 'raw',
+      valueSpec: 'Raw',
     },
   };
 
@@ -599,7 +599,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
   // reset all
   const onResetAll = () => dispatch({ type: 'onResetAll' });
 
-  // onValueSpecChange for ScatterplotControls
+  // onValueSpecChange for XYPlotControls
   const onValueSpecChange = (value: string) =>
     dispatch({ type: 'scatterplot/onValueSpecChange', payload: value });
 
@@ -645,9 +645,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     toggleLibraryControls,
     // add reset all
     onResetAll,
-    // onValueSpecChange for ScatterplotControls
+    // onValueSpecChange for XYPlotControls
     scatterplot: {
-      // need to add reducerState here for ScatterplotControls
+      // need to add reducerState here for XYPlotControls
       ...reducerState.scatterplot,
       onValueSpecChange,
     },

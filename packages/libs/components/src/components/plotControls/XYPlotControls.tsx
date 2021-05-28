@@ -16,7 +16,7 @@ import Notification from '../widgets/Notification';
  * The presence or absence of an optional callback will
  * determine if that control is displayed.
  */
-export type ScatterplotControlsProps = {
+export type XYPlotControlsProps = {
   /** Label for control panel. Optional. */
   label?: string;
   /** Additional styles for controls container. Optional */
@@ -39,7 +39,7 @@ export type ScatterplotControlsProps = {
  * contruct you own control panel by using the various
  * widgets contained here.
  */
-export default function ScatterplotControls({
+export default function XYPlotControls({
   label,
   accentColor = LIGHT_BLUE,
   errorManagement,
@@ -47,7 +47,7 @@ export default function ScatterplotControls({
   // valueSpec
   valueSpec,
   onValueSpecChange,
-}: ScatterplotControlsProps) {
+}: XYPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
   const errorStacks = useMemo(() => {
@@ -72,26 +72,28 @@ export default function ScatterplotControls({
       ref={ref}
       style={{
         borderStyle: 'solid',
-        borderWidth: '0.125em',
+        borderWidth: '0em',
         borderColor: LIGHT_GRAY,
         borderRadius: '0.6125em',
-        padding: '0.9375em',
+        // padding: '0.9375em',
+        paddingLeft: '0.9375em',
         minWidth: '11em',
-        width: 1000,
+        // width: 1000,
         ...containerStyles,
       }}
     >
-      <div
+      {/* <div
         style={{ display: 'flex', flexWrap: 'wrap', paddingTop: '0.3125em' }}
-      >
+      > */}
+      <div style={{ display: 'flex' }}>
         {valueSpec && onValueSpecChange && (
           <ButtonGroup
-            label="Data"
+            label="Plot options"
             options={[
-              'raw',
-              'smoothedMean',
-              'smoothedMeanWithRaw',
-              'bestFitLineWithRaw',
+              'Raw',
+              'Smoothed mean',
+              'Smoothed mean with raw',
+              'Best fit line with raw',
             ]}
             selectedOption={valueSpec}
             // @ts-ignore
