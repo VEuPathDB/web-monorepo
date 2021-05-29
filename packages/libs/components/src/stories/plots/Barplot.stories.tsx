@@ -46,6 +46,9 @@ export const Basic = () => {
       barLayout={barLayout}
       independentAxisLabel={'Independent axis name'}
       dependentAxisLabel={'Dependent axis name'}
+      // show/hide independent/dependent axis tick label
+      showIndependentAxisTickLabel={true}
+      showDependentAxisTickLabel={true}
       staticPlot={false}
       displayLegend={true}
       displayLibraryControls={true}

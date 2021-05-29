@@ -47,6 +47,10 @@ export interface BarplotProps extends PlotProps {
   gridColor?: string;
   /** Control of background color. Defaults to transparent.  */
   backgroundColor?: string;
+  /** show/hide independent axis tick label */
+  showIndependentAxisTickLabel?: boolean;
+  /** show/hide dependent axis tick label */
+  showDependentAxisTickLabel?: boolean;
 }
 
 /** A Plotly-based Barplot component. */
@@ -67,6 +71,8 @@ export default function Barplot({
   backgroundColor = 'transparent',
   displayLegend = true,
   displayLibraryControls = true,
+  showIndependentAxisTickLabel = true,
+  showDependentAxisTickLabel = true,
   ...props
 }: BarplotProps) {
   // Transform `data` into a Plot.ly friendly format.
@@ -118,6 +124,8 @@ export default function Barplot({
     },
     range: data.series.length ? undefined : [0, 10],
     tickfont: data.series.length ? {} : { color: 'transparent' },
+    // show/hide independent axis tick label
+    showticklabels: showIndependentAxisTickLabel,
   };
 
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
@@ -134,6 +142,8 @@ export default function Barplot({
     tickfont: data.series.length ? {} : { color: 'transparent' },
     range: data.series.length ? undefined : [0, 10],
     showline: true,
+    // show/hide dependent axis tick label
+    showticklabels: showDependentAxisTickLabel,
   };
 
   const layout: Partial<Layout> = {
