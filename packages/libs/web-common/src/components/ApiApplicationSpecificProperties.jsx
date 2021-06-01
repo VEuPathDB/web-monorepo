@@ -11,6 +11,10 @@ const EMAIL_PREFERENCE_DATA_CLINEPI= [
   {value:'preference_global_email_clinepidb', display:'ClinEpiDB'},
   {value:'preference_global_email_apidb', display:'VEuPathDB'}
 ];
+const EMAIL_PREFERENCE_DATA_MICROBIOME= [
+  {value:'preference_global_email_microbiomedb', display:'MicrobiomeDB'},
+  {value:'preference_global_email_apidb', display:'VEuPathDB'}
+];
 const EMAIL_PREFERENCE_DATA_GENOMICS = [
   {value:'preference_global_email_amoebadb', display:'AmoebaDB'},
   {value:'preference_global_email_cryptodb', display:'CryptoDB'},
@@ -34,7 +38,7 @@ const EMAIL_PREFERENCE_DATA_GENOMICS = [
  */
 function ApiApplicationSpecificProperties(props) {
   const projectId = useSelector(state => state.globalData.siteConfig.projectId);
-  if (projectId == "MicrobiomeDB" || projectId == "AllClinEpiDB") return null;
+  if (projectId == "AllClinEpiDB") return null;
   
    /**
    * This is a callback function issued by the checkbox list when a checkbox is
@@ -66,7 +70,9 @@ function ApiApplicationSpecificProperties(props) {
 
   let emailPrefData = ( projectId == "ClinEpiDB"
     ? EMAIL_PREFERENCE_DATA_CLINEPI
-    : EMAIL_PREFERENCE_DATA_GENOMICS
+    : (projectId == "MicrobiomeDB")
+      ? EMAIL_PREFERENCE_DATA_MICROBIOME
+      : EMAIL_PREFERENCE_DATA_GENOMICS
   );
 
   return (
