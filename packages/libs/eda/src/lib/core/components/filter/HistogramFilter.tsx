@@ -217,41 +217,47 @@ export function HistogramFilter(props: Props) {
   return (
     <div style={{ position: 'relative' }}>
       {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
+        <Loading
+          radius={16}
+          style={{ position: 'absolute', top: '200px', left: '200px' }}
+        />
       )}
       {data.error && <pre>{String(data.error)}</pre>}
-      {data.value &&
-        data.value.variableId === variable.id &&
-        data.value.entityId === entity.id &&
-        fgSummaryStats && (
-          <div>
-            <div className="histogram-summary-stats">
-              <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
-              {fgSummaryStats.mean} &emsp;
-              <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
-              {fgSummaryStats.max}
-            </div>
-            <HistogramPlotWithControls
-              key={filters?.length ?? 0}
-              filter={filter}
-              data={data.value}
-              getData={getData}
-              width="100%"
-              height={400}
-              spacingOptions={{
-                marginTop: 20,
-                marginBottom: 20,
-              }}
-              orientation={'vertical'}
-              barLayout={'overlay'}
-              updateFilter={updateFilter}
-              uiState={uiState}
-              updateUIState={updateUIState}
-              variableName={variable.displayName}
-              entityName={entity.displayName}
-            />
+      <div>
+        {fgSummaryStats && (
+          <div className="histogram-summary-stats">
+            <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
+            {fgSummaryStats.mean} &emsp;
+            <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
+            {fgSummaryStats.max}
           </div>
         )}
+        <HistogramPlotWithControls
+          key={filters?.length ?? 0}
+          filter={filter}
+          data={
+            data.value &&
+            data.value.variableId === variable.id &&
+            data.value.entityId === entity.id
+              ? data.value
+              : { series: [] }
+          }
+          getData={getData}
+          width="100%"
+          height={400}
+          spacingOptions={{
+            marginTop: 20,
+            marginBottom: 20,
+          }}
+          orientation={'vertical'}
+          barLayout={'overlay'}
+          updateFilter={updateFilter}
+          uiState={uiState}
+          updateUIState={updateUIState}
+          variableName={variable.displayName}
+          entityName={entity.displayName}
+        />
+      </div>
     </div>
   );
 }
@@ -370,8 +376,8 @@ function HistogramPlotWithControls({
   }, [filter]);
 
   const selectedRangeBounds = {
-    min: data.series[0].summary?.min,
-    max: data.series[0].summary?.max,
+    min: data.series[0]?.summary?.min,
+    max: data.series[0]?.summary?.max,
   } as NumberOrDateRange;
 
   return (
@@ -387,9 +393,6 @@ function HistogramPlotWithControls({
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
-        binWidth={data.binWidth!}
-        binWidthRange={data.binWidthRange!}
-        binWidthStep={data.binWidthStep!}
         containerStyles={{ border: 'none' }}
       />
       <Histogram
@@ -408,6 +411,12 @@ function HistogramPlotWithControls({
         isZoomed={uiState.independentAxisRange ? true : false}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
+        legendOptions={{
+          verticalPosition: 'top',
+          horizontalPosition: 'center',
+          orientation: 'horizontal',
+          verticalPaddingAdjustment: 20,
+        }}
       />
       <HistogramControls
         label="Axis controls"
@@ -417,15 +426,15 @@ function HistogramPlotWithControls({
         displayLibraryControls={displayLibraryControls}
         opacity={opacity}
         orientation={histogramProps.orientation}
-        binWidth={data.binWidth!}
+        binWidth={data.binWidth}
         selectedUnit={
           data.binWidth && isTimeDelta(data.binWidth)
             ? data.binWidth.unit
             : undefined
         }
         onBinWidthChange={handleBinWidthChange}
-        binWidthRange={data.binWidthRange!}
-        binWidthStep={data.binWidthStep!}
+        binWidthRange={data.binWidthRange}
+        binWidthStep={data.binWidthStep}
         errorManagement={errorManagement}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}

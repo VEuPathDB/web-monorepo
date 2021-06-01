@@ -25,19 +25,21 @@ type MosaicData = Pick<
   'data' | 'independentValues' | 'dependentValues'
 >;
 
-type ContTableData = MosaicData & {
-  pValue: number | string;
-  degreesFreedom: number;
-  chisq: number;
-};
+type ContTableData = MosaicData &
+  Partial<{
+    pValue: number | string;
+    degreesFreedom: number;
+    chisq: number;
+  }>;
 
-type TwoByTwoData = MosaicData & {
-  pValue: number | string;
-  relativeRisk: number;
-  rrInterval: string;
-  oddsRatio: number;
-  orInterval: string;
-};
+type TwoByTwoData = MosaicData &
+  Partial<{
+    pValue: number | string;
+    relativeRisk: number;
+    rrInterval: string;
+    oddsRatio: number;
+    orInterval: string;
+  }>;
 
 export const contTableVisualization: VisualizationType = {
   gridComponent: ContTableGridComponent,
@@ -196,6 +198,11 @@ function MosaicViz(props: Props) {
           }' is not suitable for ${isTwoByTwo ? '2x2' : ''} contingency tables`
         );
 
+      if (xAxisVariable === yAxisVariable)
+        throw new Error(
+          'The X and Y variables must not be the same. Please choose different variables for X and Y.'
+        );
+
       const params = getRequestParams(
         studyId,
         filters ?? [],
@@ -223,119 +230,114 @@ function MosaicViz(props: Props) {
     ])
   );
 
-  let plotComponent: JSX.Element;
+  const xAxisVariableName = findVariable(vizConfig.xAxisVariable)?.displayName;
+  const yAxisVariableName = findVariable(vizConfig.yAxisVariable)?.displayName;
+  let statsTable = undefined;
 
-  if (data.value) {
-    let statsTable = undefined;
-    const rangeRegex = /(\d+\.\d+) {2}- {2}(\d+\.\d+)/;
+  if (isTwoByTwo) {
+    const twoByTwoData = data.value as TwoByTwoData | undefined;
 
-    if (isTwoByTwo) {
-      const twoByTwoData = data.value as TwoByTwoData;
-      const orIntervalMatch = twoByTwoData.orInterval.match(rangeRegex);
-      const rrIntervalMatch = twoByTwoData.rrInterval.match(rangeRegex);
-
-      statsTable = (
-        <div className="MosaicVisualization-StatsTable">
-          <table>
-            <tbody>
-              <tr>
-                <th></th>
-                <th>Value</th>
-                <th>95% confidence interval</th>
-              </tr>
-              <tr>
-                <td>p-value</td>
-                <td>{twoByTwoData.pValue}</td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>Odds ratio</td>
-                <td>{twoByTwoData.oddsRatio}</td>
-                {orIntervalMatch && (
-                  <td>{`${Number(orIntervalMatch[1]).toFixed(4)} - ${Number(
-                    orIntervalMatch[2]
-                  ).toFixed(4)}`}</td>
-                )}
-              </tr>
-              <tr>
-                <td>Relative risk</td>
-                <td>{twoByTwoData.relativeRisk}</td>
-                {rrIntervalMatch && (
-                  <td>{`${Number(rrIntervalMatch[1]).toFixed(4)} - ${Number(
-                    rrIntervalMatch[2]
-                  ).toFixed(4)}`}</td>
-                )}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      );
-    } else {
-      const contTableData = data.value as ContTableData;
-
-      statsTable = (
-        <div className="MosaicVisualization-StatsTable">
-          <table>
-            <tbody>
-              <tr>
-                <td>p-value</td>
-                <td>{contTableData.pValue}</td>
-              </tr>
-              <tr>
-                <td>Degrees of freedom</td>
-                <td>{contTableData.degreesFreedom}</td>
-              </tr>
-              <tr>
-                <td>Chi-squared</td>
-                <td>{contTableData.chisq}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      );
-    }
-
-    plotComponent = fullscreen ? (
-      <div className="MosaicVisualization">
-        <div className="MosaicVisualization-Plot">
-          <MosaicPlotWithControls
-            data={data.value.data}
-            independentValues={data.value.independentValues}
-            dependentValues={data.value.dependentValues}
-            independentLabel={
-              findVariable(vizConfig.xAxisVariable)!.displayName
-            }
-            dependentLabel={findVariable(vizConfig.yAxisVariable)!.displayName}
-            showLegend={true}
-          />
-        </div>
-        {statsTable}
+    statsTable = (
+      <div className="MosaicVisualization-StatsTable">
+        <table>
+          <tbody>
+            <tr>
+              <th></th>
+              <th>Value</th>
+              <th>95% confidence interval</th>
+            </tr>
+            <tr>
+              <td>p-value</td>
+              <td>{twoByTwoData?.pValue ?? 'N/A'}</td>
+              <td>N/A</td>
+            </tr>
+            <tr>
+              <td>Odds ratio</td>
+              <td>{twoByTwoData?.oddsRatio ?? 'N/A'}</td>
+              <td>{twoByTwoData?.orInterval ?? 'N/A'}</td>
+            </tr>
+            <tr>
+              <td>Relative risk</td>
+              <td>{twoByTwoData?.relativeRisk ?? 'N/A'}</td>
+              <td>{twoByTwoData?.rrInterval ?? 'N/A'}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    ) : (
-      // thumbnail/grid view
-      <Mosaic
-        data={data.value.data}
-        independentValues={data.value.independentValues}
-        dependentValues={data.value.dependentValues}
-        width={350}
-        height={280}
-        showModebar={false}
-        showLegend={false}
-        independentLabel=""
-        dependentLabel=""
-      />
     );
   } else {
-    plotComponent = (
-      <i
-        className="fa fa-th-large"
-        style={{
-          fontSize: fullscreen ? '34em' : '12em',
-          color: '#aaa',
-        }}
-      ></i>
+    const contTableData = data.value as ContTableData | undefined;
+
+    statsTable = (
+      <div className="MosaicVisualization-StatsTable">
+        <table>
+          <tbody>
+            <tr>
+              <td>p-value</td>
+              <td>{contTableData?.pValue ?? 'N/A'}</td>
+            </tr>
+            <tr>
+              <td>Degrees of freedom</td>
+              <td>{contTableData?.degreesFreedom ?? 'N/A'}</td>
+            </tr>
+            <tr>
+              <td>Chi-squared</td>
+              <td>{contTableData?.chisq ?? 'N/A'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     );
   }
+
+  const plotComponent = fullscreen ? (
+    <div className="MosaicVisualization">
+      <div className="MosaicVisualization-Plot">
+        <MosaicPlotWithControls
+          data={data.value && !data.pending ? data.value.data : [[]]}
+          independentValues={
+            data.value && !data.pending ? data.value.independentValues : []
+          }
+          dependentValues={
+            data.value && !data.pending ? data.value.dependentValues : []
+          }
+          height={450}
+          independentLabel={
+            data.value && !data.pending && xAxisVariableName
+              ? xAxisVariableName
+              : ''
+          }
+          dependentLabel={
+            data.value && !data.pending && yAxisVariableName
+              ? yAxisVariableName
+              : ''
+          }
+          showLegend={true}
+        />
+      </div>
+      {statsTable}
+    </div>
+  ) : (
+    // thumbnail/grid view
+    <Mosaic
+      data={data.value && !data.pending ? data.value.data : [[]]}
+      independentValues={
+        data.value && !data.pending ? data.value.independentValues : []
+      }
+      dependentValues={
+        data.value && !data.pending ? data.value.dependentValues : []
+      }
+      width={300}
+      height={180}
+      margin={{ t: 40, b: 20, l: 20, r: 10 }}
+      showColumnLabels={false}
+      showModebar={false}
+      showLegend={false}
+      staticPlot={true}
+      independentLabel=""
+      dependentLabel=""
+    />
+  );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -443,9 +445,9 @@ export function contTableResponseToData(
     data: data,
     independentValues: response.mosaic.data[0].xLabel,
     dependentValues: response.mosaic.data[0].yLabel,
-    pValue: response.statsTable[0].pvalue[1],
-    degreesFreedom: response.statsTable[0].degreesFreedom[1],
-    chisq: response.statsTable[0].chisq[1],
+    pValue: response.statsTable[0].pvalue,
+    degreesFreedom: response.statsTable[0].degreesFreedom,
+    chisq: response.statsTable[0].chisq,
   };
 }
 
@@ -467,11 +469,11 @@ export function twoByTwoResponseToData(
     data: data,
     independentValues: response.mosaic.data[0].xLabel,
     dependentValues: response.mosaic.data[0].yLabel,
-    pValue: response.statsTable[0].pvalue[1],
-    relativeRisk: response.statsTable[0].relativerisk[1],
-    rrInterval: response.statsTable[0].rrInterval[1],
-    oddsRatio: response.statsTable[0].oddsratio[1],
-    orInterval: response.statsTable[0].orInterval[1],
+    pValue: response.statsTable[0].pvalue,
+    relativeRisk: response.statsTable[0].relativerisk,
+    rrInterval: response.statsTable[0].rrInterval,
+    oddsRatio: response.statsTable[0].oddsratio,
+    orInterval: response.statsTable[0].orInterval,
   };
 }
 

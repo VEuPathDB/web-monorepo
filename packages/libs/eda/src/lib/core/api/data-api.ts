@@ -167,16 +167,17 @@ export interface ScatterplotRequestParams {
 }
 
 // unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
-const ScatterplotResponseData = array(
+export const ScatterplotResponseData = array(
   partial({
     // valueSpec = smoothedMean only returns smoothedMean data (no series data)
-    seriesX: array(number),
-    seriesY: array(number),
-    smoothedMeanX: array(number),
+    //DKDK changed to string array
+    seriesX: array(string),
+    seriesY: array(string),
+    smoothedMeanX: array(string),
     smoothedMeanY: array(number),
     smoothedMeanSE: array(number),
     // add bestFitLineWithRaw
-    bestFitLineX: array(number),
+    bestFitLineX: array(string),
     bestFitLineY: array(number),
     r2: number,
     // need to make sure if below is correct (untested)
@@ -204,6 +205,19 @@ const sampleSizeTableArray = array(
     }),
   })
 );
+
+// define completeCasesTableArray
+const completeCasesTableArray = array(
+  partial({
+    // set union for size as it depends on the presence of overlay variable
+    completeCases: union([number, array(number)]),
+    variableDetails: type({
+      entityId: string,
+      variableId: string,
+    }),
+  })
+);
+
 export type ScatterplotResponse = TypeOf<typeof ScatterplotResponse>;
 export const ScatterplotResponse = type({
   scatterplot: type({
@@ -221,6 +235,7 @@ export const ScatterplotResponse = type({
     }),
   }),
   sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });
 
 // lineplot
@@ -250,8 +265,9 @@ export interface LineplotRequestParams {
 const LineplotResponseData = array(
   intersection([
     type({
-      seriesX: array(number),
-      seriesY: array(number),
+      //DKDK changed to string array
+      seriesX: array(string),
+      seriesY: array(string),
     }),
     partial({
       // need to make sure if below is correct (untested)
@@ -283,6 +299,7 @@ export const LineplotResponse = type({
     }),
   }),
   sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
 });
 
 export interface MosaicRequestParams {
@@ -335,10 +352,10 @@ export const ContTableResponse = intersection([
   MosaicResponse,
   type({
     statsTable: array(
-      type({
-        pvalue: array(union([number, string])),
-        degreesFreedom: array(number),
-        chisq: array(number),
+      partial({
+        pvalue: union([number, string]),
+        degreesFreedom: number,
+        chisq: number,
       })
     ),
   }),
@@ -349,12 +366,12 @@ export const TwoByTwoResponse = intersection([
   MosaicResponse,
   type({
     statsTable: array(
-      type({
-        oddsratio: array(number),
-        pvalue: array(union([number, string])),
-        orInterval: array(string),
-        rrInterval: array(string),
-        relativerisk: array(number),
+      partial({
+        oddsratio: number,
+        pvalue: union([number, string]),
+        orInterval: string,
+        rrInterval: string,
+        relativerisk: number,
       })
     ),
   }),
