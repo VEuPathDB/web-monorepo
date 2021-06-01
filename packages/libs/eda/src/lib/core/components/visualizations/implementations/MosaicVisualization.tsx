@@ -90,6 +90,7 @@ type MosaicConfig = t.TypeOf<typeof MosaicConfig>;
 const MosaicConfig = t.partial({
   xAxisVariable: Variable,
   yAxisVariable: Variable,
+  facetVariable: Variable,
 });
 
 type Props = VisualizationProps & {
@@ -139,6 +140,7 @@ function MosaicViz(props: Props) {
     [updateVisualization, visualization, vizConfig]
   );
 
+  // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (
       values: Record<
@@ -146,11 +148,12 @@ function MosaicViz(props: Props) {
         { entityId: string; variableId: string } | undefined
       >
     ) => {
-      const { xAxisVariable, yAxisVariable } = values;
+      const { xAxisVariable, yAxisVariable, facetVariable } = values;
 
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
+        facetVariable,
       });
     },
     [updateVizConfig]
@@ -352,6 +355,10 @@ function MosaicViz(props: Props) {
               {
                 name: 'yAxisVariable',
                 label: 'y-axis variable',
+              },
+              {
+                name: 'facetVariable',
+                label: 'Facet variable',
               },
             ]}
             entities={entities}
