@@ -10,6 +10,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from './Utils';
 import { Variable } from './Variable';
 import { useEntityCounts } from '../core/hooks/entityCounts';
+import { useToggleStarredVariable } from '../core/hooks/starredVariables';
 import { VariableTree } from '../core/components/VariableTree';
 import FilterChipList from '../core/components/FilterChipList';
 import { uniq } from 'lodash';
@@ -32,6 +33,8 @@ export function Subsetting(props: Props) {
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(sessionState.session?.filters);
   const makeVariableLink = useMakeVariableLink();
+
+  const toggleStarredVariable = useToggleStarredVariable(sessionState);
 
   if (entity == null || variable == null)
     return <div>Could not find specified variable.</div>;
@@ -67,6 +70,8 @@ export function Subsetting(props: Props) {
           <VariableTree
             rootEntity={entities[0]}
             entityId={entity.id}
+            starredVariables={sessionState.session?.starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
             variableId={variable.id}
             onChange={(variable) => {
               if (variable) {

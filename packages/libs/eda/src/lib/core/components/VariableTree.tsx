@@ -21,13 +21,22 @@ const valuesMap: Record<string, string> = {};
 
 export interface Props {
   rootEntity: StudyEntity;
+  starredVariables?: string[];
+  toggleStarredVariable: (targetVariableId: string) => void;
   entityId?: string;
   variableId?: string;
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: Variable) => void;
 }
 export function VariableTree(props: Props) {
-  const { rootEntity, entityId, variableId, onChange } = props;
+  const {
+    rootEntity,
+    starredVariables,
+    toggleStarredVariable,
+    entityId,
+    variableId,
+    onChange,
+  } = props;
   const entities = Array.from(preorder(rootEntity, (e) => e.children ?? []));
   const fields = useMemo(() => {
     return entities.flatMap((entity) => {
@@ -111,6 +120,8 @@ export function VariableTree(props: Props) {
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}
+      starredVariables={starredVariables}
+      toggleStarredVariable={toggleStarredVariable}
     />
   );
 }

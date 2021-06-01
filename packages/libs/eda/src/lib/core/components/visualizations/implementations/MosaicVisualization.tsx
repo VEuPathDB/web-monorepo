@@ -107,6 +107,8 @@ function MosaicViz(props: Props) {
     isTwoByTwo = false,
     dataElementConstraints,
     dataElementDependencyOrder,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -362,6 +364,8 @@ function MosaicViz(props: Props) {
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
           />
         </div>
       )}

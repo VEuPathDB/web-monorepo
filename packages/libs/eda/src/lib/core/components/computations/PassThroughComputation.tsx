@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { SessionState } from '../../hooks/session';
+import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import {
   Visualization,
   ComputationAppOverview,
@@ -34,10 +35,9 @@ const visualizationTypes: Record<string, VisualizationType> = {
 };
 
 export function PassThroughComputation(props: Props) {
-  const {
-    sessionState: { session, setVisualizations },
-    computationAppOverview,
-  } = props;
+  const { sessionState, computationAppOverview } = props;
+  const { session, setVisualizations } = sessionState;
+
   const addVisualization = useCallback(
     (visualization: Visualization) => {
       setVisualizations([...(session?.visualizations ?? []), visualization]);
@@ -65,6 +65,9 @@ export function PassThroughComputation(props: Props) {
   );
 
   const filters = useMemo(() => session?.filters ?? [], [session?.filters]);
+
+  const toggleStarredVariable = useToggleStarredVariable(sessionState);
+
   if (session == null) return <div>Session not found</div>;
   return (
     <VisualizationsContainer
@@ -84,6 +87,8 @@ export function PassThroughComputation(props: Props) {
       deleteVisualization={deleteVisualization}
       visualizationTypes={visualizationTypes}
       filters={filters}
+      starredVariables={session.starredVariables}
+      toggleStarredVariable={toggleStarredVariable}
     />
   );
 }

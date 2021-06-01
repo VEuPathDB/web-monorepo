@@ -4,11 +4,12 @@
 
 import { difference, uniq } from 'lodash';
 import React, {
-  useLayoutEffect,
-  useRef,
-  useEffect,
-  useState,
   useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react';
 //correct paths as this is a copy of FieldList component at @veupathdb/
 import { scrollIntoViewIfNeeded } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
@@ -56,6 +57,9 @@ interface FieldNodeProps {
   isActive: boolean;
   handleFieldSelect: (node: VariableFieldTreeNode) => void;
   activeFieldEntity?: string;
+  isStarred: boolean;
+  starredVariablesLoading: boolean;
+  onClickStar: () => void;
 }
 
 type valuesMapType = Record<string, string>;
@@ -66,6 +70,8 @@ interface VariableListProps {
   valuesMap: valuesMapType;
   fieldTree: VariableFieldTreeNode;
   autoFocus: boolean;
+  starredVariables?: string[];
+  toggleStarredVariable: (targetVariableId: string) => void;
 }
 
 interface getNodeSearchStringType {
@@ -84,6 +90,8 @@ export default function VariableList(props: VariableListProps) {
     valuesMap,
     fieldTree,
     autoFocus,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
@@ -159,8 +167,16 @@ export default function VariableList(props: VariableListProps) {
     [getFieldSearchString]
   );
 
+  const starredVariablesLoading = starredVariables == null;
+
+  const starredVariablesSet = useMemo(() => new Set(starredVariables), [
+    starredVariables,
+  ]);
+
   const renderNode = useCallback(
     (node: FieldTreeNode) => {
+      const [, variableId] = node.field.term.split('/');
+
       return (
         <FieldNode
           node={node}
@@ -170,10 +186,21 @@ export default function VariableList(props: VariableListProps) {
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
           activeFieldEntity={activeFieldEntity}
+          isStarred={starredVariablesSet.has(variableId)}
+          starredVariablesLoading={starredVariablesLoading}
+          onClickStar={() => toggleStarredVariable(variableId)}
         />
       );
     },
-    [activeField?.term, activeFieldEntity, handleFieldSelect, searchTerm]
+    [
+      activeField?.term,
+      activeFieldEntity,
+      handleFieldSelect,
+      searchTerm,
+      starredVariablesLoading,
+      starredVariablesSet,
+      toggleStarredVariable,
+    ]
   );
 
   return (
@@ -219,6 +246,9 @@ const FieldNode = ({
   isActive,
   handleFieldSelect,
   activeFieldEntity,
+  isStarred,
+  starredVariablesLoading,
+  onClickStar,
 }: FieldNodeProps) => {
   const nodeRef = useRef<HTMLAnchorElement>(null);
 

@@ -46,6 +46,14 @@ export interface Props {
    * lower in the tree, of the element to its right.
    */
   dataElementDependencyOrder?: string[];
+  /**
+   * An array of variable IDs for the user's "My Variables"
+   */
+  starredVariables: string[];
+  /**
+   * A callback for toggling the starred state of a variable with a given ID
+   */
+  toggleStarredVariable: (targetVariableId: string) => void;
 }
 
 const useStyles = makeStyles(
@@ -92,6 +100,8 @@ export function InputVariables(props: Props) {
     onChange,
     constraints,
     dataElementDependencyOrder,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const classes = useStyles();
   const handleChange = (inputName: string, value?: Variable) => {
@@ -152,6 +162,8 @@ export function InputVariables(props: Props) {
                 rootEntities[index],
                 flattenedConstraints && flattenedConstraints[input.name]
               )}
+              starredVariables={starredVariables}
+              toggleStarredVariable={toggleStarredVariable}
               entityId={values[input.name]?.entityId}
               variableId={values[input.name]?.variableId}
               onChange={(variable) => {
