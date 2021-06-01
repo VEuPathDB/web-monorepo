@@ -266,21 +266,30 @@ const FieldNode = ({
   return (
     <Tooltip content={node.field.description} hideDelay={0}>
       {isFilterField(node.field) ? (
-        <a
-          ref={nodeRef}
-          className={
-            'wdk-AttributeFilterFieldItem' +
-            (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')
-          }
-          href={'#' + node.field.term}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleFieldSelect(node);
-          }}
-        >
-          <Icon fa={getIcon(node.field)} /> {node.field.display}
-        </a>
+        <>
+          <button
+            className="link"
+            onClick={onClickStar}
+            disabled={starredVariablesLoading}
+          >
+            <Icon fa={isStarred ? 'star' : 'star-o'} />
+          </button>
+          <a
+            ref={nodeRef}
+            className={
+              'wdk-AttributeFilterFieldItem' +
+              (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')
+            }
+            href={'#' + node.field.term}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleFieldSelect(node);
+            }}
+          >
+            <Icon fa={getIcon(node.field)} /> {node.field.display}
+          </a>
+        </>
       ) : (
         //add condition for identifying entity parent and entity parent of activeField
         <div

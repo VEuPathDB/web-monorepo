@@ -46,7 +46,13 @@
 
   .wdk-CheckboxTreeItem__leaf {
     .wdk-CheckboxTreeNodeContent {
-      margin-left: -1ex;
+      display: grid;
+      grid-auto-flow: column;
+      flex: unset;
+      align-items: baseline;
+      gap: 0.4em;
+
+      margin-left: calc(-1ex + 0.4em);
     }
   }
 }
