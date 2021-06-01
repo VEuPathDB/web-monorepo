@@ -46,11 +46,7 @@ export interface StudyData {
   variables: Variables[];
 }
 
-export interface ShadingData {
-  /** The key is the entity ID and the value is a decimal representing the
-   * fraction of the node to shade */
-  [index: string]: number;
-}
+export type EntityCounts = Record<string, { filtered: number; total: number }>;
 
 export type Orientation = 'horizontal' | 'vertical';
 
@@ -70,9 +66,9 @@ export interface EntityDiagramProps {
     width: number;
   };
   /** Which entity to highlight */
-  highlightedEntityID: string;
-  /** Data defining the background shading of each node */
-  shadingData?: ShadingData;
+  highlightedEntityID?: string;
+  /** Counts used for red/gray bar and display */
+  entityCounts?: EntityCounts;
   /** An optional function returning the element to render for a node given its
    * data */
   renderNode?: (
@@ -101,7 +97,7 @@ export default function EntityDiagram({
   isExpanded,
   highlightedEntityID,
   filteredEntities,
-  shadingData,
+  entityCounts,
   renderNode,
   size,
   selectedTextBold = true,
@@ -148,7 +144,7 @@ export default function EntityDiagram({
 
   function CustomNode({ node }: CustomNodeProps) {
     let displayText: string;
-    const isHighlighted = highlightedEntityID == node.data.displayName;
+    const isHighlighted = highlightedEntityID == node.data.id;
 
     if (isExpanded) {
       displayText = node.data.displayName;
@@ -178,7 +174,12 @@ export default function EntityDiagram({
         strokeWidth={borderWidth}
         stroke="transparent"
         style={{
-          filter: shadowOpacity == 0 ? undefined : 'url(#shadow)',
+          filter:
+            shadowOpacity == 0
+              ? undefined
+              : isHighlighted
+              ? 'url(#selected-shadow)'
+              : 'url(#shadow)',
         }}
       />
     );
@@ -192,7 +193,7 @@ export default function EntityDiagram({
         rx={radius}
         fill="none"
         stroke={isHighlighted ? selectedHighlightColor : '#666'}
-        strokeWidth={borderWidth}
+        strokeWidth={isHighlighted ? borderWidth + 1 : borderWidth}
       />
     );
 
@@ -202,11 +203,7 @@ export default function EntityDiagram({
         width={rectWidth}
         y={isExpanded ? rectHeight / 2 - shadingHeight : -rectHeight / 2}
         x={-rectWidth / 2}
-        fill={
-          shadingData?.[node.data.id]
-            ? `url('#rect-gradient-${node.data.id}')`
-            : 'white'
-        }
+        fill={entityCounts ? `url('#rect-gradient-${node.data.id}')` : 'white'}
         style={{
           overflowWrap: isExpanded ? 'normal' : undefined,
         }}
@@ -215,18 +212,36 @@ export default function EntityDiagram({
 
     const text = (
       <Text
-        fontSize={fontSize}
+        fontSize={isHighlighted ? fontSize * 1.1 : fontSize}
         textAnchor="middle"
         verticalAnchor="middle"
         style={{
           userSelect: 'none',
           fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
         }}
-        dy={-4}
+        dy={-shadingHeight}
         width={isExpanded ? nodeWidth - 40 : undefined}
       >
         {displayText}
       </Text>
+    );
+
+    const count = entityCounts ? (
+      <Text
+        fontSize={isHighlighted ? fontSize * 1.1 * 0.9 : fontSize * 0.9}
+        fontWeight={500}
+        textAnchor="middle"
+        verticalAnchor="end"
+        y={fontSize * 0.8}
+      >
+        {`${entityCounts[
+          node.data.id
+        ].filtered.toLocaleString()} of ${entityCounts[
+          node.data.id
+        ].total.toLocaleString()}`}
+      </Text>
+    ) : (
+      <></>
     );
 
     const filterIcon = filteredEntities?.includes(node.data.id) ? (
@@ -238,7 +253,7 @@ export default function EntityDiagram({
           fill="green"
           textAnchor="start"
           x={rectWidth / 2 - 16}
-          dy={-shadingHeight / 2}
+          dy={-shadingHeight}
           verticalAnchor="middle"
         >
           &#xf0b0;
@@ -252,6 +267,7 @@ export default function EntityDiagram({
         {shadingRect}
         {filterIcon}
         {text}
+        {count}
         {borderRect}
       </>
     );
@@ -327,17 +343,33 @@ export default function EntityDiagram({
               floodOpacity={shadowOpacity}
             />
           </filter>
+          <filter
+            id="selected-shadow"
+            x="-20%"
+            y="-40%"
+            width="150%"
+            height="200%"
+          >
+            <feDropShadow
+              dx={shadowDx * 1.5}
+              dy={shadowDy * 1.5}
+              stdDeviation={shadowDispersion * 2}
+              floodOpacity={shadowOpacity}
+            />
+          </filter>
         </defs>
-        {shadingData &&
-          // Node background shading definitions
-          Object.keys(shadingData).map((key) => (
+        {/*Node background shading definitions*/}
+        {entityCounts &&
+          Object.entries(
+            entityCounts
+          ).map(([entityId, { total, filtered }]) => (
             <LinearGradient
-              key={key}
+              key={entityId}
               vertical={false}
               x1={0}
-              x2={shadingData[key]}
+              x2={filtered / total}
               fromOffset={1}
-              id={`rect-gradient-${key}`}
+              id={`rect-gradient-${entityId}`}
               from={shadingColor}
               to={isExpanded ? '#cccccc' : 'white'}
             />
