@@ -41,7 +41,6 @@ export function SessionPanel(props: Props) {
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
   useEffect(() => {
-    console.log({ location });
     const relativePath = location.pathname.replace(routeBase, '');
     if (relativePath.startsWith('/variables')) {
       setLastVarPath(relativePath.replace('/variables', ''));
