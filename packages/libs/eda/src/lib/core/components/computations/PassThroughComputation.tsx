@@ -13,6 +13,7 @@ import {
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
+import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
 
 interface Props {
   sessionState: SessionState;
@@ -31,6 +32,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   lineplot: scatterplotVisualization,
   // placeholder for densityplot
   // densityplot: scatterplotVisualization,
+  barplot: barplotVisualization,
 };
 
 export function PassThroughComputation(props: Props) {
