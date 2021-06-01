@@ -6,11 +6,12 @@ import { StudyEntity } from '../types/study';
 import { VariableLink } from './VariableLink';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { reduce } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import { useMemo } from 'react';
 
 interface Props {
   expanded: boolean;
   orientation: 'horizontal' | 'vertical';
-  selectedEntity: string;
+  selectedEntity?: string;
   entityCounts?: Record<string, number>;
   filteredEntities?: string[];
   filteredEntityCounts?: Record<string, number>;
@@ -19,18 +20,13 @@ interface Props {
 export function EntityDiagram(props: Props) {
   const studyMetadata = useStudyMetadata();
 
-  const shadingData: Record<string, number> =
-    props.entityCounts && props.filteredEntityCounts
-      ? Object.fromEntries(
-          Object.entries(props.entityCounts).map(([key, value]) => [
-            key,
-            props.filteredEntityCounts![key] === 0
-              ? 0
-              : // min width is 1%
-                Math.max(0.01, props.filteredEntityCounts![key] / value),
-          ])
-        )
-      : {};
+  const entityCounts = useMemo(
+    () =>
+      props.entityCounts &&
+      props.filteredEntityCounts &&
+      combineCounts(props.entityCounts, props.filteredEntityCounts),
+    [props.entityCounts, props.filteredEntityCounts]
+  );
 
   // Renders a VariableLink with optional children passed through
   const renderNode = (node: StudyEntity, children?: React.ReactNode) => {
@@ -56,8 +52,8 @@ export function EntityDiagram(props: Props) {
       treeData={studyMetadata.rootEntity}
       highlightedEntityID={props.selectedEntity}
       orientation={props.orientation}
-      shadingData={shadingData}
       filteredEntities={props.filteredEntities}
+      entityCounts={entityCounts}
       renderNode={renderNode}
       selectedBorderWeight={4}
       selectedHighlightColor="#666685"
@@ -88,8 +84,8 @@ function getDimensions(
   const isVertical = orientation === 'vertical';
   const treeWidth = getTreeWidth(tree);
   const treeHeight = getTreeHeight(tree);
-  const expandedNodeHeight = 35;
-  const expandedNodeWidth = 210;
+  const expandedNodeHeight = 45;
+  const expandedNodeWidth = 220;
   const miniNodeHeight = 30;
   const miniNodeWidth = 40;
   const nodeVerticalSpacingConstant = isExpanded ? 1 / 3 : 3 / 4;
@@ -128,5 +124,21 @@ function getTreeWidth(tree: StudyEntity): number {
         : node.children.length - 1 + width,
     1,
     preorder(tree, (node) => node.children ?? [])
+  );
+}
+
+function combineCounts(
+  entityCounts: Record<string, number>,
+  filteredEntityCounts: Record<string, number>
+): Record<string, { total: number; filtered: number }> {
+  return Object.keys(entityCounts).reduce(
+    (counts, entityId) =>
+      Object.assign(counts, {
+        [entityId]: {
+          total: entityCounts[entityId],
+          filtered: filteredEntityCounts[entityId],
+        },
+      }),
+    {}
   );
 }

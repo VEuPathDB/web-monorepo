@@ -102,13 +102,13 @@ export function HistogramFilter(props: Props) {
 
       const series = [
         histogramResponseToDataSeries(
-          `Entire dataset`,
+          `All ${entity.displayName}`,
           background,
           gray,
           variable.type
         ),
         histogramResponseToDataSeries(
-          `Current subset`,
+          `Subset of ${entity.displayName}`,
           foreground,
           red,
           variable.type
