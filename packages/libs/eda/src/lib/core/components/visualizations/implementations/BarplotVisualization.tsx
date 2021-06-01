@@ -33,15 +33,7 @@ export const barplotVisualization: VisualizationType = {
 };
 
 function GridComponent(props: VisualizationProps) {
-  const { visualization, computation, filters } = props;
-  return (
-    <BarplotViz
-      visualization={visualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={false}
-    />
-  );
+  return <BarplotViz {...props} fullscreen={false} />;
 }
 
 // this needs a handling of text/image for scatter, line, and density plots
@@ -84,6 +76,8 @@ function BarplotViz(props: Props) {
     fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -216,6 +210,8 @@ function BarplotViz(props: Props) {
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
           />
         </div>
       )}
