@@ -1,21 +1,14 @@
 import React from 'react';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { cx } from './Utils';
-import { StudySummary } from './StudySummary';
-import { useStudyRecord, useStudyRecordClass } from '../core';
+import { useStudyRecord } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 export function EDAWorkspaceHeading() {
   const studyRecord = useStudyRecord();
-  const studyRecordClass = useStudyRecordClass();
   return (
     <div className={cx('-Heading')}>
-      <h1>Explore and Analyze</h1>
-      <h2>Study: {safeHtml(studyRecord.displayName)}</h2>
-      <StudySummary
-        studyRecord={studyRecord}
-        studyRecordClass={studyRecordClass}
-      />
+      <h1>Study: {safeHtml(studyRecord.displayName)}</h1>
       <div className={cx('-Linkouts')}>
         <Link
           target="_blank"
