@@ -55,4 +55,18 @@
       margin-left: calc(-1ex + 0.4em);
     }
   }
+
+  .EDAWorkspace-StarButton {
+    &:focus {
+      outline: none;
+    }
+
+    .fa-star-o {
+      color: #666;
+    }
+
+    .fa-star {
+      color: #fbbd03;
+    }
+  }
 }

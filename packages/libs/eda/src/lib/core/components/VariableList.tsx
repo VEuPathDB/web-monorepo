@@ -268,7 +268,7 @@ const FieldNode = ({
       {isFilterField(node.field) ? (
         <>
           <button
-            className="link"
+            className={`${cx('-StarButton')} link`}
             onClick={onClickStar}
             disabled={starredVariablesLoading}
           >
