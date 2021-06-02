@@ -193,12 +193,8 @@ function BarplotViz(props: Props) {
     ])
   );
 
-  // console.log('const data = ', data);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {/*  change title at viz page */}
-      {fullscreen && <h1>Bar Plot</h1>}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <InputVariables
@@ -264,16 +260,19 @@ function BarplotViz(props: Props) {
           <Barplot
             data={data.value}
             width={230}
-            height={150}
+            height={165}
             //DKDK check this option (possibly plot control?)
             orientation={'vertical'}
             barLayout={'group'}
+            //DKDK show/hide independent/dependent axis tick label
+            showIndependentAxisTickLabel={false}
+            showDependentAxisTickLabel={false}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
             staticPlot={true}
             //DKDK set margin for better display at thumbnail/grid view
-            margin={{ l: 30, r: 20, b: 15, t: 20 }}
+            margin={{ l: 30, r: 20, b: 0, t: 20 }}
           />
         )
       ) : (
@@ -281,15 +280,18 @@ function BarplotViz(props: Props) {
         <Barplot
           data={{ series: [] }}
           width={fullscreen ? 1000 : 230}
-          height={fullscreen ? 600 : 150}
+          height={fullscreen ? 600 : 165}
           orientation={'vertical'}
           barLayout={'group'}
           independentAxisLabel={fullscreen ? 'Label' : undefined}
           dependentAxisLabel={fullscreen ? 'Count' : undefined}
+          //DKDK show/hide independent/dependent axis tick label
+          showIndependentAxisTickLabel={fullscreen ? undefined : false}
+          showDependentAxisTickLabel={fullscreen ? undefined : false}
           displayLegend={fullscreen ? true : false}
           displayLibraryControls={false}
           staticPlot={fullscreen ? false : true}
-          margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
+          margin={fullscreen ? {} : { l: 30, r: 20, b: 0, t: 20 }}
         />
       )}
     </div>
