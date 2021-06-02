@@ -224,14 +224,24 @@ export default function VariableList(props: VariableListProps) {
 
   const additionalFilters = useMemo(
     () => [
-      <button
-        className={`${cx('-StarredVariablesFilter')} btn`}
-        type="button"
-        onClick={toggleShowOnlyStarredVariables}
-        disabled={starredVariableToggleDisabled}
+      <Tooltip
+        content={makeStarredVariablesFilterTooltipContent(
+          showOnlyStarredVariables,
+          starredVariableToggleDisabled
+        )}
+        hideDelay={0}
       >
-        <Icon fa={showOnlyStarredVariables ? 'star' : 'star-o'} />
-      </button>,
+        <div>
+          <button
+            className={`${cx('-StarredVariablesFilter')} btn`}
+            type="button"
+            onClick={toggleShowOnlyStarredVariables}
+            disabled={starredVariableToggleDisabled}
+          >
+            <Icon fa={showOnlyStarredVariables ? 'star' : 'star-o'} />
+          </button>
+        </div>
+      </Tooltip>,
     ],
     [
       showOnlyStarredVariables,
@@ -394,6 +404,24 @@ function makeStarButtonTooltipContent(
       Click to {isStarred ? 'remove' : 'add'}{' '}
       <strong>{node.field.display}</strong> {isStarred ? 'from' : 'to'}{' '}
       <strong>My Variables</strong>.
+    </>
+  );
+}
+
+function makeStarredVariablesFilterTooltipContent(
+  showOnlyStarredVariables: boolean,
+  starredVariablesToggleDisabled: boolean
+) {
+  return starredVariablesToggleDisabled ? (
+    <>
+      To use this filter, add at least one variable to{' '}
+      <strong>My Variables</strong>.
+    </>
+  ) : showOnlyStarredVariables ? (
+    <>Click to show all variables.</>
+  ) : (
+    <>
+      Click to show only variables from <strong>My Variables</strong>.
     </>
   );
 }
