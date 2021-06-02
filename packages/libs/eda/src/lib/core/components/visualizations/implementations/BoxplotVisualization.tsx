@@ -153,16 +153,9 @@ function BoxplotViz(props: Props) {
 
       // check variable inputs and add densityplot
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return Promise.reject(new Error('Please choose a X-axis variable'));
+        return Promise.reject();
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
-        return Promise.reject(new Error('Please choose a Y-axis variable'));
-      // add a condition to check whether xAxisVariable == yxAxisVariable
-      else if (xAxisVariable === yAxisVariable)
-        return Promise.reject(
-          new Error(
-            'Please choose different variables between X- and Y-axis variable'
-          )
-        );
+        return Promise.reject();
 
       // add visualization.type here. valueSpec too?
       const params = getRequestParams(
