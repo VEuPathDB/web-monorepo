@@ -322,33 +322,24 @@ const FieldNode = ({
     return () => clearTimeout(timerId);
   }, [isActive, searchTerm]);
 
-  return (
+  const fieldContents = (
     <Tooltip content={node.field.description} hideDelay={0}>
       {isFilterField(node.field) ? (
-        <>
-          <button
-            className={`${cx('-StarButton')} link`}
-            onClick={onClickStar}
-            disabled={starredVariablesLoading}
-          >
-            <Icon fa={isStarred ? 'star' : 'star-o'} />
-          </button>
-          <a
-            ref={nodeRef}
-            className={
-              'wdk-AttributeFilterFieldItem' +
-              (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')
-            }
-            href={'#' + node.field.term}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleFieldSelect(node);
-            }}
-          >
-            <Icon fa={getIcon(node.field)} /> {node.field.display}
-          </a>
-        </>
+        <a
+          ref={nodeRef}
+          className={
+            'wdk-AttributeFilterFieldItem' +
+            (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')
+          }
+          href={'#' + node.field.term}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleFieldSelect(node);
+          }}
+        >
+          <Icon fa={getIcon(node.field)} /> {node.field.display}
+        </a>
       ) : (
         //add condition for identifying entity parent and entity parent of activeField
         <div
@@ -368,8 +359,41 @@ const FieldNode = ({
       )}
     </Tooltip>
   );
+
+  return (
+    <>
+      {isFilterField(node.field) && (
+        <Tooltip
+          content={makeStarButtonTooltipContent(node, isStarred)}
+          hideDelay={0}
+        >
+          <button
+            className={`${cx('-StarButton')} link`}
+            onClick={onClickStar}
+            disabled={starredVariablesLoading}
+          >
+            <Icon fa={isStarred ? 'star' : 'star-o'} />
+          </button>
+        </Tooltip>
+      )}
+      {fieldContents}
+    </>
+  );
 };
 
 const getIcon = (field: Field) => {
   return isRange(field) ? 'bar-chart-o' : isMulti(field) ? 'th-list' : 'list';
 };
+
+function makeStarButtonTooltipContent(
+  node: VariableFieldTreeNode,
+  isStarred: boolean
+) {
+  return (
+    <>
+      Click to {isStarred ? 'remove' : 'add'}{' '}
+      <strong>{node.field.display}</strong> {isStarred ? 'from' : 'to'}{' '}
+      <strong>My Variables</strong>.
+    </>
+  );
+}
