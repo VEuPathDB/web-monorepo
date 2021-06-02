@@ -47,9 +47,9 @@
     regenerator-runtime "^0.13.4"
 
 "@babel/types@^7.13.12":
-  version "7.14.2"
-  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.14.2.tgz#4208ae003107ef8a057ea8333e56eb64d2f6a2c3"
-  integrity sha512-SdjAG/3DikRHpUOjxZgnkbR11xUlyDMUFJdvnIgZEE16mqmY0BINMmc4//JMJglEmn6i7sq6p+mGrFWyZ98EEw==
+  version "7.14.4"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.14.4.tgz#bfd6980108168593b38b3eb48a24aa026b919bc0"
+  integrity sha512-lCj4aIs0xUefJFQnwwQv2Bxg7Omd6bgquZ6LGC+gGMh6/s5qDVfjuCMlDmYQ15SLsWHd9n+X3E75lKIhl5Lkiw==
   dependencies:
     "@babel/helper-validator-identifier" "^7.14.0"
     to-fast-properties "^2.0.0"
@@ -766,9 +766,9 @@
   integrity sha512-+C7MFmC2Kw1nCmQsmll9VETV27OpevSD4yywEfLFrLTuEYlPlHRNQnNOVmDM4x1iiurmGwfbt+jn9lwM0cghLA==
 
 "@types/node@^14.14.7":
-  version "14.17.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.1.tgz#5e07e0cb2ff793aa7a1b41deae76221e6166049f"
-  integrity sha512-/tpUyFD7meeooTRwl3sYlihx2BrJE7q9XF71EguPFIySj9B7qgnRtHsHTho+0AUm4m1SvWGm6uSncrR94q6Vtw==
+  version "14.17.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.2.tgz#1e94476db57ec93a372c7f7d29aa5707cfb92339"
+  integrity sha512-sld7b/xmFum66AAKuz/rp/CUO8+98fMpyQ3SBfzzBNGMd/1iHBTAg9oyAvcYlAj46bpc74r91jSw2iFdnx29nw==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -867,10 +867,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.2.36":
-  version "0.2.37"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.2.37.tgz#467b42901949eafa9189b0f7bc933fb49ff9eea4"
-  integrity sha512-bZYLoSCgODkzVGB82EpNUPWkHb/p7DLo3qw2pr9tR7IpisD6LoJBftqQxitaPy27CmHcCq3Jt/rT9+A5cnwzUg==
+"@veupathdb/components@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.3.3.tgz#754f84a98123e0a826c86e8174a1507923ec5cfd"
+  integrity sha512-FkUVF7fFGseTwSKhNiAt9+sZvuDa6O0dddaKFaltDIRtTuWqj8Kckl3N9BEBj9Sp3KelbZfUUGGY0/4PHOhxdA==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -903,13 +903,13 @@
     shape2geohash "^1.2.5"
 
 "@veupathdb/eda@^0.2.0":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.2.9.tgz#fdf02d9d0614bedc3ebe7da36121031b474fc525"
-  integrity sha512-7y7M11Y5cvfFmm9MipXCKnoez+HycPvg+ii+EaBJfpUbH14xoEmThQGEXgPLvg0CcrVswJVZOHNF+NYWL6P04A==
+  version "0.2.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.2.14.tgz#0dcbcb71081cea133c46ce3938ea57ffce8f1c3f"
+  integrity sha512-yZrXiz0wCpsx9f6ZjJiHIgL+D/SJ0EI8bnQy+SzUcpk1zhHwteT3972EjdoVGEVqOBvLYstv1jWo6YU9xx8MKA==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.2.36"
+    "@veupathdb/components" "^0.3.3"
     "@veupathdb/wdk-client" "^0.1.2"
     "@veupathdb/web-common" "^0.1.2"
     debounce-promise "^3.1.2"
@@ -4461,9 +4461,9 @@ react-transition-group@^2.2.1:
     react-lifecycles-compat "^3.0.4"
 
 react-transition-group@^4.3.0, react-transition-group@^4.4.0, react-transition-group@^4.4.1:
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.1.tgz#63868f9325a38ea5ee9535d828327f85773345c9"
-  integrity sha512-Djqr7OQ2aPUiYurhPalTrVy9ddmFCCzwhqQmtN+J3+3DzLO209Fdr70QrN8Z3DsglWql6iY1lDWAfpFiBtuKGw==
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.2.tgz#8b59a56f09ced7b55cbd53c36768b922890d5470"
+  integrity sha512-/RNYfRAMlZwDSr6z4zNKV6xu53/e2BuaBbGhbyYIXTrmgu/bGHzmqOs7mJSJBHy9Ud+ApHx3QjrkKSp1pxvlFg==
   dependencies:
     "@babel/runtime" "^7.5.5"
     dom-helpers "^5.0.1"
