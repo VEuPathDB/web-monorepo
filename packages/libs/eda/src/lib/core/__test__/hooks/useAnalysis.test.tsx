@@ -1,8 +1,8 @@
 import { omit } from 'lodash';
 import { act, renderHook } from '@testing-library/react-hooks';
-import { useSession, Status } from '../../hooks/session';
-import { Session, NewSession } from '../../types/session';
-import { SessionClient } from '../../api/session-api';
+import { useAnalysis, Status } from '../../hooks/analysis';
+import { Analysis, NewAnalysis } from '../../types/analysis';
+import { AnalysisClient } from '../../api/analysis-api';
 import { DataClient } from '../../api/data-api';
 import {
   StudyMetadata,
@@ -12,8 +12,8 @@ import {
 } from '../..';
 import { SubsettingClient } from '../../api/subsetting-api';
 
-const stubSession: NewSession = {
-  name: 'My Session',
+const stubAnalysis: NewAnalysis = {
+  name: 'My Analysis',
   studyId: '123',
   filters: [],
   derivedVariables: [],
@@ -25,39 +25,39 @@ const stubSession: NewSession = {
 
 const key = '123';
 
-let records: Record<string, Session>;
+let records: Record<string, Analysis>;
 let nextId: number;
 
-const sessionClient: SessionClient = {
-  async getSessions() {
+const analysisClient: AnalysisClient = {
+  async getAnalysiss() {
     return Object.values(records);
   },
-  async getSession(id: string) {
+  async getAnalysis(id: string) {
     if (id in records) return records[id];
-    throw new Error('Could not find session for id ' + id);
+    throw new Error('Could not find analysis for id ' + id);
   },
-  async createSession(newSession: NewSession) {
+  async createAnalysis(newAnalysis: NewAnalysis) {
     const id = String(nextId++);
     records[id] = {
-      ...newSession,
+      ...newAnalysis,
       id,
       created: new Date().toISOString(),
       modified: new Date().toISOString(),
     };
     return { id };
   },
-  async updateSession(session: Session) {
-    records[session.id] = session;
+  async updateAnalysis(analysis: Analysis) {
+    records[analysis.id] = analysis;
   },
-  async deleteSession(id: string) {
+  async deleteAnalysis(id: string) {
     delete records[id];
   },
-} as SessionClient;
+} as AnalysisClient;
 
 const wrapper: React.ComponentType = ({ children }) => (
   <WorkspaceContext.Provider
     value={{
-      sessionClient,
+      analysisClient,
       studyMetadata: {} as StudyMetadata,
       studyRecord: {} as StudyRecord,
       studyRecordClass: {} as StudyRecordClass,
@@ -72,7 +72,7 @@ const wrapper: React.ComponentType = ({ children }) => (
 beforeEach(() => {
   records = {
     123: {
-      ...stubSession,
+      ...stubAnalysis,
       id: key,
       created: new Date().toISOString(),
       modified: new Date().toISOString(),
@@ -81,9 +81,9 @@ beforeEach(() => {
   nextId = 1;
 });
 
-const render = () => renderHook(() => useSession(key), { wrapper });
+const render = () => renderHook(() => useAnalysis(key), { wrapper });
 
-describe('useSession', () => {
+describe('useAnalysis', () => {
   it('should have the correct status on success path', async () => {
     const { result, waitForValueToChange } = render();
     expect(result.current.status).toBe(Status.InProgress);
@@ -98,11 +98,11 @@ describe('useSession', () => {
     expect(result.current.status).toBe(Status.Error);
   });
 
-  it('should load an session', async () => {
+  it('should load an analysis', async () => {
     const { result, waitFor } = render();
     await waitFor(() => result.current.status === Status.Loaded);
-    expect(result.current.session).toBeDefined();
-    expect(result.current.session?.name).toBe('My Session');
+    expect(result.current.analysis).toBeDefined();
+    expect(result.current.analysis?.name).toBe('My Analysis');
   });
 
   it('should allow updates', async () => {
@@ -111,7 +111,7 @@ describe('useSession', () => {
     act(() => {
       result.current.setName('New Name');
     });
-    expect(result.current.session?.name).toBe('New Name');
+    expect(result.current.analysis?.name).toBe('New Name');
   });
 
   it('should update store on save', async () => {
@@ -119,29 +119,31 @@ describe('useSession', () => {
     await waitFor(() => result.current.status === Status.Loaded);
     act(() => result.current.setName('New Name'));
     expect(result.current.hasUnsavedChanges).toBeTruthy();
-    await act(() => result.current.saveSession());
-    const sessions = await sessionClient.getSessions();
-    const session = sessions.find((session) => session.id === key);
-    expect(session?.name).toBe('New Name');
+    await act(() => result.current.saveAnalysis());
+    const analysiss = await analysisClient.getAnalysiss();
+    const analysis = analysiss.find((analysis) => analysis.id === key);
+    expect(analysis?.name).toBe('New Name');
     expect(result.current.hasUnsavedChanges).toBeFalsy();
   });
 
   it('should update store on copy', async () => {
     const { result, waitFor } = render();
     await waitFor(() => result.current.status === Status.Loaded);
-    const res = await result.current.copySession();
-    const sessions = await sessionClient.getSessions();
-    const newSession = sessions.find((session) => session.id === res.id);
-    expect(omit(result.current.session, 'id')).toEqual(omit(newSession, 'id'));
-    expect(result.current.session).not.toBe(newSession);
+    const res = await result.current.copyAnalysis();
+    const analysiss = await analysisClient.getAnalysiss();
+    const newAnalysis = analysiss.find((analysis) => analysis.id === res.id);
+    expect(omit(result.current.analysis, 'id')).toEqual(
+      omit(newAnalysis, 'id')
+    );
+    expect(result.current.analysis).not.toBe(newAnalysis);
   });
 
   it('should update store on delete', async () => {
     const { result, waitFor } = render();
     await waitFor(() => result.current.status === Status.Loaded);
-    await result.current.deleteSession();
-    const sessions = await sessionClient.getSessions();
-    const session = sessions.find((session) => session.id === key);
-    expect(session).toBeUndefined();
+    await result.current.deleteAnalysis();
+    const analysiss = await analysisClient.getAnalysiss();
+    const analysis = analysiss.find((analysis) => analysis.id === key);
+    expect(analysis).toBeUndefined();
   });
 });

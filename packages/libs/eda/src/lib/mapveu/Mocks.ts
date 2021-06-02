@@ -1,47 +1,47 @@
-import { Session, NewSession } from '../core';
+import { Analysis, NewAnalysis } from '../core';
 import localforage from 'localforage';
 import { pipe } from 'fp-ts/lib/function';
-import { SessionClient } from '../core/api/session-api';
+import { AnalysisClient } from '../core/api/analysis-api';
 import { getOrElse, isLeft, isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 const localStore = localforage.createInstance({
-  name: 'mockSessionStore',
+  name: 'mockAnalysisStore',
 });
 
-export const mockSessionStore: SessionClient = {
-  async getSessions() {
-    const records: Session[] = [];
+export const mockAnalysisStore: AnalysisClient = {
+  async getAnalysiss() {
+    const records: Analysis[] = [];
     await localStore.iterate((value) => {
-      records.push(value as Session);
+      records.push(value as Analysis);
     });
     return records;
   },
-  async createSession(newSession: NewSession) {
+  async createAnalysis(newAnalysis: NewAnalysis) {
     const id = String((await localStore.keys()).length + 1);
     const now = new Date().toISOString();
-    await localStore.setItem<Session>(id, {
-      ...newSession,
+    await localStore.setItem<Analysis>(id, {
+      ...newAnalysis,
       id,
       created: now,
       modified: now,
     });
     return { id };
   },
-  async getSession(id: string) {
-    const session = await localStore.getItem(id);
-    if (session) {
-      const result = Session.decode(session);
+  async getAnalysis(id: string) {
+    const analysis = await localStore.getItem(id);
+    if (analysis) {
+      const result = Analysis.decode(analysis);
       if (isRight(result)) return result.right;
       throw new Error(PathReporter.report(result).join('\n'));
     }
-    throw new Error(`Could not find session with id "${id}".`);
+    throw new Error(`Could not find analysis with id "${id}".`);
   },
-  async updateSession(session: Session) {
+  async updateAnalysis(analysis: Analysis) {
     const now = new Date().toISOString();
-    await localStore.setItem(session.id, { ...session, modified: now });
+    await localStore.setItem(analysis.id, { ...analysis, modified: now });
   },
-  async deleteSession(id: string) {
+  async deleteAnalysis(id: string) {
     await localStore.removeItem(id);
   },
-} as SessionClient;
+} as AnalysisClient;

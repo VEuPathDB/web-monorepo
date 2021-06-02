@@ -1,55 +1,55 @@
-import { Session, NewSession } from '../types/session';
+import { Analysis, NewAnalysis } from '../types/analysis';
 import {
   createJsonRequest,
   FetchClient,
 } from '@veupathdb/web-common/lib/util/api';
 import { type, voidType, string, array } from 'io-ts';
 import { ioTransformer } from './ioTransformer';
-export class SessionClient extends FetchClient {
-  getSessions(): Promise<Session[]> {
+export class AnalysisClient extends FetchClient {
+  getAnalysiss(): Promise<Analysis[]> {
     return this.fetch(
       createJsonRequest({
-        path: '/sessions',
+        path: '/analysiss',
         method: 'GET',
-        transformResponse: ioTransformer(array(Session)),
+        transformResponse: ioTransformer(array(Analysis)),
       })
     );
   }
-  getSession(sessionId: string): Promise<Session> {
+  getAnalysis(analysisId: string): Promise<Analysis> {
     return this.fetch(
       createJsonRequest({
-        path: `/sessions/${sessionId}`,
+        path: `/analysiss/${analysisId}`,
         method: 'GET',
-        transformResponse: ioTransformer(Session),
+        transformResponse: ioTransformer(Analysis),
       })
     );
   }
-  createSession(session: NewSession): Promise<{ id: string }> {
+  createAnalysis(analysis: NewAnalysis): Promise<{ id: string }> {
     return this.fetch(
       createJsonRequest({
-        path: `/sessions`,
+        path: `/analysiss`,
         method: 'POST',
-        body: session,
+        body: analysis,
         transformResponse: ioTransformer(type({ id: string })),
       })
     );
   }
-  updateSession(session: Session): Promise<void> {
+  updateAnalysis(analysis: Analysis): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: `/sessions/${session.id}`,
+        path: `/analysiss/${analysis.id}`,
         method: 'PUT',
-        body: session,
+        body: analysis,
         transformResponse: ioTransformer(voidType),
       })
     );
   }
-  deleteSession(sessionId: string): Promise<void> {
+  deleteAnalysis(analysisId: string): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: `/sessions/${sessionId}`,
+        path: `/analysiss/${analysisId}`,
         method: 'DELETE',
-        body: { sessionId },
+        body: { analysisId },
         transformResponse: ioTransformer(voidType),
       })
     );

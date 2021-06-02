@@ -14,7 +14,7 @@ import {
 import { StudyVariableDataShape, StudyVariableType } from './study';
 
 /**
- * Visualization object stored in user's session
+ * Visualization object stored in user's analysis
  */
 export type Visualization = TypeOf<typeof Visualization>;
 export const Visualization = intersection([
@@ -30,7 +30,7 @@ export const Visualization = intersection([
 ]);
 
 /**
- * App object stored in user's session
+ * App object stored in user's analysis
  */
 export type Computation = TypeOf<typeof Computation>;
 export const Computation = intersection([

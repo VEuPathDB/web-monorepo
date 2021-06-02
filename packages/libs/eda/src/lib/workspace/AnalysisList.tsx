@@ -4,29 +4,29 @@ import { PathReporter } from 'io-ts/PathReporter';
 import * as Path from 'path';
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import { NewSession, Session, useStudyRecord, SessionClient } from '../core';
+import { NewAnalysis, Analysis, useStudyRecord, AnalysisClient } from '../core';
 
 export interface Props {
-  sessionStore: SessionClient;
+  analysisStore: AnalysisClient;
 }
 
-export function SessionList(props: Props) {
-  const { sessionStore } = props;
+export function AnalysisList(props: Props) {
+  const { analysisStore } = props;
   const studyRecord = useStudyRecord();
   const studyId = studyRecord.id.map((part) => part.value).join('/');
-  const [sessionList, setSessionList] = React.useState<Session[]>();
+  const [analysisList, setAnalysisList] = React.useState<Analysis[]>();
   const history = useHistory();
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
-  const updateSessionList = React.useCallback(async () => {
-    const list = await sessionStore.getSessions();
-    setSessionList(list.filter((a) => a.studyId === studyId));
-  }, [sessionStore, studyId]);
+  const updateAnalysisList = React.useCallback(async () => {
+    const list = await analysisStore.getAnalysiss();
+    setAnalysisList(list.filter((a) => a.studyId === studyId));
+  }, [analysisStore, studyId]);
   React.useEffect(() => {
-    updateSessionList();
-  }, [updateSessionList]);
-  const createNewSession = React.useCallback(async () => {
-    const { id } = await sessionStore.createSession({
-      name: 'Unnamed Session',
+    updateAnalysisList();
+  }, [updateAnalysisList]);
+  const createNewAnalysis = React.useCallback(async () => {
+    const { id } = await analysisStore.createAnalysis({
+      name: 'Unnamed Analysis',
       studyId,
       filters: [],
       starredVariables: [],
@@ -43,15 +43,16 @@ export function SessionList(props: Props) {
         id,
     };
     history.push(newLocation);
-  }, [sessionStore, history, studyId]);
-  const deleteSessions = React.useCallback(
-    (sessionIds: Iterable<string>) => {
-      for (const sessionId of sessionIds) sessionStore.deleteSession(sessionId);
-      updateSessionList();
+  }, [analysisStore, history, studyId]);
+  const deleteAnalysiss = React.useCallback(
+    (analysisIds: Iterable<string>) => {
+      for (const analysisId of analysisIds)
+        analysisStore.deleteAnalysis(analysisId);
+      updateAnalysisList();
     },
-    [sessionStore, updateSessionList]
+    [analysisStore, updateAnalysisList]
   );
-  const loadSession = React.useCallback(
+  const loadAnalysis = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.currentTarget.files && event.currentTarget.files[0];
       if (file == null) return;
@@ -62,7 +63,7 @@ export function SessionList(props: Props) {
           const result = loadEvent.target?.result;
           if (typeof result !== 'string') return null;
           const json = JSON.parse(result);
-          const decodeResult = NewSession.decode(json);
+          const decodeResult = NewAnalysis.decode(json);
           if (isLeft(decodeResult)) {
             console.error(
               'Error parsing file\n',
@@ -73,7 +74,7 @@ export function SessionList(props: Props) {
             );
             return;
           }
-          sessionStore.createSession(decodeResult.right).then((id) => {
+          analysisStore.createAnalysis(decodeResult.right).then((id) => {
             const newLocation = {
               ...history.location,
               pathname:
@@ -89,36 +90,36 @@ export function SessionList(props: Props) {
         }
       };
     },
-    [sessionStore, history]
+    [analysisStore, history]
   );
   const tableState = React.useMemo(
     () => ({
       options: {
-        isRowSelected: (session: Session) => selected.has(session.id),
+        isRowSelected: (analysis: Analysis) => selected.has(analysis.id),
       },
       eventHandlers: {
-        onRowSelect: (session: Session) =>
+        onRowSelect: (analysis: Analysis) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            newSet.add(session.id);
+            newSet.add(analysis.id);
             return newSet;
           }),
-        onRowDeselect: (session: Session) =>
+        onRowDeselect: (analysis: Analysis) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            newSet.delete(session.id);
+            newSet.delete(analysis.id);
             return newSet;
           }),
-        onMultipleRowSelect: (sessions: Session[]) =>
+        onMultipleRowSelect: (analysiss: Analysis[]) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            for (const session of sessions) newSet.add(session.id);
+            for (const analysis of analysiss) newSet.add(analysis.id);
             return newSet;
           }),
-        onMultipleRowDeselect: (sessions: Session[]) =>
+        onMultipleRowDeselect: (analysiss: Analysis[]) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            for (const session of sessions) newSet.delete(session.id);
+            for (const analysis of analysiss) newSet.delete(analysis.id);
             return newSet;
           }),
       },
@@ -129,17 +130,17 @@ export function SessionList(props: Props) {
             <button
               type="button"
               className="btn"
-              onClick={() => deleteSessions(selected)}
+              onClick={() => deleteAnalysiss(selected)}
             >
-              Delete selected sessions
+              Delete selected analysiss
             </button>
           ),
         },
         {
           selectionRequired: false,
           element: (
-            <button type="button" className="btn" onClick={createNewSession}>
-              Start a new session
+            <button type="button" className="btn" onClick={createNewAnalysis}>
+              Start a new analysis
             </button>
           ),
         },
@@ -153,21 +154,21 @@ export function SessionList(props: Props) {
                 type="file"
                 className="btn"
                 multiple={false}
-                onChange={loadSession}
+                onChange={loadAnalysis}
               />
               <label className="btn" htmlFor="upload-file">
-                Upload a session from JSON
+                Upload an analysis from JSON
               </label>
             </>
           ),
         },
       ],
-      rows: sessionList,
+      rows: analysisList,
       columns: [
         {
           key: 'name',
           name: 'Name',
-          renderCell: (data: { row: Session }) => (
+          renderCell: (data: { row: Analysis }) => (
             <Link to={Path.join(history.location.pathname, data.row.id)}>
               {data.row.name}
             </Link>
@@ -178,7 +179,7 @@ export function SessionList(props: Props) {
         {
           key: 'download',
           name: 'Download JSON',
-          renderCell: (data: { row: Session }) => (
+          renderCell: (data: { row: Analysis }) => (
             <a
               href={`data:text/plain;charset=utf-8,${encodeURIComponent(
                 JSON.stringify(data.row, null, 2)
@@ -192,14 +193,14 @@ export function SessionList(props: Props) {
       ],
     }),
     [
-      sessionList,
-      createNewSession,
-      deleteSessions,
-      loadSession,
+      analysisList,
+      createNewAnalysis,
+      deleteAnalysiss,
+      loadAnalysis,
       selected,
       history.location.pathname,
     ]
   );
-  if (sessionList == null) return null;
+  if (analysisList == null) return null;
   return <Mesa.Mesa state={tableState} />;
 }
