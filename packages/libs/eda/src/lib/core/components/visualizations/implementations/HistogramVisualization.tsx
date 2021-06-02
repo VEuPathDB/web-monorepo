@@ -69,6 +69,7 @@ const HistogramConfig = t.intersection([
   t.partial({
     xAxisVariable: Variable,
     overlayVariable: Variable,
+    facetVariable: Variable,
     binWidth: t.number,
     binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
   }),
@@ -121,6 +122,7 @@ function HistogramViz(props: Props) {
     [updateVisualization, visualization, vizConfig]
   );
 
+  // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (
       values: Record<
@@ -128,11 +130,12 @@ function HistogramViz(props: Props) {
         { entityId: string; variableId: string } | undefined
       >
     ) => {
-      const { xAxisVariable, overlayVariable } = values;
+      const { xAxisVariable, overlayVariable, facetVariable } = values;
       const keepBin = isEqual(xAxisVariable, vizConfig.xAxisVariable);
       updateVizConfig({
         xAxisVariable,
         overlayVariable,
+        facetVariable,
         binWidth: keepBin ? vizConfig.binWidth : undefined,
         binWidthTimeUnit: keepBin ? vizConfig.binWidthTimeUnit : undefined,
       });
@@ -217,6 +220,10 @@ function HistogramViz(props: Props) {
               {
                 name: 'overlayVariable',
                 label: 'Overlay variable',
+              },
+              {
+                name: 'facetVariable',
+                label: 'Facet variable',
               },
             ]}
             entities={entities}
