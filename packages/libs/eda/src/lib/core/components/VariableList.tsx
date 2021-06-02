@@ -35,7 +35,6 @@ import {
   Field,
   FieldTreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
-import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import { cx } from '../../workspace/Utils';
 
 //defining types - some are not used (need cleanup later)
@@ -226,17 +225,12 @@ export default function VariableList(props: VariableListProps) {
   const additionalFilters = useMemo(
     () => [
       <button
-        style={{
-          background: 'none',
-          border: 'none',
-          padding: 0,
-        }}
-        className={cx('-StarredVariablesFilter')}
+        className={`${cx('-StarredVariablesFilter')} btn`}
         type="button"
         onClick={toggleShowOnlyStarredVariables}
         disabled={starredVariableToggleDisabled}
       >
-        <Toggle on={showOnlyStarredVariables} /> <Icon fa="star" />
+        <Icon fa={showOnlyStarredVariables ? 'star' : 'star-o'} />
       </button>,
     ],
     [
