@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { cx } from './Utils';
 import { SessionSummary } from './SessionSummary';
 import { EntityDiagram, Status, StudyEntity, useSession } from '../core';
@@ -7,6 +7,7 @@ import {
   Redirect,
   Route,
   RouteComponentProps,
+  useLocation,
   useRouteMatch,
 } from 'react-router';
 import { ComputationRoute } from './ComputationRoute';
@@ -36,6 +37,17 @@ export function SessionPanel(props: Props) {
   const filteredEntities = uniq(
     sessionState.session?.filters.map((f) => f.entityId)
   );
+  const location = useLocation();
+  const [lastVarPath, setLastVarPath] = useState('');
+  const [lastVizPath, setLastVizPath] = useState('');
+  useEffect(() => {
+    const relativePath = location.pathname.replace(routeBase, '');
+    if (relativePath.startsWith('/variables')) {
+      setLastVarPath(relativePath.replace('/variables', ''));
+    } else if (relativePath.startsWith('/visualizations')) {
+      setLastVizPath(relativePath.replace('/visualizations', ''));
+    }
+  }, [location, routeBase]);
   if (status === Status.Error)
     return (
       <div>
@@ -57,13 +69,22 @@ export function SessionPanel(props: Props) {
               deleteSession={deleteSession}
             />
             <Route
-              path={[`${routeBase}/variables/:entityId?`, `${routeBase}`]}
-              render={(props: RouteComponentProps<{ entityId?: string }>) => (
+              path={[
+                `${routeBase}/variables/:entityId?/:variableId?`,
+                `${routeBase}`,
+              ]}
+              render={(
+                props: RouteComponentProps<{
+                  entityId?: string;
+                  variableId?: string;
+                }>
+              ) => (
                 <div className="Entities">
                   <EntityDiagram
                     expanded
                     orientation="horizontal"
                     selectedEntity={props.match.params.entityId}
+                    selectedVariable={props.match.params.variableId}
                     entityCounts={totalCounts.value}
                     filteredEntityCounts={filteredCounts.value}
                     filteredEntities={filteredEntities}
@@ -77,12 +98,12 @@ export function SessionPanel(props: Props) {
         items={[
           {
             display: 'Browse and subset',
-            route: '/variables',
+            route: `/variables${lastVarPath}`,
             exact: false,
           },
           {
             display: 'Visualize',
-            route: '/visualizations',
+            route: `/visualizations${lastVizPath}`,
             exact: false,
           },
         ]}

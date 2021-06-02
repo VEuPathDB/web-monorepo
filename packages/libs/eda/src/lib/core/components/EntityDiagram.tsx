@@ -6,20 +6,24 @@ import { StudyEntity } from '../types/study';
 import { VariableLink } from './VariableLink';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { reduce } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
   expanded: boolean;
   orientation: 'horizontal' | 'vertical';
   selectedEntity?: string;
+  selectedVariable?: string;
   entityCounts?: Record<string, number>;
   filteredEntities?: string[];
   filteredEntityCounts?: Record<string, number>;
 }
 
 export function EntityDiagram(props: Props) {
+  const { selectedEntity, selectedVariable } = props;
   const studyMetadata = useStudyMetadata();
-
+  const [lastVariableMap, setLastVariableMap] = useState<
+    Record<string, string>
+  >({});
   const entityCounts = useMemo(
     () =>
       props.entityCounts &&
@@ -28,11 +32,21 @@ export function EntityDiagram(props: Props) {
     [props.entityCounts, props.filteredEntityCounts]
   );
 
+  useEffect(() => {
+    if (selectedEntity && selectedVariable) {
+      setLastVariableMap((prev) => ({
+        ...prev,
+        [selectedEntity]: selectedVariable,
+      }));
+    }
+  }, [selectedEntity, selectedVariable]);
+
   // Renders a VariableLink with optional children passed through
   const renderNode = (node: StudyEntity, children?: React.ReactNode) => {
     return (
       <VariableLink
         entityId={node.id}
+        variableId={lastVariableMap[node.id]}
         children={children}
         replace={true}
         style={{ textDecoration: 'none' }}
