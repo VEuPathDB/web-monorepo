@@ -133,14 +133,14 @@ export interface BarplotRequestParams {
   //  derivedVariables:  // TO DO
   config: {
     outputEntityId: string;
-    //DKDK add proportion as it seems to be coming
+    // add proportion as it seems to be coming
     valueSpec: 'count' | 'identity' | 'proportion';
     xAxisVariable: {
       // TO DO: refactor repetition with HistogramRequestParams
       entityId: string;
       variableId: string;
     };
-    //DKDK barplot add prop
+    // barplot add prop
     overlayVariable?: {
       entityId: string;
       variableId: string;
@@ -161,7 +161,7 @@ export const BarplotResponse = type({
     data: array(
       intersection([
         type({
-          //DKDK label can be number too?
+          // label can be number too?
           // label: array(string),
           label: union([array(string), array(number)]),
           value: array(number),
@@ -180,7 +180,7 @@ export const BarplotResponse = type({
       ])
     ),
   }),
-  //DKDK sampleSizeTable
+  // sampleSizeTable
   sampleSizeTable: sampleSizeTableArray,
 });
 
@@ -217,7 +217,7 @@ export interface ScatterplotRequestParams {
 export const ScatterplotResponseData = array(
   partial({
     // valueSpec = smoothedMean only returns smoothedMean data (no series data)
-    //DKDK changed to string array
+    // changed to string array
     seriesX: array(string),
     seriesY: array(string),
     smoothedMeanX: array(string),
@@ -287,7 +287,7 @@ export interface LineplotRequestParams {
 const LineplotResponseData = array(
   intersection([
     type({
-      //DKDK changed to string array
+      // changed to string array
       seriesX: array(string),
       seriesY: array(string),
     }),
@@ -304,7 +304,7 @@ const LineplotResponseData = array(
 
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
 export const LineplotResponse = type({
-  //DKDK backend issue for lineplot returning scatterplot currently
+  // backend issue for lineplot returning scatterplot currently
   // lineplot: type({
   scatterplot: type({
     data: LineplotResponseData,
@@ -398,6 +398,86 @@ export const TwoByTwoResponse = intersection([
     ),
   }),
 ]);
+
+// boxplot
+export interface BoxplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    // add bestFitLineWithRaw
+    points: 'outliers' | 'all';
+    // boolean or string?
+    // mean: boolean;
+    mean: 'true' | 'false';
+    // not quite sure of overlayVariable and facetVariable yet
+    // facetVariable?: ZeroToTwoVariables;
+    xAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    yAxisVariable: {
+      entityId: string;
+      variableId: string;
+    };
+    overlayVariable?: {
+      entityId: string;
+      variableId: string;
+    };
+  };
+}
+
+// unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
+const BoxplotResponseData = array(
+  intersection([
+    type({
+      lowerfence: array(number),
+      upperfence: array(number),
+      q1: array(number),
+      q3: array(number),
+      median: array(number),
+    }),
+    partial({
+      // outliers type
+      outliers: union([number, array(number), array(array(number))]),
+      rawData: array(number),
+      // mean: array(number),
+      mean: union([number, array(number)]),
+      seriesX: union([array(string), array(number)]),
+      seriesY: array(number),
+      // need to make sure if below is correct (untested)
+      overlayVariableDetails: type({
+        entityId: string,
+        variableId: string,
+        value: string,
+      }),
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
+    }),
+  ])
+);
+
+export type BoxplotResponse = TypeOf<typeof BoxplotResponse>;
+export const BoxplotResponse = type({
+  boxplot: type({
+    data: BoxplotResponseData,
+    config: type({
+      incompleteCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
+});
 
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
@@ -499,6 +579,19 @@ export class DataClient extends FetchClient {
       'twobytwo',
       params,
       TwoByTwoResponse
+    );
+  }
+
+  // boxplot
+  getBoxplot(
+    computationName: string,
+    params: BoxplotRequestParams
+  ): Promise<BoxplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'boxplot',
+      params,
+      BoxplotResponse
     );
   }
 }
