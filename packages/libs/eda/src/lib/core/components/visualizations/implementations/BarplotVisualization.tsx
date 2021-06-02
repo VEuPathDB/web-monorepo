@@ -68,6 +68,7 @@ const BarplotConfig = t.intersection([
   t.partial({
     xAxisVariable: Variable,
     overlayVariable: Variable,
+    facetVariable: Variable,
   }),
 ]);
 
@@ -116,6 +117,7 @@ function BarplotViz(props: Props) {
     [updateVisualization, visualization, vizConfig]
   );
 
+  // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (
       values: Record<
@@ -123,10 +125,11 @@ function BarplotViz(props: Props) {
         { entityId: string; variableId: string } | undefined
       >
     ) => {
-      const { xAxisVariable, overlayVariable } = values;
+      const { xAxisVariable, overlayVariable, facetVariable } = values;
       updateVizConfig({
         xAxisVariable,
         overlayVariable,
+        facetVariable,
       });
     },
     [updateVizConfig, vizConfig]
@@ -207,11 +210,16 @@ function BarplotViz(props: Props) {
                 name: 'overlayVariable',
                 label: 'Overlay variable (Optional)',
               },
+              {
+                name: 'facetVariable',
+                label: 'Facet Variable',
+              },
             ]}
             entities={entities}
             values={{
               xAxisVariable: vizConfig.xAxisVariable,
               overlayVariable: vizConfig.overlayVariable,
+              facetVariable: vizConfig.facetVariable,
             }}
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}

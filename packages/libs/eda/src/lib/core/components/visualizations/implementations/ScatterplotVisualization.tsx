@@ -117,6 +117,7 @@ const ScatterplotConfig = t.intersection([
     xAxisVariable: Variable,
     yAxisVariable: Variable,
     overlayVariable: Variable,
+    facetVariable: Variable,
     valueSpecConfig: t.string,
   }),
 ]);
@@ -166,6 +167,7 @@ function ScatterplotViz(props: Props) {
     [updateVisualization, visualization, vizConfig]
   );
 
+  // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (
       values: Record<
@@ -173,11 +175,17 @@ function ScatterplotViz(props: Props) {
         { entityId: string; variableId: string } | undefined
       >
     ) => {
-      const { xAxisVariable, yAxisVariable, overlayVariable } = values;
+      const {
+        xAxisVariable,
+        yAxisVariable,
+        overlayVariable,
+        facetVariable,
+      } = values;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
         overlayVariable,
+        facetVariable,
       });
     },
     [updateVizConfig, vizConfig]
@@ -280,6 +288,10 @@ function ScatterplotViz(props: Props) {
               {
                 name: 'overlayVariable',
                 label: 'Overlay variable (Optional)',
+              },
+              {
+                name: 'facetVariable',
+                label: 'Facet variable (Optional)',
               },
             ]}
             entities={entities}
