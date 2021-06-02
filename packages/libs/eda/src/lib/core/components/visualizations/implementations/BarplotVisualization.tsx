@@ -18,10 +18,6 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 
-//DKDK need to check which variable is suitable tableVariable/isTableVariable fit to the condition of overlayVariable
-import { isTableVariable, isHistogramVariable } from '../../filter/guards';
-// import { ScatterplotVariable } from '../../filter/types';
-
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
@@ -44,7 +40,6 @@ function GridComponent(props: VisualizationProps) {
   );
 }
 
-// this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent() {
   return <div>Pick me, I'm a Bar Plot!</div>;
 }
@@ -149,22 +144,11 @@ function BarplotViz(props: Props) {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const overlayVariable = findVariable(vizConfig.overlayVariable);
 
-      // check variable inputs and add densityplot
+      // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return Promise.reject(new Error('Please choose a X-axis variable'));
-      // overlay
-      else if (
-        vizConfig.overlayVariable != null &&
-        overlayVariable != null &&
-        !isTableVariable(overlayVariable)
-      )
-        return Promise.reject(
-          new Error(
-            `'${overlayVariable.displayName}' is not suitable for this plot. Only categorical, binary, or ordinal type is allowed for the Overlay variable.`
-          )
-        );
+        return Promise.reject();
 
-      // add visualization.type here. valueSpec too?
+      // add visualization.type here
       const params = getRequestParams(
         studyId,
         filters ?? [],
@@ -261,22 +245,22 @@ function BarplotViz(props: Props) {
             data={data.value}
             width={230}
             height={165}
-            //DKDK check this option (possibly plot control?)
+            // check this option (possibly plot control?)
             orientation={'vertical'}
             barLayout={'group'}
-            //DKDK show/hide independent/dependent axis tick label
+            // show/hide independent/dependent axis tick label
             showIndependentAxisTickLabel={false}
             showDependentAxisTickLabel={false}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
             staticPlot={true}
-            //DKDK set margin for better display at thumbnail/grid view
+            // set margin for better display at thumbnail/grid view
             margin={{ l: 30, r: 20, b: 0, t: 20 }}
           />
         )
       ) : (
-        //DKDK no data case
+        // no data case
         <Barplot
           data={{ series: [] }}
           width={fullscreen ? 1000 : 230}
@@ -285,7 +269,7 @@ function BarplotViz(props: Props) {
           barLayout={'group'}
           independentAxisLabel={fullscreen ? 'Label' : undefined}
           dependentAxisLabel={fullscreen ? 'Count' : undefined}
-          //DKDK show/hide independent/dependent axis tick label
+          // show/hide independent/dependent axis tick label
           showIndependentAxisTickLabel={fullscreen ? undefined : false}
           showDependentAxisTickLabel={fullscreen ? undefined : false}
           displayLegend={fullscreen ? true : false}
@@ -315,8 +299,6 @@ any) {
     };
   }, []);
 
-  // console.log('BarplotWithControls.data = ', data);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Barplot
@@ -326,9 +308,9 @@ any) {
         // displayLegend={true}
         displayLibraryControls={false}
       />
-      {/* DKDK potential BarplotControls: commented out for now  */}
+      {/* potential BarplotControls: commented out for now  */}
       {/* <BarplotControls
-          label="Scatter Plot Controls"
+          label="Bar Plot Controls"
           errorManagement={errorManagement}
         /> */}
     </div>
@@ -336,22 +318,18 @@ any) {
 }
 
 /**
- * Reformat response from Scatter Plot endpoints into complete BarplotData
+ * Reformat response from Barplot endpoints into complete BarplotData
  * @param response
  * @returns BarplotData
  */
-//DKDK add densityplot
 export function barplotResponseToData(
   response: PromiseType<ReturnType<DataClient['getBarplot']>>,
   // vizType may be used for handling other plots in this component like line and density
   vizType: string
 ): any {
-  // console.log('visualization type at BarplotResponseToData = ', vizType);
-  // console.log('response.data =', response);
-
   return {
     series: response.barplot.data.map((data, index) => ({
-      //DKDK name has value if using overlay variable
+      // name has value if using overlay variable
       name: data.overlayVariableDetails?.value ?? `series ${index}`,
       // color: TO DO
       label: data.label,
@@ -379,9 +357,9 @@ function getRequestParams(
       outputEntityId: xAxisVariable.entityId,
       xAxisVariable: xAxisVariable,
       overlayVariable: overlayVariable,
-      //DKDK valueSpec: manually inputted for now
+      // valueSpec: manually inputted for now
       valueSpec: 'count',
-      //DKDK this works too
+      // this works too
       // valueSpec: 'proportion',
       // valueSpec: 'identity',
     },
