@@ -17,7 +17,10 @@ import {
   areTermsInString,
   makeSearchHelpText,
 } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
-import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  preorderSeq,
+  pruneDescendantNodes,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import CheckboxTree from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
@@ -32,6 +35,7 @@ import {
   Field,
   FieldTreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
+import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import { cx } from '../../workspace/Utils';
 
 //defining types - some are not used (need cleanup later)
@@ -203,11 +207,70 @@ export default function VariableList(props: VariableListProps) {
     ]
   );
 
+  const [showOnlyStarredVariables, setShowOnlyStarredVariables] = useState(
+    false
+  );
+
+  const toggleShowOnlyStarredVariables = useCallback(() => {
+    setShowOnlyStarredVariables((oldValue) => !oldValue);
+  }, []);
+
+  const starredVariableToggleDisabled = starredVariablesSet.size === 0;
+
+  useEffect(() => {
+    if (starredVariableToggleDisabled) {
+      setShowOnlyStarredVariables(false);
+    }
+  }, [starredVariableToggleDisabled]);
+
+  const additionalFilters = useMemo(
+    () => [
+      <button
+        style={{
+          background: 'none',
+          border: 'none',
+          padding: 0,
+        }}
+        className={cx('-StarredVariablesFilter')}
+        type="button"
+        onClick={toggleShowOnlyStarredVariables}
+        disabled={starredVariableToggleDisabled}
+      >
+        <Toggle on={showOnlyStarredVariables} /> <Icon fa="star" />
+      </button>,
+    ],
+    [
+      showOnlyStarredVariables,
+      toggleShowOnlyStarredVariables,
+      starredVariableToggleDisabled,
+    ]
+  );
+
+  const isAdditionalFilterApplied = showOnlyStarredVariables;
+
+  const tree = useMemo(
+    () =>
+      !showOnlyStarredVariables || starredVariableToggleDisabled
+        ? fieldTree
+        : pruneDescendantNodes(
+            (node) =>
+              node.children.length > 0 ||
+              starredVariablesSet.has(node.field.term.split('/')[1]),
+            fieldTree
+          ),
+    [
+      fieldTree,
+      showOnlyStarredVariables,
+      starredVariablesSet,
+      starredVariableToggleDisabled,
+    ]
+  );
+
   return (
     <div className={cx('-VariableList')}>
       <CheckboxTree
         autoFocusSearchBox={autoFocus}
-        tree={fieldTree}
+        tree={tree}
         expandedList={expandedNodes}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
@@ -222,6 +285,8 @@ export default function VariableList(props: VariableListProps) {
         onSearchTermChange={setSearchTerm}
         searchPredicate={searchPredicate}
         renderNode={renderNode}
+        additionalFilters={additionalFilters}
+        isAdditionalFilterApplied={isAdditionalFilterApplied}
       />
     </div>
   );

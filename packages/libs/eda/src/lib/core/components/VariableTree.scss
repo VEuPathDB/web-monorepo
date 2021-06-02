@@ -60,13 +60,23 @@
     &:focus {
       outline: none;
     }
+  }
 
-    .fa-star-o {
-      color: #666;
+  .EDAWorkspace-StarredVariablesFilter {
+    &:disabled {
+      opacity: 0.5;
     }
+  }
 
-    .fa-star {
-      color: #fbbd03;
-    }
+  .fa-star-o {
+    color: #767676;
+  }
+
+  .fa-star {
+    color: #f8cb6a;
+  }
+
+  .wdk-CheckboxTreeFilters {
+    gap: 0.5em;
   }
 }
