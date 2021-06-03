@@ -1,12 +1,12 @@
-export * from './types/session';
+export * from './types/analysis';
 export * from './types/study';
 export * from './types/filter';
-export * from './hooks/session';
+export * from './hooks/analysis';
 export * from './hooks/workspace';
 export * from './api/subsetting-api';
 export * from './api/data-api';
-export * from './api/session-api';
+export * from './api/analysis-api';
 export * from './context/WorkspaceContext';
 export { EDAWorkspaceContainer } from './components/EDAWorkspaceContainer';
-export { EDASessionListContainer } from './components/EDASessionListContainer';
+export { EDAAnalysisListContainer } from './components/EDAAnalysisListContainer';
 export { EntityDiagram } from './components/EntityDiagram';

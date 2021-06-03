@@ -2,7 +2,7 @@ import ErrorStatus from '@veupathdb/wdk-client/lib/Components/PageStatus/Error';
 import React from 'react';
 import { SubsettingClient } from '../api/subsetting-api';
 import { DataClient } from '../api/data-api';
-import { SessionClient } from '../api/session-api';
+import { AnalysisClient } from '../api/analysis-api';
 import {
   MakeVariableLink,
   WorkspaceContext,
@@ -15,10 +15,10 @@ import { workspaceTheme } from './workspaceTheme';
 const theme = createMuiTheme(workspaceTheme);
 export interface Props {
   studyId: string;
-  sessionId: string;
+  analysisId: string;
   children: React.ReactChild | React.ReactChild[];
   className?: string;
-  sessionClient: SessionClient;
+  analysisClient: AnalysisClient;
   subsettingClient: SubsettingClient;
   dataClient: DataClient;
   makeVariableLink?: MakeVariableLink;
@@ -27,7 +27,7 @@ export interface Props {
 export function EDAWorkspaceContainer(props: Props) {
   const {
     studyId,
-    sessionClient,
+    analysisClient,
     subsettingClient,
     dataClient,
     children,
@@ -52,7 +52,7 @@ export function EDAWorkspaceContainer(props: Props) {
       value={{
         ...wdkStudyRecordState,
         studyMetadata,
-        sessionClient,
+        analysisClient,
         subsettingClient,
         dataClient,
         makeVariableLink,

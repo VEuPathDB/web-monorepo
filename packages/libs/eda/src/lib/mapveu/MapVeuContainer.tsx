@@ -1,4 +1,4 @@
-import { EDASessionListContainer, EDAWorkspaceContainer } from '../core';
+import { EDAAnalysisListContainer, EDAWorkspaceContainer } from '../core';
 import { SubsettingClient } from '../core/api/subsetting-api';
 import React from 'react';
 import {
@@ -7,9 +7,9 @@ import {
   Switch,
   useRouteMatch,
 } from 'react-router';
-import { SessionList } from './MapVeuSessionList';
-import { MapVeuSession } from './MapVeuSession';
-import { mockSessionStore } from './Mocks';
+import { AnalysisList } from './MapVeuAnalysisList';
+import { MapVeuAnalysis } from './MapVeuAnalysis';
+import { mockAnalysisStore } from './Mocks';
 import { DataClient } from '../core/api/data-api';
 import { StudyList } from './StudyList';
 
@@ -33,35 +33,35 @@ export function MapVeuContainer() {
       <h1>MapVEu</h1>
       <Switch>
         <Route
-          path={`${path}/:studyId/:sessionId`}
+          path={`${path}/:studyId/:analysisId`}
           render={(
-            props: RouteComponentProps<{ studyId: string; sessionId: string }>
+            props: RouteComponentProps<{ studyId: string; analysisId: string }>
           ) => (
             <EDAWorkspaceContainer
               studyId={props.match.params.studyId}
-              sessionId={props.match.params.sessionId}
+              analysisId={props.match.params.analysisId}
               subsettingClient={edaClient}
-              sessionClient={mockSessionStore}
+              analysisClient={mockAnalysisStore}
               dataClient={dataClient}
             >
-              <MapVeuSession sessionId={props.match.params.sessionId} />
+              <MapVeuAnalysis analysisId={props.match.params.analysisId} />
             </EDAWorkspaceContainer>
           )}
         />
         <Route
           path={`${path}/:studyId`}
           render={(props: RouteComponentProps<{ studyId: string }>) => (
-            <EDASessionListContainer
+            <EDAAnalysisListContainer
               studyId={props.match.params.studyId}
-              sessionClient={mockSessionStore}
+              analysisClient={mockAnalysisStore}
               subsettingClient={edaClient}
               dataClient={dataClient}
             >
-              <SessionList
+              <AnalysisList
                 studyId={props.match.params.studyId}
-                sessionStore={mockSessionStore}
+                analysisStore={mockAnalysisStore}
               />
-            </EDASessionListContainer>
+            </EDAAnalysisListContainer>
           )}
         />
         <Route path={path} component={StudyList} />

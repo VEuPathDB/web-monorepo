@@ -2,7 +2,7 @@ import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   StudyEntity,
   StudyVariable,
-  SessionState,
+  AnalysisState,
   useStudyMetadata,
 } from '../core';
 import { FilterContainer } from '../core/components/filter/FilterContainer';
@@ -12,7 +12,7 @@ interface Props {
   totalEntityCount?: number;
   filteredEntityCount?: number;
   variable: StudyVariable;
-  sessionState: SessionState;
+  analysisState: AnalysisState;
 }
 
 export function Variable(props: Props) {
@@ -21,7 +21,7 @@ export function Variable(props: Props) {
     variable,
     filteredEntityCount,
     totalEntityCount,
-    sessionState,
+    analysisState,
   } = props;
   const studyMetadata = useStudyMetadata();
   return (
@@ -31,7 +31,7 @@ export function Variable(props: Props) {
           studyMetadata={studyMetadata}
           variable={variable}
           entity={entity}
-          sessionState={sessionState}
+          analysisState={analysisState}
           totalEntityCount={totalEntityCount}
           filteredEntityCount={filteredEntityCount}
         />

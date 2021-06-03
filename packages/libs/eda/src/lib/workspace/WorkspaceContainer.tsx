@@ -11,13 +11,13 @@ import {
 } from '../core';
 import { Variable } from '../core/types/variable';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
-import { mockSessionStore } from './Mocks';
-import { SessionPanel } from './SessionPanel';
+import { mockAnalysisStore } from './Mocks';
+import { AnalysisPanel } from './AnalysisPanel';
 import { cx, findFirstVariable } from './Utils';
 
 interface Props {
   studyId: string;
-  sessionId: string;
+  analysisId: string;
   subsettingServiceUrl: string;
   dataServiceUrl: string;
 }
@@ -56,16 +56,16 @@ export function WorkspaceContainer(props: Props) {
   );
   return (
     <EDAWorkspaceContainer
-      sessionId={props.sessionId}
+      analysisId={props.analysisId}
       studyId={props.studyId}
       className={cx()}
-      sessionClient={mockSessionStore}
+      analysisClient={mockAnalysisStore}
       dataClient={dataClient}
       subsettingClient={subsettingClient}
       makeVariableLink={makeVariableLink}
     >
       <EDAWorkspaceHeading />
-      <SessionPanel sessionId={props.sessionId} />
+      <AnalysisPanel analysisId={props.analysisId} />
     </EDAWorkspaceContainer>
   );
 }
