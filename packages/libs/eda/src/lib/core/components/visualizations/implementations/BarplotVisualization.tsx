@@ -25,6 +25,8 @@ import { isTableVariable, isHistogramVariable } from '../../filter/guards';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
+import bar from './selectorIcons/bar.svg';
+
 export const barplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
@@ -46,7 +48,7 @@ function GridComponent(props: VisualizationProps) {
 
 // this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent() {
-  return <div>Pick me, I'm a Bar Plot!</div>;
+  return <img style={{ height: '100%', width: '100%' }} src={bar} />;
 }
 
 function FullscreenComponent(props: VisualizationProps) {

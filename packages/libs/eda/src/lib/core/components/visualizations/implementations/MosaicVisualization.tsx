@@ -8,6 +8,7 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
+import _ from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
@@ -18,7 +19,8 @@ import { Variable } from '../../../types/variable';
 import { isMosaicVariable, isTwoByTwoVariable } from '../../filter/guards';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
-import _ from 'lodash';
+import contingency from './selectorIcons/contingency.svg';
+import mosaic from './selectorIcons/mosaic.svg';
 
 type MosaicData = Pick<
   MosaicProps,
@@ -60,7 +62,7 @@ function ContTableGridComponent(props: VisualizationProps) {
 }
 
 function ContTableSelectorComponent() {
-  return <div>Pick me, I'm a contingency table!</div>;
+  return <img style={{ height: '100%', width: '100%' }} src={mosaic} />;
 }
 
 function ContTableFullscreenComponent(props: VisualizationProps) {
@@ -72,7 +74,7 @@ function TwoByTwoGridComponent(props: VisualizationProps) {
 }
 
 function TwoByTwoSelectorComponent() {
-  return <div>Pick me, I'm a 2x2 contingency table!</div>;
+  return <img style={{ height: '100%', width: '100%' }} src={contingency} />;
 }
 
 function TwoByTwoFullscreenComponent(props: VisualizationProps) {

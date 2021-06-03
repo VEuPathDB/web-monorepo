@@ -199,7 +199,7 @@ function NewVisualizationPicker(props: Props) {
                 }}
               >
                 {vizType ? (
-                  <vizType.selectorComponent />
+                  <vizType.selectorComponent {...vizOverview} />
                 ) : (
                   <div>NOT IMPLEMENTED</div>
                 )}
