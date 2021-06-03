@@ -6,10 +6,10 @@ import {
 import { type, voidType, string, array } from 'io-ts';
 import { ioTransformer } from './ioTransformer';
 export class AnalysisClient extends FetchClient {
-  getAnalysiss(): Promise<Analysis[]> {
+  getAnalyses(): Promise<Analysis[]> {
     return this.fetch(
       createJsonRequest({
-        path: '/analysiss',
+        path: '/analyses',
         method: 'GET',
         transformResponse: ioTransformer(array(Analysis)),
       })
@@ -18,7 +18,7 @@ export class AnalysisClient extends FetchClient {
   getAnalysis(analysisId: string): Promise<Analysis> {
     return this.fetch(
       createJsonRequest({
-        path: `/analysiss/${analysisId}`,
+        path: `/analyses/${analysisId}`,
         method: 'GET',
         transformResponse: ioTransformer(Analysis),
       })
@@ -27,7 +27,7 @@ export class AnalysisClient extends FetchClient {
   createAnalysis(analysis: NewAnalysis): Promise<{ id: string }> {
     return this.fetch(
       createJsonRequest({
-        path: `/analysiss`,
+        path: `/analyses`,
         method: 'POST',
         body: analysis,
         transformResponse: ioTransformer(type({ id: string })),
@@ -37,7 +37,7 @@ export class AnalysisClient extends FetchClient {
   updateAnalysis(analysis: Analysis): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: `/analysiss/${analysis.id}`,
+        path: `/analyses/${analysis.id}`,
         method: 'PUT',
         body: analysis,
         transformResponse: ioTransformer(voidType),
@@ -47,7 +47,7 @@ export class AnalysisClient extends FetchClient {
   deleteAnalysis(analysisId: string): Promise<void> {
     return this.fetch(
       createJsonRequest({
-        path: `/analysiss/${analysisId}`,
+        path: `/analyses/${analysisId}`,
         method: 'DELETE',
         body: { analysisId },
         transformResponse: ioTransformer(voidType),

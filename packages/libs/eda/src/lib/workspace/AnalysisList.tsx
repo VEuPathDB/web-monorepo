@@ -18,7 +18,7 @@ export function AnalysisList(props: Props) {
   const history = useHistory();
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
   const updateAnalysisList = React.useCallback(async () => {
-    const list = await analysisStore.getAnalysiss();
+    const list = await analysisStore.getAnalyses();
     setAnalysisList(list.filter((a) => a.studyId === studyId));
   }, [analysisStore, studyId]);
   React.useEffect(() => {
@@ -44,7 +44,7 @@ export function AnalysisList(props: Props) {
     };
     history.push(newLocation);
   }, [analysisStore, history, studyId]);
-  const deleteAnalysiss = React.useCallback(
+  const deleteAnalysis = React.useCallback(
     (analysisIds: Iterable<string>) => {
       for (const analysisId of analysisIds)
         analysisStore.deleteAnalysis(analysisId);
@@ -110,16 +110,16 @@ export function AnalysisList(props: Props) {
             newSet.delete(analysis.id);
             return newSet;
           }),
-        onMultipleRowSelect: (analysiss: Analysis[]) =>
+        onMultipleRowSelect: (analyses: Analysis[]) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            for (const analysis of analysiss) newSet.add(analysis.id);
+            for (const analysis of analyses) newSet.add(analysis.id);
             return newSet;
           }),
-        onMultipleRowDeselect: (analysiss: Analysis[]) =>
+        onMultipleRowDeselect: (analyses: Analysis[]) =>
           setSelected((set) => {
             const newSet = new Set(set);
-            for (const analysis of analysiss) newSet.delete(analysis.id);
+            for (const analysis of analyses) newSet.delete(analysis.id);
             return newSet;
           }),
       },
@@ -130,9 +130,9 @@ export function AnalysisList(props: Props) {
             <button
               type="button"
               className="btn"
-              onClick={() => deleteAnalysiss(selected)}
+              onClick={() => deleteAnalysis(selected)}
             >
-              Delete selected analysiss
+              Delete selected analyses
             </button>
           ),
         },
@@ -195,7 +195,7 @@ export function AnalysisList(props: Props) {
     [
       analysisList,
       createNewAnalysis,
-      deleteAnalysiss,
+      deleteAnalysis,
       loadAnalysis,
       selected,
       history.location.pathname,

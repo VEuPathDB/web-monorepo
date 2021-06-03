@@ -29,7 +29,7 @@ let records: Record<string, Analysis>;
 let nextId: number;
 
 const analysisClient: AnalysisClient = {
-  async getAnalysiss() {
+  async getAnalyses() {
     return Object.values(records);
   },
   async getAnalysis(id: string) {
@@ -120,8 +120,8 @@ describe('useAnalysis', () => {
     act(() => result.current.setName('New Name'));
     expect(result.current.hasUnsavedChanges).toBeTruthy();
     await act(() => result.current.saveAnalysis());
-    const analysiss = await analysisClient.getAnalysiss();
-    const analysis = analysiss.find((analysis) => analysis.id === key);
+    const analyses = await analysisClient.getAnalyses();
+    const analysis = analyses.find((analysis) => analysis.id === key);
     expect(analysis?.name).toBe('New Name');
     expect(result.current.hasUnsavedChanges).toBeFalsy();
   });
@@ -130,8 +130,8 @@ describe('useAnalysis', () => {
     const { result, waitFor } = render();
     await waitFor(() => result.current.status === Status.Loaded);
     const res = await result.current.copyAnalysis();
-    const analysiss = await analysisClient.getAnalysiss();
-    const newAnalysis = analysiss.find((analysis) => analysis.id === res.id);
+    const analyses = await analysisClient.getAnalyses();
+    const newAnalysis = analyses.find((analysis) => analysis.id === res.id);
     expect(omit(result.current.analysis, 'id')).toEqual(
       omit(newAnalysis, 'id')
     );
@@ -142,8 +142,8 @@ describe('useAnalysis', () => {
     const { result, waitFor } = render();
     await waitFor(() => result.current.status === Status.Loaded);
     await result.current.deleteAnalysis();
-    const analysiss = await analysisClient.getAnalysiss();
-    const analysis = analysiss.find((analysis) => analysis.id === key);
+    const analyses = await analysisClient.getAnalyses();
+    const analysis = analyses.find((analysis) => analysis.id === key);
     expect(analysis).toBeUndefined();
   });
 });

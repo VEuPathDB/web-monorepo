@@ -16,7 +16,7 @@ export function AnalysisList(props: Props) {
   const studyRecord = useStudyRecord();
   const list = usePromise(
     useCallback(async () => {
-      const studies = await analysisStore.getAnalysiss();
+      const studies = await analysisStore.getAnalyses();
       return studies.filter((study) => study.id === studyId);
     }, [studyId, analysisStore])
   );
@@ -38,7 +38,7 @@ export function AnalysisList(props: Props) {
   return (
     <>
       <h2>Study: {studyRecord.displayName}</h2>
-      <h3>Saved Analysiss</h3>
+      <h3>Saved Analyses</h3>
       <div>
         <button className="btn" type="button" onClick={createAnalysis}>
           New Analysis
@@ -47,7 +47,7 @@ export function AnalysisList(props: Props) {
       {list.pending ? (
         <Loading />
       ) : list.value?.length === 0 ? (
-        <em>You do not have any analysiss for this study.</em>
+        <em>You do not have any analyses for this study.</em>
       ) : (
         <ul>
           {list.value?.map((analysis) => (
