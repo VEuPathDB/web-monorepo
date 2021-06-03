@@ -1,10 +1,10 @@
 import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
 import { useCallback, useEffect, useState } from 'react';
-import { useSessionClient } from './workspace';
-import { Session } from '../types/session';
+import { useAnalysisClient } from './workspace';
+import { Analysis } from '../types/analysis';
 import { usePromise } from './promise';
 
-type Setter<T extends keyof Session> = (value: Session[T]) => void;
+type Setter<T extends keyof Analysis> = (value: Analysis[T]) => void;
 
 export enum Status {
   InProgress = 'in-progress',
@@ -13,10 +13,10 @@ export enum Status {
   Error = 'error',
 }
 
-export type SessionState = {
+export type AnalysisState = {
   status: Status;
   hasUnsavedChanges: boolean;
-  session?: Session;
+  analysis?: Analysis;
   error?: unknown;
   canUndo: boolean;
   canRedo: boolean;
@@ -28,22 +28,22 @@ export type SessionState = {
   setDerivedVariables: Setter<'derivedVariables'>;
   setStarredVariables: Setter<'starredVariables'>;
   setVariableUISettings: Setter<'variableUISettings'>;
-  copySession: () => Promise<{ id: string }>;
-  deleteSession: () => Promise<void>;
-  saveSession: () => Promise<void>;
+  copyAnalysis: () => Promise<{ id: string }>;
+  deleteAnalysis: () => Promise<void>;
+  saveAnalysis: () => Promise<void>;
 };
 
-export function useSession(sessionId: string): SessionState {
-  const sessionClient = useSessionClient();
+export function useAnalysis(analysisId: string): AnalysisState {
+  const analysisClient = useAnalysisClient();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const {
-    current: session,
+    current: analysis,
     setCurrent,
     canRedo,
     canUndo,
     redo,
     undo,
-  } = useStateWithHistory<Session>({
+  } = useStateWithHistory<Analysis>({
     size: 10,
     onUndo: useCallback(() => setHasUnsavedChanges(true), [
       setHasUnsavedChanges,
@@ -52,27 +52,27 @@ export function useSession(sessionId: string): SessionState {
       setHasUnsavedChanges,
     ]),
   });
-  const savedSession = usePromise(
-    useCallback((): Promise<Session> => {
-      return sessionClient.getSession(sessionId);
-    }, [sessionId, sessionClient])
+  const savedAnalysis = usePromise(
+    useCallback((): Promise<Analysis> => {
+      return analysisClient.getAnalysis(analysisId);
+    }, [analysisId, analysisClient])
   );
 
   useEffect(() => {
-    if (savedSession.value) {
-      setCurrent(savedSession.value);
+    if (savedAnalysis.value) {
+      setCurrent(savedAnalysis.value);
     }
-  }, [savedSession.value, setCurrent]);
+  }, [savedAnalysis.value, setCurrent]);
 
-  const status = savedSession.pending
+  const status = savedAnalysis.pending
     ? Status.InProgress
-    : savedSession.error
+    : savedAnalysis.error
     ? Status.Error
     : Status.Loaded;
 
-  const useSetter = <T extends keyof Session>(propertyName: T) =>
+  const useSetter = <T extends keyof Analysis>(propertyName: T) =>
     useCallback(
-      (value: Session[T]) => {
+      (value: Analysis[T]) => {
         setCurrent((_a) => _a && { ..._a, [propertyName]: value });
         setHasUnsavedChanges(true);
       },
@@ -86,35 +86,35 @@ export function useSession(sessionId: string): SessionState {
   const setStarredVariables = useSetter('starredVariables');
   const setVariableUISettings = useSetter('variableUISettings');
 
-  const saveSession = useCallback(async () => {
-    if (session == null)
-      throw new Error("Attempt to save an session that hasn't been loaded.");
-    await sessionClient.updateSession(session);
+  const saveAnalysis = useCallback(async () => {
+    if (analysis == null)
+      throw new Error("Attempt to save an analysis that hasn't been loaded.");
+    await analysisClient.updateAnalysis(analysis);
     setHasUnsavedChanges(false);
-  }, [sessionClient, session]);
+  }, [analysisClient, analysis]);
 
-  const copySession = useCallback(async () => {
-    if (session == null)
-      throw new Error("Attempt to copy an session that hasn't been loaded.");
-    if (hasUnsavedChanges) await saveSession();
-    return await sessionClient.createSession({
-      ...session,
-      name: `Copy of ${session.name}`,
+  const copyAnalysis = useCallback(async () => {
+    if (analysis == null)
+      throw new Error("Attempt to copy an analysis that hasn't been loaded.");
+    if (hasUnsavedChanges) await saveAnalysis();
+    return await analysisClient.createAnalysis({
+      ...analysis,
+      name: `Copy of ${analysis.name}`,
     });
-  }, [sessionClient, session, saveSession, hasUnsavedChanges]);
+  }, [analysisClient, analysis, saveAnalysis, hasUnsavedChanges]);
 
-  const deleteSession = useCallback(async () => {
-    return sessionClient.deleteSession(sessionId);
-  }, [sessionClient, sessionId]);
+  const deleteAnalysis = useCallback(async () => {
+    return analysisClient.deleteAnalysis(analysisId);
+  }, [analysisClient, analysisId]);
 
   useEffect(() => {
-    if (hasUnsavedChanges) saveSession();
-  }, [saveSession, hasUnsavedChanges]);
+    if (hasUnsavedChanges) saveAnalysis();
+  }, [saveAnalysis, hasUnsavedChanges]);
 
   return {
     status,
-    session,
-    error: savedSession.error,
+    analysis,
+    error: savedAnalysis.error,
     canRedo,
     canUndo,
     hasUnsavedChanges,
@@ -126,8 +126,8 @@ export function useSession(sessionId: string): SessionState {
     setDerivedVariables,
     setStarredVariables,
     setVariableUISettings,
-    copySession,
-    deleteSession,
-    saveSession,
+    copyAnalysis,
+    deleteAnalysis,
+    saveAnalysis,
   };
 }

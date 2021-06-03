@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { SessionState } from '../../hooks/session';
+import { AnalysisState } from '../../hooks/analysis';
 import {
   Visualization,
   ComputationAppOverview,
@@ -16,7 +16,7 @@ import { scatterplotVisualization } from '../visualizations/implementations/Scat
 import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
 
 interface Props {
-  sessionState: SessionState;
+  analysisState: AnalysisState;
   computationAppOverview: ComputationAppOverview;
 }
 
@@ -37,37 +37,37 @@ const visualizationTypes: Record<string, VisualizationType> = {
 
 export function PassThroughComputation(props: Props) {
   const {
-    sessionState: { session, setVisualizations },
+    analysisState: { analysis, setVisualizations },
     computationAppOverview,
   } = props;
   const addVisualization = useCallback(
     (visualization: Visualization) => {
-      setVisualizations([...(session?.visualizations ?? []), visualization]);
+      setVisualizations([...(analysis?.visualizations ?? []), visualization]);
     },
-    [setVisualizations, session]
+    [setVisualizations, analysis]
   );
   const updateVisualization = useCallback(
     (visualization: Visualization) => {
       setVisualizations([
-        ...(session?.visualizations.filter(
+        ...(analysis?.visualizations.filter(
           (viz) => viz.id !== visualization.id
         ) ?? []),
         visualization,
       ]);
     },
-    [setVisualizations, session]
+    [setVisualizations, analysis]
   );
 
   const deleteVisualization = useCallback(
     (id: String) => {
-      if (session == null) return;
-      setVisualizations(session.visualizations.filter((v) => v.id !== id));
+      if (analysis == null) return;
+      setVisualizations(analysis.visualizations.filter((v) => v.id !== id));
     },
-    [session, setVisualizations]
+    [analysis, setVisualizations]
   );
 
-  const filters = useMemo(() => session?.filters ?? [], [session?.filters]);
-  if (session == null) return <div>Session not found</div>;
+  const filters = useMemo(() => analysis?.filters ?? [], [analysis?.filters]);
+  if (analysis == null) return <div>Analysis not found</div>;
   return (
     <VisualizationsContainer
       computationId="pass-through"
@@ -79,7 +79,7 @@ export function PassThroughComputation(props: Props) {
           configuration: undefined,
         },
       ]}
-      visualizations={session.visualizations}
+      visualizations={analysis.visualizations}
       visualizationsOverview={computationAppOverview.visualizations!}
       addVisualization={addVisualization}
       updateVisualization={updateVisualization}

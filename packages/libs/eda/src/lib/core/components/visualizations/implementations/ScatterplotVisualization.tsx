@@ -24,7 +24,15 @@ import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 
 import { InputVariables } from '../InputVariables';
-import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import {
+  SelectorProps,
+  VisualizationProps,
+  VisualizationType,
+} from '../VisualizationTypes';
+
+import density from './selectorIcons/density.svg';
+import line from './selectorIcons/line.svg';
+import scatter from './selectorIcons/scatter.svg';
 
 // XYPlotControls
 import XYPlotControls from '@veupathdb/components/lib/components/plotControls/XYPlotControls';
@@ -92,8 +100,11 @@ function GridComponent(props: VisualizationProps) {
 }
 
 // this needs a handling of text/image for scatter, line, and density plots
-function SelectorComponent() {
-  return <div>Pick me, I'm a Scatter Plot!</div>;
+function SelectorComponent({ name }: SelectorProps) {
+  const src =
+    name === 'lineplot' ? line : name === 'densityplot' ? density : scatter;
+
+  return <img style={{ height: '100%', width: '100%' }} src={src} />;
 }
 
 function FullscreenComponent(props: VisualizationProps) {
@@ -117,6 +128,7 @@ const ScatterplotConfig = t.intersection([
     xAxisVariable: Variable,
     yAxisVariable: Variable,
     overlayVariable: Variable,
+    facetVariable: Variable,
     valueSpecConfig: t.string,
   }),
 ]);
@@ -166,6 +178,7 @@ function ScatterplotViz(props: Props) {
     [updateVisualization, visualization, vizConfig]
   );
 
+  // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (
       values: Record<
@@ -173,11 +186,17 @@ function ScatterplotViz(props: Props) {
         { entityId: string; variableId: string } | undefined
       >
     ) => {
-      const { xAxisVariable, yAxisVariable, overlayVariable } = values;
+      const {
+        xAxisVariable,
+        yAxisVariable,
+        overlayVariable,
+        facetVariable,
+      } = values;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
         overlayVariable,
+        facetVariable,
       });
     },
     [updateVizConfig, vizConfig]
@@ -272,6 +291,10 @@ function ScatterplotViz(props: Props) {
               {
                 name: 'overlayVariable',
                 label: 'Overlay variable (Optional)',
+              },
+              {
+                name: 'facetVariable',
+                label: 'Facet variable (Optional)',
               },
             ]}
             entities={entities}
