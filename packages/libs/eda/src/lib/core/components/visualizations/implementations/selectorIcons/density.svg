@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="525px" height="436px" viewBox="0 0 525 436" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #FFFFFF;">
+    <title>export area</title>
+    <defs>
+        <rect id="path-1" x="208" y="72" width="485" height="395" rx="9"></rect>
+        <filter x="-8.5%" y="-7.8%" width="116.9%" height="120.8%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="6" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="10" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <filter x="-39.0%" y="-65.7%" width="177.9%" height="231.4%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="23" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="viz-icons-for-EDA" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Density" transform="translate(-190.000000, -54.000000)">
+            <g id="plot-elements" transform="translate(208.000000, 107.000000)" opacity="0.8">
+                <path d="M0,0 C0,0 60,265 121,265 C181,265 181,277 242,277 C302,277 302,186 363,186 C423,186 484,115 484,115 L484,360 L0,360 L0,0 Z" id="Area_1" fill="#508E9D"></path>
+                <path d="M0,324.131868 C0,324.131868 60.1239669,236.571429 121.25,236.571429 C181.373967,236.571429 181.373967,316.21978 242.5,316.21978 C302.623967,316.21978 302.623967,168 363.75,168 C423.873967,168 485,301.450549 485,301.450549 L485,360 L0,360 L0,324.131868 Z" id="Area_2" fill="#9B242C"></path>
+            </g>
+            <text id="title" font-family="Rubik-Regular, Rubik" font-size="60" font-weight="normal" fill="#000000">
+                <tspan x="343" y="141">Density</tspan>
+            </text>
+            <path d="M450.5,156 C514.288889,156 566,167.192881 566,181 L566,181 L335,181 C335,167.192881 386.711111,156 450.5,156 Z" id="Combined-Shape" fill="#73A5B1"></path>
+            <path d="M482.5,449 C509.561953,449 655,409.972102 655,386.5 C655,363.027898 633.061953,344 606,344 C578.938047,344 557,363.027898 557,386.5 C557,409.972102 455.438047,449 482.5,449 Z" id="Oval" fill="#FFFFFF" opacity="0.689861479" filter="url(#filter-3)"></path>
+        </g>
+    </g>
+</svg>

@@ -32,6 +32,7 @@ import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import histogram from './selectorIcons/histogram.svg';
 
 export const histogramVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -53,7 +54,7 @@ function GridComponent(props: VisualizationProps) {
 }
 
 function SelectorComponent() {
-  return <div>Pick me, I'm a histogram!</div>;
+  return <img style={{ height: '100%', width: '100%' }} src={histogram} />;
 }
 
 function FullscreenComponent(props: VisualizationProps) {
