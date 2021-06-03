@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="525px" height="436px" viewBox="0 0 525 436" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #FFFFFF;">
+    <title>export area</title>
+    <defs>
+        <rect id="path-1" x="208" y="72" width="485" height="395" rx="9"></rect>
+        <filter x="-8.5%" y="-7.8%" width="116.9%" height="120.8%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="6" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="10" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="0%" y1="1.11022302e-14%" x2="100%" y2="-1.66533454e-14%" id="linearGradient-3">
+            <stop stop-color="#9B242C" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="52.8405676%"></stop>
+            <stop stop-color="#508E9D" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="viz-icons-for-EDA" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Heatmap" transform="translate(-190.000000, -54.000000)">
+            <g id="plot-elements" transform="translate(263.000000, 181.000000)">
+                <polygon id="Value:-11,-range:-0—25" fill="#A6CEE3" opacity="0.25" points="0 0 0 52.4 75 52.4 75 0"></polygon>
+                <polygon id="Value:-79,-range:-75—100" fill="#A6CEE3" points="0 52.4 0 104.8 75 104.8 75 52.4"></polygon>
+                <polygon id="Value:-38,-range:-25—50" fill="#9B242C" opacity="0.5" points="0 104.8 0 157.2 75 157.2 75 104.8"></polygon>
+                <polygon id="Value:-40,-range:-25—50" fill="#9B242C" points="0 157.2 0 209.6 75 209.6 75 157.2"></polygon>
+                <polygon id="Value:-5,-range:-0—25" fill="#B08789" opacity="0.5" points="0 209.6 0 262 75 262 75 209.6"></polygon>
+                <polygon id="Value:-7,-range:-0—25" fill="#A6CEE3" opacity="0.25" points="75 0 75 52.4 150 52.4 150 0"></polygon>
+                <polygon id="Value:-0,-range:-0—25" fill="#A6CEE3" opacity="0.25" points="75 52.4 75 104.8 150 104.8 150 52.4"></polygon>
+                <polygon id="Value:-55,-range:-50—75" fill="#B08789" opacity="0.5" points="75 104.8 75 157.2 150 157.2 150 104.8"></polygon>
+                <polygon id="Value:-33,-range:-25—50" fill="#9B242C" opacity="0.5" points="75 157.2 75 209.6 150 209.6 150 157.2"></polygon>
+                <polygon id="Value:-15,-range:-0—25" fill="#9B242C" points="75 209.6 75 262 150 262 150 209.6"></polygon>
+                <polygon id="Value:-81,-range:-75—100" fill="#508E9D" points="150 0 150 52.4 225 52.4 225 0"></polygon>
+                <polygon id="Value:-78,-range:-75—100" fill="#508E9D" opacity="0.617802211" points="150 52.4 150 104.8 225 104.8 225 52.4"></polygon>
+                <polygon id="Value:-46,-range:-25—50" fill="#A6CEE3" opacity="0.5" points="150 104.8 150 157.2 225 157.2 225 104.8"></polygon>
+                <polygon id="Value:-52,-range:-50—75" fill="#9B242C" opacity="0.5" points="150 157.2 150 209.6 225 209.6 225 157.2"></polygon>
+                <polygon id="Value:-99,-range:-75—100" fill="#508E9D" opacity="0.617802211" points="150 209.6 150 262 225 262 225 209.6"></polygon>
+                <polygon id="Value:-96,-range:-75—100" fill="#508E9D" points="225 0 225 52.4 300 52.4 300 0"></polygon>
+                <polygon id="Value:-55,-range:-50—75" fill="#A6CEE3" opacity="0.75" points="225 52.4 225 104.8 300 104.8 300 52.4"></polygon>
+                <polygon id="Value:-85,-range:-75—100" fill="#508E9D" opacity="0.617802211" points="225 104.8 225 157.2 300 157.2 300 104.8"></polygon>
+                <polygon id="Value:-76,-range:-75—100" fill="#508E9D" points="225 157.2 225 209.6 300 209.6 300 157.2"></polygon>
+                <polygon id="Value:-97,-range:-75—100" fill="#508E9D" points="225 209.6 225 262 300 262 300 209.6"></polygon>
+                <polygon id="Value:-69,-range:-50—75" fill="#A6CEE3" opacity="0.75" points="300 0 300 52.4 375 52.4 375 0"></polygon>
+                <polygon id="Value:-9,-range:-0—25" fill="#A6CEE3" opacity="0.25" points="300 52.4 300 104.8 375 104.8 375 52.4"></polygon>
+                <polygon id="Value:-74,-range:-50—75" fill="#A6CEE3" opacity="0.75" points="300 104.8 300 157.2 375 157.2 375 104.8"></polygon>
+                <polygon id="Value:-94,-range:-75—100" fill="#508E9D" points="300 157.2 300 209.6 375 209.6 375 157.2"></polygon>
+                <polygon id="Value:-6,-range:-0—25" fill="#A6CEE3" opacity="0.25" points="300 209.6 300 262 375 262 375 209.6"></polygon>
+            </g>
+            <line x1="263" y1="156" x2="638" y2="156" id="Line" stroke="url(#linearGradient-3)" stroke-width="10" stroke-linecap="square"></line>
+            <text id="title" font-family="Rubik-Regular, Rubik" font-size="60" font-weight="normal" fill="#000000">
+                <tspan x="322" y="138">Heatmap</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

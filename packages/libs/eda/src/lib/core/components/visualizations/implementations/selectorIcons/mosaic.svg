@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="525px" height="436px" viewBox="0 0 525 436" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #FFFFFF;">
+    <title>export area</title>
+    <defs>
+        <rect id="path-1" x="208" y="72" width="485" height="395" rx="9"></rect>
+        <filter x="-8.5%" y="-7.8%" width="116.9%" height="120.8%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="6" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="10" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="viz-icons-for-EDA" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Mosaic" transform="translate(-190.000000, -54.000000)">
+            <g id="plot-elements" transform="translate(241.000000, 218.000000)">
+                <polygon id="Value:-79,-range:-75—100" fill="#508E9D" points="0 0 0 108 114 108 114 0"></polygon>
+                <polygon id="Value:-79,-range:-75—100" fill="#508E9D" points="130 3 130 30 277 30 277 3"></polygon>
+                <polygon id="Value:-79,-range:-75—100" fill="#508E9D" points="130 0 130 27 277 27 277 0"></polygon>
+                <polygon id="Value:-79,-range:-75—100" fill="#508E9D" points="295 0 295 156 330 156 330 0"></polygon>
+                <polygon id="Value:-79,-range:-75—100" fill="#508E9D" points="347 0 347 53 418 53 418 0"></polygon>
+                <polygon id="Value:-79,-range:-75—100" fill="#A6CEE3" points="130 41 130 68 277 68 277 41"></polygon>
+                <polygon id="Value:-79,-range:-75—100" fill="#A6CEE3" points="347 70 347 190 418 190 418 70"></polygon>
+                <polygon id="Value:-79,-range:-75—100" fill="#A6CEE3" points="295 168 295 186 330 186 330 168"></polygon>
+                <polygon id="Value:-79,-range:-75—100" fill="#A6CEE3" points="0 122 0 149 114 149 114 122"></polygon>
+                <polygon id="Value:-38,-range:-25—50" fill="#9B242C" points="0 160 0 222 114 222 114 160"></polygon>
+                <polygon id="Value:-38,-range:-25—50" fill="#9B242C" points="295 190 295 222 330 222 330 190"></polygon>
+                <polygon id="Value:-38,-range:-25—50" fill="#9B242C" points="347 199 347 221 418 221 418 199"></polygon>
+                <polygon id="Value:-38,-range:-25—50" fill="#9B242C" points="130 78 130 222 277 222 277 78"></polygon>
+            </g>
+            <text id="title" font-family="Rubik-Regular, Rubik" font-size="60" font-weight="normal" fill="#000000">
+                <tspan x="355" y="142">Mosaic</tspan>
+            </text>
+            <g id="line" transform="translate(294.000000, 158.000000)">
+                <rect id="Rectangle" stroke="#979797" fill="#9B242C" x="0.5" y="0.5" width="44" height="15"></rect>
+                <rect id="Rectangle" fill="#A6CEE3" x="51" y="0" width="45" height="16"></rect>
+                <rect id="Rectangle" fill="#508E9D" x="102" y="0" width="208" height="16"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

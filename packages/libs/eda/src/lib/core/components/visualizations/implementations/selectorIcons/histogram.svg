@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="525px" height="436px" viewBox="0 0 525 436" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #FFFFFF;">
+    <title>export area</title>
+    <defs>
+        <rect id="path-1" x="207" y="78" width="485" height="395" rx="9"></rect>
+        <filter x="-8.5%" y="-7.8%" width="116.9%" height="120.8%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="6" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="10" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <filter x="-39.0%" y="-65.7%" width="177.9%" height="231.4%" filterUnits="objectBoundingBox" id="filter-3">
+            <feGaussianBlur stdDeviation="23" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="0%" id="linearGradient-4">
+            <stop stop-color="#9B242C" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="viz-icons-for-EDA" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Histogram" transform="translate(-190.000000, -54.000000)">
+            <text id="title" font-family="Rubik-Regular, Rubik" font-size="60" font-weight="normal" fill="#000000">
+                <tspan x="304" y="146">Histogram</tspan>
+            </text>
+            <g id="plot-elements" transform="translate(254.000000, 199.000000)" fill="#9B242C">
+                <polygon id="Bar_1_1" points="0 262 0 163 45 163 45 262"></polygon>
+                <polygon id="Bar_1_2" points="52 262 52 64 97 64 97 262"></polygon>
+                <polygon id="Bar_1_3" points="104 262 104 0 149 0 149 262"></polygon>
+                <polygon id="Bar_1_4" points="156 262 156 52 201 52 201 262"></polygon>
+                <polygon id="Bar_1_5" points="208 262 208 113 253 113 253 262"></polygon>
+                <polygon id="Bar_1_6" points="260 262 260 163 305 163 305 262"></polygon>
+                <polygon id="Bar_1_7" points="312 262 312 212 357 212 357 262"></polygon>
+                <polygon id="Bar_1_7" points="364 262 364 237 409 237 409 262"></polygon>
+            </g>
+            <path d="M276.5,431 C303.561953,431 449,391.972102 449,368.5 C449,345.027898 427.061953,326 400,326 C372.938047,326 351,345.027898 351,368.5 C351,391.972102 249.438047,431 276.5,431 Z" id="Oval" fill="#FFFFFF" opacity="0.689861479" filter="url(#filter-3)"></path>
+            <path d="M262,171 C322.98889,157 375.928397,158 420.818522,174 C465.708647,190 537.76914,189 637,171" id="Line" stroke="url(#linearGradient-4)" stroke-width="10" stroke-linecap="square"></path>
+        </g>
+    </g>
+</svg>
