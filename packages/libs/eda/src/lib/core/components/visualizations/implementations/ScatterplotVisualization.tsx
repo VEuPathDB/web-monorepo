@@ -212,9 +212,9 @@ function ScatterplotViz(props: Props) {
 
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return Promise.reject();
+        return undefined;
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
-        return Promise.reject();
+        return undefined;
 
       // add visualization.type here. valueSpec too?
       const params = getRequestParams(

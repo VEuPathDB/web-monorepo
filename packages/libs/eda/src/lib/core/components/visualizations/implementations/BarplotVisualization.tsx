@@ -146,7 +146,7 @@ function BarplotViz(props: Props) {
 
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return Promise.reject();
+        return undefined;
 
       // add visualization.type here
       const params = getRequestParams(
