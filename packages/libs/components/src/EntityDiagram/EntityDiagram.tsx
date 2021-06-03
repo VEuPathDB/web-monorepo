@@ -228,8 +228,8 @@ export default function EntityDiagram({
 
     const count = entityCounts ? (
       <Text
-        fontSize={isHighlighted ? fontSize * 1.1 * 0.9 : fontSize * 0.9}
-        fontWeight={500}
+        fontSize={isHighlighted ? fontSize * 1.1 * 0.8 : fontSize * 0.8}
+        fill="#333"
         textAnchor="middle"
         verticalAnchor="end"
         y={fontSize * 0.8}
