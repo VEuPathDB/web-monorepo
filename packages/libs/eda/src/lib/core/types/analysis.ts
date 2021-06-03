@@ -9,8 +9,8 @@ export const DerviedVariable = t.unknown;
 export type VariableUISetting = t.TypeOf<typeof VariableUISetting>;
 export const VariableUISetting = t.UnknownRecord;
 
-export type NewSession = t.TypeOf<typeof NewSession>;
-export const NewSession = t.type({
+export type NewAnalysis = t.TypeOf<typeof NewAnalysis>;
+export const NewAnalysis = t.type({
   name: t.string,
   studyId: t.string,
   filters: t.array(Filter),
@@ -21,9 +21,9 @@ export const NewSession = t.type({
   computations: t.array(Computation),
 });
 
-export type Session = t.TypeOf<typeof Session>;
-export const Session = t.intersection([
-  NewSession,
+export type Analysis = t.TypeOf<typeof Analysis>;
+export const Analysis = t.intersection([
+  NewAnalysis,
   t.type({
     id: t.string,
     created: t.string,

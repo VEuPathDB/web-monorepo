@@ -1,17 +1,17 @@
 import { useCallback } from 'react';
-import { SessionState } from './session';
+import { AnalysisState } from './analysis';
 
 export function useToggleStarredVariable({
-  session,
+  analysis,
   setStarredVariables,
-}: SessionState) {
+}: AnalysisState) {
   return useCallback(
     (targetVariableId: string) => {
-      if (session == null) {
+      if (analysis == null) {
         return;
       }
 
-      const oldStarredVariables = session.starredVariables;
+      const oldStarredVariables = analysis.starredVariables;
 
       const newStarredVariables = !oldStarredVariables.includes(
         targetVariableId
@@ -23,6 +23,6 @@ export function useToggleStarredVariable({
 
       setStarredVariables(newStarredVariables);
     },
-    [session, setStarredVariables]
+    [analysis, setStarredVariables]
   );
 }
