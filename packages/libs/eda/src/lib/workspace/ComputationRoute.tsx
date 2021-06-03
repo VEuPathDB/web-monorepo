@@ -1,17 +1,17 @@
 import React, { useCallback } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 import { useRouteMatch } from 'react-router-dom';
-import { SessionState, useDataClient } from '../core';
+import { AnalysisState, useDataClient } from '../core';
 import { PassThroughComputation } from '../core/components/computations/PassThroughComputation';
 import { PromiseResult } from '../core/components/Promise';
 import { usePromise } from '../core/hooks/promise';
 
 export interface Props {
-  sessionState: SessionState;
+  analysisState: AnalysisState;
 }
 
 export function ComputationRoute(props: Props) {
-  const { sessionState } = props;
+  const { analysisState } = props;
   const { url } = useRouteMatch();
   const dataClient = useDataClient();
   const promiseState = usePromise(
@@ -35,7 +35,7 @@ export function ComputationRoute(props: Props) {
           </Route>
           <Route path={`${url}/pass-through`}>
             <PassThroughComputation
-              sessionState={sessionState}
+              analysisState={analysisState}
               computationAppOverview={computationAppOverview}
             />
           </Route>

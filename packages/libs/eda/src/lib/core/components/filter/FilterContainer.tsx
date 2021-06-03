@@ -1,5 +1,5 @@
 import React from 'react';
-import { SessionState } from '../../hooks/session';
+import { AnalysisState } from '../../hooks/analysis';
 import { StudyEntity, StudyMetadata, StudyVariable } from '../../types/study';
 import { isHistogramVariable, isTableVariable } from './guards';
 import { HistogramFilter } from './HistogramFilter';
@@ -10,7 +10,7 @@ interface Props {
   studyMetadata: StudyMetadata;
   variable: StudyVariable;
   entity: StudyEntity;
-  sessionState: SessionState;
+  analysisState: AnalysisState;
   totalEntityCount: number;
   filteredEntityCount: number;
 }
