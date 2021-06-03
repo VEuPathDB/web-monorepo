@@ -4,7 +4,7 @@ import {
   Switch,
   useRouteMatch,
 } from 'react-router';
-import { EDASessionList } from './EDASessionList';
+import { EDAAnalysisList } from './EDAAnalysisList';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 
@@ -29,7 +29,7 @@ export function WorkspaceRouter({
         path={`${path}/:studyId`}
         exact
         render={(props: RouteComponentProps<{ studyId: string }>) => (
-          <EDASessionList
+          <EDAAnalysisList
             {...props.match.params}
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
@@ -37,9 +37,9 @@ export function WorkspaceRouter({
         )}
       />
       <Route
-        path={`${path}/:studyId/:sessionId`}
+        path={`${path}/:studyId/:analysisId`}
         render={(
-          props: RouteComponentProps<{ studyId: string; sessionId: string }>
+          props: RouteComponentProps<{ studyId: string; analysisId: string }>
         ) => (
           <WorkspaceContainer
             {...props.match.params}

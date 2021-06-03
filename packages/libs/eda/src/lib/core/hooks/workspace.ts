@@ -1,6 +1,6 @@
 import { SubsettingClient } from '../api/subsetting-api';
 import { DataClient } from '../api/data-api';
-import { SessionClient } from '../api/session-api';
+import { AnalysisClient } from '../api/analysis-api';
 import {
   MakeVariableLink,
   WorkspaceContext,
@@ -24,8 +24,8 @@ export function useSubsettingClient(): SubsettingClient {
 export function useDataClient(): DataClient {
   return useNonNullableContext(WorkspaceContext).dataClient;
 }
-export function useSessionClient(): SessionClient {
-  return useNonNullableContext(WorkspaceContext).sessionClient;
+export function useAnalysisClient(): AnalysisClient {
+  return useNonNullableContext(WorkspaceContext).analysisClient;
 }
 export function useMakeVariableLink(): MakeVariableLink {
   return (

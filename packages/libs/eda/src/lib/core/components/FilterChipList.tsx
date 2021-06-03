@@ -26,7 +26,7 @@ interface Props {
 
 /**
  * A list (displayed horizontally) of chips representing filters applied to
- * variables in the current session
+ * variables in the current analysis
  */
 export default function FilterChipList(props: Props) {
   const classes = useStyles();

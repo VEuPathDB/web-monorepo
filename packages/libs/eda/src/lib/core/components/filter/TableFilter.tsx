@@ -7,7 +7,7 @@ import { boolean, keyof, number, partial, string, type, TypeOf } from 'io-ts';
 import { useCallback, useMemo } from 'react';
 import { BarplotResponse } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
-import { SessionState } from '../../hooks/session';
+import { AnalysisState } from '../../hooks/analysis';
 import { useDataClient } from '../../hooks/workspace';
 import { Filter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
@@ -19,7 +19,7 @@ type Props = {
   studyMetadata: StudyMetadata;
   variable: TableVariable;
   entity: StudyEntity;
-  sessionState: SessionState;
+  analysisState: AnalysisState;
   totalEntityCount: number;
   filteredEntityCount: number;
 };
@@ -65,7 +65,7 @@ export function TableFilter({
   studyMetadata,
   variable,
   entity,
-  sessionState,
+  analysisState,
   totalEntityCount,
   filteredEntityCount,
 }: Props) {
@@ -76,7 +76,7 @@ export function TableFilter({
         {
           entityId: entity.id,
           variableId: variable.id,
-          filters: sessionState.session?.filters,
+          filters: analysisState.analysis?.filters,
         },
         (filters) => {
           return dataClient.getBarplot('pass', {
@@ -133,7 +133,7 @@ export function TableFilter({
     }, [
       entity.id,
       variable.id,
-      sessionState.session?.filters,
+      analysisState.analysis?.filters,
       totalEntityCount,
       filteredEntityCount,
       dataClient,
@@ -153,7 +153,7 @@ export function TableFilter({
     [variable]
   );
 
-  const filter = sessionState.session?.filters.find(
+  const filter = analysisState.analysis?.filters.find(
     (f) => f.entityId === entity.id && f.variableId === variable.id
   );
 
@@ -161,14 +161,14 @@ export function TableFilter({
 
   const uiState: Required<UIState> = useMemo(() => {
     return pipe(
-      sessionState.session?.variableUISettings[uiStateKey],
+      analysisState.analysis?.variableUISettings[uiStateKey],
       UIState.decode,
       // This will overwrite default props with store props.
       // The result is a `Required<UIState>` object.
       map((stored) => ({ ...defaultUIState, ...stored })),
       getOrElse(() => defaultUIState)
     );
-  }, [sessionState.session?.variableUISettings, uiStateKey]);
+  }, [analysisState.analysis?.variableUISettings, uiStateKey]);
 
   const sortedDistribution = useMemo(() => {
     const values: any[] =
@@ -230,50 +230,50 @@ export function TableFilter({
 
   const handleSort = useCallback(
     (_: unknown, sort: MultiFieldSortSpec) => {
-      sessionState.setVariableUISettings({
+      analysisState.setVariableUISettings({
         [uiStateKey]: {
           ...uiState,
           sort,
         },
       });
     },
-    [sessionState, uiStateKey, uiState]
+    [analysisState, uiStateKey, uiState]
   );
 
   const handleSearch = useCallback(
     (_: unknown, searchTerm: string) => {
-      sessionState.setVariableUISettings({
+      analysisState.setVariableUISettings({
         [uiStateKey]: {
           ...uiState,
           searchTerm,
         },
       });
     },
-    [sessionState, uiStateKey, uiState]
+    [analysisState, uiStateKey, uiState]
   );
 
   const handlePagination = useCallback(
     (_: unknown, currentPage: number) => {
-      sessionState.setVariableUISettings({
+      analysisState.setVariableUISettings({
         [uiStateKey]: {
           ...uiState,
           currentPage,
         },
       });
     },
-    [sessionState, uiStateKey, uiState]
+    [analysisState, uiStateKey, uiState]
   );
 
   const handleRowsPerPage = useCallback(
     (_: unknown, rowsPerPage: number) => {
-      sessionState.setVariableUISettings({
+      analysisState.setVariableUISettings({
         [uiStateKey]: {
           ...uiState,
           rowsPerPage,
         },
       });
     },
-    [sessionState, uiStateKey, uiState]
+    [analysisState, uiStateKey, uiState]
   );
 
   const allValues = useMemo(() => {
@@ -285,12 +285,12 @@ export function TableFilter({
 
   const handleChange = useCallback(
     (_: unknown, values: string[] = allValues) => {
-      const otherFilters = (sessionState.session?.filters ?? []).filter(
+      const otherFilters = (analysisState.analysis?.filters ?? []).filter(
         (f) => f.entityId !== entity.id || f.variableId !== variable.id
       );
 
       if (values.length === 0) {
-        sessionState.setFilters(otherFilters);
+        analysisState.setFilters(otherFilters);
       } else {
         const valueProp =
           variable.type === 'string'
@@ -298,7 +298,7 @@ export function TableFilter({
             : variable.type === 'date'
             ? 'dateSet'
             : 'numberSet';
-        sessionState.setFilters(
+        analysisState.setFilters(
           otherFilters.concat({
             entityId: entity.id,
             variableId: variable.id,
@@ -308,7 +308,7 @@ export function TableFilter({
         );
       }
     },
-    [entity.id, sessionState, variable.id, variable.type, allValues]
+    [entity.id, analysisState, variable.id, variable.type, allValues]
   );
 
   return (

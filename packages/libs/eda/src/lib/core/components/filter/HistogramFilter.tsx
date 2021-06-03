@@ -26,7 +26,7 @@ import {
   HistogramResponse,
 } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
-import { SessionState } from '../../hooks/session';
+import { AnalysisState } from '../../hooks/analysis';
 import { useDataClient } from '../../hooks/workspace';
 import { DateRangeFilter, Filter, NumberRangeFilter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
@@ -38,8 +38,8 @@ type Props = {
   studyMetadata: StudyMetadata;
   variable: HistogramVariable;
   entity: StudyEntity;
-  sessionState: SessionState;
   totalEntityCount: number;
+  analysisState: AnalysisState;
 };
 
 type UIState = TypeOf<typeof UIState>;
@@ -60,20 +60,20 @@ export function HistogramFilter(props: Props) {
   const {
     variable,
     entity,
-    sessionState,
+    analysisState,
     studyMetadata,
     totalEntityCount,
   } = props;
   const { id: studyId } = studyMetadata;
-  const { setFilters } = sessionState;
-  const filters = sessionState.session?.filters;
+  const { setFilters } = analysisState;
+  const filters = analysisState.analysis?.filters;
   const uiStateKey = `${entity.id}/${variable.id}`;
   const uiState = useMemo(() => {
     return pipe(
-      UIState.decode(sessionState.session?.variableUISettings[uiStateKey]),
+      UIState.decode(analysisState.analysis?.variableUISettings[uiStateKey]),
       getOrElse((): UIState => defaultUIState)
     );
-  }, [sessionState.session?.variableUISettings, uiStateKey]);
+  }, [analysisState.analysis?.variableUISettings, uiStateKey]);
   const dataClient = useDataClient();
   const getData = useCallback(
     async (
@@ -215,14 +215,14 @@ export function HistogramFilter(props: Props) {
   const updateUIState = useCallback(
     (newUiState: TypeOf<typeof UIState>) => {
       // if (uiState.binWidth === newUiState.binWidth) return;
-      sessionState.setVariableUISettings({
+      analysisState.setVariableUISettings({
         [uiStateKey]: {
           ...uiState,
           ...newUiState,
         },
       });
     },
-    [sessionState, uiStateKey, uiState]
+    [analysisState, uiStateKey, uiState]
   );
 
   // stats from foreground

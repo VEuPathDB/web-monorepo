@@ -1,45 +1,45 @@
 import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import localforage from 'localforage';
-import { Session, NewSession, SessionClient } from '../core';
+import { Analysis, NewAnalysis, AnalysisClient } from '../core';
 
 const localStore = localforage.createInstance({
-  name: 'mockSessionStore',
+  name: 'mockAnalysisStore',
 });
 
-export const mockSessionStore: SessionClient = {
-  async getSessions() {
-    const records: Session[] = [];
+export const mockAnalysisStore: AnalysisClient = {
+  async getAnalyses() {
+    const records: Analysis[] = [];
     await localStore.iterate((value) => {
-      records.push(value as Session);
+      records.push(value as Analysis);
     });
     return records;
   },
-  async createSession(newSession: NewSession) {
+  async createAnalysis(newAnalysis: NewAnalysis) {
     const id = String((await localStore.keys()).length + 2);
     const now = new Date().toISOString();
-    await localStore.setItem<Session>(id, {
-      ...newSession,
+    await localStore.setItem<Analysis>(id, {
+      ...newAnalysis,
       id,
       created: now,
       modified: now,
     });
     return { id };
   },
-  async getSession(id: string) {
-    const session = await localStore.getItem(id);
-    if (session) {
-      const result = Session.decode(session);
+  async getAnalysis(id: string) {
+    const analysis = await localStore.getItem(id);
+    if (analysis) {
+      const result = Analysis.decode(analysis);
       if (isRight(result)) return result.right;
       throw new Error(PathReporter.report(result).join('\n'));
     }
-    throw new Error(`Could not find session with id "${id}".`);
+    throw new Error(`Could not find analysis with id "${id}".`);
   },
-  async updateSession(session: Session) {
+  async updateAnalysis(analysis: Analysis) {
     const now = new Date().toISOString();
-    await localStore.setItem(session.id, { ...session, modified: now });
+    await localStore.setItem(analysis.id, { ...analysis, modified: now });
   },
-  async deleteSession(id: string) {
+  async deleteAnalysis(id: string) {
     await localStore.removeItem(id);
   },
-} as SessionClient;
+} as AnalysisClient;

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="525px" height="436px" viewBox="0 0 525 436" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #FFFFFF;">
+    <title>export area</title>
+    <defs>
+        <rect id="path-1" x="207" y="78" width="485" height="395" rx="9"></rect>
+        <filter x="-8.5%" y="-7.8%" width="116.9%" height="120.8%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="6" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="10" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="10" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="viz-icons-for-EDA" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Scatter" transform="translate(-190.000000, -54.000000)">
+            <g id="plot-elements" transform="translate(260.000000, 201.000000)">
+                <circle id="Dot_1" fill="#9B242C" cx="45" cy="148" r="15"></circle>
+                <circle id="Dot_2" fill="#9B242C" cx="15" cy="217" r="15"></circle>
+                <circle id="Dot_2" fill="#9B242C" cx="130" cy="232" r="15"></circle>
+                <circle id="Dot_3" fill="#9B242C" cx="92" cy="163" r="15"></circle>
+                <circle id="Dot_4" fill="#A6CEE3" cx="130" cy="79" r="15"></circle>
+                <circle id="Dot_4" fill="#A6CEE3" cx="196" cy="79" r="15"></circle>
+                <circle id="Dot_5" fill="#508E9D" cx="244" cy="89" r="15"></circle>
+                <circle id="Dot_6" fill="#508E9D" cx="322" cy="74" r="15"></circle>
+                <circle id="Dot_6" fill="#508E9D" cx="352" cy="15" r="15"></circle>
+                <circle id="Dot_7" fill="#508E9D" cx="274" cy="45" r="15"></circle>
+                <circle id="Dot_8" fill="#A6CEE3" cx="160" cy="148" r="15"></circle>
+                <circle id="Dot_8" fill="#A6CEE3" cx="226" cy="148" r="15"></circle>
+            </g>
+            <g id="line" transform="translate(341.000000, 176.000000)" opacity="0.998160226">
+                <circle id="Dot_1" fill="#A6CEE3" cx="82" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#A6CEE3" cx="101" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#9B242C" cx="63" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#9B242C" cx="26" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#9B242C" cx="45" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#9B242C" cx="7" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#A6CEE3" cx="139" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#A6CEE3" cx="120" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#508E9D" cx="195" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#508E9D" cx="214" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#508E9D" cx="176" cy="7" r="7"></circle>
+                <circle id="Dot_1" fill="#508E9D" cx="158" cy="7" r="7"></circle>
+            </g>
+            <text id="title" font-family="Rubik-Regular, Rubik" font-size="60" font-weight="normal" fill="#000000">
+                <tspan x="346" y="161">Scatter</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

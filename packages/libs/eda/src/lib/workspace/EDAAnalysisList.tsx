@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { EDASessionListContainer } from '../core';
+import { EDAAnalysisListContainer } from '../core';
 import { SubsettingClient } from '../core/api/subsetting-api';
 import { DataClient } from '../core/api/data-api';
-import { mockSessionStore } from './Mocks';
+import { mockAnalysisStore } from './Mocks';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
-import { SessionList } from './SessionList';
+import { AnalysisList } from './AnalysisList';
 import { cx } from './Utils';
 
 export interface Props {
@@ -13,7 +13,7 @@ export interface Props {
   dataServiceUrl: string;
 }
 
-export function EDASessionList(props: Props) {
+export function EDAAnalysisList(props: Props) {
   const subsettingClient: SubsettingClient = useMemo(
     () => new SubsettingClient({ baseUrl: props.subsettingServiceUrl }),
     [props.subsettingServiceUrl]
@@ -25,15 +25,15 @@ export function EDASessionList(props: Props) {
   );
 
   return (
-    <EDASessionListContainer
+    <EDAAnalysisListContainer
       studyId={props.studyId}
       subsettingClient={subsettingClient}
       dataClient={dataClient}
       className={cx()}
-      sessionClient={mockSessionStore}
+      analysisClient={mockAnalysisStore}
     >
       <EDAWorkspaceHeading />
-      <SessionList sessionStore={mockSessionStore} />
-    </EDASessionListContainer>
+      <AnalysisList analysisStore={mockAnalysisStore} />
+    </EDAAnalysisListContainer>
   );
 }
