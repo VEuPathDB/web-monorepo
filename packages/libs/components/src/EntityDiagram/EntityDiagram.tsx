@@ -213,6 +213,7 @@ export default function EntityDiagram({
     const text = (
       <Text
         fontSize={isHighlighted ? fontSize * 1.1 : fontSize}
+        fontWeight={500}
         textAnchor="middle"
         verticalAnchor="middle"
         style={{
@@ -229,6 +230,7 @@ export default function EntityDiagram({
     const count = entityCounts ? (
       <Text
         fontSize={isHighlighted ? fontSize * 1.1 * 0.8 : fontSize * 0.8}
+        fontWeight={500}
         fill="#333"
         textAnchor="middle"
         verticalAnchor="end"
