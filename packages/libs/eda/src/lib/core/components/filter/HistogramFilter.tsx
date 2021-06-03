@@ -15,6 +15,7 @@ import {
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
+import UnknownCount from '@veupathdb/wdk-client/lib/Components/AttributeFilter/UnknownCount';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean } from 'io-ts';
@@ -37,6 +38,7 @@ type Props = {
   studyMetadata: StudyMetadata;
   variable: HistogramVariable;
   entity: StudyEntity;
+  totalEntityCount: number;
   analysisState: AnalysisState;
 };
 
@@ -55,7 +57,13 @@ const defaultUIState: UIState = {
 };
 
 export function HistogramFilter(props: Props) {
-  const { variable, entity, analysisState, studyMetadata } = props;
+  const {
+    variable,
+    entity,
+    analysisState,
+    studyMetadata,
+    totalEntityCount,
+  } = props;
   const { id: studyId } = studyMetadata;
   const { setFilters } = analysisState;
   const filters = analysisState.analysis?.filters;
@@ -74,6 +82,7 @@ export function HistogramFilter(props: Props) {
       HistogramData & {
         variableId: string;
         entityId: string;
+        hasDataEntitiesCount: number;
       }
     > => {
       const foregroundFilters = filters?.filter(
@@ -131,6 +140,12 @@ export function HistogramFilter(props: Props) {
           }) as NumberOrTimeDeltaRange;
       const binWidthStep = step || 0.1;
 
+      // {hasDataEntitiesCount} (YY%) of ZZ households have data for this variable
+      const completeCases = background.completeCasesTable[0].completeCases;
+      const hasDataEntitiesCount = Array.isArray(completeCases)
+        ? completeCases[0]
+        : completeCases;
+
       return {
         valueType: variable.type,
         series,
@@ -139,6 +154,7 @@ export function HistogramFilter(props: Props) {
         binWidthStep,
         variableId: variable.id,
         entityId: entity.id,
+        hasDataEntitiesCount: hasDataEntitiesCount ?? 0,
       };
     },
     [dataClient, entity, filters, studyId, variable]
@@ -215,7 +231,7 @@ export function HistogramFilter(props: Props) {
   // Note use of `key` used with HistogramPlotWithControls. This is a little hack to force
   // the range to be reset if the filter is removed.
   return (
-    <div style={{ position: 'relative' }}>
+    <div className="filter-param" style={{ position: 'relative' }}>
       {data.pending && (
         <Loading
           radius={16}
@@ -225,11 +241,26 @@ export function HistogramFilter(props: Props) {
       {data.error && <pre>{String(data.error)}</pre>}
       <div>
         {fgSummaryStats && (
-          <div className="histogram-summary-stats">
-            <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
-            {fgSummaryStats.mean} &emsp;
-            <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
-            {fgSummaryStats.max}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div className="histogram-summary-stats">
+              <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
+              {fgSummaryStats.mean} &emsp;
+              <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
+              {fgSummaryStats.max}
+            </div>
+            <UnknownCount
+              activeFieldState={{
+                summary: { internalsCount: data.value?.hasDataEntitiesCount },
+              }}
+              dataCount={totalEntityCount}
+              displayName={entity.displayName}
+            />
           </div>
         )}
         <HistogramPlotWithControls
