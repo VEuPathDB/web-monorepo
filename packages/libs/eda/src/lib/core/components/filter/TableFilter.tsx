@@ -323,7 +323,7 @@ export function TableFilter({
           <MembershipField
             displayName={entity.displayName}
             dataCount={totalEntityCount}
-            filteredDataCount={tableSummary.value.filteredEntitiesCount}
+            filteredDataCount={filteredEntityCount}
             filter={tableFilter}
             activeField={activeField}
             activeFieldState={activeFieldState}
