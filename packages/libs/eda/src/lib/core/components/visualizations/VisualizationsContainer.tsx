@@ -111,9 +111,14 @@ function ConfiguredVisualizations(props: Props) {
               <div key={viz.id} className={cx('-ConfiguredVisualization')}>
                 <div className={cx('-ConfiguredVisualizationActions')}>
                   <div>
-                    <Link to={`${url}/${viz.id}`} title="View fullscreen">
-                      <i className="fa fa-arrows-alt"></i>
-                    </Link>
+                    <button
+                      title="Delete visualization"
+                      type="button"
+                      className="link"
+                      onClick={() => deleteVisualization(viz.id)}
+                    >
+                      <i className="fa fa-trash"></i>
+                    </button>
                   </div>
                   <div>
                     <button
@@ -126,14 +131,9 @@ function ConfiguredVisualizations(props: Props) {
                     </button>
                   </div>
                   <div>
-                    <button
-                      title="Delete visualization"
-                      type="button"
-                      className="link"
-                      onClick={() => deleteVisualization(viz.id)}
-                    >
-                      <i className="fa fa-trash"></i>
-                    </button>
+                    <Link to={`${url}/${viz.id}`} title="View fullscreen">
+                      <i className="fa fa-arrows-alt"></i>
+                    </Link>
                   </div>
                 </div>
                 {type ? (
@@ -205,7 +205,7 @@ function NewVisualizationPicker(props: Props) {
                 }}
               >
                 {vizType ? (
-                  <vizType.selectorComponent />
+                  <vizType.selectorComponent {...vizOverview} />
                 ) : (
                   <div>NOT IMPLEMENTED</div>
                 )}
@@ -255,9 +255,20 @@ function FullScreenVisualization(props: Props & { id: string }) {
   return (
     <div className={cx('-FullScreenContainer')}>
       <div className={cx('-FullScreenActions')}>
-        <Link to={`../${computationId}`} title="Minimize visualization">
-          <i className="fa fa-window-restore"></i>
-        </Link>
+        <div>
+          <button
+            title="Delete visualization"
+            type="button"
+            className="link"
+            onClick={() => {
+              if (viz == null) return;
+              deleteVisualization(viz.id);
+              history.replace(Path.resolve(history.location.pathname, '..'));
+            }}
+          >
+            <i className="fa fa-trash"></i>
+          </button>
+        </div>
         <div>
           <button
             title="Copy visualization"
@@ -280,20 +291,9 @@ function FullScreenVisualization(props: Props & { id: string }) {
             <i className="fa fa-clone"></i>
           </button>
         </div>
-        <div>
-          <button
-            title="Delete visualization"
-            type="button"
-            className="link"
-            onClick={() => {
-              if (viz == null) return;
-              deleteVisualization(viz.id);
-              history.replace(Path.resolve(history.location.pathname, '..'));
-            }}
-          >
-            <i className="fa fa-trash"></i>
-          </button>
-        </div>
+        <Link to={`../${computationId}`} title="Minimize visualization">
+          <i className="fa fa-window-restore"></i>
+        </Link>
       </div>
       {viz == null ? (
         <ContentError>Visualization not found.</ContentError>

@@ -3,6 +3,7 @@ import {
   Computation,
   DataElementConstraint,
   Visualization,
+  VisualizationOverview,
 } from '../../types/visualization';
 
 /**
@@ -19,9 +20,11 @@ export interface VisualizationProps {
   toggleStarredVariable: (targetVariableId: string) => void;
 }
 
+export type SelectorProps = VisualizationOverview;
+
 export interface VisualizationType {
   gridComponent: React.ComponentType<VisualizationProps>;
   fullscreenComponent: React.ComponentType<VisualizationProps>;
-  selectorComponent: React.ComponentType;
+  selectorComponent: React.ComponentType<SelectorProps>;
   createDefaultConfig: () => unknown;
 }
