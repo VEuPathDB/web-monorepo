@@ -8,7 +8,7 @@ const localStore = localforage.createInstance({
 });
 
 export const mockAnalysisStore: AnalysisClient = {
-  async getAnalysiss() {
+  async getAnalyses() {
     const records: Analysis[] = [];
     await localStore.iterate((value) => {
       records.push(value as Analysis);
