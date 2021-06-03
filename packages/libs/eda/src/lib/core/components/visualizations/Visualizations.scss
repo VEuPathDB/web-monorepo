@@ -80,12 +80,15 @@
     button {
       height: 10em;
       width: 10em;
-      background: #eee;
+      background: white;
       margin-bottom: 1em;
       border: 0.15em solid #0000003d;
       box-shadow: 1px 1px 4px #0000003d;
       &:hover:not([disabled]) {
         box-shadow: 2px 2px 7px #000000a3;
+      }
+      &:disabled {
+        background: #eee;
       }
     }
     &Name {
