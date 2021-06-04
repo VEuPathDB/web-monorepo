@@ -75,7 +75,8 @@ const siteAnnouncements = [
   },
 */
  // clinepi workshop*
-  {
+/* 
+ {
     id: 'clinepi-workshop',
     renderDisplay: (props) => {
     if (props.projectId == 'ClinEpiDB' || props.projectId == 'AllClinEpiDB' ) {
@@ -88,7 +89,7 @@ const siteAnnouncements = [
       return null;
     }
   },
-
+*/
 
 
   // beta
