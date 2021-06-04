@@ -5,7 +5,6 @@ import React from 'react';
 import { NotFoundController } from '@veupathdb/wdk-client/lib/Controllers';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 
 import {
   getIdFromRecordClassName,
