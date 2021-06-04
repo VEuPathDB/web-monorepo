@@ -101,7 +101,7 @@ export default {
   // FIXME Add restricted results panel
   RecordHeading,
   RecordNavigationSection: function(DefaultComponent) {
-    return (...props) => <DefaultComponent {...props} visibilityFilter={() => true} />;
+    return props => <DefaultComponent {...props} visibilityFilter={() => true} />;
   },
   RecordTable,
   ContactUsController: function(DefaultComponent) {
