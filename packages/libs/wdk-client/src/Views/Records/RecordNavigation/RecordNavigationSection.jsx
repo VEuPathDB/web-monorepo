@@ -68,7 +68,8 @@ class RecordNavigationSection extends React.PureComponent {
       navigationQuery,
       navigationCategoriesExpanded,
       onNavigationCategoryExpansionChange,
-      onSectionToggle
+      onSectionToggle,
+      visibilityFilter = isNotAttribute
     } = this.props;
 
     return (
@@ -78,7 +79,7 @@ class RecordNavigationSection extends React.PureComponent {
         </h2>
         <CategoriesCheckboxTree
           disableHelp
-          visibilityFilter={isNotAttribute}
+          visibilityFilter={visibilityFilter}
           searchBoxPlaceholder="Search section names..."
           tree={categoryTree}
           leafType="section"

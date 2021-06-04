@@ -71,6 +71,7 @@ import ResultPanelHeader from 'wdk-client/Views/Strategy/ResultPanelHeader';
 import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
 import SliderInput from 'wdk-client/Components/InputControls/SliderInput';
 import UnhandledErrors from 'wdk-client/Views/UnhandledErrors/UnhandledErrors';
+import RecordNavigationSection from 'wdk-client/Views/Records/RecordNavigation/RecordNavigationSection';
 import { SearchInputSelector } from 'wdk-client/Views/Strategy/SearchInputSelector';
 
 export {
@@ -124,6 +125,7 @@ export {
   RecordHeading,
   RecordLink,
   RecordMainSection,
+  RecordNavigationSection,
   RecordTable,
   RecordTableDescription,
   RecordTableSection,
