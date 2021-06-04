@@ -46,7 +46,54 @@
 
   .wdk-CheckboxTreeItem__leaf {
     .wdk-CheckboxTreeNodeContent {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-direction: row-reverse;
+
       margin-left: -1ex;
     }
+
+    i {
+      font-size: 1.1em;
+
+      &.fa-star {
+        font-size: 1.2em;
+      }
+    }
+  }
+
+  .EDAWorkspace-StarButton {
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .EDAWorkspace-StarredVariablesFilter {
+    padding: 0.5em;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.4em;
+
+    &:disabled {
+      opacity: 0.5;
+    }
+
+    i {
+      margin: 0;
+    }
+  }
+
+  .fa-star-o {
+    color: #767676;
+  }
+
+  .fa-star {
+    color: #f8cb6a;
+  }
+
+  .wdk-CheckboxTreeFilters {
+    gap: 0.5em;
   }
 }

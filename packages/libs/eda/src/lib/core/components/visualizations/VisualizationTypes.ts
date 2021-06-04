@@ -16,6 +16,8 @@ export interface VisualizationProps {
   updateVisualization?: (newViz: Visualization) => void;
   computation: Computation;
   filters: Filter[];
+  starredVariables: string[];
+  toggleStarredVariable: (targetVariableId: string) => void;
 }
 
 export type SelectorProps = VisualizationOverview;

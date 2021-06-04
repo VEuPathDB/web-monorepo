@@ -88,15 +88,7 @@ interface ScatterplotData<T extends number | Date> {
 }
 
 function GridComponent(props: VisualizationProps) {
-  const { visualization, computation, filters } = props;
-  return (
-    <ScatterplotViz
-      visualization={visualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={false}
-    />
-  );
+  return <ScatterplotViz {...props} fullscreen={false} />;
 }
 
 // this needs a handling of text/image for scatter, line, and density plots
@@ -146,6 +138,8 @@ function ScatterplotViz(props: Props) {
     fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -314,6 +308,8 @@ function ScatterplotViz(props: Props) {
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
           />
         </div>
       )}

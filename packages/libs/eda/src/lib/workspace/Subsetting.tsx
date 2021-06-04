@@ -1,10 +1,12 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import { AnalysisState, useMakeVariableLink, useStudyMetadata } from '../core';
+import { useMakeVariableLink, useStudyMetadata } from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from './Utils';
 import { Variable } from './Variable';
+import { AnalysisState } from '../core/hooks/analysis';
 import { useEntityCounts } from '../core/hooks/entityCounts';
+import { useToggleStarredVariable } from '../core/hooks/starredVariables';
 import { VariableTree } from '../core/components/VariableTree';
 import FilterChipList from '../core/components/FilterChipList';
 
@@ -27,6 +29,8 @@ export function Subsetting(props: Props) {
   const filteredCounts = useEntityCounts(analysisState.analysis?.filters);
   const makeVariableLink = useMakeVariableLink();
 
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
+
   if (entity == null || variable == null)
     return <div>Could not find specified variable.</div>;
 
@@ -48,6 +52,8 @@ export function Subsetting(props: Props) {
           <VariableTree
             rootEntity={entities[0]}
             entityId={entity.id}
+            starredVariables={analysisState.analysis?.starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
             variableId={variable.id}
             onChange={(variable) => {
               if (variable) {
