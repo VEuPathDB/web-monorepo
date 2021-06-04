@@ -173,10 +173,10 @@ export default function VariableList(props: VariableListProps) {
   );
 
   const availableVariables = useMemo(() => {
-    const availableVariablesArray = getLeaves(
-      fieldTree,
-      (node) => node.children
-    ).map((node) => node.field.term.split('/')[1]);
+    const availableVariablesArray = preorderSeq(fieldTree)
+      .filter((node) => isFilterField(node.field))
+      .map((node) => node.field.term.split('/')[1])
+      .toArray();
 
     return new Set(availableVariablesArray);
   }, [fieldTree]);
