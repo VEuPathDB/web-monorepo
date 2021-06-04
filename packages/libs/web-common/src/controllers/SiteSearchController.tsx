@@ -328,7 +328,7 @@ async function runRequest(requestBody: SiteSearchRequest): Promise<string> {
     method: 'POST',
     body: JSON.stringify(requestBody),
     headers: {
-      'Accepts': 'application/json',
+      'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
     mode: 'cors'
