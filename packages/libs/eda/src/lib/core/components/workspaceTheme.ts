@@ -14,4 +14,24 @@ export const workspaceTheme: ThemeOptions = {
       contrastText: '#fff',
     },
   },
+  props: {
+    MuiButton: {
+      color: 'default',
+      disableRipple: true,
+      variant: 'contained',
+    },
+  },
+  overrides: {
+    MuiButton: {
+      root: {
+        lineHeight: 1.25,
+      },
+      contained: {
+        textTransform: 'none',
+      },
+      containedSizeSmall: {
+        padding: '4px 8px',
+      },
+    },
+  },
 };
