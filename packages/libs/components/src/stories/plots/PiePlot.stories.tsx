@@ -104,6 +104,29 @@ Basic.args = {
   },
 };
 
+export const BasicLoading = NoControlsTemplate.bind({});
+Basic.args = {
+  data: data,
+  width: 600,
+  height: 450,
+  title: 'Pie Plot',
+  legendOptions: {
+    horizontalPosition: 'right',
+    horizontalPaddingAdjustment: 0.1,
+    verticalPosition: 'top',
+    verticalPaddingAdjustment: 0,
+    orientation: 'vertical',
+  },
+  spacingOptions: {
+    marginBottom: 80,
+    marginLeft: 50,
+    marginRight: 80,
+    marginTop: 100,
+    padding: 0,
+  },
+  showSpinner: true,
+};
+
 export const CustomSliceColors = NoControlsTemplate.bind({});
 CustomSliceColors.args = {
   ...Basic.args,

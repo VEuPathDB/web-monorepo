@@ -1,6 +1,7 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
 import { PlotData, Layout, Annotations } from 'plotly.js';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export interface Props extends PlotProps {
   data: Array<{
@@ -91,18 +92,34 @@ export default function Heatmap(props: Props) {
   }));
 
   return (
-    <PlotlyPlot
-      data={finalData}
-      layout={Object.assign(layout, {
-        width: width,
-        height: height,
-        margin: margin,
-      })}
-      config={{
-        displayModeBar:
-          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
-        staticPlot: props.staticPlot,
-      }}
-    />
+    <div>
+      <PlotlyPlot
+        data={finalData}
+        layout={Object.assign(layout, {
+          width: width,
+          height: height,
+          margin: margin,
+        })}
+        config={{
+          displayModeBar:
+            props.showModebar !== undefined
+              ? props.showModebar
+              : ModebarDefault,
+          staticPlot: props.staticPlot,
+        }}
+      />
+      {props.showSpinner && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <CircularProgress color={'secondary'} size={50} thickness={5} />
+        </div>
+      )}
+    </div>
   );
 }

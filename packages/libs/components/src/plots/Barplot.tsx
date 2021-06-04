@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
@@ -158,24 +159,38 @@ export default function Barplot({
   };
 
   return (
-    <PlotlyPlot
-      data={plotlyFriendlyData}
-      revision={revision}
-      layout={{
-        ...layout,
-        ...{
-          autosize: true,
-          width: width,
-          height: height,
-          margin: props.margin ? props.margin : undefined,
-          showlegend: displayLegend,
-          selectdirection: orientation === 'vertical' ? 'h' : 'v',
-        },
-      }}
-      config={{
-        displayModeBar: displayLibraryControls ? 'hover' : false,
-        staticPlot: props.staticPlot ? props.staticPlot : false,
-      }}
-    />
+    <div>
+      <PlotlyPlot
+        data={plotlyFriendlyData}
+        revision={revision}
+        layout={{
+          ...layout,
+          ...{
+            autosize: true,
+            width: width,
+            height: height,
+            margin: props.margin ? props.margin : undefined,
+            showlegend: displayLegend,
+            selectdirection: orientation === 'vertical' ? 'h' : 'v',
+          },
+        }}
+        config={{
+          displayModeBar: displayLibraryControls ? 'hover' : false,
+          staticPlot: props.staticPlot ? props.staticPlot : false,
+        }}
+      />
+      {props.showSpinner && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <CircularProgress color={'secondary'} size={50} thickness={5} />
+        </div>
+      )}
+    </div>
   );
 }

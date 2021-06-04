@@ -103,6 +103,20 @@ export const Basic = () => (
   />
 );
 
+export const BasicLoading = () => (
+  <Heatmap
+    data={dataSetProcessBasic}
+    showValue={dataBasic.showValue}
+    // zsmooth={dataBasic.zsmooth}             //DKDK get this value from data: if not set, it will be false
+    xLabel="foo"
+    yLabel="bar"
+    plotTitle="Basic data: showValue = false"
+    width={plotWidth}
+    height={plotHeight}
+    showSpinner={true}
+  />
+);
+
 export const Categorical = () => (
   <Heatmap
     data={dataSetProcessCategorical}

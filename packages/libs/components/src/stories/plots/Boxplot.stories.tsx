@@ -78,6 +78,17 @@ Basic.argTypes = storyArgTypes(
   })
 );
 
+export const BasicLoading: Story<Props> = Template.bind({});
+BasicLoading.argTypes = storyArgTypes(
+  (BasicLoading.args = {
+    data: [
+      { ...catData, label: 'cats' },
+      { ...dogData, label: 'dogs' },
+    ],
+    showSpinner: true,
+  })
+);
+
 export const NoOutliersGiven: Story<Props> = Template.bind({});
 NoOutliersGiven.argTypes = storyArgTypes(
   (NoOutliersGiven.args = {

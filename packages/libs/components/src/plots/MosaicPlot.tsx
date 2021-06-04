@@ -19,7 +19,6 @@ export interface Props extends Omit<PlotProps, 'width' | 'height'> {
   titleSize?: number;
   width?: number | string;
   height?: number | string;
-  showSpinner?: boolean;
 }
 
 export default function MosaicPlot(props: Props) {

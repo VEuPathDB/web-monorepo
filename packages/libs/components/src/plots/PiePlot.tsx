@@ -2,6 +2,7 @@ import React from 'react';
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
 import PlotlyPlot from './PlotlyPlot';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
@@ -68,6 +69,8 @@ export type PiePlotProps = {
      * */
     displayTemplate?: string | string[];
   };
+  /** Show a loading spinner on top of the plot */
+  showSpinner?: boolean;
 };
 
 /** A Plot.ly based Pie plot. */
@@ -85,6 +88,7 @@ export default function PiePlot({
   donutOptions,
   textOptions,
   spacingOptions,
+  showSpinner,
 }: PiePlotProps) {
   const defaultColorIter = defaultColorGen();
   let newData: Partial<PlotData>[] = [];
@@ -197,46 +201,60 @@ export default function PiePlot({
   newData.push(primaryDataTrace);
 
   return (
-    <PlotlyPlot
-      // Type definitions from Plot.ly library are out of date.
-      // In order to avoid Typescript barfing, we have to perform this
-      // casting.
-      data={newData as PlotlyPlotData[]}
-      layout={{
-        ...layout,
-        width: width,
-        height: height,
-        plot_bgcolor: backgroundColor,
-        paper_bgcolor: backgroundColor,
-        // SUPER GROSS, modebar is a valid attribute here, but not
-        // correctly included in Plot.ly type definitoins.
-        // @ts-ignore
-        modebar: {
-          bgcolor: 'white',
-        },
-        showlegend: displayLegend,
-        title: {
-          text: title,
-          font: {
-            family: 'Helvetica, Arial, sans-serif',
-            color: DARK_GRAY,
-            size: 24,
+    <div>
+      <PlotlyPlot
+        // Type definitions from Plot.ly library are out of date.
+        // In order to avoid Typescript barfing, we have to perform this
+        // casting.
+        data={newData as PlotlyPlotData[]}
+        layout={{
+          ...layout,
+          width: width,
+          height: height,
+          plot_bgcolor: backgroundColor,
+          paper_bgcolor: backgroundColor,
+          // SUPER GROSS, modebar is a valid attribute here, but not
+          // correctly included in Plot.ly type definitoins.
+          // @ts-ignore
+          modebar: {
+            bgcolor: 'white',
           },
-          xref: 'paper',
-          x: 0,
-        },
-        margin: {
-          t: spacingOptions?.marginTop,
-          r: spacingOptions?.marginRight,
-          b: spacingOptions?.marginBottom,
-          l: spacingOptions?.marginLeft,
-          pad: spacingOptions?.padding,
-        },
-      }}
-      config={{
-        displayModeBar: displayLibraryControls,
-        displaylogo: false,
-      }}
-    />
+          showlegend: displayLegend,
+          title: {
+            text: title,
+            font: {
+              family: 'Helvetica, Arial, sans-serif',
+              color: DARK_GRAY,
+              size: 24,
+            },
+            xref: 'paper',
+            x: 0,
+          },
+          margin: {
+            t: spacingOptions?.marginTop,
+            r: spacingOptions?.marginRight,
+            b: spacingOptions?.marginBottom,
+            l: spacingOptions?.marginLeft,
+            pad: spacingOptions?.padding,
+          },
+        }}
+        config={{
+          displayModeBar: displayLibraryControls,
+          displaylogo: false,
+        }}
+      />
+      {showSpinner && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <CircularProgress color={'secondary'} size={50} thickness={5} />
+        </div>
+      )}
+    </div>
   );
 }

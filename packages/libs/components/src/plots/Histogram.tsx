@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
@@ -80,6 +81,8 @@ export interface HistogramProps {
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
   isZoomed?: boolean;
+  /** Show a loading spinner on top of the plot */
+  showSpinner?: boolean;
 }
 
 /** A Plot.ly based histogram component. */
@@ -109,6 +112,7 @@ export default function Histogram({
   onSelectedRangeChange = () => {},
   selectedRangeBounds,
   isZoomed = false,
+  showSpinner,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -436,6 +440,18 @@ export default function Histogram({
           showTips: true, // shows 'double click to zoom out' help for new users
         }}
       />
+      {showSpinner && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <CircularProgress color={'secondary'} size={50} thickness={5} />
+        </div>
+      )}
     </div>
   );
 }
