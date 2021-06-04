@@ -1,5 +1,7 @@
 // load scatter plot component
-import XYPlot from '@veupathdb/components/lib/plots/XYPlot';
+import XYPlot, {
+  ScatterplotProps,
+} from '@veupathdb/components/lib/plots/XYPlot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -43,49 +45,6 @@ export const scatterplotVisualization: VisualizationType = {
   fullscreenComponent: FullscreenComponent,
   createDefaultConfig: createDefaultConfig,
 };
-
-interface ScatterplotData<T extends number | Date> {
-  dataSetProcess: Array<{
-    /** x/y data */
-    x: T[];
-    y: T[];
-    /** legend text */
-    name?: string;
-    /** plot style */
-    mode?: 'markers' | 'lines' | 'lines+markers';
-    /** plot with marker: scatter plot with raw data */
-    marker?: {
-      /** marker color */
-      color?: string;
-      /** marker size: no unit */
-      size?: number;
-      /** marker's perimeter setting */
-      line?: {
-        /** marker's perimeter color */
-        color?: string;
-        /** marker's perimeter color: no unit */
-        width?: number;
-      };
-    };
-    /** plot with marker: scatter plot with smoothedMean and bestfitline; line and density plots */
-    line?: {
-      /** line color */
-      color?: string;
-      /** line style */
-      shape?: 'spline' | 'linear';
-      /** line width: no unit */
-      width?: number;
-    };
-    /** filling plots: tozerox - scatter plot's confidence interval; toself - density plot */
-    fill?: 'tozerox' | 'toself';
-    /** filling plots: color */
-    fillcolor?: string;
-  }>;
-  xMin: T;
-  xMax: T;
-  yMin: T;
-  yMax: T;
-}
 
 function GridComponent(props: VisualizationProps) {
   const { visualization, computation, filters } = props;
@@ -223,11 +182,9 @@ function ScatterplotViz(props: Props) {
   );
 
   const data = usePromise(
-    // useCallback(async (): Promise<ScatterplotData<number>> => {
     useCallback(async (): Promise<any> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
-      const overlayVariable = findVariable(vizConfig.overlayVariable);
 
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
@@ -413,6 +370,12 @@ function ScatterplotViz(props: Props) {
   );
 }
 
+type ScatterplotWithControlsProps = ScatterplotProps & {
+  valueSpec: string | undefined;
+  onValueSpecChange: (value: string) => void;
+  vizType: string;
+};
+
 function ScatterplotWithControls({
   data,
   // XYPlotControls: set initial value as 'raw' ('Raw')
@@ -420,9 +383,7 @@ function ScatterplotWithControls({
   onValueSpecChange,
   vizType,
   ...ScatterplotProps
-}: //
-// }: ScatterplotWithControlsProps) {
-any) {
+}: ScatterplotWithControlsProps) {
   // TODO Use UIState
   const errorManagement = useMemo((): ErrorManagement => {
     return {
@@ -466,7 +427,7 @@ export function scatterplotResponseToData(
   >,
   // vizType may be used for handling other plots in this component like line and density
   vizType: string
-): any {
+) {
   const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
 
   const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(
@@ -580,7 +541,7 @@ function processInputData<T extends number | Date>(
   ];
 
   let dataSetProcess: Array<{}> = [];
-  // dataSet.data.forEach(function (el: any, index: number) {
+
   plotDataSet.data.forEach(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xSeriesValue: T[] = [];

@@ -1,5 +1,5 @@
 // load Barplot component
-import Barplot from '@veupathdb/components/lib/plots/Barplot';
+import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -143,8 +143,6 @@ function BarplotViz(props: Props) {
   );
 
   const data = usePromise(
-    // set any for now
-    // useCallback(async (): Promise<BarplotData> => {
     useCallback(async (): Promise<any> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const overlayVariable = findVariable(vizConfig.overlayVariable);
@@ -158,9 +156,7 @@ function BarplotViz(props: Props) {
         studyId,
         filters ?? [],
         vizConfig.xAxisVariable!,
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
-        // add visualization.type
-        visualization.type
+        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined
       );
 
       // barplot
@@ -170,7 +166,7 @@ function BarplotViz(props: Props) {
       );
 
       // send visualization.type as well
-      return barplotResponseToData(await response, visualization.type);
+      return barplotResponseToData(await response);
     }, [
       studyId,
       filters,
@@ -292,13 +288,15 @@ function BarplotViz(props: Props) {
   );
 }
 
+type BarplotWithControlsProps = BarplotProps & {
+  vizType?: string;
+};
+
 function BarplotWithControls({
   data,
   vizType,
-  ...BarplotProps
-}: //
-// }: BarplotWithControlsProps) {
-any) {
+  ...BarplotControlsProps
+}: BarplotWithControlsProps) {
   // TODO Use UIState
   const errorManagement = useMemo((): ErrorManagement => {
     return {
@@ -312,7 +310,7 @@ any) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Barplot
-        {...BarplotProps}
+        {...BarplotControlsProps}
         data={data}
         // add controls
         // displayLegend={true}
@@ -333,10 +331,8 @@ any) {
  * @returns BarplotData
  */
 export function barplotResponseToData(
-  response: PromiseType<ReturnType<DataClient['getBarplot']>>,
-  // vizType may be used for handling other plots in this component like line and density
-  vizType: string
-): any {
+  response: PromiseType<ReturnType<DataClient['getBarplot']>>
+) {
   return {
     series: response.barplot.data.map((data, index) => ({
       // name has value if using overlay variable
@@ -355,10 +351,8 @@ function getRequestParams(
   studyId: string,
   filters: Filter[],
   xAxisVariable: Variable,
-  overlayVariable?: Variable,
-  // add visualization.type
-  vizType?: string
-): getRequestParamsProps {
+  overlayVariable?: Variable
+): BarplotRequestParams {
   return {
     studyId,
     filters,
