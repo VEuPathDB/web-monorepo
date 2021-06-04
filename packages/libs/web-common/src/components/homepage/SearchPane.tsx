@@ -8,7 +8,7 @@ import { LinksPosition } from '@veupathdb/wdk-client/lib/Components/CheckboxTree
 import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { CategoryTreeNode, getDisplayName, getTargetType, getRecordClassUrlSegment, getTooltipContent } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { makeClassNameHelper, wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { decode, arrayOf, string } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { Question } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
@@ -19,7 +19,7 @@ import './SearchPane.scss';
 const cx = makeClassNameHelper('ebrc-SearchPane');
 const EXPANDED_BRANCHES_SESSION_KEY = 'homepage-left-panel-expanded-branch-ids';
 
-type Props = {
+export type Props = {
   containerClassName?: string,
   searchTree: CategoryTreeNode | undefined
 };
@@ -53,7 +53,7 @@ export const SearchPane = (props: Props) => {
   );
 }
 
-type SearchCheckboxTreeProps = {
+export type SearchCheckboxTreeProps = {
   searchTree?: CategoryTreeNode,
   searchTerm: string,
   expandedBranches: string[],
@@ -63,7 +63,7 @@ type SearchCheckboxTreeProps = {
   showSearchBox?: boolean
 };
 
-export const SearchCheckboxTree = (props: SearchCheckboxTreeProps) => {
+export const SearchCheckboxTree = wrappable((props: SearchCheckboxTreeProps) => {
   const noSelectedLeaves = useMemo(
     () => [] as string[],
     []
@@ -92,7 +92,7 @@ export const SearchCheckboxTree = (props: SearchCheckboxTreeProps) => {
         showSearchBox={props.showSearchBox != null ? props.showSearchBox : true}
         linksPosition={props.linksPosition != null ? props.linksPosition : LinksPosition.Top}
       />;
-}
+});
 
 const renderNodeFactory = (questionsByUrlSegment: Record<string, Question> | undefined = {}) => (node: any, path: number[] | undefined) => {
   const isSearch = getTargetType(node) === 'search';
