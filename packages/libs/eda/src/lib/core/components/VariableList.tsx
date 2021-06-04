@@ -403,9 +403,8 @@ function makeStarButtonTooltipContent(
 ) {
   return (
     <>
-      Click to {isStarred ? 'remove' : 'add'}{' '}
-      <strong>{node.field.display}</strong> {isStarred ? 'from' : 'to'}{' '}
-      <strong>My Variables</strong>.
+      Click to {isStarred ? 'unstar' : 'star'}{' '}
+      <strong>{node.field.display}</strong>.
     </>
   );
 }
@@ -415,15 +414,10 @@ function makeStarredVariablesFilterTooltipContent(
   starredVariablesToggleDisabled: boolean
 ) {
   return starredVariablesToggleDisabled ? (
-    <>
-      To use this filter, add at least one variable to{' '}
-      <strong>My Variables</strong>.
-    </>
+    <>To use this filter, star at least one variable below.</>
   ) : showOnlyStarredVariables ? (
     <>Click to show all variables.</>
   ) : (
-    <>
-      Click to show only variables from <strong>My Variables</strong>.
-    </>
+    <>Click to show only starred variables.</>
   );
 }
