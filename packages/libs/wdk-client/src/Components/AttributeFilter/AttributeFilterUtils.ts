@@ -140,14 +140,22 @@ const GENERATED_ROOT: Field = {
   display: '@@root@@'
 }
 
-export function getTree(ontologyEntries: Iterable<Field>): FieldTreeNode {
+export interface TreeOptions {
+  hideSingleRoot: boolean;
+}
+
+export const defaultTreeOptions: TreeOptions = {
+  hideSingleRoot: true
+}
+
+export function getTree(ontologyEntries: Iterable<Field>, options: TreeOptions = defaultTreeOptions): FieldTreeNode {
   const entriesByParentTerm = mapBy(ontologyEntries, term => term.parent);
   const rootFields = entriesByParentTerm.get(undefined) || [];
   const rootChildren = rootFields.map(makeOntologyNode(entriesByParentTerm));
 
   // Return single root child, but only if it has children. Otherwise, we need
   // to place the single root beneath a generated root (below).
-  return rootChildren.length == 1 && rootChildren[0].children.length > 0
+  return options.hideSingleRoot && rootChildren.length == 1 && rootChildren[0].children.length > 0
     ? rootChildren[0]
     : { field: GENERATED_ROOT, children: rootChildren };
 }

@@ -18,7 +18,7 @@ let interpretFormStatus = (formStatus, errorMessage) => {
       disableSubmit = true;
       break;
     case 'success':
-      message = "You have registered successfully.  Please check your email for a temporary password.";
+      message = "You have registered successfully.  Please check your email (inbox and spam folder) for a temporary password.";
       messageClass += "wdk-UserProfile-success";
       disableSubmit = true; // same as 'new'
       break;
