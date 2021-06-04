@@ -1,6 +1,7 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
 import { PlotParams } from 'react-plotly.js';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import _ from 'lodash';
 
 export interface Props extends Omit<PlotProps, 'width' | 'height'> {
@@ -18,6 +19,7 @@ export interface Props extends Omit<PlotProps, 'width' | 'height'> {
   titleSize?: number;
   width?: number | string;
   height?: number | string;
+  showSpinner?: boolean;
 }
 
 export default function MosaicPlot(props: Props) {
@@ -110,18 +112,34 @@ export default function MosaicPlot(props: Props) {
   if (props.showColumnLabels !== false) data.push({ xaxis: 'x2' });
 
   return (
-    <PlotlyPlot
-      data={data}
-      style={{ width: props.width, height: props.height }}
-      layout={Object.assign(layout, {
-        margin: props.margin,
-        showlegend: props.showLegend,
-      })}
-      config={{
-        displayModeBar:
-          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
-        staticPlot: props.staticPlot,
-      }}
-    />
+    <div>
+      <PlotlyPlot
+        data={data}
+        style={{ width: props.width, height: props.height }}
+        layout={Object.assign(layout, {
+          margin: props.margin,
+          showlegend: props.showLegend,
+        })}
+        config={{
+          displayModeBar:
+            props.showModebar !== undefined
+              ? props.showModebar
+              : ModebarDefault,
+          staticPlot: props.staticPlot,
+        }}
+      />
+      {props.showSpinner && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <CircularProgress color={'secondary'} size={50} thickness={5} />
+        </div>
+      )}
+    </div>
   );
 }

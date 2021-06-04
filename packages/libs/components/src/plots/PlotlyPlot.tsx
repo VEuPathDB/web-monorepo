@@ -25,6 +25,8 @@ export interface PlotProps {
   showModebar?: boolean | 'hover';
   // add legend prop for positioning
   legend?: legendProp;
+  // show a loading spinner on top of the plot
+  showSpinner?: boolean;
 }
 
 // Passing undefined doesn't revert to default modebar behavior,
