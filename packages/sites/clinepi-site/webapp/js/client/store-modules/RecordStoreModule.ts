@@ -1,3 +1,5 @@
+import { combineEpics } from 'redux-observable';
+
 import { Action, RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as RecordStoreModule from '@veupathdb/wdk-client/lib/StoreModules/RecordStoreModule';
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -21,7 +23,16 @@ export function reduce(state: RecordStoreModule.State, action: Action) {
       };
 }
 
-export const observe = RecordStoreModule.observe;
+const {
+  observeNavigationVisibilityPreference,
+  observeNavigationVisibilityState
+} = RecordStoreModule.makeNavigationVisibilityPreferenceEpics(_ => true);
+
+export const observe = combineEpics(
+  RecordStoreModule.observe,
+  observeNavigationVisibilityPreference,
+  observeNavigationVisibilityState
+);
 
 function isDatasetRecord(record: RecordInstance | undefined) {
   return record?.recordClassName === 'DatasetRecordClasses.DatasetRecordClass';
