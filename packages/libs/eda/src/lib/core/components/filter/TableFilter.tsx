@@ -119,12 +119,16 @@ export function TableFilter({
           count: bgValueByLabel[label],
           filteredCount: fgValueByLabel[label] ?? 0,
         })),
-        entitiesCount:
-          totalEntityCount -
-          distribution.background.barplot.config.incompleteCases,
-        filteredEntitiesCount:
-          filteredEntityCount -
-          distribution.foreground.barplot.config.incompleteCases,
+        entitiesCount: Array.isArray(
+          distribution.background.completeCasesTable[0].completeCases
+        )
+          ? distribution.background.completeCasesTable[0].completeCases[0]
+          : distribution.background.completeCasesTable[0].completeCases,
+        filteredEntitiesCount: Array.isArray(
+          distribution.foreground.completeCasesTable[0].completeCases
+        )
+          ? distribution.foreground.completeCasesTable[0].completeCases[0]
+          : distribution.foreground.completeCasesTable[0].completeCases,
       };
     }, [
       entity.id,
@@ -318,8 +322,8 @@ export function TableFilter({
         tableSummary.value.variableId === variable.id && (
           <MembershipField
             displayName={entity.displayName}
-            dataCount={tableSummary.value.entitiesCount}
-            filteredDataCount={tableSummary.value.filteredEntitiesCount}
+            dataCount={totalEntityCount}
+            filteredDataCount={filteredEntityCount}
             filter={tableFilter}
             activeField={activeField}
             activeFieldState={activeFieldState}
