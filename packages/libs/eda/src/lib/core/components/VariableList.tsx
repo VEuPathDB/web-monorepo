@@ -18,6 +18,7 @@ import {
   makeSearchHelpText,
 } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
+  getLeaves,
   preorderSeq,
   pruneDescendantNodes,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -171,11 +172,24 @@ export default function VariableList(props: VariableListProps) {
     [getFieldSearchString]
   );
 
+  const availableVariables = useMemo(() => {
+    const availableVariablesArray = getLeaves(
+      fieldTree,
+      (node) => node.children
+    ).map((node) => node.field.term.split('/')[1]);
+
+    return new Set(availableVariablesArray);
+  }, [fieldTree]);
+
   const starredVariablesLoading = starredVariables == null;
 
-  const starredVariablesSet = useMemo(() => new Set(starredVariables), [
-    starredVariables,
-  ]);
+  const starredVariablesSet = useMemo(() => {
+    const presentStarredVariables = starredVariables?.filter((variableId) =>
+      availableVariables.has(variableId)
+    );
+
+    return new Set(presentStarredVariables);
+  }, [availableVariables, starredVariables]);
 
   const renderNode = useCallback(
     (node: FieldTreeNode) => {
