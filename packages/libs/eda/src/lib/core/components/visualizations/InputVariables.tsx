@@ -63,7 +63,6 @@ const useStyles = makeStyles(
       border: 0,
       padding: '1.5em',
       borderRadius: '10px',
-      color: 'rgb(150, 150, 150)',
     },
     inputs: {
       display: 'flex',
@@ -78,7 +77,6 @@ const useStyles = makeStyles(
     label: {
       marginRight: '1ex',
       fontWeight: 'bold',
-      textTransform: 'uppercase',
     },
     dataLabel: {
       textAlign: 'right',

@@ -95,13 +95,10 @@ function ConfiguredVisualizations(props: Props) {
   if (computation == null) return <div>Computation not found</div>;
   return (
     <Grid>
-      <div className={cx('-NewVisualization')}>
-        <Link to={`${url}/new`}>
-          <i className="fa fa-plus"></i>
-          <br />
-          Add a visualization
-        </Link>
-      </div>
+      <Link to={`${url}/new`} className={cx('-NewVisualization')}>
+        <i className="fa fa-plus"></i>
+        Select a visualization
+      </Link>
       {scopedVisualizations
         .map((viz) => {
           const type = visualizationTypes[viz.type];
@@ -125,7 +122,15 @@ function ConfiguredVisualizations(props: Props) {
                       title="Copy visualization"
                       type="button"
                       className="link"
-                      onClick={() => addVisualization({ ...viz, id: uuid() })}
+                      onClick={() =>
+                        addVisualization({
+                          ...viz,
+                          displayName: `Copy of ${
+                            viz.displayName ?? 'visualization'
+                          }`,
+                          id: uuid(),
+                        })
+                      }
                     >
                       <i className="fa fa-clone"></i>
                     </button>
@@ -198,7 +203,8 @@ function NewVisualizationPicker(props: Props) {
                     id,
                     computationId: computationId,
                     type: vizOverview.name!,
-                    displayName: 'Unnamed visualization',
+                    displayName:
+                      'Unnamed ' + (vizOverview.displayName ?? 'visualization'),
                     configuration: vizType?.createDefaultConfig(),
                   });
                   history.push(`../${computationId}/${id}`);
@@ -212,9 +218,6 @@ function NewVisualizationPicker(props: Props) {
               </button>
               <div className={cx('-PickerEntryName')}>
                 <div>{vizOverview.displayName}</div>
-                <div>
-                  <small>{vizOverview.name}</small>
-                </div>
               </div>
             </div>
           );
@@ -281,7 +284,9 @@ function FullScreenVisualization(props: Props & { id: string }) {
                 ...viz,
                 id,
                 displayName:
-                  'Copy of ' + (viz.displayName || 'unnamed visualization'),
+                  'Copy of ' +
+                  (viz.displayName ||
+                    ('unnamed ' + overview?.displayName ?? 'visualization')),
               });
               history.replace(
                 Path.resolve(history.location.pathname, '..', id)
@@ -307,7 +312,11 @@ function FullScreenVisualization(props: Props & { id: string }) {
         <div>
           <h1>
             <SaveableTextEditor
-              value={viz.displayName ?? 'Unnamed visualization'}
+              value={
+                viz.displayName ??
+                'unnamed ' + overview?.displayName ??
+                'visualization'
+              }
               onSave={(value) =>
                 updateVisualization({ ...viz, displayName: value })
               }
