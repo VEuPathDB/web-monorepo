@@ -23,6 +23,7 @@ import {
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import CheckboxTree from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 import {
   isFilterField,
@@ -238,7 +239,8 @@ export default function VariableList(props: VariableListProps) {
             onClick={toggleShowOnlyStarredVariables}
             disabled={starredVariableToggleDisabled}
           >
-            <Icon fa={showOnlyStarredVariables ? 'star' : 'star-o'} />
+            <Toggle on={showOnlyStarredVariables} />
+            <Icon fa="star" />
           </button>
         </div>
       </Tooltip>,

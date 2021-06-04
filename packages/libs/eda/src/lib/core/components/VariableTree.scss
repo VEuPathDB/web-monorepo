@@ -72,6 +72,9 @@
 
   .EDAWorkspace-StarredVariablesFilter {
     padding: 0.5em;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.4em;
 
     &:disabled {
       opacity: 0.5;
