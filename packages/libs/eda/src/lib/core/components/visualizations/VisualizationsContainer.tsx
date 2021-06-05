@@ -310,7 +310,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </ContentError>
       ) : (
         <div>
-          <h1>
+          <h3>
             <SaveableTextEditor
               value={
                 viz.displayName ??
@@ -321,7 +321,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
                 updateVisualization({ ...viz, displayName: value })
               }
             />
-          </h1>
+          </h3>
           <vizType.fullscreenComponent
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
