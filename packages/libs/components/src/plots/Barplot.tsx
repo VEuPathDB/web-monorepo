@@ -60,7 +60,7 @@ export default function Barplot({
   height,
   orientation = 'vertical',
   title,
-  //DKDK do not set default values for axisLabels
+  // do not set default values for axisLabels
   independentAxisLabel,
   dependentAxisLabel,
   showBarValues = false,
@@ -81,16 +81,16 @@ export default function Barplot({
       data.series.map((el: any) => {
         let calculatedOpacity = 1;
 
-        //DKDK set opacity less than unity for overlay & multiple data
+        // set opacity less than unity for overlay & multiple data
         if (barLayout === 'overlay' && data.series.length > 1)
           calculatedOpacity = opacity * 0.75;
 
-        //DKDK check data exist
+        // check data exist
         if (el.label && el.value) {
           return {
             x: orientation === 'vertical' ? el.label : el.value,
             y: orientation === 'vertical' ? el.value : el.label,
-            name: el.name, //DKDK legend name
+            name: el.name, // legend name
             orientation: orientation === 'vertical' ? 'v' : 'h',
             opacity: calculatedOpacity,
             type: 'bar',

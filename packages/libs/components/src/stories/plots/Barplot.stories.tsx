@@ -1,9 +1,5 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-
 import Barplot from '../../plots/Barplot';
-// import usePlotControls from '../../hooks/usePlotControls';
-// import HistogramControls from '../../components/plotControls/HistogramControls';
-// import { HistogramData } from '../../types/plots';
 
 export default {
   title: 'Plots/Barplot',
@@ -25,7 +21,7 @@ const dataSet = {
   ],
 };
 
-//DKDK set initial props
+// set initial props
 const plotWidth = 1000;
 const plotHeight = 600;
 // let plotWidth = 350;
@@ -42,7 +38,7 @@ export const Basic = () => {
       height={plotHeight}
       // title={plotTitle}
       orientation={orientation}
-      //DKDK check this option later
+      // check this option later
       barLayout={barLayout}
       independentAxisLabel={'Independent axis name'}
       dependentAxisLabel={'Dependent axis name'}
@@ -65,7 +61,7 @@ export const EmptyData = () => {
       height={plotHeight}
       // title={plotTitle}
       orientation={orientation}
-      //DKDK check this option later
+      // check this option later
       barLayout={barLayout}
       independentAxisLabel={'Independent axis name'}
       dependentAxisLabel={'Dependent axis name'}
@@ -77,11 +73,11 @@ export const EmptyData = () => {
   );
 };
 
-//DKDK adding storybook control
+// adding storybook control
 const Template = (args: any) => <Barplot {...args} />;
 export const WithStorybookControl: Story<any> = Template.bind({});
 
-//DKDK set default values for args that use default storybook control
+// set default values for args that use default storybook control
 WithStorybookControl.args = {
   data: dataSet,
   width: plotWidth,
