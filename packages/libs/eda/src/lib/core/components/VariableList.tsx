@@ -2,7 +2,7 @@
  * This is based on FieldList.jsx for typing
  */
 
-import { difference, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import React, {
   useCallback,
   useEffect,
@@ -18,7 +18,6 @@ import {
   makeSearchHelpText,
 } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
 import {
-  getLeaves,
   preorderSeq,
   pruneDescendantNodes,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
