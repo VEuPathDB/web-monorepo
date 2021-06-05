@@ -37,7 +37,11 @@ export function VariableTree(props: Props) {
     variableId,
     onChange,
   } = props;
-  const entities = Array.from(preorder(rootEntity, (e) => e.children ?? []));
+  const entities = useMemo(
+    () => Array.from(preorder(rootEntity, (e) => e.children ?? [])),
+    [rootEntity]
+  );
+
   const fields = useMemo(() => {
     return entities.flatMap((entity) => {
       // Create a Set of variableId so we can lookup parentIds
