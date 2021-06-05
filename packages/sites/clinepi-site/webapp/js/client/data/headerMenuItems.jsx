@@ -71,7 +71,7 @@ export default function headerMenuItems (state, props) {
             route: `${STATIC_ROUTE_PATH}/ClinEpiDB/workshops.html`
           },
           {
-            text: 'External resources',
+            text: 'External Resources',
             route: `${STATIC_ROUTE_PATH}/ClinEpiDB/resources.html`
           }
         ]
