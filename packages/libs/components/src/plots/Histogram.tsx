@@ -382,7 +382,7 @@ export default function Histogram({
   };
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <PlotlyPlot
         useResizeHandler={true}
         revision={revision}

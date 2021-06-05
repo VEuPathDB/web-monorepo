@@ -159,7 +159,7 @@ export default function Barplot({
   };
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <PlotlyPlot
         data={plotlyFriendlyData}
         revision={revision}

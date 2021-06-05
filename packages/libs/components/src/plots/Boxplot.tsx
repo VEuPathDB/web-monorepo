@@ -99,7 +99,7 @@ export default function Boxplot({
     showlegend: false,
   };
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <PlotlyPlot
         data={pdata}
         layout={Object.assign(layout, {
