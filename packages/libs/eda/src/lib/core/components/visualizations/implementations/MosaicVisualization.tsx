@@ -174,7 +174,7 @@ function MosaicViz(props: Props) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<ContTableData | TwoByTwoData> => {
+    useCallback(async (): Promise<ContTableData | TwoByTwoData | undefined> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
       if (
@@ -183,27 +183,7 @@ function MosaicViz(props: Props) {
         vizConfig.yAxisVariable == null ||
         yAxisVariable == null
       )
-        return Promise.reject(
-          new Error('Please choose a variable for each axis')
-        );
-
-      const isValidVariable = isTwoByTwo
-        ? isTwoByTwoVariable
-        : isMosaicVariable;
-
-      if (xAxisVariable && !isValidVariable(xAxisVariable))
-        throw new Error(
-          `Please choose another x-axis variable. '${
-            xAxisVariable.displayName
-          }' is not suitable for ${isTwoByTwo ? '2x2' : ''} contingency tables`
-        );
-
-      if (yAxisVariable && !isValidVariable(yAxisVariable))
-        throw new Error(
-          `Please choose another y-axis variable. '${
-            yAxisVariable.displayName
-          }' is not suitable for ${isTwoByTwo ? '2x2' : ''} contingency tables`
-        );
+        return undefined;
 
       if (xAxisVariable === yAxisVariable)
         throw new Error(

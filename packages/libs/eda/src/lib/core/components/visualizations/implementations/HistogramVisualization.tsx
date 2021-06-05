@@ -174,14 +174,12 @@ function HistogramViz(props: Props) {
   }, [entities, vizConfig.xAxisVariable]);
 
   const data = usePromise(
-    useCallback(async (): Promise<HistogramData> => {
+    useCallback(async (): Promise<HistogramData | undefined> => {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return Promise.reject(new Error('Please choose a main variable'));
+        return undefined;
 
       if (xAxisVariable && !isHistogramVariable(xAxisVariable))
-        throw new Error(
-          `Please choose another main variable. '${xAxisVariable.displayName}' is not suitable for histograms`
-        );
+        return undefined;
 
       const params = getRequestParams(
         studyId,
