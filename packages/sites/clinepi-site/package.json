@@ -9,7 +9,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@veupathdb/eda": "^0.3.0",
+    "@veupathdb/eda": "^0.3.5",
     "@veupathdb/wdk-client": "^0.1.1-alpha.12",
     "@veupathdb/web-common": "^0.1.1-alpha.11"
   },
