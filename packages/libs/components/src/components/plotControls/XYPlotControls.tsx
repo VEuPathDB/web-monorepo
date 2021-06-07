@@ -4,14 +4,13 @@ import useDimensions from 'react-cool-dimensions';
 // Definitions
 import { LIGHT_BLUE, LIGHT_GRAY } from '../../constants/colors';
 import { ErrorManagement } from '../../types/general';
-import ControlsHeader from '../typography/ControlsHeader';
 
 // Local Components
-import ButtonGroup from '../widgets/ButtonGroup';
+import RadioButtonGroup from '../widgets/RadioButtonGroup';
 import Notification from '../widgets/Notification';
 
 /**
- * Props for scatterplot controls.
+ * Props for XYPlot controls.
  *
  * The presence or absence of an optional callback will
  * determine if that control is displayed.
@@ -24,16 +23,26 @@ export type XYPlotControlsProps = {
   /** Color to use as an accent in the control panel. Will accept any
    * valid CSS color definition. Defaults to LIGHT_BLUE */
   accentColor?: string;
-  /** Attributes and methdods for error management. */
+  /** Attributes and methods for error management. */
   errorManagement: ErrorManagement;
-  /** Scatterplot: valueSpec */
+  /** XYPlot: valueSpec */
   valueSpec?: string;
-  /** Scatterplot: valueSpec */
+  /** XYPlot: valueSpec */
   onValueSpecChange?: (valueSpec: string) => void;
+  /** How buttons are displayed. Vertical or Horizontal */
+  orientation?: 'vertical' | 'horizontal';
+  /** location of radio button label: start: label & button; end: button & label */
+  labelPlacement?: 'start' | 'end' | 'top' | 'bottom';
+  /** minimum width to set up equivalently spaced width per item */
+  minWidth?: number;
+  /** button color: for now, supporting blue and red only - primary: blue; secondary: red */
+  buttonColor?: 'primary' | 'secondary';
+  /** margin of radio button group: string array for top, left, bottom, and left, e.g., ['10em', '0', '0', '10em'] */
+  margins?: string[];
 };
 
 /**
- * A scatterplot controls panel.
+ * A XYPlot controls panel.
  *
  * If you prefer a different layout or composition, you can
  * contruct you own control panel by using the various
@@ -47,6 +56,11 @@ export default function XYPlotControls({
   // valueSpec
   valueSpec,
   onValueSpecChange,
+  orientation,
+  labelPlacement,
+  minWidth,
+  buttonColor,
+  margins,
 }: XYPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
@@ -82,12 +96,9 @@ export default function XYPlotControls({
         ...containerStyles,
       }}
     >
-      {/* <div
-        style={{ display: 'flex', flexWrap: 'wrap', paddingTop: '0.3125em' }}
-      > */}
       <div style={{ display: 'flex' }}>
         {valueSpec && onValueSpecChange && (
-          <ButtonGroup
+          <RadioButtonGroup
             label="Plot options"
             options={[
               'Raw',
@@ -98,6 +109,11 @@ export default function XYPlotControls({
             selectedOption={valueSpec}
             // @ts-ignore
             onOptionSelected={onValueSpecChange}
+            orientation={orientation}
+            labelPlacement={labelPlacement}
+            minWidth={minWidth}
+            buttonColor={buttonColor}
+            margins={margins}
           />
         )}
       </div>
@@ -112,13 +128,6 @@ export default function XYPlotControls({
           onAcknowledgement={() => errorManagement.removeError(error)}
         />
       ))}
-
-      {label && (
-        <ControlsHeader
-          text={label}
-          styleOverrides={{ paddingTop: '1.5625em', textAlign: 'right' }}
-        />
-      )}
     </div>
   );
 }

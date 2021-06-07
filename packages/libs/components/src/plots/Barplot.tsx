@@ -9,7 +9,7 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
 
 // in this example, the main variable is 'country'
-export interface BarplotProps extends PlotProps {
+export interface BarplotProps extends Omit<PlotProps, 'width' | 'height'> {
   /** the data series - e.g. one per overlay variable value (sex: 'male', 'female') */
   data: {
     series: {
@@ -21,6 +21,10 @@ export interface BarplotProps extends PlotProps {
       label: string[]; // e.g. India, Pakistan, Mali
     }[];
   };
+  /** The width of the plot in pixels (if number), or CSS length. */
+  width?: number | string;
+  /** The height of the plot in pixels (if number), or CSS length. */
+  height?: number | string;
   /** The orientation of the plot. Defaults to `vertical`  (--> general PlotProp?) */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
@@ -60,7 +64,7 @@ export default function Barplot({
   height,
   orientation = 'vertical',
   title,
-  //DKDK do not set default values for axisLabels
+  // do not set default values for axisLabels
   independentAxisLabel,
   dependentAxisLabel,
   showBarValues = false,
@@ -81,16 +85,16 @@ export default function Barplot({
       data.series.map((el: any) => {
         let calculatedOpacity = 1;
 
-        //DKDK set opacity less than unity for overlay & multiple data
+        // set opacity less than unity for overlay & multiple data
         if (barLayout === 'overlay' && data.series.length > 1)
           calculatedOpacity = opacity * 0.75;
 
-        //DKDK check data exist
+        // check data exist
         if (el.label && el.value) {
           return {
             x: orientation === 'vertical' ? el.label : el.value,
             y: orientation === 'vertical' ? el.value : el.label,
-            name: el.name, //DKDK legend name
+            name: el.name, // legend name
             orientation: orientation === 'vertical' ? 'v' : 'h',
             opacity: calculatedOpacity,
             type: 'bar',
@@ -161,12 +165,13 @@ export default function Barplot({
     <PlotlyPlot
       data={plotlyFriendlyData}
       revision={revision}
+      style={{ width: width, height: height }}
       layout={{
         ...layout,
         ...{
           autosize: true,
-          width: width,
-          height: height,
+          // width: width,
+          // height: height,
           margin: props.margin ? props.margin : undefined,
           showlegend: displayLegend,
           selectdirection: orientation === 'vertical' ? 'h' : 'v',
