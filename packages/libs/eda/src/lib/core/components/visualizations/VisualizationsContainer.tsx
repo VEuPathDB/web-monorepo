@@ -21,6 +21,7 @@ import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
+import PlaceholderIcon from './implementations/PlaceholderIcon';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -213,7 +214,7 @@ function NewVisualizationPicker(props: Props) {
                 {vizType ? (
                   <vizType.selectorComponent {...vizOverview} />
                 ) : (
-                  <div>NOT IMPLEMENTED</div>
+                  <PlaceholderIcon name={vizOverview.name} />
                 )}
               </button>
               <div className={cx('-PickerEntryName')}>
