@@ -75,6 +75,16 @@ export function Subsetting(props: Props) {
           selectedVariableId={variable.id}
         />
       </div>
+      <div className="TabularDownload">
+        <button
+          type="button"
+          className="link"
+          title={`Download current subset of ${entity.displayName}`}
+          onClick={() => alert('To be implemented')}
+        >
+          <i className="fa fa-table" />
+        </button>
+      </div>
       <div className="Filter">
         <Variable
           entity={entity}

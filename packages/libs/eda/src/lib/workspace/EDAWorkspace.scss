@@ -121,9 +121,9 @@
   &-Subsetting {
     display: grid;
     grid:
-      [row1-start] 'variables     filter-chips' auto [row1-end]
-      [row2-start] 'variables     filter' 1fr [row2-end]
-      / auto 1fr;
+      [row1-start] 'variables     filter-chips tabular-download' auto [row1-end]
+      [row2-start] 'variables     filter       filter' 1fr [row2-end]
+      / auto 1fr auto;
     gap: 1em 3em;
     padding-top: 1em;
     .Variables {
@@ -132,6 +132,10 @@
     .FilterChips {
       height: 2em;
       grid-area: filter-chips;
+    }
+    .TabularDownload {
+      grid-area: tabular-download;
+      font-size: 2em;
     }
     .Filter {
       grid-area: filter;
