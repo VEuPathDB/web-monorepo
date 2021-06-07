@@ -2,13 +2,14 @@
  * This is based on FieldList.jsx for typing
  */
 
-import { difference, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import React, {
-  useLayoutEffect,
-  useRef,
-  useEffect,
-  useState,
   useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'react';
 //correct paths as this is a copy of FieldList component at @veupathdb/
 import { scrollIntoViewIfNeeded } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
@@ -16,9 +17,13 @@ import {
   areTermsInString,
   makeSearchHelpText,
 } from '@veupathdb/wdk-client/lib/Utils/SearchUtils';
-import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  preorderSeq,
+  pruneDescendantNodes,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import CheckboxTree from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
+import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
 import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 import {
   isFilterField,
@@ -56,6 +61,9 @@ interface FieldNodeProps {
   isActive: boolean;
   handleFieldSelect: (node: VariableFieldTreeNode) => void;
   activeFieldEntity?: string;
+  isStarred: boolean;
+  starredVariablesLoading: boolean;
+  onClickStar: () => void;
 }
 
 type valuesMapType = Record<string, string>;
@@ -66,6 +74,8 @@ interface VariableListProps {
   valuesMap: valuesMapType;
   fieldTree: VariableFieldTreeNode;
   autoFocus: boolean;
+  starredVariables?: string[];
+  toggleStarredVariable: (targetVariableId: string) => void;
 }
 
 interface getNodeSearchStringType {
@@ -84,6 +94,8 @@ export default function VariableList(props: VariableListProps) {
     valuesMap,
     fieldTree,
     autoFocus,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
@@ -159,8 +171,29 @@ export default function VariableList(props: VariableListProps) {
     [getFieldSearchString]
   );
 
+  const availableVariables = useMemo(() => {
+    const availableVariablesArray = preorderSeq(fieldTree)
+      .filter((node) => isFilterField(node.field))
+      .map((node) => node.field.term.split('/')[1])
+      .toArray();
+
+    return new Set(availableVariablesArray);
+  }, [fieldTree]);
+
+  const starredVariablesLoading = starredVariables == null;
+
+  const starredVariablesSet = useMemo(() => {
+    const presentStarredVariables = starredVariables?.filter((variableId) =>
+      availableVariables.has(variableId)
+    );
+
+    return new Set(presentStarredVariables);
+  }, [availableVariables, starredVariables]);
+
   const renderNode = useCallback(
     (node: FieldTreeNode) => {
+      const [, variableId] = node.field.term.split('/');
+
       return (
         <FieldNode
           node={node}
@@ -170,17 +203,93 @@ export default function VariableList(props: VariableListProps) {
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
           activeFieldEntity={activeFieldEntity}
+          isStarred={starredVariablesSet.has(variableId)}
+          starredVariablesLoading={starredVariablesLoading}
+          onClickStar={() => toggleStarredVariable(variableId)}
         />
       );
     },
-    [activeField?.term, activeFieldEntity, handleFieldSelect, searchTerm]
+    [
+      activeField?.term,
+      activeFieldEntity,
+      handleFieldSelect,
+      searchTerm,
+      starredVariablesLoading,
+      starredVariablesSet,
+      toggleStarredVariable,
+    ]
+  );
+
+  const [showOnlyStarredVariables, setShowOnlyStarredVariables] = useState(
+    false
+  );
+
+  const toggleShowOnlyStarredVariables = useCallback(() => {
+    setShowOnlyStarredVariables((oldValue) => !oldValue);
+  }, []);
+
+  const starredVariableToggleDisabled = starredVariablesSet.size === 0;
+
+  useEffect(() => {
+    if (starredVariableToggleDisabled) {
+      setShowOnlyStarredVariables(false);
+    }
+  }, [starredVariableToggleDisabled]);
+
+  const additionalFilters = useMemo(
+    () => [
+      <Tooltip
+        content={makeStarredVariablesFilterTooltipContent(
+          showOnlyStarredVariables,
+          starredVariableToggleDisabled
+        )}
+        hideDelay={0}
+      >
+        <div>
+          <button
+            className={`${cx('-StarredVariablesFilter')} btn`}
+            type="button"
+            onClick={toggleShowOnlyStarredVariables}
+            disabled={starredVariableToggleDisabled}
+          >
+            <Toggle on={showOnlyStarredVariables} />
+            <Icon fa="star" />
+          </button>
+        </div>
+      </Tooltip>,
+    ],
+    [
+      showOnlyStarredVariables,
+      toggleShowOnlyStarredVariables,
+      starredVariableToggleDisabled,
+    ]
+  );
+
+  const isAdditionalFilterApplied = showOnlyStarredVariables;
+
+  const tree = useMemo(
+    () =>
+      !showOnlyStarredVariables || starredVariableToggleDisabled
+        ? fieldTree
+        : pruneDescendantNodes(
+            (node) =>
+              node.children.length > 0 ||
+              starredVariablesSet.has(node.field.term.split('/')[1]),
+            fieldTree
+          ),
+    [
+      fieldTree,
+      showOnlyStarredVariables,
+      starredVariablesSet,
+      starredVariableToggleDisabled,
+    ]
   );
 
   return (
     <div className={cx('-VariableList')}>
       <CheckboxTree
         autoFocusSearchBox={autoFocus}
-        tree={fieldTree}
+        tree={tree}
         expandedList={expandedNodes}
         getNodeId={getNodeId}
         getNodeChildren={getNodeChildren}
@@ -195,6 +304,8 @@ export default function VariableList(props: VariableListProps) {
         onSearchTermChange={setSearchTerm}
         searchPredicate={searchPredicate}
         renderNode={renderNode}
+        additionalFilters={additionalFilters}
+        isAdditionalFilterApplied={isAdditionalFilterApplied}
       />
     </div>
   );
@@ -219,6 +330,9 @@ const FieldNode = ({
   isActive,
   handleFieldSelect,
   activeFieldEntity,
+  isStarred,
+  starredVariablesLoading,
+  onClickStar,
 }: FieldNodeProps) => {
   const nodeRef = useRef<HTMLAnchorElement>(null);
 
@@ -233,7 +347,7 @@ const FieldNode = ({
     return () => clearTimeout(timerId);
   }, [isActive, searchTerm]);
 
-  return (
+  const fieldContents = (
     <Tooltip content={node.field.description} hideDelay={0}>
       {isFilterField(node.field) ? (
         <a
@@ -270,8 +384,53 @@ const FieldNode = ({
       )}
     </Tooltip>
   );
+
+  return (
+    <>
+      {isFilterField(node.field) && (
+        <Tooltip
+          content={makeStarButtonTooltipContent(node, isStarred)}
+          hideDelay={0}
+        >
+          <button
+            className={`${cx('-StarButton')} link`}
+            onClick={onClickStar}
+            disabled={starredVariablesLoading}
+          >
+            <Icon fa={isStarred ? 'star' : 'star-o'} />
+          </button>
+        </Tooltip>
+      )}
+      {fieldContents}
+    </>
+  );
 };
 
 const getIcon = (field: Field) => {
   return isRange(field) ? 'bar-chart-o' : isMulti(field) ? 'th-list' : 'list';
 };
+
+function makeStarButtonTooltipContent(
+  node: VariableFieldTreeNode,
+  isStarred: boolean
+) {
+  return (
+    <>
+      Click to {isStarred ? 'unstar' : 'star'}{' '}
+      <strong>{node.field.display}</strong>.
+    </>
+  );
+}
+
+function makeStarredVariablesFilterTooltipContent(
+  showOnlyStarredVariables: boolean,
+  starredVariablesToggleDisabled: boolean
+) {
+  return starredVariablesToggleDisabled ? (
+    <>To use this filter, star at least one variable below.</>
+  ) : showOnlyStarredVariables ? (
+    <>Click to show all variables.</>
+  ) : (
+    <>Click to show only starred variables.</>
+  );
+}

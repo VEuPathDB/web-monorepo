@@ -42,15 +42,7 @@ export const histogramVisualization: VisualizationType = {
 };
 
 function GridComponent(props: VisualizationProps) {
-  const { visualization, computation, filters } = props;
-  return (
-    <HistogramViz
-      visualization={visualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={false}
-    />
-  );
+  return <HistogramViz {...props} fullscreen={false} />;
 }
 
 function SelectorComponent() {
@@ -97,6 +89,8 @@ function HistogramViz(props: Props) {
     fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -180,14 +174,12 @@ function HistogramViz(props: Props) {
   }, [entities, vizConfig.xAxisVariable]);
 
   const data = usePromise(
-    useCallback(async (): Promise<HistogramData> => {
+    useCallback(async (): Promise<HistogramData | undefined> => {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return Promise.reject(new Error('Please choose a main variable'));
+        return undefined;
 
       if (xAxisVariable && !isHistogramVariable(xAxisVariable))
-        throw new Error(
-          `Please choose another main variable. '${xAxisVariable.displayName}' is not suitable for histograms`
-        );
+        return undefined;
 
       const params = getRequestParams(
         studyId,
@@ -241,6 +233,8 @@ function HistogramViz(props: Props) {
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
           />
         </div>
       )}

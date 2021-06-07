@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { AnalysisState } from '../../hooks/analysis';
+import { useToggleStarredVariable } from '../../hooks/starredVariables';
 import {
   Visualization,
   ComputationAppOverview,
@@ -38,10 +39,8 @@ const visualizationTypes: Record<string, VisualizationType> = {
 };
 
 export function PassThroughComputation(props: Props) {
-  const {
-    analysisState: { analysis, setVisualizations },
-    computationAppOverview,
-  } = props;
+  const { analysisState, computationAppOverview } = props;
+  const { analysis, setVisualizations } = analysisState;
   const addVisualization = useCallback(
     (visualization: Visualization) => {
       setVisualizations([...(analysis?.visualizations ?? []), visualization]);
@@ -69,6 +68,9 @@ export function PassThroughComputation(props: Props) {
   );
 
   const filters = useMemo(() => analysis?.filters ?? [], [analysis?.filters]);
+
+  const toggleStarredVariable = useToggleStarredVariable(analysisState);
+
   if (analysis == null) return <div>Analysis not found</div>;
   return (
     <VisualizationsContainer
@@ -88,6 +90,8 @@ export function PassThroughComputation(props: Props) {
       deleteVisualization={deleteVisualization}
       visualizationTypes={visualizationTypes}
       filters={filters}
+      starredVariables={analysis.starredVariables}
+      toggleStarredVariable={toggleStarredVariable}
     />
   );
 }

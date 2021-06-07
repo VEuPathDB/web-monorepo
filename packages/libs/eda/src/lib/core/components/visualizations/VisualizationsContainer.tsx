@@ -21,6 +21,7 @@ import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
+import PlaceholderIcon from './PlaceholderIcon';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -34,6 +35,8 @@ interface Props {
   visualizationTypes: Partial<Record<string, VisualizationType>>;
   visualizationsOverview: VisualizationOverview[];
   filters: Filter[];
+  starredVariables: string[];
+  toggleStarredVariable: (targetVariableId: string) => void;
 }
 
 /**
@@ -78,6 +81,8 @@ function ConfiguredVisualizations(props: Props) {
     visualizationTypes,
     visualizationsOverview,
     filters,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const { url } = useRouteMatch();
   const computation = useMemo(
@@ -142,6 +147,8 @@ function ConfiguredVisualizations(props: Props) {
                     visualization={viz}
                     computation={computation}
                     filters={filters}
+                    starredVariables={starredVariables}
+                    toggleStarredVariable={toggleStarredVariable}
                   />
                 ) : (
                   <div>Visualization type not implemented: {viz.type}</div>
@@ -207,7 +214,7 @@ function NewVisualizationPicker(props: Props) {
                 {vizType ? (
                   <vizType.selectorComponent {...vizOverview} />
                 ) : (
-                  <div>NOT IMPLEMENTED</div>
+                  <PlaceholderIcon name={vizOverview.name} />
                 )}
               </button>
               <div className={cx('-PickerEntryName')}>
@@ -233,6 +240,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
     updateVisualization,
     computations,
     filters,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const history = useHistory();
   const viz = visualizations.find(
@@ -302,7 +311,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </ContentError>
       ) : (
         <div>
-          <h1>
+          <h3>
             <SaveableTextEditor
               value={
                 viz.displayName ??
@@ -313,7 +322,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
                 updateVisualization({ ...viz, displayName: value })
               }
             />
-          </h1>
+          </h3>
           <vizType.fullscreenComponent
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
@@ -321,6 +330,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
             updateVisualization={updateVisualization}
             computation={computation}
             filters={filters}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
           />
         </div>
       )}

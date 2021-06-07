@@ -110,6 +110,8 @@ function MosaicViz(props: Props) {
     isTwoByTwo = false,
     dataElementConstraints,
     dataElementDependencyOrder,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -172,7 +174,7 @@ function MosaicViz(props: Props) {
   );
 
   const data = usePromise(
-    useCallback(async (): Promise<ContTableData | TwoByTwoData> => {
+    useCallback(async (): Promise<ContTableData | TwoByTwoData | undefined> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
       if (
@@ -181,27 +183,7 @@ function MosaicViz(props: Props) {
         vizConfig.yAxisVariable == null ||
         yAxisVariable == null
       )
-        return Promise.reject(
-          new Error('Please choose a variable for each axis')
-        );
-
-      const isValidVariable = isTwoByTwo
-        ? isTwoByTwoVariable
-        : isMosaicVariable;
-
-      if (xAxisVariable && !isValidVariable(xAxisVariable))
-        throw new Error(
-          `Please choose another x-axis variable. '${
-            xAxisVariable.displayName
-          }' is not suitable for ${isTwoByTwo ? '2x2' : ''} contingency tables`
-        );
-
-      if (yAxisVariable && !isValidVariable(yAxisVariable))
-        throw new Error(
-          `Please choose another y-axis variable. '${
-            yAxisVariable.displayName
-          }' is not suitable for ${isTwoByTwo ? '2x2' : ''} contingency tables`
-        );
+        return undefined;
 
       if (xAxisVariable === yAxisVariable)
         throw new Error(
@@ -352,11 +334,11 @@ function MosaicViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'x-axis variable',
+                label: 'X-axis variable',
               },
               {
                 name: 'yAxisVariable',
-                label: 'y-axis variable',
+                label: 'Y-axis variable',
               },
               {
                 name: 'facetVariable',
@@ -371,6 +353,8 @@ function MosaicViz(props: Props) {
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
           />
         </div>
       )}
