@@ -9,7 +9,7 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
 
 // in this example, the main variable is 'country'
-export interface BarplotProps extends PlotProps {
+export interface BarplotProps extends Omit<PlotProps, 'width' | 'height'> {
   /** the data series - e.g. one per overlay variable value (sex: 'male', 'female') */
   data: {
     series: {
@@ -21,6 +21,10 @@ export interface BarplotProps extends PlotProps {
       label: string[]; // e.g. India, Pakistan, Mali
     }[];
   };
+  /** The width of the plot in pixels (if number), or CSS length. */
+  width?: number | string;
+  /** The height of the plot in pixels (if number), or CSS length. */
+  height?: number | string;
   /** The orientation of the plot. Defaults to `vertical`  (--> general PlotProp?) */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
@@ -161,12 +165,13 @@ export default function Barplot({
     <PlotlyPlot
       data={plotlyFriendlyData}
       revision={revision}
+      style={{ width: width, height: height }}
       layout={{
         ...layout,
         ...{
           autosize: true,
-          width: width,
-          height: height,
+          // width: width,
+          // height: height,
           margin: props.margin ? props.margin : undefined,
           showlegend: displayLegend,
           selectdirection: orientation === 'vertical' ? 'h' : 'v',
