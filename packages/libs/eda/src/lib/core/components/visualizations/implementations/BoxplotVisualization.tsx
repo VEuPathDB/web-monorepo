@@ -24,6 +24,7 @@ import { isScatterplotVariable, isTableVariable } from '../../filter/guards';
 
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import box from './selectorIcons/box.svg';
 
 export const boxplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -33,20 +34,12 @@ export const boxplotVisualization: VisualizationType = {
 };
 
 function GridComponent(props: VisualizationProps) {
-  const { visualization, computation, filters } = props;
-  return (
-    <BoxplotViz
-      visualization={visualization}
-      computation={computation}
-      filters={filters}
-      fullscreen={false}
-    />
-  );
+  return <BoxplotViz {...props} fullscreen={false} />;
 }
 
 // this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent() {
-  return <div>Pick me, I'm a Box Plot!</div>;
+  return <img style={{ height: '100%', width: '100%' }} src={box} />;
 }
 
 function FullscreenComponent(props: VisualizationProps) {
@@ -69,6 +62,7 @@ const BoxplotConfig = t.intersection([
     xAxisVariable: Variable,
     yAxisVariable: Variable,
     overlayVariable: Variable,
+    facetVariable: Variable,
   }),
 ]);
 
@@ -85,6 +79,8 @@ function BoxplotViz(props: Props) {
     fullscreen,
     dataElementConstraints,
     dataElementDependencyOrder,
+    starredVariables,
+    toggleStarredVariable,
   } = props;
   const studyMetadata = useStudyMetadata();
   const { id: studyId } = studyMetadata;
@@ -117,6 +113,7 @@ function BoxplotViz(props: Props) {
     [updateVisualization, visualization, vizConfig]
   );
 
+  // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (
       values: Record<
@@ -124,11 +121,17 @@ function BoxplotViz(props: Props) {
         { entityId: string; variableId: string } | undefined
       >
     ) => {
-      const { xAxisVariable, yAxisVariable, overlayVariable } = values;
+      const {
+        xAxisVariable,
+        yAxisVariable,
+        overlayVariable,
+        facetVariable,
+      } = values;
       updateVizConfig({
         xAxisVariable,
         yAxisVariable,
         overlayVariable,
+        facetVariable,
       });
     },
     [updateVizConfig, vizConfig]
@@ -198,15 +201,19 @@ function BoxplotViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'x-axis variable',
+                label: 'X-axis variable',
               },
               {
                 name: 'yAxisVariable',
-                label: 'y-axis variable',
+                label: 'Y-axis variable',
               },
               {
                 name: 'overlayVariable',
                 label: 'Overlay variable (Optional)',
+              },
+              {
+                name: 'facetVariable',
+                label: 'Facet variable (Optional)',
               },
             ]}
             entities={entities}
@@ -218,6 +225,8 @@ function BoxplotViz(props: Props) {
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
           />
         </div>
       )}
@@ -249,8 +258,8 @@ function BoxplotViz(props: Props) {
           <BoxplotWithControls
             // data.value
             data={data.value.series}
-            // width={1000}
-            // height={600}
+            width={'100%'}
+            height={450}
             vizType={visualization.type}
             // title={'boxplot'}
             orientation={'vertical'}
@@ -291,8 +300,8 @@ function BoxplotViz(props: Props) {
         <>
           <BoxplotEDA
             data={[]}
-            width={fullscreen ? 1000 : 230}
-            height={fullscreen ? 600 : 165}
+            width={fullscreen ? '100%' : 230}
+            height={fullscreen ? 450 : 165}
             orientation={'vertical'}
             points={'outliers'}
             independentAxisLabel={
