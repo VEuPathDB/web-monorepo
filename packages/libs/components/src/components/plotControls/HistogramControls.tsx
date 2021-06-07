@@ -189,7 +189,7 @@ export default function HistogramControls({
       ref={ref}
       style={{
         borderStyle: 'solid',
-        borderWidth: '0.125em',
+        borderWidth: '0em',
         borderColor: '#cccccc',
         borderRadius: '0.6125em',
         padding: '0.9375em',

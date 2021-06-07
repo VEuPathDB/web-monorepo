@@ -8,6 +8,7 @@ import { ErrorManagement } from '../../types/general';
 // Local Components
 import RadioButtonGroup from '../widgets/RadioButtonGroup';
 import Notification from '../widgets/Notification';
+import LabelledGroup from '../widgets/LabelledGroup';
 
 /**
  * Props for XYPlot controls.
@@ -98,23 +99,24 @@ export default function XYPlotControls({
     >
       <div style={{ display: 'flex' }}>
         {valueSpec && onValueSpecChange && (
-          <RadioButtonGroup
-            label="Plot options"
-            options={[
-              'Raw',
-              'Smoothed mean',
-              'Smoothed mean with raw',
-              'Best fit line with raw',
-            ]}
-            selectedOption={valueSpec}
-            // @ts-ignore
-            onOptionSelected={onValueSpecChange}
-            orientation={orientation}
-            labelPlacement={labelPlacement}
-            minWidth={minWidth}
-            buttonColor={buttonColor}
-            margins={margins}
-          />
+          <LabelledGroup label="Plot options">
+            <RadioButtonGroup
+              options={[
+                'Raw',
+                'Smoothed mean',
+                'Smoothed mean with raw',
+                'Best fit line with raw',
+              ]}
+              selectedOption={valueSpec}
+              // @ts-ignore
+              onOptionSelected={onValueSpecChange}
+              orientation={orientation}
+              labelPlacement={labelPlacement}
+              minWidth={minWidth}
+              buttonColor={buttonColor}
+              margins={margins}
+            />
+          </LabelledGroup>
         )}
       </div>
       {errorStacks.map(({ error, occurences }, index) => (
