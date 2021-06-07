@@ -180,7 +180,7 @@ function BarplotViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'x-axis variable',
+                label: 'Main variable',
               },
               {
                 name: 'overlayVariable',
