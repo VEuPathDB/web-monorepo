@@ -26,7 +26,7 @@ export const Basic: Story<usePlotControlsParams<any>> = (args) => {
       labelPlacement={'end'}
       minWidth={235}
       buttonColor={'primary'}
-      setMargin={['5em', '0', '0', '5em']}
+      margins={['5em', '0', '0', '5em']}
     />
   );
 };

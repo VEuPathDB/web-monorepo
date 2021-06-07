@@ -27,7 +27,7 @@ export type RadioButtonGroupProps = {
   /** button color: for now, supporting blue and red only - primary: blue; secondary: red */
   buttonColor?: 'primary' | 'secondary';
   /** margin of radio button group: string array for top, left, bottom, and left, e.g., ['10em', '0', '0', '10em'] */
-  setMargin?: string[];
+  margins?: string[];
 };
 
 /**
@@ -44,16 +44,10 @@ export default function RadioButtonGroup({
   labelPlacement,
   minWidth,
   buttonColor,
-  setMargin,
+  margins,
 }: RadioButtonGroupProps) {
   // perhaps not using focused?
   // const [focused, setFocused] = useState(false);
-
-  //DKDK
-  console.log('selectedOption = ', selectedOption);
-  console.log('orientation = ', orientation);
-  console.log('buttonColor = ', buttonColor);
-  console.log('setMargin = ', setMargin);
 
   return (
     <div
@@ -61,10 +55,10 @@ export default function RadioButtonGroup({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
-        marginTop: setMargin ? setMargin[0] : '',
-        marginRight: setMargin ? setMargin[1] : '',
-        marginBottom: setMargin ? setMargin[2] : '',
-        marginLeft: setMargin ? setMargin[3] : '',
+        marginTop: margins ? margins[0] : '',
+        marginRight: margins ? margins[1] : '',
+        marginBottom: margins ? margins[2] : '',
+        marginLeft: margins ? margins[3] : '',
         ...containerStyles,
       }}
       // perhaps not using focused?

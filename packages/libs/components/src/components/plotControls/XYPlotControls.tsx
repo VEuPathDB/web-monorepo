@@ -38,7 +38,7 @@ export type XYPlotControlsProps = {
   /** button color: for now, supporting blue and red only - primary: blue; secondary: red */
   buttonColor?: 'primary' | 'secondary';
   /** margin of radio button group: string array for top, left, bottom, and left, e.g., ['10em', '0', '0', '10em'] */
-  setMargin?: string[];
+  margins?: string[];
 };
 
 /**
@@ -60,7 +60,7 @@ export default function XYPlotControls({
   labelPlacement,
   minWidth,
   buttonColor,
-  setMargin,
+  margins,
 }: XYPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
@@ -113,7 +113,7 @@ export default function XYPlotControls({
             labelPlacement={labelPlacement}
             minWidth={minWidth}
             buttonColor={buttonColor}
-            setMargin={setMargin}
+            margins={margins}
           />
         )}
       </div>
