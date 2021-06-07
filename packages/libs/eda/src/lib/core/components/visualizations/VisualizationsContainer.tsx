@@ -21,7 +21,7 @@ import { VisualizationType } from './VisualizationTypes';
 
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
-import PlaceholderIcon from './implementations/PlaceholderIcon';
+import PlaceholderIcon from './PlaceholderIcon';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
