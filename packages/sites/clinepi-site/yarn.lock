@@ -902,10 +902,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.3.5":
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.3.5.tgz#ab6f863ca3425ed517ba38f5d3b1891e810586d0"
-  integrity sha512-dwjiBc/I2LFvbtoyWe+a5ne2pTLxDsfz/ArubsJevDPad/r1NxH75wvfOvWVbSo6lckOI9zTxAHUlAPvoS8r/w==
+"@veupathdb/eda@^0.3.8":
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.3.8.tgz#a7dd7f51133c2b0ddd75d08537f21316d04b9761"
+  integrity sha512-xFir4K1USZytqoxUpBRWnNLy0vGq76FkLd2RAZGKdMpP9A/jWRYhObb2GIHXPcztp8GUaN2MeXVnYJJFN7bkpw==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@types/debounce-promise" "^3.1.3"
