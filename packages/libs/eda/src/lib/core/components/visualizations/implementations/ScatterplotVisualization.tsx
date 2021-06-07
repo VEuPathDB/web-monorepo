@@ -233,11 +233,11 @@ function ScatterplotViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'x-axis variable',
+                label: 'X-axis variable',
               },
               {
                 name: 'yAxisVariable',
-                label: 'y-axis variable',
+                label: 'Y-axis variable',
               },
               {
                 name: 'overlayVariable',

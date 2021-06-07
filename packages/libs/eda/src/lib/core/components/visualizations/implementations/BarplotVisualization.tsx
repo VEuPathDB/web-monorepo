@@ -180,7 +180,7 @@ function BarplotViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'x-axis variable',
+                label: 'Main variable',
               },
               {
                 name: 'overlayVariable',
@@ -233,12 +233,14 @@ function BarplotViz(props: Props) {
           <BarplotWithControls
             // data.value
             data={data.value}
-            // width={1000}
-            // height={600}
+            width={'100%'}
+            height={450}
             orientation={'vertical'}
             barLayout={'group'}
             displayLegend={data.value?.series.length > 1}
-            independentAxisLabel={'Label'}
+            independentAxisLabel={
+              findVariable(vizConfig.xAxisVariable)?.displayName
+            }
             dependentAxisLabel={'Count'}
           />
         ) : (
@@ -265,11 +267,15 @@ function BarplotViz(props: Props) {
         // no data case
         <Barplot
           data={{ series: [] }}
-          width={fullscreen ? 1000 : 230}
-          height={fullscreen ? 600 : 165}
+          width={fullscreen ? '100%' : 230}
+          height={fullscreen ? 450 : 165}
           orientation={'vertical'}
           barLayout={'group'}
-          independentAxisLabel={fullscreen ? 'Label' : undefined}
+          independentAxisLabel={
+            fullscreen
+              ? findVariable(vizConfig.xAxisVariable)?.displayName
+              : undefined
+          }
           dependentAxisLabel={fullscreen ? 'Count' : undefined}
           // show/hide independent/dependent axis tick label
           showIndependentAxisTickLabel={fullscreen ? undefined : false}
