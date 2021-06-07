@@ -364,7 +364,7 @@ function ScatterplotViz(props: Props) {
               // minWidth is used to set equivalent space per item
               minWidth={210}
               buttonColor={'primary'}
-              setMargin={['0', '0', '0', '5em']}
+              margins={['0', '0', '0', '5em']}
             />
           )}
         </>
@@ -419,7 +419,7 @@ function ScatterplotWithControls({
           // minWidth is used to set equivalent space per item
           minWidth={210}
           buttonColor={'primary'}
-          setMargin={['0', '0', '0', '5em']}
+          margins={['0', '0', '0', '5em']}
         />
       )}
     </div>
