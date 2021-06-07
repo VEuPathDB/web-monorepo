@@ -3,7 +3,7 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Datum, Layout } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
 
-export interface BoxplotProps extends PlotProps {
+export interface BoxplotProps extends Omit<PlotProps, 'width' | 'height'> {
   /** Data for the box plot */
   data: {
     /** x/y data */
@@ -16,6 +16,10 @@ export interface BoxplotProps extends PlotProps {
       value: string;
     };
   }[];
+  /** The width of the plot in pixels (if number), or CSS length. */
+  width?: number | string;
+  /** The height of the plot in pixels (if number), or CSS length. */
+  height?: number | string;
   /** x-axis label */
   independentAxisLabel?: string;
   /** y-axis label */
@@ -42,6 +46,8 @@ export interface BoxplotProps extends PlotProps {
 
 export default function BoxplotEDA({
   data,
+  width,
+  height,
   orientation = 'vertical',
   points,
   // showRawData,
@@ -50,8 +56,6 @@ export default function BoxplotEDA({
   dependentAxisLabel,
   // defaultDependentAxisRange,
   markerOpacity = 0.75,
-  width,
-  height,
   margin,
   title,
   staticPlot,
@@ -146,12 +150,13 @@ export default function BoxplotEDA({
     <PlotlyPlot
       data={plotlyFriendlyData}
       revision={revision}
+      style={{ width: width, height: height }}
       layout={{
         ...layout,
         ...{
           autosize: true,
-          width: width,
-          height: height,
+          // width: width,
+          // height: height,
           margin: margin ? margin : undefined,
           showlegend: displayLegend,
           selectdirection: orientation === 'vertical' ? 'h' : 'v',
