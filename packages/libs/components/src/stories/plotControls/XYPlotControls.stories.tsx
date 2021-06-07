@@ -6,28 +6,34 @@ import usePlotControls, {
 } from '../../hooks/usePlotControls';
 
 export default {
-  title: 'Plot Controls/Scatterplot',
+  title: 'Plot Controls/XYPlot',
   component: XYPlotControls,
 } as Meta;
 
-export const BasicControls: Story<usePlotControlsParams<any>> = (args) => {
+export const Basic: Story<usePlotControlsParams<any>> = (args) => {
   const controls = usePlotControls<any>({
     data: args.data,
-    scatterplot: args.scatterplot,
+    XYPlot: args.XYPlot,
   });
 
   return (
     <XYPlotControls
-      // label="Scatter Plot Control Panel"
+      // label="XYPlot Control Panel"
       {...controls}
-      {...controls.scatterplot}
+      {...controls.XYPlot}
+      // assign new props' values for tests
+      orientation={'horizontal'}
+      labelPlacement={'end'}
+      minWidth={235}
+      buttonColor={'primary'}
+      margins={['5em', '0', '0', '5em']}
     />
   );
 };
 
-BasicControls.args = {
+Basic.args = {
   data: { series: [{ name: 'dummy data', bins: [] }] },
-  scatterplot: {
+  XYPlot: {
     valueSpec: 'Raw',
   },
 };
