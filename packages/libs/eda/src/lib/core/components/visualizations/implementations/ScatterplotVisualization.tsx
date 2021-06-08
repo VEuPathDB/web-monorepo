@@ -474,9 +474,7 @@ function getRequestParams(
 ): getRequestParamsProps {
   // valueSpec
   let valueSpecValue = 'raw';
-  if (valueSpecConfig === 'Smoothed mean') {
-    valueSpecValue = 'smoothedMean';
-  } else if (valueSpecConfig === 'Smoothed mean with raw') {
+  if (valueSpecConfig === 'Smoothed mean with raw') {
     valueSpecValue = 'smoothedMeanWithRaw';
   } else if (valueSpecConfig === 'Best fit line with raw') {
     valueSpecValue = 'bestFitLineWithRaw';
