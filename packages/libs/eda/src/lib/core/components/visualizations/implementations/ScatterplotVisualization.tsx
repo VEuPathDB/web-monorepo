@@ -363,7 +363,6 @@ function ScatterplotViz(props: Props) {
               labelPlacement={'end'}
               // minWidth is used to set equivalent space per item
               minWidth={210}
-              // minWidth={75}
               buttonColor={'primary'}
               margins={['0', '0', '0', '5em']}
             />
