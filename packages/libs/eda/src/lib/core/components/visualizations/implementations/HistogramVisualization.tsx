@@ -33,7 +33,6 @@ import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
-import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 
 export const histogramVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -211,34 +210,32 @@ function HistogramViz(props: Props) {
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <LabelledGroup label="Variables">
-            <InputVariables
-              inputs={[
-                {
-                  name: 'xAxisVariable',
-                  label: 'Main',
-                },
-                {
-                  name: 'overlayVariable',
-                  label: 'Overlay (optional)',
-                },
-                {
-                  name: 'facetVariable',
-                  label: 'Facet (optional)',
-                },
-              ]}
-              entities={entities}
-              values={{
-                xAxisVariable: vizConfig.xAxisVariable,
-                overlayVariable: vizConfig.overlayVariable,
-              }}
-              onChange={handleInputVariableChange}
-              constraints={dataElementConstraints}
-              dataElementDependencyOrder={dataElementDependencyOrder}
-              starredVariables={starredVariables}
-              toggleStarredVariable={toggleStarredVariable}
-            />
-          </LabelledGroup>
+          <InputVariables
+            inputs={[
+              {
+                name: 'xAxisVariable',
+                label: 'Main',
+              },
+              {
+                name: 'overlayVariable',
+                label: 'Overlay (optional)',
+              },
+              {
+                name: 'facetVariable',
+                label: 'Facet (optional)',
+              },
+            ]}
+            entities={entities}
+            values={{
+              xAxisVariable: vizConfig.xAxisVariable,
+              overlayVariable: vizConfig.overlayVariable,
+            }}
+            onChange={handleInputVariableChange}
+            constraints={dataElementConstraints}
+            dataElementDependencyOrder={dataElementDependencyOrder}
+            starredVariables={starredVariables}
+            toggleStarredVariable={toggleStarredVariable}
+          />
         </div>
       )}
 
