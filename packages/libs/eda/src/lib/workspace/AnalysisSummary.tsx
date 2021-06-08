@@ -40,14 +40,16 @@ export function AnalysisSummary(props: Props) {
         onSave={setAnalysisName}
       />
       <ActionIconButton
+        iconClassName="download"
+        hoverText="Bulk download study"
+        action={() => {
+          alert('Coming soon');
+        }}
+      />
+      <ActionIconButton
         iconClassName="clone"
         hoverText="Copy analysis"
         action={handleCopy}
-      />
-      <ActionIconButton
-        iconClassName="floppy-o"
-        hoverText="Save analysis"
-        action={saveAnalysis}
       />
       <ActionIconButton
         iconClassName="trash"
