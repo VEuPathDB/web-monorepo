@@ -311,11 +311,11 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </ContentError>
       ) : (
         <div>
-          <h3>
+          <h3 style={{ fontStyle: 'normal', fontWeight: 'bold' }}>
             <SaveableTextEditor
               value={
                 viz.displayName ??
-                'unnamed ' + overview?.displayName ??
+                'DKDKDK ' + overview?.displayName ??
                 'visualization'
               }
               onSave={(value) =>
@@ -323,6 +323,18 @@ function FullScreenVisualization(props: Props & { id: string }) {
               }
             />
           </h3>
+          <div
+            style={{
+              fontStyle: 'italic',
+              fontSize: '1.3em',
+              color: '#333333',
+              margin: 0,
+              paddingLeft: '0.3em',
+            }}
+          >
+            {' '}
+            {overview?.displayName}{' '}
+          </div>
           <vizType.fullscreenComponent
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
