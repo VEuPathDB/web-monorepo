@@ -43,7 +43,7 @@ export function AnalysisSummary(props: Props) {
         iconClassName="download"
         hoverText="Bulk download study"
         action={() => {
-          alert('Not yet implemented');
+          alert('Coming soon');
         }}
       />
       <ActionIconButton

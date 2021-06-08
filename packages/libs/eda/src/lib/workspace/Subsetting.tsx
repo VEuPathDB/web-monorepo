@@ -80,7 +80,7 @@ export function Subsetting(props: Props) {
           type="button"
           className="link"
           title={`Download current subset of ${entity.displayName}`}
-          onClick={() => alert('To be implemented')}
+          onClick={() => alert('Coming soon')}
         >
           <i className="fa fa-table" />
         </button>
