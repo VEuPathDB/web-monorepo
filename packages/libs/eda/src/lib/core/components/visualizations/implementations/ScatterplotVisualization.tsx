@@ -358,6 +358,13 @@ function ScatterplotViz(props: Props) {
                 removeError: (error: Error) => {},
                 clearAllErrors: () => {},
               }}
+              // new radio button
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              // minWidth is used to set equivalent space per item
+              minWidth={210}
+              buttonColor={'primary'}
+              margins={['0', '0', '0', '5em']}
             />
           )}
         </>
@@ -406,6 +413,13 @@ function ScatterplotWithControls({
           valueSpec={valueSpec}
           onValueSpecChange={onValueSpecChange}
           errorManagement={errorManagement}
+          // new radio button
+          orientation={'horizontal'}
+          labelPlacement={'end'}
+          // minWidth is used to set equivalent space per item
+          minWidth={210}
+          buttonColor={'primary'}
+          margins={['0', '0', '0', '5em']}
         />
       )}
     </div>
