@@ -111,7 +111,9 @@ export default function MosaicPlot(props: Props) {
   if (props.showColumnLabels !== false) data.push({ xaxis: 'x2' });
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div
+      style={{ position: 'relative', width: props.width, height: props.height }}
+    >
       <PlotlyPlot
         data={data}
         style={{ width: props.width, height: props.height }}

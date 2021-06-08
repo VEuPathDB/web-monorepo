@@ -201,7 +201,7 @@ export default function PiePlot({
   newData.push(primaryDataTrace);
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', width: width, height: height }}>
       <PlotlyPlot
         // Type definitions from Plot.ly library are out of date.
         // In order to avoid Typescript barfing, we have to perform this

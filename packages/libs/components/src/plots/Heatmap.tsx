@@ -92,7 +92,7 @@ export default function Heatmap(props: Props) {
   }));
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', width: width, height: height }}>
       <PlotlyPlot
         data={finalData}
         layout={Object.assign(layout, {

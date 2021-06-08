@@ -101,7 +101,9 @@ export default function XYPlot(props: ScatterplotProps) {
   const finalData = data.map((d) => ({ ...d }));
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div
+      style={{ position: 'relative', width: props.width, height: props.height }}
+    >
       <PlotlyPlot
         data={finalData}
         layout={{
