@@ -57,7 +57,7 @@ type ActionType<DataShape> =
   // add reset all
   | { type: 'onResetAll' }
   // add valueSpec for XYPlotControls
-  | { type: 'scatterplot/onValueSpecChange'; payload: string };
+  | { type: 'XYPlot/onValueSpecChange'; payload: string };
 
 /** Reducer that is used inside the hook. */
 function reducer<DataShape extends UnionOfPlotDataTypes>(
@@ -195,11 +195,11 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
     case 'onResetAll':
       return { ...state };
     // add valueSpec for XYPlotControls
-    case 'scatterplot/onValueSpecChange':
+    case 'XYPlot/onValueSpecChange':
       return {
         ...state,
-        scatterplot: {
-          ...state.scatterplot,
+        XYPlot: {
+          ...state.XYPlot,
           valueSpec: action.payload,
         },
       };
@@ -277,10 +277,10 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
     onIndependentAxisRangeReset?: () => void;
   };
   // valueSpecChange for XYPlotControls
-  scatterplot?: {
-    /** Scatterplot: valueSpec */
+  XYPlot?: {
+    /** XYPlot: valueSpec */
     valueSpec?: string;
-    /** Scatterplot: valueSpec */
+    /** XYPlot: valueSpec */
     onValueSpecChange?: () => void;
   };
 };
@@ -313,7 +313,7 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     independentAxisRange?: NumberOrDateRange;
   };
   // valueSpec for XYPlotControls
-  scatterplot?: {
+  XYPlot?: {
     valueSpec?: string;
   };
 };
@@ -348,7 +348,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       dependentAxisLogScale: false,
       dependentAxisMode: 'absolute',
     },
-    scatterplot: {
+    XYPlot: {
       valueSpec: 'Raw',
     },
   };
@@ -601,7 +601,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
   // onValueSpecChange for XYPlotControls
   const onValueSpecChange = (value: string) =>
-    dispatch({ type: 'scatterplot/onValueSpecChange', payload: value });
+    dispatch({ type: 'XYPlot/onValueSpecChange', payload: value });
 
   /**
    * Separate errors attribute from the rest of the reducer state.
@@ -646,9 +646,9 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     // add reset all
     onResetAll,
     // onValueSpecChange for XYPlotControls
-    scatterplot: {
+    XYPlot: {
       // need to add reducerState here for XYPlotControls
-      ...reducerState.scatterplot,
+      ...reducerState.XYPlot,
       onValueSpecChange,
     },
   };
