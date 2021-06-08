@@ -363,6 +363,7 @@ function ScatterplotViz(props: Props) {
               labelPlacement={'end'}
               // minWidth is used to set equivalent space per item
               minWidth={210}
+              // minWidth={75}
               buttonColor={'primary'}
               margins={['0', '0', '0', '5em']}
             />
@@ -474,9 +475,7 @@ function getRequestParams(
 ): getRequestParamsProps {
   // valueSpec
   let valueSpecValue = 'raw';
-  if (valueSpecConfig === 'Smoothed mean') {
-    valueSpecValue = 'smoothedMean';
-  } else if (valueSpecConfig === 'Smoothed mean with raw') {
+  if (valueSpecConfig === 'Smoothed mean with raw') {
     valueSpecValue = 'smoothedMeanWithRaw';
   } else if (valueSpecConfig === 'Best fit line with raw') {
     valueSpecValue = 'bestFitLineWithRaw';
