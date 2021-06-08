@@ -59,6 +59,28 @@ export default function headerMenuItems (state, props) {
         ]
       },
       {
+        id: 'help',
+        text: 'Help',
+        children: [
+          { 
+            text: 'Tutorials',
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/tutorials.html`
+          },
+          { 
+            text: 'Webinars',
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/webinars.html`
+          },
+          {
+            text: 'Workshops',
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/workshops.html`
+          },
+          {
+            text: 'External Resources',
+            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/resources.html`
+          }
+        ]
+      },
+      {
         id: 'about',
         text: 'About',
         children: [
@@ -73,18 +95,6 @@ export default function headerMenuItems (state, props) {
           { 
             text: 'FAQ',
             route: `${STATIC_ROUTE_PATH}/ClinEpiDB/faq.html`
-          },
-          {
-            text: 'Tutorials and Resources',
-            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/resources.html`
-          },
-          { 
-            text: 'Workshops',
-            route: `${STATIC_ROUTE_PATH}/ClinEpiDB/workshops.html`
-          },
-          {
-            text: 'Public Strategies',
-            route: '/workspace/strategies/public'
           },
           {
             text: 'Data Access & Use Policy',

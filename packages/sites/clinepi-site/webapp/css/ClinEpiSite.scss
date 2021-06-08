@@ -543,6 +543,14 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
   width: 90vw;
 }
 
+
+/* filterParam.css  override for range warning */
+.filter-param .chart-controls .chart-controlsContent .range-warning {
+    color: #d32f2f;
+    font-size: 130%;
+    margin-right: 0.3em;
+}
+
 .Padded {
   padding-right: 1ex;
   padding-left: 1ex;
@@ -608,9 +616,13 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 }
 
 /* Hide action links on Dataset page for now */
-.wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
+/*  .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
   visibility: hidden;
 }
+*/
+
+/* wdk Record.css  overrides */
+
 div.wdk-CollapsibleSectionContent li {
   margin-top: 0.6em;
   margin-bottom: 0.6em;
@@ -638,6 +650,19 @@ div.wdk-CollapsibleSectionContent li {
 .wdk-RecordMain div#description {
   line-height: 200%;
   max-width: 80em;
+}
+
+.wdk-RecordAttributeName, .wdk-RecordAttributeSectionItemHeader, .wdk-RecordTableContainerHeader {
+  color: #3e3e3e;
+  font-size: 130%;
+}
+
+.wdk-RecordAttributeValue, .wdk-RecordAttributeSectionItemContent, .wdk-RecordTableContainerContent {
+  font-size: 125%;
+}
+
+.wdk-RecordAttributeName, .wdk-RecordMain .wdk-CollapsibleSectionHeader:not(.wdk-RecordSectionHeader) {
+  font-size: 135%;
 }
 
 /* FONT_RELATED overrides */
