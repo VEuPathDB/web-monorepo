@@ -350,7 +350,6 @@ export default function Histogram({
     },
     color: textColor,
     range: [minBinStart, maxBinEnd],
-    fixedrange: true,
     tickfont: data.series.length ? {} : { color: 'transparent' },
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
@@ -371,7 +370,6 @@ export default function Histogram({
           dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
         )
       : [0, 10],
-    fixedrange: true,
     dtick: dependentAxisLogScale ? 1 : undefined,
     tickfont: data.series.length ? {} : { color: 'transparent' },
     showline: true,
