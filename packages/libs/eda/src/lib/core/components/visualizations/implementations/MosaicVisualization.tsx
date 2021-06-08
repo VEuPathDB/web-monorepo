@@ -334,15 +334,15 @@ function MosaicViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'X-axis variable',
+                label: 'X-axis',
               },
               {
                 name: 'yAxisVariable',
-                label: 'Y-axis variable',
+                label: 'Y-axis',
               },
               {
                 name: 'facetVariable',
-                label: 'Facet variable',
+                label: 'Facet (optional)',
               },
             ]}
             entities={entities}
