@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
-import { EntityDiagram, Status, StudyEntity, useAnalysis } from '../core';
+import {
+  EntityDiagram,
+  Status,
+  StudyEntity,
+  useAnalysis,
+  useStudyMetadata,
+  useStudyRecord,
+} from '../core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import {
   Redirect,
@@ -15,6 +22,7 @@ import { DefaultVariableRedirect } from './DefaultVariableRedirect';
 import { Subsetting } from './Subsetting';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { uniq } from 'lodash';
+import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 
 interface Props {
   analysisId: string;
@@ -22,6 +30,7 @@ interface Props {
 
 export function AnalysisPanel(props: Props) {
   const { analysisId } = props;
+  const studyRecord = useStudyRecord();
   const analysisState = useAnalysis(analysisId);
   const {
     status,
@@ -58,42 +67,39 @@ export function AnalysisPanel(props: Props) {
   if (analysis == null) return null;
   return (
     <div className={cx('-Analysis')}>
+      <AnalysisSummary
+        analysis={analysis}
+        setAnalysisName={setName}
+        copyAnalysis={copyAnalysis}
+        saveAnalysis={saveAnalysis}
+        deleteAnalysis={deleteAnalysis}
+      />
+      <Route
+        path={[
+          `${routeBase}/variables/:entityId?/:variableId?`,
+          `${routeBase}`,
+        ]}
+        render={(
+          props: RouteComponentProps<{
+            entityId?: string;
+            variableId?: string;
+          }>
+        ) => (
+          <div className="Entities">
+            <EntityDiagram
+              expanded
+              orientation="horizontal"
+              selectedEntity={props.match.params.entityId}
+              selectedVariable={props.match.params.variableId}
+              entityCounts={totalCounts.value}
+              filteredEntityCounts={filteredCounts.value}
+              filteredEntities={filteredEntities}
+            />
+          </div>
+        )}
+      />
       <WorkspaceNavigation
-        heading={
-          <>
-            <AnalysisSummary
-              analysis={analysis}
-              setAnalysisName={setName}
-              copyAnalysis={copyAnalysis}
-              saveAnalysis={saveAnalysis}
-              deleteAnalysis={deleteAnalysis}
-            />
-            <Route
-              path={[
-                `${routeBase}/variables/:entityId?/:variableId?`,
-                `${routeBase}`,
-              ]}
-              render={(
-                props: RouteComponentProps<{
-                  entityId?: string;
-                  variableId?: string;
-                }>
-              ) => (
-                <div className="Entities">
-                  <EntityDiagram
-                    expanded
-                    orientation="horizontal"
-                    selectedEntity={props.match.params.entityId}
-                    selectedVariable={props.match.params.variableId}
-                    entityCounts={totalCounts.value}
-                    filteredEntityCounts={filteredCounts.value}
-                    filteredEntities={filteredEntities}
-                  />
-                </div>
-              )}
-            />
-          </>
-        }
+        heading={<></>}
         routeBase={routeBase}
         items={[
           {
@@ -106,12 +112,26 @@ export function AnalysisPanel(props: Props) {
             route: `/visualizations${lastVizPath}`,
             exact: false,
           },
+          {
+            display: 'View study details',
+            route: `/details`,
+            exact: false,
+          },
         ]}
       />
       <Route
         path={routeBase}
         exact
         render={() => <Redirect to={`${routeBase}/variables`} />}
+      />
+      <Route
+        path={`${routeBase}/details`}
+        render={() => (
+          <RecordController
+            recordClass="dataset"
+            primaryKey={studyRecord.id.map((p) => p.value).join('/')}
+          />
+        )}
       />
       <Route
         path={`${routeBase}/variables/:entityId?`}
