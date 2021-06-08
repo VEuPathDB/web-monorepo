@@ -332,8 +332,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
               paddingLeft: '0.3em',
             }}
           >
-            {' '}
-            {overview?.displayName}{' '}
+            {overview?.displayName}
           </div>
           <vizType.fullscreenComponent
             dataElementConstraints={constraints}
