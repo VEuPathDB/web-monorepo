@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { cx } from './Utils';
 import { useStudyRecord } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';

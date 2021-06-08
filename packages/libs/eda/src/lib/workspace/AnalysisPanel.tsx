@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
-import {
-  EntityDiagram,
-  Status,
-  StudyEntity,
-  useAnalysis,
-  useStudyMetadata,
-  useStudyRecord,
-} from '../core';
+import { EntityDiagram, Status, useAnalysis, useStudyRecord } from '../core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import {
   Redirect,
