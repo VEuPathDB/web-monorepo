@@ -1,6 +1,7 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
 import { PlotData, Layout, Annotations } from 'plotly.js';
+import Spinner from '../components/Spinner';
 
 export interface Props extends PlotProps {
   data: Array<{
@@ -91,18 +92,23 @@ export default function Heatmap(props: Props) {
   }));
 
   return (
-    <PlotlyPlot
-      data={finalData}
-      layout={Object.assign(layout, {
-        width: width,
-        height: height,
-        margin: margin,
-      })}
-      config={{
-        displayModeBar:
-          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
-        staticPlot: props.staticPlot,
-      }}
-    />
+    <div style={{ position: 'relative', width: width, height: height }}>
+      <PlotlyPlot
+        data={finalData}
+        layout={Object.assign(layout, {
+          width: width,
+          height: height,
+          margin: margin,
+        })}
+        config={{
+          displayModeBar:
+            props.showModebar !== undefined
+              ? props.showModebar
+              : ModebarDefault,
+          staticPlot: props.staticPlot,
+        }}
+      />
+      {props.showSpinner && <Spinner />}
+    </div>
   );
 }

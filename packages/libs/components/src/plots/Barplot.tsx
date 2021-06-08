@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
+import Spinner from '../components/Spinner';
 
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
@@ -162,25 +163,28 @@ export default function Barplot({
   };
 
   return (
-    <PlotlyPlot
-      data={plotlyFriendlyData}
-      revision={revision}
-      style={{ width: width, height: height }}
-      layout={{
-        ...layout,
-        ...{
-          autosize: true,
-          // width: width,
-          // height: height,
-          margin: props.margin ? props.margin : undefined,
-          showlegend: displayLegend,
-          selectdirection: orientation === 'vertical' ? 'h' : 'v',
-        },
-      }}
-      config={{
-        displayModeBar: displayLibraryControls ? 'hover' : false,
-        staticPlot: props.staticPlot ? props.staticPlot : false,
-      }}
-    />
+    <div style={{ position: 'relative', width: width, height: height }}>
+      <PlotlyPlot
+        data={plotlyFriendlyData}
+        revision={revision}
+        style={{ width: width, height: height }}
+        layout={{
+          ...layout,
+          ...{
+            autosize: true,
+            // width: width,
+            // height: height,
+            margin: props.margin ? props.margin : undefined,
+            showlegend: displayLegend,
+            selectdirection: orientation === 'vertical' ? 'h' : 'v',
+          },
+        }}
+        config={{
+          displayModeBar: displayLibraryControls ? 'hover' : false,
+          staticPlot: props.staticPlot ? props.staticPlot : false,
+        }}
+      />
+      {props.showSpinner && <Spinner />}
+    </div>
   );
 }

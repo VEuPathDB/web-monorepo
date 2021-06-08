@@ -1,6 +1,7 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
 import { PlotParams } from 'react-plotly.js';
+import Spinner from '../components/Spinner';
 import _ from 'lodash';
 
 export interface Props extends Omit<PlotProps, 'width' | 'height'> {
@@ -110,18 +111,25 @@ export default function MosaicPlot(props: Props) {
   if (props.showColumnLabels !== false) data.push({ xaxis: 'x2' });
 
   return (
-    <PlotlyPlot
-      data={data}
-      style={{ width: props.width, height: props.height }}
-      layout={Object.assign(layout, {
-        margin: props.margin,
-        showlegend: props.showLegend,
-      })}
-      config={{
-        displayModeBar:
-          props.showModebar !== undefined ? props.showModebar : ModebarDefault,
-        staticPlot: props.staticPlot,
-      }}
-    />
+    <div
+      style={{ position: 'relative', width: props.width, height: props.height }}
+    >
+      <PlotlyPlot
+        data={data}
+        style={{ width: props.width, height: props.height }}
+        layout={Object.assign(layout, {
+          margin: props.margin,
+          showlegend: props.showLegend,
+        })}
+        config={{
+          displayModeBar:
+            props.showModebar !== undefined
+              ? props.showModebar
+              : ModebarDefault,
+          staticPlot: props.staticPlot,
+        }}
+      />
+      {props.showSpinner && <Spinner />}
+    </div>
   );
 }

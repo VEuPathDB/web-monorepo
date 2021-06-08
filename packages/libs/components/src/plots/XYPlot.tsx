@@ -5,6 +5,7 @@
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 // import Layout for typing layout, especially with sliders
 import { Layout } from 'plotly.js';
+import Spinner from '../components/Spinner';
 
 export interface ScatterplotProps extends PlotProps {
   /** Data for the scatter plot */
@@ -100,21 +101,26 @@ export default function XYPlot(props: ScatterplotProps) {
   const finalData = data.map((d) => ({ ...d }));
 
   return (
-    <PlotlyPlot
-      data={finalData}
-      layout={{
-        ...layout,
-        ...{
-          width: props.width,
-          height: props.height,
-          margin: props.margin ? props.margin : undefined,
-          showlegend: props.displayLegend,
-        },
-      }}
-      config={{
-        displayModeBar: props.displayLibraryControls ? 'hover' : false,
-        staticPlot: props.staticPlot,
-      }}
-    />
+    <div
+      style={{ position: 'relative', width: props.width, height: props.height }}
+    >
+      <PlotlyPlot
+        data={finalData}
+        layout={{
+          ...layout,
+          ...{
+            width: props.width,
+            height: props.height,
+            margin: props.margin ? props.margin : undefined,
+            showlegend: props.displayLegend,
+          },
+        }}
+        config={{
+          displayModeBar: props.displayLibraryControls ? 'hover' : false,
+          staticPlot: props.staticPlot,
+        }}
+      />
+      {props.showSpinner && <Spinner />}
+    </div>
   );
 }

@@ -1028,6 +1028,36 @@ export const EmptyData = () => {
   );
 };
 
+export const EmptyDataLoading = () => {
+  // set props
+  let plotWidth = 1000;
+  let plotHeight = 600;
+  // let plotWidth = 350;
+  // let plotHeight = 250;
+  let independentAxisLabel = 'Hours post infection';
+  let dependentAxisLabel = 'Expression Values (log2 ratio)';
+  let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
+
+  return (
+    <XYPlot
+      data={[]}
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
+      independentAxisRange={[xMin, xMax]}
+      dependentAxisRange={[yMin, yMax]}
+      title={plotTitle}
+      width={plotWidth}
+      height={plotHeight}
+      staticPlot={true}
+      // check enable/disable legend and built-in controls
+      displayLegend={false}
+      displayLibraryControls={false}
+      // margin={{l: 50, r: 10, b: 20, t: 10}}
+      showSpinner={true}
+    />
+  );
+};
+
 function getMinDate(dates: Date[]) {
   return new Date(Math.min(...dates.map(Number)));
 }
