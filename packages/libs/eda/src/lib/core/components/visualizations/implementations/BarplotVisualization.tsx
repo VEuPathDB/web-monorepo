@@ -273,7 +273,10 @@ function BarplotViz(props: Props) {
           barLayout={'group'}
           independentAxisLabel={
             fullscreen
-              ? findVariable(vizConfig.xAxisVariable)?.displayName
+              ? vizConfig.xAxisVariable
+                ? // the case where the x-axis variable is selected or not
+                  findVariable(vizConfig.xAxisVariable)?.displayName
+                : 'Label'
               : undefined
           }
           dependentAxisLabel={fullscreen ? 'Count' : undefined}
