@@ -315,7 +315,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             <SaveableTextEditor
               value={
                 viz.displayName ??
-                'DKDKDK ' + overview?.displayName ??
+                'Unnamed ' + overview?.displayName ??
                 'visualization'
               }
               onSave={(value) =>
