@@ -311,7 +311,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
         </ContentError>
       ) : (
         <div>
-          <h3 style={{ fontStyle: 'normal', fontWeight: 'bold' }}>
+          <h3>
             <SaveableTextEditor
               value={
                 viz.displayName ??
@@ -325,7 +325,6 @@ function FullScreenVisualization(props: Props & { id: string }) {
           </h3>
           <div
             style={{
-              fontStyle: 'italic',
               fontSize: '1.3em',
               color: '#333333',
               margin: 0,
