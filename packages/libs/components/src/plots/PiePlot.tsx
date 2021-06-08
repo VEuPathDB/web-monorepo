@@ -2,7 +2,7 @@ import React from 'react';
 import { PlotData as PlotlyPlotData } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
 import PlotlyPlot from './PlotlyPlot';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Spinner from '../components/Spinner';
 
 import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
@@ -243,18 +243,7 @@ export default function PiePlot({
           displaylogo: false,
         }}
       />
-      {showSpinner && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          <CircularProgress color={'secondary'} size={50} thickness={5} />
-        </div>
-      )}
+      {showSpinner && <Spinner />}
     </div>
   );
 }

@@ -5,7 +5,7 @@
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 // import Layout for typing layout, especially with sliders
 import { Layout } from 'plotly.js';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Spinner from '../components/Spinner';
 
 export interface ScatterplotProps extends PlotProps {
   /** Data for the scatter plot */
@@ -118,18 +118,7 @@ export default function XYPlot(props: ScatterplotProps) {
           staticPlot: props.staticPlot,
         }}
       />
-      {props.showSpinner && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          <CircularProgress color={'secondary'} size={50} thickness={5} />
-        </div>
-      )}
+      {props.showSpinner && <Spinner />}
     </div>
   );
 }

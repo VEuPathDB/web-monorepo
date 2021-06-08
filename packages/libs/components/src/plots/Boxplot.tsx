@@ -1,7 +1,7 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
 import { Datum } from 'plotly.js';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Spinner from '../components/Spinner';
 
 export interface Props extends PlotProps {
   data: {
@@ -113,18 +113,7 @@ export default function Boxplot({
           staticPlot: staticPlot,
         }}
       />
-      {showSpinner && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          <CircularProgress color={'secondary'} size={50} thickness={5} />
-        </div>
-      )}
+      {showSpinner && <Spinner />}
     </div>
   );
 }

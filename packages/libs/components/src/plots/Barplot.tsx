@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Spinner from '../components/Spinner';
 
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
@@ -179,18 +179,7 @@ export default function Barplot({
           staticPlot: props.staticPlot ? props.staticPlot : false,
         }}
       />
-      {props.showSpinner && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          <CircularProgress color={'secondary'} size={50} thickness={5} />
-        </div>
-      )}
+      {props.showSpinner && <Spinner />}
     </div>
   );
 }

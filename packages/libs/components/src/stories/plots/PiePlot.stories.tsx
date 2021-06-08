@@ -105,7 +105,7 @@ Basic.args = {
 };
 
 export const BasicLoading = NoControlsTemplate.bind({});
-Basic.args = {
+BasicLoading.args = {
   data: data,
   width: 600,
   height: 450,
