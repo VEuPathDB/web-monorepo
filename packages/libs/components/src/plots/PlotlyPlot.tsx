@@ -50,10 +50,25 @@ export default function PlotlyPlot(props: PlotParams) {
   const finalConfig = useMemo(() => ({ ...config, ...props.config }), [
     props.config,
   ]);
+  // change layout: add axis fixedrange
+  const finalLayout = useMemo(
+    () => ({
+      ...props.layout,
+      xaxis: { ...props.layout.xaxis, fixedrange: true },
+      yaxis: { ...props.layout.yaxis, fixedrange: true },
+    }),
+    [props.layout]
+  );
 
   return (
     <Suspense fallback="Loading...">
-      <Plot {...props} style={finalStyle} config={finalConfig} />
+      {/* set layout props */}
+      <Plot
+        {...props}
+        layout={finalLayout}
+        style={finalStyle}
+        config={finalConfig}
+      />
     </Suspense>
   );
 }
