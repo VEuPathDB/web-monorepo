@@ -35,7 +35,9 @@ function GridComponent(props: VisualizationProps) {
 }
 
 function SelectorComponent() {
-  return <img style={{ height: '100%', width: '100%' }} src={bar} />;
+  return (
+    <img alt="Bar plot" style={{ height: '100%', width: '100%' }} src={bar} />
+  );
 }
 
 function FullscreenComponent(props: VisualizationProps) {
@@ -123,7 +125,7 @@ function BarplotViz(props: Props) {
         facetVariable,
       });
     },
-    [updateVizConfig, vizConfig]
+    [updateVizConfig]
   );
 
   const findVariable = useCallback(
@@ -139,7 +141,6 @@ function BarplotViz(props: Props) {
   const data = usePromise(
     useCallback(async (): Promise<any> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
-      const overlayVariable = findVariable(vizConfig.overlayVariable);
 
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
@@ -168,7 +169,6 @@ function BarplotViz(props: Props) {
       vizConfig,
       findVariable,
       computation.type,
-      visualization.type,
     ])
   );
 
@@ -180,15 +180,15 @@ function BarplotViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'Main variable',
+                label: 'Main',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay variable (Optional)',
+                label: 'Overlay (optional)',
               },
               {
                 name: 'facetVariable',
-                label: 'Facet Variable',
+                label: 'Facet (optional)',
               },
             ]}
             entities={entities}
@@ -206,9 +206,6 @@ function BarplotViz(props: Props) {
         </div>
       )}
 
-      {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
-      )}
       {data.error && fullscreen && (
         <div
           style={{
@@ -233,13 +230,16 @@ function BarplotViz(props: Props) {
           <BarplotWithControls
             // data.value
             data={data.value}
-            // width={1000}
-            // height={600}
+            width={'100%'}
+            height={450}
             orientation={'vertical'}
             barLayout={'group'}
             displayLegend={data.value?.series.length > 1}
-            independentAxisLabel={'Label'}
+            independentAxisLabel={
+              findVariable(vizConfig.xAxisVariable)?.displayName
+            }
             dependentAxisLabel={'Count'}
+            showSpinner={data.pending}
           />
         ) : (
           // thumbnail/grid view
@@ -259,17 +259,25 @@ function BarplotViz(props: Props) {
             staticPlot={true}
             // set margin for better display at thumbnail/grid view
             margin={{ l: 30, r: 20, b: 0, t: 20 }}
+            showSpinner={data.pending}
           />
         )
       ) : (
         // no data case
         <Barplot
           data={{ series: [] }}
-          width={fullscreen ? 1000 : 230}
-          height={fullscreen ? 600 : 165}
+          width={fullscreen ? '100%' : 230}
+          height={fullscreen ? 450 : 165}
           orientation={'vertical'}
           barLayout={'group'}
-          independentAxisLabel={fullscreen ? 'Label' : undefined}
+          independentAxisLabel={
+            fullscreen
+              ? vizConfig.xAxisVariable
+                ? // the case where the x-axis variable is selected or not
+                  findVariable(vizConfig.xAxisVariable)?.displayName
+                : 'Label'
+              : undefined
+          }
           dependentAxisLabel={fullscreen ? 'Count' : undefined}
           // show/hide independent/dependent axis tick label
           showIndependentAxisTickLabel={fullscreen ? undefined : false}
@@ -278,6 +286,7 @@ function BarplotViz(props: Props) {
           displayLibraryControls={false}
           staticPlot={fullscreen ? false : true}
           margin={fullscreen ? {} : { l: 30, r: 20, b: 0, t: 20 }}
+          showSpinner={data.pending}
         />
       )}
     </div>
@@ -292,13 +301,15 @@ function BarplotWithControls({
   data,
   vizType,
   ...BarplotControlsProps
-}: BarplotWithControlsProps) {
+}: // eslint-disable-next-line @typescript-eslint/no-unused-vars
+BarplotWithControlsProps) {
   // TODO Use UIState
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
+      addError: (_: Error) => {},
+      removeError: (_: Error) => {},
       clearAllErrors: () => {},
     };
   }, []);
@@ -341,6 +352,7 @@ export function barplotResponseToData(
 }
 
 // add an extended type
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type getRequestParamsProps = BarplotRequestParams & { vizType?: string };
 
 function getRequestParams(

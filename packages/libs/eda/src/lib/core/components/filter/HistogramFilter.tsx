@@ -160,6 +160,10 @@ export function HistogramFilter(props: Props) {
     [dataClient, entity, filters, studyId, variable]
   );
   const data = usePromise(
+    // We're tracking specific properties of `uiState`. We should eventually be
+    // more explicit about the dependencies. This will require a change to the
+    // interface of `getRequestParams`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => getData(uiState), [
       getData,
       uiState.binWidth,
@@ -181,7 +185,7 @@ export function HistogramFilter(props: Props) {
     (selectedRange?: NumberRange | DateRange) => {
       const otherFilters = filters?.filter((f) => f !== filter) ?? [];
       if (selectedRange == null) {
-        if (otherFilters.length != filters?.length) setFilters(otherFilters);
+        if (otherFilters.length !== filters?.length) setFilters(otherFilters);
       } else {
         if (
           filter &&
@@ -324,6 +328,7 @@ function HistogramPlotWithControls({
         updateFilter(); // clear the filter if range is undefined
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [data, updateFilter]
   );
 

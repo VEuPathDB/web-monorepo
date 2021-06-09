@@ -16,7 +16,6 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
-import { isMosaicVariable, isTwoByTwoVariable } from '../../filter/guards';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
@@ -62,7 +61,13 @@ function ContTableGridComponent(props: VisualizationProps) {
 }
 
 function ContTableSelectorComponent() {
-  return <img style={{ height: '100%', width: '100%' }} src={mosaic} />;
+  return (
+    <img
+      alt="RxC contingency table"
+      style={{ height: '100%', width: '100%' }}
+      src={mosaic}
+    />
+  );
 }
 
 function ContTableFullscreenComponent(props: VisualizationProps) {
@@ -74,7 +79,13 @@ function TwoByTwoGridComponent(props: VisualizationProps) {
 }
 
 function TwoByTwoSelectorComponent() {
-  return <img style={{ height: '100%', width: '100%' }} src={contingency} />;
+  return (
+    <img
+      alt="2x2 contingency table"
+      style={{ height: '100%', width: '100%' }}
+      src={contingency}
+    />
+  );
 }
 
 function TwoByTwoFullscreenComponent(props: VisualizationProps) {
@@ -300,6 +311,7 @@ function MosaicViz(props: Props) {
               : ''
           }
           showLegend={true}
+          showSpinner={data.pending}
         />
       </div>
       {statsTable}
@@ -323,6 +335,7 @@ function MosaicViz(props: Props) {
       staticPlot={true}
       independentLabel=""
       dependentLabel=""
+      showSpinner={data.pending}
     />
   );
 
@@ -334,15 +347,15 @@ function MosaicViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'X-axis variable',
+                label: 'X-axis',
               },
               {
                 name: 'yAxisVariable',
-                label: 'Y-axis variable',
+                label: 'Y-axis',
               },
               {
                 name: 'facetVariable',
-                label: 'Facet variable',
+                label: 'Facet (optional)',
               },
             ]}
             entities={entities}
@@ -359,9 +372,6 @@ function MosaicViz(props: Props) {
         </div>
       )}
 
-      {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
-      )}
       {data.error && fullscreen && (
         <div
           style={{

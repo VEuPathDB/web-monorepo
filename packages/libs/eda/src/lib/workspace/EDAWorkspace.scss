@@ -1,13 +1,23 @@
 .EDAWorkspace {
+  font-size: 13px;
   padding: 1em 0;
+
+  .wdk-RecordContainer {
+    margin-top: 2em;
+  }
+
+  .wdk-RecordActions,
+  .wdk-RecordHeading {
+    display: none;
+  }
 
   &-Heading {
     display: grid;
     grid:
       'title linkouts' auto
-      / 1fr;
+      / auto 1fr;
     gap: 1em;
-    align-items: center;
+    align-items: baseline;
     line-height: 1;
     margin-bottom: 0.5em;
   }
@@ -15,6 +25,24 @@
   h1 {
     grid-area: title;
     padding: 0;
+  }
+
+  h2 {
+    padding: 0.25em 0;
+  }
+
+  h3 {
+    padding: 0.25em 0;
+  }
+
+  &-ProviderLabel {
+    font-weight: 300;
+    .HelpTrigger .fa {
+      font-size: 1em;
+    }
+    * {
+      display: inline-block;
+    }
   }
 
   label.btn {
@@ -50,7 +78,8 @@
     display: grid;
     grid-auto-flow: column;
     gap: 1em;
-    margin-left: auto;
+    margin-right: auto;
+    margin-left: 2em;
   }
 
   &-AnalysisSummary {
@@ -82,6 +111,11 @@
   }
 
   .WorkspaceNavigation {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: white;
+
     h1 {
       font-size: 1em;
     }
@@ -121,9 +155,9 @@
   &-Subsetting {
     display: grid;
     grid:
-      [row1-start] 'variables     filter-chips' auto [row1-end]
-      [row2-start] 'variables     filter' 1fr [row2-end]
-      / auto 1fr;
+      [row1-start] 'variables     filter-chips tabular-download' auto [row1-end]
+      [row2-start] 'variables     filter       filter' 1fr [row2-end]
+      / auto 1fr auto;
     gap: 1em 3em;
     padding-top: 1em;
     .Variables {
@@ -132,6 +166,10 @@
     .FilterChips {
       height: 2em;
       grid-area: filter-chips;
+    }
+    .TabularDownload {
+      grid-area: tabular-download;
+      font-size: 2em;
     }
     .Filter {
       grid-area: filter;

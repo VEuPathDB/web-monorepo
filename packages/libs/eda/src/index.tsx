@@ -13,6 +13,8 @@ import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
 import { WorkspaceRouter } from './lib/workspace/WorkspaceRouter';
 
+import './index.css';
+
 const subsettingServiceUrl = '/eda-subsetting-service';
 const dataServiceUrl = '/eda-data-service';
 
