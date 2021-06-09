@@ -1,4 +1,8 @@
 .VisualizationsContainer {
+  h3 {
+    padding: 0;
+    font-weight: normal;
+  }
   &-NewVisualization {
     height: 8em;
     width: 15em;
@@ -44,18 +48,18 @@
 
     &Title {
       margin-top: 0.5em;
-      font-weight: bold;
+      font-weight: 400;
       font-size: 1.15em;
     }
 
     &Subtitle {
       margin-top: 0.25em;
-      color: #444;
-      font-weight: 500;
+      font-weight: 300;
     }
   }
   &-PickerContainer {
     position: relative;
+    padding: 1em 0;
   }
   &-PickerActions {
     padding: 2em 0;
@@ -94,10 +98,16 @@
   }
   &-FullScreenContainer {
     position: relative;
-    padding: 2em 0;
+    padding: 1em 0;
     h3 {
-      padding: 0;
       font-style: italic;
+    }
+    .Subtitle {
+      padding-left: 0.3em;
+      font-weight: 300;
+      font-size: 1.1em;
+      font-style: italic;
+      margin-bottom: 2em;
     }
   }
   &-FullScreenActions {
