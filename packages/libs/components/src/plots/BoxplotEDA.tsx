@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Datum, Layout } from 'plotly.js';
 import { PlotParams } from 'react-plotly.js';
+import Spinner from '../components/Spinner';
 
 export interface BoxplotProps extends Omit<PlotProps, 'width' | 'height'> {
   /** Data for the box plot */
@@ -63,6 +64,7 @@ export default function BoxplotEDA({
   displayLibraryControls,
   showIndependentAxisTickLabel = true,
   showDependentAxisTickLabel = true,
+  showSpinner,
 }: BoxplotProps) {
   // Transform `data` into a Plot.ly friendly format.
   const plotlyFriendlyData: PlotParams['data'] = useMemo(
@@ -147,25 +149,28 @@ export default function BoxplotEDA({
   };
 
   return (
-    <PlotlyPlot
-      data={plotlyFriendlyData}
-      revision={revision}
-      style={{ width: width, height: height }}
-      layout={{
-        ...layout,
-        ...{
-          autosize: true,
-          // width: width,
-          // height: height,
-          margin: margin ? margin : undefined,
-          showlegend: displayLegend,
-          selectdirection: orientation === 'vertical' ? 'h' : 'v',
-        },
-      }}
-      config={{
-        displayModeBar: displayLibraryControls ? 'hover' : false,
-        staticPlot: staticPlot ? staticPlot : false,
-      }}
-    />
+    <div style={{ position: 'relative', width: width, height: height }}>
+      <PlotlyPlot
+        data={plotlyFriendlyData}
+        revision={revision}
+        style={{ width: width, height: height }}
+        layout={{
+          ...layout,
+          ...{
+            autosize: true,
+            // width: width,
+            // height: height,
+            margin: margin ? margin : undefined,
+            showlegend: displayLegend,
+            selectdirection: orientation === 'vertical' ? 'h' : 'v',
+          },
+        }}
+        config={{
+          displayModeBar: displayLibraryControls ? 'hover' : false,
+          staticPlot: staticPlot ? staticPlot : false,
+        }}
+      />
+      {showSpinner && <Spinner />}
+    </div>
   );
 }
