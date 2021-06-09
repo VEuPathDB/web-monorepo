@@ -1,5 +1,6 @@
-import React, { ReactNode, CSSProperties } from 'react';
+import React, { ReactNode } from 'react';
 import { every } from 'lodash';
+import { Typography } from '@material-ui/core';
 
 export interface LabelledGroupProps {
   /** Contents of the menu when opened */
@@ -26,12 +27,12 @@ export default function LabelledGroup(props: LabelledGroupProps) {
     <div
       style={{
         display: 'inline-flex',
-        borderStyle: 'solid',
+        borderStyle: 'none',
         borderWidth: '0.125em',
         borderColor: '#cccccc',
         borderRadius: '0.2em',
         padding: '1em',
-        minWidth: '11em',
+        minWidth: '45%',
         // marginTop: '1.5625em',
         marginRight: '1.5625em',
         ...containerStyles,
@@ -39,19 +40,14 @@ export default function LabelledGroup(props: LabelledGroupProps) {
     >
       {/* wrapper div to prevent from inline-flex */}
       <div>
-        <div
-          style={{
-            display: 'inline-block',
-            position: 'relative',
-            top: '-1.65em',
-            paddingLeft: '0.3em',
-            paddingRight: '0.3em',
-            background: 'white',
-            textAlign: 'center',
-          }}
-        >
-          {label}
-        </div>
+        {label && (
+          <Typography
+            variant="button"
+            style={{ color: '#000000', fontWeight: 'bold' }}
+          >
+            {label}
+          </Typography>
+        )}
         {children}
       </div>
     </div>
