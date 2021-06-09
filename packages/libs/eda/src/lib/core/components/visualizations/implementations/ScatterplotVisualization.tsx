@@ -55,7 +55,13 @@ function SelectorComponent({ name }: SelectorProps) {
   const src =
     name === 'lineplot' ? line : name === 'densityplot' ? density : scatter;
 
-  return <img style={{ height: '100%', width: '100%' }} src={src} />;
+  return (
+    <img
+      alt="Scatter plot"
+      style={{ height: '100%', width: '100%' }}
+      src={src}
+    />
+  );
 }
 
 function FullscreenComponent(props: VisualizationProps) {

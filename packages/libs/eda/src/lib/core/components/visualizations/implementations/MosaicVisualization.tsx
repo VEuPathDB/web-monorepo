@@ -62,7 +62,13 @@ function ContTableGridComponent(props: VisualizationProps) {
 }
 
 function ContTableSelectorComponent() {
-  return <img style={{ height: '100%', width: '100%' }} src={mosaic} />;
+  return (
+    <img
+      alt="RxC contingency table"
+      style={{ height: '100%', width: '100%' }}
+      src={mosaic}
+    />
+  );
 }
 
 function ContTableFullscreenComponent(props: VisualizationProps) {
@@ -74,7 +80,13 @@ function TwoByTwoGridComponent(props: VisualizationProps) {
 }
 
 function TwoByTwoSelectorComponent() {
-  return <img style={{ height: '100%', width: '100%' }} src={contingency} />;
+  return (
+    <img
+      alt="2x2 contingency table"
+      style={{ height: '100%', width: '100%' }}
+      src={contingency}
+    />
+  );
 }
 
 function TwoByTwoFullscreenComponent(props: VisualizationProps) {

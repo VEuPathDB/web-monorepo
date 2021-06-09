@@ -46,7 +46,13 @@ function GridComponent(props: VisualizationProps) {
 }
 
 function SelectorComponent() {
-  return <img style={{ height: '100%', width: '100%' }} src={histogram} />;
+  return (
+    <img
+      alt="Histogram"
+      style={{ height: '100%', width: '100%' }}
+      src={histogram}
+    />
+  );
 }
 
 function FullscreenComponent(props: VisualizationProps) {

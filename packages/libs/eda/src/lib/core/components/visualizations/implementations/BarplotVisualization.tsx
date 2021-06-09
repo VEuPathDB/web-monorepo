@@ -35,7 +35,9 @@ function GridComponent(props: VisualizationProps) {
 }
 
 function SelectorComponent() {
-  return <img style={{ height: '100%', width: '100%' }} src={bar} />;
+  return (
+    <img alt="Bar plot" style={{ height: '100%', width: '100%' }} src={bar} />
+  );
 }
 
 function FullscreenComponent(props: VisualizationProps) {
