@@ -27,6 +27,24 @@
     padding: 0;
   }
 
+  h2 {
+    padding: 0.25em 0;
+  }
+
+  h3 {
+    padding: 0.25em 0;
+  }
+
+  &-ProviderLabel {
+    font-weight: 300;
+    .HelpTrigger .fa {
+      font-size: 1em;
+    }
+    * {
+      display: inline-block;
+    }
+  }
+
   label.btn {
     padding: 8px 12px;
     font-size: 1em;

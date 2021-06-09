@@ -1,3 +1,4 @@
+import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   StudyEntity,
@@ -6,6 +7,7 @@ import {
   useStudyMetadata,
 } from '../core';
 import { FilterContainer } from '../core/components/filter/FilterContainer';
+import { cx } from './Utils';
 
 interface Props {
   entity: StudyEntity;
@@ -26,6 +28,20 @@ export function Variable(props: Props) {
   const studyMetadata = useStudyMetadata();
   return (
     <ErrorBoundary>
+      <div>
+        <h3>{variable.displayName}</h3>
+        <div className={cx('-ProviderLabel')}>
+          <div className={cx('-ProviderLabelPrefix')}>
+            Original variable name:
+          </div>
+          &nbsp;{variable.providerLabel}&nbsp;
+          <HelpIcon>
+            The name for this variable as provided with the original study's
+            data set. The VEuPathDB team curates variable names and places
+            variables into an ontology framework.
+          </HelpIcon>
+        </div>
+      </div>
       {totalEntityCount != null && filteredEntityCount != null ? (
         <FilterContainer
           studyMetadata={studyMetadata}
