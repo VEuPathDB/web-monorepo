@@ -234,7 +234,7 @@ function ScatterplotViz(props: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
           <InputVariables
             inputs={[
               {
@@ -371,6 +371,7 @@ function ScatterplotViz(props: Props) {
               minWidth={210}
               buttonColor={'primary'}
               margins={['0', '0', '0', '5em']}
+              itemMarginRight={50}
             />
           )}
         </>
@@ -426,6 +427,7 @@ function ScatterplotWithControls({
           minWidth={210}
           buttonColor={'primary'}
           margins={['0', '0', '0', '5em']}
+          itemMarginRight={50}
         />
       )}
     </div>
