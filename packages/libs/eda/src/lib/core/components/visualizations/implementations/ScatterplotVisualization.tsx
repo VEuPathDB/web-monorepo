@@ -269,9 +269,6 @@ function ScatterplotViz(props: Props) {
         </div>
       )}
 
-      {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
-      )}
       {data.error && fullscreen && (
         <div
           style={{
@@ -314,6 +311,7 @@ function ScatterplotViz(props: Props) {
             onValueSpecChange={onValueSpecChange}
             // send visualization.type here
             vizType={visualization.type}
+            showSpinner={data.pending}
           />
         ) : (
           // thumbnail/grid view
@@ -329,6 +327,7 @@ function ScatterplotViz(props: Props) {
             displayLibraryControls={false}
             staticPlot={true}
             margin={{ l: 30, r: 20, b: 15, t: 20 }}
+            showSpinner={data.pending}
           />
         )
       ) : (
@@ -352,6 +351,7 @@ function ScatterplotViz(props: Props) {
             displayLibraryControls={false}
             staticPlot={fullscreen ? false : true}
             margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
+            showSpinner={data.pending}
           />
           {visualization.type === 'scatterplot' && fullscreen && (
             <XYPlotControls

@@ -206,9 +206,6 @@ function BarplotViz(props: Props) {
         </div>
       )}
 
-      {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
-      )}
       {data.error && fullscreen && (
         <div
           style={{
@@ -242,6 +239,7 @@ function BarplotViz(props: Props) {
               findVariable(vizConfig.xAxisVariable)?.displayName
             }
             dependentAxisLabel={'Count'}
+            showSpinner={data.pending}
           />
         ) : (
           // thumbnail/grid view
@@ -261,6 +259,7 @@ function BarplotViz(props: Props) {
             staticPlot={true}
             // set margin for better display at thumbnail/grid view
             margin={{ l: 30, r: 20, b: 0, t: 20 }}
+            showSpinner={data.pending}
           />
         )
       ) : (
@@ -287,6 +286,7 @@ function BarplotViz(props: Props) {
           displayLibraryControls={false}
           staticPlot={fullscreen ? false : true}
           margin={fullscreen ? {} : { l: 30, r: 20, b: 0, t: 20 }}
+          showSpinner={data.pending}
         />
       )}
     </div>
