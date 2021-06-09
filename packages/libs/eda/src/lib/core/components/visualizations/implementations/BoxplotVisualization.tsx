@@ -207,19 +207,19 @@ function BoxplotViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'X-axis variable',
+                label: 'X-axis',
               },
               {
                 name: 'yAxisVariable',
-                label: 'Y-axis variable',
+                label: 'Y-axis',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay variable (Optional)',
+                label: 'Overlay (Optional)',
               },
               {
                 name: 'facetVariable',
-                label: 'Facet variable (Optional)',
+                label: 'Facet (Optional)',
               },
             ]}
             entities={entities}
@@ -237,9 +237,6 @@ function BoxplotViz(props: Props) {
         </div>
       )}
 
-      {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
-      )}
       {data.error && fullscreen && (
         <div
           style={{
@@ -280,6 +277,7 @@ function BoxplotViz(props: Props) {
               findVariable(vizConfig.yAxisVariable)?.displayName
             }
             showMean={true}
+            showSpinner={data.pending}
           />
         ) : (
           // thumbnail/grid view
@@ -299,6 +297,7 @@ function BoxplotViz(props: Props) {
             displayLegend={false}
             displayLibraryControls={false}
             margin={{ l: 30, r: 20, b: 0, t: 20 }}
+            showSpinner={data.pending}
           />
         )
       ) : (
@@ -332,6 +331,7 @@ function BoxplotViz(props: Props) {
             staticPlot={fullscreen ? false : true}
             showMean={fullscreen ? false : true}
             margin={fullscreen ? {} : { l: 30, r: 20, b: 0, t: 20 }}
+            showSpinner={data.pending}
           />
         </>
       )}
