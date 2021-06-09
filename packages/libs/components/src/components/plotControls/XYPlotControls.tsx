@@ -102,7 +102,6 @@ export default function XYPlotControls({
             label="Plot options"
             options={[
               'Raw',
-              'Smoothed mean',
               'Smoothed mean with raw',
               'Best fit line with raw',
             ]}

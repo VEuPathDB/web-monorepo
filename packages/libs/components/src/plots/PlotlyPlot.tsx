@@ -25,6 +25,8 @@ export interface PlotProps {
   showModebar?: boolean | 'hover';
   // add legend prop for positioning
   legend?: legendProp;
+  // show a loading spinner on top of the plot
+  showSpinner?: boolean;
 }
 
 // Passing undefined doesn't revert to default modebar behavior,
@@ -50,10 +52,25 @@ export default function PlotlyPlot(props: PlotParams) {
   const finalConfig = useMemo(() => ({ ...config, ...props.config }), [
     props.config,
   ]);
+  // change layout: add axis fixedrange
+  const finalLayout = useMemo(
+    () => ({
+      ...props.layout,
+      xaxis: { ...props.layout.xaxis, fixedrange: true },
+      yaxis: { ...props.layout.yaxis, fixedrange: true },
+    }),
+    [props.layout]
+  );
 
   return (
     <Suspense fallback="Loading...">
-      <Plot {...props} style={finalStyle} config={finalConfig} />
+      {/* set layout props */}
+      <Plot
+        {...props}
+        layout={finalLayout}
+        style={finalStyle}
+        config={finalConfig}
+      />
     </Suspense>
   );
 }

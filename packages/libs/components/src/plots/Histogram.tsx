@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
+import Spinner from '../components/Spinner';
 
 // Definitions
 import { DARK_GRAY } from '../constants/colors';
@@ -80,6 +81,8 @@ export interface HistogramProps {
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
   isZoomed?: boolean;
+  /** Show a loading spinner on top of the plot */
+  showSpinner?: boolean;
 }
 
 /** A Plot.ly based histogram component. */
@@ -109,6 +112,7 @@ export default function Histogram({
   onSelectedRangeChange = () => {},
   selectedRangeBounds,
   isZoomed = false,
+  showSpinner,
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -350,7 +354,6 @@ export default function Histogram({
     },
     color: textColor,
     range: [minBinStart, maxBinEnd],
-    fixedrange: true,
     tickfont: data.series.length ? {} : { color: 'transparent' },
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
@@ -371,14 +374,13 @@ export default function Histogram({
           dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
         )
       : [0, 10],
-    fixedrange: true,
     dtick: dependentAxisLogScale ? 1 : undefined,
     tickfont: data.series.length ? {} : { color: 'transparent' },
     showline: true,
   };
 
   return (
-    <div>
+    <div style={{ position: 'relative', width: width, height: height }}>
       <PlotlyPlot
         useResizeHandler={true}
         revision={revision}
@@ -436,6 +438,7 @@ export default function Histogram({
           showTips: true, // shows 'double click to zoom out' help for new users
         }}
       />
+      {showSpinner && <Spinner />}
     </div>
   );
 }

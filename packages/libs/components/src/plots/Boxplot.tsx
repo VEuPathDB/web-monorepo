@@ -1,6 +1,7 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
 import { Datum } from 'plotly.js';
+import Spinner from '../components/Spinner';
 
 export interface Props extends PlotProps {
   data: {
@@ -39,6 +40,7 @@ export default function Boxplot({
   height,
   margin,
   staticPlot,
+  showSpinner,
 }: Props) {
   const pdata = data.map((d) => {
     const orientationDependentProps =
@@ -97,19 +99,22 @@ export default function Boxplot({
     showlegend: false,
   };
   return (
-    <PlotlyPlot
-      data={pdata}
-      layout={Object.assign(layout, {
-        width: width,
-        height: height,
-        margin: margin,
-      })}
-      config={{
-        displayModeBar:
-          showModebar !== undefined ? showModebar : ModebarDefault,
-        staticPlot: staticPlot,
-      }}
-    />
+    <div style={{ position: 'relative', width: width, height: height }}>
+      <PlotlyPlot
+        data={pdata}
+        layout={Object.assign(layout, {
+          width: width,
+          height: height,
+          margin: margin,
+        })}
+        config={{
+          displayModeBar:
+            showModebar !== undefined ? showModebar : ModebarDefault,
+          staticPlot: staticPlot,
+        }}
+      />
+      {showSpinner && <Spinner />}
+    </div>
   );
 }
 
