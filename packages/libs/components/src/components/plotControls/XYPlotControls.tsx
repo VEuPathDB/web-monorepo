@@ -8,6 +8,7 @@ import { ErrorManagement } from '../../types/general';
 // Local Components
 import RadioButtonGroup from '../widgets/RadioButtonGroup';
 import Notification from '../widgets/Notification';
+import LabelledGroup from '../widgets/LabelledGroup';
 
 /**
  * Props for XYPlot controls.
@@ -16,8 +17,6 @@ import Notification from '../widgets/Notification';
  * determine if that control is displayed.
  */
 export type XYPlotControlsProps = {
-  /** Label for control panel. Optional. */
-  label?: string;
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
   /** Color to use as an accent in the control panel. Will accept any
@@ -39,6 +38,8 @@ export type XYPlotControlsProps = {
   buttonColor?: 'primary' | 'secondary';
   /** margin of radio button group: string array for top, left, bottom, and left, e.g., ['10em', '0', '0', '10em'] */
   margins?: string[];
+  /** marginRight of radio button item: default 16px from MUI */
+  itemMarginRight?: number | string;
 };
 
 /**
@@ -49,18 +50,16 @@ export type XYPlotControlsProps = {
  * widgets contained here.
  */
 export default function XYPlotControls({
-  label,
   accentColor = LIGHT_BLUE,
   errorManagement,
   containerStyles,
-  // valueSpec
   valueSpec,
   onValueSpecChange,
   orientation,
   labelPlacement,
-  minWidth,
   buttonColor,
   margins,
+  itemMarginRight,
 }: XYPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
@@ -106,13 +105,12 @@ export default function XYPlotControls({
               'Best fit line with raw',
             ]}
             selectedOption={valueSpec}
-            // @ts-ignore
             onOptionSelected={onValueSpecChange}
             orientation={orientation}
             labelPlacement={labelPlacement}
-            minWidth={minWidth}
             buttonColor={buttonColor}
             margins={margins}
+            itemMarginRight={itemMarginRight}
           />
         )}
       </div>

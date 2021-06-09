@@ -1,10 +1,9 @@
 // widget for radio button group
-import React, { useState } from 'react';
+import React from 'react';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { Typography } from '@material-ui/core';
 
 export type RadioButtonGroupProps = {
@@ -28,6 +27,8 @@ export type RadioButtonGroupProps = {
   buttonColor?: 'primary' | 'secondary';
   /** margin of radio button group: string array for top, left, bottom, and left, e.g., ['10em', '0', '0', '10em'] */
   margins?: string[];
+  /** marginRight of radio button item: default 16px from MUI */
+  itemMarginRight?: number | string;
 };
 
 /**
@@ -45,6 +46,7 @@ export default function RadioButtonGroup({
   minWidth,
   buttonColor,
   margins,
+  itemMarginRight,
 }: RadioButtonGroupProps) {
   // perhaps not using focused?
   // const [focused, setFocused] = useState(false);
@@ -78,7 +80,7 @@ export default function RadioButtonGroup({
       <FormControl style={{ width: '100%' }}>
         <RadioGroup
           value={selectedOption}
-          onChange={(event, value) => value && onOptionSelected(value)}
+          onChange={(_, value) => value && onOptionSelected(value)}
           aria-label={`${label} control button group`}
           row={orientation === 'horizontal' ? true : false}
         >
@@ -94,6 +96,7 @@ export default function RadioButtonGroup({
                 // padding: 5,
                 // paddingLeft: 7.5,
                 // paddingRight: 7.5,
+                marginRight: itemMarginRight,
                 fontSize: '0.75em',
                 fontWeight: 400,
                 textTransform: 'capitalize',
