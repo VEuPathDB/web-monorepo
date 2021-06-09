@@ -16,28 +16,10 @@ interface Props {
 }
 
 export function FilterContainer(props: Props) {
-  const AdditionalDescription = () => {
-    return (
-      <div>
-        <h3 style={{ padding: '0', margin: '.5em 0' }}>
-          {props.variable.displayName}
-        </h3>
-        <h4 style={{ padding: '0', margin: '.5em 0' }}>
-          Provider label: {props.variable.providerLabel}
-        </h4>
-      </div>
-    );
-  };
   return narrowProps(isHistogramVariable, props) ? (
-    <>
-      <AdditionalDescription />
-      <HistogramFilter {...props} />
-    </>
+    <HistogramFilter {...props} />
   ) : narrowProps(isTableVariable, props) ? (
-    <>
-      <AdditionalDescription />
-      <TableFilter {...props} />
-    </>
+    <TableFilter {...props} />
   ) : (
     <UnknownFilter />
   );

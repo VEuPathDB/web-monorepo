@@ -180,15 +180,15 @@ function BarplotViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'Main variable',
+                label: 'Main',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay variable (Optional)',
+                label: 'Overlay (optional)',
               },
               {
                 name: 'facetVariable',
-                label: 'Facet Variable',
+                label: 'Facet (optional)',
               },
             ]}
             entities={entities}
