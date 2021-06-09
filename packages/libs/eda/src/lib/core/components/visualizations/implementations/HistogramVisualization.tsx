@@ -26,7 +26,6 @@ import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { Variable } from '../../../types/variable';
-import { DataElementConstraint } from '../../../types/visualization';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
@@ -46,7 +45,13 @@ function GridComponent(props: VisualizationProps) {
 }
 
 function SelectorComponent() {
-  return <img style={{ height: '100%', width: '100%' }} src={histogram} />;
+  return (
+    <img
+      alt="Histogram"
+      style={{ height: '100%', width: '100%' }}
+      src={histogram}
+    />
+  );
 }
 
 function FullscreenComponent(props: VisualizationProps) {
@@ -193,15 +198,15 @@ function HistogramViz(props: Props) {
       const response = dataClient.getHistogram(computation.type, params);
       return histogramResponseToData(await response, xAxisVariable.type);
     }, [
-      studyId,
-      filters,
-      dataClient,
       vizConfig.xAxisVariable,
       vizConfig.enableOverlay,
       vizConfig.overlayVariable,
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
-      entities,
+      xAxisVariable,
+      studyId,
+      filters,
+      dataClient,
       computation.type,
     ])
   );
@@ -239,12 +244,6 @@ function HistogramViz(props: Props) {
         </div>
       )}
 
-      {data.pending && (
-        <Loading
-          style={{ position: 'absolute', top: '400px', left: '50vw' }}
-          radius={16}
-        />
-      )}
       {data.error && fullscreen && (
         <div
           style={{
@@ -282,6 +281,7 @@ function HistogramViz(props: Props) {
           independentAxisLabel={
             xAxisVariable ? xAxisVariable.displayName : 'Bins'
           }
+          showSpinner={data.pending}
         />
       ) : (
         // thumbnail/grid view
@@ -297,6 +297,7 @@ function HistogramViz(props: Props) {
           dependentAxisLabel=""
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           interactive={false}
+          showSpinner={data.pending}
         />
       )}
     </div>
@@ -325,8 +326,8 @@ function HistogramPlotWithControls({
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
+      addError: (_: Error) => {},
+      removeError: (_: Error) => {},
       clearAllErrors: () => {},
     };
   }, []);

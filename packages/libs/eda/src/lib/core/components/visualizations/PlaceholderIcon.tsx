@@ -7,11 +7,11 @@ import map from './implementations/selectorIcons/map.svg';
 const style = { height: '100%', width: '100%', opacity: 0.2 };
 
 const images: Record<string, JSX.Element> = {
-  boxplot: <img src={box} style={style} />,
-  conttable: <img src={mosaic} style={style} />,
-  heatmap: <img src={heatmap} style={style} />,
-  densityplot: <img src={density} style={style} />,
-  ['map-markers']: <img src={map} style={style} />,
+  boxplot: <img alt="Box plot" src={box} style={style} />,
+  conttable: <img alt="Contingecy table" src={mosaic} style={style} />,
+  heatmap: <img alt="Heatmap" src={heatmap} style={style} />,
+  densityplot: <img alt="Density plot" src={density} style={style} />,
+  'map-markers': <img alt="Map marker" src={map} style={style} />,
 };
 
 interface Props {

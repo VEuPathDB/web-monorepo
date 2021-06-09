@@ -38,7 +38,10 @@ export function VariableTree(props: Props) {
     onChange,
   } = props;
   const entities = useMemo(
-    () => Array.from(preorder(rootEntity, (e) => e.children ?? [])),
+    () =>
+      Array.from(
+        preorder(rootEntity, (e) => e.children?.slice().reverse() ?? [])
+      ),
     [rootEntity]
   );
 

@@ -323,6 +323,16 @@ function FullScreenVisualization(props: Props & { id: string }) {
               }
             />
           </h3>
+          <div
+            style={{
+              fontSize: '1.3em',
+              color: '#333333',
+              margin: 0,
+              paddingLeft: '0.3em',
+            }}
+          >
+            {overview?.displayName}
+          </div>
           <vizType.fullscreenComponent
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}

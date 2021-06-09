@@ -1,8 +1,7 @@
 import { Analysis, NewAnalysis } from '../core';
 import localforage from 'localforage';
-import { pipe } from 'fp-ts/lib/function';
 import { AnalysisClient } from '../core/api/analysis-api';
-import { getOrElse, isLeft, isRight } from 'fp-ts/lib/Either';
+import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 
 const localStore = localforage.createInstance({

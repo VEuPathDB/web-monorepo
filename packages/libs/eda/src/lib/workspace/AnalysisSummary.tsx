@@ -10,18 +10,12 @@ interface Props {
   analysis: Analysis;
   setAnalysisName: (name: string) => void;
   copyAnalysis: () => Promise<{ id: string }>;
-  saveAnalysis: () => void;
-  deleteAnalysis: () => void;
+  saveAnalysis: () => Promise<void>;
+  deleteAnalysis: () => Promise<void>;
 }
 
 export function AnalysisSummary(props: Props) {
-  const {
-    analysis,
-    setAnalysisName,
-    copyAnalysis,
-    saveAnalysis,
-    deleteAnalysis,
-  } = props;
+  const { analysis, setAnalysisName, copyAnalysis, deleteAnalysis } = props;
   const history = useHistory();
   const { url } = useRouteMatch();
   const handleCopy = async () => {
@@ -40,14 +34,16 @@ export function AnalysisSummary(props: Props) {
         onSave={setAnalysisName}
       />
       <ActionIconButton
+        iconClassName="download"
+        hoverText="Bulk download study"
+        action={() => {
+          alert('Coming soon');
+        }}
+      />
+      <ActionIconButton
         iconClassName="clone"
         hoverText="Copy analysis"
         action={handleCopy}
-      />
-      <ActionIconButton
-        iconClassName="floppy-o"
-        hoverText="Save analysis"
-        action={saveAnalysis}
       />
       <ActionIconButton
         iconClassName="trash"

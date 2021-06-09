@@ -55,7 +55,13 @@ function SelectorComponent({ name }: SelectorProps) {
   const src =
     name === 'lineplot' ? line : name === 'densityplot' ? density : scatter;
 
-  return <img style={{ height: '100%', width: '100%' }} src={src} />;
+  return (
+    <img
+      alt="Scatter plot"
+      style={{ height: '100%', width: '100%' }}
+      src={src}
+    />
+  );
 }
 
 function FullscreenComponent(props: VisualizationProps) {
@@ -152,7 +158,7 @@ function ScatterplotViz(props: Props) {
         facetVariable,
       });
     },
-    [updateVizConfig, vizConfig]
+    [updateVizConfig]
   );
 
   const findVariable = useCallback(
@@ -172,7 +178,7 @@ function ScatterplotViz(props: Props) {
         valueSpecConfig: value,
       });
     },
-    [updateVizConfig, vizConfig]
+    [updateVizConfig]
   );
 
   const data = usePromise(
@@ -263,9 +269,6 @@ function ScatterplotViz(props: Props) {
         </div>
       )}
 
-      {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
-      )}
       {data.error && fullscreen && (
         <div
           style={{
@@ -308,6 +311,7 @@ function ScatterplotViz(props: Props) {
             onValueSpecChange={onValueSpecChange}
             // send visualization.type here
             vizType={visualization.type}
+            showSpinner={data.pending}
           />
         ) : (
           // thumbnail/grid view
@@ -323,6 +327,7 @@ function ScatterplotViz(props: Props) {
             displayLibraryControls={false}
             staticPlot={true}
             margin={{ l: 30, r: 20, b: 15, t: 20 }}
+            showSpinner={data.pending}
           />
         )
       ) : (
@@ -346,6 +351,7 @@ function ScatterplotViz(props: Props) {
             displayLibraryControls={false}
             staticPlot={fullscreen ? false : true}
             margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
+            showSpinner={data.pending}
           />
           {visualization.type === 'scatterplot' && fullscreen && (
             <XYPlotControls
@@ -354,10 +360,17 @@ function ScatterplotViz(props: Props) {
               onValueSpecChange={onValueSpecChange}
               errorManagement={{
                 errors: [],
-                addError: (error: Error) => {},
-                removeError: (error: Error) => {},
+                addError: (_: Error) => {},
+                removeError: (_: Error) => {},
                 clearAllErrors: () => {},
               }}
+              // new radio button
+              orientation={'horizontal'}
+              labelPlacement={'end'}
+              // minWidth is used to set equivalent space per item
+              minWidth={210}
+              buttonColor={'primary'}
+              margins={['0', '0', '0', '5em']}
             />
           )}
         </>
@@ -384,8 +397,8 @@ function ScatterplotWithControls({
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
+      addError: (_: Error) => {},
+      removeError: (_: Error) => {},
       clearAllErrors: () => {},
     };
   }, []);
@@ -406,6 +419,13 @@ function ScatterplotWithControls({
           valueSpec={valueSpec}
           onValueSpecChange={onValueSpecChange}
           errorManagement={errorManagement}
+          // new radio button
+          orientation={'horizontal'}
+          labelPlacement={'end'}
+          // minWidth is used to set equivalent space per item
+          minWidth={210}
+          buttonColor={'primary'}
+          margins={['0', '0', '0', '5em']}
         />
       )}
     </div>
@@ -460,9 +480,7 @@ function getRequestParams(
 ): getRequestParamsProps {
   // valueSpec
   let valueSpecValue = 'raw';
-  if (valueSpecConfig === 'Smoothed mean') {
-    valueSpecValue = 'smoothedMean';
-  } else if (valueSpecConfig === 'Smoothed mean with raw') {
+  if (valueSpecConfig === 'Smoothed mean with raw') {
     valueSpecValue = 'smoothedMeanWithRaw';
   } else if (valueSpecConfig === 'Best fit line with raw') {
     valueSpecValue = 'bestFitLineWithRaw';
@@ -642,7 +660,7 @@ function processInputData<T extends number | Date>(
 
       // check if this Y array consists of numbers & add type assertion
       if (isArrayOfNumbers(ySeriesValue)) {
-        if (index == 0) {
+        if (index === 0) {
           yMin = Math.min(...ySeriesValue);
           yMax = Math.max(...ySeriesValue);
         } else {
