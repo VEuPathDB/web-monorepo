@@ -39,7 +39,13 @@ function GridComponent(props: VisualizationProps) {
 
 // this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent() {
-  return <img style={{ height: '100%', width: '100%' }} src={box} />;
+  return (
+    <img
+      alt="Scatter plot"
+      style={{ height: '100%', width: '100%' }}
+      src={box}
+    />
+  );
 }
 
 function FullscreenComponent(props: VisualizationProps) {
@@ -134,7 +140,7 @@ function BoxplotViz(props: Props) {
         facetVariable,
       });
     },
-    [updateVizConfig, vizConfig]
+    [updateVizConfig]
   );
 
   const findVariable = useCallback(
@@ -344,8 +350,8 @@ any) {
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
+      addError: (_: Error) => {},
+      removeError: (_: Error) => {},
       clearAllErrors: () => {},
     };
   }, []);
