@@ -125,7 +125,7 @@ function BarplotViz(props: Props) {
         facetVariable,
       });
     },
-    [updateVizConfig, vizConfig]
+    [updateVizConfig]
   );
 
   const findVariable = useCallback(
@@ -141,7 +141,6 @@ function BarplotViz(props: Props) {
   const data = usePromise(
     useCallback(async (): Promise<any> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
-      const overlayVariable = findVariable(vizConfig.overlayVariable);
 
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
@@ -170,7 +169,6 @@ function BarplotViz(props: Props) {
       vizConfig,
       findVariable,
       computation.type,
-      visualization.type,
     ])
   );
 
@@ -303,13 +301,15 @@ function BarplotWithControls({
   data,
   vizType,
   ...BarplotControlsProps
-}: BarplotWithControlsProps) {
+}: // eslint-disable-next-line @typescript-eslint/no-unused-vars
+BarplotWithControlsProps) {
   // TODO Use UIState
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
+      addError: (_: Error) => {},
+      removeError: (_: Error) => {},
       clearAllErrors: () => {},
     };
   }, []);
@@ -350,8 +350,10 @@ export function barplotResponseToData(
     })),
   };
 }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 // add an extended type
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type getRequestParamsProps = BarplotRequestParams & { vizType?: string };
 
 function getRequestParams(

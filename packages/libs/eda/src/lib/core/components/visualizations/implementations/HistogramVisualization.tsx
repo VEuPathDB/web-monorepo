@@ -26,7 +26,6 @@ import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { Variable } from '../../../types/variable';
-import { DataElementConstraint } from '../../../types/visualization';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
@@ -192,6 +191,7 @@ function HistogramViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         xAxisVariable.type,
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
         vizConfig.binWidth,
         vizConfig.binWidthTimeUnit
@@ -199,15 +199,15 @@ function HistogramViz(props: Props) {
       const response = dataClient.getHistogram(computation.type, params);
       return histogramResponseToData(await response, xAxisVariable.type);
     }, [
-      studyId,
-      filters,
-      dataClient,
       vizConfig.xAxisVariable,
       vizConfig.enableOverlay,
       vizConfig.overlayVariable,
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
-      entities,
+      xAxisVariable,
+      studyId,
+      filters,
+      dataClient,
       computation.type,
     ])
   );
@@ -331,8 +331,8 @@ function HistogramPlotWithControls({
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
+      addError: (_: Error) => {},
+      removeError: (_: Error) => {},
       clearAllErrors: () => {},
     };
   }, []);

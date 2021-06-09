@@ -158,7 +158,7 @@ function ScatterplotViz(props: Props) {
         facetVariable,
       });
     },
-    [updateVizConfig, vizConfig]
+    [updateVizConfig]
   );
 
   const findVariable = useCallback(
@@ -178,7 +178,7 @@ function ScatterplotViz(props: Props) {
         valueSpecConfig: value,
       });
     },
-    [updateVizConfig, vizConfig]
+    [updateVizConfig]
   );
 
   const data = usePromise(
@@ -360,8 +360,8 @@ function ScatterplotViz(props: Props) {
               onValueSpecChange={onValueSpecChange}
               errorManagement={{
                 errors: [],
-                addError: (error: Error) => {},
-                removeError: (error: Error) => {},
+                addError: (_: Error) => {},
+                removeError: (_: Error) => {},
                 clearAllErrors: () => {},
               }}
               // new radio button
@@ -397,8 +397,8 @@ function ScatterplotWithControls({
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
+      addError: (_: Error) => {},
+      removeError: (_: Error) => {},
       clearAllErrors: () => {},
     };
   }, []);
@@ -660,7 +660,7 @@ function processInputData<T extends number | Date>(
 
       // check if this Y array consists of numbers & add type assertion
       if (isArrayOfNumbers(ySeriesValue)) {
-        if (index == 0) {
+        if (index === 0) {
           yMin = Math.min(...ySeriesValue);
           yMax = Math.max(...ySeriesValue);
         } else {
