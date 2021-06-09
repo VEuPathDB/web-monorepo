@@ -96,6 +96,11 @@ export function AnalysisPanel(props: Props) {
         routeBase={routeBase}
         items={[
           {
+            display: 'View study details',
+            route: `/details`,
+            exact: false,
+          },
+          {
             display: 'Browse and subset',
             route: `/variables${lastVarPath}`,
             exact: false,
@@ -103,11 +108,6 @@ export function AnalysisPanel(props: Props) {
           {
             display: 'Visualize',
             route: `/visualizations${lastVizPath}`,
-            exact: false,
-          },
-          {
-            display: 'View study details',
-            route: `/details`,
             exact: false,
           },
         ]}
