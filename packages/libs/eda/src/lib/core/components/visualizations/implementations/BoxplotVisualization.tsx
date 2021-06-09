@@ -202,7 +202,7 @@ function BoxplotViz(props: Props) {
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {/*  change title at viz page */}
       {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
           <InputVariables
             inputs={[
               {
