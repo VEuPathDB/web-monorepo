@@ -234,7 +234,7 @@ function ScatterplotViz(props: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {fullscreen && (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
           <InputVariables
             inputs={[
               {

@@ -204,8 +204,7 @@ function NewVisualizationPicker(props: Props) {
                     id,
                     computationId: computationId,
                     type: vizOverview.name!,
-                    displayName:
-                      'Unnamed ' + (vizOverview.displayName ?? 'visualization'),
+                    displayName: 'Unnamed visualization',
                     configuration: vizType?.createDefaultConfig(),
                   });
                   history.push(`../${computationId}/${id}`);
@@ -285,9 +284,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
                 ...viz,
                 id,
                 displayName:
-                  'Copy of ' +
-                  (viz.displayName ||
-                    ('unnamed ' + overview?.displayName ?? 'visualization')),
+                  'Copy of ' + (viz.displayName || 'unnamed visualization'),
               });
               history.replace(
                 Path.resolve(history.location.pathname, '..', id)
@@ -313,26 +310,13 @@ function FullScreenVisualization(props: Props & { id: string }) {
         <div>
           <h3>
             <SaveableTextEditor
-              value={
-                viz.displayName ??
-                'unnamed ' + overview?.displayName ??
-                'visualization'
-              }
+              value={viz.displayName ?? 'unnamed visualization'}
               onSave={(value) =>
                 updateVisualization({ ...viz, displayName: value })
               }
             />
           </h3>
-          <div
-            style={{
-              fontSize: '1.3em',
-              color: '#333333',
-              margin: 0,
-              paddingLeft: '0.3em',
-            }}
-          >
-            {overview?.displayName}
-          </div>
+          <div className="Subtitle">{overview?.displayName}</div>
           <vizType.fullscreenComponent
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}
