@@ -189,7 +189,7 @@ export default function HistogramControls({
       ref={ref}
       style={{
         borderStyle: 'solid',
-        borderWidth: '0.125em',
+        borderWidth: '0em',
         borderColor: '#cccccc',
         borderRadius: '0.6125em',
         padding: '0.9375em',
@@ -294,7 +294,7 @@ export default function HistogramControls({
         )}
       </div>
 
-      <LabelledGroup label="y-Axis" containerStyles={{}}>
+      <LabelledGroup label="Y-axis" containerStyles={{}}>
         {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
           <Switch
             label="Log Scale:"
@@ -342,7 +342,7 @@ export default function HistogramControls({
         )}
       </LabelledGroup>
 
-      <LabelledGroup label="x-Axis" containerStyles={{}}>
+      <LabelledGroup label="X-axis" containerStyles={{}}>
         {availableUnits?.length && selectedUnit && onSelectedUnitChange && (
           <ButtonGroup
             label="Data Units"

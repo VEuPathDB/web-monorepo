@@ -1,10 +1,9 @@
 // widget for radio button group
-import React, { useState } from 'react';
+import React from 'react';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { DARK_GRAY, MEDIUM_GRAY } from '../../constants/colors';
 import { Typography } from '@material-ui/core';
 
 export type RadioButtonGroupProps = {
@@ -81,7 +80,7 @@ export default function RadioButtonGroup({
       <FormControl style={{ width: '100%' }}>
         <RadioGroup
           value={selectedOption}
-          onChange={(event, value) => value && onOptionSelected(value)}
+          onChange={(_, value) => value && onOptionSelected(value)}
           aria-label={`${label} control button group`}
           row={orientation === 'horizontal' ? true : false}
         >
