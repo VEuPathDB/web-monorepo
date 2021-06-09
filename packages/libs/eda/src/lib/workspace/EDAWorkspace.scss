@@ -27,6 +27,26 @@
     padding: 0;
   }
 
+  h2 {
+    padding: 0.25em 0;
+  }
+
+  h3 {
+    padding: 0.25em 0;
+  }
+
+  &-ProviderLabel {
+    * {
+      display: inline-block;
+    }
+    font-size: 1.1em;
+    color: dimgray;
+    &Prefix {
+      font-weight: 500;
+      margin-right: 1ex;
+    }
+  }
+
   label.btn {
     padding: 8px 12px;
     font-size: 1em;
