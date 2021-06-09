@@ -58,12 +58,6 @@ export interface Props {
 
 const useStyles = makeStyles(
   {
-    root: {
-      // border: '2px solid rgb(240, 240, 240)',
-      border: 0,
-      padding: '1.5em',
-      borderRadius: '10px',
-    },
     inputs: {
       display: 'flex',
     },
@@ -76,7 +70,7 @@ const useStyles = makeStyles(
     },
     label: {
       marginRight: '1ex',
-      fontWeight: 'bold',
+      fontWeight: 500,
     },
     dataLabel: {
       textAlign: 'right',
@@ -150,7 +144,7 @@ export function InputVariables(props: Props) {
   });
 
   return (
-    <div className={classes.root}>
+    <div>
       <div className={classes.inputs}>
         {inputs.map((input, index) => (
           <div key={input.name} className={classes.input}>
