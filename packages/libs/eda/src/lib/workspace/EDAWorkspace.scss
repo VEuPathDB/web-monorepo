@@ -36,14 +36,12 @@
   }
 
   &-ProviderLabel {
+    font-weight: 300;
+    .HelpTrigger .fa {
+      font-size: 1em;
+    }
     * {
       display: inline-block;
-    }
-    font-size: 1.1em;
-    color: dimgray;
-    &Prefix {
-      font-weight: 500;
-      margin-right: 1ex;
     }
   }
 

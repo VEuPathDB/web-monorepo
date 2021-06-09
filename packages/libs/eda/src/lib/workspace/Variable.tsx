@@ -32,14 +32,14 @@ export function Variable(props: Props) {
         <h3>{variable.displayName}</h3>
         <div className={cx('-ProviderLabel')}>
           <div className={cx('-ProviderLabelPrefix')}>
-            Original variable name &nbsp;
-            <HelpIcon>
-              The name for this variable as provided with the original study's
-              data set. The VEuPathDB team curates variable names and places
-              variables into an ontology framework.
-            </HelpIcon>
+            Original variable name:
           </div>
-          {variable.providerLabel}
+          &nbsp;{variable.providerLabel}&nbsp;
+          <HelpIcon>
+            The name for this variable as provided with the original study's
+            data set. The VEuPathDB team curates variable names and places
+            variables into an ontology framework.
+          </HelpIcon>
         </div>
       </div>
       {totalEntityCount != null && filteredEntityCount != null ? (
