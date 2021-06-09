@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/eda",
-  "version": "0.3.24",
+  "version": "0.3.25",
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@types/debounce-promise": "^3.1.3",
