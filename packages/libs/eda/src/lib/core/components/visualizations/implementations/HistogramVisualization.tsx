@@ -239,12 +239,6 @@ function HistogramViz(props: Props) {
         </div>
       )}
 
-      {data.pending && (
-        <Loading
-          style={{ position: 'absolute', top: '400px', left: '50vw' }}
-          radius={16}
-        />
-      )}
       {data.error && fullscreen && (
         <div
           style={{
@@ -282,6 +276,7 @@ function HistogramViz(props: Props) {
           independentAxisLabel={
             xAxisVariable ? xAxisVariable.displayName : 'Bins'
           }
+          showSpinner={data.pending}
         />
       ) : (
         // thumbnail/grid view
@@ -297,6 +292,7 @@ function HistogramViz(props: Props) {
           dependentAxisLabel=""
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           interactive={false}
+          showSpinner={data.pending}
         />
       )}
     </div>

@@ -300,6 +300,7 @@ function MosaicViz(props: Props) {
               : ''
           }
           showLegend={true}
+          showSpinner={data.pending}
         />
       </div>
       {statsTable}
@@ -323,6 +324,7 @@ function MosaicViz(props: Props) {
       staticPlot={true}
       independentLabel=""
       dependentLabel=""
+      showSpinner={data.pending}
     />
   );
 
@@ -359,9 +361,6 @@ function MosaicViz(props: Props) {
         </div>
       )}
 
-      {data.pending && (
-        <Loading style={{ position: 'absolute', top: '-1.5em' }} radius={2} />
-      )}
       {data.error && fullscreen && (
         <div
           style={{
