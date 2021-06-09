@@ -24,9 +24,10 @@ export const Basic: Story<usePlotControlsParams<any>> = (args) => {
       // assign new props' values for tests
       orientation={'horizontal'}
       labelPlacement={'end'}
-      minWidth={235}
+      // minWidth={235}
       buttonColor={'primary'}
       margins={['5em', '0', '0', '5em']}
+      itemMarginRight={50}
     />
   );
 };

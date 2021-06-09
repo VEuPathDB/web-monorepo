@@ -28,6 +28,8 @@ export type RadioButtonGroupProps = {
   buttonColor?: 'primary' | 'secondary';
   /** margin of radio button group: string array for top, left, bottom, and left, e.g., ['10em', '0', '0', '10em'] */
   margins?: string[];
+  /** marginRight of radio button item: default 16px from MUI */
+  itemMarginRight?: number | string;
 };
 
 /**
@@ -45,6 +47,7 @@ export default function RadioButtonGroup({
   minWidth,
   buttonColor,
   margins,
+  itemMarginRight,
 }: RadioButtonGroupProps) {
   // perhaps not using focused?
   // const [focused, setFocused] = useState(false);
@@ -94,6 +97,7 @@ export default function RadioButtonGroup({
                 // padding: 5,
                 // paddingLeft: 7.5,
                 // paddingRight: 7.5,
+                marginRight: itemMarginRight,
                 fontSize: '0.75em',
                 fontWeight: 400,
                 textTransform: 'capitalize',

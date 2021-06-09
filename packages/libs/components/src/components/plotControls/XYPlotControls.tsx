@@ -39,6 +39,8 @@ export type XYPlotControlsProps = {
   buttonColor?: 'primary' | 'secondary';
   /** margin of radio button group: string array for top, left, bottom, and left, e.g., ['10em', '0', '0', '10em'] */
   margins?: string[];
+  /** marginRight of radio button item: default 16px from MUI */
+  itemMarginRight?: number | string;
 };
 
 /**
@@ -61,6 +63,7 @@ export default function XYPlotControls({
   minWidth,
   buttonColor,
   margins,
+  itemMarginRight,
 }: XYPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
@@ -110,9 +113,10 @@ export default function XYPlotControls({
             onOptionSelected={onValueSpecChange}
             orientation={orientation}
             labelPlacement={labelPlacement}
-            minWidth={minWidth}
+            // minWidth={minWidth}
             buttonColor={buttonColor}
             margins={margins}
+            itemMarginRight={itemMarginRight}
           />
         )}
       </div>
