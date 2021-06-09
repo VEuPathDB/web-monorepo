@@ -350,7 +350,6 @@ export function barplotResponseToData(
     })),
   };
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 // add an extended type
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

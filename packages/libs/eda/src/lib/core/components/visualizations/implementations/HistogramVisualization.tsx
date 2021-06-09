@@ -191,7 +191,6 @@ function HistogramViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         xAxisVariable.type,
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
         vizConfig.binWidth,
         vizConfig.binWidthTimeUnit
