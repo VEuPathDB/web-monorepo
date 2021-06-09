@@ -63,3 +63,14 @@ export const EmptyData = () => (
     dependentLabel={''}
   />
 );
+
+export const EmptyDataLoading = () => (
+  <MosaicPlot
+    data={[[]]}
+    independentValues={[]}
+    dependentValues={[]}
+    independentLabel={''}
+    dependentLabel={''}
+    showSpinner={true}
+  />
+);

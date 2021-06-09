@@ -32,4 +32,5 @@ Basic.args = {
   minWidth: 150,
   buttonColor: 'primary',
   margins: ['10em', '0', '0', '10em'],
+  itemMarginRight: 50,
 };

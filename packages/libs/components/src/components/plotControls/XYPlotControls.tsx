@@ -17,8 +17,6 @@ import LabelledGroup from '../widgets/LabelledGroup';
  * determine if that control is displayed.
  */
 export type XYPlotControlsProps = {
-  /** Label for control panel. Optional. */
-  label?: string;
   /** Additional styles for controls container. Optional */
   containerStyles?: React.CSSProperties;
   /** Color to use as an accent in the control panel. Will accept any
@@ -40,6 +38,8 @@ export type XYPlotControlsProps = {
   buttonColor?: 'primary' | 'secondary';
   /** margin of radio button group: string array for top, left, bottom, and left, e.g., ['10em', '0', '0', '10em'] */
   margins?: string[];
+  /** marginRight of radio button item: default 16px from MUI */
+  itemMarginRight?: number | string;
 };
 
 /**
@@ -50,18 +50,16 @@ export type XYPlotControlsProps = {
  * widgets contained here.
  */
 export default function XYPlotControls({
-  label,
   accentColor = LIGHT_BLUE,
   errorManagement,
   containerStyles,
-  // valueSpec
   valueSpec,
   onValueSpecChange,
   orientation,
   labelPlacement,
-  minWidth,
   buttonColor,
   margins,
+  itemMarginRight,
 }: XYPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
@@ -99,24 +97,21 @@ export default function XYPlotControls({
     >
       <div style={{ display: 'flex' }}>
         {valueSpec && onValueSpecChange && (
-          <LabelledGroup label="Plot options">
-            <RadioButtonGroup
-              options={[
-                'Raw',
-                'Smoothed mean',
-                'Smoothed mean with raw',
-                'Best fit line with raw',
-              ]}
-              selectedOption={valueSpec}
-              // @ts-ignore
-              onOptionSelected={onValueSpecChange}
-              orientation={orientation}
-              labelPlacement={labelPlacement}
-              minWidth={minWidth}
-              buttonColor={buttonColor}
-              margins={margins}
-            />
-          </LabelledGroup>
+          <RadioButtonGroup
+            label="Plot options"
+            options={[
+              'Raw',
+              'Smoothed mean with raw',
+              'Best fit line with raw',
+            ]}
+            selectedOption={valueSpec}
+            onOptionSelected={onValueSpecChange}
+            orientation={orientation}
+            labelPlacement={labelPlacement}
+            buttonColor={buttonColor}
+            margins={margins}
+            itemMarginRight={itemMarginRight}
+          />
         )}
       </div>
       {errorStacks.map(({ error, occurences }, index) => (
