@@ -30,6 +30,6 @@ export function useDataEndpoint<T>(
         background,
         foreground,
       };
-    }, [variable, filters, fetchSummary])
+    }, [filters, fetchSummary, dataClient, entity.id, variable.id])
   );
 }
