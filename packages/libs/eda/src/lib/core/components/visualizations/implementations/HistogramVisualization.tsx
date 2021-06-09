@@ -219,15 +219,15 @@ function HistogramViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'Main variable',
+                label: 'Main',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay variable',
+                label: 'Overlay (optional)',
               },
               {
                 name: 'facetVariable',
-                label: 'Facet variable',
+                label: 'Facet (optional)',
               },
             ]}
             entities={entities}

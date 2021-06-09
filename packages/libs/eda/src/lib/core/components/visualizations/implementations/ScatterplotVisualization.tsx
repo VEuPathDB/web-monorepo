@@ -239,19 +239,19 @@ function ScatterplotViz(props: Props) {
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'X-axis variable',
+                label: 'X-axis',
               },
               {
                 name: 'yAxisVariable',
-                label: 'Y-axis variable',
+                label: 'Y-axis',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay variable (Optional)',
+                label: 'Overlay (optional)',
               },
               {
                 name: 'facetVariable',
-                label: 'Facet variable (Optional)',
+                label: 'Facet (optional)',
               },
             ]}
             entities={entities}
