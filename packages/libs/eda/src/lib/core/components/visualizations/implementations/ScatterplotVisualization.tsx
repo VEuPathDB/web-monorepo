@@ -19,8 +19,8 @@ import {
   LineplotRequestParams,
 } from '../../../api/data-api';
 
-import { useFindVariable } from '../../../hooks/findVariable';
 import { usePromise } from '../../../hooks/promise';
+import { useFindEntityAndVariable } from '../../../hooks/studyMetadata';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
@@ -162,7 +162,7 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useFindVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   // XYPlotControls: add valueSpec option
   const onValueSpecChange = useCallback(
@@ -176,8 +176,10 @@ function ScatterplotViz(props: Props) {
 
   const data = usePromise(
     useCallback(async (): Promise<any> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
-      const yAxisVariable = findVariable(vizConfig.yAxisVariable);
+      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
+        ?.variable;
+      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable)
+        ?.variable;
 
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
@@ -218,7 +220,7 @@ function ScatterplotViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findVariable,
+      findEntityAndVariable,
       computation.type,
       visualization.type,
     ])
@@ -290,10 +292,12 @@ function ScatterplotViz(props: Props) {
             height={600}
             // title={'Scatter plot'}
             independentAxisLabel={
-              findVariable(vizConfig.xAxisVariable)?.displayName
+              findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                .displayName
             }
             dependentAxisLabel={
-              findVariable(vizConfig.yAxisVariable)?.displayName
+              findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                .displayName
             }
             independentAxisRange={[data.value.xMin, data.value.xMax]}
             // block this for now
@@ -332,12 +336,14 @@ function ScatterplotViz(props: Props) {
             height={fullscreen ? 600 : 150}
             independentAxisLabel={
               fullscreen
-                ? findVariable(vizConfig.xAxisVariable)?.displayName
+                ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                    .displayName
                 : undefined
             }
             dependentAxisLabel={
               fullscreen
-                ? findVariable(vizConfig.yAxisVariable)?.displayName
+                ? findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                    .displayName
                 : undefined
             }
             displayLegend={fullscreen ? true : false}

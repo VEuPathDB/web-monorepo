@@ -12,8 +12,8 @@ import { useCallback, useMemo } from 'react';
 // need to set for Barplot
 import { DataClient, BarplotRequestParams } from '../../../api/data-api';
 
-import { useFindVariable } from '../../../hooks/findVariable';
 import { usePromise } from '../../../hooks/promise';
+import { useFindEntityAndVariable } from '../../../hooks/studyMetadata';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
@@ -129,11 +129,11 @@ function BarplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useFindVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   const data = usePromise(
     useCallback(async (): Promise<any> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
+      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
 
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
@@ -160,7 +160,7 @@ function BarplotViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findVariable,
+      findEntityAndVariable,
       computation.type,
     ])
   );
@@ -229,7 +229,8 @@ function BarplotViz(props: Props) {
             barLayout={'group'}
             displayLegend={data.value?.series.length > 1}
             independentAxisLabel={
-              findVariable(vizConfig.xAxisVariable)?.displayName
+              findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                .displayName
             }
             dependentAxisLabel={'Count'}
             showSpinner={data.pending}
@@ -267,7 +268,8 @@ function BarplotViz(props: Props) {
             fullscreen
               ? vizConfig.xAxisVariable
                 ? // the case where the x-axis variable is selected or not
-                  findVariable(vizConfig.xAxisVariable)?.displayName
+                  findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                    .displayName
                 : 'Label'
               : undefined
           }

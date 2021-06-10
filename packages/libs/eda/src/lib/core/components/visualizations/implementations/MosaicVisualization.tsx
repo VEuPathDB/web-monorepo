@@ -11,8 +11,8 @@ import * as t from 'io-ts';
 import _ from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import { DataClient, MosaicRequestParams } from '../../../api/data-api';
-import { useFindVariable } from '../../../hooks/findVariable';
 import { usePromise } from '../../../hooks/promise';
+import { useFindEntityAndVariable } from '../../../hooks/studyMetadata';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
@@ -175,12 +175,14 @@ function MosaicViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useFindVariable(entities);
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   const data = usePromise(
     useCallback(async (): Promise<ContTableData | TwoByTwoData | undefined> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
-      const yAxisVariable = findVariable(vizConfig.yAxisVariable);
+      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
+        ?.variable;
+      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable)
+        ?.variable;
       if (
         vizConfig.xAxisVariable == null ||
         xAxisVariable == null ||
@@ -215,14 +217,16 @@ function MosaicViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findVariable,
+      findEntityAndVariable,
       computation.type,
       isTwoByTwo,
     ])
   );
 
-  const xAxisVariableName = findVariable(vizConfig.xAxisVariable)?.displayName;
-  const yAxisVariableName = findVariable(vizConfig.yAxisVariable)?.displayName;
+  const xAxisVariableName = findEntityAndVariable(vizConfig.xAxisVariable)
+    ?.variable.displayName;
+  const yAxisVariableName = findEntityAndVariable(vizConfig.yAxisVariable)
+    ?.variable.displayName;
   let statsTable = undefined;
 
   if (isTwoByTwo) {
