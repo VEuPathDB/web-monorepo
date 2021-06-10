@@ -12,6 +12,7 @@ import { useCallback, useMemo } from 'react';
 // need to set for Barplot
 import { DataClient, BarplotRequestParams } from '../../../api/data-api';
 
+import { useFindVariable } from '../../../hooks/findVariable';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
@@ -128,15 +129,7 @@ function BarplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useCallback(
-    (variable?: Variable) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
-    },
-    [entities]
-  );
+  const findVariable = useFindVariable(entities);
 
   const data = usePromise(
     useCallback(async (): Promise<any> => {
