@@ -41,17 +41,20 @@ const sampleSizeTableArray = array(
   })
 );
 
+// define completeCases
+export type CompleteCasesTableRow = TypeOf<typeof completeCases>;
+const completeCases = partial({
+  // set union for size as it depends on the presence of overlay variable
+  completeCases: union([number, array(number)]),
+  variableDetails: type({
+    entityId: string,
+    variableId: string,
+  }),
+});
+
 // define completeCasesTableArray
-const completeCasesTableArray = array(
-  partial({
-    // set union for size as it depends on the presence of overlay variable
-    completeCases: union([number, array(number)]),
-    variableDetails: type({
-      entityId: string,
-      variableId: string,
-    }),
-  })
-);
+export type CompleteCasesTable = TypeOf<typeof completeCasesTableArray>;
+const completeCasesTableArray = array(completeCases);
 
 export interface HistogramRequestParams {
   studyId: string;
