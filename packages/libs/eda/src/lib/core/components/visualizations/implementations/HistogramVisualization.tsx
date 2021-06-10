@@ -10,7 +10,6 @@ import {
 } from '@veupathdb/components/lib/types/general';
 import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import { HistogramData } from '@veupathdb/components/lib/types/plots';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';

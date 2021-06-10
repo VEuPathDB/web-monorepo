@@ -2,7 +2,6 @@
 import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
