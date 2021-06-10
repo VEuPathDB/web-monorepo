@@ -220,31 +220,32 @@ export default function EntityDiagram({
           userSelect: 'none',
           fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
         }}
-        dy={-shadingHeight}
+        dy={isExpanded ? -shadingHeight : 0}
         width={isExpanded ? nodeWidth - 40 : undefined}
       >
         {displayText}
       </Text>
     );
 
-    const count = entityCounts ? (
-      <Text
-        fontSize={isHighlighted ? fontSize * 1.1 * 0.8 : fontSize * 0.8}
-        fontWeight={500}
-        fill="#333"
-        textAnchor="middle"
-        verticalAnchor="end"
-        y={fontSize * 0.8}
-      >
-        {`${entityCounts[
-          node.data.id
-        ].filtered.toLocaleString()} of ${entityCounts[
-          node.data.id
-        ].total.toLocaleString()}`}
-      </Text>
-    ) : (
-      <></>
-    );
+    const count =
+      entityCounts && isExpanded ? (
+        <Text
+          fontSize={isHighlighted ? fontSize * 1.1 * 0.8 : fontSize * 0.8}
+          fontWeight={500}
+          fill="#333"
+          textAnchor="middle"
+          verticalAnchor="end"
+          y={fontSize * 0.8}
+        >
+          {`${entityCounts[
+            node.data.id
+          ].filtered.toLocaleString()} of ${entityCounts[
+            node.data.id
+          ].total.toLocaleString()}`}
+        </Text>
+      ) : (
+        <></>
+      );
 
     const filterIcon = filteredEntities?.includes(node.data.id) ? (
       <Group>
