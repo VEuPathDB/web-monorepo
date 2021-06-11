@@ -1,28 +1,46 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
-import { Datum } from 'plotly.js';
 import Spinner from '../components/Spinner';
+import { NumberOrDateRange } from '../types/general';
 
 export interface Props extends PlotProps {
   data: {
-    lowerWhisker?: Datum;
-    q1: Datum; // would like PlotData['q1'] but is the @types module not up to date?
-    median: Datum;
-    mean?: Datum;
-    q3: Datum;
-    upperWhisker?: Datum;
+    // number | string means number or date
+    /** lower whisker/fence optional */
+    lowerWhisker?: number | string;
+    /** lower quartile (bottom of box) */
+    q1: number | string;
+    /** median (middle line of box) */
+    median: number | string;
+    /** mean (optional dotted line in box */
+    mean?: number | string;
+    /** upper quartile (top of box) */
+    q3: number | string;
+    /** upper whisker/fence optional */
+    upperWhisker?: number | string;
+    /** (x-axis) label for this box */
+
     label: string;
+    /** color for this box */
     color?: string;
-    rawData?: Datum[]; // PlotData['y'] | PlotData['x'], // doesn't seem to work
-    // but are we trying to remove dependencies on Plotly types?
-    outliers: Datum[];
+    /** optional complete data (not recommended for huge datasets) */
+    rawData?: number[] | string[];
+    /** outliers (data points outside upper and lower whiskers/fences */
+    outliers: number[] | string[];
   }[];
+  /** label for the (typically) x-axis, e.g. Country */
   independentAxisLabel?: string;
+  /** label for the (typically) y-axis, e.g. Wealth */
   dependentAxisLabel?: string;
-  defaultDependentAxisRange?: [Datum, Datum]; // can be changed by plotly's built-in controls
+  /** optional y-axis zoom range */
+  dependentAxisRange?: NumberOrDateRange;
+  /** box orientation (default is vertical) */
   orientation?: 'vertical' | 'horizontal';
+  /** show the raw data points (if provided) as beeswarm alongside boxplot */
   showRawData?: boolean;
+  /** show the mean as dotted line inside the box */
   showMean?: boolean;
+  /** opacity of outlier or raw data markers, optional */
   markerOpacity?: number;
 }
 
@@ -33,7 +51,7 @@ export default function Boxplot({
   showMean,
   independentAxisLabel,
   dependentAxisLabel,
-  defaultDependentAxisRange,
+  dependentAxisRange,
   markerOpacity,
   showModebar,
   width,
@@ -91,7 +109,7 @@ export default function Boxplot({
     [dependentAxis]: {
       rangemode: 'tozero' as const,
       title: dependentAxisLabel,
-      range: defaultDependentAxisRange,
+      range: dependentAxisRange,
     },
     [independentAxis]: {
       title: independentAxisLabel,

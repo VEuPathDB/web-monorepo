@@ -183,7 +183,7 @@ FixedYAxisRange.argTypes = storyArgTypes(
     ],
     dependentAxisLabel: 'temperature, °C',
     independentAxisLabel: 'location',
-    defaultDependentAxisRange: [-50, 50],
+    dependentAxisRange: { min: -50, max: 50 },
   })
 );
 
@@ -196,7 +196,7 @@ FixedTooSmallYAxisRange.argTypes = storyArgTypes(
     ],
     dependentAxisLabel: 'temperature, °C',
     independentAxisLabel: 'location',
-    defaultDependentAxisRange: [-10, 10],
+    dependentAxisRange: { min: -10, max: 10 },
   })
 );
 
