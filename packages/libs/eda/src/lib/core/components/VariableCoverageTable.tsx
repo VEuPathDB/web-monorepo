@@ -1,4 +1,5 @@
 import { CompleteCasesTable } from '../api/data-api';
+import { useVariableCoverageTableRows } from '../hooks/variableCoverage';
 import { Variable } from '../types/variable';
 
 export interface Props {
@@ -36,6 +37,37 @@ export type VariableRole = string;
 /* A descriptive string for the variable; e.g., "floor material" */
 export type VariableDisplay = string;
 
-export function VariableCoverageTable(_: Props) {
-  return null;
+export function VariableCoverageTable({
+  completeCases,
+  filteredEntityCounts,
+  variables,
+}: Props) {
+  const rows = useVariableCoverageTableRows(
+    variables,
+    completeCases,
+    filteredEntityCounts
+  );
+
+  return (
+    <table>
+      <tbody>
+        <tr>
+          <th></th>
+          <th>label</th>
+          <th>data</th>
+          <th>no data</th>
+          <th>total</th>
+        </tr>
+        {rows.map((row) => (
+          <tr key={row.role}>
+            <td>{row.role}</td>
+            <td>{row.display}</td>
+            <td>{row.complete}</td>
+            <td>{row.incomplete}</td>
+            <td>{row.total}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }

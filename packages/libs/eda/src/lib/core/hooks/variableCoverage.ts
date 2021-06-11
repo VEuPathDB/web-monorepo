@@ -14,9 +14,9 @@ import {
  * @returns A VariableCoverageTableRow[]
  */
 export function useVariableCoverageTableRows(
-  completeCases: CompleteCasesTable,
-  filteredEntityCounts: Record<string, number> = {},
-  variables: VariableSpec[]
+  variables: VariableSpec[],
+  completeCases?: CompleteCasesTable,
+  filteredEntityCounts: Record<string, number> = {}
 ): VariableCoverageTableRow[] {
   const completeCasesMap = useCompleteCasesMap(completeCases);
 
