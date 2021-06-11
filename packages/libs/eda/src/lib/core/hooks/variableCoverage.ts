@@ -22,33 +22,30 @@ export function useVariableCoverageTableRows(
 
   return useMemo(
     () =>
-      variables.map((variable) => {
-        if (!variable.selected) {
+      variables.map((spec) => {
+        if (!spec.selected) {
           return {
-            role: variable.spec.role,
+            role: spec.role,
           };
         }
 
         const variableCompleteCases =
-          completeCasesMap[
-            `${variable.spec.entityId}.${variable.spec.variableId}`
-          ];
+          completeCasesMap[`${spec.entityId}.${spec.variableId}`];
 
         if (variableCompleteCases == null) {
           return {
-            role: variable.spec.role,
-            display: variable.spec.display,
+            role: spec.role,
+            display: spec.display,
           };
         }
 
         const baseRowWithCounts = {
-          role: variable.spec.role,
-          display: variable.spec.display,
+          role: spec.role,
+          display: spec.display,
           complete: variableCompleteCases,
         };
 
-        const variableFilteredEntityCount =
-          filteredEntityCounts[variable.spec.entityId];
+        const variableFilteredEntityCount = filteredEntityCounts[spec.entityId];
 
         return variableFilteredEntityCount == null ||
           baseRowWithCounts.complete > variableFilteredEntityCount

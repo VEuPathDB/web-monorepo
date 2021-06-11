@@ -8,15 +8,16 @@ export interface Props {
   variables: VariableSpec[];
 }
 
-export type VariableSpec =
-  | { selected: true; spec: SelectedVariableSpec }
-  | { selected: false; spec: UnselectedVariableSpec };
+export type VariableSpec = SelectedVariableSpec | UnselectedVariableSpec;
 
 export interface UnselectedVariableSpec {
+  selected: false;
   role: VariableRole;
 }
 
-export interface SelectedVariableSpec extends UnselectedVariableSpec, Variable {
+export interface SelectedVariableSpec extends Variable {
+  selected: true;
+  role: VariableRole;
   display: VariableDisplay;
 }
 
