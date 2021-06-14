@@ -42,23 +42,25 @@ const defaultStyles = {
  */
 export default function PlotlyPlot(props: PlotProps & PlotParams) {
   const finalStyle = useMemo(
-    () => ({ ...defaultStyles, ...props.containerStyles }),
+    (): PlotParams['style'] => ({
+      ...defaultStyles,
+      ...props.containerStyles,
+    }),
     [props.containerStyles]
   );
 
   // config is derived purely from PlotProps props
   const finalConfig = useMemo(
-    () =>
-      ({
-        responsive: true,
-        displayModeBar: props.displayLibraryControls ? 'hover' : false,
-        staticPlot: props.staticPlot ? props.staticPlot : false,
-      } as PlotParams['config']),
+    (): PlotParams['config'] => ({
+      responsive: true,
+      displayModeBar: props.displayLibraryControls ? 'hover' : false,
+      staticPlot: props.staticPlot ? props.staticPlot : false,
+    }),
     [props.displayLibraryControls, props.staticPlot]
   );
 
   const finalLayout = useMemo(
-    () => ({
+    (): PlotParams['layout'] => ({
       ...props.layout,
       xaxis: { ...props.layout.xaxis, fixedrange: true },
       yaxis: { ...props.layout.yaxis, fixedrange: true },
