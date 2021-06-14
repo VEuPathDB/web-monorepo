@@ -225,67 +225,41 @@ function BarplotViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {data.value ? (
-        fullscreen ? (
-          <BarplotWithControls
-            // data.value
-            data={data.value}
-            width={'100%'}
-            height={450}
-            orientation={'vertical'}
-            barLayout={'group'}
-            displayLegend={data.value?.series.length > 1}
-            independentAxisLabel={
-              findVariable(vizConfig.xAxisVariable)?.displayName
-            }
-            dependentAxisLabel={'Count'}
-            showSpinner={data.pending}
-          />
-        ) : (
-          // thumbnail/grid view
-          <Barplot
-            data={data.value}
-            width={230}
-            height={165}
-            // check this option (possibly plot control?)
-            orientation={'vertical'}
-            barLayout={'group'}
-            // show/hide independent/dependent axis tick label
-            showIndependentAxisTickLabel={false}
-            showDependentAxisTickLabel={false}
-            // new props for better displaying grid view
-            displayLegend={false}
-            displayLibraryControls={false}
-            staticPlot={true}
-            // set margin for better display at thumbnail/grid view
-            margin={{ l: 30, r: 20, b: 0, t: 20 }}
-            showSpinner={data.pending}
-          />
-        )
-      ) : (
-        // no data case
-        <Barplot
-          data={{ series: [] }}
-          width={fullscreen ? '100%' : 230}
-          height={fullscreen ? 450 : 165}
+      {fullscreen ? (
+        <BarplotWithControls
+          data={data.value && !data.pending ? data.value : { series: [] }}
+          width={'100%'}
+          height={450}
+          // height={'100%'}
           orientation={'vertical'}
           barLayout={'group'}
+          displayLegend={data.value?.series.length > 1}
           independentAxisLabel={
-            fullscreen
-              ? vizConfig.xAxisVariable
-                ? // the case where the x-axis variable is selected or not
-                  findVariable(vizConfig.xAxisVariable)?.displayName
-                : 'Label'
-              : undefined
+            vizConfig.xAxisVariable
+              ? findVariable(vizConfig.xAxisVariable)?.displayName
+              : 'Label'
           }
-          dependentAxisLabel={fullscreen ? 'Count' : undefined}
+          dependentAxisLabel={'Count'}
+          showSpinner={data.pending}
+        />
+      ) : (
+        // thumbnail/grid view
+        <Barplot
+          data={data.value && !data.pending ? data.value : { series: [] }}
+          width={230}
+          height={165}
+          // check this option (possibly plot control?)
+          orientation={'vertical'}
+          barLayout={'group'}
           // show/hide independent/dependent axis tick label
-          showIndependentAxisTickLabel={fullscreen ? undefined : false}
-          showDependentAxisTickLabel={fullscreen ? undefined : false}
-          displayLegend={fullscreen ? true : false}
+          showIndependentAxisTickLabel={false}
+          showDependentAxisTickLabel={false}
+          // new props for better displaying grid view
+          displayLegend={false}
           displayLibraryControls={false}
-          staticPlot={fullscreen ? false : true}
-          margin={fullscreen ? {} : { l: 30, r: 20, b: 0, t: 20 }}
+          staticPlot={true}
+          // set margin for better display at thumbnail/grid view
+          margin={{ l: 30, r: 20, b: 0, t: 20 }}
           showSpinner={data.pending}
         />
       )}
