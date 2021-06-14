@@ -1,25 +1,26 @@
 import { CompleteCasesTable } from '../api/data-api';
 import { useVariableCoverageTableRows } from '../hooks/variableCoverage';
+import { Filter } from '../types/filter';
 import { Variable } from '../types/variable';
 
 export interface Props {
+  containerClassName?: string;
   completeCases?: CompleteCasesTable;
-  filteredEntityCounts?: Record<string, number>;
+  filters: Filter[];
   variables: VariableSpec[];
 }
 
-export type VariableSpec = SelectedVariableSpec | UnselectedVariableSpec;
-
-export interface UnselectedVariableSpec {
-  selected: false;
+export interface VariableSpec {
   role: VariableRole;
+  display?: VariableDisplay;
+  variable?: Variable;
 }
 
-export interface SelectedVariableSpec extends Variable {
-  selected: true;
-  role: VariableRole;
-  display: VariableDisplay;
-}
+/* A short description of the variable's role; e.g., "X-axis", "Y-axis", "Overlay" */
+export type VariableRole = string;
+
+/* A display string for the variable; e.g., "floor material" */
+export type VariableDisplay = string;
 
 export interface VariableCoverageTableRow {
   role: VariableRole;
@@ -32,43 +33,41 @@ export interface VariableCoverageTableRow {
   total?: number;
 }
 
-/* A short description of the variable's role; e.g., "x-axis", "y-axis", "overlay" */
-export type VariableRole = string;
-
-/* A descriptive string for the variable; e.g., "floor material" */
-export type VariableDisplay = string;
-
 export function VariableCoverageTable({
+  containerClassName,
   completeCases,
-  filteredEntityCounts,
+  filters,
   variables,
 }: Props) {
-  const rows = useVariableCoverageTableRows(
-    variables,
-    completeCases,
-    filteredEntityCounts
-  );
+  const rows = useVariableCoverageTableRows(variables, filters, completeCases);
+
+  const className =
+    containerClassName == null
+      ? 'VariableCoverageTable'
+      : `${containerClassName} VariableCoverageTable`;
 
   return (
-    <table>
-      <tbody>
-        <tr>
-          <th></th>
-          <th>label</th>
-          <th>data</th>
-          <th>no data</th>
-          <th>total</th>
-        </tr>
-        {rows.map((row) => (
-          <tr key={row.role}>
-            <td>{row.role}</td>
-            <td>{row.display}</td>
-            <td>{row.complete}</td>
-            <td>{row.incomplete}</td>
-            <td>{row.total}</td>
+    <div className={className}>
+      <table>
+        <tbody>
+          <tr>
+            <th></th>
+            <th>Label</th>
+            <th>Data</th>
+            <th>No data</th>
+            <th>Total</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+          {rows.map((row) => (
+            <tr key={row.role}>
+              <th>{row.role}</th>
+              <td>{row.display}</td>
+              <td>{row.complete?.toLocaleString()}</td>
+              <td>{row.incomplete?.toLocaleString()}</td>
+              <td>{row.total?.toLocaleString()}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

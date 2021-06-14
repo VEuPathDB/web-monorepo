@@ -5,6 +5,9 @@ import {
   VariableCoverageTableRow,
   VariableSpec,
 } from '../components/VariableCoverageTable';
+import { Filter } from '../types/filter';
+
+import { useEntityCounts } from './entityCounts';
 
 /**
  * Returns an array of data to be rendered in a VariableCoverageTable
@@ -15,22 +18,25 @@ import {
  */
 export function useVariableCoverageTableRows(
   variables: VariableSpec[],
-  completeCases?: CompleteCasesTable,
-  filteredEntityCounts: Record<string, number> = {}
+  filters: Filter[],
+  completeCases?: CompleteCasesTable
 ): VariableCoverageTableRow[] {
   const completeCasesMap = useCompleteCasesMap(completeCases);
+  const filteredEntityCountsResult = useEntityCounts(filters);
 
   return useMemo(
     () =>
       variables.map((spec) => {
-        if (!spec.selected) {
+        if (spec.variable == null) {
           return {
             role: spec.role,
           };
         }
 
+        const { entityId, variableId } = spec.variable;
+
         const variableCompleteCases =
-          completeCasesMap[`${spec.entityId}.${spec.variableId}`];
+          completeCasesMap[`${entityId}.${variableId}`];
 
         if (variableCompleteCases == null) {
           return {
@@ -45,7 +51,10 @@ export function useVariableCoverageTableRows(
           complete: variableCompleteCases,
         };
 
-        const variableFilteredEntityCount = filteredEntityCounts[spec.entityId];
+        const variableFilteredEntityCount =
+          filteredEntityCountsResult.value == null
+            ? undefined
+            : filteredEntityCountsResult.value[entityId];
 
         return variableFilteredEntityCount == null ||
           baseRowWithCounts.complete > variableFilteredEntityCount
@@ -57,7 +66,7 @@ export function useVariableCoverageTableRows(
                 variableFilteredEntityCount - baseRowWithCounts.complete,
             };
       }),
-    [completeCasesMap, filteredEntityCounts, variables]
+    [completeCasesMap, filteredEntityCountsResult.value, variables]
   );
 }
 
