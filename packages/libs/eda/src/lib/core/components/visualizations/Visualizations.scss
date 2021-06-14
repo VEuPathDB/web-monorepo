@@ -123,6 +123,39 @@
   }
 }
 
+@mixin data-table {
+  z-index: 1;
+  flex-grow: 1;
+  background-color: #f8f6f6;
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px solid #bfbfbf;
+
+  table {
+    min-width: 100%;
+  }
+
+  th,
+  td {
+    padding-right: 20px;
+  }
+
+  th {
+    border-color: #333;
+    border-top: 0;
+    white-space: nowrap;
+  }
+
+  th:first-of-type {
+    border-bottom: 0;
+  }
+}
+
+.VariableCoverageTable {
+  @include data-table;
+  max-width: 500px;
+}
+
 .MosaicVisualization {
   display: flex;
   flex-wrap: wrap;
@@ -138,16 +171,7 @@
   }
 
   &-StatsTable {
-    flex-grow: 1;
-    min-width: 200px;
-    max-width: 300px;
-    background-color: rgb(228, 226, 226);
-    padding: 10px;
-    border-radius: 7px;
-
-    th,
-    td {
-      padding-right: 20px;
-    }
+    @include data-table;
+    max-width: 370px;
   }
 }
