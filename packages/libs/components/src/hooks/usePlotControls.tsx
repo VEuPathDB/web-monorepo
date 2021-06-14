@@ -3,7 +3,7 @@
  * This allows us to use a single custom hook for different types of
  * plots, but can be quite the brain trip to read through.
  */
-import { Reducer, useMemo, useReducer, useState } from 'react';
+import { Reducer, useMemo, useReducer } from 'react';
 import debounce from 'debounce-promise';
 
 import { isHistogramData, isPiePlotData, isDate } from '../types/guards';
@@ -79,7 +79,7 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
       return { ...state, errors: [] };
     }
     case 'setData':
-      return { ...state, data: action.payload };
+      return { ...state, plotData: action.payload };
     case 'setBarLayout':
       return { ...state, barLayout: action.payload };
     case 'histogram/setBinWidth':
@@ -222,7 +222,7 @@ function reducer<DataShape extends UnionOfPlotDataTypes>(
  * */
 type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
   /** The data of the plot. */
-  data: DataShape;
+  plotData: DataShape;
   /** Whether or not to display the plot legend. Defaults to true. */
   displayLegend: boolean;
   /** Whether or not to display the additionally controls that
@@ -287,7 +287,7 @@ type PlotSharedState<DataShape extends UnionOfPlotDataTypes> = {
 
 /** Parameters that can be passed to the hook for initialization. */
 export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
-  data: DataShape;
+  plotData: DataShape;
   onSelectedUnitChange?: (newUnit: string) => Promise<DataShape>;
   histogram?: {
     /** Optional override for binWidthRange that is provided by
@@ -332,7 +332,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
    * the added complexity would be worth it.
    */
   const initialState: PlotSharedState<DataShape> = {
-    data: params.data,
+    plotData: params.plotData,
     errors: [],
     displayLegend: true,
     displayLibraryControls: false,
@@ -353,14 +353,14 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     },
   };
 
-  // Determine if `data` contains information about available/selected units.
-  if (isPiePlotData(params.data) || isHistogramData(params.data)) {
-    initialState.availableUnits = params.data.availableUnits ?? [];
-    initialState.selectedUnit = params.data.selectedUnit ?? '';
+  // Determine if `plotData` contains information about available/selected units.
+  if (isPiePlotData(params.plotData) || isHistogramData(params.plotData)) {
+    initialState.availableUnits = params.plotData.availableUnits ?? [];
+    initialState.selectedUnit = params.plotData.selectedUnit ?? '';
   }
 
   // Additional intialization if data is for a histogram.
-  if (isHistogramData(params.data)) {
+  if (isHistogramData(params.plotData)) {
     /**
      * Build the histogram specific state.
      * */
@@ -369,16 +369,16 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     if (params.histogram?.binWidthRange) {
       // Case 1: Override is provided by client.
       binWidthRange = params.histogram.binWidthRange;
-    } else if (params.data.binWidthRange) {
-      // Case 2: binWidthRange is specified in `data`
-      binWidthRange = params.data.binWidthRange;
+    } else if (params.plotData.binWidthRange) {
+      // Case 2: binWidthRange is specified in `plotData`
+      binWidthRange = params.plotData.binWidthRange;
     } else {
       // Case 3: Create some reasonable defaults if not provided by client or data.
 
       let lowBinValue: NumberOrDate | null = null;
       let highBinValue: NumberOrDate | null = null;
 
-      params.data.series.forEach((series) => {
+      params.plotData.series.forEach((series) => {
         series.bins.forEach((bin) => {
           if (lowBinValue === null || bin.binStart < lowBinValue) {
             lowBinValue = bin.binStart;
@@ -416,7 +416,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
       }
     }
     const binWidth =
-      params.data.binWidth ??
+      params.plotData.binWidth ??
       ('unit' in binWidthRange
         ? ({
             value: binWidthRange.max / 10,
@@ -426,7 +426,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
     const binWidthStep =
       params.histogram?.binWidthStep ??
-      params.data.binWidthStep ??
+      params.plotData.binWidthStep ??
       (binWidthRange.max - binWidthRange.min) / 10;
 
     initialState.histogram = {
@@ -439,7 +439,7 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
 
     if (params?.histogram?.displaySelectedRangeControls) {
       // calculate min and max limits for the selected range controls from the data
-      const allBins = params.data.series.flatMap((series) => series.bins);
+      const allBins = params.plotData.series.flatMap((series) => series.bins);
       const min: NumberOrDate =
         params.histogram?.selectedRange?.min ??
         orderBy(allBins, [(bin) => bin.binStart], ['asc'])[0].binStart;

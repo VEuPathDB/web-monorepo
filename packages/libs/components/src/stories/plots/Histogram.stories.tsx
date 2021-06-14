@@ -4,7 +4,6 @@ import {
   NumberRange,
   NumberOrDateRange,
   TimeDeltaRange,
-  TimeDelta,
 } from '../../types/general';
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
@@ -34,7 +33,7 @@ const TemplateWithControls: Story<
   }
 > = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
-    data: apiData,
+    plotData: apiData,
     onSelectedUnitChange: async (newUnit: string) => {
       return await binDailyCovidStats(
         undefined,
@@ -71,10 +70,6 @@ const TemplateWithControls: Story<
         valueType="number"
         {...plotControls}
         {...plotControls.histogram}
-        containerStyles={{
-          maxWidth: `calc(${toCSSLength(args.width)} - 25px)`,
-          marginLeft: 25,
-        }}
       />
     </div>
   );
@@ -83,8 +78,10 @@ const TemplateWithControls: Story<
 export const BinWidthRangeGeneratedFromData = TemplateWithControls.bind({});
 BinWidthRangeGeneratedFromData.args = {
   title: 'Some Current Covid Data in U.S. States',
-  height: 400,
-  width: 1000,
+  containerStyles: {
+    height: '400px',
+    width: '800px',
+  },
 };
 
 // @ts-ignore
@@ -96,8 +93,10 @@ BinWidthRangeGeneratedFromData.loaders = [
 
 export const NoTitle = TemplateWithControls.bind({});
 NoTitle.args = {
-  height: 400,
-  width: '100%',
+  containerStyles: {
+    height: '400px',
+    width: '100%',
+  },
   spacingOptions: {
     marginTop: 20,
     marginBottom: 20,
@@ -114,8 +113,10 @@ NoTitle.loaders = [
 export const OverrideBinWidthRangeAndStep = TemplateWithControls.bind({});
 OverrideBinWidthRangeAndStep.args = {
   title: 'Some Current Covid Data in U.S. States',
-  height: 400,
-  width: 1000,
+  containerStyles: {
+    height: '400px',
+    width: '800px',
+  },
   binWidthRange: { min: 2000, max: 10000 },
   binWidthStep: 1000,
 };
@@ -132,8 +133,10 @@ export const BackendProvidedBinWidthRangeAndStep = TemplateWithControls.bind(
 );
 BackendProvidedBinWidthRangeAndStep.args = {
   title: 'Some Current Covid Data in U.S. States',
-  height: 400,
-  width: 1000,
+  containerStyles: {
+    height: '400px',
+    width: '800px',
+  },
   includeExtraDirectives: true,
 };
 
@@ -153,7 +156,7 @@ const TemplateWithSelectedRangeControls: Story<
   }
 > = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
-    data: apiData,
+    plotData: apiData,
     onSelectedUnitChange: async (newUnit: string) => {
       return await binDailyCovidStats(
         undefined,
@@ -198,10 +201,6 @@ const TemplateWithSelectedRangeControls: Story<
         label="Histogram Controls"
         {...plotControls}
         {...plotControls.histogram}
-        containerStyles={{
-          maxWidth: `calc(${toCSSLength(args.width)} - 25px)`,
-          marginLeft: 25,
-        }}
       />
     </div>
   );
@@ -210,8 +209,11 @@ const TemplateWithSelectedRangeControls: Story<
 export const RangeSelection = TemplateWithSelectedRangeControls.bind({});
 RangeSelection.args = {
   title: 'Some Current Covid Data in U.S. States',
-  height: 400,
-  width: 1000,
+  containerStyles: {
+    height: '400px',
+    width: '800px',
+  },
+  interactive: true,
 };
 
 //@ts-ignore
@@ -226,14 +228,16 @@ const SimpleDateTemplate: Story<HistogramProps> = (
   args,
   { loaded: { apiData } }
 ) => {
-  return <Histogram {...args} data={apiData} />;
+  return <Histogram {...args} plotData={apiData} />;
 };
 
 export const EventHoursNoControls = SimpleDateTemplate.bind({});
 EventHoursNoControls.args = {
   title: 'Recent VEuPathDB github events',
-  height: 400,
-  width: 1000,
+  containerStyles: {
+    height: '400px',
+    width: '800px',
+  },
 };
 
 //@ts-ignore
@@ -250,8 +254,10 @@ EventHoursNoControls.loaders = [
 export const RepoMonthsNoControls = SimpleDateTemplate.bind({});
 RepoMonthsNoControls.args = {
   title: 'VEuPathDB github repo creation dates',
-  height: 400,
-  width: 1000,
+  containerStyles: {
+    height: '400px',
+    width: '800px',
+  },
 };
 
 //@ts-ignore
@@ -272,7 +278,7 @@ const TemplateWithSelectedDateRangeControls: Story<
   }
 > = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
-    data: apiData,
+    plotData: apiData,
     onSelectedUnitChange: async (newUnit: string) => {
       return await binGithubEventDates({
         url: 'https://api.github.com/users/VEuPathDB/repos?sort=created',
@@ -319,10 +325,6 @@ const TemplateWithSelectedDateRangeControls: Story<
         binWidthRange={{ min: 1, max: 12, unit: 'month' }}
         binWidthStep={1}
         selectedUnit={'month'}
-        containerStyles={{
-          maxWidth: `calc(${toCSSLength(args.width)} - 25px)`,
-          marginLeft: 25,
-        }}
       />
       <div>Note: bin width slider is known to be broken.</div>
     </div>
@@ -335,8 +337,11 @@ export const DateRangeSelection = TemplateWithSelectedDateRangeControls.bind(
 );
 DateRangeSelection.args = {
   title: 'VEuPathDB github repo creation dates',
-  height: 400,
-  width: 1000,
+  containerStyles: {
+    height: '400px',
+    width: '800px',
+  },
+  interactive: true,
 };
 
 //@ts-ignore
@@ -353,9 +358,11 @@ DateRangeSelection.loaders = [
 export const EmptyData: Story = (args) => {
   return (
     <Histogram
-      data={{ series: [] }}
-      width="100vw"
-      height="100vh"
+      plotData={{ series: [] }}
+      containerStyles={{
+        height: '400px',
+        width: '800px',
+      }}
       barLayout="stack"
       orientation="horizontal"
     />
@@ -365,16 +372,14 @@ export const EmptyData: Story = (args) => {
 export const EmptyDataLoading: Story = (args) => {
   return (
     <Histogram
-      data={{ series: [] }}
-      width="100vw"
-      height="100vh"
+      plotData={{ series: [] }}
+      containerStyles={{
+        height: '400px',
+        width: '800px',
+      }}
       barLayout="stack"
       orientation="horizontal"
       showSpinner={true}
     />
   );
 };
-
-function toCSSLength(length: string | number): string {
-  return typeof length === 'number' ? `${length}px` : length;
-}

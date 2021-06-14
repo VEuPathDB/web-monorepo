@@ -1,5 +1,5 @@
 import React from 'react';
-import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
+import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { PlotData, Layout, Annotations } from 'plotly.js';
 import Spinner from '../components/Spinner';
 
@@ -100,13 +100,6 @@ export default function Heatmap(props: Props) {
           height: height,
           margin: margin,
         })}
-        config={{
-          displayModeBar:
-            props.showModebar !== undefined
-              ? props.showModebar
-              : ModebarDefault,
-          staticPlot: props.staticPlot,
-        }}
       />
       {props.showSpinner && <Spinner />}
     </div>

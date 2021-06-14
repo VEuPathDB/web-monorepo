@@ -1,20 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
-import Spinner from '../components/Spinner';
 
 // Definitions
-import { DARK_GRAY } from '../constants/colors';
 import { HistogramData, HistogramBin } from '../types/plots';
 import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
-import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
-import { legendSpecification } from '../utils/plotly';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
 import { sortBy, sortedUniqBy, orderBy } from 'lodash';
 
 // Components
-import PlotlyPlot from './PlotlyPlot';
+import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
 
 // bin middles needed for highlighting
@@ -24,13 +20,10 @@ interface BinSummary {
   binMiddle: HistogramBin['binEnd'];
 }
 
-export interface HistogramProps {
-  /** Data for the plot. */
-  data: HistogramData;
-  /** The width of the plot in pixels (if number), or CSS length. */
-  width: number | string;
-  /** The height of the plot in pixels (if number), or CSS length. */
-  height: number | string;
+export interface HistogramProps extends PlotProps {
+  /** the data to plot */
+  plotData: HistogramData;
+
   /** The orientation of the plot. Defaults to `vertical` */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
@@ -40,24 +33,10 @@ export interface HistogramProps {
    * defaults to .75
    */
   opacity?: number;
-  /** Title of plot. */
-  title?: string;
   /** Label for independent axis. Defaults to `Bins`. */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
   dependentAxisLabel?: string;
-  /** Fill color of the title, axes labels, tick marks, and legend.
-   * Defaults to DARK_GRAY. Note that textColor can be overridden
-   * for the legend if `legendOptions` is provided. */
-  textColor?: string;
-  /** Color of the gridlines. Use Plotly defaults if not specified. */
-  gridColor?: string;
-  /** Control of background color. Defaults to transparent.  */
-  backgroundColor?: string;
-  /** Should plot legend be displayed? */
-  displayLegend?: boolean;
-  /** Options for customizing plot legend. */
-  legendOptions?: PlotLegendAddon;
   /** Range for the dependent axis (usually y-axis) */
   // can only be numeric
   dependentAxisRange?: NumberRange;
@@ -65,13 +44,6 @@ export interface HistogramProps {
   dependentAxisLogScale?: boolean;
   /** Show value for each bar */
   showBarValues?: boolean;
-  /** Should plotting library controls be displayed? Ex. Plot.ly */
-  displayLibraryControls?: boolean;
-  /** Options for customizing plot placement. */
-  spacingOptions?: PlotSpacingAddon;
-  /** Whether the plot is interactive. If false, overrides
-   * displayLibraryControls. */
-  interactive?: boolean;
   /** A range to highlight by means of opacity */
   selectedRange?: NumberOrDateRange;
   /** function to call upon selecting a range (in independent axis) */
@@ -81,38 +53,24 @@ export interface HistogramProps {
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
   isZoomed?: boolean;
-  /** Show a loading spinner on top of the plot */
-  showSpinner?: boolean;
 }
 
 /** A Plot.ly based histogram component. */
 export default function Histogram({
-  data,
-  width,
-  height,
+  plotData: data,
   orientation = 'vertical',
-  title,
   independentAxisLabel = 'Bins',
   dependentAxisLabel = 'Count',
-  textColor = DARK_GRAY,
-  gridColor,
   opacity = 1,
   barLayout = 'overlay',
-  backgroundColor = 'transparent',
-  // changed to dependentAxisRange
   dependentAxisRange,
   dependentAxisLogScale = false,
   showBarValues,
-  displayLegend = true,
-  legendOptions,
-  displayLibraryControls = true,
-  spacingOptions,
-  interactive = true,
   selectedRange,
   onSelectedRangeChange = () => {},
   selectedRangeBounds,
   isZoomed = false,
-  showSpinner,
+  ...restProps
 }: HistogramProps) {
   const [revision, setRevision] = useState(0);
 
@@ -352,7 +310,6 @@ export default function Histogram({
         size: 14,
       },
     },
-    color: textColor,
     range: [minBinStart, maxBinEnd],
     tickfont: data.series.length ? {} : { color: 'transparent' },
   };
@@ -366,8 +323,6 @@ export default function Histogram({
         size: 14,
       },
     },
-    color: textColor,
-    gridcolor: gridColor,
     // range should be an array
     range: data.series.length
       ? [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
@@ -380,65 +335,30 @@ export default function Histogram({
   };
 
   return (
-    <div style={{ position: 'relative', width: width, height: height }}>
-      <PlotlyPlot
-        useResizeHandler={true}
-        revision={revision}
-        style={{ height, width }}
-        layout={{
-          shapes: selectedRangeHighlighting,
-          // when we implement zooming, we will still use Plotly's select mode
-          dragmode: 'select',
-          // with a histogram, we can always use 1D selection
-          selectdirection: orientation === 'vertical' ? 'h' : 'v',
-          autosize: true,
-          margin: {
-            t: spacingOptions?.marginTop,
-            r: spacingOptions?.marginRight,
-            b: spacingOptions?.marginBottom,
-            l: spacingOptions?.marginLeft,
-            pad: spacingOptions?.padding || 0, // axes don't join up if >0
-          },
-          showlegend: displayLegend,
-          legend: {
-            font: {
-              color: textColor,
-            },
-            ...(legendOptions ? legendSpecification(legendOptions) : {}),
-          },
-          plot_bgcolor: backgroundColor,
-          paper_bgcolor: backgroundColor,
-          xaxis:
-            orientation === 'vertical'
-              ? independentAxisLayout
-              : dependentAxisLayout,
-          yaxis:
-            orientation === 'vertical'
-              ? dependentAxisLayout
-              : independentAxisLayout,
-          barmode: barLayout,
-          title: {
-            text: title,
-            font: {
-              family: 'Arial, Helvetica, sans-serif',
-              color: textColor,
-              size: 24,
-            },
-            xref: 'paper',
-            x: 0,
-          },
-        }}
-        data={plotlyFriendlyData}
-        onSelected={handleSelectedRange}
-        onSelecting={handleSelectingRange}
-        config={{
-          displayModeBar: displayLibraryControls ? 'hover' : false,
-          staticPlot: !interactive,
-          displaylogo: false,
-          showTips: true, // shows 'double click to zoom out' help for new users
-        }}
-      />
-      {showSpinner && <Spinner />}
-    </div>
+    <PlotlyPlot
+      useResizeHandler={true}
+      revision={revision}
+      layout={{
+        shapes: selectedRangeHighlighting,
+        // when we implement zooming, we will still use Plotly's select mode
+        dragmode: 'select',
+        // with a histogram, we can always use 1D selection
+        selectdirection: orientation === 'vertical' ? 'h' : 'v',
+        autosize: true,
+        xaxis:
+          orientation === 'vertical'
+            ? independentAxisLayout
+            : dependentAxisLayout,
+        yaxis:
+          orientation === 'vertical'
+            ? dependentAxisLayout
+            : independentAxisLayout,
+        barmode: barLayout,
+      }}
+      data={plotlyFriendlyData}
+      onSelected={handleSelectedRange}
+      onSelecting={handleSelectingRange}
+      {...restProps}
+    />
   );
 }

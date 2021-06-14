@@ -1,27 +1,27 @@
 import React, { lazy, Suspense, useMemo, CSSProperties } from 'react';
 import { PlotParams } from 'react-plotly.js';
+import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
-
-// set props for legend position // BOB tidy up TODO FIXME
-type legendProp = {
-  x?: number;
-  y?: number;
-  // xanchor is for positioning legend inside plot
-  xanchor?: 'auto' | 'center' | 'left' | 'right';
-  orientation?: 'h' | 'v' | undefined;
-};
+import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 
 export interface PlotProps {
+  /** Title of plot. */
+  title?: string;
+  /** Should plot legend be displayed? Default is yes */
+  displayLegend?: boolean;
   /** add CSS styles for plot component */
   containerStyles?: CSSProperties;
-  /** disable mouse-overs and interaction if true */
-  staticPlot?: boolean;
-  /** show Plotly's mode bar */
+  /** Enables mouse-overs and interaction if true. Default false. */
+  interactive?: boolean;
+  /** show Plotly's mode bar (only shows if interactive == true) */
   displayLibraryControls?: boolean;
-  // add legend prop for positioning TODO FIXME
-  legend?: legendProp;
-  // show a loading spinner on top of the plot TODO FIXME
+  /** show a loading... spinner in the middle of the enclosing div */
+
   showSpinner?: boolean;
+  /** Options for customizing plot legend. */
+  legendOptions?: PlotLegendAddon;
+  /** Options for customizing plot placement. */
+  spacingOptions?: PlotSpacingAddon;
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
@@ -41,42 +41,81 @@ const defaultStyles = {
  *
  */
 export default function PlotlyPlot(props: PlotProps & PlotParams) {
+  const {
+    title,
+    displayLegend = true,
+    containerStyles,
+    interactive = false,
+    displayLibraryControls,
+    legendOptions,
+    spacingOptions,
+    showSpinner,
+    ...plotlyProps
+  } = props;
+
   const finalStyle = useMemo(
     (): PlotParams['style'] => ({
       ...defaultStyles,
-      ...props.containerStyles,
+      ...containerStyles,
     }),
-    [props.containerStyles]
+    [containerStyles]
   );
 
   // config is derived purely from PlotProps props
   const finalConfig = useMemo(
     (): PlotParams['config'] => ({
       responsive: true,
-      displayModeBar: props.displayLibraryControls ? 'hover' : false,
-      staticPlot: props.staticPlot ? props.staticPlot : false,
+      displaylogo: false,
+      displayModeBar: displayLibraryControls ? 'hover' : false,
+      staticPlot: !interactive,
     }),
-    [props.displayLibraryControls, props.staticPlot]
+    [displayLibraryControls, interactive]
   );
 
   const finalLayout = useMemo(
     (): PlotParams['layout'] => ({
-      ...props.layout,
-      xaxis: { ...props.layout.xaxis, fixedrange: true },
-      yaxis: { ...props.layout.yaxis, fixedrange: true },
+      ...plotlyProps.layout,
+      xaxis: {
+        ...plotlyProps.layout.xaxis,
+        fixedrange: true,
+      },
+      yaxis: {
+        ...plotlyProps.layout.yaxis,
+        fixedrange: true,
+      },
+      title: {
+        text: title,
+        font: {
+          family: 'Arial, Helvetica, sans-serif',
+        },
+        xref: 'paper',
+        x: 0,
+        xanchor: 'left', // left aligned to left edge (y-axis) of plot
+      },
+      showlegend: displayLegend ?? true,
+      margin: {
+        t: spacingOptions?.marginTop,
+        r: spacingOptions?.marginRight,
+        b: spacingOptions?.marginBottom,
+        l: spacingOptions?.marginLeft,
+        pad: spacingOptions?.padding || 0, // axes don't join up if >0
+      },
+      legend: {
+        ...(legendOptions ? legendSpecification(legendOptions) : {}),
+      },
     }),
-    [props.layout]
+    [plotlyProps.layout, spacingOptions, legendOptions, displayLegend]
   );
 
   return (
     <Suspense fallback="Loading...">
       <Plot
-        {...props}
+        {...plotlyProps}
         layout={finalLayout}
         style={finalStyle}
         config={finalConfig}
       />
-      {props.showSpinner && <Spinner />}
+      {showSpinner && <Spinner />}
     </Suspense>
   );
 }

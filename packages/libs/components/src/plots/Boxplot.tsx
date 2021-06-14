@@ -1,24 +1,13 @@
 import React from 'react';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
-import { Datum } from 'plotly.js';
+import { BoxplotData } from '../types/plots';
+import { NumberOrDateRange } from '../types/general';
 
 export interface Props extends PlotProps {
-  boxplotData: {
-    lowerWhisker?: Datum;
-    q1: Datum; // would like PlotData['q1'] but is the @types module not up to date?
-    median: Datum;
-    mean?: Datum;
-    q3: Datum;
-    upperWhisker?: Datum;
-    label: string;
-    color?: string;
-    rawData?: Datum[]; // PlotData['y'] | PlotData['x'], // doesn't seem to work
-    // but are we trying to remove dependencies on Plotly types?
-    outliers: Datum[];
-  }[];
+  plotData: BoxplotData;
   independentAxisLabel?: string;
   dependentAxisLabel?: string;
-  defaultDependentAxisRange?: [Datum, Datum]; // can be changed by plotly's built-in controls
+  dependentAxisRange?: NumberOrDateRange;
   orientation?: 'vertical' | 'horizontal';
   showRawData?: boolean;
   showMean?: boolean;
@@ -27,17 +16,18 @@ export interface Props extends PlotProps {
 
 export default function Boxplot(props: Props) {
   const {
-    boxplotData,
+    plotData,
     orientation,
     showRawData,
     showMean,
     independentAxisLabel,
     dependentAxisLabel,
-    defaultDependentAxisRange,
+    dependentAxisRange,
     markerOpacity,
+    ...restProps
   } = props;
 
-  const data = boxplotData.map((d) => {
+  const data = plotData.map((d) => {
     const orientationDependentProps =
       orientation === 'vertical'
         ? {
@@ -86,14 +76,16 @@ export default function Boxplot(props: Props) {
     [dependentAxis]: {
       rangemode: 'tozero' as const,
       title: dependentAxisLabel,
-      range: defaultDependentAxisRange,
+      range: dependentAxisRange
+        ? [dependentAxisRange?.min, dependentAxisRange?.max]
+        : undefined,
     },
     [independentAxis]: {
       title: independentAxisLabel,
     },
     showlegend: false,
   };
-  return <PlotlyPlot data={data} layout={layout} {...props} />;
+  return <PlotlyPlot data={data} layout={layout} {...restProps} />;
 }
 
 Boxplot.defaultProps = {
