@@ -7,7 +7,7 @@ export interface Props {
   containerClassName?: string;
   completeCases?: CompleteCasesTable;
   filters: Filter[];
-  variables: VariableSpec[];
+  variableSpecs: VariableSpec[];
 }
 
 export interface VariableSpec {
@@ -37,9 +37,13 @@ export function VariableCoverageTable({
   containerClassName,
   completeCases,
   filters,
-  variables,
+  variableSpecs,
 }: Props) {
-  const rows = useVariableCoverageTableRows(variables, filters, completeCases);
+  const rows = useVariableCoverageTableRows(
+    variableSpecs,
+    filters,
+    completeCases
+  );
 
   const className =
     containerClassName == null

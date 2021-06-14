@@ -17,7 +17,7 @@ import { useEntityCounts } from './entityCounts';
  * @returns A VariableCoverageTableRow[]
  */
 export function useVariableCoverageTableRows(
-  variables: VariableSpec[],
+  variableSpecs: VariableSpec[],
   filters: Filter[],
   completeCases?: CompleteCasesTable
 ): VariableCoverageTableRow[] {
@@ -26,7 +26,7 @@ export function useVariableCoverageTableRows(
 
   return useMemo(
     () =>
-      variables.map((spec) => {
+      variableSpecs.map((spec) => {
         if (spec.variable == null) {
           return {
             role: spec.role,
@@ -66,7 +66,7 @@ export function useVariableCoverageTableRows(
                 variableFilteredEntityCount - baseRowWithCounts.complete,
             };
       }),
-    [completeCasesMap, filteredEntityCountsResult.value, variables]
+    [completeCasesMap, filteredEntityCountsResult.value, variableSpecs]
   );
 }
 
