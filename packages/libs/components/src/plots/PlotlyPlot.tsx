@@ -1,14 +1,8 @@
-import React, { lazy, Suspense, useMemo } from 'react';
+import React, { lazy, Suspense, useMemo, CSSProperties } from 'react';
 import { PlotParams } from 'react-plotly.js';
+import Spinner from '../components/Spinner';
 
-type Margin = {
-  l: number;
-  r: number;
-  t: number;
-  b: number;
-};
-
-// set props for legend position
+// set props for legend position // BOB tidy up TODO FIXME
 type legendProp = {
   x?: number;
   y?: number;
@@ -18,41 +12,51 @@ type legendProp = {
 };
 
 export interface PlotProps {
-  width?: number;
-  height?: number;
-  margin?: Partial<Margin>;
+  /** add CSS styles for plot component */
+  containerStyles?: CSSProperties;
+  /** disable mouse-overs and interaction if true */
   staticPlot?: boolean;
-  showModebar?: boolean | 'hover';
-  // add legend prop for positioning
+  /** show Plotly's mode bar */
+  displayLibraryControls?: boolean;
+  // add legend prop for positioning TODO FIXME
   legend?: legendProp;
-  // show a loading spinner on top of the plot
+  // show a loading spinner on top of the plot TODO FIXME
   showSpinner?: boolean;
 }
 
-// Passing undefined doesn't revert to default modebar behavior,
-// so use this as the default
-export const ModebarDefault = 'hover';
-
-const config = {
-  responsive: true,
-};
-
 const Plot = lazy(() => import('react-plotly.js'));
+
+const defaultStyles = {
+  height: '100%',
+  width: '100%',
+};
 
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
  *
- * @param props
+ * @param props : PlotProps & PlotParams
+ *
+ * Takes all Plotly props (PlotParams) and our own PlotProps for
+ * controlling global things like spinner, library controls etc
+ *
  */
-export default function PlotlyPlot(props: PlotParams) {
+export default function PlotlyPlot(props: PlotProps & PlotParams) {
   const finalStyle = useMemo(
-    () => ({ height: '100%', width: '100%', ...props.style }),
-    [props.style]
+    () => ({ ...defaultStyles, ...props.containerStyles }),
+    [props.containerStyles]
   );
-  const finalConfig = useMemo(() => ({ ...config, ...props.config }), [
-    props.config,
-  ]);
-  // change layout: add axis fixedrange
+
+  // config is derived purely from PlotProps props
+  const finalConfig = useMemo(
+    () =>
+      ({
+        responsive: true,
+        displayModeBar: props.displayLibraryControls ? 'hover' : false,
+        staticPlot: props.staticPlot ? props.staticPlot : false,
+      } as PlotParams['config']),
+    [props.displayLibraryControls, props.staticPlot]
+  );
+
   const finalLayout = useMemo(
     () => ({
       ...props.layout,
@@ -64,13 +68,13 @@ export default function PlotlyPlot(props: PlotParams) {
 
   return (
     <Suspense fallback="Loading...">
-      {/* set layout props */}
       <Plot
         {...props}
         layout={finalLayout}
         style={finalStyle}
         config={finalConfig}
       />
+      {props.showSpinner && <Spinner />}
     </Suspense>
   );
 }

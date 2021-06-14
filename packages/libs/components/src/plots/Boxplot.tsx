@@ -1,10 +1,9 @@
 import React from 'react';
-import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
+import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Datum } from 'plotly.js';
-import Spinner from '../components/Spinner';
 
 export interface Props extends PlotProps {
-  data: {
+  boxplotData: {
     lowerWhisker?: Datum;
     q1: Datum; // would like PlotData['q1'] but is the @types module not up to date?
     median: Datum;
@@ -26,23 +25,19 @@ export interface Props extends PlotProps {
   markerOpacity?: number;
 }
 
-export default function Boxplot({
-  data,
-  orientation,
-  showRawData,
-  showMean,
-  independentAxisLabel,
-  dependentAxisLabel,
-  defaultDependentAxisRange,
-  markerOpacity,
-  showModebar,
-  width,
-  height,
-  margin,
-  staticPlot,
-  showSpinner,
-}: Props) {
-  const pdata = data.map((d) => {
+export default function Boxplot(props: Props) {
+  const {
+    boxplotData,
+    orientation,
+    showRawData,
+    showMean,
+    independentAxisLabel,
+    dependentAxisLabel,
+    defaultDependentAxisRange,
+    markerOpacity,
+  } = props;
+
+  const data = boxplotData.map((d) => {
     const orientationDependentProps =
       orientation === 'vertical'
         ? {
@@ -98,24 +93,7 @@ export default function Boxplot({
     },
     showlegend: false,
   };
-  return (
-    <div style={{ position: 'relative', width: width, height: height }}>
-      <PlotlyPlot
-        data={pdata}
-        layout={Object.assign(layout, {
-          width: width,
-          height: height,
-          margin: margin,
-        })}
-        config={{
-          displayModeBar:
-            showModebar !== undefined ? showModebar : ModebarDefault,
-          staticPlot: staticPlot,
-        }}
-      />
-      {showSpinner && <Spinner />}
-    </div>
-  );
+  return <PlotlyPlot data={data} layout={layout} {...props} />;
 }
 
 Boxplot.defaultProps = {
