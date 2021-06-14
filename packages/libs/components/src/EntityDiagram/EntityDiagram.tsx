@@ -220,31 +220,32 @@ export default function EntityDiagram({
           userSelect: 'none',
           fontWeight: isHighlighted && selectedTextBold ? 'bold' : undefined,
         }}
-        dy={-shadingHeight}
+        dy={isExpanded ? -shadingHeight : 0}
         width={isExpanded ? nodeWidth - 40 : undefined}
       >
         {displayText}
       </Text>
     );
 
-    const count = entityCounts ? (
-      <Text
-        fontSize={isHighlighted ? fontSize * 1.1 * 0.8 : fontSize * 0.8}
-        fontWeight={500}
-        fill="#333"
-        textAnchor="middle"
-        verticalAnchor="end"
-        y={fontSize * 0.8}
-      >
-        {`${entityCounts[
-          node.data.id
-        ].filtered.toLocaleString()} of ${entityCounts[
-          node.data.id
-        ].total.toLocaleString()}`}
-      </Text>
-    ) : (
-      <></>
-    );
+    const count =
+      entityCounts && isExpanded ? (
+        <Text
+          fontSize={isHighlighted ? fontSize * 1.1 * 0.8 : fontSize * 0.8}
+          fontWeight={500}
+          fill="#333"
+          textAnchor="middle"
+          verticalAnchor="end"
+          y={fontSize * 0.8}
+        >
+          {`${entityCounts[
+            node.data.id
+          ].filtered.toLocaleString()} of ${entityCounts[
+            node.data.id
+          ].total.toLocaleString()}`}
+        </Text>
+      ) : (
+        <></>
+      );
 
     const filterIcon = filteredEntities?.includes(node.data.id) ? (
       <Group>
@@ -297,24 +298,31 @@ export default function EntityDiagram({
     // but begins in same place as now. Use pythagorean theorem to compute
     // x coordinates, and use `link.source.children` to determine y coordinates.
 
+    const maxOffset = 15;
+    const offset =
+      link.target.y - nodeWidth / 2 - (link.source.y + nodeWidth / 2) >
+      maxOffset * 2 + 10
+        ? maxOffset
+        : 0;
+
     if (orientation == 'horizontal') {
+      from = { x: link.source.y + nodeWidth / 2 + offset, y: link.source.x };
       to = {
-        x: link.target.y - nodeWidth / 2 - 5 - 15,
+        x: link.target.y - nodeWidth / 2 - 5 - offset,
         y: link.target.x,
       };
-      from = { x: link.source.y + nodeWidth / 2 + 15, y: link.source.x };
     } else {
+      from = { x: link.source.x, y: link.source.y };
       to = {
         x: link.target.x,
         y: link.target.y - nodeHeight / 2 - 5,
       };
-      from = { x: link.source.x, y: link.source.y };
     }
 
     return (
       <Line
-        to={to}
         from={from}
+        to={to}
         stroke="#777"
         strokeWidth={3}
         markerEnd="url(#arrow)"
