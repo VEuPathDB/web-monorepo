@@ -9,13 +9,18 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
 import React, { useCallback, useMemo } from 'react';
-import { DataClient, MosaicRequestParams } from '../../../api/data-api';
+import {
+  CompleteCasesTable,
+  DataClient,
+  MosaicRequestParams,
+} from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/studyMetadata';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
+import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
@@ -24,7 +29,9 @@ import mosaic from './selectorIcons/mosaic.svg';
 type MosaicData = Pick<
   MosaicProps,
   'data' | 'independentValues' | 'dependentValues'
->;
+> & {
+  completeCases?: CompleteCasesTable;
+};
 
 type ContTableData = MosaicData &
   Partial<{
@@ -241,17 +248,17 @@ function MosaicViz(props: Props) {
               <th>95% confidence interval</th>
             </tr>
             <tr>
-              <td>p-value</td>
+              <th>P-value</th>
               <td>{twoByTwoData?.pValue ?? 'N/A'}</td>
               <td>N/A</td>
             </tr>
             <tr>
-              <td>Odds ratio</td>
+              <th>Odds ratio</th>
               <td>{twoByTwoData?.oddsRatio ?? 'N/A'}</td>
               <td>{twoByTwoData?.orInterval ?? 'N/A'}</td>
             </tr>
             <tr>
-              <td>Relative risk</td>
+              <th>Relative risk</th>
               <td>{twoByTwoData?.relativeRisk ?? 'N/A'}</td>
               <td>{twoByTwoData?.rrInterval ?? 'N/A'}</td>
             </tr>
@@ -267,15 +274,15 @@ function MosaicViz(props: Props) {
         <table>
           <tbody>
             <tr>
-              <td>p-value</td>
+              <th>P-value</th>
               <td>{contTableData?.pValue ?? 'N/A'}</td>
             </tr>
             <tr>
-              <td>Degrees of freedom</td>
+              <th>Degrees of freedom</th>
               <td>{contTableData?.degreesFreedom ?? 'N/A'}</td>
             </tr>
             <tr>
-              <td>Chi-squared</td>
+              <th>Chi-squared</th>
               <td>{contTableData?.chisq ?? 'N/A'}</td>
             </tr>
           </tbody>
@@ -310,7 +317,25 @@ function MosaicViz(props: Props) {
           showSpinner={data.pending}
         />
       </div>
-      {statsTable}
+      <div style={{ display: 'grid', gridAutoFlow: 'row', gap: '0.5em' }}>
+        <VariableCoverageTable
+          completeCases={data.value?.completeCases}
+          filters={filters}
+          variableSpecs={[
+            {
+              role: 'X-axis',
+              display: xAxisVariableName,
+              variable: vizConfig.xAxisVariable,
+            },
+            {
+              role: 'Y-axis',
+              display: yAxisVariableName,
+              variable: vizConfig.yAxisVariable,
+            },
+          ]}
+        />
+        {statsTable}
+      </div>
     </div>
   ) : (
     // thumbnail/grid view
@@ -473,6 +498,7 @@ export function twoByTwoResponseToData(
     rrInterval: response.statsTable[0].rrInterval,
     oddsRatio: response.statsTable[0].oddsratio,
     orInterval: response.statsTable[0].orInterval,
+    completeCases: response.completeCasesTable,
   };
 }
 

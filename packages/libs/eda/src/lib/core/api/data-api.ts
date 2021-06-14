@@ -371,6 +371,7 @@ export const MosaicResponse = type({
       size: array(number),
     })
   ),
+  completeCasesTable: completeCasesTableArray,
 });
 
 export type ContTableResponse = TypeOf<typeof ContTableResponse>;
@@ -400,6 +401,7 @@ export const TwoByTwoResponse = intersection([
         relativerisk: number,
       })
     ),
+    completeCasesTable: completeCasesTableArray,
   }),
 ]);
 
