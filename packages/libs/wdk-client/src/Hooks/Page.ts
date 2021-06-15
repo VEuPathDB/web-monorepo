@@ -1,4 +1,3 @@
-import { Action } from 'history';
 import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 
@@ -21,7 +20,6 @@ export function useScrollUpOnRouteChange() {
       if (
         newLocation.state?.scrollToTop === false ||
         action === 'REPLACE' ||
-        navigatingWithinStrategyWorkspace(prevPathname, newLocation.pathname) ||
         newLocation.hash || (
           prevPathname === newLocation.pathname &&
           prevQueryString === newLocation.search
@@ -33,11 +31,4 @@ export function useScrollUpOnRouteChange() {
 
     return removeHistoryListener;
   } , []);
-}
-
-function navigatingWithinStrategyWorkspace(prevPathname: string, newPathname: string) {
-  return (
-    prevPathname.startsWith('/workspace/strategies') &&
-    newPathname.startsWith('/workspace/strategies')
-  );
 }

@@ -34,7 +34,7 @@ export default function WorkspaceNavigation(props: Props) {
           replace={item.replace}
           to={{
             pathname: routeBase + item.route,
-            state: item.state
+            state: { scrollToTop: false, ...item.state }
           }}
         >
           {item.display}
