@@ -341,7 +341,6 @@ export default function Histogram({
         dragmode: 'select',
         // with a histogram, we can always use 1D selection
         selectdirection: orientation === 'vertical' ? 'h' : 'v',
-        autosize: true,
         xaxis:
           orientation === 'vertical'
             ? independentAxisLayout
