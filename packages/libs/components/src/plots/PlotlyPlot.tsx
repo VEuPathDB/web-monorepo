@@ -3,8 +3,11 @@ import { PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
+import { UnionOfPlotDataTypes } from '../types/plots';
 
-export interface PlotProps {
+export interface PlotProps<T extends UnionOfPlotDataTypes> {
+  /** plot data - following web-components' API, not Plotly's */
+  data: T;
   /** Title of plot. */
   title?: string;
   /** Should plot legend be displayed? Default is yes */
@@ -40,7 +43,9 @@ const defaultStyles = {
  * controlling global things like spinner, library controls etc
  *
  */
-export default function PlotlyPlot(props: PlotProps & PlotParams) {
+export default function PlotlyPlot<T extends UnionOfPlotDataTypes>(
+  props: Omit<PlotProps<T>, 'data'> & PlotParams
+) {
   const {
     title,
     displayLegend = true,

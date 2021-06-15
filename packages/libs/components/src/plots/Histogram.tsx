@@ -20,10 +20,7 @@ interface BinSummary {
   binMiddle: HistogramBin['binEnd'];
 }
 
-export interface HistogramProps extends PlotProps {
-  /** the data to plot */
-  plotData: HistogramData;
-
+export interface HistogramProps extends PlotProps<HistogramData> {
   /** The orientation of the plot. Defaults to `vertical` */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
@@ -57,7 +54,7 @@ export interface HistogramProps extends PlotProps {
 
 /** A Plot.ly based histogram component. */
 export default function Histogram({
-  plotData: data,
+  data,
   orientation = 'vertical',
   independentAxisLabel = 'Bins',
   dependentAxisLabel = 'Count',

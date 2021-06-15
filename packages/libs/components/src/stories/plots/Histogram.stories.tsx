@@ -33,7 +33,7 @@ const TemplateWithControls: Story<
   }
 > = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
-    plotData: apiData,
+    data: apiData,
     onSelectedUnitChange: async (newUnit: string) => {
       return await binDailyCovidStats(
         undefined,
@@ -156,7 +156,7 @@ const TemplateWithSelectedRangeControls: Story<
   }
 > = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
-    plotData: apiData,
+    data: apiData,
     onSelectedUnitChange: async (newUnit: string) => {
       return await binDailyCovidStats(
         undefined,
@@ -228,7 +228,7 @@ const SimpleDateTemplate: Story<HistogramProps> = (
   args,
   { loaded: { apiData } }
 ) => {
-  return <Histogram {...args} plotData={apiData} />;
+  return <Histogram {...args} data={apiData} />;
 };
 
 export const EventHoursNoControls = SimpleDateTemplate.bind({});
@@ -278,7 +278,7 @@ const TemplateWithSelectedDateRangeControls: Story<
   }
 > = (args, { loaded: { apiData } }) => {
   const plotControls = usePlotControls<HistogramData>({
-    plotData: apiData,
+    data: apiData,
     onSelectedUnitChange: async (newUnit: string) => {
       return await binGithubEventDates({
         url: 'https://api.github.com/users/VEuPathDB/repos?sort=created',
@@ -358,7 +358,7 @@ DateRangeSelection.loaders = [
 export const EmptyData: Story = (args) => {
   return (
     <Histogram
-      plotData={{ series: [] }}
+      data={{ series: [] }}
       containerStyles={{
         height: '400px',
         width: '800px',
@@ -372,7 +372,7 @@ export const EmptyData: Story = (args) => {
 export const EmptyDataLoading: Story = (args) => {
   return (
     <Histogram
-      plotData={{ series: [] }}
+      data={{ series: [] }}
       containerStyles={{
         height: '400px',
         width: '800px',

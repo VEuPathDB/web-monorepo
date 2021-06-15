@@ -1,10 +1,10 @@
 import React from 'react';
+import { PlotParams } from 'react-plotly.js';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { BoxplotData } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
 
-export interface Props extends PlotProps {
-  plotData: BoxplotData;
+export interface Props extends PlotProps<BoxplotData> {
   independentAxisLabel?: string;
   dependentAxisLabel?: string;
   dependentAxisRange?: NumberOrDateRange;
@@ -16,7 +16,7 @@ export interface Props extends PlotProps {
 
 export default function Boxplot(props: Props) {
   const {
-    plotData,
+    data: plotData,
     orientation,
     showRawData,
     showMean,
@@ -27,7 +27,7 @@ export default function Boxplot(props: Props) {
     ...restProps
   } = props;
 
-  const data = plotData.map((d) => {
+  const data: PlotParams['data'] = plotData.map((d) => {
     const orientationDependentProps =
       orientation === 'vertical'
         ? {
@@ -66,7 +66,7 @@ export default function Boxplot(props: Props) {
       },
       ...orientationDependentProps,
       type: 'box',
-    } as const;
+    };
   });
 
   const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';

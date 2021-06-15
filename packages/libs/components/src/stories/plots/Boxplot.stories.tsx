@@ -71,7 +71,7 @@ const dogMean = stats.mean(dogRawData);
 export const Basic: Story<Props> = Template.bind({});
 Basic.argTypes = storyArgTypes(
   (Basic.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats' },
       { ...dogData, label: 'dogs' },
     ],
@@ -81,7 +81,7 @@ Basic.argTypes = storyArgTypes(
 export const BasicLoading: Story<Props> = Template.bind({});
 BasicLoading.argTypes = storyArgTypes(
   (BasicLoading.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats' },
       { ...dogData, label: 'dogs' },
     ],
@@ -92,7 +92,7 @@ BasicLoading.argTypes = storyArgTypes(
 export const NoOutliersGiven: Story<Props> = Template.bind({});
 NoOutliersGiven.argTypes = storyArgTypes(
   (NoOutliersGiven.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats', outliers: [] },
       { ...dogData, label: 'dogs', outliers: [] },
     ],
@@ -102,7 +102,7 @@ NoOutliersGiven.argTypes = storyArgTypes(
 export const WithMean: Story<Props> = Template.bind({});
 WithMean.argTypes = storyArgTypes(
   (WithMean.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats', mean: catMean },
       { ...dogData, label: 'dogs', mean: dogMean },
     ],
@@ -130,14 +130,14 @@ const outdoorTemperatureData = summaryStats(outdoorTemperatureRawData);
 export const BelowZero: Story<Props> = Template.bind({});
 BelowZero.argTypes = storyArgTypes(
   (BelowZero.args = {
-    plotData: [{ ...outdoorTemperatureData, label: 'outdoor temperature' }],
+    data: [{ ...outdoorTemperatureData, label: 'outdoor temperature' }],
   })
 );
 
 export const NoWhiskers: Story<Props> = Template.bind({});
 NoWhiskers.argTypes = storyArgTypes(
   (NoWhiskers.args = {
-    plotData: [
+    data: [
       {
         ...outdoorTemperatureData,
         lowerWhisker: undefined,
@@ -154,7 +154,7 @@ const indoorTemperatureData = summaryStats(indoorTemperatureRawData);
 export const YAxisLabel: Story<Props> = Template.bind({});
 YAxisLabel.argTypes = storyArgTypes(
   (YAxisLabel.args = {
-    plotData: [
+    data: [
       { ...outdoorTemperatureData, label: 'outdoor' },
       { ...indoorTemperatureData, label: 'indoor' },
     ],
@@ -165,7 +165,7 @@ YAxisLabel.argTypes = storyArgTypes(
 export const XAndYAxisLabel: Story<Props> = Template.bind({});
 XAndYAxisLabel.argTypes = storyArgTypes(
   (XAndYAxisLabel.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats' },
       { ...dogData, label: 'dogs' },
     ],
@@ -177,7 +177,7 @@ XAndYAxisLabel.argTypes = storyArgTypes(
 export const FixedYAxisRange: Story<Props> = Template.bind({});
 FixedYAxisRange.argTypes = storyArgTypes(
   (FixedYAxisRange.args = {
-    plotData: [
+    data: [
       { ...outdoorTemperatureData, label: 'outdoor' },
       { ...indoorTemperatureData, label: 'indoor' },
     ],
@@ -190,7 +190,7 @@ FixedYAxisRange.argTypes = storyArgTypes(
 export const FixedTooSmallYAxisRange: Story<Props> = Template.bind({});
 FixedTooSmallYAxisRange.argTypes = storyArgTypes(
   (FixedTooSmallYAxisRange.args = {
-    plotData: [
+    data: [
       { ...outdoorTemperatureData, label: 'outdoor' },
       { ...indoorTemperatureData, label: 'indoor' },
     ],
@@ -203,7 +203,7 @@ FixedTooSmallYAxisRange.argTypes = storyArgTypes(
 export const Horizontal: Story<Props> = Template.bind({});
 Horizontal.argTypes = storyArgTypes(
   (Horizontal.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats' },
       { ...dogData, label: 'dogs' },
     ],
@@ -216,7 +216,7 @@ Horizontal.argTypes = storyArgTypes(
 export const HorizontalLongLabels: Story<Props> = Template.bind({});
 HorizontalLongLabels.argTypes = storyArgTypes(
   (HorizontalLongLabels.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'hungry domestic cats' },
       { ...dogData, label: 'sleepy domestic dogs' },
     ],
@@ -229,7 +229,7 @@ HorizontalLongLabels.argTypes = storyArgTypes(
 export const WithRawData: Story<Props> = Template.bind({});
 WithRawData.argTypes = storyArgTypes(
   (WithRawData.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats', rawData: catRawData },
       { ...dogData, label: 'dogs', rawData: dogRawData },
     ],
@@ -242,7 +242,7 @@ WithRawData.argTypes = storyArgTypes(
 export const HorizontalWithRawData: Story<Props> = Template.bind({});
 HorizontalWithRawData.argTypes = storyArgTypes(
   (HorizontalWithRawData.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats', rawData: catRawData },
       { ...dogData, label: 'dogs', rawData: dogRawData },
     ],
@@ -256,7 +256,7 @@ HorizontalWithRawData.argTypes = storyArgTypes(
 export const HorizontalWithOneRawDataOneMean: Story<Props> = Template.bind({});
 HorizontalWithOneRawDataOneMean.argTypes = storyArgTypes(
   (HorizontalWithOneRawDataOneMean.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats with mean', mean: catMean },
       { ...dogData, label: 'dogs with raw', rawData: dogRawData },
     ],
@@ -271,7 +271,7 @@ HorizontalWithOneRawDataOneMean.argTypes = storyArgTypes(
 export const TwoColors: Story<Props> = Template.bind({});
 TwoColors.argTypes = storyArgTypes(
   (TwoColors.args = {
-    plotData: [
+    data: [
       { ...catData, label: 'cats', color: 'pink' },
       { ...dogData, label: 'dogs', color: 'purple' },
     ],
@@ -284,7 +284,7 @@ TwoColors.argTypes = storyArgTypes(
 export const NumberLabels: Story<Props> = Template.bind({});
 NumberLabels.argTypes = storyArgTypes(
   (NumberLabels.args = {
-    plotData: [
+    data: [
       { ...catData, label: '1', color: 'silver' },
       { ...dogData, label: '2.5', color: 'silver' },
       { ...indoorTemperatureData, label: '5', color: 'silver' },
@@ -299,7 +299,7 @@ NumberLabels.argTypes = storyArgTypes(
 export const DateLabels: Story<Props> = Template.bind({});
 DateLabels.argTypes = storyArgTypes(
   (DateLabels.args = {
-    plotData: [
+    data: [
       { ...catData, label: '2002-03-04', color: 'silver' },
       { ...dogData, label: '2002-04-01', color: 'silver' },
       { ...indoorTemperatureData, label: '2002-04-24', color: 'silver' },
@@ -316,7 +316,7 @@ DateLabels.argTypes = storyArgTypes(
 export const MonthLabels: Story<Props> = Template.bind({});
 MonthLabels.argTypes = storyArgTypes(
   (MonthLabels.args = {
-    plotData: [
+    data: [
       { ...catData, label: '2002-03', color: 'silver' },
       { ...dogData, label: '2002-04', color: 'silver' },
       { ...indoorTemperatureData, label: '2002-05', color: 'silver' },
@@ -336,7 +336,7 @@ MonthLabels.argTypes = storyArgTypes(
 export const YearLabels: Story<Props> = Template.bind({});
 YearLabels.argTypes = storyArgTypes(
   (YearLabels.args = {
-    plotData: [
+    data: [
       { ...catData, label: '2002', color: 'silver' },
       { ...dogData, label: '2003', color: 'silver' },
       { ...indoorTemperatureData, label: '2004', color: 'silver' },
@@ -368,7 +368,7 @@ function summaryStats(rawData: number[]) {
 }
 
 function storyArgTypes(args: any): any {
-  const pointTraceIndices = args.plotData
+  const pointTraceIndices = args.data
     .map((d: any, index: number) =>
       d.rawData || d.outliers.length ? index : -1
     )
@@ -377,14 +377,13 @@ function storyArgTypes(args: any): any {
     showRawData: {
       control: {
         disable:
-          args.plotData.filter((d: any) => d.rawData && d.rawData.length)
-            .length == 0,
+          args.data.filter((d: any) => d.rawData && d.rawData.length).length ==
+          0,
       },
     },
     showMean: {
       control: {
-        disable:
-          args.plotData.filter((d: any) => d.mean !== undefined).length == 0,
+        disable: args.data.filter((d: any) => d.mean !== undefined).length == 0,
       },
     },
     markerOpacity: {
