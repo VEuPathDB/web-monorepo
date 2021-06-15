@@ -6,6 +6,8 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 // import Layout for typing layout, especially with sliders
 import { Layout } from 'plotly.js';
 import Spinner from '../components/Spinner';
+// import extended legend prop
+import { layoutLegend } from '../types/general';
 
 export interface ScatterplotProps extends PlotProps {
   /** Data for the scatter plot */
@@ -59,6 +61,8 @@ export interface ScatterplotProps extends PlotProps {
   displayLegend?: boolean;
   /** show plotly's built-in controls */
   displayLibraryControls?: boolean;
+  /** legend title */
+  legendTitle?: string;
 }
 
 export default function XYPlot(props: ScatterplotProps) {
@@ -69,9 +73,10 @@ export default function XYPlot(props: ScatterplotProps) {
     independentAxisRange,
     dependentAxisRange,
     data,
+    legendTitle,
   } = props;
 
-  const layout: Partial<Layout> = {
+  const layout: Partial<Layout> & layoutLegend = {
     xaxis: {
       title: independentAxisLabel ? independentAxisLabel : '',
       range: independentAxisRange, // set this for better display: esp. for CI plot
@@ -93,6 +98,16 @@ export default function XYPlot(props: ScatterplotProps) {
     // plot title
     title: {
       text: title ? title : undefined,
+    },
+    // define legend.title
+    legend: {
+      title: {
+        text: legendTitle,
+        font: {
+          size: 14,
+          color: 'black',
+        },
+      },
     },
   };
 

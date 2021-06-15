@@ -3,6 +3,9 @@
  * Or, at least, haven't found a more specific home yet.
  */
 
+// import Legend to extend
+import { Legend } from 'plotly.js';
+
 export type NumberOrDate = number | string;
 
 export type ErrorManagement = {
@@ -40,3 +43,19 @@ export type TimeDelta = { value: number; unit: string };
 export type NumberOrTimeDelta = number | TimeDelta;
 export type NumberOrDateRange = NumberRange | DateRange;
 export type NumberOrTimeDeltaRange = NumberRange | TimeDeltaRange;
+
+// extend legend type: somehow plotly.js did not define legend.title type
+// see https://plotly.com/javascript/reference/layout/#layout-legend-title
+export interface layoutLegend extends Partial<Legend> {
+  legend?: {
+    title?: {
+      text?: string;
+      font?: {
+        family?: string;
+        size?: number;
+        color?: string;
+      };
+      side?: 'top' | 'left' | 'top left';
+    };
+  };
+}
