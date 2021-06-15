@@ -80,13 +80,19 @@ let dataWithAvailableUnits: PiePlotData = {
   selectedUnit: 'Not Yet',
 };
 
-const NoControlsTemplate: Story<PiePlotProps> = (args) => <PiePlot {...args} />;
+const NoControlsTemplate: Story<PiePlotProps> = (args) => (
+  <PiePlot
+    containerStyles={{
+      width: '600px',
+      height: '400px',
+    }}
+    {...args}
+  />
+);
 
 export const Basic = NoControlsTemplate.bind({});
 Basic.args = {
   data: data,
-  width: 600,
-  height: 450,
   title: 'Pie Plot',
   legendOptions: {
     horizontalPosition: 'right',
@@ -107,8 +113,6 @@ Basic.args = {
 export const BasicLoading = NoControlsTemplate.bind({});
 BasicLoading.args = {
   data: data,
-  width: 600,
-  height: 450,
   title: 'Pie Plot',
   legendOptions: {
     horizontalPosition: 'right',
@@ -178,24 +182,20 @@ export const BasicControlPanel: Story<PiePlotProps> = (args) => {
           marginRight: 0,
           marginTop: 10,
         }}
+        containerStyles={{
+          width: '600px',
+          height: '400px',
+        }}
         {...plotControls}
       />
       <div style={{ height: 25 }} />
-      <PieControls
-        label="Pie Plot Controls"
-        {...plotControls}
-        containerStyles={{
-          maxWidth: args.width,
-        }}
-      />
+      <PieControls label="Pie Plot Controls" {...plotControls} />
     </div>
   );
 };
 
 BasicControlPanel.args = {
   data: coloredData,
-  width: 500,
-  height: 300,
 };
 
 export const ControlPanelWithAvailableUnits: Story<PiePlotProps> = (args) => {
@@ -222,9 +222,6 @@ export const ControlPanelWithAvailableUnits: Story<PiePlotProps> = (args) => {
       <PieControls
         label="Pie Plot Controls W/ Available Units"
         {...plotControls}
-        containerStyles={{
-          maxWidth: args.width,
-        }}
       />
     </div>
   );
@@ -232,6 +229,4 @@ export const ControlPanelWithAvailableUnits: Story<PiePlotProps> = (args) => {
 
 ControlPanelWithAvailableUnits.args = {
   data: dataWithAvailableUnits,
-  width: 500,
-  height: 300,
 };

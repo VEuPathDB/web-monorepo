@@ -19,7 +19,6 @@ export interface PlotProps<T extends UnionOfPlotDataTypes> {
   /** show Plotly's mode bar (only shows if interactive == true) */
   displayLibraryControls?: boolean;
   /** show a loading... spinner in the middle of the enclosing div */
-
   showSpinner?: boolean;
   /** Options for customizing plot legend. */
   legendOptions?: PlotLegendAddon;
@@ -122,5 +121,5 @@ export default function PlotlyPlot<T extends UnionOfPlotDataTypes>(
       />
       {showSpinner && <Spinner />}
     </Suspense>
-  );
+  ); // FIXME: Spinner currently showing in middle of enclosing div rather than middle of plot.
 }

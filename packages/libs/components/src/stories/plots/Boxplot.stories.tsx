@@ -75,6 +75,10 @@ Basic.argTypes = storyArgTypes(
       { ...catData, label: 'cats' },
       { ...dogData, label: 'dogs' },
     ],
+    containerStyles: {
+      width: '600px',
+      height: '400px',
+    },
   })
 );
 
@@ -86,6 +90,10 @@ BasicLoading.argTypes = storyArgTypes(
       { ...dogData, label: 'dogs' },
     ],
     showSpinner: true,
+    containerStyles: {
+      width: '600px',
+      height: '400px',
+    },
   })
 );
 
