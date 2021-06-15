@@ -4,11 +4,10 @@ import { NavLink, NavLinkProps } from "react-router-dom";
 
 import './WorkspaceNavigation.scss';
 
-interface WorkspaceNavigationItem {
+interface WorkspaceNavigationItem extends Pick<NavLinkProps, 'isActive' | 'replace'> {
   display: ReactNode;
   route: string;
   state?: any;
-  isActive?: NavLinkProps['isActive'];
   exact?: boolean;
 }
 
@@ -32,9 +31,10 @@ export default function WorkspaceNavigation(props: Props) {
           activeClassName={cx('--Item', 'active')}
           isActive={item.isActive}
           exact={item.exact ?? true}
+          replace={item.replace}
           to={{
             pathname: routeBase + item.route,
-            state: item.state
+            state: { scrollToTop: false, ...item.state }
           }}
         >
           {item.display}
