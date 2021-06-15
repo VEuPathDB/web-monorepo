@@ -7,7 +7,7 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
 import Spinner from '../components/Spinner';
 // import extended legend prop
-import { layoutLegend } from '../types/general';
+import { LayoutLegendTitle } from '../types/plotly-omissions';
 
 export interface ScatterplotProps extends PlotProps {
   /** Data for the scatter plot */
@@ -76,7 +76,7 @@ export default function XYPlot(props: ScatterplotProps) {
     legendTitle,
   } = props;
 
-  const layout: Partial<Layout> & layoutLegend = {
+  const layout: Partial<Layout> & LayoutLegendTitle = {
     xaxis: {
       title: independentAxisLabel ? independentAxisLabel : '',
       range: independentAxisRange, // set this for better display: esp. for CI plot
