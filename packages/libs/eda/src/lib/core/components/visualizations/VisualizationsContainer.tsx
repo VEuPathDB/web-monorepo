@@ -96,7 +96,7 @@ function ConfiguredVisualizations(props: Props) {
   if (computation == null) return <div>Computation not found</div>;
   return (
     <Grid>
-      <Link to={`${url}/new`} className={cx('-NewVisualization')}>
+      <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
         <i className="fa fa-plus"></i>
         Select a visualization
       </Link>
@@ -137,7 +137,11 @@ function ConfiguredVisualizations(props: Props) {
                     </button>
                   </div>
                   <div>
-                    <Link to={`${url}/${viz.id}`} title="View fullscreen">
+                    <Link
+                      replace
+                      to={`${url}/${viz.id}`}
+                      title="View fullscreen"
+                    >
                       <i className="fa fa-arrows-alt"></i>
                     </Link>
                   </div>
@@ -185,7 +189,7 @@ function NewVisualizationPicker(props: Props) {
   return (
     <div className={cx('-PickerContainer')}>
       <div className={cx('-PickerActions')}>
-        <Link to={`../${computationId}`}>
+        <Link replace to={`../${computationId}`}>
           <i className="fa fa-close"></i>
         </Link>
       </div>
@@ -294,7 +298,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
             <i className="fa fa-clone"></i>
           </button>
         </div>
-        <Link to={`../${computationId}`} title="Minimize visualization">
+        <Link replace to={`../${computationId}`} title="Minimize visualization">
           <i className="fa fa-window-restore"></i>
         </Link>
       </div>
