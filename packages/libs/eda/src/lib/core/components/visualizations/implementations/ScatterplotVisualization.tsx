@@ -12,7 +12,6 @@ import { useCallback, useMemo } from 'react';
 
 // need to set for Scatterplot
 import {
-  CompleteCasesTable,
   DataClient,
   ScatterplotRequestParams,
   ScatterplotResponse,
@@ -291,19 +290,12 @@ function ScatterplotViz(props: Props) {
             width={1000}
             height={600}
             // title={'Scatter plot'}
-            xAxisVariable={vizConfig.xAxisVariable}
-            yAxisVariable={vizConfig.yAxisVariable}
-            overlayVariable={vizConfig.overlayVariable}
             independentAxisLabel={
               findEntityAndVariable(vizConfig.xAxisVariable)?.variable
                 .displayName
             }
             dependentAxisLabel={
               findEntityAndVariable(vizConfig.yAxisVariable)?.variable
-                .displayName
-            }
-            overlayLabel={
-              findEntityAndVariable(vizConfig.overlayVariable)?.variable
                 .displayName
             }
             independentAxisRange={[data.value.xMin, data.value.xMax]}
@@ -316,8 +308,6 @@ function ScatterplotViz(props: Props) {
             // send visualization.type here
             vizType={visualization.type}
             showSpinner={data.pending}
-            filters={filters}
-            completeCases={data.value.completeCases}
           />
         ) : (
           // thumbnail/grid view
@@ -389,12 +379,6 @@ function ScatterplotViz(props: Props) {
 }
 
 type ScatterplotWithControlsProps = ScatterplotProps & {
-  completeCases?: CompleteCasesTable;
-  filters: Filter[];
-  xAxisVariable?: Variable;
-  yAxisVariable?: Variable;
-  overlayVariable?: Variable;
-  overlayLabel?: string;
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
   vizType: string;
@@ -406,12 +390,6 @@ function ScatterplotWithControls({
   valueSpec = 'Raw',
   onValueSpecChange,
   vizType,
-  filters,
-  xAxisVariable,
-  yAxisVariable,
-  overlayVariable,
-  completeCases,
-  overlayLabel,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
