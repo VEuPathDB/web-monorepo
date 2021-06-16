@@ -4,6 +4,7 @@ import {
   NumberOrDateRange,
   TimeDeltaRange,
   NumberOrTimeDelta,
+  TimeDelta,
 } from '../../types/general';
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
@@ -211,23 +212,40 @@ const TemplateWithSelectedDateRangeControls: Story<Omit<
   const [data, setData] = useState<HistogramData>(EmptyHistogramData);
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [binWidth, setBinWidth] = useState<NumberOrTimeDelta>({
+    value: 1,
+    unit: 'month',
+  });
+  const unit = (binWidth as TimeDelta).unit;
 
   const handleSelectedRangeChange = async (newRange?: NumberOrDateRange) => {
     setSelectedRange(newRange);
   };
+
+  const handleUnitChange = async (newUnit: string) => {
+    const oldValue: number = (binWidth as TimeDelta).value;
+    const newValue = newUnit === 'week' ? oldValue * 4 : oldValue / 4;
+    setBinWidth({ value: Math.floor(Math.max(1, newValue)), unit: newUnit });
+  };
+
+  const handleBinWidthChange = async ({
+    binWidth: newBinWidth,
+  }: {
+    binWidth: NumberOrTimeDelta;
+  }) => setBinWidth(newBinWidth);
 
   // keep `data` up to date
   useEffect(() => {
     setLoading(true);
     binGithubEventDates({
       url: 'https://api.github.com/users/VEuPathDB/repos?sort=created',
-      unit: 'month',
-      numBins: 10,
+      unit: unit === 'week' ? 'week' : 'month', // just to get round type issue
+      binWidth: binWidth as TimeDelta,
     }).then((data) => {
       setData(data);
       setLoading(false);
     });
-  }, []);
+  }, [binWidth]);
 
   // report changes on the histogram's selected range.
   useEffect(() => {
@@ -254,6 +272,16 @@ const TemplateWithSelectedDateRangeControls: Story<Omit<
         valueType="date"
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
+        binWidth={binWidth}
+        onBinWidthChange={handleBinWidthChange}
+        binWidthRange={
+          unit === 'month'
+            ? { min: 1, max: 12, unit: 'month' }
+            : { min: 1, max: 52, unit: 'week' }
+        }
+        selectedUnit={unit}
+        availableUnits={['week', 'month']}
+        onSelectedUnitChange={handleUnitChange}
       />
     </div>
   );
