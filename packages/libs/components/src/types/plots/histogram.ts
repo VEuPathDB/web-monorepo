@@ -19,6 +19,8 @@ export type HistogramData = {
   binWidthStep?: number;
 } & AvailableUnitsAddon;
 
+export const EmptyHistogramData: HistogramData = { series: [] };
+
 export type HistogramDataSeries = {
   /** The name of the series. */
   name: string;

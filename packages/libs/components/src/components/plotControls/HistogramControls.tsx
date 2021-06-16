@@ -38,26 +38,26 @@ import LabelledGroup from '../widgets/LabelledGroup';
 export type HistogramControlsProps = {
   /** Label for control panel. Optional. */
   label?: string;
-  /** Currently selected bar layout. */
-  barLayout: string;
+  /** Currently selected bar layout. Optional */
+  barLayout?: string;
   /** Function to invoke when barlayout changes. */
   onBarLayoutChange?: (layout: 'overlay' | 'stack') => void;
   /** Whether or not to display the plot legend. */
-  displayLegend: boolean;
+  displayLegend?: boolean;
   /** Action to take on display legend change. */
   toggleDisplayLegend?: (displayLegend: boolean) => void;
   /** Whether or not to display the additionally controls that
    * may be provided by the charting library used to generate the plot.
    * For example, Plot.ly controls.*/
-  displayLibraryControls: boolean;
+  displayLibraryControls?: boolean;
   /** Action to take on display library controls change. */
   toggleLibraryControls?: (displayLegend: boolean) => void;
   /** Current histogram opacity. */
-  opacity: number;
+  opacity?: number;
   /** Function to invoke when opacity changes. */
   onOpacityChange?: (opacity: number) => void;
   /** The current orientation of the plot.  */
-  orientation: OrientationOptions;
+  orientation?: OrientationOptions;
   /** Function to invoke when orientation changes. */
   toggleOrientation?: (orientation: string) => void;
   /** Type of x-variable 'number' or 'date' */
@@ -91,7 +91,7 @@ export type HistogramControlsProps = {
    * valid CSS color definition. Defaults to LIGHT_BLUE */
   accentColor?: string;
   /** Attributes and methdods for error management. */
-  errorManagement: ErrorManagement;
+  errorManagement?: ErrorManagement;
   // add y-axis controls
   /** Whether or not to show y-axis log scale. */
   dependentAxisLogScale?: boolean;
@@ -168,6 +168,7 @@ export default function HistogramControls({
   const { ref, width } = useDimensions<HTMLDivElement>();
 
   const errorStacks = useMemo(() => {
+    if (errorManagement == null) return [];
     return errorManagement.errors.reduce<
       Array<{ error: Error; occurences: number }>
     >((accumulatedValue, currentValue) => {
@@ -182,7 +183,7 @@ export default function HistogramControls({
         return [...accumulatedValue, { error: currentValue, occurences: 1 }];
       }
     }, []);
-  }, [errorManagement.errors]);
+  }, [errorManagement?.errors]);
 
   return (
     <div
@@ -206,13 +207,13 @@ export default function HistogramControls({
           rowGap: '0.9375em',
         }}
       >
-        {toggleOrientation && (
+        {orientation && toggleOrientation && (
           <OrientationToggle
             orientation={orientation}
             onOrientationChange={toggleOrientation}
           />
         )}
-        {onBarLayoutChange && (
+        {barLayout && onBarLayoutChange && (
           <ButtonGroup
             label="Bar Layout"
             options={['overlay', 'stack']}
@@ -255,7 +256,7 @@ export default function HistogramControls({
           rowGap: '0.3125em',
         }}
       >
-        {onOpacityChange && (
+        {opacity != undefined && onOpacityChange && (
           <OpacitySlider
             value={opacity}
             onValueChange={onOpacityChange}
@@ -266,7 +267,7 @@ export default function HistogramControls({
       <div
         style={{ display: 'flex', flexWrap: 'wrap', paddingTop: '0.3125em' }}
       >
-        {toggleDisplayLegend && (
+        {displayLegend != undefined && toggleDisplayLegend && (
           <Switch
             label="Legend"
             color={accentColor}
@@ -280,7 +281,7 @@ export default function HistogramControls({
             containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
-        {toggleLibraryControls && (
+        {displayLibraryControls != undefined && toggleLibraryControls && (
           <Switch
             label="Plot.ly Controls"
             color={accentColor}
@@ -435,7 +436,7 @@ export default function HistogramControls({
           color={accentColor}
           occurences={occurences}
           containerStyles={{ marginTop: '0.625em' }}
-          onAcknowledgement={() => errorManagement.removeError(error)}
+          onAcknowledgement={() => errorManagement?.removeError(error)}
         />
       ))}
 

@@ -5,7 +5,6 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 
 import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
-import { DARK_GRAY, MEDIUM_GRAY } from '../constants/colors';
 
 export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
   hoverinfo: PlotlyPlotData['hoverinfo'] | PlotlyPlotData['textinfo'];
@@ -72,8 +71,8 @@ export default function PiePlot({
         annotations: [
           {
             font: {
-              size: donutOptions.fontSize || 12,
-              color: donutOptions.textColor || MEDIUM_GRAY,
+              size: donutOptions.fontSize,
+              color: donutOptions.textColor,
             },
             showarrow: false,
             text: donutOptions.text,
@@ -84,9 +83,9 @@ export default function PiePlot({
       });
     }
 
-    // To implement the donut hole background color, we add a feaux data trace
+    // To implement the donut hole background color, we add a faux data trace
     // inside the hole with no markings
-    const feauxDataTrace: Partial<PlotData> = {
+    const fauxDataTrace: Partial<PlotData> = {
       type: 'pie',
       values: [1],
       marker: {
@@ -98,7 +97,7 @@ export default function PiePlot({
       showlegend: false,
     };
 
-    newData.push(feauxDataTrace);
+    newData.push(fauxDataTrace);
   }
 
   // Preprocess data for PlotlyPlot
@@ -135,7 +134,7 @@ export default function PiePlot({
     textinfo: textOptions?.displayOption,
     textposition: textOptions?.displayPosition,
     texttemplate: textOptions?.displayTemplate,
-    hoverinfo: 'label+value+percent',
+    hoverinfo: restProps.interactive ? 'label+value+percent' : 'none',
   };
 
   newData.push(primaryDataTrace);

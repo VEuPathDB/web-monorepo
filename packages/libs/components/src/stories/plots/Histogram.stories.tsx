@@ -1,82 +1,61 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
-  NumberRange,
   NumberOrDateRange,
   TimeDeltaRange,
+  NumberOrTimeDelta,
 } from '../../types/general';
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
-import usePlotControls from '../../hooks/usePlotControls';
 import HistogramControls from '../../components/plotControls/HistogramControls';
 import { binDailyCovidStats } from '../api/covidData';
 import { binGithubEventDates } from '../api/githubDates';
-import { HistogramData } from '../../types/plots';
+import { HistogramData, EmptyHistogramData } from '../../types/plots';
 
 export default {
   title: 'Plots/Histogram',
   component: Histogram,
 } as Meta;
 
-const defaultActions = {
-  onSelectedRangeChange: (newRange?: NumberOrDateRange) => {
-    console.log(`made a selection of ${newRange?.min} to ${newRange?.max}`);
-  },
-};
+const TemplateWithMinimalControls: Story<Omit<HistogramProps, 'data'>> = (
+  args
+) => {
+  const [data, setData] = useState<HistogramData>(EmptyHistogramData);
+  const [binWidth, setBinWidth] = useState<number>(500);
 
-const TemplateWithControls: Story<
-  HistogramProps & {
-    binWidthRange?: NumberRange;
-    binWidthStep?: number;
-    throwSampleErrors: boolean;
-    includeExtraDirectives: boolean;
-  }
-> = (args, { loaded: { apiData } }) => {
-  const plotControls = usePlotControls<HistogramData>({
-    data: apiData,
-    onSelectedUnitChange: async (newUnit: string) => {
-      return await binDailyCovidStats(
-        undefined,
-        newUnit,
-        args.throwSampleErrors,
-        args.includeExtraDirectives
-      );
-    },
-    histogram: {
-      binWidthRange: args.binWidthRange,
-      binWidthStep: args.binWidthStep,
-      onBinWidthChange: async ({ binWidth, selectedUnit }) => {
-        return await binDailyCovidStats(
-          binWidth as number,
-          selectedUnit,
-          args.throwSampleErrors,
-          args.includeExtraDirectives
-        );
-      },
-    },
-  });
+  const handleBinWidthChange = async ({
+    binWidth: newBinWidth,
+  }: {
+    binWidth: NumberOrTimeDelta;
+  }) => {
+    if (newBinWidth > 0) {
+      setBinWidth(newBinWidth as number);
+    }
+  };
+
+  // keep `data` up to date
+  useEffect(() => {
+    binDailyCovidStats(binWidth).then((data) => setData(data));
+  }, [binWidth]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Histogram
-        {...args}
-        {...plotControls}
-        {...plotControls.histogram}
-        {...defaultActions}
-      />
+      <Histogram data={data} {...args} />
       <div style={{ height: 25 }} />
       <HistogramControls
         label="Histogram Controls"
         valueType="number"
-        {...plotControls}
-        {...plotControls.histogram}
+        binWidthRange={{ min: 100, max: 1000 }}
+        binWidthStep={100}
+        binWidth={binWidth}
+        onBinWidthChange={handleBinWidthChange}
       />
     </div>
   );
 };
 
-export const BinWidthRangeGeneratedFromData = TemplateWithControls.bind({});
-BinWidthRangeGeneratedFromData.args = {
+export const SomeCovidData = TemplateWithMinimalControls.bind({});
+SomeCovidData.args = {
   title: 'Some Current Covid Data in U.S. States',
   containerStyles: {
     height: '400px',
@@ -84,14 +63,7 @@ BinWidthRangeGeneratedFromData.args = {
   },
 };
 
-// @ts-ignore
-BinWidthRangeGeneratedFromData.loaders = [
-  async () => ({
-    apiData: await binDailyCovidStats(2000),
-  }),
-];
-
-export const NoTitle = TemplateWithControls.bind({});
+export const NoTitle = TemplateWithMinimalControls.bind({});
 NoTitle.args = {
   containerStyles: {
     height: '400px',
@@ -103,104 +75,60 @@ NoTitle.args = {
   },
 };
 
-// @ts-ignore
-NoTitle.loaders = [
-  async () => ({
-    apiData: await binDailyCovidStats(2000),
-  }),
-];
+const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
+  args
+) => {
+  const [data, setData] = useState<HistogramData>(EmptyHistogramData);
+  const [binWidth, setBinWidth] = useState<number>(500);
+  const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
 
-export const OverrideBinWidthRangeAndStep = TemplateWithControls.bind({});
-OverrideBinWidthRangeAndStep.args = {
-  title: 'Some Current Covid Data in U.S. States',
-  containerStyles: {
-    height: '400px',
-    width: '800px',
-  },
-  binWidthRange: { min: 2000, max: 10000 },
-  binWidthStep: 1000,
-};
+  const handleBinWidthChange = async ({
+    binWidth: newBinWidth,
+  }: {
+    binWidth: NumberOrTimeDelta;
+  }) => {
+    if (newBinWidth > 0) {
+      setBinWidth(newBinWidth as number);
+    }
+  };
 
-// @ts-ignore
-OverrideBinWidthRangeAndStep.loaders = [
-  async () => ({
-    apiData: await binDailyCovidStats(2000),
-  }),
-];
+  const handleSelectedRangeChange = async (newRange?: NumberOrDateRange) => {
+    setSelectedRange(newRange);
+  };
 
-export const BackendProvidedBinWidthRangeAndStep = TemplateWithControls.bind(
-  {}
-);
-BackendProvidedBinWidthRangeAndStep.args = {
-  title: 'Some Current Covid Data in U.S. States',
-  containerStyles: {
-    height: '400px',
-    width: '800px',
-  },
-  includeExtraDirectives: true,
-};
-
-// @ts-ignore
-BackendProvidedBinWidthRangeAndStep.loaders = [
-  async () => ({
-    apiData: await binDailyCovidStats(1000, undefined, false, true),
-  }),
-];
-
-const TemplateWithSelectedRangeControls: Story<
-  HistogramProps & {
-    binWidthRange?: NumberRange;
-    binWidthStep?: number;
-    throwSampleErrors: boolean;
-    includeExtraDirectives: boolean;
-  }
-> = (args, { loaded: { apiData } }) => {
-  const plotControls = usePlotControls<HistogramData>({
-    data: apiData,
-    onSelectedUnitChange: async (newUnit: string) => {
-      return await binDailyCovidStats(
-        undefined,
-        newUnit,
-        args.throwSampleErrors,
-        args.includeExtraDirectives
-      );
-    },
-    histogram: {
-      binWidthRange: args.binWidthRange,
-      binWidthStep: args.binWidthStep,
-      onBinWidthChange: async ({ binWidth, selectedUnit }) => {
-        return await binDailyCovidStats(
-          binWidth as number,
-          selectedUnit,
-          args.throwSampleErrors,
-          args.includeExtraDirectives
-        );
-      },
-      displaySelectedRangeControls: true,
-    },
-  });
-
-  /**
-   * Watch for changes on the histogram's selected range.
-   * Includes the initial setting (derived from the data).
-   */
+  // keep `data` up to date
   useEffect(() => {
-    const newRange = plotControls.histogram.selectedRange;
-    if (newRange) {
+    binDailyCovidStats(binWidth).then((data) => setData(data));
+  }, [binWidth]);
+
+  // report changes on the histogram's selected range.
+  useEffect(() => {
+    if (selectedRange) {
       console.log(
-        `The story received a new range: ${newRange.min} to ${newRange.max}`
+        `The story received a new range: ${selectedRange.min} to ${selectedRange.max}`
       );
     }
-  }, [plotControls.histogram.selectedRange]);
+  }, [selectedRange]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Histogram {...args} {...plotControls} {...plotControls.histogram} />
+      <Histogram
+        data={data}
+        {...args}
+        interactive={true}
+        selectedRange={selectedRange}
+        onSelectedRangeChange={handleSelectedRangeChange}
+      />
       <div style={{ height: 25 }} />
       <HistogramControls
         label="Histogram Controls"
-        {...plotControls}
-        {...plotControls.histogram}
+        valueType="number"
+        binWidthRange={{ min: 100, max: 1000 }}
+        binWidthStep={100}
+        binWidth={binWidth}
+        onBinWidthChange={handleBinWidthChange}
+        selectedRange={selectedRange}
+        onSelectedRangeChange={handleSelectedRangeChange}
       />
     </div>
   );
@@ -213,15 +141,7 @@ RangeSelection.args = {
     height: '400px',
     width: '800px',
   },
-  interactive: true,
 };
-
-//@ts-ignore
-RangeSelection.loaders = [
-  async () => ({
-    apiData: await binDailyCovidStats(1000),
-  }),
-];
 
 // no controls
 const SimpleDateTemplate: Story<HistogramProps> = (
