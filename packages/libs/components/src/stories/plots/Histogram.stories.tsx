@@ -22,6 +22,7 @@ const TemplateWithMinimalControls: Story<Omit<HistogramProps, 'data'>> = (
 ) => {
   const [data, setData] = useState<HistogramData>(EmptyHistogramData);
   const [binWidth, setBinWidth] = useState<number>(500);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const handleBinWidthChange = async ({
     binWidth: newBinWidth,
@@ -35,12 +36,17 @@ const TemplateWithMinimalControls: Story<Omit<HistogramProps, 'data'>> = (
 
   // keep `data` up to date
   useEffect(() => {
-    binDailyCovidStats(binWidth).then((data) => setData(data));
+    setLoading(true);
+    binDailyCovidStats(binWidth).then((data) => {
+      setData(data);
+      setLoading(false);
+    });
+    return () => setLoading(false);
   }, [binWidth]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Histogram data={data} {...args} />
+      <Histogram data={data} {...args} showSpinner={loading} />
       <div style={{ height: 25 }} />
       <HistogramControls
         label="Histogram Controls"
@@ -81,6 +87,7 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
   const [data, setData] = useState<HistogramData>(EmptyHistogramData);
   const [binWidth, setBinWidth] = useState<number>(500);
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
+  const [loading, setLoading] = useState<boolean>(true);
 
   const handleBinWidthChange = async ({
     binWidth: newBinWidth,
@@ -98,7 +105,12 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
 
   // keep `data` up to date
   useEffect(() => {
-    binDailyCovidStats(binWidth).then((data) => setData(data));
+    setLoading(true);
+    binDailyCovidStats(binWidth).then((data) => {
+      setData(data);
+      setLoading(false);
+    });
+    return () => setLoading(false);
   }, [binWidth]);
 
   // report changes on the histogram's selected range.
@@ -115,6 +127,7 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
       <Histogram
         data={data}
         {...args}
+        showSpinner={loading}
         interactive={true}
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
@@ -143,7 +156,7 @@ RangeSelection.args = {
   },
 };
 
-// no controls
+// no controls, no spinner
 const SimpleDateTemplate: Story<HistogramProps> = (
   args,
   { loaded: { apiData } }
@@ -165,7 +178,7 @@ EventHoursNoControls.loaders = [
   async () => ({
     apiData: await binGithubEventDates({
       numBins: 10,
-      url: 'https://api.github.com/users/VEuPathDB/events?per_page=100',
+      url: 'https://api.github.com/users/VEuPathDB/events?per_page=50',
       unit: 'hours',
     }),
   }),
@@ -191,62 +204,57 @@ RepoMonthsNoControls.loaders = [
   }),
 ];
 
-const TemplateWithSelectedDateRangeControls: Story<
-  HistogramProps & {
-    binWidthRange?: TimeDeltaRange;
-    binWidthStep?: number;
-  }
-> = (args, { loaded: { apiData } }) => {
-  const plotControls = usePlotControls<HistogramData>({
-    data: apiData,
-    onSelectedUnitChange: async (newUnit: string) => {
-      return await binGithubEventDates({
-        url: 'https://api.github.com/users/VEuPathDB/repos?sort=created',
-        unit: 'month',
-        numBins: 10,
-      });
-    },
-    histogram: {
-      valueType: 'date',
-      binWidthRange: args.binWidthRange,
-      binWidthStep: args.binWidthStep,
-      onBinWidthChange: async ({ binWidth, selectedUnit }) => {
-        return await binGithubEventDates({
-          url: 'https://api.github.com/users/VEuPathDB/repos?sort=created',
-          unit: 'month',
-          numBins: 10,
-        });
-      },
-      displaySelectedRangeControls: true,
-    },
-  });
+const TemplateWithSelectedDateRangeControls: Story<Omit<
+  HistogramProps,
+  'data'
+>> = (args) => {
+  const [data, setData] = useState<HistogramData>(EmptyHistogramData);
+  const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
+  const [loading, setLoading] = useState<boolean>(true);
 
-  /**
-   * Watch for changes on the histogram's selected range.
-   * Includes the initial setting (derived from the data).
-   */
+  const handleSelectedRangeChange = async (newRange?: NumberOrDateRange) => {
+    setSelectedRange(newRange);
+  };
+
+  // keep `data` up to date
   useEffect(() => {
-    const newRange = plotControls.histogram.selectedRange;
-    if (newRange) {
+    setLoading(true);
+    binGithubEventDates({
+      url: 'https://api.github.com/users/VEuPathDB/repos?sort=created',
+      unit: 'month',
+      numBins: 10,
+    }).then((data) => {
+      setData(data);
+      setLoading(false);
+    });
+  }, []);
+
+  // report changes on the histogram's selected range.
+  useEffect(() => {
+    if (selectedRange) {
       console.log(
-        `The story received a new range: ${newRange.min} to ${newRange.max}`
+        `The story received a new range: ${selectedRange.min} to ${selectedRange.max}`
       );
     }
-  }, [plotControls.histogram.selectedRange]);
+  }, [selectedRange]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Histogram {...args} {...plotControls} {...plotControls.histogram} />
+      <Histogram
+        data={data}
+        {...args}
+        showSpinner={loading}
+        interactive={true}
+        selectedRange={selectedRange}
+        onSelectedRangeChange={handleSelectedRangeChange}
+      />
       <div style={{ height: 25 }} />
       <HistogramControls
         label="Histogram Controls"
-        {...plotControls}
-        {...plotControls.histogram}
-        binWidthRange={{ min: 1, max: 12, unit: 'month' }}
-        binWidthStep={1}
-        selectedUnit={'month'}
+        valueType="date"
+        selectedRange={selectedRange}
+        onSelectedRangeChange={handleSelectedRangeChange}
       />
-      <div>Note: bin width slider is known to be broken.</div>
     </div>
   );
 };

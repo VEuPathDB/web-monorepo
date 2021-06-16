@@ -2,7 +2,11 @@
  * Grab 100 items with dates from github API
  * https://api.github.com/users/VEuPathDB/events?per_page=100
  */
-import { HistogramBin, HistogramData } from '../../types/plots';
+import {
+  HistogramBin,
+  HistogramData,
+  EmptyHistogramData,
+} from '../../types/plots';
 import { TimeDelta } from '../../types/general';
 import * as DateMath from 'date-arithmetic';
 
@@ -14,12 +18,25 @@ type EventData = {
 export const getCreatedDateData = async (
   url: string
 ): Promise<Array<EventData>> => {
-  const response = await fetch(url);
-  const json = await response.json();
-  return json.map((item: any) => ({
-    id: item.id,
-    date: new Date(item.created_at),
-  }));
+  return fetch(url)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error(
+          'Something went wrong with the request. Probably exceeded API rate limit.'
+        );
+      }
+    })
+    .then((json) => {
+      return json.map((item: any) => ({
+        id: item.id,
+        date: new Date(item.created_at),
+      }));
+    })
+    .catch((error) => {
+      console.log(error.message);
+    });
 };
 
 /**
@@ -38,6 +55,7 @@ export const binGithubEventDates = async ({
   numBins?: number;
 }): Promise<HistogramData> => {
   const eventData = await getCreatedDateData(url);
+  if (eventData == null) return EmptyHistogramData;
 
   const dates = eventData.map((event) => event.date);
 
