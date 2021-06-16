@@ -24,7 +24,7 @@ export interface HistogramProps extends PlotProps<HistogramData> {
   /** The orientation of the plot. Defaults to `vertical` */
   orientation: 'vertical' | 'horizontal';
   /** How bars are displayed when there are multiple series. */
-  barLayout: 'overlay' | 'stack' | 'group';
+  barLayout: 'overlay' | 'stack';
   /** Opacity of bars. Range is a decimal between 0 and 1. Defaults to 1
    * if there is only one data series bars are not overlayed. Otherwise,
    * defaults to .75
