@@ -26,8 +26,6 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 
-import { VariableCoverageTable } from '../../VariableCoverageTable';
-
 import { InputVariables } from '../InputVariables';
 import {
   SelectorProps,
@@ -341,53 +339,28 @@ function ScatterplotViz(props: Props) {
       ) : (
         // no data or data error case: with control
         <>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <XYPlot
-              data={[]}
-              width={fullscreen ? 1000 : 230}
-              height={fullscreen ? 600 : 150}
-              independentAxisLabel={
-                fullscreen
-                  ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                      .displayName
-                  : undefined
-              }
-              dependentAxisLabel={
-                fullscreen
-                  ? findEntityAndVariable(vizConfig.yAxisVariable)?.variable
-                      .displayName
-                  : undefined
-              }
-              displayLegend={fullscreen ? true : false}
-              displayLibraryControls={false}
-              staticPlot={fullscreen ? false : true}
-              margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
-              showSpinner={data.pending}
-            />
-            <VariableCoverageTable
-              filters={filters}
-              variableSpecs={[
-                {
-                  role: 'X-axis',
-                  display: findEntityAndVariable(vizConfig.xAxisVariable)
-                    ?.variable.displayName,
-                  variable: vizConfig.xAxisVariable,
-                },
-                {
-                  role: 'Y-axis',
-                  display: findEntityAndVariable(vizConfig.yAxisVariable)
-                    ?.variable.displayName,
-                  variable: vizConfig.yAxisVariable,
-                },
-                {
-                  role: 'Overlay',
-                  display: findEntityAndVariable(vizConfig.overlayVariable)
-                    ?.variable.displayName,
-                  variable: vizConfig.overlayVariable,
-                },
-              ]}
-            />
-          </div>
+          <XYPlot
+            data={[]}
+            width={fullscreen ? 1000 : 230}
+            height={fullscreen ? 600 : 150}
+            independentAxisLabel={
+              fullscreen
+                ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                    .displayName
+                : undefined
+            }
+            dependentAxisLabel={
+              fullscreen
+                ? findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                    .displayName
+                : undefined
+            }
+            displayLegend={fullscreen ? true : false}
+            displayLibraryControls={false}
+            staticPlot={fullscreen ? false : true}
+            margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
+            showSpinner={data.pending}
+          />
           {visualization.type === 'scatterplot' && fullscreen && (
             <XYPlotControls
               // label="Scatter Plot Controls"
@@ -453,36 +426,13 @@ function ScatterplotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <XYPlot
-          {...scatterplotProps}
-          data={data}
-          // add controls
-          displayLegend={data.length > 1}
-          displayLibraryControls={false}
-        />
-        <VariableCoverageTable
-          completeCases={completeCases}
-          filters={filters}
-          variableSpecs={[
-            {
-              role: 'X-axis',
-              display: scatterplotProps.independentAxisLabel,
-              variable: xAxisVariable,
-            },
-            {
-              role: 'Y-axis',
-              display: scatterplotProps.dependentAxisLabel,
-              variable: yAxisVariable,
-            },
-            {
-              role: 'Overlay',
-              display: overlayLabel,
-              variable: overlayVariable,
-            },
-          ]}
-        />
-      </div>
+      <XYPlot
+        {...scatterplotProps}
+        data={data}
+        // add controls
+        displayLegend={data.length > 1}
+        displayLibraryControls={false}
+      />
       {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (
         <XYPlotControls

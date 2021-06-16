@@ -20,7 +20,6 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
-import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
@@ -317,25 +316,7 @@ function MosaicViz(props: Props) {
           showSpinner={data.pending}
         />
       </div>
-      <div style={{ display: 'grid', gridAutoFlow: 'row', gap: '0.5em' }}>
-        <VariableCoverageTable
-          completeCases={data.value?.completeCases}
-          filters={filters}
-          variableSpecs={[
-            {
-              role: 'X-axis',
-              display: xAxisVariableName,
-              variable: vizConfig.xAxisVariable,
-            },
-            {
-              role: 'Y-axis',
-              display: yAxisVariableName,
-              variable: vizConfig.yAxisVariable,
-            },
-          ]}
-        />
-        {statsTable}
-      </div>
+      {statsTable}
     </div>
   ) : (
     // thumbnail/grid view
