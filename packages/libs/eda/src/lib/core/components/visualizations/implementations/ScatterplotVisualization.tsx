@@ -290,8 +290,8 @@ function ScatterplotViz(props: Props) {
           <ScatterplotWithControls
             // data.value
             data={[...data.value.dataSetProcess]}
-            width={1000}
-            height={600}
+            width={750}
+            height={450}
             // title={'Scatter plot'}
             xAxisVariable={vizConfig.xAxisVariable}
             yAxisVariable={vizConfig.yAxisVariable}
@@ -341,11 +341,18 @@ function ScatterplotViz(props: Props) {
       ) : (
         // no data or data error case: with control
         <>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+            }}
+          >
             <XYPlot
               data={[]}
-              width={fullscreen ? 1000 : 230}
-              height={fullscreen ? 600 : 150}
+              width={fullscreen ? 750 : 230}
+              height={fullscreen ? 450 : 150}
               independentAxisLabel={
                 fullscreen
                   ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
@@ -453,7 +460,14 @@ function ScatterplotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-evenly',
+          alignItems: 'center',
+        }}
+      >
         <XYPlot
           {...scatterplotProps}
           data={data}
