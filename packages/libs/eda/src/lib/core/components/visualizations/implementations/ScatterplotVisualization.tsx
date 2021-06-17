@@ -319,7 +319,7 @@ function ScatterplotViz(props: Props) {
             vizType={visualization.type}
             showSpinner={data.pending}
             filters={filters}
-            completeCases={data.value.completeCases}
+            completeCases={data.pending ? undefined : data.value.completeCases}
           />
         ) : (
           // thumbnail/grid view

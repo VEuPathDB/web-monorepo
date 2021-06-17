@@ -319,7 +319,7 @@ function MosaicViz(props: Props) {
       </div>
       <div style={{ display: 'grid', gridAutoFlow: 'row', gap: '0.5em' }}>
         <VariableCoverageTable
-          completeCases={data.value?.completeCases}
+          completeCases={data.pending ? undefined : data.value?.completeCases}
           filters={filters}
           variableSpecs={[
             {
