@@ -137,14 +137,14 @@ export interface BarplotRequestParams {
   //  derivedVariables:  // TO DO
   config: {
     outputEntityId: string;
-    //DKDK add proportion as it seems to be coming
+    // add proportion as it seems to be coming
     valueSpec: 'count' | 'identity' | 'proportion';
     xAxisVariable: {
       // TO DO: refactor repetition with HistogramRequestParams
       entityId: string;
       variableId: string;
     };
-    //DKDK barplot add prop
+    // barplot add prop
     overlayVariable?: {
       entityId: string;
       variableId: string;
@@ -165,9 +165,7 @@ export const BarplotResponse = type({
     data: array(
       intersection([
         type({
-          //DKDK label can be number too?
-          // label: array(string),
-          label: union([array(string), array(number)]),
+          label: array(string),
           value: array(number),
         }),
         partial({
@@ -221,7 +219,7 @@ export interface ScatterplotRequestParams {
 export const ScatterplotResponseData = array(
   partial({
     // valueSpec = smoothedMean only returns smoothedMean data (no series data)
-    //DKDK changed to string array
+    // changed to string array
     seriesX: array(string),
     seriesY: array(string),
     smoothedMeanX: array(string),
@@ -291,7 +289,7 @@ export interface LineplotRequestParams {
 const LineplotResponseData = array(
   intersection([
     type({
-      //DKDK changed to string array
+      // changed to string array
       seriesX: array(string),
       seriesY: array(string),
     }),
@@ -308,7 +306,7 @@ const LineplotResponseData = array(
 
 export type LineplotResponse = TypeOf<typeof LineplotResponse>;
 export const LineplotResponse = type({
-  //DKDK backend issue for lineplot returning scatterplot currently
+  // backend issue for lineplot returning scatterplot currently
   // lineplot: type({
   scatterplot: type({
     data: LineplotResponseData,
