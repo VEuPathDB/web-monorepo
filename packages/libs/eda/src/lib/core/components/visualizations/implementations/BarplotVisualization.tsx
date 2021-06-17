@@ -18,6 +18,8 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 
+import { VariableCoverageTable } from '../../VariableCoverageTable';
+
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
@@ -218,23 +220,50 @@ function BarplotViz(props: Props) {
         </div>
       )}
       {fullscreen ? (
-        <BarplotWithControls
-          data={data.value && !data.pending ? data.value : { series: [] }}
-          width={'100%'}
-          height={450}
-          // height={'100%'}
-          orientation={'vertical'}
-          barLayout={'group'}
-          displayLegend={data.value?.series.length > 1}
-          independentAxisLabel={
-            vizConfig.xAxisVariable
-              ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                  .displayName
-              : 'Label'
-          }
-          dependentAxisLabel={'Count'}
-          showSpinner={data.pending}
-        />
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+          }}
+        >
+          <BarplotWithControls
+            data={data.value && !data.pending ? data.value : { series: [] }}
+            width={750}
+            height={450}
+            // height={'100%'}
+            orientation={'vertical'}
+            barLayout={'group'}
+            displayLegend={data.value?.series.length > 1}
+            independentAxisLabel={
+              vizConfig.xAxisVariable
+                ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                    .displayName
+                : 'Label'
+            }
+            dependentAxisLabel={'Count'}
+            showSpinner={data.pending}
+          />
+          <VariableCoverageTable
+            completeCases={data.pending ? undefined : data.value?.completeCases}
+            filters={filters}
+            variableSpecs={[
+              {
+                role: 'Main',
+                display: findEntityAndVariable(vizConfig.xAxisVariable)
+                  ?.variable.displayName,
+                variable: vizConfig.xAxisVariable,
+              },
+              {
+                role: 'Overlay',
+                display: findEntityAndVariable(vizConfig.overlayVariable)
+                  ?.variable.displayName,
+                variable: vizConfig.overlayVariable,
+              },
+            ]}
+          />
+        </div>
       ) : (
         // thumbnail/grid view
         <Barplot
@@ -315,6 +344,7 @@ export function barplotResponseToData(
       label: data.label,
       value: data.value,
     })),
+    completeCases: response.completeCasesTable,
   };
 }
 
