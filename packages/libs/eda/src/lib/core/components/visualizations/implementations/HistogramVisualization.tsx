@@ -17,6 +17,7 @@ import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
+  CompleteCasesTable,
   DataClient,
   HistogramRequestParams,
   HistogramResponse,
@@ -26,11 +27,16 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { Variable } from '../../../types/variable';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
+import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
+
+type HistogramDataWithCompleteCases = HistogramData & {
+  completeCases?: CompleteCasesTable;
+};
 
 export const histogramVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -177,8 +183,16 @@ function HistogramViz(props: Props) {
     return variable;
   }, [entities, vizConfig.xAxisVariable]);
 
+  const overlayVariable = useMemo(() => {
+    const { variable } =
+      findEntityAndVariable(entities, vizConfig.overlayVariable) ?? {};
+    return variable;
+  }, [entities, vizConfig.overlayVariable]);
+
   const data = usePromise(
-    useCallback(async (): Promise<HistogramData | undefined> => {
+    useCallback(async (): Promise<
+      HistogramDataWithCompleteCases | undefined
+    > => {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
 
@@ -268,7 +282,7 @@ function HistogramViz(props: Props) {
           onBinWidthChange={onBinWidthChange}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           handleDependentAxisLogScale={handleDependentAxisLogScale}
-          width="100%"
+          width={750}
           height={400}
           orientation={'vertical'}
           barLayout={'stack'}
@@ -277,10 +291,15 @@ function HistogramViz(props: Props) {
               ? true
               : false
           }
+          independentAxisVariable={vizConfig.xAxisVariable}
           independentAxisLabel={
             xAxisVariable ? xAxisVariable.displayName : 'Bins'
           }
           showSpinner={data.pending}
+          filters={filters}
+          completeCases={data.pending ? undefined : data.value?.completeCases}
+          overlayVariable={vizConfig.overlayVariable}
+          overlayLabel={overlayVariable?.displayName}
         />
       ) : (
         // thumbnail/grid view
@@ -310,12 +329,24 @@ type HistogramPlotWithControlsProps = HistogramProps & {
     binWidth: NumberOrTimeDelta;
   }) => void;
   handleDependentAxisLogScale: (newState?: boolean) => void;
+  filters: Filter[];
+  completeCases?: CompleteCasesTable;
+  independentAxisVariable?: Variable;
+  independentAxisLabel?: string;
+  overlayVariable?: Variable;
+  overlayLabel?: string;
 };
 
 function HistogramPlotWithControls({
   data,
   onBinWidthChange,
   handleDependentAxisLogScale,
+  filters,
+  completeCases,
+  independentAxisVariable,
+  independentAxisLabel,
+  overlayVariable,
+  overlayLabel,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // TODO Use UIState
@@ -333,14 +364,39 @@ function HistogramPlotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Histogram
-        {...histogramProps}
-        data={data}
-        opacity={opacity}
-        displayLibraryControls={displayLibraryControls}
-        showBarValues={false}
-        barLayout={barLayout}
-      />
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+        }}
+      >
+        <Histogram
+          {...histogramProps}
+          data={data}
+          opacity={opacity}
+          displayLibraryControls={displayLibraryControls}
+          showBarValues={false}
+          barLayout={barLayout}
+        />
+        <VariableCoverageTable
+          completeCases={completeCases}
+          filters={filters}
+          variableSpecs={[
+            {
+              role: 'Main',
+              display: independentAxisLabel,
+              variable: independentAxisVariable,
+            },
+            {
+              role: 'Overlay',
+              display: overlayLabel,
+              variable: overlayVariable,
+            },
+          ]}
+        />
+      </div>
       <HistogramControls
         valueType={data.valueType}
         barLayout={barLayout}
@@ -370,12 +426,12 @@ function HistogramPlotWithControls({
 /**
  * Reformat response from histogram endpoints into complete HistogramData
  * @param response
- * @returns HistogramData
+ * @returns HistogramDataWithCompleteCases
  */
 export function histogramResponseToData(
   response: HistogramResponse,
   type: HistogramVariable['type']
-): HistogramData {
+): HistogramDataWithCompleteCases {
   if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
@@ -416,6 +472,7 @@ export function histogramResponseToData(
     binWidth,
     binWidthRange,
     binWidthStep,
+    completeCases: response.completeCasesTable,
   };
 }
 
