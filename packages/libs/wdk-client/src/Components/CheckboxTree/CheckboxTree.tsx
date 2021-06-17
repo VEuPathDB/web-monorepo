@@ -134,6 +134,9 @@ export type Props<T> = {
 
   /** Indicates if an additional filter has been applied; optional, defaults to false */
   isAdditionalFilterApplied?: boolean;
+
+  /** Wrap tree section with additional UI elements */
+  wrapTreeSection?: (treeSection: React.ReactNode) => React.ReactNode;
 };
 
 type TreeLinkHandler = MouseEventHandler<HTMLButtonElement>;
@@ -736,7 +739,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
       isSearchable, currentList, defaultList, showSearchBox, searchTerm,
       searchBoxPlaceholder, searchBoxHelp, searchIconName,
       linksPosition = LinksPosition.Both, additionalActions,
-      additionalFilters, isAdditionalFilterApplied,
+      additionalFilters, isAdditionalFilterApplied, wrapTreeSection,
       onSearchTermChange, autoFocusSearchBox, shouldExpandOnClick = true
     } = this.props;
     let topLevelNodes = (showRoot ? [ this.state.generated.statefulTree ] :
@@ -768,6 +771,30 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
 
     let listClassName = 'wdk-CheckboxTreeList' + (isSelectable ? ' wdk-CheckboxTreeList__selectable' : '');
     let CheckboxTreeNodeT = (CheckboxTreeNode as new () => CheckboxTreeNode<StatefulNode<T>>);
+
+    let treeSection = (
+      <ul className={listClassName}>
+      {topLevelNodes.map((node, index) =>
+        <CheckboxTreeNodeT
+          key={"node_" + getNodeId(node)}
+          name={name || ''}
+          node={node}
+          path={[index]}
+          listClassName={listClassName}
+          getNodeState={getNodeState}
+          isSelectable={!!isSelectable}
+          isMultiPick={!!isMultiPick}
+          isActiveSearch={isActiveSearch(this.props)}
+          toggleSelection={this.toggleSelection}
+          toggleExpansion={this.toggleExpansion}
+          shouldExpandOnClick={shouldExpandOnClick}
+          getNodeId={getNodeId}
+          getNodeChildren={getStatefulChildren}
+          renderNode={this.renderNode} />
+      )}
+    </ul>
+    );
+
     return (
       <div className="wdk-CheckboxTree">
         {linksPosition & LinksPosition.Top ? treeLinks : null}
@@ -787,26 +814,7 @@ export default class CheckboxTree<T> extends Component<Props<T>, State<T>> {
           </div>
         )}
         {noResultsMessage}
-        <ul className={listClassName}>
-          {topLevelNodes.map((node, index) =>
-            <CheckboxTreeNodeT
-              key={"node_" + getNodeId(node)}
-              name={name || ''}
-              node={node}
-              path={[index]}
-              listClassName={listClassName}
-              getNodeState={getNodeState}
-              isSelectable={!!isSelectable}
-              isMultiPick={!!isMultiPick}
-              isActiveSearch={isActiveSearch(this.props)}
-              toggleSelection={this.toggleSelection}
-              toggleExpansion={this.toggleExpansion}
-              shouldExpandOnClick={shouldExpandOnClick}
-              getNodeId={getNodeId}
-              getNodeChildren={getStatefulChildren}
-              renderNode={this.renderNode} />
-          )}
-        </ul>
+        {wrapTreeSection ? wrapTreeSection(treeSection) : treeSection}
         {linksPosition & LinksPosition.Bottom ? treeLinks : null}
       </div>
     );
