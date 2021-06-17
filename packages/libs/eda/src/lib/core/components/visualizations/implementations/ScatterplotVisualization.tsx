@@ -371,29 +371,31 @@ function ScatterplotViz(props: Props) {
               margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
               showSpinner={data.pending}
             />
-            <VariableCoverageTable
-              filters={filters}
-              variableSpecs={[
-                {
-                  role: 'X-axis',
-                  display: findEntityAndVariable(vizConfig.xAxisVariable)
-                    ?.variable.displayName,
-                  variable: vizConfig.xAxisVariable,
-                },
-                {
-                  role: 'Y-axis',
-                  display: findEntityAndVariable(vizConfig.yAxisVariable)
-                    ?.variable.displayName,
-                  variable: vizConfig.yAxisVariable,
-                },
-                {
-                  role: 'Overlay',
-                  display: findEntityAndVariable(vizConfig.overlayVariable)
-                    ?.variable.displayName,
-                  variable: vizConfig.overlayVariable,
-                },
-              ]}
-            />
+            {fullscreen && (
+              <VariableCoverageTable
+                filters={filters}
+                variableSpecs={[
+                  {
+                    role: 'X-axis',
+                    display: findEntityAndVariable(vizConfig.xAxisVariable)
+                      ?.variable.displayName,
+                    variable: vizConfig.xAxisVariable,
+                  },
+                  {
+                    role: 'Y-axis',
+                    display: findEntityAndVariable(vizConfig.yAxisVariable)
+                      ?.variable.displayName,
+                    variable: vizConfig.yAxisVariable,
+                  },
+                  {
+                    role: 'Overlay',
+                    display: findEntityAndVariable(vizConfig.overlayVariable)
+                      ?.variable.displayName,
+                    variable: vizConfig.overlayVariable,
+                  },
+                ]}
+              />
+            )}
           </div>
           {visualization.type === 'scatterplot' && fullscreen && (
             <XYPlotControls
