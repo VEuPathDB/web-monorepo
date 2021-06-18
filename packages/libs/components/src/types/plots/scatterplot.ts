@@ -37,8 +37,10 @@ export type ScatterplotData = {
     fillcolor?: string;
   }[];
 
-  /** valueType is 'number' (default) or 'date' (x and y data should be given as string[])  */
-  valueType?: 'number' | 'date';
+  /** independentValueType 'number' (default) or 'date' (x data should be given as string[])  */
+  independentValueType?: 'number' | 'date';
+  /** dependentValueType 'number' (default) or 'date' (y data should be given as string[])  */
+  dependentValueType?: 'number' | 'date';
 };
 
 export const EmptyScatterplotData = {

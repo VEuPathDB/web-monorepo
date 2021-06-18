@@ -35,7 +35,7 @@ export default function XYPlot(props: ScatterplotProps) {
       zeroline: false, // disable yaxis line
       // make plot border
       mirror: true,
-      type: data?.valueType === 'date' ? 'date' : 'linear',
+      type: data?.independentValueType === 'date' ? 'date' : 'linear',
     },
     yaxis: {
       title: dependentAxisLabel,
@@ -43,6 +43,7 @@ export default function XYPlot(props: ScatterplotProps) {
       zeroline: false, // disable xaxis line
       // make plot border
       mirror: true,
+      type: data?.dependentValueType === 'date' ? 'date' : 'linear',
     },
   };
 

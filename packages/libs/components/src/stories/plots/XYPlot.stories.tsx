@@ -55,3 +55,47 @@ EmptyDataLoading.args = {
   showSpinner: true,
 };
 EmptyDataLoading.argTypes = disableDataControl;
+
+export const NumberVsDate = Template.bind({});
+NumberVsDate.args = {
+  data: {
+    series: [
+      {
+        x: [
+          '2013-12-20',
+          '2013-12-25',
+          '2014-04-11',
+          '2014-04-12',
+          '2014-05-01',
+          '2014-07-18',
+          '2015-01-11',
+          '2015-07-31',
+          '2015-09-21',
+          '2015-11-11',
+        ],
+        y: [38, 56, 85, 10, 20, 69, 29, 57, 58, 100],
+        name: 'Sales',
+        mode: 'lines+markers',
+      },
+      {
+        x: [
+          '2013-12-20',
+          '2013-12-25',
+          '2014-04-11',
+          '2014-04-12',
+          '2014-05-01',
+          '2014-07-18',
+          '2015-01-11',
+          '2015-07-31',
+          '2015-09-21',
+          '2015-11-11',
+        ],
+        y: [39, 54, 84, 89, 25, 66, 72, 38, 93, 11],
+        name: 'Ad spend',
+        mode: 'lines+markers',
+      },
+    ],
+    independentValueType: 'date',
+    dependentValueType: 'number',
+  },
+};
