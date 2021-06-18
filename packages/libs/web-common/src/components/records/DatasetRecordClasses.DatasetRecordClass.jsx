@@ -125,7 +125,7 @@ function References(props) {
     return null;
   }
   let value = props.value
-  .map(row => {
+  .map((row, index) => {
     if (row.link_type === 'question'){
       let name = row.target_name;
       let question = questions.find(q => q.fullName === name);
@@ -142,10 +142,10 @@ function References(props) {
         </li>
       );
     } else {
-      // Then return the text and url. Note we still need to add keys for each li.
+      // Then return the text and url.
       let cleanUrl = row.url.replace('/a/app','');
       return (
-        <li>
+        <li key={index}>
           <Link to={`${cleanUrl}`}>
             {row.text}
           </Link>
