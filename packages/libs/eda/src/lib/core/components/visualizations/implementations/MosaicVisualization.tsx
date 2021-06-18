@@ -317,7 +317,15 @@ function MosaicViz(props: Props) {
           showSpinner={data.pending}
         />
       </div>
-      <div style={{ display: 'grid', gridAutoFlow: 'row', gap: '0.5em' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridAutoFlow: 'row',
+          gap: '0.5em',
+          marginLeft: '3em',
+          marginTop: '1.5em',
+        }}
+      >
         <VariableCoverageTable
           completeCases={data.pending ? undefined : data.value?.completeCases}
           filters={filters}
