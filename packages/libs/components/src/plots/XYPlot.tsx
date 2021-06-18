@@ -16,6 +16,8 @@ export interface ScatterplotProps extends PlotProps<ScatterplotData> {
   independentAxisRange?: NumberOrDateRange;
   /** y-axis range: required for confidence interval */
   dependentAxisRange?: NumberOrDateRange;
+  // TO DO
+  // opacity?
 }
 
 export default function XYPlot(props: ScatterplotProps) {
