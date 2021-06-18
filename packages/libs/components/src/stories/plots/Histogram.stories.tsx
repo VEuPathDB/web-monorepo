@@ -70,12 +70,9 @@ SomeCovidData.args = {
   },
 };
 
-export const NoTitle = TemplateWithMinimalControls.bind({});
-NoTitle.args = {
-  containerStyles: {
-    height: '400px',
-    width: '100%',
-  },
+export const NoTitleFullWidth = TemplateWithMinimalControls.bind({});
+NoTitleFullWidth.args = {
+  containerStyles: {},
   spacingOptions: {
     marginTop: 20,
     marginBottom: 20,

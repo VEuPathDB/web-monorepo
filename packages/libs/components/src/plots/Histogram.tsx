@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
 // Definitions
@@ -69,14 +69,6 @@ export default function Histogram({
   isZoomed = false,
   ...restProps
 }: HistogramProps) {
-  const [revision, setRevision] = useState(0);
-
-  // Quirk of Plot.ly library. If you don't do this, the
-  // plot will not refresh on barLayout changes.
-  useEffect(() => {
-    setRevision(revision + 1);
-  }, [barLayout]);
-
   /**
    * Determine bar opacity. This gets a little complicated
    * as we have to dynamically adjust an opacity of 1 down
@@ -334,7 +326,6 @@ export default function Histogram({
   return (
     <PlotlyPlot
       useResizeHandler={true}
-      revision={revision}
       layout={{
         shapes: selectedRangeHighlighting,
         // when we implement zooming, we will still use Plotly's select mode

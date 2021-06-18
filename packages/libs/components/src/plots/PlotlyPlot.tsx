@@ -13,7 +13,14 @@ export interface PlotProps<T extends UnionOfPlotDataTypes> {
   title?: string;
   /** Should plot legend be displayed? Default is yes */
   displayLegend?: boolean;
-  /** add CSS styles for plot component */
+  /** add CSS styles for plot component
+   * Note: if playing around with Storybook controls, changes
+   * to containerStyles only seem to take effect when resizing
+   * the story window.  Resizing seems to be responsive whether
+   * or not `responsive: true` in the plot config...
+   *
+   * Defaults:  { width: '100%', height: '400px' }
+   */
   containerStyles?: CSSProperties;
   /** Enables mouse-overs and interaction if true. Default false. */
   interactive?: boolean;
@@ -32,7 +39,7 @@ export interface PlotProps<T extends UnionOfPlotDataTypes> {
 const Plot = lazy(() => import('react-plotly.js'));
 
 const defaultStyles = {
-  height: '100%',
+  height: '400px',
   width: '100%',
 };
 

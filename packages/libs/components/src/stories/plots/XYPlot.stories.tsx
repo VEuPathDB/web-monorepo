@@ -37,7 +37,7 @@ RealData.args = {
   displayLibraryControls: false,
   legendTitle: 'Legend title example',
   containerStyles: {
-    width: '1000px',
+    height: '500px',
   },
 };
 // Don't show "data" in storybook controls because it's impractical to edit it
