@@ -125,23 +125,34 @@ function References(props) {
     return null;
   }
   let value = props.value
-  .filter(row => row.target_type === 'question')
-  .map(row => {
-    let name = row.target_name;
-    let question = questions.find(q => q.fullName === name);
+  .map((row, index) => {
+    if (row.link_type === 'question'){
+      let name = row.target_name;
+      let question = questions.find(q => q.fullName === name);
 
-    if (question == null) throw new Error("cannot find question with name:" + name) ;
+      if (question == null) throw new Error("cannot find question with name:" + name) ;
 
-    let recordClass = recordClasses.find(r => r.urlSegment === question.outputRecordClassName);
-    let searchName = `Identify ${recordClass.displayNamePlural} based on ${question.displayName}`;
-    return (
-      <li key={name}>
-        <Link to={`/search/${recordClass.urlSegment}/${question.urlSegment}`}>
-          {searchName}
-        </Link>
-      </li>
-    );
-  });
+      let recordClass = recordClasses.find(r => r.urlSegment === question.outputRecordClassName);
+      let searchName = `Identify ${recordClass.displayNamePlural} based on ${question.displayName}`;
+      return (
+        <li key={name}>
+          <Link to={`/search/${recordClass.urlSegment}/${question.urlSegment}`}>
+            {searchName}
+          </Link>
+        </li>
+      );
+    } else {
+      // Then return the text and url.
+      let cleanUrl = row.url.replace('/a/app','');
+      return (
+        <li key={index}>
+          <Link to={`${cleanUrl}`}>
+            {row.text}
+          </Link>
+        </li>
+      );
+    }
+   });
   return value.length === 0 ? <em>No data available</em> : <ul>{value}</ul>;
 }
 
