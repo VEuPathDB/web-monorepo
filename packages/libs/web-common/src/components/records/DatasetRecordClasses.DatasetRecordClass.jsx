@@ -124,13 +124,9 @@ function References(props) {
   if (questions == null || recordClasses == null) {
     return null;
   }
-  console.log(props)
-  console.log(questions)
-  console.log(recordClasses)
-  console.log(props.value)
   let value = props.value
   .map(row => {
-    if (row.target_type === 'question'){
+    if (row.link_type === 'question'){
       let name = row.target_name;
       let question = questions.find(q => q.fullName === name);
 
@@ -146,10 +142,11 @@ function References(props) {
         </li>
       );
     } else {
-      // Then return the text and url
+      // Then return the text and url. Note we still need to add keys for each li.
+      let cleanUrl = row.url.replace('/a/app','');
       return (
         <li>
-          <Link to={`${row.url}`}>
+          <Link to={`${cleanUrl}`}>
             {row.text}
           </Link>
         </li>
