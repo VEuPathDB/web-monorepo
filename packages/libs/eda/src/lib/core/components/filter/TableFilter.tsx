@@ -93,10 +93,9 @@ export function TableFilter({
           });
         }
       );
-      //DKDK by setting union for label (array number or string), ts error occurs
       const fgValueByLabel = Object.fromEntries(
         distribution.foreground.barplot.data[0].label.map(
-          (label: string | number, index: number) => [
+          (label: string, index: number) => [
             label,
             distribution.foreground.barplot.data[0].value[index] ?? 0,
           ]
@@ -104,7 +103,7 @@ export function TableFilter({
       );
       const bgValueByLabel = Object.fromEntries(
         distribution.background.barplot.data[0].label.map(
-          (label: string | number, index: number) => [
+          (label: string, index: number) => [
             label,
             distribution.background.barplot.data[0].value[index] ?? 0,
           ]
