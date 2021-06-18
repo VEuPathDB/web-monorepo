@@ -995,6 +995,8 @@ export const RealDataDate = () => {
       displayLegend={true}
       displayLibraryControls={true}
       // margin={{l: 50, r: 10, b: 20, t: 10}}
+      // add legend title
+      legendTitle={'legend title example'}
     />
   );
 };
