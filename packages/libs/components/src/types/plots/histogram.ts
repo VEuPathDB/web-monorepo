@@ -8,6 +8,7 @@ export type HistogramData = {
   series: Array<HistogramDataSeries>;
   /** Is the continous variable that was binned numeric or date (date-time actually).
    * The implementation will assume 'number' if not provided.
+   * This is mainly needed if providing year-only dates, because Plotly can't guess correctly for them.
    */
   valueType?: 'number' | 'date';
   /** Current binWidth. */

@@ -5,6 +5,7 @@ import { HistogramData } from './histogram';
 import { LinePlotData } from './linePlot';
 import { PiePlotData } from './piePlot';
 import { BoxplotData } from './boxplot';
+import { ScatterplotData } from './scatterplot';
 
 // Commonly used type definitions for plots.
 export type BarLayoutOptions = 'overlay' | 'stack' | 'group';
@@ -27,8 +28,11 @@ export type UnionOfPlotDataTypes =
   | HistogramData
   | PiePlotData
   | LinePlotData
-  | BoxplotData;
+  | BoxplotData
+  | ScatterplotData;
 
 export * from './histogram';
+export * from './linePlot';
 export * from './piePlot';
 export * from './boxplot';
+export * from './scatterplot';

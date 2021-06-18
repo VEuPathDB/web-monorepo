@@ -4,6 +4,7 @@ import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { UnionOfPlotDataTypes } from '../types/plots';
+import { LayoutLegendTitle } from '../types/plotly-omissions';
 
 export interface PlotProps<T extends UnionOfPlotDataTypes> {
   /** plot data - following web-components' API, not Plotly's */
@@ -20,8 +21,10 @@ export interface PlotProps<T extends UnionOfPlotDataTypes> {
   displayLibraryControls?: boolean;
   /** show a loading... spinner in the middle of the enclosing div */
   showSpinner?: boolean;
-  /** Options for customizing plot legend. */
+  /** Options for customizing plot legend layout and appearance. */
   legendOptions?: PlotLegendAddon;
+  /** legend title */
+  legendTitle?: string;
   /** Options for customizing plot placement. */
   spacingOptions?: PlotSpacingAddon;
 }
@@ -52,6 +55,7 @@ export default function PlotlyPlot<T extends UnionOfPlotDataTypes>(
     interactive = false,
     displayLibraryControls,
     legendOptions,
+    legendTitle,
     spacingOptions,
     showSpinner,
     ...plotlyProps
@@ -77,15 +81,19 @@ export default function PlotlyPlot<T extends UnionOfPlotDataTypes>(
   );
 
   const finalLayout = useMemo(
-    (): PlotParams['layout'] => ({
+    (): PlotParams['layout'] & LayoutLegendTitle => ({
       ...plotlyProps.layout,
       xaxis: {
         ...plotlyProps.layout.xaxis,
         fixedrange: true,
+        linewidth: 1,
+        linecolor: 'black',
       },
       yaxis: {
         ...plotlyProps.layout.yaxis,
         fixedrange: true,
+        linewidth: 1,
+        linecolor: 'black',
       },
       title: {
         text: title,
@@ -105,6 +113,9 @@ export default function PlotlyPlot<T extends UnionOfPlotDataTypes>(
         pad: spacingOptions?.padding || 0, // axes don't join up if >0
       },
       legend: {
+        title: {
+          text: legendTitle,
+        },
         ...(legendOptions ? legendSpecification(legendOptions) : {}),
       },
     }),
