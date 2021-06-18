@@ -5,6 +5,7 @@ import Path from 'path';
 import { Analysis } from '../core';
 import { ActionIconButton } from './ActionIconButton';
 import { cx } from './Utils';
+import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 
 interface Props {
   analysis: Analysis;
@@ -12,6 +13,7 @@ interface Props {
   copyAnalysis: () => Promise<{ id: string }>;
   saveAnalysis: () => Promise<void>;
   deleteAnalysis: () => Promise<void>;
+  onFilterIconClick: () => void;
 }
 
 export function AnalysisSummary(props: Props) {
@@ -33,6 +35,7 @@ export function AnalysisSummary(props: Props) {
         value={analysis.name}
         onSave={setAnalysisName}
       />
+      <button onClick={props.onFilterIconClick}>See all filters</button>
       <ActionIconButton
         iconClassName="download"
         hoverText="Bulk download study"
