@@ -345,8 +345,7 @@ function ScatterplotViz(props: Props) {
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              justifyContent: 'space-evenly',
-              alignItems: 'center',
+              alignItems: 'flex-start',
             }}
           >
             <XYPlot
@@ -466,8 +465,7 @@ function ScatterplotWithControls({
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          justifyContent: 'space-evenly',
-          alignItems: 'center',
+          alignItems: 'flex-start',
         }}
       >
         <XYPlot

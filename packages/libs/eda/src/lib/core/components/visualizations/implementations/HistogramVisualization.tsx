@@ -368,8 +368,7 @@ function HistogramPlotWithControls({
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          justifyContent: 'space-around',
-          alignItems: 'center',
+          alignItems: 'flex-start',
         }}
       >
         <Histogram

@@ -126,9 +126,8 @@
 @mixin data-table {
   z-index: 1;
   flex-grow: 1;
-  background-color: #f8f6f6;
+  background-color: #fafafa;
   padding: 10px;
-  border-radius: 7px;
   border: 1px solid #bfbfbf;
 
   table {
@@ -141,8 +140,10 @@
   }
 
   th {
-    border-color: #333;
+    font-weight: 500;
+    border-color: #888;
     border-top: 0;
+    border-width: 1px 0;
     white-space: nowrap;
   }
 
@@ -154,13 +155,15 @@
 .VariableCoverageTable {
   @include data-table;
   max-width: 500px;
+
+  margin-top: 1.5em;
+  margin-left: 3em;
 }
 
 .MosaicVisualization {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
-  align-items: center;
+  align-items: flex-start;
   min-height: 500px;
   width: 90vw;
 

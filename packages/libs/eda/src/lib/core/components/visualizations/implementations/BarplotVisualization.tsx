@@ -224,8 +224,7 @@ function BarplotViz(props: Props) {
           style={{
             display: 'flex',
             flexWrap: 'wrap',
-            justifyContent: 'space-evenly',
-            alignItems: 'center',
+            alignItems: 'flex-start',
           }}
         >
           <BarplotWithControls
