@@ -2,16 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import {
   NumberOrDateRange,
-  TimeDeltaRange,
   NumberOrTimeDelta,
   TimeDelta,
 } from '../../types/general';
 
-import Histogram, { HistogramProps } from '../../plots/Histogram';
+import Histogram, {
+  HistogramProps,
+  EmptyHistogramData,
+} from '../../plots/Histogram';
 import HistogramControls from '../../components/plotControls/HistogramControls';
 import { binDailyCovidStats } from '../api/covidData';
 import { binGithubEventDates } from '../api/githubDates';
-import { HistogramData, EmptyHistogramData } from '../../types/plots';
+import { HistogramData } from '../../types/plots';
 
 export default {
   title: 'Plots/Histogram',

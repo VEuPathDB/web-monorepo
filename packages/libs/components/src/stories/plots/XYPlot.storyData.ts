@@ -1,5 +1,5 @@
 import { NumberOrDateRange } from '../../types/general';
-import { ScatterplotData } from '../../types/plots';
+import { XYPlotData } from '../../types/plots';
 
 // set data array types for VEuPathDB scatter plot: https://redmine.apidb.org/issues/41310
 // but changed to new format: most likely x & y data are row/column vector format; also standardError is not a single value but vector
@@ -607,7 +607,7 @@ let defaultColor: string = '#00b0f6';
 function processInputData<T extends number | Date>(
   dataSet: VEuPathDBScatterPlotData<T>
 ): {
-  dataSetProcess: ScatterplotData;
+  dataSetProcess: XYPlotData;
   xAxisRange: NumberOrDateRange;
   yAxisRange: NumberOrDateRange;
 } {

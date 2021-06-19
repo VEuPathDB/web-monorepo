@@ -1,6 +1,5 @@
 import React from 'react';
-import XYPlot, { ScatterplotProps } from '../../plots/XYPlot';
-import { EmptyScatterplotData } from '../../types/plots/scatterplot';
+import XYPlot, { XYPlotProps, EmptyXYPlotData } from '../../plots/XYPlot';
 import { dataSetProcess, xAxisRange, yAxisRange } from './XYPlot.storyData';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
@@ -16,7 +15,7 @@ export default {
  *  width and height of the plot are manually set at ScatterAndLinePlotCIReal (layout)
  * Opacity control (slider) is manually set at ScatterAndLinePlotCIReal (layout)
  */
-const Template: Story<ScatterplotProps> = (args) => {
+const Template: Story<XYPlotProps> = (args) => {
   return <XYPlot {...args} />;
 };
 
@@ -45,13 +44,13 @@ RealData.argTypes = disableDataControl;
 
 export const EmptyData = Template.bind({});
 EmptyData.args = {
-  data: EmptyScatterplotData,
+  data: EmptyXYPlotData,
 };
 EmptyData.argTypes = disableDataControl;
 
 export const EmptyDataLoading = Template.bind({});
 EmptyDataLoading.args = {
-  data: EmptyScatterplotData,
+  data: EmptyXYPlotData,
   showSpinner: true,
 };
 EmptyDataLoading.argTypes = disableDataControl;

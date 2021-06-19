@@ -1,4 +1,4 @@
-export type ScatterplotData = {
+export type XYPlotData = {
   /** an array of data series (aka traces) */
   series: {
     /** x/y data */
@@ -41,8 +41,4 @@ export type ScatterplotData = {
   independentValueType?: 'number' | 'date';
   /** dependentValueType 'number' (default) or 'date' (y data should be given as string[])  */
   dependentValueType?: 'number' | 'date';
-};
-
-export const EmptyScatterplotData = {
-  series: [],
 };

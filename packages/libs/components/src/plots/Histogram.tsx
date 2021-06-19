@@ -20,6 +20,8 @@ interface BinSummary {
   binMiddle: HistogramBin['binEnd'];
 }
 
+export const EmptyHistogramData: HistogramData = { series: [] };
+
 export interface HistogramProps extends PlotProps<HistogramData> {
   /** The orientation of the plot. Defaults to `vertical` */
   orientation: 'vertical' | 'horizontal';

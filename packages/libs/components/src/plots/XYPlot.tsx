@@ -3,11 +3,11 @@
  * density, and combinations of plots like marker + line + confidence interval
  */
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
-import { ScatterplotData } from '../types/plots/scatterplot';
+import { XYPlotData } from '../types/plots';
 import { Layout } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 
-export interface ScatterplotProps extends PlotProps<ScatterplotData> {
+export interface XYPlotProps extends PlotProps<XYPlotData> {
   /** x-axis label */
   independentAxisLabel?: string;
   /** y-axis label */
@@ -20,7 +20,11 @@ export interface ScatterplotProps extends PlotProps<ScatterplotData> {
   // opacity?
 }
 
-export default function XYPlot(props: ScatterplotProps) {
+export const EmptyXYPlotData: XYPlotData = {
+  series: [],
+};
+
+export default function XYPlot(props: XYPlotProps) {
   const {
     data,
     independentAxisLabel,
