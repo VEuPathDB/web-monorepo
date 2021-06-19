@@ -1,28 +1,22 @@
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
-import { BoxplotData } from '../types/plots';
+import { BoxplotData, OpacityAddon, OrientationAddon } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
 
-// will import this from a central location
-interface OrientationProp {
-  orientation?: 'vertical' | 'horizontal';
-}
-
-export interface BoxplotProps extends PlotProps<BoxplotData> {
+interface Props extends PlotProps<BoxplotData> {
+  /** label for independent axis */
   independentAxisLabel?: string;
+  /** label for dependent axis */
   dependentAxisLabel?: string;
+  /** set the range of the dependent axis (optional)  */
   dependentAxisRange?: NumberOrDateRange;
-  /** Orientation of plot - default is vertical boxes displayed in a horizontal row */
-  orientation?: 'vertical' | 'horizontal';
   /** show the rawData (if given) - optional */
   showRawData?: boolean;
   /** Show the mean as an extra dotted line in the box - optional */
-
   showMean?: boolean;
-  /** Opacity of outliers or rawData markers 0 to 1 (default 0.5) */
-  opacity?: number;
 }
+export type BoxplotProps = Props & OrientationAddon & OpacityAddon;
 
 export default function Boxplot(props: BoxplotProps) {
   const {

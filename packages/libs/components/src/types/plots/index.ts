@@ -8,6 +8,16 @@ import { BoxplotData } from './boxplot';
 import { XYPlotData } from './xyplot';
 
 // Commonly used type definitions for plots.
+
+export type OrientationAddon = {
+  /** Orientation of plot - default is vertical boxes displayed in a horizontal row */
+  orientation?: 'vertical' | 'horizontal';
+};
+export type OpacityAddon = {
+  /** Opacity of outliers or rawData markers 0 to 1 (default 0.5) */
+  opacity?: number;
+};
+
 export type BarLayoutOptions = 'overlay' | 'stack' | 'group';
 export type OrientationOptions = 'vertical' | 'horizontal';
 export type AvailableUnitsAddon =

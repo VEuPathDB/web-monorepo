@@ -18,7 +18,7 @@ export type HistogramData = {
   /** The amount that binWidth should be adjusted each time the
    * user drags the slider to the left or right. */
   binWidthStep?: number;
-} & AvailableUnitsAddon;
+} & AvailableUnitsAddon; // TO DO: figure out if we still need this
 
 export type HistogramDataSeries = {
   /** The name of the series. */
