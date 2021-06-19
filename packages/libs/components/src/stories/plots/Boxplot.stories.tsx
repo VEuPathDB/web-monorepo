@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import Boxplot, { Props } from '../../plots/Boxplot';
+import Boxplot, { BoxplotProps } from '../../plots/Boxplot';
 import stats from 'stats-lite';
 import _ from 'lodash';
 
@@ -8,7 +8,7 @@ export default {
   title: 'Plots/Box',
   component: Boxplot,
   argTypes: {
-    markerOpacity: {
+    opacity: {
       control: {
         type: 'range',
         min: 0,
@@ -19,7 +19,7 @@ export default {
   },
 } as Meta;
 
-const Template = (args: Props) => <Boxplot {...args} />;
+const Template = (args: BoxplotProps) => <Boxplot {...args} />;
 
 const catRawData = [
   8,
@@ -68,7 +68,7 @@ const dogRawData = [
 const dogData = summaryStats(dogRawData);
 const dogMean = stats.mean(dogRawData);
 
-export const Basic: Story<Props> = Template.bind({});
+export const Basic: Story<BoxplotProps> = Template.bind({});
 Basic.argTypes = storyArgTypes(
   (Basic.args = {
     data: [
@@ -82,7 +82,7 @@ Basic.argTypes = storyArgTypes(
   })
 );
 
-export const BasicLoading: Story<Props> = Template.bind({});
+export const BasicLoading: Story<BoxplotProps> = Template.bind({});
 BasicLoading.argTypes = storyArgTypes(
   (BasicLoading.args = {
     data: [
@@ -97,7 +97,7 @@ BasicLoading.argTypes = storyArgTypes(
   })
 );
 
-export const NoOutliersGiven: Story<Props> = Template.bind({});
+export const NoOutliersGiven: Story<BoxplotProps> = Template.bind({});
 NoOutliersGiven.argTypes = storyArgTypes(
   (NoOutliersGiven.args = {
     data: [
@@ -107,7 +107,7 @@ NoOutliersGiven.argTypes = storyArgTypes(
   })
 );
 
-export const WithMean: Story<Props> = Template.bind({});
+export const WithMean: Story<BoxplotProps> = Template.bind({});
 WithMean.argTypes = storyArgTypes(
   (WithMean.args = {
     data: [
@@ -135,14 +135,14 @@ const outdoorTemperatureRawData = [
 ];
 const outdoorTemperatureData = summaryStats(outdoorTemperatureRawData);
 
-export const BelowZero: Story<Props> = Template.bind({});
+export const BelowZero: Story<BoxplotProps> = Template.bind({});
 BelowZero.argTypes = storyArgTypes(
   (BelowZero.args = {
     data: [{ ...outdoorTemperatureData, label: 'outdoor temperature' }],
   })
 );
 
-export const NoWhiskers: Story<Props> = Template.bind({});
+export const NoWhiskers: Story<BoxplotProps> = Template.bind({});
 NoWhiskers.argTypes = storyArgTypes(
   (NoWhiskers.args = {
     data: [
@@ -159,7 +159,7 @@ NoWhiskers.argTypes = storyArgTypes(
 const indoorTemperatureRawData = [15, 17, 20, 21, 21, 21, 21, 23, 22, 25];
 const indoorTemperatureData = summaryStats(indoorTemperatureRawData);
 
-export const YAxisLabel: Story<Props> = Template.bind({});
+export const YAxisLabel: Story<BoxplotProps> = Template.bind({});
 YAxisLabel.argTypes = storyArgTypes(
   (YAxisLabel.args = {
     data: [
@@ -170,7 +170,7 @@ YAxisLabel.argTypes = storyArgTypes(
   })
 );
 
-export const XAndYAxisLabel: Story<Props> = Template.bind({});
+export const XAndYAxisLabel: Story<BoxplotProps> = Template.bind({});
 XAndYAxisLabel.argTypes = storyArgTypes(
   (XAndYAxisLabel.args = {
     data: [
@@ -182,7 +182,7 @@ XAndYAxisLabel.argTypes = storyArgTypes(
   })
 );
 
-export const FixedYAxisRange: Story<Props> = Template.bind({});
+export const FixedYAxisRange: Story<BoxplotProps> = Template.bind({});
 FixedYAxisRange.argTypes = storyArgTypes(
   (FixedYAxisRange.args = {
     data: [
@@ -195,7 +195,7 @@ FixedYAxisRange.argTypes = storyArgTypes(
   })
 );
 
-export const FixedTooSmallYAxisRange: Story<Props> = Template.bind({});
+export const FixedTooSmallYAxisRange: Story<BoxplotProps> = Template.bind({});
 FixedTooSmallYAxisRange.argTypes = storyArgTypes(
   (FixedTooSmallYAxisRange.args = {
     data: [
@@ -208,7 +208,7 @@ FixedTooSmallYAxisRange.argTypes = storyArgTypes(
   })
 );
 
-export const Horizontal: Story<Props> = Template.bind({});
+export const Horizontal: Story<BoxplotProps> = Template.bind({});
 Horizontal.argTypes = storyArgTypes(
   (Horizontal.args = {
     data: [
@@ -221,7 +221,7 @@ Horizontal.argTypes = storyArgTypes(
   })
 );
 
-export const HorizontalLongLabels: Story<Props> = Template.bind({});
+export const HorizontalLongLabels: Story<BoxplotProps> = Template.bind({});
 HorizontalLongLabels.argTypes = storyArgTypes(
   (HorizontalLongLabels.args = {
     data: [
@@ -234,7 +234,7 @@ HorizontalLongLabels.argTypes = storyArgTypes(
   })
 );
 
-export const WithRawData: Story<Props> = Template.bind({});
+export const WithRawData: Story<BoxplotProps> = Template.bind({});
 WithRawData.argTypes = storyArgTypes(
   (WithRawData.args = {
     data: [
@@ -247,7 +247,7 @@ WithRawData.argTypes = storyArgTypes(
   })
 );
 
-export const HorizontalWithRawData: Story<Props> = Template.bind({});
+export const HorizontalWithRawData: Story<BoxplotProps> = Template.bind({});
 HorizontalWithRawData.argTypes = storyArgTypes(
   (HorizontalWithRawData.args = {
     data: [
@@ -261,7 +261,9 @@ HorizontalWithRawData.argTypes = storyArgTypes(
   })
 );
 
-export const HorizontalWithOneRawDataOneMean: Story<Props> = Template.bind({});
+export const HorizontalWithOneRawDataOneMean: Story<BoxplotProps> = Template.bind(
+  {}
+);
 HorizontalWithOneRawDataOneMean.argTypes = storyArgTypes(
   (HorizontalWithOneRawDataOneMean.args = {
     data: [
@@ -276,7 +278,7 @@ HorizontalWithOneRawDataOneMean.argTypes = storyArgTypes(
   })
 );
 
-export const TwoColors: Story<Props> = Template.bind({});
+export const TwoColors: Story<BoxplotProps> = Template.bind({});
 TwoColors.argTypes = storyArgTypes(
   (TwoColors.args = {
     data: [
@@ -289,7 +291,7 @@ TwoColors.argTypes = storyArgTypes(
 // even though the labels are correctly provided as strings
 // Plotly is treating them as dates.
 // Is this a bug or a feature?
-export const NumberLabels: Story<Props> = Template.bind({});
+export const NumberLabels: Story<BoxplotProps> = Template.bind({});
 NumberLabels.argTypes = storyArgTypes(
   (NumberLabels.args = {
     data: [
@@ -304,7 +306,7 @@ NumberLabels.argTypes = storyArgTypes(
 // even though the labels are correctly provided as
 // Plotly is treating them as numbers.
 // Is this a bug or a feature?
-export const DateLabels: Story<Props> = Template.bind({});
+export const DateLabels: Story<BoxplotProps> = Template.bind({});
 DateLabels.argTypes = storyArgTypes(
   (DateLabels.args = {
     data: [
@@ -321,7 +323,7 @@ DateLabels.argTypes = storyArgTypes(
 // x-axis labels are the last day of the previous month - except the first trace!
 // Even weirder is that if you switch it to horizontal mode the labels are completely correct:
 // "Jun 2002", "May 2002" etc
-export const MonthLabels: Story<Props> = Template.bind({});
+export const MonthLabels: Story<BoxplotProps> = Template.bind({});
 MonthLabels.argTypes = storyArgTypes(
   (MonthLabels.args = {
     data: [
@@ -341,7 +343,7 @@ MonthLabels.argTypes = storyArgTypes(
 // (even those with numeric-as-string x-axes)
 //
 // To fix this we could add layout.xaxis.type = 'date'
-export const YearLabels: Story<Props> = Template.bind({});
+export const YearLabels: Story<BoxplotProps> = Template.bind({});
 YearLabels.argTypes = storyArgTypes(
   (YearLabels.args = {
     data: [
@@ -394,7 +396,7 @@ function storyArgTypes(args: any): any {
         disable: args.data.filter((d: any) => d.mean !== undefined).length == 0,
       },
     },
-    markerOpacity: {
+    opacity: {
       control: {
         disable: pointTraceIndices.length == 0,
       },

@@ -4,26 +4,36 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { BoxplotData } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
 
-export interface Props extends PlotProps<BoxplotData> {
+// will import this from a central location
+interface OrientationProp {
+  orientation?: 'vertical' | 'horizontal';
+}
+
+export interface BoxplotProps extends PlotProps<BoxplotData> {
   independentAxisLabel?: string;
   dependentAxisLabel?: string;
   dependentAxisRange?: NumberOrDateRange;
+  /** Orientation of plot - default is vertical boxes displayed in a horizontal row */
   orientation?: 'vertical' | 'horizontal';
+  /** show the rawData (if given) - optional */
   showRawData?: boolean;
+  /** Show the mean as an extra dotted line in the box - optional */
+
   showMean?: boolean;
-  markerOpacity?: number;
+  /** Opacity of outliers or rawData markers 0 to 1 (default 0.5) */
+  opacity?: number;
 }
 
-export default function Boxplot(props: Props) {
+export default function Boxplot(props: BoxplotProps) {
   const {
     data: plotData,
-    orientation,
+    orientation = 'vertical',
     showRawData,
     showMean,
     independentAxisLabel,
     dependentAxisLabel,
     dependentAxisRange,
-    markerOpacity,
+    opacity = 0.5,
     ...restProps
   } = props;
 
@@ -61,7 +71,7 @@ export default function Boxplot(props: Props) {
       boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
       jitter: 0.1, // should be dependent on the number of datapoints...?
       marker: {
-        opacity: markerOpacity,
+        opacity: opacity,
         color: d.color,
       },
       ...orientationDependentProps,
@@ -87,8 +97,3 @@ export default function Boxplot(props: Props) {
   };
   return <PlotlyPlot data={data} layout={layout} {...restProps} />;
 }
-
-Boxplot.defaultProps = {
-  markerOpacity: 0.5,
-  orientation: 'vertical',
-};
