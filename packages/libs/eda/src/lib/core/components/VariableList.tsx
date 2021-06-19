@@ -11,6 +11,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { Link } from 'react-router-dom';
 //correct paths as this is a copy of FieldList component at @veupathdb/
 import { scrollIntoViewIfNeeded } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import {
@@ -59,6 +60,7 @@ interface FieldNodeProps {
   node: VariableFieldTreeNode;
   searchTerm: string;
   isActive: boolean;
+  isDisabled?: boolean;
   handleFieldSelect: (node: VariableFieldTreeNode) => void;
   activeFieldEntity?: string;
   isStarred: boolean;
@@ -76,6 +78,7 @@ interface VariableListProps {
   autoFocus: boolean;
   starredVariables?: string[];
   toggleStarredVariable: (targetVariableId: string) => void;
+  disabledFieldIds?: string[];
 }
 
 interface getNodeSearchStringType {
@@ -90,6 +93,7 @@ interface getNodeSearchStringType {
 export default function VariableList(props: VariableListProps) {
   const {
     activeField,
+    disabledFieldIds,
     onActiveFieldChange,
     valuesMap,
     fieldTree,
@@ -190,6 +194,10 @@ export default function VariableList(props: VariableListProps) {
     return new Set(presentStarredVariables);
   }, [availableVariables, starredVariables]);
 
+  const disabledFields = useMemo(() => new Set(disabledFieldIds), [
+    disabledFieldIds,
+  ]);
+
   const renderNode = useCallback(
     (node: FieldTreeNode) => {
       const [, variableId] = node.field.term.split('/');
@@ -199,6 +207,7 @@ export default function VariableList(props: VariableListProps) {
           node={node}
           searchTerm={searchTerm}
           isActive={node.field.term === activeField?.term}
+          isDisabled={disabledFields.has(node.field.term)}
           handleFieldSelect={handleFieldSelect}
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
@@ -212,6 +221,7 @@ export default function VariableList(props: VariableListProps) {
     [
       activeField?.term,
       activeFieldEntity,
+      disabledFields,
       handleFieldSelect,
       searchTerm,
       starredVariablesLoading,
@@ -229,6 +239,8 @@ export default function VariableList(props: VariableListProps) {
   }, []);
 
   const starredVariableToggleDisabled = starredVariablesSet.size === 0;
+
+  const [disabledVariablesHidden, setDisabledVariablesHidden] = useState(false);
 
   useEffect(() => {
     if (starredVariableToggleDisabled) {
@@ -260,15 +272,67 @@ export default function VariableList(props: VariableListProps) {
     ],
     [
       showOnlyStarredVariables,
-      toggleShowOnlyStarredVariables,
       starredVariableToggleDisabled,
+      toggleShowOnlyStarredVariables,
     ]
+  );
+
+  const wrapTreeSection = useCallback(
+    (treeSection: React.ReactNode) => {
+      const tooltipContent = (
+        <>
+          Some variables cannot be used here. Use this to toggle their presence
+          below.
+          <br />
+          <br />
+          <strong>
+            <Link
+              to=""
+              onClick={(e) => {
+                e.preventDefault();
+                alert('Comming soon');
+              }}
+            >
+              <Icon fa="info-circle" /> Learn more
+            </Link>
+          </strong>{' '}
+          about variable compatibility
+        </>
+      );
+      return (
+        <>
+          {disabledFields.size > 0 && (
+            <div className={cx('-DisabledVariablesToggle')}>
+              <Tooltip
+                content={tooltipContent}
+                showDelay={50}
+                hideDelay={50}
+                hideEvent="click mouseout"
+              >
+                <button
+                  className="link"
+                  type="button"
+                  onClick={() =>
+                    setDisabledVariablesHidden((hidden) => !hidden)
+                  }
+                >
+                  <Toggle on={disabledVariablesHidden} /> Only show compatible
+                  variables
+                </button>
+              </Tooltip>
+            </div>
+          )}
+          {treeSection}
+        </>
+      );
+    },
+    [disabledFields.size, disabledVariablesHidden]
   );
 
   const isAdditionalFilterApplied = showOnlyStarredVariables;
 
-  const tree = useMemo(
-    () =>
+  const tree = useMemo(() => {
+    const tree =
       !showOnlyStarredVariables || starredVariableToggleDisabled
         ? fieldTree
         : pruneDescendantNodes(
@@ -276,14 +340,22 @@ export default function VariableList(props: VariableListProps) {
               node.children.length > 0 ||
               starredVariablesSet.has(node.field.term.split('/')[1]),
             fieldTree
-          ),
-    [
-      fieldTree,
-      showOnlyStarredVariables,
-      starredVariablesSet,
-      starredVariableToggleDisabled,
-    ]
-  );
+          );
+    return disabledVariablesHidden
+      ? pruneDescendantNodes((node) => {
+          if (disabledFields.size === 0) return true;
+          if (node.field.type == null) return node.children.length > 0;
+          return !disabledFields.has(node.field.term);
+        }, tree)
+      : tree;
+  }, [
+    showOnlyStarredVariables,
+    starredVariableToggleDisabled,
+    fieldTree,
+    disabledVariablesHidden,
+    starredVariablesSet,
+    disabledFields,
+  ]);
 
   return (
     <div className={cx('-VariableList')}>
@@ -306,6 +378,7 @@ export default function VariableList(props: VariableListProps) {
         renderNode={renderNode}
         additionalFilters={additionalFilters}
         isAdditionalFilterApplied={isAdditionalFilterApplied}
+        wrapTreeSection={wrapTreeSection}
       />
     </div>
   );
@@ -328,6 +401,7 @@ const FieldNode = ({
   node,
   searchTerm,
   isActive,
+  isDisabled,
   handleFieldSelect,
   activeFieldEntity,
   isStarred,
@@ -354,13 +428,14 @@ const FieldNode = ({
           ref={nodeRef}
           className={
             'wdk-AttributeFilterFieldItem' +
-            (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')
+            (isActive ? ' wdk-AttributeFilterFieldItem__active' : '') +
+            (isDisabled ? ' wdk-AttributeFilterFieldItem__disabled' : '')
           }
           href={'#' + node.field.term}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            handleFieldSelect(node);
+            if (!isDisabled) handleFieldSelect(node);
           }}
         >
           <Icon fa={getIcon(node.field)} /> {node.field.display}
