@@ -145,10 +145,10 @@ export function VariableTreeDropdown(props: Props) {
     <div className={cx('-VariableTreeDropdown')}>
       <PopoverButton label={label} key={`${entityId}/${variableId}`}>
         {variable && (
-          <div style={{ textAlign: 'center', padding: '0.25em' }}>
+          <div style={{ textAlign: 'center', padding: '.75em 0.25em 0.25em' }}>
             <Button
               type="button"
-              style={{ width: '100%' }}
+              style={{ width: '90%' }}
               variant="contained"
               color="default"
               size="small"

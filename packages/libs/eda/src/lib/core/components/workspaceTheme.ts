@@ -33,7 +33,7 @@ export const workspaceTheme: ThemeOptions = {
         lineHeight: 1.25,
         textTransform: 'none',
       },
-      containedSizeSmall: {
+      sizeSmall: {
         padding: '4px 8px',
       },
     },
