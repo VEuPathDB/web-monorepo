@@ -15,3 +15,4 @@ Look at an existing plot, such as `Boxplot` ([source](../src/plots/Boxplot.tsx))
 - Styling and layout - not quite perfected.
   - `containerStyles` handles the plot size (default is `{width: '100%', height: '400px'}`). In Storybook, the plots don't respond to new `containerStyles` prop values until the browser window (or storybook panel) is resized. Storybook controls require strict JSON with full double quoting.
   - Fonts: don't add font family, style and size in your plot component - we will style these in a more coordinated way later
+- There is no need to implement anything for `usePlotControls` - this is mothballed for now.
