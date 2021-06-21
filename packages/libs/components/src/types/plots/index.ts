@@ -7,6 +7,7 @@ import { PiePlotData } from './piePlot';
 import { BoxplotData } from './boxplot';
 import { XYPlotData } from './xyplot';
 import { BarplotData } from './barplot';
+import { HeatmapData } from './heatmap';
 
 // Commonly used type definitions for plots.
 
@@ -19,7 +20,8 @@ export type UnionOfPlotDataTypes =
   | LinePlotData
   | BoxplotData
   | XYPlotData
-  | BarplotData;
+  | BarplotData
+  | HeatmapData;
 
 export * from './addOns';
 
@@ -29,3 +31,4 @@ export * from './piePlot';
 export * from './boxplot';
 export * from './xyplot';
 export * from './barplot';
+export * from './heatmap';

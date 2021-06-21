@@ -23,6 +23,7 @@ interface Props extends PlotProps<BoxplotData> {
   showMean?: boolean;
 }
 export type BoxplotProps = Props & OrientationAddon & OpacityAddon;
+export const EmptyBoxplotData: BoxplotData = [];
 
 export default function Boxplot(props: BoxplotProps) {
   const {
@@ -89,9 +90,13 @@ export default function Boxplot(props: BoxplotProps) {
       range: dependentAxisRange
         ? [dependentAxisRange?.min, dependentAxisRange?.max]
         : undefined,
+      tickfont: data.length ? {} : { color: 'transparent' },
     },
     [independentAxis]: {
       title: independentAxisLabel,
+      range: data.length ? undefined : [1, 5], // avoids x==0 line
+      showgrid: false,
+      tickfont: data.length ? {} : { color: 'transparent' },
     },
     showlegend: false,
   };

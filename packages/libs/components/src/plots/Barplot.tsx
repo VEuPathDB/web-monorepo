@@ -18,7 +18,7 @@ interface Props extends PlotProps<BarplotData> {
   /** Label for dependent axis. Defaults to 'Count' */
   dependentAxisLabel?: string;
   /** Show value for each bar */
-  showBarValues?: boolean;
+  showValues?: boolean;
   /** show/hide independent axis tick label, default is true */
   showIndependentAxisTickLabel?: boolean;
   /** show/hide dependent axis tick label, default is true */
@@ -35,7 +35,7 @@ export default function Barplot({
   data,
   independentAxisLabel,
   dependentAxisLabel,
-  showBarValues = false,
+  showValues = false,
   orientation = OrientationDefault,
   opacity = OpacityDefault,
   barLayout = 'group',
@@ -60,14 +60,14 @@ export default function Barplot({
             orientation: orientation === 'vertical' ? 'v' : 'h',
             opacity: calculatedOpacity,
             type: 'bar',
-            text: showBarValues ? el.value : undefined,
-            textposition: showBarValues ? 'auto' : undefined,
+            text: showValues ? el.value : undefined,
+            textposition: showValues ? 'auto' : undefined,
           };
         } else {
           return {};
         }
       }),
-    [data, barLayout, orientation, showBarValues, opacity]
+    [data, barLayout, orientation, showValues, opacity]
   );
 
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {

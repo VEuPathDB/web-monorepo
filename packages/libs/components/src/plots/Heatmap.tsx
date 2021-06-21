@@ -1,80 +1,74 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
-import { PlotData, Layout, Annotations } from 'plotly.js';
-import Spinner from '../components/Spinner';
+import { Layout, Annotations } from 'plotly.js';
+import { HeatmapData } from '../types/plots';
 
-export interface Props extends PlotProps {
-  data: Array<{
-    x: number[] | string[];
-    y: number[] | string[];
-    z: number[][];
-  }>;
-  xLabel?: string;
-  yLabel?: string;
-  plotTitle?: string;
-  showValue?: boolean;
+interface Props extends PlotProps<HeatmapData> {
+  /** Label for x axis. Both x and y axes have "independent" variables */
+  xAxisLabel?: string;
+  /** Label for y axis. */
+  yAxisLabel?: string;
+  /** Show values as text in heatmap */
+  showValues?: boolean;
   //DKDK add zsmooth here so that it can be treated as a Props out of data
-  zsmooth?: 'fast' | 'best' | false;
+  zSmooth?: 'fast' | 'best' | false;
 }
+export type HeatmapProps = Props; // & Addons...
+export const EmptyHeatmapData: HeatmapData = {
+  xLabels: [],
+  yLabels: [],
+  values: [[]],
+};
 
-export default function Heatmap(props: Props) {
-  //DKDK add zsmooth here so that it can be treated as a Props out of data
+export default function Heatmap(props: HeatmapProps) {
   const {
-    xLabel,
-    yLabel,
-    plotTitle,
-    width,
-    height,
-    showValue,
-    zsmooth,
     data,
-    margin,
+    xAxisLabel,
+    yAxisLabel,
+    showValues,
+    zSmooth,
+    legendTitle, // needs to be handled here via colorbar, not main legend in PlotlyPlot
+    ...restProps
   } = props;
+
+  const isEmptyData = useMemo(() => data.values.flat().length == 0, [data]);
+
   const layout: Partial<Layout> = {
-    width: width,
-    height: height,
     //DKDK set annotations for displaying values at each cell
     annotations: [],
     xaxis: {
-      title: xLabel,
+      title: xAxisLabel,
+      mirror: true,
+      showgrid: false,
+      tickfont: isEmptyData ? { color: 'transparent' } : {},
+      zeroline: false, // for empty plot, mainly
+      nticks: isEmptyData ? 5 : data.xLabels.length + 1,
     },
     yaxis: {
-      title: yLabel,
-    },
-    title: {
-      text: plotTitle,
+      title: yAxisLabel,
+      mirror: true,
+      showgrid: false,
+      tickfont: isEmptyData ? { color: 'transparent' } : {},
+      zeroline: false, // for empty plot, mainly
+      nticks: isEmptyData ? 5 : data.yLabels.length + 1,
     },
   };
 
-  //DKDK set variables for annotation
-  let xValues = data[0].x;
-  let yValues = data[0].y;
-  let zValues = data[0].z;
-  //DKDK set (default) textColor
-  let textColor = 'white';
-
   //DKDK add value texts at each cell when props.showValue = true
-  if (showValue) {
-    for (let i = 0; i < yValues.length; i++) {
-      for (let j = 0; j < xValues.length; j++) {
-        // let currentValue = zValues[i][j];
-        // if (currentValue != 0) {
-        //   textColor = 'white';
-        // } else {
-        //   textColor = 'black';
-        // }
+  if (showValues) {
+    for (let i = 0; i < data.yLabels.length; i++) {
+      for (let j = 0; j < data.xLabels.length; j++) {
         let result: Partial<Annotations> = {
           xref: 'x',
           yref: 'y',
-          x: xValues[j],
-          y: yValues[i],
+          x: data.xLabels[j],
+          y: data.yLabels[i],
           //DKDK zValues(i.e., z) is number[][] so converting it into string to avoid type error
-          text: zValues[i][j].toString(),
+          text: data.values[i][j]?.toString(),
           font: {
-            family: 'Arial',
-            size: 12,
-            // color: 'rgb(50, 171, 96)'
-            color: textColor,
+            color: 'white', // TO DO: generate color more intelligently
+            // taking palette/gradient into consideration too
+            // (white works just-about OK on top of the default blue-grey-red gradient)
           },
           showarrow: false,
         };
@@ -84,24 +78,20 @@ export default function Heatmap(props: Props) {
     }
   }
 
-  //DKDK add zsmooth here so that it can be treated as a Props out of data
-  const finalData = data.map((d) => ({
-    ...d,
-    type: 'heatmap' as const,
-    zsmooth: zsmooth,
-  }));
+  const finalData = [
+    {
+      x: data.xLabels,
+      y: data.yLabels,
+      z: data.values,
+      type: 'heatmap' as const,
+      zsmooth: zSmooth,
+      colorbar: {
+        title: {
+          text: legendTitle,
+        },
+      },
+    },
+  ];
 
-  return (
-    <div style={{ position: 'relative', width: width, height: height }}>
-      <PlotlyPlot
-        data={finalData}
-        layout={Object.assign(layout, {
-          width: width,
-          height: height,
-          margin: margin,
-        })}
-      />
-      {props.showSpinner && <Spinner />}
-    </div>
-  );
+  return <PlotlyPlot data={finalData} layout={layout} {...restProps} />;
 }

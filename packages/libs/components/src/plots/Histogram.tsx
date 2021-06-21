@@ -41,7 +41,7 @@ interface Props extends PlotProps<HistogramData> {
   /** Use a log scale for dependent axis. Default is false */
   dependentAxisLogScale?: boolean;
   /** Show value for each bar */
-  showBarValues?: boolean;
+  showValues?: boolean;
   /** A range to highlight by means of opacity */
   selectedRange?: NumberOrDateRange;
   /** function to call upon selecting a range (in independent axis) */
@@ -67,7 +67,7 @@ export default function Histogram({
   barLayout = 'overlay',
   dependentAxisRange,
   dependentAxisLogScale = false,
-  showBarValues,
+  showValues,
   selectedRange,
   onSelectedRangeChange = () => {},
   selectedRangeBounds,
@@ -137,8 +137,8 @@ export default function Histogram({
           orientation: orientation === 'vertical' ? 'v' : 'h',
           name: series.name,
           // text: binLabels, // TO DO: find a way to show concise bin labels
-          text: showBarValues ? binCounts.map(String) : binLabels,
-          textposition: showBarValues ? 'auto' : undefined,
+          text: showValues ? binCounts.map(String) : binLabels,
+          textposition: showValues ? 'auto' : undefined,
           marker: {
             ...(series.color ? { color: series.color } : {}),
           },
@@ -157,7 +157,7 @@ export default function Histogram({
           },
         };
       }),
-    [data, orientation, calculatedBarOpacity, selectedRange, showBarValues]
+    [data, orientation, calculatedBarOpacity, selectedRange, showValues]
   );
 
   /**

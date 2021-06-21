@@ -261,7 +261,6 @@ const TemplateWithSelectedDateRangeControls: Story<Omit<
         data={data}
         {...args}
         showSpinner={loading}
-        interactive={true}
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
       />
@@ -310,31 +309,23 @@ DateRangeSelection.loaders = [
   }),
 ];
 
-export const EmptyData: Story = (args) => {
-  return (
-    <Histogram
-      data={{ series: [] }}
-      containerStyles={{
-        height: '400px',
-        width: '800px',
-      }}
-      barLayout="stack"
-      orientation="horizontal"
-    />
-  );
+export const EmptyData: Story<HistogramProps> = (args) => (
+  <Histogram {...args} />
+);
+EmptyData.args = {
+  data: EmptyHistogramData,
+  containerStyles: {
+    height: '400px',
+    width: '800px',
+  },
+  barLayout: 'stack',
+  orientation: 'vertical',
 };
 
-export const EmptyDataLoading: Story = (args) => {
-  return (
-    <Histogram
-      data={{ series: [] }}
-      containerStyles={{
-        height: '400px',
-        width: '800px',
-      }}
-      barLayout="stack"
-      orientation="horizontal"
-      showSpinner={true}
-    />
-  );
+export const EmptyDataLoading: Story<HistogramProps> = (args) => (
+  <Histogram {...args} />
+);
+EmptyDataLoading.args = {
+  ...EmptyData.args,
+  showSpinner: true,
 };
