@@ -1,7 +1,6 @@
 import { StudyEntity } from '..';
 import { Filter } from '../types/filter';
 import Draggable from 'react-draggable';
-// import { uniq } from 'lodash';
 import FilterChipList from './FilterChipList';
 
 interface Props {

@@ -88,8 +88,18 @@
     font-size: 1.65em;
   }
 
-  &-AnalysisNameEditBox {
+  &-AnalysisSummaryLeft {
+    display: flex;
+    align-items: center;
     margin-right: auto;
+  }
+
+  &-AnalysisSummaryRight {
+    display: flex;
+    align-items: center;
+  }
+
+  &-AnalysisNameEditBox {
     font-style: italic;
   }
 
@@ -189,5 +199,9 @@
     > div {
       font-size: 1.333em;
     }
+  }
+
+  .fa.fa-filter {
+    color: green;
   }
 }

@@ -5,7 +5,6 @@ import Path from 'path';
 import { Analysis } from '../core';
 import { ActionIconButton } from './ActionIconButton';
 import { cx } from './Utils';
-import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 
 interface Props {
   analysis: Analysis;
@@ -17,7 +16,13 @@ interface Props {
 }
 
 export function AnalysisSummary(props: Props) {
-  const { analysis, setAnalysisName, copyAnalysis, deleteAnalysis } = props;
+  const {
+    analysis,
+    setAnalysisName,
+    copyAnalysis,
+    deleteAnalysis,
+    onFilterIconClick,
+  } = props;
   const history = useHistory();
   const { url } = useRouteMatch();
   const handleCopy = async () => {
@@ -30,29 +35,37 @@ export function AnalysisSummary(props: Props) {
   };
   return (
     <div className={cx('-AnalysisSummary')}>
-      <SaveableTextEditor
-        className={cx('-AnalysisNameEditBox')}
-        value={analysis.name}
-        onSave={setAnalysisName}
-      />
-      <button onClick={props.onFilterIconClick}>See all filters</button>
-      <ActionIconButton
-        iconClassName="download"
-        hoverText="Bulk download study"
-        action={() => {
-          alert('Coming soon');
-        }}
-      />
-      <ActionIconButton
-        iconClassName="clone"
-        hoverText="Copy analysis"
-        action={handleCopy}
-      />
-      <ActionIconButton
-        iconClassName="trash"
-        hoverText="Delete analysis"
-        action={handleDelete}
-      />
+      <div className={cx('-AnalysisSummaryLeft')}>
+        <SaveableTextEditor
+          className={cx('-AnalysisNameEditBox')}
+          value={analysis.name}
+          onSave={setAnalysisName}
+        />
+        <ActionIconButton
+          iconClassName="filter"
+          hoverText="See all filters"
+          action={onFilterIconClick}
+        />
+      </div>
+      <div className={cx('-AnalysisSummaryRight')}>
+        <ActionIconButton
+          iconClassName="download"
+          hoverText="Bulk download study"
+          action={() => {
+            alert('Coming soon');
+          }}
+        />
+        <ActionIconButton
+          iconClassName="clone"
+          hoverText="Copy analysis"
+          action={handleCopy}
+        />
+        <ActionIconButton
+          iconClassName="trash"
+          hoverText="Delete analysis"
+          action={handleDelete}
+        />
+      </div>
     </div>
   );
 }
