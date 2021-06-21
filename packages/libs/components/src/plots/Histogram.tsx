@@ -157,7 +157,7 @@ export default function Histogram({
           },
         };
       }),
-    [data, orientation, calculatedBarOpacity, selectedRange]
+    [data, orientation, calculatedBarOpacity, selectedRange, showBarValues]
   );
 
   /**
@@ -295,10 +295,6 @@ export default function Histogram({
     showline: false,
     title: {
       text: independentAxisLabel,
-      font: {
-        family: 'Arial, Helvetica, sans-serif',
-        size: 14,
-      },
     },
     range: [minBinStart, maxBinEnd],
     tickfont: data.series.length ? {} : { color: 'transparent' },
@@ -308,10 +304,6 @@ export default function Histogram({
     automargin: true,
     title: {
       text: dependentAxisLabel,
-      font: {
-        family: 'Arial, Helvetica, sans-serif',
-        size: 14,
-      },
     },
     // range should be an array
     range: data.series.length

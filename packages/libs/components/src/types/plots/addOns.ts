@@ -55,7 +55,7 @@ export const OpacityDefault: number = 0.5;
 /** BarLayout - options and default differ depending on usage */
 export type BarLayoutAddon<O extends BarLayoutOptions> = {
   /** How bars are displayed when there are multiple series. */
-  barLayout: O;
+  barLayout?: O;
 };
 
 /** PlotData addons */

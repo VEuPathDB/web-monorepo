@@ -104,9 +104,6 @@ export default function PlotlyPlot<T extends UnionOfPlotDataTypes>(
       },
       title: {
         text: title,
-        font: {
-          family: 'Arial, Helvetica, sans-serif',
-        },
         xref: 'paper',
         x: 0,
         xanchor: 'left', // left aligned to left edge (y-axis) of plot
