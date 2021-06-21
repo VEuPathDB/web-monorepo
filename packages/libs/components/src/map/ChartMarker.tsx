@@ -241,9 +241,11 @@ export default function ChartMarker(props: ChartMarkerProps) {
         })),
       }}
       orientation="vertical"
-      barLayout="group"
-      width={plotSize}
-      height={plotSize}
+      barLayout="stack"
+      containerStyles={{
+        width: plotSize + 'px',
+        height: plotSize + 'px',
+      }}
       spacingOptions={{
         marginLeft: marginSize,
         marginRight: marginSize,

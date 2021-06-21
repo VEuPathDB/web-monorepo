@@ -38,8 +38,10 @@ export default function TabPieChartContent(props: SidebarPieChartProps) {
         text: sumValues?.toString(),
         fontSize: 20,
       }}
-      width={width}
-      height={height}
+      containerStyles={{
+        width: width + 'px',
+        height: height + 'px',
+      }}
       spacingOptions={{
         marginTop: 0,
         marginBottom: 0,

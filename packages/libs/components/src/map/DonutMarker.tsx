@@ -215,8 +215,10 @@ export default function DonutMarker(props: DonutMarkerProps) {
         text: sumLabel as string,
         fontSize: 18,
       }}
-      width={plotSize}
-      height={plotSize}
+      containerStyles={{
+        width: plotSize + 'px',
+        height: plotSize + 'px',
+      }}
       spacingOptions={{
         marginLeft: marginSize,
         marginRight: marginSize,
@@ -224,12 +226,11 @@ export default function DonutMarker(props: DonutMarkerProps) {
         marginBottom: marginSize,
       }}
       displayLegend={false}
-      showHoverInfo={false}
+      interactive={false}
       displayLibraryControls={false}
       textOptions={{
         displayPosition: 'inside',
-        displayOption: 'text',
-        sliceOverrides: fullStat.slices.map((datum) =>
+        sliceTextOverrides: fullStat.slices.map((datum) =>
           datum.value / sumValues >= 0.015 ? datum.value.toString() : ''
         ),
       }}
