@@ -3,7 +3,7 @@ import { Button } from '@material-ui/core';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { cx } from '../../workspace/Utils';
 import { StudyEntity } from '../types/study';
 import { Variable } from '../types/variable';
@@ -27,6 +27,8 @@ export interface Props {
   disabledVariables?: Variable[];
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: Variable) => void;
+  hideDisabledFields?: boolean;
+  setHideDisabledFields?: (hide: boolean) => void;
 }
 export function VariableTree(props: Props) {
   const {
@@ -37,6 +39,8 @@ export function VariableTree(props: Props) {
     entityId,
     variableId,
     onChange,
+    hideDisabledFields = false,
+    setHideDisabledFields = () => {},
   } = props;
   const entities = useMemo(
     () =>
@@ -130,12 +134,15 @@ export function VariableTree(props: Props) {
       autoFocus={false}
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
+      hideDisabledFields={hideDisabledFields}
+      setHideDisabledFields={setHideDisabledFields}
     />
   );
 }
 
 export function VariableTreeDropdown(props: Props) {
   const { rootEntity, entityId, variableId, onChange } = props;
+  const [hideDisabledFields, setHideDisabledFields] = useState(false);
   const entities = Array.from(preorder(rootEntity, (e) => e.children ?? []));
   const variable = entities
     .find((e) => e.id === entityId)
@@ -159,7 +166,11 @@ export function VariableTreeDropdown(props: Props) {
           </div>
         )}
         <div className={cx('-VariableTreeDropdownTreeContainer')}>
-          <VariableTree {...props} />
+          <VariableTree
+            {...props}
+            hideDisabledFields={hideDisabledFields}
+            setHideDisabledFields={setHideDisabledFields}
+          />
         </div>
       </PopoverButton>
     </div>

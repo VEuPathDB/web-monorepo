@@ -79,6 +79,8 @@ interface VariableListProps {
   starredVariables?: string[];
   toggleStarredVariable: (targetVariableId: string) => void;
   disabledFieldIds?: string[];
+  hideDisabledFields: boolean;
+  setHideDisabledFields: (hide: boolean) => void;
 }
 
 interface getNodeSearchStringType {
@@ -100,6 +102,8 @@ export default function VariableList(props: VariableListProps) {
     autoFocus,
     starredVariables,
     toggleStarredVariable,
+    hideDisabledFields,
+    setHideDisabledFields,
   } = props;
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
@@ -240,8 +244,6 @@ export default function VariableList(props: VariableListProps) {
 
   const starredVariableToggleDisabled = starredVariablesSet.size === 0;
 
-  const [disabledVariablesHidden, setDisabledVariablesHidden] = useState(false);
-
   useEffect(() => {
     if (starredVariableToggleDisabled) {
       setShowOnlyStarredVariables(false);
@@ -312,11 +314,11 @@ export default function VariableList(props: VariableListProps) {
                 <button
                   className="link"
                   type="button"
-                  onClick={() =>
-                    setDisabledVariablesHidden((hidden) => !hidden)
-                  }
+                  onClick={() => {
+                    setHideDisabledFields(!hideDisabledFields);
+                  }}
                 >
-                  <Toggle on={disabledVariablesHidden} /> Only show compatible
+                  <Toggle on={hideDisabledFields} /> Only show compatible
                   variables
                 </button>
               </Tooltip>
@@ -326,7 +328,7 @@ export default function VariableList(props: VariableListProps) {
         </>
       );
     },
-    [disabledFields.size, disabledVariablesHidden]
+    [disabledFields.size, hideDisabledFields, setHideDisabledFields]
   );
 
   const isAdditionalFilterApplied = showOnlyStarredVariables;
@@ -341,7 +343,7 @@ export default function VariableList(props: VariableListProps) {
               starredVariablesSet.has(node.field.term.split('/')[1]),
             fieldTree
           );
-    return disabledVariablesHidden
+    return hideDisabledFields
       ? pruneDescendantNodes((node) => {
           if (disabledFields.size === 0) return true;
           if (node.field.type == null) return node.children.length > 0;
@@ -352,7 +354,7 @@ export default function VariableList(props: VariableListProps) {
     showOnlyStarredVariables,
     starredVariableToggleDisabled,
     fieldTree,
-    disabledVariablesHidden,
+    hideDisabledFields,
     starredVariablesSet,
     disabledFields,
   ]);
