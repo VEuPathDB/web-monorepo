@@ -86,6 +86,7 @@ export function AnalysisPanel(props: Props) {
       />
       <GlobalFiltersDialog
         open={globalFiltersDialogOpen}
+        setOpen={setGlobalFiltersDialogOpen}
         entities={entities}
         filters={analysis.filters}
         setFilters={analysisState.setFilters}

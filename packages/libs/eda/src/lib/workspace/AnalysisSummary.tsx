@@ -41,11 +41,13 @@ export function AnalysisSummary(props: Props) {
           value={analysis.name}
           onSave={setAnalysisName}
         />
-        <ActionIconButton
-          iconClassName="filter"
-          hoverText="See all filters"
-          action={onFilterIconClick}
-        />
+        {analysis.filters.length > 0 && (
+          <ActionIconButton
+            iconClassName="filter"
+            hoverText="See all filters"
+            action={onFilterIconClick}
+          />
+        )}
       </div>
       <div className={cx('-AnalysisSummaryRight')}>
         <ActionIconButton
