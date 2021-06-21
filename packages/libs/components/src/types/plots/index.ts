@@ -8,6 +8,7 @@ import { BoxplotData } from './boxplot';
 import { XYPlotData } from './xyplot';
 import { BarplotData } from './barplot';
 import { HeatmapData } from './heatmap';
+import { MosaicData } from './mosaic';
 
 // Commonly used type definitions for plots.
 
@@ -21,7 +22,8 @@ export type UnionOfPlotDataTypes =
   | BoxplotData
   | XYPlotData
   | BarplotData
-  | HeatmapData;
+  | HeatmapData
+  | MosaicData;
 
 export * from './addOns';
 
@@ -32,3 +34,4 @@ export * from './boxplot';
 export * from './xyplot';
 export * from './barplot';
 export * from './heatmap';
+export * from './mosaic';
