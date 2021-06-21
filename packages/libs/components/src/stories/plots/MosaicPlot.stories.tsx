@@ -33,7 +33,6 @@ TwoByTwo.args = {
   dependentAxisLabel: 'Status',
   colors: ['orange', 'blue'],
   title: 'Sex & Status Mosaic',
-  ...defaults,
 };
 
 export const TwoByThree = Template.bind({});
