@@ -16,15 +16,25 @@
   }
 
   /* All entities */
-  .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldEntityParent {
+  .wdk-AttributeFilterFieldEntityParent {
     font-weight: bold;
     font-size: 1.05em;
   }
 
   /* Active variable */
-  .wdk-AttributeFilterFieldItem__active {
-    background: #e6e6e6;
-    outline: none;
+  .wdk-AttributeFilterFieldItem {
+    &__active {
+      background: #e6e6e6;
+      outline: none;
+    }
+    &__disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .wdk-CheckboxTreeAdditionalFilters {
+    display: flex;
   }
 
   /* height of CheckboxTree - use vh */
@@ -35,7 +45,7 @@
   /* configuring scrolling for CheckboxTree list only: anchoring search bar */
   .wdk-CheckboxTree > .wdk-CheckboxTreeList {
     position: relative;
-    height: 100%;
+    height: calc(100% - 3em);
     overflow: auto;
     padding: 0 1em;
   }
@@ -96,5 +106,30 @@
 
   .wdk-CheckboxTreeFilters {
     gap: 0.5em;
+  }
+
+  .EDAWorkspace-DisabledVariablesToggle {
+    margin: 0 1em 0.75em;
+    button {
+      color: #666;
+    }
+  }
+}
+
+.EDAWorkspace-VariableTreeDropdown {
+  position: relative;
+
+  &TreeContainer {
+    // border: 1px solid;
+    border-radius: 0.25em;
+    padding: 0.5em;
+    height: 60vh;
+    width: 30em;
+    position: relative;
+
+    .wdk-AttributeFilterFieldItem,
+    .wdk-AttributeFilterFieldParent {
+      color: #2f2f2f;
+    }
   }
 }

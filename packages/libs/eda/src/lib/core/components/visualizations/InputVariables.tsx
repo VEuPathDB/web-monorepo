@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { StudyEntity } from '../../types/study';
 import { Variable } from '../../types/variable';
 import {
   DataElementConstraintRecord,
-  filterVariablesByConstraint,
+  excludedVariables,
   flattenConstraints,
   ValueByInputName,
 } from '../../utils/data-element-constraints';
 import { VariableTreeDropdown } from '../VariableTree';
-import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  mapStructure,
+  preorder,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 
 interface InputSpec {
   name: string;
@@ -103,46 +106,76 @@ export function InputVariables(props: Props) {
   const flattenedConstraints =
     constraints && flattenConstraints(values, entities, constraints);
 
-  // Steps
-  // 1. Get closest prev and next values
-  // 2. If next defined, root is next's entity, otherwise default root entity
-  // 3. If prev is defined, remove prev's entity's children
-  // 4. Return tree.
-  const rootEntities = inputs.map((input) => {
-    if (dataElementDependencyOrder == null) return entities[0];
-
-    // 1
-    const index = dataElementDependencyOrder.indexOf(input.name);
-    // return root entity if dependencyOrder is not declared
-    if (index === -1) return entities[0];
-
-    const prevValue = dataElementDependencyOrder
-      .slice(0, index)
-      .map((n) => values[n])
-      .reverse()
-      .find((v) => v != null);
-    const nextValue = dataElementDependencyOrder
-      .slice(index + 1)
-      .map((n) => values[n])
-      .find((v) => v != null);
-
-    // 2
-    const rootEntityId = nextValue?.entityId ?? entities[0].id;
-    const rootEntity =
-      entities.find((entity) => entity.id === rootEntityId) ?? entities[0];
-
-    // 3
-    return prevValue == null
-      ? rootEntity
-      : mapStructure(
-          (entity) =>
-            entity.id === prevValue.entityId
-              ? { ...entity, children: [] }
-              : entity,
-          (entity) => entity.children ?? [],
-          rootEntity
+  // Find entities that are excluded for each variable, and union their variables
+  // with the disabled variables.
+  const disabledVariablesByInputIndex = useMemo(
+    () =>
+      inputs.map((input) => {
+        const disabledVariables = excludedVariables(
+          entities[0],
+          flattenedConstraints && flattenedConstraints[input.name]
         );
-  });
+        if (dataElementDependencyOrder == null) return disabledVariables;
+
+        const index = dataElementDependencyOrder.indexOf(input.name);
+        // no change if dependencyOrder is not declared
+        if (index === -1) return disabledVariables;
+
+        const prevValue = dataElementDependencyOrder
+          .slice(0, index)
+          .map((n) => values[n])
+          .reverse()
+          .find((v) => v != null);
+        const nextValue = dataElementDependencyOrder
+          .slice(index + 1)
+          .map((n) => values[n])
+          .find((v) => v != null);
+
+        // Remove descendants of next input's entity
+        if (prevValue) {
+          const entity = entities.find(
+            (entity) => entity.id === prevValue.entityId
+          );
+          if (entity == null) throw new Error('Unknown entity used.');
+          const childVariables = Array.from(
+            preorder(entity, (e) => e.children ?? [])
+          )
+            .slice(1)
+            .flatMap((e) =>
+              e.variables.map(
+                (variable): Variable => ({
+                  variableId: variable.id,
+                  entityId: e.id,
+                })
+              )
+            );
+          disabledVariables.push(...childVariables);
+        }
+
+        // remove ancestors of previous input's entity
+        if (nextValue == null || nextValue.entityId === entities[0].id)
+          return disabledVariables;
+        const ancestorTree = mapStructure<StudyEntity, StudyEntity>(
+          (entity, children) => ({
+            ...entity,
+            children: children.filter((e) => e.id !== nextValue.entityId),
+          }),
+          (entity) => entity.children ?? [],
+          entities[0]
+        );
+        const ancestorVariables = Array.from(
+          preorder(ancestorTree, (e) => e.children ?? [])
+        ).flatMap((e) =>
+          e.variables.map((variable) => ({
+            variableId: variable.id,
+            entityId: e.id,
+          }))
+        );
+        disabledVariables.push(...ancestorVariables);
+        return disabledVariables;
+      }),
+    [dataElementDependencyOrder, entities, flattenedConstraints, inputs, values]
+  );
 
   return (
     <div>
@@ -151,10 +184,8 @@ export function InputVariables(props: Props) {
           <div key={input.name} className={classes.input}>
             <div className={classes.label}>{input.label}</div>
             <VariableTreeDropdown
-              rootEntity={filterVariablesByConstraint(
-                rootEntities[index],
-                flattenedConstraints && flattenedConstraints[input.name]
-              )}
+              rootEntity={entities[0]}
+              disabledVariables={disabledVariablesByInputIndex[index]}
               starredVariables={starredVariables}
               toggleStarredVariable={toggleStarredVariable}
               entityId={values[input.name]?.entityId}
