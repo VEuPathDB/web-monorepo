@@ -2,7 +2,15 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
 
 // Definitions
-import { HistogramData, HistogramBin } from '../types/plots';
+import {
+  HistogramData,
+  HistogramBin,
+  OpacityAddon,
+  OpacityDefault,
+  OrientationAddon,
+  OrientationDefault,
+  BarLayoutAddon,
+} from '../types/plots';
 import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
 
 // Libraries
@@ -22,16 +30,7 @@ interface BinSummary {
 
 export const EmptyHistogramData: HistogramData = { series: [] };
 
-export interface HistogramProps extends PlotProps<HistogramData> {
-  /** The orientation of the plot. Defaults to `vertical` */
-  orientation: 'vertical' | 'horizontal';
-  /** How bars are displayed when there are multiple series. */
-  barLayout: 'overlay' | 'stack';
-  /** Opacity of bars. Range is a decimal between 0 and 1. Defaults to 1
-   * if there is only one data series bars are not overlayed. Otherwise,
-   * defaults to .75
-   */
-  opacity?: number;
+interface Props extends PlotProps<HistogramData> {
   /** Label for independent axis. Defaults to `Bins`. */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
@@ -53,14 +52,18 @@ export interface HistogramProps extends PlotProps<HistogramData> {
   /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
   isZoomed?: boolean;
 }
+export type HistogramProps = Props &
+  OrientationAddon &
+  OpacityAddon &
+  BarLayoutAddon<'overlay' | 'stack'>;
 
 /** A Plot.ly based histogram component. */
 export default function Histogram({
   data,
-  orientation = 'vertical',
   independentAxisLabel = 'Bins',
   dependentAxisLabel = 'Count',
-  opacity = 1,
+  orientation = OrientationDefault,
+  opacity = OpacityDefault,
   barLayout = 'overlay',
   dependentAxisRange,
   dependentAxisLogScale = false,
@@ -72,17 +75,13 @@ export default function Histogram({
   ...restProps
 }: HistogramProps) {
   /**
-   * Determine bar opacity. This gets a little complicated
-   * as we have to dynamically adjust an opacity of 1 down
-   * when there is more than 1 data series and the layout
-   * is overlay.
+   * Determine bar opacity. Only applicable when in overlay
+   * mode and there are >1 series.
+   * Values less than 0.75 recommended to avoid it looking like a stacked chart.
+   * If providing an opacity slider, don't let values go higher than 0.75.
    */
   const calculatedBarOpacity: number = useMemo(() => {
-    if (barLayout === 'overlay' && data.series.length > 1) {
-      return opacity > 1 ? (opacity / 100) * 0.75 : opacity * 0.75;
-    } else {
-      return opacity > 1 ? opacity / 100 : opacity;
-    }
+    return barLayout === 'overlay' && data.series.length > 1 ? opacity : 1;
   }, [barLayout, data.series.length, opacity]);
 
   /**

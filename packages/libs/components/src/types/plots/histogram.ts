@@ -1,4 +1,4 @@
-import { AvailableUnitsAddon } from '.';
+import { AvailableUnitsAddon } from './addOns';
 import { NumberOrTimeDeltaRange, NumberOrTimeDelta } from '../general';
 
 /**

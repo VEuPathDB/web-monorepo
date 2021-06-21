@@ -1,7 +1,13 @@
 import React from 'react';
 import { PlotParams } from 'react-plotly.js';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
-import { BoxplotData, OpacityAddon, OrientationAddon } from '../types/plots';
+import {
+  BoxplotData,
+  OpacityAddon,
+  OpacityDefault,
+  OrientationAddon,
+  OrientationDefault,
+} from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
 
 interface Props extends PlotProps<BoxplotData> {
@@ -21,13 +27,13 @@ export type BoxplotProps = Props & OrientationAddon & OpacityAddon;
 export default function Boxplot(props: BoxplotProps) {
   const {
     data: plotData,
-    orientation = 'vertical',
     showRawData,
     showMean,
     independentAxisLabel,
     dependentAxisLabel,
     dependentAxisRange,
-    opacity = 0.5,
+    orientation = OrientationDefault,
+    opacity = OpacityDefault,
     ...restProps
   } = props;
 
