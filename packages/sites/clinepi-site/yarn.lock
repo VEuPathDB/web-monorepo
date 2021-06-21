@@ -867,10 +867,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.3.10":
-  version "0.3.10"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.3.10.tgz#a794003df6dc512521d5de530cfaa73fc1accd11"
-  integrity sha512-Z3Ll6zLZsaup4LjSpQtJ2bnpZJyYwUahiJFULXzxImC4WE053kKUOvbY2QVxs+uhGI37VXoDIlHa5V22wtnlsw==
+"@veupathdb/components@^0.3.11":
+  version "0.3.13"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.3.13.tgz#b102c0efd1d7d09ed2e5b6cc6971375ad078b453"
+  integrity sha512-VbAY/hEL9zMNQcq5rVyuSEhvGXD/h4LIrWDDS4R2BBZ0MEE15Hz9Yhwe/SOI+cZmcSAlbtW/V0MZNDzuS6j83Q==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -902,15 +902,15 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.3.24":
-  version "0.3.24"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.3.24.tgz#c653b5c5cbdeaac22f37e7e3c96595cb7a70ac3a"
-  integrity sha512-/4kfxRgIID/4fIRfqV92VmdISTH8OjkIqEwNIX+aZn6MeL35103bG/vcmU2B/A2XCQa54JXAdzfa4b15wYgCHg==
+"@veupathdb/eda@^0.3.28":
+  version "0.3.28"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.3.28.tgz#a7930f14cea34e1bffb3fd6120695e6af2605b1e"
+  integrity sha512-9Zzs5OphJsqVQpqFC904hzRLacUMNnbUTSuSaUIfiN6wAcMdDXtxM0WqCD8KWWCtKA4VPGKynOcOZAMAOrpGQQ==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.3.10"
-    "@veupathdb/wdk-client" "^0.1.2"
+    "@veupathdb/components" "^0.3.11"
+    "@veupathdb/wdk-client" "^0.1.4"
     "@veupathdb/web-common" "^0.1.2"
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
@@ -967,10 +967,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/wdk-client@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.2.tgz#3b8b466e9ca72d8af6c07fc1dad21fd9b22e6059"
-  integrity sha512-PlUD6O0ihUfPWrcfLpi3Qgau4ew+V3lPfBq4YerxFS1Cn8fEskRRjtffpJqDNPzqDsWOrBblsBYaB9kpB1I2Dg==
+"@veupathdb/wdk-client@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.4.tgz#415b839a2c6efbd59c34d5bb7cd536b074f0ae0a"
+  integrity sha512-oEyAt3CtAzy4ZcL4Ja2kGhUg9AC3dyxUNIOCSGNDbj/6L49wcB7Gu7jLgM1uxJkN+dqsO9KreLxSg0r774rCiw==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
