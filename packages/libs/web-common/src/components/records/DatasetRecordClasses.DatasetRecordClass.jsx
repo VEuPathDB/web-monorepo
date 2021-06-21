@@ -125,6 +125,7 @@ function References(props) {
     return null;
   }
   let value = props.value
+  .filter(row => row.target_type === 'question' || row.link_type === 'genomicsInternal')
   .map((row, index) => {
     if (row.link_type === 'question'){
       let name = row.target_name;
@@ -142,7 +143,7 @@ function References(props) {
         </li>
       );
     } else {
-      // Then return the text and url.
+      // Use text and url (after cleaning) to create link
       let cleanUrl = row.url.replace('/a/app','');
       return (
         <li key={index}>
