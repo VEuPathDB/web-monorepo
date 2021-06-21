@@ -42,6 +42,7 @@ export default function XYPlot(props: XYPlotProps) {
       // make plot border
       mirror: true,
       type: data?.independentValueType === 'date' ? 'date' : 'linear',
+      tickfont: data.series.length ? {} : { color: 'transparent' },
     },
     yaxis: {
       title: dependentAxisLabel,
@@ -50,6 +51,7 @@ export default function XYPlot(props: XYPlotProps) {
       // make plot border
       mirror: true,
       type: data?.dependentValueType === 'date' ? 'date' : 'linear',
+      tickfont: data.series.length ? {} : { color: 'transparent' },
     },
   };
 

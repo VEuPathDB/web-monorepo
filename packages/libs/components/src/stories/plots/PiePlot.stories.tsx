@@ -1,7 +1,7 @@
 import React from 'react';
 import { Story } from '@storybook/react/types-6-0';
 
-import PiePlot, { PiePlotProps } from '../../plots/PiePlot';
+import PiePlot, { EmptyPieData, PiePlotProps } from '../../plots/PiePlot';
 import { PiePlotData } from '../../types/plots';
 import {
   DARK_GRAY,
@@ -10,8 +10,6 @@ import {
   LIGHT_GREEN,
   LIGHT_PURPLE,
 } from '../../constants/colors';
-import usePlotControls from '../../hooks/usePlotControls';
-import PieControls from '../../components/plotControls/PieControls';
 
 export default {
   title: 'Plots/Pie & Donut',
@@ -58,29 +56,7 @@ let coloredData: PiePlotData = {
   ],
 };
 
-let dataWithAvailableUnits: PiePlotData = {
-  slices: [
-    {
-      value: 10,
-      label: 'Purple',
-      color: LIGHT_PURPLE,
-    },
-    {
-      value: 2,
-      label: 'Green',
-      color: LIGHT_GREEN,
-    },
-    {
-      value: 30,
-      color: LIGHT_BLUE,
-      label: 'Blue',
-    },
-  ],
-  availableUnits: ['Not Yet', 'Implemented'],
-  selectedUnit: 'Not Yet',
-};
-
-const NoControlsTemplate: Story<PiePlotProps> = (args) => (
+const Template: Story<PiePlotProps> = (args) => (
   <PiePlot
     containerStyles={{
       width: '600px',
@@ -90,7 +66,7 @@ const NoControlsTemplate: Story<PiePlotProps> = (args) => (
   />
 );
 
-export const Basic = NoControlsTemplate.bind({});
+export const Basic = Template.bind({});
 Basic.args = {
   data: data,
   title: 'Pie Plot',
@@ -110,7 +86,7 @@ Basic.args = {
   },
 };
 
-export const BasicLoading = NoControlsTemplate.bind({});
+export const BasicLoading = Template.bind({});
 BasicLoading.args = {
   data: data,
   title: 'Pie Plot',
@@ -131,14 +107,14 @@ BasicLoading.args = {
   showSpinner: true,
 };
 
-export const CustomSliceColors = NoControlsTemplate.bind({});
+export const CustomSliceColors = Template.bind({});
 CustomSliceColors.args = {
   ...Basic.args,
   data: coloredData,
   title: 'Pie Plot w/ Custom Colors',
 };
 
-export const BasicDonut = NoControlsTemplate.bind({});
+export const BasicDonut = Template.bind({});
 BasicDonut.args = {
   ...Basic.args,
   title: 'Basic Donut Plot',
@@ -147,7 +123,7 @@ BasicDonut.args = {
   },
 };
 
-export const DonutText = NoControlsTemplate.bind({});
+export const DonutText = Template.bind({});
 DonutText.args = {
   ...Basic.args,
   title: 'Donut Plot w/Text',
@@ -157,7 +133,7 @@ DonutText.args = {
   },
 };
 
-export const FilledDonut = NoControlsTemplate.bind({});
+export const FilledDonut = Template.bind({});
 FilledDonut.args = {
   ...Basic.args,
   title: 'Filled Donut',
@@ -169,64 +145,12 @@ FilledDonut.args = {
   },
 };
 
-export const BasicControlPanel: Story<PiePlotProps> = (args) => {
-  const plotControls = usePlotControls<PiePlotData>({ data: args.data });
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', margin: 25 }}>
-      <PiePlot
-        {...args}
-        spacingOptions={{
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
-          marginTop: 10,
-        }}
-        containerStyles={{
-          width: '600px',
-          height: '400px',
-        }}
-        {...plotControls}
-      />
-      <div style={{ height: 25 }} />
-      <PieControls label="Pie Plot Controls" {...plotControls} />
-    </div>
-  );
+export const Empty = Template.bind({});
+Empty.args = {
+  data: EmptyPieData,
 };
 
-BasicControlPanel.args = {
-  data: coloredData,
-};
-
-export const ControlPanelWithAvailableUnits: Story<PiePlotProps> = (args) => {
-  const plotControls = usePlotControls<PiePlotData>({
-    data: args.data,
-    onSelectedUnitChange: async (unit) => {
-      return args.data;
-    },
-  });
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', margin: 25 }}>
-      <PiePlot
-        {...args}
-        spacingOptions={{
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
-          marginTop: 10,
-        }}
-        {...plotControls}
-      />
-      <div style={{ height: 25 }} />
-      <PieControls
-        label="Pie Plot Controls W/ Available Units"
-        {...plotControls}
-      />
-    </div>
-  );
-};
-
-ControlPanelWithAvailableUnits.args = {
-  data: dataWithAvailableUnits,
+export const EmptyLoading = Template.bind({});
+EmptyLoading.args = {
+  data: EmptyPieData,
 };
