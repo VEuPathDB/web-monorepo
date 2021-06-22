@@ -1,8 +1,9 @@
 import { StudyEntity } from '..';
 import { Filter } from '../types/filter';
 import Draggable from 'react-draggable';
+// import { ResizableBox } from 'react-resizable';
 import FilterChipList from './FilterChipList';
-import { ActionIconButton } from '../../workspace/ActionIconButton';
+// import 'react-resizable/css/styles.css';
 
 interface Props {
   open: boolean;
@@ -37,12 +38,7 @@ export default function GlobalFiltersDialog(props: Props) {
         entityId;
 
       filterChipLists.push(
-        <div
-          style={{
-            padding: '10px',
-            overflow: 'auto',
-          }}
-        >
+        <div>
           <h4>{entityDisplayText}</h4>
           <FilterChipList
             filters={filters}
@@ -53,7 +49,17 @@ export default function GlobalFiltersDialog(props: Props) {
       );
     }
 
-    content = <div>{filterChipLists}</div>;
+    content = (
+      <div
+        style={{
+          padding: '10px',
+          overflow: 'auto',
+          height: '238px',
+        }}
+      >
+        {filterChipLists}
+      </div>
+    );
   } else {
     content = <div>There are no filters applied to the dataset.</div>;
   }
@@ -82,6 +88,7 @@ export default function GlobalFiltersDialog(props: Props) {
             fontWeight: 700,
             padding: '.6em .8em',
             cursor: 'move',
+            height: '42px',
           }}
         >
           <div
@@ -127,10 +134,17 @@ export default function GlobalFiltersDialog(props: Props) {
           style={{
             position: 'absolute',
             bottom: 0,
+            height: '20px',
+            width: '100%',
+            backgroundColor: '#eee',
+            textAlign: 'center',
           }}
         >
           {props.filters.length > 0 && (
-            <button onClick={() => props.setFilters([])}>
+            <button
+              onClick={() => props.setFilters([])}
+              style={{ border: 'none', background: 'none' }}
+            >
               Remove all filters
             </button>
           )}
