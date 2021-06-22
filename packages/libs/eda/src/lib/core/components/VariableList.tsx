@@ -25,7 +25,6 @@ import {
 import CheckboxTree from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
-import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 import {
   isFilterField,
   isMulti,
@@ -38,6 +37,18 @@ import {
   FieldTreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import { cx } from '../../workspace/Utils';
+import { Theme, Tooltip, withStyles } from '@material-ui/core';
+
+const HtmlTooltip = withStyles((theme: Theme) => ({
+  tooltip: {
+    backgroundColor: '#fffde7',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 320,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+    boxShadow: theme.shadows[1],
+  },
+}))(Tooltip);
 
 //defining types - some are not used (need cleanup later)
 interface VariableField {
@@ -253,11 +264,10 @@ export default function VariableList(props: VariableListProps) {
   const additionalFilters = useMemo(
     () => [
       <Tooltip
-        content={makeStarredVariablesFilterTooltipContent(
+        title={makeStarredVariablesFilterTooltipContent(
           showOnlyStarredVariables,
           starredVariableToggleDisabled
         )}
-        hideDelay={0}
       >
         <div>
           <button
@@ -305,11 +315,10 @@ export default function VariableList(props: VariableListProps) {
         <>
           {disabledFields.size > 0 && (
             <div className={cx('-DisabledVariablesToggle')}>
-              <Tooltip
-                content={tooltipContent}
-                showDelay={50}
-                hideDelay={50}
-                hideEvent="click mouseout"
+              <HtmlTooltip
+                title={tooltipContent}
+                interactive
+                // hideEvent="click mouseout"
               >
                 <button
                   className="link"
@@ -321,7 +330,7 @@ export default function VariableList(props: VariableListProps) {
                   <Toggle on={hideDisabledFields} /> Only show compatible
                   variables
                 </button>
-              </Tooltip>
+              </HtmlTooltip>
             </div>
           )}
           {treeSection}
@@ -423,57 +432,58 @@ const FieldNode = ({
     return () => clearTimeout(timerId);
   }, [isActive, searchTerm]);
 
-  const fieldContents = (
-    <Tooltip content={node.field.description} hideDelay={0}>
-      {isFilterField(node.field) ? (
-        <a
-          ref={nodeRef}
-          className={
-            'wdk-AttributeFilterFieldItem' +
-            (isActive ? ' wdk-AttributeFilterFieldItem__active' : '') +
-            (isDisabled ? ' wdk-AttributeFilterFieldItem__disabled' : '')
-          }
-          href={'#' + node.field.term}
-          title={
-            isDisabled
-              ? 'This variable cannot be used with this plot and other variable selections.'
-              : 'Select this variable.'
-          }
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!isDisabled) handleFieldSelect(node);
-          }}
-        >
-          <Icon fa={getIcon(node.field)} /> {node.field.display}
-        </a>
-      ) : (
-        //add condition for identifying entity parent and entity parent of activeField
-        <div
-          className={
-            'wdk-Link wdk-AttributeFilterFieldParent' +
-            (node.field.term.includes('entity:')
-              ? ' wdk-AttributeFilterFieldEntityParent'
-              : '') +
-            (activeFieldEntity != null &&
-            node.field.term.split(':')[1] === activeFieldEntity
-              ? ' wdk-AttributeFilterFieldParent__active'
-              : '')
-          }
-        >
-          {node.field.display}
-        </div>
-      )}
+  const fieldContents = isFilterField(node.field) ? (
+    <Tooltip
+      title={
+        isDisabled
+          ? 'This variable cannot be used with this plot and other variable selections.'
+          : 'Select this variable.'
+      }
+    >
+      <a
+        ref={nodeRef}
+        className={
+          'wdk-AttributeFilterFieldItem' +
+          (isActive ? ' wdk-AttributeFilterFieldItem__active' : '') +
+          (isDisabled ? ' wdk-AttributeFilterFieldItem__disabled' : '')
+        }
+        href={'#' + node.field.term}
+        title={
+          isDisabled
+            ? 'This variable cannot be used with this plot and other variable selections.'
+            : 'Select this variable.'
+        }
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!isDisabled) handleFieldSelect(node);
+        }}
+      >
+        <Icon fa={getIcon(node.field)} /> {node.field.display}
+      </a>
     </Tooltip>
+  ) : (
+    //add condition for identifying entity parent and entity parent of activeField
+    <div
+      className={
+        'wdk-Link wdk-AttributeFilterFieldParent' +
+        (node.field.term.includes('entity:')
+          ? ' wdk-AttributeFilterFieldEntityParent'
+          : '') +
+        (activeFieldEntity != null &&
+        node.field.term.split(':')[1] === activeFieldEntity
+          ? ' wdk-AttributeFilterFieldParent__active'
+          : '')
+      }
+    >
+      {node.field.display}
+    </div>
   );
 
   return (
     <>
       {isFilterField(node.field) && (
-        <Tooltip
-          content={makeStarButtonTooltipContent(node, isStarred)}
-          hideDelay={0}
-        >
+        <Tooltip title={makeStarButtonTooltipContent(node, isStarred)}>
           <button
             className={`${cx('-StarButton')} link`}
             onClick={onClickStar}
