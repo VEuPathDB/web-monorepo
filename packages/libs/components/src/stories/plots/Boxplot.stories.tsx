@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import Boxplot, { Props } from '../../plots/Boxplot';
+import Boxplot from '../../plots/Boxplot';
 
 export default {
   title: 'Plots/Boxplot',

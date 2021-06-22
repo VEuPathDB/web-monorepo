@@ -89,28 +89,20 @@ export default function Boxplot({
   dependentValueType,
 }: Props) {
   const pdata = data.map((d, index) => {
-    const orientationDependentProps: any =
-      orientation === 'vertical'
-        ? {
-            x: d.label,
-            y:
-              d.rawData && showRawData
-                ? d.rawData
-                : d.outliers?.length
-                ? d.outliers
-                : undefined,
-          }
-        : {
-            y: d.label,
-            x:
-              d.rawData && showRawData
-                ? d.rawData
-                : d.outliers?.length
-                ? d.outliers
-                : undefined,
-          };
+    const [independentAxis, dependentAxis] =
+      orientation === 'vertical' ? ['x', 'y'] : ['y', 'x'];
+    const orientationDependentProps: any = {
+      [independentAxis]: d.label,
+      [dependentAxis]:
+        d.rawData && showRawData
+          ? d.rawData
+          : d.outliers?.length
+          ? d.outliers
+          : undefined,
+    };
 
     // seems like plotly bug: y[0] or x[0] should not be empty array (e.g., with overlay variable)
+    // see multipleData at story file (Kenya case)
     if (
       orientation === 'vertical' &&
       orientationDependentProps.y &&
@@ -218,12 +210,3 @@ Boxplot.defaultProps = {
   markerOpacity: 0.5,
   orientation: 'vertical',
 };
-
-function isArrayOfNumbers(value: any): value is number[] {
-  // value.length !==0
-  return (
-    Array.isArray(value) &&
-    value.length !== 0 &&
-    value.every((item) => typeof item === 'number')
-  );
-}
