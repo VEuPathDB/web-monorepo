@@ -1,5 +1,5 @@
 // load Boxplot component
-import BoxplotEDA from '@veupathdb/components/lib/plots/BoxplotEDA';
+import Boxplot from '@veupathdb/components/lib/plots/Boxplot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -18,10 +18,6 @@ import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 
-// tableVariable/isTableVariable fit to the condition of overlayVariable
-import { isScatterplotVariable, isTableVariable } from '../../filter/guards';
-// import { ScatterplotVariable } from '../../filter/types';
-
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
@@ -37,14 +33,9 @@ function GridComponent(props: VisualizationProps) {
   return <BoxplotViz {...props} fullscreen={false} />;
 }
 
-// this needs a handling of text/image for scatter, line, and density plots
 function SelectorComponent() {
   return (
-    <img
-      alt="Scatter plot"
-      style={{ height: '100%', width: '100%' }}
-      src={box}
-    />
+    <img alt="Box plot" style={{ height: '100%', width: '100%' }} src={box} />
   );
 }
 
@@ -53,17 +44,13 @@ function FullscreenComponent(props: VisualizationProps) {
 }
 
 function createDefaultConfig(): BoxplotConfig {
-  return {
-    enableOverlay: true,
-  };
+  return {};
 }
 
 type BoxplotConfig = t.TypeOf<typeof BoxplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const BoxplotConfig = t.intersection([
-  t.type({
-    enableOverlay: t.boolean,
-  }),
+  t.type({}),
   t.partial({
     xAxisVariable: Variable,
     yAxisVariable: Variable,
@@ -162,9 +149,14 @@ function BoxplotViz(props: Props) {
 
       // check variable inputs and add densityplot
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return Promise.reject();
+        return undefined;
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
-        return Promise.reject();
+        return undefined;
+
+      if (xAxisVariable === yAxisVariable)
+        throw new Error(
+          'The X and Y variables should not be the same. Please choose different variables for X and Y.'
+        );
 
       // add visualization.type here. valueSpec too?
       const params = getRequestParams(
@@ -172,7 +164,7 @@ function BoxplotViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
+        vizConfig.overlayVariable,
         // add visualization.type
         visualization.type
       );
@@ -195,8 +187,6 @@ function BoxplotViz(props: Props) {
       visualization.type,
     ])
   );
-
-  console.log('const boxplot data = ', data);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -256,84 +246,48 @@ function BoxplotViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {data.value ? (
-        fullscreen ? (
-          <BoxplotWithControls
-            // data.value
-            data={data.value.series}
-            width={'100%'}
-            height={450}
-            vizType={visualization.type}
-            // title={'boxplot'}
-            orientation={'vertical'}
-            // orientation={'horizontal'}
-            points={'outliers'}
-            // points={'all'}
-            //DKDK check this option later
-            independentAxisLabel={
-              findVariable(vizConfig.xAxisVariable)?.displayName
-            }
-            dependentAxisLabel={
-              findVariable(vizConfig.yAxisVariable)?.displayName
-            }
-            showMean={true}
-            showSpinner={data.pending}
-          />
-        ) : (
-          // thumbnail/grid view
-          <BoxplotEDA
-            data={data.value.series}
-            width={230}
-            height={165}
-            orientation={'vertical'}
-            // orientation={'horizontal'}
-            points={'outliers'}
-            // points={'all'}
-            //DKDK show/hide independent/dependent axis tick label
-            showIndependentAxisTickLabel={false}
-            showDependentAxisTickLabel={false}
-            showMean={true}
-            staticPlot={true}
-            displayLegend={false}
-            displayLibraryControls={false}
-            margin={{ l: 30, r: 20, b: 0, t: 20 }}
-            showSpinner={data.pending}
-          />
-        )
+      {fullscreen ? (
+        <BoxplotWithControls
+          // data.value
+          data={data.value && !data.pending ? data.value.series : []}
+          width={'100%'}
+          height={450}
+          vizType={visualization.type}
+          // title={'boxplot'}
+          orientation={'vertical'}
+          // orientation={'horizontal'}
+          independentAxisLabel={
+            findVariable(vizConfig.xAxisVariable)?.displayName
+          }
+          dependentAxisLabel={
+            findVariable(vizConfig.yAxisVariable)?.displayName
+          }
+          showMean={true}
+          showSpinner={data.pending}
+          // this is required for date type
+          // not sure why enrollment year's type is number, not date
+          independentValueType={findVariable(vizConfig.xAxisVariable)?.type}
+          dependentValueType={findVariable(vizConfig.yAxisVariable)?.type}
+          showRawData={true}
+        />
       ) : (
-        //DKDK no data or data error case: with control
-        <>
-          <BoxplotEDA
-            data={[]}
-            width={fullscreen ? '100%' : 230}
-            height={fullscreen ? 450 : 165}
-            orientation={'vertical'}
-            points={'outliers'}
-            independentAxisLabel={
-              fullscreen
-                ? findVariable(vizConfig.xAxisVariable)
-                  ? findVariable(vizConfig.xAxisVariable)?.displayName
-                  : 'Label'
-                : undefined
-            }
-            dependentAxisLabel={
-              fullscreen
-                ? findVariable(vizConfig.yAxisVariable)
-                  ? findVariable(vizConfig.yAxisVariable)?.displayName
-                  : 'Count'
-                : undefined
-            }
-            //DKDK show/hide independent/dependent axis tick label
-            showIndependentAxisTickLabel={fullscreen ? undefined : false}
-            showDependentAxisTickLabel={fullscreen ? undefined : false}
-            displayLegend={fullscreen ? true : false}
-            displayLibraryControls={false}
-            staticPlot={fullscreen ? false : true}
-            showMean={fullscreen ? false : true}
-            margin={fullscreen ? {} : { l: 30, r: 20, b: 0, t: 20 }}
-            showSpinner={data.pending}
-          />
-        </>
+        // thumbnail/grid view
+        <Boxplot
+          data={data.value && !data.pending ? data.value.series : []}
+          width={230}
+          height={165}
+          orientation={'vertical'}
+          // orientation={'horizontal'}
+          // show/hide independent/dependent axis tick label
+          showIndependentAxisTickLabel={false}
+          showDependentAxisTickLabel={false}
+          showMean={true}
+          staticPlot={true}
+          displayLegend={false}
+          displayLibraryControls={false}
+          margin={{ l: 30, r: 20, b: 0, t: 20 }}
+          showSpinner={data.pending}
+        />
       )}
     </div>
   );
@@ -356,18 +310,16 @@ any) {
     };
   }, []);
 
-  // console.log('BoxplotWithControls.data = ', data);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <BoxplotEDA
+      <Boxplot
         {...BoxplotProps}
         data={data}
         // add controls
         displayLegend={data.length > 1}
         displayLibraryControls={false}
       />
-      {/* DKDK potential BoxplotControls: commented out for now  */}
+      {/* potential BoxplotControls: commented out for now  */}
       {/* <BoxplotControls
           // label="Box Plot Controls"
           errorManagement={errorManagement}
@@ -377,27 +329,36 @@ any) {
 }
 
 /**
- * Reformat response from Scatter Plot endpoints into complete BoxplotData
+ * Reformat response from Box Plot endpoints into complete BoxplotData
  * @param response
  * @returns BoxplotData
  */
-//DKDK add densityplot
 export function boxplotResponseToData(
   response: PromiseType<ReturnType<DataClient['getBoxplot']>>,
   // vizType may be used for handling other plots in this component like line and density
   vizType: string
 ): any {
-  // console.log('visualization type at BoxplotResponseToData = ', vizType);
-  console.log('response.data =', response);
-
   return {
-    series: response.boxplot.data.map((data, index) => ({
-      seriesX: data.seriesX,
-      seriesY: data.seriesY,
-      overlayVariableDetails: data.overlayVariableDetails
-        ? data.overlayVariableDetails
-        : '',
-    })),
+    series: response.boxplot.data.map(
+      (data: { [key: string]: any }, index) => ({
+        lowerfence: data.lowerfence,
+        upperfence: data.upperfence,
+        q1: data.q1,
+        q3: data.q3,
+        median: data.median,
+        mean: data.mean ? data.mean : undefined,
+        outliers: data.outliers ? data.outliers : undefined,
+        //DKDK currently returns seriesX and seriesY for points: 'all' option
+        // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
+        rawData: data.rawData ? data.rawData : undefined,
+        // this will be used as legend
+        name: data.overlayVariableDetails
+          ? data.overlayVariableDetails.value
+          : 'Data',
+        // this will be used as x-axis tick labels
+        label: data[response.boxplot.config.xVariableDetails.variableId],
+      })
+    ),
   };
 }
 
@@ -408,8 +369,7 @@ function getRequestParams(
   studyId: string,
   filters: Filter[],
   xAxisVariable: Variable,
-  //DKDK set yAxisVariable as optional for densityplot
-  yAxisVariable?: Variable,
+  yAxisVariable: Variable,
   overlayVariable?: Variable,
   // add visualization.type
   vizType?: string
@@ -420,9 +380,9 @@ function getRequestParams(
     config: {
       // is outputEntityId correct?
       outputEntityId: xAxisVariable.entityId,
-      //DKDK post options
-      // points: 'outliers',
-      points: 'all',
+      // post options
+      points: 'outliers',
+      // points: 'all',
       mean: 'true',
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
