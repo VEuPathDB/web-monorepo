@@ -343,7 +343,6 @@ function HistogramPlotWithControls({
         barLayout={barLayout}
       />
       <HistogramControls
-        label="Histogram Controls"
         valueType={data.valueType}
         barLayout={barLayout}
         displayLegend={false /* should not be a required prop */}

@@ -371,6 +371,7 @@ function ScatterplotViz(props: Props) {
               minWidth={210}
               buttonColor={'primary'}
               margins={['0', '0', '0', '5em']}
+              itemMarginRight={50}
             />
           )}
         </>
@@ -426,6 +427,7 @@ function ScatterplotWithControls({
           minWidth={210}
           buttonColor={'primary'}
           margins={['0', '0', '0', '5em']}
+          itemMarginRight={50}
         />
       )}
     </div>
@@ -970,6 +972,11 @@ function processInputData<T extends number | Date>(
       });
     }
 
+    // make some margin for x-axis range (2% of range for now)
+    if (typeof xMin == 'number' && typeof xMax == 'number') {
+      xMin = xMin - (xMax - xMin) * 0.02;
+      xMax = xMax + (xMax - xMin) * 0.02;
+    }
     // make some margin for y-axis range (5% of range for now)
     if (typeof yMin == 'number' && typeof yMax == 'number') {
       yMin = yMin - (yMax - yMin) * 0.05;

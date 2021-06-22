@@ -162,9 +162,7 @@ export const BarplotResponse = type({
     data: array(
       intersection([
         type({
-          // label can be number too?
-          // label: array(string),
-          label: union([array(string), array(number)]),
+          label: array(string),
           value: array(number),
         }),
         partial({
