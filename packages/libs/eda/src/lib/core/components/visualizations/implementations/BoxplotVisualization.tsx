@@ -49,15 +49,12 @@ function createDefaultConfig(): BoxplotConfig {
 
 type BoxplotConfig = t.TypeOf<typeof BoxplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const BoxplotConfig = t.intersection([
-  t.type({}),
-  t.partial({
-    xAxisVariable: Variable,
-    yAxisVariable: Variable,
-    overlayVariable: Variable,
-    facetVariable: Variable,
-  }),
-]);
+const BoxplotConfig = t.partial({
+  xAxisVariable: Variable,
+  yAxisVariable: Variable,
+  overlayVariable: Variable,
+  facetVariable: Variable,
+});
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
@@ -164,9 +161,7 @@ function BoxplotViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
-        vizConfig.overlayVariable,
-        // add visualization.type
-        visualization.type
+        vizConfig.overlayVariable
       );
 
       // boxplot
@@ -176,7 +171,7 @@ function BoxplotViz(props: Props) {
       );
 
       // send visualization.type as well
-      return boxplotResponseToData(await response, visualization.type);
+      return boxplotResponseToData(await response);
     }, [
       studyId,
       filters,
@@ -252,7 +247,6 @@ function BoxplotViz(props: Props) {
           data={data.value && !data.pending ? data.value.series : []}
           width={'100%'}
           height={450}
-          vizType={visualization.type}
           // title={'boxplot'}
           orientation={'vertical'}
           // orientation={'horizontal'}
@@ -295,7 +289,6 @@ function BoxplotViz(props: Props) {
 
 function BoxplotWithControls({
   data,
-  vizType,
   ...BoxplotProps
 }: //
 // }: BoxplotWithControlsProps) {
@@ -334,9 +327,7 @@ any) {
  * @returns BoxplotData
  */
 export function boxplotResponseToData(
-  response: PromiseType<ReturnType<DataClient['getBoxplot']>>,
-  // vizType may be used for handling other plots in this component like line and density
-  vizType: string
+  response: PromiseType<ReturnType<DataClient['getBoxplot']>>
 ): any {
   return {
     series: response.boxplot.data.map(
@@ -363,16 +354,14 @@ export function boxplotResponseToData(
 }
 
 // add an extended type
-type getRequestParamsProps = BoxplotRequestParams & { vizType?: string };
+type getRequestParamsProps = BoxplotRequestParams;
 
 function getRequestParams(
   studyId: string,
   filters: Filter[],
   xAxisVariable: Variable,
   yAxisVariable: Variable,
-  overlayVariable?: Variable,
-  // add visualization.type
-  vizType?: string
+  overlayVariable?: Variable
 ): getRequestParamsProps {
   return {
     studyId,
