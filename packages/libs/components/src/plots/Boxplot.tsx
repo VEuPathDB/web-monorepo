@@ -110,6 +110,20 @@ export default function Boxplot({
                 : undefined,
           };
 
+    // seems like plotly bug: y[0] or x[0] should not be empty array (e.g., with overlay variable)
+    if (
+      orientation === 'vertical' &&
+      orientationDependentProps.y &&
+      orientationDependentProps.y[0].length === 0
+    )
+      orientationDependentProps.y[0] = [null];
+    if (
+      orientation === 'horizontal' &&
+      orientationDependentProps.x &&
+      orientationDependentProps.x[0].length === 0
+    )
+      orientationDependentProps.x[0] = [null];
+
     return {
       lowerfence: d.lowerfence,
       upperfence: d.upperfence,
@@ -150,7 +164,7 @@ export default function Boxplot({
       tickfont: data.length ? {} : { color: 'transparent' },
       range: data.length ? undefined : [0, 10],
       showticklabels: showIndependentAxisTickLabel,
-      // just use empty string if not date
+      // set type for date
       type: independentValueType === 'date' ? 'date' : undefined,
     },
     [dependentAxis]: {
@@ -168,6 +182,7 @@ export default function Boxplot({
       range: data.length ? undefined : [0, 10],
       showticklabels: showDependentAxisTickLabel,
       // type: 'date' is required for y-axis date case like enrollment year
+      // but not working properly as it is classified as number at data
       type: dependentValueType === 'date' ? 'date' : undefined,
     },
     title: {
