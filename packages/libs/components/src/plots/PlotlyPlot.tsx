@@ -3,21 +3,26 @@ import { PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
-import { UnionOfPlotDataTypes } from '../types/plots';
 import { LayoutLegendTitle } from '../types/plotly-omissions';
 
-export interface PlotProps<T extends UnionOfPlotDataTypes> {
+export interface PlotProps<T> {
   /** plot data - following web-components' API, not Plotly's */
   data: T;
   /** Title of plot. */
   title?: string;
   /** Should plot legend be displayed? Default is yes */
   displayLegend?: boolean;
-  /** add CSS styles for plot component
+  /** CSS styles for enclosing div and also passed to
+   * the underlying Plotly plot component
+   *
    * Note: if playing around with Storybook controls, changes
    * to containerStyles only seem to take effect when resizing
    * the story window.  Resizing seems to be responsive whether
    * or not `responsive: true` in the plot config...
+   *
+   * Also note: borders, margins and padding need to be 0px
+   * because we are not doing any CSS calculations for the plotly
+   * component sizing.
    *
    * Defaults:  { width: '100%', height: '400px' }
    */
@@ -26,7 +31,7 @@ export interface PlotProps<T extends UnionOfPlotDataTypes> {
   interactive?: boolean;
   /** show Plotly's mode bar (only shows if interactive == true) */
   displayLibraryControls?: boolean;
-  /** show a loading... spinner in the middle of the enclosing div */
+  /** show a loading... spinner in the middle of the container div */
   showSpinner?: boolean;
   /** Options for customizing plot legend layout and appearance. */
   legendOptions?: PlotLegendAddon;
@@ -52,7 +57,7 @@ const defaultStyles = {
  * controlling global things like spinner, library controls etc
  *
  */
-export default function PlotlyPlot<T extends UnionOfPlotDataTypes>(
+export default function PlotlyPlot<T>(
   props: Omit<PlotProps<T>, 'data'> & PlotParams
 ) {
   const {
@@ -128,13 +133,15 @@ export default function PlotlyPlot<T extends UnionOfPlotDataTypes>(
 
   return (
     <Suspense fallback="Loading...">
-      <Plot
-        {...plotlyProps}
-        layout={finalLayout}
-        style={finalStyle}
-        config={finalConfig}
-      />
-      {showSpinner && <Spinner />}
+      <div style={{ ...finalStyle, position: 'relative' }}>
+        <Plot
+          {...plotlyProps}
+          layout={finalLayout}
+          style={finalStyle}
+          config={finalConfig}
+        />
+        {showSpinner && <Spinner />}
+      </div>
     </Suspense>
-  ); // FIXME: Spinner currently showing in middle of enclosing div rather than middle of plot.
+  );
 }

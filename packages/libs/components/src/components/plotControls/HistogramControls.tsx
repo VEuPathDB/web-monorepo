@@ -225,7 +225,7 @@ export default function HistogramControls({
         )}
         {onSelectedRangeChange ? (
           <LabelledGroup label="Subset by value">
-            {valueType !== undefined && valueType === 'date' ? (
+            {valueType != null && valueType === 'date' ? (
               <DateRangeInput
                 rangeBounds={selectedRangeBounds as DateRange}
                 range={selectedRange as DateRange}
@@ -256,7 +256,7 @@ export default function HistogramControls({
           rowGap: '0.3125em',
         }}
       >
-        {opacity != undefined && onOpacityChange && (
+        {opacity != null && onOpacityChange && (
           <OpacitySlider
             value={opacity}
             onValueChange={onOpacityChange}
@@ -267,7 +267,7 @@ export default function HistogramControls({
       <div
         style={{ display: 'flex', flexWrap: 'wrap', paddingTop: '0.3125em' }}
       >
-        {displayLegend != undefined && toggleDisplayLegend && (
+        {displayLegend != null && toggleDisplayLegend && (
           <Switch
             label="Legend"
             color={accentColor}
@@ -281,7 +281,7 @@ export default function HistogramControls({
             containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
-        {displayLibraryControls != undefined && toggleLibraryControls && (
+        {displayLibraryControls != null && toggleLibraryControls && (
           <Switch
             label="Plot.ly Controls"
             color={accentColor}
@@ -296,7 +296,7 @@ export default function HistogramControls({
       </div>
 
       <LabelledGroup label="Y-axis" containerStyles={{}}>
-        {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
+        {toggleDependentAxisLogScale && dependentAxisLogScale != null && (
           <Switch
             label="Log Scale:"
             color={accentColor}
@@ -344,20 +344,23 @@ export default function HistogramControls({
       </LabelledGroup>
 
       <LabelledGroup label="X-axis" containerStyles={{}}>
-        {availableUnits?.length && selectedUnit && onSelectedUnitChange && (
-          <ButtonGroup
-            label="Data Units"
-            options={availableUnits}
-            selectedOption={selectedUnit}
-            onOptionSelected={onSelectedUnitChange}
-            containerStyles={{ paddingBottom: '0.9375em' }}
-          />
-        )}
+        {availableUnits &&
+          availableUnits?.length > 0 &&
+          selectedUnit &&
+          onSelectedUnitChange && (
+            <ButtonGroup
+              label="Data Units"
+              options={availableUnits}
+              selectedOption={selectedUnit}
+              onOptionSelected={onSelectedUnitChange}
+              containerStyles={{ paddingBottom: '0.9375em' }}
+            />
+          )}
 
         {onBinWidthChange && (
           <SliderWidget
             label={`Bin Width${
-              valueType !== undefined && valueType === 'date'
+              valueType != null && valueType === 'date'
                 ? ' (' + (binWidth as TimeDelta).unit + ')'
                 : ''
             }`}
@@ -376,7 +379,7 @@ export default function HistogramControls({
             onChange={(newValue: number) => {
               onBinWidthChange({
                 binWidth:
-                  valueType !== undefined && valueType === 'date'
+                  valueType != null && valueType === 'date'
                     ? ({ value: newValue, unit: selectedUnit } as TimeDelta)
                     : newValue,
                 selectedUnit,
@@ -386,7 +389,7 @@ export default function HistogramControls({
         )}
 
         {onIndependentAxisRangeChange &&
-          (valueType !== undefined && valueType === 'date' ? (
+          (valueType != null && valueType === 'date' ? (
             <DateRangeInput
               label="Range:"
               range={independentAxisRange as DateRange}

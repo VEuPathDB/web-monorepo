@@ -9,26 +9,26 @@ import * as DateMath from 'date-arithmetic';
 
 type EventData = {
   id: string;
-  date: Date;
+  date: string;
 };
 
 export const getCreatedDateData = async (
   url: string
 ): Promise<Array<EventData>> => {
-  return fetch(url)
+  return await fetch(url)
     .then((response) => {
       if (response.ok) {
         return response.json();
       } else {
         throw new Error(
-          'Something went wrong with the request. Probably exceeded API rate limit.'
+          'Response not as expected. Probably exceeded API rate limit.'
         );
       }
     })
     .then((json) => {
       return json.map((item: any) => ({
         id: item.id,
-        date: new Date(item.created_at),
+        date: item.created_at,
       }));
     })
     .catch((error) => {
@@ -54,17 +54,15 @@ export const binGithubEventDates = async ({
   const eventData = await getCreatedDateData(url);
   if (eventData == null) return EmptyHistogramData;
 
-  const dates = eventData.map((event) => event.date);
-
-  // the dates come in reverse order from github, so exploit that to save time
-  const rawFirstDate = dates[dates.length - 1];
+  const dates = eventData.map((event) => event.date).sort();
+  const rawFirstDate = dates[0];
   // round it down to the nearest 'unit'
   // TO DO: phase 3 or 4 - handle epiweeks
   const firstDate =
     unit === 'week'
-      ? DateMath.startOf(rawFirstDate, unit, 0)
-      : DateMath.startOf(rawFirstDate, unit);
-  const lastDate = dates[0];
+      ? DateMath.startOf(new Date(rawFirstDate), unit, 0).toISOString()
+      : DateMath.startOf(new Date(rawFirstDate), unit).toISOString();
+  const lastDate = dates[dates.length - 1];
   const bins: HistogramBin[] = [];
 
   // bin width in whole time-units
@@ -76,7 +74,10 @@ export const binGithubEventDates = async ({
     ? {
         value: Math.max(
           1,
-          Math.floor(DateMath.diff(firstDate, lastDate, unit, true) / numBins)
+          Math.floor(
+            DateMath.diff(new Date(firstDate), new Date(lastDate), unit, true) /
+              numBins
+          )
         ),
         unit,
       }
@@ -86,18 +87,18 @@ export const binGithubEventDates = async ({
     let date = firstDate;
     date < lastDate;
     date = DateMath.add(
-      date,
+      new Date(date),
       calculatedBinWidth.value,
       calculatedBinWidth.unit as DateMath.Unit
-    )
+    ).toISOString()
   ) {
     const binEnd = DateMath.add(
-      date,
+      new Date(date),
       calculatedBinWidth.value,
       calculatedBinWidth.unit as DateMath.Unit
     );
     bins.push({
-      binStart: date.toISOString(),
+      binStart: date,
       binEnd: binEnd.toISOString(),
       binLabel: `${date} - ${binEnd}`,
       count: 0,
@@ -107,7 +108,7 @@ export const binGithubEventDates = async ({
   dates.forEach((date) => {
     // find the bin *after* the one this belongs to
     const matchingBinIndex = bins.findIndex((bin) => {
-      return date.toISOString() < bin.binStart;
+      return date < bin.binStart;
     });
     // but if we don't find that bin, we must need the final bin
     if (matchingBinIndex < 0) {
@@ -127,7 +128,7 @@ export const binGithubEventDates = async ({
     valueType: 'date',
   };
 
-  console.log(objectToReturn);
+  // console.log(objectToReturn);
 
   // @ts-ignore
   return objectToReturn;

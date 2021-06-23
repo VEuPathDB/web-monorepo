@@ -114,7 +114,7 @@ export default function Histogram({
         const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
         const binCounts = series.bins.map((bin) => bin.count);
         const binWidths = series.bins.map((bin) => {
-          if (data.valueType !== undefined && data.valueType === 'date') {
+          if (data.valueType != null && data.valueType === 'date') {
             // date, needs to be in milliseconds
             // TO DO: bars seem very slightly too narrow at monthly resolution (multiplying by 1009 fixes it)
             return (
@@ -178,14 +178,14 @@ export default function Histogram({
         // If we are not zoomed in, adjust the first bin's binStart to
         // selectedRangeBounds.min if needed
         index === 0 &&
-        selectedRangeBounds?.min != undefined &&
+        selectedRangeBounds?.min != null &&
         (!isZoomed || selectedRangeBounds.min > bin.binStart)
           ? selectedRangeBounds.min
           : bin.binStart,
       binEnd:
         // do similar for the last bin and binEnd
         index === uniqueBins.length - 1 &&
-        selectedRangeBounds?.max != undefined &&
+        selectedRangeBounds?.max != null &&
         (!isZoomed || selectedRangeBounds.max < bin.binEnd)
           ? selectedRangeBounds.max
           : bin.binEnd,
@@ -308,7 +308,7 @@ export default function Histogram({
     // range should be an array
     range: data.series.length
       ? [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
-          dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
+          dependentAxisLogScale && val != null ? Math.log10(val || 1) : val
         )
       : [0, 10],
     dtick: dependentAxisLogScale ? 1 : undefined,

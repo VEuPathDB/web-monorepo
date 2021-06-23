@@ -153,4 +153,5 @@ Empty.args = {
 export const EmptyLoading = Template.bind({});
 EmptyLoading.args = {
   data: EmptyPieData,
+  showSpinner: true,
 };

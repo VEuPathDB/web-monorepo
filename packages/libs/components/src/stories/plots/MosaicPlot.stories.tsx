@@ -74,7 +74,7 @@ EmptyData.args = {
 };
 
 export const EmptyDataLoading = Template.bind({});
-EmptyData.args = {
+EmptyDataLoading.args = {
   data: EmptyMosaicData,
   showSpinner: true,
 };

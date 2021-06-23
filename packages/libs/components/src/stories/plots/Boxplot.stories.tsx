@@ -390,7 +390,7 @@ function storyArgTypes(args: any): any {
     },
     showMean: {
       control: {
-        disable: args.data.filter((d: any) => d.mean !== undefined).length == 0,
+        disable: args.data.filter((d: any) => d.mean != null).length == 0,
       },
     },
     opacity: {

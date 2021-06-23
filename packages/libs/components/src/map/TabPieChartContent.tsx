@@ -55,7 +55,7 @@ export default function TabPieChartContent(props: SidebarPieChartProps) {
         verticalPosition: 'bottom',
         verticalPaddingAdjustment: -0.5,
       }}
-      displayLegend={props.showLegend !== undefined ? props.showLegend : true}
+      displayLegend={props.showLegend != null ? props.showLegend : true}
       displayLibraryControls={false}
     />
   );
