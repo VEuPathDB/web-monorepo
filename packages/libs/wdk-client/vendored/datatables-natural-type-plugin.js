@@ -48,7 +48,7 @@ function naturalSort (a, b, html) {
 		x = a.toString().replace(sre, '') || '',
 		y = b.toString().replace(sre, '') || '';
 		// remove html from strings if desired
-		if (!html) {
+		if (html) {
 			x = x.replace(htmre, '');
 			y = y.replace(htmre, '');
 		}
