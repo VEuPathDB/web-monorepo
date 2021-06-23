@@ -37,18 +37,8 @@ import {
   FieldTreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import { cx } from '../../workspace/Utils';
-import { Theme, Tooltip, withStyles } from '@material-ui/core';
-
-const HtmlTooltip = withStyles((theme: Theme) => ({
-  tooltip: {
-    backgroundColor: '#fffde7',
-    color: 'rgba(0, 0, 0, 0.87)',
-    maxWidth: 320,
-    fontSize: theme.typography.pxToRem(12),
-    border: '1px solid #dadde9',
-    boxShadow: theme.shadows[1],
-  },
-}))(Tooltip);
+import { Tooltip } from '@material-ui/core';
+import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 //defining types - some are not used (need cleanup later)
 interface VariableField {
@@ -316,9 +306,16 @@ export default function VariableList(props: VariableListProps) {
           {disabledFields.size > 0 && (
             <div className={cx('-DisabledVariablesToggle')}>
               <HtmlTooltip
+                css={
+                  {
+                    /*
+                     * This is needed to address a compiler error.
+                     * Not sure why it's complaining, but here we are...
+                     */
+                  }
+                }
                 title={tooltipContent}
                 interactive
-                // hideEvent="click mouseout"
               >
                 <button
                   className="link"
