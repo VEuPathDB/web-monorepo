@@ -42,5 +42,10 @@ export const workspaceTheme: ThemeOptions = {
         border: '1px solid #ccc',
       },
     },
+    MuiTooltip: {
+      tooltip: {
+        fontSize: 12,
+      },
+    },
   },
 };
