@@ -25,17 +25,20 @@ import {
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
+import { StudyEntity } from '../../../types/study';
 import { Variable } from '../../../types/variable';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 
 type HistogramDataWithCompleteCases = HistogramData & {
   completeCases?: CompleteCasesTable;
+  incompleteCases?: number;
 };
 
 export const histogramVisualization: VisualizationType = {
@@ -177,10 +180,13 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const xAxisVariable = useMemo(() => {
-    const { variable } =
+  const { xAxisVariable, outputEntity } = useMemo(() => {
+    const { entity, variable } =
       findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
-    return variable;
+    return {
+      outputEntity: entity,
+      xAxisVariable: variable,
+    };
   }, [entities, vizConfig.xAxisVariable]);
 
   const overlayVariable = useMemo(() => {
@@ -291,6 +297,7 @@ function HistogramViz(props: Props) {
               ? true
               : false
           }
+          outputEntity={outputEntity}
           independentAxisVariable={vizConfig.xAxisVariable}
           independentAxisLabel={
             xAxisVariable ? xAxisVariable.displayName : 'Bins'
@@ -298,6 +305,9 @@ function HistogramViz(props: Props) {
           showSpinner={data.pending}
           filters={filters}
           completeCases={data.pending ? undefined : data.value?.completeCases}
+          incompleteCases={
+            data.pending ? undefined : data.value?.incompleteCases
+          }
           overlayVariable={vizConfig.overlayVariable}
           overlayLabel={overlayVariable?.displayName}
         />
@@ -331,6 +341,8 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   handleDependentAxisLogScale: (newState?: boolean) => void;
   filters: Filter[];
   completeCases?: CompleteCasesTable;
+  incompleteCases?: number;
+  outputEntity?: StudyEntity;
   independentAxisVariable?: Variable;
   independentAxisLabel?: string;
   overlayVariable?: Variable;
@@ -343,6 +355,8 @@ function HistogramPlotWithControls({
   handleDependentAxisLogScale,
   filters,
   completeCases,
+  incompleteCases,
+  outputEntity,
   independentAxisVariable,
   independentAxisLabel,
   overlayVariable,
@@ -364,6 +378,11 @@ function HistogramPlotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <OutputEntityTitle
+        entity={outputEntity}
+        filters={filters}
+        incompleteCases={incompleteCases}
+      />
       <div
         style={{
           display: 'flex',
@@ -382,6 +401,7 @@ function HistogramPlotWithControls({
         <VariableCoverageTable
           completeCases={completeCases}
           filters={filters}
+          outputEntityId={independentAxisVariable?.entityId}
           variableSpecs={[
             {
               role: 'Main',
@@ -472,6 +492,7 @@ export function histogramResponseToData(
     binWidthRange,
     binWidthStep,
     completeCases: response.completeCasesTable,
+    incompleteCases: response.histogram.config.incompleteCases,
   };
 }
 

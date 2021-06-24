@@ -21,6 +21,7 @@ import { Variable } from '../../../types/variable';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 import bar from './selectorIcons/bar.svg';
@@ -220,49 +221,61 @@ function BarplotViz(props: Props) {
         </div>
       )}
       {fullscreen ? (
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'flex-start',
-          }}
-        >
-          <BarplotWithControls
-            data={data.value && !data.pending ? data.value : { series: [] }}
-            width={750}
-            height={450}
-            // height={'100%'}
-            orientation={'vertical'}
-            barLayout={'group'}
-            displayLegend={data.value?.series.length > 1}
-            independentAxisLabel={
-              vizConfig.xAxisVariable
-                ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                    .displayName
-                : 'Label'
-            }
-            dependentAxisLabel={'Count'}
-            showSpinner={data.pending}
-          />
-          <VariableCoverageTable
-            completeCases={data.pending ? undefined : data.value?.completeCases}
+        <>
+          <OutputEntityTitle
+            entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
             filters={filters}
-            variableSpecs={[
-              {
-                role: 'Main',
-                display: findEntityAndVariable(vizConfig.xAxisVariable)
-                  ?.variable.displayName,
-                variable: vizConfig.xAxisVariable,
-              },
-              {
-                role: 'Overlay',
-                display: findEntityAndVariable(vizConfig.overlayVariable)
-                  ?.variable.displayName,
-                variable: vizConfig.overlayVariable,
-              },
-            ]}
+            incompleteCases={
+              data.pending ? undefined : data.value?.incompleteCases
+            }
           />
-        </div>
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'flex-start',
+            }}
+          >
+            <BarplotWithControls
+              data={data.value && !data.pending ? data.value : { series: [] }}
+              width={750}
+              height={450}
+              // height={'100%'}
+              orientation={'vertical'}
+              barLayout={'group'}
+              displayLegend={data.value?.series.length > 1}
+              independentAxisLabel={
+                vizConfig.xAxisVariable
+                  ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                      .displayName
+                  : 'Label'
+              }
+              dependentAxisLabel={'Count'}
+              showSpinner={data.pending}
+            />
+            <VariableCoverageTable
+              completeCases={
+                data.pending ? undefined : data.value?.completeCases
+              }
+              filters={filters}
+              outputEntityId={vizConfig.xAxisVariable?.entityId}
+              variableSpecs={[
+                {
+                  role: 'Main',
+                  display: findEntityAndVariable(vizConfig.xAxisVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.xAxisVariable,
+                },
+                {
+                  role: 'Overlay',
+                  display: findEntityAndVariable(vizConfig.overlayVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.overlayVariable,
+                },
+              ]}
+            />
+          </div>
+        </>
       ) : (
         // thumbnail/grid view
         <Barplot
@@ -344,6 +357,7 @@ export function barplotResponseToData(
       value: data.value,
     })),
     completeCases: response.completeCasesTable,
+    incompleteCases: response.barplot.config.incompleteCases,
   };
 }
 

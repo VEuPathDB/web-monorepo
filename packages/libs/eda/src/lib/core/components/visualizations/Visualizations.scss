@@ -109,6 +109,10 @@
       font-style: italic;
       margin-bottom: 2em;
     }
+    .js-plotly-plot {
+      border: 1px solid #dedede;
+      box-shadow: 1px 1px 4px #00000066;
+    }
   }
   &-FullScreenActions {
     display: flex;
@@ -125,7 +129,6 @@
 
 @mixin data-table {
   z-index: 1;
-  flex-grow: 1;
   background-color: #fafafa;
   padding: 10px;
   border: 1px solid #bfbfbf;
@@ -168,7 +171,6 @@
   width: 90vw;
 
   &-Plot {
-    flex-grow: 2;
     min-width: 500px;
     max-width: 1000px;
   }

@@ -23,12 +23,14 @@ import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/studyMetadata';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
+import { StudyEntity } from '../../../types/study';
 import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   SelectorProps,
   VisualizationProps,
@@ -293,6 +295,9 @@ function ScatterplotViz(props: Props) {
             width={750}
             height={450}
             // title={'Scatter plot'}
+            outputEntity={
+              findEntityAndVariable(vizConfig.xAxisVariable)?.entity
+            }
             xAxisVariable={vizConfig.xAxisVariable}
             yAxisVariable={vizConfig.yAxisVariable}
             overlayVariable={vizConfig.overlayVariable}
@@ -320,6 +325,9 @@ function ScatterplotViz(props: Props) {
             showSpinner={data.pending}
             filters={filters}
             completeCases={data.pending ? undefined : data.value.completeCases}
+            incompleteCases={
+              data.pending ? undefined : data.value.incompleteCases
+            }
           />
         ) : (
           // thumbnail/grid view
@@ -340,7 +348,8 @@ function ScatterplotViz(props: Props) {
         )
       ) : (
         // no data or data error case: with control
-        <>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {fullscreen && <OutputEntityTitle filters={filters} />}
           <div
             style={{
               display: 'flex',
@@ -417,7 +426,7 @@ function ScatterplotViz(props: Props) {
               itemMarginRight={50}
             />
           )}
-        </>
+        </div>
       )}
     </div>
   );
@@ -425,7 +434,9 @@ function ScatterplotViz(props: Props) {
 
 type ScatterplotWithControlsProps = ScatterplotProps & {
   completeCases?: CompleteCasesTable;
+  incompleteCases?: number;
   filters: Filter[];
+  outputEntity?: StudyEntity;
   xAxisVariable?: Variable;
   yAxisVariable?: Variable;
   overlayVariable?: Variable;
@@ -442,10 +453,12 @@ function ScatterplotWithControls({
   onValueSpecChange,
   vizType,
   filters,
+  outputEntity,
   xAxisVariable,
   yAxisVariable,
   overlayVariable,
   completeCases,
+  incompleteCases,
   overlayLabel,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
@@ -461,11 +474,17 @@ function ScatterplotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <OutputEntityTitle
+        entity={outputEntity}
+        filters={filters}
+        incompleteCases={incompleteCases}
+      />
       <div
         style={{
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'flex-start',
+          marginBottom: '1em',
         }}
       >
         <XYPlot
@@ -478,6 +497,7 @@ function ScatterplotWithControls({
         <VariableCoverageTable
           completeCases={completeCases}
           filters={filters}
+          outputEntityId={outputEntity?.id}
           variableSpecs={[
             {
               role: 'X-axis',
@@ -545,6 +565,7 @@ export function scatterplotResponseToData(
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
+    incompleteCases: response.scatterplot.config.incompleteCases,
   };
 }
 

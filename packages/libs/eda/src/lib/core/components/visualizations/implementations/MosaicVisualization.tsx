@@ -22,6 +22,7 @@ import { PromiseType } from '../../../types/utility';
 import { Variable } from '../../../types/variable';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
@@ -31,6 +32,7 @@ type MosaicData = Pick<
   'data' | 'independentValues' | 'dependentValues'
 > & {
   completeCases?: CompleteCasesTable;
+  incompleteCases?: number;
 };
 
 type ContTableData = MosaicData &
@@ -303,6 +305,7 @@ function MosaicViz(props: Props) {
             data.value && !data.pending ? data.value.dependentValues : []
           }
           height={450}
+          width={750}
           independentLabel={
             data.value && !data.pending && xAxisVariableName
               ? xAxisVariableName
@@ -321,7 +324,7 @@ function MosaicViz(props: Props) {
         style={{
           display: 'grid',
           gridAutoFlow: 'row',
-          gap: '0.5em',
+          gap: '0.75em',
           marginLeft: '3em',
           marginTop: '1.5em',
         }}
@@ -329,6 +332,7 @@ function MosaicViz(props: Props) {
         <VariableCoverageTable
           completeCases={data.pending ? undefined : data.value?.completeCases}
           filters={filters}
+          outputEntityId={vizConfig.xAxisVariable?.entityId}
           variableSpecs={[
             {
               role: 'X-axis',
@@ -420,6 +424,16 @@ function MosaicViz(props: Props) {
             : String(data.error)}
         </div>
       )}
+
+      {fullscreen && (
+        <OutputEntityTitle
+          entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+          filters={filters}
+          incompleteCases={
+            data.pending ? undefined : data.value?.incompleteCases
+          }
+        />
+      )}
       {plotComponent}
     </div>
   );
@@ -507,6 +521,7 @@ export function twoByTwoResponseToData(
     oddsRatio: response.statsTable[0].oddsratio,
     orInterval: response.statsTable[0].orInterval,
     completeCases: response.completeCasesTable,
+    incompleteCases: response.mosaic.config.incompleteCases,
   };
 }
 
