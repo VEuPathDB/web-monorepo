@@ -2,6 +2,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { useEntityCounts } from '../../hooks/entityCounts';
 import { Filter } from '../../types/filter';
 import { StudyEntity } from '../../types/study';
+import { makeEntityDisplayName } from '../../utils/study-metadata';
 
 interface Props {
   incompleteCases?: number;
@@ -25,13 +26,8 @@ export function OutputEntityTitle({ entity, incompleteCases, filters }: Props) {
     <p className={cx('', (entity == null || outputSize == null) && 'loading')}>
       {outputSize != null && <>{outputSize.toLocaleString()} </>}
       {entity != null && outputSize != null
-        ? makeEntityDisplayName(entity, outputSize)
+        ? makeEntityDisplayName(entity, outputSize !== 1)
         : 'Loading visualization...'}
     </p>
   );
-}
-
-// FIXME: "StudyEntity" should probably have a "displayNamePlural" field
-function makeEntityDisplayName(entity: StudyEntity, outputSize: number) {
-  return outputSize === 1 ? entity.displayName : `${entity.displayName}s`;
 }
