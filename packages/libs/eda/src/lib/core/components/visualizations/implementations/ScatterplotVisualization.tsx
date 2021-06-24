@@ -367,13 +367,13 @@ function ScatterplotViz(props: Props) {
               independentAxisLabel={
                 fullscreen
                   ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                      .displayName
+                      .displayName ?? 'X-Axis'
                   : undefined
               }
               dependentAxisLabel={
                 fullscreen
                   ? findEntityAndVariable(vizConfig.yAxisVariable)?.variable
-                      .displayName
+                      .displayName ?? 'Y-Axis'
                   : undefined
               }
               displayLegend={fullscreen ? true : false}

@@ -304,16 +304,8 @@ function MosaicViz(props: Props) {
           }
           height={450}
           width={750}
-          independentLabel={
-            data.value && !data.pending && xAxisVariableName
-              ? xAxisVariableName
-              : ''
-          }
-          dependentLabel={
-            data.value && !data.pending && yAxisVariableName
-              ? yAxisVariableName
-              : ''
-          }
+          independentLabel={xAxisVariableName ?? 'X-axis'}
+          dependentLabel={yAxisVariableName ?? 'Y-axis'}
           showLegend={true}
           showSpinner={data.pending}
         />

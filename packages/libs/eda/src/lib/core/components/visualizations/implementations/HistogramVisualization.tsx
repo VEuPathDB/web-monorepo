@@ -300,9 +300,7 @@ function HistogramViz(props: Props) {
           }
           outputEntity={outputEntity}
           independentAxisVariable={vizConfig.xAxisVariable}
-          independentAxisLabel={
-            xAxisVariable ? xAxisVariable.displayName : 'Bins'
-          }
+          independentAxisLabel={xAxisVariable?.displayName ?? 'Main'}
           showSpinner={data.pending}
           filters={filters}
           completeCases={data.pending ? undefined : data.value?.completeCases}
@@ -343,7 +341,6 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   sampleSize?: SampleSizeTableArray;
   outputEntity?: StudyEntity;
   independentAxisVariable?: Variable;
-  independentAxisLabel?: string;
   overlayVariable?: Variable;
   overlayLabel?: string;
 };
@@ -357,7 +354,6 @@ function HistogramPlotWithControls({
   sampleSize,
   outputEntity,
   independentAxisVariable,
-  independentAxisLabel,
   overlayVariable,
   overlayLabel,
   ...histogramProps
@@ -400,7 +396,7 @@ function HistogramPlotWithControls({
           variableSpecs={[
             {
               role: 'Main',
-              display: independentAxisLabel,
+              display: histogramProps.independentAxisLabel,
               variable: independentAxisVariable,
             },
             {

@@ -242,10 +242,8 @@ function BarplotViz(props: Props) {
               barLayout={'group'}
               displayLegend={data.value?.series.length > 1}
               independentAxisLabel={
-                vizConfig.xAxisVariable
-                  ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                      .displayName
-                  : 'Label'
+                findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                  .displayName ?? 'Main'
               }
               dependentAxisLabel={'Count'}
               showSpinner={data.pending}

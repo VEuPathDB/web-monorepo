@@ -58,15 +58,15 @@ export function VariableCoverageTable({
           <tr>
             <th></th>
             <th>Label</th>
-            <th>Data</th>
-            <th>No data</th>
+            <th className="numeric">Data</th>
+            <th className="numeric">No data</th>
           </tr>
           {rows.map((row) => (
             <tr key={row.role}>
               <th>{row.role}</th>
               <td>{row.display}</td>
-              <td>{row.complete?.toLocaleString()}</td>
-              <td>{row.incomplete?.toLocaleString()}</td>
+              <td className="numeric">{row.complete?.toLocaleString()}</td>
+              <td className="numeric">{row.incomplete?.toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
