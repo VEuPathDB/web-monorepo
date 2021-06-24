@@ -14,12 +14,14 @@ import { useEntityCounts } from './entityCounts';
  * @param completeCases
  * @param filteredEntityCounts
  * @param variables
+ * @param outputEntityId
  * @returns A VariableCoverageTableRow[]
  */
 export function useVariableCoverageTableRows(
   variableSpecs: VariableSpec[],
   filters: Filter[],
-  completeCases?: CompleteCasesTable
+  completeCases?: CompleteCasesTable,
+  outputEntityId?: string
 ): VariableCoverageTableRow[] {
   const completeCasesMap = useCompleteCasesMap(completeCases);
   const filteredEntityCountsResult = useEntityCounts(filters);
@@ -52,21 +54,24 @@ export function useVariableCoverageTableRows(
         };
 
         const variableFilteredEntityCount =
-          filteredEntityCountsResult.value == null
+          filteredEntityCountsResult.value == null || outputEntityId == null
             ? undefined
-            : filteredEntityCountsResult.value[entityId];
+            : filteredEntityCountsResult.value[outputEntityId];
 
-        return variableFilteredEntityCount == null ||
-          baseRowWithCounts.complete > variableFilteredEntityCount
+        return variableFilteredEntityCount == null
           ? baseRowWithCounts
           : {
               ...baseRowWithCounts,
-              total: variableFilteredEntityCount,
               incomplete:
                 variableFilteredEntityCount - baseRowWithCounts.complete,
             };
       }),
-    [completeCasesMap, filteredEntityCountsResult.value, variableSpecs]
+    [
+      completeCasesMap,
+      filteredEntityCountsResult.value,
+      outputEntityId,
+      variableSpecs,
+    ]
   );
 }
 

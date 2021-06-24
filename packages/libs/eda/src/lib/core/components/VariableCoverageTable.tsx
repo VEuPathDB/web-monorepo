@@ -8,6 +8,7 @@ export interface Props {
   completeCases?: CompleteCasesTable;
   filters: Filter[];
   variableSpecs: VariableSpec[];
+  outputEntityId?: string;
 }
 
 export interface VariableSpec {
@@ -29,20 +30,20 @@ export interface VariableCoverageTableRow {
   complete?: number;
   /* count of entities which are missing the variable */
   incomplete?: number;
-  /* total count of entities */
-  total?: number;
 }
 
 export function VariableCoverageTable({
   containerClassName,
   completeCases,
   filters,
+  outputEntityId,
   variableSpecs,
 }: Props) {
   const rows = useVariableCoverageTableRows(
     variableSpecs,
     filters,
-    completeCases
+    completeCases,
+    outputEntityId
   );
 
   const className =
@@ -59,7 +60,6 @@ export function VariableCoverageTable({
             <th>Label</th>
             <th>Data</th>
             <th>No data</th>
-            <th>Total</th>
           </tr>
           {rows.map((row) => (
             <tr key={row.role}>
@@ -67,7 +67,6 @@ export function VariableCoverageTable({
               <td>{row.display}</td>
               <td>{row.complete?.toLocaleString()}</td>
               <td>{row.incomplete?.toLocaleString()}</td>
-              <td>{row.total?.toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
