@@ -27,13 +27,11 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
 
-type MosaicData = Pick<
-  MosaicProps,
-  'data' | 'independentValues' | 'dependentValues'
-> & {
-  completeCases?: CompleteCasesTable;
-  incompleteCases?: number;
-};
+interface MosaicData
+  extends Pick<MosaicProps, 'data' | 'independentValues' | 'dependentValues'> {
+  completeCases: CompleteCasesTable;
+  sampleSize: { size: number[] }[];
+}
 
 type ContTableData = MosaicData &
   Partial<{
@@ -428,10 +426,7 @@ function MosaicViz(props: Props) {
       {fullscreen && (
         <OutputEntityTitle
           entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
-          filters={filters}
-          incompleteCases={
-            data.pending ? undefined : data.value?.incompleteCases
-          }
+          sampleSize={data.pending ? undefined : data.value?.sampleSize}
         />
       )}
       {plotComponent}
@@ -494,6 +489,8 @@ export function contTableResponseToData(
     pValue: response.statsTable[0].pvalue,
     degreesFreedom: response.statsTable[0].degreesFreedom,
     chisq: response.statsTable[0].chisq,
+    completeCases: response.completeCasesTable,
+    sampleSize: response.sampleSizeTable,
   };
 }
 
@@ -521,7 +518,7 @@ export function twoByTwoResponseToData(
     oddsRatio: response.statsTable[0].oddsratio,
     orInterval: response.statsTable[0].orInterval,
     completeCases: response.completeCasesTable,
-    incompleteCases: response.mosaic.config.incompleteCases,
+    sampleSize: response.sampleSizeTable,
   };
 }
 

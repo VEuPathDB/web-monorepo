@@ -17,6 +17,7 @@ import {
   ScatterplotRequestParams,
   ScatterplotResponse,
   LineplotRequestParams,
+  SampleSizeTableArray,
 } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
@@ -325,9 +326,7 @@ function ScatterplotViz(props: Props) {
             showSpinner={data.pending}
             filters={filters}
             completeCases={data.pending ? undefined : data.value.completeCases}
-            incompleteCases={
-              data.pending ? undefined : data.value.incompleteCases
-            }
+            sampleSize={data.pending ? undefined : data.value.sampleSize}
           />
         ) : (
           // thumbnail/grid view
@@ -349,7 +348,11 @@ function ScatterplotViz(props: Props) {
       ) : (
         // no data or data error case: with control
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {fullscreen && <OutputEntityTitle filters={filters} />}
+          {fullscreen && (
+            <OutputEntityTitle
+              entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            />
+          )}
           <div
             style={{
               display: 'flex',
@@ -433,8 +436,8 @@ function ScatterplotViz(props: Props) {
 }
 
 type ScatterplotWithControlsProps = ScatterplotProps & {
-  completeCases?: CompleteCasesTable;
-  incompleteCases?: number;
+  completeCases: CompleteCasesTable;
+  sampleSize: SampleSizeTableArray;
   filters: Filter[];
   outputEntity?: StudyEntity;
   xAxisVariable?: Variable;
@@ -458,7 +461,7 @@ function ScatterplotWithControls({
   yAxisVariable,
   overlayVariable,
   completeCases,
-  incompleteCases,
+  sampleSize,
   overlayLabel,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
@@ -474,11 +477,7 @@ function ScatterplotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <OutputEntityTitle
-        entity={outputEntity}
-        filters={filters}
-        incompleteCases={incompleteCases}
-      />
+      <OutputEntityTitle entity={outputEntity} sampleSize={sampleSize} />
       <div
         style={{
           display: 'flex',
@@ -565,7 +564,7 @@ export function scatterplotResponseToData(
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
-    incompleteCases: response.scatterplot.config.incompleteCases,
+    sampleSize: response.sampleSizeTable,
   };
 }
 

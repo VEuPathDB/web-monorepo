@@ -21,6 +21,7 @@ import {
   DataClient,
   HistogramRequestParams,
   HistogramResponse,
+  SampleSizeTableArray,
 } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
@@ -37,8 +38,8 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 
 type HistogramDataWithCompleteCases = HistogramData & {
-  completeCases?: CompleteCasesTable;
-  incompleteCases?: number;
+  completeCases: CompleteCasesTable;
+  sampleSize: SampleSizeTableArray;
 };
 
 export const histogramVisualization: VisualizationType = {
@@ -305,9 +306,7 @@ function HistogramViz(props: Props) {
           showSpinner={data.pending}
           filters={filters}
           completeCases={data.pending ? undefined : data.value?.completeCases}
-          incompleteCases={
-            data.pending ? undefined : data.value?.incompleteCases
-          }
+          sampleSize={data.pending ? undefined : data.value?.sampleSize}
           overlayVariable={vizConfig.overlayVariable}
           overlayLabel={overlayVariable?.displayName}
         />
@@ -341,7 +340,7 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   handleDependentAxisLogScale: (newState?: boolean) => void;
   filters: Filter[];
   completeCases?: CompleteCasesTable;
-  incompleteCases?: number;
+  sampleSize?: SampleSizeTableArray;
   outputEntity?: StudyEntity;
   independentAxisVariable?: Variable;
   independentAxisLabel?: string;
@@ -355,7 +354,7 @@ function HistogramPlotWithControls({
   handleDependentAxisLogScale,
   filters,
   completeCases,
-  incompleteCases,
+  sampleSize,
   outputEntity,
   independentAxisVariable,
   independentAxisLabel,
@@ -378,11 +377,7 @@ function HistogramPlotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <OutputEntityTitle
-        entity={outputEntity}
-        filters={filters}
-        incompleteCases={incompleteCases}
-      />
+      <OutputEntityTitle entity={outputEntity} sampleSize={sampleSize} />
       <div
         style={{
           display: 'flex',
@@ -492,7 +487,7 @@ export function histogramResponseToData(
     binWidthRange,
     binWidthStep,
     completeCases: response.completeCasesTable,
-    incompleteCases: response.histogram.config.incompleteCases,
+    sampleSize: response.sampleSizeTable,
   };
 }
 

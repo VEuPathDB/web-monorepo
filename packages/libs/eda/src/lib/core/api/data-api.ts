@@ -29,6 +29,7 @@ const AppsResponse = type({
 type ZeroToTwoVariables = [] | [Variable] | [Variable, Variable];
 
 // define sampleSizeTableArray
+export type SampleSizeTableArray = TypeOf<typeof sampleSizeTableArray>;
 const sampleSizeTableArray = array(
   partial({
     // set union for size as it depends on the presence of overlay variable

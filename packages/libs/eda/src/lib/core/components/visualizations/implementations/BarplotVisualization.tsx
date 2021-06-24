@@ -224,10 +224,7 @@ function BarplotViz(props: Props) {
         <>
           <OutputEntityTitle
             entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
-            filters={filters}
-            incompleteCases={
-              data.pending ? undefined : data.value?.incompleteCases
-            }
+            sampleSize={data.pending ? undefined : data.value?.sampleSize}
           />
           <div
             style={{
@@ -357,7 +354,7 @@ export function barplotResponseToData(
       value: data.value,
     })),
     completeCases: response.completeCasesTable,
-    incompleteCases: response.barplot.config.incompleteCases,
+    sampleSize: response.sampleSizeTable,
   };
 }
 
