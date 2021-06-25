@@ -3,7 +3,6 @@
  * https://api.github.com/users/VEuPathDB/events?per_page=100
  */
 import { HistogramBin, HistogramData } from '../../types/plots';
-import { EmptyHistogramData } from '../../plots/Histogram';
 import { TimeDelta } from '../../types/general';
 import * as DateMath from 'date-arithmetic';
 
@@ -50,9 +49,9 @@ export const binGithubEventDates = async ({
   unit: DateMath.Unit;
   binWidth?: TimeDelta;
   numBins?: number;
-}): Promise<HistogramData> => {
+}): Promise<HistogramData | undefined> => {
   const eventData = await getCreatedDateData(url);
-  if (eventData == null) return EmptyHistogramData;
+  if (eventData == null) return undefined;
 
   const dates = eventData.map((event) => event.date).sort();
   const rawFirstDate = dates[0];

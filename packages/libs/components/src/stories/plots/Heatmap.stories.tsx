@@ -1,5 +1,5 @@
 import React from 'react';
-import Heatmap, { HeatmapProps, EmptyHeatmapData } from '../../plots/Heatmap';
+import Heatmap, { HeatmapProps } from '../../plots/Heatmap';
 import { Meta, Story } from '@storybook/react';
 
 export default {
@@ -48,12 +48,10 @@ CategoricalAxes.args = {
 
 export const Empty = Template.bind({});
 Empty.args = {
-  data: EmptyHeatmapData,
   showSpinner: false,
 };
 
 export const EmptyLoading = Template.bind({});
 EmptyLoading.args = {
-  data: EmptyHeatmapData,
   showSpinner: true,
 };

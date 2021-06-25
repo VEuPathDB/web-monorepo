@@ -6,10 +6,7 @@ import {
   TimeDelta,
 } from '../../types/general';
 
-import Histogram, {
-  HistogramProps,
-  EmptyHistogramData,
-} from '../../plots/Histogram';
+import Histogram, { HistogramProps } from '../../plots/Histogram';
 import HistogramControls from '../../components/plotControls/HistogramControls';
 import { binDailyCovidStats } from '../api/covidData';
 import { binGithubEventDates } from '../api/githubDates';
@@ -23,7 +20,7 @@ export default {
 const TemplateWithMinimalControls: Story<Omit<HistogramProps, 'data'>> = (
   args
 ) => {
-  const [data, setData] = useState<HistogramData>(EmptyHistogramData);
+  const [data, setData] = useState<HistogramData>();
   const [binWidth, setBinWidth] = useState<number>(500);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -84,7 +81,7 @@ NoTitleFullWidth.args = {
 const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
   args
 ) => {
-  const [data, setData] = useState<HistogramData>(EmptyHistogramData);
+  const [data, setData] = useState<HistogramData>();
   const [binWidth, setBinWidth] = useState<number>(500);
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -208,7 +205,7 @@ const TemplateWithSelectedDateRangeControls: Story<Omit<
   HistogramProps,
   'data'
 >> = (args) => {
-  const [data, setData] = useState<HistogramData>(EmptyHistogramData);
+  const [data, setData] = useState<HistogramData>();
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
   const [binWidth, setBinWidth] = useState<NumberOrTimeDelta>({
@@ -313,7 +310,6 @@ export const EmptyData: Story<HistogramProps> = (args) => (
   <Histogram {...args} />
 );
 EmptyData.args = {
-  data: EmptyHistogramData,
   containerStyles: {
     height: '400px',
     width: '800px',

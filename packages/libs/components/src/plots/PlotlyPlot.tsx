@@ -7,7 +7,7 @@ import { LayoutLegendTitle } from '../types/plotly-omissions';
 
 export interface PlotProps<T> {
   /** plot data - following web-components' API, not Plotly's */
-  data: T;
+  data?: T;
   /** Title of plot. */
   title?: string;
   /** Should plot legend be displayed? Default is yes */

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import Boxplot, { BoxplotProps, EmptyBoxplotData } from '../../plots/Boxplot';
+import Boxplot, { BoxplotProps } from '../../plots/Boxplot';
 import stats from 'stats-lite';
 import _ from 'lodash';
 
@@ -85,7 +85,6 @@ Basic.argTypes = storyArgTypes(
 export const EmptyLoading: Story<BoxplotProps> = Template.bind({});
 EmptyLoading.argTypes = storyArgTypes(
   (EmptyLoading.args = {
-    data: EmptyBoxplotData,
     showSpinner: true,
     containerStyles: {
       width: '600px',

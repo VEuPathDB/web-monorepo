@@ -1,5 +1,5 @@
 import React from 'react';
-import XYPlot, { XYPlotProps, EmptyXYPlotData } from '../../plots/XYPlot';
+import XYPlot, { XYPlotProps } from '../../plots/XYPlot';
 import { dataSetProcess, xAxisRange, yAxisRange } from './XYPlot.storyData';
 import { Story, Meta } from '@storybook/react/types-6-0';
 
@@ -43,14 +43,11 @@ RealData.args = {
 RealData.argTypes = disableDataControl;
 
 export const EmptyData = Template.bind({});
-EmptyData.args = {
-  data: EmptyXYPlotData,
-};
+EmptyData.args = {};
 EmptyData.argTypes = disableDataControl;
 
 export const EmptyDataLoading = Template.bind({});
 EmptyDataLoading.args = {
-  data: EmptyXYPlotData,
   showSpinner: true,
 };
 EmptyDataLoading.argTypes = disableDataControl;

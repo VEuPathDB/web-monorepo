@@ -4,7 +4,7 @@ import { MosaicData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
 import _ from 'lodash';
 
-interface Props extends PlotProps<MosaicData> {
+export interface MosaicPlotProps extends PlotProps<MosaicData> {
   /** label for independent axis */
   independentAxisLabel?: string;
   /** label for dependent axis */
@@ -14,15 +14,14 @@ interface Props extends PlotProps<MosaicData> {
   showColumnLabels?: boolean;
 }
 
-export type MosaicPlotProps = Props; // can & Addons here...
-export const EmptyMosaicData: MosaicData = {
+const EmptyMosaicData: MosaicData = {
   values: [[]],
   independentLabels: [],
   dependentLabels: [],
 };
 
 export default function MosaicPlot({
-  data,
+  data = EmptyMosaicData,
   independentAxisLabel,
   dependentAxisLabel,
   colors,

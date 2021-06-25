@@ -3,8 +3,9 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout, Annotations } from 'plotly.js';
 import { HeatmapData } from '../types/plots';
 
-interface Props extends PlotProps<HeatmapData> {
+export interface HeatmapProps extends PlotProps<HeatmapData> {
   /** Label for x axis. Both x and y axes have "independent" variables */
+  // TO DO: rename to independent and dependent - see https://epvb.slack.com/archives/C012X6FPVB4/p1624543299066000
   xAxisLabel?: string;
   /** Label for y axis. */
   yAxisLabel?: string;
@@ -13,8 +14,8 @@ interface Props extends PlotProps<HeatmapData> {
   //DKDK add zsmooth here so that it can be treated as a Props out of data
   zSmooth?: 'fast' | 'best' | false;
 }
-export type HeatmapProps = Props; // & Addons...
-export const EmptyHeatmapData: HeatmapData = {
+
+const EmptyHeatmapData: HeatmapData = {
   xLabels: [],
   yLabels: [],
   values: [[]],
@@ -22,7 +23,7 @@ export const EmptyHeatmapData: HeatmapData = {
 
 export default function Heatmap(props: HeatmapProps) {
   const {
-    data,
+    data = EmptyHeatmapData,
     xAxisLabel,
     yAxisLabel,
     showValues,

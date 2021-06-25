@@ -28,9 +28,13 @@ interface BinSummary {
   binMiddle: HistogramBin['binEnd'];
 }
 
-export const EmptyHistogramData: HistogramData = { series: [] };
+const EmptyHistogramData: HistogramData = { series: [] };
 
-interface Props extends PlotProps<HistogramData> {
+export interface HistogramProps
+  extends PlotProps<HistogramData>,
+    OrientationAddon,
+    OpacityAddon,
+    BarLayoutAddon<'overlay' | 'stack'> {
   /** Label for independent axis. Defaults to `Bins`. */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
@@ -52,14 +56,10 @@ interface Props extends PlotProps<HistogramData> {
   /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
   isZoomed?: boolean;
 }
-export type HistogramProps = Props &
-  OrientationAddon &
-  OpacityAddon &
-  BarLayoutAddon<'overlay' | 'stack'>;
 
 /** A Plot.ly based histogram component. */
 export default function Histogram({
-  data,
+  data = EmptyHistogramData,
   independentAxisLabel = 'Bins',
   dependentAxisLabel = 'Count',
   orientation = OrientationDefault,

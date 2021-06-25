@@ -12,7 +12,11 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
 
 // in this example, the main variable is 'country'
-interface Props extends PlotProps<BarplotData> {
+export interface BarplotProps
+  extends PlotProps<BarplotData>,
+    BarLayoutAddon<'overlay' | 'stack' | 'group'>,
+    OrientationAddon,
+    OpacityAddon {
   /** Label for independent axis. e.g. 'Country' */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to 'Count' */
@@ -24,15 +28,12 @@ interface Props extends PlotProps<BarplotData> {
   /** show/hide dependent axis tick label, default is true */
   showDependentAxisTickLabel?: boolean;
 }
-export type BarplotProps = Props &
-  BarLayoutAddon<'overlay' | 'stack' | 'group'> &
-  OrientationAddon &
-  OpacityAddon;
-export const EmptyBarplotData: BarplotData = { series: [] };
+
+const EmptyBarplotData: BarplotData = { series: [] };
 
 /** A Plotly-based Barplot component. */
 export default function Barplot({
-  data,
+  data = EmptyBarplotData,
   independentAxisLabel,
   dependentAxisLabel,
   showValues = false,

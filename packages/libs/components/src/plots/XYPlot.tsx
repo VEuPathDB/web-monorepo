@@ -20,13 +20,13 @@ export interface XYPlotProps extends PlotProps<XYPlotData> {
   // opacity?
 }
 
-export const EmptyXYPlotData: XYPlotData = {
+const EmptyXYPlotData: XYPlotData = {
   series: [],
 };
 
 export default function XYPlot(props: XYPlotProps) {
   const {
-    data,
+    data = EmptyXYPlotData,
     independentAxisLabel,
     dependentAxisLabel,
     independentAxisRange,

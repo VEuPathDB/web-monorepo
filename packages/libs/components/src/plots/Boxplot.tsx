@@ -10,7 +10,10 @@ import {
 } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
 
-interface Props extends PlotProps<BoxplotData> {
+export interface BoxplotProps
+  extends PlotProps<BoxplotData>,
+    OrientationAddon,
+    OpacityAddon {
   /** label for independent axis */
   independentAxisLabel?: string;
   /** label for dependent axis */
@@ -22,12 +25,11 @@ interface Props extends PlotProps<BoxplotData> {
   /** Show the mean as an extra dotted line in the box - optional */
   showMean?: boolean;
 }
-export type BoxplotProps = Props & OrientationAddon & OpacityAddon;
-export const EmptyBoxplotData: BoxplotData = [];
+const EmptyBoxplotData: BoxplotData = [];
 
 export default function Boxplot(props: BoxplotProps) {
   const {
-    data: plotData,
+    data: plotData = EmptyBoxplotData,
     showRawData,
     showMean,
     independentAxisLabel,

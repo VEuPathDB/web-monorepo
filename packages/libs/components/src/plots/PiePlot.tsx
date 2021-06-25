@@ -17,7 +17,7 @@ export interface PlotData extends Omit<PlotlyPlotData, 'hoverinfo'> {
   texttemplate: string | string[];
 }
 
-export interface Props extends PlotProps<PiePlotData> {
+export interface PiePlotProps extends PlotProps<PiePlotData> {
   /** Extra specification for "donut" plot variation. */
   donutOptions?: {
     /** Percentage of the plot to cut out. */
@@ -50,13 +50,11 @@ export interface Props extends PlotProps<PiePlotData> {
   };
 }
 
-export type PiePlotProps = Props; // Note - OpacityAddon was decided not needed because there is are no overlapping markers
-export const EmptyPieData: PiePlotData = { slices: [] };
+const EmptyPieData: PiePlotData = { slices: [] };
 
 /** A Plot.ly based Pie plot. */
 export default function PiePlot({
-  data,
-  //  opacity = OpacityDefault,
+  data = EmptyPieData,
   donutOptions,
   textOptions,
   ...restProps
@@ -128,7 +126,6 @@ export default function PiePlot({
 
   const primaryDataTrace: Partial<PlotData> = {
     type: 'pie',
-    //    opacity,
     ...data.slices.reduce(reducer, {
       values: [],
       labels: [],

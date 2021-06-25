@@ -1,9 +1,6 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MosaicPlot, {
-  MosaicPlotProps,
-  EmptyMosaicData,
-} from '../../plots/MosaicPlot';
+import MosaicPlot, { MosaicPlotProps } from '../../plots/MosaicPlot';
 
 export default {
   title: 'Plots/Mosaic',
@@ -69,12 +66,9 @@ FourByThree.args = {
 };
 
 export const EmptyData = Template.bind({});
-EmptyData.args = {
-  data: EmptyMosaicData,
-};
+EmptyData.args = {};
 
 export const EmptyDataLoading = Template.bind({});
 EmptyDataLoading.args = {
-  data: EmptyMosaicData,
   showSpinner: true,
 };

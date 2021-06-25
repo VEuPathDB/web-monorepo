@@ -1,7 +1,7 @@
 import React from 'react';
 import { Story } from '@storybook/react/types-6-0';
 
-import PiePlot, { EmptyPieData, PiePlotProps } from '../../plots/PiePlot';
+import PiePlot, { PiePlotProps } from '../../plots/PiePlot';
 import { PiePlotData } from '../../types/plots';
 import {
   DARK_GRAY,
@@ -146,12 +146,9 @@ FilledDonut.args = {
 };
 
 export const Empty = Template.bind({});
-Empty.args = {
-  data: EmptyPieData,
-};
+Empty.args = {};
 
 export const EmptyLoading = Template.bind({});
 EmptyLoading.args = {
-  data: EmptyPieData,
   showSpinner: true,
 };

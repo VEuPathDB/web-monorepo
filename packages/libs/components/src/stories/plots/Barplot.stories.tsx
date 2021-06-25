@@ -1,5 +1,5 @@
 import { Story, Meta } from '@storybook/react/types-6-0';
-import Barplot, { BarplotProps, EmptyBarplotData } from '../../plots/Barplot';
+import Barplot, { BarplotProps } from '../../plots/Barplot';
 
 export default {
   title: 'Plots/Barplot',
@@ -33,14 +33,12 @@ Basic.args = {
 
 export const EmptyData = Template.bind({});
 EmptyData.args = {
-  data: EmptyBarplotData,
   dependentAxisLabel: 'Dependent axis label',
   independentAxisLabel: 'Independent axis label',
 };
 
 export const EmptyDataLoading = Template.bind({});
 EmptyDataLoading.args = {
-  data: EmptyBarplotData,
   dependentAxisLabel: 'Dependent axis label',
   independentAxisLabel: 'Independent axis label',
   showSpinner: true,
