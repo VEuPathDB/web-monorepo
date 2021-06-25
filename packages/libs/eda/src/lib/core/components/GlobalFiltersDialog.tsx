@@ -1,9 +1,9 @@
 import { StudyEntity } from '..';
 import { Filter } from '../types/filter';
 import Draggable from 'react-draggable';
-// import { ResizableBox } from 'react-resizable';
 import FilterChipList from './FilterChipList';
-// import 'react-resizable/css/styles.css';
+import { ResizableBox } from 'react-resizable';
+import 'react-resizable/css/styles.css';
 
 interface Props {
   open: boolean;
@@ -44,6 +44,7 @@ export default function GlobalFiltersDialog(props: Props) {
             filters={filters}
             entities={props.entities}
             removeFilter={props.removeFilter}
+            showValues={true}
           />
         </div>
       );
@@ -54,7 +55,9 @@ export default function GlobalFiltersDialog(props: Props) {
         style={{
           padding: '10px',
           overflow: 'auto',
-          height: '238px',
+          // height: '238px',
+          // flexGrow: 1,
+          flex: '1 1 auto',
         }}
       >
         {filterChipLists}
@@ -65,91 +68,119 @@ export default function GlobalFiltersDialog(props: Props) {
   }
 
   return (
-    <Draggable>
-      <div
-        style={{
-          width: 400,
-          height: 300,
-          position: 'fixed',
-          top: '50vh',
-          left: '50vw',
-          zIndex: 100,
-          backgroundColor: 'white',
-          boxShadow: '0 0 20px rgba(0,0,0,.4)',
-        }}
-      >
-        <div
-          style={{
-            backgroundColor: '#eee',
-            display: 'flex',
-            alignItems: 'center',
-            position: 'relative',
-            fontSize: '1.2em',
-            fontWeight: 700,
-            padding: '.6em .8em',
-            cursor: 'move',
-            height: '42px',
-          }}
-        >
+    <div
+      style={{
+        position: 'fixed',
+        width: 0,
+        height: 0,
+        top: '50vh',
+        left: '50vw',
+        zIndex: 100,
+        // display: 'flex',
+        // alignItems: 'center',
+        // justifyContent: 'center',
+      }}
+    >
+      <Draggable handle={'.global_filter_box_title'}>
+        <ResizableBox width={400} height={300}>
+          {/* <div style={{backgroundColor: 'grey'}}>
+            I'm resizable!
+          </div> */}
           <div
             style={{
+              // width: 400,
+              // height: 300,
+              position: 'absolute',
+              // minWidth: '300px',
+              // position: 'fixed',
+              // top: '50vh',
+              // left: '50vw',
+              // zIndex: 100,
+              backgroundColor: 'white',
+              boxShadow: '0 0 20px rgba(0,0,0,.4)',
               display: 'flex',
-              justifyContent: 'flex-start',
-              flex: 1,
-            }}
-          />
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              flex: 5,
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-              overflow: 'hidden',
-              marginRight: 'auto',
+              flexDirection: 'column',
+              width: '100%',
+              height: '100%',
             }}
           >
-            Active filters
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              flex: 1,
-            }}
-          >
-            <button
-              onClick={() => props.setOpen(false)}
+            <div
+              className="global_filter_box_title"
               style={{
-                border: 'none',
-                background: 'none',
+                backgroundColor: '#eee',
+                display: 'flex',
+                alignItems: 'center',
+                position: 'relative',
+                fontSize: '1.2em',
+                fontWeight: 700,
+                padding: '.6em .8em',
+                cursor: 'move',
+                // height: '42px',
+                flex: '0 1 42px',
               }}
             >
-              <i className="fa fa-close"></i>
-            </button>
-          </div>
-        </div>
-        {content}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            height: '20px',
-            width: '100%',
-            backgroundColor: '#eee',
-            textAlign: 'center',
-          }}
-        >
-          {props.filters.length > 0 && (
-            <button
-              onClick={() => props.setFilters([])}
-              style={{ border: 'none', background: 'none' }}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  flex: 1,
+                }}
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  flex: 5,
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  marginRight: 'auto',
+                }}
+              >
+                Active filters
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  flex: 1,
+                }}
+              >
+                <button
+                  onClick={() => props.setOpen(false)}
+                  style={{
+                    border: 'none',
+                    background: 'none',
+                  }}
+                >
+                  <i className="fa fa-close"></i>
+                </button>
+              </div>
+            </div>
+            {content}
+            <div
+              style={{
+                // position: 'absolute',
+                // bottom: 0,
+                // height: '20px',
+                width: '100%',
+                backgroundColor: '#eee',
+                textAlign: 'center',
+                flex: '0 1 20px',
+              }}
             >
-              Remove all filters
-            </button>
-          )}
-        </div>
-      </div>
-    </Draggable>
+              {props.filters.length > 0 && (
+                <button
+                  onClick={() => props.setFilters([])}
+                  style={{ border: 'none', background: 'none' }}
+                >
+                  Remove all filters
+                </button>
+              )}
+            </div>
+          </div>
+        </ResizableBox>
+      </Draggable>
+    </div>
   );
 }

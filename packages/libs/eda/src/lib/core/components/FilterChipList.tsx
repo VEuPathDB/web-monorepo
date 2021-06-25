@@ -22,6 +22,7 @@ interface Props {
   selectedEntityId?: string;
   selectedVariableId?: string;
   removeFilter: (filter: Filter) => void;
+  showValues?: boolean;
 }
 
 /**
@@ -83,6 +84,7 @@ export default function FilterChipList(props: Props) {
                   variableId={variable.id}
                   replace={true}
                 >
+                  {/* {variable.displayName + props.showValues ? '\n' + filterValueDisplay : ''} */}
                   {variable.displayName}
                 </VariableLink>
               </FilterChip>
