@@ -12,19 +12,8 @@ export interface PlotProps<T> {
   title?: string;
   /** Should plot legend be displayed? Default is yes */
   displayLegend?: boolean;
-  /** CSS styles for enclosing div and also passed to
-   * the underlying Plotly plot component
-   *
-   * Note: if playing around with Storybook controls, changes
-   * to containerStyles only seem to take effect when resizing
-   * the story window.  Resizing seems to be responsive whether
-   * or not `responsive: true` in the plot config...
-   *
-   * Also note: borders, margins and padding need to be 0px
-   * because we are not doing any CSS calculations for the plotly
-   * component sizing.
-   *
-   * Defaults:  { width: '100%', height: '400px' }
+  /** CSS styles for enclosing div
+   * Default is { width: '100%', height: '400px' }
    */
   containerStyles?: CSSProperties;
   /** Enables mouse-overs and interaction if true. Default false. */
@@ -43,11 +32,6 @@ export interface PlotProps<T> {
 
 const Plot = lazy(() => import('react-plotly.js'));
 
-const defaultStyles = {
-  height: '400px',
-  width: '100%',
-};
-
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
  *
@@ -63,7 +47,7 @@ export default function PlotlyPlot<T>(
   const {
     title,
     displayLegend = true,
-    containerStyles,
+    containerStyles = { width: '100%', height: '400px' },
     interactive = false,
     displayLibraryControls,
     legendOptions,
@@ -72,14 +56,6 @@ export default function PlotlyPlot<T>(
     showSpinner,
     ...plotlyProps
   } = props;
-
-  const finalStyle = useMemo(
-    (): PlotParams['style'] => ({
-      ...defaultStyles,
-      ...containerStyles,
-    }),
-    [containerStyles]
-  );
 
   // config is derived purely from PlotProps props
   const finalConfig = useMemo(
@@ -127,17 +103,25 @@ export default function PlotlyPlot<T>(
         },
         ...(legendOptions ? legendSpecification(legendOptions) : {}),
       },
+      autosize: true, // responds properly to enclosing div resizing (not to be confused with config.responsive)
     }),
-    [plotlyProps.layout, spacingOptions, legendOptions, displayLegend]
+    [
+      plotlyProps.layout,
+      spacingOptions,
+      legendOptions,
+      displayLegend,
+      legendTitle,
+      title,
+    ]
   );
 
   return (
     <Suspense fallback="Loading...">
-      <div style={{ ...finalStyle, position: 'relative' }}>
+      <div style={{ ...containerStyles, position: 'relative' }}>
         <Plot
           {...plotlyProps}
           layout={finalLayout}
-          style={finalStyle}
+          style={{ width: '100%', height: '100%' }}
           config={finalConfig}
         />
         {showSpinner && <Spinner />}
