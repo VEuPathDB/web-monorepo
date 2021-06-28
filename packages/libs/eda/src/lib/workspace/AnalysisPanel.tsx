@@ -46,7 +46,10 @@ export function AnalysisPanel(props: Props) {
   const filteredCounts = useEntityCounts(analysisState.analysis?.filters);
   const studyMetadata = useStudyMetadata();
   const entities = Array.from(
-    preorder(studyMetadata.rootEntity, (e) => e.children || [])
+    preorder(
+      studyMetadata.rootEntity,
+      (e) => e.children?.slice().reverse() ?? []
+    )
   );
   const filteredEntities = uniq(
     analysisState.analysis?.filters.map((f) => f.entityId)
@@ -84,16 +87,20 @@ export function AnalysisPanel(props: Props) {
           setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
         }
       />
-      <GlobalFiltersDialog
-        open={globalFiltersDialogOpen}
-        setOpen={setGlobalFiltersDialogOpen}
-        entities={entities}
-        filters={analysis.filters}
-        setFilters={analysisState.setFilters}
-        removeFilter={(filter) =>
-          analysisState.setFilters(analysis.filters.filter((f) => f !== filter))
-        }
-      />
+      {globalFiltersDialogOpen && (
+        <GlobalFiltersDialog
+          // open={globalFiltersDialogOpen}
+          setOpen={setGlobalFiltersDialogOpen}
+          entities={entities}
+          filters={analysis.filters}
+          setFilters={analysisState.setFilters}
+          removeFilter={(filter) =>
+            analysisState.setFilters(
+              analysis.filters.filter((f) => f !== filter)
+            )
+          }
+        />
+      )}
       <Route
         path={[
           `${routeBase}/variables/:entityId?/:variableId?`,
