@@ -212,7 +212,7 @@ function NewVisualizationPicker(props: Props) {
                     displayName: 'Unnamed visualization',
                     configuration: vizType?.createDefaultConfig(),
                   });
-                  history.push(`../${computationId}/${id}`);
+                  history.replace(`../${computationId}/${id}`);
                 }}
               >
                 {vizType ? (
