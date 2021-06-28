@@ -24,11 +24,7 @@ const TemplateWithMinimalControls: Story<Omit<HistogramProps, 'data'>> = (
   const [binWidth, setBinWidth] = useState<number>(500);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const handleBinWidthChange = async ({
-    binWidth: newBinWidth,
-  }: {
-    binWidth: NumberOrTimeDelta;
-  }) => {
+  const handleBinWidthChange = async (newBinWidth: NumberOrTimeDelta) => {
     if (newBinWidth > 0) {
       setBinWidth(newBinWidth as number);
     }
@@ -86,11 +82,7 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
 
-  const handleBinWidthChange = async ({
-    binWidth: newBinWidth,
-  }: {
-    binWidth: NumberOrTimeDelta;
-  }) => {
+  const handleBinWidthChange = async (newBinWidth: NumberOrTimeDelta) => {
     if (newBinWidth > 0) {
       setBinWidth(newBinWidth as number);
     }
@@ -224,11 +216,8 @@ const TemplateWithSelectedDateRangeControls: Story<Omit<
     setBinWidth({ value: Math.floor(Math.max(1, newValue)), unit: newUnit });
   };
 
-  const handleBinWidthChange = async ({
-    binWidth: newBinWidth,
-  }: {
-    binWidth: NumberOrTimeDelta;
-  }) => setBinWidth(newBinWidth);
+  const handleBinWidthChange = async (newBinWidth: NumberOrTimeDelta) =>
+    setBinWidth(newBinWidth);
 
   // keep `data` up to date
   useEffect(() => {

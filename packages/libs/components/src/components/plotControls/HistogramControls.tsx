@@ -15,6 +15,10 @@ import {
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
 
+// Mid-level controls
+import SelectedRangeControl from './SelectedRangeControl';
+import BinWidthControl from './BinWidthControl';
+
 // Local Components
 import Button from '../widgets/Button';
 import ButtonGroup from '../widgets/ButtonGroup';
@@ -71,10 +75,7 @@ export type HistogramControlsProps = {
   /** The current binWidth */
   binWidth?: NumberOrTimeDelta;
   /** Function to invoke when bin width changes. */
-  onBinWidthChange?: (params: {
-    binWidth: NumberOrTimeDelta;
-    selectedUnit?: string;
-  }) => void;
+  onBinWidthChange?: (newBinWidth: NumberOrTimeDelta) => void;
   /** The acceptable range of binWidthValues. */
   binWidthRange?: NumberOrTimeDeltaRange;
   /** The step to take when adjusting binWidth */
@@ -223,27 +224,12 @@ export default function HistogramControls({
             containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
-        {onSelectedRangeChange ? (
-          <LabelledGroup label="Subset by value">
-            {valueType != null && valueType === 'date' ? (
-              <DateRangeInput
-                rangeBounds={selectedRangeBounds as DateRange}
-                range={selectedRange as DateRange}
-                onRangeChange={onSelectedRangeChange}
-                allowPartialRange={false}
-                showClearButton={true}
-              />
-            ) : (
-              <NumberRangeInput
-                rangeBounds={selectedRangeBounds as NumberRange}
-                range={selectedRange as NumberRange}
-                onRangeChange={onSelectedRangeChange}
-                allowPartialRange={false}
-                showClearButton={true}
-              />
-            )}
-          </LabelledGroup>
-        ) : null}
+        <SelectedRangeControl
+          valueType={valueType}
+          selectedRangeBounds={selectedRangeBounds}
+          selectedRange={selectedRange}
+          onSelectedRangeChange={onSelectedRangeChange}
+        />
       </div>
       <div
         style={{
@@ -357,36 +343,12 @@ export default function HistogramControls({
             />
           )}
 
-        {onBinWidthChange && (
-          <SliderWidget
-            label={`Bin Width${
-              valueType != null && valueType === 'date'
-                ? ' (' + (binWidth as TimeDelta).unit + ')'
-                : ''
-            }`}
-            minimum={binWidthRange?.min}
-            maximum={binWidthRange?.max}
-            showTextInput={true}
-            step={binWidthStep}
-            value={
-              binWidth
-                ? typeof binWidth === 'number'
-                  ? binWidth
-                  : binWidth.value
-                : undefined
-            }
-            debounceRateMs={250}
-            onChange={(newValue: number) => {
-              onBinWidthChange({
-                binWidth:
-                  valueType != null && valueType === 'date'
-                    ? ({ value: newValue, unit: selectedUnit } as TimeDelta)
-                    : newValue,
-                selectedUnit,
-              });
-            }}
-          />
-        )}
+        <BinWidthControl
+          binWidth={binWidth}
+          binWidthStep={binWidthStep}
+          binWidthRange={binWidthRange}
+          onBinWidthChange={onBinWidthChange}
+        />
 
         {onIndependentAxisRangeChange &&
           (valueType != null && valueType === 'date' ? (

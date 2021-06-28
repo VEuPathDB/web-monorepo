@@ -58,6 +58,12 @@ export type BarLayoutAddon<O extends BarLayoutOptions> = {
   barLayout?: O;
 };
 
+/** valueType for when components or widgets take number or date types  */
+export type ValueTypeAddon = {
+  /** Type of variable 'number' or 'date' */
+  valueType?: 'number' | 'date';
+};
+
 /** PlotData addons */
 export type AvailableUnitsAddon =
   | {

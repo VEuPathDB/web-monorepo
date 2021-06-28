@@ -296,10 +296,7 @@ export type usePlotControlsParams<DataShape extends UnionOfPlotDataTypes> = {
     /** Optional override for binWidthStep that is provided by
      * data backend or calculated. */
     binWidthStep?: number;
-    onBinWidthChange: (params: {
-      binWidth: NumberOrTimeDelta;
-      selectedUnit?: string;
-    }) => Promise<DataShape>;
+    onBinWidthChange: (binWidth: NumberOrTimeDelta) => Promise<DataShape>;
     selectedRange?: NumberOrDateRange;
     /** A switch to show/hide the range controls  */
     displaySelectedRangeControls?: boolean;
@@ -540,18 +537,12 @@ export default function usePlotControls<DataShape extends UnionOfPlotDataTypes>(
     [params.histogram?.onBinWidthChange]
   );
 
-  const onBinWidthChange = (args: {
-    binWidth: NumberOrTimeDelta;
-    selectedUnit?: string;
-  }) => {
+  const onBinWidthChange = (binWidth: NumberOrTimeDelta) => {
     if (params.histogram) {
       // immediately update binWidth so the ui is consistent
-      dispatch({ type: 'histogram/setBinWidth', payload: args.binWidth });
+      dispatch({ type: 'histogram/setBinWidth', payload: binWidth });
       if (debouncedBinWidthHandler) {
-        debouncedBinWidthHandler({
-          binWidth: args.binWidth,
-          selectedUnit: reducerState.selectedUnit,
-        }).then(
+        debouncedBinWidthHandler(binWidth).then(
           (newData) => dispatch({ type: 'setData', payload: newData }),
           (error) => dispatch({ type: 'errors/add', payload: error })
         );
