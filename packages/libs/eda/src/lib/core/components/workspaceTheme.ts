@@ -13,6 +13,12 @@ export const workspaceTheme: ThemeOptions = {
       dark: '#084e71',
       contrastText: '#fff',
     },
+    secondary: {
+      light: '#FB7087',
+      main: '#DD314E',
+      dark: '#A00D25',
+      contrastText: '#fff',
+    },
   },
   props: {
     MuiButton: {
@@ -25,12 +31,20 @@ export const workspaceTheme: ThemeOptions = {
     MuiButton: {
       root: {
         lineHeight: 1.25,
-      },
-      contained: {
         textTransform: 'none',
       },
-      containedSizeSmall: {
+      sizeSmall: {
         padding: '4px 8px',
+      },
+    },
+    MuiPopover: {
+      root: {
+        border: '1px solid #ccc',
+      },
+    },
+    MuiTooltip: {
+      tooltip: {
+        fontSize: 12,
       },
     },
   },

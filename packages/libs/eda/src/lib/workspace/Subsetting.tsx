@@ -9,6 +9,7 @@ import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useToggleStarredVariable } from '../core/hooks/starredVariables';
 import { VariableTree } from '../core/components/VariableTree';
 import FilterChipList from '../core/components/FilterChipList';
+import { Tooltip } from '@material-ui/core';
 
 interface Props {
   analysisState: AnalysisState;
@@ -76,14 +77,15 @@ export function Subsetting(props: Props) {
         />
       </div>
       <div className="TabularDownload">
-        <button
-          type="button"
-          className="link"
-          title={`Download current subset of ${entity.displayName}`}
-          onClick={() => alert('Coming soon')}
-        >
-          <i className="fa fa-table" />
-        </button>
+        <Tooltip title={`Download current subset of ${entity.displayName}`}>
+          <button
+            type="button"
+            className="link"
+            onClick={() => alert('Coming soon')}
+          >
+            <i className="fa fa-table" />
+          </button>
+        </Tooltip>
       </div>
       <div className="Filter">
         <Variable
