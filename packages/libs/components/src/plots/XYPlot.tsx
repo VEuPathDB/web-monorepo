@@ -9,12 +9,12 @@ import Spinner from '../components/Spinner';
 // import extended legend prop
 import { LayoutLegendTitle } from '../types/plotly-omissions';
 
-export interface ScatterplotProps extends PlotProps {
+export interface XYPlotProps extends PlotProps {
   /** Data for the scatter plot */
   data: Array<{
     /** x/y data */
-    x: number[] | Date[];
-    y: number[] | Date[];
+    x: number[] | string[];
+    y: number[] | string[];
     /** legend text */
     name?: string;
     /** plot style */
@@ -54,25 +54,31 @@ export interface ScatterplotProps extends PlotProps {
   /** plot title */
   title?: string;
   /** x-axis range: required for confidence interval */
-  independentAxisRange?: number[] | Date[];
+  independentAxisRange?: number[] | string[];
   /** y-axis range: required for confidence interval */
-  dependentAxisRange?: number[] | Date[];
+  dependentAxisRange?: number[] | string[];
   /** show plot legend */
   displayLegend?: boolean;
   /** show plotly's built-in controls */
   displayLibraryControls?: boolean;
+  /** independentValueType 'number' (default) or 'date' (x data should be given as string[])  */
+  independentValueType?: 'number' | 'date';
+  /** dependentValueType 'number' (default) or 'date' (y data should be given as string[])  */
+  dependentValueType?: 'number' | 'date';
   /** legend title */
   legendTitle?: string;
 }
 
-export default function XYPlot(props: ScatterplotProps) {
+export default function XYPlot(props: XYPlotProps) {
   const {
+    data,
     independentAxisLabel,
     dependentAxisLabel,
     title,
     independentAxisRange,
     dependentAxisRange,
-    data,
+    independentValueType,
+    dependentValueType,
     legendTitle,
   } = props;
 
@@ -85,6 +91,8 @@ export default function XYPlot(props: ScatterplotProps) {
       linecolor: 'black',
       linewidth: 1,
       mirror: true,
+      // date or number type (from variable.type)
+      type: independentValueType === 'date' ? 'date' : undefined,
     },
     yaxis: {
       title: dependentAxisLabel ? dependentAxisLabel : '',
@@ -94,6 +102,8 @@ export default function XYPlot(props: ScatterplotProps) {
       linecolor: 'black',
       linewidth: 1,
       mirror: true,
+      // date or number type (from variable.type)
+      type: dependentValueType === 'date' ? 'date' : undefined,
     },
     // plot title
     title: {

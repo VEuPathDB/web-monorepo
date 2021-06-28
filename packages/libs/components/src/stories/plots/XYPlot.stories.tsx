@@ -1,5 +1,6 @@
 import React from 'react';
 import XYPlot from '../../plots/XYPlot';
+import { min, max, lte, gte } from 'lodash';
 
 export default {
   title: 'Plots/XYPlot',
@@ -9,264 +10,208 @@ export default {
   },
 };
 
-// set data array types for VEuPathDB scatter plot: https://redmine.apidb.org/issues/41310
-// but changed to new format: most likely x & y data are row/column vector format; also standardError is not a single value but vector
-interface VEuPathDBScatterPlotData<T extends number | Date> {
-  data: Array<{
-    series: {
-      x: T[]; // perhaps string[] is better despite Date format, e.g., ISO format?
-      y: T[]; // will y data have a Date?
-      popupContent?: string;
-    };
-    interval?: {
-      x: T[]; // perhaps string[] is better despite Date format, e.g., ISO format?
-      y: T[]; // will y data have a Date?
-      orientation: string;
-      standardError: number[];
-    };
-    color?: string;
-    label: string;
-    // for general scatter component
-    showLines?: boolean;
-    showMarkers?: boolean;
-    fillArea?: boolean;
-    useSpline?: boolean;
-  }>;
-  opacity?: number;
+interface VEuPathDBScatterPlotData {
+  scatterplot: {
+    data: Array<{
+      seriesX?: number[] | string[]; // perhaps string[] is better despite Date format, e.g., ISO format?
+      seriesY?: number[] | string[]; // will y data have a Date?
+      smoothedMeanX?: number[] | string[]; // perhaps string[] is better despite Date format, e.g., ISO format?
+      smoothedMeanY?: number[]; // will y data have a date string? Nope, number only
+      smoothedMeanSE?: number[];
+      bestFitLineX?: number[] | string[];
+      bestFitLineY?: number[];
+    }>;
+  };
 }
-
-// type for hexToRgb function
-interface hexProp {
-  // hex: string,
-  hexToRgb: (arg0: string) => number[];
-  replace: (
-    arg0: RegExp,
-    arg1: (m: string, r: string, g: string, b: string) => void
-  ) => any;
-  // replace(arg0: RegExp, arg1: (m: string, r: string, g: string, b: string)),
-}
-
-// change HTML hex code to rgb array
-const hexToRgb = (hex?: string): [number, number, number] => {
-  if (!hex) return [0, 0, 0];
-  const fullHex = hex.replace(
-    /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
-    (m: string, r: string, g: string, b: string): string =>
-      '#' + r + r + g + g + b + b
-  );
-  const hexDigits = fullHex.substring(1);
-  const matches = hexDigits.match(/.{2}/g);
-  if (matches == null) return [0, 0, 0];
-  return matches.map((x: string) => parseInt(x, 16)) as [
-    number,
-    number,
-    number
-  ];
-};
-
-// check number array and if empty
-function isArrayOfNumbers(value: any): value is number[] {
-  // value.length !==0
-  return (
-    Array.isArray(value) &&
-    value.length !== 0 &&
-    value.every((item) => typeof item === 'number')
-  );
-}
-
-// an example data: data are assumed to be number type only
-let orientationValue = 'y';
 
 // Real data comprised of numbers
-const dataSet: VEuPathDBScatterPlotData<number> = {
-  data: [
-    {
-      // scatter plot with CI
-      series: {
-        x: [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19,
-          20,
-          21,
-          22,
-          23,
-          24,
-          25,
-          26,
-          27,
-          28,
-          29,
-          30,
-          31,
-          32,
-          33,
-          34,
-          35,
-          36,
-          37,
-          38,
-          39,
-          40,
-          41,
-          42,
-          43,
-          44,
-          46,
-          47,
+const dataSet: VEuPathDBScatterPlotData = {
+  scatterplot: {
+    data: [
+      {
+        // scatter plot with CI
+        seriesX: [
+          '0',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+          '19',
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '32',
+          '33',
+          '34',
+          '35',
+          '36',
+          '37',
+          '38',
+          '39',
+          '40',
+          '41',
+          '42',
+          '43',
+          '44',
+          '46',
+          '47',
         ],
-        y: [
-          0.58,
-          0.54,
-          0.43,
-          0.86,
-          1.19,
-          1.47,
-          0.98,
-          1.36,
-          0.58,
-          0.82,
-          0.77,
-          1.22,
-          2.21,
-          0.46,
-          1.55,
-          1.38,
-          0.98,
-          1.4,
-          1.29,
-          1.3,
-          1.56,
-          1.73,
-          1.48,
-          1.38,
-          1.1,
-          1.14,
-          0.84,
-          1.12,
-          1.07,
-          1.1,
-          0.73,
-          0.86,
-          1.16,
-          1.02,
-          0.77,
-          1.04,
-          0.57,
-          0.08,
-          0.2,
-          0.4,
-          0.23,
-          0.13,
-          -0.51,
-          0,
-          -0.35,
-          0.21,
-          -0.08,
+        seriesY: [
+          '0.58',
+          '0.54',
+          '0.43',
+          '0.86',
+          '1.19',
+          '1.47',
+          '0.98',
+          '1.36',
+          '0.58',
+          '0.82',
+          '0.77',
+          '1.22',
+          '2.21',
+          '0.46',
+          '1.55',
+          '1.38',
+          '0.98',
+          '1.4',
+          '1.29',
+          '1.3',
+          '1.56',
+          '1.73',
+          '1.48',
+          '1.38',
+          '1.1',
+          '1.14',
+          '0.84',
+          '1.12',
+          '1.07',
+          '1.1',
+          '0.73',
+          '0.86',
+          '1.16',
+          '1.02',
+          '0.77',
+          '1.04',
+          '0.57',
+          '0.08',
+          '0.2',
+          '0.4',
+          '0.23',
+          '0.13',
+          '-0.51',
+          '0',
+          '-0.35',
+          '0.21',
+          '-0.08',
         ],
-      },
-      // popupContent?: string;   // this prop is placed at each object, {x, y, popupContent}, but not tested
-      interval: {
-        x: [
-          0,
-          0.5949367,
-          1.1898734,
-          1.7848101,
-          2.3797468,
-          2.9746835,
-          3.5696203,
-          4.164557,
-          4.7594937,
-          5.3544304,
-          5.9493671,
-          6.5443038,
-          7.1392405,
-          7.7341772,
-          8.3291139,
-          8.9240506,
-          9.5189873,
-          10.1139241,
-          10.7088608,
-          11.3037975,
-          11.8987342,
-          12.4936709,
-          13.0886076,
-          13.6835443,
-          14.278481,
-          14.8734177,
-          15.4683544,
-          16.0632911,
-          16.6582278,
-          17.2531646,
-          17.8481013,
-          18.443038,
-          19.0379747,
-          19.6329114,
-          20.2278481,
-          20.8227848,
-          21.4177215,
-          22.0126582,
-          22.6075949,
-          23.2025316,
-          23.7974684,
-          24.3924051,
-          24.9873418,
-          25.5822785,
-          26.1772152,
-          26.7721519,
-          27.3670886,
-          27.9620253,
-          28.556962,
-          29.1518987,
-          29.7468354,
-          30.3417722,
-          30.9367089,
-          31.5316456,
-          32.1265823,
-          32.721519,
-          33.3164557,
-          33.9113924,
-          34.5063291,
-          35.1012658,
-          35.6962025,
-          36.2911392,
-          36.8860759,
-          37.4810127,
-          38.0759494,
-          38.6708861,
-          39.2658228,
-          39.8607595,
-          40.4556962,
-          41.0506329,
-          41.6455696,
-          42.2405063,
-          42.835443,
-          43.4303797,
-          44.0253165,
-          44.6202532,
-          45.2151899,
-          45.8101266,
-          46.4050633,
-          47,
+        // popupContent?: string;   // this prop is placed at each object, {x, y, popupContent}, but not tested
+        smoothedMeanX: [
+          '0',
+          '0.5949367',
+          '1.1898734',
+          '1.7848101',
+          '2.3797468',
+          '2.9746835',
+          '3.5696203',
+          '4.164557',
+          '4.7594937',
+          '5.3544304',
+          '5.9493671',
+          '6.5443038',
+          '7.1392405',
+          '7.7341772',
+          '8.3291139',
+          '8.9240506',
+          '9.5189873',
+          '10.1139241',
+          '10.7088608',
+          '11.3037975',
+          '11.8987342',
+          '12.4936709',
+          '13.0886076',
+          '13.6835443',
+          '14.278481',
+          '14.8734177',
+          '15.4683544',
+          '16.0632911',
+          '16.6582278',
+          '17.2531646',
+          '17.8481013',
+          '18.443038',
+          '19.0379747',
+          '19.6329114',
+          '20.2278481',
+          '20.8227848',
+          '21.4177215',
+          '22.0126582',
+          '22.6075949',
+          '23.2025316',
+          '23.7974684',
+          '24.3924051',
+          '24.9873418',
+          '25.5822785',
+          '26.1772152',
+          '26.7721519',
+          '27.3670886',
+          '27.9620253',
+          '28.556962',
+          '29.1518987',
+          '29.7468354',
+          '30.3417722',
+          '30.9367089',
+          '31.5316456',
+          '32.1265823',
+          '32.721519',
+          '33.3164557',
+          '33.9113924',
+          '34.5063291',
+          '35.1012658',
+          '35.6962025',
+          '36.2911392',
+          '36.8860759',
+          '37.4810127',
+          '38.0759494',
+          '38.6708861',
+          '39.2658228',
+          '39.8607595',
+          '40.4556962',
+          '41.0506329',
+          '41.6455696',
+          '42.2405063',
+          '42.835443',
+          '43.4303797',
+          '44.0253165',
+          '44.6202532',
+          '45.2151899',
+          '45.8101266',
+          '46.4050633',
+          '47',
         ],
-        y: [
+        smoothedMeanY: [
           0.5785742,
           0.62672442,
           0.67323618,
@@ -348,7 +293,7 @@ const dataSet: VEuPathDBScatterPlotData<number> = {
           -0.25792504,
           -0.30664913,
         ],
-        standardError: [
+        smoothedMeanSE: [
           0.17707248,
           0.16235568,
           0.14874309,
@@ -430,562 +375,255 @@ const dataSet: VEuPathDBScatterPlotData<number> = {
           0.17443995,
           0.18947155,
         ],
-        orientation: orientationValue,
       },
-      color: '#00b0f6', // use this as fitting line and scatter color
-      label: 'Data 1', // use this as "name" in plotly
-      // below setting is for marker without line but use spline for fitting line
-      showLines: false,
-      showMarkers: true,
-      fillArea: false,
-      useSpline: true,
-    },
-    {
-      // line plot with marker
-      series: {
-        // random data from 0 to 29
-        x: [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12,
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19,
-          20,
-          21,
-          22,
-          23,
-          24,
-          25,
-          26,
-          27,
-          28,
-          29,
+      {
+        // line plot with marker
+        seriesX: [
+          '0',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
+          '10',
+          '11',
+          '12',
+          '13',
+          '14',
+          '15',
+          '16',
+          '17',
+          '18',
+          '19',
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
         ],
-        y: [
-          -1,
-          -0.8,
-          -0.4,
-          0,
-          0.5,
-          0.8,
-          1.3,
-          1.7,
-          2.0,
-          2.3,
-          2.7,
-          3.5,
-          4.0,
-          4.5,
-          4.7,
-          4.7,
-          4.6,
-          4.0,
-          3.5,
-          2.7,
-          2.3,
-          2.0,
-          1.7,
-          1.3,
-          0.8,
-          0.5,
-          0,
-          -0.4,
-          -0.67,
-          -1,
+        seriesY: [
+          '-1',
+          '-0.8',
+          '-0.4',
+          '0',
+          '0.5',
+          '0.8',
+          '1.3',
+          '1.7',
+          '2.0',
+          '2.3',
+          '2.7',
+          '3.5',
+          '4.0',
+          '4.5',
+          '4.7',
+          '4.7',
+          '4.6',
+          '4.0',
+          '3.5',
+          '2.7',
+          '2.3',
+          '2.0',
+          '1.7',
+          '1.3',
+          '0.8',
+          '0.5',
+          '0',
+          '-0.4',
+          '-0.67',
+          '-1',
         ],
       },
-      color: '#8B0000', // use this as point/marker color
-      label: 'Data 2', // use this as "name" in plotly
-      // below setting is for marker with line but no spline interpolation
-      showLines: true,
-      showMarkers: true,
-      fillArea: false,
-      useSpline: false,
-    },
-    {
-      // line plot with marker
-      series: {
-        // random data from 20 to 47
-        x: [
-          20,
-          21,
-          22,
-          23,
-          24,
-          25,
-          26,
-          27,
-          28,
-          29,
-          30,
-          31,
-          32,
-          33,
-          34,
-          35,
-          36,
-          37,
-          38,
-          39,
-          40,
-          41,
-          42,
-          43,
-          44,
-          45,
-          46,
-          47,
+      {
+        // line plot with marker
+        seriesX: [
+          '20',
+          '21',
+          '22',
+          '23',
+          '24',
+          '25',
+          '26',
+          '27',
+          '28',
+          '29',
+          '30',
+          '31',
+          '32',
+          '33',
+          '34',
+          '35',
+          '36',
+          '37',
+          '38',
+          '39',
+          '40',
+          '41',
+          '42',
+          '43',
+          '44',
+          '45',
+          '46',
+          '47',
         ],
-        y: [
-          -1,
-          -0.8,
-          -0.7,
-          -0.5,
-          -0.2,
-          0,
-          0.5,
-          0.8,
-          1.2,
-          1.5,
-          2.3,
-          2.6,
-          2.9,
-          3.0,
-          2.85,
-          2.6,
-          2.0,
-          1.5,
-          1.2,
-          1.0,
-          0.8,
-          0.4,
-          0,
-          -0.3,
-          -0.6,
-          -0.7,
-          -0.8,
-          -1,
+        seriesY: [
+          '-1',
+          '-0.8',
+          '-0.7',
+          '-0.5',
+          '-0.2',
+          '0',
+          '0.5',
+          '0.8',
+          '1.2',
+          '1.5',
+          '2.3',
+          '2.6',
+          '2.9',
+          '3.0',
+          '2.85',
+          '2.6',
+          '2.0',
+          '1.5',
+          '1.2',
+          '1.0',
+          '0.8',
+          '0.4',
+          '0',
+          '-0.3',
+          '-0.6',
+          '-0.7',
+          '-0.8',
+          '-1',
         ],
       },
-      color: '#006400', // use this as point/marker color
-      label: 'Data 3', // use this as "name" in plotly
-      // density plot: also testing for no line/marker => line seems to be defailt in this case
-      showLines: false,
-      showMarkers: false,
-      fillArea: true,
-      useSpline: true,
-    },
-  ],
-  // opacity: 0.2,
+    ],
+  },
 };
 
-// // a sample data for testing Date format: ISO format only
-// const dataSet: VEuPathDBScatterPlotData = {
-//   data: [
-//     {
-//       series: {
-//         x: ['2020-01-11T00:00:00Z', '2019-01-01T00:00:00Z', '2018-01-01T00:00:00Z', '2017-12-20T00:00:00Z', '2016-07-18T00:00:00Z', '2015-07-31T00:00:00Z','2014-01-11T00:00:00Z', '2013-01-01T00:00:00Z', '2012-05-01T00:00:00Z', '2012-01-05T00:00:00Z'],
-//         y: [1,2,3,4,5,6,7,8,9,10],
-//       },
-//       // popupContent?: string;   // this prop is placed at each object, {x, y, popupContent}, but not tested
-//       interval: {
-//         x: ['2020-01-11T00:00:00Z', '2019-01-01T00:00:00Z', '2018-01-01T00:00:00Z', '2017-12-20T00:00:00Z', '2016-07-18T00:00:00Z', '2015-07-31T00:00:00Z','2014-01-11T00:00:00Z', '2013-01-01T00:00:00Z', '2012-05-01T00:00:00Z', '2012-01-05T00:00:00Z'],
-//         y: [1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.2,9.5],
-//         standardError: [0.1,0.145,0.2,0.11,0.5,0.24,0.7,0.33,0.45,0.55],
-//         orientation: orientationValue,
-//       },
-//       color: '#00b0f6',       // use this as fitting line and scatter color
-//       label: 'Dataset 1',     // use this as "name" in plotly
-//     },
-//   ],
-//   // opacity: 0.2,
-// }
+// a sample data for testing Date format: ISO format only
+const dateStringDataSet: VEuPathDBScatterPlotData = {
+  scatterplot: {
+    data: [
+      // Case 2-1) X: date string; Y: number
+      {
+        // not sorted X
+        seriesX: [
+          '2012-05-01',
+          '2013-01-01',
+          '2012-01-05',
+          '2014-01-11',
+          '2015-07-31',
+          '2016-07-18',
+          '2017-12-20',
+          '2018-01-01',
+          '2019-01-01',
+          '2020-01-11',
+        ],
+        seriesY: ['2', '3', '1', '4', '5', '6', '7', '8', '9', '10'],
+        // not sorted X
+        smoothedMeanX: [
+          '2012-08-01',
+          '2013-06-01',
+          '2014-01-11',
+          '2015-05-31',
+          '2012-03-05',
+          '2016-02-18',
+          '2017-10-20',
+          '2018-04-01',
+          '2019-07-01',
+          '2019-12-11',
+        ],
+        smoothedMeanY: [2.2, 3.3, 4.4, 5.5, 1.1, 6.6, 7.7, 8.8, 9.2, 9.5],
+        smoothedMeanSE: [
+          0.145,
+          0.2,
+          0.11,
+          0.5,
+          0.1,
+          0.24,
+          0.7,
+          0.33,
+          0.45,
+          0.55,
+        ],
+      },
 
-// set global Opacity value
-let globalOpacity = dataSet.opacity ? dataSet.opacity : 1;
+      // // Case 2-2) X: number string; Y: date string
+      // // // In this case, smoothedMean and bestfitline have response error from backend anyway
+      // {
+      //   // not sorted X
+      //   seriesY: ['2012-05-01', '2013-01-01', '2012-01-05', '2014-01-11', '2015-07-31', '2016-07-18', '2017-12-20', '2018-01-01', '2019-01-01','2020-01-11' ],
+      //   seriesX: ["2","3","1","4","5","6","7","8","9","10"],
+      //   // // not sorted X
+      //   // smoothedMeanX: ['2012-08-01', '2013-06-01', '2014-01-11', '2015-05-31', '2012-03-05','2016-02-18', '2017-10-20', '2018-04-01', '2019-07-01', '2019-12-11' ],
+      //   // smoothedMeanY: [2.2,3.3,4.4,5.5,1.1,6.6,7.7,8.8,9.2,9.5],
+      //   // smoothedMeanSE: [0.145,0.2,0.11,0.5,0.1,0.24,0.7,0.33,0.45,0.55],
+      // },
+    ],
+  },
+};
 
-// set a default color - set to any for now
-let defaultColor: string = '#00b0f6';
+/*
+  Testing scatter, line, and density plots for Case 1: number string
+  Note that all plots will display smoothed mean line and confidence interval
+    :it is because only single dataset is commonly used in this story
+**/
+// Case 1. X and Y: number string cases
+const independentValueType = 'number';
+const dependentValueType = 'number';
+// a) checking scatter plot: raw data with smoothed mean and confidence interval
+// const { dataSetProcess, yMin, yMax } = processInputData(dataSet, 'scatterplot', 'markers', independentValueType, dependentValueType);
+// b) checking line plot: raw data with line
+const { dataSetProcess, yMin, yMax } = processInputData(
+  dataSet,
+  'lineplot',
+  'lines',
+  independentValueType,
+  dependentValueType
+);
+// c) checking density plot: raw data with filled area
+// const { dataSetProcess, yMin, yMax } = processInputData(dataSet, 'densityplot', 'lines', independentValueType, dependentValueType);
 
-// making plotly input data
-function processInputData<T extends number | Date>(
-  dataSet: VEuPathDBScatterPlotData<T>
-) {
-  // set variables for x- and yaxis ranges
-  let xMin: number | Date = 0;
-  let xMax: number | Date = 0;
-  let yMin: number | Date = 0;
-  let yMax: number | Date = 0;
+// // // Case 2. X or Y : date string (yyyy-mm-dd) case
+// // Case 2-1
+// const independentValueType = 'date';
+// const dependentValueType = 'number';
+// // Case 2-2
+// // const independentValueType = 'number';
+// // const dependentValueType = 'date';
+// const { dataSetProcess, yMin, yMax } = processInputData(dateStringDataSet, 'scatterplot', 'markers', independentValueType, dependentValueType);
 
-  let dataSetProcess: any = [];
-  dataSet.data.forEach(function (el: any, index: number) {
-    // initialize variables: setting with union type for future, but this causes typescript issue in the current version
-    let xSeriesValue: T[] = [];
-    let ySeriesValue: T[] = [];
-    let xIntervalLineValue: T[] = [];
-    let yIntervalLineValue: T[] = [];
-    let standardErrorValue: T[] = []; // this is for standardError
-    let xIntervalBounds: T[] = [];
-    let yIntervalBounds: T[] = [];
-
-    // set rgbValue here per dataset with a default color
-    let rgbValue: number[] = el.color
-      ? hexToRgb(el.color)
-      : hexToRgb(defaultColor);
-    let scatterPointColor: string = '';
-    let fittingLineColor: string = '';
-    let intervalColor: string = '';
-    // set line and marker variable
-    let modeValue: string = '';
-    let splineValue: string = '';
-    let fillAreaValue: string = '';
-
-    // series is for scatter plot
-    if (el.series) {
-      // check the number of x = number of y
-      if (el.series.x.length !== el.series.y.length) {
-        console.log(
-          'x length=',
-          el.series.x.length,
-          '  y length=',
-          el.series.y.length
-        );
-        alert('The number of X data is not equal to the number of Y data');
-        throw new Error(
-          'The number of X data is not equal to the number of Y data'
-        );
-      }
-
-      // probably no need to have this for series data, though
-      //1) combine the arrays:
-      let combinedArray = [];
-      for (let j = 0; j < el.series.x.length; j++) {
-        combinedArray.push({ xValue: el.series.x[j], yValue: el.series.y[j] });
-      }
-      //2) sort:
-      combinedArray.sort(function (a, b) {
-        return a.xValue < b.xValue ? -1 : a.xValue == b.xValue ? 0 : 1;
-      });
-      //3) separate them back out:
-      for (let k = 0; k < combinedArray.length; k++) {
-        xSeriesValue[k] = combinedArray[k].xValue;
-        ySeriesValue[k] = combinedArray[k].yValue;
-      }
-
-      /*
-       *  set variables for x-/y-axes ranges including x,y data points: considering Date data for X as well
-       * This is for finding global min/max values among data arrays for better display of the plot(s)
-       */
-      // check if this X array consists of numbers & add type assertion
-      if (isArrayOfNumbers(xSeriesValue)) {
-        xMin =
-          xMin < Math.min(...(xSeriesValue as number[]))
-            ? xMin
-            : Math.min(...(xSeriesValue as number[]));
-        xMax =
-          xMax > Math.max(...(xSeriesValue as number[]))
-            ? xMax
-            : Math.max(...(xSeriesValue as number[]));
-      } else {
-        // this array consists of Dates
-        if (index == 0) {
-          // to set initial min/max Date values for Date[]
-          xMin = getMinDate(xSeriesValue as Date[]);
-          xMax = getMaxDate(xSeriesValue as Date[]);
-        } else {
-          xMin =
-            xMin <
-            Math.min(...xSeriesValue.map((date) => new Date(date).getTime()))
-              ? xMin
-              : new Date(
-                  Math.min(
-                    ...xSeriesValue.map((date) => new Date(date).getTime())
-                  )
-                );
-          xMax =
-            xMax >
-            Math.max(...xSeriesValue.map((date) => new Date(date).getTime()))
-              ? xMax
-              : new Date(
-                  Math.max(
-                    ...xSeriesValue.map((date) => new Date(date).getTime())
-                  )
-                );
-        }
-      }
-
-      // check if this Y array consists of numbers & add type assertion
-      if (isArrayOfNumbers(ySeriesValue)) {
-        if (index == 0) {
-          yMin = Math.min(...ySeriesValue);
-          yMax = Math.max(...ySeriesValue);
-        } else {
-          yMin =
-            yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
-          yMax =
-            yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
-        }
-      } else {
-        if (index == 0) {
-          // to set initial Date value for Date[]
-          yMin = getMinDate(ySeriesValue as Date[]);
-          yMax = getMaxDate(ySeriesValue as Date[]);
-        } else {
-          yMin =
-            yMin < getMinDate(ySeriesValue as Date[])
-              ? yMin
-              : getMinDate(ySeriesValue as Date[]);
-          yMax =
-            yMax > getMaxDate(ySeriesValue as Date[])
-              ? yMax
-              : getMaxDate(ySeriesValue as Date[]);
-        }
-      }
-
-      // use global opacity for coloring
-      scatterPointColor =
-        'rgba(' +
-        rgbValue[0] +
-        ',' +
-        rgbValue[1] +
-        ',' +
-        rgbValue[2] +
-        ',' +
-        globalOpacity +
-        ')'; // set alpha/opacity as 0.2 for CI
-
-      // check plot options: default value at plotly js seems to be lines
-      if (el.showLines == true && el.showMarkers == true) {
-        modeValue = 'lines+markers';
-      } else if (el.showLines == true && el.showMarkers == false) {
-        modeValue = 'lines';
-      } else if (el.showLines == false && el.showMarkers == true) {
-        modeValue = 'markers';
-      }
-
-      if (el.useSpline) {
-        splineValue = 'spline';
-      }
-
-      if (el.fillArea) {
-        fillAreaValue = 'toself';
-      }
-
-      // add scatter data considering input options
-      dataSetProcess.push({
-        x: xSeriesValue,
-        y: ySeriesValue,
-        name: el.label,
-        // mode: 'markers',
-        // mode: 'lines+markers',
-        mode: modeValue,
-        // type: 'scattergl',
-        type: 'scatter',
-        fill: fillAreaValue,
-        marker: { color: scatterPointColor, size: 12 },
-        line: { color: scatterPointColor, shape: splineValue },
-      });
-    }
-
-    // check if interval prop exists
-    if (el.interval) {
-      // check the number of x = number of y or standardError
-      if (
-        el.interval.x.length !== el.interval.y.length ||
-        el.interval.x.length !== el.interval.standardError.length
-      ) {
-        alert(
-          'The number of X data is not equal to the number of Y data or standardError data'
-        );
-        throw new Error(
-          'The number of X data is not equal to the number of Y data or standardError data'
-        );
-      }
-      // sorting function
-      //1) combine the arrays: including standardError
-      let combinedArrayInterval = [];
-      for (let j = 0; j < el.interval.x.length; j++) {
-        combinedArrayInterval.push({
-          xValue: el.interval.x[j],
-          yValue: el.interval.y[j],
-          zValue: el.interval.standardError[j],
-        });
-      }
-      //2) sort:
-      combinedArrayInterval.sort(function (a, b) {
-        return a.xValue < b.xValue ? -1 : a.xValue == b.xValue ? 0 : 1;
-      });
-      //3) separate them back out:
-      for (let k = 0; k < combinedArrayInterval.length; k++) {
-        xIntervalLineValue[k] = combinedArrayInterval[k].xValue;
-        yIntervalLineValue[k] = combinedArrayInterval[k].yValue;
-        standardErrorValue[k] = combinedArrayInterval[k].zValue;
-      }
-
-      // set variables for x-/y-axes ranges including fitting line: note that initial values of xMin and xMax are already defined earlier (el.series)
-      if (isArrayOfNumbers(xIntervalLineValue)) {
-        xMin = el.series.x
-          ? xMin < Math.min(...xIntervalLineValue)
-            ? xMin
-            : Math.min(...xIntervalLineValue)
-          : Math.min(...xIntervalLineValue);
-        xMax = el.series.x
-          ? xMax > Math.max(...xIntervalLineValue)
-            ? xMax
-            : Math.max(...xIntervalLineValue)
-          : Math.max(...xIntervalLineValue);
-      } else {
-        xMin = el.series.x
-          ? xMin < getMinDate(xIntervalLineValue as Date[])
-            ? xMin
-            : getMinDate(xIntervalLineValue as Date[])
-          : getMinDate(xIntervalLineValue as Date[]);
-        xMax = el.series.x
-          ? xMax > getMaxDate(xIntervalLineValue as Date[])
-            ? xMax
-            : getMaxDate(xIntervalLineValue as Date[])
-          : getMaxDate(xIntervalLineValue as Date[]);
-      }
-
-      if (isArrayOfNumbers(yIntervalLineValue)) {
-        yMin = el.series.y
-          ? yMin < Math.min(...yIntervalLineValue)
-            ? yMin
-            : Math.min(...yIntervalLineValue)
-          : Math.min(...yIntervalLineValue);
-        yMax = el.series.y
-          ? yMax > Math.max(...yIntervalLineValue)
-            ? yMax
-            : Math.max(...yIntervalLineValue)
-          : Math.max(...yIntervalLineValue);
-      } else {
-        yMin = el.series.y
-          ? yMin < getMinDate(yIntervalLineValue as Date[])
-            ? yMin
-            : getMinDate(yIntervalLineValue as Date[])
-          : getMinDate(yIntervalLineValue as Date[]);
-        yMax = el.series.y
-          ? yMax > getMaxDate(yIntervalLineValue as Date[])
-            ? yMax
-            : getMaxDate(yIntervalLineValue as Date[])
-          : getMaxDate(yIntervalLineValue as Date[]);
-      }
-      // use global opacity for coloring
-      fittingLineColor =
-        'rgba(' +
-        rgbValue[0] +
-        ',' +
-        rgbValue[1] +
-        ',' +
-        rgbValue[2] +
-        ',' +
-        globalOpacity +
-        ')';
-
-      // store data for fitting line: this is not affected by plot options (e.g., showLine etc.)
-      dataSetProcess.push({
-        x: xIntervalLineValue,
-        y: yIntervalLineValue,
-        name: el.label + ' fitting',
-        // mode: 'lines+markers',
-        mode: 'lines', // no data point is displayed: only line
-        // type: 'line',
-        // line: {color: el.color, shape: 'spline',  width: 5 },
-        line: { color: fittingLineColor, shape: 'spline', width: 5 },
-      });
-      // make Confidence Interval (CI) or Bounds (filled area)
-      xIntervalBounds = xIntervalLineValue;
-      xIntervalBounds = xIntervalBounds.concat(
-        xIntervalLineValue.map((element: any) => element).reverse()
-      );
-
-      // finding upper and lower bound values.
-      const { yUpperValues, yLowerValues } = getBounds(
-        el.interval.orientation === 'x'
-          ? xIntervalLineValue
-          : yIntervalLineValue,
-        standardErrorValue
-      );
-
-      // make upper and lower bounds plotly format
-      yIntervalBounds = yUpperValues;
-      yIntervalBounds = yIntervalBounds.concat(
-        yLowerValues.map((element: any) => element).reverse()
-      );
-
-      // set alpha/opacity as 0.2 for CI
-      intervalColor =
-        'rgba(' + rgbValue[0] + ',' + rgbValue[1] + ',' + rgbValue[2] + ',0.2)';
-
-      // set variables for x-/y-axes ranges including CI/bounds: no need for x data as it was compared before
-      yMin =
-        yMin < Math.min(...yLowerValues.map(Number))
-          ? yMin
-          : Math.min(...yLowerValues.map(Number));
-      yMax =
-        yMax > Math.max(...yUpperValues.map(Number))
-          ? yMax
-          : Math.max(...yUpperValues.map(Number));
-
-      // store data for CI/bounds
-      dataSetProcess.push({
-        x: xIntervalBounds,
-        y: yIntervalBounds,
-        name: 'Confidence interval',
-        fill: 'tozerox',
-        fillcolor: intervalColor,
-        type: 'line',
-        line: { color: 'transparent', shape: 'spline' }, // here, line means upper and lower bounds
-      });
-    }
-
-    // make some margin for y-axis range (5% of range for now)
-    if (typeof yMin == 'number' && typeof yMax == 'number') {
-      yMin = yMin - (yMax - yMin) * 0.05;
-      yMax = yMax + (yMax - yMin) * 0.05;
-    }
-  });
-
-  return { dataSetProcess, xMin, xMax, yMin, yMax };
-}
-
-const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(dataSet);
+// set some default props
+const plotWidth = 1000;
+const plotHeight = 600;
+// let plotWidth = 350;
+// let plotHeight = 250;
+const independentAxisLabel = 'independent axis label';
+const dependentAxisLabel = 'dependent axis label';
+const plotTitle = '';
 
 /**
- *  width and height of the plot are manually set at ScatterAndLinePlotCIReal (layout)
+ * width and height of the plot are manually set at ScatterAndLinePlotCIReal (layout)
  * Opacity control (slider) is manually set at ScatterAndLinePlotCIReal (layout)
  */
-export const RealDataDate = () => {
-  // set props
-  let plotWidth = 1000;
-  let plotHeight = 600;
-  // let plotWidth = 350;
-  // let plotHeight = 250;
-  let independentAxisLabel = 'Hours post infection';
-  let dependentAxisLabel = 'Expression Values (log2 ratio)';
-  let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
-
+export const MultipleData = () => {
   return (
     <XYPlot
       data={[...dataSetProcess]}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
-      independentAxisRange={[xMin, xMax]}
+      // not to use independentAxisRange
+      // independentAxisRange={[xMin, xMax]}
       dependentAxisRange={[yMin, yMax]}
       title={plotTitle}
       width={plotWidth}
@@ -997,26 +635,20 @@ export const RealDataDate = () => {
       // margin={{l: 50, r: 10, b: 20, t: 10}}
       // add legend title
       legendTitle={'legend title example'}
+      independentValueType={independentValueType}
+      dependentValueType={dependentValueType}
     />
   );
 };
 
 export const EmptyData = () => {
-  // set props
-  let plotWidth = 1000;
-  let plotHeight = 600;
-  // let plotWidth = 350;
-  // let plotHeight = 250;
-  let independentAxisLabel = 'Hours post infection';
-  let dependentAxisLabel = 'Expression Values (log2 ratio)';
-  let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
-
   return (
     <XYPlot
       data={[]}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
-      independentAxisRange={[xMin, xMax]}
+      // not to use independentAxisRange
+      // independentAxisRange={[xMin, xMax]}
       dependentAxisRange={[yMin, yMax]}
       title={plotTitle}
       width={plotWidth}
@@ -1031,21 +663,13 @@ export const EmptyData = () => {
 };
 
 export const EmptyDataLoading = () => {
-  // set props
-  let plotWidth = 1000;
-  let plotHeight = 600;
-  // let plotWidth = 350;
-  // let plotHeight = 250;
-  let independentAxisLabel = 'Hours post infection';
-  let dependentAxisLabel = 'Expression Values (log2 ratio)';
-  let plotTitle = 'Expression Values - PF3D7_0107900 - Total mRNA Abundance';
-
   return (
     <XYPlot
       data={[]}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
-      independentAxisRange={[xMin, xMax]}
+      // not to use independentAxisRange
+      // independentAxisRange={[xMin, xMax]}
       dependentAxisRange={[yMin, yMax]}
       title={plotTitle}
       width={plotWidth}
@@ -1060,13 +684,314 @@ export const EmptyDataLoading = () => {
   );
 };
 
-function getMinDate(dates: Date[]) {
-  return new Date(Math.min(...dates.map(Number)));
+// making plotly input data
+function processInputData<T extends number | string>(
+  dataSet: any,
+  vizType: string,
+  // line, marker,
+  modeValue: string,
+  // send independentValueType & dependentValueType
+  independentValueType: string,
+  dependentValueType: string
+) {
+  // set fillAreaValue for densityplot
+  const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
+
+  // distinguish data per Viztype
+  // currently, lineplot returning scatterplot, not lineplot
+  const plotDataSet =
+    vizType === 'lineplot'
+      ? dataSet.scatterplot
+      : vizType === 'densityplot'
+      ? // set densityplot as scatterplot for this example
+        // ? dataSet.densityplot
+        dataSet.scatterplot
+      : dataSet.scatterplot;
+
+  // set variables for x- and yaxis ranges
+  let yMin: number | string | undefined = 0;
+  let yMax: number | string | undefined = 0;
+
+  // coloring: using plotly.js default colors
+  const markerColors = [
+    '31, 119, 180', //'#1f77b4',  // muted blue
+    '255, 127, 14', //'#ff7f0e',  // safety orange
+    '44, 160, 44', //'#2ca02c',  // cooked asparagus green
+    '214, 39, 40', //'#d62728',  // brick red
+    '148, 103, 189', //'#9467bd',  // muted purple
+    '140, 86, 75', //'#8c564b',  // chestnut brown
+    '227, 119, 194', //'#e377c2',  // raspberry yogurt pink
+    '127, 127, 127', //'#7f7f7f',  // middle gray
+    '188, 189, 34', //'#bcbd22',  // curry yellow-green
+    '23, 190, 207', //'#17becf'   // blue-teal
+  ];
+
+  // set dataSetProcess as any
+  let dataSetProcess: any = [];
+
+  // drawing raw data (markers) at first
+  plotDataSet.data.forEach(function (el: any, index: number) {
+    // initialize seriesX/Y
+    let seriesX = [];
+    let seriesY = [];
+
+    // series is for scatter plot
+    if (el.seriesX && el.seriesY) {
+      // check the number of x = number of y
+      if (el.seriesX.length !== el.seriesY.length) {
+        // alert('The number of X data is not equal to the number of Y data');
+        throw new Error(
+          'The number of X data is not equal to the number of Y data'
+        );
+      }
+
+      /*
+        For raw data, there are two cases:
+          a) X: number string; Y: date string
+          b) X: date string; Y: number string
+        For the case of b), smoothed mean and best fit line option would get backend response error
+      **/
+      if (independentValueType === 'date') {
+        seriesX = el.seriesX;
+      } else {
+        seriesX = el.seriesX.map(Number);
+      }
+      if (dependentValueType === 'date') {
+        seriesY = el.seriesY;
+      } else {
+        seriesY = el.seriesY.map(Number);
+      }
+
+      // check if this Y array consists of numbers & add type assertion
+      if (index === 0) {
+        // if (seriesY && seriesY !== undefined) {
+        yMin = min(seriesY);
+        yMax = max(seriesY);
+        // }
+      } else {
+        yMin =
+          // (yMin !== undefined && seriesY.length !== 0 && yMin < min(seriesY)) ? yMin : min(seriesY);
+          lte(yMin, min(seriesY)) ? yMin : min(seriesY);
+        yMax = gte(yMax, max(seriesY)) ? yMax : max(seriesY);
+      }
+
+      // add scatter data considering input options
+      dataSetProcess.push({
+        x: seriesX,
+        y: seriesY,
+        // distinguish X/Y Data from Overlay
+        name: el.overlayVariableDetails
+          ? el.overlayVariableDetails.value
+          : 'Data',
+        mode: modeValue,
+        type:
+          vizType === 'lineplot'
+            ? 'scatter'
+            : vizType === 'densityplot'
+            ? 'scatter'
+            : 'scattergl', // for the raw data of the scatterplot
+        fill: fillAreaValue,
+        marker: {
+          color: 'rgba(' + markerColors[index] + ',0.7)',
+          // size: 6,
+          // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
+        },
+        // this needs to be here for the case of markers with line or lineplot.
+        // always use spline?
+        line: { color: 'rgba(' + markerColors[index] + ',1)', shape: 'spline' },
+      });
+    }
+  });
+
+  // after drawing raw data, smoothedMean and bestfitline plots are displayed
+  plotDataSet.data.forEach(function (el: any, index: number) {
+    // initialize variables: setting with union type for future, but this causes typescript issue in the current version
+    let xIntervalLineValue: T[] = [];
+    let yIntervalLineValue: number[] = [];
+    let standardErrorValue: number[] = []; // this is for standardError
+
+    let xIntervalBounds: T[] = [];
+    let yIntervalBounds: number[] = [];
+
+    // initialize smoothedMeanX, bestFitLineX
+    let smoothedMeanX = [];
+    let bestFitLineX = [];
+
+    // check if smoothedMean prop exists
+    if (el.smoothedMeanX && el.smoothedMeanY && el.smoothedMeanSE) {
+      // check the number of x = number of y or standardError
+      if (el.smoothedMeanX.length !== el.smoothedMeanY.length) {
+        throw new Error(
+          'The number of X data is not equal to the number of Y data or standardError data'
+        );
+      }
+
+      // change string array to number array for numeric data
+      // smoothedMeanX = el.smoothedMeanX.map(Number);
+      if (independentValueType === 'date') {
+        smoothedMeanX = el.smoothedMeanX;
+      } else {
+        smoothedMeanX = el.smoothedMeanX.map(Number);
+      }
+      // smoothedMeanY/SE are number[]
+
+      // the date format, yyyy-mm-dd works with sort, so no change in the following is required
+      // sorting function
+      //1) combine the arrays: including standardError
+      let combinedArrayInterval = [];
+      for (let j = 0; j < smoothedMeanX.length; j++) {
+        combinedArrayInterval.push({
+          xValue: smoothedMeanX[j],
+          yValue: el.smoothedMeanY[j],
+          zValue: el.smoothedMeanSE[j],
+        });
+      }
+      //2) sort:
+      combinedArrayInterval.sort(function (a, b) {
+        return a.xValue < b.xValue ? -1 : a.xValue === b.xValue ? 0 : 1;
+      });
+      //3) separate them back out:
+      for (let k = 0; k < combinedArrayInterval.length; k++) {
+        xIntervalLineValue[k] = combinedArrayInterval[k].xValue;
+        yIntervalLineValue[k] = combinedArrayInterval[k].yValue;
+        standardErrorValue[k] = combinedArrayInterval[k].zValue;
+      }
+
+      // add additional condition for the case of smoothedMean (without series data)
+      yMin = el.seriesY
+        ? lte(yMin, min(yIntervalLineValue))
+          ? yMin
+          : min(yIntervalLineValue)
+        : min(yIntervalLineValue);
+      yMax = el.seriesY
+        ? gte(yMax, max(yIntervalLineValue))
+          ? yMax
+          : max(yIntervalLineValue)
+        : max(yIntervalLineValue);
+
+      // store data for smoothed mean: this is not affected by plot options (e.g., showLine etc.)
+      dataSetProcess.push({
+        x: xIntervalLineValue,
+        y: yIntervalLineValue,
+        // name: 'Smoothed mean',
+        name: el.overlayVariableDetails
+          ? el.overlayVariableDetails.value + '<br>Smoothed mean'
+          : 'Smoothed mean',
+        mode: 'lines', // no data point is displayed: only line
+        line: {
+          color: 'rgba(' + markerColors[index] + ',1)',
+          shape: 'spline',
+          width: 2,
+        },
+        // use scattergl
+        type: 'scattergl',
+      });
+
+      // make Confidence Interval (CI) or Bounds (filled area)
+      xIntervalBounds = xIntervalLineValue;
+      xIntervalBounds = xIntervalBounds.concat(
+        xIntervalLineValue.map((element: any) => element).reverse()
+      );
+
+      // finding upper and lower bound values.
+      const { yUpperValues, yLowerValues } = getBounds(
+        yIntervalLineValue,
+        standardErrorValue
+      );
+
+      // make upper and lower bounds plotly format
+      yIntervalBounds = yUpperValues;
+      yIntervalBounds = yIntervalBounds.concat(
+        yLowerValues.map((element: any) => element).reverse()
+      );
+
+      // set variables for x-/y-axes ranges including CI/bounds: no need for x data as it was compared before
+      yMin = lte(yMin, min(yLowerValues)) ? yMin : min(yLowerValues);
+      yMax = gte(yMax, max(yLowerValues)) ? yMax : max(yLowerValues);
+
+      // store data for CI/bounds
+      dataSetProcess.push({
+        x: xIntervalBounds,
+        y: yIntervalBounds,
+        // name: '95% Confidence interval',
+        name: el.overlayVariableDetails
+          ? el.overlayVariableDetails.value + '<br>95% Confidence interval'
+          : '95% Confidence interval',
+        // this is better to be tozeroy, not tozerox
+        fill: 'tozeroy',
+        fillcolor: 'rgba(' + markerColors[index] + ',0.2)',
+        // type: 'line',
+        type: 'scattergl',
+        // here, line means upper and lower bounds
+        line: { color: 'transparent', shape: 'spline' },
+      });
+    }
+
+    // accomodating bestFitLineWithRaw
+    // check if bestFitLineX/Y props exist
+    if (el.bestFitLineX && el.bestFitLineY) {
+      // check the number of x = number of y
+      if (el.bestFitLineX.length !== el.bestFitLineY.length) {
+        throw new Error(
+          'The number of X data is not equal to the number of Y data or standardError data'
+        );
+      }
+
+      // change string array to number array for numeric data
+      if (independentValueType === 'date') {
+        bestFitLineX = el.bestFitLineX;
+      } else {
+        bestFitLineX = el.bestFitLineX.map(Number);
+      }
+
+      // add additional condition for the case of smoothedMean (without series data)
+      yMin = el.seriesY
+        ? lte(yMin, min(el.bestFitLineY))
+          ? yMin
+          : min(el.bestFitLineY)
+        : min(el.bestFitLineY);
+      yMax = el.seriesY
+        ? gte(yMax, max(el.bestFitLineY))
+          ? yMax
+          : max(el.bestFitLineY)
+        : max(el.bestFitLineY);
+
+      // store data for fitting line: this is not affected by plot options (e.g., showLine etc.)
+      dataSetProcess.push({
+        x: bestFitLineX,
+        y: el.bestFitLineY,
+        // display R-square value at legend text(s)
+        // name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
+        name: el.overlayVariableDetails
+          ? el.overlayVariableDetails.value + '<br>R<sup>2</sup> = ' + el.r2
+          : 'Best fit<br>R<sup>2</sup> = ' + el.r2,
+        mode: 'lines', // no data point is displayed: only line
+        line: {
+          color: 'rgba(' + markerColors[index] + ',1)',
+          shape: 'spline',
+        },
+        // use scattergl
+        type: 'scattergl',
+      });
+    }
+  });
+
+  // make some margin for y-axis range (5% of range for now)
+  if (typeof yMin == 'number' && typeof yMax == 'number') {
+    yMin = yMin - (yMax - yMin) * 0.05;
+    yMax = yMax + (yMax - yMin) * 0.05;
+  } else {
+    // set yMin/yMax to be NaN so that plotly uses autoscale for date type
+    yMin = NaN;
+    yMax = NaN;
+  }
+
+  return { dataSetProcess, yMin, yMax };
 }
 
-function getMaxDate(dates: Date[]) {
-  return new Date(Math.max(...dates.map(Number)));
-}
+/*
+ * Utility functions for processInputData()
+ */
 
 function getBounds<T extends number | Date>(
   values: T[],

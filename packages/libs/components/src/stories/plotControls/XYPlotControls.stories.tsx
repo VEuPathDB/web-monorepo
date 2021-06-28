@@ -28,6 +28,7 @@ export const Basic: Story<usePlotControlsParams<any>> = (args) => {
       buttonColor={'primary'}
       margins={['5em', '0', '0', '5em']}
       itemMarginRight={50}
+      plotOptions={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
     />
   );
 };
