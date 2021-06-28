@@ -2,6 +2,7 @@
  * Additional reusable modules to extend PlotProps and PlotData props
  */
 
+import { CSSProperties } from 'react';
 import { BarLayoutOptions, OrientationOptions } from '.';
 
 /** PlotProps addons */
@@ -62,6 +63,18 @@ export type BarLayoutAddon<O extends BarLayoutOptions> = {
 export type ValueTypeAddon = {
   /** Type of variable 'number' or 'date' */
   valueType?: 'number' | 'date';
+};
+
+/** simple string label prop */
+export type LabelAddon = {
+  /** Label for component or widget */
+  label?: string;
+};
+
+/** container styling */
+export type ContainerStylesAddon = {
+  /** Additional styles for component's container. Optional */
+  containerStyles?: CSSProperties;
 };
 
 /** PlotData addons */

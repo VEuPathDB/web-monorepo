@@ -9,8 +9,6 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   NumberRange,
-  DateRange,
-  TimeDelta,
 } from '../../types/general';
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
@@ -18,6 +16,7 @@ import ControlsHeader from '../typography/ControlsHeader';
 // Mid-level controls
 import SelectedRangeControl from './SelectedRangeControl';
 import BinWidthControl from './BinWidthControl';
+import AxisRangeControl from './AxisRangeControl';
 
 // Local Components
 import Button from '../widgets/Button';
@@ -25,12 +24,8 @@ import ButtonGroup from '../widgets/ButtonGroup';
 import Notification from '../widgets/Notification';
 import OpacitySlider from '../widgets/OpacitySlider';
 import OrientationToggle from '../widgets/OrientationToggle';
-import SliderWidget from '../widgets/Slider';
 import Switch from '../widgets/Switch';
-import {
-  NumberRangeInput,
-  DateRangeInput,
-} from '../widgets/NumberAndDateRangeInputs';
+import { NumberRangeInput } from '../widgets/NumberAndDateRangeInputs';
 import LabelledGroup from '../widgets/LabelledGroup';
 
 /**
@@ -350,22 +345,11 @@ export default function HistogramControls({
           onBinWidthChange={onBinWidthChange}
         />
 
-        {onIndependentAxisRangeChange &&
-          (valueType != null && valueType === 'date' ? (
-            <DateRangeInput
-              label="Range:"
-              range={independentAxisRange as DateRange}
-              onRangeChange={onIndependentAxisRangeChange}
-              allowPartialRange={false}
-            />
-          ) : (
-            <NumberRangeInput
-              label="Range:"
-              range={independentAxisRange as NumberRange}
-              onRangeChange={onIndependentAxisRangeChange}
-              allowPartialRange={false}
-            />
-          ))}
+        <AxisRangeControl
+          label="Range:"
+          range={independentAxisRange}
+          onRangeChange={onIndependentAxisRangeChange}
+        />
 
         {onIndependentAxisSettingsReset && (
           <Button

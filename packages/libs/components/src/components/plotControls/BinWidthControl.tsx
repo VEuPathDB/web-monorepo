@@ -1,12 +1,14 @@
 import SliderWidget from '../widgets/Slider';
-import { ValueTypeAddon } from '../../types/plots';
+import { ContainerStylesAddon, ValueTypeAddon } from '../../types/plots';
 import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
 } from '../../types/general';
 
-export interface BinWidthControlProps extends ValueTypeAddon {
+export interface BinWidthControlProps
+  extends ValueTypeAddon,
+    ContainerStylesAddon {
   /** Label for this control component, optional, default = 'Bin width' */
   label?: string;
   /** The current binWidth */
@@ -26,6 +28,7 @@ export default function BinWidthControl({
   onBinWidthChange,
   binWidthRange,
   binWidthStep,
+  containerStyles,
 }: BinWidthControlProps) {
   const unit =
     valueType != null && valueType === 'date'
@@ -54,6 +57,7 @@ export default function BinWidthControl({
             : newValue
         );
       }}
+      containerStyles={containerStyles}
     />
   ) : null;
 }

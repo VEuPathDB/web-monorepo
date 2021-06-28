@@ -4,12 +4,13 @@ import {
 } from '../widgets/NumberAndDateRangeInputs';
 import LabelledGroup from '../widgets/LabelledGroup';
 import { NumberOrDateRange, NumberRange, DateRange } from '../../types/general';
+import { ContainerStylesAddon, ValueTypeAddon } from '../../types/plots';
 
-export interface SelectedRangeControlProps {
+export interface SelectedRangeControlProps
+  extends ValueTypeAddon,
+    ContainerStylesAddon {
   /** Label for this control component, optional */
   label?: string;
-  /** Type of x-variable 'number' or 'date' */
-  valueType?: 'number' | 'date';
   /** A range to highlight by means of opacity. Optional */
   selectedRange?: NumberOrDateRange;
   /** function to call upon selecting a range (in independent axis). Optional */
@@ -27,6 +28,7 @@ export default function SelectedRangeControl({
   onSelectedRangeChange,
   selectedRangeBounds,
   showClearButton = true,
+  containerStyles,
 }: SelectedRangeControlProps) {
   return onSelectedRangeChange ? (
     <LabelledGroup label={label}>
@@ -37,6 +39,7 @@ export default function SelectedRangeControl({
           onRangeChange={onSelectedRangeChange}
           allowPartialRange={false}
           showClearButton={showClearButton}
+          containerStyles={containerStyles}
         />
       ) : (
         <NumberRangeInput
@@ -45,6 +48,7 @@ export default function SelectedRangeControl({
           onRangeChange={onSelectedRangeChange}
           allowPartialRange={false}
           showClearButton={showClearButton}
+          containerStyles={containerStyles}
         />
       )}
     </LabelledGroup>
