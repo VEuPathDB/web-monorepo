@@ -2,9 +2,9 @@ import { HelpIcon } from '@veupathdb/wdk-client/lib/Components';
 import { ErrorBoundary } from '@veupathdb/wdk-client/lib/Controllers';
 import {
   StudyEntity,
-  StudyVariable,
   AnalysisState,
   useStudyMetadata,
+  StudyVariableVariable,
 } from '../core';
 import { FilterContainer } from '../core/components/filter/FilterContainer';
 import { cx } from './Utils';
@@ -13,7 +13,7 @@ interface Props {
   entity: StudyEntity;
   totalEntityCount?: number;
   filteredEntityCount?: number;
-  variable: StudyVariable;
+  variable: StudyVariableVariable;
   analysisState: AnalysisState;
 }
 

@@ -10,6 +10,7 @@ import {
 export function isHistogramVariable(
   variable: StudyVariable
 ): variable is HistogramVariable {
+  if (variable.type === 'category') return false;
   switch (variable.dataShape) {
     case 'continuous':
       switch (variable.type) {
@@ -24,6 +25,7 @@ export function isHistogramVariable(
 export function isTableVariable(
   variable: StudyVariable
 ): variable is TableVariable {
+  if (variable.type === 'category') return false;
   switch (variable.dataShape) {
     case 'binary':
     case 'categorical':
@@ -41,6 +43,7 @@ export function isTableVariable(
 export function isScatterplotVariable(
   variable: StudyVariable
 ): variable is ScatterplotVariable {
+  if (variable.type === 'category') return false;
   switch (variable.dataShape) {
     case 'continuous':
       switch (variable.type) {
@@ -55,13 +58,13 @@ export function isScatterplotVariable(
 export function isMosaicVariable(
   variable: StudyVariable
 ): variable is MosaicVariable {
+  if (variable.type === 'category') return false;
   switch (variable.dataShape) {
     case 'categorical':
     case 'binary':
     case 'ordinal':
       switch (variable.type) {
         case 'number':
-        case 'category':
         case 'string':
           return true;
       }

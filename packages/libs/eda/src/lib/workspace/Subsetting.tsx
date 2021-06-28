@@ -32,7 +32,7 @@ export function Subsetting(props: Props) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  if (entity == null || variable == null)
+  if (entity == null || variable == null || variable.type === 'category')
     return <div>Could not find specified variable.</div>;
 
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
