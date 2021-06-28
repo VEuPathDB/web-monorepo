@@ -1,10 +1,7 @@
 // load scatter plot component
-import XYPlot, {
-  ScatterplotProps,
-} from '@veupathdb/components/lib/plots/XYPlot';
+import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
@@ -38,6 +35,7 @@ import scatter from './selectorIcons/scatter.svg';
 
 // XYPlotControls
 import XYPlotControls from '@veupathdb/components/lib/components/plotControls/XYPlotControls';
+import { min, max, lte, gte } from 'lodash';
 
 export const scatterplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -70,25 +68,19 @@ function FullscreenComponent(props: VisualizationProps) {
 
 function createDefaultConfig(): ScatterplotConfig {
   return {
-    enableOverlay: true,
     valueSpecConfig: 'Raw',
   };
 }
 
 type ScatterplotConfig = t.TypeOf<typeof ScatterplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const ScatterplotConfig = t.intersection([
-  t.type({
-    enableOverlay: t.boolean,
-  }),
-  t.partial({
-    xAxisVariable: Variable,
-    yAxisVariable: Variable,
-    overlayVariable: Variable,
-    facetVariable: Variable,
-    valueSpecConfig: t.string,
-  }),
-]);
+const ScatterplotConfig = t.partial({
+  xAxisVariable: Variable,
+  yAxisVariable: Variable,
+  overlayVariable: Variable,
+  facetVariable: Variable,
+  valueSpecConfig: t.string,
+});
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
@@ -186,11 +178,22 @@ function ScatterplotViz(props: Props) {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
 
+      // check independentValueType/dependentValueType
+      const independentValueType = xAxisVariable?.type
+        ? xAxisVariable.type
+        : '';
+      const dependentValueType = yAxisVariable?.type ? yAxisVariable.type : '';
+
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
         return undefined;
+
+      if (xAxisVariable === yAxisVariable)
+        throw new Error(
+          'The X and Y variables should not be the same. Please choose different variables for X and Y.'
+        );
 
       // add visualization.type here. valueSpec too?
       const params = getRequestParams(
@@ -198,7 +201,7 @@ function ScatterplotViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
+        vizConfig.overlayVariable,
         // add visualization.type
         visualization.type,
         // XYPlotControls
@@ -218,8 +221,13 @@ function ScatterplotViz(props: Props) {
               params as ScatterplotRequestParams
             );
 
-      // send visualization.type as well
-      return scatterplotResponseToData(await response, visualization.type);
+      // send visualization.type, independentValueType, and dependentValueType as well
+      return scatterplotResponseToData(
+        await response,
+        visualization.type,
+        independentValueType,
+        dependentValueType
+      );
     }, [
       studyId,
       filters,
@@ -288,102 +296,74 @@ function ScatterplotViz(props: Props) {
             : String(data.error)}
         </div>
       )}
-      {data.value ? (
-        fullscreen ? (
-          <ScatterplotWithControls
-            // data.value
-            data={[...data.value.dataSetProcess]}
-            width={1000}
-            height={600}
-            // title={'Scatter plot'}
-            independentAxisLabel={
-              findVariable(vizConfig.xAxisVariable)?.displayName
-            }
-            dependentAxisLabel={
-              findVariable(vizConfig.yAxisVariable)?.displayName
-            }
-            independentAxisRange={[data.value.xMin, data.value.xMax]}
-            // block this for now
-            dependentAxisRange={[data.value.yMin, data.value.yMax]}
-            // XYPlotControls valueSpecInitial
-            valueSpec={vizConfig.valueSpecConfig}
-            // valueSpec={valueSpecInitial}
-            onValueSpecChange={onValueSpecChange}
-            // send visualization.type here
-            vizType={visualization.type}
-            showSpinner={data.pending}
-          />
-        ) : (
-          // thumbnail/grid view
-          <XYPlot
-            data={[...data.value.dataSetProcess]}
-            width={230}
-            height={150}
-            independentAxisRange={[data.value.xMin, data.value.xMax]}
-            // block this for now
-            dependentAxisRange={[data.value.yMin, data.value.yMax]}
-            // new props for better displaying grid view
-            displayLegend={false}
-            displayLibraryControls={false}
-            staticPlot={true}
-            margin={{ l: 30, r: 20, b: 15, t: 20 }}
-            showSpinner={data.pending}
-          />
-        )
+      {fullscreen ? (
+        <ScatterplotWithControls
+          // data.value
+          data={
+            data.value && !data.pending ? [...data.value.dataSetProcess] : []
+          }
+          width={1000}
+          height={600}
+          // title={'Scatter plot'}
+          independentAxisLabel={
+            findVariable(vizConfig.xAxisVariable)?.displayName
+          }
+          dependentAxisLabel={
+            findVariable(vizConfig.yAxisVariable)?.displayName
+          }
+          // independentAxisRange={data.value && !data.pending ? [data.value.xMin, data.value.xMax] : []}
+          // block this for now
+          dependentAxisRange={
+            data.value && !data.pending
+              ? [data.value.yMin, data.value.yMax]
+              : []
+          }
+          // XYPlotControls valueSpecInitial
+          valueSpec={vizConfig.valueSpecConfig}
+          // valueSpec={valueSpecInitial}
+          onValueSpecChange={onValueSpecChange}
+          // send visualization.type here
+          vizType={visualization.type}
+          showSpinner={data.pending}
+          // add plotOptions to control the list of plot options
+          plotOptions={
+            findVariable(vizConfig.yAxisVariable)?.type === 'date'
+              ? ['Raw']
+              : ['Raw', 'Smoothed mean with raw', 'Best fit line with raw']
+          }
+        />
       ) : (
-        // no data or data error case: with control
-        <>
-          <XYPlot
-            data={[]}
-            width={fullscreen ? 1000 : 230}
-            height={fullscreen ? 600 : 150}
-            independentAxisLabel={
-              fullscreen
-                ? findVariable(vizConfig.xAxisVariable)?.displayName
-                : undefined
-            }
-            dependentAxisLabel={
-              fullscreen
-                ? findVariable(vizConfig.yAxisVariable)?.displayName
-                : undefined
-            }
-            displayLegend={fullscreen ? true : false}
-            displayLibraryControls={false}
-            staticPlot={fullscreen ? false : true}
-            margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
-            showSpinner={data.pending}
-          />
-          {visualization.type === 'scatterplot' && fullscreen && (
-            <XYPlotControls
-              // label="Scatter Plot Controls"
-              valueSpec={vizConfig.valueSpecConfig}
-              onValueSpecChange={onValueSpecChange}
-              errorManagement={{
-                errors: [],
-                addError: (_: Error) => {},
-                removeError: (_: Error) => {},
-                clearAllErrors: () => {},
-              }}
-              // new radio button
-              orientation={'horizontal'}
-              labelPlacement={'end'}
-              // minWidth is used to set equivalent space per item
-              minWidth={210}
-              buttonColor={'primary'}
-              margins={['0', '0', '0', '5em']}
-              itemMarginRight={50}
-            />
-          )}
-        </>
+        // thumbnail/grid view
+        <XYPlot
+          data={
+            data.value && !data.pending ? [...data.value.dataSetProcess] : []
+          }
+          width={230}
+          height={150}
+          // independentAxisRange={data.value && !data.pending ? [data.value.xMin, data.value.xMax] : []}
+          // block this for now
+          dependentAxisRange={
+            data.value && !data.pending
+              ? [data.value.yMin, data.value.yMax]
+              : []
+          }
+          // new props for better displaying grid view
+          displayLegend={false}
+          displayLibraryControls={false}
+          staticPlot={true}
+          margin={{ l: 30, r: 20, b: 15, t: 20 }}
+          showSpinner={data.pending}
+        />
       )}
     </div>
   );
 }
 
-type ScatterplotWithControlsProps = ScatterplotProps & {
+type ScatterplotWithControlsProps = XYPlotProps & {
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
   vizType: string;
+  plotOptions: string[];
 };
 
 function ScatterplotWithControls({
@@ -392,6 +372,8 @@ function ScatterplotWithControls({
   valueSpec = 'Raw',
   onValueSpecChange,
   vizType,
+  // add plotOptions
+  plotOptions,
   ...ScatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -428,6 +410,8 @@ function ScatterplotWithControls({
           buttonColor={'primary'}
           margins={['0', '0', '0', '5em']}
           itemMarginRight={50}
+          // add plotOptions
+          plotOptions={plotOptions}
         />
       )}
     </div>
@@ -444,20 +428,24 @@ export function scatterplotResponseToData(
     ReturnType<DataClient['getScatterplot'] | DataClient['getLineplot']>
   >,
   // vizType may be used for handling other plots in this component like line and density
-  vizType: string
+  vizType: string,
+  independentValueType: string,
+  dependentValueType: string
 ) {
   const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
 
-  const { dataSetProcess, xMin, xMax, yMin, yMax } = processInputData(
+  const { dataSetProcess, yMin, yMax } = processInputData(
     response,
     vizType,
-    modeValue
+    modeValue,
+    independentValueType,
+    dependentValueType
   );
 
   return {
     dataSetProcess: dataSetProcess,
-    xMin: xMin,
-    xMax: xMax,
+    // xMin: xMin,
+    // xMax: xMax,
     yMin: yMin,
     yMax: yMax,
   };
@@ -519,28 +507,30 @@ function getRequestParams(
 }
 
 // making plotly input data
-function processInputData<T extends number | Date>(
-  dataSet: ScatterplotResponse,
+function processInputData<T extends number | string>(
+  dataSet: any,
   vizType: string,
   // line, marker,
-  modeValue: string
+  modeValue: string,
+  // use independentValueType & dependentValueType to distinguish btw number and date string
+  independentValueType: string,
+  dependentValueType: string
 ) {
   // set fillAreaValue for densityplot
-  const fillAreaValue = '';
+  const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
 
   // distinguish data per Viztype
+  // currently, lineplot returning scatterplot, not lineplot
   const plotDataSet =
     vizType === 'lineplot'
-      ? // backend issue for lineplot returning scatterplot currently
-        // dataSet.lineplot
-        dataSet.scatterplot
+      ? dataSet.scatterplot
+      : vizType === 'densityplot'
+      ? dataSet.densityplot
       : dataSet.scatterplot;
 
   // set variables for x- and yaxis ranges
-  let xMin: number | Date = 0;
-  let xMax: number | Date = 0;
-  let yMin: number | Date = 0;
-  let yMax: number | Date = 0;
+  let yMin: number | string | undefined = 0;
+  let yMax: number | string | undefined = 0;
 
   // coloring: using plotly.js default colors
   const markerColors = [
@@ -556,27 +546,14 @@ function processInputData<T extends number | Date>(
     '23, 190, 207', //'#17becf'   // blue-teal
   ];
 
-  let dataSetProcess: Array<{}> = [];
+  // set dataSetProcess as any
+  let dataSetProcess: any = [];
 
+  // drawing raw data (markers) at first
   plotDataSet.data.forEach(function (el: any, index: number) {
-    // initialize variables: setting with union type for future, but this causes typescript issue in the current version
-    let xSeriesValue: T[] = [];
-    let ySeriesValue: T[] = [];
-    let xIntervalLineValue: T[] = [];
-    let yIntervalLineValue: T[] = [];
-    let standardErrorValue: T[] = []; // this is for standardError
-    // bestFitLineWithRaw
-    let xBestFitLineValue: T[] = [];
-    let yBestFitLineValue: T[] = [];
-
-    let xIntervalBounds: T[] = [];
-    let yIntervalBounds: T[] = [];
-
-    // initialize seriesX/Y, smoothedMeanX, bestFitLineX
+    // initialize seriesX/Y
     let seriesX = [];
     let seriesY = [];
-    let smoothedMeanX = [];
-    let bestFitLineX = [];
 
     // series is for scatter plot
     if (el.seriesX && el.seriesY) {
@@ -588,117 +565,47 @@ function processInputData<T extends number | Date>(
         );
       }
 
-      // change string array to number array for numeric data
-      seriesX = el.seriesX.map(Number);
-      seriesY = el.seriesY.map(Number);
-
-      // probably no need to have this for series data, though
-      //1) combine the arrays:
-      let combinedArray = [];
-      for (let j = 0; j < seriesX.length; j++) {
-        combinedArray.push({
-          // use seriesX/Y instead of el.seriesX/Y
-          xValue: seriesX[j],
-          yValue: seriesY[j],
-        });
-      }
-      //2) sort:
-      combinedArray.sort(function (a, b) {
-        return a.xValue < b.xValue ? -1 : a.xValue === b.xValue ? 0 : 1;
-      });
-      //3) separate them back out:
-      for (let k = 0; k < combinedArray.length; k++) {
-        xSeriesValue[k] = combinedArray[k].xValue;
-        ySeriesValue[k] = combinedArray[k].yValue;
-      }
-
       /*
-       * Set variables for x-/y-axes ranges including x,y data points: considering Date data for X as well
-       * This is for finding global min/max values among data arrays for better display of the plot(s)
-       */
-      // check if this X array consists of numbers & add type assertion
-      if (isArrayOfNumbers(xSeriesValue)) {
-        if (index === 0) {
-          // need to set initial xMin/xMax
-          xMin = xSeriesValue[0];
-          xMax = xSeriesValue[xSeriesValue.length - 1];
-        } else {
-          xMin =
-            xMin < Math.min(...(xSeriesValue as number[]))
-              ? xMin
-              : Math.min(...(xSeriesValue as number[]));
-          xMax =
-            xMax > Math.max(...(xSeriesValue as number[]))
-              ? xMax
-              : Math.max(...(xSeriesValue as number[]));
-        }
+        For raw data, there are two cases:
+          a) X: number string; Y: date string
+          b) X: date string; Y: number string
+        For the case of b), smoothed mean and best fit line option would get backend response error
+      **/
+      if (independentValueType === 'date') {
+        seriesX = el.seriesX;
       } else {
-        // this array consists of Dates
-        if (index === 0) {
-          // to set initial min/max Date values for Date[]
-          xMin = getMinDate(xSeriesValue as Date[]);
-          xMax = getMaxDate(xSeriesValue as Date[]);
-        } else {
-          xMin =
-            xMin <
-            Math.min(...xSeriesValue.map((date) => new Date(date).getTime()))
-              ? xMin
-              : new Date(
-                  Math.min(
-                    ...xSeriesValue.map((date) => new Date(date).getTime())
-                  )
-                );
-          xMax =
-            xMax >
-            Math.max(...xSeriesValue.map((date) => new Date(date).getTime()))
-              ? xMax
-              : new Date(
-                  Math.max(
-                    ...xSeriesValue.map((date) => new Date(date).getTime())
-                  )
-                );
-        }
+        seriesX = el.seriesX.map(Number);
       }
+      if (dependentValueType === 'date') {
+        seriesY = el.seriesY;
+      } else {
+        seriesY = el.seriesY.map(Number);
+      }
+
+      // console.log('seriesX = ', seriesX)
 
       // check if this Y array consists of numbers & add type assertion
-      if (isArrayOfNumbers(ySeriesValue)) {
-        if (index === 0) {
-          yMin = Math.min(...ySeriesValue);
-          yMax = Math.max(...ySeriesValue);
-        } else {
-          yMin =
-            yMin < Math.min(...ySeriesValue) ? yMin : Math.min(...ySeriesValue);
-          yMax =
-            yMax > Math.max(...ySeriesValue) ? yMax : Math.max(...ySeriesValue);
-        }
+      if (index === 0) {
+        // if (seriesY && seriesY !== undefined) {
+        yMin = min(seriesY);
+        yMax = max(seriesY);
+        // }
       } else {
-        if (index === 0) {
-          // to set initial Date value for Date[]
-          yMin = getMinDate(ySeriesValue as Date[]);
-          yMax = getMaxDate(ySeriesValue as Date[]);
-        } else {
-          yMin =
-            yMin < getMinDate(ySeriesValue as Date[])
-              ? yMin
-              : getMinDate(ySeriesValue as Date[]);
-          yMax =
-            yMax > getMaxDate(ySeriesValue as Date[])
-              ? yMax
-              : getMaxDate(ySeriesValue as Date[]);
-        }
+        yMin =
+          // (yMin !== undefined && seriesY.length !== 0 && yMin < min(seriesY)) ? yMin : min(seriesY);
+          lte(yMin, min(seriesY)) ? yMin : min(seriesY);
+        yMax = gte(yMax, max(seriesY)) ? yMax : max(seriesY);
       }
 
       // add scatter data considering input options
       dataSetProcess.push({
-        x: xSeriesValue,
-        y: ySeriesValue,
+        x: seriesX,
+        y: seriesY,
         // distinguish X/Y Data from Overlay
         name: el.overlayVariableDetails
           ? el.overlayVariableDetails.value
           : 'Data',
         mode: modeValue,
-        // type: 'scattergl',
-        // type: 'scatter',
         type:
           vizType === 'lineplot'
             ? 'scatter'
@@ -707,18 +614,30 @@ function processInputData<T extends number | Date>(
             : 'scattergl', // for the raw data of the scatterplot
         fill: fillAreaValue,
         marker: {
-          // coloring
-          color: 'rgba(' + markerColors[index] + ',0)',
-          size: 12,
-          // coloring
-          line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
+          color: 'rgba(' + markerColors[index] + ',0.7)',
+          // size: 6,
+          // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
-        // coloring
         line: { color: 'rgba(' + markerColors[index] + ',1)', shape: 'spline' },
       });
     }
+  });
+
+  // after drawing raw data, smoothedMean and bestfitline plots are displayed
+  plotDataSet.data.forEach(function (el: any, index: number) {
+    // initialize variables: setting with union type for future, but this causes typescript issue in the current version
+    let xIntervalLineValue: T[] = [];
+    let yIntervalLineValue: number[] = [];
+    let standardErrorValue: number[] = []; // this is for standardError
+
+    let xIntervalBounds: T[] = [];
+    let yIntervalBounds: number[] = [];
+
+    // initialize smoothedMeanX, bestFitLineX
+    let smoothedMeanX = [];
+    let bestFitLineX = [];
 
     // check if smoothedMean prop exists
     if (el.smoothedMeanX && el.smoothedMeanY && el.smoothedMeanSE) {
@@ -730,8 +649,14 @@ function processInputData<T extends number | Date>(
       }
 
       // change string array to number array for numeric data
-      smoothedMeanX = el.smoothedMeanX.map(Number);
+      if (independentValueType === 'date') {
+        smoothedMeanX = el.smoothedMeanX;
+      } else {
+        smoothedMeanX = el.smoothedMeanX.map(Number);
+      }
+      // smoothedMeanY/SE are number[]
 
+      // the date format, yyyy-mm-dd works with sort, so no change in the following is required
       // sorting function
       //1) combine the arrays: including standardError
       let combinedArrayInterval = [];
@@ -753,70 +678,34 @@ function processInputData<T extends number | Date>(
         standardErrorValue[k] = combinedArrayInterval[k].zValue;
       }
 
-      // set variables for x-/y-axes ranges including fitting line
-      if (isArrayOfNumbers(xIntervalLineValue)) {
-        // add additional condition for the case of smoothedMean (without series data)
-        xMin = el.seriesX
-          ? xMin < Math.min(...xIntervalLineValue)
-            ? xMin
-            : Math.min(...xIntervalLineValue)
-          : Math.min(...xIntervalLineValue);
-        xMax = el.seriesX
-          ? xMax > Math.max(...xIntervalLineValue)
-            ? xMax
-            : Math.max(...xIntervalLineValue)
-          : Math.max(...xIntervalLineValue);
-      } else {
-        xMin = el.seriesX
-          ? xMin < getMinDate(xIntervalLineValue as Date[])
-            ? xMin
-            : getMinDate(xIntervalLineValue as Date[])
-          : getMinDate(xIntervalLineValue as Date[]);
-        xMax = el.seriesX
-          ? xMax > getMaxDate(xIntervalLineValue as Date[])
-            ? xMax
-            : getMaxDate(xIntervalLineValue as Date[])
-          : getMaxDate(xIntervalLineValue as Date[]);
-      }
-
-      if (isArrayOfNumbers(yIntervalLineValue)) {
-        // add additional condition for the case of smoothedMean (without series data)
-        yMin = el.seriesY
-          ? yMin < Math.min(...yIntervalLineValue)
-            ? yMin
-            : Math.min(...yIntervalLineValue)
-          : Math.min(...yIntervalLineValue);
-        yMax = el.seriesY
-          ? yMax > Math.max(...yIntervalLineValue)
-            ? yMax
-            : Math.max(...yIntervalLineValue)
-          : Math.max(...yIntervalLineValue);
-      } else {
-        yMin = el.seriesY
-          ? yMin < getMinDate(yIntervalLineValue as Date[])
-            ? yMin
-            : getMinDate(yIntervalLineValue as Date[])
-          : getMinDate(yIntervalLineValue as Date[]);
-        yMax = el.seriesY
-          ? yMax > getMaxDate(yIntervalLineValue as Date[])
-            ? yMax
-            : getMaxDate(yIntervalLineValue as Date[])
-          : getMaxDate(yIntervalLineValue as Date[]);
-      }
+      // add additional condition for the case of smoothedMean (without series data)
+      yMin = el.seriesY
+        ? lte(yMin, min(yIntervalLineValue))
+          ? yMin
+          : min(yIntervalLineValue)
+        : min(yIntervalLineValue);
+      yMax = el.seriesY
+        ? gte(yMax, max(yIntervalLineValue))
+          ? yMax
+          : max(yIntervalLineValue)
+        : max(yIntervalLineValue);
 
       // store data for smoothed mean: this is not affected by plot options (e.g., showLine etc.)
       dataSetProcess.push({
         x: xIntervalLineValue,
         y: yIntervalLineValue,
-        name: 'Smoothed mean',
+        // name: 'Smoothed mean',
+        name: el.overlayVariableDetails
+          ? el.overlayVariableDetails.value + '<br>Smoothed mean'
+          : 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
-          // coloring
           color: 'rgba(' + markerColors[index] + ',1)',
           shape: 'spline',
           width: 2,
         },
-        type: 'scatter',
+        // use scattergl
+        type: 'scattergl',
       });
 
       // make Confidence Interval (CI) or Bounds (filled area)
@@ -824,16 +713,6 @@ function processInputData<T extends number | Date>(
       xIntervalBounds = xIntervalBounds.concat(
         xIntervalLineValue.map((element: any) => element).reverse()
       );
-
-      // need to compare xMin/xMax
-      xMin =
-        xMin < Math.min(...xIntervalBounds.map(Number))
-          ? xMin
-          : Math.min(...xIntervalBounds.map(Number));
-      xMax =
-        xMax > Math.max(...xIntervalBounds.map(Number))
-          ? xMax
-          : Math.max(...xIntervalBounds.map(Number));
 
       // finding upper and lower bound values.
       const { yUpperValues, yLowerValues } = getBounds(
@@ -848,25 +727,22 @@ function processInputData<T extends number | Date>(
       );
 
       // set variables for x-/y-axes ranges including CI/bounds: no need for x data as it was compared before
-      yMin =
-        yMin < Math.min(...yLowerValues.map(Number))
-          ? yMin
-          : Math.min(...yLowerValues.map(Number));
-      yMax =
-        yMax > Math.max(...yUpperValues.map(Number))
-          ? yMax
-          : Math.max(...yUpperValues.map(Number));
+      yMin = lte(yMin, min(yLowerValues)) ? yMin : min(yLowerValues);
+      yMax = gte(yMax, max(yLowerValues)) ? yMax : max(yLowerValues);
 
       // store data for CI/bounds
       dataSetProcess.push({
         x: xIntervalBounds,
         y: yIntervalBounds,
-        name: '95% Confidence interval',
+        // name: '95% Confidence interval',
+        name: el.overlayVariableDetails
+          ? el.overlayVariableDetails.value + '<br>95% Confidence interval'
+          : '95% Confidence interval',
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
-        // coloring
         fillcolor: 'rgba(' + markerColors[index] + ',0.2)',
-        type: 'line',
+        // type: 'line',
+        type: 'scattergl',
         // here, line means upper and lower bounds
         line: { color: 'transparent', shape: 'spline' },
       });
@@ -883,133 +759,62 @@ function processInputData<T extends number | Date>(
       }
 
       // change string array to number array for numeric data
-      bestFitLineX = el.bestFitLineX.map(Number);
-
-      // sorting function
-      //1) combine the arrays: including standardError
-      let combinedArrayInterval = [];
-      for (let j = 0; j < el.bestFitLineX.length; j++) {
-        combinedArrayInterval.push({
-          xValue: bestFitLineX[j],
-          yValue: el.bestFitLineY[j],
-        });
-      }
-      //2) sort:
-      combinedArrayInterval.sort(function (a, b) {
-        return a.xValue < b.xValue ? -1 : a.xValue === b.xValue ? 0 : 1;
-      });
-      //3) separate them back out:
-      for (let k = 0; k < combinedArrayInterval.length; k++) {
-        xBestFitLineValue[k] = combinedArrayInterval[k].xValue;
-        yBestFitLineValue[k] = combinedArrayInterval[k].yValue;
-      }
-
-      // set variables for x-/y-axes ranges including fitting line
-      if (isArrayOfNumbers(xBestFitLineValue)) {
-        // add additional condition for the case of smoothedMean (without series data)
-        xMin = el.seriesX
-          ? xMin < Math.min(...xBestFitLineValue)
-            ? xMin
-            : Math.min(...xBestFitLineValue)
-          : Math.min(...xBestFitLineValue);
-        xMax = el.seriesX
-          ? xMax > Math.max(...xBestFitLineValue)
-            ? xMax
-            : Math.max(...xBestFitLineValue)
-          : Math.max(...xBestFitLineValue);
+      if (independentValueType === 'date') {
+        bestFitLineX = el.bestFitLineX;
       } else {
-        xMin = el.seriesX
-          ? xMin < getMinDate(xBestFitLineValue as Date[])
-            ? xMin
-            : getMinDate(xBestFitLineValue as Date[])
-          : getMinDate(xBestFitLineValue as Date[]);
-        xMax = el.seriesX
-          ? xMax > getMaxDate(xBestFitLineValue as Date[])
-            ? xMax
-            : getMaxDate(xBestFitLineValue as Date[])
-          : getMaxDate(xBestFitLineValue as Date[]);
+        bestFitLineX = el.bestFitLineX.map(Number);
       }
 
-      if (isArrayOfNumbers(yBestFitLineValue)) {
-        // add additional condition for the case of smoothedMean (without series data)
-        yMin = el.seriesY
-          ? yMin < Math.min(...yBestFitLineValue)
-            ? yMin
-            : Math.min(...yBestFitLineValue)
-          : Math.min(...yBestFitLineValue);
-        yMax = el.seriesY
-          ? yMax > Math.max(...yBestFitLineValue)
-            ? yMax
-            : Math.max(...yBestFitLineValue)
-          : Math.max(...yBestFitLineValue);
-      } else {
-        yMin = el.seriesY
-          ? yMin < getMinDate(yBestFitLineValue as Date[])
-            ? yMin
-            : getMinDate(yBestFitLineValue as Date[])
-          : getMinDate(yBestFitLineValue as Date[]);
-        yMax = el.seriesY
-          ? yMax > getMaxDate(yBestFitLineValue as Date[])
-            ? yMax
-            : getMaxDate(yBestFitLineValue as Date[])
-          : getMaxDate(yBestFitLineValue as Date[]);
-      }
+      // add additional condition for the case of smoothedMean (without series data)
+      yMin = el.seriesY
+        ? lte(yMin, min(el.bestFitLineY))
+          ? yMin
+          : min(el.bestFitLineY)
+        : min(el.bestFitLineY);
+      yMax = el.seriesY
+        ? gte(yMax, max(el.bestFitLineY))
+          ? yMax
+          : max(el.bestFitLineY)
+        : max(el.bestFitLineY);
 
       // store data for fitting line: this is not affected by plot options (e.g., showLine etc.)
       dataSetProcess.push({
-        x: xBestFitLineValue,
-        y: yBestFitLineValue,
+        x: bestFitLineX,
+        y: el.bestFitLineY,
         // display R-square value at legend text(s)
-        name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
+        // name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
+        name: el.overlayVariableDetails
+          ? el.overlayVariableDetails.value + '<br>R<sup>2</sup> = ' + el.r2
+          : 'Best fit<br>R<sup>2</sup> = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
-          // coloring
           color: 'rgba(' + markerColors[index] + ',1)',
           shape: 'spline',
-          width: 2,
         },
-        type: 'scatter',
+        // use scattergl
+        type: 'scattergl',
       });
-    }
-
-    // make some margin for x-axis range (2% of range for now)
-    if (typeof xMin == 'number' && typeof xMax == 'number') {
-      xMin = xMin - (xMax - xMin) * 0.02;
-      xMax = xMax + (xMax - xMin) * 0.02;
-    }
-    // make some margin for y-axis range (5% of range for now)
-    if (typeof yMin == 'number' && typeof yMax == 'number') {
-      yMin = yMin - (yMax - yMin) * 0.05;
-      yMax = yMax + (yMax - yMin) * 0.05;
     }
   });
 
-  return { dataSetProcess, xMin, xMax, yMin, yMax };
+  // make some margin for y-axis range (5% of range for now)
+  if (typeof yMin == 'number' && typeof yMax == 'number') {
+    yMin = yMin - (yMax - yMin) * 0.05;
+    yMax = yMax + (yMax - yMin) * 0.05;
+  } else {
+    // set yMin/yMax to be NaN so that plotly uses autoscale for date type
+    yMin = NaN;
+    yMax = NaN;
+  }
+
+  return { dataSetProcess, yMin, yMax };
 }
 
 /*
  * Utility functions for processInputData()
  */
 
-// check number array and if empty
-function isArrayOfNumbers(value: any): value is number[] {
-  // value.length !==0
-  return (
-    Array.isArray(value) &&
-    value.length !== 0 &&
-    value.every((item) => typeof item === 'number')
-  );
-}
-
-function getMinDate(dates: Date[]) {
-  return new Date(Math.min(...dates.map(Number)));
-}
-
-function getMaxDate(dates: Date[]) {
-  return new Date(Math.max(...dates.map(Number)));
-}
-
-function getBounds<T extends number | Date>(
+function getBounds<T extends number | string>(
   values: T[],
   standardErrors: T[]
 ): {
@@ -1018,11 +823,11 @@ function getBounds<T extends number | Date>(
 } {
   const yUpperValues = values.map((value, idx) => {
     const tmp = Number(value) + 2 * Number(standardErrors[idx]);
-    return value instanceof Date ? (new Date(tmp) as T) : (tmp as T);
+    return tmp as T;
   });
   const yLowerValues = values.map((value, idx) => {
     const tmp = Number(value) - 2 * Number(standardErrors[idx]);
-    return value instanceof Date ? (new Date(tmp) as T) : (tmp as T);
+    return tmp as T;
   });
 
   return { yUpperValues, yLowerValues };
