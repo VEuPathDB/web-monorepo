@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
 import { EntityDiagram, Status, useAnalysis, useStudyRecord } from '../core';
@@ -42,16 +42,18 @@ export function AnalysisPanel(props: Props) {
   const location = useLocation();
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
-  // use relativePath as input arg: 'Browse and Subset' do not have UUID
-  const isUUIDUrl = useCallback(
-    (relativePath: string) => {
-      const lastUrlElement = relativePath.split('/').pop();
-      return lastUrlElement?.match(
+  // check whether a user is at viz's full screen mode
+  const inFullscreenVisualization = useMemo(() => {
+    const relativePath = location.pathname.replace(routeBase, '');
+    const lastUrlElement = relativePath.split('/').pop();
+
+    // 'Browse and Subset' and the 'Visualize' selector do not have a UUID in the url
+    return (
+      lastUrlElement?.match(
         '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
-      );
-    },
-    [location, routeBase]
-  );
+      ) != null
+    );
+  }, [location, routeBase]);
 
   useEffect(() => {
     const relativePath = location.pathname.replace(routeBase, '');
@@ -118,8 +120,8 @@ export function AnalysisPanel(props: Props) {
           },
           {
             display: 'Visualize',
-            // use relativePath here to handle a behavior between subset and viz tabs
-            route: isUUIDUrl(location.pathname.replace(routeBase, ''))
+            // check whether user is at viz's full screen mode
+            route: inFullscreenVisualization
               ? '/visualizations/pass-through'
               : `/visualizations${lastVizPath}`,
             exact: false,
