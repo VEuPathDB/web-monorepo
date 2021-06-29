@@ -54,6 +54,10 @@
           .GlobalFiltersDialog_CloseButton {
             border: none;
             background: none;
+
+            &:hover {
+              background-color: lightgray;
+            }
           }
         }
       }
@@ -74,10 +78,10 @@
           border: none;
           background: none;
           color: rgb(0, 102, 153);
-        }
 
-        .GlobalFiltersDialog_RemoveAllButton:hover {
-          background-color: pink;
+          &:hover {
+            background-color: pink;
+          }
         }
       }
     }
