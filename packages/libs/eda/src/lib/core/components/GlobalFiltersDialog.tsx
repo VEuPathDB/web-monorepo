@@ -38,7 +38,6 @@ export default function GlobalFiltersDialog(props: Props) {
               filters={matchingFilters}
               entities={props.entities}
               removeFilter={props.removeFilter}
-              showValues={true}
             />
           </div>
         );
