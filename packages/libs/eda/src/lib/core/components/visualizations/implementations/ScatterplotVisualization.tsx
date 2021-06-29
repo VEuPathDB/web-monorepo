@@ -1015,7 +1015,7 @@ function processInputData<T extends number | Date>(
     }
   });
 
-  return { dataSetProcess, xMin, xMax, yMin, yMax };
+  return { dataSetProcess: { series: dataSetProcess }, xMin, xMax, yMin, yMax };
 }
 
 /*
