@@ -104,9 +104,12 @@
   }
 
   &-SeeAllFiltersButton {
+    border-width: 2px !important;
+
     .MuiButton-label {
       align-items: end;
       text-transform: none;
+      font-weight: bold;
     }
   }
 
