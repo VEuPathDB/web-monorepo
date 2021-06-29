@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
 import { EntityDiagram, Status, useAnalysis, useStudyRecord } from '../core';
@@ -42,6 +42,17 @@ export function AnalysisPanel(props: Props) {
   const location = useLocation();
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
+  //DKDK use relativePath as input arg: 'Browse and Subset' do not have UUID
+  const isUUIDUrl = useCallback(
+    (relativePath: string) => {
+      const lastUrlElement = relativePath.split('/').pop();
+      return lastUrlElement?.match(
+        '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+      );
+    },
+    [location, routeBase]
+  );
+
   useEffect(() => {
     const relativePath = location.pathname.replace(routeBase, '');
     if (relativePath.startsWith('/variables')) {
@@ -107,7 +118,10 @@ export function AnalysisPanel(props: Props) {
           },
           {
             display: 'Visualize',
-            route: `/visualizations${lastVizPath}`,
+            //DKDK use relativePath here to handle between subset and viz tabs
+            route: isUUIDUrl(location.pathname.replace(routeBase, ''))
+              ? '/visualizations/pass-through'
+              : `/visualizations${lastVizPath}`,
             exact: false,
           },
         ]}
