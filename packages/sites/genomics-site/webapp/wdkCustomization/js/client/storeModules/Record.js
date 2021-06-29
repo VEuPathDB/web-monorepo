@@ -124,6 +124,12 @@ function pruneCategories(nextState) {
     categoryTree = pruneCategoryBasedOnShowStrains(pruneCategoriesByMetaTable(removeProteinCategories(categoryTree, record), record), record);
     nextState = Object.assign({}, nextState, { categoryTree });
   }
+  if (isDatasetRecord(record)) {
+    console.log(categoryTree)
+    console.log(record)
+    categoryTree = pruneByDatasetCategory(categoryTree, record);
+    nextState = Object.assign({}, nextState, { categoryTree }); 
+  }
   return nextState;
 }
 
@@ -189,6 +195,28 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     categoryTree
   )
 }
+
+function pruneByDatasetCategory(categoryTree, record) {
+  console.log(categoryTree)
+  console.log(record)
+
+
+  if (record.attributes.newcategory === 'Annotation, curation and identifiers') {
+
+    return tree.pruneDescendantNodes(
+      individual => {
+        console.log(individual);
+        if (individual.wdkReference == null) return false;
+        if (individual.wdkReference.name === 'version') return false;
+        return true;
+      },
+      categoryTree
+    )
+
+  }
+  return categoryTree
+}
+
 
 
 // Custom observers
@@ -330,4 +358,8 @@ function isGeneRecord(record) {
 
 function isSnpsRecord(record) {
   return record.recordClassName === 'SnpRecordClasses.SnpRecordClass';
+}
+
+function isDatasetRecord(record) {
+  return record.recordClassName === 'DatasetRecordClasses.DatasetRecordClass';
 }
