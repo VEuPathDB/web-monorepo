@@ -42,7 +42,7 @@ export function AnalysisPanel(props: Props) {
   const location = useLocation();
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
-  //DKDK use relativePath as input arg: 'Browse and Subset' do not have UUID
+  // use relativePath as input arg: 'Browse and Subset' do not have UUID
   const isUUIDUrl = useCallback(
     (relativePath: string) => {
       const lastUrlElement = relativePath.split('/').pop();
@@ -118,7 +118,7 @@ export function AnalysisPanel(props: Props) {
           },
           {
             display: 'Visualize',
-            //DKDK use relativePath here to handle between subset and viz tabs
+            // use relativePath here to handle a behavior between subset and viz tabs
             route: isUUIDUrl(location.pathname.replace(routeBase, ''))
               ? '/visualizations/pass-through'
               : `/visualizations${lastVizPath}`,
