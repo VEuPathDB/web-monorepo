@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import { StudyEntity, useMakeVariableLink, useStudyMetadata } from '../core';
+import { useMakeVariableLink, useStudyMetadata } from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from './Utils';
 import { Variable } from './Variable';
