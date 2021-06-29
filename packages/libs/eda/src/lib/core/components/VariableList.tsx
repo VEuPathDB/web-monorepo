@@ -11,6 +11,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { Link } from 'react-router-dom';
 //correct paths as this is a copy of FieldList component at @veupathdb/
 import { scrollIntoViewIfNeeded } from '@veupathdb/wdk-client/lib/Utils/DomUtils';
 import {
@@ -24,7 +25,6 @@ import {
 import CheckboxTree from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
 import Icon from '@veupathdb/wdk-client/lib/Components/Icon/IconAlt';
 import Toggle from '@veupathdb/wdk-client/lib/Components/Icon/Toggle';
-import Tooltip from '@veupathdb/wdk-client/lib/Components/Overlays/Tooltip';
 import {
   isFilterField,
   isMulti,
@@ -37,6 +37,8 @@ import {
   FieldTreeNode,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import { cx } from '../../workspace/Utils';
+import { Tooltip } from '@material-ui/core';
+import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
 
 //defining types - some are not used (need cleanup later)
 interface VariableField {
@@ -59,6 +61,7 @@ interface FieldNodeProps {
   node: VariableFieldTreeNode;
   searchTerm: string;
   isActive: boolean;
+  isDisabled?: boolean;
   handleFieldSelect: (node: VariableFieldTreeNode) => void;
   activeFieldEntity?: string;
   isStarred: boolean;
@@ -76,6 +79,9 @@ interface VariableListProps {
   autoFocus: boolean;
   starredVariables?: string[];
   toggleStarredVariable: (targetVariableId: string) => void;
+  disabledFieldIds?: string[];
+  hideDisabledFields: boolean;
+  setHideDisabledFields: (hide: boolean) => void;
 }
 
 interface getNodeSearchStringType {
@@ -90,12 +96,15 @@ interface getNodeSearchStringType {
 export default function VariableList(props: VariableListProps) {
   const {
     activeField,
+    disabledFieldIds,
     onActiveFieldChange,
     valuesMap,
     fieldTree,
     autoFocus,
     starredVariables,
     toggleStarredVariable,
+    hideDisabledFields,
+    setHideDisabledFields,
   } = props;
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
@@ -190,6 +199,10 @@ export default function VariableList(props: VariableListProps) {
     return new Set(presentStarredVariables);
   }, [availableVariables, starredVariables]);
 
+  const disabledFields = useMemo(() => new Set(disabledFieldIds), [
+    disabledFieldIds,
+  ]);
+
   const renderNode = useCallback(
     (node: FieldTreeNode) => {
       const [, variableId] = node.field.term.split('/');
@@ -199,6 +212,7 @@ export default function VariableList(props: VariableListProps) {
           node={node}
           searchTerm={searchTerm}
           isActive={node.field.term === activeField?.term}
+          isDisabled={disabledFields.has(node.field.term)}
           handleFieldSelect={handleFieldSelect}
           //add activefieldEntity prop (parent entity obtained from activeField)
           //alternatively, send activeField and isActive is directly checked at FieldNode
@@ -212,6 +226,7 @@ export default function VariableList(props: VariableListProps) {
     [
       activeField?.term,
       activeFieldEntity,
+      disabledFields,
       handleFieldSelect,
       searchTerm,
       starredVariablesLoading,
@@ -239,11 +254,10 @@ export default function VariableList(props: VariableListProps) {
   const additionalFilters = useMemo(
     () => [
       <Tooltip
-        content={makeStarredVariablesFilterTooltipContent(
+        title={makeStarredVariablesFilterTooltipContent(
           showOnlyStarredVariables,
           starredVariableToggleDisabled
         )}
-        hideDelay={0}
       >
         <div>
           <button
@@ -260,15 +274,73 @@ export default function VariableList(props: VariableListProps) {
     ],
     [
       showOnlyStarredVariables,
-      toggleShowOnlyStarredVariables,
       starredVariableToggleDisabled,
+      toggleShowOnlyStarredVariables,
     ]
+  );
+
+  const wrapTreeSection = useCallback(
+    (treeSection: React.ReactNode) => {
+      const tooltipContent = (
+        <>
+          Some variables cannot be used here. Use this to toggle their presence
+          below.
+          <br />
+          <br />
+          <strong>
+            <Link
+              to=""
+              onClick={(e) => {
+                e.preventDefault();
+                alert('Comming soon');
+              }}
+            >
+              <Icon fa="info-circle" /> Learn more
+            </Link>
+          </strong>{' '}
+          about variable compatibility
+        </>
+      );
+      return (
+        <>
+          {disabledFields.size > 0 && (
+            <div className={cx('-DisabledVariablesToggle')}>
+              <HtmlTooltip
+                css={
+                  {
+                    /*
+                     * This is needed to address a compiler error.
+                     * Not sure why it's complaining, but here we are...
+                     */
+                  }
+                }
+                title={tooltipContent}
+                interactive
+              >
+                <button
+                  className="link"
+                  type="button"
+                  onClick={() => {
+                    setHideDisabledFields(!hideDisabledFields);
+                  }}
+                >
+                  <Toggle on={hideDisabledFields} /> Only show compatible
+                  variables
+                </button>
+              </HtmlTooltip>
+            </div>
+          )}
+          {treeSection}
+        </>
+      );
+    },
+    [disabledFields.size, hideDisabledFields, setHideDisabledFields]
   );
 
   const isAdditionalFilterApplied = showOnlyStarredVariables;
 
-  const tree = useMemo(
-    () =>
+  const tree = useMemo(() => {
+    const tree =
       !showOnlyStarredVariables || starredVariableToggleDisabled
         ? fieldTree
         : pruneDescendantNodes(
@@ -276,14 +348,22 @@ export default function VariableList(props: VariableListProps) {
               node.children.length > 0 ||
               starredVariablesSet.has(node.field.term.split('/')[1]),
             fieldTree
-          ),
-    [
-      fieldTree,
-      showOnlyStarredVariables,
-      starredVariablesSet,
-      starredVariableToggleDisabled,
-    ]
-  );
+          );
+    return hideDisabledFields
+      ? pruneDescendantNodes((node) => {
+          if (disabledFields.size === 0) return true;
+          if (node.field.type == null) return node.children.length > 0;
+          return !disabledFields.has(node.field.term);
+        }, tree)
+      : tree;
+  }, [
+    showOnlyStarredVariables,
+    starredVariableToggleDisabled,
+    fieldTree,
+    hideDisabledFields,
+    starredVariablesSet,
+    disabledFields,
+  ]);
 
   return (
     <div className={cx('-VariableList')}>
@@ -306,6 +386,7 @@ export default function VariableList(props: VariableListProps) {
         renderNode={renderNode}
         additionalFilters={additionalFilters}
         isAdditionalFilterApplied={isAdditionalFilterApplied}
+        wrapTreeSection={wrapTreeSection}
       />
     </div>
   );
@@ -328,6 +409,7 @@ const FieldNode = ({
   node,
   searchTerm,
   isActive,
+  isDisabled,
   handleFieldSelect,
   activeFieldEntity,
   isStarred,
@@ -347,51 +429,58 @@ const FieldNode = ({
     return () => clearTimeout(timerId);
   }, [isActive, searchTerm]);
 
-  const fieldContents = (
-    <Tooltip content={node.field.description} hideDelay={0}>
-      {isFilterField(node.field) ? (
-        <a
-          ref={nodeRef}
-          className={
-            'wdk-AttributeFilterFieldItem' +
-            (isActive ? ' wdk-AttributeFilterFieldItem__active' : '')
-          }
-          href={'#' + node.field.term}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleFieldSelect(node);
-          }}
-        >
-          <Icon fa={getIcon(node.field)} /> {node.field.display}
-        </a>
-      ) : (
-        //add condition for identifying entity parent and entity parent of activeField
-        <div
-          className={
-            'wdk-Link wdk-AttributeFilterFieldParent' +
-            (node.field.term.includes('entity:')
-              ? ' wdk-AttributeFilterFieldEntityParent'
-              : '') +
-            (activeFieldEntity != null &&
-            node.field.term.split(':')[1] === activeFieldEntity
-              ? ' wdk-AttributeFilterFieldParent__active'
-              : '')
-          }
-        >
-          {node.field.display}
-        </div>
-      )}
+  const fieldContents = isFilterField(node.field) ? (
+    <Tooltip
+      title={
+        isDisabled
+          ? 'This variable cannot be used with this plot and other variable selections.'
+          : 'Select this variable.'
+      }
+    >
+      <a
+        ref={nodeRef}
+        className={
+          'wdk-AttributeFilterFieldItem' +
+          (isActive ? ' wdk-AttributeFilterFieldItem__active' : '') +
+          (isDisabled ? ' wdk-AttributeFilterFieldItem__disabled' : '')
+        }
+        href={'#' + node.field.term}
+        title={
+          isDisabled
+            ? 'This variable cannot be used with this plot and other variable selections.'
+            : 'Select this variable.'
+        }
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!isDisabled) handleFieldSelect(node);
+        }}
+      >
+        <Icon fa={getIcon(node.field)} /> {node.field.display}
+      </a>
     </Tooltip>
+  ) : (
+    //add condition for identifying entity parent and entity parent of activeField
+    <div
+      className={
+        'wdk-Link wdk-AttributeFilterFieldParent' +
+        (node.field.term.includes('entity:')
+          ? ' wdk-AttributeFilterFieldEntityParent'
+          : '') +
+        (activeFieldEntity != null &&
+        node.field.term.split(':')[1] === activeFieldEntity
+          ? ' wdk-AttributeFilterFieldParent__active'
+          : '')
+      }
+    >
+      {node.field.display}
+    </div>
   );
 
   return (
     <>
       {isFilterField(node.field) && (
-        <Tooltip
-          content={makeStarButtonTooltipContent(node, isStarred)}
-          hideDelay={0}
-        >
+        <Tooltip title={makeStarButtonTooltipContent(node, isStarred)}>
           <button
             className={`${cx('-StarButton')} link`}
             onClick={onClickStar}

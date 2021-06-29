@@ -132,16 +132,19 @@ export function AnalysisPanel(props: Props) {
             display: 'View study details',
             route: `/details`,
             exact: false,
+            replace: true,
           },
           {
             display: 'Browse and subset',
             route: `/variables${lastVarPath}`,
             exact: false,
+            replace: true,
           },
           {
             display: 'Visualize',
             route: `/visualizations${lastVizPath}`,
             exact: false,
+            replace: true,
           },
         ]}
       />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { cx } from './Utils';
+import { Tooltip } from '@material-ui/core';
 
 interface Props {
   iconClassName: string;
@@ -12,9 +13,11 @@ export function ActionIconButton(props: Props) {
   const { action, hoverText, iconClassName } = props;
   return (
     <div className={cx('-ActionIconButton')}>
-      <button type="button" title={hoverText} className="link" onClick={action}>
-        <IconAlt fa={iconClassName} />
-      </button>
+      <Tooltip title={hoverText}>
+        <button type="button" className="link" onClick={action}>
+          <IconAlt fa={iconClassName} />
+        </button>
+      </Tooltip>
     </div>
   );
 }

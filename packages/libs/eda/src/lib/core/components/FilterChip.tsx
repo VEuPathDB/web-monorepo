@@ -1,4 +1,5 @@
-import { Chip } from '@material-ui/core';
+import React from 'react';
+import { Chip, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 interface Props {
@@ -31,13 +32,14 @@ export default function FilterChip(props: Props) {
   const classes = useStyles(props);
 
   return (
-    <Chip
-      className={classes.root}
-      size="small"
-      label={props.children}
-      title={props.tooltipText}
-      clickable={true}
-      onDelete={props.onDelete}
-    />
+    <Tooltip title={props.tooltipText}>
+      <Chip
+        className={classes.root}
+        size="small"
+        label={props.children}
+        clickable={true}
+        onDelete={props.onDelete}
+      />
+    </Tooltip>
   );
 }

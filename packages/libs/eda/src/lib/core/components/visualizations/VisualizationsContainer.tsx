@@ -22,6 +22,7 @@ import { VisualizationType } from './VisualizationTypes';
 import './Visualizations.scss';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import PlaceholderIcon from './PlaceholderIcon';
+import { Tooltip } from '@material-ui/core';
 
 const cx = makeClassNameHelper('VisualizationsContainer');
 
@@ -96,7 +97,7 @@ function ConfiguredVisualizations(props: Props) {
   if (computation == null) return <div>Computation not found</div>;
   return (
     <Grid>
-      <Link to={`${url}/new`} className={cx('-NewVisualization')}>
+      <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
         <i className="fa fa-plus"></i>
         Select a visualization
       </Link>
@@ -109,37 +110,41 @@ function ConfiguredVisualizations(props: Props) {
               <div key={viz.id} className={cx('-ConfiguredVisualization')}>
                 <div className={cx('-ConfiguredVisualizationActions')}>
                   <div>
-                    <button
-                      title="Delete visualization"
-                      type="button"
-                      className="link"
-                      onClick={() => deleteVisualization(viz.id)}
-                    >
-                      <i className="fa fa-trash"></i>
-                    </button>
+                    <Tooltip title="Delete visualization">
+                      <button
+                        type="button"
+                        className="link"
+                        onClick={() => deleteVisualization(viz.id)}
+                      >
+                        <i className="fa fa-trash"></i>
+                      </button>
+                    </Tooltip>
                   </div>
                   <div>
-                    <button
-                      title="Copy visualization"
-                      type="button"
-                      className="link"
-                      onClick={() =>
-                        addVisualization({
-                          ...viz,
-                          displayName: `Copy of ${
-                            viz.displayName ?? 'visualization'
-                          }`,
-                          id: uuid(),
-                        })
-                      }
-                    >
-                      <i className="fa fa-clone"></i>
-                    </button>
+                    <Tooltip title="Copy visualization">
+                      <button
+                        type="button"
+                        className="link"
+                        onClick={() =>
+                          addVisualization({
+                            ...viz,
+                            displayName: `Copy of ${
+                              viz.displayName ?? 'visualization'
+                            }`,
+                            id: uuid(),
+                          })
+                        }
+                      >
+                        <i className="fa fa-clone"></i>
+                      </button>
+                    </Tooltip>
                   </div>
                   <div>
-                    <Link to={`${url}/${viz.id}`} title="View fullscreen">
-                      <i className="fa fa-arrows-alt"></i>
-                    </Link>
+                    <Tooltip title="View fullscreen">
+                      <Link replace to={`${url}/${viz.id}`}>
+                        <i className="fa fa-arrows-alt"></i>
+                      </Link>
+                    </Tooltip>
                   </div>
                 </div>
                 {type ? (
@@ -185,7 +190,7 @@ function NewVisualizationPicker(props: Props) {
   return (
     <div className={cx('-PickerContainer')}>
       <div className={cx('-PickerActions')}>
-        <Link to={`../${computationId}`}>
+        <Link replace to={`../${computationId}`}>
           <i className="fa fa-close"></i>
         </Link>
       </div>
@@ -207,7 +212,7 @@ function NewVisualizationPicker(props: Props) {
                     displayName: 'Unnamed visualization',
                     configuration: vizType?.createDefaultConfig(),
                   });
-                  history.push(`../${computationId}/${id}`);
+                  history.replace(`../${computationId}/${id}`);
                 }}
               >
                 {vizType ? (
@@ -259,44 +264,48 @@ function FullScreenVisualization(props: Props & { id: string }) {
     <div className={cx('-FullScreenContainer')}>
       <div className={cx('-FullScreenActions')}>
         <div>
-          <button
-            title="Delete visualization"
-            type="button"
-            className="link"
-            onClick={() => {
-              if (viz == null) return;
-              deleteVisualization(viz.id);
-              history.replace(Path.resolve(history.location.pathname, '..'));
-            }}
-          >
-            <i className="fa fa-trash"></i>
-          </button>
+          <Tooltip title="Delete visualization">
+            <button
+              type="button"
+              className="link"
+              onClick={() => {
+                if (viz == null) return;
+                deleteVisualization(viz.id);
+                history.replace(Path.resolve(history.location.pathname, '..'));
+              }}
+            >
+              <i className="fa fa-trash"></i>
+            </button>
+          </Tooltip>
         </div>
         <div>
-          <button
-            title="Copy visualization"
-            type="button"
-            className="link"
-            onClick={() => {
-              if (viz == null) return;
-              const id = uuid();
-              addVisualization({
-                ...viz,
-                id,
-                displayName:
-                  'Copy of ' + (viz.displayName || 'unnamed visualization'),
-              });
-              history.replace(
-                Path.resolve(history.location.pathname, '..', id)
-              );
-            }}
-          >
-            <i className="fa fa-clone"></i>
-          </button>
+          <Tooltip title="Copy visualization">
+            <button
+              type="button"
+              className="link"
+              onClick={() => {
+                if (viz == null) return;
+                const id = uuid();
+                addVisualization({
+                  ...viz,
+                  id,
+                  displayName:
+                    'Copy of ' + (viz.displayName || 'unnamed visualization'),
+                });
+                history.replace(
+                  Path.resolve(history.location.pathname, '..', id)
+                );
+              }}
+            >
+              <i className="fa fa-clone"></i>
+            </button>
+          </Tooltip>
         </div>
-        <Link to={`../${computationId}`} title="Minimize visualization">
-          <i className="fa fa-window-restore"></i>
-        </Link>
+        <Tooltip title="Minimize visualization">
+          <Link replace to={`../${computationId}`}>
+            <i className="fa fa-window-restore"></i>
+          </Link>
+        </Tooltip>
       </div>
       {viz == null ? (
         <ContentError>Visualization not found.</ContentError>

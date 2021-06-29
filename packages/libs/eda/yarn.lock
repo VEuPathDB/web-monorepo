@@ -1576,7 +1576,7 @@
   resolved "https://registry.yarnpkg.com/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz#497c67a1cef50d1a2459ba60f315e448d2ad87fe"
   integrity sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==
 
-"@material-ui/core@^4.11.2":
+"@material-ui/core@^4.11.2", "@material-ui/core@^4.11.3":
   version "4.11.4"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.11.4.tgz#4fb9fe5dec5dcf780b687e3a40cff78b2b9640a4"
   integrity sha512-oqb+lJ2Dl9HXI9orc6/aN8ZIAMkeThufA5iZELf2LQeBn2NtjVilF5D2w7e9RpntAzDb4jK5DsVhkfOvFY/8fg==
@@ -1585,24 +1585,6 @@
     "@material-ui/styles" "^4.11.4"
     "@material-ui/system" "^4.11.3"
     "@material-ui/types" "5.1.0"
-    "@material-ui/utils" "^4.11.2"
-    "@types/react-transition-group" "^4.2.0"
-    clsx "^1.0.4"
-    hoist-non-react-statics "^3.3.2"
-    popper.js "1.16.1-lts"
-    prop-types "^15.7.2"
-    react-is "^16.8.0 || ^17.0.0"
-    react-transition-group "^4.4.0"
-
-"@material-ui/core@^4.11.3":
-  version "4.11.3"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.11.3.tgz#f22e41775b0bd075e36a7a093d43951bf7f63850"
-  integrity sha512-Adt40rGW6Uds+cAyk3pVgcErpzU/qxc7KBR94jFHBYretU4AtWZltYcNsbeMn9tXL86jjVL1kuGcIHsgLgFGRw==
-  dependencies:
-    "@babel/runtime" "^7.4.4"
-    "@material-ui/styles" "^4.11.3"
-    "@material-ui/system" "^4.11.3"
-    "@material-ui/types" "^5.1.0"
     "@material-ui/utils" "^4.11.2"
     "@types/react-transition-group" "^4.2.0"
     clsx "^1.0.4"
@@ -1630,7 +1612,7 @@
     prop-types "^15.7.2"
     react-is "^16.8.0 || ^17.0.0"
 
-"@material-ui/styles@^4.11.3", "@material-ui/styles@^4.11.4":
+"@material-ui/styles@^4.11.4":
   version "4.11.4"
   resolved "https://registry.yarnpkg.com/@material-ui/styles/-/styles-4.11.4.tgz#eb9dfccfcc2d208243d986457dff025497afa00d"
   integrity sha512-KNTIZcnj/zprG5LW0Sao7zw+yG3O35pviHzejMdcSGCdWbiO8qzRgOYL8JAxAsWBKOKYwVZxXtHWaB5T2Kvxew==
@@ -1662,7 +1644,7 @@
     csstype "^2.5.2"
     prop-types "^15.7.2"
 
-"@material-ui/types@5.1.0", "@material-ui/types@^5.1.0":
+"@material-ui/types@5.1.0":
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/@material-ui/types/-/types-5.1.0.tgz#efa1c7a0b0eaa4c7c87ac0390445f0f88b0d88f2"
   integrity sha512-7cqRjrY50b8QzRSYyhSpx4WRw2YuO0KKIGQEVk5J8uoz2BanawykgZGoWEqKm7pVIbzFDN0SpPcVV4IhOFkl8A==
@@ -2907,10 +2889,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.3.11":
-  version "0.3.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.3.11.tgz#3e944d63528b3c6336939b0e52c0c6a98706105b"
-  integrity sha512-u5wy6pFz1h9RdtE6wntnhT75u4FRj39JHUzdKaeAmJkBSzza6dSc4FmtpHw48leyIHOFAjOMFI5mfLClhzWCag==
+"@veupathdb/components@^0.3.14":
+  version "0.3.14"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.3.14.tgz#5b5df11fe6233e7d93402ea4cb9f57bb870e4fb9"
+  integrity sha512-a3xVpBSVaOl46B/clzrsFovA0Rl2pBg5pnQnLWSxNymbMn/IBmh3muiIfkX76wgjd+gRMAWVaLfqHwkgVSz/Uw==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -2968,10 +2950,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/tsconfig/-/tsconfig-1.0.1.tgz#a2b748b46838af1337ca9f23d969993fb952def4"
   integrity sha512-i6gq7mgnyEN8/xW5EaI9RiWCwS1oB8cgWqx9h5w4vZtnb10oiyyepD640l9x/gZf6IWecjynRs7weDgSRs7l0Q==
 
-"@veupathdb/wdk-client@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.2.tgz#3b8b466e9ca72d8af6c07fc1dad21fd9b22e6059"
-  integrity sha512-PlUD6O0ihUfPWrcfLpi3Qgau4ew+V3lPfBq4YerxFS1Cn8fEskRRjtffpJqDNPzqDsWOrBblsBYaB9kpB1I2Dg==
+"@veupathdb/wdk-client@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.1.4.tgz#415b839a2c6efbd59c34d5bb7cd536b074f0ae0a"
+  integrity sha512-oEyAt3CtAzy4ZcL4Ja2kGhUg9AC3dyxUNIOCSGNDbj/6L49wcB7Gu7jLgM1uxJkN+dqsO9KreLxSg0r774rCiw==
   dependencies:
     "@types/datatables.net" "^1.10.5"
     "@types/flot" "^0.0.31"
@@ -16052,10 +16034,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^4.0.3:
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.3.tgz#39062d8019912d43726298f09493d598048c1ce3"
-  integrity sha512-qOcYwxaByStAWrBf4x0fibwZvMRG+r4cQoTjbPtUlrWjBHbmCAww1i448U0GJ+3cNNEtebDteo/cHOR3xJ4wEw==
+typescript@^4.3.4:
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.4.tgz#3f85b986945bcf31071decdd96cf8bfa65f9dcbc"
+  integrity sha512-uauPG7XZn9F/mo+7MrsRjyvbxFpzemRjKEZXS4AK83oP2KKOJPvb+9cO/gmnv8arWZvhnjVOXz7B49m1l0e9Ew==
 
 unbox-primitive@^1.0.0:
   version "1.0.0"

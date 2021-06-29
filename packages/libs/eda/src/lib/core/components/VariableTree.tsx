@@ -1,11 +1,10 @@
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
+import { Button } from '@material-ui/core';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import {
-  preorder,
-  pruneDescendantNodes,
-} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { cx } from '../../workspace/Utils';
 import { StudyEntity } from '../types/study';
 import { Variable } from '../types/variable';
 import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
@@ -25,17 +24,23 @@ export interface Props {
   toggleStarredVariable: (targetVariableId: string) => void;
   entityId?: string;
   variableId?: string;
+  disabledVariables?: Variable[];
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
   onChange: (variable?: Variable) => void;
+  hideDisabledFields?: boolean;
+  setHideDisabledFields?: (hide: boolean) => void;
 }
 export function VariableTree(props: Props) {
   const {
     rootEntity,
+    disabledVariables,
     starredVariables,
     toggleStarredVariable,
     entityId,
     variableId,
     onChange,
+    hideDisabledFields = false,
+    setHideDisabledFields = () => {},
   } = props;
   const entities = useMemo(
     () =>
@@ -89,15 +94,14 @@ export function VariableTree(props: Props) {
   }, [entities]);
 
   // Construct the fieldTree using the fields defined above.
-  const fieldTree = useMemo(() => {
-    const fieldTree = getTree(fields, { hideSingleRoot: false });
-    // Remove non-variable branches with no children.
-    // This can happen if variables are filtered out due to constraints.
-    return pruneDescendantNodes(
-      (node) => node.field.type != null || node.children.length > 0,
-      fieldTree
-    );
-  }, [fields]);
+  const fieldTree = useMemo(() => getTree(fields, { hideSingleRoot: false }), [
+    fields,
+  ]);
+
+  const disabledFields = useMemo(
+    () => disabledVariables?.map((v) => `${v.entityId}/${v.variableId}`),
+    [disabledVariables]
+  );
 
   // Used to lookup a field by entityId and variableId.
   const fieldsByTerm = useMemo(() => keyBy(fields, (f) => f.term), [fields]);
@@ -123,53 +127,52 @@ export function VariableTree(props: Props) {
   return (
     <VariableList
       activeField={activeField}
+      disabledFieldIds={disabledFields}
       onActiveFieldChange={onActiveFieldChange}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}
       starredVariables={starredVariables}
       toggleStarredVariable={toggleStarredVariable}
+      hideDisabledFields={hideDisabledFields}
+      setHideDisabledFields={setHideDisabledFields}
     />
   );
 }
 
 export function VariableTreeDropdown(props: Props) {
   const { rootEntity, entityId, variableId, onChange } = props;
+  const [hideDisabledFields, setHideDisabledFields] = useState(false);
   const entities = Array.from(preorder(rootEntity, (e) => e.children ?? []));
   const variable = entities
     .find((e) => e.id === entityId)
     ?.variables.find((v) => v.id === variableId);
   const label = variable?.displayName ?? 'Select a variable';
   return (
-    <div
-      style={{
-        position: 'relative',
-      }}
-    >
+    <div className={cx('-VariableTreeDropdown')}>
       <PopoverButton label={label} key={`${entityId}/${variableId}`}>
-        <div
-          style={{
-            border: '1px solid',
-            borderRadius: ' 0.25em',
-            padding: '0.5em',
-            height: '60vh',
-            width: '30em',
-            position: 'relative',
-          }}
-        >
-          <VariableTree {...props} />
+        {variable && (
+          <div style={{ textAlign: 'center', padding: '.75em 0.25em 0.25em' }}>
+            <Button
+              type="button"
+              style={{ width: '90%' }}
+              variant="contained"
+              color="default"
+              size="small"
+              onClick={() => onChange()}
+            >
+              Clear selection
+            </Button>
+          </div>
+        )}
+        <div className={cx('-VariableTreeDropdownTreeContainer')}>
+          <VariableTree
+            {...props}
+            hideDisabledFields={hideDisabledFields}
+            setHideDisabledFields={setHideDisabledFields}
+          />
         </div>
       </PopoverButton>
-      {variable && (
-        <button
-          type="button"
-          style={{ position: 'absolute', bottom: '-1.5em', right: 0 }}
-          className="link"
-          onClick={() => onChange()}
-        >
-          clear
-        </button>
-      )}
     </div>
   );
 }

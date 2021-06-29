@@ -1,10 +1,18 @@
-import { mapStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { Seq } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
+import {
+  mapStructure,
+  preorder,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { isEmpty, union } from 'lodash';
-import { StudyEntity } from '../types/study';
+import { StudyEntity, StudyVariable } from '../types/study';
 import { Variable } from '../types/variable';
 import { DataElementConstraint } from '../types/visualization';
 import { findEntityAndVariable } from './study-metadata';
 
+/**
+ * Returns a new study entity tree with variables and entities removed that do
+ * not satisfy the provided constraint.
+ */
 export function filterVariablesByConstraint(
   rootEntity: StudyEntity,
   constraint?: DataElementConstraint
@@ -17,19 +25,50 @@ export function filterVariablesByConstraint(
   return mapStructure(
     (entity, children) => ({
       ...entity,
-      variables: entity.variables.filter(
-        (variable) =>
-          variable.dataShape == null ||
-          variable.type === 'category' ||
-          ((constraint.allowedShapes == null ||
-            constraint.allowedShapes.includes(variable.dataShape)) &&
-            (constraint.allowedTypes == null ||
-              constraint.allowedTypes.includes(variable.type)))
+      variables: entity.variables.filter((variable) =>
+        variableConstraintPredicate(constraint, variable)
       ),
       children,
     }),
     (e) => e.children ?? [],
     rootEntity
+  );
+}
+
+/**
+ * Returns an array of variable identifiers that do not satisfy the provided
+ * constraint.
+ */
+export function excludedVariables(
+  rootEntity: StudyEntity,
+  constraint?: DataElementConstraint
+): Variable[] {
+  if (constraint == null) return [];
+  return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
+    .flatMap((e) =>
+      e.variables
+        .filter(
+          (variable) => !variableConstraintPredicate(constraint, variable)
+        )
+        .map((v) => ({ entityId: e.id, variableId: v.id }))
+    )
+    .toArray();
+}
+
+/**
+ * Tests if a variable satisfies a constraint
+ */
+function variableConstraintPredicate(
+  constraint: DataElementConstraint,
+  variable: StudyVariable
+) {
+  return (
+    variable.dataShape == null ||
+    variable.type === 'category' ||
+    ((constraint.allowedShapes == null ||
+      constraint.allowedShapes.includes(variable.dataShape)) &&
+      (constraint.allowedTypes == null ||
+        constraint.allowedTypes.includes(variable.type)))
   );
 }
 
