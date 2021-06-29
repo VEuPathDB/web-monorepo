@@ -364,6 +364,7 @@ function HistogramPlotWithControls({
             onBinWidthChange={onBinWidthChange}
             binWidthRange={data?.binWidthRange}
             binWidthStep={data?.binWidthStep}
+            valueType={data?.valueType}
           />
         </LabelledGroup>
       </div>
