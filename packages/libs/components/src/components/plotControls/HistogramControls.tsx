@@ -331,12 +331,14 @@ export default function HistogramControls({
           binWidthStep={binWidthStep}
           binWidthRange={binWidthRange}
           onBinWidthChange={onBinWidthChange}
+          valueType={valueType}
         />
 
         <AxisRangeControl
           label="Range:"
           range={independentAxisRange}
           onRangeChange={onIndependentAxisRangeChange}
+          valueType={valueType}
         />
 
         {onIndependentAxisSettingsReset && (
