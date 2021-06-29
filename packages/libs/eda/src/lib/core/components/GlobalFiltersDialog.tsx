@@ -9,22 +9,32 @@ import 'react-resizable/css/styles.css';
 import './GlobalFiltersDialog.scss';
 
 interface Props {
+  // A function to set whether the dialog is open
   setOpen: (open: boolean) => void;
+  // The list of entities over which filters are being applied
   entities: StudyEntity[];
+  // The list of filters to display
   filters: Filter[];
+  // A function to set the filters
   setFilters: (filters: Filter[]) => void;
+  // A function to remove a given filter
   removeFilter: (filter: Filter) => void;
 }
 
+/**
+ * A dialog that displays filters sorted into bins by entity.
+ */
 export default function GlobalFiltersDialog(props: Props) {
   let content: JSX.Element;
 
   if (props.filters.length > 0) {
-    let filters = props.filters;
+    // Construct a filter chip list for each entity that has filters applied
+    let filters = props.filters; // The remaining unbinned filters
     let matchingFilters: Filter[] = [];
     let filterChipLists: JSX.Element[] = [];
 
     for (const entity of props.entities) {
+      // Find the filters that belong to this entity
       [matchingFilters, filters] = _.partition(
         filters,
         (f) => f.entityId === entity.id
@@ -43,6 +53,8 @@ export default function GlobalFiltersDialog(props: Props) {
         );
     }
 
+    // Any filters left in `filters` are for an entity not provided. Shouldn't
+    // ever happen; would signal a problem.
     if (filters.length > 0) {
       filterChipLists.unshift(
         <Alert severity="warning">
