@@ -51,9 +51,7 @@ export default function GlobalFiltersDialog(props: Props) {
       );
     }
 
-    content = (
-      <div className="GlobalFiltersDialog_Content">{filterChipLists}</div>
-    );
+    content = <div>{filterChipLists}</div>;
   } else {
     content = <div>There are no filters applied to the dataset.</div>;
   }
@@ -88,7 +86,7 @@ export default function GlobalFiltersDialog(props: Props) {
                   </button>
                 </div>
               </div>
-              {content}
+              <div className="GlobalFiltersDialog_Content">{content}</div>
               <div className="GlobalFiltersDialog_Footer">
                 {props.filters.length > 0 && (
                   <button
