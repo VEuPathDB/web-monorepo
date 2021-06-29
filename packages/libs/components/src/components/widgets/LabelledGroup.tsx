@@ -32,7 +32,7 @@ export default function LabelledGroup(props: LabelledGroupProps) {
         borderColor: '#cccccc',
         borderRadius: '0.2em',
         padding: '1em',
-        minWidth: '45%',
+        //        minWidth: '45%',
         // marginTop: '1.5625em',
         marginRight: '1.5625em',
         ...containerStyles,

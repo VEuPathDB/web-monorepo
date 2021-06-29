@@ -16,9 +16,9 @@ const Template: Story<SwitchProps> = (args) => {
     <Switch
       {...args}
       state={value}
-      onStateChange={(event) => {
-        args.onStateChange(event);
-        setValue(!value);
+      onStateChange={(newValue) => {
+        args.onStateChange(newValue);
+        setValue(newValue);
       }}
       containerStyles={{ ...args.containerStyles, margin: 25 }}
     />
@@ -28,7 +28,7 @@ const Template: Story<SwitchProps> = (args) => {
 export const Basic = Template.bind({});
 Basic.args = {
   state: false,
-  onStateChange: (event) => console.log('Switch Toggled'),
+  onStateChange: (newValue) => console.log(`Switch Toggled to ${newValue}`),
 };
 
 export const Labelled = Template.bind({});

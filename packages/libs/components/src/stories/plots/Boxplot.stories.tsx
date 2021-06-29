@@ -374,28 +374,30 @@ function summaryStats(rawData: number[]) {
 }
 
 function storyArgTypes(args: any): any {
-  const pointTraceIndices = args.data
-    .map((d: any, index: number) =>
-      d.rawData || d.outliers.length ? index : -1
-    )
-    .filter((i: number) => i >= 0);
-  return {
-    showRawData: {
-      control: {
-        disable:
-          args.data.filter((d: any) => d.rawData && d.rawData.length).length ==
-          0,
+  if (args.data) {
+    const pointTraceIndices = args.data
+      .map((d: any, index: number) =>
+        d.rawData || d.outliers.length ? index : -1
+      )
+      .filter((i: number) => i >= 0);
+    return {
+      showRawData: {
+        control: {
+          disable:
+            args.data.filter((d: any) => d.rawData && d.rawData.length)
+              .length == 0,
+        },
       },
-    },
-    showMean: {
-      control: {
-        disable: args.data.filter((d: any) => d.mean != null).length == 0,
+      showMean: {
+        control: {
+          disable: args.data.filter((d: any) => d.mean != null).length == 0,
+        },
       },
-    },
-    opacity: {
-      control: {
-        disable: pointTraceIndices.length == 0,
+      opacity: {
+        control: {
+          disable: pointTraceIndices.length == 0,
+        },
       },
-    },
-  };
+    };
+  }
 }

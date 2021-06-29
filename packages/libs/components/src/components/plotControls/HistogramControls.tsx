@@ -253,12 +253,7 @@ export default function HistogramControls({
             label="Legend"
             color={accentColor}
             state={displayLegend}
-            // The stinky use of `any` here comes from
-            // an incomplete type definition in the
-            // material UI library.
-            onStateChange={(event: any) =>
-              toggleDisplayLegend(event.target.checked)
-            }
+            onStateChange={toggleDisplayLegend}
             containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
@@ -267,9 +262,7 @@ export default function HistogramControls({
             label="Plot.ly Controls"
             color={accentColor}
             state={displayLibraryControls}
-            onStateChange={(event: any) =>
-              toggleLibraryControls(event.target.checked)
-            }
+            onStateChange={toggleLibraryControls}
             // add paddingRight
             containerStyles={{ paddingRight: '1.5625em' }}
           />
@@ -282,12 +275,7 @@ export default function HistogramControls({
             label="Log Scale:"
             color={accentColor}
             state={dependentAxisLogScale}
-            // The stinky use of `any` here comes from
-            // an incomplete type definition in the
-            // material UI library.
-            onStateChange={(event: any) =>
-              toggleDependentAxisLogScale(event.target.checked)
-            }
+            onStateChange={toggleDependentAxisLogScale}
             containerStyles={{ paddingBottom: '0.3125em' }}
           />
         )}
