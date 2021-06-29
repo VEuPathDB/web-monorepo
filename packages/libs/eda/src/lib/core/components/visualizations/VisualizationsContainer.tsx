@@ -97,7 +97,7 @@ function ConfiguredVisualizations(props: Props) {
   if (computation == null) return <div>Computation not found</div>;
   return (
     <Grid>
-      <Link to={`${url}/new`} className={cx('-NewVisualization')}>
+      <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
         <i className="fa fa-plus"></i>
         Select a visualization
       </Link>
@@ -141,7 +141,7 @@ function ConfiguredVisualizations(props: Props) {
                   </div>
                   <div>
                     <Tooltip title="View fullscreen">
-                      <Link to={`${url}/${viz.id}`}>
+                      <Link replace to={`${url}/${viz.id}`}>
                         <i className="fa fa-arrows-alt"></i>
                       </Link>
                     </Tooltip>
@@ -190,7 +190,7 @@ function NewVisualizationPicker(props: Props) {
   return (
     <div className={cx('-PickerContainer')}>
       <div className={cx('-PickerActions')}>
-        <Link to={`../${computationId}`}>
+        <Link replace to={`../${computationId}`}>
           <i className="fa fa-close"></i>
         </Link>
       </div>
@@ -212,7 +212,7 @@ function NewVisualizationPicker(props: Props) {
                     displayName: 'Unnamed visualization',
                     configuration: vizType?.createDefaultConfig(),
                   });
-                  history.push(`../${computationId}/${id}`);
+                  history.replace(`../${computationId}/${id}`);
                 }}
               >
                 {vizType ? (
@@ -302,7 +302,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
           </Tooltip>
         </div>
         <Tooltip title="Minimize visualization">
-          <Link to={`../${computationId}`}>
+          <Link replace to={`../${computationId}`}>
             <i className="fa fa-window-restore"></i>
           </Link>
         </Tooltip>
