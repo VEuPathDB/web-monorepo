@@ -13,26 +13,22 @@ type EventData = {
 
 export const getCreatedDateData = async (
   url: string
-): Promise<Array<EventData>> => {
-  return await fetch(url)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error(
-          'Response not as expected. Probably exceeded API rate limit.'
-        );
-      }
-    })
-    .then((json) => {
-      return json.map((item: any) => ({
-        id: item.id,
-        date: item.created_at,
-      }));
-    })
-    .catch((error) => {
-      console.log(error.message);
-    });
+): Promise<Array<EventData> | undefined> => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok)
+      throw new Error(
+        'Response not as expected. Probably exceeded API rate limit.'
+      );
+    const json = await response.json();
+    return json.map((item: any) => ({
+      id: item.id,
+      date: item.created_at,
+    }));
+  } catch (error) {
+    console.log(error.message);
+    return undefined;
+  }
 };
 
 /**
