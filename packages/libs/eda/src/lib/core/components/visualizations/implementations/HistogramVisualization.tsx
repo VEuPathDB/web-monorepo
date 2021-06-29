@@ -10,7 +10,6 @@ import {
 } from '@veupathdb/components/lib/types/general';
 import { isTimeDelta } from '@veupathdb/components/lib/types/guards';
 import { HistogramData } from '@veupathdb/components/lib/types/plots';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
@@ -150,7 +149,7 @@ function HistogramViz(props: Props) {
   );
 
   const onBinWidthChange = useCallback(
-    ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
+    (newBinWidth: NumberOrTimeDelta) => {
       if (newBinWidth) {
         updateVizConfig({
           binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
@@ -265,12 +264,14 @@ function HistogramViz(props: Props) {
       )}
       {fullscreen ? (
         <HistogramPlotWithControls
-          data={data.value && !data.pending ? data.value : { series: [] }}
+          data={data.value && !data.pending ? data.value : undefined}
           onBinWidthChange={onBinWidthChange}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           handleDependentAxisLogScale={handleDependentAxisLogScale}
-          width="100%"
-          height={400}
+          containerStyles={{
+            width: '100%',
+            height: '400px',
+          }}
           orientation={'vertical'}
           barLayout={'stack'}
           displayLegend={
@@ -286,9 +287,11 @@ function HistogramViz(props: Props) {
       ) : (
         // thumbnail/grid view
         <Histogram
-          data={data.value && !data.pending ? data.value : { series: [] }}
-          width={350}
-          height={280}
+          data={data.value && !data.pending ? data.value : undefined}
+          containerStyles={{
+            width: '350px',
+            height: '280px',
+          }}
           orientation={'vertical'}
           barLayout={'stack'}
           displayLibraryControls={false}
@@ -305,11 +308,7 @@ function HistogramViz(props: Props) {
 }
 
 type HistogramPlotWithControlsProps = HistogramProps & {
-  onBinWidthChange: ({
-    binWidth: newBinWidth,
-  }: {
-    binWidth: NumberOrTimeDelta;
-  }) => void;
+  onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
   handleDependentAxisLogScale: (newState?: boolean) => void;
 };
 
@@ -339,27 +338,20 @@ function HistogramPlotWithControls({
         data={data}
         opacity={opacity}
         displayLibraryControls={displayLibraryControls}
-        showBarValues={false}
+        showValues={false}
         barLayout={barLayout}
       />
       <HistogramControls
-        valueType={data.valueType}
+        valueType={data?.valueType}
         barLayout={barLayout}
         displayLegend={false /* should not be a required prop */}
         displayLibraryControls={displayLibraryControls}
         opacity={opacity}
         orientation={histogramProps.orientation}
-        binWidth={data.binWidth}
-        selectedUnit={
-          data.binWidth && isTimeDelta(data.binWidth)
-            ? data.binWidth.unit
-            : undefined
-        }
-        onBinWidthChange={({ binWidth: newBinWidth }) => {
-          onBinWidthChange({ binWidth: newBinWidth });
-        }}
-        binWidthRange={data.binWidthRange}
-        binWidthStep={data.binWidthStep}
+        binWidth={data?.binWidth}
+        onBinWidthChange={onBinWidthChange}
+        binWidthRange={data?.binWidthRange}
+        binWidthStep={data?.binWidthStep}
         errorManagement={errorManagement}
         dependentAxisLogScale={histogramProps.dependentAxisLogScale}
         toggleDependentAxisLogScale={handleDependentAxisLogScale}

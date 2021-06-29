@@ -2,7 +2,6 @@
 import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
@@ -228,9 +227,10 @@ function BarplotViz(props: Props) {
       {fullscreen ? (
         <BarplotWithControls
           data={data.value && !data.pending ? data.value : { series: [] }}
-          width={'100%'}
-          height={450}
-          // height={'100%'}
+          containerStyles={{
+            width: '100%',
+            height: '450px',
+          }}
           orientation={'vertical'}
           barLayout={'group'}
           displayLegend={data.value?.series.length > 1}
@@ -246,8 +246,10 @@ function BarplotViz(props: Props) {
         // thumbnail/grid view
         <Barplot
           data={data.value && !data.pending ? data.value : { series: [] }}
-          width={230}
-          height={165}
+          containerStyles={{
+            width: '230px',
+            height: '165px',
+          }}
           // check this option (possibly plot control?)
           orientation={'vertical'}
           barLayout={'group'}
@@ -257,9 +259,14 @@ function BarplotViz(props: Props) {
           // new props for better displaying grid view
           displayLegend={false}
           displayLibraryControls={false}
-          staticPlot={true}
+          interactive={false}
           // set margin for better display at thumbnail/grid view
-          margin={{ l: 30, r: 20, b: 0, t: 20 }}
+          spacingOptions={{
+            marginLeft: 30,
+            marginRight: 20,
+            marginBottom: 0,
+            marginTop: 20,
+          }}
           showSpinner={data.pending}
         />
       )}
