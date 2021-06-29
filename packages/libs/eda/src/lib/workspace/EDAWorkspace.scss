@@ -103,6 +103,13 @@
     font-style: italic;
   }
 
+  &-SeeAllFiltersButton {
+    .MuiButton-label {
+      align-items: end;
+      text-transform: none;
+    }
+  }
+
   &-ActionIconButton {
     margin-left: 1em;
     button {

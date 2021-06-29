@@ -4,6 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router';
 import Path from 'path';
 import { Analysis } from '../core';
 import { ActionIconButton } from './ActionIconButton';
+import { Button, Icon } from '@material-ui/core';
 import { cx } from './Utils';
 
 interface Props {
@@ -42,11 +43,14 @@ export function AnalysisSummary(props: Props) {
           onSave={setAnalysisName}
         />
         {analysis.filters.length > 0 && (
-          <ActionIconButton
-            iconClassName="filter"
-            hoverText="See all filters"
-            action={onFilterIconClick}
-          />
+          <Button
+            className={cx('-SeeAllFiltersButton')}
+            variant="outlined"
+            onClick={onFilterIconClick}
+            startIcon={<Icon className="fa fa-filter" />}
+          >
+            See all filters
+          </Button>
         )}
       </div>
       <div className={cx('-AnalysisSummaryRight')}>
