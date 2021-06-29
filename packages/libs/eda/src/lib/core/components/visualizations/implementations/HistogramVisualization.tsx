@@ -292,8 +292,14 @@ function HistogramViz(props: Props) {
         <Histogram
           data={data.value && !data.pending ? data.value : undefined}
           containerStyles={{
-            width: '350px',
-            height: '280px',
+            width: '250px',
+            height: '180px',
+          }}
+          spacingOptions={{
+            marginLeft: 0,
+            marginRight: 30,
+            marginTop: 30,
+            marginBottom: 0,
           }}
           orientation={'vertical'}
           barLayout={'stack'}

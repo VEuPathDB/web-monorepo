@@ -248,7 +248,7 @@ function BarplotViz(props: Props) {
           data={data.value && !data.pending ? data.value : { series: [] }}
           containerStyles={{
             width: '230px',
-            height: '165px',
+            height: '150px',
           }}
           // check this option (possibly plot control?)
           orientation={'vertical'}

@@ -312,14 +312,14 @@ function MosaicViz(props: Props) {
     <Mosaic
       data={data.value && !data.pending ? data.value : undefined}
       containerStyles={{
-        width: '300px',
-        height: '180px',
+        width: '250px',
+        height: '150px',
       }}
       spacingOptions={{
-        marginTop: 40,
+        marginTop: 30,
         marginBottom: 20,
-        marginLeft: 20,
-        marginRight: 10,
+        marginLeft: 30,
+        marginRight: 20,
       }}
       showColumnLabels={false}
       displayLibraryControls={false}
