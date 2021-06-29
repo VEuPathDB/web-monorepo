@@ -1,91 +1,84 @@
-.GlobalFiltersDialog_Anchor {
+.GlobalFiltersDialog_CenterAnchor {
   position: fixed;
   width: 0;
   height: 0;
   top: 50vh;
   left: 50vw;
-  // width: 100%;
-  // height: 100%;
   z-index: 100;
-  // display: flex;
-  // alignItems: center;
-  // justifyContent: center;
 
-  .GlobalFiltersDialog {
-    // width: 400;
-    // height: 300;
-    position: absolute;
-    // minWidth: 300px;
-    // position: fixed;
-    // top: 50vh;
-    // left: 50vw;
-    // zIndex: 100;
-    background-color: white;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    // margin: auto;
+  .GlobalFiltersDialog_TopLeftAnchor {
+    width: 0;
+    height: 0;
 
-    .GlobalFiltersDialog_Header {
-      background-color: #eee;
+    .GlobalFiltersDialog {
+      position: absolute;
+      background-color: white;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
       display: flex;
-      align-items: center;
-      position: relative;
-      font-size: 1.2em;
-      font-weight: 700;
-      padding: 0.6em 0.8em;
-      cursor: move;
-      // height: 42px;
-      flex: 0 1 42px;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
 
-      .GlobalFiltersDialog_Header_Left {
+      .GlobalFiltersDialog_Header {
+        background-color: #eee;
         display: flex;
-        justify-content: flex-start;
-        flex: 1;
-      }
+        align-items: center;
+        position: relative;
+        font-size: 1.2em;
+        font-weight: 700;
+        padding: 0.6em 0.8em;
+        cursor: move;
+        flex: 0 1 42px;
 
-      .GlobalFiltersDialog_Header_Center {
-        display: flex;
-        justify-content: center;
-        flex: 5;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        margin-right: auto;
-      }
+        .GlobalFiltersDialog_Header_Left {
+          display: flex;
+          justify-content: flex-start;
+          flex: 1;
+        }
 
-      .GlobalFiltersDialog_Header_Right {
-        display: flex;
-        justify-content: flex-end;
-        flex: 1;
+        .GlobalFiltersDialog_Header_Center {
+          display: flex;
+          justify-content: center;
+          flex: 5;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          margin-right: auto;
+        }
 
-        .GlobalFiltersDialog_CloseButton {
-          border: none;
-          background: none;
+        .GlobalFiltersDialog_Header_Right {
+          display: flex;
+          justify-content: flex-end;
+          flex: 1;
+
+          .GlobalFiltersDialog_CloseButton {
+            border: none;
+            background: none;
+          }
         }
       }
-    }
 
-    .GlobalFiltersDialog_Content {
-      padding: 10px;
-      overflow: auto;
-      flex: 1 1 auto;
-    }
+      .GlobalFiltersDialog_Content {
+        padding: 10px;
+        overflow: auto;
+        flex: 1 1 auto;
+      }
 
-    .GlobalFiltersDialog_Footer {
-      // position: absolute;
-      // bottom: 0;
-      // height: 20px;
-      width: 100%;
-      background-color: #eee;
-      text-align: center;
-      flex: 0 1 20px;
+      .GlobalFiltersDialog_Footer {
+        width: 100%;
+        background-color: #eee;
+        text-align: center;
+        flex: 0 1 20px;
 
-      .GlobalFiltersDialog_RemoveAllButton {
-        border: none;
-        background: none;
+        .GlobalFiltersDialog_RemoveAllButton {
+          border: none;
+          background: none;
+          color: rgb(0, 102, 153);
+        }
+
+        .GlobalFiltersDialog_RemoveAllButton:hover {
+          background-color: pink;
+        }
       }
     }
   }
