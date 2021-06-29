@@ -453,7 +453,7 @@ function HistogramPlotWithControls({
         }}
       />
       <HistogramControls
-        label="Axis controls"
+        label={undefined}
         valueType={data?.valueType}
         barLayout={barLayout}
         displayLegend={displayLegend}

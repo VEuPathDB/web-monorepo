@@ -2,6 +2,9 @@ import HistogramControls from '@veupathdb/components/lib/components/plotControls
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
+import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import {
   ErrorManagement,
   NumberOrTimeDelta,
@@ -341,21 +344,23 @@ function HistogramPlotWithControls({
         showValues={false}
         barLayout={barLayout}
       />
-      <HistogramControls
-        valueType={data?.valueType}
-        barLayout={barLayout}
-        displayLegend={false /* should not be a required prop */}
-        displayLibraryControls={displayLibraryControls}
-        opacity={opacity}
-        orientation={histogramProps.orientation}
-        binWidth={data?.binWidth}
-        onBinWidthChange={onBinWidthChange}
-        binWidthRange={data?.binWidthRange}
-        binWidthStep={data?.binWidthStep}
-        errorManagement={errorManagement}
-        dependentAxisLogScale={histogramProps.dependentAxisLogScale}
-        toggleDependentAxisLogScale={handleDependentAxisLogScale}
-      />
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LabelledGroup label="Y-axis">
+          <Switch
+            label="Log Scale:"
+            state={histogramProps.dependentAxisLogScale}
+            onStateChange={handleDependentAxisLogScale}
+          />
+        </LabelledGroup>
+        <LabelledGroup label="X-axis">
+          <BinWidthControl
+            binWidth={data?.binWidth}
+            onBinWidthChange={onBinWidthChange}
+            binWidthRange={data?.binWidthRange}
+            binWidthStep={data?.binWidthStep}
+          />
+        </LabelledGroup>
+      </div>
     </div>
   );
 }
