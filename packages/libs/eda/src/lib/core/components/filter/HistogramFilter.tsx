@@ -1,4 +1,5 @@
 import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
+import SelectedRangeControl from '@veupathdb/components/lib/components/plotControls/SelectedRangeControl';
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
@@ -275,11 +276,13 @@ export function HistogramFilter(props: Props) {
             data.value.variableId === variable.id &&
             data.value.entityId === entity.id
               ? data.value
-              : { series: [] }
+              : undefined
           }
           getData={getData}
-          width="100%"
-          height={400}
+          containerStyles={{
+            width: '100%',
+            height: '400px',
+          }}
           spacingOptions={{
             marginTop: 20,
             marginBottom: 20,
@@ -333,7 +336,7 @@ function HistogramPlotWithControls({
   );
 
   const handleBinWidthChange = useCallback(
-    ({ binWidth: newBinWidth }: { binWidth: NumberOrTimeDelta }) => {
+    (newBinWidth: NumberOrTimeDelta) => {
       updateUIState({
         binWidth: isTimeDelta(newBinWidth) ? newBinWidth.value : newBinWidth,
         binWidthTimeUnit: isTimeDelta(newBinWidth)
@@ -412,28 +415,23 @@ function HistogramPlotWithControls({
   }, [filter]);
 
   const selectedRangeBounds = {
-    min: data.series[0]?.summary?.min,
-    max: data.series[0]?.summary?.max,
+    min: data?.series[0]?.summary?.min,
+    max: data?.series[0]?.summary?.max,
   } as NumberOrDateRange;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <HistogramControls
-        valueType={data.valueType}
-        barLayout={barLayout}
-        displayLegend={displayLegend}
-        displayLibraryControls={displayLibraryControls}
-        opacity={opacity}
-        orientation={histogramProps.orientation}
-        errorManagement={errorManagement}
+      <SelectedRangeControl
+        label={`Subset on ${variableName}`}
+        valueType={data?.valueType}
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
         onSelectedRangeChange={handleSelectedRangeChange}
-        containerStyles={{ border: 'none' }}
       />
       <Histogram
         {...histogramProps}
         data={data}
+        interactive={true}
         selectedRange={selectedRange}
         selectedRangeBounds={selectedRangeBounds}
         opacity={opacity}
@@ -455,22 +453,17 @@ function HistogramPlotWithControls({
         }}
       />
       <HistogramControls
-        label="Axis controls"
-        valueType={data.valueType}
+        label={undefined}
+        valueType={data?.valueType}
         barLayout={barLayout}
         displayLegend={displayLegend}
         displayLibraryControls={displayLibraryControls}
         opacity={opacity}
         orientation={histogramProps.orientation}
-        binWidth={data.binWidth}
-        selectedUnit={
-          data.binWidth && isTimeDelta(data.binWidth)
-            ? data.binWidth.unit
-            : undefined
-        }
+        binWidth={data?.binWidth}
         onBinWidthChange={handleBinWidthChange}
-        binWidthRange={data.binWidthRange}
-        binWidthStep={data.binWidthStep}
+        binWidthRange={data?.binWidthRange}
+        binWidthStep={data?.binWidthStep}
         errorManagement={errorManagement}
         independentAxisRange={uiState.independentAxisRange}
         onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
