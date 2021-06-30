@@ -199,7 +199,8 @@ function pruneByDatasetCategory(categoryTree, record) {
   console.log(record)
 
 
-  // Remove Dataset Version from genome datasets, otherwise remove genome tables from non-genome datasets
+  // Remove Dataset Version and Source Version from genome datasets, otherwise remove genome tables from non-genome datasets
+  // Additionally, choose either the genome dataset history or non-genome dataset history table
   if (record.attributes.newcategory === 'Annotation, curation and identifiers') {
 
     categoryTree = tree.pruneDescendantNodes(
@@ -208,6 +209,8 @@ function pruneByDatasetCategory(categoryTree, record) {
         if (individual.children.length > 0) return true;
         if (individual.wdkReference == null) return false;
         if (individual.wdkReference.name === 'version') return false;
+        if (individual.wdkReference.name === 'Version') return false;
+        if (individual.wdkReference.name === 'DatasetHistory') return false;
         return true;
       },
       categoryTree
@@ -222,6 +225,7 @@ function pruneByDatasetCategory(categoryTree, record) {
         if (individual.wdkReference.name === 'SequenceTypeCounts') return false;
         if (individual.wdkReference.name === 'GenomeAssociatedData') return false;
         if (individual.wdkReference.name === 'ExternalDatabases') return false;
+        if (individual.wdkReference.name === 'GenomeHistory') return false;
         return true;
       },
       categoryTree
