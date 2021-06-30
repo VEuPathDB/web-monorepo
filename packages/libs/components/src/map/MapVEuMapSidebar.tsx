@@ -24,7 +24,7 @@ const { BaseLayer } = LayersControl;
 function removeClassName(targetClass: string) {
   //DKDK much convenient to use jquery here but try not to use it
   let targetElement = document.getElementsByClassName(targetClass)[0];
-  if (targetElement !== undefined) {
+  if (targetElement != null) {
     targetElement.classList.remove(targetClass);
   }
 }
@@ -34,7 +34,7 @@ function removeClassNameActive(targetClass: string) {
   //DKDK much convenient to use jquery here but try not to use it
   let targetElement = document.getElementsByClassName(targetClass)[0];
   // console.log(targetElement)
-  if (targetElement !== undefined) {
+  if (targetElement != null) {
     targetElement.classList.remove('active');
   }
 }

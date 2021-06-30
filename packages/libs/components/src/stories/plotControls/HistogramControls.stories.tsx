@@ -90,13 +90,9 @@ AdditionalOptions.args = {
     valueType: 'date',
     binWidthRange: { min: 1, max: 24, unit: 'hours' },
     binWidthStep: 1,
-    onBinWidthChange: async (args: {
-      binWidth: NumberOrTimeDelta;
-      selectedUnit?: string;
-    }) => {
+    onBinWidthChange: async (binWidth: NumberOrTimeDelta) => {
       return dummyData({
-        binWidth: args.binWidth,
-        selectedUnit: args.selectedUnit,
+        binWidth: binWidth,
       });
     },
   },

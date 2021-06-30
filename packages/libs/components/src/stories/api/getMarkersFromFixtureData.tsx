@@ -57,7 +57,7 @@ export const getSpeciesDonuts = async (
     bucket.term.buckets.forEach((bucket: any) => {
       const species = bucket.val;
       let prevCount = speciesToCount.get(species);
-      if (prevCount === undefined) prevCount = 0;
+      if (prevCount == null) prevCount = 0;
       speciesToCount.set(species, prevCount + bucket.count);
     });
   });
@@ -317,7 +317,7 @@ export const getCollectionDateChartMarkers = async (
         colors.push(chartMarkerColorsHex[index]);
 
         // sum all counts for legend
-        if (legendSums[index] === undefined) {
+        if (legendSums[index] == null) {
           legendSums[index] = 0;
           legendLabels[index] = label;
           legendColors[index] = chartMarkerColorsHex[index];
@@ -333,7 +333,7 @@ export const getCollectionDateChartMarkers = async (
     colors.push('silver'); // fill the last color
 
     legendLabels[5] = 'no data/out of bounds';
-    if (legendSums[5] === undefined) legendSums[5] = 0;
+    if (legendSums[5] == null) legendSums[5] = 0;
     legendSums[5] += noDataValue;
     legendColors[5] = 'silver';
 

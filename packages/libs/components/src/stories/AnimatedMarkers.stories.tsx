@@ -102,7 +102,7 @@ const getMarkerElements = (
         const geohash: string = Geohash.encode(lat, long, geohashLevel);
 
         let agg = aggsByGeohash.get(geohash);
-        if (agg === undefined) {
+        if (agg == null) {
           agg = {
             lat: 0,
             long: 0,
@@ -117,10 +117,10 @@ const getMarkerElements = (
         }
         agg.lat = agg.lat + lat;
         agg.long = agg.long + long;
-        if (agg.latMin === undefined || lat < agg.latMin) agg.latMin = lat;
-        if (agg.longMin === undefined || long < agg.longMin) agg.longMin = long;
-        if (agg.latMax === undefined || lat > agg.latMax) agg.latMax = lat;
-        if (agg.longMax === undefined || long > agg.longMax) agg.longMax = long;
+        if (agg.latMin == null || lat < agg.latMin) agg.latMin = lat;
+        if (agg.longMin == null || long < agg.longMin) agg.longMin = long;
+        if (agg.latMax == null || lat > agg.latMax) agg.latMax = lat;
+        if (agg.longMax == null || long > agg.longMax) agg.longMax = long;
 
         agg.count++;
       }

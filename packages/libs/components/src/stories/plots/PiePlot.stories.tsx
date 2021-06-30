@@ -10,8 +10,6 @@ import {
   LIGHT_GREEN,
   LIGHT_PURPLE,
 } from '../../constants/colors';
-import usePlotControls from '../../hooks/usePlotControls';
-import PieControls from '../../components/plotControls/PieControls';
 
 export default {
   title: 'Plots/Pie & Donut',
@@ -58,35 +56,19 @@ let coloredData: PiePlotData = {
   ],
 };
 
-let dataWithAvailableUnits: PiePlotData = {
-  slices: [
-    {
-      value: 10,
-      label: 'Purple',
-      color: LIGHT_PURPLE,
-    },
-    {
-      value: 2,
-      label: 'Green',
-      color: LIGHT_GREEN,
-    },
-    {
-      value: 30,
-      color: LIGHT_BLUE,
-      label: 'Blue',
-    },
-  ],
-  availableUnits: ['Not Yet', 'Implemented'],
-  selectedUnit: 'Not Yet',
-};
+const Template: Story<PiePlotProps> = (args) => (
+  <PiePlot
+    containerStyles={{
+      width: '600px',
+      height: '400px',
+    }}
+    {...args}
+  />
+);
 
-const NoControlsTemplate: Story<PiePlotProps> = (args) => <PiePlot {...args} />;
-
-export const Basic = NoControlsTemplate.bind({});
+export const Basic = Template.bind({});
 Basic.args = {
   data: data,
-  width: 600,
-  height: 450,
   title: 'Pie Plot',
   legendOptions: {
     horizontalPosition: 'right',
@@ -104,11 +86,9 @@ Basic.args = {
   },
 };
 
-export const BasicLoading = NoControlsTemplate.bind({});
+export const BasicLoading = Template.bind({});
 BasicLoading.args = {
   data: data,
-  width: 600,
-  height: 450,
   title: 'Pie Plot',
   legendOptions: {
     horizontalPosition: 'right',
@@ -127,14 +107,14 @@ BasicLoading.args = {
   showSpinner: true,
 };
 
-export const CustomSliceColors = NoControlsTemplate.bind({});
+export const CustomSliceColors = Template.bind({});
 CustomSliceColors.args = {
   ...Basic.args,
   data: coloredData,
   title: 'Pie Plot w/ Custom Colors',
 };
 
-export const BasicDonut = NoControlsTemplate.bind({});
+export const BasicDonut = Template.bind({});
 BasicDonut.args = {
   ...Basic.args,
   title: 'Basic Donut Plot',
@@ -143,7 +123,7 @@ BasicDonut.args = {
   },
 };
 
-export const DonutText = NoControlsTemplate.bind({});
+export const DonutText = Template.bind({});
 DonutText.args = {
   ...Basic.args,
   title: 'Donut Plot w/Text',
@@ -153,7 +133,7 @@ DonutText.args = {
   },
 };
 
-export const FilledDonut = NoControlsTemplate.bind({});
+export const FilledDonut = Template.bind({});
 FilledDonut.args = {
   ...Basic.args,
   title: 'Filled Donut',
@@ -165,73 +145,10 @@ FilledDonut.args = {
   },
 };
 
-export const BasicControlPanel: Story<PiePlotProps> = (args) => {
-  const plotControls = usePlotControls<PiePlotData>({ data: args.data });
+export const Empty = Template.bind({});
+Empty.args = {};
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', margin: 25 }}>
-      <PiePlot
-        {...args}
-        spacingOptions={{
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
-          marginTop: 10,
-        }}
-        {...plotControls}
-      />
-      <div style={{ height: 25 }} />
-      <PieControls
-        label="Pie Plot Controls"
-        {...plotControls}
-        containerStyles={{
-          maxWidth: args.width,
-        }}
-      />
-    </div>
-  );
-};
-
-BasicControlPanel.args = {
-  data: coloredData,
-  width: 500,
-  height: 300,
-};
-
-export const ControlPanelWithAvailableUnits: Story<PiePlotProps> = (args) => {
-  const plotControls = usePlotControls<PiePlotData>({
-    data: args.data,
-    onSelectedUnitChange: async (unit) => {
-      return args.data;
-    },
-  });
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', margin: 25 }}>
-      <PiePlot
-        {...args}
-        spacingOptions={{
-          marginBottom: 0,
-          marginLeft: 0,
-          marginRight: 0,
-          marginTop: 10,
-        }}
-        {...plotControls}
-      />
-      <div style={{ height: 25 }} />
-      <PieControls
-        label="Pie Plot Controls W/ Available Units"
-        {...plotControls}
-        containerStyles={{
-          maxWidth: args.width,
-        }}
-      />
-    </div>
-  );
-};
-
-ControlPanelWithAvailableUnits.args = {
-  data: dataWithAvailableUnits,
-  width: 500,
-  height: 300,
+export const EmptyLoading = Template.bind({});
+EmptyLoading.args = {
+  showSpinner: true,
 };

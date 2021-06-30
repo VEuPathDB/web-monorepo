@@ -124,12 +124,7 @@ export default function PieControls({
             label="Legend"
             color={accentColor}
             state={displayLegend}
-            // The stinky use of `any` here comes from
-            // an incomplete type definition in the
-            // material UI library.
-            onStateChange={(event: any) =>
-              toggleDisplayLegend(event.target.checked)
-            }
+            onStateChange={toggleDisplayLegend}
             containerStyles={{ paddingRight: 25, paddingBottom: 10 }}
           />
           <Switch

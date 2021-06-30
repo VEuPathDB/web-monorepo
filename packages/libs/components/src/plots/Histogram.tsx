@@ -1,20 +1,24 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
-import Spinner from '../components/Spinner';
 
 // Definitions
-import { DARK_GRAY } from '../constants/colors';
-import { HistogramData, HistogramBin } from '../types/plots';
+import {
+  HistogramData,
+  HistogramBin,
+  OpacityAddon,
+  OpacityDefault,
+  OrientationAddon,
+  OrientationDefault,
+  BarLayoutAddon,
+} from '../types/plots';
 import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
-import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
-import { legendSpecification } from '../utils/plotly';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
 import { sortBy, sortedUniqBy, orderBy } from 'lodash';
 
 // Components
-import PlotlyPlot from './PlotlyPlot';
+import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout, Shape } from 'plotly.js';
 
 // bin middles needed for highlighting
@@ -24,54 +28,24 @@ interface BinSummary {
   binMiddle: HistogramBin['binEnd'];
 }
 
-export interface HistogramProps {
-  /** Data for the plot. */
-  data: HistogramData;
-  /** The width of the plot in pixels (if number), or CSS length. */
-  width: number | string;
-  /** The height of the plot in pixels (if number), or CSS length. */
-  height: number | string;
-  /** The orientation of the plot. Defaults to `vertical` */
-  orientation: 'vertical' | 'horizontal';
-  /** How bars are displayed when there are multiple series. */
-  barLayout: 'overlay' | 'stack' | 'group';
-  /** Opacity of bars. Range is a decimal between 0 and 1. Defaults to 1
-   * if there is only one data series bars are not overlayed. Otherwise,
-   * defaults to .75
-   */
-  opacity?: number;
-  /** Title of plot. */
-  title?: string;
+const EmptyHistogramData: HistogramData = { series: [] };
+
+export interface HistogramProps
+  extends PlotProps<HistogramData>,
+    OrientationAddon,
+    OpacityAddon,
+    BarLayoutAddon<'overlay' | 'stack'> {
   /** Label for independent axis. Defaults to `Bins`. */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
   dependentAxisLabel?: string;
-  /** Fill color of the title, axes labels, tick marks, and legend.
-   * Defaults to DARK_GRAY. Note that textColor can be overridden
-   * for the legend if `legendOptions` is provided. */
-  textColor?: string;
-  /** Color of the gridlines. Use Plotly defaults if not specified. */
-  gridColor?: string;
-  /** Control of background color. Defaults to transparent.  */
-  backgroundColor?: string;
-  /** Should plot legend be displayed? */
-  displayLegend?: boolean;
-  /** Options for customizing plot legend. */
-  legendOptions?: PlotLegendAddon;
   /** Range for the dependent axis (usually y-axis) */
   // can only be numeric
   dependentAxisRange?: NumberRange;
   /** Use a log scale for dependent axis. Default is false */
   dependentAxisLogScale?: boolean;
   /** Show value for each bar */
-  showBarValues?: boolean;
-  /** Should plotting library controls be displayed? Ex. Plot.ly */
-  displayLibraryControls?: boolean;
-  /** Options for customizing plot placement. */
-  spacingOptions?: PlotSpacingAddon;
-  /** Whether the plot is interactive. If false, overrides
-   * displayLibraryControls. */
-  interactive?: boolean;
+  showValues?: boolean;
   /** A range to highlight by means of opacity */
   selectedRange?: NumberOrDateRange;
   /** function to call upon selecting a range (in independent axis) */
@@ -81,59 +55,33 @@ export interface HistogramProps {
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
   isZoomed?: boolean;
-  /** Show a loading spinner on top of the plot */
-  showSpinner?: boolean;
 }
 
 /** A Plot.ly based histogram component. */
 export default function Histogram({
-  data,
-  width,
-  height,
-  orientation = 'vertical',
-  title,
+  data = EmptyHistogramData,
   independentAxisLabel = 'Bins',
   dependentAxisLabel = 'Count',
-  textColor = DARK_GRAY,
-  gridColor,
-  opacity = 1,
+  orientation = OrientationDefault,
+  opacity = OpacityDefault,
   barLayout = 'overlay',
-  backgroundColor = 'transparent',
-  // changed to dependentAxisRange
   dependentAxisRange,
   dependentAxisLogScale = false,
-  showBarValues,
-  displayLegend = true,
-  legendOptions,
-  displayLibraryControls = true,
-  spacingOptions,
-  interactive = true,
+  showValues,
   selectedRange,
   onSelectedRangeChange = () => {},
   selectedRangeBounds,
   isZoomed = false,
-  showSpinner,
+  ...restProps
 }: HistogramProps) {
-  const [revision, setRevision] = useState(0);
-
-  // Quirk of Plot.ly library. If you don't do this, the
-  // plot will not refresh on barLayout changes.
-  useEffect(() => {
-    setRevision(revision + 1);
-  }, [barLayout]);
-
   /**
-   * Determine bar opacity. This gets a little complicated
-   * as we have to dynamically adjust an opacity of 1 down
-   * when there is more than 1 data series and the layout
-   * is overlay.
+   * Determine bar opacity. Only applicable when in overlay
+   * mode and there are >1 series.
+   * Values less than 0.75 recommended to avoid it looking like a stacked chart.
+   * If providing an opacity slider, don't let values go higher than 0.75.
    */
   const calculatedBarOpacity: number = useMemo(() => {
-    if (barLayout === 'overlay' && data.series.length > 1) {
-      return opacity > 1 ? (opacity / 100) * 0.75 : opacity * 0.75;
-    } else {
-      return opacity > 1 ? opacity / 100 : opacity;
-    }
+    return barLayout === 'overlay' && data.series.length > 1 ? opacity : 1;
   }, [barLayout, data.series.length, opacity]);
 
   /**
@@ -166,7 +114,7 @@ export default function Histogram({
         const binLabels = series.bins.map((bin) => bin.binLabel); // see TO DO: below
         const binCounts = series.bins.map((bin) => bin.count);
         const binWidths = series.bins.map((bin) => {
-          if (data.valueType !== undefined && data.valueType === 'date') {
+          if (data.valueType != null && data.valueType === 'date') {
             // date, needs to be in milliseconds
             // TO DO: bars seem very slightly too narrow at monthly resolution (multiplying by 1009 fixes it)
             return (
@@ -189,8 +137,8 @@ export default function Histogram({
           orientation: orientation === 'vertical' ? 'v' : 'h',
           name: series.name,
           // text: binLabels, // TO DO: find a way to show concise bin labels
-          text: showBarValues ? binCounts.map(String) : binLabels,
-          textposition: showBarValues ? 'auto' : undefined,
+          text: showValues ? binCounts.map(String) : binLabels,
+          textposition: showValues ? 'auto' : undefined,
           marker: {
             ...(series.color ? { color: series.color } : {}),
           },
@@ -209,7 +157,7 @@ export default function Histogram({
           },
         };
       }),
-    [data, orientation, calculatedBarOpacity, selectedRange]
+    [data, orientation, calculatedBarOpacity, selectedRange, showValues]
   );
 
   /**
@@ -230,14 +178,14 @@ export default function Histogram({
         // If we are not zoomed in, adjust the first bin's binStart to
         // selectedRangeBounds.min if needed
         index === 0 &&
-        selectedRangeBounds?.min != undefined &&
+        selectedRangeBounds?.min != null &&
         (!isZoomed || selectedRangeBounds.min > bin.binStart)
           ? selectedRangeBounds.min
           : bin.binStart,
       binEnd:
         // do similar for the last bin and binEnd
         index === uniqueBins.length - 1 &&
-        selectedRangeBounds?.max != undefined &&
+        selectedRangeBounds?.max != null &&
         (!isZoomed || selectedRangeBounds.max < bin.binEnd)
           ? selectedRangeBounds.max
           : bin.binEnd,
@@ -347,12 +295,7 @@ export default function Histogram({
     showline: false,
     title: {
       text: independentAxisLabel,
-      font: {
-        family: 'Arial, Helvetica, sans-serif',
-        size: 14,
-      },
     },
-    color: textColor,
     range: [minBinStart, maxBinEnd],
     tickfont: data.series.length ? {} : { color: 'transparent' },
   };
@@ -361,17 +304,11 @@ export default function Histogram({
     automargin: true,
     title: {
       text: dependentAxisLabel,
-      font: {
-        family: 'Arial, Helvetica, sans-serif',
-        size: 14,
-      },
     },
-    color: textColor,
-    gridcolor: gridColor,
     // range should be an array
     range: data.series.length
       ? [dependentAxisRange?.min, dependentAxisRange?.max].map((val) =>
-          dependentAxisLogScale && val != undefined ? Math.log10(val || 1) : val
+          dependentAxisLogScale && val != null ? Math.log10(val || 1) : val
         )
       : [0, 10],
     dtick: dependentAxisLogScale ? 1 : undefined,
@@ -380,65 +317,28 @@ export default function Histogram({
   };
 
   return (
-    <div style={{ position: 'relative', width: width, height: height }}>
-      <PlotlyPlot
-        useResizeHandler={true}
-        revision={revision}
-        style={{ height, width }}
-        layout={{
-          shapes: selectedRangeHighlighting,
-          // when we implement zooming, we will still use Plotly's select mode
-          dragmode: 'select',
-          // with a histogram, we can always use 1D selection
-          selectdirection: orientation === 'vertical' ? 'h' : 'v',
-          autosize: true,
-          margin: {
-            t: spacingOptions?.marginTop,
-            r: spacingOptions?.marginRight,
-            b: spacingOptions?.marginBottom,
-            l: spacingOptions?.marginLeft,
-            pad: spacingOptions?.padding || 0, // axes don't join up if >0
-          },
-          showlegend: displayLegend,
-          legend: {
-            font: {
-              color: textColor,
-            },
-            ...(legendOptions ? legendSpecification(legendOptions) : {}),
-          },
-          plot_bgcolor: backgroundColor,
-          paper_bgcolor: backgroundColor,
-          xaxis:
-            orientation === 'vertical'
-              ? independentAxisLayout
-              : dependentAxisLayout,
-          yaxis:
-            orientation === 'vertical'
-              ? dependentAxisLayout
-              : independentAxisLayout,
-          barmode: barLayout,
-          title: {
-            text: title,
-            font: {
-              family: 'Arial, Helvetica, sans-serif',
-              color: textColor,
-              size: 24,
-            },
-            xref: 'paper',
-            x: 0,
-          },
-        }}
-        data={plotlyFriendlyData}
-        onSelected={handleSelectedRange}
-        onSelecting={handleSelectingRange}
-        config={{
-          displayModeBar: displayLibraryControls ? 'hover' : false,
-          staticPlot: !interactive,
-          displaylogo: false,
-          showTips: true, // shows 'double click to zoom out' help for new users
-        }}
-      />
-      {showSpinner && <Spinner />}
-    </div>
+    <PlotlyPlot
+      useResizeHandler={true}
+      layout={{
+        shapes: selectedRangeHighlighting,
+        // when we implement zooming, we will still use Plotly's select mode
+        dragmode: 'select',
+        // with a histogram, we can always use 1D selection
+        selectdirection: orientation === 'vertical' ? 'h' : 'v',
+        xaxis:
+          orientation === 'vertical'
+            ? independentAxisLayout
+            : dependentAxisLayout,
+        yaxis:
+          orientation === 'vertical'
+            ? dependentAxisLayout
+            : independentAxisLayout,
+        barmode: barLayout,
+      }}
+      data={plotlyFriendlyData}
+      onSelected={handleSelectedRange}
+      onSelecting={handleSelectingRange}
+      {...restProps}
+    />
   );
 }

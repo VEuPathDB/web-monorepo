@@ -9,11 +9,14 @@ import {
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   NumberRange,
-  DateRange,
-  TimeDelta,
 } from '../../types/general';
 import { OrientationOptions } from '../../types/plots';
 import ControlsHeader from '../typography/ControlsHeader';
+
+// Mid-level controls
+import SelectedRangeControl from './SelectedRangeControl';
+import BinWidthControl from './BinWidthControl';
+import AxisRangeControl from './AxisRangeControl';
 
 // Local Components
 import Button from '../widgets/Button';
@@ -21,12 +24,8 @@ import ButtonGroup from '../widgets/ButtonGroup';
 import Notification from '../widgets/Notification';
 import OpacitySlider from '../widgets/OpacitySlider';
 import OrientationToggle from '../widgets/OrientationToggle';
-import SliderWidget from '../widgets/Slider';
 import Switch from '../widgets/Switch';
-import {
-  NumberRangeInput,
-  DateRangeInput,
-} from '../widgets/NumberAndDateRangeInputs';
+import { NumberRangeInput } from '../widgets/NumberAndDateRangeInputs';
 import LabelledGroup from '../widgets/LabelledGroup';
 
 /**
@@ -38,26 +37,26 @@ import LabelledGroup from '../widgets/LabelledGroup';
 export type HistogramControlsProps = {
   /** Label for control panel. Optional. */
   label?: string;
-  /** Currently selected bar layout. */
-  barLayout: string;
+  /** Currently selected bar layout. Optional */
+  barLayout?: string;
   /** Function to invoke when barlayout changes. */
   onBarLayoutChange?: (layout: 'overlay' | 'stack') => void;
   /** Whether or not to display the plot legend. */
-  displayLegend: boolean;
+  displayLegend?: boolean;
   /** Action to take on display legend change. */
   toggleDisplayLegend?: (displayLegend: boolean) => void;
   /** Whether or not to display the additionally controls that
    * may be provided by the charting library used to generate the plot.
    * For example, Plot.ly controls.*/
-  displayLibraryControls: boolean;
+  displayLibraryControls?: boolean;
   /** Action to take on display library controls change. */
   toggleLibraryControls?: (displayLegend: boolean) => void;
   /** Current histogram opacity. */
-  opacity: number;
+  opacity?: number;
   /** Function to invoke when opacity changes. */
   onOpacityChange?: (opacity: number) => void;
   /** The current orientation of the plot.  */
-  orientation: OrientationOptions;
+  orientation?: OrientationOptions;
   /** Function to invoke when orientation changes. */
   toggleOrientation?: (orientation: string) => void;
   /** Type of x-variable 'number' or 'date' */
@@ -71,10 +70,7 @@ export type HistogramControlsProps = {
   /** The current binWidth */
   binWidth?: NumberOrTimeDelta;
   /** Function to invoke when bin width changes. */
-  onBinWidthChange?: (params: {
-    binWidth: NumberOrTimeDelta;
-    selectedUnit?: string;
-  }) => void;
+  onBinWidthChange?: (newBinWidth: NumberOrTimeDelta) => void;
   /** The acceptable range of binWidthValues. */
   binWidthRange?: NumberOrTimeDeltaRange;
   /** The step to take when adjusting binWidth */
@@ -91,7 +87,7 @@ export type HistogramControlsProps = {
    * valid CSS color definition. Defaults to LIGHT_BLUE */
   accentColor?: string;
   /** Attributes and methdods for error management. */
-  errorManagement: ErrorManagement;
+  errorManagement?: ErrorManagement;
   // add y-axis controls
   /** Whether or not to show y-axis log scale. */
   dependentAxisLogScale?: boolean;
@@ -168,6 +164,7 @@ export default function HistogramControls({
   const { ref, width } = useDimensions<HTMLDivElement>();
 
   const errorStacks = useMemo(() => {
+    if (errorManagement == null) return [];
     return errorManagement.errors.reduce<
       Array<{ error: Error; occurences: number }>
     >((accumulatedValue, currentValue) => {
@@ -182,7 +179,7 @@ export default function HistogramControls({
         return [...accumulatedValue, { error: currentValue, occurences: 1 }];
       }
     }, []);
-  }, [errorManagement.errors]);
+  }, [errorManagement?.errors]);
 
   return (
     <div
@@ -206,13 +203,13 @@ export default function HistogramControls({
           rowGap: '0.9375em',
         }}
       >
-        {toggleOrientation && (
+        {orientation && toggleOrientation && (
           <OrientationToggle
             orientation={orientation}
             onOrientationChange={toggleOrientation}
           />
         )}
-        {onBarLayoutChange && (
+        {barLayout && onBarLayoutChange && (
           <ButtonGroup
             label="Bar Layout"
             options={['overlay', 'stack']}
@@ -222,27 +219,12 @@ export default function HistogramControls({
             containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
-        {onSelectedRangeChange ? (
-          <LabelledGroup label="Subset by value">
-            {valueType !== undefined && valueType === 'date' ? (
-              <DateRangeInput
-                rangeBounds={selectedRangeBounds as DateRange}
-                range={selectedRange as DateRange}
-                onRangeChange={onSelectedRangeChange}
-                allowPartialRange={false}
-                showClearButton={true}
-              />
-            ) : (
-              <NumberRangeInput
-                rangeBounds={selectedRangeBounds as NumberRange}
-                range={selectedRange as NumberRange}
-                onRangeChange={onSelectedRangeChange}
-                allowPartialRange={false}
-                showClearButton={true}
-              />
-            )}
-          </LabelledGroup>
-        ) : null}
+        <SelectedRangeControl
+          valueType={valueType}
+          selectedRangeBounds={selectedRangeBounds}
+          selectedRange={selectedRange}
+          onSelectedRangeChange={onSelectedRangeChange}
+        />
       </div>
       <div
         style={{
@@ -255,7 +237,7 @@ export default function HistogramControls({
           rowGap: '0.3125em',
         }}
       >
-        {onOpacityChange && (
+        {opacity != null && onOpacityChange && (
           <OpacitySlider
             value={opacity}
             onValueChange={onOpacityChange}
@@ -266,28 +248,21 @@ export default function HistogramControls({
       <div
         style={{ display: 'flex', flexWrap: 'wrap', paddingTop: '0.3125em' }}
       >
-        {toggleDisplayLegend && (
+        {displayLegend != null && toggleDisplayLegend && (
           <Switch
             label="Legend"
             color={accentColor}
             state={displayLegend}
-            // The stinky use of `any` here comes from
-            // an incomplete type definition in the
-            // material UI library.
-            onStateChange={(event: any) =>
-              toggleDisplayLegend(event.target.checked)
-            }
+            onStateChange={toggleDisplayLegend}
             containerStyles={{ paddingRight: '1.5625em' }}
           />
         )}
-        {toggleLibraryControls && (
+        {displayLibraryControls != null && toggleLibraryControls && (
           <Switch
             label="Plot.ly Controls"
             color={accentColor}
             state={displayLibraryControls}
-            onStateChange={(event: any) =>
-              toggleLibraryControls(event.target.checked)
-            }
+            onStateChange={toggleLibraryControls}
             // add paddingRight
             containerStyles={{ paddingRight: '1.5625em' }}
           />
@@ -295,17 +270,12 @@ export default function HistogramControls({
       </div>
 
       <LabelledGroup label="Y-axis" containerStyles={{}}>
-        {toggleDependentAxisLogScale && dependentAxisLogScale !== undefined && (
+        {toggleDependentAxisLogScale && dependentAxisLogScale != null && (
           <Switch
             label="Log Scale:"
             color={accentColor}
             state={dependentAxisLogScale}
-            // The stinky use of `any` here comes from
-            // an incomplete type definition in the
-            // material UI library.
-            onStateChange={(event: any) =>
-              toggleDependentAxisLogScale(event.target.checked)
-            }
+            onStateChange={toggleDependentAxisLogScale}
             containerStyles={{ paddingBottom: '0.3125em' }}
           />
         )}
@@ -343,63 +313,33 @@ export default function HistogramControls({
       </LabelledGroup>
 
       <LabelledGroup label="X-axis" containerStyles={{}}>
-        {availableUnits?.length && selectedUnit && onSelectedUnitChange && (
-          <ButtonGroup
-            label="Data Units"
-            options={availableUnits}
-            selectedOption={selectedUnit}
-            onOptionSelected={onSelectedUnitChange}
-            containerStyles={{ paddingBottom: '0.9375em' }}
-          />
-        )}
-
-        {onBinWidthChange && (
-          <SliderWidget
-            label={`Bin Width${
-              valueType !== undefined && valueType === 'date'
-                ? ' (' + (binWidth as TimeDelta).unit + ')'
-                : ''
-            }`}
-            minimum={binWidthRange?.min}
-            maximum={binWidthRange?.max}
-            showTextInput={true}
-            step={binWidthStep}
-            value={
-              binWidth
-                ? typeof binWidth === 'number'
-                  ? binWidth
-                  : binWidth.value
-                : undefined
-            }
-            debounceRateMs={250}
-            onChange={(newValue: number) => {
-              onBinWidthChange({
-                binWidth:
-                  valueType !== undefined && valueType === 'date'
-                    ? ({ value: newValue, unit: selectedUnit } as TimeDelta)
-                    : newValue,
-                selectedUnit,
-              });
-            }}
-          />
-        )}
-
-        {onIndependentAxisRangeChange &&
-          (valueType !== undefined && valueType === 'date' ? (
-            <DateRangeInput
-              label="Range:"
-              range={independentAxisRange as DateRange}
-              onRangeChange={onIndependentAxisRangeChange}
-              allowPartialRange={false}
+        {availableUnits &&
+          availableUnits?.length > 0 &&
+          selectedUnit &&
+          onSelectedUnitChange && (
+            <ButtonGroup
+              label="Data Units"
+              options={availableUnits}
+              selectedOption={selectedUnit}
+              onOptionSelected={onSelectedUnitChange}
+              containerStyles={{ paddingBottom: '0.9375em' }}
             />
-          ) : (
-            <NumberRangeInput
-              label="Range:"
-              range={independentAxisRange as NumberRange}
-              onRangeChange={onIndependentAxisRangeChange}
-              allowPartialRange={false}
-            />
-          ))}
+          )}
+
+        <BinWidthControl
+          binWidth={binWidth}
+          binWidthStep={binWidthStep}
+          binWidthRange={binWidthRange}
+          onBinWidthChange={onBinWidthChange}
+          valueType={valueType}
+        />
+
+        <AxisRangeControl
+          label="Range:"
+          range={independentAxisRange}
+          onRangeChange={onIndependentAxisRangeChange}
+          valueType={valueType}
+        />
 
         {onIndependentAxisSettingsReset && (
           <Button
@@ -435,7 +375,7 @@ export default function HistogramControls({
           color={accentColor}
           occurences={occurences}
           containerStyles={{ marginTop: '0.625em' }}
-          onAcknowledgement={() => errorManagement.removeError(error)}
+          onAcknowledgement={() => errorManagement?.removeError(error)}
         />
       ))}
 

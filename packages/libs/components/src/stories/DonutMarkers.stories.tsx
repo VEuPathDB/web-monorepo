@@ -61,7 +61,7 @@ const legendInfoNumberText: string = 'Species';
 function removeClassName(targetClass: string) {
   //DKDK much convenient to use jquery here but try not to use it
   let targetElement = document.getElementsByClassName(targetClass)[0];
-  if (targetElement !== undefined) {
+  if (targetElement != null) {
     targetElement.classList.remove(targetClass);
   }
 }
