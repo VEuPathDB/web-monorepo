@@ -122,7 +122,7 @@ export function AnalysisPanel(props: Props) {
             display: 'Visualize',
             // check whether user is at viz's full screen mode
             route: inFullscreenVisualization
-              ? // remove everything from the last '/' to the end (UUID in this case)
+              ? // remove everything from the last '/' to the end (for this case, UUID)
                 location.pathname.replace(routeBase, '').replace(/\/[^/]*$/, '')
               : `/visualizations${lastVizPath}`,
             exact: false,
