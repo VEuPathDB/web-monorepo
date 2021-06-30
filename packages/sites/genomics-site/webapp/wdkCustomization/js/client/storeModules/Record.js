@@ -199,7 +199,7 @@ function pruneByDatasetCategory(categoryTree, record) {
   console.log(record)
 
 
-  // Remove Dataset Version from genome datasets
+  // Remove Dataset Version from genome datasets, otherwise remove genome tables from non-genome datasets
   if (record.attributes.newcategory === 'Annotation, curation and identifiers') {
 
     categoryTree = tree.pruneDescendantNodes(
@@ -213,7 +213,20 @@ function pruneByDatasetCategory(categoryTree, record) {
       categoryTree
     )
 
-  }
+  } else {
+    categoryTree = tree.pruneDescendantNodes(
+      individual => {
+        if (individual.children.length > 0) return true;
+        if (individual.wdkReference == null) return false;
+        if (individual.wdkReference.name === 'TranscriptTypeCounts') return false;
+        if (individual.wdkReference.name === 'SequenceTypeCounts') return false;
+        if (individual.wdkReference.name === 'GenomeAssociatedData') return false;
+        if (individual.wdkReference.name === 'ExternalDatabases') return false;
+        return true;
+      },
+      categoryTree
+    )
+  }     
 
   // Example graphs should only be shown on RNASeq, Microarray, Phenotype datasets
   if (!['RNASeq', 'DNA Microarray', 'Phenotype'].includes(record.attributes.newcategory)) {
