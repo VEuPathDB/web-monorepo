@@ -125,8 +125,6 @@ function pruneCategories(nextState) {
     nextState = Object.assign({}, nextState, { categoryTree });
   }
   if (isDatasetRecord(record)) {
-    console.log(categoryTree)
-    console.log(record)
     categoryTree = pruneByDatasetCategory(categoryTree, record);
     nextState = Object.assign({}, nextState, { categoryTree }); 
   }
@@ -201,11 +199,13 @@ function pruneByDatasetCategory(categoryTree, record) {
   console.log(record)
 
 
+  // Remove Dataset Version from genome datasets
   if (record.attributes.newcategory === 'Annotation, curation and identifiers') {
 
-    return tree.pruneDescendantNodes(
+    categoryTree = tree.pruneDescendantNodes(
       individual => {
         console.log(individual);
+        if (individual.children.length > 0) return true;
         if (individual.wdkReference == null) return false;
         if (individual.wdkReference.name === 'version') return false;
         return true;
@@ -214,6 +214,20 @@ function pruneByDatasetCategory(categoryTree, record) {
     )
 
   }
+
+  // Example graphs should only be shown on RNASeq, Microarray, Phenotype datasets
+  if (!['RNASeq', 'DNA Microarray', 'Phenotype'].includes(record.attributes.newcategory)) {
+    categoryTree = tree.pruneDescendantNodes(
+      individual => {
+        if (individual.children.length > 0) return true;
+        if (individual.wdkReference == null) return false;
+        if (individual.wdkReference.name === 'ExampleGraphs') return false;
+        return true;
+      },
+      categoryTree
+    )
+  }
+ 
   return categoryTree
 }
 
