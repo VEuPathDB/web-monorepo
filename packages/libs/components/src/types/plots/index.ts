@@ -10,6 +10,11 @@ import { BarplotData } from './barplot';
 import { HeatmapData } from './heatmap';
 import { MosaicData } from './mosaic';
 
+export type FacetedData<D> = {
+  facetLabel: string;
+  facetData: D;
+}[];
+
 // Commonly used type definitions for plots.
 
 export type BarLayoutOptions = 'overlay' | 'stack' | 'group';

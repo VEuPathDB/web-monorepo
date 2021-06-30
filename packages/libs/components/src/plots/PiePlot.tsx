@@ -5,8 +5,10 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 // FIXME - confusing mix of imports from plotly and react-plotly
 //         isn't PlotlyPlotData the same as PlotParams['data'] ?
 
+import LabelledGroup from '../components/widgets/LabelledGroup';
 import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
+import { isFacetedData } from '../types/guards';
 
 // Plotly PlotData['hoverinfo'] definition lacks options that work
 // for pie traces. These can be found in PlotData['textinfo']
@@ -55,10 +57,34 @@ const EmptyPieData: PiePlotData = { slices: [] };
 /** A Plot.ly based Pie plot. */
 export default function PiePlot({
   data = EmptyPieData,
-  donutOptions,
-  textOptions,
-  ...restProps
+  ...props
 }: PiePlotProps) {
+  if (isFacetedData<PiePlotData>(data))
+    return (
+      <div>
+        <h2>{props.title}</h2>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          {data.map(({ facetData, facetLabel }, index) => (
+            <PiePlot
+              key={index}
+              data={facetData}
+              {...props}
+              title={facetLabel}
+              containerStyles={{
+                width: '300px',
+                height: '300px',
+                border: '3px dashed gray',
+              }}
+              displayLegend={false}
+              interactive={true}
+            />
+          ))}
+        </div>
+      </div>
+    );
+
+  const { donutOptions, textOptions, ...restProps } = props;
+
   const defaultColorIter = defaultColorGen();
   let newData: Partial<PlotData>[] = [];
 

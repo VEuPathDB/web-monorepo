@@ -9,7 +9,12 @@ import {
   TimeDelta,
   NumberOrTimeDelta,
 } from './general';
-import { HistogramData, PiePlotData, UnionOfPlotDataTypes } from './plots';
+import {
+  FacetedData,
+  HistogramData,
+  PiePlotData,
+  UnionOfPlotDataTypes,
+} from './plots';
 import { LinePlotData } from './plots/linePlot';
 
 /** Determine if data is for a histogram plot. */
@@ -77,4 +82,14 @@ export function isTimeDelta(
   maybeTimeDelta: NumberOrTimeDelta
 ): maybeTimeDelta is TimeDelta {
   return typeof maybeTimeDelta !== 'number' && 'unit' in maybeTimeDelta;
+}
+
+/** Is data faceted or not? */
+export function isFacetedData<T>(
+  maybeFacetedData: T | FacetedData<T>
+): maybeFacetedData is FacetedData<T> {
+  return (
+    'every' in maybeFacetedData &&
+    maybeFacetedData.every((d) => 'facetLabel' in d)
+  );
 }

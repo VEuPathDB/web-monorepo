@@ -4,10 +4,11 @@ import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { LayoutLegendTitle } from '../types/plotly-omissions';
+import { FacetedData } from '../types/plots';
 
 export interface PlotProps<T> {
   /** plot data - following web-components' API, not Plotly's */
-  data?: T;
+  data?: T | FacetedData<T>;
   /** Title of plot. */
   title?: string;
   /** Should plot legend be displayed? Default is yes */

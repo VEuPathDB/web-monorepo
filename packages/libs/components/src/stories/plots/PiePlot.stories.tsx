@@ -2,7 +2,7 @@ import React from 'react';
 import { Story } from '@storybook/react/types-6-0';
 
 import PiePlot, { PiePlotProps } from '../../plots/PiePlot';
-import { PiePlotData } from '../../types/plots';
+import { FacetedData, PiePlotData } from '../../types/plots';
 import {
   DARK_GRAY,
   DARK_GREEN,
@@ -55,6 +55,39 @@ let coloredData: PiePlotData = {
     },
   ],
 };
+
+const facetedData: FacetedData<PiePlotData> = [
+  {
+    facetLabel: 'indoors',
+    facetData: {
+      slices: [
+        {
+          value: 25,
+          label: 'dogs',
+        },
+        {
+          value: 10,
+          label: 'cats',
+        },
+      ],
+    },
+  },
+  {
+    facetLabel: 'outdoors',
+    facetData: {
+      slices: [
+        {
+          value: 5,
+          label: 'dogs',
+        },
+        {
+          value: 33,
+          label: 'cats',
+        },
+      ],
+    },
+  },
+];
 
 const Template: Story<PiePlotProps> = (args) => (
   <PiePlot
@@ -151,4 +184,10 @@ Empty.args = {};
 export const EmptyLoading = Template.bind({});
 EmptyLoading.args = {
   showSpinner: true,
+};
+
+export const Faceted = Template.bind({});
+Faceted.args = {
+  data: facetedData,
+  title: 'indoor and outdoor pets',
 };
