@@ -111,7 +111,7 @@ export function AnalysisPanel(props: Props) {
             // check whether user is at viz
             route: location.pathname
               .replace(routeBase, '')
-              .includes('/visualizations')
+              .startsWith('/visualizations')
               ? '/visualizations'
               : `/visualizations${lastVizPath}`,
             exact: false,
