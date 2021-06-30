@@ -36,7 +36,7 @@ const StudyVariableDisplayType = t.keyof({
   hidden: null,
 });
 
-export const StudyVariableBase = t.intersection([
+export const _StudyVariableBase = t.intersection([
   t.type({
     id: t.string,
     providerLabel: t.string,
@@ -51,11 +51,9 @@ export const StudyVariableBase = t.intersection([
   }),
 ]);
 
-export type StudyVariableVariable = t.TypeOf<typeof StudyVariableVariable>;
-export const StudyVariableVariable = t.intersection([
-  StudyVariableBase,
+const _StudyVariableNonCategoryBase = t.intersection([
+  _StudyVariableBase,
   t.type({
-    type: StudyVariableType,
     distinctValuesCount: t.number,
     isTemporal: t.boolean,
     isFeatured: t.boolean,
@@ -67,17 +65,77 @@ export const StudyVariableVariable = t.intersection([
   }),
 ]);
 
+export type StudyVariableString = t.TypeOf<typeof StudyVariableString>;
+export const StudyVariableString = t.intersection([
+  _StudyVariableNonCategoryBase,
+  t.type({
+    type: t.literal('string'),
+  }),
+]);
+
+export type StudyVariableNumber = t.TypeOf<typeof StudyVariableNumber>;
+export const StudyVariableNumber = t.intersection([
+  _StudyVariableNonCategoryBase,
+  t.type({
+    type: t.literal('number'),
+    units: t.string,
+  }),
+  t.partial({
+    // TODO This is supposed to be required, but the backend isn't populating it.
+    precision: t.number,
+    displayRangeMin: t.number,
+    displayRangeMax: t.number,
+    rangeMin: t.number,
+    rangeMax: t.number,
+    binWidthOverride: t.number,
+    binWidth: t.number,
+  }),
+]);
+
+export type StudyVariableDate = t.TypeOf<typeof StudyVariableDate>;
+export const StudyVariableDate = t.intersection([
+  _StudyVariableNonCategoryBase,
+  t.type({
+    type: t.literal('date'),
+  }),
+  t.partial({
+    displayRangeMin: t.string,
+    displayRangeMax: t.string,
+    rangeMin: t.string,
+    rangeMax: t.string,
+    binWidthOverride: t.string,
+    binWidth: t.string,
+  }),
+]);
+
+export type StudyVariableLongitude = t.TypeOf<typeof StudyVariableLongitude>;
+export const StudyVariableLongitude = t.intersection([
+  _StudyVariableNonCategoryBase,
+  t.type({
+    type: t.literal('longitude'),
+  }),
+]);
+
 export type StudyVariableCategory = t.TypeOf<typeof StudyVariableCategory>;
 export const StudyVariableCategory = t.intersection([
-  StudyVariableBase,
+  _StudyVariableBase,
   t.type({
     type: t.literal('category'),
   }),
 ]);
 
+export type StudyVariableVariable =
+  | StudyVariableString
+  | StudyVariableNumber
+  | StudyVariableDate
+  | StudyVariableLongitude;
+
 export type StudyVariable = t.TypeOf<typeof StudyVariable>;
 export const StudyVariable = t.union([
-  StudyVariableVariable,
+  StudyVariableString,
+  StudyVariableNumber,
+  StudyVariableDate,
+  StudyVariableLongitude,
   StudyVariableCategory,
 ]);
 
