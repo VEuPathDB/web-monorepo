@@ -1,15 +1,15 @@
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
-import { StudyEntity, StudyVariableVariable } from '../types/study';
-import { Variable } from '../types/variable';
+import { StudyEntity, Variable } from '../types/study';
+import { VariableDescriptor } from '../types/variable';
 
 export interface EntityAndVariable {
   entity: StudyEntity;
-  variable: StudyVariableVariable;
+  variable: Variable;
 }
 
 export function findEntityAndVariable(
   entities: Iterable<StudyEntity>,
-  variableDescriptor?: Variable
+  variableDescriptor?: VariableDescriptor
 ): EntityAndVariable | undefined {
   if (variableDescriptor == null) return undefined;
   const entity = find(

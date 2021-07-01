@@ -15,7 +15,7 @@ import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
@@ -101,9 +101,9 @@ function createDefaultConfig(): MosaicConfig {
 type MosaicConfig = t.TypeOf<typeof MosaicConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const MosaicConfig = t.partial({
-  xAxisVariable: Variable,
-  yAxisVariable: Variable,
-  facetVariable: Variable,
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor,
+  facetVariable: VariableDescriptor,
 });
 
 type Props = VisualizationProps & {
@@ -175,7 +175,7 @@ function MosaicViz(props: Props) {
   );
 
   const findVariable = useCallback(
-    (variable?: Variable) => {
+    (variable?: VariableDescriptor) => {
       if (variable == null) return undefined;
       return entities
         .find((e) => e.id === variable.entityId)
@@ -483,8 +483,8 @@ export function twoByTwoResponseToData(
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: Variable,
-  yAxisVariable: Variable
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor
 ): MosaicRequestParams {
   return {
     studyId,

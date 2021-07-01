@@ -1,28 +1,22 @@
 import {
-  StudyVariableDate,
-  StudyVariableNumber,
-  StudyVariableString,
+  DateVariable,
+  NumberVariable,
+  StringVariable,
 } from '../../types/study';
 
-export type HistogramVariable = (StudyVariableNumber | StudyVariableDate) & {
+export type HistogramVariable = (NumberVariable | DateVariable) & {
   dataShape: 'continuous';
 };
 
-type X = HistogramVariable['type'];
-
-export type TableVariable = (
-  | StudyVariableString
-  | StudyVariableNumber
-  | StudyVariableDate
-) & {
+export type TableVariable = (StringVariable | NumberVariable | DateVariable) & {
   dataShape: 'categorical' | 'binary' | 'ordinal';
 };
 
-export type ScatterplotVariable = (StudyVariableNumber | StudyVariableDate) & {
+export type ScatterplotVariable = (NumberVariable | DateVariable) & {
   dataShape: 'continuous';
 };
 
-export type MosaicVariable = (StudyVariableString | StudyVariableNumber) & {
+export type MosaicVariable = (StringVariable | NumberVariable) & {
   dataShape: 'categorical' | 'binary' | 'ordinal';
 };
 

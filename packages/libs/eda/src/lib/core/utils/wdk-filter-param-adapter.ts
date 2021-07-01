@@ -7,7 +7,7 @@ import {
   NumberRangeFilter,
 } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/Types';
 import { DistributionResponse } from '../api/subsetting-api';
-import { StudyVariable } from '../types/study';
+import { VariableTreeNode } from '../types/study';
 
 /*
  * These adapters can be used to convert filter objects between EDA and WDK
@@ -93,7 +93,7 @@ export function fromEdaFilter(filter: EdaFilter): WdkFilter {
   } as WdkFilter;
 }
 
-export function edaVariableToWdkField(variable: StudyVariable): Field {
+export function edaVariableToWdkField(variable: VariableTreeNode): Field {
   return {
     display: variable.displayName,
     isRange: variable.dataShape === 'continuous',
@@ -110,7 +110,7 @@ export function edaVariableToWdkField(variable: StudyVariable): Field {
 export function toWdkVariableSummary(
   foreground: DistributionResponse,
   background: DistributionResponse,
-  variable: StudyVariable
+  variable: VariableTreeNode
 ) {
   return {
     distribution: Object.entries(background.distribution).map(

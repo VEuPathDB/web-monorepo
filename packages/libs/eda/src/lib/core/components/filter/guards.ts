@@ -1,4 +1,4 @@
-import { StudyVariable } from '../../types/study';
+import { VariableTreeNode } from '../../types/study';
 import {
   HistogramVariable,
   TableVariable,
@@ -8,7 +8,7 @@ import {
 } from './types';
 
 export function isHistogramVariable(
-  variable: StudyVariable
+  variable: VariableTreeNode
 ): variable is HistogramVariable {
   switch (variable.dataShape) {
     case 'continuous':
@@ -22,7 +22,7 @@ export function isHistogramVariable(
 }
 
 export function isTableVariable(
-  variable: StudyVariable
+  variable: VariableTreeNode
 ): variable is TableVariable {
   switch (variable.dataShape) {
     case 'binary':
@@ -39,7 +39,7 @@ export function isTableVariable(
 }
 
 export function isScatterplotVariable(
-  variable: StudyVariable
+  variable: VariableTreeNode
 ): variable is ScatterplotVariable {
   switch (variable.dataShape) {
     case 'continuous':
@@ -53,7 +53,7 @@ export function isScatterplotVariable(
 }
 
 export function isMosaicVariable(
-  variable: StudyVariable
+  variable: VariableTreeNode
 ): variable is MosaicVariable {
   switch (variable.dataShape) {
     case 'categorical':
@@ -69,7 +69,7 @@ export function isMosaicVariable(
 }
 
 export function isTwoByTwoVariable(
-  variable: StudyVariable
+  variable: VariableTreeNode
 ): variable is TwoByTwoVariable {
   return isMosaicVariable(variable) && variable.dataShape === 'binary';
 }

@@ -16,27 +16,27 @@ export type StudyRecord = RecordInstance;
 
 // See https://github.com/gcanti/io-ts/blob/master/index.md#union-of-string-literals
 
-export const StudyVariableType = t.keyof({
+export const VariableType = t.keyof({
   string: null,
   number: null,
   date: null,
   longitude: null,
 });
 
-export const StudyVariableDataShape = t.keyof({
+export const VariableDataShape = t.keyof({
   continuous: null,
   categorical: null,
   ordinal: null,
   binary: null,
 });
 
-const StudyVariableDisplayType = t.keyof({
+const VariableDisplayType = t.keyof({
   default: null,
   multifilter: null,
   hidden: null,
 });
 
-export const _StudyVariableBase = t.intersection([
+export const VariableTreeNode_Base = t.intersection([
   t.type({
     id: t.string,
     providerLabel: t.string,
@@ -46,13 +46,13 @@ export const _StudyVariableBase = t.intersection([
     parentId: t.string,
     definition: t.string,
     displayOrder: t.number,
-    displayType: StudyVariableDisplayType,
-    dataShape: StudyVariableDataShape,
+    displayType: VariableDisplayType,
+    dataShape: VariableDataShape,
   }),
 ]);
 
-const _StudyVariableNonCategoryBase = t.intersection([
-  _StudyVariableBase,
+const Variable_Base = t.intersection([
+  VariableTreeNode_Base,
   t.type({
     distinctValuesCount: t.number,
     isTemporal: t.boolean,
@@ -65,17 +65,17 @@ const _StudyVariableNonCategoryBase = t.intersection([
   }),
 ]);
 
-export type StudyVariableString = t.TypeOf<typeof StudyVariableString>;
-export const StudyVariableString = t.intersection([
-  _StudyVariableNonCategoryBase,
+export type StringVariable = t.TypeOf<typeof StringVariable>;
+export const StringVariable = t.intersection([
+  Variable_Base,
   t.type({
     type: t.literal('string'),
   }),
 ]);
 
-export type StudyVariableNumber = t.TypeOf<typeof StudyVariableNumber>;
-export const StudyVariableNumber = t.intersection([
-  _StudyVariableNonCategoryBase,
+export type NumberVariable = t.TypeOf<typeof NumberVariable>;
+export const NumberVariable = t.intersection([
+  Variable_Base,
   t.type({
     type: t.literal('number'),
     units: t.string,
@@ -92,9 +92,9 @@ export const StudyVariableNumber = t.intersection([
   }),
 ]);
 
-export type StudyVariableDate = t.TypeOf<typeof StudyVariableDate>;
-export const StudyVariableDate = t.intersection([
-  _StudyVariableNonCategoryBase,
+export type DateVariable = t.TypeOf<typeof DateVariable>;
+export const DateVariable = t.intersection([
+  Variable_Base,
   t.type({
     type: t.literal('date'),
   }),
@@ -108,35 +108,35 @@ export const StudyVariableDate = t.intersection([
   }),
 ]);
 
-export type StudyVariableLongitude = t.TypeOf<typeof StudyVariableLongitude>;
-export const StudyVariableLongitude = t.intersection([
-  _StudyVariableNonCategoryBase,
+export type LongitudeVariable = t.TypeOf<typeof LongitudeVariable>;
+export const LongitudeVariable = t.intersection([
+  Variable_Base,
   t.type({
     type: t.literal('longitude'),
   }),
 ]);
 
-export type StudyVariableCategory = t.TypeOf<typeof StudyVariableCategory>;
-export const StudyVariableCategory = t.intersection([
-  _StudyVariableBase,
+export type CategoryVariable = t.TypeOf<typeof CategoryVariable>;
+export const CategoryVariable = t.intersection([
+  VariableTreeNode_Base,
   t.type({
     type: t.literal('category'),
   }),
 ]);
 
-export type StudyVariableVariable =
-  | StudyVariableString
-  | StudyVariableNumber
-  | StudyVariableDate
-  | StudyVariableLongitude;
+export type Variable =
+  | StringVariable
+  | NumberVariable
+  | DateVariable
+  | LongitudeVariable;
 
-export type StudyVariable = t.TypeOf<typeof StudyVariable>;
-export const StudyVariable = t.union([
-  StudyVariableString,
-  StudyVariableNumber,
-  StudyVariableDate,
-  StudyVariableLongitude,
-  StudyVariableCategory,
+export type VariableTreeNode = t.TypeOf<typeof VariableTreeNode>;
+export const VariableTreeNode = t.union([
+  StringVariable,
+  NumberVariable,
+  DateVariable,
+  LongitudeVariable,
+  CategoryVariable,
 ]);
 
 // StudyEntity
@@ -149,7 +149,7 @@ const _StudyEntityBase = t.intersection([
     idColumnName: t.string,
     displayName: t.string,
     description: t.string,
-    variables: t.array(StudyVariable),
+    variables: t.array(VariableTreeNode),
   }),
   t.partial({
     displayNamePlural: t.string,

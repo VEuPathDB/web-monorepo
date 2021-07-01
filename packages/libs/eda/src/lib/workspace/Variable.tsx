@@ -4,7 +4,7 @@ import {
   StudyEntity,
   AnalysisState,
   useStudyMetadata,
-  StudyVariableVariable,
+  Variable,
 } from '../core';
 import { FilterContainer } from '../core/components/filter/FilterContainer';
 import { cx } from './Utils';
@@ -13,11 +13,11 @@ interface Props {
   entity: StudyEntity;
   totalEntityCount?: number;
   filteredEntityCount?: number;
-  variable: StudyVariableVariable;
+  variable: Variable;
   analysisState: AnalysisState;
 }
 
-export function Variable(props: Props) {
+export function VariableDetails(props: Props) {
   const {
     entity,
     variable,

@@ -4,7 +4,6 @@ import XYPlot, {
 } from '@veupathdb/components/lib/plots/XYPlot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
@@ -23,7 +22,7 @@ import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 
 import { InputVariables } from '../InputVariables';
 import {
@@ -82,10 +81,10 @@ const ScatterplotConfig = t.intersection([
     enableOverlay: t.boolean,
   }),
   t.partial({
-    xAxisVariable: Variable,
-    yAxisVariable: Variable,
-    overlayVariable: Variable,
-    facetVariable: Variable,
+    xAxisVariable: VariableDescriptor,
+    yAxisVariable: VariableDescriptor,
+    overlayVariable: VariableDescriptor,
+    facetVariable: VariableDescriptor,
     valueSpecConfig: t.string,
   }),
 ]);
@@ -162,7 +161,7 @@ function ScatterplotViz(props: Props) {
   );
 
   const findVariable = useCallback(
-    (variable?: Variable) => {
+    (variable?: VariableDescriptor) => {
       if (variable == null) return undefined;
       return entities
         .find((e) => e.id === variable.entityId)
@@ -471,10 +470,10 @@ type getRequestParamsProps =
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: Variable,
+  xAxisVariable: VariableDescriptor,
   // set yAxisVariable as optional for densityplot
-  yAxisVariable?: Variable,
-  overlayVariable?: Variable,
+  yAxisVariable?: VariableDescriptor,
+  overlayVariable?: VariableDescriptor,
   // add visualization.type
   vizType?: string,
   // XYPlotControls

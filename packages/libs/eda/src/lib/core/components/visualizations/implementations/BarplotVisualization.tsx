@@ -2,7 +2,6 @@
 import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
@@ -16,7 +15,7 @@ import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
@@ -57,9 +56,9 @@ const BarplotConfig = t.intersection([
     enableOverlay: t.boolean,
   }),
   t.partial({
-    xAxisVariable: Variable,
-    overlayVariable: Variable,
-    facetVariable: Variable,
+    xAxisVariable: VariableDescriptor,
+    overlayVariable: VariableDescriptor,
+    facetVariable: VariableDescriptor,
   }),
 ]);
 
@@ -129,7 +128,7 @@ function BarplotViz(props: Props) {
   );
 
   const findVariable = useCallback(
-    (variable?: Variable) => {
+    (variable?: VariableDescriptor) => {
       if (variable == null) return undefined;
       return entities
         .find((e) => e.id === variable.entityId)
@@ -332,8 +331,8 @@ type getRequestParamsProps = BarplotRequestParams & { vizType?: string };
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: Variable,
-  overlayVariable?: Variable
+  xAxisVariable: VariableDescriptor,
+  overlayVariable?: VariableDescriptor
 ): BarplotRequestParams {
   return {
     studyId,
