@@ -323,11 +323,13 @@ function MosaicViz(props: Props) {
           variableSpecs={[
             {
               role: 'X-axis',
+              required: true,
               display: xAxisVariableName,
               variable: vizConfig.xAxisVariable,
             },
             {
               role: 'Y-axis',
+              required: true,
               display: yAxisVariableName,
               variable: vizConfig.yAxisVariable,
             },

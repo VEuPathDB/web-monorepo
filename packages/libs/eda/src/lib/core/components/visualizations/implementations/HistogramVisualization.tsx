@@ -406,6 +406,7 @@ function HistogramPlotWithControls({
           variableSpecs={[
             {
               role: 'Main',
+              required: true,
               display: histogramProps.independentAxisLabel,
               variable: independentAxisVariable,
             },

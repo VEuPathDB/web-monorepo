@@ -13,6 +13,7 @@ export interface Props {
 
 export interface VariableSpec {
   role: VariableRole;
+  required?: boolean;
   display?: VariableDisplay;
   variable?: Variable;
 }
@@ -26,6 +27,8 @@ export type VariableDisplay = string;
 export interface VariableCoverageTableRow {
   role: VariableRole;
   display?: VariableDisplay;
+  /* whether this row should always appear in the table; false by default */
+  required?: boolean;
   /* absolute count of entities which have the variable */
   completeCount?: number;
   /* absolute count of entities which are missing the variable */
@@ -65,28 +68,30 @@ export function VariableCoverageTable({
             <th className="numeric">Data</th>
             <th className="numeric">No data</th>
           </tr>
-          {rows.map((row) => (
-            <tr key={row.role}>
-              <th>{row.role}</th>
-              <td>{row.display}</td>
-              <td>
-                {row.completeCount?.toLocaleString()}
-                {row.completePercent != null && (
-                  <span className="percentage">
-                    {row.completePercent.toFixed(2)}%
-                  </span>
-                )}
-              </td>
-              <td>
-                {row.incompleteCount?.toLocaleString()}
-                {row.incompletePercent != null && (
-                  <span className="percentage">
-                    ({row.incompletePercent.toFixed(2)}%)
-                  </span>
-                )}
-              </td>
-            </tr>
-          ))}
+          {rows
+            .filter((row) => row.required || row.display != null)
+            .map((row) => (
+              <tr key={row.role}>
+                <th>{row.role}</th>
+                <td>{row.display}</td>
+                <td>
+                  {row.completeCount?.toLocaleString()}
+                  {row.completePercent != null && (
+                    <span className="percentage">
+                      {row.completePercent.toFixed(2)}%
+                    </span>
+                  )}
+                </td>
+                <td>
+                  {row.incompleteCount?.toLocaleString()}
+                  {row.incompletePercent != null && (
+                    <span className="percentage">
+                      ({row.incompletePercent.toFixed(2)}%)
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>

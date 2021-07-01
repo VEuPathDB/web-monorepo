@@ -420,12 +420,14 @@ function ScatterplotViz(props: Props) {
                 variableSpecs={[
                   {
                     role: 'X-axis',
+                    required: true,
                     display: findEntityAndVariable(vizConfig.xAxisVariable)
                       ?.variable.displayName,
                     variable: vizConfig.xAxisVariable,
                   },
                   {
                     role: 'Y-axis',
+                    required: true,
                     display: findEntityAndVariable(vizConfig.yAxisVariable)
                       ?.variable.displayName,
                     variable: vizConfig.yAxisVariable,
@@ -532,11 +534,13 @@ function ScatterplotWithControls({
           variableSpecs={[
             {
               role: 'X-axis',
+              required: true,
               display: scatterplotProps.independentAxisLabel,
               variable: xAxisVariable,
             },
             {
               role: 'Y-axis',
+              required: true,
               display: scatterplotProps.dependentAxisLabel,
               variable: yAxisVariable,
             },

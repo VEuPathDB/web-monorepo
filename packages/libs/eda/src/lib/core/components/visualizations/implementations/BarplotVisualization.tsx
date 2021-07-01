@@ -259,6 +259,7 @@ function BarplotViz(props: Props) {
               variableSpecs={[
                 {
                   role: 'Main',
+                  required: true,
                   display: findEntityAndVariable(vizConfig.xAxisVariable)
                     ?.variable.displayName,
                   variable: vizConfig.xAxisVariable,

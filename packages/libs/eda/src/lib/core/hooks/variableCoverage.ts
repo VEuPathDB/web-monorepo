@@ -32,6 +32,7 @@ export function useVariableCoverageTableRows(
         if (spec.variable == null) {
           return {
             role: spec.role,
+            required: spec.required,
           };
         }
 
@@ -43,12 +44,14 @@ export function useVariableCoverageTableRows(
         if (variableCompleteCases == null) {
           return {
             role: spec.role,
+            required: spec.required,
             display: spec.display,
           };
         }
 
         const baseRowWithCounts = {
           role: spec.role,
+          required: spec.required,
           display: spec.display,
           completeCount: variableCompleteCases,
         };
