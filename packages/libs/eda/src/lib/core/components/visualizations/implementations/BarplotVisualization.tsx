@@ -12,7 +12,7 @@ import { useCallback, useMemo } from 'react';
 import { DataClient, BarplotRequestParams } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
-import { useFindEntityAndVariable } from '../../../hooks/studyMetadata';
+import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
