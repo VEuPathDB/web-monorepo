@@ -32,7 +32,7 @@ export function OutputEntityTitle({ entity, sampleSize }: Props) {
   );
 
   return (
-    <p className={cx('')}>
+    <p className={cx()}>
       {outputSize != null && <>{outputSize.toLocaleString()} </>}
       <span className={cx('-EntityName', entity == null && 'unselected')}>
         {entity != null
