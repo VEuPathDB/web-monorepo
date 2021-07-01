@@ -5,10 +5,10 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 // FIXME - confusing mix of imports from plotly and react-plotly
 //         isn't PlotlyPlotData the same as PlotParams['data'] ?
 
-import LabelledGroup from '../components/widgets/LabelledGroup';
+import FacetedPlot from './FacetedPlot';
 import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
-import { isFacetedData } from '../types/guards';
+import { isFaceted } from '../types/guards';
 
 // Plotly PlotData['hoverinfo'] definition lacks options that work
 // for pie traces. These can be found in PlotData['textinfo']
@@ -59,28 +59,14 @@ export default function PiePlot({
   data = EmptyPieData,
   ...props
 }: PiePlotProps) {
-  if (isFacetedData<PiePlotData>(data))
+  // return a faceted plot if necessary
+  if (isFaceted<PiePlotData>(data))
     return (
-      <div>
-        <h2>{props.title}</h2>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-          {data.map(({ facetData, facetLabel }, index) => (
-            <PiePlot
-              key={index}
-              data={facetData}
-              {...props}
-              title={facetLabel}
-              containerStyles={{
-                width: '300px',
-                height: '300px',
-                border: '3px dashed gray',
-              }}
-              displayLegend={false}
-              interactive={true}
-            />
-          ))}
-        </div>
-      </div>
+      <FacetedPlot<PiePlotData, PiePlotProps>
+        component={PiePlot}
+        data={data}
+        props={props}
+      />
     );
 
   const { donutOptions, textOptions, ...restProps } = props;

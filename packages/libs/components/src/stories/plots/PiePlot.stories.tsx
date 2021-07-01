@@ -56,39 +56,6 @@ let coloredData: PiePlotData = {
   ],
 };
 
-const facetedData: FacetedData<PiePlotData> = [
-  {
-    facetLabel: 'indoors',
-    facetData: {
-      slices: [
-        {
-          value: 25,
-          label: 'dogs',
-        },
-        {
-          value: 10,
-          label: 'cats',
-        },
-      ],
-    },
-  },
-  {
-    facetLabel: 'outdoors',
-    facetData: {
-      slices: [
-        {
-          value: 5,
-          label: 'dogs',
-        },
-        {
-          value: 33,
-          label: 'cats',
-        },
-      ],
-    },
-  },
-];
-
 const Template: Story<PiePlotProps> = (args) => (
   <PiePlot
     containerStyles={{
@@ -185,6 +152,43 @@ export const EmptyLoading = Template.bind({});
 EmptyLoading.args = {
   showSpinner: true,
 };
+
+/**
+ * FACETING
+ */
+
+const facetedData: FacetedData<PiePlotData> = [
+  {
+    facetLabel: 'indoors',
+    facetData: {
+      slices: [
+        {
+          value: 25,
+          label: 'dogs',
+        },
+        {
+          value: 10,
+          label: 'cats',
+        },
+      ],
+    },
+  },
+  {
+    facetLabel: 'outdoors',
+    facetData: {
+      slices: [
+        {
+          value: 5,
+          label: 'dogs',
+        },
+        {
+          value: 33,
+          label: 'cats',
+        },
+      ],
+    },
+  },
+];
 
 export const Faceted = Template.bind({});
 Faceted.args = {

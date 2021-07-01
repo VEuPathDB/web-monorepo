@@ -85,7 +85,7 @@ export function isTimeDelta(
 }
 
 /** Is data faceted or not? */
-export function isFacetedData<T>(
+export function isFaceted<T>(
   maybeFacetedData: T | FacetedData<T>
 ): maybeFacetedData is FacetedData<T> {
   return (
