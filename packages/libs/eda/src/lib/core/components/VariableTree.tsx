@@ -10,6 +10,7 @@ import { Variable } from '../types/variable';
 import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
+import { useStudyEntities } from '../hooks/study';
 
 // TODO Populate valuesMap with properties of variables.
 // This is used by the search functionality of FieldList.
@@ -42,13 +43,7 @@ export function VariableTree(props: Props) {
     hideDisabledFields = false,
     setHideDisabledFields = () => {},
   } = props;
-  const entities = useMemo(
-    () =>
-      Array.from(
-        preorder(rootEntity, (e) => e.children?.slice().reverse() ?? [])
-      ),
-    [rootEntity]
-  );
+  const entities = useStudyEntities(rootEntity);
 
   const fields = useMemo(() => {
     return entities.flatMap((entity) => {

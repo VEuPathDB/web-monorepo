@@ -24,6 +24,7 @@ import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { useStudyEntities } from '../core/hooks/study';
 
 interface Props {
   analysisId: string;
@@ -45,12 +46,7 @@ export function AnalysisPanel(props: Props) {
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(analysisState.analysis?.filters);
   const studyMetadata = useStudyMetadata();
-  const entities = Array.from(
-    preorder(
-      studyMetadata.rootEntity,
-      (e) => e.children?.slice().reverse() ?? []
-    )
-  );
+  const entities = useStudyEntities(studyMetadata.rootEntity);
   const filteredEntities = uniq(
     analysisState.analysis?.filters.map((f) => f.entityId)
   );

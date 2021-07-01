@@ -1,12 +1,20 @@
-import { createContext, useCallback } from 'react';
+import { createContext, useCallback, useMemo } from 'react';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  preorder,
+  preorderSeq,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   getTargetType,
   getScopes,
   getNodeId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import { StudyMetadata, StudyRecordClass, StudyRecord } from '../types/study';
+import {
+  StudyMetadata,
+  StudyRecordClass,
+  StudyRecord,
+  StudyEntity,
+} from '../types/study';
 import { usePromise } from './promise';
 import { SubsettingClient } from '../api/subsetting-api';
 
@@ -88,5 +96,15 @@ export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
         );
       return store.getStudyMetadata(study.id);
     }, [datasetId, store])
+  );
+}
+
+export function useStudyEntities(rootEntity: StudyEntity) {
+  return useMemo(
+    () =>
+      Array.from(
+        preorder(rootEntity, (e) => e.children?.slice().reverse() ?? [])
+      ),
+    [rootEntity]
   );
 }

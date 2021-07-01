@@ -3,6 +3,7 @@ import { StudyEntity } from '..';
 import { VariableLink } from './VariableLink';
 import { makeStyles } from '@material-ui/core/styles';
 import { Filter } from '../types/filter';
+import { findEntityAndVariable } from '../utils/study-metadata';
 
 // Material UI CSS declarations
 const useStyles = makeStyles((theme) => ({
@@ -36,13 +37,8 @@ export default function FilterChipList(props: Props) {
     return (
       <div className={classes.root}>
         {filters.map((filter) => {
-          // Get this filter's entity and variable
-          const entity = props.entities.find(
-            (entity) => entity.id === filter.entityId
-          );
-          const variable = entity?.variables.find(
-            (variable) => variable.id === filter.variableId
-          );
+          const { entity, variable } =
+            findEntityAndVariable(props.entities, filter) ?? {};
 
           if (entity && variable) {
             // The string to be displayed for the filter's value
