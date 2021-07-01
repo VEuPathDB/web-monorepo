@@ -247,8 +247,8 @@ function BarplotViz(props: Props) {
                   .displayName ?? 'Main'
               }
               dependentAxisLabel={'Count'}
-              showSpinner={data.pending}
               interactive
+              showSpinner={data.pending}
             />
             <VariableCoverageTable
               completeCases={

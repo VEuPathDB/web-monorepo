@@ -305,8 +305,8 @@ function HistogramViz(props: Props) {
           outputEntity={outputEntity}
           independentAxisVariable={vizConfig.xAxisVariable}
           independentAxisLabel={xAxisVariable?.displayName ?? 'Main'}
-          showSpinner={data.pending}
           interactive
+          showSpinner={data.pending}
           filters={filters}
           completeCases={data.pending ? undefined : data.value?.completeCases}
           sampleSize={data.pending ? undefined : data.value?.sampleSize}
