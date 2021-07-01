@@ -29,20 +29,20 @@ export default function GlobalFiltersDialog(props: Props) {
 
   if (props.filters.length > 0) {
     // Construct a filter chip list for each entity that has filters applied
-    let filters = props.filters; // The remaining unbinned filters
+    let remainingFilters = props.filters; // The remaining unbinned filters
     let matchingFilters: Filter[] = [];
     let filterChipLists: JSX.Element[] = [];
 
     for (const entity of props.entities) {
       // Find the filters that belong to this entity
-      [matchingFilters, filters] = _.partition(
-        filters,
+      [matchingFilters, remainingFilters] = _.partition(
+        remainingFilters,
         (f) => f.entityId === entity.id
       );
 
       if (matchingFilters.length > 0)
         filterChipLists.push(
-          <div>
+          <div key={`filter-chip-list-${entity.id}`}>
             <h4>{entity.displayName}</h4>
             <FilterChipList
               filters={matchingFilters}
@@ -53,17 +53,20 @@ export default function GlobalFiltersDialog(props: Props) {
         );
     }
 
-    // Any filters left in `filters` are for an entity not provided. Shouldn't
-    // ever happen; would signal a problem.
-    if (filters.length > 0) {
-      filterChipLists.unshift(
-        <Alert severity="warning">
-          Some applied filters do not have matching entities in this study.
-        </Alert>
-      );
-    }
-
-    content = <div>{filterChipLists}</div>;
+    content = (
+      <div>
+        {
+          // Any filters left in `remainingFilters` are for an entity not provided.
+          // Shouldn't ever happen; would signal a problem.
+          remainingFilters.length > 0 && (
+            <Alert severity="warning">
+              Some applied filters do not have matching entities in this study.
+            </Alert>
+          )
+        }
+        {filterChipLists}
+      </div>
+    );
   } else {
     content = <div>There are no filters applied to the dataset.</div>;
   }
