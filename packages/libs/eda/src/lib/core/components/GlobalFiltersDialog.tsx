@@ -87,7 +87,7 @@ export default function GlobalFiltersDialog(props: Props) {
               <div className="GlobalFiltersDialog_Header">
                 <div className="GlobalFiltersDialog_Header_Left" />
                 <div className="GlobalFiltersDialog_Header_Center">
-                  Active filters
+                  All filters
                 </div>
                 <div className="GlobalFiltersDialog_Header_Right">
                   <button

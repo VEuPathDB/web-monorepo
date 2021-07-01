@@ -49,7 +49,7 @@ export function AnalysisSummary(props: Props) {
             onClick={onFilterIconClick}
             startIcon={<Icon className="fa fa-filter" />}
           >
-            See all filters
+            Show all filters
           </Button>
         )}
       </div>
