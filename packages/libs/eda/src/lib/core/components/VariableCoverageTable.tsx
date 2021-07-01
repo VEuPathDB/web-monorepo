@@ -26,10 +26,14 @@ export type VariableDisplay = string;
 export interface VariableCoverageTableRow {
   role: VariableRole;
   display?: VariableDisplay;
-  /* count of entities which have the variable */
-  complete?: number;
-  /* count of entities which are missing the variable */
-  incomplete?: number;
+  /* absolute count of entities which have the variable */
+  completeCount?: number;
+  /* absolute count of entities which are missing the variable */
+  incompleteCount?: number;
+  /* percent of subset entities which have the variable */
+  completePercent?: number;
+  /* percent of subset entities which are missing the variable */
+  incompletePercent?: number;
 }
 
 export function VariableCoverageTable({
@@ -65,8 +69,22 @@ export function VariableCoverageTable({
             <tr key={row.role}>
               <th>{row.role}</th>
               <td>{row.display}</td>
-              <td className="numeric">{row.complete?.toLocaleString()}</td>
-              <td className="numeric">{row.incomplete?.toLocaleString()}</td>
+              <td>
+                {row.completeCount?.toLocaleString()}
+                {row.completePercent != null && (
+                  <span className="percentage">
+                    {row.completePercent.toFixed(2)}%
+                  </span>
+                )}
+              </td>
+              <td>
+                {row.incompleteCount?.toLocaleString()}
+                {row.incompletePercent != null && (
+                  <span className="percentage">
+                    ({row.incompletePercent.toFixed(2)}%)
+                  </span>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>

@@ -50,7 +50,7 @@ export function useVariableCoverageTableRows(
         const baseRowWithCounts = {
           role: spec.role,
           display: spec.display,
-          complete: variableCompleteCases,
+          completeCount: variableCompleteCases,
         };
 
         const variableFilteredEntityCount =
@@ -58,13 +58,22 @@ export function useVariableCoverageTableRows(
             ? undefined
             : filteredEntityCountsResult.value[outputEntityId];
 
-        return variableFilteredEntityCount == null
-          ? baseRowWithCounts
-          : {
-              ...baseRowWithCounts,
-              incomplete:
-                variableFilteredEntityCount - baseRowWithCounts.complete,
-            };
+        if (variableFilteredEntityCount == null) {
+          return baseRowWithCounts;
+        }
+
+        const incompleteCount =
+          variableFilteredEntityCount - baseRowWithCounts.completeCount;
+
+        return {
+          ...baseRowWithCounts,
+          incompleteCount,
+          completePercent:
+            (baseRowWithCounts.completeCount / variableFilteredEntityCount) *
+            100,
+          incompletePercent:
+            (incompleteCount / variableFilteredEntityCount) * 100,
+        };
       }),
     [
       completeCasesMap,
