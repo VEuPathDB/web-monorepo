@@ -1,7 +1,8 @@
 // import MosaicControls from '@veupathdb/components/lib/components/plotControls/MosaicControls';
 import Mosaic, {
-  Props as MosaicProps,
+  MosaicPlotProps as MosaicProps,
 } from '@veupathdb/components/lib/plots/MosaicPlot';
+import { MosaicData } from '@veupathdb/components/lib/types/plots';
 // import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -27,20 +28,19 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
 
-interface MosaicData
-  extends Pick<MosaicProps, 'data' | 'independentValues' | 'dependentValues'> {
+interface MosaicDataWithCompleteCases extends MosaicData {
   completeCases: CompleteCasesTable;
   sampleSize: { size: number[] }[];
 }
 
-type ContTableData = MosaicData &
+type ContTableData = MosaicDataWithCompleteCases &
   Partial<{
     pValue: number | string;
     degreesFreedom: number;
     chisq: number;
   }>;
 
-type TwoByTwoData = MosaicData &
+type TwoByTwoData = MosaicDataWithCompleteCases &
   Partial<{
     pValue: number | string;
     relativeRisk: number;
@@ -295,18 +295,15 @@ function MosaicViz(props: Props) {
     <div className="MosaicVisualization">
       <div className="MosaicVisualization-Plot">
         <MosaicPlotWithControls
-          data={data.value && !data.pending ? data.value.data : [[]]}
-          independentValues={
-            data.value && !data.pending ? data.value.independentValues : []
-          }
-          dependentValues={
-            data.value && !data.pending ? data.value.dependentValues : []
-          }
-          height={450}
-          width={750}
-          independentLabel={xAxisVariableName ?? 'X-axis'}
-          dependentLabel={yAxisVariableName ?? 'Y-axis'}
-          showLegend={true}
+          data={data.value && !data.pending ? data.value : undefined}
+          containerStyles={{
+            height: '450px',
+            width: '750px',
+          }}
+          independentAxisLabel={xAxisVariableName ?? 'X-axis'}
+          dependentAxisLabel={yAxisVariableName ?? 'Y-axis'}
+          displayLegend={true}
+          interactive
           showSpinner={data.pending}
         />
       </div>
@@ -342,22 +339,23 @@ function MosaicViz(props: Props) {
   ) : (
     // thumbnail/grid view
     <Mosaic
-      data={data.value && !data.pending ? data.value.data : [[]]}
-      independentValues={
-        data.value && !data.pending ? data.value.independentValues : []
-      }
-      dependentValues={
-        data.value && !data.pending ? data.value.dependentValues : []
-      }
-      width={300}
-      height={180}
-      margin={{ t: 40, b: 20, l: 20, r: 10 }}
+      data={data.value && !data.pending ? data.value : undefined}
+      containerStyles={{
+        width: '250px',
+        height: '150px',
+      }}
+      spacingOptions={{
+        marginTop: 30,
+        marginBottom: 20,
+        marginLeft: 30,
+        marginRight: 20,
+      }}
       showColumnLabels={false}
-      showModebar={false}
-      showLegend={false}
-      staticPlot={true}
-      independentLabel=""
-      dependentLabel=""
+      displayLibraryControls={false}
+      displayLegend={false}
+      interactive={false}
+      independentAxisLabel={''}
+      dependentAxisLabel={''}
       showSpinner={data.pending}
     />
   );
@@ -448,7 +446,7 @@ function MosaicPlotWithControls({
       <Mosaic
         {...mosaicProps}
         data={data}
-        showModebar={displayLibraryControls}
+        displayLibraryControls={displayLibraryControls}
       />
       {/* <MosaicControls
         label="Mosaic Controls"
@@ -475,9 +473,10 @@ export function contTableResponseToData(
   const data = _.unzip(response.mosaic.data[0].value);
 
   return {
-    data: data,
-    independentValues: response.mosaic.data[0].xLabel,
-    dependentValues: response.mosaic.data[0].yLabel,
+    values: data,
+    independentLabels: response.mosaic.data[0].xLabel,
+    dependentLabels: response.mosaic.data[0].yLabel,
+
     pValue: response.statsTable[0].pvalue,
     degreesFreedom: response.statsTable[0].degreesFreedom,
     chisq: response.statsTable[0].chisq,
@@ -501,9 +500,10 @@ export function twoByTwoResponseToData(
   const data = _.unzip(response.mosaic.data[0].value);
 
   return {
-    data: data,
-    independentValues: response.mosaic.data[0].xLabel,
-    dependentValues: response.mosaic.data[0].yLabel,
+    values: data,
+    independentLabels: response.mosaic.data[0].xLabel,
+    dependentLabels: response.mosaic.data[0].yLabel,
+
     pValue: response.statsTable[0].pvalue,
     relativeRisk: response.statsTable[0].relativerisk,
     rrInterval: response.statsTable[0].rrInterval,

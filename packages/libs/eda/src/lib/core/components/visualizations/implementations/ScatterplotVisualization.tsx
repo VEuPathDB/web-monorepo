@@ -1,7 +1,5 @@
 // load scatter plot component
-import XYPlot, {
-  ScatterplotProps,
-} from '@veupathdb/components/lib/plots/XYPlot';
+import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -292,9 +290,11 @@ function ScatterplotViz(props: Props) {
         fullscreen ? (
           <ScatterplotWithControls
             // data.value
-            data={[...data.value.dataSetProcess]}
-            width={750}
-            height={450}
+            data={data.value.dataSetProcess}
+            containerStyles={{
+              width: '750px',
+              height: '450px',
+            }}
             // title={'Scatter plot'}
             outputEntity={
               findEntityAndVariable(vizConfig.xAxisVariable)?.entity
@@ -314,15 +314,19 @@ function ScatterplotViz(props: Props) {
               findEntityAndVariable(vizConfig.overlayVariable)?.variable
                 .displayName
             }
-            independentAxisRange={[data.value.xMin, data.value.xMax]}
+            independentAxisRange={{
+              min: data.value.xMin,
+              max: data.value.xMax,
+            }}
             // block this for now
-            dependentAxisRange={[data.value.yMin, data.value.yMax]}
+            dependentAxisRange={{ min: data.value.yMin, max: data.value.yMax }}
             // XYPlotControls valueSpecInitial
             valueSpec={vizConfig.valueSpecConfig}
             // valueSpec={valueSpecInitial}
             onValueSpecChange={onValueSpecChange}
             // send visualization.type here
             vizType={visualization.type}
+            interactive
             showSpinner={data.pending}
             filters={filters}
             completeCases={data.pending ? undefined : data.value.completeCases}
@@ -331,17 +335,27 @@ function ScatterplotViz(props: Props) {
         ) : (
           // thumbnail/grid view
           <XYPlot
-            data={[...data.value.dataSetProcess]}
-            width={230}
-            height={150}
-            independentAxisRange={[data.value.xMin, data.value.xMax]}
+            data={data.value.dataSetProcess}
+            containerStyles={{
+              width: '230px',
+              height: '150px',
+            }}
+            independentAxisRange={{
+              min: data.value.xMin,
+              max: data.value.xMax,
+            }}
             // block this for now
-            dependentAxisRange={[data.value.yMin, data.value.yMax]}
+            dependentAxisRange={{ min: data.value.yMin, max: data.value.yMax }}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
-            staticPlot={true}
-            margin={{ l: 30, r: 20, b: 15, t: 20 }}
+            interactive={false}
+            spacingOptions={{
+              marginLeft: 30,
+              marginRight: 20,
+              marginBottom: 15,
+              marginTop: 20,
+            }}
             showSpinner={data.pending}
           />
         )
@@ -361,9 +375,18 @@ function ScatterplotViz(props: Props) {
             }}
           >
             <XYPlot
-              data={[]}
-              width={fullscreen ? 750 : 230}
-              height={fullscreen ? 450 : 150}
+              data={undefined}
+              containerStyles={
+                fullscreen
+                  ? {
+                      width: '750px',
+                      height: '450px',
+                    }
+                  : {
+                      width: '230px',
+                      height: '150px',
+                    }
+              }
               independentAxisLabel={
                 fullscreen
                   ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
@@ -376,10 +399,19 @@ function ScatterplotViz(props: Props) {
                       .displayName ?? 'Y-Axis'
                   : undefined
               }
-              displayLegend={fullscreen ? true : false}
+              displayLegend={fullscreen}
               displayLibraryControls={false}
-              staticPlot={fullscreen ? false : true}
-              margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
+              interactive={fullscreen}
+              spacingOptions={
+                fullscreen
+                  ? {}
+                  : {
+                      marginLeft: 30,
+                      marginRight: 20,
+                      marginBottom: 15,
+                      marginTop: 20,
+                    }
+              }
               showSpinner={data.pending}
             />
             {fullscreen && (
@@ -435,7 +467,7 @@ function ScatterplotViz(props: Props) {
   );
 }
 
-type ScatterplotWithControlsProps = ScatterplotProps & {
+type ScatterplotWithControlsProps = XYPlotProps & {
   completeCases: CompleteCasesTable;
   sampleSize: SampleSizeTableArray;
   filters: Filter[];
@@ -490,7 +522,7 @@ function ScatterplotWithControls({
           {...scatterplotProps}
           data={data}
           // add controls
-          displayLegend={data.length > 1}
+          displayLegend={data?.series && data.series.length > 1}
           displayLibraryControls={false}
         />
         <VariableCoverageTable
@@ -1089,7 +1121,7 @@ function processInputData<T extends number | Date>(
     }
   });
 
-  return { dataSetProcess, xMin, xMax, yMin, yMax };
+  return { dataSetProcess: { series: dataSetProcess }, xMin, xMax, yMin, yMax };
 }
 
 /*
