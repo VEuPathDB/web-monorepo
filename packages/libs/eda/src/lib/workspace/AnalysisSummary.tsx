@@ -45,7 +45,7 @@ export function AnalysisSummary(props: Props) {
         {analysis.filters.length > 0 && (
           <Button
             className={cx('-SeeAllFiltersButton')}
-            variant="outlined"
+            // variant="contained"
             onClick={onFilterIconClick}
             startIcon={<Icon className="fa fa-filter" />}
           >
