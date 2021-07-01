@@ -116,8 +116,8 @@ export const LongitudeVariable = t.intersection([
   }),
 ]);
 
-export type CategoryVariable = t.TypeOf<typeof CategoryVariable>;
-export const CategoryVariable = t.intersection([
+export type VariableCategory = t.TypeOf<typeof VariableCategory>;
+export const VariableCategory = t.intersection([
   VariableTreeNode_Base,
   t.type({
     type: t.literal('category'),
@@ -136,7 +136,7 @@ export const VariableTreeNode = t.union([
   NumberVariable,
   DateVariable,
   LongitudeVariable,
-  CategoryVariable,
+  VariableCategory,
 ]);
 
 // StudyEntity
