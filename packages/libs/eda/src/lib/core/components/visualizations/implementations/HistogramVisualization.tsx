@@ -27,7 +27,7 @@ import {
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
@@ -75,9 +75,9 @@ const HistogramConfig = t.intersection([
     dependentAxisLogScale: t.boolean,
   }),
   t.partial({
-    xAxisVariable: Variable,
-    overlayVariable: Variable,
-    facetVariable: Variable,
+    xAxisVariable: VariableDescriptor,
+    overlayVariable: VariableDescriptor,
+    facetVariable: VariableDescriptor,
     binWidth: t.number,
     binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
   }),
@@ -427,9 +427,9 @@ export function histogramResponseToData(
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  variable: Variable,
+  variable: VariableDescriptor,
   variableType: 'number' | 'date',
-  overlayVariable?: Variable,
+  overlayVariable?: VariableDescriptor,
   binWidth?: number,
   binWidthTimeUnit?: string
 ): HistogramRequestParams {

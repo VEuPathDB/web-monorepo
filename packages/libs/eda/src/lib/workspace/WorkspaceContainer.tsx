@@ -8,7 +8,7 @@ import {
   StudyMetadata,
   SubsettingClient,
 } from '../core';
-import { Variable } from '../core/types/variable';
+import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockAnalysisStore } from './Mocks';
 import { AnalysisPanel } from './AnalysisPanel';
@@ -35,7 +35,7 @@ export function WorkspaceContainer(props: Props) {
       {
         entityId: maybeEntityId,
         variableId: maybeVariableId,
-      }: Partial<Variable>,
+      }: Partial<VariableDescriptor>,
       studyMetadata: StudyMetadata
     ) => {
       const entityId = maybeEntityId ?? studyMetadata.rootEntity.id;
