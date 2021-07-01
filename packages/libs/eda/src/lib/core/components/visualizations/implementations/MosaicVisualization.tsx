@@ -28,19 +28,19 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
 
-interface MosaicDataWithCompleteCases extends MosaicData {
+interface MosaicDataWithCoverageStatistics extends MosaicData {
   completeCases: CompleteCasesTable;
   sampleSize: { size: number[] }[];
 }
 
-type ContTableData = MosaicDataWithCompleteCases &
+type ContTableData = MosaicDataWithCoverageStatistics &
   Partial<{
     pValue: number | string;
     degreesFreedom: number;
     chisq: number;
   }>;
 
-type TwoByTwoData = MosaicDataWithCompleteCases &
+type TwoByTwoData = MosaicDataWithCoverageStatistics &
   Partial<{
     pValue: number | string;
     relativeRisk: number;

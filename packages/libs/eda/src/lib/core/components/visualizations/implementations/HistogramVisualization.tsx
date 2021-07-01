@@ -39,7 +39,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 
-type HistogramDataWithCompleteCases = HistogramData & {
+type HistogramDataWithCoverageStatistics = HistogramData & {
   completeCases: CompleteCasesTable;
   sampleSize: SampleSizeTableArray;
 };
@@ -200,7 +200,7 @@ function HistogramViz(props: Props) {
 
   const data = usePromise(
     useCallback(async (): Promise<
-      HistogramDataWithCompleteCases | undefined
+      HistogramDataWithCoverageStatistics | undefined
     > => {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
@@ -443,12 +443,12 @@ function HistogramPlotWithControls({
 /**
  * Reformat response from histogram endpoints into complete HistogramData
  * @param response
- * @returns HistogramDataWithCompleteCases
+ * @returns HistogramDataWithCoverageStatistics
  */
 export function histogramResponseToData(
   response: HistogramResponse,
   type: HistogramVariable['type']
-): HistogramDataWithCompleteCases {
+): HistogramDataWithCoverageStatistics {
   if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
