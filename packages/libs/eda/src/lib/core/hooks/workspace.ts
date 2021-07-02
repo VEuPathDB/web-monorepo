@@ -7,7 +7,7 @@ import {
 } from '../context/WorkspaceContext';
 import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
 import { useNonNullableContext } from './nonNullableContext';
-import { Variable } from '../types/variable';
+import { VariableDescriptor } from '../types/variable';
 
 export function useStudyMetadata(): StudyMetadata {
   return useNonNullableContext(WorkspaceContext).studyMetadata;
@@ -35,7 +35,7 @@ export function useMakeVariableLink(): MakeVariableLink {
 }
 
 function defaultMakeVariableLink(
-  { variableId, entityId }: Partial<Variable>,
+  { variableId, entityId }: Partial<VariableDescriptor>,
   studyMetadata: StudyMetadata
 ): string {
   return variableId && entityId

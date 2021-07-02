@@ -23,13 +23,12 @@ import {
   DataClient,
   HistogramRequestParams,
   HistogramResponse,
-  SampleSizeTableArray,
 } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { StudyEntity } from '../../../types/study';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { isHistogramVariable } from '../../filter/guards';
@@ -41,7 +40,7 @@ import histogram from './selectorIcons/histogram.svg';
 
 type HistogramDataWithCoverageStatistics = HistogramData & {
   completeCases: CompleteCasesTable;
-  sampleSize: SampleSizeTableArray;
+  outputSize: number;
 };
 
 export const histogramVisualization: VisualizationType = {
@@ -84,9 +83,9 @@ const HistogramConfig = t.intersection([
     dependentAxisLogScale: t.boolean,
   }),
   t.partial({
-    xAxisVariable: Variable,
-    overlayVariable: Variable,
-    facetVariable: Variable,
+    xAxisVariable: VariableDescriptor,
+    overlayVariable: VariableDescriptor,
+    facetVariable: VariableDescriptor,
     binWidth: t.number,
     binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
   }),
@@ -309,7 +308,7 @@ function HistogramViz(props: Props) {
           showSpinner={data.pending}
           filters={filters}
           completeCases={data.pending ? undefined : data.value?.completeCases}
-          sampleSize={data.pending ? undefined : data.value?.sampleSize}
+          outputSize={data.pending ? undefined : data.value?.outputSize}
           overlayVariable={vizConfig.overlayVariable}
           overlayLabel={overlayVariable?.displayName}
         />
@@ -347,10 +346,10 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   handleDependentAxisLogScale: (newState?: boolean) => void;
   filters: Filter[];
   completeCases?: CompleteCasesTable;
-  sampleSize?: SampleSizeTableArray;
+  outputSize?: number;
   outputEntity?: StudyEntity;
-  independentAxisVariable?: Variable;
-  overlayVariable?: Variable;
+  independentAxisVariable?: VariableDescriptor;
+  overlayVariable?: VariableDescriptor;
   overlayLabel?: string;
 };
 
@@ -360,7 +359,7 @@ function HistogramPlotWithControls({
   handleDependentAxisLogScale,
   filters,
   completeCases,
-  sampleSize,
+  outputSize,
   outputEntity,
   independentAxisVariable,
   overlayVariable,
@@ -383,7 +382,7 @@ function HistogramPlotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <OutputEntityTitle entity={outputEntity} sampleSize={sampleSize} />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
           display: 'flex',
@@ -490,16 +489,16 @@ export function histogramResponseToData(
     binWidthRange,
     binWidthStep,
     completeCases: response.completeCasesTable,
-    sampleSize: response.sampleSizeTable,
+    outputSize: response.histogram.config.completeCases,
   };
 }
 
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  variable: Variable,
+  variable: VariableDescriptor,
   variableType: 'number' | 'date',
-  overlayVariable?: Variable,
+  overlayVariable?: VariableDescriptor,
   binWidth?: number,
   binWidthTimeUnit?: string
 ): HistogramRequestParams {

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { StudyEntity } from '../../types/study';
-import { Variable } from '../../types/variable';
+import { VariableDescriptor } from '../../types/variable';
 import {
   DataElementConstraintRecord,
   excludedVariables,
@@ -100,7 +100,7 @@ export function InputVariables(props: Props) {
     toggleStarredVariable,
   } = props;
   const classes = useStyles();
-  const handleChange = (inputName: string, value?: Variable) => {
+  const handleChange = (inputName: string, value?: VariableDescriptor) => {
     onChange({ ...values, [inputName]: value });
   };
   const flattenedConstraints =
@@ -143,7 +143,7 @@ export function InputVariables(props: Props) {
             .slice(1)
             .flatMap((e) =>
               e.variables.map(
-                (variable): Variable => ({
+                (variable): VariableDescriptor => ({
                   variableId: variable.id,
                   entityId: e.id,
                 })

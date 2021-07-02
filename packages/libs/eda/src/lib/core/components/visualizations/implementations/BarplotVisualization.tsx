@@ -16,7 +16,7 @@ import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
@@ -60,9 +60,9 @@ const BarplotConfig = t.intersection([
     enableOverlay: t.boolean,
   }),
   t.partial({
-    xAxisVariable: Variable,
-    overlayVariable: Variable,
-    facetVariable: Variable,
+    xAxisVariable: VariableDescriptor,
+    overlayVariable: VariableDescriptor,
+    facetVariable: VariableDescriptor,
   }),
 ]);
 
@@ -224,7 +224,7 @@ function BarplotViz(props: Props) {
         <>
           <OutputEntityTitle
             entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
-            sampleSize={data.pending ? undefined : data.value?.sampleSize}
+            outputSize={data.pending ? undefined : data.value?.outputSize}
           />
           <div
             style={{
@@ -362,7 +362,7 @@ export function barplotResponseToData(
       value: data.value,
     })),
     completeCases: response.completeCasesTable,
-    sampleSize: response.sampleSizeTable,
+    outputSize: response.barplot.config.completeCases,
   };
 }
 
@@ -373,8 +373,8 @@ type getRequestParamsProps = BarplotRequestParams & { vizType?: string };
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: Variable,
-  overlayVariable?: Variable
+  xAxisVariable: VariableDescriptor,
+  overlayVariable?: VariableDescriptor
 ): BarplotRequestParams {
   return {
     studyId,

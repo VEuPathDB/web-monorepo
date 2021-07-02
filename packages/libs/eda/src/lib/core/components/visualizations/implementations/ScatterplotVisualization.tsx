@@ -15,7 +15,6 @@ import {
   ScatterplotRequestParams,
   ScatterplotResponse,
   LineplotRequestParams,
-  SampleSizeTableArray,
 } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
@@ -24,7 +23,7 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { StudyEntity } from '../../../types/study';
 import { PromiseType } from '../../../types/utility';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 
@@ -86,10 +85,10 @@ const ScatterplotConfig = t.intersection([
     enableOverlay: t.boolean,
   }),
   t.partial({
-    xAxisVariable: Variable,
-    yAxisVariable: Variable,
-    overlayVariable: Variable,
-    facetVariable: Variable,
+    xAxisVariable: VariableDescriptor,
+    yAxisVariable: VariableDescriptor,
+    overlayVariable: VariableDescriptor,
+    facetVariable: VariableDescriptor,
     valueSpecConfig: t.string,
   }),
 ]);
@@ -330,7 +329,7 @@ function ScatterplotViz(props: Props) {
             showSpinner={data.pending}
             filters={filters}
             completeCases={data.pending ? undefined : data.value.completeCases}
-            sampleSize={data.pending ? undefined : data.value.sampleSize}
+            outputSize={data.pending ? undefined : data.value.outputSize}
           />
         ) : (
           // thumbnail/grid view
@@ -471,12 +470,12 @@ function ScatterplotViz(props: Props) {
 
 type ScatterplotWithControlsProps = XYPlotProps & {
   completeCases: CompleteCasesTable;
-  sampleSize: SampleSizeTableArray;
+  outputSize: number;
   filters: Filter[];
   outputEntity?: StudyEntity;
-  xAxisVariable?: Variable;
-  yAxisVariable?: Variable;
-  overlayVariable?: Variable;
+  xAxisVariable?: VariableDescriptor;
+  yAxisVariable?: VariableDescriptor;
+  overlayVariable?: VariableDescriptor;
   overlayLabel?: string;
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
@@ -495,7 +494,7 @@ function ScatterplotWithControls({
   yAxisVariable,
   overlayVariable,
   completeCases,
-  sampleSize,
+  outputSize,
   overlayLabel,
   ...scatterplotProps
 }: ScatterplotWithControlsProps) {
@@ -511,7 +510,7 @@ function ScatterplotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <OutputEntityTitle entity={outputEntity} sampleSize={sampleSize} />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
       <div
         style={{
           display: 'flex',
@@ -600,7 +599,7 @@ export function scatterplotResponseToData(
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
-    sampleSize: response.sampleSizeTable,
+    outputSize: response.scatterplot.config.completeCases,
   };
 }
 
@@ -612,10 +611,10 @@ type getRequestParamsProps =
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: Variable,
+  xAxisVariable: VariableDescriptor,
   // set yAxisVariable as optional for densityplot
-  yAxisVariable?: Variable,
-  overlayVariable?: Variable,
+  yAxisVariable?: VariableDescriptor,
+  overlayVariable?: VariableDescriptor,
   // add visualization.type
   vizType?: string,
   // XYPlotControls

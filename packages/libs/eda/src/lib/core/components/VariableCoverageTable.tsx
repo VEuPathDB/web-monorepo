@@ -1,7 +1,7 @@
 import { CompleteCasesTable } from '../api/data-api';
 import { useVariableCoverageTableRows } from '../hooks/variableCoverage';
 import { Filter } from '../types/filter';
-import { Variable } from '../types/variable';
+import { VariableDescriptor } from '../types/variable';
 
 export interface Props {
   containerClassName?: string;
@@ -15,7 +15,7 @@ export interface VariableSpec {
   role: VariableRole;
   required?: boolean;
   display?: VariableDisplay;
-  variable?: Variable;
+  variable?: VariableDescriptor;
 }
 
 /* A short description of the variable's role; e.g., "X-axis", "Y-axis", "Overlay" */

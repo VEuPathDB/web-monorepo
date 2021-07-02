@@ -20,7 +20,7 @@ import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -30,7 +30,7 @@ import mosaic from './selectorIcons/mosaic.svg';
 
 interface MosaicDataWithCoverageStatistics extends MosaicData {
   completeCases: CompleteCasesTable;
-  sampleSize: { size: number[] }[];
+  outputSize: number;
 }
 
 type ContTableData = MosaicDataWithCoverageStatistics &
@@ -108,9 +108,9 @@ function createDefaultConfig(): MosaicConfig {
 type MosaicConfig = t.TypeOf<typeof MosaicConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const MosaicConfig = t.partial({
-  xAxisVariable: Variable,
-  yAxisVariable: Variable,
-  facetVariable: Variable,
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor,
+  facetVariable: VariableDescriptor,
 });
 
 type Props = VisualizationProps & {
@@ -418,7 +418,7 @@ function MosaicViz(props: Props) {
       {fullscreen && (
         <OutputEntityTitle
           entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
-          sampleSize={data.pending ? undefined : data.value?.sampleSize}
+          outputSize={data.pending ? undefined : data.value?.outputSize}
         />
       )}
       {plotComponent}
@@ -483,7 +483,7 @@ export function contTableResponseToData(
     degreesFreedom: response.statsTable[0].degreesFreedom,
     chisq: response.statsTable[0].chisq,
     completeCases: response.completeCasesTable,
-    sampleSize: response.sampleSizeTable,
+    outputSize: response.mosaic.config.completeCases,
   };
 }
 
@@ -512,15 +512,15 @@ export function twoByTwoResponseToData(
     oddsRatio: response.statsTable[0].oddsratio,
     orInterval: response.statsTable[0].orInterval,
     completeCases: response.completeCasesTable,
-    sampleSize: response.sampleSizeTable,
+    outputSize: response.mosaic.config.completeCases,
   };
 }
 
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: Variable,
-  yAxisVariable: Variable
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor
 ): MosaicRequestParams {
   return {
     studyId,

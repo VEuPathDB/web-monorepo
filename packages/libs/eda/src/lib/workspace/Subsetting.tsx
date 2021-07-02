@@ -3,7 +3,7 @@ import { useHistory } from 'react-router';
 import { useMakeVariableLink, useStudyMetadata } from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from './Utils';
-import { Variable } from './Variable';
+import { VariableDetails } from './Variable';
 import { AnalysisState } from '../core/hooks/analysis';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useToggleStarredVariable } from '../core/hooks/starredVariables';
@@ -32,7 +32,7 @@ export function Subsetting(props: Props) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  if (entity == null || variable == null)
+  if (entity == null || variable == null || variable.type === 'category')
     return <div>Could not find specified variable.</div>;
 
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
@@ -88,7 +88,7 @@ export function Subsetting(props: Props) {
         </Tooltip>
       </div>
       <div className="Filter">
-        <Variable
+        <VariableDetails
           entity={entity}
           variable={variable}
           analysisState={analysisState}
