@@ -6,8 +6,8 @@ const _VariableBase = t.type({
   variableId: t.string,
 });
 
-export type Variable = t.TypeOf<typeof Variable>;
-export const Variable = _VariableBase;
+export type VariableDescriptor = t.TypeOf<typeof VariableDescriptor>;
+export const VariableDescriptor = _VariableBase;
 
 export type StringVariableValue = t.TypeOf<typeof StringVariableValue>;
 export const StringVariableValue = t.intersection([
