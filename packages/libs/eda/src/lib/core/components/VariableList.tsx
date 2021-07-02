@@ -201,13 +201,13 @@ export default function VariableList(props: VariableListProps) {
 
   // update visibleStarredVariable for MyVariable
   useEffect(() => {
-    setVisibleStarredVariables(starredVariables ? starredVariables : ['']);
+    setVisibleStarredVariables(starredVariables ?? ['']);
   }, [showOnlyStarredVariables]);
 
   // update visibleStarredVariables when starredVariables are updated at VariableTree, not MyVariable
   useEffect(() => {
     if (showOnlyStarredVariables === false) {
-      setVisibleStarredVariables(starredVariables ? starredVariables : ['']);
+      setVisibleStarredVariables(starredVariables ?? ['']);
     }
   }, [starredVariables]);
 
