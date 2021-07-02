@@ -222,6 +222,7 @@ function pruneByDatasetCategory(categoryTree, record) {
         if (individual.children.length > 0) return true;
         if (individual.wdkReference == null) return false;
         if (individual.wdkReference.name === 'TranscriptTypeCounts') return false;
+        if (individual.wdkReference.name === 'GeneTypeCounts') return false;
         if (individual.wdkReference.name === 'SequenceTypeCounts') return false;
         if (individual.wdkReference.name === 'GenomeAssociatedData') return false;
         if (individual.wdkReference.name === 'ExternalDatabases') return false;
