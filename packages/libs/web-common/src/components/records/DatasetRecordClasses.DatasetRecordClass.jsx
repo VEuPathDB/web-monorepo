@@ -52,7 +52,8 @@ export function RecordHeading(props) {
     contact,
     email,
     institution,
-    organism_prefix
+    organism_prefix,
+    newcategory,
   } = attributes;
 
   let version = tables.Version && tables.Version[0];
@@ -95,6 +96,13 @@ export function RecordHeading(props) {
           <div className="eupathdb-RecordOverviewItem">
             <strong>Source version: </strong>
             <span>{renderSourceVersion(version)}</span>
+          </div>
+        ) : null}
+
+        {newcategory ? (
+          <div className="eupathdb-RecordOverviewItem">
+            <strong>Category: </strong>
+            <span>{newcategory}</span>
           </div>
         ) : null}
 
