@@ -11,7 +11,7 @@ import {
   array,
   record,
 } from 'io-ts';
-import { StudyVariableDataShape, StudyVariableType } from './study';
+import { VariableDataShape, VariableType } from './study';
 
 /**
  * Visualization object stored in user's analysis
@@ -58,8 +58,8 @@ export const DataElementConstraint = intersection([
     maxNumVars: number,
   }),
   partial({
-    allowedTypes: array(StudyVariableType),
-    allowedShapes: array(StudyVariableDataShape),
+    allowedTypes: array(VariableType),
+    allowedShapes: array(VariableDataShape),
   }),
 ]);
 

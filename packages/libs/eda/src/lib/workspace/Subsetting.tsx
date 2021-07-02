@@ -3,12 +3,13 @@ import { useHistory } from 'react-router';
 import { useMakeVariableLink, useStudyMetadata } from '../core';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { cx } from './Utils';
-import { Variable } from './Variable';
+import { VariableDetails } from './Variable';
 import { AnalysisState } from '../core/hooks/analysis';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { useToggleStarredVariable } from '../core/hooks/starredVariables';
 import { VariableTree } from '../core/components/VariableTree';
 import FilterChipList from '../core/components/FilterChipList';
+import { Tooltip } from '@material-ui/core';
 
 interface Props {
   analysisState: AnalysisState;
@@ -31,7 +32,7 @@ export function Subsetting(props: Props) {
 
   const toggleStarredVariable = useToggleStarredVariable(analysisState);
 
-  if (entity == null || variable == null)
+  if (entity == null || variable == null || variable.type === 'category')
     return <div>Could not find specified variable.</div>;
 
   const totalEntityCount = totalCounts.value && totalCounts.value[entity.id];
@@ -76,17 +77,18 @@ export function Subsetting(props: Props) {
         />
       </div>
       <div className="TabularDownload">
-        <button
-          type="button"
-          className="link"
-          title={`Download current subset of ${entity.displayName}`}
-          onClick={() => alert('Coming soon')}
-        >
-          <i className="fa fa-table" />
-        </button>
+        <Tooltip title={`Download current subset of ${entity.displayName}`}>
+          <button
+            type="button"
+            className="link"
+            onClick={() => alert('Coming soon')}
+          >
+            <i className="fa fa-table" />
+          </button>
+        </Tooltip>
       </div>
       <div className="Filter">
-        <Variable
+        <VariableDetails
           entity={entity}
           variable={variable}
           analysisState={analysisState}
