@@ -197,19 +197,9 @@ export default function VariableList(props: VariableListProps) {
   );
 
   // make visibleStarredVariables state be used at MyVariable
-  const [visibleStarredVariables, setVisibleStarredVariables] = useState(['']);
-
-  // update visibleStarredVariable for MyVariable
-  useEffect(() => {
-    setVisibleStarredVariables(starredVariables ?? ['']);
-  }, [showOnlyStarredVariables]);
-
-  // update visibleStarredVariables when starredVariables are updated at VariableTree, not MyVariable
-  useEffect(() => {
-    if (showOnlyStarredVariables === false) {
-      setVisibleStarredVariables(starredVariables ?? ['']);
-    }
-  }, [starredVariables]);
+  const [visibleStarredVariables, setVisibleStarredVariables] = useState<
+    string[]
+  >([]);
 
   const starredVariablesSet = useMemo(() => {
     const presentStarredVariables = starredVariables?.filter((variableId) =>
@@ -266,15 +256,11 @@ export default function VariableList(props: VariableListProps) {
 
   const toggleShowOnlyStarredVariables = useCallback(() => {
     setShowOnlyStarredVariables((oldValue) => !oldValue);
-  }, []);
+    setVisibleStarredVariables(starredVariables ?? []);
+  }, [starredVariables]);
 
-  const starredVariableToggleDisabled = starredVariablesSet.size === 0;
-
-  useEffect(() => {
-    if (starredVariableToggleDisabled) {
-      setShowOnlyStarredVariables(false);
-    }
-  }, [starredVariableToggleDisabled]);
+  const starredVariableToggleDisabled =
+    !showOnlyStarredVariables && starredVariablesSet.size === 0;
 
   const additionalFilters = useMemo(
     () => [
@@ -387,7 +373,7 @@ export default function VariableList(props: VariableListProps) {
     starredVariableToggleDisabled,
     fieldTree,
     hideDisabledFields,
-    starredVariablesSet,
+    visibleStarredVariablesSet,
     disabledFields,
   ]);
 
