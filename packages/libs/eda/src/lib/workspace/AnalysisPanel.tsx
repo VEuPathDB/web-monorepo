@@ -23,7 +23,6 @@ import { useEntityCounts } from '../core/hooks/entityCounts';
 import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { useStudyEntities } from '../core/hooks/study';
 
 interface Props {

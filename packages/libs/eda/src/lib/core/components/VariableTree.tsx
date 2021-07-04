@@ -1,7 +1,6 @@
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 import { Button } from '@material-ui/core';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { cx } from '../../workspace/Utils';
@@ -138,7 +137,7 @@ export function VariableTree(props: Props) {
 export function VariableTreeDropdown(props: Props) {
   const { rootEntity, entityId, variableId, onChange } = props;
   const [hideDisabledFields, setHideDisabledFields] = useState(false);
-  const entities = Array.from(preorder(rootEntity, (e) => e.children ?? []));
+  const entities = useStudyEntities(rootEntity);
   const variable = entities
     .find((e) => e.id === entityId)
     ?.variables.find((v) => v.id === variableId);
