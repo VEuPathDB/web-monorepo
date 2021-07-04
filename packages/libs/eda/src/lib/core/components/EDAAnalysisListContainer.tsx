@@ -1,10 +1,10 @@
 import React from 'react';
 import { useWdkStudyRecord, useStudyMetadata } from '../hooks/study';
-import { LoadError } from '@veupathdb/wdk-client/lib/Components';
 import { AnalysisClient } from '../api/analysis-api';
 import { SubsettingClient } from '../api/subsetting-api';
 import { DataClient } from '../api/data-api';
 import { WorkspaceContext } from '../context/WorkspaceContext';
+import ErrorStatus from '@veupathdb/wdk-client/lib/Components/PageStatus/Error';
 
 interface Props {
   studyId: string;
@@ -26,7 +26,13 @@ export function EDAAnalysisListContainer(props: Props) {
   } = props;
   const studyRecordState = useWdkStudyRecord(studyId);
   const studyMetadata = useStudyMetadata(studyId, subsettingClient);
-  if (studyMetadata.error) return <LoadError />;
+  if (studyMetadata.error)
+    return (
+      <ErrorStatus>
+        <h2>Unable to load study metadata</h2>
+        <pre>{String(studyMetadata.error)}</pre>
+      </ErrorStatus>
+    );
   if (studyRecordState == null || studyMetadata.value == null) return null;
   return (
     <div className={className}>

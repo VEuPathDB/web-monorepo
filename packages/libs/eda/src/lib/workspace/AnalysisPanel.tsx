@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
 import {
@@ -54,6 +54,18 @@ export function AnalysisPanel(props: Props) {
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
   const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
+  // check whether a user is at viz's full screen mode
+  const inFullscreenVisualization = useMemo(() => {
+    const relativePath = location.pathname.replace(routeBase, '');
+    const lastUrlElement = relativePath.split('/').pop();
+
+    // 'Browse and Subset' and the 'Visualize' selector do not have a UUID in the url
+    return (
+      lastUrlElement?.match(
+        '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+      ) != null
+    );
+  }, [location, routeBase]);
 
   useEffect(() => {
     const relativePath = location.pathname.replace(routeBase, '');
@@ -138,7 +150,10 @@ export function AnalysisPanel(props: Props) {
           },
           {
             display: 'Visualize',
-            route: `/visualizations${lastVizPath}`,
+            // check whether user is at viz's full screen mode
+            route: inFullscreenVisualization
+              ? '/visualizations/pass-through'
+              : `/visualizations${lastVizPath}`,
             exact: false,
             replace: true,
           },

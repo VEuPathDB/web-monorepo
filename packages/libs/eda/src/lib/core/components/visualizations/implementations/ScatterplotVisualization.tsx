@@ -1,10 +1,7 @@
 // load scatter plot component
-import XYPlot, {
-  ScatterplotProps,
-} from '@veupathdb/components/lib/plots/XYPlot';
+import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
@@ -23,7 +20,7 @@ import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 
 import { InputVariables } from '../InputVariables';
 import {
@@ -82,10 +79,10 @@ const ScatterplotConfig = t.intersection([
     enableOverlay: t.boolean,
   }),
   t.partial({
-    xAxisVariable: Variable,
-    yAxisVariable: Variable,
-    overlayVariable: Variable,
-    facetVariable: Variable,
+    xAxisVariable: VariableDescriptor,
+    yAxisVariable: VariableDescriptor,
+    overlayVariable: VariableDescriptor,
+    facetVariable: VariableDescriptor,
     valueSpecConfig: t.string,
   }),
 ]);
@@ -162,7 +159,7 @@ function ScatterplotViz(props: Props) {
   );
 
   const findVariable = useCallback(
-    (variable?: Variable) => {
+    (variable?: VariableDescriptor) => {
       if (variable == null) return undefined;
       return entities
         .find((e) => e.id === variable.entityId)
@@ -292,9 +289,11 @@ function ScatterplotViz(props: Props) {
         fullscreen ? (
           <ScatterplotWithControls
             // data.value
-            data={[...data.value.dataSetProcess]}
-            width={1000}
-            height={600}
+            data={data.value.dataSetProcess}
+            containerStyles={{
+              width: '1000px',
+              height: '600px',
+            }}
             // title={'Scatter plot'}
             independentAxisLabel={
               findVariable(vizConfig.xAxisVariable)?.displayName
@@ -302,9 +301,12 @@ function ScatterplotViz(props: Props) {
             dependentAxisLabel={
               findVariable(vizConfig.yAxisVariable)?.displayName
             }
-            independentAxisRange={[data.value.xMin, data.value.xMax]}
+            independentAxisRange={{
+              min: data.value.xMin,
+              max: data.value.xMax,
+            }}
             // block this for now
-            dependentAxisRange={[data.value.yMin, data.value.yMax]}
+            dependentAxisRange={{ min: data.value.yMin, max: data.value.yMax }}
             // XYPlotControls valueSpecInitial
             valueSpec={vizConfig.valueSpecConfig}
             // valueSpec={valueSpecInitial}
@@ -316,17 +318,27 @@ function ScatterplotViz(props: Props) {
         ) : (
           // thumbnail/grid view
           <XYPlot
-            data={[...data.value.dataSetProcess]}
-            width={230}
-            height={150}
-            independentAxisRange={[data.value.xMin, data.value.xMax]}
+            data={data.value.dataSetProcess}
+            containerStyles={{
+              width: '230px',
+              height: '150px',
+            }}
+            independentAxisRange={{
+              min: data.value.xMin,
+              max: data.value.xMax,
+            }}
             // block this for now
-            dependentAxisRange={[data.value.yMin, data.value.yMax]}
+            dependentAxisRange={{ min: data.value.yMin, max: data.value.yMax }}
             // new props for better displaying grid view
             displayLegend={false}
             displayLibraryControls={false}
-            staticPlot={true}
-            margin={{ l: 30, r: 20, b: 15, t: 20 }}
+            interactive={false}
+            spacingOptions={{
+              marginLeft: 30,
+              marginRight: 20,
+              marginBottom: 15,
+              marginTop: 20,
+            }}
             showSpinner={data.pending}
           />
         )
@@ -334,9 +346,18 @@ function ScatterplotViz(props: Props) {
         // no data or data error case: with control
         <>
           <XYPlot
-            data={[]}
-            width={fullscreen ? 1000 : 230}
-            height={fullscreen ? 600 : 150}
+            data={undefined}
+            containerStyles={
+              fullscreen
+                ? {
+                    width: '1000px',
+                    height: '600px',
+                  }
+                : {
+                    width: '230px',
+                    height: '150px',
+                  }
+            }
             independentAxisLabel={
               fullscreen
                 ? findVariable(vizConfig.xAxisVariable)?.displayName
@@ -347,10 +368,19 @@ function ScatterplotViz(props: Props) {
                 ? findVariable(vizConfig.yAxisVariable)?.displayName
                 : undefined
             }
-            displayLegend={fullscreen ? true : false}
+            displayLegend={fullscreen}
             displayLibraryControls={false}
-            staticPlot={fullscreen ? false : true}
-            margin={fullscreen ? {} : { l: 30, r: 20, b: 15, t: 20 }}
+            interactive={fullscreen}
+            spacingOptions={
+              fullscreen
+                ? {}
+                : {
+                    marginLeft: 30,
+                    marginRight: 20,
+                    marginBottom: 15,
+                    marginTop: 20,
+                  }
+            }
             showSpinner={data.pending}
           />
           {visualization.type === 'scatterplot' && fullscreen && (
@@ -380,7 +410,7 @@ function ScatterplotViz(props: Props) {
   );
 }
 
-type ScatterplotWithControlsProps = ScatterplotProps & {
+type ScatterplotWithControlsProps = XYPlotProps & {
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
   vizType: string;
@@ -410,7 +440,7 @@ function ScatterplotWithControls({
         {...ScatterplotProps}
         data={data}
         // add controls
-        displayLegend={data.length > 1}
+        displayLegend={data?.series && data.series.length > 1}
         displayLibraryControls={false}
       />
       {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
@@ -471,10 +501,10 @@ type getRequestParamsProps =
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: Variable,
+  xAxisVariable: VariableDescriptor,
   // set yAxisVariable as optional for densityplot
-  yAxisVariable?: Variable,
-  overlayVariable?: Variable,
+  yAxisVariable?: VariableDescriptor,
+  overlayVariable?: VariableDescriptor,
   // add visualization.type
   vizType?: string,
   // XYPlotControls
@@ -984,7 +1014,7 @@ function processInputData<T extends number | Date>(
     }
   });
 
-  return { dataSetProcess, xMin, xMax, yMin, yMax };
+  return { dataSetProcess: { series: dataSetProcess }, xMin, xMax, yMin, yMax };
 }
 
 /*

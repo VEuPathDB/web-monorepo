@@ -4,8 +4,8 @@ import {
   preorder,
 } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { isEmpty, union } from 'lodash';
-import { StudyEntity, StudyVariable } from '../types/study';
-import { Variable } from '../types/variable';
+import { StudyEntity, VariableTreeNode } from '../types/study';
+import { VariableDescriptor } from '../types/variable';
 import { DataElementConstraint } from '../types/visualization';
 import { findEntityAndVariable } from './study-metadata';
 
@@ -42,7 +42,7 @@ export function filterVariablesByConstraint(
 export function excludedVariables(
   rootEntity: StudyEntity,
   constraint?: DataElementConstraint
-): Variable[] {
+): VariableDescriptor[] {
   if (constraint == null) return [];
   return Seq.from(preorder(rootEntity, (e) => e.children ?? []))
     .flatMap((e) =>
@@ -60,7 +60,7 @@ export function excludedVariables(
  */
 function variableConstraintPredicate(
   constraint: DataElementConstraint,
-  variable: StudyVariable
+  variable: VariableTreeNode
 ) {
   return (
     variable.dataShape == null ||
@@ -72,7 +72,7 @@ function variableConstraintPredicate(
   );
 }
 
-export type ValueByInputName = Partial<Record<string, Variable>>;
+export type ValueByInputName = Partial<Record<string, VariableDescriptor>>;
 export type DataElementConstraintRecord = Record<string, DataElementConstraint>;
 
 /**

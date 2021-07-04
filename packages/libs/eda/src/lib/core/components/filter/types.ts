@@ -1,25 +1,25 @@
-import { StudyVariable } from '../../types/study';
+import {
+  DateVariable,
+  NumberVariable,
+  StringVariable,
+} from '../../types/study';
 
-export interface HistogramVariable extends StudyVariable {
-  type: 'number' | 'date';
+export type HistogramVariable = (NumberVariable | DateVariable) & {
   dataShape: 'continuous';
-}
+};
 
-export interface TableVariable extends StudyVariable {
-  type: 'string' | 'number' | 'date';
+export type TableVariable = (StringVariable | NumberVariable | DateVariable) & {
   dataShape: 'categorical' | 'binary' | 'ordinal';
-}
+};
 
-export interface ScatterplotVariable extends StudyVariable {
-  type: 'number' | 'date';
+export type ScatterplotVariable = (NumberVariable | DateVariable) & {
   dataShape: 'continuous';
-}
+};
 
-export interface MosaicVariable extends StudyVariable {
-  type: 'string' | 'number' | 'category';
+export type MosaicVariable = (StringVariable | NumberVariable) & {
   dataShape: 'categorical' | 'binary' | 'ordinal';
-}
+};
 
-export interface TwoByTwoVariable extends MosaicVariable {
+export type TwoByTwoVariable = MosaicVariable & {
   dataShape: 'binary';
-}
+};

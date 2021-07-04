@@ -3,7 +3,7 @@ import { DataClient } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
 import { useDataClient } from '../../hooks/workspace';
 import { Filter } from '../../types/filter';
-import { StudyEntity, StudyVariable } from '../../types/study';
+import { StudyEntity, VariableTreeNode } from '../../types/study';
 
 type SummaryFetcher<T> = (
   dataClient: DataClient,
@@ -11,7 +11,7 @@ type SummaryFetcher<T> = (
 ) => Promise<T>;
 
 export function useDataEndpoint<T>(
-  variable: StudyVariable,
+  variable: VariableTreeNode,
   entity: StudyEntity,
   filters: Filter[] | undefined,
   fetchSummary: SummaryFetcher<T>

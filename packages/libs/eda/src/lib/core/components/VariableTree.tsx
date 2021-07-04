@@ -6,7 +6,7 @@ import { keyBy } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { cx } from '../../workspace/Utils';
 import { StudyEntity } from '../types/study';
-import { Variable } from '../types/variable';
+import { VariableDescriptor } from '../types/variable';
 import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
@@ -25,9 +25,9 @@ export interface Props {
   toggleStarredVariable: (targetVariableId: string) => void;
   entityId?: string;
   variableId?: string;
-  disabledVariables?: Variable[];
+  disabledVariables?: VariableDescriptor[];
   /** term string is of format "entityId/variableId"  e.g. "PCO_0000024/EUPATH_0000714" */
-  onChange: (variable?: Variable) => void;
+  onChange: (variable?: VariableDescriptor) => void;
   hideDisabledFields?: boolean;
   setHideDisabledFields?: (hide: boolean) => void;
 }
