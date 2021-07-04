@@ -1,14 +1,17 @@
-.GlobalFiltersDialog_CenterAnchor {
+.GlobalFiltersDialog_Wrapper {
   position: fixed;
-  width: 0;
-  height: 0;
-  top: 50vh;
-  left: 50vw;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 100;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  .GlobalFiltersDialog_TopLeftAnchor {
-    width: 0;
-    height: 0;
+  .react-draggable.react-resizable {
+    pointer-events: auto;
 
     .GlobalFiltersDialog {
       position: absolute;

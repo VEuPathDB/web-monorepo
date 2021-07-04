@@ -72,52 +72,40 @@ export default function GlobalFiltersDialog(props: Props) {
     content = <div>There are no filters applied to the dataset.</div>;
   }
 
-  const initialWidth = 400;
-  const initialHeight = 300;
-
   return (
-    <div className="GlobalFiltersDialog_CenterAnchor">
-      <div
-        className="GlobalFiltersDialog_TopLeftAnchor"
-        style={{
-          transform: `translate(-${initialWidth / 2}px, -${
-            initialHeight / 2
-          }px)`,
-        }}
-      >
-        <Draggable handle={'.GlobalFiltersDialog_Header'}>
-          <ResizableBox width={initialWidth} height={initialHeight}>
-            <div className="GlobalFiltersDialog">
-              <div className="GlobalFiltersDialog_Header">
-                <div className="GlobalFiltersDialog_Header_Left" />
-                <div className="GlobalFiltersDialog_Header_Center">
-                  All filters
-                </div>
-                <div className="GlobalFiltersDialog_Header_Right">
-                  <button
-                    className="GlobalFiltersDialog_CloseButton"
-                    onClick={() => props.setOpen(false)}
-                  >
-                    <i className="fa fa-close"></i>
-                  </button>
-                </div>
+    <div className="GlobalFiltersDialog_Wrapper">
+      <Draggable handle=".GlobalFiltersDialog_Header" bounds="html">
+        <ResizableBox width={400} height={300}>
+          <div className="GlobalFiltersDialog">
+            <div className="GlobalFiltersDialog_Header">
+              <div className="GlobalFiltersDialog_Header_Left" />
+              <div className="GlobalFiltersDialog_Header_Center">
+                All filters
               </div>
-              <div className="GlobalFiltersDialog_Content">{content}</div>
-              <div className="GlobalFiltersDialog_Footer">
-                {props.filters.length > 0 && (
-                  <Button
-                    className="GlobalFiltersDialog_RemoveAllButton"
-                    size="small"
-                    onClick={() => props.setFilters([])}
-                  >
-                    Remove all filters
-                  </Button>
-                )}
+              <div className="GlobalFiltersDialog_Header_Right">
+                <button
+                  className="GlobalFiltersDialog_CloseButton"
+                  onClick={() => props.setOpen(false)}
+                >
+                  <i className="fa fa-close" />
+                </button>
               </div>
             </div>
-          </ResizableBox>
-        </Draggable>
-      </div>
+            <div className="GlobalFiltersDialog_Content">{content}</div>
+            <div className="GlobalFiltersDialog_Footer">
+              {props.filters.length > 0 && (
+                <Button
+                  className="GlobalFiltersDialog_RemoveAllButton"
+                  size="small"
+                  onClick={() => props.setFilters([])}
+                >
+                  Remove all filters
+                </Button>
+              )}
+            </div>
+          </div>
+        </ResizableBox>
+      </Draggable>
     </div>
   );
 }
