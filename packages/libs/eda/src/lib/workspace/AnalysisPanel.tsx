@@ -96,19 +96,16 @@ export function AnalysisPanel(props: Props) {
         }
         globalFiltersDialogOpen={globalFiltersDialogOpen}
       />
-      {globalFiltersDialogOpen && (
-        <GlobalFiltersDialog
-          setOpen={setGlobalFiltersDialogOpen}
-          entities={entities}
-          filters={analysis.filters}
-          setFilters={analysisState.setFilters}
-          removeFilter={(filter) =>
-            analysisState.setFilters(
-              analysis.filters.filter((f) => f !== filter)
-            )
-          }
-        />
-      )}
+      <GlobalFiltersDialog
+        open={globalFiltersDialogOpen}
+        setOpen={setGlobalFiltersDialogOpen}
+        entities={entities}
+        filters={analysis.filters}
+        setFilters={analysisState.setFilters}
+        removeFilter={(filter) =>
+          analysisState.setFilters(analysis.filters.filter((f) => f !== filter))
+        }
+      />
       <Route
         path={[
           `${routeBase}/variables/:entityId?/:variableId?`,

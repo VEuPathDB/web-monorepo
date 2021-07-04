@@ -10,6 +10,8 @@ import 'react-resizable/css/styles.css';
 import './GlobalFiltersDialog.scss';
 
 interface Props {
+  // Whether the dialog is open
+  open: boolean;
   // A function to set whether the dialog is open
   setOpen: (open: boolean) => void;
   // The list of entities over which filters are being applied
@@ -73,7 +75,10 @@ export default function GlobalFiltersDialog(props: Props) {
   }
 
   return (
-    <div className="GlobalFiltersDialog_Wrapper">
+    <div
+      className="GlobalFiltersDialog_Wrapper"
+      style={{ display: props.open ? 'flex' : 'none' }}
+    >
       <Draggable handle=".GlobalFiltersDialog_Header" bounds="html">
         <ResizableBox width={400} height={300}>
           <div className="GlobalFiltersDialog">
