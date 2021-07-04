@@ -72,12 +72,15 @@
         width: 100%;
         background-color: #eee;
         text-align: center;
-        flex: 0 1 20px;
+        flex: 0 1 34px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
         .GlobalFiltersDialog_RemoveAllButton {
-          border: none;
-          background: none;
-          color: rgb(0, 102, 153);
+          background-color: lightgray;
+          box-shadow: none;
 
           &:hover {
             background-color: pink;

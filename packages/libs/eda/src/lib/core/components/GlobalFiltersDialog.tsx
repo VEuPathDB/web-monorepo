@@ -3,6 +3,7 @@ import { Filter } from '../types/filter';
 import FilterChipList from './FilterChipList';
 import Draggable from 'react-draggable';
 import { ResizableBox } from 'react-resizable';
+import { Button } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import _ from 'lodash';
 import 'react-resizable/css/styles.css';
@@ -104,12 +105,13 @@ export default function GlobalFiltersDialog(props: Props) {
               <div className="GlobalFiltersDialog_Content">{content}</div>
               <div className="GlobalFiltersDialog_Footer">
                 {props.filters.length > 0 && (
-                  <button
+                  <Button
                     className="GlobalFiltersDialog_RemoveAllButton"
+                    size="small"
                     onClick={() => props.setFilters([])}
                   >
                     Remove all filters
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
