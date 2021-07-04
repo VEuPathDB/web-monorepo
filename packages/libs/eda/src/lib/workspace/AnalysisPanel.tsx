@@ -94,6 +94,7 @@ export function AnalysisPanel(props: Props) {
         onFilterIconClick={() =>
           setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
         }
+        globalFiltersDialogOpen={globalFiltersDialogOpen}
       />
       {globalFiltersDialogOpen && (
         <GlobalFiltersDialog

@@ -14,6 +14,7 @@ interface Props {
   saveAnalysis: () => Promise<void>;
   deleteAnalysis: () => Promise<void>;
   onFilterIconClick: () => void;
+  globalFiltersDialogOpen: boolean;
 }
 
 export function AnalysisSummary(props: Props) {
@@ -23,6 +24,7 @@ export function AnalysisSummary(props: Props) {
     copyAnalysis,
     deleteAnalysis,
     onFilterIconClick,
+    globalFiltersDialogOpen,
   } = props;
   const history = useHistory();
   const { url } = useRouteMatch();
@@ -45,11 +47,10 @@ export function AnalysisSummary(props: Props) {
         {analysis.filters.length > 0 && (
           <Button
             className={cx('-SeeAllFiltersButton')}
-            // variant="contained"
             onClick={onFilterIconClick}
             startIcon={<Icon className="fa fa-filter" />}
           >
-            Show all filters
+            {(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
           </Button>
         )}
       </div>
