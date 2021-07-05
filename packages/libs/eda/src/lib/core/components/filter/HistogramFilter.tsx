@@ -15,7 +15,6 @@ import {
   HistogramData,
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import UnknownCount from '@veupathdb/wdk-client/lib/Components/AttributeFilter/UnknownCount';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
@@ -76,6 +75,11 @@ export function HistogramFilter(props: Props) {
     if (variable.type === 'number')
       return {
         binWidth: variable.binWidthOverride ?? variable.binWidth,
+        binWidthTimeUnit: undefined,
+        independentAxisRange:
+          variable.displayRangeMin != null && variable.displayRangeMax != null
+            ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
+            : undefined,
         ...otherDefaults,
       };
 
@@ -87,7 +91,11 @@ export function HistogramFilter(props: Props) {
 
     return {
       binWidth: binWidth?.value,
-      binWidthUnit: binWidth?.unit,
+      binWidthTimeUnit: binWidth?.unit as TimeUnit, // bit nasty!
+      independentAxisRange:
+        variable.displayRangeMin != null && variable.displayRangeMax != null
+          ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
+          : undefined,
       ...otherDefaults,
     };
   }, [variable]);
@@ -260,12 +268,6 @@ export function HistogramFilter(props: Props) {
   // the range to be reset if the filter is removed.
   return (
     <div className="filter-param" style={{ position: 'relative' }}>
-      {data.pending && (
-        <Loading
-          radius={16}
-          style={{ position: 'absolute', top: '200px', left: '200px' }}
-        />
-      )}
       {data.error && <pre>{String(data.error)}</pre>}
       <div>
         {fgSummaryStats && (
@@ -318,6 +320,7 @@ export function HistogramFilter(props: Props) {
           updateUIState={updateUIState}
           variableName={variable.displayName}
           entityName={entity.displayName}
+          showSpinner={data.pending}
         />
       </div>
     </div>
@@ -379,6 +382,10 @@ function HistogramPlotWithControls({
         `handleIndependentAxisRangeChange newRange: ${newRange?.min} to ${newRange?.max}`
       );
       updateUIState({
+        // when the independent axis range is 'zoomed', reset the binWidth
+        // so the back end provides a suitable value
+        binWidth: undefined,
+        binWidthTimeUnit: undefined,
         independentAxisRange: newRange,
       });
     },
@@ -387,11 +394,11 @@ function HistogramPlotWithControls({
 
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateUIState({
-      independentAxisRange: undefined,
-      binWidth: undefined,
-      binWidthTimeUnit: undefined,
+      independentAxisRange: defaultUIState.independentAxisRange,
+      binWidth: defaultUIState.binWidth,
+      binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
     });
-  }, [updateUIState]);
+  }, [defaultUIState]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
@@ -469,6 +476,7 @@ function HistogramPlotWithControls({
         // add independentAxisLabel
         independentAxisLabel={variableName}
         isZoomed={uiState.independentAxisRange ? true : false}
+        independentAxisRange={uiState.independentAxisRange}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
         legendOptions={{
