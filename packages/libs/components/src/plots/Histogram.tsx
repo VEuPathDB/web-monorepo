@@ -55,6 +55,8 @@ export interface HistogramProps
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
   isZoomed?: boolean;
+  /** independent axis range min and max (this will be widened to include data if needed) */
+  independentAxisRange?: NumberOrDateRange;
 }
 
 /** A Plot.ly based histogram component. */
@@ -72,6 +74,7 @@ export default function Histogram({
   onSelectedRangeChange = () => {},
   selectedRangeBounds,
   isZoomed = false,
+  independentAxisRange,
   ...restProps
 }: HistogramProps) {
   /**
@@ -296,7 +299,14 @@ export default function Histogram({
     title: {
       text: independentAxisLabel,
     },
-    range: [minBinStart, maxBinEnd],
+    range: [
+      independentAxisRange && independentAxisRange.min < minBinStart
+        ? independentAxisRange.min
+        : minBinStart,
+      independentAxisRange && independentAxisRange?.max > maxBinEnd
+        ? independentAxisRange.max
+        : maxBinEnd,
+    ],
     tickfont: data.series.length ? {} : { color: 'transparent' },
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
