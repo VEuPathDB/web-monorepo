@@ -34,6 +34,7 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
+import { parseTimeDelta } from '../../utils/date-conversion';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -53,10 +54,6 @@ const UIState = partial({
   dependentAxisLogScale: boolean,
 });
 
-const defaultUIState: UIState = {
-  dependentAxisLogScale: false,
-};
-
 export function HistogramFilter(props: Props) {
   const {
     variable,
@@ -69,12 +66,38 @@ export function HistogramFilter(props: Props) {
   const { setFilters } = analysisState;
   const filters = analysisState.analysis?.filters;
   const uiStateKey = `${entity.id}/${variable.id}`;
+
+  // get as much default UI state from variable annotations as possible
+  const defaultUIState: UIState = useMemo(() => {
+    const otherDefaults = {
+      dependentAxisLogScale: false,
+    };
+
+    if (variable.type === 'number')
+      return {
+        binWidth: variable.binWidthOverride ?? variable.binWidth,
+        ...otherDefaults,
+      };
+
+    // else date variable
+    const binWidthString = variable.binWidthOverride ?? variable.binWidth;
+    const binWidth = binWidthString
+      ? parseTimeDelta(binWidthString)
+      : undefined;
+
+    return {
+      binWidth: binWidth?.value,
+      binWidthUnit: binWidth?.unit,
+      ...otherDefaults,
+    };
+  }, [variable]);
+
   const uiState = useMemo(() => {
     return pipe(
       UIState.decode(analysisState.analysis?.variableUISettings[uiStateKey]),
       getOrElse((): UIState => defaultUIState)
     );
-  }, [analysisState.analysis?.variableUISettings, uiStateKey]);
+  }, [analysisState.analysis?.variableUISettings, uiStateKey, defaultUIState]);
   const dataClient = useDataClient();
   const getData = useCallback(
     async (
@@ -126,7 +149,7 @@ export function HistogramFilter(props: Props) {
       ];
       const binWidth: NumberOrTimeDelta =
         variable.type === 'number'
-          ? background.histogram.config.binSpec.value || 1
+          ? background.histogram.config.binSpec.value || 1 // TO DO: throw error when response doesn't contain binWidth?
           : {
               value: background.histogram.config.binSpec.value || 1,
               unit: background.histogram.config.binSpec.units ?? 'month',
@@ -291,6 +314,7 @@ export function HistogramFilter(props: Props) {
           barLayout={'overlay'}
           updateFilter={updateFilter}
           uiState={uiState}
+          defaultUIState={defaultUIState}
           updateUIState={updateUIState}
           variableName={variable.displayName}
           entityName={entity.displayName}
@@ -304,6 +328,7 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   getData: (params?: UIState) => Promise<HistogramData>; // TO DO: not used - get rid of?
   updateFilter: (selectedRange?: NumberRange | DateRange) => void;
   uiState: UIState;
+  defaultUIState: UIState;
   updateUIState: (uiState: UIState) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
   // add variableName for independentAxisLabel
@@ -316,6 +341,7 @@ function HistogramPlotWithControls({
   getData,
   updateFilter,
   uiState,
+  defaultUIState,
   updateUIState,
   filter,
   // variableName for independentAxisLabel
@@ -384,7 +410,7 @@ function HistogramPlotWithControls({
       dependentAxisRange: undefined,
       dependentAxisLogScale: defaultUIState.dependentAxisLogScale,
     });
-  }, [updateUIState]);
+  }, [defaultUIState]);
 
   const handleDependentAxisLogScale = useCallback(
     (newState?: boolean) => {
