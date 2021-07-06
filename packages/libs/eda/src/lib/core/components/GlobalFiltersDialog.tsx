@@ -80,7 +80,7 @@ export default function GlobalFiltersDialog(props: Props) {
       style={{ display: props.open ? 'flex' : 'none' }}
     >
       <Draggable handle=".GlobalFiltersDialog_Header" bounds="html">
-        <ResizableBox width={400} height={300}>
+        <ResizableBox width={400} height={300} minConstraints={[200, 200]}>
           <div className="GlobalFiltersDialog">
             <div className="GlobalFiltersDialog_Header">
               <div className="GlobalFiltersDialog_Header_Left" />

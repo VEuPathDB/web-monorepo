@@ -6,12 +6,11 @@
   height: 100vh;
   z-index: 100;
   pointer-events: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
   .react-draggable.react-resizable {
     pointer-events: auto;
+    top: calc(50vh - 150px);
+    left: calc(50vw - 200px);
 
     .GlobalFiltersDialog {
       position: absolute;
