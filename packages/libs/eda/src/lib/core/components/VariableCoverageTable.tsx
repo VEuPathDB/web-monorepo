@@ -78,7 +78,7 @@ export function VariableCoverageTable({
                   {row.completeCount?.toLocaleString()}
                   {row.completePercent != null && (
                     <span className="percentage">
-                      {row.completePercent.toFixed(2)}%
+                      ({row.completePercent.toFixed(2)}%)
                     </span>
                   )}
                 </td>
