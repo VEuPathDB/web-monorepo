@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/cytoscape": "3.2.9",
-    "@veupathdb/multi-blast": "^0.1.1-beta.5",
+    "@veupathdb/multi-blast": "^0.1.1-beta.6",
     "@veupathdb/preferred-organisms": "^0.1.1-alpha.20",
     "@veupathdb/wdk-client": "^0.1.1",
     "@veupathdb/web-common": "^0.1.1-alpha.11",
