@@ -191,6 +191,16 @@ export default function VariableList(props: VariableListProps) {
 
   const starredVariablesLoading = starredVariables == null;
 
+  // moved this useState here
+  const [showOnlyStarredVariables, setShowOnlyStarredVariables] = useState(
+    false
+  );
+
+  // make visibleStarredVariables state be used at MyVariable
+  const [visibleStarredVariables, setVisibleStarredVariables] = useState<
+    string[]
+  >([]);
+
   const starredVariablesSet = useMemo(() => {
     const presentStarredVariables = starredVariables?.filter((variableId) =>
       availableVariables.has(variableId)
@@ -198,6 +208,15 @@ export default function VariableList(props: VariableListProps) {
 
     return new Set(presentStarredVariables);
   }, [availableVariables, starredVariables]);
+
+  // this will be used for MyVariable instead of starredVariableSet
+  const visibleStarredVariablesSet = useMemo(() => {
+    const presentStarredVariables = visibleStarredVariables?.filter(
+      (variableId) => availableVariables.has(variableId)
+    );
+
+    return new Set(presentStarredVariables);
+  }, [availableVariables, visibleStarredVariables]);
 
   const disabledFields = useMemo(() => new Set(disabledFieldIds), [
     disabledFieldIds,
@@ -235,21 +254,13 @@ export default function VariableList(props: VariableListProps) {
     ]
   );
 
-  const [showOnlyStarredVariables, setShowOnlyStarredVariables] = useState(
-    false
-  );
-
   const toggleShowOnlyStarredVariables = useCallback(() => {
     setShowOnlyStarredVariables((oldValue) => !oldValue);
-  }, []);
+    setVisibleStarredVariables(starredVariables ?? []);
+  }, [starredVariables]);
 
-  const starredVariableToggleDisabled = starredVariablesSet.size === 0;
-
-  useEffect(() => {
-    if (starredVariableToggleDisabled) {
-      setShowOnlyStarredVariables(false);
-    }
-  }, [starredVariableToggleDisabled]);
+  const starredVariableToggleDisabled =
+    !showOnlyStarredVariables && starredVariablesSet.size === 0;
 
   const additionalFilters = useMemo(
     () => [
@@ -346,7 +357,8 @@ export default function VariableList(props: VariableListProps) {
         : pruneDescendantNodes(
             (node) =>
               node.children.length > 0 ||
-              starredVariablesSet.has(node.field.term.split('/')[1]),
+              // visibleStarredVariablesSet is used for MyVariable instead of starredVariableSet
+              visibleStarredVariablesSet.has(node.field.term.split('/')[1]),
             fieldTree
           );
     return hideDisabledFields
@@ -361,7 +373,7 @@ export default function VariableList(props: VariableListProps) {
     starredVariableToggleDisabled,
     fieldTree,
     hideDisabledFields,
-    starredVariablesSet,
+    visibleStarredVariablesSet,
     disabledFields,
   ]);
 
