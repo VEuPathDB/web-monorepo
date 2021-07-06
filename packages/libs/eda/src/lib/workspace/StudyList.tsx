@@ -44,7 +44,7 @@ export function StudyList(props: Props) {
             (r) => r.attributes.dataset_id === study.datasetId
           );
           return (
-            <li>
+            <li key={study.datasetId}>
               <Link to={`${url}/${study.datasetId}`}>
                 {dataset ? safeHtml(dataset.displayName) : study.id}
               </Link>
