@@ -445,13 +445,16 @@ function HistogramPlotWithControls({
   }, [filter]);
 
   const selectedRangeBounds = useMemo((): NumberOrDateRange | undefined => {
-    return data?.series[0]?.summary
-      ? fullISODateRange({
-          min: data.series[0].summary.min,
-          max: data.series[0].summary.max,
-        } as NumberOrDateRange)
+    return data?.series[0]?.summary && data?.valueType
+      ? fullISODateRange(
+          {
+            min: data.series[0].summary.min,
+            max: data.series[0].summary.max,
+          } as NumberOrDateRange,
+          data.valueType
+        )
       : undefined;
-  }, [data?.series]);
+  }, [data?.series, data?.valueType]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
