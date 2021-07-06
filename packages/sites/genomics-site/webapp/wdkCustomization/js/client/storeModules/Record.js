@@ -195,17 +195,14 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
 }
 
 function pruneByDatasetCategory(categoryTree, record) {
-  console.log(categoryTree)
-  console.log(record)
 
 
   // Remove Dataset Version and Source Version from genome datasets, otherwise remove genome tables from non-genome datasets
-  // Additionally, choose either the genome dataset history or non-genome dataset history table
+  // Additionally, choose either the genome dataset history (GenomeHistory) or non-genome dataset history table (DatasetHistory).
   if (record.attributes.newcategory === 'Annotation, curation and identifiers') {
 
     categoryTree = tree.pruneDescendantNodes(
       individual => {
-        console.log(individual);
         if (individual.children.length > 0) return true;
         if (individual.wdkReference == null) return false;
         if (individual.wdkReference.name === 'version') return false;
