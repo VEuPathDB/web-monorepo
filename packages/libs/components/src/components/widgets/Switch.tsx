@@ -10,9 +10,9 @@ export type SwitchProps = {
   /** Optional label for widget. */
   label?: string;
   /** If the switch is on or off. */
-  state: boolean;
+  state?: boolean;
   /** What action to take when state changes. */
-  onStateChange: (event: { target: HTMLInputElement }) => void;
+  onStateChange: (newState: boolean) => void;
   /** Color to use. Will accept any valid CSS color definition.
    * Defaults to LIGHT_BLUE */
   color?: string;
@@ -64,7 +64,10 @@ export default function Switch({
       <ThemeProvider theme={theme}>
         <MaterialSwitch
           checked={state}
-          onChange={onStateChange}
+          // The stinky use of `any` here comes from
+          // an incomplete type definition in the
+          // material UI library. (Comment author unknown - possibly MD)
+          onChange={(event: any) => onStateChange(event.target.checked)}
           size="small"
           color="primary"
         />

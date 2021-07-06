@@ -102,14 +102,14 @@ function BaseInput({
           });
         return !required;
       }
-      if (minValue !== undefined && newValue < minValue) {
+      if (minValue != null && newValue < minValue) {
         newValue = minValue;
         setErrorState({
           error: true,
           helperText: `Sorry, value can't go below ${minValue}!`,
         });
         return false;
-      } else if (maxValue !== undefined && newValue > maxValue) {
+      } else if (maxValue != null && newValue > maxValue) {
         newValue = maxValue;
         setErrorState({
           error: true,

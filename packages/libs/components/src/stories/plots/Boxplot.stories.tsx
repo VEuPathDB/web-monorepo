@@ -1,12 +1,12 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import Boxplot from '../../plots/Boxplot';
+import Boxplot, { BoxplotProps } from '../../plots/Boxplot';
 
 export default {
   title: 'Plots/Boxplot',
   component: Boxplot,
   argTypes: {
-    markerOpacity: {
+    opacity: {
       control: {
         type: 'range',
         min: 0,
@@ -184,8 +184,11 @@ export const singleDataset = () => {
   return (
     <Boxplot
       data={singleData.series}
-      width={plotWidth}
-      height={plotHeight}
+      //DKDK width/height props are replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
       title={plotTitle}
       orientation={orientation}
       independentAxisLabel={'Floor material'}
@@ -194,10 +197,10 @@ export const singleDataset = () => {
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
       showMean={true}
-      staticPlot={false}
+      //DKDK staticPlot is changed to interactive
+      interactive={true}
       displayLegend={singleData.series.length > 1}
       displayLibraryControls={false}
-      // margin={{l: 50, r: 10, b: 20, t: 10}}
     />
   );
 };
@@ -206,8 +209,11 @@ export const multipleDataset = () => {
   return (
     <Boxplot
       data={multipleData.series}
-      width={plotWidth}
-      height={plotHeight}
+      //DKDK width/height props are replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
       title={plotTitle}
       orientation={orientation}
       independentAxisLabel={'Floor material'}
@@ -216,10 +222,10 @@ export const multipleDataset = () => {
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
       showMean={true}
-      staticPlot={false}
+      //DKDK staticPlot is changed to interactive
+      interactive={true}
       displayLegend={multipleData.series.length > 1}
       displayLibraryControls={false}
-      // margin={{l: 50, r: 10, b: 20, t: 10}}
     />
   );
 };
@@ -228,8 +234,11 @@ export const yearDataset = () => {
   return (
     <Boxplot
       data={yearData.series}
-      width={plotWidth}
-      height={plotHeight}
+      //DKDK width height is replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
       title={plotTitle}
       orientation={orientation}
       independentAxisLabel={'Breastfed'}
@@ -238,10 +247,18 @@ export const yearDataset = () => {
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
       showMean={true}
-      staticPlot={false}
+      //DKDK staticPlot is changed to interactive
+      interactive={true}
       displayLegend={multipleData.series.length > 1}
       displayLibraryControls={false}
-      // margin={{l: 50, r: 10, b: 20, t: 10}}
+      //DKDK margin is replaced with spacingOptions
+      spacingOptions={{
+        marginTop: 100,
+        marginRight: 100,
+        marginBottom: 100,
+        marginLeft: 100,
+      }}
+      legendTitle={'Legend title example'}
       // most likely, no need to use independentValueType props
       // independentValueType={'number'}
       // this will be like findVariable(vizConfig.yAxisVariable)?.type at viz
@@ -250,17 +267,76 @@ export const yearDataset = () => {
   );
 };
 
-// adding storybook control
 const Template = (args: any) => <Boxplot {...args} />;
+
+export const EmptyLoading: Story<BoxplotProps> = Template.bind({});
+EmptyLoading.argTypes = storyArgTypes(
+  (EmptyLoading.args = {
+    showSpinner: true,
+    containerStyles: {
+      width: '600px',
+      height: '400px',
+    },
+  })
+);
+
+// adding storybook control
 export const WithStorybookControl: Story<any> = Template.bind({});
 
 // set default values for args that use default storybook control
-WithStorybookControl.args = {
-  data: singleData.series,
-  width: plotWidth,
-  height: plotHeight,
-  orientation: orientation,
-  showMean: true,
-  independentAxisLabel: 'Floor material',
-  dependentAxisLabel: 'Sleeping rooms in dwelling',
-};
+WithStorybookControl.argTypes = storyArgTypes(
+  (WithStorybookControl.args = {
+    data: singleData.series,
+    // width: plotWidth,
+    // height: plotHeight,
+    orientation: orientation,
+    showMean: true,
+    interactive: true,
+    displayLegend: true,
+    displayLibraryControls: true,
+    showSpinner: false,
+    legendTitle: 'Legend title example',
+    independentAxisLabel: 'Floor material',
+    dependentAxisLabel: 'Sleeping rooms in dwelling',
+    showIndependentAxisTickLabel: true,
+    showDependentAxisTickLabel: true,
+    containerStyles: {
+      width: plotWidth,
+      height: plotHeight,
+    },
+  })
+);
+
+function storyArgTypes(args: any): any {
+  if (args.data) {
+    const pointTraceIndices = args.data
+      .map((d: any, index: number) =>
+        d.rawData || d.outliers.length ? index : -1
+      )
+      .filter((i: number) => i >= 0);
+    return {
+      //DKDK disable data control
+      data: { control: { disable: true } },
+      showRawData: {
+        control: {
+          disable:
+            args.data.filter((d: any) => d.rawData && d.rawData.length)
+              .length == 0,
+        },
+      },
+      showMean: {
+        control: {
+          disable: args.data.filter((d: any) => d.mean != null).length == 0,
+        },
+      },
+      opacity: {
+        control: {
+          disable: pointTraceIndices.length == 0,
+        },
+      },
+      //DKDK no need to control independentValueType & dependentValueType
+      independentValueType: { control: { disable: true } },
+      dependentValueType: { control: { disable: true } },
+    };
+  }
+}

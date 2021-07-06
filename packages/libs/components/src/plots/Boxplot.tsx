@@ -1,60 +1,30 @@
 import React from 'react';
 import { Layout } from 'plotly.js';
-import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
-import Spinner from '../components/Spinner';
+import { PlotParams } from 'react-plotly.js';
+import PlotlyPlot, { PlotProps } from './PlotlyPlot';
+import {
+  BoxplotData,
+  OpacityAddon,
+  OpacityDefault,
+  OrientationAddon,
+  OrientationDefault,
+} from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
 
-export interface Props extends Omit<PlotProps, 'width' | 'height'> {
-  data: {
-    // number | string means number or date
-    // this is based on current data API doc
-    /** lower whisker/fence optional */
-    lowerfence?: number[];
-    /** upper whisker/fence optional */
-    upperfence?: number[];
-    /** lower quartile (bottom of box) */
-    q1: number[];
-    /** upper quartile (top of box) */
-    q3: number[];
-    /** median (middle line of box) */
-    median: number[];
-    /** mean (optional dotted line in box */
-    mean?: number[];
-    /** (x-axis) label for this box */
-    label: string[];
-    /** legend name */
-    name?: string;
-    /** color for this box */
-    color?: string;
-    /** optional complete data (not recommended for huge datasets) */
-    rawData?: number[] | string[];
-    /** outliers: data points outside upper and lower whiskers/fences (optional) */
-    outliers?: number[][] | string[][];
-  }[];
-  /** The width of the plot in pixels (if number), or CSS length. */
-  width?: number | string;
-  /** The height of the plot in pixels (if number), or CSS length. */
-  height?: number | string;
-  /** plot title */
-  title?: string;
-  /** label for the (typically) x-axis, e.g. Country */
+export interface BoxplotProps
+  extends PlotProps<BoxplotData>,
+    OrientationAddon,
+    OpacityAddon {
+  /** label for independent axis */
   independentAxisLabel?: string;
   /** label for the (typically) y-axis, e.g. Wealth */
   dependentAxisLabel?: string;
-  /** optional y-axis zoom range */
+  /** set the range of the dependent axis (optional)  */
   dependentAxisRange?: NumberOrDateRange;
-  /** box orientation (default is vertical) */
-  orientation?: 'vertical' | 'horizontal';
-  /** show the raw data points (if provided) as beeswarm alongside boxplot */
+  /** show the rawData (if given) - optional */
   showRawData?: boolean;
-  /** show the mean as dotted line inside the box */
+  /** Show the mean as an extra dotted line in the box - optional */
   showMean?: boolean;
-  /** opacity of outlier or raw data markers, optional */
-  markerOpacity?: number;
-  /** show plot legend */
-  displayLegend?: boolean;
-  /** show plotly's built-in controls */
-  displayLibraryControls?: boolean;
   /** show/hide independent axis tick label */
   showIndependentAxisTickLabel?: boolean;
   /** show/hide dependent axis tick label */
@@ -64,31 +34,28 @@ export interface Props extends Omit<PlotProps, 'width' | 'height'> {
   /** dependentValueType 'number' (default) or 'date' (y data should be given as string[])  */
   dependentValueType?: 'number' | 'date';
 }
+const EmptyBoxplotData: BoxplotData = [];
 
-export default function Boxplot({
-  data,
-  width,
-  height,
-  title,
-  orientation,
-  showRawData,
-  showMean,
-  independentAxisLabel,
-  dependentAxisLabel,
-  dependentAxisRange,
-  markerOpacity,
-  showModebar,
-  margin,
-  staticPlot,
-  showSpinner,
-  displayLegend,
-  displayLibraryControls,
-  showIndependentAxisTickLabel = true,
-  showDependentAxisTickLabel = true,
-  independentValueType,
-  dependentValueType,
-}: Props) {
-  const pdata = data.map((d, index) => {
+export default function Boxplot(props: BoxplotProps) {
+  const {
+    data: plotData = EmptyBoxplotData,
+    showRawData,
+    showMean,
+    independentAxisLabel,
+    dependentAxisLabel,
+    dependentAxisRange,
+    orientation = OrientationDefault,
+    opacity = OpacityDefault,
+    showIndependentAxisTickLabel = true,
+    showDependentAxisTickLabel = true,
+    independentValueType,
+    dependentValueType,
+    ...restProps
+  } = props;
+
+  // margin,
+
+  const data: PlotParams['data'] = plotData.map((d) => {
     const [independentAxis, dependentAxis] =
       orientation === 'vertical' ? ['x', 'y'] : ['y', 'x'];
     const orientationDependentProps: any = {
@@ -120,8 +87,8 @@ export default function Boxplot({
       lowerfence: d.lowerfence,
       upperfence: d.upperfence,
       median: d.median,
-      mean: d.mean !== undefined ? d.mean : undefined,
-      boxmean: d.mean !== undefined && showMean,
+      mean: d.mean !== null ? d.mean : undefined,
+      boxmean: d.mean !== null && showMean,
       q1: d.q1,
       q3: d.q3,
       // name is used as legend
@@ -129,13 +96,15 @@ export default function Boxplot({
       boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
       jitter: 0.1, // should be dependent on the number of datapoints...?
       marker: {
-        opacity: markerOpacity,
+        opacity: opacity,
         color: d.color,
       },
       ...orientationDependentProps,
       type: 'box',
-    } as const;
+    };
   });
+
+  console.log('data =', data);
 
   const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';
   const independentAxis = orientation === 'vertical' ? 'xaxis' : 'yaxis';
@@ -146,15 +115,9 @@ export default function Boxplot({
       showgrid: false,
       zeroline: false,
       showline: false,
-      title: {
-        text: independentAxisLabel ? independentAxisLabel : '',
-        font: {
-          family: 'Arial, Helvetica, sans-serif',
-          size: 14,
-        },
-      },
+      title: independentAxisLabel,
+      range: data.length ? undefined : [1, 5], // avoids x==0 line
       tickfont: data.length ? {} : { color: 'transparent' },
-      range: data.length ? undefined : [0, 10],
       showticklabels: showIndependentAxisTickLabel,
       // set type for date
       type: independentValueType === 'date' ? 'date' : undefined,
@@ -163,50 +126,19 @@ export default function Boxplot({
       automargin: true,
       showline: true,
       rangemode: 'tozero' as const,
-      title: {
-        text: dependentAxisLabel ? dependentAxisLabel : '',
-        font: {
-          family: 'Arial, Helvetica, sans-serif',
-          size: 14,
-        },
-      },
+      title: dependentAxisLabel,
+      range: dependentAxisRange
+        ? [dependentAxisRange?.min, dependentAxisRange?.max]
+        : undefined,
       tickfont: data.length ? {} : { color: 'transparent' },
-      range: data.length ? undefined : [0, 10],
       showticklabels: showDependentAxisTickLabel,
       // type: 'date' is required for y-axis date case like enrollment year
       // but not working properly as it is classified as number at data
       type: dependentValueType === 'date' ? 'date' : undefined,
     },
-    title: {
-      text: title ? title : '',
-    },
-    showlegend: displayLegend,
+    //DKDK don't forget this for multiple datasets
     boxmode: 'group',
   };
-  return (
-    <div style={{ position: 'relative', width: width, height: height }}>
-      <PlotlyPlot
-        data={pdata}
-        style={{ width: width, height: height }}
-        layout={{
-          ...layout,
-          ...{
-            // width: width,
-            // height: height,
-            margin: margin ? margin : undefined,
-          },
-        }}
-        config={{
-          displayModeBar: displayLibraryControls ? 'hover' : false,
-          staticPlot: staticPlot,
-        }}
-      />
-      {showSpinner && <Spinner />}
-    </div>
-  );
-}
 
-Boxplot.defaultProps = {
-  markerOpacity: 0.5,
-  orientation: 'vertical',
-};
+  return <PlotlyPlot data={data} layout={layout} {...restProps} />;
+}

@@ -4,7 +4,7 @@ import L from 'leaflet';
 import BoundsDriftMarker, { BoundsDriftMarkerProps } from './BoundsDriftMarker';
 import Histogram from '../plots/Histogram';
 // import NumberRange type def
-import { NumberOrDateRange, NumberRange } from '../types/general';
+import { NumberRange } from '../types/general';
 
 interface ChartMarkerProps extends BoundsDriftMarkerProps {
   borderColor?: string;
@@ -241,9 +241,11 @@ export default function ChartMarker(props: ChartMarkerProps) {
         })),
       }}
       orientation="vertical"
-      barLayout="group"
-      width={plotSize}
-      height={plotSize}
+      barLayout="stack"
+      containerStyles={{
+        width: plotSize + 'px',
+        height: plotSize + 'px',
+      }}
       spacingOptions={{
         marginLeft: marginSize,
         marginRight: marginSize,
@@ -257,7 +259,7 @@ export default function ChartMarker(props: ChartMarkerProps) {
       independentAxisLabel={`Total: ${sumValues.toString()}`}
       // dependentAxisRange is an object with {min, max} (NumberRange)
       dependentAxisRange={props.dependentAxisRange ?? undefined}
-      showBarValues={true}
+      showValues={true}
     />
   );
 
