@@ -334,7 +334,9 @@ function BlastSummary({
                 className="EditJob"
                 to={{
                   pathname: '/workspace/blast/new',
-                  state: multiQueryParamValues,
+                  state: {
+                    parameterValues: multiQueryParamValues,
+                  },
                 }}
               >
                 Revise and rerun
