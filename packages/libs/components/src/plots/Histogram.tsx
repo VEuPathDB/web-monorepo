@@ -239,7 +239,7 @@ export default function Histogram({
         }
       }
     },
-    [data.valueType, orientation, binSummaries, setSelectingRange]
+    [orientation, binSummaries]
   );
 
   // handle finshed/completed (graphical) range selection
@@ -257,6 +257,11 @@ export default function Histogram({
   const selectedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
     const range = selectingRange ?? selectedRange;
     if (data.series.length && range) {
+      // for dates, draw the blue area to the end of the day
+      const rightCoordinate =
+        data.valueType === 'number'
+          ? range.max
+          : DateMath.endOf(new Date(range.max), 'day').toISOString();
       return [
         {
           type: 'rect',
@@ -265,7 +270,7 @@ export default function Histogram({
                 xref: 'x',
                 yref: 'paper',
                 x0: range.min,
-                x1: range.max,
+                x1: rightCoordinate,
                 y0: 0,
                 y1: 1,
               }
@@ -275,7 +280,7 @@ export default function Histogram({
                 x0: 0,
                 x1: 1,
                 y0: range.min,
-                y1: range.max,
+                y1: rightCoordinate,
               }),
           line: {
             color: 'blue',
