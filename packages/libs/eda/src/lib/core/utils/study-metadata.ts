@@ -27,7 +27,8 @@ export function findEntityAndVariable(
   return { entity, variable };
 }
 
-// FIXME: "StudyEntity" should probably have a "displayNamePlural" field
 export function makeEntityDisplayName(entity: StudyEntity, isPlural: boolean) {
-  return entity.displayName + (isPlural ? 's' : '');
+  return !isPlural
+    ? entity.displayName
+    : entity.displayNamePlural ?? `${entity.displayName}s`;
 }
