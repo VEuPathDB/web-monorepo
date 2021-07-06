@@ -33,7 +33,7 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { parseTimeDelta } from '../../utils/date-conversion';
+import { parseTimeDelta, fullISODateRange } from '../../utils/date-conversion';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -447,10 +447,14 @@ function HistogramPlotWithControls({
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
-  const selectedRangeBounds = {
-    min: data?.series[0]?.summary?.min,
-    max: data?.series[0]?.summary?.max,
-  } as NumberOrDateRange;
+  const selectedRangeBounds = useMemo((): NumberOrDateRange | undefined => {
+    return data?.series[0]?.summary
+      ? fullISODateRange({
+          min: data.series[0].summary.min,
+          max: data.series[0].summary.max,
+        } as NumberOrDateRange)
+      : undefined;
+  }, [data?.series]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
