@@ -378,9 +378,6 @@ function HistogramPlotWithControls({
 
   const handleIndependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
-      console.log(
-        `handleIndependentAxisRangeChange newRange: ${newRange?.min} to ${newRange?.max}`
-      );
       updateUIState({
         // when the independent axis range is 'zoomed', reset the binWidth
         // so the back end provides a suitable value
