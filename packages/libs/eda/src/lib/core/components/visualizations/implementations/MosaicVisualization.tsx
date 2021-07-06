@@ -297,8 +297,8 @@ function MosaicViz(props: Props) {
         <MosaicPlotWithControls
           data={data.value && !data.pending ? data.value : undefined}
           containerStyles={{
-            height: '450px',
             width: '750px',
+            height: '450px',
           }}
           independentAxisLabel={xAxisVariableName ?? 'X-axis'}
           dependentAxisLabel={yAxisVariableName ?? 'Y-axis'}
