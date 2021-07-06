@@ -29,14 +29,14 @@ export interface BoxplotProps
   showIndependentAxisTickLabel?: boolean;
   /** show/hide dependent axis tick label */
   showDependentAxisTickLabel?: boolean;
-  /** independentValueType 'number' (default) or 'date' (x data should be given as string[])  */
+  /** independentValueType: 'string' | 'number' | 'date' | 'longitude' | 'category' */
   independentValueType?:
     | 'string'
     | 'number'
     | 'date'
     | 'longitude'
     | 'category';
-  /** dependentValueType 'number' (default) or 'date' (y data should be given as string[])  */
+  /** dependentValueType: 'string' | 'number' | 'date' | 'longitude' | 'category' */
   dependentValueType?: 'string' | 'number' | 'date' | 'longitude' | 'category';
 }
 const EmptyBoxplotData: BoxplotData = [];
