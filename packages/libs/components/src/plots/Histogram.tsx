@@ -123,7 +123,7 @@ export default function Histogram({
             return (
               DateMath.diff(
                 new Date(bin.binStart as string),
-                new Date(bin.binEnd as string),
+                DateMath.endOf(new Date(bin.binEnd as string), 'day'),
                 'seconds',
                 false
               ) * 1000
