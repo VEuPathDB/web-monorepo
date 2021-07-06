@@ -1,8 +1,7 @@
 // load Boxplot component
-import Boxplot from '@veupathdb/components/lib/plots/Boxplot';
+import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
 import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
@@ -16,11 +15,16 @@ import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 
 import { InputVariables } from '../InputVariables';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
+import { BoxplotData } from '@veupathdb/components/lib/types/plots';
+
+interface PromiseBoxplotData {
+  series: BoxplotData;
+}
 
 export const boxplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -50,10 +54,10 @@ function createDefaultConfig(): BoxplotConfig {
 type BoxplotConfig = t.TypeOf<typeof BoxplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const BoxplotConfig = t.partial({
-  xAxisVariable: Variable,
-  yAxisVariable: Variable,
-  overlayVariable: Variable,
-  facetVariable: Variable,
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor,
+  overlayVariable: VariableDescriptor,
+  facetVariable: VariableDescriptor,
 });
 
 type Props = VisualizationProps & {
@@ -128,7 +132,7 @@ function BoxplotViz(props: Props) {
   );
 
   const findVariable = useCallback(
-    (variable?: Variable) => {
+    (variable?: VariableDescriptor) => {
       if (variable == null) return undefined;
       return entities
         .find((e) => e.id === variable.entityId)
@@ -138,9 +142,7 @@ function BoxplotViz(props: Props) {
   );
 
   const data = usePromise(
-    // set any for now
-    // useCallback(async (): Promise<BoxplotData> => {
-    useCallback(async (): Promise<any> => {
+    useCallback(async (): Promise<PromiseBoxplotData | undefined> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
 
@@ -245,8 +247,10 @@ function BoxplotViz(props: Props) {
         <BoxplotWithControls
           // data.value
           data={data.value && !data.pending ? data.value.series : []}
-          width={'100%'}
-          height={450}
+          containerStyles={{
+            width: '100%',
+            height: 450,
+          }}
           // title={'boxplot'}
           orientation={'vertical'}
           // orientation={'horizontal'}
@@ -256,6 +260,9 @@ function BoxplotViz(props: Props) {
           dependentAxisLabel={
             findVariable(vizConfig.yAxisVariable)?.displayName
           }
+          // show/hide independent/dependent axis tick label
+          showIndependentAxisTickLabel={true}
+          showDependentAxisTickLabel={true}
           showMean={true}
           showSpinner={data.pending}
           // this is required for date type
@@ -263,23 +270,33 @@ function BoxplotViz(props: Props) {
           independentValueType={findVariable(vizConfig.xAxisVariable)?.type}
           dependentValueType={findVariable(vizConfig.yAxisVariable)?.type}
           showRawData={true}
+          legendTitle={findVariable(vizConfig.overlayVariable)?.displayName}
         />
       ) : (
         // thumbnail/grid view
         <Boxplot
           data={data.value && !data.pending ? data.value.series : []}
-          width={230}
-          height={165}
+          containerStyles={{
+            width: 230,
+            height: 165,
+          }}
           orientation={'vertical'}
           // orientation={'horizontal'}
           // show/hide independent/dependent axis tick label
           showIndependentAxisTickLabel={false}
           showDependentAxisTickLabel={false}
           showMean={true}
-          staticPlot={true}
+          interactive={false}
           displayLegend={false}
           displayLibraryControls={false}
-          margin={{ l: 30, r: 20, b: 0, t: 20 }}
+          // margin={{ l: 30, r: 20, b: 0, t: 20 }}
+          //DKDK margin is replaced with spacingOptions
+          spacingOptions={{
+            marginTop: 20,
+            marginRight: 20,
+            marginBottom: 0,
+            marginLeft: 30,
+          }}
           showSpinner={data.pending}
         />
       )}
@@ -287,12 +304,12 @@ function BoxplotViz(props: Props) {
   );
 }
 
+type BoxplotWithControlsProps = BoxplotProps;
+
 function BoxplotWithControls({
   data,
-  ...BoxplotProps
-}: //
-// }: BoxplotWithControlsProps) {
-any) {
+  ...BoxplotComponentProps
+}: BoxplotWithControlsProps) {
   // TODO Use UIState
   const errorManagement = useMemo((): ErrorManagement => {
     return {
@@ -306,10 +323,10 @@ any) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Boxplot
-        {...BoxplotProps}
+        {...BoxplotComponentProps}
         data={data}
         // add controls
-        displayLegend={data.length > 1}
+        displayLegend={data && data.length > 1}
         displayLibraryControls={false}
       />
       {/* potential BoxplotControls: commented out for now  */}
@@ -322,13 +339,13 @@ any) {
 }
 
 /**
- * Reformat response from Box Plot endpoints into complete BoxplotData
+ * Reformat response from Box Plot endpoints into complete PromiseBoxplotData
  * @param response
- * @returns BoxplotData
+ * @returns PromiseBoxplotData
  */
 export function boxplotResponseToData(
   response: PromiseType<ReturnType<DataClient['getBoxplot']>>
-): any {
+): PromiseBoxplotData {
   return {
     series: response.boxplot.data.map(
       (data: { [key: string]: any }, index) => ({
@@ -359,9 +376,9 @@ type getRequestParamsProps = BoxplotRequestParams;
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: Variable,
-  yAxisVariable: Variable,
-  overlayVariable?: Variable
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor,
+  overlayVariable?: VariableDescriptor
 ): getRequestParamsProps {
   return {
     studyId,

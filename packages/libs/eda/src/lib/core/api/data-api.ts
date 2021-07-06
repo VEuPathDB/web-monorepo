@@ -139,16 +139,9 @@ export interface BarplotRequestParams {
     outputEntityId: string;
     // add proportion as it seems to be coming
     valueSpec: 'count' | 'identity' | 'proportion';
-    xAxisVariable: {
-      // TO DO: refactor repetition with HistogramRequestParams
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
     // barplot add prop
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -200,18 +193,9 @@ export interface ScatterplotRequestParams {
       | 'bestFitLineWithRaw';
     // not quite sure of overlayVariable and facetVariable yet
     // facetVariable?: ZeroToTwoVariables;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -271,18 +255,9 @@ export interface LineplotRequestParams {
     // not quite sure of overlayVariable and facetVariable yet
     // overlayVariable?: Variable;
     // facetVariable?: ZeroToTwoVariables;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -331,14 +306,8 @@ export interface MosaicRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
   };
 }
 
@@ -414,18 +383,9 @@ export interface BoxplotRequestParams {
     mean: 'true' | 'false';
     // not quite sure of overlayVariable and facetVariable yet
     // facetVariable?: ZeroToTwoVariables;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -442,7 +402,7 @@ const BoxplotResponseData = array(
     partial({
       // outliers type
       outliers: union([number, array(number), array(array(number))]),
-      rawData: array(number),
+      rawData: union([number, array(number), array(array(number))]),
       // mean: array(number),
       mean: union([number, array(number)]),
       seriesX: union([array(string), array(number)]),
@@ -466,7 +426,7 @@ export const BoxplotResponse = type({
   boxplot: type({
     data: BoxplotResponseData,
     config: type({
-      incompleteCases: number,
+      completeCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
