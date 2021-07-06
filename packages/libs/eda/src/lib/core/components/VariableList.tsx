@@ -457,11 +457,6 @@ const FieldNode = ({
           (isDisabled ? ' wdk-AttributeFilterFieldItem__disabled' : '')
         }
         href={'#' + node.field.term}
-        title={
-          isDisabled
-            ? 'This variable cannot be used with this plot and other variable selections.'
-            : 'Select this variable.'
-        }
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
