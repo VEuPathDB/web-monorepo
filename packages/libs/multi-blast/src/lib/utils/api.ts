@@ -103,6 +103,13 @@ export const apiRequests = {
       transformResponse: standardTransformer(longJobResponse),
     };
   },
+  rerunJob: function (jobId: string) {
+    return {
+      path: `${JOBS_PATH}/${jobId}`,
+      method: 'POST',
+      transformResponse: noContent,
+    };
+  },
   fetchSingleFileJsonReport: function (jobId: string) {
     return {
       path: `${JOBS_PATH}/${jobId}/report?format=single-file-json&zip=false&inline=true`,
@@ -118,6 +125,10 @@ export const apiRequests = {
     };
   },
 };
+
+async function noContent(body: unknown) {
+  return null;
+}
 
 // FIXME: Update createRequestHandler to accommodate responses
 // with "attachment" Content-Disposition
