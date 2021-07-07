@@ -24,6 +24,7 @@ import {
   ApiResultSuccess,
   ErrorDetails,
   LongJobResponse,
+  LongReportResponse,
   MultiQueryReportJson,
 } from '../utils/ServiceTypes';
 import { BlastApi } from '../utils/api';
@@ -69,12 +70,22 @@ function BlastWorkspaceResultWithLoadedApi(
     [props.blastApi, props.jobId]
   );
 
-  const multiQueryReportResult = usePromise(
+  const reportResult = usePromise(
     async () =>
       jobResult.value?.status !== 'job-completed'
         ? undefined
-        : props.blastApi.fetchSingleFileJsonReport(jobResult.value.job.id),
+        : makeReportPollingPromise(props.blastApi, props.jobId),
     [props.blastApi, jobResult.value?.status]
+  );
+
+  const multiQueryReportResult = usePromise(
+    async () =>
+      reportResult.value?.status !== 'report-completed'
+        ? undefined
+        : props.blastApi.fetchSingleFileJsonReport(
+            reportResult.value.report.reportID
+          ),
+    [props.blastApi, reportResult.value]
   );
 
   const individualQueriesResult = usePromise(async () => {
@@ -429,12 +440,80 @@ async function makeJobPollingPromise(
       };
     }
 
+    if (job.status === 'expired') {
+      await blastApi.rerunJob(job.id);
+    }
+
     await waitForNextPoll();
 
     return makeJobPollingPromise(blastApi, jobId);
   } else {
     return {
       ...jobRequest,
+      status: 'request-error',
+    };
+  }
+}
+
+type ReportPollingResult = ReportPollingSuccess | ReportPollingError;
+
+interface ReportPollingSuccess {
+  status: 'report-completed' | 'queueing-error';
+  report: LongReportResponse;
+}
+
+interface ReportPollingError {
+  status: 'request-error';
+  details: ErrorDetails;
+}
+
+async function makeReportPollingPromise(
+  blastApi: BlastApi,
+  jobId: string,
+  reportId?: string
+): Promise<ReportPollingResult> {
+  if (reportId == null) {
+    const reportRequest = await blastApi.createReport(jobId, {
+      format: 'single-file-json',
+    });
+
+    if (reportRequest.status === 'ok') {
+      return makeReportPollingPromise(
+        blastApi,
+        jobId,
+        reportRequest.value.reportID
+      );
+    } else {
+      return {
+        ...reportRequest,
+        status: 'request-error',
+      };
+    }
+  }
+
+  const reportRequest = await blastApi.fetchReport(reportId);
+
+  if (reportRequest.status === 'ok') {
+    const report = reportRequest.value;
+
+    if (report.status === 'completed' || report.status === 'errored') {
+      return {
+        status:
+          report.status === 'completed' ? 'report-completed' : 'queueing-error',
+        report,
+      };
+    }
+
+    if (report.status === 'expired') {
+      await blastApi.rerunReport(report.reportID);
+    }
+
+    await waitForNextPoll();
+
+    return makeReportPollingPromise(blastApi, jobId, report.reportID);
+  } else {
+    return {
+      ...reportRequest,
       status: 'request-error',
     };
   }
