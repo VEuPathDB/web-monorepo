@@ -254,6 +254,12 @@ function BoxplotViz(props: Props) {
           // title={'boxplot'}
           orientation={'vertical'}
           // orientation={'horizontal'}
+          // add condition to show legend when overlayVariable is used
+          displayLegend={
+            data.value &&
+            (data.value.series.length > 1 ||
+              typeof vizConfig.overlayVariable !== 'undefined')
+          }
           independentAxisLabel={
             findVariable(vizConfig.xAxisVariable)?.displayName
           }
@@ -268,7 +274,6 @@ function BoxplotViz(props: Props) {
           showSpinner={data.pending}
           // this is required for date type
           // not sure why enrollment year's type is number, not date
-          independentValueType={findVariable(vizConfig.xAxisVariable)?.type}
           dependentValueType={findVariable(vizConfig.yAxisVariable)?.type}
           showRawData={true}
           legendTitle={findVariable(vizConfig.overlayVariable)?.displayName}
@@ -291,7 +296,7 @@ function BoxplotViz(props: Props) {
           displayLegend={false}
           displayLibraryControls={false}
           // margin={{ l: 30, r: 20, b: 0, t: 20 }}
-          //DKDK margin is replaced with spacingOptions
+          // margin is replaced with spacingOptions
           spacingOptions={{
             marginTop: 20,
             marginRight: 20,
@@ -327,7 +332,7 @@ function BoxplotWithControls({
         {...BoxplotComponentProps}
         data={data}
         // add controls
-        displayLegend={data && data.length > 1}
+        // displayLegend={data && data.length > 1}
         displayLibraryControls={false}
       />
       {/* potential BoxplotControls: commented out for now  */}
@@ -357,7 +362,7 @@ export function boxplotResponseToData(
         median: data.median,
         mean: data.mean ? data.mean : undefined,
         outliers: data.outliers ? data.outliers : undefined,
-        //DKDK currently returns seriesX and seriesY for points: 'all' option
+        // currently returns seriesX and seriesY for points: 'all' option
         // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
         rawData: data.rawData ? data.rawData : undefined,
         // this will be used as legend
