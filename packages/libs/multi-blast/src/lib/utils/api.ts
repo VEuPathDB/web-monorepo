@@ -127,7 +127,7 @@ export const apiRequests = {
       path: REPORTS_PATH,
       method: 'POST',
       body: {
-        jobId,
+        jobID: jobId,
         ...reportConfig,
       },
       transformResponse: standardTransformer(createReportResponse),

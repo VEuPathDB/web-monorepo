@@ -623,7 +623,7 @@ export const longReportResponse = combine(
 
 export type LongReportResponse = Unpack<typeof longReportResponse>;
 
-export const createReportResponse = shortJobResponse;
+export const createReportResponse = shortReportResponse;
 
 export type CreateReportReponse = ShortJobResponse;
 
