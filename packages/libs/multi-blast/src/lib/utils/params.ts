@@ -11,7 +11,9 @@ import {
 import {
   IoBlastCompBasedStats,
   IoBlastConfig,
+  IoBlastNDust,
   IOBlastPScoringMatrix,
+  IoBlastSegMask,
   IOBlastXScoringMatrix,
   IOTBlastNScoringMatrix,
   IOTBlastXScoringMatrix,
@@ -106,25 +108,20 @@ export function paramValuesToBlastConfig(
   const filterLowComplexityRegions =
     filterLowComplexityRegionsStr !== 'no filter';
 
-  const dustConfig = !filterLowComplexityRegions
+  const dustConfig: { dust: IoBlastNDust } = !filterLowComplexityRegions
     ? {
-        dust: {
-          enable: false,
-        },
+        dust: 'no',
       }
     : {
-        dust: {
-          enable: true,
-          level: 20,
-          window: 64,
-          linker: 1,
-        },
+        dust: 'yes',
       };
 
-  const segConfig = !filterLowComplexityRegions
-    ? {}
+  const segConfig: { seg: IoBlastSegMask } = !filterLowComplexityRegions
+    ? {
+        seg: 'no',
+      }
     : {
-        seg: { window: 12, locut: 2.2, hicut: 2.5 },
+        seg: 'yes',
       };
 
   const [reward, penalty] = (matchMismatchStr ?? '').split(',').map(Number);
@@ -246,14 +243,17 @@ export function blastConfigToParamValues(
   }
 
   if (blastConfig.tool === 'blastn') {
-    parameterValues[FILTER_LOW_COMPLEX_PARAM_NAME] = blastConfig.dust?.enable
-      ? 'dust'
-      : 'no filter';
+    parameterValues[FILTER_LOW_COMPLEX_PARAM_NAME] =
+      blastConfig.dust === 'yes' || typeof blastConfig.dust === 'object'
+        ? 'dust'
+        : 'no filter';
   }
 
   if (blastConfig.tool !== 'blastn') {
     parameterValues[FILTER_LOW_COMPLEX_PARAM_NAME] =
-      blastConfig.seg != null ? 'seg' : 'no filter';
+      blastConfig.seg === 'yes' || typeof blastConfig.seg === 'object'
+        ? 'seg'
+        : 'no filter';
   }
 
   if (blastConfig.softMasking != null) {

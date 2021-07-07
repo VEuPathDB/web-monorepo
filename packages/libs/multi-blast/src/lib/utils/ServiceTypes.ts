@@ -41,11 +41,15 @@ export const ioBlastCompBasedStats = oneOf(
 
 export type IoBlastCompBasedStats = Unpack<typeof ioBlastCompBasedStats>;
 
-export const ioBlastSegMask = partialRecord({
-  window: number,
-  locut: number,
-  hicut: number,
-});
+export const ioBlastSegMask = oneOf(
+  constant('yes'),
+  constant('no'),
+  record({
+    window: number,
+    locut: number,
+    hicut: number,
+  })
+);
 
 export type IoBlastSegMask = Unpack<typeof ioBlastSegMask>;
 
@@ -264,12 +268,15 @@ export const ioTBlastNTask = oneOf(
 
 export type IoTBlastNTask = Unpack<typeof ioTBlastNTask>;
 
-export const ioBlastNDust = partialRecord({
-  enable: boolean,
-  level: number,
-  window: number,
-  linker: number,
-});
+export const ioBlastNDust = oneOf(
+  constant('yes'),
+  constant('no'),
+  record({
+    level: number,
+    window: number,
+    linker: number,
+  })
+);
 
 export type IoBlastNDust = Unpack<typeof ioBlastNDust>;
 
