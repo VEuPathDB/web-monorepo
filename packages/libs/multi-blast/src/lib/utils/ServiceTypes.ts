@@ -589,6 +589,44 @@ export const createJobResponse = record({
 
 export type CreateJobResponse = Unpack<typeof createJobResponse>;
 
+export const reportConfig = partialRecord({
+  format: ioBlastFormat,
+  fieldDelim: string,
+  fields: arrayOf(ioBlastReportField),
+  numDescriptions: number,
+  numAlignments: number,
+  lineLength: number,
+  sortHits: ioHitSorting,
+  sortHSPs: ioHspSorting,
+  maxTargetSeqs: number,
+  parseDefLines: boolean,
+});
+
+export type ReportConfig = Unpack<typeof reportConfig>;
+
+export const shortReportResponse = record({
+  jobID: string,
+  reportID: string,
+  config: reportConfig,
+  status: ioJobStatus,
+  description: optional(string),
+});
+
+export type ShortReportResponse = Unpack<typeof shortReportResponse>;
+
+export const longReportResponse = combine(
+  shortReportResponse,
+  partialRecord({
+    files: arrayOf(string),
+  })
+);
+
+export type LongReportResponse = Unpack<typeof longReportResponse>;
+
+export const createReportResponse = shortJobResponse;
+
+export type CreateReportReponse = ShortJobResponse;
+
 export const reportStrand = oneOf(constant('Plus'), constant('Minus'));
 
 export type ReportStrand = Unpack<typeof reportStrand>;
