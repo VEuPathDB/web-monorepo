@@ -108,21 +108,13 @@ export function paramValuesToBlastConfig(
   const filterLowComplexityRegions =
     filterLowComplexityRegionsStr !== 'no filter';
 
-  const dustConfig: { dust: IoBlastNDust } = !filterLowComplexityRegions
-    ? {
-        dust: 'no',
-      }
-    : {
-        dust: 'yes',
-      };
+  const dustConfig: { dust: IoBlastNDust } = {
+    dust: filterLowComplexityRegions ? 'yes' : 'no',
+  };
 
-  const segConfig: { seg: IoBlastSegMask } = !filterLowComplexityRegions
-    ? {
-        seg: 'no',
-      }
-    : {
-        seg: 'yes',
-      };
+  const segConfig: { seg: IoBlastSegMask } = {
+    seg: filterLowComplexityRegions ? 'yes' : 'no',
+  };
 
   const [reward, penalty] = (matchMismatchStr ?? '').split(',').map(Number);
   const [gapOpen, gapExtend] = (gapCostsStr ?? '').split(',').map(Number);
