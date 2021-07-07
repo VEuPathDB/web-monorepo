@@ -562,8 +562,10 @@ export const shortJobResponse = record({
   description: optional(string),
   status: ioJobStatus,
   created: string,
-  expires: string,
-  isPrimary: boolean,
+  // FIXME: This field no longer appears in the response. Service bug?
+  // expires: string,
+  // FIXME: This field is missing from "secondary" jobs. Service bug?
+  isPrimary: optional(boolean),
   parentJobs: optional(arrayOf(record({ id: string, index: number }))),
   site: string,
   targets: arrayOf(record({ organism: string, target: string })),
