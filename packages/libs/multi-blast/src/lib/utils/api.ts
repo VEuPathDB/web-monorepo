@@ -147,9 +147,9 @@ export const apiRequests = {
       transformResponse: noContent,
     };
   },
-  fetchSingleFileJsonReport: function (jobId: string) {
+  fetchSingleFileJsonReport: function (reportId: string) {
     return {
-      path: `${JOBS_PATH}/${jobId}/report?format=single-file-json&zip=false&inline=true`,
+      path: `${REPORTS_PATH}/${reportId}/files/report.json?download=false`,
       method: 'GET',
       transformResponse: standardTransformer(multiQueryReportJson),
     };
