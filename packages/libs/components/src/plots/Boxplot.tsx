@@ -29,13 +29,6 @@ export interface BoxplotProps
   showIndependentAxisTickLabel?: boolean;
   /** show/hide dependent axis tick label */
   showDependentAxisTickLabel?: boolean;
-  /** independentValueType: 'string' | 'number' | 'date' | 'longitude' | 'category' */
-  independentValueType?:
-    | 'string'
-    | 'number'
-    | 'date'
-    | 'longitude'
-    | 'category';
   /** dependentValueType: 'string' | 'number' | 'date' | 'longitude' | 'category' */
   dependentValueType?: 'string' | 'number' | 'date' | 'longitude' | 'category';
 }
@@ -53,7 +46,6 @@ export default function Boxplot(props: BoxplotProps) {
     opacity = OpacityDefault,
     showIndependentAxisTickLabel = true,
     showDependentAxisTickLabel = true,
-    independentValueType,
     dependentValueType,
     ...restProps
   } = props;
@@ -75,18 +67,8 @@ export default function Boxplot(props: BoxplotProps) {
 
     // seems like plotly bug: y[0] or x[0] should not be empty array (e.g., with overlay variable)
     // see multipleData at story file (Kenya case)
-    if (
-      orientation === 'vertical' &&
-      orientationDependentProps.y &&
-      orientationDependentProps.y[0].length === 0
-    )
-      orientationDependentProps.y[0] = [null];
-    if (
-      orientation === 'horizontal' &&
-      orientationDependentProps.x &&
-      orientationDependentProps.x[0].length === 0
-    )
-      orientationDependentProps.x[0] = [null];
+    if (orientationDependentProps[dependentAxis]?.[0].length === 0)
+      orientationDependentProps[dependentAxis][0] = [null];
 
     return {
       lowerfence: d.lowerfence,
@@ -109,8 +91,6 @@ export default function Boxplot(props: BoxplotProps) {
     };
   });
 
-  console.log('data =', data);
-
   const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';
   const independentAxis = orientation === 'vertical' ? 'xaxis' : 'yaxis';
 
@@ -124,8 +104,6 @@ export default function Boxplot(props: BoxplotProps) {
       range: data.length ? undefined : [1, 5], // avoids x==0 line
       tickfont: data.length ? {} : { color: 'transparent' },
       showticklabels: showIndependentAxisTickLabel,
-      // set type for date
-      type: independentValueType === 'date' ? 'date' : undefined,
     },
     [dependentAxis]: {
       automargin: true,
@@ -141,7 +119,7 @@ export default function Boxplot(props: BoxplotProps) {
       // but not working properly as it is classified as number at data
       type: dependentValueType === 'date' ? 'date' : undefined,
     },
-    //DKDK don't forget this for multiple datasets
+    // don't forget this for multiple datasets
     boxmode: 'group',
   };
 

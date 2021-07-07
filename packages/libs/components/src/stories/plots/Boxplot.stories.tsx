@@ -184,7 +184,7 @@ export const singleDataset = () => {
   return (
     <Boxplot
       data={singleData.series}
-      //DKDK width/height props are replaced with containerStyles
+      // width/height props are replaced with containerStyles
       containerStyles={{
         width: plotWidth,
         height: plotHeight,
@@ -197,7 +197,7 @@ export const singleDataset = () => {
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
       showMean={true}
-      //DKDK staticPlot is changed to interactive
+      // staticPlot is changed to interactive
       interactive={true}
       displayLegend={singleData.series.length > 1}
       displayLibraryControls={false}
@@ -209,7 +209,7 @@ export const multipleDataset = () => {
   return (
     <Boxplot
       data={multipleData.series}
-      //DKDK width/height props are replaced with containerStyles
+      // width/height props are replaced with containerStyles
       containerStyles={{
         width: plotWidth,
         height: plotHeight,
@@ -222,7 +222,7 @@ export const multipleDataset = () => {
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
       showMean={true}
-      //DKDK staticPlot is changed to interactive
+      // staticPlot is changed to interactive
       interactive={true}
       displayLegend={multipleData.series.length > 1}
       displayLibraryControls={false}
@@ -234,7 +234,7 @@ export const yearDataset = () => {
   return (
     <Boxplot
       data={yearData.series}
-      //DKDK width height is replaced with containerStyles
+      // width height is replaced with containerStyles
       containerStyles={{
         width: plotWidth,
         height: plotHeight,
@@ -247,11 +247,11 @@ export const yearDataset = () => {
       showIndependentAxisTickLabel={true}
       showDependentAxisTickLabel={true}
       showMean={true}
-      //DKDK staticPlot is changed to interactive
+      // staticPlot is changed to interactive
       interactive={true}
       displayLegend={multipleData.series.length > 1}
       displayLibraryControls={false}
-      //DKDK margin is replaced with spacingOptions
+      // margin is replaced with spacingOptions
       spacingOptions={{
         marginTop: 100,
         marginRight: 100,
@@ -259,8 +259,6 @@ export const yearDataset = () => {
         marginLeft: 100,
       }}
       legendTitle={'Legend title example'}
-      // most likely, no need to use independentValueType props
-      // independentValueType={'number'}
       // this will be like findVariable(vizConfig.yAxisVariable)?.type at viz
       dependentValueType={'date'}
     />
@@ -315,7 +313,7 @@ function storyArgTypes(args: any): any {
       )
       .filter((i: number) => i >= 0);
     return {
-      //DKDK disable data control
+      // disable data control
       data: { control: { disable: true } },
       showRawData: {
         control: {
@@ -334,8 +332,7 @@ function storyArgTypes(args: any): any {
           disable: pointTraceIndices.length == 0,
         },
       },
-      //DKDK no need to control independentValueType & dependentValueType
-      independentValueType: { control: { disable: true } },
+      // no need to control dependentValueType
       dependentValueType: { control: { disable: true } },
     };
   }
