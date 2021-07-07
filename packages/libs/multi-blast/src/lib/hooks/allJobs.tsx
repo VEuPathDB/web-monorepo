@@ -45,6 +45,17 @@ export function useAllJobsColumns(): MesaColumn<keyof JobRow>[] {
         key: 'status',
         name: 'Status',
         sortable: true,
+        renderCell: ({ row }: { row: JobRow }) => (
+          <div>
+            {row.status}
+            {row.status === 'expired' && (
+              <>
+                {' '}
+                (<Link to={`/workspace/blast/result/${row.jobId}`}>rerun</Link>)
+              </>
+            )}
+          </div>
+        ),
       },
     ],
     []

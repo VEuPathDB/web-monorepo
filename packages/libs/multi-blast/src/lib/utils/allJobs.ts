@@ -6,15 +6,7 @@ export function shouldIncludeInJobsTable(
   jobEntity: ShortJobResponse,
   projectId: string
 ) {
-  return (
-    !isJobExpired(jobEntity) &&
-    isJobPrimary(jobEntity) &&
-    isJobFromSite(jobEntity, projectId)
-  );
-}
-
-function isJobExpired(jobEntity: ShortJobResponse) {
-  return new Date() > new Date(jobEntity.expires);
+  return isJobPrimary(jobEntity) && isJobFromSite(jobEntity, projectId);
 }
 
 function isJobPrimary(jobEntity: ShortJobResponse) {

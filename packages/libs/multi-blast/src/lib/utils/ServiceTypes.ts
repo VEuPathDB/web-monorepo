@@ -182,7 +182,8 @@ export const ioJobStatus = oneOf(
   constant('queued'),
   constant('in-progress'),
   constant('completed'),
-  constant('errored')
+  constant('errored'),
+  constant('expired')
 );
 
 export type IoJobStatus = Unpack<typeof ioJobStatus>;
