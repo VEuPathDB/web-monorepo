@@ -57,6 +57,7 @@ export const apiRequests = {
     targets: { organism: string; target: string }[],
     query: string | File,
     config: IoBlastConfig,
+    maxResultSize: number = 0,
     description?: string
   ) {
     const requestProperties = {
@@ -69,6 +70,7 @@ export const apiRequests = {
               ...config,
               query,
             },
+      maxResultSize,
       description,
     };
 

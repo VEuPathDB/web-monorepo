@@ -376,6 +376,7 @@ function NewJobForm(props: NewJobFormProps) {
         targets,
         query,
         config,
+        0,
         jobDescription
       );
 
