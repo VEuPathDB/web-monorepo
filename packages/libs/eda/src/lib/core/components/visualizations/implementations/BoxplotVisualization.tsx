@@ -264,6 +264,7 @@ function BoxplotViz(props: Props) {
           showIndependentAxisTickLabel={true}
           showDependentAxisTickLabel={true}
           showMean={true}
+          interactive={true}
           showSpinner={data.pending}
           // this is required for date type
           // not sure why enrollment year's type is number, not date
