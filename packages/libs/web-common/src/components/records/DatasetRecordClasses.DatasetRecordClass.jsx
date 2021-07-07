@@ -54,7 +54,9 @@ export function RecordHeading(props) {
     institution,
     organism_prefix,
     newcategory,
+    megabase_pairs
   } = attributes;
+
 
   let version = tables.Version && tables.Version[0];
   let primaryPublication = getPrimaryPublication(record);
@@ -112,7 +114,15 @@ export function RecordHeading(props) {
             <span>{eupath_release}</span>
           </div>
         ) : null}
-      </div>
+     
+        {megabase_pairs ? (
+          <div className="eupathdb-RecordOverviewItem">
+            <strong>Megabase Pairs: </strong>
+            <span>{megabase_pairs}</span>
+          </div>
+        ) : null} 
+
+     </div>
     </div>
   );
 }
