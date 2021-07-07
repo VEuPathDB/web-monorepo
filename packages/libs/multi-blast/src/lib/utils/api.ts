@@ -19,11 +19,15 @@ import {
   ApiResult,
   ErrorDetails,
   IoBlastConfig,
+  ReportConfig,
   createJobResponse,
+  createReportResponse,
   errorDetails,
   longJobResponse,
+  longReportResponse,
   multiQueryReportJson,
   shortJobResponse,
+  shortReportResponse,
 } from './ServiceTypes';
 
 export function createBlastRequestHandler(
@@ -43,6 +47,7 @@ export function createBlastRequestHandler(
 }
 
 const JOBS_PATH = '/jobs';
+const REPORTS_PATH = '/reports';
 
 export const apiRequests = {
   fetchJobEntities: function () {
@@ -106,6 +111,38 @@ export const apiRequests = {
   rerunJob: function (jobId: string) {
     return {
       path: `${JOBS_PATH}/${jobId}`,
+      method: 'POST',
+      transformResponse: noContent,
+    };
+  },
+  fetchReportEntities: function () {
+    return {
+      path: REPORTS_PATH,
+      method: 'GET',
+      transformResponse: standardTransformer(arrayOf(shortReportResponse)),
+    };
+  },
+  createReport: function (jobId: string, reportConfig: ReportConfig) {
+    return createJsonRequest({
+      path: REPORTS_PATH,
+      method: 'POST',
+      body: {
+        jobId,
+        ...reportConfig,
+      },
+      transformResponse: standardTransformer(createReportResponse),
+    });
+  },
+  fetchReport: function (reportId: string) {
+    return {
+      path: `${REPORTS_PATH}/${reportId}`,
+      method: 'GET',
+      transformResponse: standardTransformer(longReportResponse),
+    };
+  },
+  rerunReport: function (reportId: string) {
+    return {
+      path: `${REPORTS_PATH}/${reportId}`,
       method: 'POST',
       transformResponse: noContent,
     };
