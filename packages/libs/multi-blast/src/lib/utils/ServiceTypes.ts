@@ -133,6 +133,7 @@ export const ioBlastReportField = oneOf(
   constant('sstrand'),
   constant('staxid'),
   constant('staxids'),
+  constant('std'),
   constant('stitle')
 );
 
