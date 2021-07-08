@@ -29,8 +29,8 @@ export interface BoxplotProps
   showIndependentAxisTickLabel?: boolean;
   /** show/hide dependent axis tick label */
   showDependentAxisTickLabel?: boolean;
-  /** dependentValueType: 'string' | 'number' | 'date' | 'longitude' | 'category' */
-  dependentValueType?: 'string' | 'number' | 'date' | 'longitude' | 'category';
+  /** dependentValueType: 'number' | 'date' */
+  dependentValueType?: 'number' | 'date';
 }
 const EmptyBoxplotData: BoxplotData = [];
 

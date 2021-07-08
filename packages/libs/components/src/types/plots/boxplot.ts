@@ -20,7 +20,7 @@ export type BoxplotData = {
   /** color for this box */
   color?: string;
   /** optional complete data (not recommended for huge datasets) */
-  rawData?: number[][] | string[][];
+  rawData?: number[][];
   /** outliers: data points outside upper and lower whiskers/fences (optional) */
-  outliers?: number[][] | string[][];
+  outliers?: number[][];
 }[];
