@@ -251,19 +251,17 @@ function BoxplotViz(props: Props) {
             width: '100%',
             height: 450,
           }}
-          // title={'boxplot'}
           orientation={'vertical'}
-          // orientation={'horizontal'}
           // add condition to show legend when overlayVariable is used
           displayLegend={
             data.value &&
             (data.value.series.length > 1 || vizConfig.overlayVariable != null)
           }
           independentAxisLabel={
-            findVariable(vizConfig.xAxisVariable)?.displayName
+            findVariable(vizConfig.xAxisVariable)?.displayName ?? 'X-Axis'
           }
           dependentAxisLabel={
-            findVariable(vizConfig.yAxisVariable)?.displayName
+            findVariable(vizConfig.yAxisVariable)?.displayName ?? 'Y-Axis'
           }
           // show/hide independent/dependent axis tick label
           showIndependentAxisTickLabel={true}
@@ -271,9 +269,6 @@ function BoxplotViz(props: Props) {
           showMean={true}
           interactive={true}
           showSpinner={data.pending}
-          // this is required for date type
-          // not sure why enrollment year's type is number, not date
-          dependentValueType={findVariable(vizConfig.yAxisVariable)?.type}
           showRawData={true}
           legendTitle={findVariable(vizConfig.overlayVariable)?.displayName}
         />
@@ -286,7 +281,6 @@ function BoxplotViz(props: Props) {
             height: 165,
           }}
           orientation={'vertical'}
-          // orientation={'horizontal'}
           // show/hide independent/dependent axis tick label
           showIndependentAxisTickLabel={false}
           showDependentAxisTickLabel={false}
@@ -294,7 +288,6 @@ function BoxplotViz(props: Props) {
           interactive={false}
           displayLegend={false}
           displayLibraryControls={false}
-          // margin={{ l: 30, r: 20, b: 0, t: 20 }}
           // margin is replaced with spacingOptions
           spacingOptions={{
             marginTop: 20,
@@ -331,7 +324,6 @@ function BoxplotWithControls({
         {...BoxplotComponentProps}
         data={data}
         // add controls
-        // displayLegend={data && data.length > 1}
         displayLibraryControls={false}
       />
       {/* potential BoxplotControls: commented out for now  */}
@@ -391,9 +383,8 @@ function getRequestParams(
     config: {
       // is outputEntityId correct?
       outputEntityId: xAxisVariable.entityId,
-      // post options
+      // post options: 'all', 'outliers'
       points: 'outliers',
-      // points: 'all',
       mean: 'true',
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
