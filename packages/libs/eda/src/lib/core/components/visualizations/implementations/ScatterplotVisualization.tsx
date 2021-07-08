@@ -67,25 +67,19 @@ function FullscreenComponent(props: VisualizationProps) {
 
 function createDefaultConfig(): ScatterplotConfig {
   return {
-    enableOverlay: true,
     valueSpecConfig: 'Raw',
   };
 }
 
 type ScatterplotConfig = t.TypeOf<typeof ScatterplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const ScatterplotConfig = t.intersection([
-  t.type({
-    enableOverlay: t.boolean,
-  }),
-  t.partial({
-    xAxisVariable: VariableDescriptor,
-    yAxisVariable: VariableDescriptor,
-    overlayVariable: VariableDescriptor,
-    facetVariable: VariableDescriptor,
-    valueSpecConfig: t.string,
-  }),
-]);
+const ScatterplotConfig = t.partial({
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor,
+  overlayVariable: VariableDescriptor,
+  facetVariable: VariableDescriptor,
+  valueSpecConfig: t.string,
+});
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
@@ -195,7 +189,7 @@ function ScatterplotViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
+        vizConfig.overlayVariable,
         // add visualization.type
         visualization.type,
         // XYPlotControls
@@ -295,6 +289,11 @@ function ScatterplotViz(props: Props) {
               height: '600px',
             }}
             // title={'Scatter plot'}
+            displayLegend={
+              data.value &&
+              (data.value.dataSetProcess.series.length > 1 ||
+                typeof vizConfig.overlayVariable !== 'undefined')
+            }
             independentAxisLabel={
               findVariable(vizConfig.xAxisVariable)?.displayName
             }
@@ -314,6 +313,8 @@ function ScatterplotViz(props: Props) {
             // send visualization.type here
             vizType={visualization.type}
             showSpinner={data.pending}
+            interactive={true}
+            legendTitle={findVariable(vizConfig.overlayVariable)?.displayName}
           />
         ) : (
           // thumbnail/grid view
@@ -440,7 +441,6 @@ function ScatterplotWithControls({
         {...ScatterplotProps}
         data={data}
         // add controls
-        displayLegend={data?.series && data.series.length > 1}
         displayLibraryControls={false}
       />
       {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
