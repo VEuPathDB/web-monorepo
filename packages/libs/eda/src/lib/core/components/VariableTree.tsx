@@ -11,13 +11,6 @@ import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
 
-// TODO Populate valuesMap with properties of variables.
-// This is used by the search functionality of FieldList.
-// It should be a map from field term to string.
-// In WDK searches, this is a concatenated string of values
-// for categorical-type variables.
-const valuesMap: Record<string, string> = {};
-
 export interface Props {
   rootEntity: StudyEntity;
   starredVariables?: string[];
@@ -49,6 +42,24 @@ export function VariableTree(props: Props) {
       ),
     [rootEntity]
   );
+
+  // This is used by the search functionality of FieldList.
+  // It should be a map from field term to string.
+  // In WDK searches, this is a concatenated string of values
+  // for categorical-type variables.
+  const valuesMap = useMemo(() => {
+    const valuesMap: Record<string, string> = {};
+    for (const entity of entities) {
+      for (const variable of entity.variables) {
+        if (variable.type !== 'category' && variable.vocabulary) {
+          valuesMap[`${entity.id}/${variable.id}`] = variable.vocabulary.join(
+            ' '
+          );
+        }
+      }
+    }
+    return valuesMap;
+  }, [entities]);
 
   const fields = useMemo(() => {
     return entities.flatMap((entity) => {
