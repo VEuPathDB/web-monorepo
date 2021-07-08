@@ -228,8 +228,7 @@ function BarplotViz(props: Props) {
           barLayout={'group'}
           displayLegend={
             data.value &&
-            (data.value.series.length > 1 ||
-              typeof vizConfig.overlayVariable !== 'undefined')
+            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
           }
           independentAxisLabel={
             vizConfig.xAxisVariable

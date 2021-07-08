@@ -292,7 +292,7 @@ function ScatterplotViz(props: Props) {
             displayLegend={
               data.value &&
               (data.value.dataSetProcess.series.length > 1 ||
-                typeof vizConfig.overlayVariable !== 'undefined')
+                vizConfig.overlayVariable != null)
             }
             independentAxisLabel={
               findVariable(vizConfig.xAxisVariable)?.displayName
