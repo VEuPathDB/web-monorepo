@@ -159,8 +159,16 @@ function BlastWorkspaceResultWithLoadedApi(
   return jobResult.value != null &&
     jobResult.value.status === 'request-error' ? (
     <BlastRequestError errorDetails={jobResult.value.details} />
+  ) : jobResult.value != null && jobResult.value.status === 'queueing-error' ? (
+    <ErrorPage message="We were unable to queue your job." />
   ) : queryResult.value != null && queryResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={queryResult.value.details} />
+  ) : reportResult.value != null &&
+    reportResult.value.status === 'request-error' ? (
+    <BlastRequestError errorDetails={reportResult.value.details} />
+  ) : reportResult.value != null &&
+    reportResult.value.status === 'queueing-error' ? (
+    <ErrorPage message="We were unable to queue your combined results report." />
   ) : multiQueryReportResult.value != null &&
     multiQueryReportResult.value.status === 'error' ? (
     <BlastRequestError errorDetails={multiQueryReportResult.value.details} />
@@ -169,11 +177,10 @@ function BlastWorkspaceResultWithLoadedApi(
     <BlastRequestError errorDetails={individualQueriesResult.value.details} />
   ) : queryResult.value == null ||
     jobResult.value == null ||
+    reportResult.value == null ||
     multiQueryReportResult.value == null ||
     individualQueriesResult.value == null ? (
     <LoadingBlastResult {...props} />
-  ) : jobResult.value.status === 'queueing-error' ? (
-    <ErrorPage message="We were unable to queue your job." />
   ) : (
     <BlastResultWithLoadedReport
       {...props}
