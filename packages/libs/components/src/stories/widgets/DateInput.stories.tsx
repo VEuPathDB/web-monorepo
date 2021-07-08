@@ -116,8 +116,10 @@ export const CustomValidator = ControlledTemplate.bind({});
 CustomValidator.args = {
   label: 'Weekdays only',
   validator: (newValue) => {
-    // allow empty values in this case
+    // allow empty values in this case (emulates `required: false`)
     if (newValue == null) return { validity: true, message: '' };
+    // uncomment to emulate `required: true` functionality
+    // if (newValue == null) return { validity: false, message: 'please pick a day' };
 
     const date = new Date(newValue);
     if (date) {
