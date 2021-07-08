@@ -257,8 +257,7 @@ function BoxplotViz(props: Props) {
           // add condition to show legend when overlayVariable is used
           displayLegend={
             data.value &&
-            (data.value.series.length > 1 ||
-              typeof vizConfig.overlayVariable !== 'undefined')
+            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
           }
           independentAxisLabel={
             findVariable(vizConfig.xAxisVariable)?.displayName
