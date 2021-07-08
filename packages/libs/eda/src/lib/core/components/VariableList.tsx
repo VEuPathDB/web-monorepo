@@ -355,7 +355,7 @@ export default function VariableList(props: VariableListProps) {
                   const isActive = field.term === activeField?.term;
                   const isDisabled = disabledFields.has(field.term);
                   return (
-                    <li>
+                    <li key={field.term}>
                       <a
                         className={
                           'wdk-AttributeFilterFieldItem' +
