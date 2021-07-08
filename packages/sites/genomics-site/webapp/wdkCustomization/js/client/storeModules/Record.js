@@ -124,6 +124,10 @@ function pruneCategories(nextState) {
     categoryTree = pruneCategoryBasedOnShowStrains(pruneCategoriesByMetaTable(removeProteinCategories(categoryTree, record), record), record);
     nextState = Object.assign({}, nextState, { categoryTree });
   }
+  if (isDatasetRecord(record)) {
+    categoryTree = pruneByDatasetCategory(categoryTree, record);
+    nextState = Object.assign({}, nextState, { categoryTree }); 
+  }
   return nextState;
 }
 
@@ -189,6 +193,59 @@ function pruneCategoriesByMetaTable(categoryTree, record) {
     categoryTree
   )
 }
+
+function pruneByDatasetCategory(categoryTree, record) {
+
+
+  // Remove Dataset Version and Source Version from genome datasets, otherwise remove genome tables from non-genome datasets
+  // Additionally, choose either the genome dataset history (GenomeHistory) or non-genome dataset history table (DatasetHistory).
+  if (record.attributes.newcategory === 'Genomics') {
+
+    categoryTree = tree.pruneDescendantNodes(
+      individual => {
+        if (individual.children.length > 0) return true;
+        if (individual.wdkReference == null) return false;
+        if (individual.wdkReference.name === 'version') return false;
+        if (individual.wdkReference.name === 'Version') return false;
+        if (individual.wdkReference.name === 'DatasetHistory') return false;
+        return true;
+      },
+      categoryTree
+    )
+
+  } else {
+    categoryTree = tree.pruneDescendantNodes(
+      individual => {
+        if (individual.children.length > 0) return true;
+        if (individual.wdkReference == null) return false;
+        if (individual.wdkReference.name === 'TranscriptTypeCounts') return false;
+        if (individual.wdkReference.name === 'GeneTypeCounts') return false;
+        if (individual.wdkReference.name === 'SequenceTypeCounts') return false;
+        if (individual.wdkReference.name === 'GenomeAssociatedData') return false;
+        if (individual.wdkReference.name === 'ExternalDatabases') return false;
+        if (individual.wdkReference.name === 'GenomeHistory') return false;
+        return true;
+      },
+      categoryTree
+    )
+  }     
+
+  // Example graphs should only be shown on RNASeq, Microarray, Phenotype datasets
+  if (!['RNASeq', 'DNA Microarray', 'Phenotype'].includes(record.attributes.newcategory)) {
+    categoryTree = tree.pruneDescendantNodes(
+      individual => {
+        if (individual.children.length > 0) return true;
+        if (individual.wdkReference == null) return false;
+        if (individual.wdkReference.name === 'ExampleGraphs') return false;
+        return true;
+      },
+      categoryTree
+    )
+  }
+ 
+  return categoryTree
+}
+
 
 
 // Custom observers
@@ -330,4 +387,8 @@ function isGeneRecord(record) {
 
 function isSnpsRecord(record) {
   return record.recordClassName === 'SnpRecordClasses.SnpRecordClass';
+}
+
+function isDatasetRecord(record) {
+  return record.recordClassName === 'DatasetRecordClasses.DatasetRecordClass';
 }
