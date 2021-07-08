@@ -87,15 +87,18 @@ export function RecordHeading(props) {
     <div>
       <props.DefaultComponent {...props}/>
       <div className="wdk-RecordOverview eupathdb-RecordOverview">
-        <div className="eupathdb-RecordOverviewItem">
-          <strong>Summary: </strong>
-          <span style={{ whiteSpace: 'normal' }} dangerouslySetInnerHTML={{__html: summary}}/>
-        </div>
-
+        
         {organism_prefix ? (
           <div className="eupathdb-RecordOverviewItem">
             <strong>Organism (source or reference): </strong>
             <span dangerouslySetInnerHTML={{__html: organism_prefix}}/>
+          </div>
+        ) : null}
+
+        {newcategory ? (
+          <div className="eupathdb-RecordOverviewItem">
+            <strong>Category: </strong>
+            <span>{newcategory}</span>
           </div>
         ) : null}
 
@@ -115,18 +118,10 @@ export function RecordHeading(props) {
           </div>
         ) : null}
 
-
         {version ? (
           <div className="eupathdb-RecordOverviewItem">
             <strong>Source version(s): </strong>
             <span>{renderSourceVersion(version, newcategory)}</span>
-          </div>
-        ) : null}
-
-        {newcategory ? (
-          <div className="eupathdb-RecordOverviewItem">
-            <strong>Category: </strong>
-            <span>{newcategory}</span>
           </div>
         ) : null}
 
@@ -136,6 +131,11 @@ export function RecordHeading(props) {
             <span>{eupath_release}</span>
           </div>
         ) : null}
+        
+        <div className="eupathdb-RecordOverviewItem">
+          <strong>Summary: </strong>
+          <span style={{ whiteSpace: 'normal' }} dangerouslySetInnerHTML={{__html: summary}}/>
+        </div>
      
         {megabase_pairs ? (
           <div className="eupathdb-RecordOverviewItem">
