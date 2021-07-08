@@ -46,7 +46,7 @@ export default function Boxplot(props: BoxplotProps) {
     opacity = OpacityDefault,
     showIndependentAxisTickLabel = true,
     showDependentAxisTickLabel = true,
-    dependentValueType,
+    dependentValueType = 'number',
     ...restProps
   } = props;
 
