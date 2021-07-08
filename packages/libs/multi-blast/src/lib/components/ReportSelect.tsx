@@ -76,7 +76,7 @@ export function ReportSelect({ jobId, placeholder }: Props) {
     []
   );
 
-  const downloadReportCallback = useDownloadReportCallback();
+  const downloadReportCallback = useDownloadReportCallback(jobId);
 
   useEffect(() => {
     let canceled = false;

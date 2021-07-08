@@ -15,10 +15,13 @@ import {
   standardTransformer,
 } from '@veupathdb/web-common/lib/util/api';
 
+import { makeReportPollingPromise } from '../components/BlastWorkspaceResult';
+
 import {
   ApiResult,
   ErrorDetails,
   IoBlastConfig,
+  IoBlastFormat,
   ReportConfig,
   createJobResponse,
   createReportResponse,
@@ -169,16 +172,60 @@ async function noContent(body: unknown) {
 
 // FIXME: Update createRequestHandler to accommodate responses
 // with "attachment" Content-Disposition
-export function createJobContentDownloader(user: User) {
+export function createJobContentDownloader(
+  user: User,
+  blastApi: BlastApi,
+  blastServiceUrl: string,
+  jobId: string
+) {
   return async function downloadJobContent(
-    contentUrl: string,
+    format: IoBlastFormat,
+    shouldZip: boolean,
     filename: string
   ) {
-    const response = await fetch(contentUrl, {
-      headers: { 'Auth-Key': getAuthKey(user) },
-    });
+    const reportResponse = await makeReportPollingPromise(
+      blastApi,
+      jobId,
+      format
+    );
 
-    const blob = await response.blob();
+    if (reportResponse.status === 'queueing-error') {
+      throw new Error('We were unable to queue your report.');
+    }
+
+    if (reportResponse.status === 'request-error') {
+      throw new Error(
+        `An error occurred while trying to create your report: ${JSON.stringify(
+          reportResponse.details
+        )}`
+      );
+    }
+
+    const { reportID, files = [] } = reportResponse.report;
+
+    const nonZippedReportFiles = files.filter(
+      (file) => file !== 'meta.json' && !file.endsWith('.zip')
+    );
+
+    const reportFile =
+      shouldZip || nonZippedReportFiles[0] == null
+        ? 'report.zip'
+        : nonZippedReportFiles[0];
+
+    const downloadResponse = await fetch(
+      `${blastServiceUrl}/reports/${reportID}/files/${reportFile}`,
+      {
+        headers: { 'Auth-Key': getAuthKey(user) },
+      }
+    );
+
+    if (!downloadResponse.ok) {
+      throw new Error(
+        'An error occurred while trying to download your report.'
+      );
+    }
+
+    const blob = await downloadResponse.blob();
 
     // Adapted from https://stackoverflow.com/a/42274086
     const url = window.URL.createObjectURL(blob);

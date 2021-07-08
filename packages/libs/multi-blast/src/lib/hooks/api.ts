@@ -65,24 +65,23 @@ function useReportError() {
   }, [dispatch, wdkDependencies]);
 }
 
-export function useDownloadReportCallback() {
+export function useDownloadReportCallback(jobId: string) {
   const blastServiceUrl = useContext(BlastServiceUrl);
 
   const user = useWdkService((wdkService) => wdkService.getCurrentUser(), []);
 
-  const reportDownloader = useMemo(
-    () => user && createJobContentDownloader(user),
-    [user]
-  );
+  const blastApi = useBlastApi();
 
-  return useMemo(
-    () =>
+  return useMemo(() => {
+    const reportDownloader =
+      user &&
+      blastApi &&
+      createJobContentDownloader(user, blastApi, blastServiceUrl, jobId);
+
+    return (
       reportDownloader &&
       ((jobId: string, format: IoBlastFormat, zip: boolean) =>
-        reportDownloader(
-          `${blastServiceUrl}/jobs/${jobId}/report?format=${format}&zip=${zip}`,
-          zip ? `${jobId}-${format}-report.zip` : `${jobId}-${format}-report`
-        )),
-    [blastServiceUrl, reportDownloader]
-  );
+        reportDownloader(format, zip, `${jobId}-${format}-report`))
+    );
+  }, [user, blastApi, blastServiceUrl, jobId]);
 }

@@ -23,6 +23,7 @@ import {
   ApiResultError,
   ApiResultSuccess,
   ErrorDetails,
+  IoBlastFormat,
   LongJobResponse,
   LongReportResponse,
   MultiQueryReportJson,
@@ -74,7 +75,11 @@ function BlastWorkspaceResultWithLoadedApi(
     async () =>
       jobResult.value?.status !== 'job-completed'
         ? undefined
-        : makeReportPollingPromise(props.blastApi, props.jobId),
+        : makeReportPollingPromise(
+            props.blastApi,
+            props.jobId,
+            'single-file-json'
+          ),
     [props.blastApi, jobResult.value?.status]
   );
 
@@ -467,20 +472,22 @@ interface ReportPollingError {
   details: ErrorDetails;
 }
 
-async function makeReportPollingPromise(
+export async function makeReportPollingPromise(
   blastApi: BlastApi,
   jobId: string,
+  format: IoBlastFormat,
   reportId?: string
 ): Promise<ReportPollingResult> {
   if (reportId == null) {
     const reportRequest = await blastApi.createReport(jobId, {
-      format: 'single-file-json',
+      format,
     });
 
     if (reportRequest.status === 'ok') {
       return makeReportPollingPromise(
         blastApi,
         jobId,
+        'single-file-json',
         reportRequest.value.reportID
       );
     } else {
@@ -510,7 +517,12 @@ async function makeReportPollingPromise(
 
     await waitForNextPoll();
 
-    return makeReportPollingPromise(blastApi, jobId, report.reportID);
+    return makeReportPollingPromise(
+      blastApi,
+      jobId,
+      'single-file-json',
+      report.reportID
+    );
   } else {
     return {
       ...reportRequest,
