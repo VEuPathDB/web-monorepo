@@ -1,7 +1,10 @@
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 import { Button } from '@material-ui/core';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  preorder,
+  pruneDescendantNodes,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { cx } from '../../workspace/Utils';
@@ -104,10 +107,30 @@ export function VariableTree(props: Props) {
     });
   }, [entities]);
 
+  const featuredFields = useMemo(() => {
+    return entities.flatMap((entity) =>
+      entity.variables
+        .filter(
+          (variable) => variable.type !== 'category' && variable.isFeatured
+        )
+        .map((variable) => ({
+          ...variable,
+          id: `${entity.id}/${variable.id}`,
+          displayName: `<span class="Entity">${entity.displayName}</span>: ${variable.displayName}`,
+        }))
+        .map(edaVariableToWdkField)
+    );
+  }, [entities]);
+
   // Construct the fieldTree using the fields defined above.
-  const fieldTree = useMemo(() => getTree(fields, { hideSingleRoot: false }), [
-    fields,
-  ]);
+  const fieldTree = useMemo(() => {
+    const initialTree = getTree(fields, { hideSingleRoot: false });
+    const tree = pruneDescendantNodes(
+      (node) => node.field.type != null || node.children.length > 0,
+      initialTree
+    );
+    return tree;
+  }, [fields]);
 
   const disabledFields = useMemo(
     () => disabledVariables?.map((v) => `${v.entityId}/${v.variableId}`),
@@ -140,6 +163,7 @@ export function VariableTree(props: Props) {
       activeField={activeField}
       disabledFieldIds={disabledFields}
       onActiveFieldChange={onActiveFieldChange}
+      featuredFields={featuredFields}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}

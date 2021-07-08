@@ -39,6 +39,7 @@ import {
 import { cx } from '../../workspace/Utils';
 import { Tooltip } from '@material-ui/core';
 import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 //defining types - some are not used (need cleanup later)
 interface VariableField {
@@ -82,6 +83,7 @@ interface VariableListProps {
   disabledFieldIds?: string[];
   hideDisabledFields: boolean;
   setHideDisabledFields: (hide: boolean) => void;
+  featuredFields: VariableField[];
 }
 
 interface getNodeSearchStringType {
@@ -100,6 +102,7 @@ export default function VariableList(props: VariableListProps) {
     onActiveFieldChange,
     valuesMap,
     fieldTree,
+    featuredFields,
     autoFocus,
     starredVariables,
     toggleStarredVariable,
@@ -327,6 +330,9 @@ export default function VariableList(props: VariableListProps) {
                 }
                 title={tooltipContent}
                 interactive
+                enterDelay={500}
+                enterNextDelay={500}
+                leaveDelay={0}
               >
                 <button
                   className="link"
@@ -341,11 +347,52 @@ export default function VariableList(props: VariableListProps) {
               </HtmlTooltip>
             </div>
           )}
+          {featuredFields.length && (
+            <div className="FeaturedVariables">
+              <h3>Featured variables</h3>
+              <ul>
+                {featuredFields.map((field) => {
+                  const isActive = field.term === activeField?.term;
+                  const isDisabled = disabledFields.has(field.term);
+                  return (
+                    <li>
+                      <a
+                        className={
+                          'wdk-AttributeFilterFieldItem' +
+                          (isActive
+                            ? ' wdk-AttributeFilterFieldItem__active'
+                            : '') +
+                          (isDisabled
+                            ? ' wdk-AttributeFilterFieldItem__disabled'
+                            : '')
+                        }
+                        href={'#' + field.term}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onActiveFieldChange(field.term);
+                        }}
+                      >
+                        <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
           {treeSection}
         </>
       );
     },
-    [disabledFields.size, hideDisabledFields, setHideDisabledFields]
+    [
+      disabledFields,
+      hideDisabledFields,
+      featuredFields,
+      setHideDisabledFields,
+      activeField?.term,
+      onActiveFieldChange,
+    ]
   );
 
   const isAdditionalFilterApplied = showOnlyStarredVariables;
@@ -502,9 +549,9 @@ const FieldNode = ({
   );
 };
 
-const getIcon = (field: Field) => {
+function getIcon(field: Field) {
   return isRange(field) ? 'bar-chart-o' : isMulti(field) ? 'th-list' : 'list';
-};
+}
 
 function makeStarButtonTooltipContent(
   node: VariableFieldTreeNode,
