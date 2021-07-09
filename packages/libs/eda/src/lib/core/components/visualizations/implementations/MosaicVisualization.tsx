@@ -88,9 +88,7 @@ function TwoByTwoFullscreenComponent(props: VisualizationProps) {
 }
 
 function createDefaultConfig(): MosaicConfig {
-  return {
-    // enableOverlay: true,
-  };
+  return {};
 }
 
 type MosaicConfig = t.TypeOf<typeof MosaicConfig>;
@@ -303,6 +301,7 @@ function MosaicViz(props: Props) {
           }
           displayLegend={true}
           showSpinner={data.pending}
+          interactive={true}
         />
       </div>
       {statsTable}
