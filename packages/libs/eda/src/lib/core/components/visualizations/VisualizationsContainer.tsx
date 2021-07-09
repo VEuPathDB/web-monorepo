@@ -106,8 +106,8 @@ function ConfiguredVisualizations(props: Props) {
           const type = visualizationTypes[viz.type];
           const meta = visualizationsOverview.find((v) => v.name === viz.type);
           return (
-            <>
-              <div key={viz.id} className={cx('-ConfiguredVisualization')}>
+            <div key={viz.id}>
+              <div className={cx('-ConfiguredVisualization')}>
                 <div className={cx('-ConfiguredVisualizationActions')}>
                   <div>
                     <Tooltip title="Delete visualization">
@@ -165,7 +165,7 @@ function ConfiguredVisualizations(props: Props) {
               <div className={cx('-ConfiguredVisualizationSubtitle')}>
                 {meta?.displayName}
               </div>
-            </>
+            </div>
           );
         })
         .reverse()}
