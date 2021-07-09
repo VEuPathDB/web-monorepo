@@ -196,10 +196,13 @@ function NewVisualizationPicker(props: Props) {
       </div>
       <h3>Select a visualization</h3>
       <Grid>
-        {visualizationsOverview.map((vizOverview) => {
+        {visualizationsOverview.map((vizOverview, index) => {
           const vizType = visualizationTypes[vizOverview.name!];
           return (
-            <div className={cx('-PickerEntry', vizType == null && 'disabled')}>
+            <div
+              className={cx('-PickerEntry', vizType == null && 'disabled')}
+              key={`vizType${index}`}
+            >
               <button
                 type="button"
                 disabled={vizType == null}
