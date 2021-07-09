@@ -283,7 +283,6 @@ function HistogramViz(props: Props) {
           }
           interactive={true}
           showSpinner={data.pending}
-          interactive={true}
           legendTitle={
             findEntityAndVariable(entities, vizConfig.overlayVariable)?.variable
               .displayName
