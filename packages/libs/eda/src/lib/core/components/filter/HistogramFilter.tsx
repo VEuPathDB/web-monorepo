@@ -1,5 +1,11 @@
-import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
 import SelectedRangeControl from '@veupathdb/components/lib/components/plotControls/SelectedRangeControl';
+import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import Button from '@veupathdb/components/lib/components/widgets/Button';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
+
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
@@ -430,14 +436,6 @@ function HistogramPlotWithControls({
   const displayLegend = true;
   const displayLibraryControls = false;
   const opacity = 100;
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
 
   const selectedRange = useMemo((): NumberOrDateRange | undefined => {
     if (filter == null) return;
@@ -490,28 +488,63 @@ function HistogramPlotWithControls({
           verticalPaddingAdjustment: 20,
         }}
       />
-      <HistogramControls
-        label={undefined}
-        valueType={data?.valueType}
-        barLayout={barLayout}
-        displayLegend={displayLegend}
-        displayLibraryControls={displayLibraryControls}
-        opacity={opacity}
-        orientation={histogramProps.orientation}
-        binWidth={data?.binWidth}
-        onBinWidthChange={handleBinWidthChange}
-        binWidthRange={data?.binWidthRange}
-        binWidthStep={data?.binWidthStep}
-        errorManagement={errorManagement}
-        independentAxisRange={uiState.independentAxisRange}
-        onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
-        onIndependentAxisSettingsReset={handleIndependentAxisSettingsReset}
-        dependentAxisRange={uiState.dependentAxisRange}
-        onDependentAxisRangeChange={handleDependentAxisRangeChange}
-        onDependentAxisSettingsReset={handleDependentAxisSettingsReset}
-        dependentAxisLogScale={uiState.dependentAxisLogScale}
-        toggleDependentAxisLogScale={handleDependentAxisLogScale}
-      />
+
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LabelledGroup label="Y-axis" containerStyles={{}}>
+          <Switch
+            label="Log Scale:"
+            state={uiState.dependentAxisLogScale}
+            onStateChange={handleDependentAxisLogScale}
+            containerStyles={{ paddingBottom: '0.3125em' }}
+          />
+
+          <NumberRangeInput
+            label="Range:"
+            range={uiState.dependentAxisRange}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              handleDependentAxisRangeChange(newRange as NumberRange);
+            }}
+            allowPartialRange={false}
+          />
+
+          <Button
+            type={'solid'}
+            text={'Reset to defaults'}
+            onClick={handleDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '100%',
+            }}
+          />
+        </LabelledGroup>
+
+        <LabelledGroup label="X-axis" containerStyles={{}}>
+          <BinWidthControl
+            binWidth={data?.binWidth}
+            binWidthStep={data?.binWidthStep}
+            binWidthRange={data?.binWidthRange}
+            onBinWidthChange={handleBinWidthChange}
+            valueType={data?.valueType}
+          />
+
+          <AxisRangeControl
+            label="Range:"
+            range={uiState.independentAxisRange}
+            onRangeChange={handleIndependentAxisRangeChange}
+            valueType={data?.valueType}
+          />
+
+          <Button
+            type={'solid'}
+            text={'Reset to defaults'}
+            onClick={handleIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '100%',
+            }}
+          />
+        </LabelledGroup>
+      </div>
     </div>
   );
 }
