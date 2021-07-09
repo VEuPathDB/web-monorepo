@@ -62,7 +62,6 @@ function FullscreenComponent(props: VisualizationProps) {
 
 function createDefaultConfig(): HistogramConfig {
   return {
-    enableOverlay: true,
     dependentAxisLogScale: false,
   };
 }
@@ -71,7 +70,6 @@ type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const HistogramConfig = t.intersection([
   t.type({
-    enableOverlay: t.boolean,
     dependentAxisLogScale: t.boolean,
   }),
   t.partial({
@@ -193,7 +191,7 @@ function HistogramViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         xAxisVariable.type,
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
+        vizConfig.overlayVariable,
         vizConfig.binWidth,
         vizConfig.binWidthTimeUnit
       );
@@ -201,7 +199,6 @@ function HistogramViz(props: Props) {
       return histogramResponseToData(await response, xAxisVariable.type);
     }, [
       vizConfig.xAxisVariable,
-      vizConfig.enableOverlay,
       vizConfig.overlayVariable,
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
@@ -278,15 +275,19 @@ function HistogramViz(props: Props) {
           orientation={'vertical'}
           barLayout={'stack'}
           displayLegend={
-            data.value?.series?.length && data.value.series.length > 1
-              ? true
-              : false
+            data.value &&
+            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
           }
           independentAxisLabel={
             xAxisVariable ? xAxisVariable.displayName : 'Bins'
           }
           interactive={true}
           showSpinner={data.pending}
+          interactive={true}
+          legendTitle={
+            findEntityAndVariable(entities, vizConfig.overlayVariable)?.variable
+              .displayName
+          }
         />
       ) : (
         // thumbnail/grid view
