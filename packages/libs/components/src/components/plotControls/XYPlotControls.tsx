@@ -42,6 +42,8 @@ export type XYPlotControlsProps = {
   itemMarginRight?: number | string;
   /** plot options as props */
   plotOptions?: string[];
+  /** label for RadioButtonGroup */
+  label?: string;
 };
 
 /**
@@ -64,6 +66,7 @@ export default function XYPlotControls({
   itemMarginRight,
   // add plotOptions
   plotOptions,
+  label,
 }: XYPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
@@ -102,9 +105,9 @@ export default function XYPlotControls({
       <div style={{ display: 'flex' }}>
         {valueSpec && onValueSpecChange && (
           <RadioButtonGroup
-            label="Plot options"
+            label={label}
             // following plotOptions
-            options={plotOptions ? plotOptions : []}
+            options={plotOptions ?? []}
             selectedOption={valueSpec}
             onOptionSelected={onValueSpecChange}
             orientation={orientation}

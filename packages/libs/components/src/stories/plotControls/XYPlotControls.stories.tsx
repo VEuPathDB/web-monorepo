@@ -22,6 +22,7 @@ export const Basic: Story<usePlotControlsParams<any>> = (args) => {
       {...controls}
       {...controls.XYPlot}
       // assign new props' values for tests
+      label={'Plot modes'}
       orientation={'horizontal'}
       labelPlacement={'end'}
       // minWidth={235}
