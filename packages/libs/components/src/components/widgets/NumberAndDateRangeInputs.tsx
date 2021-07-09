@@ -95,10 +95,10 @@ function BaseInput({
       ) {
         onRangeChange(localRange);
       } else if (
-        localRange?.min == undefined &&
-        localRange?.max == undefined &&
-        range?.min != undefined &&
-        range?.max != undefined
+        localRange?.min == null &&
+        localRange?.max == null &&
+        range?.min != null &&
+        range?.max != null
       ) {
         onRangeChange(undefined);
       } else if (
@@ -107,12 +107,12 @@ function BaseInput({
         rangeBounds &&
         !allowPartialRange
       ) {
-        if (localRange.min == undefined) {
+        if (localRange.min == null) {
           setLocalRange({
             min: rangeBounds.min,
             max: localRange.max,
           } as NumberOrDateRange);
-        } else if (localRange.max == undefined) {
+        } else if (localRange.max == null) {
           setLocalRange({
             min: localRange.min,
             max: rangeBounds.max,

@@ -1,29 +1,35 @@
 import React from 'react';
-import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
+import PlotlyPlot, { PlotProps } from './PlotlyPlot';
+import { MosaicData } from '../types/plots';
 import { PlotParams } from 'react-plotly.js';
-import Spinner from '../components/Spinner';
 import _ from 'lodash';
 
-export interface Props extends Omit<PlotProps, 'width' | 'height'> {
-  // N columns, M rows
-  data: Array<Array<number>>; // MxN (M = outerLength; N = innerLength)
-  independentValues: Array<string>; // N
-  dependentValues: Array<string>; // M
-  independentLabel: string;
-  dependentLabel: string;
-  colors?: Array<string>; // M
-  showLegend?: boolean;
-  showModebar?: boolean;
+export interface MosaicPlotProps extends PlotProps<MosaicData> {
+  /** label for independent axis */
+  independentAxisLabel?: string;
+  /** label for dependent axis */
+  dependentAxisLabel?: string; // TO DO: standardise across all plots
+  /** colors for dependent axis */ colors?: Array<string>;
+  /** Show column labels */
   showColumnLabels?: boolean;
-  title?: string;
-  titleSize?: number;
-  width?: number | string;
-  height?: number | string;
 }
 
-export default function MosaicPlot(props: Props) {
+const EmptyMosaicData: MosaicData = {
+  values: [[]],
+  independentLabels: [],
+  dependentLabels: [],
+};
+
+export default function MosaicPlot({
+  data = EmptyMosaicData,
+  independentAxisLabel,
+  dependentAxisLabel,
+  colors,
+  showColumnLabels,
+  ...restProps
+}: MosaicPlotProps) {
   // Column widths
-  const raw_widths = _.unzip(props.data).map((arr) => _.sum(arr));
+  const raw_widths = _.unzip(data.values).map((arr) => _.sum(arr));
   const sum_raw_widths = _.sum(raw_widths);
   const percent_widths = raw_widths.map(
     (width) => (width / sum_raw_widths) * 100
@@ -38,7 +44,7 @@ export default function MosaicPlot(props: Props) {
   const layout = {
     // Bottom x axis displaying percent ticks
     xaxis: {
-      title: props.independentLabel ? props.independentLabel + ' (%)' : '',
+      title: independentAxisLabel ? independentAxisLabel + ' (%)' : '',
       // Must expliticly define range for it to work consistently
       range: [0, 100] as number[],
       tickvals: [0, 20, 40, 60, 80, 100] as number[],
@@ -49,8 +55,8 @@ export default function MosaicPlot(props: Props) {
     xaxis2: {
       tickvals: column_centers,
       ticktext:
-        props.showColumnLabels !== false
-          ? props.independentValues.map(
+        showColumnLabels !== false
+          ? data.independentLabels.map(
               (value, i) =>
                 `<b>${value}</b> ${percent_widths[i].toFixed(1)}% (${raw_widths[
                   i
@@ -62,33 +68,25 @@ export default function MosaicPlot(props: Props) {
       side: 'top',
     },
     yaxis: {
-      title: props.dependentLabel ? props.dependentLabel + ' (%)' : '',
+      title: dependentAxisLabel ? dependentAxisLabel + ' (%)' : '',
       range: [0, 100] as number[],
       tickvals: [0, 20, 40, 60, 80, 100] as number[],
     },
     barmode: 'stack',
     barnorm: 'percent',
-    title: props.title
-      ? {
-          text: props.title,
-          font: {
-            size: props.titleSize,
-          },
-        }
-      : undefined,
   } as const;
 
-  let data: PlotParams['data'] = props.data
+  const plotlyReadyData: PlotParams['data'] = data.values
     .map(
       (counts, i) =>
         ({
           x: column_centers,
           y: counts,
-          name: props.dependentValues[i],
+          name: data.dependentLabels[i],
           hoverinfo: 'text',
           hovertext: counts.map(
             (count, j) =>
-              `<b>${props.dependentValues[i]}</b> ${(
+              `<b>${data.dependentLabels[i]}</b> ${(
                 (count / raw_widths[j]) *
                 100
               ).toFixed(1)}% (${count.toLocaleString('en-US')})`
@@ -101,35 +99,14 @@ export default function MosaicPlot(props: Props) {
               width: 2,
               color: 'white',
             },
-            color: props.colors ? props.colors[i] : undefined,
+            color: colors ? colors[i] : undefined,
           },
         } as const)
     )
     .reverse(); // Reverse so first trace is on top, matching data array
 
   // Add empty trace to show second x axis
-  if (props.showColumnLabels !== false) data.push({ xaxis: 'x2' });
+  if (showColumnLabels !== false) plotlyReadyData.push({ xaxis: 'x2' });
 
-  return (
-    <div
-      style={{ position: 'relative', width: props.width, height: props.height }}
-    >
-      <PlotlyPlot
-        data={data}
-        style={{ width: props.width, height: props.height }}
-        layout={Object.assign(layout, {
-          margin: props.margin,
-          showlegend: props.showLegend,
-        })}
-        config={{
-          displayModeBar:
-            props.showModebar !== undefined
-              ? props.showModebar
-              : ModebarDefault,
-          staticPlot: props.staticPlot,
-        }}
-      />
-      {props.showSpinner && <Spinner />}
-    </div>
-  );
+  return <PlotlyPlot data={plotlyReadyData} layout={layout} {...restProps} />;
 }

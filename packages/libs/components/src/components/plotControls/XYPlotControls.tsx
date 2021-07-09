@@ -36,6 +36,7 @@ export type XYPlotControlsProps = {
   /** button color: for now, supporting blue and red only - primary: blue; secondary: red */
   buttonColor?: 'primary' | 'secondary';
   /** margin of radio button group: string array for top, left, bottom, and left, e.g., ['10em', '0', '0', '10em'] */
+  // TO DO: standardise to use SpacingOptionsAddon?
   margins?: string[];
   /** marginRight of radio button item: default 16px from MUI */
   itemMarginRight?: number | string;

@@ -1,6 +1,10 @@
-import React from 'react';
-import XYPlot from '../../plots/XYPlot';
+import React, { useState } from 'react';
+import XYPlot, { XYPlotProps } from '../../plots/XYPlot';
 import { min, max, lte, gte } from 'lodash';
+// import { dataSetProcess, xAxisRange, yAxisRange } from './XYPlot.storyData';
+import { Story, Meta } from '@storybook/react/types-6-0';
+// test to use RadioButtonGroup directly instead of XYPlotControls
+import RadioButtonGroup from '../../components/widgets/RadioButtonGroup';
 
 export default {
   title: 'Plots/XYPlot',
@@ -8,7 +12,7 @@ export default {
   parameters: {
     redmine: 'https://redmine.apidb.org/issues/41310',
   },
-};
+} as Meta;
 
 interface VEuPathDBScatterPlotData {
   scatterplot: {
@@ -24,7 +28,7 @@ interface VEuPathDBScatterPlotData {
   };
 }
 
-// Real data comprised of numbers
+// use actual data response format (number/string) following scatter plot data API
 const dataSet: VEuPathDBScatterPlotData = {
   scatterplot: {
     data: [
@@ -574,24 +578,33 @@ const dateStringDataSet: VEuPathDBScatterPlotData = {
 };
 
 /*
-  Testing scatter, line, and density plots for Case 1: number string
+  Testing scatter, line, and density plots
+  Case 1: number string; Case 2: date string
   Note that all plots will display smoothed mean line and confidence interval
     :it is because only single dataset is commonly used in this story
+  uncomment Case (line starting with const { dataSetProcess, yMin, yMax }) to test each case
+  Did not try to make it separate because each case requires the same function, processInputData
 **/
 // Case 1. X and Y: number string cases
 const independentValueType = 'number';
 const dependentValueType = 'number';
-// a) checking scatter plot: raw data with smoothed mean and confidence interval
-// const { dataSetProcess, yMin, yMax } = processInputData(dataSet, 'scatterplot', 'markers', independentValueType, dependentValueType);
-// b) checking line plot: raw data with line
+// Case 1-1) checking scatter plot: raw data with smoothed mean and confidence interval
 const { dataSetProcess, yMin, yMax } = processInputData(
   dataSet,
-  'lineplot',
-  'lines',
+  'scatterplot',
+  'markers',
   independentValueType,
   dependentValueType
 );
-// c) checking density plot: raw data with filled area
+// Case 1-2) checking line plot: raw data with line
+// const { dataSetProcess, yMin, yMax } = processInputData(
+//   dataSet,
+//   'lineplot',
+//   'lines',
+//   independentValueType,
+//   dependentValueType
+// );
+// Case 1-3) checking density plot: raw data with filled area
 // const { dataSetProcess, yMin, yMax } = processInputData(dataSet, 'densityplot', 'lines', independentValueType, dependentValueType);
 
 // // // Case 2. X or Y : date string (yyyy-mm-dd) case
@@ -619,16 +632,20 @@ const plotTitle = '';
 export const MultipleData = () => {
   return (
     <XYPlot
-      data={[...dataSetProcess]}
+      data={dataSetProcess}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
       // not to use independentAxisRange
       // independentAxisRange={[xMin, xMax]}
-      dependentAxisRange={[yMin, yMax]}
+      dependentAxisRange={{ min: yMin, max: yMax }}
       title={plotTitle}
-      width={plotWidth}
-      height={plotHeight}
-      staticPlot={false}
+      // width height is replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
+      // staticPlot is changed to interactive
+      interactive={true}
       // check enable/disable legend and built-in controls
       displayLegend={true}
       displayLibraryControls={true}
@@ -644,20 +661,30 @@ export const MultipleData = () => {
 export const EmptyData = () => {
   return (
     <XYPlot
-      data={[]}
-      independentAxisLabel={independentAxisLabel}
-      dependentAxisLabel={dependentAxisLabel}
+      data={undefined}
+      // independentAxisLabel={independentAxisLabel}
+      // dependentAxisLabel={dependentAxisLabel}
       // not to use independentAxisRange
       // independentAxisRange={[xMin, xMax]}
-      dependentAxisRange={[yMin, yMax]}
+      dependentAxisRange={{ min: yMin, max: yMax }}
       title={plotTitle}
-      width={plotWidth}
-      height={plotHeight}
-      staticPlot={true}
+      // width height is replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
+      // staticPlot is changed to interactive
+      interactive={true}
       // check enable/disable legend and built-in controls
       displayLegend={false}
       displayLibraryControls={false}
-      // margin={{l: 50, r: 10, b: 20, t: 10}}
+      // margin is replaced with spacingOptions: testing here
+      spacingOptions={{
+        marginTop: 100,
+        marginRight: 100,
+        marginBottom: 100,
+        marginLeft: 100,
+      }}
     />
   );
 };
@@ -665,16 +692,16 @@ export const EmptyData = () => {
 export const EmptyDataLoading = () => {
   return (
     <XYPlot
-      data={[]}
-      independentAxisLabel={independentAxisLabel}
-      dependentAxisLabel={dependentAxisLabel}
-      // not to use independentAxisRange
-      // independentAxisRange={[xMin, xMax]}
-      dependentAxisRange={[yMin, yMax]}
+      data={undefined}
+      dependentAxisRange={{ min: yMin, max: yMax }}
       title={plotTitle}
-      width={plotWidth}
-      height={plotHeight}
-      staticPlot={true}
+      // width height is replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
+      // staticPlot is changed to interactive
+      interactive={false}
       // check enable/disable legend and built-in controls
       displayLegend={false}
       displayLibraryControls={false}
@@ -683,6 +710,59 @@ export const EmptyDataLoading = () => {
     />
   );
 };
+
+// test plot mode control to directly access RadioButtonGroup
+// also, test for disabling radio item(s)
+export const PlotModeControl = () => {
+  const [valueSpec, setValueSpec] = useState('Raw');
+
+  const onValueSpecChange = (value: string) => {
+    setValueSpec(value);
+  };
+
+  return (
+    <RadioButtonGroup
+      label="Plot Modes"
+      // following plotOptions
+      options={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
+      // this will be used to disable radio options (grayed out)
+      disabledList={['Smoothed mean with raw', 'Best fit line with raw']}
+      selectedOption={valueSpec}
+      onOptionSelected={onValueSpecChange}
+      orientation={'horizontal'}
+      labelPlacement={'end'}
+      buttonColor={'primary'}
+      margins={['5em', '0', '0', '5em']}
+      itemMarginRight={50}
+    />
+  );
+};
+
+const Template = (args: any) => <XYPlot {...args} />;
+
+const disableDataControl = {
+  data: { control: { disable: true } },
+};
+
+// adding storybook control
+export const WithStorybookControl: Story<any> = Template.bind({});
+// set default values for args that use default storybook control
+WithStorybookControl.args = {
+  data: dataSetProcess,
+  interactive: true,
+  displayLegend: true,
+  displayLibraryControls: true,
+  showSpinner: false,
+  legendTitle: 'Legend title example',
+  independentAxisLabel: 'Floor material',
+  dependentAxisLabel: 'Sleeping rooms in dwelling',
+  containerStyles: {
+    width: plotWidth,
+    height: plotHeight,
+  },
+};
+// Don't show "data" in storybook controls because it's impractical to edit it
+WithStorybookControl.argTypes = disableDataControl;
 
 // making plotly input data
 function processInputData<T extends number | string>(
@@ -986,7 +1066,7 @@ function processInputData<T extends number | string>(
     yMax = NaN;
   }
 
-  return { dataSetProcess, yMin, yMax };
+  return { dataSetProcess: { series: dataSetProcess }, yMin, yMax };
 }
 
 /*

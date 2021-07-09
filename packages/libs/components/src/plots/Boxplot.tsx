@@ -1,48 +1,46 @@
 import React from 'react';
-import PlotlyPlot, { PlotProps, ModebarDefault } from './PlotlyPlot';
-import { Datum } from 'plotly.js';
-import Spinner from '../components/Spinner';
+import { PlotParams } from 'react-plotly.js';
+import PlotlyPlot, { PlotProps } from './PlotlyPlot';
+import {
+  BoxplotData,
+  OpacityAddon,
+  OpacityDefault,
+  OrientationAddon,
+  OrientationDefault,
+} from '../types/plots';
+import { NumberOrDateRange } from '../types/general';
 
-export interface Props extends PlotProps {
-  data: {
-    lowerWhisker?: Datum;
-    q1: Datum; // would like PlotData['q1'] but is the @types module not up to date?
-    median: Datum;
-    mean?: Datum;
-    q3: Datum;
-    upperWhisker?: Datum;
-    label: string;
-    color?: string;
-    rawData?: Datum[]; // PlotData['y'] | PlotData['x'], // doesn't seem to work
-    // but are we trying to remove dependencies on Plotly types?
-    outliers: Datum[];
-  }[];
+export interface BoxplotProps
+  extends PlotProps<BoxplotData>,
+    OrientationAddon,
+    OpacityAddon {
+  /** label for independent axis */
   independentAxisLabel?: string;
+  /** label for dependent axis */
   dependentAxisLabel?: string;
-  defaultDependentAxisRange?: [Datum, Datum]; // can be changed by plotly's built-in controls
-  orientation?: 'vertical' | 'horizontal';
+  /** set the range of the dependent axis (optional)  */
+  dependentAxisRange?: NumberOrDateRange;
+  /** show the rawData (if given) - optional */
   showRawData?: boolean;
+  /** Show the mean as an extra dotted line in the box - optional */
   showMean?: boolean;
-  markerOpacity?: number;
 }
+const EmptyBoxplotData: BoxplotData = [];
 
-export default function Boxplot({
-  data,
-  orientation,
-  showRawData,
-  showMean,
-  independentAxisLabel,
-  dependentAxisLabel,
-  defaultDependentAxisRange,
-  markerOpacity,
-  showModebar,
-  width,
-  height,
-  margin,
-  staticPlot,
-  showSpinner,
-}: Props) {
-  const pdata = data.map((d) => {
+export default function Boxplot(props: BoxplotProps) {
+  const {
+    data: plotData = EmptyBoxplotData,
+    showRawData,
+    showMean,
+    independentAxisLabel,
+    dependentAxisLabel,
+    dependentAxisRange,
+    orientation = OrientationDefault,
+    opacity = OpacityDefault,
+    ...restProps
+  } = props;
+
+  const data: PlotParams['data'] = plotData.map((d) => {
     const orientationDependentProps =
       orientation === 'vertical'
         ? {
@@ -68,20 +66,20 @@ export default function Boxplot({
       upperfence: [d.upperWhisker],
       lowerfence: [d.lowerWhisker],
       median: [d.median],
-      mean: d.mean !== undefined ? [d.mean] : undefined,
-      boxmean: d.mean !== undefined && showMean,
+      mean: d.mean != null ? [d.mean] : undefined,
+      boxmean: d.mean != null && showMean,
       q1: [d.q1],
       q3: [d.q3],
       name: d.label,
       boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
       jitter: 0.1, // should be dependent on the number of datapoints...?
       marker: {
-        opacity: markerOpacity,
+        opacity: opacity,
         color: d.color,
       },
       ...orientationDependentProps,
       type: 'box',
-    } as const;
+    };
   });
 
   const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';
@@ -91,34 +89,18 @@ export default function Boxplot({
     [dependentAxis]: {
       rangemode: 'tozero' as const,
       title: dependentAxisLabel,
-      range: defaultDependentAxisRange,
+      range: dependentAxisRange
+        ? [dependentAxisRange?.min, dependentAxisRange?.max]
+        : undefined,
+      tickfont: data.length ? {} : { color: 'transparent' },
     },
     [independentAxis]: {
       title: independentAxisLabel,
+      range: data.length ? undefined : [1, 5], // avoids x==0 line
+      showgrid: false,
+      tickfont: data.length ? {} : { color: 'transparent' },
     },
     showlegend: false,
   };
-  return (
-    <div style={{ position: 'relative', width: width, height: height }}>
-      <PlotlyPlot
-        data={pdata}
-        layout={Object.assign(layout, {
-          width: width,
-          height: height,
-          margin: margin,
-        })}
-        config={{
-          displayModeBar:
-            showModebar !== undefined ? showModebar : ModebarDefault,
-          staticPlot: staticPlot,
-        }}
-      />
-      {showSpinner && <Spinner />}
-    </div>
-  );
+  return <PlotlyPlot data={data} layout={layout} {...restProps} />;
 }
-
-Boxplot.defaultProps = {
-  markerOpacity: 0.5,
-  orientation: 'vertical',
-};

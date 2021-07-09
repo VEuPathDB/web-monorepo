@@ -1,4 +1,4 @@
-import { AvailableUnitsAddon } from '.';
+import { AvailableUnitsAddon } from './addOns';
 
 // Pie Plot Type Definitions
 export type PiePlotData = {
