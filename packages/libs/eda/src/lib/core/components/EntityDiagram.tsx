@@ -1,6 +1,7 @@
 import { useStudyMetadata } from '../hooks/workspace';
 import EntityDiagramComponent, {
   Orientation,
+  StudyData,
 } from '@veupathdb/components/lib/EntityDiagram/EntityDiagram';
 import { StudyEntity } from '../types/study';
 import { VariableLink } from './VariableLink';
@@ -42,7 +43,7 @@ export function EntityDiagram(props: Props) {
   }, [selectedEntity, selectedVariable]);
 
   // Renders a VariableLink with optional children passed through
-  const renderNode = (node: StudyEntity, children?: React.ReactNode) => {
+  const renderNode = (node: StudyData, children?: React.ReactNode) => {
     return (
       <VariableLink
         entityId={node.id}
@@ -60,10 +61,13 @@ export function EntityDiagram(props: Props) {
     props.expanded
   );
 
+  // TODO Update props of EntityDiagramComponent in web-components to be more
+  // generic. Until then, we have to cast the StudyData type.
+
   return (
     <EntityDiagramComponent
       isExpanded={props.expanded}
-      treeData={studyMetadata.rootEntity}
+      treeData={studyMetadata.rootEntity as StudyData}
       highlightedEntityID={props.selectedEntity}
       orientation={props.orientation}
       filteredEntities={props.filteredEntities}

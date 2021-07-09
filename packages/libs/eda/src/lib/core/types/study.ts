@@ -16,55 +16,145 @@ export type StudyRecord = RecordInstance;
 
 // See https://github.com/gcanti/io-ts/blob/master/index.md#union-of-string-literals
 
-export const StudyVariableType = t.keyof({
-  category: null,
+export const VariableType = t.keyof({
   string: null,
   number: null,
   date: null,
   longitude: null,
 });
 
-export const StudyVariableDataShape = t.keyof({
+export const VariableDataShape = t.keyof({
   continuous: null,
   categorical: null,
   ordinal: null,
   binary: null,
 });
 
-const StudyVariableDisplayType = t.keyof({
+const VariableDisplayType = t.keyof({
   default: null,
   multifilter: null,
   hidden: null,
 });
 
-export type StudyVariable = t.TypeOf<typeof StudyVariable>;
-export const StudyVariable = t.intersection([
+export const VariableTreeNode_Base = t.intersection([
   t.type({
     id: t.string,
     providerLabel: t.string,
     displayName: t.string,
-    type: StudyVariableType,
-    isMultiValued: t.boolean,
-    // description: t.string,
   }),
   t.partial({
     parentId: t.string,
-    displayType: StudyVariableDisplayType,
-    dataShape: StudyVariableDataShape,
+    definition: t.string,
+    displayOrder: t.number,
+    displayType: VariableDisplayType,
+    dataShape: VariableDataShape,
   }),
+]);
+
+const Variable_Base = t.intersection([
+  VariableTreeNode_Base,
+  t.type({
+    distinctValuesCount: t.number,
+    isTemporal: t.boolean,
+    isFeatured: t.boolean,
+    isMergeKey: t.boolean,
+    isMultiValued: t.boolean,
+  }),
+  t.partial({
+    vocabulary: t.array(t.string),
+  }),
+]);
+
+export type StringVariable = t.TypeOf<typeof StringVariable>;
+export const StringVariable = t.intersection([
+  Variable_Base,
+  t.type({
+    type: t.literal('string'),
+  }),
+]);
+
+export type NumberVariable = t.TypeOf<typeof NumberVariable>;
+export const NumberVariable = t.intersection([
+  Variable_Base,
+  t.type({
+    type: t.literal('number'),
+    units: t.string,
+  }),
+  t.partial({
+    // TODO This is supposed to be required, but the backend isn't populating it.
+    precision: t.number,
+    displayRangeMin: t.number,
+    displayRangeMax: t.number,
+    rangeMin: t.number,
+    rangeMax: t.number,
+    binWidthOverride: t.number,
+    binWidth: t.number,
+  }),
+]);
+
+export type DateVariable = t.TypeOf<typeof DateVariable>;
+export const DateVariable = t.intersection([
+  Variable_Base,
+  t.type({
+    type: t.literal('date'),
+  }),
+  t.partial({
+    displayRangeMin: t.string,
+    displayRangeMax: t.string,
+    rangeMin: t.string,
+    rangeMax: t.string,
+    binWidthOverride: t.string,
+    binWidth: t.string,
+  }),
+]);
+
+export type LongitudeVariable = t.TypeOf<typeof LongitudeVariable>;
+export const LongitudeVariable = t.intersection([
+  Variable_Base,
+  t.type({
+    type: t.literal('longitude'),
+  }),
+]);
+
+export type VariableCategory = t.TypeOf<typeof VariableCategory>;
+export const VariableCategory = t.intersection([
+  VariableTreeNode_Base,
+  t.type({
+    type: t.literal('category'),
+  }),
+]);
+
+export type Variable =
+  | StringVariable
+  | NumberVariable
+  | DateVariable
+  | LongitudeVariable;
+
+export type VariableTreeNode = t.TypeOf<typeof VariableTreeNode>;
+export const VariableTreeNode = t.union([
+  StringVariable,
+  NumberVariable,
+  DateVariable,
+  LongitudeVariable,
+  VariableCategory,
 ]);
 
 // StudyEntity
 // -----------
 
 type _StudyEntityBase = t.TypeOf<typeof _StudyEntityBase>;
-const _StudyEntityBase = t.type({
-  id: t.string,
-  displayName: t.string,
-  description: t.string,
-  variables: t.array(StudyVariable),
-  // displayNamePlural: t.string,
-});
+const _StudyEntityBase = t.intersection([
+  t.type({
+    id: t.string,
+    idColumnName: t.string,
+    displayName: t.string,
+    description: t.string,
+    variables: t.array(VariableTreeNode),
+  }),
+  t.partial({
+    displayNamePlural: t.string,
+  }),
+]);
 
 // export type StudyEntity = t.Unpack<typeof StudyEntity>;
 export type StudyEntity = _StudyEntityBase & {
@@ -86,7 +176,6 @@ export type StudyOverview = t.TypeOf<typeof StudyOverview>;
 export const StudyOverview = t.type({
   id: t.string,
   datasetId: t.string,
-  // name: t.string,
 });
 
 export type StudyMetadata = t.TypeOf<typeof StudyMetadata>;

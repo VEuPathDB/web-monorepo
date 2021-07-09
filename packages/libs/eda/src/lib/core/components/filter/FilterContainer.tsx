@@ -1,6 +1,11 @@
 import React from 'react';
 import { AnalysisState } from '../../hooks/analysis';
-import { StudyEntity, StudyMetadata, StudyVariable } from '../../types/study';
+import {
+  StudyEntity,
+  StudyMetadata,
+  VariableTreeNode,
+  Variable,
+} from '../../types/study';
 import { isHistogramVariable, isTableVariable } from './guards';
 import { HistogramFilter } from './HistogramFilter';
 import { TableFilter } from './TableFilter';
@@ -8,7 +13,7 @@ import UnknownFilter from './UnknownFilter';
 
 interface Props {
   studyMetadata: StudyMetadata;
-  variable: StudyVariable;
+  variable: Variable;
   entity: StudyEntity;
   analysisState: AnalysisState;
   totalEntityCount: number;
@@ -25,12 +30,12 @@ export function FilterContainer(props: Props) {
   );
 }
 
-interface NarrowedProps<T extends StudyVariable> extends Props {
+interface NarrowedProps<T extends Variable> extends Props {
   variable: T;
 }
 
-function narrowProps<T extends StudyVariable>(
-  guard: (variable: StudyVariable) => variable is T,
+function narrowProps<T extends Variable>(
+  guard: (variable: VariableTreeNode) => variable is T,
   props: Props
 ): props is NarrowedProps<T> {
   return guard(props.variable);

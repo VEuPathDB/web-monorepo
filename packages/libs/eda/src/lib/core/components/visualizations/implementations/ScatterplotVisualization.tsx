@@ -6,13 +6,12 @@ import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 
 // need to set for Scatterplot
 import {
   DataClient,
   ScatterplotRequestParams,
-  ScatterplotResponse,
   LineplotRequestParams,
 } from '../../../api/data-api';
 
@@ -20,7 +19,7 @@ import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
-import { Variable } from '../../../types/variable';
+import { VariableDescriptor } from '../../../types/variable';
 
 import { InputVariables } from '../InputVariables';
 import {
@@ -33,9 +32,42 @@ import density from './selectorIcons/density.svg';
 import line from './selectorIcons/line.svg';
 import scatter from './selectorIcons/scatter.svg';
 
-// XYPlotControls
-import XYPlotControls from '@veupathdb/components/lib/components/plotControls/XYPlotControls';
+// use lodash instead of Math.min/max
 import { min, max, lte, gte } from 'lodash';
+// directly use RadioButtonGroup instead of XYPlotControls
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+// import XYPlotData
+import { XYPlotData } from '@veupathdb/components/lib/types/plots';
+
+// define PromiseXYPlotData
+interface PromiseXYPlotData {
+  dataSetProcess: XYPlotData;
+  yMin: number;
+  yMax: number;
+}
+
+// define XYPlotDataResponse
+interface XYPlotDataResponse {
+  scatterplot?: {
+    data: Array<{
+      seriesX?: number[] | string[];
+      seriesY?: number[] | string[];
+      smoothedMeanX?: number[] | string[];
+      smoothedMeanY?: number[];
+      smoothedMeanSE?: number[];
+      bestFitLineX?: number[] | string[];
+      bestFitLineY?: number[];
+    }>;
+  };
+  // from data API doc, densityplot returns densityX/Y but processInputData() did not consider it yet
+  // To-do: need further changes at processInputData() when working with densityplot in the future
+  densityplot?: {
+    data: Array<{
+      densityX?: number[] | string[];
+      densityY?: number[] | string[];
+    }>;
+  };
+}
 
 export const scatterplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -75,10 +107,10 @@ function createDefaultConfig(): ScatterplotConfig {
 type ScatterplotConfig = t.TypeOf<typeof ScatterplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const ScatterplotConfig = t.partial({
-  xAxisVariable: Variable,
-  yAxisVariable: Variable,
-  overlayVariable: Variable,
-  facetVariable: Variable,
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor,
+  overlayVariable: VariableDescriptor,
+  facetVariable: VariableDescriptor,
   valueSpecConfig: t.string,
 });
 
@@ -154,7 +186,7 @@ function ScatterplotViz(props: Props) {
   );
 
   const findVariable = useCallback(
-    (variable?: Variable) => {
+    (variable?: VariableDescriptor) => {
       if (variable == null) return undefined;
       return entities
         .find((e) => e.id === variable.entityId)
@@ -173,8 +205,17 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig]
   );
 
+  // set valueSpec as Raw when yAxisVariable = date
+  useEffect(() => {
+    if (findVariable(vizConfig.yAxisVariable)?.type === 'date') {
+      updateVizConfig({
+        valueSpecConfig: 'Raw',
+      });
+    }
+  }, [vizConfig.yAxisVariable]);
+
   const data = usePromise(
-    useCallback(async (): Promise<any> => {
+    useCallback(async (): Promise<PromiseXYPlotData | undefined> => {
       const xAxisVariable = findVariable(vizConfig.xAxisVariable);
       const yAxisVariable = findVariable(vizConfig.yAxisVariable);
 
@@ -300,58 +341,84 @@ function ScatterplotViz(props: Props) {
         <ScatterplotWithControls
           // data.value
           data={
-            data.value && !data.pending ? [...data.value.dataSetProcess] : []
+            data.value && !data.pending ? data.value.dataSetProcess : undefined
           }
-          width={1000}
-          height={600}
+          containerStyles={{
+            width: '750px',
+            height: '450px',
+          }}
           // title={'Scatter plot'}
+          displayLegend={
+            data.value &&
+            (data.value.dataSetProcess.series.length > 1 ||
+              vizConfig.overlayVariable != null)
+          }
           independentAxisLabel={
-            findVariable(vizConfig.xAxisVariable)?.displayName
+            findVariable(vizConfig.xAxisVariable)?.displayName ?? 'X-Axis'
           }
           dependentAxisLabel={
-            findVariable(vizConfig.yAxisVariable)?.displayName
+            findVariable(vizConfig.yAxisVariable)?.displayName ?? 'Y-Axis'
           }
           // independentAxisRange={data.value && !data.pending ? [data.value.xMin, data.value.xMax] : []}
           // block this for now
           dependentAxisRange={
             data.value && !data.pending
-              ? [data.value.yMin, data.value.yMax]
-              : []
+              ? { min: data.value.yMin, max: data.value.yMax }
+              : undefined
           }
-          // XYPlotControls valueSpecInitial
-          valueSpec={vizConfig.valueSpecConfig}
-          // valueSpec={valueSpecInitial}
+          // set valueSpec as Raw when yAxisVariable = date
+          valueSpec={
+            findVariable(vizConfig.yAxisVariable)?.type === 'date'
+              ? 'Raw'
+              : vizConfig.valueSpecConfig
+          }
           onValueSpecChange={onValueSpecChange}
           // send visualization.type here
           vizType={visualization.type}
+          interactive={true}
           showSpinner={data.pending}
           // add plotOptions to control the list of plot options
-          plotOptions={
+          plotOptions={[
+            'Raw',
+            'Smoothed mean with raw',
+            'Best fit line with raw',
+          ]}
+          // disabledList prop is used to disable radio options (grayed out)
+          disabledList={
             findVariable(vizConfig.yAxisVariable)?.type === 'date'
-              ? ['Raw']
-              : ['Raw', 'Smoothed mean with raw', 'Best fit line with raw']
+              ? ['Smoothed mean with raw', 'Best fit line with raw']
+              : []
           }
+          independentValueType={findVariable(vizConfig.xAxisVariable)?.type}
+          dependentValueType={findVariable(vizConfig.yAxisVariable)?.type}
+          legendTitle={findVariable(vizConfig.overlayVariable)?.displayName}
         />
       ) : (
         // thumbnail/grid view
         <XYPlot
           data={
-            data.value && !data.pending ? [...data.value.dataSetProcess] : []
+            data.value && !data.pending ? data.value.dataSetProcess : undefined
           }
-          width={230}
-          height={150}
-          // independentAxisRange={data.value && !data.pending ? [data.value.xMin, data.value.xMax] : []}
-          // block this for now
+          containerStyles={{
+            width: '230px',
+            height: '150px',
+          }}
           dependentAxisRange={
             data.value && !data.pending
-              ? [data.value.yMin, data.value.yMax]
-              : []
+              ? { min: data.value.yMin, max: data.value.yMax }
+              : undefined
           }
           // new props for better displaying grid view
           displayLegend={false}
           displayLibraryControls={false}
-          staticPlot={true}
-          margin={{ l: 30, r: 20, b: 15, t: 20 }}
+          interactive={false}
+          // margin is replaced with spacingOptions
+          spacingOptions={{
+            marginTop: 20,
+            marginRight: 20,
+            marginBottom: 20,
+            marginLeft: 30,
+          }}
           showSpinner={data.pending}
         />
       )}
@@ -364,6 +431,8 @@ type ScatterplotWithControlsProps = XYPlotProps & {
   onValueSpecChange: (value: string) => void;
   vizType: string;
   plotOptions: string[];
+  // add disabledList
+  disabledList: string[];
 };
 
 function ScatterplotWithControls({
@@ -374,6 +443,8 @@ function ScatterplotWithControls({
   vizType,
   // add plotOptions
   plotOptions,
+  // add disabledList
+  disabledList,
   ...ScatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
@@ -392,26 +463,23 @@ function ScatterplotWithControls({
         {...ScatterplotProps}
         data={data}
         // add controls
-        displayLegend={data.length > 1}
         displayLibraryControls={false}
       />
       {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (
-        <XYPlotControls
-          // label="Scatter Plot Controls"
-          valueSpec={valueSpec}
-          onValueSpecChange={onValueSpecChange}
-          errorManagement={errorManagement}
-          // new radio button
+        // use RadioButtonGroup directly instead of XYPlotControls
+        <RadioButtonGroup
+          label="Plot Modes"
+          options={plotOptions}
+          selectedOption={valueSpec}
+          onOptionSelected={onValueSpecChange}
+          // disabledList prop is used to disable radio options (grayed out)
+          disabledList={disabledList}
           orientation={'horizontal'}
           labelPlacement={'end'}
-          // minWidth is used to set equivalent space per item
-          minWidth={210}
           buttonColor={'primary'}
-          margins={['0', '0', '0', '5em']}
+          margins={['0', '0', '0', '6em']}
           itemMarginRight={50}
-          // add plotOptions
-          plotOptions={plotOptions}
         />
       )}
     </div>
@@ -431,7 +499,7 @@ export function scatterplotResponseToData(
   vizType: string,
   independentValueType: string,
   dependentValueType: string
-) {
+): PromiseXYPlotData {
   const modeValue = vizType === 'lineplot' ? 'lines' : 'markers'; // for scatterplot
 
   const { dataSetProcess, yMin, yMax } = processInputData(
@@ -459,10 +527,10 @@ type getRequestParamsProps =
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: Variable,
+  xAxisVariable: VariableDescriptor,
   // set yAxisVariable as optional for densityplot
-  yAxisVariable?: Variable,
-  overlayVariable?: Variable,
+  yAxisVariable?: VariableDescriptor,
+  overlayVariable?: VariableDescriptor,
   // add visualization.type
   vizType?: string,
   // XYPlotControls
@@ -508,7 +576,7 @@ function getRequestParams(
 
 // making plotly input data
 function processInputData<T extends number | string>(
-  dataSet: any,
+  dataSet: XYPlotDataResponse,
   vizType: string,
   // line, marker,
   modeValue: string,
@@ -546,11 +614,11 @@ function processInputData<T extends number | string>(
     '23, 190, 207', //'#17becf'   // blue-teal
   ];
 
-  // set dataSetProcess as any
+  // set dataSetProcess as any for now
   let dataSetProcess: any = [];
 
   // drawing raw data (markers) at first
-  plotDataSet.data.forEach(function (el: any, index: number) {
+  plotDataSet?.data.forEach(function (el: any, index: number) {
     // initialize seriesX/Y
     let seriesX = [];
     let seriesY = [];
@@ -581,8 +649,6 @@ function processInputData<T extends number | string>(
       } else {
         seriesY = el.seriesY.map(Number);
       }
-
-      // console.log('seriesX = ', seriesX)
 
       // check if this Y array consists of numbers & add type assertion
       if (index === 0) {
@@ -626,7 +692,7 @@ function processInputData<T extends number | string>(
   });
 
   // after drawing raw data, smoothedMean and bestfitline plots are displayed
-  plotDataSet.data.forEach(function (el: any, index: number) {
+  plotDataSet?.data.forEach(function (el: any, index: number) {
     // initialize variables: setting with union type for future, but this causes typescript issue in the current version
     let xIntervalLineValue: T[] = [];
     let yIntervalLineValue: number[] = [];
@@ -711,7 +777,7 @@ function processInputData<T extends number | string>(
       // make Confidence Interval (CI) or Bounds (filled area)
       xIntervalBounds = xIntervalLineValue;
       xIntervalBounds = xIntervalBounds.concat(
-        xIntervalLineValue.map((element: any) => element).reverse()
+        xIntervalLineValue.map((element) => element).reverse()
       );
 
       // finding upper and lower bound values.
@@ -723,7 +789,7 @@ function processInputData<T extends number | string>(
       // make upper and lower bounds plotly format
       yIntervalBounds = yUpperValues;
       yIntervalBounds = yIntervalBounds.concat(
-        yLowerValues.map((element: any) => element).reverse()
+        yLowerValues.map((element) => element).reverse()
       );
 
       // set variables for x-/y-axes ranges including CI/bounds: no need for x data as it was compared before
@@ -807,7 +873,7 @@ function processInputData<T extends number | string>(
     yMax = NaN;
   }
 
-  return { dataSetProcess, yMin, yMax };
+  return { dataSetProcess: { series: dataSetProcess }, yMin, yMax };
 }
 
 /*

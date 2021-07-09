@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
 import { EntityDiagram, Status, useAnalysis, useStudyRecord } from '../core';
@@ -42,6 +42,19 @@ export function AnalysisPanel(props: Props) {
   const location = useLocation();
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
+  // check whether a user is at viz's full screen mode
+  const inFullscreenVisualization = useMemo(() => {
+    const relativePath = location.pathname.replace(routeBase, '');
+    const lastUrlElement = relativePath.split('/').pop();
+
+    // 'Browse and Subset' and the 'Visualize' selector do not have a UUID in the url
+    return (
+      lastUrlElement?.match(
+        '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+      ) != null
+    );
+  }, [location, routeBase]);
+
   useEffect(() => {
     const relativePath = location.pathname.replace(routeBase, '');
     if (relativePath.startsWith('/variables')) {
@@ -99,16 +112,22 @@ export function AnalysisPanel(props: Props) {
             display: 'View study details',
             route: `/details`,
             exact: false,
+            replace: true,
           },
           {
             display: 'Browse and subset',
             route: `/variables${lastVarPath}`,
             exact: false,
+            replace: true,
           },
           {
             display: 'Visualize',
-            route: `/visualizations${lastVizPath}`,
+            // check whether user is at viz's full screen mode
+            route: inFullscreenVisualization
+              ? '/visualizations/pass-through'
+              : `/visualizations${lastVizPath}`,
             exact: false,
+            replace: true,
           },
         ]}
       />

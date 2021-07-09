@@ -18,7 +18,7 @@ import {
 } from 'io-ts';
 import { Filter } from '../types/filter';
 import { TimeUnit } from '../types/general';
-import { Variable, StringVariableValue } from '../types/variable';
+import { VariableDescriptor, StringVariableValue } from '../types/variable';
 import { ComputationAppOverview } from '../types/visualization';
 import { ioTransformer } from './ioTransformer';
 
@@ -26,7 +26,10 @@ const AppsResponse = type({
   apps: array(ComputationAppOverview),
 });
 
-type ZeroToTwoVariables = [] | [Variable] | [Variable, Variable];
+type ZeroToTwoVariables =
+  | []
+  | [VariableDescriptor]
+  | [VariableDescriptor, VariableDescriptor];
 
 // define sampleSizeTableArray
 const sampleSizeTableArray = array(
@@ -60,8 +63,8 @@ export interface HistogramRequestParams {
   config: {
     outputEntityId: string;
     valueSpec: 'count' | 'proportion';
-    xAxisVariable: Variable;
-    overlayVariable?: Variable; // TO DO: should this be StringVariable??
+    xAxisVariable: VariableDescriptor;
+    overlayVariable?: VariableDescriptor; // TO DO: should this be StringVariable??
     facetVariable?: ZeroToTwoVariables; // ditto here
     binSpec: {
       type: 'binWidth' | 'numBins';
@@ -96,13 +99,13 @@ export const HistogramResponse = type({
       ])
     ),
     config: type({
-      incompleteCases: number,
+      completeCases: number,
       binSlider: type({
         min: number,
         max: number,
         step: number,
       }),
-      xVariableDetails: Variable,
+      xVariableDetails: VariableDescriptor,
       binSpec: intersection([
         type({ type: keyof({ binWidth: null, numBins: null }) }),
         partial({
@@ -136,16 +139,9 @@ export interface BarplotRequestParams {
     outputEntityId: string;
     // add proportion as it seems to be coming
     valueSpec: 'count' | 'identity' | 'proportion';
-    xAxisVariable: {
-      // TO DO: refactor repetition with HistogramRequestParams
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
     // barplot add prop
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -153,7 +149,7 @@ export type BarplotResponse = TypeOf<typeof BarplotResponse>;
 export const BarplotResponse = type({
   barplot: type({
     config: type({
-      incompleteCases: number,
+      completeCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -197,18 +193,9 @@ export interface ScatterplotRequestParams {
       | 'bestFitLineWithRaw';
     // not quite sure of overlayVariable and facetVariable yet
     // facetVariable?: ZeroToTwoVariables;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -244,7 +231,7 @@ export const ScatterplotResponse = type({
   scatterplot: type({
     data: ScatterplotResponseData,
     config: type({
-      incompleteCases: number,
+      completeCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -268,18 +255,9 @@ export interface LineplotRequestParams {
     // not quite sure of overlayVariable and facetVariable yet
     // overlayVariable?: Variable;
     // facetVariable?: ZeroToTwoVariables;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -308,7 +286,7 @@ export const LineplotResponse = type({
   scatterplot: type({
     data: LineplotResponseData,
     config: type({
-      incompleteCases: number,
+      completeCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
@@ -328,14 +306,8 @@ export interface MosaicRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
   };
 }
 
@@ -350,7 +322,7 @@ export const MosaicResponse = type({
       })
     ),
     config: type({
-      incompleteCases: number,
+      completeCases: number,
       xVariableDetails: type({
         variableId: string,
         entityId: string,
