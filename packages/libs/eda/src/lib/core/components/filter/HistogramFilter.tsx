@@ -584,6 +584,6 @@ function formatStatValue(
   return type === 'date'
     ? value
     : Number(value).toLocaleString(undefined, {
-        maximumFractionDigits: 3,
+        maximumFractionDigits: 4,
       });
 }
