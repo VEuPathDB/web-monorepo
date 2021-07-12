@@ -198,7 +198,7 @@ export default function Histogram({
               new Date(bin.binStart as string),
               DateMath.diff(
                 new Date(bin.binStart as string),
-                new Date(bin.binEnd as string),
+                DateMath.endOf(new Date(bin.binEnd as string), 'day'),
                 'seconds',
                 false
               ) * 500,
@@ -218,8 +218,14 @@ export default function Histogram({
           orientation === 'vertical' ? object.range.x : object.range.y;
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
         // TO DO: think about time zones?
-        const rawRange: NumberOrDateRange = { min, max };
-
+        // ISO-ify time part of plotly's response
+        //// console.log(`${min} to ${max} raw`);
+        const rawRange: NumberOrDateRange = {
+          min: min.replace(/ /, 'T').replace(/\.\d+$/, ''),
+          max: max.replace(/ /, 'T').replace(/\.\d+$/, ''),
+        };
+        //// console.log(`${rawRange.min} to ${rawRange.max} selected`);
+        //// console.log(binSummaries.slice().reverse());
         // now snap to bin boundaries using same logic that Plotly uses
         // (dragging range past middle of bin selects it)
         const leftBin = binSummaries.find(
