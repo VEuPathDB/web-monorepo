@@ -69,8 +69,15 @@ export function Subsetting(props: Props) {
       </div>
       <div className="FilterChips">
         <FilterChipList
-          filters={analysisState.analysis?.filters}
-          setFilters={analysisState.setFilters}
+          filters={analysisState.analysis?.filters.filter(
+            (f) => f.entityId === entity.id
+          )}
+          removeFilter={(filter) =>
+            analysisState.analysis &&
+            analysisState.setFilters(
+              analysisState.analysis.filters.filter((f) => f !== filter)
+            )
+          }
           entities={entities}
           selectedEntityId={entity.id}
           selectedVariableId={variable.id}

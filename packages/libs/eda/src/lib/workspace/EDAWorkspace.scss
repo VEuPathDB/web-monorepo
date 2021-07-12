@@ -92,9 +92,30 @@
     font-size: 1.65em;
   }
 
-  &-AnalysisNameEditBox {
+  &-AnalysisSummaryLeft {
+    display: flex;
+    align-items: center;
     margin-right: auto;
+  }
+
+  &-AnalysisSummaryRight {
+    display: flex;
+    align-items: center;
+  }
+
+  &-AnalysisNameEditBox {
     font-style: italic;
+  }
+
+  &-SeeAllFiltersButton {
+    margin-left: 15px !important;
+    box-shadow: none !important;
+
+    .MuiButton-label {
+      align-items: end;
+      text-transform: none;
+      font-weight: bold;
+    }
   }
 
   &-ActionIconButton {
@@ -193,5 +214,9 @@
     > div {
       font-size: 1.333em;
     }
+  }
+
+  .fa.fa-filter {
+    color: green;
   }
 }

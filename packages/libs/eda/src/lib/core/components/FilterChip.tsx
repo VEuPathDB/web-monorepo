@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'default',
     border: props.isActive ? '2px solid' : '1px solid',
     borderColor: props.isActive ? '#aaa' : '#ccc',
+    marginBottom: '5px',
     '& a': {
       color: theme.palette.primary.main,
       textDecoration: 'none',
