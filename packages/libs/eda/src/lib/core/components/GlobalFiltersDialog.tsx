@@ -80,6 +80,8 @@ export default function GlobalFiltersDialog(props: Props) {
       style={{ display: props.open ? 'flex' : 'none' }}
     >
       <Draggable handle=".GlobalFiltersDialog_Header" bounds="html">
+        {/** If changing width/height, also change .react-draggable.react-resizable top/left offsets
+         *  in GlobalFiltersDialog.scss to preserve dialog centering */}
         <ResizableBox width={400} height={300} minConstraints={[200, 200]}>
           <div className="GlobalFiltersDialog">
             <div className="GlobalFiltersDialog_Header">

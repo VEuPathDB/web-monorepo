@@ -9,6 +9,8 @@
 
   .react-draggable.react-resizable {
     pointer-events: auto;
+    // top and left are dependent on the inital width/height of the dialog
+    // set at the <ResizableBox> element in GlobalFiltersDialog.tsx
     top: calc(50vh - 150px);
     left: calc(50vw - 200px);
 
