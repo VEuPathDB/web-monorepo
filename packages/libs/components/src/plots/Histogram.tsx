@@ -295,6 +295,20 @@ export default function Histogram({
     }
   }, [selectingRange, selectedRange, orientation, data.series]);
 
+  const plotlyIndependentAxisRange = useMemo(() => {
+    const range = independentAxisRange
+      ? [independentAxisRange.min, independentAxisRange.max]
+      : [minBinStart, maxBinEnd];
+    if (data?.valueType === 'date') {
+      return [
+        range[0],
+        DateMath.endOf(new Date(range[1]), 'day').toISOString(),
+      ];
+    } else {
+      return range;
+    }
+  }, [data?.valueType, independentAxisRange, minBinStart, maxBinEnd]);
+
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
     automargin: true,
@@ -304,14 +318,7 @@ export default function Histogram({
     title: {
       text: independentAxisLabel,
     },
-    range: [
-      independentAxisRange && independentAxisRange.min < minBinStart
-        ? independentAxisRange.min
-        : minBinStart,
-      independentAxisRange && independentAxisRange?.max > maxBinEnd
-        ? independentAxisRange.max
-        : maxBinEnd,
-    ],
+    range: plotlyIndependentAxisRange,
     tickfont: data.series.length ? {} : { color: 'transparent' },
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
