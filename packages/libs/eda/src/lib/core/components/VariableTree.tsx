@@ -1,6 +1,7 @@
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 import { Button } from '@material-ui/core';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
+import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { cx } from '../../workspace/Utils';
@@ -10,13 +11,6 @@ import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
 import { useStudyEntities } from '../hooks/study';
-
-// TODO Populate valuesMap with properties of variables.
-// This is used by the search functionality of FieldList.
-// It should be a map from field term to string.
-// In WDK searches, this is a concatenated string of values
-// for categorical-type variables.
-const valuesMap: Record<string, string> = {};
 
 export interface Props {
   rootEntity: StudyEntity;
@@ -43,6 +37,24 @@ export function VariableTree(props: Props) {
     setHideDisabledFields = () => {},
   } = props;
   const entities = useStudyEntities(rootEntity);
+
+  // This is used by the search functionality of FieldList.
+  // It should be a map from field term to string.
+  // In WDK searches, this is a concatenated string of values
+  // for categorical-type variables.
+  const valuesMap = useMemo(() => {
+    const valuesMap: Record<string, string> = {};
+    for (const entity of entities) {
+      for (const variable of entity.variables) {
+        if (variable.type !== 'category' && variable.vocabulary) {
+          valuesMap[`${entity.id}/${variable.id}`] = variable.vocabulary.join(
+            ' '
+          );
+        }
+      }
+    }
+    return valuesMap;
+  }, [entities]);
 
   const fields = useMemo(() => {
     return entities.flatMap((entity) => {
@@ -87,10 +99,30 @@ export function VariableTree(props: Props) {
     });
   }, [entities]);
 
+  const featuredFields = useMemo(() => {
+    return entities.flatMap((entity) =>
+      entity.variables
+        .filter(
+          (variable) => variable.type !== 'category' && variable.isFeatured
+        )
+        .map((variable) => ({
+          ...variable,
+          id: `${entity.id}/${variable.id}`,
+          displayName: `<span class="Entity">${entity.displayName}</span>: ${variable.displayName}`,
+        }))
+        .map(edaVariableToWdkField)
+    );
+  }, [entities]);
+
   // Construct the fieldTree using the fields defined above.
-  const fieldTree = useMemo(() => getTree(fields, { hideSingleRoot: false }), [
-    fields,
-  ]);
+  const fieldTree = useMemo(() => {
+    const initialTree = getTree(fields, { hideSingleRoot: false });
+    const tree = pruneDescendantNodes(
+      (node) => node.field.type != null || node.children.length > 0,
+      initialTree
+    );
+    return tree;
+  }, [fields]);
 
   const disabledFields = useMemo(
     () => disabledVariables?.map((v) => `${v.entityId}/${v.variableId}`),
@@ -123,6 +155,7 @@ export function VariableTree(props: Props) {
       activeField={activeField}
       disabledFieldIds={disabledFields}
       onActiveFieldChange={onActiveFieldChange}
+      featuredFields={featuredFields}
       valuesMap={valuesMap}
       fieldTree={fieldTree}
       autoFocus={false}

@@ -8,6 +8,11 @@ export function findFirstVariable(
   variables: VariableTreeNode[],
   parentId: string
 ): VariableTreeNode | undefined {
+  const featuredVariable = variables.find(
+    (v) => v.type !== 'category' && v.isFeatured
+  );
+  if (featuredVariable) return featuredVariable;
+
   const variable = variables.find((v) => v.parentId === parentId);
   if (variable == null) return variables.find((v) => v.dataShape != null);
   if (variable.dataShape != null) return variable;
