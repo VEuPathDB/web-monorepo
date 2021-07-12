@@ -219,13 +219,10 @@ export default function Histogram({
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
         // TO DO: think about time zones?
         // ISO-ify time part of plotly's response
-        //// console.log(`${min} to ${max} raw`);
         const rawRange: NumberOrDateRange = {
           min: min.replace(/ /, 'T').replace(/\.\d+$/, ''),
           max: max.replace(/ /, 'T').replace(/\.\d+$/, ''),
         };
-        //// console.log(`${rawRange.min} to ${rawRange.max} selected`);
-        //// console.log(binSummaries.slice().reverse());
         // now snap to bin boundaries using same logic that Plotly uses
         // (dragging range past middle of bin selects it)
         const leftBin = binSummaries.find(
@@ -302,9 +299,17 @@ export default function Histogram({
   }, [selectingRange, selectedRange, orientation, data.series]);
 
   const plotlyIndependentAxisRange = useMemo(() => {
-    const range = independentAxisRange
-      ? [independentAxisRange.min, independentAxisRange.max]
-      : [minBinStart, maxBinEnd];
+    // here we ensure that no data bins are excluded/hidden from view
+    const range = [
+      independentAxisRange && independentAxisRange.min < minBinStart
+        ? independentAxisRange.min
+        : minBinStart,
+      independentAxisRange && independentAxisRange?.max > maxBinEnd
+        ? independentAxisRange.max
+        : maxBinEnd,
+    ];
+    // extend date-based range.max to the end of the day
+    // (this also avoids excluding a the final bin if binWidth=='day')
     if (data?.valueType === 'date') {
       return [
         range[0],
