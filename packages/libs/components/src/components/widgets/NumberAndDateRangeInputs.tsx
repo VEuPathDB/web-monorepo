@@ -105,7 +105,6 @@ function BaseInput({
     if (!isReceiving) {
       if (
         localRange &&
-        (localRange.min !== range?.min || localRange.max !== range?.max) &&
         (allowPartialRange ||
           (localRange.min != null && localRange.max != null))
       ) {
@@ -113,7 +112,10 @@ function BaseInput({
           ? validator(localRange)
           : { validity: true, message: '' };
         if (validity) {
-          onRangeChange(localRange);
+          // communicate the change if there is a change
+          if (localRange.min !== range?.min || localRange.max !== range?.max) {
+            onRangeChange(localRange);
+          }
           setValidationWarning('');
         } else {
           setValidationWarning(message);

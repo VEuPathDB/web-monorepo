@@ -11,7 +11,9 @@ export type NotificationProps = {
   text: string;
   /** Function to invoke when notification is acknowledged. */
   onAcknowledgement: () => void;
-  /** Number of times this notification has been received. */
+  /** Number of times this notification has been received.
+   * If not provided, no occurrence count is shown.
+   * */
   occurences?: number;
   /** Background color for notification. Any acceptable CSS color definition.
    * Defaults to LIGHT_GREEN. */
@@ -26,7 +28,7 @@ export default function Notification({
   title,
   text,
   onAcknowledgement,
-  occurences = 1,
+  occurences,
   color = LIGHT_GREEN,
   containerStyles = {},
 }: NotificationProps) {
@@ -50,27 +52,29 @@ export default function Notification({
         <Typography variant="button" style={{ color: 'white' }}>
           {title}
         </Typography>
-        <div
-          style={{
-            backgroundColor: 'white',
-            borderRadius: 5,
-            height: 20,
-            width: 20,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <span
+        {occurences != null ? (
+          <div
             style={{
-              color: color,
-              fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-              fontSize: 11,
+              backgroundColor: 'white',
+              borderRadius: 5,
+              height: 20,
+              width: 20,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
-            {occurences}
-          </span>
-        </div>
+            <span
+              style={{
+                color: color,
+                fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+                fontSize: 11,
+              }}
+            >
+              {occurences}
+            </span>
+          </div>
+        ) : null}
       </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <span
