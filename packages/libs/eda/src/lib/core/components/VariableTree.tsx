@@ -202,15 +202,7 @@ export function VariableTreeDropdown(props: Props) {
       </PopoverButton>
       {/* add variable.definition */}
       {variable && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '3em',
-            right: 0,
-            color: '#000000',
-            fontSize: '1em',
-          }}
-        >
+        <div className={cx('-DisplayVariableDefinition')}>
           {variable?.definition}
         </div>
       )}

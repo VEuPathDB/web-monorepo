@@ -219,4 +219,12 @@
   .fa.fa-filter {
     color: green;
   }
+
+  &-DisplayVariableDefinition {
+    position: absolute;
+    top: 3em;
+    right: 0;
+    color: #000000;
+    font-size: 1em;
+  }
 }
