@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
+import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   createJsonRequest,
   FetchClient,
@@ -49,7 +50,9 @@ export class SubsettingClient extends FetchClient {
         method: 'GET',
         path: `/studies/${studyId}`,
         transformResponse: (res) =>
-          ioTransformer(StudyResponse)(res).then((r) => r.study),
+          ioTransformer(StudyResponse)(res).then((r) =>
+            orderVariables(r.study)
+          ),
       })
     );
   }
@@ -82,4 +85,24 @@ export class SubsettingClient extends FetchClient {
       })
     );
   }
+}
+
+// !!MUTATION!! order variables in-place
+function orderVariables(study: StudyMetadata) {
+  for (const entity of preorder(
+    study.rootEntity,
+    (entity) => entity.children ?? []
+  ))
+    entity.variables.sort((var1, var2) => {
+      if (var1.displayOrder && var2.displayOrder)
+        return var1.displayOrder - var2.displayOrder;
+      if (var1.displayOrder) return -1;
+      if (var2.displayOrder) return 1;
+      return var1.displayName < var2.displayName
+        ? -1
+        : var1.displayName > var2.displayName
+        ? 1
+        : 0;
+    });
+  return study;
 }
