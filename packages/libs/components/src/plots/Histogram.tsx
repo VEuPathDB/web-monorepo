@@ -217,7 +217,7 @@ export default function Histogram({
         const [val1, val2] =
           orientation === 'vertical' ? object.range.x : object.range.y;
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
-        // TO DO: think about time zones?
+        // TO DO: carefully test/debug time zones and different browsers
         // ISO-ify time part of plotly's response
         const rawRange: NumberOrDateRange = {
           min: min.replace(/ /, 'T').replace(/\.\d+$/, ''),
