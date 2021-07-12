@@ -157,7 +157,7 @@ export default function SliderWidget({
       )}
       {showTextInput && (
         <NumberInput
-          value={localValue}
+          value={localValue ?? 0}
           minValue={minimum}
           maxValue={maximum}
           onValueChange={(newValue?: NumberOrDate) =>
@@ -190,7 +190,7 @@ export default function SliderWidget({
         aria-label={label ?? 'slider'}
         min={minimum}
         max={maximum}
-        value={localValue}
+        value={localValue ?? 0}
         step={step}
         valueLabelDisplay={valueLabelDisplay}
         valueLabelFormat={valueFormatter}
