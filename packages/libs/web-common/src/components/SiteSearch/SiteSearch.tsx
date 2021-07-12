@@ -64,8 +64,9 @@ function Results(props: Props) {
     return (
       <>
         <h1><Title {...props}/></h1>
-        <div style={{ textAlign: 'center', fontSize: '1.2em' }}>
-          <p style={{ fontSize: '1.2em' }}>Your search term did not yield results.</p>
+        <div style={{ fontSize: '1.1em' }}>
+          <p style={{ fontSize: '1.1em' }}>Your search returned 0 results. <br/> Consider using a wildcard to broaden your search.  
+                                           <br/>Examples:  use A0A509AH24* instead of A0A509AH24   OR   phospho* instead of phospho.</p>
         </div>
 
       </>
