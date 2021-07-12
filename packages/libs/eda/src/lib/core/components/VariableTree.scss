@@ -5,6 +5,21 @@
   left: 1px;
   right: 1px;
 
+  .FeaturedVariables {
+    padding: 0 1em;
+    background-color: #fafafa;
+    box-shadow: 0 0 1px #6f6f6f5c;
+    h3 {
+      font-size: 1.05em;
+    }
+    ul {
+      list-style: none;
+    }
+    .Entity {
+      font-weight: 500;
+    }
+  }
+
   .wdk-CheckboxTreeItem {
     padding-left: 1.5em;
   }
@@ -13,6 +28,7 @@
   .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent {
     padding: 0.25em 0.5em;
     border-radius: 0.5em;
+    display: inline-block;
   }
 
   /* All entities */
@@ -37,17 +53,18 @@
     display: flex;
   }
 
-  /* height of CheckboxTree - use vh */
   .wdk-CheckboxTree {
-    height: calc(100% - 6em);
+    height: 100%;
+    display: flex;
+    flex-flow: column;
   }
 
   /* configuring scrolling for CheckboxTree list only: anchoring search bar */
   .wdk-CheckboxTree > .wdk-CheckboxTreeList {
     position: relative;
-    height: calc(100% - 3em);
     overflow: auto;
     padding: 0 1em;
+    flex-grow: 2;
   }
 
   .wdk-CheckboxTreeNodeContent {
