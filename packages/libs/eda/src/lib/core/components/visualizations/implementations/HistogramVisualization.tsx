@@ -1,4 +1,3 @@
-import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
@@ -20,6 +19,7 @@ import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
+  CompleteCasesTable,
   DataClient,
   HistogramRequestParams,
   HistogramResponse,
@@ -27,13 +27,21 @@ import {
 import { usePromise } from '../../../hooks/promise';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
+import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
+import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { isHistogramVariable } from '../../filter/guards';
 import { HistogramVariable } from '../../filter/types';
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
+
+type HistogramDataWithCoverageStatistics = HistogramData & {
+  completeCases: CompleteCasesTable;
+  outputSize: number;
+};
 
 export const histogramVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -172,14 +180,25 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const xAxisVariable = useMemo(() => {
-    const { variable } =
+  const { xAxisVariable, outputEntity } = useMemo(() => {
+    const { entity, variable } =
       findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
-    return variable;
+    return {
+      outputEntity: entity,
+      xAxisVariable: variable,
+    };
   }, [entities, vizConfig.xAxisVariable]);
 
+  const overlayVariable = useMemo(() => {
+    const { variable } =
+      findEntityAndVariable(entities, vizConfig.overlayVariable) ?? {};
+    return variable;
+  }, [entities, vizConfig.overlayVariable]);
+
   const data = usePromise(
-    useCallback(async (): Promise<HistogramData | undefined> => {
+    useCallback(async (): Promise<
+      HistogramDataWithCoverageStatistics | undefined
+    > => {
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
 
@@ -269,7 +288,7 @@ function HistogramViz(props: Props) {
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           handleDependentAxisLogScale={handleDependentAxisLogScale}
           containerStyles={{
-            width: '100%',
+            width: '750px',
             height: '400px',
           }}
           orientation={'vertical'}
@@ -278,11 +297,16 @@ function HistogramViz(props: Props) {
             data.value &&
             (data.value.series.length > 1 || vizConfig.overlayVariable != null)
           }
-          independentAxisLabel={
-            xAxisVariable ? xAxisVariable.displayName : 'Bins'
-          }
+          outputEntity={outputEntity}
+          independentAxisVariable={vizConfig.xAxisVariable}
+          independentAxisLabel={xAxisVariable?.displayName ?? 'Main'}
+          interactive
           showSpinner={data.pending}
-          interactive={true}
+          filters={filters}
+          completeCases={data.pending ? undefined : data.value?.completeCases}
+          outputSize={data.pending ? undefined : data.value?.outputSize}
+          overlayVariable={vizConfig.overlayVariable}
+          overlayLabel={overlayVariable?.displayName}
           legendTitle={
             findEntityAndVariable(entities, vizConfig.overlayVariable)?.variable
               .displayName
@@ -320,18 +344,33 @@ function HistogramViz(props: Props) {
 type HistogramPlotWithControlsProps = HistogramProps & {
   onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
   handleDependentAxisLogScale: (newState?: boolean) => void;
+  filters: Filter[];
+  completeCases?: CompleteCasesTable;
+  outputSize?: number;
+  outputEntity?: StudyEntity;
+  independentAxisVariable?: VariableDescriptor;
+  overlayVariable?: VariableDescriptor;
+  overlayLabel?: string;
 };
 
 function HistogramPlotWithControls({
   data,
   onBinWidthChange,
   handleDependentAxisLogScale,
+  filters,
+  completeCases,
+  outputSize,
+  outputEntity,
+  independentAxisVariable,
+  overlayVariable,
+  overlayLabel,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // TODO Use UIState
   const barLayout = 'stack';
   const displayLibraryControls = false;
   const opacity = 100;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const errorManagement = useMemo((): ErrorManagement => {
     return {
       errors: [],
@@ -343,14 +382,41 @@ function HistogramPlotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Histogram
-        {...histogramProps}
-        data={data}
-        opacity={opacity}
-        displayLibraryControls={displayLibraryControls}
-        showValues={false}
-        barLayout={barLayout}
-      />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
+        }}
+      >
+        <Histogram
+          {...histogramProps}
+          data={data}
+          opacity={opacity}
+          displayLibraryControls={displayLibraryControls}
+          showValues={false}
+          barLayout={barLayout}
+        />
+        <VariableCoverageTable
+          completeCases={completeCases}
+          filters={filters}
+          outputEntityId={independentAxisVariable?.entityId}
+          variableSpecs={[
+            {
+              role: 'Main',
+              required: true,
+              display: histogramProps.independentAxisLabel,
+              variable: independentAxisVariable,
+            },
+            {
+              role: 'Overlay',
+              display: overlayLabel,
+              variable: overlayVariable,
+            },
+          ]}
+        />
+      </div>
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <LabelledGroup label="Y-axis">
           <Switch
@@ -376,12 +442,12 @@ function HistogramPlotWithControls({
 /**
  * Reformat response from histogram endpoints into complete HistogramData
  * @param response
- * @returns HistogramData
+ * @returns HistogramDataWithCoverageStatistics
  */
 export function histogramResponseToData(
   response: HistogramResponse,
   type: HistogramVariable['type']
-): HistogramData {
+): HistogramDataWithCoverageStatistics {
   if (response.histogram.data.length === 0)
     throw Error(`Expected one or more data series, but got zero`);
 
@@ -422,6 +488,8 @@ export function histogramResponseToData(
     binWidth,
     binWidthRange,
     binWidthStep,
+    completeCases: response.completeCasesTable,
+    outputSize: response.histogram.config.completeCases,
   };
 }
 

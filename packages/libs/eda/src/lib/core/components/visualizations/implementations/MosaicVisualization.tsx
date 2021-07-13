@@ -10,25 +10,37 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
 import React, { useCallback, useMemo } from 'react';
-import { DataClient, MosaicRequestParams } from '../../../api/data-api';
+import {
+  CompleteCasesTable,
+  DataClient,
+  MosaicRequestParams,
+} from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
+import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
+import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
 
-type ContTableData = MosaicData &
+interface MosaicDataWithCoverageStatistics extends MosaicData {
+  completeCases: CompleteCasesTable;
+  outputSize: number;
+}
+
+type ContTableData = MosaicDataWithCoverageStatistics &
   Partial<{
     pValue: number | string;
     degreesFreedom: number;
     chisq: number;
   }>;
 
-type TwoByTwoData = MosaicData &
+type TwoByTwoData = MosaicDataWithCoverageStatistics &
   Partial<{
     pValue: number | string;
     relativeRisk: number;
@@ -167,20 +179,14 @@ function MosaicViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useCallback(
-    (variable?: VariableDescriptor) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
-    },
-    [entities]
-  );
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   const data = usePromise(
     useCallback(async (): Promise<ContTableData | TwoByTwoData | undefined> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
-      const yAxisVariable = findVariable(vizConfig.yAxisVariable);
+      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
+        ?.variable;
+      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable)
+        ?.variable;
       if (
         vizConfig.xAxisVariable == null ||
         xAxisVariable == null ||
@@ -215,14 +221,16 @@ function MosaicViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findVariable,
+      findEntityAndVariable,
       computation.type,
       isTwoByTwo,
     ])
   );
 
-  const xAxisVariableName = findVariable(vizConfig.xAxisVariable)?.displayName;
-  const yAxisVariableName = findVariable(vizConfig.yAxisVariable)?.displayName;
+  const xAxisVariableName = findEntityAndVariable(vizConfig.xAxisVariable)
+    ?.variable.displayName;
+  const yAxisVariableName = findEntityAndVariable(vizConfig.yAxisVariable)
+    ?.variable.displayName;
   let statsTable = undefined;
 
   if (isTwoByTwo) {
@@ -238,17 +246,17 @@ function MosaicViz(props: Props) {
               <th>95% confidence interval</th>
             </tr>
             <tr>
-              <td>p-value</td>
+              <th>P-value</th>
               <td>{twoByTwoData?.pValue ?? 'N/A'}</td>
               <td>N/A</td>
             </tr>
             <tr>
-              <td>Odds ratio</td>
+              <th>Odds ratio</th>
               <td>{twoByTwoData?.oddsRatio ?? 'N/A'}</td>
               <td>{twoByTwoData?.orInterval ?? 'N/A'}</td>
             </tr>
             <tr>
-              <td>Relative risk</td>
+              <th>Relative risk</th>
               <td>{twoByTwoData?.relativeRisk ?? 'N/A'}</td>
               <td>{twoByTwoData?.rrInterval ?? 'N/A'}</td>
             </tr>
@@ -264,15 +272,15 @@ function MosaicViz(props: Props) {
         <table>
           <tbody>
             <tr>
-              <td>p-value</td>
+              <th>P-value</th>
               <td>{contTableData?.pValue ?? 'N/A'}</td>
             </tr>
             <tr>
-              <td>Degrees of freedom</td>
+              <th>Degrees of freedom</th>
               <td>{contTableData?.degreesFreedom ?? 'N/A'}</td>
             </tr>
             <tr>
-              <td>Chi-squared</td>
+              <th>Chi-squared</th>
               <td>{contTableData?.chisq ?? 'N/A'}</td>
             </tr>
           </tbody>
@@ -287,24 +295,46 @@ function MosaicViz(props: Props) {
         <MosaicPlotWithControls
           data={data.value && !data.pending ? data.value : undefined}
           containerStyles={{
+            width: '750px',
             height: '450px',
           }}
-          independentAxisLabel={
-            data.value && !data.pending && xAxisVariableName
-              ? xAxisVariableName
-              : ''
-          }
-          dependentAxisLabel={
-            data.value && !data.pending && yAxisVariableName
-              ? yAxisVariableName
-              : ''
-          }
+          independentAxisLabel={xAxisVariableName ?? 'X-axis'}
+          dependentAxisLabel={yAxisVariableName ?? 'Y-axis'}
           displayLegend={true}
+          interactive
           showSpinner={data.pending}
-          interactive={true}
         />
       </div>
-      {statsTable}
+      <div
+        style={{
+          display: 'grid',
+          gridAutoFlow: 'row',
+          gap: '0.75em',
+          marginLeft: '3em',
+          marginTop: '1.5em',
+        }}
+      >
+        <VariableCoverageTable
+          completeCases={data.pending ? undefined : data.value?.completeCases}
+          filters={filters}
+          outputEntityId={vizConfig.xAxisVariable?.entityId}
+          variableSpecs={[
+            {
+              role: 'X-axis',
+              required: true,
+              display: xAxisVariableName,
+              variable: vizConfig.xAxisVariable,
+            },
+            {
+              role: 'Y-axis',
+              required: true,
+              display: yAxisVariableName,
+              variable: vizConfig.yAxisVariable,
+            },
+          ]}
+        />
+        {statsTable}
+      </div>
     </div>
   ) : (
     // thumbnail/grid view
@@ -382,6 +412,13 @@ function MosaicViz(props: Props) {
             : String(data.error)}
         </div>
       )}
+
+      {fullscreen && (
+        <OutputEntityTitle
+          entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+          outputSize={data.pending ? undefined : data.value?.outputSize}
+        />
+      )}
       {plotComponent}
     </div>
   );
@@ -438,11 +475,12 @@ export function contTableResponseToData(
   return {
     values: data,
     independentLabels: response.mosaic.data[0].xLabel,
-    dependentLabels: response.mosaic.data[0].yLabel,
-
+    dependentLabels: response.mosaic.data[0].yLabel[0],
     pValue: response.statsTable[0].pvalue,
     degreesFreedom: response.statsTable[0].degreesFreedom,
     chisq: response.statsTable[0].chisq,
+    completeCases: response.completeCasesTable,
+    outputSize: response.mosaic.config.completeCases,
   };
 }
 
@@ -463,13 +501,14 @@ export function twoByTwoResponseToData(
   return {
     values: data,
     independentLabels: response.mosaic.data[0].xLabel,
-    dependentLabels: response.mosaic.data[0].yLabel,
-
+    dependentLabels: response.mosaic.data[0].yLabel[0],
     pValue: response.statsTable[0].pvalue,
     relativeRisk: response.statsTable[0].relativerisk,
     rrInterval: response.statsTable[0].rrInterval,
     oddsRatio: response.statsTable[0].oddsratio,
     orInterval: response.statsTable[0].orInterval,
+    completeCases: response.completeCasesTable,
+    outputSize: response.mosaic.config.completeCases,
   };
 }
 
