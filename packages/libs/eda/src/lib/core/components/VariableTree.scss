@@ -6,18 +6,32 @@
   right: 1px;
 
   .FeaturedVariables {
-    padding: 0 1em;
-    background-color: #fafafa;
-    box-shadow: 0 0 1px #6f6f6f5c;
+    padding: 0.5em 1em;
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 1px #6f6f6fb0;
+    summary {
+      outline: none;
+      cursor: pointer;
+      &::marker {
+        color: #888;
+      }
+    }
     h3 {
       font-size: 1.05em;
+      display: inline-block;
     }
     ul {
       list-style: none;
+      margin: 0;
     }
     .Entity {
       font-weight: 500;
     }
+  }
+
+  .wdk-CheckboxTree > .wdk-CheckboxTreeList {
+    margin: 0;
   }
 
   .wdk-CheckboxTreeItem {
