@@ -59,15 +59,16 @@ interface VariableFieldTreeNode extends FieldTreeNode {
 }
 
 interface FieldNodeProps {
-  node: VariableFieldTreeNode;
+  field: VariableField;
   searchTerm: string;
   isActive: boolean;
   isDisabled?: boolean;
-  handleFieldSelect: (node: VariableFieldTreeNode) => void;
+  handleFieldSelect: (field: VariableField) => void;
   activeFieldEntity?: string;
   isStarred: boolean;
   starredVariablesLoading: boolean;
   onClickStar: () => void;
+  scrollIntoView: boolean;
 }
 
 type valuesMapType = Record<string, string>;
@@ -95,6 +96,12 @@ interface getNodeSearchStringType {
   };
 }
 
+// These are options that we want to persist until the page is reloaded.
+// This is crude, but works well enough for now.
+const Options = {
+  featuredVariablesOpen: true,
+};
+
 export default function VariableList(props: VariableListProps) {
   const {
     activeField,
@@ -109,6 +116,9 @@ export default function VariableList(props: VariableListProps) {
     hideDisabledFields,
     setHideDisabledFields,
   } = props;
+  const [featuredVariablesOpen, setFeaturedVariablesOpen] = useState(
+    Options.featuredVariablesOpen
+  );
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
     (field?: Field) => {
@@ -153,8 +163,8 @@ export default function VariableList(props: VariableListProps) {
   }, [activeField, activeFieldEntity, getPathToField]);
 
   const handleFieldSelect = useCallback(
-    (node: FieldTreeNode) => {
-      onActiveFieldChange(node.field.term);
+    (field: Field) => {
+      onActiveFieldChange(field.term);
     },
     [onActiveFieldChange]
   );
@@ -231,7 +241,7 @@ export default function VariableList(props: VariableListProps) {
 
       return (
         <FieldNode
-          node={node}
+          field={node.field}
           searchTerm={searchTerm}
           isActive={node.field.term === activeField?.term}
           isDisabled={disabledFields.has(node.field.term)}
@@ -242,6 +252,7 @@ export default function VariableList(props: VariableListProps) {
           isStarred={starredVariablesSet.has(variableId)}
           starredVariablesLoading={starredVariablesLoading}
           onClickStar={() => toggleStarredVariable(variableId)}
+          scrollIntoView
         />
       );
     },
@@ -349,36 +360,46 @@ export default function VariableList(props: VariableListProps) {
           )}
           {featuredFields.length && (
             <div className="FeaturedVariables">
-              <h3>Featured variables</h3>
-              <ul>
-                {featuredFields.map((field) => {
-                  const isActive = field.term === activeField?.term;
-                  const isDisabled = disabledFields.has(field.term);
-                  return (
-                    <li key={field.term}>
-                      <a
-                        className={
-                          'wdk-AttributeFilterFieldItem' +
-                          (isActive
-                            ? ' wdk-AttributeFilterFieldItem__active'
-                            : '') +
-                          (isDisabled
-                            ? ' wdk-AttributeFilterFieldItem__disabled'
-                            : '')
-                        }
-                        href={'#' + field.term}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          onActiveFieldChange(field.term);
-                        }}
+              <details
+                open={featuredVariablesOpen}
+                onToggle={() => {
+                  setFeaturedVariablesOpen(!featuredVariablesOpen);
+                  Options.featuredVariablesOpen = !featuredVariablesOpen;
+                }}
+              >
+                <summary>
+                  <h3>Featured variables</h3>
+                </summary>
+                <ul>
+                  {featuredFields.map((field) => {
+                    const isActive = field.term === activeField?.term;
+                    const isDisabled = disabledFields.has(field.term);
+                    const variableId = field.term.split('/')[1];
+                    return (
+                      <li
+                        key={field.term}
+                        className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
                       >
-                        <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
+                        <div className="wdk-CheckboxTreeNodeContent">
+                          <FieldNode
+                            field={field}
+                            isActive={isActive}
+                            isDisabled={isDisabled}
+                            searchTerm=""
+                            handleFieldSelect={handleFieldSelect}
+                            isStarred={starredVariablesSet.has(variableId)}
+                            starredVariablesLoading={starredVariablesLoading}
+                            onClickStar={() =>
+                              toggleStarredVariable(variableId)
+                            }
+                            scrollIntoView={false}
+                          />
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </details>
             </div>
           )}
           {treeSection}
@@ -391,7 +412,10 @@ export default function VariableList(props: VariableListProps) {
       featuredFields,
       setHideDisabledFields,
       activeField?.term,
-      onActiveFieldChange,
+      handleFieldSelect,
+      starredVariablesSet,
+      starredVariablesLoading,
+      toggleStarredVariable,
     ]
   );
 
@@ -465,7 +489,7 @@ const getNodeSearchString = (valuesMap: valuesMapType) => {
 };
 
 const FieldNode = ({
-  node,
+  field,
   searchTerm,
   isActive,
   isDisabled,
@@ -474,6 +498,7 @@ const FieldNode = ({
   isStarred,
   starredVariablesLoading,
   onClickStar,
+  scrollIntoView,
 }: FieldNodeProps) => {
   const nodeRef = useRef<HTMLAnchorElement>(null);
 
@@ -481,14 +506,18 @@ const FieldNode = ({
     // hack: Use setTimeout since DOM may not reflect the current state of expanded nodes.
     // hack: This ensures that the node is visible when attempting to scroll into view.
     let timerId = setTimeout(() => {
-      if (isActive && nodeRef.current?.offsetParent instanceof HTMLElement) {
+      if (
+        scrollIntoView &&
+        isActive &&
+        nodeRef.current?.offsetParent instanceof HTMLElement
+      ) {
         scrollIntoViewIfNeeded(nodeRef.current.offsetParent);
       }
     });
     return () => clearTimeout(timerId);
-  }, [isActive, searchTerm]);
+  }, [isActive, searchTerm, scrollIntoView]);
 
-  const fieldContents = isFilterField(node.field) ? (
+  const fieldContents = isFilterField(field) ? (
     <Tooltip
       title={
         isDisabled
@@ -503,14 +532,14 @@ const FieldNode = ({
           (isActive ? ' wdk-AttributeFilterFieldItem__active' : '') +
           (isDisabled ? ' wdk-AttributeFilterFieldItem__disabled' : '')
         }
-        href={'#' + node.field.term}
+        href={'#' + field.term}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          if (!isDisabled) handleFieldSelect(node);
+          if (!isDisabled) handleFieldSelect(field);
         }}
       >
-        <Icon fa={getIcon(node.field)} /> {node.field.display}
+        <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
       </a>
     </Tooltip>
   ) : (
@@ -518,23 +547,23 @@ const FieldNode = ({
     <div
       className={
         'wdk-Link wdk-AttributeFilterFieldParent' +
-        (node.field.term.includes('entity:')
+        (field.term.includes('entity:')
           ? ' wdk-AttributeFilterFieldEntityParent'
           : '') +
         (activeFieldEntity != null &&
-        node.field.term.split(':')[1] === activeFieldEntity
+        field.term.split(':')[1] === activeFieldEntity
           ? ' wdk-AttributeFilterFieldParent__active'
           : '')
       }
     >
-      {node.field.display}
+      {safeHtml(field.display)}
     </div>
   );
 
   return (
     <>
-      {isFilterField(node.field) && (
-        <Tooltip title={makeStarButtonTooltipContent(node, isStarred)}>
+      {isFilterField(field) && (
+        <Tooltip title={makeStarButtonTooltipContent(field, isStarred)}>
           <button
             className={`${cx('-StarButton')} link`}
             onClick={onClickStar}
@@ -554,13 +583,12 @@ function getIcon(field: Field) {
 }
 
 function makeStarButtonTooltipContent(
-  node: VariableFieldTreeNode,
+  field: VariableField,
   isStarred: boolean
 ) {
   return (
     <>
-      Click to {isStarred ? 'unstar' : 'star'}{' '}
-      <strong>{node.field.display}</strong>.
+      Click to {isStarred ? 'unstar' : 'star'} <strong>{field.display}</strong>.
     </>
   );
 }
