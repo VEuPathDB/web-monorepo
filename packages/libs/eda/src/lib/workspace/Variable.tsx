@@ -44,6 +44,7 @@ export function VariableDetails(props: Props) {
       </div>
       {totalEntityCount != null && filteredEntityCount != null ? (
         <FilterContainer
+          key={variable.id}
           studyMetadata={studyMetadata}
           variable={variable}
           entity={entity}
