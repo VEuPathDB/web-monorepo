@@ -352,7 +352,7 @@ export const MosaicResponse = type({
     data: array(
       type({
         xLabel: array(string),
-        yLabel: array(string),
+        yLabel: array(array(string)),
         value: array(array(number)),
       })
     ),

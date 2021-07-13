@@ -39,6 +39,7 @@ import {
 import { cx } from '../../workspace/Utils';
 import { Tooltip } from '@material-ui/core';
 import { HtmlTooltip } from '@veupathdb/components/lib/components/widgets/Tooltip';
+import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
 //defining types - some are not used (need cleanup later)
 interface VariableField {
@@ -82,6 +83,7 @@ interface VariableListProps {
   disabledFieldIds?: string[];
   hideDisabledFields: boolean;
   setHideDisabledFields: (hide: boolean) => void;
+  featuredFields: VariableField[];
 }
 
 interface getNodeSearchStringType {
@@ -100,6 +102,7 @@ export default function VariableList(props: VariableListProps) {
     onActiveFieldChange,
     valuesMap,
     fieldTree,
+    featuredFields,
     autoFocus,
     starredVariables,
     toggleStarredVariable,
@@ -191,6 +194,16 @@ export default function VariableList(props: VariableListProps) {
 
   const starredVariablesLoading = starredVariables == null;
 
+  // moved this useState here
+  const [showOnlyStarredVariables, setShowOnlyStarredVariables] = useState(
+    false
+  );
+
+  // make visibleStarredVariables state be used at MyVariable
+  const [visibleStarredVariables, setVisibleStarredVariables] = useState<
+    string[]
+  >([]);
+
   const starredVariablesSet = useMemo(() => {
     const presentStarredVariables = starredVariables?.filter((variableId) =>
       availableVariables.has(variableId)
@@ -198,6 +211,15 @@ export default function VariableList(props: VariableListProps) {
 
     return new Set(presentStarredVariables);
   }, [availableVariables, starredVariables]);
+
+  // this will be used for MyVariable instead of starredVariableSet
+  const visibleStarredVariablesSet = useMemo(() => {
+    const presentStarredVariables = visibleStarredVariables?.filter(
+      (variableId) => availableVariables.has(variableId)
+    );
+
+    return new Set(presentStarredVariables);
+  }, [availableVariables, visibleStarredVariables]);
 
   const disabledFields = useMemo(() => new Set(disabledFieldIds), [
     disabledFieldIds,
@@ -235,21 +257,13 @@ export default function VariableList(props: VariableListProps) {
     ]
   );
 
-  const [showOnlyStarredVariables, setShowOnlyStarredVariables] = useState(
-    false
-  );
-
   const toggleShowOnlyStarredVariables = useCallback(() => {
     setShowOnlyStarredVariables((oldValue) => !oldValue);
-  }, []);
+    setVisibleStarredVariables(starredVariables ?? []);
+  }, [starredVariables]);
 
-  const starredVariableToggleDisabled = starredVariablesSet.size === 0;
-
-  useEffect(() => {
-    if (starredVariableToggleDisabled) {
-      setShowOnlyStarredVariables(false);
-    }
-  }, [starredVariableToggleDisabled]);
+  const starredVariableToggleDisabled =
+    !showOnlyStarredVariables && starredVariablesSet.size === 0;
 
   const additionalFilters = useMemo(
     () => [
@@ -316,6 +330,9 @@ export default function VariableList(props: VariableListProps) {
                 }
                 title={tooltipContent}
                 interactive
+                enterDelay={500}
+                enterNextDelay={500}
+                leaveDelay={0}
               >
                 <button
                   className="link"
@@ -330,11 +347,52 @@ export default function VariableList(props: VariableListProps) {
               </HtmlTooltip>
             </div>
           )}
+          {featuredFields.length && (
+            <div className="FeaturedVariables">
+              <h3>Featured variables</h3>
+              <ul>
+                {featuredFields.map((field) => {
+                  const isActive = field.term === activeField?.term;
+                  const isDisabled = disabledFields.has(field.term);
+                  return (
+                    <li key={field.term}>
+                      <a
+                        className={
+                          'wdk-AttributeFilterFieldItem' +
+                          (isActive
+                            ? ' wdk-AttributeFilterFieldItem__active'
+                            : '') +
+                          (isDisabled
+                            ? ' wdk-AttributeFilterFieldItem__disabled'
+                            : '')
+                        }
+                        href={'#' + field.term}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onActiveFieldChange(field.term);
+                        }}
+                      >
+                        <Icon fa={getIcon(field)} /> {safeHtml(field.display)}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
           {treeSection}
         </>
       );
     },
-    [disabledFields.size, hideDisabledFields, setHideDisabledFields]
+    [
+      disabledFields,
+      hideDisabledFields,
+      featuredFields,
+      setHideDisabledFields,
+      activeField?.term,
+      onActiveFieldChange,
+    ]
   );
 
   const isAdditionalFilterApplied = showOnlyStarredVariables;
@@ -346,7 +404,8 @@ export default function VariableList(props: VariableListProps) {
         : pruneDescendantNodes(
             (node) =>
               node.children.length > 0 ||
-              starredVariablesSet.has(node.field.term.split('/')[1]),
+              // visibleStarredVariablesSet is used for MyVariable instead of starredVariableSet
+              visibleStarredVariablesSet.has(node.field.term.split('/')[1]),
             fieldTree
           );
     return hideDisabledFields
@@ -361,7 +420,7 @@ export default function VariableList(props: VariableListProps) {
     starredVariableToggleDisabled,
     fieldTree,
     hideDisabledFields,
-    starredVariablesSet,
+    visibleStarredVariablesSet,
     disabledFields,
   ]);
 
@@ -445,11 +504,6 @@ const FieldNode = ({
           (isDisabled ? ' wdk-AttributeFilterFieldItem__disabled' : '')
         }
         href={'#' + node.field.term}
-        title={
-          isDisabled
-            ? 'This variable cannot be used with this plot and other variable selections.'
-            : 'Select this variable.'
-        }
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -495,9 +549,9 @@ const FieldNode = ({
   );
 };
 
-const getIcon = (field: Field) => {
+function getIcon(field: Field) {
   return isRange(field) ? 'bar-chart-o' : isMulti(field) ? 'th-list' : 'list';
-};
+}
 
 function makeStarButtonTooltipContent(
   node: VariableFieldTreeNode,

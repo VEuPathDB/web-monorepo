@@ -48,23 +48,16 @@ function FullscreenComponent(props: VisualizationProps) {
 }
 
 function createDefaultConfig(): BarplotConfig {
-  return {
-    enableOverlay: true,
-  };
+  return {};
 }
 
 type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const BarplotConfig = t.intersection([
-  t.type({
-    enableOverlay: t.boolean,
-  }),
-  t.partial({
-    xAxisVariable: VariableDescriptor,
-    overlayVariable: VariableDescriptor,
-    facetVariable: VariableDescriptor,
-  }),
-]);
+const BarplotConfig = t.partial({
+  xAxisVariable: VariableDescriptor,
+  overlayVariable: VariableDescriptor,
+  facetVariable: VariableDescriptor,
+});
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
@@ -146,7 +139,7 @@ function BarplotViz(props: Props) {
         studyId,
         filters ?? [],
         vizConfig.xAxisVariable!,
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined
+        vizConfig.overlayVariable
       );
 
       // barplot
@@ -241,12 +234,20 @@ function BarplotViz(props: Props) {
               }}
               orientation={'vertical'}
               barLayout={'group'}
-              displayLegend={data.value?.series.length > 1}
+              displayLegend={
+                data.value &&
+                (data.value.series.length > 1 ||
+                  vizConfig.overlayVariable != null)
+              }
               independentAxisLabel={
                 findEntityAndVariable(vizConfig.xAxisVariable)?.variable
                   .displayName ?? 'Main'
               }
               dependentAxisLabel={'Count'}
+              legendTitle={
+                findEntityAndVariable(vizConfig.overlayVariable)?.variable
+                  .displayName
+              }
               interactive
               showSpinner={data.pending}
             />

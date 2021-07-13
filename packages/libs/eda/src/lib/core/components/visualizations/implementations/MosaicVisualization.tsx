@@ -100,9 +100,7 @@ function TwoByTwoFullscreenComponent(props: VisualizationProps) {
 }
 
 function createDefaultConfig(): MosaicConfig {
-  return {
-    // enableOverlay: true,
-  };
+  return {};
 }
 
 type MosaicConfig = t.TypeOf<typeof MosaicConfig>;
@@ -477,8 +475,7 @@ export function contTableResponseToData(
   return {
     values: data,
     independentLabels: response.mosaic.data[0].xLabel,
-    dependentLabels: response.mosaic.data[0].yLabel,
-
+    dependentLabels: response.mosaic.data[0].yLabel[0],
     pValue: response.statsTable[0].pvalue,
     degreesFreedom: response.statsTable[0].degreesFreedom,
     chisq: response.statsTable[0].chisq,
@@ -504,8 +501,7 @@ export function twoByTwoResponseToData(
   return {
     values: data,
     independentLabels: response.mosaic.data[0].xLabel,
-    dependentLabels: response.mosaic.data[0].yLabel,
-
+    dependentLabels: response.mosaic.data[0].yLabel[0],
     pValue: response.statsTable[0].pvalue,
     relativeRisk: response.statsTable[0].relativerisk,
     rrInterval: response.statsTable[0].rrInterval,

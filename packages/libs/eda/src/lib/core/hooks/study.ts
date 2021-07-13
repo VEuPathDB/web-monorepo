@@ -1,6 +1,9 @@
-import { createContext, useCallback } from 'react';
+import { createContext, useCallback, useMemo } from 'react';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  preorder,
+  preorderSeq,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   getTargetType,
   getScopes,
@@ -103,5 +106,15 @@ export function useFindEntityAndVariable(entities: StudyEntity[]) {
     (variable?: VariableDescriptor) =>
       findEntityAndVariable(entities, variable),
     [entities]
+  );
+}
+
+export function useStudyEntities(rootEntity: StudyEntity) {
+  return useMemo(
+    () =>
+      Array.from(
+        preorder(rootEntity, (e) => e.children?.slice().reverse() ?? [])
+      ),
+    [rootEntity]
   );
 }

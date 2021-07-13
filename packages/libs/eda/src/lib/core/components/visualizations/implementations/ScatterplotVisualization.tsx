@@ -73,25 +73,19 @@ function FullscreenComponent(props: VisualizationProps) {
 
 function createDefaultConfig(): ScatterplotConfig {
   return {
-    enableOverlay: true,
     valueSpecConfig: 'Raw',
   };
 }
 
 type ScatterplotConfig = t.TypeOf<typeof ScatterplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const ScatterplotConfig = t.intersection([
-  t.type({
-    enableOverlay: t.boolean,
-  }),
-  t.partial({
-    xAxisVariable: VariableDescriptor,
-    yAxisVariable: VariableDescriptor,
-    overlayVariable: VariableDescriptor,
-    facetVariable: VariableDescriptor,
-    valueSpecConfig: t.string,
-  }),
-]);
+const ScatterplotConfig = t.partial({
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor,
+  overlayVariable: VariableDescriptor,
+  facetVariable: VariableDescriptor,
+  valueSpecConfig: t.string,
+});
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
@@ -195,7 +189,7 @@ function ScatterplotViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined,
+        vizConfig.overlayVariable,
         // add visualization.type
         visualization.type,
         // XYPlotControls
@@ -301,6 +295,11 @@ function ScatterplotViz(props: Props) {
             xAxisVariable={vizConfig.xAxisVariable}
             yAxisVariable={vizConfig.yAxisVariable}
             overlayVariable={vizConfig.overlayVariable}
+            displayLegend={
+              data.value &&
+              (data.value.dataSetProcess.series.length > 1 ||
+                vizConfig.overlayVariable != null)
+            }
             independentAxisLabel={
               findEntityAndVariable(vizConfig.xAxisVariable)?.variable
                 .displayName
@@ -310,6 +309,10 @@ function ScatterplotViz(props: Props) {
                 .displayName
             }
             overlayLabel={
+              findEntityAndVariable(vizConfig.overlayVariable)?.variable
+                .displayName
+            }
+            legendTitle={
               findEntityAndVariable(vizConfig.overlayVariable)?.variable
                 .displayName
             }
@@ -523,7 +526,6 @@ function ScatterplotWithControls({
           {...scatterplotProps}
           data={data}
           // add controls
-          displayLegend={data?.series && data.series.length > 1}
           displayLibraryControls={false}
         />
         <VariableCoverageTable

@@ -4,6 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router';
 import Path from 'path';
 import { Analysis } from '../core';
 import { ActionIconButton } from './ActionIconButton';
+import { Button, Icon } from '@material-ui/core';
 import { cx } from './Utils';
 
 interface Props {
@@ -12,10 +13,19 @@ interface Props {
   copyAnalysis: () => Promise<{ id: string }>;
   saveAnalysis: () => Promise<void>;
   deleteAnalysis: () => Promise<void>;
+  onFilterIconClick: () => void;
+  globalFiltersDialogOpen: boolean;
 }
 
 export function AnalysisSummary(props: Props) {
-  const { analysis, setAnalysisName, copyAnalysis, deleteAnalysis } = props;
+  const {
+    analysis,
+    setAnalysisName,
+    copyAnalysis,
+    deleteAnalysis,
+    onFilterIconClick,
+    globalFiltersDialogOpen,
+  } = props;
   const history = useHistory();
   const { url } = useRouteMatch();
   const handleCopy = async () => {
@@ -28,28 +38,41 @@ export function AnalysisSummary(props: Props) {
   };
   return (
     <div className={cx('-AnalysisSummary')}>
-      <SaveableTextEditor
-        className={cx('-AnalysisNameEditBox')}
-        value={analysis.name}
-        onSave={setAnalysisName}
-      />
-      <ActionIconButton
-        iconClassName="download"
-        hoverText="Bulk download study"
-        action={() => {
-          alert('Coming soon');
-        }}
-      />
-      <ActionIconButton
-        iconClassName="clone"
-        hoverText="Copy analysis"
-        action={handleCopy}
-      />
-      <ActionIconButton
-        iconClassName="trash"
-        hoverText="Delete analysis"
-        action={handleDelete}
-      />
+      <div className={cx('-AnalysisSummaryLeft')}>
+        <SaveableTextEditor
+          className={cx('-AnalysisNameEditBox')}
+          value={analysis.name}
+          onSave={setAnalysisName}
+        />
+        {analysis.filters.length > 0 && (
+          <Button
+            className={cx('-SeeAllFiltersButton')}
+            onClick={onFilterIconClick}
+            startIcon={<Icon className="fa fa-filter" />}
+          >
+            {(globalFiltersDialogOpen ? 'Hide' : 'Show') + ' all filters'}
+          </Button>
+        )}
+      </div>
+      <div className={cx('-AnalysisSummaryRight')}>
+        <ActionIconButton
+          iconClassName="download"
+          hoverText="Bulk download study"
+          action={() => {
+            alert('Coming soon');
+          }}
+        />
+        <ActionIconButton
+          iconClassName="clone"
+          hoverText="Copy analysis"
+          action={handleCopy}
+        />
+        <ActionIconButton
+          iconClassName="trash"
+          hoverText="Delete analysis"
+          action={handleDelete}
+        />
+      </div>
     </div>
   );
 }
