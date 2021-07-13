@@ -26,6 +26,9 @@ export function VariableDetails(props: Props) {
     analysisState,
   } = props;
   const studyMetadata = useStudyMetadata();
+
+  console.log('variable =', variable);
+
   return (
     <ErrorBoundary>
       <div>
@@ -40,6 +43,10 @@ export function VariableDetails(props: Props) {
             data set. The VEuPathDB team curates variable names and places
             variables into an ontology framework.
           </HelpIcon>
+        </div>
+        {/* add variable.definition */}
+        <div className={cx('-SubsettingVariableDefinition')}>
+          {variable?.definition}
         </div>
       </div>
       {totalEntityCount != null && filteredEntityCount != null ? (
