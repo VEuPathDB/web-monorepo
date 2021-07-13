@@ -22,12 +22,14 @@ export const Basic: Story<usePlotControlsParams<any>> = (args) => {
       {...controls}
       {...controls.XYPlot}
       // assign new props' values for tests
+      label={'Plot modes'}
       orientation={'horizontal'}
       labelPlacement={'end'}
       // minWidth={235}
       buttonColor={'primary'}
       margins={['5em', '0', '0', '5em']}
       itemMarginRight={50}
+      plotOptions={['Raw', 'Smoothed mean with raw', 'Best fit line with raw']}
     />
   );
 };

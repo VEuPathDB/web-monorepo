@@ -8,7 +8,6 @@ import { ErrorManagement } from '../../types/general';
 // Local Components
 import RadioButtonGroup from '../widgets/RadioButtonGroup';
 import Notification from '../widgets/Notification';
-import LabelledGroup from '../widgets/LabelledGroup';
 
 /**
  * Props for XYPlot controls.
@@ -26,7 +25,7 @@ export type XYPlotControlsProps = {
   errorManagement: ErrorManagement;
   /** XYPlot: valueSpec */
   valueSpec?: string;
-  /** XYPlot: valueSpec */
+  /** XYPlot: onValueSpecChange */
   onValueSpecChange?: (valueSpec: string) => void;
   /** How buttons are displayed. Vertical or Horizontal */
   orientation?: 'vertical' | 'horizontal';
@@ -41,6 +40,10 @@ export type XYPlotControlsProps = {
   margins?: string[];
   /** marginRight of radio button item: default 16px from MUI */
   itemMarginRight?: number | string;
+  /** plot options as props */
+  plotOptions?: string[];
+  /** label for RadioButtonGroup */
+  label?: string;
 };
 
 /**
@@ -61,6 +64,9 @@ export default function XYPlotControls({
   buttonColor,
   margins,
   itemMarginRight,
+  // add plotOptions
+  plotOptions,
+  label,
 }: XYPlotControlsProps) {
   const { ref, width } = useDimensions<HTMLDivElement>();
 
@@ -99,12 +105,9 @@ export default function XYPlotControls({
       <div style={{ display: 'flex' }}>
         {valueSpec && onValueSpecChange && (
           <RadioButtonGroup
-            label="Plot options"
-            options={[
-              'Raw',
-              'Smoothed mean with raw',
-              'Best fit line with raw',
-            ]}
+            label={label}
+            // following plotOptions
+            options={plotOptions ?? []}
             selectedOption={valueSpec}
             onOptionSelected={onValueSpecChange}
             orientation={orientation}
