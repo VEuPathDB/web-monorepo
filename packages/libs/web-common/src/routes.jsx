@@ -18,10 +18,6 @@ export const STATIC_ROUTE_PATH = '/static-content';
  * For example: the route '/about' is not here because the content (in About.jsx) is not shared.
  */
 export const wrapRoutes = wdkRoutes => [
-  {
-    path: '/record/organisms/:id*',
-    component: (props) => <Redirect to={`/record/dataset/${props.match.params.id}`}/>
-  },
 
   // FIXME: Should this be a ClinEpi-level route?
   { 
