@@ -96,6 +96,12 @@ interface getNodeSearchStringType {
   };
 }
 
+// These are options that we want to persist until the page is reloaded.
+// This is crude, but works well enough for now.
+const Options = {
+  featuredVariablesOpen: true,
+};
+
 export default function VariableList(props: VariableListProps) {
   const {
     activeField,
@@ -110,6 +116,9 @@ export default function VariableList(props: VariableListProps) {
     hideDisabledFields,
     setHideDisabledFields,
   } = props;
+  const [featuredVariablesOpen, setFeaturedVariablesOpen] = useState(
+    Options.featuredVariablesOpen
+  );
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
     (field?: Field) => {
@@ -351,7 +360,13 @@ export default function VariableList(props: VariableListProps) {
           )}
           {featuredFields.length && (
             <div className="FeaturedVariables">
-              <details open>
+              <details
+                open={featuredVariablesOpen}
+                onToggle={() => {
+                  setFeaturedVariablesOpen(!featuredVariablesOpen);
+                  Options.featuredVariablesOpen = !featuredVariablesOpen;
+                }}
+              >
                 <summary>
                   <h3>Featured variables</h3>
                 </summary>
