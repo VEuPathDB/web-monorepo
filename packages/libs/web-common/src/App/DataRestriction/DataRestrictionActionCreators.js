@@ -16,7 +16,7 @@ export function attemptAction(action, details = {}) {
       return checkPermissions(user).then(permissions => {
         return handleAction(
           permissions,
-          user,
+          user.properties.approvedStudies,
           studies[0],
           action,
           details
@@ -45,7 +45,7 @@ export function clearRestrictions() {
 }
 
 // Create restriction action
-function handleAction(permissions, user, studies, action, { studyId, onAllow, onDeny }) {
+function handleAction(permissions, approvedStudies, studies, action, { studyId, onAllow, onDeny }) {
   console.info(label('Restriction Encountered:'), { action, studyId });
   const study = studies.find(study => studyId === study.id);
 
@@ -57,7 +57,7 @@ function handleAction(permissions, user, studies, action, { studyId, onAllow, on
     return clearRestrictions();
   }
 
-  if (isAllowedAccess({ permissions, user, action, study })) {
+  if (isAllowedAccess({ permissions, approvedStudies, action, study })) {
     if (typeof onAllow === 'function') onAllow();
     return unrestricted(study, action);
   }
