@@ -1,10 +1,7 @@
 import PopoverButton from '@veupathdb/components/lib/components/widgets/PopoverButton';
 import { Button } from '@material-ui/core';
 import { getTree } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
-import {
-  preorder,
-  pruneDescendantNodes,
-} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { keyBy } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { cx } from '../../workspace/Utils';
@@ -13,6 +10,7 @@ import { VariableDescriptor } from '../types/variable';
 import { edaVariableToWdkField } from '../utils/wdk-filter-param-adapter';
 import VariableList from './VariableList';
 import './VariableTree.scss';
+import { useStudyEntities } from '../hooks/study';
 
 export interface Props {
   rootEntity: StudyEntity;
@@ -38,13 +36,7 @@ export function VariableTree(props: Props) {
     hideDisabledFields = false,
     setHideDisabledFields = () => {},
   } = props;
-  const entities = useMemo(
-    () =>
-      Array.from(
-        preorder(rootEntity, (e) => e.children?.slice().reverse() ?? [])
-      ),
-    [rootEntity]
-  );
+  const entities = useStudyEntities(rootEntity);
 
   // This is used by the search functionality of FieldList.
   // It should be a map from field term to string.
@@ -178,7 +170,7 @@ export function VariableTree(props: Props) {
 export function VariableTreeDropdown(props: Props) {
   const { rootEntity, entityId, variableId, onChange } = props;
   const [hideDisabledFields, setHideDisabledFields] = useState(false);
-  const entities = Array.from(preorder(rootEntity, (e) => e.children ?? []));
+  const entities = useStudyEntities(rootEntity);
   const variable = entities
     .find((e) => e.id === entityId)
     ?.variables.find((v) => v.id === variableId);

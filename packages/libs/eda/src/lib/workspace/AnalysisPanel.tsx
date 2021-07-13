@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
-import { EntityDiagram, Status, useAnalysis, useStudyRecord } from '../core';
+import {
+  EntityDiagram,
+  Status,
+  useAnalysis,
+  useStudyMetadata,
+  useStudyRecord,
+} from '../core';
 import WorkspaceNavigation from '@veupathdb/wdk-client/lib/Components/Workspace/WorkspaceNavigation';
 import {
   Redirect,
@@ -16,6 +22,8 @@ import { Subsetting } from './Subsetting';
 import { useEntityCounts } from '../core/hooks/entityCounts';
 import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
+import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
+import { useStudyEntities } from '../core/hooks/study';
 
 interface Props {
   analysisId: string;
@@ -36,12 +44,15 @@ export function AnalysisPanel(props: Props) {
   const { url: routeBase } = useRouteMatch();
   const totalCounts = useEntityCounts();
   const filteredCounts = useEntityCounts(analysisState.analysis?.filters);
+  const studyMetadata = useStudyMetadata();
+  const entities = useStudyEntities(studyMetadata.rootEntity);
   const filteredEntities = uniq(
     analysisState.analysis?.filters.map((f) => f.entityId)
   );
   const location = useLocation();
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
+  const [globalFiltersDialogOpen, setGlobalFiltersDialogOpen] = useState(false);
 
   useEffect(() => {
     const relativePath = location.pathname.replace(routeBase, '');
@@ -67,6 +78,20 @@ export function AnalysisPanel(props: Props) {
         copyAnalysis={copyAnalysis}
         saveAnalysis={saveAnalysis}
         deleteAnalysis={deleteAnalysis}
+        onFilterIconClick={() =>
+          setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
+        }
+        globalFiltersDialogOpen={globalFiltersDialogOpen}
+      />
+      <GlobalFiltersDialog
+        open={globalFiltersDialogOpen}
+        setOpen={setGlobalFiltersDialogOpen}
+        entities={entities}
+        filters={analysis.filters}
+        setFilters={analysisState.setFilters}
+        removeFilter={(filter) =>
+          analysisState.setFilters(analysis.filters.filter((f) => f !== filter))
+        }
       />
       <Route
         path={[

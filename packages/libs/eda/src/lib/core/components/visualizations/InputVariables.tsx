@@ -63,6 +63,7 @@ const useStyles = makeStyles(
   {
     inputs: {
       display: 'flex',
+      marginBottom: '0.5em',
     },
     input: {
       display: 'flex',
