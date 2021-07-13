@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 
-import { CompleteCasesTable } from '../api/data-api';
+import { keyBy, mapValues } from 'lodash';
+
+import { CompleteCasesTable, CompleteCasesTableRow } from '../api/data-api';
 import {
   VariableCoverageTableRow,
   VariableSpec,
@@ -89,24 +91,32 @@ export function useVariableCoverageTableRows(
 
 /**
  * Transforms a CompleteCasesTable array into a map
- * @param completeCases
+ * @param completeCasesTable
  * @returns A map with key-value pairs of the form {entityId}.{variableId} -> {completeCaseCount}
  */
 export function useCompleteCasesMap(
-  completeCases: CompleteCasesTable = []
+  completeCasesTable: CompleteCasesTable = []
 ): Record<string, number> {
-  return useMemo(
-    () =>
-      completeCases.reduce((memo, { completeCases, variableDetails }) => {
-        if (completeCases != null && variableDetails != null) {
-          // variableDetails.variableId is of the form {entityId}.{variableId}
-          memo[variableDetails.variableId] = Array.isArray(completeCases)
-            ? completeCases[0]
-            : completeCases;
-        }
+  return useMemo(() => {
+    const nonemptyRows = completeCasesTable.filter(isNonemptyRow);
 
-        return memo;
-      }, {} as Record<string, number>),
-    [completeCases]
+    // variableDetails.variableId is of the form {entityId}.{variableId}
+    const rowsByVariableId = keyBy(
+      nonemptyRows,
+      ({ variableDetails }) => variableDetails.variableId
+    );
+
+    return mapValues(rowsByVariableId, ({ completeCases }) =>
+      Array.isArray(completeCases) ? completeCases[0] : completeCases
+    );
+  }, [completeCasesTable]);
+}
+
+function isNonemptyRow(
+  completeCasesTableRow: CompleteCasesTableRow
+): completeCasesTableRow is Required<CompleteCasesTableRow> {
+  return (
+    completeCasesTableRow.variableDetails != null ||
+    completeCasesTableRow.completeCases != null
   );
 }
