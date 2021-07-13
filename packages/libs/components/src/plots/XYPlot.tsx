@@ -8,14 +8,23 @@ import { Layout } from 'plotly.js';
 import { NumberOrDateRange } from '../types/general';
 
 export interface XYPlotProps extends PlotProps<XYPlotData> {
+  /** x-axis range: required for confidence interval - not really */
+  independentAxisRange?: NumberOrDateRange;
+  /** y-axis range: required for confidence interval */
+  dependentAxisRange?: NumberOrDateRange;
   /** x-axis label */
   independentAxisLabel?: string;
   /** y-axis label */
   dependentAxisLabel?: string;
-  /** x-axis range: required for confidence interval */
-  independentAxisRange?: NumberOrDateRange;
-  /** y-axis range: required for confidence interval */
-  dependentAxisRange?: NumberOrDateRange;
+  /** independentValueType */
+  independentValueType?:
+    | 'string'
+    | 'number'
+    | 'date'
+    | 'longitude'
+    | 'category';
+  /** dependentValueType */
+  dependentValueType?: 'string' | 'number' | 'date' | 'longitude' | 'category';
   // TO DO
   // opacity?
 }
@@ -27,10 +36,12 @@ const EmptyXYPlotData: XYPlotData = {
 export default function XYPlot(props: XYPlotProps) {
   const {
     data = EmptyXYPlotData,
-    independentAxisLabel,
-    dependentAxisLabel,
     independentAxisRange,
     dependentAxisRange,
+    independentAxisLabel,
+    dependentAxisLabel,
+    independentValueType,
+    dependentValueType,
     ...restProps
   } = props;
 
@@ -41,7 +52,8 @@ export default function XYPlot(props: XYPlotProps) {
       zeroline: false, // disable yaxis line
       // make plot border
       mirror: true,
-      type: data?.independentValueType === 'date' ? 'date' : 'linear',
+      // date or number type (from variable.type)
+      type: independentValueType === 'date' ? 'date' : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
     },
     yaxis: {
@@ -50,7 +62,8 @@ export default function XYPlot(props: XYPlotProps) {
       zeroline: false, // disable xaxis line
       // make plot border
       mirror: true,
-      type: data?.dependentValueType === 'date' ? 'date' : 'linear',
+      // date or number type (from variable.type)
+      type: dependentValueType === 'date' ? 'date' : undefined,
       tickfont: data.series.length ? {} : { color: 'transparent' },
     },
   };
