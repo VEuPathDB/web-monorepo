@@ -9,21 +9,32 @@ import * as t from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
 
 // need to set for Boxplot
-import { DataClient, BoxplotRequestParams } from '../../../api/data-api';
+import {
+  DataClient,
+  BoxplotRequestParams,
+  CompleteCasesTable,
+} from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
+import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
+import { VariableCoverageTable } from '../../VariableCoverageTable';
+
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
 import { BoxplotData } from '@veupathdb/components/lib/types/plots';
 
 interface PromiseBoxplotData {
   series: BoxplotData;
+  // add more props with variable coverage table
+  completeCases: CompleteCasesTable;
+  outputSize: number;
 }
 
 export const boxplotVisualization: VisualizationType = {
@@ -131,20 +142,12 @@ function BoxplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useCallback(
-    (variable?: VariableDescriptor) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
-    },
-    [entities]
-  );
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   const data = usePromise(
     useCallback(async (): Promise<PromiseBoxplotData | undefined> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
-      const yAxisVariable = findVariable(vizConfig.yAxisVariable);
+      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
 
       // check variable inputs and add densityplot
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
@@ -179,7 +182,7 @@ function BoxplotViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findVariable,
+      findEntityAndVariable,
       computation.type,
       visualization.type,
     ])
@@ -244,34 +247,83 @@ function BoxplotViz(props: Props) {
         </div>
       )}
       {fullscreen ? (
-        <BoxplotWithControls
-          // data.value
-          data={data.value && !data.pending ? data.value.series : []}
-          containerStyles={{
-            width: '100%',
-            height: 450,
-          }}
-          orientation={'vertical'}
-          // add condition to show legend when overlayVariable is used
-          displayLegend={
-            data.value &&
-            (data.value.series.length > 1 || vizConfig.overlayVariable != null)
-          }
-          independentAxisLabel={
-            findVariable(vizConfig.xAxisVariable)?.displayName ?? 'X-Axis'
-          }
-          dependentAxisLabel={
-            findVariable(vizConfig.yAxisVariable)?.displayName ?? 'Y-Axis'
-          }
-          // show/hide independent/dependent axis tick label
-          showIndependentAxisTickLabel={true}
-          showDependentAxisTickLabel={true}
-          showMean={true}
-          interactive={true}
-          showSpinner={data.pending}
-          showRawData={true}
-          legendTitle={findVariable(vizConfig.overlayVariable)?.displayName}
-        />
+        <>
+          <OutputEntityTitle
+            entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            outputSize={data.pending ? undefined : data.value?.outputSize}
+          />
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'flex-start',
+            }}
+          >
+            <BoxplotWithControls
+              // data.value
+              data={data.value && !data.pending ? data.value.series : []}
+              containerStyles={{
+                width: '750px',
+                height: '450px',
+              }}
+              orientation={'vertical'}
+              // add condition to show legend when overlayVariable is used
+              displayLegend={
+                data.value &&
+                (data.value.series.length > 1 ||
+                  vizConfig.overlayVariable != null)
+              }
+              independentAxisLabel={
+                findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                  .displayName ?? 'X-Axis'
+              }
+              dependentAxisLabel={
+                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                  .displayName ?? 'Y-Axis'
+              }
+              // show/hide independent/dependent axis tick label
+              showIndependentAxisTickLabel={true}
+              showDependentAxisTickLabel={true}
+              showMean={true}
+              interactive={true}
+              showSpinner={data.pending}
+              showRawData={true}
+              legendTitle={
+                findEntityAndVariable(vizConfig.overlayVariable)?.variable
+                  .displayName
+              }
+            />
+            <VariableCoverageTable
+              completeCases={
+                data.pending ? undefined : data.value?.completeCases
+              }
+              filters={filters}
+              outputEntityId={vizConfig.xAxisVariable?.entityId}
+              variableSpecs={[
+                {
+                  role: 'X-axis',
+                  required: true,
+                  display: findEntityAndVariable(vizConfig.xAxisVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.xAxisVariable,
+                },
+                {
+                  role: 'Y-axis',
+                  required: true,
+                  display: findEntityAndVariable(vizConfig.yAxisVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.yAxisVariable,
+                },
+                {
+                  role: 'Overlay',
+                  display: findEntityAndVariable(vizConfig.overlayVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.overlayVariable,
+                },
+              ]}
+            />
+          </div>
+        </>
       ) : (
         // thumbnail/grid view
         <Boxplot
@@ -364,6 +416,8 @@ export function boxplotResponseToData(
         label: data[response.boxplot.config.xVariableDetails.variableId],
       })
     ),
+    completeCases: response.completeCasesTable,
+    outputSize: response.boxplot.config.completeCases,
   };
 }
 
