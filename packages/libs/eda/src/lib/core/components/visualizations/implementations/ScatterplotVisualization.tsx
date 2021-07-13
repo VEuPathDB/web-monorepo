@@ -10,6 +10,7 @@ import { useCallback, useMemo } from 'react';
 
 // need to set for Scatterplot
 import {
+  CompleteCasesTable,
   DataClient,
   ScatterplotRequestParams,
   ScatterplotResponse,
@@ -17,12 +18,17 @@ import {
 } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
+import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
+import { StudyEntity } from '../../../types/study';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
+import { VariableCoverageTable } from '../../VariableCoverageTable';
+
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   SelectorProps,
   VisualizationProps,
@@ -152,15 +158,7 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useCallback(
-    (variable?: VariableDescriptor) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
-    },
-    [entities]
-  );
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   // XYPlotControls: add valueSpec option
   const onValueSpecChange = useCallback(
@@ -174,8 +172,10 @@ function ScatterplotViz(props: Props) {
 
   const data = usePromise(
     useCallback(async (): Promise<any> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
-      const yAxisVariable = findVariable(vizConfig.yAxisVariable);
+      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
+        ?.variable;
+      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable)
+        ?.variable;
 
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
@@ -216,7 +216,7 @@ function ScatterplotViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findVariable,
+      findEntityAndVariable,
       computation.type,
       visualization.type,
     ])
@@ -285,20 +285,36 @@ function ScatterplotViz(props: Props) {
             // data.value
             data={data.value.dataSetProcess}
             containerStyles={{
-              width: '1000px',
-              height: '600px',
+              width: '750px',
+              height: '450px',
             }}
             // title={'Scatter plot'}
+            outputEntity={
+              findEntityAndVariable(vizConfig.xAxisVariable)?.entity
+            }
+            xAxisVariable={vizConfig.xAxisVariable}
+            yAxisVariable={vizConfig.yAxisVariable}
+            overlayVariable={vizConfig.overlayVariable}
             displayLegend={
               data.value &&
               (data.value.dataSetProcess.series.length > 1 ||
                 vizConfig.overlayVariable != null)
             }
             independentAxisLabel={
-              findVariable(vizConfig.xAxisVariable)?.displayName
+              findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                .displayName
             }
             dependentAxisLabel={
-              findVariable(vizConfig.yAxisVariable)?.displayName
+              findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                .displayName
+            }
+            overlayLabel={
+              findEntityAndVariable(vizConfig.overlayVariable)?.variable
+                .displayName
+            }
+            legendTitle={
+              findEntityAndVariable(vizConfig.overlayVariable)?.variable
+                .displayName
             }
             independentAxisRange={{
               min: data.value.xMin,
@@ -312,9 +328,11 @@ function ScatterplotViz(props: Props) {
             onValueSpecChange={onValueSpecChange}
             // send visualization.type here
             vizType={visualization.type}
+            interactive
             showSpinner={data.pending}
-            interactive={true}
-            legendTitle={findVariable(vizConfig.overlayVariable)?.displayName}
+            filters={filters}
+            completeCases={data.pending ? undefined : data.value.completeCases}
+            outputSize={data.pending ? undefined : data.value.outputSize}
           />
         ) : (
           // thumbnail/grid view
@@ -345,45 +363,87 @@ function ScatterplotViz(props: Props) {
         )
       ) : (
         // no data or data error case: with control
-        <>
-          <XYPlot
-            data={undefined}
-            containerStyles={
-              fullscreen
-                ? {
-                    width: '1000px',
-                    height: '600px',
-                  }
-                : {
-                    width: '230px',
-                    height: '150px',
-                  }
-            }
-            independentAxisLabel={
-              fullscreen
-                ? findVariable(vizConfig.xAxisVariable)?.displayName
-                : undefined
-            }
-            dependentAxisLabel={
-              fullscreen
-                ? findVariable(vizConfig.yAxisVariable)?.displayName
-                : undefined
-            }
-            displayLegend={fullscreen}
-            displayLibraryControls={false}
-            interactive={fullscreen}
-            spacingOptions={
-              fullscreen
-                ? {}
-                : {
-                    marginLeft: 30,
-                    marginRight: 20,
-                    marginBottom: 15,
-                    marginTop: 20,
-                  }
-            }
-            showSpinner={data.pending}
-          />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {fullscreen && (
+            <OutputEntityTitle
+              entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            />
+          )}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'flex-start',
+            }}
+          >
+            <XYPlot
+              data={undefined}
+              containerStyles={
+                fullscreen
+                  ? {
+                      width: '750px',
+                      height: '450px',
+                    }
+                  : {
+                      width: '230px',
+                      height: '150px',
+                    }
+              }
+              independentAxisLabel={
+                fullscreen
+                  ? findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                      .displayName ?? 'X-Axis'
+                  : undefined
+              }
+              dependentAxisLabel={
+                fullscreen
+                  ? findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                      .displayName ?? 'Y-Axis'
+                  : undefined
+              }
+              displayLegend={fullscreen}
+              displayLibraryControls={false}
+              interactive={fullscreen}
+              spacingOptions={
+                fullscreen
+                  ? {}
+                  : {
+                      marginLeft: 30,
+                      marginRight: 20,
+                      marginBottom: 15,
+                      marginTop: 20,
+                    }
+              }
+              showSpinner={data.pending}
+            />
+            {fullscreen && (
+              <VariableCoverageTable
+                filters={filters}
+                variableSpecs={[
+                  {
+                    role: 'X-axis',
+                    required: true,
+                    display: findEntityAndVariable(vizConfig.xAxisVariable)
+                      ?.variable.displayName,
+                    variable: vizConfig.xAxisVariable,
+                  },
+                  {
+                    role: 'Y-axis',
+                    required: true,
+                    display: findEntityAndVariable(vizConfig.yAxisVariable)
+                      ?.variable.displayName,
+                    variable: vizConfig.yAxisVariable,
+                  },
+                  {
+                    role: 'Overlay',
+                    display: findEntityAndVariable(vizConfig.overlayVariable)
+                      ?.variable.displayName,
+                    variable: vizConfig.overlayVariable,
+                  },
+                ]}
+              />
+            )}
+          </div>
           {visualization.type === 'scatterplot' && fullscreen && (
             <XYPlotControls
               // label="Scatter Plot Controls"
@@ -405,13 +465,21 @@ function ScatterplotViz(props: Props) {
               itemMarginRight={50}
             />
           )}
-        </>
+        </div>
       )}
     </div>
   );
 }
 
 type ScatterplotWithControlsProps = XYPlotProps & {
+  completeCases: CompleteCasesTable;
+  outputSize: number;
+  filters: Filter[];
+  outputEntity?: StudyEntity;
+  xAxisVariable?: VariableDescriptor;
+  yAxisVariable?: VariableDescriptor;
+  overlayVariable?: VariableDescriptor;
+  overlayLabel?: string;
   valueSpec: string | undefined;
   onValueSpecChange: (value: string) => void;
   vizType: string;
@@ -423,7 +491,15 @@ function ScatterplotWithControls({
   valueSpec = 'Raw',
   onValueSpecChange,
   vizType,
-  ...ScatterplotProps
+  filters,
+  outputEntity,
+  xAxisVariable,
+  yAxisVariable,
+  overlayVariable,
+  completeCases,
+  outputSize,
+  overlayLabel,
+  ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
   const errorManagement = useMemo((): ErrorManagement => {
@@ -437,12 +513,46 @@ function ScatterplotWithControls({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <XYPlot
-        {...ScatterplotProps}
-        data={data}
-        // add controls
-        displayLibraryControls={false}
-      />
+      <OutputEntityTitle entity={outputEntity} outputSize={outputSize} />
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'flex-start',
+          marginBottom: '1em',
+        }}
+      >
+        <XYPlot
+          {...scatterplotProps}
+          data={data}
+          // add controls
+          displayLibraryControls={false}
+        />
+        <VariableCoverageTable
+          completeCases={completeCases}
+          filters={filters}
+          outputEntityId={outputEntity?.id}
+          variableSpecs={[
+            {
+              role: 'X-axis',
+              required: true,
+              display: scatterplotProps.independentAxisLabel,
+              variable: xAxisVariable,
+            },
+            {
+              role: 'Y-axis',
+              required: true,
+              display: scatterplotProps.dependentAxisLabel,
+              variable: yAxisVariable,
+            },
+            {
+              role: 'Overlay',
+              display: overlayLabel,
+              variable: overlayVariable,
+            },
+          ]}
+        />
+      </div>
       {/*  XYPlotControls: check vizType (only for scatterplot for now) */}
       {vizType === 'scatterplot' && (
         <XYPlotControls
@@ -490,6 +600,8 @@ export function scatterplotResponseToData(
     xMax: xMax,
     yMin: yMin,
     yMax: yMax,
+    completeCases: response.completeCasesTable,
+    outputSize: response.scatterplot.config.completeCases,
   };
 }
 

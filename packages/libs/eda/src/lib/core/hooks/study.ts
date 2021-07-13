@@ -10,13 +10,15 @@ import {
   getNodeId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
 import {
+  StudyEntity,
   StudyMetadata,
   StudyRecordClass,
   StudyRecord,
-  StudyEntity,
 } from '../types/study';
 import { usePromise } from './promise';
 import { SubsettingClient } from '../api/subsetting-api';
+import { VariableDescriptor } from '../types/variable';
+import { findEntityAndVariable } from '../utils/study-metadata';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -96,6 +98,14 @@ export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
         );
       return store.getStudyMetadata(study.id);
     }, [datasetId, store])
+  );
+}
+
+export function useFindEntityAndVariable(entities: StudyEntity[]) {
+  return useCallback(
+    (variable?: VariableDescriptor) =>
+      findEntityAndVariable(entities, variable),
+    [entities]
   );
 }
 

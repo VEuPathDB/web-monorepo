@@ -32,6 +32,7 @@ type ZeroToTwoVariables =
   | [VariableDescriptor, VariableDescriptor];
 
 // define sampleSizeTableArray
+export type SampleSizeTableArray = TypeOf<typeof sampleSizeTableArray>;
 const sampleSizeTableArray = array(
   partial({
     // set union for size as it depends on the presence of overlay variable
@@ -44,17 +45,20 @@ const sampleSizeTableArray = array(
   })
 );
 
+// define completeCases
+export type CompleteCasesTableRow = TypeOf<typeof completeCases>;
+const completeCases = partial({
+  // set union for size as it depends on the presence of overlay variable
+  completeCases: union([number, array(number)]),
+  variableDetails: type({
+    entityId: string,
+    variableId: string,
+  }),
+});
+
 // define completeCasesTableArray
-const completeCasesTableArray = array(
-  partial({
-    // set union for size as it depends on the presence of overlay variable
-    completeCases: union([number, array(number)]),
-    variableDetails: type({
-      entityId: string,
-      variableId: string,
-    }),
-  })
-);
+export type CompleteCasesTable = TypeOf<typeof completeCasesTableArray>;
+const completeCasesTableArray = array(completeCases);
 
 export interface HistogramRequestParams {
   studyId: string;
@@ -369,6 +373,7 @@ export const MosaicResponse = type({
       size: array(number),
     })
   ),
+  completeCasesTable: completeCasesTableArray,
 });
 
 export type ContTableResponse = TypeOf<typeof ContTableResponse>;
@@ -398,6 +403,7 @@ export const TwoByTwoResponse = intersection([
         relativerisk: number,
       })
     ),
+    completeCasesTable: completeCasesTableArray,
   }),
 ]);
 
