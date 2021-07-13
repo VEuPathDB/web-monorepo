@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { Redirect } from 'react-router-dom';
 
 import SiteSearchController from '@veupathdb/web-common/lib/controllers/SiteSearchController';
 
@@ -101,6 +102,11 @@ function SiteSearchRouteComponent() {
  * Wrap Ebrc Routes
  */
 export const wrapRoutes = ebrcRoutes => [
+  {
+    path: '/record/organism/:id*',
+    component: (props) => <Redirect to={`/record/dataset/${props.match.params.id}`}/>
+  },
+
   {
     path: '/fasta-tool',
     component: () => <FastaConfigController/>
