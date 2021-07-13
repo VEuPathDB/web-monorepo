@@ -254,10 +254,12 @@ export function HistogramFilter(props: Props) {
             }}
           >
             <div className="histogram-summary-stats">
-              <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
-              {fgSummaryStats.mean} &emsp;
-              <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
-              {fgSummaryStats.max}
+              <b>Min:</b> {formatStatValue(fgSummaryStats.min, variable.type)}{' '}
+              &emsp; <b>Mean:</b>{' '}
+              {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
+              <b>Median:</b>{' '}
+              {formatStatValue(fgSummaryStats.median, variable.type)} &emsp;{' '}
+              <b>Max:</b> {formatStatValue(fgSummaryStats.max, variable.type)}
             </div>
             <UnknownCount
               activeFieldState={{
@@ -572,4 +574,16 @@ async function getHistogram(
     'pass',
     getRequestParams(studyId, filters, entity, variable, dataParams, rawConfig)
   );
+}
+
+// TODO [2021-07-10] - Use variable.precision when avaiable
+function formatStatValue(
+  value: string | number,
+  type: HistogramVariable['type']
+) {
+  return type === 'date'
+    ? value
+    : Number(value).toLocaleString(undefined, {
+        maximumFractionDigits: 4,
+      });
 }

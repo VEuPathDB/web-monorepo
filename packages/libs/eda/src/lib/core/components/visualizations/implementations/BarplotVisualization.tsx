@@ -12,12 +12,16 @@ import { useCallback, useMemo } from 'react';
 import { DataClient, BarplotRequestParams } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
+import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
+import { VariableCoverageTable } from '../../VariableCoverageTable';
+
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 import bar from './selectorIcons/bar.svg';
@@ -44,23 +48,16 @@ function FullscreenComponent(props: VisualizationProps) {
 }
 
 function createDefaultConfig(): BarplotConfig {
-  return {
-    enableOverlay: true,
-  };
+  return {};
 }
 
 type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const BarplotConfig = t.intersection([
-  t.type({
-    enableOverlay: t.boolean,
-  }),
-  t.partial({
-    xAxisVariable: VariableDescriptor,
-    overlayVariable: VariableDescriptor,
-    facetVariable: VariableDescriptor,
-  }),
-]);
+const BarplotConfig = t.partial({
+  xAxisVariable: VariableDescriptor,
+  overlayVariable: VariableDescriptor,
+  facetVariable: VariableDescriptor,
+});
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
@@ -127,19 +124,11 @@ function BarplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  const findVariable = useCallback(
-    (variable?: VariableDescriptor) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
-    },
-    [entities]
-  );
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   const data = usePromise(
     useCallback(async (): Promise<any> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
+      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
 
       // check variable inputs: this is necessary to prevent from data post
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
@@ -150,7 +139,7 @@ function BarplotViz(props: Props) {
         studyId,
         filters ?? [],
         vizConfig.xAxisVariable!,
-        vizConfig.enableOverlay ? vizConfig.overlayVariable : undefined
+        vizConfig.overlayVariable
       );
 
       // barplot
@@ -166,7 +155,7 @@ function BarplotViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findVariable,
+      findEntityAndVariable,
       computation.type,
     ])
   );
@@ -225,23 +214,67 @@ function BarplotViz(props: Props) {
         </div>
       )}
       {fullscreen ? (
-        <BarplotWithControls
-          data={data.value && !data.pending ? data.value : { series: [] }}
-          containerStyles={{
-            width: '100%',
-            height: '450px',
-          }}
-          orientation={'vertical'}
-          barLayout={'group'}
-          displayLegend={data.value?.series.length > 1}
-          independentAxisLabel={
-            vizConfig.xAxisVariable
-              ? findVariable(vizConfig.xAxisVariable)?.displayName
-              : 'Label'
-          }
-          dependentAxisLabel={'Count'}
-          showSpinner={data.pending}
-        />
+        <>
+          <OutputEntityTitle
+            entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            outputSize={data.pending ? undefined : data.value?.outputSize}
+          />
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'flex-start',
+            }}
+          >
+            <BarplotWithControls
+              data={data.value && !data.pending ? data.value : { series: [] }}
+              containerStyles={{
+                width: '750px',
+                height: '450px',
+              }}
+              orientation={'vertical'}
+              barLayout={'group'}
+              displayLegend={
+                data.value &&
+                (data.value.series.length > 1 ||
+                  vizConfig.overlayVariable != null)
+              }
+              independentAxisLabel={
+                findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                  .displayName ?? 'Main'
+              }
+              dependentAxisLabel={'Count'}
+              legendTitle={
+                findEntityAndVariable(vizConfig.overlayVariable)?.variable
+                  .displayName
+              }
+              interactive
+              showSpinner={data.pending}
+            />
+            <VariableCoverageTable
+              completeCases={
+                data.pending ? undefined : data.value?.completeCases
+              }
+              filters={filters}
+              outputEntityId={vizConfig.xAxisVariable?.entityId}
+              variableSpecs={[
+                {
+                  role: 'Main',
+                  required: true,
+                  display: findEntityAndVariable(vizConfig.xAxisVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.xAxisVariable,
+                },
+                {
+                  role: 'Overlay',
+                  display: findEntityAndVariable(vizConfig.overlayVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.overlayVariable,
+                },
+              ]}
+            />
+          </div>
+        </>
       ) : (
         // thumbnail/grid view
         <Barplot
@@ -329,6 +362,8 @@ export function barplotResponseToData(
       label: data.label,
       value: data.value,
     })),
+    completeCases: response.completeCasesTable,
+    outputSize: response.barplot.config.completeCases,
   };
 }
 
