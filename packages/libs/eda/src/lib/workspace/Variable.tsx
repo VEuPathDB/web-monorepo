@@ -26,9 +26,6 @@ export function VariableDetails(props: Props) {
     analysisState,
   } = props;
   const studyMetadata = useStudyMetadata();
-
-  console.log('variable =', variable);
-
   return (
     <ErrorBoundary>
       <div>
