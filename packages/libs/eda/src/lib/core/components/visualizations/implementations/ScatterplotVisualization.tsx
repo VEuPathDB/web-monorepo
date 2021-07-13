@@ -1,27 +1,33 @@
 // load scatter plot component
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
-import { ErrorManagement } from '@veupathdb/components/lib/types/general';
+// import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 
 // need to set for Scatterplot
 import {
+  CompleteCasesTable,
   DataClient,
   ScatterplotRequestParams,
   LineplotRequestParams,
 } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
+import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
+// import { StudyEntity } from '../../../types/study';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
+import { VariableCoverageTable } from '../../VariableCoverageTable';
+
 import { InputVariables } from '../InputVariables';
+import { OutputEntityTitle } from '../OutputEntityTitle';
 import {
   SelectorProps,
   VisualizationProps,
@@ -44,6 +50,9 @@ interface PromiseXYPlotData {
   dataSetProcess: XYPlotData;
   yMin: number;
   yMax: number;
+  // add more props with variable coverage table
+  completeCases: CompleteCasesTable;
+  outputSize: number;
 }
 
 // define XYPlotDataResponse
@@ -161,6 +170,9 @@ function ScatterplotViz(props: Props) {
     [updateVisualization, visualization, vizConfig]
   );
 
+  // moved the location of this findEntityAndVariable
+  const findEntityAndVariable = useFindEntityAndVariable(entities);
+
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (
@@ -180,19 +192,14 @@ function ScatterplotViz(props: Props) {
         yAxisVariable,
         overlayVariable,
         facetVariable,
+        // set valueSpec as Raw when yAxisVariable = date
+        valueSpecConfig:
+          findEntityAndVariable(yAxisVariable)?.variable.type === 'date'
+            ? 'Raw'
+            : vizConfig.valueSpecConfig,
       });
     },
-    [updateVizConfig]
-  );
-
-  const findVariable = useCallback(
-    (variable?: VariableDescriptor) => {
-      if (variable == null) return undefined;
-      return entities
-        .find((e) => e.id === variable.entityId)
-        ?.variables.find((v) => v.id === variable.variableId);
-    },
-    [entities]
+    [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
   );
 
   // XYPlotControls: add valueSpec option
@@ -205,19 +212,12 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  // set valueSpec as Raw when yAxisVariable = date
-  useEffect(() => {
-    if (findVariable(vizConfig.yAxisVariable)?.type === 'date') {
-      updateVizConfig({
-        valueSpecConfig: 'Raw',
-      });
-    }
-  }, [vizConfig.yAxisVariable]);
-
   const data = usePromise(
     useCallback(async (): Promise<PromiseXYPlotData | undefined> => {
-      const xAxisVariable = findVariable(vizConfig.xAxisVariable);
-      const yAxisVariable = findVariable(vizConfig.yAxisVariable);
+      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
+        ?.variable;
+      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable)
+        ?.variable;
 
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
@@ -274,7 +274,7 @@ function ScatterplotViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findVariable,
+      findEntityAndVariable,
       computation.type,
       visualization.type,
     ])
@@ -283,6 +283,7 @@ function ScatterplotViz(props: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {fullscreen && (
+        //DKDKDK add margin-bottom
         <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
           <InputVariables
             inputs={[
@@ -338,61 +339,119 @@ function ScatterplotViz(props: Props) {
         </div>
       )}
       {fullscreen ? (
-        <ScatterplotWithControls
-          // data.value
-          data={
-            data.value && !data.pending ? data.value.dataSetProcess : undefined
-          }
-          containerStyles={{
-            width: '750px',
-            height: '450px',
-          }}
-          // title={'Scatter plot'}
-          displayLegend={
-            data.value &&
-            (data.value.dataSetProcess.series.length > 1 ||
-              vizConfig.overlayVariable != null)
-          }
-          independentAxisLabel={
-            findVariable(vizConfig.xAxisVariable)?.displayName ?? 'X-Axis'
-          }
-          dependentAxisLabel={
-            findVariable(vizConfig.yAxisVariable)?.displayName ?? 'Y-Axis'
-          }
-          // independentAxisRange={data.value && !data.pending ? [data.value.xMin, data.value.xMax] : []}
-          // block this for now
-          dependentAxisRange={
-            data.value && !data.pending
-              ? { min: data.value.yMin, max: data.value.yMax }
-              : undefined
-          }
-          // set valueSpec as Raw when yAxisVariable = date
-          valueSpec={
-            findVariable(vizConfig.yAxisVariable)?.type === 'date'
-              ? 'Raw'
-              : vizConfig.valueSpecConfig
-          }
-          onValueSpecChange={onValueSpecChange}
-          // send visualization.type here
-          vizType={visualization.type}
-          interactive={true}
-          showSpinner={data.pending}
-          // add plotOptions to control the list of plot options
-          plotOptions={[
-            'Raw',
-            'Smoothed mean with raw',
-            'Best fit line with raw',
-          ]}
-          // disabledList prop is used to disable radio options (grayed out)
-          disabledList={
-            findVariable(vizConfig.yAxisVariable)?.type === 'date'
-              ? ['Smoothed mean with raw', 'Best fit line with raw']
-              : []
-          }
-          independentValueType={findVariable(vizConfig.xAxisVariable)?.type}
-          dependentValueType={findVariable(vizConfig.yAxisVariable)?.type}
-          legendTitle={findVariable(vizConfig.overlayVariable)?.displayName}
-        />
+        <>
+          <OutputEntityTitle
+            entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            outputSize={data.pending ? undefined : data.value?.outputSize}
+          />
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'flex-start',
+            }}
+          >
+            <ScatterplotWithControls
+              // data.value
+              data={
+                data.value && !data.pending
+                  ? data.value.dataSetProcess
+                  : undefined
+              }
+              containerStyles={{
+                width: '750px',
+                height: '450px',
+              }}
+              // title={'Scatter plot'}
+              displayLegend={
+                data.value &&
+                (data.value.dataSetProcess.series.length > 1 ||
+                  vizConfig.overlayVariable != null)
+              }
+              independentAxisLabel={
+                findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                  .displayName ?? 'X-Axis'
+              }
+              dependentAxisLabel={
+                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                  .displayName ?? 'Y-Axis'
+              }
+              dependentAxisRange={
+                data.value && !data.pending
+                  ? { min: data.value.yMin, max: data.value.yMax }
+                  : undefined
+              }
+              // set valueSpec as Raw when yAxisVariable = date
+              valueSpec={
+                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                  .type === 'date'
+                  ? 'Raw'
+                  : vizConfig.valueSpecConfig
+              }
+              onValueSpecChange={onValueSpecChange}
+              // send visualization.type here
+              vizType={visualization.type}
+              interactive={true}
+              showSpinner={data.pending}
+              // add plotOptions to control the list of plot options
+              plotOptions={[
+                'Raw',
+                'Smoothed mean with raw',
+                'Best fit line with raw',
+              ]}
+              // disabledList prop is used to disable radio options (grayed out)
+              disabledList={
+                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                  .type === 'date'
+                  ? ['Smoothed mean with raw', 'Best fit line with raw']
+                  : []
+              }
+              independentValueType={
+                findEntityAndVariable(vizConfig.xAxisVariable)?.variable.type
+              }
+              dependentValueType={
+                findEntityAndVariable(vizConfig.yAxisVariable)?.variable.type
+              }
+              legendTitle={
+                findEntityAndVariable(vizConfig.overlayVariable)?.variable
+                  .displayName
+              }
+            />
+            <VariableCoverageTable
+              completeCases={
+                data.value && !data.pending
+                  ? data.value?.completeCases
+                  : undefined
+              }
+              filters={filters}
+              outputEntityId={
+                findEntityAndVariable(vizConfig.xAxisVariable)?.entity.id
+              }
+              variableSpecs={[
+                {
+                  role: 'X-axis',
+                  required: true,
+                  display: findEntityAndVariable(vizConfig.xAxisVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.xAxisVariable,
+                },
+                {
+                  role: 'Y-axis',
+                  required: true,
+                  display: findEntityAndVariable(vizConfig.yAxisVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.yAxisVariable,
+                },
+                {
+                  role: 'Overlay',
+                  display: findEntityAndVariable(vizConfig.overlayVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.overlayVariable,
+                },
+              ]}
+            />
+          </div>
+        </>
       ) : (
         // thumbnail/grid view
         <XYPlot
@@ -445,22 +504,22 @@ function ScatterplotWithControls({
   plotOptions,
   // add disabledList
   disabledList,
-  ...ScatterplotProps
+  ...scatterplotProps
 }: ScatterplotWithControlsProps) {
   // TODO Use UIState
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (_: Error) => {},
-      removeError: (_: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
+  // const errorManagement = useMemo((): ErrorManagement => {
+  //   return {
+  //     errors: [],
+  //     addError: (_: Error) => {},
+  //     removeError: (_: Error) => {},
+  //     clearAllErrors: () => {},
+  //   };
+  // }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <XYPlot
-        {...ScatterplotProps}
+        {...scatterplotProps}
         data={data}
         // add controls
         displayLibraryControls={false}
@@ -478,7 +537,7 @@ function ScatterplotWithControls({
           orientation={'horizontal'}
           labelPlacement={'end'}
           buttonColor={'primary'}
-          margins={['0', '0', '0', '6em']}
+          margins={['1em', '0', '0', '6em']}
           itemMarginRight={50}
         />
       )}
@@ -516,6 +575,8 @@ export function scatterplotResponseToData(
     // xMax: xMax,
     yMin: yMin,
     yMax: yMax,
+    completeCases: response.completeCasesTable,
+    outputSize: response.scatterplot.config.completeCases,
   };
 }
 

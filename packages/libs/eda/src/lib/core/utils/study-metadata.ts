@@ -26,3 +26,9 @@ export function findEntityAndVariable(
     return undefined;
   return { entity, variable };
 }
+
+export function makeEntityDisplayName(entity: StudyEntity, isPlural: boolean) {
+  return !isPlural
+    ? entity.displayName
+    : entity.displayNamePlural ?? `${entity.displayName}s`;
+}
