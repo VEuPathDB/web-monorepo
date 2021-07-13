@@ -113,7 +113,7 @@ const recordToAttribution = (record: RecordInstance) => {
 
   return (
     <li key={datasetId} className={cx('DatasetItem')}>
-      <Link to={`/record/dataset/${datasetId}`}>{record.displayName}</Link>
+      <Link to={`/record/dataset/${datasetId}`}>{safeHtml(record.displayName)}</Link>
       <div className={cx('Details')}>
         <div className={cx('Summary')}>
           {
