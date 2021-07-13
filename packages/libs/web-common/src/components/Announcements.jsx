@@ -161,6 +161,24 @@ const siteAnnouncements = [
     }
   },
 
+// VectorBase
+  {
+    id: 'vbIndianStrain',
+    renderDisplay: props => {
+      if ( (props.projectId == 'VectorBase') &&
+           (props.location.pathname.indexOf("/record/dataset/DS_869a805bc4") > -1) 
+         )
+      {
+        return (
+          <div key="vbIndianStrain">
+            The strain name ‘Indian 2020’ will be replaced with the strain name ‘UCISS2018’  with the next VectorBase release.
+          </div>
+        );
+      }
+      return null;
+    }
+  },
+
   // TriTryp gene page for Bodo saltans strain Lake Konstanz
   {
     id: 'geneFungi',
