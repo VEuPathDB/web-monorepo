@@ -166,7 +166,9 @@ const siteAnnouncements = [
     id: 'vbIndianStrain',
     renderDisplay: props => {
       if ( (props.projectId == 'VectorBase') &&
-           (props.location.pathname.indexOf("/record/dataset/DS_869a805bc4") > -1) 
+           (  (props.location.pathname.indexOf("/record/dataset/DS_869a805bc4") > -1) ||
+              (props.location.pathname.indexOf("/record/dataset/TMPTX_asteIndian2020") > -1)
+           ) 
          )
       {
         return (
