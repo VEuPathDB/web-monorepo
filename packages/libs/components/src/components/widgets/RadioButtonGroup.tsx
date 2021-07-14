@@ -29,6 +29,8 @@ export type RadioButtonGroupProps = {
   margins?: string[];
   /** marginRight of radio button item: default 16px from MUI */
   itemMarginRight?: number | string;
+  /** disabled list to disable radio button item(s): grayed out */
+  disabledList?: string[];
 };
 
 /**
@@ -47,6 +49,7 @@ export default function RadioButtonGroup({
   buttonColor,
   margins,
   itemMarginRight,
+  disabledList,
 }: RadioButtonGroupProps) {
   // perhaps not using focused?
   // const [focused, setFocused] = useState(false);
@@ -89,6 +92,7 @@ export default function RadioButtonGroup({
               key={index}
               value={option}
               label={option}
+              disabled={disabledList?.includes(option)}
               labelPlacement={labelPlacement}
               // primary: blue; secondary: red
               control={<Radio color={buttonColor} />}

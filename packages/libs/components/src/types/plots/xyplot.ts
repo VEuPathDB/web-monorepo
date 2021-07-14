@@ -36,9 +36,4 @@ export type XYPlotData = {
     /** filling plots: color */
     fillcolor?: string;
   }[];
-
-  /** independentValueType 'number' (default) or 'date' (x data should be given as string[])  */
-  independentValueType?: 'number' | 'date';
-  /** dependentValueType 'number' (default) or 'date' (y data should be given as string[])  */
-  dependentValueType?: 'number' | 'date';
 };
