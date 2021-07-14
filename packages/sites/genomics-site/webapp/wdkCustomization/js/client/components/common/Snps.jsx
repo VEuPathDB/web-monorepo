@@ -45,8 +45,9 @@ export const SnpsAlignmentForm = enhance(function SnpsAlignmentForm(props) {
         <input name="filter_param_value" type="hidden" value={value}/>
 
         <div style={headingStyle}>Select output options:</div>
-        <div className="form-radio"><label><input name="type" type="radio" value="htsSnp" defaultChecked={true} /> Show Alignment</label></div>
-        <div className="form-radio"><label><input name="type" type="radio" value="fasta" /> Multi-FASTA</label></div>
+        <div className="form-radio"><label><input name="type" type="radio" value="fasta" defaultChecked={true}/> Multi-FASTA</label></div>
+        <div className="form-radio"><label><input name="type" type="radio" value="htsSnp"/> Show Alignment (max 5000 nucleotides)</label></div>
+
         <div className="form-radio" style={{ marginTop: '1rem' }}>
           <input name="metadata" value="1" type="checkbox" checked/> Include strain and isolate metadata in the output.
         </div>
