@@ -39,7 +39,7 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { parseTimeDelta, fullISODateRange } from '../../utils/date-conversion';
+import { fullISODateRange } from '../../utils/date-conversion';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -90,14 +90,12 @@ export function HistogramFilter(props: Props) {
       };
 
     // else date variable
-    const binWidthString = variable.binWidthOverride ?? variable.binWidth;
-    const binWidth = binWidthString
-      ? parseTimeDelta(binWidthString)
-      : undefined;
+    const binWidth = variable.binWidthOverride ?? variable.binWidth;
+    const binUnits = variable.binUnits;
 
     return {
-      binWidth: binWidth?.value,
-      binWidthTimeUnit: binWidth?.unit as TimeUnit, // bit nasty!
+      binWidth: binWidth,
+      binWidthTimeUnit: binUnits, // bit nasty!
       independentAxisRange:
         variable.displayRangeMin != null && variable.displayRangeMax != null
           ? { min: variable.displayRangeMin, max: variable.displayRangeMax }

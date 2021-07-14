@@ -4,6 +4,7 @@ import {
   RecordClass,
   RecordInstance,
 } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { TimeUnit } from './general';
 
 // Aliases
 // -------
@@ -103,8 +104,9 @@ export const DateVariable = t.intersection([
     displayRangeMax: t.string,
     rangeMin: t.string,
     rangeMax: t.string,
-    binWidthOverride: t.string,
-    binWidth: t.string,
+    binWidthOverride: t.number,
+    binWidth: t.number,
+    binUnits: TimeUnit,
   }),
 ]);
 
