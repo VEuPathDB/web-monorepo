@@ -32,6 +32,7 @@ type ZeroToTwoVariables =
   | [VariableDescriptor, VariableDescriptor];
 
 // define sampleSizeTableArray
+export type SampleSizeTableArray = TypeOf<typeof sampleSizeTableArray>;
 const sampleSizeTableArray = array(
   partial({
     // set union for size as it depends on the presence of overlay variable
@@ -44,17 +45,20 @@ const sampleSizeTableArray = array(
   })
 );
 
+// define completeCases
+export type CompleteCasesTableRow = TypeOf<typeof completeCases>;
+const completeCases = partial({
+  // set union for size as it depends on the presence of overlay variable
+  completeCases: union([number, array(number)]),
+  variableDetails: type({
+    entityId: string,
+    variableId: string,
+  }),
+});
+
 // define completeCasesTableArray
-const completeCasesTableArray = array(
-  partial({
-    // set union for size as it depends on the presence of overlay variable
-    completeCases: union([number, array(number)]),
-    variableDetails: type({
-      entityId: string,
-      variableId: string,
-    }),
-  })
-);
+export type CompleteCasesTable = TypeOf<typeof completeCasesTableArray>;
+const completeCasesTableArray = array(completeCases);
 
 export interface HistogramRequestParams {
   studyId: string;
@@ -139,16 +143,9 @@ export interface BarplotRequestParams {
     outputEntityId: string;
     // add proportion as it seems to be coming
     valueSpec: 'count' | 'identity' | 'proportion';
-    xAxisVariable: {
-      // TO DO: refactor repetition with HistogramRequestParams
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
     // barplot add prop
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -200,18 +197,9 @@ export interface ScatterplotRequestParams {
       | 'bestFitLineWithRaw';
     // not quite sure of overlayVariable and facetVariable yet
     // facetVariable?: ZeroToTwoVariables;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -271,18 +259,9 @@ export interface LineplotRequestParams {
     // not quite sure of overlayVariable and facetVariable yet
     // overlayVariable?: Variable;
     // facetVariable?: ZeroToTwoVariables;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    overlayVariable?: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
+    overlayVariable?: VariableDescriptor;
   };
 }
 
@@ -331,14 +310,8 @@ export interface MosaicRequestParams {
   filters: Filter[];
   config: {
     outputEntityId: string;
-    xAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
-    yAxisVariable: {
-      entityId: string;
-      variableId: string;
-    };
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
   };
 }
 
@@ -348,7 +321,7 @@ export const MosaicResponse = type({
     data: array(
       type({
         xLabel: array(string),
-        yLabel: array(string),
+        yLabel: array(array(string)),
         value: array(array(number)),
       })
     ),
@@ -369,6 +342,7 @@ export const MosaicResponse = type({
       size: array(number),
     })
   ),
+  completeCasesTable: completeCasesTableArray,
 });
 
 export type ContTableResponse = TypeOf<typeof ContTableResponse>;
@@ -398,6 +372,7 @@ export const TwoByTwoResponse = intersection([
         relativerisk: number,
       })
     ),
+    completeCasesTable: completeCasesTableArray,
   }),
 ]);
 

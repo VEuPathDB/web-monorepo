@@ -1,14 +1,24 @@
-import { createContext, useCallback } from 'react';
+import { createContext, useCallback, useMemo } from 'react';
 import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { preorderSeq } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import {
+  preorder,
+  preorderSeq,
+} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import {
   getTargetType,
   getScopes,
   getNodeId,
 } from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import { StudyMetadata, StudyRecordClass, StudyRecord } from '../types/study';
+import {
+  StudyEntity,
+  StudyMetadata,
+  StudyRecordClass,
+  StudyRecord,
+} from '../types/study';
 import { usePromise } from './promise';
 import { SubsettingClient } from '../api/subsetting-api';
+import { VariableDescriptor } from '../types/variable';
+import { findEntityAndVariable } from '../utils/study-metadata';
 
 const STUDY_RECORD_CLASS_NAME = 'dataset';
 
@@ -88,5 +98,23 @@ export function useStudyMetadata(datasetId: string, store: SubsettingClient) {
         );
       return store.getStudyMetadata(study.id);
     }, [datasetId, store])
+  );
+}
+
+export function useFindEntityAndVariable(entities: StudyEntity[]) {
+  return useCallback(
+    (variable?: VariableDescriptor) =>
+      findEntityAndVariable(entities, variable),
+    [entities]
+  );
+}
+
+export function useStudyEntities(rootEntity: StudyEntity) {
+  return useMemo(
+    () =>
+      Array.from(
+        preorder(rootEntity, (e) => e.children?.slice().reverse() ?? [])
+      ),
+    [rootEntity]
   );
 }
