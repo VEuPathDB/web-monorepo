@@ -176,3 +176,18 @@ export const ControlledBounds: Story = () => {
     </>
   );
 };
+
+export const CustomValidator = ControlledTemplate.bind({});
+CustomValidator.args = {
+  label: 'Even numbers 0 <= x <= 10',
+  validator: (newValue) => {
+    const validity =
+      newValue != null &&
+      typeof newValue === 'number' &&
+      newValue >= 0 &&
+      newValue <= 10 &&
+      newValue % 2 == 0;
+    return { validity, message: validity ? '' : 'Not an even number 0 to 10' };
+  },
+  containerStyles: { width: '40ch' },
+};

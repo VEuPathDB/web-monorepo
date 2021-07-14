@@ -8,6 +8,7 @@ import {
 
 import Histogram, { HistogramProps } from '../../plots/Histogram';
 import HistogramControls from '../../components/plotControls/HistogramControls';
+import AxisRangeControl from '../../components/plotControls/AxisRangeControl';
 import { binDailyCovidStats } from '../api/covidData';
 import { binGithubEventDates } from '../api/githubDates';
 import { HistogramData } from '../../types/plots';
@@ -81,6 +82,9 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
   const [binWidth, setBinWidth] = useState<number>(500);
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [independentAxisRange, setIndependentAxisRange] = useState<
+    NumberOrDateRange
+  >();
 
   const handleBinWidthChange = async (newBinWidth: NumberOrTimeDelta) => {
     if (newBinWidth > 0) {
@@ -90,6 +94,12 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
 
   const handleSelectedRangeChange = async (newRange?: NumberOrDateRange) => {
     setSelectedRange(newRange);
+  };
+
+  const handleIndependentAxisRangeChange = async (
+    newRange?: NumberOrDateRange
+  ) => {
+    setIndependentAxisRange(newRange);
   };
 
   // keep `data` up to date
@@ -120,6 +130,7 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
         interactive={true}
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
+        independentAxisRange={independentAxisRange}
       />
       <div style={{ height: 25 }} />
       <HistogramControls
@@ -131,6 +142,11 @@ const TemplateWithSelectedRangeControls: Story<Omit<HistogramProps, 'data'>> = (
         onBinWidthChange={handleBinWidthChange}
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
+      />
+      <AxisRangeControl
+        label="Manual x-range control (you can only set it wider than data range)"
+        range={independentAxisRange}
+        onRangeChange={handleIndependentAxisRangeChange}
       />
     </div>
   );
@@ -200,6 +216,9 @@ const TemplateWithSelectedDateRangeControls: Story<Omit<
   const [data, setData] = useState<HistogramData>();
   const [selectedRange, setSelectedRange] = useState<NumberOrDateRange>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [independentAxisRange, setIndependentAxisRange] = useState<
+    NumberOrDateRange
+  >();
   const [binWidth, setBinWidth] = useState<NumberOrTimeDelta>({
     value: 1,
     unit: 'month',
@@ -218,6 +237,12 @@ const TemplateWithSelectedDateRangeControls: Story<Omit<
 
   const handleBinWidthChange = async (newBinWidth: NumberOrTimeDelta) =>
     setBinWidth(newBinWidth);
+
+  const handleIndependentAxisRangeChange = async (
+    newRange?: NumberOrDateRange
+  ) => {
+    setIndependentAxisRange(newRange);
+  };
 
   // keep `data` up to date
   useEffect(() => {
@@ -249,10 +274,10 @@ const TemplateWithSelectedDateRangeControls: Story<Omit<
         showSpinner={loading}
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
+        independentAxisRange={independentAxisRange}
       />
       <div style={{ height: 25 }} />
       <HistogramControls
-        label="Histogram Controls"
         valueType="date"
         selectedRange={selectedRange}
         onSelectedRangeChange={handleSelectedRangeChange}
@@ -266,6 +291,12 @@ const TemplateWithSelectedDateRangeControls: Story<Omit<
         selectedUnit={unit}
         availableUnits={['week', 'month']}
         onSelectedUnitChange={handleUnitChange}
+      />
+      <AxisRangeControl
+        label="Manual x-range control (you can only set it wider than data range)"
+        range={independentAxisRange}
+        onRangeChange={handleIndependentAxisRangeChange}
+        valueType="date"
       />
     </div>
   );

@@ -55,6 +55,8 @@ export interface HistogramProps
   selectedRangeBounds?: NumberOrDateRange; // TO DO: handle DateRange too
   /** Relevant to range selection - flag to indicate if the data is zoomed in. Default false. */
   isZoomed?: boolean;
+  /** independent axis range min and max (this will be widened to include data if needed) */
+  independentAxisRange?: NumberOrDateRange;
 }
 
 /** A Plot.ly based histogram component. */
@@ -72,6 +74,7 @@ export default function Histogram({
   onSelectedRangeChange = () => {},
   selectedRangeBounds,
   isZoomed = false,
+  independentAxisRange,
   ...restProps
 }: HistogramProps) {
   /**
@@ -120,7 +123,7 @@ export default function Histogram({
             return (
               DateMath.diff(
                 new Date(bin.binStart as string),
-                new Date(bin.binEnd as string),
+                DateMath.endOf(new Date(bin.binEnd as string), 'day'),
                 'seconds',
                 false
               ) * 1000
@@ -195,7 +198,7 @@ export default function Histogram({
               new Date(bin.binStart as string),
               DateMath.diff(
                 new Date(bin.binStart as string),
-                new Date(bin.binEnd as string),
+                DateMath.endOf(new Date(bin.binEnd as string), 'day'),
                 'seconds',
                 false
               ) * 500,
@@ -214,9 +217,12 @@ export default function Histogram({
         const [val1, val2] =
           orientation === 'vertical' ? object.range.x : object.range.y;
         const [min, max] = val1 > val2 ? [val2, val1] : [val1, val2];
-        // TO DO: think about time zones?
-        const rawRange: NumberOrDateRange = { min, max };
-
+        // TO DO: carefully test/debug time zones and different browsers
+        // ISO-ify time part of plotly's response
+        const rawRange: NumberOrDateRange = {
+          min: min.replace(/ /, 'T').replace(/\.\d+$/, ''),
+          max: max.replace(/ /, 'T').replace(/\.\d+$/, ''),
+        };
         // now snap to bin boundaries using same logic that Plotly uses
         // (dragging range past middle of bin selects it)
         const leftBin = binSummaries.find(
@@ -236,7 +242,7 @@ export default function Histogram({
         }
       }
     },
-    [data.valueType, orientation, binSummaries, setSelectingRange]
+    [orientation, binSummaries]
   );
 
   // handle finshed/completed (graphical) range selection
@@ -254,6 +260,11 @@ export default function Histogram({
   const selectedRangeHighlighting: Partial<Shape>[] = useMemo(() => {
     const range = selectingRange ?? selectedRange;
     if (data.series.length && range) {
+      // for dates, draw the blue area to the end of the day
+      const rightCoordinate =
+        data.valueType === 'number'
+          ? range.max
+          : DateMath.endOf(new Date(range.max), 'day').toISOString();
       return [
         {
           type: 'rect',
@@ -262,7 +273,7 @@ export default function Histogram({
                 xref: 'x',
                 yref: 'paper',
                 x0: range.min,
-                x1: range.max,
+                x1: rightCoordinate,
                 y0: 0,
                 y1: 1,
               }
@@ -272,7 +283,7 @@ export default function Histogram({
                 x0: 0,
                 x1: 1,
                 y0: range.min,
-                y1: range.max,
+                y1: rightCoordinate,
               }),
           line: {
             color: 'blue',
@@ -287,6 +298,28 @@ export default function Histogram({
     }
   }, [selectingRange, selectedRange, orientation, data.series]);
 
+  const plotlyIndependentAxisRange = useMemo(() => {
+    // here we ensure that no data bins are excluded/hidden from view
+    const range = [
+      independentAxisRange && independentAxisRange.min < minBinStart
+        ? independentAxisRange.min
+        : minBinStart,
+      independentAxisRange && independentAxisRange?.max > maxBinEnd
+        ? independentAxisRange.max
+        : maxBinEnd,
+    ];
+    // extend date-based range.max to the end of the day
+    // (this also avoids excluding a the final bin if binWidth=='day')
+    if (data?.valueType === 'date') {
+      return [
+        range[0],
+        DateMath.endOf(new Date(range[1]), 'day').toISOString(),
+      ];
+    } else {
+      return range;
+    }
+  }, [data?.valueType, independentAxisRange, minBinStart, maxBinEnd]);
+
   const independentAxisLayout: Layout['xaxis'] | Layout['yaxis'] = {
     type: data?.valueType === 'date' ? 'date' : 'linear',
     automargin: true,
@@ -296,7 +329,7 @@ export default function Histogram({
     title: {
       text: independentAxisLabel,
     },
-    range: [minBinStart, maxBinEnd],
+    range: plotlyIndependentAxisRange,
     tickfont: data.series.length ? {} : { color: 'transparent' },
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {

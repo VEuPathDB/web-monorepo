@@ -15,6 +15,12 @@ type BaseProps<M extends NumberOrDate> = {
   maxValue?: M;
   /** If true, warn about empty value. Default is false. */
   required?: boolean;
+  /** Optional validator function. Should return {validity: true, message: ''} if value is allowed.
+   * If provided, minValue and maxValue and required will have no effect.
+   */
+  validator?: (
+    newValue?: NumberOrDate
+  ) => { validity: boolean; message: string };
   /** Function to invoke when value changes. */
   onValueChange: (newValue?: NumberOrDate) => void;
   /** UI Label for the widget. Optional */
@@ -65,6 +71,7 @@ function BaseInput({
   value,
   minValue,
   maxValue,
+  validator,
   required = false,
   onValueChange,
   label,
@@ -72,6 +79,11 @@ function BaseInput({
   containerStyles,
   displayRangeViolationWarnings = true,
 }: BaseInputProps) {
+  if (validator && (required || minValue != null || maxValue != null))
+    console.log(
+      'WARNING: NumberInput or DateInput will ignore props required, minValue and/or maxValue because validator was provided.'
+    );
+
   const [localValue, setLocalValue] = useState<NumberOrDate | undefined>(value);
   const [focused, setFocused] = useState(false);
   const [errorState, setErrorState] = useState({
@@ -92,36 +104,40 @@ function BaseInput({
   // Cancel pending onChange request when this component is unmounted.
   useEffect(() => debouncedOnChange.cancel, []);
 
+  const _validator =
+    validator ??
+    useCallback(
+      (newValue?: NumberOrDate): { validity: boolean; message: string } => {
+        if (newValue == null) {
+          return {
+            validity: !required,
+            message: required ? `Please enter a ${valueType}.` : '',
+          };
+        }
+        if (minValue != null && newValue < minValue) {
+          return {
+            validity: false,
+            message: `Sorry, value can't go below ${minValue}!`,
+          };
+        } else if (maxValue != null && newValue > maxValue) {
+          return {
+            validity: false,
+            message: `Sorry, value can't go above ${minValue}!`,
+          };
+        } else {
+          return { validity: true, message: '' };
+        }
+      },
+      [required, minValue, maxValue]
+    );
+
   const boundsCheckedValue = useCallback(
     (newValue?: NumberOrDate) => {
-      if (newValue == null) {
-        required &&
-          setErrorState({
-            error: true,
-            helperText: `Please enter a ${valueType}.`,
-          });
-        return !required;
-      }
-      if (minValue != null && newValue < minValue) {
-        newValue = minValue;
-        setErrorState({
-          error: true,
-          helperText: `Sorry, value can't go below ${minValue}!`,
-        });
-        return false;
-      } else if (maxValue != null && newValue > maxValue) {
-        newValue = maxValue;
-        setErrorState({
-          error: true,
-          helperText: `Sorry, value can't go above ${maxValue}!`,
-        });
-        return false;
-      } else {
-        setErrorState({ error: false, helperText: '' });
-        return true;
-      }
+      const { validity, message } = _validator(newValue);
+      setErrorState({ error: message !== '', helperText: message });
+      return validity;
     },
-    [required, minValue, maxValue]
+    [_validator]
   );
 
   // Handle incoming value changes (including changes in minValue/maxValue, which affect boundsCheckedValue)
