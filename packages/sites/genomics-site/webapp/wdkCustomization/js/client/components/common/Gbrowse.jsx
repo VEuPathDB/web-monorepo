@@ -201,7 +201,7 @@ function JbrowseIframe({ jbrowseUrl,ht }) {
           {lockText}
         </label>
       </div>
-      <iframe onLoad={onLoad} src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&meno=0"} width="100%" height={ht} scrolling="no" allowFullScreen={false} />
+      <iframe onLoad={onLoad} src={jbrowseUrl + "&tracklist=0&nav=0&overview=0&fullviewlink=0&menu=0"} width="100%" height={ht} scrolling="no" allowFullScreen={false} />
     </div>
   );
 }
@@ -215,6 +215,7 @@ export function GbrowseContext(props) {
   let jbrowseUrlFull = ""
   let apolloUrlFull = ""
   let apolloHelp = ""
+  let isInApollo = ""
   let jbrowseUrl = record.attributes.jbrowseLink;
   let jbrowseCommonUrl = record.attributes.jbrowseUrl;
 
@@ -223,7 +224,8 @@ export function GbrowseContext(props) {
       jbrowseUrlFull = record.attributes.geneJbrowseFullUrl;
       apolloUrlFull = record.attributes.geneApolloFullUrl;
       apolloHelp = record.attributes.apolloHelp;
-      if (window.location.href.indexOf("vectorbase") != -1 && window.location.href.indexOf("gene/FB") == -1  || window.location.href.indexOf("piroplasmadb") != -1 || window.location.href.indexOf("toxodb") != -1 || window.location.href.indexOf("amoebadb") != -1 || window.location.href.indexOf("fungidb") != -1 || window.location.href.indexOf("plasmodb") != -1 || window.location.href.indexOf("cryptodb") != -1 || window.location.href.indexOf("sporidiadb") != -1 || window.location.href.indexOf("giardiadb") != -1 || window.location.href.indexOf("tritrypdb") != -1 || window.location.href.indexOf("trichdb") != -1){
+      isInApollo = record.attributes.apolloIdCheck;
+      if (window.location.href.indexOf("vectorbase") != -1 && isInApollo !== ""  || window.location.href.indexOf("piroplasmadb") != -1 && isInApollo !== "" || window.location.href.indexOf("toxodb") != -1 && isInApollo !== "" || window.location.href.indexOf("amoebadb") != -1 && isInApollo !== "" || window.location.href.indexOf("fungidb") != -1 && isInApollo !== "" || window.location.href.indexOf("plasmodb") != -1 && isInApollo !== "" || window.location.href.indexOf("cryptodb") != -1 && isInApollo !== "" || window.location.href.indexOf("sporidiadb") != -1 && isInApollo !== "" || window.location.href.indexOf("giardiadb") != -1 && isInApollo !== "" || window.location.href.indexOf("tritrypdb") != -1 && isInApollo !== "" || window.location.href.indexOf("trichdb") != -1 && isInApollo !== ""){
       return (
         <div>
         <p><img src={newFeatureImage}/>This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a></p>
