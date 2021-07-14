@@ -283,7 +283,7 @@ function HistogramViz(props: Props) {
       )}
       {fullscreen ? (
         <HistogramPlotWithControls
-          data={data.value && !data.pending ? data.value : undefined}
+          data={data.value}
           onBinWidthChange={onBinWidthChange}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
           handleDependentAxisLogScale={handleDependentAxisLogScale}
