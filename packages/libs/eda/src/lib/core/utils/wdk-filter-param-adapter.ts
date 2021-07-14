@@ -113,15 +113,13 @@ export function toWdkVariableSummary(
   variable: VariableTreeNode
 ) {
   return {
-    distribution: Object.entries(background.distribution).map(
-      ([value, count]) => ({
-        count,
-        filteredCount: foreground.distribution[value],
-        value,
-      })
-    ),
-    entitiesCount: background.entitiesCount,
-    filteredEntitiesCount: foreground.entitiesCount,
+    distribution: background.histogram.map(({ value, binLabel }, index) => ({
+      count: value,
+      filteredCount: foreground.histogram[index].value,
+      value: binLabel,
+    })),
+    entitiesCount: background.statistics.numDistinctEntityRecords,
+    filteredEntitiesCount: foreground.statistics.numDistinctEntityRecords,
     activeField: edaVariableToWdkField(variable),
   };
 }
