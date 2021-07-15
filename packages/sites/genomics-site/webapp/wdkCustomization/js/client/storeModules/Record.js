@@ -198,7 +198,7 @@ function pruneByDatasetCategory(categoryTree, record) {
 
   // Remove Dataset Version and Source Version from genome datasets, otherwise remove genome tables from non-genome datasets
   // Additionally, choose either the genome dataset history (GenomeHistory) or non-genome dataset history table (DatasetHistory).
-  if (record.attributes.newcategory === 'Genomics') {
+  if (record.attributes.newcategory === 'Genomes') {
     categoryTree = tree.pruneDescendantNodes(
       individual => {
         if (individual.children.length > 0) return true;
