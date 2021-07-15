@@ -25,11 +25,10 @@ import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
-import { DataClient, HistogramRequestParams } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
 import { useSubsettingClient } from '../../hooks/workspace';
-import { DateRangeFilter, Filter, NumberRangeFilter } from '../../types/filter';
+import { DateRangeFilter, NumberRangeFilter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
@@ -153,13 +152,13 @@ export function HistogramFilter(props: Props) {
       );
 
       const series = [
-        histogramResponseToDataSeries(
+        distributionResponseToDataSeries(
           `All ${entity.displayName}`,
           distribution.background,
           gray,
           variable.type
         ),
-        histogramResponseToDataSeries(
+        distributionResponseToDataSeries(
           `Subset of ${entity.displayName}`,
           distribution.foreground,
           red,
@@ -566,7 +565,7 @@ function HistogramPlotWithControls({
   );
 }
 
-function histogramResponseToDataSeries(
+function distributionResponseToDataSeries(
   name: string,
   response: DistributionResponse,
   color: string,
@@ -574,8 +573,8 @@ function histogramResponseToDataSeries(
 ): HistogramDataSeries {
   const bins = response.histogram.map(
     ({ value, binStart, binEnd, binLabel }) => ({
-      binStart,
-      binEnd,
+      binStart: type === 'date' ? binStart : Number(binStart),
+      binEnd: type === 'date' ? binEnd : Number(binEnd),
       binLabel,
       count: value,
     })
@@ -584,55 +583,6 @@ function histogramResponseToDataSeries(
     name,
     color,
     bins,
-  };
-}
-
-type Config = Partial<HistogramRequestParams['config']>;
-
-function getRequestParams(
-  studyId: string,
-  filters: Filter[],
-  entity: StudyEntity,
-  variable: HistogramVariable,
-  dataParams?: UIState,
-  rawConfig?: Config
-): HistogramRequestParams {
-  const binSpec: Config['binSpec'] = rawConfig?.binSpec
-    ? rawConfig.binSpec
-    : dataParams?.binWidth
-    ? {
-        type: 'binWidth',
-        value: dataParams.binWidth,
-        ...(variable.type === 'date'
-          ? { units: dataParams.binWidthTimeUnit }
-          : {}),
-      }
-    : { type: 'binWidth' };
-
-  const viewport: Config['viewport'] = rawConfig?.viewport
-    ? rawConfig.viewport
-    : dataParams?.independentAxisRange &&
-      dataParams?.independentAxisRange.min != null &&
-      dataParams?.independentAxisRange.max != null
-    ? {
-        xMin: String(dataParams.independentAxisRange.min),
-        xMax: String(dataParams.independentAxisRange.max),
-      }
-    : undefined;
-
-  return {
-    studyId,
-    filters,
-    config: {
-      outputEntityId: entity.id,
-      valueSpec: 'count',
-      xAxisVariable: {
-        entityId: entity.id,
-        variableId: variable.id,
-      },
-      binSpec,
-      viewport,
-    },
   };
 }
 
