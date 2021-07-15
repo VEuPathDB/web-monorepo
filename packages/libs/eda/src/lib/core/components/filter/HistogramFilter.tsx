@@ -390,7 +390,16 @@ function HistogramPlotWithControls({
   const handleSelectedRangeChange = useCallback(
     (range?: NumberOrDateRange) => {
       if (range) {
-        updateFilter(range);
+        updateFilter({
+          min:
+            typeof range.min === 'string'
+              ? padISODateTime(range.min)
+              : range.min,
+          max:
+            typeof range.max === 'string'
+              ? padISODateTime(range.max)
+              : range.min,
+        } as NumberOrDateRange);
       } else {
         updateFilter(); // clear the filter if range is undefined
       }
