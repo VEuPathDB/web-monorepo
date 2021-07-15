@@ -32,7 +32,7 @@ function renderPrimaryContact(contact, institution, email, record) {
 }
 
 function renderSourceVersion(version, newcategory) {
-  if (newcategory === 'Genomics') {
+  if (newcategory === 'Genomes') {
     return (
       <span>
         {version}&nbsp;
@@ -57,7 +57,7 @@ function renderSourceVersion(version, newcategory) {
 
 function getSourceVersion(attributes, tables) {
   let version;
-  if (attributes.newcategory === 'Genomics') {
+  if (attributes.newcategory === 'Genomes') {
     version = attributes.functional_annotation_version ? attributes.genome_version + ", " + attributes.annotation_version + ", " + attributes.functional_annotation_version : attributes.genome_version + ", " + attributes.annotation_version;
   } else {
     version = tables.Version && tables.Version[0];
