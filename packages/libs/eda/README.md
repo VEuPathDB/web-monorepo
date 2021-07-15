@@ -45,12 +45,12 @@ _The `yarn start` script makes use of environment variables when running in deve
 
 The following environment variables are used by the `yarn start` script:
 
-| Variable name                        | Description                                  |
-| ------------------------------------ | -------------------------------------------- |
-| `WDK_SERVICE_URL`                    | Full url to a running WDK REST Service       |
-| `EDA_SUBSETTING_SERVICE_URL`         | Full url to a running EDA Subsetting Service |
-| `EDA_DATA_SERVICE_URL`               | Full url to a running EDA Data Service       |
-| `REACT_APP_ENABLE_DATA_RESTRICTIONS` | If `true`, enables data restrictions         |
+| Variable name                         | Description                                       |
+| ------------------------------------- | ------------------------------------------------- |
+| `WDK_SERVICE_URL`                     | Full url to a running WDK REST Service            |
+| `EDA_SUBSETTING_SERVICE_URL`          | Full url to a running EDA Subsetting Service      |
+| `EDA_DATA_SERVICE_URL`                | Full url to a running EDA Data Service            |
+| `REACT_APP_DISABLE_DATA_RESTRICTIONS` | If present and `true`, disables data restrictions |
 
 ## Learn More
 

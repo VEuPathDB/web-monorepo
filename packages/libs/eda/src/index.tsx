@@ -67,10 +67,10 @@ initialize({
     Page: (DefaultComponent: React.ComponentType<Props>) => {
       return function ClinEpiPage(props: Props) {
         useEffect(() => {
-          if (process.env.REACT_APP_ENABLE_DATA_RESTRICTIONS === 'true') {
-            enableRestriction();
-          } else {
+          if (process.env.REACT_APP_DISABLE_DATA_RESTRICTIONS === 'true') {
             disableRestriction();
+          } else {
+            enableRestriction();
           }
         }, []);
 
