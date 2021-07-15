@@ -33,9 +33,10 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
-import { fullISODateRange } from '../../utils/date-conversion';
+import { fullISODateRange, padISODateTime } from '../../utils/date-conversion';
 import { getDistribution } from './util';
 import { DistributionResponse } from '../../api/subsetting-api';
+import { MenuItem, Select } from '@material-ui/core';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -393,14 +394,30 @@ function HistogramPlotWithControls({
     [updateUIState]
   );
 
+  const handleBinUnitChange = useCallback(
+    (newBinUnit: string) => {
+      updateUIState({
+        binWidthTimeUnit: newBinUnit as TimeUnit,
+      });
+    },
+    [updateUIState]
+  );
+
   const handleIndependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
       updateUIState({
-        // when the independent axis range is 'zoomed', reset the binWidth
-        // so the back end provides a suitable value
-        binWidth: undefined,
-        binWidthTimeUnit: undefined,
-        independentAxisRange: newRange,
+        independentAxisRange:
+          newRange &&
+          ({
+            min:
+              typeof newRange.min === 'string'
+                ? padISODateTime(newRange.min)
+                : newRange.min,
+            max:
+              typeof newRange.max === 'string'
+                ? padISODateTime(newRange.max)
+                : newRange.max,
+          } as NumberOrDateRange),
       });
     },
     [updateUIState]
@@ -542,6 +559,16 @@ function HistogramPlotWithControls({
             onBinWidthChange={handleBinWidthChange}
             valueType={data?.valueType}
           />
+
+          <Select
+            value={uiState.binWidthTimeUnit ?? 'year'}
+            onChange={(e) => handleBinUnitChange(String(e.target.value))}
+          >
+            <MenuItem value="day">Day</MenuItem>
+            <MenuItem value="week">Week</MenuItem>
+            <MenuItem value="month">Month</MenuItem>
+            <MenuItem value="year">Year</MenuItem>
+          </Select>
 
           <AxisRangeControl
             label="Range:"
