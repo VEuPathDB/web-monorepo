@@ -1,5 +1,11 @@
-import HistogramControls from '@veupathdb/components/lib/components/plotControls/HistogramControls';
 import SelectedRangeControl from '@veupathdb/components/lib/components/plotControls/SelectedRangeControl';
+import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
+import AxisRangeControl from '@veupathdb/components/lib/components/plotControls/AxisRangeControl';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import Button from '@veupathdb/components/lib/components/widgets/Button';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import { NumberRangeInput } from '@veupathdb/components/lib/components/widgets/NumberAndDateRangeInputs';
+
 import Histogram, {
   HistogramProps,
 } from '@veupathdb/components/lib/plots/Histogram';
@@ -15,7 +21,6 @@ import {
   HistogramData,
   HistogramDataSeries,
 } from '@veupathdb/components/lib/types/plots';
-import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import UnknownCount from '@veupathdb/wdk-client/lib/Components/AttributeFilter/UnknownCount';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
@@ -34,6 +39,7 @@ import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
+import { parseTimeDelta, fullISODateRange } from '../../utils/date-conversion';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -53,10 +59,6 @@ const UIState = partial({
   dependentAxisLogScale: boolean,
 });
 
-const defaultUIState: UIState = {
-  dependentAxisLogScale: false,
-};
-
 export function HistogramFilter(props: Props) {
   const {
     variable,
@@ -69,12 +71,47 @@ export function HistogramFilter(props: Props) {
   const { setFilters } = analysisState;
   const filters = analysisState.analysis?.filters;
   const uiStateKey = `${entity.id}/${variable.id}`;
+
+  // get as much default UI state from variable annotations as possible
+  const defaultUIState: UIState = useMemo(() => {
+    const otherDefaults = {
+      dependentAxisLogScale: false,
+    };
+
+    if (variable.type === 'number')
+      return {
+        binWidth: variable.binWidthOverride ?? variable.binWidth,
+        binWidthTimeUnit: undefined,
+        independentAxisRange:
+          variable.displayRangeMin != null && variable.displayRangeMax != null
+            ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
+            : undefined,
+        ...otherDefaults,
+      };
+
+    // else date variable
+    const binWidthString = variable.binWidthOverride ?? variable.binWidth;
+    const binWidth = binWidthString
+      ? parseTimeDelta(binWidthString)
+      : undefined;
+
+    return {
+      binWidth: binWidth?.value,
+      binWidthTimeUnit: binWidth?.unit as TimeUnit, // bit nasty!
+      independentAxisRange:
+        variable.displayRangeMin != null && variable.displayRangeMax != null
+          ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
+          : undefined,
+      ...otherDefaults,
+    };
+  }, [variable]);
+
   const uiState = useMemo(() => {
     return pipe(
       UIState.decode(analysisState.analysis?.variableUISettings[uiStateKey]),
       getOrElse((): UIState => defaultUIState)
     );
-  }, [analysisState.analysis?.variableUISettings, uiStateKey]);
+  }, [analysisState.analysis?.variableUISettings, uiStateKey, defaultUIState]);
   const dataClient = useDataClient();
   const getData = useCallback(
     async (
@@ -126,7 +163,7 @@ export function HistogramFilter(props: Props) {
       ];
       const binWidth: NumberOrTimeDelta =
         variable.type === 'number'
-          ? background.histogram.config.binSpec.value || 1
+          ? background.histogram.config.binSpec.value || 1 // TO DO: throw error when response doesn't contain binWidth?
           : {
               value: background.histogram.config.binSpec.value || 1,
               unit: background.histogram.config.binSpec.units ?? 'month',
@@ -237,12 +274,6 @@ export function HistogramFilter(props: Props) {
   // the range to be reset if the filter is removed.
   return (
     <div className="filter-param" style={{ position: 'relative' }}>
-      {data.pending && (
-        <Loading
-          radius={16}
-          style={{ position: 'absolute', top: '200px', left: '200px' }}
-        />
-      )}
       {data.error && <pre>{String(data.error)}</pre>}
       <div>
         {fgSummaryStats && (
@@ -254,10 +285,12 @@ export function HistogramFilter(props: Props) {
             }}
           >
             <div className="histogram-summary-stats">
-              <b>Min:</b> {fgSummaryStats.min} &emsp; <b>Mean:</b>{' '}
-              {fgSummaryStats.mean} &emsp;
-              <b>Median:</b> {fgSummaryStats.median} &emsp; <b>Max:</b>{' '}
-              {fgSummaryStats.max}
+              <b>Min:</b> {formatStatValue(fgSummaryStats.min, variable.type)}{' '}
+              &emsp; <b>Mean:</b>{' '}
+              {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
+              <b>Median:</b>{' '}
+              {formatStatValue(fgSummaryStats.median, variable.type)} &emsp;{' '}
+              <b>Max:</b> {formatStatValue(fgSummaryStats.max, variable.type)}
             </div>
             <UnknownCount
               activeFieldState={{
@@ -291,9 +324,11 @@ export function HistogramFilter(props: Props) {
           barLayout={'overlay'}
           updateFilter={updateFilter}
           uiState={uiState}
+          defaultUIState={defaultUIState}
           updateUIState={updateUIState}
           variableName={variable.displayName}
           entityName={entity.displayName}
+          showSpinner={data.pending}
         />
       </div>
     </div>
@@ -304,6 +339,7 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   getData: (params?: UIState) => Promise<HistogramData>; // TO DO: not used - get rid of?
   updateFilter: (selectedRange?: NumberRange | DateRange) => void;
   uiState: UIState;
+  defaultUIState: UIState;
   updateUIState: (uiState: UIState) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
   // add variableName for independentAxisLabel
@@ -316,6 +352,7 @@ function HistogramPlotWithControls({
   getData,
   updateFilter,
   uiState,
+  defaultUIState,
   updateUIState,
   filter,
   // variableName for independentAxisLabel
@@ -349,10 +386,11 @@ function HistogramPlotWithControls({
 
   const handleIndependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
-      console.log(
-        `handleIndependentAxisRangeChange newRange: ${newRange?.min} to ${newRange?.max}`
-      );
       updateUIState({
+        // when the independent axis range is 'zoomed', reset the binWidth
+        // so the back end provides a suitable value
+        binWidth: undefined,
+        binWidthTimeUnit: undefined,
         independentAxisRange: newRange,
       });
     },
@@ -361,11 +399,11 @@ function HistogramPlotWithControls({
 
   const handleIndependentAxisSettingsReset = useCallback(() => {
     updateUIState({
-      independentAxisRange: undefined,
-      binWidth: undefined,
-      binWidthTimeUnit: undefined,
+      independentAxisRange: defaultUIState.independentAxisRange,
+      binWidth: defaultUIState.binWidth,
+      binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
     });
-  }, [updateUIState]);
+  }, [defaultUIState]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
@@ -384,7 +422,7 @@ function HistogramPlotWithControls({
       dependentAxisRange: undefined,
       dependentAxisLogScale: defaultUIState.dependentAxisLogScale,
     });
-  }, [updateUIState]);
+  }, [defaultUIState]);
 
   const handleDependentAxisLogScale = useCallback(
     (newState?: boolean) => {
@@ -400,24 +438,23 @@ function HistogramPlotWithControls({
   const displayLegend = true;
   const displayLibraryControls = false;
   const opacity = 100;
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (error: Error) => {},
-      removeError: (error: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
 
   const selectedRange = useMemo((): NumberOrDateRange | undefined => {
     if (filter == null) return;
     return { min: filter.min, max: filter.max } as NumberOrDateRange;
   }, [filter]);
 
-  const selectedRangeBounds = {
-    min: data?.series[0]?.summary?.min,
-    max: data?.series[0]?.summary?.max,
-  } as NumberOrDateRange;
+  const selectedRangeBounds = useMemo((): NumberOrDateRange | undefined => {
+    return data?.series[0]?.summary && data?.valueType
+      ? fullISODateRange(
+          {
+            min: data.series[0].summary.min,
+            max: data.series[0].summary.max,
+          } as NumberOrDateRange,
+          data.valueType
+        )
+      : undefined;
+  }, [data?.series, data?.valueType]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -443,6 +480,7 @@ function HistogramPlotWithControls({
         // add independentAxisLabel
         independentAxisLabel={variableName}
         isZoomed={uiState.independentAxisRange ? true : false}
+        independentAxisRange={uiState.independentAxisRange}
         dependentAxisRange={uiState.dependentAxisRange}
         dependentAxisLogScale={uiState.dependentAxisLogScale}
         legendOptions={{
@@ -452,28 +490,63 @@ function HistogramPlotWithControls({
           verticalPaddingAdjustment: 20,
         }}
       />
-      <HistogramControls
-        label={undefined}
-        valueType={data?.valueType}
-        barLayout={barLayout}
-        displayLegend={displayLegend}
-        displayLibraryControls={displayLibraryControls}
-        opacity={opacity}
-        orientation={histogramProps.orientation}
-        binWidth={data?.binWidth}
-        onBinWidthChange={handleBinWidthChange}
-        binWidthRange={data?.binWidthRange}
-        binWidthStep={data?.binWidthStep}
-        errorManagement={errorManagement}
-        independentAxisRange={uiState.independentAxisRange}
-        onIndependentAxisRangeChange={handleIndependentAxisRangeChange}
-        onIndependentAxisSettingsReset={handleIndependentAxisSettingsReset}
-        dependentAxisRange={uiState.dependentAxisRange}
-        onDependentAxisRangeChange={handleDependentAxisRangeChange}
-        onDependentAxisSettingsReset={handleDependentAxisSettingsReset}
-        dependentAxisLogScale={uiState.dependentAxisLogScale}
-        toggleDependentAxisLogScale={handleDependentAxisLogScale}
-      />
+
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LabelledGroup label="Y-axis" containerStyles={{}}>
+          <Switch
+            label="Log Scale:"
+            state={uiState.dependentAxisLogScale}
+            onStateChange={handleDependentAxisLogScale}
+            containerStyles={{ paddingBottom: '0.3125em' }}
+          />
+
+          <NumberRangeInput
+            label="Range:"
+            range={uiState.dependentAxisRange}
+            onRangeChange={(newRange?: NumberOrDateRange) => {
+              handleDependentAxisRangeChange(newRange as NumberRange);
+            }}
+            allowPartialRange={false}
+          />
+
+          <Button
+            type={'solid'}
+            text={'Reset to defaults'}
+            onClick={handleDependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '100%',
+            }}
+          />
+        </LabelledGroup>
+
+        <LabelledGroup label="X-axis" containerStyles={{}}>
+          <BinWidthControl
+            binWidth={data?.binWidth}
+            binWidthStep={data?.binWidthStep}
+            binWidthRange={data?.binWidthRange}
+            onBinWidthChange={handleBinWidthChange}
+            valueType={data?.valueType}
+          />
+
+          <AxisRangeControl
+            label="Range:"
+            range={uiState.independentAxisRange}
+            onRangeChange={handleIndependentAxisRangeChange}
+            valueType={data?.valueType}
+          />
+
+          <Button
+            type={'solid'}
+            text={'Reset to defaults'}
+            onClick={handleIndependentAxisSettingsReset}
+            containerStyles={{
+              paddingTop: '1.0em',
+              width: '100%',
+            }}
+          />
+        </LabelledGroup>
+      </div>
     </div>
   );
 }
@@ -572,4 +645,16 @@ async function getHistogram(
     'pass',
     getRequestParams(studyId, filters, entity, variable, dataParams, rawConfig)
   );
+}
+
+// TODO [2021-07-10] - Use variable.precision when avaiable
+function formatStatValue(
+  value: string | number,
+  type: HistogramVariable['type']
+) {
+  return type === 'date'
+    ? value
+    : Number(value).toLocaleString(undefined, {
+        maximumFractionDigits: 4,
+      });
 }
