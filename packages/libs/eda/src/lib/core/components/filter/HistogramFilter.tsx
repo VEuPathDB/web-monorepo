@@ -297,12 +297,30 @@ export function HistogramFilter(props: Props) {
             }}
           >
             <div className="histogram-summary-stats">
-              <b>Min:</b> {formatStatValue(fgSummaryStats.min, variable.type)}{' '}
-              &emsp; <b>Mean:</b>{' '}
-              {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
-              <b>Median:</b>{' '}
-              {formatStatValue(fgSummaryStats.median, variable.type)} &emsp;{' '}
-              <b>Max:</b> {formatStatValue(fgSummaryStats.max, variable.type)}
+              {fgSummaryStats.min != null && (
+                <>
+                  <b>Min:</b>{' '}
+                  {formatStatValue(fgSummaryStats.min, variable.type)} &emsp;
+                </>
+              )}
+              {fgSummaryStats.mean != null && (
+                <>
+                  <b>Mean:</b>{' '}
+                  {formatStatValue(fgSummaryStats.mean, variable.type)} &emsp;
+                </>
+              )}
+              {fgSummaryStats.median != null && (
+                <>
+                  <b>Median:</b>{' '}
+                  {formatStatValue(fgSummaryStats.median, variable.type)} &emsp;
+                </>
+              )}
+              {fgSummaryStats.max != null && (
+                <>
+                  <b>Max:</b>{' '}
+                  {formatStatValue(fgSummaryStats.max, variable.type)} &emsp;
+                </>
+              )}
             </div>
             <UnknownCount
               activeFieldState={{
@@ -596,6 +614,14 @@ function distributionResponseToDataSeries(
     name,
     color,
     bins,
+    summary: {
+      min: response.statistics.subsetMin!,
+      mean: response.statistics.subsetMean!,
+      max: response.statistics.subsetMax!,
+      q1: undefined!,
+      q3: undefined!,
+      median: undefined!,
+    },
   };
 }
 
@@ -605,7 +631,7 @@ function formatStatValue(
   type: HistogramVariable['type']
 ) {
   return type === 'date'
-    ? value
+    ? String(value).replace(/T.*$/, '')
     : Number(value).toLocaleString(undefined, {
         maximumFractionDigits: 4,
       });
