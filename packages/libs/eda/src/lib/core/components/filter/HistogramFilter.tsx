@@ -36,7 +36,6 @@ import { HistogramVariable } from './types';
 import { fullISODateRange, padISODateTime } from '../../utils/date-conversion';
 import { getDistribution } from './util';
 import { DistributionResponse } from '../../api/subsetting-api';
-import { MenuItem, Select } from '@material-ui/core';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -394,15 +393,6 @@ function HistogramPlotWithControls({
     [updateUIState]
   );
 
-  const handleBinUnitChange = useCallback(
-    (newBinUnit: string) => {
-      updateUIState({
-        binWidthTimeUnit: newBinUnit as TimeUnit,
-      });
-    },
-    [updateUIState]
-  );
-
   const handleIndependentAxisRangeChange = useCallback(
     (newRange?: NumberOrDateRange) => {
       updateUIState({
@@ -556,19 +546,15 @@ function HistogramPlotWithControls({
             binWidth={data?.binWidth}
             binWidthStep={data?.binWidthStep}
             binWidthRange={data?.binWidthRange}
+            binUnit={uiState.binWidthTimeUnit ?? 'year'}
+            binUnitOptions={
+              data?.valueType === 'date'
+                ? ['day', 'week', 'month', 'year']
+                : undefined
+            }
             onBinWidthChange={handleBinWidthChange}
             valueType={data?.valueType}
           />
-
-          <Select
-            value={uiState.binWidthTimeUnit ?? 'year'}
-            onChange={(e) => handleBinUnitChange(String(e.target.value))}
-          >
-            <MenuItem value="day">Day</MenuItem>
-            <MenuItem value="week">Week</MenuItem>
-            <MenuItem value="month">Month</MenuItem>
-            <MenuItem value="year">Year</MenuItem>
-          </Select>
 
           <AxisRangeControl
             label="Range:"
@@ -631,7 +617,7 @@ function computeBinSlider(
 ) {
   switch (type) {
     case 'date': {
-      return { min: 1, max: 1000, step: 1 };
+      return { min: 1, max: 60, step: 1 };
     }
     case 'number': {
       const { min: rangeMin, max: rangeMax } = range as NumberRange;
