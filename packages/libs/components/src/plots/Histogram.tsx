@@ -220,8 +220,14 @@ export default function Histogram({
         // TO DO: carefully test/debug time zones and different browsers
         // ISO-ify time part of plotly's response
         const rawRange: NumberOrDateRange = {
-          min: min.replace(/ /, 'T').replace(/\.\d+$/, ''),
-          max: max.replace(/ /, 'T').replace(/\.\d+$/, ''),
+          min:
+            typeof min === 'string'
+              ? min.replace(/ /, 'T').replace(/\.\d+$/, '')
+              : min,
+          max:
+            typeof max === 'string'
+              ? max.replace(/ /, 'T').replace(/\.\d+$/, '')
+              : max,
         };
         // now snap to bin boundaries using same logic that Plotly uses
         // (dragging range past middle of bin selects it)
