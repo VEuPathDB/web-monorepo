@@ -84,7 +84,7 @@ export function HistogramFilter(props: Props) {
         independentAxisRange:
           variable.displayRangeMin != null && variable.displayRangeMax != null
             ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
-            : { min: Math.min(0, variable.rangeMin!), max: variable.rangeMax! },
+            : { min: Math.min(0, variable.rangeMin), max: variable.rangeMax },
         ...otherDefaults,
       };
 
@@ -102,8 +102,8 @@ export function HistogramFilter(props: Props) {
               max: variable.displayRangeMax + 'T00:00:00',
             }
           : {
-              min: variable.rangeMin! + 'T00:00:00',
-              max: variable.rangeMax! + 'T00:00:00',
+              min: variable.rangeMin + 'T00:00:00',
+              max: variable.rangeMax + 'T00:00:00',
             },
       ...otherDefaults,
     };
