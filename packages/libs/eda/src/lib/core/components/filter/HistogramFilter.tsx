@@ -11,7 +11,6 @@ import Histogram, {
 } from '@veupathdb/components/lib/plots/Histogram';
 import {
   DateRange,
-  ErrorManagement,
   TimeDelta,
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
@@ -24,22 +23,20 @@ import {
 import UnknownCount from '@veupathdb/wdk-client/lib/Components/AttributeFilter/UnknownCount';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
-import { number, partial, TypeOf, boolean } from 'io-ts';
+import { number, partial, TypeOf, boolean, type, intersection } from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
-import {
-  DataClient,
-  HistogramRequestParams,
-  HistogramResponse,
-} from '../../api/data-api';
+import { DataClient, HistogramRequestParams } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
-import { useDataClient } from '../../hooks/workspace';
+import { useSubsettingClient } from '../../hooks/workspace';
 import { DateRangeFilter, Filter, NumberRangeFilter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
 import { TimeUnit, NumberOrDateRange, NumberRange } from '../../types/general';
 import { gray, red } from './colors';
 import { HistogramVariable } from './types';
 import { fullISODateRange } from '../../utils/date-conversion';
+import { getDistribution } from './util';
+import { DistributionResponse } from '../../api/subsetting-api';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -51,13 +48,17 @@ type Props = {
 
 type UIState = TypeOf<typeof UIState>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const UIState = partial({
-  binWidth: number,
-  binWidthTimeUnit: TimeUnit,
-  independentAxisRange: NumberOrDateRange,
-  dependentAxisRange: NumberRange,
-  dependentAxisLogScale: boolean,
-});
+const UIState = intersection([
+  type({
+    binWidth: number,
+    independentAxisRange: NumberOrDateRange,
+    dependentAxisLogScale: boolean,
+  }),
+  partial({
+    binWidthTimeUnit: TimeUnit,
+    dependentAxisRange: NumberRange,
+  }),
+]);
 
 export function HistogramFilter(props: Props) {
   const {
@@ -67,7 +68,6 @@ export function HistogramFilter(props: Props) {
     studyMetadata,
     totalEntityCount,
   } = props;
-  const { id: studyId } = studyMetadata;
   const { setFilters } = analysisState;
   const filters = analysisState.analysis?.filters;
   const uiStateKey = `${entity.id}/${variable.id}`;
@@ -80,12 +80,12 @@ export function HistogramFilter(props: Props) {
 
     if (variable.type === 'number')
       return {
-        binWidth: variable.binWidthOverride ?? variable.binWidth,
+        binWidth: variable.binWidthOverride ?? variable.binWidth ?? 0.1,
         binWidthTimeUnit: undefined,
         independentAxisRange:
           variable.displayRangeMin != null && variable.displayRangeMax != null
             ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
-            : undefined,
+            : { min: Math.min(0, variable.rangeMin!), max: variable.rangeMax! },
         ...otherDefaults,
       };
 
@@ -94,12 +94,18 @@ export function HistogramFilter(props: Props) {
     const binUnits = variable.binUnits;
 
     return {
-      binWidth: binWidth,
-      binWidthTimeUnit: binUnits, // bit nasty!
+      binWidth: binWidth ?? 1,
+      binWidthTimeUnit: binUnits ?? variable.binUnits!, // bit nasty!
       independentAxisRange:
         variable.displayRangeMin != null && variable.displayRangeMax != null
-          ? { min: variable.displayRangeMin, max: variable.displayRangeMax }
-          : undefined,
+          ? {
+              min: variable.displayRangeMin + 'T00:00:00',
+              max: variable.displayRangeMax + 'T00:00:00',
+            }
+          : {
+              min: variable.rangeMin! + 'T00:00:00',
+              max: variable.rangeMax! + 'T00:00:00',
+            },
       ...otherDefaults,
     };
   }, [variable]);
@@ -110,10 +116,10 @@ export function HistogramFilter(props: Props) {
       getOrElse((): UIState => defaultUIState)
     );
   }, [analysisState.analysis?.variableUISettings, uiStateKey, defaultUIState]);
-  const dataClient = useDataClient();
+  const subsettingClient = useSubsettingClient();
   const getData = useCallback(
     async (
-      dataParams?: UIState
+      dataParams: UIState
     ): Promise<
       HistogramData & {
         variableId: string;
@@ -121,52 +127,56 @@ export function HistogramFilter(props: Props) {
         hasDataEntitiesCount: number;
       }
     > => {
-      const foregroundFilters = filters?.filter(
-        (f) => f.entityId !== entity.id || f.variableId !== variable.id
+      const distribution = await getDistribution<DistributionResponse>(
+        {
+          entityId: entity.id,
+          variableId: variable.id,
+          filters: analysisState.analysis?.filters,
+        },
+        (filters) => {
+          return subsettingClient.getDistribution(
+            studyMetadata.id,
+            entity.id,
+            variable.id,
+            {
+              valueSpec: 'count',
+              filters,
+              binSpec: {
+                displayRangeMin: dataParams.independentAxisRange.min,
+                displayRangeMax: dataParams.independentAxisRange.max,
+                binWidth: dataParams.binWidth,
+                binUnits: dataParams.binWidthTimeUnit,
+              },
+            }
+          );
+        }
       );
-      const background = await getHistogram(
-        dataClient,
-        studyId,
-        [],
-        entity,
-        variable,
-        dataParams
-      );
-      const foreground =
-        foregroundFilters && foregroundFilters.length !== 0
-          ? await getHistogram(
-              dataClient,
-              studyId,
-              foregroundFilters,
-              entity,
-              variable,
-              dataParams,
-              background.histogram.config
-            )
-          : background;
 
       const series = [
         histogramResponseToDataSeries(
           `All ${entity.displayName}`,
-          background,
+          distribution.background,
           gray,
           variable.type
         ),
         histogramResponseToDataSeries(
           `Subset of ${entity.displayName}`,
-          foreground,
+          distribution.foreground,
           red,
           variable.type
         ),
       ];
       const binWidth: NumberOrTimeDelta =
         variable.type === 'number'
-          ? background.histogram.config.binSpec.value || 1 // TO DO: throw error when response doesn't contain binWidth?
+          ? dataParams.binWidth
           : {
-              value: background.histogram.config.binSpec.value || 1,
-              unit: background.histogram.config.binSpec.units ?? 'month',
+              value: dataParams.binWidth,
+              unit: dataParams.binWidthTimeUnit ?? 'year',
             };
-      const { min, max, step } = background.histogram.config.binSlider;
+      const { min, max, step } = computeBinSlider(
+        variable.type,
+        dataParams.independentAxisRange
+      );
       const binWidthRange = (variable.type === 'number'
         ? { min, max }
         : {
@@ -176,11 +186,8 @@ export function HistogramFilter(props: Props) {
           }) as NumberOrTimeDeltaRange;
       const binWidthStep = step || 0.1;
 
-      // {hasDataEntitiesCount} (YY%) of ZZ households have data for this variable
-      const completeCases = background.completeCasesTable[0].completeCases;
-      const hasDataEntitiesCount = Array.isArray(completeCases)
-        ? completeCases[0]
-        : completeCases;
+      const hasDataEntitiesCount =
+        distribution.background.statistics.numDistinctEntityRecords;
 
       return {
         valueType: variable.type,
@@ -193,7 +200,15 @@ export function HistogramFilter(props: Props) {
         hasDataEntitiesCount: hasDataEntitiesCount ?? 0,
       };
     },
-    [dataClient, entity, filters, studyId, variable]
+    [
+      analysisState.analysis?.filters,
+      entity.displayName,
+      entity.id,
+      studyMetadata.id,
+      subsettingClient,
+      variable.id,
+      variable.type,
+    ]
   );
   const data = usePromise(
     // We're tracking specific properties of `uiState`. We should eventually be
@@ -253,7 +268,7 @@ export function HistogramFilter(props: Props) {
   );
 
   const updateUIState = useCallback(
-    (newUiState: TypeOf<typeof UIState>) => {
+    (newUiState: Partial<UIState>) => {
       // if (uiState.binWidth === newUiState.binWidth) return;
       analysisState.setVariableUISettings({
         [uiStateKey]: {
@@ -309,7 +324,6 @@ export function HistogramFilter(props: Props) {
               ? data.value
               : undefined
           }
-          getData={getData}
           containerStyles={{
             width: '100%',
             height: '400px',
@@ -334,11 +348,10 @@ export function HistogramFilter(props: Props) {
 }
 
 type HistogramPlotWithControlsProps = HistogramProps & {
-  getData: (params?: UIState) => Promise<HistogramData>; // TO DO: not used - get rid of?
   updateFilter: (selectedRange?: NumberRange | DateRange) => void;
   uiState: UIState;
   defaultUIState: UIState;
-  updateUIState: (uiState: UIState) => void;
+  updateUIState: (uiState: Partial<UIState>) => void;
   filter?: DateRangeFilter | NumberRangeFilter;
   // add variableName for independentAxisLabel
   variableName: string;
@@ -347,7 +360,6 @@ type HistogramPlotWithControlsProps = HistogramProps & {
 
 function HistogramPlotWithControls({
   data,
-  getData,
   updateFilter,
   uiState,
   defaultUIState,
@@ -401,7 +413,12 @@ function HistogramPlotWithControls({
       binWidth: defaultUIState.binWidth,
       binWidthTimeUnit: defaultUIState.binWidthTimeUnit,
     });
-  }, [defaultUIState]);
+  }, [
+    defaultUIState.binWidth,
+    defaultUIState.binWidthTimeUnit,
+    defaultUIState.independentAxisRange,
+    updateUIState,
+  ]);
 
   const handleDependentAxisRangeChange = useCallback(
     (newRange?: NumberRange) => {
@@ -420,7 +437,7 @@ function HistogramPlotWithControls({
       dependentAxisRange: undefined,
       dependentAxisLogScale: defaultUIState.dependentAxisLogScale,
     });
-  }, [defaultUIState]);
+  }, [defaultUIState.dependentAxisLogScale, updateUIState]);
 
   const handleDependentAxisLogScale = useCallback(
     (newState?: boolean) => {
@@ -551,33 +568,22 @@ function HistogramPlotWithControls({
 
 function histogramResponseToDataSeries(
   name: string,
-  response: HistogramResponse,
+  response: DistributionResponse,
   color: string,
   type: HistogramVariable['type']
 ): HistogramDataSeries {
-  if (response.histogram.data.length !== 1)
-    throw Error(
-      `Expected a single data series, but got ${response.histogram.data.length}`
-    );
-  const data = response.histogram.data[0];
-  const bins = data.value.map((_, index) => ({
-    binStart:
-      type === 'number'
-        ? Number(data.binStart[index])
-        : String(data.binStart[index]),
-    binEnd:
-      type === 'number'
-        ? Number(data.binEnd[index])
-        : String(data.binEnd[index]),
-    binLabel: data.binLabel[index],
-    count: data.value[index],
-  }));
-  const summary = response.histogram.config.summary;
+  const bins = response.histogram.map(
+    ({ value, binStart, binEnd, binLabel }) => ({
+      binStart,
+      binEnd,
+      binLabel,
+      count: value,
+    })
+  );
   return {
     name,
     color,
     bins,
-    summary,
   };
 }
 
@@ -630,21 +636,6 @@ function getRequestParams(
   };
 }
 
-async function getHistogram(
-  dataClient: DataClient,
-  studyId: string,
-  filters: Filter[],
-  entity: StudyEntity,
-  variable: HistogramVariable,
-  dataParams?: UIState,
-  rawConfig?: Config
-) {
-  return dataClient.getHistogram(
-    'pass',
-    getRequestParams(studyId, filters, entity, variable, dataParams, rawConfig)
-  );
-}
-
 // TODO [2021-07-10] - Use variable.precision when avaiable
 function formatStatValue(
   value: string | number,
@@ -655,4 +646,22 @@ function formatStatValue(
     : Number(value).toLocaleString(undefined, {
         maximumFractionDigits: 4,
       });
+}
+
+function computeBinSlider(
+  type: HistogramVariable['type'],
+  range: NumberOrDateRange
+) {
+  switch (type) {
+    case 'date': {
+      return { min: 1, max: 1000, step: 1 };
+    }
+    case 'number': {
+      const { min: rangeMin, max: rangeMax } = range as NumberRange;
+      const rangeSize = Math.round((rangeMax - rangeMin) * 100) / 100;
+      const max = rangeSize;
+      const min = rangeSize / 1000;
+      return { min, max, step: min };
+    }
+  }
 }
