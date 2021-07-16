@@ -398,7 +398,7 @@ function HistogramPlotWithControls({
           max:
             typeof range.max === 'string'
               ? padISODateTime(range.max)
-              : range.min,
+              : range.max,
         } as NumberOrDateRange);
       } else {
         updateFilter(); // clear the filter if range is undefined
