@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { NumberOrDateRange, NumberRange, DateRange } from '../../types/general';
 import {
   ValueTypeAddon,
@@ -26,6 +27,26 @@ export default function AxisRangeControl({
   onRangeChange,
   containerStyles,
 }: AxisRangeControlProps) {
+  const validator = useCallback((range?: NumberOrDateRange): {
+    validity: boolean;
+    message: string;
+  } => {
+    if (range) {
+      if (range.min === range.max) {
+        return {
+          validity: false,
+          message: 'Start and end of range cannot be the same',
+        };
+      } else if (range.min > range.max) {
+        return {
+          validity: false,
+          message: 'End cannot be before start of range',
+        };
+      }
+    }
+    return { validity: true, message: '' };
+  }, []);
+
   return onRangeChange ? (
     valueType != null && valueType === 'date' ? (
       <DateRangeInput
@@ -34,6 +55,7 @@ export default function AxisRangeControl({
         onRangeChange={onRangeChange}
         allowPartialRange={false}
         containerStyles={containerStyles}
+        validator={validator}
       />
     ) : (
       <NumberRangeInput
@@ -42,6 +64,7 @@ export default function AxisRangeControl({
         onRangeChange={onRangeChange}
         allowPartialRange={false}
         containerStyles={containerStyles}
+        validator={validator}
       />
     )
   ) : null;
