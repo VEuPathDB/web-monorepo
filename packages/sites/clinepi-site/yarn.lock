@@ -913,10 +913,10 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.6.2":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.6.2.tgz#3cf51fbd093c20c217ac07599cb8b4616810bfd0"
-  integrity sha512-jA9AJaxBwIX1rVDZMhW7EPmL8v2tRjq8oDn6kPHgWZil3WtnaEMIjokK3oV8g06+3x5pn8Etpl8nxCtg03DXZA==
+"@veupathdb/eda@^0.6.3":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.6.3.tgz#df6515cd516c354f0854666aca181027fcbd5714"
+  integrity sha512-OEA/FLTxVWyGyqgFkuqo3Hgr/0pYjMdfwd6XC8ioQq4A3cu4b1HjqVZwnqR3rUoe8ZRqWpm5i3e2APEe6Uz84g==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
