@@ -41,6 +41,10 @@ export function VariableDetails(props: Props) {
             variables into an ontology framework.
           </HelpIcon>
         </div>
+        {/* add variable.definition */}
+        <div className={cx('-SubsettingVariableDefinition')}>
+          {variable?.definition}
+        </div>
       </div>
       {totalEntityCount != null && filteredEntityCount != null ? (
         <FilterContainer

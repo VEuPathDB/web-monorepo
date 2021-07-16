@@ -1,4 +1,7 @@
-import { TimeDelta } from '@veupathdb/components/lib/types/general';
+import {
+  TimeDelta,
+  NumberOrDateRange,
+} from '@veupathdb/components/lib/types/general';
 import { isTimeUnit } from '@veupathdb/components/lib/types/guards';
 
 /**
@@ -22,6 +25,22 @@ export function padISODateTime(ISODate: string): string {
     fixedISODateTime = fixedISODateTime + 'Z';
   }
   return fixedISODateTime;
+}
+
+/**
+ * Take a number or date range and if it's a date range,
+ * convert min and max to full ISO format datetimes.
+ */
+export function fullISODateRange(
+  range: NumberOrDateRange,
+  valueType: 'number' | 'date'
+): NumberOrDateRange {
+  return valueType === 'number'
+    ? range
+    : {
+        min: padISODateTime(range.min as string),
+        max: padISODateTime(range.max as string),
+      };
 }
 
 /**

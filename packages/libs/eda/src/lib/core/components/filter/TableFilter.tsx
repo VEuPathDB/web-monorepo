@@ -5,15 +5,15 @@ import { getOrElse, map } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import { boolean, keyof, number, partial, string, type, TypeOf } from 'io-ts';
 import { useCallback, useMemo } from 'react';
-import { BarplotResponse } from '../../api/data-api';
 import { usePromise } from '../../hooks/promise';
 import { AnalysisState } from '../../hooks/analysis';
-import { useDataClient } from '../../hooks/workspace';
+import { useSubsettingClient } from '../../hooks/workspace';
 import { Filter } from '../../types/filter';
 import { StudyEntity, StudyMetadata } from '../../types/study';
 import { fromEdaFilter } from '../../utils/wdk-filter-param-adapter';
 import { TableVariable } from './types';
 import { getDistribution } from './util';
+import { DistributionResponse } from '../../api/subsetting-api';
 
 type Props = {
   studyMetadata: StudyMetadata;
@@ -69,45 +69,38 @@ export function TableFilter({
   totalEntityCount,
   filteredEntityCount,
 }: Props) {
-  const dataClient = useDataClient();
+  const subsettingClient = useSubsettingClient();
   const tableSummary = usePromise(
     useCallback(async () => {
-      const distribution = await getDistribution<BarplotResponse>(
+      const distribution = await getDistribution<DistributionResponse>(
         {
           entityId: entity.id,
           variableId: variable.id,
           filters: analysisState.analysis?.filters,
         },
         (filters) => {
-          return dataClient.getBarplot('pass', {
-            studyId: studyMetadata.id,
-            filters,
-            config: {
-              outputEntityId: entity.id,
+          return subsettingClient.getDistribution(
+            studyMetadata.id,
+            entity.id,
+            variable.id,
+            {
               valueSpec: 'count',
-              xAxisVariable: {
-                entityId: entity.id,
-                variableId: variable.id,
-              },
-            },
-          });
+              filters,
+            }
+          );
         }
       );
       const fgValueByLabel = Object.fromEntries(
-        distribution.foreground.barplot.data[0].label.map(
-          (label: string, index: number) => [
-            label,
-            distribution.foreground.barplot.data[0].value[index] ?? 0,
-          ]
-        )
+        distribution.foreground.histogram.map(({ binLabel, value }) => [
+          binLabel,
+          value ?? 0,
+        ])
       );
       const bgValueByLabel = Object.fromEntries(
-        distribution.background.barplot.data[0].label.map(
-          (label: string, index: number) => [
-            label,
-            distribution.background.barplot.data[0].value[index] ?? 0,
-          ]
-        )
+        distribution.background.histogram.map(({ binLabel, value }) => [
+          binLabel,
+          value ?? 0,
+        ])
       );
       return {
         // first two are used to make sure we're showing the correct distrubution
@@ -118,22 +111,16 @@ export function TableFilter({
           count: bgValueByLabel[label],
           filteredCount: fgValueByLabel[label] ?? 0,
         })),
-        entitiesCount: Array.isArray(
-          distribution.background.completeCasesTable[0].completeCases
-        )
-          ? distribution.background.completeCasesTable[0].completeCases[0]
-          : distribution.background.completeCasesTable[0].completeCases,
-        filteredEntitiesCount: Array.isArray(
-          distribution.foreground.completeCasesTable[0].completeCases
-        )
-          ? distribution.foreground.completeCasesTable[0].completeCases[0]
-          : distribution.foreground.completeCasesTable[0].completeCases,
+        entitiesCount:
+          distribution.background.statistics.numDistinctEntityRecords,
+        filteredEntitiesCount:
+          distribution.foreground.statistics.numDistinctEntityRecords,
       };
     }, [
       entity.id,
       variable.id,
       analysisState.analysis?.filters,
-      dataClient,
+      subsettingClient,
       studyMetadata.id,
     ])
   );

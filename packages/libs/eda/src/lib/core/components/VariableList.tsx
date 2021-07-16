@@ -116,9 +116,6 @@ export default function VariableList(props: VariableListProps) {
     hideDisabledFields,
     setHideDisabledFields,
   } = props;
-  const [featuredVariablesOpen, setFeaturedVariablesOpen] = useState(
-    Options.featuredVariablesOpen
-  );
   const [searchTerm, setSearchTerm] = useState<string>('');
   const getPathToField = useCallback(
     (field?: Field) => {
@@ -361,10 +358,9 @@ export default function VariableList(props: VariableListProps) {
           {featuredFields.length && (
             <div className="FeaturedVariables">
               <details
-                open={featuredVariablesOpen}
-                onToggle={() => {
-                  setFeaturedVariablesOpen(!featuredVariablesOpen);
-                  Options.featuredVariablesOpen = !featuredVariablesOpen;
+                open={Options.featuredVariablesOpen}
+                onToggle={(event: React.SyntheticEvent<HTMLDetailsElement>) => {
+                  Options.featuredVariablesOpen = event.currentTarget.open;
                 }}
               >
                 <summary>

@@ -4,7 +4,16 @@ import {
   createJsonRequest,
   FetchClient,
 } from '@veupathdb/web-common/lib/util/api';
-import { array, number, record, string, type, TypeOf } from 'io-ts';
+import {
+  array,
+  number,
+  partial,
+  intersection,
+  union,
+  string,
+  type,
+  TypeOf,
+} from 'io-ts';
 import { memoize } from 'lodash';
 import { Filter } from '../types/filter';
 import { StudyMetadata, StudyOverview } from '../types/study';
@@ -18,13 +27,40 @@ export const StudyResponse = type({
 
 export interface DistributionRequestParams {
   filters: Filter[];
+  binSpec?: {
+    displayRangeMin: number | string;
+    displayRangeMax: number | string;
+    binWidth: number;
+    binUnits?: string;
+  };
+  valueSpec: 'count';
+  /* | 'proportion' FIXME only count works right now */
 }
 
 export type DistributionResponse = TypeOf<typeof DistributionResponse>;
 
 export const DistributionResponse = type({
-  entitiesCount: number,
-  distribution: record(string, number),
+  histogram: array(
+    type({
+      value: number,
+      binStart: string,
+      binEnd: string,
+      binLabel: string,
+    })
+  ),
+  statistics: intersection([
+    partial({
+      subsetMin: union([number, string]),
+      subsetMax: union([number, string]),
+      subsetMean: union([number, string]),
+    }),
+    type({
+      numVarValues: number,
+      numDistinctValues: number,
+      numDistinctEntityRecords: number,
+      numMissingCases: number,
+    }),
+  ]),
 });
 
 export class SubsettingClient extends FetchClient {
