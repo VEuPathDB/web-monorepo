@@ -20,6 +20,7 @@ export const {
   twitterUrl = '',
   twitterUrl2 = '',
   youtubeUrl = '',
+  redditUrl = '',
   vimeoUrl = '',
   communitySite = '',
   siteSearchServiceUrl = '',

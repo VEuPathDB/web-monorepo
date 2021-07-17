@@ -4,8 +4,8 @@ import { noop } from 'lodash';
 
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
-import { twitterUrl, twitterUrl2, facebookUrl, youtubeUrl } from 'ebrc-client/config';
-import { AnnouncementsToggle, Twitter, Facebook, YouTube } from './SocialMediaIcons';
+import { twitterUrl, twitterUrl2, facebookUrl, youtubeUrl, redditUrl } from 'ebrc-client/config';
+import { AnnouncementsToggle, Twitter, Facebook, YouTube, Reddit } from './SocialMediaIcons';
 
 import './SocialMediaLinks.scss';
 
@@ -45,6 +45,10 @@ export const SocialMediaLinks = ({
 
       <a href={facebookUrl} target="_blank">
         <Facebook />
+      </a>
+
+      <a href={redditUrl} target="_blank">
+        <Reddit />
       </a>
 
       <a href={youtubeUrl} target="_blank">
