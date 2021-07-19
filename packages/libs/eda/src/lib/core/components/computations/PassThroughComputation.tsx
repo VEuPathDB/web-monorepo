@@ -8,7 +8,7 @@ import {
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import {
-  // contTableVisualization,
+  contTableVisualization,
   twoByTwoVisualization,
 } from '../visualizations/implementations/MosaicVisualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
@@ -28,7 +28,7 @@ const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
   histogram: histogramVisualization,
   twobytwo: twoByTwoVisualization,
-  // conttable: contTableVisualization,
+  conttable: contTableVisualization,
   scatterplot: scatterplotVisualization,
   lineplot: scatterplotVisualization,
   // placeholder for densityplot
