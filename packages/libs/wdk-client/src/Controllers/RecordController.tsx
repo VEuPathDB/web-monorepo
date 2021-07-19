@@ -148,6 +148,7 @@ class RecordController extends PageController<Props> {
     if (recordClass.useBasket) {
       headerActions.push({
         label: inBasket ? 'Remove from basket' : 'Add to basket',
+        className: ' basket ',
         iconClassName: loadingBasketStatus ? loadingClassName : 'fa fa-shopping-basket',
         onClick: (event: Event) => {
           event.preventDefault();
