@@ -547,7 +547,8 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 /* filterParam.css  override for range warning */
 .filter-param .chart-controls .chart-controlsContent .range-warning {
     color: #d32f2f;
-    font-size: 130%;
+    font-size: 200%;
+    vertical-align: middle;
     margin-right: 0.3em;
 }
 
@@ -621,7 +622,23 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 }
 */
 
+/* Hide Favorites action link on record pages */
+.wdk-RecordActionItem .favorites {
+  display: none;
+}
+/* Hide Basket action link on record pages */
+.wdk-RecordActionItem .basket {
+  display: none;
+}
+.wdk-RecordActionItem {
+    padding: 0;
+}
+
 /* wdk Record.css  overrides */
+
+.wdk-RecordNavigationIndicator {
+  display: none;
+}
 
 div.wdk-CollapsibleSectionContent li {
   margin-top: 0.6em;
@@ -672,10 +689,6 @@ b, strong, th,
   font-weight: 500;
 }
 
-/* Hide Favorites action link on record pages */
-.wdk-RecordActionItem .favorites {
-  display: none;
-}
 
 /* Ensures that clicking a child of a .study-action button targets the button itself */
 button.study-action[data-study-id][data-args] * {

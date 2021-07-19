@@ -96,6 +96,16 @@ export default function headerMenuItems (state, props) {
             text: 'Data Access & Use Policy',
             route: `${STATIC_ROUTE_PATH}/ClinEpiDB/access_and_use.html`
           },
+          {
+            text: 'Publications about ClinEpiDB',
+            url: 'https://gatesopenresearch.org/articles/3-1661',
+            target: '_blank'
+          },
+          {
+            text: 'Publications that use our resource',
+            url: 'https://scholar.google.com/scholar?hl=en&q=ClinEpiDB',
+            target: '_blank'
+          },
           ...socialLinks
         ]
       },
