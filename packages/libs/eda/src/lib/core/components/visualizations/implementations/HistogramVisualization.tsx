@@ -3,6 +3,7 @@ import Histogram, {
 } from '@veupathdb/components/lib/plots/Histogram';
 import BinWidthControl from '@veupathdb/components/lib/components/plotControls/BinWidthControl';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import {
   ErrorManagement,
@@ -71,14 +72,19 @@ function FullscreenComponent(props: VisualizationProps) {
 function createDefaultConfig(): HistogramConfig {
   return {
     dependentAxisLogScale: false,
+    valueSpec: 'count',
   };
 }
+
+type ValueSpec = t.TypeOf<typeof ValueSpec>;
+const ValueSpec = t.keyof({ count: null, proportion: null });
 
 type HistogramConfig = t.TypeOf<typeof HistogramConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 const HistogramConfig = t.intersection([
   t.type({
     dependentAxisLogScale: t.boolean,
+    valueSpec: ValueSpec,
   }),
   t.partial({
     xAxisVariable: VariableDescriptor,
@@ -171,10 +177,19 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const handleDependentAxisLogScale = useCallback(
+  const onDependentAxisLogScaleChange = useCallback(
     (newState?: boolean) => {
       updateVizConfig({
         dependentAxisLogScale: newState,
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const onValueSpecChange = useCallback(
+    (newValueSpec: ValueSpec) => {
+      updateVizConfig({
+        valueSpec: newValueSpec,
       });
     },
     [updateVizConfig]
@@ -210,6 +225,7 @@ function HistogramViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         xAxisVariable.type,
+        vizConfig.valueSpec,
         vizConfig.overlayVariable,
         vizConfig.binWidth,
         vizConfig.binWidthTimeUnit
@@ -226,6 +242,7 @@ function HistogramViz(props: Props) {
       filters,
       dataClient,
       computation.type,
+      vizConfig.valueSpec,
     ])
   );
 
@@ -283,10 +300,12 @@ function HistogramViz(props: Props) {
       )}
       {fullscreen ? (
         <HistogramPlotWithControls
-          data={data.value}
+          data={data.value && !data.pending ? data.value : undefined}
           onBinWidthChange={onBinWidthChange}
           dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-          handleDependentAxisLogScale={handleDependentAxisLogScale}
+          onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
+          valueSpec={vizConfig.valueSpec}
+          onValueSpecChange={onValueSpecChange}
           containerStyles={{
             width: '750px',
             height: '400px',
@@ -310,6 +329,9 @@ function HistogramViz(props: Props) {
           legendTitle={
             findEntityAndVariable(entities, vizConfig.overlayVariable)?.variable
               .displayName
+          }
+          dependentAxisLabel={
+            vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
           }
         />
       ) : (
@@ -343,7 +365,7 @@ function HistogramViz(props: Props) {
 
 type HistogramPlotWithControlsProps = HistogramProps & {
   onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
-  handleDependentAxisLogScale: (newState?: boolean) => void;
+  onDependentAxisLogScaleChange: (newState?: boolean) => void;
   filters: Filter[];
   completeCases?: CompleteCasesTable;
   outputSize?: number;
@@ -351,12 +373,14 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   independentAxisVariable?: VariableDescriptor;
   overlayVariable?: VariableDescriptor;
   overlayLabel?: string;
+  valueSpec: ValueSpec;
+  onValueSpecChange: (newValueSpec: ValueSpec) => void;
 };
 
 function HistogramPlotWithControls({
   data,
   onBinWidthChange,
-  handleDependentAxisLogScale,
+  onDependentAxisLogScaleChange,
   filters,
   completeCases,
   outputSize,
@@ -364,6 +388,8 @@ function HistogramPlotWithControls({
   independentAxisVariable,
   overlayVariable,
   overlayLabel,
+  valueSpec,
+  onValueSpecChange,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
   // TODO Use UIState
@@ -422,7 +448,20 @@ function HistogramPlotWithControls({
           <Switch
             label="Log Scale:"
             state={histogramProps.dependentAxisLogScale}
-            onStateChange={handleDependentAxisLogScale}
+            onStateChange={onDependentAxisLogScaleChange}
+          />
+          <RadioButtonGroup
+            selectedOption={
+              valueSpec === 'proportion' ? 'proportional' : 'count'
+            }
+            options={['count', 'proportional']}
+            onOptionSelected={(newOption) => {
+              if (newOption === 'proportional') {
+                onValueSpecChange('proportion');
+              } else {
+                onValueSpecChange('count');
+              }
+            }}
           />
         </LabelledGroup>
         <LabelledGroup label="X-axis">
@@ -432,6 +471,16 @@ function HistogramPlotWithControls({
             binWidthRange={data?.binWidthRange}
             binWidthStep={data?.binWidthStep}
             valueType={data?.valueType}
+            binUnit={
+              data?.valueType === 'date'
+                ? (data?.binWidth as TimeDelta).unit
+                : undefined
+            }
+            binUnitOptions={
+              data?.valueType === 'date'
+                ? ['day', 'week', 'month', 'year']
+                : undefined
+            }
           />
         </LabelledGroup>
       </div>
@@ -498,6 +547,7 @@ function getRequestParams(
   filters: Filter[],
   variable: VariableDescriptor,
   variableType: 'number' | 'date',
+  valueSpec: ValueSpec,
   overlayVariable?: VariableDescriptor,
   binWidth?: number,
   binWidthTimeUnit?: string
@@ -517,7 +567,7 @@ function getRequestParams(
     filters,
     config: {
       outputEntityId: variable.entityId,
-      valueSpec: 'count',
+      valueSpec,
       xAxisVariable: variable,
       overlayVariable,
       ...binSpec,
