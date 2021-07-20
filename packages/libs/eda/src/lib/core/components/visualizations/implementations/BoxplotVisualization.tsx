@@ -329,8 +329,8 @@ function BoxplotViz(props: Props) {
         <Boxplot
           data={data.value && !data.pending ? data.value.series : []}
           containerStyles={{
-            width: 230,
-            height: 165,
+            width: '230px',
+            height: '150px',
           }}
           orientation={'vertical'}
           // show/hide independent/dependent axis tick label
