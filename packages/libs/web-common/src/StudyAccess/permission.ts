@@ -116,10 +116,17 @@ export function shouldDisplayProvidersTable(userPermissions: UserPermissions, da
   );
 }
 
-// By "updating the providers", we mean:
-// (1) adding a new provider
-// (2) removing an existing provider
-// (3) altering a provider's managerial capabilities
+export function canAddProviders(userPermissions: UserPermissions, datasetId: string) {
+  return (
+    isOwner(userPermissions) ||
+    isManager(userPermissions, datasetId)
+  );
+}
+
+export function canRemoveProviders(userPermissions: UserPermissions) {
+  return isOwner(userPermissions);
+}
+
 export function canUpdateProviders(userPermissions: UserPermissions, datasetId: string) {
   return (
     isOwner(userPermissions) ||
@@ -134,7 +141,7 @@ export function shouldDisplayEndUsersTable(userPermissions: UserPermissions, dat
 export function canAddEndUsers(userPermissions: UserPermissions, datasetId: string) {
   return (
     isOwner(userPermissions) ||
-    isProvider(userPermissions, datasetId)
+    isManager(userPermissions, datasetId)
   );
 }
 

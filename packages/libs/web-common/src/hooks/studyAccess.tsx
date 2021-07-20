@@ -25,6 +25,8 @@ import {
   canAddEndUsers,
   canRemoveEndUsers,
   canUpdateApprovalStatus,
+  canAddProviders,
+  canRemoveProviders,
   canUpdateProviders,
   canUpdateStaff,
   permissionsResponseToUserPermissions,
@@ -49,7 +51,6 @@ import { bindApiRequestCreators } from 'ebrc-client/util/api';
 
 interface BaseTableRow {
   userId: number;
-  name: string;
   email: string;
 }
 
@@ -58,6 +59,7 @@ interface StaffTableRow extends BaseTableRow {
 }
 
 interface StaffTableFullRow extends StaffTableRow {
+  name: string;
   staffId: number;
 }
 
@@ -66,10 +68,12 @@ interface ProviderTableRow extends BaseTableRow {
 }
 
 interface ProviderTableFullRow extends ProviderTableRow {
+  name: string;
   providerId: number;
 }
 
 interface EndUserTableRow extends BaseTableRow {
+  name: string;
   startDate?: string;
   content: string;
   approvalStatus: ApprovalStatus;
@@ -84,9 +88,10 @@ interface EndUserTableFullRow extends EndUserTableRow {
 }
 
 interface HistoryTableRow extends BaseTableRow {
+  name: string;
   timestamp: HistoryResult['cause']['timestamp'];
   actionPerformer: string;
-  action: HistoryResult['cause']['action'];
+  changeDescription: string;
   content: string;
   approvalStatus: HistoryResult['row']['approvalStatus'];
   denialReason: NonNullable<HistoryResult['row']['denialReason']>;
@@ -94,6 +99,7 @@ interface HistoryTableRow extends BaseTableRow {
 }
 
 interface HistoryTableFullRow extends HistoryTableRow {
+  action: HistoryResult['cause']['action'];
   purpose: NonNullable<HistoryResult['row']['purpose']>;
   researchQuestion: NonNullable<HistoryResult['row']['researchQuestion']>;
   analysisPlan: NonNullable<HistoryResult['row']['analysisPlan']>;
@@ -261,7 +267,7 @@ export function useStaffTableSectionConfig(
     [ userPermissions ]
   );
 
-  const staffAreUpdateable = false;
+  const staffUpdateable = false;
 
   const {
     onIsOwnerChange
@@ -295,14 +301,11 @@ export function useStaffTableSectionConfig(
               userId: {
                 key: 'userId',
                 name: 'User ID',
-                className: cx('--UserIdCell'),
-                sortable: true
-              },
-              name: {
-                key: 'name',
-                name: 'Name',
-                className: cx('--NameCell'),
-                sortable: true
+                className: cx('--UserIdentityCell'),
+                sortable: true,
+                makeOrder: ({ name, userId }) => [name, userId],
+                makeSearchableString: (_, { name, userId }) => `${name} ${userId} (${userId})`,
+                renderCell: ({ row: { name, userId } }) => `${name} (${userId})`
               },
               email: {
                 key: 'email',
@@ -318,7 +321,7 @@ export function useStaffTableSectionConfig(
                 makeSearchableString: booleanToString,
                 makeOrder: ({ isOwner }) => booleanToString(isOwner),
                 renderCell: ({ value, row: { staffId, userId: wdkUserId } }) => {
-                  return !staffAreUpdateable || wdkUserId === userId
+                  return !staffUpdateable || wdkUserId === userId
                     ? booleanToString(value)
                     : <SingleSelect
                         items={BOOLEAN_SELECT_ITEMS}
@@ -333,16 +336,16 @@ export function useStaffTableSectionConfig(
                 }
               }
             },
-            columnOrder: [ 'userId', 'name', 'email', 'isOwner' ],
+            columnOrder: [ 'userId', 'email', 'isOwner' ],
             idGetter: ({ userId }) => userId,
-            initialSort: { columnKey: 'name', direction: 'asc' }
+            initialSort: { columnKey: 'userId', direction: 'asc' }
           }
         },
     [
       userId,
       value,
       loading,
-      staffAreUpdateable,
+      staffUpdateable,
       staffTableUiState,
       onIsOwnerChange
     ]
@@ -369,7 +372,9 @@ export function useProviderTableSectionConfig(
     [ userPermissions, activeDatasetId ]
   );
 
-  const providersAreUpdateable = userPermissions && canUpdateProviders(userPermissions, activeDatasetId);
+  const providersAddable = userPermissions && canAddProviders(userPermissions, activeDatasetId);
+  const providersRemovable = userPermissions && canRemoveProviders(userPermissions);
+  const providersUpdateable = userPermissions && canUpdateProviders(userPermissions, activeDatasetId);
 
   const {
     onIsManagerChange
@@ -403,14 +408,11 @@ export function useProviderTableSectionConfig(
               userId: {
                 key: 'userId',
                 name: 'User ID',
-                className: cx('--UserIdCell'),
-                sortable: true
-              },
-              name: {
-                key: 'name',
-                name: 'Name',
-                className: cx('--NameCell'),
-                sortable: true
+                className: cx('--UserIdentityCell'),
+                sortable: true,
+                makeOrder: ({ name, userId }) => [name, userId],
+                makeSearchableString: (_, { name, userId }) => `${name} ${userId} (${userId})`,
+                renderCell: ({ row: { name, userId } }) => `${name} (${userId})`
               },
               email: {
                 key: 'email',
@@ -426,7 +428,7 @@ export function useProviderTableSectionConfig(
                 makeSearchableString: booleanToString,
                 makeOrder: ({ isManager }) => booleanToString(isManager),
                 renderCell: ({ value, row: { providerId, userId: wdkUserId } }) => {
-                  return !providersAreUpdateable || wdkUserId === userId
+                  return !providersUpdateable || wdkUserId === userId
                     ? booleanToString(value)
                     : <SingleSelect
                         items={BOOLEAN_SELECT_ITEMS}
@@ -441,93 +443,33 @@ export function useProviderTableSectionConfig(
                 }
               }
             },
-            columnOrder: [ 'userId', 'name', 'email', 'isManager' ],
+            columnOrder: [ 'userId', 'email', 'isManager' ],
             idGetter: ({ userId }) => userId,
-            initialSort: { columnKey: 'name', direction: 'asc' },
-            actions: !providersAreUpdateable ? undefined : [
-              {
-                element: (
-                  <button type="button" className="btn">
-                    <IconAlt fa="plus" />
-                    Add Providers
-                  </button>
-                ),
-                callback: () => {
-                  changeOpenDialogConfig({
-                    type: 'add-users',
-                    permissionNamePlural: 'providers',
-                    onSubmit: async (providerEmails: string[]) => {
-                      changeOpenDialogConfig(undefined);
-
-                      const addedUsers = await Promise.all(
-                        providerEmails.map(
-                          providerEmail => createProviderEntry({
-                            datasetId: activeDatasetId,
-                            email: providerEmail,
-                            isManager: false
-                          })
-                        )
-                      );
-
-                      const addedUsersWithEmails = zipWith(
-                        addedUsers,
-                        providerEmails,
-                        (addedUser, email) => ({
-                          ...addedUser,
-                          email
-                        })
-                      );
-
-                      const [ createdUsers, emailedUsers ] = partition(addedUsersWithEmails, ({ created }) => created);
-
-                      changeOpenDialogConfig({
-                        type: 'users-added',
-                        createdUsers: createdUsers.map(({ email }) => email),
-                        emailedUsers: emailedUsers.map(({ email }) => email),
-                        permissionName: 'provider',
-                        permissionNamePlural: 'providers',
-                        onConfirm: () => {
-                          changeOpenDialogConfig(undefined);
-                        }
-                      });
-
-                      reloadProvidersTable();
-                    }
-                  });
-                }
-              },
-              {
-                selectionRequired: true,
-                element: selection => (
-                  <button
-                    type="button"
-                    className="btn"
-                    disabled={selection.length === 0}
-                  >
-                    <IconAlt fa="trash" />
-                    Remove {selection.length === 1 ? 'Provider' : 'Providers'}
-                  </button>
-                ),
-                callback: async (selection) => {
-                  await Promise.all(
-                    selection.map(({ providerId }) => deleteProviderEntry(providerId))
-                  );
-
-                  reloadProvidersTable();
-                }
-              }
-            ]
+            initialSort: { columnKey: 'userId', direction: 'asc' },
+            actions: makeProviderTableActions(
+              activeDatasetId,
+              createProviderEntry,
+              deleteProviderEntry,
+              changeOpenDialogConfig,
+              reloadProvidersTable,
+              providersAddable,
+              providersRemovable
+            )
           }
         },
     [
       userId,
       value,
       loading,
-      providersAreUpdateable,
+      providersAddable,
+      providersRemovable,
+      providersUpdateable,
       onIsManagerChange,
       providerTableUiState,
       reloadProvidersTable,
-      changeOpenDialogConfig
+      changeOpenDialogConfig,
+      createProviderEntry,
+      deleteProviderEntry
     ]
   );
 }
@@ -715,7 +657,9 @@ export function useEndUserTableSectionConfig(
       activeDatasetId,
       endUsersAddable,
       endUsersRemovable,
-      changeOpenDialogConfig
+      changeOpenDialogConfig,
+      createEndUserEntry,
+      deleteEndUserEntry
     ]
   );
 }
@@ -767,8 +711,23 @@ export function useHistoryTableSectionConfig(
                   row.disseminationPlan
                 ),
                 denialReason: row.denialReason ?? '',
-                allowSelfEdits: row.allowSelfEdits
-              })),
+                allowSelfEdits: row.allowSelfEdits,
+              }))
+              .sort(({ timestamp: timestampA }, { timestamp: timestampB }) =>
+                timestampA === timestampB
+                  ? 0
+                  : timestampA < timestampB
+                  ? -1
+                  : 1
+              )
+              .reduce(
+                addChangeDescription,
+                {
+                  rowsWithChangeDescriptions: [],
+                  lastRowsByEndUser: {}
+                }
+              )
+              .rowsWithChangeDescriptions,
             columns: {
               userId: {
                 key: 'userId',
@@ -802,10 +761,10 @@ export function useHistoryTableSectionConfig(
                 className: cx('--NameCell'),
                 sortable: true,
               },
-              action: {
-                key: 'action',
+              changeDescription: {
+                key: 'changeDescription',
                 name: 'Action',
-                className: cx('--ActionCell'),
+                className: cx('--ChangeDescriptionCell'),
                 sortable: true,
                 renderCell: ({ value }) => value.toLowerCase()
               },
@@ -856,10 +815,10 @@ export function useHistoryTableSectionConfig(
               'email',
               'timestamp',
               'actionPerformer',
-              'action',
+              'changeDescription',
               'approvalStatus',
-              'content',
               'denialReason',
+              'content',
               'allowSelfEdits'
             ],
             idGetter: getHistoryTableRowId,
@@ -1101,6 +1060,106 @@ function useApprovalStatusColumnConfig(
   };
 }
 
+interface TableAction<R> {
+  selectionRequired: boolean;
+  element: (selection: R[]) => JSX.Element;
+  callback: (selection: R[]) => Promise<void>;
+}
+
+function makeProviderTableActions(
+  activeDatasetId: string,
+  createProviderEntry: StudyAccessApi['createProviderEntry'],
+  deleteProviderEntry: StudyAccessApi['deleteProviderEntry'],
+  changeOpenDialogConfig: (newDialogContentProps: ContentProps | undefined) => void,
+  reloadProvidersTable: () => void,
+  providersAddable: boolean | undefined,
+  providersRemovable: boolean | undefined,
+) {
+  const addProviders = !providersAddable ? undefined : {
+    element: (
+      <button type="button" className="btn">
+        <IconAlt fa="plus" />
+        Add Providers
+      </button>
+    ),
+    callback: () => {
+      changeOpenDialogConfig({
+        type: 'add-users',
+        permissionNamePlural: 'providers',
+        onSubmit: async (providerEmails: string[]) => {
+          changeOpenDialogConfig(undefined);
+
+          const addedUsers = await Promise.all(
+            providerEmails.map(
+              providerEmail => createProviderEntry({
+                datasetId: activeDatasetId,
+                email: providerEmail,
+                isManager: false
+              })
+            )
+          );
+
+          const addedUsersWithEmails = zipWith(
+            addedUsers,
+            providerEmails,
+            (addedUser, email) => ({
+              ...addedUser,
+              email
+            })
+          );
+
+          const [ createdUsers, emailedUsers ] = partition(addedUsersWithEmails, ({ created }) => created);
+
+          changeOpenDialogConfig({
+            type: 'users-added',
+            createdUsers: createdUsers.map(({ email }) => email),
+            emailedUsers: emailedUsers.map(({ email }) => email),
+            permissionName: 'provider',
+            permissionNamePlural: 'providers',
+            onConfirm: () => {
+              changeOpenDialogConfig(undefined);
+            }
+          });
+
+          reloadProvidersTable();
+        }
+      });
+    }
+  };
+
+  const removeProviders = !providersRemovable ? undefined : {
+    selectionRequired: true,
+    element: (selection: ProviderTableFullRow[]) => (
+      <button
+        type="button"
+        className="btn"
+        disabled={selection.length === 0}
+      >
+        <IconAlt fa="trash" />
+        Remove {selection.length === 1 ? 'Provider' : 'Providers'}
+      </button>
+    ),
+    callback: async (selection: ProviderTableFullRow[]) => {
+      await Promise.all(
+        selection.map(({ providerId }) => deleteProviderEntry(providerId))
+      );
+
+      reloadProvidersTable();
+    }
+  }
+
+  const availableActions = [
+    addProviders,
+    removeProviders
+  ].filter(
+    (action): action is TableAction<ProviderTableRow> => action != null
+  );
+
+  return availableActions.length === 0
+    ? undefined
+    : availableActions;
+}
+
 function makeEndUserTableActions(
   activeDatasetId: string,
   createEndUserEntry: StudyAccessApi['createEndUserEntry'],
@@ -1174,7 +1233,7 @@ function makeEndUserTableActions(
 
   const removeEndUsers = !endUsersRemovable ? undefined : {
     selectionRequired: true,
-    element: (selection: EndUserTableRow[]) => (
+    element: (selection: EndUserTableFullRow[]) => (
       <button
         type="button"
         className="btn"
@@ -1184,7 +1243,7 @@ function makeEndUserTableActions(
         Remove {selection.length === 1 ? 'End User' : 'End Users'}
       </button>
     ),
-    callback: async (selection: EndUserTableRow[]) => {
+    callback: async (selection: EndUserTableFullRow[]) => {
       await Promise.all(
         selection.map(({ userId }) => deleteEndUserEntry(userId, activeDatasetId))
       );
@@ -1197,11 +1256,7 @@ function makeEndUserTableActions(
     addEndUsers,
     removeEndUsers
   ].filter(
-    (action): action is ({
-      selectionRequired: boolean,
-      element: (selection: EndUserTableRow[]) => JSX.Element,
-      callback: (selection: EndUserTableRow[]) => Promise<void>
-    }) => action != null
+    (action): action is TableAction<EndUserTableFullRow> => action != null
   );
 
   return availableActions.length === 0
@@ -1402,4 +1457,48 @@ function makeContentDisplay(
 
 function getHistoryTableRowId(row: HistoryTableFullRow) {
   return `${row.userId}-${row.timestamp}`
+}
+
+interface RowHistory {
+  rowsWithChangeDescriptions: HistoryTableFullRow[];
+  lastRowsByEndUser: Record<string, HistoryTableFullRow>;
+}
+
+function addChangeDescription(rowHistory: RowHistory, nextRow: Omit<HistoryTableFullRow, 'changeDescription'>) {
+  const rowWithChangeDescription = {
+    ...nextRow,
+    changeDescription: nextRow.action !== 'UPDATE'
+      ? nextRow.action
+      : makeUpdateChangeDescription(
+          nextRow,
+          rowHistory.lastRowsByEndUser[nextRow.userId]
+        )
+  };
+
+  rowHistory.rowsWithChangeDescriptions.push(rowWithChangeDescription);
+  rowHistory.lastRowsByEndUser[nextRow.userId] = rowWithChangeDescription;
+
+  return rowHistory;
+}
+
+const COLUMNS_TO_MONITOR_FOR_CHANGE = {
+  'approvalStatus': 'approval status',
+  'content': 'content',
+  'denialReason': 'notes',
+  'allowSelfEdits': 'lock/unlock'
+} as const;
+
+const COLUMNS_TO_MONITOR_FOR_CHANGE_KEYS =
+  Object.keys(COLUMNS_TO_MONITOR_FOR_CHANGE) as (keyof typeof COLUMNS_TO_MONITOR_FOR_CHANGE)[];
+
+function makeUpdateChangeDescription(nextRow: Omit<HistoryTableFullRow, 'changeDescription'>, prevRow?: HistoryTableFullRow) {
+  const changedColumns = prevRow == null
+    ? []
+    : COLUMNS_TO_MONITOR_FOR_CHANGE_KEYS
+      .filter(columnKey => prevRow[columnKey] !== nextRow[columnKey])
+      .map(columnKey => COLUMNS_TO_MONITOR_FOR_CHANGE[columnKey]);
+
+  return changedColumns.length === 0
+    ? `update`
+    : `update ${changedColumns.join(', ')}`;
 }

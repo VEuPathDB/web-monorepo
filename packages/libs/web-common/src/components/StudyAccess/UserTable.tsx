@@ -29,10 +29,12 @@ export interface UserTableSortObject<R, K extends UserTableColumnKey<R>> extends
   direction: 'asc' | 'desc';
 };
 
+type OrderablePrimimitive = boolean | number | string;
+
 export interface UserTableColumn<R, K extends UserTableColumnKey<R>> extends MesaColumn<K> {
   renderCell?: (props: { row: R, value: R[K] }) => React.ReactNode;
-  makeSearchableString?: (value: R[K]) => string;
-  makeOrder?: (row: R) => boolean | number | string;
+  makeSearchableString?: (value: R[K], row: R) => string;
+  makeOrder?: (row: R) => OrderablePrimimitive | OrderablePrimimitive[];
 }
 
 export type UserTableColumns<R, C extends UserTableColumnKey<R>> = {
@@ -137,7 +139,7 @@ function useMesaFilteredRows<R, C extends UserTableColumnKey<R>>(
 
         return makeSearchableString == null
           ? String(row[columnKey])
-          : makeSearchableString(row[columnKey]);
+          : makeSearchableString(row[columnKey], row);
       });
 
       const searchableRowString = searchableColumnStrings.join('\0');
