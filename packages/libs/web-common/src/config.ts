@@ -25,5 +25,6 @@ export const {
   communitySite = '',
   siteSearchServiceUrl = '',
   studyAccessServiceUrl = '',
-  retainContainerContent = false
+  retainContainerContent = false,
+  useEda = false,
 } = window.__SITE_CONFIG__;
