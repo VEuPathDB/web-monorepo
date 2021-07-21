@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { useEda } from 'ebrc-client/config';
 import { IconAlt as Icon, Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
@@ -51,11 +52,15 @@ class StudyMenuItem extends React.Component {
         </div>
         <div className="row StudyMenuItem-Links">
         { (!isPrereleaseStudy(study.access, study.id, user, permissions))
-          ? searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
+          ? useEda ? (
+            <Link name="Explore the data" to={`/eda/${study.id}`}>
+              <i className="fa fa-area-chart"/>
+            </Link>
+          ) : searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
           : (
-             <div className="prerelease">
-               <small>(coming soon)</small>
-             </div>
+            <div className="prerelease">
+              <small>(coming soon)</small>
+            </div>
             )
         }
         </div>
