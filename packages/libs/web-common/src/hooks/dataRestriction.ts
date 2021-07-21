@@ -1,6 +1,13 @@
-import { useEffect } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect
+} from 'react';
 import { useDispatch } from 'react-redux';
 
+import {
+  WdkDepdendenciesContext
+} from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import {
   Unpack,
   constant,
@@ -17,8 +24,30 @@ const STUDY_ACTION_CLASS_NAME = 'study-action';
 const STUDY_ID_DATA_ATTRIBUTE = 'data-study-id';
 const ARGS_DATA_ATTRIBUTE = 'data-args';
 
-export function useAttemptActionClickHandler() {
+export function useAttemptActionCallback() {
   const dispatch = useDispatch();
+  const wdkDependencies = useContext(WdkDepdendenciesContext);
+
+  if (wdkDependencies == null) {
+    throw new Error('In order to "useAttemptActionCallback", WdkDependenciesContext must be provided.');
+  }
+
+  return useCallback(async (
+    action: string,
+    details: {
+      studyId: string,
+      onAllow?: () => void,
+      onDeny?: () => void
+    }
+  ) => {
+    const attemptedAction = await attemptAction(action, details)(wdkDependencies);
+
+    dispatch(attemptedAction);
+  }, [ dispatch, wdkDependencies ]);
+}
+
+export function useAttemptActionClickHandler() {
+  const attemptAction = useAttemptActionCallback();
 
   useEffect(() => {
     function handleActionButtonClick(event: MouseEvent) {
@@ -48,14 +77,12 @@ export function useAttemptActionClickHandler() {
 
         const parsedActionArgs = decode(actionArgs, actionArgsStr);
 
-        dispatch(
-          attemptAction(
-            parsedActionArgs.type,
-            {
-              studyId,
-              ...makeDataRestrictionCallbacks(parsedActionArgs, event)
-            }
-          )
+        attemptAction(
+          parsedActionArgs.type,
+          {
+            studyId,
+            ...makeDataRestrictionCallbacks(parsedActionArgs, event)
+          }
         );
       }
     }
@@ -65,7 +92,7 @@ export function useAttemptActionClickHandler() {
     return () => {
       document.removeEventListener('click', handleActionButtonClick);
     };
-  }, [ dispatch ]);
+  }, [ attemptAction ]);
 }
 
 const actionArgs = oneOf(
