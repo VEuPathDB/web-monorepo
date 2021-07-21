@@ -376,6 +376,77 @@ export const TwoByTwoResponse = intersection([
   }),
 ]);
 
+// boxplot
+export interface BoxplotRequestParams {
+  studyId: string;
+  filters: Filter[];
+  config: {
+    outputEntityId: string;
+    // add bestFitLineWithRaw
+    points: 'outliers' | 'all';
+    // boolean or string?
+    // mean: boolean;
+    mean: 'true' | 'false';
+    // not quite sure of overlayVariable and facetVariable yet
+    // facetVariable?: ZeroToTwoVariables;
+    xAxisVariable: VariableDescriptor;
+    yAxisVariable: VariableDescriptor;
+    overlayVariable?: VariableDescriptor;
+  };
+}
+
+// unlike API doc, data (response) shows seriesX, seriesY, smoothedMeanX, smoothedMeanY, smoothedMeanSE
+const BoxplotResponseData = array(
+  intersection([
+    type({
+      lowerfence: array(number),
+      upperfence: array(number),
+      q1: array(number),
+      q3: array(number),
+      median: array(number),
+    }),
+    partial({
+      // outliers type
+      outliers: union([number, array(number), array(array(number))]),
+      rawData: union([number, array(number), array(array(number))]),
+      // mean: array(number),
+      mean: union([number, array(number)]),
+      seriesX: union([array(string), array(number)]),
+      seriesY: array(number),
+      // need to make sure if below is correct (untested)
+      overlayVariableDetails: type({
+        entityId: string,
+        variableId: string,
+        value: string,
+      }),
+      facetVariableDetails: union([
+        tuple([StringVariableValue]),
+        tuple([StringVariableValue, StringVariableValue]),
+      ]),
+    }),
+  ])
+);
+
+export type BoxplotResponse = TypeOf<typeof BoxplotResponse>;
+export const BoxplotResponse = type({
+  boxplot: type({
+    data: BoxplotResponseData,
+    config: type({
+      completeCases: number,
+      xVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+      yVariableDetails: type({
+        variableId: string,
+        entityId: string,
+      }),
+    }),
+  }),
+  sampleSizeTable: sampleSizeTableArray,
+  completeCasesTable: completeCasesTableArray,
+});
+
 export class DataClient extends FetchClient {
   getApps(): Promise<TypeOf<typeof AppsResponse>> {
     return this.fetch(
@@ -476,6 +547,19 @@ export class DataClient extends FetchClient {
       'twobytwo',
       params,
       TwoByTwoResponse
+    );
+  }
+
+  // boxplot
+  getBoxplot(
+    computationName: string,
+    params: BoxplotRequestParams
+  ): Promise<BoxplotResponse> {
+    return this.getVisualizationData(
+      computationName,
+      'boxplot',
+      params,
+      BoxplotResponse
     );
   }
 }
