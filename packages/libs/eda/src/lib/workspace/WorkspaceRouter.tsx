@@ -3,6 +3,7 @@ import {
   RouteComponentProps,
   Switch,
   useRouteMatch,
+  Redirect,
 } from 'react-router';
 import { EDAAnalysisList } from './EDAAnalysisList';
 import { StudyList } from './StudyList';
@@ -24,6 +25,15 @@ export function WorkspaceRouter({
         path={path}
         exact
         render={() => <StudyList subsettingServiceUrl={subsettingServiceUrl} />}
+      />
+      {/* replacing/redirecting double slashes url with single slash one */}
+      <Route
+        exact
+        strict
+        path="(.*//+.*)"
+        render={({ location }) => (
+          <Redirect to={location.pathname.replace(/\/\/+/g, '/')} />
+        )}
       />
       <Route
         path={`${path}/:studyId`}
