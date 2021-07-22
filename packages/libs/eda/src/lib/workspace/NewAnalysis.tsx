@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { AnalysisClient } from '../core';
 
 interface Props {
@@ -10,31 +11,27 @@ interface Props {
 export function NewAnalysis(props: Props) {
   const { analysisClient: analysisStore, studyId } = props;
   const history = useHistory();
-  useEffect(() => {
-    let cancelled = false;
-    analysisStore
-      .createAnalysis({
-        name: 'Unnamed Analysis',
-        studyId,
-        filters: [],
-        starredVariables: [],
-        derivedVariables: [],
-        visualizations: [],
-        computations: [],
-        variableUISettings: {},
-      })
-      .then(({ id }) => {
-        if (!cancelled) {
-          const newLocation = {
-            ...history.location,
-            pathname: `./${id}`,
-          };
-          history.push(newLocation);
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [analysisStore, history, studyId]);
+  useEffect(
+    () =>
+      Task.fromPromise(
+        analysisStore.createAnalysis({
+          name: 'Unnamed Analysis',
+          studyId,
+          filters: [],
+          starredVariables: [],
+          derivedVariables: [],
+          visualizations: [],
+          computations: [],
+          variableUISettings: {},
+        })
+      ).run(({ id }) => {
+        const newLocation = {
+          ...history.location,
+          pathname: `./${id}`,
+        };
+        history.push(newLocation);
+      }),
+    [analysisStore, history, studyId]
+  );
   return <div style={{ fontSize: '3em' }}>Creating new analysis...</div>;
 }
