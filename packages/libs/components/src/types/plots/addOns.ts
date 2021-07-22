@@ -53,6 +53,12 @@ export type OpacityAddon = {
 };
 export const OpacityDefault: number = 0.5;
 
+export type DependentAxisLogScaleAddon = {
+  /** Use a log scale for dependent axis. Default is false */
+  dependentAxisLogScale?: boolean;
+};
+export const DependentAxisLogScaleDefault: boolean = false;
+
 /** BarLayout - options and default differ depending on usage */
 export type BarLayoutAddon<O extends BarLayoutOptions> = {
   /** How bars are displayed when there are multiple series. */

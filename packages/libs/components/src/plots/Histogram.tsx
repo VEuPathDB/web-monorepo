@@ -10,6 +10,8 @@ import {
   OrientationAddon,
   OrientationDefault,
   BarLayoutAddon,
+  DependentAxisLogScaleAddon,
+  DependentAxisLogScaleDefault,
 } from '../types/plots';
 import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
 
@@ -34,7 +36,8 @@ export interface HistogramProps
   extends PlotProps<HistogramData>,
     OrientationAddon,
     OpacityAddon,
-    BarLayoutAddon<'overlay' | 'stack'> {
+    BarLayoutAddon<'overlay' | 'stack'>,
+    DependentAxisLogScaleAddon {
   /** Label for independent axis. Defaults to `Bins`. */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
@@ -42,8 +45,6 @@ export interface HistogramProps
   /** Range for the dependent axis (usually y-axis) */
   // can only be numeric
   dependentAxisRange?: NumberRange;
-  /** Use a log scale for dependent axis. Default is false */
-  dependentAxisLogScale?: boolean;
   /** Show value for each bar */
   showValues?: boolean;
   /** A range to highlight by means of opacity */
@@ -68,7 +69,7 @@ export default function Histogram({
   opacity = OpacityDefault,
   barLayout = 'overlay',
   dependentAxisRange,
-  dependentAxisLogScale = false,
+  dependentAxisLogScale = DependentAxisLogScaleDefault,
   showValues,
   selectedRange,
   onSelectedRangeChange = () => {},
@@ -340,6 +341,7 @@ export default function Histogram({
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     type: dependentAxisLogScale ? 'log' : 'linear',
+    tickformat: ',.1r', // comma-separated thousands, rounded to 1 significant digit
     automargin: true,
     title: {
       text: dependentAxisLabel,
