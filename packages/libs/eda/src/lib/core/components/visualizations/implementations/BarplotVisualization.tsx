@@ -1,6 +1,8 @@
 // load Barplot component
 import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
-import { ErrorManagement } from '@veupathdb/components/lib/types/general';
+import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
+import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -48,16 +50,28 @@ function FullscreenComponent(props: VisualizationProps) {
 }
 
 function createDefaultConfig(): BarplotConfig {
-  return {};
+  return {
+    dependentAxisLogScale: false,
+    valueSpec: 'count',
+  };
 }
+
+type ValueSpec = t.TypeOf<typeof ValueSpec>;
+const ValueSpec = t.keyof({ count: null, proportion: null });
 
 type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const BarplotConfig = t.partial({
-  xAxisVariable: VariableDescriptor,
-  overlayVariable: VariableDescriptor,
-  facetVariable: VariableDescriptor,
-});
+const BarplotConfig = t.intersection([
+  t.type({
+    dependentAxisLogScale: t.boolean,
+    valueSpec: ValueSpec,
+  }),
+  t.partial({
+    xAxisVariable: VariableDescriptor,
+    overlayVariable: VariableDescriptor,
+    facetVariable: VariableDescriptor,
+  }),
+]);
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
@@ -124,6 +138,24 @@ function BarplotViz(props: Props) {
     [updateVizConfig]
   );
 
+  const onDependentAxisLogScaleChange = useCallback(
+    (newState?: boolean) => {
+      updateVizConfig({
+        dependentAxisLogScale: newState,
+      });
+    },
+    [updateVizConfig]
+  );
+
+  const onValueSpecChange = useCallback(
+    (newValueSpec: ValueSpec) => {
+      updateVizConfig({
+        valueSpec: newValueSpec,
+      });
+    },
+    [updateVizConfig]
+  );
+
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   const data = usePromise(
@@ -135,12 +167,7 @@ function BarplotViz(props: Props) {
         return undefined;
 
       // add visualization.type here
-      const params = getRequestParams(
-        studyId,
-        filters ?? [],
-        vizConfig.xAxisVariable!,
-        vizConfig.overlayVariable
-      );
+      const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
       // barplot
       const response = dataClient.getBarplot(
@@ -154,7 +181,10 @@ function BarplotViz(props: Props) {
       studyId,
       filters,
       dataClient,
-      vizConfig,
+      vizConfig.xAxisVariable,
+      vizConfig.overlayVariable,
+      vizConfig.facetVariable,
+      vizConfig.valueSpec,
       findEntityAndVariable,
       computation.type,
     ])
@@ -250,6 +280,10 @@ function BarplotViz(props: Props) {
               }
               interactive
               showSpinner={data.pending}
+              valueSpec={vizConfig.valueSpec}
+              onValueSpecChange={onValueSpecChange}
+              dependentAxisLogScale={vizConfig.dependentAxisLogScale}
+              onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
             />
             <VariableCoverageTable
               completeCases={
@@ -301,6 +335,7 @@ function BarplotViz(props: Props) {
             marginTop: 20,
           }}
           showSpinner={data.pending}
+          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
         />
       )}
     </div>
@@ -308,40 +343,52 @@ function BarplotViz(props: Props) {
 }
 
 type BarplotWithControlsProps = BarplotProps & {
-  vizType?: string;
+  dependentAxisLogScale: boolean;
+  onDependentAxisLogScaleChange: (newState: boolean) => void;
+  valueSpec: ValueSpec;
+  onValueSpecChange: (newValueSpec: ValueSpec) => void;
 };
 
 function BarplotWithControls({
   data,
-  vizType,
-  ...BarplotControlsProps
-}: // eslint-disable-next-line @typescript-eslint/no-unused-vars
-BarplotWithControlsProps) {
-  // TODO Use UIState
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (_: Error) => {},
-      removeError: (_: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
-
+  dependentAxisLogScale,
+  onDependentAxisLogScaleChange,
+  valueSpec,
+  onValueSpecChange,
+  ...barPlotProps
+}: BarplotWithControlsProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Barplot
-        {...BarplotControlsProps}
+        {...barPlotProps}
+        dependentAxisLogScale={dependentAxisLogScale}
         data={data}
         // add controls
         // displayLegend={true}
         displayLibraryControls={false}
       />
-      {/* potential BarplotControls: commented out for now  */}
-      {/* <BarplotControls
-          label="Bar Plot Controls"
-          errorManagement={errorManagement}
-        /> */}
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <LabelledGroup label="Y-axis">
+          <Switch
+            label="Log Scale:"
+            state={dependentAxisLogScale}
+            onStateChange={onDependentAxisLogScaleChange}
+          />
+          <RadioButtonGroup
+            selectedOption={
+              valueSpec === 'proportion' ? 'proportional' : 'count'
+            }
+            options={['count', 'proportional']}
+            onOptionSelected={(newOption) => {
+              if (newOption === 'proportional') {
+                onValueSpecChange('proportion');
+              } else {
+                onValueSpecChange('count');
+              }
+            }}
+          />
+        </LabelledGroup>
+      </div>
     </div>
   );
 }
@@ -367,29 +414,21 @@ export function barplotResponseToData(
   };
 }
 
-// add an extended type
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type getRequestParamsProps = BarplotRequestParams & { vizType?: string };
-
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  xAxisVariable: VariableDescriptor,
-  overlayVariable?: VariableDescriptor
+  vizConfig: BarplotConfig
 ): BarplotRequestParams {
   return {
     studyId,
     filters,
     config: {
       // is outputEntityId correct?
-      outputEntityId: xAxisVariable.entityId,
-      xAxisVariable: xAxisVariable,
-      overlayVariable: overlayVariable,
+      outputEntityId: vizConfig.xAxisVariable!.entityId,
+      xAxisVariable: vizConfig.xAxisVariable!,
+      overlayVariable: vizConfig.overlayVariable,
       // valueSpec: manually inputted for now
-      valueSpec: 'count',
-      // this works too
-      // valueSpec: 'proportion',
-      // valueSpec: 'identity',
+      valueSpec: vizConfig.valueSpec,
     },
   } as BarplotRequestParams;
 }

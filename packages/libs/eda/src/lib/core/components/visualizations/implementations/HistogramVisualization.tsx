@@ -195,12 +195,15 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const { xAxisVariable, outputEntity } = useMemo(() => {
+  const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
     const { entity, variable } =
       findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
+    const valueType: 'number' | 'date' =
+      variable?.type === 'date' ? 'date' : 'number';
     return {
       outputEntity: entity,
       xAxisVariable: variable,
+      valueType,
     };
   }, [entities, vizConfig.xAxisVariable]);
 
@@ -223,26 +226,22 @@ function HistogramViz(props: Props) {
       const params = getRequestParams(
         studyId,
         filters ?? [],
-        vizConfig.xAxisVariable,
-        xAxisVariable.type,
-        vizConfig.valueSpec,
-        vizConfig.overlayVariable,
-        vizConfig.binWidth,
-        vizConfig.binWidthTimeUnit
+        valueType,
+        vizConfig
       );
       const response = dataClient.getHistogram(computation.type, params);
       return histogramResponseToData(await response, xAxisVariable.type);
     }, [
       vizConfig.xAxisVariable,
-      vizConfig.overlayVariable,
       vizConfig.binWidth,
       vizConfig.binWidthTimeUnit,
-      xAxisVariable,
+      vizConfig.overlayVariable,
+      vizConfig.facetVariable,
+      vizConfig.valueSpec,
       studyId,
       filters,
       dataClient,
       computation.type,
-      vizConfig.valueSpec,
     ])
   );
 
@@ -392,19 +391,9 @@ function HistogramPlotWithControls({
   onValueSpecChange,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
-  // TODO Use UIState
   const barLayout = 'stack';
   const displayLibraryControls = false;
   const opacity = 100;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (_: Error) => {},
-      removeError: (_: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -545,19 +534,23 @@ export function histogramResponseToData(
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  variable: VariableDescriptor,
-  variableType: 'number' | 'date',
-  valueSpec: ValueSpec,
-  overlayVariable?: VariableDescriptor,
-  binWidth?: number,
-  binWidthTimeUnit?: string
+  valueType: 'number' | 'date',
+  vizConfig: HistogramConfig
 ): HistogramRequestParams {
+  const {
+    binWidth,
+    binWidthTimeUnit,
+    valueSpec,
+    overlayVariable,
+    xAxisVariable,
+  } = vizConfig;
+
   const binSpec = binWidth
     ? {
         binSpec: {
           type: 'binWidth',
           value: binWidth,
-          ...(variableType === 'date' ? { units: binWidthTimeUnit } : {}),
+          ...(valueType === 'date' ? { units: binWidthTimeUnit } : {}),
         },
       }
     : { binSpec: { type: 'binWidth' } };
@@ -566,10 +559,10 @@ function getRequestParams(
     studyId,
     filters,
     config: {
-      outputEntityId: variable.entityId,
-      valueSpec,
-      xAxisVariable: variable,
+      outputEntityId: xAxisVariable!.entityId,
+      xAxisVariable,
       overlayVariable,
+      valueSpec,
       ...binSpec,
     },
   } as HistogramRequestParams;
