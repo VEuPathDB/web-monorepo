@@ -4,6 +4,8 @@ import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
 import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
 import { LayoutLegendTitle } from '../types/plotly-omissions';
+// add d3.select
+import { select } from 'd3';
 
 export interface PlotProps<T> {
   /** plot data - following web-components' API, not Plotly's */
@@ -32,6 +34,9 @@ export interface PlotProps<T> {
 
 const Plot = lazy(() => import('react-plotly.js'));
 
+// store legend list for tooltip
+let storeLegendList: NonNullable<string[]> = [];
+
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
  *
@@ -54,8 +59,27 @@ export default function PlotlyPlot<T>(
     legendTitle,
     spacingOptions,
     showSpinner,
+    // expose data for applying legend ellipsis
+    data,
     ...plotlyProps
   } = props;
+
+  // store legend list for tooltip
+  if (data) {
+    storeLegendList = data.map((data) => {
+      return data.name ?? '';
+    });
+  }
+
+  // set the number of characters to be displayed
+  const maxLegendText = 20;
+  // change data.name with ellipsis
+  for (let i = 0; i < data.length; i++) {
+    data[i].name =
+      (data[i].name || '').length > maxLegendText
+        ? (data[i].name || '').substring(0, maxLegendText) + '...'
+        : data[i].name;
+  }
 
   // config is derived purely from PlotProps props
   const finalConfig = useMemo(
@@ -120,12 +144,27 @@ export default function PlotlyPlot<T>(
       <div style={{ ...containerStyles, position: 'relative' }}>
         <Plot
           {...plotlyProps}
+          // need to set data props for modigying its name prop
+          data={data}
           layout={finalLayout}
           style={{ width: '100%', height: '100%' }}
           config={finalConfig}
+          // use onAfterPlot event handler for legend tooltip
+          onAfterPlot={legendTooltip}
         />
         {showSpinner && <Spinner />}
       </div>
     </Suspense>
   );
+}
+
+// define d3 variable with select
+const d3 = { select };
+// add legend tooltip
+function legendTooltip() {
+  const legendLayer = d3.select('g.legend');
+  legendLayer
+    .selectAll('g.traces')
+    .append('svg:title')
+    .text((d, i) => storeLegendList[i]);
 }
