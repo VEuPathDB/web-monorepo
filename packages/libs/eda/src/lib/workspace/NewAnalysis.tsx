@@ -11,8 +11,9 @@ export function NewAnalysis(props: Props) {
   const { analysisClient: analysisStore, studyId } = props;
   const history = useHistory();
   useEffect(() => {
-    async function run() {
-      const { id } = await analysisStore.createAnalysis({
+    let cancelled = false;
+    analysisStore
+      .createAnalysis({
         name: 'Unnamed Analysis',
         studyId,
         filters: [],
@@ -21,14 +22,19 @@ export function NewAnalysis(props: Props) {
         visualizations: [],
         computations: [],
         variableUISettings: {},
+      })
+      .then(({ id }) => {
+        if (!cancelled) {
+          const newLocation = {
+            ...history.location,
+            pathname: `./${id}`,
+          };
+          history.push(newLocation);
+        }
       });
-      const newLocation = {
-        ...history.location,
-        pathname: `./${id}`,
-      };
-      history.push(newLocation);
-    }
-    run();
+    return () => {
+      cancelled = true;
+    };
   }, [analysisStore, history, studyId]);
   return <div style={{ fontSize: '3em' }}>Creating new analysis...</div>;
 }
