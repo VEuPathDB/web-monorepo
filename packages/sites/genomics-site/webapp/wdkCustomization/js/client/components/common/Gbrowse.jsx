@@ -225,7 +225,7 @@ export function GbrowseContext(props) {
       apolloUrlFull = record.attributes.geneApolloFullUrl;
       apolloHelp = record.attributes.apolloHelp;
       isInApollo = record.attributes.apolloIdCheck;
-      if (isInApollo !== ""){
+      if (isInApollo !== "" && isInApollo !== null){
       return (
         <div>
         <p><img src={newFeatureImage}/>This gene is available in <b>Apollo</b> for community annotation. To find out more about Apollo, please visit <a href={apolloHelp}>this help page.</a></p>
