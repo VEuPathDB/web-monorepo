@@ -616,10 +616,9 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 }
 
 /* Hide action links on Dataset page for now */
-/*  .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
-  visibility: hidden;
+.wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
+  display: none;
 }
-*/
 
 /* wdk Record.css  overrides */
 
