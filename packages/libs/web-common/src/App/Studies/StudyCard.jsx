@@ -68,7 +68,7 @@ class StudyCard extends React.Component {
           { (!isPrereleaseStudy(card.access, card.id, user, permissions) && searches.length)
             ? useEda ? (
                 <div className="box">
-                  <Link to={`/eda/${card.id}`}>
+                  <Link to={`/eda/${card.id}/new`}>
                     <i className="fa fa-area-chart"/>
                   </Link>
                 </div>

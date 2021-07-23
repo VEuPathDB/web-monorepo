@@ -53,7 +53,7 @@ class StudyMenuItem extends React.Component {
         <div className="row StudyMenuItem-Links">
         { (!isPrereleaseStudy(study.access, study.id, user, permissions))
           ? useEda ? (
-            <Link name="Explore the data" to={`/eda/${study.id}`}>
+            <Link name="Explore the data" to={`/eda/${study.id}/new`}>
               <i className="fa fa-area-chart"/>
             </Link>
           ) : searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
