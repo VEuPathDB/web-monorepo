@@ -8,13 +8,14 @@ import {
 import { testVisualization } from '../visualizations/implementations/TestVisualization';
 import { histogramVisualization } from '../visualizations/implementations/HistogramVisualization';
 import {
-  // contTableVisualization,
+  contTableVisualization,
   twoByTwoVisualization,
 } from '../visualizations/implementations/MosaicVisualization';
 import { VisualizationsContainer } from '../visualizations/VisualizationsContainer';
 import { VisualizationType } from '../visualizations/VisualizationTypes';
 import { scatterplotVisualization } from '../visualizations/implementations/ScatterplotVisualization';
 import { barplotVisualization } from '../visualizations/implementations/BarplotVisualization';
+import { boxplotVisualization } from '../visualizations/implementations/BoxplotVisualization';
 
 interface Props {
   analysisState: AnalysisState;
@@ -28,12 +29,13 @@ const visualizationTypes: Record<string, VisualizationType> = {
   testVisualization,
   histogram: histogramVisualization,
   twobytwo: twoByTwoVisualization,
-  // conttable: contTableVisualization,
+  conttable: contTableVisualization,
   scatterplot: scatterplotVisualization,
   lineplot: scatterplotVisualization,
   // placeholder for densityplot
   // densityplot: scatterplotVisualization,
   barplot: barplotVisualization,
+  boxplot: boxplotVisualization,
 };
 
 export function PassThroughComputation(props: Props) {

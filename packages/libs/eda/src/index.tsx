@@ -1,6 +1,6 @@
 import './globals';
 import { endpoint, rootElement, rootUrl } from './constants';
-import React from 'react';
+import React, { useEffect } from 'react';
 import reportWebVitals from './reportWebVitals';
 
 import { initialize } from '@veupathdb/web-common/lib/bootstrap';
@@ -8,6 +8,16 @@ import { Link } from '@veupathdb/wdk-client/lib/Components';
 import { RouteEntry } from '@veupathdb/wdk-client/lib/Core/RouteEntry';
 import '@veupathdb/wdk-client/lib/Core/Style/index.scss';
 import '@veupathdb/web-common/lib/styles/client.scss';
+
+import { Props } from '@veupathdb/wdk-client/lib/Components/Layout/Page';
+
+import { DataRestrictionDaemon } from '@veupathdb/web-common/lib/App/DataRestriction';
+import {
+  disableRestriction,
+  enableRestriction,
+  reduxMiddleware,
+} from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
+import { useAttemptActionClickHandler } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 
 import Header from './Header';
 import { MapVeuContainer } from './lib/mapveu';
@@ -54,8 +64,29 @@ initialize({
   ],
   componentWrappers: {
     SiteHeader: () => Header,
+    Page: (DefaultComponent: React.ComponentType<Props>) => {
+      return function ClinEpiPage(props: Props) {
+        useEffect(() => {
+          if (process.env.REACT_APP_DISABLE_DATA_RESTRICTIONS === 'true') {
+            disableRestriction();
+          } else {
+            enableRestriction();
+          }
+        }, []);
+
+        useAttemptActionClickHandler();
+
+        return (
+          <>
+            <DataRestrictionDaemon />
+            <DefaultComponent {...props} />
+          </>
+        );
+      };
+    },
   },
   endpoint,
+  additionalMiddleware: [reduxMiddleware],
 } as any);
 
 // If you want to start measuring performance in your app, pass a function

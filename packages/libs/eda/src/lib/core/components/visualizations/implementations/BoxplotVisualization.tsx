@@ -1,17 +1,19 @@
-// load Barplot component
-import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
-import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
-import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
-import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+// load Boxplot component
+import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
+import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
-import { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-// need to set for Barplot
-import { DataClient, BarplotRequestParams } from '../../../api/data-api';
+// need to set for Boxplot
+import {
+  DataClient,
+  BoxplotRequestParams,
+  CompleteCasesTable,
+} from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -25,10 +27,17 @@ import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+import box from './selectorIcons/box.svg';
+import { BoxplotData } from '@veupathdb/components/lib/types/plots';
 
-import bar from './selectorIcons/bar.svg';
+interface PromiseBoxplotData {
+  series: BoxplotData;
+  // add more props with variable coverage table
+  completeCases: CompleteCasesTable;
+  outputSize: number;
+}
 
-export const barplotVisualization: VisualizationType = {
+export const boxplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
   selectorComponent: SelectorComponent,
   fullscreenComponent: FullscreenComponent,
@@ -36,48 +45,37 @@ export const barplotVisualization: VisualizationType = {
 };
 
 function GridComponent(props: VisualizationProps) {
-  return <BarplotViz {...props} fullscreen={false} />;
+  return <BoxplotViz {...props} fullscreen={false} />;
 }
 
 function SelectorComponent() {
   return (
-    <img alt="Bar plot" style={{ height: '100%', width: '100%' }} src={bar} />
+    <img alt="Box plot" style={{ height: '100%', width: '100%' }} src={box} />
   );
 }
 
 function FullscreenComponent(props: VisualizationProps) {
-  return <BarplotViz {...props} fullscreen />;
+  return <BoxplotViz {...props} fullscreen />;
 }
 
-function createDefaultConfig(): BarplotConfig {
-  return {
-    dependentAxisLogScale: false,
-    valueSpec: 'count',
-  };
+function createDefaultConfig(): BoxplotConfig {
+  return {};
 }
 
-type ValueSpec = t.TypeOf<typeof ValueSpec>;
-const ValueSpec = t.keyof({ count: null, proportion: null });
-
-type BarplotConfig = t.TypeOf<typeof BarplotConfig>;
+type BoxplotConfig = t.TypeOf<typeof BoxplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const BarplotConfig = t.intersection([
-  t.type({
-    dependentAxisLogScale: t.boolean,
-    valueSpec: ValueSpec,
-  }),
-  t.partial({
-    xAxisVariable: VariableDescriptor,
-    overlayVariable: VariableDescriptor,
-    facetVariable: VariableDescriptor,
-  }),
-]);
+const BoxplotConfig = t.partial({
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor,
+  overlayVariable: VariableDescriptor,
+  facetVariable: VariableDescriptor,
+});
 
 type Props = VisualizationProps & {
   fullscreen: boolean;
 };
 
-function BarplotViz(props: Props) {
+function BoxplotViz(props: Props) {
   const {
     computation,
     visualization,
@@ -100,13 +98,13 @@ function BarplotViz(props: Props) {
 
   const vizConfig = useMemo(() => {
     return pipe(
-      BarplotConfig.decode(visualization.configuration),
-      getOrElse((): t.TypeOf<typeof BarplotConfig> => createDefaultConfig())
+      BoxplotConfig.decode(visualization.configuration),
+      getOrElse((): t.TypeOf<typeof BoxplotConfig> => createDefaultConfig())
     );
   }, [visualization.configuration]);
 
   const updateVizConfig = useCallback(
-    (newConfig: Partial<BarplotConfig>) => {
+    (newConfig: Partial<BoxplotConfig>) => {
       if (updateVisualization) {
         updateVisualization({
           ...visualization,
@@ -128,29 +126,17 @@ function BarplotViz(props: Props) {
         { entityId: string; variableId: string } | undefined
       >
     ) => {
-      const { xAxisVariable, overlayVariable, facetVariable } = values;
-      updateVizConfig({
+      const {
         xAxisVariable,
+        yAxisVariable,
         overlayVariable,
         facetVariable,
-      });
-    },
-    [updateVizConfig]
-  );
-
-  const onDependentAxisLogScaleChange = useCallback(
-    (newState?: boolean) => {
+      } = values;
       updateVizConfig({
-        dependentAxisLogScale: newState,
-      });
-    },
-    [updateVizConfig]
-  );
-
-  const onValueSpecChange = useCallback(
-    (newValueSpec: ValueSpec) => {
-      updateVizConfig({
-        valueSpec: newValueSpec,
+        xAxisVariable,
+        yAxisVariable,
+        overlayVariable,
+        facetVariable,
       });
     },
     [updateVizConfig]
@@ -159,61 +145,78 @@ function BarplotViz(props: Props) {
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   const data = usePromise(
-    useCallback(async (): Promise<any> => {
+    useCallback(async (): Promise<PromiseBoxplotData | undefined> => {
       const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
 
-      // check variable inputs: this is necessary to prevent from data post
+      // check variable inputs and add densityplot
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
+      else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
+        return undefined;
 
-      // add visualization.type here
-      const params = getRequestParams(studyId, filters ?? [], vizConfig);
+      if (xAxisVariable === yAxisVariable)
+        throw new Error(
+          'The X and Y variables should not be the same. Please choose different variables for X and Y.'
+        );
 
-      // barplot
-      const response = dataClient.getBarplot(
+      // add visualization.type here. valueSpec too?
+      const params = getRequestParams(
+        studyId,
+        filters ?? [],
+        vizConfig.xAxisVariable,
+        vizConfig.yAxisVariable,
+        vizConfig.overlayVariable
+      );
+
+      // boxplot
+      const response = dataClient.getBoxplot(
         computation.type,
-        params as BarplotRequestParams
+        params as BoxplotRequestParams
       );
 
       // send visualization.type as well
-      return barplotResponseToData(await response);
+      return boxplotResponseToData(await response);
     }, [
       studyId,
       filters,
       dataClient,
-      vizConfig.xAxisVariable,
-      vizConfig.overlayVariable,
-      vizConfig.facetVariable,
-      vizConfig.valueSpec,
+      vizConfig,
       findEntityAndVariable,
       computation.type,
+      visualization.type,
     ])
   );
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {/*  change title at viz page */}
       {fullscreen && (
         <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
           <InputVariables
             inputs={[
               {
                 name: 'xAxisVariable',
-                label: 'Main',
+                label: 'X-axis',
+              },
+              {
+                name: 'yAxisVariable',
+                label: 'Y-axis',
               },
               {
                 name: 'overlayVariable',
-                label: 'Overlay (optional)',
+                label: 'Overlay (Optional)',
               },
               {
                 name: 'facetVariable',
-                label: 'Facet (optional)',
+                label: 'Facet (Optional)',
               },
             ]}
             entities={entities}
             values={{
               xAxisVariable: vizConfig.xAxisVariable,
+              yAxisVariable: vizConfig.yAxisVariable,
               overlayVariable: vizConfig.overlayVariable,
-              facetVariable: vizConfig.facetVariable,
             }}
             onChange={handleInputVariableChange}
             constraints={dataElementConstraints}
@@ -256,14 +259,15 @@ function BarplotViz(props: Props) {
               alignItems: 'flex-start',
             }}
           >
-            <BarplotWithControls
-              data={data.value && !data.pending ? data.value : { series: [] }}
+            <BoxplotWithControls
+              // data.value
+              data={data.value && !data.pending ? data.value.series : []}
               containerStyles={{
                 width: '750px',
                 height: '450px',
               }}
               orientation={'vertical'}
-              barLayout={'group'}
+              // add condition to show legend when overlayVariable is used
               displayLegend={
                 data.value &&
                 (data.value.series.length > 1 ||
@@ -271,21 +275,23 @@ function BarplotViz(props: Props) {
               }
               independentAxisLabel={
                 findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                  .displayName ?? 'Main'
+                  .displayName ?? 'X-Axis'
               }
               dependentAxisLabel={
-                vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
+                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                  .displayName ?? 'Y-Axis'
               }
+              // show/hide independent/dependent axis tick label
+              showIndependentAxisTickLabel={true}
+              showDependentAxisTickLabel={true}
+              showMean={true}
+              interactive={true}
+              showSpinner={data.pending}
+              showRawData={true}
               legendTitle={
                 findEntityAndVariable(vizConfig.overlayVariable)?.variable
                   .displayName
               }
-              interactive
-              showSpinner={data.pending}
-              valueSpec={vizConfig.valueSpec}
-              onValueSpecChange={onValueSpecChange}
-              dependentAxisLogScale={vizConfig.dependentAxisLogScale}
-              onDependentAxisLogScaleChange={onDependentAxisLogScaleChange}
             />
             <VariableCoverageTable
               completeCases={
@@ -295,11 +301,18 @@ function BarplotViz(props: Props) {
               outputEntityId={vizConfig.xAxisVariable?.entityId}
               variableSpecs={[
                 {
-                  role: 'Main',
+                  role: 'X-axis',
                   required: true,
                   display: findEntityAndVariable(vizConfig.xAxisVariable)
                     ?.variable.displayName,
                   variable: vizConfig.xAxisVariable,
+                },
+                {
+                  role: 'Y-axis',
+                  required: true,
+                  display: findEntityAndVariable(vizConfig.yAxisVariable)
+                    ?.variable.displayName,
+                  variable: vizConfig.yAxisVariable,
                 },
                 {
                   role: 'Overlay',
@@ -313,125 +326,123 @@ function BarplotViz(props: Props) {
         </>
       ) : (
         // thumbnail/grid view
-        <Barplot
-          data={data.value && !data.pending ? data.value : { series: [] }}
+        <Boxplot
+          data={data.value && !data.pending ? data.value.series : []}
           containerStyles={{
             width: '230px',
             height: '150px',
           }}
-          // check this option (possibly plot control?)
           orientation={'vertical'}
-          barLayout={'group'}
           // show/hide independent/dependent axis tick label
           showIndependentAxisTickLabel={false}
           showDependentAxisTickLabel={false}
-          // new props for better displaying grid view
+          showMean={true}
+          interactive={false}
           displayLegend={false}
           displayLibraryControls={false}
-          interactive={false}
-          // set margin for better display at thumbnail/grid view
+          // margin is replaced with spacingOptions
           spacingOptions={{
-            marginLeft: 30,
+            marginTop: 20,
             marginRight: 20,
             marginBottom: 0,
-            marginTop: 20,
+            marginLeft: 30,
           }}
           showSpinner={data.pending}
-          dependentAxisLogScale={vizConfig.dependentAxisLogScale}
         />
       )}
     </div>
   );
 }
 
-type BarplotWithControlsProps = BarplotProps & {
-  dependentAxisLogScale: boolean;
-  onDependentAxisLogScaleChange: (newState: boolean) => void;
-  valueSpec: ValueSpec;
-  onValueSpecChange: (newValueSpec: ValueSpec) => void;
-};
+type BoxplotWithControlsProps = BoxplotProps;
 
-function BarplotWithControls({
+function BoxplotWithControls({
   data,
-  dependentAxisLogScale,
-  onDependentAxisLogScaleChange,
-  valueSpec,
-  onValueSpecChange,
-  ...barPlotProps
-}: BarplotWithControlsProps) {
+  ...BoxplotComponentProps
+}: BoxplotWithControlsProps) {
+  // TODO Use UIState
+  const errorManagement = useMemo((): ErrorManagement => {
+    return {
+      errors: [],
+      addError: (_: Error) => {},
+      removeError: (_: Error) => {},
+      clearAllErrors: () => {},
+    };
+  }, []);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <Barplot
-        {...barPlotProps}
-        dependentAxisLogScale={dependentAxisLogScale}
+      <Boxplot
+        {...BoxplotComponentProps}
         data={data}
         // add controls
-        // displayLegend={true}
         displayLibraryControls={false}
       />
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <LabelledGroup label="Y-axis">
-          <Switch
-            label="Log Scale:"
-            state={dependentAxisLogScale}
-            onStateChange={onDependentAxisLogScaleChange}
-          />
-          <RadioButtonGroup
-            selectedOption={
-              valueSpec === 'proportion' ? 'proportional' : 'count'
-            }
-            options={['count', 'proportional']}
-            onOptionSelected={(newOption) => {
-              if (newOption === 'proportional') {
-                onValueSpecChange('proportion');
-              } else {
-                onValueSpecChange('count');
-              }
-            }}
-          />
-        </LabelledGroup>
-      </div>
+      {/* potential BoxplotControls: commented out for now  */}
+      {/* <BoxplotControls
+          // label="Box Plot Controls"
+          errorManagement={errorManagement}
+        /> */}
     </div>
   );
 }
 
 /**
- * Reformat response from Barplot endpoints into complete BarplotData
+ * Reformat response from Box Plot endpoints into complete PromiseBoxplotData
  * @param response
- * @returns BarplotData
+ * @returns PromiseBoxplotData
  */
-export function barplotResponseToData(
-  response: PromiseType<ReturnType<DataClient['getBarplot']>>
-) {
+export function boxplotResponseToData(
+  response: PromiseType<ReturnType<DataClient['getBoxplot']>>
+): PromiseBoxplotData {
   return {
-    series: response.barplot.data.map((data, index) => ({
-      // name has value if using overlay variable
-      name: data.overlayVariableDetails?.value ?? `series ${index}`,
-      // color: TO DO
-      label: data.label,
-      value: data.value,
-    })),
+    series: response.boxplot.data.map(
+      (data: { [key: string]: any }, index) => ({
+        lowerfence: data.lowerfence,
+        upperfence: data.upperfence,
+        q1: data.q1,
+        q3: data.q3,
+        median: data.median,
+        mean: data.mean ? data.mean : undefined,
+        outliers: data.outliers ? data.outliers : undefined,
+        // currently returns seriesX and seriesY for points: 'all' option
+        // it is necessary to rely on rawData (or seriesX/Y) for boxplot if points: 'all'
+        rawData: data.rawData ? data.rawData : undefined,
+        // this will be used as legend
+        name: data.overlayVariableDetails
+          ? data.overlayVariableDetails.value
+          : 'Data',
+        // this will be used as x-axis tick labels
+        label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
+      })
+    ),
     completeCases: response.completeCasesTable,
-    outputSize: response.barplot.config.completeCases,
+    outputSize: response.boxplot.config.completeCases,
   };
 }
+
+// add an extended type
+type getRequestParamsProps = BoxplotRequestParams;
 
 function getRequestParams(
   studyId: string,
   filters: Filter[],
-  vizConfig: BarplotConfig
-): BarplotRequestParams {
+  xAxisVariable: VariableDescriptor,
+  yAxisVariable: VariableDescriptor,
+  overlayVariable?: VariableDescriptor
+): getRequestParamsProps {
   return {
     studyId,
     filters,
     config: {
       // is outputEntityId correct?
-      outputEntityId: vizConfig.xAxisVariable!.entityId,
-      xAxisVariable: vizConfig.xAxisVariable!,
-      overlayVariable: vizConfig.overlayVariable,
-      // valueSpec: manually inputted for now
-      valueSpec: vizConfig.valueSpec,
-      barmode: 'group', // or 'stack'
+      outputEntityId: xAxisVariable.entityId,
+      // post options: 'all', 'outliers'
+      points: 'outliers',
+      mean: 'TRUE',
+      xAxisVariable: xAxisVariable,
+      yAxisVariable: yAxisVariable,
+      overlayVariable: overlayVariable,
     },
-  } as BarplotRequestParams;
+  } as BoxplotRequestParams;
 }

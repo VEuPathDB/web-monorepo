@@ -309,6 +309,9 @@ function HistogramViz(props: Props) {
             width: '750px',
             height: '400px',
           }}
+          spacingOptions={{
+            marginTop: 50,
+          }}
           orientation={'vertical'}
           barLayout={'stack'}
           displayLegend={
@@ -561,6 +564,7 @@ function getRequestParams(
     config: {
       outputEntityId: xAxisVariable!.entityId,
       xAxisVariable,
+      barmode: 'stack',
       overlayVariable,
       valueSpec,
       ...binSpec,
