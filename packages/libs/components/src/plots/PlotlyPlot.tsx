@@ -34,9 +34,6 @@ export interface PlotProps<T> {
 
 const Plot = lazy(() => import('react-plotly.js'));
 
-// store legend list for tooltip
-let storeLegendList: NonNullable<string[]> = [];
-
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
  *
@@ -65,11 +62,22 @@ export default function PlotlyPlot<T>(
   } = props;
 
   // store legend list for tooltip
+  let storeLegendList: NonNullable<string[]> = [];
+
+  // store legend list for tooltip
   if (data) {
     storeLegendList = data.map((data) => {
       return data.name ?? '';
     });
   }
+
+  /**
+   * To-do:
+   * Mosaic has reversely ordered data so storeLegendList needs to be reversed in that case
+   * So, perhaps we need a new prop to know which plot component is calling this PlotlyPlot
+   * e.g., plotComponent={'Mosaic'} at <Mosaic>, and define plotComponent?: string at PlotProps
+   * Then, if(plotComponent === 'Mosaic') storedLegendList.reverse();
+   */
 
   // set the number of characters to be displayed
   const maxLegendText = 20;
@@ -150,7 +158,7 @@ export default function PlotlyPlot<T>(
           style={{ width: '100%', height: '100%' }}
           config={finalConfig}
           // use onAfterPlot event handler for legend tooltip
-          onAfterPlot={legendTooltip}
+          onAfterPlot={() => legendTooltip(storeLegendList)}
         />
         {showSpinner && <Spinner />}
       </div>
@@ -161,10 +169,10 @@ export default function PlotlyPlot<T>(
 // define d3 variable with select
 const d3 = { select };
 // add legend tooltip
-function legendTooltip() {
+const legendTooltip = (storeLegendList: string[]) => {
   const legendLayer = d3.select('g.legend');
   legendLayer
     .selectAll('g.traces')
     .append('svg:title')
     .text((d, i) => storeLegendList[i]);
-}
+};
