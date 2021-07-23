@@ -97,26 +97,16 @@ export function useVariableCoverageTableRows(
 export function useCompleteCasesMap(
   completeCasesTable: CompleteCasesTable = []
 ): Record<string, number> {
-  return useMemo(() => {
-    const nonemptyRows = completeCasesTable.filter(isNonemptyRow);
-
-    // variableDetails.variableId is of the form {entityId}.{variableId}
-    const rowsByVariableId = keyBy(
-      nonemptyRows,
-      ({ variableDetails }) => variableDetails.variableId
-    );
-
-    return mapValues(rowsByVariableId, ({ completeCases }) =>
-      Array.isArray(completeCases) ? completeCases[0] : completeCases
-    );
-  }, [completeCasesTable]);
-}
-
-function isNonemptyRow(
-  completeCasesTableRow: CompleteCasesTableRow
-): completeCasesTableRow is Required<CompleteCasesTableRow> {
-  return (
-    completeCasesTableRow.variableDetails != null ||
-    completeCasesTableRow.completeCases != null
+  return useMemo(
+    () =>
+      // the reduce essentially performs a lodash.keyBy, with empty row protection
+      completeCasesTable.reduce((map, { completeCases, variableDetails }) => {
+        if (completeCases != null && variableDetails != null) {
+          const key = `${variableDetails.entityId}.${variableDetails.variableId}`;
+          map[key] = completeCases;
+        }
+        return map;
+      }, {} as Record<string, number>),
+    [completeCasesTable]
   );
 }

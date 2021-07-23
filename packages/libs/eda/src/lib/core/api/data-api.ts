@@ -49,7 +49,7 @@ const sampleSizeTableArray = array(
 export type CompleteCasesTableRow = TypeOf<typeof completeCases>;
 const completeCases = partial({
   // set union for size as it depends on the presence of overlay variable
-  completeCases: union([number, array(number)]),
+  completeCases: number,
   variableDetails: type({
     entityId: string,
     variableId: string,
@@ -67,6 +67,7 @@ export interface HistogramRequestParams {
   config: {
     outputEntityId: string;
     valueSpec: 'count' | 'proportion';
+    barmode: 'overlay' | 'stack';
     xAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor; // TO DO: should this be StringVariable??
     facetVariable?: ZeroToTwoVariables; // ditto here
@@ -143,6 +144,7 @@ export interface BarplotRequestParams {
     outputEntityId: string;
     // add proportion as it seems to be coming
     valueSpec: 'count' | 'identity' | 'proportion';
+    barmode: 'group' | 'stack';
     xAxisVariable: VariableDescriptor;
     // barplot add prop
     overlayVariable?: VariableDescriptor;
@@ -386,7 +388,7 @@ export interface BoxplotRequestParams {
     points: 'outliers' | 'all';
     // boolean or string?
     // mean: boolean;
-    mean: 'true' | 'false';
+    mean: 'TRUE' | 'FALSE';
     // not quite sure of overlayVariable and facetVariable yet
     // facetVariable?: ZeroToTwoVariables;
     xAxisVariable: VariableDescriptor;
@@ -404,6 +406,7 @@ const BoxplotResponseData = array(
       q1: array(number),
       q3: array(number),
       median: array(number),
+      label: array(string),
     }),
     partial({
       // outliers type

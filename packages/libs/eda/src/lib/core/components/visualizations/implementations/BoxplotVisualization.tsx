@@ -413,7 +413,7 @@ export function boxplotResponseToData(
           ? data.overlayVariableDetails.value
           : 'Data',
         // this will be used as x-axis tick labels
-        label: data[response.boxplot.config.xVariableDetails.variableId],
+        label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
       })
     ),
     completeCases: response.completeCasesTable,
@@ -439,7 +439,7 @@ function getRequestParams(
       outputEntityId: xAxisVariable.entityId,
       // post options: 'all', 'outliers'
       points: 'outliers',
-      mean: 'true',
+      mean: 'TRUE',
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
       overlayVariable: overlayVariable,
