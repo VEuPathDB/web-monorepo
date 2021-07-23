@@ -5,9 +5,11 @@ import {
   useRouteMatch,
   Redirect,
 } from 'react-router';
+import { NewAnalysis } from './NewAnalysis';
 import { EDAAnalysisList } from './EDAAnalysisList';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
+import { mockAnalysisStore } from './Mocks';
 
 type Props = {
   subsettingServiceUrl: string;
@@ -43,6 +45,16 @@ export function WorkspaceRouter({
             {...props.match.params}
             subsettingServiceUrl={subsettingServiceUrl}
             dataServiceUrl={dataServiceUrl}
+          />
+        )}
+      />
+      <Route
+        path={`${path}/:studyId/new`}
+        exact
+        render={(props: RouteComponentProps<{ studyId: string }>) => (
+          <NewAnalysis
+            {...props.match.params}
+            analysisClient={mockAnalysisStore}
           />
         )}
       />
