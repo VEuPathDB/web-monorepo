@@ -1,4 +1,4 @@
-import { bindAll, debounce, difference, escapeRegExp, get, has, isFunction, memoize } from 'lodash';
+import { bindAll, debounce, difference, escapeRegExp, get, has, isFunction, memoize, uniq } from 'lodash';
 import React from 'react';
 import Toggle from 'wdk-client/Components/Icon/Toggle';
 import { MesaController as Mesa } from 'wdk-client/Components/Mesa';
@@ -333,7 +333,7 @@ class MembershipTable extends React.PureComponent {
       }
       const currentValues = rows.map(entry => entry.value);
 
-      this.emitChange(difference(currentValues, disabledValues).concat(filterValues || []));
+      this.emitChange(uniq(difference(currentValues, disabledValues).concat(filterValues || [])));
     }
   }
 
