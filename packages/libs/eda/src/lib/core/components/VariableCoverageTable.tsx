@@ -33,10 +33,10 @@ export interface VariableCoverageTableRow {
   completeCount?: number;
   /* absolute count of entities which are missing the variable */
   incompleteCount?: number;
-  /* percent of subset entities which have the variable */
-  completePercent?: number;
-  /* percent of subset entities which are missing the variable */
-  incompletePercent?: number;
+  /* percent of subset entities which have the variable: allowing string like '< 1', '> 99' */
+  completePercent?: number | string;
+  /* percent of subset entities which are missing the variable: allowing string like '< 1', '> 99' */
+  incompletePercent?: number | string;
 }
 
 export function VariableCoverageTable({
@@ -78,7 +78,10 @@ export function VariableCoverageTable({
                   {row.completeCount?.toLocaleString()}
                   {row.completePercent != null && (
                     <span className="percentage">
-                      ({row.completePercent.toFixed(2)}%)
+                      {/* check number or string like '< 1', '> 99' */}
+                      {typeof row.completePercent === 'number'
+                        ? '(' + row.completePercent.toFixed(2) + '%)'
+                        : '(' + row.completePercent + '%)'}
                     </span>
                   )}
                 </td>
@@ -86,7 +89,10 @@ export function VariableCoverageTable({
                   {row.incompleteCount?.toLocaleString()}
                   {row.incompletePercent != null && (
                     <span className="percentage">
-                      ({row.incompletePercent.toFixed(2)}%)
+                      {/* check number or string like '< 1', '> 99' */}
+                      {typeof row.incompletePercent === 'number'
+                        ? '(' + row.incompletePercent.toFixed(2) + '%)'
+                        : '(' + row.incompletePercent + '%)'}
                     </span>
                   )}
                 </td>
