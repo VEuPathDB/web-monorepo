@@ -518,7 +518,7 @@ function getRequestParams(
     config: {
       outputEntityId: variable.entityId,
       valueSpec: 'count',
-      barmode: 'stack',
+      barMode: 'stack',
       xAxisVariable: variable,
       overlayVariable,
       ...binSpec,
