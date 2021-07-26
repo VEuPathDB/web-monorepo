@@ -130,16 +130,16 @@ function BarplotViz(props: Props) {
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const { variable } = useMemo(() => {
+    return (
+      findEntityAndVariable(vizConfig.xAxisVariable) ?? { variable: undefined }
+    );
+  }, [vizConfig.xAxisVariable]);
 
   const data = usePromise(
     useCallback(async (): Promise<any> => {
-      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+      if (variable == null) return undefined;
 
-      // check variable inputs: this is necessary to prevent from data post
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return undefined;
-
-      // add visualization.type here
       const params = getRequestParams(
         studyId,
         filters ?? [],
@@ -147,21 +147,13 @@ function BarplotViz(props: Props) {
         vizConfig.overlayVariable
       );
 
-      // barplot
       const response = dataClient.getBarplot(
         computation.type,
         params as BarplotRequestParams
       );
 
       return barplotResponseToData(await response);
-    }, [
-      studyId,
-      filters,
-      dataClient,
-      vizConfig,
-      findEntityAndVariable,
-      computation.type,
-    ])
+    }, [studyId, filters, dataClient, vizConfig, variable, computation.type])
   );
 
   return (
@@ -254,6 +246,7 @@ function BarplotViz(props: Props) {
               }
               interactive
               showSpinner={data.pending}
+              categoricalAxisCategoryOrder={variable?.vocabulary}
             />
             <VariableCoverageTable
               completeCases={
@@ -305,6 +298,7 @@ function BarplotViz(props: Props) {
             marginTop: 20,
           }}
           showSpinner={data.pending}
+          categoricalAxisCategoryOrder={variable?.vocabulary}
         />
       )}
     </div>
