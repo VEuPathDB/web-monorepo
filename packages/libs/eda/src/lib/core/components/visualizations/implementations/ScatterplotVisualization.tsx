@@ -1,6 +1,5 @@
 // load scatter plot component
 import XYPlot, { XYPlotProps } from '@veupathdb/components/lib/plots/XYPlot';
-// import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -10,7 +9,6 @@ import { useCallback, useMemo } from 'react';
 
 // need to set for Scatterplot
 import {
-  CompleteCasesTable,
   DataClient,
   ScatterplotRequestParams,
   LineplotRequestParams,
@@ -44,15 +42,13 @@ import { min, max, lte, gte } from 'lodash';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 // import XYPlotData
 import { XYPlotData } from '@veupathdb/components/lib/types/plots';
+import { CoverageStatistics } from '../../../types/visualization';
 
 // define PromiseXYPlotData
-interface PromiseXYPlotData {
+interface PromiseXYPlotData extends CoverageStatistics {
   dataSetProcess: XYPlotData;
   yMin: number;
   yMax: number;
-  // add more props with variable coverage table
-  completeCases: CompleteCasesTable;
-  outputSize: number;
 }
 
 // define XYPlotDataResponse

@@ -1,6 +1,6 @@
 // load Barplot component
 import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
-import { ErrorManagement } from '@veupathdb/components/lib/types/general';
+import { BarplotData } from '@veupathdb/components/lib/types/plots';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -9,7 +9,11 @@ import * as t from 'io-ts';
 import { useCallback, useMemo } from 'react';
 
 // need to set for Barplot
-import { DataClient, BarplotRequestParams } from '../../../api/data-api';
+import {
+  DataClient,
+  BarplotResponse,
+  BarplotRequestParams,
+} from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -19,6 +23,7 @@ import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { CoverageStatistics } from '../../../types/visualization';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -148,7 +153,6 @@ function BarplotViz(props: Props) {
         params as BarplotRequestParams
       );
 
-      // send visualization.type as well
       return barplotResponseToData(await response);
     }, [
       studyId,
@@ -317,17 +321,6 @@ function BarplotWithControls({
   ...BarplotControlsProps
 }: // eslint-disable-next-line @typescript-eslint/no-unused-vars
 BarplotWithControlsProps) {
-  // TODO Use UIState
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (_: Error) => {},
-      removeError: (_: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Barplot
@@ -349,11 +342,11 @@ BarplotWithControlsProps) {
 /**
  * Reformat response from Barplot endpoints into complete BarplotData
  * @param response
- * @returns BarplotData
+ * @returns BarplotData & completeCases & outputSize
  */
 export function barplotResponseToData(
-  response: PromiseType<ReturnType<DataClient['getBarplot']>>
-) {
+  response: BarplotResponse
+): BarplotData & CoverageStatistics {
   return {
     series: response.barplot.data.map((data, index) => ({
       // name has value if using overlay variable
@@ -366,10 +359,6 @@ export function barplotResponseToData(
     outputSize: response.barplot.config.completeCases,
   };
 }
-
-// add an extended type
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type getRequestParamsProps = BarplotRequestParams & { vizType?: string };
 
 function getRequestParams(
   studyId: string,

@@ -1,6 +1,5 @@
 // load Boxplot component
 import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
-import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -9,11 +8,7 @@ import * as t from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
 
 // need to set for Boxplot
-import {
-  DataClient,
-  BoxplotRequestParams,
-  CompleteCasesTable,
-} from '../../../api/data-api';
+import { DataClient, BoxplotRequestParams } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -29,12 +24,10 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
 import { BoxplotData } from '@veupathdb/components/lib/types/plots';
+import { CoverageStatistics } from '../../../types/visualization';
 
-interface PromiseBoxplotData {
+interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
-  // add more props with variable coverage table
-  completeCases: CompleteCasesTable;
-  outputSize: number;
 }
 
 export const boxplotVisualization: VisualizationType = {
@@ -360,16 +353,6 @@ function BoxplotWithControls({
   data,
   ...BoxplotComponentProps
 }: BoxplotWithControlsProps) {
-  // TODO Use UIState
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (_: Error) => {},
-      removeError: (_: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Boxplot
@@ -378,11 +361,7 @@ function BoxplotWithControls({
         // add controls
         displayLibraryControls={false}
       />
-      {/* potential BoxplotControls: commented out for now  */}
-      {/* <BoxplotControls
-          // label="Box Plot Controls"
-          errorManagement={errorManagement}
-        /> */}
+      {/* potential controls go here  */}
     </div>
   );
 }

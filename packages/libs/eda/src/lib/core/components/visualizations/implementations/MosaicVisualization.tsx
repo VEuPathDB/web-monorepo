@@ -21,6 +21,7 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
+import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -28,10 +29,9 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
 
-interface MosaicDataWithCoverageStatistics extends MosaicData {
-  completeCases: CompleteCasesTable;
-  outputSize: number;
-}
+interface MosaicDataWithCoverageStatistics
+  extends MosaicData,
+    CoverageStatistics {}
 
 type ContTableData = MosaicDataWithCoverageStatistics &
   Partial<{
@@ -430,16 +430,7 @@ function MosaicPlotWithControls({
   data,
   ...mosaicProps
 }: MosaicPlotWithControlsProps) {
-  // TODO Use UIState
   const displayLibraryControls = false;
-  // const errorManagement = useMemo((): ErrorManagement => {
-  //   return {
-  //     errors: [],
-  //     addError: (error: Error) => {},
-  //     removeError: (error: Error) => {},
-  //     clearAllErrors: () => {},
-  //   };
-  // }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -448,12 +439,7 @@ function MosaicPlotWithControls({
         data={data}
         displayLibraryControls={displayLibraryControls}
       />
-      {/* <MosaicControls
-        label="Mosaic Controls"
-        displayLegend={false}
-        displayLibraryControls={displayLibraryControls}
-        errorManagement={errorManagement}
-      /> */}
+      {/* controls go here as needed */}
     </div>
   );
 }

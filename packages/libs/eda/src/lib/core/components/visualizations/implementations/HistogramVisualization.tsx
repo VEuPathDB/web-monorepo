@@ -19,7 +19,6 @@ import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
-  CompleteCasesTable,
   DataClient,
   HistogramRequestParams,
   HistogramResponse,
@@ -29,6 +28,7 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
+import { CoverageStatistics } from '../../../types/visualization';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { isHistogramVariable } from '../../filter/guards';
@@ -38,10 +38,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 
-type HistogramDataWithCoverageStatistics = HistogramData & {
-  completeCases: CompleteCasesTable;
-  outputSize: number;
-};
+type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
 export const histogramVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -345,13 +342,11 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
   handleDependentAxisLogScale: (newState?: boolean) => void;
   filters: Filter[];
-  completeCases?: CompleteCasesTable;
-  outputSize?: number;
   outputEntity?: StudyEntity;
   independentAxisVariable?: VariableDescriptor;
   overlayVariable?: VariableDescriptor;
   overlayLabel?: string;
-};
+} & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
   data,
@@ -370,15 +365,6 @@ function HistogramPlotWithControls({
   const barLayout = 'stack';
   const displayLibraryControls = false;
   const opacity = 100;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (_: Error) => {},
-      removeError: (_: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
