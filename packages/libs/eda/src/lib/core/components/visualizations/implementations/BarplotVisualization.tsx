@@ -431,7 +431,7 @@ function getRequestParams(
       overlayVariable: vizConfig.overlayVariable,
       // valueSpec: manually inputted for now
       valueSpec: vizConfig.valueSpec,
-      barmode: 'group', // or 'stack'
+      barMode: 'group', // or 'stack'
     },
   } as BarplotRequestParams;
 }
