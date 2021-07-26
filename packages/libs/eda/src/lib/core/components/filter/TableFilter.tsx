@@ -170,11 +170,15 @@ export function TableFilter({
       // first sort by value
       .sort((a, b) =>
         uiState.sort.columnKey === 'value'
-          ? // Handle strings w/ numbers, case insensitive
-            a.value.localeCompare(b.value, 'en', {
-              numeric: true,
-              sensitivity: 'base',
-            })
+          ? variable.vocabulary != null && variable.vocabulary.length
+            ? // if available, sort by the variable's 'vocabulary' metadata
+              variable.vocabulary.indexOf(a.value) -
+              variable.vocabulary.indexOf(b.value)
+            : // Handle strings w/ numbers, case insensitive
+              a.value.localeCompare(b.value, 'en', {
+                numeric: true,
+                sensitivity: 'base',
+              })
           : // Otherwise, numeric comparison
             a[uiState.sort.columnKey] - b[uiState.sort.columnKey]
       );
