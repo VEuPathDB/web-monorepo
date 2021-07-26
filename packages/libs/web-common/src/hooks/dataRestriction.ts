@@ -131,18 +131,27 @@ export function useAttemptActionTask<E>(
         const attemptAction$ = attemptAction(action, { studyId })(wdkDependencies);
 
         attemptAction$.then(fulfill, reject);
-      }).map((action) => {
+      }).map((attemptedAction) => {
         if (
-          (action.type !== UNRESTRICTED_ACTION &&
-            action.type !== RESTRICTED_ACTION) ||
-          action.payload.study.disabled
+          (attemptedAction.type !== UNRESTRICTED_ACTION &&
+            attemptedAction.type !== RESTRICTED_ACTION) ||
+          attemptedAction.payload.study.disabled
         ) {
+          // A study is considered "not found" if:
+          // (1) the study DOES NOT exist on the backend
+          //     (which can be verified by checking if the attempted action
+          //      was neither an UNRESTRICTED_ACTION nor a RESTRICTED_ACTION)
+          // OR
+          // (2) the study DOES exist on the backend, but is
+          //     marked as "disabled" by the client
+          //     (which can be verified by checking if the attemption action's
+          //      study is "disabled")
           return 'study-not-found';
         }
 
-        dispatch(action);
+        dispatch(attemptedAction);
 
-        if (action.type === RESTRICTED_ACTION) {
+        if (attemptedAction.type === RESTRICTED_ACTION) {
           return 'not-approved';
         } else {
           return 'approved';
