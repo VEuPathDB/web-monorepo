@@ -67,7 +67,7 @@ export interface HistogramRequestParams {
   config: {
     outputEntityId: string;
     valueSpec: 'count' | 'proportion';
-    barmode: 'overlay' | 'stack';
+    barMode: 'overlay' | 'stack';
     xAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor; // TO DO: should this be StringVariable??
     facetVariable?: ZeroToTwoVariables; // ditto here
@@ -144,7 +144,7 @@ export interface BarplotRequestParams {
     outputEntityId: string;
     // add proportion as it seems to be coming
     valueSpec: 'count' | 'identity' | 'proportion';
-    barmode: 'group' | 'stack';
+    barMode: 'group' | 'stack';
     xAxisVariable: VariableDescriptor;
     // barplot add prop
     overlayVariable?: VariableDescriptor;

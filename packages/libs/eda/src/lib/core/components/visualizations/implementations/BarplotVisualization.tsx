@@ -387,7 +387,7 @@ function getRequestParams(
       overlayVariable: overlayVariable,
       // valueSpec: manually inputted for now
       valueSpec: 'count',
-      barmode: 'group', // or 'stack'
+      barMode: 'group', // or 'stack'
       // this works too
       // valueSpec: 'proportion',
       // valueSpec: 'identity',
