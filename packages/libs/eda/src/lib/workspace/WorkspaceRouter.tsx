@@ -7,9 +7,10 @@ import {
 } from 'react-router';
 import { NewAnalysis } from './NewAnalysis';
 import { EDAAnalysisList } from './EDAAnalysisList';
-import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { mockAnalysisStore } from './Mocks';
+import { SubsettingClient } from '../core/api/subsetting-api';
+import { AllAnalyses } from './AllAnalyses';
 
 type Props = {
   subsettingServiceUrl: string;
@@ -21,12 +22,19 @@ export function WorkspaceRouter({
   dataServiceUrl,
 }: Props) {
   const { path } = useRouteMatch();
+  const subsettingClient = SubsettingClient.getClient(subsettingServiceUrl);
+
   return (
     <Switch>
       <Route
         path={path}
         exact
-        render={() => <StudyList subsettingServiceUrl={subsettingServiceUrl} />}
+        render={() => (
+          <AllAnalyses
+            analysisClient={mockAnalysisStore}
+            subsettingClient={subsettingClient}
+          />
+        )}
       />
       {/* replacing/redirecting double slashes url with single slash one */}
       <Route
