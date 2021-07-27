@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -25,11 +24,13 @@ import {
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 
 import {
-  RESTRICTED_ACTION,
-  UNRESTRICTED_ACTION,
+  Action as DataRestrictionAction,
+  ActionAttemptDetails,
   attemptAction,
-  label
-} from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
+  label,
+  restricted,
+  unrestricted,
+} from '../App/DataRestriction/DataRestrictionActionCreators';
 
 const STUDY_ACTION_CLASS_NAME = 'study-action';
 
@@ -124,20 +125,20 @@ export function useAttemptActionTask<E>(
 
   return useMemo(
     () =>
-      new Task<any, E>(function (fulfill, reject) {
+      new Task<DataRestrictionAction, E>(function (fulfill, reject) {
         const attemptAction$ = attemptAction(action, { studyId })(wdkDependencies);
 
         attemptAction$.then(fulfill, reject);
       }).map((attemptedAction) => {
         if (
-          (attemptedAction.type !== UNRESTRICTED_ACTION &&
-            attemptedAction.type !== RESTRICTED_ACTION) ||
+          (!unrestricted.isOfType(attemptedAction) &&
+            !restricted.isOfType(attemptedAction)) ||
           attemptedAction.payload.study.disabled
         ) {
           // A study is considered "not found" if:
           // (1) the study DOES NOT exist on the backend
-          //     (which can be verified by checking if the attempted action
-          //      was neither an UNRESTRICTED_ACTION nor a RESTRICTED_ACTION)
+          //     (which can be verified by checking if the attempted redux action
+          //      was neither an "unrestricted" nor a "restricted" action)
           // OR
           // (2) the study DOES exist on the backend, but is
           //     marked as "disabled" by the client
@@ -148,7 +149,7 @@ export function useAttemptActionTask<E>(
 
         dispatch(attemptedAction);
 
-        if (attemptedAction.type === RESTRICTED_ACTION) {
+        if (restricted.isOfType(attemptedAction)) {
           return 'not-approved';
         } else {
           return 'approved';
@@ -164,11 +165,7 @@ export function useAttemptActionCallback() {
 
   return useCallback(async (
     action: string,
-    details: {
-      studyId: string,
-      onAllow?: () => void,
-      onDeny?: () => void
-    }
+    details: ActionAttemptDetails
   ) => {
     const attemptedAction = await attemptAction(action, details)(wdkDependencies);
 
@@ -234,7 +231,7 @@ const actionArgs = oneOf(
 
 type ActionArgs = Unpack<typeof actionArgs>;
 
-function makeDataRestrictionCallbacks(actionArgs: ActionArgs, event: MouseEvent) {
+function makeDataRestrictionCallbacks(actionArgs: ActionArgs, event: MouseEvent): Pick<ActionAttemptDetails, 'onAllow' | 'onDeny'> {
   switch (actionArgs.type) {
     case 'download': {
       const { ctrlKey } = event;
