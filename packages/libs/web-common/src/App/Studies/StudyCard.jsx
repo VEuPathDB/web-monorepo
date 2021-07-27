@@ -7,6 +7,7 @@ import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import DownloadLink from './DownloadLink';
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
 import './StudyCard.scss';
+import { makeEdaRoute } from 'ebrc-client/routes';
 
 
 class StudyCard extends React.Component {
@@ -68,7 +69,7 @@ class StudyCard extends React.Component {
           { (!isPrereleaseStudy(card.access, card.id, user, permissions) && searches.length)
             ? useEda ? (
                 <div className="box">
-                  <Link to={`/eda/${card.id}/new`}>
+                  <Link to={`${makeEdaRoute(card.id)}/new`}>
                     <i className="fa fa-area-chart"/>
                   </Link>
                 </div>

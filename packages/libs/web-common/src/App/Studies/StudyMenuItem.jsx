@@ -5,6 +5,7 @@ import { IconAlt as Icon, Link, Mesa } from '@veupathdb/wdk-client/lib/Component
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
 import './StudyMenu.scss';
+import { makeEdaRoute } from 'ebrc-client/routes';
 
 class StudyMenuItem extends React.Component {
   constructor (props) {
@@ -53,7 +54,7 @@ class StudyMenuItem extends React.Component {
         <div className="row StudyMenuItem-Links">
         { (!isPrereleaseStudy(study.access, study.id, user, permissions))
           ? useEda ? (
-            <Link name="Explore the data" to={`/eda/${study.id}/new`}>
+            <Link name="Explore the data" to={`${makeEdaRoute(study.id)}/new`}>
               <i className="fa fa-area-chart"/>
             </Link>
           ) : searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
