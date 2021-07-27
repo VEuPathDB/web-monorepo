@@ -122,7 +122,7 @@ function BaseInput({
         } else if (maxValue != null && newValue > maxValue) {
           return {
             validity: false,
-            message: `Sorry, value can't go above ${minValue}!`,
+            message: `Sorry, value can't go above ${maxValue}!`,
           };
         } else {
           return { validity: true, message: '' };
