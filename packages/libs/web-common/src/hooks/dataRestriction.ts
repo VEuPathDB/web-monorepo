@@ -9,6 +9,9 @@ import {
 import { useDispatch } from 'react-redux';
 
 import {
+  useNonNullableContext
+} from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
+import {
   WdkDepdendenciesContext
 } from '@veupathdb/wdk-client/lib/Hooks/WdkDependenciesEffect';
 import {
@@ -117,13 +120,7 @@ export function useAttemptActionTask<E>(
   action: string
 ): Task<CompleteApprovalStatus, E> {
   const dispatch = useDispatch();
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
-
-  if (wdkDependencies == null) {
-    throw new Error(
-      'In order to "useAttemptActionTask", WdkDependenciesContext must be provided.'
-    );
-  }
+  const wdkDependencies = useNonNullableContext(WdkDepdendenciesContext);
 
   return useMemo(
     () =>
@@ -163,11 +160,7 @@ export function useAttemptActionTask<E>(
 
 export function useAttemptActionCallback() {
   const dispatch = useDispatch();
-  const wdkDependencies = useContext(WdkDepdendenciesContext);
-
-  if (wdkDependencies == null) {
-    throw new Error('In order to "useAttemptActionCallback", WdkDependenciesContext must be provided.');
-  }
+  const wdkDependencies = useNonNullableContext(WdkDepdendenciesContext);
 
   return useCallback(async (
     action: string,
