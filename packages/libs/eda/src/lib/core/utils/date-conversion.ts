@@ -15,9 +15,9 @@ export function padISODateTime(ISODate: string): string {
     fixedISODateTime = fixedISODateTime + '-01';
   }
 
-  // add the time as T00:00.000 if needed
+  // add the time as T00:00:00 if needed
   if (fixedISODateTime.indexOf('T') < 0) {
-    fixedISODateTime = fixedISODateTime + 'T00:00';
+    fixedISODateTime = fixedISODateTime + 'T00:00:00';
   }
 
   // add the Z for Zulu time zone

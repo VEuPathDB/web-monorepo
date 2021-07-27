@@ -10,6 +10,8 @@ import {
 import { Filter } from '../types/filter';
 
 import { useEntityCounts } from './entityCounts';
+// use toPercentage function for handling very high or small percentage
+import { toPercentage } from '@veupathdb/wdk-client/lib/Components/AttributeFilter/AttributeFilterUtils';
 
 /**
  * Returns an array of data to be rendered in a VariableCoverageTable
@@ -73,11 +75,15 @@ export function useVariableCoverageTableRows(
         return {
           ...baseRowWithCounts,
           incompleteCount,
-          completePercent:
-            (baseRowWithCounts.completeCount / variableFilteredEntityCount) *
-            100,
-          incompletePercent:
-            (incompleteCount / variableFilteredEntityCount) * 100,
+          // use toPercentage function for handling very high or small percentage
+          completePercent: toPercentage(
+            baseRowWithCounts.completeCount,
+            variableFilteredEntityCount
+          ),
+          incompletePercent: toPercentage(
+            incompleteCount,
+            variableFilteredEntityCount
+          ),
         };
       }),
     [
