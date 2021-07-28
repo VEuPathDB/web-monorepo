@@ -422,15 +422,19 @@ function reorderData(
   });
 
   if (overlayVocabulary.length > 0) {
+    // for each value in the overlay vocabulary's correct order
+    // find the index in the series where series.name equals that value
     const overlayValues = labelOrderedSeries.map((series) => series.name);
     const overlayIndices = overlayVocabulary.map((name) =>
       overlayValues.indexOf(name)
     );
     return {
       ...data,
+      // return the series in overlay vocabulary order
       series: overlayIndices.map(
         (i, j) =>
           labelOrderedSeries[i] ?? {
+            // if there is no series, insert a dummy series
             name: overlayVocabulary[j],
             label: labelVocabulary,
             value: labelVocabulary.map(() => undefined),
