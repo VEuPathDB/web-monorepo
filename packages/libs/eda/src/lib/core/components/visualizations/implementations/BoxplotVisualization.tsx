@@ -166,7 +166,9 @@ function BoxplotViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
-        vizConfig.overlayVariable
+        vizConfig.overlayVariable,
+        // add dataElementDependencyOrder
+        dataElementDependencyOrder
       );
 
       // boxplot
@@ -298,7 +300,13 @@ function BoxplotViz(props: Props) {
                 data.pending ? undefined : data.value?.completeCases
               }
               filters={filters}
-              outputEntityId={vizConfig.xAxisVariable?.entityId}
+              outputEntityId={
+                // add outputEntityId per dataElementDependencyOrder
+                dataElementDependencyOrder != null &&
+                dataElementDependencyOrder[0] === 'yAxisVariable'
+                  ? vizConfig.yAxisVariable?.entityId
+                  : vizConfig.xAxisVariable?.entityId
+              }
               variableSpecs={[
                 {
                   role: 'X-axis',
@@ -429,14 +437,20 @@ function getRequestParams(
   filters: Filter[],
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
-  overlayVariable?: VariableDescriptor
+  overlayVariable?: VariableDescriptor,
+  // add dataElementDependencyOrder here
+  dataElementDependencyOrder?: string[]
 ): getRequestParamsProps {
   return {
     studyId,
     filters,
     config: {
-      // is outputEntityId correct?
-      outputEntityId: xAxisVariable.entityId,
+      // add outputEntityId per dataElementDependencyOrder
+      outputEntityId:
+        dataElementDependencyOrder != null &&
+        dataElementDependencyOrder[0] === 'yAxisVariable'
+          ? yAxisVariable?.entityId
+          : xAxisVariable.entityId,
       // post options: 'all', 'outliers'
       points: 'outliers',
       mean: 'TRUE',

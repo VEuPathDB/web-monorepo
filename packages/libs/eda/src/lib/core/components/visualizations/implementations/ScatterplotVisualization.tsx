@@ -243,6 +243,8 @@ function ScatterplotViz(props: Props) {
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
         vizConfig.overlayVariable,
+        // add dataElementDependencyOrder
+        dataElementDependencyOrder,
         // add visualization.type
         visualization.type,
         // XYPlotControls
@@ -283,7 +285,6 @@ function ScatterplotViz(props: Props) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {fullscreen && (
-        //DKDKDK add margin-bottom
         <div style={{ display: 'flex', alignItems: 'center', zIndex: 1 }}>
           <InputVariables
             inputs={[
@@ -425,7 +426,11 @@ function ScatterplotViz(props: Props) {
               }
               filters={filters}
               outputEntityId={
-                findEntityAndVariable(vizConfig.xAxisVariable)?.entity.id
+                // add outputEntityId per dataElementDependencyOrder
+                dataElementDependencyOrder != null &&
+                dataElementDependencyOrder[0] === 'yAxisVariable'
+                  ? vizConfig.yAxisVariable?.entityId
+                  : vizConfig.xAxisVariable?.entityId
               }
               variableSpecs={[
                 {
@@ -580,10 +585,16 @@ export function scatterplotResponseToData(
   };
 }
 
-// add an extended type
+// add an extended type including dataElementDependencyOrder
 type getRequestParamsProps =
-  | (ScatterplotRequestParams & { vizType?: string })
-  | (LineplotRequestParams & { vizType?: string });
+  | (ScatterplotRequestParams & {
+      vizType?: string;
+      dataElementDependencyOrder?: string[];
+    })
+  | (LineplotRequestParams & {
+      vizType?: string;
+      dataElementDependencyOrder?: string[];
+    });
 
 function getRequestParams(
   studyId: string,
@@ -592,6 +603,8 @@ function getRequestParams(
   // set yAxisVariable as optional for densityplot
   yAxisVariable?: VariableDescriptor,
   overlayVariable?: VariableDescriptor,
+  // add dataElementDependencyOrder
+  dataElementDependencyOrder?: string[],
   // add visualization.type
   vizType?: string,
   // XYPlotControls
@@ -610,8 +623,12 @@ function getRequestParams(
       studyId,
       filters,
       config: {
-        // is outputEntityId correct?
-        outputEntityId: xAxisVariable.entityId,
+        // add outputEntityId per dataElementDependencyOrder
+        outputEntityId:
+          dataElementDependencyOrder != null &&
+          dataElementDependencyOrder[0] === 'yAxisVariable'
+            ? yAxisVariable?.entityId
+            : xAxisVariable.entityId,
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
@@ -623,8 +640,12 @@ function getRequestParams(
       studyId,
       filters,
       config: {
-        // is outputEntityId correct?
-        outputEntityId: xAxisVariable.entityId,
+        // add outputEntityId per dataElementDependencyOrder
+        outputEntityId:
+          dataElementDependencyOrder != null &&
+          dataElementDependencyOrder[0] === 'yAxisVariable'
+            ? yAxisVariable?.entityId
+            : xAxisVariable.entityId,
         // XYPlotControls
         valueSpec: valueSpecValue,
         xAxisVariable: xAxisVariable,

@@ -204,7 +204,9 @@ function MosaicViz(props: Props) {
         studyId,
         filters ?? [],
         vizConfig.xAxisVariable,
-        vizConfig.yAxisVariable
+        vizConfig.yAxisVariable,
+        // add dataElementDependencyOrder
+        dataElementDependencyOrder
       );
 
       if (isTwoByTwo) {
@@ -317,7 +319,13 @@ function MosaicViz(props: Props) {
         <VariableCoverageTable
           completeCases={data.pending ? undefined : data.value?.completeCases}
           filters={filters}
-          outputEntityId={vizConfig.xAxisVariable?.entityId}
+          outputEntityId={
+            // add outputEntityId per dataElementDependencyOrder
+            dataElementDependencyOrder != null &&
+            dataElementDependencyOrder[0] === 'yAxisVariable'
+              ? vizConfig.yAxisVariable?.entityId
+              : vizConfig.xAxisVariable?.entityId
+          }
           variableSpecs={[
             {
               role: 'X-axis',
@@ -516,13 +524,20 @@ function getRequestParams(
   studyId: string,
   filters: Filter[],
   xAxisVariable: VariableDescriptor,
-  yAxisVariable: VariableDescriptor
+  yAxisVariable: VariableDescriptor,
+  // add dataElementDependencyOrder here
+  dataElementDependencyOrder?: string[]
 ): MosaicRequestParams {
   return {
     studyId,
     filters,
     config: {
-      outputEntityId: xAxisVariable.entityId,
+      // add outputEntityId per dataElementDependencyOrder
+      outputEntityId:
+        dataElementDependencyOrder != null &&
+        dataElementDependencyOrder[0] === 'yAxisVariable'
+          ? yAxisVariable?.entityId
+          : xAxisVariable.entityId,
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
     },
