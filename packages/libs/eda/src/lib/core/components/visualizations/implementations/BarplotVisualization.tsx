@@ -19,7 +19,6 @@ import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
@@ -28,6 +27,8 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
+
+import { orderBy } from 'lodash';
 
 import bar from './selectorIcons/bar.svg';
 
@@ -130,11 +131,19 @@ function BarplotViz(props: Props) {
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
-  const { variable } = useMemo(() => {
-    return (
-      findEntityAndVariable(vizConfig.xAxisVariable) ?? { variable: undefined }
-    );
-  }, [vizConfig.xAxisVariable]);
+  const { variable, entity, overlayVariable } = useMemo(() => {
+    const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+    const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+    return {
+      variable: xAxisVariable ? xAxisVariable.variable : undefined,
+      entity: xAxisVariable ? xAxisVariable.entity : undefined,
+      overlayVariable: overlayVariable ? overlayVariable.variable : undefined,
+    };
+  }, [
+    findEntityAndVariable,
+    vizConfig.xAxisVariable,
+    vizConfig.overlayVariable,
+  ]);
 
   const data = usePromise(
     useCallback(async (): Promise<any> => {
@@ -152,7 +161,11 @@ function BarplotViz(props: Props) {
         params as BarplotRequestParams
       );
 
-      return barplotResponseToData(await response);
+      return reorderData(
+        barplotResponseToData(await response),
+        variable?.vocabulary,
+        overlayVariable?.vocabulary
+      );
     }, [studyId, filters, dataClient, vizConfig, variable, computation.type])
   );
 
@@ -212,7 +225,7 @@ function BarplotViz(props: Props) {
       {fullscreen ? (
         <>
           <OutputEntityTitle
-            entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            entity={entity}
             outputSize={data.pending ? undefined : data.value?.outputSize}
           />
           <div
@@ -374,4 +387,57 @@ function getRequestParams(
       // valueSpec: 'identity',
     },
   } as BarplotRequestParams;
+}
+
+/**
+ * reorder the series prop of the BarplotData object so that labels
+ * go in the same order as the main variable's vocabulary, and the overlay
+ * strata are ordered in that variable's vocabulary order too, with missing values and traces added as undefined
+ *
+ * NOTE: if any values are missing from the vocabulary array, then the data for that value WILL NOT BE PLOTTED
+ *
+ */
+function reorderData(
+  data: BarplotData,
+  labelVocabulary: string[] = [],
+  overlayVocabulary: string[] = []
+) {
+  const labelOrderedSeries = data.series.map((series) => {
+    if (labelVocabulary.length > 0) {
+      // for each label in the vocabulary's correct order,
+      // find the index of that label in the provided series' label array
+      const labelIndices = labelVocabulary.map((label) =>
+        series.label.indexOf(label)
+      );
+      // now return the data from the other array(s) in the same order
+      // any missing labels will be mapped to `undefined` (indexing an array with -1)
+      return {
+        ...series,
+        label: labelVocabulary,
+        value: labelIndices.map((i) => series.value[i]),
+      };
+    } else {
+      return series;
+    }
+  });
+
+  if (overlayVocabulary.length > 0) {
+    const overlayValues = labelOrderedSeries.map((series) => series.name);
+    const overlayIndices = overlayVocabulary.map((name) =>
+      overlayValues.indexOf(name)
+    );
+    return {
+      ...data,
+      series: overlayIndices.map(
+        (i, j) =>
+          labelOrderedSeries[i] ?? {
+            name: overlayVocabulary[j],
+            label: labelVocabulary,
+            value: labelVocabulary.map(() => undefined),
+          }
+      ),
+    };
+  } else {
+    return { ...data, series: labelOrderedSeries };
+  }
 }
