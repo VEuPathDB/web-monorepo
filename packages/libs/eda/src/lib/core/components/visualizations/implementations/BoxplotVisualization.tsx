@@ -137,12 +137,31 @@ function BoxplotViz(props: Props) {
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
+  const {
+    xAxisVariable,
+    xAxisEntity,
+    yAxisVariable,
+    overlayVariable,
+  } = useMemo(() => {
+    const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+    const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
+    const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+
+    return {
+      xAxisVariable: xAxisVariable ? xAxisVariable.variable : undefined,
+      xAxisEntity: xAxisVariable ? xAxisVariable.entity : undefined,
+      yAxisVariable: yAxisVariable ? yAxisVariable.variable : undefined,
+      overlayVariable: overlayVariable ? overlayVariable.variable : undefined,
+    };
+  }, [
+    findEntityAndVariable,
+    vizConfig.xAxisVariable,
+    vizConfig.yAxisVariable,
+    vizConfig.overlayVariable,
+  ]);
+
   const data = usePromise(
     useCallback(async (): Promise<PromiseBoxplotData | undefined> => {
-      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
-      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
-
-      // check variable inputs and add densityplot
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
@@ -175,7 +194,8 @@ function BoxplotViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findEntityAndVariable,
+      xAxisVariable,
+      yAxisVariable,
       computation.type,
       visualization.type,
     ])
@@ -242,7 +262,7 @@ function BoxplotViz(props: Props) {
       {fullscreen ? (
         <>
           <OutputEntityTitle
-            entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            entity={xAxisEntity}
             outputSize={data.pending ? undefined : data.value?.outputSize}
           />
           <div
@@ -266,14 +286,8 @@ function BoxplotViz(props: Props) {
                 (data.value.series.length > 1 ||
                   vizConfig.overlayVariable != null)
               }
-              independentAxisLabel={
-                findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                  .displayName ?? 'X-Axis'
-              }
-              dependentAxisLabel={
-                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
-                  .displayName ?? 'Y-Axis'
-              }
+              independentAxisLabel={xAxisVariable?.displayName ?? 'X-Axis'}
+              dependentAxisLabel={yAxisVariable?.displayName ?? 'Y-Axis'}
               // show/hide independent/dependent axis tick label
               showIndependentAxisTickLabel={true}
               showDependentAxisTickLabel={true}
@@ -281,10 +295,8 @@ function BoxplotViz(props: Props) {
               interactive={true}
               showSpinner={data.pending}
               showRawData={true}
-              legendTitle={
-                findEntityAndVariable(vizConfig.overlayVariable)?.variable
-                  .displayName
-              }
+              legendTitle={overlayVariable?.displayName}
+              categoricalAxisCategoryOrder={xAxisVariable?.vocabulary}
             />
             <VariableCoverageTable
               completeCases={
@@ -296,21 +308,18 @@ function BoxplotViz(props: Props) {
                 {
                   role: 'X-axis',
                   required: true,
-                  display: findEntityAndVariable(vizConfig.xAxisVariable)
-                    ?.variable.displayName,
+                  display: xAxisVariable?.displayName,
                   variable: vizConfig.xAxisVariable,
                 },
                 {
                   role: 'Y-axis',
                   required: true,
-                  display: findEntityAndVariable(vizConfig.yAxisVariable)
-                    ?.variable.displayName,
+                  display: yAxisVariable?.displayName,
                   variable: vizConfig.yAxisVariable,
                 },
                 {
                   role: 'Overlay',
-                  display: findEntityAndVariable(vizConfig.overlayVariable)
-                    ?.variable.displayName,
+                  display: overlayVariable?.displayName,
                   variable: vizConfig.overlayVariable,
                 },
               ]}
