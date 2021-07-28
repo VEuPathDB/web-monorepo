@@ -212,6 +212,24 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig]
   );
 
+  // outputEntity for OutputEntityTitle's outputEntity prop
+  const outputEntity = useMemo(() => {
+    const outputEntityVariableName =
+      dataElementDependencyOrder != null &&
+      dataElementDependencyOrder[0] === 'yAxisVariable'
+        ? vizConfig.yAxisVariable
+        : vizConfig.xAxisVariable;
+    return findEntityAndVariable(outputEntityVariableName)?.entity;
+  }, [dataElementDependencyOrder, vizConfig, findEntityAndVariable]);
+
+  // outputEntityId for getRequestParams
+  const outputEntityId = useMemo(() => {
+    return dataElementDependencyOrder != null &&
+      dataElementDependencyOrder[0] === 'yAxisVariable'
+      ? vizConfig.yAxisVariable?.entityId
+      : vizConfig.xAxisVariable?.entityId;
+  }, [dataElementDependencyOrder, vizConfig, findEntityAndVariable]);
+
   const data = usePromise(
     useCallback(async (): Promise<PromiseXYPlotData | undefined> => {
       const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
@@ -243,8 +261,8 @@ function ScatterplotViz(props: Props) {
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
         vizConfig.overlayVariable,
-        // add dataElementDependencyOrder
-        dataElementDependencyOrder,
+        // pass outputEntityId
+        outputEntityId,
         // add visualization.type
         visualization.type,
         // XYPlotControls
@@ -342,7 +360,7 @@ function ScatterplotViz(props: Props) {
       {fullscreen ? (
         <>
           <OutputEntityTitle
-            entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            entity={outputEntity}
             outputSize={data.pending ? undefined : data.value?.outputSize}
           />
           <div
@@ -425,13 +443,7 @@ function ScatterplotViz(props: Props) {
                   : undefined
               }
               filters={filters}
-              outputEntityId={
-                // add outputEntityId per dataElementDependencyOrder
-                dataElementDependencyOrder != null &&
-                dataElementDependencyOrder[0] === 'yAxisVariable'
-                  ? vizConfig.yAxisVariable?.entityId
-                  : vizConfig.xAxisVariable?.entityId
-              }
+              outputEntityId={outputEntityId}
               variableSpecs={[
                 {
                   role: 'X-axis',
@@ -603,8 +615,8 @@ function getRequestParams(
   // set yAxisVariable as optional for densityplot
   yAxisVariable?: VariableDescriptor,
   overlayVariable?: VariableDescriptor,
-  // add dataElementDependencyOrder
-  dataElementDependencyOrder?: string[],
+  // pass outputEntityId
+  outputEntityId?: string,
   // add visualization.type
   vizType?: string,
   // XYPlotControls
@@ -623,12 +635,8 @@ function getRequestParams(
       studyId,
       filters,
       config: {
-        // add outputEntityId per dataElementDependencyOrder
-        outputEntityId:
-          dataElementDependencyOrder != null &&
-          dataElementDependencyOrder[0] === 'yAxisVariable'
-            ? yAxisVariable?.entityId
-            : xAxisVariable.entityId,
+        // add outputEntityId
+        outputEntityId: outputEntityId,
         xAxisVariable: xAxisVariable,
         yAxisVariable: yAxisVariable,
         overlayVariable: overlayVariable,
@@ -640,12 +648,8 @@ function getRequestParams(
       studyId,
       filters,
       config: {
-        // add outputEntityId per dataElementDependencyOrder
-        outputEntityId:
-          dataElementDependencyOrder != null &&
-          dataElementDependencyOrder[0] === 'yAxisVariable'
-            ? yAxisVariable?.entityId
-            : xAxisVariable.entityId,
+        // add outputEntityId
+        outputEntityId: outputEntityId,
         // XYPlotControls
         valueSpec: valueSpecValue,
         xAxisVariable: xAxisVariable,
