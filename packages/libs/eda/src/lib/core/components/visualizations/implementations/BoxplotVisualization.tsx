@@ -296,7 +296,6 @@ function BoxplotViz(props: Props) {
               showSpinner={data.pending}
               showRawData={true}
               legendTitle={overlayVariable?.displayName}
-              categoricalAxisCategoryOrder={xAxisVariable?.vocabulary}
             />
             <VariableCoverageTable
               completeCases={

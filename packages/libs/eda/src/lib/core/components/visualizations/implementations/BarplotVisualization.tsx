@@ -246,7 +246,6 @@ function BarplotViz(props: Props) {
               }
               interactive
               showSpinner={data.pending}
-              categoricalAxisCategoryOrder={variable?.vocabulary}
             />
             <VariableCoverageTable
               completeCases={
@@ -298,7 +297,6 @@ function BarplotViz(props: Props) {
             marginTop: 20,
           }}
           showSpinner={data.pending}
-          categoricalAxisCategoryOrder={variable?.vocabulary}
         />
       )}
     </div>
