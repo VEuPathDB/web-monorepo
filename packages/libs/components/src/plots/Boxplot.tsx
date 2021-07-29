@@ -55,49 +55,63 @@ export default function Boxplot(props: BoxplotProps) {
   // get them in the given order, and trivially unique-ify them, if traces have different values
   const categoryOrder = uniq(flatMap(plotData, (d) => d.label));
 
-  const data: PlotParams['data'] = plotData.map((d) => {
-    // using the d.median array, find the indices of non-null values
-    const definedDataIndices = (d.median as any[]).map((x) => x); /// TO DO TO DO TO DO
-    //(median, index) => median != null ? index : undefined);
-    //.filter((x) => x != null);
+  const [independentAxisName, dependentAxisName] =
+    orientation === 'vertical' ? ['x', 'y'] : ['y', 'x'];
 
-    const [independentAxis, dependentAxis] =
-      orientation === 'vertical' ? ['x', 'y'] : ['y', 'x'];
-    const orientationDependentProps: any = {
-      [independentAxis]: at(d.label, definedDataIndices),
-      [dependentAxis]:
-        d.rawData && showRawData
-          ? d.rawData
-          : d.outliers?.length
-          ? d.outliers
-          : undefined,
-    };
+  const data: PlotParams['data'] = plotData
+    .map((d) => {
+      // part 1 of the hack to avoid showing empty boxes as lines on the zero line
+      // using the d.median array, find the indices of non-null values
+      // we will use this to filter out only the "good" values of q1, q3, lowerfence etc
+      const definedDataIndices = d.median
+        .map((median, index) => (median != null ? index : undefined))
+        .filter((x) => x != null) as number[];
 
-    // seems like plotly bug: y[0] or x[0] should not be empty array (e.g., with overlay variable)
-    // see multipleData at story file (Kenya case)
-    if (orientationDependentProps[dependentAxis]?.[0].length === 0)
-      orientationDependentProps[dependentAxis][0] = [null];
+      const orientationDependentProps: any = {
+        [independentAxisName]: at(d.label, definedDataIndices),
+        [dependentAxisName]:
+          d.rawData && showRawData
+            ? at(d.rawData, definedDataIndices)
+            : d.outliers?.length
+            ? at(d.outliers, definedDataIndices)
+            : undefined,
+      };
 
-    return {
-      lowerfence: d.lowerfence,
-      upperfence: d.upperfence,
-      median: d.median,
-      mean: d.mean !== null ? d.mean : undefined,
-      boxmean: d.mean !== null && showMean,
-      q1: d.q1,
-      q3: d.q3,
-      // name is used as legend
-      name: d.name,
-      boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
-      jitter: 0.1, // should be dependent on the number of datapoints...?
-      marker: {
-        opacity: opacity,
-        color: d.color,
-      },
-      ...orientationDependentProps,
-      type: 'box',
-    };
-  });
+      // seems like plotly bug: y[0] or x[0] should not be empty array (e.g., with overlay variable)
+      // see multipleData at story file (Kenya case)
+      if (orientationDependentProps[dependentAxisName]?.[0].length === 0)
+        orientationDependentProps[dependentAxisName][0] = [null];
+
+      return {
+        lowerfence: at(d.lowerfence, definedDataIndices),
+        upperfence: at(d.upperfence, definedDataIndices),
+        median: at(d.median, definedDataIndices),
+        mean: d.mean !== null ? at(d.mean, definedDataIndices) : undefined,
+        boxmean: d.mean !== null && showMean,
+        q1: at(d.q1, definedDataIndices),
+        q3: at(d.q3, definedDataIndices),
+        // name is used as legend
+        name: d.name,
+        boxpoints: d.rawData && showRawData ? 'all' : 'outliers',
+        jitter: 0.1, // should be dependent on the number of datapoints...?
+        marker: {
+          opacity: opacity,
+          color: d.color,
+        },
+        ...orientationDependentProps,
+        type: 'box',
+      };
+    })
+    .concat(
+      // this is part 2 of the hack - provide all the category names in a new invisible trace
+      {
+        [independentAxisName]: categoryOrder,
+        [dependentAxisName]: categoryOrder.map(() => 0),
+        type: 'bar',
+        hoverinfo: 'none',
+        showlegend: false,
+      }
+    );
 
   const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';
   const independentAxis = orientation === 'vertical' ? 'xaxis' : 'yaxis';
@@ -112,6 +126,8 @@ export default function Boxplot(props: BoxplotProps) {
       range: data.length ? undefined : [1, 5], // avoids x==0 line
       tickfont: data.length ? {} : { color: 'transparent' },
       showticklabels: showIndependentAxisTickLabel,
+      categoryorder: 'array',
+      categoryarray: categoryOrder,
     },
     [dependentAxis]: {
       automargin: true,
