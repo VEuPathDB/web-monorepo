@@ -305,6 +305,59 @@ WithStorybookControl.argTypes = storyArgTypes(
   })
 );
 
+const emptyCategoryData = {
+  series: [
+    {
+      lowerfence: [undefined, 1, undefined, 1, 1],
+      upperfence: [undefined, 6, undefined, 1, 6],
+      median: [undefined, 4, undefined, 1, 2],
+      mean: [undefined, 3.6, undefined, 1, 2.1914],
+      boxmean: true,
+      q1: [undefined, 2, undefined, 1, 1],
+      q3: [undefined, 5, undefined, 1, 3],
+      name: 'Bangladesh',
+      label: [
+        'Finished floor; cement',
+        'Finished floor; ceramic tile',
+        'Finished floor; vinyl of asphalt strips',
+        'Natural floor; dung',
+        'Natural floor; earth/sand',
+      ],
+      outliers: [
+        [],
+        [],
+        [],
+        [],
+        [7, 7, 8, 7, 7, 9, 7, 7, 7, 7, 7, 8, 7, 7, 8, 7, 8, 8, 7, 7, 7, 8, 9],
+      ],
+    },
+  ],
+};
+
+export const EmptyCategoryData: Story<any> = Template.bind({});
+EmptyCategoryData.argTypes = storyArgTypes(
+  (EmptyCategoryData.args = {
+    data: emptyCategoryData.series,
+    // width: plotWidth,
+    // height: plotHeight,
+    orientation: orientation,
+    showMean: true,
+    interactive: true,
+    displayLegend: true,
+    displayLibraryControls: true,
+    showSpinner: false,
+    legendTitle: 'Legend title example',
+    independentAxisLabel: 'Floor material',
+    dependentAxisLabel: 'Sleeping rooms in dwelling',
+    showIndependentAxisTickLabel: true,
+    showDependentAxisTickLabel: true,
+    containerStyles: {
+      width: plotWidth,
+      height: plotHeight,
+    },
+  })
+);
+
 function storyArgTypes(args: any): any {
   if (args.data) {
     const pointTraceIndices = args.data

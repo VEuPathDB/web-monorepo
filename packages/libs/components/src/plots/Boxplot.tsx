@@ -10,6 +10,7 @@ import {
   OrientationDefault,
 } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
+import { uniq, flatMap, at } from 'lodash';
 
 export interface BoxplotProps
   extends PlotProps<BoxplotData>,
@@ -50,13 +51,20 @@ export default function Boxplot(props: BoxplotProps) {
     ...restProps
   } = props;
 
-  // margin,
+  // get the order of the provided category values (labels shown along x-axis)
+  // get them in the given order, and trivially unique-ify them, if traces have different values
+  const categoryOrder = uniq(flatMap(plotData, (d) => d.label));
 
   const data: PlotParams['data'] = plotData.map((d) => {
+    // using the d.median array, find the indices of non-null values
+    const definedDataIndices = (d.median as any[]).map((x) => x); /// TO DO TO DO TO DO
+    //(median, index) => median != null ? index : undefined);
+    //.filter((x) => x != null);
+
     const [independentAxis, dependentAxis] =
       orientation === 'vertical' ? ['x', 'y'] : ['y', 'x'];
     const orientationDependentProps: any = {
-      [independentAxis]: d.label,
+      [independentAxis]: at(d.label, definedDataIndices),
       [dependentAxis]:
         d.rawData && showRawData
           ? d.rawData
