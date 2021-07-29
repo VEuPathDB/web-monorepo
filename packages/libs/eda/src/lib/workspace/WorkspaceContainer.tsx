@@ -1,5 +1,7 @@
 import { find } from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
+import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/RestrictedPage';
+import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import React, { useCallback, useMemo } from 'react';
 import { useRouteMatch } from 'react-router';
 import {
@@ -53,18 +55,22 @@ export function WorkspaceContainer(props: Props) {
     },
     [url]
   );
+  const approvalStatus = useApprovalStatus(props.studyId, 'analysis');
+
   return (
-    <EDAWorkspaceContainer
-      analysisId={props.analysisId}
-      studyId={props.studyId}
-      className={cx()}
-      analysisClient={mockAnalysisStore}
-      dataClient={dataClient}
-      subsettingClient={subsettingClient}
-      makeVariableLink={makeVariableLink}
-    >
-      <EDAWorkspaceHeading />
-      <AnalysisPanel analysisId={props.analysisId} />
-    </EDAWorkspaceContainer>
+    <RestrictedPage approvalStatus={approvalStatus}>
+      <EDAWorkspaceContainer
+        analysisId={props.analysisId}
+        studyId={props.studyId}
+        className={cx()}
+        analysisClient={mockAnalysisStore}
+        dataClient={dataClient}
+        subsettingClient={subsettingClient}
+        makeVariableLink={makeVariableLink}
+      >
+        <EDAWorkspaceHeading />
+        <AnalysisPanel analysisId={props.analysisId} />
+      </EDAWorkspaceContainer>
+    </RestrictedPage>
   );
 }
