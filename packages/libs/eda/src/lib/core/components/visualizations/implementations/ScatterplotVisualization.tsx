@@ -212,7 +212,7 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  // outputEntity for OutputEntityTitle's outputEntity prop
+  // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useMemo(() => {
     const outputEntityVariableName =
       dataElementDependencyOrder != null &&
@@ -220,14 +220,6 @@ function ScatterplotViz(props: Props) {
         ? vizConfig.yAxisVariable
         : vizConfig.xAxisVariable;
     return findEntityAndVariable(outputEntityVariableName)?.entity;
-  }, [dataElementDependencyOrder, vizConfig, findEntityAndVariable]);
-
-  // outputEntityId for getRequestParams
-  const outputEntityId = useMemo(() => {
-    return dataElementDependencyOrder != null &&
-      dataElementDependencyOrder[0] === 'yAxisVariable'
-      ? vizConfig.yAxisVariable?.entityId
-      : vizConfig.xAxisVariable?.entityId;
   }, [dataElementDependencyOrder, vizConfig, findEntityAndVariable]);
 
   const data = usePromise(
@@ -261,8 +253,8 @@ function ScatterplotViz(props: Props) {
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
         vizConfig.overlayVariable,
-        // pass outputEntityId
-        outputEntityId,
+        // pass outputEntity.id
+        outputEntity?.id,
         // add visualization.type
         visualization.type,
         // XYPlotControls
@@ -443,7 +435,7 @@ function ScatterplotViz(props: Props) {
                   : undefined
               }
               filters={filters}
-              outputEntityId={outputEntityId}
+              outputEntityId={outputEntity?.id}
               variableSpecs={[
                 {
                   role: 'X-axis',
@@ -588,8 +580,6 @@ export function scatterplotResponseToData(
 
   return {
     dataSetProcess: dataSetProcess,
-    // xMin: xMin,
-    // xMax: xMax,
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
@@ -601,11 +591,9 @@ export function scatterplotResponseToData(
 type getRequestParamsProps =
   | (ScatterplotRequestParams & {
       vizType?: string;
-      dataElementDependencyOrder?: string[];
     })
   | (LineplotRequestParams & {
       vizType?: string;
-      dataElementDependencyOrder?: string[];
     });
 
 function getRequestParams(
@@ -682,9 +670,9 @@ function processInputData<T extends number | string>(
       ? dataSet.densityplot
       : dataSet.scatterplot;
 
-  // set variables for x- and yaxis ranges
-  let yMin: number | string | undefined = 0;
-  let yMax: number | string | undefined = 0;
+  // set variables for x- and yaxis ranges: no default values are set
+  let yMin: number | string | undefined;
+  let yMax: number | string | undefined;
 
   // coloring: using plotly.js default colors
   const markerColors = [
@@ -736,17 +724,20 @@ function processInputData<T extends number | string>(
         seriesY = el.seriesY.map(Number);
       }
 
-      // check if this Y array consists of numbers & add type assertion
-      if (index === 0) {
-        // if (seriesY && seriesY !== undefined) {
-        yMin = min(seriesY);
-        yMax = max(seriesY);
-        // }
-      } else {
+      // compute yMin/yMax
+      if (seriesY.length) {
         yMin =
-          // (yMin !== undefined && seriesY.length !== 0 && yMin < min(seriesY)) ? yMin : min(seriesY);
-          lte(yMin, min(seriesY)) ? yMin : min(seriesY);
-        yMax = gte(yMax, max(seriesY)) ? yMax : max(seriesY);
+          yMin != null
+            ? lte(yMin, min(seriesY))
+              ? yMin
+              : min(seriesY)
+            : min(seriesY);
+        yMax =
+          yMax != null
+            ? gte(yMax, max(seriesY))
+              ? yMax
+              : max(seriesY)
+            : max(seriesY);
       }
 
       // add scatter data considering input options
@@ -831,16 +822,19 @@ function processInputData<T extends number | string>(
       }
 
       // add additional condition for the case of smoothedMean (without series data)
-      yMin = el.seriesY
-        ? lte(yMin, min(yIntervalLineValue))
-          ? yMin
-          : min(yIntervalLineValue)
-        : min(yIntervalLineValue);
-      yMax = el.seriesY
-        ? gte(yMax, max(yIntervalLineValue))
-          ? yMax
-          : max(yIntervalLineValue)
-        : max(yIntervalLineValue);
+      // need to check whether data is empty
+      if (yIntervalLineValue.length) {
+        yMin = el.seriesY.length
+          ? lte(yMin, min(yIntervalLineValue))
+            ? yMin
+            : min(yIntervalLineValue)
+          : min(yIntervalLineValue);
+        yMax = el.seriesY.length
+          ? gte(yMax, max(yIntervalLineValue))
+            ? yMax
+            : max(yIntervalLineValue)
+          : max(yIntervalLineValue);
+      }
 
       // store data for smoothed mean: this is not affected by plot options (e.g., showLine etc.)
       dataSetProcess.push({
@@ -848,7 +842,7 @@ function processInputData<T extends number | string>(
         y: yIntervalLineValue,
         // name: 'Smoothed mean',
         name: el.overlayVariableDetails
-          ? el.overlayVariableDetails.value + '<br>Smoothed mean'
+          ? el.overlayVariableDetails.value + ', Smoothed mean'
           : 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
@@ -878,9 +872,11 @@ function processInputData<T extends number | string>(
         yLowerValues.map((element) => element).reverse()
       );
 
-      // set variables for x-/y-axes ranges including CI/bounds: no need for x data as it was compared before
-      yMin = lte(yMin, min(yLowerValues)) ? yMin : min(yLowerValues);
-      yMax = gte(yMax, max(yLowerValues)) ? yMax : max(yLowerValues);
+      // set variables for y-axes ranges including CI/bounds
+      if (yLowerValues.length) {
+        yMin = lte(yMin, min(yLowerValues)) ? yMin : min(yLowerValues);
+        yMax = gte(yMax, max(yUpperValues)) ? yMax : max(yUpperValues);
+      }
 
       // store data for CI/bounds
       dataSetProcess.push({
@@ -888,7 +884,7 @@ function processInputData<T extends number | string>(
         y: yIntervalBounds,
         // name: '95% Confidence interval',
         name: el.overlayVariableDetails
-          ? el.overlayVariableDetails.value + '<br>95% Confidence interval'
+          ? el.overlayVariableDetails.value + ', 95% Confidence interval'
           : '95% Confidence interval',
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
@@ -918,16 +914,18 @@ function processInputData<T extends number | string>(
       }
 
       // add additional condition for the case of smoothedMean (without series data)
-      yMin = el.seriesY
-        ? lte(yMin, min(el.bestFitLineY))
-          ? yMin
-          : min(el.bestFitLineY)
-        : min(el.bestFitLineY);
-      yMax = el.seriesY
-        ? gte(yMax, max(el.bestFitLineY))
-          ? yMax
-          : max(el.bestFitLineY)
-        : max(el.bestFitLineY);
+      if (el.bestFitLineY.length) {
+        yMin = el.seriesY
+          ? lte(yMin, min(el.bestFitLineY))
+            ? yMin
+            : min(el.bestFitLineY)
+          : min(el.bestFitLineY);
+        yMax = el.seriesY
+          ? gte(yMax, max(el.bestFitLineY))
+            ? yMax
+            : max(el.bestFitLineY)
+          : max(el.bestFitLineY);
+      }
 
       // store data for fitting line: this is not affected by plot options (e.g., showLine etc.)
       dataSetProcess.push({
@@ -936,8 +934,8 @@ function processInputData<T extends number | string>(
         // display R-square value at legend text(s)
         // name: 'Best fit<br>R<sup>2</sup> = ' + el.r2,
         name: el.overlayVariableDetails
-          ? el.overlayVariableDetails.value + '<br>R<sup>2</sup> = ' + el.r2
-          : 'Best fit<br>R<sup>2</sup> = ' + el.r2,
+          ? el.overlayVariableDetails.value + ', R² = ' + el.r2
+          : 'Best fit, R² = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
           color: 'rgba(' + markerColors[index] + ',1)',
