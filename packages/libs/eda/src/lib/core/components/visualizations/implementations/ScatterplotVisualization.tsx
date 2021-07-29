@@ -19,6 +19,7 @@ import {
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 // import { StudyEntity } from '../../../types/study';
 import { PromiseType } from '../../../types/utility';
@@ -113,9 +114,9 @@ function createDefaultConfig(): ScatterplotConfig {
   };
 }
 
-type ScatterplotConfig = t.TypeOf<typeof ScatterplotConfig>;
+export type ScatterplotConfig = t.TypeOf<typeof ScatterplotConfig>;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-const ScatterplotConfig = t.partial({
+export const ScatterplotConfig = t.partial({
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
   overlayVariable: VariableDescriptor,
@@ -213,14 +214,12 @@ function ScatterplotViz(props: Props) {
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  const outputEntity = useMemo(() => {
-    const outputEntityVariableName =
-      dataElementDependencyOrder != null &&
-      dataElementDependencyOrder[0] === 'yAxisVariable'
-        ? vizConfig.yAxisVariable
-        : vizConfig.xAxisVariable;
-    return findEntityAndVariable(outputEntityVariableName)?.entity;
-  }, [dataElementDependencyOrder, vizConfig, findEntityAndVariable]);
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'xAxisVariable',
+    entities
+  );
 
   const data = usePromise(
     useCallback(async (): Promise<PromiseXYPlotData | undefined> => {

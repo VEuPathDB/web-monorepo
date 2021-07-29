@@ -336,10 +336,7 @@ function FullScreenVisualization(props: Props & { id: string }) {
               }
             />
           </h3>
-          {/* add viz description */}
-          <div className="Subtitle">
-            {overview?.displayName}: {overview?.description}
-          </div>
+          <div className="Subtitle">{overview?.displayName}</div>
           <vizType.fullscreenComponent
             dataElementConstraints={constraints}
             dataElementDependencyOrder={dataElementDependencyOrder}

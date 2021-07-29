@@ -18,6 +18,7 @@ import {
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
@@ -145,14 +146,12 @@ function BoxplotViz(props: Props) {
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
-  const outputEntity = useMemo(() => {
-    const outputEntityVariableName =
-      dataElementDependencyOrder != null &&
-      dataElementDependencyOrder[0] === 'yAxisVariable'
-        ? vizConfig.yAxisVariable
-        : vizConfig.xAxisVariable;
-    return findEntityAndVariable(outputEntityVariableName)?.entity;
-  }, [dataElementDependencyOrder, vizConfig, findEntityAndVariable]);
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'xAxisVariable',
+    entities
+  );
 
   const data = usePromise(
     useCallback(async (): Promise<PromiseBoxplotData | undefined> => {
