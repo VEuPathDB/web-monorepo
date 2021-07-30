@@ -74,7 +74,7 @@ export default function Boxplot(props: BoxplotProps) {
             ? at(d.rawData, definedDataIndices)
             : d.outliers?.length
             ? at(d.outliers, definedDataIndices)
-            : undefined,
+            : [[null]],
       };
 
       // seems like plotly bug: y[0] or x[0] should not be empty array (e.g., with overlay variable)
