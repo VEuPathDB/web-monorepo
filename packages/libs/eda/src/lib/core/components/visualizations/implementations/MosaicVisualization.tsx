@@ -206,11 +206,19 @@ function MosaicViz(props: Props) {
       if (isTwoByTwo) {
         const response = dataClient.getTwoByTwo(computation.type, params);
 
-        return twoByTwoResponseToData(await response);
+        return reorderData(
+          twoByTwoResponseToData(await response),
+          xAxisVariable.vocabulary,
+          yAxisVariable.vocabulary
+        );
       } else {
         const response = dataClient.getContTable(computation.type, params);
 
-        return contTableResponseToData(await response);
+        return reorderData(
+          contTableResponseToData(await response),
+          xAxisVariable.vocabulary,
+          yAxisVariable.vocabulary
+        );
       }
     }, [
       studyId,
@@ -523,7 +531,7 @@ function reorderData<T extends TwoByTwoData | ContTableData>(
 
   const yIndices =
     yVocabulary.length > 0
-      ? indicesForCorrectOrder(data.independentLabels, yVocabulary)
+      ? indicesForCorrectOrder(data.dependentLabels, yVocabulary)
       : Array.from(data.dependentLabels.keys());
 
   return {
@@ -532,15 +540,19 @@ function reorderData<T extends TwoByTwoData | ContTableData>(
       data.values.map((innerDim) => _.at(innerDim, xIndices)),
       yIndices
     ),
+    independentLabels: _.at(data.independentLabels, xIndices),
+    dependentLabels: _.at(data.dependentLabels, yIndices),
   };
 }
 
 /**
- * given an array of labels [ 'cat', 'dog', 'mouse' ]
- * and an array of the desired order [ 'mouse', 'rat', 'cat', 'dog' ]
- * return the indices of the labels that would put them in the right order,
+ * given an array of `labels` [ 'cat', 'dog', 'mouse' ]
+ * and an array of the desired `order` [ 'mouse', 'rat', 'cat', 'dog' ]
+ * return the `indices` of the labels that would put them in the right order,
  * e.g. [ 2, 0, 1 ]
- * you can use _.at(someArray, indices) to reorder other arrays with this
+ * you can use `_.at(someOtherArray, indices)` to reorder other arrays with this
+ *
+ * it fails nicely if the strings in `order` aren't in `labels`
  */
 function indicesForCorrectOrder(labels: string[], order: string[]): number[] {
   const sortedLabels = _.sortBy(labels, (label) => order.indexOf(label));
