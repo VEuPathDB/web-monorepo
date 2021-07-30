@@ -10,11 +10,7 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
 import React, { useCallback, useMemo } from 'react';
-import {
-  CompleteCasesTable,
-  DataClient,
-  MosaicRequestParams,
-} from '../../../api/data-api';
+import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
@@ -513,4 +509,42 @@ function getRequestParams(
       yAxisVariable: yAxisVariable,
     },
   };
+}
+
+function reorderData<T extends TwoByTwoData | ContTableData>(
+  data: T,
+  xVocabulary: string[] = [],
+  yVocabulary: string[] = []
+): T {
+  const xIndices =
+    xVocabulary.length > 0
+      ? indicesForCorrectOrder(data.independentLabels, xVocabulary)
+      : Array.from(data.independentLabels.keys()); // [0,1,2,3,...] - effectively a no-op
+
+  const yIndices =
+    yVocabulary.length > 0
+      ? indicesForCorrectOrder(data.independentLabels, yVocabulary)
+      : Array.from(data.dependentLabels.keys());
+
+  return {
+    ...data,
+    values: _.at(
+      data.values.map((innerDim) => _.at(innerDim, xIndices)),
+      yIndices
+    ),
+  };
+}
+
+/**
+ * given an array of labels [ 'cat', 'dog', 'mouse' ]
+ * and an array of the desired order [ 'mouse', 'rat', 'cat', 'dog' ]
+ * return the indices of the labels that would put them in the right order,
+ * e.g. [ 2, 0, 1 ]
+ * you can use _.at(someArray, indices) to reorder other arrays with this
+ */
+function indicesForCorrectOrder(labels: string[], order: string[]): number[] {
+  const sortedLabels = _.sortBy(labels, (label) => order.indexOf(label));
+  // [ 'mouse', 'cat', 'dog' ]
+  return sortedLabels.map((label) => labels.indexOf(label));
+  // [ 2, 0, 1 ]
 }
