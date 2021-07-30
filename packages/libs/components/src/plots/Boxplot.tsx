@@ -100,18 +100,20 @@ export default function Boxplot(props: BoxplotProps) {
         },
         ...orientationDependentProps,
         type: 'box',
+        // `offsetgroup` somehow ensures that an overlay value with no data at all will
+        // still be shown as a gap in the boxplots shown above a single x tick.
+        offsetgroup: d.name,
       };
-    })
-    .concat(
-      // this is part 2 of the hack - provide all the category names in a new invisible trace
-      {
-        [independentAxisName]: categoryOrder,
-        [dependentAxisName]: categoryOrder.map(() => 0),
-        type: 'bar',
-        hoverinfo: 'none',
-        showlegend: false,
-      }
-    );
+    }) // part 2 of the hack:
+    // the following is required because Plotly's 'categoryorder/categoryarray' props do not
+    // introduce "empty" bars/boxes at the beginning or end of the x-axis
+    .concat({
+      [independentAxisName]: categoryOrder,
+      [dependentAxisName]: categoryOrder.map(() => 0),
+      type: 'bar',
+      hoverinfo: 'none',
+      showlegend: false,
+    });
 
   const dependentAxis = orientation === 'vertical' ? 'yaxis' : 'xaxis';
   const independentAxis = orientation === 'vertical' ? 'xaxis' : 'yaxis';
@@ -126,6 +128,7 @@ export default function Boxplot(props: BoxplotProps) {
       range: data.length ? undefined : [1, 5], // avoids x==0 line
       tickfont: data.length ? {} : { color: 'transparent' },
       showticklabels: showIndependentAxisTickLabel,
+      // part 3 of the hack:
       categoryorder: 'array',
       categoryarray: categoryOrder,
     },
