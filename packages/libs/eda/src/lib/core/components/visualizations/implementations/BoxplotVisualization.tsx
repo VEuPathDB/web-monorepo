@@ -351,7 +351,7 @@ function BoxplotViz(props: Props) {
           spacingOptions={{
             marginTop: 20,
             marginRight: 20,
-            marginBottom: 0,
+            marginBottom: 15,
             marginLeft: 30,
           }}
           showSpinner={data.pending}
