@@ -1,3 +1,4 @@
+import { useNonNullableContext } from '@veupathdb/wdk-client/lib/Hooks/NonNullableContext';
 import { SubsettingClient } from '../api/subsetting-api';
 import { DataClient } from '../api/data-api';
 import { AnalysisClient } from '../api/analysis-api';
@@ -6,7 +7,6 @@ import {
   WorkspaceContext,
 } from '../context/WorkspaceContext';
 import { StudyMetadata, StudyRecord, StudyRecordClass } from '../types/study';
-import { useNonNullableContext } from './nonNullableContext';
 import { VariableDescriptor } from '../types/variable';
 
 export function useStudyMetadata(): StudyMetadata {
