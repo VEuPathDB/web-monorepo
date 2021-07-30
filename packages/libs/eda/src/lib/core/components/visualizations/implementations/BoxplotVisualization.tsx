@@ -26,6 +26,8 @@ import box from './selectorIcons/box.svg';
 import { BoxplotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 
+import { at } from 'lodash';
+
 interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
 }
@@ -188,7 +190,11 @@ function BoxplotViz(props: Props) {
       );
 
       // send visualization.type as well
-      return boxplotResponseToData(await response);
+      return reorderData(
+        boxplotResponseToData(await response),
+        xAxisVariable.vocabulary,
+        overlayVariable?.vocabulary
+      );
     }, [
       studyId,
       filters,
@@ -432,4 +438,104 @@ function getRequestParams(
       overlayVariable: overlayVariable,
     },
   } as BoxplotRequestParams;
+}
+
+/**
+ * reorder the series prop of the BarplotData object so that labels
+ * go in the same order as the main variable's vocabulary, and the overlay
+ * strata are ordered in that variable's vocabulary order too, with missing values and traces added as undefined
+ *
+ * NOTE: if any values are missing from the vocabulary array, then the data for that value WILL NOT BE PLOTTED
+ *
+ */
+function reorderData(
+  data: PromiseBoxplotData,
+  labelVocabulary: string[] = [],
+  overlayVocabulary: string[] = []
+) {
+  const labelOrderedSeries = data.series.map((series) => {
+    if (labelVocabulary.length > 0) {
+      // for each label in the vocabulary's correct order,
+      // find the index of that label in the provided series' label array
+      const labelIndices = labelVocabulary.map((label) =>
+        series.label.indexOf(label)
+      );
+      // now return the data from the other array(s) in the same order
+      // any missing labels will be mapped to `undefined` (indexing an array with -1)
+      return {
+        ...series,
+        label: labelVocabulary,
+        q1: dice(series.q1, labelIndices),
+        q3: dice(series.q3, labelIndices),
+        median: dice(series.median, labelIndices),
+        ...(series.lowerfence != null
+          ? { lowerfence: dice(series.lowerfence, labelIndices) }
+          : {}),
+        ...(series.upperfence != null
+          ? { upperfence: dice(series.upperfence, labelIndices) }
+          : {}),
+        ...(series.mean ? { mean: dice(series.mean, labelIndices) } : {}),
+        ...(series.rawData
+          ? { rawData: dice2d(series.rawData, labelIndices) }
+          : {}),
+        ...(series.outliers
+          ? { outliers: dice2d(series.outliers, labelIndices) }
+          : {}),
+      };
+    } else {
+      return series;
+    }
+  });
+
+  if (overlayVocabulary.length > 0) {
+    // for each value in the overlay vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const overlayValues = labelOrderedSeries.map((series) => series.name);
+    const overlayIndices = overlayVocabulary.map((name) =>
+      overlayValues.indexOf(name)
+    );
+    return {
+      ...data,
+      // return the series in overlay vocabulary order
+      series: overlayIndices.map(
+        (i, j) =>
+          labelOrderedSeries[i] ?? {
+            // if there is no series, insert a dummy series
+            name: overlayVocabulary[j],
+            label: labelVocabulary,
+            value: labelVocabulary.map(() => undefined),
+          }
+      ),
+    };
+  } else {
+    return { ...data, series: labelOrderedSeries };
+  }
+}
+
+/**
+ * dice(inArray, indices)
+ *
+ * lodash.at() wrapped in some TS that preserves the input type on the output (and ensures the result is not `(string | number)[]`)
+ *
+ * returns an array of elements of `inArray` in the order of the `indices` given
+ *
+ */
+function dice<T extends number[] | string[]>(inArray: T, indices: number[]): T {
+  return at(inArray, indices) as T;
+}
+
+/**
+ * dice2d(inArray, indices)
+ *
+ * lodash.at() wrapped in some TS that preserves the input type on the output (and ensures the result is not `(string | number)[]`)
+ *
+ * returns an array of elements of `inArray` in the order of the `indices` given
+ *
+ * undefined elements are replaced with an empty array
+ */
+function dice2d<T extends number[][] | string[][]>(
+  inArray: T,
+  indices: number[]
+): T {
+  return at(inArray, indices).map((x) => x ?? []) as T;
 }

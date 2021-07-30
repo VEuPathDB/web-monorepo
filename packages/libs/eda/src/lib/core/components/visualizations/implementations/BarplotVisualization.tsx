@@ -28,8 +28,6 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
-import { orderBy } from 'lodash';
-
 import bar from './selectorIcons/bar.svg';
 
 export const barplotVisualization: VisualizationType = {
