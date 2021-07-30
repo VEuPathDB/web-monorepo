@@ -153,7 +153,7 @@ export default function PlotlyPlot<T>(
   }
 
   // reverse storedLegendList when reverseLegendTooltips is true (e.g., Mosaic)
-  reverseLegendTooltips ? storedLegendList.reverse() : storedLegendList;
+  if (reverseLegendTooltips) storedLegendList.reverse();
 
   // set the number of characters to be displayed
   const maxLegendText = maxLegendTextLength;
