@@ -30,9 +30,22 @@ export interface PlotProps<T> {
   legendTitle?: string;
   /** Options for customizing plot placement. */
   spacingOptions?: PlotSpacingAddon;
+  /** a plot like Mosaic reverse data: need to check for legend ellipsis tooltip */
+  reverseLegendTooltips?: boolean;
+  /** maximum number of characters for legend ellipsis */
+  maxLegendTextLength?: number;
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
+
+/**
+ * store legend list for tooltip texts
+ * note that somehow this should be a global variable
+ * if defined inside PlotlyPlot component, then it does not work correctly
+ * for plot control of scatter plot viz
+ * perhaps due to lazy loading?
+ */
+let storedLegendList: NonNullable<string[]> = [];
 
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
@@ -56,38 +69,14 @@ export default function PlotlyPlot<T>(
     legendTitle,
     spacingOptions,
     showSpinner,
+    // set default reverseLegendTooltips as false
+    reverseLegendTooltips = false,
+    // set default max number of characters (20) for legend ellipsis
+    maxLegendTextLength = 20,
     // expose data for applying legend ellipsis
     data,
     ...plotlyProps
   } = props;
-
-  // store legend list for tooltip
-  let storeLegendList: NonNullable<string[]> = [];
-
-  // store legend list for tooltip
-  if (data) {
-    storeLegendList = data.map((data) => {
-      return data.name ?? '';
-    });
-  }
-
-  /**
-   * To-do:
-   * Mosaic has reversely ordered data so storeLegendList needs to be reversed in that case
-   * So, perhaps we need a new prop to know which plot component is calling this PlotlyPlot
-   * e.g., plotComponent={'Mosaic'} at <Mosaic>, and define plotComponent?: string at PlotProps
-   * Then, if(plotComponent === 'Mosaic') storedLegendList.reverse();
-   */
-
-  // set the number of characters to be displayed
-  const maxLegendText = 20;
-  // change data.name with ellipsis
-  for (let i = 0; i < data.length; i++) {
-    data[i].name =
-      (data[i].name || '').length > maxLegendText
-        ? (data[i].name || '').substring(0, maxLegendText) + '...'
-        : data[i].name;
-  }
 
   // config is derived purely from PlotProps props
   const finalConfig = useMemo(
@@ -147,18 +136,49 @@ export default function PlotlyPlot<T>(
     ]
   );
 
+  /**
+   * legend ellipsis with tooltip
+   */
+  // store legend list for tooltip
+  // need to use filter as Mosaic uses x2 axis without data as well
+  if (data && data != null) {
+    storedLegendList = data
+      .filter((data) => {
+        if (data.name == null) return false;
+        return true;
+      })
+      .map((data) => {
+        return data.name ?? '';
+      });
+  }
+
+  // reverse storedLegendList when reverseLegendTooltips is true (e.g., Mosaic)
+  reverseLegendTooltips ? storedLegendList.reverse() : storedLegendList;
+
+  // set the number of characters to be displayed
+  const maxLegendText = maxLegendTextLength;
+  // change data.name with ellipsis
+  const finalData = data.map((d) => ({
+    ...d,
+    name:
+      (d.name || '').length > maxLegendText
+        ? (d.name || '').substring(0, maxLegendText) + '...'
+        : d.name,
+  }));
+
   return (
     <Suspense fallback="Loading...">
       <div style={{ ...containerStyles, position: 'relative' }}>
         <Plot
           {...plotlyProps}
           // need to set data props for modigying its name prop
-          data={data}
+          // data={data}
+          data={finalData}
           layout={finalLayout}
           style={{ width: '100%', height: '100%' }}
           config={finalConfig}
           // use onAfterPlot event handler for legend tooltip
-          onAfterPlot={() => legendTooltip(storeLegendList)}
+          onAfterPlot={legendTooltip}
         />
         {showSpinner && <Spinner />}
       </div>
@@ -169,10 +189,10 @@ export default function PlotlyPlot<T>(
 // define d3 variable with select
 const d3 = { select };
 // add legend tooltip
-const legendTooltip = (storeLegendList: string[]) => {
+const legendTooltip = () => {
   const legendLayer = d3.select('g.legend');
   legendLayer
     .selectAll('g.traces')
     .append('svg:title')
-    .text((d, i) => storeLegendList[i]);
+    .text((d, i) => storedLegendList[i]);
 };

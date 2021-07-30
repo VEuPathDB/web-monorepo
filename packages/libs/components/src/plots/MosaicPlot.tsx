@@ -108,5 +108,13 @@ export default function MosaicPlot({
   // Add empty trace to show second x axis
   if (showColumnLabels !== false) plotlyReadyData.push({ xaxis: 'x2' });
 
-  return <PlotlyPlot data={plotlyReadyData} layout={layout} {...restProps} />;
+  // set reverseLegendTooltips as true for Mosaic plot: default is false
+  return (
+    <PlotlyPlot
+      data={plotlyReadyData}
+      layout={layout}
+      reverseLegendTooltips={true}
+      {...restProps}
+    />
+  );
 }
