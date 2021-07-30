@@ -503,7 +503,9 @@ function reorderData(
             // if there is no series, insert a dummy series
             name: overlayVocabulary[j],
             label: labelVocabulary,
-            value: labelVocabulary.map(() => undefined),
+            median: labelVocabulary.map(() => undefined),
+            q1: labelVocabulary.map(() => undefined),
+            q3: labelVocabulary.map(() => undefined),
           }
       ),
     };
