@@ -18,6 +18,7 @@ import {
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
@@ -144,6 +145,14 @@ function BoxplotViz(props: Props) {
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
+  // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'xAxisVariable',
+    entities
+  );
+
   const data = usePromise(
     useCallback(async (): Promise<PromiseBoxplotData | undefined> => {
       const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
@@ -166,7 +175,9 @@ function BoxplotViz(props: Props) {
         filters ?? [],
         vizConfig.xAxisVariable,
         vizConfig.yAxisVariable,
-        vizConfig.overlayVariable
+        vizConfig.overlayVariable,
+        // pass outputEntity.id
+        outputEntity?.id
       );
 
       // boxplot
@@ -249,7 +260,7 @@ function BoxplotViz(props: Props) {
       {fullscreen ? (
         <>
           <OutputEntityTitle
-            entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            entity={outputEntity}
             outputSize={data.pending ? undefined : data.value?.outputSize}
           />
           <div
@@ -298,7 +309,7 @@ function BoxplotViz(props: Props) {
                 data.pending ? undefined : data.value?.completeCases
               }
               filters={filters}
-              outputEntityId={vizConfig.xAxisVariable?.entityId}
+              outputEntityId={outputEntity?.id}
               variableSpecs={[
                 {
                   role: 'X-axis',
@@ -429,14 +440,16 @@ function getRequestParams(
   filters: Filter[],
   xAxisVariable: VariableDescriptor,
   yAxisVariable: VariableDescriptor,
-  overlayVariable?: VariableDescriptor
+  overlayVariable?: VariableDescriptor,
+  // pass outputEntityId
+  outputEntityId?: string
 ): getRequestParamsProps {
   return {
     studyId,
     filters,
     config: {
-      // is outputEntityId correct?
-      outputEntityId: xAxisVariable.entityId,
+      // add outputEntityId per dataElementDependencyOrder
+      outputEntityId: outputEntityId,
       // post options: 'all', 'outliers'
       points: 'outliers',
       mean: 'TRUE',
