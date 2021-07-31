@@ -138,10 +138,14 @@ export default function Histogram({
             return (bin.binEnd as number) - (bin.binStart as number);
           }
         });
+
+        const [xAxisName, yAxisName] =
+          orientation === 'vertical' ? ['x', 'y'] : ['y', 'x'];
+
         return {
           type: 'bar',
-          x: orientation === 'vertical' ? binStarts : binCounts,
-          y: orientation === 'vertical' ? binCounts : binStarts,
+          [xAxisName]: binStarts.length ? binStarts : [null], // hack to make sure empty series
+          [yAxisName]: binCounts.length ? binCounts : [null], // show up in the legend
           opacity: calculatedBarOpacity,
           orientation: orientation === 'vertical' ? 'v' : 'h',
           name: series.name,
