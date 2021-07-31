@@ -259,11 +259,14 @@ function ScatterplotViz(props: Props) {
             );
 
       // send visualization.type, independentValueType, and dependentValueType as well
-      return scatterplotResponseToData(
-        await response,
-        visualization.type,
-        independentValueType,
-        dependentValueType
+      return reorderData(
+        scatterplotResponseToData(
+          await response,
+          visualization.type,
+          independentValueType,
+          dependentValueType
+        ),
+        findEntityAndVariable(vizConfig.overlayVariable)?.variable.vocabulary
       );
     }, [
       studyId,
@@ -954,4 +957,37 @@ function getBounds<T extends number | string>(
   });
 
   return { yUpperValues, yLowerValues };
+}
+
+function reorderData(
+  data: PromiseXYPlotData,
+  overlayVocabulary: string[] = []
+) {
+  if (overlayVocabulary.length > 0) {
+    // for each value in the overlay vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const overlayValues = data.dataSetProcess.series.map(
+      (series) => series.name
+    );
+    const overlayIndices = overlayVocabulary.map((name) =>
+      overlayValues.indexOf(name)
+    );
+    return {
+      ...data,
+      dataSetProcess: {
+        // return the series in overlay vocabulary order
+        series: overlayIndices.map(
+          (i, j) =>
+            data.dataSetProcess.series[i] ?? {
+              // if there is no series, insert a dummy series
+              name: overlayVocabulary[j],
+              x: [null],
+              y: [null],
+            }
+        ),
+      },
+    };
+  } else {
+    return data;
+  }
 }
