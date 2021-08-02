@@ -2,12 +2,9 @@ import { StudyCard } from '@veupathdb/web-common/lib/App/Studies';
 import { SearchCard } from '@veupathdb/web-common/lib/App/Searches';
 import { ImageCard } from '@veupathdb/web-common/lib/App/ImageCard';
 
-import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
 import { studyMatchPredicate, studyFilters } from '@veupathdb/web-common/lib/util/homeContent';
 
-const ClinEpiStudyCard = withPermissions(StudyCard);
-
-export default ({ studies, searches, visualizations }) => ([
+export default permissionsValue => ({ studies, searches, visualizations }) => ([
   {
     title: 'Explore the Studies',
     contentType: 'StudyCardList',
@@ -15,13 +12,14 @@ export default ({ studies, searches, visualizations }) => ([
     filters: studyFilters(studies),
     filtersLabel: 'disease',
     items: studies.entities,
-    isLoading: studies.loading,
+    isLoading: studies.loading || permissionsValue.loading,
     isExpandable: true,
     tableViewLink: '/search/dataset/Studies/result',
-    cardComponent: ClinEpiStudyCard,
+    cardComponent: StudyCard,
     getSearchStringForItem: item => 
       item.searchString,
-    matchPredicate: studyMatchPredicate
+    matchPredicate: studyMatchPredicate,
+    permissions: permissionsValue.permissions
   },
   {
     title: 'Explore Example Searches',
