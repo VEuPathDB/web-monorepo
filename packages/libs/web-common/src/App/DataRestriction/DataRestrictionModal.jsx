@@ -164,7 +164,7 @@ DataRestrictionModal.propTypes = {
   permissions: PropTypes.object.isRequired,
   study: PropTypes.object.isRequired,
   action: PropTypes.string.isRequired,
-  when: PropTypes.bool.isRequired,
+  when: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   showLoginForm: PropTypes.func.isRequired,
   webAppUrl: PropTypes.string.isRequired
