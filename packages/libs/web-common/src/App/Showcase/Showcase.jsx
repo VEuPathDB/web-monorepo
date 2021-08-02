@@ -6,7 +6,6 @@ import { IconAlt as Icon } from '@veupathdb/wdk-client/lib/Components';
 import CardList from './CardList';
 
 import './Showcase.scss';
-import ShowcaseFilter from './ShowcaseFilter';
 
 class Showcase extends React.Component {
   constructor (props) {
