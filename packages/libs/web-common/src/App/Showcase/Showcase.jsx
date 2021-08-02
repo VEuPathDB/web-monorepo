@@ -45,7 +45,7 @@ class Showcase extends React.Component {
     const { handleFilter } = this;
     const { filteredItems: list } = this.state;
     const { content, prefix, attemptAction } = this.props;
-    const { title, viewAllUrl, viewAllAppUrl, filters, filtersLabel, contentType, contentNamePlural, items, description, isLoading, isExpandable, tableViewLink, cardComponent, getSearchStringForItem, matchPredicate } = content;
+    const { title, viewAllUrl, viewAllAppUrl, filters, filtersLabel, contentType, contentNamePlural, items, description, isLoading, isExpandable, tableViewLink, cardComponent, getSearchStringForItem, matchPredicate, permissions } = content;
     const cards = this.renderCardList(contentType, cardComponent, {
       attemptAction,
       contentNamePlural,
@@ -57,7 +57,8 @@ class Showcase extends React.Component {
       isExpandable,
       tableViewLink,
       getSearchStringForItem,
-      matchPredicate
+      matchPredicate,
+      permissions
     });
 
 
