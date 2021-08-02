@@ -1,8 +1,10 @@
+import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
 import { useCallback, useEffect, useState } from 'react';
 import { useAnalysisClient } from './workspace';
 import { Analysis } from '../types/analysis';
 import { usePromise } from './promise';
+import { AnalysisClient } from '../api/analysis-api';
 
 type Setter<T extends keyof Analysis> = (value: Analysis[T]) => void;
 
@@ -129,5 +131,58 @@ export function useAnalysis(analysisId: string): AnalysisState {
     copyAnalysis,
     deleteAnalysis,
     saveAnalysis,
+  };
+}
+
+export function usePinnedAnalyses(analysisClient: AnalysisClient) {
+  const [pinnedAnalyses, setPinnedAnalyses] = useState<string[]>([]);
+
+  // load and populate pinnedAnalysies
+  useEffect(
+    () =>
+      Task.fromPromise(() => analysisClient.getPreferences()).run((prefs) =>
+        setPinnedAnalyses(prefs.pinnedAnalyses ?? [])
+      ),
+    [analysisClient]
+  );
+
+  const isPinnedAnalysis = useCallback(
+    (id: string) => pinnedAnalyses.includes(id),
+    [pinnedAnalyses]
+  );
+
+  const addOrRemovePinnedAnalysis = useCallback(
+    (operation: 'add' | 'remove', id: string) => {
+      const nextPinnedAnalyses =
+        operation === 'add'
+          ? pinnedAnalyses.concat(id)
+          : pinnedAnalyses.filter((i) => i !== id);
+      setPinnedAnalyses(nextPinnedAnalyses);
+      analysisClient.setPreferences({
+        pinnedAnalyses: nextPinnedAnalyses,
+      });
+    },
+    [analysisClient, pinnedAnalyses]
+  );
+
+  const addPinnedAnalysis = useCallback(
+    (id: string) => {
+      addOrRemovePinnedAnalysis('add', id);
+    },
+    [addOrRemovePinnedAnalysis]
+  );
+
+  const removePinnedAnalysis = useCallback(
+    (id: string) => {
+      addOrRemovePinnedAnalysis('remove', id);
+    },
+    [addOrRemovePinnedAnalysis]
+  );
+
+  return {
+    pinnedAnalyses,
+    isPinnedAnalysis,
+    addPinnedAnalysis,
+    removePinnedAnalysis,
   };
 }
