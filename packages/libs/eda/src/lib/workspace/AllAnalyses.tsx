@@ -1,10 +1,17 @@
 import Path from 'path';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import { Analysis, AnalysisClient, SubsettingClient } from '../core';
+import {
+  Analysis,
+  AnalysisClient,
+  SubsettingClient,
+  usePinnedAnalyses,
+} from '../core';
 import { usePromise } from '../core/hooks/promise';
 import { Mesa } from '@veupathdb/wdk-client/lib/Components';
+import Switch from '@veupathdb/components/lib/components/widgets/Switch';
+import { orderBy } from 'lodash';
 
 interface Props {
   analysisClient: AnalysisClient;
@@ -16,9 +23,19 @@ export function AllAnalyses(props: Props) {
   const analyses = usePromise(
     useCallback(() => analysisClient.getAnalyses(), [analysisClient])
   );
+
+  const {
+    isPinnedAnalysis,
+    addPinnedAnalysis,
+    removePinnedAnalysis,
+  } = usePinnedAnalyses(analysisClient);
+
   const studies = usePromise(
     useCallback(() => subsettingClient.getStudies(), [subsettingClient])
   );
+
+  const [sortPinned, setSortPinned] = useState(true);
+
   const datasets = useWdkService(
     (wdkService) =>
       wdkService.getAnswerJson(
@@ -38,7 +55,11 @@ export function AllAnalyses(props: Props) {
   const history = useHistory();
   const tableState = useMemo(
     () => ({
-      rows: analysisList,
+      rows: sortPinned
+        ? orderBy(analysisList, (analysis) =>
+            isPinnedAnalysis(analysis.id) ? 0 : 1
+          )
+        : analysisList,
       options: {
         renderEmptyState: () => (
           <div
@@ -57,6 +78,21 @@ export function AllAnalyses(props: Props) {
         ),
       },
       columns: [
+        {
+          key: 'pinned',
+          name: <i className="fa fa-thumb-tack" />,
+          width: '4em',
+          renderCell: (data: { row: Analysis }) => (
+            <input
+              type="checkbox"
+              checked={isPinnedAnalysis(data.row.id)}
+              onChange={(e) => {
+                if (e.target.checked) addPinnedAnalysis(data.row.id);
+                else removePinnedAnalysis(data.row.id);
+              }}
+            />
+          ),
+        },
         {
           key: 'name',
           name: 'Analysis',
@@ -105,12 +141,25 @@ export function AllAnalyses(props: Props) {
         },
       ],
     }),
-    [analysisList, datasets?.records, history.location.pathname]
+    [
+      addPinnedAnalysis,
+      analysisList,
+      datasets?.records,
+      history.location.pathname,
+      isPinnedAnalysis,
+      removePinnedAnalysis,
+      sortPinned,
+    ]
   );
   if (analysisList == null) return null;
   return (
     <div>
       <h1>My Analyses</h1>
+      <Switch
+        state={sortPinned}
+        onStateChange={setSortPinned}
+        label="Sort pinned to top"
+      />
       <Mesa.Mesa state={tableState} />
     </div>
   );
