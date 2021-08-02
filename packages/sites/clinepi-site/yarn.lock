@@ -323,10 +323,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.1.1-alpha.11":
-  version "0.1.1-alpha.11"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.1-alpha.11.tgz#66598c0433755ef7961571d9939c0b5932a76610"
-  integrity sha512-0oIKjRjaiO27T1JFEbRRqeDYwHqMmrtOxrCbkmvIytkeaONiiLXNWNyhEIs9UnWtYDebYX9+LVMCQUD6v9BXCA==
+"@veupathdb/web-common@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.3.tgz#a2909ddb8e66260c952ad031722d291c62f97347"
+  integrity sha512-BhrlQwI2gX25obKp0OucgUBi7TMVaodgAu/lVrlX+QIkXGvq6136njUEUpPpDdlgb2fRXMjDAF6vftL62prbMg==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
@@ -921,9 +921,9 @@ value-equal@^1.0.1:
   integrity sha512-NOJ6JZCAWr0zlxZt+xqCHNTEKOsrks2HQd4MqhP1qy4z1SkbEP467eNx6TgDKXMvUOb+OENfJCZwM+16n7fRfw==
 
 whatwg-fetch@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.5.0.tgz#605a2cd0a7146e5db141e29d1c62ab84c0c4c868"
-  integrity sha512-jXkLtsR42xhXg7akoDKvKWE40eJeI+2KZqcp2h3NsOrRnDvtWX36KcKl30dy+hxECivdk2BVUHVNrPtoMBUx6A==
+  version "3.6.2"
+  resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.6.2.tgz#dced24f37f2624ed0281725d51d0e2e3fe677f8c"
+  integrity sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA==
 
 yaml@^1.7.2:
   version "1.10.0"
