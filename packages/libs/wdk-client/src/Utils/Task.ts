@@ -21,9 +21,9 @@ export class Task<T, E> {
     return new Task<T, E>((fulfill, reject) => void reject(e));
   }
 
-  static fromPromise<T, E>(p: Promise<T>) {
+  static fromPromise<T, E>(callback: () => Promise<T>) {
     return new Task<T, E>(function(fulfill, reject) {
-      p.then(fulfill, reject);
+      callback().then(fulfill, reject);
     });
   }
 
