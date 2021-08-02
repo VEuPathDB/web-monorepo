@@ -68,15 +68,11 @@ function loadStudies() {
 
 
 export function fetchStudies(wdkService) {
-  const user$ = wdkService.getCurrentUser();
-
   return Promise.all([
     wdkService.getConfig().then(config => config.projectId),
     wdkService.getQuestions(),
     wdkService.getRecordClasses(),
-    wdkService.getStudies('__ALL_ATTRIBUTES__', '__ALL_TABLES__'),
-    user$,
-    user$.then(checkPermissions)
+    wdkService.getStudies('__ALL_ATTRIBUTES__', '__ALL_TABLES__')
   ]).then(spread(formatStudies))
 }
 
@@ -104,7 +100,7 @@ const parseStudy = mapProps({
 });
   
 
-function formatStudies(projectId, questions, recordClasses, answer, user, permissions) {
+function formatStudies(projectId, questions, recordClasses, answer) {
   const questionsByName = keyBy(questions, 'fullName');
   const recordClassesByName = keyBy(recordClasses, 'urlSegment');
 
