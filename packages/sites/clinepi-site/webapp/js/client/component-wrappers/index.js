@@ -109,7 +109,6 @@ export default {
     return () => <DefaultComponent specialInstructions={specialInstructions} />;
   },
   DownloadLink: withPermissions,
-  DataRestrictionDaemon: withPermissions,
   Page
 }
 
