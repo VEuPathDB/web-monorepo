@@ -12,6 +12,8 @@ import {
   DataClient,
   ScatterplotRequestParams,
   LineplotRequestParams,
+  ScatterplotResponse,
+  LineplotResponse,
 } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
@@ -53,27 +55,7 @@ interface PromiseXYPlotData extends CoverageStatistics {
 }
 
 // define XYPlotDataResponse
-interface XYPlotDataResponse {
-  scatterplot?: {
-    data: Array<{
-      seriesX?: number[] | string[];
-      seriesY?: number[] | string[];
-      smoothedMeanX?: number[] | string[];
-      smoothedMeanY?: number[];
-      smoothedMeanSE?: number[];
-      bestFitLineX?: number[] | string[];
-      bestFitLineY?: number[];
-    }>;
-  };
-  // from data API doc, densityplot returns densityX/Y but processInputData() did not consider it yet
-  // To-do: need further changes at processInputData() when working with densityplot in the future
-  densityplot?: {
-    data: Array<{
-      densityX?: number[] | string[];
-      densityY?: number[] | string[];
-    }>;
-  };
-}
+type XYPlotDataResponse = ScatterplotResponse | LineplotResponse;
 
 export const scatterplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -270,14 +252,14 @@ function ScatterplotViz(props: Props) {
             );
 
       // send visualization.type, independentValueType, and dependentValueType as well
-      return reorderData(
-        scatterplotResponseToData(
+      return scatterplotResponseToData(
+        reorderResponse(
           await response,
-          visualization.type,
-          independentValueType,
-          dependentValueType
+          findEntityAndVariable(vizConfig.overlayVariable)?.variable.vocabulary
         ),
-        findEntityAndVariable(vizConfig.overlayVariable)?.variable.vocabulary
+        visualization.type,
+        independentValueType,
+        dependentValueType
       );
     }, [
       studyId,
@@ -581,7 +563,7 @@ export function scatterplotResponseToData(
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
-    outputSize: response.scatterplot.config.completeCases,
+    outputSize: response.scatterplot.config.completeCases, // TO DO: won't work with densityplot response, when that's implemented
   };
 }
 
@@ -665,7 +647,7 @@ function processInputData<T extends number | string>(
     vizType === 'lineplot'
       ? dataSet.scatterplot
       : vizType === 'densityplot'
-      ? dataSet.densityplot
+      ? dataSet.scatterplot // TO DO: it will have to be dataSet.densityplot
       : dataSet.scatterplot;
 
   // set variables for x- and yaxis ranges: no default values are set
@@ -740,8 +722,8 @@ function processInputData<T extends number | string>(
 
       // add scatter data considering input options
       dataSetProcess.push({
-        x: seriesX,
-        y: seriesY,
+        x: seriesX.length ? seriesX : [null], // [null] hack required to make sure
+        y: seriesY.length ? seriesY : [null], // Plotly has a legend entry for empty traces
         // distinguish X/Y Data from Overlay
         name: el.overlayVariableDetails
           ? el.overlayVariableDetails.value
@@ -981,37 +963,37 @@ function getBounds<T extends number | string>(
   return { yUpperValues, yLowerValues };
 }
 
-function reorderData(
-  data: PromiseXYPlotData,
+function reorderResponse(
+  response: XYPlotDataResponse,
   overlayVocabulary: string[] = []
 ) {
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
-    const overlayValues = data.dataSetProcess.series.map(
-      (series) => series.name
+    const overlayValues = response.scatterplot.data.map(
+      (series) => series.overlayVariableDetails?.value
     );
     const overlayIndices = overlayVocabulary.map((name) =>
       overlayValues.indexOf(name)
     );
     return {
-      ...data,
-      dataSetProcess: {
-        // return the series in overlay vocabulary order
-        series: overlayIndices.map(
+      ...response,
+      scatterplot: {
+        ...response.scatterplot,
+        data: overlayIndices.map(
           (i, j) =>
-            data.dataSetProcess.series[i] ?? {
+            response.scatterplot.data[i] ?? {
               // if there is no series, insert a dummy series
-              name: overlayVocabulary[j],
-              x: [null],
-              y: [null],
-              mode: 'markers',
-              type: 'scatter',
+              overlayVariableDetails: {
+                value: overlayVocabulary[j],
+              },
+              seriesX: [],
+              seriesY: [],
             }
         ),
       },
     };
   } else {
-    return data;
+    return response;
   }
 }
