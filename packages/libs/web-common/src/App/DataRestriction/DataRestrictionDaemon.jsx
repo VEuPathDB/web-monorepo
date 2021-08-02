@@ -7,6 +7,8 @@ import { useLocation } from 'react-router';
 import { UserSessionActions } from '@veupathdb/wdk-client/lib/Actions';
 import { wrappable } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 
+import { usePermissions } from '../../hooks/permissions';
+
 import { clearRestrictions } from './DataRestrictionActionCreators';
 import DataRestrictionModal from './DataRestrictionModal';
 
@@ -16,7 +18,6 @@ function DataRestrictionDaemon(props) {
   const {
     dataRestriction,
     user,
-    permissions,
     webAppUrl,
     clearRestrictions,
     showLoginForm,
@@ -28,12 +29,18 @@ function DataRestrictionDaemon(props) {
     clearRestrictions();
   }, [location.pathname]);
 
-  if (dataRestriction == null || user == null) return null;
+  const permissionsValue = usePermissions();
+
+  if (
+    dataRestriction == null ||
+    user == null ||
+    permissionsValue.loading
+  ) return null;
 
   return !dataRestriction ? null : (
     <DataRestrictionModal
       user={user}
-      permissions={permissions}
+      permissions={permissionsValue.permissions}
       study={dataRestriction.study}
       action={dataRestriction.action}
       webAppUrl={webAppUrl}
@@ -46,7 +53,6 @@ function DataRestrictionDaemon(props) {
 DataRestrictionDaemon.propTypes = {
   dataRestriction: PropTypes.object,
   user: PropTypes.object,
-  permissions: PropTypes.object.isRequired,
   webAppUrl: PropTypes.string.isRequired,
   clearRestrictions: PropTypes.func.isRequired,
   showLoginForm: PropTypes.func.isRequired,
