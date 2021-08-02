@@ -13,7 +13,7 @@ export function NewAnalysis(props: Props) {
   const history = useHistory();
   useEffect(
     () =>
-      Task.fromPromise(
+      Task.fromPromise(() =>
         analysisStore.createAnalysis({
           name: 'Unnamed Analysis',
           studyId,
