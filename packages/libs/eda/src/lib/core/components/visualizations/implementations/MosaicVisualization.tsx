@@ -14,6 +14,7 @@ import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
+import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
@@ -177,6 +178,14 @@ function MosaicViz(props: Props) {
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
+  // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
+  const outputEntity = useFindOutputEntity(
+    dataElementDependencyOrder,
+    vizConfig,
+    'xAxisVariable',
+    entities
+  );
+
   const data = usePromise(
     useCallback(async (): Promise<ContTableData | TwoByTwoData | undefined> => {
       const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
@@ -200,7 +209,9 @@ function MosaicViz(props: Props) {
         studyId,
         filters ?? [],
         vizConfig.xAxisVariable,
-        vizConfig.yAxisVariable
+        vizConfig.yAxisVariable,
+        // pass outputEntity.id
+        outputEntity?.id ?? ''
       );
 
       if (isTwoByTwo) {
@@ -321,7 +332,7 @@ function MosaicViz(props: Props) {
         <VariableCoverageTable
           completeCases={data.pending ? undefined : data.value?.completeCases}
           filters={filters}
-          outputEntityId={vizConfig.xAxisVariable?.entityId}
+          outputEntityId={outputEntity?.id}
           variableSpecs={[
             {
               role: 'X-axis',
@@ -419,7 +430,7 @@ function MosaicViz(props: Props) {
 
       {fullscreen && (
         <OutputEntityTitle
-          entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+          entity={outputEntity}
           outputSize={data.pending ? undefined : data.value?.outputSize}
         />
       )}
@@ -506,13 +517,16 @@ function getRequestParams(
   studyId: string,
   filters: Filter[],
   xAxisVariable: VariableDescriptor,
-  yAxisVariable: VariableDescriptor
+  yAxisVariable: VariableDescriptor,
+  // pass outputEntityId
+  outputEntityId: string
 ): MosaicRequestParams {
   return {
     studyId,
     filters,
     config: {
-      outputEntityId: xAxisVariable.entityId,
+      // add outputEntityId
+      outputEntityId: outputEntityId,
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
     },
