@@ -52,11 +52,11 @@ describe('Task', () => {
   });
 
   test('Task.fromPromise should create a Task from a Promise', t => {
-    let cancel = Task.fromPromise(Promise.resolve(1))
+    let cancel = Task.fromPromise(() => Promise.resolve(1))
       .run(() => void t.fail('this should cancel'));
     cancel();
 
-    Task.fromPromise(Promise.resolve(10))
+    Task.fromPromise(() => Promise.resolve(10))
       .run(v => expect(v).toBe(10));
 
     setTimeout(() => t(), 1000);
