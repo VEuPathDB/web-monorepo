@@ -38,6 +38,18 @@ module.exports = function (app) {
       onProxyReq: addAuthCookie,
     })
   );
+  app.use(
+    '/dataset-access',
+    createProxyMiddleware({
+      target: process.env.DATASET_ACCESS_SERVICE_URL,
+      pathRewrite: { [`^/dataset-access`]: '' },
+      secure: false,
+      changeOrigin: true,
+      followRedirects: true,
+      logLevel: 'debug',
+      onProxyReq: addAuthCookie,
+    })
+  );
 };
 
 function addAuthCookie(proxyReq) {
