@@ -90,7 +90,7 @@ export default function Barplot({
 
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     automargin: true,
-    tickformat: ',.1r', // comma-separated thousands, rounded to 1 significant digit
+    tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
     type: dependentAxisLogScale ? 'log' : 'linear',
     title: {
       text: dependentAxisLabel ? dependentAxisLabel : '',

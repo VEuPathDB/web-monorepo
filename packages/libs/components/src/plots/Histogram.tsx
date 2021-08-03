@@ -377,7 +377,7 @@ export default function Histogram({
   };
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     type: dependentAxisLogScale ? 'log' : 'linear',
-    tickformat: ',.1r', // comma-separated thousands, rounded to 1 significant digit
+    tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
     automargin: true,
     title: {
       text: dependentAxisLabel,
