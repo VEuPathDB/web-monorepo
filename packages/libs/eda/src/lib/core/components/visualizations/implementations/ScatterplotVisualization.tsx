@@ -45,6 +45,8 @@ import { min, max, lte, gte } from 'lodash';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 // import XYPlotData
 import { XYPlotData } from '@veupathdb/components/lib/types/plots';
+// import axis label unit util
+import { axisLabelUnit } from '../../../utils/axisLabelUnit';
 
 // define PromiseXYPlotData
 interface PromiseXYPlotData {
@@ -309,10 +311,10 @@ function ScatterplotViz(props: Props) {
                 name: 'overlayVariable',
                 label: 'Overlay (optional)',
               },
-              {
-                name: 'facetVariable',
-                label: 'Facet (optional)',
-              },
+              // {
+              //   name: 'facetVariable',
+              //   label: 'Facet (optional)',
+              // },
             ]}
             entities={entities}
             values={{
@@ -379,12 +381,14 @@ function ScatterplotViz(props: Props) {
                   vizConfig.overlayVariable != null)
               }
               independentAxisLabel={
-                findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                  .displayName ?? 'X-Axis'
+                axisLabelUnit(
+                  findEntityAndVariable(vizConfig.xAxisVariable)?.variable
+                ) ?? 'X-Axis'
               }
               dependentAxisLabel={
-                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
-                  .displayName ?? 'Y-Axis'
+                axisLabelUnit(
+                  findEntityAndVariable(vizConfig.yAxisVariable)?.variable
+                ) ?? 'Y-Axis'
               }
               dependentAxisRange={
                 data.value && !data.pending
