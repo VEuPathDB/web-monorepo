@@ -102,22 +102,21 @@ async function fetchDatasetMetadata(wdkService: WdkService) {
             [TARGET_TYPE_ATTRIBUTE]: targetType,
           }
         ) => {
-          if (
-            typeof targetName !== 'string' ||
-            typeof targetType !== 'string'
-          ) {
-            throw new Error(
-              `In order to use this feature, each row of the '${WDK_REFERENCES_TABLE}' table must have string-valued '${TARGET_TYPE_ATTRIBUTE}' and '${TARGET_NAME_ATTRIBUTE}' attributes.`
-            );
-          }
-
           if (targetType === 'question') {
             const questionFullName = targetName;
+
+            if (typeof questionFullName !== 'string') {
+              console.warn(
+                `Observed a non-string question target '${questionFullName}' for dataset '${datasetId}'`
+              );
+              return memo;
+            }
+
             const questionUrlSegment = questionNameMap.get(questionFullName);
 
             if (questionUrlSegment == null) {
               console.warn(
-                `Observed a WDK Reference for a non-existent question '${questionFullName}'`
+                `Observed a non-existent question '${questionFullName}' for dataset '${datasetId}'`
               );
               return memo;
             }
