@@ -19,7 +19,7 @@ export function NewAnalysis(props: Props) {
       return;
     }
 
-    return Task.fromPromise(
+    return Task.fromPromise(() =>
       analysisStore.createAnalysis({
         name: 'Unnamed Analysis',
         studyId,
