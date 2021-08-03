@@ -190,6 +190,51 @@
   .VariableCoverageTable {
     margin: 0;
   }
+
+  .contingency-table {
+    @include data-table;
+    overflow: auto;
+
+    .contingency-table_column-label {
+      border-bottom: 1px solid #888 !important;
+    }
+
+    .contingency-table_column-label:first-of-type {
+      border-left: 1px solid #888;
+    }
+
+    .contingency-table_row-label {
+      border-bottom: 0;
+      border-right: 1px solid #888;
+    }
+
+    tr:nth-of-type(3) .contingency-table_row-label {
+      border-top: 1px solid #888;
+    }
+
+    .contingency-table_totals-row-header {
+      text-align: end;
+      border-top: 1px solid #888;
+      border-right: 1px solid #888;
+    }
+
+    .contingency-table_totals-column-header {
+      border-left: 1px solid #888;
+    }
+
+    .contingency-table_totals-row-value {
+      border-top: 1px solid #888;
+    }
+
+    .contingency-table_totals-column-value {
+      border-left: 1px solid #888;
+    }
+
+    .contingency-table_grand-total {
+      border-top: 1px solid #888;
+      border-left: 1px solid #888;
+    }
+  }
 }
 
 .OutputEntityTitle {

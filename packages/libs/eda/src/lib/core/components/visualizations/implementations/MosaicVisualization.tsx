@@ -3,6 +3,7 @@ import Mosaic, {
   MosaicPlotProps as MosaicProps,
 } from '@veupathdb/components/lib/plots/MosaicPlot';
 import { MosaicData } from '@veupathdb/components/lib/types/plots';
+import { ContingencyTable } from '@veupathdb/components/lib/components/ContingencyTable';
 // import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -28,6 +29,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
+import Tabs from '@veupathdb/components/lib/components/Tabs';
 
 interface MosaicDataWithCoverageStatistics extends MosaicData {
   completeCases: CompleteCasesTable;
@@ -303,17 +305,32 @@ function MosaicViz(props: Props) {
   const plotComponent = fullscreen ? (
     <div className="MosaicVisualization">
       <div className="MosaicVisualization-Plot">
-        <MosaicPlotWithControls
-          data={data.value && !data.pending ? data.value : undefined}
-          containerStyles={{
-            width: '750px',
-            height: '450px',
-          }}
-          independentAxisLabel={xAxisVariableName ?? 'X-axis'}
-          dependentAxisLabel={yAxisVariableName ?? 'Y-axis'}
-          displayLegend={true}
-          interactive
-          showSpinner={data.pending}
+        <Tabs
+          items={[
+            [
+              'Mosaic',
+              <MosaicPlotWithControls
+                data={data.value && !data.pending ? data.value : undefined}
+                containerStyles={{
+                  width: '750px',
+                  height: '450px',
+                }}
+                independentAxisLabel={xAxisVariableName ?? 'X-axis'}
+                dependentAxisLabel={yAxisVariableName ?? 'Y-axis'}
+                displayLegend={true}
+                interactive
+                showSpinner={data.pending}
+              />,
+            ],
+            [
+              'Table',
+              <ContingencyTable
+                data={data.value}
+                independentVariable={xAxisVariableName ?? 'X-axis'}
+                dependentVariable={yAxisVariableName ?? 'Y-axis'}
+              />,
+            ],
+          ]}
         />
       </div>
       <div
