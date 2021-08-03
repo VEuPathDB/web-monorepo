@@ -1,15 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { connect } from 'react-redux';
-import { zip } from 'lodash';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { keyBy, zip } from 'lodash';
 import { SubmissionMetadata, reportSubmissionError } from '@veupathdb/wdk-client/lib/Actions/QuestionActions';
 import { requestCreateStrategy } from '@veupathdb/wdk-client/lib/Actions/StrategyActions';
 import { Loading, RadioList, TextArea } from '@veupathdb/wdk-client/lib/Components';
 import { DispatchAction } from '@veupathdb/wdk-client/lib/Core/CommonTypes';
-import { RootState } from '@veupathdb/wdk-client/lib/Core/State/Types';
-import { useWdkEffect } from '@veupathdb/wdk-client/lib/Service/WdkService';
+import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { QuestionState, DEFAULT_STRATEGY_NAME } from '@veupathdb/wdk-client/lib/StoreModules/QuestionStoreModule';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
-import { AnswerSpec, StandardReportConfig, Answer, CheckBoxEnumParam, StringParam, getSingleRecordQuestionName } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { CheckBoxEnumParam, RecordInstance, StringParam } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 import { Props as FormProps } from '@veupathdb/wdk-client/lib/Views/Question/DefaultQuestionForm';
 import { DEFAULT_COLS, calculateRows } from '@veupathdb/wdk-client/lib/Views/Question/Params/StringParam';
 import { useChangeParamValue } from '@veupathdb/wdk-client/lib/Views/Question/Params/Utils';
@@ -21,13 +19,7 @@ const BLAST_RECORD_CLASS_PARAM = 'BlastRecordClass';
 const BLAST_QUERY_SEQUENCE_PARAM = 'BlastQuerySequence';
 const EXPECTATION_VALUE_PARAM = '-e';
 
-type StateProps = {
-  projectId?: string
-};
-
-type OwnProps = FormProps;
-
-type Props = StateProps & OwnProps;
+type Props = FormProps;
 
 type TargetDataType = 'Transcripts' | 'Proteins' | 'Genome' | 'EST' | 'ORF' | 'PopSet';
 
@@ -44,22 +36,22 @@ type AlgorithmOntologyTerm = {
   internal: string
 };
 
-const BlastQuestionFormView = ({ projectId, ...formProps}: Props) => {
-  const targetDataType = formProps.state.paramValues[BLAST_DATABASE_TYPE_PARAM] as TargetDataType;
+export const BlastQuestionForm = (props: Props) => {
+  const targetDataType = props.state.paramValues[BLAST_DATABASE_TYPE_PARAM] as TargetDataType;
 
-  const enabledAlgorithms = useEnabledAlgorithms(targetDataType, projectId);
-  const targetParamProps = useTargetParamProps(formProps.state, formProps.eventHandlers.updateParamValue);
-  const algorithmParamProps = useAlgorithmParamProps(formProps.state, formProps.eventHandlers.updateParamValue, enabledAlgorithms);
-  const sequenceParamProps = useSequenceParamProps(formProps.state, formProps.eventHandlers.updateParamValue);
+  const enabledAlgorithms = useEnabledAlgorithms(targetDataType);
+  const targetParamProps = useTargetParamProps(props.state, props.eventHandlers.updateParamValue);
+  const algorithmParamProps = useAlgorithmParamProps(props.state, props.eventHandlers.updateParamValue, enabledAlgorithms);
+  const sequenceParamProps = useSequenceParamProps(props.state, props.eventHandlers.updateParamValue);
 
   const submissionMetadata = useSubmissionMetadata(
-    formProps.submissionMetadata,
-    formProps.state.question.urlSegment,
+    props.submissionMetadata,
+    props.state.question.urlSegment,
     targetMetadataByDataType[targetDataType],
-    formProps.dispatchAction
+    props.dispatchAction
   );
 
-  const onSubmit = useOnSubmit(formProps.state);
+  const onSubmit = useOnSubmit(props.state);
 
   const targetParamElement = <RadioList {...targetParamProps} name="target" />;
   const algorithmParamElement = <RadioList {...algorithmParamProps} name="algorithm" />;
@@ -74,10 +66,10 @@ const BlastQuestionFormView = ({ projectId, ...formProps}: Props) => {
   return !enabledAlgorithms
     ? <Loading />
     : <EbrcDefaultQuestionForm
-        {...formProps}
+        {...props}
         parameterElements={
           {
-            ...formProps.parameterElements,
+            ...props.parameterElements,
             [BLAST_DATABASE_TYPE_PARAM]: targetParamElement,
             [BLAST_ALGORITHM_PARAM]: algorithmParamElement,
             [BLAST_QUERY_SEQUENCE_PARAM]: sequenceParamElement
@@ -87,12 +79,6 @@ const BlastQuestionFormView = ({ projectId, ...formProps}: Props) => {
         onSubmit={onSubmit}
       />;
 };
-
-const mapStateToProps = (state: RootState) => ({
-  projectId: state.globalData.siteConfig && state.globalData.siteConfig.projectId
-})
-
-export const BlastQuestionForm = connect(mapStateToProps)(BlastQuestionFormView);
 
 const targetMetadataByDataType: Record<TargetDataType, TargetMetadata> = {
   Transcripts: {
@@ -127,8 +113,8 @@ const targetMetadataByDataType: Record<TargetDataType, TargetMetadata> = {
   }
 };
 
-const useEnabledAlgorithms = (targetDataType: TargetDataType, projectId: string | undefined) => {
-  const algorithmTermsByDatabase = useAlgorithmTermsByDatabase(projectId);
+const useEnabledAlgorithms = (targetDataType: TargetDataType) => {
+  const algorithmTermsByDatabase = useAlgorithmTermsByDatabase();
 
   const enabledAlgorithms = useMemo(
     () => (
@@ -141,35 +127,54 @@ const useEnabledAlgorithms = (targetDataType: TargetDataType, projectId: string 
   return enabledAlgorithms;
 }
 
-const useAlgorithmTermsByDatabase = (projectId: string | undefined) => {
-  const [ algorithmTermsByDatabase, setAlgorithmTermsByDatabase ] = useState<Record<BlastDatabase, string[]> | undefined>(undefined);
+const useAlgorithmTermsByDatabase = () => {
+  const algorithmTermsByDatabase = useWdkService(async (wdkService) => {
+    const [ projectId, recordClasses ] = await Promise.all([
+      wdkService.getConfig().then(({ projectId }) => projectId),
+      wdkService.getRecordClasses()
+    ]);
 
-  useWdkEffect((wdkService) => {
-    if (!projectId) {
-      return;
-    }
-
-    const answerPromises = blastDatabases.map(
-      databaseName => wdkService.getAnswerJson(
-        makeAllowedAlgorithmsSearchConfig(databaseName, projectId),
-        makeAllowedAlgorithmsReportConfig(databaseName)
-      )
+    const recordClassesByUrlSegment = keyBy(
+      recordClasses,
+      recordClass => recordClass.urlSegment
     );
 
-    (async () => {
-      const answersByDatabase = await Promise.all(answerPromises);
+    const recordPromises = blastDatabases.map((databaseName) => {
+      const recordClass = recordClassesByUrlSegment[databaseName];
 
-      const result = zip(blastDatabases, answersByDatabase).reduce(
-        (memo, [databaseName, answer]) => ({
-          ...memo,
-          [databaseName as BlastDatabase]: answerToTerms(databaseName as BlastDatabase, answer as Answer).map(({ term }) => term)
-        }),
-        {} as Record<BlastDatabase, string[]>
+      const primaryKey = recordClass.primaryKeyColumnRefs.map(
+        columnName => ({
+          name: columnName,
+          value: columnName === 'project_id' ? projectId : 'fill'
+        })
       );
 
-      setAlgorithmTermsByDatabase(result);
-    })();
-  }, [ projectId ]);
+      return wdkService.getRecord(
+        recordClass.urlSegment,
+        primaryKey,
+        {
+          tables: [
+            algorithmTermTables[databaseName]
+          ]
+        }
+      );
+    });
+
+    const databaseRecords = await Promise.all(recordPromises);
+
+    const result = zip(blastDatabases, databaseRecords).reduce(
+      (memo, [databaseName, record]) => ({
+        ...memo,
+        [databaseName as BlastDatabase]: recordToTerms(
+          databaseName as BlastDatabase,
+          record as RecordInstance
+        ).map(({ term }) => term)
+      }),
+      {} as Record<BlastDatabase, string[]>
+    );
+
+    return result;
+  }, []);
 
   return algorithmTermsByDatabase;
 };
@@ -179,39 +184,19 @@ const blastDatabases: BlastDatabase[] = [
   'blast-orf-ontology'
 ];
 
-const blastDatabaseSearchNames: Record<BlastDatabase, string> = {
-  'blast-est-ontology': getSingleRecordQuestionName('AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass'),
-  'blast-orf-ontology': getSingleRecordQuestionName('AjaxRecordClasses.Blast_Protein_Orf_TermClass')
-};
-
 const algorithmTermTables: Record<BlastDatabase, string> = {
   'blast-est-ontology': 'BlastTGETerms',
   'blast-orf-ontology': 'BlastPOTerms'
 };
 
-const makeAllowedAlgorithmsSearchConfig = (databaseName: BlastDatabase, projectId: string): AnswerSpec => ({
-  searchName: blastDatabaseSearchNames[databaseName],
-  searchConfig: {
-    parameters: {
-      primaryKeys: `fill,${projectId}`
-    }
-  }
-});
-
-const makeAllowedAlgorithmsReportConfig = (databaseName: BlastDatabase): StandardReportConfig => ({
-  tables: [
-    algorithmTermTables[databaseName]
-  ]
-});
-
-const answerToTerms = (databaseName: BlastDatabase, answer: Answer): AlgorithmOntologyTerm[] => {
+const recordToTerms = (databaseName: BlastDatabase, record: RecordInstance): AlgorithmOntologyTerm[] => {
   const termTable = algorithmTermTables[databaseName];
 
-  if (answer.records[0].tableErrors.includes(termTable)) {
+  if (record.tableErrors.includes(termTable)) {
     throw new Error(`Missing expected table ${termTable}`);
   }
 
-  return answer.records[0].tables[termTable] as AlgorithmOntologyTerm[];
+  return record.tables[termTable] as AlgorithmOntologyTerm[];
 };
 
 const useTargetParamProps = (state: QuestionState, updateParamValue: Props['eventHandlers']['updateParamValue']) => {
