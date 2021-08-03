@@ -1,14 +1,9 @@
 import { useContext, useMemo } from 'react';
 
-import { zip } from 'lodash';
+import { keyBy, zip } from 'lodash';
 
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
-import {
-  Answer,
-  AnswerSpec,
-  StandardReportConfig,
-  getSingleRecordQuestionName,
-} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import {
   BlastOntologyDatabase,
@@ -20,15 +15,6 @@ const blastOntologyDatabases: BlastOntologyDatabase[] = [
   'blast-est-ontology',
   'blast-orf-ontology',
 ];
-
-const blastDatabaseSearchNames: Record<BlastOntologyDatabase, string> = {
-  'blast-est-ontology': getSingleRecordQuestionName(
-    'AjaxRecordClasses.Blast_Transcripts_Genome_Est_TermClass'
-  ),
-  'blast-orf-ontology': getSingleRecordQuestionName(
-    'AjaxRecordClasses.Blast_Protein_Orf_TermClass'
-  ),
-};
 
 const algorithmTermTables: Record<BlastOntologyDatabase, string> = {
   'blast-est-ontology': 'BlastTGETerms',
@@ -73,75 +59,60 @@ export function useEnabledAlgorithms(
 }
 
 function useAlgorithmTermsByDatabase() {
-  const projectId = useWdkService(
-    (wdkService) => wdkService.getConfig().then(({ projectId }) => projectId),
-    []
-  );
+  const algorithmTermsByDatabase = useWdkService(async (wdkService) => {
+    const [projectId, recordClasses] = await Promise.all([
+      wdkService.getConfig().then(({ projectId }) => projectId),
+      wdkService.getRecordClasses(),
+    ]);
 
-  const algorithmTermsByDatabase = useWdkService(
-    async (wdkService) => {
-      if (projectId == null) {
-        return undefined;
-      }
+    const recordClassesByUrlSegment = keyBy(
+      recordClasses,
+      (recordClass) => recordClass.urlSegment
+    );
 
-      const answerPromises = blastOntologyDatabases.map((databaseName) =>
-        wdkService.getAnswerJson(
-          makeAllowedAlgorithmsSearchConfig(databaseName, projectId),
-          makeAllowedAlgorithmsReportConfig(databaseName)
-        )
-      );
+    const recordPromises = blastOntologyDatabases.map((databaseName) => {
+      const recordClass = recordClassesByUrlSegment[databaseName];
 
-      const answersByDatabase = await Promise.all(answerPromises);
+      const primaryKey = recordClass.primaryKeyColumnRefs.map((columnName) => ({
+        name: columnName,
+        value: columnName === 'project_id' ? projectId : 'fill',
+      }));
 
-      const result = zip(blastOntologyDatabases, answersByDatabase).reduce(
-        (memo, [databaseName, answer]) => ({
-          ...memo,
-          [databaseName as BlastOntologyDatabase]: answerToTerms(
-            databaseName as BlastOntologyDatabase,
-            answer as Answer
-          ).map(({ term }) => term),
-        }),
-        {} as Record<BlastOntologyDatabase, string[]>
-      );
+      return wdkService.getRecord(recordClass.urlSegment, primaryKey, {
+        tables: [algorithmTermTables[databaseName]],
+      });
+    });
 
-      return result;
-    },
-    [projectId]
-  );
+    const databaseRecords = await Promise.all(recordPromises);
+
+    const result = zip(blastOntologyDatabases, databaseRecords).reduce(
+      (memo, [databaseName, record]) => ({
+        ...memo,
+        [databaseName as BlastOntologyDatabase]: recordToTerms(
+          databaseName as BlastOntologyDatabase,
+          record as RecordInstance
+        ).map(({ term }) => term),
+      }),
+      {} as Record<BlastOntologyDatabase, string[]>
+    );
+
+    return result;
+  }, []);
 
   return algorithmTermsByDatabase;
 }
 
-function makeAllowedAlgorithmsSearchConfig(
+function recordToTerms(
   databaseName: BlastOntologyDatabase,
-  projectId: string
-): AnswerSpec {
-  return {
-    searchName: blastDatabaseSearchNames[databaseName],
-    searchConfig: {
-      parameters: {
-        primaryKeys: `fill,${projectId}`,
-      },
-    },
-  };
-}
-
-function makeAllowedAlgorithmsReportConfig(
-  databaseName: BlastOntologyDatabase
-): StandardReportConfig {
-  return {
-    tables: [algorithmTermTables[databaseName]],
-  };
-}
-
-function answerToTerms(databaseName: BlastOntologyDatabase, answer: Answer) {
+  record: RecordInstance
+) {
   const termTableName = algorithmTermTables[databaseName];
 
-  if (answer.records[0].tableErrors.includes(termTableName)) {
+  if (record.tableErrors.includes(termTableName)) {
     throw new Error(`Missing expected table '${termTableName}'.`);
   }
 
-  const termTable = answer.records[0].tables[termTableName];
+  const termTable = record.tables[termTableName];
 
   if (termTable.some((row) => row.term == null || row.internal == null)) {
     throw new Error(
