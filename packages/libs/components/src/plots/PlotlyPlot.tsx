@@ -1,4 +1,11 @@
-import React, { lazy, Suspense, useMemo, CSSProperties } from 'react';
+import React, {
+  lazy,
+  Suspense,
+  useMemo,
+  useCallback,
+  useRef,
+  CSSProperties,
+} from 'react';
 import { PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
@@ -37,15 +44,6 @@ export interface PlotProps<T> {
 }
 
 const Plot = lazy(() => import('react-plotly.js'));
-
-/**
- * store legend list for tooltip texts
- * note that somehow this should be a global variable
- * if defined inside PlotlyPlot component, then it does not work correctly
- * for plot control of scatter plot viz
- * perhaps due to lazy loading?
- */
-let storedLegendList: NonNullable<string[]> = [];
 
 /**
  * Wrapper over the `react-plotly.js` `Plot` component
@@ -139,21 +137,39 @@ export default function PlotlyPlot<T>(
   /**
    * legend ellipsis with tooltip
    */
-  // store legend list for tooltip
-  // need to use filter as Mosaic uses x2 axis without data as well
-  if (data && data != null) {
-    storedLegendList = data
-      .filter((data) => {
-        if (data.name == null) return false;
-        return true;
-      })
-      .map((data) => {
-        return data.name ?? '';
-      });
-  }
+  const storedLegendList = useMemo(() => {
+    if (data != null) {
+      return data
+        .filter((data) => {
+          if (data.name == null || data.x?.length === 0) return false;
+          return true;
+        })
+        .map((data) => {
+          return data.name ?? '';
+        });
+    } else {
+      return [];
+    }
+  }, [data]);
 
-  // reverse storedLegendList when reverseLegendTooltips is true (e.g., Mosaic)
+  // reverse storedLegendList when reverseLegendTooltips is true (e.g., Mosaic's reversed data)
+  // default behavior of stacked plot at plotly is to put the first data and legend at the bottom (histogram, bar plot)
   if (reverseLegendTooltips) storedLegendList.reverse();
+
+  // define useRef
+  const plotlyPlotRef = useRef<HTMLDivElement>(null);
+
+  // add legend tooltip function
+  const legendTooltip = useCallback(() => {
+    // use div ref
+    if (plotlyPlotRef.current) {
+      select(plotlyPlotRef.current)
+        .select('g.legend')
+        .selectAll('g.traces')
+        .append('svg:title')
+        .text((d, i) => storedLegendList[i]);
+    }
+  }, [storedLegendList]);
 
   // set the number of characters to be displayed
   const maxLegendText = maxLegendTextLength;
@@ -168,31 +184,23 @@ export default function PlotlyPlot<T>(
 
   return (
     <Suspense fallback="Loading...">
-      <div style={{ ...containerStyles, position: 'relative' }}>
+      {/* set ref at div */}
+      <div
+        style={{ ...containerStyles, position: 'relative' }}
+        ref={plotlyPlotRef}
+      >
         <Plot
           {...plotlyProps}
           // need to set data props for modigying its name prop
-          // data={data}
           data={finalData}
           layout={finalLayout}
           style={{ width: '100%', height: '100%' }}
           config={finalConfig}
-          // use onAfterPlot event handler for legend tooltip
-          onAfterPlot={legendTooltip}
+          // use onUpdate event handler for legend tooltip
+          onUpdate={legendTooltip}
         />
         {showSpinner && <Spinner />}
       </div>
     </Suspense>
   );
 }
-
-// define d3 variable with select
-const d3 = { select };
-// add legend tooltip
-const legendTooltip = () => {
-  const legendLayer = d3.select('g.legend');
-  legendLayer
-    .selectAll('g.traces')
-    .append('svg:title')
-    .text((d, i) => storedLegendList[i]);
-};
