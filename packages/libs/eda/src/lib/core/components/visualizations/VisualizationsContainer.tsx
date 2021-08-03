@@ -95,6 +95,7 @@ function ConfiguredVisualizations(props: Props) {
     [computationId, visualizations]
   );
   if (computation == null) return <div>Computation not found</div>;
+
   return (
     <Grid>
       <Link replace to={`${url}/new`} className={cx('-NewVisualization')}>
@@ -105,6 +106,8 @@ function ConfiguredVisualizations(props: Props) {
         .map((viz) => {
           const type = visualizationTypes[viz.type];
           const meta = visualizationsOverview.find((v) => v.name === viz.type);
+          // dataElementDependencyOrder should be passed for grid view/thumbnail
+          const dataElementDependencyOrder = meta?.dataElementDependencyOrder;
           return (
             <div key={viz.id}>
               <div className={cx('-ConfiguredVisualization')}>
@@ -154,6 +157,8 @@ function ConfiguredVisualizations(props: Props) {
                     filters={filters}
                     starredVariables={starredVariables}
                     toggleStarredVariable={toggleStarredVariable}
+                    // dataElementDependencyOrder should be passed for grid view/thumbnail
+                    dataElementDependencyOrder={dataElementDependencyOrder}
                   />
                 ) : (
                   <div>Visualization type not implemented: {viz.type}</div>
@@ -203,27 +208,30 @@ function NewVisualizationPicker(props: Props) {
               className={cx('-PickerEntry', vizType == null && 'disabled')}
               key={`vizType${index}`}
             >
-              <button
-                type="button"
-                disabled={vizType == null}
-                onClick={async () => {
-                  const id = uuid();
-                  addVisualization({
-                    id,
-                    computationId: computationId,
-                    type: vizOverview.name!,
-                    displayName: 'Unnamed visualization',
-                    configuration: vizType?.createDefaultConfig(),
-                  });
-                  history.replace(`../${computationId}/${id}`);
-                }}
-              >
-                {vizType ? (
-                  <vizType.selectorComponent {...vizOverview} />
-                ) : (
-                  <PlaceholderIcon name={vizOverview.name} />
-                )}
-              </button>
+              {/* add viz description tooltip for viz picker */}
+              <Tooltip title={<>{vizOverview.description}</>}>
+                <button
+                  type="button"
+                  disabled={vizType == null}
+                  onClick={async () => {
+                    const id = uuid();
+                    addVisualization({
+                      id,
+                      computationId: computationId,
+                      type: vizOverview.name!,
+                      displayName: 'Unnamed visualization',
+                      configuration: vizType?.createDefaultConfig(),
+                    });
+                    history.replace(`../${computationId}/${id}`);
+                  }}
+                >
+                  {vizType ? (
+                    <vizType.selectorComponent {...vizOverview} />
+                  ) : (
+                    <PlaceholderIcon name={vizOverview.name} />
+                  )}
+                </button>
+              </Tooltip>
               <div className={cx('-PickerEntryName')}>
                 <div>{vizOverview.displayName}</div>
               </div>

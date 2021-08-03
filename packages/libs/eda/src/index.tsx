@@ -17,6 +17,7 @@ import {
   enableRestriction,
   reduxMiddleware,
 } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
+import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
 import { useAttemptActionClickHandler } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 
 import Header from './Header';
@@ -63,6 +64,7 @@ initialize({
     ...routes,
   ],
   componentWrappers: {
+    DataRestrictionDaemon: withPermissions,
     SiteHeader: () => Header,
     Page: (DefaultComponent: React.ComponentType<Props>) => {
       return function ClinEpiPage(props: Props) {
