@@ -28,9 +28,6 @@ import { apiActions } from './components/strategies/ApiStepDetailsActions';
 
 import { VEuPathDBHomePage } from './components/homepage/VEuPathDBHomePage';
 
-import { SiteSearchInput as SiteSearchInputWrapper } from './component-wrappers/SiteSearchInput';
-import { AnswerController as AnswerControllerWrapper } from './component-wrappers/AnswerController';
-
 export const SiteHeader = () => ApiSiteHeader;
 
 const stopPropagation = event => event.stopPropagation();
@@ -394,6 +391,10 @@ export function Page() {
   };
 }
 
-export const SiteSearchInput = SiteSearchInputWrapper;
+export { SiteSearchInput } from './component-wrappers/SiteSearchInput';
 
-export const AnswerController = AnswerControllerWrapper;
+export { AnswerController } from './component-wrappers/AnswerController';
+
+export { SearchCheckboxTree } from './component-wrappers/SearchCheckboxTree';
+
+export { SearchCheckboxTree as SearchInputSelector } from './component-wrappers/SearchCheckboxTree';
