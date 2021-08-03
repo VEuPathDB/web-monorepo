@@ -14,7 +14,7 @@ export interface MosaicPlotProps extends PlotProps<MosaicData> {
   showColumnLabels?: boolean;
 }
 
-const EmptyMosaicData: MosaicData = {
+export const EmptyMosaicData: MosaicData = {
   values: [[]],
   independentLabels: [],
   dependentLabels: [],
