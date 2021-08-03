@@ -937,17 +937,17 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.6.17":
-  version "0.6.17"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.6.17.tgz#e5021c878062fe5161f274a8f051b899d70c00b9"
-  integrity sha512-OLzV1iCJQaQgMqMs7k7uTnD4Rt12U1EmB/PqEY75JmtPsX69onK3vZt0/IIRt+UYx40Y7q9xEHJrYITGq30OFA==
+"@veupathdb/eda@^0.6.22":
+  version "0.6.22"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.6.22.tgz#1b0216a73c1e3ba107b4683582f684ba2e3ce4ba"
+  integrity sha512-PbnaS5ITuBNniMYqxNWkZUcbTyyYqej0ONvPr8EdM4ekfQOz/UGsskNStvYUpGkrkCeusVuKIdH6Rlh/W52O3Q==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
     "@veupathdb/components" "^0.3.23"
-    "@veupathdb/wdk-client" "^0.1.6"
-    "@veupathdb/web-common" "^0.1.2"
+    "@veupathdb/wdk-client" "^0.2.0"
+    "@veupathdb/web-common" "^0.1.3"
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
     io-ts "^2.2.13"
@@ -1005,10 +1005,57 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.2.tgz#8748eca36d24ea8bf1728236106cb7f07e5b2318"
-  integrity sha512-hz+l+wNGXAVz0GJdxUi40ppNSDJLFd9AkAH+FCr2OdcFKKSFXxg/CkGkQ9Hyf4YHmtdXifVRf6lqozfNfJYRVg==
+"@veupathdb/wdk-client@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@veupathdb/wdk-client/-/wdk-client-0.2.0.tgz#6a3b8b267f55faf4a34e5a167e288028e3636a11"
+  integrity sha512-FbhCXTSUUXKKMUhuhnURmPyF1pIFDKyEMDkunw9XcCITeKckjv9Qxn031r14DjNeQqB1XPkqI/3FiOJ7uM67yA==
+  dependencies:
+    "@types/datatables.net" "^1.10.5"
+    "@types/flot" "^0.0.31"
+    "@types/history" "^4.7.4"
+    "@types/jqueryui" "^1.11.35"
+    "@types/json-stable-stringify" "^1.0.31"
+    "@types/lodash" "^4.14.104"
+    "@types/natural-sort" "^0.0.20"
+    "@types/node" "^14.14.7"
+    "@types/prop-types" "^15.7.3"
+    "@types/qtip2" "^2.2.29"
+    "@types/react" "^16.9.18"
+    "@types/react-autocomplete" "^1.8.4"
+    "@types/react-dom" "^16.9.5"
+    "@types/react-redux" "^7.1.5"
+    "@types/react-router" "^5.1.4"
+    "@types/react-router-dom" "^5.1.3"
+    "@types/react-select" "^3.0.4"
+    "@types/uuid" "^8.0.0"
+    classnames "^2.2.0"
+    history "^4.10.1"
+    json-stable-stringify "^1.0.0"
+    localforage "^1.5.0"
+    lodash "^4.17.5"
+    mansion-ui "2.5"
+    moment "^2.21.0"
+    natural-sort "^1.0.0"
+    prop-types "^15.7.2"
+    react "^16.12.0"
+    react-autocomplete "^1.8.1"
+    react-dom "^16.12.0"
+    react-redux "^7.1.3"
+    react-router "^5.1.2"
+    react-router-dom "^5.1.2"
+    react-select "^3.0.4"
+    react-transition-group "^2.2.1"
+    redux "^4.0.0"
+    redux-observable "^1.2.0"
+    reselect "^3.0.1"
+    rxjs "^6.2.2"
+    spin.js "^4.0.0"
+    uuid "^8.1.0"
+
+"@veupathdb/web-common@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.3.tgz#a2909ddb8e66260c952ad031722d291c62f97347"
+  integrity sha512-BhrlQwI2gX25obKp0OucgUBi7TMVaodgAu/lVrlX+QIkXGvq6136njUEUpPpDdlgb2fRXMjDAF6vftL62prbMg==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
