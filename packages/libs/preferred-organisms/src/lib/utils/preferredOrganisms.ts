@@ -51,9 +51,9 @@ export const makePreferredOrganismsRecoilState = memoize(
       get: () => wdkService.getConfig(),
     });
 
-    const projectId = selector({
-      key: 'project-id',
-      get: ({ get }) => get(config).projectId,
+    const displayName = selector({
+      key: 'display-name',
+      get: ({ get }) => get(config).displayName,
     });
 
     const buildNumber = selector({
@@ -163,6 +163,7 @@ export const makePreferredOrganismsRecoilState = memoize(
     return {
       availableOrganisms,
       buildNumber,
+      displayName,
       newOrganisms,
       organismPreference,
       organismPreferenceBuildNumber,
@@ -171,7 +172,6 @@ export const makePreferredOrganismsRecoilState = memoize(
       preferredOrganismsEnabled,
       preferredQuestions,
       preferredSpecies,
-      projectId,
     };
   }
 );

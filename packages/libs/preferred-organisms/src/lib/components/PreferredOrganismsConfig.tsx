@@ -31,7 +31,7 @@ interface Props {
   configIsUnchanged: boolean;
   newOrganisms: Set<string>;
   organismTree: Node<TreeBoxVocabNode>;
-  projectId: string;
+  displayName: string;
   referenceStrains: Set<string>;
   savePreferredOrganisms: () => void;
   savingPreferredOrganismsEnabled: boolean;
@@ -45,7 +45,7 @@ export function PreferredOrganismsConfig({
   configIsUnchanged,
   newOrganisms,
   organismTree,
-  projectId,
+  displayName,
   referenceStrains,
   savePreferredOrganisms,
   savingPreferredOrganismsEnabled,
@@ -86,7 +86,7 @@ export function PreferredOrganismsConfig({
         <span>
           Set your{' '}
           <span className={cx('--InlineTitle')}>My Organism Preferences</span>{' '}
-          to limit the organisms you see throughout {projectId}.
+          to limit the organisms you see throughout {displayName}.
         </span>
       </p>
       {describeNewOrganisms && newOrganisms.size > 0 && (
@@ -121,7 +121,7 @@ export function PreferredOrganismsConfig({
               />
             </span>
             <div style={{ marginLeft: '1rem' }}>
-              In this release of {projectId},{' '}
+              In this release of {displayName},{' '}
               {makeNewOrganismDescription(newOrganisms.size)}{' '}
             </div>
             <button
@@ -220,7 +220,7 @@ export function PreferredOrganismsConfig({
           </h2>
           <div className={cx('--PreviewContent')}>
             <div className={cx('--PreviewInstructions')}>
-              {projectId} will restrict the organisms it displays, throughout
+              {displayName} will restrict the organisms it displays, throughout
               the site, to those you have chosen, as shown below.
             </div>
             {configSelection.length === 0 ? (

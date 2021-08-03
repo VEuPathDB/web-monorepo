@@ -3,16 +3,20 @@ import { useMemo } from 'react';
 import { Link } from '@veupathdb/wdk-client/lib/Components';
 
 import { NewOrganismsBanner } from './lib/components/NewOrganismsBanner';
+
+import { useOrganismMetadata } from './lib/hooks/organismMetadata';
 import {
+  useDisplayName,
   useNewOrganisms,
   usePreferredOrganismsState,
-  useProjectId,
+  usePreferredQuestions,
+  usePreferredSpecies,
 } from './lib/hooks/preferredOrganisms';
 import { useReferenceStrains } from './lib/hooks/referenceStrains';
 
 export default function Home() {
   const [preferredOrganisms] = usePreferredOrganismsState();
-  const projectId = useProjectId();
+  const displayName = useDisplayName();
 
   const referenceStrains = useReferenceStrains();
 
@@ -21,6 +25,12 @@ export default function Home() {
   ]);
 
   const newOrganisms = useNewOrganisms();
+
+  useOrganismMetadata();
+
+  usePreferredQuestions();
+
+  usePreferredSpecies();
 
   return (
     <div style={{ fontSize: '1.2em' }}>
@@ -51,11 +61,11 @@ export default function Home() {
           <NewOrganismsBanner
             onDismiss={() => {}}
             newOrganismCount={newOrganisms.size}
-            projectId={projectId}
+            displayName={displayName}
           />
         </div>
         <div>
-          These are the reference strains for {projectId}:
+          These are the reference strains for {displayName}:
           <ul>
             {referenceStrainsList.map((referenceStrain) => (
               <li key={referenceStrain}>{referenceStrain}</li>

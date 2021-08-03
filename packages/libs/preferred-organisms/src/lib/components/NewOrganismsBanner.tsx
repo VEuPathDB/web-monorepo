@@ -3,13 +3,13 @@ import { IconAlt, Link } from '@veupathdb/wdk-client/lib/Components';
 interface Props {
   onDismiss: () => void;
   newOrganismCount: number;
-  projectId: string;
+  displayName: string;
 }
 
 export function NewOrganismsBanner({
   newOrganismCount,
   onDismiss,
-  projectId,
+  displayName,
 }: Props) {
   return (
     <div
@@ -30,7 +30,7 @@ export function NewOrganismsBanner({
         ></i>
       </span>
       <div>
-        {makeNewOrganismDescription(newOrganismCount, projectId)}
+        {makeNewOrganismDescription(newOrganismCount, displayName)}
         <br />
         <Link to="/preferred-organisms">
           Please review My Organism Preferences.
@@ -54,9 +54,9 @@ export function NewOrganismsBanner({
 
 function makeNewOrganismDescription(
   newOrganismCount: number,
-  projectId: string
+  displayName: string
 ) {
   return newOrganismCount === 1
-    ? `There is 1 new organism in ${projectId}.`
-    : `There are ${newOrganismCount} new organisms in ${projectId}.`;
+    ? `There is 1 new organism in ${displayName}.`
+    : `There are ${newOrganismCount} new organisms in ${displayName}.`;
 }

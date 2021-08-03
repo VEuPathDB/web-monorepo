@@ -8,10 +8,10 @@ import { PreferredOrganismsToggle } from './PreferredOrganismsToggle';
 
 import {
   useAvailableOrganisms,
+  useDisplayName,
   useNewOrganisms,
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
-  useProjectId,
   useTogglePreferredOrganisms,
 } from '../hooks/preferredOrganisms';
 
@@ -60,7 +60,7 @@ function PreferredOrganismsCount() {
 
 function NewOrganismsBannerController() {
   const newOrganisms = useNewOrganisms();
-  const projectId = useProjectId();
+  const displayName = useDisplayName();
   const [showBanner, setShowBanner] = useState(true);
 
   const onDismiss = useCallback(() => {
@@ -72,7 +72,7 @@ function NewOrganismsBannerController() {
   return !showBanner || newOrganismCount === 0 ? null : (
     <NewOrganismsBanner
       newOrganismCount={newOrganismCount}
-      projectId={projectId}
+      displayName={displayName}
       onDismiss={onDismiss}
     />
   );

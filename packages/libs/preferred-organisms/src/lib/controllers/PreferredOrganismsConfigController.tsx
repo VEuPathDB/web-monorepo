@@ -6,10 +6,10 @@ import { useSetDocumentTitle } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { PreferredOrganismsConfig } from '../components/PreferredOrganismsConfig';
 import {
   useAvailableOrganisms,
+  useDisplayName,
   useNewOrganisms,
   useOrganismTree,
   usePreferredOrganismsState,
-  useProjectId,
   useSavePreferredOrganisms,
 } from '../hooks/preferredOrganisms';
 import { useReferenceStrains } from '../hooks/referenceStrains';
@@ -50,7 +50,7 @@ export function PreferredOrganismsConfigController() {
 
   const savePreferredOrganisms = useSavePreferredOrganisms(configSelection);
 
-  const projectIdValue = useProjectId();
+  const displayName = useDisplayName();
 
   const referenceStrains = useReferenceStrains();
 
@@ -79,7 +79,7 @@ export function PreferredOrganismsConfigController() {
         configIsUnchanged={configIsUnchanged}
         newOrganisms={newOrganisms}
         organismTree={organismTree}
-        projectId={projectIdValue}
+        displayName={displayName}
         referenceStrains={referenceStrains}
         savePreferredOrganisms={savePreferredOrganisms}
         savingPreferredOrganismsEnabled={savingPreferredOrganismsEnabled}

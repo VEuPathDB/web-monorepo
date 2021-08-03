@@ -17,10 +17,10 @@ export function useOrganismTree() {
   return useRecoilValue(organismTree);
 }
 
-export function useProjectId() {
-  const { projectId } = usePreferredOrganismsRecoilState();
+export function useDisplayName() {
+  const { displayName } = usePreferredOrganismsRecoilState();
 
-  return useRecoilValue(projectId);
+  return useRecoilValue(displayName);
 }
 
 export function usePreferredOrganismsState() {
