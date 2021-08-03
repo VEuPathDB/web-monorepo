@@ -1,11 +1,11 @@
 import lodash from 'lodash';
-import React, { Component, useEffect } from 'react';
+import React, { Component, Suspense, useEffect, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 import { RecordActions } from '@veupathdb/wdk-client/lib/Actions';
 import * as Category from '@veupathdb/wdk-client/lib/Utils/CategoryUtils';
-import { CollapsibleSection, CategoriesCheckboxTree, RecordTable as WdkRecordTable } from '@veupathdb/wdk-client/lib/Components';
+import { CollapsibleSection, CategoriesCheckboxTree, Loading, RecordTable as WdkRecordTable } from '@veupathdb/wdk-client/lib/Components';
 import { renderAttributeValue, pure } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import {Seq} from '@veupathdb/wdk-client/lib/Utils/IterableUtils';
 import {preorderSeq} from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -21,6 +21,7 @@ import Sequence from '../common/Sequence';
 import {SnpsAlignmentForm} from '../common/Snps';
 import { addCommentLink } from '../common/UserComments';
 import { withRequestFields } from './utils';
+import { usePreferredOrganismsEnabledState, usePreferredOrganismsState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
 /**
  * Render thumbnails at eupathdb-GeneThumbnailsContainer
@@ -226,7 +227,11 @@ export function RecordTable(props) {
       return <MercatorTable {...props} />
 
     case 'Orthologs':
-      return <OrthologsForm {...props}/>
+      return (
+        <Suspense fallback={<Loading />}>
+          <OrthologsFormContainer {...props}/>
+        </Suspense>
+      );
 
     case 'WolfPsortForm':
       return <WolfPsortForm {...props}/>
@@ -910,6 +915,23 @@ class StringDBForm extends React.Component {
     }
 }
 
+function OrthologsFormContainer(props) {
+  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
+
+  const [ preferredOrganisms ] = usePreferredOrganismsState();
+
+  const filteredValue = useMemo(() => {
+    if (!preferredOrganismsEnabled) {
+      return props.value;
+    }
+
+    const preferredOrganismsSet = new Set(preferredOrganisms);
+
+    return props.value.filter(({ organism }) => preferredOrganismsSet.has(organism));
+  }, [ props.value, preferredOrganisms, preferredOrganismsEnabled ]);
+
+  return <OrthologsForm {...props} value={filteredValue} />;
+}
 
 class OrthologsForm extends SortKeyTable {
 
