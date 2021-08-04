@@ -17,7 +17,7 @@ import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
-import { sortBy, sortedUniqBy, orderBy } from 'lodash';
+import { sortBy, sortedUniqBy, orderBy, some } from 'lodash';
 
 // Components
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
@@ -379,9 +379,25 @@ export default function Histogram({
     range: plotlyIndependentAxisRange,
     tickfont: data.series.length ? {} : { color: 'transparent' },
   };
+
+  // if at least one bin.count is 0 < x < 1 then these are probably fractions/proportions
+  // affects mouseover formatting only in logScale mode
+  // worst case is that mouseovers contain integers followed by .0000
+  const dataLooksFractional = useMemo(() => {
+    return some(
+      data.series.flatMap((series) => series.bins.map((bin) => bin.count)),
+      (val) => val > 0 && val < 1
+    );
+  }, [data.series]);
+
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     type: dependentAxisLogScale ? 'log' : 'linear',
-    tickformat: ',.1r', // comma-separated thousands, rounded to 1 significant digit
+    tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
+    hoverformat: dependentAxisLogScale
+      ? dataLooksFractional
+        ? ',.4f'
+        : ',.0f'
+      : undefined,
     automargin: true,
     title: {
       text: dependentAxisLabel,
