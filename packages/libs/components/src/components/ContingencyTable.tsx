@@ -17,11 +17,7 @@ export function ContingencyTable(props: ContingencyTableProps) {
       <table>
         <tbody>
           <tr>
-            <td
-              className="contingency-table_top-left-corner"
-              colSpan={2}
-              rowSpan={2}
-            ></td>
+            <td className="contingency-table_top-left-corner" colSpan={1}></td>
             <th
               className="contingency-table_column-header"
               colSpan={data.independentLabels.length}
@@ -31,6 +27,12 @@ export function ContingencyTable(props: ContingencyTableProps) {
             </th>
           </tr>
           <tr>
+            <th
+              className="contingency-table_row-header"
+              style={{ textAlign: 'center' }}
+            >
+              {props.dependentVariable}
+            </th>
             {data.independentLabels.map((label) => (
               <th className="contingency-table_column-label">{label}</th>
             ))}
@@ -38,14 +40,6 @@ export function ContingencyTable(props: ContingencyTableProps) {
           </tr>
           {data.values.map((row, index) => (
             <tr>
-              {index === 0 && (
-                <th
-                  className="contingency-table_row-header"
-                  rowSpan={data.dependentLabels.length}
-                >
-                  {props.dependentVariable}
-                </th>
-              )}
               <th className="contingency-table_row-label">
                 {data.dependentLabels[index]}
               </th>
@@ -58,7 +52,6 @@ export function ContingencyTable(props: ContingencyTableProps) {
             </tr>
           ))}
           <tr>
-            <td></td>
             <th className="contingency-table_totals-row-header">Total</th>
             {_.unzip(data.values).map((col) => (
               <td className="contingency-table_totals-row-value">
