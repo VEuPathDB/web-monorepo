@@ -156,20 +156,18 @@ export default function PlotlyPlot<T>(
   // default behavior of stacked plot at plotly is to put the first data and legend at the bottom (histogram, bar plot)
   if (reverseLegendTooltips) storedLegendList.reverse();
 
-  // define useRef
-  const plotlyPlotRef = useRef<HTMLDivElement>(null);
-
   // add legend tooltip function
-  const legendTooltip = useCallback(() => {
-    // use div ref
-    if (plotlyPlotRef.current) {
-      select(plotlyPlotRef.current)
+  const onUpdate = useCallback(
+    (_, graphDiv: Readonly<HTMLElement>) => {
+      // use graphDiv
+      select(graphDiv)
         .select('g.legend')
         .selectAll('g.traces')
         .append('svg:title')
         .text((d, i) => storedLegendList[i]);
-    }
-  }, [storedLegendList]);
+    },
+    [storedLegendList]
+  );
 
   // set the number of characters to be displayed
   const maxLegendText = maxLegendTextLength;
@@ -184,11 +182,7 @@ export default function PlotlyPlot<T>(
 
   return (
     <Suspense fallback="Loading...">
-      {/* set ref at div */}
-      <div
-        style={{ ...containerStyles, position: 'relative' }}
-        ref={plotlyPlotRef}
-      >
+      <div style={{ ...containerStyles, position: 'relative' }}>
         <Plot
           {...plotlyProps}
           // need to set data props for modigying its name prop
@@ -197,7 +191,7 @@ export default function PlotlyPlot<T>(
           style={{ width: '100%', height: '100%' }}
           config={finalConfig}
           // use onUpdate event handler for legend tooltip
-          onUpdate={legendTooltip}
+          onUpdate={onUpdate}
         />
         {showSpinner && <Spinner />}
       </div>
