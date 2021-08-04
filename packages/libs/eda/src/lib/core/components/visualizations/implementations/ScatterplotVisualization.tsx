@@ -46,7 +46,7 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 // import XYPlotData
 import { XYPlotData } from '@veupathdb/components/lib/types/plots';
 // import axis label unit util
-import { axisLabelUnit } from '../../../utils/axisLabelUnit';
+import { axisLabelUnit } from '../../../utils/axis-label-unit';
 
 // define PromiseXYPlotData
 interface PromiseXYPlotData {
