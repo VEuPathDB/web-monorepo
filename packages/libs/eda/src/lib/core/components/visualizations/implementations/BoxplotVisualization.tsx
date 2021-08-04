@@ -207,6 +207,7 @@ function BoxplotViz(props: Props) {
       vizConfig,
       xAxisVariable,
       yAxisVariable,
+      overlayVariable,
       computation.type,
       visualization.type,
     ])
@@ -230,10 +231,6 @@ function BoxplotViz(props: Props) {
               {
                 name: 'overlayVariable',
                 label: 'Overlay (Optional)',
-              },
-              {
-                name: 'facetVariable',
-                label: 'Facet (Optional)',
               },
             ]}
             entities={entities}

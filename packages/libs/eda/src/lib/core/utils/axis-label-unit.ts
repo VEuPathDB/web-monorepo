@@ -1,6 +1,6 @@
 import { Variable } from '../types/study';
 
-export function axisLabelUnit(
+export function axisLabelWithUnit(
   axisVariableContent: Variable | undefined
 ): string | undefined {
   if (

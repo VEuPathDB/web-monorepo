@@ -47,7 +47,7 @@ import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/Radio
 import { XYPlotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 // import axis label unit util
-import { axisLabelUnit } from '../../../utils/axis-label-unit';
+import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
 // define PromiseXYPlotData
 interface PromiseXYPlotData extends CoverageStatistics {
@@ -154,6 +154,23 @@ function ScatterplotViz(props: Props) {
   // moved the location of this findEntityAndVariable
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
+  const { xAxisVariable, yAxisVariable, overlayVariable } = useMemo(() => {
+    const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+    const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
+    const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+
+    return {
+      xAxisVariable: xAxisVariable ? xAxisVariable.variable : undefined,
+      yAxisVariable: yAxisVariable ? yAxisVariable.variable : undefined,
+      overlayVariable: overlayVariable ? overlayVariable.variable : undefined,
+    };
+  }, [
+    findEntityAndVariable,
+    vizConfig.xAxisVariable,
+    vizConfig.yAxisVariable,
+    vizConfig.overlayVariable,
+  ]);
+
   // TODO Handle facetVariable
   const handleInputVariableChange = useCallback(
     (
@@ -203,11 +220,6 @@ function ScatterplotViz(props: Props) {
 
   const data = usePromise(
     useCallback(async (): Promise<PromiseXYPlotData | undefined> => {
-      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
-        ?.variable;
-      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable)
-        ?.variable;
-
       // check independentValueType/dependentValueType
       const independentValueType = xAxisVariable?.type
         ? xAxisVariable.type
@@ -255,10 +267,7 @@ function ScatterplotViz(props: Props) {
 
       // send visualization.type, independentValueType, and dependentValueType as well
       return scatterplotResponseToData(
-        reorderResponse(
-          await response,
-          findEntityAndVariable(vizConfig.overlayVariable)?.variable.vocabulary
-        ),
+        reorderResponse(await response, overlayVariable?.vocabulary),
         visualization.type,
         independentValueType,
         dependentValueType
@@ -268,7 +277,9 @@ function ScatterplotViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findEntityAndVariable,
+      xAxisVariable,
+      yAxisVariable,
+      overlayVariable,
       computation.type,
       visualization.type,
     ])
@@ -292,10 +303,6 @@ function ScatterplotViz(props: Props) {
                 name: 'overlayVariable',
                 label: 'Overlay (optional)',
               },
-              // {
-              //   name: 'facetVariable',
-              //   label: 'Facet (optional)',
-              // },
             ]}
             entities={entities}
             values={{
@@ -362,15 +369,9 @@ function ScatterplotViz(props: Props) {
                   vizConfig.overlayVariable != null)
               }
               independentAxisLabel={
-                axisLabelUnit(
-                  findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                ) ?? 'X-Axis'
+                axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'
               }
-              dependentAxisLabel={
-                axisLabelUnit(
-                  findEntityAndVariable(vizConfig.yAxisVariable)?.variable
-                ) ?? 'Y-Axis'
-              }
+              dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
               dependentAxisRange={
                 data.value && !data.pending
                   ? { min: data.value.yMin, max: data.value.yMax }
@@ -378,8 +379,7 @@ function ScatterplotViz(props: Props) {
               }
               // set valueSpec as Raw when yAxisVariable = date
               valueSpec={
-                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
-                  .type === 'date'
+                yAxisVariable?.type === 'date'
                   ? 'Raw'
                   : vizConfig.valueSpecConfig
               }
@@ -396,21 +396,13 @@ function ScatterplotViz(props: Props) {
               ]}
               // disabledList prop is used to disable radio options (grayed out)
               disabledList={
-                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
-                  .type === 'date'
+                yAxisVariable?.type === 'date'
                   ? ['Smoothed mean with raw', 'Best fit line with raw']
                   : []
               }
-              independentValueType={
-                findEntityAndVariable(vizConfig.xAxisVariable)?.variable.type
-              }
-              dependentValueType={
-                findEntityAndVariable(vizConfig.yAxisVariable)?.variable.type
-              }
-              legendTitle={
-                findEntityAndVariable(vizConfig.overlayVariable)?.variable
-                  .displayName
-              }
+              independentValueType={xAxisVariable?.type}
+              dependentValueType={yAxisVariable?.type}
+              legendTitle={overlayVariable?.displayName}
             />
             <VariableCoverageTable
               completeCases={
@@ -424,21 +416,18 @@ function ScatterplotViz(props: Props) {
                 {
                   role: 'X-axis',
                   required: true,
-                  display: findEntityAndVariable(vizConfig.xAxisVariable)
-                    ?.variable.displayName,
+                  display: xAxisVariable?.displayName,
                   variable: vizConfig.xAxisVariable,
                 },
                 {
                   role: 'Y-axis',
                   required: true,
-                  display: findEntityAndVariable(vizConfig.yAxisVariable)
-                    ?.variable.displayName,
+                  display: yAxisVariable?.displayName,
                   variable: vizConfig.yAxisVariable,
                 },
                 {
                   role: 'Overlay',
-                  display: findEntityAndVariable(vizConfig.overlayVariable)
-                    ?.variable.displayName,
+                  display: overlayVariable?.displayName,
                   variable: vizConfig.overlayVariable,
                 },
               ]}
