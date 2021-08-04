@@ -93,7 +93,8 @@ function BaseInput({
 
   const classes = makeStyles({
     root: {
-      height: 32, // default height is 56 and is waaaay too tall
+      height: 36.5, // default height is 56 and is waaaay too tall
+      // 34.5 is the height of the reset button, but 36.5 lines up better
     },
   })();
 
