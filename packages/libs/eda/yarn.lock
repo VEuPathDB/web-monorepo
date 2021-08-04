@@ -2889,10 +2889,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.4.2.tgz#1ed13a9b1f61a66e624d2627ace63527e47d920d"
-  integrity sha512-26EFfd/2mv6bGmf9X5RNSavJJLcja6oAoy1mfOdXas6AfP8FLEqJL/7uHcwDYeT/xpeuXR9G2tsk3jBdqLfxDA==
+"@veupathdb/components@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.4.3.tgz#477cc8e24d8de781cd749991626d76f796bd0797"
+  integrity sha512-TXAr1NnsuK4r1kzybfYnVhJa3eJRZtIqqeJt65bg3ix53sweubpLnQQwhhTBM7SkaTV31KoMRfKVHFjK+YSsEA==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
