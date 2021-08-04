@@ -3,7 +3,6 @@ import React, {
   Suspense,
   useMemo,
   useCallback,
-  useRef,
   CSSProperties,
 } from 'react';
 import { PlotParams } from 'react-plotly.js';
@@ -150,7 +149,6 @@ export default function PlotlyPlot<T>(
       select(graphDiv)
         .select('g.legend')
         .selectAll('g.traces')
-        //DKDK add below
         .selectAll('title')
         .remove();
       // add tooltip using svg title
