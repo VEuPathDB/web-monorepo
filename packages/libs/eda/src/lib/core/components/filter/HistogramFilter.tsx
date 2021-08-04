@@ -504,6 +504,8 @@ function HistogramPlotWithControls({
       : undefined;
   }, [data?.series, data?.valueType]);
 
+  const widgetHeight = '4em';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <SelectedRangeControl
@@ -545,7 +547,10 @@ function HistogramPlotWithControls({
             label="Log Scale:"
             state={uiState.dependentAxisLogScale}
             onStateChange={handleDependentAxisLogScale}
-            containerStyles={{ paddingBottom: '0.3125em' }}
+            containerStyles={{
+              paddingBottom: '0.3125em',
+              minHeight: widgetHeight,
+            }}
           />
 
           <NumberRangeInput
@@ -558,12 +563,13 @@ function HistogramPlotWithControls({
           />
 
           <Button
-            type={'solid'}
-            text={'Reset to defaults'}
+            type={'outlined'}
+            text={'Reset Y-axis to defaults'}
             onClick={handleDependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '100%',
+              width: '50%',
+              float: 'right',
             }}
           />
         </LabelledGroup>
@@ -581,6 +587,7 @@ function HistogramPlotWithControls({
             }
             onBinWidthChange={handleBinWidthChange}
             valueType={data?.valueType}
+            containerStyles={{ minHeight: widgetHeight }}
           />
 
           <AxisRangeControl
@@ -591,12 +598,13 @@ function HistogramPlotWithControls({
           />
 
           <Button
-            type={'solid'}
-            text={'Reset to defaults'}
+            type={'outlined'}
+            text={'Reset X-axis to defaults'}
             onClick={handleIndependentAxisSettingsReset}
             containerStyles={{
               paddingTop: '1.0em',
-              width: '100%',
+              width: '50%',
+              float: 'right',
             }}
           />
         </LabelledGroup>
