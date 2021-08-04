@@ -135,14 +135,9 @@ export default function PlotlyPlot<T>(
    */
   const storedLegendList = useMemo(() => {
     if (data != null) {
-      return data
-        .filter((data) => {
-          if (data.name == null || data.x?.length === 0) return false;
-          return true;
-        })
-        .map((data) => {
-          return data.name ?? '';
-        });
+      return data.map((data) => {
+        return data.name ?? '';
+      });
     } else {
       return [];
     }
