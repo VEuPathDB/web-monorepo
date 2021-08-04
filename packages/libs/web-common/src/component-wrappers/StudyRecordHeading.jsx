@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import React from 'react';
 import { connect, useSelector } from 'react-redux';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
+import { makeEdaRoute } from 'ebrc-client/routes';
 import StudySearches from 'ebrc-client/App/Studies/StudySearches';
 import DownloadLink from 'ebrc-client/App/Studies/DownloadLink';
 import { attemptAction } from 'ebrc-client/App/DataRestriction/DataRestrictionActionCreators';
@@ -15,6 +16,7 @@ const cx = makeClassNameHelper('StudyRecordHeadingSearchLinks');
 function StudyRecordHeading({
   showSearches = false,
   showDownload = false,
+  showAnalyzeLink = false,
   entries,
   loading,
   study,
@@ -26,6 +28,21 @@ function StudyRecordHeading({
 
   return (
     <React.Fragment>
+      {showAnalyzeLink && (
+        <div style={{
+          padding: '1.8em 0',
+          position: 'absolute',
+          right: 0
+        }}>
+          <Link to={`${makeEdaRoute(props.record.id[0].value)}/new`} className="btn" style={{
+            fontSize: '1.8em',
+            backgroundColor: '#1976d2',
+            color: 'white',
+          }}>
+            Analyze this study
+          </Link>
+        </div>
+      )}
       <props.DefaultComponent {...props}/>
       {study != null && permissions != null && shouldOfferLinkToDashboard(permissions) && (
         <div className={cx('DashboardLink')}><Link className={'btn ' + cx('DashboardLink')} to={`/study-access/${study.id}`}>Data Access Dashboard</Link></div>
