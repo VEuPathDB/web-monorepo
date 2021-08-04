@@ -5,14 +5,16 @@ import { RestrictedPage } from '@veupathdb/web-common/lib/App/DataRestriction/Re
 import { useApprovalStatus } from '@veupathdb/web-common/lib/hooks/dataRestriction';
 import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { AnalysisClient } from '../core';
+import { useRouteMatch } from 'react-router';
 
 interface Props {
   analysisClient: AnalysisClient;
   studyId: string;
+  replaceRegexp: RegExp;
 }
 
 export function LatestAnalysis(props: Props) {
-  const { analysisClient: analysisStore, studyId } = props;
+  const { analysisClient, studyId, replaceRegexp } = props;
   const approvalStatus = useApprovalStatus(studyId, 'analysis');
   const history = useHistory();
   useEffect(() => {
@@ -20,7 +22,7 @@ export function LatestAnalysis(props: Props) {
       return;
     }
 
-    return Task.fromPromise(() => analysisStore.getAnalyses())
+    return Task.fromPromise(() => analysisClient.getAnalyses())
       .map((analyses) =>
         orderBy(
           analyses.filter((analysis) => analysis.studyId === studyId),
@@ -30,7 +32,7 @@ export function LatestAnalysis(props: Props) {
       .chain((analyses) =>
         analyses.length === 0
           ? Task.fromPromise(() =>
-              analysisStore.createAnalysis({
+              analysisClient.createAnalysis({
                 name: 'Unnamed Analysis',
                 studyId,
                 filters: [],
@@ -46,11 +48,11 @@ export function LatestAnalysis(props: Props) {
       .run(({ id }) => {
         const newLocation = {
           ...history.location,
-          pathname: `./${id}`,
+          pathname: history.location.pathname.replace(replaceRegexp, id),
         };
         history.replace(newLocation);
       });
-  }, [analysisStore, history, studyId, approvalStatus]);
+  }, [analysisClient, history, studyId, approvalStatus, replaceRegexp]);
 
   return (
     <RestrictedPage approvalStatus={approvalStatus}>

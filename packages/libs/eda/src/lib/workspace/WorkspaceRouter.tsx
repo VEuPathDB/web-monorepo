@@ -60,11 +60,11 @@ export function WorkspaceRouter({
         )}
       />
       <Route
-        path={`${path}/:studyId/latest`}
-        exact
+        path={`${path}/:studyId/~latest`}
         render={(props: RouteComponentProps<{ studyId: string }>) => (
           <LatestAnalysis
             {...props.match.params}
+            replaceRegexp={/~latest/}
             analysisClient={mockAnalysisStore}
           />
         )}
