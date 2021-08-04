@@ -208,8 +208,9 @@
       border-right: 1px solid #888;
     }
 
-    tr:nth-of-type(3) .contingency-table_row-label {
-      border-top: 1px solid #888;
+    .contingency-table_row-header {
+      border-bottom: 1px solid #888 !important;
+      border-right: 1px solid #888;
     }
 
     .contingency-table_totals-row-header {
