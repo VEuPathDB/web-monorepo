@@ -35,7 +35,7 @@ export function NewAnalysis(props: Props) {
         ...history.location,
         pathname: `./${id}`,
       };
-      history.push(newLocation);
+      history.replace(newLocation);
     });
   }, [analysisStore, history, studyId, approvalStatus]);
 
