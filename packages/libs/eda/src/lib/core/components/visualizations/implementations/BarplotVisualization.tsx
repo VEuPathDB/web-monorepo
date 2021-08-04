@@ -1,5 +1,6 @@
 // load Barplot component
 import Barplot, { BarplotProps } from '@veupathdb/components/lib/plots/Barplot';
+import { BarplotData } from '@veupathdb/components/lib/types/plots';
 import LabelledGroup from '@veupathdb/components/lib/components/widgets/LabelledGroup';
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
@@ -11,16 +12,20 @@ import * as t from 'io-ts';
 import { useCallback, useMemo } from 'react';
 
 // need to set for Barplot
-import { DataClient, BarplotRequestParams } from '../../../api/data-api';
+import {
+  DataClient,
+  BarplotResponse,
+  BarplotRequestParams,
+} from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
-import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
 
 import { VariableCoverageTable } from '../../VariableCoverageTable';
+import { CoverageStatistics } from '../../../types/visualization';
 
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -157,26 +162,36 @@ function BarplotViz(props: Props) {
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
+  const { variable, entity, overlayVariable } = useMemo(() => {
+    const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+    const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+    return {
+      variable: xAxisVariable ? xAxisVariable.variable : undefined,
+      entity: xAxisVariable ? xAxisVariable.entity : undefined,
+      overlayVariable: overlayVariable ? overlayVariable.variable : undefined,
+    };
+  }, [
+    findEntityAndVariable,
+    vizConfig.xAxisVariable,
+    vizConfig.overlayVariable,
+  ]);
 
   const data = usePromise(
     useCallback(async (): Promise<any> => {
-      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+      if (variable == null) return undefined;
 
-      // check variable inputs: this is necessary to prevent from data post
-      if (vizConfig.xAxisVariable == null || xAxisVariable == null)
-        return undefined;
-
-      // add visualization.type here
       const params = getRequestParams(studyId, filters ?? [], vizConfig);
 
-      // barplot
       const response = dataClient.getBarplot(
         computation.type,
         params as BarplotRequestParams
       );
 
-      // send visualization.type as well
-      return barplotResponseToData(await response);
+      return reorderData(
+        barplotResponseToData(await response),
+        variable?.vocabulary,
+        overlayVariable?.vocabulary
+      );
     }, [
       studyId,
       filters,
@@ -246,7 +261,7 @@ function BarplotViz(props: Props) {
       {fullscreen ? (
         <>
           <OutputEntityTitle
-            entity={findEntityAndVariable(vizConfig.xAxisVariable)?.entity}
+            entity={entity}
             outputSize={data.pending ? undefined : data.value?.outputSize}
           />
           <div
@@ -398,11 +413,11 @@ function BarplotWithControls({
 /**
  * Reformat response from Barplot endpoints into complete BarplotData
  * @param response
- * @returns BarplotData
+ * @returns BarplotData & completeCases & outputSize
  */
 export function barplotResponseToData(
-  response: PromiseType<ReturnType<DataClient['getBarplot']>>
-) {
+  response: BarplotResponse
+): BarplotData & CoverageStatistics {
   return {
     series: response.barplot.data.map((data, index) => ({
       // name has value if using overlay variable
@@ -434,4 +449,61 @@ function getRequestParams(
       barMode: 'group', // or 'stack'
     },
   } as BarplotRequestParams;
+}
+
+/**
+ * reorder the series prop of the BarplotData object so that labels
+ * go in the same order as the main variable's vocabulary, and the overlay
+ * strata are ordered in that variable's vocabulary order too, with missing values and traces added as undefined
+ *
+ * NOTE: if any values are missing from the vocabulary array, then the data for that value WILL NOT BE PLOTTED
+ *
+ */
+function reorderData(
+  data: BarplotData,
+  labelVocabulary: string[] = [],
+  overlayVocabulary: string[] = []
+) {
+  const labelOrderedSeries = data.series.map((series) => {
+    if (labelVocabulary.length > 0) {
+      // for each label in the vocabulary's correct order,
+      // find the index of that label in the provided series' label array
+      const labelIndices = labelVocabulary.map((label) =>
+        series.label.indexOf(label)
+      );
+      // now return the data from the other array(s) in the same order
+      // any missing labels will be mapped to `undefined` (indexing an array with -1)
+      return {
+        ...series,
+        label: labelVocabulary,
+        value: labelIndices.map((i) => series.value[i]),
+      };
+    } else {
+      return series;
+    }
+  });
+
+  if (overlayVocabulary.length > 0) {
+    // for each value in the overlay vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const overlayValues = labelOrderedSeries.map((series) => series.name);
+    const overlayIndices = overlayVocabulary.map((name) =>
+      overlayValues.indexOf(name)
+    );
+    return {
+      ...data,
+      // return the series in overlay vocabulary order
+      series: overlayIndices.map(
+        (i, j) =>
+          labelOrderedSeries[i] ?? {
+            // if there is no series, insert a dummy series
+            name: overlayVocabulary[j],
+            label: labelVocabulary,
+            value: labelVocabulary.map(() => undefined),
+          }
+      ),
+    };
+  } else {
+    return { ...data, series: labelOrderedSeries };
+  }
 }
