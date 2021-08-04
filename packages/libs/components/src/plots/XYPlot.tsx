@@ -46,6 +46,7 @@ export default function XYPlot(props: XYPlotProps) {
   } = props;
 
   const layout: Partial<Layout> = {
+    hovermode: 'closest',
     xaxis: {
       title: independentAxisLabel,
       range: [independentAxisRange?.min, independentAxisRange?.max], // set this for better display: esp. for CI plot
