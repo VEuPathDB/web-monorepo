@@ -7,6 +7,8 @@ import {
   OpacityDefault,
   OrientationAddon,
   OrientationDefault,
+  DependentAxisLogScaleAddon,
+  DependentAxisLogScaleDefault,
 } from '../types/plots';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
@@ -16,7 +18,8 @@ export interface BarplotProps
   extends PlotProps<BarplotData>,
     BarLayoutAddon<'overlay' | 'stack' | 'group'>,
     OrientationAddon,
-    OpacityAddon {
+    OpacityAddon,
+    DependentAxisLogScaleAddon {
   /** Label for independent axis. e.g. 'Country' */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to 'Count' */
@@ -42,6 +45,7 @@ export default function Barplot({
   barLayout = 'group',
   showIndependentAxisTickLabel = true,
   showDependentAxisTickLabel = true,
+  dependentAxisLogScale = DependentAxisLogScaleDefault,
   ...restProps
 }: BarplotProps) {
   // Transform `data` into a Plot.ly friendly format.
@@ -86,6 +90,8 @@ export default function Barplot({
 
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     automargin: true,
+    tickformat: ',.1r', // comma-separated thousands, rounded to 1 significant digit
+    type: dependentAxisLogScale ? 'log' : 'linear',
     title: {
       text: dependentAxisLabel ? dependentAxisLabel : '',
     },

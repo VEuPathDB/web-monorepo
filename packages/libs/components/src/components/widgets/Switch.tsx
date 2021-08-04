@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import MaterialSwitch from '@material-ui/core/Switch';
 
