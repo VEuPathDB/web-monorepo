@@ -128,6 +128,8 @@
   }
 }
 
+$data-table-inner-border: 1px solid #888;
+
 @mixin data-table {
   z-index: 1;
   background-color: #fafafa;
@@ -145,9 +147,7 @@
 
   th {
     font-weight: 500;
-    border-color: #888;
-    border-top: 0;
-    border-width: 1px 0;
+    border-bottom: $data-table-inner-border;
     white-space: nowrap;
   }
 
@@ -196,44 +196,44 @@
     overflow: auto;
 
     .contingency-table_column-label {
-      border-bottom: 1px solid #888 !important;
+      border-bottom: $data-table-inner-border !important;
     }
 
     .contingency-table_column-label:first-of-type {
-      border-left: 1px solid #888;
+      border-left: $data-table-inner-border;
     }
 
     .contingency-table_row-label {
       border-bottom: 0;
-      border-right: 1px solid #888;
+      border-right: $data-table-inner-border;
     }
 
     .contingency-table_row-header {
-      border-bottom: 1px solid #888 !important;
-      border-right: 1px solid #888;
+      border-bottom: $data-table-inner-border !important;
+      border-right: $data-table-inner-border;
     }
 
     .contingency-table_totals-row-header {
       text-align: end;
-      border-top: 1px solid #888;
-      border-right: 1px solid #888;
+      border-top: $data-table-inner-border;
+      border-right: $data-table-inner-border;
     }
 
     .contingency-table_totals-column-header {
-      border-left: 1px solid #888;
+      border-left: $data-table-inner-border;
     }
 
     .contingency-table_totals-row-value {
-      border-top: 1px solid #888;
+      border-top: $data-table-inner-border;
     }
 
     .contingency-table_totals-column-value {
-      border-left: 1px solid #888;
+      border-left: $data-table-inner-border;
     }
 
     .contingency-table_grand-total {
-      border-top: 1px solid #888;
-      border-left: 1px solid #888;
+      border-top: $data-table-inner-border;
+      border-left: $data-table-inner-border;
     }
   }
 }
