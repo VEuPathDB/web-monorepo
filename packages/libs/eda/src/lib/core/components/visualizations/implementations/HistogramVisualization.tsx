@@ -6,7 +6,6 @@ import LabelledGroup from '@veupathdb/components/lib/components/widgets/Labelled
 import RadioButtonGroup from '@veupathdb/components/lib/components/widgets/RadioButtonGroup';
 import Switch from '@veupathdb/components/lib/components/widgets/Switch';
 import {
-  ErrorManagement,
   NumberOrTimeDelta,
   NumberOrTimeDeltaRange,
   TimeDelta,
@@ -20,7 +19,6 @@ import * as t from 'io-ts';
 import { isEqual } from 'lodash';
 import React, { useCallback, useMemo } from 'react';
 import {
-  CompleteCasesTable,
   DataClient,
   HistogramRequestParams,
   HistogramResponse,
@@ -30,6 +28,7 @@ import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
 import { Filter } from '../../../types/filter';
 import { StudyEntity } from '../../../types/study';
 import { VariableDescriptor } from '../../../types/variable';
+import { CoverageStatistics } from '../../../types/visualization';
 import { findEntityAndVariable } from '../../../utils/study-metadata';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { isHistogramVariable } from '../../filter/guards';
@@ -39,10 +38,7 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 
-type HistogramDataWithCoverageStatistics = HistogramData & {
-  completeCases: CompleteCasesTable;
-  outputSize: number;
-};
+type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
 export const histogramVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -230,7 +226,10 @@ function HistogramViz(props: Props) {
         vizConfig
       );
       const response = dataClient.getHistogram(computation.type, params);
-      return histogramResponseToData(await response, xAxisVariable.type);
+      return reorderData(
+        histogramResponseToData(await response, xAxisVariable.type),
+        overlayVariable?.vocabulary
+      );
     }, [
       vizConfig.xAxisVariable,
       vizConfig.binWidth,
@@ -369,15 +368,13 @@ type HistogramPlotWithControlsProps = HistogramProps & {
   onBinWidthChange: (newBinWidth: NumberOrTimeDelta) => void;
   onDependentAxisLogScaleChange: (newState?: boolean) => void;
   filters: Filter[];
-  completeCases?: CompleteCasesTable;
-  outputSize?: number;
   outputEntity?: StudyEntity;
   independentAxisVariable?: VariableDescriptor;
   overlayVariable?: VariableDescriptor;
   overlayLabel?: string;
   valueSpec: ValueSpec;
   onValueSpecChange: (newValueSpec: ValueSpec) => void;
-};
+} & Partial<CoverageStatistics>;
 
 function HistogramPlotWithControls({
   data,
@@ -570,4 +567,32 @@ function getRequestParams(
       ...binSpec,
     },
   } as HistogramRequestParams;
+}
+
+function reorderData(
+  data: HistogramDataWithCoverageStatistics,
+  overlayVocabulary: string[] = []
+) {
+  if (overlayVocabulary.length > 0) {
+    // for each value in the overlay vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const overlayValues = data.series.map((series) => series.name);
+    const overlayIndices = overlayVocabulary.map((name) =>
+      overlayValues.indexOf(name)
+    );
+    return {
+      ...data,
+      // return the series in overlay vocabulary order
+      series: overlayIndices.map(
+        (i, j) =>
+          data.series[i] ?? {
+            // if there is no series, insert a dummy series
+            name: overlayVocabulary[j],
+            bins: [],
+          }
+      ),
+    };
+  } else {
+    return data;
+  }
 }

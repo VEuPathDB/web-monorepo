@@ -1,6 +1,5 @@
 // load Boxplot component
 import Boxplot, { BoxplotProps } from '@veupathdb/components/lib/plots/Boxplot';
-import { ErrorManagement } from '@veupathdb/components/lib/types/general';
 
 import { preorder } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
 import { getOrElse } from 'fp-ts/lib/Either';
@@ -9,11 +8,7 @@ import * as t from 'io-ts';
 import React, { useCallback, useMemo } from 'react';
 
 // need to set for Boxplot
-import {
-  DataClient,
-  BoxplotRequestParams,
-  CompleteCasesTable,
-} from '../../../api/data-api';
+import { DataClient, BoxplotRequestParams } from '../../../api/data-api';
 
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
@@ -30,12 +25,12 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import box from './selectorIcons/box.svg';
 import { BoxplotData } from '@veupathdb/components/lib/types/plots';
+import { CoverageStatistics } from '../../../types/visualization';
 
-interface PromiseBoxplotData {
+import { at } from 'lodash';
+
+interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
-  // add more props with variable coverage table
-  completeCases: CompleteCasesTable;
-  outputSize: number;
 }
 
 export const boxplotVisualization: VisualizationType = {
@@ -145,6 +140,23 @@ function BoxplotViz(props: Props) {
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
+  const { xAxisVariable, yAxisVariable, overlayVariable } = useMemo(() => {
+    const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+    const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
+    const overlayVariable = findEntityAndVariable(vizConfig.overlayVariable);
+
+    return {
+      xAxisVariable: xAxisVariable ? xAxisVariable.variable : undefined,
+      yAxisVariable: yAxisVariable ? yAxisVariable.variable : undefined,
+      overlayVariable: overlayVariable ? overlayVariable.variable : undefined,
+    };
+  }, [
+    findEntityAndVariable,
+    vizConfig.xAxisVariable,
+    vizConfig.yAxisVariable,
+    vizConfig.overlayVariable,
+  ]);
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -155,10 +167,6 @@ function BoxplotViz(props: Props) {
 
   const data = usePromise(
     useCallback(async (): Promise<PromiseBoxplotData | undefined> => {
-      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
-      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
-
-      // check variable inputs and add densityplot
       if (vizConfig.xAxisVariable == null || xAxisVariable == null)
         return undefined;
       else if (vizConfig.yAxisVariable == null || yAxisVariable == null)
@@ -187,13 +195,18 @@ function BoxplotViz(props: Props) {
       );
 
       // send visualization.type as well
-      return boxplotResponseToData(await response);
+      return reorderData(
+        boxplotResponseToData(await response),
+        xAxisVariable.vocabulary,
+        overlayVariable?.vocabulary
+      );
     }, [
       studyId,
       filters,
       dataClient,
       vizConfig,
-      findEntityAndVariable,
+      xAxisVariable,
+      yAxisVariable,
       computation.type,
       visualization.type,
     ])
@@ -284,14 +297,8 @@ function BoxplotViz(props: Props) {
                 (data.value.series.length > 1 ||
                   vizConfig.overlayVariable != null)
               }
-              independentAxisLabel={
-                findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                  .displayName ?? 'X-Axis'
-              }
-              dependentAxisLabel={
-                findEntityAndVariable(vizConfig.yAxisVariable)?.variable
-                  .displayName ?? 'Y-Axis'
-              }
+              independentAxisLabel={xAxisVariable?.displayName ?? 'X-Axis'}
+              dependentAxisLabel={yAxisVariable?.displayName ?? 'Y-Axis'}
               // show/hide independent/dependent axis tick label
               showIndependentAxisTickLabel={true}
               showDependentAxisTickLabel={true}
@@ -299,10 +306,7 @@ function BoxplotViz(props: Props) {
               interactive={true}
               showSpinner={data.pending}
               showRawData={true}
-              legendTitle={
-                findEntityAndVariable(vizConfig.overlayVariable)?.variable
-                  .displayName
-              }
+              legendTitle={overlayVariable?.displayName}
             />
             <VariableCoverageTable
               completeCases={
@@ -314,21 +318,18 @@ function BoxplotViz(props: Props) {
                 {
                   role: 'X-axis',
                   required: true,
-                  display: findEntityAndVariable(vizConfig.xAxisVariable)
-                    ?.variable.displayName,
+                  display: xAxisVariable?.displayName,
                   variable: vizConfig.xAxisVariable,
                 },
                 {
                   role: 'Y-axis',
                   required: true,
-                  display: findEntityAndVariable(vizConfig.yAxisVariable)
-                    ?.variable.displayName,
+                  display: yAxisVariable?.displayName,
                   variable: vizConfig.yAxisVariable,
                 },
                 {
                   role: 'Overlay',
-                  display: findEntityAndVariable(vizConfig.overlayVariable)
-                    ?.variable.displayName,
+                  display: overlayVariable?.displayName,
                   variable: vizConfig.overlayVariable,
                 },
               ]}
@@ -355,7 +356,7 @@ function BoxplotViz(props: Props) {
           spacingOptions={{
             marginTop: 20,
             marginRight: 20,
-            marginBottom: 0,
+            marginBottom: 15,
             marginLeft: 30,
           }}
           showSpinner={data.pending}
@@ -371,16 +372,6 @@ function BoxplotWithControls({
   data,
   ...BoxplotComponentProps
 }: BoxplotWithControlsProps) {
-  // TODO Use UIState
-  const errorManagement = useMemo((): ErrorManagement => {
-    return {
-      errors: [],
-      addError: (_: Error) => {},
-      removeError: (_: Error) => {},
-      clearAllErrors: () => {},
-    };
-  }, []);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Boxplot
@@ -389,11 +380,7 @@ function BoxplotWithControls({
         // add controls
         displayLibraryControls={false}
       />
-      {/* potential BoxplotControls: commented out for now  */}
-      {/* <BoxplotControls
-          // label="Box Plot Controls"
-          errorManagement={errorManagement}
-        /> */}
+      {/* potential controls go here  */}
     </div>
   );
 }
@@ -458,4 +445,106 @@ function getRequestParams(
       overlayVariable: overlayVariable,
     },
   } as BoxplotRequestParams;
+}
+
+/**
+ * reorder the series prop of the BarplotData object so that labels
+ * go in the same order as the main variable's vocabulary, and the overlay
+ * strata are ordered in that variable's vocabulary order too, with missing values and traces added as undefined
+ *
+ * NOTE: if any values are missing from the vocabulary array, then the data for that value WILL NOT BE PLOTTED
+ *
+ */
+function reorderData(
+  data: PromiseBoxplotData,
+  labelVocabulary: string[] = [],
+  overlayVocabulary: string[] = []
+) {
+  const labelOrderedSeries = data.series.map((series) => {
+    if (labelVocabulary.length > 0) {
+      // for each label in the vocabulary's correct order,
+      // find the index of that label in the provided series' label array
+      const labelIndices = labelVocabulary.map((label) =>
+        series.label.indexOf(label)
+      );
+      // now return the data from the other array(s) in the same order
+      // any missing labels will be mapped to `undefined` (indexing an array with -1)
+      return {
+        ...series,
+        label: labelVocabulary,
+        q1: dice(series.q1, labelIndices),
+        q3: dice(series.q3, labelIndices),
+        median: dice(series.median, labelIndices),
+        ...(series.lowerfence != null
+          ? { lowerfence: dice(series.lowerfence, labelIndices) }
+          : {}),
+        ...(series.upperfence != null
+          ? { upperfence: dice(series.upperfence, labelIndices) }
+          : {}),
+        ...(series.mean ? { mean: dice(series.mean, labelIndices) } : {}),
+        ...(series.rawData
+          ? { rawData: dice2d(series.rawData, labelIndices) }
+          : {}),
+        ...(series.outliers
+          ? { outliers: dice2d(series.outliers, labelIndices) }
+          : {}),
+      };
+    } else {
+      return series;
+    }
+  });
+
+  if (overlayVocabulary.length > 0) {
+    // for each value in the overlay vocabulary's correct order
+    // find the index in the series where series.name equals that value
+    const overlayValues = labelOrderedSeries.map((series) => series.name);
+    const overlayIndices = overlayVocabulary.map((name) =>
+      overlayValues.indexOf(name)
+    );
+    return {
+      ...data,
+      // return the series in overlay vocabulary order
+      series: overlayIndices.map(
+        (i, j) =>
+          labelOrderedSeries[i] ?? {
+            // if there is no series, insert a dummy series
+            name: overlayVocabulary[j],
+            label: labelVocabulary,
+            median: labelVocabulary.map(() => undefined),
+            q1: labelVocabulary.map(() => undefined),
+            q3: labelVocabulary.map(() => undefined),
+          }
+      ),
+    };
+  } else {
+    return { ...data, series: labelOrderedSeries };
+  }
+}
+
+/**
+ * dice(inArray, indices)
+ *
+ * lodash.at() wrapped in some TS that preserves the input type on the output (and ensures the result is not `(string | number)[]`)
+ *
+ * returns an array of elements of `inArray` in the order of the `indices` given
+ *
+ */
+function dice<T extends number[] | string[]>(inArray: T, indices: number[]): T {
+  return at(inArray, indices) as T;
+}
+
+/**
+ * dice2d(inArray, indices)
+ *
+ * lodash.at() wrapped in some TS that preserves the input type on the output (and ensures the result is not `(string | number)[]`)
+ *
+ * returns an array of elements of `inArray` in the order of the `indices` given
+ *
+ * undefined elements are replaced with an empty array
+ */
+function dice2d<T extends number[][] | string[][]>(
+  inArray: T,
+  indices: number[]
+): T {
+  return at(inArray, indices).map((x) => x ?? []) as T;
 }

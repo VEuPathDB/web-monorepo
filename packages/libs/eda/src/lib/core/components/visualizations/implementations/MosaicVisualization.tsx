@@ -10,11 +10,7 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
 import React, { useCallback, useMemo } from 'react';
-import {
-  CompleteCasesTable,
-  DataClient,
-  MosaicRequestParams,
-} from '../../../api/data-api';
+import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
@@ -22,6 +18,7 @@ import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
+import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -29,10 +26,9 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
 
-interface MosaicDataWithCoverageStatistics extends MosaicData {
-  completeCases: CompleteCasesTable;
-  outputSize: number;
-}
+interface MosaicDataWithCoverageStatistics
+  extends MosaicData,
+    CoverageStatistics {}
 
 type ContTableData = MosaicDataWithCoverageStatistics &
   Partial<{
@@ -221,11 +217,19 @@ function MosaicViz(props: Props) {
       if (isTwoByTwo) {
         const response = dataClient.getTwoByTwo(computation.type, params);
 
-        return twoByTwoResponseToData(await response);
+        return reorderData(
+          twoByTwoResponseToData(await response),
+          xAxisVariable.vocabulary,
+          yAxisVariable.vocabulary
+        );
       } else {
         const response = dataClient.getContTable(computation.type, params);
 
-        return contTableResponseToData(await response);
+        return reorderData(
+          contTableResponseToData(await response),
+          xAxisVariable.vocabulary,
+          yAxisVariable.vocabulary
+        );
       }
     }, [
       studyId,
@@ -441,16 +445,7 @@ function MosaicPlotWithControls({
   data,
   ...mosaicProps
 }: MosaicPlotWithControlsProps) {
-  // TODO Use UIState
   const displayLibraryControls = false;
-  // const errorManagement = useMemo((): ErrorManagement => {
-  //   return {
-  //     errors: [],
-  //     addError: (error: Error) => {},
-  //     removeError: (error: Error) => {},
-  //     clearAllErrors: () => {},
-  //   };
-  // }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -459,12 +454,7 @@ function MosaicPlotWithControls({
         data={data}
         displayLibraryControls={displayLibraryControls}
       />
-      {/* <MosaicControls
-        label="Mosaic Controls"
-        displayLegend={false}
-        displayLibraryControls={displayLibraryControls}
-        errorManagement={errorManagement}
-      /> */}
+      {/* controls go here as needed */}
     </div>
   );
 }
@@ -541,4 +531,46 @@ function getRequestParams(
       yAxisVariable: yAxisVariable,
     },
   };
+}
+
+function reorderData<T extends TwoByTwoData | ContTableData>(
+  data: T,
+  xVocabulary: string[] = [],
+  yVocabulary: string[] = []
+): T {
+  const xIndices =
+    xVocabulary.length > 0
+      ? indicesForCorrectOrder(data.independentLabels, xVocabulary)
+      : Array.from(data.independentLabels.keys()); // [0,1,2,3,...] - effectively a no-op
+
+  const yIndices =
+    yVocabulary.length > 0
+      ? indicesForCorrectOrder(data.dependentLabels, yVocabulary)
+      : Array.from(data.dependentLabels.keys());
+
+  return {
+    ...data,
+    values: _.at(
+      data.values.map((innerDim) => _.at(innerDim, xIndices)),
+      yIndices
+    ),
+    independentLabels: _.at(data.independentLabels, xIndices),
+    dependentLabels: _.at(data.dependentLabels, yIndices),
+  };
+}
+
+/**
+ * given an array of `labels` [ 'cat', 'dog', 'mouse' ]
+ * and an array of the desired `order` [ 'mouse', 'rat', 'cat', 'dog' ]
+ * return the `indices` of the labels that would put them in the right order,
+ * e.g. [ 2, 0, 1 ]
+ * you can use `_.at(someOtherArray, indices)` to reorder other arrays with this
+ *
+ * it fails nicely if the strings in `order` aren't in `labels`
+ */
+function indicesForCorrectOrder(labels: string[], order: string[]): number[] {
+  const sortedLabels = _.sortBy(labels, (label) => order.indexOf(label));
+  // [ 'mouse', 'cat', 'dog' ]
+  return sortedLabels.map((label) => labels.indexOf(label));
+  // [ 2, 0, 1 ]
 }

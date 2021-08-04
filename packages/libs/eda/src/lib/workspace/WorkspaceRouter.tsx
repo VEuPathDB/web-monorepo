@@ -10,6 +10,7 @@ import { EDAAnalysisList } from './EDAAnalysisList';
 import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { mockAnalysisStore } from './Mocks';
+import { LatestAnalysis } from './LatestAnalysis';
 
 type Props = {
   subsettingServiceUrl: string;
@@ -53,6 +54,16 @@ export function WorkspaceRouter({
         exact
         render={(props: RouteComponentProps<{ studyId: string }>) => (
           <NewAnalysis
+            {...props.match.params}
+            analysisClient={mockAnalysisStore}
+          />
+        )}
+      />
+      <Route
+        path={`${path}/:studyId/latest`}
+        exact
+        render={(props: RouteComponentProps<{ studyId: string }>) => (
+          <LatestAnalysis
             {...props.match.params}
             analysisClient={mockAnalysisStore}
           />

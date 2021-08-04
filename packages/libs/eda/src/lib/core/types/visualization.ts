@@ -12,6 +12,7 @@ import {
   record,
 } from 'io-ts';
 import { VariableDataShape, VariableType } from './study';
+import { CompleteCasesTable } from '../api/data-api';
 
 /**
  * Visualization object stored in user's analysis
@@ -79,3 +80,8 @@ export const ComputationAppOverview = intersection([
     visualizations: array(VisualizationOverview),
   }),
 ]);
+
+export type CoverageStatistics = {
+  completeCases: CompleteCasesTable;
+  outputSize: number;
+};
