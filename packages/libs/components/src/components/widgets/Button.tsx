@@ -52,7 +52,7 @@ export default function Button({
           disableElevation={true}
           style={{
             width: '100%',
-            color: textColor ? textColor : 'white',
+            color: textColor ? textColor : undefined,
           }}
           color="primary"
           onClick={onClick}
