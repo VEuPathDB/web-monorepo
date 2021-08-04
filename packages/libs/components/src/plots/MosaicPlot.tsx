@@ -44,7 +44,7 @@ export default function MosaicPlot({
   const layout = {
     // Bottom x axis displaying percent ticks
     xaxis: {
-      title: independentAxisLabel ? independentAxisLabel + ' (%)' : '',
+      title: independentAxisLabel,
       // Must expliticly define range for it to work consistently
       range: [0, 100] as number[],
       tickvals: [0, 20, 40, 60, 80, 100] as number[],
@@ -68,7 +68,7 @@ export default function MosaicPlot({
       side: 'top',
     },
     yaxis: {
-      title: dependentAxisLabel ? dependentAxisLabel + ' (%)' : '',
+      title: dependentAxisLabel,
       range: [0, 100] as number[],
       tickvals: [0, 20, 40, 60, 80, 100] as number[],
     },
