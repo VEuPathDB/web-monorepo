@@ -146,7 +146,14 @@ export default function PlotlyPlot<T>(
   // add legend tooltip function
   const onUpdate = useCallback(
     (_, graphDiv: Readonly<HTMLElement>) => {
-      // use graphDiv
+      // remove pre-existing title to avoid duplicates
+      select(graphDiv)
+        .select('g.legend')
+        .selectAll('g.traces')
+        //DKDK add below
+        .selectAll('title')
+        .remove();
+      // add tooltip using svg title
       select(graphDiv)
         .select('g.legend')
         .selectAll('g.traces')
