@@ -109,13 +109,6 @@ export default function Barplot({
   };
 
   return (
-    <PlotlyPlot
-      data={plotlyFriendlyData}
-      layout={layout}
-      // stacked barplot reverses legend at plotly as plot start from bottom
-      // default bar plot is grouped but just add this for a possible plot control in the future
-      reverseLegendTooltips={barLayout === 'stack'}
-      {...restProps}
-    />
+    <PlotlyPlot data={plotlyFriendlyData} layout={layout} {...restProps} />
   );
 }

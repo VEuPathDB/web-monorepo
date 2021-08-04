@@ -415,8 +415,6 @@ export default function Histogram({
       data={plotlyFriendlyData}
       onSelected={handleSelectedRange}
       onSelecting={handleSelectingRange}
-      // stacked histogram (e.g., viz) reverses legend at plotly as plot start from bottom
-      reverseLegendTooltips={barLayout === 'stack'}
       {...restProps}
     />
   );

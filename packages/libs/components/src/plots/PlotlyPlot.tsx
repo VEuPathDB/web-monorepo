@@ -37,8 +37,6 @@ export interface PlotProps<T> {
   legendTitle?: string;
   /** Options for customizing plot placement. */
   spacingOptions?: PlotSpacingAddon;
-  /** a plot like Mosaic reverse data: need to check for legend ellipsis tooltip */
-  reverseLegendTooltips?: boolean;
   /** maximum number of characters for legend ellipsis */
   maxLegendTextLength?: number;
 }
@@ -67,8 +65,6 @@ export default function PlotlyPlot<T>(
     legendTitle,
     spacingOptions,
     showSpinner,
-    // set default reverseLegendTooltips as false
-    reverseLegendTooltips = false,
     // set default max number of characters (20) for legend ellipsis
     maxLegendTextLength = 20,
     // expose data for applying legend ellipsis
@@ -152,10 +148,6 @@ export default function PlotlyPlot<T>(
     }
   }, [data]);
 
-  // reverse storedLegendList when reverseLegendTooltips is true (e.g., Mosaic's reversed data)
-  // default behavior of stacked plot at plotly is to put the first data and legend at the bottom (histogram, bar plot)
-  if (reverseLegendTooltips) storedLegendList.reverse();
-
   // add legend tooltip function
   const onUpdate = useCallback(
     (_, graphDiv: Readonly<HTMLElement>) => {
@@ -164,7 +156,7 @@ export default function PlotlyPlot<T>(
         .select('g.legend')
         .selectAll('g.traces')
         .append('svg:title')
-        .text((d, i) => storedLegendList[i]);
+        .text((d) => storedLegendList[d[0].trace.index]);
     },
     [storedLegendList]
   );
