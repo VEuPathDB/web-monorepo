@@ -17,7 +17,7 @@
       'title linkouts' auto
       / auto 1fr;
     gap: 1em;
-    align-items: baseline;
+    align-items: center;
     line-height: 1;
     margin-bottom: 0.5em;
   }
@@ -74,12 +74,12 @@
 
   &-Linkouts {
     grid-area: linkouts;
-    font-size: 1.25em;
+    font-size: 1.5em;
     display: grid;
     grid-auto-flow: column;
     gap: 1em;
     margin-right: auto;
-    margin-left: 2em;
+    // margin-left: 1ex;
   }
 
   &-Analysis {
@@ -95,12 +95,12 @@
   &-AnalysisSummaryLeft {
     display: flex;
     align-items: center;
-    margin-right: auto;
   }
 
   &-AnalysisSummaryRight {
     display: flex;
     align-items: center;
+    font-size: 0.8em;
   }
 
   &-AnalysisNameEditBox {
