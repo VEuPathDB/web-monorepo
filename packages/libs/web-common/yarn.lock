@@ -937,17 +937,17 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.8.1.tgz#50145e00277ac73c82d3c409b51c2a26e368af26"
-  integrity sha512-qvaTBv+PNUKHXU6mly6TJ2RsYBPhTTggXztTR2ajCRlcdoN9m00aO8jvSUInywBvYaf3X/ySN6rPz0WkJEIH5g==
+"@veupathdb/eda@^0.8.4":
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.8.4.tgz#84ba790f3773f1e0f68c275bc2299a210032de02"
+  integrity sha512-wbkKUMB3zC2EqokHoeOtHsZb35bi7Sjws+UlBnbK5qe5gT2QSqlzo5trh4vJZFrOkweGz6tu53vqRfNXIm4xLQ==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
     "@veupathdb/components" "^0.4.4"
     "@veupathdb/wdk-client" "^0.2.0"
-    "@veupathdb/web-common" "^0.1.3"
+    "@veupathdb/web-common" "^0.1.5"
     debounce-promise "^3.1.2"
     fp-ts "^2.9.3"
     io-ts "^2.2.13"
@@ -1052,10 +1052,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.3.tgz#a2909ddb8e66260c952ad031722d291c62f97347"
-  integrity sha512-BhrlQwI2gX25obKp0OucgUBi7TMVaodgAu/lVrlX+QIkXGvq6136njUEUpPpDdlgb2fRXMjDAF6vftL62prbMg==
+"@veupathdb/web-common@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.5.tgz#3d664a8d815fb9731433fe0895fe7e4810f334c2"
+  integrity sha512-SSHbv3ZIho3xmkIY9prkpw/S5EKRumZj05RxfjtLkwBKiZ9k31Nd6owBD/ykmF3rwOwm4UST1PQMv3jL23zKuA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
