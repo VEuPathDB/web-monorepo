@@ -19,7 +19,9 @@
     gap: 1em;
     align-items: center;
     line-height: 1;
-    margin-bottom: 0.5em;
+    border-bottom: 1px solid lightgray;
+    margin-bottom: 1em;
+    padding-bottom: 0.75em;
   }
 
   h1 {
@@ -79,7 +81,10 @@
     grid-auto-flow: column;
     gap: 1em;
     margin-right: auto;
-    // margin-left: 1ex;
+    margin-left: 2em;
+    a {
+      font-size: 0.75em;
+    }
   }
 
   &-Analysis {
@@ -143,6 +148,10 @@
 
     h1 {
       font-size: 1em;
+    }
+
+    .WorkspaceNavigation--Item {
+      margin-right: 1.25em;
     }
   }
 

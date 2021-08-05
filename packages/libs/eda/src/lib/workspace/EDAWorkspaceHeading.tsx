@@ -13,12 +13,30 @@ export function EDAWorkspaceHeading() {
     <div className={cx('-Heading')}>
       <h1>{safeHtml(studyRecord.displayName)}</h1>
       <div className={cx('-Linkouts')}>
+        {studyRecord.attributes.bulk_download_url && (
+          <div>
+            <Tooltip title="Download study files">
+              <Button
+                variant="text"
+                color="primary"
+                startIcon={<Icon className="fa fa-download fa-fw" />}
+                component={Link}
+                to={
+                  (studyRecord.attributes
+                    .bulk_download_url as LinkAttributeValue).url
+                }
+              >
+                &nbsp;Download
+              </Button>
+            </Tooltip>
+          </div>
+        )}
         <div>
           <Tooltip title="Create a new analysis">
             <Button
-              variant="outlined"
+              variant="text"
               color="primary"
-              startIcon={<Icon className="fa fa-plus" />}
+              startIcon={<Icon className="fa fa-plus fa-fw" />}
               component={Link}
               to={
                 url.endsWith(studyRecord.id[0].value)
@@ -26,28 +44,10 @@ export function EDAWorkspaceHeading() {
                   : `${url}/../new`
               }
             >
-              New
+              New analysis
             </Button>
           </Tooltip>
         </div>
-        {studyRecord.attributes.bulk_download_url && (
-          <div>
-            <Tooltip title="Download study files">
-              <Button
-                variant="outlined"
-                color="primary"
-                startIcon={<Icon className="fa fa-download" />}
-                component={Link}
-                to={
-                  (studyRecord.attributes
-                    .bulk_download_url as LinkAttributeValue).url
-                }
-              >
-                Download
-              </Button>
-            </Tooltip>
-          </div>
-        )}
       </div>
     </div>
   );
