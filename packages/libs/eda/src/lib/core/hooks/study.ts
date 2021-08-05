@@ -50,7 +50,8 @@ export function useWdkStudyRecord(datasetId: string): HookValue | undefined {
             getScopes(node).includes('eda')
         )
         .map(getNodeId)
-        .toArray();
+        .toArray()
+        .concat(['bulk_download_url']);
       const studyRecord = await wdkService
         .getRecord(
           STUDY_RECORD_CLASS_NAME,
