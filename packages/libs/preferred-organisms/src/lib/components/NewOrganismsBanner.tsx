@@ -17,6 +17,8 @@ export function NewOrganismsBanner({
         display: 'inline-grid',
         gridAutoFlow: 'column',
         gap: '1em',
+        justifyContent: 'flex-end',
+        marginRight: '1em',
       }}
     >
       <span className="fa-stack" style={{ fontSize: '1.2em' }}>
