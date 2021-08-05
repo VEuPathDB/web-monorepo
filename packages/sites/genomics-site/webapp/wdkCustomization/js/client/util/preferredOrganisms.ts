@@ -44,7 +44,10 @@ export function isPreferredDataset(
         throw new Error(`Expected the '${VERSION_TABLE}' table to have a string-valued '${ORGANISM_COLUMN}' column`);
       }
 
-      return preferredOrganisms.has(organism);
+      return (
+        preferredOrganisms.has(organism) ||
+        organism === 'ALL'
+      );
     }
   );
 }
