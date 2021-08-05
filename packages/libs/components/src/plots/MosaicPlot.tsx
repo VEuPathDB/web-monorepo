@@ -93,5 +93,12 @@ export default function MosaicPlot({
     )
     .reverse(); // Reverse so first trace is on top, matching data array
 
-  return <PlotlyPlot data={plotlyReadyData} layout={layout} {...restProps} />;
+  return (
+    <PlotlyPlot
+      data={plotlyReadyData}
+      layout={layout}
+      legendTitle={dependentAxisLabel}
+      {...restProps}
+    />
+  );
 }
