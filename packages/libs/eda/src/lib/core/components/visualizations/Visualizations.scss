@@ -147,6 +147,7 @@ $data-table-inner-border: 1px solid #888;
 
   th {
     font-weight: 500;
+    border: none;
     border-bottom: $data-table-inner-border;
     white-space: nowrap;
   }
