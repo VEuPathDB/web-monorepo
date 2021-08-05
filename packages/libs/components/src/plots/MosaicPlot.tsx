@@ -56,7 +56,7 @@ export default function MosaicPlot({
       range: [0, 100] as number[],
     },
     yaxis: {
-      title: dependentAxisLabel,
+      title: dependentAxisLabel && dependentAxisLabel + ' (Proportion)',
       range: [0, 100] as number[],
       tickvals: [0, 20, 40, 60, 80, 100] as number[],
     },
