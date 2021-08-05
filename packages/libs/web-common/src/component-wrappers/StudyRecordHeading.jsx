@@ -34,7 +34,7 @@ function StudyRecordHeading({
           position: 'absolute',
           right: 0
         }}>
-          <Link to={`${makeEdaRoute(props.record.id[0].value)}/new`} className="btn" style={{
+          <Link to={`${makeEdaRoute(props.record.id[0].value)}/latest`} className="btn" style={{
             fontSize: '1.8em',
             backgroundColor: '#1976d2',
             color: 'white',
