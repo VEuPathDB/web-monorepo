@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import TextArea from 'wdk-client/Components/InputControls/TextArea';
 import TextBox from 'wdk-client/Components/InputControls/TextBox';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 
@@ -27,13 +28,17 @@ const UserIdentity = props => {
             placeholder="Please re-type the same email as above" />
       </div>
       {props.propDefs.map(propDef => {
-        let { name, displayName, isRequired } = propDef;
+        let { name, displayName, isMultiLine, isRequired } = propDef;
         let value = user.properties[name] ? user.properties[name] : '';
         return (
           <div key={name}>
             <label htmlFor="{name}">{ isRequired ? <i className="fa fa-asterisk"></i> : ''}{displayName}:</label>
-            <TextBox id="{name}" value={value} required={isRequired}
-                onChange={onPropertyChange(name)} maxLength="255" size="80" />
+            {(isMultiLine
+              ? <TextArea id="{name}" value={value} required={isRequired}
+                  onChange={onPropertyChange(name)} maxLength="3000" style={{width:"40em",height:"5em"}}/>
+              : <TextBox id="{name}" value={value} required={isRequired}
+                  onChange={onPropertyChange(name)} maxLength="255" size="80" />
+            )}
           </div>
         );
       })}
