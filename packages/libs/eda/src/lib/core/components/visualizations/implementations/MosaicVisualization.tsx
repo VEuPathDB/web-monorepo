@@ -25,6 +25,8 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
 interface MosaicDataWithCoverageStatistics
   extends MosaicData,
@@ -316,8 +318,8 @@ function MosaicViz(props: Props) {
             width: '750px',
             height: '450px',
           }}
-          independentAxisLabel={xAxisVariable?.displayName ?? 'X-axis'}
-          dependentAxisLabel={yAxisVariable?.displayName ?? 'Y-axis'}
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
           displayLegend={true}
           interactive
           showSpinner={data.pending}

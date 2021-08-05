@@ -32,6 +32,8 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 import bar from './selectorIcons/bar.svg';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
 export const barplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -281,7 +283,7 @@ function BarplotViz(props: Props) {
                 (data.value.series.length > 1 ||
                   vizConfig.overlayVariable != null)
               }
-              independentAxisLabel={variable?.displayName ?? 'Main'}
+              independentAxisLabel={axisLabelWithUnit(variable) ?? 'Main'}
               dependentAxisLabel={
                 vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
               }

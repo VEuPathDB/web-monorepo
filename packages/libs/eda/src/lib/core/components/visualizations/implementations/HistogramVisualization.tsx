@@ -37,6 +37,8 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -317,7 +319,7 @@ function HistogramViz(props: Props) {
           }
           outputEntity={outputEntity}
           independentAxisVariable={vizConfig.xAxisVariable}
-          independentAxisLabel={xAxisVariable?.displayName ?? 'Main'}
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
           interactive
           showSpinner={data.pending}
           filters={filters}
