@@ -52,7 +52,7 @@ class LoginForm extends Component<Props,State> {
               <tr>
                 <td style={{ textAlign: 'right' }}>
                   <div className="small">
-                    <b>Username/Email: </b>
+                    <b>Username or Email: </b>
                   </div>
                 </td>
                 <td style={{ textAlign: 'left' }}>

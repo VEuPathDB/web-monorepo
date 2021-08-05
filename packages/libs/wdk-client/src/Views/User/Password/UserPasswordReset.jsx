@@ -21,7 +21,7 @@ const UserPasswordReset = props => {
         <h1>Reset Password</h1>
         { !message ? '' : <span style={{color:"red"}}>{message}</span> }
         <p>
-          Please enter your registration email below and click 'Submit'.  An
+          Please enter your registration username or email below and click 'Submit'.  An
           email containing a new, temporary password will be sent shortly.
         </p><p>
           <TextBox value={emailText} onChange={updatePasswordResetEmail}/>
