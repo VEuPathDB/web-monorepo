@@ -17,9 +17,11 @@
       'title linkouts' auto
       / auto 1fr;
     gap: 1em;
-    align-items: baseline;
+    align-items: center;
     line-height: 1;
-    margin-bottom: 0.5em;
+    border-bottom: 1px solid lightgray;
+    margin-bottom: 1em;
+    padding-bottom: 0.75em;
   }
 
   h1 {
@@ -74,12 +76,15 @@
 
   &-Linkouts {
     grid-area: linkouts;
-    font-size: 1.25em;
+    font-size: 1.5em;
     display: grid;
     grid-auto-flow: column;
     gap: 1em;
     margin-right: auto;
     margin-left: 2em;
+    a {
+      font-size: 0.75em;
+    }
   }
 
   &-Analysis {
@@ -95,12 +100,12 @@
   &-AnalysisSummaryLeft {
     display: flex;
     align-items: center;
-    margin-right: auto;
   }
 
   &-AnalysisSummaryRight {
     display: flex;
     align-items: center;
+    font-size: 0.8em;
   }
 
   &-AnalysisNameEditBox {
@@ -143,6 +148,10 @@
 
     h1 {
       font-size: 1em;
+    }
+
+    .WorkspaceNavigation--Item {
+      margin-right: 1.25em;
     }
   }
 
