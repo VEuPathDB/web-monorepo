@@ -1,4 +1,5 @@
-import { Suspense, useCallback, useState } from 'react';
+import { Suspense } from 'react';
+import { useLocation } from 'react-router';
 
 import { Link, IconAlt } from '@veupathdb/wdk-client/lib/Components';
 import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -12,6 +13,7 @@ import {
   useNewOrganisms,
   usePreferredOrganismsEnabledState,
   usePreferredOrganismsState,
+  useSavePreferredOrganisms,
   useTogglePreferredOrganisms,
 } from '../hooks/preferredOrganisms';
 
@@ -61,15 +63,16 @@ function PreferredOrganismsCount() {
 function NewOrganismsBannerController() {
   const newOrganisms = useNewOrganisms();
   const displayName = useDisplayName();
-  const [showBanner, setShowBanner] = useState(true);
 
-  const onDismiss = useCallback(() => {
-    setShowBanner(false);
-  }, []);
+  const [preferredOrganisms] = usePreferredOrganismsState();
+  const onDismiss = useSavePreferredOrganisms(preferredOrganisms);
+
+  const { pathname } = useLocation();
 
   const newOrganismCount = newOrganisms.size;
 
-  return !showBanner || newOrganismCount === 0 ? null : (
+  return newOrganismCount === 0 ||
+    pathname.startsWith('/preferred-organisms') ? null : (
     <NewOrganismsBanner
       newOrganismCount={newOrganismCount}
       displayName={displayName}
