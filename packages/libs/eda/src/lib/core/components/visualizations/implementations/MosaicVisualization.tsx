@@ -237,6 +237,7 @@ function MosaicViz(props: Props) {
       findEntityAndVariable,
       computation.type,
       isTwoByTwo,
+      outputEntity?.id,
     ])
   );
 
