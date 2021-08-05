@@ -296,7 +296,11 @@ function findPreferredQuestions(
   const preferredOrganismsSet = new Set(preferredOrganisms);
 
   return [...datasetMetadata].reduce((memo, [, { organisms, questions }]) => {
-    if (organisms.some((organism) => preferredOrganismsSet.has(organism))) {
+    if (
+      organisms.some(
+        (organism) => preferredOrganismsSet.has(organism) || organism === 'ALL'
+      )
+    ) {
       questions.forEach((questionUrlSegment) => {
         memo.add(questionUrlSegment);
       });
