@@ -902,10 +902,10 @@
   resolved "https://registry.yarnpkg.com/@types/warning/-/warning-3.0.0.tgz#0d2501268ad8f9962b740d387c4654f5f8e23e52"
   integrity sha1-DSUBJorY+ZYrdA04fEZU9fjiPlI=
 
-"@veupathdb/components@^0.3.23":
-  version "0.3.23"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.3.23.tgz#dacb49c70420e7d3c53c8782aeec0636d45e918e"
-  integrity sha512-mV3Nv+q5P6Pord59aDBYOAM9ikDH9xGGs6MqXR7o4TcK3TpuuDScvUH5XRjw+GyrsaWFPgsP3gNKYXmVu0Q5qQ==
+"@veupathdb/components@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.4.4.tgz#d4b2a3ceec758e7c5df653332bca2f7c73883e35"
+  integrity sha512-UwHJhCmExiT8HD5+FwvGNOnAN5wkQORVs/T/bdZIFGCR15QWZQIUMl2l1kQVEl5UItnl2fAwF0Aq1Y8pLnSd2Q==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -937,15 +937,15 @@
     react-transition-group "^4.4.1"
     shape2geohash "^1.2.5"
 
-"@veupathdb/eda@^0.6.22":
-  version "0.6.22"
-  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.6.22.tgz#1b0216a73c1e3ba107b4683582f684ba2e3ce4ba"
-  integrity sha512-PbnaS5ITuBNniMYqxNWkZUcbTyyYqej0ONvPr8EdM4ekfQOz/UGsskNStvYUpGkrkCeusVuKIdH6Rlh/W52O3Q==
+"@veupathdb/eda@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@veupathdb/eda/-/eda-0.8.1.tgz#50145e00277ac73c82d3c409b51c2a26e368af26"
+  integrity sha512-qvaTBv+PNUKHXU6mly6TJ2RsYBPhTTggXztTR2ajCRlcdoN9m00aO8jvSUInywBvYaf3X/ySN6rPz0WkJEIH5g==
   dependencies:
     "@material-ui/core" "^4.11.3"
     "@material-ui/lab" "^4.0.0-alpha.58"
     "@types/debounce-promise" "^3.1.3"
-    "@veupathdb/components" "^0.3.23"
+    "@veupathdb/components" "^0.4.4"
     "@veupathdb/wdk-client" "^0.2.0"
     "@veupathdb/web-common" "^0.1.3"
     debounce-promise "^3.1.2"
