@@ -2889,10 +2889,10 @@
   resolved "https://registry.yarnpkg.com/@veupathdb/browserslist-config/-/browserslist-config-1.0.0.tgz#90ca79640ffbb195a87d4d65cd4b2f92342f8b76"
   integrity sha512-qfKu1z9gaaHdMgRGaZBiayuIh92ishsf14lR+Rj61CJF131XWq3+5e2VyLyOdKsYJ1EreAxgyC/0upIBEzwQJw==
 
-"@veupathdb/components@^0.3.23":
-  version "0.3.23"
-  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.3.23.tgz#dacb49c70420e7d3c53c8782aeec0636d45e918e"
-  integrity sha512-mV3Nv+q5P6Pord59aDBYOAM9ikDH9xGGs6MqXR7o4TcK3TpuuDScvUH5XRjw+GyrsaWFPgsP3gNKYXmVu0Q5qQ==
+"@veupathdb/components@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@veupathdb/components/-/components-0.4.4.tgz#d4b2a3ceec758e7c5df653332bca2f7c73883e35"
+  integrity sha512-UwHJhCmExiT8HD5+FwvGNOnAN5wkQORVs/T/bdZIFGCR15QWZQIUMl2l1kQVEl5UItnl2fAwF0Aq1Y8pLnSd2Q==
   dependencies:
     "@material-ui/core" "^4.11.2"
     "@material-ui/icons" "^4.11.2"
@@ -2997,10 +2997,10 @@
     spin.js "^4.0.0"
     uuid "^8.1.0"
 
-"@veupathdb/web-common@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.3.tgz#a2909ddb8e66260c952ad031722d291c62f97347"
-  integrity sha512-BhrlQwI2gX25obKp0OucgUBi7TMVaodgAu/lVrlX+QIkXGvq6136njUEUpPpDdlgb2fRXMjDAF6vftL62prbMg==
+"@veupathdb/web-common@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@veupathdb/web-common/-/web-common-0.1.5.tgz#3d664a8d815fb9731433fe0895fe7e4810f334c2"
+  integrity sha512-SSHbv3ZIho3xmkIY9prkpw/S5EKRumZj05RxfjtLkwBKiZ9k31Nd6owBD/ykmF3rwOwm4UST1PQMv3jL23zKuA==
   dependencies:
     custom-event-polyfill "^1.0.7"
     md5 "^2.3.0"
