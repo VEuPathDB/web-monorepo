@@ -5,10 +5,13 @@ import { useStudyRecord } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { Button, Tooltip, Icon } from '@material-ui/core';
 import { LinkAttributeValue } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import { useAttemptActionCallback } from '@veupathdb/web-common/lib/hooks/dataRestriction';
+import { Action } from '@veupathdb/web-common/lib/App/DataRestriction/DataRestrictionUtils';
 
 export function EDAWorkspaceHeading() {
   const studyRecord = useStudyRecord();
   const { url } = useRouteMatch();
+  const attemptAction = useAttemptActionCallback();
   return (
     <div className={cx('-Heading')}>
       <h1>{safeHtml(studyRecord.displayName)}</h1>
@@ -20,11 +23,16 @@ export function EDAWorkspaceHeading() {
                 variant="text"
                 color="primary"
                 startIcon={<Icon className="fa fa-download fa-fw" />}
-                component={Link}
-                to={
-                  (studyRecord.attributes
-                    .bulk_download_url as LinkAttributeValue).url
-                }
+                type="button"
+                onClick={() => {
+                  attemptAction(Action.download, {
+                    studyId: studyRecord.id[0].value,
+                    onAllow: () => {
+                      window.location.href = (studyRecord.attributes
+                        .bulk_download_url as LinkAttributeValue).url;
+                    },
+                  });
+                }}
               >
                 &nbsp;Download
               </Button>
