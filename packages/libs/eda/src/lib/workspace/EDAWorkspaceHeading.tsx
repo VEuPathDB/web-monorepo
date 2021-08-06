@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
+import Path from 'path';
 import { cx } from './Utils';
 import { useStudyRecord } from '../core';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
@@ -49,7 +50,7 @@ export function EDAWorkspaceHeading() {
               to={
                 url.endsWith(studyRecord.id[0].value)
                   ? `${url}/new`
-                  : `${url}/../new`
+                  : Path.resolve(url, '../new')
               }
             >
               New analysis
