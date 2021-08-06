@@ -34,27 +34,37 @@ export function ContingencyTable(props: ContingencyTableProps) {
               {props.dependentVariable}
             </th>
             {data.independentLabels.map((label) => (
-              <th className="contingency-table_column-label">{label}</th>
+              <th key={label} className="contingency-table_column-label">
+                {label}
+              </th>
             ))}
             <th className="contingency-table_totals-column-header">Total</th>
           </tr>
-          {data.values.map((row, index) => (
-            <tr>
+          {data.values.map((row, i) => (
+            <tr key={data.dependentLabels[i]}>
               <th className="contingency-table_row-label">
-                {data.dependentLabels[index]}
+                {data.dependentLabels[i]}
               </th>
-              {row.map((value) => (
-                <td className="contingency-table_value">{value}</td>
+              {row.map((value, j) => (
+                <td
+                  key={`${data.dependentLabels[i]}-${data.independentLabels[j]}`}
+                  className="contingency-table_value"
+                >
+                  {value}
+                </td>
               ))}
               <td className="contingency-table_totals-column-value">
-                {rowSums[index]}
+                {rowSums[i]}
               </td>
             </tr>
           ))}
           <tr>
             <th className="contingency-table_totals-row-header">Total</th>
-            {_.unzip(data.values).map((col) => (
-              <td className="contingency-table_totals-row-value">
+            {_.unzip(data.values).map((col, i) => (
+              <td
+                key={data.independentLabels[i]}
+                className="contingency-table_totals-row-value"
+              >
                 {_.sum(col)}
               </td>
             ))}

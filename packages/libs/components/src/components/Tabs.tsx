@@ -18,13 +18,15 @@ export default function Tabs(props: Props) {
       <TabContext value={activeTab}>
         <AppBar position="static">
           <MUITabs value={Number(activeTab)} onChange={handleChange}>
-            {props.items.map((item) => (
-              <Tab label={item[0]} />
+            {props.items.map((item, index) => (
+              <Tab key={index} label={item[0]} />
             ))}
           </MUITabs>
         </AppBar>
         {props.items.map((item, index) => (
-          <TabPanel value={String(index)}>{item[1]}</TabPanel>
+          <TabPanel key={index} value={String(index)}>
+            {item[1]}
+          </TabPanel>
         ))}
       </TabContext>
     </div>
