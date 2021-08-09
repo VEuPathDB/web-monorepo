@@ -617,10 +617,9 @@ button.ebrc-QuestionWizardParamGroupButton__active:hover {
 }
 
 /* Hide action links on Dataset page for now */
-/*  .wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
-  visibility: hidden;
+.wdk-RecordContainer__DatasetRecordClasses\.DatasetRecordClass .wdk-RecordActions {
+  display: none;
 }
-*/
 
 /* Hide Favorites action link on record pages */
 .wdk-RecordActionItem .favorites {
@@ -838,3 +837,6 @@ ul.wdk-AnswerTable-AttributeSelector li input#column-select-description, ul.wdk-
 }
 
 
+.EDAWorkspace .WorkspaceNavigation {
+  top: 40px;
+}

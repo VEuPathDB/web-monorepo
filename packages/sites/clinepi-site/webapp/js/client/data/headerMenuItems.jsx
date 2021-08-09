@@ -2,7 +2,7 @@ import React from 'react';
 import { StudyMenuItem, StudyMenuSearch } from '@veupathdb/web-common/lib/App/Studies';
 import { menuItemsFromSocials, iconMenuItemsFromSocials } from '@veupathdb/web-common/lib/App/Utils/Utils';
 import { getStaticSiteData } from '../selectors/siteData';
-import { STATIC_ROUTE_PATH } from '@veupathdb/web-common/lib/routes';
+import { STATIC_ROUTE_PATH, makeEdaRoute } from '@veupathdb/web-common/lib/routes';
 import { withPermissions } from '@veupathdb/web-common/lib/components/Permissions';
 
 const ClinEpiStudyMenuItem = withPermissions(StudyMenuItem);
@@ -40,18 +40,9 @@ export default function headerMenuItems (state, props) {
         text: 'Workspace',
         children: [
           {
-            text: 'My Search Strategies',
-            route: '/workspace/strategies'
+            text: 'My Analyses',
+            route: makeEdaRoute()
           },
-          {
-            text: 'My Basket',
-            route: '/workspace/basket',
-            loginRequired: true
-          },
-          {
-            text: 'Public Search Strategies',
-            route: '/workspace/strategies/public'
-          }
         ]
       },
       {
