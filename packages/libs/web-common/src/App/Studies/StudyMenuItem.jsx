@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { useEda } from 'ebrc-client/config';
 import { IconAlt as Icon, Link, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
+import { makeEdaRoute } from 'ebrc-client/routes';
 import './StudyMenu.scss';
 
 class StudyMenuItem extends React.Component {
@@ -40,22 +42,27 @@ class StudyMenuItem extends React.Component {
     const { study, user, permissions } = this.props;
     const { name, id, disabled, route, searches } = study;
     const SearchLink = this.renderSearchLink;
+    const edaRoute = makeEdaRoute(study.id) + '/~latest';
 
     return (
       <div className={'row StudyMenuItem' + (disabled ? ' StudyMenuItem--disabled' : '')}>
         <div className="box StudyMenuItem-Name">
-          <Link to={route} className={'StudyMenuItem-RecordLink ' + id}>
+          <Link to={useEda ? edaRoute + '/details' : route} className={'StudyMenuItem-RecordLink ' + id}>
             {safeHtml(name)}
             <Icon fa="angle-double-right" />
           </Link>
         </div>
         <div className="row StudyMenuItem-Links">
         { (!isPrereleaseStudy(study.access, study.id, user, permissions))
-          ? searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
+          ? useEda ? (
+            <Link name="Explore the data" to={edaRoute}>
+              <i className="fa fa-area-chart"/>
+            </Link>
+          ) : searches.map(({ path, displayName, icon }) => <SearchLink key={path} path={path} displayName={displayName} icon={icon} />)
           : (
-             <div className="prerelease">
-               <small>(coming soon)</small>
-             </div>
+            <div className="prerelease">
+              <small>(coming soon)</small>
+            </div>
             )
         }
         </div>

@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { useEda } from 'ebrc-client/config';
 import { CategoryIcon } from 'ebrc-client/App/Categories';
 import { IconAlt as Icon, Link } from '@veupathdb/wdk-client/lib/Components';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import DownloadLink from './DownloadLink';
 import { isPrereleaseStudy } from 'ebrc-client/App/DataRestriction/DataRestrictionUtils';
 import './StudyCard.scss';
+import { makeEdaRoute } from 'ebrc-client/routes';
 
 
 class StudyCard extends React.Component {
@@ -31,11 +33,12 @@ class StudyCard extends React.Component {
     const { id, access, name, categories, route, headline, points, searches, disabled } = card;
     const myStudyTitle = "Go to the Study Details page";
     const primaryCategory = categories[0];
+    const edaRoute = makeEdaRoute(card.id) + '/~latest';
 
     return (
       <div className={'Card StudyCard ' + (disabled ? 'disabled' : '') + ' StudyCard__' + id}>
         <div className="box StudyCard-Heading">
-          <h2 title={myStudyTitle}><Link to={route}>{safeHtml(name)}</Link></h2>
+          <h2 title={myStudyTitle}><Link to={useEda ? edaRoute + '/details' : route}>{safeHtml(name)}</Link></h2>
           <div className="box StudyCard-Categories">
             {primaryCategory && <CategoryIcon category={primaryCategory}/>}
           </div>
@@ -43,7 +46,7 @@ class StudyCard extends React.Component {
             <Icon fa="angle-double-right" /> 
           </Link> */}
         </div>
-        <Link to={route} className="StudyCard-DetailsLink" title={myStudyTitle}>
+        <Link to={useEda ? edaRoute + '/details' : route} className="StudyCard-DetailsLink" title={myStudyTitle}>
           <small>Study Details <Icon fa="chevron-circle-right"/></small>
         </Link>
         <div className="box StudyCard-Stripe">
@@ -65,7 +68,13 @@ class StudyCard extends React.Component {
         </div>
         <div className="box StudyCard-Footer">
           { (!isPrereleaseStudy(card.access, card.id, user, permissions) && searches.length)
-            ? searches.map(({ icon, displayName, path }) => {
+            ? useEda ? (
+                <div className="box">
+                  <Link to={edaRoute}>
+                    <i className="fa fa-area-chart"/>
+                  </Link>
+                </div>
+              ) : searches.map(({ icon, displayName, path }) => {
               const route = `/search/${path}`;
               return (
                 <div

@@ -1,5 +1,4 @@
-import React from 'react';
-import { Redirect } from 'react-router-dom';
+import React, { Suspense } from 'react';
 
 import { communitySite } from 'ebrc-client/config';
 
@@ -9,8 +8,19 @@ import GalaxyTermsController from './controllers/GalaxyTermsController';
 import ExternalContentController from 'ebrc-client/controllers/ExternalContentController';
 import { ResetSessionController } from 'ebrc-client/controllers/ResetSessionController';
 import StudyAccessController from './controllers/StudyAccessController';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
+
 
 export const STATIC_ROUTE_PATH = '/static-content';
+
+export function makeEdaRoute(studyId) {
+  return '/workspace/analyses' + (studyId ? `/${studyId}` : '');
+}
+
+const edaServiceUrl = '/eda-data';
+
+const WorkspaceRouter = React.lazy(() => import('./WorkspaceRouter'));
+
 
 /**
  * Wrap WDK Routes
@@ -25,6 +35,33 @@ export const wrapRoutes = wdkRoutes => [
     component: props => <StudyAccessController {...props.match.params}/>,
     requiresLogin: true
   },
+
+  {
+    path: makeEdaRoute(),
+    exact: false,
+    component: () => (
+      <Suspense fallback={<Loading/>}>
+        <WorkspaceRouter
+          dataServiceUrl={edaServiceUrl}
+          subsettingServiceUrl={edaServiceUrl}
+        />
+      </Suspense>
+    )
+  },
+
+  {
+    path: '/eda',
+    exact: false,
+    component: () => (
+      <Suspense fallback={<Loading/>}>
+        <WorkspaceRouter
+          dataServiceUrl={edaServiceUrl}
+          subsettingServiceUrl={edaServiceUrl}
+        />
+      </Suspense>
+    )
+  },
+
 
   {
     path: '/tree-data-view',
