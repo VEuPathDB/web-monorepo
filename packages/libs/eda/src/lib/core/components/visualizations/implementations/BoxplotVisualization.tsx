@@ -28,6 +28,8 @@ import { BoxplotData } from '@veupathdb/components/lib/types/plots';
 import { CoverageStatistics } from '../../../types/visualization';
 
 import { at } from 'lodash';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
 interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
@@ -207,6 +209,7 @@ function BoxplotViz(props: Props) {
       vizConfig,
       xAxisVariable,
       yAxisVariable,
+      overlayVariable,
       computation.type,
       visualization.type,
     ])
@@ -230,10 +233,6 @@ function BoxplotViz(props: Props) {
               {
                 name: 'overlayVariable',
                 label: 'Overlay (Optional)',
-              },
-              {
-                name: 'facetVariable',
-                label: 'Facet (Optional)',
               },
             ]}
             entities={entities}
@@ -297,8 +296,10 @@ function BoxplotViz(props: Props) {
                 (data.value.series.length > 1 ||
                   vizConfig.overlayVariable != null)
               }
-              independentAxisLabel={xAxisVariable?.displayName ?? 'X-Axis'}
-              dependentAxisLabel={yAxisVariable?.displayName ?? 'Y-Axis'}
+              independentAxisLabel={
+                axisLabelWithUnit(xAxisVariable) ?? 'X-Axis'
+              }
+              dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-Axis'}
               // show/hide independent/dependent axis tick label
               showIndependentAxisTickLabel={true}
               showDependentAxisTickLabel={true}

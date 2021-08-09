@@ -37,6 +37,8 @@ import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -241,6 +243,8 @@ function HistogramViz(props: Props) {
       filters,
       dataClient,
       computation.type,
+      xAxisVariable,
+      overlayVariable,
     ])
   );
 
@@ -257,10 +261,6 @@ function HistogramViz(props: Props) {
               {
                 name: 'overlayVariable',
                 label: 'Overlay (optional)',
-              },
-              {
-                name: 'facetVariable',
-                label: 'Facet (optional)',
               },
             ]}
             entities={entities}
@@ -319,7 +319,7 @@ function HistogramViz(props: Props) {
           }
           outputEntity={outputEntity}
           independentAxisVariable={vizConfig.xAxisVariable}
-          independentAxisLabel={xAxisVariable?.displayName ?? 'Main'}
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'Main'}
           interactive
           showSpinner={data.pending}
           filters={filters}
@@ -327,10 +327,7 @@ function HistogramViz(props: Props) {
           outputSize={data.pending ? undefined : data.value?.outputSize}
           overlayVariable={vizConfig.overlayVariable}
           overlayLabel={overlayVariable?.displayName}
-          legendTitle={
-            findEntityAndVariable(entities, vizConfig.overlayVariable)?.variable
-              .displayName
-          }
+          legendTitle={overlayVariable?.displayName}
           dependentAxisLabel={
             vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
           }
