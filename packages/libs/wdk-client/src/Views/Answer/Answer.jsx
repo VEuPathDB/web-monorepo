@@ -32,7 +32,7 @@ function Answer(props) {
         (totalPages - 1) * pageSize
       ));
     }
-  }, [offset, pageSize, totalRows, onOffsetChange]);
+  }, [offset, pageSize, totalRows, totalPages, onOffsetChange]);
 
   const onPageChange = useCallback(newPage => {
     onOffsetChange((newPage - 1) * pageSize);
