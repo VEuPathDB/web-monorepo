@@ -102,28 +102,8 @@ function AttributePopup(props) {
 function useTableState (props) {
   const { records, onSort, recordClass, onMoveColumn, visibleAttributes, displayInfo, renderCellContent, deriveRowClassName, customSortBys } = props;
 
-  return useMemo(() => {
-    const { sorting } = displayInfo;
-
-    const options = {
-      useStickyHeader: true,
-      tableBodyMaxHeight: 'unset',
-      deriveRowClassName: deriveRowClassName && (record => deriveRowClassName({ recordClass, record }))
-    };
-
-    const uiState = {
-      sort: !sorting.length ? null : {
-        columnKey: sorting[0].attributeName ? sorting[0].attributeName : null,
-        direction: sorting[0].direction.toLowerCase() || 'asc'
-      }
-    };
-
-    let sortingAttribute = visibleAttributes.find( attribute => attribute.name === sorting[0].attributeName )
-    const sortKeys = makeSortKeys(sortingAttribute, customSortBys);
-    const sortDirections = sortKeys.map(_ => sorting[0].direction.toLowerCase() || 'asc');
-    const rows = orderBy(records, sortKeys, sortDirections);
-
-    const columns = visibleAttributes.map((attribute) => {
+  const columns = useMemo(() =>
+    visibleAttributes.map((attribute) => {
       return {
         key: attribute.name,
         helpText: attribute.help,
@@ -141,11 +121,41 @@ function useTableState (props) {
           if (renderCellContent) return renderCellContent({ ...cellProps, CellContent: AnswerTableCell });
           return <AnswerTableCell {...cellProps}/>;
         } 
+      };
+    }
+  ), [renderCellContent, visibleAttributes]);
+
+  const options = useMemo(
+    () => ({
+      useStickyHeader: true,
+      tableBodyMaxHeight: 'unset',
+      deriveRowClassName: deriveRowClassName && (record => deriveRowClassName({ recordClass, record }))
+    }),
+    [ deriveRowClassName ]
+  );
+
+  const { sorting } = displayInfo;
+
+  const uiState = useMemo(
+    () => ({
+      sort: !sorting.length ? null : {
+        columnKey: sorting[0].attributeName ? sorting[0].attributeName : null,
+        direction: sorting[0].direction.toLowerCase() || 'asc'
       }
-    });
+    }),
+    [ sorting ]
+  );
 
+  const rows = useMemo(() => {
+    const sortingAttribute = visibleAttributes.find( attribute => attribute.name === sorting[0].attributeName )
+    const sortKeys = makeSortKeys(sortingAttribute, customSortBys);
+    const sortDirections = sortKeys.map(_ => sorting[0].direction.toLowerCase() || 'asc');
 
-    const eventHandlers = {
+    return orderBy(records, sortKeys, sortDirections);
+  }, [records, sorting, visibleAttributes, customSortBys]);
+
+  const eventHandlers = useMemo(
+    () => ({
       onSort ({ key }, direction) { onSort([{ attributeName: key, direction }]); },
       onColumnReorder: (colKey, newIndex) => {
         const currentIndex = columns.findIndex(col => col.key === colKey);
@@ -153,11 +163,20 @@ function useTableState (props) {
         if (newIndex < currentIndex) newIndex++;
         onMoveColumn(colKey, newIndex);
       }
-    };
+    }),
+    [columns, onMoveColumn, onSort]
+  );
 
-    return MesaState.create({ rows, columns, options, uiState, eventHandlers });
-  }, [records, onSort, recordClass, onMoveColumn, visibleAttributes, displayInfo, renderCellContent, deriveRowClassName, customSortBys])
-
+  return useMemo(() =>
+    MesaState.create({
+      rows,
+      columns,
+      options,
+      uiState,
+      eventHandlers
+    }),
+    [rows, columns, options, uiState, eventHandlers]
+  );
 }
 
 function makeSortKeys(sortingAttribute, customSortBys = {}) {
