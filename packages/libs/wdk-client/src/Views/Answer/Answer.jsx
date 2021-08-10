@@ -1,8 +1,8 @@
 import { orderBy, uniq } from 'lodash';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useCallback } from 'react';
 import { withRouter } from 'react-router';
 import Icon from 'wdk-client/Components/Icon/IconAlt';
-import { Mesa, MesaState } from 'wdk-client/Components/Mesa';
+import { Mesa, MesaState, PaginationMenu } from 'wdk-client/Components/Mesa';
 import Dialog from 'wdk-client/Components/Overlays/Dialog';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
 import AttributeSelector from 'wdk-client/Views/Answer/AnswerAttributeSelector';
@@ -11,9 +11,32 @@ import AnswerTableCell from 'wdk-client/Views/Answer/AnswerTableCell';
 import 'wdk-client/Views/Answer/wdk-Answer.scss';
 
 function Answer(props) {
-  const { question, recordClass, displayInfo, additionalActions } = props;
+  const {
+    question,
+    recordClass,
+    displayInfo,
+    additionalActions,
+    offset,
+    totalRows,
+    totalPages,
+    onOffsetChange,
+    pageSize,
+  } = props;
 
   const tableState = useTableState(props);
+
+  useEffect(() => {
+    if (offset >= totalRows) {
+      onOffsetChange(Math.max(
+        0,
+        (totalPages - 1) * pageSize
+      ));
+    }
+  }, [offset, pageSize, totalRows, onOffsetChange]);
+
+  const onPageChange = useCallback(newPage => {
+    onOffsetChange((newPage - 1) * pageSize);
+  }, [offset, onOffsetChange, pageSize]);
 
   return (
     <div className="wdk-AnswerContainer">
@@ -24,9 +47,18 @@ function Answer(props) {
         {recordClass.description}
       </div>
       <div className="wdk-Answer">
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', minHeight: '4.75em' }}>
           <AnswerFilter {...props}/>
           <AnswerCount {...props} />
+          <div className="MesaComponent">
+            <PaginationMenu
+              totalRows={totalRows}
+              totalPages={totalPages}
+              currentPage={Math.ceil((offset + 1) / pageSize)}
+              rowsPerPage={pageSize}
+              onPageChange={onPageChange}
+            />
+          </div>
           <div style={{ flex: 1, textAlign: 'right' }}>
             {additionalActions?.map(({ key, display }) =>
               <React.Fragment key={key}>
@@ -43,14 +75,11 @@ function Answer(props) {
 }
 
 function AnswerCount(props) {
-  const { recordClass, meta, records, displayInfo } = props;
+  const { recordClass, records, totalRows, offset, currentPageTotalRows } = props;
   const { displayNamePlural } = recordClass;
-  const { pagination } = displayInfo;
-  const { offset, numRecords } = pagination;
-  const { totalCount, responseCount } = meta;
   const first = offset + 1;
-  const last = Math.min(offset + numRecords, responseCount, records.length);
-  const countPhrase = !records.length ? 0 : `${first} - ${last} of ${totalCount}`;
+  const last = offset + currentPageTotalRows;
+  const countPhrase = !records.length ? 0 : `${first} - ${last} of ${totalRows}`;
 
   return (
     <p className="wdk-Answer-count">
