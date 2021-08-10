@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { isEqual } from 'lodash';
+import { createSelector, defaultMemoize } from 'reselect';
+
 import HeadingRow from 'wdk-client/Components/Mesa/Ui/HeadingRow';
 import DataRowList from 'wdk-client/Components/Mesa/Ui/DataRowList';
 import { makeClassifier, combineWidths } from 'wdk-client/Components/Mesa/Utils/Utils';
@@ -133,7 +136,7 @@ class DataTable extends React.Component {
     const { dynamicWidths, tableWrapperWidth } = this.state;
     const newColumns = columns.every(({ width }) => width) || !dynamicWidths || dynamicWidths.length == 0
       ? columns
-      : columns.map((column, index) => Object.assign({}, column, { width: dynamicWidths[index] }));
+      : makeColumnsWithDynamicWidths({ columns, dynamicWidths });
     const bodyWrapperStyle = { maxHeight: options ? options.tableBodyMaxHeight : null };
     const wrapperStyle = { minWidth: dynamicWidths ? combineWidths(columns.map(({ width }) => width)) : null };
     const headerWrapperStyle = { width: tableWrapperWidth, display: dynamicWidths == null ? 'none' : 'block' };
@@ -208,5 +211,15 @@ DataTable.propTypes = {
   uiState: PropTypes.object,
   eventHandlers: PropTypes.objectOf(PropTypes.func)
 };
+
+const makeColumnsWithDynamicWidths = defaultMemoize(
+  ({ columns, dynamicWidths }) => columns.map(
+    (column, index) => Object.assign({}, column, { width: dynamicWidths[index] })
+  ),
+  (a, b) => (
+    a.columns === b.columns &&
+    isEqual(a.dynamicWidths, b.dynamicWidths)
+  )
+);
 
 export default DataTable;
