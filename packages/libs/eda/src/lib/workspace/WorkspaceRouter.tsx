@@ -23,7 +23,7 @@ export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
 }: Props) {
-  const { path } = useRouteMatch();
+  const { path, url } = useRouteMatch();
   const subsettingClient = SubsettingClient.getClient(subsettingServiceUrl);
 
   return (
@@ -50,7 +50,12 @@ export function WorkspaceRouter({
       <Route
         path={`${path}/studies`}
         exact
-        render={() => <StudyList subsettingServiceUrl={subsettingServiceUrl} />}
+        render={() => (
+          <StudyList
+            baseUrl={url}
+            subsettingServiceUrl={subsettingServiceUrl}
+          />
+        )}
       />
       <Route
         path={`${path}/:studyId`}
