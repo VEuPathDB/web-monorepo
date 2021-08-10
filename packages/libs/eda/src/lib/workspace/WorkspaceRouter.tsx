@@ -12,6 +12,7 @@ import { mockAnalysisStore } from './Mocks';
 import { SubsettingClient } from '../core/api/subsetting-api';
 import { AllAnalyses } from './AllAnalyses';
 import { LatestAnalysis } from './LatestAnalysis';
+import { StudyList } from './StudyList';
 
 type Props = {
   subsettingServiceUrl: string;
@@ -45,6 +46,11 @@ export function WorkspaceRouter({
         render={({ location }) => (
           <Redirect to={location.pathname.replace(/\/\/+/g, '/')} />
         )}
+      />
+      <Route
+        path={`${path}/studies`}
+        exact
+        render={() => <StudyList subsettingServiceUrl={subsettingServiceUrl} />}
       />
       <Route
         path={`${path}/:studyId`}
