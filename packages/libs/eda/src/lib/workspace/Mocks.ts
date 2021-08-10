@@ -60,4 +60,7 @@ export const mockAnalysisStore: AnalysisClient = {
   async deleteAnalysis(id: string) {
     await analysisStore.removeItem(id);
   },
+  async deleteAnalyses(ids: string[]) {
+    for (const id of ids) await analysisStore.removeItem(id);
+  },
 } as AnalysisClient;
