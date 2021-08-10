@@ -42,30 +42,21 @@ export function Subsetting(props: Props) {
   return (
     <div className={cx('-Subsetting')}>
       <div className="Variables">
-        <div
-          style={{
-            padding: '.5em',
-            height: '60vh',
-            width: '30em',
-            position: 'relative',
+        <VariableTree
+          rootEntity={entities[0]}
+          entityId={entity.id}
+          starredVariables={analysisState.analysis?.starredVariables}
+          toggleStarredVariable={toggleStarredVariable}
+          variableId={variable.id}
+          onChange={(variable) => {
+            if (variable) {
+              const { entityId, variableId } = variable;
+              history.replace(
+                makeVariableLink({ entityId, variableId }, studyMetadata)
+              );
+            } else history.replace('..');
           }}
-        >
-          <VariableTree
-            rootEntity={entities[0]}
-            entityId={entity.id}
-            starredVariables={analysisState.analysis?.starredVariables}
-            toggleStarredVariable={toggleStarredVariable}
-            variableId={variable.id}
-            onChange={(variable) => {
-              if (variable) {
-                const { entityId, variableId } = variable;
-                history.replace(
-                  makeVariableLink({ entityId, variableId }, studyMetadata)
-                );
-              } else history.replace('..');
-            }}
-          />
-        </div>
+        />
       </div>
       <div className="FilterChips">
         <FilterChipList

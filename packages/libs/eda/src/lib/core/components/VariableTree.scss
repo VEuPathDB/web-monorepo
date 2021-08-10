@@ -1,15 +1,10 @@
 .EDAWorkspace-VariableList {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 1px;
-  right: 1px;
+  display: flex;
+  flex-flow: column;
 
   .FeaturedVariables {
     padding: 0.5em 1em;
-    background-color: #f7f7f7;
     border: 1px solid #ccc;
-    box-shadow: 0 0 1px #6f6f6fb0;
     summary {
       outline: none;
       cursor: pointer;
@@ -39,8 +34,8 @@
     padding-left: 1.5em;
   }
 
-  .wdk-CheckboxTree .wdk-AttributeFilterFieldItem,
-  .wdk-CheckboxTree .wdk-Link.wdk-AttributeFilterFieldParent {
+  .wdk-AttributeFilterFieldItem,
+  .wdk-Link.wdk-AttributeFilterFieldParent {
     padding: 0.25em 0.5em;
     border-radius: 0.5em;
     display: inline-block;
@@ -69,7 +64,7 @@
   }
 
   .wdk-CheckboxTree {
-    height: 100%;
+    height: 60vh;
     display: flex;
     flex-flow: column;
   }
@@ -141,7 +136,7 @@
   }
 
   .EDAWorkspace-DisabledVariablesToggle {
-    margin: 0 1em 0.75em;
+    margin: 0.75em;
     button {
       color: #666;
     }
@@ -154,7 +149,7 @@
   &TreeContainer {
     // border: 1px solid;
     border-radius: 0.25em;
-    padding: 0.5em;
+    padding: 0.5em 0.5em 0.5em 0;
     height: 60vh;
     width: 30em;
     position: relative;
@@ -162,6 +157,12 @@
     .wdk-AttributeFilterFieldItem,
     .wdk-AttributeFilterFieldParent {
       color: #2f2f2f;
+    }
+
+    .FeaturedVariables {
+      border: none;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
     }
   }
 }
