@@ -73,4 +73,17 @@ export class AnalysisClient extends FetchClient {
       })
     );
   }
+  deleteAnalyses(analysisIds: Iterable<string>): Promise<void> {
+    return this.fetch(
+      createJsonRequest({
+        path: '/analyses',
+        method: 'PATCH',
+        body: Array.from(analysisIds).map((id) => ({
+          op: 'delete',
+          id,
+        })),
+        transformResponse: ioTransformer(voidType),
+      })
+    );
+  }
 }
