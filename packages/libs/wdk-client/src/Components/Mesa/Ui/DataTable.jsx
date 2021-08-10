@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { isEqual } from 'lodash';
-import { createSelector, defaultMemoize } from 'reselect';
+import { defaultMemoize } from 'reselect';
 
 import HeadingRow from 'wdk-client/Components/Mesa/Ui/HeadingRow';
 import DataRowList from 'wdk-client/Components/Mesa/Ui/DataRowList';
