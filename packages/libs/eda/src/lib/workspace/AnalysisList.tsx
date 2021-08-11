@@ -22,9 +22,10 @@ export function AnalysisList(props: Props) {
   const studyId = studyRecord.id.map((part) => part.value).join('/');
   const history = useHistory();
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
-  const { analyses: analysisList, deleteAnalyses } = useAnalysisList(
+  const { analyses, deleteAnalyses } = useAnalysisList(
     analysisStore
   );
+  const analysisList = analyses ? analyses.filter((analysis) => analysis.studyId === studyId) : undefined;
   const createNewAnalysis = React.useCallback(async () => {
     const { id } = await analysisStore.createAnalysis({
       name: 'Unnamed Analysis',
