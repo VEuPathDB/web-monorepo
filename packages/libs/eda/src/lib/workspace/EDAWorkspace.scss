@@ -189,7 +189,7 @@
   &-Subsetting {
     display: grid;
     grid:
-      [row1-start] 'variables     filter-chips tabular-download' auto [row1-end]
+      [row1-start] '.             filter-chips tabular-download' auto [row1-end]
       [row2-start] 'variables     filter       filter' 1fr [row2-end]
       / auto 1fr auto;
     gap: 1em 3em;
