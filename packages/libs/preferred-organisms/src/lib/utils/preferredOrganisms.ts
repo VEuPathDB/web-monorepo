@@ -13,7 +13,10 @@ import {
   string,
 } from '@veupathdb/wdk-client/lib/Utils/Json';
 import { foldStructure } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  Question,
+  TreeBoxVocabNode,
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { pruneNodesWithSingleExtendingChild } from '@veupathdb/web-common/lib/util/organisms';
 
@@ -44,7 +47,9 @@ export const makePreferredOrganismsRecoilState = memoize(
       wdkDependencies
     );
 
-    const { datasetMetadata } = makeDatasetMetadataRecoilState(wdkDependencies);
+    const { questions, datasetMetadata } = makeDatasetMetadataRecoilState(
+      wdkDependencies
+    );
 
     const config = selector({
       key: 'wdk-service-config',
@@ -157,7 +162,11 @@ export const makePreferredOrganismsRecoilState = memoize(
     const preferredQuestions = selector({
       key: 'preferred-questions',
       get: ({ get }) =>
-        findPreferredQuestions(get(datasetMetadata), get(preferredOrganisms)),
+        findPreferredQuestions(
+          get(questions),
+          get(datasetMetadata),
+          get(preferredOrganisms)
+        ),
     });
 
     return {
@@ -290,24 +299,35 @@ function findPreferredSpecies(
 }
 
 function findPreferredQuestions(
+  questions: Question[],
   datasetMetadata: Map<string, DatasetMetadata>,
   preferredOrganisms: string[]
 ) {
   const preferredOrganismsSet = new Set(preferredOrganisms);
+  const preferredQuestions = new Set<string>();
+  const universalQuestions = new Set(
+    questions.map(({ urlSegment }) => urlSegment)
+  );
 
-  return [...datasetMetadata].reduce((memo, [, { organisms, questions }]) => {
-    if (
-      organisms.some(
-        (organism) => preferredOrganismsSet.has(organism) || organism === 'ALL'
-      )
-    ) {
-      questions.forEach((questionUrlSegment) => {
-        memo.add(questionUrlSegment);
-      });
+  for (const { organisms, questions } of datasetMetadata.values()) {
+    const datasetHasPreferredOrganism = organisms.some(
+      (organism) => preferredOrganismsSet.has(organism) || organism === 'ALL'
+    );
+
+    for (const questionUrlSegment of questions) {
+      if (datasetHasPreferredOrganism) {
+        preferredQuestions.add(questionUrlSegment);
+      }
+
+      universalQuestions.delete(questionUrlSegment);
     }
+  }
 
-    return memo;
-  }, new Set<string>());
+  for (const questionUrlSegment of universalQuestions) {
+    preferredQuestions.add(questionUrlSegment);
+  }
+
+  return preferredQuestions;
 }
 
 const organismPreference = record({
