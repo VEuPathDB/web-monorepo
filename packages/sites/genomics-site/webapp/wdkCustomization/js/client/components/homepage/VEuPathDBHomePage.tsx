@@ -317,7 +317,7 @@ const useHeaderMenuItems = (
           type: 'reactRoute',
           url: makeStaticPageRoute(`/apollo_help.html`),
           metadata: {
-            include: [ AmoebaDB,CryptoDB,FungiDB,PlasmoDB,PiroplasmaDB,ToxoDB,VectorBase ]
+            include: [ AmoebaDB, CryptoDB, FungiDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, PlasmoDB, ToxoDB, TrichDB, TriTrypDB, VectorBase, EuPathDB, VEuPathDB, UniDB ]
          }
         },
         { 
