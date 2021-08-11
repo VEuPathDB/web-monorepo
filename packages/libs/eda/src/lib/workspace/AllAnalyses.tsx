@@ -13,6 +13,7 @@ import { Loading, Mesa } from '@veupathdb/wdk-client/lib/Components';
 import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/ContentError';
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
 import { orderBy } from 'lodash';
 import Path from 'path';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -157,7 +158,15 @@ export function AllAnalyses(props: Props) {
             <Button
               type="button"
               startIcon={<Icon color="action" className="fa fa-trash" />}
-              onClick={() => deleteAnalyses(selectedAnalyses)}
+              onClick={async () => {
+                const answer = await confirm(
+                  'Delete selected analyses',
+                  'Are you sure you want to delete selected analyses?'
+                );
+                if (answer) {
+                  deleteAnalyses(selectedAnalyses);
+                }
+              }}
               disabled={selectedAnalyses.size === 0}
             >
               Delete selected analyses
@@ -169,7 +178,15 @@ export function AllAnalyses(props: Props) {
             <Button
               type="button"
               startIcon={<Icon color="action" className="fa fa-trash" />}
-              onClick={removeUnpinned}
+              onClick={async () => {
+                const answer = await confirm(
+                  'Delete selected analyses',
+                  'Are you sure you want to delete selected analyses?'
+                );
+                if (answer) {
+                  removeUnpinned();
+                }
+              }}
               disabled={pinnedAnalyses.length === 0}
             >
               Delete unpinned analyses
