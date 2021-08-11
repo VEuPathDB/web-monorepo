@@ -394,3 +394,7 @@ export function Page() {
 export { SiteSearchInput } from './component-wrappers/SiteSearchInput';
 
 export { AnswerController } from './component-wrappers/AnswerController';
+
+export { SearchCheckboxTree } from './component-wrappers/SearchCheckboxTree';
+
+export { SearchCheckboxTree as SearchInputSelector } from './component-wrappers/SearchCheckboxTree';
