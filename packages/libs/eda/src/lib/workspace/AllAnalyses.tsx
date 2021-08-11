@@ -29,15 +29,9 @@ import { workspaceTheme } from '../core/components/workspaceTheme';
 
 const useStyles = makeStyles({
   root: {
-    '& .ActionToolbar-ItemList': {
-      width: '100%',
-    },
     '& .ActionToolbar-Item': {
       display: 'flex',
       alignItems: 'center',
-      '&:last-of-type': {
-        marginLeft: 'auto',
-      },
     },
     '& .MesaComponent td': {
       verticalAlign: 'middle',
@@ -160,6 +154,30 @@ export function AllAnalyses(props: Props) {
       actions: [
         {
           element: (
+            <Button
+              type="button"
+              startIcon={<Icon color="action" className="fa fa-trash" />}
+              onClick={() => deleteAnalyses(selectedAnalyses)}
+              disabled={selectedAnalyses.size === 0}
+            >
+              Delete selected analyses
+            </Button>
+          ),
+        },
+        {
+          element: (
+            <Button
+              type="button"
+              startIcon={<Icon color="action" className="fa fa-trash" />}
+              onClick={removeUnpinned}
+              disabled={pinnedAnalyses.length === 0}
+            >
+              Delete unpinned analyses
+            </Button>
+          ),
+        },
+        {
+          element: (
             <FormControlLabel
               control={
                 <Switch
@@ -175,29 +193,6 @@ export function AllAnalyses(props: Props) {
               }}
               disabled={pinnedAnalyses.length === 0}
             />
-          ),
-        },
-        {
-          element: (
-            <Button
-              variant="text"
-              startIcon={<Icon color="action" className="fa fa-trash" />}
-              onClick={removeUnpinned}
-              disabled={pinnedAnalyses.length === 0}
-            >
-              Delete unpinned analyses
-            </Button>
-          ),
-        },
-        {
-          element: (
-            <Button
-              type="button"
-              onClick={() => deleteAnalyses(selectedAnalyses)}
-              disabled={selectedAnalyses.size === 0}
-            >
-              Delete selected analyses
-            </Button>
           ),
         },
       ],
