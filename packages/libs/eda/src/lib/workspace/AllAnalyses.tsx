@@ -302,8 +302,20 @@ export function AllAnalyses(props: Props) {
             );
           },
         },
-        { key: 'created', name: 'Created', sortable: true },
-        { key: 'modified', name: 'Modified', sortable: true },
+        {
+          key: 'created',
+          name: 'Created',
+          sortable: true,
+          renderCell: (data: { value: string }) =>
+            new Date(data.value).toUTCString().slice(5),
+        },
+        {
+          key: 'modified',
+          name: 'Modified',
+          sortable: true,
+          renderCell: (data: { value: string }) =>
+            new Date(data.value).toUTCString().slice(5),
+        },
       ],
     }),
     [
