@@ -247,6 +247,7 @@ const TrichDB = 'TrichDB';
 const TriTrypDB = 'TriTrypDB';
 const VectorBase = 'VectorBase';
 const VEuPathDB = 'VEuPathDB';
+const UniDB = 'UniDB';
 const DB = 'DB';
 
 
