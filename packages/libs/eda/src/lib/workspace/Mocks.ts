@@ -7,6 +7,7 @@ import {
   AnalysisClient,
   AnalysisPreferences,
 } from '../core';
+import { max } from 'lodash';
 
 const analysisStore = localforage.createInstance({
   name: 'mockAnalysisStore',
@@ -34,7 +35,8 @@ export const mockAnalysisStore: AnalysisClient = {
     return records;
   },
   async createAnalysis(newAnalysis: NewAnalysis) {
-    const id = String((await analysisStore.keys()).length + 2);
+    const usedIds = await localStore.keys();
+    const id = String((max(usedIds.map((x) => Number(x))) ?? 0) + 1);
     const now = new Date().toISOString();
     await analysisStore.setItem<Analysis>(id, {
       ...newAnalysis,

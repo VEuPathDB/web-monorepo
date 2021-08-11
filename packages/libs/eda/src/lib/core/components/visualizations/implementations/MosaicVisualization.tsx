@@ -25,6 +25,8 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
 interface MosaicDataWithCoverageStatistics
   extends MosaicData,
@@ -178,6 +180,16 @@ function MosaicViz(props: Props) {
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
+  const { xAxisVariable, yAxisVariable } = useMemo(() => {
+    const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+    const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
+
+    return {
+      xAxisVariable: xAxisVariable ? xAxisVariable.variable : undefined,
+      yAxisVariable: yAxisVariable ? yAxisVariable.variable : undefined,
+    };
+  }, [findEntityAndVariable, vizConfig.xAxisVariable, vizConfig.yAxisVariable]);
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -188,10 +200,6 @@ function MosaicViz(props: Props) {
 
   const data = usePromise(
     useCallback(async (): Promise<ContTableData | TwoByTwoData | undefined> => {
-      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
-        ?.variable;
-      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable)
-        ?.variable;
       if (
         vizConfig.xAxisVariable == null ||
         xAxisVariable == null ||
@@ -236,16 +244,13 @@ function MosaicViz(props: Props) {
       filters,
       dataClient,
       vizConfig,
-      findEntityAndVariable,
+      xAxisVariable,
+      yAxisVariable,
       computation.type,
       isTwoByTwo,
     ])
   );
 
-  const xAxisVariableName = findEntityAndVariable(vizConfig.xAxisVariable)
-    ?.variable.displayName;
-  const yAxisVariableName = findEntityAndVariable(vizConfig.yAxisVariable)
-    ?.variable.displayName;
   let statsTable = undefined;
 
   if (isTwoByTwo) {
@@ -313,8 +318,8 @@ function MosaicViz(props: Props) {
             width: '750px',
             height: '450px',
           }}
-          independentAxisLabel={xAxisVariableName ?? 'X-axis'}
-          dependentAxisLabel={yAxisVariableName ?? 'Y-axis'}
+          independentAxisLabel={axisLabelWithUnit(xAxisVariable) ?? 'X-axis'}
+          dependentAxisLabel={axisLabelWithUnit(yAxisVariable) ?? 'Y-axis'}
           displayLegend={true}
           interactive
           showSpinner={data.pending}
@@ -337,13 +342,13 @@ function MosaicViz(props: Props) {
             {
               role: 'X-axis',
               required: true,
-              display: xAxisVariableName,
+              display: xAxisVariable?.displayName,
               variable: vizConfig.xAxisVariable,
             },
             {
               role: 'Y-axis',
               required: true,
-              display: yAxisVariableName,
+              display: yAxisVariable?.displayName,
               variable: vizConfig.yAxisVariable,
             },
           ]}

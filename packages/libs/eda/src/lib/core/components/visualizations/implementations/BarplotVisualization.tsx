@@ -32,6 +32,8 @@ import { OutputEntityTitle } from '../OutputEntityTitle';
 import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 
 import bar from './selectorIcons/bar.svg';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
 export const barplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -200,7 +202,8 @@ function BarplotViz(props: Props) {
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.valueSpec,
-      findEntityAndVariable,
+      variable,
+      overlayVariable,
       computation.type,
     ])
   );
@@ -218,10 +221,6 @@ function BarplotViz(props: Props) {
               {
                 name: 'overlayVariable',
                 label: 'Overlay (optional)',
-              },
-              {
-                name: 'facetVariable',
-                label: 'Facet (optional)',
               },
             ]}
             entities={entities}
@@ -284,17 +283,11 @@ function BarplotViz(props: Props) {
                 (data.value.series.length > 1 ||
                   vizConfig.overlayVariable != null)
               }
-              independentAxisLabel={
-                findEntityAndVariable(vizConfig.xAxisVariable)?.variable
-                  .displayName ?? 'Main'
-              }
+              independentAxisLabel={axisLabelWithUnit(variable) ?? 'Main'}
               dependentAxisLabel={
                 vizConfig.valueSpec === 'count' ? 'Count' : 'Proportion'
               }
-              legendTitle={
-                findEntityAndVariable(vizConfig.overlayVariable)?.variable
-                  .displayName
-              }
+              legendTitle={overlayVariable?.displayName}
               interactive
               showSpinner={data.pending}
               valueSpec={vizConfig.valueSpec}
@@ -312,14 +305,12 @@ function BarplotViz(props: Props) {
                 {
                   role: 'Main',
                   required: true,
-                  display: findEntityAndVariable(vizConfig.xAxisVariable)
-                    ?.variable.displayName,
+                  display: variable?.displayName,
                   variable: vizConfig.xAxisVariable,
                 },
                 {
                   role: 'Overlay',
-                  display: findEntityAndVariable(vizConfig.overlayVariable)
-                    ?.variable.displayName,
+                  display: overlayVariable?.displayName,
                   variable: vizConfig.overlayVariable,
                 },
               ]}
