@@ -185,7 +185,7 @@ export function AllAnalyses(props: Props) {
               onClick={removeUnpinned}
               disabled={pinnedAnalyses.length === 0}
             >
-              Remove unpinned analyses
+              Delete unpinned analyses
             </Button>
           ),
         },
