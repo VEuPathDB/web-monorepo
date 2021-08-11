@@ -35,7 +35,7 @@ export const mockAnalysisStore: AnalysisClient = {
     return records;
   },
   async createAnalysis(newAnalysis: NewAnalysis) {
-    const usedIds = await localStore.keys();
+    const usedIds = await analysisStore.keys();
     const id = String((max(usedIds.map((x) => Number(x))) ?? 0) + 1);
     const now = new Date().toISOString();
     await analysisStore.setItem<Analysis>(id, {
