@@ -42,17 +42,7 @@ export default function MosaicPlot({
   });
 
   const layout = {
-    // Bottom x axis displaying percent ticks
     xaxis: {
-      title: independentAxisLabel ? independentAxisLabel + ' (%)' : '',
-      // Must expliticly define range for it to work consistently
-      range: [0, 100] as number[],
-      tickvals: [0, 20, 40, 60, 80, 100] as number[],
-      ticktext: ['', '20', '40', '60', '80', '100'] as string[],
-      showgrid: true,
-    },
-    // Top x axis displaying independent variable labels
-    xaxis2: {
       tickvals: column_centers,
       ticktext:
         showColumnLabels !== false
@@ -64,11 +54,9 @@ export default function MosaicPlot({
             )
           : undefined,
       range: [0, 100] as number[],
-      overlaying: 'x',
-      side: 'top',
     },
     yaxis: {
-      title: dependentAxisLabel ? dependentAxisLabel + ' (%)' : '',
+      title: dependentAxisLabel && dependentAxisLabel + ' (Proportion)',
       range: [0, 100] as number[],
       tickvals: [0, 20, 40, 60, 80, 100] as number[],
     },
@@ -105,8 +93,12 @@ export default function MosaicPlot({
     )
     .reverse(); // Reverse so first trace is on top, matching data array
 
-  // Add empty trace to show second x axis
-  if (showColumnLabels !== false) plotlyReadyData.push({ xaxis: 'x2' });
-
-  return <PlotlyPlot data={plotlyReadyData} layout={layout} {...restProps} />;
+  return (
+    <PlotlyPlot
+      data={plotlyReadyData}
+      layout={layout}
+      legendTitle={dependentAxisLabel}
+      {...restProps}
+    />
+  );
 }
