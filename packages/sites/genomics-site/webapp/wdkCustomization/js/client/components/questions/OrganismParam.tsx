@@ -118,23 +118,7 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
 }
 
 function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: string[], onChange: (newValue: string[]) => void) {
-  const [ preferredOrganisms ] = usePreferredOrganismsState();
-  const preferredSpecies = usePreferredSpecies();
-
-  const { pathname } = useLocation();
-  const isSearchPage = pathname.startsWith('/search');
-
-  const preferredValues = useMemo(
-    () => findPreferredValues(
-      new Set(preferredOrganisms),
-      preferredSpecies,
-      selectedValues,
-      parameter.vocabulary,
-      isSearchPage,
-      findPreferenceType(parameter)
-    ),
-    [ parameter, isSearchPage, preferredOrganisms, preferredSpecies ]
-  );
+  const preferredValues = usePreferredValues(parameter, selectedValues);
 
   const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
 
@@ -175,8 +159,30 @@ function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: st
             vocabulary: preferredVocabulary
           };
     },
-    [ isSearchPage, parameter, preferredOrganismsEnabled, preferredValues ]
+    [ parameter, preferredOrganismsEnabled, preferredValues ]
   );
+}
+
+function usePreferredValues(parameter: TreeBoxEnumParam, selectedValues: string[]) {
+  const [ preferredOrganisms ] = usePreferredOrganismsState();
+  const preferredSpecies = usePreferredSpecies();
+
+  const { pathname } = useLocation();
+  const isSearchPage = pathname.startsWith('/search');
+
+  const preferredValues = useMemo(
+    () => findPreferredValues(
+      new Set(preferredOrganisms),
+      preferredSpecies,
+      selectedValues,
+      parameter.vocabulary,
+      isSearchPage,
+      findPreferenceType(parameter)
+    ),
+    [ parameter, isSearchPage, preferredOrganisms, preferredSpecies ]
+  );
+
+  return preferredValues;
 }
 
 function isOrganismParamProps<S = void>(props: Props<Parameter, S>): props is Props<EnumParam, S> {
