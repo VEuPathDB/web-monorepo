@@ -5,7 +5,15 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Props as CheckboxTreeProps } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
 
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
-import { EnumParam, Parameter, TreeBoxEnumParam, TreeBoxVocabNode } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+import {
+  CheckBoxEnumParam,
+  EnumParam,
+  Parameter,
+  SelectEnumParam,
+  TreeBoxEnumParam,
+  TreeBoxVocabNode,
+  TypeAheadEnumParam
+} from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import ParamComponent from '@veupathdb/wdk-client/lib/Views/Question/ParameterComponent';
 import EnumParamModule from '@veupathdb/wdk-client/lib/Views/Question/Params/EnumParam';
@@ -34,6 +42,8 @@ import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/re
 
 import { OrganismPreferencesWarning } from '../common/OrganismPreferencesWarning';
 
+type FlatEnumParam = SelectEnumParam | CheckBoxEnumParam | TypeAheadEnumParam;
+
 const ORGANISM_PROPERTIES_KEY = 'organismProperties';
 
 const PRUNE_NODES_WITH_SINGLE_EXTENDING_CHILD_PROPERTY = 'pruneNodesWithSingleExtendingChild';
@@ -58,33 +68,13 @@ export function OrganismParam(props: Props<Parameter, State>) {
 export function ValidatedOrganismParam(props: Props<EnumParam, State>) {
   return props.parameter.displayType === 'treeBox'
     ? <TreeBoxOrganismEnumParam {...props as Props<TreeBoxEnumParam, State>} />
-    : <ParamComponent {...props} />;
+    : <FlatOrganismEnumParam {...props as Props<FlatEnumParam, State>} />;
 }
 
 function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
-  const selectedValues = useMemo(() => {
-    return isMultiPick(props.parameter)
-      ? toMultiValueArray(props.value)
-      : props.value == null || props.value === ''
-      ? []
-      : [ props.value ];
-  }, [ isMultiPick(props.parameter), props.value ]);
+  const { selectedValues, onChange } = useEnumParamSelectedValues(props);
 
-  const transformValue = useCallback((newValue: string[]) => {
-    if (isMultiPick(props.parameter)) {
-      return toMultiValueString(newValue);
-    } else {
-      return newValue.length === 0
-        ? ''
-        : newValue[0]
-    }
-  }, [ isMultiPick(props.parameter) ]);
-
-  const onChange = useCallback((newValue: string[]) => {
-    props.onParamValueChange(transformValue(newValue));
-  }, [ props.onParamValueChange, transformValue ]);
-
-  const paramWithPrunedVocab = useParamWithPrunedVocab(props.parameter, selectedValues, onChange);
+  const paramWithPrunedVocab = useTreeBoxParamWithPrunedVocab(props.parameter, selectedValues, onChange);
 
   const referenceStrains = useReferenceStrains();
 
@@ -117,20 +107,16 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
       />;
 }
 
-function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: string[], onChange: (newValue: string[]) => void) {
+function FlatOrganismEnumParam(props: Props<FlatEnumParam, State>) {
+  return <ParamComponent {...props} />;
+}
+
+function useTreeBoxParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: string[], onChange: (newValue: string[]) => void) {
   const preferredValues = usePreferredValues(parameter, selectedValues);
 
   const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
 
-  useEffect(() => {
-    if (preferredOrganismsEnabled) {
-      const filteredSelectedValues = selectedValues.filter(selectedValue => preferredValues.has(selectedValue));
-
-      if (filteredSelectedValues.length !== selectedValues.length) {
-        onChange(filteredSelectedValues);
-      }
-    }
-  }, [ preferredOrganismsEnabled ]);
+  useRestrictSelectedValuesOnToggle(selectedValues, onChange, preferredValues);
 
   return useMemo(
     () => {
@@ -163,6 +149,35 @@ function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: st
   );
 }
 
+function useEnumParamSelectedValues(props: Props<EnumParam, State>) {
+  const selectedValues = useMemo(() => {
+    return isMultiPick(props.parameter)
+      ? toMultiValueArray(props.value)
+      : props.value == null || props.value === ''
+      ? []
+      : [ props.value ];
+  }, [ isMultiPick(props.parameter), props.value ]);
+
+  const transformValue = useCallback((newValue: string[]) => {
+    if (isMultiPick(props.parameter)) {
+      return toMultiValueString(newValue);
+    } else {
+      return newValue.length === 0
+        ? ''
+        : newValue[0]
+    }
+  }, [ isMultiPick(props.parameter) ]);
+
+  const onChange = useCallback((newValue: string[]) => {
+    props.onParamValueChange(transformValue(newValue));
+  }, [ props.onParamValueChange, transformValue ]);
+
+  return {
+    selectedValues,
+    onChange
+  };
+}
+
 function usePreferredValues(parameter: EnumParam, selectedValues: string[]) {
   const [ preferredOrganisms ] = usePreferredOrganismsState();
   const preferredSpecies = usePreferredSpecies();
@@ -183,6 +198,24 @@ function usePreferredValues(parameter: EnumParam, selectedValues: string[]) {
   );
 
   return preferredValues;
+}
+
+function useRestrictSelectedValuesOnToggle(
+  selectedValues: string[],
+  onChange: (newValue: string[]) => void,
+  preferredValues: Set<string>
+) {
+  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
+
+  useEffect(() => {
+    if (preferredOrganismsEnabled) {
+      const filteredSelectedValues = selectedValues.filter(selectedValue => preferredValues.has(selectedValue));
+
+      if (filteredSelectedValues.length !== selectedValues.length) {
+        onChange(filteredSelectedValues);
+      }
+    }
+  }, [ preferredOrganismsEnabled ]);
 }
 
 function isOrganismParamProps<S = void>(props: Props<Parameter, S>): props is Props<EnumParam, S> {
