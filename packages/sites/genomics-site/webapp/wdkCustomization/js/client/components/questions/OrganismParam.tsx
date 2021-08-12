@@ -163,7 +163,7 @@ function useParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: st
   );
 }
 
-function usePreferredValues(parameter: TreeBoxEnumParam, selectedValues: string[]) {
+function usePreferredValues(parameter: EnumParam, selectedValues: string[]) {
   const [ preferredOrganisms ] = usePreferredOrganismsState();
   const preferredSpecies = usePreferredSpecies();
 
@@ -206,13 +206,15 @@ function findPreferredValues(
   preferredOrganismValues: Set<string>,
   preferredSpecies: Set<string>,
   selectedValues: string[],
-  vocabRoot: TreeBoxVocabNode,
+  vocabulary: EnumParam['vocabulary'],
   isSearchPage: boolean,
   preferenceType: 'organism' | 'species'
 ) {
   const basePreferredValues = preferenceType === 'organism'
     ? preferredOrganismValues
-    : findPreferredSpeciesValues(vocabRoot, preferredSpecies);
+    : Array.isArray(vocabulary)
+    ? preferredSpecies
+    : findPreferredSpeciesValues(vocabulary, preferredSpecies);
 
   return isSearchPage
     ? basePreferredValues
