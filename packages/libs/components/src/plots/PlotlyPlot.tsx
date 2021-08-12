@@ -133,6 +133,7 @@ export default function PlotlyPlot<T>(
       displayLegend,
       legendTitle,
       title,
+      colorPalette,
     ]
   );
 
