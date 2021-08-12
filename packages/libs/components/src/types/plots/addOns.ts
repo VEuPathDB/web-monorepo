@@ -102,6 +102,7 @@ export type AvailableUnitsAddon =
 export type ColorPaletteAddon = {
   colorPalette?: string[];
 };
+/** Based on [Tol's muted colormap](https://personal.sron.nl/~pault/) */
 export const ColorPaletteDefault: string[] = [
   'rgb(136,34,85)',
   'rgb(136,204,238)',
