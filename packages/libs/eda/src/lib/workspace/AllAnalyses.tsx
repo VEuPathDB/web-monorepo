@@ -166,10 +166,10 @@ export function AllAnalyses(props: Props) {
             </div>
           </div>
         ),
-        deriveRowClassName: (row: Analysis) => {
-          return isPinnedAnalysis(row.id) ? 'pinned' : 'not-pinned';
+        deriveRowClassName: ({ analysis }: AnalysisAndDataset) => {
+          return isPinnedAnalysis(analysis.id) ? 'pinned' : 'not-pinned';
         },
-        isRowSelected: (analysis: Analysis) =>
+        isRowSelected: ({ analysis }: AnalysisAndDataset) =>
           selectedAnalyses.has(analysis.id),
       },
       actions: [
@@ -238,28 +238,28 @@ export function AllAnalyses(props: Props) {
           console.log({ column, direction });
           setTableSort([column.key, direction]);
         },
-        onRowSelect: (analysis: Analysis) =>
+        onRowSelect: ({ analysis }: AnalysisAndDataset) =>
           setSelectedAnalyses((set) => {
             const newSet = new Set(set);
             newSet.add(analysis.id);
             return newSet;
           }),
-        onRowDeselect: (analysis: Analysis) =>
+        onRowDeselect: ({ analysis }: AnalysisAndDataset) =>
           setSelectedAnalyses((set) => {
             const newSet = new Set(set);
             newSet.delete(analysis.id);
             return newSet;
           }),
-        onMultipleRowSelect: (analyses: Analysis[]) =>
+        onMultipleRowSelect: (entries: AnalysisAndDataset[]) =>
           setSelectedAnalyses((set) => {
             const newSet = new Set(set);
-            for (const analysis of analyses) newSet.add(analysis.id);
+            for (const entry of entries) newSet.add(entry.analysis.id);
             return newSet;
           }),
-        onMultipleRowDeselect: (analyses: Analysis[]) =>
+        onMultipleRowDeselect: (entries: AnalysisAndDataset[]) =>
           setSelectedAnalyses((set) => {
             const newSet = new Set(set);
-            for (const analysis of analyses) newSet.delete(analysis.id);
+            for (const entry of entries) newSet.delete(entry.analysis.id);
             return newSet;
           }),
       },
@@ -373,7 +373,6 @@ export function AllAnalyses(props: Props) {
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
         <h1>My Analyses</h1>
-        {(loading || datasets == null) && <Loading />}
         {error && <ContentError>{error}</ContentError>}
         {analyses && datasets && (
           <Mesa.Mesa state={tableState}>
@@ -397,6 +396,7 @@ export function AllAnalyses(props: Props) {
                 {analyses.length} analyses
               </span>
             </div>
+            {(loading || datasets == null) && <Loading />}
           </Mesa.Mesa>
         )}
       </div>
