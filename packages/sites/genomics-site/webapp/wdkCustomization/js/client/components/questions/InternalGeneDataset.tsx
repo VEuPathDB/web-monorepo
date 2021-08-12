@@ -24,6 +24,8 @@ import { usePreferredOrganismsState, usePreferredOrganismsEnabledState } from '@
 
 import { isPreferredDataset } from '../../util/preferredOrganisms';
 
+import { OrganismPreferencesWarning } from '../common/OrganismPreferencesWarning';
+
 import './InternalGeneDataset.scss';
 
 const cx = makeClassNameHelper('wdk-InternalGeneDatasetForm');
@@ -183,7 +185,12 @@ function InternalGeneDatasetContent(props: Props) {
           />
           <InternalGeneDatasetTable
             searchBoxHeader="Filter Data Sets:"
-            emptyResultMessage=""
+            emptyResultMessage={
+              <OrganismPreferencesWarning
+                action="use this page"
+                explanation="Your current preferences exclude all organisms used in this page's searches."
+              /> as any
+            }
             showCount={false}
             rows={
               showingOneRecord || preferredOrganismsEnabled
