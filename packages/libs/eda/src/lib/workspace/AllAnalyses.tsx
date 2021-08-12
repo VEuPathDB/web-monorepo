@@ -1,3 +1,9 @@
+import { orderBy } from 'lodash';
+import Path from 'path';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useRouteMatch } from 'react-router';
+import { Link, useHistory } from 'react-router-dom';
+
 import {
   Button,
   Checkbox,
@@ -6,6 +12,7 @@ import {
   Icon,
   makeStyles,
   Switch,
+  TextField,
   ThemeProvider,
   Tooltip,
 } from '@material-ui/core';
@@ -14,11 +21,8 @@ import { ContentError } from '@veupathdb/wdk-client/lib/Components/PageStatus/Co
 import { useSessionBackedState } from '@veupathdb/wdk-client/lib/Hooks/SessionBackedState';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { confirm } from '@veupathdb/wdk-client/lib/Utils/Platform';
-import { orderBy } from 'lodash';
-import Path from 'path';
-import React, { useCallback, useMemo, useState } from 'react';
-import { useRouteMatch } from 'react-router';
-import { Link, useHistory } from 'react-router-dom';
+import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
+
 import {
   Analysis,
   AnalysisClient,
@@ -27,6 +31,16 @@ import {
   usePinnedAnalyses,
 } from '../core';
 import { workspaceTheme } from '../core/components/workspaceTheme';
+
+interface AnalysisAndDataset {
+  analysis: Analysis;
+  dataset?: RecordInstance;
+}
+
+interface Props {
+  analysisClient: AnalysisClient;
+  subsettingClient: SubsettingClient;
+}
 
 const useStyles = makeStyles({
   root: {
@@ -40,30 +54,16 @@ const useStyles = makeStyles({
   },
 });
 
-interface Props {
-  analysisClient: AnalysisClient;
-  subsettingClient: SubsettingClient;
-}
-
 export function AllAnalyses(props: Props) {
   const { analysisClient } = props;
   const { url } = useRouteMatch();
+  const history = useHistory();
+  const classes = useStyles();
+
   const [selectedAnalyses, setSelectedAnalyses] = useState<Set<string>>(
     new Set()
   );
-  const classes = useStyles();
-
-  const {
-    pinnedAnalyses,
-    isPinnedAnalysis,
-    addPinnedAnalysis,
-    removePinnedAnalysis,
-  } = usePinnedAnalyses(analysisClient);
-
-  const { analyses, deleteAnalyses, loading, error } = useAnalysisList(
-    analysisClient
-  );
-
+  const [searchText, setSearchText] = useState('');
   const [sortPinned, setSortPinned] = useSessionBackedState<boolean>(
     true,
     'eda::allAnalysesPinned',
@@ -75,41 +75,58 @@ export function AllAnalyses(props: Props) {
     [string, 'asc' | 'desc']
   >(['modified', 'desc'], 'eda::allAnalysesSort', JSON.stringify, JSON.parse);
 
-  // const [sortPinned, setSortPinned] = useState(true);
+  const {
+    pinnedAnalyses,
+    isPinnedAnalysis,
+    addPinnedAnalysis,
+    removePinnedAnalysis,
+  } = usePinnedAnalyses(analysisClient);
 
-  const datasets = useWdkService(
-    (wdkService) =>
-      wdkService.getAnswerJson(
-        {
-          searchName: 'Studies',
-          searchConfig: {
-            parameters: {},
-          },
-        },
-        {
-          attributes: ['dataset_id'],
-        }
-      ),
-    []
+  const datasets = useDatasets();
+
+  const { analyses, deleteAnalyses, loading, error } = useAnalysisList(
+    analysisClient
   );
-  const history = useHistory();
+
+  const analysesAndDatasets = useMemo(
+    () =>
+      analyses?.map((analysis) => {
+        const dataset = datasets?.records.find(
+          (d) => d.id[0].value === analysis.studyId
+        );
+        return {
+          analysis,
+          dataset,
+        };
+      }),
+    [analyses, datasets]
+  );
+
+  const filteredAnalysesAndDatasets = useMemo(() => {
+    if (!searchText) return analysesAndDatasets;
+    return analysesAndDatasets?.filter(
+      ({ analysis, dataset }) =>
+        analysis.name.toLowerCase().includes(searchText) ||
+        dataset?.displayName.toLowerCase().includes(searchText)
+    );
+  }, [searchText, analysesAndDatasets]);
 
   const removeUnpinned = useCallback(() => {
-    if (analyses == null) return;
-    const idsToRemove = analyses
-      .map((analysis) => analysis.id)
+    if (filteredAnalysesAndDatasets == null) return;
+    const idsToRemove = filteredAnalysesAndDatasets
+      .map(({ analysis }) => analysis.id)
       .filter((id) => !isPinnedAnalysis(id));
     deleteAnalyses(idsToRemove);
-  }, [analyses, deleteAnalyses, isPinnedAnalysis]);
+  }, [filteredAnalysesAndDatasets, deleteAnalyses, isPinnedAnalysis]);
 
   const tableState = useMemo(
     () => ({
       rows: sortPinned
         ? orderBy(
-            analyses,
+            filteredAnalysesAndDatasets,
             [
-              (analysis) => (isPinnedAnalysis(analysis.id) ? 0 : 1),
-              (analysis) => {
+              ({ analysis }) => (isPinnedAnalysis(analysis.id) ? 0 : 1),
+              ({ analysis }) => {
                 const columnKey = tableSort[0];
                 switch (columnKey) {
                   case 'study':
@@ -129,7 +146,7 @@ export function AllAnalyses(props: Props) {
             ],
             ['asc', tableSort[1]]
           )
-        : analyses,
+        : filteredAnalysesAndDatasets,
       options: {
         renderEmptyState: () => (
           <div
@@ -142,7 +159,10 @@ export function AllAnalyses(props: Props) {
             }}
           >
             <div>
-              You do not have any analyses. Get started by choosing a study.
+              {analyses == null
+                ? 'You do not have any analyses. Get started by choosing a study'
+                : 'There are no analyses that match your search'}
+              .
             </div>
           </div>
         ),
@@ -254,11 +274,11 @@ export function AllAnalyses(props: Props) {
           key: 'name',
           name: 'Analysis',
           sortable: true,
-          renderCell: (data: { row: Analysis }) => (
+          renderCell: (data: { row: AnalysisAndDataset }) => (
             <>
               <Tooltip
                 title={
-                  isPinnedAnalysis(data.row.id)
+                  isPinnedAnalysis(data.row.analysis.id)
                     ? 'Remove from pinned analyses'
                     : 'Add to pinned analyses'
                 }
@@ -276,10 +296,11 @@ export function AllAnalyses(props: Props) {
                       checkedIcon={
                         <Icon color="primary" className="fa fa-thumb-tack" />
                       }
-                      checked={isPinnedAnalysis(data.row.id)}
+                      checked={isPinnedAnalysis(data.row.analysis.id)}
                       onChange={(e) => {
-                        if (e.target.checked) addPinnedAnalysis(data.row.id);
-                        else removePinnedAnalysis(data.row.id);
+                        if (e.target.checked)
+                          addPinnedAnalysis(data.row.analysis.id);
+                        else removePinnedAnalysis(data.row.analysis.id);
                       }}
                     />
                   }
@@ -289,11 +310,11 @@ export function AllAnalyses(props: Props) {
               <Link
                 to={Path.join(
                   history.location.pathname,
-                  data.row.studyId,
-                  data.row.id
+                  data.row.analysis.studyId,
+                  data.row.analysis.id
                 )}
               >
-                {data.row.name}
+                {data.row.analysis.name}
               </Link>
             </>
           ),
@@ -302,10 +323,8 @@ export function AllAnalyses(props: Props) {
           key: 'study',
           name: 'Study',
           sortable: true,
-          renderCell: (data: { row: Analysis }) => {
-            const dataset = datasets?.records.find(
-              (d) => d.id[0].value === data.row.studyId
-            );
+          renderCell: (data: { row: AnalysisAndDataset }) => {
+            const { dataset } = data.row;
             if (dataset == null) return 'Unknown study';
             return (
               <Link to={`${url}/${dataset.id[0].value}`}>
@@ -318,33 +337,34 @@ export function AllAnalyses(props: Props) {
           key: 'created',
           name: 'Created',
           sortable: true,
-          renderCell: (data: { value: string }) =>
-            new Date(data.value).toUTCString().slice(5),
+          renderCell: (data: { row: AnalysisAndDataset }) =>
+            new Date(data.row.analysis.created).toUTCString().slice(5),
         },
         {
           key: 'modified',
           name: 'Modified',
           sortable: true,
-          renderCell: (data: { value: string }) =>
-            new Date(data.value).toUTCString().slice(5),
+          renderCell: (data: { row: AnalysisAndDataset }) =>
+            new Date(data.row.analysis.modified).toUTCString().slice(5),
         },
       ],
     }),
     [
-      addPinnedAnalysis,
-      analyses,
-      datasets?.records,
-      deleteAnalyses,
-      history.location.pathname,
-      isPinnedAnalysis,
-      pinnedAnalyses.length,
-      removePinnedAnalysis,
-      removeUnpinned,
+      sortPinned,
+      filteredAnalysesAndDatasets,
+      tableSort,
       selectedAnalyses,
+      pinnedAnalyses.length,
+      isPinnedAnalysis,
+      datasets?.records,
+      analyses,
+      deleteAnalyses,
+      removeUnpinned,
       setSortPinned,
       setTableSort,
-      sortPinned,
-      tableSort,
+      history.location.pathname,
+      addPinnedAnalysis,
+      removePinnedAnalysis,
       url,
     ]
   );
@@ -353,10 +373,51 @@ export function AllAnalyses(props: Props) {
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
         <h1>My Analyses</h1>
-        {loading && <Loading />}
+        {(loading || datasets == null) && <Loading />}
         {error && <ContentError>{error}</ContentError>}
-        {analyses && <Mesa.Mesa state={tableState} />}
+        {analyses && datasets && (
+          <Mesa.Mesa state={tableState}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1ex',
+              }}
+            >
+              <TextField
+                variant="outlined"
+                size="small"
+                label="Search analyses"
+                inputProps={{ size: 50 }}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
+              <span>
+                Showing {filteredAnalysesAndDatasets?.length} of{' '}
+                {analyses.length} analyses
+              </span>
+            </div>
+          </Mesa.Mesa>
+        )}
       </div>
     </ThemeProvider>
+  );
+}
+
+function useDatasets() {
+  return useWdkService(
+    (wdkService) =>
+      wdkService.getAnswerJson(
+        {
+          searchName: 'Studies',
+          searchConfig: {
+            parameters: {},
+          },
+        },
+        {
+          attributes: ['dataset_id'],
+        }
+      ),
+    []
   );
 }
