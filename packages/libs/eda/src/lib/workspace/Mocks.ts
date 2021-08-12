@@ -2,6 +2,7 @@ import { isRight } from 'fp-ts/lib/Either';
 import { PathReporter } from 'io-ts/lib/PathReporter';
 import localforage from 'localforage';
 import { Analysis, NewAnalysis, AnalysisClient } from '../core';
+import { max } from 'lodash';
 
 const localStore = localforage.createInstance({
   name: 'mockAnalysisStore',
@@ -16,7 +17,8 @@ export const mockAnalysisStore: AnalysisClient = {
     return records;
   },
   async createAnalysis(newAnalysis: NewAnalysis) {
-    const id = String((await localStore.keys()).length + 2);
+    const usedIds = await localStore.keys();
+    const id = String((max(usedIds.map((x) => Number(x))) ?? 0) + 1);
     const now = new Date().toISOString();
     await localStore.setItem<Analysis>(id, {
       ...newAnalysis,
