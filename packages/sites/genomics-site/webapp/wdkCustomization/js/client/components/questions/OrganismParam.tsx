@@ -1,7 +1,7 @@
 import React, { Suspense, useCallback, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router';
 
-import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Props as CheckboxTreeProps } from '@veupathdb/wdk-client/lib/Components/CheckboxTree/CheckboxTree';
 
 import { pruneDescendantNodes } from '@veupathdb/wdk-client/lib/Utils/TreeUtils';
@@ -32,7 +32,7 @@ import {
 } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 import { useReferenceStrains } from '@veupathdb/preferred-organisms/lib/hooks/referenceStrains';
 
-import './OrganismParam.scss';
+import { OrganismPreferencesWarning } from '../common/OrganismPreferencesWarning';
 
 const ORGANISM_PROPERTIES_KEY = 'organismProperties';
 
@@ -103,14 +103,10 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
   }), [ renderNode, searchPredicate ]);
 
   return paramWithPrunedVocab.vocabulary.children.length === 0
-    ? <p className="EmptyTree">
-        <div className="Instructions">
-          To use this search, please first <Link to="/preferred-organisms">adjust My Organism Preferences</Link>.
-        </div>
-        <div className="Explanation">
-          (Your current preferences exclude all organisms used in this search.)
-        </div>
-      </p>
+    ? <OrganismPreferencesWarning
+        action="use this search"
+        explanation="Your current preferences exclude all organisms used in this search."
+      />
     : <TreeBoxEnumParamComponent
         {...props}
         selectedValues={selectedValues}
