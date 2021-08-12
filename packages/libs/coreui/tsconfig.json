@@ -1,0 +1,6 @@
+{
+  "extends": "@veupathdb/tsconfig/tsconfig",
+  "compilerOptions": {
+    "jsxImportSource": "@emotion/react"
+  }
+}

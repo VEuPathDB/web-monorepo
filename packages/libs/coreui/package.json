@@ -1,0 +1,51 @@
+{
+  "name": "@veupathdb/core-components",
+  "version": "0.1.0",
+  "description": "Core components and style definitions for VEuPath applications.",
+  "main": "dist/index.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "build": "rm -rf dist && NODE_ENV=production babel src --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__,src/stories/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VEuPathDB/core-components.git"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/VEuPathDB/core-components/issues"
+  },
+  "homepage": "https://github.com/VEuPathDB/core-components#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.14.8",
+    "@babel/preset-react": "^7.14.5",
+    "@emotion/babel-plugin": "^11.3.0",
+    "@emotion/babel-preset-css-prop": "^11.2.0",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
+    "@storybook/addon-actions": "^6.3.4",
+    "@storybook/addon-essentials": "^6.3.4",
+    "@storybook/addon-links": "^6.3.4",
+    "@storybook/react": "^6.3.4",
+    "@veupathdb/tsconfig": "^1.0.1",
+    "babel-loader": "^8.2.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "typescript": "^4.3.5"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "typescript": "^4.3.5",
+    "@emotion/babel-preset-css-prop": "^11.2.0",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0"
+  }
+}
