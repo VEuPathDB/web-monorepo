@@ -8,6 +8,7 @@ import {
   OpacityDefault,
   OrientationAddon,
   OrientationDefault,
+  ColorPaletteAddon,
 } from '../types/plots';
 import { NumberOrDateRange } from '../types/general';
 import { uniq, flatMap, at } from 'lodash';
@@ -15,7 +16,8 @@ import { uniq, flatMap, at } from 'lodash';
 export interface BoxplotProps
   extends PlotProps<BoxplotData>,
     OrientationAddon,
-    OpacityAddon {
+    OpacityAddon,
+    ColorPaletteAddon {
   /** label for independent axis */
   independentAxisLabel?: string;
   /** label for the (typically) y-axis, e.g. Wealth */
