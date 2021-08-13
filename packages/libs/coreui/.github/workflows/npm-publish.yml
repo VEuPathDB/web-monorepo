@@ -18,6 +18,7 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: ls -lart
+      - run: ls -lart dist
 
   publish-npm:
     needs: build
@@ -28,6 +29,7 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
+      - run: ls -lart dist
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
