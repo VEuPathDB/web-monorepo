@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 
-export const primaryFont = css({ fontFamily: "'Poppins', sans-serif" });
+export const primaryFont = css({ fontFamily: "'Inter', sans-serif" });
 export const secondaryFont = css({ fontFamily: 'sans-serif' });
 
 export const h1 = css([primaryFont, { fontSize: '4.209rem', fontWeight: 500 }]);

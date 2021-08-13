@@ -1,5 +1,5 @@
-import H1 from './components/H1';
-import H2 from './components/H2';
-import H3 from './components/H3';
+export { default as H1 } from './components/H1';
+export { default as H2 } from './components/H2';
+export { default as H3 } from './components/H3';
 
-export { H1, H2, H3 };
+export { default as styles } from './styles';
