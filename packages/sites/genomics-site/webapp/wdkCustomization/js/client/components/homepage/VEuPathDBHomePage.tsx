@@ -466,7 +466,7 @@ const useHeaderMenuItems = (
           key: 'pubcrawler',
           display: 'PubMed and Entrez',
           type: 'externalLink',
-          url: `/pubcrawler/${projectId}`,
+          url: `/pubcrawler/${displayName}`,
           target: '_blank'
         },
         { 
