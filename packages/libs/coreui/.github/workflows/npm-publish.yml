@@ -38,6 +38,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: distFolder
+          path: dist
       - run: ls -lart dist
       - run: npm publish --access public
         env:
