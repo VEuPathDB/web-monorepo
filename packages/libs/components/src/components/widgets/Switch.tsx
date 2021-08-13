@@ -17,6 +17,8 @@ export type SwitchProps = {
   color?: string;
   /** Additional styles to apply to the widget container. */
   containerStyles?: React.CSSProperties;
+  /** If true, disable interaction with the switch */
+  disabled?: boolean;
 };
 
 /**
@@ -30,6 +32,7 @@ export default function Switch({
   onStateChange,
   color = LIGHT_BLUE,
   containerStyles = {},
+  disabled = false,
 }: SwitchProps) {
   const [focused, setFocused] = useState(false);
 
@@ -49,7 +52,7 @@ export default function Switch({
         alignItems: 'center',
         ...containerStyles,
       }}
-      onMouseOver={() => setFocused(true)}
+      onMouseOver={() => setFocused(true && !disabled)}
       onMouseOut={() => setFocused(false)}
     >
       {label && (
@@ -69,6 +72,7 @@ export default function Switch({
           onChange={(event: any) => onStateChange(event.target.checked)}
           size="small"
           color="primary"
+          disabled={disabled}
         />
       </ThemeProvider>
     </div>
