@@ -1,3 +1,5 @@
-import SectionHeader from './components/SectionHeader';
+import H1 from './components/H1';
+import H2 from './components/H2';
+import H3 from './components/H3';
 
-export { SectionHeader };
+export { H1, H2, H3 };

@@ -1,6 +1,6 @@
 {
   "name": "@veupathdb/core-components",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Core components and style definitions for VEuPath applications.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "build": "rm -rf dist && NODE_ENV=production babel src --out-dir dist --copy-files --extensions \".ts,.tsx\" --ignore __tests__,spec.js,test.js,__snapshots__,src/stories/*"
+    "build": "rm -rf dist && NODE_ENV=production babel src --out-dir dist --copy-files --extensions \".ts,.tsx\" --ignore __tests__,spec.js,test.js,__snapshots__,src/stories/*",
+    "tsc": "tsc"
   },
   "repository": {
     "type": "git",

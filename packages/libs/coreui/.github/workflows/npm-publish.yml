@@ -17,8 +17,7 @@ jobs:
           node-version: 14
       - run: npm install
       - run: npm run build
-      - run: ls -lart
-      - run: ls -lart dist
+      - run: npm run tsc
       - name: Store Dist Folder
         uses: actions/upload-artifact@v2
         with:
