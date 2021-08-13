@@ -19,6 +19,11 @@ jobs:
       - run: npm run build
       - run: ls -lart
       - run: ls -lart dist
+      - name: Store Dist Folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: distFolder
+          path: dist
 
   publish-npm:
     needs: build
@@ -29,6 +34,10 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
+      - name: Retrieve Dist Folder
+        uses: actions/download-artifact@v2
+        with:
+          name: distFolder
       - run: ls -lart dist
       - run: npm publish --access public
         env:
