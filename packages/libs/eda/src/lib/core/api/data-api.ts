@@ -80,6 +80,7 @@ export interface HistogramRequestParams {
       xMin: string;
       xMax: string;
     };
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 

@@ -90,6 +90,7 @@ const HistogramConfig = t.intersection([
     facetVariable: VariableDescriptor,
     binWidth: t.number,
     binWidthTimeUnit: t.string, // TO DO: constrain to weeks, months etc like Unit from date-arithmetic and/or R
+    showMissingness: t.boolean,
   }),
 ]);
 
@@ -193,6 +194,15 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
+  const onShowMissingnessChange = useCallback(
+    (newState?: boolean) => {
+      updateVizConfig({
+        showMissingness: newState,
+      });
+    },
+    [updateVizConfig]
+  );
+
   const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
     const { entity, variable } =
       findEntityAndVariable(entities, vizConfig.xAxisVariable) ?? {};
@@ -230,7 +240,8 @@ function HistogramViz(props: Props) {
       const response = dataClient.getHistogram(computation.type, params);
       return reorderData(
         histogramResponseToData(await response, xAxisVariable.type),
-        overlayVariable?.vocabulary
+        overlayVariable?.vocabulary,
+        vizConfig.showMissingness ?? false
       );
     }, [
       vizConfig.xAxisVariable,
@@ -239,6 +250,7 @@ function HistogramViz(props: Props) {
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.valueSpec,
+      vizConfig.showMissingness,
       studyId,
       filters,
       dataClient,
@@ -257,10 +269,12 @@ function HistogramViz(props: Props) {
               {
                 name: 'xAxisVariable',
                 label: 'Main',
+                role: 'primary',
               },
               {
                 name: 'overlayVariable',
                 label: 'Overlay (optional)',
+                role: 'stratification',
               },
             ]}
             entities={entities}
@@ -273,6 +287,13 @@ function HistogramViz(props: Props) {
             dataElementDependencyOrder={dataElementDependencyOrder}
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
+            showMissingness={vizConfig.showMissingness}
+            onShowMissingnessChange={
+              overlayVariable /* || facetVariable */
+                ? onShowMissingnessChange
+                : undefined
+            }
+            outputEntity={outputEntity}
           />
         </div>
       )}
@@ -540,6 +561,7 @@ function getRequestParams(
     valueSpec,
     overlayVariable,
     xAxisVariable,
+    showMissingness,
   } = vizConfig;
 
   const binSpec = binWidth
@@ -562,19 +584,26 @@ function getRequestParams(
       overlayVariable,
       valueSpec,
       ...binSpec,
+      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
     },
   } as HistogramRequestParams;
 }
 
 function reorderData(
   data: HistogramDataWithCoverageStatistics,
-  overlayVocabulary: string[] = []
+  overlayVocabulary: string[] = [],
+  includeMissingData: boolean
 ) {
   if (overlayVocabulary.length > 0) {
+    // manually add an extra 'No data' category on to the end of the array.
+    // TO DO: 'No data' should perhaps be an app-wide constant
+    const vocabulary = includeMissingData
+      ? [...overlayVocabulary, 'No data']
+      : overlayVocabulary;
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
     const overlayValues = data.series.map((series) => series.name);
-    const overlayIndices = overlayVocabulary.map((name) =>
+    const overlayIndices = vocabulary.map((name) =>
       overlayValues.indexOf(name)
     );
     return {
@@ -584,7 +613,7 @@ function reorderData(
         (i, j) =>
           data.series[i] ?? {
             // if there is no series, insert a dummy series
-            name: overlayVocabulary[j],
+            name: vocabulary[j],
             bins: [],
           }
       ),
