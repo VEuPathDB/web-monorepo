@@ -68,7 +68,10 @@ function variableConstraintPredicate(
     ((constraint.allowedShapes == null ||
       constraint.allowedShapes.includes(variable.dataShape)) &&
       (constraint.allowedTypes == null ||
-        constraint.allowedTypes.includes(variable.type)))
+        constraint.allowedTypes.includes(variable.type)) &&
+      (constraint.allowMultiValued === undefined ||
+        constraint.allowMultiValued === true ||
+        !variable.isMultiValued))
   );
 }
 

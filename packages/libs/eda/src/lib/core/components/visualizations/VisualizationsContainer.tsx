@@ -266,6 +266,8 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const vizType = viz && visualizationTypes[viz.type];
   const overview = visualizationsOverview.find((v) => v.name === viz?.type);
   const constraints = overview?.dataElementConstraints;
+  console.log(constraints);
+  // const constraints = [...overview?.dataElementConstraints, ];
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
   if (viz == null) return <div>Visualization not found.</div>;
   if (computation == null) return <div>Computation not found.</div>;
