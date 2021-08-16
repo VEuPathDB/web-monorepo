@@ -13,6 +13,7 @@ import { makeClassNameHelper } from '@veupathdb/wdk-client/lib/Utils/ComponentUt
 import { Filter } from '../../types/filter';
 import {
   Computation,
+  DataElementConstraint,
   Visualization,
   VisualizationOverview,
 } from '../../types/visualization';
@@ -265,7 +266,14 @@ function FullScreenVisualization(props: Props & { id: string }) {
   const computation = computations.find((a) => a.id === computationId);
   const vizType = viz && visualizationTypes[viz.type];
   const overview = visualizationsOverview.find((v) => v.name === viz?.type);
-  const constraints = overview?.dataElementConstraints;
+  const constraints =
+    overview?.dataElementConstraints &&
+    overview.dataElementConstraints.map((constraint) =>
+      Object.keys(constraint).reduce((newConstraint: any, key) => {
+        newConstraint[key] = { ...constraint[key], allowMultiValued: false };
+        return newConstraint;
+      }, {})
+    );
   console.log(constraints);
   // const constraints = [...overview?.dataElementConstraints, ];
   const dataElementDependencyOrder = overview?.dataElementDependencyOrder;
