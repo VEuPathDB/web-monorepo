@@ -24,7 +24,7 @@ export function OrganismPreferencesWarning({
   const togglePreferredOrganisms = useTogglePreferredOrganisms();
 
   return (
-    <p className={className}>
+    <div className={className}>
       <div className="Instructions">
         To {action}, please first{' '}
         <button type="button" className="link" onClick={togglePreferredOrganisms}>
@@ -35,6 +35,6 @@ export function OrganismPreferencesWarning({
       <div className="Explanation">
         ({explanation})
       </div>
-    </p>
+    </div>
   );
 }
