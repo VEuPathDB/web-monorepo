@@ -288,11 +288,7 @@ function HistogramViz(props: Props) {
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
             showMissingness={vizConfig.showMissingness}
-            onShowMissingnessChange={
-              overlayVariable /* || facetVariable */
-                ? onShowMissingnessChange
-                : undefined
-            }
+            onShowMissingnessChange={onShowMissingnessChange}
             outputEntity={outputEntity}
           />
         </div>

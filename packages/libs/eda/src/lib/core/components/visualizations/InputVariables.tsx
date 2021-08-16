@@ -193,6 +193,16 @@ export function InputVariables(props: Props) {
     [dataElementDependencyOrder, entities, flattenedConstraints, inputs, values]
   );
 
+  const stratificationIsActive: boolean = useMemo(() => {
+    // are any of the stratification inputs currently set to a variable?
+    // e.g. values['overlayVariable'] is truthy
+    return (
+      inputs.filter(
+        (input) => input.role === 'stratification' && values[input.name]
+      ).length > 0
+    );
+  }, [inputs, values]);
+
   return (
     <div>
       <div className={classes.inputs}>
@@ -228,7 +238,7 @@ export function InputVariables(props: Props) {
                 } with no data for selected stratification variable(s)`}
                 state={showMissingness}
                 onStateChange={onShowMissingnessChange}
-                disabled={false /* to be decided: disable or hide completely */}
+                disabled={!stratificationIsActive}
               />
             </div>
           )}
