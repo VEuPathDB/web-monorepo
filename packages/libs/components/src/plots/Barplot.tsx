@@ -68,6 +68,9 @@ export default function Barplot({
             type: 'bar',
             text: showValues ? el.value : undefined,
             textposition: showValues ? 'auto' : undefined,
+            marker: {
+              ...(el.color ? { color: el.color } : {}),
+            },
           };
         } else {
           return {};
