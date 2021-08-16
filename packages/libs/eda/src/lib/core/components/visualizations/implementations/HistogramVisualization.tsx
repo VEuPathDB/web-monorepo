@@ -39,6 +39,7 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import { vocabularyWithMissingData } from '../../../utils/analysis';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -238,10 +239,13 @@ function HistogramViz(props: Props) {
         vizConfig
       );
       const response = dataClient.getHistogram(computation.type, params);
+      console.log(overlayVariable?.vocabulary);
       return reorderData(
         histogramResponseToData(await response, xAxisVariable.type),
-        overlayVariable?.vocabulary,
-        vizConfig.showMissingness ?? false
+        vocabularyWithMissingData(
+          overlayVariable?.vocabulary,
+          vizConfig.showMissingness
+        )
       );
     }, [
       vizConfig.xAxisVariable,
@@ -587,19 +591,14 @@ function getRequestParams(
 
 function reorderData(
   data: HistogramDataWithCoverageStatistics,
-  overlayVocabulary: string[] = [],
-  includeMissingData: boolean
+  overlayVocabulary: string[] = []
 ) {
+  console.log(overlayVocabulary);
   if (overlayVocabulary.length > 0) {
-    // manually add an extra 'No data' category on to the end of the array.
-    // TO DO: 'No data' should perhaps be an app-wide constant
-    const vocabulary = includeMissingData
-      ? [...overlayVocabulary, 'No data']
-      : overlayVocabulary;
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
     const overlayValues = data.series.map((series) => series.name);
-    const overlayIndices = vocabulary.map((name) =>
+    const overlayIndices = overlayVocabulary.map((name) =>
       overlayValues.indexOf(name)
     );
     return {
@@ -609,7 +608,7 @@ function reorderData(
         (i, j) =>
           data.series[i] ?? {
             // if there is no series, insert a dummy series
-            name: vocabulary[j],
+            name: overlayVocabulary[j],
             bins: [],
           }
       ),
