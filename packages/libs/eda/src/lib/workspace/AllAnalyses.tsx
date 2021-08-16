@@ -374,7 +374,7 @@ export function AllAnalyses(props: Props) {
       <div className={classes.root}>
         <h1>My Analyses</h1>
         {error && <ContentError>{error}</ContentError>}
-        {analyses && datasets && (
+        {analyses && datasets ? (
           <Mesa.Mesa state={tableState}>
             <div
               style={{
@@ -398,6 +398,8 @@ export function AllAnalyses(props: Props) {
             </div>
             {(loading || datasets == null) && <Loading />}
           </Mesa.Mesa>
+        ) : (
+          <Loading />
         )}
       </div>
     </ThemeProvider>
