@@ -13,12 +13,14 @@ import {
 import { VariableDescriptor } from '../core/types/variable';
 import { EDAWorkspaceHeading } from './EDAWorkspaceHeading';
 import { mockAnalysisStore } from './Mocks';
-import { AnalysisPanel } from './AnalysisPanel';
 import { cx, findFirstVariable } from './Utils';
+import { SavedAnalysis } from './SavedAnalysis';
+import { NewAnalysisPage } from './NewAnalysis';
+import { AnalysisPanel } from './AnalysisPanel';
 
 interface Props {
   studyId: string;
-  analysisId: string;
+  analysisId?: string;
   subsettingServiceUrl: string;
   dataServiceUrl: string;
 }
@@ -29,8 +31,8 @@ export function WorkspaceContainer(props: Props) {
     [props.subsettingServiceUrl]
   );
   const dataClient = useMemo(
-    () => new DataClient({ baseUrl: props.subsettingServiceUrl }),
-    [props.subsettingServiceUrl]
+    () => new DataClient({ baseUrl: props.dataServiceUrl }),
+    [props.dataServiceUrl]
   );
   const makeVariableLink = useCallback(
     (
@@ -69,7 +71,11 @@ export function WorkspaceContainer(props: Props) {
         makeVariableLink={makeVariableLink}
       >
         <EDAWorkspaceHeading />
-        <AnalysisPanel analysisId={props.analysisId} />
+        {props.analysisId == null ? (
+          <NewAnalysisPage />
+        ) : (
+          <SavedAnalysis analysisId={props.analysisId} />
+        )}
       </EDAWorkspaceContainer>
     </RestrictedPage>
   );

@@ -1,7 +1,7 @@
 import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
 import { useCallback, useEffect, useState } from 'react';
 import { useAnalysisClient } from './workspace';
-import { Analysis } from '../types/analysis';
+import { Analysis, NewAnalysis } from '../types/analysis';
 import { usePromise } from './promise';
 
 type Setter<T extends keyof Analysis> = (value: Analysis[T]) => void;
@@ -16,7 +16,7 @@ export enum Status {
 export type AnalysisState = {
   status: Status;
   hasUnsavedChanges: boolean;
-  analysis?: Analysis;
+  analysis?: Analysis | NewAnalysis;
   error?: unknown;
   canUndo: boolean;
   canRedo: boolean;
@@ -28,9 +28,9 @@ export type AnalysisState = {
   setDerivedVariables: Setter<'derivedVariables'>;
   setStarredVariables: Setter<'starredVariables'>;
   setVariableUISettings: Setter<'variableUISettings'>;
-  copyAnalysis: () => Promise<{ id: string }>;
-  deleteAnalysis: () => Promise<void>;
   saveAnalysis: () => Promise<void>;
+  copyAnalysis?: () => Promise<{ id: string }>;
+  deleteAnalysis?: () => Promise<void>;
 };
 
 export function useAnalysis(analysisId: string): AnalysisState {

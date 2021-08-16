@@ -30,3 +30,16 @@ export const Analysis = t.intersection([
     modified: t.string,
   }),
 ]);
+
+export function makeNewAnalysis(studyId: string): NewAnalysis {
+  return {
+    name: 'Unnamed Analysis',
+    studyId,
+    filters: [],
+    starredVariables: [],
+    derivedVariables: [],
+    visualizations: [],
+    computations: [],
+    variableUISettings: {},
+  };
+}
