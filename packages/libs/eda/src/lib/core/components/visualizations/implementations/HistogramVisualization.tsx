@@ -239,7 +239,6 @@ function HistogramViz(props: Props) {
         vizConfig
       );
       const response = dataClient.getHistogram(computation.type, params);
-      console.log(overlayVariable?.vocabulary);
       return reorderData(
         histogramResponseToData(await response, xAxisVariable.type),
         vocabularyWithMissingData(
@@ -593,7 +592,6 @@ function reorderData(
   data: HistogramDataWithCoverageStatistics,
   overlayVocabulary: string[] = []
 ) {
-  console.log(overlayVocabulary);
   if (overlayVocabulary.length > 0) {
     // for each value in the overlay vocabulary's correct order
     // find the index in the series where series.name equals that value
