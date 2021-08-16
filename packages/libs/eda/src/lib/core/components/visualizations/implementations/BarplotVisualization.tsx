@@ -34,6 +34,10 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import bar from './selectorIcons/bar.svg';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import {
+  grayOutLastSeries,
+  vocabularyWithMissingData,
+} from '../../../utils/analysis';
 
 export const barplotVisualization: VisualizationType = {
   gridComponent: GridComponent,
@@ -77,6 +81,7 @@ const BarplotConfig = t.intersection([
     xAxisVariable: VariableDescriptor,
     overlayVariable: VariableDescriptor,
     facetVariable: VariableDescriptor,
+    showMissingness: t.boolean,
   }),
 ]);
 
@@ -163,6 +168,15 @@ function BarplotViz(props: Props) {
     [updateVizConfig]
   );
 
+  const onShowMissingnessChange = useCallback(
+    (newState?: boolean) => {
+      updateVizConfig({
+        showMissingness: newState,
+      });
+    },
+    [updateVizConfig]
+  );
+
   const findEntityAndVariable = useFindEntityAndVariable(entities);
   const { variable, entity, overlayVariable } = useMemo(() => {
     const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
@@ -189,10 +203,16 @@ function BarplotViz(props: Props) {
         params as BarplotRequestParams
       );
 
-      return reorderData(
-        barplotResponseToData(await response),
-        variable?.vocabulary,
-        overlayVariable?.vocabulary
+      return grayOutLastSeries(
+        reorderData(
+          barplotResponseToData(await response),
+          variable?.vocabulary,
+          vocabularyWithMissingData(
+            overlayVariable?.vocabulary,
+            vizConfig.showMissingness
+          )
+        ),
+        vizConfig.showMissingness
       );
     }, [
       studyId,
@@ -202,6 +222,7 @@ function BarplotViz(props: Props) {
       vizConfig.overlayVariable,
       vizConfig.facetVariable,
       vizConfig.valueSpec,
+      vizConfig.showMissingness,
       variable,
       overlayVariable,
       computation.type,
@@ -217,10 +238,12 @@ function BarplotViz(props: Props) {
               {
                 name: 'xAxisVariable',
                 label: 'Main',
+                role: 'primary',
               },
               {
                 name: 'overlayVariable',
                 label: 'Overlay (optional)',
+                role: 'stratification',
               },
             ]}
             entities={entities}
@@ -234,6 +257,9 @@ function BarplotViz(props: Props) {
             dataElementDependencyOrder={dataElementDependencyOrder}
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
+            onShowMissingnessChange={onShowMissingnessChange}
+            showMissingness={vizConfig.showMissingness}
+            outputEntity={entity}
           />
         </div>
       )}
@@ -438,6 +464,7 @@ function getRequestParams(
       // valueSpec: manually inputted for now
       valueSpec: vizConfig.valueSpec,
       barMode: 'group', // or 'stack'
+      showMissingness: vizConfig.showMissingness ? 'TRUE' : 'FALSE',
     },
   } as BarplotRequestParams;
 }

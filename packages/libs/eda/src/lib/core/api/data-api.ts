@@ -149,6 +149,7 @@ export interface BarplotRequestParams {
     xAxisVariable: VariableDescriptor;
     // barplot add prop
     overlayVariable?: VariableDescriptor;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 

@@ -39,8 +39,10 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import histogram from './selectorIcons/histogram.svg';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
-import { vocabularyWithMissingData } from '../../../utils/analysis';
-import { gray } from '../colors';
+import {
+  vocabularyWithMissingData,
+  grayOutLastSeries,
+} from '../../../utils/analysis';
 
 type HistogramDataWithCoverageStatistics = HistogramData & CoverageStatistics;
 
@@ -620,16 +622,16 @@ function reorderData(
   }
 }
 
-function grayOutLastSeries(
-  data: HistogramDataWithCoverageStatistics,
-  showMissingness: boolean = false
-) {
-  return {
-    ...data,
-    series: data.series.map((series, index) =>
-      showMissingness && index === data.series.length - 1
-        ? { ...series, color: gray }
-        : series
-    ),
-  };
-}
+//function grayOutLastSeries(
+//  data: HistogramDataWithCoverageStatistics,
+//  showMissingness: boolean = false
+//) {
+//  return {
+//    ...data,
+//    series: data.series.map((series, index) =>
+//      showMissingness && index === data.series.length - 1
+//        ? { ...series, color: gray }
+//        : series
+//    ),
+//  };
+//}
