@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useEffect, useMemo } from 'react';
+import React, { Suspense, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useLocation } from 'react-router';
 
 import { Loading } from '@veupathdb/wdk-client/lib/Components';
@@ -92,11 +92,8 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
     searchPredicate
   }), [ renderNode, searchPredicate ]);
 
-  return paramWithPrunedVocab.vocabulary.children.length === 0
-    ? <OrganismPreferencesWarning
-        action="use this search"
-        explanation="Your current preferences exclude all organisms used in this search."
-      />
+  return hasEmptyVocabularly(paramWithPrunedVocab)
+    ? <EmptyParamWarning />
     : <TreeBoxEnumParamComponent
         {...props}
         selectedValues={selectedValues}
@@ -108,7 +105,13 @@ function TreeBoxOrganismEnumParam(props: Props<TreeBoxEnumParam, State>) {
 }
 
 function FlatOrganismEnumParam(props: Props<FlatEnumParam, State>) {
-  return <ParamComponent {...props} />;
+  const { selectedValues, onChange } = useEnumParamSelectedValues(props);
+
+  const paramWithPrunedVocab = useFlatParamWithPrunedVocab(props.parameter, selectedValues, onChange);
+
+  return hasEmptyVocabularly(paramWithPrunedVocab)
+    ? <EmptyParamWarning />
+    : <ParamComponent {...props} parameter={paramWithPrunedVocab} />;
 }
 
 function useTreeBoxParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedValues: string[], onChange: (newValue: string[]) => void) {
@@ -116,9 +119,7 @@ function useTreeBoxParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedVal
 
   const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
 
-  useRestrictSelectedValuesOnToggle(selectedValues, onChange, preferredValues);
-
-  return useMemo(
+  const paramWithPrunedVocab = useMemo(
     () => {
       const shouldPruneNodesWithSingleExtendingChild = parameter.properties?.[ORGANISM_PROPERTIES_KEY].includes(PRUNE_NODES_WITH_SINGLE_EXTENDING_CHILD_PROPERTY);
 
@@ -147,6 +148,44 @@ function useTreeBoxParamWithPrunedVocab(parameter: TreeBoxEnumParam, selectedVal
     },
     [ parameter, preferredOrganismsEnabled, preferredValues ]
   );
+
+  useRestrictSelectedValues(
+    selectedValues,
+    onChange,
+    preferredValues,
+    paramWithPrunedVocab
+  );
+
+  return paramWithPrunedVocab;
+}
+
+function useFlatParamWithPrunedVocab(parameter: FlatEnumParam, selectedValues: string[], onChange: (newValue: string[]) => void) {
+  const preferredValues = usePreferredValues(parameter, selectedValues);
+
+  const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
+
+  const paramWithPrunedVocab = useMemo(
+    () => {
+      const shouldOnlyShowPreferredOrganisms = parameter.properties?.[ORGANISM_PROPERTIES_KEY].includes(SHOW_ONLY_PREFERRED_ORGANISMS_PROPERTY);
+
+      return shouldOnlyShowPreferredOrganisms && preferredOrganismsEnabled
+        ? {
+            ...parameter,
+            vocabulary: parameter.vocabulary.filter(([ term ]) => preferredValues.has(term))
+          }
+        : parameter;
+    },
+    [ parameter, preferredOrganismsEnabled, preferredValues ]
+  );
+
+  useRestrictSelectedValues(
+    selectedValues,
+    onChange,
+    preferredValues,
+    paramWithPrunedVocab
+  );
+
+  return paramWithPrunedVocab;
 }
 
 function useEnumParamSelectedValues(props: Props<EnumParam, State>) {
@@ -200,22 +239,43 @@ function usePreferredValues(parameter: EnumParam, selectedValues: string[]) {
   return preferredValues;
 }
 
-function useRestrictSelectedValuesOnToggle(
+function useRestrictSelectedValues(
   selectedValues: string[],
   onChange: (newValue: string[]) => void,
-  preferredValues: Set<string>
+  preferredValues: Set<string>,
+  parameter: EnumParam
 ) {
   const [ preferredOrganismsEnabled ] = usePreferredOrganismsEnabledState();
 
-  useEffect(() => {
-    if (preferredOrganismsEnabled) {
-      const filteredSelectedValues = selectedValues.filter(selectedValue => preferredValues.has(selectedValue));
+  const selectedValuesRef = useRef({ selectedValues, onChange });
 
-      if (filteredSelectedValues.length !== selectedValues.length) {
-        onChange(filteredSelectedValues);
+  useEffect(() => {
+    selectedValuesRef.current = {
+      selectedValues,
+      onChange
+    };
+  }, [ selectedValues, onChange ]);
+
+  useEffect(() => {
+    const {
+      selectedValues,
+      onChange
+    } = selectedValuesRef.current
+
+    if (preferredOrganismsEnabled && !hasEmptyVocabularly(parameter)) {
+      const preferredSelectedValues = selectedValues.filter(selectedValue => preferredValues.has(selectedValue));
+
+      if (
+        preferredSelectedValues.length !== selectedValues.length
+      ) {
+        if (!Array.isArray(parameter.vocabulary) || preferredSelectedValues.length > 0) {
+          onChange(preferredSelectedValues);
+        } else if (!isMultiPick(parameter)) {
+          onChange([parameter.vocabulary[0][0]]);
+        }
       }
     }
-  }, [ preferredOrganismsEnabled ]);
+  }, [ preferredOrganismsEnabled, preferredValues, parameter ]);
 }
 
 function isOrganismParamProps<S = void>(props: Props<Parameter, S>): props is Props<EnumParam, S> {
@@ -227,6 +287,12 @@ export function isOrganismParam(parameter: Parameter): parameter is EnumParam {
     parameter?.properties?.[ORGANISM_PROPERTIES_KEY] != null &&
     EnumParamModule.isType(parameter)
   );
+}
+
+function hasEmptyVocabularly(parameter: EnumParam) {
+  return Array.isArray(parameter.vocabulary)
+    ? parameter.vocabulary.length === 0
+    : parameter.vocabulary.children.length === 0
 }
 
 function findPreferenceType(parameter: Parameter) {
@@ -272,4 +338,13 @@ function findPreferredSpeciesValues(vocabRoot: TreeBoxVocabNode, preferredSpecie
       _traverse(child, speciesInAncestry || nodeIsSpecies);
     });
   }
+}
+
+function EmptyParamWarning() {
+  return (
+    <OrganismPreferencesWarning
+      action="use this search"
+      explanation="Your current preferences exclude all organisms used in this search."
+    />
+  );
 }
