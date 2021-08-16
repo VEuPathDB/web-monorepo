@@ -2,15 +2,15 @@ import { Link, Loading } from '@veupathdb/wdk-client/lib/Components';
 import { useWdkService } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
 import { safeHtml } from '@veupathdb/wdk-client/lib/Utils/ComponentUtils';
 import React, { useCallback } from 'react';
-import { useRouteMatch } from 'react-router';
 import { SubsettingClient } from '../core';
 import { usePromise } from '../core/hooks/promise';
 
 interface Props {
   subsettingServiceUrl: string;
+  baseUrl: string;
 }
 export function StudyList(props: Props) {
-  const { url } = useRouteMatch();
+  const { baseUrl } = props;
   const subsettingClient = SubsettingClient.getClient(
     props.subsettingServiceUrl
   );
@@ -45,7 +45,7 @@ export function StudyList(props: Props) {
           );
           return (
             <li key={study.datasetId}>
-              <Link to={`${url}/${study.datasetId}`}>
+              <Link to={`${baseUrl}/${study.datasetId}`}>
                 {dataset ? safeHtml(dataset.displayName) : study.id}
               </Link>
             </li>
