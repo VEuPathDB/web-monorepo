@@ -12,6 +12,7 @@ import {
   BarLayoutAddon,
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
+  ColorPaletteAddon,
 } from '../types/plots';
 import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
 
@@ -37,7 +38,8 @@ export interface HistogramProps
     OrientationAddon,
     OpacityAddon,
     BarLayoutAddon<'overlay' | 'stack'>,
-    DependentAxisLogScaleAddon {
+    DependentAxisLogScaleAddon,
+    ColorPaletteAddon {
   /** Label for independent axis. Defaults to `Bins`. */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
