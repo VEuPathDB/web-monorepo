@@ -167,6 +167,7 @@ export function PreferredOrganismsConfig({
                       type="button"
                       className={`btn ${cx('--CancelButton')}`}
                       onClick={revertConfigSelection}
+                      disabled={configIsUnchanged}
                     >
                       X
                     </button>
