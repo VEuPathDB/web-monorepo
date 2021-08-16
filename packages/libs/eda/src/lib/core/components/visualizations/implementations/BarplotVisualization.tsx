@@ -212,7 +212,7 @@ function BarplotViz(props: Props) {
             vizConfig.showMissingness
           )
         ),
-        vizConfig.showMissingness
+        vizConfig.showMissingness && overlayVariable != null
       );
     }, [
       studyId,

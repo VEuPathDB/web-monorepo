@@ -250,7 +250,7 @@ function HistogramViz(props: Props) {
             vizConfig.showMissingness
           )
         ),
-        vizConfig.showMissingness
+        vizConfig.showMissingness && overlayVariable != null
       );
     }, [
       vizConfig.xAxisVariable,
@@ -621,17 +621,3 @@ function reorderData(
     return data;
   }
 }
-
-//function grayOutLastSeries(
-//  data: HistogramDataWithCoverageStatistics,
-//  showMissingness: boolean = false
-//) {
-//  return {
-//    ...data,
-//    series: data.series.map((series, index) =>
-//      showMissingness && index === data.series.length - 1
-//        ? { ...series, color: gray }
-//        : series
-//    ),
-//  };
-//}

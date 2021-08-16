@@ -204,6 +204,7 @@ export interface ScatterplotRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 
@@ -266,6 +267,7 @@ export interface LineplotRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 
