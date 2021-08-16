@@ -2,12 +2,12 @@ import { get } from 'lodash';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
+import { useWdkServiceWithRefresh } from '@veupathdb/wdk-client/lib/Hooks/WdkServiceHook';
+
 import {
   isTranscripFilterEnabled,
   requestTranscriptFilterUpdate
 } from '../../util/transcriptFilters';
-import {useWdkEffect} from '@veupathdb/wdk-client/lib/Service/WdkService';
-import {alert} from '@veupathdb/wdk-client/lib/Utils/Platform';
 
 // --------------
 // GeneRecordLink
@@ -101,27 +101,31 @@ const ORTHOLOG_COLUMN_FILTER_TOOL = 'byValue';
 
 function OrthologCount(props) {
   const { step, DefaultComponent } = props;
-  const [ uniqueOrthologValues, setUniqueOrthologValues ] = useState(null);
-  useWdkEffect(wdkService => {
-    wdkService.getStepColumnReport(
-      step.id,
-      ORTHOLOG_COLUMN_FILTER_NAME,
-      ORTHOLOG_COLUMN_FILTER_TOOL,
-      { maxValues: 0 }
-    ).then(
-      result => {
-        const { uniqueValues } = result;
-        setUniqueOrthologValues(uniqueValues);
-      }
-    );
-  }, [step]);
+  const uniqueOrthologValues = useWdkServiceWithRefresh(
+    async wdkService => {
+      const result = await wdkService.getStepColumnReport(
+        step.id,
+        ORTHOLOG_COLUMN_FILTER_NAME,
+        ORTHOLOG_COLUMN_FILTER_TOOL,
+        { maxValues: 0 }
+      );
+
+      return result.uniqueValues == null
+        ? { available: false }
+        : { available: true, value: result.uniqueValues };
+    },
+    [step]
+  );
 
   return uniqueOrthologValues == null ? null : (
     <React.Fragment>
       <DefaultComponent {...props}/>
-      <div style={{ order: 1, fontSize: '1.4em', marginLeft: '.5em' }}>
-        ({uniqueOrthologValues.toLocaleString()} ortholog groups)
-      </div>
+      {
+        uniqueOrthologValues.available &&
+        <div style={{ order: 1, fontSize: '1.4em', marginLeft: '.5em' }}>
+          ({uniqueOrthologValues.value.toLocaleString()} ortholog groups)
+        </div>
+      }
     </React.Fragment>
   );
 }
