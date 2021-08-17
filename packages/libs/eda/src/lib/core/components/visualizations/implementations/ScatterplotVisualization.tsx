@@ -51,6 +51,7 @@ import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 import { StudyEntity } from '../../../types/study';
 import { vocabularyWithMissingData } from '../../../utils/analysis';
 import { gray } from '../colors';
+import { ColorPaletteDefault } from '@veupathdb/components/lib/types/plots/addOns';
 
 // define PromiseXYPlotData
 interface PromiseXYPlotData extends CoverageStatistics {
@@ -671,26 +672,12 @@ function processInputData<T extends number | string>(
   let yMin: number | string | undefined;
   let yMax: number | string | undefined;
 
-  // coloring: using plotly.js default colors
-  const markerColors = [
-    '31, 119, 180', //'#1f77b4',  // muted blue
-    '255, 127, 14', //'#ff7f0e',  // safety orange
-    '44, 160, 44', //'#2ca02c',  // cooked asparagus green
-    '214, 39, 40', //'#d62728',  // brick red
-    '148, 103, 189', //'#9467bd',  // muted purple
-    '140, 86, 75', //'#8c564b',  // chestnut brown
-    '227, 119, 194', //'#e377c2',  // raspberry yogurt pink
-    '127, 127, 127', //'#7f7f7f',  // middle gray
-    '188, 189, 34', //'#bcbd22',  // curry yellow-green
-    '23, 190, 207', //'#17becf'   // blue-teal
-  ];
-
   // function to return color or gray where needed if showMissingness == true
   const markerColor = (index: number) => {
     if (showMissingness && index === plotDataSet.data.length - 1) {
       return gray;
     } else {
-      return `rgb(${markerColors[index]})`;
+      return ColorPaletteDefault[index] ?? 'black'; // TO DO: decide on overflow behaviour
     }
   };
 
