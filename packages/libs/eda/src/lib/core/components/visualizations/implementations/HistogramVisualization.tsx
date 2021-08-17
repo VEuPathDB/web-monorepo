@@ -180,31 +180,20 @@ function HistogramViz(props: Props) {
     [updateVizConfig]
   );
 
-  const onDependentAxisLogScaleChange = useCallback(
-    (newState?: boolean) => {
+  const onChangeHandlerFactory = useCallback(
+    <ValueType,>(key: keyof HistogramConfig) => (newValue?: ValueType) => {
       updateVizConfig({
-        dependentAxisLogScale: newState,
+        [key]: newValue,
       });
     },
     [updateVizConfig]
   );
-
-  const onValueSpecChange = useCallback(
-    (newValueSpec: ValueSpec) => {
-      updateVizConfig({
-        valueSpec: newValueSpec,
-      });
-    },
-    [updateVizConfig]
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale'
   );
-
-  const onShowMissingnessChange = useCallback(
-    (newState?: boolean) => {
-      updateVizConfig({
-        showMissingness: newState,
-      });
-    },
-    [updateVizConfig]
+  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
+    'showMissingness'
   );
 
   const { xAxisVariable, outputEntity, valueType } = useMemo(() => {
