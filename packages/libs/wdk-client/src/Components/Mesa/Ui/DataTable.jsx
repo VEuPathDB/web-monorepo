@@ -46,7 +46,6 @@ class DataTable extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (
-      this.props.rows !== prevProps.rows ||
       this.props.columns.map(c => c.name).toString() !== prevProps.columns.map(c => c.name).toString()
     ) {
       this.setDynamicWidths();
