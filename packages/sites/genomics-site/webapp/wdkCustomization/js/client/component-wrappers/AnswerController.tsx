@@ -1,10 +1,12 @@
 import React, { ComponentType, Suspense, useMemo } from 'react';
 
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 import { Props } from '@veupathdb/wdk-client/lib/Controllers/AnswerController';
 import { RecordInstance } from '@veupathdb/wdk-client/lib/Utils/WdkModel';
 
 import { usePreferredOrganismsState, usePreferredOrganismsEnabledState } from '@veupathdb/preferred-organisms/lib/hooks/preferredOrganisms';
 
+import { PreferredOrganismsPageLoading } from '../components/common/PreferredOrganismsPageLoading';
 import { isPreferredDataset, isPreferredOrganism } from '../util/preferredOrganisms';
 
 interface RecordFilterPredicate {
@@ -14,7 +16,7 @@ interface RecordFilterPredicate {
 export function AnswerController(DefaultComponent: ComponentType<Props>): ComponentType<Props> {
   return function(props) {
     return (
-      <Suspense fallback={null}>
+      <Suspense fallback={<PreferredOrganismsPageLoading />}>
         {
           props.ownProps.recordClass === 'organism'
             ? <OrganismAnswerController {...props} DefaultComponent={DefaultComponent} />
