@@ -25,6 +25,7 @@ import { usePreferredOrganismsState, usePreferredOrganismsEnabledState } from '@
 import { isPreferredDataset } from '../../util/preferredOrganisms';
 
 import { OrganismPreferencesWarning } from '../common/OrganismPreferencesWarning';
+import { PreferredOrganismsPageLoading } from '../common/PreferredOrganismsPageLoading';
 
 import './InternalGeneDataset.scss';
 
@@ -58,7 +59,7 @@ type DisplayCategory = {
 
 export function InternalGeneDataset(props: Props) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<PreferredOrganismsPageLoading />}>
       <InternalGeneDatasetContent {...props} />
     </Suspense>
   );
