@@ -301,121 +301,11 @@ export default function VariableList(props: VariableListProps) {
     ]
   );
 
-  const wrapTreeSection = useCallback(
-    (treeSection: React.ReactNode) => {
-      const tooltipContent = (
-        <>
-          Some variables cannot be used here. Use this to toggle their presence
-          below.
-          <br />
-          <br />
-          <strong>
-            <Link
-              to=""
-              onClick={(e) => {
-                e.preventDefault();
-                alert('Comming soon');
-              }}
-            >
-              <Icon fa="info-circle" /> Learn more
-            </Link>
-          </strong>{' '}
-          about variable compatibility
-        </>
-      );
-      return (
-        <>
-          {disabledFields.size > 0 && (
-            <div className={cx('-DisabledVariablesToggle')}>
-              <HtmlTooltip
-                css={
-                  {
-                    /*
-                     * This is needed to address a compiler error.
-                     * Not sure why it's complaining, but here we are...
-                     */
-                  }
-                }
-                title={tooltipContent}
-                interactive
-                enterDelay={500}
-                enterNextDelay={500}
-                leaveDelay={0}
-              >
-                <button
-                  className="link"
-                  type="button"
-                  onClick={() => {
-                    setHideDisabledFields(!hideDisabledFields);
-                  }}
-                >
-                  <Toggle on={hideDisabledFields} /> Only show compatible
-                  variables
-                </button>
-              </HtmlTooltip>
-            </div>
-          )}
-          {featuredFields.length && (
-            <div className="FeaturedVariables">
-              <details
-                open={Options.featuredVariablesOpen}
-                onToggle={(event: React.SyntheticEvent<HTMLDetailsElement>) => {
-                  Options.featuredVariablesOpen = event.currentTarget.open;
-                }}
-              >
-                <summary>
-                  <h3>Featured variables</h3>
-                </summary>
-                <ul>
-                  {featuredFields.map((field) => {
-                    const isActive = field.term === activeField?.term;
-                    const isDisabled = disabledFields.has(field.term);
-                    const variableId = field.term.split('/')[1];
-                    return (
-                      <li
-                        key={field.term}
-                        className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
-                      >
-                        <div className="wdk-CheckboxTreeNodeContent">
-                          <FieldNode
-                            field={field}
-                            isActive={isActive}
-                            isDisabled={isDisabled}
-                            searchTerm=""
-                            handleFieldSelect={handleFieldSelect}
-                            isStarred={starredVariablesSet.has(variableId)}
-                            starredVariablesLoading={starredVariablesLoading}
-                            onClickStar={() =>
-                              toggleStarredVariable(variableId)
-                            }
-                            scrollIntoView={false}
-                          />
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </details>
-            </div>
-          )}
-          {treeSection}
-        </>
-      );
-    },
-    [
-      disabledFields,
-      hideDisabledFields,
-      featuredFields,
-      setHideDisabledFields,
-      activeField?.term,
-      handleFieldSelect,
-      starredVariablesSet,
-      starredVariablesLoading,
-      toggleStarredVariable,
-    ]
-  );
-
   const isAdditionalFilterApplied = showOnlyStarredVariables;
+
+  const allowedFeaturedFields = hideDisabledFields
+    ? featuredFields.filter((field) => !disabledFields.has(field.term))
+    : featuredFields;
 
   const tree = useMemo(() => {
     const tree =
@@ -444,8 +334,100 @@ export default function VariableList(props: VariableListProps) {
     disabledFields,
   ]);
 
+  const tooltipContent = (
+    <>
+      Some variables cannot be used here. Use this to toggle their presence
+      below.
+      <br />
+      <br />
+      <strong>
+        <Link
+          to=""
+          onClick={(e) => {
+            e.preventDefault();
+            alert('Comming soon');
+          }}
+        >
+          <Icon fa="info-circle" /> Learn more
+        </Link>
+      </strong>{' '}
+      about variable compatibility
+    </>
+  );
+
   return (
     <div className={cx('-VariableList')}>
+      {disabledFields.size > 0 && (
+        <div className={cx('-DisabledVariablesToggle')}>
+          <HtmlTooltip
+            css={
+              {
+                /*
+                 * This is needed to address a compiler error.
+                 * Not sure why it's complaining, but here we are...
+                 */
+              }
+            }
+            title={tooltipContent}
+            interactive
+            enterDelay={500}
+            enterNextDelay={500}
+            leaveDelay={0}
+          >
+            <button
+              className="link"
+              type="button"
+              onClick={() => {
+                setHideDisabledFields(!hideDisabledFields);
+              }}
+            >
+              <Toggle on={hideDisabledFields} /> Only show compatible variables
+            </button>
+          </HtmlTooltip>
+        </div>
+      )}
+      {allowedFeaturedFields.length && (
+        <div className="FeaturedVariables">
+          <details
+            open={Options.featuredVariablesOpen}
+            onToggle={(event: React.SyntheticEvent<HTMLDetailsElement>) => {
+              Options.featuredVariablesOpen = event.currentTarget.open;
+            }}
+          >
+            <summary>
+              <h3>Featured variables</h3>
+            </summary>
+            <ul>
+              {allowedFeaturedFields.map((field) => {
+                const isActive = field.term === activeField?.term;
+                const isDisabled = disabledFields.has(field.term);
+                const variableId = field.term.split('/')[1];
+                return (
+                  <li
+                    key={field.term}
+                    className="wdk-CheckboxTreeItem wdk-CheckboxTreeItem__leaf"
+                  >
+                    <div className="wdk-CheckboxTreeNodeContent">
+                      <FieldNode
+                        field={field}
+                        isActive={isActive}
+                        isDisabled={isDisabled}
+                        searchTerm=""
+                        handleFieldSelect={handleFieldSelect}
+                        isStarred={starredVariablesSet.has(variableId)}
+                        starredVariablesLoading={starredVariablesLoading}
+                        onClickStar={() => toggleStarredVariable(variableId)}
+                        scrollIntoView={false}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
+        </div>
+      )}
+
       <CheckboxTree
         autoFocusSearchBox={autoFocus}
         tree={tree}
@@ -465,7 +447,6 @@ export default function VariableList(props: VariableListProps) {
         renderNode={renderNode}
         additionalFilters={additionalFilters}
         isAdditionalFilterApplied={isAdditionalFilterApplied}
-        wrapTreeSection={wrapTreeSection}
       />
     </div>
   );

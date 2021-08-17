@@ -8,7 +8,7 @@ import {
   WorkspaceContext,
 } from '../context/WorkspaceContext';
 import { useStudyMetadata, useWdkStudyRecord } from '../hooks/study';
-import { ThemeProvider } from '@material-ui/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core';
 import { workspaceTheme } from './workspaceTheme';
 

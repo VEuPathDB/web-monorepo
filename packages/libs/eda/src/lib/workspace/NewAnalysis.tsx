@@ -19,7 +19,7 @@ export function NewAnalysis(props: Props) {
       return;
     }
 
-    return Task.fromPromise(
+    return Task.fromPromise(() =>
       analysisStore.createAnalysis({
         name: 'Unnamed Analysis',
         studyId,
@@ -35,7 +35,7 @@ export function NewAnalysis(props: Props) {
         ...history.location,
         pathname: `./${id}`,
       };
-      history.push(newLocation);
+      history.replace(newLocation);
     });
   }, [analysisStore, history, studyId, approvalStatus]);
 

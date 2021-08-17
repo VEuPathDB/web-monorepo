@@ -7,9 +7,12 @@ import {
 } from 'react-router';
 import { NewAnalysis } from './NewAnalysis';
 import { EDAAnalysisList } from './EDAAnalysisList';
-import { StudyList } from './StudyList';
 import { WorkspaceContainer } from './WorkspaceContainer';
 import { mockAnalysisStore } from './Mocks';
+import { SubsettingClient } from '../core/api/subsetting-api';
+import { AllAnalyses } from './AllAnalyses';
+import { LatestAnalysis } from './LatestAnalysis';
+import { StudyList } from './StudyList';
 
 type Props = {
   subsettingServiceUrl: string;
@@ -20,13 +23,20 @@ export function WorkspaceRouter({
   subsettingServiceUrl,
   dataServiceUrl,
 }: Props) {
-  const { path } = useRouteMatch();
+  const { path, url } = useRouteMatch();
+  const subsettingClient = SubsettingClient.getClient(subsettingServiceUrl);
+
   return (
     <Switch>
       <Route
         path={path}
         exact
-        render={() => <StudyList subsettingServiceUrl={subsettingServiceUrl} />}
+        render={() => (
+          <AllAnalyses
+            analysisClient={mockAnalysisStore}
+            subsettingClient={subsettingClient}
+          />
+        )}
       />
       {/* replacing/redirecting double slashes url with single slash one */}
       <Route
@@ -35,6 +45,16 @@ export function WorkspaceRouter({
         path="(.*//+.*)"
         render={({ location }) => (
           <Redirect to={location.pathname.replace(/\/\/+/g, '/')} />
+        )}
+      />
+      <Route
+        path={`${path}/studies`}
+        exact
+        render={() => (
+          <StudyList
+            baseUrl={url}
+            subsettingServiceUrl={subsettingServiceUrl}
+          />
         )}
       />
       <Route
@@ -54,6 +74,16 @@ export function WorkspaceRouter({
         render={(props: RouteComponentProps<{ studyId: string }>) => (
           <NewAnalysis
             {...props.match.params}
+            analysisClient={mockAnalysisStore}
+          />
+        )}
+      />
+      <Route
+        path={`${path}/:studyId/~latest`}
+        render={(props: RouteComponentProps<{ studyId: string }>) => (
+          <LatestAnalysis
+            {...props.match.params}
+            replaceRegexp={/~latest/}
             analysisClient={mockAnalysisStore}
           />
         )}

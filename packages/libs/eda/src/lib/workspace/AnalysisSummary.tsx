@@ -56,13 +56,6 @@ export function AnalysisSummary(props: Props) {
       </div>
       <div className={cx('-AnalysisSummaryRight')}>
         <ActionIconButton
-          iconClassName="download"
-          hoverText="Bulk download study"
-          action={() => {
-            alert('Coming soon');
-          }}
-        />
-        <ActionIconButton
           iconClassName="clone"
           hoverText="Copy analysis"
           action={handleCopy}

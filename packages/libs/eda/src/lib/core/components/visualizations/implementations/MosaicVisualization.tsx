@@ -11,11 +11,7 @@ import { pipe } from 'fp-ts/lib/function';
 import * as t from 'io-ts';
 import _ from 'lodash';
 import React, { useCallback, useMemo } from 'react';
-import {
-  CompleteCasesTable,
-  DataClient,
-  MosaicRequestParams,
-} from '../../../api/data-api';
+import { DataClient, MosaicRequestParams } from '../../../api/data-api';
 import { usePromise } from '../../../hooks/promise';
 import { useFindEntityAndVariable } from '../../../hooks/study';
 import { useDataClient, useStudyMetadata } from '../../../hooks/workspace';
@@ -23,6 +19,7 @@ import { useFindOutputEntity } from '../../../hooks/findOutputEntity';
 import { Filter } from '../../../types/filter';
 import { PromiseType } from '../../../types/utility';
 import { VariableDescriptor } from '../../../types/variable';
+import { CoverageStatistics } from '../../../types/visualization';
 import { VariableCoverageTable } from '../../VariableCoverageTable';
 import { InputVariables } from '../InputVariables';
 import { OutputEntityTitle } from '../OutputEntityTitle';
@@ -30,11 +27,12 @@ import { VisualizationProps, VisualizationType } from '../VisualizationTypes';
 import contingency from './selectorIcons/contingency.svg';
 import mosaic from './selectorIcons/mosaic.svg';
 import Tabs from '@veupathdb/components/lib/components/Tabs';
+// import axis label unit util
+import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
 
-interface MosaicDataWithCoverageStatistics extends MosaicData {
-  completeCases: CompleteCasesTable;
-  outputSize: number;
-}
+interface MosaicDataWithCoverageStatistics
+  extends MosaicData,
+    CoverageStatistics {}
 
 type ContTableData = MosaicDataWithCoverageStatistics &
   Partial<{
@@ -184,6 +182,16 @@ function MosaicViz(props: Props) {
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
 
+  const { xAxisVariable, yAxisVariable } = useMemo(() => {
+    const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable);
+    const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable);
+
+    return {
+      xAxisVariable: xAxisVariable ? xAxisVariable.variable : undefined,
+      yAxisVariable: yAxisVariable ? yAxisVariable.variable : undefined,
+    };
+  }, [findEntityAndVariable, vizConfig.xAxisVariable, vizConfig.yAxisVariable]);
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -194,10 +202,6 @@ function MosaicViz(props: Props) {
 
   const data = usePromise(
     useCallback(async (): Promise<ContTableData | TwoByTwoData | undefined> => {
-      const xAxisVariable = findEntityAndVariable(vizConfig.xAxisVariable)
-        ?.variable;
-      const yAxisVariable = findEntityAndVariable(vizConfig.yAxisVariable)
-        ?.variable;
       if (
         vizConfig.xAxisVariable == null ||
         xAxisVariable == null ||
@@ -223,28 +227,33 @@ function MosaicViz(props: Props) {
       if (isTwoByTwo) {
         const response = dataClient.getTwoByTwo(computation.type, params);
 
-        return twoByTwoResponseToData(await response);
+        return reorderData(
+          twoByTwoResponseToData(await response),
+          xAxisVariable.vocabulary,
+          yAxisVariable.vocabulary
+        );
       } else {
         const response = dataClient.getContTable(computation.type, params);
 
-        return contTableResponseToData(await response);
+        return reorderData(
+          contTableResponseToData(await response),
+          xAxisVariable.vocabulary,
+          yAxisVariable.vocabulary
+        );
       }
     }, [
       studyId,
       filters,
       dataClient,
       vizConfig,
-      findEntityAndVariable,
+      xAxisVariable,
+      yAxisVariable,
       computation.type,
       isTwoByTwo,
       outputEntity?.id,
     ])
   );
 
-  const xAxisVariableName = findEntityAndVariable(vizConfig.xAxisVariable)
-    ?.variable.displayName;
-  const yAxisVariableName = findEntityAndVariable(vizConfig.yAxisVariable)
-    ?.variable.displayName;
   let statsTable = undefined;
 
   if (isTwoByTwo) {
@@ -303,6 +312,9 @@ function MosaicViz(props: Props) {
     );
   }
 
+  const xAxisLabel = axisLabelWithUnit(xAxisVariable);
+  const yAxisLabel = axisLabelWithUnit(yAxisVariable);
+
   const plotComponent = fullscreen ? (
     <div className="MosaicVisualization">
       <div className="MosaicVisualization-Plot">
@@ -316,8 +328,8 @@ function MosaicViz(props: Props) {
                   width: '750px',
                   height: '450px',
                 }}
-                independentAxisLabel={xAxisVariableName ?? 'X-axis'}
-                dependentAxisLabel={yAxisVariableName ?? 'Y-axis'}
+                independentAxisLabel={xAxisLabel ?? 'X-axis'}
+                dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
                 displayLegend={true}
                 interactive
                 showSpinner={data.pending}
@@ -327,8 +339,8 @@ function MosaicViz(props: Props) {
               'Table',
               <ContingencyTable
                 data={data.value}
-                independentVariable={xAxisVariableName ?? 'X-axis'}
-                dependentVariable={yAxisVariableName ?? 'Y-axis'}
+                independentVariable={xAxisLabel ?? 'X-axis'}
+                dependentVariable={yAxisLabel ?? 'Y-axis'}
               />,
             ],
           ]}
@@ -351,13 +363,13 @@ function MosaicViz(props: Props) {
             {
               role: 'X-axis',
               required: true,
-              display: xAxisVariableName,
+              display: xAxisVariable?.displayName,
               variable: vizConfig.xAxisVariable,
             },
             {
               role: 'Y-axis',
               required: true,
-              display: yAxisVariableName,
+              display: yAxisVariable?.displayName,
               variable: vizConfig.yAxisVariable,
             },
           ]}
@@ -459,16 +471,7 @@ function MosaicPlotWithControls({
   data,
   ...mosaicProps
 }: MosaicPlotWithControlsProps) {
-  // TODO Use UIState
   const displayLibraryControls = false;
-  // const errorManagement = useMemo((): ErrorManagement => {
-  //   return {
-  //     errors: [],
-  //     addError: (error: Error) => {},
-  //     removeError: (error: Error) => {},
-  //     clearAllErrors: () => {},
-  //   };
-  // }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -477,12 +480,7 @@ function MosaicPlotWithControls({
         data={data}
         displayLibraryControls={displayLibraryControls}
       />
-      {/* <MosaicControls
-        label="Mosaic Controls"
-        displayLegend={false}
-        displayLibraryControls={displayLibraryControls}
-        errorManagement={errorManagement}
-      /> */}
+      {/* controls go here as needed */}
     </div>
   );
 }
@@ -559,4 +557,46 @@ function getRequestParams(
       yAxisVariable: yAxisVariable,
     },
   };
+}
+
+function reorderData<T extends TwoByTwoData | ContTableData>(
+  data: T,
+  xVocabulary: string[] = [],
+  yVocabulary: string[] = []
+): T {
+  const xIndices =
+    xVocabulary.length > 0
+      ? indicesForCorrectOrder(data.independentLabels, xVocabulary)
+      : Array.from(data.independentLabels.keys()); // [0,1,2,3,...] - effectively a no-op
+
+  const yIndices =
+    yVocabulary.length > 0
+      ? indicesForCorrectOrder(data.dependentLabels, yVocabulary)
+      : Array.from(data.dependentLabels.keys());
+
+  return {
+    ...data,
+    values: _.at(
+      data.values.map((innerDim) => _.at(innerDim, xIndices)),
+      yIndices
+    ),
+    independentLabels: _.at(data.independentLabels, xIndices),
+    dependentLabels: _.at(data.dependentLabels, yIndices),
+  };
+}
+
+/**
+ * given an array of `labels` [ 'cat', 'dog', 'mouse' ]
+ * and an array of the desired `order` [ 'mouse', 'rat', 'cat', 'dog' ]
+ * return the `indices` of the labels that would put them in the right order,
+ * e.g. [ 2, 0, 1 ]
+ * you can use `_.at(someOtherArray, indices)` to reorder other arrays with this
+ *
+ * it fails nicely if the strings in `order` aren't in `labels`
+ */
+function indicesForCorrectOrder(labels: string[], order: string[]): number[] {
+  const sortedLabels = _.sortBy(labels, (label) => order.indexOf(label));
+  // [ 'mouse', 'cat', 'dog' ]
+  return sortedLabels.map((label) => labels.indexOf(label));
+  // [ 2, 0, 1 ]
 }
