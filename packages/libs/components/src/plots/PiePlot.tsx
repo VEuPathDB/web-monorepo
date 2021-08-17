@@ -117,7 +117,12 @@ export default function PiePlot({
 
     // Use the provided color or the next default plotly color if none is provided
     let color = currentData.color;
-    reducedData.marker.colors.push(color);
+    reducedData.marker.colors.push(color ?? '');
+    // typescript definitions may be wrong.  We're not allowed to pass
+    // an Array<string | undefined> to marker.colors
+    // but the empty string works.
+    // Using marker.color instead works type-wise, but it doesn't actually work
+    // color-wise!
 
     return reducedData;
   };
