@@ -2,7 +2,7 @@ import { Task } from '@veupathdb/wdk-client/lib/Utils/Task';
 import { useStateWithHistory } from '@veupathdb/wdk-client/lib/Hooks/StateWithHistory';
 import { useCallback, useEffect, useState } from 'react';
 import { useAnalysisClient } from './workspace';
-import { Analysis } from '../types/analysis';
+import { Analysis, NewAnalysis } from '../types/analysis';
 import { usePromise } from './promise';
 import { AnalysisClient } from '../api/analysis-api';
 import { differenceWith } from 'lodash';
@@ -19,7 +19,7 @@ export enum Status {
 export type AnalysisState = {
   status: Status;
   hasUnsavedChanges: boolean;
-  analysis?: Analysis;
+  analysis?: Analysis | NewAnalysis;
   error?: unknown;
   canUndo: boolean;
   canRedo: boolean;
@@ -31,10 +31,19 @@ export type AnalysisState = {
   setDerivedVariables: Setter<'derivedVariables'>;
   setStarredVariables: Setter<'starredVariables'>;
   setVariableUISettings: Setter<'variableUISettings'>;
+  saveAnalysis: () => Promise<void>;
   copyAnalysis: () => Promise<{ id: string }>;
   deleteAnalysis: () => Promise<void>;
-  saveAnalysis: () => Promise<void>;
 };
+
+const analysisCache: Record<string, Analysis | undefined> = {};
+
+export function usePreloadAnalysis() {
+  const analysisClient = useAnalysisClient();
+  return async function preloadAnalysis(id: string) {
+    analysisCache[id] = await analysisClient.getAnalysis(id);
+  };
+}
 
 export function useAnalysis(analysisId: string): AnalysisState {
   const analysisClient = useAnalysisClient();
@@ -55,23 +64,32 @@ export function useAnalysis(analysisId: string): AnalysisState {
       setHasUnsavedChanges,
     ]),
   });
-  const savedAnalysis = usePromise(
-    useCallback((): Promise<Analysis> => {
-      return analysisClient.getAnalysis(analysisId);
-    }, [analysisId, analysisClient])
-  );
+
+  const [savedAnalysis, setSavedAnalysis] = useState(analysisCache[analysisId]);
+  const [status, setStatus] = useState<Status>(Status.InProgress);
+  const [error, setError] = useState<unknown>();
 
   useEffect(() => {
-    if (savedAnalysis.value) {
-      setCurrent(savedAnalysis.value);
-    }
-  }, [savedAnalysis.value, setCurrent]);
+    if (savedAnalysis) return;
+    setStatus(Status.InProgress);
+    analysisClient.getAnalysis(analysisId).then(
+      (analysis) => {
+        setSavedAnalysis(analysis);
+        setStatus(Status.Loaded);
+        analysisCache[analysis.id] = analysis;
+      },
+      (error) => {
+        setError(error);
+        setStatus(Status.Error);
+      }
+    );
+  }, [analysisClient, analysisId, savedAnalysis]);
 
-  const status = savedAnalysis.pending
-    ? Status.InProgress
-    : savedAnalysis.error
-    ? Status.Error
-    : Status.Loaded;
+  useEffect(() => {
+    if (savedAnalysis) {
+      setCurrent(savedAnalysis);
+    }
+  }, [savedAnalysis, setCurrent]);
 
   const useSetter = <T extends keyof Analysis>(propertyName: T) =>
     useCallback(
@@ -117,7 +135,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
   return {
     status,
     analysis,
-    error: savedAnalysis.error,
+    error,
     canRedo,
     canUndo,
     hasUnsavedChanges,

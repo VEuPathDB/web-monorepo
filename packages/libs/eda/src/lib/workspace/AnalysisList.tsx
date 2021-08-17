@@ -22,30 +22,10 @@ export function AnalysisList(props: Props) {
   const studyId = studyRecord.id.map((part) => part.value).join('/');
   const history = useHistory();
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
-  const { analyses, deleteAnalyses } = useAnalysisList(
-    analysisStore
-  );
-  const analysisList = analyses ? analyses.filter((analysis) => analysis.studyId === studyId) : undefined;
-  const createNewAnalysis = React.useCallback(async () => {
-    const { id } = await analysisStore.createAnalysis({
-      name: 'Unnamed Analysis',
-      studyId,
-      filters: [],
-      starredVariables: [],
-      derivedVariables: [],
-      visualizations: [],
-      computations: [],
-      variableUISettings: {},
-    });
-    const newLocation = {
-      ...history.location,
-      pathname:
-        history.location.pathname +
-        (history.location.pathname.endsWith('/') ? '' : '/') +
-        id,
-    };
-    history.push(newLocation);
-  }, [analysisStore, history, studyId]);
+  const { analyses, deleteAnalyses } = useAnalysisList(analysisStore);
+  const analysisList = analyses
+    ? analyses.filter((analysis) => analysis.studyId === studyId)
+    : undefined;
   const loadAnalysis = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.currentTarget.files && event.currentTarget.files[0];
@@ -133,14 +113,6 @@ export function AnalysisList(props: Props) {
         {
           selectionRequired: false,
           element: (
-            <button type="button" className="btn" onClick={createNewAnalysis}>
-              Start a new analysis
-            </button>
-          ),
-        },
-        {
-          selectionRequired: false,
-          element: (
             <>
               <input
                 hidden
@@ -187,7 +159,6 @@ export function AnalysisList(props: Props) {
       ],
     }),
     [
-      createNewAnalysis,
       loadAnalysis,
       analysisList,
       selected,

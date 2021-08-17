@@ -15,7 +15,6 @@ import { workspaceTheme } from './workspaceTheme';
 const theme = createMuiTheme(workspaceTheme);
 export interface Props {
   studyId: string;
-  analysisId: string;
   children: React.ReactChild | React.ReactChild[];
   className?: string;
   analysisClient: AnalysisClient;
