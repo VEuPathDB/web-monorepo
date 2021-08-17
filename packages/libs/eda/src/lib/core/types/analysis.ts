@@ -3,6 +3,11 @@ import * as t from 'io-ts';
 import { Filter } from './filter';
 import { Computation, Visualization } from './visualization';
 
+export type AnalysisPreferences = t.TypeOf<typeof AnalysisPreferences>;
+export const AnalysisPreferences = t.partial({
+  pinnedAnalyses: t.array(t.string),
+});
+
 export type DerviedVariable = t.TypeOf<typeof DerviedVariable>;
 export const DerviedVariable = t.unknown;
 
