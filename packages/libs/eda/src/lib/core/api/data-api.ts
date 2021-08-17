@@ -413,11 +413,13 @@ const BoxplotResponseData = array(
       label: array(string),
     }),
     partial({
-      // outliers type
-      outliers: union([number, array(number), array(array(number))]),
-      rawData: union([number, array(number), array(array(number))]),
+      // outliers
+      // back end is returning {} instead of [], e.g.
+      // [ {}, [1,2,3], [4,5,6] ]
+      outliers: array(union([array(number), type({})])),
+      rawData: array(array(number)),
       // mean: array(number),
-      mean: union([number, array(number)]),
+      mean: array(number),
       seriesX: union([array(string), array(number)]),
       seriesY: array(number),
       // need to make sure if below is correct (untested)
