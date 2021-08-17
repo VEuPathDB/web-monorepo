@@ -9,9 +9,11 @@ import {
   OrientationDefault,
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
+  ColorPaletteAddon,
 } from '../types/plots';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
+import { some } from 'lodash';
 
 // in this example, the main variable is 'country'
 export interface BarplotProps
@@ -19,7 +21,8 @@ export interface BarplotProps
     BarLayoutAddon<'overlay' | 'stack' | 'group'>,
     OrientationAddon,
     OpacityAddon,
-    DependentAxisLogScaleAddon {
+    DependentAxisLogScaleAddon,
+    ColorPaletteAddon {
   /** Label for independent axis. e.g. 'Country' */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to 'Count' */
@@ -88,9 +91,24 @@ export default function Barplot({
     showticklabels: showIndependentAxisTickLabel,
   };
 
+  // if at least one value is 0 < x < 1 then these are probably fractions/proportions
+  // affects mouseover formatting only in logScale mode
+  // worst case is that mouseovers contain integers followed by .0000
+  const dataLooksFractional = useMemo(() => {
+    return some(
+      data.series.flatMap((series) => series.value),
+      (val) => val > 0 && val < 1
+    );
+  }, [data.series]);
+
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     automargin: true,
-    tickformat: ',.1r', // comma-separated thousands, rounded to 1 significant digit
+    tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
+    hoverformat: dependentAxisLogScale
+      ? dataLooksFractional
+        ? ',.4f'
+        : ',.0f'
+      : undefined,
     type: dependentAxisLogScale ? 'log' : 'linear',
     title: {
       text: dependentAxisLabel ? dependentAxisLabel : '',

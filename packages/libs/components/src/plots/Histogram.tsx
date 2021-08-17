@@ -12,12 +12,13 @@ import {
   BarLayoutAddon,
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
+  ColorPaletteAddon,
 } from '../types/plots';
 import { NumberOrDate, NumberOrDateRange, NumberRange } from '../types/general';
 
 // Libraries
 import * as DateMath from 'date-arithmetic';
-import { sortBy, sortedUniqBy, orderBy } from 'lodash';
+import { sortBy, sortedUniqBy, orderBy, some } from 'lodash';
 
 // Components
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
@@ -37,7 +38,8 @@ export interface HistogramProps
     OrientationAddon,
     OpacityAddon,
     BarLayoutAddon<'overlay' | 'stack'>,
-    DependentAxisLogScaleAddon {
+    DependentAxisLogScaleAddon,
+    ColorPaletteAddon {
   /** Label for independent axis. Defaults to `Bins`. */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to `Count`. */
@@ -138,10 +140,14 @@ export default function Histogram({
             return (bin.binEnd as number) - (bin.binStart as number);
           }
         });
+
+        const [xAxisName, yAxisName] =
+          orientation === 'vertical' ? ['x', 'y'] : ['y', 'x'];
+
         return {
           type: 'bar',
-          x: orientation === 'vertical' ? binStarts : binCounts,
-          y: orientation === 'vertical' ? binCounts : binStarts,
+          [xAxisName]: binStarts.length ? binStarts : [null], // hack to make sure empty series
+          [yAxisName]: binCounts.length ? binCounts : [null], // show up in the legend
           opacity: calculatedBarOpacity,
           orientation: orientation === 'vertical' ? 'v' : 'h',
           name: series.name,
@@ -375,9 +381,25 @@ export default function Histogram({
     range: plotlyIndependentAxisRange,
     tickfont: data.series.length ? {} : { color: 'transparent' },
   };
+
+  // if at least one bin.count is 0 < x < 1 then these are probably fractions/proportions
+  // affects mouseover formatting only in logScale mode
+  // worst case is that mouseovers contain integers followed by .0000
+  const dataLooksFractional = useMemo(() => {
+    return some(
+      data.series.flatMap((series) => series.bins.map((bin) => bin.count)),
+      (val) => val > 0 && val < 1
+    );
+  }, [data.series]);
+
   const dependentAxisLayout: Layout['yaxis'] | Layout['xaxis'] = {
     type: dependentAxisLogScale ? 'log' : 'linear',
-    tickformat: ',.1r', // comma-separated thousands, rounded to 1 significant digit
+    tickformat: dependentAxisLogScale ? ',.1r' : undefined, // comma-separated thousands, rounded to 1 significant digit
+    hoverformat: dependentAxisLogScale
+      ? dataLooksFractional
+        ? ',.4f'
+        : ',.0f'
+      : undefined,
     automargin: true,
     title: {
       text: dependentAxisLabel,

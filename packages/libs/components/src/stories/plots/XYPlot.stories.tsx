@@ -594,7 +594,16 @@ const { dataSetProcess, yMin, yMax } = processInputData(
   'scatterplot',
   'markers',
   independentValueType,
-  dependentValueType
+  dependentValueType,
+  true
+);
+const { dataSetProcess: dataSetProcessDefaultColors } = processInputData(
+  dataSet,
+  'scatterplot',
+  'markers',
+  independentValueType,
+  dependentValueType,
+  false
 );
 // Case 1-2) checking line plot: raw data with line
 // const { dataSetProcess, yMin, yMax } = processInputData(
@@ -633,6 +642,35 @@ export const MultipleData = () => {
   return (
     <XYPlot
       data={dataSetProcess}
+      independentAxisLabel={independentAxisLabel}
+      dependentAxisLabel={dependentAxisLabel}
+      // not to use independentAxisRange
+      // independentAxisRange={[xMin, xMax]}
+      dependentAxisRange={{ min: yMin, max: yMax }}
+      title={plotTitle}
+      // width height is replaced with containerStyles
+      containerStyles={{
+        width: plotWidth,
+        height: plotHeight,
+      }}
+      // staticPlot is changed to interactive
+      interactive={true}
+      // check enable/disable legend and built-in controls
+      displayLegend={true}
+      displayLibraryControls={true}
+      // margin={{l: 50, r: 10, b: 20, t: 10}}
+      // add legend title
+      legendTitle={'legend title example'}
+      independentValueType={independentValueType}
+      dependentValueType={dependentValueType}
+    />
+  );
+};
+
+export const MultipleDataDefaultColors = () => {
+  return (
+    <XYPlot
+      data={dataSetProcessDefaultColors}
       independentAxisLabel={independentAxisLabel}
       dependentAxisLabel={dependentAxisLabel}
       // not to use independentAxisRange
@@ -772,7 +810,8 @@ function processInputData<T extends number | string>(
   modeValue: string,
   // send independentValueType & dependentValueType
   independentValueType: string,
-  dependentValueType: string
+  dependentValueType: string,
+  defineColors: boolean
 ) {
   // set fillAreaValue for densityplot
   const fillAreaValue = vizType === 'densityplot' ? 'toself' : '';
@@ -792,7 +831,7 @@ function processInputData<T extends number | string>(
   let yMin: number | string | undefined = 0;
   let yMax: number | string | undefined = 0;
 
-  // coloring: using plotly.js default colors
+  // coloring: using plotly.js default colors instead of web-components default palette
   const markerColors = [
     '31, 119, 180', //'#1f77b4',  // muted blue
     '255, 127, 14', //'#ff7f0e',  // safety orange
@@ -872,13 +911,20 @@ function processInputData<T extends number | string>(
             : 'scattergl', // for the raw data of the scatterplot
         fill: fillAreaValue,
         marker: {
-          color: 'rgba(' + markerColors[index] + ',0.7)',
+          color: defineColors
+            ? 'rgba(' + markerColors[index] + ',0.7)'
+            : undefined,
           // size: 6,
           // line: { color: 'rgba(' + markerColors[index] + ',0.7)', width: 2 },
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
-        line: { color: 'rgba(' + markerColors[index] + ',1)', shape: 'spline' },
+        line: {
+          color: defineColors
+            ? 'rgba(' + markerColors[index] + ',1)'
+            : undefined,
+          shape: 'spline',
+        },
       });
     }
   });
@@ -959,7 +1005,9 @@ function processInputData<T extends number | string>(
           : 'Smoothed mean',
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: 'rgba(' + markerColors[index] + ',1)',
+          color: defineColors
+            ? 'rgba(' + markerColors[index] + ',1)'
+            : undefined,
           shape: 'spline',
           width: 2,
         },
@@ -999,7 +1047,9 @@ function processInputData<T extends number | string>(
           : '95% Confidence interval',
         // this is better to be tozeroy, not tozerox
         fill: 'tozeroy',
-        fillcolor: 'rgba(' + markerColors[index] + ',0.2)',
+        fillcolor: defineColors
+          ? 'rgba(' + markerColors[index] + ',0.2)'
+          : undefined,
         // type: 'line',
         type: 'scattergl',
         // here, line means upper and lower bounds
@@ -1047,7 +1097,9 @@ function processInputData<T extends number | string>(
           : 'Best fit<br>R<sup>2</sup> = ' + el.r2,
         mode: 'lines', // no data point is displayed: only line
         line: {
-          color: 'rgba(' + markerColors[index] + ',1)',
+          color: defineColors
+            ? 'rgba(' + markerColors[index] + ',1)'
+            : undefined,
           shape: 'spline',
         },
         // use scattergl

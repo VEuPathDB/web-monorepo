@@ -243,15 +243,14 @@ function BaseInput({
         )}
         {showClearButton && (
           <Button
-            type={'solid'}
+            type={'outlined'}
             text={clearButtonLabel}
             onClick={() => {
               setIsReceiving(false);
               setLocalRange(undefined);
             }}
             containerStyles={{
-              paddingLeft: '10px',
-              height: '20px',
+              paddingLeft: '20px',
             }}
           />
         )}
