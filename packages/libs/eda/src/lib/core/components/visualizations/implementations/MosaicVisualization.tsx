@@ -314,6 +314,8 @@ function MosaicViz(props: Props) {
 
   const xAxisLabel = axisLabelWithUnit(xAxisVariable);
   const yAxisLabel = axisLabelWithUnit(yAxisVariable);
+  const width = '705px';
+  const height = '450px';
 
   const plotComponent = fullscreen ? (
     <div className="MosaicVisualization">
@@ -325,8 +327,8 @@ function MosaicViz(props: Props) {
               <MosaicPlotWithControls
                 data={data.value && !data.pending ? data.value : undefined}
                 containerStyles={{
-                  width: '750px',
-                  height: '450px',
+                  width: width,
+                  height: height,
                 }}
                 independentAxisLabel={xAxisLabel ?? 'X-axis'}
                 dependentAxisLabel={yAxisLabel ?? 'Y-axis'}
@@ -339,6 +341,7 @@ function MosaicViz(props: Props) {
               'Table',
               <ContingencyTable
                 data={data.value}
+                containerStyles={{ width: width }}
                 independentVariable={xAxisLabel ?? 'X-axis'}
                 dependentVariable={yAxisLabel ?? 'Y-axis'}
               />,
