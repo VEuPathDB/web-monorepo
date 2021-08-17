@@ -28,10 +28,11 @@ import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
   analysisState: AnalysisState;
+  hideCopyAndSave?: boolean;
 }
 
 export function AnalysisPanel(props: Props) {
-  const { analysisState } = props;
+  const { analysisState, hideCopyAndSave = false } = props;
   const studyRecord = useStudyRecord();
   const {
     status,
@@ -75,9 +76,9 @@ export function AnalysisPanel(props: Props) {
       <AnalysisSummary
         analysis={analysis}
         setAnalysisName={setName}
-        copyAnalysis={copyAnalysis}
+        copyAnalysis={hideCopyAndSave ? undefined : copyAnalysis}
         saveAnalysis={saveAnalysis}
-        deleteAnalysis={deleteAnalysis}
+        deleteAnalysis={hideCopyAndSave ? undefined : deleteAnalysis}
         onFilterIconClick={() =>
           setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
         }

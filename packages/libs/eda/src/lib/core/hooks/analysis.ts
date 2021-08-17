@@ -32,8 +32,8 @@ export type AnalysisState = {
   setStarredVariables: Setter<'starredVariables'>;
   setVariableUISettings: Setter<'variableUISettings'>;
   saveAnalysis: () => Promise<void>;
-  copyAnalysis?: () => Promise<{ id: string }>;
-  deleteAnalysis?: () => Promise<void>;
+  copyAnalysis: () => Promise<{ id: string }>;
+  deleteAnalysis: () => Promise<void>;
 };
 
 export function useAnalysis(analysisId: string): AnalysisState {

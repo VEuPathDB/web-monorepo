@@ -129,7 +129,6 @@ describe('useAnalysis', () => {
   it('should update store on copy', async () => {
     const { result, waitFor } = render();
     await waitFor(() => result.current.status === Status.Loaded);
-    if (result.current.copyAnalysis == null) return;
     const res = await result.current.copyAnalysis();
     const analyses = await analysisClient.getAnalyses();
     const newAnalysis = analyses.find((analysis) => analysis.id === res.id);
@@ -142,7 +141,6 @@ describe('useAnalysis', () => {
   it('should update store on delete', async () => {
     const { result, waitFor } = render();
     await waitFor(() => result.current.status === Status.Loaded);
-    if (result.current.deleteAnalysis == null) return;
     await result.current.deleteAnalysis();
     const analyses = await analysisClient.getAnalyses();
     const analysis = analyses.find((analysis) => analysis.id === key);

@@ -40,6 +40,12 @@ export function NewAnalysisPage() {
   const saveAnalysis = useCallback(() => {
     return createAnalysis(analysis);
   }, [analysis, createAnalysis]);
+  const copyAnalysis = useCallback(() => {
+    throw new Error('Cannot copy an unsaved analysis.');
+  }, []);
+  const deleteAnalysis = useCallback(() => {
+    throw new Error('Cannot delete an unsaved analysis.');
+  }, []);
   const setName = useCallback(
     (name: string) => {
       createAnalysis({ ...analysis, name });
@@ -89,6 +95,8 @@ export function NewAnalysisPage() {
       setVariableUISettings,
       setVisualizations,
       saveAnalysis,
+      copyAnalysis,
+      deleteAnalysis,
       status: Status.Loaded,
       hasUnsavedChanges: true,
       canRedo: false,
@@ -98,6 +106,8 @@ export function NewAnalysisPage() {
     }),
     [
       analysis,
+      copyAnalysis,
+      deleteAnalysis,
       saveAnalysis,
       setDerivedVariables,
       setFilters,
@@ -107,5 +117,5 @@ export function NewAnalysisPage() {
       setVisualizations,
     ]
   );
-  return <AnalysisPanel analysisState={analysisState} />;
+  return <AnalysisPanel analysisState={analysisState} hideCopyAndSave />;
 }
