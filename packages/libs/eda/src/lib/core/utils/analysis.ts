@@ -1,6 +1,7 @@
 import {
   HistogramData,
   BarplotData,
+  BoxplotData,
 } from '@veupathdb/components/lib/types/plots';
 import { gray } from '../components/visualizations/colors';
 
@@ -13,10 +14,9 @@ export function vocabularyWithMissingData(
     : vocabulary;
 }
 
-export function grayOutLastSeries<T extends BarplotData | HistogramData>(
-  data: T,
-  showMissingness: boolean = false
-) {
+export function grayOutLastSeries<
+  T extends BarplotData | HistogramData | { series: BoxplotData }
+>(data: T, showMissingness: boolean = false) {
   return {
     ...data,
     series: data.series.map((series, index) =>

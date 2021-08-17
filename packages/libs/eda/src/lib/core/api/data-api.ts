@@ -398,6 +398,7 @@ export interface BoxplotRequestParams {
     xAxisVariable: VariableDescriptor;
     yAxisVariable: VariableDescriptor;
     overlayVariable?: VariableDescriptor;
+    showMissingness?: 'TRUE' | 'FALSE';
   };
 }
 

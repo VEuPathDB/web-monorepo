@@ -30,6 +30,10 @@ import { CoverageStatistics } from '../../../types/visualization';
 import { at } from 'lodash';
 // import axis label unit util
 import { axisLabelWithUnit } from '../../../utils/axis-label-unit';
+import {
+  grayOutLastSeries,
+  vocabularyWithMissingData,
+} from '../../../utils/analysis';
 
 interface PromiseBoxplotData extends CoverageStatistics {
   series: BoxplotData;
@@ -67,6 +71,7 @@ const BoxplotConfig = t.partial({
   yAxisVariable: VariableDescriptor,
   overlayVariable: VariableDescriptor,
   facetVariable: VariableDescriptor,
+  showMissingness: t.boolean,
 });
 
 type Props = VisualizationProps & {
@@ -159,6 +164,19 @@ function BoxplotViz(props: Props) {
     vizConfig.overlayVariable,
   ]);
 
+  // prettier-ignore
+  const onChangeHandlerFactory = useCallback(
+    < ValueType,>(key: keyof BoxplotConfig) => (newValue?: ValueType) => {
+      updateVizConfig({
+        [key]: newValue,
+      });
+    },
+    [updateVizConfig]
+  );
+  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
+    'showMissingness'
+  );
+
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams
   const outputEntity = useFindOutputEntity(
     dataElementDependencyOrder,
@@ -187,7 +205,8 @@ function BoxplotViz(props: Props) {
         vizConfig.yAxisVariable,
         vizConfig.overlayVariable,
         // pass outputEntity.id
-        outputEntity?.id
+        outputEntity?.id,
+        vizConfig.showMissingness
       );
 
       // boxplot
@@ -197,10 +216,16 @@ function BoxplotViz(props: Props) {
       );
 
       // send visualization.type as well
-      return reorderData(
-        boxplotResponseToData(await response),
-        xAxisVariable.vocabulary,
-        overlayVariable?.vocabulary
+      return grayOutLastSeries(
+        reorderData(
+          boxplotResponseToData(await response),
+          xAxisVariable.vocabulary,
+          vocabularyWithMissingData(
+            overlayVariable?.vocabulary,
+            vizConfig.showMissingness
+          )
+        ),
+        vizConfig.showMissingness && overlayVariable != null
       );
     }, [
       studyId,
@@ -225,14 +250,17 @@ function BoxplotViz(props: Props) {
               {
                 name: 'xAxisVariable',
                 label: 'X-axis',
+                role: 'primary',
               },
               {
                 name: 'yAxisVariable',
                 label: 'Y-axis',
+                role: 'primary',
               },
               {
                 name: 'overlayVariable',
                 label: 'Overlay (Optional)',
+                role: 'stratification',
               },
             ]}
             entities={entities}
@@ -246,6 +274,9 @@ function BoxplotViz(props: Props) {
             dataElementDependencyOrder={dataElementDependencyOrder}
             starredVariables={starredVariables}
             toggleStarredVariable={toggleStarredVariable}
+            showMissingness={vizConfig.showMissingness}
+            onShowMissingnessChange={onShowMissingnessChange}
+            outputEntity={outputEntity}
           />
         </div>
       )}
@@ -431,7 +462,8 @@ function getRequestParams(
   yAxisVariable: VariableDescriptor,
   overlayVariable?: VariableDescriptor,
   // pass outputEntityId
-  outputEntityId?: string
+  outputEntityId?: string,
+  showMissingness?: boolean
 ): getRequestParamsProps {
   return {
     studyId,
@@ -445,6 +477,7 @@ function getRequestParams(
       xAxisVariable: xAxisVariable,
       yAxisVariable: yAxisVariable,
       overlayVariable: overlayVariable,
+      showMissingness: showMissingness ? 'TRUE' : 'FALSE',
     },
   } as BoxplotRequestParams;
 }
