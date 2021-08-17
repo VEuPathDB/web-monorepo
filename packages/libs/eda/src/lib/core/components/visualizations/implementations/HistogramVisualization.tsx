@@ -181,7 +181,8 @@ function HistogramViz(props: Props) {
   );
 
   const onChangeHandlerFactory = useCallback(
-    <ValueType,>(key: keyof HistogramConfig) => (newValue?: ValueType) => {
+    // prettier-ignore
+    < ValueType,>(key: keyof HistogramConfig) => (newValue?: ValueType) => {
       updateVizConfig({
         [key]: newValue,
       });
