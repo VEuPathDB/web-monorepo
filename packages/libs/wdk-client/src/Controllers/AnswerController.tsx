@@ -1,9 +1,10 @@
+import { isEqual } from 'lodash';
 import QueryString from 'querystring';
 import * as React from 'react';
 import PageController from 'wdk-client/Core/Controllers/PageController';
 import { RootState } from 'wdk-client/Core/State/Types';
 import { wrappable } from 'wdk-client/Utils/ComponentUtils';
-import { isEmpty, isEqual, ListIteratee } from 'lodash';
+import { isEmpty, ListIteratee } from 'lodash';
 import {
   loadAnswer,
   changeColumnPosition,
@@ -19,11 +20,8 @@ import { connect } from 'react-redux';
 import { AttributeField, TableField, AttributeValue, RecordInstance, RecordClass } from 'wdk-client/Utils/WdkModel';
 import { History } from 'history';
 import { filterRecords } from 'wdk-client/Views/Records/RecordUtils';
-import { defaultMemoize } from 'reselect';
 
 const MAXROWS = 2000;
-
-const PAGE_SIZE = 100;
 
 const ActionCreators = {
   loadAnswer,
@@ -75,7 +73,6 @@ type OwnProps = {
   filterTerm?: string;
   filterAttributes?: string[];
   filterTables?: string[];
-  offset?: number;
   history: History;
 }
 
@@ -110,24 +107,6 @@ class AnswerController extends PageController<Props> {
     if (!isEmpty(filterTables)) queryParams.filterTables = filterTables;
     const queryString = QueryString.stringify(queryParams);
     this.props.ownProps.history.replace(`?${queryString}`);
-  }
-
-  changeOffset = (offset: number) => {
-    const { history } = this.props.ownProps;
-    const currentParams = QueryString.parse(history.location.search.slice(1));
-
-    // remove current offset query param
-    delete currentParams.offset;
-
-    if (!offset) {
-      const queryString = QueryString.stringify(currentParams);
-      history.replace(`?${queryString}`);
-      return;
-    }
-
-    const queryParams = { ...currentParams, offset };
-    const queryString = QueryString.stringify(queryParams);
-    history.replace(`?${queryString}`);
   }
 
   loadData(prevProps?: Props) {
@@ -234,7 +213,6 @@ class AnswerController extends PageController<Props> {
       filterTerm,
       filterAttributes = [],
       filterTables = [],
-      offset = 0
     } = this.props.ownProps;
 
     const {
@@ -243,22 +221,12 @@ class AnswerController extends PageController<Props> {
       changeVisibleColumns
     } = this.props.dispatchProps;
 
-    const pageSize = PAGE_SIZE;
-
-    const filteredRecords = records && filterTerm
-      ? makeFilteredRecords({ records, filterTerm, filterAttributes, filterTables })
-      : records;
-
-    const totalRows = filteredRecords?.length;
-    const totalPages = totalRows != null && Math.ceil(totalRows / pageSize);
-
-    const filteredRecordsPage = makeFilteredRecordsPage({ filteredRecords, offset, pageSize });
-    const currentPageTotalRows = filteredRecordsPage != null && filteredRecordsPage.length;
+    const filteredRecords = records && filterTerm ? filterRecords(records, { filterTerm, filterAttributes, filterTables }) : records;
 
     return (
       <CastAnswer
         meta={meta}
-        records={filteredRecordsPage}
+        records={filteredRecords}
         question={question}
         recordClass={recordClass}
         displayInfo={displayInfo}
@@ -267,14 +235,8 @@ class AnswerController extends PageController<Props> {
         filterTerm={filterTerm}
         filterAttributes={filterAttributes}
         filterTables={filterTables}
-        offset={offset}
-        currentPageTotalRows={currentPageTotalRows}
-        totalRows={totalRows}
-        totalPages={totalPages}
-        pageSize={pageSize}
         format="table"
         onSort={changeSorting}
-        onOffsetChange={this.changeOffset}
         onMoveColumn={changeColumnPosition}
         onChangeColumns={changeVisibleColumns}
         onFilter={this.changeFilter}
@@ -296,35 +258,6 @@ class AnswerController extends PageController<Props> {
   }
 
 }
-
-const shallowCompare = (a: any, b: any) =>
-  Object.keys(a).every(aKey => a[aKey] === b[aKey]) ||
-  Object.keys(b).every(bKey => a[bKey] === b[bKey]);
-
-const makeFilteredRecords = defaultMemoize(
-  (
-    {
-      records,
-      filterTerm,
-      filterAttributes,
-      filterTables
-    }: Pick<Required<Props['stateProps']>, 'records' | 'filterTerm' | 'filterAttributes' | 'filterTables'>
-  ) =>
-    filterRecords(records, { filterTerm, filterAttributes, filterTables }),
-  shallowCompare
-);
-
-const makeFilteredRecordsPage = defaultMemoize(
-  (
-    {
-      filteredRecords,
-      offset,
-      pageSize
-    }: { filteredRecords?: RecordInstance[], offset: number, pageSize: number }
-  ) =>
-    filteredRecords?.slice(offset, offset + pageSize),
-  shallowCompare
-);
 
 const mapStateToProps = (state: RootState) => state.answerView;
 

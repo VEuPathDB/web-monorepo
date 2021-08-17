@@ -42,8 +42,7 @@ const routes: RouteEntry[] = [
   {
     path: '/search/:recordClass/:question/result',
     component: (props: RouteComponentProps<{recordClass: string; question: string;}>) => {
-      const { filterTerm, filterAttributes = [], filterTables = [], offset = '0' } = QueryString.parse(props.location.search.slice(1));
-      const offsetStr = isArray(offset) ? offset[0] : offset;
+      const { filterTerm, filterAttributes = [], filterTables = [] } = QueryString.parse(props.location.search.slice(1));
       const parameters = parseSearchParamsFromQueryParams(parseQueryString(props));
       return (
         <AnswerController
@@ -52,7 +51,6 @@ const routes: RouteEntry[] = [
           filterTerm={isArray(filterTerm) ? filterTerm[0] : filterTerm}
           filterAttributes={castArray(filterAttributes)}
           filterTables={castArray(filterTables)}
-          offset={Math.max(parseInt(offsetStr, 10), 0)}
           history={props.history}
         />
       )
