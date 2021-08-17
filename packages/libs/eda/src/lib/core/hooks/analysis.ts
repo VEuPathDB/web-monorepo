@@ -36,6 +36,15 @@ export type AnalysisState = {
   deleteAnalysis: () => Promise<void>;
 };
 
+const analysisCache: Record<string, Analysis | undefined> = {};
+
+export function usePreloadAnalysis() {
+  const analysisClient = useAnalysisClient();
+  return async function preloadAnalysis(id: string) {
+    analysisCache[id] = await analysisClient.getAnalysis(id);
+  };
+}
+
 export function useAnalysis(analysisId: string): AnalysisState {
   const analysisClient = useAnalysisClient();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -55,23 +64,32 @@ export function useAnalysis(analysisId: string): AnalysisState {
       setHasUnsavedChanges,
     ]),
   });
-  const savedAnalysis = usePromise(
-    useCallback((): Promise<Analysis> => {
-      return analysisClient.getAnalysis(analysisId);
-    }, [analysisId, analysisClient])
-  );
+
+  const [savedAnalysis, setSavedAnalysis] = useState(analysisCache[analysisId]);
+  const [status, setStatus] = useState<Status>(Status.InProgress);
+  const [error, setError] = useState<unknown>();
 
   useEffect(() => {
-    if (savedAnalysis.value) {
-      setCurrent(savedAnalysis.value);
-    }
-  }, [savedAnalysis.value, setCurrent]);
+    if (savedAnalysis) return;
+    setStatus(Status.InProgress);
+    analysisClient.getAnalysis(analysisId).then(
+      (analysis) => {
+        setSavedAnalysis(analysis);
+        setStatus(Status.Loaded);
+        analysisCache[analysis.id] = analysis;
+      },
+      (error) => {
+        setError(error);
+        setStatus(Status.Error);
+      }
+    );
+  }, [analysisClient, analysisId, savedAnalysis]);
 
-  const status = savedAnalysis.pending
-    ? Status.InProgress
-    : savedAnalysis.error
-    ? Status.Error
-    : Status.Loaded;
+  useEffect(() => {
+    if (savedAnalysis) {
+      setCurrent(savedAnalysis);
+    }
+  }, [savedAnalysis, setCurrent]);
 
   const useSetter = <T extends keyof Analysis>(propertyName: T) =>
     useCallback(
@@ -117,7 +135,7 @@ export function useAnalysis(analysisId: string): AnalysisState {
   return {
     status,
     analysis,
-    error: savedAnalysis.error,
+    error,
     canRedo,
     canUndo,
     hasUnsavedChanges,

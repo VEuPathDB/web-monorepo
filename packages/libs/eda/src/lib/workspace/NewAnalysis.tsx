@@ -8,6 +8,7 @@ import {
   NewAnalysis,
   Status,
   useAnalysisClient,
+  usePreloadAnalysis,
   useStudyRecord,
   VariableUISetting,
 } from '../core';
@@ -20,6 +21,7 @@ export function NewAnalysisPage() {
     makeNewAnalysis(studyRecord.id[0].value)
   );
   const analysisClient = useAnalysisClient();
+  const preloadAnalysis = usePreloadAnalysis();
   const history = useHistory();
   const location = useLocation();
   const { url } = useRouteMatch();
@@ -29,13 +31,14 @@ export function NewAnalysisPage() {
       subPath: string = location.pathname.slice(url.length)
     ) => {
       const { id } = await analysisClient.createAnalysis(newAnalysis);
+      await preloadAnalysis(id);
       const newLocation = {
         ...location,
         pathname: Path.resolve(url, '..', id + subPath),
       };
       history.replace(newLocation);
     },
-    [analysisClient, history, location, url]
+    [analysisClient, history, location, preloadAnalysis, url]
   );
   const saveAnalysis = useCallback(() => {
     return createAnalysis(analysis);
