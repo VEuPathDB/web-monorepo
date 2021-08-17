@@ -389,14 +389,17 @@ function MosaicViz(props: Props) {
               {
                 name: 'xAxisVariable',
                 label: 'X-axis',
+                role: 'primary',
               },
               {
                 name: 'yAxisVariable',
                 label: 'Y-axis',
+                role: 'primary',
               },
               {
                 name: 'facetVariable',
                 label: 'Facet (optional)',
+                role: 'stratification',
               },
             ]}
             entities={entities}

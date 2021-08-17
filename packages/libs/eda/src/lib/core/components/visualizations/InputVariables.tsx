@@ -19,7 +19,7 @@ import { makeEntityDisplayName } from '../../utils/study-metadata';
 interface InputSpec {
   name: string;
   label: string;
-  role?: 'primary' | 'stratification'; // TO DO: make mandatory when all viz are updated??
+  role: 'primary' | 'stratification';
 }
 
 export interface Props {
