@@ -4,6 +4,7 @@ import { AnalysisSummary } from './AnalysisSummary';
 import {
   AnalysisState,
   EntityDiagram,
+  Status,
   useStudyMetadata,
   useStudyRecord,
 } from '../core';
@@ -33,6 +34,7 @@ export function AnalysisPanel(props: Props) {
   const { analysisState } = props;
   const studyRecord = useStudyRecord();
   const {
+    status,
     analysis,
     setName,
     copyAnalysis,
@@ -59,6 +61,14 @@ export function AnalysisPanel(props: Props) {
       setLastVizPath(relativePath.replace('/visualizations', ''));
     }
   }, [location, routeBase]);
+
+  if (status === Status.Error)
+    return (
+      <div>
+        <h2>Error</h2>
+        <p>Could not load the analysis.</p>
+      </div>
+    );
   if (analysis == null) return <Loading />;
   return (
     <div className={cx('-Analysis')}>
