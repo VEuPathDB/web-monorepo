@@ -117,7 +117,16 @@ function OrganismFilter({ resultType, ...otherProps }: Props) {
   }
 
   return (
-    <Suspense fallback={null}>
+    <Suspense
+      fallback={(
+        <Container>
+          <h3 className={cx('--Heading')}>
+            {TITLE}
+          </h3>
+          <Loading />
+        </Container>
+      )}
+    >
       <OrganismFilterForStep step={step} {...otherProps} />
     </Suspense>
   );
