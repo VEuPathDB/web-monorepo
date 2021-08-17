@@ -59,6 +59,12 @@ export function NewAnalysisPage() {
     [analysis, createAnalysis]
   );
   const setDerivedVariables = useCallback(() => {}, []);
+  const setVariableUISettings = useCallback(
+    (variableUISettings: Record<string, VariableUISetting>) => {
+      setAnalysis((analysis) => ({ ...analysis, variableUISettings }));
+    },
+    []
+  );
   const setVisualizations = useCallback(
     (visualizations: Visualization[]) => {
       createAnalysis(
@@ -80,11 +86,7 @@ export function NewAnalysisPage() {
       setFilters,
       setName,
       setStarredVariables,
-      setVariableUISettings: (
-        variableUISettings: Record<string, VariableUISetting>
-      ) => {
-        setAnalysis((analysis) => ({ ...analysis, variableUISettings }));
-      },
+      setVariableUISettings,
       setVisualizations,
       saveAnalysis,
       status: Status.Loaded,
@@ -101,6 +103,7 @@ export function NewAnalysisPage() {
       setFilters,
       setName,
       setStarredVariables,
+      setVariableUISettings,
       setVisualizations,
     ]
   );
