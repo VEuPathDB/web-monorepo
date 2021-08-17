@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react';
 import { MosaicData } from '../types/plots/mosaic';
 import { EmptyMosaicData } from '../plots/MosaicPlot';
 import _ from 'lodash';
@@ -6,6 +7,7 @@ interface ContingencyTableProps {
   data?: MosaicData;
   independentVariable: string;
   dependentVariable: string;
+  containerStyles?: CSSProperties;
 }
 
 export function ContingencyTable(props: ContingencyTableProps) {
@@ -13,7 +15,7 @@ export function ContingencyTable(props: ContingencyTableProps) {
   const rowSums = data.values.map((row) => _.sum(row));
 
   return (
-    <div className="contingency-table">
+    <div className="contingency-table" style={props.containerStyles}>
       <table>
         <tbody>
           <tr>
