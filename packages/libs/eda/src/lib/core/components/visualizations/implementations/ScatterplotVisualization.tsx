@@ -680,6 +680,10 @@ function processInputData<T extends number | string>(
       return ColorPaletteDefault[index] ?? 'black'; // TO DO: decide on overflow behaviour
     }
   };
+  const markerSymbol = (index: number) =>
+    showMissingness && index === plotDataSet.data.length - 1
+      ? 'x'
+      : 'circle-open';
 
   // set dataSetProcess as any for now
   let dataSetProcess: any = [];
@@ -752,6 +756,7 @@ function processInputData<T extends number | string>(
         opacity: 0.7,
         marker: {
           color: markerColor(index),
+          symbol: markerSymbol(index),
         },
         // this needs to be here for the case of markers with line or lineplot.
         // always use spline?
