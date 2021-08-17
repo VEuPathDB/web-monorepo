@@ -9,6 +9,7 @@ import {
   OrientationDefault,
   DependentAxisLogScaleAddon,
   DependentAxisLogScaleDefault,
+  ColorPaletteAddon,
 } from '../types/plots';
 import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 import { Layout } from 'plotly.js';
@@ -20,7 +21,8 @@ export interface BarplotProps
     BarLayoutAddon<'overlay' | 'stack' | 'group'>,
     OrientationAddon,
     OpacityAddon,
-    DependentAxisLogScaleAddon {
+    DependentAxisLogScaleAddon,
+    ColorPaletteAddon {
   /** Label for independent axis. e.g. 'Country' */
   independentAxisLabel?: string;
   /** Label for dependent axis. Defaults to 'Count' */

@@ -97,3 +97,19 @@ export type AvailableUnitsAddon =
       /** Currently selected unit. */
       selectedUnit?: never;
     };
+
+/** Color palette addon */
+export type ColorPaletteAddon = {
+  colorPalette?: string[];
+};
+/** Based on [Tol's muted colormap](https://personal.sron.nl/~pault/) */
+export const ColorPaletteDefault: string[] = [
+  'rgb(136,34,85)',
+  'rgb(136,204,238)',
+  'rgb(153,153,51)',
+  'rgb(51,34,136)',
+  'rgb(68,170,153)',
+  'rgb(221,204,119)',
+  'rgb(204,102,119)',
+  'rgb(17,119,51)',
+];

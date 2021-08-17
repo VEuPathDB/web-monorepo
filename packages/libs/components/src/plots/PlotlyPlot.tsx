@@ -8,7 +8,12 @@ import React, {
 import { PlotParams } from 'react-plotly.js';
 import { legendSpecification } from '../utils/plotly';
 import Spinner from '../components/Spinner';
-import { PlotLegendAddon, PlotSpacingAddon } from '../types/plots/addOns';
+import {
+  PlotLegendAddon,
+  PlotSpacingAddon,
+  ColorPaletteAddon,
+  ColorPaletteDefault,
+} from '../types/plots/addOns';
 import { LayoutLegendTitle } from '../types/plotly-omissions';
 // add d3.select
 import { select } from 'd3';
@@ -52,7 +57,7 @@ const Plot = lazy(() => import('react-plotly.js'));
  *
  */
 export default function PlotlyPlot<T>(
-  props: Omit<PlotProps<T>, 'data'> & PlotParams
+  props: Omit<PlotProps<T>, 'data'> & PlotParams & ColorPaletteAddon
 ) {
   const {
     title,
@@ -68,6 +73,7 @@ export default function PlotlyPlot<T>(
     maxLegendTextLength = 20,
     // expose data for applying legend ellipsis
     data,
+    colorPalette,
     ...plotlyProps
   } = props;
 
@@ -118,6 +124,7 @@ export default function PlotlyPlot<T>(
         ...(legendOptions ? legendSpecification(legendOptions) : {}),
       },
       autosize: true, // responds properly to enclosing div resizing (not to be confused with config.responsive)
+      colorway: colorPalette ?? ColorPaletteDefault,
     }),
     [
       plotlyProps.layout,
@@ -126,6 +133,7 @@ export default function PlotlyPlot<T>(
       displayLegend,
       legendTitle,
       title,
+      colorPalette,
     ]
   );
 
