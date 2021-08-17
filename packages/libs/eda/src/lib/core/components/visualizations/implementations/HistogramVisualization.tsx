@@ -540,7 +540,9 @@ export function histogramResponseToData(
     binWidthRange,
     binWidthStep,
     completeCases: response.completeCasesTable,
-    outputSize: response.histogram.config.completeCases,
+    outputSize:
+      response.histogram.config.completeCases +
+      response.histogram.config.plottedIncompleteCases,
   };
 }
 

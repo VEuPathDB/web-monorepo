@@ -448,7 +448,9 @@ export function boxplotResponseToData(
       label: data.label, // [response.boxplot.config.xVariableDetails.variableId],
     })),
     completeCases: response.completeCasesTable,
-    outputSize: response.boxplot.config.completeCases,
+    outputSize:
+      response.boxplot.config.completeCases +
+      response.boxplot.config.plottedIncompleteCases,
   };
 }
 

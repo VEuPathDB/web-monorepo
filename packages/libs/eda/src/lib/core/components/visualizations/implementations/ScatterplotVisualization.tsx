@@ -573,7 +573,10 @@ export function scatterplotResponseToData(
     yMin: yMin,
     yMax: yMax,
     completeCases: response.completeCasesTable,
-    outputSize: response.scatterplot.config.completeCases, // TO DO: won't work with densityplot response, when that's implemented
+    outputSize:
+      response.scatterplot.config.completeCases +
+      response.scatterplot.config.plottedIncompleteCases,
+    // TO DO: won't work with densityplot response, when that's implemented
   };
 }
 

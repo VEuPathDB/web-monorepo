@@ -434,7 +434,9 @@ export function barplotResponseToData(
       value: data.value,
     })),
     completeCases: response.completeCasesTable,
-    outputSize: response.barplot.config.completeCases,
+    outputSize:
+      response.barplot.config.completeCases +
+      response.barplot.config.plottedIncompleteCases,
   };
 }
 
