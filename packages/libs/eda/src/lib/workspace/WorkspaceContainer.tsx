@@ -16,7 +16,6 @@ import { mockAnalysisStore } from './Mocks';
 import { cx, findFirstVariable } from './Utils';
 import { SavedAnalysis } from './SavedAnalysis';
 import { NewAnalysisPage } from './NewAnalysis';
-import { AnalysisPanel } from './AnalysisPanel';
 
 interface Props {
   studyId: string;
@@ -62,7 +61,6 @@ export function WorkspaceContainer(props: Props) {
   return (
     <RestrictedPage approvalStatus={approvalStatus}>
       <EDAWorkspaceContainer
-        analysisId={props.analysisId}
         studyId={props.studyId}
         className={cx()}
         analysisClient={mockAnalysisStore}
