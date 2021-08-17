@@ -39,7 +39,6 @@ export function MapVeuContainer() {
           ) => (
             <EDAWorkspaceContainer
               studyId={props.match.params.studyId}
-              analysisId={props.match.params.analysisId}
               subsettingClient={edaClient}
               analysisClient={mockAnalysisStore}
               dataClient={dataClient}

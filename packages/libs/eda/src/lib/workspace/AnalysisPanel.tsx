@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { cx } from './Utils';
 import { AnalysisSummary } from './AnalysisSummary';
 import {
+  AnalysisState,
   EntityDiagram,
   Status,
-  useAnalysis,
   useStudyMetadata,
   useStudyRecord,
 } from '../core';
@@ -24,15 +24,16 @@ import { uniq } from 'lodash';
 import { RecordController } from '@veupathdb/wdk-client/lib/Controllers';
 import GlobalFiltersDialog from '../core/components/GlobalFiltersDialog';
 import { useStudyEntities } from '../core/hooks/study';
+import { Loading } from '@veupathdb/wdk-client/lib/Components';
 
 interface Props {
-  analysisId: string;
+  analysisState: AnalysisState;
+  hideCopyAndSave?: boolean;
 }
 
 export function AnalysisPanel(props: Props) {
-  const { analysisId } = props;
+  const { analysisState, hideCopyAndSave = false } = props;
   const studyRecord = useStudyRecord();
-  const analysisState = useAnalysis(analysisId);
   const {
     status,
     analysis,
@@ -40,15 +41,14 @@ export function AnalysisPanel(props: Props) {
     copyAnalysis,
     saveAnalysis,
     deleteAnalysis,
+    setFilters,
   } = analysisState;
   const { url: routeBase } = useRouteMatch();
   const totalCounts = useEntityCounts();
-  const filteredCounts = useEntityCounts(analysisState.analysis?.filters);
+  const filteredCounts = useEntityCounts(analysis?.filters);
   const studyMetadata = useStudyMetadata();
   const entities = useStudyEntities(studyMetadata.rootEntity);
-  const filteredEntities = uniq(
-    analysisState.analysis?.filters.map((f) => f.entityId)
-  );
+  const filteredEntities = uniq(analysis?.filters.map((f) => f.entityId));
   const location = useLocation();
   const [lastVarPath, setLastVarPath] = useState('');
   const [lastVizPath, setLastVizPath] = useState('');
@@ -62,22 +62,23 @@ export function AnalysisPanel(props: Props) {
       setLastVizPath(relativePath.replace('/visualizations', ''));
     }
   }, [location, routeBase]);
+
   if (status === Status.Error)
     return (
       <div>
         <h2>Error</h2>
-        <p>Could not load the analysis analysis.</p>
+        <p>Could not load the analysis.</p>
       </div>
     );
-  if (analysis == null) return null;
+  if (analysis == null) return <Loading />;
   return (
     <div className={cx('-Analysis')}>
       <AnalysisSummary
         analysis={analysis}
         setAnalysisName={setName}
-        copyAnalysis={copyAnalysis}
+        copyAnalysis={hideCopyAndSave ? undefined : copyAnalysis}
         saveAnalysis={saveAnalysis}
-        deleteAnalysis={deleteAnalysis}
+        deleteAnalysis={hideCopyAndSave ? undefined : deleteAnalysis}
         onFilterIconClick={() =>
           setGlobalFiltersDialogOpen(!globalFiltersDialogOpen)
         }
@@ -88,9 +89,9 @@ export function AnalysisPanel(props: Props) {
         setOpen={setGlobalFiltersDialogOpen}
         entities={entities}
         filters={analysis.filters}
-        setFilters={analysisState.setFilters}
+        setFilters={setFilters}
         removeFilter={(filter) =>
-          analysisState.setFilters(analysis.filters.filter((f) => f !== filter))
+          setFilters(analysis.filters.filter((f) => f !== filter))
         }
       />
       <Route
@@ -171,7 +172,7 @@ export function AnalysisPanel(props: Props) {
         render={(
           props: RouteComponentProps<{ entityId: string; variableId: string }>
         ) => (
-          <Subsetting analysisState={analysisState} {...props.match.params} />
+          <Subsetting {...props.match.params} analysisState={analysisState} />
         )}
       />
       <Route

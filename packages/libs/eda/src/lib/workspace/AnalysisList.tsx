@@ -4,7 +4,13 @@ import { PathReporter } from 'io-ts/PathReporter';
 import * as Path from 'path';
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import { NewAnalysis, Analysis, useStudyRecord, AnalysisClient } from '../core';
+import {
+  NewAnalysis,
+  Analysis,
+  useStudyRecord,
+  AnalysisClient,
+  useAnalysisList,
+} from '../core';
 
 export interface Props {
   analysisStore: AnalysisClient;
@@ -14,44 +20,12 @@ export function AnalysisList(props: Props) {
   const { analysisStore } = props;
   const studyRecord = useStudyRecord();
   const studyId = studyRecord.id.map((part) => part.value).join('/');
-  const [analysisList, setAnalysisList] = React.useState<Analysis[]>();
   const history = useHistory();
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
-  const updateAnalysisList = React.useCallback(async () => {
-    const list = await analysisStore.getAnalyses();
-    setAnalysisList(list.filter((a) => a.studyId === studyId));
-  }, [analysisStore, studyId]);
-  React.useEffect(() => {
-    updateAnalysisList();
-  }, [updateAnalysisList]);
-  const createNewAnalysis = React.useCallback(async () => {
-    const { id } = await analysisStore.createAnalysis({
-      name: 'Unnamed Analysis',
-      studyId,
-      filters: [],
-      starredVariables: [],
-      derivedVariables: [],
-      visualizations: [],
-      computations: [],
-      variableUISettings: {},
-    });
-    const newLocation = {
-      ...history.location,
-      pathname:
-        history.location.pathname +
-        (history.location.pathname.endsWith('/') ? '' : '/') +
-        id,
-    };
-    history.push(newLocation);
-  }, [analysisStore, history, studyId]);
-  const deleteAnalysis = React.useCallback(
-    (analysisIds: Iterable<string>) => {
-      for (const analysisId of analysisIds)
-        analysisStore.deleteAnalysis(analysisId);
-      updateAnalysisList();
-    },
-    [analysisStore, updateAnalysisList]
-  );
+  const { analyses, deleteAnalyses } = useAnalysisList(analysisStore);
+  const analysisList = analyses
+    ? analyses.filter((analysis) => analysis.studyId === studyId)
+    : undefined;
   const loadAnalysis = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.currentTarget.files && event.currentTarget.files[0];
@@ -130,17 +104,9 @@ export function AnalysisList(props: Props) {
             <button
               type="button"
               className="btn"
-              onClick={() => deleteAnalysis(selected)}
+              onClick={() => deleteAnalyses(selected)}
             >
               Delete selected analyses
-            </button>
-          ),
-        },
-        {
-          selectionRequired: false,
-          element: (
-            <button type="button" className="btn" onClick={createNewAnalysis}>
-              Start a new analysis
             </button>
           ),
         },
@@ -193,11 +159,10 @@ export function AnalysisList(props: Props) {
       ],
     }),
     [
-      analysisList,
-      createNewAnalysis,
-      deleteAnalysis,
       loadAnalysis,
+      analysisList,
       selected,
+      deleteAnalyses,
       history.location.pathname,
     ]
   );
