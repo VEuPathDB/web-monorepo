@@ -204,23 +204,18 @@ function ScatterplotViz(props: Props) {
     [updateVizConfig, findEntityAndVariable, vizConfig.valueSpecConfig]
   );
 
-  // XYPlotControls: add valueSpec option
-  const onValueSpecChange = useCallback(
-    (value: string) => {
+  // prettier-ignore
+  const onChangeHandlerFactory = useCallback(
+    < ValueType,>(key: keyof ScatterplotConfig) => (newValue?: ValueType) => {
       updateVizConfig({
-        valueSpecConfig: value,
+        [key]: newValue,
       });
     },
     [updateVizConfig]
   );
-
-  const onShowMissingnessChange = useCallback(
-    (newState?: boolean) => {
-      updateVizConfig({
-        showMissingness: newState,
-      });
-    },
-    [updateVizConfig]
+  const onValueSpecChange = onChangeHandlerFactory<string>('valueSpecConfig');
+  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
+    'showMissingness'
   );
 
   // outputEntity for OutputEntityTitle's outputEntity prop and outputEntityId at getRequestParams

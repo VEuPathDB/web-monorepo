@@ -150,31 +150,21 @@ function BarplotViz(props: Props) {
     [updateVizConfig]
   );
 
-  const onDependentAxisLogScaleChange = useCallback(
-    (newState?: boolean) => {
+  // prettier-ignore
+  const onChangeHandlerFactory = useCallback(
+    < ValueType,>(key: keyof BarplotConfig) => (newValue?: ValueType) => {
       updateVizConfig({
-        dependentAxisLogScale: newState,
+        [key]: newValue,
       });
     },
     [updateVizConfig]
   );
-
-  const onValueSpecChange = useCallback(
-    (newValueSpec: ValueSpec) => {
-      updateVizConfig({
-        valueSpec: newValueSpec,
-      });
-    },
-    [updateVizConfig]
+  const onDependentAxisLogScaleChange = onChangeHandlerFactory<boolean>(
+    'dependentAxisLogScale'
   );
-
-  const onShowMissingnessChange = useCallback(
-    (newState?: boolean) => {
-      updateVizConfig({
-        showMissingness: newState,
-      });
-    },
-    [updateVizConfig]
+  const onValueSpecChange = onChangeHandlerFactory<ValueSpec>('valueSpec');
+  const onShowMissingnessChange = onChangeHandlerFactory<boolean>(
+    'showMissingness'
   );
 
   const findEntityAndVariable = useFindEntityAndVariable(entities);
