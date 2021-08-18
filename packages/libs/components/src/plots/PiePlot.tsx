@@ -5,7 +5,6 @@ import PlotlyPlot, { PlotProps } from './PlotlyPlot';
 // FIXME - confusing mix of imports from plotly and react-plotly
 //         isn't PlotlyPlotData the same as PlotParams['data'] ?
 
-import defaultColorGen from '../utils/defaultColorGen';
 import { PiePlotData, PiePlotDatum } from '../types/plots';
 
 // Plotly PlotData['hoverinfo'] definition lacks options that work
@@ -59,7 +58,6 @@ export default function PiePlot({
   textOptions,
   ...restProps
 }: PiePlotProps) {
-  const defaultColorIter = defaultColorGen();
   let newData: Partial<PlotData>[] = [];
 
   // Set some initial PLot.ly "layout" properties.
@@ -118,8 +116,13 @@ export default function PiePlot({
     reducedData.labels.push(currentData.label);
 
     // Use the provided color or the next default plotly color if none is provided
-    let color = currentData.color || (defaultColorIter.next().value as string);
-    reducedData.marker.colors.push(color);
+    let color = currentData.color;
+    reducedData.marker.colors.push(color ?? '');
+    // typescript definitions may be wrong.  We're not allowed to pass
+    // an Array<string | undefined> to marker.colors
+    // but the empty string works.
+    // Using marker.color instead works type-wise, but it doesn't actually work
+    // color-wise!
 
     return reducedData;
   };

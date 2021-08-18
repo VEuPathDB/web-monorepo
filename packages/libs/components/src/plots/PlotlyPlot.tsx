@@ -18,7 +18,7 @@ import { LayoutLegendTitle } from '../types/plotly-omissions';
 // add d3.select
 import { select } from 'd3';
 
-export interface PlotProps<T> {
+export interface PlotProps<T> extends ColorPaletteAddon {
   /** plot data - following web-components' API, not Plotly's */
   data?: T;
   /** Title of plot. */
@@ -57,7 +57,7 @@ const Plot = lazy(() => import('react-plotly.js'));
  *
  */
 export default function PlotlyPlot<T>(
-  props: Omit<PlotProps<T>, 'data'> & PlotParams & ColorPaletteAddon
+  props: Omit<PlotProps<T>, 'data'> & PlotParams
 ) {
   const {
     title,
@@ -73,7 +73,7 @@ export default function PlotlyPlot<T>(
     maxLegendTextLength = 20,
     // expose data for applying legend ellipsis
     data,
-    colorPalette,
+    colorPalette = ColorPaletteDefault,
     ...plotlyProps
   } = props;
 
@@ -124,7 +124,7 @@ export default function PlotlyPlot<T>(
         ...(legendOptions ? legendSpecification(legendOptions) : {}),
       },
       autosize: true, // responds properly to enclosing div resizing (not to be confused with config.responsive)
-      colorway: colorPalette ?? ColorPaletteDefault,
+      colorway: colorPalette,
     }),
     [
       plotlyProps.layout,
