@@ -31,6 +31,7 @@ type CompositePluginComponentProps<PluginProps> = {
   context: PluginEntryContext;
   pluginProps: PluginProps;
   defaultComponent?: PluginComponent<PluginProps>;
+  fallback?: React.ReactNode;
 }
 
 type ResolvedPluginReferences = {
@@ -107,7 +108,7 @@ function makeCompositePluginComponentUncached<T>(registry: ClientPluginRegistryE
       }
     }, [ props.context.paramName, props.context.searchName, props.context.recordClassName ]);
 
-    if (resolvedReferences == null) return null;
+    if (resolvedReferences == null) return <>{props.fallback}</> ?? null;
 
     if ('error' in resolvedReferences) {
       return resolvedReferences.error.status === 404
