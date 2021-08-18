@@ -387,27 +387,6 @@ function HistogramPlotWithControls({
   entityName,
   ...histogramProps
 }: HistogramPlotWithControlsProps) {
-  const handleSelectedRangeChange = useCallback(
-    (range?: NumberOrDateRange) => {
-      if (range) {
-        updateFilter({
-          min:
-            typeof range.min === 'string'
-              ? padISODateTime(range.min)
-              : range.min,
-          max:
-            typeof range.max === 'string'
-              ? padISODateTime(range.max)
-              : range.max,
-        } as NumberOrDateRange);
-      } else {
-        updateFilter(); // clear the filter if range is undefined
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, updateFilter]
-  );
-
   const handleBinWidthChange = useCallback(
     (newBinWidth: NumberOrTimeDelta) => {
       updateUIState({
@@ -505,6 +484,32 @@ function HistogramPlotWithControls({
         )
       : undefined;
   }, [data?.series, data?.valueType]);
+
+  const handleSelectedRangeChange = useCallback(
+    (range?: NumberOrDateRange) => {
+      if (range) {
+        updateFilter(
+          enforceBounds(
+            {
+              min:
+                typeof range.min === 'string'
+                  ? padISODateTime(range.min)
+                  : range.min,
+              max:
+                typeof range.max === 'string'
+                  ? padISODateTime(range.max)
+                  : range.max,
+            } as NumberOrDateRange,
+            selectedRangeBounds
+          )
+        );
+      } else {
+        updateFilter(); // clear the filter if range is undefined
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data, updateFilter]
+  );
 
   const widgetHeight = '4em';
 
@@ -669,5 +674,19 @@ function computeBinSlider(
       const min = rangeSize / 1000;
       return { min, max, step: min };
     }
+  }
+}
+
+function enforceBounds(
+  range: NumberOrDateRange,
+  bounds: NumberOrDateRange | undefined
+) {
+  if (bounds) {
+    return {
+      min: range.min < bounds.min ? bounds.min : range.min,
+      max: range.max > bounds.max ? bounds.max : range.max,
+    } as NumberOrDateRange;
+  } else {
+    return range;
   }
 }
