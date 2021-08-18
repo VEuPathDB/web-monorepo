@@ -19,6 +19,8 @@ export type SwitchProps = {
   containerStyles?: React.CSSProperties;
   /** If true, disable interaction with the switch */
   disabled?: boolean;
+  /** label position; default is 'before' */
+  labelPosition?: 'before' | 'after';
 };
 
 /**
@@ -33,6 +35,7 @@ export default function Switch({
   color = LIGHT_BLUE,
   containerStyles = {},
   disabled = false,
+  labelPosition = 'before',
 }: SwitchProps) {
   const [focused, setFocused] = useState(false);
 
@@ -48,7 +51,7 @@ export default function Switch({
     <div
       style={{
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: labelPosition === 'after' ? 'row-reverse' : 'row',
         alignItems: 'center',
         ...containerStyles,
       }}
@@ -58,7 +61,12 @@ export default function Switch({
       {label && (
         <Typography
           variant="button"
-          style={{ color: focused ? DARK_GRAY : MEDIUM_GRAY, paddingRight: 5 }}
+          style={{
+            color: focused ? DARK_GRAY : MEDIUM_GRAY,
+            ...(labelPosition === 'after'
+              ? { paddingLeft: 5 }
+              : { paddingRight: 5 }),
+          }}
         >
           {label}
         </Typography>
