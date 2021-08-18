@@ -17,7 +17,7 @@ export function PreferredOrganismsToggle({ enabled, label, onClick }: Props) {
       style={{
         background: 'none',
         border: 'none',
-        padding: 0,
+        padding: '0 0.25em',
       }}
       type="button"
       onClick={onClick}
