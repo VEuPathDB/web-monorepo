@@ -1,10 +1,11 @@
 import React from 'react';
 
+import { Loading } from 'wdk-client/Components';
+import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
 import { AddStepOperationFormProps } from 'wdk-client/Views/Strategy/AddStepPanel';
 
 import 'wdk-client/Views/Strategy/ConvertStepForm.scss';
-import {Plugin} from 'wdk-client/Utils/ClientPlugin';
 
 const cx = makeClassNameHelper('ConvertStepForm');
 
@@ -48,6 +49,7 @@ export const ConvertStepForm = ({
               addType
             }
           }}
+          fallback={<Loading />}
         />
       </div>
     </div>

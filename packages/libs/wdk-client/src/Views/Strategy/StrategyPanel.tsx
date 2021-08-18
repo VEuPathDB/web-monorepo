@@ -1,6 +1,7 @@
 import React from 'react';
 import { SaveableTextEditor, Loading } from 'wdk-client/Components';
 import { makeClassNameHelper } from 'wdk-client/Utils/ComponentUtils';
+import { QuestionController } from 'wdk-client/Controllers';
 import { StrategyDetails } from 'wdk-client/Utils/WdkUser';
 import { AddStepPanel } from 'wdk-client/Views/Strategy/AddStepPanel';
 import { AddType, PartialUiStepTree } from 'wdk-client/Views/Strategy/Types';
@@ -139,9 +140,11 @@ export default function StrategyPanel(props: Props) {
                   strategyId: strategy.strategyId,
                   stepId: reviseStep.id,
                   previousSearchConfig: reviseStep.searchConfig
-                },
+                } as const,
                 submitButtonText: 'Revise'
               }}
+              defaultComponent={QuestionController}
+              fallback={<Loading />}
             />
           </div>
         </StrategyModal>

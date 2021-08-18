@@ -103,6 +103,7 @@ function QuestionController(props: Props) {
           recordClassName
         }}
         pluginProps={props}
+        fallback={<Loading />}
       />
     ),
     [ searchName, recordClassName ] 

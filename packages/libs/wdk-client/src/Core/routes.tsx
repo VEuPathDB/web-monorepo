@@ -28,7 +28,7 @@ import QuestionController from 'wdk-client/Controllers/QuestionController';
 import { Plugin } from 'wdk-client/Utils/ClientPlugin';
 import StrategyWorkspaceController from 'wdk-client/Controllers/StrategyWorkspaceController';
 import BasketController from 'wdk-client/Controllers/BasketController';
-import { PermissionDenied } from 'wdk-client/Components';
+import { Loading, PermissionDenied } from 'wdk-client/Components';
 import NotFound from 'wdk-client/Views/NotFound/NotFound';
 import Error from 'wdk-client/Components/PageStatus/Error';
 import UserDatasetsWorkspace from 'wdk-client/Views/UserDatasets/UserDatasetsWorkspace';
@@ -84,6 +84,7 @@ const routes: RouteEntry[] = [
             prepopulateWithLastParamValues: true
           }}
           defaultComponent={QuestionController}
+          fallback={<Loading />}
         />
       );
     }

@@ -6,6 +6,7 @@ import { memoize, isEqual } from 'lodash/fp';
 import ResultTabs, { TabConfig } from 'wdk-client/Core/MoveAfterRefactor/Components/Shared/ResultTabs';
 import { connect } from 'react-redux';
 import { transitionToInternalPage } from 'wdk-client/Actions/RouterActions';
+import { Loading } from 'wdk-client/Components';
 import { RootState } from 'wdk-client/Core/State/Types';
 import {
   analysisPanelOrder,
@@ -266,6 +267,7 @@ const mergeProps = (
               resultType: ownProps.resultType,
               viewId: ownProps.viewId
             }}
+            fallback={<Loading />}
           />
         ) : null
       })
@@ -298,6 +300,7 @@ const mergeProps = (
               renameAnalysis: eventHandlers.renameAnalysis(+baseTabConfig.key),
               duplicateAnalysis: eventHandlers.duplicateAnalysis(+baseTabConfig.key)
             }}
+            fallback={<Loading />}
           />
         )
       })
