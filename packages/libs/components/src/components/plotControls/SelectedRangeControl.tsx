@@ -39,7 +39,15 @@ export default function SelectedRangeControl({
     : // use a custom validator when we don't want to
       // actually constrain the range between the bounds.
       useCallback((range?: NumberOrDateRange) => {
-        if (range && range?.min > range?.max) {
+        if (
+          range &&
+          (valueType === 'date'
+            ? // only compare the date part (one can be datetime, just-entered value is just a date)
+              (range.min as string).substring(0, 10) >
+              (range.max as string).substring(0, 10)
+            : range?.min > range?.max)
+        ) {
+          console.log(range);
           return {
             validity: false,
             message: 'Range start cannot be above range end',
